@@ -38,7 +38,7 @@ $PAGE->set_url('/group/members.php', array('group'=>$groupid));
 $PAGE->set_pagelayout('standard');
 
 require_login($course);
-$context = get_context_instance(CONTEXT_COURSE, $course->id);
+$context = context_course::instance($course->id);
 require_capability('moodle/course:managegroups', $context);
 
 $returnurl = $CFG->wwwroot.'/group/index.php?id='.$course->id.'&group='.$group->id;
@@ -67,6 +67,10 @@ if (optional_param('remove', false, PARAM_BOOL) && confirm_sesskey()) {
     $userstoremove = $groupmembersselector->get_selected_users();
     if (!empty($userstoremove)) {
         foreach ($userstoremove as $user) {
+            if (!groups_remove_member_allowed($groupid, $user->id)) {
+                print_error('errorremovenotpermitted', 'group', $returnurl,
+                        $user->fullname);
+            }
             if (!groups_remove_member($groupid, $user->id)) {
                 print_error('erroraddremoveuser', 'group', $returnurl);
             }
@@ -84,7 +88,6 @@ $strusergroupmembership = get_string('usergroupmembership', 'group');
 
 $groupname = format_string($group->name);
 
-$PAGE->requires->yui2_lib('connection');
 $PAGE->requires->js('/group/clientlib.js');
 $PAGE->navbar->add($strparticipants, new moodle_url('/user/index.php', array('id'=>$course->id)));
 $PAGE->navbar->add($strgroups, new moodle_url('/group/index.php', array('id'=>$course->id)));

@@ -52,7 +52,7 @@ class block_blog_recent extends block_base {
         }
 
         // verify blog is enabled
-        if (empty($CFG->bloglevel)) {
+        if (empty($CFG->enableblogs)) {
             $this->content = new stdClass();
             $this->content->text = '';
             if ($this->page->user_is_editing()) {

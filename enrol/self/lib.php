@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,8 +17,7 @@
 /**
  * Self enrolment plugin.
  *
- * @package    enrol
- * @subpackage self
+ * @package    enrol_self
  * @copyright  2010 Petr Skoda  {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -66,7 +64,7 @@ class enrol_self_plugin extends enrol_plugin {
     /**
      * Returns localised name of enrol instance
      *
-     * @param object $instance (null is accepted too)
+     * @param stdClass $instance (null is accepted too)
      * @return string
      */
     public function get_instance_name($instance) {
@@ -86,28 +84,38 @@ class enrol_self_plugin extends enrol_plugin {
     }
 
     public function roles_protected() {
-        // users may tweak the roles later
+        // Users may tweak the roles later.
         return false;
     }
 
     public function allow_unenrol(stdClass $instance) {
-        // users with unenrol cap may unenrol other users manually manually
+        // Users with unenrol cap may unenrol other users manually manually.
         return true;
     }
 
     public function allow_manage(stdClass $instance) {
-        // users with manage cap may tweak period and status
+        // Users with manage cap may tweak period and status.
         return true;
     }
 
     public function show_enrolme_link(stdClass $instance) {
-        return ($instance->status == ENROL_INSTANCE_ENABLED);
+        global $CFG, $USER;
+
+        if ($instance->status != ENROL_INSTANCE_ENABLED) {
+            return false;
+        }
+        if ($instance->customint5) {
+            require_once("$CFG->dirroot/cohort/lib.php");
+            return cohort_is_member($instance->customint5, $USER->id);
+        }
+        return true;
     }
 
     /**
      * Sets up navigation entries.
      *
-     * @param object $instance
+     * @param stdClass $instancesnode
+     * @param stdClass $instance
      * @return void
      */
     public function add_course_navigation($instancesnode, stdClass $instance) {
@@ -156,7 +164,7 @@ class enrol_self_plugin extends enrol_plugin {
         if (!has_capability('moodle/course:enrolconfig', $context) or !has_capability('enrol/self:config', $context)) {
             return NULL;
         }
-        // multiple instances supported - different roles with different password
+        // Multiple instances supported - different roles with different password.
         return new moodle_url('/enrol/self/edit.php', array('courseid'=>$courseid));
     }
 
@@ -171,7 +179,7 @@ class enrol_self_plugin extends enrol_plugin {
         global $CFG, $OUTPUT, $SESSION, $USER, $DB;
 
         if (isguestuser()) {
-            // can not enrol guest!!
+            // Can not enrol guest!!
             return null;
         }
         if ($DB->record_exists('user_enrolments', array('userid'=>$USER->id, 'enrolid'=>$instance->id))) {
@@ -187,6 +195,18 @@ class enrol_self_plugin extends enrol_plugin {
         if ($instance->enrolenddate != 0 and $instance->enrolenddate < time()) {
             //TODO: inform that enrolment is not possible any more
             return null;
+        }
+
+        if ($instance->customint5) {
+            require_once("$CFG->dirroot/cohort/lib.php");
+            if (!cohort_is_member($instance->customint5, $USER->id)) {
+                $cohort = $DB->get_record('cohort', array('id'=>$instance->customint5));
+                if (!$cohort) {
+                    return null;
+                }
+                $a = format_string($cohort->name, true, array('context'=>context::instance_by_id($cohort->contextid)));
+                return $OUTPUT->box(markdown_to_html(get_string('cohortnonmemberinfo', 'enrol_self', $a)));
+            }
         }
 
         require_once("$CFG->dirroot/enrol/self/locallib.php");
@@ -206,7 +226,7 @@ class enrol_self_plugin extends enrol_plugin {
                 }
 
                 $this->enrol_user($instance, $USER->id, $instance->roleid, $timestart, $timeend);
-                add_to_log($instance->courseid, 'course', 'enrol', '../enrol/users.php?id='.$instance->courseid, $instance->courseid); //there should be userid somewhere!
+                add_to_log($instance->courseid, 'course', 'enrol', '../enrol/users.php?id='.$instance->courseid, $instance->courseid); //TODO: There should be userid somewhere!
 
                 if ($instance->password and $instance->customint1 and $data->enrolpassword !== $instance->password) {
                     // it must be a group enrolment, let's assign group too
@@ -221,7 +241,7 @@ class enrol_self_plugin extends enrol_plugin {
                         }
                     }
                 }
-                // send welcome
+                // Send welcome message.
                 if ($instance->customint4) {
                     $this->email_welcome_message($instance, $USER);
                 }
@@ -237,7 +257,7 @@ class enrol_self_plugin extends enrol_plugin {
 
     /**
      * Add new instance of enrol plugin with default settings.
-     * @param object $course
+     * @param stdClass $course
      * @return int id of new instance
      */
     public function add_default_instance($course) {
@@ -245,6 +265,7 @@ class enrol_self_plugin extends enrol_plugin {
                         'customint2'  => $this->get_config('longtimenosee'),
                         'customint3'  => $this->get_config('maxenrolled'),
                         'customint4'  => $this->get_config('sendcoursewelcomemessage'),
+                        'customint5'  => 0,
                         'enrolperiod' => $this->get_config('enrolperiod', 0),
                         'status'      => $this->get_config('status'),
                         'roleid'      => $this->get_config('roleid', 0));
@@ -257,32 +278,42 @@ class enrol_self_plugin extends enrol_plugin {
     }
 
     /**
-     * Send welcome email to specified user
+     * Send welcome email to specified user.
      *
-     * @param object $instance
-     * @param object $user user record
+     * @param stdClass $instance
+     * @param stdClass $user user record
      * @return void
      */
     protected function email_welcome_message($instance, $user) {
         global $CFG, $DB;
 
         $course = $DB->get_record('course', array('id'=>$instance->courseid), '*', MUST_EXIST);
+        $context = context_course::instance($course->id);
 
         $a = new stdClass();
-        $a->coursename = format_string($course->fullname);
+        $a->coursename = format_string($course->fullname, true, array('context'=>$context));
         $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id";
 
         if (trim($instance->customtext1) !== '') {
             $message = $instance->customtext1;
             $message = str_replace('{$a->coursename}', $a->coursename, $message);
             $message = str_replace('{$a->profileurl}', $a->profileurl, $message);
+            if (strpos($message, '<') === false) {
+                // Plain text only.
+                $messagetext = $message;
+                $messagehtml = text_to_html($messagetext, null, false, true);
+            } else {
+                // This is most probably the tag/newline soup known as FORMAT_MOODLE.
+                $messagehtml = format_text($message, FORMAT_MOODLE, array('context'=>$context, 'para'=>false, 'newlines'=>true, 'filter'=>true));
+                $messagetext = html_to_text($messagehtml);
+            }
         } else {
-            $message = get_string('welcometocoursetext', 'enrol_self', $a);
+            $messagetext = get_string('welcometocoursetext', 'enrol_self', $a);
+            $messagehtml = text_to_html($messagetext, null, false, true);
         }
 
-        $subject = get_string('welcometocourse', 'enrol_self', format_string($course->fullname));
+        $subject = get_string('welcometocourse', 'enrol_self', format_string($course->fullname, true, array('context'=>$context)));
 
-        $context = context_course::instance($course->id);
         $rusers = array();
         if (!empty($CFG->coursecontact)) {
             $croles = explode(',', $CFG->coursecontact);
@@ -294,12 +325,12 @@ class enrol_self_plugin extends enrol_plugin {
             $contact = generate_email_supportuser();
         }
 
-        //directly emailing welcome message rather than using messaging
-        email_to_user($user, $contact, $subject, $message);
+        // Directly emailing welcome message rather than using messaging.
+        email_to_user($user, $contact, $subject, $messagetext, $messagehtml);
     }
 
     /**
-     * Enrol self cron support
+     * Enrol self cron support.
      * @return void
      */
     public function cron() {
@@ -313,10 +344,10 @@ class enrol_self_plugin extends enrol_plugin {
 
         $now = time();
 
-        //note: the logic of self enrolment guarantees that user logged in at least once (=== u.lastaccess set)
-        //      and that user accessed course at least once too (=== user_lastaccess record exists)
+        // Note: the logic of self enrolment guarantees that user logged in at least once (=== u.lastaccess set)
+        //       and that user accessed course at least once too (=== user_lastaccess record exists).
 
-        // first deal with users that did not log in for a really long time
+        // First deal with users that did not log in for a really long time.
         $sql = "SELECT e.*, ue.userid
                   FROM {user_enrolments} ue
                   JOIN {enrol} e ON (e.id = ue.enrolid AND e.enrol = 'self' AND e.customint2 > 0)
@@ -331,7 +362,7 @@ class enrol_self_plugin extends enrol_plugin {
         }
         $rs->close();
 
-        // now unenrol from course user did not visit for a long time
+        // Now unenrol from course user did not visit for a long time.
         $sql = "SELECT e.*, ue.userid
                   FROM {user_enrolments} ue
                   JOIN {enrol} e ON (e.id = ue.enrolid AND e.enrol = 'self' AND e.customint2 > 0)
@@ -350,7 +381,7 @@ class enrol_self_plugin extends enrol_plugin {
     }
 
      /**
-     * Gets an array of the user enrolment actions
+     * Gets an array of the user enrolment actions.
      *
      * @param course_enrolment_manager $manager
      * @param stdClass $ue A user enrolment object
@@ -378,7 +409,7 @@ class enrol_self_plugin extends enrol_plugin {
  * Indicates API features that the enrol plugin supports.
  *
  * @param string $feature
- * @return mixed True if yes (some features may use other values)
+ * @return mixed true if yes (some features may use other values)
  */
 function enrol_self_supports($feature) {
     switch($feature) {

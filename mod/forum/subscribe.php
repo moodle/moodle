@@ -55,7 +55,7 @@ $PAGE->set_url($url);
 $forum   = $DB->get_record('forum', array('id' => $id), '*', MUST_EXIST);
 $course  = $DB->get_record('course', array('id' => $forum->course), '*', MUST_EXIST);
 $cm      = get_coursemodule_from_instance('forum', $forum->id, $course->id, false, MUST_EXIST);
-$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+$context = context_module::instance($cm->id);
 
 if ($user) {
     require_sesskey();

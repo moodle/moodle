@@ -120,7 +120,7 @@ class comment {
             $this->contextid = $this->context->id;
         } else if(!empty($options->contextid)) {
             $this->contextid = $options->contextid;
-            $this->context = get_context_instance_by_id($this->contextid);
+            $this->context = context::instance_by_id($this->contextid);
         } else {
             print_error('invalidcontext');
         }
@@ -201,12 +201,19 @@ class comment {
         $this->check_permissions();
 
         // load template
-        $this->template  = html_writer::tag('div', '___picture___', array('class' => 'comment-userpicture'));
-        $this->template .= html_writer::start_tag('div', array('class' => 'comment-content'));
-        $this->template .= '___name___ - ';
-        $this->template .= html_writer::tag('span', '___time___');
-        $this->template .= html_writer::tag('div', '___content___');
-        $this->template .= html_writer::end_tag('div'); // .comment-content
+        $this->template = html_writer::start_tag('div', array('class' => 'comment-message'));
+
+        $this->template .= html_writer::start_tag('div', array('class' => 'comment-message-meta'));
+
+        $this->template .= html_writer::tag('span', '___picture___', array('class' => 'picture'));
+        $this->template .= html_writer::tag('span', '___name___', array('class' => 'user')) . ' - ';
+        $this->template .= html_writer::tag('span', '___time___', array('class' => 'time'));
+
+        $this->template .= html_writer::end_tag('div'); // .comment-message-meta
+        $this->template .= html_writer::tag('div', '___content___', array('class' => 'text'));
+
+        $this->template .= html_writer::end_tag('div'); // .comment-message
+
         if (!empty($this->plugintype)) {
             $this->template = plugin_callback($this->plugintype, $this->pluginname, 'comment', 'template', array($this->comment_param), $this->template);
         }

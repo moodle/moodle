@@ -92,10 +92,12 @@ class repository_googledocs extends repository {
     }
 
     public function get_file($url, $file = '') {
+        if (empty($url)) {
+           throw new repository_exception('cannotdownload', 'repository');
+        }
         $gdocs = new google_docs($this->googleoauth);
-
         $path = $this->prepare_file($file);
-        return $gdocs->download_file($url, $path);
+        return $gdocs->download_file($url, $path, self::GETFILE_TIMEOUT);
     }
 
     public function supported_filetypes() {

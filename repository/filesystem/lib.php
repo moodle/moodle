@@ -91,36 +91,48 @@ class repository_filesystem extends repository {
         $list['dynload'] = true;
         $list['nologin'] = true;
         $list['nosearch'] = true;
+        // retrieve list of files and directories and sort them
+        $fileslist = array();
+        $dirslist = array();
         if ($dh = opendir($this->root_path)) {
             while (($file = readdir($dh)) != false) {
                 if ( $file != '.' and $file !='..') {
-                    if (filetype($this->root_path.$file) == 'file') {
-                        $list['list'][] = array(
-                            'title' => $file,
-                            'source' => $path.'/'.$file,
-                            'size' => filesize($this->root_path.$file),
-                            'datecreated' => filectime($this->root_path.$file),
-                            'datemodified' => filemtime($this->root_path.$file),
-                            'thumbnail' => $OUTPUT->pix_url(file_extension_icon($file, 90))->out(false),
-                            'icon' => $OUTPUT->pix_url(file_extension_icon($file, 24))->out(false)
-                        );
+                    if (is_file($this->root_path.$file)) {
+                        $fileslist[] = $file;
                     } else {
-                        if (!empty($path)) {
-                            $current_path = $path . '/'. $file;
-                        } else {
-                            $current_path = $file;
-                        }
-                        $list['list'][] = array(
-                            'title' => $file,
-                            'children' => array(),
-                            'datecreated' => filectime($this->root_path.$file),
-                            'datemodified' => filemtime($this->root_path.$file),
-                            'thumbnail' => $OUTPUT->pix_url(file_folder_icon(90))->out(false),
-                            'path' => $current_path
-                            );
+                        $dirslist[] = $file;
                     }
                 }
             }
+        }
+        collatorlib::asort($fileslist, collatorlib::SORT_STRING);
+        collatorlib::asort($dirslist, collatorlib::SORT_STRING);
+        // fill the $list['list']
+        foreach ($dirslist as $file) {
+            if (!empty($path)) {
+                $current_path = $path . '/'. $file;
+            } else {
+                $current_path = $file;
+            }
+            $list['list'][] = array(
+                'title' => $file,
+                'children' => array(),
+                'datecreated' => filectime($this->root_path.$file),
+                'datemodified' => filemtime($this->root_path.$file),
+                'thumbnail' => $OUTPUT->pix_url(file_folder_icon(90))->out(false),
+                'path' => $current_path
+                );
+        }
+        foreach ($fileslist as $file) {
+            $list['list'][] = array(
+                'title' => $file,
+                'source' => $path.'/'.$file,
+                'size' => filesize($this->root_path.$file),
+                'datecreated' => filectime($this->root_path.$file),
+                'datemodified' => filemtime($this->root_path.$file),
+                'thumbnail' => $OUTPUT->pix_url(file_extension_icon($file, 90))->out(false),
+                'icon' => $OUTPUT->pix_url(file_extension_icon($file, 24))->out(false)
+            );
         }
         $list['list'] = array_filter($list['list'], array($this, 'filter'));
         return $list;
@@ -233,18 +245,41 @@ class repository_filesystem extends repository {
     }
 
     /**
+     * Return reference file life time
+     *
+     * @param string $ref
+     * @return int
+     */
+    public function get_reference_file_lifetime($ref) {
+        // Does not cost us much to synchronise within our own filesystem, set to 1 minute
+        return 60;
+    }
+
+    /**
+     * Return human readable reference information
+     *
+     * @param string $reference value of DB field files_reference.reference
+     * @param int $filestatus status of the file, 0 - ok, 666 - source missing
+     * @return string
+     */
+    public function get_reference_details($reference, $filestatus = 0) {
+        $details = $this->get_name().': '.$reference;
+        if ($filestatus) {
+            return get_string('lostsource', 'repository', $details);
+        } else {
+            return $details;
+        }
+    }
+
+    /**
      * Returns information about file in this repository by reference
-     * {@link repository::get_file_reference()}
-     * {@link repository::get_file()}
      *
      * Returns null if file not found or is not readable
      *
      * @param stdClass $reference file reference db record
      * @return stdClass|null contains one of the following:
-     *   - 'contenthash' and 'filesize'
-     *   - 'filepath'
-     *   - 'handle'
-     *   - 'content'
+     *   - 'filesize' if file should not be copied to moodle filepool
+     *   - 'filepath' if file should be copied to moodle filepool
      */
     public function get_file_by_reference($reference) {
         $ref = $reference->reference;
@@ -254,7 +289,16 @@ class repository_filesystem extends repository {
             $filepath = $this->root_path.$ref;
         }
         if (file_exists($filepath) && is_readable($filepath)) {
-            return (object)array('filepath' => $filepath);
+            if (file_extension_in_typegroup($filepath, 'web_image')) {
+                // return path to image files so it will be copied into moodle filepool
+                // we need the file in filepool to generate an image thumbnail
+                return (object)array('filepath' => $filepath);
+            } else {
+                // return just the file size so file will NOT be copied into moodle filepool
+                return (object)array(
+                    'filesize' => filesize($filepath)
+                );
+            }
         } else {
             return null;
         }

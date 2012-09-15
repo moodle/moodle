@@ -28,7 +28,7 @@ require_once('../config.php');
 
 require_login();
 
-$systemcontext = get_context_instance(CONTEXT_SYSTEM);
+$systemcontext = context_system::instance();
 require_capability('moodle/tag:create', $systemcontext);
 
 if (empty($CFG->usetags)) {

@@ -762,16 +762,20 @@ class phpunit_util {
      * Note: To be used from CLI scripts only.
      *
      * @static
+     * @param bool $displayprogress if true, this method will echo progress information.
      * @return void may terminate execution with exit code
      */
-    public static function drop_site() {
+    public static function drop_site($displayprogress = false) {
         global $DB, $CFG;
 
         if (!self::is_test_site()) {
             phpunit_bootstrap_error(PHPUNIT_EXITCODE_CONFIGERROR, 'Can not drop non-test site!!');
         }
 
-        // purge dataroot
+        // Purge dataroot
+        if ($displayprogress) {
+            echo "Purging dataroot:\n";
+        }
         self::reset_dataroot();
         phpunit_bootstrap_initdataroot($CFG->dataroot);
         $keep = array('.', '..', 'lock', 'webrunner.xml');
@@ -795,9 +799,28 @@ class phpunit_util {
             unset($tables['config']);
             $tables['config'] = 'config';
         }
+
+        if ($displayprogress) {
+            echo "Dropping tables:\n";
+        }
+        $dotsonline = 0;
         foreach ($tables as $tablename) {
             $table = new xmldb_table($tablename);
             $DB->get_manager()->drop_table($table);
+
+            if ($dotsonline == 60) {
+                if ($displayprogress) {
+                    echo "\n";
+                }
+                $dotsonline = 0;
+            }
+            if ($displayprogress) {
+                echo '.';
+            }
+            $dotsonline += 1;
+        }
+        if ($displayprogress) {
+            echo "\n";
         }
     }
 

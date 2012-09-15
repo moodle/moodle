@@ -97,9 +97,9 @@ class MoodleQuickForm_url extends HTML_QuickForm_text{
         $strsaved = get_string('filesaved', 'repository');
         $straddlink = get_string('choosealink', 'repository');
         if ($COURSE->id == SITEID) {
-            $context = get_context_instance(CONTEXT_SYSTEM);
+            $context = context_system::instance();
         } else {
-            $context = get_context_instance(CONTEXT_COURSE, $COURSE->id);
+            $context = context_course::instance($COURSE->id);
         }
         $client_id = uniqid();
 

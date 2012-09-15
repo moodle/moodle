@@ -383,7 +383,7 @@ class file_info_context_course extends file_info {
             if (empty($cminfo->uservisible)) {
                 continue;
             }
-            $modcontext = get_context_instance(CONTEXT_MODULE, $cminfo->id);
+            $modcontext = context_module::instance($cminfo->id, IGNORE_MISSING);
             if ($child = $this->browser->get_file_info($modcontext)) {
                 $children[] = $child;
             }
@@ -401,7 +401,7 @@ class file_info_context_course extends file_info {
     public function get_parent() {
         //TODO: error checking if get_parent_contextid() returns false
         $pcid = get_parent_contextid($this->context);
-        $parent = get_context_instance_by_id($pcid);
+        $parent = context::instance_by_id($pcid, IGNORE_MISSING);
         return $this->browser->get_file_info($parent);
     }
 }

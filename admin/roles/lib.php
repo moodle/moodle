@@ -933,7 +933,7 @@ class override_permissions_table_advanced extends capability_table_with_risks {
         global $DB;
 
     /// Get the capabilities from the parent context, so that can be shown in the interface.
-        $parentcontext = get_context_instance_by_id(get_parent_contextid($this->context));
+        $parentcontext = context::instance_by_id(get_parent_contextid($this->context));
         $this->parentpermissions = role_context_capabilities($this->roleid, $parentcontext);
     }
 
@@ -996,7 +996,7 @@ abstract class role_assign_user_selector_base extends user_selector_base {
         if (isset($options['context'])) {
             $this->context = $options['context'];
         } else {
-            $this->context = get_context_instance_by_id($options['contextid']);
+            $this->context = context::instance_by_id($options['contextid']);
         }
         $options['accesscontext'] = $this->context;
         parent::__construct($name, $options);
@@ -1039,12 +1039,10 @@ class potential_assignees_below_course extends role_assign_user_selector_base {
         $countfields = 'SELECT COUNT(u.id)';
 
         $sql   = " FROM {user} u
-                  WHERE u.id IN ($enrolsql) $wherecondition
-                        AND u.id NOT IN (
-                           SELECT r.userid
-                             FROM {role_assignments} r
-                            WHERE r.contextid = :contextid
-                                  AND r.roleid = :roleid)";
+              LEFT JOIN {role_assignments} ra ON (ra.userid = u.id AND ra.roleid = :roleid AND ra.contextid = :contextid)
+                  WHERE u.id IN ($enrolsql)
+                        $wherecondition
+                        AND ra.id IS NULL";
         $order = ' ORDER BY lastname ASC, firstname ASC';
 
         $params['contextid'] = $this->context->id;
@@ -1232,7 +1230,7 @@ class existing_role_holders extends role_assign_user_selector_base {
     }
 
     protected function parent_con_group_name($search, $contextid) {
-        $context = get_context_instance_by_id($contextid);
+        $context = context::instance_by_id($contextid);
         $contextname = print_context_name($context, true, true);
         if ($search) {
             $a = new stdClass;
@@ -1479,7 +1477,7 @@ class role_allow_switch_page extends role_allow_role_page {
 function roles_get_potential_user_selector($context, $name, $options) {
         $blockinsidecourse = false;
         if ($context->contextlevel == CONTEXT_BLOCK) {
-            $parentcontext = get_context_instance_by_id(get_parent_contextid($context));
+            $parentcontext = context::instance_by_id(get_parent_contextid($context));
             $blockinsidecourse = in_array($parentcontext->contextlevel, array(CONTEXT_MODULE, CONTEXT_COURSE));
         }
 

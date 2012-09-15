@@ -17,10 +17,9 @@
 /**
  * Embedded answer (Cloze) question importer.
  *
- * @package    qformat
- * @subpackage multianswer
- * @copyright  2003 Henrik Kaipe
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   qformat_multianswer
+ * @copyright 2003 Henrik Kaipe
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -31,32 +30,36 @@ defined('MOODLE_INTERNAL') || die();
  * Importer that imports a text file containing a single Multianswer question
  * from a text file.
  *
- * @copyright  2003 Henrik Kaipe
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2003 Henrik Kaipe
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qformat_multianswer extends qformat_default {
 
     public function provide_import() {
-      return true;
+        return true;
     }
 
-    protected function readquestions($lines) {
+    public function readquestions($lines) {
+        question_bank::get_qtype('multianswer'); // Ensure the multianswer code is loaded.
+
         // For this class the method has been simplified as
         // there can never be more than one question for a
-        // multianswer import
+        // multianswer import.
         $questions = array();
 
         $questiontext = array();
         $questiontext['text'] = implode('', $lines);
-        $questiontext['format'] = 0 ;
+        $questiontext['format'] = FORMAT_MOODLE;
         $questiontext['itemid'] = '';
         $question = qtype_multianswer_extract_question($questiontext);
-        $question->questiontext = $question->questiontext['text'] ;
-        $question->questiontextformat = 0 ;
+        $question->questiontext = $question->questiontext['text'];
+        $question->questiontextformat = 0;
 
-        $question->qtype = MULTIANSWER;
+        $question->qtype = 'multianswer';
         $question->generalfeedback = '';
-        $question->course = $this->course;
+        $question->generalfeedbackformat = FORMAT_MOODLE;
+        $question->length = 1;
+        $question->penalty = 0.3333333;
 
         if (!empty($question)) {
             $name = html_to_text(implode(' ', $lines));

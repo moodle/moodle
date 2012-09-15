@@ -857,6 +857,8 @@ if ($formdata = $mform2->is_cancelled()) {
                         if ($duration > 0) { // sanity check
                             $timeend = $today + $duration;
                         }
+                    } else if ($manualcache[$courseid]->enrolperiod > 0) {
+                        $timeend = $today + $manualcache[$courseid]->enrolperiod;
                     }
 
                     $manual->enrol_user($manualcache[$courseid], $user->id, $rid, $today, $timeend);

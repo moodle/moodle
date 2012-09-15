@@ -140,6 +140,30 @@ class zip_packer_testcase extends advanced_testcase {
         foreach($archivefiles as $file) {
             $this->assertArrayHasKey($file->pathname, $this->files);
         }
+
+        // Test invalid files parameter.
+        $archive = "$CFG->tempdir/archive2.zip";
+        $this->assertFalse(file_exists($archive));
+
+        $this->assertFalse(file_exists(__DIR__.'/xx/yy/ee.txt'));
+        $files = array('xtest.txt'=>__DIR__.'/xx/yy/ee.txt');
+        ob_start();
+        $result = $packer->archive_to_pathname($files, $archive);
+        $d = ob_end_clean();
+        $this->assertTrue($d !== '');
+        $this->assertFalse($result);
+
+        $this->assertTrue(file_exists(__DIR__.'/fixtures/test.txt'));
+        $files = array();
+        $files['""""'] = null; // Invalid directory name.
+        $files['test.txt'] = __DIR__.'/fixtures/test.txt';
+        ob_start();
+        $result = $packer->archive_to_pathname($files, $archive);
+        $d = ob_end_clean();
+        $this->assertTrue($d !== '');
+        $this->assertTrue($result);
+
+        @unlink($archive);
     }
 
     /**

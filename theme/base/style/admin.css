@@ -42,6 +42,7 @@
 #page-admin-report-backups-index .backup-unfinished {color: #f00000;}
 #page-admin-report-backups-index .backup-skipped,
 #page-admin-report-backups-index .backup-ok {color: #006400;}
+#page-admin-report-backups-index .backup-warning {color: #ff9900;}
 
 #page-admin-qbehaviours .disabled {color: gray;}
 #page-admin-qbehaviours th {white-space: normal;}
@@ -68,6 +69,7 @@
 .path-admin-roles .capabilitysearchui {text-align: left;margin-left: auto;margin-right: auto;}
 #page-admin-roles-define .topfields {margin: 1em 0 2em;}
 #page-admin-roles-define .mform {width: 100%;}
+#page-admin-roles-define .capdefault {background-color: #eee; border: 1px solid #cecece;}
 #page-filter-manage .backlink,
 .path-admin-roles .backlink {margin-top: 1em}
 #page-admin-roles-explain #chooseuser h3,

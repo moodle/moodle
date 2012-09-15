@@ -318,7 +318,7 @@ function file_get_unused_draft_itemid() {
         print_error('noguest');
     }
 
-    $contextid = get_context_instance(CONTEXT_USER, $USER->id)->id;
+    $contextid = context_user::instance($USER->id)->id;
 
     $fs = get_file_storage();
     $draftitemid = rand(1, 999999999);
@@ -357,7 +357,7 @@ function file_prepare_draft_area(&$draftitemid, $contextid, $component, $fileare
         $options['forcehttps'] = false;
     }
 
-    $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
+    $usercontext = context_user::instance($USER->id);
     $fs = get_file_storage();
 
     if (empty($draftitemid)) {
@@ -465,7 +465,7 @@ function file_rewrite_pluginfile_urls($text, $file, $contextid, $component, $fil
 function file_get_draft_area_info($draftitemid) {
     global $CFG, $USER;
 
-    $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
+    $usercontext = context_user::instance($USER->id);
     $fs = get_file_storage();
 
     $results = array();
@@ -490,7 +490,7 @@ function file_get_draft_area_info($draftitemid) {
 function file_get_user_used_space() {
     global $DB, $USER;
 
-    $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
+    $usercontext = context_user::instance($USER->id);
     $sql = "SELECT SUM(files1.filesize) AS totalbytes FROM {files} files1
             JOIN (SELECT contenthash, filename, MAX(id) AS id
             FROM {files}
@@ -526,7 +526,7 @@ function file_correct_filepath($str) { //TODO: what is this? (skodak)
 function file_get_drafarea_folders($draftitemid, $filepath, &$data) {
     global $USER, $OUTPUT, $CFG;
     $data->children = array();
-    $context = get_context_instance(CONTEXT_USER, $USER->id);
+    $context = context_user::instance($USER->id);
     $fs = get_file_storage();
     if ($files = $fs->get_directory_files($context->id, 'user', 'draft', $draftitemid, $filepath, false)) {
         foreach ($files as $file) {
@@ -558,7 +558,7 @@ function file_get_drafarea_folders($draftitemid, $filepath, &$data) {
 function file_get_drafarea_files($draftitemid, $filepath = '/') {
     global $USER, $OUTPUT, $CFG;
 
-    $context = get_context_instance(CONTEXT_USER, $USER->id);
+    $context = context_user::instance($USER->id);
     $fs = get_file_storage();
 
     $data = new stdClass();
@@ -711,7 +711,7 @@ function file_restore_source_field_from_draft_file($storedfile) {
 function file_save_draft_area_files($draftitemid, $contextid, $component, $filearea, $itemid, array $options=null, $text=null, $forcehttps=false) {
     global $USER;
 
-    $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
+    $usercontext = context_user::instance($USER->id);
     $fs = get_file_storage();
 
     $options = (array)$options;
@@ -804,10 +804,6 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
                 continue;
             }
 
-            // Replaced file content
-            if ($oldfile->get_contenthash() != $newfile->get_contenthash()) {
-                $oldfile->replace_content_with($newfile);
-            }
             // Updated author
             if ($oldfile->get_author() != $newfile->get_author()) {
                 $oldfile->set_author($newfile->get_author());
@@ -827,14 +823,16 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
                 $oldfile->set_sortorder($newfile->get_sortorder());
             }
 
-            // Update file size
-            if ($oldfile->get_filesize() != $newfile->get_filesize()) {
-                $oldfile->set_filesize($newfile->get_filesize());
-            }
-
             // Update file timemodified
             if ($oldfile->get_timemodified() != $newfile->get_timemodified()) {
                 $oldfile->set_timemodified($newfile->get_timemodified());
+            }
+
+            // Replaced file content
+            if ($oldfile->get_contenthash() != $newfile->get_contenthash() || $oldfile->get_filesize() != $newfile->get_filesize()) {
+                $oldfile->replace_content_with($newfile);
+                // push changes to all local files that are referencing this file
+                $fs->update_references_to_storedfile($this);
             }
 
             // unchanged file or directory - we keep it as is
@@ -905,7 +903,7 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
 function file_rewrite_urls_to_pluginfile($text, $draftitemid, $forcehttps = false) {
     global $CFG, $USER;
 
-    $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
+    $usercontext = context_user::instance($USER->id);
 
     $wwwroot = $CFG->wwwroot;
     if ($forcehttps) {
@@ -2328,7 +2326,7 @@ function send_stored_file($stored_file, $lifetime=86400 , $filter=0, $forcedownl
     }
 
     // handle external resource
-    if ($stored_file && $stored_file->is_external_file()) {
+    if ($stored_file && $stored_file->is_external_file() && !isset($options['sendcachedexternalfile'])) {
         $stored_file->send_file($lifetime, $filter, $forcedownload, $options);
         die;
     }
@@ -2752,6 +2750,8 @@ class curl {
     public  $info;
     /** @var string error */
     public  $error;
+    /** @var int error code */
+    public  $errno;
 
     /** @var array cURL options */
     private $options;
@@ -2895,6 +2895,14 @@ class curl {
         unset($this->options['CURLOPT_INFILE']);
         unset($this->options['CURLOPT_INFILESIZE']);
         unset($this->options['CURLOPT_CUSTOMREQUEST']);
+        unset($this->options['CURLOPT_FILE']);
+    }
+
+    /**
+     * Resets the HTTP Request headers (to prepare for the new request)
+     */
+    public function resetHeader() {
+        $this->header = array();
     }
 
     /**
@@ -3119,6 +3127,7 @@ class curl {
 
         $this->info  = curl_getinfo($curl);
         $this->error = curl_error($curl);
+        $this->errno = curl_errno($curl);
 
         if ($this->debug){
             echo '<h1>Return Data</h1>';
@@ -3203,6 +3212,62 @@ class curl {
     }
 
     /**
+     * Downloads one file and writes it to the specified file handler
+     *
+     * <code>
+     * $c = new curl();
+     * $file = fopen('savepath', 'w');
+     * $result = $c->download_one('http://localhost/', null,
+     *   array('file' => $file, 'timeout' => 5, 'followlocation' => true, 'maxredirs' => 3));
+     * fclose($file);
+     * $download_info = $c->get_info();
+     * if ($result === true) {
+     *   // file downloaded successfully
+     * } else {
+     *   $error_text = $result;
+     *   $error_code = $c->get_errno();
+     * }
+     * </code>
+     *
+     * <code>
+     * $c = new curl();
+     * $result = $c->download_one('http://localhost/', null,
+     *   array('filepath' => 'savepath', 'timeout' => 5, 'followlocation' => true, 'maxredirs' => 3));
+     * // ... see above, no need to close handle and remove file if unsuccessful
+     * </code>
+     *
+     * @param string $url
+     * @param array|null $params key-value pairs to be added to $url as query string
+     * @param array $options request options. Must include either 'file' or 'filepath'
+     * @return bool|string true on success or error string on failure
+     */
+    public function download_one($url, $params, $options = array()) {
+        $options['CURLOPT_HTTPGET'] = 1;
+        $options['CURLOPT_BINARYTRANSFER'] = true;
+        if (!empty($params)){
+            $url .= (stripos($url, '?') !== false) ? '&' : '?';
+            $url .= http_build_query($params, '', '&');
+        }
+        if (!empty($options['filepath']) && empty($options['file'])) {
+            // open file
+            if (!($options['file'] = fopen($options['filepath'], 'w'))) {
+                $this->errno = 100;
+                return get_string('cannotwritefile', 'error', $options['filepath']);
+            }
+            $filepath = $options['filepath'];
+        }
+        unset($options['filepath']);
+        $result = $this->request($url, $options);
+        if (isset($filepath)) {
+            fclose($options['file']);
+            if ($result !== true) {
+                unlink($filepath);
+            }
+        }
+        return $result;
+    }
+
+    /**
      * HTTP PUT method
      *
      * @param string $url
@@ -3278,6 +3343,15 @@ class curl {
      */
     public function get_info() {
         return $this->info;
+    }
+
+    /**
+     * Get curl error code
+     *
+     * @return int
+     */
+    public function get_errno() {
+        return $this->errno;
     }
 }
 
@@ -3451,7 +3525,7 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null) {
             send_file_not_found();
         }
 
-        if (empty($CFG->bloglevel)) {
+        if (empty($CFG->enableblogs)) {
             print_error('siteblogdisable', 'blog');
         }
 
@@ -3471,15 +3545,15 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null) {
             }
         }
 
-        if ('publishstate' === 'public') {
+        if ($entry->publishstate === 'public') {
             if ($CFG->forcelogin) {
                 require_login();
             }
 
-        } else if ('publishstate' === 'site') {
+        } else if ($entry->publishstate === 'site') {
             require_login();
             //ok
-        } else if ('publishstate' === 'draft') {
+        } else if ($entry->publishstate === 'draft') {
             require_login();
             if ($USER->id != $entry->userid) {
                 send_file_not_found();
@@ -3763,7 +3837,7 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null) {
 
                 while (!$canview && count($courses) > 0) {
                     $course = array_shift($courses);
-                    if (has_capability('moodle/user:viewdetails', get_context_instance(CONTEXT_COURSE, $course->id))) {
+                    if (has_capability('moodle/user:viewdetails', context_course::instance($course->id))) {
                         $canview = true;
                     }
                 }
@@ -3780,7 +3854,7 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null) {
 
         } else if ($filearea === 'profile' and $context->contextlevel == CONTEXT_COURSE) {
             $userid = (int)array_shift($args);
-            $usercontext = get_context_instance(CONTEXT_USER, $userid);
+            $usercontext = context_user::instance($userid);
 
             if ($CFG->forcelogin) {
                 require_login();
@@ -4196,171 +4270,4 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null) {
         send_file_not_found();
     }
 
-}
-
-/**
- * Universe file cacheing class
- *
- * @package    core_files
- * @category   files
- * @copyright  2012 Dongsheng Cai {@link http://dongsheng.org}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class cache_file {
-    /** @var string */
-    public $cachedir = '';
-
-    /**
-     * static method to create cache_file class instance
-     *
-     * @param array $options caching ooptions
-     */
-    public static function get_instance($options = array()) {
-        return new cache_file($options);
-    }
-
-    /**
-     * Constructor
-     *
-     * @param array $options
-     */
-    private function __construct($options = array()) {
-        global $CFG;
-
-        // Path to file caches.
-        if (isset($options['cachedir'])) {
-            $this->cachedir = $options['cachedir'];
-        } else {
-            $this->cachedir = $CFG->cachedir . '/filedir';
-        }
-
-        // Create cache directory.
-        if (!file_exists($this->cachedir)) {
-            mkdir($this->cachedir, $CFG->directorypermissions, true);
-        }
-
-        // When use cache_file::get, it will check ttl.
-        if (isset($options['ttl']) && is_numeric($options['ttl'])) {
-            $this->ttl = $options['ttl'];
-        } else {
-            // One day.
-            $this->ttl = 60 * 60 * 24;
-        }
-    }
-
-    /**
-     * Get cached file, false if file expires
-     *
-     * @param mixed $param
-     * @param array $options caching options
-     * @return bool|string
-     */
-    public static function get($param, $options = array()) {
-        $instance = self::get_instance($options);
-        $filepath = $instance->generate_filepath($param);
-        if (file_exists($filepath)) {
-            $lasttime = filemtime($filepath);
-            if (time() - $lasttime > $instance->ttl) {
-                // Remove cache file.
-                unlink($filepath);
-                return false;
-            } else {
-                return $filepath;
-            }
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Static method to create cache from a file
-     *
-     * @param mixed $ref
-     * @param string $srcfile
-     * @param array $options
-     * @return string cached file path
-     */
-    public static function create_from_file($ref, $srcfile, $options = array()) {
-        $instance = self::get_instance($options);
-        $cachedfilepath = $instance->generate_filepath($ref);
-        copy($srcfile, $cachedfilepath);
-        return $cachedfilepath;
-    }
-
-    /**
-     * Static method to create cache from url
-     *
-     * @param mixed $ref file reference
-     * @param string $url file url
-     * @param array $options options
-     * @return string cached file path
-     */
-    public static function create_from_url($ref, $url, $options = array()) {
-        $instance = self::get_instance($options);
-        $cachedfilepath = $instance->generate_filepath($ref);
-        $fp = fopen($cachedfilepath, 'w');
-        $curl = new curl;
-        $curl->download(array(array('url'=>$url, 'file'=>$fp)));
-        // Must close file handler.
-        fclose($fp);
-        return $cachedfilepath;
-    }
-
-    /**
-     * Static method to create cache from string
-     *
-     * @param mixed $ref file reference
-     * @param string $url file url
-     * @param array $options options
-     * @return string cached file path
-     */
-    public static function create_from_string($ref, $string, $options = array()) {
-        $instance = self::get_instance($options);
-        $cachedfilepath = $instance->generate_filepath($ref);
-        $fp = fopen($cachedfilepath, 'w');
-        fwrite($fp, $string);
-        // Must close file handler.
-        fclose($fp);
-        return $cachedfilepath;
-    }
-
-    /**
-     * Build path to cache file
-     *
-     * @param mixed $ref
-     * @return string
-     */
-    private function generate_filepath($ref) {
-        global $CFG;
-        $hash = sha1(serialize($ref));
-        $l1 = $hash[0].$hash[1];
-        $l2 = $hash[2].$hash[3];
-        $dir = $this->cachedir . "/$l1/$l2";
-        if (!file_exists($dir)) {
-            mkdir($dir, $CFG->directorypermissions, true);
-        }
-        return "$dir/$hash";
-    }
-
-    /**
-     * Remove cache files
-     *
-     * @param array $options options
-     * @param int $expire The number of seconds before expiry
-     */
-    public static function cleanup($options = array(), $expire) {
-        global $CFG;
-        $instance = self::get_instance($options);
-        if ($dir = opendir($instance->cachedir)) {
-            while (($file = readdir($dir)) !== false) {
-                if (!is_dir($file) && $file != '.' && $file != '..') {
-                    $lasttime = @filemtime($instance->cachedir . $file);
-                    if(time() - $lasttime > $expire){
-                        @unlink($instance->cachedir . $file);
-                    }
-                }
-            }
-            closedir($dir);
-        }
-    }
 }

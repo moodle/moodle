@@ -58,7 +58,7 @@ if ($deluser !== 0) {
     $url->param('deluser', $deluser);
 }
 $PAGE->set_url($url);
-$PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
+$PAGE->set_context(context_system::instance());
 
 if (!$course = $DB->get_record('course', array('id'=>$id))) {
     print_error('invalidcourseid');
@@ -66,8 +66,8 @@ if (!$course = $DB->get_record('course', array('id'=>$id))) {
 
 require_login();
 
-$coursecontext = get_context_instance(CONTEXT_COURSE, $id);   // Course context
-$systemcontext = get_context_instance(CONTEXT_SYSTEM);   // SYSTEM context
+$coursecontext = context_course::instance($id);   // Course context
+$systemcontext = context_system::instance();   // SYSTEM context
 require_capability('moodle/course:bulkmessaging', $coursecontext);
 
 if (empty($SESSION->emailto)) {

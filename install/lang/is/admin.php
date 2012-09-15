@@ -36,5 +36,8 @@ $string['cliincorrectvalueerror'] = 'Villa, ótækt gildi "{$a->value}" fyrir "{
 $string['cliincorrectvalueretry'] = 'Rangt gildi, vinsamlegast reyndu aftur';
 $string['clitypevalue'] = 'Sláðu inn gildi';
 $string['clitypevaluedefault'] = 'Sláðu inn gildi, sláðu á Enter hnappinn á lyklaborðinu til að nota sjálfgefið gildi ({$a})';
+$string['cliunknowoption'] = 'Óþekktir valkostir:
+  {$a}
+Vinsamlegast notaðu --help valkostinn.';
 $string['environmentrequireinstall'] = 'verður að vera uppsett og virkjað';
 $string['environmentrequireversion'] = 'krafist er útgáfu {$a->needed} en þú notast við útgáfu {$a->current}';

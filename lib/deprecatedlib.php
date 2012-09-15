@@ -75,7 +75,7 @@ function filter_text($text, $courseid = NULL) {
         $courseid = $COURSE->id;
     }
 
-    if (!$context = get_context_instance(CONTEXT_COURSE, $courseid)) {
+    if (!$context = context_course::instance($courseid, IGNORE_MISSING)) {
         return $text;
     }
 
@@ -312,7 +312,7 @@ function get_teacher() {
  * @return array of user
  */
 function get_course_participants($courseid) {
-    return get_enrolled_users(get_context_instance(CONTEXT_COURSE, $courseid));
+    return get_enrolled_users(context_course::instance($courseid));
 }
 
 /**
@@ -324,7 +324,7 @@ function get_course_participants($courseid) {
  * @return boolean
  */
 function is_course_participant($userid, $courseid) {
-    return is_enrolled(get_context_instance(CONTEXT_COURSE, $courseid), $userid);
+    return is_enrolled(context_course::instance($courseid), $userid);
 }
 
 /**
@@ -341,7 +341,7 @@ function is_course_participant($userid, $courseid) {
 function get_recent_enrolments($courseid, $timestart) {
     global $DB;
 
-    $context = get_context_instance(CONTEXT_COURSE, $courseid);
+    $context = context_course::instance($courseid);
 
     $sql = "SELECT u.id, u.firstname, u.lastname, MAX(l.time)
               FROM {user} u, {role_assignments} ra, {log} l
@@ -859,27 +859,7 @@ function use_html_editor($name='', $editorhidebuttons='', $id='') {
  *      2. and 3. lead to a call $PAGE->requires->js('/lib/javascript-static.js').
  */
 function require_js($lib) {
-    global $CFG, $PAGE;
-    // Add the lib to the list of libs to be loaded, if it isn't already
-    // in the list.
-    if (is_array($lib)) {
-        foreach($lib as $singlelib) {
-            require_js($singlelib);
-        }
-        return;
-    }
-
-    debugging('Call to deprecated function require_js. Please use $PAGE->requires->js_module() instead.', DEBUG_DEVELOPER);
-
-    if (strpos($lib, 'yui_') === 0) {
-        $PAGE->requires->yui2_lib(substr($lib, 4));
-    } else {
-        if ($PAGE->requires->is_head_done()) {
-            echo html_writer::script('', $lib);
-        } else {
-            $PAGE->requires->js(new moodle_url($lib));
-        }
-    }
+    throw new coding_exception('require_js() was removed, use new JS api');
 }
 
 /**
@@ -2601,7 +2581,7 @@ function update_module_button($cmid, $ignored, $string) {
 
     //NOTE: DO NOT call new output method because it needs the module name we do not have here!
 
-    if (has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_MODULE, $cmid))) {
+    if (has_capability('moodle/course:manageactivities', context_module::instance($cmid))) {
         $string = get_string('updatethis', '', $string);
 
         $url = new moodle_url("$CFG->wwwroot/course/mod.php", array('update' => $cmid, 'return' => true, 'sesskey' => sesskey()));

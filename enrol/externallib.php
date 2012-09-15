@@ -273,6 +273,7 @@ class core_enrol_external extends external_api {
                     'msn'         => new external_value(PARAM_NOTAGS, 'msn number', VALUE_OPTIONAL),
                     'department'  => new external_value(PARAM_TEXT, 'department', VALUE_OPTIONAL),
                     'institution' => new external_value(PARAM_TEXT, 'institution', VALUE_OPTIONAL),
+                    'idnumber'    => new external_value(PARAM_RAW, 'An arbitrary ID code number perhaps from the institution', VALUE_OPTIONAL),
                     'interests'   => new external_value(PARAM_TEXT, 'user interests (separated by commas)', VALUE_OPTIONAL),
                     'firstaccess' => new external_value(PARAM_INT, 'first access to the site (0 if never)', VALUE_OPTIONAL),
                     'lastaccess'  => new external_value(PARAM_INT, 'last access to the site (0 if never)', VALUE_OPTIONAL),
@@ -380,7 +381,7 @@ class core_role_external extends external_api {
 
         foreach ($params['assignments'] as $assignment) {
             // Ensure the current user is allowed to run this function in the enrolment context
-            $context = get_context_instance_by_id($assignment['contextid']);
+            $context = context::instance_by_id($assignment['contextid'], IGNORE_MISSING);
             self::validate_context($context);
             require_capability('moodle/role:assign', $context);
 
@@ -444,7 +445,7 @@ class core_role_external extends external_api {
 
         foreach ($params['unassignments'] as $unassignment) {
             // Ensure the current user is allowed to run this function in the unassignment context
-            $context = get_context_instance_by_id($unassignment['contextid']);
+            $context = context::instance_by_id($unassignment['contextid'], IGNORE_MISSING);
             self::validate_context($context);
             require_capability('moodle/role:assign', $context);
 

@@ -38,7 +38,7 @@ if ($cancel) {
 //HTTPS is required in this page when $CFG->loginhttps enabled
 $PAGE->https_required();
 
-$context = get_context_instance(CONTEXT_SYSTEM);
+$context = context_system::instance();
 $PAGE->set_url("$CFG->httpswwwroot/login/index.php");
 $PAGE->set_context($context);
 $PAGE->set_pagelayout('login');
@@ -204,15 +204,15 @@ if ($frm and isset($frm->username)) {                             // Login WITH 
             // no wantsurl stored or external - go to homepage
             $urltogo = $CFG->wwwroot.'/';
             unset($SESSION->wantsurl);
-        }
 
-    /// Go to my-moodle page instead of site homepage if defaulthomepage set to homepage_my
-        if (!empty($CFG->defaulthomepage) && $CFG->defaulthomepage == HOMEPAGE_MY && !is_siteadmin() && !isguestuser()) {
-            if ($urltogo == $CFG->wwwroot or $urltogo == $CFG->wwwroot.'/' or $urltogo == $CFG->wwwroot.'/index.php') {
-                $urltogo = $CFG->wwwroot.'/my/';
+            $home_page = get_home_page();
+            // Go to my-moodle page instead of site homepage if defaulthomepage set to homepage_my
+            if ($home_page == HOMEPAGE_MY && !is_siteadmin() && !isguestuser()) {
+                if ($urltogo == $CFG->wwwroot or $urltogo == $CFG->wwwroot.'/' or $urltogo == $CFG->wwwroot.'/index.php') {
+                    $urltogo = $CFG->wwwroot.'/my/';
+                }
             }
         }
-
 
     /// check if user password has expired
     /// Currently supported only for ldap-authentication module

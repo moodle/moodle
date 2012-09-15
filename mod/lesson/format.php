@@ -29,27 +29,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-/**#@+
- * The core question types.
- *
- * These used to be in lib/questionlib.php, but are being deprecated. Copying them
- * here to keep this code working for now.
- */
-if (!defined('SHORTANSWER')) {
-    define("SHORTANSWER",   "shortanswer");
-    define("TRUEFALSE",     "truefalse");
-    define("MULTICHOICE",   "multichoice");
-    define("RANDOM",        "random");
-    define("MATCH",         "match");
-    define("RANDOMSAMATCH", "randomsamatch");
-    define("DESCRIPTION",   "description");
-    define("NUMERICAL",     "numerical");
-    define("MULTIANSWER",   "multianswer");
-    define("CALCULATED",    "calculated");
-    define("ESSAY",         "essay");
-}
-/**#@-*/
-
 /**
  * Given some question info and some data about the the answers
  * this function parses, organises and saves the question
@@ -59,10 +38,10 @@ if (!defined('SHORTANSWER')) {
  * Lifted from mod/quiz/lib.php -
  *    1. all reference to oldanswers removed
  *    2. all reference to quiz_multichoice table removed
- *    3. In SHORTANSWER questions usecase is store in the qoption field
- *    4. In NUMERIC questions store the range as two answers
- *    5. TRUEFALSE options are ignored
- *    6. For MULTICHOICE questions with more than one answer the qoption field is true
+ *    3. In shortanswer questions usecase is store in the qoption field
+ *    4. In numeric questions store the range as two answers
+ *    5. truefalse options are ignored
+ *    6. For multichoice questions with more than one answer the qoption field is true
  *
  * @param opject $question Contains question data like question, type and answers.
  * @return object Returns $result->error or $result->notice.
@@ -116,7 +95,7 @@ function lesson_save_question_options($question, $lesson) {
             }
             break;
 
-        case LESSON_PAGE_NUMERICAL:   // Note similarities to SHORTANSWER
+        case LESSON_PAGE_NUMERICAL:   // Note similarities to shortanswer.
 
             $answers = array();
             $maxfraction = -1;
@@ -305,11 +284,11 @@ class qformat_default {
     var $displayerrors = true;
     var $category = NULL;
     var $questionids = array();
-    var $qtypeconvert = array(NUMERICAL   => LESSON_PAGE_NUMERICAL,
-                              MULTICHOICE => LESSON_PAGE_MULTICHOICE,
-                              TRUEFALSE   => LESSON_PAGE_TRUEFALSE,
-                              SHORTANSWER => LESSON_PAGE_SHORTANSWER,
-                              MATCH       => LESSON_PAGE_MATCHING
+    var $qtypeconvert = array('numerical'   => LESSON_PAGE_NUMERICAL,
+                               'multichoice' => LESSON_PAGE_MULTICHOICE,
+                               'truefalse'   => LESSON_PAGE_TRUEFALSE,
+                               'shortanswer' => LESSON_PAGE_SHORTANSWER,
+                               'match'       => LESSON_PAGE_MATCHING
                               );
 
     // Importing functions
@@ -352,11 +331,11 @@ class qformat_default {
                 case 'category':
                     break;
                 // the good ones
-                case SHORTANSWER :
-                case NUMERICAL :
-                case TRUEFALSE :
-                case MULTICHOICE :
-                case MATCH :
+                case 'shortanswer' :
+                case 'numerical' :
+                case 'truefalse' :
+                case 'multichoice' :
+                case 'match' :
                     $count++;
 
                     //Show nice formated question in one line.
@@ -366,12 +345,12 @@ class qformat_default {
                     $newpage->lessonid = $lesson->id;
                     $newpage->qtype = $this->qtypeconvert[$question->qtype];
                     switch ($question->qtype) {
-                        case SHORTANSWER :
+                        case 'shortanswer' :
                             if (isset($question->usecase)) {
                                 $newpage->qoption = $question->usecase;
                             }
                             break;
-                        case MULTICHOICE :
+                        case 'multichoice' :
                             if (isset($question->single)) {
                                 $newpage->qoption = !$question->single;
                             }
@@ -384,6 +363,15 @@ class qformat_default {
                         $newpage->title = "Page $count";
                     }
                     $newpage->contents = $question->questiontext;
+                    $newpage->contentsformat = isset($question->questionformat) ? $question->questionformat : FORMAT_HTML;
+
+                    // Sometimes, questiontext is not a simple text, but one array
+                    // containing both text and format, so we need to support here
+                    // that case with the following dirty patch. MDL-35147
+                    if (is_array($question->questiontext)) {
+                        $newpage->contents = isset($question->questiontext['text']) ? $question->questiontext['text'] : '';
+                        $newpage->contentsformat = isset($question->questiontext['format']) ? $question->questiontext['format'] : FORMAT_HTML;
+                    }
 
                     // set up page links
                     if ($pageid) {
@@ -580,6 +568,93 @@ class qformat_default {
         return html_to_text(format_text($question->questiontext,
                 $question->questiontextformat, $formatoptions), 0, false);
     }
+
+    /**
+     * Since the lesson module tries to re-use the question bank import classes in
+     * a crazy way, this is necessary to stop things breaking.
+     */
+    protected function add_blank_combined_feedback($question) {
+        return $question;
+    }
 }
 
 
+/**
+ * Since the lesson module tries to re-use the question bank import classes in
+ * a crazy way, this is necessary to stop things breaking. This should be exactly
+ * the same as the class defined in question/format.php.
+ */
+class qformat_based_on_xml extends qformat_default {
+    /**
+     * A lot of imported files contain unwanted entities.
+     * This method tries to clean up all known problems.
+     * @param string str string to correct
+     * @return string the corrected string
+     */
+    public function cleaninput($str) {
+
+        $html_code_list = array(
+            "&#039;" => "'",
+            "&#8217;" => "'",
+            "&#8220;" => "\"",
+            "&#8221;" => "\"",
+            "&#8211;" => "-",
+            "&#8212;" => "-",
+        );
+        $str = strtr($str, $html_code_list);
+        // Use textlib entities_to_utf8 function to convert only numerical entities.
+        $str = textlib::entities_to_utf8($str, false);
+        return $str;
+    }
+
+    /**
+     * Return the array moodle is expecting
+     * for an HTML text. No processing is done on $text.
+     * qformat classes that want to process $text
+     * for instance to import external images files
+     * and recode urls in $text must overwrite this method.
+     * @param array $text some HTML text string
+     * @return array with keys text, format and files.
+     */
+    public function text_field($text) {
+        return array(
+            'text' => trim($text),
+            'format' => FORMAT_HTML,
+            'files' => array(),
+        );
+    }
+
+    /**
+     * Return the value of a node, given a path to the node
+     * if it doesn't exist return the default value.
+     * @param array xml data to read
+     * @param array path path to node expressed as array
+     * @param mixed default
+     * @param bool istext process as text
+     * @param string error if set value must exist, return false and issue message if not
+     * @return mixed value
+     */
+    public function getpath($xml, $path, $default, $istext=false, $error='') {
+        foreach ($path as $index) {
+            if (!isset($xml[$index])) {
+                if (!empty($error)) {
+                    $this->error($error);
+                    return false;
+                } else {
+                    return $default;
+                }
+            }
+
+            $xml = $xml[$index];
+        }
+
+        if ($istext) {
+            if (!is_string($xml)) {
+                $this->error(get_string('invalidxml', 'qformat_xml'));
+            }
+            $xml = trim($xml);
+        }
+
+        return $xml;
+    }
+}

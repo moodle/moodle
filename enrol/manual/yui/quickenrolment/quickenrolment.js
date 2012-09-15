@@ -339,7 +339,7 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
                 count++;
                 var user = result.response.users[i];
                 users.append(create('<div class="'+CSS.USER+' clearfix" rel="'+user.id+'"></div>')
-                    .addClass((i%2)?CSS.ODD:CSS.EVEN)
+                    .addClass((count%2)?CSS.ODD:CSS.EVEN)
                     .append(create('<div class="'+CSS.COUNT+'">'+count+'</div>'))
                     .append(create('<div class="'+CSS.PICTURE+'"></div>')
                         .append(create(user.picture)))
@@ -524,4 +524,4 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
         }
     }
 
-}, '@VERSION@', {requires:['base','node', 'overlay', 'io-base', 'test', 'json-parse', 'event-delegate', 'dd-plugin', 'event-key', 'moodle-enrol-notification']});
+}, '@VERSION@', {requires:['base','node', 'overlay', 'io-base', 'test', 'json-parse', 'event-delegate', 'dd-plugin', 'event-key', 'moodle-core-notification']});

@@ -29,7 +29,7 @@ require('../config.php');
 require_login();
 require_sesskey();
 
-$usercontext = get_context_instance(CONTEXT_USER, $USER->id);
+$usercontext = context_user::instance($USER->id);
 
 $PAGE->set_context($usercontext);
 $PAGE->set_url('/user/managetoken.php');

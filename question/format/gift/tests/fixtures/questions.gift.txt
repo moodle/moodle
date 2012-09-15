@@ -37,9 +37,10 @@
     =%0%*#Completely wrong
 }
 
-// true/false
+// true/false, with general feedback
 ::Q1:: 42 is the Absolute Answer to everything.{
-FALSE#42 is the Ultimate Answer.#You gave the right answer.}";
+FALSE#42 is the Ultimate Answer.#You gave the right answer.
+####This is, of course, a Hitchiker's Guide to the Galaxy reference.}";
 
 // name 0-11
 ::2-08 TSL::TSL is blablabla.{T}

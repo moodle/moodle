@@ -82,7 +82,9 @@ class data_field_latlong extends data_field_base {
         }
         $latlongsrs->close();
 
-       return html_writer::select($options, 'f_'.$this->field->id, $value);
+        $return = html_writer::label(get_string('latlong', 'data'), 'menuf_'.$this->field->id, false, array('class' => 'accesshide'));
+        $return .= html_writer::select($options, 'f_'.$this->field->id, $value);
+       return $return;
     }
 
     function parse_search_field() {
@@ -128,7 +130,6 @@ class data_field_latlong extends data_field_base {
             } else {
                 $compasslong = sprintf('%01.4f', $long) . '°E';
             }
-            $str = '<form style="display:inline;">';
 
             // Now let's create the jump-to-services link
             $servicesshown = explode(',', $this->field->param1);
@@ -146,11 +147,14 @@ class data_field_latlong extends data_field_base {
             );
 
             if(sizeof($servicesshown)==1 && $servicesshown[0]) {
-                $str .= " <a href='"
+                $str = " <a href='"
                           . str_replace(array_keys($urlreplacements), array_values($urlreplacements), $this->linkoutservices[$servicesshown[0]])
                           ."' title='$servicesshown[0]'>$compasslat, $compasslong</a>";
             } elseif (sizeof($servicesshown)>1) {
-                $str .= "$compasslat, $compasslong\n<select name='jumpto'>";
+                $str = '<form id="latlongfieldbrowse">';
+                $str .= "$compasslat, $compasslong\n";
+                $str .= "<label class='accesshide' for='jumpto'>". get_string('jumpto') ."</label>";
+                $str .= "<select id='jumpto' name='jumpto'>";
                 foreach($servicesshown as $servicename){
                     // Add a link to a service
                     $str .= "\n  <option value='"
@@ -160,10 +164,11 @@ class data_field_latlong extends data_field_base {
                 // NB! If you are editing this, make sure you don't break the javascript reference "previousSibling"
                 //   which allows the "Go" button to refer to the drop-down selector.
                 $str .= "\n</select><input type='button' value='" . get_string('go') . "' onclick='if(previousSibling.value){self.location=previousSibling.value}'/>";
+                $str .= '</form>';
             } else {
-                $str.= "$compasslat, $compasslong";
+                $str = "$compasslat, $compasslong";
             }
-            $str.= '</form>';
+
             return $str;
         }
         return false;

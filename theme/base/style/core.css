@@ -252,8 +252,9 @@ input#id_externalurl {direction:ltr;}
  * Blogs
  */
 .addbloglink {text-align: center;}
-.blog_entry .audience {text-align: right;}
+.blog_entry .audience {text-align: right;padding-right: 4px;}
 .blog_entry .tags {margin-top: 15px;}
+.blog_entry .content {margin-left: 43px;}
 
 /**
  * Group
@@ -356,10 +357,9 @@ table.mod_index {width:100%;}
 .comment-paging{text-align:center;}
 .comment-paging .pageno{padding:2px;}
 .comment-paging .curpage{border:1px solid #CCC;}
-.comment-userpicture {width: 20px;float:left;}
-.comment-content {margin-left: 22px;}
-.comment-content div {margin:0;padding:0;}
-.comment-content p {padding:0;margin:0 18px 0 0;}
+.comment-message .picture {width: 20px;float:left;}
+.comment-message .text {margin:0;padding:0;}
+.comment-message .text p {padding:0;margin:0 18px 0 0;}
 .comment-delete {float:right;text-align:right;}
 .comment-delete-confirm {background: #eee; padding: 2px; width: 5em;text-align:center;}
 .comment-container {float:left;margin: 4px;}
@@ -508,7 +508,7 @@ body.tag .managelink {padding: 5px;}
 #custommenu .yui3-menu-horizontal .yui3-menu-label,
 #custommenu .yui3-menu-horizontal .yui3-menu-content {background-image:none;background-position:right center;background-repeat:no-repeat;}
 #custommenu .yui3-menu-label,
-#custommenu .yui3-menu .yui3-menu .yui3-menu-label {background-image:url([[pix:theme|vertical-menu-submenu-indicator]]);}
+#custommenu .yui3-menu .yui3-menu .yui3-menu-label {background-image:url([[pix:theme|vertical-menu-submenu-indicator]]); padding-right: 20px;}
 #custommenu .yui3-menu .yui3-menu .yui3-menu-label-menuvisible {background-image:url([[pix:theme|horizontal-menu-submenu-indicator]]);}
 
 /**

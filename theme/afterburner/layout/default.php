@@ -17,9 +17,17 @@ $hasfootnote = (!empty($PAGE->theme->settings->footnote));
 
 $bodyclasses = array();
 if ($showsidepre && !$showsidepost) {
-    $bodyclasses[] = 'side-pre-only';
+    if (!right_to_left()) {
+        $bodyclasses[] = 'side-pre-only';
+    } else {
+        $bodyclasses[] = 'side-post-only';
+    }
 } else if ($showsidepost && !$showsidepre) {
-    $bodyclasses[] = 'side-post-only';
+    if (!right_to_left()) {
+        $bodyclasses[] = 'side-post-only';
+    } else {
+        $bodyclasses[] = 'side-pre-only';
+    }
 } else if (!$showsidepost && !$showsidepre) {
     $bodyclasses[] = 'content-only';
 }
@@ -74,32 +82,40 @@ echo $OUTPUT->doctype() ?>
 <!-- END OF CUSTOMMENU AND NAVBAR -->
     <div id="page-content">
        <div id="region-main-box">
-           <div id="region-post-box">
-              <div id="region-main-wrap">
-                 <div id="region-main-pad">
-                   <div id="region-main">
-                     <div class="region-content">
-                            <?php echo $OUTPUT->main_content() ?>
-                     </div>
+           <div id="region-pre-box">
+               <div id="region-main">
+                   <div class="region-content">
+                       <?php echo $OUTPUT->main_content() ?>
                    </div>
-                 </div>
                </div>
 
-                <?php if ($hassidepre) { ?>
-                <div id="region-pre" class="block-region">
+               <?php if ($hassidepre OR (right_to_left() AND $hassidepost)) { ?>
+               <div id="region-pre" class="block-region">
                    <div class="region-content">
-                        <?php echo $OUTPUT->blocks_for_region('side-pre') ?>
-                   </div>
-                </div>
-                <?php } ?>
+                           <?php
+                       if (!right_to_left()) {
+                           echo $OUTPUT->blocks_for_region('side-pre');
+                       } elseif ($hassidepost) {
+                           echo $OUTPUT->blocks_for_region('side-post');
+                   } ?>
 
-                <?php if ($hassidepost) { ?>
-                <div id="region-post" class="block-region">
-                   <div class="region-content">
-                        <?php echo $OUTPUT->blocks_for_region('side-post') ?>
                    </div>
-                </div>
-                <?php } ?>
+               </div>
+               <?php } ?>
+
+               <?php if ($hassidepost OR (right_to_left() AND $hassidepre)) { ?>
+               <div id="region-post" class="block-region">
+                   <div class="region-content">
+                          <?php
+                      if (!right_to_left()) {
+                          echo $OUTPUT->blocks_for_region('side-post');
+                      } elseif ($hassidepre) {
+                          echo $OUTPUT->blocks_for_region('side-pre');
+                   } ?>
+                   </div>
+               </div>
+               <?php } ?>
+
             </div>
         </div>
     </div>

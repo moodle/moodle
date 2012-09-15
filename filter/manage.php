@@ -181,7 +181,10 @@ if (empty($availablefilters)) {
         } else {
             $activechoices[TEXTFILTER_INHERIT] = $strdefaultoff;
         }
-        $row[] = html_writer::select($activechoices, str_replace('/', '_', $filter), $filterinfo->localstate, false);
+        $filtername = str_replace('/', '_', $filter);
+        $select = html_writer::label($filterinfo->localstate, 'menu'. $filtername, false, array('class' => 'accesshide'));
+        $select .= html_writer::select($activechoices, $filtername, $filterinfo->localstate, false);
+        $row[] = $select;
 
         // Settings link, if required
         if ($settingscol) {

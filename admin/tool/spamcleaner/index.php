@@ -96,6 +96,7 @@ echo $OUTPUT->box_start();     // The forms section at the top
 
 <form method="post" action="index.php">
   <div>
+    <label class="accesshide" for="keyword_el"><?php print_string('spamkeyword', 'tool_spamcleaner') ?></label>
     <input type="text" name="keyword" id="keyword_el" value="<?php p($keyword) ?>" />
     <input type="hidden" name="sesskey" value="<?php echo sesskey();?>" />
     <input type="submit" value="<?php echo get_string('spamsearch', 'tool_spamcleaner')?>" />

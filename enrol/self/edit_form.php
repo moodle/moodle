@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -19,8 +18,7 @@
  * Adds new instance of enrol_self to specified course
  * or edits current instance.
  *
- * @package    enrol
- * @subpackage self
+ * @package    enrol_self
  * @copyright  2010 Petr Skoda  {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -32,6 +30,8 @@ require_once($CFG->libdir.'/formslib.php');
 class enrol_self_edit_form extends moodleform {
 
     function definition() {
+        global $DB;
+
         $mform = $this->_form;
 
         list($instance, $plugin, $context) = $this->_customdata;
@@ -100,11 +100,44 @@ class enrol_self_edit_form extends moodleform {
         $mform->addHelpButton('customint3', 'maxenrolled', 'enrol_self');
         $mform->setType('customint3', PARAM_INT);
 
+        $cohorts = array(0 => get_string('no'));
+        list($sqlparents, $params) = $DB->get_in_or_equal($context->get_parent_context_ids(), SQL_PARAMS_NAMED);
+        $params['current'] = $instance->customint5;
+        $sql = "SELECT id, name, idnumber, contextid
+                  FROM {cohort}
+                 WHERE contextid $sqlparents OR id = :current
+              ORDER BY name ASC, idnumber ASC";
+        $rs = $DB->get_recordset_sql($sql, $params);
+        foreach ($rs as $c) {
+            $ccontext = context::instance_by_id($c->contextid);
+            if ($c->id != $instance->customint5 and !has_capability('moodle/cohort:view', $ccontext)) {
+                continue;
+            }
+            $cohorts[$c->id] = format_string($c->name, true, array('context'=>$context));
+            if ($c->idnumber) {
+                $cohorts[$c->id] .= ' ['.s($c->idnumber).']';
+            }
+        }
+        if (!isset($cohorts[$instance->customint5])) {
+            // Somebody deleted a cohort, better keep the wrong value so that random ppl can not enrol.
+            $cohorts[$instance->customint5] = get_string('unknowncohort', 'cohort', $instance->customint5);
+        }
+        $rs->close();
+        if (count($cohorts) > 1) {
+            $mform->addElement('select', 'customint5', get_string('cohortonly', 'enrol_self'), $cohorts);
+            $mform->addHelpButton('customint5', 'cohortonly', 'enrol_self');
+        } else {
+            $mform->addElement('hidden', 'customint5');
+            $mform->setType('customint5', PARAM_INT);
+            $mform->setConstant('customint5', 0);
+        }
+
         $mform->addElement('advcheckbox', 'customint4', get_string('sendcoursewelcomemessage', 'enrol_self'));
         $mform->setDefault('customint4', $plugin->get_config('sendcoursewelcomemessage'));
         $mform->addHelpButton('customint4', 'sendcoursewelcomemessage', 'enrol_self');
 
         $mform->addElement('textarea', 'customtext1', get_string('customwelcomemessage', 'enrol_self'), array('cols'=>'60', 'rows'=>'8'));
+        $mform->addHelpButton('customtext1', 'customwelcomemessage', 'enrol_self');
 
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
@@ -158,7 +191,7 @@ class enrol_self_edit_form extends moodleform {
     }
 
     /**
-    * Gets a list of roles that this user can assign for the course as the default for self-enrolment
+    * Gets a list of roles that this user can assign for the course as the default for self-enrolment.
     *
     * @param context $context the context.
     * @param integer $defaultrole the id of the role that is set as the default for self-enrolment

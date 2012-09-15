@@ -2,7 +2,7 @@ M.mod_assign = {};
 
 M.mod_assign.init_tree = function(Y, expand_all, htmlid) {
     Y.use('yui2-treeview', function(Y) {
-        var tree = new YAHOO.widget.TreeView(htmlid);
+        var tree = new Y.YUI2.widget.TreeView(htmlid);
 
         tree.subscribe("clickEvent", function(node, event) {
             // we want normal clicking which redirects to url
@@ -127,4 +127,16 @@ M.mod_assign.init_grading_options = function(Y) {
             });
         }
     });
+};
+
+M.mod_assign.init_grade_change = function(Y) {
+    var gradenode = Y.one('#id_grade');
+    if (gradenode) {
+        var originalvalue = gradenode.get('value');
+        gradenode.on('change', function() {
+            if (gradenode.get('value') != originalvalue) {
+                alert(M.str.mod_assign.changegradewarning);
+            }
+        });
+    }
 };

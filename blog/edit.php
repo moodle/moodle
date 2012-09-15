@@ -69,7 +69,7 @@ if ($action == 'edit') {
     $id = required_param('entryid', PARAM_INT);
 }
 
-if (empty($CFG->bloglevel)) {
+if (empty($CFG->enableblogs)) {
     print_error('blogdisable', 'blog');
 }
 
@@ -105,6 +105,9 @@ if ($id) {
 }
 $returnurl->param('userid', $userid);
 
+// Blog renderer.
+$output = $PAGE->get_renderer('blog');
+
 $strblogs = get_string('blogs','blog');
 
 if ($action === 'delete'){
@@ -125,7 +128,11 @@ if ($action === 'delete'){
         $PAGE->set_title("$SITE->shortname: $strblogs");
         $PAGE->set_heading($SITE->fullname);
         echo $OUTPUT->header();
-        $entry->print_html();
+
+        // Output the entry.
+        $entry->prepare_render();
+        echo $output->render($entry);
+
         echo '<br />';
         echo $OUTPUT->confirm(get_string('blogdeleteconfirm', 'blog'), new moodle_url('edit.php', $optionsyes),new moodle_url( 'index.php', $optionsno));
         echo $OUTPUT->footer();

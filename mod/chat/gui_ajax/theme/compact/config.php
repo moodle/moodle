@@ -11,7 +11,7 @@ $chattheme_cfg->event_message = <<<TEMPLATE
 TEMPLATE;
 $chattheme_cfg->user_message = <<<TEMPLATE
 <div class='chat-message'>
-    <div class="meta">
+    <div class="chat-message-meta">
         <span class="time">___time___</span>
         <span class="user"><a href="___senderprofile___" target="_blank">___sender___</a></span>
     </div>

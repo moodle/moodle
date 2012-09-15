@@ -100,26 +100,44 @@ class zip_packer extends file_packer {
             return false;
         }
 
+        $result = false; // One processed file or dir means success here.
+
         foreach ($files as $archivepath => $file) {
             $archivepath = trim($archivepath, '/');
 
             if (is_null($file)) {
                 // empty directories have null as content
-                $ziparch->add_directory($archivepath.'/');
+                if ($ziparch->add_directory($archivepath.'/')) {
+                    $result = true;
+                } else {
+                    debugging("Can not zip '$archivepath' directory", DEBUG_DEVELOPER);
+                }
 
             } else if (is_string($file)) {
-                $this->archive_pathname($ziparch, $archivepath, $file);
+                if ($this->archive_pathname($ziparch, $archivepath, $file)) {
+                    $result = true;
+                } else {
+                    debugging("Can not zip '$archivepath' file", DEBUG_DEVELOPER);
+                }
 
             } else if (is_array($file)) {
                 $content = reset($file);
-                $ziparch->add_file_from_string($archivepath, $content);
+                if ($ziparch->add_file_from_string($archivepath, $content)) {
+                    $result = true;
+                } else {
+                    debugging("Can not zip '$archivepath' file", DEBUG_DEVELOPER);
+                }
 
             } else {
-                $this->archive_stored($ziparch, $archivepath, $file);
+                if ($this->archive_stored($ziparch, $archivepath, $file)) {
+                    $result = true;
+                } else {
+                    debugging("Can not zip '$archivepath' file", DEBUG_DEVELOPER);
+                }
             }
         }
 
-        return $ziparch->close();
+        return ($ziparch->close() && $result);
     }
 
     /**
@@ -128,12 +146,16 @@ class zip_packer extends file_packer {
      * @param zip_archive $ziparch zip archive instance
      * @param string $archivepath file path to archive
      * @param stored_file $file stored_file object
+     * @return bool success
      */
     private function archive_stored($ziparch, $archivepath, $file) {
-        $file->archive_file($ziparch, $archivepath);
+        $result = $file->archive_file($ziparch, $archivepath);
+        if (!$result) {
+            return false;
+        }
 
         if (!$file->is_directory()) {
-            return;
+            return true;
         }
 
         $baselength = strlen($file->get_filepath());
@@ -147,8 +169,11 @@ class zip_packer extends file_packer {
             if (!$file->is_directory()) {
                 $path = $path.$file->get_filename();
             }
+            // Ignore result here, partial zipping is ok for now.
             $file->archive_file($ziparch, $path);
         }
+
+        return true;
     }
 
     /**
@@ -157,18 +182,18 @@ class zip_packer extends file_packer {
      * @param zip_archive $ziparch zip archive instance
      * @param string $archivepath file path to archive
      * @param string $file path name of the file
+     * @return bool success
      */
     private function archive_pathname($ziparch, $archivepath, $file) {
         if (!file_exists($file)) {
-            return;
+            return false;
         }
 
         if (is_file($file)) {
             if (!is_readable($file)) {
-                return;
+                return false;
             }
-            $ziparch->add_file_from_pathname($archivepath, $file);
-            return;
+            return $ziparch->add_file_from_pathname($archivepath, $file);
         }
         if (is_dir($file)) {
             if ($archivepath !== '') {
@@ -183,7 +208,7 @@ class zip_packer extends file_packer {
                 $this->archive_pathname($ziparch, $newpath, $file->getPathname());
             }
             unset($files); //release file handles
-            return;
+            return true;
         }
     }
 

@@ -973,7 +973,7 @@ class cm_info extends stdClass {
         $this->icon             = isset($mod->icon) ? $mod->icon : '';
         $this->iconcomponent    = isset($mod->iconcomponent) ? $mod->iconcomponent : '';
         $this->customdata       = isset($mod->customdata) ? $mod->customdata : '';
-        $this->context          = get_context_instance(CONTEXT_MODULE, $mod->cm);
+        $this->context          = context_module::instance($mod->cm);
         $this->showdescription  = isset($mod->showdescription) ? $mod->showdescription : 0;
         $this->state = self::STATE_BASIC;
 
@@ -1091,7 +1091,7 @@ class cm_info extends stdClass {
      */
     private function update_user_visible() {
         global $CFG;
-        $modcontext = get_context_instance(CONTEXT_MODULE, $this->id);
+        $modcontext = context_module::instance($this->id);
         $userid = $this->modinfo->get_user_id();
         $this->uservisible = true;
         // Check visibility/availability conditions.
@@ -1202,6 +1202,10 @@ function get_fast_modinfo(&$course, $userid=0) {
 
     if (!property_exists($course, 'modinfo')) {
         debugging('Coding problem - missing course modinfo property in get_fast_modinfo() call');
+    }
+
+    if (!property_exists($course, 'sectioncache')) {
+        debugging('Coding problem - missing course sectioncache property in get_fast_modinfo() call');
     }
 
     unset($cache[$course->id]); // prevent potential reference problems when switching users

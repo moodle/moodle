@@ -94,9 +94,9 @@ $yesno = array( get_string('no'), get_string('yes') );
     </td>
 </tr>
 <tr valign="top" class="required">
-    <td align="right"><?php print_string('auth_cas_hostname_key', 'auth_cas') ?>:</td>
+    <td align="right"><label for="hostname"><?php print_string('auth_cas_hostname_key', 'auth_cas') ?>: </label></td>
     <td>
-        <input name="hostname" type="text" size="30" value="<?php echo $config->hostname ?>" />
+        <input name="hostname" id="hostname" type="text" size="30" value="<?php echo $config->hostname ?>" />
         <?php if (isset($err['hostname'])) { echo $OUTPUT->error_text($err['hostname']); } ?>
     </td>
     <td>
@@ -105,10 +105,10 @@ $yesno = array( get_string('no'), get_string('yes') );
 </tr>
 <tr valign="top" class="required">
     <td align="right">
-        <?php print_string('auth_cas_baseuri_key', 'auth_cas') ?>:
+        <label for="baseuri"><?php print_string('auth_cas_baseuri_key', 'auth_cas') ?>: </label>
     </td>
     <td>
-        <input name="baseuri" type="text" size="30" value="<?php echo $config->baseuri ?>" />
+        <input name="baseuri" id="baseuri" type="text" size="30" value="<?php echo $config->baseuri ?>" />
         <?php if (isset($err['baseuri'])) { echo $OUTPUT->error_text($err['baseuri']); } ?>
     </td>
     <td>
@@ -117,10 +117,10 @@ $yesno = array( get_string('no'), get_string('yes') );
 </tr>
 <tr valign="top" class="required">
     <td align="right">
-        <?php print_string('auth_cas_port_key', 'auth_cas') ?>:
+        <label for="port"><?php print_string('auth_cas_port_key', 'auth_cas') ?>: </label>
     </td>
     <td>
-        <input name="port" type="text" size="30" value="<?php echo $config->port ?>" />
+        <input name="port" id="port" type="text" size="30" value="<?php echo $config->port ?>" />
         <?php if (isset($err['port'])) { echo $OUTPUT->error_text($err['port']); } ?>
     </td>
     <td>
@@ -129,7 +129,7 @@ $yesno = array( get_string('no'), get_string('yes') );
 </tr>
 <tr valign="top" class="required">
     <td align="right">
-        <?php print_string('auth_cas_casversion', 'auth_cas') ?>:
+        <?php echo html_writer::label(get_string('auth_cas_casversion', 'auth_cas'), 'menucasversion'); ?>:
     </td>
     <td>
         <?php
@@ -145,7 +145,7 @@ $yesno = array( get_string('no'), get_string('yes') );
     </td>
 </tr>
 <tr valign="top" class="required">
-    <td align="right"><?php print_string('auth_cas_language_key', 'auth_cas') ?>:</td>
+    <td align="right"><?php echo html_writer::label(get_string('auth_cas_language_key', 'auth_cas'), 'menulanguage'); ?>:</td>
     <td>
         <?php echo html_writer::select($CASLANGUAGES, 'language', $config->language, false); ?>
     </td>
@@ -155,7 +155,7 @@ $yesno = array( get_string('no'), get_string('yes') );
 </tr>
 <tr valign="top" class="required">
     <td align="right">
-        <?php print_string('auth_cas_proxycas_key', 'auth_cas') ?>:
+        <?php echo html_writer::label(get_string('auth_cas_proxycas_key', 'auth_cas'), 'menuproxycas'); ?>:
     </td>
     <td>
         <?php echo html_writer::select($yesno, 'proxycas', $config->proxycas, false); ?>
@@ -165,7 +165,7 @@ $yesno = array( get_string('no'), get_string('yes') );
     </td>
 </tr>
 <tr valign="top" class="required">
-    <td align="right"><?php print_string('auth_cas_logoutcas_key', 'auth_cas') ?>:</td>
+    <td align="right"><?php echo html_writer::label(get_string('auth_cas_logoutcas_key', 'auth_cas'), 'menulogoutcas'); ?>:</td>
     <td>
         <?php echo html_writer::select($yesno, 'logoutcas', $config->logoutcas, false); ?>
     </td>
@@ -174,7 +174,7 @@ $yesno = array( get_string('no'), get_string('yes') );
     </td>
 </tr>
 <tr valign="top" class="required">
-    <td align="right"><?php print_string('auth_cas_multiauth_key', 'auth_cas') ?>:</td>
+    <td align="right"><?php echo html_writer::label(get_string('auth_cas_multiauth_key', 'auth_cas'), 'menumultiauth'); ?>:</td>
     <td>
         <?php echo html_writer::select($yesno, 'multiauth', $config->multiauth, false); ?>
     </td>
@@ -183,7 +183,7 @@ $yesno = array( get_string('no'), get_string('yes') );
     </td>
 </tr>
 <tr valign="top"  class="required">
-    <td align="right"><?php print_string('auth_cas_certificate_check_key', 'auth_cas') ?>:</td>
+    <td align="right"><?php echo html_writer::label(get_string('auth_cas_certificate_check_key', 'auth_cas'), 'menucertificate_check'); ?>:</td>
     <td>
         <?php echo html_writer::select($yesno, 'certificate_check', $config->certificate_check, false); ?>
     </td>
@@ -192,7 +192,7 @@ $yesno = array( get_string('no'), get_string('yes') );
     </td>
 </tr>
 <tr valign="top" class="required">
-    <td align="right"><?php print_string('auth_cas_certificate_path_key', 'auth_cas') ?>:</td>
+    <td align="right"><label for="certificate_path"><?php print_string('auth_cas_certificate_path_key', 'auth_cas') ?>: </label></td>
     <td>
         <input name="certificate_path" id="certificate_path" type="text" size="30" value="<?php echo $config->certificate_path ?>" />
         <?php if (isset($err['certificate_path'])) echo $OUTPUT->error_text($err['certificate_path']); ?>
@@ -219,7 +219,7 @@ $yesno = array( get_string('no'), get_string('yes') );
     </td>
 </tr>
 <tr valign="top" class="required">
-    <td align="right"><label for="menuversion"><?php print_string('auth_ldap_version_key', 'auth_ldap') ?></label></td>
+    <td align="right"><label for="menuldap_version"><?php print_string('auth_ldap_version_key', 'auth_ldap') ?></label></td>
     <td>
         <?php
              $versions = array();

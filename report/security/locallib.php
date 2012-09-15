@@ -850,7 +850,7 @@ function report_security_check_riskbackup($detailed=false) {
             $links = array();
             foreach ($overriddenroles as $role) {
                 $role->name = $role->localname;
-                $context = get_context_instance_by_id($role->contextid);
+                $context = context::instance_by_id($role->contextid);
                 $role->name = role_get_name($role, $context, ROLENAME_BOTH);
                 $role->contextname = print_context_name($context);
                 $role->url = "$CFG->wwwroot/$CFG->admin/roles/override.php?contextid=$role->contextid&amp;roleid=$role->id";
@@ -867,7 +867,7 @@ function report_security_check_riskbackup($detailed=false) {
             $sqluserinfo ORDER BY u.lastname, u.firstname", $params);
 
         foreach ($rs as $user) {
-            $context = get_context_instance_by_id($user->contextid);
+            $context = context::instance_by_id($user->contextid);
             $url = "$CFG->wwwroot/$CFG->admin/roles/assign.php?contextid=$user->contextid&amp;roleid=$user->roleid";
             $a = (object)array('fullname'=>fullname($user), 'url'=>$url, 'email'=>$user->email,
                                'contextname'=>print_context_name($context));

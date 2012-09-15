@@ -191,6 +191,11 @@ function quiz_report_qm_filter_select($quiz, $quizattemptsalias = 'quiza') {
  */
 function quiz_report_grade_bands($bandwidth, $bands, $quizid, $userids = array()) {
     global $DB;
+    if (!is_int($bands)) {
+        debugging('$bands passed to quiz_report_grade_bands must be an integer. (' .
+                gettype($bands) . ' passed.)', DEBUG_DEVELOPER);
+        $bands = (int) $bands;
+    }
 
     if ($userids) {
         list($usql, $params) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED, 'u');
@@ -220,7 +225,7 @@ ORDER BY
     $data = $DB->get_records_sql_menu($sql, $params);
 
     // We need to create array elements with values 0 at indexes where there is no element.
-    $data =  $data + array_fill(0, $bands+1, 0);
+    $data =  $data + array_fill(0, $bands + 1, 0);
     ksort($data);
 
     // Place the maximum (prefect grade) into the last band i.e. make last

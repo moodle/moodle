@@ -109,23 +109,21 @@ class google_docs {
                     $source = 'https://spreadsheets.google.com/feeds/download/spreadsheets/Export?key='.$docid.'&exportFormat=xls';
                     break;
                 case 'pdf':
-                    $title  = (string)$gdoc->title;
-                    $source = (string)$gdoc->content[0]->attributes()->src;
-                    break;
                 case 'file':
-                    $title = (string)$gdoc->title;
-                    $source = (string)$gdoc->content[0]->attributes()->src;
+                    $title  = (string)$gdoc->title;
+                    // Some files don't have a content probably because the download has been restricted.
+                    if (isset($gdoc->content)) {
+                        $source = (string)$gdoc->content[0]->attributes()->src;
+                    }
                     break;
             }
 
-            if (!empty($source)) {
-                $files[] =  array( 'title' => $title,
-                    'url' => "{$gdoc->link[0]->attributes()->href}",
-                    'source' => $source,
-                    'date'   => usertime(strtotime($gdoc->updated)),
-                    'thumbnail' => (string) $OUTPUT->pix_url(file_extension_icon($title, 32))
-                );
-            }
+            $files[] =  array( 'title' => $title,
+                'url' => "{$gdoc->link[0]->attributes()->href}",
+                'source' => $source,
+                'date'   => usertime(strtotime($gdoc->updated)),
+                'thumbnail' => (string) $OUTPUT->pix_url(file_extension_icon($title, 32))
+            );
         }
 
         return $files;
@@ -185,12 +183,21 @@ class google_docs {
      *
      * @param string $url url of file
      * @param string $path path to save file to
+     * @param int $timeout request timeout, default 0 which means no timeout
      * @return array stucture for repository download_file
      */
-    public function download_file($url, $path) {
-        $content = $this->googleoauth->get($url);
-        file_put_contents($path, $content);
-        return array('path'=>$path, 'url'=>$url);
+    public function download_file($url, $path, $timeout = 0) {
+        $result = $this->googleoauth->download_one($url, null, array('filepath' => $path, 'timeout' => $timeout));
+        if ($result === true) {
+            $info = $this->googleoauth->get_info();
+            if (isset($info['http_code']) && $info['http_code'] == 200) {
+                return array('path'=>$path, 'url'=>$url);
+            } else {
+                throw new moodle_exception('cannotdownload', 'repository');
+            }
+        } else {
+            throw new moodle_exception('errorwhiledownload', 'repository', '', $result);
+        }
     }
 }
 

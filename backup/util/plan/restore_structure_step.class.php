@@ -218,8 +218,14 @@ abstract class restore_structure_step extends restore_step {
      */
     public function add_related_files($component, $filearea, $mappingitemname, $filesctxid = null, $olditemid = null) {
         $filesctxid = is_null($filesctxid) ? $this->task->get_old_contextid() : $filesctxid;
-        restore_dbops::send_files_to_pool($this->get_basepath(), $this->get_restoreid(), $component,
-                                          $filearea, $filesctxid, $this->task->get_userid(), $mappingitemname, $olditemid);
+        $results = restore_dbops::send_files_to_pool($this->get_basepath(), $this->get_restoreid(), $component,
+                $filearea, $filesctxid, $this->task->get_userid(), $mappingitemname, $olditemid);
+        $resultstoadd = array();
+        foreach ($results as $result) {
+            $this->log($result->message, $result->level);
+            $resultstoadd[$result->code] = true;
+        }
+        $this->task->add_result($resultstoadd);
     }
 
     /**
@@ -256,7 +262,7 @@ abstract class restore_structure_step extends restore_step {
 
         // Re-enforce 'moodle/restore:rolldates' capability for the user in the course, just in case
         } else if (!has_capability('moodle/restore:rolldates',
-                                   get_context_instance(CONTEXT_COURSE, $this->get_courseid()),
+                                   context_course::instance($this->get_courseid()),
                                    $this->task->get_userid())) {
             $cache[$this->get_restoreid()] = 0;
 

@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,8 +17,7 @@
 /**
  * Self enrolment plugin settings and presets.
  *
- * @package    enrol
- * @subpackage self
+ * @package    enrol_self
  * @copyright  2010 Petr Skoda  {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -65,8 +63,8 @@ if ($ADMIN->fulltree) {
             get_string('defaultrole', 'enrol_self'), get_string('defaultrole_desc', 'enrol_self'), $student->id, $options));
     }
 
-    $settings->add(new admin_setting_configtext('enrol_self/enrolperiod',
-        get_string('enrolperiod', 'enrol_self'), get_string('enrolperiod_desc', 'enrol_self'), 0, PARAM_INT));
+    $settings->add(new admin_setting_configduration('enrol_self/enrolperiod',
+        get_string('enrolperiod', 'enrol_self'), get_string('enrolperiod_desc', 'enrol_self'), 0));
 
     $options = array(0 => get_string('never'),
                      1800 * 3600 * 24 => get_string('numdays', '', 1800),

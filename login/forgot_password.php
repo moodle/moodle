@@ -36,7 +36,7 @@ $p_username = optional_param('s', false, PARAM_RAW);
 $PAGE->https_required();
 
 $PAGE->set_url('/login/forgot_password.php');
-$systemcontext = get_context_instance(CONTEXT_SYSTEM);
+$systemcontext = context_system::instance();
 $PAGE->set_context($systemcontext);
 
 // setup text strings

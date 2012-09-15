@@ -35,9 +35,7 @@ if (!$course = $DB->get_record('course', array('id'=>$id))) {
     print_error('invalidcourseid');
 }
 
-if (!$context = get_context_instance(CONTEXT_COURSE, $course->id)) {
-        print_error('badcontext');
-}
+$context = context_course::instance($course->id);
 
 require_login($course);
 $PAGE->set_pagelayout('incourse');

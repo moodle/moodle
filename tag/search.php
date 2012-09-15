@@ -47,10 +47,10 @@ if ($perpage !== 18) {
     $params['perpage'] = $perpage;
 }
 $PAGE->set_url(new moodle_url('/tag/search.php', $params));
-$PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
+$PAGE->set_context(context_system::instance());
 $PAGE->set_pagelayout('standard');
 
-$systemcontext = get_context_instance(CONTEXT_SYSTEM);
+$systemcontext = context_system::instance();
 $manage_link = '&nbsp;';
 
 $PAGE->set_title(get_string('tags', 'tag'));

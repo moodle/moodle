@@ -69,7 +69,7 @@ echo '<table width="90%" align="center" class="generalbox">';
     </strong></td>
 </tr>
 <tr valign="top">
-    <td align="right" width="20%"><?php print_string('popupformat','glossary'); ?></td>
+    <td align="right" width="20%"><?php echo html_writer::label(get_string('popupformat','glossary'), 'menupopupformatname'); ?></td>
     <td>
  <?php
     //get and update available formats
@@ -92,9 +92,9 @@ echo '<table width="90%" align="center" class="generalbox">';
     </td>
 </tr>
 <tr valign="top">
-    <td align="right" width="20%"><?php print_string('defaultmode','glossary'); ?></td>
+    <td align="right" width="20%"><label for="defaultmode"><?php print_string('defaultmode','glossary'); ?></label></td>
     <td>
-    <select size="1" name="defaultmode">
+    <select size="1" id="defaultmode" name="defaultmode">
 <?php
     $sletter = '';
     $scat = '';
@@ -129,9 +129,9 @@ echo '<table width="90%" align="center" class="generalbox">';
     </td>
 </tr>
 <tr valign="top">
-    <td align="right" width="20%"><?php print_string('defaulthook','glossary'); ?></td>
+    <td align="right" width="20%"><label for="defaulthook"><?php print_string('defaulthook','glossary'); ?></label></td>
     <td>
-    <select size="1" name="defaulthook">
+    <select size="1" id="defaulthook" name="defaulthook">
 <?php
     $sall = '';
     $sspecial = '';
@@ -166,9 +166,9 @@ echo '<table width="90%" align="center" class="generalbox">';
     </td>
 </tr>
 <tr valign="top">
-    <td align="right" width="20%"><?php print_string('defaultsortkey','glossary'); ?></td>
+    <td align="right" width="20%"><label for="sortkey"><?php print_string('defaultsortkey','glossary'); ?></label></td>
     <td>
-    <select size="1" name="sortkey">
+    <select size="1" id="sortkey" name="sortkey">
 <?php
     $sfname = '';
     $slname = '';
@@ -203,9 +203,9 @@ echo '<table width="90%" align="center" class="generalbox">';
     </td>
 </tr>
 <tr valign="top">
-    <td align="right" width="20%"><?php print_string('defaultsortorder','glossary'); ?></td>
+    <td align="right" width="20%"><label for="sortorder"><?php print_string('defaultsortorder','glossary'); ?></label></td>
     <td>
-    <select size="1" name="sortorder">
+    <select size="1" id="sortorder" name="sortorder">
 <?php
     $sasc = '';
     $sdesc = '';
@@ -228,9 +228,9 @@ echo '<table width="90%" align="center" class="generalbox">';
     </td>
 </tr>
 <tr valign="top">
-    <td align="right" width="20%"><?php print_string("includegroupbreaks", "glossary"); ?>:</td>
+    <td align="right" width="20%"><label for="showgroup"><?php print_string("includegroupbreaks", "glossary"); ?>:</label></td>
     <td>
-    <select size="1" name="showgroup">
+    <select size="1" id="showgroup" name="showgroup">
 <?php
     $yselected = "";
     $nselected = "";

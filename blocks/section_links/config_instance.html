@@ -66,7 +66,7 @@ for($i = 1; $i < 3; $i++){
 ?>
     <tr valign="top">
         <td align="right">
-            <?php print_string('numsections'.$i, 'block_section_links'); ?>:
+            <label for="menunumsections<?php echo $i; ?>"><?php print_string('numsections'.$i, 'block_section_links'); ?>:</label>
         </td>
         <td>
             <?php choose_from_menu($numberofsections, 'numsections'.$i, $selected[$i][0]); ?>
@@ -77,7 +77,7 @@ for($i = 1; $i < 3; $i++){
     </tr>
     <tr valign="top">
         <td align="right">
-            <?php print_string('incby'.$i, 'block_section_links'); ?>:
+            <label for="menuincby<?php echo $i;?>"><?php print_string('incby'.$i, 'block_section_links'); ?>:</label>
         </td>
         <td>
             <?php choose_from_menu($increments, 'incby'.$i, $selected[$i][1]); ?>

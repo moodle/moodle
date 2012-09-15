@@ -88,7 +88,7 @@ if ($id) {
 
 require_login($course, true, $cm);
 
-$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+$context = context_module::instance($cm->id);
 require_capability('mod/data:managetemplates', $context);
 
 /************************************
@@ -352,6 +352,7 @@ if (($mode == 'new') && (!empty($newtype)) && confirm_sesskey()) {          /// 
 
     $options = array(0 => get_string('ascending', 'data'),
                      1 => get_string('descending', 'data'));
+    echo html_writer::label(get_string('sortby'), 'menudefaultsortdir', false, array('class' => 'accesshide'));
     echo html_writer::select($options, 'defaultsortdir', $data->defaultsortdir, false);
     echo '<input type="submit" value="'.get_string('save', 'data').'" />';
     echo '</div>';

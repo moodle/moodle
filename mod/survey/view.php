@@ -198,10 +198,14 @@ $completion->set_module_viewed($cm);
            $checkarray['questions'][] = Array('question'=>$question, 'default'=>$default);
        }
     }
-    $PAGE->requires->js('/mod/survey/survey.js');
     $PAGE->requires->data_for_js('surveycheck', $checkarray);
+    $module = array(
+        'name'      => 'mod_survey',
+        'fullpath'  => '/mod/survey/survey.js',
+        'requires'  => array('yui2-event'),
+    );
     $PAGE->requires->string_for_js('questionsnotanswered', 'survey');
-    $PAGE->requires->js_function_call('survey_attach_onsubmit');
+    $PAGE->requires->js_init_call('M.mod_survey.init', $checkarray, true, $module);
 
     echo '<br />';
     echo '<input type="submit" value="'.get_string("clicktocontinue", "survey").'" />';

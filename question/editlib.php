@@ -117,7 +117,7 @@ function question_can_delete_cat($todelete) {
         print_error('cannotdeletecate', 'question');
     } else {
         $contextid = $DB->get_field('question_categories', 'contextid', array('id' => $todelete));
-        require_capability('moodle/question:managecategory', get_context_instance_by_id($contextid));
+        require_capability('moodle/question:managecategory', context::instance_by_id($contextid));
     }
 }
 
@@ -407,9 +407,16 @@ class question_bank_checkbox_column extends question_bank_column_base {
         echo '<input title="' . $this->strselect . '" type="checkbox" name="q' .
                 $question->id . '" id="checkq' . $question->id . '" value="1"/>';
         if ($this->firstrow) {
-            $PAGE->requires->js('/question/qbank.js');
-            $PAGE->requires->js_function_call('question_bank.init_checkbox_column', array(get_string('selectall'),
-                    get_string('deselectall'), 'checkq' . $question->id));
+            $PAGE->requires->js('/question/qengine.js');
+            $module = array(
+                'name'      => 'qbank',
+                'fullpath'  => '/question/qbank.js',
+                'requires'  => array('yui2-dom', 'yui2-event', 'yui2-container'),
+                'strings'   => array(),
+                'async'     => false,
+            );
+            $PAGE->requires->js_init_call('question_bank.init_checkbox_column', array(get_string('selectall'),
+                    get_string('deselectall'), 'checkq' . $question->id), false, $module);
             $this->firstrow = false;
         }
     }
@@ -887,8 +894,6 @@ class question_bank_view {
         $this->init_column_types();
         $this->init_columns($this->wanted_columns());
         $this->init_sort();
-
-        $PAGE->requires->yui2_lib('container');
     }
 
     protected function wanted_columns() {
@@ -1185,8 +1190,6 @@ class question_bank_view {
             return;
         }
 
-        $PAGE->requires->js('/question/qbank.js');
-
         // Category selection form
         echo $OUTPUT->heading(get_string('questionbank', 'question'), 2);
 
@@ -1320,7 +1323,7 @@ class question_bank_view {
         $strdelete = get_string('delete');
 
         list($categoryid, $contextid) = explode(',', $categoryandcontext);
-        $catcontext = get_context_instance_by_id($contextid);
+        $catcontext = context::instance_by_id($contextid);
 
         $canadd = has_capability('moodle/question:add', $catcontext);
         $caneditall =has_capability('moodle/question:editall', $catcontext);
@@ -1464,7 +1467,7 @@ class question_bank_view {
             if (! $tocategory = $DB->get_record('question_categories', array('id' => $tocategoryid, 'contextid' => $contextid))) {
                 print_error('cannotfindcate', 'question');
             }
-            $tocontext = get_context_instance_by_id($contextid);
+            $tocontext = context::instance_by_id($contextid);
             require_capability('moodle/question:add', $tocontext);
             $rawdata = (array) data_submitted();
             $questionids = array();
@@ -1639,12 +1642,8 @@ function question_edit_setup($edittab, $baseurl, $requirecmid = false, $requirec
         $pagevars['qpage'] = 0;
     }
 
-    $pagevars['qperpage'] = optional_param('qperpage', -1, PARAM_INT);
-    if ($pagevars['qperpage'] > -1) {
-        $thispageurl->param('qperpage', $pagevars['qperpage']);
-    } else {
-        $pagevars['qperpage'] = DEFAULT_QUESTIONS_PER_PAGE;
-    }
+    $pagevars['qperpage'] = question_get_display_preference(
+            'qperpage', DEFAULT_QUESTIONS_PER_PAGE, PARAM_INT, $thispageurl);
 
     for ($i = 1; $i <= question_bank_view::MAX_SORTS; $i++) {
         $param = 'qbs' . $i;
@@ -1672,28 +1671,12 @@ function question_edit_setup($edittab, $baseurl, $requirecmid = false, $requirec
         $pagevars['cat'] = "$category->id,$category->contextid";
     }
 
-    if(($recurse = optional_param('recurse', -1, PARAM_BOOL)) != -1) {
-        $pagevars['recurse'] = $recurse;
-        $thispageurl->param('recurse', $recurse);
-    } else {
-        $pagevars['recurse'] = 1;
-    }
+    // Display options.
+    $pagevars['recurse']    = question_get_display_preference('recurse',    1, PARAM_BOOL, $thispageurl);
+    $pagevars['showhidden'] = question_get_display_preference('showhidden', 0, PARAM_BOOL, $thispageurl);
+    $pagevars['qbshowtext'] = question_get_display_preference('qbshowtext', 0, PARAM_BOOL, $thispageurl);
 
-    if(($showhidden = optional_param('showhidden', -1, PARAM_BOOL)) != -1) {
-        $pagevars['showhidden'] = $showhidden;
-        $thispageurl->param('showhidden', $showhidden);
-    } else {
-        $pagevars['showhidden'] = 0;
-    }
-
-    if(($showquestiontext = optional_param('qbshowtext', -1, PARAM_BOOL)) != -1) {
-        $pagevars['qbshowtext'] = $showquestiontext;
-        $thispageurl->param('qbshowtext', $showquestiontext);
-    } else {
-        $pagevars['qbshowtext'] = 0;
-    }
-
-    //category list page
+    // Category list page.
     $pagevars['cpage'] = optional_param('cpage', 1, PARAM_INT);
     if ($pagevars['cpage'] != 1){
         $thispageurl->param('cpage', $pagevars['cpage']);
@@ -1703,12 +1686,38 @@ function question_edit_setup($edittab, $baseurl, $requirecmid = false, $requirec
 }
 
 /**
+ * Get a particular question preference that is also stored as a user preference.
+ * If the the value is given in the GET/POST request, then that value is used,
+ * and the user preference is updated to that value. Otherwise, the last set
+ * value of the user preference is used, or if it has never been set the default
+ * passed to this function.
+ *
+ * @param string $param the param name. The URL parameter set, and the GET/POST
+ *      parameter read. The user_preference name is 'question_bank_' . $param.
+ * @param mixed $default The default value to use, if not otherwise set.
+ * @param int $type one of the PARAM_... constants.
+ * @param moodle_url $thispageurl if the value has been explicitly set, we add
+ *      it to this URL.
+ * @return mixed the parameter value to use.
+ */
+function question_get_display_preference($param, $default, $type, $thispageurl) {
+    $submittedvalue = optional_param($param, null, $type);
+    if (is_null($submittedvalue)) {
+        return get_user_preferences('question_bank_' . $param, $default);
+    }
+
+    set_user_preference('question_bank_' . $param, $submittedvalue);
+    $thispageurl->param($param, $submittedvalue);
+    return $submittedvalue;
+}
+
+/**
  * Make sure user is logged in as required in this context.
  */
 function require_login_in_context($contextorid = null){
     global $DB, $CFG;
     if (!is_object($contextorid)){
-        $context = get_context_instance_by_id($contextorid);
+        $context = context::instance_by_id($contextorid, IGNORE_MISSING);
     } else {
         $context = $contextorid;
     }
@@ -1744,7 +1753,7 @@ function require_login_in_context($contextorid = null){
  */
 function print_choose_qtype_to_add_form($hiddenparams, array $allowedqtypes = null) {
     global $CFG, $PAGE, $OUTPUT;
-    $PAGE->requires->js('/question/qbank.js');
+
     echo '<div id="chooseqtypehead" class="hd">' . "\n";
     echo $OUTPUT->heading(get_string('chooseqtypetoadd', 'question'), 3);
     echo "</div>\n";
@@ -1780,7 +1789,16 @@ function print_choose_qtype_to_add_form($hiddenparams, array $allowedqtypes = nu
     echo '<input type="submit" id="chooseqtypecancel" name="addcancel" value="' . get_string('cancel') . '" />' . "\n";
     echo "</div></form>\n";
     echo "</div>\n";
-    $PAGE->requires->js_init_call('qtype_chooser.init', array('chooseqtype'));
+
+    $PAGE->requires->js('/question/qengine.js');
+    $module = array(
+        'name'      => 'qbank',
+        'fullpath'  => '/question/qbank.js',
+        'requires'  => array('yui2-dom', 'yui2-event', 'yui2-container'),
+        'strings'   => array(),
+        'async'     => false,
+    );
+    $PAGE->requires->js_init_call('qtype_chooser.init', array('chooseqtype'), false, $module);
 }
 
 /**
@@ -1821,8 +1839,6 @@ function create_new_question_button($categoryid, $params, $caption, $tooltip = '
     $url = new moodle_url('/question/addquestion.php', $params);
     echo $OUTPUT->single_button($url, $caption, 'get', array('disabled'=>$disabled, 'title'=>$tooltip));
 
-    $PAGE->requires->yui2_lib('dragdrop');
-    $PAGE->requires->yui2_lib('container');
     if (!$choiceformprinted) {
         echo '<div id="qtypechoicecontainer">';
         print_choose_qtype_to_add_form(array());

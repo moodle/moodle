@@ -34,14 +34,14 @@
             'id' => $courseid));
 
     if ($contextid) {
-        $context = get_context_instance_by_id($contextid, MUST_EXIST);
+        $context = context::instance_by_id($contextid, MUST_EXIST);
         if ($context->contextlevel != CONTEXT_COURSE) {
             print_error('invalidcontext');
         }
         $course = $DB->get_record('course', array('id'=>$context->instanceid), '*', MUST_EXIST);
     } else {
         $course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
-        $context = get_context_instance(CONTEXT_COURSE, $course->id, MUST_EXIST);
+        $context = context_course::instance($course->id, MUST_EXIST);
     }
     // not needed anymore
     unset($contextid);
@@ -49,10 +49,10 @@
 
     require_login($course);
 
-    $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+    $systemcontext = context_system::instance();
     $isfrontpage = ($course->id == SITEID);
 
-    $frontpagectx = get_context_instance(CONTEXT_COURSE, SITEID);
+    $frontpagectx = context_course::instance(SITEID);
 
     if ($isfrontpage) {
         $PAGE->set_pagelayout('admin');
@@ -190,7 +190,7 @@
         $courselist = array();
         $popupurl = new moodle_url('/user/index.php?roleid='.$roleid.'&sifirst=&silast=');
         foreach ($mycourses as $mycourse) {
-            $coursecontext = get_context_instance(CONTEXT_COURSE, $mycourse->id);
+            $coursecontext = context_course::instance($mycourse->id);
             $courselist[$mycourse->id] = format_string($mycourse->shortname, true, array('context' => $coursecontext));
         }
         if (has_capability('moodle/site:viewparticipants', $systemcontext)) {
@@ -579,8 +579,8 @@
 
                     context_instance_preload($user);
 
-                    $context = get_context_instance(CONTEXT_COURSE, $course->id);
-                    $usercontext = get_context_instance(CONTEXT_USER, $user->id);
+                    $context = context_course::instance($course->id);
+                    $usercontext = context_user::instance($user->id);
 
                     $countries = get_string_manager()->get_list_of_countries();
 
@@ -719,7 +719,7 @@
                     }
                 }
 
-                $usercontext = get_context_instance(CONTEXT_USER, $user->id);
+                $usercontext = context_user::instance($user->id);
 
                 if ($piclink = ($USER->id == $user->id || has_capability('moodle/user:viewdetails', $context) || has_capability('moodle/user:viewdetails', $usercontext))) {
                     $profilelink = '<strong><a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id.'">'.fullname($user).'</a></strong>';
@@ -803,8 +803,9 @@
     }
 
     if (has_capability('moodle/site:viewparticipants', $context) && $totalcount > ($perpage*3)) {
-        echo '<form action="index.php" class="searchform"><div><input type="hidden" name="id" value="'.$course->id.'" />'.get_string('search').':&nbsp;'."\n";
-        echo '<input type="text" name="search" value="'.s($search).'" />&nbsp;<input type="submit" value="'.get_string('search').'" /></div></form>'."\n";
+        echo '<form action="index.php" class="searchform"><div><input type="hidden" name="id" value="'.$course->id.'" />';
+        echo '<label for="search">' . get_string('search', 'search') . ' </label>';
+        echo '<input type="text" id="search" name="search" value="'.s($search).'" />&nbsp;<input type="submit" value="'.get_string('search').'" /></div></form>'."\n";
     }
 
     $perpageurl = clone($baseurl);

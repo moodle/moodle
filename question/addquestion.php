@@ -60,7 +60,7 @@ if ($cmid) {
 }
 
 // Check permissions.
-$categorycontext = get_context_instance_by_id($category->contextid);
+$categorycontext = context::instance_by_id($category->contextid);
 require_capability('moodle/question:add', $categorycontext);
 
 // Ensure other optional params get passed on to question.php.

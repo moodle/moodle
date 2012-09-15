@@ -1,0 +1,120 @@
+/** Overide for RTL layout **/
+
+.dir-rtl .block .header .block_action {
+    float:left;
+}
+.dir-rtl .block .header .commands {
+    text-align: right;
+}
+.dir-rtl .block .header .title h2 {
+    margin-right: 10px;
+}
+.dir-rtl .coursebox h3,
+.dir-rtl .coursebox .info,
+.dir-rtl .coursebox .summary {
+    text-align: right;
+}
+.dir-rtl a.logo {
+    float: right;
+}
+.dir-rtl .headermenu,
+.dir-rtl .langmenu {
+    clear: left;
+    right: auto;
+}
+.dir-rtl .headermenu {
+    left: 10px;
+}
+.dir-rtl .langmenu {
+    float: left;
+}
+.dir-rtl .langmenu select.select.menulang {
+    margin-left: 0;
+}
+.dir-rtl .loginbox .loginform .form-label {
+    width: 46%;
+}
+
+/* right align CUSTOMMENU
+-------------------------*/
+.dir-rtl #custommenu ul.dropdown {
+    float: right;
+}
+.dir-rtl #custommenu ul.dropdown ul{
+    right: 0;
+    left: auto;
+}
+.dir-rtl #custommenu ul.dropdown ul ul {
+    right: 203px;
+    left: auto;
+}
+.dir-rtl #custommenu ul.dropdown ul span,
+.dir-rtl #custommenu ul.dropdown ul span a,
+.dir-rtl #custommenu ul.dropdown ul li.clickable-with-children > a {
+    background-image: url([[pix:theme|menu/nav-arrow-left]]);
+    background-position: 0 50%;
+    background-repeat: no-repeat;
+}
+.dir-rtl #custommenu ul.dropdown ul li:hover > span,
+.dir-rtl #custommenu ul.dropdown ul li:hover > span a {
+    background-color: #fff;
+    background-image: url([[pix:theme|menu/nav-arrowover-left]]);
+    color: #036;
+}
+.dir-rtl #custommenu ul.dropdown li.clickable-with-children:hover > a {
+    background-image: url([[pix:theme|menu/nav-arrowover-left]]);
+}
+
+/* RTL Docking Module
+--------------------*/
+
+.dir-rtl #dock {
+    top: 0;
+    left: auto;
+    right: 0;
+    }
+.dir-rtl #dock .dockeditem.firstdockitem {
+    margin-top: 2.3em;
+    -webkit-border-top-left-radius: 6px;
+    -moz-border-radius-topleft: 6px;
+    border-top-left-radius: 6px;
+}
+.dir-rtl #dock .dockedtitle {
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+    -webkit-border-top-right-radius: 0;
+    -moz-border-radius-topright: 0;
+    border-top-right-radius: 0;
+    -webkit-border-bottom-right-radius: 0;
+    -moz-border-radius-bottomright: 0;
+    border-bottom-right-radius: 0;
+}
+.dir-rtl #dock .dockedtitle.activeitem {
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
+}
+.dir-rtl #dock .controls {
+    -webkit-border-bottom-left-radius: 6px;
+    -moz-border-radius-bottomleft: 6px;
+    border-bottom-left-radius: 6px;
+}
+.dir-rtl #dock .controls img {
+    margin-right: 10px;
+}
+/*
+Docked Item Panel
+-----------------------*/
+.dir-rtl #dockeditempanel {
+    right: 100%;
+}
+.dir-rtl #dockeditempanel .dockeditempanel_content {
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+    -webkit-border-top-right-radius: 0;
+    -moz-border-radius-topright: 0;
+    border-top-right-radius: 0;
+}
+.dir-rtl.has_dock.side-post-only  #region-main {margin-left:0;}

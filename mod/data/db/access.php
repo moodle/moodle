@@ -238,6 +238,19 @@ $capabilities = array(
             'editingteacher' => CAP_ALLOW,
         )
     ),
+
+    'mod/data:exportuserinfo' => array(
+
+        'riskbitmask' => RISK_PERSONAL,
+
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'manager' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+        )
+    ),
 );
 
 

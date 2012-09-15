@@ -47,6 +47,11 @@ if ($hassiteconfig
         $temp->add(new admin_setting_configselect('moodlecourse/legacyfiles', new lang_string('courselegacyfiles'), new lang_string('courselegacyfiles_help'), key($choices), $choices));
     }
 
+    $choices = array();
+    $choices[COURSE_DISPLAY_SINGLEPAGE] = new lang_string('coursedisplay_single');
+    $choices[COURSE_DISPLAY_MULTIPAGE] = new lang_string('coursedisplay_multi');
+    $temp->add(new admin_setting_configselect('moodlecourse/coursedisplay', new lang_string('coursedisplay'), new lang_string('coursedisplay_help'), COURSE_DISPLAY_SINGLEPAGE, $choices));
+
     $temp->add(new admin_setting_heading('groups', new lang_string('groups', 'group'), ''));
     $choices = array();
     $choices[NOGROUPS] = new lang_string('groupsnone', 'group');

@@ -33,7 +33,7 @@ if (! $glossary = $DB->get_record("glossary", array("id"=>$cm->instance))) {
 
 require_login($course, false, $cm);
 
-$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+$context = context_module::instance($cm->id);
 require_capability('mod/glossary:export', $context);
 
 $strglossaries = get_string("modulenameplural", "glossary");

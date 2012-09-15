@@ -57,8 +57,9 @@ class plagiarism_plugin {
      * hook to add plagiarism specific settings to a module settings page
      * @param object $mform  - Moodle form
      * @param object $context - current context
+     * @param string $modulename - Name of the module
      */
-    public function get_form_elements_module($mform, $context) {
+    public function get_form_elements_module($mform, $context, $modulename = "") {
     }
     /* hook to save plagiarism specific settings on a module settings page
      * @param object $data - data from an mform submission.

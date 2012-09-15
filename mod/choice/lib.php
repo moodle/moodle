@@ -200,7 +200,7 @@ function choice_prepare_options($choice, $user, $coursemodule, $allresponses) {
     $cdisplay = array('options'=>array());
 
     $cdisplay['limitanswers'] = true;
-    $context = get_context_instance(CONTEXT_MODULE, $coursemodule->id);
+    $context = context_module::instance($coursemodule->id);
 
     foreach ($choice->option as $optionid => $text) {
         if (isset($text)) { //make sure there are no dud entries in the db with blank text values.
@@ -248,7 +248,7 @@ function choice_user_submit_response($formanswer, $choice, $userid, $course, $cm
     require_once($CFG->libdir.'/completionlib.php');
 
     $current = $DB->get_record('choice_answers', array('choiceid' => $choice->id, 'userid' => $userid));
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $context = context_module::instance($cm->id);
 
     $countanswers=0;
     if($choice->limitanswers) {
@@ -368,7 +368,7 @@ function prepare_choice_show_results($choice, $course, $cm, $allresponses, $forc
     unset($display->maxanswers);
 
     $display->numberofuser = $totaluser;
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $context = context_module::instance($cm->id);
     $display->viewresponsecapability = has_capability('mod/choice:readresponses', $context);
     $display->deleterepsonsecapability = has_capability('mod/choice:deleteresponses',$context);
     $display->fullnamecapability = has_capability('moodle/site:viewfullnames', $context);
@@ -385,8 +385,6 @@ function prepare_choice_show_results($choice, $course, $cm, $allresponses, $forc
             $totalresponsecount += count($userlist);
         }
     }
-
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     $hascapfullnames = has_capability('moodle/site:viewfullnames', $context);
 
@@ -708,7 +706,7 @@ function choice_reset_userdata($data) {
 function choice_get_response_data($choice, $cm, $groupmode) {
     global $CFG, $USER, $DB;
 
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $context = context_module::instance($cm->id);
 
 /// Get the current group
     if ($groupmode > 0) {

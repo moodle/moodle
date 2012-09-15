@@ -69,15 +69,15 @@ if (empty($CFG->enablenotes)) {
 
 /// output HTML
 if ($course->id == SITEID) {
-    $coursecontext = get_context_instance(CONTEXT_SYSTEM);   // SYSTEM context
+    $coursecontext = context_system::instance();   // SYSTEM context
 } else {
-    $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);   // Course context
+    $coursecontext = context_course::instance($course->id);   // Course context
 }
-$systemcontext = get_context_instance(CONTEXT_SYSTEM);   // SYSTEM context
+$systemcontext = context_system::instance();   // SYSTEM context
 
 $strnotes = get_string('notes', 'notes');
 if ($userid) {
-    $PAGE->set_context(get_context_instance(CONTEXT_USER, $user->id));
+    $PAGE->set_context(context_user::instance($user->id));
     $PAGE->navigation->extend_for_user($user);
 } else {
     $link = null;
@@ -106,7 +106,7 @@ echo $OUTPUT->box_start();
 
 if ($courseid != SITEID) {
     //echo '<a href="#sitenotes">' . $strsitenotes . '</a> | <a href="#coursenotes">' . $strcoursenotes . '</a> | <a href="#personalnotes">' . $strpersonalnotes . '</a>';
-    $context = get_context_instance(CONTEXT_COURSE, $courseid);
+    $context = context_course::instance($courseid);
     $addid = has_capability('moodle/notes:manage', $context) ? $courseid : 0;
     $view = has_capability('moodle/notes:view', $context);
     $fullname = format_string($course->fullname, true, array('context' => $context));
@@ -116,17 +116,17 @@ if ($courseid != SITEID) {
 
 } else {  // Normal course
     //echo '<a href="#sitenotes">' . $strsitenotes . '</a> | <a href="#coursenotes">' . $strcoursenotes . '</a>';
-    $view = has_capability('moodle/notes:view', get_context_instance(CONTEXT_SYSTEM));
+    $view = has_capability('moodle/notes:view', context_system::instance());
     note_print_notes('<a name="sitenotes"></a>' . $strsitenotes, 0, $view, 0, $userid, NOTES_STATE_SITE, 0);
     echo '<a name="coursenotes"></a>';
 
     if (!empty($userid)) {
         $courses = enrol_get_users_courses($userid);
         foreach($courses as $c) {
-            $ccontext = get_context_instance(CONTEXT_COURSE, $c->id);
+            $ccontext = context_course::instance($c->id);
             $cfullname = format_string($c->fullname, true, array('context' => $ccontext));
             $header = '<a href="' . $CFG->wwwroot . '/course/view.php?id=' . $c->id . '">' . $cfullname . '</a>';
-            if (has_capability('moodle/notes:manage', get_context_instance(CONTEXT_COURSE, $c->id))) {
+            if (has_capability('moodle/notes:manage', context_course::instance($c->id))) {
                 $addid = $c->id;
             } else {
                 $addid = 0;

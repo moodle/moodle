@@ -53,6 +53,7 @@ function workshop_supports($feature) {
         case FEATURE_COMPLETION_TRACKS_VIEWS:
             return true;
         case FEATURE_SHOW_DESCRIPTION:  return true;
+        case FEATURE_PLAGIARISM:        return true;
         default:                        return null;
     }
 }

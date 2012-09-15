@@ -81,7 +81,7 @@ foreach ($parts as $part) {
     }
     //debug($bits);
     $version = array_shift($bits);
-    if ($version == 'moodle') {
+    if ($version === 'moodle') {
         //TODO: this is a ugly hack because we should not load any libs here!
         if (!defined('MOODLE_INTERNAL')) {
             define('MOODLE_INTERNAL', true);
@@ -101,15 +101,22 @@ foreach ($parts as $part) {
             $bits[] = 'sam';
         }
         $contentfile = $dir.'/yui/'.join('/', $bits).'/'.$filename;
+    } else if ($version === '2in3') {
+        $contentfile = "$CFG->libdir/yuilib/$part";
+
+    } else if ($version == 'gallery') {
+        $contentfile = "$CFG->libdir/yui/$part";
+
     } else {
-        if ($version != $CFG->yui3version and $version != $CFG->yui2version and $version != 'gallery') {
+        if ($version != $CFG->yui3version) {
             $content .= "\n// Wrong yui version $part!\n";
             continue;
         }
-        $contentfile = "$CFG->libdir/yui/$part";
+        $contentfile = "$CFG->libdir/yuilib/$part";
     }
     if (!file_exists($contentfile) or !is_file($contentfile)) {
-        $content .= "\n// Combo resource $part ($contentfile) not found!\n";
+        $location = '$CFG->dirroot'.preg_replace('/^'.preg_quote($CFG->dirroot, '/').'/', '', $contentfile);
+        $content .= "\n// Combo resource $part ($location) not found!\n";
         continue;
     }
     $filecontent = file_get_contents($contentfile);
@@ -124,9 +131,20 @@ foreach ($parts as $part) {
     if ($mimetype === 'text/css') {
         if ($version == 'moodle') {
             $filecontent = preg_replace('/([a-z0-9_-]+)\.(png|gif)/', $relroot.'/theme/yui_image.php'.$sep.$version.'/'.$frankenstyle.'/'.array_shift($bits).'/$1.$2', $filecontent);
+
+        } else if ($version == '2in3') {
+            // First we need to remove relative paths to images. These are used by YUI modules to make use of global assets.
+            // I've added this as a separate regex so it can be easily removed once
+            // YUI standardise there CSS methods
+            $filecontent = preg_replace('#(\.\./\.\./\.\./\.\./assets/skins/sam/)?([a-z0-9_-]+)\.(png|gif)#', '$2.$3', $filecontent);
+
+            // search for all images in yui2 CSS and serve them through the yui_image.php script
+            $filecontent = preg_replace('/([a-z0-9_-]+)\.(png|gif)/', $relroot.'/theme/yui_image.php'.$sep.$CFG->yui2version.'/$1.$2', $filecontent);
+
         } else if ($version == 'gallery') {
             // search for all images in gallery module CSS and serve them through the yui_image.php script
             $filecontent = preg_replace('/([a-z0-9_-]+)\.(png|gif)/', $relroot.'/theme/yui_image.php'.$sep.$version.'/'.$bits[0].'/'.$bits[1].'/$1.$2', $filecontent);
+
         } else {
             // First we need to remove relative paths to images. These are used by YUI modules to make use of global assets.
             // I've added this as a separate regex so it can be easily removed once

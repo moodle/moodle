@@ -191,6 +191,10 @@ h2.headingblock {
     padding: 5px 10px 10px;
 }
 
+/* Blogs */
+
+.blog_entry .content {margin-left: 43px;}
+
 /* Dock */
 
 #dock {

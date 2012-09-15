@@ -26,7 +26,7 @@ M.mod_folder = {};
 
 M.mod_folder.init_tree = function(Y, expand_all) {
     Y.use('yui2-treeview', function(Y) {
-        var tree = new YAHOO.widget.TreeView("folder_tree");
+        var tree = new Y.YUI2.widget.TreeView("folder_tree");
 
         tree.subscribe("clickEvent", function(node, event) {
             // we want normal clicking which redirects to url

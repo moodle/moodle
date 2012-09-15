@@ -63,7 +63,7 @@ class question_usage_by_activity {
      */
     protected $preferredbehaviour = null;
 
-    /** @var object the context this usage belongs to. */
+    /** @var context the context this usage belongs to. */
     protected $context;
 
     /** @var string plugin name of the plugin this usage belongs to. */
@@ -104,7 +104,7 @@ class question_usage_by_activity {
         return $this->preferredbehaviour;
     }
 
-    /** @return object the context this usage belongs to. */
+    /** @return context the context this usage belongs to. */
     public function get_owning_context() {
         return $this->context;
     }
@@ -708,7 +708,7 @@ class question_usage_by_activity {
         }
 
         $quba = new question_usage_by_activity($record->component,
-            get_context_instance_by_id($record->contextid));
+            context::instance_by_id($record->contextid, IGNORE_MISSING));
         $quba->set_id_from_database($record->qubaid);
         $quba->set_preferred_behaviour($record->preferredbehaviour);
 

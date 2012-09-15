@@ -64,7 +64,7 @@ class restore_course_task extends restore_task {
     public function build() {
 
         // Define the task contextid (the course one)
-        $this->contextid = get_context_instance(CONTEXT_COURSE, $this->get_courseid())->id;
+        $this->contextid = context_course::instance($this->get_courseid())->id;
 
         // Executed conditionally if restoring to new course or if overwrite_conf setting is enabled
         if ($this->get_target() == backup::TARGET_NEW_COURSE || $this->get_setting_value('overwrite_conf') == true) {

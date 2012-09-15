@@ -2271,7 +2271,7 @@ class accesslib_testcase extends advanced_testcase {
 
         foreach ($DB->get_records('context') as $contextid=>$record) {
             $context = context::instance_by_id($contextid);
-            $this->assertSame(get_context_instance_by_id($contextid), $context);
+            $this->assertSame(context::instance_by_id($contextid, IGNORE_MISSING), $context);
             $this->assertSame(get_context_instance($record->contextlevel, $record->instanceid), $context);
             $this->assertSame(get_parent_contexts($context), $context->get_parent_context_ids());
             if ($context->id == SYSCONTEXTID) {
@@ -2336,14 +2336,14 @@ class accesslib_testcase extends advanced_testcase {
         accesslib_clear_all_caches(false);
         $DB->delete_records('cache_flags', array());
         $course = $DB->get_record('course', array('id'=>$testcourses[2]));
-        $context = get_context_instance(CONTEXT_COURSE, $course->id);
+        $context = context_course::instance($course->id);
         $oldpath = $context->path;
         $miscid = $DB->get_field_sql("SELECT MIN(id) FROM {course_categories}");
         $categorycontext = context_coursecat::instance($miscid);
         $course->category = $miscid;
         $DB->update_record('course', $course);
         context_moved($context, $categorycontext);
-        $context = get_context_instance(CONTEXT_COURSE, $course->id);
+        $context = context_course::instance($course->id);
         $this->assertEquals($context->get_parent_context(), $categorycontext);
 
         $this->assertTrue($DB->record_exists('context', array('contextlevel'=>CONTEXT_COURSE, 'instanceid'=>$testcourses[2])));
@@ -2353,7 +2353,7 @@ class accesslib_testcase extends advanced_testcase {
         $name = get_contextlevel_name(CONTEXT_COURSE);
         $this->assertFalse(empty($name));
 
-        $context = get_context_instance(CONTEXT_COURSE, $testcourses[2]);
+        $context = context_course::instance($testcourses[2]);
         $name = print_context_name($context);
         $this->assertFalse(empty($name));
 
@@ -2361,7 +2361,7 @@ class accesslib_testcase extends advanced_testcase {
         $this->assertFalse($url instanceof modole_url);
 
         $page = $DB->get_record('page', array('id'=>$testpages[7]));
-        $context = get_context_instance(CONTEXT_MODULE, $page->id);
+        $context = context_module::instance($page->id);
         $coursecontext = get_course_context($context);
         $this->assertEquals($coursecontext->contextlevel, CONTEXT_COURSE);
         $this->assertEquals(get_courseid_from_context($context), $page->course);

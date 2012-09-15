@@ -28,6 +28,7 @@ echo $OUTPUT->header();
 
     <form action="../empty.php" method="get" target="empty" id="inputform"
           onsubmit="return empty_field_and_submit();">
+        <label class="accesshide" for="chat_message"><?php print_string('entermessage', 'chat'); ?></label>
         <input type="text" name="chat_message" id="chat_message" size="60" value="" />
         <?php echo $OUTPUT->help_icon('usingchat', 'chat'); ?>
     </form>

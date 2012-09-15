@@ -64,7 +64,7 @@ function blog_user_can_edit_entry($blogentry) {
 function blog_user_can_view_user_entry($targetuserid, $blogentry=null) {
     global $CFG, $USER, $DB;
 
-    if (empty($CFG->bloglevel)) {
+    if (empty($CFG->enableblogs)) {
         return false; // blog system disabled
     }
 
@@ -349,8 +349,7 @@ function blog_get_context_url($context=null) {
  */
 function blog_is_enabled_for_user() {
     global $CFG;
-    //return (!empty($CFG->bloglevel) && $CFG->bloglevel <= BLOG_GLOBAL_LEVEL && isloggedin() && !isguestuser());
-    return (!empty($CFG->bloglevel) && (isloggedin() || ($CFG->bloglevel == BLOG_GLOBAL_LEVEL)));
+    return (!empty($CFG->enableblogs) && (isloggedin() || ($CFG->bloglevel == BLOG_GLOBAL_LEVEL)));
 }
 
 /**
@@ -406,7 +405,7 @@ function blog_get_all_options(moodle_page $page, stdClass $userid = null) {
     }
 
     // If blog level is global then display a link to view all site entries
-    if (!empty($CFG->bloglevel) && $CFG->bloglevel >= BLOG_GLOBAL_LEVEL && has_capability('moodle/blog:view', context_system::instance())) {
+    if (!empty($CFG->enableblogs) && $CFG->bloglevel >= BLOG_GLOBAL_LEVEL && has_capability('moodle/blog:view', context_system::instance())) {
         $options[CONTEXT_SYSTEM] = array('viewsite' => array(
             'string' => get_string('viewsiteentries', 'blog'),
             'link' => new moodle_url('/blog/index.php')
@@ -511,7 +510,8 @@ function blog_get_options_for_course(stdClass $course, stdClass $user=null) {
 
     // Check that the user can associate with the course
     $sitecontext = context_system::instance();
-    if (!has_capability('moodle/blog:associatecourse', $sitecontext)) {
+    $coursecontext = context_course::instance($course->id);
+    if (!has_capability('moodle/blog:associatecourse', $coursecontext)) {
         return $options;
     }
     // Generate the cache key
@@ -526,7 +526,6 @@ function blog_get_options_for_course(stdClass $course, stdClass $user=null) {
         return $courseoptions[$key];
     }
 
-    $coursecontext = context_course::instance($course->id, IGNORE_MISSING);
     $canparticipate = (is_enrolled($coursecontext) or is_viewing($coursecontext));
 
     if (has_capability('moodle/blog:view', $coursecontext)) {
@@ -587,8 +586,9 @@ function blog_get_options_for_module($module, $user=null) {
     }
 
     // Check the user can associate with the module
+    $modcontext = context_module::instance($module->id);
     $sitecontext = context_system::instance();
-    if (!has_capability('moodle/blog:associatemodule', $sitecontext)) {
+    if (!has_capability('moodle/blog:associatemodule', $modcontext)) {
         return $options;
     }
 
@@ -604,7 +604,6 @@ function blog_get_options_for_module($module, $user=null) {
         return $moduleoptions[$module->id];
     }
 
-    $modcontext = context_module::instance($module->id, IGNORE_MISSING);
     $canparticipate = (is_enrolled($modcontext) or is_viewing($modcontext));
 
     if (has_capability('moodle/blog:view', $modcontext)) {
@@ -743,7 +742,9 @@ function blog_get_headers($courseid=null, $groupid=null, $userid=null, $tagid=nu
 
     $PAGE->set_pagelayout('standard');
 
-    if (!empty($modid) && $CFG->useblogassociations && has_capability('moodle/blog:associatemodule', $sitecontext)) { // modid always overrides courseid, so the $course object may be reset here
+    // modid always overrides courseid, so the $course object may be reset here
+    if (!empty($modid) && $CFG->useblogassociations) {
+
         $headers['filters']['module'] = $modid;
         // A groupid param may conflict with this coursemod's courseid. Ignore groupid in that case
         $courseid = $DB->get_field('course_modules', 'course', array('id'=>$modid));

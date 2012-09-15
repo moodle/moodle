@@ -44,7 +44,7 @@ $sm = get_string_manager();
 
 $PAGE->set_url('/help.php');
 $PAGE->set_pagelayout('popup');
-$PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
+$PAGE->set_context(context_system::instance());
 
 if ($ajax) {
     @header('Content-Type: text/plain; charset=utf-8');

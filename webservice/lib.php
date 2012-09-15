@@ -102,7 +102,7 @@ class webservice {
         }
 
         //Non admin can not authenticate if maintenance mode
-        $hassiteconfig = has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM), $user);
+        $hassiteconfig = has_capability('moodle/site:config', context_system::instance(), $user);
         if (!empty($CFG->maintenance_enabled) and !$hassiteconfig) {
             //this is usually temporary, client want to implement code logic  => moodle_exception
             throw new moodle_exception('sitemaintenance', 'admin');
@@ -116,7 +116,7 @@ class webservice {
         }
 
         //check if there is any required system capability
-        if ($service->requiredcapability and !has_capability($service->requiredcapability, get_context_instance(CONTEXT_SYSTEM), $user)) {
+        if ($service->requiredcapability and !has_capability($service->requiredcapability, context_system::instance(), $user)) {
             throw new webservice_access_exception('The capability ' . $service->requiredcapability . ' is required.');
         }
 
@@ -262,7 +262,7 @@ class webservice {
         global $CFG, $DB;
 
         // generate a token for non admin if web service are enable and the user has the capability to create a token
-        if (!is_siteadmin() && has_capability('moodle/webservice:createtoken', get_context_instance(CONTEXT_SYSTEM), $userid) && !empty($CFG->enablewebservices)) {
+        if (!is_siteadmin() && has_capability('moodle/webservice:createtoken', context_system::instance(), $userid) && !empty($CFG->enablewebservices)) {
             // for every service than the user is authorised on, create a token (if it doesn't already exist)
 
             // get all services which are set to all user (no restricted to specific users)
@@ -298,7 +298,7 @@ class webservice {
                     $newtoken->userid = $userid;
                     $newtoken->externalserviceid = $serviceid;
                     // TODO MDL-31190 find a way to get the context - UPDATE FOLLOWING LINE
-                    $newtoken->contextid = get_context_instance(CONTEXT_SYSTEM)->id;
+                    $newtoken->contextid = context_system::instance()->id;
                     $newtoken->creatorid = $userid;
                     $newtoken->timecreated = time();
 
@@ -835,7 +835,7 @@ abstract class webservice_server implements webservice_server_interface {
                 throw new webservice_access_exception('The web service authentication plugin is missing.');
             }
 
-            $this->restricted_context = get_context_instance(CONTEXT_SYSTEM);
+            $this->restricted_context = context_system::instance();
 
             if (!$this->username) {
                 throw new moodle_exception('missingusername', 'webservice');
@@ -860,7 +860,7 @@ abstract class webservice_server implements webservice_server_interface {
         }
 
         //Non admin can not authenticate if maintenance mode
-        $hassiteconfig = has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM), $user);
+        $hassiteconfig = has_capability('moodle/site:config', context_system::instance(), $user);
         if (!empty($CFG->maintenance_enabled) and !$hassiteconfig) {
             throw new moodle_exception('sitemaintenance', 'admin');
         }
@@ -949,7 +949,7 @@ abstract class webservice_server implements webservice_server_interface {
                     . ' is not supported - check this allowed user');
         }
 
-        $this->restricted_context = get_context_instance_by_id($token->contextid);
+        $this->restricted_context = context::instance_by_id($token->contextid);
         $this->restricted_serviceid = $token->externalserviceid;
 
         $user = $DB->get_record('user', array('id'=>$token->userid), '*', MUST_EXIST);
@@ -1110,7 +1110,7 @@ abstract class webservice_zend_server extends webservice_server {
                   FROM {external_services} s
                   JOIN {external_services_functions} sf ON (sf.externalserviceid = s.id AND s.restrictedusers = 1)
                   JOIN {external_services_users} su ON (su.externalserviceid = s.id AND su.userid = :userid)
-                 WHERE s.enabled = 1 AND su.validuntil IS NULL OR su.validuntil < :now $wscond2";
+                 WHERE s.enabled = 1 AND (su.validuntil IS NULL OR su.validuntil < :now) $wscond2";
 
         $params = array_merge($params, array('userid'=>$USER->id, 'now'=>time()));
 
@@ -1612,7 +1612,7 @@ abstract class webservice_base_server extends webservice_server {
                   FROM {external_services} s
                   JOIN {external_services_functions} sf ON (sf.externalserviceid = s.id AND s.restrictedusers = 1 AND sf.functionname = :name2)
                   JOIN {external_services_users} su ON (su.externalserviceid = s.id AND su.userid = :userid)
-                 WHERE s.enabled = 1 AND su.validuntil IS NULL OR su.validuntil < :now $wscond2";
+                 WHERE s.enabled = 1 AND (su.validuntil IS NULL OR su.validuntil < :now) $wscond2";
         $params = array_merge($params, array('userid'=>$USER->id, 'name1'=>$function->name, 'name2'=>$function->name, 'now'=>time()));
 
         $rs = $DB->get_recordset_sql($sql, $params);

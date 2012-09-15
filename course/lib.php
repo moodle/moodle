@@ -47,9 +47,6 @@ define('FIRSTUSEDEXCELROW', 3);
 define('MOD_CLASS_ACTIVITY', 0);
 define('MOD_CLASS_RESOURCE', 1);
 
-define('COURSE_DISPLAY_SINGLEPAGE', 0); // display all sections on one page
-define('COURSE_DISPLAY_MULTIPAGE', 1); // split pages into a page per section
-
 function make_log_url($module, $url) {
     switch ($module) {
         case 'course':
@@ -534,10 +531,19 @@ function print_mnet_log($hostid, $course, $user=0, $date=0, $order="l.time ASC",
 
 function print_log_csv($course, $user, $date, $order='l.time DESC', $modname,
                         $modid, $modaction, $groupid) {
-    global $DB;
+    global $DB, $CFG;
 
-    $text = get_string('course')."\t".get_string('time')."\t".get_string('ip_address')."\t".
-            get_string('fullnameuser')."\t".get_string('action')."\t".get_string('info');
+    require_once($CFG->libdir . '/csvlib.class.php');
+
+    $csvexporter = new csv_export_writer('tab');
+
+    $header = array();
+    $header[] = get_string('course');
+    $header[] = get_string('time');
+    $header[] = get_string('ip_address');
+    $header[] = get_string('fullnameuser');
+    $header[] = get_string('action');
+    $header[] = get_string('info');
 
     if (!$logs = build_logs_array($course, $user, $date, $order, '', '',
                        $modname, $modid, $modaction, $groupid)) {
@@ -564,16 +570,10 @@ function print_log_csv($course, $user, $date, $order='l.time DESC', $modname,
 
     $strftimedatetime = get_string("strftimedatetime");
 
-    $filename = 'logs_'.userdate(time(),get_string('backupnameformat', 'langconfig'),99,false);
-    $filename .= '.txt';
-    header("Content-Type: application/download\n");
-    header("Content-Disposition: attachment; filename=\"$filename\"");
-    header("Expires: 0");
-    header("Cache-Control: must-revalidate,post-check=0,pre-check=0");
-    header("Pragma: public");
-
-    echo get_string('savedat').userdate(time(), $strftimedatetime)."\n";
-    echo $text."\n";
+    $csvexporter->set_filename('logs', '.txt');
+    $title = array(get_string('savedat').userdate(time(), $strftimedatetime));
+    $csvexporter->add_data($title);
+    $csvexporter->add_data($header);
 
     if (empty($logs['logs'])) {
         return true;
@@ -603,9 +603,9 @@ function print_log_csv($course, $user, $date, $order='l.time DESC', $modname,
         $firstField = format_string($courses[$log->course], true, array('context' => $coursecontext));
         $fullname = fullname($log, has_capability('moodle/site:viewfullnames', $coursecontext));
         $row = array($firstField, userdate($log->time, $strftimedatetime), $log->ip, $fullname, $log->module.' '.$log->action, $log->info);
-        $text = implode("\t", $row);
-        echo $text." \n";
+        $csvexporter->add_data($row);
     }
+    $csvexporter->download_file();
     return true;
 }
 
@@ -2254,22 +2254,6 @@ function make_categories_options() {
         }
     }
     return $cats;
-}
-
-/**
- * Gets the name of a course to be displayed when showing a list of courses.
- * By default this is just $course->fullname but user can configure it. The
- * result of this function should be passed through print_string.
- * @param object $course Moodle course object
- * @return string Display name of course (either fullname or short + fullname)
- */
-function get_course_display_name_for_list($course) {
-    global $CFG;
-    if (!empty($CFG->courselistshortnames)) {
-        return $course->shortname . ' ' .$course->fullname;
-    } else {
-        return $course->fullname;
-    }
 }
 
 /**
@@ -4038,7 +4022,7 @@ function average_number_of_participants() {
         WHERE ue.enrolid = e.id
             AND e.courseid <> :siteid
             AND c.id = e.courseid
-            AND c.visible = 1)';
+            AND c.visible = 1) total';
     $params = array('siteid' => $SITE->id);
     $enrolmenttotal = $DB->count_records_sql($sql, $params);
 
@@ -4071,7 +4055,7 @@ function average_number_of_courses_modules() {
         WHERE c.id = cm.course
             AND c.id <> :siteid
             AND cm.visible = 1
-            AND c.visible = 1)';
+            AND c.visible = 1) total';
     $params = array('siteid' => $SITE->id);
     $moduletotal = $DB->count_records_sql($sql, $params);
 

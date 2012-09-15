@@ -50,7 +50,7 @@ function lesson_add_instance($data, $mform) {
     $lessonid = $DB->insert_record("lesson", $data);
     $data->id = $lessonid;
 
-    $context = get_context_instance(CONTEXT_MODULE, $cmid);
+    $context = context_module::instance($cmid);
     $lesson = $DB->get_record('lesson', array('id'=>$lessonid), '*', MUST_EXIST);
 
     if ($filename = $mform->get_new_filename('mediafilepicker')) {
@@ -86,7 +86,7 @@ function lesson_update_instance($data, $mform) {
     unset($data->mediafile);
     $DB->update_record("lesson", $data);
 
-    $context = get_context_instance(CONTEXT_MODULE, $cmid);
+    $context = context_module::instance($cmid);
     if ($filename = $mform->get_new_filename('mediafilepicker')) {
         if ($file = $mform->save_stored_file('mediafilepicker', $context->id, 'mod_lesson', 'mediafile', 0, '/', $filename, true)) {
             $DB->set_field('lesson', 'mediafile', '/'.$file->get_filename(), array('id'=>$data->id));
@@ -295,7 +295,7 @@ function lesson_print_overview($courses, &$htmlarray) {
             $str .= $OUTPUT->box(get_string('lessoncloseson', 'lesson', userdate($lesson->deadline)), 'info');
 
             // Attempt information
-            if (has_capability('mod/lesson:manage', get_context_instance(CONTEXT_MODULE, $lesson->coursemodule))) {
+            if (has_capability('mod/lesson:manage', context_module::instance($lesson->coursemodule))) {
                 // Number of user attempts
                 $attempts = $DB->count_records('lesson_attempts', array('lessonid'=>$lesson->id));
                 $str     .= $OUTPUT->box(get_string('xattempts', 'lesson', $attempts), 'info');
@@ -345,7 +345,7 @@ function lesson_get_user_grades($lesson, $userid=0) {
 
     $params = array("lessonid" => $lesson->id,"lessonid2" => $lesson->id);
 
-    if (isset($userid)) {
+    if (!empty($userid)) {
         $params["userid"] = $userid;
         $params["userid2"] = $userid;
         $user = "AND u.id = :userid";

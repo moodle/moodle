@@ -43,7 +43,7 @@ class mod_lesson_renderer extends plugin_renderer_base {
         $title = $this->page->course->shortname.": ".$activityname;
 
         // Build the buttons
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        $context = context_module::instance($cm->id);
 
     /// Header setup
         $this->page->set_title($title);
@@ -215,7 +215,7 @@ class mod_lesson_renderer extends plugin_renderer_base {
         $table->width = '80%';
         $table->data = array();
 
-        $canedit = has_capability('mod/lesson:edit', get_context_instance(CONTEXT_MODULE, $this->page->cm->id));
+        $canedit = has_capability('mod/lesson:edit', context_module::instance($this->page->cm->id));
 
         while ($pageid != 0) {
             $page = $lesson->load_page($pageid);
@@ -250,7 +250,7 @@ class mod_lesson_renderer extends plugin_renderer_base {
         $manager = lesson_page_type_manager::get($lesson);
         $qtypes = $manager->get_page_type_strings();
         $npages = count($lesson->load_all_pages());
-        $canedit = has_capability('mod/lesson:edit', get_context_instance(CONTEXT_MODULE, $this->page->cm->id));
+        $canedit = has_capability('mod/lesson:edit', context_module::instance($this->page->cm->id));
 
         $content = '';
         if ($canedit) {
@@ -452,7 +452,7 @@ class mod_lesson_renderer extends plugin_renderer_base {
     public function ongoing_score(lesson $lesson) {
         global $USER, $DB;
 
-        $context = get_context_instance(CONTEXT_MODULE, $this->page->cm->id);
+        $context = context_module::instance($this->page->cm->id);
         if (has_capability('mod/lesson:manage', $context)) {
             return $this->output->box(get_string('teacherongoingwarning', 'lesson'), "ongoing center");
         } else {
@@ -483,7 +483,7 @@ class mod_lesson_renderer extends plugin_renderer_base {
     public function progress_bar(lesson $lesson) {
         global $CFG, $USER, $DB;
 
-        $context = get_context_instance(CONTEXT_MODULE, $this->page->cm->id);
+        $context = context_module::instance($this->page->cm->id);
 
         // lesson setting to turn progress bar on or off
         if (!$lesson->progressbar) {

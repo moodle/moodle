@@ -135,6 +135,8 @@ class moodle1_mod_wiki_handler extends moodle1_mod_handler {
      * data available
      */
     public function process_wiki($data) {
+        global $CFG;    // We need to check a config setting.
+
         if (!empty($data['initialcontent'])) {
             //convert file in <INITIALCONTENT>filename</INITIALCONTENT> into a subwiki page if no entry created.
             $temppath = $this->converter->get_tempdir_path();
@@ -167,6 +169,12 @@ class moodle1_mod_wiki_handler extends moodle1_mod_handler {
         $this->fileman->filearea = 'intro';
         $this->fileman->itemid   = 0;
         $data['intro'] = moodle1_converter::migrate_referenced_files($data['intro'], $this->fileman);
+
+        // convert the introformat if necessary
+        if ($CFG->texteditors !== 'textarea') {
+            $data['intro'] = text_to_html($data['intro'], false, false, true);
+            $data['introformat'] = FORMAT_HTML;
+        }
 
         // we now have all information needed to start writing into the file
         $this->open_xml_writer("activities/wiki_{$this->moduleid}/wiki.xml");

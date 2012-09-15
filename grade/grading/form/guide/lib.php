@@ -339,7 +339,9 @@ class gradingform_guide_controller extends gradingform_controller {
                 $modulename = substr($modulename, 4);
                 if ($dbman->table_exists($modulename)) {
                     $cm = get_coursemodule_from_id($modulename, $context->instanceid);
-                    $this->moduleinstance = $DB->get_record($modulename, array("id"=>$cm->instance));
+                    if (!empty($cm)) { // This should only occur when the course is being deleted.
+                        $this->moduleinstance = $DB->get_record($modulename, array("id"=>$cm->instance));
+                    }
                 }
             }
         }
@@ -504,6 +506,7 @@ class gradingform_guide_controller extends gradingform_controller {
         $comments = $this->definition->guide_comment;
         $options = $this->get_options();
         $guide = '';
+        $guide .= $output->box($this->get_formatted_description(), 'gradingform_guide-description');
         if (has_capability('moodle/grade:managegradingforms', $page->context)) {
             $guide .= $output->display_guide_mapping_explained($this->get_min_max_score());
             $guide .= $output->display_guide($criteria, $comments, $options, self::DISPLAY_PREVIEW, 'guide');
@@ -870,10 +873,8 @@ class gradingform_guide_instance extends gradingform_instance {
             $html .= html_writer::tag('div', get_string('restoredfromdraft', 'gradingform_guide'),
                 array('class' => 'gradingform_guide-restored'));
         }
-        if (!empty($options['showdescriptionteacher'])) {
-            $html .= html_writer::tag('div', $this->get_controller()->get_formatted_description(),
-                array('class' => 'gradingform_guide-description'));
-        }
+        $html .= html_writer::tag('div', $this->get_controller()->get_formatted_description(),
+            array('class' => 'gradingform_guide-description'));
         $html .= $this->get_controller()->get_renderer($page)->display_guide($criteria, $comments, $options, $mode,
             $gradingformelement->getName(), $value, $this->validationerrors);
         return $html;

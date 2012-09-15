@@ -29,6 +29,9 @@ require_once('export_form.php');
 
 // database ID
 $d = required_param('d', PARAM_INT);
+$exportuser = optional_param('exportuser', false, PARAM_BOOL); // Flag for exporting user details
+$exporttime = optional_param('exporttime', false, PARAM_BOOL); // Flag for exporting date/time information
+$exportapproval = optional_param('exportapproval', false, PARAM_BOOL); // Flag for exporting user details
 
 $PAGE->set_url('/mod/data/export.php', array('d'=>$d));
 
@@ -49,9 +52,7 @@ $data->course     = $cm->course;
 $data->cmidnumber = $cm->idnumber;
 $data->instance   = $cm->instance;
 
-if (! $context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
-    print_error('invalidcontext', '');
-}
+$context = context_module::instance($cm->id);
 
 require_login($course, false, $cm);
 require_capability(DATA_CAP_EXPORT, $context);
@@ -60,7 +61,6 @@ require_capability(DATA_CAP_EXPORT, $context);
 $fieldrecords = $DB->get_records('data_fields', array('dataid'=>$data->id), 'id');
 
 if(empty($fieldrecords)) {
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     if (has_capability('mod/data:managetemplates', $context)) {
         redirect($CFG->wwwroot.'/mod/data/field.php?d='.$data->id);
     } else {
@@ -75,7 +75,7 @@ foreach ($fieldrecords as $fieldrecord) {
 }
 
 
-$mform = new mod_data_export_form('export.php?d='.$data->id, $fields, $cm);
+$mform = new mod_data_export_form('export.php?d='.$data->id, $fields, $cm, $data);
 
 if($mform->is_cancelled()) {
     redirect('view.php?d='.$data->id);
@@ -108,7 +108,8 @@ foreach ($formdata as $key => $value) {
 
 $currentgroup = groups_get_activity_group($cm);
 
-$exportdata = data_get_exportdata($data->id, $fields, $selectedfields, $currentgroup);
+$exportdata = data_get_exportdata($data->id, $fields, $selectedfields, $currentgroup, $context,
+                                  $exportuser, $exporttime, $exportapproval);
 $count = count($exportdata);
 switch ($formdata['exporttype']) {
     case 'csv':

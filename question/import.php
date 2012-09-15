@@ -42,7 +42,7 @@ if (!$category = $DB->get_record("question_categories", array('id' => $catid))) 
     print_error('nocategory', 'question');
 }
 
-$categorycontext = get_context_instance_by_id($category->contextid);
+$categorycontext = context::instance_by_id($category->contextid);
 $category->context = $categorycontext;
 //this page can be called without courseid or cmid in which case
 //we get the context from the category object.

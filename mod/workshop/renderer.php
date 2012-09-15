@@ -82,6 +82,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
      * @return string HTML
      */
     protected function render_workshop_submission(workshop_submission $submission) {
+        global $CFG;
 
         $o  = '';    // output HTML code
         $anonymous = $submission->is_anonymous();
@@ -134,6 +135,15 @@ class mod_workshop_renderer extends plugin_renderer_base {
         $content = format_text($submission->content, $submission->contentformat, array('overflowdiv'=>true));
         $content = file_rewrite_pluginfile_urls($content, 'pluginfile.php', $this->page->context->id,
                                                         'mod_workshop', 'submission_content', $submission->id);
+        if (!empty($content)) {
+            if (!empty($CFG->enableplagiarism)) {
+                require_once($CFG->libdir.'/plagiarismlib.php');
+                $content .= plagiarism_get_links(array('userid' => $submission->authorid,
+                    'content' => $submission->content,
+                    'cmid' => $this->page->cm->id,
+                    'course' => $this->page->course));
+            }
+        }
         $o .= $this->output->container($content, 'content');
 
         $o .= $this->helper_submission_attachments($submission->id, 'html');
@@ -766,6 +776,14 @@ class mod_workshop_renderer extends plugin_renderer_base {
 
             } else if ($format == 'text') {
                 $outputfiles .= $linktxt . PHP_EOL;
+            }
+
+            if (!empty($CFG->enableplagiarism)) {
+                require_once($CFG->libdir.'/plagiarismlib.php');
+                $outputfiles .= plagiarism_get_links(array('userid' => $file->get_userid(),
+                    'file' => $file,
+                    'cmid' => $this->page->cm->id,
+                    'course' => $this->page->course->id));
             }
         }
 

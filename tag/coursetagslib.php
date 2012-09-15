@@ -232,7 +232,7 @@ function coursetag_print_cloud($tagcloud, $return=false, $max_size=180, $min_siz
 
     $step = ($max_size - $min_size)/($spread);
 
-    $systemcontext   = get_context_instance(CONTEXT_SYSTEM);
+    $systemcontext   = context_system::instance();
     $can_manage_tags = has_capability('moodle/tag:manage', $systemcontext);
 
     //prints the tag cloud

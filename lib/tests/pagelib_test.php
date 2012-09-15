@@ -65,7 +65,7 @@ class moodle_page_test extends advanced_testcase {
     public function test_setting_course_works() {
         // Setup fixture
         $course = $this->getDataGenerator()->create_course();
-        $this->testpage->set_context(get_context_instance(CONTEXT_SYSTEM)); // Avoid trying to set the context.
+        $this->testpage->set_context(context_system::instance()); // Avoid trying to set the context.
         // Exercise SUT
         $this->testpage->set_course($course);
         // Validate
@@ -76,7 +76,7 @@ class moodle_page_test extends advanced_testcase {
         global $COURSE, $PAGE;
         // Setup fixture
         $course = $this->getDataGenerator()->create_course();
-        $this->testpage->set_context(get_context_instance(CONTEXT_SYSTEM)); // Avoid trying to set the context.
+        $this->testpage->set_context(context_system::instance()); // Avoid trying to set the context.
         $PAGE = $this->testpage;
         // Exercise SUT
         $this->testpage->set_course($course);
@@ -89,7 +89,7 @@ class moodle_page_test extends advanced_testcase {
         $originalcourse = $COURSE;
         // Setup fixture
         $course = $this->getDataGenerator()->create_course();
-        $this->testpage->set_context(get_context_instance(CONTEXT_SYSTEM)); // Avoid trying to set the context.
+        $this->testpage->set_context(context_system::instance()); // Avoid trying to set the context.
         // Exercise SUT
         $this->testpage->set_course($course);
         // Validate
@@ -118,7 +118,7 @@ class moodle_page_test extends advanced_testcase {
     public function test_cannot_set_category_once_course_set() {
         // Setup fixture
         $course = $this->getDataGenerator()->create_course();
-        $this->testpage->set_context(get_context_instance(CONTEXT_SYSTEM)); // Avoid trying to set the context.
+        $this->testpage->set_context(context_system::instance()); // Avoid trying to set the context.
         $this->testpage->set_course($course);
         // Set expectation.
         $this->setExpectedException('coding_exception');
@@ -129,7 +129,7 @@ class moodle_page_test extends advanced_testcase {
     public function test_categories_array_empty_for_front_page() {
         global $SITE;
         // Setup fixture
-        $this->testpage->set_context(get_context_instance(CONTEXT_SYSTEM)); // Avoid trying to set the context.
+        $this->testpage->set_context(context_system::instance()); // Avoid trying to set the context.
         $this->testpage->set_course($SITE);
         // Exercise SUT and validate.
         $this->assertEquals(array(), $this->testpage->categories);
@@ -137,7 +137,7 @@ class moodle_page_test extends advanced_testcase {
 
     public function test_set_state_normal_path() {
         $course = $this->getDataGenerator()->create_course();
-        $this->testpage->set_context(get_context_instance(CONTEXT_SYSTEM));
+        $this->testpage->set_context(context_system::instance());
         $this->testpage->set_course($course);
 
         $this->assertEquals(moodle_page::STATE_BEFORE_HEADER, $this->testpage->state);
@@ -166,7 +166,7 @@ class moodle_page_test extends advanced_testcase {
 
     public function test_header_printed_becomes_true() {
         $course = $this->getDataGenerator()->create_course();
-        $this->testpage->set_context(get_context_instance(CONTEXT_SYSTEM));
+        $this->testpage->set_context(context_system::instance());
         $this->testpage->set_course($course);
 
         // Exercise SUT
@@ -564,7 +564,7 @@ class moodle_page_editing_test extends advanced_testcase {
         parent::setUp();
         $this->setAdminUser();
         $this->testpage = new testable_moodle_page();
-        $this->testpage->set_context(get_context_instance(CONTEXT_SYSTEM));
+        $this->testpage->set_context(context_system::instance());
         $this->resetAfterTest();
     }
 

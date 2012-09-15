@@ -32,8 +32,13 @@ class moodle1_workshopform_comments_handler extends moodle1_workshopform_handler
 
     /**
      * Converts <ELEMENT> into <workshopform_comments_dimension>
+     *
+     * @param array $data legacy element data
+     * @param array $raw raw element data
+     *
+     * @return array converted
      */
-    public function process_legacy_element($data, $raw) {
+    public function process_legacy_element(array $data, array $raw) {
         // prepare a fake record and re-use the upgrade logic
         $fakerecord = (object)$data;
         $converted = (array)workshopform_comments_upgrade_element($fakerecord, 12345678);

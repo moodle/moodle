@@ -33,10 +33,12 @@
  *
  * @param mixed $grouporid  The group id or group object
  * @param mixed $userorid   The user id or user object
+ * @param string $component Optional component name e.g. 'enrol_imsenterprise'
+ * @param int $itemid Optional itemid associated with component
  * @return bool True if user added successfully or the user is already a
  * member of the group, false otherwise.
  */
-function groups_add_member($grouporid, $userorid) {
+function groups_add_member($grouporid, $userorid, $component=null, $itemid=0) {
     global $DB;
 
     if (is_object($userorid)) {
@@ -56,7 +58,7 @@ function groups_add_member($grouporid, $userorid) {
     }
 
     //check if the user a participant of the group course
-    if (!is_enrolled(get_context_instance(CONTEXT_COURSE, $group->courseid), $userid)) {
+    if (!is_enrolled(context_course::instance($group->courseid), $userid)) {
         return false;
     }
 
@@ -68,6 +70,25 @@ function groups_add_member($grouporid, $userorid) {
     $member->groupid   = $groupid;
     $member->userid    = $userid;
     $member->timeadded = time();
+    $member->component = '';
+    $member->itemid = 0;
+
+    // Check the component exists if specified
+    if (!empty($component)) {
+        $dir = get_component_directory($component);
+        if ($dir && is_dir($dir)) {
+            // Component exists and can be used
+            $member->component = $component;
+            $member->itemid = $itemid;
+        } else {
+            throw new coding_exception('Invalid call to groups_add_member(). An invalid component was specified');
+        }
+    }
+
+    if ($itemid !== 0 && empty($member->component)) {
+        // An itemid can only be specified if a valid component was found
+        throw new coding_exception('Invalid call to groups_add_member(). A component must be specified if an itemid is given');
+    }
 
     $DB->insert_record('groups_members', $member);
 
@@ -78,9 +99,60 @@ function groups_add_member($grouporid, $userorid) {
     $eventdata = new stdClass();
     $eventdata->groupid = $groupid;
     $eventdata->userid  = $userid;
+    $eventdata->component = $member->component;
+    $eventdata->itemid = $member->itemid;
     events_trigger('groups_member_added', $eventdata);
 
     return true;
+}
+
+/**
+ * Checks whether the current user is permitted (using the normal UI) to
+ * remove a specific group member, assuming that they have access to remove
+ * group members in general.
+ *
+ * For automatically-created group member entries, this checks with the
+ * relevant plugin to see whether it is permitted. The default, if the plugin
+ * doesn't provide a function, is true.
+ *
+ * For other entries (and any which have already been deleted/don't exist) it
+ * just returns true.
+ *
+ * @param mixed $grouporid The group id or group object
+ * @param mixed $userorid The user id or user object
+ * @return bool True if permitted, false otherwise
+ */
+function groups_remove_member_allowed($grouporid, $userorid) {
+    global $DB;
+
+    if (is_object($userorid)) {
+        $userid = $userorid->id;
+    } else {
+        $userid = $userorid;
+    }
+    if (is_object($grouporid)) {
+        $groupid = $grouporid->id;
+    } else {
+        $groupid = $grouporid;
+    }
+
+    // Get entry
+    if (!($entry = $DB->get_record('groups_members',
+            array('groupid' => $groupid, 'userid' => $userid), '*', IGNORE_MISSING))) {
+        // If the entry does not exist, they are allowed to remove it (this
+        // is consistent with groups_remove_member below).
+        return true;
+    }
+
+    // If the entry does not have a component value, they can remove it
+    if (empty($entry->component)) {
+        return true;
+    }
+
+    // It has a component value, so we need to call a plugin function (if it
+    // exists); the default is to allow removal
+    return component_callback($entry->component, 'allow_group_member_remove',
+            array($entry->itemid, $entry->groupid, $entry->userid), true);
 }
 
 /**
@@ -140,7 +212,7 @@ function groups_create_group($data, $editform = false, $editoroptions = false) {
 
     //check that courseid exists
     $course = $DB->get_record('course', array('id' => $data->courseid), '*', MUST_EXIST);
-    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+    $context = context_course::instance($course->id);
 
     $data->timecreated  = time();
     $data->timemodified = $data->timecreated;
@@ -236,7 +308,7 @@ function groups_update_group_icon($group, $data, $editform) {
     require_once("$CFG->libdir/gdlib.php");
 
     $fs = get_file_storage();
-    $context = get_context_instance(CONTEXT_COURSE, $group->courseid, MUST_EXIST);
+    $context = context_course::instance($group->courseid, MUST_EXIST);
 
     //TODO: it would make sense to allow picture deleting too (skodak)
 
@@ -264,7 +336,7 @@ function groups_update_group_icon($group, $data, $editform) {
 function groups_update_group($data, $editform = false, $editoroptions = false) {
     global $CFG, $DB;
 
-    $context = get_context_instance(CONTEXT_COURSE, $data->courseid);
+    $context = context_course::instance($data->courseid);
 
     $data->timemodified = time();
     $data->name         = trim($data->name);
@@ -353,7 +425,7 @@ function groups_delete_group($grouporid) {
     $DB->delete_records('groups', array('id'=>$groupid));
 
     // Delete all files associated with this group
-    $context = get_context_instance(CONTEXT_COURSE, $group->courseid);
+    $context = context_course::instance($group->courseid);
     $fs = get_file_storage();
     $fs->delete_area_files($context->id, 'group', 'description', $groupid);
     $fs->delete_area_files($context->id, 'group', 'icon', $groupid);
@@ -393,7 +465,7 @@ function groups_delete_grouping($groupingorid) {
     //group itself last
     $DB->delete_records('groupings', array('id'=>$groupingid));
 
-    $context = get_context_instance(CONTEXT_COURSE, $grouping->courseid);
+    $context = context_course::instance($grouping->courseid);
     $fs = get_file_storage();
     $files = $fs->get_area_files($context->id, 'grouping', 'description', $groupingid);
     foreach ($files as $file) {
@@ -484,7 +556,7 @@ function groups_delete_groups($courseid, $showfeedback=false) {
     groups_delete_group_members($courseid, 0, $showfeedback);
 
     // delete group pictures and descriptions
-    $context = get_context_instance(CONTEXT_COURSE, $courseid);
+    $context = context_course::instance($courseid);
     $fs = get_file_storage();
     $fs->delete_area_files($context->id, 'group');
 
@@ -492,7 +564,7 @@ function groups_delete_groups($courseid, $showfeedback=false) {
     $groupssql = "SELECT id FROM {groups} g WHERE g.courseid = ?";
     $DB->delete_records_select('event', "groupid IN ($groupssql)", array($courseid));
 
-    $context = get_context_instance(CONTEXT_COURSE, $courseid);
+    $context = context_course::instance($courseid);
     $fs = get_file_storage();
     $fs->delete_area_files($context->id, 'group');
 
@@ -529,7 +601,7 @@ function groups_delete_groupings($courseid, $showfeedback=false) {
     $DB->set_field('course_modules', 'groupingid', 0, array('course'=>$courseid));
 
     // Delete all files associated with groupings for this course
-    $context = get_context_instance(CONTEXT_COURSE, $courseid);
+    $context = context_course::instance($courseid);
     $fs = get_file_storage();
     $fs->delete_area_files($context->id, 'grouping');
 
@@ -574,7 +646,7 @@ function groups_get_possible_roles($context) {
 function groups_get_potential_members($courseid, $roleid = null, $cohortid = null, $orderby = 'lastname ASC, firstname ASC') {
     global $DB;
 
-    $context = get_context_instance(CONTEXT_COURSE, $courseid);
+    $context = context_course::instance($courseid);
 
     // we are looking for all users with this role assigned in this context or higher
     $listofcontexts = get_related_contexts_string($context);
@@ -689,7 +761,7 @@ function groups_get_members_by_role($groupid, $courseid, $fields='u.*',
 
     // Retrieve information about all users and their roles on the course or
     // parent ('related') contexts
-    $context = get_context_instance(CONTEXT_COURSE, $courseid);
+    $context = context_course::instance($courseid);
 
     if ($extrawheretest) {
         $extrawheretest = ' AND ' . $extrawheretest;

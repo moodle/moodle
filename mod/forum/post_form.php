@@ -138,7 +138,7 @@ class mod_forum_post_form extends moodleform {
         if (groups_get_activity_groupmode($cm, $course)) { // hack alert
             $groupdata = groups_get_activity_allowed_groups($cm);
             $groupcount = count($groupdata);
-            $modulecontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+            $modulecontext = context_module::instance($cm->id);
             $contextcheck = has_capability('mod/forum:movediscussions', $modulecontext) && empty($post->parent) && $groupcount > 1;
             if ($contextcheck) {
                 $groupinfo = array('0' => get_string('allparticipants'));

@@ -79,7 +79,7 @@ class question_dataset_dependent_items_form extends question_wizard_form {
             print_error('categorydoesnotexist', 'question', $returnurl);
         }
         $this->category = $category;
-        $this->categorycontext = get_context_instance_by_id($category->contextid);
+        $this->categorycontext = context::instance_by_id($category->contextid);
         //get the dataset defintions for this question
         if (empty($question->id)) {
             $this->datasetdefs = $this->qtypeobj->get_dataset_definitions(

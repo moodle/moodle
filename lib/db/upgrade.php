@@ -85,7 +85,7 @@ defined('MOODLE_INTERNAL') || die();
  * @return bool always true
  */
 function xmldb_main_upgrade($oldversion) {
-    global $CFG, $USER, $DB, $OUTPUT;
+    global $CFG, $USER, $DB, $OUTPUT, $SITE;
 
     require_once($CFG->libdir.'/db/upgradelib.php'); // Core Upgrade-related functions
 
@@ -1067,6 +1067,131 @@ function xmldb_main_upgrade($oldversion) {
 
         // Main savepoint reached
         upgrade_main_savepoint(true, 2012072401.00);
+    }
+
+    if ($oldversion < 2012072600.01) {
+        // Handle events with empty eventtype //MDL-32827
+
+        $DB->set_field('event', 'eventtype', 'site', array('eventtype' => '', 'courseid' => $SITE->id));
+        $DB->set_field_select('event', 'eventtype', 'due', "eventtype = '' AND courseid != 0 AND groupid = 0 AND (modulename = 'assignment' OR modulename = 'assign')");
+        $DB->set_field_select('event', 'eventtype', 'course', "eventtype = '' AND courseid != 0 AND groupid = 0");
+        $DB->set_field_select('event', 'eventtype', 'group', "eventtype = '' AND groupid != 0");
+        $DB->set_field_select('event', 'eventtype', 'user', "eventtype = '' AND userid != 0");
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2012072600.01);
+    }
+
+    if ($oldversion < 2012080200.02) {
+        // Drop obsolete question upgrade field that should have been added to the install.xml.
+        $table = new xmldb_table('question');
+        $field = new xmldb_field('oldquestiontextformat', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0');
+
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        upgrade_main_savepoint(true, 2012080200.02);
+    }
+
+    if ($oldversion < 2012081400.01) {
+        // Move the ability to disable blogs to its own setting MDL-25012.
+
+        if (isset($CFG->bloglevel)) {
+            // Only change settings if existing setting was set.
+            if (empty($CFG->bloglevel)) {
+                set_config('enableblogs', 0);
+                // Now set the bloglevel to a valid setting as the disabled setting has been removed.
+                // This prevents confusing results when users enable the blog system in future.
+                set_config('bloglevel', BLOG_USER_LEVEL);
+            } else {
+                set_config('enableblogs', 1);
+            }
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2012081400.01);
+    }
+
+    if ($oldversion < 2012081600.01) {
+        // Delete removed setting - Google Maps API V2 will not work in 2013.
+        unset_config('googlemapkey');
+        upgrade_main_savepoint(true, 2012081600.01);
+    }
+
+    if ($oldversion < 2012082300.01) {
+        // Add more custom enrol fields.
+        $table = new xmldb_table('enrol');
+
+        $field = new xmldb_field('customint5', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'customint4');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('customint6', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'customint5');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('customint7', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'customint6');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('customint8', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'customint7');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('customchar3', XMLDB_TYPE_CHAR, '1333', null, null, null, null, 'customchar2');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('customtext3', XMLDB_TYPE_TEXT, null, null, null, null, null, 'customtext2');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('customtext4', XMLDB_TYPE_TEXT, null, null, null, null, null, 'customtext3');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2012082300.01);
+    }
+
+    if ($oldversion < 2012082300.02) {
+        // Define field component to be added to groups_members
+        $table = new xmldb_table('groups_members');
+        $field = new xmldb_field('component', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null, 'timeadded');
+
+        // Conditionally launch add field component
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field itemid to be added to groups_members
+        $field = new xmldb_field('itemid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'component');
+
+        // Conditionally launch add field itemid
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2012082300.02);
+    }
+
+    if ($oldversion < 2012090500.00) {
+        $subquery = 'SELECT b.id FROM {blog_external} b where b.id = ' . $DB->sql_cast_char2int('{post}.content', true);
+        $sql = 'DELETE FROM {post}
+                      WHERE {post}.module = \'blog_external\'
+                            AND NOT EXISTS (' . $subquery . ')
+                            AND ' . $DB->sql_isnotempty('post', 'uniquehash', false, false);
+        $DB->execute($sql);
+        upgrade_main_savepoint(true, 2012090500.00);
     }
 
     return true;

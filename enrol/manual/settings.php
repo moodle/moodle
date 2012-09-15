@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,8 +17,7 @@
 /**
  * Manual enrolment plugin settings and presets.
  *
- * @package    enrol
- * @subpackage manual
+ * @package    enrol_manual
  * @copyright  2010 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -44,8 +42,8 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configselect('enrol_manual/status',
         get_string('status', 'enrol_manual'), get_string('status_desc', 'enrol_manual'), ENROL_INSTANCE_ENABLED, $options));
 
-    $settings->add(new admin_setting_configtext('enrol_manual/enrolperiod',
-        get_string('defaultperiod', 'enrol_manual'), get_string('defaultperiod_desc', 'enrol_manual'), 0, PARAM_INT));
+    $settings->add(new admin_setting_configduration('enrol_manual/enrolperiod',
+        get_string('defaultperiod', 'enrol_manual'), get_string('defaultperiod_desc', 'enrol_manual'), 0));
 
     if (!during_initial_install()) {
         $options = get_default_enrol_roles(context_system::instance());
@@ -55,4 +53,3 @@ if ($ADMIN->fulltree) {
             get_string('defaultrole', 'role'), '', $student->id, $options));
     }
 }
-

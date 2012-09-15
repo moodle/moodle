@@ -58,7 +58,7 @@ class block_blog_menu extends block_base {
             return $this->content;
         }
 
-        if (empty($CFG->bloglevel)) {
+        if (empty($CFG->enableblogs)) {
             $this->content = new stdClass();
             $this->content->text = '';
             if ($this->page->user_is_editing()) {

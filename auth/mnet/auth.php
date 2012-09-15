@@ -81,7 +81,7 @@ class auth_plugin_mnet extends auth_plugin_base {
 
         if (array_key_exists('picture', $userdata) && !empty($user->picture)) {
             $fs = get_file_storage();
-            $usercontext = get_context_instance(CONTEXT_USER, $user->id, MUST_EXIST);
+            $usercontext = context_user::instance($user->id, MUST_EXIST);
             if ($usericonfile = $fs->get_file($usercontext->id, 'user', 'icon', 0, '/', 'f1.png')) {
                 $userdata['_mnet_userpicture_timemodified'] = $usericonfile->get_timemodified();
                 $userdata['_mnet_userpicture_mimetype'] = $usericonfile->get_mimetype();
@@ -299,7 +299,7 @@ class auth_plugin_mnet extends auth_plugin_base {
 
             if ($key == '_mnet_userpicture_timemodified' and empty($CFG->disableuserimages) and isset($remoteuser->picture)) {
                 // update the user picture if there is a newer verion at the identity provider
-                $usercontext = get_context_instance(CONTEXT_USER, $localuser->id, MUST_EXIST);
+                $usercontext = context_user::instance($localuser->id, MUST_EXIST);
                 if ($usericonfile = $fs->get_file($usercontext->id, 'user', 'icon', 0, '/', 'f1.png')) {
                     $localtimemodified = $usericonfile->get_timemodified();
                 } else if ($usericonfile = $fs->get_file($usercontext->id, 'user', 'icon', 0, '/', 'f1.jpg')) {
@@ -1136,7 +1136,7 @@ class auth_plugin_mnet extends auth_plugin_base {
 
         if ($user = $DB->get_record('user', array('username' => $username, 'mnethostid' => $CFG->mnet_localhost_id))) {
             $fs = get_file_storage();
-            $usercontext = get_context_instance(CONTEXT_USER, $user->id, MUST_EXIST);
+            $usercontext = context_user::instance($user->id, MUST_EXIST);
             $return = array();
             if ($f1 = $fs->get_file($usercontext->id, 'user', 'icon', 0, '/', 'f1.png')) {
                 $return['f1'] = base64_encode($f1->get_content());

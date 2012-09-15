@@ -65,14 +65,10 @@ $url = new moodle_url('/mod/feedback/show_nonrespondents.php', array('id'=>$cm->
 
 $PAGE->set_url($url);
 
-if (!$context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
-        print_error('badcontext');
-}
+$context = context_module::instance($cm->id);
 
 //we need the coursecontext to allow sending of mass mails
-if (!$coursecontext = get_context_instance(CONTEXT_COURSE, $course->id)) {
-        print_error('badcontext');
-}
+$coursecontext = context_course::instance($course->id);
 
 require_login($course, true, $cm);
 
@@ -85,7 +81,7 @@ require_capability('mod/feedback:viewreports', $context);
 if ($action == 'sendmessage' AND has_capability('moodle/course:bulkmessaging', $coursecontext)) {
     $shortname = format_string($course->shortname,
                             true,
-                            array('context' => get_context_instance(CONTEXT_COURSE, $course->id)));
+                            array('context' => $coursecontext));
     $strfeedbacks = get_string("modulenameplural", "feedback");
 
     $htmlmessage = "<body id=\"email\">";
@@ -288,6 +284,7 @@ if (!$students) {
             print_string('formathtml');
             echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';
         } else {
+            echo '<label for="menuformat" class="accesshide">'. get_string('format') .'</label>';
             choose_from_menu(format_text_menu(), "format", $format, "");
         }
         echo '<br /><div class="buttons">';

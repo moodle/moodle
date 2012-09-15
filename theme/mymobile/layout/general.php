@@ -210,7 +210,7 @@ echo $OUTPUT->doctype() ?>
 
                 <div data-role="fieldcontain" id="sliderdiv">
                     <label for="slider"><?php p(get_string('mtoggle','theme_mymobile')); ?>:</label>
-                    <select name="slider" class="slider" data-role="slider">
+                    <select name="slider" class="slider" data-role="slider" id="slider">
                         <option value="on">On</option>
                         <option value="off">Off</option>
                     </select>

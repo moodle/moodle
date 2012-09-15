@@ -328,7 +328,7 @@ class external_api {
             throw new invalid_parameter_exception('Context does not exist');
         }
         if (empty(self::$contextrestriction)) {
-            self::$contextrestriction = get_context_instance(CONTEXT_SYSTEM);
+            self::$contextrestriction = context_system::instance();
         }
         $rcontext = self::$contextrestriction;
 
@@ -520,7 +520,7 @@ function external_generate_token($tokentype, $serviceorid, $userid, $contextorid
         $service = $serviceorid;
     }
     if (!is_object($contextorid)){
-        $context = get_context_instance_by_id($contextorid, MUST_EXIST);
+        $context = context::instance_by_id($contextorid, MUST_EXIST);
     } else {
         $context = $contextorid;
     }

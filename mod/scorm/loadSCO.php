@@ -49,7 +49,16 @@ if (!empty($id)) {
 
 $PAGE->set_url('/mod/scorm/loadSCO.php', array('scoid'=>$scoid, 'id'=>$cm->id));
 
-require_login($course, false, $cm);
+if (!isloggedin()) { // Prevent login page from being shown in iframe.
+    // Using simple html instead of exceptions here as shown inside iframe/object.
+    echo html_writer::start_tag('html');
+    echo html_writer::tag('head', '');
+    echo html_writer::tag('body', get_string('loggedinnot'));
+    echo html_writer::end_tag('html');
+    exit;
+}
+
+require_login($course, false, $cm, false); // Call require_login anyway to set up globals correctly.
 
 //check if scorm closed
 $timenow = time();

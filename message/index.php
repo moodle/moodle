@@ -82,14 +82,14 @@ $url->param('viewing', $viewing);
 
 $PAGE->set_url($url);
 
-$PAGE->set_context(get_context_instance(CONTEXT_USER, $USER->id));
+$PAGE->set_context(context_user::instance($USER->id));
 $PAGE->navigation->extend_for_user($USER);
 $PAGE->set_pagelayout('course');
 
 // Disable message notification popups while the user is viewing their messages
 $PAGE->set_popup_notification_allowed(false);
 
-$context = get_context_instance(CONTEXT_SYSTEM);
+$context = context_system::instance();
 
 $user1 = null;
 $currentuser = true;
@@ -153,7 +153,7 @@ if ($currentuser && !empty($user2) && has_capability('moodle/site:sendmessage', 
 
     if (!empty($userpreferences['message_blocknoncontacts'])) {  // User is blocking non-contacts
         if (empty($contact)) {   // We are not a contact!
-            $messageerror = get_string('userisblockingyounoncontact', 'message');
+            $messageerror = get_string('userisblockingyounoncontact', 'message', fullname($user2));
         }
     }
 
@@ -287,8 +287,19 @@ echo html_writer::start_tag('div', array('class' => 'messagearea mdl-align'));
         if ($currentuser && has_capability('moodle/site:sendmessage', $context)) {
             echo html_writer::start_tag('div', array('class' => 'mdl-align messagesend'));
                 if (!empty($messageerror)) {
-                    echo $OUTPUT->heading($messageerror, 3);
+                    echo html_writer::tag('span', $messageerror, array('id' => 'messagewarning'));
                 } else {
+                    // Display a warning if the current user is blocking non-contacts and is about to message to a non-contact
+                    // Otherwise they may wonder why they never get a reply
+                    $blocknoncontacts = get_user_preferences('message_blocknoncontacts', '', $user1->id);
+                    if (!empty($blocknoncontacts)) {
+                        $contact = $DB->get_record('message_contacts', array('userid' => $user1->id, 'contactid' => $user2->id));
+                        if (empty($contact)) {
+                            $msg = get_string('messagingblockednoncontact', 'message', fullname($user2));
+                            echo html_writer::tag('span', $msg, array('id' => 'messagewarning'));
+                        }
+                    }
+
                     $mform = new send_form();
                     $defaultmessage = new stdClass;
                     $defaultmessage->id = $user2->id;

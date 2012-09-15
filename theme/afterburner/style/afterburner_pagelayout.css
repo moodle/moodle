@@ -1,0 +1,112 @@
+/* Page Layout for Afterburner Moodle 2.4 Theme
+using Matthew James Taylor's Perfect Holy Grail Percentage Layout
+-----------------------------------------------------------------*/
+html {
+    margin: 0;
+    padding: 0;
+    background-color: #fff;
+}
+body {
+    margin: 0;
+    padding: 0;
+    min-width: 775px;
+    background: #fff url([[pix:theme|core/bground]]) repeat-x fixed;
+}
+#page-wrapper {
+    width: 90%;
+    margin: 0 auto;
+    background: none;
+    border: 1px solid #eee;
+}
+#page {
+    width: 100%;
+    margin: 0 auto;
+    padding: 0;
+    background: none;
+}
+/*
+3 Column Page Layout
+-----------------------*/
+
+#page-content {
+    clear: both;
+    float: left;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+    background-color: #eee;      /* Right column background colour */
+}
+#region-main-box {
+    float: left;
+    right: 25%;
+    position: relative;
+    width: 100%;
+    background-color: #fff;      /* Center column background colour */
+}
+#region-pre-box {
+    float: left;
+    right: 50%;
+    position: relative;
+    width: 100%;
+    background-color: #d1e0e7;   /* Left column background colour */
+}
+#region-main {
+    float: left;
+    overflow: hidden;
+    position: relative;
+    width: 50%;
+    left: 100%;
+    background-color: #fff;
+}
+#region-pre {
+    float: left;
+    overflow: hidden;
+    position: relative;
+    width: 25%;
+    left: 25%;
+}
+#region-post {
+    float: left;
+    overflow: hidden;
+    position: relative;
+    width: 25%;
+    left: 75%;
+
+}
+#region-main .region-content {
+    padding: 0 20px;
+}
+#page-footer {
+    clear: both;
+    float: left;
+    width: 100%;
+}
+
+/** SIDE-PRE-ONLY **/
+
+.side-pre-only #region-main-box {right: 0%;}
+.side-pre-only #region-pre-box {right: 77%;}
+.side-pre-only #region-main {left: 100%; width: 77%;}
+.side-pre-only #region-pre {left: 0; width: 23%;}
+.side-pre-only #region-post {width: 0;}
+
+
+/** SIDE-POST-ONLY **/
+
+.side-post-only #region-main-box {right: 23%;}
+.side-post-only #region-pre-box {right: 0; background-color: #fff;}
+.side-post-only #region-main {left: 25%; width: 75%;}
+.side-post-only #region-pre {width: 0;}
+.side-post-only #region-post {left: 25%; width: 23%;}
+.has_dock.side-post-only #region-main {margin-left: 0;}
+
+/** CONTENT ONLY - NO BLOCKS WHATSOEVER **/
+
+.content-only #region-main-box {right: 0;}
+.content-only #region-pre-box {right: 0;}
+.content-only #region-main {left: 0; width: 100%;}
+.content-only #region-pre {width: 0;}
+.content-only #region-post {width: 0;}
+
+.pagelayout-report #page-content #region-main {overflow:auto;}
+.pagelayout-report #page-content #region-main .region-content {overflow: visible;}

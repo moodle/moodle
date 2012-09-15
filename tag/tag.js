@@ -2,9 +2,9 @@ var coursetagdivs = null;
 var coursetag_tags = new Array();
 
 function init_tag_autocomplete() {
-
-    var myDataSource = new YAHOO.util.XHRDataSource("./tag_autocomplete.php");
-    myDataSource.responseType = YAHOO.util.XHRDataSource.TYPE_TEXT;
+YUI().use('yui2-autocomplete', 'yui2-datasource', 'yui2-animation', 'yui2-connection', function(Y) {
+    var myDataSource = new Y.YUI2.util.XHRDataSource("./tag_autocomplete.php");
+    myDataSource.responseType = Y.YUI2.util.XHRDataSource.TYPE_TEXT;
     myDataSource.responseSchema = {
         recordDelim: "\n",
         fieldDelim: "\t"
@@ -13,7 +13,7 @@ function init_tag_autocomplete() {
     myDataSource.minQueryLength = 3;
 
     // Instantiate the AutoComplete
-    var myAutoComp = new YAHOO.widget.AutoComplete("id_relatedtags", "relatedtags-autocomplete", myDataSource);
+    var myAutoComp = new Y.YUI2.widget.AutoComplete("id_relatedtags", "relatedtags-autocomplete", myDataSource);
     document.getElementById('id_relatedtags').style.width = '30%';
     myAutoComp.allowBrowserAutocomplete = false;
     myAutoComp.maxResultsDisplayed = 20;
@@ -26,7 +26,7 @@ function init_tag_autocomplete() {
         myDataSource: myDataSource,
         myAutoComp: myAutoComp
     };
-
+});
 }
 
 function ctags_checkinput(val) {
@@ -63,7 +63,9 @@ function add_tag_footer_link(eid, ltitle, laction, ltext) {
         var callback = function () {
             ctags_show_div(laction);
         };
-        YAHOO.util.Event.addListener(link, 'click', callback);
+        YUI().use('yui2-event', function(Y) {
+            Y.YUI2.util.Event.addListener(link, 'click', callback);
+        });
         if (e.childNodes.length > 0) {
             e.appendChild(document.createTextNode(' | '));
         } else {

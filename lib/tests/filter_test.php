@@ -298,7 +298,7 @@ class filter_active_local_testcase extends advanced_testcase {
      */
     public function test_throws_exception_when_setting_global() {
         // Exercise SUT.
-        filter_set_local_state('filter/name', get_context_instance(CONTEXT_SYSTEM)->id, TEXTFILTER_INHERIT);
+        filter_set_local_state('filter/name', context_system::instance()->id, TEXTFILTER_INHERIT);
     }
 
     public function test_local_inherit_deletes_existing() {

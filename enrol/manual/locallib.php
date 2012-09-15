@@ -17,8 +17,7 @@
 /**
  * Auxiliary manual user enrolment lib, the main purpose is to lower memory requirements...
  *
- * @package    enrol
- * @subpackage manual
+ * @package    enrol_manual
  * @copyright  2010 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,7 +29,7 @@ require_once($CFG->dirroot . '/enrol/locallib.php');
 
 
 /**
- * Enrol candidates
+ * Enrol candidates.
  */
 class enrol_manual_potential_participant extends user_selector_base {
     protected $enrolid;
@@ -42,12 +41,12 @@ class enrol_manual_potential_participant extends user_selector_base {
 
     /**
      * Candidate users
-     * @param <type> $search
+     * @param string $search
      * @return array
      */
     public function find_users($search) {
         global $DB;
-        //by default wherecondition retrieves all users except the deleted, not confirmed and guest
+        // By default wherecondition retrieves all users except the deleted, not confirmed and guest.
         list($wherecondition, $params) = $this->search_sql($search, 'u');
         $params['enrolid'] = $this->enrolid;
 
@@ -55,11 +54,9 @@ class enrol_manual_potential_participant extends user_selector_base {
         $countfields = 'SELECT COUNT(1)';
 
         $sql = " FROM {user} u
-                WHERE $wherecondition AND
-                      u.id NOT IN (
-                          SELECT ue.userid
-                            FROM {user_enrolments} ue
-                            JOIN {enrol} e ON (e.id = ue.enrolid AND e.id = :enrolid))";
+            LEFT JOIN {user_enrolments} ue ON (ue.userid = u.id AND ue.enrolid = :enrolid)
+                WHERE $wherecondition
+                      AND ue.id IS NULL";
         $order = ' ORDER BY u.lastname ASC, u.firstname ASC';
 
         if (!$this->is_validating()) {
@@ -94,7 +91,7 @@ class enrol_manual_potential_participant extends user_selector_base {
 }
 
 /**
- * Enroled users
+ * Enrolled users.
  */
 class enrol_manual_current_participant extends user_selector_base {
     protected $courseid;
@@ -107,12 +104,12 @@ class enrol_manual_current_participant extends user_selector_base {
 
     /**
      * Candidate users
-     * @param <type> $search
+     * @param string $search
      * @return array
      */
     public function find_users($search) {
         global $DB;
-        //by default wherecondition retrieves all users except the deleted, not confirmed and guest
+        // By default wherecondition retrieves all users except the deleted, not confirmed and guest.
         list($wherecondition, $params) = $this->search_sql($search, 'u');
         $params['enrolid'] = $this->enrolid;
 
@@ -184,7 +181,6 @@ class enrol_manual_editselectedusers_operation extends enrol_bulk_enrolment_oper
     /**
      * Processes the bulk operation request for the given userids with the provided properties.
      *
-     * @global moodle_database $DB
      * @param course_enrolment_manager $manager
      * @param array $userids
      * @param stdClass $properties The data returned by the form.
@@ -196,7 +192,7 @@ class enrol_manual_editselectedusers_operation extends enrol_bulk_enrolment_oper
             return false;
         }
 
-        // Get all of the user enrolment id's
+        // Get all of the user enrolment id's.
         $ueids = array();
         $instances = array();
         foreach ($users as $user) {
@@ -239,15 +235,15 @@ class enrol_manual_editselectedusers_operation extends enrol_bulk_enrolment_oper
             return true;
         }
 
-        // Update the modifierid
+        // Update the modifierid.
         $updatesql[] = 'modifierid = :modifierid';
         $params['modifierid'] = (int)$USER->id;
 
-        // Update the time modified
+        // Update the time modified.
         $updatesql[] = 'timemodified = :timemodified';
         $params['timemodified'] = time();
 
-        // Build the SQL statement
+        // Build the SQL statement.
         $updatesql = join(', ', $updatesql);
         $sql = "UPDATE {user_enrolments}
                    SET $updatesql
@@ -355,4 +351,102 @@ class enrol_manual_deleteselectedusers_operation extends enrol_bulk_enrolment_op
         }
         return true;
     }
+}
+
+/**
+ * Migrates all enrolments of the given plugin to enrol_manual plugin,
+ * this is used for example during plugin uninstallation.
+ *
+ * NOTE: this function does not trigger role and enrolment related events.
+ *
+ * @param string $enrol  The enrolment method.
+ */
+function enrol_manual_migrate_plugin_enrolments($enrol) {
+    global $DB;
+
+    if ($enrol === 'manual') {
+        // We can not migrate to self.
+        return;
+    }
+
+    $manualplugin = enrol_get_plugin('manual');
+
+    $params = array('enrol'=>$enrol);
+    $sql = "SELECT e.id, e.courseid, e.status, MIN(me.id) AS mid, COUNT(ue.id) AS cu
+              FROM {enrol} e
+              JOIN {user_enrolments} ue ON (ue.enrolid = e.id)
+              JOIN {course} c ON (c.id = e.courseid)
+         LEFT JOIN {enrol} me ON (me.courseid = e.courseid AND me.enrol='manual')
+             WHERE e.enrol = :enrol
+          GROUP BY e.id, e.courseid, e.status
+          ORDER BY e.id";
+    $rs = $DB->get_recordset_sql($sql, $params);
+
+    foreach($rs as $e) {
+        $minstance = false;
+        if (!$e->mid) {
+            // Manual instance does not exist yet, add a new one.
+            $course = $DB->get_record('course', array('id'=>$e->courseid), '*', MUST_EXIST);
+            if ($minstance = $DB->get_record('enrol', array('courseid'=>$course->id, 'enrol'=>'manual'))) {
+                // Already created by previous iteration.
+                $e->mid = $minstance->id;
+            } else if ($e->mid = $manualplugin->add_default_instance($course)) {
+                $minstance = $DB->get_record('enrol', array('id'=>$e->mid));
+                if ($e->status != ENROL_INSTANCE_ENABLED) {
+                    $DB->set_field('enrol', 'status', ENROL_INSTANCE_DISABLED, array('id'=>$e->mid));
+                    $minstance->status = ENROL_INSTANCE_DISABLED;
+                }
+            }
+        } else {
+            $minstance = $DB->get_record('enrol', array('id'=>$e->mid));
+        }
+
+        if (!$minstance) {
+            // This should never happen unless adding of default instance fails unexpectedly.
+            continue;
+        }
+
+        // First delete potential role duplicates.
+        $params = array('id'=>$e->id, 'component'=>'enrol_'.$enrol, 'empty'=>$DB->sql_empty());
+        $sql = "SELECT ra.id
+                  FROM {role_assignments} ra
+                  JOIN {role_assignments} mra ON (mra.contextid = ra.contextid AND mra.userid = ra.userid AND mra.roleid = ra.roleid AND mra.component = :empty AND mra.itemid = 0)
+                 WHERE ra.component = :component AND ra.itemid = :id";
+        $ras = $DB->get_records_sql($sql, $params);
+        $ras = array_keys($ras);
+        $DB->delete_records_list('role_assignments', 'id', $ras);
+        unset($ras);
+
+        // Migrate roles.
+        $sql = "UPDATE {role_assignments}
+                   SET itemid = 0, component = :empty
+                 WHERE itemid = :id AND component = :component";
+        $params = array('empty'=>$DB->sql_empty(), 'id'=>$e->id, 'component'=>'enrol_'.$enrol);
+        $DB->execute($sql, $params);
+
+        // Delete potential enrol duplicates.
+        $params = array('id'=>$e->id, 'mid'=>$e->mid);
+        $sql = "SELECT ue.id
+                  FROM {user_enrolments} ue
+                  JOIN {user_enrolments} mue ON (mue.userid = ue.userid AND mue.enrolid = :mid)
+                 WHERE ue.enrolid = :id";
+        $ues = $DB->get_records_sql($sql, $params);
+        $ues = array_keys($ues);
+        $DB->delete_records_list('user_enrolments', 'id', $ues);
+        unset($ues);
+
+        // Migrate to manual enrol instance.
+        $params = array('id'=>$e->id, 'mid'=>$e->mid);
+        if ($e->status != ENROL_INSTANCE_ENABLED and $minstance->status == ENROL_INSTANCE_ENABLED) {
+            $status = ", status = :disabled";
+            $params['disabled'] = ENROL_USER_SUSPENDED;
+        } else {
+            $status = "";
+        }
+        $sql = "UPDATE {user_enrolments}
+                   SET enrolid = :mid $status
+                 WHERE enrolid = :id";
+        $DB->execute($sql, $params);
+    }
+    $rs->close();
 }

@@ -976,10 +976,6 @@ class file_storage {
             $filerecord->sortorder = 0;
         }
 
-        $filerecord->referencefileid   = !isset($filerecord->referencefileid) ? 0 : $filerecord->referencefileid;
-        $filerecord->referencelastsync = !isset($filerecord->referencelastsync) ? 0 : $filerecord->referencelastsync;
-        $filerecord->referencelifetime = !isset($filerecord->referencelifetime) ? 0 : $filerecord->referencelifetime;
-
         $filerecord->filepath = clean_param($filerecord->filepath, PARAM_PATH);
         if (strpos($filerecord->filepath, '/') !== 0 or strrpos($filerecord->filepath, '/') !== strlen($filerecord->filepath)-1) {
             // path must start and end with '/'
@@ -1094,9 +1090,6 @@ class file_storage {
         } else {
             $filerecord->sortorder = 0;
         }
-        $filerecord->referencefileid   = !isset($filerecord->referencefileid) ? 0 : $filerecord->referencefileid;
-        $filerecord->referencelastsync = !isset($filerecord->referencelastsync) ? 0 : $filerecord->referencelastsync;
-        $filerecord->referencelifetime = !isset($filerecord->referencelifetime) ? 0 : $filerecord->referencelifetime;
 
         $filerecord->filepath = clean_param($filerecord->filepath, PARAM_PATH);
         if (strpos($filerecord->filepath, '/') !== 0 or strrpos($filerecord->filepath, '/') !== strlen($filerecord->filepath)-1) {
@@ -1217,9 +1210,10 @@ class file_storage {
             $filerecord->sortorder = 0;
         }
 
-        $filerecord->referencefileid   = empty($filerecord->referencefileid) ? 0 : $filerecord->referencefileid;
-        $filerecord->referencelastsync = empty($filerecord->referencelastsync) ? 0 : $filerecord->referencelastsync;
-        $filerecord->referencelifetime = empty($filerecord->referencelifetime) ? 0 : $filerecord->referencelifetime;
+        // TODO MDL-33416 [2.4] fields referencelastsync and referencelifetime to be removed from {files} table completely
+        unset($filerecord->referencelastsync);
+        unset($filerecord->referencelifetime);
+
         $filerecord->mimetype          = empty($filerecord->mimetype) ? $this->mimetype($filerecord->filename) : $filerecord->mimetype;
         $filerecord->userid            = empty($filerecord->userid) ? null : $filerecord->userid;
         $filerecord->source            = empty($filerecord->source) ? null : $filerecord->source;
@@ -1266,22 +1260,39 @@ class file_storage {
         $transaction = $DB->start_delegated_transaction();
 
         try {
-            $filerecord->referencefileid = $this->get_or_create_referencefileid($repositoryid, $reference,
-                $filerecord->referencelastsync, $filerecord->referencelifetime);
+            $filerecord->referencefileid = $this->get_or_create_referencefileid($repositoryid, $reference);
         } catch (Exception $e) {
             throw new file_reference_exception($repositoryid, $reference, null, null, $e->getMessage());
         }
 
-        // External file doesn't have content in moodle.
-        // So we create an empty file for it.
-        list($filerecord->contenthash, $filerecord->filesize, $newfile) = $this->add_string_to_pool(null);
+        if (isset($filerecord->contenthash) && $this->content_exists($filerecord->contenthash)) {
+            // there was specified the contenthash for a file already stored in moodle filepool
+            if (empty($filerecord->filesize)) {
+                $filepathname = $this->path_from_hash($filerecord->contenthash) . '/' . $filerecord->contenthash;
+                $filerecord->filesize = filesize($filepathname);
+            } else {
+                $filerecord->filesize = clean_param($filerecord->filesize, PARAM_INT);
+            }
+        } else {
+            // atempt to get the result of last synchronisation for this reference
+            $lastcontent = $DB->get_record('files', array('referencefileid' => $filerecord->referencefileid),
+                    'id, contenthash, filesize', IGNORE_MULTIPLE);
+            if ($lastcontent) {
+                $filerecord->contenthash = $lastcontent->contenthash;
+                $filerecord->filesize = $lastcontent->filesize;
+            } else {
+                // External file doesn't have content in moodle.
+                // So we create an empty file for it.
+                list($filerecord->contenthash, $filerecord->filesize, $newfile) = $this->add_string_to_pool(null);
+            }
+        }
 
         $filerecord->pathnamehash = $this->get_pathname_hash($filerecord->contextid, $filerecord->component, $filerecord->filearea, $filerecord->itemid, $filerecord->filepath, $filerecord->filename);
 
         try {
             $filerecord->id = $DB->insert_record('files', $filerecord);
         } catch (dml_exception $e) {
-            if ($newfile) {
+            if (!empty($newfile)) {
                 $this->deleted_file_cleanup($filerecord->contenthash);
             }
             throw new stored_file_creation_exception($filerecord->contextid, $filerecord->component, $filerecord->filearea, $filerecord->itemid,
@@ -1292,10 +1303,8 @@ class file_storage {
 
         $transaction->allow_commit();
 
-        // Adding repositoryid and reference to file record to create stored_file instance
-        $filerecord->repositoryid = $repositoryid;
-        $filerecord->reference = $reference;
-        return $this->get_file_instance($filerecord);
+        // this will retrieve all reference information from DB as well
+        return $this->get_file_by_id($filerecord->id);
     }
 
     /**
@@ -1806,17 +1815,50 @@ class file_storage {
     }
 
     /**
+     * Updates all files that are referencing this file with the new contenthash
+     * and filesize
+     *
+     * @param stored_file $storedfile
+     */
+    public function update_references_to_storedfile(stored_file $storedfile) {
+        global $CFG;
+        $params = array();
+        $params['contextid'] = $storedfile->get_contextid();
+        $params['component'] = $storedfile->get_component();
+        $params['filearea']  = $storedfile->get_filearea();
+        $params['itemid']    = $storedfile->get_itemid();
+        $params['filename']  = $storedfile->get_filename();
+        $params['filepath']  = $storedfile->get_filepath();
+        $reference = self::pack_reference($params);
+        $referencehash = sha1($reference);
+
+        $sql = "SELECT repositoryid, id FROM {files_reference}
+                 WHERE referencehash = ? and reference = ?";
+        $rs = $DB->get_recordset_sql($sql, array($referencehash, $reference));
+
+        $now = time();
+        foreach ($rs as $record) {
+            require_once($CFG->dirroot.'/repository/lib.php');
+            $repo = repository::get_instance($record->repositoryid);
+            $lifetime = $repo->get_reference_file_lifetime($reference);
+            $this->update_references($record->id, $now, $lifetime,
+                    $storedfile->get_contenthash(), $storedfile->get_filesize(), 0);
+        }
+        $rs->close();
+    }
+
+    /**
      * Convert file alias to local file
      *
+     * @throws moodle_exception if file could not be downloaded
+     *
      * @param stored_file $storedfile a stored_file instances
+     * @param int $maxbytes throw an exception if file size is bigger than $maxbytes (0 means no limit)
      * @return stored_file stored_file
      */
-    public function import_external_file(stored_file $storedfile) {
+    public function import_external_file(stored_file $storedfile, $maxbytes = 0) {
         global $CFG;
-        require_once($CFG->dirroot.'/repository/lib.php');
-        // sync external file
-        repository::sync_external_file($storedfile);
-        // Remove file references
+        $storedfile->import_external_file_contents($maxbytes);
         $storedfile->delete_reference();
         return $storedfile;
     }
@@ -1923,10 +1965,12 @@ class file_storage {
         // else problems like MDL-33172 occur.
         $filefields = array('contenthash', 'pathnamehash', 'contextid', 'component', 'filearea',
             'itemid', 'filepath', 'filename', 'userid', 'filesize', 'mimetype', 'status', 'source',
-            'author', 'license', 'timecreated', 'timemodified', 'sortorder', 'referencefileid',
-            'referencelastsync', 'referencelifetime');
+            'author', 'license', 'timecreated', 'timemodified', 'sortorder', 'referencefileid');
 
-        $referencefields = array('repositoryid', 'reference');
+        $referencefields = array('repositoryid' => 'repositoryid',
+            'reference' => 'reference',
+            'lastsync' => 'referencelastsync',
+            'lifetime' => 'referencelifetime');
 
         // id is specifically named to prevent overlaping between the two tables.
         $fields = array();
@@ -1935,8 +1979,8 @@ class file_storage {
             $fields[] = "{$filesprefix}.{$field}";
         }
 
-        foreach ($referencefields as $field) {
-            $fields[] = "{$filesreferenceprefix}.{$field}";
+        foreach ($referencefields as $field => $alias) {
+            $fields[] = "{$filesreferenceprefix}.{$field} AS {$alias}";
         }
 
         return implode(', ', $fields);
@@ -1996,5 +2040,41 @@ class file_storage {
 
         return $DB->get_field('files_reference', 'id',
             array('repositoryid' => $repositoryid, 'referencehash' => sha1($reference)), $strictness);
+    }
+
+    /**
+     * Updates a reference to the external resource and all files that use it
+     *
+     * This function is called after synchronisation of an external file and updates the
+     * contenthash, filesize and status of all files that reference this external file
+     * as well as time last synchronised and sync lifetime (how long we don't need to call
+     * synchronisation for this reference).
+     *
+     * @param int $referencefileid
+     * @param int $lastsync
+     * @param int $lifetime
+     * @param string $contenthash
+     * @param int $filesize
+     * @param int $status 0 if ok or 666 if source is missing
+     */
+    public function update_references($referencefileid, $lastsync, $lifetime, $contenthash, $filesize, $status) {
+        global $DB;
+        $referencefileid = clean_param($referencefileid, PARAM_INT);
+        $lastsync = clean_param($lastsync, PARAM_INT);
+        $lifetime = clean_param($lifetime, PARAM_INT);
+        validate_param($contenthash, PARAM_TEXT, NULL_NOT_ALLOWED);
+        $filesize = clean_param($filesize, PARAM_INT);
+        $status = clean_param($status, PARAM_INT);
+        $params = array('contenthash' => $contenthash,
+                    'filesize' => $filesize,
+                    'status' => $status,
+                    'referencefileid' => $referencefileid,
+                    'lastsync' => $lastsync,
+                    'lifetime' => $lifetime);
+        $DB->execute('UPDATE {files} SET contenthash = :contenthash, filesize = :filesize,
+            status = :status, referencelastsync = :lastsync, referencelifetime = :lifetime
+            WHERE referencefileid = :referencefileid', $params);
+        $data = array('id' => $referencefileid, 'lastsync' => $lastsync, 'lifetime' => $lifetime);
+        $DB->update_record('files_reference', (object)$data);
     }
 }

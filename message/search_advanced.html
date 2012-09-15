@@ -42,7 +42,7 @@
     <tr><td>&nbsp;</td><td colspan="2"><input type="radio" name="keywordsoption" id="keywordsoption2" value="fromme" /><label for="keywordsoption2"><?php print_string('onlyfromme', 'message') ?></label></td></tr>
     <tr><td>&nbsp;</td><td colspan="2"><input type="radio" checked="checked" name="keywordsoption" id="keywordsoption3" value="allmine" /><label for="keywordsoption3"><?php print_string('allmine', 'message') ?></label></td></tr>
 
-    <?php if (has_capability('moodle/site:readallmessages', get_context_instance(CONTEXT_SYSTEM))) { ?>
+    <?php if (has_capability('moodle/site:readallmessages', context_system::instance())) { ?>
     <tr><td>&nbsp;</td><td colspan="2"><input type="radio" name="keywordsoption" id="keywordsoption4" value="allusers" /><label for="keywordsoption4"><?php print_string('allusers', 'message') ?></label></td></tr>
     <?php } ?>
 

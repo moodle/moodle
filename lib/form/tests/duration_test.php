@@ -77,7 +77,7 @@ class duration_form_element_testcase extends basic_testcase {
         $units = $this->element->get_units();
         ksort($units);
         $this->assertEquals($units, array(1 => get_string('seconds'), 60 => get_string('minutes'),
-            3600 => get_string('hours'), 86400 => get_string('days')));
+            3600 => get_string('hours'), 86400 => get_string('days'), 604800 => get_string('weeks')));
     }
 
     /**

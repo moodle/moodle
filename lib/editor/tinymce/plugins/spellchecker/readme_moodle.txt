@@ -1,0 +1,11 @@
+This is a modification of php spellchecker plugin by Moxiecode Systems AB,
+see https://github.com/tinymce/tinymce_spellchecker_php
+
+List of changes:
+* Add support for curl proxy when accessing Google spell service.
+* Workaround for error() function collisions.
+* Modified config file to use moodle $CFG.
+* Moved static files to /tinymce/ subfolder.
+
+Commits:
+https://github.com/moodle/custom-tinymce_spellchecker_php/commits/MOODLE_22_2.0.6b

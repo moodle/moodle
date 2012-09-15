@@ -42,6 +42,11 @@ class repository_flickr_public extends repository {
     public $photos;
 
     /**
+     * Stores sizes of images to prevent multiple API call
+     */
+    static private $sizes = array();
+
+    /**
      * constructor method
      *
      * @global object $CFG
@@ -213,13 +218,14 @@ class repository_flickr_public extends repository {
 
     public function license4moodle ($license_id) {
         $license = array(
+            '0' => 'allrightsreserved',
             '1' => 'cc-nc-sa',
             '2' => 'cc-nc',
             '3' => 'cc-nc-nd',
             '4' => 'cc',
             '5' => 'cc-sa',
             '6' => 'cc-nd',
-            '7' => 'allrightsreserved'
+            '7' => 'other'
             );
         return $license[$license_id];
     }
@@ -402,16 +408,35 @@ class repository_flickr_public extends repository {
      * @return string
      */
     private function build_photo_url($photoid) {
-        $result = $this->flickr->photos_getSizes($photoid);
-        $url = '';
-        if(!empty($result[4])) {
-            $url = $result[4]['source'];
-        } elseif(!empty($result[3])) {
-            $url = $result[3]['source'];
-        } elseif(!empty($result[2])) {
-            $url = $result[2]['source'];
+        $bestsize = $this->get_best_size($photoid);
+        if (!isset($bestsize['source'])) {
+            throw new repository_exception('cannotdownload', 'repository');
         }
-        return $url;
+        return $bestsize['source'];
+    }
+
+    /**
+     * Returns the best size for a photo
+     *
+     * @param string $photoid the photo identifier
+     * @return array of information provided by the API
+     */
+    protected function get_best_size($photoid) {
+        if (!isset(self::$sizes[$photoid])) {
+            // Sizes are returned from smallest to greatest.
+            self::$sizes[$photoid] = $this->flickr->photos_getSizes($photoid);
+        }
+        $sizes = self::$sizes[$photoid];
+        $bestsize = array();
+        if (is_array($sizes)) {
+            while ($bestsize = array_pop($sizes)) {
+                // Make sure the source is set. Exit the loop if found.
+                if (isset($bestsize['source'])) {
+                    break;
+                }
+            }
+        }
+        return $bestsize;
     }
 
     public function get_link($photoid) {
@@ -434,33 +459,23 @@ class repository_flickr_public extends repository {
             $author = $info['owner']['username'];
         }
         $copyright = get_string('author', 'repository') . ': ' . $author;
-        $result = $this->flickr->photos_getSizes($photoid);
-        // download link
-        $source = '';
-        // flickr photo page
-        $url = '';
-        if (!empty($result[4])) {
-            $source = $result[4]['source'];
-            $url = $result[4]['url'];
-        } elseif(!empty($result[3])) {
-            $source = $result[3]['source'];
-            $url = $result[3]['url'];
-        } elseif(!empty($result[2])) {
-            $source = $result[2]['source'];
-            $url = $result[2]['url'];
+
+        // If we can read the original secret, it means that we have access to the original picture.
+        if (isset($info['originalsecret'])) {
+            $source = $this->flickr->buildPhotoURL($info, 'original');
+        } else {
+            $source = $this->build_photo_url($photoid);
         }
-        $path = $this->prepare_file($file);
-        $fp = fopen($path, 'w');
-        $c = new curl;
-        $c->download(array(array('url'=>$source, 'file'=>$fp)));
-        // must close file handler, otherwise gd lib will fail to process it
-        fclose($fp);
+
+        $result = parent::get_file($source, $file);
+        $path = $result['path'];
+
         if (!empty($this->usewatermarks)) {
             $img = new moodle_image($path);
             $img->watermark($copyright, array(10,10), array('ttf'=>true, 'fontsize'=>12))->saveas($path);
         }
 
-        return array('path'=>$path, 'url'=>$url, 'author'=>$info['owner']['realname'], 'license'=>$this->license4moodle($info['license']));
+        return array('path'=>$path, 'author'=>$info['owner']['realname'], 'license'=>$this->license4moodle($info['license']));
     }
 
     /**

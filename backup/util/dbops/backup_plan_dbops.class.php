@@ -39,7 +39,7 @@ abstract class backup_plan_dbops extends backup_dbops {
         global $DB;
 
         // Get the context of the module
-        $contextid = get_context_instance(CONTEXT_MODULE, $moduleid)->id;
+        $contextid = context_module::instance($moduleid)->id;
 
         // Get all the block instances which parentcontextid is the module contextid
         $blockids = array();
@@ -57,7 +57,7 @@ abstract class backup_plan_dbops extends backup_dbops {
         global $DB;
 
         // Get the context of the course
-        $contextid = get_context_instance(CONTEXT_COURSE, $courseid)->id;
+        $contextid = context_course::instance($courseid)->id;
 
         // Get all the block instances which parentcontextid is the course contextid
         $blockids = array();
@@ -112,7 +112,7 @@ abstract class backup_plan_dbops extends backup_dbops {
 
         // Get all sections belonging to requested course
         $sectionsarr = array();
-        $sections = $DB->get_records('course_sections', array('course' => $courseid));
+        $sections = $DB->get_records('course_sections', array('course' => $courseid), 'section');
         foreach ($sections as $section) {
             $sectionsarr[] = $section->id;
         }
@@ -197,24 +197,24 @@ abstract class backup_plan_dbops extends backup_dbops {
     * @param int $courseid/$sectionid/$cmid
     * @param bool $users Should be true is users were included in the backup
     * @param bool $anonymised Should be true is user information was anonymized.
-    * @param bool $useidasname true to use id, false to use strings (default)
+    * @param bool $useidonly only use the ID in the file name
     * @return string The filename to use
     */
-    public static function get_default_backup_filename($format, $type, $id, $users, $anonymised, $useidasname = false) {
+    public static function get_default_backup_filename($format, $type, $id, $users, $anonymised, $useidonly = false) {
         global $DB;
 
         // Calculate backup word
         $backupword = str_replace(' ', '_', textlib::strtolower(get_string('backupfilename')));
         $backupword = trim(clean_filename($backupword), '_');
 
+        // Not $useidonly, lets fetch the name
         $shortname = '';
-        // Not $useidasname, lets calculate it, else $id will be used
-        if (!$useidasname) {
+        if (!$useidonly) {
             // Calculate proper name element (based on type)
             switch ($type) {
                 case backup::TYPE_1COURSE:
                     $shortname = $DB->get_field('course', 'shortname', array('id' => $id));
-                    $context = get_context_instance(CONTEXT_COURSE, $id);
+                    $context = context_course::instance($id);
                     $shortname = format_string($shortname, true, array('context' => $context));
                     break;
                 case backup::TYPE_1SECTION:
@@ -231,7 +231,11 @@ abstract class backup_plan_dbops extends backup_dbops {
             $shortname = textlib::strtolower(trim(clean_filename($shortname), '_'));
         }
 
-        $name = empty($shortname) ? $id : $shortname;
+        // The name will always contain the ID, but we append the course short name if requested.
+        $name = $id;
+        if (!$useidonly && $shortname != '') {
+            $name .= '-' . $shortname;
+        }
 
         // Calculate date
         $backupdateformat = str_replace(' ', '_', get_string('backupnameformat', 'langconfig'));

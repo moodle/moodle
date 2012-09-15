@@ -59,7 +59,7 @@ class autogroup_form extends moodleform {
             $mform->setDefault('roleid', $student->id);
         }
 
-        $context = get_context_instance(CONTEXT_COURSE, $COURSE->id);
+        $context = context_course::instance($COURSE->id);
         if (has_capability('moodle/cohort:view', $context)) {
             $options = cohort_get_visible_list($COURSE);
             if ($options) {

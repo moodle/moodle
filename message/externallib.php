@@ -77,7 +77,7 @@ class core_message_external extends external_api {
         }
 
         // Ensure the current user is allowed to run this function
-        $context = get_context_instance(CONTEXT_SYSTEM);
+        $context = context_system::instance();
         self::validate_context($context);
         require_capability('moodle/site:sendmessage', $context);
 

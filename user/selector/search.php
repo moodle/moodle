@@ -26,7 +26,7 @@
 require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->dirroot . '/user/selector/lib.php');
 
-$PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
+$PAGE->set_context(context_system::instance());
 $PAGE->set_url('/user/selector/search.php');
 
 // In developer debug mode, when there is a debug=1 in the URL send as plain text
@@ -86,6 +86,9 @@ foreach ($users as &$group) {
         $output->name = $userselector->output_user($user);
         if (!empty($user->disabled)) {
             $output->disabled = true;
+        }
+        if (!empty($user->infobelow)) {
+            $output->infobelow = $user->infobelow;
         }
         $group[$user->id] = $output;
     }

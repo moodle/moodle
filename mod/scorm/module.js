@@ -48,17 +48,17 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, launc
 
     Y.use('yui2-resize', 'yui2-dragdrop', 'yui2-container', 'yui2-button', 'yui2-layout', 'yui2-treeview', 'yui2-json', 'yui2-event', function(Y) {
 
-        YAHOO.widget.TextNode.prototype.getContentHtml = function() {
+        Y.YUI2.widget.TextNode.prototype.getContentHtml = function() {
             var sb = [];
             sb[sb.length] = this.href ? '<a' : '<span';
-            sb[sb.length] = ' id="' + YAHOO.lang.escapeHTML(this.labelElId) + '"';
-            sb[sb.length] = ' class="' + YAHOO.lang.escapeHTML(this.labelStyle) + '"';
+            sb[sb.length] = ' id="' + Y.YUI2.lang.escapeHTML(this.labelElId) + '"';
+            sb[sb.length] = ' class="' + Y.YUI2.lang.escapeHTML(this.labelStyle) + '"';
             if (this.href) {
-                sb[sb.length] = ' href="' + YAHOO.lang.escapeHTML(this.href) + '"';
-                sb[sb.length] = ' target="' + YAHOO.lang.escapeHTML(this.target) + '"';
+                sb[sb.length] = ' href="' + Y.YUI2.lang.escapeHTML(this.href) + '"';
+                sb[sb.length] = ' target="' + Y.YUI2.lang.escapeHTML(this.target) + '"';
             }
             if (this.title) {
-                sb[sb.length] = ' title="' + YAHOO.lang.escapeHTML(this.title) + '"';
+                sb[sb.length] = ' title="' + Y.YUI2.lang.escapeHTML(this.title) + '"';
             }
             sb[sb.length] = ' >';
             sb[sb.length] = this.label;
@@ -98,7 +98,7 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, launc
                 document.getElementById('external-scormapi').src = api_url;
             }
 
-            var content = new YAHOO.util.Element('scorm_content');
+            var content = new Y.YUI2.util.Element('scorm_content');
             try {
                 // first try IE way - it can not set name attribute later
                 // and also it has some restrictions on DOM access from object tag
@@ -116,7 +116,7 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, launc
                     var obj = document.createElement('<iframe id="scorm_object" src="'+url_prefix + node.title+'">');
                 }
                 // fudge IE7 to redraw the screen
-                if (YAHOO.env.ua.ie > 5 && YAHOO.env.ua.ie < 8) {
+                if (Y.YUI2.env.ua.ie > 5 && Y.YUI2.env.ua.ie < 8) {
                     obj.attachEvent("onload", scorm_resize_parent);
                 }
             } catch (e) {
@@ -134,7 +134,7 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, launc
                     mine.close()
                 }
             }
-            var old = YAHOO.util.Dom.get('scorm_object');
+            var old = Y.YUI2.util.Dom.get('scorm_object');
             if (old) {
                 if(window_name) {
                     var cwidth = scormplayerdata.cwidth;
@@ -177,7 +177,7 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, launc
             // fudge  IE7 to redraw the screen
             parent.resizeBy(-10, -10);
             parent.resizeBy(10, 10);
-            var ifr = YAHOO.util.Dom.get('scorm_object');
+            var ifr = Y.YUI2.util.Dom.get('scorm_object');
             if (ifr) {
                 ifr.detachEvent("onload", scorm_resize_parent);
             }
@@ -195,7 +195,7 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, launc
             // make sure that the max width of the TOC doesn't go to far
 
             var left = scorm_layout_widget.getUnitByPosition('left');
-            var maxwidth = parseInt(YAHOO.util.Dom.getStyle('scorm_layout', 'width'));
+            var maxwidth = parseInt(Y.YUI2.util.Dom.getStyle('scorm_layout', 'width'));
             left.set('maxWidth', (maxwidth - 50));
             var cwidth = left.get('width');
             if (cwidth > (maxwidth - 1)) {
@@ -207,7 +207,7 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, launc
             center.setStyle('height', '100%');
 
             // calculate the rough new height
-            newheight = YAHOO.util.Dom.getViewportHeight() -5;
+            newheight = Y.YUI2.util.Dom.getViewportHeight() -5;
             if (newheight < 600) {
                 newheight = 600;
             }
@@ -222,22 +222,22 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, launc
         };
 
         var scorm_get_htmlelement_size = function(el, prop) {
-            var val = YAHOO.util.Dom.getStyle(el, prop);
+            var val = Y.YUI2.util.Dom.getStyle(el, prop);
             if (val == 'auto') {
                 if (el.get) {
                     el = el.get('element'); // get real HTMLElement from YUI element
                 }
-                val = YAHOO.util.Dom.getComputedStyle(YAHOO.util.Dom.get(el), prop);
+                val = Y.YUI2.util.Dom.getComputedStyle(Y.YUI2.util.Dom.get(el), prop);
             }
             return parseInt(val);
         };
 
         var scorm_resize_frame = function() {
-            var obj = YAHOO.util.Dom.get('scorm_object');
+            var obj = Y.YUI2.util.Dom.get('scorm_object');
             if (obj) {
                 var content = scorm_layout_widget.getUnitByPosition('center').get('wrap');
                 // basically trap IE6 and 7
-                if (YAHOO.env.ua.ie > 5 && YAHOO.env.ua.ie < 8) {
+                if (Y.YUI2.env.ua.ie > 5 && Y.YUI2.env.ua.ie < 8) {
                     if( obj.style.setAttribute ) {
                         obj.style.setAttribute("cssText", 'width: ' +(content.offsetWidth - 6)+'px; height: ' + (content.offsetHeight - 10)+'px;');
                     }
@@ -308,11 +308,11 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, launc
         mod_scorm_prev = scorm_prev;
 
         // layout
-        YAHOO.widget.LayoutUnit.prototype.STR_COLLAPSE = M.str.moodle.hide;
-        YAHOO.widget.LayoutUnit.prototype.STR_EXPAND = M.str.moodle.show;
+        Y.YUI2.widget.LayoutUnit.prototype.STR_COLLAPSE = M.str.moodle.hide;
+        Y.YUI2.widget.LayoutUnit.prototype.STR_EXPAND = M.str.moodle.show;
 
         if (scorm_disable_toc) {
-            scorm_layout_widget = new YAHOO.widget.Layout('scorm_layout', {
+            scorm_layout_widget = new Y.YUI2.widget.Layout('scorm_layout', {
                 minWidth: 255,
                 minHeight: 600,
                 units: [
@@ -321,7 +321,7 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, launc
                 ]
             });
         } else {
-            scorm_layout_widget = new YAHOO.widget.Layout('scorm_layout', {
+            scorm_layout_widget = new Y.YUI2.widget.Layout('scorm_layout', {
                 minWidth: 255,
                 minHeight: 600,
                 units: [
@@ -343,11 +343,11 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, launc
         }
         // ugly resizing hack that works around problems with resizing of iframes and objects
         left._resize.on('startResize', function() {
-            var obj = YAHOO.util.Dom.get('scorm_object');
+            var obj = Y.YUI2.util.Dom.get('scorm_object');
             obj.style.display = 'none';
         });
         left._resize.on('endResize', function() {
-            var obj = YAHOO.util.Dom.get('scorm_object');
+            var obj = Y.YUI2.util.Dom.get('scorm_object');
             obj.style.display = 'block';
             scorm_resize_frame();
         });
@@ -359,7 +359,7 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, launc
             }
         }
         // TOC tree
-        var tree = new YAHOO.widget.TreeView('scorm_tree');
+        var tree = new Y.YUI2.widget.TreeView('scorm_tree');
         scorm_tree_node = tree;
         tree.singleNodeHighlight = true;
         tree.subscribe('labelClick', function(node) {
@@ -390,18 +390,18 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, launc
 
         // navigation
         if (scorm_hide_nav == false) {
-            scorm_nav_panel = new YAHOO.widget.Panel('scorm_navpanel', { visible:true, draggable:true, close:false, xy: [250, 450],
+            scorm_nav_panel = new Y.YUI2.widget.Panel('scorm_navpanel', { visible:true, draggable:true, close:false, xy: [250, 450],
                                                                     autofillheight: "body"} );
             scorm_nav_panel.setHeader(M.str.scorm.navigation);
 
             //TODO: make some better&accessible buttons
             scorm_nav_panel.setBody('<span id="scorm_nav"><button id="nav_skipprev">&lt;&lt;</button><button id="nav_prev">&lt;</button><button id="nav_up">^</button><button id="nav_next">&gt;</button><button id="nav_skipnext">&gt;&gt;</button></span>');
             scorm_nav_panel.render();
-            scorm_buttons[0] = new YAHOO.widget.Button('nav_skipprev');
-            scorm_buttons[1] = new YAHOO.widget.Button('nav_prev');
-            scorm_buttons[2] = new YAHOO.widget.Button('nav_up');
-            scorm_buttons[3] = new YAHOO.widget.Button('nav_next');
-            scorm_buttons[4] = new YAHOO.widget.Button('nav_skipnext');
+            scorm_buttons[0] = new Y.YUI2.widget.Button('nav_skipprev');
+            scorm_buttons[1] = new Y.YUI2.widget.Button('nav_prev');
+            scorm_buttons[2] = new Y.YUI2.widget.Button('nav_up');
+            scorm_buttons[3] = new Y.YUI2.widget.Button('nav_next');
+            scorm_buttons[4] = new Y.YUI2.widget.Button('nav_skipnext');
             scorm_buttons[0].on('click', function(ev) {
                 scorm_activate_item(scorm_skipprev(scorm_tree_node.getHighlightedNode()));
             });
@@ -447,23 +447,27 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, launc
 
 
 function scorm_get_prev() {
-	scorm_tree_node = YAHOO.widget.TreeView.getTree('scorm_tree');
-    if (scorm_tree_node) {
-        var hnode = scorm_tree_node.getHighlightedNode();
-        var prev = mod_scorm_prev(hnode);
-        if (prev) {
-            mod_scorm_activate_item(prev);
+    YUI.use('yui2-treeview', function(Y) {
+        scorm_tree_node = Y.YUI2.widget.TreeView.getTree('scorm_tree');
+        if (scorm_tree_node) {
+            var hnode = scorm_tree_node.getHighlightedNode();
+            var prev = mod_scorm_prev(hnode);
+            if (prev) {
+                mod_scorm_activate_item(prev);
+            }
         }
-    }
+    });
 }
 
 function scorm_get_next() {
-	scorm_tree_node = YAHOO.widget.TreeView.getTree('scorm_tree');
-    if (scorm_tree_node) {
-        var hnode = scorm_tree_node.getHighlightedNode();
-        var next = mod_scorm_next(hnode);
-        if (next) {
-            mod_scorm_activate_item(next);
+    YUI.use('yui2-treeview', function(Y) {
+        scorm_tree_node = Y.YUI2.widget.TreeView.getTree('scorm_tree');
+        if (scorm_tree_node) {
+            var hnode = scorm_tree_node.getHighlightedNode();
+            var next = mod_scorm_next(hnode);
+            if (next) {
+                mod_scorm_activate_item(next);
+            }
         }
-    }
+    });
 }

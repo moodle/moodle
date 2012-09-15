@@ -540,8 +540,13 @@ class feedback_item_numeric extends feedback_item_base {
     }
 
     public function clean_input_value($value) {
+        $value = str_replace($this->sep_dec, FEEDBACK_DECIMAL, $value);
         if (!is_numeric($value)) {
-            return null;
+            if ($value == '') {
+                return null; //an empty string should be null
+            } else {
+                return clean_param($value, PARAM_TEXT); //we have to know the value if it is wrong
+            }
         }
         return clean_param($value, $this->value_type());
     }

@@ -42,7 +42,7 @@ try {
     // This identifies the block instance requesting AJAX extension
     $instanceid = optional_param('instance', null, PARAM_INT);
 
-    $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
+    $PAGE->set_context(context_system::instance());
 
     // Create a global nav object
     $navigation = new global_navigation_for_ajax($PAGE, $branchtype, $branchid);

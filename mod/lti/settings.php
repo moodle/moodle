@@ -134,27 +134,27 @@ if ($ADMIN->fulltree) {
 
 <script type=\"text/javascript\">
 //<![CDATA[
-    (function(){
+    YUI().use('yui2-tabview', 'yui2-datatable', function(Y) {
         //If javascript is disabled, they will just see the three tabs one after another
         var lti_tab_heading = document.getElementById('lti_tab_heading');
         lti_tab_heading.style.display = '';
 
-        new YAHOO.widget.TabView('lti_tabs');
+        new Y.YUI2.widget.TabView('lti_tabs');
 
         var setupTools = function(id, sort){
-            var lti_tools = YAHOO.util.Dom.get(id + '_tools');
+            var lti_tools = Y.YUI2.util.Dom.get(id + '_tools');
 
             if(lti_tools){
-                var dataSource = new YAHOO.util.DataSource(lti_tools);
+                var dataSource = new Y.YUI2.util.DataSource(lti_tools);
 
                 var configuredColumns = [
                     {key:'name', label:'$typename', sortable:true},
                     {key:'baseURL', label:'$baseurl', sortable:true},
-                    {key:'timecreated', label:'$createdon', sortable:true, formatter:YAHOO.widget.DataTable.formatDate},
+                    {key:'timecreated', label:'$createdon', sortable:true, formatter:Y.YUI2.widget.DataTable.formatDate},
                     {key:'action', label:'$action'}
                 ];
 
-                dataSource.responseType = YAHOO.util.DataSource.TYPE_HTMLTABLE;
+                dataSource.responseType = Y.YUI2.util.DataSource.TYPE_HTMLTABLE;
                 dataSource.responseSchema = {
                     fields: [
                         {key:'name'},
@@ -164,7 +164,7 @@ if ($ADMIN->fulltree) {
                     ]
                 };
 
-                new YAHOO.widget.DataTable(id + '_container', configuredColumns, dataSource,
+                new Y.YUI2.widget.DataTable(id + '_container', configuredColumns, dataSource,
                     {
                         sortedBy: sort
                     }
@@ -175,13 +175,9 @@ if ($ADMIN->fulltree) {
         setupTools('lti_configured', {key:'name', dir:'asc'});
         setupTools('lti_pending', {key:'timecreated', dir:'desc'});
         setupTools('lti_rejected', {key:'timecreated', dir:'desc'});
-    })();
+    });
 //]]
 </script>
 ";
-    global $PAGE; // TODO: Move to YUI3 ASAP
-    $PAGE->requires->yui2_lib('tabview');
-    $PAGE->requires->yui2_lib('datatable');
-
     $settings->add(new admin_setting_heading('lti_types', get_string('external_tool_types', 'lti') . $OUTPUT->help_icon('main_admin', 'lti'), $template));
 }

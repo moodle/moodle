@@ -35,7 +35,7 @@ $searchquery  = optional_param('search', '', PARAM_RAW);
 require_login();
 
 if ($contextid) {
-    $context = get_context_instance_by_id($contextid, MUST_EXIST);
+    $context = context::instance_by_id($contextid, MUST_EXIST);
 } else {
     $context = context_system::instance();
 }

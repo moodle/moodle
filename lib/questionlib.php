@@ -209,39 +209,44 @@ function get_grade_options() {
 }
 
 /**
- * match grade options
- * if no match return error or match nearest
+ * Check whether a given grade is one of a list of allowed options. If not,
+ * depending on $matchgrades, either return the nearest match, or return false
+ * to signal an error.
  * @param array $gradeoptionsfull list of valid options
  * @param int $grade grade to be tested
  * @param string $matchgrades 'error' or 'nearest'
- * @return mixed either 'fixed' value or false if erro
+ * @return mixed either 'fixed' value or false if error.
  */
-function match_grade_options($gradeoptionsfull, $grade, $matchgrades='error') {
+function match_grade_options($gradeoptionsfull, $grade, $matchgrades = 'error') {
+
     if ($matchgrades == 'error') {
-        // if we just need an error...
+        // (Almost) exact match, or an error.
         foreach ($gradeoptionsfull as $value => $option) {
-            // slightly fuzzy test, never check floats for equality :-)
+            // Slightly fuzzy test, never check floats for equality.
             if (abs($grade - $value) < 0.00001) {
-                return $grade;
+                return $value; // Be sure the return the proper value.
             }
         }
-        // didn't find a match so that's an error
+        // Didn't find a match so that's an error.
         return false;
+
     } else if ($matchgrades == 'nearest') {
-        // work out nearest value
-        $hownear = array();
+        // Work out nearest value
+        $best = false;
+        $bestmismatch = 2;
         foreach ($gradeoptionsfull as $value => $option) {
-            if ($grade==$value) {
-                return $grade;
+            $newmismatch = abs($grade - $value);
+            if ($newmismatch < $bestmismatch) {
+                $best = $value;
+                $bestmismatch = $newmismatch;
             }
-            $hownear[ $value ] = abs( $grade - $value );
         }
-        // reverse sort list of deltas and grab the last (smallest)
-        asort( $hownear, SORT_NUMERIC );
-        reset( $hownear );
-        return key( $hownear );
+        return $best;
+
     } else {
-        return false;
+        // Unknow option passed.
+        throw new coding_exception('Unknown $matchgrades ' . $matchgrades .
+                ' passed to match_grade_options');
     }
 }
 
@@ -355,7 +360,7 @@ function question_delete_course($course, $feedback=true) {
 
     //Cache some strings
     $strcatdeleted = get_string('unusedcategorydeleted', 'quiz');
-    $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+    $coursecontext = context_course::instance($course->id);
     $categoriescourse = $DB->get_records('question_categories',
             array('contextid' => $coursecontext->id), 'parent', 'id, parent, name, contextid');
 
@@ -407,7 +412,7 @@ function question_delete_course($course, $feedback=true) {
 function question_delete_course_category($category, $newcategory, $feedback=true) {
     global $DB, $OUTPUT;
 
-    $context = get_context_instance(CONTEXT_COURSECAT, $category->id);
+    $context = context_coursecat::instance($category->id);
     if (empty($newcategory)) {
         $feedbackdata   = array(); // To store feedback to be showed at the end of the process
         $rescueqcategory = null; // See the code around the call to question_save_from_deletion.
@@ -464,7 +469,7 @@ function question_delete_course_category($category, $newcategory, $feedback=true
 
     } else {
         // Move question categories ot the new context.
-        if (!$newcontext = get_context_instance(CONTEXT_COURSECAT, $newcategory->id)) {
+        if (!$newcontext = context_coursecat::instance($newcategory->id)) {
             return false;
         }
         $DB->set_field('question_categories', 'contextid', $newcontext->id,
@@ -529,7 +534,7 @@ function question_delete_activity($cm, $feedback=true) {
 
     //Cache some strings
     $strcatdeleted = get_string('unusedcategorydeleted', 'quiz');
-    $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $modcontext = context_module::instance($cm->id);
     if ($categoriesmods = $DB->get_records('question_categories',
             array('contextid' => $modcontext->id), 'parent', 'id, parent, name, contextid')) {
         //Sort categories following their tree (parent-child) relationships
@@ -780,14 +785,22 @@ function question_load_questions($questionids, $extrafields = '', $join = '') {
  */
 function _tidy_question($question, $loadtags = false) {
     global $CFG;
+
+    // Load question-type specific fields.
     if (!question_bank::is_qtype_installed($question->qtype)) {
         $question->questiontext = html_writer::tag('p', get_string('warningmissingtype',
                 'qtype_missingtype')) . $question->questiontext;
     }
     question_bank::get_qtype($question->qtype)->get_question_options($question);
+
+    // Convert numeric fields to float. (Prevents these being displayed as 1.0000000.)
+    $question->defaultmark += 0;
+    $question->penalty += 0;
+
     if (isset($question->_partiallyloaded)) {
         unset($question->_partiallyloaded);
     }
+
     if ($loadtags && !empty($CFG->usetags)) {
         require_once($CFG->dirroot . '/tag/lib.php');
         $question->tags = tag_get_tags_array('question', $question->id);
@@ -992,7 +1005,7 @@ function question_category_select_menu($contexts, $top = false, $currentcat = 0,
     foreach ($categoriesarray as $group => $opts) {
         $options[] = array($group => $opts);
     }
-
+    echo html_writer::label($selected, 'menucategory', false, array('class' => 'accesshide'));
     echo html_writer::select($options, 'category', $selected, $choose);
 }
 
@@ -1104,16 +1117,18 @@ function question_category_options($contexts, $top = false, $currentcat = 0,
 
     // sort cats out into different contexts
     $categoriesarray = array();
-    foreach ($pcontexts as $pcontext) {
-        $contextstring = print_context_name(
-                get_context_instance_by_id($pcontext), true, true);
+    foreach ($pcontexts as $contextid) {
+        $context = context::instance_by_id($contextid);
+        $contextstring = $context->get_context_name(true, true);
         foreach ($categories as $category) {
-            if ($category->contextid == $pcontext) {
+            if ($category->contextid == $contextid) {
                 $cid = $category->id;
                 if ($currentcat != $cid || $currentcat == 0) {
                     $countstring = !empty($category->questioncount) ?
                             " ($category->questioncount)" : '';
-                    $categoriesarray[$contextstring][$cid] = $category->indentedname.$countstring;
+                    $categoriesarray[$contextstring][$cid] =
+                            format_string($category->indentedname, true,
+                                array('context' => $context)) . $countstring;
                 }
             }
         }
@@ -1333,7 +1348,7 @@ function question_has_capability_on($question, $cap, $cachecat = -1) {
         }
     }
     $category = $categories[$question->category];
-    $context = get_context_instance_by_id($category->contextid);
+    $context = context::instance_by_id($category->contextid);
 
     if (array_search($cap, $question_questioncaps)!== false) {
         if (!has_capability('moodle/question:' . $cap . 'all', $context)) {

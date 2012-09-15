@@ -99,7 +99,7 @@ abstract class restore_prechecks_helper {
         // If restoring to different site and restoring users and backup has mnet users warn/error
         if (!$samesite && $restoreusers && $hasmnetusers) {
             // User is admin (can create users at sysctx), warn
-            if (has_capability('moodle/user:create', get_context_instance(CONTEXT_SYSTEM), $controller->get_userid())) {
+            if (has_capability('moodle/user:create', context_system::instance(), $controller->get_userid())) {
                 $warnings[] = get_string('mnetrestore_extusers_admin', 'admin');
             // User not admin
             } else {

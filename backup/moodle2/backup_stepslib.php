@@ -182,8 +182,17 @@ abstract class backup_questions_activity_structure_step extends backup_activity_
     /**
      * Attach to $element (usually attempts) the needed backup structures
      * for question_usages and all the associated data.
+     *
+     * @param backup_nested_element $element the element that will contain all the question_usages data.
+     * @param string $usageidname the name of the element that holds the usageid.
+     *      This must be child of $element, and must be a final element.
+     * @param string $nameprefix this prefix is added to all the element names we create.
+     *      Element names in the XML must be unique, so if you are using usages in
+     *      two different ways, you must give a prefix to at least one of them. If
+     *      you only use one sort of usage, then you can just use the default empty prefix.
+     *      This should include a trailing underscore. For example "myprefix_"
      */
-    protected function add_question_usages($element, $usageidname) {
+    protected function add_question_usages($element, $usageidname, $nameprefix = '') {
         global $CFG;
         require_once($CFG->dirroot . '/question/engine/lib.php');
 
@@ -195,21 +204,21 @@ abstract class backup_questions_activity_structure_step extends backup_activity_
             throw new backup_step_exception('question_states_bad_question_attempt_element', $usageidname);
         }
 
-        $quba = new backup_nested_element('question_usage', array('id'),
+        $quba = new backup_nested_element($nameprefix . 'question_usage', array('id'),
                 array('component', 'preferredbehaviour'));
 
-        $qas = new backup_nested_element('question_attempts');
-        $qa = new backup_nested_element('question_attempt', array('id'), array(
+        $qas = new backup_nested_element($nameprefix . 'question_attempts');
+        $qa = new backup_nested_element($nameprefix . 'question_attempt', array('id'), array(
                 'slot', 'behaviour', 'questionid', 'maxmark', 'minfraction',
                 'flagged', 'questionsummary', 'rightanswer', 'responsesummary',
                 'timemodified'));
 
-        $steps = new backup_nested_element('steps');
-        $step = new backup_nested_element('step', array('id'), array(
+        $steps = new backup_nested_element($nameprefix . 'steps');
+        $step = new backup_nested_element($nameprefix . 'step', array('id'), array(
                 'sequencenumber', 'state', 'fraction', 'timecreated', 'userid'));
 
-        $response = new backup_nested_element('response');
-        $variable = new backup_nested_element('variable', null,  array('name', 'value'));
+        $response = new backup_nested_element($nameprefix . 'response');
+        $variable = new backup_nested_element($nameprefix . 'variable', null,  array('name', 'value'));
 
         // Build the tree
         $element->add_child($quba);
@@ -513,9 +522,12 @@ class backup_enrolments_structure_step extends backup_structure_step {
         $enrol = new backup_nested_element('enrol', array('id'), array(
             'enrol', 'status', 'sortorder', 'name', 'enrolperiod', 'enrolstartdate',
             'enrolenddate', 'expirynotify', 'expirytreshold', 'notifyall',
-            'password', 'cost', 'currency', 'roleid', 'customint1', 'customint2', 'customint3',
-            'customint4', 'customchar1', 'customchar2', 'customdec1', 'customdec2',
-            'customtext1', 'customtext2', 'timecreated', 'timemodified'));
+            'password', 'cost', 'currency', 'roleid',
+            'customint1', 'customint2', 'customint3', 'customint4', 'customint5', 'customint6', 'customint7', 'customint8',
+            'customchar1', 'customchar2', 'customchar3',
+            'customdec1', 'customdec2',
+            'customtext1', 'customtext2', 'customtext3', 'customtext4',
+            'timecreated', 'timemodified'));
 
         $userenrolments = new backup_nested_element('user_enrolments');
 
@@ -667,7 +679,7 @@ class backup_final_scales_structure_step extends backup_structure_step {
                                    AND bi.itemname = 'scalefinal'", array(backup::VAR_BACKUPID));
 
         // Annotate scale files (they store files in system context, so pass it instead of default one)
-        $scale->annotate_files('grade', 'scale', 'id', get_context_instance(CONTEXT_SYSTEM)->id);
+        $scale->annotate_files('grade', 'scale', 'id', context_system::instance()->id);
 
         // Return main element (scalesdef)
         return $scalesdef;
@@ -704,7 +716,7 @@ class backup_final_outcomes_structure_step extends backup_structure_step {
                                      AND bi.itemname = 'outcomefinal'", array(backup::VAR_BACKUPID));
 
         // Annotate outcome files (they store files in system context, so pass it instead of default one)
-        $outcome->annotate_files('grade', 'outcome', 'id', get_context_instance(CONTEXT_SYSTEM)->id);
+        $outcome->annotate_files('grade', 'outcome', 'id', context_system::instance()->id);
 
         // Return main element (outcomesdef)
         return $outcomesdef;
@@ -993,7 +1005,7 @@ class backup_groups_structure_step extends backup_structure_step {
         $members = new backup_nested_element('group_members');
 
         $member = new backup_nested_element('group_member', array('id'), array(
-            'userid', 'timeadded'));
+            'userid', 'timeadded', 'component', 'itemid'));
 
         $groupings = new backup_nested_element('groupings');
 
@@ -1470,8 +1482,8 @@ class backup_main_structure_step extends backup_structure_step {
         $info['original_course_fullname']  = $originalcourseinfo->fullname;
         $info['original_course_shortname'] = $originalcourseinfo->shortname;
         $info['original_course_startdate'] = $originalcourseinfo->startdate;
-        $info['original_course_contextid'] = get_context_instance(CONTEXT_COURSE, $this->get_courseid())->id;
-        $info['original_system_contextid'] = get_context_instance(CONTEXT_SYSTEM)->id;
+        $info['original_course_contextid'] = context_course::instance($this->get_courseid())->id;
+        $info['original_system_contextid'] = context_system::instance()->id;
 
         // Get more information from controller
         list($dinfo, $cinfo, $sinfo) = backup_controller_dbops::get_moodle_backup_information($this->get_backupid());
@@ -1835,7 +1847,7 @@ class backup_annotate_all_user_files extends backup_execution_step {
             'backupid' => $this->get_backupid(), 'itemname' => 'userfinal'));
         foreach ($rs as $record) {
             $userid = $record->itemid;
-            $userctx = get_context_instance(CONTEXT_USER, $userid);
+            $userctx = context_user::instance($userid, IGNORE_MISSING);
             if (!$userctx) {
                 continue; // User has not context, sure it's a deleted user, so cannot have files
             }

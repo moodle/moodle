@@ -37,7 +37,7 @@ $edit   = optional_param('edit', null, PARAM_BOOL);    // Turn editing on and of
 
 require_login();
 
-$context = get_context_instance(CONTEXT_SYSTEM);
+$context = context_system::instance();
 require_capability('moodle/my:configsyspages', $context);
 $PAGE->set_blocks_editing_capability('moodle/my:configsyspages');
 $header = "$SITE->shortname: ".get_string('publicprofile')." (".get_string('myprofile', 'admin').")";

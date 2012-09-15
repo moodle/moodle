@@ -87,7 +87,7 @@ class block_edit_form extends moodleform {
 
         $regionoptions = $this->page->theme->get_all_block_regions();
 
-        $parentcontext = get_context_instance_by_id($this->block->instance->parentcontextid);
+        $parentcontext = context::instance_by_id($this->block->instance->parentcontextid);
         $mform->addElement('hidden', 'bui_parentcontextid', $parentcontext->id);
 
         $mform->addElement('static', 'bui_homecontext', get_string('createdat', 'block'), print_context_name($parentcontext));

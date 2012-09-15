@@ -26,7 +26,7 @@ require(dirname(__FILE__) . '/../../../config.php');
 require_once($CFG->libdir . '/pdflib.php');
 
 require_login();
-$context = get_context_instance(CONTEXT_SYSTEM);
+$context = context_system::instance();
 require_capability('moodle/site:config', $context);
 
 $getpdf     = optional_param('getpdf', 0, PARAM_INT);

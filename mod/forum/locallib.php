@@ -91,7 +91,7 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
             throw new portfolio_caller_exception('invalidcoursemodule');
         }
 
-        $this->modcontext = get_context_instance(CONTEXT_MODULE, $this->cm->id);
+        $this->modcontext = context_module::instance($this->cm->id);
         $fs = get_file_storage();
         if ($this->post) {
             if ($this->attachment) {
@@ -372,7 +372,7 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
      * @return bool
      */
     function check_permissions() {
-        $context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
+        $context = context_module::instance($this->cm->id);
         if ($this->post) {
             return (has_capability('mod/forum:exportpost', $context)
                 || ($this->post->userid == $this->user->id

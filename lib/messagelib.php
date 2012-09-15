@@ -60,7 +60,7 @@ function message_send($eventdata) {
     //TODO: we need to solve problems with database transactions here somehow, for now we just prevent transactions - sorry
     $DB->transactions_forbidden();
 
-    if (is_int($eventdata->userto)) {
+    if (is_number($eventdata->userto)) {
         $eventdata->userto = $DB->get_record('user', array('id' => $eventdata->userto));
     }
     if (is_int($eventdata->userfrom)) {
@@ -388,7 +388,7 @@ function message_get_my_providers() {
 function message_get_providers_for_user($userid) {
     global $DB, $CFG;
 
-    $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+    $systemcontext = context_system::instance();
 
     $providers = get_message_providers();
 

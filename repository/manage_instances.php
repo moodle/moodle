@@ -65,7 +65,7 @@ if ($usercourseid != SITEID) {
     $url->param('usercourseid', $usercourseid);
 }
 
-$context = get_context_instance_by_id($contextid);
+$context = context::instance_by_id($contextid);
 
 $PAGE->set_url($url);
 $PAGE->set_context($context);
@@ -106,12 +106,16 @@ if (!empty($new)){
     $type = repository::get_type_by_id($instance->options['typeid']);
 }
 
-if (isset($type) && !$type->get_visible()) {
-    print_error('typenotvisible', 'repository', $baseurl);
-}
-
-if (isset($type) && !$type->get_contextvisibility($context)) {
-    print_error('usercontextrepositorydisabled', 'repository', $baseurl);
+if (isset($type)) {
+    if (!$type->get_visible()) {
+        print_error('typenotvisible', 'repository', $baseurl);
+    }
+    // Prevents the user from creating/editing an instance if the repository is not visible in
+    // this context OR if the user does not have the capability to view this repository in this context.
+    $canviewrepository = has_capability('repository/'.$type->get_typename().':view', $context);
+    if (!$type->get_contextvisibility($context) || !$canviewrepository) {
+        print_error('usercontextrepositorydisabled', 'repository', $baseurl);
+    }
 }
 
 /// Create navigation links
@@ -177,7 +181,7 @@ if (!empty($edit) || !empty($new)) {
             }
             $success = $instance->set_option($settings);
         } else {
-            $success = repository::static_function($plugin, 'create', $plugin, 0, get_context_instance_by_id($contextid), $fromform);
+            $success = repository::static_function($plugin, 'create', $plugin, 0, context::instance_by_id($contextid), $fromform);
             $data = data_submitted();
         }
         if ($success) {

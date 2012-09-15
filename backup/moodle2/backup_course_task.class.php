@@ -42,7 +42,7 @@ class backup_course_task extends backup_task {
     public function __construct($name, $courseid, $plan = null) {
 
         $this->courseid   = $courseid;
-        $this->contextid  = get_context_instance(CONTEXT_COURSE, $this->courseid)->id;
+        $this->contextid  = context_course::instance($this->courseid)->id;
 
         parent::__construct($name, $plan);
     }

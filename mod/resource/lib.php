@@ -234,7 +234,7 @@ function resource_get_coursemodule_info($coursemodule) {
     require_once("$CFG->dirroot/mod/resource/locallib.php");
     require_once($CFG->libdir.'/completionlib.php');
 
-    $context = get_context_instance(CONTEXT_MODULE, $coursemodule->id);
+    $context = context_module::instance($coursemodule->id);
 
     if (!$resource = $DB->get_record('resource', array('id'=>$coursemodule->instance),
             'id, name, display, displayoptions, tobemigrated, revision, intro, introformat')) {
@@ -455,7 +455,7 @@ function resource_page_type_list($pagetype, $parentcontext, $currentcontext) {
 function resource_export_contents($cm, $baseurl) {
     global $CFG, $DB;
     $contents = array();
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $context = context_module::instance($cm->id);
     $resource = $DB->get_record('resource', array('id'=>$cm->instance), '*', MUST_EXIST);
 
     $fs = get_file_storage();

@@ -170,16 +170,8 @@ if ($csv) {
 
     echo $OUTPUT->header();
 
-    $PAGE->requires->yui2_lib(
-        array(
-            'yahoo',
-            'dom',
-            'element',
-            'event',
-        )
-    );
-
     $PAGE->requires->js('/report/completion/textrotate.js');
+    $PAGE->requires->js_function_call('textrotate_init', null, true);
 
     // Handle groups (if enabled)
     groups_print_course_menu($course, $CFG->wwwroot.'/report/completion/?course='.$course->id);

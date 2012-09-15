@@ -113,20 +113,36 @@ class assign_submission_onlinetext extends assign_submission_plugin {
     }
 
      /**
-      * Save data to the database
+      * Save data to the database and trigger plagiarism plugin, if enabled, to scan the uploaded content via events trigger
       *
       * @param stdClass $submission
       * @param stdClass $data
       * @return bool
       */
      public function save(stdClass $submission, stdClass $data) {
-        global $DB;
+        global $USER, $DB;
 
         $editoroptions = $this->get_edit_options();
 
         $data = file_postupdate_standard_editor($data, 'onlinetext', $editoroptions, $this->assignment->get_context(), 'assignsubmission_onlinetext', ASSIGNSUBMISSION_ONLINETEXT_FILEAREA, $submission->id);
 
         $onlinetextsubmission = $this->get_onlinetext_submission($submission->id);
+
+        $fs = get_file_storage();
+        $files = $fs->get_area_files($this->assignment->get_context()->id, 'assignsubmission_onlinetext', ASSIGNSUBMISSION_ONLINETEXT_FILEAREA, $submission->id, "id", false);
+        // Let Moodle know that an assessable content was uploaded (eg for plagiarism detection)
+        $eventdata = new stdClass();
+        $eventdata->modulename = 'assign';
+        $eventdata->cmid = $this->assignment->get_course_module()->id;
+        $eventdata->itemid = $submission->id;
+        $eventdata->courseid = $this->assignment->get_course()->id;
+        $eventdata->userid = $USER->id;
+        $eventdata->content = trim(format_text($data->onlinetext, $data->onlinetext_editor['format'], array('context'=>$this->assignment->get_context())));
+        if ($files) {
+            $eventdata->pathnamehashes = array_keys($files);
+        }
+        events_trigger('assessable_content_uploaded', $eventdata);
+
         if ($onlinetextsubmission) {
 
             $onlinetextsubmission->onlinetext = $data->onlinetext;
@@ -194,6 +210,7 @@ class assign_submission_onlinetext extends assign_submission_plugin {
       * @return string
       */
     public function view_summary(stdClass $submission, & $showviewlink) {
+        global $CFG;
 
         $onlinetextsubmission = $this->get_onlinetext_submission($submission->id);
         // always show the view link
@@ -202,10 +219,19 @@ class assign_submission_onlinetext extends assign_submission_plugin {
         if ($onlinetextsubmission) {
             $text = format_text($onlinetextsubmission->onlinetext, $onlinetextsubmission->onlineformat, array('context'=>$this->assignment->get_context()));
             $shorttext = shorten_text($text, 140);
+            $plagiarismlinks = '';
+            if (!empty($CFG->enableplagiarism)) {
+                require_once($CFG->libdir . '/plagiarismlib.php');
+                $plagiarismlinks .= plagiarism_get_links(array('userid' => $submission->userid,
+                    'content' => trim(format_text($onlinetextsubmission->onlinetext, $onlinetextsubmission->onlineformat, array('context'=>$this->assignment->get_context()))),
+                    'cmid' => $this->assignment->get_course_module()->id,
+                    'course' => $this->assignment->get_course()->id,
+                    'assignment' => $submission->assignment));
+            }
             if ($text != $shorttext) {
-                return $shorttext . get_string('numwords', 'assignsubmission_onlinetext', count_words($text));
+                return $shorttext . $plagiarismlinks . get_string('numwords', 'assignsubmission_onlinetext', count_words($text));
             } else {
-                return $shorttext;
+                return $shorttext . $plagiarismlinks;
             }
         }
         return '';
@@ -224,7 +250,18 @@ class assign_submission_onlinetext extends assign_submission_plugin {
         if ($onlinetextsubmission) {
             $user = $DB->get_record("user", array("id"=>$submission->userid),'id,username,firstname,lastname', MUST_EXIST);
 
-            $prefix = clean_filename(fullname($user) . "_" .$submission->userid . "_");
+            if (!$this->assignment->is_blind_marking()) {
+                $filename = str_replace('_', '', fullname($user)) . '_' .
+                            $this->assignment->get_uniqueid_for_user($userid) . '_' .
+                            $this->get_name() . '_';
+                $prefix = clean_filename($filename);
+            } else {
+                $filename = get_string('participant', 'assign') . '_' .
+                            $this->assignment->get_uniqueid_for_user($userid) . '_' .
+                            $this->get_name() . '_';
+                $prefix = clean_filename($filename);
+            }
+
             $finaltext = str_replace('@@PLUGINFILE@@/', $prefix, $onlinetextsubmission->onlinetext);
             $submissioncontent = "<html><body>". format_text($finaltext, $onlinetextsubmission->onlineformat, array('context'=>$this->assignment->get_context())). "</body></html>";      //fetched from database
 

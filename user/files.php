@@ -38,7 +38,7 @@ if (empty($returnurl)) {
     $returnurl = new moodle_url('/user/files.php');
 }
 
-$context = get_context_instance(CONTEXT_USER, $USER->id);
+$context = context_user::instance($USER->id);
 require_capability('moodle/user:manageownfiles', $context);
 
 $title = get_string('myfiles');

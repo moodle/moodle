@@ -309,7 +309,7 @@ switch ($action) {
             if (isset($source->original)) {
                 $reffiles = $fs->search_references($source->original);
                 foreach ($reffiles as $reffile) {
-                    $refcontext = get_context_instance_by_id($reffile->get_contextid());
+                    $refcontext = context::instance_by_id($reffile->get_contextid());
                     $fileinfo = $browser->get_file_info($refcontext, $reffile->get_component(), $reffile->get_filearea(), $reffile->get_itemid(), $reffile->get_filepath(), $reffile->get_filename());
                     if (empty($fileinfo)) {
                         $return['references'][] = get_string('undisclosedreference', 'repository');

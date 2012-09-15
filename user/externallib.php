@@ -100,7 +100,7 @@ class core_user_external extends external_api {
         require_once($CFG->dirroot."/user/profile/lib.php"); //required for customfields related function
 
         // Ensure the current user is allowed to run this function
-        $context = get_context_instance(CONTEXT_SYSTEM);
+        $context = context_system::instance();
         self::validate_context($context);
         require_capability('moodle/user:create', $context);
 
@@ -226,7 +226,7 @@ class core_user_external extends external_api {
         require_once($CFG->dirroot."/user/lib.php");
 
         // Ensure the current user is allowed to run this function
-        $context = get_context_instance(CONTEXT_SYSTEM);
+        $context = context_system::instance();
         require_capability('moodle/user:delete', $context);
         self::validate_context($context);
 
@@ -324,7 +324,7 @@ class core_user_external extends external_api {
         require_once($CFG->dirroot."/user/profile/lib.php"); //required for customfields related function
 
         // Ensure the current user is allowed to run this function
-        $context = get_context_instance(CONTEXT_SYSTEM);
+        $context = context_system::instance();
         require_capability('moodle/user:update', $context);
         self::validate_context($context);
 
@@ -413,7 +413,7 @@ class core_user_external extends external_api {
                 continue;
             }
             context_instance_preload($user);
-            $usercontext = get_context_instance(CONTEXT_USER, $user->id);
+            $usercontext = context_user::instance($user->id, IGNORE_MISSING);
             self::validate_context($usercontext);
             $currentuser = ($user->id == $USER->id);
 
@@ -576,7 +576,7 @@ class core_user_external extends external_api {
             }
             context_instance_preload($user);
             $course = $courses[$courseids[$user->id]];
-            $context = get_context_instance(CONTEXT_COURSE, $courseids[$user->id]);
+            $context = context_course::instance($courseids[$user->id], IGNORE_MISSING);
             self::validate_context($context);
             if ($userarray = user_get_user_details($user, $course)) {
                 $result[] = $userarray;
@@ -614,6 +614,7 @@ class core_user_external extends external_api {
                     'msn'         => new external_value(PARAM_NOTAGS, 'msn number', VALUE_OPTIONAL),
                     'department'  => new external_value(PARAM_TEXT, 'department', VALUE_OPTIONAL),
                     'institution' => new external_value(PARAM_TEXT, 'institution', VALUE_OPTIONAL),
+                    'idnumber'    => new external_value(PARAM_RAW, 'An arbitrary ID code number perhaps from the institution', VALUE_OPTIONAL),
                     'interests'   => new external_value(PARAM_TEXT, 'user interests (separated by commas)', VALUE_OPTIONAL),
                     'firstaccess' => new external_value(PARAM_INT, 'first access to the site (0 if never)', VALUE_OPTIONAL),
                     'lastaccess'  => new external_value(PARAM_INT, 'last access to the site (0 if never)', VALUE_OPTIONAL),

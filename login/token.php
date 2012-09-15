@@ -43,7 +43,7 @@ $user = authenticate_user_login($username, $password);
 if (!empty($user)) {
 
     //Non admin can not authenticate if maintenance mode
-    $hassiteconfig = has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM), $user);
+    $hassiteconfig = has_capability('moodle/site:config', context_system::instance(), $user);
     if (!empty($CFG->maintenance_enabled) and !$hassiteconfig) {
         throw new moodle_exception('sitemaintenance', 'admin');
     }
@@ -77,7 +77,7 @@ if (!empty($user)) {
     }
 
     //check if there is any required system capability
-    if ($service->requiredcapability and !has_capability($service->requiredcapability, get_context_instance(CONTEXT_SYSTEM), $user)) {
+    if ($service->requiredcapability and !has_capability($service->requiredcapability, context_system::instance(), $user)) {
         throw new moodle_exception('missingrequiredcapability', 'webservice', '', $service->requiredcapability);
     }
 
@@ -155,7 +155,7 @@ if (!empty($user)) {
             $token->token = md5(uniqid(rand(), 1));
             $token->userid = $user->id;
             $token->tokentype = EXTERNAL_TOKEN_PERMANENT;
-            $token->contextid = get_context_instance(CONTEXT_SYSTEM)->id;
+            $token->contextid = context_system::instance()->id;
             $token->creatorid = $user->id;
             $token->timecreated = time();
             $token->externalserviceid = $service_record->id;

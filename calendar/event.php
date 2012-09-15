@@ -123,10 +123,10 @@ if ($eventid !== 0) {
     $event = new stdClass();
     $event->action = $action;
     $event->course = $courseid;
+    $event->courseid = $courseid;
     $event->timeduration = 0;
     if ($formoptions->eventtypes->courses) {
         if (!$issite) {
-            $event->courseid = $courseid;
             $event->eventtype = 'course';
         } else {
             unset($formoptions->eventtypes->courses);

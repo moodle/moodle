@@ -24,7 +24,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 require_once($CFG->dirroot . '/repository/lib.php');
-require_once('S3.php');
+require_once($CFG->dirroot . '/repository/s3/S3.php');
 
 /**
  * This is a repository class used to browse Amazon S3 content.
@@ -50,6 +50,23 @@ class repository_s3 extends repository {
     }
 
     /**
+     * Extracts the Bucket and URI from the path
+     *
+     * @param string $path path in this format 'bucket/path/to/folder/and/file'
+     * @return array including bucket and uri
+     */
+    protected function explode_path($path) {
+        $parts = explode('/', $path, 2);
+        if (isset($parts[1]) && $parts[1] !== '') {
+            list($bucket, $uri) = $parts;
+        } else {
+            $bucket = $parts[0];
+            $uri = '';
+        }
+        return array($bucket, $uri);
+    }
+
+    /**
      * Get S3 file list
      *
      * @param string $path
@@ -60,8 +77,13 @@ class repository_s3 extends repository {
         if (empty($this->access_key)) {
             die(json_encode(array('e'=>get_string('needaccesskey', 'repository_s3'))));
         }
+
         $list = array();
         $list['list'] = array();
+        $list['path'] = array(
+            array('name' => get_string('pluginname', 'repository_s3'), 'path' => '')
+        );
+
         // the management interface url
         $list['manage'] = false;
         // dynamically loading
@@ -71,29 +93,78 @@ class repository_s3 extends repository {
         $list['nologin'] = true;
         // set to true, the search button will be removed
         $list['nosearch'] = true;
+
         $tree = array();
+
         if (empty($path)) {
             $buckets = $this->s->listBuckets();
             foreach ($buckets as $bucket) {
                 $folder = array(
                     'title' => $bucket,
                     'children' => array(),
-                    'thumbnail'=>$OUTPUT->pix_url(file_folder_icon(90))->out(false),
-                    'path'=>$bucket
+                    'thumbnail' => $OUTPUT->pix_url(file_folder_icon(90))->out(false),
+                    'path' => $bucket
                     );
                 $tree[] = $folder;
             }
         } else {
-            $contents = $this->s->getBucket($path);
-            foreach ($contents as $file) {
-                $info = $this->s->getObjectInfo($path, baseName($file['name']));
-                $tree[] = array(
-                    'title'=>$file['name'],
-                    'size'=>$file['size'],
-                    'date'=>userdate($file['time']),
-                    'source'=>$path.'/'.$file['name'],
-                    'thumbnail' => $OUTPUT->pix_url(file_extension_icon($file['name'], 90))->out(false)
+            $files = array();
+            $folders = array();
+            list($bucket, $uri) = $this->explode_path($path);
+
+            $contents = $this->s->getBucket($bucket, $uri, null, null, '/', true);
+            foreach ($contents as $object) {
+
+                // If object has a prefix, it is a 'CommonPrefix', which we consider a folder
+                if (isset($object['prefix'])) {
+                    $title = rtrim($object['prefix'], '/');
+                } else {
+                    $title = $object['name'];
+                }
+
+                // Removes the prefix (folder path) from the title
+                if (strlen($uri) > 0) {
+                    $title = substr($title, strlen($uri));
+                    // Check if title is empty and not zero
+                    if (empty($title) && !is_numeric($title)) {
+                        // Amazon returns the prefix itself, we skip it
+                        continue;
+                    }
+                }
+
+                // This is a so-called CommonPrefix, we consider it as a folder
+                if (isset($object['prefix'])) {
+                    $folders[] = array(
+                        'title' => $title,
+                        'children' => array(),
+                        'thumbnail'=> $OUTPUT->pix_url(file_folder_icon(90))->out(false),
+                        'path' => $bucket . '/' . $object['prefix']
                     );
+                } else {
+                    $files[] = array(
+                        'title' => $title,
+                        'size' => $object['size'],
+                        'datemodified' => $object['time'],
+                        'source' => $bucket . '/' . $object['name'],
+                        'thumbnail' => $OUTPUT->pix_url(file_extension_icon($title, 90))->out(false)
+                    );
+                }
+            }
+            $tree = array_merge($folders, $files);
+        }
+
+        $trail = '';
+        if (!empty($path)) {
+            $parts = explode('/', $path);
+            if (count($parts) > 1) {
+                foreach ($parts as $part) {
+                    if (!empty($part)) {
+                        $trail .= $part . '/';
+                        $list['path'][] = array('name' => $part, 'path' => $trail);
+                    }
+                }
+            } else {
+                $list['path'][] = array('name' => $path, 'path' => $path);
             }
         }
 
@@ -110,13 +181,10 @@ class repository_s3 extends repository {
      * @return array The local stored path
      */
     public function get_file($filepath, $file = '') {
-        global $CFG;
-        $arr = explode('/', $filepath);
-        $bucket   = $arr[0];
-        $filename = $arr[1];
+        list($bucket, $uri) = $this->explode_path($filepath);
         $path = $this->prepare_file($file);
-        $this->s->getObject($bucket, $filename, $path);
-        return array('path'=>$path);
+        $this->s->getObject($bucket, $uri, $path);
+        return array('path' => $path);
     }
 
     /**

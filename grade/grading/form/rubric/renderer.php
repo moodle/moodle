@@ -164,7 +164,8 @@ class gradingform_rubric_renderer extends plugin_renderer_base {
         $leveltemplate .= html_writer::start_tag('div', array('class' => 'level-wrapper'));
         if ($mode == gradingform_rubric_controller::DISPLAY_EDIT_FULL) {
             $definition = html_writer::tag('textarea', htmlspecialchars($level['definition']), array('name' => '{NAME}[criteria][{CRITERION-id}][levels][{LEVEL-id}][definition]', 'cols' => '10', 'rows' => '4'));
-            $score = html_writer::empty_tag('input', array('type' => 'text', 'name' => '{NAME}[criteria][{CRITERION-id}][levels][{LEVEL-id}][score]', 'size' => '3', 'value' => $level['score']));
+            $score = html_writer::label(get_string('criterionempty', 'gradingform_rubric'), '{NAME}criteria{CRITERION-id}levels{LEVEL-id}', false, array('class' => 'accesshide'));
+            $score .= html_writer::empty_tag('input', array('type' => 'text','id' => '{NAME}criteria{CRITERION-id}levels{LEVEL-id}', 'name' => '{NAME}[criteria][{CRITERION-id}][levels][{LEVEL-id}][score]', 'size' => '3', 'value' => $level['score']));
         } else {
             if ($mode == gradingform_rubric_controller::DISPLAY_EDIT_FROZEN) {
                 $leveltemplate .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => '{NAME}[criteria][{CRITERION-id}][levels][{LEVEL-id}][definition]', 'value' => $level['definition']));
@@ -290,7 +291,7 @@ class gradingform_rubric_renderer extends plugin_renderer_base {
             switch ($option) {
                 case 'sortlevelsasc':
                     // Display option as dropdown
-                    $html .= html_writer::tag('span', get_string($option, 'gradingform_rubric'), array('class' => 'label'));
+                    $html .= html_writer::label(get_string($option, 'gradingform_rubric'), $attrs['id'], false, array('class' => 'label'));
                     $value = (int)(!!$value); // make sure $value is either 0 or 1
                     if ($mode == gradingform_rubric_controller::DISPLAY_EDIT_FULL) {
                         $selectoptions = array(0 => get_string($option.'0', 'gradingform_rubric'), 1 => get_string($option.'1', 'gradingform_rubric'));
@@ -448,7 +449,7 @@ class gradingform_rubric_renderer extends plugin_renderer_base {
     public function display_regrade_confirmation($elementname, $changelevel, $value) {
         $html = html_writer::start_tag('div', array('class' => 'gradingform_rubric-regrade'));
         if ($changelevel<=2) {
-            $html .= get_string('regrademessage1', 'gradingform_rubric');
+            $html .= html_writer::label(get_string('regrademessage1', 'gradingform_rubric'), 'menu' . $elementname . 'regrade');
             $selectoptions = array(
                 0 => get_string('regradeoption0', 'gradingform_rubric'),
                 1 => get_string('regradeoption1', 'gradingform_rubric')

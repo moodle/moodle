@@ -58,9 +58,9 @@ if ($version == 'moodle' && count($parts) >= 3) {
 } else if (count($parts) == 1 && ($version == $CFG->yui3version || $version == $CFG->yui2version)) {
     list($image) = $parts;
     if ($version == $CFG->yui3version) {
-        $imagepath = "$CFG->dirroot/lib/yui/$CFG->yui3version/build/assets/skins/sam/$image";
+        $imagepath = "$CFG->dirroot/lib/yuilib/$CFG->yui3version/build/assets/skins/sam/$image";
     } else  {
-        $imagepath = "$CFG->dirroot/lib/yui/$CFG->yui2version/build/assets/skins/sam/$image";
+        $imagepath = "$CFG->dirroot/lib/yuilib/2in3/$CFG->yui2version/build/assets/skins/sam/$image";
     }
 } else {
     yui_image_not_found();

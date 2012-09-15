@@ -509,6 +509,14 @@ class gradingform_rubric_controller extends gradingform_controller {
         $options = $this->get_options();
         $rubric = '';
         if (has_capability('moodle/grade:managegradingforms', $page->context)) {
+            $showdescription = true;
+        } else {
+            $showdescription = $options['showdescriptionstudent'];
+        }
+        if ($showdescription) {
+            $rubric .= $output->box($this->get_formatted_description(), 'gradingform_rubric-description');
+        }
+        if (has_capability('moodle/grade:managegradingforms', $page->context)) {
             $rubric .= $output->display_rubric_mapping_explained($this->get_min_max_score());
             $rubric .= $output->display_rubric($criteria, $options, self::DISPLAY_PREVIEW, 'rubric');
         } else {
@@ -556,7 +564,8 @@ class gradingform_rubric_controller extends gradingform_controller {
             return $this->get_instance($instance);
         }
         if ($itemid && $raterid) {
-            if ($rs = $DB->get_records('grading_instances', array('raterid' => $raterid, 'itemid' => $itemid), 'timemodified DESC', '*', 0, 1)) {
+            $params = array('definitionid' => $this->definition->id, 'raterid' => $raterid, 'itemid' => $itemid);
+            if ($rs = $DB->get_records('grading_instances', $params, 'timemodified DESC', '*', 0, 1)) {
                 $record = reset($rs);
                 $currentinstance = $this->get_current_instance($raterid, $itemid);
                 if ($record->status == gradingform_rubric_instance::INSTANCE_STATUS_INCOMPLETE &&

@@ -45,7 +45,7 @@ require_login($course, false, $cm);
 $url = new moodle_url('/mod/lesson/lesson.php', array('id'=>$id,'action'=>$action));
 $PAGE->set_url($url);
 
-$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+$context = context_module::instance($cm->id);
 require_capability('mod/lesson:edit', $context);
 require_sesskey();
 

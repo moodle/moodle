@@ -30,7 +30,7 @@
         print_error('cannotcallscript');
     }
 
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $context = context_module::instance($cm->id);
 
     $inactive = NULL;
     $activetwo = NULL;

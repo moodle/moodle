@@ -6458,7 +6458,7 @@ class context_course extends context {
                 if ($short){
                     $name .= format_string($course->shortname, true, array('context' => $this));
                 } else {
-                    $name .= format_string($course->fullname);
+                    $name .= format_string(get_course_display_name_for_list($course));
                }
             }
         }
@@ -6676,7 +6676,7 @@ class context_module extends context {
                     if ($withprefix){
                         $name = get_string('modulename', $cm->modname).': ';
                     }
-                    $name .= $mod->name;
+                    $name .= format_string($mod->name, true, array('context' => $this));
                 }
             }
         return $name;

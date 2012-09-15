@@ -48,6 +48,27 @@ function xmldb_wiki_upgrade($oldversion) {
     // Moodle v2.3.0 release upgrade line
     // Put any upgrade step following this
 
+    if ($oldversion < 2012061701) {
+        // Drop all legacy upgrade tables, not used anymore.
+
+        $table = new xmldb_table('wiki_entries_old');
+        if ($dbman->table_exists('wiki_entries_old')) {
+            $dbman->drop_table($table);
+        }
+
+        $table = new xmldb_table('wiki_locks_old');
+        if ($dbman->table_exists('wiki_locks_old')) {
+            $dbman->drop_table($table);
+        }
+
+        $table = new xmldb_table('wiki_pages_old');
+        if ($dbman->table_exists('wiki_pages_old')) {
+            $dbman->drop_table($table);
+        }
+
+        upgrade_plugin_savepoint(true, 2012061701, 'mod', 'wiki');
+    }
+
 
     return true;
 }

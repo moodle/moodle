@@ -280,7 +280,7 @@ function chat_print_recent_activity($course, $viewfullnames, $timestart) {
         }
 
         if (groups_get_activity_groupmode($cm) != SEPARATEGROUPS
-         or has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_MODULE, $cm->id))) {
+         or has_capability('moodle/site:accessallgroups', context_module::instance($cm->id))) {
             if ($timeout > time() - $cm->lasttime) {
                 $current[] = $cm;
             } else {
@@ -767,16 +767,15 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
     }
 
     // It's not a system event
-
-    $text = $message->message;
+    $text = trim($message->message);
 
     /// Parse the text to clean and filter it
-
     $options = new stdClass();
     $options->para = false;
     $text = format_text($text, FORMAT_MOODLE, $options, $courseid);
 
     // And now check for special cases
+    $patternTo = '#^\s*To\s([^:]+):(.*)#';
     $special = false;
 
     if (substr($text, 0, 5) == 'beep ') {
@@ -799,23 +798,32 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
             return false;
         }
     } else if (substr($text, 0, 1) == '/') {     /// It's a user command
-        // support some IRC commands
-        $pattern = '#(^\/)(\w+).*#';
-        preg_match($pattern, trim($text), $matches);
-        $command = $matches[2];
-        switch ($command){
-        case 'me':
-            $special = true;
-            $outinfo = $message->strtime;
-            $outmain = '*** <b>'.$sender->firstname.' '.substr($text, 4).'</b>';
-            break;
-        }
-    } elseif (substr($text, 0, 2) == 'To') {
-        $pattern = '#To[[:space:]](.*):(.*)#';
-        preg_match($pattern, trim($text), $matches);
         $special = true;
-        $outinfo = $message->strtime;
-        $outmain = $sender->firstname.' '.get_string('saidto', 'chat').' <i>'.$matches[1].'</i>: '.$matches[2];
+        $pattern = '#(^\/)(\w+).*#';
+        preg_match($pattern, $text, $matches);
+        $command = isset($matches[2]) ? $matches[2] : false;
+        // Support some IRC commands.
+        switch ($command){
+            case 'me':
+                $outinfo = $message->strtime;
+                $outmain = '*** <b>'.$sender->firstname.' '.substr($text, 4).'</b>';
+                break;
+            default:
+                // Error, we set special back to false to use the classic message output.
+                $special = false;
+                break;
+        }
+    } else if (preg_match($patternTo, $text)) {
+        $special = true;
+        $matches = array();
+        preg_match($patternTo, $text, $matches);
+        if (isset($matches[1]) && isset($matches[2])) {
+            $outinfo = $message->strtime;
+            $outmain = $sender->firstname.' '.get_string('saidto', 'chat').' <i>'.$matches[1].'</i>: '.$matches[2];
+        } else {
+            // Error, we set special back to false to use the classic message output.
+            $special = false;
+        }
     }
 
     if(!$special) {
@@ -875,7 +883,8 @@ function chat_format_message($message, $courseid, $currentuser, $chat_lastrow=NU
  * @return bool|string Returns HTML or false
  */
 function chat_format_message_theme ($message, $chatuser, $currentuser, $groupingid, $theme = 'bubble') {
-    global $CFG, $USER, $OUTPUT, $COURSE, $DB;
+    global $CFG, $USER, $OUTPUT, $COURSE, $DB, $PAGE;
+    require_once($CFG->dirroot.'/mod/chat/locallib.php');
 
     static $users;     // Cache user lookups
 
@@ -912,24 +921,18 @@ function chat_format_message_theme ($message, $chatuser, $currentuser, $grouping
     if(!empty($message->system)) {
         $result->type = 'system';
 
-        $userlink = new moodle_url('/user/view.php', array('id'=>$message->userid,'course'=>$courseid));
+        $senderprofile = $CFG->wwwroot.'/user/view.php?id='.$sender->id.'&amp;course='.$courseid;
+        $event = get_string('message'.$message->message, 'chat', fullname($sender));
+        $eventmessage = new event_message($senderprofile, fullname($sender), $message->strtime, $event, $theme);
 
-        $patterns = array();
-        $replacements = array();
-        $patterns[] = '___senderprofile___';
-        $patterns[] = '___sender___';
-        $patterns[] = '___time___';
-        $patterns[] = '___event___';
-        $replacements[] = $CFG->wwwroot.'/user/view.php?id='.$sender->id.'&amp;course='.$courseid;
-        $replacements[] = fullname($sender);
-        $replacements[] = $message->strtime;
-        $replacements[] = get_string('message'.$message->message, 'chat', fullname($sender));
-        $result->html = str_replace($patterns, $replacements, $chattheme_cfg->event_message);
+        $output = $PAGE->get_renderer('mod_chat');
+        $result->html = $output->render($eventmessage);
+
         return $result;
     }
 
     // It's not a system event
-    $text = $message->message;
+    $text = trim($message->message);
 
     /// Parse the text to clean and filter it
     $options = new stdClass();
@@ -940,8 +943,9 @@ function chat_format_message_theme ($message, $chatuser, $currentuser, $grouping
     $special = false;
     $outtime = $message->strtime;
 
-    //Initilise output variable.
+    // Initialise variables.
     $outmain = '';
+    $patternTo = '#^\s*To\s([^:]+):(.*)#';
 
     if (substr($text, 0, 5) == 'beep ') {
         $special = true;
@@ -969,62 +973,48 @@ function chat_format_message_theme ($message, $chatuser, $currentuser, $grouping
     } else if (substr($text, 0, 1) == '/') {     /// It's a user command
         $special = true;
         $result->type = 'command';
-        // support some IRC commands
         $pattern = '#(^\/)(\w+).*#';
-        preg_match($pattern, trim($text), $matches);
-        $command = $matches[2];
-        $special = true;
+        preg_match($pattern, $text, $matches);
+        $command = isset($matches[2]) ? $matches[2] : false;
+        // Support some IRC commands.
         switch ($command){
-        case 'me':
-            $outmain = '*** <b>'.$sender->firstname.' '.substr($text, 4).'</b>';
-            break;
+            case 'me':
+                $outmain = '*** <b>'.$sender->firstname.' '.substr($text, 4).'</b>';
+                break;
+            default:
+                // Error, we set special back to false to use the classic message output.
+                $special = false;
+                break;
         }
-    } elseif (substr($text, 0, 2) == 'To') {
+    } else if (preg_match($patternTo, $text)) {
         $special = true;
         $result->type = 'dialogue';
-        $pattern = '#To[[:space:]](.*):(.*)#';
-        preg_match($pattern, trim($text), $matches);
-        $special = true;
-        $outmain = $sender->firstname.' <b>'.get_string('saidto', 'chat').'</b> <i>'.$matches[1].'</i>: '.$matches[2];
+        $matches = array();
+        preg_match($patternTo, $text, $matches);
+        if (isset($matches[1]) && isset($matches[2])) {
+            $outmain = $sender->firstname.' <b>'.get_string('saidto', 'chat').'</b> <i>'.$matches[1].'</i>: '.$matches[2];
+        } else {
+            // Error, we set special back to false to use the classic message output.
+            $special = false;
+        }
     }
 
-    if(!$special) {
+    if (!$special) {
         $outmain = $text;
     }
 
     $result->text = strip_tags($outtime.': '.$outmain);
 
-    $ismymessage = '';
-    $rightalign = '';
+    $mymessageclass = '';
     if ($sender->id == $USER->id) {
-        $ismymessage = ' class="mymessage"';
-        $rightalign = ' align="right"';
+        $mymessageclass = 'chat-message-mymessage';
     }
-    $patterns = array();
-    $replacements = array();
-    $patterns[] = '___avatar___';
-    $patterns[] = '___sender___';
-    $patterns[] = '___senderprofile___';
-    $patterns[] = '___time___';
-    $patterns[] = '___message___';
-    $patterns[] = '___mymessageclass___';
-    $patterns[] = '___tablealign___';
-    $replacements[] = $message->picture;
-    $replacements[] = fullname($sender);
-    $replacements[] = $CFG->wwwroot.'/user/view.php?id='.$sender->id.'&amp;course='.$courseid;
-    $replacements[] = $outtime;
-    $replacements[] = $outmain;
-    $replacements[] = $ismymessage;
-    $replacements[] = $rightalign;
-    if (!empty($chattheme_cfg->avatar) and !empty($chattheme_cfg->align)) {
-        if (!empty($ismymessage)) {
-            $result->html = str_replace($patterns, $replacements, $chattheme_cfg->user_message_right);
-        } else {
-            $result->html = str_replace($patterns, $replacements, $chattheme_cfg->user_message_left);
-        }
-    } else {
-        $result->html = str_replace($patterns, $replacements, $chattheme_cfg->user_message);
-    }
+
+    $senderprofile = $CFG->wwwroot.'/user/view.php?id='.$sender->id.'&amp;course='.$courseid;
+    $usermessage = new user_message($senderprofile, fullname($sender), $message->picture, $mymessageclass, $outtime, $outmain, $theme);
+
+    $output = $PAGE->get_renderer('mod_chat');
+    $result->html = $output->render($usermessage);
 
     //When user beeps other user, then don't show any timestamp to other users in chat.
     if (('' === $outmain) && $special) {
@@ -1033,7 +1023,6 @@ function chat_format_message_theme ($message, $chatuser, $currentuser, $grouping
         return $result;
     }
 }
-
 
 /**
  * @global object $DB
@@ -1218,7 +1207,7 @@ function chat_extend_navigation($navigation, $course, $module, $cm) {
 
     $currentgroup = groups_get_activity_group($cm, true);
 
-    if (has_capability('mod/chat:chat', get_context_instance(CONTEXT_MODULE, $cm->id))) {
+    if (has_capability('mod/chat:chat', context_module::instance($cm->id))) {
         $strenterchat    = get_string('enterchat', 'chat');
 
         $target = $CFG->wwwroot.'/mod/chat/';

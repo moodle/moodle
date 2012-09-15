@@ -95,7 +95,7 @@ bodyContent: '<div class="comment-delete-confirm"><a href="#" id="confirmdelete-
                                     color: { to: '#06e' },
                                     backgroundColor: { to: '#FFE390' }
                                 };
-                                var anim = new YAHOO.util.ColorAnim(ids[i], attributes);
+                                var anim = new Y.YUI2.util.ColorAnim(ids[i], attributes);
                                 anim.animate();
                             }
                             scope.register_pagination();
@@ -106,7 +106,7 @@ bodyContent: '<div class="comment-delete-confirm"><a href="#" id="confirmdelete-
                     var attributes = {
                         backgroundColor: { from: '#FFE390', to:'#FFFFFF' }
                     };
-                    var anim = new YAHOO.util.ColorAnim('dlg-content-'+cid, attributes);
+                    var anim = new Y.YUI2.util.ColorAnim('dlg-content-'+cid, attributes);
                     anim.animate();
                 }
             },
@@ -255,7 +255,7 @@ bodyContent: '<div class="comment-delete-confirm"><a href="#" id="confirmdelete-
                         };
                         var cmt = Y.one('#'+htmlid);
                         cmt.setStyle('overflow', 'hidden');
-                        var anim = new YAHOO.util.Anim(htmlid, attributes, 1, YAHOO.util.Easing.easeOut);
+                        var anim = new Y.YUI2.util.Anim(htmlid, attributes, 1, Y.YUI2.util.Easing.easeOut);
                         anim.onComplete.subscribe(remove_dom, cmt, this);
                         anim.animate();
                     }

@@ -1,5 +1,7 @@
 function submit_download_form() {
-    f = YAHOO.util.Dom.get("redirectform");
-    YAHOO.util.Dom.addClass(f.parentNode, "hide");
+YUI().use('yui2-dom', function(Y) {
+    f = Y.YUI2.util.Dom.get("redirectform");
+    Y.YUI2.util.Dom.addClass(f.parentNode, "hide");
     f.submit();
+});
 }

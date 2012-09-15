@@ -93,7 +93,7 @@ foreach ($lessons as $lesson) {
         $link = "<a href=\"view.php?id=$lesson->coursemodule\">".format_string($lesson->name,true)."</a>";
     }
     $cm = get_coursemodule_from_instance('lesson', $lesson->id);
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $context = context_module::instance($cm->id);
 
     if ($lesson->deadline == 0) {
         $due = $strnodeadline;

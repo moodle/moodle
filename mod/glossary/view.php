@@ -251,7 +251,7 @@ $PAGE->set_url($url);
 if (!empty($CFG->enablerssfeeds) && !empty($CFG->glossary_enablerssfeeds)
     && $glossary->rsstype && $glossary->rssarticles) {
 
-    $rsstitle = format_string($course->shortname, true, array('context' => get_context_instance(CONTEXT_COURSE, $course->id))) . ': %fullname%';
+    $rsstitle = format_string($course->shortname, true, array('context' => context_course::instance($course->id))) . ': %fullname%';
     rss_add_http_header($context, 'mod_glossary', $glossary, $rsstitle);
 }
 
@@ -448,7 +448,7 @@ if ($allentries) {
 
                     $user = $DB->get_record("user", array("id"=>$entry->userid));
                     echo $OUTPUT->user_picture($user, array('courseid'=>$course->id));
-                    $pivottoshow = fullname($user, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)));
+                    $pivottoshow = fullname($user, has_capability('moodle/site:viewfullnames', context_course::instance($course->id)));
                 } else {
                     echo '<th >';
                 }

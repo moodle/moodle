@@ -65,7 +65,7 @@ if ($courseid) {
 }
 
 if ($courseid) {
-    $PAGE->set_context(get_context_instance(CONTEXT_COURSE, $courseid));
+    $PAGE->set_context(context_course::instance($courseid));
 } else {
     $PAGE->set_context(get_system_context());
 }
@@ -86,7 +86,7 @@ $welcome = get_string('morewelcome', $tagslang);
 
 // The title and breadcrumb
 if ($courseid) {
-    $courseshortname = format_string($course->shortname, true, array('context' => get_context_instance(CONTEXT_COURSE, $courseid)));
+    $courseshortname = format_string($course->shortname, true, array('context' => context_course::instance($courseid)));
     $PAGE->navbar->add($courseshortname, new moodle_url('/course/view.php', array('id'=>$courseid)));
 }
 $PAGE->navbar->add($title);
@@ -183,7 +183,7 @@ if ($loggedin) {
     }
 }
 if ($courseid) {
-    $fullname = format_string($course->fullname, true, array('context' => get_context_instance(CONTEXT_COURSE, $course->id)));
+    $fullname = format_string($course->fullname, true, array('context' => context_course::instance($course->id)));
     if ($show == 'course') {
         $link1 .= ' | <b>'.get_string('moreshowcoursetags', $tagslang, $fullname).'</b>';
     } else {

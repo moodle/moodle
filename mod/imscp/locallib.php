@@ -35,7 +35,7 @@ function imscp_print_content($imscp, $cm, $course) {
 
     $items = unserialize($imscp->structure);
     $first = reset($items);
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $context = context_module::instance($cm->id);
     $urlbase = "$CFG->wwwroot/pluginfile.php";
     $path = '/'.$context->id.'/mod_imscp/content/'.$imscp->revision.'/'.$first['href'];
     $firsturl = file_encode_url($urlbase, $path, false);
@@ -61,7 +61,7 @@ function imscp_print_content($imscp, $cm, $course) {
 function imscp_htmllize_item($item, $imscp, $cm) {
     global $CFG;
 
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $context = context_module::instance($cm->id);
     $urlbase = "$CFG->wwwroot/pluginfile.php";
     $path = '/'.$context->id.'/mod_imscp/content/'.$imscp->revision.'/'.$item['href'];
     $url = file_encode_url($urlbase, $path, false);

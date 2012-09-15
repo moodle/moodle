@@ -912,6 +912,56 @@ class moodlelib_testcase extends advanced_testcase {
         } catch (invalid_parameter_exception $ex) {
             $this->assertTrue(true);
         }
+        try {
+            $param = validate_param('1.0', PARAM_FLOAT);
+            $this->assertSame(1.0, $param);
+
+            // Make sure valid floats do not cause exception.
+            validate_param(1.0, PARAM_FLOAT);
+            validate_param(10, PARAM_FLOAT);
+            validate_param('0', PARAM_FLOAT);
+            validate_param('119813454.545464564564546564545646556564465465456465465465645645465645645645', PARAM_FLOAT);
+            validate_param('011.1', PARAM_FLOAT);
+            validate_param('11', PARAM_FLOAT);
+            validate_param('+.1', PARAM_FLOAT);
+            validate_param('-.1', PARAM_FLOAT);
+            validate_param('1e10', PARAM_FLOAT);
+            validate_param('.1e+10', PARAM_FLOAT);
+            validate_param('1E-1', PARAM_FLOAT);
+            $this->assertTrue(true);
+        } catch (invalid_parameter_exception $ex) {
+            $this->fail('Valid float notation not accepted');
+        }
+        try {
+            $param = validate_param('1,2', PARAM_FLOAT);
+            $this->fail('invalid_parameter_exception expected');
+        } catch (invalid_parameter_exception $ex) {
+            $this->assertTrue(true);
+        }
+        try {
+            $param = validate_param('', PARAM_FLOAT);
+            $this->fail('invalid_parameter_exception expected');
+        } catch (invalid_parameter_exception $ex) {
+            $this->assertTrue(true);
+        }
+        try {
+            $param = validate_param('.', PARAM_FLOAT);
+            $this->fail('invalid_parameter_exception expected');
+        } catch (invalid_parameter_exception $ex) {
+            $this->assertTrue(true);
+        }
+        try {
+            $param = validate_param('e10', PARAM_FLOAT);
+            $this->fail('invalid_parameter_exception expected');
+        } catch (invalid_parameter_exception $ex) {
+            $this->assertTrue(true);
+        }
+        try {
+            $param = validate_param('abc', PARAM_FLOAT);
+            $this->fail('invalid_parameter_exception expected');
+        } catch (invalid_parameter_exception $ex) {
+            $this->assertTrue(true);
+        }
     }
 
     function test_shorten_text() {
@@ -1499,9 +1549,9 @@ class moodlelib_testcase extends advanced_testcase {
                 'hour' => '10',
                 'minutes' => '00',
                 'seconds' => '00',
-                'timezone' => '0.0', //no dst offset
-                'applydst' => false,
-                'expectedoutput' => '1309528800'
+                'timezone' => '0.0',
+                'applydst' => false, //no dst offset
+                'expectedoutput' => '1309514400' // 6pm at UTC+0
             ),
             array(
                 'usertimezone' => 'America/Moncton',
@@ -1859,5 +1909,65 @@ class moodlelib_testcase extends advanced_testcase {
         // Localisation off
         $this->assertEquals('5.43000', format_float(5.43, 5, false));
         $this->assertEquals('5.43', format_float(5.43, 5, false, true));
+    }
+
+    /**
+     * Test deleting of users.
+     */
+    public function test_delete_user() {
+        global $DB, $CFG;
+
+        $this->resetAfterTest();
+
+        $guest = $DB->get_record('user', array('id'=>$CFG->siteguest), '*', MUST_EXIST);
+        $admin = $DB->get_record('user', array('id'=>$CFG->siteadmins), '*', MUST_EXIST);
+        $this->assertEquals(0, $DB->count_records('user', array('deleted'=>1)));
+
+        $user = $this->getDataGenerator()->create_user(array('idnumber'=>'abc'));
+        $user2 = $this->getDataGenerator()->create_user(array('idnumber'=>'xyz'));
+
+        $result = delete_user($user);
+        $this->assertTrue($result);
+        $deluser = $DB->get_record('user', array('id'=>$user->id), '*', MUST_EXIST);
+        $this->assertEquals(1, $deluser->deleted);
+        $this->assertEquals(0, $deluser->picture);
+        $this->assertSame('', $deluser->idnumber);
+        $this->assertSame(md5($user->username), $deluser->email);
+        $this->assertRegExp('/^'.preg_quote($user->email, '/').'\.\d*$/', $deluser->username);
+
+        $this->assertEquals(1, $DB->count_records('user', array('deleted'=>1)));
+
+        // Try invalid params.
+
+        $record = new stdClass();
+        $record->grrr = 1;
+        try {
+            delete_user($record);
+            $this->fail('Expecting exception for invalid delete_user() $user parameter');
+        } catch (coding_exception $e) {
+            $this->assertTrue(true);
+        }
+        $record->id = 1;
+        try {
+            delete_user($record);
+            $this->fail('Expecting exception for invalid delete_user() $user parameter');
+        } catch (coding_exception $e) {
+            $this->assertTrue(true);
+        }
+
+        $CFG->debug = DEBUG_MINIMAL; // Prevent standard debug warnings.
+
+        $record = new stdClass();
+        $record->id = 666;
+        $record->username = 'xx';
+        $this->assertFalse($DB->record_exists('user', array('id'=>666))); // Any non-existent id is ok.
+        $result = delete_user($record);
+        $this->assertFalse($result);
+
+        $result = delete_user($guest);
+        $this->assertFalse($result);
+
+        $result = delete_user($admin);
+        $this->assertFalse($result);
     }
 }

@@ -24,7 +24,7 @@ if (!$cm = get_coursemodule_from_instance('chat', $chat->id, $course->id)) {
     print_error('invalidcoursemodule');
 }
 
-$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+$context = context_module::instance($cm->id);
 
 require_login($course, false, $cm);
 
@@ -59,7 +59,7 @@ if (!empty($CFG->chat_normal_updatemode)) {
     $updatemode = $CFG->chat_normal_updatemode;
 }
 
-$courseshortname = format_string($course->shortname, true, array('context' => get_context_instance(CONTEXT_COURSE, $course->id)));
+$courseshortname = format_string($course->shortname, true, array('context' => context_course::instance($course->id)));
 ?>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">

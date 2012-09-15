@@ -59,15 +59,15 @@ $userid = $userid ? $userid : $USER->id;       // Owner of the page
 $user = $DB->get_record('user', array('id' => $userid));
 
 if ($user->deleted) {
-    $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
+    $PAGE->set_context(context_system::instance());
     echo $OUTPUT->header();
-    echo $OUTPUT->heading(get_string('userdeleted'));
+    echo $OUTPUT->notification(get_string('userdeleted'));
     echo $OUTPUT->footer();
     die;
 }
 
 $currentuser = ($user->id == $USER->id);
-$context = $usercontext = get_context_instance(CONTEXT_USER, $userid, MUST_EXIST);
+$context = $usercontext = context_user::instance($userid, MUST_EXIST);
 
 if (!$currentuser &&
     !empty($CFG->forceloginforprofiles) &&
@@ -76,13 +76,13 @@ if (!$currentuser &&
 
     // Course managers can be browsed at site level. If not forceloginforprofiles, allow access (bug #4366)
     $struser = get_string('user');
-    $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
+    $PAGE->set_context(context_system::instance());
     $PAGE->set_title("$SITE->shortname: $struser");  // Do not leak the name
     $PAGE->set_heading("$SITE->shortname: $struser");
     $PAGE->set_url('/user/profile.php', array('id'=>$userid));
     $PAGE->navbar->add($struser);
     echo $OUTPUT->header();
-    echo $OUTPUT->heading(get_string('usernotavailable', 'error'));
+    echo $OUTPUT->notification(get_string('usernotavailable', 'error'));
     echo $OUTPUT->footer();
     exit;
 }
@@ -93,7 +93,7 @@ if (!$currentpage = my_get_page($userid, MY_PAGE_PUBLIC)) {
 }
 
 if (!$currentpage->userid) {
-    $context = get_context_instance(CONTEXT_SYSTEM);  // A trick so that we even see non-sticky blocks
+    $context = context_system::instance();  // A trick so that we even see non-sticky blocks
 }
 
 $PAGE->set_context($context);
@@ -116,6 +116,12 @@ if (has_capability('moodle/user:viewhiddendetails', $context)) {
     $hiddenfields = array();
 } else {
     $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
+}
+
+if (has_capability('moodle/site:viewuseridentity', $context)) {
+    $identityfields = array_flip(explode(',', $CFG->showuseridentity));
+} else {
+    $identityfields = array();
 }
 
 // Start setting up the page
@@ -247,23 +253,34 @@ if (! isset($hiddenfields['city']) && $user->city) {
     print_row(get_string('city') . ':', $user->city);
 }
 
-if (has_capability('moodle/user:viewhiddendetails', $context)) {
-    if ($user->address) {
-        print_row(get_string("address").":", "$user->address");
-    }
-    if ($user->phone1) {
-        print_row(get_string("phone").":", "$user->phone1");
-    }
-    if ($user->phone2) {
-        print_row(get_string("phone2").":", "$user->phone2");
-    }
+if (isset($identityfields['address']) && $user->address) {
+    print_row(get_string("address").":", "$user->address");
 }
 
-if ($currentuser
+if (isset($identityfields['phone1']) && $user->phone1) {
+    print_row(get_string("phone").":", "$user->phone1");
+}
+
+if (isset($identityfields['phone2']) && $user->phone2) {
+    print_row(get_string("phone2").":", "$user->phone2");
+}
+
+if (isset($identityfields['institution']) && $user->institution) {
+    print_row(get_string("institution").":", "$user->institution");
+}
+
+if (isset($identityfields['department']) && $user->department) {
+    print_row(get_string("department").":", "$user->department");
+}
+
+if (isset($identityfields['idnumber']) && $user->idnumber) {
+    print_row(get_string("idnumber").":", "$user->idnumber");
+}
+
+if (isset($identityfields['email']) and ($currentuser
   or $user->maildisplay == 1
   or has_capability('moodle/course:useremail', $context)
-  or ($user->maildisplay == 2 and enrol_sharing_course($user, $USER))) {
-
+  or ($user->maildisplay == 2 and enrol_sharing_course($user, $USER)))) {
     print_row(get_string("email").":", obfuscate_mailto($user->email, ''));
 }
 
@@ -306,7 +323,7 @@ if (!isset($hiddenfields['mycourses'])) {
             if ($mycourse->category) {
                 $class = '';
                 if ($mycourse->visible == 0) {
-                    $ccontext = get_context_instance(CONTEXT_COURSE, $mycourse->id);
+                    $ccontext = context_course::instance($mycourse->id);
                     if (!has_capability('moodle/course:viewhiddencourses', $ccontext)) {
                         continue;
                     }

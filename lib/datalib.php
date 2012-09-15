@@ -158,7 +158,7 @@ function search_users($courseid, $groupid, $searchtext, $sort='', array $excepti
             return $DB->get_records_sql($sql, $params);
 
         } else {
-            $context = get_context_instance(CONTEXT_COURSE, $courseid);
+            $context = context_course::instance($courseid);
             $contextlists = get_related_contexts_string($context);
 
             $sql = "SELECT u.id, u.firstname, u.lastname, u.email
@@ -412,7 +412,7 @@ function get_courses($categoryid="all", $sort="c.sortorder ASC", $fields="c.*") 
             context_instance_preload($course);
             if (isset($course->visible) && $course->visible <= 0) {
                 // for hidden courses, require visibility check
-                if (has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id))) {
+                if (has_capability('moodle/course:viewhiddencourses', context_course::instance($course->id))) {
                     $visiblecourses [$course->id] = $course;
                 }
             } else {
@@ -479,7 +479,7 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
         context_instance_preload($course);
         if ($course->visible <= 0) {
             // for hidden courses, require visibility check
-            if (has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id))) {
+            if (has_capability('moodle/course:viewhiddencourses', context_course::instance($course->id))) {
                 $totalcount++;
                 if ($totalcount > $limitfrom && (!$limitnum or count($visiblecourses) < $limitnum)) {
                     $visiblecourses [$course->id] = $course;
@@ -596,7 +596,7 @@ function get_courses_wmanagers($categoryid=0, $sort="c.sortorder ASC", $fields=a
         // managers efficiently later...
         foreach ($courses as $k => $course) {
             context_instance_preload($course);
-            $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+            $coursecontext = context_course::instance($course->id);
             $courses[$k] = $course;
             $courses[$k]->managers = array();
             if ($allcats === false) {
@@ -694,7 +694,7 @@ function get_courses_wmanagers($categoryid=0, $sort="c.sortorder ASC", $fields=a
                     }
                 } else {
                     foreach ($courses as $k => $course) {
-                        $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+                        $coursecontext = context_course::instance($course->id);
                         // Note that strpos() returns 0 as "matched at pos 0"
                         if (strpos($coursecontext->path, $ra->path.'/') === 0) {
                             // Only add it to subpaths
@@ -806,7 +806,7 @@ function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $record
     $rs = $DB->get_recordset_sql($sql, $params);
     foreach($rs as $course) {
         context_instance_preload($course);
-        $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+        $coursecontext = context_course::instance($course->id);
         if ($course->visible || has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
             // Don't exit this loop till the end
             // we need to count all the visible courses
@@ -885,7 +885,7 @@ function get_categories($parent='none', $sort=NULL, $shallow=true) {
     $rs = $DB->get_recordset_sql($sql, $params);
     foreach($rs as $cat) {
         context_instance_preload($cat);
-        $catcontext = get_context_instance(CONTEXT_COURSECAT, $cat->id);
+        $catcontext = context_coursecat::instance($cat->id);
         if ($cat->visible || has_capability('moodle/category:viewhiddencategories', $catcontext)) {
             $categories[$cat->id] = $cat;
         }
@@ -949,7 +949,7 @@ function get_course_category($catid=0) {
             $cat->timemodified = time();
             $catid = $DB->insert_record('course_categories', $cat);
             // make sure category context exists
-            get_context_instance(CONTEXT_COURSECAT, $catid);
+            context_coursecat::instance($catid);
             mark_context_dirty('/'.SYSCONTEXTID);
             fix_course_sortorder(); // Required to build course_categories.depth and .path.
             $category = $DB->get_record('course_categories', array('id'=>$catid));
@@ -1032,7 +1032,7 @@ function fix_course_sortorder() {
         $defaultcat = reset($topcats);
         foreach ($frontcourses as $course) {
             $DB->set_field('course', 'category', $defaultcat->id, array('id'=>$course->id));
-            $context = get_context_instance(CONTEXT_COURSE, $course->id);
+            $context = context_course::instance($course->id);
             $fixcontexts[$context->id] = $context;
         }
         unset($frontcourses);
@@ -1178,7 +1178,7 @@ function _fix_course_cats($children, &$sortorder, $parent, $depth, $path, &$fixc
             $update = true;
 
             // make sure context caches are rebuild and dirty contexts marked
-            $context = get_context_instance(CONTEXT_COURSECAT, $cat->id);
+            $context = context_coursecat::instance($cat->id);
             $fixcontexts[$context->id] = $context;
         }
         if ($cat->sortorder != $sortorder) {
@@ -1620,7 +1620,7 @@ function coursemodule_visible_for_user($cm, $userid=0) {
     if (empty($userid)) {
         $userid = $USER->id;
     }
-    if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_MODULE, $cm->id), $userid)) {
+    if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', context_module::instance($cm->id), $userid)) {
         return false;
     }
     if ($CFG->enableavailability) {
@@ -1628,7 +1628,7 @@ function coursemodule_visible_for_user($cm, $userid=0) {
         $ci=new condition_info($cm,CONDITION_MISSING_EXTRATABLE);
         if(!$ci->is_available($cm->availableinfo,false,$userid) and
             !has_capability('moodle/course:viewhiddenactivities',
-                get_context_instance(CONTEXT_MODULE, $cm->id), $userid)) {
+                context_module::instance($cm->id), $userid)) {
             return false;
         }
     }
@@ -2010,7 +2010,7 @@ function user_can_create_courses() {
     global $DB;
     $catsrs = $DB->get_recordset('course_categories');
     foreach ($catsrs as $cat) {
-        if (has_capability('moodle/course:create', get_context_instance(CONTEXT_COURSECAT, $cat->id))) {
+        if (has_capability('moodle/course:create', context_coursecat::instance($cat->id))) {
             $catsrs->close();
             return true;
         }

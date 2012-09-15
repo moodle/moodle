@@ -195,5 +195,5 @@ YUI.add('moodle-block_community-imagegallery', function(Y) {
     }
 
 }, '@VERSION@', {
-    requires:['base','node','overlay', 'moodle-enrol-notification']
+    requires:['base','node','overlay', 'moodle-core-notification']
 });

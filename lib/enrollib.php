@@ -389,7 +389,7 @@ function enrol_course_updated($inserted, $course, $data) {
 function enrol_add_course_navigation(navigation_node $coursenode, $course) {
     global $CFG;
 
-    $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+    $coursecontext = context_course::instance($course->id);
 
     $instances = enrol_get_instances($course->id, true);
     $plugins   = enrol_get_plugins(true);
@@ -604,7 +604,7 @@ function enrol_get_my_courses($fields = NULL, $sort = 'visible DESC,sortorder AS
     foreach ($courses as $id=>$course) {
         context_instance_preload($course);
         if (!$course->visible) {
-            if (!$context = get_context_instance(CONTEXT_COURSE, $id)) {
+            if (!$context = context_course::instance($id, IGNORE_MISSING)) {
                 unset($courses[$id]);
                 continue;
             }
@@ -1018,7 +1018,7 @@ abstract class enrol_plugin {
             $enrol = $this->get_name();
             return get_string('pluginname', 'enrol_'.$enrol);
         } else {
-            $context = get_context_instance(CONTEXT_COURSE, $instance->courseid);
+            $context = context_course::instance($instance->courseid);
             return format_string($instance->name, true, array('context'=>$context));
         }
     }
@@ -1215,7 +1215,7 @@ abstract class enrol_plugin {
         if ($instance->enrol !== $name) {
             throw new coding_exception('invalid enrol instance!');
         }
-        $context = get_context_instance(CONTEXT_COURSE, $instance->courseid, MUST_EXIST);
+        $context = context_course::instance($instance->courseid, MUST_EXIST);
 
         $inserted = false;
         $updated  = false;
@@ -1352,7 +1352,7 @@ abstract class enrol_plugin {
         if ($instance->enrol !== $name) {
             throw new coding_exception('invalid enrol instance!');
         }
-        $context = get_context_instance(CONTEXT_COURSE, $instance->courseid, MUST_EXIST);
+        $context = context_course::instance($instance->courseid, MUST_EXIST);
 
         if (!$ue = $DB->get_record('user_enrolments', array('enrolid'=>$instance->id, 'userid'=>$userid))) {
             // weird, user not enrolled
@@ -1484,7 +1484,7 @@ abstract class enrol_plugin {
             return NULL;
         }
 
-        $context = get_context_instance(CONTEXT_COURSE, $instance->courseid, MUST_EXIST);
+        $context = context_course::instance($instance->courseid, MUST_EXIST);
 
         if (!has_capability("enrol/$name:unenrolself", $context)) {
             return NULL;

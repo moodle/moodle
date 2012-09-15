@@ -36,7 +36,7 @@ if (! $user = $DB->get_record('user', array('id'=>$userid))) {
 
 require_login($course, false, $cm);
 
-if (!has_capability('mod/assignment:grade', get_context_instance(CONTEXT_MODULE, $cm->id))) {
+if (!has_capability('mod/assignment:grade', context_module::instance($cm->id))) {
     print_error('cannotviewassignment', 'assignment');
 }
 

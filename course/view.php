@@ -97,7 +97,7 @@
     $logparam = 'id='. $course->id;
     $loglabel = 'view';
     $infoid = $course->id;
-    if(!empty($section)) {
+    if ($section and $section > 0) {
         $loglabel = 'view section';
 
         // Get section details and check it exists.
@@ -162,7 +162,7 @@
             set_user_preference('usemodchooser', $modchooser);
         }
 
-        if (has_capability('moodle/course:update', $context)) {
+        if (has_capability('moodle/course:sectionvisibility', $context)) {
             if ($hide && confirm_sesskey()) {
                 set_section_visible($course->id, $hide, '0');
                 redirect($PAGE->url);
@@ -172,9 +172,11 @@
                 set_section_visible($course->id, $show, '1');
                 redirect($PAGE->url);
             }
+        }
 
+        if (has_capability('moodle/course:update', $context)) {
             if (!empty($section)) {
-                if (!empty($move) and confirm_sesskey()) {
+                if (!empty($move) and has_capability('moodle/course:movesections', $context) and confirm_sesskey()) {
                     $destsection = $section + $move;
                     if (move_section_to($course, $section, $destsection)) {
                         // Rebuild course cache, after moving section

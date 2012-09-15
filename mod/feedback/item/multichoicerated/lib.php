@@ -465,7 +465,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
         return 1;
     }
 
-    private function get_info($item) {
+    public function get_info($item) {
         $presentation = empty($item->presentation) ? '' : $item->presentation;
 
         $info = new stdClass();
@@ -575,7 +575,8 @@ class feedback_item_multichoicerated extends feedback_item_base {
         echo '<ul>';
         ?>
         <li class="feedback_item_select_<?php echo $hv.'_'.$align;?>">
-            <select name="<?php echo $item->typ.'_'.$item->id;?>">
+            <label class="accesshide" for="<?php echo $item->typ.'_'.$item->id;?>"><?php echo $item->name; ?></label>
+            <select id="<?php echo $item->typ.'_'.$item->id;?>" name="<?php echo $item->typ.'_'.$item->id;?>">
                 <option value="0">&nbsp;</option>
                 <?php
                 $index = 1;

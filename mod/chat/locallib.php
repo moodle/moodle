@@ -103,7 +103,7 @@ class chat_portfolio_caller extends portfolio_module_caller_base {
      * @return bool
      */
     public function check_permissions() {
-        $context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
+        $context = context_module::instance($this->cm->id);
         return has_capability('mod/chat:exportsession', $context)
             || ($this->participated
                 && has_capability('mod/chat:exportparticipatedsession', $context));
@@ -152,5 +152,99 @@ class chat_portfolio_caller extends portfolio_module_caller_base {
             . $this->cm->id . ((isset($this->start))
                 ? '&start=' . $this->start . '&end=' . $this->end
                 : '');
+    }
+}
+
+/**
+ * A chat event such a user entering or leaving a chat activity
+ *
+ * @package    mod_chat
+ * @copyright  2012 Andrew Davis
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class event_message implements renderable {
+
+    /** @var string The URL of the profile of the user who caused the event */
+    public $senderprofile;
+
+    /** @var string The ready to display name of the user who caused the event */
+    public $sendername;
+
+    /** @var string Ready to display event time */
+    public $time;
+
+    /** @var string Event description */
+    public $event;
+
+    /** @var string The chat theme name */
+    public $theme;
+
+    /**
+     * event_message constructor
+     *
+     * @param string $senderprofile The URL of the profile of the user who caused the event
+     * @param string $sendername The ready to display name of the user who caused the event
+     * @param string $time Ready to display event time
+     * @param string $theme The chat theme name
+     */
+    function __construct($senderprofile, $sendername, $time, $event, $theme) {
+
+        $this->senderprofile = $senderprofile;
+        $this->sendername = $sendername;
+        $this->time = $time;
+        $this->event = $event;
+        $this->theme = $theme;
+    }
+}
+
+/**
+ * A chat message from a user
+ *
+ * @package    mod_chat
+ * @copyright  2012 Andrew Davis
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class user_message implements renderable {
+
+    /** @var string The URL of the profile of the user sending the message */
+    public $senderprofile;
+
+    /** @var string The ready to display name of the user sending the message */
+    public $sendername;
+
+    /** @var string HTML for the avatar of the user sending the message */
+    public $avatar;
+
+    /** @var string Empty or a html class definition to append to the html */
+    public $mymessageclass;
+
+    /** @var string Ready to display message time */
+    public $time;
+
+    /** @var string The message */
+    public $message;
+
+    /** @var string The name of the chat theme to use */
+    public $theme;
+
+    /**
+     * user_message constructor
+     *
+     * @param string $senderprofile The URL of the profile of the user sending the message
+     * @param string $sendername The ready to display name of the user sending the message
+     * @param string $avatar HTML for the avatar of the user sending the message
+     * @param string $mymessageclass Empty or a html class definition to append to the html
+     * @param string $time Ready to display message time
+     * @param string $message The message
+     * @param string $theme The name of the chat theme to use
+     */
+    function __construct($senderprofile, $sendername, $avatar, $mymessageclass, $time, $message, $theme) {
+
+        $this->sendername = $sendername;
+        $this->avatar = $avatar;
+        $this->mymessageclass = $mymessageclass;
+        $this->time = $time;
+        $this->message = $message;
+        $this->theme = $theme;
     }
 }

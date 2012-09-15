@@ -53,7 +53,7 @@ $mod = $cm;
 require_login($course, false, $cm);
 
 require_login($course, false, $cm);
-$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+$context = context_module::instance($cm->id);
 require_capability('mod/lesson:edit', $context);
 
 $strimportppt = get_string("importppt", "lesson");

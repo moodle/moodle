@@ -184,6 +184,7 @@ function get_grade_tree(&$gtree, $element, $current_itemid=null, $errors=null) {
                     $name .= '<div class="error"><span class="error">' . $errors[$grade_item->id].'</span><br />'."\n";
                     $closingdiv = "</div>\n";
                 }
+                $name .= '<label class="accesshide" for="id_idnumber_' . $grade_item->id . '">' . get_string('gradeitems', 'grades')  .'</label>';
                 $name .= '<input class="idnumber" id="id_idnumber_'.$grade_item->id.'" type="text" name="idnumbers['.$grade_item->id.']" />' . "\n";
                 $name .= $closingdiv;
             }

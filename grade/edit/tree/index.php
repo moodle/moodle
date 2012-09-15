@@ -51,13 +51,6 @@ $context = context_course::instance($course->id);
 require_capability('moodle/grade:manage', $context);
 
 // todo $PAGE->requires->js_module() should be used here instead
-$PAGE->requires->yui2_lib('event');
-$PAGE->requires->yui2_lib('json');
-$PAGE->requires->yui2_lib('connection');
-$PAGE->requires->yui2_lib('dragdrop');
-$PAGE->requires->yui2_lib('element');
-$PAGE->requires->yui2_lib('container');
-$PAGE->requires->yui2_lib('animation');
 $PAGE->requires->js('/grade/edit/tree/functions.js');
 
 /// return tracking object
@@ -342,8 +335,8 @@ if (!$moving) {
 if (!$moving && count($grade_edit_tree->categories) > 1) {
     echo '<br /><br />';
     echo '<input type="hidden" name="bulkmove" value="0" id="bulkmoveinput" />';
-    echo get_string('moveselectedto', 'grades') . ' ';
     $attributes = array('id'=>'menumoveafter');
+    echo html_writer::label(get_string('moveselectedto', 'grades'), 'menumoveafter');
     echo html_writer::select($grade_edit_tree->categories, 'moveafter', '', array(''=>'choosedots'), $attributes);
     $OUTPUT->add_action_handler(new component_action('change', 'submit_bulk_move'), 'menumoveafter');
     echo '<div id="noscriptgradetreeform" class="hiddenifjs">

@@ -50,7 +50,7 @@ if (!$assignment = $DB->get_record('assignment', array('id'=>$cm->instance))) {
     print_error('invalidid', 'assignment');
 }
 
-$fullname = format_string($course->fullname, true, array('context' => get_context_instance(CONTEXT_COURSE, $course->id)));
+$fullname = format_string($course->fullname, true, array('context' => context_course::instance($course->id)));
 
 $PAGE->set_url($url);
 $PAGE->set_context($context);

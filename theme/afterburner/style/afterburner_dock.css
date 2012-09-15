@@ -2,45 +2,38 @@
 Docking Module
 ---------------*/
 #dock {
-    width:3%;
+    width: 30px;
     position:fixed;
-    top:0px;
-    left:2%;
-    height:100%;
+    top: 0;
+    left: 0;
+    height: 100%;
     z-index:11000;
     }
 #dock.nothingdocked {
     visibility: hidden;
     display:none;
 }
-#dock .controls {
-    bottom: auto;
-    background-color: #ddd;
-    -webkit-border-bottom-left-radius: 6px;
-    -moz-border-radius-bottomleft: 6px;
-    border-bottom-left-radius: 6px;
-}
 #dock .dockeditem.firstdockitem {
     margin-top: 2.3em;
-    -webkit-border-top-left-radius: 6px;
-    -moz-border-radius-topleft: 6px;
-    border-top-left-radius: 6px;
+    -webkit-border-top-right-radius: 6px;
+    -moz-border-radius-topright: 6px;
+    border-top-right-radius: 6px;
 }
 #dock .dockeditem {
     background-color: #ddd;
     padding: 2px;
-    padding-right: 0px;
+    padding-left: 0px;
 }
 #dock .dockedtitle {
     padding-bottom: 5px;
     cursor:pointer;
     background-color: #aaa;
-    -webkit-border-top-left-radius: 6px;
-    -moz-border-radius-topleft: 6px;
-    border-top-left-radius: 6px;
-    -webkit-border-bottom-left-radius: 6px;
-    -moz-border-radius-bottomleft: 6px;
-    border-bottom-left-radius: 6px;
+    -webkit-border-top-right-radius: 6px;
+    -moz-border-radius-topright: 6px;
+    border-top-right-radius: 6px;
+    -webkit-border-bottom-right-radius: 6px;
+    -moz-border-radius-bottomright: 6px;
+    border-bottom-right-radius: 6px;
 }
 #dock .dockedtitle h2 {
     margin: 0;
@@ -48,22 +41,30 @@ Docking Module
     color: #fff;
 }
 .dockedtitle.activeitem h2 {
-    color: #fff !important;
+    color: #fff;
 }
 #dock .dockedtitle.activeitem {
     background-color: #abc;
     width: 35px;
-    -webkit-border-top-left-radius: 6px;
-    -moz-border-radius-topleft: 6px;
-    border-top-left-radius: 6px;
-    -webkit-border-bottom-left-radius: 6px;
-    -moz-border-radius-bottomleft: 6px;
-    border-bottom-left-radius: 6px;
+    -webkit-border-top-right-radius: 0;
+    -moz-border-radius-topright: 0;
+    border-top-right-radius: 0;
+    -webkit-border-bottom-right-radius: 0;
+    -moz-border-radius-bottomright: 0;
+    border-bottom-right-radius: 0;
+}
+#dock .controls {
+    bottom: auto;
+    background-color: #ddd;
+    -webkit-border-bottom-right-radius: 6px;
+    -moz-border-radius-bottomright: 6px;
+    border-bottom-right-radius: 6px;
 }
 #dock .controls img {
     cursor:pointer;
     margin-left: 10px;
 }
+
 /*
 Docked Item Panel
 -----------------------*/
@@ -85,10 +86,10 @@ Docked Item Panel
     border-style: solid;
     border-width: 5px;
     -webkit-border-radius: 6px;
-    -webkit-border-top-left-radius: 0;
     -moz-border-radius: 6px;
-    -moz-border-radius-topleft: 0;
     border-radius: 6px;
+    -webkit-border-top-left-radius: 0;
+    -moz-border-radius-topleft: 0;
     border-top-left-radius: 0;
 }
 #dockeditempanel .dockeditempanel_hd {
@@ -104,19 +105,19 @@ Docked Item Panel
 }
 #dockeditempanel .dockeditempanel_hd {
     border-bottom:1px dotted #aaa;
-    text-align: right;
+    text-align: left;
 }
 #dockeditempanel .dockeditempanel_hd h2 {
     display:inline;
     margin: 0;
-    padding-right: 1em;
+    padding-left: 1em;
     color: #fff;
 }
 #dockeditempanel .dockeditempanel_hd .commands {
     display:inline;
 }
 #dockeditempanel .dockeditempanel_hd .commands img {
-    margin-right: 3px;
+    margin-left: 3px;
     vertical-align: middle;
 }
 #dockeditempanel .dockeditempanel_bd {

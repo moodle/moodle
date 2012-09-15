@@ -150,8 +150,16 @@ function phpunit_boostrap_fix_file_permissions($file) {
  * @return bool
  */
 function phpunit_bootstrap_is_cygwin() {
-    if (empty($_SERVER['SHELL']) or empty($_SERVER['OS'])) {
+    if (empty($_SERVER['OS']) or $_SERVER['OS'] !== 'Windows_NT') {
+        return false;
+
+    } else if (!empty($_SERVER['SHELL']) and $_SERVER['SHELL'] === '/bin/bash') {
+        return true;
+
+    } else if (!empty($_SERVER['TERM']) and $_SERVER['TERM'] === 'cygwin') {
+        return true;
+
+    } else {
         return false;
     }
-    return ($_SERVER['OS'] === 'Windows_NT' and $_SERVER['SHELL'] === '/bin/bash');
 }

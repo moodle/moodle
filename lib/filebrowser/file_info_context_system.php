@@ -101,7 +101,7 @@ class file_info_context_system extends file_info {
 
         $course_cats = $DB->get_records('course_categories', array('parent'=>0), 'sortorder', 'id,visible');
         foreach ($course_cats as $category) {
-            $context = get_context_instance(CONTEXT_COURSECAT, $category->id);
+            $context = context_coursecat::instance($category->id);
             if (!$category->visible and !has_capability('moodle/category:viewhiddencategories', $context)) {
                 continue;
             }
@@ -115,7 +115,7 @@ class file_info_context_system extends file_info {
             if (!$course->visible and !has_capability('moodle/course:viewhiddencourses', $context)) {
                 continue;
             }
-            $context = get_context_instance(CONTEXT_COURSE, $course->id);
+            $context = context_course::instance($course->id);
             if ($child = $this->browser->get_file_info($context)) {
                 $children[] = $child;
             }

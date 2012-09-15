@@ -27,7 +27,7 @@ $PAGE->set_url('/mod/assignment/type/online/all.php', array('id'=>$id));
 require_course_login($course);
 
 // check for view capability at course level
-$context = get_context_instance(CONTEXT_COURSE,$course->id);
+$context = context_course::instance($course->id);
 require_capability('mod/assignment:view',$context);
 
 // various strings
@@ -60,7 +60,7 @@ foreach( $assignments as $assignment ) {
     }
 
     // check we are allowed to view this
-    $context = get_context_instance(CONTEXT_MODULE, $assignment->coursemodule);
+    $context = context_module::instance($assignment->coursemodule);
     if (!has_capability('mod/assignment:view',$context)) {
         continue;
     }

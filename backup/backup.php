@@ -56,11 +56,11 @@ require_login($course, false, $cm);
 
 switch ($type) {
     case backup::TYPE_1COURSE :
-        require_capability('moodle/backup:backupcourse', get_context_instance(CONTEXT_COURSE, $course->id));
+        require_capability('moodle/backup:backupcourse', context_course::instance($course->id));
         $heading = get_string('backupcourse', 'backup', $course->shortname);
         break;
     case backup::TYPE_1SECTION :
-        $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+        $coursecontext = context_course::instance($course->id);
         require_capability('moodle/backup:backupsection', $coursecontext);
         if ((string)$section->name !== '') {
             $sectionname = format_string($section->name, true, array('context' => $coursecontext));
@@ -72,7 +72,7 @@ switch ($type) {
         }
         break;
     case backup::TYPE_1ACTIVITY :
-        require_capability('moodle/backup:backupactivity', get_context_instance(CONTEXT_MODULE, $cm->id));
+        require_capability('moodle/backup:backupactivity', context_module::instance($cm->id));
         $heading = get_string('backupactivity', 'backup', $cm->name);
         break;
     default :

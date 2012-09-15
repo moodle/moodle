@@ -47,7 +47,7 @@ if ($link !== 0) {
 }
 $PAGE->set_url($url);
 
-$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+$context = context_module::instance($cm->id);
 
 switch ($mode) {
     case 'add':

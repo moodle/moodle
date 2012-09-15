@@ -29,9 +29,9 @@ if ($show_instructions) {
 
         ?>
           <div class="guestsub">
-          <p><?php print_string("auth_shibboleth_select_organization", "auth_shibboleth"); ?></p>
+          <p><label for="idp"><?php print_string("auth_shibboleth_select_organization", "auth_shibboleth"); ?></label></p>
             <form action="login.php" method="post" id="guestlogin">
-            <select name="idp">
+            <select id="idp" name="idp">
                 <option value="-" ><?php print_string("auth_shibboleth_select_member", "auth_shibboleth"); ?></option>
                 <?php
                     print_idp_list();

@@ -44,7 +44,7 @@
 
         $glossaryid  = clean_param($args[3], PARAM_INT);
         $cm = get_coursemodule_from_instance('glossary', $glossaryid, 0, false, MUST_EXIST);
-        $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+        $modcontext = context_module::instance($cm->id);
 
         if ($COURSE->id == $cm->course) {
             $course = $COURSE;

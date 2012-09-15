@@ -30,6 +30,51 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Returns all non-view and non-temp tables with sane names.
+ * Prints list of non-supported tables using $OUTPUT->notification()
+ *
+ * @return array
+ */
+function upgrade_mysql_get_supported_tables() {
+    global $OUTPUT, $DB;
+
+    $tables = array();
+    $patprefix = str_replace('_', '\\_', $DB->get_prefix());
+    $pregprefix = preg_quote($DB->get_prefix(), '/');
+
+    $sql = "SHOW FULL TABLES LIKE '$patprefix%'";
+    $rs = $DB->get_recordset_sql($sql);
+    foreach ($rs as $record) {
+        $record = array_change_key_case((array)$record, CASE_LOWER);
+        $type = $record['table_type'];
+        unset($record['table_type']);
+        $fullname = array_shift($record);
+
+        if ($pregprefix === '') {
+            $name = $fullname;
+        } else {
+            $count = null;
+            $name = preg_replace("/^$pregprefix/", '', $fullname, -1, $count);
+            if ($count !== 1) {
+                continue;
+            }
+        }
+
+        if (!preg_match("/^[a-z][a-z0-9_]*$/", $name)) {
+            echo $OUTPUT->notification("Database table with invalid name '$fullname' detected, skipping.", 'notifyproblem');
+            continue;
+        }
+        if ($type === 'VIEW') {
+            echo $OUTPUT->notification("Unsupported database table view '$fullname' detected, skipping.", 'notifyproblem');
+            continue;
+        }
+        $tables[$name] = $name;
+    }
+    $rs->close();
+
+    return $tables;
+}
 
 /**
  * Remove all signed numbers from current database - mysql only.
@@ -50,7 +95,7 @@ function upgrade_mysql_fix_unsigned_columns() {
     $pbar = new progress_bar('mysqlconvertunsigned', 500, true);
 
     $prefix = $DB->get_prefix();
-    $tables = $DB->get_tables();
+    $tables = upgrade_mysql_get_supported_tables();
 
     $tablecount = count($tables);
     $i = 0;
@@ -68,6 +113,23 @@ function upgrade_mysql_fix_unsigned_columns() {
 
             $column = (object)array_change_key_case((array)$column, CASE_LOWER);
             if (stripos($column->type, 'unsigned') !== false) {
+                $maxvalue = 0;
+                if (preg_match('/^int/i', $column->type)) {
+                    $maxvalue = 2147483647;
+                } else if (preg_match('/^medium/i', $column->type)) {
+                    $maxvalue = 8388607;
+                } else if (preg_match('/^smallint/i', $column->type)) {
+                    $maxvalue = 32767;
+                } else if (preg_match('/^tinyint/i', $column->type)) {
+                    $maxvalue = 127;
+                }
+                if ($maxvalue) {
+                    // Make sure nobody is abusing our integer ranges - moodle int sizes are in digits, not bytes!!!
+                    $invalidcount = $DB->get_field_sql("SELECT COUNT('x') FROM `{{$table}}` WHERE `$column->field` > :maxnumber", array('maxnumber'=>$maxvalue));
+                    if ($invalidcount) {
+                        throw new moodle_exception('notlocalisederrormessage', 'error', new moodle_url('/admin/'), "Database table '{$table}'' contains unsigned column '{$column->field}' with $invalidcount values that are out of allowed range, upgrade can not continue.");
+                    }
+                }
                 $type = preg_replace('/unsigned/i', 'signed', $column->type);
                 $notnull = ($column->null === 'NO') ? 'NOT NULL' : 'NULL';
                 $default = (!is_null($column->default) and $column->default !== '') ? "DEFAULT '$column->default'" : '';
@@ -98,7 +160,7 @@ function upgrade_mysql_fix_lob_columns() {
     $pbar = new progress_bar('mysqlconvertlobs', 500, true);
 
     $prefix = $DB->get_prefix();
-    $tables = $DB->get_tables();
+    $tables = upgrade_mysql_get_supported_tables();
     asort($tables);
 
     $tablecount = count($tables);

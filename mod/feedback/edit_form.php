@@ -123,11 +123,11 @@ class feedback_edit_use_template_form extends moodleform {
             $elementgroup[] = $mform->createElement('submit',
                                                      'use_template',
                                                      get_string('use_this_template', 'feedback'));
+
+            $mform->addGroup($elementgroup, 'elementgroup', '', array(' '), false);
         } else {
             $mform->addElement('static', 'info', get_string('no_templates_available_yet', 'feedback'));
         }
-        $mform->addGroup($elementgroup, 'elementgroup', '', array(' '), false);
-
     }
 }
 

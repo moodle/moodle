@@ -52,6 +52,9 @@ class mod_assign_grading_batch_operations_form extends moodleform {
         if ($instance['submissiondrafts']) {
             $options['reverttodraft'] = get_string('reverttodraft', 'assign');
         }
+        if ($instance['duedate']) {
+            $options['grantextension'] = get_string('grantextension', 'assign');
+        }
         $mform->addElement('hidden', 'action', 'batchgradingoperation');
         $mform->addElement('hidden', 'id', $instance['cm']);
         $mform->addElement('hidden', 'selectedusers', '', array('class'=>'selectedusers'));

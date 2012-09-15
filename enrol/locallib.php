@@ -97,6 +97,7 @@ class course_enrolment_manager {
     private $_instances = null;
     private $_inames = null;
     private $_plugins = null;
+    private $_allplugins = null;
     private $_roles = null;
     private $_assignableroles = null;
     private $_assignablerolesothers = null;
@@ -278,7 +279,7 @@ class course_enrolment_manager {
         global $DB, $CFG;
 
         // Add some additional sensible conditions
-        $tests = array("id <> :guestid", 'u.deleted = 0', 'u.confirmed = 1');
+        $tests = array("u.id <> :guestid", 'u.deleted = 0', 'u.confirmed = 1');
         $params = array('guestid' => $CFG->siteguest);
         if (!empty($search)) {
             $conditions = get_extra_user_fields($this->get_context());
@@ -306,10 +307,9 @@ class course_enrolment_manager {
         $fields      = 'SELECT '.$ufields;
         $countfields = 'SELECT COUNT(1)';
         $sql = " FROM {user} u
+            LEFT JOIN {user_enrolments} ue ON (ue.userid = u.id AND ue.enrolid = :enrolid)
                 WHERE $wherecondition
-                      AND u.id NOT IN (SELECT ue.userid
-                                         FROM {user_enrolments} ue
-                                         JOIN {enrol} e ON (e.id = ue.enrolid AND e.id = :enrolid))";
+                      AND ue.id IS NULL";
         $order = ' ORDER BY u.lastname ASC, u.firstname ASC';
         $params['enrolid'] = $enrolid;
         $totalusers = $DB->count_records_sql($countfields . $sql, $params);
@@ -353,12 +353,9 @@ class course_enrolment_manager {
         $fields      = 'SELECT '.user_picture::fields('u', array('username','lastaccess'));
         $countfields = 'SELECT COUNT(u.id)';
         $sql   = " FROM {user} u
+              LEFT JOIN {role_assignments} ra ON (ra.userid = u.id AND ra.contextid = :contextid)
                   WHERE $wherecondition
-                    AND u.id NOT IN (
-                           SELECT u.id
-                             FROM {role_assignments} r, {user} u
-                            WHERE r.contextid = :contextid AND
-                                  u.id = r.userid)";
+                    AND ra.id IS NULL";
         $order = ' ORDER BY lastname ASC, firstname ASC';
 
         $params['contextid'] = $this->context->id;
@@ -401,11 +398,13 @@ class course_enrolment_manager {
     /**
      * Returns all of the enrolment instances for this course.
      *
+     * NOTE: since 2.4 it includes instances of disabled plugins too.
+     *
      * @return array
      */
     public function get_enrolment_instances() {
         if ($this->_instances === null) {
-            $this->_instances = enrol_get_instances($this->course->id, true);
+            $this->_instances = enrol_get_instances($this->course->id, false);
         }
         return $this->_instances;
     }
@@ -413,12 +412,14 @@ class course_enrolment_manager {
     /**
      * Returns the names for all of the enrolment instances for this course.
      *
+     * NOTE: since 2.4 it includes instances of disabled plugins too.
+     *
      * @return array
      */
     public function get_enrolment_instance_names() {
         if ($this->_inames === null) {
             $instances = $this->get_enrolment_instances();
-            $plugins = $this->get_enrolment_plugins();
+            $plugins = $this->get_enrolment_plugins(false);
             foreach ($instances as $key=>$instance) {
                 if (!isset($plugins[$instance->enrol])) {
                     // weird, some broken stuff in plugin
@@ -434,13 +435,29 @@ class course_enrolment_manager {
     /**
      * Gets all of the enrolment plugins that are active for this course.
      *
+     * @param bool $onlyenabled return only enabled enrol plugins
      * @return array
      */
-    public function get_enrolment_plugins() {
+    public function get_enrolment_plugins($onlyenabled = true) {
         if ($this->_plugins === null) {
             $this->_plugins = enrol_get_plugins(true);
         }
-        return $this->_plugins;
+
+        if ($onlyenabled) {
+            return $this->_plugins;
+        }
+
+        if ($this->_allplugins === null) {
+            // Make sure we have the same objects in _allplugins and _plugins.
+            $this->_allplugins = $this->_plugins;
+            foreach (enrol_get_plugins(false) as $name=>$plugin) {
+                if (!isset($this->_allplugins[$name])) {
+                    $this->_allplugins[$name] = $plugin;
+                }
+            }
+        }
+
+        return $this->_allplugins;
     }
 
     /**
@@ -526,7 +543,7 @@ class course_enrolment_manager {
             $userenrolment = $DB->get_record('user_enrolments', array('id'=>(int)$userenrolment));
         }
         $instances = $this->get_enrolment_instances();
-        $plugins = $this->get_enrolment_plugins();
+        $plugins = $this->get_enrolment_plugins(false);
         if (!$userenrolment || !isset($instances[$userenrolment->enrolid])) {
             return array(false, false);
         }
@@ -679,7 +696,7 @@ class course_enrolment_manager {
     }
 
     /**
-     * Gets the enrolments this user has in the course
+     * Gets the enrolments this user has in the course - including all suspended plugins and instances.
      *
      * @global moodle_database $DB
      * @param int $userid
@@ -691,7 +708,7 @@ class course_enrolment_manager {
         $params['userid'] = $userid;
         $userenrolments = $DB->get_records_select('user_enrolments', "enrolid $instancessql AND userid = :userid", $params);
         $instances = $this->get_enrolment_instances();
-        $plugins = $this->get_enrolment_plugins();
+        $plugins = $this->get_enrolment_plugins(false);
         $inames = $this->get_enrolment_instance_names();
         foreach ($userenrolments as &$ue) {
             $ue->enrolmentinstance     = $instances[$ue->enrolid];
@@ -833,6 +850,8 @@ class course_enrolment_manager {
         $url = new moodle_url($pageurl, $this->get_url_params());
         $extrafields = get_extra_user_fields($context);
 
+        $enabledplugins = $this->get_enrolment_plugins(true);
+
         $userdetails = array();
         foreach ($users as $user) {
             $details = $this->prepare_user_for_display($user, $extrafields, $now);
@@ -853,7 +872,15 @@ class course_enrolment_manager {
             // Enrolments
             $details['enrolments'] = array();
             foreach ($this->get_user_enrolments($user->id) as $ue) {
-                if ($ue->timestart and $ue->timeend) {
+                if (!isset($enabledplugins[$ue->enrolmentinstance->enrol])) {
+                    $details['enrolments'][$ue->id] = array(
+                        'text' => $ue->enrolmentinstancename,
+                        'period' => null,
+                        'dimmed' =>  true,
+                        'actions' => array()
+                    );
+                    continue;
+                } else if ($ue->timestart and $ue->timeend) {
                     $period = get_string('periodstartend', 'enrol', array('start'=>userdate($ue->timestart), 'end'=>userdate($ue->timeend)));
                     $periodoutside = ($ue->timestart && $ue->timeend && $now < $ue->timestart && $now > $ue->timeend);
                 } else if ($ue->timestart) {
@@ -863,7 +890,8 @@ class course_enrolment_manager {
                     $period = get_string('periodend', 'enrol', userdate($ue->timeend));
                     $periodoutside = ($ue->timeend && $now > $ue->timeend);
                 } else {
-                    $period = '';
+                    // If there is no start or end show when user was enrolled.
+                    $period = get_string('periodnone', 'enrol', userdate($ue->timecreated));
                     $periodoutside = false;
                 }
                 $details['enrolments'][$ue->id] = array(
@@ -912,7 +940,7 @@ class course_enrolment_manager {
     }
 
     public function get_manual_enrol_buttons() {
-        $plugins = $this->get_enrolment_plugins();
+        $plugins = $this->get_enrolment_plugins(true); // Skip disabled plugins.
         $buttons = array();
         foreach ($plugins as $plugin) {
             $newbutton = $plugin->get_manual_enrol_button($this);
@@ -944,7 +972,7 @@ class course_enrolment_manager {
      */
     public function get_filtered_enrolment_plugin() {
         $instances = $this->get_enrolment_instances();
-        $plugins = $this->get_enrolment_plugins();
+        $plugins = $this->get_enrolment_plugins(false);
 
         if (empty($this->instancefilter) || !array_key_exists($this->instancefilter, $instances)) {
             return false;
@@ -968,7 +996,7 @@ class course_enrolment_manager {
         global $DB;
 
         $instances = $this->get_enrolment_instances();
-        $plugins = $this->get_enrolment_plugins();
+        $plugins = $this->get_enrolment_plugins(false);
 
         if  (!empty($this->instancefilter)) {
             $instancesql = ' = :instanceid';

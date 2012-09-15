@@ -65,7 +65,7 @@ if ($perpage != 5) {
 add_to_log(($isspecificcourse)?$courseid:SITEID, "forum", "user report", 'user.php?'.$url->get_query_string(), $userid);
 
 $user = $DB->get_record("user", array("id" => $userid), '*', MUST_EXIST);
-$usercontext = get_context_instance(CONTEXT_USER, $user->id, MUST_EXIST);
+$usercontext = context_user::instance($user->id, MUST_EXIST);
 // Check if the requested user is the guest user
 if (isguestuser($user)) {
     // The guest user cannot post, so it is not possible to view any posts.
@@ -91,7 +91,7 @@ $hasparentaccess = $isparent && has_all_capabilities(array('moodle/user:viewdeta
 if ($isspecificcourse) {
     // Get the requested course and its context
     $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
-    $coursecontext = get_context_instance(CONTEXT_COURSE, $courseid, MUST_EXIST);
+    $coursecontext = context_course::instance($courseid, MUST_EXIST);
     // We have a specific course to search, which we will also assume we are within.
     if ($hasparentaccess) {
         // A `parent` role won't likely have access to the course so we won't attempt
@@ -144,7 +144,7 @@ if (empty($result->posts)) {
         $sharedcourses = enrol_get_shared_courses($USER->id, $user->id, true);
         foreach ($sharedcourses as $sharedcourse) {
             // Check the view cap within the course context
-            if (has_capability('moodle/user:viewdetails', get_context_instance(CONTEXT_COURSE, $sharedcourse->id))) {
+            if (has_capability('moodle/user:viewdetails', context_course::instance($sharedcourse->id))) {
                 $canviewuser = true;
                 break;
             }
@@ -256,7 +256,7 @@ foreach ($result->posts as $post) {
         $result->posts[$updatedpost[0]->id] = $updatedpost[0];
     }
 
-    $courseshortname = format_string($course->shortname, true, array('context' => get_context_instance(CONTEXT_COURSE, $course->id)));
+    $courseshortname = format_string($course->shortname, true, array('context' => context_course::instance($course->id)));
     $forumname = format_string($forum->name, true, array('context' => $cm->context));
 
     $fullsubjects = array();

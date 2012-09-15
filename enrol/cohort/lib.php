@@ -92,7 +92,7 @@ class enrol_cohort_plugin extends enrol_plugin {
               ORDER BY name ASC";
         $cohorts = $DB->get_records_sql($sql, $params);
         foreach ($cohorts as $c) {
-            $context = get_context_instance_by_id($c->contextid);
+            $context = context::instance_by_id($c->contextid);
             if (has_capability('moodle/cohort:view', $context)) {
                 return true;
             }
@@ -121,16 +121,7 @@ class enrol_cohort_plugin extends enrol_plugin {
      * @return void
      */
     public function course_updated($inserted, $course, $data) {
-        global $CFG;
-
-        if (!$inserted) {
-            // sync cohort enrols
-            require_once("$CFG->dirroot/enrol/cohort/locallib.php");
-            enrol_cohort_sync($course->id);
-        } else {
-            // cohorts are never inserted automatically
-        }
-
+        // It turns out there is no need for cohorts to deal with this hook, see MDL-34870.
     }
 
     /**

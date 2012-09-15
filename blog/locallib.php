@@ -39,7 +39,7 @@ require_once($CFG->libdir . '/filelib.php');
  * @copyright  2009 Nicolas Connault
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class blog_entry {
+class blog_entry implements renderable {
     // Public Database fields
     public $id;
     public $userid;
@@ -66,6 +66,9 @@ class blog_entry {
     public $form;
     public $tags = array();
 
+    /** @var StdClass Data needed to render the entry */
+    public $renderable;
+
     // Methods
     /**
      * Constructor. If given an id, will fetch the corresponding record from the DB.
@@ -89,242 +92,126 @@ class blog_entry {
         $this->form = $form;
     }
 
+
     /**
-     * Prints or returns the HTML for this blog entry.
-     *
-     * @param bool $return
-     * @return string
+     * Gets the required data to print the entry
      */
-    public function print_html($return=false) {
+    public function prepare_render() {
 
-        global $USER, $CFG, $COURSE, $DB, $OUTPUT, $PAGE;
+        global $DB, $CFG, $PAGE;
 
-        $user = $DB->get_record('user', array('id'=>$this->userid));
-        $cmttext = '';
+        $this->renderable = new StdClass();
+
+        $this->renderable->user = $DB->get_record('user', array('id'=>$this->userid));
+
+        // Entry comments.
         if (!empty($CFG->usecomments) and $CFG->blogusecomments) {
             require_once($CFG->dirroot . '/comment/lib.php');
-            // Comments
+
             $cmt = new stdClass();
-            $cmt->context = context_user::instance($user->id);
+            $cmt->context = context_user::instance($this->userid);
             $cmt->courseid = $PAGE->course->id;
             $cmt->area = 'format_blog';
             $cmt->itemid = $this->id;
             $cmt->showcount = $CFG->blogshowcommentscount;
             $cmt->component = 'blog';
-            $comment = new comment($cmt);
-            $cmttext = $comment->output(true);
+            $this->renderable->comment = new comment($cmt);
         }
+
         $this->summary = file_rewrite_pluginfile_urls($this->summary, 'pluginfile.php', SYSCONTEXTID, 'blog', 'post', $this->id);
 
-        $options = array('overflowdiv'=>true);
-        $template['body'] = format_text($this->summary, $this->summaryformat, $options);
-        $template['title'] = format_string($this->subject);
-        $template['userid'] = $user->id;
-        $template['author'] = fullname($user);
-        $template['created'] = userdate($this->created);
-
-        if ($this->created != $this->lastmodified) {
-            $template['lastmod'] = userdate($this->lastmodified);
-        }
-
-        $template['publishstate'] = $this->publishstate;
-
-        $stredit = get_string('edit');
-        $strdelete = get_string('delete');
-
-        // Check to see if the entry is unassociated with group/course level access
-        $unassociatedentry = false;
-        if (!empty($CFG->useblogassociations) && ($this->publishstate == 'group' || $this->publishstate == 'course')) {
-            if (!$DB->record_exists('blog_association', array('blogid' => $this->id))) {
-                $unassociatedentry = true;
-            }
-        }
-
-        // Start printing of the blog
-        $table = new html_table();
-        $table->cellspacing = 0;
-        $table->attributes['class'] = 'forumpost blog_entry blog'. ($unassociatedentry ? 'draft' : $template['publishstate']);
-        $table->attributes['id'] = 'b'.$this->id;
-        $table->width = '100%';
-
-        $picturecell = new html_table_cell();
-        $picturecell->attributes['class'] = 'picture left';
-        $picturecell->text = $OUTPUT->user_picture($user);
-
-        $table->head[] = $picturecell;
-
-        $topiccell = new html_table_cell();
-        $topiccell->attributes['class'] = 'topic starter';
-        $titlelink =  html_writer::link(new moodle_url('/blog/index.php', array('entryid' => $this->id)), $template['title']);
-        $topiccell->text = $OUTPUT->container($titlelink, 'subject');
-        $topiccell->text .= $OUTPUT->container_start('author');
-
-        $fullname = fullname($user, has_capability('moodle/site:viewfullnames', context_course::instance($PAGE->course->id)));
-        $by = new stdClass();
-        $by->name =  html_writer::link(new moodle_url('/user/view.php', array('id' => $user->id, 'course' => $PAGE->course->id)), $fullname);
-        $by->date = $template['created'];
-
-        $topiccell->text .= get_string('bynameondate', 'forum', $by);
-        $topiccell->text .= $OUTPUT->container_end();
-
+        // External blog link.
         if ($this->uniquehash && $this->content) {
             if ($externalblog = $DB->get_record('blog_external', array('id' => $this->content))) {
                 $urlparts = parse_url($externalblog->url);
-                $topiccell->text .= $OUTPUT->container(get_string('retrievedfrom', 'blog').get_string('labelsep', 'langconfig').html_writer::link($urlparts['scheme'].'://'.$urlparts['host'], $externalblog->name), 'externalblog');
+                $this->renderable->externalblogtext = get_string('retrievedfrom', 'blog') . get_string('labelsep', 'langconfig');
+                $this->renderable->externalblogtext .= html_writer::link($urlparts['scheme'] . '://'.$urlparts['host'], $externalblog->name);
             }
         }
 
-        $topiccell->header = false;
-        $table->head[] = $topiccell;
+        // Retrieve associations
+        $this->renderable->unassociatedentry = false;
+        if (!empty($CFG->useblogassociations)) {
 
-        // Actual content
-        $mainrow = new html_table_row();
+            // Adding the entry associations data.
+            if ($associations = $associations = $DB->get_records('blog_association', array('blogid' => $this->id))) {
 
-        $leftsidecell = new html_table_cell();
-        $leftsidecell->attributes['class'] = 'left side';
-        $mainrow->cells[] = $leftsidecell;
-
-        $contentcell = new html_table_cell();
-        $contentcell->attributes['class'] = 'content';
-
-        $attachedimages = $OUTPUT->container($this->print_attachments(), 'attachments');
-
-        // retrieve associations in case they're needed early
-        $blogassociations = $DB->get_records('blog_association', array('blogid' => $this->id));
-
-        // determine text for publish state
-        switch ($template['publishstate']) {
-            case 'draft':
-                $blogtype = get_string('publishtonoone', 'blog');
-            break;
-            case 'site':
-                $blogtype = get_string('publishtosite', 'blog');
-            break;
-            case 'public':
-                $blogtype = get_string('publishtoworld', 'blog');
-            break;
-            default:
-                $blogtype = '';
-            break;
-
-        }
-
-        $contentcell->text .= $OUTPUT->container($blogtype, 'audience');
-
-        $contentcell->text .= $template['body'];
-        $contentcell->text .= $attachedimages;
-
-        // Uniquehash is used as a link to an external blog
-        if (!empty($this->uniquehash)) {
-            $contentcell->text .= $OUTPUT->container_start('externalblog');
-            $contentcell->text .= html_writer::link($this->uniquehash, get_string('linktooriginalentry', 'blog'));
-            $contentcell->text .= $OUTPUT->container_end();
-        }
-
-        // Links to tags
-        $officialtags = tag_get_tags_csv('post', $this->id, TAG_RETURN_HTML, 'official');
-        $defaulttags = tag_get_tags_csv('post', $this->id, TAG_RETURN_HTML, 'default');
-
-        if (!empty($CFG->usetags) && ($officialtags || $defaulttags) ) {
-            $contentcell->text .= $OUTPUT->container_start('tags');
-
-            if ($officialtags) {
-                $contentcell->text .= get_string('tags', 'tag') .': '. $OUTPUT->container($officialtags, 'officialblogtags');
-                if ($defaulttags) {
-                    $contentcell->text .=  ', ';
+                // Check to see if the entry is unassociated with group/course level access.
+                if ($this->publishstate == 'group' || $this->publishstate == 'course') {
+                    $this->renderable->unassociatedentry = true;
                 }
-            }
-            $contentcell->text .=  $defaulttags;
-            $contentcell->text .= $OUTPUT->container_end();
-        }
 
-        // Add associations
-        if (!empty($CFG->useblogassociations) && $blogassociations) {
-            $contentcell->text .= $OUTPUT->container_start('tags');
-            $assocstr = '';
-            $hascourseassocs = false;
-            $assoctype = '';
+                foreach ($associations as $key => $assocrec) {
 
-            // First find and show the associated course
-            foreach ($blogassociations as $assocrec) {
-                $context = context::instance_by_id($assocrec->contextid);
-                if ($context->contextlevel ==  CONTEXT_COURSE) {
-                    $assocurl = new moodle_url('/course/view.php', array('id' => $context->instanceid));
-                    $text = $DB->get_field('course', 'shortname', array('id' => $context->instanceid)); //TODO: performance!!!!
-                    $assocstr .= $OUTPUT->action_icon($assocurl, new pix_icon('i/course', $text), null, array(), true);
-                    $hascourseassocs = true;
-                    $assoctype = get_string('course');
-                }
-            }
-
-            // Now show mod association
-            foreach ($blogassociations as $assocrec) {
-                $context = context::instance_by_id($assocrec->contextid);
-
-                if ($context->contextlevel ==  CONTEXT_MODULE) {
-                    if ($hascourseassocs) {
-                        $assocstr .= ', ';
-                        $hascourseassocs = false;
+                    if (!$context = context::instance_by_id($assocrec->contextid, IGNORE_MISSING)) {
+                        unset($associations[$key]);
+                        continue;
                     }
 
-                    $modinfo = $DB->get_record('course_modules', array('id' => $context->instanceid));
-                    $modname = $DB->get_field('modules', 'name', array('id' => $modinfo->module));
+                    // The renderer will need the contextlevel of the association.
+                    $associations[$key]->contextlevel = $context->contextlevel;
 
-                    $assocurl = new moodle_url('/mod/'.$modname.'/view.php', array('id' => $modinfo->id));
-                    $text = $DB->get_field($modname, 'name', array('id' => $modinfo->instance)); //TODO: performance!!!!
-                    $assocstr .= $OUTPUT->action_icon($assocurl, new pix_icon('icon', $text, $modname), null, array(), true);
-                    $assocstr .= ', ';
-                    $assoctype = get_string('modulename', $modname);
+                    // Course associations.
+                    if ($context->contextlevel ==  CONTEXT_COURSE) {
+                        $instancename = $DB->get_field('course', 'shortname', array('id' => $context->instanceid)); //TODO: performance!!!!
 
+                        $associations[$key]->url = $assocurl = new moodle_url('/course/view.php', array('id' => $context->instanceid));
+                        $associations[$key]->text = $instancename;
+                        $associations[$key]->icon = new pix_icon('i/course', $associations[$key]->text);
+                    }
+
+                    // Mod associations.
+                    if ($context->contextlevel ==  CONTEXT_MODULE) {
+
+                        // Getting the activity type and the activity instance id
+                        $sql = 'SELECT cm.instance, m.name FROM {course_modules} cm
+                                  JOIN {modules} m ON m.id = cm.module
+                                 WHERE cm.id = :cmid';
+                        $modinfo = $DB->get_record_sql($sql, array('cmid' => $context->instanceid));
+                        $instancename = $DB->get_field($modinfo->name, 'name', array('id' => $modinfo->instance)); //TODO: performance!!!!
+
+                        $associations[$key]->type = get_string('modulename', $modinfo->name);
+                        $associations[$key]->url = new moodle_url('/mod/' . $modinfo->name . '/view.php', array('id' => $context->instanceid));
+                        $associations[$key]->text = $instancename;
+                        $associations[$key]->icon = new pix_icon('icon', $associations[$key]->text, $modinfo->name);
+                    }
                 }
             }
-            $assocstr = substr($assocstr, 0, -2);
-            $contentcell->text .= get_string('associated', 'blog', $assoctype) . ': '. $assocstr;
-
-            $contentcell->text .= $OUTPUT->container_end();
+            $this->renderable->blogassociations = $associations;
         }
 
-        if ($unassociatedentry) {
-            $contentcell->text .= $OUTPUT->container(get_string('associationunviewable', 'blog'), 'noticebox');
-        }
+        // Entry attachments.
+        $this->renderable->attachments = $this->get_attachments();
 
-    /// Commands
+        $this->renderable->usercanedit = blog_user_can_edit_entry($this);
+    }
 
-        $contentcell->text .= $OUTPUT->container_start('commands');
 
-        if (blog_user_can_edit_entry($this)) {
-            if (empty($this->uniquehash)) {
-                //External blog entries should not be edited
-                $contentcell->text .= html_writer::link(new moodle_url('/blog/edit.php',
-                                                        array('action' => 'edit', 'entryid' => $this->id)),
-                                                        $stredit) . ' | ';
+    /**
+     * Gets the entry attachments list
+     * @return array List of blog_entry_attachment instances
+     */
+    function get_attachments() {
+
+        global $CFG;
+
+        require_once($CFG->libdir.'/filelib.php');
+
+        $syscontext = context_system::instance();
+
+        $fs = get_file_storage();
+        $files = $fs->get_area_files($syscontext->id, 'blog', 'attachment', $this->id);
+
+        // Adding a blog_entry_attachment for each non-directory file.
+        $attachments = array();
+        foreach ($files as $file) {
+            if ($file->is_directory()) {
+                continue;
             }
-            $contentcell->text .= html_writer::link(new moodle_url('/blog/edit.php',
-                                                    array('action' => 'delete', 'entryid' => $this->id)),
-                                                    $strdelete) . ' | ';
+            $attachments[] = new blog_entry_attachment($file, $this->id);
         }
 
-        $contentcell->text .= html_writer::link(new moodle_url('/blog/index.php', array('entryid' => $this->id)), get_string('permalink', 'blog'));
-
-        $contentcell->text .= $OUTPUT->container_end();
-
-        if (isset($template['lastmod']) ){
-            $contentcell->text .= '<div style="font-size: 55%;">';
-            $contentcell->text .= ' [ '.get_string('modified').': '.$template['lastmod'].' ]';
-            $contentcell->text .= '</div>';
-        }
-
-        //add comments under everything
-        $contentcell->text .= $cmttext;
-
-        $mainrow->cells[] = $contentcell;
-        $table->data = array($mainrow);
-
-        if ($return) {
-            return html_writer::table($table);
-        } else {
-            echo html_writer::table($table);
-        }
+        return $attachments;
     }
 
     /**
@@ -405,11 +292,10 @@ class blog_entry {
      * @return void
      */
     public function delete() {
-        global $DB, $USER;
-
-        $returnurl = '';
+        global $DB;
 
         $this->delete_attachments();
+        $this->remove_associations();
 
         $DB->delete_records('post', array('id' => $this->id));
         tag_set('post', $this->id, array());
@@ -481,66 +367,6 @@ class blog_entry {
     }
 
     /**
-     * if return=html, then return a html string.
-     * if return=text, then return a text-only string.
-     * otherwise, print HTML for non-images, and return image HTML
-     *
-     * @param bool $return Whether to return or print the generated code
-     * @return void
-     */
-    public function print_attachments($return=false) {
-        global $CFG, $OUTPUT;
-
-        require_once($CFG->libdir.'/filelib.php');
-
-        $fs = get_file_storage();
-
-        $syscontext = context_system::instance();
-
-        $files = $fs->get_area_files($syscontext->id, 'blog', 'attachment', $this->id);
-
-        $imagereturn = "";
-        $output = "";
-
-        $strattachment = get_string("attachment", "forum");
-
-        foreach ($files as $file) {
-            if ($file->is_directory()) {
-                continue;
-            }
-
-            $filename = $file->get_filename();
-            $ffurl    = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.SYSCONTEXTID.'/blog/attachment/'.$this->id.'/'.$filename);
-            $mimetype = $file->get_mimetype();
-
-            $image = $OUTPUT->pix_icon(file_file_icon($file), $filename, 'moodle', array('class'=>'icon'));
-
-            if ($return == "html") {
-                $output .= html_writer::link($ffurl, $image);
-                $output .= html_writer::link($ffurl, $filename);
-
-            } else if ($return == "text") {
-                $output .= "$strattachment $filename:\n$ffurl\n";
-
-            } else {
-                if (file_mimetype_in_typegroup($file->get_mimetype(), 'web_image')) {    // Image attachments don't get printed as links
-                    $imagereturn .= '<br /><img src="'.$ffurl.'" alt="" />';
-                } else {
-                    $imagereturn .= html_writer::link($ffurl, $image);
-                    $imagereturn .= format_text(html_writer::link($ffurl, $filename), FORMAT_HTML, array('context'=>$syscontext));
-                }
-            }
-        }
-
-        if ($return) {
-            return $output;
-        }
-
-        return $imagereturn;
-
-    }
-
-    /**
      * function to attach tags into an entry
      * @return void
      */
@@ -602,7 +428,7 @@ class blog_entry {
         global $CFG, $USER, $DB;
         $sitecontext = context_system::instance();
 
-        if (empty($CFG->bloglevel) || !has_capability('moodle/blog:view', $sitecontext)) {
+        if (empty($CFG->enableblogs) || !has_capability('moodle/blog:view', $sitecontext)) {
             return false; // blog system disabled or user has no blog view capability
         }
 
@@ -807,8 +633,11 @@ class blog_listing {
      * @return void
      */
     public function print_entries() {
-        global $CFG, $USER, $DB, $OUTPUT;
+        global $CFG, $USER, $DB, $OUTPUT, $PAGE;
         $sitecontext = context_system::instance();
+
+        // Blog renderer
+        $output = $PAGE->get_renderer('blog');
 
         $page  = optional_param('blogpage', 0, PARAM_INT);
         $limit = optional_param('limit', get_user_preferences('blogpagesize', 10), PARAM_INT);
@@ -860,10 +689,13 @@ class blog_listing {
 
         if ($entries) {
             $count = 0;
-
             foreach ($entries as $entry) {
                 $blogentry = new blog_entry(null, $entry);
-                $blogentry->print_html();
+
+                // Get the required blog entry data to render it
+                $blogentry->prepare_render();
+                echo $output->render($blogentry);
+
                 $count++;
             }
 
@@ -1160,4 +992,31 @@ class blog_filter_search extends blog_filter {
         $this->params[] = "%$searchterm%";
         $this->params[] = "%$searchterm%";
     }
+}
+
+
+/**
+ * Renderable class to represent an entry attachment
+ */
+class blog_entry_attachment implements renderable {
+
+    public $filename;
+    public $url;
+    public $file;
+
+    /**
+     * Gets the file data
+     *
+     * @param stored_file $file
+     * @param int $entryid Attachment entry id
+     */
+    public function __construct($file, $entryid) {
+
+        global $CFG;
+
+        $this->file = $file;
+        $this->filename = $file->get_filename();
+        $this->url = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.SYSCONTEXTID.'/blog/attachment/'.$entryid.'/'.$this->filename);
+    }
+
 }

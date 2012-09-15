@@ -1,0 +1,12 @@
+This files describes API changes in the quiz code.
+
+
+=== 2.4 ===
+
+* mod_quiz_renderer::finish_review_link now requires $attemptobj to be passed in
+  instead of a moodle_url.
+
+
+=== Earlier changes ===
+
+* Were not documented in this way. Sorry.

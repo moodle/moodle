@@ -405,7 +405,7 @@ class assignment_upload extends assignment_base {
         global $DB;
 
         // Grab the context assocated with our course module
-        $context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
+        $context = context_module::instance($this->cm->id);
 
         // Get ids of users enrolled in the given course.
         list($enroledsql, $params) = get_enrolled_sql($context, 'mod/assignment:view', $groupid);
@@ -1081,8 +1081,8 @@ class assignment_upload extends assignment_base {
         $mform->addHelpButton('var4', 'trackdrafts', 'assignment');
         $mform->setDefault('var4', 1);
 
-        $course_context = get_context_instance(CONTEXT_COURSE, $COURSE->id);
-        plagiarism_get_form_elements_module($mform, $course_context);
+        $course_context = context_course::instance($COURSE->id);
+        plagiarism_get_form_elements_module($mform, $course_context, 'mod_assignment');
     }
 
     function portfolio_exportable() {
@@ -1150,7 +1150,7 @@ class assignment_upload extends assignment_base {
         require_once($CFG->libdir.'/filelib.php');
         $submissions = $this->get_submissions('','');
         if (empty($submissions)) {
-            print_error('errornosubmissions', 'assignment');
+            print_error('errornosubmissions', 'assignment', new moodle_url('/mod/assignment/submissions.php', array('id'=>$this->cm->id)));
         }
         $filesforzipping = array();
         $fs = get_file_storage();
@@ -1164,6 +1164,11 @@ class assignment_upload extends assignment_base {
         }
         $filename = str_replace(' ', '_', clean_filename($this->course->shortname.'-'.$this->assignment->name.'-'.$groupname.$this->assignment->id.".zip")); //name of new zip file.
         foreach ($submissions as $submission) {
+            // If assignment is open and submission is not finalized then don't add it to zip.
+            $submissionstatus = $this->is_finalized($submission);
+            if ($this->isopen() && empty($submissionstatus)) {
+                continue;
+            }
             $a_userid = $submission->userid; //get userid
             if ((groups_is_member($groupid,$a_userid)or !$groupmode or !$groupid)) {
                 $a_assignid = $submission->assignment; //get name of this assignment for use in the file names.
@@ -1180,6 +1185,12 @@ class assignment_upload extends assignment_base {
                 }
             }
         } // end of foreach loop
+
+        // Throw error if no files are added.
+        if (empty($filesforzipping)) {
+            print_error('errornosubmissions', 'assignment', new moodle_url('/mod/assignment/submissions.php', array('id'=>$this->cm->id)));
+        }
+
         if ($zipfile = assignment_pack_files($filesforzipping)) {
             send_temp_file($zipfile, $filename); //send file and delete after sending.
         }

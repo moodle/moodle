@@ -25,7 +25,7 @@ if (!$cm = get_coursemodule_from_instance('chat', $chat->id, $course->id)) {
 }
 
 require_login($course, false, $cm);
-$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+$context = context_module::instance($cm->id);
 
 if (isguestuser()) {
     print_error('noguests', 'chat');
@@ -53,7 +53,7 @@ if (!$chat_sid = chat_login_user($chat->id, 'sockets', $groupid, $course)) {
 }
 
 $params = "chat_sid=$chat_sid";
-$courseshortname = format_string($course->shortname, true, array('context' => get_context_instance(CONTEXT_COURSE, $course->id)));
+$courseshortname = format_string($course->shortname, true, array('context' => context_course::instance($course->id)));
 
 ?><!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
 <html>
