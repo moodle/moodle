@@ -1077,6 +1077,134 @@ class potential_assignees_below_course extends role_assign_user_selector_base {
 }
 
 /**
+ * User selector subclass for the selection of users in the check permissions page.
+ *
+ * @copyright 2012 Petr Skoda {@link http://skodak.org}
+ */
+class role_check_users_selector extends user_selector_base {
+    const MAX_ENROLLED_PER_PAGE = 100;
+    const MAX_POTENTIAL_PER_PAGE = 100;
+
+    /** @var bool limit listing of users to enrolled only */
+    var $onlyenrolled;
+
+    /**
+     * Constructor.
+     *
+     * @param string $name the control name/id for use in the HTML.
+     * @param array $options other options needed to construct this selector.
+     * You must be able to clone a userselector by doing new get_class($us)($us->get_name(), $us->get_options());
+     */
+    public function __construct($name, $options) {
+        if (!isset($options['multiselect'])) {
+            $options['multiselect'] = false;
+        }
+        parent::__construct($name, $options);
+
+        $coursecontext = $this->accesscontext->get_course_context(false);
+        if ($coursecontext and $coursecontext->id != SITEID and !has_capability('moodle/role:manage', $coursecontext)) {
+            // Prevent normal teachers from looking up all users.
+            $this->onlyenrolled = true;
+        } else {
+            $this->onlyenrolled = false;
+        }
+    }
+
+    public function find_users($search) {
+        global $DB;
+
+        list($wherecondition, $params) = $this->search_sql($search, 'u');
+
+        $fields      = 'SELECT ' . $this->required_fields_sql('u');
+        $countfields = 'SELECT COUNT(1)';
+
+        $coursecontext = $this->accesscontext->get_course_context(false);
+
+        if ($coursecontext and $coursecontext != SITEID) {
+            $sql1 = " FROM {user} u
+                      JOIN {user_enrolments} ue ON (ue.userid = u.id)
+                      JOIN {enrol} e ON (e.id = ue.enrolid AND e.courseid = :courseid1)
+                     WHERE $wherecondition";
+            $params['courseid1'] = $coursecontext->instanceid;
+
+            if ($this->onlyenrolled) {
+                $sql2 = null;
+            } else {
+                $sql2 = " FROM {user} u
+                     LEFT JOIN ({user_enrolments} ue
+                                JOIN {enrol} e ON (e.id = ue.enrolid AND e.courseid = :courseid2)) ON (ue.userid = u.id)
+                         WHERE $wherecondition
+                               AND ue.id IS NULL";
+                $params['courseid2'] = $coursecontext->instanceid;
+            }
+
+        } else {
+            if ($this->onlyenrolled) {
+                // Bad luck, current user may not view only enrolled users.
+                return array();
+            }
+            $sql1 = null;
+            $sql2 = " FROM {user} u
+                     WHERE $wherecondition";
+        }
+
+        $order = " ORDER BY lastname ASC, firstname ASC";
+
+        $params['contextid'] = $this->accesscontext->id;
+
+        $result = array();
+
+        if ($search) {
+            $groupname1 = get_string('enrolledusersmatching', 'enrol', $search);
+            $groupname2 = get_string('potusersmatching', 'role', $search);
+        } else {
+            $groupname1 = get_string('enrolledusers', 'enrol');
+            $groupname2 = get_string('potusers', 'role');
+        }
+
+        if ($sql1) {
+            $enrolleduserscount = $DB->count_records_sql($countfields . $sql1, $params);
+            if (!$this->is_validating() and $enrolleduserscount > $this::MAX_ENROLLED_PER_PAGE) {
+                $result[$groupname1] = array();
+                $toomany = $this->too_many_results($search, $enrolleduserscount);
+                $result[implode(' - ', array_keys($toomany))] = array();
+
+            } else {
+                $enrolledusers = $DB->get_records_sql($fields . $sql1 . $order, $params);
+                if ($enrolledusers) {
+                    $result[$groupname1] = $enrolledusers;
+                }
+            }
+            if ($sql2) {
+                $result[''] = array();
+            }
+        }
+        if ($sql2) {
+            $otheruserscount = $DB->count_records_sql($countfields . $sql2, $params);
+            if (!$this->is_validating() and $otheruserscount > $this::MAX_POTENTIAL_PER_PAGE) {
+                $result[$groupname2] = array();
+                $toomany = $this->too_many_results($search, $otheruserscount);
+                $result[implode(' - ', array_keys($toomany))] = array();
+            } else {
+                $otherusers = $DB->get_records_sql($fields . $sql2 . $order, $params);
+                if ($otherusers) {
+                    $result[$groupname2] = $otherusers;
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    protected function get_options() {
+        global $CFG;
+        $options = parent::get_options();
+        $options['file'] = $CFG->admin . '/roles/lib.php';
+        return $options;
+    }
+}
+
+/**
  * User selector subclass for the list of potential users on the assign roles page,
  * when we are assigning in a context at or above the course level. In this case we
  * show all the users in the system who do not already have the role.
