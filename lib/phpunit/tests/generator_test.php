@@ -53,6 +53,18 @@ class core_phpunit_generator_testcase extends advanced_testcase {
         $this->assertRegExp('/^Test course category \d/', $category->description);
         $this->assertSame(FORMAT_MOODLE, $category->descriptionformat);
 
+        $count = $DB->count_records('cohort');
+        $cohort = $generator->create_cohort();
+        $this->assertEquals($count+1, $DB->count_records('cohort'));
+        $this->assertEquals(context_system::instance()->id, $cohort->contextid);
+        $this->assertRegExp('/^Cohort \d/', $cohort->name);
+        $this->assertSame('', $cohort->idnumber);
+        $this->assertRegExp('/^Test cohort \d/', $cohort->description);
+        $this->assertSame(FORMAT_MOODLE, $cohort->descriptionformat);
+        $this->assertSame('', $cohort->component);
+        $this->assertLessThanOrEqual(time(), $cohort->timecreated);
+        $this->assertSame($cohort->timecreated, $cohort->timemodified);
+
         $count = $DB->count_records('course');
         $course = $generator->create_course();
         $this->assertEquals($count+1, $DB->count_records('course'));
