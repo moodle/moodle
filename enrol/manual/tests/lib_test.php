@@ -201,4 +201,104 @@ class enrol_manual_lib_testcase extends advanced_testcase {
         enrol_manual_migrate_plugin_enrolments('manual');
         enrol_manual_migrate_plugin_enrolments('yyyy');
     }
+
+    public function test_expired() {
+        global $DB;
+        $this->resetAfterTest();
+
+        $manualplugin = enrol_get_plugin('manual');
+
+        $now = time();
+
+        // Prepare some data.
+
+        $studentrole = $DB->get_record('role', array('shortname'=>'student'));
+        $this->assertNotEmpty($studentrole);
+        $teacherrole = $DB->get_record('role', array('shortname'=>'teacher'));
+        $this->assertNotEmpty($teacherrole);
+        $managerrole = $DB->get_record('role', array('shortname'=>'manager'));
+        $this->assertNotEmpty($managerrole);
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+        $user4 = $this->getDataGenerator()->create_user();
+
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+        $course3 = $this->getDataGenerator()->create_course();
+        $context1 = context_course::instance($course1->id);
+        $context2 = context_course::instance($course2->id);
+        $context3 = context_course::instance($course3->id);
+
+        $this->assertEquals(3, $DB->count_records('enrol', array('enrol'=>'manual')));
+        $instance1 = $DB->get_record('enrol', array('courseid'=>$course1->id, 'enrol'=>'manual'), '*', MUST_EXIST);
+        $this->assertEquals($studentrole->id, $instance1->roleid);
+        $instance2 = $DB->get_record('enrol', array('courseid'=>$course2->id, 'enrol'=>'manual'), '*', MUST_EXIST);
+        $this->assertEquals($studentrole->id, $instance2->roleid);
+        $instance3 = $DB->get_record('enrol', array('courseid'=>$course3->id, 'enrol'=>'manual'), '*', MUST_EXIST);
+        $this->assertEquals($studentrole->id, $instance3->roleid);
+
+        $this->assertEquals(0, $DB->count_records('user_enrolments'));
+        $this->assertEquals(0, $DB->count_records('role_assignments'));
+
+        $manualplugin->enrol_user($instance1, $user1->id, $studentrole->id);
+        $manualplugin->enrol_user($instance1, $user2->id, $studentrole->id);
+        $manualplugin->enrol_user($instance1, $user3->id, $studentrole->id, 0, $now-60);
+
+        $manualplugin->enrol_user($instance3, $user1->id, $studentrole->id, 0, 0);
+        $manualplugin->enrol_user($instance3, $user2->id, $studentrole->id, 0, $now+60*60);
+        $manualplugin->enrol_user($instance3, $user3->id, $teacherrole->id, 0, $now-60*60);
+
+        role_assign($managerrole->id, $user4->id, $context1->id);
+
+        $this->assertEquals(6, $DB->count_records('user_enrolments'));
+        $this->assertEquals(7, $DB->count_records('role_assignments'));
+        $this->assertEquals(5, $DB->count_records('role_assignments', array('roleid'=>$studentrole->id)));
+        $this->assertEquals(1, $DB->count_records('role_assignments', array('roleid'=>$teacherrole->id)));
+        $this->assertEquals(1, $DB->count_records('role_assignments', array('roleid'=>$managerrole->id)));
+
+        // Execute tests.
+
+        $this->assertEquals(ENROL_EXT_REMOVED_KEEP, $manualplugin->get_config('expiredaction'));
+        $manualplugin->sync(null, false);
+        $this->assertEquals(6, $DB->count_records('user_enrolments'));
+        $this->assertEquals(7, $DB->count_records('role_assignments'));
+
+
+        $manualplugin->set_config('expiredaction', ENROL_EXT_REMOVED_SUSPENDNOROLES);
+        $manualplugin->sync($course2->id, false);
+        $this->assertEquals(6, $DB->count_records('user_enrolments'));
+        $this->assertEquals(7, $DB->count_records('role_assignments'));
+
+        $this->assertTrue($DB->record_exists('role_assignments', array('contextid'=>$context1->id, 'userid'=>$user3->id, 'roleid'=>$studentrole->id)));
+        $this->assertTrue($DB->record_exists('role_assignments', array('contextid'=>$context3->id, 'userid'=>$user3->id, 'roleid'=>$teacherrole->id)));
+        $manualplugin->sync(null, false);
+        $this->assertEquals(6, $DB->count_records('user_enrolments'));
+        $this->assertEquals(5, $DB->count_records('role_assignments'));
+        $this->assertEquals(4, $DB->count_records('role_assignments', array('roleid'=>$studentrole->id)));
+        $this->assertEquals(0, $DB->count_records('role_assignments', array('roleid'=>$teacherrole->id)));
+        $this->assertFalse($DB->record_exists('role_assignments', array('contextid'=>$context1->id, 'userid'=>$user3->id, 'roleid'=>$studentrole->id)));
+        $this->assertFalse($DB->record_exists('role_assignments', array('contextid'=>$context3->id, 'userid'=>$user3->id, 'roleid'=>$teacherrole->id)));
+
+
+        $manualplugin->set_config('expiredaction', ENROL_EXT_REMOVED_UNENROL);
+
+        role_assign($studentrole->id, $user3->id, $context1->id);
+        role_assign($teacherrole->id, $user3->id, $context3->id);
+        $this->assertEquals(6, $DB->count_records('user_enrolments'));
+        $this->assertEquals(7, $DB->count_records('role_assignments'));
+        $this->assertEquals(5, $DB->count_records('role_assignments', array('roleid'=>$studentrole->id)));
+        $this->assertEquals(1, $DB->count_records('role_assignments', array('roleid'=>$teacherrole->id)));
+        $this->assertEquals(1, $DB->count_records('role_assignments', array('roleid'=>$managerrole->id)));
+
+        $manualplugin->sync(null, false);
+        $this->assertEquals(4, $DB->count_records('user_enrolments'));
+        $this->assertFalse($DB->record_exists('user_enrolments', array('enrolid'=>$instance1->id, 'userid'=>$user3->id)));
+        $this->assertFalse($DB->record_exists('user_enrolments', array('enrolid'=>$instance3->id, 'userid'=>$user3->id)));
+        $this->assertEquals(5, $DB->count_records('role_assignments'));
+        $this->assertEquals(4, $DB->count_records('role_assignments', array('roleid'=>$studentrole->id)));
+        $this->assertEquals(0, $DB->count_records('role_assignments', array('roleid'=>$teacherrole->id)));
+        $this->assertEquals(1, $DB->count_records('role_assignments', array('roleid'=>$managerrole->id)));
+    }
 }

@@ -29,6 +29,15 @@ if ($ADMIN->fulltree) {
     //--- general settings -----------------------------------------------------------------------------------
     $settings->add(new admin_setting_heading('enrol_manual_settings', '', get_string('pluginname_desc', 'enrol_manual')));
 
+    // Note: let's reuse the ext sync constants and strings here, internally it is very similar,
+    //       it describes what should happend when users are not supposed to be enerolled any more.
+    $options = array(
+        ENROL_EXT_REMOVED_KEEP           => get_string('extremovedkeep', 'enrol'),
+        ENROL_EXT_REMOVED_SUSPENDNOROLES => get_string('extremovedsuspendnoroles', 'enrol'),
+        ENROL_EXT_REMOVED_UNENROL        => get_string('extremovedunenrol', 'enrol'),
+    );
+    $settings->add(new admin_setting_configselect('enrol_manual/expiredaction', get_string('expiredaction', 'enrol_manual'), get_string('expiredaction_help', 'enrol_manual'), ENROL_EXT_REMOVED_KEEP, $options));
+
 
     //--- enrol instance defaults ----------------------------------------------------------------------------
     $settings->add(new admin_setting_heading('enrol_manual_defaults',
