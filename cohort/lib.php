@@ -167,34 +167,46 @@ function cohort_is_member($cohortid, $userid) {
 }
 
 /**
- * Returns list of visible cohorts in course.
+ * Returns list of cohorts from course parent contexts.
  *
- * @param  object $course
- * @param  bool $enrolled true means include only cohorts with enrolled users
- * @return array
+ * Note: this function does not implement any capability checks,
+ *       it means it may disclose existence of cohorts,
+ *       make sure it is displayed to users with appropriate rights only.
+ *
+ * @param  stdClass $course
+ * @param  bool $onlyenrolled true means include only cohorts with enrolled users
+ * @return array of cohort names with number of enrolled users
  */
-function cohort_get_visible_list($course) {
-    global $DB, $USER;
+function cohort_get_visible_list($course, $onlyenrolled=true) {
+    global $DB;
 
     $context = context_course::instance($course->id);
     list($esql, $params) = get_enrolled_sql($context);
-    $parentsql = get_related_contexts_string($context);
+    list($parentsql, $params2) = $DB->get_in_or_equal($context->get_parent_context_ids(), SQL_PARAMS_NAMED);
+    $params = array_merge($params, $params2);
 
-    $sql = "SELECT c.id, c.name, c.idnumber, COUNT(u.id) AS cnt
+    if ($onlyenrolled) {
+        $left = "";
+        $having = "HAVING COUNT(u.id) > 0";
+    } else {
+        $left = "LEFT";
+        $having = "";
+    }
+
+    $sql = "SELECT c.id, c.name, c.contextid, c.idnumber, COUNT(u.id) AS cnt
               FROM {cohort} c
-              JOIN {cohort_members} cm ON cm.cohortid = c.id
-              JOIN ($esql) u ON u.id = cm.userid
+        $left JOIN ({cohort_members} cm
+                   JOIN ($esql) u ON u.id = cm.userid) ON cm.cohortid = c.id
              WHERE c.contextid $parentsql
-          GROUP BY c.id, c.name, c.idnumber
-            HAVING COUNT(u.id) > 0
+          GROUP BY c.id, c.name, c.contextid, c.idnumber
+           $having
           ORDER BY c.name, c.idnumber";
-    $params['ctx'] = $context->id;
 
     $cohorts = $DB->get_records_sql($sql, $params);
 
     foreach ($cohorts as $cid=>$cohort) {
-        $cohorts[$cid] = format_string($cohort->name);
-        if ($cohort->idnumber) {
+        $cohorts[$cid] = format_string($cohort->name, true, array('context'=>$cohort->contextid));
+        if ($cohort->cnt) {
             $cohorts[$cid] .= ' (' . $cohort->cnt . ')';
         }
     }

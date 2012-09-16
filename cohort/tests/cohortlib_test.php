@@ -178,4 +178,82 @@ class cohort_testcase extends advanced_testcase {
         cohort_add_member($cohort->id, $user->id);
         $this->assertTrue(cohort_is_member($cohort->id, $user->id));
     }
+
+    public function test_cohort_get_visible_list() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $category1 = $this->getDataGenerator()->create_category();
+        $category2 = $this->getDataGenerator()->create_category();
+
+        $course1 = $this->getDataGenerator()->create_course(array('category'=>$category1->id));
+        $course2 = $this->getDataGenerator()->create_course(array('category'=>$category2->id));
+        $course3 = $this->getDataGenerator()->create_course();
+
+        $cohort1 = $this->getDataGenerator()->create_cohort(array('contextid'=>context_coursecat::instance($category1->id)->id));
+        $cohort2 = $this->getDataGenerator()->create_cohort(array('contextid'=>context_coursecat::instance($category2->id)->id));
+        $cohort3 = $this->getDataGenerator()->create_cohort(array('contextid'=>context_system::instance()->id));
+        $cohort4 = $this->getDataGenerator()->create_cohort(array('contextid'=>context_system::instance()->id));
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+        $user4 = $this->getDataGenerator()->create_user();
+        $user5 = $this->getDataGenerator()->create_user();
+
+        $manualenrol = enrol_get_plugin('manual');
+        $enrol1 = $DB->get_record('enrol', array('courseid'=>$course1->id, 'enrol'=>'manual'));
+        $enrol2 = $DB->get_record('enrol', array('courseid'=>$course2->id, 'enrol'=>'manual'));
+
+        $manualenrol->enrol_user($enrol1, $user1->id);
+        $manualenrol->enrol_user($enrol1, $user3->id);
+        $manualenrol->enrol_user($enrol1, $user4->id);
+        $manualenrol->enrol_user($enrol2, $user2->id);
+
+        cohort_add_member($cohort1->id, $user1->id);
+        cohort_add_member($cohort3->id, $user1->id);
+        cohort_add_member($cohort1->id, $user3->id);
+        cohort_add_member($cohort2->id, $user2->id);
+
+        $list = cohort_get_visible_list($course1);
+        $this->assertEquals(2, count($list));
+        $this->assertNotEmpty($list[$cohort1->id]);
+        $this->assertRegExp('/\(2\)$/', $list[$cohort1->id]);
+        $this->assertNotEmpty($list[$cohort3->id]);
+        $this->assertRegExp('/\(1\)$/', $list[$cohort3->id]);
+
+        $list = cohort_get_visible_list($course1, false);
+        $this->assertEquals(3, count($list));
+        $this->assertNotEmpty($list[$cohort1->id]);
+        $this->assertRegExp('/\(2\)$/', $list[$cohort1->id]);
+        $this->assertNotEmpty($list[$cohort3->id]);
+        $this->assertRegExp('/\(1\)$/', $list[$cohort3->id]);
+        $this->assertNotEmpty($list[$cohort4->id]);
+        $this->assertRegExp('/[^\)]$/', $list[$cohort4->id]);
+
+        $list = cohort_get_visible_list($course2);
+        $this->assertEquals(1, count($list));
+        $this->assertNotEmpty($list[$cohort2->id]);
+        $this->assertRegExp('/\(1\)$/', $list[$cohort2->id]);
+
+        $list = cohort_get_visible_list($course2, false);
+        $this->assertEquals(3, count($list));
+        $this->assertNotEmpty($list[$cohort2->id]);
+        $this->assertRegExp('/\(1\)$/', $list[$cohort2->id]);
+        $this->assertNotEmpty($list[$cohort3->id]);
+        $this->assertRegExp('/[^\)]$/', $list[$cohort3->id]);
+        $this->assertNotEmpty($list[$cohort4->id]);
+        $this->assertRegExp('/[^\)]$/', $list[$cohort4->id]);
+
+        $list = cohort_get_visible_list($course3);
+        $this->assertEquals(0, count($list));
+
+        $list = cohort_get_visible_list($course3, false);
+        $this->assertEquals(2, count($list));
+        $this->assertNotEmpty($list[$cohort3->id]);
+        $this->assertRegExp('/[^\)]$/', $list[$cohort3->id]);
+        $this->assertNotEmpty($list[$cohort4->id]);
+        $this->assertRegExp('/[^\)]$/', $list[$cohort4->id]);
+    }
 }
