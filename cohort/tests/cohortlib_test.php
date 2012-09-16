@@ -267,7 +267,7 @@ class cohort_testcase extends advanced_testcase {
 
         $cohort1 = $this->getDataGenerator()->create_cohort(array('contextid'=>context_coursecat::instance($category1->id)->id, 'name'=>'aaagrrryyy', 'idnumber'=>'','description'=>''));
         $cohort2 = $this->getDataGenerator()->create_cohort(array('contextid'=>context_coursecat::instance($category1->id)->id, 'name'=>'bbb', 'idnumber'=>'', 'description'=>'yyybrrr'));
-        $cohort3 = $this->getDataGenerator()->create_cohort(array('contextid'=>context_coursecat::instance($category1->id)->id, 'name'=>'ccc', 'idnumber'=>'xxarrrghyyy', 'description'=>''));
+        $cohort3 = $this->getDataGenerator()->create_cohort(array('contextid'=>context_coursecat::instance($category1->id)->id, 'name'=>'ccc', 'idnumber'=>'xxarrrghyyy', 'description'=>'po_us'));
         $cohort4 = $this->getDataGenerator()->create_cohort(array('contextid'=>context_system::instance()->id));
 
         $result = cohort_get_cohorts(context_coursecat::instance($category2->id)->id);
@@ -298,6 +298,16 @@ class cohort_testcase extends advanced_testcase {
         $result = cohort_get_cohorts(context_coursecat::instance($category1->id)->id, 1, 1, 'yyy');
         $this->assertEquals(3, $result['totalcohorts']);
         $this->assertEquals(array($cohort2->id=>$cohort2), $result['cohorts']);
+        $this->assertEquals(3, $result['allcohorts']);
+
+        $result = cohort_get_cohorts(context_coursecat::instance($category1->id)->id, 0, 100, 'po_us');
+        $this->assertEquals(1, $result['totalcohorts']);
+        $this->assertEquals(array($cohort3->id=>$cohort3), $result['cohorts']);
+        $this->assertEquals(3, $result['allcohorts']);
+
+        $result = cohort_get_cohorts(context_coursecat::instance($category1->id)->id, 0, 100, 'pokus');
+        $this->assertEquals(0, $result['totalcohorts']);
+        $this->assertEquals(array(), $result['cohorts']);
         $this->assertEquals(3, $result['allcohorts']);
     }
 }
