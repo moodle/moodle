@@ -19,7 +19,7 @@
  *
  * This file is part of the memcache cache store, it contains the API for interacting with an instance of the store.
  *
- * @package    cache_memcache
+ * @package    cachestore_memcache
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -37,7 +37,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cache_store_memcache implements cache_store {
+class cachestore_memcache implements cache_store {
 
     /**
      * The name of the store
@@ -349,7 +349,7 @@ class cache_store_memcache implements cache_store {
             return false;
         }
 
-        $config = get_config('cache_memcache');
+        $config = get_config('cachestore_memcache');
         if (empty($config->testservers)) {
             return false;
         }
@@ -357,7 +357,7 @@ class cache_store_memcache implements cache_store {
         $configuration = array();
         $configuration['servers'] = explode("\n", $config->testservers);
 
-        $store = new cache_store_memcache('Test memcache', $configuration);
+        $store = new cachestore_memcache('Test memcache', $configuration);
         $store->initialise($definition);
 
         return $store;

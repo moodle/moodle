@@ -1083,7 +1083,7 @@ class cache_application extends cache implements cache_loader_with_locking {
      */
     protected function ensure_lock_store_available() {
         if ($this->lockstore === null) {
-            $this->lockstore = cache_helper::get_cache_store_for_locking();
+            $this->lockstore = cache_helper::get_cachestore_for_locking();
         }
     }
 

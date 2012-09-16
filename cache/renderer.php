@@ -100,7 +100,7 @@ class core_cache_renderer extends plugin_renderer_base {
 
             $row = new html_table_row(array(
                 $storename,
-                get_string('pluginname', 'cache_'.$store['plugin']),
+                get_string('pluginname', 'cachestore_'.$store['plugin']),
                 ($store['isready'] && $store['requirementsmet']) ? $this->output->pix_icon('i/tick_green_small', '1') : '',
                 $store['mappings'],
                 join(', ', $modes),

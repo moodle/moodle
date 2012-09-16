@@ -37,7 +37,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cache_store_dummy implements cache_store {
+class cachestore_dummy implements cache_store {
     
     /**
      * The name of this store.
@@ -262,7 +262,7 @@ class cache_store_dummy implements cache_store {
      * @return false
      */
     public static function initialise_test_instance(cache_definition $definition) {
-        $cache = new cache_store_dummy('Dummy store test');
+        $cache = new cachestore_dummy('Dummy store test');
         $cache->initialise($definition);
         return $cache;;
     }

@@ -498,10 +498,10 @@ if ($hassiteconfig) {
     $ADMIN->add('cache', new admin_externalpage('cacheconfig', new lang_string('cacheconfig', 'cache'), $CFG->wwwroot .'/cache/admin.php'));
     $ADMIN->add('cache', new admin_externalpage('cachetestperformance', new lang_string('testperformance', 'cache'), $CFG->wwwroot . '/cache/testperformance.php'));
     $ADMIN->add('cache', new admin_category('cachestores', new lang_string('cachestores', 'cache')));
-    foreach (get_plugin_list('cache') as $plugin => $path) {
+    foreach (get_plugin_list('cachestore') as $plugin => $path) {
         $settingspath = $path.'/settings.php';
         if (file_exists($settingspath)) {
-            $settings = new admin_settingpage('cache_'.$plugin.'_settings', new lang_string('pluginname', 'cache_'.$plugin), 'moodle/site:config');
+            $settings = new admin_settingpage('cachestore_'.$plugin.'_settings', new lang_string('pluginname', 'cachestore_'.$plugin), 'moodle/site:config');
             include($settingspath);
             $ADMIN->add('cachestores', $settings);
         }

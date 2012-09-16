@@ -139,7 +139,7 @@ if (!defined('PHPUNIT_TEST')) {
 }
 
 // When set to true MUC (Moodle caching) will not use any of the defined or default stores.
-// The Cache API will continue to function however this will force the use of the cache_store_dummy so all requests
+// The Cache API will continue to function however this will force the use of the cachestore_dummy so all requests
 // will be interacting with a static property and will never go to the proper cache stores.
 // Useful if you need to avoid the stores for one reason or another.
 if (!defined('NO_CACHE_STORES')) {

@@ -56,10 +56,10 @@ $strunsupportedmode = new lang_string('unsupportedmode', 'cache');
 $struntestable = new lang_string('untestable', 'cache');
 $strtested = new lang_string('tested', 'cache');
 
-foreach (get_plugin_list_with_file('cache', 'lib.php', true) as $plugin => $path) {
+foreach (get_plugin_list_with_file('cachestore', 'lib.php', true) as $plugin => $path) {
 
-    $class = 'cache_store_'.$plugin;
-    $plugin = get_string('pluginname', 'cache_'.$plugin);
+    $class = 'cachestore_'.$plugin;
+    $plugin = get_string('pluginname', 'cachestore_'.$plugin);
 
     if (!class_exists($class) || !method_exists($class, 'initialise_test_instance')) {
         $applicationtable->data[] = array($plugin, $strinvalidplugin, '-', '-', '-', '-');

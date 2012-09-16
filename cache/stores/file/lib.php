@@ -20,7 +20,7 @@
  * This file is part of the file cache store, it contains the API for interacting with an instance of the store.
  * This is used as a default cache store within the Cache API. It should never be deleted.
  *
- * @package    cache_file
+ * @package    cachestore_file
  * @category   cache
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -37,7 +37,7 @@
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cache_store_file implements cache_store, cache_is_lockable, cache_is_key_aware {
+class cachestore_file implements cache_store, cache_is_lockable, cache_is_key_aware {
 
     /**
      * The name of the store.
@@ -124,7 +124,7 @@ class cache_store_file implements cache_store, cache_is_lockable, cache_is_key_a
                 debugging('The given file cache store path is not writable. '.$path, DEBUG_DEVELOPER);
             }
         } else {
-            $path = make_cache_directory('cache_store_file/'.preg_replace('#[^a-zA-Z0-9\.\-_]+#', '', $name));
+            $path = make_cache_directory('cachestore_file/'.preg_replace('#[^a-zA-Z0-9\.\-_]+#', '', $name));
         }
         $this->isready = $path !== false;
         $this->path = $path;
@@ -581,12 +581,12 @@ class cache_store_file implements cache_store, cache_is_lockable, cache_is_key_a
      * Returns an instance of the cache store, or false if one cannot be created.
      *
      * @param cache_definition $definition
-     * @return cache_store_file
+     * @return cachestore_file
      */
     public static function initialise_test_instance(cache_definition $definition) {
         $name = 'File test';
-        $path = make_cache_directory('cache_store_file_test');
-        $cache = new cache_store_file($name, array('path' => $path));
+        $path = make_cache_directory('cachestore_file_test');
+        $cache = new cachestore_file($name, array('path' => $path));
         $cache->initialise($definition);
         return $cache;
     }

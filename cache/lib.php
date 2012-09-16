@@ -135,6 +135,15 @@ class cache_ttl_wrapper {
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class cache_exception extends moodle_exception {
+    /**
+     * Constructs a new exception
+     *
+     * @param string $errorcode
+     * @param string $module
+     * @param string $link
+     * @param mixed $a
+     * @param mixed $debuginfo
+     */
     public function __construct($errorcode, $module = 'cache', $link = '', $a = NULL, $debuginfo = null) {
         parent::__construct($errorcode, $module, $link, $a, $debuginfo);
     }

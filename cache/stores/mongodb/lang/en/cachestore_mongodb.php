@@ -17,7 +17,7 @@
 /**
  * The language strings for the MongoDB store plugin.
  *
- * @package    cache_mongodb
+ * @package    cachestore_mongodb
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

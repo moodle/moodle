@@ -17,7 +17,7 @@
 /**
  * Cache mongodb store version information.
  *
- * @package    cache_mongodb
+ * @package    cachestore_mongodb
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -26,4 +26,4 @@ defined('MOODLE_INTERNAL') || die;
 
 $plugin->version   = 2012091000;    // The current module version (Date: YYYYMMDDXX)
 $plugin->requires  = 2012090700;    // Requires this Moodle version
-$plugin->component = 'cache_mongodb';  // Full name of the plugin (used for diagnostics)
+$plugin->component = 'cachestore_mongodb';  // Full name of the plugin (used for diagnostics)

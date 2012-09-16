@@ -19,7 +19,7 @@
  *
  * This file is part of the MongoDB store plugin, it contains the API for interacting with an instance of the store.
  *
- * @package    cache_mongodb
+ * @package    cachestore_mongodb
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -37,7 +37,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cache_store_mongodb implements cache_store {
+class cachestore_mongodb implements cache_store {
 
     /**
      * The name of the store
@@ -442,7 +442,7 @@ class cache_store_mongodb implements cache_store {
             return false;
         }
 
-        $config = get_config('cache_mongodb');
+        $config = get_config('cachestore_mongodb');
         if (empty($config->testserver)) {
             return false;
         }
@@ -468,7 +468,7 @@ class cache_store_mongodb implements cache_store {
             $configuration['extendedmode'] = (bool)$config->testextendedmode;
         }
 
-        $store = new cache_store_mongodb('Test mongodb', $configuration);
+        $store = new cachestore_mongodb('Test mongodb', $configuration);
         $store->initialise($definition);
 
         return $store;

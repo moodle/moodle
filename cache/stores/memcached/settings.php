@@ -19,11 +19,11 @@
  *
  * This file is part of the memcached cache store, it contains the API for interacting with an instance of the store.
  *
- * @package    cache_memcached
+ * @package    cachestore_memcached
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die;
 
-$settings->add(new admin_setting_configtextarea('cache_memcached/testservers', new lang_string('testservers', 'cache_memcached'), new lang_string('testservers_desc', 'cache_memcached'), '', PARAM_RAW, 60, 3));
+$settings->add(new admin_setting_configtextarea('cachestore_memcached/testservers', new lang_string('testservers', 'cachestore_memcached'), new lang_string('testservers_desc', 'cachestore_memcached'), '', PARAM_RAW, 60, 3));

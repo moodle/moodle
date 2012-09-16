@@ -115,6 +115,7 @@ class cache_lock {
      * Returns an instance of the cache lock class.
      *
      * @staticvar bool $instance
+     * @param bool $forceregeneration
      * @return cache_lock
      */
     protected static function instance($forceregeneration = false) {
@@ -157,7 +158,7 @@ class cache_lock {
     /**
      * Acquires a lock, of dies trying (jokes).
      *
-     * Read {@see cache_lock::lock()} for full details.
+     * Read {@link cache_lock::lock()} for full details.
      *
      * @param string $key
      * @param bool $block
@@ -216,7 +217,7 @@ class cache_lock {
     /**
      * Releases an acquired lock.
      *
-     * For more details see {@see cache_lock::unlock()}
+     * For more details see {@link cache_lock::unlock()}
      *
      * @param string $key
      * @param bool $forceunlock If set to true the lock will be removed if it exists regardless of whether or not we own it.

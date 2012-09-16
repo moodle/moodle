@@ -295,12 +295,12 @@ class cache_factory {
      * Creates a dummy store object for use when a loader has no potential stores to use.
      *
      * @param cache_definition $definition
-     * @return cache_store_dummy
+     * @return cachestore_dummy
      */
     protected function create_dummy_store(cache_definition $definition) {
         global $CFG;
         require_once($CFG->dirroot.'/cache/classes/dummystore.php');
-        $store = new cache_store_dummy();
+        $store = new cachestore_dummy();
         $store->initialise($definition);
         return $store;
     }

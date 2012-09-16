@@ -37,7 +37,7 @@ require_once($CFG->dirroot.'/lib/formslib.php');
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cache_store_addinstance_form extends moodleform {
+class cachestore_addinstance_form extends moodleform {
 
     /**
      * The definition of the add instance form

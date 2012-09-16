@@ -19,7 +19,7 @@
  *
  * This file is part of the memcached cache store, it contains the API for interacting with an instance of the store.
  *
- * @package    cache_memcached
+ * @package    cachestore_memcached
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -43,7 +43,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cache_store_memcached implements cache_store {
+class cachestore_memcached implements cache_store {
 
     /**
      * The name of the store
@@ -333,13 +333,13 @@ class cache_store_memcached implements cache_store {
      */
     public static function config_get_serialiser_options() {
         $options = array(
-            Memcached::SERIALIZER_PHP => get_string('serialiser_php', 'cache_memcached')
+            Memcached::SERIALIZER_PHP => get_string('serialiser_php', 'cachestore_memcached')
         );
         if (Memcached::HAVE_JSON) {
-            $options[Memcached::SERIALIZER_JSON] = get_string('serialiser_json', 'cache_memcached');
+            $options[Memcached::SERIALIZER_JSON] = get_string('serialiser_json', 'cachestore_memcached');
         }
         if (Memcached::HAVE_IGBINARY) {
-            $options[Memcached::SERIALIZER_IGBINARY] = get_string('serialiser_php', 'cache_memcached');
+            $options[Memcached::SERIALIZER_IGBINARY] = get_string('serialiser_php', 'cachestore_memcached');
         }
         return $options;
     }
@@ -350,15 +350,15 @@ class cache_store_memcached implements cache_store {
      */
     public static function config_get_hash_options() {
         $options = array(
-            Memcached::HASH_DEFAULT => get_string('hash_default', 'cache_memcached'),
-            Memcached::HASH_MD5 => get_string('hash_md5', 'cache_memcached'),
-            Memcached::HASH_CRC => get_string('hash_crc', 'cache_memcached'),
-            Memcached::HASH_FNV1_64 => get_string('hash_fnv1_64', 'cache_memcached'),
-            Memcached::HASH_FNV1A_64 => get_string('hash_fnv1a_64', 'cache_memcached'),
-            Memcached::HASH_FNV1_32 => get_string('hash_fnv1_32', 'cache_memcached'),
-            Memcached::HASH_FNV1A_32 => get_string('hash_fnv1a_32', 'cache_memcached'),
-            Memcached::HASH_HSIEH => get_string('hash_hsieh', 'cache_memcached'),
-            Memcached::HASH_MURMUR => get_string('hash_murmur', 'cache_memcached'),
+            Memcached::HASH_DEFAULT => get_string('hash_default', 'cachestore_memcached'),
+            Memcached::HASH_MD5 => get_string('hash_md5', 'cachestore_memcached'),
+            Memcached::HASH_CRC => get_string('hash_crc', 'cachestore_memcached'),
+            Memcached::HASH_FNV1_64 => get_string('hash_fnv1_64', 'cachestore_memcached'),
+            Memcached::HASH_FNV1A_64 => get_string('hash_fnv1a_64', 'cachestore_memcached'),
+            Memcached::HASH_FNV1_32 => get_string('hash_fnv1_32', 'cachestore_memcached'),
+            Memcached::HASH_FNV1A_32 => get_string('hash_fnv1a_32', 'cachestore_memcached'),
+            Memcached::HASH_HSIEH => get_string('hash_hsieh', 'cachestore_memcached'),
+            Memcached::HASH_MURMUR => get_string('hash_murmur', 'cachestore_memcached'),
         );
         return $options;
     }
@@ -414,7 +414,7 @@ class cache_store_memcached implements cache_store {
             return false;
         }
 
-        $config = get_config('cache_memcached');
+        $config = get_config('cachestore_memcached');
         if (empty($config->testservers)) {
             return false;
         }
@@ -437,7 +437,7 @@ class cache_store_memcached implements cache_store {
             $configuration['bufferwrites'] = $config->testbufferwrites;
         }
 
-        $store = new cache_store_memcached('Test memcached', $configuration);
+        $store = new cachestore_memcached('Test memcached', $configuration);
         $store->initialise($definition);
 
         return $store;

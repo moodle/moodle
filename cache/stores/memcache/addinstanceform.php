@@ -19,7 +19,7 @@
  *
  * This file is part of the memcache cache store, it contains the API for interacting with an instance of the store.
  *
- * @package    cache_memcache
+ * @package    cachestore_memcache
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -35,15 +35,15 @@ require_once($CFG->dirroot.'/cache/stores/memcached/lib.php');
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cache_store_memcache_addinstance_form extends cache_store_addinstance_form {
+class cachestore_memcache_addinstance_form extends cachestore_addinstance_form {
 
     /**
      * Add the desired form elements.
      */
     protected function configuration_definition() {
         $form = $this->_form;
-        $form->addElement('textarea', 'servers', get_string('servers', 'cache_memcache'), array('cols' => 75, 'rows' => 5));
-        $form->addHelpButton('servers', 'servers', 'cache_memcache');
+        $form->addElement('textarea', 'servers', get_string('servers', 'cachestore_memcache'), array('cols' => 75, 'rows' => 5));
+        $form->addHelpButton('servers', 'servers', 'cachestore_memcache');
         $form->addRule('servers', get_string('required'), 'required');
         $form->setType('servers', PARAM_RAW);
     }

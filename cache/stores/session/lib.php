@@ -20,7 +20,7 @@
  * This file is part of the session cache store, it contains the API for interacting with an instance of the store.
  * This is used as a default cache store within the Cache API. It should never be deleted.
  *
- * @package    cache_session
+ * @package    cachestore_session
  * @category   cache
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -34,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cache_store_session extends session_data_store implements cache_store, cache_is_key_aware {
+class cachestore_session extends session_data_store implements cache_store, cache_is_key_aware {
 
     /**
      * The name of the store
@@ -358,7 +358,7 @@ class cache_store_session extends session_data_store implements cache_store, cac
      */
     public static function initialise_test_instance(cache_definition $definition) {
         // Do something here perhaps.
-        $cache = new cache_store_session('Session test');
+        $cache = new cachestore_session('Session test');
         $cache->initialise($definition);
         return $cache;
     }
@@ -387,10 +387,10 @@ abstract class session_data_store {
     protected static function &register_store_id($id) {
         if (is_null(self::$sessionstore)) {
             global $SESSION;
-            if (!isset($SESSION->cache_store_session)) {
-                $SESSION->cache_store_session = array();
+            if (!isset($SESSION->cachestore_session)) {
+                $SESSION->cachestore_session = array();
             }
-            self::$sessionstore =& $SESSION->cache_store_session;
+            self::$sessionstore =& $SESSION->cachestore_session;
         }
         if (!array_key_exists($id, self::$sessionstore)) {
             self::$sessionstore[$id] = array();

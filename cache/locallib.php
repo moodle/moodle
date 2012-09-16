@@ -105,9 +105,9 @@ class cache_config_writer extends cache_config {
         if (array_key_exists($name, $this->configstores)) {
             throw new cache_exception('Duplicate name specificed for cache plugin instance. You must provide a unique name.');
         }
-        $class = 'cache_store_'.$plugin;
+        $class = 'cachestore_'.$plugin;
         if (!class_exists($class)) {
-            $plugins = get_plugin_list_with_file('cache', 'lib.php');
+            $plugins = get_plugin_list_with_file('cachestore', 'lib.php');
             if (!array_key_exists($plugin, $plugins)) {
                 throw new cache_exception('Invalid plugin name specified. The plugin either does not exist or is not a valid cache plugin.');
             }
@@ -202,11 +202,11 @@ class cache_config_writer extends cache_config {
         if (!array_key_exists($name, $this->configstores)) {
             throw new cache_exception('The requested instance does not exist.');
         }
-        $plugins = get_plugin_list_with_file('cache', 'lib.php');
+        $plugins = get_plugin_list_with_file('cachestore', 'lib.php');
         if (!array_key_exists($plugin, $plugins)) {
             throw new cache_exception('Invalid plugin name specified. The plugin either does not exist or is not valid.');
         }
-        $class = 'cache_store_.'.$plugin;
+        $class = 'cachestore_.'.$plugin;
         $file = $plugins[$plugin];
         if (!class_exists($class)) {
             if (file_exists($file)) {
@@ -283,39 +283,39 @@ class cache_config_writer extends cache_config {
                 'name' => 'default_locking',
                 'plugin' => 'file',
                 'configuration' => array(),
-                'features' => cache_store_file::get_supported_features(),
+                'features' => cachestore_file::get_supported_features(),
                 'modes' => cache_store::MODE_APPLICATION,
                 'useforlocking' => true,
                 'mappingsonly' => true,
                 'default' => true,
-                //'class' => 'cache_store_file'
+                //'class' => 'cachestore_file'
             ),
             'default_application' => array(
                 'name' => 'default_application',
                 'plugin' => 'file',
                 'configuration' => array(),
-                'features' => cache_store_file::get_supported_features(),
+                'features' => cachestore_file::get_supported_features(),
                 'modes' => cache_store::MODE_APPLICATION,
                 'default' => true,
-                //'class' => 'cache_store_file'
+                //'class' => 'cachestore_file'
             ),
             'default_session' => array(
                 'name' => 'default_session',
                 'plugin' => 'session',
                 'configuration' => array(),
-                'features' => cache_store_session::get_supported_features(),
+                'features' => cachestore_session::get_supported_features(),
                 'modes' => cache_store::MODE_SESSION,
                 'default' => true,
-                //'class' => 'cache_store_session'
+                //'class' => 'cachestore_session'
             ),
             'default_request' => array(
                 'name' => 'default_request',
                 'plugin' => 'static',
                 'configuration' => array(),
-                'features' => cache_store_static::get_supported_features(),
+                'features' => cachestore_static::get_supported_features(),
                 'modes' => cache_store::MODE_REQUEST,
                 'default' => true,
-                //'class' => 'cache_store_static'
+                //'class' => 'cachestore_static'
             )
         );
         $writer->configdefinitions = self::locate_definitions();
@@ -539,11 +539,11 @@ abstract class cache_administration_helper extends cache_helper {
      */
     public static function get_plugin_summaries() {
         $return = array();
-        $plugins = get_plugin_list_with_file('cache', 'lib.php', true);
+        $plugins = get_plugin_list_with_file('cachestore', 'lib.php', true);
         foreach ($plugins as $plugin => $path) {
-            $class = 'cache_store_'.$plugin;
+            $class = 'cachestore_'.$plugin;
             $return[$plugin] = array(
-                'name' => get_string('pluginname', 'cache_'.$plugin),
+                'name' => get_string('pluginname', 'cachestore_'.$plugin),
                 'requirementsmet' => $class::are_requirements_met(),
                 'instances' => 0,
                 'modes' => array(
@@ -710,19 +710,19 @@ abstract class cache_administration_helper extends cache_helper {
      * Returns a form that can be used to add a store instance.
      *
      * @param string $plugin The plugin to add an instance of
-     * @return cache_store_addinstance_form
+     * @return cachestore_addinstance_form
      * @throws coding_exception
      */
     public static function get_add_store_form($plugin) {
         global $CFG; // Needed for includes
-        $plugindir = get_plugin_directory('cache', $plugin);
-        $class = 'cache_store_addinstance_form';
+        $plugindir = get_plugin_directory('cachestore', $plugin);
+        $class = 'cachestore_addinstance_form';
         if (file_exists($plugindir.'/addinstanceform.php')) {
             require_once($plugindir.'/addinstanceform.php');
-            if (class_exists('cache_store_'.$plugin.'_addinstance_form')) {
-                $class = 'cache_store_'.$plugin.'_addinstance_form';
-                if (!array_key_exists('cache_store_addinstance_form', class_parents($class))) {
-                    throw new coding_exception('Cache plugin add instance forms must extend cache_store_addinstance_form');
+            if (class_exists('cachestore_'.$plugin.'_addinstance_form')) {
+                $class = 'cachestore_'.$plugin.'_addinstance_form';
+                if (!array_key_exists('cachestore_addinstance_form', class_parents($class))) {
+                    throw new coding_exception('Cache plugin add instance forms must extend cachestore_addinstance_form');
                 }
             }
         }
@@ -736,19 +736,19 @@ abstract class cache_administration_helper extends cache_helper {
      *
      * @param string $plugin
      * @param string $store
-     * @return cache_store_addinstance_form
+     * @return cachestore_addinstance_form
      * @throws coding_exception
      */
     public static function get_edit_store_form($plugin, $store) {
         global $CFG; // Needed for includes
-        $plugindir = get_plugin_directory('cache', $plugin);
-        $class = 'cache_store_addinstance_form';
+        $plugindir = get_plugin_directory('cachestore', $plugin);
+        $class = 'cachestore_addinstance_form';
         if (file_exists($plugindir.'/addinstanceform.php')) {
             require_once($plugindir.'/addinstanceform.php');
-            if (class_exists('cache_store_'.$plugin.'_addinstance_form')) {
-                $class = 'cache_store_'.$plugin.'_addinstance_form';
-                if (!array_key_exists('cache_store_addinstance_form', class_parents($class))) {
-                    throw new coding_exception('Cache plugin add instance forms must extend cache_store_addinstance_form');
+            if (class_exists('cachestore_'.$plugin.'_addinstance_form')) {
+                $class = 'cachestore_'.$plugin.'_addinstance_form';
+                if (!array_key_exists('cachestore_addinstance_form', class_parents($class))) {
+                    throw new coding_exception('Cache plugin add instance forms must extend cachestore_addinstance_form');
                 }
             }
         }
@@ -772,7 +772,7 @@ abstract class cache_administration_helper extends cache_helper {
             throw new coding_exception('Invalid cache plugin provided. '.$file);
         }
         require_once($file);
-        $class = 'cache_store_'.$data->plugin;
+        $class = 'cachestore_'.$data->plugin;
         $method = 'config_get_configuration_array';
         if (!class_exists($class)) {
             throw new coding_exception('Invalid cache plugin provided.');

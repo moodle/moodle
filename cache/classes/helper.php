@@ -127,7 +127,7 @@ class cache_helper {
     public static function get_cache_stores(cache_definition $definition) {
         $instance = cache_config::instance();
         $stores = $instance->get_stores_for_definition($definition);
-        $stores = self::initialise_cache_store_instances($stores, $definition);
+        $stores = self::initialise_cachestore_instances($stores, $definition);
         return $stores;
     }
 
@@ -138,7 +138,7 @@ class cache_helper {
      * @param cache_definition $definition
      * @return array
      */
-    protected static function initialise_cache_store_instances(array $stores, cache_definition $definition) {
+    protected static function initialise_cachestore_instances(array $stores, cache_definition $definition) {
         $return = array();
         $factory = cache_factory::instance();
         foreach ($stores as $name => $details) {
@@ -154,14 +154,14 @@ class cache_helper {
      * Returns the cache store to be used for locking or false if there is not one.
      * @return cache_store|boolean
      */
-    public static function get_cache_store_for_locking() {
+    public static function get_cachestore_for_locking() {
         $factory = cache_factory::instance();
         $definition = $factory->create_definition('core', 'locking');
         $instance = cache_config::instance();
         $stores = $instance->get_stores_for_definition($definition);
         foreach ($stores as $name => $details) {
             if ($details['useforlocking']) {
-                $instances = self::initialise_cache_store_instances(array($name => $details), $definition);
+                $instances = self::initialise_cachestore_instances(array($name => $details), $definition);
                 return reset($instances);
             }
         }

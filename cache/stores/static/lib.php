@@ -20,7 +20,7 @@
  * This file is part of the static cache store, it contains the API for interacting with an instance of the store.
  * This is used as a default cache store within the Cache API. It should never be deleted.
  *
- * @package    cache_static
+ * @package    cachestore_static
  * @category   cache
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -34,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cache_store_static extends static_data_store implements cache_store, cache_is_key_aware {
+class cachestore_static extends static_data_store implements cache_store, cache_is_key_aware {
 
     /**
      * The name of the store
@@ -358,7 +358,7 @@ class cache_store_static extends static_data_store implements cache_store, cache
      */
     public static function initialise_test_instance(cache_definition $definition) {
         // Do something here perhaps.
-        $cache = new cache_store_static('Static store');
+        $cache = new cachestore_static('Static store');
         $cache->initialise($definition);
         return $cache;;
     }

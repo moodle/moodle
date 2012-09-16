@@ -19,7 +19,7 @@
  *
  * Not to be confused with the memcache plugin.
  *
- * @package    cache_memcached
+ * @package    cachestore_memcached
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,4 +28,4 @@ defined('MOODLE_INTERNAL') || die;
 
 $plugin->version   = 2012091000;    // The current module version (Date: YYYYMMDDXX)
 $plugin->requires  = 2012090700;    // Requires this Moodle version
-$plugin->component = 'cache_memcached';  // Full name of the plugin (used for diagnostics)
+$plugin->component = 'cachestore_memcached';  // Full name of the plugin (used for diagnostics)

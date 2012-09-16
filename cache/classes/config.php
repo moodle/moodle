@@ -126,7 +126,7 @@ class cache_config {
                 continue;
             }
             $plugin = $store['plugin'];
-            $class = 'cache_store_'.$plugin;
+            $class = 'cachestore_'.$plugin;
             if (!array_key_exists($plugin, $availableplugins) && (!class_exists($class) || !is_subclass_of($class, 'cache_store'))) {
                 // Not a valid plugin, or has been uninstalled, just skip it an carry on.
                 debugging('Invalid cache store in config. Not an available plugin.', DEBUG_DEVELOPER);
@@ -327,7 +327,7 @@ class cache_config {
         if (defined('NO_CACHE_STORES') && NO_CACHE_STORES !== false) {
             // Yip its been disabled.
             // To facilitate this we are going to always return an empty array of stores to use.
-            // This will force all cache instances to use the cache_store_dummy.
+            // This will force all cache instances to use the cachestore_dummy.
             // MUC will still be used essentially so that code using it will still continue to function but because no cache stores
             // are being used interaction with MUC will be purely based around a static var.
             return array();
