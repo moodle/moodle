@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -80,10 +79,7 @@ if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
     if (!empty($userstoassign)) {
 
         foreach ($userstoassign as $adduser) {
-            // no duplicates please
-            if (!$DB->record_exists('cohort_members', array('cohortid'=>$cohort->id, 'userid'=>$adduser->id))) {
-                cohort_add_member($cohort->id, $adduser->id);
-            }
+            cohort_add_member($cohort->id, $adduser->id);
         }
 
         $potentialuserselector->invalidate_selected_users();

@@ -132,6 +132,10 @@ function cohort_delete_category($category) {
  */
 function cohort_add_member($cohortid, $userid) {
     global $DB;
+    if ($DB->record_exists('cohort_members', array('cohortid'=>$cohortid, 'userid'=>$userid))) {
+        // No duplicates!
+        return;
+    }
     $record = new stdClass();
     $record->cohortid  = $cohortid;
     $record->userid    = $userid;
