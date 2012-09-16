@@ -215,9 +215,8 @@ function cohort_get_visible_list($course, $onlyenrolled=true) {
 }
 
 /**
- * Get all the cohorts.
+ * Get all the cohorts defined in given context.
  *
- * @global moodle_database $DB
  * @param int $contextid
  * @param int $page number of the current page
  * @param int $perpage items per page
@@ -227,32 +226,26 @@ function cohort_get_visible_list($course, $onlyenrolled=true) {
 function cohort_get_cohorts($contextid, $page = 0, $perpage = 25, $search = '') {
     global $DB;
 
-    $cohorts = array();
-
     // Add some additional sensible conditions
     $tests = array('contextid = ?');
     $params = array($contextid);
 
     if (!empty($search)) {
-        $conditions = array(
-            'name',
-            'idnumber',
-            'description',
-        );
-        $searchparam = '%' . $search . '%';
+        $conditions = array('name', 'idnumber', 'description');
+        $searchparam = '%' . $DB->sql_like_escape($search) . '%';
         foreach ($conditions as $key=>$condition) {
-            $conditions[$key] = $DB->sql_like($condition,"?", false);
+            $conditions[$key] = $DB->sql_like($condition, "?", false);
             $params[] = $searchparam;
         }
         $tests[] = '(' . implode(' OR ', $conditions) . ')';
     }
     $wherecondition = implode(' AND ', $tests);
 
-    $fields = 'SELECT *';
-    $countfields = 'SELECT COUNT(1)';
+    $fields = "SELECT *";
+    $countfields = "SELECT COUNT(1)";
     $sql = " FROM {cohort}
              WHERE $wherecondition";
-    $order = ' ORDER BY name ASC';
+    $order = " ORDER BY name ASC, idnumber ASC";
     $totalcohorts = $DB->count_records_sql($countfields . $sql, $params);
     $cohorts = $DB->get_records_sql($fields . $sql . $order, $params, $page*$perpage, $perpage);
 
