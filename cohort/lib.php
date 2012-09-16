@@ -225,7 +225,7 @@ function cohort_get_visible_list($course, $onlyenrolled=true) {
  * @param int $page number of the current page
  * @param int $perpage items per page
  * @param string $search search string
- * @return array    Array(totalcohorts => int, cohorts => array)
+ * @return array    Array(totalcohorts => int, cohorts => array, allcohorts => int)
  */
 function cohort_get_cohorts($contextid, $page = 0, $perpage = 25, $search = '') {
     global $DB;
@@ -250,8 +250,9 @@ function cohort_get_cohorts($contextid, $page = 0, $perpage = 25, $search = '') 
     $sql = " FROM {cohort}
              WHERE $wherecondition";
     $order = " ORDER BY name ASC, idnumber ASC";
+    $allcohorts = $DB->count_records('cohort', array('contextid'=>$contextid));
     $totalcohorts = $DB->count_records_sql($countfields . $sql, $params);
     $cohorts = $DB->get_records_sql($fields . $sql . $order, $params, $page*$perpage, $perpage);
 
-    return array('totalcohorts' => $totalcohorts, 'cohorts' => $cohorts);
+    return array('totalcohorts' => $totalcohorts, 'cohorts' => $cohorts, 'allcohorts'=>$allcohorts);
 }

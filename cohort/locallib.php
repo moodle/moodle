@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/cohot/lib.php');
+require_once($CFG->dirroot . '/cohort/lib.php');
 require_once($CFG->dirroot . '/user/selector/lib.php');
 
 

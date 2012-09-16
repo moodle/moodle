@@ -67,7 +67,18 @@ if ($category) {
 
 echo $OUTPUT->header();
 
-echo $OUTPUT->heading(get_string('cohortsin', 'cohort', print_context_name($context)));
+$cohorts = cohort_get_cohorts($context->id, $page, 25, $searchquery);
+
+$count = '';
+if ($cohorts['allcohorts'] > 0) {
+    if ($searchquery === '') {
+        $count = ' ('.$cohorts['allcohorts'].')';
+    } else {
+        $count = ' ('.$cohorts['totalcohorts'].'/'.$cohorts['allcohorts'].')';
+    }
+}
+
+echo $OUTPUT->heading(get_string('cohortsin', 'cohort', $context->get_context_name()).$count);
 
 // Add search form.
 $search  = html_writer::start_tag('form', array('id'=>'searchcohortquery', 'method'=>'get'));
@@ -79,7 +90,6 @@ $search .= html_writer::end_tag('div');
 $search .= html_writer::end_tag('form');
 echo $search;
 
-$cohorts = cohort_get_cohorts($context->id, $page, 25, $searchquery);
 
 // Output pagination bar.
 $params = array('page' => $page);

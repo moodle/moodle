@@ -273,25 +273,31 @@ class cohort_testcase extends advanced_testcase {
         $result = cohort_get_cohorts(context_coursecat::instance($category2->id)->id);
         $this->assertEquals(0, $result['totalcohorts']);
         $this->assertEquals(0, count($result['cohorts']));
+        $this->assertEquals(0, $result['allcohorts']);
 
         $result = cohort_get_cohorts(context_coursecat::instance($category1->id)->id);
         $this->assertEquals(3, $result['totalcohorts']);
         $this->assertEquals(array($cohort1->id=>$cohort1, $cohort2->id=>$cohort2, $cohort3->id=>$cohort3), $result['cohorts']);
+        $this->assertEquals(3, $result['allcohorts']);
 
         $result = cohort_get_cohorts(context_coursecat::instance($category1->id)->id, 0, 100, 'arrrgh');
         $this->assertEquals(1, $result['totalcohorts']);
         $this->assertEquals(array($cohort3->id=>$cohort3), $result['cohorts']);
+        $this->assertEquals(3, $result['allcohorts']);
 
         $result = cohort_get_cohorts(context_coursecat::instance($category1->id)->id, 0, 100, 'brrr');
         $this->assertEquals(1, $result['totalcohorts']);
         $this->assertEquals(array($cohort2->id=>$cohort2), $result['cohorts']);
+        $this->assertEquals(3, $result['allcohorts']);
 
         $result = cohort_get_cohorts(context_coursecat::instance($category1->id)->id, 0, 100, 'grrr');
         $this->assertEquals(1, $result['totalcohorts']);
         $this->assertEquals(array($cohort1->id=>$cohort1), $result['cohorts']);
+        $this->assertEquals(3, $result['allcohorts']);
 
         $result = cohort_get_cohorts(context_coursecat::instance($category1->id)->id, 1, 1, 'yyy');
         $this->assertEquals(3, $result['totalcohorts']);
         $this->assertEquals(array($cohort2->id=>$cohort2), $result['cohorts']);
+        $this->assertEquals(3, $result['allcohorts']);
     }
 }
