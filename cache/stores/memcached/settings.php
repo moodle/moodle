@@ -26,8 +26,4 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-if ($ADMIN->fulltree) {
-    require_once($CFG->dirroot.'/cache/stores/memcached/lib.php');
-
-    $settings->add(new admin_setting_configtextarea('cache_memcached/testservers', get_string('testservers', 'cache_memcached'), get_string('testservers_desc', 'cache_memcached'), ''));
-}
+$settings->add(new admin_setting_configtextarea('cache_memcached/testservers', new lang_string('testservers', 'cache_memcached'), new lang_string('testservers_desc', 'cache_memcached'), '', PARAM_RAW, 60, 3));

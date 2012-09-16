@@ -13,6 +13,7 @@ $string['cachedef_databasemeta'] = 'Database meta information';
 $string['cachedef_eventinvalidation'] = 'Event invalidation';
 $string['cachedef_locking'] = 'Locking';
 $string['cachedef_string'] = 'Language string cache';
+$string['cachestores'] = 'Cache stores';
 $string['component'] = 'Component';
 $string['confirmstoredeletion'] = 'Confirm store deletion';
 $string['defaultmappings'] = 'Default mappings';

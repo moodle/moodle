@@ -26,8 +26,4 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-if ($ADMIN->fulltree) {
-    require_once($CFG->dirroot.'/cache/stores/mongodb/lib.php');
-
-    $settings->add(new admin_setting_configtextarea('cache_mongodb/testserver', get_string('testserver', 'cache_mongodb'), get_string('testserver_desc', 'cache_mongodb'), ''));
-}
+$settings->add(new admin_setting_configtextarea('cache_mongodb/testserver', new lang_string('testserver', 'cache_mongodb'), new lang_string('testserver_desc', 'cache_mongodb'), '', PARAM_RAW, 60, 3));
