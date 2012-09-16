@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/cohot/lib.php');
 require_once($CFG->dirroot . '/user/selector/lib.php');
 
+
 /**
  * Cohort assignment candidates
  */
@@ -40,12 +41,12 @@ class cohort_candidate_selector extends user_selector_base {
 
     /**
      * Candidate users
-     * @param <type> $search
+     * @param string $search
      * @return array
      */
     public function find_users($search) {
         global $DB;
-        //by default wherecondition retrieves all users except the deleted, not confirmed and guest
+        // By default wherecondition retrieves all users except the deleted, not confirmed and guest.
         list($wherecondition, $params) = $this->search_sql($search, 'u');
         $params['cohortid'] = $this->cohortid;
 
@@ -103,12 +104,12 @@ class cohort_existing_selector extends user_selector_base {
 
     /**
      * Candidate users
-     * @param <type> $search
+     * @param string $search
      * @return array
      */
     public function find_users($search) {
         global $DB;
-        //by default wherecondition retrieves all users except the deleted, not confirmed and guest
+        // By default wherecondition retrieves all users except the deleted, not confirmed and guest.
         list($wherecondition, $params) = $this->search_sql($search, 'u');
         $params['cohortid'] = $this->cohortid;
 

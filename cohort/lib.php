@@ -27,8 +27,8 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Add new cohort.
  *
- * @param  object $cohort
- * @return int
+ * @param  stdClass $cohort
+ * @return int new cohort id
  */
 function cohort_add_cohort($cohort) {
     global $DB;
@@ -65,7 +65,7 @@ function cohort_add_cohort($cohort) {
 
 /**
  * Update existing cohort.
- * @param  object $cohort
+ * @param  stdClass $cohort
  * @return void
  */
 function cohort_update_cohort($cohort) {
@@ -82,7 +82,7 @@ function cohort_update_cohort($cohort) {
 
 /**
  * Delete cohort.
- * @param  object $cohort
+ * @param  stdClass $cohort
  * @return void
  */
 function cohort_delete_cohort($cohort) {
@@ -102,7 +102,7 @@ function cohort_delete_cohort($cohort) {
  * Somehow deal with cohorts when deleting course category,
  * we can not just delete them because they might be used in enrol
  * plugins or referenced in external systems.
- * @param  object $category
+ * @param  stdClass $category
  * @return void
  */
 function cohort_delete_category($category) {
