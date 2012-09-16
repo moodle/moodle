@@ -25,7 +25,7 @@
  */
 
 require_once('../config.php');
-require_once($CFG->dirroot.'/cohort/lib.php');
+require_once($CFG->dirroot.'/cohort/locallib.php');
 
 $id = required_param('id', PARAM_INT);
 

@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,13 +17,12 @@
 /**
  * Cohort related management functions, this file needs to be included manually.
  *
- * @package    core
- * @subpackage cohort
+ * @package    core_cohort
  * @copyright  2010 Petr Skoda  {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once($CFG->dirroot . '/user/selector/lib.php');
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Add new cohort.
@@ -247,128 +245,4 @@ function cohort_get_cohorts($contextid, $page = 0, $perpage = 25, $search = '') 
     $cohorts = $DB->get_records_sql($fields . $sql . $order, $params, $page*$perpage, $perpage);
 
     return array('totalcohorts' => $totalcohorts, 'cohorts' => $cohorts);
-}
-
-/**
- * Cohort assignment candidates
- */
-class cohort_candidate_selector extends user_selector_base {
-    protected $cohortid;
-
-    public function __construct($name, $options) {
-        $this->cohortid = $options['cohortid'];
-        parent::__construct($name, $options);
-    }
-
-    /**
-     * Candidate users
-     * @param <type> $search
-     * @return array
-     */
-    public function find_users($search) {
-        global $DB;
-        //by default wherecondition retrieves all users except the deleted, not confirmed and guest
-        list($wherecondition, $params) = $this->search_sql($search, 'u');
-        $params['cohortid'] = $this->cohortid;
-
-        $fields      = 'SELECT ' . $this->required_fields_sql('u');
-        $countfields = 'SELECT COUNT(1)';
-
-        $sql = " FROM {user} u
-            LEFT JOIN {cohort_members} cm ON (cm.userid = u.id AND cm.cohortid = :cohortid)
-                WHERE cm.id IS NULL AND $wherecondition";
-
-        $order = ' ORDER BY u.lastname ASC, u.firstname ASC';
-
-        if (!$this->is_validating()) {
-            $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
-            if ($potentialmemberscount > 100) {
-                return $this->too_many_results($search, $potentialmemberscount);
-            }
-        }
-
-        $availableusers = $DB->get_records_sql($fields . $sql . $order, $params);
-
-        if (empty($availableusers)) {
-            return array();
-        }
-
-
-        if ($search) {
-            $groupname = get_string('potusersmatching', 'cohort', $search);
-        } else {
-            $groupname = get_string('potusers', 'cohort');
-        }
-
-        return array($groupname => $availableusers);
-    }
-
-    protected function get_options() {
-        $options = parent::get_options();
-        $options['cohortid'] = $this->cohortid;
-        $options['file'] = 'cohort/lib.php';
-        return $options;
-    }
-}
-
-/**
- * Cohort assignment candidates
- */
-class cohort_existing_selector extends user_selector_base {
-    protected $cohortid;
-
-    public function __construct($name, $options) {
-        $this->cohortid = $options['cohortid'];
-        parent::__construct($name, $options);
-    }
-
-    /**
-     * Candidate users
-     * @param <type> $search
-     * @return array
-     */
-    public function find_users($search) {
-        global $DB;
-        //by default wherecondition retrieves all users except the deleted, not confirmed and guest
-        list($wherecondition, $params) = $this->search_sql($search, 'u');
-        $params['cohortid'] = $this->cohortid;
-
-        $fields      = 'SELECT ' . $this->required_fields_sql('u');
-        $countfields = 'SELECT COUNT(1)';
-
-        $sql = " FROM {user} u
-                 JOIN {cohort_members} cm ON (cm.userid = u.id AND cm.cohortid = :cohortid)
-                WHERE $wherecondition";
-
-        $order = ' ORDER BY u.lastname ASC, u.firstname ASC';
-
-        if (!$this->is_validating()) {
-            $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
-            if ($potentialmemberscount > 100) {
-                return $this->too_many_results($search, $potentialmemberscount);
-            }
-        }
-
-        $availableusers = $DB->get_records_sql($fields . $sql . $order, $params);
-
-        if (empty($availableusers)) {
-            return array();
-        }
-
-
-        if ($search) {
-            $groupname = get_string('currentusersmatching', 'cohort', $search);
-        } else {
-            $groupname = get_string('currentusers', 'cohort');
-        }
-
-        return array($groupname => $availableusers);
-    }
-
-    protected function get_options() {
-        $options = parent::get_options();
-        $options['cohortid'] = $this->cohortid;
-        $options['file'] = 'cohort/lib.php';
-        return $options;
-    }
 }
