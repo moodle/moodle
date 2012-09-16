@@ -449,10 +449,15 @@ body.tag .managelink {padding: 5px;}
 .path-backup .mform .grouped_settings.section_level {clear:both;}
 .path-backup .mform .grouped_settings {clear:both;overflow:hidden;}
 .path-backup .mform .grouped_settings .fitem .fitemtitle {width:40%;padding-right:10px;}
+.path-backup.dir-rtl .mform .grouped_settings .fitem .fitemtitle {width: 60%;}
 .path-backup .mform .grouped_settings .fitem .felement {width:50%;}
+.path-backup.dir-rtl .mform .grouped_settings .fitem .felement {width: 99%;}
 .path-backup .mform .grouped_settings.section_level .include_setting {width:50%;margin:0;float:left;clear:left;font-weight:bold;}
+.path-backup.dir-rtl  .mform .grouped_settings.section_level .include_setting {float: right; clear: right;}
 .path-backup .mform .grouped_settings.section_level .normal_setting {width:50%;margin:0;margin-left:50%;}
+.path-backup.dir-rtl  .mform .grouped_settings.section_level .normal_setting {margin:0;}
 .path-backup .mform .grouped_settings.activity_level .include_setting label {font-weight:normal;}
+.path-backup.dir-rtl .mform .grouped_settings.activity_level .include_setting label img {float:right;}
 .path-backup .mform .fitem fieldset.felement {margin-left:0;width:auto;padding-left:0;}
 .path-backup .notification.dependencies_enforced {text-align:center;color:#A00;font-weight:bold;}
 .path-backup .backup_progress {text-align:center;}
