@@ -34,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2010 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_textlib_testcase extends basic_testcase {
+class core_textlib_testcase extends advanced_testcase {
 
     /**
      * Tests the static parse charset method
@@ -347,9 +347,7 @@ class core_textlib_testcase extends basic_testcase {
     public function test_deprecated_textlib_get_instance() {
         ob_start();
         $textlib = textlib_get_instance();
-        $output = ob_get_contents();
-        $this->assertNotEmpty($output);
-        ob_end_clean();
+        $this->assertDebuggingCalled();
         $this->assertSame($textlib->substr('abc', 1, 1), 'b');
         $this->assertSame($textlib->strlen('abc'), 3);
         $this->assertSame($textlib->strtoupper('Abc'), 'ABC');
