@@ -119,6 +119,14 @@ class mdeploytest extends PHPUnit_Framework_TestCase {
             array('1', input_manager::TYPE_FLAG, true),
             array('0', input_manager::TYPE_FLAG, true),
             array('muhehe', input_manager::TYPE_FLAG, true),
+
+            array('C:\\WINDOWS\\user.dat', input_manager::TYPE_PATH, 'C/WINDOWS/user.dat'),
+            array('../../../etc/passwd', input_manager::TYPE_PATH, '/etc/passwd'),
+            array('///////.././public_html/test.php', input_manager::TYPE_PATH, '/public_html/test.php'),
+
+            array("!@#$%|/etc/qwerty\n\n\t\n\r", input_manager::TYPE_RAW, "!@#$%|/etc/qwerty\n\n\t\n\r"),
+
+            array("\nrock'n'roll.mp3\t.exe", input_manager::TYPE_FILE, 'rocknroll.mp3.exe'),
         );
     }
 

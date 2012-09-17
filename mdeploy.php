@@ -34,6 +34,7 @@ if (defined('MOODLE_INTERNAL')) {
 
 class invalid_coding_exception extends Exception {}
 class missing_option_exception extends Exception {}
+class unauthorized_access_exception extends Exception {}
 
 
 // Various support classes /////////////////////////////////////////////////////
@@ -100,8 +101,11 @@ abstract class singleton_pattern {
  */
 class input_manager extends singleton_pattern {
 
+    const TYPE_FILE         = 'file';   // File name
     const TYPE_FLAG         = 'flag';   // No value, just a flag (switch)
     const TYPE_INT          = 'int';    // Integer
+    const TYPE_PATH         = 'path';   // Full path to a file or a directory
+    const TYPE_RAW          = 'raw';    // Raw value, keep as is
 
     /** @var input_cli_provider|input_http_provider the provider of the input */
     protected $inputprovider = null;
@@ -151,9 +155,12 @@ class input_manager extends singleton_pattern {
     public function get_option_info($name=null) {
 
         $supportedoptions = array(
+            array('d', 'dataroot', input_manager::TYPE_PATH, 'Full path to the dataroot (moodledata) directory'),
             array('h', 'help', input_manager::TYPE_FLAG, 'Prints usage information'),
             array('i', 'install', input_manager::TYPE_FLAG, 'Installation mode'),
             array('u', 'upgrade', input_manager::TYPE_FLAG, 'Upgrade mode'),
+            array('', 'passfile', input_manager::TYPE_FILE, 'File name of the passphrase file (HTTP access only)'),
+            array('', 'password', input_manager::TYPE_RAW, 'Session passphrase (HTTP access only)'),
         );
 
         if (is_null($name)) {
@@ -217,11 +224,30 @@ class input_manager extends singleton_pattern {
 
         switch ($type) {
 
+            case input_manager::TYPE_FILE:
+                $raw = preg_replace('~[[:cntrl:]]|[&<>"`\|\':\\\\/]~u', '', $raw);
+                $raw = preg_replace('~\.\.+~', '', $raw);
+                if ($raw === '.') {
+                    $raw = '';
+                }
+                return $raw;
+
             case input_manager::TYPE_FLAG:
                 return true;
 
             case input_manager::TYPE_INT:
                 return (int)$raw;
+
+            case input_manager::TYPE_PATH:
+                $raw = str_replace('\\', '/', $raw);
+                $raw = preg_replace('~[[:cntrl:]]|[&<>"`\|\':]~u', '', $raw);
+                $raw = preg_replace('~\.\.+~', '', $raw);
+                $raw = preg_replace('~//+~', '/', $raw);
+                $raw = preg_replace('~/(\./)+~', '/', $raw);
+                return $raw;
+
+            case input_manager::TYPE_RAW:
+                return $raw;
 
             default:
                 throw new invalid_coding_exception('Unknown option type.');
@@ -563,6 +589,7 @@ class worker extends singleton_pattern {
         }
 
         // Authorize access. None in CLI. Passphrase in HTTP.
+        $this->authorize();
 
         // Fetch the ZIP file into a temporary location.
 
@@ -579,6 +606,40 @@ class worker extends singleton_pattern {
     protected function initialize() {
         $this->input = input_manager::instance();
         $this->output = output_manager::instance();
+    }
+
+    // End of external API
+
+    /**
+     * Authorize access to the script.
+     *
+     * In CLI mode, the access is automatically authorized. In HTTP mode, the
+     * passphrase submitted via the request params must match the contents of the
+     * file, the name of which is passed in another parameter.
+     *
+     * @throws unauthorized_access_exception
+     */
+    protected function authorize() {
+
+        if (PHP_SAPI === 'cli') {
+            return;
+        }
+
+        $dataroot = $this->input->get_option('dataroot');
+        $passfile = $this->input->get_option('passfile');
+        $password = $this->input->get_option('password');
+
+        $passpath = $dataroot.'/temp/mdeploy/'.$passfile;
+
+        if (!is_readable($passpath)) {
+            throw new unauthorized_access_exception('Unable to read passphrase file.');
+        }
+
+        $stored = file_get_contents($passpath);
+
+        if ($password !== $stored) {
+            throw new unauthorized_access_exception('Session passphrase does not match the stored one.');
+        }
     }
 }
 
