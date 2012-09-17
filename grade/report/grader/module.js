@@ -56,7 +56,7 @@ M.gradereport_grader = {
                     return;
                 }
 
-                var content = '<div class="graderreportoverlay">';
+                var content = '<div class="graderreportoverlay" role="tooltip" aria-describedby="' + properties.id + '">';
                 content += '<div class="fullname">'+properties.username+'</div><div class="itemname">'+properties.itemname+'</div>';
                 if (properties.feedback) {
                     content += '<div class="feedback">'+properties.feedback+'</div>';
@@ -241,6 +241,7 @@ M.gradereport_grader.classes.report.prototype.get_cell_info = function(arg) {
     }
 
     return {
+        id : cell.getAttribute('id'),
         userid : userid,
         username : this.users[userid],
         itemid : itemid,
