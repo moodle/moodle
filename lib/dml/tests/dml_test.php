@@ -51,17 +51,6 @@ class dml_testcase extends database_driver_testcase {
         return new xmldb_table($tablename);
     }
 
-    protected function enable_debugging() {
-        ob_start(); // hide debug warning
-    }
-
-    protected function get_debugging() {
-        $debuginfo = ob_get_contents();
-        ob_end_clean();
-
-        return $debuginfo;
-    }
-
     function test_diagnose() {
         $DB = $this->tdb;
         $result = $DB->diagnose();
@@ -982,10 +971,7 @@ class dml_testcase extends database_driver_testcase {
         $conditions = array('onetext' => '1');
         try {
             $rs = $DB->get_recordset($tablename, $conditions);
-            if (debugging()) {
-                // only in debug mode - hopefully all devs test code in debug mode...
-                $this->fail('An Exception is missing, expected due to equating of text fields');
-            }
+            $this->fail('An Exception is missing, expected due to equating of text fields');
         } catch (exception $e) {
             $this->assertTrue($e instanceof dml_exception);
             $this->assertEquals($e->errorcode, 'textconditionsnotallowed');
@@ -1439,6 +1425,8 @@ class dml_testcase extends database_driver_testcase {
     }
 
     public function test_get_records_sql() {
+        global $CFG;
+
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -1477,10 +1465,14 @@ class dml_testcase extends database_driver_testcase {
         $this->assertEquals($inskey4, next($records)->id);
 
         // Awful test, requires debug enabled and sent to browser. Let's do that and restore after test
-        $this->enable_debugging();
         $records = $DB->get_records_sql("SELECT course AS id, course AS course FROM {{$tablename}}", null);
-        $this->assertFalse($this->get_debugging() === '');
+        $this->assertDebuggingCalled();
         $this->assertEquals(6, count($records));
+        $CFG->debug = DEBUG_MINIMAL;
+        $records = $DB->get_records_sql("SELECT course AS id, course AS course FROM {{$tablename}}", null);
+        $this->assertDebuggingNotCalled();
+        $this->assertEquals(6, count($records));
+        $CFG->debug = DEBUG_DEVELOPER;
 
         // negative limits = no limits
         $records = $DB->get_records_sql("SELECT * FROM {{$tablename}} ORDER BY id", null, -1, -1);
@@ -1692,6 +1684,8 @@ class dml_testcase extends database_driver_testcase {
     }
 
     public function test_get_record_sql() {
+        global $CFG;
+
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -1728,9 +1722,12 @@ class dml_testcase extends database_driver_testcase {
             $this->assertTrue(true);
         }
 
-        $this->enable_debugging();
         $this->assertNotEmpty($DB->get_record_sql("SELECT * FROM {{$tablename}}", array(), IGNORE_MISSING));
-        $this->assertFalse($this->get_debugging() === '');
+        $this->assertDebuggingCalled();
+        $CFG->debug = DEBUG_MINIMAL;
+        $this->assertNotEmpty($DB->get_record_sql("SELECT * FROM {{$tablename}}", array(), IGNORE_MISSING));
+        $this->assertDebuggingNotCalled();
+        $CFG->debug = DEBUG_DEVELOPER;
 
         // multiple matches ignored
         $this->assertNotEmpty($DB->get_record_sql("SELECT * FROM {{$tablename}}", array(), IGNORE_MULTIPLE));
@@ -1772,13 +1769,11 @@ class dml_testcase extends database_driver_testcase {
             $this->assertTrue(true);
         }
 
-        $this->enable_debugging();
         $this->assertEquals(5, $DB->get_field($tablename, 'course', array('course' => 5), IGNORE_MULTIPLE));
-        $this->assertSame($this->get_debugging(), '');
+        $this->assertDebuggingNotCalled();
 
-        $this->enable_debugging();
         $this->assertEquals(5, $DB->get_field($tablename, 'course', array('course' => 5), IGNORE_MISSING));
-        $this->assertFalse($this->get_debugging() === '');
+        $this->assertDebuggingCalled();
 
         // test for exception throwing on text conditions being compared. (MDL-24863, unwanted auto conversion of param to int)
         $conditions = array('onetext' => '1');
