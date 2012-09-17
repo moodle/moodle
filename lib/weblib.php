@@ -2853,9 +2853,13 @@ function debugging($message = '', $level = DEBUG_NORMAL, $backtrace = null) {
         }
         $from = format_backtrace($backtrace, CLI_SCRIPT);
         if (PHPUNIT_TEST) {
-            echo 'Debugging: ' . $message . "\n" . $from;
+            if (phpunit_util::debugging_triggered($message, $level, $from)) {
+                // We are inside test, the debug message was logged.
+                return true;
+            }
+        }
 
-        } else if (NO_DEBUG_DISPLAY) {
+        if (NO_DEBUG_DISPLAY) {
             // script does not want any errors or debugging in output,
             // we send the info to error log instead
             error_log('Debugging: ' . $message . $from);

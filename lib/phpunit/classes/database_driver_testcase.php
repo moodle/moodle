@@ -133,4 +133,68 @@ abstract class database_driver_testcase extends PHPUnit_Framework_TestCase {
         phpunit_util::reset_all_data();
         parent::tearDownAfterClass();
     }
+
+    /**
+     * Return debugging messages from the current test.
+     * @return array
+     */
+    public function getDebuggingMessages() {
+        return phpunit_util::get_debugging_messages();
+    }
+
+    /**
+     * Clear all previous debugging messages in current test.
+     * @return array
+     */
+    public function resetDebugging() {
+        return phpunit_util::reset_debugging();
+    }
+
+    /**
+     * Assert that exactly debugging was just called once.
+     *
+     * Discards the debugging message if successful.
+     *
+     * @param null|string $debugmessage null means any
+     * @param null|string $debuglevel null means any
+     * @param string $message
+     */
+    public function assertDebuggingCalled($debugmessage = null, $debuglevel = null, $message = '') {
+        $debugging = phpunit_util::get_debugging_messages();
+        $count = count($debugging);
+
+        if ($count == 0) {
+            if ($message === '') {
+                $message = 'Expectation failed, debugging() not triggered.';
+            }
+            $this->fail($message);
+        }
+        if ($count > 1) {
+            if ($message === '') {
+                $message = 'Expectation failed, debugging() triggered '.$count.' times.';
+            }
+            $this->fail($message);
+        }
+        $this->assertEquals(1, $count);
+
+        $debug = reset($debugging);
+        if ($debugmessage !== null) {
+            $this->assertSame($debugmessage, $debug->message, $message);
+        }
+        if ($debuglevel !== null) {
+            $this->assertSame($debuglevel, $debug->level, $message);
+        }
+
+        phpunit_util::reset_debugging();
+    }
+
+    public function assertDebuggingNotCalled($message = '') {
+        $debugging = phpunit_util::get_debugging_messages();
+        $count = count($debugging);
+
+        if ($message === '') {
+            $message = 'Expectation failed, debugging() was triggered.';
+        }
+        $this->assertEquals(0, $count, $message);
+    }
 }

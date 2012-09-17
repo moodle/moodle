@@ -36,6 +36,40 @@ defined('MOODLE_INTERNAL') || die();
  */
 class core_phpunit_advanced_testcase extends advanced_testcase {
 
+    public function test_debugging() {
+        global $CFG;
+        $this->resetAfterTest();
+
+        debugging('hokus');
+        $this->assertDebuggingCalled();
+        debugging('pokus');
+        $this->assertDebuggingCalled('pokus');
+        debugging('pokus', DEBUG_MINIMAL);
+        $this->assertDebuggingCalled('pokus', DEBUG_MINIMAL);
+        $this->assertDebuggingNotCalled();
+
+        debugging('a');
+        debugging('b', DEBUG_MINIMAL);
+        debugging('c', DEBUG_DEVELOPER);
+        $debuggings = $this->getDebuggingMessages();
+        $this->assertEquals(3, count($debuggings));
+        $this->assertSame('a', $debuggings[0]->message);
+        $this->assertSame(DEBUG_NORMAL, $debuggings[0]->level);
+        $this->assertSame('b', $debuggings[1]->message);
+        $this->assertSame(DEBUG_MINIMAL, $debuggings[1]->level);
+        $this->assertSame('c', $debuggings[2]->message);
+        $this->assertSame(DEBUG_DEVELOPER, $debuggings[2]->level);
+
+        $this->resetDebugging();
+        $this->assertDebuggingNotCalled();
+        $debuggings = $this->getDebuggingMessages();
+        $this->assertEquals(0, count($debuggings));
+
+        $CFG->debug = DEBUG_NONE;
+        debugging('hokus');
+        $this->assertDebuggingNotCalled();
+    }
+
     public function test_set_user() {
         global $USER, $DB;
 

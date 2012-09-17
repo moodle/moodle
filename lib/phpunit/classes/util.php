@@ -57,6 +57,9 @@ class phpunit_util {
     /** @var resource used for prevention of parallel test execution */
     protected static $lockhandle = null;
 
+    /** @var array list of debugging messages triggered during the last test execution */
+    protected static $debuggings = array();
+
     /**
      * Prevent parallel test execution - this can not work in Moodle because we modify database and dataroot.
      *
@@ -543,6 +546,10 @@ class phpunit_util {
      */
     public static function reset_all_data($logchanges = false) {
         global $DB, $CFG, $USER, $SITE, $COURSE, $PAGE, $OUTPUT, $SESSION, $GROUPLIB_CACHE;
+
+        // Show any unhandled debugging messages, the runbare() could already reset it.
+        self::display_debugging_messages();
+        self::reset_debugging();
 
         // reset global $DB in case somebody mocked it
         $DB = self::get_global_backup('DB');
@@ -1159,5 +1166,71 @@ class phpunit_util {
             return true;
         }
         return false;
+    }
+
+    /**
+     * To be called from debugging() only.
+     * @param string $message
+     * @param int $level
+     * @param string $from
+     */
+    public static function debugging_triggered($message, $level, $from) {
+        // Store only if debugging triggered from actual test,
+        // we need normal debugging outside of tests to find problems in our phpunit integration.
+        $backtrace = debug_backtrace();
+
+        foreach ($backtrace as $bt) {
+            $intest = false;
+            if (isset($bt['object']) and is_object($bt['object'])) {
+                if ($bt['object'] instanceof PHPUnit_Framework_TestCase) {
+                    if (strpos($bt['function'], 'test') === 0) {
+                        $intest = true;
+                        break;
+                    }
+                }
+            }
+        }
+        if (!$intest) {
+            return false;
+        }
+
+        $debug = new stdClass();
+        $debug->message = $message;
+        $debug->level   = $level;
+        $debug->from    = $from;
+
+        self::$debuggings[] = $debug;
+
+        return true;
+    }
+
+    /**
+     * Resets the list of debugging messages.
+     */
+    public static function reset_debugging() {
+        self::$debuggings = array();
+    }
+
+    /**
+     * Returns all debugging messages triggered during test.
+     * @return array with instances having message, level and stacktrace property.
+     */
+    public static function get_debugging_messages() {
+        return self::$debuggings;
+    }
+
+    /**
+     * Prints out any debug messages accumulated during test execution.
+     * @return bool false if no debug messages, true if debug triggered
+     */
+    public static function display_debugging_messages() {
+        if (empty(self::$debuggings)) {
+            return false;
+        }
+        foreach(self::$debuggings as $debug) {
+            echo 'Debugging: ' . $debug->message . "\n" . trim($debug->from) . "\n";
+        }
+
+        return true;
     }
 }
