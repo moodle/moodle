@@ -32,34 +32,21 @@ require_once($CFG->libdir . '/outputlib.php');
 /**
  * Unit tests for the xhtml_container_stack class.
  *
- * These tests assume that developer debug mode is on, which, at the time of
- * writing, is true. admin/tool/unittest/index.php forces it on.
+ * These tests assume that developer debug mode is on which is enforced by our phpunit integration.
  *
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class xhtml_container_stack_testcase extends basic_testcase {
-    protected function start_capture() {
-        ob_start();
-    }
-
-    protected function end_capture() {
-        $result = ob_get_contents();
-        ob_end_clean();
-        return $result;
-    }
-
+class xhtml_container_stack_testcase extends advanced_testcase {
     public function test_push_then_pop() {
         // Set up.
         $stack = new xhtml_container_stack();
         // Exercise SUT.
-        $this->start_capture();
         $stack->push('testtype', '</div>');
         $html = $stack->pop('testtype');
-        $errors = $this->end_capture();
         // Verify outcome
         $this->assertEquals('</div>', $html);
-        $this->assertEquals('', $errors);
+        $this->assertDebuggingNotCalled();
     }
 
     public function test_mismatched_pop_prints_warning() {
@@ -67,40 +54,34 @@ class xhtml_container_stack_testcase extends basic_testcase {
         $stack = new xhtml_container_stack();
         $stack->push('testtype', '</div>');
         // Exercise SUT.
-        $this->start_capture();
         $html = $stack->pop('mismatch');
-        $errors = $this->end_capture();
         // Verify outcome
         $this->assertEquals('</div>', $html);
-        $this->assertNotEquals('', $errors);
+        $this->assertDebuggingCalled();
     }
 
     public function test_pop_when_empty_prints_warning() {
         // Set up.
         $stack = new xhtml_container_stack();
         // Exercise SUT.
-        $this->start_capture();
         $html = $stack->pop('testtype');
-        $errors = $this->end_capture();
         // Verify outcome
         $this->assertEquals('', $html);
-        $this->assertNotEquals('', $errors);
+        $this->assertDebuggingCalled();
     }
 
     public function test_correct_nesting() {
         // Set up.
         $stack = new xhtml_container_stack();
         // Exercise SUT.
-        $this->start_capture();
         $stack->push('testdiv', '</div>');
         $stack->push('testp', '</p>');
         $html2 = $stack->pop('testp');
         $html1 = $stack->pop('testdiv');
-        $errors = $this->end_capture();
         // Verify outcome
         $this->assertEquals('</p>', $html2);
         $this->assertEquals('</div>', $html1);
-        $this->assertEquals('', $errors);
+        $this->assertDebuggingNotCalled();
     }
 
     public function test_pop_all_but_last() {
@@ -110,12 +91,10 @@ class xhtml_container_stack_testcase extends basic_testcase {
         $stack->push('test2', '</h2>');
         $stack->push('test3', '</h3>');
         // Exercise SUT.
-        $this->start_capture();
         $html = $stack->pop_all_but_last();
-        $errors = $this->end_capture();
         // Verify outcome
         $this->assertEquals('</h3></h2>', $html);
-        $this->assertEquals('', $errors);
+        $this->assertDebuggingNotCalled();
         // Tear down.
         $stack->discard();
     }
@@ -125,12 +104,10 @@ class xhtml_container_stack_testcase extends basic_testcase {
         $stack = new xhtml_container_stack();
         $stack->push('test1', '</h1>');
         // Exercise SUT.
-        $this->start_capture();
         $html = $stack->pop_all_but_last();
-        $errors = $this->end_capture();
         // Verify outcome
         $this->assertEquals('', $html);
-        $this->assertEquals('', $errors);
+        $this->assertDebuggingNotCalled();
         // Tear down.
         $stack->discard();
     }
@@ -139,12 +116,10 @@ class xhtml_container_stack_testcase extends basic_testcase {
         // Set up.
         $stack = new xhtml_container_stack();
         // Exercise SUT.
-        $this->start_capture();
         $html = $stack->pop_all_but_last();
-        $errors = $this->end_capture();
         // Verify outcome
         $this->assertEquals('', $html);
-        $this->assertEquals('', $errors);
+        $this->assertDebuggingNotCalled();
     }
 
     public function test_discard() {
@@ -153,10 +128,8 @@ class xhtml_container_stack_testcase extends basic_testcase {
         $stack->push('test1', '</somethingdistinctive>');
         $stack->discard();
         // Exercise SUT.
-        $this->start_capture();
         $stack = null;
-        $errors = $this->end_capture();
         // Verify outcome
-        $this->assertEquals('', $errors);
+        $this->assertDebuggingNotCalled();
     }
 }
