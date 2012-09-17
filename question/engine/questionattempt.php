@@ -883,12 +883,7 @@ class question_attempt {
         switch ($type) {
             case self::PARAM_MARK:
                 // Special case to work around PARAM_FLOAT converting '' to 0.
-                $mark = $this->get_submitted_var($name, PARAM_RAW_TRIMMED, $postdata);
-                if ($mark === '' || is_null($mark)) {
-                    return $mark;
-                } else {
-                    return clean_param(str_replace(',', '.', $mark), PARAM_FLOAT);
-                }
+                return question_utils::clean_param_mark($this->get_submitted_var($name, PARAM_RAW_TRIMMED, $postdata));
 
             case self::PARAM_FILES:
                 return $this->process_response_files($name, $name, $postdata);
