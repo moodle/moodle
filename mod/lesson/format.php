@@ -520,6 +520,37 @@ class qformat_default {
         return NULL;
     }
 
+    /**
+     * Construct a reasonable default question name, based on the start of the question text.
+     * @param string $questiontext the question text.
+     * @param string $default default question name to use if the constructed one comes out blank.
+     * @return string a reasonable question name.
+     */
+    public function create_default_question_name($questiontext, $default) {
+        $name = $this->clean_question_name(shorten_text($questiontext, 80));
+        if ($name) {
+            return $name;
+        } else {
+            return $default;
+        }
+    }
+
+    /**
+     * Ensure that a question name does not contain anything nasty, and will fit in the DB field.
+     * @param string $name the raw question name.
+     * @return string a safe question name.
+     */
+    public function clean_question_name($name) {
+        $name = clean_param($name, PARAM_TEXT); // Matches what the question editing form does.
+        $name = trim($name);
+        $trimlength = 251;
+        while (textlib::strlen($name) > 255 && $trimlength > 0) {
+            $name = shorten_text($name, $trimlength);
+            $trimlength -= 10;
+        }
+        return $name;
+    }
+
     function defaultquestion() {
     // returns an "empty" question
     // Somewhere to specify question parameters that are not handled
