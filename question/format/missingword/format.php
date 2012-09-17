@@ -89,7 +89,7 @@ class qformat_missingword extends qformat_default {
 
         /// Save the new question text
         $question->questiontext = substr_replace($text, "_____", $answerstart, $answerlength+1);
-        $question->name = $question->questiontext;
+        $question->name = $this->create_default_question_name($question->questiontext, get_string('questionname', 'question'));
 
 
         /// Parse the answers

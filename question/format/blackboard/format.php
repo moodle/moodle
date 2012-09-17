@@ -123,13 +123,9 @@ class qformat_blackboard extends qformat_based_on_xml {
             $question->questiontext = $text;
         }
         // Put name in question object. We must ensure it is not empty and it is less than 250 chars.
-        $question->name = shorten_text(strip_tags($question->questiontext), 200);
-        $question->name = substr($question->name, 0, 250);
-        if (!$question->name) {
-            $id = $this->getpath($questiondata,
-                    array('@', 'id'), '',  true);
-            $question->name = get_string('defaultname', 'qformat_blackboard' , $id);
-        }
+        $id = $this->getpath($questiondata, array('@', 'id'), '',  true);
+        $question->name = $this->create_default_question_name($question->questiontext,
+                get_string('defaultname', 'qformat_blackboard', $id));
 
         $question->generalfeedback = '';
         $question->generalfeedbackformat = FORMAT_HTML;

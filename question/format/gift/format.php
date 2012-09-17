@@ -206,7 +206,7 @@ class qformat_gift extends qformat_default {
                 // name will be assigned after processing question text below
             } else {
                 $questionname = substr($text, 0, $namefinish);
-                $question->name = trim($this->escapedchar_post($questionname));
+                $question->name = $this->clean_question_name($this->escapedchar_post($questionname));
                 $text = trim(substr($text, $namefinish+2)); // Remove name from text
             }
         } else {
@@ -251,12 +251,8 @@ class qformat_gift extends qformat_default {
 
         // set question name if not already set
         if ($question->name === false) {
-            $question->name = $question->questiontext;
+            $question->name = $this->create_default_question_name($question->questiontext, get_string('questionname', 'question'));
         }
-
-        // ensure name is not longer than 250 characters
-        $question->name = shorten_text($question->name, 200);
-        $question->name = strip_tags(substr($question->name, 0, 250));
 
         // determine QUESTION TYPE
         $question->qtype = NULL;
