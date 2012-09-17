@@ -357,26 +357,9 @@ class moodlelib_testcase extends advanced_testcase {
         }
 
         // make sure warning is displayed if array submitted - TODO: throw exception in Moodle 2.3
-        $debugging = isset($CFG->debug) ? $CFG->debug : null;
-        $debugdisplay = isset($CFG->debugdisplay) ? $CFG->debugdisplay : null;
-        $CFG->debug = DEBUG_DEVELOPER;
-        $CFG->debugdisplay = true;
-
-        ob_start();
+        $_POST['username'] = array('a'=>'a');
         $this->assertSame(optional_param('username', 'default_user', PARAM_RAW), $_POST['username']);
-        $d = ob_end_clean();
-        $this->assertTrue($d !== '');
-
-        if ($debugging !== null) {
-            $CFG->debug = $debugging;
-        } else {
-            unset($CFG->debug);
-        }
-        if ($debugdisplay !== null) {
-            $CFG->debugdisplay = $debugdisplay;
-        } else {
-            unset($CFG->debugdisplay);
-        }
+        $this->assertDebuggingCalled();
     }
 
     function test_optional_param_array() {
@@ -429,34 +412,14 @@ class moodlelib_testcase extends advanced_testcase {
         }
 
         // do not allow non-arrays
-        $debugging = isset($CFG->debug) ? $CFG->debug : null;
-        $debugdisplay = isset($CFG->debugdisplay) ? $CFG->debugdisplay : null;
-        $CFG->debug = DEBUG_DEVELOPER;
-        $CFG->debugdisplay = true;
-
-        ob_start();
         $_POST['username'] = 'post_user';
         $this->assertSame(optional_param_array('username', array('a'=>'default_user'), PARAM_RAW), array('a'=>'default_user'));
-        $d = ob_end_clean();
-        $this->assertTrue($d !== '');
+        $this->assertDebuggingCalled();
 
         // make sure array keys are sanitised
-        ob_start();
         $_POST['username'] = array('abc123_;-/*-+ '=>'arrggh', 'a1_-'=>'post_user');
         $this->assertSame(optional_param_array('username', array(), PARAM_RAW), array('a1_-'=>'post_user'));
-        $d = ob_end_clean();
-        $this->assertTrue($d !== '');
-
-        if ($debugging !== null) {
-            $CFG->debug = $debugging;
-        } else {
-            unset($CFG->debug);
-        }
-        if ($debugdisplay !== null) {
-            $CFG->debugdisplay = $debugdisplay;
-        } else {
-            unset($CFG->debugdisplay);
-        }
+        $this->assertDebuggingCalled();
     }
 
     function test_required_param() {
@@ -499,26 +462,9 @@ class moodlelib_testcase extends advanced_testcase {
         }
 
         // make sure warning is displayed if array submitted - TODO: throw exception in Moodle 2.3
-        $debugging = isset($CFG->debug) ? $CFG->debug : null;
-        $debugdisplay = isset($CFG->debugdisplay) ? $CFG->debugdisplay : null;
-        $CFG->debug = DEBUG_DEVELOPER;
-        $CFG->debugdisplay = true;
-
-        ob_start();
+        $_POST['username'] = array('a'=>'a');
         $this->assertSame(required_param('username', PARAM_RAW), $_POST['username']);
-        $d = ob_end_clean();
-        $this->assertTrue($d !== '');
-
-        if ($debugging !== null) {
-            $CFG->debug = $debugging;
-        } else {
-            unset($CFG->debug);
-        }
-        if ($debugdisplay !== null) {
-            $CFG->debugdisplay = $debugdisplay;
-        } else {
-            unset($CFG->debugdisplay);
-        }
+        $this->assertDebuggingCalled();
     }
 
     function test_required_param_array() {
@@ -570,29 +516,10 @@ class moodlelib_testcase extends advanced_testcase {
             $this->assertTrue(true);
         }
 
-        // do not allow non-arrays
-        $debugging = isset($CFG->debug) ? $CFG->debug : null;
-        $debugdisplay = isset($CFG->debugdisplay) ? $CFG->debugdisplay : null;
-        $CFG->debug = DEBUG_DEVELOPER;
-        $CFG->debugdisplay = true;
-
         // make sure array keys are sanitised
-        ob_start();
         $_POST['username'] = array('abc123_;-/*-+ '=>'arrggh', 'a1_-'=>'post_user');
         $this->assertSame(required_param_array('username', PARAM_RAW), array('a1_-'=>'post_user'));
-        $d = ob_end_clean();
-        $this->assertTrue($d !== '');
-
-        if ($debugging !== null) {
-            $CFG->debug = $debugging;
-        } else {
-            unset($CFG->debug);
-        }
-        if ($debugdisplay !== null) {
-            $CFG->debugdisplay = $debugdisplay;
-        } else {
-            unset($CFG->debugdisplay);
-        }
+        $this->assertDebuggingCalled();
     }
 
     function test_clean_param() {
