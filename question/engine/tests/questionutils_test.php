@@ -191,4 +191,14 @@ class question_utils_test extends advanced_testcase {
         $this->setExpectedException('moodle_exception');
         question_utils::int_to_roman(1.5);
     }
+
+    public function test_clean_param_mark() {
+        $this->assertNull(question_utils::clean_param_mark(null));
+        $this->assertSame('', question_utils::clean_param_mark(''));
+        $this->assertSame(0.0, question_utils::clean_param_mark('0'));
+        $this->assertSame(1.5, question_utils::clean_param_mark('1.5'));
+        $this->assertSame(1.5, question_utils::clean_param_mark('1,5'));
+        $this->assertSame(-1.5, question_utils::clean_param_mark('-1.5'));
+        $this->assertSame(-1.5, question_utils::clean_param_mark('-1,5'));
+    }
 }

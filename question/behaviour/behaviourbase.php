@@ -477,9 +477,9 @@ abstract class question_behaviour {
      */
     public static function is_manual_grade_in_range($qubaid, $slot) {
         $prefix = 'q' . $qubaid . ':' . $slot . '_';
-        $mark = optional_param($prefix . '-mark', null, PARAM_NUMBER);
-        $maxmark = optional_param($prefix . '-maxmark', null, PARAM_NUMBER);
-        $minfraction = optional_param($prefix . ':minfraction', null, PARAM_NUMBER);
+        $mark = question_utils::optional_param_mark($prefix . '-mark');
+        $maxmark = optional_param($prefix . '-maxmark', null, PARAM_FLOAT);
+        $minfraction = optional_param($prefix . ':minfraction', null, PARAM_FLOAT);
         return is_null($mark) || ($mark >= $minfraction * $maxmark && $mark <= $maxmark);
     }
 
