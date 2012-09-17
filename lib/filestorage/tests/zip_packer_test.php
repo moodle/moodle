@@ -147,21 +147,17 @@ class zip_packer_testcase extends advanced_testcase {
 
         $this->assertFalse(file_exists(__DIR__.'/xx/yy/ee.txt'));
         $files = array('xtest.txt'=>__DIR__.'/xx/yy/ee.txt');
-        ob_start();
         $result = $packer->archive_to_pathname($files, $archive);
-        $d = ob_end_clean();
-        $this->assertTrue($d !== '');
         $this->assertFalse($result);
+        $this->assertDebuggingCalled();
 
         $this->assertTrue(file_exists(__DIR__.'/fixtures/test.txt'));
         $files = array();
         $files['""""'] = null; // Invalid directory name.
         $files['test.txt'] = __DIR__.'/fixtures/test.txt';
-        ob_start();
         $result = $packer->archive_to_pathname($files, $archive);
-        $d = ob_end_clean();
-        $this->assertTrue($d !== '');
         $this->assertTrue($result);
+        $this->resetDebugging();
 
         @unlink($archive);
     }
