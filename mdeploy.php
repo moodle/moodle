@@ -103,7 +103,7 @@ class input_manager extends singleton_pattern {
     const TYPE_FLAG         = 'flag';   // No value, just a flag (switch)
     const TYPE_INT          = 'int';    // Integer
 
-    /** @var input_cli_manager|input_http_manager the provider of the input */
+    /** @var input_cli_provider|input_http_provider the provider of the input */
     protected $inputprovider = null;
 
     /**
@@ -435,38 +435,132 @@ class input_http_provider extends input_provider {
 // Output handling /////////////////////////////////////////////////////////////
 
 /**
- * TODO: short description.
- *
- * TODO: long description.
+ * Provides output operations.
  *
  * @copyright 2012 David Mudrak <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class output_manager extends singleton_pattern {
 
+    /** @var output_cli_provider|output_http_provider the provider of the output functionality */
+    protected $outputprovider = null;
+
+    /**
+     * Magic method triggered when invoking an inaccessible method.
+     *
+     * @param string $name method name
+     * @param array $arguments method arguments
+     */
+    public function __call($name, array $arguments = array()) {
+        call_user_func_array(array($this->outputprovider, $name), $arguments);
+    }
+
+    /**
+     * Picks the appropriate helper class to delegate calls to.
+     */
+    protected function initialize() {
+        if (PHP_SAPI === 'cli') {
+            $this->outputprovider = output_cli_provider::instance();
+        } else {
+            $this->outputprovider = output_http_provider::instance();
+        }
+    }
 }
 
+
+/**
+ * Base class for all output providers.
+ *
+ * @copyright 2012 David Mudrak <david@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+abstract class output_provider extends singleton_pattern {
+}
+
+/**
+ * Provides output to the command line.
+ *
+ * @copyright 2012 David Mudrak <david@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class output_cli_provider extends output_provider {
+
+    /**
+     * Prints help information in CLI mode.
+     */
+    public function help() {
+
+        $this->outln('mdeploy.php - Moodle (http://moodle.org) deployment utility');
+        $this->outln();
+        $this->outln('Usage: $ sudo -u apache php mdeploy.php [options]');
+        $this->outln();
+        $input = input_manager::instance();
+        foreach($input->get_option_info() as $info) {
+            $option = array();
+            if (!empty($info->shortname)) {
+                $option[] = '-'.$info->shortname;
+            }
+            if (!empty($info->longname)) {
+                $option[] = '--'.$info->longname;
+            }
+            $this->outln(sprintf('%-20s %s', implode(', ', $option), $info->desc));
+        }
+    }
+
+    // End of external API
+
+    /**
+     * Writes a text to the STDOUT followed by a new line character.
+     *
+     * @param string $text text to print
+     */
+    protected function outln($text='') {
+        fputs(STDOUT, $text.PHP_EOL);
+    }
+}
+
+
+/**
+ * Provides HTML output as a part of HTTP response.
+ *
+ * @copyright 2012 David Mudrak <david@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class output_http_provider extends output_provider {
+
+    /**
+     * Prints help on the script usage.
+     */
+    public function help() {
+        // No help available via HTTP
+    }
+}
 
 // The main class providing all the functionality //////////////////////////////
 
 /**
- * TODO: short description.
- *
- * TODO: long description.
+ * The actual worker class implementing the main functionality of the script.
  *
  * @copyright 2012 David Mudrak <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class worker extends singleton_pattern {
 
+    /** @var input_manager */
+    protected $input = null;
+
+    /** @var output_manager */
+    protected $output = null;
+
     /**
-     * TODO: short description.
-     *
-     * @param input_manager  $input  
-     * @param output_manager $output 
-     * @return TODO
+     * Main - the one that actually does something
      */
-    public function execute(input_manager $input, output_manager $output) {
+    public function execute() {
+
+        if ($this->input->get_option('help')) {
+            $this->output->help();
+            exit(1);
+        }
 
         // Authorize access. None in CLI. Passphrase in HTTP.
 
@@ -479,6 +573,13 @@ class worker extends singleton_pattern {
         // Redirect to the given URL (in HTTP) or exit (in CLI).
     }
 
+    /**
+     * Initialize the worker class.
+     */
+    protected function initialize() {
+        $this->input = input_manager::instance();
+        $this->output = output_manager::instance();
+    }
 }
 
 
@@ -487,21 +588,13 @@ class worker extends singleton_pattern {
 // Check if the script is actually executed or if it was just included by someone
 // else - typically by the PHPUnit. This is a PHP alternative to the Python's
 // if __name__ == '__main__'
-
 if (!debug_backtrace()) {
-    // We are executed by the SAPI
-
-    // Initialize the input options manager.
-    $input = input_manager::instance();
-
-    // Initialize the output (display) manager.
-    $output = output_manager::instance();
-
+    // We are executed by the SAPI.
     // Initialize the worker class to actually make the job.
     $worker = worker::instance();
 
     // Lights, Camera, Action!
-    $worker->execute($input, $output);
+    $worker->execute();
 
 } else {
     // We are included - probably by some unit testing framework. Do nothing.
