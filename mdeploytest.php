@@ -152,4 +152,20 @@ class mdeploytest extends PHPUnit_Framework_TestCase {
         $this->assertTrue($provider->has_option('help')); // help passed and it is a flag (value ignored)
         $this->assertTrue($provider->has_option('h')); // 'h' is a shortname for 'help'
     }
+
+    public function test_get_option() {
+        $input = testable_input_manager::instance();
+        $provider = input_fake_provider::instance();
+
+        $provider->set_fake_options(array('help' => false, 'passfile' => '_mdeploy.123456'));
+        $this->assertTrue($input->get_option('h'));
+        $this->assertEquals($input->get_option('passfile'), '_mdeploy.123456');
+        $this->assertEquals($input->get_option('password', 'admin123'), 'admin123');
+        try {
+            $this->assertEquals($input->get_option('password'), 'admin123'); // must throw exception (not passed but required)
+            $this->assertTrue(false);
+        } catch (missing_option_exception $e) {
+            $this->assertTrue(true);
+        }
+    }
 }

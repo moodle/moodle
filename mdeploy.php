@@ -267,9 +267,9 @@ class input_manager extends singleton_pattern {
      * @param string $type the parameter type, e.g. {@link input_manager::TYPE_INT}
      * @return mixed
      */
-    protected function get_required_option($name, $type) {
+    protected function get_required_option($name) {
         if ($this->inputprovider->has_option($name)) {
-            return $this->cast_value($this->inputprovider->get_raw_option($name), $type);
+            return $this->inputprovider->get_option($name);
         } else {
             throw new missing_option_exception('Missing required option: '.$name);
         }
@@ -283,9 +283,9 @@ class input_manager extends singleton_pattern {
      * @param mixed $default the default value.
      * @return mixed
      */
-    protected function get_optional_option($name, $type, $default) {
+    protected function get_optional_option($name, $default) {
         if ($this->inputprovider->has_option($name)) {
-            return $this->inputprovider->get_raw_option($name);
+            return $this->inputprovider->get_option($name);
         } else {
             return $default;
         }
