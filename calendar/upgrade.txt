@@ -1,0 +1,9 @@
+This files describes API changes in /calendar/* ,
+information provided here is intended especially for developers.
+
+
+=== 2.4 ===
+
+required changes in code:
+
+* calendar_get_popup() function now just returns id, instead of the string "id=$id"

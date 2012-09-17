@@ -317,9 +317,9 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
 
             //Accessibility: functionality moved to calendar_get_popup.
             if($display->thismonth && $day == $d) {
-                $popup = calendar_get_popup(true, $events[$eventid]->timestart, $popupcontent);
+                $popupid = calendar_get_popup(true, $events[$eventid]->timestart, $popupcontent);
             } else {
-                $popup = calendar_get_popup(false, $events[$eventid]->timestart, $popupcontent);
+                $popupid = calendar_get_popup(false, $events[$eventid]->timestart, $popupcontent);
             }
 
             // Class and cell content
@@ -332,7 +332,7 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
             } else if(isset($typesbyday[$day]['startuser'])) {
                 $class .= ' calendar_event_user';
             }
-            $cell = '<a href="'.(string)$dayhref.'" '.$popup.'>'.$day.'</a>';
+            $cell = html_writer::link((string)$dayhref, $day, array('aria-controls' => $popupid.'_panel', 'id' => $popupid));
         } else {
             $cell = $day;
         }
@@ -374,8 +374,8 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
 
             if(! isset($eventsbyday[$day])) {
                 $class .= ' eventnone';
-                $popup = calendar_get_popup(true, false);
-                $cell = '<a href="#" '.$popup.'>'.$day.'</a>';
+                $popupid = calendar_get_popup(true, false);
+                $cell = html_writer::link('#', $day, array('aria-controls' => $popupid.'_panel', 'id' => $popupid));;
             }
             $cell = get_accesshide($today.' ').$cell;
         }
@@ -406,8 +406,8 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
  *
  * @param bool $is_today false except when called on the current day.
  * @param mixed $event_timestart $events[$eventid]->timestart, OR false if there are no events.
- * @param string $popupcontent content for the popup window/layout
- * @return string of eventid for the calendar_tooltip popup window/layout
+ * @param string $popupcontent content for the popup window/layout.
+ * @return string eventid for the calendar_tooltip popup window/layout.
  */
 function calendar_get_popup($is_today, $event_timestart, $popupcontent='') {
     global $PAGE;
@@ -430,7 +430,7 @@ function calendar_get_popup($is_today, $event_timestart, $popupcontent='') {
     $PAGE->requires->yui_module('moodle-calendar-eventmanager', 'M.core_calendar.add_event', array(array('eventId'=>$id,'title'=>$popupcaption, 'content'=>$popupcontent)));
 
     $popupcount++;
-    return 'id="'.$id.'"';
+    return $id;
 }
 
 /**
