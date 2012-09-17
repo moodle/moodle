@@ -101,6 +101,7 @@ class courserequest_testcase extends advanced_testcase {
         // Test without category.
         $cr = course_request::create($data);
         $id = $cr->approve();
+        $this->assertDebuggingCalled(); // Caused by sending of message.
         $course = $DB->get_record('course', array('id' => $id));
         $this->assertEquals($data->fullname, $course->fullname);
         $this->assertEquals($data->shortname, $course->shortname);
@@ -116,6 +117,7 @@ class courserequest_testcase extends advanced_testcase {
         $data->category = $cat1->id;
         $cr = course_request::create($data);
         $id = $cr->approve();
+        $this->assertDebuggingCalled(); // Caused by sending of message.
         $course = $DB->get_record('course', array('id' => $id));
         $this->assertEquals($data->category, $course->category);
     }
@@ -139,6 +141,7 @@ class courserequest_testcase extends advanced_testcase {
         $cr = course_request::create($data);
         $this->assertTrue($DB->record_exists('course_request', array('id' => $cr->id)));
         $cr->reject('Sorry!');
+        $this->assertDebuggingCalled(); // Caused by sending of message.
         $this->assertFalse($DB->record_exists('course_request', array('id' => $cr->id)));
     }
 
