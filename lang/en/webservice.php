@@ -49,7 +49,6 @@ $string['createservicedescription'] = 'A service is a set of web service functio
 $string['createserviceforusersdescription'] = 'A service is a set of web service functions. You will allow users to access to a new service. On the <strong>Add service</strong> page check \'Enable\' and uncheck \'Authorised users\' options. Select \'No required capability\'.';
 $string['createtoken'] = 'Create token';
 $string['createtokenforuser'] = 'Create a token for a user';
-$string['createtokenforuserauto'] = 'Create a token for a user automatically';
 $string['createtokenforuserdescription'] = 'Create a token for the web services user.';
 $string['createuser'] = 'Create a specific user';
 $string['createuserdescription'] = 'A web services user is required to represent the system controlling Moodle.';
