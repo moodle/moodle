@@ -160,13 +160,12 @@ class ddl_testcase extends database_driver_testcase {
         // first make sure it returns false if table does not exist
         $table = $this->tables['test_table0'];
 
-        ob_start(); // hide debug warning
         try {
             $result = $DB->get_records('test_table0');
         } catch (dml_exception $e) {
             $result = false;
         }
-        ob_end_clean();
+        $this->resetDebugging();
 
         $this->assertFalse($result);
 
@@ -183,13 +182,12 @@ class ddl_testcase extends database_driver_testcase {
         // drop table and test again
         $dbman->drop_table($table);
 
-        ob_start(); // hide debug warning
         try {
             $result = $DB->get_records('test_table0');
         } catch (dml_exception $e) {
             $result = false;
         }
-        ob_end_clean();
+        $this->resetDebugging();
 
         $this->assertFalse($result);
 
@@ -1123,13 +1121,12 @@ class ddl_testcase extends database_driver_testcase {
         $record = new stdClass();
         $record->name = NULL;
 
-        ob_start(); // hide debug warning
         try {
             $result = $DB->insert_record('test_table_cust0', $record, false);
         } catch (dml_exception $e) {
             $result = false;
         }
-        ob_end_clean();
+        $this->resetDebugging();
         $this->assertFalse($result);
 
         $field = new xmldb_field('name');
@@ -1145,13 +1142,12 @@ class ddl_testcase extends database_driver_testcase {
         $field->set_attributes(XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null);
         $dbman->change_field_notnull($table, $field);
 
-        ob_start(); // hide debug warning
         try {
             $result = $DB->insert_record('test_table_cust0', $record, false);
         } catch (dml_exception $e) {
             $result = false;
         }
-        ob_end_clean();
+        $this->resetDebugging();
         $this->assertFalse($result);
 
         $dbman->drop_table($table);
@@ -1214,13 +1210,12 @@ class ddl_testcase extends database_driver_testcase {
         $index->set_attributes(XMLDB_INDEX_UNIQUE, array('onenumber', 'name'));
         $dbman->add_index($table, $index);
 
-        ob_start(); // hide debug warning
         try {
             $result = $DB->insert_record('test_table_cust0', $record, false);
         } catch (dml_exception $e) {
             $result = false;;
         }
-        ob_end_clean();
+        $this->resetDebugging();
         $this->assertFalse($result);
 
         $dbman->drop_table($table);
@@ -1398,12 +1393,10 @@ class ddl_testcase extends database_driver_testcase {
 
         // feed nonexistent file
         try {
-            ob_start(); // hide debug warning
             $dbman->delete_tables_from_xmldb_file('fpsoiudfposui');
-            ob_end_clean();
             $this->assertTrue(false);
         } catch (Exception $e) {
-            ob_end_clean();
+            $this->resetDebugging();
             $this->assertTrue($e instanceof moodle_exception);
         }
 
@@ -1414,12 +1407,10 @@ class ddl_testcase extends database_driver_testcase {
             $devhack = true;
         }
         try {
-            ob_start(); // hide debug warning
             $dbman->delete_tables_from_xmldb_file(__DIR__ . '/fixtures/invalid.xml');
             $this->assertTrue(false);
-            ob_end_clean();
         } catch (Exception $e) {
-            ob_end_clean();
+            $this->resetDebugging();
             $this->assertTrue($e instanceof moodle_exception);
         }
         if ($devhack) {
@@ -1443,12 +1434,10 @@ class ddl_testcase extends database_driver_testcase {
 
         // feed nonexistent file
         try {
-            ob_start(); // hide debug warning
             $dbman->install_from_xmldb_file('fpsoiudfposui');
-            ob_end_clean();
             $this->assertTrue(false);
         } catch (Exception $e) {
-            ob_end_clean();
+            $this->resetDebugging();
             $this->assertTrue($e instanceof moodle_exception);
         }
 
@@ -1459,12 +1448,10 @@ class ddl_testcase extends database_driver_testcase {
             $devhack = true;
         }
         try {
-            ob_start(); // hide debug warning
             $dbman->install_from_xmldb_file(__DIR__ . '/fixtures/invalid.xml');
-            ob_end_clean();
             $this->assertTrue(false);
         } catch (Exception $e) {
-            ob_end_clean();
+            $this->resetDebugging();
             $this->assertTrue($e instanceof moodle_exception);
         }
         if ($devhack) {
