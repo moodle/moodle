@@ -378,7 +378,7 @@ class plugin_manager {
             ),
 
             'assignfeedback' => array(
-                'comments', 'file'
+                'comments', 'file', 'offline'
             ),
 
             'auth' => array(
