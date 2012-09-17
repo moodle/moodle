@@ -74,16 +74,22 @@ class cache_config_writer extends cache_config {
         $configuration['modemappings'] = $this->configmodemappings;
         $configuration['definitions'] = $this->configdefinitions;
         $configuration['definitionmappings'] = $this->configdefinitionmappings;
+        $configuration['locks'] = $this->configlocks;
 
         // Prepare the file content.
         $content = "<?php defined('MOODLE_INTERNAL') || die();\n \$configuration = ".var_export($configuration, true).";";
 
-        if (cache_lock::lock('config', false)) {
+        // We need to create a temporary cache lock instance for use here. Remember we are generating the config file
+        // it doesn't exist and thus we can't use the normal API for this (it'll just try to use config).
+        $factory = cache_factory::instance();
+        $locking = $factory->create_lock_instance(reset($this->configlocks));
+        if ($locking->lock('configwrite', 'config', true)) {
+            // Its safe to use w mode here because we have already acquired the lock.
             $handle = fopen($cachefile, 'w');
             fwrite($handle, $content);
             fflush($handle);
             fclose($handle);
-            cache_lock::unlock('config');
+            $locking->unlock('configwrite', 'config');
         } else {
             throw new cache_exception('ex_configcannotsave', 'cache', '', null, 'Unable to open the cache config file.');
         }
@@ -341,6 +347,13 @@ class cache_config_writer extends cache_config {
                 'store' => 'default_locking',
                 'definition' => 'core/locking',
                 'sort' => -1
+            )
+        );
+        $writer->configlocks = array(
+            'default_file_lock' => array(
+                'name' => 'default_file_lock',
+                'type' => 'cachelock_file',
+                'dir' => 'filelocks'
             )
         );
         $writer->config_save();

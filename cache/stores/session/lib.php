@@ -362,6 +362,14 @@ class cachestore_session extends session_data_store implements cache_store, cach
         $cache->initialise($definition);
         return $cache;
     }
+
+    /**
+     * Returns the name of this instance.
+     * @return string
+     */
+    public function my_name() {
+        return $this->name;
+    }
 }
 
 /**

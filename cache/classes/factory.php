@@ -77,6 +77,12 @@ class cache_factory {
     protected $definitions = array();
 
     /**
+     * An array of lock plugins.
+     * @var array
+     */
+    protected $lockplugins = null;
+
+    /**
      * Returns an instance of the cache_factor method.
      *
      * @param bool $forcereload If set to true a new cache_factory instance will be created and used.
@@ -106,6 +112,7 @@ class cache_factory {
         $factory->stores = array();
         $factory->configs = array();
         $factory->definitions = array();
+        $factory->lockplugins = null; // MUST be null in order to force its regeneration.
     }
 
     /**
@@ -165,7 +172,7 @@ class cache_factory {
     }
 
     /**
-     * Common protected method to create a cache instance given a definition.
+     * Common public method to create a cache instance given a definition.
      *
      * This is used by the static make methods.
      *
@@ -303,5 +310,30 @@ class cache_factory {
         $store = new cachestore_dummy();
         $store->initialise($definition);
         return $store;
+    }
+
+    /**
+     * Returns a lock instance ready for use.
+     *
+     * @param array $config
+     * @return cache_lock_interface
+     */
+    public function create_lock_instance(array $config) {
+        if (!array_key_exists('name', $config) || !array_key_exists('type', $config)) {
+            throw new coding_exception('Invalid cache lock instance provided');
+        }
+        $name = $config['name'];
+        $type = $config['type'];
+        unset($config['name']);
+        unset($config['type']);
+
+        if ($this->lockplugins === null) {
+            $this->lockplugins = get_plugin_list_with_class('cachelock', '', 'lib.php');
+        }
+        if (!array_key_exists($type, $this->lockplugins)) {
+            throw new coding_exception('Invalid cache lock type.');
+        }
+        $class = $this->lockplugins[$type];
+        return new $class($name, $config);
     }
 }

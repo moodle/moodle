@@ -66,6 +66,12 @@ class cache_config {
     protected $configdefinitionmappings = array();
 
     /**
+     * An array of configured cache lock instances.
+     * @var array
+     */
+    protected $configlocks = array();
+
+    /**
      * Please use cache_config::instance to get an instance of the cache config that is ready to be used.
      */
     public function __construct() {
@@ -114,8 +120,32 @@ class cache_config {
 
         $this->configstores = array();
         $this->configdefinitions = array();
+        $this->configlocks = array();
         $this->configmodemappings = array();
         $this->configdefinitionmappings = array();
+        $this->configlockmappings = array();
+
+        // Filter the lock instances
+        $defaultlock = null;
+        foreach ($configuration['locks'] as $conf) {
+            if (!is_array($conf)) {
+                // Something is very wrong here.
+                continue;
+            }
+            if (!array_key_exists('name', $conf)) {
+                // Not a valid definition configuration
+                continue;
+            }
+            $name = $conf['name'];
+            if (array_key_exists($name, $this->configlocks)) {
+                debugging('Duplicate cache lock detected. This should never happen.', DEBUG_DEVELOPER);
+                continue;
+            }
+            if ($defaultlock === null || !empty($this->configlocks['default'])) {
+                $defaultlock = $name;
+            }
+            $this->configlocks[$name] = $conf;
+        }
 
         // Filter the stores
         $availableplugins = cache_helper::early_get_cache_plugins();
@@ -151,6 +181,10 @@ class cache_config {
             }
             $store['class'] = $class;
             $store['default'] = !empty($store['default']);
+            if (!array_key_exists('lock', $store) || !array_key_exists($this->configlocks, $store['lock'])) {
+                $store['lock'] = $defaultlock;
+            }
+
             $this->configstores[$store['name']] = $store;
         }
 
@@ -255,6 +289,9 @@ class cache_config {
         }
         if (!array_key_exists('definitionmappings', $configuration) || !is_array($configuration['definitionmappings'])) {
             $configuration['definitionmappings'] = array();
+        }
+        if (!array_key_exists('locks', $configuration) || !is_array($configuration['locks'])) {
+            $configuration['locks'] = array();
         }
 
         return $configuration;
@@ -393,5 +430,34 @@ class cache_config {
      */
     public function get_definition_mappings() {
         return $this->configdefinitionmappings;
+    }
+
+    /**
+     * Returns an array of the configured locks.
+     * @return array
+     */
+    public function get_locks() {
+        return $this->configlocks;
+    }
+
+    /**
+     * Returns the lock store configuration to use with a given store.
+     * @param string $storename
+     * @return array
+     * @throws cache_exception
+     */
+    public function get_lock_for_store($storename) {
+        if (array_key_exists($storename, $this->configstores)) {
+            if (array_key_exists($this->configstores[$storename]['lock'], $this->configlocks)) {
+                $lock = $this->configstores[$storename]['lock'];
+                return $this->configlocks[$lock];
+            }
+        }
+        foreach ($this->configlocks as $lockconf) {
+            if (!empty($lockconf['default'])) {
+                return $lockconf;
+            }
+        }
+        throw new cache_exception('ex_nodefaultlock');
     }
 }

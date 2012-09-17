@@ -8011,7 +8011,8 @@ function get_plugin_types($fullpaths=true) {
                       'qformat'       => 'question/format',
                       'plagiarism'    => 'plagiarism',
                       'tool'          => $CFG->admin.'/tool',
-                      'cachestore'         => 'cache/stores',
+                      'cachestore'    => 'cache/stores',
+                      'cachelock'     => 'cache/locks',
                       'theme'         => 'theme',  // this is a bit hacky, themes may be in $CFG->themedir too
         );
 

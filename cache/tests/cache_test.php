@@ -324,8 +324,8 @@ class cache_phpunit_tests extends advanced_testcase {
         $this->assertTrue($cache1->acquire_lock('testkey'));
         $this->assertFalse($cache2->acquire_lock('testkey'));
 
-        $this->assertTrue($cache1->has_lock('testkey'));
-        $this->assertFalse($cache2->has_lock('testkey'));
+        $this->assertTrue($cache1->check_lock_state('testkey'));
+        $this->assertFalse($cache2->check_lock_state('testkey'));
 
         $this->assertTrue($cache1->release_lock('testkey'));
         $this->assertFalse($cache2->release_lock('testkey'));

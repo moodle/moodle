@@ -31,7 +31,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 // Include the required classes.
-require_once($CFG->dirroot.'/cache/classes/lock.php');
 require_once($CFG->dirroot.'/cache/classes/interfaces.php');
 require_once($CFG->dirroot.'/cache/classes/config.php');
 require_once($CFG->dirroot.'/cache/classes/helper.php');

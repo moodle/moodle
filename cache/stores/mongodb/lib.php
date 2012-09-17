@@ -473,4 +473,12 @@ class cachestore_mongodb implements cache_store {
 
         return $store;
     }
+
+    /**
+     * Returns the name of this instance.
+     * @return string
+     */
+    public function my_name() {
+        return $this->name;
+    }
 }

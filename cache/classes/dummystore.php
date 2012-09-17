@@ -266,4 +266,12 @@ class cachestore_dummy implements cache_store {
         $cache->initialise($definition);
         return $cache;;
     }
+
+    /**
+     * Returns the name of this instance.
+     * @return string
+     */
+    public function my_name() {
+        return $this->name;
+    }
 }

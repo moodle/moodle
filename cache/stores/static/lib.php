@@ -362,6 +362,14 @@ class cachestore_static extends static_data_store implements cache_store, cache_
         $cache->initialise($definition);
         return $cache;;
     }
+
+    /**
+     * Returns the name of this instance.
+     * @return string
+     */
+    public function my_name() {
+        return $this->name;
+    }
 }
 
 /**

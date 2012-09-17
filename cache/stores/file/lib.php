@@ -37,7 +37,7 @@
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cachestore_file implements cache_store, cache_is_lockable, cache_is_key_aware {
+class cachestore_file implements cache_store, cache_is_key_aware {
 
     /**
      * The name of the store.
@@ -80,12 +80,6 @@ class cachestore_file implements cache_store, cache_is_lockable, cache_is_key_aw
      * @var bool
      */
     protected $isready = false;
-
-    /**
-     * An array containing the locks this store instance owns presently.
-     * @var array
-     */
-    protected $locks = array();
 
     /**
      * The cache definition this instance has been initialised with.
@@ -447,81 +441,6 @@ class cachestore_file implements cache_store, cache_is_lockable, cache_is_key_aw
         }
         return false;
     }
-
-    /**
-     * Acquires a lock for the key with the given identifier.
-     *
-     * @param string $key The key to acquire a lock for.
-     * @param string $identifier The identifier who will own the lock.
-     * @return bool True if the lock could be acquired, false otherwise.
-     */
-    public function acquire_lock($key, $identifier) {
-        if (array_key_exists($key, $this->locks) && $this->locks[$key] == $identifier) {
-            // We already have the lock, return true.
-            return true;
-        }
-        $result = cache_lock::lock($key, false);
-        if ($result) {
-            $this->locks[$key] = $identifier;
-        }
-        return $result;
-    }
-    
-    /**
-     * Releases the lock provided it belongs to the identifier.
-     *
-     * @param string $key The key to the lock is for.
-     * @param string $identifier The identifier of the caller.
-     * @return bool True if the lock has been released, false if there was a problem releasing the lock.
-     */
-    public function release_lock($key, $identifier) {
-        if (array_key_exists($key, $this->locks) && $this->locks[$key] == $identifier) {
-            $outcome = cache_lock::unlock($key);
-            return $outcome;
-        }
-        return false;
-    }
-    
-    /**
-     * Returns true if the given key has a lock and it belongs to the identifier.
-     *
-     * @param string $key The key to the lock is for.
-     * @param string $identifier The identifier of the caller.
-     * @return bool True if this code has the lock, false if there is a lock but this code doesn't have it, null if there is no lock.
-     */
-    public function has_lock($key, $identifier) {
-        return (array_key_exists($key, $this->locks) && $this->locks[$key] == $identifier);
-    }
-
-    /**
-     * Returns the path to the lock file.
-     *
-     * @param string $key
-     * @return string The absolute path to use for a lock file for this key.
-     */
-    protected function get_lock_file($key) {
-        return $this->path.'/lock-'.$key.'.lock';
-    }
-
-    /**
-     * Cleans up any left over lock files.
-     *
-     * There shouldn't be any left over lock files but clean them up just in case.
-     */
-    public function __destruct() {
-        $errors = false;
-        foreach ($this->locks as $file) {
-            try {
-                @unlink($file);
-            } catch (Exception $e) {
-                // We just want to ensure we unlink everything possible.
-                $errors = true;
-            }
-        }
-        if ($errors) {
-            error_log('ERROR ERROR ERROR!!! Unable to release all file cache store locks!');
-        }
-    }
     
     /**
      * Purges the cache deleting all items within it.
@@ -596,8 +515,7 @@ class cachestore_file implements cache_store, cache_is_lockable, cache_is_key_aw
      *
      * There are several things going on in this function to try to ensure what we don't end up with partial writes etc.
      *   1. Files for writing are opened with the mode xb, the file must be created and can not already exist.
-     *   2. We use cache_mutex to ensure we acquire a lock.
-     *   3. Renaming, data is written to a temporary file, where it can be verified using md5 and is then renamed.
+     *   2. Renaming, data is written to a temporary file, where it can be verified using md5 and is then renamed.
      *
      * @param string $file Absolute file path
      * @param string $content The content to write.
@@ -614,11 +532,6 @@ class cachestore_file implements cache_store, cache_is_lockable, cache_is_key_aw
             }
         }
 
-        // Lock the temp file before we write.
-        if (!cache_lock::lock($tempfile, false)) {
-            return false;
-        }
-
         // Open the file with mode=x. This acts to create and open the file for writing only.
         // If the file already exists this will return false.
         // We also force binary.
@@ -627,14 +540,10 @@ class cachestore_file implements cache_store, cache_is_lockable, cache_is_key_aw
             // File already exists... lock already exists, return false.
             return false;
         }
-        // We have the lock. Write our content.
         fwrite($handle, $content);
         fflush($handle);
         // Close the handle, we're done.
         fclose($handle);
-
-        // Unlock the temp file.
-        cache_lock::unlock($tempfile);
 
         if (md5_file($tempfile) !== md5($content)) {
             // The md5 of the content of the file must match the md5 of the content given to be written.
@@ -649,5 +558,13 @@ class cachestore_file implements cache_store, cache_is_lockable, cache_is_key_aw
             @unlink($tempfile);
         }
         return $result;
+    }
+
+    /**
+     * Returns the name of this instance.
+     * @return string
+     */
+    public function my_name() {
+        return $this->name;
     }
 }

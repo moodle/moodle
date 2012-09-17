@@ -151,21 +151,16 @@ class cache_helper {
     }
 
     /**
-     * Returns the cache store to be used for locking or false if there is not one.
-     * @return cache_store|boolean
+     * Returns a cache_lock instance suitable for use with the store.
+     *
+     * @param cache_store $store
+     * @return cache_lock_interface
      */
-    public static function get_cachestore_for_locking() {
-        $factory = cache_factory::instance();
-        $definition = $factory->create_definition('core', 'locking');
+    public static function get_cachelock_for_store(cache_store $store) {
         $instance = cache_config::instance();
-        $stores = $instance->get_stores_for_definition($definition);
-        foreach ($stores as $name => $details) {
-            if ($details['useforlocking']) {
-                $instances = self::initialise_cachestore_instances(array($name => $details), $definition);
-                return reset($instances);
-            }
-        }
-        return false;
+        $lockconf = $instance->get_lock_for_store($store->my_name());
+        $factory = cache_factory::instance();
+        return $factory->create_lock_instance($lockconf);
     }
 
     /**
@@ -387,6 +382,10 @@ class cache_helper {
 
     /**
      * Purge all of the cache stores of all of their data.
+     *
+     * Think twice before calling this method. It will purge **ALL** caches regardless of whether they have been used recently or
+     * anything. This will involve full setup of the cache + the purge operation. On a site using caching heavily this WILL be
+     * painful.
      */
     public static function purge_all() {
         $config = cache_config::instance();

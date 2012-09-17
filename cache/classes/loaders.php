@@ -941,9 +941,9 @@ class cache_application extends cache implements cache_loader_with_locking {
 
     /**
      * Gets set to a cache_store to use for locking if the caches primary store doesn't support locking natively.
-     * @var cache_store
+     * @var cache_lock_interface
      */
-    protected $lockstore;
+    protected $cachelockinstance;
 
     /**
      * Overrides the cache construct method.
@@ -1038,8 +1038,8 @@ class cache_application extends cache implements cache_loader_with_locking {
         if ($this->nativelocking) {
             return $this->get_store()->acquire_lock($key, $this->get_identifier());
         } else {
-            $this->ensure_lock_store_available();
-            return $this->lockstore->acquire_lock($key, $this->get_identifier());
+            $this->ensure_cachelock_available();
+            return $this->cachelockinstance->lock($key, $this->get_identifier());
         }
     }
 
@@ -1050,13 +1050,13 @@ class cache_application extends cache implements cache_loader_with_locking {
      * @return bool|null Returns true if there is a lock and this cache has it, null if no one has a lock on that key, false if
      *      someone else has the lock.
      */
-    public function has_lock($key) {
+    public function check_lock_state($key) {
         $key = $this->parse_key($key);
         if ($this->nativelocking) {
-            return $this->get_store()->has_lock($key, $this->get_identifier());
+            return $this->get_store()->check_lock_state($key, $this->get_identifier());
         } else {
-            $this->ensure_lock_store_available();
-            return $this->lockstore->has_lock($key, $this->get_identifier());
+            $this->ensure_cachelock_available();
+            return $this->cachelockinstance->check_state($key, $this->get_identifier());
         }
     }
 
@@ -1071,8 +1071,8 @@ class cache_application extends cache implements cache_loader_with_locking {
         if ($this->nativelocking) {
             return $this->get_store()->release_lock($key, $this->get_identifier());
         } else {
-            $this->ensure_lock_store_available();
-            return $this->lockstore->release_lock($key, $this->get_identifier());
+            $this->ensure_cachelock_available();
+            return $this->cachelockinstance->unlock($key, $this->get_identifier());
         }
     }
 
@@ -1081,9 +1081,9 @@ class cache_application extends cache implements cache_loader_with_locking {
      *
      * This should only happen if the cache store doesn't natively support it.
      */
-    protected function ensure_lock_store_available() {
-        if ($this->lockstore === null) {
-            $this->lockstore = cache_helper::get_cachestore_for_locking();
+    protected function ensure_cachelock_available() {
+        if ($this->cachelockinstance === null) {
+            $this->cachelockinstance = cache_helper::get_cachelock_for_store($this->get_store());
         }
     }
 
@@ -1168,7 +1168,7 @@ class cache_application extends cache implements cache_loader_with_locking {
      * @throws moodle_exception
      */
     public function get($key, $strictness = IGNORE_MISSING) {
-        if ($this->requirelockingread && $this->has_lock($key) === false) {
+        if ($this->requirelockingread && $this->check_lock_state($key) === false) {
             // Read locking required and someone else has the read lock.
             return false;
         }

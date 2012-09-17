@@ -35,6 +35,7 @@ $string['editstore'] = 'Edit store';
 $string['editstoresuccess'] = 'Succesfully edited the cache store.';
 $string['editdefinitionmappings'] = '{$a} definition store mappings';
 $string['ex_configcannotsave'] = 'Unable to save the cache config to file.';
+$string['ex_nodefaultlock'] = 'Unable to find a default lock instance.';
 $string['ex_unabletolock'] = 'Unable to acquire a lock for caching.';
 $string['gethit'] = 'Get - Hit';
 $string['getmiss'] = 'Get - Miss';
