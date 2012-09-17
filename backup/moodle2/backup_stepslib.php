@@ -1096,7 +1096,7 @@ class backup_users_structure_step extends backup_structure_step {
             'lastaccess', 'lastlogin', 'currentlogin',
             'mailformat', 'maildigest', 'maildisplay', 'htmleditor',
             'autosubscribe', 'trackforums', 'timecreated',
-            'timemodified', 'trustbitmask', 'screenreader');
+            'timemodified', 'trustbitmask');
 
         // Then, the fields potentially needing anonymization
         $anonfields = array(
