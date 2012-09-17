@@ -1696,9 +1696,8 @@ class accesslib_testcase extends advanced_testcase {
 
         // ====== $context->get_child_contexts() ================================
 
-        $CFG->debug = 0;
         $children = $systemcontext->get_child_contexts();
-        $CFG->debug = DEBUG_DEVELOPER;
+        $this->resetDebugging();
         $this->assertEquals(count($children)+1, $DB->count_records('context'));
 
         $context = context_coursecat::instance($testcategories[3]);
@@ -2281,9 +2280,8 @@ class accesslib_testcase extends advanced_testcase {
             }
         }
 
-        $CFG->debug = 0;
         $children = get_child_contexts($systemcontext);
-        $CFG->debug = DEBUG_DEVELOPER;
+        $this->resetDebugging();
         $this->assertEquals(count($children), $DB->count_records('context')-1);
         unset($children);
 

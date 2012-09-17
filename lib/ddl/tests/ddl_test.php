@@ -1542,10 +1542,9 @@ class ddl_testcase extends database_driver_testcase {
         $this->assertTrue($dbman->table_exists('test_table1'));
 
         // Make sure it can be dropped using deprecated drop_temp_table()
-        $CFG->debug = 0;
         $dbman->drop_temp_table($table1);
         $this->assertFalse($dbman->table_exists('test_table1'));
-        $CFG->debug = DEBUG_DEVELOPER;
+        $this->assertDebuggingCalled();
     }
 
     public function test_concurrent_temp_tables() {

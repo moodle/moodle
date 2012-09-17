@@ -1882,8 +1882,6 @@ class moodlelib_testcase extends advanced_testcase {
             $this->assertTrue(true);
         }
 
-        $CFG->debug = DEBUG_MINIMAL; // Prevent standard debug warnings.
-
         $record = new stdClass();
         $record->id = 666;
         $record->username = 'xx';
@@ -1896,5 +1894,7 @@ class moodlelib_testcase extends advanced_testcase {
 
         $result = delete_user($admin);
         $this->assertFalse($result);
+
+        $this->resetDebugging();
     }
 }

@@ -345,7 +345,6 @@ class core_textlib_testcase extends advanced_testcase {
      * @return void
      */
     public function test_deprecated_textlib_get_instance() {
-        ob_start();
         $textlib = textlib_get_instance();
         $this->assertDebuggingCalled();
         $this->assertSame($textlib->substr('abc', 1, 1), 'b');
