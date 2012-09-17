@@ -144,7 +144,7 @@ abstract class database_exporter {
         $tables = $this->schema->getTables();
         $this->begin_database_export($CFG->version, $CFG->release, date('c'), $description);
         foreach ($tables as $table) {
-            $rs = $this->mdb->get_recordset_sql('SELECT * FROM {'.$table->getName().'}');
+            $rs = $this->mdb->export_table_recordset($table->getName());
             if (!$rs) {
                 throw new ddl_table_missing_exception($table->getName());
             }
@@ -153,6 +153,7 @@ abstract class database_exporter {
                 $this->export_table_data($table, $row);
             }
             $this->finish_table_export($table);
+            $rs->close();
         }
         $this->finish_database_export();
     }
