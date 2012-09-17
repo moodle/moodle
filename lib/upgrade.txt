@@ -11,6 +11,11 @@ YUI changes:
 * moodle-enrol-notification has been renamed to moodle-core-notification
 * YUI2 code must now use 2in3, see http://yuilibrary.com/yui/docs/yui/yui-yui2.html
 
+Unit testing changes:
+* output debugging() is not sent to standard output any more,
+  use $this->assertDebuggingCalled(), $this->assertDebuggingNotCalled(),
+  $this->getDebuggingMessages() or $this->assertResetDebugging() instead.
+
 === 2.3 ===
 
 Database layer changes:

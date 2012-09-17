@@ -241,7 +241,7 @@ abstract class advanced_testcase extends PHPUnit_Framework_TestCase {
 
     /**
      * Return debugging messages from the current test.
-     * @return array
+     * @return array with instances having 'message', 'level' and 'stacktrace' property.
      */
     public function getDebuggingMessages() {
         return phpunit_util::get_debugging_messages();
@@ -249,10 +249,9 @@ abstract class advanced_testcase extends PHPUnit_Framework_TestCase {
 
     /**
      * Clear all previous debugging messages in current test.
-     * @return array
      */
     public function resetDebugging() {
-        return phpunit_util::reset_debugging();
+        phpunit_util::reset_debugging();
     }
 
     /**
@@ -293,6 +292,10 @@ abstract class advanced_testcase extends PHPUnit_Framework_TestCase {
         phpunit_util::reset_debugging();
     }
 
+    /**
+     * Call when no debugging() messages expected.
+     * @param string $message
+     */
     public function assertDebuggingNotCalled($message = '') {
         $debugging = phpunit_util::get_debugging_messages();
         $count = count($debugging);
