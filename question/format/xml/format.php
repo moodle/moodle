@@ -166,9 +166,9 @@ class qformat_xml extends qformat_default {
         $qo = $this->defaultquestion();
 
         // Question name
-        $qo->name = $this->getpath($question,
+        $qo->name = $this->clean_question_name($this->getpath($question,
                 array('#', 'name', 0, '#', 'text', 0, '#'), '', true,
-                get_string('xmlimportnoname', 'qformat_xml'));
+                get_string('xmlimportnoname', 'qformat_xml')));
         $qo->questiontext = $this->getpath($question,
                 array('#', 'questiontext', 0, '#', 'text', 0, '#'), '', true);
         $qo->questiontextformat = $this->trans_format($this->getpath(
@@ -437,7 +437,7 @@ class qformat_xml extends qformat_default {
         $qo->course = $this->course;
         $qo->generalfeedback = '';
 
-        $qo->name = $this->import_text($question['#']['name'][0]['#']['text']);
+        $qo->name = $this->clean_question_name($this->import_text($question['#']['name'][0]['#']['text']));
         $qo->questiontextformat = $questiontext['format'];
         $qo->questiontext = $qo->questiontext['text'];
         $qo->questiontextfiles = array();
