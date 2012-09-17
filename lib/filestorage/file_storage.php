@@ -443,7 +443,7 @@ class file_storage {
      */
     public function get_area_tree($contextid, $component, $filearea, $itemid) {
         $result = array('dirname'=>'', 'dirfile'=>null, 'subdirs'=>array(), 'files'=>array());
-        $files = $this->get_area_files($contextid, $component, $filearea, $itemid, "sortorder, itemid, filepath, filename", true);
+        $files = $this->get_area_files($contextid, $component, $filearea, $itemid, "itemid, filepath, filename", true);
         // first create directory structure
         foreach ($files as $hash=>$dir) {
             if (!$dir->is_directory()) {
