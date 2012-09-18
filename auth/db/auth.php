@@ -191,8 +191,16 @@ class auth_plugin_db extends auth_plugin_base {
      * @return bool                  True on success
      */
     function user_update_password($user, $newpassword) {
+        global $DB;
+
         if ($this->is_internal()) {
-            return update_internal_user_password($user, $newpassword);
+            $puser = $DB->get_record('user', array('id'=>$user->id), '*', MUST_EXIST);
+            if (update_internal_user_password($puser, $newpassword)) {
+                $user->password = $puser->password;
+                return true;
+            } else {
+                return false;
+            }
         } else {
             // we should have never been called!
             return false;
