@@ -69,8 +69,10 @@ class assign_feedback_comments extends assign_feedback_plugin {
             }
         }
 
-        return html_writer::tag('textarea', $commenttext, array('name'=>'quickgrade_comments_' . $userid,
-                                                                'class'=>'quickgrade'));
+        return html_writer::tag('label', get_string('pluginname', 'assignfeedback_comments'),
+                array('for'=>'quickgrade_comments_' . $userid, 'class'=>'accesshide'))
+                . html_writer::tag('textarea', $commenttext,
+                array('name'=>'quickgrade_comments_' . $userid, 'id'=>'quickgrade_comments_' . $userid, 'class'=>'quickgrade'));
     }
 
     /**

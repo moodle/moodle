@@ -124,7 +124,6 @@ M.gradereport_grader.classes.report = function(Y, id, cfg, items, users, feedbac
     this.items = items;
     this.users = users;
     this.feedback = feedback;
-    this.feedbacklabel = '';
     this.table = Y.one('#user-grades');
     this.grades = grades;
 
@@ -354,8 +353,8 @@ M.gradereport_grader.classes.ajax.prototype.make_editable = function(e) {
         node = node.ancestor('td');
     }
     this.report.Y.detach('click', this.make_editable, node);
-//alert(this.report.toSource());
-    if (this.current) { 
+
+    if (this.current) {
         // Current is already set!
         this.process_editable_field(node);
         return;
@@ -663,7 +662,7 @@ M.gradereport_grader.classes.ajax.prototype.submission_outcome = function(tid, o
                         // otherwise we will prompt the user to choose to use their value or the new value!
                         if (!this.current.has_changed() || confirm(M.str.gradereport_grader.ajaxfieldchanged)) {
                             this.current.set_grade(finalgrade);
-                            this.current.grade.set('value', finalgrade);alert(this.current.node.toSource());
+                            this.current.grade.set('value', finalgrade);
                         }
                     }
                 }
@@ -944,16 +943,11 @@ M.gradereport_grader.classes.textfield = function(report, node) {
     this.gradespan = node.one('.gradevalue');
     this.inputdiv = this.report.Y.Node.create('<div></div>');
     this.editfeedback = this.report.ajax.showquickfeedback;
-    this.gradelabel = this.report.Y.Node.create('<label class="accesshide" for=""></label>');
     this.grade = this.report.Y.Node.create('<input type="text" class="text" value="" />');
     this.gradetype = 'value';
-    this.inputdiv.append(this.gradelabel);
     this.inputdiv.append(this.grade);
     if (this.report.ajax.showquickfeedback) {
-        this.feedbacklabel = this.report.Y.Node.create('<label class="accesshide" for=""></label>');
         this.feedback = this.report.Y.Node.create('<input type="text" class="quickfeedback" value="" />');
-        
-        this.inputdiv.append(this.feedbacklabel);
         this.inputdiv.append(this.feedback);
     }
 };
@@ -964,7 +958,6 @@ M.gradereport_grader.classes.textfield.prototype.keyevents = [];
 M.gradereport_grader.classes.textfield.prototype.editable = false;
 M.gradereport_grader.classes.textfield.prototype.gradetype = null;
 M.gradereport_grader.classes.textfield.prototype.grade = null;
-M.gradereport_grader.classes.textfield.prototype.gradelabel = null;
 M.gradereport_grader.classes.textfield.prototype.report = null;
 M.gradereport_grader.classes.textfield.prototype.node = null;
 M.gradereport_grader.classes.textfield.prototype.gradespam = null;
@@ -982,9 +975,7 @@ M.gradereport_grader.classes.textfield.prototype.replace = function() {
     if (this.editfeedback) {
         this.set_feedback(this.get_feedback());
     }
-    //this.node.on('.test').innerHTML('test');
     this.node.replaceChild(this.inputdiv, this.gradespan);
-    //alert(this.inputdiv.toSource());
     this.grade.focus();
     this.editable = true;
     return this;
