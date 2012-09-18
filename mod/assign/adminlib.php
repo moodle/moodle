@@ -447,10 +447,10 @@ class assign_plugin_manager {
      * @param string $subtype - The type of plugin (submission or feedback)
      * @param part_of_admin_tree $admin - The handle to the admin menu
      * @param admin_settingpage $settings - The handle to current node in the navigation tree
-     * @param stdClass $module - The handle to the current module
+     * @param stdClass|plugininfo_mod $module - The handle to the current module
      * @return None
      */
-    static function add_admin_assign_plugin_settings($subtype, part_of_admin_tree $admin, admin_settingpage $settings, stdClass $module) {
+    static function add_admin_assign_plugin_settings($subtype, part_of_admin_tree $admin, admin_settingpage $settings, $module) {
         global $CFG;
 
         $plugins = get_plugin_list_with_file($subtype, 'settings.php', false);
@@ -463,7 +463,7 @@ class assign_plugin_manager {
 
         foreach ($pluginsbyname as $pluginname => $plugin) {
             $settings = new admin_settingpage($subtype . '_'.$plugin,
-                    $pluginname, 'moodle/site:config', !$module->visible);
+                    $pluginname, 'moodle/site:config', $module->is_enabled() === false);
             if ($admin->fulltree) {
                 $shortsubtype = substr($subtype, strlen('assign'));
                 include($CFG->dirroot . "/mod/assign/$shortsubtype/$plugin/settings.php");

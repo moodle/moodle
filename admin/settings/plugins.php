@@ -9,23 +9,12 @@ if ($hassiteconfig) {
     $allplugins = plugin_manager::instance()->get_plugins();
 
     $ADMIN->add('modules', new admin_page_pluginsoverview());
+
+    // activity modules
     $ADMIN->add('modules', new admin_category('modsettings', new lang_string('activitymodules')));
     $ADMIN->add('modsettings', new admin_page_managemods());
-    $modules = $DB->get_records('modules', array(), "name ASC");
-    foreach ($modules as $module) {
-        $modulename = $module->name;
-        if (!file_exists("$CFG->dirroot/mod/$modulename/lib.php")) {
-            continue;
-        }
-        $strmodulename = new lang_string('modulename', 'mod_'.$modulename);
-        if (file_exists($CFG->dirroot.'/mod/'.$modulename.'/settings.php')) {
-            // do not show disabled modules in tree, keep only settings link on manage page
-            $settings = new admin_settingpage('modsetting'.$modulename, $strmodulename, 'moodle/site:config', !$module->visible);
-            include($CFG->dirroot.'/mod/'.$modulename.'/settings.php');
-            if ($settings) {
-                $ADMIN->add('modsettings', $settings);
-            }
-        }
+    foreach ($allplugins['mod'] as $module) {
+        $module->load_settings($ADMIN, 'modsettings', $hassiteconfig);
     }
 
     // hidden script for converting journals to online assignments (or something like that) linked from elsewhere

@@ -199,7 +199,7 @@ if (empty($reportsbyname)) {
     $ADMIN->add('modsettings', $quizsettings);
 } else {
     $ADMIN->add('modsettings', new admin_category('modsettingsquizcat',
-            get_string('modulename', 'quiz'), !$module->visible));
+            get_string('modulename', 'quiz'), $module->is_enabled() === false));
     $ADMIN->add('modsettingsquizcat', $quizsettings);
 
     // Add the report pages for the settings.php files in sub directories of mod/quiz/report.
@@ -207,7 +207,7 @@ if (empty($reportsbyname)) {
         $reportname = $report;
 
         $settings = new admin_settingpage('modsettingsquizcat'.$reportname,
-                $strreportname, 'moodle/site:config', !$module->visible);
+                $strreportname, 'moodle/site:config', $module->is_enabled() === false);
         if ($ADMIN->fulltree) {
             include($CFG->dirroot . "/mod/quiz/report/$reportname/settings.php");
         }
