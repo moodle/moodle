@@ -25,9 +25,9 @@
 
 /* List of handlers */
 $handlers = array (
-    'user_enrolled' => array (
+    'role_assigned' => array (
         'handlerfile'      => '/mod/forum/lib.php',
-        'handlerfunction'  => 'forum_user_enrolled',
+        'handlerfunction'  => 'forum_user_role_assigned',
         'schedule'         => 'instant',
         'internal'         => 1,
     ),
