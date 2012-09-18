@@ -1073,6 +1073,7 @@ class moodle_page {
      */
     public function set_title($title) {
         $title = format_string($title);
+        $title = strip_tags($title);
         $title = str_replace('"', '&quot;', $title);
         $this->_title = $title;
     }
