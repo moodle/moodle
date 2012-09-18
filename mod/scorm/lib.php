@@ -150,7 +150,7 @@ function scorm_add_instance($scorm, $mform=null) {
 
     scorm_parse($record, true);
 
-    scorm_grade_item_update($record, null, false);
+    scorm_grade_item_update($record);
 
     return $record->id;
 }
@@ -591,18 +591,21 @@ function scorm_get_user_grades($scorm, $userid=0) {
  * @param bool $nullifnone
  */
 function scorm_update_grades($scorm, $userid=0, $nullifnone=true) {
-    global $CFG, $DB;
+    global $CFG;
     require_once($CFG->libdir.'/gradelib.php');
+    require_once($CFG->libdir.'/completionlib.php');
 
     if ($grades = scorm_get_user_grades($scorm, $userid)) {
         scorm_grade_item_update($scorm, $grades);
-
+        //set complete
+        scorm_set_completion($scorm, $userid, COMPLETION_COMPLETE, $grades);
     } else if ($userid and $nullifnone) {
         $grade = new stdClass();
         $grade->userid   = $userid;
         $grade->rawgrade = null;
         scorm_grade_item_update($scorm, $grade);
-
+        //set incomplete.
+        scorm_set_completion($scorm, $userid, COMPLETION_INCOMPLETE);
     } else {
         scorm_grade_item_update($scorm);
     }
@@ -646,10 +649,9 @@ function scorm_upgrade_grades() {
  * @uses GRADE_TYPE_NONE
  * @param object $scorm object with extra cmidnumber
  * @param mixed $grades optional array/object of grade(s); 'reset' means reset grades in gradebook
- * @param boolean $updatecompletion  set whether to update completion stuff
  * @return object grade_item
  */
-function scorm_grade_item_update($scorm, $grades=null, $updatecompletion=true) {
+function scorm_grade_item_update($scorm, $grades=null) {
     global $CFG, $DB;
     require_once($CFG->dirroot.'/mod/scorm/locallib.php');
     if (!function_exists('grade_update')) { //workaround for buggy PHP versions
@@ -678,19 +680,6 @@ function scorm_grade_item_update($scorm, $grades=null, $updatecompletion=true) {
     if ($grades  === 'reset') {
         $params['reset'] = true;
         $grades = null;
-    }
-
-    // Update activity completion if applicable
-    if ($updatecompletion) {
-        // Get course info
-        $course = new stdClass();
-        $course->id = $scorm->course;
-
-        $cm = get_coursemodule_from_instance('scorm', $scorm->id, $course->id);
-        if (!empty($cm)) {
-            $completion = new completion_info($course);
-            $completion->update_state($cm, COMPLETION_COMPLETE);
-        }
     }
 
     return grade_update('mod/scorm', $scorm->course, 'mod', 'scorm', $scorm->id, 0, $grades, $params);
@@ -1328,4 +1317,33 @@ function scorm_dndupload_handle($uploadinfo) {
     $scorm->height = $scorm->frameheight;
 
     return scorm_add_instance($scorm, null);
+}
+
+/**
+ * Sets activity completion state
+ *
+ * @param object $scorm object
+ * @param int $userid User ID
+ * @param int $completionstate Completion state
+ * @param array $grades grades array of users with grades - used when $userid = 0
+ */
+function scorm_set_completion($scorm, $userid, $completionstate = COMPLETION_COMPLETE, $grades = array()) {
+    if (!completion_info::is_enabled()) {
+        return;
+    }
+
+    $course = new stdClass();
+    $course->id = $scorm->course;
+
+    $cm = get_coursemodule_from_instance('scorm', $scorm->id, $scorm->course);
+    if (!empty($cm)) {
+        $completion = new completion_info($course);
+        if (empty($userid)) { //we need to get all the relevant users from $grades param.
+            foreach ($grades as $grade) {
+                $completion->update_state($cm, $completionstate, $grade->userid);
+            }
+        } else {
+            $completion->update_state($cm, $completionstate, $userid);
+        }
+    }
 }
