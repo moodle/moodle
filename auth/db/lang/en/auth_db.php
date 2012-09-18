@@ -40,6 +40,7 @@ $string['auth_dbhost'] = 'The computer hosting the database server.';
 $string['auth_dbhost_key'] = 'Host';
 $string['auth_dbchangepasswordurl_key'] = 'Password-change URL';
 $string['auth_dbinsertuser'] = 'Inserted user {$a->name} id {$a->id}';
+$string['auth_dbinsertuserduplicate'] = 'Error inserting user {$a->username} - user with this username was already created through \'{$a->auth}\' plugin.';
 $string['auth_dbinsertusererror'] = 'Error inserting user {$a}';
 $string['auth_dbname'] = 'Name of the database itself';
 $string['auth_dbname_key'] = 'DB name';
