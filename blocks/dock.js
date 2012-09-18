@@ -164,7 +164,7 @@ M.core_dock.init = function(Y) {
     var dock = Y.one('#dock');
     if (!dock) {
         // Start the construction of the dock
-        dock = Y.Node.create('<div id="dock" class="'+css.dock+' '+css.dock+'_'+this.cfg.position+'_'+this.cfg.orientation+'"></div>')
+        dock = Y.Node.create('<div id="dock" role="menubar" class="'+css.dock+' '+css.dock+'_'+this.cfg.position+'_'+this.cfg.orientation+'"></div>')
                     .append(Y.Node.create('<div class="'+css.buttonscontainer+'"></div>')
                         .append(Y.Node.create('<div class="'+css.dockeditemcontainer+'"></div>')));
         this.nodes.body.append(dock);
@@ -1036,7 +1036,7 @@ M.core_dock.item.prototype = {
         var Y = this.Y;
         var css = M.core_dock.css;
 
-        this.nodes.docktitle = Y.Node.create('<div id="dock_item_'+this.id+'_title" class="'+css.dockedtitle+'"></div>');
+        this.nodes.docktitle = Y.Node.create('<div id="dock_item_'+this.id+'_title" role="menu" aria-haspopup="true" class="'+css.dockedtitle+'"></div>');
         this.nodes.docktitle.append(this.title);
         this.nodes.dockitem = Y.Node.create('<div id="dock_item_'+this.id+'" class="'+css.dockeditem+'" tabindex="0"></div>');
         this.nodes.dockitem.on('dock:actionkey', this.toggle, this);
@@ -1065,6 +1065,8 @@ M.core_dock.item.prototype = {
         this.active = true;
         // Add active item class first up
         this.nodes.docktitle.addClass(css.activeitem);
+        // Set aria-exapanded property to true.
+        this.nodes.docktitle.set('aria-expanded', "true");
         this.fire('dockeditem:showcomplete');
         M.core_dock.resize();
         return true;
@@ -1081,6 +1083,8 @@ M.core_dock.item.prototype = {
         this.nodes.docktitle.removeClass(css.activeitem);
         // Hide the panel
         M.core_dock.getPanel().hide();
+        // Set aria-exapanded property to false
+        this.nodes.docktitle.set('aria-expanded', "false");
         this.fire('dockeditem:hidecomplete');
     },
     /**
