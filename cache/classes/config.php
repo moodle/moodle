@@ -105,6 +105,17 @@ class cache_config {
      */
     protected static function get_config_file_path() {
         global $CFG;
+        if (!empty($CFG->altcacheconfigpath)) {
+            $path = $CFG->altcacheconfigpath;
+            if (is_dir($path) && is_writable($path)) {
+                // Its a writable directory, thats fine.
+                return $path.'/cacheconfig.php';
+            } else if (is_writable(dirname($path)) && (!file_exists($path) || is_writable($path))) {
+                // Its a file, either it doesn't exist and the directory is writable or the file exists and is writable.
+                return $path;
+            }
+        }
+        // Return the default location within dataroot.
         return $CFG->dataroot.'/muc/config.php';
     }
 

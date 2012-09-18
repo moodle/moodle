@@ -411,6 +411,17 @@ $CFG->admin = 'admin';
 //
 //     $CFG->extramemorylimit = '1G';
 //
+// Moodle 2.4 introduced a new cache API.
+// The cache API stores a configuration file within the Moodle data directory and
+// uses that rather than the database in order to function in a stand-alone manner.
+// Using altcacheconfigpath you can change the location where this config file is
+// looked for.
+// It can either be a directory in which to store the file, or the full path to the
+// file if you want to take full control. Either way it must be writable by the
+// webserver.
+//
+//     $CFG->altcacheconfigpath = '/var/www/shared/moodle.cache.config.php
+//
 // The CSS files the Moodle produces can be extremely large and complex, especially
 // if you are using a custom theme that builds upon several other themes.
 // In Moodle 2.3 a CSS optimiser was added as an experimental feature for advanced
