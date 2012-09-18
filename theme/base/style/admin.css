@@ -252,6 +252,7 @@
 #page-admin-plugins #plugins-overview-filter .filter-item {padding:5px 10px;}
 #page-admin-plugins #plugins-overview-filter .filter-item.active {font-weight:bold;}
 #page-admin-plugins #plugins-overview-filter .separator {border-left:1px dotted #999;}
+#page-admin-plugins #plugins-control-panel .actions .uninstall {color:#900;}
 #page-admin-plugins #plugins-control-panel .notes .pluginupdateinfo {padding:5px 10px;margin:10px;background-color:#d2ebff;-moz-border-radius: 10px;-webkit-border-radius: 10px;border-radius: 10px;}
 #page-admin-plugins #plugins-control-panel .notes .pluginupdateinfo.maturity50 {background-color:#ffd3d9;}
 #page-admin-plugins #plugins-control-panel .notes .pluginupdateinfo.maturity100,
