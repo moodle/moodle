@@ -44,5 +44,8 @@
 .block .calendar-controls .previous {text-align: left;display: block;float: left;width: 12%;}
 .block .calendar-controls .current {float:left;text-align: center;display: block;width:76%;}
 .block .calendar-controls .next {text-align: right;display: block;float: left;width: 12%;}
-.block .filters table {border-collapse:separate;border-spacing: 2px;padding: 2px;width: 100%;}
+.block .calendar_filters ul {list-style: none; margin: 0;}
+.block .calendar_filters li { margin-bottom: .2em;}
+.block .calendar_filters li span img { padding: 0 .2em;}
+.block .calendar_filters .eventname { padding-left: .2em;}
 .block .content h3.eventskey {margin-top:0.5em;margin-bottom:0;margin-left:0.5em;}
