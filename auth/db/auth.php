@@ -65,7 +65,7 @@ class auth_plugin_db extends auth_plugin_base {
                 $authdb->Close();
                 // user exists externally
                 // check username/password internally
-                if ($user = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>$CFG->mnet_localhost_id))) {
+                if ($user = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>$CFG->mnet_localhost_id, 'auth'=>$this->authtype))) {
                     return validate_internal_user_password($user, $password);
                 }
             } else {
