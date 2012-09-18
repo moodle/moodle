@@ -8,8 +8,6 @@ var DIALOGUE_NAME = 'Moodle dialogue',
     ALERT_NAME = 'Moodle alert',
     C = Y.Node.create,
     BASE = 'notificationBase',
-    LIGHTBOX = 'lightbox',
-    NODELIGHTBOX = 'nodeLightbox',
     COUNT = 0,
     CONFIRMYES = 'yesLabel',
     CONFIRMNO = 'noLabel',
@@ -31,7 +29,6 @@ var DIALOGUE = function(config) {
     var id = 'moodle-dialogue-'+COUNT;
     config.notificationBase =
         C('<div class="'+CSS.BASE+'">')
-            .append(C('<div class="'+CSS.LIGHTBOX+' '+CSS.HIDDEN+'"></div>'))
             .append(C('<div id="'+id+'" class="'+CSS.WRAP+'"></div>')
                 .append(C('<div class="'+CSS.HEADER+' yui3-widget-hd"></div>'))
                 .append(C('<div class="'+CSS.BODY+' yui3-widget-bd"></div>'))
@@ -42,34 +39,39 @@ var DIALOGUE = function(config) {
     config.visible =    config.visible || false;
     config.center =     config.centered || true;
     config.centered =   false;
+
+    // lightbox param to keep the stable versions API
+    if (config.lightbox === true) {
+        config.modal = true;
+    }
+    delete config.lightbox;
+
+    // closeButton param to keep the stable versions API
+    if (config.closeButton === false) {
+        config.buttons = null;
+    } else {
+        config.buttons = [
+            {
+                section: Y.WidgetStdMod.HEADER,
+                classNames: 'closebutton',
+                action: function (e) {
+                    this.hide();
+                }
+            }
+        ];
+    }
     DIALOGUE.superclass.constructor.apply(this, [config]);
 };
-Y.extend(DIALOGUE, Y.Overlay, {
+Y.extend(DIALOGUE, Y.Panel, {
     initializer : function(config) {
-        this.set(NODELIGHTBOX, this.get(BASE).one('.'+CSS.LIGHTBOX).setStyle('opacity', 0.5));
         this.after('visibleChange', this.visibilityChanged, this);
-        this.after('headerContentChange', function(e){
-            var h = (this.get('closeButton'))?this.get(BASE).one('.'+CSS.HEADER):false;
-            if (h && !h.one('.closebutton')) {
-                var c = C('<div class="closebutton"></div>');
-                c.on('click', this.hide, this);
-                h.append(c);
-            }
-        }, this);
         this.render();
         this.show();
     },
     visibilityChanged : function(e) {
         switch (e.attrName) {
             case 'visible':
-                if (this.get(LIGHTBOX)) {
-                    var l = this.get(NODELIGHTBOX);
-                    if (!e.prevVal && e.newVal) {
-                        l.setStyle('height',l.get('docHeight')+'px').removeClass(CSS.HIDDEN);
-                    } else if (e.prevVal && !e.newVal) {
-                        l.addClass(CSS.HIDDEN);
-                    }
-                }
+                this.get('maskNode').addClass(CSS.LIGHTBOX);
                 if (this.get('center') && !e.prevVal && e.newVal) {
                     this.centerDialogue();
                 }
@@ -96,9 +98,6 @@ Y.extend(DIALOGUE, Y.Overlay, {
         notificationBase : {
 
         },
-        nodeLightbox : {
-            value : null
-        },
         lightbox : {
             validator : Y.Lang.isBoolean,
             value : true
@@ -116,6 +115,9 @@ Y.extend(DIALOGUE, Y.Overlay, {
 
 var ALERT = function(config) {
     config.closeButton = false;
+    if (config.lightbox !== false) {
+        config.lightbox = true;
+    }
     ALERT.superclass.constructor.apply(this, [config]);
 };
 Y.extend(ALERT, DIALOGUE, {
@@ -166,6 +168,9 @@ Y.extend(ALERT, DIALOGUE, {
 });
 
 var CONFIRM = function(config) {
+    if (config.lightbox !== false) {
+        config.lightbox = true;
+    }
     CONFIRM.superclass.constructor.apply(this, [config]);
 };
 Y.extend(CONFIRM, DIALOGUE, {
@@ -372,4 +377,4 @@ M.core.confirm = CONFIRM;
 M.core.exception = EXCEPTION;
 M.core.ajaxException = AJAXEXCEPTION;
 
-}, '@VERSION@', {requires:['base','node','overlay','event-key', 'moodle-enrol-notification-skin']});
+}, '@VERSION@', {requires:['base','node','panel','event-key', 'moodle-enrol-notification-skin']});
