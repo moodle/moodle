@@ -373,7 +373,8 @@ class grade_edit_tree {
 
         if ((($aggcoef == 'aggregationcoefweight' || $aggcoef == 'aggregationcoef') && $type == 'weight') ||
             ($aggcoef == 'aggregationcoefextraweight' && $type == 'extra')) {
-            return '<input type="text" size="6" id="aggregationcoef_'.$item->id.'" name="aggregationcoef_'.$item->id.'"
+            return '<label class="accesshide" for="aggregationcoef_'.$item->id.'">'.get_string('extracreditvalue', 'grades', $item->itemname).'</label>'.
+                '<input type="text" size="6" id="aggregationcoef_'.$item->id.'" name="aggregationcoef_'.$item->id.'"
                 value="'.grade_edit_tree::format_number($item->aggregationcoef).'" />';
         } elseif ($aggcoef == 'aggregationcoefextrasum' && $type == 'extra') {
             $checked = ($item->aggregationcoef > 0) ? 'checked="checked"' : '';
@@ -811,7 +812,8 @@ class grade_edit_tree_column_range extends grade_edit_tree_column {
         } elseif ($item->is_external_item()) {
             $grademax = format_float($item->grademax, $item->get_decimals());
         } else {
-            $grademax = '<input type="text" size="6" id="grademax'.$item->id.'" name="grademax_'.$item->id.'" value="'.format_float($item->grademax, $item->get_decimals()).'" />';
+            $grademax = '<label class="accesshide" for="grademax'.$item->id.'">'.get_string('grademax', 'grades').'</label>';
+            $grademax .= '<input type="text" size="6" id="grademax'.$item->id.'" name="grademax_'.$item->id.'" value="'.format_float($item->grademax, $item->get_decimals()).'" />';
         }
 
         $itemcell = clone($this->itemcell);
@@ -964,7 +966,8 @@ class grade_edit_tree_column_droplow extends grade_edit_tree_column_category {
     }
 
     public function get_category_cell($category, $levelclass, $params) {
-        $droplow = '<input type="text" size="3" id="droplow_'.$category->id.'" name="droplow_'.$category->id.'" value="'.$category->droplow.'" />';
+        $droplow = '<label class="accesshide" for="droplow_'.$category->id.'">'.get_string('droplowestvalue', 'grades').'</label>';
+        $droplow .= '<input type="text" size="3" id="droplow_'.$category->id.'" name="droplow_'.$category->id.'" value="'.$category->droplow.'" />';
 
         if ($this->forced) {
             $droplow = $category->droplow;
@@ -997,7 +1000,8 @@ class grade_edit_tree_column_keephigh extends grade_edit_tree_column_category {
     }
 
     public function get_category_cell($category, $levelclass, $params) {
-        $keephigh = '<input type="text" size="3" id="keephigh_'.$category->id.'" name="keephigh_'.$category->id.'" value="'.$category->keephigh.'" />';
+        $keephigh = '<label class="accesshide" for="keephigh_'.$category->id.'">'.get_string('keephigh', 'grades').'</label>';
+        $keephigh .= '<input type="text" size="3" id="keephigh_'.$category->id.'" name="keephigh_'.$category->id.'" value="'.$category->keephigh.'" />';
 
         if ($this->forced) {
             $keephigh = $category->keephigh;
@@ -1044,8 +1048,8 @@ class grade_edit_tree_column_multfactor extends grade_edit_tree_column {
             $itemcell->text = '&nbsp;';
             return $itemcell;
         }
-
-        $multfactor = '<input type="text" size="4" id="multfactor'.$item->id.'" name="multfactor_'.$item->id.'" value="'.grade_edit_tree::format_number($item->multfactor).'" />';
+        $multfactor = '<label class="accesshide" for="multfactor'.$item->id.'">'.get_string('multfactorvalue', 'grades', $item->itemname).'</label>';
+        $multfactor .= '<input type="text" size="4" id="multfactor'.$item->id.'" name="multfactor_'.$item->id.'" value="'.grade_edit_tree::format_number($item->multfactor).'" />';
 
         $itemcell->text = $multfactor;
         return $itemcell;
@@ -1087,7 +1091,8 @@ class grade_edit_tree_column_plusfactor extends grade_edit_tree_column {
             return $itemcell;
         }
 
-        $plusfactor = '<input type="text" size="4" id="plusfactor_'.$item->id.'" name="plusfactor_'.$item->id.'" value="'.grade_edit_tree::format_number($item->plusfactor).'" />';
+        $plusfactor = '<label class="accesshide" for="plusfactor_'. $item->id . '">'.get_string('plusfactorvalue', 'grades', $item->itemname).'</label>';
+        $plusfactor .= '<input type="text" size="4" id="plusfactor_'.$item->id.'" name="plusfactor_'.$item->id.'" value="'.grade_edit_tree::format_number($item->plusfactor).'" />';
 
         $itemcell->text = $plusfactor;
         return $itemcell;

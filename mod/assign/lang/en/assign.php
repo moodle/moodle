@@ -299,6 +299,7 @@ $string['updatetable'] = 'Save and update table';
 $string['upgradenotimplemented'] = 'Upgrade not implemented in plugin ({$a->type} {$a->subtype})';
 $string['userextensiondate'] = 'Extension granted until: {$a}';
 $string['userswhoneedtosubmit'] = 'Users who need to submit: {$a}';
+$string['usergrade'] = 'User grade';
 $string['viewfeedback'] = 'View feedback';
 $string['viewfeedbackforuser'] = 'View feedback for user: {$a}';
 $string['viewfullgradingpage'] = 'Open the full grading page to provide feedback';
