@@ -91,6 +91,7 @@ if ($chapter) {
     </head>
     <body>
     <a name="top"></a>
+    <h1 class="book_title"><?php echo format_string($book->name, true, array('context'=>$context)) ?></h1>
     <div class="chapter">
     <?php
 
@@ -98,11 +99,11 @@ if ($chapter) {
     if (!$book->customtitles) {
         if (!$chapter->subchapter) {
             $currtitle = book_get_chapter_title($chapter->id, $chapters, $book, $context);
-            echo '<p class="book_chapter_title">'.$currtitle.'</p>';
+            echo '<h2 class="book_chapter_title">'.$currtitle.'</h2>';
         } else {
             $currtitle = book_get_chapter_title($chapters[$chapter->id]->parent, $chapters, $book, $context);
             $currsubtitle = book_get_chapter_title($chapter->id, $chapters, $book, $context);
-            echo '<p class="book_chapter_title">'.$currtitle.'<br />'.$currsubtitle.'</p>';
+            echo '<h2 class="book_chapter_title">'.$currtitle.'</h2><h3 class="book_chapter_title">'.$currsubtitle.'</h3>';
         }
     }
 
@@ -128,7 +129,7 @@ if ($chapter) {
     </head>
     <body>
     <a name="top"></a>
-    <p class="book_title"><?php echo format_string($book->name, true, array('context'=>$context)) ?></p>
+    <h1 class="book_title"><?php echo format_string($book->name, true, array('context'=>$context)) ?></h1>
     <p class="book_summary"><?php echo format_text($book->intro, $book->introformat, array('noclean'=>true, 'context'=>$context)) ?></p>
     <div class="book_info"><table>
     <tr>
@@ -162,7 +163,11 @@ if ($chapter) {
         }
         echo '<div class="book_chapter"><a name="ch'.$ch->id.'"></a>';
         if (!$book->customtitles) {
-            echo '<p class="book_chapter_title">'.$titles[$ch->id].'</p>';
+            if (!$chapter->subchapter) {
+                echo '<h2 class="book_chapter_title">'.$titles[$ch->id].'</h2>';
+            } else {
+                echo '<h3 class="book_chapter_title">'.$titles[$ch->id].'</h3>';
+            }
         }
         $content = str_replace($link1, '#ch', $chapter->content);
         $content = str_replace($link2, '#top', $content);

@@ -60,11 +60,7 @@ function booktool_print_get_toc($chapters, $book, $cm) {
 
     $toc .= html_writer::tag('a', '', array('name' => 'toc')); // Representation of toc (HTML).
 
-    if ($book->customtitles) {
-        $toc .= html_writer::tag('h1', get_string('toc', 'mod_book'));
-    } else {
-        $toc .= html_writer::tag('p', get_string('toc', 'mod_book'), array('class' => 'book_chapter_title'));
-    }
+    $toc .= html_writer::tag('h2', get_string('toc', 'mod_book'), array('class' => 'book_chapter_title'));
     $toc .= html_writer::start_tag('ul');
     foreach ($chapters as $ch) {
         if (!$ch->hidden) {
