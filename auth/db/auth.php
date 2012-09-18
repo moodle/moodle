@@ -346,7 +346,7 @@ class auth_plugin_db extends auth_plugin_base {
             if ($verbose) {
                 mtrace(get_string('auth_dbuserstoadd','auth_db',count($add_users)));
             }
-            $transaction = $DB->start_delegated_transaction();
+            // Do not use transactions around this foreach, we want to skip problematic users, not revert everything.
             foreach($add_users as $user) {
                 $username = $user;
                 $user = $this->get_userinfo_asobj($user);
@@ -372,9 +372,16 @@ class auth_plugin_db extends auth_plugin_base {
                 } else {
                     $user->timecreated = time();
                     $user->timemodified = $user->timecreated;
-                    $id = $DB->insert_record ('user', $user); // it is truly a new user
-                    if ($verbose) {
-                        mtrace("\t".get_string('auth_dbinsertuser', 'auth_db', array('name'=>$user->username, 'id'=>$id)));
+                    try {
+                        $id = $DB->insert_record('user', $user); // it is truly a new user
+                        if ($verbose) {
+                            mtrace("\t".get_string('auth_dbinsertuser', 'auth_db', array('name'=>$user->username, 'id'=>$id)));
+                        }
+                    } catch (moodle_exception $e) {
+                        if ($verbose) {
+                            mtrace("\t".get_string('auth_dbinsertusererror', 'auth_db', $user->username));
+                        }
+                        continue;
                     }
                     // if relevant, tag for password generation
                     if ($this->is_internal()) {
@@ -383,7 +390,6 @@ class auth_plugin_db extends auth_plugin_base {
                     }
                 }
             }
-            $transaction->allow_commit();
             unset($add_users); // free mem
         }
         return 0;
