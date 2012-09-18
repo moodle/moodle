@@ -60,7 +60,7 @@ class cache_phpunit_tests extends advanced_testcase {
         $this->assertTrue(cache_config_phpunittest::config_file_exists());
 
         $stores = $instance->get_all_stores();
-        $this->assertCount(4, $stores);
+        $this->assertCount(3, $stores);
         foreach ($stores as $name => $store) {
             // Check its an array.
             $this->assertInternalType('array', $store);
@@ -241,6 +241,56 @@ class cache_phpunit_tests extends advanced_testcase {
 
         $this->assertFalse($cache->get('key1'));
         $this->assertFalse($cache->get('key2'));
+
+        // Quick reference test.
+        $obj = new stdClass;
+        $obj->key = 'value';
+        $ref =& $obj;
+        $this->assertTrue($cache->set('obj', $obj));
+
+        $obj->key = 'eulav';
+        $var = $cache->get('obj');
+        $this->assertInstanceOf('stdClass', $var);
+        $this->assertEquals('value', $var->key);
+
+        $ref->key = 'eulav';
+        $var = $cache->get('obj');
+        $this->assertInstanceOf('stdClass', $var);
+        $this->assertEquals('value', $var->key);
+
+        $this->assertTrue($cache->delete('obj'));
+
+        // Deep reference test.
+        $obj1 = new stdClass;
+        $obj1->key = 'value';
+        $obj2 = new stdClass;
+        $obj2->key = 'test';
+        $obj3 = new stdClass;
+        $obj3->key = 'pork';
+        $obj1->subobj =& $obj2;
+        $obj2->subobj =& $obj3;
+        $this->assertTrue($cache->set('obj', $obj1));
+
+        $obj1->key = 'eulav';
+        $obj2->key = 'tset';
+        $obj3->key = 'krop';
+        $var = $cache->get('obj');
+        $this->assertInstanceOf('stdClass', $var);
+        $this->assertEquals('value', $var->key);
+        $this->assertInstanceOf('stdClass', $var->subobj);
+        $this->assertEquals('test', $var->subobj->key);
+        $this->assertInstanceOf('stdClass', $var->subobj->subobj);
+        $this->assertEquals('pork', $var->subobj->subobj->key);
+        $this->assertTrue($cache->delete('obj'));
+
+        // Death reference test... basicaly we don't want this to die.
+        $obj = new stdClass;
+        $obj->key = 'value';
+        $obj->self =& $obj;
+        $this->assertTrue($cache->set('obj', $obj));
+        $var = $cache->get('obj');
+        $this->assertInstanceOf('stdClass', $var);
+        $this->assertEquals('value', $var->key);
     }
 
     /**

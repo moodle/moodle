@@ -459,6 +459,12 @@ class cache implements cache_loader, cache_is_key_aware {
         }
         if (is_object($data) && $data instanceof cacheable_object) {
             $data = new cache_cached_object($data);
+        } else if (!is_scalar($data)) {
+            // If data is an object it will be a reference.
+            // If data is an array if may contain references.
+            // We want to break references so that the cache cannot be modified outside of itself.
+            // Call the function to unreference it (in the best way possible).
+            $data = $this->unref($data);
         }
         if ($this->has_a_ttl() && !$this->store_supports_native_ttl()) {
             $data = new cache_ttl_wrapper($data, $this->definition->get_ttl());
@@ -468,6 +474,70 @@ class cache implements cache_loader, cache_is_key_aware {
             $this->set_in_persist_cache($parsedkey, $data);
         }
         return $this->store->set($parsedkey, $data);
+    }
+
+    /**
+     * Removes references where required.
+     *
+     * @param stdClass|array $data
+     */
+    protected function unref($data) {
+        // Check if it requires serialisation in order to produce a reference free copy.
+        if ($this->requires_serialisation($data)) {
+            // Damn, its going to have to be serialise.
+            $data = serialize($data);
+            // We unserialise immediately so that we don't have to do it every time on get.
+            $data = unserialize($data);
+        } else if (!is_scalar($data)) {
+            // Its safe to clone, lets do it, its going to beat the pants of serialisation.
+            $data = $this->deep_clone($data);
+        }
+        return $data;
+    }
+
+    /**
+     * Checks to see if a var requires serialisation.
+     *
+     * @param mixed $value The value to check.
+     * @param int $depth Used to ensure we don't enter an endless loop (think recursion).
+     * @return bool Returns true if the value is going to require serialisation in order to ensure a reference free copy
+     *      or false if its safe to clone.
+     */
+    protected function requires_serialisation($value, $depth = 1) {
+        if (is_scalar($value)) {
+            return false;
+        } else if (is_array($value) || $value instanceof stdClass || $value instanceof Traversable) {
+            if ($depth > 5) {
+                // Skrew it, mega-deep object, developer you suck, we're just going to serialise.
+                return true;
+            }
+            foreach ($value as $key => $subvalue) {
+                if ($this->requires_serialisation($subvalue, $depth++)) {
+                    return true;
+                }
+            }
+        }
+        // Its not scalar, array, or stdClass so we'll need to serialise.
+        return true;
+    }
+
+    /**
+     * Creates a reference free clone of the given value.
+     *
+     * @param mixed $value
+     * @return mixed
+     */
+    protected function deep_clone($value) {
+        if (is_object($value)) {
+            // Objects must be cloned to begin with.
+            $value = clone $value;
+        }
+        if (is_array($value) || is_object($value)) {
+            foreach ($value as $key => $subvalue) {
+                $value[$key] = $this->deep_clone($subvalue);
+            }
+        }
+        return $value;
     }
 
     /**
