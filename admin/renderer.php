@@ -278,22 +278,30 @@ class core_admin_renderer extends plugin_renderer_base {
     /**
      * Display the plugin management page (admin/plugins.php).
      *
+     * The filtering options array may contain following items:
+     *  bool contribonly - show only contributed extensions
+     *  bool updatesonly - show only plugins with an available update
+     *
      * @param plugin_manager $pluginman
      * @param available_update_checker $checker
+     * @param array $options filtering options
      * @return string HTML to output.
      */
-    public function plugin_management_page(plugin_manager $pluginman, available_update_checker $checker) {
+    public function plugin_management_page(plugin_manager $pluginman, available_update_checker $checker, array $options = array()) {
         global $CFG;
 
         $output = '';
 
         $output .= $this->header();
         $output .= $this->heading(get_string('pluginsoverview', 'core_admin'));
-        $output .= $this->plugins_overview_panel($pluginman);
+        $output .= $this->plugins_overview_panel($pluginman, $options);
 
         if (empty($CFG->disableupdatenotifications)) {
             $output .= $this->container_start('checkforupdates');
-            $output .= $this->single_button(new moodle_url($this->page->url, array('fetchremote' => 1)), get_string('checkforupdates', 'core_plugin'));
+            $output .= $this->single_button(
+                new moodle_url($this->page->url, array_merge($options, array('fetchremote' => 1))),
+                get_string('checkforupdates', 'core_plugin')
+            );
             if ($timefetched = $checker->get_last_timefetched()) {
                 $output .= $this->container(get_string('checkforupdateslast', 'core_plugin',
                     userdate($timefetched, get_string('strftimedatetime', 'core_langconfig'))));
@@ -301,7 +309,7 @@ class core_admin_renderer extends plugin_renderer_base {
             $output .= $this->container_end();
         }
 
-        $output .= $this->box($this->plugins_control_panel($pluginman), 'generalbox');
+        $output .= $this->box($this->plugins_control_panel($pluginman, $options), 'generalbox');
         $output .= $this->footer();
 
         return $output;
@@ -870,9 +878,10 @@ class core_admin_renderer extends plugin_renderer_base {
      * Prints an overview about the plugins - number of installed, number of extensions etc.
      *
      * @param plugin_manager $pluginman provides information about the plugins
+     * @param array $options filtering options
      * @return string as usually
      */
-    public function plugins_overview_panel(plugin_manager $pluginman) {
+    public function plugins_overview_panel(plugin_manager $pluginman, array $options = array()) {
         global $CFG;
 
         $plugininfo = $pluginman->get_plugins();
@@ -898,14 +907,49 @@ class core_admin_renderer extends plugin_renderer_base {
         }
 
         $info = array();
+        $filter = array();
+        $somefilteractive = false;
         $info[] = html_writer::tag('span', get_string('numtotal', 'core_plugin', $numtotal), array('class' => 'info total'));
         $info[] = html_writer::tag('span', get_string('numdisabled', 'core_plugin', $numdisabled), array('class' => 'info disabled'));
         $info[] = html_writer::tag('span', get_string('numextension', 'core_plugin', $numextension), array('class' => 'info extension'));
+        if ($numextension > 0) {
+            if (empty($options['contribonly'])) {
+                $filter[] = html_writer::link(
+                    new moodle_url($this->page->url, array('contribonly' => 1)),
+                    get_string('filtercontribonly', 'core_plugin'),
+                    array('class' => 'filter-item show-contribonly')
+                );
+            } else {
+                $filter[] = html_writer::tag('span', get_string('filtercontribonlyactive', 'core_plugin'),
+                    array('class' => 'filter-item active show-contribonly'));
+                $somefilteractive = true;
+            }
+        }
         if ($numupdatable > 0) {
             $info[] = html_writer::tag('span', get_string('numupdatable', 'core_plugin', $numupdatable), array('class' => 'info updatable'));
+            if (empty($options['updatesonly'])) {
+                $filter[] = html_writer::link(
+                    new moodle_url($this->page->url, array('updatesonly' => 1)),
+                    get_string('filterupdatesonly', 'core_plugin'),
+                    array('class' => 'filter-item show-updatesonly')
+                );
+            } else {
+                $filter[] = html_writer::tag('span', get_string('filterupdatesonlyactive', 'core_plugin'),
+                    array('class' => 'filter-item active show-updatesonly'));
+                $somefilteractive = true;
+            }
+        }
+        if ($somefilteractive) {
+            $filter[] = html_writer::link($this->page->url, get_string('filterall', 'core_plugin'), array('class' => 'filter-item show-all'));
         }
 
-        return $this->output->box(implode(html_writer::tag('span', ' ', array('class' => 'separator')), $info), '', 'plugins-overview-panel');
+        $output  = $this->output->box(implode(html_writer::tag('span', ' ', array('class' => 'separator')), $info), '', 'plugins-overview-panel');
+
+        if (!empty($filter)) {
+            $output .= $this->output->box(implode(html_writer::tag('span', ' ', array('class' => 'separator')), $filter), '', 'plugins-overview-filter');
+        }
+
+        return $output;
     }
 
     /**
@@ -914,12 +958,42 @@ class core_admin_renderer extends plugin_renderer_base {
      * This default implementation renders all plugins into one big table.
      *
      * @param plugin_manager $pluginman provides information about the plugins.
+     * @param array $options filtering options
      * @return string HTML code
      */
-    public function plugins_control_panel(plugin_manager $pluginman) {
+    public function plugins_control_panel(plugin_manager $pluginman, array $options = array()) {
         global $CFG;
 
         $plugininfo = $pluginman->get_plugins();
+
+        // Filter the list of plugins according the options.
+        if (!empty($options['updatesonly'])) {
+            $updateable = array();
+            foreach ($plugininfo as $plugintype => $pluginnames) {
+                foreach ($pluginnames as $pluginname => $pluginfo) {
+                    if (!empty($pluginfo->availableupdates)) {
+                        foreach ($pluginfo->availableupdates as $pluginavailableupdate) {
+                            if ($pluginavailableupdate->version > $pluginfo->versiondisk) {
+                                $updateable[$plugintype][$pluginname] = $pluginfo;
+                            }
+                        }
+                    }
+                }
+            }
+            $plugininfo = $updateable;
+        }
+
+        if (!empty($options['contribonly'])) {
+            $contribs = array();
+            foreach ($plugininfo as $plugintype => $pluginnames) {
+                foreach ($pluginnames as $pluginname => $pluginfo) {
+                    if (!$pluginfo->is_standard()) {
+                        $contribs[$plugintype][$pluginname] = $pluginfo;
+                    }
+                }
+            }
+            $plugininfo = $contribs;
+        }
 
         if (empty($plugininfo)) {
             return '';
