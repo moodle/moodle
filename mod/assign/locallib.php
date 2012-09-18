@@ -2623,20 +2623,28 @@ class assign {
         }
         $currentgrades->close();
 
+        $adminconfig = $this->get_admin_config();
+        $gradebookplugin = $adminconfig->feedback_plugin_for_gradebook;
+
         // ok - ready to process the updates
         foreach ($modifiedusers as $userid => $modified) {
             $grade = $this->get_user_grade($userid, true);
             $grade->grade= grade_floatval(unformat_float($modified->grade));
             $grade->grader= $USER->id;
 
-            $this->update_grade($grade);
-
             // save plugins data
             foreach ($this->feedbackplugins as $plugin) {
                 if ($plugin->is_visible() && $plugin->is_enabled() && $plugin->supports_quickgrading()) {
                     $plugin->save_quickgrading_changes($userid, $grade);
+                    if (('assignfeedback_' . $plugin->get_type()) == $gradebookplugin) {
+                        // This is the feedback plugin chose to push comments to the gradebook.
+                        $grade->feedbacktext = $plugin->text_for_gradebook($grade);
+                        $grade->feedbackformat = $plugin->format_for_gradebook($grade);
+                    }
                 }
             }
+
+            $this->update_grade($grade);
 
             // save outcomes
             if ($CFG->enableoutcomes) {
