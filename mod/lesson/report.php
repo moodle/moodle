@@ -94,7 +94,7 @@ if (! $times = $DB->get_records('lesson_timer', array('lessonid' => $lesson->id)
 }
 
 if ($nothingtodisplay) {
-    echo $lessonoutput->header($lesson, $cm, $action);
+    echo $lessonoutput->header($lesson, $cm, $action, false, null, get_string('nolessonattempts', 'lesson'));
     echo $OUTPUT->notification(get_string('nolessonattempts', 'lesson'));
     echo $OUTPUT->footer();
     exit();
@@ -160,7 +160,7 @@ if ($action === 'delete') {
     /**************************************************************************
     this action is for default view and overview view
     **************************************************************************/
-    echo $lessonoutput->header($lesson, $cm, $action);
+    echo $lessonoutput->header($lesson, $cm, $action, false, null, get_string('overview', 'lesson'));
 
     $course_context = context_course::instance($course->id);
     if (has_capability('gradereport/grader:view', $course_context) && has_capability('moodle/grade:viewall', $course_context)) {
@@ -376,7 +376,7 @@ if ($action === 'delete') {
     4.  Print out the object which contains all the try info
 
 **************************************************************************/
-    echo $lessonoutput->header($lesson, $cm, $action);
+    echo $lessonoutput->header($lesson, $cm, $actionfalse, null, get_string('detailedstats', 'lesson'));
 
     $course_context = context_course::instance($course->id);
     if (has_capability('gradereport/grader:view', $course_context) && has_capability('moodle/grade:viewall', $course_context)) {
@@ -440,7 +440,7 @@ if ($action === 'delete') {
         $page = $lessonpages[$pageid];
         $answerpage = new stdClass;
         $data ='';
-        
+
         $answerdata = new stdClass;
         // Set some defaults for the answer data.
         $answerdata->score = NULL;
@@ -461,7 +461,7 @@ if ($action === 'delete') {
         if (empty($userid)) {
             // there is no userid, so set these vars and display stats.
             $answerpage->grayout = 0;
-            $useranswer = NULL;    
+            $useranswer = NULL;
         } elseif ($useranswers = $DB->get_records("lesson_attempts",array("lessonid"=>$lesson->id, "userid"=>$userid, "retry"=>$try,"pageid"=>$page->id), "timeseen")) {
             // get the user's answer for this page
             // need to find the right one

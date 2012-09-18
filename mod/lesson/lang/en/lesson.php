@@ -206,6 +206,7 @@ $string['jump'] = 'Jump';
 $string['jumps'] = 'Jumps';
 $string['jumps_help'] = 'Each answer (for questions) or description (for content pages) has a corresponding jump. The jump can be relative, such as this page or next page, or absolute, specifying any one of the pages in the lesson.';
 $string['jumpsto'] = 'Jumps to <em>{$a}</em>';
+$string['leftduringtimedsession'] = 'You have left during a timed lesson.';
 $string['leftduringtimed'] = 'You have left during a timed lesson.<br />Please click on Continue to restart the lesson.';
 $string['leftduringtimednoretake'] = 'You have left during a timed lesson and you are<br />not allowed to retake or continue the lesson.';
 $string['lesson:addinstance'] = 'Add a new lesson';

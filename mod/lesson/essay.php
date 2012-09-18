@@ -303,7 +303,7 @@ switch ($mode) {
 add_to_log($course->id, 'lesson', 'view grade', "essay.php?id=$cm->id", get_string('manualgrading', 'lesson'), $cm->id);
 
 $lessonoutput = $PAGE->get_renderer('mod_lesson');
-echo $lessonoutput->header($lesson, $cm, 'essay');
+echo $lessonoutput->header($lesson, $cm, 'essay', false, null, get_string('manualgrading', 'lesson'));
 
 switch ($mode) {
     case 'display':
