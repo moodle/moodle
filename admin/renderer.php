@@ -1065,12 +1065,10 @@ class core_admin_renderer extends plugin_renderer_base {
                     $availability = new html_table_cell('');
                 } else if ($isenabled) {
                     $row->attributes['class'] .= ' enabled';
-                    $icon = $this->output->pix_icon('i/hide', get_string('pluginenabled', 'core_plugin'));
-                    $availability = new html_table_cell($icon . ' ' . get_string('pluginenabled', 'core_plugin'));
+                    $availability = new html_table_cell(get_string('pluginenabled', 'core_plugin'));
                 } else {
                     $row->attributes['class'] .= ' disabled';
-                    $icon = $this->output->pix_icon('i/show', get_string('plugindisabled', 'core_plugin'));
-                    $availability = new html_table_cell($icon . ' ' . get_string('plugindisabled', 'core_plugin'));
+                    $availability = new html_table_cell(get_string('plugindisabled', 'core_plugin'));
                 }
 
                 $actions = array();
