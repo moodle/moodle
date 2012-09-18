@@ -319,18 +319,18 @@ class assign {
             $this->process_batch_grading_operation();
             $action = 'grading';
          } else if ($action == 'submitgrade') {
-            if (optional_param('saveandshownext', null, PARAM_ALPHA)) {
+            if (optional_param('saveandshownext', null, PARAM_RAW)) {
                 //save and show next
                 $action = 'grade';
                 if ($this->process_save_grade($mform)) {
                     $action = 'nextgrade';
                 }
-            } else if (optional_param('nosaveandprevious', null, PARAM_ALPHA)) {
+            } else if (optional_param('nosaveandprevious', null, PARAM_RAW)) {
                 $action = 'previousgrade';
-            } else if (optional_param('nosaveandnext', null, PARAM_ALPHA)) {
+            } else if (optional_param('nosaveandnext', null, PARAM_RAW)) {
                 //show next button
                 $action = 'nextgrade';
-            } else if (optional_param('savegrade', null, PARAM_ALPHA)) {
+            } else if (optional_param('savegrade', null, PARAM_RAW)) {
                 //save changes button
                 $action = 'grade';
                 if ($this->process_save_grade($mform)) {
