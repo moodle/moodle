@@ -141,7 +141,8 @@ class cache_config {
                 debugging('Duplicate cache lock detected. This should never happen.', DEBUG_DEVELOPER);
                 continue;
             }
-            if ($defaultlock === null || !empty($this->configlocks['default'])) {
+            $conf['default'] = (!empty($conf['default']));
+            if ($defaultlock === null || $conf['default']) {
                 $defaultlock = $name;
             }
             $this->configlocks[$name] = $conf;
@@ -175,13 +176,9 @@ class cache_config {
             if (!array_key_exists('configuration', $store) || !is_array($store['configuration'])) {
                 $store['configuration'] = array();
             }
-            if (!empty($store['useforlocking'])) {
-                // The site has a specified cache for locking.
-                unset($this->configstores['default_locking']);
-            }
             $store['class'] = $class;
             $store['default'] = !empty($store['default']);
-            if (!array_key_exists('lock', $store) || !array_key_exists($this->configlocks, $store['lock'])) {
+            if (!array_key_exists('lock', $store) || !array_key_exists($store['lock'], $this->configlocks)) {
                 $store['lock'] = $defaultlock;
             }
 
@@ -434,7 +431,7 @@ class cache_config {
 
     /**
      * Returns an array of the configured locks.
-     * @return array
+     * @return array Array of name => config
      */
     public function get_locks() {
         return $this->configlocks;

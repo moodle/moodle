@@ -102,21 +102,15 @@ class cache_phpunit_tests extends advanced_testcase {
         }
 
         $definitions = $instance->get_definitions();
-        // The default locking definition is required for the cache API and must be there.
-        $this->assertArrayHasKey('core/locking', $definitions);
         // The event invalidation definition is required for the cache API and must be there.
         $this->assertArrayHasKey('core/eventinvalidation', $definitions);
 
         $definitionmappings = $instance->get_definition_mappings();
-        // There should be a mapping for default locking to default_locking
         $found = false;
         foreach ($definitionmappings as $mapping) {
             // Required attributes = definition + store
             $this->assertArrayHasKey('definition', $mapping);
             $this->assertArrayHasKey('store', $mapping);
-            if ($mapping['store'] == 'default_locking' && $mapping['definition'] == 'core/locking') {
-                $found = true;
-            }
         }
         $this->assertTrue($found, 'The expected mapping for default locking definition to the default locking store was not found.');
     }

@@ -282,4 +282,49 @@ class core_cache_renderer extends plugin_renderer_base {
         $html .= html_writer::end_tag('div');
         return $html;
     }
+
+    /**
+     * Display basic information about lock instances.
+     *
+     * @todo Add some actions so that people can configure lock instances.
+     *
+     * @param array $locks
+     * @return string
+     */
+    public function lock_summaries(array $locks) {
+        $table = new html_table();
+        $table->colclasses = array(
+            'name',
+            'default',
+            'uses',
+            // 'actions'
+        );
+        $table->rowclasses = array(
+            'lock_name',
+            'lock_default',
+            'lock_uses',
+            // 'lock_actions',
+        );
+        $table->head = array(
+            get_string('lockname', 'cache'),
+            get_string('lockdefault', 'cache'),
+            get_string('lockuses', 'cache'),
+            // get_string('actions', 'cache')
+        );
+        $table->data = array();
+        $tick = $this->output->pix_icon('i/tick_green_big', '');
+        foreach ($locks as $lock) {
+            $table->data[] = new html_table_row(array(
+                new html_table_cell($lock['name']),
+                new html_table_cell($lock['default'] ? $tick : ''),
+                new html_table_cell($lock['uses']),
+            ));
+        }
+
+        $html = html_writer::start_tag('div', array('id' => 'core-cache-lock-summary'));
+        $html .= $this->output->heading(get_string('locksummary', 'cache'), 3);
+        $html .= html_writer::table($table);
+        $html .= html_writer::end_tag('div');
+        return $html;
+    }
 }

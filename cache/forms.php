@@ -46,6 +46,7 @@ class cachestore_addinstance_form extends moodleform {
         $form = $this->_form;
         $store = $this->_customdata['store'];
         $plugin = $this->_customdata['plugin'];
+        $locks = $this->_customdata['locks'];
 
         $form->addElement('hidden', 'plugin', $plugin);
         $form->addElement('hidden', 'editing', !empty($this->_customdata['store']));
@@ -60,6 +61,14 @@ class cachestore_addinstance_form extends moodleform {
             $form->addElement('static', 'name-value', get_string('storename', 'cache'), $store);
         }
 
+        if (is_array($locks)) {
+            $form->addElement('select', 'lock', get_string('lockmethod', 'cache'), $locks);
+            $form->addHelpButton('lock', 'lockmethod', 'cache');
+            $form->setType('lock', PARAM_TEXT);
+        } else {
+            $form->addElement('hidden', 'lock', '');
+            $form->addElement('static', 'lock-value', get_string('lockmethod', 'cache'), '<em>'.get_string('nativelocking', 'cache').'</em>');
+        }
 
         if (method_exists($this, 'configuration_definition')) {
             $form->addElement('header', 'storeconfiguration', get_string('storeconfiguration', 'cache'));

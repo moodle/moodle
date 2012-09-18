@@ -137,10 +137,12 @@ class cache_config_writer extends cache_config {
             'configuration' => $configuration,
             'features' => $class::get_supported_features($configuration),
             'modes' => $class::get_supported_modes($configuration),
-            'mappingsonly' => !empty($configuration['mappingsonly']),
-            'useforlocking' => !empty($configuration['useforlocking'])
-
+            'mappingsonly' => !empty($configuration['mappingsonly'])
         );
+        if (array_key_exists('lock', $configuration)) {
+            $this->configstores[$name]['lock'] = $configuration['lock'];
+            unset($this->configstores[$name]['configuration']['lock']);
+        }
         $this->config_save();
         return true;
     }
@@ -228,9 +230,12 @@ class cache_config_writer extends cache_config {
             'configuration' => $configuration,
             'features' => $class::get_supported_features($configuration),
             'modes' => $class::get_supported_modes($configuration),
-            'mappingsonly' => !empty($configuration['mappingsonly']),
-            'useforlocking' => !empty($configuration['useforlocking'])
+            'mappingsonly' => !empty($configuration['mappingsonly'])
         );
+        if (array_key_exists('lock', $configuration)) {
+            $this->configstores[$name]['lock'] = $configuration['lock'];
+            unset($this->configstores[$name]['configuration']['lock']);
+        }
         $this->config_save();
         return true;
     }
@@ -285,17 +290,6 @@ class cache_config_writer extends cache_config {
 
         $writer = new self;
         $writer->configstores = array(
-            'default_locking' => array(
-                'name' => 'default_locking',
-                'plugin' => 'file',
-                'configuration' => array(),
-                'features' => cachestore_file::get_supported_features(),
-                'modes' => cache_store::MODE_APPLICATION,
-                'useforlocking' => true,
-                'mappingsonly' => true,
-                'default' => true,
-                //'class' => 'cachestore_file'
-            ),
             'default_application' => array(
                 'name' => 'default_application',
                 'plugin' => 'file',
@@ -342,18 +336,12 @@ class cache_config_writer extends cache_config {
                 'sort' => -1
             )
         );
-        $writer->configdefinitionmappings = array(
-            array(
-                'store' => 'default_locking',
-                'definition' => 'core/locking',
-                'sort' => -1
-            )
-        );
         $writer->configlocks = array(
             'default_file_lock' => array(
-                'name' => 'default_file_lock',
+                'name' => 'cachelock_file_default',
                 'type' => 'cachelock_file',
-                'dir' => 'filelocks'
+                'dir' => 'filelocks',
+                'default' => true
             )
         );
         $writer->config_save();
@@ -740,8 +728,33 @@ abstract class cache_administration_helper extends cache_helper {
             }
         }
 
+        $supportsnativelocking = false;
+        if (file_exists($plugindir.'/lib.php')) {
+            require_once($plugindir.'/lib.php');
+            $pluginclass = 'cachestore_'.$plugin;
+            if (class_exists($pluginclass)) {
+                $supportsnativelocking = array_key_exists('cache_is_lockable', class_implements($pluginclass));
+            }
+        }
+
+        if (!$supportsnativelocking) {
+            $config = cache_config::instance();
+            $locks = array();
+            foreach ($config->get_locks() as $lock => $conf) {
+                debug($conf);
+                if (!empty($conf['default'])) {
+                    $name = get_string($lock, 'cache');
+                } else {
+                    $name = $lock;
+                }
+                $locks[$lock] = $name;
+            }
+        } else {
+            $locks = false;
+        }
+
         $url = new moodle_url('/cache/admin.php', array('action' => 'addstore'));
-        return new $class($url, array('plugin' => $plugin, 'store' => null));
+        return new $class($url, array('plugin' => $plugin, 'store' => null, 'locks' => $locks));
     }
 
     /**
@@ -821,9 +834,7 @@ abstract class cache_administration_helper extends cache_helper {
             }
         }
         foreach ($possiblestores as $key => $store) {
-            if ($key === 'default_locking') {
-                unset($possiblestores[$key]);
-            } else if ($store['default']) {
+            if ($store['default']) {
                 unset($possiblestores[$key]);
                 $possiblestores[$key] = $store;
             }
@@ -862,5 +873,35 @@ abstract class cache_administration_helper extends cache_helper {
             }
         }
         return $modemappings;
+    }
+
+    /**
+     * Returns an array summarising the locks available in the system
+     */
+    public static function get_lock_summaries() {
+        $locks = array();
+        $instance = cache_config::instance();
+        $stores = $instance->get_all_stores();
+        foreach ($instance->get_locks() as $lock) {
+            $default = !empty($lock['default']);
+            if ($default) {
+                $name = new lang_string($lock['name'], 'cache');
+            } else {
+                $name = $lock['name'];
+            }
+            $uses = 0;
+            foreach ($stores as $store) {
+                if (!empty($store['lock']) && $store['lock'] === $lock['name']) {
+                    $uses++;
+                }
+            }
+            $lockdata = array(
+                'name' => $name,
+                'default' => $default,
+                'uses' => $uses
+            );
+            $locks[] = $lockdata;
+        }
+        return $locks;
     }
 }

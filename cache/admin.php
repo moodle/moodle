@@ -39,6 +39,7 @@ $stores = cache_administration_helper::get_store_summaries();
 $plugins = cache_administration_helper::get_plugin_summaries();
 $definitions = cache_administration_helper::get_definition_summaries();
 $defaultmodestores = cache_administration_helper::get_default_mode_stores();
+$locks = cache_administration_helper::get_lock_summaries();
 
 $title = new lang_string('cacheadmin', 'cache');
 $mform = null;
@@ -60,6 +61,12 @@ if (!empty($action) && confirm_sesskey()) {
             } else if ($data = $mform->get_data()) {
                 $config = cache_administration_helper::get_store_configuration_from_data($data);
                 $writer = cache_config_writer::instance();
+                unset($config['lock']);
+                foreach ($writer->get_locks() as $lock => $lockconfig) {
+                    if ($lock == $data->lock) {
+                        $config['lock'] = $data->lock;
+                    }
+                }
                 $writer->add_plugin_instance($data->name, $data->plugin, $config);
                 redirect($PAGE->url, get_string('addstoresuccess', 'cache', $plugins[$plugin]['name']), 5);
             }
@@ -74,6 +81,12 @@ if (!empty($action) && confirm_sesskey()) {
             } else if ($data = $mform->get_data()) {
                 $config = cache_administration_helper::get_store_configuration_from_data($data);
                 $writer = cache_config_writer::instance();
+                unset($config['lock']);
+                foreach ($writer->get_locks() as $lock => $lockconfig) {
+                    if ($lock == $data->lock) {
+                        $config['lock'] = $data->lock;
+                    }
+                }
                 $writer->edit_plugin_instance($data->name, $data->plugin, $config);
                 redirect($PAGE->url, get_string('editstoresuccess', 'cache', $plugins[$plugin]['name']), 5);
             }
@@ -172,6 +185,7 @@ if ($mform instanceof moodleform) {
     echo $renderer->plugin_summaries($plugins);
     echo $renderer->store_summariers($stores, $plugins);
     echo $renderer->definition_summaries($definitions, cache_administration_helper::get_definition_actions($context));
+    echo $renderer->lock_summaries($locks);
 
     $applicationstore = join(', ', $defaultmodestores[cache_store::MODE_APPLICATION]);
     $sessionstore = join(', ', $defaultmodestores[cache_store::MODE_SESSION]);
