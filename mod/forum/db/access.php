@@ -343,6 +343,6 @@ $capabilities = array(
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW
         )
-    ),    
+    ),
 );
 
