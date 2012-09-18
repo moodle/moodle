@@ -526,8 +526,10 @@ if ($USER->id != $post->userid) {   // Not the original author, so add a message
     }
 }
 
+$formheading = '';
 if (!empty($parent)) {
     $heading = get_string("yourreply", "forum");
+    $formheading = get_string('reply', 'forum');
 } else {
     if ($forum->type == 'qanda') {
         $heading = get_string('yournewquestion', 'forum');
@@ -875,6 +877,9 @@ if (!empty($parent)) {
     }
 }
 
+if (!empty($formheading)) {
+    echo $OUTPUT->heading($formheading, 2, array('class' => 'accesshide'));
+}
 $mform_post->display();
 
 echo $OUTPUT->footer();
