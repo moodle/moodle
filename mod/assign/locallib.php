@@ -2009,10 +2009,6 @@ class assign {
         if ($rownum == count($useridlist) - 1) {
             $last = true;
         }
-        // the placement of this is important so can pass the list of userids above
-        if ($offset) {
-            $_POST = array();
-        }
         if (!$userid) {
             throw new coding_exception('Row is out of bounds for the current grading table: ' . $rownum);
         }
@@ -3852,6 +3848,7 @@ class assign {
         $mform->setType('id', PARAM_INT);
         $mform->addElement('hidden', 'rownum', $rownum);
         $mform->setType('rownum', PARAM_INT);
+        $mform->setConstant('rownum', $rownum);
         $mform->addElement('hidden', 'useridlist', implode(',', $useridlist));
         $mform->setType('useridlist', PARAM_TEXT);
         $mform->addElement('hidden', 'ajax', optional_param('ajax', 0, PARAM_INT));
