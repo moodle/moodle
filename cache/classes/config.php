@@ -75,7 +75,7 @@ class cache_config {
      * Please use cache_config::instance to get an instance of the cache config that is ready to be used.
      */
     public function __construct() {
-        //$this->config_load();
+        // Nothing to do here but look pretty.
     }
 
     /**
@@ -94,7 +94,7 @@ class cache_config {
      * @return bool True if it exists
      */
     public static function config_file_exists() {
-        // Allow for late static binding
+        // Allow for late static binding.
         return file_exists(self::get_config_file_path());
     }
 
@@ -136,7 +136,7 @@ class cache_config {
         $this->configdefinitionmappings = array();
         $this->configlockmappings = array();
 
-        // Filter the lock instances
+        // Filter the lock instances.
         $defaultlock = null;
         foreach ($configuration['locks'] as $conf) {
             if (!is_array($conf)) {
@@ -144,7 +144,7 @@ class cache_config {
                 continue;
             }
             if (!array_key_exists('name', $conf)) {
-                // Not a valid definition configuration
+                // Not a valid definition configuration.
                 continue;
             }
             $name = $conf['name'];
@@ -159,17 +159,18 @@ class cache_config {
             $this->configlocks[$name] = $conf;
         }
 
-        // Filter the stores
+        // Filter the stores.
         $availableplugins = cache_helper::early_get_cache_plugins();
         foreach ($configuration['stores'] as $store) {
             if (!is_array($store) || !array_key_exists('name', $store) || !array_key_exists('plugin', $store)) {
-                // Not a valid instance configuration
+                // Not a valid instance configuration.
                 debugging('Invalid cache store in config. Missing name or plugin.', DEBUG_DEVELOPER);
                 continue;
             }
             $plugin = $store['plugin'];
             $class = 'cachestore_'.$plugin;
-            if (!array_key_exists($plugin, $availableplugins) && (!class_exists($class) || !is_subclass_of($class, 'cache_store'))) {
+            $exists = array_key_exists($plugin, $availableplugins);
+            if (!$exists && (!class_exists($class) || !is_subclass_of($class, 'cache_store'))) {
                 // Not a valid plugin, or has been uninstalled, just skip it an carry on.
                 debugging('Invalid cache store in config. Not an available plugin.', DEBUG_DEVELOPER);
                 continue;
@@ -196,14 +197,14 @@ class cache_config {
             $this->configstores[$store['name']] = $store;
         }
 
-        // Filter the definitions
+        // Filter the definitions.
         foreach ($configuration['definitions'] as $id => $conf) {
             if (!is_array($conf)) {
                 // Something is very wrong here.
                 continue;
             }
             if (!array_key_exists('mode', $conf) || !array_key_exists('component', $conf) || !array_key_exists('area', $conf)) {
-                // Not a valid definition configuration
+                // Not a valid definition configuration.
                 continue;
             }
             if (array_key_exists($id, $this->configdefinitions)) {
@@ -212,27 +213,27 @@ class cache_config {
             }
             $conf['mode'] = (int)$conf['mode'];
             if ($conf['mode'] < cache_store::MODE_APPLICATION || $conf['mode'] > cache_store::MODE_REQUEST) {
-                // Invalid cache mode used for the definition
+                // Invalid cache mode used for the definition.
                 continue;
             }
             $this->configdefinitions[$id] = $conf;
         }
 
-        // Filter the mode mappings
+        // Filter the mode mappings.
         foreach ($configuration['modemappings'] as $mapping) {
             if (!is_array($mapping) || !array_key_exists('mode', $mapping) || !array_key_exists('store', $mapping)) {
-                // Not a valid mapping configuration
+                // Not a valid mapping configuration.
                 debugging('A cache mode mapping entry is invalid.', DEBUG_DEVELOPER);
                 continue;
             }
             if (!array_key_exists($mapping['store'], $this->configstores)) {
-                // Mapped array instance doesn't exist
+                // Mapped array instance doesn't exist.
                 debugging('A cache mode mapping exists for a mode or store that does not exist.', DEBUG_DEVELOPER);
                 continue;
             }
             $mapping['mode'] = (int)$mapping['mode'];
             if ($mapping['mode'] < 0 || $mapping['mode'] > 4) {
-                // Invalid cache type used for the mapping
+                // Invalid cache type used for the mapping.
                 continue;
             }
             if (!array_key_exists('sort', $mapping)) {
@@ -241,18 +242,18 @@ class cache_config {
             $this->configmodemappings[] = $mapping;
         }
 
-        // Filter the definition mappings
+        // Filter the definition mappings.
         foreach ($configuration['definitionmappings'] as $mapping) {
             if (!is_array($mapping) || !array_key_exists('definition', $mapping) || !array_key_exists('store', $mapping)) {
-                // Not a valid mapping configuration
+                // Not a valid mapping configuration.
                 continue;
             }
             if (!array_key_exists($mapping['store'], $this->configstores)) {
-                // Mapped array instance doesn't exist
+                // Mapped array instance doesn't exist.
                 continue;
             }
             if (!array_key_exists($mapping['definition'], $this->configdefinitions)) {
-                // Mapped array instance doesn't exist
+                // Mapped array instance doesn't exist.
                 continue;
             }
             if (!array_key_exists('sort', $mapping)) {
@@ -280,7 +281,7 @@ class cache_config {
         $cachefile = self::get_config_file_path();
 
         if (!file_exists($cachefile)) {
-            throw new cache_exception('Default cache configuration could not be found. It should have already been created by now.');
+            throw new cache_exception('Default cache config could not be found. It should have already been created by now.');
         }
         include($cachefile);
         if (!is_array($configuration)) {
@@ -318,7 +319,7 @@ class cache_config {
         if ($a['sort'] == $b['sort']) {
             return 0;
         }
-        return ($a['sort'] < $b['sort']) ? 1 : -1 ;
+        return ($a['sort'] < $b['sort']) ? 1 : -1;
     }
 
     /**

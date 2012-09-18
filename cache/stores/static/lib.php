@@ -379,7 +379,7 @@ class cachestore_static extends static_data_store implements cache_store, cache_
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class static_data_store {
-    
+
     /**
      * An array for storage.
      * @var array

@@ -150,9 +150,9 @@ class cachelock_file implements cache_lock_interface {
                 $iterations = 0;
                 $maxiterations = $this->blockattempts;
                 while (($result = $this->lock($key, false)) === false) {
-                    // usleep causes the application to cleep to x microseconds.
+                    // Usleep causes the application to cleep to x microseconds.
                     // Before anyone asks there are 1'000'000 microseconds to a second.
-                    usleep(rand(1000, 50000)); // Sleep between 1 and 50 milliseconds
+                    usleep(rand(1000, 50000)); // Sleep between 1 and 50 milliseconds.
                     $iterations++;
                     if ($iterations > $maxiterations) {
                         // BOOM! We've exceeded the maximum number of iterations we want to block for.

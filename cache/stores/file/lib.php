@@ -259,7 +259,7 @@ class cachestore_file implements cache_store, cache_is_key_aware {
         if (!$readfile) {
             return false;
         }
-        // Check the filesize first, likely not needed but important none the less
+        // Check the filesize first, likely not needed but important none the less.
         $filesize = filesize($file);
         if (!$filesize) {
             return false;
@@ -269,14 +269,14 @@ class cachestore_file implements cache_store, cache_is_key_aware {
             return false;
         }
         // Lock it up!
-        // We don't care if this succeeds or not, on some systems it will, on some it won't, meah either way
+        // We don't care if this succeeds or not, on some systems it will, on some it won't, meah either way.
         flock($handle, LOCK_SH);
         // HACK ALERT
         // There is a problem when reading from the file during PHPUNIT tests. For one reason or another the filesize is not correct
         // Doesn't happen during normal operation, just during unit tests.
-        // Read it
+        // Read it.
         $data = fread($handle, $filesize+128);
-        // Unlock it
+        // Unlock it.
         flock($handle, LOCK_UN);
         // Return it unserialised.
         return $this->prep_data_after_read($data);
@@ -298,7 +298,7 @@ class cachestore_file implements cache_store, cache_is_key_aware {
         }
         return $result;
     }
-    
+
     /**
      * Deletes an item from the cache store.
      *
@@ -345,11 +345,11 @@ class cachestore_file implements cache_store, cache_is_key_aware {
             // Couldn't write the file.
             return false;
         }
-        // Record the key if required
+        // Record the key if required.
         if ($this->prescan) {
             $this->keys[$filename] = cache::now() + 1;
         }
-        // Return true.. it all worked **miracles**
+        // Return true.. it all worked **miracles**.
         return true;
     }
 
@@ -441,7 +441,7 @@ class cachestore_file implements cache_store, cache_is_key_aware {
         }
         return false;
     }
-    
+
     /**
      * Purges the cache deleting all items within it.
      *
@@ -465,7 +465,7 @@ class cachestore_file implements cache_store, cache_is_key_aware {
     protected function ensure_path_exists() {
         if (!is_writable($this->path)) {
             if ($this->custompath && !$this->autocreate) {
-                throw new coding_exception('File store path does not exist. You must create it and make it writable to the web server.');
+                throw new coding_exception('File store path does not exist. It must exist and be writable by the web server.');
             }
             if (!make_writable_directory($this->path, false)) {
                 throw new coding_exception('File store path does not exist and can not be created.');

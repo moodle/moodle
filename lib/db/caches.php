@@ -27,6 +27,7 @@
  */
 
 $definitions = array(
+    // Used to store processed lang files.
     'string' => array(
         'mode' => cache_store::MODE_APPLICATION,
         'component' => 'core',
@@ -34,6 +35,7 @@ $definitions = array(
         'persistent' => true,
         'persistentmaxsize' => 3
     ),
+    // Used to store database meta information.
     'databasemeta' => array(
         'mode' => cache_store::MODE_APPLICATION,
         'requireidentifiers' => array(
@@ -42,11 +44,12 @@ $definitions = array(
         'persistent' => true,
         'persistentmaxsize' => 2
     ),
+    // Used to store data from the config + config_plugins table in the database.
     'config' => array(
         'mode' => cache_store::MODE_APPLICATION,
         'persistent' => true
     ),
-    // Event invalidation cache
+    // Event invalidation cache.
     'eventinvalidation' => array(
         'mode' => cache_store::MODE_APPLICATION,
         'persistent' => true,

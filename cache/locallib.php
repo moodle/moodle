@@ -115,7 +115,7 @@ class cache_config_writer extends cache_config {
         if (!class_exists($class)) {
             $plugins = get_plugin_list_with_file('cachestore', 'lib.php');
             if (!array_key_exists($plugin, $plugins)) {
-                throw new cache_exception('Invalid plugin name specified. The plugin either does not exist or is not a valid cache plugin.');
+                throw new cache_exception('Invalid plugin name specified. The plugin does not exist or is not valid.');
             }
             $file = $plugins[$plugin];
             if (file_exists($file)) {
@@ -297,7 +297,6 @@ class cache_config_writer extends cache_config {
                 'features' => cachestore_file::get_supported_features(),
                 'modes' => cache_store::MODE_APPLICATION,
                 'default' => true,
-                //'class' => 'cachestore_file'
             ),
             'default_session' => array(
                 'name' => 'default_session',
@@ -306,7 +305,6 @@ class cache_config_writer extends cache_config {
                 'features' => cachestore_session::get_supported_features(),
                 'modes' => cache_store::MODE_SESSION,
                 'default' => true,
-                //'class' => 'cachestore_session'
             ),
             'default_request' => array(
                 'name' => 'default_request',
@@ -315,7 +313,6 @@ class cache_config_writer extends cache_config {
                 'features' => cachestore_static::get_supported_features(),
                 'modes' => cache_store::MODE_REQUEST,
                 'default' => true,
-                //'class' => 'cachestore_static'
             )
         );
         $writer->configdefinitions = self::locate_definitions();
@@ -353,7 +350,7 @@ class cache_config_writer extends cache_config {
      * Calls config_save further down, you should redirect immediately or asap after calling this method.
      */
     public static function update_definitions() {
-        $config = cache_config_writer::instance();
+        $config = self::instance();
         $config->write_definitions_to_cache(self::locate_definitions());
     }
 
@@ -374,7 +371,7 @@ class cache_config_writer extends cache_config {
         foreach ($plugintypes as $type => $location) {
             $plugins = get_plugin_list_with_file($type, 'db/caches.php');
             foreach ($plugins as $plugin => $filepath) {
-                $component = clean_param($type.'_'.$plugin, PARAM_COMPONENT); // standardised plugin name
+                $component = clean_param($type.'_'.$plugin, PARAM_COMPONENT); // Standardised plugin name.
                 $files[$component] = $filepath;
             }
         }
@@ -422,7 +419,7 @@ class cache_config_writer extends cache_config {
             return array();
         }
         $definitions = array();
-        include $file;
+        include($file);
         return $definitions;
     }
 
@@ -715,7 +712,7 @@ abstract class cache_administration_helper extends cache_helper {
      * @throws coding_exception
      */
     public static function get_add_store_form($plugin) {
-        global $CFG; // Needed for includes
+        global $CFG; // Needed for includes.
         $plugindir = get_plugin_directory('cachestore', $plugin);
         $class = 'cachestore_addinstance_form';
         if (file_exists($plugindir.'/addinstanceform.php')) {
@@ -766,7 +763,7 @@ abstract class cache_administration_helper extends cache_helper {
      * @throws coding_exception
      */
     public static function get_edit_store_form($plugin, $store) {
-        global $CFG; // Needed for includes
+        global $CFG; // Needed for includes.
         $plugindir = get_plugin_directory('cachestore', $plugin);
         $class = 'cachestore_addinstance_form';
         if (file_exists($plugindir.'/addinstanceform.php')) {

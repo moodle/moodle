@@ -278,7 +278,7 @@ class cache_definition {
         $component = (string)$definition['component'];
         $area = (string)$definition['area'];
 
-        // Set the defaults
+        // Set the defaults.
         $requireidentifiers = array();
         $requiredataguarantee = false;
         $requiremultipleidentifiers = false;

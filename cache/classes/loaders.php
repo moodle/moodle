@@ -314,7 +314,7 @@ class cache implements cache_loader, cache_is_key_aware {
         } else if ($this->perfdebug) {
             cache_helper::record_cache_hit($this->storetype, $this->definition->get_id());
         }
-        // 5. Validate strictness
+        // 5. Validate strictness.
         if ($strictness === MUST_EXIST && $result === false) {
             throw new moodle_exception('Requested key did not exist in any cache stores and could not be loaded.');
         }
@@ -350,7 +350,7 @@ class cache implements cache_loader, cache_is_key_aware {
         $resultstore = array();
         $keystofind = array();
 
-        // First up check the persist cache for each key
+        // First up check the persist cache for each key.
         $isusingpersist = $this->is_using_persist_cache();
         foreach ($keys as $key) {
             $pkey = $this->parse_key($key);
@@ -423,7 +423,7 @@ class cache implements cache_loader, cache_is_key_aware {
         }
         unset($result);
 
-        // Final step is to check strictness
+        // Final step is to check strictness.
         if ($strictness === MUST_EXIST) {
             foreach ($keys as $key) {
                 if (!array_key_exists($key, $fullresult)) {
@@ -647,7 +647,7 @@ class cache implements cache_loader, cache_is_key_aware {
         $parsedkey = $this->parse_key($key);
         $this->delete_from_persist_cache($parsedkey);
         if ($recurse && !empty($this->loader)) {
-            // Delete from the bottom of the stack first
+            // Delete from the bottom of the stack first.
             $this->loader->delete($key, $recurse);
         }
         return $this->store->delete($parsedkey);
@@ -669,7 +669,7 @@ class cache implements cache_loader, cache_is_key_aware {
             }
         }
         if ($recurse && !empty($this->loader)) {
-            // Delete from the bottom of the stack first
+            // Delete from the bottom of the stack first.
             $this->loader->delete_many($keys, $recurse);
         }
         return $this->store->delete_many($parsedkeys);
@@ -681,11 +681,11 @@ class cache implements cache_loader, cache_is_key_aware {
      * @return bool True on success, false otherwise
      */
     public function purge() {
-        // 1. Purge the persist cache
+        // 1. Purge the persist cache.
         $this->persistcache = array();
-        // 2. Purge the store
+        // 2. Purge the store.
         $this->store->purge();
-        // 3. Optionally pruge any stacked loaders
+        // 3. Optionally pruge any stacked loaders.
         if ($this->loader) {
             $this->loader->purge();
         }
@@ -981,7 +981,7 @@ class cache_application extends cache implements cache_loader_with_locking {
             $todelete = array();
             // Iterate the returned data for the events.
             foreach ($events as $event => $keys) {
-                // Look at each key and check the timestamp
+                // Look at each key and check the timestamp.
                 foreach ($keys as $key => $timestamp) {
                     // If the timestamp of the event is more than or equal to the last invalidation (happened between the last
                     // invalidation and now)then we need to invaliate the key.
@@ -994,7 +994,7 @@ class cache_application extends cache implements cache_loader_with_locking {
                 $todelete = array_unique($todelete);
                 $this->delete_many($todelete);
             }
-            // Set the time of the last invalidation
+            // Set the time of the last invalidation.
             $this->set('lastinvalidation', cache::now());
         }
     }
@@ -1008,7 +1008,12 @@ class cache_application extends cache implements cache_loader_with_locking {
     public function get_identifier() {
         static $instances = 0;
         if ($this->lockidentifier === null) {
-            $this->lockidentifier = md5($this->get_definition()->generate_definition_hash().sesskey().$instances++.'cache_application');
+            $this->lockidentifier = md5(
+                $this->get_definition()->generate_definition_hash() .
+                sesskey() .
+                $instances++ .
+                'cache_application'
+            );
         }
         return $this->lockidentifier;
     }
@@ -1017,7 +1022,7 @@ class cache_application extends cache implements cache_loader_with_locking {
      * Fixes the instance up after a clone.
      */
     public function __clone() {
-        // Force a new idenfitier
+        // Force a new idenfitier.
         $this->lockidentifier = null;
     }
 
@@ -1314,10 +1319,10 @@ class cache_session extends cache {
             // Iterate the returned data for the events.
             foreach ($events as $event => $keys) {
                 if ($keys === false) {
-                    // No data to be invalidated yet
+                    // No data to be invalidated yet.
                     continue;
                 }
-                // Look at each key and check the timestamp
+                // Look at each key and check the timestamp.
                 foreach ($keys as $key => $timestamp) {
                     // If the timestamp of the event is more than or equal to the last invalidation (happened between the last
                     // invalidation and now)then we need to invaliate the key.
@@ -1330,7 +1335,7 @@ class cache_session extends cache {
                 $todelete = array_unique($todelete);
                 $this->delete_many($todelete);
             }
-            // Set the time of the last invalidation
+            // Set the time of the last invalidation.
             $this->set('lastsessioninvalidation', cache::now());
         }
     }
@@ -1352,4 +1357,6 @@ class cache_session extends cache {
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cache_request extends cache {}
+class cache_request extends cache {
+    // This comment appeases code pre-checker ;) !
+}

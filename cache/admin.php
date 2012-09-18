@@ -48,11 +48,11 @@ $notifysuccess = true;
 
 if (!empty($action) && confirm_sesskey()) {
     switch ($action) {
-        case 'rescandefinitions' :
+        case 'rescandefinitions' : // Rescan definitions.
             cache_config_writer::update_definitions();
             redirect($PAGE->url);
             break;
-        case 'addstore' :
+        case 'addstore' : // Add the requested store.
             $plugin = required_param('plugin', PARAM_PLUGIN);
             $mform = cache_administration_helper::get_add_store_form($plugin);
             $title = get_string('addstore', 'cache', $plugins[$plugin]['name']);
@@ -71,7 +71,7 @@ if (!empty($action) && confirm_sesskey()) {
                 redirect($PAGE->url, get_string('addstoresuccess', 'cache', $plugins[$plugin]['name']), 5);
             }
             break;
-        case 'editstore' :
+        case 'editstore' : // Edit the requested store.
             $plugin = required_param('plugin', PARAM_PLUGIN);
             $store = required_param('store', PARAM_TEXT);
             $mform = cache_administration_helper::get_edit_store_form($plugin, $store);
@@ -91,7 +91,7 @@ if (!empty($action) && confirm_sesskey()) {
                 redirect($PAGE->url, get_string('editstoresuccess', 'cache', $plugins[$plugin]['name']), 5);
             }
             break;
-        case 'deletestore' :
+        case 'deletestore' : // Delete a given store.
             $store = required_param('store', PARAM_TEXT);
             $confirm = optional_param('confirm', false, PARAM_BOOL);
 
@@ -106,14 +106,16 @@ if (!empty($action) && confirm_sesskey()) {
             if ($notifysuccess) {
                 if (!$confirm) {
                     $title = get_string('confirmstoredeletion', 'cache');
-                    $url = new moodle_url($PAGE->url, array('store' => $store, 'confirm' => 1, 'action' => $action, 'sesskey' => sesskey()));
+                    $params = array('store' => $store, 'confirm' => 1, 'action' => $action, 'sesskey' => sesskey());
+                    $url = new moodle_url($PAGE->url, $params);
                     $button = new single_button($url, get_string('deletestore', 'cache'));
 
                     $PAGE->set_title($title);
                     $PAGE->set_heading($SITE->fullname);
                     echo $OUTPUT->header();
                     echo $OUTPUT->heading($title);
-                    echo $OUTPUT->confirm(get_string('deletestoreconfirmation', 'cache', $stores[$store]['name']), $button, $PAGE->url);
+                    $confirmation = get_string('deletestoreconfirmation', 'cache', $stores[$store]['name']);
+                    echo $OUTPUT->confirm($confirmation, $button, $PAGE->url);
                     echo $OUTPUT->footer();
                     exit;
                 } else {
@@ -123,7 +125,7 @@ if (!empty($action) && confirm_sesskey()) {
                 }
             }
             break;
-        case 'editdefinitionmapping' :
+        case 'editdefinitionmapping' : // Edit definition mappings.
             $definition = required_param('definition', PARAM_TEXT);
             $title = get_string('editdefinitionmappings', 'cache', $definition);
             $mform = new cache_definition_mappings_form($PAGE->url, array('definition' => $definition));
@@ -141,7 +143,7 @@ if (!empty($action) && confirm_sesskey()) {
                 redirect($PAGE->url);
             }
             break;
-        case 'editmodemappings': // Edit default mode mappings
+        case 'editmodemappings': // Edit default mode mappings.
             $mform = new cache_mode_mappings_form(null, $stores);
             $mform->set_data(array(
                 'mode_'.cache_store::MODE_APPLICATION => key($defaultmodestores[cache_store::MODE_APPLICATION]),
@@ -162,8 +164,10 @@ if (!empty($action) && confirm_sesskey()) {
             }
             break;
 
-        case 'purge': // Purge a store cache
-            // TODO
+        case 'purge': // Purge a store cache.
+            $store = required_param('store', PARAM_TEXT);
+            cache_helper::purge_store($store);
+            redirect($PAGE->url, get_string('purgestoresuccess', 'cache'), 5);
             break;
     }
 }

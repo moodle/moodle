@@ -67,7 +67,8 @@ class cachestore_addinstance_form extends moodleform {
             $form->setType('lock', PARAM_TEXT);
         } else {
             $form->addElement('hidden', 'lock', '');
-            $form->addElement('static', 'lock-value', get_string('lockmethod', 'cache'), '<em>'.get_string('nativelocking', 'cache').'</em>');
+            $form->addElement('static', 'lock-value', get_string('lockmethod', 'cache'),
+                    '<em>'.get_string('nativelocking', 'cache').'</em>');
         }
 
         if (method_exists($this, 'configuration_definition')) {
@@ -125,14 +126,14 @@ class cache_definition_mappings_form extends moodleform {
         $form = $this->_form;
 
         list($component, $area) = explode('/', $definition, 2);
-        list($currentstores, $storeoptions, $defaults) = cache_administration_helper::get_definition_store_options($component, $area);
+        list($currentstores, $storeoptions, $defaults) =
+                cache_administration_helper::get_definition_store_options($component, $area);
 
         $form->addElement('hidden', 'definition', $definition);
         $form->addElement('hidden', 'action', 'editdefinitionmapping');
 
         $requiredoptions = max(3, count($currentstores)+1);
         $requiredoptions = min($requiredoptions, count($storeoptions));
-
 
         $options = array('' => get_string('none'));
         foreach ($storeoptions as $option => $def) {
@@ -142,7 +143,7 @@ class cache_definition_mappings_form extends moodleform {
             }
         }
 
-        for ($i = 0 ; $i < $requiredoptions; $i++) {
+        for ($i = 0; $i < $requiredoptions; $i++) {
             $title = '...';
             if ($i === 0) {
                 $title = get_string('mappingprimary', 'cache');
@@ -158,7 +159,8 @@ class cache_definition_mappings_form extends moodleform {
         }
 
         if (!empty($defaults)) {
-            $form->addElement('static', 'defaults', get_string('defaultmappings', 'cache'), html_writer::tag('strong', join(', ', $defaults)));
+            $form->addElement('static', 'defaults', get_string('defaultmappings', 'cache'),
+                    html_writer::tag('strong', join(', ', $defaults)));
             $form->addHelpButton('defaults', 'defaultmappings', 'cache');
         }
 

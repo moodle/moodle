@@ -214,13 +214,19 @@ class core_cache_renderer extends plugin_renderer_base {
             'mappings',
             'actions'
         );
-        $table->data = array();
+        $table->data = array('none', 'cache');
 
+        $none = new lang_string('none', 'cache');
         foreach ($definitions as $id => $definition) {
             $htmlactions = array();
             foreach ($actions as $action) {
                 $action['url']->param('definition', $id);
                 $htmlactions[] = $this->output->action_link($action['url'], $action['text']);
+            }
+            if (!empty($definition['mappings'])) {
+                $mapping = join(', ', $definition['mappings']);
+            } else {
+                $mapping = '<em>'.$none.'</em>';
             }
 
             $row = new html_table_row(array(
@@ -228,7 +234,7 @@ class core_cache_renderer extends plugin_renderer_base {
                 get_string('mode_'.$definition['mode'], 'cache'),
                 $definition['component'],
                 $definition['area'],
-                (!empty($definition['mappings'])) ? join(', ', $definition['mappings']) : '<em>'.get_string('none', 'cache').'</em>',
+                $mapping,
                 join(', ', $htmlactions)
             ));
             $row->attributes['class'] = 'definition-'.$definition['component'].'-'.$definition['area'];
@@ -239,7 +245,9 @@ class core_cache_renderer extends plugin_renderer_base {
         $html .= $this->output->heading(get_string('definitionsummaries', 'cache'), 3);
         $html .= html_writer::table($table);
 
-        $html .= html_writer::tag('div', html_writer::link(new moodle_url('/cache/admin.php', array('action' => 'rescandefinitions', 'sesskey' => sesskey())), get_string('rescandefinitions', 'cache')), array('id' => 'core-cache-rescan-definitions'));
+        $url = new moodle_url('/cache/admin.php', array('action' => 'rescandefinitions', 'sesskey' => sesskey()));
+        $link = html_writer::link($url, get_string('rescandefinitions', 'cache'));
+        $html .= html_writer::tag('div', $link, array('id' => 'core-cache-rescan-definitions'));
 
         $html .= html_writer::end_tag('div');
         return $html;
@@ -278,7 +286,8 @@ class core_cache_renderer extends plugin_renderer_base {
         $html = html_writer::start_tag('div', array('id' => 'core-cache-mode-mappings'));
         $html .= $this->output->heading(get_string('defaultmappings', 'cache'), 3);
         $html .= html_writer::table($table);
-        $html .= html_writer::tag('div', html_writer::link($editurl, get_string('editmappings', 'cache')), array('class' => 'edit-link'));
+        $link = html_writer::link($editurl, get_string('editmappings', 'cache'));
+        $html .= html_writer::tag('div', $link, array('class' => 'edit-link'));
         $html .= html_writer::end_tag('div');
         return $html;
     }
@@ -297,19 +306,19 @@ class core_cache_renderer extends plugin_renderer_base {
             'name',
             'default',
             'uses',
-            // 'actions'
+            // Useful later: 'actions'.
         );
         $table->rowclasses = array(
             'lock_name',
             'lock_default',
             'lock_uses',
-            // 'lock_actions',
+            // Useful later: 'lock_actions',.
         );
         $table->head = array(
             get_string('lockname', 'cache'),
             get_string('lockdefault', 'cache'),
             get_string('lockuses', 'cache'),
-            // get_string('actions', 'cache')
+            // Useful later: get_string('actions', 'cache').
         );
         $table->data = array();
         $tick = $this->output->pix_icon('i/tick_green_big', '');

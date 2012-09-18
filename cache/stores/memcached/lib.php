@@ -74,7 +74,7 @@ class cachestore_memcached implements cache_store {
      * @var bool
      */
     protected $isready = false;
-    
+
     /**
      * The cache definition this store was initialised with.
      * @var cache_definition
@@ -98,7 +98,11 @@ class cachestore_memcached implements cache_store {
         }
 
         $compression = array_key_exists('compression', $configuration) ? (bool)$configuration['compression'] : true;
-        $serialiser = (array_key_exists('serialiser', $configuration)) ? (int)$configuration['serialiser'] : Memcached::SERIALIZER_PHP;
+        if (array_key_exists('serialiser', $configuration)) {
+            $serialiser = (int)$configuration['serialiser'];
+        } else {
+            $serialiser = Memcached::SERIALIZER_PHP;
+        }
         $prefix = (!empty($configuration['prefix'])) ? (string)$configuration['prefix'] : crc32($name);
         $hashmethod = (array_key_exists('hash', $configuration)) ? (int)$configuration['hash'] : Memcached::HASH_DEFAULT;
         $bufferwrites = array_key_exists('bufferwrites', $configuration) ? (bool)$configuration['bufferwrites'] : false;

@@ -26,4 +26,8 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-$settings->add(new admin_setting_configtextarea('cachestore_memcached/testservers', new lang_string('testservers', 'cachestore_memcached'), new lang_string('testservers_desc', 'cachestore_memcached'), '', PARAM_RAW, 60, 3));
+$settings->add(new admin_setting_configtextarea(
+        'cachestore_memcached/testservers',
+        new lang_string('testservers', 'cachestore_memcached'),
+        new lang_string('testservers_desc', 'cachestore_memcached'),
+        '', PARAM_RAW, 60, 3));

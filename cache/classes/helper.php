@@ -187,7 +187,7 @@ class cache_helper {
             }
             $pluginname = clean_param($pluginname, PARAM_PLUGIN);
             if (empty($pluginname)) {
-                // better ignore plugins with problematic names here
+                // Better ignore plugins with problematic names here.
                 continue;
             }
             $result[$pluginname] = $fulldir.'/'.$pluginname;
@@ -276,7 +276,7 @@ class cache_helper {
      * @return bool
      */
     public static function purge_by_definition($component, $area, array $identifiers = array()) {
-        // Create the cache
+        // Create the cache.
         $cache = cache::make($component, $area, $identifiers);
         // Purge baby, purge.
         $cache->purge();
@@ -303,7 +303,7 @@ class cache_helper {
                 if ($invalidationeventset === false) {
                     // Get the event invalidation cache.
                     $cache = cache::make('core', 'eventinvalidation');
-                    // Create a key to invalidate all
+                    // Create a key to invalidate all.
                     $data = array(
                         'purged' => cache::now()
                     );
@@ -400,6 +400,31 @@ class cache_helper {
             $instance->initialise($definition);
             $instance->purge();
         }
+    }
+
+    /**
+     * Purges a store given its name.
+     *
+     * @param string $storename
+     * @return bool
+     */
+    public static function purge_store($storename) {
+        $config = cache_config::instance();
+        foreach ($config->get_all_stores() as $store) {
+            if ($store['name'] !== $storename) {
+                continue;
+            }
+            $class = $store['class'];
+            $instance = new $class($store['name'], $store['configuration']);
+            if (!$instance->is_ready()) {
+                continue;
+            }
+            $definition = cache_definition::load_adhoc(cache_store::MODE_REQUEST, 'core', 'cache_purge');
+            $instance->initialise($definition);
+            $instance->purge();
+            return true;
+        }
+        return false;
     }
 
     /**

@@ -385,7 +385,7 @@ abstract class session_data_store {
      * @var array
      */
     private static $sessionstore = null;
-    
+
     /**
      * Returns a static store by reference... REFERENCE SUPER IMPORTANT.
      *

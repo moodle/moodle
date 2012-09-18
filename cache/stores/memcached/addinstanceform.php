@@ -53,7 +53,8 @@ class cachestore_memcached_addinstance_form extends cachestore_addinstance_form 
         $form->setDefault('compression', 1);
         $form->setType('compression', PARAM_BOOL);
 
-        $form->addElement('select', 'serialiser', get_string('useserialiser', 'cachestore_memcached'), cachestore_memcached::config_get_serialiser_options());
+        $serialiseroptions = cachestore_memcached::config_get_serialiser_options();
+        $form->addElement('select', 'serialiser', get_string('useserialiser', 'cachestore_memcached'), $serialiseroptions);
         $form->addHelpButton('serialiser', 'useserialiser', 'cachestore_memcached');
         $form->setDefault('serialiser', Memcached::SERIALIZER_PHP);
         $form->setType('serialiser', PARAM_NUMBER);
@@ -62,11 +63,11 @@ class cachestore_memcached_addinstance_form extends cachestore_addinstance_form 
         $form->setType('prefix', PARAM_ALPHANUM);
         $form->addHelpButton('prefix', 'prefix', 'cachestore_memcached');
 
-        $form->addElement('select', 'hash', get_string('hash', 'cachestore_memcached'), cachestore_memcached::config_get_hash_options());
+        $hashoptions = cachestore_memcached::config_get_hash_options();
+        $form->addElement('select', 'hash', get_string('hash', 'cachestore_memcached'), $hashoptions);
         $form->addHelpButton('hash', 'hash', 'cachestore_memcached');
         $form->setDefault('serialiser', Memcached::HASH_DEFAULT);
         $form->setType('serialiser', PARAM_INT);
-
 
         $form->addElement('selectyesno', 'bufferwrites', get_string('bufferwrites', 'cachestore_memcached'));
         $form->addHelpButton('bufferwrites', 'bufferwrites', 'cachestore_memcached');

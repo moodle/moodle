@@ -143,4 +143,6 @@ class cache_phpunit_dummy_datasource implements cache_data_source {
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cache_phpunit_dummy_overrideclass extends cache_application {}
+class cache_phpunit_dummy_overrideclass extends cache_application {
+    // Satisfying the code pre-checker is just part of my day job.
+}

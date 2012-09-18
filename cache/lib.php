@@ -143,7 +143,8 @@ class cache_exception extends moodle_exception {
      * @param mixed $a
      * @param mixed $debuginfo
      */
-    public function __construct($errorcode, $module = 'cache', $link = '', $a = NULL, $debuginfo = null) {
+    public function __construct($errorcode, $module = 'cache', $link = '', $a = null, $debuginfo = null) {
+        // This may appear like a useless override but you will notice that we have set a MUCH more useful default for $module.
         parent::__construct($errorcode, $module, $link, $a, $debuginfo);
     }
 }

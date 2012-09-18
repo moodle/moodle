@@ -252,7 +252,7 @@ class cachestore_mongodb implements cache_store {
         if (!is_array($key)) {
             $key = array('key' => $key);
         }
-        
+
         $result = $this->collection->findOne($key);
         if ($result === null || !array_key_exists('data', $result)) {
             return false;

@@ -38,7 +38,7 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class cachestore_dummy implements cache_store {
-    
+
     /**
      * The name of this store.
      * @var string
@@ -51,7 +51,7 @@ class cachestore_dummy implements cache_store {
      * @var bool
      */
     protected $persist = false;
-    
+
     /**
      * The persistent store array
      * @var array

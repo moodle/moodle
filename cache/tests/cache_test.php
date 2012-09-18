@@ -28,9 +28,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-/**
- * Include the necessary evils.
- */
+// Include the necessary evils.
 global $CFG;
 require_once($CFG->dirroot.'/cache/locallib.php');
 require_once($CFG->dirroot.'/cache/tests/fixtures/lib.php');
@@ -64,13 +62,13 @@ class cache_phpunit_tests extends advanced_testcase {
         $stores = $instance->get_all_stores();
         $this->assertCount(4, $stores);
         foreach ($stores as $name => $store) {
-            // Check its an array
+            // Check its an array.
             $this->assertInternalType('array', $store);
-            // Check the name is the key
+            // Check the name is the key.
             $this->assertEquals($name, $store['name']);
-            // Check that it has been declared default
+            // Check that it has been declared default.
             $this->assertTrue($store['default']);
-            // Required attributes = name + plugin + configuration + modes + features
+            // Required attributes = name + plugin + configuration + modes + features.
             $this->assertArrayHasKey('name', $store);
             $this->assertArrayHasKey('plugin', $store);
             $this->assertArrayHasKey('configuration', $store);
@@ -86,12 +84,12 @@ class cache_phpunit_tests extends advanced_testcase {
             cache_store::MODE_REQUEST => false,
         );
         foreach ($modemappings as $mapping) {
-            // We expect 3 properties
+            // We expect 3 properties.
             $this->assertCount(3, $mapping);
-            // Required attributes = mode + store
+            // Required attributes = mode + store.
             $this->assertArrayHasKey('mode', $mapping);
             $this->assertArrayHasKey('store', $mapping);
-            // Record the mode
+            // Record the mode.
             $modes[$mapping['mode']] = true;
         }
 
@@ -106,13 +104,11 @@ class cache_phpunit_tests extends advanced_testcase {
         $this->assertArrayHasKey('core/eventinvalidation', $definitions);
 
         $definitionmappings = $instance->get_definition_mappings();
-        $found = false;
         foreach ($definitionmappings as $mapping) {
-            // Required attributes = definition + store
+            // Required attributes = definition + store.
             $this->assertArrayHasKey('definition', $mapping);
             $this->assertArrayHasKey('store', $mapping);
         }
-        $this->assertTrue($found, 'The expected mapping for default locking definition to the default locking store was not found.');
     }
 
     /**
@@ -182,7 +178,7 @@ class cache_phpunit_tests extends advanced_testcase {
 
         $this->assertTrue($cache->purge());
 
-        // Check all read methods
+        // Check all read methods.
         $this->assertFalse($cache->get($key));
         $this->assertFalse($cache->has($key));
         $result = $cache->get_many(array($key));
@@ -191,12 +187,12 @@ class cache_phpunit_tests extends advanced_testcase {
         $this->assertFalse($cache->has_any(array($key)));
         $this->assertFalse($cache->has_all(array($key)));
 
-        // Set the data
+        // Set the data.
         $this->assertTrue($cache->set($key, $datascalar));
-        // Setting it more than once should be permitted
+        // Setting it more than once should be permitted.
         $this->assertTrue($cache->set($key, $datascalar));
 
-        // Recheck the read methods
+        // Recheck the read methods.
         $this->assertEquals($datascalar, $cache->get($key));
         $this->assertTrue($cache->has($key));
         $result = $cache->get_many(array($key));
@@ -205,18 +201,18 @@ class cache_phpunit_tests extends advanced_testcase {
         $this->assertTrue($cache->has_any(array($key)));
         $this->assertTrue($cache->has_all(array($key)));
 
-        // Delete it
+        // Delete it.
         $this->assertTrue($cache->delete($key));
 
-        // Check its gone
+        // Check its gone.
         $this->assertFalse($cache->get($key));
         $this->assertFalse($cache->has($key));
 
-        // Test arrays
+        // Test arrays.
         $this->assertTrue($cache->set($key, $dataarray));
         $this->assertEquals($dataarray, $cache->get($key));
 
-        // Test objects
+        // Test objects.
         $this->assertTrue($cache->set($key, $dataobject));
         $this->assertEquals($dataobject, $cache->get($key));
 
@@ -227,14 +223,14 @@ class cache_phpunit_tests extends advanced_testcase {
         $this->assertEquals('red_ptc_wfc', $result->property1);
         $this->assertEquals('blue_ptc_wfc', $result->property2);
 
-        // Test set many
+        // Test set many.
         $cache->set_many(array('key1' => 'data1', 'key2' => 'data2'));
         $this->assertEquals('data1', $cache->get('key1'));
         $this->assertEquals('data2', $cache->get('key2'));
         $this->assertTrue($cache->delete('key1'));
         $this->assertTrue($cache->delete('key2'));
 
-        // Test delete many
+        // Test delete many.
         $this->assertTrue($cache->set('key1', 'data1'));
         $this->assertTrue($cache->set('key2', 'data2'));
 
@@ -262,15 +258,15 @@ class cache_phpunit_tests extends advanced_testcase {
         $cache = cache::make('phpunit', 'datasourcetest');
         $this->assertInstanceOf('cache_application', $cache);
 
-        // Purge it to be sure
+        // Purge it to be sure.
         $this->assertTrue($cache->purge());
-        // It won't be there yet
+        // It won't be there yet.
         $this->assertFalse($cache->has('Test'));
 
-        // It should load it ;)
+        // It should load it ;).
         $this->assertTrue($cache->has('Test', true));
 
-        // Purge it to be sure
+        // Purge it to be sure.
         $this->assertTrue($cache->purge());
         $this->assertEquals('Test has no value really.', $cache->get('Test'));
     }
@@ -289,13 +285,13 @@ class cache_phpunit_tests extends advanced_testcase {
         $cache = cache::make('phpunit', 'overridetest');
         $this->assertInstanceOf('cache_phpunit_dummy_overrideclass', $cache);
         $this->assertInstanceOf('cache_application', $cache);
-        // Purge it to be sure
+        // Purge it to be sure.
         $this->assertTrue($cache->purge());
-        // It won't be there yet
+        // It won't be there yet.
         $this->assertFalse($cache->has('Test'));
-        // Add it
+        // Add it.
         $this->assertTrue($cache->set('Test', 'Test has no value really.'));
-        // Check its there
+        // Check its there.
         $this->assertEquals('Test has no value really.', $cache->get('Test'));
     }
 
@@ -348,7 +344,7 @@ class cache_phpunit_tests extends advanced_testcase {
         $this->assertTrue($cache->set('testkey2', 'test data 2'));
         $this->assertEquals('test data 2', $cache->get('testkey2'));
 
-        // Test invalidating a single entry
+        // Test invalidating a single entry.
         cache_helper::invalidate_by_event('crazyevent', array('testkey1'));
 
         $this->assertFalse($cache->get('testkey1'));
@@ -356,7 +352,7 @@ class cache_phpunit_tests extends advanced_testcase {
 
         $this->assertTrue($cache->set('testkey1', 'test data 1'));
 
-        // Test invalidating both entries
+        // Test invalidating both entries.
         cache_helper::invalidate_by_event('crazyevent', array('testkey1', 'testkey2'));
 
         $this->assertFalse($cache->get('testkey1'));
@@ -380,7 +376,7 @@ class cache_phpunit_tests extends advanced_testcase {
         $this->assertEquals('test data 2', $cache->get('testkey2'));
 
         cache_helper::invalidate_by_definition('phpunit', 'definitioninvalidation', array(), 'testkey1');
-        
+
         $this->assertFalse($cache->get('testkey1'));
         $this->assertEquals('test data 2', $cache->get('testkey2'));
 
@@ -408,7 +404,6 @@ class cache_phpunit_tests extends advanced_testcase {
         // We need to add data the to cache, invalidate it by event, manually force it back without MUC knowing to simulate a
         // disconnected/distributed setup (think load balanced server using local cache), instantiate the cache again and finally
         // check that it is not picked up.
-        
         $instance = cache_config_phpunittest::instance();
         $instance->phpunit_add_definition('phpunit/eventinvalidationtest', array(
             'mode' => cache_store::MODE_APPLICATION,
@@ -429,7 +424,7 @@ class cache_phpunit_tests extends advanced_testcase {
         // OK data added, data invalidated, and invalidation time has been set.
         // Now we need to manually add back the data and adjust the invalidation time.
         $timefile = $CFG->dataroot.'/cache/cachestore_file/default_application/phpunit_eventinvalidationtest/494515064.cache';
-        $timecont = serialize(cache::now() - 60); // Back 60sec in the past to force it to re-invalidate
+        $timecont = serialize(cache::now() - 60); // Back 60sec in the past to force it to re-invalidate.
         file_put_contents($timefile, $timecont);
         $this->assertTrue(file_exists($timefile));
 
@@ -449,7 +444,7 @@ class cache_phpunit_tests extends advanced_testcase {
         $cache = cache::make('phpunit', 'eventinvalidationtest');
         $this->assertEquals('test data 1', $cache->get('testkey1'));
 
-        // Test 2: Rebuild and test the invalidation of the event via the invalidation cache
+        // Test 2: Rebuild and test the invalidation of the event via the invalidation cache.
         cache_factory::reset();
         $instance = cache_config_phpunittest::instance();
         $instance->phpunit_add_definition('phpunit/eventinvalidationtest', array(

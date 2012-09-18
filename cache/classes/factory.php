@@ -209,7 +209,7 @@ class cache_factory {
      */
     public function create_store_from_config($name, array $details, cache_definition $definition) {
         if (!array_key_exists($name, $this->stores)) {
-            // name, plugin, configuration, class
+            // Properties: name, plugin, configuration, class.
             $class = $details['class'];
             $store = new $class($details['name'], $details['configuration']);
             $this->stores[$name] = $store;
@@ -241,7 +241,7 @@ class cache_factory {
             require_once($CFG->dirroot.'/cache/locallib.php');
             $class .= '_writer';
         }
-        
+
         // Check if this is a PHPUnit test and redirect to the phpunit config classes if it is.
         if (defined('PHPUNIT_TEST') && PHPUNIT_TEST) {
             require_once($CFG->dirroot.'/cache/locallib.php');
@@ -290,7 +290,8 @@ class cache_factory {
                 if (!$definition) {
                     throw new coding_exception('The requested cache definition does not exist.'. $id, $id);
                 } else {
-                    debugging('Cache definitions reparsed causing cache reset in order to locate definition. You should bump the version number to ensure definitions are reprocessed.', DEBUG_DEVELOPER);
+                    debugging('Cache definitions reparsed causing cache reset in order to locate definition.
+                        You should bump the version number to ensure definitions are reprocessed.', DEBUG_DEVELOPER);
                 }
             }
             $this->definitions[$id] = cache_definition::load($id, $definition, $aggregate);

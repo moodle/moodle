@@ -33,9 +33,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-/**
- * Include the necessary evils.
- */
+// Include the necessary evils.
 require_once($CFG->dirroot.'/cache/forms.php');
 require_once($CFG->dirroot.'/cache/stores/mongodb/lib.php');
 
