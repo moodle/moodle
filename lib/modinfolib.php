@@ -1235,6 +1235,11 @@ function rebuild_course_cache($courseid=0, $clearonly=false) {
     // Destroy navigation caches
     navigation_cache::destroy_volatile_caches();
 
+    if (class_exists('format_base')) {
+        // if file containing class is not loaded, there is no cache there anyway
+        format_base::reset_course_cache($courseid);
+    }
+
     if ($clearonly) {
         if (empty($courseid)) {
             $DB->set_field('course', 'modinfo', null);

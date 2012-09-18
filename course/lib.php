@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die;
 require_once($CFG->libdir.'/completionlib.php');
 require_once($CFG->libdir.'/filelib.php');
 require_once($CFG->dirroot.'/course/dnduploadlib.php');
+require_once($CFG->dirroot.'/course/format/lib.php');
 
 define('COURSE_MAX_LOGS_PER_PAGE', 1000);       // records
 define('COURSE_MAX_RECENT_PERIOD', 172800);     // Two days, in seconds
@@ -3654,68 +3655,29 @@ function move_category($category, $newparentcat) {
 }
 
 /**
- * Returns the display name of the given section that the course prefers.
+ * Returns the display name of the given section that the course prefers
  *
- * This function utilizes a callback that can be implemented within the course
- * formats lib.php file to customize the display name that is used to reference
- * the section.
+ * Implementation of this function is provided by course format
+ * @see format_base::get_section_name()
  *
- * By default (if callback is not defined) the method
- * {@see get_numeric_section_name} is called instead.
- *
- * @param stdClass $course The course to get the section name for
- * @param stdClass $section Section object from database
- * @return Display name that the course format prefers, e.g. "Week 2"
- *
- * @see get_generic_section_name
+ * @param int|stdClass $courseorid The course to get the section name for (object or just course id)
+ * @param int|stdClass $section Section object from database or just field course_sections.section
+ * @return string Display name that the course format prefers, e.g. "Week 2"
  */
-function get_section_name(stdClass $course, stdClass $section) {
-    global $CFG;
-
-    /// Inelegant hack for bug 3408
-    if ($course->format == 'site') {
-        return get_string('site');
-    }
-
-    // Use course formatter callback if it exists
-    $namingfile = $CFG->dirroot.'/course/format/'.$course->format.'/lib.php';
-    $namingfunction = 'callback_'.$course->format.'_get_section_name';
-    if (!function_exists($namingfunction) && file_exists($namingfile)) {
-        require_once $namingfile;
-    }
-    if (function_exists($namingfunction)) {
-        return $namingfunction($course, $section);
-    }
-
-    // else, default behavior:
-    return get_generic_section_name($course->format, $section);
+function get_section_name($courseorid, $section) {
+    return course_get_format($courseorid)->get_section_name($section);
 }
 
 /**
- * Gets the generic section name for a courses section.
+ * Tells if current course format uses sections
  *
  * @param string $format Course format ID e.g. 'weeks' $course->format
- * @param stdClass $section Section object from database
- * @return Display name that the course format prefers, e.g. "Week 2"
+ * @return bool
  */
-function get_generic_section_name($format, stdClass $section) {
-    return get_string('sectionname', "format_$format") . ' ' . $section->section;
-}
-
-
 function course_format_uses_sections($format) {
-    global $CFG;
-
-    $featurefile = $CFG->dirroot.'/course/format/'.$format.'/lib.php';
-    $featurefunction = 'callback_'.$format.'_uses_sections';
-    if (!function_exists($featurefunction) && file_exists($featurefile)) {
-        require_once $featurefile;
-    }
-    if (function_exists($featurefunction)) {
-        return $featurefunction();
-    }
-
-    return false;
+    $course = new stdClass();
+    $course->format = $format;
+    return course_get_format($course)->uses_sections();
 }
 
 /**
@@ -3729,30 +3691,9 @@ function course_format_uses_sections($format) {
  * @return stdClass
  */
 function course_format_ajax_support($format) {
-    global $CFG;
-
-    // set up default values
-    $ajaxsupport = new stdClass();
-    $ajaxsupport->capable = false;
-    $ajaxsupport->testedbrowsers = array();
-
-    // get the information from the course format library
-    $featurefile = $CFG->dirroot.'/course/format/'.$format.'/lib.php';
-    $featurefunction = 'callback_'.$format.'_ajax_support';
-    if (!function_exists($featurefunction) && file_exists($featurefile)) {
-        require_once $featurefile;
-    }
-    if (function_exists($featurefunction)) {
-        $formatsupport = $featurefunction();
-        if (isset($formatsupport->capable)) {
-            $ajaxsupport->capable = $formatsupport->capable;
-        }
-        if (is_array($formatsupport->testedbrowsers)) {
-            $ajaxsupport->testedbrowsers = $formatsupport->testedbrowsers;
-        }
-    }
-
-    return $ajaxsupport;
+    $course = new stdClass();
+    $course->format = $format;
+    return course_get_format($course)->supports_ajax();
 }
 
 /**
@@ -4598,44 +4539,14 @@ function include_course_ajax($course, $usedmodules = array(), $enabledmodules = 
 /**
  * The URL to use for the specified course (with section)
  *
- * @param stdClass $course The course to get the section name for
- * @param int $sectionno The section number to return a link to
+ * @param int|stdClass $courseorid The course to get the section name for (either object or just course id)
+ * @param int|stdClass $section Section object from database or just field course_sections.section
  *     if omitted the course view page is returned
  * @param array $options options for view URL. At the moment core uses:
  *     'navigation' (bool) if true and section has no separate page, the function returns null
  *     'sr' (int) used by multipage formats to specify to which section to return
  * @return moodle_url The url of course
  */
-function course_get_url($course, $sectionno = null, $options = array()) {
-    if ($course->id == SITEID) {
-        return new moodle_url('/');
-    }
-    $url = new moodle_url('/course/view.php', array('id' => $course->id));
-
-    $sr = null;
-    if (array_key_exists('sr', $options)) {
-        $sr = $options['sr'];
-    }
-    if ($sectionno !== null) {
-        if ($sr !== null) {
-            if ($sr) {
-                $usercoursedisplay = COURSE_DISPLAY_MULTIPAGE;
-                $sectionno = $sr;
-            } else {
-                $usercoursedisplay = COURSE_DISPLAY_SINGLEPAGE;
-            }
-        } else {
-            $usercoursedisplay = $course->coursedisplay;
-        }
-        if ($sectionno != 0 && $usercoursedisplay == COURSE_DISPLAY_MULTIPAGE) {
-            $url->param('section', $sectionno);
-        } else {
-            if (!empty($options['navigation'])) {
-                return null;
-            }
-            $url->set_anchor('section-'.$sectionno);
-        }
-    }
-
-    return $url;
+function course_get_url($courseorid, $section = null, $options = array()) {
+    return course_get_format($courseorid)->get_view_url($section, $options);
 }

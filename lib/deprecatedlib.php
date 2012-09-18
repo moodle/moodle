@@ -2907,3 +2907,20 @@ function textlib_get_instance() {
     return new textlib();
 }
 
+/**
+ * Gets the generic section name for a courses section
+ *
+ * The global function is deprecated. Each course format can define their own generic section name
+ *
+ * @deprecated since 2.4
+ * @see get_section_name()
+ * @see format_base::get_section_name()
+ *
+ * @param string $format Course format ID e.g. 'weeks' $course->format
+ * @param stdClass $section Section object from database
+ * @return Display name that the course format prefers, e.g. "Week 2"
+ */
+function get_generic_section_name($format, stdClass $section) {
+    debugging('get_generic_section_name() is deprecated. Please use appropriate functionality from class format_base', DEBUG_DEVELOPER);
+    return get_string('sectionname', "format_$format") . ' ' . $section->section;
+}

@@ -1252,10 +1252,8 @@ class global_navigation extends navigation_node {
                 }
                 // Add the essentials such as reports etc...
                 $this->add_course_essentials($coursenode, $course);
-                if ($this->format_display_course_content($course->format)) {
-                    // Load the course sections
-                    $sections = $this->load_course_sections($course, $coursenode);
-                }
+                // Extend course navigation with it's sections/activities
+                $this->load_course_sections($course, $coursenode);
                 if (!$coursenode->contains_active_node() && !$coursenode->search_for_active_node()) {
                     $coursenode->make_active();
                 }
@@ -1384,7 +1382,7 @@ class global_navigation extends navigation_node {
                     break;
                 }
                 $this->add_course_essentials($coursenode, $course);
-                $sections = $this->load_course_sections($course, $coursenode);
+                $this->load_course_sections($course, $coursenode);
                 break;
         }
 
@@ -1484,32 +1482,6 @@ class global_navigation extends navigation_node {
             $this->showcategories = $show;
         }
         return $this->showcategories;
-    }
-
-    /**
-     * Checks the course format to see whether it wants the navigation to load
-     * additional information for the course.
-     *
-     * This function utilises a callback that can exist within the course format lib.php file
-     * The callback should be a function called:
-     * callback_{formatname}_display_content()
-     * It doesn't get any arguments and should return true if additional content is
-     * desired. If the callback doesn't exist we assume additional content is wanted.
-     *
-     * @param string $format The course format
-     * @return bool
-     */
-    protected function format_display_course_content($format) {
-        global $CFG;
-        $formatlib = $CFG->dirroot.'/course/format/'.$format.'/lib.php';
-        if (file_exists($formatlib)) {
-            require_once($formatlib);
-            $displayfunc = 'callback_'.$format.'_display_content';
-            if (function_exists($displayfunc) && !$displayfunc()) {
-                return $displayfunc();
-            }
-        }
-        return true;
     }
 
     /**
@@ -1898,20 +1870,8 @@ class global_navigation extends navigation_node {
      */
     protected function load_course_sections(stdClass $course, navigation_node $coursenode) {
         global $CFG;
-        $structurefile = $CFG->dirroot.'/course/format/'.$course->format.'/lib.php';
-        $structurefunc = 'callback_'.$course->format.'_load_content';
-        if (function_exists($structurefunc)) {
-            return $structurefunc($this, $course, $coursenode);
-        } else if (file_exists($structurefile)) {
-            require_once $structurefile;
-            if (function_exists($structurefunc)) {
-                return $structurefunc($this, $course, $coursenode);
-            } else {
-                return $this->load_generic_course_sections($course, $coursenode);
-            }
-        } else {
-            return $this->load_generic_course_sections($course, $coursenode);
-        }
+        require_once($CFG->dirroot.'/course/lib.php');
+        return course_get_format($course)->extend_course_navigation($this, $coursenode);
     }
 
     /**
@@ -1980,25 +1940,13 @@ class global_navigation extends navigation_node {
      *
      * @param stdClass $course
      * @param navigation_node $coursenode
-     * @param string $courseformat The course format
      * @return array An array of course section nodes
      */
-    public function load_generic_course_sections(stdClass $course, navigation_node $coursenode, $courseformat='unknown') {
+    public function load_generic_course_sections(stdClass $course, navigation_node $coursenode) {
         global $CFG, $DB, $USER, $SITE;
         require_once($CFG->dirroot.'/course/lib.php');
 
         list($sections, $activities) = $this->generate_sections_and_activities($course);
-
-        $namingfunction = 'callback_'.$courseformat.'_get_section_name';
-        $namingfunctionexists = (function_exists($namingfunction));
-
-        $urlfunction = 'callback_'.$courseformat.'_get_section_url';
-        if (function_exists($urlfunction)) {
-            // This code path is deprecated but we decided not to warn developers as
-            // major changes are likely to follow in 2.4. See MDL-32504.
-        } else {
-            $urlfunction = null;
-        }
 
         $key = 0;
         if (defined('AJAX_SCRIPT') && AJAX_SCRIPT == '0' && $this->page->url->compare(new moodle_url('/course/view.php'), URL_MATCH_BASE)) {
@@ -2016,19 +1964,9 @@ class global_navigation extends navigation_node {
                     continue;
                 }
 
-                if ($namingfunctionexists) {
-                    $sectionname = $namingfunction($course, $section, $sections);
-                } else {
-                    $sectionname = get_string('section').' '.$section->section;
-                }
+                $sectionname = get_section_name($course, $section);
+                $url = course_get_url($course, $section->section, array('navigation' => true));
 
-                $url = null;
-                if ($urlfunction) {
-                    // pre 2.3 style format url
-                    $url = $urlfunction($course->id, $section->section);
-                }else{
-                    $url = course_get_url($course, $section->section, array('navigation' => true));
-                }
                 $sectionnode = $coursenode->add($sectionname, $url, navigation_node::TYPE_SECTION, null, $section->id);
                 $sectionnode->nodetype = navigation_node::NODETYPE_BRANCH;
                 $sectionnode->hidden = (!$section->visible || !$section->available);
@@ -2863,9 +2801,7 @@ class global_navigation_for_ajax extends global_navigation {
                 $this->page->set_context(context_course::instance($course->id));
                 $coursenode = $this->add_course($course);
                 $this->add_course_essentials($coursenode, $course);
-                if ($this->format_display_course_content($course->format)) {
-                    $this->load_course_sections($course, $coursenode);
-                }
+                $this->load_course_sections($course, $coursenode);
                 break;
             case self::TYPE_SECTION :
                 $sql = 'SELECT c.*, cs.section AS sectionnumber

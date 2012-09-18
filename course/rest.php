@@ -91,13 +91,9 @@ switch($requestmethod) {
                         require_capability('moodle/course:movesections', $coursecontext);
                         move_section_to($course, $id, $value);
                         // See if format wants to do something about it
-                        $libfile = $CFG->dirroot.'/course/format/'.$course->format.'/lib.php';
-                        $functionname = 'callback_'.$course->format.'_ajax_section_move';
-                        if (!function_exists($functionname) && file_exists($libfile)) {
-                            require_once $libfile;
-                        }
-                        if (function_exists($functionname)) {
-                            echo json_encode($functionname($course));
+                        $response = course_get_format($course)->ajax_section_move();
+                        if ($response !== null) {
+                            echo json_encode($response);
                         }
                         break;
                 }
