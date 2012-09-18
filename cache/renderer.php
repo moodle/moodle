@@ -214,7 +214,7 @@ class core_cache_renderer extends plugin_renderer_base {
             'mappings',
             'actions'
         );
-        $table->data = array('none', 'cache');
+        $table->data = array();
 
         $none = new lang_string('none', 'cache');
         foreach ($definitions as $id => $definition) {

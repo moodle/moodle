@@ -96,6 +96,9 @@ class cachestore_memcached implements cache_store {
             // Nothing configured.
             return;
         }
+        if (!is_array($configuration['servers'])) {
+            $configuration['servers'] = array($configuration['servers']);
+        }
 
         $compression = array_key_exists('compression', $configuration) ? (bool)$configuration['compression'] : true;
         if (array_key_exists('serialiser', $configuration)) {

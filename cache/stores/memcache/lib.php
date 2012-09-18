@@ -90,6 +90,9 @@ class cachestore_memcache implements cache_store {
             // Nothing configured.
             return;
         }
+        if (!is_array($configuration['servers'])) {
+            $configuration['servers'] = array($configuration['servers']);
+        }
         foreach ($configuration['servers'] as $server) {
             if (!is_array($server)) {
                 $server = explode(':', $server, 3);

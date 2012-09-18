@@ -259,6 +259,7 @@
 
 #core-cache-plugin-summaries table,
 #core-cache-store-summaries table {width:100%;}
+#core-cache-lock-summary table,
 #core-cache-definition-summaries table,
 #core-cache-mode-mappings table {margin:0 auto;}
 #core-cache-store-summaries .default-store td {color:#333;font-style: italic;}
