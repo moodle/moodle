@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,8 +17,7 @@
 /**
  * Cohort related management functions, this file needs to be included manually.
  *
- * @package    core
- * @subpackage cohort
+ * @package    core_cohort
  * @copyright  2010 Petr Skoda  {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -69,21 +67,31 @@ if ($category) {
 
 echo $OUTPUT->header();
 
-echo $OUTPUT->heading(get_string('cohortsin', 'cohort', print_context_name($context)));
+$cohorts = cohort_get_cohorts($context->id, $page, 25, $searchquery);
 
-// add search form
+$count = '';
+if ($cohorts['allcohorts'] > 0) {
+    if ($searchquery === '') {
+        $count = ' ('.$cohorts['allcohorts'].')';
+    } else {
+        $count = ' ('.$cohorts['totalcohorts'].'/'.$cohorts['allcohorts'].')';
+    }
+}
+
+echo $OUTPUT->heading(get_string('cohortsin', 'cohort', $context->get_context_name()).$count);
+
+// Add search form.
 $search  = html_writer::start_tag('form', array('id'=>'searchcohortquery', 'method'=>'get'));
 $search .= html_writer::start_tag('div');
-$search .= html_writer::label(get_string('searchcohort', 'cohort').':', 'cohort_search_q');
+$search .= html_writer::label(get_string('searchcohort', 'cohort'), 'cohort_search_q'); // No : in form labels!
 $search .= html_writer::empty_tag('input', array('id'=>'cohort_search_q', 'type'=>'text', 'name'=>'search', 'value'=>$searchquery));
 $search .= html_writer::empty_tag('input', array('type'=>'submit', 'value'=>get_string('search', 'cohort')));
 $search .= html_writer::end_tag('div');
 $search .= html_writer::end_tag('form');
 echo $search;
 
-$cohorts = cohort_get_cohorts($context->id, $page, 25, $searchquery);
 
-// output pagination bar
+// Output pagination bar.
 $params = array('page' => $page);
 if ($contextid) {
     $params['contextid'] = $contextid;
@@ -98,7 +106,7 @@ $data = array();
 foreach($cohorts['cohorts'] as $cohort) {
     $line = array();
     $line[] = format_string($cohort->name);
-    $line[] = s($cohort->idnumber); // plain text
+    $line[] = s($cohort->idnumber); // All idnumbers are plain text.
     $line[] = format_text($cohort->description, $cohort->descriptionformat);
 
     $line[] = $DB->count_records('cohort_members', array('cohortid'=>$cohort->id));

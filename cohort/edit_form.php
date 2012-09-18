@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,15 +17,12 @@
 /**
  * Cohort related management functions, this file needs to be included manually.
  *
- * @package    core
- * @subpackage cohort
+ * @package    core_cohort
  * @copyright  2010 Petr Skoda  {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
-}
+defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/lib/formslib.php');
 
@@ -49,7 +45,7 @@ class cohort_edit_form extends moodleform {
         $mform->addElement('select', 'contextid', get_string('context', 'role'), $options);
 
         $mform->addElement('text', 'idnumber', get_string('idnumber', 'cohort'), 'maxlength="254" size="50"');
-        $mform->setType('idnumber', PARAM_RAW); // idnumbers are plain text, must not be changed
+        $mform->setType('idnumber', PARAM_RAW); // Idnumbers are plain text, must not be changed.
 
         $mform->addElement('editor', 'description_editor', get_string('description', 'cohort'), null, $editoroptions);
         $mform->setType('description_editor', PARAM_RAW);
@@ -69,7 +65,7 @@ class cohort_edit_form extends moodleform {
 
         $idnumber = trim($data['idnumber']);
         if ($idnumber === '') {
-            // fine, empty is ok
+            // Fine, empty is ok.
 
         } else if ($data['id']) {
             $current = $DB->get_record('cohort', array('id'=>$data['id']), '*', MUST_EXIST);
@@ -95,16 +91,16 @@ class cohort_edit_form extends moodleform {
         $options = array();
         $syscontext = context_system::instance();
         if (has_capability('moodle/cohort:manage', $syscontext)) {
-            $options[$syscontext->id] = print_context_name($syscontext);
+            $options[$syscontext->id] = $syscontext->get_context_name();
         }
         foreach ($displaylist as $cid=>$name) {
             $context = context_coursecat::instance($cid);
             $options[$context->id] = $name;
         }
-        // always add current - this is not likely, but if the logic gets changed it might be a problem
+        // Always add current - this is not likely, but if the logic gets changed it might be a problem.
         if (!isset($options[$currentcontextid])) {
             $context = context::instance_by_id($currentcontextid, MUST_EXIST);
-            $options[$context->id] = print_context_name($syscontext);
+            $options[$context->id] = $syscontext->get_context_name();
         }
         return $options;
     }

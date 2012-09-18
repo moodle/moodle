@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,14 +17,13 @@
 /**
  * Cohort related management functions, this file needs to be included manually.
  *
- * @package    core
- * @subpackage cohort
+ * @package    core_cohort
  * @copyright  2010 Petr Skoda  {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('../config.php');
-require_once($CFG->dirroot.'/cohort/lib.php');
+require('../config.php');
+require_once($CFG->dirroot.'/cohort/locallib.php');
 
 $id = required_param('id', PARAM_INT);
 
@@ -42,7 +40,7 @@ $PAGE->set_url('/cohort/assign.php', array('id'=>$id));
 $returnurl = new moodle_url('/cohort/index.php', array('contextid'=>$cohort->contextid));
 
 if (!empty($cohort->component)) {
-    // we can not manually edit cohorts that were created by external systems, sorry
+    // We can not manually edit cohorts that were created by external systems, sorry.
     redirect($returnurl);
 }
 
@@ -80,10 +78,7 @@ if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
     if (!empty($userstoassign)) {
 
         foreach ($userstoassign as $adduser) {
-            // no duplicates please
-            if (!$DB->record_exists('cohort_members', array('cohortid'=>$cohort->id, 'userid'=>$adduser->id))) {
-                cohort_add_member($cohort->id, $adduser->id);
-            }
+            cohort_add_member($cohort->id, $adduser->id);
         }
 
         $potentialuserselector->invalidate_selected_users();

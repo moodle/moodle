@@ -39,6 +39,9 @@
         <testsuite name="core_files">
             <directory suffix="_test.php">lib/filestorage/tests</directory>
         </testsuite>
+        <testsuite name="core_cohort">
+            <directory suffix="_test.php">cohort/tests</directory>
+        </testsuite>
         <testsuite name="core_grade">
             <directory suffix="_test.php">lib/grade/tests</directory>
             <directory suffix="_test.php">grade/tests</directory>

@@ -36,6 +36,7 @@
 class phpunit_data_generator {
     protected $usercounter = 0;
     protected $categorycount = 0;
+    protected $cohortcount = 0;
     protected $coursecount = 0;
     protected $scalecount = 0;
     protected $groupcount = 0;
@@ -218,7 +219,7 @@ EOD;
      * @param array $options
      * @return stdClass course category record
      */
-    function create_category($record=null, array $options=null) {
+    public function create_category($record=null, array $options=null) {
         global $DB, $CFG;
         require_once("$CFG->dirroot/course/lib.php");
 
@@ -271,13 +272,57 @@ EOD;
     }
 
     /**
+     * Create test cohort.
+     * @param array|stdClass $record
+     * @param array $options
+     * @return stdClass cohort record
+     */
+    public function create_cohort($record=null, array $options=null) {
+        global $DB, $CFG;
+        require_once("$CFG->dirroot/cohort/lib.php");
+
+        $this->cohortcount++;
+        $i = $this->cohortcount;
+
+        $record = (array)$record;
+
+        if (!isset($record['contextid'])) {
+            $record['contextid'] = context_system::instance()->id;
+        }
+
+        if (!isset($record['name'])) {
+            $record['name'] = 'Cohort '.$i;
+        }
+
+        if (!isset($record['idnumber'])) {
+            $record['idnumber'] = '';
+        }
+
+        if (!isset($record['description'])) {
+            $record['description'] = "Test cohort $i\n$this->loremipsum";
+        }
+
+        if (!isset($record['descriptionformat'])) {
+            $record['descriptionformat'] = FORMAT_MOODLE;
+        }
+
+        if (!isset($record['component'])) {
+            $record['component'] = '';
+        }
+
+        $id = cohort_add_cohort((object)$record);
+
+        return $DB->get_record('cohort', array('id'=>$id), '*', MUST_EXIST);
+    }
+
+    /**
      * Create a test course
      * @param array|stdClass $record
      * @param array $options with keys:
      *      'createsections'=>bool precreate all sections
      * @return stdClass course record
      */
-    function create_course($record=null, array $options=null) {
+    public function create_course($record=null, array $options=null) {
         global $DB, $CFG;
         require_once("$CFG->dirroot/course/lib.php");
 
