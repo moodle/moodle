@@ -507,7 +507,7 @@ if (!isset($forum->maxattachments)) {  // TODO - delete this once we add a field
 
 require_once('post_form.php');
 
-$mform_post = new mod_forum_post_form('post.php', array('course'=>$course, 'cm'=>$cm, 'coursecontext'=>$coursecontext, 'modcontext'=>$modcontext, 'forum'=>$forum, 'post'=>$post));
+$mform_post = new mod_forum_post_form('post.php', array('course'=>$course, 'cm'=>$cm, 'coursecontext'=>$coursecontext, 'modcontext'=>$modcontext, 'forum'=>$forum, 'post'=>$post), 'post', '', array('id' => 'mformforum'));
 
 $draftitemid = file_get_submitted_draft_itemid('attachments');
 file_prepare_draft_area($draftitemid, $modcontext->id, 'mod_forum', 'attachment', empty($post->id)?null:$post->id, mod_forum_post_form::attachment_options($forum));
@@ -528,8 +528,10 @@ if ($USER->id != $post->userid) {   // Not the original author, so add a message
     unset($data);
 }
 
+$formheading = '';
 if (!empty($parent)) {
     $heading = get_string("yourreply", "forum");
+    $formheading = get_string('reply', 'forum');
 } else {
     if ($forum->type == 'qanda') {
         $heading = get_string('yournewquestion', 'forum');
@@ -888,6 +890,9 @@ if (!empty($parent)) {
     }
 }
 
+if (!empty($formheading)) {
+    echo $OUTPUT->heading($formheading, 2, array('class' => 'accesshide'));
+}
 $mform_post->display();
 
 echo $OUTPUT->footer();
