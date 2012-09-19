@@ -195,7 +195,7 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform->setAdvanced('whatgrade', $cfg_scorm->whatgrade_adv);
 
         // Display attempt status
-        $mform->addElement('selectyesno', 'displayattemptstatus', get_string('displayattemptstatus', 'scorm'));
+        $mform->addElement('select', 'displayattemptstatus', get_string('displayattemptstatus', 'scorm'), scorm_get_attemptstatus_array());
         $mform->addHelpButton('displayattemptstatus', 'displayattemptstatus', 'scorm');
         $mform->setDefault('displayattemptstatus', $cfg_scorm->displayattemptstatus);
         $mform->setAdvanced('displayattemptstatus', $cfg_scorm->displayattemptstatus_adv);

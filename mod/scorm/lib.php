@@ -41,6 +41,12 @@ define('SCORM_12', 1);
 define('SCORM_13', 2);
 define('SCORM_AICC', 3);
 
+// List of possible attemptstatusdisplay options.
+define('SCORM_DISPLAY_ATTEMPTSTATUS_NO', 0);
+define('SCORM_DISPLAY_ATTEMPTSTATUS_ALL', 1);
+define('SCORM_DISPLAY_ATTEMPTSTATUS_MY', 2);
+define('SCORM_DISPLAY_ATTEMPTSTATUS_ENTRY', 3);
+
 /**
  * Return an array of status options
  *
@@ -1104,7 +1110,8 @@ function scorm_print_overview($courses, &$htmlarray) {
         if ($scorm->timeclose) {
             $str .= '<div class="info">'.$strduedate.': '.userdate($scorm->timeclose).'</div>';
         }
-        if ($scorm->displayattemptstatus == 1) {
+        if ($scorm->displayattemptstatus == SCORM_DISPLAY_ATTEMPTSTATUS_ALL ||
+                $scorm->displayattemptstatus == SCORM_DISPLAY_ATTEMPTSTATUS_MY) {
             require_once($CFG->dirroot.'/mod/scorm/locallib.php');
             $str .= '<div class="details">'.scorm_get_attempt_status($USER, $scorm).'</div>';
         }
