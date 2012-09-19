@@ -154,17 +154,8 @@ if ($hassiteconfig) {
     }
     $ADMIN->add('filtersettings', $temp);
 
-    $activefilters = filter_get_globally_enabled();
-    $filternames = filter_get_all_installed();
-    foreach ($filternames as $filterpath => $strfiltername) {
-        if (file_exists("$CFG->dirroot/$filterpath/filtersettings.php")) {
-            $settings = new admin_settingpage('filtersetting'.str_replace('/', '', $filterpath),
-                    $strfiltername, 'moodle/site:config', !isset($activefilters[$filterpath]));
-            include("$CFG->dirroot/$filterpath/filtersettings.php");
-            if ($settings) {
-                $ADMIN->add('filtersettings', $settings);
-            }
-        }
+    foreach ($allplugins['filter'] as $filter) {
+        $filter->load_settings($ADMIN, 'filtersettings', $hassiteconfig);
     }
 
 

@@ -2122,14 +2122,26 @@ class plugininfo_filter extends plugininfo_base {
         return null;
     }
 
-    public function get_settings_url() {
-
+    public function get_settings_section_name() {
         $globalstates = self::get_global_states();
         $legacyname = $globalstates[$this->name]->legacyname;
-        if (filter_has_global_settings($legacyname)) {
-            return new moodle_url('/admin/settings.php', array('section' => 'filtersetting' . str_replace('/', '', $legacyname)));
-        } else {
-            return null;
+        return 'filtersetting' . str_replace('/', '', $legacyname);
+    }
+
+    public function load_settings(part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
+        global $CFG, $USER, $DB, $OUTPUT, $PAGE; // in case settings.php wants to refer to them
+        $ADMIN = $adminroot; // may be used in settings.php
+        $filter = $this; // also can be used inside settings.php
+
+        $settings = null;
+        if ($hassiteconfig && file_exists($this->full_path('filtersettings.php'))) {
+            $section = $this->get_settings_section_name();
+            $settings = new admin_settingpage($section, $this->displayname,
+                    'moodle/site:config', $this->is_enabled() === false);
+            include($this->full_path('filtersettings.php')); // this may also set $settings to null
+        }
+        if ($settings) {
+            $ADMIN->add($parentnodename, $settings);
         }
     }
 
