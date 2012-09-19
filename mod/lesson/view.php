@@ -73,7 +73,7 @@ if ($userhasgrade && !$lesson->retake) {
 ///     Check for high scores
 if (!$canmanage) {
     if (!$lesson->is_accessible()) {  // Deadline restrictions
-        echo $lessonoutput->header($lesson, $cm, '', false, null, get_string('lessonnotready2', 'lesson'));
+        echo $lessonoutput->header($lesson, $cm, '', false, null, get_string('notavailable'));
         if ($lesson->deadline != 0 && time() > $lesson->deadline) {
             echo $lessonoutput->lesson_inaccessible(get_string('lessonclosed', 'lesson', userdate($lesson->deadline)));
         } else {
