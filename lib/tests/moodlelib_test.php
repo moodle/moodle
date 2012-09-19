@@ -1897,4 +1897,27 @@ class moodlelib_testcase extends advanced_testcase {
 
         $this->resetDebugging();
     }
+
+    /**
+     * Test function convert_to_array()
+     */
+    public function test_convert_to_array() {
+        // check that normal classes are converted to arrays the same way as (array) would do
+        $obj = new stdClass();
+        $obj->prop1 = 'hello';
+        $obj->prop2 = array('first', 'second', 13);
+        $obj->prop3 = 15;
+        $this->assertEquals(convert_to_array($obj), (array)$obj);
+
+        // check that context object (with iterator) is converted to array properly
+        $obj = get_system_context();
+        $ar = array(
+            'id'           => $obj->id,
+            'contextlevel' => $obj->contextlevel,
+            'instanceid'   => $obj->instanceid,
+            'path'         => $obj->path,
+            'depth'        => $obj->depth
+        );
+        $this->assertEquals(convert_to_array($obj), $ar);
+    }
 }
