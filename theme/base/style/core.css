@@ -863,6 +863,10 @@ sup {vertical-align: super;}
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFFFF', endColorstr='#CCCCCC')!important;
     filter: dropshadow(color=#FFFFFF, offx=1, offy=1);
 }
+/* Activity Chooser "Close" button */
+.dir-rtl .moodle-dialogue-base .closebutton {float: left;}
+/* Question Bank - Question Chooser "Close" button */
+#page-question-edit.dir-rtl a.container-close {right:auto;left:6px;}
 
 .chooserdialogue .moodle-dialogue-bd {
     font-size: 12px;
