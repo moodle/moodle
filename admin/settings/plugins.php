@@ -91,19 +91,9 @@ if ($hassiteconfig) {
     $ADMIN->add('modules', new admin_category('editorsettings', new lang_string('editors', 'editor')));
     $temp = new admin_settingpage('manageeditors', new lang_string('editorsettings', 'editor'));
     $temp->add(new admin_setting_manageeditors());
-    $htmleditors = editors_get_available();
     $ADMIN->add('editorsettings', $temp);
-
-    $editors_available = editors_get_available();
-    foreach ($editors_available as $editor=>$editorstr) {
-        if (file_exists($CFG->dirroot . '/lib/editor/'.$editor.'/settings.php')) {
-            $settings = new admin_settingpage('editorsettings'.$editor, new lang_string('pluginname', 'editor_'.$editor), 'moodle/site:config');
-            // settings.php may create a subcategory or unset the settings completely
-            include($CFG->dirroot . '/lib/editor/'.$editor.'/settings.php');
-            if ($settings) {
-                $ADMIN->add('editorsettings', $settings);
-            }
-        }
+    foreach ($allplugins['editor'] as $editor) {
+        $editor->load_settings($ADMIN, 'editorsettings', $hassiteconfig);
     }
 
 /// License types

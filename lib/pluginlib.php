@@ -2669,3 +2669,51 @@ class plugininfo_local extends plugininfo_base {
         }
     }
 }
+
+/**
+ * Class for HTML editors
+ */
+class plugininfo_editor extends plugininfo_base {
+
+    public function get_settings_section_name() {
+        return 'editorsettings' . $this->name;
+    }
+
+    public function load_settings(part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
+        global $CFG, $USER, $DB, $OUTPUT, $PAGE; // in case settings.php wants to refer to them
+        $ADMIN = $adminroot; // may be used in settings.php
+        $editor = $this; // also can be used inside settings.php
+        $section = $this->get_settings_section_name();
+
+        $settings = null;
+        if ($hassiteconfig && file_exists($this->full_path('settings.php'))) {
+            $settings = new admin_settingpage($section, $this->displayname,
+                    'moodle/site:config', $this->is_enabled() === false);
+            include($this->full_path('settings.php')); // this may also set $settings to null
+        }
+        if ($settings) {
+            $ADMIN->add($parentnodename, $settings);
+        }
+    }
+
+    /**
+     * Returns the information about plugin availability
+     *
+     * True means that the plugin is enabled. False means that the plugin is
+     * disabled. Null means that the information is not available, or the
+     * plugin does not support configurable availability or the availability
+     * can not be changed.
+     *
+     * @return null|bool
+     */
+    public function is_enabled() {
+        global $CFG;
+        if (empty($CFG->texteditors)) {
+            $CFG->texteditors = 'tinymce,textarea';
+        }
+        if (in_array($this->name, explode(',', $CFG->texteditors))) {
+            return true;
+        }
+        return false;
+    }
+}

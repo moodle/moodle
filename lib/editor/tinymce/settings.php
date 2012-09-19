@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-$ADMIN->add('editorsettings', new admin_category('editortinymce', new lang_string('pluginname', 'editor_tinymce')));
+$ADMIN->add('editorsettings', new admin_category('editortinymce', $editor->displayname, $editor->is_enabled() === false));
 
 $settings = new admin_settingpage('editorsettingstinymce', new lang_string('settings', 'editor_tinymce'));
 if ($ADMIN->fulltree) {
