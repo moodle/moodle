@@ -81,28 +81,10 @@ if ($hassiteconfig) {
     $ADMIN->add('modules', new admin_category('enrolments', new lang_string('enrolments', 'enrol')));
     $temp = new admin_settingpage('manageenrols', new lang_string('manageenrols', 'enrol'));
     $temp->add(new admin_setting_manageenrols());
-    if (empty($CFG->enrol_plugins_enabled)) {
-        $enabled = array();
-    } else {
-        $enabled = explode(',', $CFG->enrol_plugins_enabled);
-    }
-    $enrols = get_plugin_list('enrol');
     $ADMIN->add('enrolments', $temp);
-    foreach($enrols as $enrol=>$enrolpath) {
-        if (!file_exists("$enrolpath/settings.php")) {
-            continue;
-        }
-
-        $settings = new admin_settingpage('enrolsettings'.$enrol, new lang_string('pluginname', 'enrol_'.$enrol), 'moodle/site:config', !in_array($enrol, $enabled));
-        // settings.php may create a subcategory or unset the settings completely
-        include("$enrolpath/settings.php");
-        if ($settings) {
-            $ADMIN->add('enrolments', $settings);
-        }
-
+    foreach($allplugins['enrol'] as $enrol) {
+        $enrol->load_settings($ADMIN, 'enrolments', $hassiteconfig);
     }
-    unset($enabled);
-    unset($enrols);
 
 
 /// Editor plugins
