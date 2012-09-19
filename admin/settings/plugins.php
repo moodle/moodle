@@ -20,22 +20,11 @@ if ($hassiteconfig) {
     // hidden script for converting journals to online assignments (or something like that) linked from elsewhere
     $ADMIN->add('modsettings', new admin_externalpage('oacleanup', 'Online Assignment Cleanup', $CFG->wwwroot.'/'.$CFG->admin.'/oacleanup.php', 'moodle/site:config', true));
 
+    // blocks
     $ADMIN->add('modules', new admin_category('blocksettings', new lang_string('blocks')));
     $ADMIN->add('blocksettings', new admin_page_manageblocks());
-    $blocks = $DB->get_records('block', array(), "name ASC");
-    foreach ($blocks as $block) {
-        $blockname = $block->name;
-        if (!file_exists("$CFG->dirroot/blocks/$blockname/block_$blockname.php")) {
-            continue;
-        }
-        $strblockname = new lang_string('pluginname', 'block_'.$blockname);
-        if (file_exists($CFG->dirroot.'/blocks/'.$blockname.'/settings.php')) {
-            $settings = new admin_settingpage('blocksetting'.$blockname, $strblockname, 'moodle/site:config', !$block->visible);
-            include($CFG->dirroot.'/blocks/'.$blockname.'/settings.php');
-            if ($settings) {
-                $ADMIN->add('blocksettings', $settings);
-            }
-        }
+    foreach ($allplugins['block'] as $block) {
+        $block->load_settings($ADMIN, 'blocksettings', $hassiteconfig);
     }
 
     // message outputs

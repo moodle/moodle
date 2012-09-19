@@ -1900,6 +1900,23 @@ class plugininfo_block extends plugininfo_base {
         return $blocks;
     }
 
+    /**
+     * Magic method getter, redirects to read only values.
+     *
+     * For block plugins pretends the object has 'visible' property for compatibility
+     * with plugins developed for Moodle version below 2.4
+     *
+     * @param string $name
+     * @return mixed
+     */
+    public function __get($name) {
+        if ($name === 'visible') {
+            debugging('This is now an instance of plugininfo_block, please use $block->is_enabled() instead of $block->visible', DEBUG_DEVELOPER);
+            return ($this->is_enabled() !== false);
+        }
+        return parent::__get($name);
+    }
+
     public function init_display_name() {
 
         if (get_string_manager()->string_exists('pluginname', 'block_' . $this->name)) {
@@ -1936,21 +1953,35 @@ class plugininfo_block extends plugininfo_base {
         }
     }
 
-    public function get_settings_url() {
+    public function get_settings_section_name() {
+        return 'blocksetting' . $this->name;
+    }
 
-        if (($block = block_instance($this->name)) === false) {
-            return parent::get_settings_url();
+    public function load_settings(part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
+        global $CFG, $USER, $DB, $OUTPUT, $PAGE; // in case settings.php wants to refer to them
+        $ADMIN = $adminroot; // may be used in settings.php
+        $block = $this; // also can be used inside settings.php
+        $section = $this->get_settings_section_name();
 
-        } else if ($block->has_config()) {
+        if (!$hassiteconfig || (($blockinstance = block_instance($this->name)) === false)) {
+            return;
+        }
+
+        $settings = null;
+        if ($blockinstance->has_config()) {
             if (file_exists($this->full_path('settings.php'))) {
-                return new moodle_url('/admin/settings.php', array('section' => 'blocksetting' . $this->name));
+                $settings = new admin_settingpage($section, $this->displayname,
+                        'moodle/site:config', $this->is_enabled() === false);
+                include($this->full_path('settings.php')); // this may also set $settings to null
             } else {
                 $blocksinfo = self::get_blocks_info();
-                return new moodle_url('/admin/block.php', array('block' => $blocksinfo[$this->name]->id));
+                $settingsurl = new moodle_url('/admin/block.php', array('block' => $blocksinfo[$this->name]->id));
+                $settings = new admin_externalpage($section, $this->displayname,
+                        $settingsurl, 'moodle/site:config', $this->is_enabled() === false);
             }
-
-        } else {
-            return parent::get_settings_url();
+        }
+        if ($settings) {
+            $ADMIN->add($parentnodename, $settings);
         }
     }
 
