@@ -111,11 +111,12 @@ if (empty($pending)) {
         $course->check_shortname_collision();
 
         // Retreiving category name.
-        // If the user does not have the capability to change the category, we fallback on the default one.
+        // If the category was not set (can happen after upgrade) or if the user does not have the capability
+        // to change the category, we fallback on the default one.
         // Else, the category proposed is fetched, but we fallback on the default one if we can't find it.
         // It is just a matter of displaying the right information because the logic when approving the category
         // proceeds the same way. The system context level is used as moodle/site:approvecourse uses it.
-        if (!has_capability('moodle/course:changecategory', context_system::instance()) ||
+        if (empty($course->category) || !has_capability('moodle/course:changecategory', context_system::instance()) ||
                 (!$category = get_course_category($course->category))) {
             $category = get_course_category($CFG->defaultrequestcategory);
         }

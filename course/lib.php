@@ -4144,7 +4144,7 @@ class course_request {
         global $USER, $DB, $CFG;
         $data->requester = $USER->id;
 
-        // Setting the default category is none set.
+        // Setting the default category if none set.
         if (empty($data->category) || empty($CFG->requestcategoryselection)) {
             $data->category = $CFG->defaultrequestcategory;
         }
@@ -4306,10 +4306,10 @@ class course_request {
         unset($data->reason);
         unset($data->requester);
 
-        // If the current user does not have the rights to change the category, or if the
+        // If the category is not set, if the current user does not have the rights to change the category, or if the
         // category does not exist, we set the default category to the course to be approved.
         // The system level is used because the capability moodle/site:approvecourse is based on a system level.
-        if (!has_capability('moodle/course:changecategory', context_system::instance()) ||
+        if (empty($data->category) || !has_capability('moodle/course:changecategory', context_system::instance()) ||
                 (!$category = get_course_category($data->category))) {
             $category = get_course_category($CFG->defaultrequestcategory);
         }
