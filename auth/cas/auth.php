@@ -269,7 +269,6 @@ class auth_plugin_cas extends auth_plugin_ldap {
             $config->certificate_path = '';
         }
         if (!isset($config->logout_return_url)) {
-        {
             $config->logout_return_url = '';
         }
 
