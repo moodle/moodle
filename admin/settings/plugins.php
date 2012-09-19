@@ -73,26 +73,9 @@ if ($hassiteconfig) {
     $temp->add(new admin_setting_configtext('recaptchaprivatekey', new lang_string('recaptchaprivatekey', 'admin'), new lang_string('configrecaptchaprivatekey', 'admin'), '', PARAM_NOTAGS));
     $ADMIN->add('authsettings', $temp);
 
-
-    $auths = get_plugin_list('auth');
-    $authsenabled = get_enabled_auth_plugins();
-    foreach ($auths as $authname => $authdir) {
-        $strauthname = new lang_string('pluginname', "auth_{$authname}");
-        // do not show disabled auths in tree, keep only settings link on manage page
-        $enabled = in_array($authname, $authsenabled);
-        if (file_exists($authdir.'/settings.php')) {
-            // TODO: finish implementation of common settings - locking, etc.
-            $settings = new admin_settingpage('authsetting'.$authname, $strauthname, 'moodle/site:config', !$enabled);
-            include($authdir.'/settings.php');
-            if ($settings) {
-                $ADMIN->add('authsettings', $settings);
-            }
-
-        } else {
-            $ADMIN->add('authsettings', new admin_externalpage('authsetting'.$authname, $strauthname, "$CFG->wwwroot/$CFG->admin/auth_config.php?auth=$authname", 'moodle/site:config', !$enabled));
-        }
+    foreach ($allplugins['auth'] as $auth) {
+        $auth->load_settings($ADMIN, 'authsettings', $hassiteconfig);
     }
-
 
     // Enrolment plugins
     $ADMIN->add('modules', new admin_category('enrolments', new lang_string('enrolments', 'enrol')));

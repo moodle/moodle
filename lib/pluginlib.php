@@ -2393,11 +2393,31 @@ class plugininfo_auth extends plugininfo_base {
         return isset($enabled[$this->name]);
     }
 
-    public function get_settings_url() {
-        if (file_exists($this->full_path('settings.php'))) {
-            return new moodle_url('/admin/settings.php', array('section' => 'authsetting' . $this->name));
-        } else {
-            return new moodle_url('/admin/auth_config.php', array('auth' => $this->name));
+    public function get_settings_section_name() {
+        return 'authsetting' . $this->name;
+    }
+
+    public function load_settings(part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
+        global $CFG, $USER, $DB, $OUTPUT, $PAGE; // in case settings.php wants to refer to them
+        $ADMIN = $adminroot; // may be used in settings.php
+        $auth = $this; // also to be used inside settings.php
+        $section = $this->get_settings_section_name();
+
+        $settings = null;
+        if ($hassiteconfig) {
+            if (file_exists($this->full_path('settings.php'))) {
+                // TODO: finish implementation of common settings - locking, etc.
+                $settings = new admin_settingpage($section, $this->displayname,
+                        'moodle/site:config', $this->is_enabled() === false);
+                include($this->full_path('settings.php')); // this may also set $settings to null
+            } else {
+                $settingsurl = new moodle_url('/admin/auth_config.php', array('auth' => $this->name));
+                $settings = new admin_externalpage($section, $this->displayname,
+                        $settingsurl, 'moodle/site:config', $this->is_enabled() === false);
+            }
+        }
+        if ($settings) {
+            $ADMIN->add($parentnodename, $settings);
         }
     }
 }
