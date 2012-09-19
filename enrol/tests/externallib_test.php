@@ -14,16 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Enrol/Role external PHPunit tests
- *
- * @package    core_enrol
- * @category   external
- * @copyright  2012 Jerome Mouneyrac
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since Moodle 2.4
- */
-
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -121,6 +111,57 @@ class core_enrol_external_testcase extends externallib_advanced_testcase {
 
         // Check we retrieve the good total number of enrolled users.
         $this->assertEquals(2, count($enrolledincourses));
+    }
+
+    /** 
+     * Test get_enrolled_users_with_capability
+     */
+    public function test_get_enrolled_users_with_capability () {
+        global $DB, $USER;
+
+        $this->resetAfterTest(true);
+
+        $coursedata['idnumber'] = 'idnumbercourse1';
+        $coursedata['fullname'] = 'Lightwork Course 1';
+        $coursedata['summary'] = 'Lightwork Course 1 description';
+        $coursedata['summaryformat'] = FORMAT_MOODLE;
+        $course1  = self::getDataGenerator()->create_course($coursedata);
+
+        // Create a manual enrolment record.
+        $manual_enrol_data['enrol'] = 'manual';
+        $manual_enrol_data['status'] = 0;
+        $manual_enrol_data['courseid'] = $course1->id;
+        $enrolid = $DB->insert_record('enrol', $manual_enrol_data);
+
+        // Create the user and give them capabilities in the course context.
+        $context = context_course::instance($course1->id);
+        $roleid = $this->assignUserCapability('moodle/course:viewparticipants', $context->id, 3);
+
+        // Create a student.
+        $student1  = self::getDataGenerator()->create_user();
+
+        // Enrol both the user and the student in the course.
+        $user_enrolment_data['status'] = 0;
+        $user_enrolment_data['enrolid'] = $enrolid;
+        $user_enrolment_data['userid'] = $USER->id;
+        $DB->insert_record('user_enrolments', $user_enrolment_data);
+
+        $user_enrolment_data['status'] = 0;
+        $user_enrolment_data['enrolid'] = $enrolid;
+        $user_enrolment_data['userid'] = $student1->id;
+        $DB->insert_record('user_enrolments', $user_enrolment_data);
+
+        $params = array("coursecapabilities" =>array
+        ('courseid' => $course1->id, 'capabilities' => array('moodle/course:viewparticipants')));
+        $options = array();
+        $result = core_enrol_external::get_enrolled_users_with_capability($params, $options);
+
+        // Check an array containing the expected user for the course capability is returned.
+        $expecteduserlist = $result[0];
+        $this->assertEquals($course1->id, $expecteduserlist['courseid']);
+        $this->assertEquals('moodle/course:viewparticipants', $expecteduserlist['capability']);
+        $this->assertEquals(1, count($expecteduserlist['users']));
+
     }
 }
 
