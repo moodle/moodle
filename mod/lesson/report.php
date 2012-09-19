@@ -376,7 +376,7 @@ if ($action === 'delete') {
     4.  Print out the object which contains all the try info
 
 **************************************************************************/
-    echo $lessonoutput->header($lesson, $cm, $actionfalse, null, get_string('detailedstats', 'lesson'));
+    echo $lessonoutput->header($lesson, $cm, $action, false, null, get_string('detailedstats', 'lesson'));
 
     $course_context = context_course::instance($course->id);
     if (has_capability('gradereport/grader:view', $course_context) && has_capability('moodle/grade:viewall', $course_context)) {
