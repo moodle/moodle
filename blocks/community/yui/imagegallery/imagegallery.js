@@ -98,8 +98,8 @@ YUI.add('moodle-block_community-imagegallery', function(Y) {
                 + '" style="max-height:' + maxheight + 'px;"></div>'));
             this.panel.destroy();
             this.panel = new M.core.dialogue({
-                headerContent:previousimagelink + '<div id=\"imagenumber\" class=\"imagetitle\"> Image '
-                + screennumber + ' / ' + this.imageidnumbers[imageid] + ' </div>' + nextimagelink,
+                headerContent:previousimagelink + '<div id=\"imagenumber\" class=\"imagetitle\"><h1> Image '
+                + screennumber + ' / ' + this.imageidnumbers[imageid] + ' </h1></div>' + nextimagelink,
                 bodyContent:Y.one('#imageoverlay').get('innerHTML'),
                 visible: false, //by default it is not displayed
                 lightbox : false,

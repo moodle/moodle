@@ -19,7 +19,8 @@ YUI.add('moodle-block_community-comments', function(Y) {
             {
                 var commentid = this.get('commentids')[i];
                 this.panels[commentid] = new M.core.dialogue({
-                    headerContent:Y.one('#commentoverlay-'+commentid+' .commenttitle').get('innerHTML'),
+                    headerContent:Y.Node.create('<h1>')
+                        .append(Y.one('#commentoverlay-'+commentid+' .commenttitle').get('innerHTML')),
                     bodyContent:Y.one('#commentoverlay-'+commentid).get('innerHTML'),
                     visible: false, //by default it is not displayed
                     lightbox : false,
