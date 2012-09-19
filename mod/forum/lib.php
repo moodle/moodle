@@ -4624,8 +4624,9 @@ function forum_is_subscribed($userid, $forum) {
         $forum = $DB->get_record('forum', array('id' => $forum));
     }
     // If forum is force subscribed and has allowforcesubscribe, then user is subscribed.
-    if (forum_is_forcesubscribed($forum) &&
-            has_capability('mod/forum:allowforcesubscribe', context_module::instance($forum->id), $userid)) {
+    $cm = get_coursemodule_from_instance('forum', $forum->id);
+    if (forum_is_forcesubscribed($forum) && $cm &&
+            has_capability('mod/forum:allowforcesubscribe', context_module::instance($cm->id), $userid)) {
         return true;
     }
     return $DB->record_exists("forum_subscriptions", array("userid" => $userid, "forum" => $forum->id));
@@ -6118,16 +6119,21 @@ function forum_user_role_assigned($cp) {
         return;
     }
 
-    $sql = "SELECT f.id
+    $sql = "SELECT f.id, cm.id AS cmid
               FROM {forum} f
+              JOIN {course_modules} cm ON (cm.instance = f.id)
+              JOIN {modules} m ON (m.id = cm.module)
          LEFT JOIN {forum_subscriptions} fs ON (fs.forum = f.id AND fs.userid = :userid)
-             WHERE f.course = :courseid AND f.forcesubscribe = :initial AND fs.id IS NULL";
+             WHERE f.course = :courseid
+               AND f.forcesubscribe = :initial
+               AND m.name = 'forum'
+               AND fs.id IS NULL";
     $params = array('courseid'=>$context->instanceid, 'userid'=>$cp->userid, 'initial'=>FORUM_INITIALSUBSCRIBE);
 
     $forums = $DB->get_records_sql($sql, $params);
     foreach ($forums as $forum) {
         // If user doesn't have allowforcesubscribe capability then don't subscribe.
-        if (has_capability('mod/forum:allowforcesubscribe', context_module::instance($forum->id), $cp->userid)) {
+        if (has_capability('mod/forum:allowforcesubscribe', context_module::instance($forum->cmid), $cp->userid)) {
             forum_subscribe($cp->userid, $forum->id);
         }
     }
