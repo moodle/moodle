@@ -40,18 +40,20 @@ class block_settings_renderer extends plugin_renderer_base {
 
             // this applies to the li item which contains all child lists too
             $liclasses = array($item->get_css_type());
+            $liexpandable = array();
             if (!$item->forceopen || (!$item->forceopen && $item->collapse) || ($item->children->count()==0  && $item->nodetype==navigation_node::NODETYPE_BRANCH)) {
                 $liclasses[] = 'collapsed';
             }
             if ($isbranch) {
                 $liclasses[] = 'contains_branch';
+                $liexpandable = array('aria-expanded' => in_array('collapsed', $liclasses) ? "false" : "true");
             } else if ($hasicon) {
                 $liclasses[] = 'item_with_icon';
             }
             if ($item->isactive === true) {
                 $liclasses[] = 'current_branch';
             }
-            $liattr = array('class'=>join(' ',$liclasses));
+            $liattr = array('class' => join(' ',$liclasses)) + $liexpandable;
             // class attribute on the div item which only contains the item content
             $divclasses = array('tree_item');
             if ($isbranch) {
