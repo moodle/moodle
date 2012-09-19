@@ -332,17 +332,8 @@ if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) 
     // Question type settings.
     $ADMIN->add('modules', new admin_category('qtypesettings', new lang_string('questiontypes', 'admin')));
     $ADMIN->add('qtypesettings', new admin_page_manageqtypes());
-    $qtypes = get_plugin_list('qtype');
-    foreach ($qtypes as $qtype => $path) {
-        $settingsfile = $path . '/settings.php';
-        if (file_exists($settingsfile)) {
-            $settings = new admin_settingpage('qtypesetting' . $qtype,
-                    new lang_string('pluginname', 'qtype_' . $qtype), 'moodle/question:config');
-            include($settingsfile);
-            if ($settings) {
-                $ADMIN->add('qtypesettings', $settings);
-            }
-        }
+    foreach ($allplugins['qtype'] as $qtype) {
+        $qtype->load_settings($ADMIN, 'qtypesettings', $hassiteconfig);
     }
 }
 
