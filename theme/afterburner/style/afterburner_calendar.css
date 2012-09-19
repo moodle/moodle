@@ -133,32 +133,36 @@ Modules: Calendar
 .block .content h3.eventskey {
     margin-top:0.5em;
     margin-bottom:0;
-    margin-left:0.5em;
 }
+.block .calendar_filters li { padding: 0; }
 /*
 Colors for Calendar Events
 -----------------------*/
 #calendar .event_global,
 .minicalendar .event_global,
-.block_calendar_month .event_global {
+.block_calendar_month .event_global,
+.calendar_event_global {
     border-color:#def2ba !important;
     background-color:#def2ba;
 }
 #calendar .event_course,
 .minicalendar .event_course,
-.block_calendar_month .event_course {
+.block_calendar_month .event_course,
+.calendar_event_course {
     border-color:#c6dfeb !important;
     background-color:#c6dfeb;
 }
 #calendar .event_group,
 .minicalendar .event_group,
-.block_calendar_month .event_group {
+.block_calendar_month .event_group,
+.calendar_event_group {
     border-color:#feffc2 !important;
     background-color:#feffc2;
 }
 #calendar .event_user,
 .minicalendar .event_user,
-.block_calendar_month .event_user {
+.block_calendar_month .event_user,
+.calendar_event_user {
     border-color:#d9c6e2 !important;
     background-color:#d9c6e2;
 }
