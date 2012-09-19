@@ -2750,3 +2750,24 @@ class plugininfo_editor extends plugininfo_base {
         return false;
     }
 }
+
+/**
+ * Class for plagiarism plugins
+ */
+class plugininfo_plagiarism extends plugininfo_base {
+
+    public function get_settings_section_name() {
+        return 'plagiarism'. $this->name;
+    }
+
+    public function load_settings(part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
+        // plagiarism plugin just redirect to settings.php in the plugins directory
+        if ($hassiteconfig && file_exists($this->full_path('settings.php'))) {
+            $section = $this->get_settings_section_name();
+            $settingsurl = new moodle_url($this->get_dir().'/settings.php');
+            $settings = new admin_externalpage($section, $this->displayname,
+                    $settingsurl, 'moodle/site:config', $this->is_enabled() === false);
+            $adminroot->add($parentnodename, $settings);
+        }
+    }
+}

@@ -343,10 +343,8 @@ if ($hassiteconfig && !empty($CFG->enableplagiarism)) {
     $ADMIN->add('plagiarism', new admin_externalpage('manageplagiarismplugins', new lang_string('manageplagiarism', 'plagiarism'),
         $CFG->wwwroot . '/' . $CFG->admin . '/plagiarism.php'));
 
-    foreach (get_plugin_list('plagiarism') as $plugin => $plugindir) {
-        if (file_exists($plugindir.'/settings.php')) {
-            $ADMIN->add('plagiarism', new admin_externalpage('plagiarism'.$plugin, new lang_string($plugin, 'plagiarism_'.$plugin), "$CFG->wwwroot/plagiarism/$plugin/settings.php", 'moodle/site:config'));
-        }
+    foreach ($allplugins['plagiarism'] as $plugin) {
+        $plugin->load_settings($ADMIN, 'plagiarism', $hassiteconfig);
     }
 }
 $ADMIN->add('reports', new admin_externalpage('comments', new lang_string('comments'), $CFG->wwwroot.'/comment/', 'moodle/site:viewreports'));
