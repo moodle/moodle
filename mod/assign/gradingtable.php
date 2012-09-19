@@ -118,12 +118,12 @@ class assign_grading_table extends table_sql implements renderable {
         $headers = array();
 
         // Select
-        $columns[] = 'select';
-        $headers[] = get_string('select') . '<div class="selectall"><input type="checkbox" name="selectall" title="' . get_string('selectall') . '"/></div>';
-
-        // Edit links
         if (!$this->is_downloading()) {
-            $columns[] = 'edit';
+            $columns[] = 'select';
+            $headers[] = get_string('select') . '<div class="selectall"><input type="checkbox" name="selectall" title="' . get_string('selectall') . '"/></div>';
+
+            // We have to call this column userid so we can use userid as a default sortable column.
+            $columns[] = 'userid';
             $headers[] = get_string('edit');
         }
 
@@ -187,8 +187,10 @@ class assign_grading_table extends table_sql implements renderable {
         // set the columns
         $this->define_columns($columns);
         $this->define_headers($headers);
+        // We require at least one unique column for the sort.
+        $this->sortable(true, 'userid');
         $this->no_sorting('finalgrade');
-        $this->no_sorting('edit');
+        $this->no_sorting('userid');
         $this->no_sorting('select');
         $this->no_sorting('outcomes');
 
@@ -430,7 +432,7 @@ class assign_grading_table extends table_sql implements renderable {
      * @param stdClass $row
      * @return string
      */
-    function col_edit(stdClass $row) {
+    function col_userid(stdClass $row) {
         $edit = '';
         if ($this->rownum < 0) {
             $this->rownum = $this->currpage * $this->pagesize;
