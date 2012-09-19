@@ -268,6 +268,10 @@ class auth_plugin_cas extends auth_plugin_ldap {
         if (!isset($config->certificate_path)) {
             $config->certificate_path = '';
         }
+        if (!isset($config->logout_return_url)) {
+        {
+            $config->logout_return_url = '';
+        }
 
         // LDAP settings
         if (!isset($config->host_url)) {
@@ -331,6 +335,7 @@ class auth_plugin_cas extends auth_plugin_ldap {
         set_config('multiauth', $config->multiauth, $this->pluginconfig);
         set_config('certificate_check', $config->certificate_check, $this->pluginconfig);
         set_config('certificate_path', $config->certificate_path, $this->pluginconfig);
+        set_config('logout_return_url', $config->logout_return_url, $this->pluginconfig);
 
         // save LDAP settings
         set_config('host_url', trim($config->host_url), $this->pluginconfig);
@@ -438,5 +443,20 @@ class auth_plugin_cas extends auth_plugin_ldap {
             return;
         }
         parent::sync_users($do_updates);
+    }
+
+    /**
+    * Hook for logout page
+    */
+    function logoutpage_hook() {
+        global $USER, $redirect;
+        // Only do this if the user is actually logged in via CAS
+        if ($USER->auth === $this->authtype) {
+            // Check if there is an alternative logout return url defined
+            if (isset($this->config->logout_return_url) && !empty($this->config->logout_return_url)) {
+                // Set redirect to alternative return url
+                $redirect = $this->config->logout_return_url;
+            }
+        }
     }
 }
