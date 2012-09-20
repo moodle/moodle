@@ -1184,6 +1184,10 @@ function question_categorylist($categoryid) {
 
     $categorylist = array($categoryid);
     foreach ($subcategories as $subcategory) {
+        if($subcategory->id == $categoryid)
+            //prevent infinite loop
+            throw new coding_exception("Question category $categoryid points to itself as a parent.");
+        }
         $categorylist = array_merge($categorylist, question_categorylist($subcategory->id));
     }
 
