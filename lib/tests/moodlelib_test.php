@@ -1920,4 +1920,40 @@ class moodlelib_testcase extends advanced_testcase {
         );
         $this->assertEquals(convert_to_array($obj), $ar);
     }
+
+    /**
+     * Test the function date_format_string().
+     */
+    function test_date_format_string() {
+        // Forcing locale and timezone.
+        $oldlocale = setlocale(LC_TIME, '0');
+        setlocale(LC_TIME, 'en_AU.UTF-8');
+        $systemdefaulttimezone = date_default_timezone_get();
+        date_default_timezone_set('Australia/Perth');
+
+        // Note: date_format_string() uses the timezone only to differenciate
+        // the server time from the UTC time. It does not modify the timestamp.
+        // Hence similar results for timezones <= 13.
+        $str = date_format_string(1293876000, '%A, %d %B %Y, %I:%M %p', 99);
+        $this->assertEquals($str, 'Saturday, 01 January 2011, 06:00 PM');
+
+        $str = date_format_string(1293876000, '%A, %d %B %Y, %I:%M %p', 0);
+        $this->assertEquals($str, 'Saturday, 01 January 2011, 10:00 AM');
+
+        $str = date_format_string(1293876000, '%A, %d %B %Y, %I:%M %p', -12);
+        $this->assertEquals($str, 'Saturday, 01 January 2011, 10:00 AM');
+
+        $str = date_format_string(1293876000, 'Žluťoučký koníček %A', 99);
+        $this->assertEquals($str, 'Žluťoučký koníček Saturday');
+
+        $str = date_format_string(1293876000, '言語設定言語 %A', 99);
+        $this->assertEquals($str, '言語設定言語 Saturday');
+
+        $str = date_format_string(1293876000, '简体中文简体 %A', 99);
+        $this->assertEquals($str, '简体中文简体 Saturday');
+
+        // Restore system default values.
+        date_default_timezone_set($systemdefaulttimezone);
+        setlocale(LC_TIME, $oldlocale);
+    }
 }
