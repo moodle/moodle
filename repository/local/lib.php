@@ -67,10 +67,7 @@ class repository_local extends repository {
             }
         }
         if (empty($context) && !empty($this->context)) {
-            list($repositorycontext, $course, $cm) = get_context_info_array($this->context->id);
-            if (isset($course->id)) {
-                $context = context_course::instance($course->id);
-            }
+            $context = $this->context->get_course_context(false);
         }
         if (empty($context)) {
             $context = context_system::instance();
@@ -85,7 +82,7 @@ class repository_local extends repository {
             if (!is_array($extensions)) {
                 $extensions = array($extensions);
             }
-            $extensions = array_map('strtolower', $extensions);
+            $extensions = array_map('textlib::strtolower', $extensions);
         }
 
         // build file tree
@@ -143,7 +140,7 @@ class repository_local extends repository {
     /**
      * Returns all children elements that have one of the specified extensions
      *
-     * This function may skip subfolers and recursively add their children
+     * This function may skip subfolders and recursively add their children
      * {@link repository_local::can_skip()}
      *
      * @param file_info $fileinfo
@@ -164,7 +161,7 @@ class repository_local extends repository {
     }
 
     /**
-     * Wether this folder may be skipped in folder hierarchy
+     * Whether this folder may be skipped in folder hierarchy
      *
      * 1. Skip the name of a single filearea in a module
      * 2. Skip course categories for non-admins who do not have navshowmycoursecategories setting
@@ -176,7 +173,6 @@ class repository_local extends repository {
      */
     private function can_skip(file_info $fileinfo, $extensions, $parent = -1) {
         global $CFG;
-        static $skipcategories = null;
         if (!$fileinfo->is_directory()) {
             // do not skip files
             return false;
@@ -196,13 +192,14 @@ class repository_local extends repository {
             $params = $fileinfo->get_params();
             if (strlen($params['filearea']) &&
                     ($params['filepath'] === '/' || empty($params['filepath'])) &&
-                    ($params['filename'] === '.' || empty($params['filename']))) {
+                    ($params['filename'] === '.' || empty($params['filename'])) &&
+                    context::instance_by_id($params['contextid'])->contextlevel == CONTEXT_MODULE) {
                 if ($parent === -1) {
                     $parent = $fileinfo->get_parent();
                 }
                 // This is a filearea inside an activity, it can be skipped if it has no non-empty siblings
                 if ($parent && ($parent instanceof file_info_context_module)) {
-                    if ($parent->count_non_empty_children($extensions) <= 1) {
+                    if ($parent->count_non_empty_children($extensions, 2) <= 1) {
                         return true;
                     }
                 }

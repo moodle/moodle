@@ -143,7 +143,7 @@ abstract class file_info {
                 $nonemptylist[] = $fileinfo;
             } else {
                 $filename = $fileinfo->get_visible_name();
-                $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+                $extension = textlib::strtolower(pathinfo($filename, PATHINFO_EXTENSION));
                 if (!empty($extension) && in_array('.'.$extension, $extensions)) {
                     $nonemptylist[] = $fileinfo;
                 }
@@ -156,7 +156,7 @@ abstract class file_info {
      * Returns the number of children which are either files matching the specified extensions
      * or folders containing at least one such file.
      *
-     * NOTE: We don't need the exact number of non empty children if it is >=2
+     * We usually don't need the exact number of non empty children if it is >=2 (see param $limit)
      * This function is used by repository_local to evaluate if the folder is empty. But
      * it also can be used to check if folder has only one subfolder because in some cases
      * this subfolder can be skipped.
@@ -166,27 +166,32 @@ abstract class file_info {
      * and memory usage on big sites).
      *
      * @param string|array $extensions, for example '*' or array('.gif','.jpg')
+     * @param int $limit stop counting after at least $limit non-empty children are found
      * @return int
      */
-    public function count_non_empty_children($extensions = '*') {
+    public function count_non_empty_children($extensions = '*', $limit = 1) {
         $list = $this->get_children();
         $cnt = 0;
+        // first loop through files
         foreach ($list as $fileinfo) {
-            if ($cnt > 1) {
-                // it only matters if it is 0, 1 or 2+
-                return $cnt;
-            }
-            if ($fileinfo->is_directory()) {
-                if ($fileinfo->count_non_empty_children($extensions)) {
-                    $cnt++;
+            if (!$fileinfo->is_directory()) {
+                if ($extensions !== '*') {
+                    $filename = $fileinfo->get_visible_name();
+                    $extension = textlib::strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+                    if (empty($extension) || !in_array('.'.$extension, $extensions)) {
+                        continue;
+                    }
                 }
-            } else if ($extensions === '*') {
-                $cnt++;
-            } else {
-                $filename = $fileinfo->get_visible_name();
-                $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
-                if (!empty($extension) && in_array('.'.$extension, $extensions)) {
-                    $cnt++;
+                if ((++$cnt) >= $limit) {
+                    return $cnt;
+                }
+            }
+        }
+        // now loop through directories
+        foreach ($list as $fileinfo) {
+            if ($fileinfo->is_directory() && $fileinfo->count_non_empty_children($extensions)) {
+                if ((++$cnt) >= $limit) {
+                    return $cnt;
                 }
             }
         }
