@@ -60,6 +60,13 @@ M.mod_chat_ajax.init = function(Y, cfg) {
             this.sendbutton = Y.one('#button-send');
             this.messagebox = Y.one('#chat-messages');
 
+            // Set aria attributes to messagebox and chat-userlist
+            this.messagebox.set('role', 'log');
+            this.messagebox.set('aria-live', 'polite');
+            var userlist = Y.one('#chat-userlist');
+            userlist.set('aria-live', 'polite');
+            userlist.set('aria-relevant', 'all');
+
             // Attach the default events for this module
             this.sendbutton.on('click', this.send, this);
             this.messagebox.on('mouseenter', function() {
