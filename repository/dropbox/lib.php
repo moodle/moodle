@@ -506,6 +506,10 @@ class repository_dropbox extends repository {
      */
     public function get_link($reference) {
         $ref = unserialize($reference);
+        if (!isset($ref->url)) {
+            $this->dropbox->set_access_token($ref->access_key, $ref->access_secret);
+            $ref->url = $this->dropbox->get_file_share_link($ref->path, self::GETFILE_TIMEOUT);
+        }
         return $this->get_file_download_link($ref->url);
     }
 
