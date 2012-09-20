@@ -93,7 +93,6 @@ YUI.add('moodle-block_community-imagegallery', function(Y) {
             var panel = Y.one('#imageoverlay');
             panel.setContent('');
 
-
             panel.append(Y.Node.create('<div style="text-align:center"><img id=\"imagetodisplay\" src="' + url
                 + '" style="max-height:' + maxheight + 'px;"></div>'));
             this.panel.destroy();
@@ -131,6 +130,9 @@ YUI.add('moodle-block_community-imagegallery', function(Y) {
                 this.panel.set('width', panelwidth);
                 this.panel.set("centered", true);
                 this.panel.show();
+
+                // Focus on the close button
+                this.panel.get('buttons').header[0].focus();
 
             }, this, url);
 
