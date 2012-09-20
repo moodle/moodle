@@ -38,5 +38,5 @@ $string['clitypevalue'] = 'syötä arvo';
 $string['clitypevaluedefault'] = 'syötä arvo, paina Enteriä käyttääksesi oletusarvoa ({$a})';
 $string['cliunknowoption'] = 'Tunnistamaton valinta: {$a} Ole hyvä ja käytä --help -valintaa.';
 $string['cliyesnoprompt'] = 'syötä y (kyllä) tai n (ei)';
-$string['environmentrequireinstall'] = 'vaaditaan asennettavaksi/käyttöönotettavaksi';
+$string['environmentrequireinstall'] = 'pitää olla asennettuna ja käytössä';
 $string['environmentrequireversion'] = 'versio {$a->needed} vaaditaan ja käytössä on versio {$a->current}';
