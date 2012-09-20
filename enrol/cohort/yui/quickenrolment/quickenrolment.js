@@ -20,6 +20,7 @@ YUI.add('moodle-enrol_cohort-quickenrolment', function(Y) {
         AJAXURL = 'ajaxurl',
         MANUALENROLMENT = 'manualEnrolment',
         CSS = {
+            CLOSEBTN : 'close-button',
             COHORT : 'qce-cohort',
             COHORTS : 'qce-cohorts',
             COHORTBUTTON : 'qce-cohort-button',
@@ -52,13 +53,16 @@ YUI.add('moodle-enrol_cohort-quickenrolment', function(Y) {
             this.publish('cohortsloaded');
             this.publish('defaultcohortroleloaded', {fireOnce:true});
 
+            var finishbutton = Y.Node.create('<div class="'+CSS.CLOSEBTN+'"></div>')
+                                   .append(Y.Node.create('<input type="button" value="'+M.str.enrol.finishenrollingusers+'" />'));
             var base = Y.Node.create('<div class="'+CSS.PANELCONTENT+'"></div>')
                 .append(Y.Node.create('<div class="'+CSS.PANELROLES+'"></div>'))
                 .append(Y.Node.create('<div class="'+CSS.PANELCOHORTS+'"></div>'))
                 .append(Y.Node.create('<div class="'+CSS.FOOTER+'"></div>')
-                    .append(Y.Node.create('<div class="'+CSS.SEARCH+'"><label>'+M.str.enrol_cohort.cohortsearch+':</label></div>')
+                    .append(Y.Node.create('<div class="'+CSS.SEARCH+'"><label for="enrolcohortsearch">'+M.str.enrol_cohort.cohortsearch+':</label></div>')
                         .append(Y.Node.create('<input type="text" id="enrolcohortsearch" value="" />'))
                     )
+                    .append(finishbutton)
                 )
                 .append(Y.Node.create('<div class="'+CSS.LIGHTBOX+' '+CSS.HIDDEN+'"></div>')
                     .append(Y.Node.create('<img alt="loading" class="'+CSS.LOADINGICON+'" />')
@@ -99,6 +103,7 @@ YUI.add('moodle-enrol_cohort-quickenrolment', function(Y) {
             this.on('defaultcohortroleloaded', this.updateContent, this, panel);
             Y.on('key', this.hide, document.body, 'down:27', this);
             close.on('click', this.hide, this);
+            finishbutton.on('click', this.hide, this);
 
             Y.all('.enrol_cohort_plugin input').each(function(node){
                 if (node.getAttribute('type', 'submit')) {
@@ -117,6 +122,11 @@ YUI.add('moodle-enrol_cohort-quickenrolment', function(Y) {
             this.getCohorts(e, false);
             this.getAssignableRoles();
             this.fire('show');
+
+            var rolesselect = Y.one('#id_enrol_cohort_assignable_roles');
+            if (rolesselect) {
+                rolesselect.focus();
+            }
         },
         updateContent : function(e, panel) {
             var content, i, roles, cohorts, count=0, supportmanual = this.get(MANUALENROLMENT), defaultrole;
@@ -154,13 +164,14 @@ YUI.add('moodle-enrol_cohort-quickenrolment', function(Y) {
                     break;
                 case 'assignablerolesloaded':
                     roles = this.get(ASSIGNABLEROLES);
-                    content = Y.Node.create('<select></select>');
+                    content = Y.Node.create('<select id="id_enrol_cohort_assignable_roles"></select>');
                     for (i in roles) {
                         content.append(Y.Node.create('<option value="'+i+'">'+roles[i]+'</option>'));
                     }
-                    panel.get('contentBox').one('.'+CSS.PANELROLES).setContent(Y.Node.create('<div><label>'+M.str.role.assignroles+':</label></div>').append(content));
+                    panel.get('contentBox').one('.'+CSS.PANELROLES).setContent(Y.Node.create('<div><label for="id_enrol_cohort_assignable_roles">'+M.str.role.assignroles+':</label></div>').append(content));
 
                     this.getDefaultCohortRole();
+                    Y.one('#id_enrol_cohort_assignable_roles').focus();
                     break;
                 case 'defaultcohortroleloaded':
                     defaultrole = this.get(DEFAULTCOHORTROLE);
@@ -280,7 +291,8 @@ YUI.add('moodle-enrol_cohort-quickenrolment', function(Y) {
                                 new M.core.ajaxException(result);
                             } else {
                                 if (result.response && result.response.message) {
-                                    new M.core.alert(result.response);
+                                    var alertpanel = new M.core.alert(result.response);
+                                    Y.Node.one('#id_yuialertconfirm-' + alertpanel.COUNT).focus();
                                 }
                                 var enrolled = Y.Node.create('<div class="'+CSS.COHORTBUTTON+' alreadyenrolled">'+M.str.enrol.synced+'</div>');
                                 node.one('.'+CSS.COHORT+' #cohortid_'+cohort.get(COHORTID)).replace(enrolled);
