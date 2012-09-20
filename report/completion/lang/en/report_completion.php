@@ -26,6 +26,8 @@
 
 $string['completion:view'] = 'View course completion report';
 $string['completiondate'] = 'Completion date';
+$string['id'] = 'ID';
+$string['name'] = 'Name';
 $string['page-report-completion-x'] = 'Any completion report';
 $string['page-report-completion-index'] = 'Course completion report';
 $string['page-report-completion-user'] = 'User course completion report';
