@@ -48,6 +48,7 @@ class event_form extends moodleform {
         $newevent = (empty($this->_customdata->event) || empty($this->_customdata->event->id));
         $repeatedevents = (!empty($this->_customdata->event->eventrepeats) && $this->_customdata->event->eventrepeats>0);
         $hasduration = (!empty($this->_customdata->hasduration) && $this->_customdata->hasduration);
+        $mform->addElement('header', 'general', get_string('general'));
 
         if ($newevent) {
             $eventtypes = $this->_customdata->eventtypes;
@@ -112,7 +113,8 @@ class event_form extends moodleform {
         $mform->addElement('date_time_selector', 'timestart', get_string('date'));
         $mform->addRule('timestart', get_string('required'), 'required');
 
-        $mform->addElement('radio', 'duration', get_string('eventduration', 'calendar'), get_string('durationnone', 'calendar'), 0);
+        $mform->addElement('header', 'durationdetails', get_string('eventduration', 'calendar'));
+        $mform->addElement('radio', 'duration', null, get_string('durationnone', 'calendar'), 0);
 
         $mform->addElement('radio', 'duration', null, get_string('durationuntil', 'calendar'), 1);
         $mform->addElement('date_time_selector', 'timedurationuntil', '&nbsp;');
@@ -127,6 +129,7 @@ class event_form extends moodleform {
 
         if ($newevent) {
 
+            $mform->addElement('header', 'repeatevents', get_string('repeatedevents', 'calendar'));
             $mform->addElement('checkbox', 'repeat', get_string('repeatevent', 'calendar'), null, 'repeat');
             $mform->addElement('text', 'repeats', get_string('repeatweeksl', 'calendar'), 'maxlength="10" size="10"');
             $mform->setType('repeats', PARAM_INT);
