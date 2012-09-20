@@ -96,7 +96,7 @@ echo $OUTPUT->header();
     $title = get_string('edittitle', $tagslang);
     echo $OUTPUT->heading($title, 2, 'mdl-align');
 
-    $mytags = coursetag_print_cloud(coursetag_get_tags(0, $USER->id, 'default'), true);
+    $mytags = tag_print_cloud(coursetag_get_tags(0, $USER->id, 'default'), 150, true);
     $outstr = '
         <div class="coursetag_edit_centered">
             <div>

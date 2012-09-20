@@ -32,21 +32,29 @@ require_once($CFG->libdir.'/filelib.php');
  * @package  core_tag
  * @access   public
  * @category tag
- * @param    int       $nr_of_tags Limit for the number of tags to return/display
+ * @param    array     $tagset Array of tags to display
+ * @param    int       $nr_of_tags Limit for the number of tags to return/display, used if $tagset is null
  * @param    bool      $return     if true the function will return the generated tag cloud instead of displaying it.
  * @return string|null a HTML string or null if this function does the output
  */
-function tag_print_cloud($nr_of_tags=150, $return=false) {
+//TODO question for integrator - for contrib work would it be best to add $tagset at the end of the parameter list
+// not the beginning?  I put it at the beginning because it sits better as alternative to $nr_of_tags there
+function tag_print_cloud($tagset=null, $nr_of_tags=150, $return=false) {
     global $CFG, $DB;
 
     $can_manage_tags = has_capability('moodle/tag:manage', context_system::instance());
 
-    if ( !$tagsincloud = $DB->get_records_sql('SELECT tg.rawname, tg.id, tg.name, tg.tagtype, COUNT(ti.id) AS count, tg.flag
-                                                 FROM {tag_instance} ti JOIN {tag} tg ON tg.id = ti.tagid
-                                                WHERE ti.itemtype <> \'tag\'
-                                             GROUP BY tg.id, tg.rawname, tg.name, tg.flag, tg.tagtype
-                                             ORDER BY count DESC, tg.name ASC', null, 0, $nr_of_tags) ) {
-        $tagsincloud = array();
+    if (is_null($tagset)) {
+        // No tag set received, so fetch tags from database
+        if ( !$tagsincloud = $DB->get_records_sql('SELECT tg.rawname, tg.id, tg.name, tg.tagtype, COUNT(ti.id) AS count, tg.flag
+                                                   FROM {tag_instance} ti JOIN {tag} tg ON tg.id = ti.tagid
+                                                   WHERE ti.itemtype <> \'tag\'
+                                                   GROUP BY tg.id, tg.rawname, tg.name, tg.flag, tg.tagtype
+                                                   ORDER BY count DESC, tg.name ASC', null, 0, $nr_of_tags) ) {
+            $tagsincloud = array();
+        }
+    } else {
+        $tagsincloud = $tagset;
     }
 
     $tagkeys = array_keys($tagsincloud);
@@ -200,8 +208,10 @@ function tag_print_management_box($tag_object, $return=false) {
             $links[] = '<a href="'. $CFG->wwwroot .'/tag/user.php?action=addinterest&amp;sesskey='. sesskey() .'&amp;tag='. rawurlencode($tag_object->name) .'">'. get_string('addtagtomyinterests', 'tag', $tagname) .'</a>';
         }
 
-        // flag as inappropriate link
-        $links[] = '<a href="'. $CFG->wwwroot .'/tag/user.php?action=flaginappropriate&amp;sesskey='. sesskey() .'&amp;tag='. rawurlencode($tag_object->name) .'">'. get_string('flagasinappropriate', 'tag', rawurlencode($tagname)) .'</a>';
+        // Flag as inappropriate link.  Only people with moodle/tag:flag capability.
+        if (has_capability('moodle/tag:flag', $systemcontext)) {
+            $links[] = '<a href="'. $CFG->wwwroot .'/tag/user.php?action=flaginappropriate&amp;sesskey='. sesskey() .'&amp;tag='. rawurlencode($tag_object->name) .'">'. get_string('flagasinappropriate', 'tag', rawurlencode($tagname)) .'</a>';
+        }
 
         // Edit tag: Only people with moodle/tag:edit capability who either have it as an interest or can manage tags
         if (has_capability('moodle/tag:edit', $systemcontext) ||

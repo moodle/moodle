@@ -24,6 +24,7 @@
  */
 
 require_once $CFG->dirroot.'/tag/lib.php';
+require_once $CFG->dirroot.'/tag/locallib.php';
 
 /**
  * Returns an ordered array of tags associated with visible courses
@@ -186,89 +187,10 @@ function coursetag_sort($a, $b) {
 
     if (is_numeric($a->$tagsort)) {
         return ($a->$tagsort == $b->$tagsort) ? 0 : ($a->$tagsort > $b->$tagsort) ? 1 : -1;
-    } elseif (is_string($a->$tagsort)) {
+    } else if (is_string($a->$tagsort)) {
         return strcmp($a->$tagsort, $b->$tagsort);
     } else {
         return 0;
-    }
-}
-
-/**
- * Prints a tag cloud
- *
- * @package  core_tag
- * @category tag
- * @param    array $tagcloud array of tag objects (fields: id, name, rawname, count and flag)
- * @param    mixed $return   if true return html string
- * @param    int   $max_size maximum text size, in percentage
- * @param    int   $min_size minimum text size, in percentage
- */
-function coursetag_print_cloud($tagcloud, $return=false, $max_size=180, $min_size=80) {
-
-    global $CFG;
-
-    if (empty($tagcloud)) {
-        return;
-    }
-
-    ksort($tagcloud);
-
-    $count = array();
-    foreach ($tagcloud as $key => $value) {
-        if(!empty($value->count)) {
-            $count[$key] = log10($value->count);
-        } else {
-            $count[$key] = 0;
-        }
-    }
-
-    $max = max($count);
-    $min = min($count);
-
-    $spread = $max - $min;
-    if (0 == $spread) { // we don't want to divide by zero
-        $spread = 1;
-    }
-
-    $step = ($max_size - $min_size)/($spread);
-
-    $systemcontext   = context_system::instance();
-    $can_manage_tags = has_capability('moodle/tag:manage', $systemcontext);
-
-    //prints the tag cloud
-    $output = '<ul class="tag-cloud inline-list">';
-    foreach ($tagcloud as $key => $tag) {
-
-        $size = $min_size + ((log10($tag->count) - $min) * $step);
-        $size = ceil($size);
-
-        $style = 'style="font-size: '.$size.'%"';
-
-        if ($tag->count > 1) {
-            $title = 'title="'.s(get_string('thingstaggedwith','tag', $tag)).'"';
-        } else {
-            $title = 'title="'.s(get_string('thingtaggedwith','tag', $tag)).'"';
-        }
-
-        $href = 'href="'.$CFG->wwwroot.'/tag/index.php?id='.$tag->id.'"';
-
-        //highlight tags that have been flagged as inappropriate for those who can manage them
-        $tagname = tag_display_name($tag);
-        if ($tag->flag > 0 && $can_manage_tags) {
-            $tagname =  '<span class="flagged-tag">' . tag_display_name($tag) . '</span>';
-        }
-
-        $tag_link = '<li><a '.$href.' '.$title.' '. $style .'>'.$tagname.'</a></li> ';
-
-        $output .= $tag_link;
-
-    }
-    $output .= '</ul>'."\n";
-
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
     }
 }
 
@@ -277,18 +199,13 @@ function coursetag_print_cloud($tagcloud, $return=false, $max_size=180, $min_siz
  *
  * @package  core_tag
  * @category tag
- * @param    string   $coursetagdivs comma separated divs ids
  * @return   null
  */
-function coursetag_get_jscript($coursetagdivs = '') {
+function coursetag_get_jscript() {
     global $CFG, $DB, $PAGE;
 
     $PAGE->requires->js('/tag/tag.js');
     $PAGE->requires->strings_for_js(array('jserror1', 'jserror2'), 'block_tags');
-
-    if ($coursetagdivs) {
-        $PAGE->requires->js_function_call('set_course_tag_divs', $coursetagdivs);
-    }
 
     if ($coursetags = $DB->get_records('tag', null, 'name ASC', 'name, id')) {
         foreach ($coursetags as $key => $value) {
@@ -359,7 +276,7 @@ function coursetag_store_keywords($tags, $courseid, $userid=0, $tagtype='officia
     global $CFG;
 
     if (is_array($tags) and !empty($tags)) {
-        foreach($tags as $tag) {
+        foreach ($tags as $tag) {
             $tag = trim($tag);
             if (strlen($tag) > 0) {
                 //tag_set_add('course', $courseid, $tag, $userid); //deletes official tags
@@ -494,221 +411,3 @@ function coursetag_delete_course_tags($courseid, $showfeedback=false) {
     }
 }
 
-/*
- * Function called by cron to create/update users rss feeds
- *
- * @return true
- *
- * Function removed.
- * rsslib.php needs updating to accept Dublin Core tags (dc/cc) input before this can work.
- */
-/*
-function coursetag_rss_feeds() {
-
-    global $CFG, $DB;
-    require_once($CFG->dirroot.'/lib/dmllib.php');
-    require_once($CFG->dirroot.'/lib/rsslib.php');
-
-    $status = true;
-    mtrace('    Preparing to update all user unit tags RSS feeds');
-    if (empty($CFG->enablerssfeeds)) {
-        mtrace('      RSS DISABLED (admin variables - enablerssfeeds)');
-    } else {
-
-        //  Load all the categories for use later on
-        $categories = $DB->get_records('course_categories');
-
-        // get list of users who have tagged a unit
-        $sql = "
-            SELECT DISTINCT u.id as userid, u.username, u.firstname, u.lastname, u.email
-            FROM {user} u, {course} c, {tag_instance} cti, {tag} t
-            WHERE c.id = cti.itemid
-            AND u.id = cti.tiuserid
-            AND t.id = cti.tagid
-            AND t.tagtype = 'personal'
-            AND u.confirmed = 1
-            AND u.deleted = 0
-            ORDER BY userid";
-        if ($users = $DB->get_records_sql($sql)) {
-
-            $items = array(); //contains rss data items for each user
-            foreach ($users as $user) {
-
-                // loop through each user, getting the data (tags for courses)
-                $sql = "
-                    SELECT cti.id, c.id as courseid, c.fullname, c.shortname, c.category, t.rawname, cti.timemodified
-                    FROM {course} c, {tag_instance} cti, {tag} t
-                    WHERE c.id = cti.itemid
-                    AND cti.tiuserid = :userid{$user->userid}
-                    AND cti.tagid = t.id
-                    AND t.tagtype = 'personal'
-                    ORDER BY courseid";
-                if ($usertags = $DB->get_records_sql($sql, array('userid' => $user->userid))) {
-                    $latest_date = 0; //latest date any tag was created by a user
-                    $c = 0; //course identifier
-
-                    foreach ($usertags as $usertag) {
-                        if ($usertag->courseid != $c) {
-                            $c = $usertag->courseid;
-                            $items[$c] = new stdClass();
-                            $items[$c]->title = $usertag->fullname . '(' . $usertag->shortname . ')';
-                            $items[$c]->link = $CFG->wwwroot . '/course/view.php?name=' . $usertag->shortname;
-                            $items[$c]->description = ''; //needs to be blank
-                            $items[$c]->category = $categories[$usertag->category]->name;
-                            $items[$c]->subject[] = $usertag->rawname;
-                            $items[$c]->pubdate = $usertag->timemodified;
-                            $items[$c]->tag = true;
-                        } else {
-                            $items[$c]->subject[] .= $usertag->rawname;
-                        }
-                        //  Check and set the latest modified date.
-                        $latest_date = $usertag->timemodified > $latest_date ? $usertag->timemodified : $latest_date;
-                    }
-
-                    //  Setup some vars for use while creating the file
-                    $path = $CFG->dataroot.'/1/usertagsrss/'.$user->userid;
-                    $file_name = 'user_unit_tags_rss.xml';
-                    $title = get_string('rsstitle', 'tag', ucwords(strtolower($user->firstname.' '.$user->lastname)));
-                    $desc = get_string('rssdesc', 'tag');
-                    // check that the path exists
-                    if (!file_exists($path)) {
-                        mtrace('  Creating folder '.$path);
-                        check_dir_exists($path, TRUE, TRUE);
-                    }
-
-                    // create or update the feed for the user
-                    // this functionality can be copied into seperate lib as in next two lines
-                    //require_once($CFG->dirroot.'/local/ocilib.php');
-                    //oci_create_rss_feed( $path, $file_name, $latest_date, $items, $title, $desc, $dc=true, $cc=false);
-
-                    //  Set path to RSS file
-                    $full_path = "$save_path/$file_name";
-
-                    mtrace("    Preparing to update RSS feed for $file_name");
-
-                    //  First let's make sure there is work to do by checking the time the file was last modified,
-                    //  if a course was update after the file was mofified
-                    if (file_exists($full_path)) {
-                        if ($lastmodified = filemtime($full_path)) {
-                            mtrace("        XML File $file_name Created on ".date( "D, j M Y G:i:s T", $lastmodified ));
-                            mtrace('        Lastest course modification on '.date( "D, j M Y G:i:s T", $latest_date ));
-                            if ($latest_date > $lastmodified) {
-                                mtrace("        XML File $file_name needs updating");
-                                $changes = true;
-                            } else {
-                                mtrace("        XML File $file_name doesn't need updating");
-                                $changes = false;
-                            }
-                        }
-                    } else {
-                        mtrace("        XML File $file_name needs updating");
-                        $changes = true;
-                    }
-
-                    if ($changes) {
-                        //  Now we know something has changed, write the new file
-
-                        if (!empty($items)) {
-                            //  First set rss feeds common headers
-                            $header = rss_standard_header(strip_tags(format_string($title,true)),
-                                                          $CFG->wwwroot,
-                                                          $desc,
-                                                          true, true);
-                            //  Now all the rss items
-                            if (!empty($header)) {
-                                $articles = rss_add_items($items,$dc,$cc);
-                            }
-                            //  Now all rss feeds common footers
-                            if (!empty($header) && !empty($articles)) {
-                                $footer = rss_standard_footer();
-                            }
-                            //  Now, if everything is ok, concatenate it
-                            if (!empty($header) && !empty($articles) && !empty($footer)) {
-                                $result = $header.$articles.$footer;
-                            } else {
-                                $result = false;
-                            }
-                        } else {
-                            $result = false;
-                        }
-
-                        //  Save the XML contents to file
-                        if (!empty($result)) {
-                            $rss_file = fopen($full_path, "w");
-                            if ($rss_file) {
-                                $status = fwrite ($rss_file, $result);
-                                fclose($rss_file);
-                            } else {
-                                $status = false;
-                            }
-                        }
-
-                        //  Output result
-                        if (empty($result)) {
-                            // There was nothing to put into the XML file. Delete it!
-                            if( is_file($full_path) ) {
-                                mtrace("        There were no items for XML File $file_name. Deleting XML File");
-                                unlink($full_path);
-                                mtrace("        $full_path -> (deleted)");
-                            } else {
-                                mtrace("        There were no items for the XML File $file_name and no file to delete. Ignore.");
-                            }
-                        } else {
-                            if (!empty($status)) {
-                                mtrace("        $full_path -> OK");
-                            } else {
-                                mtrace("        $full_path -> FAILED");
-                            }
-                        }
-                    }
-                    //end of oci_create_rss_feed()
-                }
-            }
-        }
-    }
-
-    return $status;
-}
- */
-
-/*
- * Get official keywords for the <meta name="keywords"> in header.html
- * use: echo '<meta name="keywords" content="'.coursetag_get_official_keywords($COURSE->id).'"/>';
- *
- * @param int $courseid
- * @return string
- *
- * Function removed but fully working
- * This function is potentially useful to anyone wanting to improve search results for course pages.
- * The idea is to add official tags (not personal tags to prevent their deletion) to all
- * courses (facility not added yet) which will be automatically added to the page header to boost
- * search engine specificity/ratings.
- */
-/*
-function coursetag_get_official_keywords($courseid, $asarray=false) {
-    global $CFG;
-    $returnstr = '';
-    $sql = "SELECT t.id, name, rawname
-        FROM {tag} t, {tag_instance} ti
-        WHERE ti.itemid = :courseid
-        AND ti.itemtype = 'course'
-        AND t.tagtype = 'official'
-        AND ti.tagid = t.id
-        ORDER BY name ASC";
-    if ($tags = $DB->get_records_sql($sql, array('courseid' => $courseid))) {
-        if ($asarray) {
-            return $tags;
-        }
-        foreach ($tags as $tag) {
-            if( empty($CFG->keeptagnamecase) ) {
-                $name = textlib::strtotitle($tag->name);
-            } else {
-                $name = $tag->rawname;
-            }
-            $returnstr .= $name.', ';
-        }
-        $returnstr = rtrim($returnstr, ', ');
-    }
-    return $returnstr;
-}
-*/
