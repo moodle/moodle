@@ -130,7 +130,7 @@ Y.extend(ALERT, DIALOGUE, {
     _enterKeypress : null,
     initializer : function(config) {
         this.publish('complete');
-        var yes = C('<input type="button" value="'+this.get(CONFIRMYES)+'" />'),
+        var yes = C('<input type="button" id="id_yuialertconfirm-' + this.COUNT + '" value="'+this.get(CONFIRMYES)+'" />'),
             content = C('<div class="confirmation-dialogue"></div>')
                     .append(C('<div class="confirmation-message">'+this.get('message')+'</div>'))
                     .append(C('<div class="confirmation-buttons"></div>')
@@ -183,8 +183,8 @@ Y.extend(CONFIRM, DIALOGUE, {
         this.publish('complete');
         this.publish('complete-yes');
         this.publish('complete-no');
-        var yes = C('<input type="button" value="'+this.get(CONFIRMYES)+'" />'),
-            no = C('<input type="button" value="'+this.get(CONFIRMNO)+'" />'),
+        var yes = C('<input type="button" id="id_yuiconfirmyes-' + this.COUNT + '" value="'+this.get(CONFIRMYES)+'" />'),
+            no = C('<input type="button" id="id_yuiconfirmno-' + this.COUNT + '" value="'+this.get(CONFIRMNO)+'" />'),
             content = C('<div class="confirmation-dialogue"></div>')
                         .append(C('<div class="confirmation-message">'+this.get(QUESTION)+'</div>'))
                         .append(C('<div class="confirmation-buttons"></div>')

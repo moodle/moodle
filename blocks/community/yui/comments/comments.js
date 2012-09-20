@@ -55,6 +55,9 @@ YUI.add('moodle-block_community-comments', function(Y) {
             this.event = Y.one(document.body).on('click', this.hide, this, commentid);
             // We add a new event on the panel in order to hide the panel for the next click (touch device).
             this.panelevent = Y.one("#commentoverlay-"+commentid).on('click', this.hide, this, commentid);
+
+            // Focus on the close button
+            this.panels[commentid].get('buttons').header[0].focus();
         },
 
         hide : function (e, commentid) {
