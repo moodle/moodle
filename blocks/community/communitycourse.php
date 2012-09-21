@@ -228,10 +228,10 @@ if (!empty($courses)) {
     }
 }
 $PAGE->requires->yui_module('moodle-block_community-comments', 'M.blocks_community.init_comments',
-        array(array('commentids' => $commentedcourseids)));
+        array(array('commentids' => $commentedcourseids, 'closeButtonTitle' => get_string('close', 'editor'))));
 $PAGE->requires->yui_module('moodle-block_community-imagegallery', 'M.blocks_community.init_imagegallery',
         array(array('imageids' => $courseids, 'imagenumbers' => $courseimagenumbers,
-                'huburl' => $huburl)));
+                'huburl' => $huburl, 'closeButtonTitle' => get_string('close', 'editor'))));
 
 echo highlight($search, $renderer->course_list($courses, $huburl, $courseid));
 
