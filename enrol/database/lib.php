@@ -630,7 +630,7 @@ class enrol_database_plugin extends enrol_plugin {
         if ($idnumber) {
             $sqlfields[] = $idnumber;
         }
-        $sql = $this->db_get_sql($table, array(), $sqlfields);
+        $sql = $this->db_get_sql($table, array(), $sqlfields, true);
         $createcourses = array();
         if ($rs = $extdb->Execute($sql)) {
             if (!$rs->EOF) {
