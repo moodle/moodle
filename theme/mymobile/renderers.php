@@ -749,6 +749,11 @@ class theme_mymobile_core_renderer extends core_renderer {
             $select->attributes['title'] = $select->tooltip;
         }
 
+        $select->attributes['class'] = 'autosubmit';
+        if ($select->class) {
+            $select->attributes['class'] .= ' ' . $select->class;
+        }
+
         if ($select->label) {
             $output .= html_writer::label($select->label, $select->attributes['id']);
         }
@@ -767,7 +772,10 @@ class theme_mymobile_core_renderer extends core_renderer {
         $output .= html_writer::tag('noscript', html_writer::tag('div', $go), array('style' => 'inline'));
 
         $nothing = empty($select->nothing) ? false : key($select->nothing);
-        $this->page->requires->js_init_call('M.util.init_select_autosubmit', array($select->formid, $select->attributes['id'], $nothing));
+        $this->page->requires->yui_module('moodle-core-formautosubmit',
+            'M.core.init_formautosubmit',
+            array(array('selectid' => $select->attributes['id'], 'nothing' => $nothing))
+        );
 
         // then div wrapper for xhtml strictness
         $output = html_writer::tag('div', $output);
