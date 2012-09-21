@@ -15,7 +15,9 @@
 .block_course_overview .profilepicture {
     float: left;
 }
-
+.dir-rtl.block_course_overview .profilepicture {
+    float:right;
+}
 .block_course_overview .welcome_area {
     width: 100%;
     padding-bottom: 5px;
@@ -28,12 +30,18 @@
     border-collapse: separate;
     clear: none;
 }
+.dir-rtl .block_course_overview .welcome_message {
+    float:right;
+}
 
 .block_course_overview .content h2.title {
     float: left;
     margin-bottom: 0;
     margin-top: 0;
     position: relative;
+}
+.dir-rtl .block_course_overview .content h2.title {
+    float:right;
 }
 
 .block_course_overview .course_title {
@@ -49,11 +57,18 @@
     float: left;
     padding: 2px 10px 0 0;
 }
+.dir-rtl.editing .block_course_overview .move {
+    float:right;
+    padding: 2px 10px;
+}
 
 .editing .block_course_overview .moveicons {
     display: block;
     float: left;
     padding-right: 5px;
+}
+.dir-rtl.editing .block_course_overview .moveicons {
+    float:right;
 }
 
 .editing .block_course_overview .moveup {
@@ -64,10 +79,16 @@
     float: left;
     width: 14px;
 }
+.dir-rtl.editing .block_course_overview .movedownspacer {
+    float:right;
+}
 
 .editing .block_course_overview .moveupspacer {
     float: right;
     width: 14px;
+}
+.dir-rtl.editing .block_course_overview .moveupspacer {
+    float:left;
 }
 
 .block_course_overview #course_list {
@@ -81,6 +102,9 @@
 .block_course_overview .activity_info {
     clear: both;
 }
+.dir-rtl .block_course_overview .activity_info {
+    margin-right: 25px;
+}
 
 .block_course_overview .activity_overview {
     padding: 2px;
@@ -90,6 +114,9 @@
     text-align: left;
     margin: 0;
 }
+.dir-rtl .block_course_overview .singleselect {
+    text-align: right;
+}
 
 .block_course_overview .coursemovetarget {
     display: block;
@@ -98,3 +125,7 @@
     border-width: 2px;
     border-style: dashed;
 }
+
+.block_course_overview .collapsibleregioninner .name {margin-right: 20px;}
+.block_course_overview .collapsibleregioninner .info,
+.block_course_overview .collapsibleregioninner .details {margin-right: 25px;}
