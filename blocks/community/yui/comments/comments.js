@@ -24,7 +24,8 @@ YUI.add('moodle-block_community-comments', function(Y) {
                     bodyContent:Y.one('#commentoverlay-'+commentid).get('innerHTML'),
                     visible: false, //by default it is not displayed
                     lightbox : false,
-                    zIndex:100
+                    zIndex:100,
+                    closeButtonTitle: this.get('closeButtonTitle')
                 });
 
                 this.panels[commentid].get('contentBox').one('.commenttitle').remove();
@@ -78,7 +79,11 @@ YUI.add('moodle-block_community-comments', function(Y) {
     }, {
         NAME : COMMENTSNAME,
         ATTRS : {
-            commentids: {}
+            commentids: {},
+            closeButtonTitle : {
+                validator : Y.Lang.isString,
+                value : 'Close'
+            }
         }
     });
 

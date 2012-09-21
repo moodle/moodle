@@ -102,7 +102,8 @@ YUI.add('moodle-block_community-imagegallery', function(Y) {
                 bodyContent:Y.one('#imageoverlay').get('innerHTML'),
                 visible: false, //by default it is not displayed
                 lightbox : false,
-                zIndex:100
+                zIndex:100,
+                closeButtonTitle: this.get('closeButtonTitle')
             });
             this.panel.render();
             this.panel.hide(); //show the panel
@@ -187,7 +188,11 @@ YUI.add('moodle-block_community-imagegallery', function(Y) {
         ATTRS : {
             imageids: {},
             imagenumbers: {},
-            huburl: {}
+            huburl: {},
+            closeButtonTitle : {
+                validator : Y.Lang.isString,
+                value : 'Close'
+            }
         }
     });
 
