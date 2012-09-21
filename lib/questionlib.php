@@ -1179,16 +1179,24 @@ function question_add_tops($categories, $pcontexts) {
 function question_categorylist($categoryid) {
     global $DB;
 
-    $subcategories = $DB->get_records('question_categories',
-            array('parent' => $categoryid), 'sortorder ASC', 'id, 1');
+    //final list of category IDs
+    $categorylist = array();
 
-    $categorylist = array($categoryid);
-    foreach ($subcategories as $subcategory) {
-        if($subcategory->id == $categoryid)
-            //prevent infinite loop
-            throw new coding_exception("Question category $categoryid points to itself as a parent.");
+    //a list of category IDs to check for any sub-categories
+    $templist = array($categoryid);
+
+    while ($current = array_shift($templist)) {
+        if (isset($categorylist[$current])) {
+            throw new coding_exception("Category id=$current is already on the list - loop of categories detected.");
         }
-        $categorylist = array_merge($categorylist, question_categorylist($subcategory->id));
+
+        $subcategories = $DB->get_records('question_categories',
+                array('parent' => $current), 'sortorder ASC', 'id, 1');
+        foreach ($subcategories as $subcategory) {
+            $templist[] = $subcategory->id;
+        }
+
+        $categorylist[$current] = $current;
     }
 
     return $categorylist;
