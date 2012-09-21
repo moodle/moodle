@@ -219,8 +219,11 @@ switch ($action) {
         $file = $fs->get_file($user_context->id, 'user', 'draft', $draftid, $filepath, '.');
 
         $parent_path = $file->get_parent_directory()->get_filepath();
+        
+        $filepath = explode('/', trim($file->get_filepath(), '/'));
+        $filepath = array_pop($filepath);
 
-        if ($newfile = $zipper->archive_to_storage(array($file), $user_context->id, 'user', 'draft', $draftid, $parent_path, $filepath.'.zip', $USER->id)) {
+        if ($newfile = $zipper->archive_to_storage(array($filepath => $file), $user_context->id, 'user', 'draft', $draftid, $parent_path, $filepath.'.zip', $USER->id)) {
             $return = new stdClass();
             $return->filepath = $parent_path;
             echo json_encode($return);
@@ -251,7 +254,7 @@ switch ($action) {
 
         // archive compressed file to an unused draft area
         $newdraftitemid = file_get_unused_draft_itemid();
-        if ($newfile = $zipper->archive_to_storage(array($stored_file), $user_context->id, 'user', 'draft', $newdraftitemid, '/', $filename, $USER->id)) {
+        if ($newfile = $zipper->archive_to_storage(array('/' => $stored_file), $user_context->id, 'user', 'draft', $newdraftitemid, '/', $filename, $USER->id)) {
             $return = new stdClass();
             $return->fileurl  = moodle_url::make_draftfile_url($newdraftitemid, '/', $filename)->out();
             $return->filepath = $parent_path;

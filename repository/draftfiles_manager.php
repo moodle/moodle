@@ -147,7 +147,7 @@ case 'downloaddir':
         $filename = get_string('files').'.zip';
     }
 
-    if ($newfile = $zipper->archive_to_storage(array($file), $user_context->id, 'user', 'draft', $itemid, $parent_path, $filename, $USER->id)) {
+    if ($newfile = $zipper->archive_to_storage(array('/' => $file), $user_context->id, 'user', 'draft', $itemid, $parent_path, $filename, $USER->id)) {
         $fileurl = moodle_url::make_draftfile_url($itemid, '/', $filename)->out();
         header('Location: ' . $fileurl );
     } else {
@@ -161,14 +161,16 @@ case 'zip':
     $file = $fs->get_file($user_context->id, 'user', 'draft', $itemid, $draftpath, '.');
     if (!$file->get_parent_directory()) {
         $parent_path = '/';
+        $filepath = '/';
         $filename = get_string('files').'.zip';
     } else {
         $parent_path = $file->get_parent_directory()->get_filepath();
         $filepath = explode('/', trim($file->get_filepath(), '/'));
-        $filename = array_pop($filepath).'.zip';
+        $filepath = array_pop($filepath);
+        $filename = $filepath.'.zip';
     }
 
-    $newfile = $zipper->archive_to_storage(array($file), $user_context->id, 'user', 'draft', $itemid, $parent_path, $filename, $USER->id);
+    $newfile = $zipper->archive_to_storage(array($filepath => $file), $user_context->id, 'user', 'draft', $itemid, $parent_path, $filename, $USER->id);
 
     $home_url->param('action', 'browse');
     $home_url->param('draftpath', $parent_path);
