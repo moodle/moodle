@@ -288,7 +288,7 @@ class zip_archive extends file_archive {
         if (!isset($this->za)) {
             return false;
         }
-        $localname = ltrim($localname, '/'). '/';
+        $localname = trim($localname, '/'). '/';
         $localname = $this->mangle_pathname($localname);
 
         if ($localname === '/') {
@@ -296,7 +296,13 @@ class zip_archive extends file_archive {
             return false;
         }
 
-        return $this->za->addEmptyDir($localname);
+        if ($localname !== '') {
+            if (!$this->za->addEmptyDir($localname)) {
+                return false;
+            }
+            $this->modified = true;
+        }
+        return true;
     }
 
     /**
