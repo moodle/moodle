@@ -361,7 +361,13 @@ bodyContent: '<div class="comment-delete-confirm"><a href="#" id="confirmdelete-
                 } else {
                     // hide
                     container.setStyle('display', 'none');
-                    img.set('src', M.util.image_url('t/collapsed', 'core'));
+                    var collapsedimage = 't/collapsed'; // ltr mode
+                    if ( Y.one(document.body).hasClass('dir-rtl') ) {
+                        collapsedimage = 't/collapsed_rtl';
+                    } else {
+                        collapsedimage = 't/collapsed';
+                    }
+                    img.set('src', M.util.image_url(collapsedimage, 'core'));
                     if (ta) {
                         ta.set('value','');
                     }
