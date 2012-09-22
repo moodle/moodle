@@ -211,6 +211,7 @@ a.skip:active {position: static;display: block;}
 .mform .fitem .fitemtitle div {display: inline;}
 .mform .fitem .felement {border-width: 0;width:80%;margin-left:16%;}
 .mform .fitem fieldset.felement {margin-left:0;padding-left:1%;margin-bottom:0}
+.dir-rtl .mform .fitem fieldset.felement {padding-right: 1%;margin-right: 0;}
 .mform .error,
 .mform .required {color:#A00;}
 .mform .required .fgroup span label {color:#000;}
