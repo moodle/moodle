@@ -284,6 +284,7 @@ input#id_externalurl {direction:ltr;}
 .loginbox .subcontent {margin:5px;padding:10px;text-align:center;}
 .loginbox .loginpanel .desc {margin:0;padding:0;margin-bottom:5px;}
 .loginbox .signuppanel .subcontent {text-align:left;}
+.dir-rtl .loginbox .signuppanel .subcontent {text-align: right;}
 .loginbox .loginsub {margin-left:0;margin-right:0;}
 .loginbox .guestsub,
 .loginbox .forgotsub,
