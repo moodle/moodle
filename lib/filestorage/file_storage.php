@@ -398,7 +398,7 @@ class file_storage {
      * @param bool $includedirs whether or not include directories
      * @return array of stored_files indexed by pathanmehash
      */
-    public function get_area_files($contextid, $component, $filearea, $itemid = false, $sort = "sortorder, itemid, filepath, filename", $includedirs = true) {
+    public function get_area_files($contextid, $component, $filearea, $itemid = false, $sort = "itemid, filepath, filename", $includedirs = true) {
         global $DB;
 
         $conditions = array('contextid'=>$contextid, 'component'=>$component, 'filearea'=>$filearea);
@@ -443,7 +443,7 @@ class file_storage {
      */
     public function get_area_tree($contextid, $component, $filearea, $itemid) {
         $result = array('dirname'=>'', 'dirfile'=>null, 'subdirs'=>array(), 'files'=>array());
-        $files = $this->get_area_files($contextid, $component, $filearea, $itemid, "sortorder, itemid, filepath, filename", true);
+        $files = $this->get_area_files($contextid, $component, $filearea, $itemid, '', true);
         // first create directory structure
         foreach ($files as $hash=>$dir) {
             if (!$dir->is_directory()) {
@@ -480,7 +480,26 @@ class file_storage {
             $pointer['files'][$file->get_filename()] = $file;
             unset($pointer);
         }
+        $result = $this->sort_area_tree($result);
         return $result;
+    }
+
+    /**
+     * Sorts the result of {@link file_storage::get_area_tree()}.
+     *
+     * @param array $tree Array of results provided by {@link file_storage::get_area_tree()}
+     * @return array of sorted results
+     */
+    protected function sort_area_tree($tree) {
+        foreach ($tree as $key => &$value) {
+            if ($key == 'subdirs') {
+                $value = $this->sort_area_tree($value);
+                collatorlib::ksort($value, collatorlib::SORT_NATURAL);
+            } else if ($key == 'files') {
+                collatorlib::ksort($value, collatorlib::SORT_NATURAL);
+            }
+        }
+        return $tree;
     }
 
     /**
