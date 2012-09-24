@@ -522,7 +522,7 @@ $functions = array(
         'classpath'   => 'course/externallib.php',
         'description' => 'Update categories',
         'type'        => 'write',
-        'capabilities'=> 'moodle:category/manage',
+        'capabilities'=> 'moodle/category:manage',
     ),
 
     'core_course_delete_categories' => array(
