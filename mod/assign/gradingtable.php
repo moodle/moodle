@@ -308,6 +308,10 @@ class assign_grading_table extends table_sql implements renderable {
             }
         }
 
+        // When there is no data we still want the column headers printed in the csv file.
+        if ($this->is_downloading()) {
+            $this->start_output();
+        }
     }
 
     /**
