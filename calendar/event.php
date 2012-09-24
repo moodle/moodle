@@ -194,8 +194,6 @@ $renderer = $PAGE->get_renderer('core_calendar');
 $calendar->add_sidecalendar_blocks($renderer);
 
 echo $OUTPUT->header();
-echo $renderer->start_layout();
 echo $OUTPUT->heading($title);
 $mform->display();
-echo $renderer->complete_layout();
 echo $OUTPUT->footer();
