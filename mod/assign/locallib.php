@@ -1957,6 +1957,7 @@ class assign {
             $grade->locked = 0;
             $grade->grade = -1;
             $grade->grader = $USER->id;
+            $grade->extensionduedate = 0;
             $gid = $DB->insert_record('assign_grades', $grade);
             $grade->id = $gid;
             return $grade;
