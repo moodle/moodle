@@ -1282,7 +1282,9 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
             }
         }
         $fs = get_file_storage();
-        if ($files = $fs->get_area_files($filecontext->id, 'mod_glossary', 'attachment', $entry->id, "timemodified", false)) {
+        if ($files = $fs->get_area_files($filecontext->id, 'mod_glossary', 'attachment', $entry->id, "timemodified", false)
+         || $files = $fs->get_area_files($filecontext->id, 'mod_glossary', 'entry', $entry->id, "timemodified", false)) {
+
             $button->set_formats(PORTFOLIO_FORMAT_RICHHTML);
         } else {
             $button->set_formats(PORTFOLIO_FORMAT_PLAINHTML);
