@@ -7006,27 +7006,6 @@ function forum_get_post_actions() {
 }
 
 /**
- * this function returns all the separate forum ids, given a courseid
- *
- * @global object
- * @global object
- * @param int $courseid
- * @return array
- */
-function forum_get_separate_modules($courseid) {
-
-    global $CFG,$DB;
-    $forummodule = $DB->get_record("modules", array("name" => "forum"));
-
-    $sql = 'SELECT f.id, f.id FROM {forum} f, {course_modules} cm WHERE
-           f.id = cm.instance AND cm.module =? AND cm.visible = 1 AND cm.course = ?
-           AND cm.groupmode ='.SEPARATEGROUPS;
-
-    return $DB->get_records_sql($sql, array($forummodule->id, $courseid));
-
-}
-
-/**
  * @global object
  * @global object
  * @global object
