@@ -126,18 +126,12 @@ if (has_capability('mod/chat:chat', $context)) {
         echo '</p>';
     }
 
-    if (empty($USER->screenreader)) {
-        $params['id'] = $chat->id;
-        $chattarget = new moodle_url("/mod/chat/gui_$CFG->chat_method/index.php", $params);
-        echo '<p>';
-        echo $OUTPUT->action_link($chattarget, $strenterchat, new popup_action('click', $chattarget, "chat$course->id$chat->id$groupparam", array('height' => 500, 'width' => 700)));
-        echo '</p>';
-    }
+    $params['id'] = $chat->id;
+    $chattarget = new moodle_url("/mod/chat/gui_$CFG->chat_method/index.php", $params);
+    echo '<p>';
+    echo $OUTPUT->action_link($chattarget, $strenterchat, new popup_action('click', $chattarget, "chat$course->id$chat->id$groupparam", array('height' => 500, 'width' => 700)));
+    echo '</p>';
 
-    // if user is using screen reader, then there is no need to display this link again
-    // users with screenreader set, will only see 1 link, to the manual refresh page
-    // for better accessibility
-    // show frame/js-less alternative
     $params['id'] = $chat->id;
     $link = new moodle_url('/mod/chat/gui_basic/index.php', $params);
     $action = new popup_action('click', $link, "chat{$course->id}{$chat->id}{$groupparam}", array('height' => 500, 'width' => 700));

@@ -615,7 +615,6 @@ class grade_report_grader extends grade_report {
         $rows = array();
 
         $showuserimage = $this->get_pref('showuserimage');
-        $fixedstudents = $this->is_fixed_students();
 
         $strfeedback  = $this->get_lang_string("feedback");
         $strgrade     = $this->get_lang_string('grade');
@@ -1639,7 +1638,7 @@ class grade_report_grader extends grade_report {
      */
     public function is_fixed_students() {
         global $USER, $CFG;
-        return empty($USER->screenreader) && $CFG->grade_report_fixedstudents &&
+        return $CFG->grade_report_fixedstudents &&
             (check_browser_version('MSIE', '7.0') ||
              check_browser_version('Firefox', '2.0') ||
              check_browser_version('Gecko', '2006010100') ||

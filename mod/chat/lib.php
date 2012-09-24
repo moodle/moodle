@@ -1203,7 +1203,7 @@ function chat_supports($feature) {
 }
 
 function chat_extend_navigation($navigation, $course, $module, $cm) {
-    global $CFG, $USER, $PAGE, $OUTPUT;
+    global $CFG;
 
     $currentgroup = groups_get_activity_group($cm, true);
 
@@ -1219,12 +1219,9 @@ function chat_extend_navigation($navigation, $course, $module, $cm) {
 
         $links = array();
 
-        // If user is using screenreader, display gui_basic gui link only
-        if (empty($USER->screenreader)) {
-            $url = new moodle_url($target.'gui_'.$CFG->chat_method.'/index.php', $params);
-            $action = new popup_action('click', $url, 'chat'.$course->id.$cm->instance.$currentgroup, array('height' => 500, 'width' => 700));
-            $links[] = new action_link($url, $strenterchat, $action);
-        }
+        $url = new moodle_url($target.'gui_'.$CFG->chat_method.'/index.php', $params);
+        $action = new popup_action('click', $url, 'chat'.$course->id.$cm->instance.$currentgroup, array('height' => 500, 'width' => 700));
+        $links[] = new action_link($url, $strenterchat, $action);
 
         $url = new moodle_url($target.'gui_basic/index.php', $params);
         $action = new popup_action('click', $url, 'chat'.$course->id.$cm->instance.$currentgroup, array('height' => 500, 'width' => 700));
