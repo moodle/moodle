@@ -134,3 +134,16 @@ div.earlysubmission {
 td.submissioneditable {
     color: red;
 }
+
+.expandsummaryicon {
+    cursor: pointer;
+    display: none;
+}
+
+.jsenabled .expandsummaryicon {
+    display: inline;
+}
+
+.hidefull {
+    display: none;
+}

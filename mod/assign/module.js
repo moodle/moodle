@@ -86,7 +86,6 @@ M.mod_assign.init_grading_table = function(Y) {
                 } else {
                     confirmmessage = eval('M.str.assign.batchoperationconfirm' + operation.get('value'));
                 }
-                console.log(confirmmessage);
                 if (!confirm(confirmmessage)) {
                     e.preventDefault();
                 }
@@ -151,3 +150,63 @@ M.mod_assign.init_grade_change = function(Y) {
         });
     }
 };
+
+M.mod_assign.init_plugin_summary = function(Y, subtype, type, submissionid) {
+    suffix = subtype + '_' + type + '_' + submissionid;
+    classname = 'contract_' + suffix;
+    contract = Y.one('.' + classname);
+    if (contract) {
+        contract.on('click', function(e) {
+            img = e.target;
+            imgclasses = img.getAttribute('class').split(' ');
+            for (i = 0; i < imgclasses.length; i++) {
+                classname = imgclasses[i];
+                if (classname.indexOf('contract_') == 0) {
+                    thissuffix = classname.substr(9);
+                }
+            }
+            fullclassname = 'full_' + thissuffix;
+            full = Y.one('.' + fullclassname);
+            if (full) {
+                full.hide(true);
+            }
+            summaryclassname = 'summary_' + thissuffix;
+            summary = Y.one('.' + summaryclassname);
+            if (summary) {
+                summary.show(true);
+            }
+        });
+    }
+    classname = 'expand_' + suffix;
+    expand = Y.one('.' + classname);
+
+    full = Y.one('.full_' + suffix);
+    if (full) {
+        full.hide();
+        full.toggleClass('hidefull');
+    }
+    if (expand) {
+        expand.on('click', function(e) {
+            img = e.target;
+            imgclasses = img.getAttribute('class').split(' ');
+            for (i = 0; i < imgclasses.length; i++) {
+                classname = imgclasses[i];
+                if (classname.indexOf('expand_') == 0) {
+                    thissuffix = classname.substr(7);
+                }
+            }
+            summaryclassname = 'summary_' + thissuffix;
+            summary = Y.one('.' + summaryclassname);
+            if (summary) {
+                summary.hide(true);
+            }
+            fullclassname = 'full_' + thissuffix;
+            full = Y.one('.' + fullclassname);
+            if (full) {
+                full.show(true);
+            }
+        });
+    }
+
+
+}
