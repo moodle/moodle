@@ -1864,7 +1864,7 @@ class assign {
      *
      * @return assign_renderer
      */
-    private function get_renderer() {
+    public function get_renderer() {
         global $PAGE;
         if ($this->output) {
             return $this->output;
