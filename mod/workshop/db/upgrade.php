@@ -132,13 +132,14 @@ function xmldb_workshop_upgrade($oldversion) {
         // $filearea = "$workshop->course/$CFG->moddata/workshop/$submission->id";
         $fs     = get_file_storage();
         $from   = 'FROM {workshop_submissions} s
+                   JOIN {workshop_submissions_old} o ON (o.newid = s.id)
                    JOIN {workshop} w ON (w.id = s.workshopid)
                    JOIN {modules} m ON (m.name = :modulename)
                    JOIN {course_modules} cm ON (cm.module = m.id AND cm.instance = w.id)
                   WHERE s.attachment <> 1';
         $params = array('modulename' => 'workshop');
         $count  = $DB->count_records_sql('SELECT COUNT(s.id) ' . $from, $params);
-        $rs     = $DB->get_recordset_sql('SELECT s.id, s.authorid, s.workshopid, cm.course, cm.id AS cmid ' .
+        $rs     = $DB->get_recordset_sql('SELECT s.id, o.id AS oldid, s.authorid, s.workshopid, cm.course, cm.id AS cmid ' .
                                             $from . ' ORDER BY cm.course, w.id', $params);
         $pbar   = new progress_bar('migrateworkshopsubmissions', 500, true);
         $i      = 0;
@@ -147,7 +148,7 @@ function xmldb_workshop_upgrade($oldversion) {
             upgrade_set_timeout(60); // set up timeout, may also abort execution
             $pbar->update($i, $count, "Migrating workshop submissions - $i/$count");
 
-            $filedir = "$CFG->dataroot/$submission->course/$CFG->moddata/workshop/$submission->id";
+            $filedir = "$CFG->dataroot/$submission->course/$CFG->moddata/workshop/$submission->oldid";
             if ($files = get_directory_list($filedir, '', false)) {
                 $context = get_context_instance(CONTEXT_MODULE, $submission->cmid);
                 foreach ($files as $filename) {
@@ -178,7 +179,7 @@ function xmldb_workshop_upgrade($oldversion) {
                 }
             }
             // remove dirs if empty
-            @rmdir("$CFG->dataroot/$submission->course/$CFG->moddata/workshop/$submission->id");
+            @rmdir("$CFG->dataroot/$submission->course/$CFG->moddata/workshop/$submission->oldid");
             @rmdir("$CFG->dataroot/$submission->course/$CFG->moddata/workshop");
             @rmdir("$CFG->dataroot/$submission->course/$CFG->moddata");
             @rmdir("$CFG->dataroot/$submission->course");
