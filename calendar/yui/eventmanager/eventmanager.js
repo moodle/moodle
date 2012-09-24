@@ -24,6 +24,8 @@ YUI.add('moodle-calendar-eventmanager', function(Y) {
             this.publish('hideevent');
             td.on('mouseenter', this.startShow, this);
             td.on('mouseleave', this.startHide, this);
+            td.on('focus', this.startShow, this);
+            td.on('blur', this.startHide, this);
             return true;
         },
         initPanel : function() {
@@ -47,7 +49,10 @@ YUI.add('moodle-calendar-eventmanager', function(Y) {
                 });
                 panel.render(td);
                 panel.get('boundingBox').addClass('calendar-event-panel');
+                panel.get('boundingBox').setAttribute('aria-live', 'off');
                 this.on('showevent', panel.show, panel);
+                this.on('showevent', this.setAriashow, panel);
+                this.on('hideevent', this.setAriahide, panel);
                 this.on('hideevent', panel.hide, panel);
             }
         },
@@ -60,6 +65,12 @@ YUI.add('moodle-calendar-eventmanager', function(Y) {
         },
         cancelShow : function() {
             clearTimeout(this.get(SHOWTIMEOUT));
+        },
+        setAriashow : function() {
+            this.get('boundingBox').setAttribute('aria-live', 'assertive');
+        },
+        setAriahide : function() {
+             this.get('boundingBox').setAttribute('aria-live', 'off');
         },
         show : function() {
             this.initPanel();
