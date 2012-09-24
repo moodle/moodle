@@ -613,8 +613,7 @@ class dndupload_ajax_processor {
 
         $DB->set_field('course_modules', 'instance', $instanceid, array('id' => $this->cm->id));
 
-        $sectionid = add_mod_to_section($this->cm);
-        $DB->set_field('course_modules', 'section', $sectionid, array('id' => $this->cm->id));
+        $sectionid = course_add_cm_to_section($this->course, $this->cm->id, $this->section);
 
         set_coursemodule_visible($this->cm->id, true);
 

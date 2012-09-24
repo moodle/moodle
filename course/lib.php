@@ -2758,50 +2758,50 @@ function get_course_section($section, $courseid) {
 }
 
 /**
- * Given a full mod object with section and course already defined, adds this module to that section.
+ * Adds an existing module to the section
  *
- * @param object $mod
- * @param int $beforemod An existing ID which we will insert the new module before
- * @return int The course_sections ID where the mod is inserted
+ * Updates both tables {course_sections} and {course_modules}
+ *
+ * @param int|stdClass $courseorid course id or course object
+ * @param int $modid id of the module already existing in course_modules table
+ * @param int $sectionnum relative number of the section (field course_sections.section)
+ *     If section does not exist it will be created
+ * @param int|stdClass $beforemod id or object with field id corresponding to the module
+ *     before which the module needs to be included. Null for inserting in the
+ *     end of the section
+ * @return int The course_sections ID where the module is inserted
  */
-function add_mod_to_section($mod, $beforemod=NULL) {
-    global $DB;
-
-    if ($section = $DB->get_record("course_sections", array("course"=>$mod->course, "section"=>$mod->section))) {
-
-        $section->sequence = trim($section->sequence);
-
-        if (empty($section->sequence)) {
-            $newsequence = "$mod->coursemodule";
-
-        } else if ($beforemod) {
-            $modarray = explode(",", $section->sequence);
-
-            if ($key = array_keys($modarray, $beforemod->id)) {
-                $insertarray = array($mod->id, $beforemod->id);
-                array_splice($modarray, $key[0], 1, $insertarray);
-                $newsequence = implode(",", $modarray);
-
-            } else {  // Just tack it on the end anyway
-                $newsequence = "$section->sequence,$mod->coursemodule";
-            }
-
-        } else {
-            $newsequence = "$section->sequence,$mod->coursemodule";
-        }
-
-        $DB->set_field("course_sections", "sequence", $newsequence, array("id"=>$section->id));
-        return $section->id;     // Return course_sections ID that was used.
-
-    } else {  // Insert a new record
-        $section = new stdClass();
-        $section->course   = $mod->course;
-        $section->section  = $mod->section;
-        $section->summary  = "";
-        $section->summaryformat = FORMAT_HTML;
-        $section->sequence = $mod->coursemodule;
-        return $DB->insert_record("course_sections", $section);
+function course_add_cm_to_section($courseorid, $modid, $sectionnum, $beforemod = NULL) {
+    global $DB, $COURSE;
+    if (is_object($beforemod)) {
+        $beforemod = $beforemod->id;
     }
+    if (is_object($courseorid)) {
+        $course = &$courseorid;
+    } else {
+        if (isset($COURSE->id) && $COURSE->id == $courseorid) {
+            $course = &$COURSE;
+        } else {
+            $course = $DB->get_record('course', array('id' => $courseorid), '*', MUST_EXIST);
+        }
+    }
+    $section = get_course_section($sectionnum, $courseid);
+    $modarray = explode(",", trim($section->sequence));
+    if (empty($modarray)) {
+        $newsequence = "$modid";
+    } else if ($beforemod && ($key = array_keys($modarray, $beforemod))) {
+        $insertarray = array($modid, $beforemod);
+        array_splice($modarray, $key[0], 1, $insertarray);
+        $newsequence = implode(",", $modarray);
+    } else {
+        $newsequence = "$section->sequence,$modid";
+    }
+    $DB->set_field("course_sections", "sequence", $newsequence, array("id" => $section->id));
+    $DB->set_field('course_modules', 'section', $section->id, array('id' => $modid));
+    rebuild_course_cache($course->id, true);
+    $course->modinfo = null;
+    $course->sectioncache = null;
+    return $section->id;     // Return course_sections ID that was used.
 }
 
 function set_coursemodule_groupmode($id, $groupmode) {
@@ -2902,14 +2902,14 @@ function delete_course_module($id) {
     return $DB->delete_records('course_modules', array('id'=>$cm->id));
 }
 
-function delete_mod_from_section($mod, $section) {
+function delete_mod_from_section($modid, $sectionid) {
     global $DB;
 
-    if ($section = $DB->get_record("course_sections", array("id"=>$section)) ) {
+    if ($section = $DB->get_record("course_sections", array("id"=>$sectionid)) ) {
 
         $modarray = explode(",", $section->sequence);
 
-        if ($key = array_keys ($modarray, $mod)) {
+        if ($key = array_keys ($modarray, $modid)) {
             array_splice($modarray, $key[0], 1);
             $newsequence = implode(",", $modarray);
             return $DB->set_field("course_sections", "sequence", $newsequence, array("id"=>$section->id));
@@ -3097,27 +3097,13 @@ function moveto_module($mod, $section, $beforemod=NULL) {
         echo $OUTPUT->notification("Could not delete module from existing section");
     }
 
-/// Update module itself if necessary
-
-    if ($mod->section != $section->id) {
-        $mod->section = $section->id;
-        $DB->update_record("course_modules", $mod);
-        // if moving to a hidden section then hide module
-        if (!$section->visible) {
-            set_coursemodule_visible($mod->id, 0);
-        }
+    // if moving to a hidden section then hide module
+    if (!$section->visible && $mod->visible) {
+        set_coursemodule_visible($mod->id, 0);
     }
 
 /// Add the module into the new section
-
-    $mod->course       = $section->course;
-    $mod->section      = $section->section;  // need relative reference
-    $mod->coursemodule = $mod->id;
-
-    if (! add_mod_to_section($mod, $beforemod)) {
-        return false;
-    }
-
+    course_add_cm_to_section($section->course, $mod->id, $section->section, $beforemod);
     return true;
 }
 

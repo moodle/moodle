@@ -159,14 +159,11 @@ if ($xml = glossary_read_imported_file($result)) {
                     print_error('cannotaddcoursemodule');
                 }
 
-                if (! $sectionid = add_mod_to_section($mod) ) {
-                    print_error('cannotaddcoursemoduletosection');
-                }
+                $sectionid = course_add_cm_to_section($course, $mod->coursemodule, 0);
                 //We get the section's visible field status
                 $visible = $DB->get_field("course_sections", "visible", array("id"=>$sectionid));
 
                 $DB->set_field("course_modules", "visible", $visible, array("id"=>$mod->coursemodule));
-                $DB->set_field("course_modules", "section", $sectionid, array("id"=>$mod->coursemodule));
 
                 add_to_log($course->id, "course", "add mod",
                            "../mod/$mod->modulename/view.php?id=$mod->coursemodule",

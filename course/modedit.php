@@ -474,9 +474,7 @@ if ($mform->is_cancelled()) {
 
         // course_modules and course_sections each contain a reference
         // to each other, so we have to update one of them twice.
-        $sectionid = add_mod_to_section($fromform);
-
-        $DB->set_field('course_modules', 'section', $sectionid, array('id'=>$fromform->coursemodule));
+        $sectionid = course_add_cm_to_section($course, $fromform->coursemodule, $fromform->section);
 
         // make sure visibility is set correctly (in particular in calendar)
         // note: allow them to set it even without moodle/course:activityvisibility

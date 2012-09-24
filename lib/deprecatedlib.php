@@ -2957,3 +2957,23 @@ function get_all_sections($courseid) {
     $course = $DB->get_record('course', array('id' => $courseid));
     return get_fast_modinfo($course)->get_section_info_all();
 }
+
+/**
+ * Given a full mod object with section and course already defined, adds this module to that section.
+ *
+ * This function is deprecated, please use {@link course_add_cm_to_section()}
+ * Note that course_add_cm_to_section() also updates field course_modules.section and
+ * calls rebuild_course_cache()
+ *
+ * @deprecated since 2.4
+ *
+ * @param object $mod
+ * @param int $beforemod An existing ID which we will insert the new module before
+ * @return int The course_sections ID where the mod is inserted
+ */
+function add_mod_to_section($mod, $beforemod=NULL) {
+    debugging('Function add_mod_to_section() is deprecated, please use course_add_cm_to_section()', DEBUG_DEVELOPER);
+    global $DB;
+    $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+    return course_add_cm_to_section($course, $mod->coursemodule, $mod->section, $beforemod);
+}
