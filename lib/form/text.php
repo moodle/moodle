@@ -65,6 +65,20 @@ class MoodleQuickForm_text extends HTML_QuickForm_text{
     }
 
     /**
+     * Freeze the element so that only its value is returned and set persistantfreeze to false
+     *
+     * @since     2.4
+     * @access    public
+     * @return    void
+     */
+    function freeze()
+    {
+        $this->_flagFrozen = true;
+        // No hidden element is needed refer MDL-30845
+        $this->setPersistantFreeze(false);
+    } //end func freeze
+
+    /**
      * Returns the html to be used when the element is frozen
      *
      * @since     2.4
