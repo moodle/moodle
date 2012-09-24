@@ -3563,7 +3563,7 @@ class settings_navigation extends navigation_node {
                 $baseurl->param('sesskey', sesskey());
             } else {
                 // Edit on the main course page.
-                $baseurl = new moodle_url('/course/view.php', array('id'=>$course->id, 'sesskey'=>sesskey()));
+                $baseurl = new moodle_url('/course/view.php', array('id'=>$course->id, 'return'=>$this->page->url->out_as_local_url(false), 'sesskey'=>sesskey()));
             }
 
             $editurl = clone($baseurl);
