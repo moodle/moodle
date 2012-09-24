@@ -959,5 +959,15 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012062501.14);
     }
 
+    if ($oldversion < 2012062502.02) {
+        // Some folders still have a sortorder set, which is used for main files but is not
+        // supported by the folder resource. We reset the value here.
+        $sql = 'UPDATE {files} SET sortorder = ? WHERE component = ? AND filearea = ? AND sortorder <> ?';
+        $DB->execute($sql, array(0, 'mod_folder', 'content', 0));
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2012062502.02);
+    }
+
     return true;
 }
