@@ -193,7 +193,7 @@
     <location>yui</location>
     <name>YUI</name>
     <license>BSD</license>
-    <version>3.7.1</version>
+    <version>3.7.2</version>
     <licenseversion></licenseversion>
   </library>
   <library>
