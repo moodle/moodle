@@ -49,32 +49,9 @@ YUI.add('moodle-course-toolboxes', function(Y) {
 
     Y.extend(TOOLBOX, Y.Base, {
         /**
-         * Replace the button click at the selector with the specified
-         * callback
-         *
-         * @param toolboxtarget The selector of the working area
-         * @param selector The 'button' to replace
-         * @param callback The callback to apply
-         * @param cursor An optional cursor style to apply
+         * Toggle the visibility and availability for the specified
+         * resource show/hide button
          */
-        replace_button : function(toolboxtarget, selector, callback, cursor) {
-            if (!cursor) {
-                // Set the default cursor type to pointer to match the
-                // anchor
-                cursor = 'pointer';
-            }
-            var button = Y.one(toolboxtarget).all(selector)
-                .setStyle('cursor', cursor);
-
-            // on isn't chainable and will return an event
-            button.on('click', callback, this);
-
-            return button;
-        },
-          /**
-           * Toggle the visibility and availability for the specified
-           * resource show/hide button
-           */
         toggle_hide_resource_ui : function(button) {
             var element = button.ancestor(CSS.ACTIVITYLI);
             var hideicon = button.one('img');
@@ -241,6 +218,17 @@ YUI.add('moodle-course-toolboxes', function(Y) {
         initializer : function(config) {
             this.setup_for_resource();
             M.course.coursebase.register_module(this);
+
+            var prefix = CSS.ACTIVITYLI + ' ' + CSS.COMMANDSPAN + ' ';
+            Y.delegate('click', this.edit_resource_title, CSS.PAGECONTENT, prefix + CSS.EDITTITLE, this);
+            Y.delegate('click', this.move_left, CSS.PAGECONTENT, prefix + CSS.MOVELEFT, this);
+            Y.delegate('click', this.move_right, CSS.PAGECONTENT, prefix + CSS.MOVERIGHT, this);
+            Y.delegate('click', this.delete_resource, CSS.PAGECONTENT, prefix + CSS.DELETE, this);
+            Y.delegate('click', this.toggle_hide_resource, CSS.PAGECONTENT, prefix + CSS.HIDE, this);
+            Y.delegate('click', this.toggle_hide_resource, CSS.PAGECONTENT, prefix + CSS.SHOW, this);
+            Y.delegate('click', this.toggle_groupmode, CSS.PAGECONTENT, prefix + CSS.GROUPSNONE, this);
+            Y.delegate('click', this.toggle_groupmode, CSS.PAGECONTENT, prefix + CSS.GROUPSSEPARATE, this);
+            Y.delegate('click', this.toggle_groupmode, CSS.PAGECONTENT, prefix + CSS.GROUPSVISIBLE, this);
         },
 
         /**
@@ -252,27 +240,16 @@ YUI.add('moodle-course-toolboxes', function(Y) {
          */
         setup_for_resource : function(baseselector) {
             if (!baseselector) {
-                var baseselector = CSS.PAGECONTENT + ' ' + CSS.ACTIVITYLI;;
+                var baseselector = CSS.PAGECONTENT + ' ' + CSS.ACTIVITYLI;
             }
 
             Y.all(baseselector).each(this._setup_for_resource, this);
         },
         _setup_for_resource : function(toolboxtarget) {
-            // Edit Title
-            this.replace_button(toolboxtarget, CSS.COMMANDSPAN + ' ' + CSS.EDITTITLE, this.edit_resource_title);
-
-            // Move left and right
-            this.replace_button(toolboxtarget, CSS.COMMANDSPAN + ' ' + CSS.MOVELEFT, this.move_left);
-            this.replace_button(toolboxtarget, CSS.COMMANDSPAN + ' ' + CSS.MOVERIGHT, this.move_right);
-
-            // Delete
-            this.replace_button(toolboxtarget, CSS.COMMANDSPAN + ' ' + CSS.DELETE, this.delete_resource);
-
-            // Show/Hide
-            var showhide = this.replace_button(toolboxtarget, CSS.COMMANDSPAN + ' ' + CSS.HIDE, this.toggle_hide_resource);
-            var shown = this.replace_button(toolboxtarget, CSS.COMMANDSPAN + ' ' + CSS.SHOW, this.toggle_hide_resource);
-
-            showhide = showhide.concat(shown);
+            toolboxtarget = Y.one(toolboxtarget);
+            // "Disable" show/hide icons (change cursor to not look clickable) if section is hidden
+            var showhide = toolboxtarget.all(CSS.COMMANDSPAN + ' ' + CSS.HIDE);
+            showhide.concat(toolboxtarget.all(CSS.COMMANDSPAN + ' ' + CSS.SHOW));
             showhide.each(function(node) {
                 var section = node.ancestor(CSS.SECTIONLI);
                 if (section && section.hasClass(CSS.SECTIONHIDDENCLASS)) {
@@ -280,15 +257,15 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                 }
             });
 
-            // Change Group Mode
+            // Set groupmode attribute for use by this.toggle_groupmode()
             var groups;
-            groups = this.replace_button(toolboxtarget, CSS.COMMANDSPAN + ' ' + CSS.GROUPSNONE, this.toggle_groupmode);
+            groups = toolboxtarget.all(CSS.COMMANDSPAN + ' ' + CSS.GROUPSNONE);
             groups.setAttribute('groupmode', this.GROUPS_NONE);
 
-            groups = this.replace_button(toolboxtarget, CSS.COMMANDSPAN + ' ' + CSS.GROUPSSEPARATE, this.toggle_groupmode);
+            groups = toolboxtarget.all(CSS.COMMANDSPAN + ' ' + CSS.GROUPSSEPARATE);
             groups.setAttribute('groupmode', this.GROUPS_SEPARATE);
 
-            groups = this.replace_button(toolboxtarget, CSS.COMMANDSPAN + ' ' + CSS.GROUPSVISIBLE, this.toggle_groupmode);
+            groups = toolboxtarget.all(CSS.COMMANDSPAN + ' ' + CSS.GROUPSVISIBLE);
             groups.setAttribute('groupmode', this.GROUPS_VISIBLE);
         },
         move_left : function(e) {
@@ -405,6 +382,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             };
             var spinner = M.util.add_spinner(Y, element.one(CSS.SPINNERCOMMANDSPAN));
             this.send_request(data, spinner);
+            return false; // Need to return false to stop the delegate for the new state firing
         },
         toggle_groupmode : function(e) {
             // Prevent the default button action
@@ -460,6 +438,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             };
             var spinner = M.util.add_spinner(Y, element.one(CSS.SPINNERCOMMANDSPAN));
             this.send_request(data, spinner);
+            return false; // Need to return false to stop the delegate for the new state firing
         },
         /**
          * Add the moveleft button
@@ -632,6 +611,11 @@ YUI.add('moodle-course-toolboxes', function(Y) {
         initializer : function(config) {
             this.setup_for_section();
             M.course.coursebase.register_module(this);
+
+            // Section Highlighting
+            Y.delegate('click', this.toggle_highlight, CSS.PAGECONTENT, CSS.SECTIONLI + ' ' + CSS.HIGHLIGHT, this);
+            // Section Visibility
+            Y.delegate('click', this.toggle_hide_section, CSS.PAGECONTENT, CSS.SECTIONLI + ' ' + CSS.SHOWHIDE, this);
         },
         /**
          * Update any section areas within the scope of the specified
@@ -641,18 +625,15 @@ YUI.add('moodle-course-toolboxes', function(Y) {
          * @return void
          */
         setup_for_section : function(baseselector) {
-            if (!baseselector) {
+            // Left here for potential future use - not currently needed due to YUI delegation in initializer()
+            /*if (!baseselector) {
                 var baseselector = CSS.PAGECONTENT;
             }
 
-            Y.all(baseselector).each(this._setup_for_section, this);
+            Y.all(baseselector).each(this._setup_for_section, this);*/
         },
         _setup_for_section : function(toolboxtarget) {
-            // Section Highlighting
-            this.replace_button(toolboxtarget, CSS.RIGHTSIDE + ' ' + CSS.HIGHLIGHT, this.toggle_highlight);
-
-            // Section Visibility
-            this.replace_button(toolboxtarget, CSS.RIGHTSIDE + ' ' + CSS.SHOWHIDE, this.toggle_hide_section);
+            // Left here for potential future use - not currently needed due to YUI delegation in initializer()
         },
         toggle_hide_section : function(e) {
             // Prevent the default button action
