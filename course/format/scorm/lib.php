@@ -34,16 +34,6 @@ function callback_scorm_definition() {
 }
 
 /**
- * The GET argument variable that is used to identify the section being
- * viewed by the user (if there is one)
- *
- * @return string
- */
-function callback_scorm_request_key() {
-    return 'scorm';
-}
-
-/**
  * Toogle display of course contents (sections, activities)
  *
  * @return bool

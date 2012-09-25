@@ -3593,11 +3593,6 @@ class settings_navigation extends navigation_node {
                 user_preference_allow_ajax_update('usemodchooser', PARAM_BOOL);
             }
 
-            if ($this->page->user_is_editing()) {
-                // Removed as per MDL-22732
-                // $this->add_course_editing_links($course);
-            }
-
             // Add the course settings link
             $url = new moodle_url('/course/edit.php', array('id'=>$course->id));
             $coursenode->add(get_string('editsettings'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/settings', ''));
@@ -3736,91 +3731,6 @@ class settings_navigation extends navigation_node {
         }
         // Return we are done
         return $coursenode;
-    }
-
-    /**
-     * Adds branches and links to the settings navigation to add course activities
-     * and resources.
-     *
-     * @param stdClass $course
-     */
-    protected function add_course_editing_links($course) {
-        global $CFG;
-
-        require_once($CFG->dirroot.'/course/lib.php');
-
-        // Add `add` resources|activities branches
-        $structurefile = $CFG->dirroot.'/course/format/'.$course->format.'/lib.php';
-        if (file_exists($structurefile)) {
-            require_once($structurefile);
-            $requestkey = call_user_func('callback_'.$course->format.'_request_key');
-            $formatidentifier = optional_param($requestkey, 0, PARAM_INT);
-        } else {
-            $requestkey = get_string('section');
-            $formatidentifier = optional_param($requestkey, 0, PARAM_INT);
-        }
-
-        $modinfo = get_fast_modinfo($course);
-        $sections = $modinfo->get_section_info_all();
-
-        $addresource = $this->add(get_string('addresource'));
-        $addactivity = $this->add(get_string('addactivity'));
-        if ($formatidentifier!==0) {
-            $addresource->force_open();
-            $addactivity->force_open();
-        }
-
-        $this->get_course_modules($course);
-
-        foreach ($sections as $section) {
-            if ($formatidentifier !== 0 && $section->section != $formatidentifier) {
-                continue;
-            }
-            $sectionurl = new moodle_url('/course/view.php', array('id'=>$course->id, $requestkey=>$section->section));
-            if ($section->section == 0) {
-                $sectionresources = $addresource->add(get_string('course'), $sectionurl, self::TYPE_SETTING);
-                $sectionactivities = $addactivity->add(get_string('course'), $sectionurl, self::TYPE_SETTING);
-            } else {
-                $sectionname = get_section_name($course, $section);
-                $sectionresources = $addresource->add($sectionname, $sectionurl, self::TYPE_SETTING);
-                $sectionactivities = $addactivity->add($sectionname, $sectionurl, self::TYPE_SETTING);
-            }
-            foreach ($resources as $value=>$resource) {
-                $url = new moodle_url('/course/mod.php', array('id'=>$course->id, 'sesskey'=>sesskey(), 'section'=>$section->section));
-                $pos = strpos($value, '&type=');
-                if ($pos!==false) {
-                    $url->param('add', textlib::substr($value, 0,$pos));
-                    $url->param('type', textlib::substr($value, $pos+6));
-                } else {
-                    $url->param('add', $value);
-                }
-                $sectionresources->add($resource, $url, self::TYPE_SETTING);
-            }
-            $subbranch = false;
-            foreach ($activities as $activityname=>$activity) {
-                if ($activity==='--') {
-                    $subbranch = false;
-                    continue;
-                }
-                if (strpos($activity, '--')===0) {
-                    $subbranch = $sectionactivities->add(trim($activity, '-'));
-                    continue;
-                }
-                $url = new moodle_url('/course/mod.php', array('id'=>$course->id, 'sesskey'=>sesskey(), 'section'=>$section->section));
-                $pos = strpos($activityname, '&type=');
-                if ($pos!==false) {
-                    $url->param('add', textlib::substr($activityname, 0,$pos));
-                    $url->param('type', textlib::substr($activityname, $pos+6));
-                } else {
-                    $url->param('add', $activityname);
-                }
-                if ($subbranch !== false) {
-                    $subbranch->add($activity, $url, self::TYPE_SETTING);
-                } else {
-                    $sectionactivities->add($activity, $url, self::TYPE_SETTING);
-                }
-            }
-        }
     }
 
     /**

@@ -71,16 +71,6 @@ function callback_social_definition() {
 }
 
 /**
- * The GET argument variable that is used to identify the section being
- * viewed by the user (if there is one)
- *
- * @return string
- */
-function callback_social_request_key() {
-    return 'social';
-}
-
-/**
  * Toogle display of course contents (sections, activities)
  *
  * @return bool
