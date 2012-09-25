@@ -415,8 +415,8 @@ function authorize_print_order($orderid)
         }
         $a = new stdClass;
         $a->upto = $upto;
-        $extrahtml = get_string('howmuch', 'enrol_authorize') .
-                     ' <input type="text" size="5" name="amount" value="'.$amount.'" /> ' .
+        $extrahtml = '<label for="amount">'.get_string('howmuch', 'enrol_authorize').'</label> ' .
+                     '<input id="amount" type="text" size="5" name="amount" value="'.$amount.'" /> ' .
                      get_string('canbecredit', 'enrol_authorize', $a) . '<br />';
         $table->data[] = array("<b>$strs->confirm:</b>",
                                authorize_print_action_button($orderid, ORDER_REFUND, 0, true, $authstrs->unenrolstudent, $strs->no, $extrahtml));
