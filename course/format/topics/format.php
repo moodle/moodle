@@ -44,12 +44,20 @@ if (($marker >=0) && has_capability('moodle/course:setcurrentsection', $context)
     course_set_marker($course->id, $marker);
 }
 
+// make sure all sections are created
+$modinfo = get_fast_modinfo($course);
+for ($sectionnum = 0; $sectionnum <= $course->numsections; $sectionnum++) {
+    if (!$modinfo->get_section_info($sectionnum)) {
+        get_course_section($sectionnum, $course->id);
+    }
+}
+
 $renderer = $PAGE->get_renderer('format_topics');
 
 if (!empty($displaysection)) {
-    $renderer->print_single_section_page($course, $sections, $mods, $modnames, $modnamesused, $displaysection);
+    $renderer->print_single_section_page($course, null, null, null, null, $displaysection);
 } else {
-    $renderer->print_multiple_section_page($course, $sections, $mods, $modnames, $modnamesused);
+    $renderer->print_multiple_section_page($course, null, null, null, null);
 }
 
 // Include course format js module

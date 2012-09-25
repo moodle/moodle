@@ -1332,9 +1332,9 @@ function get_print_section_cm_text(cm_info $cm, $course) {
  * Prints a section full of activity modules
  *
  * @param stdClass $course The course
- * @param stdClass $section The section
- * @param array $mods The modules in the section
- * @param array $modnamesused An array containing the list of modules and their names
+ * @param stdClass|section_info $section The section object containing properties id and section
+ * @param array $mods (argument not used)
+ * @param array $modnamesused (argument not used)
  * @param bool $absolute All links are absolute
  * @param string $width Width of the container
  * @param bool $hidecompletion Hide completion status
@@ -1353,7 +1353,6 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
     static $strmovehere;
     static $strmovefull;
     static $strunreadpostsone;
-    static $modulenames;
 
     if (!isset($initialised)) {
         $groupbuttons     = ($course->groupmode or (!$course->groupmodeforce));
@@ -1364,7 +1363,6 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
             $strmovehere  = get_string("movehere");
             $strmovefull  = strip_tags(get_string("movefull", "", "'$USER->activitycopyname'"));
         }
-        $modulenames      = array();
         $initialised = true;
     }
 
@@ -1372,61 +1370,36 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
     $completioninfo = new completion_info($course);
 
     //Accessibility: replace table with list <ul>, but don't output empty list.
-    if (!empty($section->sequence)) {
+    if (!empty($modinfo->sections[$section->section])) {
 
         // Fix bug #5027, don't want style=\"width:$width\".
         echo "<ul class=\"section img-text\">\n";
-        $sectionmods = explode(",", $section->sequence);
 
-        foreach ($sectionmods as $modnumber) {
-            if (empty($mods[$modnumber])) {
-                continue;
-            }
-
-            /**
-             * @var cm_info
-             */
-            $mod = $mods[$modnumber];
+        foreach ($modinfo->sections[$section->section] as $modnumber) {
+            $mod = $modinfo->cms[$modnumber];
 
             if ($ismoving and $mod->id == $USER->activitycopy) {
                 // do not display moving mod
                 continue;
             }
 
-            if (isset($modinfo->cms[$modnumber])) {
-                // We can continue (because it will not be displayed at all)
-                // if:
-                // 1) The activity is not visible to users
-                // and
-                // 2a) The 'showavailability' option is not set (if that is set,
-                //     we need to display the activity so we can show
-                //     availability info)
-                // or
-                // 2b) The 'availableinfo' is empty, i.e. the activity was
-                //     hidden in a way that leaves no info, such as using the
-                //     eye icon.
-                if (!$modinfo->cms[$modnumber]->uservisible &&
-                    (empty($modinfo->cms[$modnumber]->showavailability) ||
-                      empty($modinfo->cms[$modnumber]->availableinfo))) {
-                    // visibility shortcut
-                    continue;
-                }
-            } else {
-                if (!file_exists("$CFG->dirroot/mod/$mod->modname/lib.php")) {
-                    // module not installed
-                    continue;
-                }
-                if (!coursemodule_visible_for_user($mod) &&
-                    empty($mod->showavailability)) {
-                    // full visibility check
-                    continue;
-                }
+            // We can continue (because it will not be displayed at all)
+            // if:
+            // 1) The activity is not visible to users
+            // and
+            // 2a) The 'showavailability' option is not set (if that is set,
+            //     we need to display the activity so we can show
+            //     availability info)
+            // or
+            // 2b) The 'availableinfo' is empty, i.e. the activity was
+            //     hidden in a way that leaves no info, such as using the
+            //     eye icon.
+            if (!$mod->uservisible &&
+                (empty($mod->showavailability) ||
+                  empty($mod->availableinfo))) {
+                // visibility shortcut
+                continue;
             }
-
-            if (!isset($modulenames[$mod->modname])) {
-                $modulenames[$mod->modname] = get_string('modulename', $mod->modname);
-            }
-            $modulename = $modulenames[$mod->modname];
 
             // In some cases the activity is visible to user, but it is
             // dimmed. This is done if viewhiddenactivities is true and if:
@@ -1710,7 +1683,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
              ' alt="'.$strmovehere.'" /></a></li>
              ';
     }
-    if (!empty($section->sequence) || $ismoving) {
+    if (!empty($modinfo->sections[$section->section]) || $ismoving) {
         echo "</ul><!--class='section'-->\n\n";
     }
 }
