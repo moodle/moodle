@@ -67,10 +67,6 @@ class block_social_activities extends block_list {
         $modinfo = get_fast_modinfo($course);
         $section = $modinfo->get_section_info(0);
 
-        if (!empty($section)) {
-            get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused);
-        }
-
         $groupbuttons = $course->groupmode;
         $groupbuttonslink = (!$course->groupmodeforce);
 
@@ -141,11 +137,7 @@ class block_social_activities extends block_list {
             $this->content->icons[] = '';
         }
 
-        if ($modnames) {
-            $this->content->footer = print_section_add_menus($course, 0, $modnames, true, true);
-        } else {
-            $this->content->footer = '';
-        }
+        $this->content->footer = print_section_add_menus($course, 0, null, true, true);
 
         return $this->content;
     }

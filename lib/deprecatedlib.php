@@ -2977,3 +2977,39 @@ function add_mod_to_section($mod, $beforemod=NULL) {
     $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
     return course_add_cm_to_section($course, $mod->coursemodule, $mod->section, $beforemod);
 }
+
+/**
+ * Returns a number of useful structures for course displays
+ *
+ * Function get_all_mods() is deprecated in 2.4
+ * Instead of:
+ * <code>
+ * get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused);
+ * </code>
+ * please use:
+ * <code>
+ * $mods = get_fast_modinfo($course)->get_cms();
+ * $modnames = get_module_types_names();
+ * $modnamesplural = get_module_types_names(true);
+ * $modnamesused = get_fast_modinfo($course)->get_used_module_names();
+ * </code>
+ *
+ * @deprecated since 2.4
+ *
+ * @param int $courseid id of the course to get info about
+ * @param array $mods (return) list of course modules
+ * @param array $modnames (return) list of names of all module types installed and available
+ * @param array $modnamesplural (return) list of names of all module types installed and available in the plural form
+ * @param array $modnamesused (return) list of names of all module types used in the course
+ */
+function get_all_mods($courseid, &$mods, &$modnames, &$modnamesplural, &$modnamesused) {
+    debugging('Function get_all_mods() is deprecated. Use get_fast_modinfo() and get_module_types_names() instead. See phpdocs for details', DEBUG_DEVELOPER);
+
+    global $COURSE;
+    $modnames      = get_module_types_names();
+    $modnamesplural= get_module_types_names(true);
+    $course = ($courseid==$COURSE->id) ? $COURSE : $DB->get_record('course',array('id'=>$courseid));
+    $modinfo = get_fast_modinfo($course);
+    $mods = $modinfo->get_cms();
+    $modnamesused = $modinfo->get_used_module_names();
+}

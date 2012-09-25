@@ -1209,56 +1209,30 @@ function get_array_of_activities($courseid) {
     return $mod;
 }
 
-
 /**
- * Returns a number of useful structures for course displays
+ * Returns the localised human-readable names of all used modules
+ *
+ * @param bool $plural if true returns the plural forms of the names
+ * @return array where key is the module name (component name without 'mod_') and
+ *     the value is the human-readable string. Array sorted alphabetically by value
  */
-function get_all_mods($courseid, &$mods, &$modnames, &$modnamesplural, &$modnamesused) {
-    global $CFG, $DB, $COURSE;
-
-    $mods          = array();    // course modules indexed by id
-    $modnames      = array();    // all course module names (except resource!)
-    $modnamesplural= array();    // all course module names (plural form)
-    $modnamesused  = array();    // course module names used
-
-    if ($allmods = $DB->get_records("modules")) {
-        foreach ($allmods as $mod) {
-            if (!file_exists("$CFG->dirroot/mod/$mod->name/lib.php")) {
-                continue;
+function get_module_types_names($plural = false) {
+    static $modnames = null;
+    global $DB, $CFG;
+    if ($modnames === null) {
+        $modnames = array(0 => array(), 1 => array());
+        if ($allmods = $DB->get_records("modules")) {
+            foreach ($allmods as $mod) {
+                if (file_exists("$CFG->dirroot/mod/$mod->name/lib.php") && $mod->visible) {
+                    $modnames[0][$mod->name] = get_string("modulename", "$mod->name");
+                    $modnames[1][$mod->name] = get_string("modulenameplural", "$mod->name");
+                }
             }
-            if ($mod->visible) {
-                $modnames[$mod->name] = get_string("modulename", "$mod->name");
-                $modnamesplural[$mod->name] = get_string("modulenameplural", "$mod->name");
-            }
-        }
-        collatorlib::asort($modnames);
-    } else {
-        print_error("nomodules", 'debug');
-    }
-
-    $course = ($courseid==$COURSE->id) ? $COURSE : $DB->get_record('course',array('id'=>$courseid));
-    $modinfo = get_fast_modinfo($course);
-
-    if ($rawmods=$modinfo->cms) {
-        foreach($rawmods as $mod) {    // Index the mods
-            if (empty($modnames[$mod->modname])) {
-                continue;
-            }
-            $mods[$mod->id] = $mod;
-            $mods[$mod->id]->modfullname = $modnames[$mod->modname];
-            if (!$mod->visible and !has_capability('moodle/course:viewhiddenactivities', context_course::instance($courseid))) {
-                continue;
-            }
-            // Check groupings
-            if (!groups_course_module_visible($mod)) {
-                continue;
-            }
-            $modnamesused[$mod->modname] = $modnames[$mod->modname];
-        }
-        if ($modnamesused) {
-            collatorlib::asort($modnamesused);
+            collatorlib::asort($modnames[0]);
+            collatorlib::asort($modnames[1]);
         }
     }
+    return $modnames[(int)$plural];
 }
 
 /**
@@ -1746,18 +1720,28 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
  *
  * @param stdClass $course The course
  * @param int $section relative section number (field course_sections.section)
- * @param array $modnames An array containing the list of modules and their names
+ * @param null|array $modnames An array containing the list of modules and their names
+ *     if omitted will be taken from get_module_types_names()
  * @param bool $vertical Vertical orientation
  * @param bool $return Return the menus or send them to output
  * @param int $sectionreturn The section to link back to
  * @return void|string depending on $return
  */
-function print_section_add_menus($course, $section, $modnames, $vertical=false, $return=false, $sectionreturn=null) {
+function print_section_add_menus($course, $section, $modnames = null, $vertical=false, $return=false, $sectionreturn=null) {
     global $CFG, $OUTPUT;
 
-    // check to see if user can add menus
-    if (!has_capability('moodle/course:manageactivities', context_course::instance($course->id))) {
-        return false;
+    if ($modnames === null) {
+        $modnames = get_module_types_names();
+    }
+
+    // check to see if user can add menus and there are modules to add
+    if (!has_capability('moodle/course:manageactivities', context_course::instance($course->id))
+            || empty($modnames)) {
+        if ($return) {
+            return '';
+        } else {
+            return false;
+        }
     }
 
     // Retrieve all modules with associated metadata

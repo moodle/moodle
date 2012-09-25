@@ -63,7 +63,6 @@ class block_site_main_menu extends block_list {
         $ismoving = ismoving($course->id);
         $section  = get_course_section(0, $course->id);
         $modinfo = get_fast_modinfo($course);
-        get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused);
 
         $groupbuttons = $course->groupmode;
         $groupbuttonslink = (!$course->groupmodeforce);
@@ -134,11 +133,7 @@ class block_site_main_menu extends block_list {
             $this->content->icons[] = '';
         }
 
-        if (!empty($modnames)) {
-            $this->content->footer = print_section_add_menus($course, 0, $modnames, true, true);
-        } else {
-            $this->content->footer = '';
-        }
+        $this->content->footer = print_section_add_menus($course, 0, null, true, true);
 
         return $this->content;
     }

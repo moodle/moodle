@@ -3427,10 +3427,9 @@ class settings_navigation extends navigation_node {
      */
     protected function get_course_modules($course) {
         global $CFG;
-        $mods = $modnames = $modnamesplural = $modnamesused = array();
         // This function is included when we include course/lib.php at the top
         // of this file
-        get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused);
+        $modnames = get_module_types_names();
         $resources = array();
         $activities = array();
         foreach($modnames as $modname=>$modnamestr) {

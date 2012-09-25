@@ -83,7 +83,7 @@ echo $OUTPUT->heading(format_string($course->fullname) . ": $userinfo", 2);
 $mform->display();
 
 $modinfo = get_fast_modinfo($course);
-get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused);
+$modnames = get_module_types_names();
 
 if (has_capability('moodle/course:viewhiddensections', $context)) {
     $hiddenfilter = "";

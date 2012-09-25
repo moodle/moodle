@@ -159,6 +159,24 @@ class course_modinfo extends stdClass {
     }
 
     /**
+     * Returns array of localised human-readable module names used in this course
+     *
+     * @param bool $plural if true returns the plural form of modules names
+     * @return array
+     */
+    public function get_used_module_names($plural = false) {
+        $modnames = get_module_types_names($plural);
+        $modnamesused = array();
+        foreach ($this->get_cms() as $cmid => $mod) {
+            if (isset($modnames[$mod->modname]) && $mod->uservisible) {
+                $modnamesused[$mod->modname] = $modnames[$mod->modname];
+            }
+        }
+        collatorlib::asort($modnamesused);
+        return $modnamesused;
+    }
+
+    /**
      * Obtains all instances of a particular module on this course.
      * @param $modname Name of module (not full frankenstyle) e.g. 'label'
      * @return array Array from instance id => cm_info for modules on this course; empty if none
@@ -611,14 +629,6 @@ class cm_info extends stdClass {
     public $conditionsfield;
 
     /**
-     * Plural name of module type, e.g. 'Forums' - from lang file
-     * @deprecated Do not use this value (you can obtain it by calling get_string instead); it
-     *   will be removed in a future version (see later TODO in this file)
-     * @var string
-     */
-    public $modplural;
-
-    /**
      * True if this course-module is available to students i.e. if all availability conditions
      * are met - obtained dynamically
      * @var bool
@@ -691,6 +701,24 @@ class cm_info extends stdClass {
      * @var string
      */
     private $afterediticons;
+
+    /**
+     * Magic method getter
+     *
+     * @param string $name
+     * @return mixed
+     */
+    public function __get($name) {
+        switch ($name) {
+            case 'modplural':
+                return $this->get_module_type_name(true);
+            case 'modfullname':
+                return $this->get_module_type_name();
+            default:
+                debugging('Invalid cm_info property accessed: '.$name);
+                return null;
+        }
+    }
 
     /**
      * @return bool True if this module has a 'view' page that should be linked to in navigation
@@ -791,6 +819,21 @@ class cm_info extends stdClass {
             $icon = $output->pix_url('icon', $this->modname);
         }
         return $icon;
+    }
+
+    /**
+     * Returns a localised human-readable name of the module type
+     *
+     * @param bool $plural return plural form
+     * @return string
+     */
+    public function get_module_type_name($plural = false) {
+        $modnames = get_module_types_names($plural);
+        if (isset($modnames[$this->modname])) {
+            return $modnames[$this->modname];
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -1012,16 +1055,6 @@ class cm_info extends stdClass {
                 ? $mod->conditionsgrade : array();
         $this->conditionsfield = isset($mod->conditionsfield)
                 ? $mod->conditionsfield : array();
-
-        // Get module plural name.
-        // TODO This was a very old performance hack and should now be removed as the information
-        // certainly doesn't belong in modinfo. On a 'normal' page this is only used in the
-        // activity_modules block, so if it needs caching, it should be cached there.
-        static $modplurals;
-        if (!isset($modplurals[$this->modname])) {
-            $modplurals[$this->modname] = get_string('modulenameplural', $this->modname);
-        }
-        $this->modplural = $modplurals[$this->modname];
 
         static $modviews;
         if (!isset($modviews[$this->modname])) {

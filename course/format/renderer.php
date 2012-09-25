@@ -271,7 +271,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
      *
      * @param stdClass $section The course_section entry from DB
      * @param stdClass $course The course entry from DB
-     * @param array    $mods course modules indexed by id (from get_all_mods)
+     * @param array    $mods course modules indexed by id (from get_fast_modinfo()->get_cms())
      * @return string HTML to output.
      */
     protected function section_summary($section, $course, $mods) {
@@ -318,7 +318,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
      *
      * @param stdClass $section The course_section entry from DB
      * @param stdClass $course the course record from DB
-     * @param array    $mods course modules indexed by id (from get_all_mods)
+     * @param array    $mods course modules indexed by id (from get_fast_modinfo()->get_cms())
      * @return string HTML to output.
      */
     private function section_activity_summary($section, $course, $mods) {
