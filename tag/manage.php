@@ -246,6 +246,7 @@ $totalcount = $DB->count_records_sql("
 $table->initialbars(true); // always initial bars
 $table->pagesize($perpage, $totalcount);
 
+//@todo MDL-35474 convert to mform
 echo '<form class="tag-management-form" method="post" action="'.$CFG->wwwroot.'/tag/manage.php"><div>';
 
 //retrieve tags from DB
@@ -253,25 +254,32 @@ if ($tagrecords = $DB->get_records_sql($query, $params, $table->get_page_start()
 
     //populate table with data
     foreach ($tagrecords as $tag) {
-        $id             =   $tag->id;
-        $name           =   '<a href="'.$CFG->wwwroot.'/tag/index.php?id='.$tag->id.'">'. tag_display_name($tag) .'</a>';
-        $owner          =   '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$tag->owner.'">' . fullname($tag) . '</a>';
-        $count          =   $tag->count;
-        $flag           =   $tag->flag;
-        $timemodified   =   format_time(time() - $tag->timemodified);
-        $checkbox       =   '<input type="checkbox" name="tagschecked[]" value="'.$tag->id.'" />';
-        $text           =   '<input type="text" name="newname['.$tag->id.']" />';
-        $tagtype        =   html_writer::select($existing_tagtypes, 'tagtypes['.$tag->id.']', $tag->tagtype, false);
+        $id             = $tag->id;
+        $params         = array('id' => $tag->id);
+        $taglink        = new moodle_url($CFG->wwwroot . '/tag/index.php', $params);
+        $name           = html_writer::link($taglink, tag_display_name($tag));
+        $params         = array('id' => $tag->owner);
+        $ownerlink      = new moodle_url($CFG->wwwroot . '/user/view.php', $params);
+        $owner          = html_writer::link($ownerlink, fullname($tag));
+        $count          = $tag->count;
+        $flag           = $tag->flag;
+        $timemodified   = format_time(time() - $tag->timemodified);
+        $checkbox       = html_writer::tag('input', '', array('type' => 'checkbox', 'name' => 'tagschecked[]', 'value' => $tag->id));
+        $attrs          = array('type' => 'text', 'id' => 'newname_' . $tag->id, 'name' => 'newname["'.$tag->id.'"]');
+        $text           = html_writer::label(get_string('newname', 'tag'), 'newname_' . $tag->id, false, array('class' => 'accesshide'));
+        $text          .= html_writer::empty_tag('input', $attrs);
+        $tagtype        = html_writer::label(get_string('tagtype', 'tag'), 'menutagtypes'. $tag->id, false, array('class' => 'accesshide'));
+        $tagtype       .= html_writer::select($existing_tagtypes, 'tagtypes['.$tag->id.']', $tag->tagtype, false, array('id' => 'menutagtypes'. $tag->id));
 
         //if the tag if flagged, highlight it
         if ($tag->flag > 0) {
-            $id = '<span class="flagged-tag">' . $id . '</span>';
-            $name = '<span class="flagged-tag">' . $name . '</span>';
-            $owner = '<span class="flagged-tag">' . $owner . '</span>';
-            $count = '<span class="flagged-tag">' . $count . '</span>';
-            $flag = '<span class="flagged-tag">' . $flag . '</span>';
-            $timemodified = '<span class="flagged-tag">' . $timemodified . '</span>';
-            $tagtype = '<span class="flagged-tag">'. $tagtype. '</span>';
+            $id = html_writer::tag('span', $id, array('class' => 'flagged-tag'));
+            $name = html_writer::tag('span', $name, array('class' => 'flagged-tag'));
+            $owner = html_writer::tag('span', $owner, array('class' => 'flagged-tag'));
+            $count = html_writer::tag('span', $count, array('class' => 'flagged-tag'));
+            $flag = html_writer::tag('span', $flag, array('class' => 'flagged-tag'));
+            $timemodified = html_writer::tag('span', $timemodified, array('class' => 'flagged-tag'));
+            $tagtype = html_writer::tag('span', $tagtype, array('class' => 'flagged-tag'));
         }
 
         $data = array($id, $name, $owner, $count, $flag, $timemodified, $text, $tagtype, $checkbox);
@@ -279,31 +287,43 @@ if ($tagrecords = $DB->get_records_sql($query, $params, $table->get_page_start()
         $table->add_data($data);
     }
 
-    echo '<input type="button" onclick="checkall()" value="'.get_string('selectall').'" /> ';
-    echo '<input type="button" onclick="checknone()" value="'.get_string('deselectall').'" /> ';
-    echo '<input type="hidden" name="sesskey" value="'.sesskey().'" /> ';
-    echo '<br/><br/>';
-    echo '<select id="menuformaction" name="action">
-                <option value="" selected="selected">'. get_string('withselectedtags', 'tag') .'</option>
-                <option value="reset">'. get_string('resetflag', 'tag') .'</option>
-                <option value="delete">'. get_string('delete', 'tag') .'</option>
-                <option value="changetype">'. get_string('changetype', 'tag') .'</option>
-                <option value="changename">'. get_string('changename', 'tag') .'</option>
-            </select>';
+    echo html_writer::empty_tag('input', array('type' => 'button', 'onclick' => 'checkall()', 'value' => get_string('selectall')));
+    echo html_writer::empty_tag('input', array('type' => 'button', 'onclick' => 'checknone()', 'value' => get_string('deselectall')));
+    echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()));
+    echo html_writer::empty_tag('br');
+    echo html_writer::empty_tag('br');
 
-    echo '<button id="tag-management-submit" type="submit">'. get_string('ok') .'</button>';
+    echo html_writer::label(get_string('withselectedtags', 'tag'), 'menuformaction', false, array('class' => 'accesshide'));
+    $options = array('' => get_string('withselectedtags', 'tag'),
+                     'reset' => get_string('resetflag', 'tag'),
+                     'delete' => get_string('delete', 'tag'),
+                     'changetype' => get_string('changetype', 'tag'),
+                     'changename' => get_string('changename', 'tag'));
+    echo html_writer::select($options, 'action', '', array(), array('id' => 'menuformaction'));
+
+    echo html_writer::tag('button', get_string('ok'), array('id' => 'tag-management-submit', 'type' => 'submit'));
 }
 
 $table->print_html();
+
+//@todo MDL-35474 convert to mform
 echo '</div></form>';
 
 if ($perpage == SHOW_ALL_PAGE_SIZE) {
-    echo '<div id="showall"><a href="'. $baseurl .'&amp;perpage='. DEFAULT_PAGE_SIZE .'">'. get_string('showperpage', '', DEFAULT_PAGE_SIZE) .'</a></div>';
+    echo html_writer::start_tag('div', array('id' => 'showall'));
+    $params = array('perpage' => DEFAULT_PAGE_SIZE);
+    $url = new moodle_url($baseurl, $params);
+    echo html_writer::link($url, get_string('showperpage', '', DEFAULT_PAGE_SIZE));
+    echo html_writer::end_tag('div');
 
 } else if ($totalcount > 0 and $perpage < $totalcount) {
-    echo '<div id="showall"><a href="'. $baseurl .'&amp;perpage='. SHOW_ALL_PAGE_SIZE .'">'. get_string('showall', '', $totalcount) .'</a></div>';
+    echo html_writer::start_tag('div', array('id' => 'showall'));
+    $params = array('perpage' => SHOW_ALL_PAGE_SIZE);
+    $url = new moodle_url($baseurl, $params);
+    echo html_writer::link($url, get_string('showall', '', $totalcount));
+    echo html_writer::end_tag('div');
 }
 
-echo '<br/>';
+echo html_writer::empty_tag('br');
 
 echo $OUTPUT->footer();
