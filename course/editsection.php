@@ -78,7 +78,7 @@ if ($mform->is_cancelled()){
     if (!empty($CFG->enableavailability)) {
         $section->availablefrom = $data->availablefrom;
         $section->availableuntil = $data->availableuntil;
-        if (!empty($data->groupingid)) {
+        if (isset($data->groupingid)) {
             $section->groupingid = $data->groupingid;
         }
         $section->showavailability = $data->showavailability;
