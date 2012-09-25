@@ -992,3 +992,17 @@ sup {vertical-align: super;}
     -webkit-box-shadow: 0px 0px 10px 0px #CCCCCC;
     -moz-box-shadow: 0px 0px 10px 0px #CCCCCC;
 }
+
+/* Install Process' text fields Forms, should always be justified to the left */
+form#installform #id_wwwroot,form#installform #id_dirroot ,form#installform #id_dataroot,
+form#installform #id_dbhost, form#installform #id_dbname, form#installform #id_dbuser,
+form#installform #id_dbpass, form#installform #id_prefix
+{direction: ltr;}
+
+html[dir=rtl] .breadcrumb,
+html[dir=rtl] .headermain,
+html[dir=rtl] #page-header {float: right;}
+
+html[dir=rtl] .formrow label.formlabel { float:right; }
+
+html[dir=rtl] .configphp {direction:ltr;text-align:left;}
