@@ -264,9 +264,12 @@ class assign_grading_table extends table_sql implements renderable {
             }
         }
 
-        // final grade
-        $columns[] = 'finalgrade';
-        $headers[] = get_string('finalgrade', 'grades');
+        // Exclude 'Final grade' column in downloaded grading worksheets.
+        if (!$this->is_downloading()) {
+            // Final grade.
+            $columns[] = 'finalgrade';
+            $headers[] = get_string('finalgrade', 'grades');
+        }
 
         // load the grading info for all users
         $this->gradinginfo = grade_get_grades($this->assignment->get_course()->id, 'mod', 'assign', $this->assignment->get_instance()->id, $users);
