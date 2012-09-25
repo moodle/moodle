@@ -83,7 +83,6 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             var newstring = M.util.get_string(status, 'moodle');
             hideicon.setAttrs({
                 'alt' : newstring,
-                'title' : newstring,
                 'src'   : M.util.image_url('t/' + status)
             });
             button.set('title', newstring);
@@ -424,7 +423,6 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             // Change the UI
             icon.setAttrs({
                 'alt' : newtitle,
-                'title' : newtitle,
                 'src' : iconsrc
             });
             button.setAttribute('title', newtitle);
@@ -452,7 +450,6 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                 .addClass(CSS.GENERICICONCLASS)
                 .setAttrs({
                     'src'   : M.util.image_url('t/left', 'moodle'),
-                    'title' : left_string,
                     'alt'   : left_string
                 });
             var moveright = target.one(CSS.MOVERIGHT);
@@ -663,7 +660,6 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             var newstring = M.util.get_string(status + 'fromothers', 'format_' + this.get('format'));
             hideicon.setAttrs({
                 'alt' : newstring,
-                'title' : newstring,
                 'src'   : M.util.image_url('i/' + status)
             });
             button.set('title', newstring);
@@ -721,7 +717,6 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                 .set('title', old_string);
             Y.one(CSS.PAGECONTENT)
                 .all(M.course.format.get_section_selector(Y) + '.current ' + CSS.HIGHLIGHT + ' img')
-                .set('title', old_string)
                 .set('alt', old_string)
                 .set('src', M.util.image_url('i/marker'));
 
@@ -737,7 +732,6 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                 button
                     .set('title', new_string);
                 buttonicon
-                    .set('title', new_string)
                     .set('alt', new_string)
                     .set('src', M.util.image_url('i/marked'));
             }
