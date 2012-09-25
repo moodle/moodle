@@ -42,6 +42,9 @@ class pgsql_native_moodle_database extends moodle_database {
 
     protected $last_error_reporting; // To handle pgsql driver default verbosity
 
+    /** @var bool savepoint hack for MDL-35506 - workaround for automatic transaction rollback on error */
+    protected $savepointpresent = false;
+
     /**
      * Detects if all needed PHP stuff installed.
      * Note: can be used before connect()
@@ -223,6 +226,15 @@ class pgsql_native_moodle_database extends moodle_database {
      * @return void
      */
     protected function query_start($sql, array $params=null, $type, $extrainfo=null) {
+        if ($this->is_transaction_started() and $type != SQL_QUERY_AUX) {
+            $res = @pg_query($this->pgsql, "SAVEPOINT moodle_pg_savepoint");
+            if ($res) {
+                pg_free_result($res);
+            }
+            $this->savepointpresent = true;
+        } else {
+            $this->savepointpresent = false;
+        }
         parent::query_start($sql, $params, $type, $extrainfo);
         // pgsql driver tents to send debug to output, we do not need that ;-)
         $this->last_error_reporting = error_reporting(0);
@@ -236,7 +248,25 @@ class pgsql_native_moodle_database extends moodle_database {
     protected function query_end($result) {
         // reset original debug level
         error_reporting($this->last_error_reporting);
-        parent::query_end($result);
+        try {
+            parent::query_end($result);
+            if ($this->savepointpresent) {
+                $res = @pg_query($this->pgsql, "RELEASE SAVEPOINT moodle_pg_savepoint");
+                if ($res) {
+                    pg_free_result($res);
+                }
+                $this->savepointpresent = false;
+            }
+        } catch (Exception $e) {
+            if ($this->savepointpresent) {
+                $res = @pg_query($this->pgsql, "ROLLBACK TO SAVEPOINT moodle_pg_savepoint");
+                if ($res) {
+                    pg_free_result($res);
+                }
+                $this->savepointpresent = false;
+            }
+            throw $e;
+        }
     }
 
     /**
