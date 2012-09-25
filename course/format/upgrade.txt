@@ -2,6 +2,11 @@ This files describes API changes for course formats
 
 Overview of this plugin type at http://docs.moodle.org/dev/Course_formats
 
+=== 2.4 ===
+
+* Function settings_navigation::add_course_editing_links() is completely removed, course format
+  functions callback_XXXX_request_key() are no longer used (where XXXX is the course format name)
+
 === 2.3 ===
 
 * The new $course->coursedisplay option was introduced, users can now choose to display
