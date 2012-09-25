@@ -693,6 +693,12 @@ function scorm_grade_item_update($scorm, $grades=null, $updatecompletion=true) {
         }
     }
 
+    if(!optional_param('attemptsmode')) {
+    	foreach($grades as $temp_grade_key => $temp_grade) {
+    		$grades[$temp_grade_key]->rawgrade = ($temp_grade->rawgrade * $scorm->maxgrade) / 100;
+    	}
+    }
+
     return grade_update('mod/scorm', $scorm->course, 'mod', 'scorm', $scorm->id, 0, $grades, $params);
 }
 
