@@ -139,31 +139,39 @@ class admin_setting_ldap_rolemapping extends admin_setting {
      * @return string XHTML field
      */
     public function output_html($data, $query='') {
-        $return  = '<div style="float:left; width:auto; margin-right: 0.5em;">';
-        $return .= '<div style="height: 2em;">'.get_string('roles', 'role').'</div>';
+        $return  = html_writer::start_tag('div', array('style' =>'float:left; width:auto; margin-right: 0.5em;'));
+        $return .= html_writer::tag('div', get_string('roles', 'role'), array('style' => 'height: 2em;'));
         foreach ($data as $role) {
-            $return .= '<div style="height: 2em;">'.s($role['name']).'</div>';
+            $return .= html_writer::tag('div', s($role['name']), array('style' => 'height: 2em;'));
         }
-        $return .= '</div>';
+        $return .= html_writer::end_tag('div');
 
-        $return .= '<div style="float:left; width:auto; margin-right: 0.5em;">';
-        $return .= '<div style="height: 2em;">'.get_string('contexts', 'enrol_ldap').'</div>';
+        $return .= html_writer::start_tag('div', array('style' => 'float:left; width:auto; margin-right: 0.5em;'));
+        $return .= html_writer::tag('div', get_string('contexts', 'enrol_ldap'), array('style' => 'height: 2em;'));
         foreach ($data as $role) {
             $contextid = $this->get_id().'['.$role['id'].'][contexts]';
             $contextname = $this->get_full_name().'['.$role['id'].'][contexts]';
-            $return .= '<div style="height: 2em;"><input type="text" size="40" id="'.$contextid.'" name="'.$contextname.'" value="'.s($role['contexts']).'"/></div>';
+            $return .= html_writer::start_tag('div', array('style' => 'height: 2em;'));
+            $return .= html_writer::label(get_string('role_mapping_context', 'enrol_ldap', $role['name']), $contextid, false, array('class' => 'accesshide'));
+            $attrs = array('type' => 'text', 'size' => '40', 'id' => $contextid, 'name' => $contextname, 'value' => s($role['contexts']));
+            $return .= html_writer::empty_tag('input', $attrs);
+            $return .= html_writer::end_tag('div');
         }
-        $return .= '</div>';
+        $return .= html_writer::end_tag('div');
 
-        $return .= '<div style="float:left; width:auto; margin-right: 0.5em;">';
-        $return .= '<div style="height: 2em;">'.get_string('memberattribute', 'enrol_ldap').'</div>';
+        $return .= html_writer::start_tag('div', array('style' => 'float:left; width:auto; margin-right: 0.5em;'));
+        $return .= html_writer::tag('div', get_string('memberattribute', 'enrol_ldap'), array('style' => 'height: 2em;'));
         foreach ($data as $role) {
             $memberattrid = $this->get_id().'['.$role['id'].'][memberattribute]';
             $memberattrname = $this->get_full_name().'['.$role['id'].'][memberattribute]';
-            $return .= '<div style="height: 2em;"><input type="text" size="15" id="'.$memberattrid.'" name="'.$memberattrname.'" value="'.s($role['memberattribute']).'"/></div>';
+            $return .= html_writer::start_tag('div', array('style' => 'height: 2em;'));
+            $return .= html_writer::label(get_string('role_mapping_attribute', 'enrol_ldap', $role['name']), $memberattrid, false, array('class' => 'accesshide'));
+            $attrs = array('type' => 'text', 'size' => '15', 'id' => $memberattrid, 'name' => $memberattrname, 'value' => s($role['memberattribute']));
+            $return .= html_writer::empty_tag('input', $attrs);
+            $return .= html_writer::end_tag('div');
         }
-        $return .= '</div>';
-        $return .= '<div style="clear:both;"></div>';
+        $return .= html_writer::end_tag('div');
+        $return .= html_writer::tag('div', '', array('style' => 'clear:both;'));
 
         return format_admin_setting($this, $this->visiblename, $return,
                                     $this->description, true, '', '', $query);
