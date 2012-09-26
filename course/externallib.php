@@ -285,7 +285,7 @@ class core_course_external extends external_api {
                         array('options' => $options));
 
         //retrieve courses
-        if (!key_exists('ids', $params['options'])
+        if (!array_key_exists('ids', $params['options'])
                 or empty($params['options']['ids'])) {
             $courses = $DB->get_records('course');
         } else {
@@ -523,12 +523,12 @@ class core_course_external extends external_api {
             require_capability('moodle/course:create', $context);
 
             // Make sure lang is valid
-            if (key_exists('lang', $course) and empty($availablelangs[$course['lang']])) {
+            if (array_key_exists('lang', $course) and empty($availablelangs[$course['lang']])) {
                 throw new moodle_exception('errorinvalidparam', 'webservice', '', 'lang');
             }
 
             // Make sure theme is valid
-            if (key_exists('forcetheme', $course)) {
+            if (array_key_exists('forcetheme', $course)) {
                 if (!empty($CFG->allowcoursethemes)) {
                     if (empty($availablethemes[$course['forcetheme']])) {
                         throw new moodle_exception('errorinvalidparam', 'webservice', '', 'forcetheme');
@@ -547,10 +547,10 @@ class core_course_external extends external_api {
             //set default value for completion
             $courseconfig = get_config('moodlecourse');
             if (completion_info::is_enabled_for_site()) {
-                if (!key_exists('enablecompletion', $course)) {
+                if (!array_key_exists('enablecompletion', $course)) {
                     $course['enablecompletion'] = $courseconfig->enablecompletion;
                 }
-                if (!key_exists('completionstartonenrol', $course)) {
+                if (!array_key_exists('completionstartonenrol', $course)) {
                     $course['completionstartonenrol'] = $courseconfig->completionstartonenrol;
                 }
             } else {
