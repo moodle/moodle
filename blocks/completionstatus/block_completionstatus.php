@@ -51,8 +51,10 @@ class block_completionstatus extends block_base {
         // Create empty content
         $this->content = new stdClass();
 
+        $context = get_context_instance(CONTEXT_COURSE, $course->id);
+
         // Can edit settings?
-        $can_edit = has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $course->id));
+        $can_edit = has_capability('moodle/course:update', $context);
 
         // Get course completion data
         $info = new completion_info($course);
