@@ -1,0 +1,11 @@
+This files describes API changes in tagging, information provided
+here is intended especially for developers.
+
+=== 2.4 ===
+
+Significant cleanup was done to course tags which involved some API
+changes, see MDL-15471
+* tag_print_cloud() arguments were changed
+* coursetag_print_cloud() was removed.
+* coursetag_get_official_keywords() was removed
+* coursetag_rss_feeds() was removed
