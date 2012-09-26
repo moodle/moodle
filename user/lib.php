@@ -324,15 +324,13 @@ function user_get_user_details($user, $course = null, array $userfields = array(
         $userdetails['phone2'] = $user->phone2;
     }
 
-    if (isset($user->description) && (!isset($hiddenfields['description']) or $isadmin)) {
-        if (!$cannotviewdescription) {
-
-            if (in_array('description', $userfields)) {
-                // Always return the descriptionformat if description is requested.
-                list($userdetails['description'], $userdetails['descriptionformat']) =
-                        external_format_text($user->description, $user->descriptionformat,
-                                $usercontext->id, 'user', 'profile', null);
-            }
+    if (isset($user->description) &&
+        ((!isset($hiddenfields['description']) && !$cannotviewdescription) or $isadmin)) {
+        if (in_array('description', $userfields)) {
+            // Always return the descriptionformat if description is requested.
+            list($userdetails['description'], $userdetails['descriptionformat']) =
+                    external_format_text($user->description, $user->descriptionformat,
+                            $usercontext->id, 'user', 'profile', null);
         }
     }
 
