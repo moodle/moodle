@@ -78,7 +78,7 @@ class core_enrol_external extends external_api {
 
     /**
      * Return users that have the capabilities for each course specified. For each course and capability specified,
-     * a list of the users that are enrolled in the course and have that capability are returned. 
+     * a list of the users that are enrolled in the course and have that capability are returned.
      *
      * @param array $coursecapabilities array of course ids and associated capability names {courseid, {capabilities}}
      * @return array An array of arrays describing users for each associated courseid and capability

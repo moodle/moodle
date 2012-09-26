@@ -113,7 +113,7 @@ class core_enrol_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(2, count($enrolledincourses));
     }
 
-    /** 
+    /**
      * Test get_enrolled_users_with_capability
      */
     public function test_get_enrolled_users_with_capability () {
