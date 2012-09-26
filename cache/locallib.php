@@ -81,8 +81,19 @@ class cache_config_writer extends cache_config {
 
         // We need to create a temporary cache lock instance for use here. Remember we are generating the config file
         // it doesn't exist and thus we can't use the normal API for this (it'll just try to use config).
+        $lockconf = reset($this->configlocks);
+        if ($lockconf === false) {
+            debugging('Your cache configuration file is out of date and needs to be refreshed.', DEBUG_DEVELOPER);
+            // Use the default
+            $lockconf = array(
+                'name' => 'cachelock_file_default',
+                'type' => 'cachelock_file',
+                'dir' => 'filelocks',
+                'default' => true
+            );
+        }
         $factory = cache_factory::instance();
-        $locking = $factory->create_lock_instance(reset($this->configlocks));
+        $locking = $factory->create_lock_instance($lockconf);
         if ($locking->lock('configwrite', 'config', true)) {
             // Its safe to use w mode here because we have already acquired the lock.
             $handle = fopen($cachefile, 'w');
@@ -515,12 +526,6 @@ abstract class cache_administration_helper extends cache_helper {
         ksort($default);
         $return = $return + $default;
 
-        foreach ($instance->get_mode_mappings() as $mapping) {
-            if (!array_key_exists($mapping['store'], $return)) {
-                continue;
-            }
-            $return[$mapping['store']]['mappings']++;
-        }
         foreach ($instance->get_definition_mappings() as $mapping) {
             if (!array_key_exists($mapping['store'], $return)) {
                 continue;
@@ -738,7 +743,6 @@ abstract class cache_administration_helper extends cache_helper {
             $config = cache_config::instance();
             $locks = array();
             foreach ($config->get_locks() as $lock => $conf) {
-                debug($conf);
                 if (!empty($conf['default'])) {
                     $name = get_string($lock, 'cache');
                 } else {
