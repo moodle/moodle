@@ -265,7 +265,7 @@ if ($tagrecords = $DB->get_records_sql($query, $params, $table->get_page_start()
         $flag           = $tag->flag;
         $timemodified   = format_time(time() - $tag->timemodified);
         $checkbox       = html_writer::tag('input', '', array('type' => 'checkbox', 'name' => 'tagschecked[]', 'value' => $tag->id));
-        $attrs          = array('type' => 'text', 'id' => 'newname_' . $tag->id, 'name' => 'newname["'.$tag->id.'"]');
+        $attrs          = array('type' => 'text', 'id' => 'newname_' . $tag->id, 'name' => 'newname['.$tag->id.']');
         $text           = html_writer::label(get_string('newname', 'tag'), 'newname_' . $tag->id, false, array('class' => 'accesshide'));
         $text          .= html_writer::empty_tag('input', $attrs);
         $tagtype        = html_writer::label(get_string('tagtype', 'tag'), 'menutagtypes'. $tag->id, false, array('class' => 'accesshide'));
