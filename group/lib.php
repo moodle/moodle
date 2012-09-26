@@ -44,9 +44,16 @@ function groups_add_member($grouporid, $userorid, $component=null, $itemid=0) {
     if (is_object($userorid)) {
         $userid = $userorid->id;
         $user   = $userorid;
+        if (!isset($user->deleted)) {
+            $user = $DB->get_record('user', array('id'=>$userid), '*', MUST_EXIST);
+        }
     } else {
         $userid = $userorid;
         $user = $DB->get_record('user', array('id'=>$userid), '*', MUST_EXIST);
+    }
+
+    if ($user->deleted) {
+        return false;
     }
 
     if (is_object($grouporid)) {

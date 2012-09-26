@@ -621,6 +621,9 @@ class course_enrolment_manager {
         global $DB;
         require_capability('moodle/course:managegroups', $this->context);
         $group = $this->get_group($groupid);
+        if (!groups_remove_member_allowed($group, $user)) {
+            return false;
+        }
         if (!$group) {
             return false;
         }

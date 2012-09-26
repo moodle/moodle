@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->dirroot.'/enrol/cohort/locallib.php');
 require_once($CFG->dirroot.'/cohort/lib.php');
+require_once($CFG->dirroot.'/group/lib.php');
 
 class enrol_cohort_testcase extends advanced_testcase {
 
@@ -190,6 +191,48 @@ class enrol_cohort_testcase extends advanced_testcase {
         $this->assertFalse($DB->record_exists('enrol', array('id'=>$cohortinstance1->id)));
         $this->assertFalse($DB->record_exists('role_assignments', array('component'=>'enrol_cohort', 'itemid'=>$cohortinstance1->id)));
 
+
+        // Test group sync.
+
+        $id = groups_create_group((object)array('name'=>'Group 1', 'courseid'=>$course1->id));
+        $group1 = $DB->get_record('groups', array('id'=>$id), '*', MUST_EXIST);
+        $id = groups_create_group((object)array('name'=>'Group 2', 'courseid'=>$course1->id));
+        $group2 = $DB->get_record('groups', array('id'=>$id), '*', MUST_EXIST);
+
+        $cohort1 = $this->getDataGenerator()->create_cohort(array('contextid'=>context_coursecat::instance($cat1->id)->id));
+        $id = $cohortplugin->add_instance($course1, array('customint1'=>$cohort1->id, 'roleid'=>$studentrole->id, 'customint2'=>$group1->id));
+        $cohortinstance1 = $DB->get_record('enrol', array('id'=>$id));
+
+        $this->assertEquals(4, $DB->count_records('user_enrolments', array()));
+        $this->assertEquals(2, $DB->count_records('role_assignments', array()));
+
+        $this->assertTrue(is_enrolled(context_course::instance($course1->id), $user4));
+        $this->assertTrue(groups_add_member($group1, $user4));
+        $this->assertTrue(groups_add_member($group2, $user4));
+
+        $this->assertFalse(groups_is_member($group1->id, $user1->id));
+        cohort_add_member($cohort1->id, $user1->id);
+        $this->assertTrue(groups_is_member($group1->id, $user1->id));
+        $this->assertTrue($DB->record_exists('groups_members', array('groupid'=>$group1->id, 'userid'=>$user1->id, 'component'=>'enrol_cohort', 'itemid'=>$cohortinstance1->id)));
+
+        cohort_add_member($cohort1->id, $user4->id);
+        $this->assertTrue(groups_is_member($group1->id, $user4->id));
+        $this->assertFalse($DB->record_exists('groups_members', array('groupid'=>$group1->id, 'userid'=>$user4->id, 'component'=>'enrol_cohort', 'itemid'=>$cohortinstance1->id)));
+
+        $cohortplugin->set_config('unenrolaction', ENROL_EXT_REMOVED_UNENROL);
+
+        cohort_remove_member($cohort1->id, $user1->id);
+        $this->assertFalse(groups_is_member($group1->id, $user1->id));
+
+        cohort_remove_member($cohort1->id, $user4->id);
+        $this->assertTrue(groups_is_member($group1->id, $user4->id));
+        $this->assertTrue(groups_is_member($group2->id, $user4->id));
+
+        $cohortplugin->set_config('unenrolaction', ENROL_EXT_REMOVED_SUSPENDNOROLES);
+        cohort_add_member($cohort1->id, $user1->id);
+
+        cohort_remove_member($cohort1->id, $user1->id);
+        $this->assertTrue(groups_is_member($group1->id, $user1->id));
     }
 
     public function test_sync_course() {
@@ -307,6 +350,65 @@ class enrol_cohort_testcase extends advanced_testcase {
         enrol_cohort_sync($course1->id, false);
         $this->assertEquals(3, $DB->count_records('user_enrolments', array()));
         $this->assertEquals(3, $DB->count_records('role_assignments', array()));
+
+
+        // Test group sync.
+
+        $this->disable_plugin(); // No event sync
+
+        $id = groups_create_group((object)array('name'=>'Group 1', 'courseid'=>$course1->id));
+        $group1 = $DB->get_record('groups', array('id'=>$id), '*', MUST_EXIST);
+        $id = groups_create_group((object)array('name'=>'Group 2', 'courseid'=>$course1->id));
+        $group2 = $DB->get_record('groups', array('id'=>$id), '*', MUST_EXIST);
+
+        $cohort1 = $this->getDataGenerator()->create_cohort(array('contextid'=>context_coursecat::instance($cat1->id)->id));
+        $id = $cohortplugin->add_instance($course1, array('customint1'=>$cohort1->id, 'roleid'=>$studentrole->id, 'customint2'=>$group1->id));
+        $cohortinstance1 = $DB->get_record('enrol', array('id'=>$id));
+
+        $this->assertTrue(is_enrolled(context_course::instance($course1->id), $user4));
+        $this->assertTrue(groups_add_member($group1, $user4));
+        $this->assertTrue(groups_add_member($group2, $user4));
+
+        $this->enable_plugin(); // No event sync
+
+        $this->assertEquals(3, $DB->count_records('user_enrolments', array()));
+        $this->assertEquals(3, $DB->count_records('role_assignments', array()));
+
+        $this->assertFalse(groups_is_member($group1->id, $user1->id));
+        cohort_add_member($cohort1->id, $user1->id);
+        cohort_add_member($cohort1->id, $user4->id);
+        cohort_add_member($cohort2->id, $user4->id);
+
+        enrol_cohort_sync($course1->id, false);
+
+        $this->assertEquals(7, $DB->count_records('user_enrolments', array()));
+        $this->assertEquals(7, $DB->count_records('role_assignments', array()));
+
+        $this->assertTrue(groups_is_member($group1->id, $user1->id));
+        $this->assertTrue($DB->record_exists('groups_members', array('groupid'=>$group1->id, 'userid'=>$user1->id, 'component'=>'enrol_cohort', 'itemid'=>$cohortinstance1->id)));
+
+        $this->assertTrue(groups_is_member($group1->id, $user4->id));
+        $this->assertFalse($DB->record_exists('groups_members', array('groupid'=>$group1->id, 'userid'=>$user4->id, 'component'=>'enrol_cohort', 'itemid'=>$cohortinstance1->id)));
+
+        $cohortinstance1->customint2 = $group2->id;
+        $DB->update_record('enrol', $cohortinstance1);
+
+        enrol_cohort_sync($course1->id, false);
+        $this->assertFalse(groups_is_member($group1->id, $user1->id));
+        $this->assertTrue(groups_is_member($group2->id, $user1->id));
+        $this->assertTrue($DB->record_exists('groups_members', array('groupid'=>$group2->id, 'userid'=>$user1->id, 'component'=>'enrol_cohort', 'itemid'=>$cohortinstance1->id)));
+
+        $this->assertTrue(groups_is_member($group1->id, $user4->id));
+        $this->assertTrue(groups_is_member($group2->id, $user4->id));
+        $this->assertFalse($DB->record_exists('groups_members', array('groupid'=>$group1->id, 'userid'=>$user4->id, 'component'=>'enrol_cohort', 'itemid'=>$cohortinstance1->id)));
+        $this->assertFalse($DB->record_exists('groups_members', array('groupid'=>$group2->id, 'userid'=>$user4->id, 'component'=>'enrol_cohort', 'itemid'=>$cohortinstance1->id)));
+
+        cohort_remove_member($cohort1->id, $user1->id);
+        $this->assertFalse(groups_is_member($group1->id, $user1->id));
+
+        cohort_remove_member($cohort1->id, $user4->id);
+        $this->assertTrue(groups_is_member($group1->id, $user4->id));
+        $this->assertTrue(groups_is_member($group2->id, $user4->id));
     }
 
     public function test_sync_all_courses() {
@@ -420,5 +522,74 @@ class enrol_cohort_testcase extends advanced_testcase {
         $this->assertEquals(3, $DB->count_records('user_enrolments', array()));
         $this->assertEquals(3, $DB->count_records('role_assignments', array()));
 
+
+        // Test group sync.
+
+        $this->disable_plugin(); // No event sync
+
+        $id = groups_create_group((object)array('name'=>'Group 1', 'courseid'=>$course1->id));
+        $group1 = $DB->get_record('groups', array('id'=>$id), '*', MUST_EXIST);
+        $id = groups_create_group((object)array('name'=>'Group 2', 'courseid'=>$course1->id));
+        $group2 = $DB->get_record('groups', array('id'=>$id), '*', MUST_EXIST);
+        $id = groups_create_group((object)array('name'=>'Group 2', 'courseid'=>$course2->id));
+        $group3 = $DB->get_record('groups', array('id'=>$id), '*', MUST_EXIST);
+
+        $cohort1 = $this->getDataGenerator()->create_cohort(array('contextid'=>context_coursecat::instance($cat1->id)->id));
+        $id = $cohortplugin->add_instance($course1, array('customint1'=>$cohort1->id, 'roleid'=>$studentrole->id, 'customint2'=>$group1->id));
+        $cohortinstance1 = $DB->get_record('enrol', array('id'=>$id));
+
+        $this->assertTrue(groups_add_member($group1, $user4));
+        $this->assertTrue(groups_add_member($group2, $user4));
+
+        $this->assertEquals(3, $DB->count_records('user_enrolments', array()));
+        $this->assertEquals(3, $DB->count_records('role_assignments', array()));
+
+        $this->assertFalse(groups_is_member($group1->id, $user1->id));
+        cohort_add_member($cohort1->id, $user1->id);
+        cohort_add_member($cohort1->id, $user4->id);
+        cohort_add_member($cohort2->id, $user4->id);
+        cohort_add_member($cohort2->id, $user3->id);
+
+        $this->enable_plugin();
+
+        enrol_cohort_sync(null, false);
+
+        $this->assertEquals(8, $DB->count_records('user_enrolments', array()));
+        $this->assertEquals(8, $DB->count_records('role_assignments', array()));
+
+        $this->assertTrue(groups_is_member($group1->id, $user1->id));
+        $this->assertTrue($DB->record_exists('groups_members', array('groupid'=>$group1->id, 'userid'=>$user1->id, 'component'=>'enrol_cohort', 'itemid'=>$cohortinstance1->id)));
+
+        $this->assertTrue(is_enrolled(context_course::instance($course1->id), $user4));
+        $this->assertTrue(groups_is_member($group1->id, $user4->id));
+        $this->assertFalse($DB->record_exists('groups_members', array('groupid'=>$group1->id, 'userid'=>$user4->id, 'component'=>'enrol_cohort', 'itemid'=>$cohortinstance1->id)));
+
+        $this->assertTrue(is_enrolled(context_course::instance($course2->id), $user3));
+        $this->assertFalse(groups_is_member($group3->id, $user3->id));
+
+        $cohortinstance1->customint2 = $group2->id;
+        $DB->update_record('enrol', $cohortinstance1);
+        $cohortinstance3->customint2 = $group3->id;
+        $DB->update_record('enrol', $cohortinstance3);
+
+        enrol_cohort_sync(null, false);
+        $this->assertFalse(groups_is_member($group1->id, $user1->id));
+        $this->assertTrue(groups_is_member($group2->id, $user1->id));
+        $this->assertTrue($DB->record_exists('groups_members', array('groupid'=>$group2->id, 'userid'=>$user1->id, 'component'=>'enrol_cohort', 'itemid'=>$cohortinstance1->id)));
+
+        $this->assertTrue(groups_is_member($group1->id, $user4->id));
+        $this->assertTrue(groups_is_member($group2->id, $user4->id));
+        $this->assertFalse($DB->record_exists('groups_members', array('groupid'=>$group1->id, 'userid'=>$user4->id, 'component'=>'enrol_cohort', 'itemid'=>$cohortinstance1->id)));
+        $this->assertFalse($DB->record_exists('groups_members', array('groupid'=>$group2->id, 'userid'=>$user4->id, 'component'=>'enrol_cohort', 'itemid'=>$cohortinstance1->id)));
+
+        $this->assertTrue(groups_is_member($group3->id, $user3->id));
+        $this->assertTrue($DB->record_exists('groups_members', array('groupid'=>$group3->id, 'userid'=>$user3->id, 'component'=>'enrol_cohort', 'itemid'=>$cohortinstance3->id)));
+
+        cohort_remove_member($cohort1->id, $user1->id);
+        $this->assertFalse(groups_is_member($group1->id, $user1->id));
+
+        cohort_remove_member($cohort1->id, $user4->id);
+        $this->assertTrue(groups_is_member($group1->id, $user4->id));
+        $this->assertTrue(groups_is_member($group2->id, $user4->id));
     }
 }

@@ -45,15 +45,17 @@ class enrol_cohort_plugin extends enrol_plugin {
 
         } else if (empty($instance->name)) {
             $enrol = $this->get_name();
+            $cohort = $DB->get_record('cohort', array('id'=>$instance->customint1));
+            $cohortname = format_string($cohort->name, true, array('context'=>context::instance_by_id($cohort->contextid)));
             if ($role = $DB->get_record('role', array('id'=>$instance->roleid))) {
                 $role = role_get_name($role, context_course::instance($instance->courseid, IGNORE_MISSING));
-                return get_string('pluginname', 'enrol_'.$enrol) . ' (' . format_string($DB->get_field('cohort', 'name', array('id'=>$instance->customint1))) . ' - ' . $role .')';
+                return get_string('pluginname', 'enrol_'.$enrol) . ' (' . $cohortname . ' - ' . $role .')';
             } else {
-                return get_string('pluginname', 'enrol_'.$enrol) . ' (' . format_string($DB->get_field('cohort', 'name', array('id'=>$instance->customint1))) . ')';
+                return get_string('pluginname', 'enrol_'.$enrol) . ' (' . $cohortname . ')';
             }
 
         } else {
-            return format_string($instance->name);
+            return format_string($instance->name, true, array('context'=>context_course::instance($instance->courseid)));
         }
     }
 
@@ -67,7 +69,7 @@ class enrol_cohort_plugin extends enrol_plugin {
             return NULL;
         }
         // Multiple instances supported - multiple parent courses linked.
-        return new moodle_url('/enrol/cohort/addinstance.php', array('id'=>$courseid));
+        return new moodle_url('/enrol/cohort/edit.php', array('courseid'=>$courseid));
     }
 
     /**
@@ -97,6 +99,29 @@ class enrol_cohort_plugin extends enrol_plugin {
             }
         }
         return false;
+    }
+
+    /**
+     * Returns edit icons for the page with list of instances.
+     * @param stdClass $instance
+     * @return array
+     */
+    public function get_action_icons(stdClass $instance) {
+        global $OUTPUT;
+
+        if ($instance->enrol !== 'cohort') {
+            throw new coding_exception('invalid enrol instance!');
+        }
+        $context = context_course::instance($instance->courseid);
+
+        $icons = array();
+
+        if (has_capability('enrol/cohort:config', $context)) {
+            $editlink = new moodle_url("/enrol/cohort/edit.php", array('courseid'=>$instance->courseid, 'id'=>$instance->id));
+            $icons[] = $OUTPUT->action_icon($editlink, new pix_icon('i/edit', get_string('edit'), 'core', array('class'=>'icon')));
+        }
+
+        return $icons;
     }
 
     /**
@@ -190,7 +215,7 @@ class enrol_cohort_plugin extends enrol_plugin {
             return false;
         }
 
-        $cohorturl = new moodle_url('/enrol/cohort/addinstance.php', array('id' => $course->id));
+        $cohorturl = new moodle_url('/enrol/cohort/edit.php', array('courseid' => $course->id));
         $button = new enrol_user_button($cohorturl, get_string('enrolcohort', 'enrol'), 'get');
         $button->class .= ' enrol_cohort_plugin';
 
@@ -238,6 +263,10 @@ class enrol_cohort_plugin extends enrol_plugin {
             // No cohort restore from other sites.
             $step->set_mapping('enrol', $oldid, 0);
             return;
+        }
+
+        if (!empty($data->customint2)) {
+            $data->customint2 = $step->get_mappingid('group', $data->customint2);
         }
 
         if ($data->roleid and $DB->record_exists('cohort', array('id'=>$data->customint1))) {
@@ -296,4 +325,26 @@ class enrol_cohort_plugin extends enrol_plugin {
             $this->enrol_user($instance, $userid, null, $data->timestart, $data->timeend, ENROL_USER_SUSPENDED);
         }
     }
+
+    /**
+     * Restore user group membership.
+     * @param stdClass $instance
+     * @param int $groupid
+     * @param int $userid
+     */
+    public function restore_group_member($instance, $groupid, $userid) {
+        // Nothing to do here, the group members are added in $this->restore_group_restored()
+        return;
+    }
+}
+
+/**
+ * Prevent removal of enrol roles.
+ * @param int $itemid
+ * @param int $groupid
+ * @param int $userid
+ * @return bool
+ */
+function enrol_cohort_allow_group_member_remove($itemid, $groupid, $userid) {
+    return false;
 }

@@ -7,6 +7,10 @@ information provided here is intended especially for developers.
   and page_generic_activity.
 * use $CFG->googlemapkey3 instead of removed $CFG->googlemapkey and migrate to Google Maps API V3
 * Function settings_navigation::add_course_editing_links() is completely removed
+* New component and itemid columns in groups_members table - this allows plugin to create protected
+  group memberships using 'xx_yy_allow_group_member_remove' callback and there is also a new restore
+  callback 'xx_yy_restore_group_member()'.
+* New general role assignment restore plugin callback 'xx_yy_restore_role_assignment()'.
 
 YUI changes:
 * moodle-enrol-notification has been renamed to moodle-core-notification

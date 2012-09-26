@@ -76,6 +76,9 @@ class restore_course_task extends restore_task {
             $this->add_step(new restore_enrolments_structure_step('course_enrolments', 'enrolments.xml'));
         }
 
+        // Populate groups, this must be done after enrolments because only enrolled users may be in groups.
+        $this->add_step(new restore_groups_members_structure_step('create_groups_members', '../groups.xml'));
+
         // Restore course role assignments and overrides (internally will observe the role_assignments setting),
         // this must be done after all users are enrolled.
         $this->add_step(new restore_ras_and_caps_structure_step('course_ras_and_caps', 'roles.xml'));

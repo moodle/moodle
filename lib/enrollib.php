@@ -1339,6 +1339,7 @@ abstract class enrol_plugin {
      */
     public function unenrol_user(stdClass $instance, $userid) {
         global $CFG, $USER, $DB;
+        require_once("$CFG->dirroot/group/lib.php");
 
         $name = $this->get_name();
         $courseid = $instance->courseid;
@@ -1353,6 +1354,13 @@ abstract class enrol_plugin {
             return;
         }
 
+        // Remove all users groups linked to this enrolment instance.
+        if ($gms = $DB->get_records('groups_members', array('userid'=>$userid, 'component'=>'enrol_'.$name, 'itemid'=>$instance->id))) {
+            foreach ($gms as $gm) {
+                groups_remove_member($gm->groupid, $gm->userid);
+            }
+        }
+
         role_unassign_all(array('userid'=>$userid, 'contextid'=>$context->id, 'component'=>'enrol_'.$name, 'itemid'=>$instance->id));
         $DB->delete_records('user_enrolments', array('id'=>$ue->id));
 
@@ -1363,15 +1371,14 @@ abstract class enrol_plugin {
         $sql = "SELECT 'x'
                   FROM {user_enrolments} ue
                   JOIN {enrol} e ON (e.id = ue.enrolid)
-                  WHERE ue.userid = :userid AND e.courseid = :courseid";
+                 WHERE ue.userid = :userid AND e.courseid = :courseid";
         if ($DB->record_exists_sql($sql, array('userid'=>$userid, 'courseid'=>$courseid))) {
             $ue->lastenrol = false;
             events_trigger('user_unenrolled', $ue);
             // user still has some enrolments, no big cleanup yet
+
         } else {
             // the big cleanup IS necessary!
-
-            require_once("$CFG->dirroot/group/lib.php");
             require_once("$CFG->libdir/gradelib.php");
 
             // remove all remaining roles
@@ -1620,6 +1627,7 @@ abstract class enrol_plugin {
         $participants->close();
 
         // now clean up all remainders that were not removed correctly
+        $DB->delete_records('groups_members', array('itemid'=>$instance->id, 'component'=>$name));
         $DB->delete_records('role_assignments', array('itemid'=>$instance->id, 'component'=>$name));
         $DB->delete_records('user_enrolments', array('enrolid'=>$instance->id));
 
@@ -1807,5 +1815,16 @@ abstract class enrol_plugin {
      */
     public function restore_role_assignment($instance, $roleid, $userid, $contextid) {
         // No role assignment by default, override if necessary.
+    }
+
+    /**
+     * Restore user group membership.
+     * @param stdClass $instance
+     * @param int $groupid
+     * @param int $userid
+     */
+    public function restore_group_member($instance, $groupid, $userid) {
+        // Implement if you want to restore protected group memberships,
+        // usually this is not necessary because plugins should be able to recreate the memberships automatically.
     }
 }
