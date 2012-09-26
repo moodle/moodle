@@ -671,6 +671,11 @@ body.tag .managelink {padding: 5px;}
 
 .dir-rtl .felement.feditor select {margin-right:18.75%;margin-left:auto;}
 .dir-rtl .mform .fitem .felement {margin-right: 16%;margin-left:auto;text-align: right;}
+.dir-rtl .mform .fitem .felement input[name=email],
+.dir-rtl .mform .fitem .felement input[name=url],
+.dir-rtl .mform .fitem .felement input[name=idnumber],
+.dir-rtl .mform .fitem .felement input[name=phone1],
+.dir-rtl .mform .fitem .felement input[name=phone2] {text-align: left; direction: ltr;}
 
 /* Audio player size in 'block' mode (can only change width, height is hardcoded in JS) */
 .resourcecontent .mediaplugin_mp3 object {height:25px; width: 600px}
