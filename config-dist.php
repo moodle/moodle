@@ -442,6 +442,18 @@ $CFG->admin = 'admin';
 //
 //      $CFG->disableupdatenotifications = true;
 //
+// As of version 2.4 Moodle serves icons as SVG images if the users browser appears
+// to support SVG.
+// For those wanting to control the serving of SVG images the following setting can
+// be defined in your config.php.
+// If it is not defined then the default (browser detection) will occur.
+//
+// To ensure they are always used when available:
+//      $CFG->svgicons = true;
+//
+// To ensure they are never used even when available:
+//      $CFG->svgicons = false;
+//
 //=========================================================================
 // 8. SETTINGS FOR DEVELOPMENT SERVERS - not intended for production use!!!
 //=========================================================================

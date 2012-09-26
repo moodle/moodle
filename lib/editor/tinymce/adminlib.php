@@ -198,7 +198,7 @@ class tiynce_subplugins_settings extends admin_setting {
                 $displayname = html_writer::tag('span', $namestr, array('class'=>'dimmed_text'));
             }
 
-            if ($PAGE->theme->resolve_image_location('icon', 'tinymce_' . $name)) {
+            if ($PAGE->theme->resolve_image_location('icon', 'tinymce_' . $name, false)) {
                 $icon = $OUTPUT->pix_icon('icon', '', 'tinymce_' . $name, array('class' => 'smallicon pluginicon'));
             } else {
                 $icon = $OUTPUT->pix_icon('spacer', '', 'moodle', array('class' => 'smallicon pluginicon noicon'));

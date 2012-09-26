@@ -37,6 +37,13 @@ if ($slashargument = min_get_slash_argument()) {
     if (substr_count($slashargument, '/') < 3) {
         image_not_found();
     }
+    if (strpos($slashargument, '_s/') === 0) {
+        // Can't use SVG
+        $slashargument = substr($slashargument, 3);
+        $usesvg = false;
+    } else {
+        $usesvg = true;
+    }
     // image must be last because it may contain "/"
     list($themename, $component, $rev, $image) = explode('/', $slashargument, 4);
     $themename = min_clean_param($themename, 'SAFEDIR');
@@ -49,6 +56,7 @@ if ($slashargument = min_get_slash_argument()) {
     $component = min_optional_param('component', 'core', 'SAFEDIR');
     $rev       = min_optional_param('rev', -1, 'INT');
     $image     = min_optional_param('image', '', 'SAFEPATH');
+    $usesvg    = (bool)min_optional_param('svg', '1', 'INT');
 }
 
 if (empty($component) or $component === 'moodle' or $component === 'core') {
@@ -77,12 +85,15 @@ if ($rev > -1) {
         image_not_found();
     }
     $cacheimage = false;
-    if (file_exists("$candidatelocation/$image.gif")) {
-        $cacheimage = "$candidatelocation/$image.gif";
-        $ext = 'gif';
+    if ($usesvg && file_exists("$candidatelocation/$image.svg")) {
+        $cacheimage = "$candidatelocation/$image.svg";
+        $ext = 'svg';
     } else if (file_exists("$candidatelocation/$image.png")) {
         $cacheimage = "$candidatelocation/$image.png";
         $ext = 'png';
+    } else if (file_exists("$candidatelocation/$image.gif")) {
+        $cacheimage = "$candidatelocation/$image.gif";
+        $ext = 'gif';
     } else if (file_exists("$candidatelocation/$image.jpg")) {
         $cacheimage = "$candidatelocation/$image.jpg";
         $ext = 'jpg';
@@ -120,7 +131,7 @@ define('NO_UPGRADE_CHECK', true);  // Ignore upgrade check
 require("$CFG->dirroot/lib/setup.php");
 
 $theme = theme_config::load($themename);
-$imagefile = $theme->resolve_image_location($image, $component);
+$imagefile = $theme->resolve_image_location($image, $component, $usesvg);
 
 $rev = theme_get_revision();
 $etag = sha1("$themename/$component/$rev/$image");
@@ -229,10 +240,12 @@ function image_not_found() {
 
 function get_contenttype_from_ext($ext) {
     switch ($ext) {
-        case 'gif':
-            return 'image/gif';
+        case 'svg':
+            return 'image/svg+xml';
         case 'png':
             return 'image/png';
+        case 'gif':
+            return 'image/gif';
         case 'jpg':
         case 'jpeg':
             return 'image/jpeg';
