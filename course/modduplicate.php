@@ -134,7 +134,7 @@ if ($newcmid) {
     echo $output->confirm(
         get_string('duplicatesuccess', 'core', $a),
         new single_button(
-            new moodle_url('/course/modedit.php', array('update' => $newcmid)),
+            new moodle_url('/course/modedit.php', array('update' => $newcmid, 'sr' => $sectionreturn)),
             get_string('duplicatecontedit'),
             'get'),
         new single_button(
