@@ -37,8 +37,6 @@ require_once($CFG->libdir.'/filelib.php');
  * @param    bool      $return     if true the function will return the generated tag cloud instead of displaying it.
  * @return string|null a HTML string or null if this function does the output
  */
-//TODO question for integrator - for contrib work would it be best to add $tagset at the end of the parameter list
-// not the beginning?  I put it at the beginning because it sits better as alternative to $nr_of_tags there
 function tag_print_cloud($tagset=null, $nr_of_tags=150, $return=false) {
     global $CFG, $DB;
 

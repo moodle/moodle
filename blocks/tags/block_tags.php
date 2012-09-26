@@ -111,10 +111,10 @@ class block_tags extends block_base {
             $moretags = new moodle_url('/tag/coursetags_more.php', array('show'=>$tagtype));
             if ($tagtype == 'all') {
                 $tags = coursetag_get_tags(0, 0, $this->config->tagtype, $this->config->numberoftags, 'name');
-            } else if ($tagtype=='course') {
+            } else if ($tagtype == 'course') {
                 $tags = coursetag_get_tags($this->page->course->id, 0, $this->config->tagtype, $this->config->numberoftags, 'name');
                 $moretags->param('courseid', $this->page->course->id);
-            } else if ($tagtype=='my') {
+            } else if ($tagtype == 'my') {
                 $tags = coursetag_get_tags(0, $USER->id, $this->config->tagtype, $this->config->numberoftags, 'name');
             }
             $tagcloud = tag_print_cloud($tags, 150, true);
@@ -142,7 +142,7 @@ class block_tags extends block_base {
                                 has_capability('moodle/tag:create', context_course::instance($this->page->course->id))) {
                     $buttonadd = get_string('add', 'block_tags');
                     $arrowtitle = get_string('arrowtitle', 'block_tags');
-                    $edit_tags = get_string('edittags', 'block_tags');
+                    $edittags = get_string('edittags', 'block_tags');
                     $sesskey = sesskey();
                     $arrowright = $OUTPUT->pix_url('t/arrow_left');
                     $redirect = $this->page->url->out();
@@ -173,7 +173,7 @@ class block_tags extends block_base {
                                 </div>
                                 <div style="display: inline;">
                                     <button type="submit">$buttonadd</button>
-                                    <a href="$CFG->wwwroot/tag/coursetags_edit.php?courseid=$COURSE->id" title="$edit_tags">$edit_tags</a>
+                                    <a href="$CFG->wwwroot/tag/coursetags_edit.php?courseid=$COURSE->id" title="$edittags">$edittags</a>
                                 </div>
                             </div>
                         </form>
