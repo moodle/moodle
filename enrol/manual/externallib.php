@@ -101,7 +101,7 @@ class enrol_manual_external extends external_api {
 
             //throw an exception if user is not able to assign the role
             $roles = get_assignable_roles($context);
-            if (!key_exists($enrolment['roleid'], $roles)) {
+            if (!array_key_exists($enrolment['roleid'], $roles)) {
                 $errorparams = new stdClass();
                 $errorparams->roleid = $enrolment['roleid'];
                 $errorparams->courseid = $enrolment['courseid'];
