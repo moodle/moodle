@@ -296,16 +296,15 @@ function user_get_user_details($user, $course = null, array $userfields = array(
         $userdetails['phone2'] = $user->phone2;
     }
 
-    if (isset($user->description) && (!isset($hiddenfields['description']) or $isadmin)) {
-        if (!$cannotviewdescription) {
+    if (isset($user->description) &&
+        ((!isset($hiddenfields['description']) && !$cannotviewdescription) or $isadmin)) {
 
-            if (in_array('description', $userfields)) {
-                $user->description = file_rewrite_pluginfile_urls($user->description, 'pluginfile.php', $usercontext->id, 'user', 'profile', null);
-                $userdetails['description'] = $user->description;
-            }
-            if (in_array('descriptionformat', $userfields)) {
-                $userdetails['descriptionformat'] = $user->descriptionformat;
-            }
+        if (in_array('description', $userfields)) {
+            $user->description = file_rewrite_pluginfile_urls($user->description, 'pluginfile.php', $usercontext->id, 'user', 'profile', null);
+            $userdetails['description'] = $user->description;
+        }
+        if (in_array('descriptionformat', $userfields)) {
+            $userdetails['descriptionformat'] = $user->descriptionformat;
         }
     }
 
