@@ -226,15 +226,6 @@ class pgsql_native_moodle_database extends moodle_database {
      * @return void
      */
     protected function query_start($sql, array $params=null, $type, $extrainfo=null) {
-        if ($this->is_transaction_started() and $type != SQL_QUERY_AUX) {
-            $res = @pg_query($this->pgsql, "SAVEPOINT moodle_pg_savepoint");
-            if ($res) {
-                pg_free_result($res);
-            }
-            $this->savepointpresent = true;
-        } else {
-            $this->savepointpresent = false;
-        }
         parent::query_start($sql, $params, $type, $extrainfo);
         // pgsql driver tents to send debug to output, we do not need that ;-)
         $this->last_error_reporting = error_reporting(0);
@@ -250,20 +241,18 @@ class pgsql_native_moodle_database extends moodle_database {
         error_reporting($this->last_error_reporting);
         try {
             parent::query_end($result);
-            if ($this->savepointpresent) {
-                $res = @pg_query($this->pgsql, "RELEASE SAVEPOINT moodle_pg_savepoint");
+            if ($this->savepointpresent and $this->last_type != SQL_QUERY_AUX and $this->last_type != SQL_QUERY_SELECT) {
+                $res = @pg_query($this->pgsql, "RELEASE SAVEPOINT moodle_pg_savepoint; SAVEPOINT moodle_pg_savepoint");
                 if ($res) {
                     pg_free_result($res);
                 }
-                $this->savepointpresent = false;
             }
         } catch (Exception $e) {
             if ($this->savepointpresent) {
-                $res = @pg_query($this->pgsql, "ROLLBACK TO SAVEPOINT moodle_pg_savepoint");
+                $res = @pg_query($this->pgsql, "ROLLBACK TO SAVEPOINT moodle_pg_savepoint; SAVEPOINT moodle_pg_savepoint");
                 if ($res) {
                     pg_free_result($res);
                 }
-                $this->savepointpresent = false;
             }
             throw $e;
         }
@@ -1299,7 +1288,8 @@ class pgsql_native_moodle_database extends moodle_database {
      * @return void
      */
     protected function begin_transaction() {
-        $sql = "BEGIN ISOLATION LEVEL READ COMMITTED";
+        $this->savepointpresent = true;
+        $sql = "BEGIN ISOLATION LEVEL READ COMMITTED; SAVEPOINT moodle_pg_savepoint";
         $this->query_start($sql, NULL, SQL_QUERY_AUX);
         $result = pg_query($this->pgsql, $sql);
         $this->query_end($result);
@@ -1313,7 +1303,8 @@ class pgsql_native_moodle_database extends moodle_database {
      * @return void
      */
     protected function commit_transaction() {
-        $sql = "COMMIT";
+        $this->savepointpresent = false;
+        $sql = "RELEASE SAVEPOINT moodle_pg_savepoint; COMMIT";
         $this->query_start($sql, NULL, SQL_QUERY_AUX);
         $result = pg_query($this->pgsql, $sql);
         $this->query_end($result);
@@ -1327,7 +1318,8 @@ class pgsql_native_moodle_database extends moodle_database {
      * @return void
      */
     protected function rollback_transaction() {
-        $sql = "ROLLBACK";
+        $this->savepointpresent = false;
+        $sql = "RELEASE SAVEPOINT moodle_pg_savepoint; ROLLBACK";
         $this->query_start($sql, NULL, SQL_QUERY_AUX);
         $result = pg_query($this->pgsql, $sql);
         $this->query_end($result);
