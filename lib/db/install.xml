@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20120917" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20120926" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -2019,7 +2019,8 @@
       </KEYS>
       <INDEXES>
         <INDEX NAME="name" UNIQUE="true" FIELDS="name" COMMENT="tag names are unique" NEXT="idname"/>
-        <INDEX NAME="idname" UNIQUE="true" FIELDS="id, name" COMMENT="Improves performance of autocomplete in tag block" PREVIOUS="name"/>      </INDEXES>
+        <INDEX NAME="idname" UNIQUE="true" FIELDS="id, name" COMMENT="Improves performance of autocomplete in tag block" PREVIOUS="name"/>
+      </INDEXES>
     </TABLE>
     <TABLE NAME="tag_correlation" COMMENT="The rationale for the 'tag_correlation' table is performance.   It works as a cache for a potentially heavy load query done at the 'tag_instance' table.   So, the 'tag_correlation' table stores redundant information derived from the 'tag_instance' table" PREVIOUS="tag" NEXT="tag_instance">
       <FIELDS>
