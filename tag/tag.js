@@ -45,10 +45,6 @@ function ctags_checkinput(val) {
     }
 }
 
-function set_course_tag_divs(ctagdivs) {
-    window.coursetagdivs = ctagdivs;
-}
-
 function set_course_tag(key) {
     window.coursetag_tags[window.coursetag_tags.length] = key;
 }

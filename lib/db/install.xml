@@ -2018,8 +2018,8 @@
         <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="name" UNIQUE="true" FIELDS="name" COMMENT="tag names are unique"/>
-      </INDEXES>
+        <INDEX NAME="name" UNIQUE="true" FIELDS="name" COMMENT="tag names are unique" NEXT="idname"/>
+        <INDEX NAME="idname" UNIQUE="true" FIELDS="id, name" COMMENT="Improves performance of autocomplete in tag block" PREVIOUS="name"/>      </INDEXES>
     </TABLE>
     <TABLE NAME="tag_correlation" COMMENT="The rationale for the 'tag_correlation' table is performance.   It works as a cache for a potentially heavy load query done at the 'tag_instance' table.   So, the 'tag_correlation' table stores redundant information derived from the 'tag_instance' table" PREVIOUS="tag" NEXT="tag_instance">
       <FIELDS>

@@ -1230,5 +1230,19 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012092100.01);
     }
 
+    if ($oldversion < 2012092600.00) {
+        // Define index idname (unique) to be added to tag
+        $table = new xmldb_table('tag');
+        $index = new xmldb_index('idname', XMLDB_INDEX_UNIQUE, array('id', 'name'));
+
+        // Conditionally launch add index idname
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2012092600.00);
+    }
+
     return true;
 }

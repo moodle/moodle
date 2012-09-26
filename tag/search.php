@@ -72,7 +72,7 @@ if(!empty($query)) {
 echo '<br/><br/>';
 
 echo $OUTPUT->box_start('generalbox', 'big-tag-cloud-box');
-tag_print_cloud(150);
+tag_print_cloud(null, 150);
 echo $OUTPUT->box_end();
 
 echo $OUTPUT->footer();
