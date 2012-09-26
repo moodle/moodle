@@ -355,7 +355,7 @@ $functions = array(
     ),
 
     // === enrol related functions ===
-        
+
     'core_enrol_get_enrolled_users_with_capability' => array(
         'classname'   => 'core_enrol_external',
         'methodname'  => 'get_enrolled_users_with_capability',
