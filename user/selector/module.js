@@ -237,6 +237,7 @@ M.core_user.init_user_selector = function (Y, name, hash, extrafields, lastsearc
                     option.set('disabled', true);
                 } else if (selectedusers===true || selectedusers[userid]) {
                     option.set('selected', true);
+                    delete selectedusers[userid];
                 } else {
                     option.set('selected', false);
                 }
