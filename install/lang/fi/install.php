@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
 $string['admindirname'] = 'Ylläpitohakemisto';
 $string['availablelangs'] = 'Saatavilla olevat kielipaketit';
 $string['chooselanguagehead'] = 'Valitse kieli';
-$string['chooselanguagesub'] = 'Valitse kieli asennusohjelmaa varten. Tätä kieltä käytetään sivuston oletuskielenä. Voit valita muita kieliä käyttöösi myöhemmin.';
+$string['chooselanguagesub'] = 'Valitse kieli asennusohjelmaa varten. Tätä kieltä käytetään sivuston oletuskielenä, jonka voi vaihtaa tarpeen mukaan. Myöhemmin voit myös lisätä käyttöön muitakin kieliä.';
 $string['clialreadyconfigured'] = 'Tiedosto config.php on jo olemassa, käytä admin/cli/install_database.php -tiedostoa jos haluat asentaa tämän sivuston.';
 $string['clialreadyinstalled'] = 'Tiedosto config.php on jo olemassa, ole hyvä ja käytä admin/cli/upgrade.php:ta jos haluat päivittää sivustosi';
 $string['cliinstallheader'] = 'Moodlen {$a} komentoriviasennusohjelma';
