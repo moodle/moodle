@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
 $string['admindirname'] = 'Ylläpitohakemisto';
 $string['availablelangs'] = 'Saatavilla olevat kielipaketit';
 $string['chooselanguagehead'] = 'Valitse kieli';
-$string['chooselanguagesub'] = 'Valitse kieli asennusohjelmaa varten. Voit valita muita kieliä käyttöösi myöhemmin.';
+$string['chooselanguagesub'] = 'Valitse kieli asennusohjelmaa varten. Tätä kieltä käytetään sivuston oletuskielenä, jonka voi vaihtaa tarpeen mukaan. Myöhemmin voit myös lisätä käyttöön muitakin kieliä.';
 $string['clialreadyconfigured'] = 'Tiedosto config.php on jo olemassa, käytä admin/cli/install_database.php -tiedostoa jos haluat asentaa tämän sivuston.';
 $string['clialreadyinstalled'] = 'Tiedosto config.php on jo olemassa, ole hyvä ja käytä admin/cli/upgrade.php:ta jos haluat päivittää sivustosi';
 $string['cliinstallheader'] = 'Moodlen {$a} komentoriviasennusohjelma';
@@ -43,7 +43,7 @@ $string['databasetypehead'] = 'Valitse tietokannan ajuri';
 $string['dataroot'] = 'Datahakemisto';
 $string['datarootpermission'] = 'Datahakemistojen oikeudet';
 $string['dbprefix'] = 'Taulukon etumerkki';
-$string['dirroot'] = 'Moodle hakemisto';
+$string['dirroot'] = 'Moodle-hakemisto';
 $string['environmenthead'] = 'Ympäristön tarkistus';
 $string['environmentsub2'] = 'Jokaisessa Moodle-julkaisussa on joitakin vähimmäisvaatimuksia PHP-versiolta sekä joitakin pakollisia PHP-lisäosia.
 Ennen jokaista asennusta ja päivitystä suoritetaan täysi ympäristön tarkistus. Ole hyvä ja ota yhteyttä palvelimen ylläpitoon jos et tiedä kuinka asentaa uutta versiota tai PHP-lisäosia.';
