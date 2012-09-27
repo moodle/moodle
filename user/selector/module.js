@@ -43,6 +43,8 @@ M.core_user.init_user_selector = function (Y, name, hash, extrafields, lastsearc
         listbox : Y.one('#'+name),
         /** Used to hold the timeout id of the timeout that waits before doing a search. */
         timeoutid : null,
+        /** Stores any in-progress remote requests. */
+        iotransactions : {},
         /** The last string that we searched for, so we can avoid unnecessary repeat searches. */
         lastsearch : lastsearch,
         /** Whether any options where selected last time we checked. Used by
@@ -140,7 +142,12 @@ M.core_user.init_user_selector = function (Y, name, hash, extrafields, lastsearc
                 return;
             }
 
-            Y.io(M.cfg.wwwroot + '/user/selector/search.php', {
+            // Try to cancel existing transactions.
+            Y.Object.each(this.iotransactions, function(trans) {
+                trans.abort();
+            });
+
+            var iotrans = Y.io(M.cfg.wwwroot + '/user/selector/search.php', {
                 method: 'POST',
                 data: 'selectorid='+hash+'&sesskey='+M.cfg.sesskey+'&search='+value + '&userselector_searchanywhere=' + this.get_option('searchanywhere'),
                 on: {
@@ -149,6 +156,7 @@ M.core_user.init_user_selector = function (Y, name, hash, extrafields, lastsearc
                 },
                 context:this
             });
+            this.iotransactions[iotrans.id] = iotrans;
 
             this.lastsearch = value;
             this.listbox.setStyle('background','url(' + M.util.image_url('i/loading', 'moodle') + ') no-repeat center center');
@@ -160,17 +168,27 @@ M.core_user.init_user_selector = function (Y, name, hash, extrafields, lastsearc
          */
         handle_response : function(requestid, response) {
             try {
+                delete this.iotransactions[requestid];
+                if (!Y.Object.isEmpty(this.iotransactions)) {
+                    // More searches pending. Wait until they are all done.
+                    return;
+                }
                 this.listbox.setStyle('background','');
                 var data = Y.JSON.parse(response.responseText);
                 this.output_options(data);
             } catch (e) {
-                this.handle_failure();
+                this.handle_failure(requestid);
             }
         },
         /**
          * Handles what happens when the ajax request fails.
          */
-        handle_failure : function() {
+        handle_failure : function(requestid) {
+            delete this.iotransactions[requestid];
+            if (!Y.Object.isEmpty(this.iotransactions)) {
+                // More searches pending. Wait until they are all done.
+                return;
+            }
             this.listbox.setStyle('background','');
             this.searchfield.addClass('error');
 
