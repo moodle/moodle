@@ -402,6 +402,8 @@ if ($hassiteconfig) {
                                                         $CFG->wwwroot . '/' . $CFG->admin . '/localplugins.php'));
 }
 
+// extend settings for each local plugin. Note that their settings may be in any part of the
+// settings tree and may be visible not only for administrators. We can not use $allplugins here
 foreach (get_plugin_list('local') as $plugin => $plugindir) {
     $settings_path = "$plugindir/settings.php";
     if (file_exists($settings_path)) {

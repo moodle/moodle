@@ -2709,14 +2709,6 @@ class plugininfo_local extends plugininfo_base {
     public function get_uninstall_url() {
         return new moodle_url('/admin/localplugins.php', array('delete' => $this->name, 'sesskey' => sesskey()));
     }
-
-    public function get_settings_url() {
-        if (file_exists($this->full_path('settings.php'))) {
-            return new moodle_url('/admin/settings.php', array('section' => 'local_' . $this->name));
-        } else {
-            return parent::get_settings_url();
-        }
-    }
 }
 
 /**
