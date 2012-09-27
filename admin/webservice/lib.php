@@ -41,8 +41,7 @@ class service_user_selector extends user_selector_base {
         parent::__construct($name, $options);
         if (!empty($options['serviceid'])) {
             $this->serviceid = $options['serviceid'];
-        }
-        else {
+        } else {
             throw new moodle_exception('serviceidnotfound');
         }
         $this->displayallowedusers = !empty($options['displayallowedusers']);
