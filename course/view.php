@@ -17,7 +17,6 @@
     $move        = optional_param('move', 0, PARAM_INT);
     $marker      = optional_param('marker',-1 , PARAM_INT);
     $switchrole  = optional_param('switchrole',-1, PARAM_INT);
-    $return      = optional_param('return', 0, PARAM_LOCALURL);
 
     if (empty($id) && empty($name) && empty($idnumber)) {
         print_error('unspecifycourseid', 'error');
@@ -123,8 +122,6 @@
             // Redirect to site root if Editing is toggled on frontpage
             if ($course->id == SITEID) {
                 redirect($CFG->wwwroot .'/?redirect=0');
-            } else if (!empty($return)) {
-                redirect($CFG->wwwroot . $return);
             } else {
                 redirect($PAGE->url);
             }

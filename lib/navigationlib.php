@@ -3177,7 +3177,7 @@ class settings_navigation extends navigation_node {
 
         if (has_capability('moodle/course:update', $coursecontext)) {
             // Add the turn on/off settings
-            $url = new moodle_url('/course/view.php', array('id'=>$course->id, 'return'=>str_replace($CFG->wwwroot, '', $this->page->url->out(false)), 'sesskey'=>sesskey()));
+            $url = new moodle_url('/course/view.php', array('id'=>$course->id, 'sesskey'=>sesskey()));
             if ($this->page->user_is_editing()) {
                 $url->param('edit', 'off');
                 $editstring = get_string('turneditingoff');
