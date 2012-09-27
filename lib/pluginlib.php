@@ -2510,15 +2510,31 @@ class plugininfo_enrol extends plugininfo_base {
  */
 class plugininfo_message extends plugininfo_base {
 
-    public function get_settings_url() {
+    public function get_settings_section_name() {
+        return 'messagesetting' . $this->name;
+    }
+
+    public function load_settings(part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
+        global $CFG, $USER, $DB, $OUTPUT, $PAGE; // in case settings.php wants to refer to them
+        $ADMIN = $adminroot; // may be used in settings.php
+        if (!$hassiteconfig) {
+            return;
+        }
+        $section = $this->get_settings_section_name();
+
+        $settings = null;
         $processors = get_message_processors();
         if (isset($processors[$this->name])) {
             $processor = $processors[$this->name];
             if ($processor->available && $processor->hassettings) {
-                return new moodle_url('settings.php', array('section' => 'messagesetting'.$processor->name));
+                $settings = new admin_settingpage($section, $this->displayname,
+                        'moodle/site:config', $this->is_enabled() === false);
+                include($this->full_path('settings.php')); // this may also set $settings to null
             }
         }
-        return parent::get_settings_url();
+        if ($settings) {
+            $ADMIN->add($parentnodename, $settings);
+        }
     }
 
     /**
@@ -2539,7 +2555,7 @@ class plugininfo_message extends plugininfo_base {
     public function get_uninstall_url() {
         $processors = get_message_processors();
         if (isset($processors[$this->name])) {
-            return new moodle_url('message.php', array('uninstall' => $processors[$this->name]->id, 'sesskey' => sesskey()));
+            return new moodle_url('/admin/message.php', array('uninstall' => $processors[$this->name]->id, 'sesskey' => sesskey()));
         } else {
             return parent::get_uninstall_url();
         }
