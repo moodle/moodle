@@ -2575,12 +2575,19 @@ class plugininfo_repository extends plugininfo_base {
         return isset($enabled[$this->name]);
     }
 
-    public function get_settings_url() {
+    public function get_settings_section_name() {
+        return 'repositorysettings'.$this->name;
+    }
 
-        if ($this->is_enabled()) {
-            return new moodle_url('/admin/repository.php', array('sesskey' => sesskey(), 'action' => 'edit', 'repos' => $this->name));
-        } else {
-            return parent::get_settings_url();
+    public function load_settings(part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
+        if ($hassiteconfig && $this->is_enabled()) {
+            // completely no access to repository setting when it is not enabled
+            $sectionname = $this->get_settings_section_name();
+            $settingsurl = new moodle_url('/admin/repository.php',
+                    array('sesskey' => sesskey(), 'action' => 'edit', 'repos' => $this->name));
+            $settings = new admin_externalpage($sectionname, $this->displayname,
+                    $settingsurl, 'moodle/site:config', false);
+            $adminroot->add($parentnodename, $settings);
         }
     }
 
