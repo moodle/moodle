@@ -242,7 +242,6 @@ if ($hassiteconfig) {
     foreach ($allplugins['repository'] as $repositorytype) {
         $repositorytype->load_settings($ADMIN, 'repositorysettings', $hassiteconfig);
     }
-}
 
 /// Web services
     $ADMIN->add('modules', new admin_category('webservicesettings', new lang_string('webservices', 'webservice')));
@@ -280,17 +279,8 @@ if ($hassiteconfig) {
                         'admin'), new lang_string('configenablewsdocumentation', 'admin', $wsdoclink), false));
     $ADMIN->add('webservicesettings', $temp);
     /// links to protocol pages
-    $webservices_available = get_plugin_list('webservice');
-    $active_webservices = empty($CFG->webserviceprotocols) ? array() : explode(',', $CFG->webserviceprotocols);
-    foreach ($webservices_available as $webservice => $location) {
-        if (file_exists("$location/settings.php")) {
-            $name = new lang_string('pluginname', 'webservice_'.$webservice);
-            $settings = new admin_settingpage('webservicesetting'.$webservice, $name, 'moodle/site:config', !in_array($webservice, $active_webservices) or empty($CFG->enablewebservices));
-            include("$location/settings.php");
-            if ($settings) {
-                $ADMIN->add('webservicesettings', $settings);
-            }
-        }
+    foreach ($allplugins['webservice'] as $webservice) {
+        $webservice->load_settings($ADMIN, 'webservicesettings', $hassiteconfig);
     }
     /// manage token page link
     $ADMIN->add('webservicesettings', new admin_externalpage('addwebservicetoken', new lang_string('managetokens', 'webservice'), "$CFG->wwwroot/$CFG->admin/webservice/tokens.php", 'moodle/site:config', true));
@@ -300,6 +290,7 @@ if ($hassiteconfig) {
         $temp->add(new admin_setting_heading('webservicesaredisabled', '', new lang_string('disabledwarning', 'webservice')));
     }
     $ADMIN->add('webservicesettings', $temp);
+}
 
 // Question type settings
 if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) {
