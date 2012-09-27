@@ -1501,10 +1501,14 @@ class admins_potential_selector extends user_selector_base {
      * @param string $name control name
      * @param array $options should have two elements with keys groupid and courseid.
      */
-    public function __construct() {
-        global $CFG, $USER;
-        $admins = explode(',', $CFG->siteadmins);
-        parent::__construct('addselect', array('multiselect'=>false, 'exclude'=>$admins));
+    public function __construct($name = null, $options = array()) {
+        global $CFG;
+        if (is_null($name)) {
+            $name = 'addselect';
+        }
+        $options['multiselect'] = false;
+        $options['exclude'] = explode(',', $CFG->siteadmins);
+        parent::__construct($name, $options);
     }
 
     public function find_users($search) {
@@ -1558,9 +1562,12 @@ class admins_existing_selector extends user_selector_base {
      * @param string $name control name
      * @param array $options should have two elements with keys groupid and courseid.
      */
-    public function __construct() {
-        global $CFG, $USER;
-        parent::__construct('removeselect', array('multiselect'=>false));
+    public function __construct($name = null, $options = array()) {
+        if (is_null($name)) {
+            $name = 'removeselect';
+        }
+        $options['multiselect'] = false;
+        parent::__construct($name, $options);
     }
 
     public function find_users($search) {
