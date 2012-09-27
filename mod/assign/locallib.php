@@ -2461,6 +2461,8 @@ class assign {
             $prefix = 'plugingradingbatchoperation_';
 
             if ($data->operation == 'grantextension') {
+                // Reset the form so the grant extension page will create the extension form.
+                $mform = null;
                 return 'grantextension';
             } else if (strpos($data->operation, $prefix) === 0) {
                 $tail = substr($data->operation, strlen($prefix));
