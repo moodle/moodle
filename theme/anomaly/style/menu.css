@@ -1,0 +1,221 @@
+/* Custom menu, in LTR mode
+--------------------------*/
+#custommenu {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    clear: both;
+    height: 30px;
+    background: #222;
+    margin:0;
+}
+/*
+Dropdown Menu - CSS from DeCaf Theme by Lei Zhang
+-------------------------------------------------*/
+ul.dropdown span.customitem {
+    padding: 0;
+    border: 0;
+    width: 100%;
+}
+ul.dropdown span.customitem {
+    padding: 0;
+    width: 100%;
+}
+ul.dropdown li a,
+ul.dropdown span.customitem a {
+    padding: 6px 20px;
+}
+ul.dropdown span.customitem a:hover {
+    border: 0;
+}
+#custommenu ul.dropdown ul {
+    padding:0;
+    width: auto;
+}
+#custommenu ul.dropdown ul a {
+    padding: 4px 18px;
+}
+#custommenu ul.dropdown > li span a {
+    height: 16px;
+}
+ul.dropdown,
+ul.dropdown li,
+ul.dropdown ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+ul.dropdown {
+    position:relative;
+    top: 0;
+    z-index: 597;
+    float:left;
+    font-size: 13px;
+}
+ul.dropdown li {
+    float: left;
+    line-height: 1.3em;
+    vertical-align: middle;
+    background-color: transparent;
+    color: #FFF;
+    zoom: 1;
+}
+ul.dropdown li.hover,
+ul.dropdown li:hover {
+    position: relative;
+    z-index: 599;
+    cursor: default;
+}
+ul.dropdown ul {
+    visibility: hidden;
+    position: absolute;
+    top: 100%;
+    z-index: 598;
+    left: 0;
+    right: auto;
+    margin-top: -1px; /** this setting is important do not change **/
+    font-size: 100%;
+}
+ul.dropdown ul li {
+    float:none;
+    background-color: #3A4D28;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #3A4D28 #697F55 #5A6D49; /** menu item border **/
+    padding: 0;
+}
+ul.dropdown ul ul {
+    top: 0;
+    right: auto;
+    left: 100%;
+    margin-top: 0;
+    border-top: none;
+    border-left: none;
+    font-weight: 400;
+}
+ul.dropdown li:hover > ul {
+    visibility: visible;
+}
+ul.dropdown span,
+ul.dropdown span a,
+ul.dropdown li.clickable-with-children > a {
+    width: auto;
+    padding: 2px 6px 4px 20px;
+    color: #FFF;
+}
+ul.dropdown ul span,
+ul.dropdown ul span a,
+ul.dropdown ul li.clickable-with-children > a {
+    background-color: #3A4D28;
+    background-image: url([[pix:theme|menu/nav-arrow-right]]);
+    background-position: 100% 50%;
+    background-repeat: no-repeat;
+    color: #FFF;
+}
+ul.dropdown ul ul span,
+ul.dropdown ul ul span a,
+ul.dropdown ul ul li.clickable-with-children > a {
+    background-color: #3A4D28;
+    background-image: url([[pix:theme|menu/nav-arrow-right]]);
+    background-position: 100% 50%;
+    background-repeat: no-repeat;
+    color: #FFF;
+}
+ul.dropdown a:link,
+ul.dropdown a:visited {
+    color: white;
+    text-decoration: none;
+}
+ul.dropdown a:hover {
+    border: 0 none;
+    background-color: #697F55;
+    color: #FFF;
+}
+ul.dropdown ul ul li {
+    background-color: #3A4D28;
+}
+ul.dropdown ul ul ul li {
+    background-color: #3A4D28;
+}
+ul.dropdown li a,
+ul.dropdown span,
+ul.dropdown span a {
+    border: 0 none;
+}
+ul.dropdown ul li a,
+ul.dropdown ul span,
+ul.dropdown ul span a {
+    border: 0;
+}
+ul.dropdown ul ul li a,
+ul.dropdown ul ul span,
+ul.dropdown ul ul span a {
+    border: 0 none;
+}
+ul.dropdown ul ul ul li a,
+ul.dropdown ul ul ul span,
+ul.dropdown ul ul ul span a {
+    border: 0 none;
+}
+ul.dropdown a,
+ul.dropdown span {
+    display: block;
+}
+ul.dropdown ul a {
+    width: 166px;
+    padding: 2px 0 4px 5px;
+}
+ul.dropdown ul a.open:hover {
+   background-color: #697F55;
+    color: #FFF;
+}
+ul.dropdown ul li:hover > span,
+ul.dropdown ul li:hover > span a {
+    background-color: #697F55;
+    background-image:url([[pix:theme|menu/nav-arrowover-right]]);
+    color:  #FFF;
+}
+ul.dropdown li.clickable-with-children:hover > a {
+    background-image:url([[pix:theme|menu/nav-arrowover-right]]);
+}
+ul.dropdown *.open,
+ul.dropdown li:hover > span,
+ul.dropdown li:hover > span a {
+    background-color: #697F55;
+    color: #FFF;
+}
+ul.dropdown ul ul *.open,
+ul.dropdown ul ul li:hover > span,
+ul.dropdown ul ul li:hover > span a {
+    background-color: #697F55;
+    background-image: url([[pix:theme|menu/nav-arrowover-right]]);
+    color: #FFF;
+}
+
+/* Custom menu, in RTL mode
+---------------------------*/
+.dir-rtl #custommenu ul.dropdown {
+    float: right;
+}
+.dir-rtl #custommenu ul.dropdown ul{
+    right: 0;
+    left: auto;
+}
+.dir-rtl #custommenu ul.dropdown ul ul {
+    right: 203px;
+    left: auto;
+}
+.dir-rtl #custommenu ul.dropdown ul span,
+.dir-rtl #custommenu ul.dropdown ul span a,
+.dir-rtl #custommenu ul.dropdown ul li.clickable-with-children > a {
+    background-image: url([[pix:theme|menu/nav-arrow-left]]);
+    background-position: 0 50%;
+    background-repeat: no-repeat;
+}
+.dir-rtl #custommenu ul.dropdown ul li:hover > span,
+.dir-rtl #custommenu ul.dropdown ul li:hover > span a {
+    background-image: url([[pix:theme|menu/nav-arrowover-left]]);
+}
+.dir-rtl #custommenu ul.dropdown li.clickable-with-children:hover > a {
+    background-image: url([[pix:theme|menu/nav-arrowover-left]]);
+}
