@@ -36,7 +36,6 @@ abstract class qtype_ddtoimage_edit_form_base extends question_edit_form {
     const START_NUM_ITEMS = 6;
     const ADD_NUM_ITEMS = 3;
 
-
     /**
      *
      * Options shared by all file pickers in the form.
