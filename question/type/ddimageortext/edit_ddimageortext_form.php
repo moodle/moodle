@@ -217,6 +217,8 @@ class qtype_ddimageortext_edit_form extends qtype_ddtoimage_edit_form_base {
 
     protected function drop_zones_repeated_options() {
         $repeatedoptions = array();
+        $repeatedoptions['xleft']['type']     = PARAM_INT;
+        $repeatedoptions['ytop']['type']      = PARAM_INT;
         $repeatedoptions['choice']['default'] = '0';
         return $repeatedoptions;
     }
@@ -230,19 +232,23 @@ class qtype_ddimageortext_edit_form extends qtype_ddtoimage_edit_form_base {
         $allchoices = array();
         for ($i=0; $i < $data['nodropzone']; $i++) {
             $ytoppresent = (trim($data['drops'][$i]['ytop']) !== '');
-            $xleftpresent = (trim($data['drops'][$i]['ytop']) !== '');
+            $xleftpresent = (trim($data['drops'][$i]['xleft']) !== '');
+            $ytopisint = (string) clean_param($data['drops'][$i]['ytop'], PARAM_INT) === trim($data['drops'][$i]['ytop']);
+            $xleftisint = (string) clean_param($data['drops'][$i]['xleft'], PARAM_INT) === trim($data['drops'][$i]['xleft']);
             $labelpresent = (trim($data['drops'][$i]['droplabel']) !== '');
             $choice = $data['drops'][$i]['choice'];
             $imagechoicepresent = ($choice !== '0');
 
             if ($imagechoicepresent) {
                 if (!$ytoppresent) {
-                    $errors["drops[$i]"] =
-                                    get_string('formerror_noytop', 'qtype_ddimageortext');
+                    $errors["drops[$i]"] = get_string('formerror_noytop', 'qtype_ddimageortext');
+                } else if (!$ytopisint) {
+                    $errors["drops[$i]"] = get_string('formerror_notintytop', 'qtype_ddimageortext');
                 }
                 if (!$xleftpresent) {
-                    $errors["drops[$i]"] =
-                                get_string('formerror_noxleft', 'qtype_ddimageortext');
+                    $errors["drops[$i]"] = get_string('formerror_noxleft', 'qtype_ddimageortext');
+                } else if (!$xleftisint) {
+                    $errors["drops[$i]"] = get_string('formerror_notintxleft', 'qtype_ddimageortext');
                 }
 
                 if ($data['dragitemtype'][$choice - 1] != 'word' &&
@@ -253,17 +259,17 @@ class qtype_ddimageortext_edit_form extends qtype_ddtoimage_edit_form_base {
 
                 if (isset($allchoices[$choice]) && !$data['drags'][$choice-1]['infinite']) {
                     $errors["drops[$i]"] =
-                     get_string('formerror_multipledraginstance', 'qtype_ddimageortext', $choice);
+                            get_string('formerror_multipledraginstance', 'qtype_ddimageortext', $choice);
                     $errors['drops['.($allchoices[$choice]).']'] =
-                     get_string('formerror_multipledraginstance', 'qtype_ddimageortext', $choice);
+                            get_string('formerror_multipledraginstance', 'qtype_ddimageortext', $choice);
                     $errors['drags['.($choice-1).']'] =
-                     get_string('formerror_multipledraginstance2', 'qtype_ddimageortext', $choice);
+                            get_string('formerror_multipledraginstance2', 'qtype_ddimageortext', $choice);
                 }
                 $allchoices[$choice] = $i;
             } else {
                 if ($ytoppresent || $xleftpresent || $labelpresent) {
                     $errors["drops[$i]"] =
-                        get_string('formerror_noimageselected', 'qtype_ddimageortext');
+                            get_string('formerror_noimageselected', 'qtype_ddimageortext');
                 }
             }
         }
