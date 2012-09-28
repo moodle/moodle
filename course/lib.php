@@ -3945,7 +3945,7 @@ function average_number_of_participants() {
         WHERE ue.enrolid = e.id
             AND e.courseid <> :siteid
             AND c.id = e.courseid
-            AND c.visible = 1) as total';
+            AND c.visible = 1) total';
     $params = array('siteid' => $SITE->id);
     $enrolmenttotal = $DB->count_records_sql($sql, $params);
 
@@ -3978,7 +3978,7 @@ function average_number_of_courses_modules() {
         WHERE c.id = cm.course
             AND c.id <> :siteid
             AND cm.visible = 1
-            AND c.visible = 1) as total';
+            AND c.visible = 1) total';
     $params = array('siteid' => $SITE->id);
     $moduletotal = $DB->count_records_sql($sql, $params);
 
