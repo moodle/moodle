@@ -117,6 +117,7 @@ class question_engine_data_mapper {
         $record->responsesummary = $qa->get_response_summary();
         $record->timemodified = time();
         $record->id = $this->db->insert_record('question_attempts', $record);
+        $qa->set_database_id($record->id);
 
         foreach ($qa->get_step_iterator() as $seq => $step) {
             $this->insert_question_attempt_step($step, $record->id, $seq, $context);
