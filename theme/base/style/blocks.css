@@ -32,6 +32,9 @@
 .block.hidden .block-hider-hide {display:none;}
 .block.hidden .block-hider-show {display:inline;}
 
+.block_completionstatus .generaltable { border: 0px; }
+.block_completionstatus .generaltable .cell { border: 0px; }
+
 /** Overide for RTL layout **/
 .dir-rtl .block .header,
 .dir-rtl .block h2.header {text-align:right;}

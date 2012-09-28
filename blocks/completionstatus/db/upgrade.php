@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -57,13 +56,9 @@ function xmldb_block_completionstatus_upgrade($oldversion, $block) {
             foreach ($blocks as $block) {
                 blocks_delete_instance($block);
             }
-
         }
-
         // Savepoint reached.
         upgrade_block_savepoint(true, 2012112901, 'completionstatus');
     }
-
-
     return true;
 }
