@@ -150,6 +150,7 @@ if ($hassiteconfig
                     'institution' => get_string('institution'),
                 )));
         $temp->add(new admin_setting_configcheckbox('enablegravatar', get_string('enablegravatar', 'admin'), get_string('enablegravatar_help', 'admin'), 0));
+        $temp->add(new admin_setting_configtext('gravatardefaulturl', get_string('gravatardefaulturl', 'admin'), get_string('gravatardefaulturl_help', 'admin'), 'mm'));
     }
 
     $ADMIN->add('roles', $temp);
