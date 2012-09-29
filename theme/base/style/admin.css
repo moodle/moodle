@@ -161,8 +161,11 @@
 #adminsettings fieldset.error legend {display: block;}
 #adminsettings .form-item {clear: both;margin: 1em 0 2em 0;}
 #adminsettings .form-item .form-label {display: block;float: left;width: 12.5em;text-align: right;}
+.dir-rtl #adminsettings .form-item .form-label {float:right;}
 #adminsettings .form-item .form-label .form-shortname {display:block;}
+.dir-rtl #adminsettings .form-item .form-label .form-shortname {text-align: left;}
 #adminsettings .form-item .form-setting {display: block;margin-left: 13.5em;text-align: left;}
+.dir-rtl #adminsettings .form-item .form-setting {margin-right: 13.5em; margin-left: auto;text-align: right;}
 .dir-rtl #admin-spelllanguagelist textarea,
 #page-admin-setting-editorsettingstinymce.dir-rtl .form-textarea textarea {text-align: left;direction: ltr;}
 #adminsettings .form-item .form-setting .form-htmlarea {width:  640px;display:inline;}
@@ -175,6 +178,7 @@
 #adminsettings .form-item .form-setting .form-password .unmask,
 #adminsettings .form-item .form-setting .form-defaultinfo {display: inline;}
 #adminsettings .form-item .form-description {display: block;margin: 0.5em 0 0em 14.25em;text-align: left;}
+.dir-rtl #adminsettings .form-item .form-description {margin: 0.5em 14.25em 0em 0em;}
 #adminsettings .form-item .pathok,
 #adminsettings .form-item .patherror {margin-left: 0.5em;}
 #adminsettings #admin-emoticons table td input {width: 8em;}
@@ -195,7 +199,7 @@
 /** Overide for RTL layout **/
 .dir-rtl #adminsettings .form-item  .form-setting,
 .dir-rtl #adminsettings .form-item  .form-label,
-.dir-rtl #adminsettings .form-item .form-description { float: right;text-align: right}
+.dir-rtl #adminsettings .form-item .form-description {text-align: right}
 .dir-rtl.path-admin .roleassigntable p {text-align: right;}
 
 /** Plugins check */
