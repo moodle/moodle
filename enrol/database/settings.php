@@ -63,7 +63,7 @@ if ($ADMIN->fulltree) {
     $options = array('id'=>'id', 'idnumber'=>'idnumber', 'email'=>'email', 'username'=>'username'); // only local users if username selected, no mnet users!
     $settings->add(new admin_setting_configselect('enrol_database/localuserfield', get_string('localuserfield', 'enrol_database'), '', 'idnumber', $options));
 
-    $options = array('id'=>'id', 'shortname'=>'shortname', 'fullname'=>'fullname');
+    $options = array('id'=>'id', 'shortname'=>'shortname');
     $settings->add(new admin_setting_configselect('enrol_database/localrolefield', get_string('localrolefield', 'enrol_database'), '', 'shortname', $options));
 
     $options = array('id'=>'id', 'idnumber'=>'idnumber');

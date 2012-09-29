@@ -633,6 +633,16 @@ class enrol_database_plugin extends enrol_plugin {
         $category  = strtolower($this->get_config('newcoursecategory'));
 
         $localcategoryfield = $this->get_config('localcategoryfield', 'id');
+        $defaultcategory    = $this->get_config('defaultcategory');
+
+        if (!$DB->record_exists('course_categories', array('id'=>$defaultcategory))) {
+            if ($verbose) {
+                mtrace("  default course category does not exist!");
+            }
+            $categories = $DB->get_records('course_categories', array(), 'sortorder', 'id', 0, 1);
+            $first = reset($categories);
+            $defaultcategory = $first->id;
+        }
 
         $sqlfields = array($fullname, $shortname);
         if ($category) {
@@ -665,17 +675,28 @@ class enrol_database_plugin extends enrol_plugin {
                         }
                         continue;
                     }
-                    if ($category and !$coursecategory = $DB->get_record('course_categories', array($localcategoryfield=>$fields[$category]), 'id')) {
-                        if ($verbose) {
-                            mtrace('  error: invalid category '.$localcategoryfield.', can not create course: '.$fields[$shortname]);
-                        }
-                        continue;
-                    }
                     $course = new stdClass();
                     $course->fullname  = $fields[$fullname];
                     $course->shortname = $fields[$shortname];
                     $course->idnumber  = $idnumber ? $fields[$idnumber] : '';
-                    $course->category  = $category ? $coursecategory->id : NULL;
+                    if ($category) {
+                        if (empty($fields[$category])) {
+                            // Empty category means use default.
+                            $course->category = $defaultcategory;
+                        } else if ($coursecategory = $DB->get_record('course_categories', array($localcategoryfield=>$fields[$category]), 'id')) {
+                            // Yay, correctly specified category!
+                            $course->category = $coursecategory->id;
+                            unset($coursecategory);
+                        } else {
+                            // Bad luck, better not continue because unwanted ppl might get access to course in different category.
+                            if ($verbose) {
+                                mtrace('  error: invalid category '.$localcategoryfield.', can not create course: '.$fields[$shortname]);
+                            }
+                            continue;
+                        }
+                    } else {
+                        $course->category = $defaultcategory;
+                    }
                     $createcourses[] = $course;
                 }
             }
@@ -689,7 +710,6 @@ class enrol_database_plugin extends enrol_plugin {
             require_once("$CFG->dirroot/course/lib.php");
 
             $templatecourse = $this->get_config('templatecourse');
-            $defaultcategory = $this->get_config('defaultcategory');
 
             $template = false;
             if ($templatecourse) {
@@ -722,21 +742,13 @@ class enrol_database_plugin extends enrol_plugin {
                 $template->lang           = $courseconfig->lang;
                 $template->groupmodeforce = $courseconfig->groupmodeforce;
             }
-            if (!$DB->record_exists('course_categories', array('id'=>$defaultcategory))) {
-                if ($verbose) {
-                    mtrace("  default course category does not exist!");
-                }
-                $categories = $DB->get_records('course_categories', array(), 'sortorder', 'id', 0, 1);
-                $first = reset($categories);
-                $defaultcategory = $first->id;
-            }
 
             foreach ($createcourses as $fields) {
                 $newcourse = clone($template);
                 $newcourse->fullname  = $fields->fullname;
                 $newcourse->shortname = $fields->shortname;
                 $newcourse->idnumber  = $fields->idnumber;
-                $newcourse->category  = $fields->category ? $fields->category : $defaultcategory;
+                $newcourse->category  = $fields->category;
 
                 // Detect duplicate data once again, above we can not find duplicates
                 // in external data using DB collation rules...
