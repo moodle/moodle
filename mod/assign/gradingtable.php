@@ -121,10 +121,6 @@ class assign_grading_table extends table_sql implements renderable {
         if (!$this->is_downloading()) {
             $columns[] = 'select';
             $headers[] = get_string('select') . '<div class="selectall"><input type="checkbox" name="selectall" title="' . get_string('selectall') . '"/></div>';
-
-            // We have to call this column userid so we can use userid as a default sortable column.
-            $columns[] = 'userid';
-            $headers[] = get_string('edit');
         }
 
         // User picture
@@ -145,6 +141,11 @@ class assign_grading_table extends table_sql implements renderable {
         // Grade
         $columns[] = 'grade';
         $headers[] = get_string('grade');
+        if (!$this->is_downloading()) {
+            // We have to call this column userid so we can use userid as a default sortable column.
+            $columns[] = 'userid';
+            $headers[] = get_string('edit');
+        }
 
         // Submission plugins
         if ($assignment->is_any_submission_plugin_enabled()) {
