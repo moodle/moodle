@@ -1408,6 +1408,10 @@ function &get_mimetypes_array() {
         'fdf'  => array ('type'=>'application/pdf', 'icon'=>'pdf'),
         'flv'  => array ('type'=>'video/x-flv', 'icon'=>'flash', 'groups'=>array('video','web_video'), 'string'=>'video'),
         'f4v'  => array ('type'=>'video/mp4', 'icon'=>'flash', 'groups'=>array('video','web_video'), 'string'=>'video'),
+
+        'gallery'           => array ('type'=>'application/x-smarttech-notebook', 'icon'=>'archive'),
+        'galleryitem,'      => array ('type'=>'application/x-smarttech-notebook', 'icon'=>'archive'),
+        'gallerycollection' => array ('type'=>'application/x-smarttech-notebook', 'icon'=>'archive'),
         'gif'  => array ('type'=>'image/gif', 'icon'=>'gif', 'groups'=>array('image', 'web_image'), 'string'=>'image'),
         'gtar' => array ('type'=>'application/x-gtar', 'icon'=>'archive', 'groups'=>array('archive'), 'string'=>'archive'),
         'tgz'  => array ('type'=>'application/g-zip', 'icon'=>'archive', 'groups'=>array('archive'), 'string'=>'archive'),
@@ -1450,6 +1454,9 @@ function &get_mimetypes_array() {
         'mpeg' => array ('type'=>'video/mpeg', 'icon'=>'mpeg', 'groups'=>array('video','web_video'), 'string'=>'video'),
         'mpe'  => array ('type'=>'video/mpeg', 'icon'=>'mpeg', 'groups'=>array('video','web_video'), 'string'=>'video'),
         'mpg'  => array ('type'=>'video/mpeg', 'icon'=>'mpeg', 'groups'=>array('video','web_video'), 'string'=>'video'),
+
+        'nbk'       => array ('type'=>'application/x-smarttech-notebook', 'icon'=>'archive'),
+        'notebook'  => array ('type'=>'application/x-smarttech-notebook', 'icon'=>'archive'),
 
         'odt'  => array ('type'=>'application/vnd.oasis.opendocument.text', 'icon'=>'writer', 'groups'=>array('document')),
         'ott'  => array ('type'=>'application/vnd.oasis.opendocument.text-template', 'icon'=>'writer', 'groups'=>array('document')),
@@ -1530,6 +1537,8 @@ function &get_mimetypes_array() {
         'webm'  => array ('type'=>'video/webm', 'icon'=>'video', 'groups'=>array('video'), 'string'=>'video'),
         'wmv'  => array ('type'=>'video/x-ms-wmv', 'icon'=>'wmv', 'groups'=>array('video'), 'string'=>'video'),
         'asf'  => array ('type'=>'video/x-ms-asf', 'icon'=>'wmv', 'groups'=>array('video'), 'string'=>'video'),
+
+        'xbk'  => array ('type'=>'application/x-smarttech-notebook', 'icon'=>'archive'),
         'xdp'  => array ('type'=>'application/pdf', 'icon'=>'pdf'),
         'xfd'  => array ('type'=>'application/pdf', 'icon'=>'pdf'),
         'xfdf' => array ('type'=>'application/pdf', 'icon'=>'pdf'),
@@ -1544,6 +1553,7 @@ function &get_mimetypes_array() {
 
         'xml'  => array ('type'=>'application/xml', 'icon'=>'markup'),
         'xsl'  => array ('type'=>'text/xml', 'icon'=>'markup'),
+
         'zip'  => array ('type'=>'application/zip', 'icon'=>'archive', 'groups'=>array('archive'), 'string'=>'archive')
     );
     return $mimearray;
