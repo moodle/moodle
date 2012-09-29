@@ -117,8 +117,8 @@ class mod_quiz_overdue_attempt_updater {
            FROM {quiz_attempts} iquiza
            JOIN {quiz} quiz ON quiz.id = iquiza.quiz
       LEFT JOIN {quiz_overrides} quo ON quo.quiz = quiz.id AND quo.userid = iquiza.userid
-      LEFT JOIN {quiz_overrides} qgo ON qgo.quiz = quiz.id
-      LEFT JOIN {groups_members} gm ON gm.userid = iquiza.userid AND gm.groupid = qgo.groupid
+      LEFT JOIN {groups_members} gm ON gm.userid = iquiza.userid
+      LEFT JOIN {quiz_overrides} qgo ON qgo.quiz = quiz.id AND qgo.groupid = gm.groupid
 
           WHERE iquiza.state IN ('inprogress', 'overdue')
             AND iquiza.timemodified >= :processfrom
