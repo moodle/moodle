@@ -19,8 +19,7 @@
  *
  * This plugin synchronises enrolment and roles with external database table.
  *
- * @package    enrol
- * @subpackage database
+ * @package    enrol_database
  * @copyright  2010 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -36,7 +35,7 @@ class enrol_database_plugin extends enrol_plugin {
     /**
      * Is it possible to delete enrol instance via standard UI?
      *
-     * @param object $instance
+     * @param stdClass $instance
      * @return bool
      */
     public function instance_deleteable($instance) {
@@ -69,7 +68,7 @@ class enrol_database_plugin extends enrol_plugin {
     }
 
     /**
-     * Gets an array of the user enrolment actions
+     * Gets an array of the user enrolment actions.
      *
      * @param course_enrolment_manager $manager
      * @param stdClass $ue A user enrolment object
@@ -92,13 +91,13 @@ class enrol_database_plugin extends enrol_plugin {
      * Forces synchronisation of user enrolments with external database,
      * does not create new courses.
      *
-     * @param object $user user record
+     * @param stdClass $user user record
      * @return void
      */
     public function sync_user_enrolments($user) {
         global $CFG, $DB;
 
-        // we do not create courses here intentionally because it requires full sync and is slow
+        // We do not create courses here intentionally because it requires full sync and is slow.
         if (!$this->get_config('dbtype') or !$this->get_config('dbhost') or !$this->get_config('remoteenroltable') or !$this->get_config('remotecoursefield') or !$this->get_config('remoteuserfield')) {
             return;
         }
@@ -131,7 +130,7 @@ class enrol_database_plugin extends enrol_plugin {
             $user = $DB->get_record('user', array('id'=>$user->id));
         }
 
-        // create roles mapping
+        // Create roles mapping.
         $allroles = get_all_roles();
         if (!isset($allroles[$defaultrole])) {
             $defaultrole = 0;
@@ -145,11 +144,11 @@ class enrol_database_plugin extends enrol_plugin {
         $instances = array();
 
         if (!$extdb = $this->db_init()) {
-            // can not connect to database, sorry
+            // Can not connect to database, sorry.
             return;
         }
 
-        // read remote enrols and create instances
+        // Read remote enrols and create instances.
         $sql = $this->db_get_sql($table, array($userfield=>$user->$localuserfield), array(), false);
 
         if ($rs = $extdb->Execute($sql)) {
@@ -159,7 +158,7 @@ class enrol_database_plugin extends enrol_plugin {
                     $fields = $this->db_decode($fields);
 
                     if (empty($fields[$coursefield_l])) {
-                        // missing course info
+                        // Missing course info.
                         continue;
                     }
                     if (!$course = $DB->get_record('course', array($localcoursefield=>$fields[$coursefield_l]), 'id,visible')) {
@@ -171,7 +170,7 @@ class enrol_database_plugin extends enrol_plugin {
 
                     if (empty($fields[$rolefield_l]) or !isset($roles[$fields[$rolefield_l]])) {
                         if (!$defaultrole) {
-                            // role is mandatory
+                            // Role is mandatory.
                             continue;
                         }
                         $roleid = $defaultrole;
@@ -196,21 +195,21 @@ class enrol_database_plugin extends enrol_plugin {
             $rs->Close();
             $extdb->Close();
         } else {
-            // bad luck, something is wrong with the db connection
+            // Bad luck, something is wrong with the db connection.
             $extdb->Close();
             return;
         }
 
-        // enrol user into courses and sync roles
+        // Enrol user into courses and sync roles.
         foreach ($enrols as $courseid => $roles) {
             if (!isset($instances[$courseid])) {
-                // ignored
+                // Ignored.
                 continue;
             }
             $instance = $instances[$courseid];
 
             if ($e = $DB->get_record('user_enrolments', array('userid'=>$user->id, 'enrolid'=>$instance->id))) {
-                // reenable enrolment when previously disable enrolment refreshed
+                // Reenable enrolment when previously disable enrolment refreshed.
                 if ($e->status == ENROL_USER_SUSPENDED) {
                     $this->update_user_enrol($instance, $user->id, ENROL_USER_ACTIVE);
                 }
@@ -220,7 +219,7 @@ class enrol_database_plugin extends enrol_plugin {
             }
 
             if (!$context = context_course::instance($instance->courseid, IGNORE_MISSING)) {
-                //weird
+                // Weird.
                 continue;
             }
             $current = $DB->get_records('role_assignments', array('contextid'=>$context->id, 'userid'=>$user->id, 'component'=>'enrol_database', 'itemid'=>$instance->id), '', 'id, roleid');
@@ -240,7 +239,7 @@ class enrol_database_plugin extends enrol_plugin {
             }
         }
 
-        // unenrol as necessary
+        // Unenrol as necessary.
         $sql = "SELECT e.*, c.visible AS cvisible, ue.status AS ustatus
                   FROM {enrol} e
                   JOIN {user_enrolments} ue ON ue.enrolid = e.id
@@ -253,25 +252,24 @@ class enrol_database_plugin extends enrol_plugin {
             }
 
             if (!$context = context_course::instance($instance->courseid, IGNORE_MISSING)) {
-                //weird
+                // Very weird.
                 continue;
             }
 
             if (!empty($enrols[$instance->courseid])) {
-                // we want this user enrolled
+                // We want this user enrolled.
                 continue;
             }
 
-            // deal with enrolments removed from external table
+            // Deal with enrolments removed from external table
             if ($unenrolaction == ENROL_EXT_REMOVED_UNENROL) {
-                // unenrol
                 $this->unenrol_user($instance, $user->id);
 
             } else if ($unenrolaction == ENROL_EXT_REMOVED_KEEP) {
-                // keep - only adding enrolments
+                // Keep - only adding enrolments.
 
             } else if ($unenrolaction == ENROL_EXT_REMOVED_SUSPEND or $unenrolaction == ENROL_EXT_REMOVED_SUSPENDNOROLES) {
-                // disable
+                // Suspend users.
                 if ($instance->ustatus != ENROL_USER_SUSPENDED) {
                     $this->update_user_enrol($instance, $user->id, ENROL_USER_SUSPENDED);
                 }
@@ -292,7 +290,7 @@ class enrol_database_plugin extends enrol_plugin {
     public function sync_enrolments($verbose = false) {
         global $CFG, $DB;
 
-        // we do not create courses here intentionally because it requires full sync and is slow
+        // We do not create courses here intentionally because it requires full sync and is slow.
         if (!$this->get_config('dbtype') or !$this->get_config('dbhost') or !$this->get_config('remoteenroltable') or !$this->get_config('remotecoursefield') or !$this->get_config('remoteuserfield')) {
             if ($verbose) {
                 mtrace('User enrolment synchronisation skipped.');
@@ -309,11 +307,10 @@ class enrol_database_plugin extends enrol_plugin {
             return 1;
         }
 
-        // we may need a lot of memory here
+        // We may need a lot of memory here.
         @set_time_limit(0);
         raise_memory_limit(MEMORY_HUGE);
 
-        // second step is to sync instances and users
         $table            = $this->get_config('remoteenroltable');
         $coursefield      = trim($this->get_config('remotecoursefield'));
         $userfield        = trim($this->get_config('remoteuserfield'));
@@ -331,7 +328,7 @@ class enrol_database_plugin extends enrol_plugin {
         $unenrolaction    = $this->get_config('unenrolaction');
         $defaultrole      = $this->get_config('defaultrole');
 
-        // create roles mapping
+        // Create roles mapping.
         $allroles = get_all_roles();
         if (!isset($allroles[$defaultrole])) {
             $defaultrole = 0;
@@ -341,7 +338,7 @@ class enrol_database_plugin extends enrol_plugin {
             $roles[$role->$localrolefield] = $role->id;
         }
 
-        // get a list of courses to be synced that are in external table
+        // Get a list of courses to be synced that are in external table.
         $externalcourses = array();
         $sql = $this->db_get_sql($table, array(), array($coursefield), true);
         if ($rs = $extdb->Execute($sql)) {
@@ -367,7 +364,7 @@ class enrol_database_plugin extends enrol_plugin {
             mtrace('  Preventing unenrolment of all current users, because it might result in major data loss, there has to be at least one record in external enrol table, sorry.');
         }
 
-        // first find all existing courses with enrol instance
+        // First find all existing courses with enrol instance.
         $existing = array();
         $sql = "SELECT c.id, c.visible, c.$localcoursefield AS mapping, e.id AS enrolid, c.shortname
                   FROM {course} c
@@ -382,7 +379,7 @@ class enrol_database_plugin extends enrol_plugin {
         }
         $rs->close();
 
-        // add necessary enrol instances that are not present yet
+        // Add necessary enrol instances that are not present yet.
         $params = array();
         $localnotempty = "";
         if ($localcoursefield !== 'id') {
@@ -415,10 +412,10 @@ class enrol_database_plugin extends enrol_plugin {
             unset($list);
         }
 
-        // free memory
+        // Free memory.
         unset($externalcourses);
 
-        // sync enrolments
+        // Sync user enrolments.
         $ignorehidden = $this->get_config('ignorehiddencourses');
         $sqlfields = array($userfield);
         if ($rolefield) {
@@ -429,11 +426,11 @@ class enrol_database_plugin extends enrol_plugin {
                 continue;
             }
             if (!$instance = $DB->get_record('enrol', array('id'=>$course->enrolid))) {
-                continue; //weird
+                continue; // Weird!
             }
             $context = context_course::instance($course->id);
 
-            // get current list of enrolled users with their roles
+            // Get current list of enrolled users with their roles.
             $current_roles  = array();
             $current_status = array();
             $user_mapping   = array();
@@ -455,7 +452,7 @@ class enrol_database_plugin extends enrol_plugin {
             }
             $rs->close();
 
-            // get list of users that need to be enrolled and their roles
+            // Get list of users that need to be enrolled and their roles.
             $requested_roles = array();
             $sql = $this->db_get_sql($table, array($coursefield=>$course->mapping), $sqlfields);
             if ($rs = $extdb->Execute($sql)) {
@@ -508,7 +505,7 @@ class enrol_database_plugin extends enrol_plugin {
             }
             unset($user_mapping);
 
-            // enrol all users and sync roles
+            // Enrol all users and sync roles.
             foreach ($requested_roles as $userid=>$userroles) {
                 foreach ($userroles as $roleid) {
                     if (empty($current_roles[$userid])) {
@@ -521,7 +518,7 @@ class enrol_database_plugin extends enrol_plugin {
                     }
                 }
 
-                // assign extra roles
+                // Assign extra roles.
                 foreach ($userroles as $roleid) {
                     if (empty($current_roles[$userid][$roleid])) {
                         role_assign($roleid, $userid, $context->id, 'enrol_database', $instance->id);
@@ -532,7 +529,7 @@ class enrol_database_plugin extends enrol_plugin {
                     }
                 }
 
-                // unassign removed roles
+                // Unassign removed roles.
                 foreach($current_roles[$userid] as $cr) {
                     if (empty($userroles[$cr])) {
                         role_unassign($cr, $userid, $context->id, 'enrol_database', $instance->id);
@@ -543,7 +540,7 @@ class enrol_database_plugin extends enrol_plugin {
                     }
                 }
 
-                // reenable enrolment when previously disable enrolment refreshed
+                // Reenable enrolment when previously disable enrolment refreshed.
                 if ($current_status[$userid] == ENROL_USER_SUSPENDED) {
                     $this->update_user_enrol($instance, $userid, ENROL_USER_ACTIVE);
                     if ($verbose) {
@@ -552,10 +549,10 @@ class enrol_database_plugin extends enrol_plugin {
                 }
             }
 
-            // deal with enrolments removed from external table
+            // Deal with enrolments removed from external table.
             if ($unenrolaction == ENROL_EXT_REMOVED_UNENROL) {
                 if (!$preventfullunenrol) {
-                    // unenrol
+                    // Unenrol.
                     foreach ($current_status as $userid=>$status) {
                         if (isset($requested_roles[$userid])) {
                             continue;
@@ -568,10 +565,10 @@ class enrol_database_plugin extends enrol_plugin {
                 }
 
             } else if ($unenrolaction == ENROL_EXT_REMOVED_KEEP) {
-                // keep - only adding enrolments
+                // Keep - only adding enrolments.
 
             } else if ($unenrolaction == ENROL_EXT_REMOVED_SUSPEND or $unenrolaction == ENROL_EXT_REMOVED_SUSPENDNOROLES) {
-                // disable
+                // Suspend enrolments.
                 foreach ($current_status as $userid=>$status) {
                     if (isset($requested_roles[$userid])) {
                         continue;
@@ -592,7 +589,7 @@ class enrol_database_plugin extends enrol_plugin {
             }
         }
 
-        // close db connection
+        // Close db connection.
         $extdb->Close();
 
         if ($verbose) {
@@ -614,7 +611,7 @@ class enrol_database_plugin extends enrol_plugin {
     public function sync_courses($verbose = false) {
         global $CFG, $DB;
 
-        // make sure we sync either enrolments or courses
+        // Make sure we sync either enrolments or courses.
         if (!$this->get_config('dbtype') or !$this->get_config('dbhost') or !$this->get_config('newcoursetable') or !$this->get_config('newcoursefullname') or !$this->get_config('newcourseshortname')) {
             if ($verbose) {
                 mtrace('Course synchronisation skipped.');
@@ -626,7 +623,7 @@ class enrol_database_plugin extends enrol_plugin {
             mtrace('Starting course synchronisation...');
         }
 
-        // we may need a lot of memory here
+        // We may need a lot of memory here.
         @set_time_limit(0);
         raise_memory_limit(MEMORY_HUGE);
 
@@ -635,7 +632,6 @@ class enrol_database_plugin extends enrol_plugin {
             return 1;
         }
 
-        // first create new courses
         $table     = $this->get_config('newcoursetable');
         $fullname  = trim($this->get_config('newcoursefullname'));
         $shortname = trim($this->get_config('newcourseshortname'));
@@ -676,15 +672,15 @@ class enrol_database_plugin extends enrol_plugin {
                     $fields = $this->db_decode($fields);
                     if (empty($fields[$shortname_l]) or empty($fields[$fullname_l])) {
                         if ($verbose) {
-                            mtrace('  error: invalid external course record, shortname and fullname are mandatory: ' . json_encode($fields)); // hopefully every geek can read JS, right?
+                            mtrace('  error: invalid external course record, shortname and fullname are mandatory: ' . json_encode($fields)); // Hopefully every geek can read JS, right?
                         }
                         continue;
                     }
                     if ($DB->record_exists('course', array('shortname'=>$fields[$shortname_l]))) {
-                        // already exists
+                        // Already exists, skip.
                         continue;
                     }
-                    // allow empty idnumber but not duplicates
+                    // Allow empty idnumber but not duplicates.
                     if ($idnumber and $fields[$idnumber_l] !== '' and $fields[$idnumber_l] !== null and $DB->record_exists('course', array('idnumber'=>$fields[$idnumber_l]))) {
                         if ($verbose) {
                             mtrace('  error: duplicate idnumber, can not create course: '.$fields[$shortname_l].' ['.$fields[$idnumber_l].']');
@@ -789,7 +785,7 @@ class enrol_database_plugin extends enrol_plugin {
             unset($template);
         }
 
-        // close db connection
+        // Close db connection.
         $extdb->Close();
 
         if ($verbose) {
@@ -830,14 +826,14 @@ class enrol_database_plugin extends enrol_plugin {
 
         require_once($CFG->libdir.'/adodb/adodb.inc.php');
 
-        // Connect to the external database (forcing new connection)
+        // Connect to the external database (forcing new connection).
         $extdb = ADONewConnection($this->get_config('dbtype'));
         if ($this->get_config('debugdb')) {
             $extdb->debug = true;
-            ob_start(); //start output buffer to allow later use of the page headers
+            ob_start(); // Start output buffer to allow later use of the page headers.
         }
 
-        // the dbtype my contain the new connection URL, so make sure we are not connected yet
+        // The dbtype my contain the new connection URL, so make sure we are not connected yet.
         if (!$extdb->IsConnected()) {
             $result = $extdb->Connect($this->get_config('dbhost'), $this->get_config('dbuser'), $this->get_config('dbpass'), $this->get_config('dbname'), true);
             if (!$result) {
@@ -853,7 +849,7 @@ class enrol_database_plugin extends enrol_plugin {
     }
 
     protected function db_addslashes($text) {
-        // using custom made function for now
+        // Use custom made function for now - it is better to not rely on adodb or php defaults.
         if ($this->get_config('dbsybasequoting')) {
             $text = str_replace('\\', '\\\\', $text);
             $text = str_replace(array('\'', '"', "\0"), array('\\\'', '\\"', '\\0'), $text);
@@ -893,4 +889,3 @@ class enrol_database_plugin extends enrol_plugin {
         }
     }
 }
-

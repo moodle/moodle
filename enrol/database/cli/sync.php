@@ -26,8 +26,7 @@
  *   - you need to change the "www-data" to match the apache user account
  *   - use "su" if "sudo" not available
  *
- * @package    enrol
- * @subpackage database
+ * @package    enrol_database
  * @copyright  2010 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -37,7 +36,7 @@ define('CLI_SCRIPT', true);
 require(dirname(dirname(dirname(dirname(__FILE__)))).'/config.php');
 require_once($CFG->libdir.'/clilib.php');
 
-// now get cli options
+// Now get cli options.
 list($options, $unrecognized) = cli_get_params(array('verbose'=>false, 'help'=>false), array('v'=>'verbose', 'h'=>'help'));
 
 if ($unrecognized) {
