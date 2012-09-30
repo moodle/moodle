@@ -221,6 +221,9 @@ class auth_plugin_db extends auth_plugin_base {
 
         if ($this->is_internal()) {
             $puser = $DB->get_record('user', array('id'=>$user->id), '*', MUST_EXIST);
+            // This will also update the stored hash to the latest algorithm
+            // if the existing hash is using an out-of-date algorithm (or the
+            // legacy md5 algorithm).
             if (update_internal_user_password($puser, $newpassword)) {
                 $user->password = $puser->password;
                 return true;

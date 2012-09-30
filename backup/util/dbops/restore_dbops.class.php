@@ -1052,7 +1052,7 @@ abstract class restore_dbops {
 
                 // Most external plugins do not store passwords locally
                 if (!empty($userauth->preventpassindb)) {
-                    $user->password = 'not cached';
+                    $user->password = AUTH_PASSWORD_NOT_CACHED;
 
                 // If Moodle is responsible for storing/validating pwd and reset functionality is available, mark
                 } else if ($userauth->isinternal and $userauth->canresetpwd) {

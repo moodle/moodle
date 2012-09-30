@@ -1564,6 +1564,18 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012120300.07);
     }
 
+    if ($oldversion < 2013020900.00) {
+
+        // Changing precision of field password on table user to (255).
+        $table = new xmldb_table('user');
+        $field = new xmldb_field('password', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'username');
+
+        // Launch change of precision for field password.
+        $dbman->change_field_precision($table, $field);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2013020900.00);
+    }
 
     return true;
 }
