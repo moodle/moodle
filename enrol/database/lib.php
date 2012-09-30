@@ -493,9 +493,8 @@ class enrol_database_plugin extends enrol_plugin {
                 }
                 $rs->Close();
             } else {
-                mtrace('Error while communicating with external enrolment database');
-                $extdb->Close();
-                return;
+                mtrace("  error: skipping course '$course->mapping' - could not match with external database");
+                continue;
             }
             unset($user_mapping);
 
