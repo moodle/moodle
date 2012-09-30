@@ -104,9 +104,14 @@ class enrol_database_plugin extends enrol_plugin {
         }
 
         $table            = $this->get_config('remoteenroltable');
-        $coursefield      = strtolower($this->get_config('remotecoursefield'));
-        $userfield        = strtolower($this->get_config('remoteuserfield'));
-        $rolefield        = strtolower($this->get_config('remoterolefield'));
+        $coursefield      = trim($this->get_config('remotecoursefield'));
+        $userfield        = trim($this->get_config('remoteuserfield'));
+        $rolefield        = trim($this->get_config('remoterolefield'));
+
+        // Lowercased versions - necessary because we normalise the resultset with array_change_key_case().
+        $coursefield_l    = strtolower($coursefield);
+        $userfield_l      = strtolower($userfield);
+        $rolefield_l      = strtolower($rolefield);
 
         $localrolefield   = $this->get_config('localrolefield');
         $localuserfield   = $this->get_config('localuserfield');
@@ -153,25 +158,25 @@ class enrol_database_plugin extends enrol_plugin {
                     $fields = array_change_key_case($fields, CASE_LOWER);
                     $fields = $this->db_decode($fields);
 
-                    if (empty($fields[$coursefield])) {
+                    if (empty($fields[$coursefield_l])) {
                         // missing course info
                         continue;
                     }
-                    if (!$course = $DB->get_record('course', array($localcoursefield=>$fields[$coursefield]), 'id,visible')) {
+                    if (!$course = $DB->get_record('course', array($localcoursefield=>$fields[$coursefield_l]), 'id,visible')) {
                         continue;
                     }
                     if (!$course->visible and $ignorehidden) {
                         continue;
                     }
 
-                    if (empty($fields[$rolefield]) or !isset($roles[$fields[$rolefield]])) {
+                    if (empty($fields[$rolefield_l]) or !isset($roles[$fields[$rolefield_l]])) {
                         if (!$defaultrole) {
                             // role is mandatory
                             continue;
                         }
                         $roleid = $defaultrole;
                     } else {
-                        $roleid = $roles[$fields[$rolefield]];
+                        $roleid = $roles[$fields[$rolefield_l]];
                     }
 
                     if (empty($enrols[$course->id])) {
@@ -310,9 +315,14 @@ class enrol_database_plugin extends enrol_plugin {
 
         // second step is to sync instances and users
         $table            = $this->get_config('remoteenroltable');
-        $coursefield      = strtolower($this->get_config('remotecoursefield'));
-        $userfield        = strtolower($this->get_config('remoteuserfield'));
-        $rolefield        = strtolower($this->get_config('remoterolefield'));
+        $coursefield      = trim($this->get_config('remotecoursefield'));
+        $userfield        = trim($this->get_config('remoteuserfield'));
+        $rolefield        = trim($this->get_config('remoterolefield'));
+
+        // Lowercased versions - necessary because we normalise the resultset with array_change_key_case().
+        $coursefield_l    = strtolower($coursefield);
+        $userfield_l      = strtolower($userfield);
+        $rolefield_l      = strtolower($rolefield);
 
         $localrolefield   = $this->get_config('localrolefield');
         $localuserfield   = $this->get_config('localuserfield');
@@ -456,13 +466,13 @@ class enrol_database_plugin extends enrol_plugin {
                     }
                     while ($fields = $rs->FetchRow()) {
                         $fields = array_change_key_case($fields, CASE_LOWER);
-                        if (empty($fields[$userfield])) {
+                        if (empty($fields[$userfield_l])) {
                             if ($verbose) {
                                 mtrace("  error: skipping user without mandatory $localuserfield in course '$course->mapping'");
                             }
                             continue;
                         }
-                        $mapping = $fields[$userfield];
+                        $mapping = $fields[$userfield_l];
                         if (!isset($user_mapping[$mapping])) {
                             $usersearch[$localuserfield] = $mapping;
                             if (!$user = $DB->get_record('user', $usersearch, 'id', IGNORE_MULTIPLE)) {
@@ -476,7 +486,7 @@ class enrol_database_plugin extends enrol_plugin {
                         } else {
                             $userid = $user_mapping[$mapping];
                         }
-                        if (empty($fields[$rolefield]) or !isset($roles[$fields[$rolefield]])) {
+                        if (empty($fields[$rolefield_l]) or !isset($roles[$fields[$rolefield_l]])) {
                             if (!$defaultrole) {
                                 if ($verbose) {
                                     mtrace("  error: skipping user '$userid' in course '$course->mapping' - missing course and default role");
@@ -485,7 +495,7 @@ class enrol_database_plugin extends enrol_plugin {
                             }
                             $roleid = $defaultrole;
                         } else {
-                            $roleid = $roles[$fields[$rolefield]];
+                            $roleid = $roles[$fields[$rolefield_l]];
                         }
 
                         $requested_roles[$userid][$roleid] = $roleid;
@@ -627,10 +637,16 @@ class enrol_database_plugin extends enrol_plugin {
 
         // first create new courses
         $table     = $this->get_config('newcoursetable');
-        $fullname  = strtolower($this->get_config('newcoursefullname'));
-        $shortname = strtolower($this->get_config('newcourseshortname'));
-        $idnumber  = strtolower($this->get_config('newcourseidnumber'));
-        $category  = strtolower($this->get_config('newcoursecategory'));
+        $fullname  = trim($this->get_config('newcoursefullname'));
+        $shortname = trim($this->get_config('newcourseshortname'));
+        $idnumber  = trim($this->get_config('newcourseidnumber'));
+        $category  = trim($this->get_config('newcoursecategory'));
+
+        // Lowercased versions - necessary because we normalise the resultset with array_change_key_case().
+        $fullname_l  = strtolower($fullname);
+        $shortname_l = strtolower($shortname);
+        $idnumber_l  = strtolower($idnumber);
+        $category_l  = strtolower($category);
 
         $localcategoryfield = $this->get_config('localcategoryfield', 'id');
         $defaultcategory    = $this->get_config('defaultcategory');
@@ -658,39 +674,39 @@ class enrol_database_plugin extends enrol_plugin {
                 while ($fields = $rs->FetchRow()) {
                     $fields = array_change_key_case($fields, CASE_LOWER);
                     $fields = $this->db_decode($fields);
-                    if (empty($fields[$shortname]) or empty($fields[$fullname])) {
+                    if (empty($fields[$shortname_l]) or empty($fields[$fullname_l])) {
                         if ($verbose) {
                             mtrace('  error: invalid external course record, shortname and fullname are mandatory: ' . json_encode($fields)); // hopefully every geek can read JS, right?
                         }
                         continue;
                     }
-                    if ($DB->record_exists('course', array('shortname'=>$fields[$shortname]))) {
+                    if ($DB->record_exists('course', array('shortname'=>$fields[$shortname_l]))) {
                         // already exists
                         continue;
                     }
                     // allow empty idnumber but not duplicates
-                    if ($idnumber and $fields[$idnumber] !== '' and $fields[$idnumber] !== null and $DB->record_exists('course', array('idnumber'=>$fields[$idnumber]))) {
+                    if ($idnumber and $fields[$idnumber_l] !== '' and $fields[$idnumber_l] !== null and $DB->record_exists('course', array('idnumber'=>$fields[$idnumber_l]))) {
                         if ($verbose) {
-                            mtrace('  error: duplicate idnumber, can not create course: '.$fields[$shortname].' ['.$fields[$idnumber].']');
+                            mtrace('  error: duplicate idnumber, can not create course: '.$fields[$shortname_l].' ['.$fields[$idnumber_l].']');
                         }
                         continue;
                     }
                     $course = new stdClass();
-                    $course->fullname  = $fields[$fullname];
-                    $course->shortname = $fields[$shortname];
-                    $course->idnumber  = $idnumber ? $fields[$idnumber] : '';
+                    $course->fullname  = $fields[$fullname_l];
+                    $course->shortname = $fields[$shortname_l];
+                    $course->idnumber  = $idnumber ? $fields[$idnumber_l] : '';
                     if ($category) {
-                        if (empty($fields[$category])) {
+                        if (empty($fields[$category_l])) {
                             // Empty category means use default.
                             $course->category = $defaultcategory;
-                        } else if ($coursecategory = $DB->get_record('course_categories', array($localcategoryfield=>$fields[$category]), 'id')) {
+                        } else if ($coursecategory = $DB->get_record('course_categories', array($localcategoryfield=>$fields[$category_l]), 'id')) {
                             // Yay, correctly specified category!
                             $course->category = $coursecategory->id;
                             unset($coursecategory);
                         } else {
                             // Bad luck, better not continue because unwanted ppl might get access to course in different category.
                             if ($verbose) {
-                                mtrace('  error: invalid category '.$localcategoryfield.', can not create course: '.$fields[$shortname]);
+                                mtrace('  error: invalid category '.$localcategoryfield.', can not create course: '.$fields[$shortname_l]);
                             }
                             continue;
                         }
