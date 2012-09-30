@@ -915,4 +915,68 @@ class enrol_database_plugin extends enrol_plugin {
             return textlib::convert($text, $dbenc, 'utf-8');
         }
     }
+
+    /**
+     * Automatic enrol sync executed during restore.
+     * @param stdClass $course course record
+     */
+    public function restore_sync_course($course) {
+        $this->sync_enrolments(false, $course->id);
+    }
+
+    /**
+     * Restore instance and map settings.
+     *
+     * @param restore_enrolments_structure_step $step
+     * @param stdClass $data
+     * @param stdClass $course
+     * @param int $oldid
+     */
+    public function restore_instance(restore_enrolments_structure_step $step, stdClass $data, $course, $oldid) {
+        global $DB;
+
+        if ($instance = $DB->get_record('enrol', array('courseid'=>$course->id, 'enrol'=>$this->get_name()))) {
+            $instanceid = $instance->id;
+        } else {
+            $instanceid = $this->add_instance($course);
+        }
+        $step->set_mapping('enrol', $oldid, $instanceid);
+    }
+
+    /**
+     * Restore user enrolment.
+     *
+     * @param restore_enrolments_structure_step $step
+     * @param stdClass $data
+     * @param stdClass $instance
+     * @param int $oldinstancestatus
+     * @param int $userid
+     */
+    public function restore_user_enrolment(restore_enrolments_structure_step $step, $data, $instance, $userid, $oldinstancestatus) {
+        global $DB;
+
+        if ($this->get_config('unenrolaction') == ENROL_EXT_REMOVED_UNENROL) {
+            // Enrolments were already synchronised in restore_instance(), we do not want any suspended leftovers.
+            return;
+        }
+        if (!$DB->record_exists('user_enrolments', array('enrolid'=>$instance->id, 'userid'=>$userid))) {
+            $this->enrol_user($instance, $userid, null, 0, 0, ENROL_USER_SUSPENDED);
+        }
+    }
+
+    /**
+     * Restore role assignment.
+     *
+     * @param stdClass $instance
+     * @param int $roleid
+     * @param int $userid
+     * @param int $contextid
+     */
+    public function restore_role_assignment($instance, $roleid, $userid, $contextid) {
+        if ($this->get_config('unenrolaction') == ENROL_EXT_REMOVED_UNENROL or $this->get_config('unenrolaction') == ENROL_EXT_REMOVED_SUSPENDNOROLES) {
+            // Role assignments were already synchronised in restore_instance(), we do not want any leftovers.
+            return;
+        }
+        role_assign($roleid, $userid, $contextid, 'enrol_'.$this->get_name(), $instance->id);
+    }
 }
