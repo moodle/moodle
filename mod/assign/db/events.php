@@ -43,7 +43,7 @@ assessable_file_uploaded
     ->userid         = // The user id that the attempt belongs to.
     ->pathnamehashes = // An array of pathnamehashes of the files submitted by the user (var not passed if not set).
 
-assessable_content_done
+assessable_submitted
     ->modulename     = 'assign';
     ->cmid           = // The cmid of the assign.
     ->itemid         = // The submission id of the user submission.

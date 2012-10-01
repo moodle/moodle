@@ -3325,14 +3325,14 @@ class assign {
                 $this->add_to_log('submit for grading', $this->format_submission_for_log($submission));
                 $this->notify_graders($submission);
                 $this->notify_student_submission_receipt($submission);
-                // Trigger assessable_content_done event to show completion
+                // Trigger assessable_submitted event on submission
                 $eventdata = new stdClass();
                 $eventdata->modulename   = 'assign';
                 $eventdata->cmid         = $this->get_course_module()->id;
                 $eventdata->itemid       = $submission->id;
                 $eventdata->courseid     = $this->get_course()->id;
                 $eventdata->userid       = $USER->id;
-                events_trigger('assessable_content_done', $eventdata);
+                events_trigger('assessable_submitted', $eventdata);
             }
         }
         return true;
