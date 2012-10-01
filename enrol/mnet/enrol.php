@@ -344,9 +344,10 @@ class enrol_mnet_mnetservice_enrol {
             $params = array_merge($params, $rparams);
         }
 
-        $sql .= " ORDER BY u.lastname, u.firstname";
+        list($sort, $sortparams) = users_order_by_sql('u');
+        $sql .= " ORDER BY $sort";
 
-        $rs = $DB->get_recordset_sql($sql, $params);
+        $rs = $DB->get_recordset_sql($sql, array_merge($params, $sortparams));
         $list = array();
         foreach ($rs as $record) {
             $list[] = $record;

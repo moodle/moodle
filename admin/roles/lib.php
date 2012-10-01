@@ -1043,10 +1043,11 @@ class potential_assignees_below_course extends role_assign_user_selector_base {
                   WHERE u.id IN ($enrolsql)
                         $wherecondition
                         AND ra.id IS NULL";
-        $order = ' ORDER BY lastname ASC, firstname ASC';
-
         $params['contextid'] = $this->context->id;
         $params['roleid'] = $this->roleid;
+
+        list($sort, $sortparams) = users_order_by_sql('u', $search, $this->accesscontext);
+        $order = ' ORDER BY ' . $sort;
 
         // Check to see if there are too many to show sensibly.
         if (!$this->is_validating()) {
@@ -1057,7 +1058,7 @@ class potential_assignees_below_course extends role_assign_user_selector_base {
         }
 
         // If not, show them.
-        $availableusers = $DB->get_records_sql($fields . $sql . $order, $params);
+        $availableusers = $DB->get_records_sql($fields . $sql . $order, array_merge($params, $sortparams));
 
         if (empty($availableusers)) {
             return array();
@@ -1094,7 +1095,9 @@ class potential_assignees_course_and_above extends role_assign_user_selector_bas
                            FROM {role_assignments} r
                           WHERE r.contextid = :contextid
                                 AND r.roleid = :roleid)";
-        $order = ' ORDER BY lastname ASC, firstname ASC';
+
+        list($sort, $sortparams) = users_order_by_sql('', $search, $this->accesscontext);
+        $order = ' ORDER BY ' . $sort;
 
         $params['contextid'] = $this->context->id;
         $params['roleid'] = $this->roleid;
@@ -1106,7 +1109,7 @@ class potential_assignees_course_and_above extends role_assign_user_selector_bas
             }
         }
 
-        $availableusers = $DB->get_records_sql($fields . $sql . $order, $params);
+        $availableusers = $DB->get_records_sql($fields . $sql . $order, array_merge($params, $sortparams));
 
         if (empty($availableusers)) {
             return array();
@@ -1140,6 +1143,9 @@ class existing_role_holders extends role_assign_user_selector_base {
         $params = array_merge($params, $ctxparams);
         $params['roleid'] = $this->roleid;
 
+        list($sort, $sortparams) = users_order_by_sql('u', $search, $this->accesscontext);
+        $params = array_merge($params, $sortparams);
+
         $sql = "SELECT ra.id as raid," . $this->required_fields_sql('u') . ",ra.contextid,ra.component
                 FROM {role_assignments} ra
                 JOIN {user} u ON u.id = ra.userid
@@ -1148,7 +1154,7 @@ class existing_role_holders extends role_assign_user_selector_base {
                     $wherecondition AND
                     ctx.id $ctxcondition AND
                     ra.roleid = :roleid
-                ORDER BY ctx.depth DESC, ra.component, u.lastname, u.firstname";
+                ORDER BY ctx.depth DESC, ra.component, $sort";
         $contextusers = $DB->get_records_sql($sql, $params);
 
         // No users at all.
@@ -1495,10 +1501,14 @@ class admins_potential_selector extends user_selector_base {
      * @param string $name control name
      * @param array $options should have two elements with keys groupid and courseid.
      */
-    public function __construct() {
-        global $CFG, $USER;
-        $admins = explode(',', $CFG->siteadmins);
-        parent::__construct('addselect', array('multiselect'=>false, 'exclude'=>$admins));
+    public function __construct($name = null, $options = array()) {
+        global $CFG;
+        if (is_null($name)) {
+            $name = 'addselect';
+        }
+        $options['multiselect'] = false;
+        $options['exclude'] = explode(',', $CFG->siteadmins);
+        parent::__construct($name, $options);
     }
 
     public function find_users($search) {
@@ -1510,8 +1520,11 @@ class admins_potential_selector extends user_selector_base {
 
         $sql = " FROM {user}
                 WHERE $wherecondition AND mnethostid = :localmnet";
-        $order = ' ORDER BY lastname ASC, firstname ASC';
+
         $params['localmnet'] = $CFG->mnet_localhost_id; // it could be dangerous to make remote users admins and also this could lead to other problems
+
+        list($sort, $sortparams) = users_order_by_sql('', $search, $this->accesscontext);
+        $order = ' ORDER BY ' . $sort;
 
         // Check to see if there are too many to show sensibly.
         if (!$this->is_validating()) {
@@ -1521,7 +1534,7 @@ class admins_potential_selector extends user_selector_base {
             }
         }
 
-        $availableusers = $DB->get_records_sql($fields . $sql . $order, $params);
+        $availableusers = $DB->get_records_sql($fields . $sql . $order, array_merge($params, $sortparams));
 
         if (empty($availableusers)) {
             return array();
@@ -1549,9 +1562,12 @@ class admins_existing_selector extends user_selector_base {
      * @param string $name control name
      * @param array $options should have two elements with keys groupid and courseid.
      */
-    public function __construct() {
-        global $CFG, $USER;
-        parent::__construct('removeselect', array('multiselect'=>false));
+    public function __construct($name = null, $options = array()) {
+        if (is_null($name)) {
+            $name = 'removeselect';
+        }
+        $options['multiselect'] = false;
+        parent::__construct($name, $options);
     }
 
     public function find_users($search) {
@@ -1568,7 +1584,10 @@ class admins_existing_selector extends user_selector_base {
         }
         $sql = " FROM {user}
                 WHERE $wherecondition";
-        $order = ' ORDER BY lastname ASC, firstname ASC';
+
+        list($sort, $sortparams) = users_order_by_sql('', $search, $this->accesscontext);
+        $params = array_merge($params, $sortparams);
+        $order = ' ORDER BY ' . $sort;
 
         $availableusers = $DB->get_records_sql($fields . $sql . $order, $params);
 

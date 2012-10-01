@@ -2309,7 +2309,7 @@ function get_enrolled_sql(context $context, $withcapability = '', $groupid = 0, 
  * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
  * @return array of user records
  */
-function get_enrolled_users(context $context, $withcapability = '', $groupid = 0, $userfields = 'u.*', $orderby = '', $limitfrom = 0, $limitnum = 0) {
+function get_enrolled_users(context $context, $withcapability = '', $groupid = 0, $userfields = 'u.*', $orderby = null, $limitfrom = 0, $limitnum = 0) {
     global $DB;
 
     list($esql, $params) = get_enrolled_sql($context, $withcapability, $groupid);
@@ -2321,7 +2321,9 @@ function get_enrolled_users(context $context, $withcapability = '', $groupid = 0
     if ($orderby) {
         $sql = "$sql ORDER BY $orderby";
     } else {
-        $sql = "$sql ORDER BY u.lastname ASC, u.firstname ASC";
+        list($sort, $sortparams) = users_order_by_sql('u');
+        $sql = "$sql ORDER BY $sort";
+        $params = array_merge($params, $sortparams);
     }
 
     return $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
@@ -3841,18 +3843,19 @@ function sort_by_roleassignment_authority($users, context $context, $roles = arr
  * @param context $context
  * @param bool $parent if true, get list of users assigned in higher context too
  * @param string $fields fields from user (u.) , role assignment (ra) or role (r.)
- * @param string $sort sort from user (u.) , role assignment (ra) or role (r.)
+ * @param string $sort sort from user (u.) , role assignment (ra.) or role (r.).
+ *      null => use default sort from users_order_by_sql.
  * @param bool $gethidden_ignored use enrolments instead
  * @param string $group defaults to ''
  * @param mixed $limitfrom defaults to ''
  * @param mixed $limitnum defaults to ''
  * @param string $extrawheretest defaults to ''
- * @param string|array $whereparams defaults to ''
+ * @param array $whereorsortparams any paramter values used by $sort or $extrawheretest.
  * @return array
  */
 function get_role_users($roleid, context $context, $parent = false, $fields = '',
-        $sort = 'u.lastname, u.firstname', $gethidden_ignored = null, $group = '',
-        $limitfrom = '', $limitnum = '', $extrawheretest = '', $whereparams = array()) {
+        $sort = null, $gethidden_ignored = null, $group = '',
+        $limitfrom = '', $limitnum = '', $extrawheretest = '', $whereorsortparams = array()) {
     global $DB;
 
     if (empty($fields)) {
@@ -3899,7 +3902,15 @@ function get_role_users($roleid, context $context, $parent = false, $fields = ''
 
     if ($extrawheretest) {
         $extrawheretest = ' AND ' . $extrawheretest;
+    }
+
+    if ($whereorsortparams) {
         $params = array_merge($params, $whereparams);
+    }
+
+    if (!$sort) {
+        list($sort, $sortparams) = users_order_by_sql('u');
+        $params = array_merge($params, $sortparams);
     }
 
     $sql = "SELECT DISTINCT $fields, ra.roleid

@@ -57,7 +57,8 @@ class cohort_candidate_selector extends user_selector_base {
             LEFT JOIN {cohort_members} cm ON (cm.userid = u.id AND cm.cohortid = :cohortid)
                 WHERE cm.id IS NULL AND $wherecondition";
 
-        $order = ' ORDER BY u.lastname ASC, u.firstname ASC';
+        list($sort, $sortparams) = users_order_by_sql('u', $search, $this->accesscontext);
+        $order = ' ORDER BY ' . $sort;
 
         if (!$this->is_validating()) {
             $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
@@ -66,7 +67,7 @@ class cohort_candidate_selector extends user_selector_base {
             }
         }
 
-        $availableusers = $DB->get_records_sql($fields . $sql . $order, $params);
+        $availableusers = $DB->get_records_sql($fields . $sql . $order, array_merge($params, $sortparams));
 
         if (empty($availableusers)) {
             return array();
@@ -120,7 +121,8 @@ class cohort_existing_selector extends user_selector_base {
                  JOIN {cohort_members} cm ON (cm.userid = u.id AND cm.cohortid = :cohortid)
                 WHERE $wherecondition";
 
-        $order = ' ORDER BY u.lastname ASC, u.firstname ASC';
+        list($sort, $sortparams) = users_order_by_sql('u', $search, $this->accesscontext);
+        $order = ' ORDER BY ' . $sort;
 
         if (!$this->is_validating()) {
             $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
@@ -129,7 +131,7 @@ class cohort_existing_selector extends user_selector_base {
             }
         }
 
-        $availableusers = $DB->get_records_sql($fields . $sql . $order, $params);
+        $availableusers = $DB->get_records_sql($fields . $sql . $order, array_merge($params, $sortparams));
 
         if (empty($availableusers)) {
             return array();

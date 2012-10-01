@@ -310,11 +310,15 @@ class course_enrolment_manager {
             LEFT JOIN {user_enrolments} ue ON (ue.userid = u.id AND ue.enrolid = :enrolid)
                 WHERE $wherecondition
                       AND ue.id IS NULL";
-        $order = ' ORDER BY u.lastname ASC, u.firstname ASC';
         $params['enrolid'] = $enrolid;
+
+        list($sort, $sortparams) = users_order_by_sql('u', $search, $this->get_context());
+        $order = ' ORDER BY ' . $sort;
+        $params += $sortparams;
+
         $totalusers = $DB->count_records_sql($countfields . $sql, $params);
         $availableusers = $DB->get_records_sql($fields . $sql . $order, $params, $page*$perpage, $perpage);
-        return array('totalusers'=>$totalusers, 'users'=>$availableusers);
+        return array('totalusers' => $totalusers, 'users' => $availableusers);
     }
 
     /**
@@ -334,7 +338,7 @@ class course_enrolment_manager {
         $tests = array("u.id <> :guestid", 'u.deleted = 0', 'u.confirmed = 1');
         $params = array('guestid'=>$CFG->siteguest);
         if (!empty($search)) {
-            $conditions = array('u.firstname','u.lastname');
+            $conditions = array('u.firstname', 'u.lastname');
             if ($searchanywhere) {
                 $searchparam = '%' . $search . '%';
             } else {
@@ -356,11 +360,14 @@ class course_enrolment_manager {
               LEFT JOIN {role_assignments} ra ON (ra.userid = u.id AND ra.contextid = :contextid)
                   WHERE $wherecondition
                     AND ra.id IS NULL";
-        $order = ' ORDER BY lastname ASC, firstname ASC';
-
         $params['contextid'] = $this->context->id;
+
+        list($sort, $sortparams) = users_order_by_sql('u', $search, $this->context);
+        $order = ' ORDER BY ' . $sort;
+
         $totalusers = $DB->count_records_sql($countfields . $sql, $params);
-        $availableusers = $DB->get_records_sql($fields . $sql . $order, $params, $page*$perpage, $perpage);
+        $availableusers = $DB->get_records_sql($fields . $sql . $order,
+                array_merge($params, $sortparams), $page*$perpage, $perpage);
         return array('totalusers'=>$totalusers, 'users'=>$availableusers);
     }
 
@@ -1008,14 +1015,16 @@ class course_enrolment_manager {
         $userfields = user_picture::fields('u');
         list($idsql, $idparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED, 'userid0000');
 
+        list($sort, $sortparams) = users_order_by_sql('u');
+
         $sql = "SELECT ue.id AS ueid, ue.status, ue.enrolid, ue.userid, ue.timestart, ue.timeend, ue.modifierid, ue.timecreated, ue.timemodified, $userfields
                   FROM {user_enrolments} ue
              LEFT JOIN {user} u ON u.id = ue.userid
                  WHERE ue.enrolid $instancesql AND
                        u.id $idsql
-              ORDER BY u.firstname ASC, u.lastname ASC";
+              ORDER BY $sort";
 
-        $rs = $DB->get_recordset_sql($sql, $idparams + $instanceparams);
+        $rs = $DB->get_recordset_sql($sql, $idparams + $instanceparams + $sortparams);
         $users = array();
         foreach ($rs as $ue) {
             $user = user_picture::unalias($ue);

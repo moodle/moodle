@@ -2520,10 +2520,11 @@ function print_course($course, $highlightterms = '') {
         $rusers = array();
 
         if (!isset($course->managers)) {
+            list($sort, $sortparams) = users_order_by_sql('u');
             $rusers = get_role_users($managerroles, $context, true,
                 'ra.id AS raid, u.id, u.username, u.firstname, u.lastname, rn.name AS rolecoursealias,
                  r.name AS rolename, r.sortorder, r.id AS roleid, r.shortname AS roleshortname',
-                'r.sortorder ASC, u.lastname ASC');
+                'r.sortorder ASC, ' . $sort, null, '', '', '', '', $sortparams);
         } else {
             //  use the managers array if we have it for perf reasosn
             //  populate the datastructure like output of get_role_users();

@@ -751,13 +751,13 @@ function groups_unassign_grouping($groupingid, $groupid) {
  * @param int $groupid
  * @param int $courseid Course ID (should match the group's course)
  * @param string $fields List of fields from user table prefixed with u, default 'u.*'
- * @param string $sort SQL ORDER BY clause, default 'u.lastname ASC'
+ * @param string $sort SQL ORDER BY clause, default (when null passed) is what comes from users_order_by_sql.
  * @param string $extrawheretest extra SQL conditions ANDed with the existing where clause.
- * @param array $whereparams any parameters required by $extrawheretest (named parameters).
+ * @param array $whereorsortparams any parameters required by $extrawheretest (named parameters).
  * @return array Complex array as described above
  */
 function groups_get_members_by_role($groupid, $courseid, $fields='u.*',
-        $sort='u.lastname ASC', $extrawheretest='', $whereparams=array()) {
+        $sort=null, $extrawheretest='', $whereorsortparams=array()) {
     global $CFG, $DB;
 
     // Retrieve information about all users and their roles on the course or
@@ -768,6 +768,11 @@ function groups_get_members_by_role($groupid, $courseid, $fields='u.*',
         $extrawheretest = ' AND ' . $extrawheretest;
     }
 
+    if (is_null($sort)) {
+        list($sort, $sortparams) = users_order_by_sql('u');
+        $whereorsortparams = array_merge($whereorsortparams, $sortparams);
+    }
+
     $sql = "SELECT r.id AS roleid, u.id AS userid, $fields
               FROM {groups_members} gm
               JOIN {user} u ON u.id = gm.userid
@@ -776,8 +781,8 @@ function groups_get_members_by_role($groupid, $courseid, $fields='u.*',
              WHERE gm.groupid=:mgroupid
                    ".$extrawheretest."
           ORDER BY r.sortorder, $sort";
-    $whereparams['mgroupid'] = $groupid;
-    $rs = $DB->get_recordset_sql($sql, $whereparams);
+    $whereorsortparams['mgroupid'] = $groupid;
+    $rs = $DB->get_recordset_sql($sql, $whereorsortparams);
 
     return groups_calculate_role_people($rs, $context);
 }

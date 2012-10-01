@@ -90,20 +90,22 @@ if (!empty($orphaned)) {
 if ($groupmode) {
     $colname = get_string('group');
     $sql = 'SELECT o.*, g.name
-                FROM {quiz_overrides} o JOIN {groups} g
-                ON o.groupid = g.id
-                WHERE o.quiz = ?
+                FROM {quiz_overrides} o
+                JOIN {groups} g ON o.groupid = g.id
+                WHERE o.quiz = :quizid
                 ORDER BY g.name';
+    $params = array('quizid' => $quiz->id);
 } else {
     $colname = get_string('user');
+    list($sort, $params) = users_order_by_sql('u');
     $sql = 'SELECT o.*, u.firstname, u.lastname
-                FROM {quiz_overrides} o JOIN {user} u
-                ON o.userid = u.id
-                WHERE o.quiz = ?
-                ORDER BY u.lastname, u.firstname';
+                FROM {quiz_overrides} o
+                JOIN {user} u ON o.userid = u.id
+                WHERE o.quiz = :quizid
+                ORDER BY ' . $sort;
+    $params['quizid'] = $quiz->id;
 }
 
-$params = array($quiz->id);
 $overrides = $DB->get_records_sql($sql, $params);
 
 // Initialise table.

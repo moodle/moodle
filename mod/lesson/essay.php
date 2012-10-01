@@ -160,12 +160,10 @@ switch ($mode) {
                 SELECT u.*
                   FROM {user} u
                   JOIN (
-                    SELECT DISTINCT u.id
-                      FROM {user} u,
-                           {lesson_attempts} a
-                     WHERE a.lessonid = :lessonid and
-                           u.id = a.userid) ui ON (u.id = ui.id)
-                  ORDER BY u.lastname", $params)) {
+                           SELECT DISTINCT userid
+                             FROM {lesson_attempts}
+                            WHERE lessonid = :lessonid
+                       ) ui ON u.id = ui.id", $params)) {
                 print_error('cannotfinduser', 'lesson');
             }
         }
@@ -268,6 +266,8 @@ switch ($mode) {
             if ($essayattempts = $DB->get_records_select('lesson_attempts', 'pageid '.$usql, $parameters)) {
                 // Get all the users who have taken this lesson, order by their last name
                 $ufields = user_picture::fields('u');
+                list($sort, $sortparams) = users_order_by_sql('u');
+                $params = array_merge($params, $sortparams);
                 if (!empty($cm->groupingid)) {
                     $params["groupinid"] = $cm->groupingid;
                     $sql = "SELECT DISTINCT $ufields
@@ -276,14 +276,14 @@ switch ($mode) {
                                 INNER JOIN {groups_members} gm ON gm.userid = u.id
                                 INNER JOIN {groupings_groups} gg ON gm.groupid = :groupinid
                             WHERE a.lessonid = :lessonid
-                            ORDER BY u.lastname";
+                            ORDER BY $sort";
                 } else {
                     $sql = "SELECT DISTINCT $ufields
                             FROM {user} u,
                                  {lesson_attempts} a
                             WHERE a.lessonid = :lessonid and
                                   u.id = a.userid
-                            ORDER BY u.lastname";
+                            ORDER BY $sort";
                 }
                 if (!$users = $DB->get_records_sql($sql, $params)) {
                     $mode = 'none'; // not displaying anything

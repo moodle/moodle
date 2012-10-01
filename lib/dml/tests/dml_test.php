@@ -4114,6 +4114,22 @@ class dml_testcase extends database_driver_testcase {
         $records = $DB->get_records_sql($sql, null);
         $this->assertEquals($result, $records);
 
+        // Test CASE expressions in the ORDER BY clause - used by MDL-34657.
+        $sql = "SELECT id, course, name
+                  FROM {{$tablename}}
+              ORDER BY CASE WHEN (course = 5 OR name  = 'xyz') THEN 0 ELSE 1 END, name, course";
+        // First, records matching the course = 5 OR name = 'xyz', then the rest. Each
+        // group ordered by name and course.
+        $result = array(
+            3 => (object)array('id' => 3, 'course' => 5, 'name' => 'def'),
+            1 => (object)array('id' => 1, 'course' => 3, 'name' => 'xyz'),
+            4 => (object)array('id' => 4, 'course' => 2, 'name' => 'abc'),
+            2 => (object)array('id' => 2, 'course' => 3, 'name' => 'abc'));
+        $records = $DB->get_records_sql($sql, null);
+        $this->assertEquals($result, $records);
+        // Verify also array keys, order is important in this test.
+        $this->assertEquals(array_keys($result), array_keys($records));
+
         // test limits in queries with DISTINCT/ALL clauses and multiple whitespace. MDL-25268
         $sql = "SELECT   DISTINCT   course
                   FROM {{$tablename}}

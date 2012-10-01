@@ -291,6 +291,7 @@ class mnetservice_enrol {
 
             if (!empty($usernames)) {
                 list($usql, $params) = $DB->get_in_or_equal($usernames, SQL_PARAMS_NAMED);
+                list($sort, $sortparams) = users_order_by_sql();
                 $params['mnetlocalhostid'] = $CFG->mnet_localhost_id;
                 $sql = "SELECT username,id
                           FROM {user}
@@ -298,8 +299,8 @@ class mnetservice_enrol {
                                AND username $usql
                                AND deleted = 0
                                AND confirmed = 1
-                      ORDER BY lastname,firstname,email";
-                $usersbyusername = $DB->get_records_sql($sql, $params);
+                      ORDER BY $sort";
+                $usersbyusername = $DB->get_records_sql($sql, array_merge($params, $sortparams));
             } else {
                 $usersbyusername = array();
             }
@@ -489,7 +490,9 @@ class mnetservice_enrol_existing_users_selector extends user_selector_base {
                          WHERE e.hostid = :hostid AND e.remotecourseid = :remotecourseid
                                AND e.enroltype = 'mnet'
                                AND $wherecondition";
-        $order = "    ORDER BY u.lastname ASC, u.firstname ASC";
+
+        list($sort, $sortparams) = users_order_by_sql('u');
+        $order = "    ORDER BY $sort";
 
         if (!$this->is_validating()) {
             $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
@@ -498,7 +501,7 @@ class mnetservice_enrol_existing_users_selector extends user_selector_base {
             }
         }
 
-        $availableusers = $DB->get_records_sql($fields . $sql . $order, $params);
+        $availableusers = $DB->get_records_sql($fields . $sql . $order, array_merge($params, $sortparams));
 
         if (empty($availableusers)) {
             return array();
@@ -576,7 +579,8 @@ class mnetservice_enrol_potential_users_selector extends user_selector_base {
                                                   FROM {mnetservice_enrol_enrolments} e
                                                  WHERE (e.hostid = :hostid AND e.remotecourseid = :remotecourseid))";
 
-        $order = "    ORDER BY u.lastname ASC, u.firstname ASC";
+        list($sort, $sortparams) = users_order_by_sql('u');
+        $order = "    ORDER BY $sort";
 
         if (!$this->is_validating()) {
             $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
@@ -585,7 +589,7 @@ class mnetservice_enrol_potential_users_selector extends user_selector_base {
             }
         }
 
-        $availableusers = $DB->get_records_sql($fields . $sql . $order, $params);
+        $availableusers = $DB->get_records_sql($fields . $sql . $order, array_merge($params, $sortparams));
 
         if (empty($availableusers)) {
             return array();

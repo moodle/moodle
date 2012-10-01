@@ -863,8 +863,9 @@ function report_security_check_riskbackup($detailed=false) {
         // Get a list of affected users as well
         $users = array();
 
+        list($sort, $sortparams) = users_order_by_sql('u');
         $rs = $DB->get_recordset_sql("SELECT DISTINCT u.id, u.firstname, u.lastname, u.picture, u.imagealt, u.email, ra.contextid, ra.roleid
-            $sqluserinfo ORDER BY u.lastname, u.firstname", $params);
+            $sqluserinfo ORDER BY $sort", array_merge($params, $sortparams));
 
         foreach ($rs as $user) {
             $context = context::instance_by_id($user->contextid);

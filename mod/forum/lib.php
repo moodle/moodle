@@ -107,13 +107,7 @@ function forum_add_instance($forum, $mform = null) {
     }
 
     if ($forum->forcesubscribe == FORUM_INITIALSUBSCRIBE) {
-    /// all users should be subscribed initially
-    /// Note: forum_get_potential_subscribers should take the forum context,
-    /// but that does not exist yet, becuase the forum is only half build at this
-    /// stage. However, because the forum is brand new, we know that there are
-    /// no role assignments or overrides in the forum context, so using the
-    /// course context gives the same list of users.
-        $users = forum_get_potential_subscribers($modcontext, 0, 'u.id, u.email', '');
+        $users = forum_get_potential_subscribers($modcontext, 0, 'u.id, u.email');
         foreach ($users as $user) {
             forum_subscribe($user->id, $forum->id);
         }
@@ -2857,20 +2851,20 @@ function forum_get_user_discussions($courseid, $userid, $groupid=0) {
  * @param string $sort sort order. As for get_users_by_capability.
  * @return array list of users.
  */
-function forum_get_potential_subscribers($forumcontext, $groupid, $fields, $sort) {
+function forum_get_potential_subscribers($forumcontext, $groupid, $fields, $sort = '') {
     global $DB;
 
     // only active enrolled users or everybody on the frontpage
     list($esql, $params) = get_enrolled_sql($forumcontext, 'mod/forum:allowforcesubscribe', $groupid, true);
+    if (!$sort) {
+        list($sort, $sortparams) = users_order_by_sql('u');
+        $params = array_merge($params, $sortparams);
+    }
 
     $sql = "SELECT $fields
               FROM {user} u
-              JOIN ($esql) je ON je.id = u.id";
-    if ($sort) {
-        $sql = "$sql ORDER BY $sort";
-    } else {
-        $sql = "$sql ORDER BY u.lastname ASC, u.firstname ASC";
-    }
+              JOIN ($esql) je ON je.id = u.id
+          ORDER BY $sort";
 
     return $DB->get_records_sql($sql, $params);
 }
@@ -7823,6 +7817,7 @@ abstract class forum_subscriber_selector_base extends user_selector_base {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class forum_potential_subscriber_selector extends forum_subscriber_selector_base {
+    const MAX_USERS_PER_PAGE = 100;
 
     /**
      * If set to true EVERYONE in this course is force subscribed to this forum
@@ -7862,8 +7857,7 @@ class forum_potential_subscriber_selector extends forum_subscriber_selector_base
     /**
      * Finds all potential users
      *
-     * Potential users are determined by checking for users with a capability
-     * determined in {@see forum_get_potential_subscribers()}
+     * Potential subscribers are all enroled users who are not already subscribed.
      *
      * @param string $search
      * @return array
@@ -7871,28 +7865,57 @@ class forum_potential_subscriber_selector extends forum_subscriber_selector_base
     public function find_users($search) {
         global $DB;
 
-        $availableusers = forum_get_potential_subscribers($this->context, $this->currentgroup, $this->required_fields_sql('u'), 'u.firstname ASC, u.lastname ASC');
+        $whereconditions = array();
+        list($wherecondition, $params) = $this->search_sql($search, 'u');
+        if ($wherecondition) {
+            $whereconditions[] = $wherecondition;
+        }
 
-        if (empty($availableusers)) {
-            $availableusers = array();
-        } else if ($search) {
-            $search = strtolower($search);
-            foreach ($availableusers as $key=>$user) {
-                if (stripos($user->firstname, $search) === false && stripos($user->lastname, $search) === false) {
-                    unset($availableusers[$key]);
+        if (!$this->forcesubscribed) {
+            $existingids = array();
+            foreach ($this->existingsubscribers as $group) {
+                foreach ($group as $user) {
+                    $existingids[$user->id] = 1;
                 }
+            }
+            if ($existingids) {
+                list($usertest, $userparams) = $DB->get_in_or_equal(
+                        array_keys($existingids), SQL_PARAMS_NAMED, 'existing', false);
+                $whereconditions[] = 'u.id ' . $usertest;
+                $params = array_merge($params, $userparams);
             }
         }
 
-        // Unset any existing subscribers
-        if (count($this->existingsubscribers)>0 && !$this->forcesubscribed) {
-            foreach ($this->existingsubscribers as $group) {
-                foreach ($group as $user) {
-                    if (array_key_exists($user->id, $availableusers)) {
-                        unset($availableusers[$user->id]);
-                    }
-                }
+        if ($whereconditions) {
+            $wherecondition = 'WHERE ' . implode(' AND ', $whereconditions);
+        }
+
+        list($esql, $eparams) = get_enrolled_sql($this->context, '', $this->currentgroup, true);
+        $params = array_merge($params, $eparams);
+
+        $fields      = 'SELECT ' . $this->required_fields_sql('u');
+        $countfields = 'SELECT COUNT(u.id)';
+
+        $sql = " FROM {user} u
+                 JOIN ($esql) je ON je.id = u.id
+                      $wherecondition";
+
+        list($sort, $sortparams) = users_order_by_sql('u', $search, $this->accesscontext);
+        $order = ' ORDER BY ' . $sort;
+
+        // Check to see if there are too many to show sensibly.
+        if (!$this->is_validating()) {
+            $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
+            if ($potentialmemberscount > self::MAX_USERS_PER_PAGE) {
+                return $this->too_many_results($search, $potentialmemberscount);
             }
+        }
+
+        // If not, show them.
+        $availableusers = $DB->get_records_sql($fields . $sql . $order, array_merge($params, $sortparams));
+
+        if (empty($availableusers)) {
+            return array();
         }
 
         if ($this->forcesubscribed) {
@@ -7939,16 +7962,16 @@ class forum_existing_subscriber_selector extends forum_subscriber_selector_base 
 
         // only active enrolled or everybody on the frontpage
         list($esql, $eparams) = get_enrolled_sql($this->context, '', $this->currentgroup, true);
-        $params = array_merge($params, $eparams);
-
         $fields = $this->required_fields_sql('u');
+        list($sort, $sortparams) = users_order_by_sql('u', $search, $this->accesscontext);
+        $params = array_merge($params, $eparams, $sortparams);
 
         $subscribers = $DB->get_records_sql("SELECT $fields
                                                FROM {user} u
                                                JOIN ($esql) je ON je.id = u.id
                                                JOIN {forum_subscriptions} s ON s.userid = u.id
                                               WHERE $wherecondition AND s.forum = :forumid
-                                           ORDER BY u.lastname ASC, u.firstname ASC", $params);
+                                           ORDER BY $sort", $params);
 
         return array(get_string("existingsubscribers", 'forum') => $subscribers);
     }

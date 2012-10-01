@@ -130,19 +130,25 @@ class quiz_override_form extends moodleform {
             } else {
                 // Prepare the list of users.
                 $users = array();
+                list($sort, $sortparams) = users_order_by_sql('u');
+                if (!empty($sortparams)) {
+                    throw new coding_exception('users_order_by_sql returned some query parameters. ' .
+                            'This is unexpected, and a problem because there is no way to pass these ' .
+                            'parameters to get_users_by_capability. See MDL-34657.');
+                }
                 if (!empty($CFG->enablegroupmembersonly) && $cm->groupmembersonly) {
                     // Only users from the grouping.
                     $groups = groups_get_all_groups($cm->course, 0, $cm->groupingid);
                     if (!empty($groups)) {
                         $users = get_users_by_capability($this->context, 'mod/quiz:attempt',
                                 'u.id, u.firstname, u.lastname, u.email',
-                                'firstname ASC, lastname ASC', '', '', array_keys($groups),
+                                $sort, '', '', array_keys($groups),
                                 '', false, true);
                     }
                 } else {
                     $users = get_users_by_capability($this->context, 'mod/quiz:attempt',
                             'u.id, u.firstname, u.lastname, u.email' ,
-                            'firstname ASC, lastname ASC', '', '', '', '', false, true);
+                            $sort, '', '', '', '', false, true);
                 }
                 if (empty($users)) {
                     // Generate an error.
