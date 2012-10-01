@@ -1003,17 +1003,31 @@ class cm_info extends stdClass  {
         }
         // Check group membership. The grouping option makes the activity
         // completely invisible as it does not apply to the user at all.
+        if ($this->is_user_access_restricted_by_group()) {
+            $this->uservisible = false;
+            // Ensure activity is completely hidden from user.
+            $this->showavailability = 0;
+        }
+    }
+
+    /**
+     * Checks whether the module group settings restrict the user access.
+     * @return bool true if the user access is restricted
+     */
+    public function is_user_access_restricted_by_group() {
+        global $CFG;
+        $modcontext = context_module::instance($this->id);
+        $userid = $this->modinfo->get_user_id();
         if (!empty($CFG->enablegroupmembersonly) and !empty($this->groupmembersonly)
                 and !has_capability('moodle/site:accessallgroups', $modcontext, $userid)) {
             // If the activity has 'group members only' and you don't have accessallgroups...
             $groups = $this->modinfo->get_groups($this->groupingid);
             if (empty($groups)) {
                 // ...and you don't belong to a group, then set it so you can't see/access it
-                $this->uservisible = false;
-                // Ensure activity is completely hidden from user.
-                $this->showavailability = 0;
+                return true;
             }
         }
+        return false;
     }
 
     /**
