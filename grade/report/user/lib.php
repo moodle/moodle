@@ -341,23 +341,25 @@ class grade_report_user extends grade_report {
                 $hidden = ' hidden';
             }
 
+            $hide = false;
             // If this is a hidden grade item, hide it completely from the user.
             if ($grade_grade->is_hidden() && !$this->canviewhidden && (
                     $this->showhiddenitems == GRADE_REPORT_USER_HIDE_HIDDEN ||
                     ($this->showhiddenitems == GRADE_REPORT_USER_HIDE_UNTIL && !$grade_grade->is_hiddenuntil()))) {
-                // return false;
-            } else {
-                // The grade object can be marked visible but still be hidden
-                // if "enablegroupmembersonly" is on and its an activity assigned to a grouping the user is not in
-                if (!empty($grade_object->itemmodule) && !empty($grade_object->iteminstance)) {
-                    $instances = $this->gtree->modinfo->get_instances();
-                    if (!empty($instances[$grade_object->itemmodule][$grade_object->iteminstance])) {
-                        $cm = $instances[$grade_object->itemmodule][$grade_object->iteminstance];
-                        if (!$cm->uservisible) {
-                            return false;
-                        }
+                $hide = true;
+            } else if (!empty($grade_object->itemmodule) && !empty($grade_object->iteminstance)) {
+                // The grade object can be marked visible but still be hidden if "enablegroupmembersonly"
+                // is on and it's an activity assigned to a grouping the user is not in.
+                $instances = $this->gtree->modinfo->get_instances_of($grade_object->itemmodule);
+                if (!empty($instances[$grade_object->iteminstance])) {
+                    $cm = $instances[$grade_object->iteminstance];
+                    if ($cm->is_user_access_restricted_by_group()) {
+                        $hide = true;
                     }
                 }
+            }
+
+            if (!$hide) {
                 /// Excluded Item
                 if ($grade_grade->is_excluded()) {
                     $fullname .= ' ['.get_string('excluded', 'grades').']';
