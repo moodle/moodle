@@ -34,6 +34,7 @@ $url->param('id', $userid);
 $url->param('course', $course);
 
 $PAGE->set_url($url);
+$PAGE->set_popup_notification_allowed(false); // We are within the messaging system so don't show message popups
 
 if (!$course = $DB->get_record('course', array('id' => $course))) {
     print_error('invalidcourseid');

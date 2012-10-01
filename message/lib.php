@@ -26,12 +26,6 @@ require_once($CFG->libdir.'/eventslib.php');
 
 define ('MESSAGE_SHORTLENGTH', 300);
 
-//$PAGE isnt set if we're being loaded by cron which doesnt display popups anyway
-if (isset($PAGE)) {
-    //TODO: this is a mega crazy hack - it is not acceptable to call anything when including lib!!! (skodak)
-    $PAGE->set_popup_notification_allowed(false); // We are in a message window (so don't pop up a new one)
-}
-
 define ('MESSAGE_DISCUSSION_WIDTH',600);
 define ('MESSAGE_DISCUSSION_HEIGHT',500);
 
