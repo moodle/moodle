@@ -386,7 +386,7 @@ class question_attempt_step {
         $record = $currentrec;
         $data = array();
         while ($currentrec && $currentrec->attemptstepid == $attemptstepid) {
-            if ($currentrec->name) {
+            if (!is_null($currentrec->name)) {
                 $data[$currentrec->name] = $currentrec->value;
             }
             $records->next();
