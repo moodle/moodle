@@ -148,7 +148,9 @@ class cache_config_writer extends cache_config {
             'configuration' => $configuration,
             'features' => $class::get_supported_features($configuration),
             'modes' => $class::get_supported_modes($configuration),
-            'mappingsonly' => !empty($configuration['mappingsonly'])
+            'mappingsonly' => !empty($configuration['mappingsonly']),
+            'class' => $class,
+            'default' => false
         );
         if (array_key_exists('lock', $configuration)) {
             $this->configstores[$name]['lock'] = $configuration['lock'];
@@ -207,7 +209,7 @@ class cache_config_writer extends cache_config {
     /**
      * Edits a give plugin instance.
      *
-     * The plugin instance if determined by its name, hence you cannot rename plugins.
+     * The plugin instance is determined by its name, hence you cannot rename plugins.
      * This function also calls save so you should redirect immediately, or at least very shortly after
      * calling this method.
      *
@@ -225,14 +227,14 @@ class cache_config_writer extends cache_config {
         if (!array_key_exists($plugin, $plugins)) {
             throw new cache_exception('Invalid plugin name specified. The plugin either does not exist or is not valid.');
         }
-        $class = 'cachestore_.'.$plugin;
+        $class = 'cachestore_'.$plugin;
         $file = $plugins[$plugin];
         if (!class_exists($class)) {
             if (file_exists($file)) {
                 require_once($file);
             }
             if (!class_exists($class)) {
-                throw new cache_exception('Invalid cache plugin specified. The plugin does not contain the require class.');
+                throw new cache_exception('Invalid cache plugin specified. The plugin does not contain the required class.'.$class);
             }
         }
         $this->configstores[$name] = array(
@@ -241,7 +243,9 @@ class cache_config_writer extends cache_config {
             'configuration' => $configuration,
             'features' => $class::get_supported_features($configuration),
             'modes' => $class::get_supported_modes($configuration),
-            'mappingsonly' => !empty($configuration['mappingsonly'])
+            'mappingsonly' => !empty($configuration['mappingsonly']),
+            'class' => $class,
+            'default' => $this->configstores[$name]['default'] // Can't change the default.
         );
         if (array_key_exists('lock', $configuration)) {
             $this->configstores[$name]['lock'] = $configuration['lock'];
@@ -718,7 +722,11 @@ abstract class cache_administration_helper extends cache_helper {
      */
     public static function get_add_store_form($plugin) {
         global $CFG; // Needed for includes.
-        $plugindir = get_plugin_directory('cachestore', $plugin);
+        $plugins = get_plugin_list('cachestore');
+        if (!array_key_exists($plugin, $plugins)) {
+            throw new coding_exception('Invalid cache plugin used when trying to create an edit form.');
+        }
+        $plugindir = $plugins[$plugin];
         $class = 'cachestore_addinstance_form';
         if (file_exists($plugindir.'/addinstanceform.php')) {
             require_once($plugindir.'/addinstanceform.php');
@@ -730,6 +738,59 @@ abstract class cache_administration_helper extends cache_helper {
             }
         }
 
+        $locks = self::get_possible_locks_for_plugin($plugindir, $plugin);
+
+        $url = new moodle_url('/cache/admin.php', array('action' => 'addstore'));
+        return new $class($url, array('plugin' => $plugin, 'store' => null, 'locks' => $locks));
+    }
+
+    /**
+     * Returns a form that can be used to edit a store instance.
+     *
+     * @param string $plugin
+     * @param string $store
+     * @return cachestore_addinstance_form
+     * @throws coding_exception
+     */
+    public static function get_edit_store_form($plugin, $store) {
+        global $CFG; // Needed for includes.
+        $plugins = get_plugin_list('cachestore');
+        if (!array_key_exists($plugin, $plugins)) {
+            throw new coding_exception('Invalid cache plugin used when trying to create an edit form.');
+        }
+        $factory = cache_factory::instance();
+        $config = $factory->create_config_instance();
+        $stores = $config->get_all_stores();
+        if (!array_key_exists($store, $stores)) {
+            throw new coding_exception('Invalid store name given when trying to create an edit form.');
+        }
+        $plugindir = $plugins[$plugin];
+        $class = 'cachestore_addinstance_form';
+        if (file_exists($plugindir.'/addinstanceform.php')) {
+            require_once($plugindir.'/addinstanceform.php');
+            if (class_exists('cachestore_'.$plugin.'_addinstance_form')) {
+                $class = 'cachestore_'.$plugin.'_addinstance_form';
+                if (!array_key_exists('cachestore_addinstance_form', class_parents($class))) {
+                    throw new coding_exception('Cache plugin add instance forms must extend cachestore_addinstance_form');
+                }
+            }
+        }
+
+        $locks = self::get_possible_locks_for_plugin($plugindir, $plugin);
+
+        $url = new moodle_url('/cache/admin.php', array('action' => 'editstore'));
+        return new $class($url, array('plugin' => $plugin, 'store' => $store, 'locks' => $locks));
+    }
+
+    /**
+     * Returns an array of suitable lock instances for use with this plugin, or false if the plugin handles locking itself.
+     *
+     * @param string $plugindir
+     * @param string $plugin
+     * @return array|false
+     */
+    protected static function get_possible_locks_for_plugin($plugindir, $plugin) {
+        global $CFG; // Needed for includes.
         $supportsnativelocking = false;
         if (file_exists($plugindir.'/lib.php')) {
             require_once($plugindir.'/lib.php');
@@ -754,34 +815,7 @@ abstract class cache_administration_helper extends cache_helper {
             $locks = false;
         }
 
-        $url = new moodle_url('/cache/admin.php', array('action' => 'addstore'));
-        return new $class($url, array('plugin' => $plugin, 'store' => null, 'locks' => $locks));
-    }
-
-    /**
-     * Returns a form that can be used to edit a store instance.
-     *
-     * @param string $plugin
-     * @param string $store
-     * @return cachestore_addinstance_form
-     * @throws coding_exception
-     */
-    public static function get_edit_store_form($plugin, $store) {
-        global $CFG; // Needed for includes.
-        $plugindir = get_plugin_directory('cachestore', $plugin);
-        $class = 'cachestore_addinstance_form';
-        if (file_exists($plugindir.'/addinstanceform.php')) {
-            require_once($plugindir.'/addinstanceform.php');
-            if (class_exists('cachestore_'.$plugin.'_addinstance_form')) {
-                $class = 'cachestore_'.$plugin.'_addinstance_form';
-                if (!array_key_exists('cachestore_addinstance_form', class_parents($class))) {
-                    throw new coding_exception('Cache plugin add instance forms must extend cachestore_addinstance_form');
-                }
-            }
-        }
-
-        $url = new moodle_url('/cache/admin.php', array('action' => 'editstore'));
-        return new $class($url, array('plugin' => $plugin, 'store' => $store));
+        return $locks;
     }
 
     /**

@@ -345,6 +345,29 @@ class cache_phpunit_tests extends advanced_testcase {
         $this->assertEquals('Test has no value really.', $cache->get('Test'));
     }
 
+    public function test_definition_ttl() {
+        $instance = cache_config_phpunittest::instance(true);
+        $instance->phpunit_add_definition('phpunit/ttltest', array(
+            'mode' => cache_store::MODE_APPLICATION,
+            'component' => 'phpunit',
+            'area' => 'ttltest',
+            'ttl' => -10
+        ));
+        $cache = cache::make('phpunit', 'ttltest');
+        $this->assertInstanceOf('cache_application', $cache);
+
+        // Purge it to be sure.
+        $this->assertTrue($cache->purge());
+        // It won't be there yet.
+        $this->assertFalse($cache->has('Test'));
+        // Set it now.
+        $this->assertTrue($cache->set('Test', 'Test'));
+        // Check its not there.
+        $this->assertFalse($cache->has('Test'));
+        // Double check by trying to get it.
+        $this->assertFalse($cache->get('Test'));
+    }
+
     /**
      * Tests manual locking operations on an application cache
      */
@@ -563,5 +586,17 @@ class cache_phpunit_tests extends advanced_testcase {
         // Check things have been removed.
         $this->assertFalse($cache->get('testkey1'));
         $this->assertFalse($cache->get('testkey2'));
+    }
+
+    /**
+     * Test the use of an alt path.
+     * If we can generate a config instance we are done :)
+     */
+    public function test_alt_cache_path() {
+        global $CFG;
+        $this->resetAfterTest();
+        $CFG->altcacheconfigpath = $CFG->dataroot.'/cache/altcacheconfigpath';
+        $instance = cache_config_phpunittest::instance();
+        $this->assertInstanceOf('cache_config', $instance);
     }
 }
