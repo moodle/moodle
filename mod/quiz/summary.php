@@ -57,8 +57,9 @@ if ($attemptobj->is_preview_user()) {
 
 // Check access.
 $accessmanager = $attemptobj->get_access_manager(time());
-$messages = $accessmanager->prevent_access();
+$accessmanager->setup_attempt_page($PAGE);
 $output = $PAGE->get_renderer('mod_quiz');
+$messages = $accessmanager->prevent_access();
 if (!$attemptobj->is_preview_user() && $messages) {
     print_error('attempterror', 'quiz', $attemptobj->view_url(),
             $output->access_messages($messages));
@@ -86,7 +87,6 @@ $PAGE->blocks->add_fake_block($navbc, $firstregion);
 $PAGE->navbar->add(get_string('summaryofattempt', 'quiz'));
 $PAGE->set_title(format_string($attemptobj->get_quiz_name()));
 $PAGE->set_heading($attemptobj->get_course()->fullname);
-$accessmanager->setup_attempt_page($PAGE);
 
 // Display the page.
 
