@@ -277,6 +277,13 @@ class cache implements cache_loader, cache_is_key_aware {
             if ($this->perfdebug) {
                 cache_helper::record_cache_hit('** static persist **', $this->definition->get_id());
             }
+            if (!is_scalar($result)) {
+                // If data is an object it will be a reference.
+                // If data is an array if may contain references.
+                // We want to break references so that the cache cannot be modified outside of itself.
+                // Call the function to unreference it (in the best way possible).
+                $result = $this->unref($result);
+            }
             return $result;
         } else if ($this->perfdebug) {
             cache_helper::record_cache_miss('** static persist **', $this->definition->get_id());
@@ -321,6 +328,15 @@ class cache implements cache_loader, cache_is_key_aware {
         // 6. Set it to the store if we got it from the loader/datasource.
         if ($setaftervalidation) {
             $this->set($key, $result);
+        }
+        // 7. Make sure we don't pass back anything that could be a reference.
+        //    We don't want people modifying the data in the cache.
+        if (!is_scalar($result)) {
+            // If data is an object it will be a reference.
+            // If data is an array if may contain references.
+            // We want to break references so that the cache cannot be modified outside of itself.
+            // Call the function to unreference it (in the best way possible).
+            $result = $this->unref($result);
         }
         return $result;
     }
@@ -570,6 +586,12 @@ class cache implements cache_loader, cache_is_key_aware {
         foreach ($keyvaluearray as $key => $value) {
             if (is_object($value) && $value instanceof cacheable_object) {
                 $value = new cache_cached_object($value);
+            } else if (!is_scalar($value)) {
+                // If data is an object it will be a reference.
+                // If data is an array if may contain references.
+                // We want to break references so that the cache cannot be modified outside of itself.
+                // Call the function to unreference it (in the best way possible).
+                $value = $this->unref($value);
             }
             if ($simulatettl) {
                 $value = new cache_ttl_wrapper($value, $this->definition->get_ttl());

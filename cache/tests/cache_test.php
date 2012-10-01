@@ -291,6 +291,23 @@ class cache_phpunit_tests extends advanced_testcase {
         $var = $cache->get('obj');
         $this->assertInstanceOf('stdClass', $var);
         $this->assertEquals('value', $var->key);
+
+        // Reference test after retrieve.
+        $obj = new stdClass;
+        $obj->key = 'value';
+        $this->assertTrue($cache->set('obj', $obj));
+
+        $var1 = $cache->get('obj');
+        $this->assertInstanceOf('stdClass', $var1);
+        $this->assertEquals('value', $var1->key);
+        $var1->key = 'eulav';
+        $this->assertEquals('eulav', $var1->key);
+
+        $var2 = $cache->get('obj');
+        $this->assertInstanceOf('stdClass', $var2);
+        $this->assertEquals('value', $var2->key);
+
+        $this->assertTrue($cache->delete('obj'));
     }
 
     /**
