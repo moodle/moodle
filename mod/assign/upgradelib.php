@@ -95,6 +95,10 @@ class assign_upgrade_manager {
         if ($oldassignment->preventlate) {
             $data->cutoffdate = $data->duedate;
         }
+        $data->teamsubmission = 0;
+        $data->requireallteammemberssubmit = 0;
+        $data->teamsubmissiongroupingid = 0;
+        $data->blindmarking = 0;
 
         $newassignment = new assign(null, null, null);
 
