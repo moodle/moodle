@@ -553,6 +553,8 @@ $string['googlemapkey3_help'] = 'You need to enter a special key to use Google M
 $string['gotofirst'] = 'Go to first missing string';
 $string['gradebook'] = 'Gradebook';
 $string['gradebookroles'] = 'Graded roles';
+$string['gravatardefaulturl'] = 'Gravatar default image URL';
+$string['gravatardefaulturl_help'] = 'Gravatar needs a default image to display if it is unable to find a picture for a given user. Provide a full URL for an image. If you leave this setting empty, Moodle will attempt to use the most appropriate default image for the page you are viewing. Note also that Gravatar has a number of codes which can be used to <a href="https://en.gravatar.com/site/implement/images/#default-image">generate default images</a>.';
 $string['gradeexport'] = 'Primary grade export methods';
 $string['guestroleid'] = 'Role for guest';
 $string['guestroleid_help'] = 'This role is automatically assigned to the guest user. It is also temporarily assigned to not enrolled users that enter the course via guest enrolment plugin.';
