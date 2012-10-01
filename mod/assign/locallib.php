@@ -3755,6 +3755,17 @@ class assign {
             if (!$this->get_instance()->submissiondrafts) {
                 $this->notify_student_submission_receipt($submission);
                 $this->notify_graders($submission);
+                // Trigger assessable_submitted event on submission
+                $eventdata = new stdClass();
+                $eventdata->modulename   = 'assign';
+                $eventdata->cmid         = $this->get_course_module()->id;
+                $eventdata->itemid       = $submission->id;
+                $eventdata->courseid     = $this->get_course()->id;
+                $eventdata->userid       = $USER->id;
+                $eventdata->params       = array(
+                    'submission_editable' => true,
+                );
+                events_trigger('assessable_submitted', $eventdata);
             }
             return true;
         }
