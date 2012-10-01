@@ -165,26 +165,26 @@ class cache_config_writer_phpunit_tests extends advanced_testcase {
         $this->assertArrayNotHasKey('addplugintest', $config->get_all_stores());
         $this->assertArrayNotHasKey('addplugintestwlock', $config->get_all_stores());
         // Add a default file instance.
-        $config->add_plugin_instance('addplugintest', 'file');
+        $config->add_store_instance('addplugintest', 'file');
 
         cache_factory::reset();
         $config = cache_config_writer::instance();
         $this->assertArrayHasKey('addplugintest', $config->get_all_stores());
 
         // Add a store with a lock described.
-        $config->add_plugin_instance('addplugintestwlock', 'file', array('lock' => 'default_file_lock'));
+        $config->add_store_instance('addplugintestwlock', 'file', array('lock' => 'default_file_lock'));
         $this->assertArrayHasKey('addplugintestwlock', $config->get_all_stores());
 
-        $config->delete_store('addplugintest');
+        $config->delete_store_instance('addplugintest');
         $this->assertArrayNotHasKey('addplugintest', $config->get_all_stores());
         $this->assertArrayHasKey('addplugintestwlock', $config->get_all_stores());
 
-        $config->delete_store('addplugintestwlock');
+        $config->delete_store_instance('addplugintestwlock');
         $this->assertArrayNotHasKey('addplugintest', $config->get_all_stores());
         $this->assertArrayNotHasKey('addplugintestwlock', $config->get_all_stores());
 
         // Add a default file instance.
-        $config->add_plugin_instance('storeconfigtest', 'file', array('test' => 'a', 'one' => 'two'));
+        $config->add_store_instance('storeconfigtest', 'file', array('test' => 'a', 'one' => 'two'));
         $stores = $config->get_all_stores();
         $this->assertArrayHasKey('storeconfigtest', $stores);
         $this->assertArrayHasKey('configuration', $stores['storeconfigtest']);
@@ -193,7 +193,7 @@ class cache_config_writer_phpunit_tests extends advanced_testcase {
         $this->assertEquals('a', $stores['storeconfigtest']['configuration']['test']);
         $this->assertEquals('two', $stores['storeconfigtest']['configuration']['one']);
 
-        $config->edit_plugin_instance('storeconfigtest', 'file', array('test' => 'b', 'one' => 'three'));
+        $config->edit_store_instance('storeconfigtest', 'file', array('test' => 'b', 'one' => 'three'));
         $stores = $config->get_all_stores();
         $this->assertArrayHasKey('storeconfigtest', $stores);
         $this->assertArrayHasKey('configuration', $stores['storeconfigtest']);
@@ -202,17 +202,17 @@ class cache_config_writer_phpunit_tests extends advanced_testcase {
         $this->assertEquals('b', $stores['storeconfigtest']['configuration']['test']);
         $this->assertEquals('three', $stores['storeconfigtest']['configuration']['one']);
 
-        $config->delete_store('storeconfigtest');
+        $config->delete_store_instance('storeconfigtest');
 
         try {
-            $config->delete_store('default_application');
+            $config->delete_store_instance('default_application');
             $this->fail('Default store deleted. This should not be possible!');
         } catch (Exception $e) {
             $this->assertInstanceOf('cache_exception', $e);
         }
 
         try {
-            $config->delete_store('some_crazy_store');
+            $config->delete_store_instance('some_crazy_store');
             $this->fail('You should not be able to delete a store that does not exist.');
         } catch (Exception $e) {
             $this->assertInstanceOf('cache_exception', $e);
@@ -220,7 +220,7 @@ class cache_config_writer_phpunit_tests extends advanced_testcase {
 
         try {
             // Try with a plugin that does not exist.
-            $config->add_plugin_instance('storeconfigtest', 'shallowfail', array('test' => 'a', 'one' => 'two'));
+            $config->add_store_instance('storeconfigtest', 'shallowfail', array('test' => 'a', 'one' => 'two'));
             $this->fail('You should not be able to add an instance of a store that does not exist.');
         } catch (Exception $e) {
             $this->assertInstanceOf('cache_exception', $e);
@@ -232,7 +232,7 @@ class cache_config_writer_phpunit_tests extends advanced_testcase {
      */
     public function test_set_mode_mappings() {
         $config = cache_config_writer::instance();
-        $this->assertTrue($config->add_plugin_instance('setmodetest', 'file'));
+        $this->assertTrue($config->add_store_instance('setmodetest', 'file'));
         $this->assertTrue($config->set_mode_mappings(array(
             cache_store::MODE_APPLICATION => array('setmodetest', 'default_application'),
             cache_store::MODE_SESSION => array('default_session'),
@@ -260,7 +260,7 @@ class cache_config_writer_phpunit_tests extends advanced_testcase {
         ));
 
         $config = cache_config_writer::instance();
-        $this->assertTrue($config->add_plugin_instance('setdefinitiontest', 'file'));
+        $this->assertTrue($config->add_store_instance('setdefinitiontest', 'file'));
         $this->assertInternalType('array', $config->get_definition_by_id('phpunit/testdefinition'));
         $config->set_definition_mappings('phpunit/testdefinition', array('setdefinitiontest', 'default_application'));
 
@@ -303,7 +303,7 @@ class cache_administration_helper_phpunit_tests extends advanced_testcase {
     public function test_get_summaries() {
         // First the preparation.
         $config = cache_config_writer::instance();
-        $this->assertTrue($config->add_plugin_instance('summariesstore', 'file'));
+        $this->assertTrue($config->add_store_instance('summariesstore', 'file'));
         $config->set_definition_mappings('core/eventinvalidation', array('summariesstore'));
         $this->assertTrue($config->set_mode_mappings(array(
             cache_store::MODE_APPLICATION => array('summariesstore'),
@@ -311,7 +311,7 @@ class cache_administration_helper_phpunit_tests extends advanced_testcase {
             cache_store::MODE_REQUEST => array('default_request'),
         )));
 
-        $storesummaries = cache_administration_helper::get_store_summaries();
+        $storesummaries = cache_administration_helper::get_store_instance_summaries();
         $this->assertInternalType('array', $storesummaries);
         $this->assertArrayHasKey('summariesstore', $storesummaries);
         $summary = $storesummaries['summariesstore'];
@@ -352,7 +352,7 @@ class cache_administration_helper_phpunit_tests extends advanced_testcase {
         $this->assertInternalType('array', $summary['mappings']);
         $this->assertContains('summariesstore', $summary['mappings']);
 
-        $pluginsummaries = cache_administration_helper::get_plugin_summaries();
+        $pluginsummaries = cache_administration_helper::get_store_plugin_summaries();
         $this->assertInternalType('array', $pluginsummaries);
         $this->assertArrayHasKey('file', $pluginsummaries);
         $summary = $pluginsummaries['file'];
@@ -403,7 +403,7 @@ class cache_administration_helper_phpunit_tests extends advanced_testcase {
      */
     public function test_get_edit_store_form() {
         $config = cache_config_writer::instance();
-        $this->assertTrue($config->add_plugin_instance('summariesstore', 'file'));
+        $this->assertTrue($config->add_store_instance('summariesstore', 'file'));
 
         $form = cache_administration_helper::get_edit_store_form('file', 'summariesstore');
         $this->assertInstanceOf('moodleform', $form);

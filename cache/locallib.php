@@ -118,7 +118,7 @@ class cache_config_writer extends cache_config {
      * @return bool
      * @throws cache_exception
      */
-    public function add_plugin_instance($name, $plugin, array $configuration = array()) {
+    public function add_store_instance($name, $plugin, array $configuration = array()) {
         if (array_key_exists($name, $this->configstores)) {
             throw new cache_exception('Duplicate name specificed for cache plugin instance. You must provide a unique name.');
         }
@@ -219,7 +219,7 @@ class cache_config_writer extends cache_config {
      * @return bool
      * @throws cache_exception
      */
-    public function edit_plugin_instance($name, $plugin, $configuration) {
+    public function edit_store_instance($name, $plugin, $configuration) {
         if (!array_key_exists($name, $this->configstores)) {
             throw new cache_exception('The requested instance does not exist.');
         }
@@ -265,7 +265,7 @@ class cache_config_writer extends cache_config {
      * @return bool
      * @throws cache_exception
      */
-    public function delete_store($name) {
+    public function delete_store_instance($name) {
         if (!array_key_exists($name, $this->configstores)) {
             throw new cache_exception('The requested store does not exist.');
         }
@@ -488,7 +488,7 @@ abstract class cache_administration_helper extends cache_helper {
      * Returns an array containing all of the information about stores a renderer needs.
      * @return array
      */
-    public static function get_store_summaries() {
+    public static function get_store_instance_summaries() {
         $return = array();
         $default = array();
         $instance = cache_config::instance();
@@ -544,7 +544,7 @@ abstract class cache_administration_helper extends cache_helper {
      * Returns an array of information about plugins, everything a renderer needs.
      * @return array
      */
-    public static function get_plugin_summaries() {
+    public static function get_store_plugin_summaries() {
         $return = array();
         $plugins = get_plugin_list_with_file('cachestore', 'lib.php', true);
         foreach ($plugins as $plugin => $path) {
@@ -669,7 +669,7 @@ abstract class cache_administration_helper extends cache_helper {
      * @param array $storedetails
      * @return array
      */
-    public static function get_store_actions($name, array $storedetails) {
+    public static function get_store_instance_actions($name, array $storedetails) {
         $actions = array();
         if (has_capability('moodle/site:config', get_system_context())) {
             $baseurl = new moodle_url('/cache/admin.php', array('store' => $name, 'sesskey' => sesskey()));
@@ -699,7 +699,7 @@ abstract class cache_administration_helper extends cache_helper {
      * @param array $plugindetails
      * @return array
      */
-    public static function get_plugin_actions($name, array $plugindetails) {
+    public static function get_store_plugin_actions($name, array $plugindetails) {
         $actions = array();
         if (has_capability('moodle/site:config', get_system_context())) {
             if (!empty($plugindetails['canaddinstance'])) {
@@ -738,7 +738,7 @@ abstract class cache_administration_helper extends cache_helper {
             }
         }
 
-        $locks = self::get_possible_locks_for_plugin($plugindir, $plugin);
+        $locks = self::get_possible_locks_for_stores($plugindir, $plugin);
 
         $url = new moodle_url('/cache/admin.php', array('action' => 'addstore'));
         return new $class($url, array('plugin' => $plugin, 'store' => null, 'locks' => $locks));
@@ -776,7 +776,7 @@ abstract class cache_administration_helper extends cache_helper {
             }
         }
 
-        $locks = self::get_possible_locks_for_plugin($plugindir, $plugin);
+        $locks = self::get_possible_locks_for_stores($plugindir, $plugin);
 
         $url = new moodle_url('/cache/admin.php', array('action' => 'editstore'));
         return new $class($url, array('plugin' => $plugin, 'store' => $store, 'locks' => $locks));
@@ -789,7 +789,7 @@ abstract class cache_administration_helper extends cache_helper {
      * @param string $plugin
      * @return array|false
      */
-    protected static function get_possible_locks_for_plugin($plugindir, $plugin) {
+    protected static function get_possible_locks_for_stores($plugindir, $plugin) {
         global $CFG; // Needed for includes.
         $supportsnativelocking = false;
         if (file_exists($plugindir.'/lib.php')) {

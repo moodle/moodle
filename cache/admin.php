@@ -35,8 +35,8 @@ $action = optional_param('action', null, PARAM_ALPHA);
 admin_externalpage_setup('cacheconfig');
 $context = context_system::instance();
 
-$stores = cache_administration_helper::get_store_summaries();
-$plugins = cache_administration_helper::get_plugin_summaries();
+$stores = cache_administration_helper::get_store_instance_summaries();
+$plugins = cache_administration_helper::get_store_plugin_summaries();
 $definitions = cache_administration_helper::get_definition_summaries();
 $defaultmodestores = cache_administration_helper::get_default_mode_stores();
 $locks = cache_administration_helper::get_lock_summaries();
@@ -67,7 +67,7 @@ if (!empty($action) && confirm_sesskey()) {
                         $config['lock'] = $data->lock;
                     }
                 }
-                $writer->add_plugin_instance($data->name, $data->plugin, $config);
+                $writer->add_store_instance($data->name, $data->plugin, $config);
                 redirect($PAGE->url, get_string('addstoresuccess', 'cache', $plugins[$plugin]['name']), 5);
             }
             break;
@@ -87,7 +87,7 @@ if (!empty($action) && confirm_sesskey()) {
                         $config['lock'] = $data->lock;
                     }
                 }
-                $writer->edit_plugin_instance($data->name, $data->plugin, $config);
+                $writer->edit_store_instance($data->name, $data->plugin, $config);
                 redirect($PAGE->url, get_string('editstoresuccess', 'cache', $plugins[$plugin]['name']), 5);
             }
             break;
@@ -120,7 +120,7 @@ if (!empty($action) && confirm_sesskey()) {
                     exit;
                 } else {
                     $writer = cache_config_writer::instance();
-                    $writer->delete_store($store);
+                    $writer->delete_store_instance($store);
                     redirect($PAGE->url, get_string('deletestoresuccess', 'cache'), 5);
                 }
             }
@@ -186,8 +186,8 @@ if (!is_null($notification)) {
 if ($mform instanceof moodleform) {
     $mform->display();
 } else {
-    echo $renderer->plugin_summaries($plugins);
-    echo $renderer->store_summariers($stores, $plugins);
+    echo $renderer->store_plugin_summaries($plugins);
+    echo $renderer->store_instance_summariers($stores, $plugins);
     echo $renderer->definition_summaries($definitions, cache_administration_helper::get_definition_actions($context));
     echo $renderer->lock_summaries($locks);
 

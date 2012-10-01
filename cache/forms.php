@@ -93,7 +93,7 @@ class cachestore_addinstance_form extends moodleform {
             if (!preg_match('#^[a-zA-Z0-9\-_ ]+$#', $data['name'])) {
                 $errors['name'] = get_string('storenameinvalid', 'cache');
             } else if (empty($this->_customdata['store'])) {
-                $stores = cache_administration_helper::get_store_summaries();
+                $stores = cache_administration_helper::get_store_instance_summaries();
                 if (array_key_exists($data['name'], $stores)) {
                     $errors['name'] = get_string('storenamealreadyused', 'cache');
                 }

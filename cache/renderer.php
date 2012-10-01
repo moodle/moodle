@@ -44,7 +44,7 @@ class core_cache_renderer extends plugin_renderer_base {
      * @param array $plugins
      * @return string HTML
      */
-    public function store_summariers(array $stores, array $plugins) {
+    public function store_instance_summariers(array $stores, array $plugins) {
         $table = new html_table();
         $table->head = array(
             get_string('storename', 'cache'),
@@ -69,7 +69,7 @@ class core_cache_renderer extends plugin_renderer_base {
         $defaultstoreactions = get_string('defaultstoreactions', 'cache');
 
         foreach ($stores as $name => $store) {
-            $actions = cache_administration_helper::get_store_actions($name, $store);
+            $actions = cache_administration_helper::get_store_instance_actions($name, $store);
             $modes = array();
             foreach ($store['modes'] as $mode => $enabled) {
                 if ($enabled) {
@@ -127,7 +127,7 @@ class core_cache_renderer extends plugin_renderer_base {
      * @param array $plugins
      * @return string HTML
      */
-    public function plugin_summaries(array $plugins) {
+    public function store_plugin_summaries(array $plugins) {
         $table = new html_table();
         $table->head = array(
             get_string('plugin', 'cache'),
@@ -148,7 +148,7 @@ class core_cache_renderer extends plugin_renderer_base {
         $table->data = array();
 
         foreach ($plugins as $name => $plugin) {
-            $actions = cache_administration_helper::get_plugin_actions($name, $plugin);
+            $actions = cache_administration_helper::get_store_plugin_actions($name, $plugin);
 
             $modes = array();
             foreach ($plugin['modes'] as $mode => $enabled) {
