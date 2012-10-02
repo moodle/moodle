@@ -544,6 +544,9 @@ class phpunit_util {
     public static function reset_all_data($logchanges = false) {
         global $DB, $CFG, $USER, $SITE, $COURSE, $PAGE, $OUTPUT, $SESSION, $GROUPLIB_CACHE;
 
+        // Release memory and indirectly call destroy() methods to release resource handles, etc.
+        gc_collect_cycles();
+
         // reset global $DB in case somebody mocked it
         $DB = self::get_global_backup('DB');
 
