@@ -948,6 +948,11 @@ class theme_config {
     public function post_process($css) {
         // now resolve all image locations
         if (preg_match_all('/\[\[pix:([a-z_]+\|)?([^\]]+)\]\]/', $css, $matches, PREG_SET_ORDER)) {
+            // We are going to disable the use of SVG images when available in CSS background-image properties
+            // as support for it in browsers is at best quirky.
+            // When we choose to support SVG in background css we will need to remove this code and implement a solution that is
+            // either consistent or varies the URL for serving CSS depending upon SVG being used if available, or not.
+            $this->force_svg_use(false);
             $replaced = array();
             foreach ($matches as $match) {
                 if (isset($replaced[$match[0]])) {
@@ -1129,6 +1134,17 @@ class theme_config {
             }
         }
         return $this->usesvg;
+    }
+
+    /**
+     * Forces the usesvg setting to either true or false, avoiding any decision making.
+     *
+     * This function should only ever be used when absolutely required, and before any generation of image URL's has occurred.
+     *
+     * @param bool $setting True to force the use of svg when available, null otherwise.
+     */
+    private function force_svg_use($setting) {
+        $this->usesvg = (bool)$setting;
     }
 
     /**
