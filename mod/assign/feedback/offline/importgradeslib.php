@@ -160,8 +160,10 @@ class assignfeedback_offline_grade_importer {
                     $result->user = $this->validusers[$userid];
                     $result->feedback = array();
                     foreach ($this->feedbackcolumnindexes as $description => $details) {
-                        $details['value'] = $record[$details['index']];
-                        $result->feedback[] = $details;
+                        if (!empty($details['index'])) {
+                            $details['value'] = $record[$details['index']];
+                            $result->feedback[] = $details;
+                        }
                     }
 
                     return $result;
