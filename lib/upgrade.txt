@@ -12,6 +12,10 @@ information provided here is intended especially for developers.
   functionality is moved to course format class)
 * in the function global_navigation::load_generic_course_sections() the argument $courseformat is
   removed
+* New component and itemid columns in groups_members table - this allows plugin to create protected
+  group memberships using 'xx_yy_allow_group_member_remove' callback and there is also a new restore
+  callback 'xx_yy_restore_group_member()'.
+* New general role assignment restore plugin callback 'xx_yy_restore_role_assignment()'.
 
 YUI changes:
 * moodle-enrol-notification has been renamed to moodle-core-notification

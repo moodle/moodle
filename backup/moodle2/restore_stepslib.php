@@ -715,9 +715,6 @@ class restore_groups_structure_step extends restore_structure_step {
         $paths = array(); // Add paths here
 
         $paths[] = new restore_path_element('group', '/groups/group');
-        if ($this->get_setting_value('users')) {
-            $paths[] = new restore_path_element('member', '/groups/group/group_members/group_member');
-        }
         $paths[] = new restore_path_element('grouping', '/groups/groupings/grouping');
         $paths[] = new restore_path_element('grouping_group', '/groups/groupings/grouping/grouping_groups/grouping_group');
 
@@ -767,33 +764,6 @@ class restore_groups_structure_step extends restore_structure_step {
         }
         // Save the id mapping
         $this->set_mapping('group', $oldid, $newitemid, $restorefiles);
-    }
-
-    public function process_member($data) {
-        global $DB;
-
-        $data = (object)$data; // handy
-
-        // get parent group->id
-        $data->groupid = $this->get_new_parentid('group');
-
-        // map user newitemid and insert if not member already
-        if ($data->userid = $this->get_mappingid('user', $data->userid)) {
-            if (!$DB->record_exists('groups_members', array('groupid' => $data->groupid, 'userid' => $data->userid))) {
-                // Check the componment, if any, exists
-                if (!empty($data->component)) {
-                    $dir = get_component_directory($data->component);
-                    if (!$dir || !is_dir($dir)) {
-                        // Component does not exist on restored system; clear
-                        // component and itemid
-                        unset($data->component);
-                        unset($data->itemid);
-                    }
-                }
-
-                $DB->insert_record('groups_members', $data);
-            }
-        }
     }
 
     public function process_grouping($data) {
@@ -864,6 +834,86 @@ class restore_groups_structure_step extends restore_structure_step {
         $this->add_related_files('grouping', 'description', 'grouping');
     }
 
+}
+
+/**
+ * Structure step that will create all the needed group memberships
+ * by loading them from the groups.xml file performing the required matches.
+ */
+class restore_groups_members_structure_step extends restore_structure_step {
+
+    protected $plugins = null;
+
+    protected function define_structure() {
+
+        $paths = array(); // Add paths here
+
+        if ($this->get_setting_value('users')) {
+            $paths[] = new restore_path_element('group', '/groups/group');
+            $paths[] = new restore_path_element('member', '/groups/group/group_members/group_member');
+        }
+
+        return $paths;
+    }
+
+    public function process_group($data) {
+        $data = (object)$data; // handy
+
+        // HACK ALERT!
+        // Not much to do here, this groups mapping should be already done from restore_groups_structure_step.
+        // Let's fake internal state to make $this->get_new_parentid('group') work.
+
+        $this->set_mapping('group', $data->id, $this->get_mappingid('group', $data->id));
+    }
+
+    public function process_member($data) {
+        global $DB, $CFG;
+        require_once("$CFG->dirroot/group/lib.php");
+
+        // NOTE: Always use groups_add_member() because it triggers events and verifies if user is enrolled.
+
+        $data = (object)$data; // handy
+
+        // get parent group->id
+        $data->groupid = $this->get_new_parentid('group');
+
+        // map user newitemid and insert if not member already
+        if ($data->userid = $this->get_mappingid('user', $data->userid)) {
+            if (!$DB->record_exists('groups_members', array('groupid' => $data->groupid, 'userid' => $data->userid))) {
+                // Check the component, if any, exists.
+                if (empty($data->component)) {
+                    groups_add_member($data->groupid, $data->userid);
+
+                } else if ((strpos($data->component, 'enrol_') === 0)) {
+                    // Deal with enrolment groups - ignore the component and just find out the instance via new id,
+                    // it is possible that enrolment was restored using different plugin type.
+                    if (!isset($this->plugins)) {
+                        $this->plugins = enrol_get_plugins(true);
+                    }
+                    if ($enrolid = $this->get_mappingid('enrol', $data->itemid)) {
+                        if ($instance = $DB->get_record('enrol', array('id'=>$enrolid))) {
+                            if (isset($this->plugins[$instance->enrol])) {
+                                $this->plugins[$instance->enrol]->restore_group_member($instance, $data->groupid, $data->userid);
+                            }
+                        }
+                    }
+
+                } else {
+                    $dir = get_component_directory($data->component);
+                    if ($dir and is_dir($dir)) {
+                        if (component_callback($data->component, 'restore_group_member', array($this, $data), true)) {
+                            return;
+                        }
+                    }
+                    // Bad luck, plugin could not restore the data, let's add normal membership.
+                    groups_add_member($data->groupid, $data->userid);
+                    $message = "Restore of '$data->component/$data->itemid' group membership is not supported, using standard group membership instead.";
+                    debugging($message);
+                    $this->log($message, backup::LOG_WARNING);
+                }
+            }
+        }
+    }
 }
 
 /**
@@ -1475,6 +1525,22 @@ class restore_ras_and_caps_structure_step extends restore_structure_step {
                     }
                 }
             }
+
+        } else {
+            $data->roleid    = $newroleid;
+            $data->userid    = $newuserid;
+            $data->contextid = $contextid;
+            $dir = get_component_directory($data->component);
+            if ($dir and is_dir($dir)) {
+                if (component_callback($data->component, 'restore_role_assignment', array($this, $data), true)) {
+                    return;
+                }
+            }
+            // Bad luck, plugin could not restore the data, let's add normal membership.
+            role_assign($data->roleid, $data->userid, $data->contextid);
+            $message = "Restore of '$data->component/$data->itemid' role assignments is not supported, using manual role assignments instead.";
+            debugging($message);
+            $this->log($message, backup::LOG_WARNING);
         }
     }
 
@@ -1594,8 +1660,10 @@ class restore_enrolments_structure_step extends restore_structure_step {
 
         } else {
             if (!enrol_is_enabled($data->enrol) or !isset($this->plugins[$data->enrol])) {
-                debugging("Enrol plugin data can not be restored because it is not enabled, use migration to manual enrolments");
                 $this->set_mapping('enrol', $oldid, 0);
+                $message = "Enrol plugin '$data->enrol' data can not be restored because it is not enabled, use migration to manual enrolments";
+                debugging($message);
+                $this->log($message, backup::LOG_WARNING);
                 return;
             }
             if ($task = $this->get_task() and $task->get_target() == backup::TARGET_NEW_COURSE) {
@@ -1796,7 +1864,7 @@ class restore_calendarevents_structure_step extends restore_structure_step {
     }
 
     public function process_calendarevents($data) {
-        global $DB;
+        global $DB, $SITE;
 
         $data = (object)$data;
         $oldid = $data->id;
@@ -3204,10 +3272,10 @@ class restore_create_question_files extends restore_execution_step {
  */
 class restore_process_file_aliases_queue extends restore_execution_step {
 
-    /** @var array internal cache for {@link choose_repository() */
+    /** @var array internal cache for {@link choose_repository()} */
     private $cachereposbyid = array();
 
-    /** @var array internal cache for {@link choose_repository() */
+    /** @var array internal cache for {@link choose_repository()} */
     private $cachereposbytype = array();
 
     /**

@@ -49,13 +49,18 @@ require_login($course);
 require_capability('moodle/course:enrolreview', $context);
 require_sesskey();
 
+if (!enrol_is_enabled('cohort')) {
+    // This should never happen, no need to invent new error strings.
+    throw new enrol_ajax_exception('errorenrolcohort');
+}
+
 echo $OUTPUT->header(); // Send headers.
 
 $manager = new course_enrolment_manager($PAGE, $course);
 
-$outcome = new stdClass;
+$outcome = new stdClass();
 $outcome->success = true;
-$outcome->response = new stdClass;
+$outcome->response = new stdClass();
 $outcome->error = '';
 
 switch ($action) {
@@ -88,18 +93,21 @@ switch ($action) {
         enrol_cohort_sync($manager->get_course()->id);
         break;
     case 'enrolcohortusers':
+        //TODO: this should be moved to enrol_manual, see MDL-35618.
         require_capability('enrol/manual:enrol', $context);
         $roleid = required_param('roleid', PARAM_INT);
         $cohortid = required_param('cohortid', PARAM_INT);
-        $result = enrol_cohort_enrol_all_users($manager, $cohortid, $roleid);
 
         $roles = $manager->get_assignable_roles();
         if (!enrol_cohort_can_view_cohort($cohortid) || !array_key_exists($roleid, $roles)) {
             throw new enrol_ajax_exception('errorenrolcohort');
         }
+
+        $result = enrol_cohort_enrol_all_users($manager, $cohortid, $roleid);
         if ($result === false) {
             throw new enrol_ajax_exception('errorenrolcohortusers');
         }
+
         $outcome->success = true;
         $outcome->response->users = $result;
         $outcome->response->title = get_string('success');

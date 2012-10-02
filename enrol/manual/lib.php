@@ -480,4 +480,19 @@ class enrol_manual_plugin extends enrol_plugin {
         // we do not use component in manual or self enrol.
         role_assign($roleid, $userid, $contextid, '', 0);
     }
+
+    /**
+     * Restore user group membership.
+     * @param stdClass $instance
+     * @param int $groupid
+     * @param int $userid
+     */
+    public function restore_group_member($instance, $groupid, $userid) {
+        global $CFG;
+        require_once("$CFG->dirroot/group/lib.php");
+
+        // This might be called when forcing restore as manual enrolments.
+
+        groups_add_member($groupid, $userid);
+    }
 }

@@ -40,7 +40,8 @@ class enrol_cohort_handler {
      * @return bool
      */
     public static function member_added($ca) {
-        global $DB;
+        global $DB, $CFG;
+        require_once("$CFG->dirroot/group/lib.php");
 
         if (!enrol_is_enabled('cohort')) {
             return true;
@@ -68,6 +69,15 @@ class enrol_cohort_handler {
             unset($instance->roleexists);
             // No problem if already enrolled.
             $plugin->enrol_user($instance, $ca->userid, $instance->roleid, 0, 0, ENROL_USER_ACTIVE);
+
+            // Sync groups.
+            if ($instance->customint2) {
+                if (!groups_is_member($instance->customint2, $ca->userid)) {
+                    if ($group = $DB->get_record('groups', array('id'=>$instance->customint2, 'courseid'=>$instance->courseid))) {
+                        groups_add_member($group->id, $ca->userid, 'enrol_cohort', $instance->id);
+                    }
+                }
+            }
         }
 
         return true;
@@ -147,6 +157,7 @@ class enrol_cohort_handler {
  */
 function enrol_cohort_sync($courseid = NULL, $verbose = false) {
     global $CFG, $DB;
+    require_once("$CFG->dirroot/group/lib.php");
 
     // Purge all roles if cohort sync disabled, those can be recreated later here by cron or CLI.
     if (!enrol_is_enabled('cohort')) {
@@ -216,7 +227,7 @@ function enrol_cohort_sync($courseid = NULL, $verbose = false) {
         }
         $instance = $instances[$ue->enrolid];
         if ($unenrolaction == ENROL_EXT_REMOVED_UNENROL) {
-            // Temove enrolment together with group membership, grades, preferences, etc.
+            // Remove enrolment together with group membership, grades, preferences, etc.
             $plugin->unenrol_user($instance, $ue->userid);
             if ($verbose) {
                 mtrace("  unenrolling: $ue->userid ==> $instance->courseid via cohort $instance->customint1");
@@ -287,6 +298,48 @@ function enrol_cohort_sync($courseid = NULL, $verbose = false) {
     $rs->close();
 
 
+    // Finally sync groups.
+    $onecourse = $courseid ? "AND e.courseid = :courseid" : "";
+
+    // Remove invalid.
+    $sql = "SELECT gm.*, e.courseid, g.name AS groupname
+              FROM {groups_members} gm
+              JOIN {groups} g ON (g.id = gm.groupid)
+              JOIN {enrol} e ON (e.enrol = 'cohort' AND e.courseid = g.courseid $onecourse)
+              JOIN {user_enrolments} ue ON (ue.userid = gm.userid AND ue.enrolid = e.id)
+             WHERE gm.component='enrol_cohort' AND gm.itemid = e.id AND g.id <> e.customint2";
+    $params = array();
+    $params['courseid'] = $courseid;
+
+    $rs = $DB->get_recordset_sql($sql, $params);
+    foreach($rs as $gm) {
+        groups_remove_member($gm->groupid, $gm->userid);
+        if ($verbose) {
+            mtrace("  removing user from group: $gm->userid ==> $gm->courseid - $gm->groupname");
+        }
+    }
+    $rs->close();
+
+    // Add missing.
+    $sql = "SELECT ue.*, g.id AS groupid, e.courseid, g.name AS groupname
+              FROM {user_enrolments} ue
+              JOIN {enrol} e ON (e.id = ue.enrolid AND e.enrol = 'cohort' $onecourse)
+              JOIN {groups} g ON (g.courseid = e.courseid AND g.id = e.customint2)
+         LEFT JOIN {groups_members} gm ON (gm.groupid = g.id AND gm.userid = ue.userid)
+             WHERE gm.id IS NULL";
+    $params = array();
+    $params['courseid'] = $courseid;
+
+    $rs = $DB->get_recordset_sql($sql, $params);
+    foreach($rs as $ue) {
+        groups_add_member($ue->groupid, $ue->userid, 'enrol_cohort', $ue->enrolid);
+        if ($verbose) {
+            mtrace("  adding user to group: $ue->userid ==> $ue->courseid - $ue->groupname");
+        }
+    }
+    $rs->close();
+
+
     if ($verbose) {
         mtrace('...user enrolment synchronisation finished.');
     }
@@ -327,8 +380,8 @@ function enrol_cohort_enrol_all_users(course_enrolment_manager $manager, $cohort
               FROM {cohort_members} com
          LEFT JOIN (
                 SELECT *
-                FROM {user_enrolments} ue
-                WHERE ue.enrolid = :enrolid
+                  FROM {user_enrolments} ue
+                 WHERE ue.enrolid = :enrolid
                  ) ue ON ue.userid=com.userid
              WHERE com.cohortid = :cohortid AND ue.id IS NULL";
     $params = array('cohortid' => $cohortid, 'enrolid' => $instance->id);
@@ -361,10 +414,10 @@ function enrol_cohort_get_cohorts(course_enrolment_manager $manager) {
         }
     }
     list($sqlparents, $params) = $DB->get_in_or_equal(get_parent_contexts($context));
-    $sql = "SELECT id, name, contextid
+    $sql = "SELECT id, name, idnumber, contextid
               FROM {cohort}
              WHERE contextid $sqlparents
-          ORDER BY name ASC";
+          ORDER BY name ASC, idnumber ASC";
     $rs = $DB->get_recordset_sql($sql, $params);
     foreach ($rs as $c) {
         $context = context::instance_by_id($c->contextid);
@@ -373,7 +426,7 @@ function enrol_cohort_get_cohorts(course_enrolment_manager $manager) {
         }
         $cohorts[$c->id] = array(
             'cohortid'=>$c->id,
-            'name'=>format_string($c->name),
+            'name'=>format_string($c->name, true, array('context'=>context::instance_by_id($c->contextid))),
             'users'=>$DB->count_records('cohort_members', array('cohortid'=>$c->id)),
             'enrolled'=>in_array($c->id, $enrolled)
         );
@@ -423,7 +476,7 @@ function enrol_cohort_search_cohorts(course_enrolment_manager $manager, $offset 
         }
     }
 
-    list($sqlparents, $params) = $DB->get_in_or_equal(get_parent_contexts($context));
+    list($sqlparents, $params) = $DB->get_in_or_equal($context->get_parent_context_ids());
 
     // Add some additional sensible conditions.
     $tests = array('contextid ' . $sqlparents);
@@ -435,21 +488,20 @@ function enrol_cohort_search_cohorts(course_enrolment_manager $manager, $offset 
             'idnumber',
             'description'
         );
-        $searchparam = '%' . $search . '%';
+        $searchparam = '%' . $DB->sql_like_escape($search) . '%';
         foreach ($conditions as $key=>$condition) {
-            $conditions[$key] = $DB->sql_like($condition,"?", false);
+            $conditions[$key] = $DB->sql_like($condition, "?", false);
             $params[] = $searchparam;
         }
         $tests[] = '(' . implode(' OR ', $conditions) . ')';
     }
     $wherecondition = implode(' AND ', $tests);
 
-    $fields = 'SELECT id, name, contextid, description';
-    $countfields = 'SELECT COUNT(1)';
-    $sql = " FROM {cohort}
-             WHERE $wherecondition";
-    $order = ' ORDER BY name ASC';
-    $rs = $DB->get_recordset_sql($fields . $sql . $order, $params, $offset);
+    $sql = "SELECT id, name, idnumber, contextid, description
+              FROM {cohort}
+             WHERE $wherecondition
+          ORDER BY name ASC, idnumber ASC";
+    $rs = $DB->get_recordset_sql($sql, $params, $offset);
 
     // Produce the output respecting parameters.
     foreach ($rs as $c) {
@@ -461,15 +513,15 @@ function enrol_cohort_search_cohorts(course_enrolment_manager $manager, $offset 
             continue;
         }
         if ($limit === 0) {
-            // we have reached the required number of items and know that there are more, exit now.
+            // We have reached the required number of items and know that there are more, exit now.
             $offset--;
             break;
         }
         $cohorts[$c->id] = array(
-            'cohortid'=>$c->id,
-            'name'=>  shorten_text(format_string($c->name), 35),
-            'users'=>$DB->count_records('cohort_members', array('cohortid'=>$c->id)),
-            'enrolled'=>in_array($c->id, $enrolled)
+            'cohortid' => $c->id,
+            'name'     => shorten_text(format_string($c->name, true, array('context'=>context::instance_by_id($c->contextid))), 35),
+            'users'    => $DB->count_records('cohort_members', array('cohortid'=>$c->id)),
+            'enrolled' => in_array($c->id, $enrolled)
         );
         // Count items.
         $limit--;
