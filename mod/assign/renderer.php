@@ -549,6 +549,8 @@ class mod_assign_renderer extends plugin_renderer_base {
                 $cell2 = new html_table_cell(get_string('submissionnoteditable', 'assign'));
                 $cell2->attributes = array('class'=>'submissionnoteditable');
             }
+            $row->cells = array($cell1, $cell2);
+            $t->data[] = $row;
         }
 
         // Grading criteria preview.
