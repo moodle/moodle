@@ -37,9 +37,15 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_multianswer_walkthrough_test extends qbehaviour_walkthrough_test_base {
+
+    protected function get_contains_subq_status(question_state $state) {
+        return new question_pattern_expectation('~' .
+                preg_quote($state->default_string(true), '~') . '<br />~');
+    }
+
     public function test_deferred_feedback() {
 
-        // Create a gapselect question.
+        // Create a multianswer question.
         $q = test_question_maker::make_question('multianswer', 'fourmc');
         $this->start_attempt_at_question($q, 'deferredfeedback', 4);
 
@@ -84,6 +90,112 @@ class qtype_multianswer_walkthrough_test extends qbehaviour_walkthrough_test_bas
         $this->check_current_output(
                 $this->get_contains_mark_summary(2),
                 $this->get_contains_partcorrect_expectation(),
+                $this->get_does_not_contain_validation_error_expectation());
+    }
+
+    public function test_deferred_feedback_numericalzero_not_answered() {
+        // Tests the situation found in MDL-35370.
+
+        // Create a multianswer question with one numerical subquestion, right answer zero.
+        $q = test_question_maker::make_question('multianswer', 'numericalzero');
+        $this->start_attempt_at_question($q, 'deferredfeedback', 1);
+
+        // Check the initial state.
+        $this->check_current_state(question_state::$todo);
+        $this->check_current_mark(null);
+        $this->check_current_output(
+                $this->get_contains_marked_out_of_summary(),
+                $this->get_does_not_contain_feedback_expectation(),
+                $this->get_does_not_contain_validation_error_expectation());
+
+        // Now submit all and finish.
+        $this->process_submission(array('-finish' => 1));
+
+        // Verify.
+        $this->check_current_state(question_state::$gaveup);
+        $this->check_current_mark(null);
+        $this->check_current_output(
+                $this->get_contains_marked_out_of_summary(),
+                new question_pattern_expectation('~<input[^>]* class="incorrect" [^>]*/>~'),
+                $this->get_contains_subq_status(question_state::$gaveup),
+                $this->get_does_not_contain_validation_error_expectation());
+    }
+
+    public function test_deferred_feedback_numericalzero_0_answer() {
+        // Tests the situation found in MDL-35370.
+
+        // Create a multianswer question with one numerical subquestion, right answer zero.
+        $q = test_question_maker::make_question('multianswer', 'numericalzero');
+        $this->start_attempt_at_question($q, 'deferredfeedback', 1);
+
+        // Check the initial state.
+        $this->check_current_state(question_state::$todo);
+        $this->check_current_mark(null);
+        $this->check_current_output(
+                $this->get_contains_marked_out_of_summary(),
+                $this->get_does_not_contain_feedback_expectation(),
+                $this->get_does_not_contain_validation_error_expectation());
+
+        // Save a the correct answer.
+        $this->process_submission(array('sub1_answer' => '0'));
+
+        // Verify.
+        $this->check_current_state(question_state::$complete);
+        $this->check_current_mark(null);
+        $this->check_current_output(
+                $this->get_contains_marked_out_of_summary(),
+                $this->get_does_not_contain_feedback_expectation(),
+                $this->get_does_not_contain_validation_error_expectation());
+
+        // Now submit all and finish.
+        $this->process_submission(array('-finish' => 1));
+
+        // Verify.
+        $this->check_current_state(question_state::$gradedright);
+        $this->check_current_mark(1);
+        $this->check_current_output(
+                $this->get_contains_mark_summary(1),
+                $this->get_contains_correct_expectation(),
+                $this->get_contains_subq_status(question_state::$gradedright),
+                $this->get_does_not_contain_validation_error_expectation());
+    }
+
+    public function test_deferred_feedback_numericalzero_0_wrong() {
+        // Tests the situation found in MDL-35370.
+
+        // Create a multianswer question with one numerical subquestion, right answer zero.
+        $q = test_question_maker::make_question('multianswer', 'numericalzero');
+        $this->start_attempt_at_question($q, 'deferredfeedback', 1);
+
+        // Check the initial state.
+        $this->check_current_state(question_state::$todo);
+        $this->check_current_mark(null);
+        $this->check_current_output(
+                $this->get_contains_marked_out_of_summary(),
+                $this->get_does_not_contain_feedback_expectation(),
+                $this->get_does_not_contain_validation_error_expectation());
+
+        // Save a the correct answer.
+        $this->process_submission(array('sub1_answer' => '42'));
+
+        // Verify.
+        $this->check_current_state(question_state::$complete);
+        $this->check_current_mark(null);
+        $this->check_current_output(
+                $this->get_contains_marked_out_of_summary(),
+                $this->get_does_not_contain_feedback_expectation(),
+                $this->get_does_not_contain_validation_error_expectation());
+
+        // Now submit all and finish.
+        $this->process_submission(array('-finish' => 1));
+
+        // Verify.
+        $this->check_current_state(question_state::$gradedwrong);
+        $this->check_current_mark(0);
+        $this->check_current_output(
+                $this->get_contains_mark_summary(0),
+                $this->get_contains_incorrect_expectation(),
+                $this->get_contains_subq_status(question_state::$gradedwrong),
                 $this->get_does_not_contain_validation_error_expectation());
     }
 }
