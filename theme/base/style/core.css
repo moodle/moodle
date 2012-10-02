@@ -477,6 +477,8 @@ body.tag .managelink {padding: 5px;}
 #helppopupbox {background-color: #eee; border: 1px solid #848484;z-index: 10000 !important;}
 #helppopupbox .yui3-widget-hd {float:right;margin:3px 3px 0 0;}
 #helppopupbox .yui3-widget-bd {margin:0 1em 1em 1em;border-top:1px solid #eee;}
+#helppopupbox .yui3-widget-ft {text-align: center;}
+#helppopupbox .yui3-widget-ft .closebtn {margin:0 1em 1em 1em;}
 #helppopupbox .helpheading {font-size: 1em;}
 #helppopupbox .spinner {margin:1em;}
 
