@@ -987,7 +987,7 @@ function quiz_get_flag_option($attempt, $context) {
  *      IMMEDIATELY_AFTER, LATER_WHILE_OPEN or AFTER_CLOSE constants.
  */
 function quiz_attempt_state($quiz, $attempt) {
-    if ($attempt->state != quiz_attempt::FINISHED) {
+    if ($attempt->state == quiz_attempt::IN_PROGRESS) {
         return mod_quiz_display_options::DURING;
     } else if (time() < $attempt->timefinish + 120) {
         return mod_quiz_display_options::IMMEDIATELY_AFTER;
