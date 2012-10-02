@@ -86,24 +86,30 @@ abstract class qbehaviour_renderer extends plugin_renderer_base {
 
         $commenteditor = html_writer::tag('div', html_writer::tag('textarea', s($commenttext),
                 array('id' => $id, 'name' => $inputname, 'rows' => 10, 'cols' => 60)));
-
-        $commenteditor .= html_writer::start_tag('div');
-        if (count($formats == 1)) {
-            reset($formats);
-            $commenteditor .= html_writer::empty_tag('input', array('type' => 'hidden',
-                    'name' => $inputname . 'format', 'value' => key($formats)));
-
-        } else {
-            $commenteditor .= html_writer::select(
-                    $formats, $inputname . 'format', $commentformat, '');
-        }
         $commenteditor .= html_writer::end_tag('div');
+
+        $editorformat = '';
+        if (count($formats) == 1) {
+            reset($formats);
+            $editorformat .= html_writer::empty_tag('input', array('type' => 'hidden',
+                    'name' => $inputname . 'format', 'value' => key($formats)));
+        } else {
+            $editorformat = html_writer::start_tag('div', array('class' => 'fitem'));
+            $editorformat .= html_writer::start_tag('div', array('class' => 'fitemtitle'));
+            $editorformat .= html_writer::tag('label', get_string('format'), array('for'=>'menu'.$inputname.'format'));
+            $editorformat .= html_writer::end_tag('div');
+            $editorformat .= html_writer::start_tag('div', array('class' => 'felement fhtmleditor'));
+            $editorformat .= html_writer::select($formats, $inputname.'format', $commentformat, '');
+            $editorformat .= html_writer::end_tag('div');
+            $editorformat .= html_writer::end_tag('div');
+        }
 
         $comment = html_writer::tag('div', html_writer::tag('div',
                 html_writer::tag('label', get_string('comment', 'question'),
                 array('for' => $id)), array('class' => 'fitemtitle')) .
                 html_writer::tag('div', $commenteditor, array('class' => 'felement fhtmleditor')),
                 array('class' => 'fitem'));
+        $comment .= $editorformat;
 
         $mark = '';
         if ($qa->get_max_mark()) {
@@ -117,6 +123,7 @@ abstract class qbehaviour_renderer extends plugin_renderer_base {
                 'type' => 'text',
                 'size' => $fieldsize,
                 'name' => $markfield,
+                'id'=> $markfield
             );
             if (!is_null($currentmark)) {
                 $attributes['value'] = $qa->format_fraction_as_mark(
