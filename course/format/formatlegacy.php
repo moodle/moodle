@@ -40,7 +40,7 @@ class format_legacy extends format_base {
      *
      * @return bool
      */
-    function uses_sections() {
+    public function uses_sections() {
         global $CFG;
         // Note that lib.php in course format folder is already included by now
         $featurefunction = 'callback_'.$this->format.'_uses_sections';
@@ -58,7 +58,7 @@ class format_legacy extends format_base {
      * @param int|stdClass $section Section object from database or just field section.section
      * @return string Display name that the course format prefers, e.g. "Topic 2"
      */
-    function get_section_name($section) {
+    public function get_section_name($section) {
         // Use course formatter callback if it exists
         $namingfunction = 'callback_'.$this->format.'_get_section_name';
         if (function_exists($namingfunction) && ($course = $this->get_course())) {
@@ -66,7 +66,7 @@ class format_legacy extends format_base {
         }
 
         // else, default behavior:
-        return parent::get_section_name($section);        
+        return parent::get_section_name($section);
     }
 
     /**
@@ -99,7 +99,7 @@ class format_legacy extends format_base {
         }
 
         // else, default behavior:
-        return parent::get_view_url($section, $options);        
+        return parent::get_view_url($section, $options);
     }
 
     /**
@@ -109,11 +109,11 @@ class format_legacy extends format_base {
      *
      * The returned object's property (boolean)capable indicates that
      * the course format supports Moodle course ajax features.
-     * The property (array)testedbrowsers can be used as a parameter for {@see ajaxenabled()}.
+     * The property (array)testedbrowsers can be used as a parameter for {@link ajaxenabled()}.
      *
      * @return stdClass
      */
-    function supports_ajax() {
+    public function supports_ajax() {
         // set up default values
         $ajaxsupport = parent::supports_ajax();
 

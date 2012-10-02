@@ -86,22 +86,22 @@ abstract class format_base {
     }
 
     /**
-     * Validates course format and returns either itself or default format name
+     * Validates that course format exists and enabled and returns either itself or default format
      *
      * @param string $format
      * @return string
      */
-    protected static final function get_used_format($format) {
+    protected static final function get_format_or_default($format) {
         if ($format === 'site') {
             return $format;
         }
-        $plugins = get_plugin_list('format'); // TODO filter only enabled
+        $plugins = get_plugin_list('format'); // TODO MDL-35260 filter only enabled
         if (isset($plugins[$format])) {
             return $format;
         }
         // Else return default format
-        $defaultformat = reset($plugins); // TODO get default format from config
-        debugging('Format plugin format_'.$format.' is not found or is not enabled. Using default format_'.$defaultformat);
+        $defaultformat = reset($plugins); // TODO MDL-35260 get default format from config
+        debugging('Format plugin format_'.$format.' is not found or is not enabled. Using default format_'.$defaultformat, DEBUG_DEVELOPER);
         return $defaultformat;
     }
 
@@ -119,13 +119,13 @@ abstract class format_base {
         static $classnames = array('site' => 'format_site');
         if (!isset($classnames[$format])) {
             $plugins = get_plugin_list('format');
-            $usedformat = self::get_used_format($format);
+            $usedformat = self::get_format_or_default($format);
             if (file_exists($plugins[$usedformat].'/lib.php')) {
-                require_once $plugins[$usedformat].'/lib.php';
+                require_once($plugins[$usedformat].'/lib.php');
             }
             $classnames[$format] = 'format_'. $usedformat;
             if (!class_exists($classnames[$format])) {
-                require_once $CFG->dirroot.'/course/format/formatlegacy.php';
+                require_once($CFG->dirroot.'/course/format/formatlegacy.php');
                 $classnames[$format] = 'format_legacy';
             }
         }
@@ -135,7 +135,7 @@ abstract class format_base {
     /**
      * Returns an instance of the class
      *
-     * @todo use MUC for caching of instances, limit the number of cached instances
+     * @todo MDL-35727 use MUC for caching of instances, limit the number of cached instances
      *
      * @param int|stdClass $courseorid either course id or
      *     an object that has the property 'format' and may contain property 'id'
@@ -146,20 +146,21 @@ abstract class format_base {
         if (!is_object($courseorid)) {
             $courseid = (int)$courseorid;
             if ($courseid && isset(self::$instances[$courseid]) && count(self::$instances[$courseid]) == 1) {
-                $format = reset(array_keys(self::$instances[$courseid]));
+                $formats = array_keys(self::$instances[$courseid]);
+                $format = reset($formats);
             } else {
                 $format = $DB->get_field('course', 'format', array('id' => $courseid), MUST_EXIST);
             }
         } else {
             $format = $courseorid->format;
             if (isset($courseorid->id)) {
-                $courseid = (int)$courseorid->id;
+                $courseid = clean_param($courseorid->id, PARAM_INT);
             } else {
                 $courseid = 0;
             }
         }
         // validate that format exists and enabled, use default otherwise
-        $format = self::get_used_format($format);
+        $format = self::get_format_or_default($format);
         if (!isset(self::$instances[$courseid][$format])) {
             $classname = self::get_class_name($format);
             self::$instances[$courseid][$format] = new $classname($format, $courseid);
@@ -192,7 +193,7 @@ abstract class format_base {
      *
      * @return string
      */
-    public final function get_format() {        
+    public final function get_format() {
         return $this->format;
     }
 
@@ -201,7 +202,7 @@ abstract class format_base {
      *
      * @return int
      */
-    public final function get_courseid() {        
+    public final function get_courseid() {
         return $this->courseid;
     }
 
@@ -294,13 +295,13 @@ abstract class format_base {
         }
         return get_string('sectionname', 'format_'.$this->format) . ' ' . $sectionnum;
     }
-    
+
     /**
      * Returns the information about the ajax support in the given source format
      *
      * The returned object's property (boolean)capable indicates that
      * the course format supports Moodle course ajax features.
-     * The property (array)testedbrowsers can be used as a parameter for {@see ajaxenabled()}.
+     * The property (array)testedbrowsers can be used as a parameter for {@link ajaxenabled()}.
      *
      * @return stdClass
      */
@@ -409,7 +410,7 @@ class format_site extends format_base {
      */
     function get_section_name($section) {
         return get_string('site');
-    }    
+    }
 
     /**
      * For this fake course referring to the whole site, the site homepage is always returned
