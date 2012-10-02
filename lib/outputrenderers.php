@@ -1752,6 +1752,7 @@ class core_renderer extends renderer_base {
         $output = html_writer::tag('a', $output, $attributes);
 
         $this->page->requires->js_init_call('M.util.help_icon.add', array(array('id'=>$id, 'url'=>$url->out(false))));
+        $this->page->requires->string_for_js('close', 'form');
 
         // and finally span
         return html_writer::tag('span', $output, array('class' => 'helplink'));
@@ -1817,6 +1818,7 @@ class core_renderer extends renderer_base {
         $output = html_writer::tag('a', $output, $attributes);
 
         $this->page->requires->js_init_call('M.util.help_icon.add', array(array('id'=>$id, 'url'=>$url->out(false))));
+        $this->page->requires->string_for_js('close', 'form');
 
         // and finally span
         return html_writer::tag('span', $output, array('class' => 'helplink'));
