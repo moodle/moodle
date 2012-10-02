@@ -58,7 +58,7 @@ class assignfeedback_file_batch_upload_files_form extends moodleform {
                                                   $fileoptions,
                                                   $params['context'],
                                                   'assignfeedback_file',
-                                                  ASSIGNFEEDBACK_BATCHFILE_FILEAREA, $USER->id);
+                                                  ASSIGNFEEDBACK_FILE_BATCH_FILEAREA, $USER->id);
 
         $mform->addElement('filemanager', 'files_filemanager', '', null, $fileoptions);
 
