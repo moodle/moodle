@@ -4,6 +4,10 @@ Overview of this plugin type at http://docs.moodle.org/dev/Course_formats
 
 === 2.4 ===
 
+Course format API has been changed significantly. Instead of implementing callbacks course formats
+may overwrite the class format_base. See format_legacy class for a template for upgrading course
+format.
+
 * Function settings_navigation::add_course_editing_links() is completely removed, course format
   functions callback_XXXX_request_key() are no longer used (where XXXX is the course format name)
 
