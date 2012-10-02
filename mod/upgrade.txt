@@ -8,10 +8,12 @@ new features:
 
 * mod/xxx/adminlib.php may now include 'plugininfo_yoursubplugintype' class definition
   used by plugin_manager; it is recommended to store extra admin settings classes in this file
-  
+
 optional - no changes needed:
 
 * mod_lesson_renderer::header() now accepts an additional parameter $extrapagetitle
+
+* mod/data/lib.php data_get_all_recordids() now has two new optional variables:  $selectdata and $params.
 
 === 2.3 ===
 
