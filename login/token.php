@@ -170,7 +170,7 @@ if (!empty($user)) {
     // log token access
     $DB->set_field('external_tokens', 'lastaccess', time(), array('id'=>$token->id));
 
-    add_to_log(SITEID, 'webservice', 'user request webservice token', '' , 'User ID: ' . $user->id);
+    add_to_log(SITEID, 'webservice', 'sending requested user token', '' , 'User ID: ' . $user->id);
 
     $usertoken = new stdClass;
     $usertoken->token = $token->token;
