@@ -25,6 +25,7 @@
 
 $string['addfields'] = 'Add {$a} fields to form';
 $string['advancedelement'] = 'Advanced element';
+$string['close'] = 'Close';
 $string['day'] = 'Day';
 $string['display'] = 'Display';
 $string['err_alphanumeric'] = 'You must enter only letters or numbers here.';
