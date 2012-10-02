@@ -29,9 +29,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class check_bigints extends XMLDBCheckAction {
-    private $correct_type;
-    private $dbfamily;
-
     /**
      * Init method, every subclass will have its own
      */
@@ -51,19 +48,6 @@ class check_bigints extends XMLDBCheckAction {
             'nowrongintsfound' => 'tool_xmldb',
             'yeswrongintsfound' => 'tool_xmldb',
         ));
-
-        // Correct fields must be type bigint for MySQL and int8 for PostgreSQL
-        $this->dbfamily = $DB->get_dbfamily();
-        switch ($this->dbfamily) {
-            case 'mysql':
-                $this->correct_type = 'bigint';
-                break;
-            case 'postgres':
-                $this->correct_type = 'int8';
-                break;
-            default:
-                $this->correct_type = NULL;
-        }
     }
 
     protected function check_table(xmldb_table $xmldb_table, array $metacolumns) {
@@ -87,7 +71,7 @@ class check_bigints extends XMLDBCheckAction {
                 // Going to check this field in DB
                 $o.='            <li>' . $this->str['field'] . ': ' . $xmldb_field->getName() . ' ';
                 // Detect if the physical field is wrong
-                if ($metacolumn->type != $this->correct_type) {
+                if (($metacolumn->meta_type != 'I' and $metacolumn->meta_type != 'R') or $metacolumn->max_length < 10) {
                     $o.='<font color="red">' . $this->str['wrong'] . '</font>';
                     // Add the wrong field to the list
                     $obj = new stdClass();
@@ -124,17 +108,7 @@ class check_bigints extends XMLDBCheckAction {
             foreach ($wrong_fields as $obj) {
                 $xmldb_table = $obj->table;
                 $xmldb_field = $obj->field;
-                // MySQL directly supports this
-
-// TODO: move this hack to generators!!
-
-                if ($this->dbfamily == 'mysql') {
-                    $sqlarr = $dbman->generator->getAlterFieldSQL($xmldb_table, $xmldb_field);
-                // PostgreSQL (XMLDB implementation) is a bit, er... imperfect.
-                } else if ($this->dbfamily == 'postgres') {
-                    $sqlarr = array('ALTER TABLE ' . $DB->get_prefix() . $xmldb_table->getName() .
-                              ' ALTER COLUMN ' . $xmldb_field->getName() . ' TYPE BIGINT;');
-                }
+                $sqlarr = $dbman->generator->getAlterFieldSQL($xmldb_table, $xmldb_field);
                 $r.= '            <li>' . $this->str['table'] . ': ' . $xmldb_table->getName() . '. ' .
                                           $this->str['field'] . ': ' . $xmldb_field->getName() . '</li>';
                 // Add to output if we have sentences
