@@ -179,6 +179,10 @@ class qtype_numerical_question extends question_graded_automatically {
      * @return question_answer the matching answer.
      */
     public function get_matching_answer($value, $multiplier) {
+        if (is_null($value) || $value === '') {
+            return null;
+        }
+
         if (!is_null($multiplier)) {
             $scaledvalue = $value * $multiplier;
         } else {
@@ -193,6 +197,7 @@ class qtype_numerical_question extends question_graded_automatically {
                 return $answer;
             }
         }
+
         return null;
     }
 
@@ -273,18 +278,17 @@ class qtype_numerical_question extends question_graded_automatically {
     public function check_file_access($qa, $options, $component, $filearea, $args,
             $forcedownload) {
         if ($component == 'question' && $filearea == 'answerfeedback') {
-            $question = $qa->get_question();
             $currentanswer = $qa->get_last_qt_var('answer');
             if ($this->has_separate_unit_field()) {
                 $selectedunit = $qa->get_last_qt_var('unit');
             } else {
                 $selectedunit = null;
             }
-            list($value, $unit, $multiplier) = $question->ap->apply_units(
+            list($value, $unit, $multiplier) = $this->ap->apply_units(
                     $currentanswer, $selectedunit);
-            $answer = $question->get_matching_answer($value, $multiplier);
+            $answer = $this->get_matching_answer($value, $multiplier);
             $answerid = reset($args); // itemid is answer id.
-            return $options->feedback && $answerid == $answer->id;
+            return $options->feedback && $answer && $answerid == $answer->id;
 
         } else if ($component == 'question' && $filearea == 'hint') {
             return $this->check_hint_file_access($qa, $options, $args);

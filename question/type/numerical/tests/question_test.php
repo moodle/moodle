@@ -181,6 +181,11 @@ class qtype_numerical_question_test extends advanced_testcase {
         $this->assertEquals('3.1', $num->summarise_response(array('answer' => '3.1')));
     }
 
+    public function test_summarise_response_zero() {
+        $num = test_question_maker::make_question('numerical');
+        $this->assertEquals('0', $num->summarise_response(array('answer' => '0')));
+    }
+
     public function test_summarise_response_unit() {
         $num = test_question_maker::make_question('numerical', 'unit');
         $this->assertEquals('3.1', $num->summarise_response(array('answer' => '3.1')));

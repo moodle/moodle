@@ -38,7 +38,7 @@ require_once($CFG->dirroot . '/question/type/multianswer/question.php');
  */
 class qtype_multianswer_test_helper extends question_test_helper {
     public function get_test_questions() {
-        return array('twosubq', 'fourmc');
+        return array('twosubq', 'fourmc', 'numericalzero');
     }
 
     /**
@@ -284,6 +284,50 @@ class qtype_multianswer_test_helper extends question_test_helper {
 
             $q->subquestions[$i] = $mc;
         }
+
+        return $q;
+    }
+
+    /**
+     * Makes a multianswer question with one numerical subquestion, right answer 0.
+     * This is used for testing the MDL-35370 bug.
+     * @return qtype_multianswer_question
+     */
+    public function make_multianswer_question_numericalzero() {
+        question_bank::load_question_definition_classes('multianswer');
+        $q = new qtype_multianswer_question();
+        test_question_maker::initialise_a_question($q);
+        $q->name = 'Numerical zero';
+        $q->questiontext =
+                'Enter zero: {#1}.';
+        $q->generalfeedback = '';
+        $q->qtype = question_bank::get_qtype('multianswer');
+
+        $q->textfragments = array(
+            'Enter zero: ',
+            '.',
+        );
+        $q->places = array('1' => '1');
+
+        // Numerical subquestion.
+        question_bank::load_question_definition_classes('numerical');
+        $sub = new qtype_numerical_question();
+        test_question_maker::initialise_a_question($sub);
+        $sub->name = 'Numerical zero';
+        $sub->questiontext = '{1:NUMERICAL:=0:0}';
+        $sub->questiontextformat = FORMAT_HTML;
+        $sub->generalfeedback = '';
+        $sub->generalfeedbackformat = FORMAT_HTML;
+        $sub->answers = array(
+            13 => new qtype_numerical_answer(13, '0', 1.0, '', FORMAT_HTML, 0),
+        );
+        $sub->qtype = question_bank::get_qtype('numerical');
+        $sub->ap = new qtype_numerical_answer_processor(array());
+        $sub->maxmark = 1;
+
+        $q->subquestions = array(
+            1 => $sub,
+        );
 
         return $q;
     }
