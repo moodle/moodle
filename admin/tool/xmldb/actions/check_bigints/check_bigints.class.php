@@ -59,19 +59,24 @@ class check_bigints extends XMLDBCheckAction {
             $o.='        <ul>';
             foreach ($xmldb_fields as $xmldb_field) {
                 // If the field isn't integer(10), skip
-                if ($xmldb_field->getType() != XMLDB_TYPE_INTEGER || $xmldb_field->getLength() != 10) {
+                if ($xmldb_field->getType() != XMLDB_TYPE_INTEGER) {
                     continue;
                 }
                 // If the metadata for that column doesn't exist, skip
                 if (!isset($metacolumns[$xmldb_field->getName()])) {
                     continue;
                 }
+                $minlength = $xmldb_field->getLength();
+                if ($minlength > 18) {
+                    // Anything above 18 is borked, just ignore it here.
+                    $minlength = 18;
+                }
                 // To variable for better handling
                 $metacolumn = $metacolumns[$xmldb_field->getName()];
                 // Going to check this field in DB
                 $o.='            <li>' . $this->str['field'] . ': ' . $xmldb_field->getName() . ' ';
                 // Detect if the physical field is wrong
-                if (($metacolumn->meta_type != 'I' and $metacolumn->meta_type != 'R') or $metacolumn->max_length < 10) {
+                if (($metacolumn->meta_type != 'I' and $metacolumn->meta_type != 'R') or $metacolumn->max_length < $minlength) {
                     $o.='<font color="red">' . $this->str['wrong'] . '</font>';
                     // Add the wrong field to the list
                     $obj = new stdClass();
