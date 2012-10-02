@@ -5,6 +5,9 @@
  */
 
 if ($hassiteconfig) {
+    require_once("$CFG->libdir/pluginlib.php");
+    $allplugins = plugin_manager::instance()->get_plugins();
+
     $ADMIN->add('modules', new admin_page_pluginsoverview());
     $ADMIN->add('modules', new admin_category('modsettings', new lang_string('activitymodules')));
     $ADMIN->add('modsettings', new admin_page_managemods());

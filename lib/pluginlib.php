@@ -1763,6 +1763,15 @@ abstract class plugininfo_base {
     }
 
     /**
+     * Returns the node name used in admin settings menu for this plugin settings (if applicable)
+     *
+     * @return null|string node name or null if plugin does not create settings node (default)
+     */
+    public function get_settings_section_name() {
+        return null;
+    }
+
+    /**
      * Returns the URL of the plugin settings screen
      *
      * Null value means that the plugin either does not have the settings screen
@@ -1771,7 +1780,31 @@ abstract class plugininfo_base {
      * @return null|moodle_url
      */
     public function get_settings_url() {
-        return null;
+        $section = $this->get_settings_section_name();
+        if ($section === null) {
+            return null;
+        }
+        $settings = admin_get_root()->locate($section);
+        if ($settings && $settings instanceof admin_settingpage) {
+            return new moodle_url('/admin/settings.php', array('section' => $section));
+        } else if ($settings && $settings instanceof admin_externalpage) {
+            return new moodle_url($settings->url);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Loads plugin settings to the settings tree
+     *
+     * This function usually includes settings.php file in plugins folder.
+     * Alternatively it can create a link to some settings page (instance of admin_externalpage)
+     *
+     * @param part_of_admin_tree $adminroot
+     * @param string $parentnodename
+     * @param bool $hassiteconfig whether the current user has moodle/site:config capability
+     */
+    public function load_settings(part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
     }
 
     /**
