@@ -5,6 +5,8 @@
 
 #page-mod-quiz-attempt .submitbtns,
 #page-mod-quiz-review .submitbtns {clear: left; text-align: left; padding-top: 1.5em;}
+#page-mod-quiz-attempt.dir-rtl .submitbtns,
+#page-mod-quiz-review.dir-rtl .submitbtns {text-align: right;}
 
 body.jsenabled .questionflagcheckbox {display: none;}
 
@@ -21,6 +23,7 @@ body.jsenabled .questionflagcheckbox {display: none;}
 .path-mod-quiz #user-picture img {width: auto;height: auto;float: left;}
 
 .path-mod-quiz .qnbutton {display: block; position: relative; float: left; width: 1.5em; height: 1.5em; overflow: hidden; margin: 0.3em 0.3em 0.3em 0; padding: 0; border: 1px solid #bbb; background: #ddd; text-align: center; vertical-align: middle;line-height: 1.5em !important; font-weight: bold; text-decoration: none;}
+.path-mod-quiz.dir-rtl  .qnbutton {float: right;}
 .path-mod-quiz .qnbutton:hover {text-decoration: underline;}
 .path-mod-quiz .qnbutton span {cursor: pointer; cursor: hand;}
 
@@ -136,6 +139,7 @@ table.quizattemptsummary .noreviewmessage {color: gray;}
 table.quizreviewsummary {width: 100%;}
 table.quizreviewsummary th.cell {padding: 1px 0.5em 1px 1em;font-weight: bold;text-align: right;width: 10em;background: #f0f0f0;}
 table.quizreviewsummary td.cell {padding: 1px 1em 1px 0.5em;text-align: left;background: #fafafa;}
+.dir-rtl table.quizreviewsummary td.cell {text-align: right;}
 
 /** Mod quiz make comment or override grade popup. **/
 #page-mod-quiz-comment .mform {width: 100%;}
