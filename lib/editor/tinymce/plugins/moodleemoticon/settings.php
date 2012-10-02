@@ -15,18 +15,16 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * TinyMCE DragMath plugin version details.
+ * Emoticon integration settings.
  *
- * @package   tinymce_dragmath
- * @copyright 2012 The Open University
+ * @package   tinymce_moodleemoticon
+ * @copyright 2012 Petr Skoda {@link http://skodak.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
-// The current plugin version (Date: YYYYMMDDXX).
-$plugin->version   = 2012100200;
-// Required Moodle version.
-$plugin->requires  = 2012092700;
-// Full name of the plugin (used for diagnostics).
-$plugin->component = 'tinymce_dragmath';
+if ($ADMIN->fulltree) {
+    $settings->add(new admin_setting_configcheckbox('tinymce_moodleemoticon/requireemoticon',
+        get_string('requireemoticon', 'tinymce_moodleemoticon'), get_string('requireemoticon_desc', 'tinymce_moodleemoticon'), 1));
+}
