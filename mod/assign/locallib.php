@@ -1805,16 +1805,20 @@ class assign {
                 if ($this->get_instance()->teamsubmission) {
                     $submission = $this->get_group_submission($userid, 0, false);
                     $submissiongroup = $this->get_submission_group($userid);
-                    $groupname = '-' . $submissiongroup->name;
+                    if ($submissiongroup) {
+                        $groupname = $submissiongroup->name . '-';
+                    } else {
+                        $groupname = get_string('defaultteam', 'assign') . '-';
+                    }
                 } else {
                     $submission = $this->get_user_submission($userid, false);
                 }
 
                 if ($this->is_blind_marking()) {
-                    $prefix = clean_filename(str_replace('_', ' ', get_string('participant', 'assign') . $groupname) .
+                    $prefix = clean_filename(str_replace('_', ' ', $groupname . get_string('participant', 'assign')) .
                                              "_" . $this->get_uniqueid_for_user($userid) . "_");
                 } else {
-                    $prefix = clean_filename(str_replace('_', ' ', fullname($student) . $groupname) .
+                    $prefix = clean_filename(str_replace('_', ' ', $groupname . fullname($student)) .
                                              "_" . $this->get_uniqueid_for_user($userid) . "_");
                 }
 
