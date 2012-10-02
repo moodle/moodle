@@ -91,9 +91,7 @@
 .categorylist .category .name,
 .categorylist .category .image,
 .categorylist .course .name,
-.categorylist .course .info {
-    margin: 0.1em;
-}
+.categorylist .course .info {margin: 0.1em;}
 
 /* Course and category combo list on front page */
 .course_category_tree .controls {margin-bottom:5px;text-align:right;float:right;}
@@ -115,11 +113,7 @@
 
 /* Publication */
 #page-course-publish-metadata .metadatatext {width:400px;}
-#page-course-publish-metadata .hubscreenshot {
-    display:inline;
-    float:left;
-    margin-right:10px;
-}
+#page-course-publish-metadata .hubscreenshot {display:inline;float:left;margin-right:10px;}
 #page-course-publish-metadata .hubscreenshot img {vertical-align:bottom;}
 #page-course-publish-metadata .hubdescription {}
 #page-course-publish-metadata .hubinfo {display:block; margin-bottom:20px;}
