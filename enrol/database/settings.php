@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,8 +17,7 @@
 /**
  * Database enrolment plugin settings and presets.
  *
- * @package    enrol
- * @subpackage database
+ * @package    enrol_database
  * @copyright  2010 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -63,7 +61,7 @@ if ($ADMIN->fulltree) {
     $options = array('id'=>'id', 'idnumber'=>'idnumber', 'email'=>'email', 'username'=>'username'); // only local users if username selected, no mnet users!
     $settings->add(new admin_setting_configselect('enrol_database/localuserfield', get_string('localuserfield', 'enrol_database'), '', 'idnumber', $options));
 
-    $options = array('id'=>'id', 'shortname'=>'shortname', 'fullname'=>'fullname');
+    $options = array('id'=>'id', 'shortname'=>'shortname');
     $settings->add(new admin_setting_configselect('enrol_database/localrolefield', get_string('localrolefield', 'enrol_database'), '', 'shortname', $options));
 
     $options = array('id'=>'id', 'idnumber'=>'idnumber');
