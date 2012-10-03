@@ -45,20 +45,11 @@ bullist,numlist,outdent,indent,|,link,unlink,|,image,nonbreaking,charmap,table,|
 $ADMIN->add('editortinymce', $settings);
 unset($settings);
 
-$subplugins = get_plugin_list('tinymce');
-$disabled = array(); // Disabling of subplugins to be implemented later.
-foreach ($subplugins as $name=>$dir) {
-    if (file_exists("$dir/settings.php")) {
-        $settings = new admin_settingpage('tinymce'.$name.'settings', new lang_string('pluginname', 'tinymce_'.$name), 'moodle/site:config', in_array($name, $disabled));
-        // settings.php may create a subcategory or unset the settings completely.
-        include("$dir/settings.php");
-        if ($settings) {
-            $ADMIN->add('editortinymce', $settings);
-        }
-    }
+require_once("$CFG->libdir/pluginlib.php");
+$allplugins = plugin_manager::instance()->get_plugins();
+foreach ($allplugins['tinymce'] as $plugin) {
+    $plugin->load_settings($ADMIN, 'editortinymce', $hassiteconfig);
 }
-unset($subplugins);
-unset($disabled);
 
 // TinyMCE does not have standard settings page.
 $settings = null;
