@@ -190,6 +190,7 @@ $string['modulename_link'] = 'mod/assignment/view';
 $string['modulenameplural'] = 'Assignments';
 $string['mysubmission'] = 'My submission: ';
 $string['newsubmissions'] = 'Assignments submitted';
+$string['nopermission'] = 'No permission';
 $string['nofiles'] = 'No files. ';
 $string['nograde'] = 'No grade. ';
 $string['nolatesubmissions'] = 'No late submissions accepted. ';
