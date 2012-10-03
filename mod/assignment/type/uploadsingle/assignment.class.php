@@ -78,9 +78,7 @@ class assignment_uploadsingle extends assignment_base {
         if ($submission = $this->get_submission($USER->id)) {
             $filecount = $this->count_user_files($submission->id);
             if ($submission->timemarked) {
-                if($this->view_feedback($submission)) {
-                    $this->view_responsefile($submission);
-                }
+                $this->view_feedback($submission);
             }
             if ($filecount) {
                 echo $OUTPUT->box($this->print_user_files($USER->id, true), 'generalbox boxaligncenter');
@@ -102,15 +100,14 @@ class assignment_uploadsingle extends assignment_base {
      * @param object $submission The submission object
      */
     function view_responsefile($submission) {
-        $responsefiles = $this->print_responsefiles($submission->userid, true);
-        if (!empty($responsefiles)) {
-            echo '<table cellspacing="0" class="feedback">';
+        $fs = get_file_storage();
+        $noresponsefiles = $fs->is_area_empty($this->context->id, 'mod_assignment', 'response', $submission->id);
+        if (!$noresponsefiles) {
             echo '<tr>';
             echo '<td class="left side">&nbsp;</td>';
             echo '<td class="content">';
-            echo $responsefiles;
-            echo '</tr>';
-            echo '</table>';
+            echo $this->print_responsefiles($submission->userid);
+            echo '</td></tr>';
         }
     }
 
