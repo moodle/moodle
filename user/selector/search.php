@@ -78,9 +78,11 @@ if (isset($options['file'])) {
 $userselector = new $classname($name, $options);
 
 // Do the search and output the results.
-$users = $userselector->find_users($search);
-foreach ($users as &$group) {
-    foreach ($group as $user) {
+$results = $userselector->find_users($search);
+$json = array();
+foreach ($results as $groupname => $users) {
+    $groupdata = array('name' => $groupname, 'users' => array());
+    foreach ($users as $user) {
         $output = new stdClass;
         $output->id = $user->id;
         $output->name = $userselector->output_user($user);
@@ -90,8 +92,9 @@ foreach ($users as &$group) {
         if (!empty($user->infobelow)) {
             $output->infobelow = $user->infobelow;
         }
-        $group[$user->id] = $output;
+        $groupdata['users'][] = $output;
     }
+    $json[] = $groupdata;
 }
 
-echo json_encode(array('results' => $users));
+echo json_encode(array('results' => $json));
