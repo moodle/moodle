@@ -44,16 +44,17 @@ class mod_assign_grading_options_form extends moodleform {
     function definition() {
         $mform = $this->_form;
         $instance = $this->_customdata;
+        $dirtyclass = array('class'=>'ignoredirty');
 
         $mform->addElement('header', 'general', get_string('gradingoptions', 'assign'));
         // visible elements
         $options = array(-1=>get_string('all'),10=>'10', 20=>'20', 50=>'50', 100=>'100');
-        $mform->addElement('select', 'perpage', get_string('assignmentsperpage', 'assign'), $options);
+        $mform->addElement('select', 'perpage', get_string('assignmentsperpage', 'assign'), $options, $dirtyclass);
         $options = array('' => get_string('filternone', 'assign'),
                          ASSIGN_FILTER_SUBMITTED => get_string('filtersubmitted', 'assign'),
                          ASSIGN_FILTER_REQUIRE_GRADING => get_string('filterrequiregrading', 'assign'));
         if ($instance['submissionsenabled']) {
-            $mform->addElement('select', 'filter', get_string('filter', 'assign'), $options);
+            $mform->addElement('select', 'filter', get_string('filter', 'assign'), $options, $dirtyclass);
         }
 
         // quickgrading
