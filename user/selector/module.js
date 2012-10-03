@@ -221,8 +221,9 @@ M.core_user.init_user_selector = function (Y, name, hash, extrafields, lastsearc
 
             // Output each optgroup.
             var count = 0;
-            for (var groupname in data.results) {
-                this.output_group(groupname, data.results[groupname], selectedusers, true);
+            for (var key in data.results) {
+                var groupdata = data.results[key];
+                this.output_group(groupdata.name, groupdata.users, selectedusers, true);
                 count++;
             }
             if (!count) {
@@ -248,13 +249,14 @@ M.core_user.init_user_selector = function (Y, name, hash, extrafields, lastsearc
         output_group : function(groupname, users, selectedusers, processsingle) {
             var optgroup = Y.Node.create('<optgroup></optgroup>');
             var count = 0;
-            for (var userid in users) {
-                var user = users[userid];
-                var option = Y.Node.create('<option value="'+userid+'">'+user.name+'</option>');
+            for (var key in users) {
+                var user = users[key];
+                var option = Y.Node.create('<option value="'+user.id+'">'+user.name+'</option>');
                 if (user.disabled) {
                     option.set('disabled', true);
-                } else if (selectedusers===true || selectedusers[userid]) {
+                } else if (selectedusers===true || selectedusers[user.id]) {
                     option.set('selected', true);
+                    delete selectedusers[user.id];
                 } else {
                     option.set('selected', false);
                 }
