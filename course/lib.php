@@ -602,7 +602,8 @@ function print_log_csv($course, $user, $date, $order='l.time DESC', $modname,
         $coursecontext = context_course::instance($course->id);
         $firstField = format_string($courses[$log->course], true, array('context' => $coursecontext));
         $fullname = fullname($log, has_capability('moodle/site:viewfullnames', $coursecontext));
-        $row = array($firstField, userdate($log->time, $strftimedatetime), $log->ip, $fullname, $log->module.' '.$log->action, $log->info);
+        $actionurl = $CFG->wwwroot. make_log_url($log->module,$log->url);
+        $row = array($firstField, userdate($log->time, $strftimedatetime), $log->ip, $fullname, $log->module.' '.$log->action.' ('.$actionurl.')', $log->info);
         $csvexporter->add_data($row);
     }
     $csvexporter->download_file();
@@ -713,7 +714,8 @@ function print_log_xls($course, $user, $date, $order='l.time DESC', $modname,
         $myxls->write($row, 2, $log->ip, '');
         $fullname = fullname($log, has_capability('moodle/site:viewfullnames', $coursecontext));
         $myxls->write($row, 3, $fullname, '');
-        $myxls->write($row, 4, $log->module.' '.$log->action, '');
+        $actionurl = $CFG->wwwroot. make_log_url($log->module,$log->url);
+        $myxls->write($row, 4, $log->module.' '.$log->action.' ('.$actionurl.')', '');
         $myxls->write($row, 5, $log->info, '');
 
         $row++;
@@ -826,7 +828,8 @@ function print_log_ods($course, $user, $date, $order='l.time DESC', $modname,
         $myxls->write_string($row, 2, $log->ip);
         $fullname = fullname($log, has_capability('moodle/site:viewfullnames', $coursecontext));
         $myxls->write_string($row, 3, $fullname);
-        $myxls->write_string($row, 4, $log->module.' '.$log->action);
+        $actionurl = $CFG->wwwroot. make_log_url($log->module,$log->url);
+        $myxls->write_string($row, 4, $log->module.' '.$log->action.' ('.$actionurl.')');
         $myxls->write_string($row, 5, $log->info);
 
         $row++;
