@@ -149,24 +149,15 @@ class assignment_uploadsingle extends assignment_base {
     }
 
     function print_responsefiles($userid, $return=false) {
-        global $CFG, $USER, $OUTPUT, $PAGE;
-
-        $mode    = optional_param('mode', '', PARAM_ALPHA);
-        $offset  = optional_param('offset', 0, PARAM_INT);
+        global $OUTPUT, $PAGE;
 
         $output = $OUTPUT->box_start('responsefiles');
-
-        $candelete = $this->can_manage_responsefiles();
-        $strdelete   = get_string('delete');
-
-        $fs = get_file_storage();
-        $browser = get_file_browser();
 
         if ($submission = $this->get_submission($userid)) {
             $renderer = $PAGE->get_renderer('mod_assignment');
             $output .= $renderer->assignment_files($this->context, $submission->id, 'response');
-            $output .= $OUTPUT->box_end();
         }
+        $output .= $OUTPUT->box_end();
 
         if ($return) {
             return $output;
