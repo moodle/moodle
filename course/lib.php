@@ -1617,7 +1617,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                     // Display link itself
                     echo '<a ' . $linkcss . $mod->extra . $onclick .
                             ' href="' . $url . '"><img src="' . $mod->get_icon_url() .
-                            '" class="activityicon" alt="" /> ' .
+                            '" class="activityicon" alt="' . $modulename . '" /> ' .
                             $accesstext . '<span class="instancename">' .
                             $instancename . $altname . '</span></a>';
 
