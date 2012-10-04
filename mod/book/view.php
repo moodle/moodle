@@ -87,13 +87,16 @@ if ($chapterid == '0') { // Go to first chapter if no given.
     }
 }
 
-if (!$chapterid or !$chapter = $DB->get_record('book_chapters', array('id'=>$chapterid, 'bookid'=>$book->id))) {
-    print_error('errorchapter', 'mod_book', new moodle_url('/course/view.php', array('id'=>$course->id)));
-}
+$courseurl = new moodle_url('/course/view.php', array('id' => $course->id));
 
-// chapter is hidden for students
-if ($chapter->hidden and !$viewhidden) {
-    print_error('errorchapter', 'mod_book', new moodle_url('/course/view.php', array('id'=>$course->id)));
+// No content in the book.
+if (!$chapterid) {
+    $PAGE->set_url('/mod/book/view.php', array('id' => $id));
+    notice(get_string('nocontent', 'mod_book'), $courseurl->out(false));
+}
+// Chapter doesnt exist or it is hidden for students
+if ((!$chapter = $DB->get_record('book_chapters', array('id' => $chapterid, 'bookid' => $book->id))) or ($chapter->hidden and !$viewhidden)) {
+    print_error('errorchapter', 'mod_book', $courseurl);
 }
 
 $PAGE->set_url('/mod/book/view.php', array('id'=>$id, 'chapterid'=>$chapterid));
