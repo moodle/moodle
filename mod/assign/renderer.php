@@ -541,7 +541,7 @@ class mod_assign_renderer extends plugin_renderer_base {
         // Show graders whether this submission is editable by students.
         if ($status->view == assign_submission_status::GRADER_VIEW) {
             $row = new html_table_row();
-            $cell1 = new html_table_cell(get_string('open', 'assign'));
+            $cell1 = new html_table_cell(get_string('editingstatus', 'assign'));
             if ($status->canedit) {
                 $cell2 = new html_table_cell(get_string('submissioneditable', 'assign'));
                 $cell2->attributes = array('class'=>'submissioneditable');
