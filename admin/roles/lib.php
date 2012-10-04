@@ -1596,13 +1596,10 @@ class admins_existing_selector extends user_selector_base {
         }
 
         $mainadmin = array();
-        $adminids = explode(',', $CFG->siteadmins);
-        foreach ($adminids as $id) {
-            if (isset($availableusers[$id])) {
-                $mainadmin = array($id=>$availableusers[$id]);
-                unset($availableusers[$id]);
-                break;
-            }
+        $mainadminuser = get_admin();
+        if ($mainadminuser && isset($availableusers[$mainadminuser->id])) {
+            $mainadmin = array($mainadminuser->id => $availableusers[$mainadminuser->id]);
+            unset($availableusers[$mainadminuser->id]);
         }
 
         $result = array();
