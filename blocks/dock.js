@@ -958,7 +958,7 @@ M.core_dock.genericblock.prototype = {
         placeholder.replace(this.Y.Node.getDOMNode(this.cachedcontentnode));
         this.cachedcontentnode = this.Y.one('#'+this.cachedcontentnode.get('id'));
 
-        var commands = this.cachedcontentnode.one('.title .commands');
+        var commands = dockitem.commands;
         if (commands) {
             commands.all('.hidepanelicon').remove();
             commands.all('.moveto').remove();
