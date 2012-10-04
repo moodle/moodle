@@ -735,9 +735,14 @@ abstract class groups_user_selector_base extends user_selector_base {
 class group_members_selector extends groups_user_selector_base {
     public function find_users($search) {
         list($wherecondition, $params) = $this->search_sql($search, 'u');
+
+        list($sort, $sortparams) = users_order_by_sql('u', $search, $this->accesscontext);
+        $orderby = ' ORDER BY ' . $sort;
+
         $roles = groups_get_members_by_role($this->groupid, $this->courseid,
                 $this->required_fields_sql('u') . ', gm.component',
-                null, $wherecondition, $params);
+                $sort, $wherecondition, array_merge($params, $sortparams));
+
         return $this->convert_array_format($roles, $search);
     }
 }
