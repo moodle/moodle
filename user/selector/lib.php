@@ -737,7 +737,6 @@ class group_members_selector extends groups_user_selector_base {
         list($wherecondition, $params) = $this->search_sql($search, 'u');
 
         list($sort, $sortparams) = users_order_by_sql('u', $search, $this->accesscontext);
-        $orderby = ' ORDER BY ' . $sort;
 
         $roles = groups_get_members_by_role($this->groupid, $this->courseid,
                 $this->required_fields_sql('u') . ', gm.component',
