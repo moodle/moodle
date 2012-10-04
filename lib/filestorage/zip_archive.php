@@ -541,6 +541,7 @@ class zip_archive extends file_archive {
                             case 'ISO-8859-5': $encoding = 'CP866'; break;
                             case 'ISO-8859-6': $encoding = 'CP720'; break;
                             case 'ISO-8859-7': $encoding = 'CP737'; break;
+                            case 'ISO-8859-8': $encoding = 'CP862'; break;
                         }
                     }
                     $newname = @textlib::convert($name, $encoding, 'utf-8');
