@@ -111,7 +111,7 @@ function report_stats_report($course, $report, $mode, $user, $roleid, $time) {
 
         list($sort, $moreparams) = users_order_by_sql('u');
         $moreparams['courseid'] = $course->id;
-        $sql = "SELECT DISTINCT s.userid, u.firstname, u.lastname, u.idnumber
+        $sql = "SELECT DISTINCT u.id, u.firstname, u.lastname, u.idnumber
                   FROM {stats_user_{$param->table}} s
                   JOIN {user} u ON u.id = s.userid
                  WHERE courseid = :courseid";
