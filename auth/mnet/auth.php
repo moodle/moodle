@@ -378,7 +378,8 @@ class auth_plugin_mnet extends auth_plugin_base {
                 $extra = $DB->get_records_sql($sql);
 
                 $keys = array_keys($courses);
-                $defaultrole = reset(get_archetype_roles('student'));
+                $studentroles = get_archetype_roles('student');
+                $defaultrole = reset($studentroles);
                 //$defaultrole = get_default_course_role($ccache[$shortname]); //TODO: rewrite this completely, there is no default course role any more!!!
                 foreach ($keys AS $id) {
                     if ($courses[$id]->visible == 0) {
