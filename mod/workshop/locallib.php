@@ -500,7 +500,7 @@ class workshop {
             return array();
         }
 
-        list($sort, $sortparams) = users_order_by_sql('u');
+        list($sort, $sortparams) = users_order_by_sql();
         $sql .= " ORDER BY $sort";
 
         return $DB->get_records_sql($sql, array_merge($params, $sortparams), $limitfrom, $limitnum);
