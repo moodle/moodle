@@ -759,7 +759,10 @@ function process_properties_tag($tagcontents){
 * @param string $string Text to write (newline will be added automatically)
 */
 function log_line($string){
-    mtrace($string);
+
+    if (!PHPUNIT_TEST) {
+        mtrace($string);
+    }
     if($this->logfp) {
         fwrite($this->logfp, $string . "\n");
     }
