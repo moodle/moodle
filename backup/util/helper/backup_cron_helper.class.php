@@ -127,8 +127,9 @@ abstract class backup_cron_automated_helper {
                 }
 
                 // The last backup is considered as successful when OK or SKIPPED.
-                $lastbackupwassuccessful =  $backupcourse->laststatus == self::BACKUP_STATUS_SKIPPED ||
-                                            $backupcourse->laststatus == self::BACKUP_STATUS_OK;
+                $lastbackupwassuccessful =  ($backupcourse->laststatus == self::BACKUP_STATUS_SKIPPED ||
+                                            $backupcourse->laststatus == self::BACKUP_STATUS_OK) && (
+                                            $backupcourse->laststarttime > 0 && $backupcourse->lastendtime > 0);
 
                 // Skip courses that do not yet need backup.
                 $skipped = !(($backupcourse->nextstarttime > 0 && $backupcourse->nextstarttime < $now) || $rundirective == self::RUN_IMMEDIATELY);
