@@ -155,6 +155,78 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
 
 
     /**
+     * Course attributes mapping to IMS enterprise group description tags
+     */
+    public function test_courses_attrmapping() {
+        global $DB;
+
+        // Setting a all = coursecode (idnumber) mapping.
+        $this->imsplugin->set_config('imscoursemapshortname', 'coursecode');
+        $this->imsplugin->set_config('imscoursemapfullname', 'coursecode');
+        $this->imsplugin->set_config('imscoursemapsummary', 'coursecode');
+
+        $course1 = new StdClass();
+        $course1->idnumber = 'id1';
+        $course1->imsshort = 'description_short1';
+        $course1->imslong = 'description_long';
+        $course1->imsfull = 'description_full';
+        $course1->category = 'DEFAULT CATNAME';
+
+        $this->set_xml_file(false, array($course1));
+        $this->imsplugin->cron();
+
+        $dbcourse = $DB->get_record('course', array('idnumber' => $course1->idnumber));
+        $this->assertFalse(!$dbcourse);
+        $this->assertEquals($dbcourse->shortname, $course1->idnumber);
+        $this->assertEquals($dbcourse->fullname, $course1->idnumber);
+        $this->assertEquals($dbcourse->summary, $course1->idnumber);
+
+
+        // Setting a mapping using all the description tags.
+        $this->imsplugin->set_config('imscoursemapshortname', 'short');
+        $this->imsplugin->set_config('imscoursemapfullname', 'long');
+        $this->imsplugin->set_config('imscoursemapsummary', 'full');
+
+        $course2 = new StdClass();
+        $course2->idnumber = 'id2';
+        $course2->imsshort = 'description_short2';
+        $course2->imslong = 'description_long';
+        $course2->imsfull = 'description_full';
+        $course2->category = 'DEFAULT CATNAME';
+
+        $this->set_xml_file(false, array($course2));
+        $this->imsplugin->cron();
+
+        $dbcourse = $DB->get_record('course', array('idnumber' => $course2->idnumber));
+        $this->assertFalse(!$dbcourse);
+        $this->assertEquals($dbcourse->shortname, $course2->imsshort);
+        $this->assertEquals($dbcourse->fullname, $course2->imslong);
+        $this->assertEquals($dbcourse->summary, $course2->imsfull);
+
+
+        // Setting a mapping where the specified description tags doesn't exist in the XML file (must delegate into idnumber).
+        $this->imsplugin->set_config('imscoursemapshortname', 'short');
+        $this->imsplugin->set_config('imscoursemapfullname', 'long');
+        $this->imsplugin->set_config('imscoursemapsummary', 'full');
+
+        $course3 = new StdClass();
+        $course3->idnumber = 'id3';
+        $course3->imsshort = 'description_short3';
+        $course3->category = 'DEFAULT CATNAME';
+
+        $this->set_xml_file(false, array($course3));
+        $this->imsplugin->cron();
+
+        $dbcourse = $DB->get_record('course', array('idnumber' => $course3->idnumber));
+        $this->assertFalse(!$dbcourse);
+        $this->assertEquals($dbcourse->shortname, $course3->imsshort);
+        $this->assertEquals($dbcourse->fullname, $course3->idnumber);
+        $this->assertEquals($dbcourse->summary, $course3->idnumber);
+
+    }
+
+
+    /**
      * Sets the plugin configuration for testing
      */
     protected function set_test_config() {
