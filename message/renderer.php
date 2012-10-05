@@ -227,16 +227,17 @@ class core_message_renderer extends plugin_renderer_base {
         $output .= html_writer::nonempty_tag('legend', get_string('providers_config', 'message'), array('class' => 'ftoggler'));
 
         foreach($providers as $provider) {
-            $components[] = $provider->component;
+            if($provider->component != 'moodle') {
+                $components[] = $provider->component;
+            }
         }
         // Lets arrange by components so that core settings (moodle) appear as the first table.
         $components = array_unique($components);
         asort($components);
-        array_pop($components); //drop moodle! omg!
         array_unshift($components, 'moodle'); // pop it in front! phew!
         asort($providers);
 
-        $number_procs = count($processors);
+        $numprocs = count($processors);
         // Display the messaging options table(s)
         foreach ($components as $component) {
             $table = new html_table();
@@ -264,7 +265,7 @@ class core_message_renderer extends plugin_renderer_base {
                 $providername = get_string('messageprovider:'.$provider->name, $provider->component);
                 $providercell = new html_table_cell($providername);
                 $providercell->header = true;
-                $providercell->colspan = $number_procs;
+                $providercell->colspan = $numprocs;
                 $providercell->attributes['class'] = 'c0';
                 $headerrow->cells = array($providercell);
                 $table->data[] = $headerrow;
