@@ -82,9 +82,7 @@ $string['pathsunsecuredataroot'] = 'Dataroot-sijainti on turvallinen';
 $string['pathswrongadmindir'] = 'Admin-hakemistoa ei ole';
 $string['phpextension'] = '{$a} PHP-lisäosa';
 $string['phpversion'] = 'PHP versio';
-$string['phpversionhelp'] = '<p>Moodle vaatii vähintään PHP version 4.1.0.</p>
-<p>Käytät parhaillaan versiota {$a}</p>
-<p>Sinun täytyy päivittää PHP tai siirtää isäntä uudemman PHP version kanssa!</p>';
+$string['phpversionhelp'] = '<p>Moodle vaatii vähintään PHP-version 4.3.0 tai 5.1.0 (5.0.x sisältää monia tunnettuja ongelmia).</p> <p>Käytössäsi on versio {$a}</p> <p>Sinun pitää päivittää PHP tai siirtää palvelimelle jossa on uudempi PHP.<br /> (Jos käytössäsi on 5.0.x voit myös päivittää alaspäin 4.4.x -versioon)</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Näet tämän sivun koska olet onnistuneesti asentanut ja käynnistänyt <strong>{$a->packname} {$a->packversion}</strong> paketin tietokoneellasi.
 Onnittelut!';
