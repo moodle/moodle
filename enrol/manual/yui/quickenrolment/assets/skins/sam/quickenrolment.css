@@ -15,7 +15,7 @@ Structure of the user enroller panel
                             .picture
                             .details
                                 .fullname
-                                .email
+                                .extrafields
                             .options
                                 .enrol
                     .uep-more-results

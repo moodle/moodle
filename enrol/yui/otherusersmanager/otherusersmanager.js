@@ -11,7 +11,7 @@ YUI.add('moodle-enrol-otherusersmanager', function(Y) {
         USERCOUNT = 'userCount',
         PICTURE = 'picture',
         FULLNAME = 'fullname',
-        EMAIL = 'email',
+        EXTRAFIELDS = 'extrafields',
         ASSIGNABLEROLES = 'assignableRoles',
         USERS = 'users',
         URL = 'url',
@@ -36,7 +36,7 @@ YUI.add('moodle-enrol-otherusersmanager', function(Y) {
         PICTURE : 'oump-user-picture',
         DETAILS : 'oump-user-specifics',
         FULLNAME : 'oump-user-fullname',
-        EMAIL : 'oump-user-email',
+        EXTRAFIELDS : 'oump-user-extrafields',
         OPTIONS : 'oump-role-options',
         ROLEOPTION : 'oump-assignable-role',
         ODD  : 'odd',
@@ -310,7 +310,7 @@ YUI.add('moodle-enrol-otherusersmanager', function(Y) {
                     )
                     .append(Y.Node.create('<div class="'+CSS.DETAILS+'"></div>')
                         .append(Y.Node.create('<div class="'+CSS.FULLNAME+'">'+this.get(FULLNAME)+'</div>'))
-                        .append(Y.Node.create('<div class="'+CSS.EMAIL+'">'+this.get(EMAIL)+'</div>'))
+                        .append(Y.Node.create('<div class="'+CSS.EXTRAFIELDS+'">'+this.get(EXTRAFIELDS)+'</div>'))
                     )
                     .append(Y.Node.create('<div class="'+CSS.OPTIONS+'"><span class="label">'+M.str.role.assignrole+': </span></div>'))
                 );
@@ -374,7 +374,7 @@ YUI.add('moodle-enrol-otherusersmanager', function(Y) {
             fullname : {
                 validator : Y.Lang.isString
             },
-            email : {
+            extrafields : {
                 validator : Y.Lang.isString
             },
             picture : {

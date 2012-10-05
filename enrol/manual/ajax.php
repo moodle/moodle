@@ -56,6 +56,8 @@ $outcome->success = true;
 $outcome->response = new stdClass;
 $outcome->error = '';
 
+$searchanywhere = get_user_preferences('userselector_searchanywhere', false);
+
 switch ($action) {
     case 'getassignable':
         $otheruserroles = optional_param('otherusers', false, PARAM_BOOL);
@@ -63,9 +65,9 @@ switch ($action) {
         break;
     case 'searchusers':
         $enrolid = required_param('enrolid', PARAM_INT);
-        $search  = optional_param('search', '', PARAM_RAW);
+        $search = optional_param('search', '', PARAM_RAW);
         $page = optional_param('page', 0, PARAM_INT);
-        $outcome->response = $manager->get_potential_users($enrolid, $search, true, $page);
+        $outcome->response = $manager->get_potential_users($enrolid, $search, $searchanywhere, $page);
         $extrafields = get_extra_user_fields($context);
         foreach ($outcome->response['users'] as &$user) {
             $user->picture = $OUTPUT->user_picture($user);
