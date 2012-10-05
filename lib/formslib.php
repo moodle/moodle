@@ -1263,6 +1263,9 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
     /** @var bool Whether to display advanced elements (on page load) */
     var $_showAdvanced = null;
 
+    /** @var bool whether to automatically initialise M.formchangechecker for this form. */
+    protected $_use_form_change_checker = true;
+
     /**
      * The form name is derived from the class name of the wrapper minus the trailing form
      * It is a name with words joined by underscores whereas the id attribute is words joined by underscores.
@@ -1392,8 +1395,32 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
         return $this->_showAdvanced;
     }
 
+    /**
+     * Call this method if you don't want the formchangechecker JavaScript to be
+     * automatically initialised for this form.
+     */
+    public function disable_form_change_checker() {
+        $this->_use_form_change_checker = false;
+    }
 
-   /**
+    /**
+     * If you have called {@link disable_form_change_checker()} then you can use
+     * this method to re-enable it. It is enabled by default, so normally you don't
+     * need to call this.
+     */
+    public function enable_form_change_checker() {
+        $this->_use_form_change_checker = true;
+    }
+
+    /**
+     * @return bool whether this form should automatically initialise
+     *      formchangechecker for itself.
+     */
+    public function is_form_change_checker_enabled() {
+        return $this->_use_form_change_checker;
+    }
+
+    /**
     * Accepts a renderer
     *
     * @param HTML_QuickForm_Renderer $renderer An HTML_QuickForm_Renderer object
@@ -2243,13 +2270,15 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
             $this->_hiddenHtml .= $form->_pageparams;
         }
 
-        $PAGE->requires->yui_module('moodle-core-formchangechecker',
-                'M.core_formchangechecker.init',
-                array(array(
-                    'formid' => $form->getAttribute('id')
-                ))
-        );
-        $PAGE->requires->string_for_js('changesmadereallygoaway', 'moodle');
+        if ($form->is_form_change_checker_enabled()) {
+            $PAGE->requires->yui_module('moodle-core-formchangechecker',
+                    'M.core_formchangechecker.init',
+                    array(array(
+                        'formid' => $form->getAttribute('id')
+                    ))
+            );
+            $PAGE->requires->string_for_js('changesmadereallygoaway', 'moodle');
+        }
     }
 
     /**
