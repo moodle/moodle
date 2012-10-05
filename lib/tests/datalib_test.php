@@ -63,8 +63,8 @@ class datalib_testcase extends advanced_testcase {
         list($sort, $params) = users_order_by_sql('', 'search', context_system::instance());
         $this->assert_same_sql('CASE WHEN
                     ' . $DB->sql_fullname() . ' = :usersortexact1 OR
-                    firstname = :usersortexact2 OR
-                    lastname = :usersortexact3
+                    LOWER(firstname) = LOWER(:usersortexact2) OR
+                    LOWER(lastname) = LOWER(:usersortexact3)
                 THEN 0 ELSE 1 END, lastname, firstname, id', $sort);
         $this->assertEquals(array('usersortexact1' => 'search', 'usersortexact2' => 'search',
                 'usersortexact3' => 'search'), $params);
@@ -79,10 +79,10 @@ class datalib_testcase extends advanced_testcase {
         list($sort, $params) = users_order_by_sql('u', 'search', context_system::instance());
         $this->assert_same_sql('CASE WHEN
                     ' . $DB->sql_fullname('u.firstname', 'u.lastname') . ' = :usersortexact1 OR
-                    u.firstname = :usersortexact2 OR
-                    u.lastname = :usersortexact3 OR
-                    u.email = :usersortexact4 OR
-                    u.idnumber = :usersortexact5
+                    LOWER(u.firstname) = LOWER(:usersortexact2) OR
+                    LOWER(u.lastname) = LOWER(:usersortexact3) OR
+                    LOWER(u.email) = LOWER(:usersortexact4) OR
+                    LOWER(u.idnumber) = LOWER(:usersortexact5)
                 THEN 0 ELSE 1 END, u.lastname, u.firstname, u.id', $sort);
         $this->assertEquals(array('usersortexact1' => 'search', 'usersortexact2' => 'search',
                 'usersortexact3' => 'search', 'usersortexact4' => 'search', 'usersortexact5' => 'search'), $params);
