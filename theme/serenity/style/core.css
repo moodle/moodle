@@ -16,34 +16,34 @@ html {
     background: none;
 }
 
-body,h1,h2,h3,h4,h5,h6,p,ul,ol,dl,input,textarea { 
+body,h1,h2,h3,h4,h5,h6,p,ul,ol,dl,input,textarea {
     font-family: Georgia, "Times New Roman", Times, serif;
     color: #2a2513;
 }
 
-#wrapper { 
+#wrapper {
     background: #fff;
     margin: 2% 5%;
     padding: 5px;
     border: 1px solid #c1bc9d;
 }
 
-a { 
+a {
     color: #336699;
 }
 
-a:hover { 
+a:hover {
     text-decoration: underline;
 }
 
-.pagelayout-frontpage #page-content #region-main-box #region-post-box { 
+.pagelayout-frontpage #page-content #region-main-box #region-post-box {
     padding-top: 0;
 }
 
 /* Header
 ------------------------*/
 
-#page-header { 
+#page-header {
     background: #ddd6cc url([[pix:theme|header_grass]]) repeat-x 0 100%;
     margin-bottom: 5px;
 }
@@ -52,7 +52,7 @@ a:hover {
     margin-bottom: 0px;
 }
 
-.headermain { 
+.headermain {
     font-weight: normal;
     margin: 1em 0.5em 0.75em;
 }
@@ -67,10 +67,10 @@ a:hover {
     float:none;
 }
 
-/* Navbar 
+/* Navbar
 -------------------------*/
 
-.navbar { 
+.navbar {
     background: #aeb9c6 url([[pix:theme|breadcrumb]]) repeat-x 0 100%;
     padding: 5px;
 }
@@ -78,21 +78,21 @@ a:hover {
 /* Blocks
 -------------------------*/
 
-.block { 
+.block {
     border-color: #eee;
 }
 
-.block .header { 
+.block .header {
     background: #9eb1bf;
     padding-left: 5px;
 }
 
-.block .title { 
+.block .title {
     background: #867f6a;
     padding-left: 5px;
 }
 
-.block .title h2 { 
+.block .title h2 {
     background: #6e6855;
     margin: 0;
     padding: 5px;
@@ -100,24 +100,24 @@ a:hover {
     color: #fff;
 }
 
-.block_action { 
+.block_action {
     padding: 5px 0 0;
 }
 
-.block .content { 
+.block .content {
     background: #d8d2c6;
     border: 1px solid #867f6a;
 }
 
 .block .minicalendar td,
-.block .minicalendar th { 
+.block .minicalendar th {
     border-color: #d8d2c6;
 }
 
 /* Course
 ----------------------------*/
 
-.headingblock { 
+.headingblock {
     background: url([[pix:theme|headingblock]]) repeat-x 0 0;
     color: #fff;
     font-weight: normal;
@@ -142,10 +142,10 @@ a:hover {
     background: #fff;
 }
 
-/* Forums 
+/* Forums
 -----------------------------*/
 
-.forumpost .topic { 
+.forumpost .topic {
     background: #cad5e1;
     border-width: 1px;
     border-color: #eee #eee #aaa;
@@ -158,11 +158,11 @@ a:hover {
 }
 
 
-.forumpost .starter .subject { 
+.forumpost .starter .subject {
     font-weight: bold;
 }
 
-.forumpost .content { 
+.forumpost .content {
     border-color: #eee;
     border-width: 0 1px 1px;
     border-style: solid;
@@ -172,56 +172,56 @@ a:hover {
 /* Dock
 -----------------------------*/
 
-body.has_dock { 
+body.has_dock {
     margin: 0;
 }
 
-#dock { 
+#dock {
     left: 5%;
     margin-left: -29px;
     border-width: 0;
     background-color: transparent;
 }
 
-#dock .controls { 
+#dock .controls {
     bottom: auto;
     background-color: #DDD6CC;
 }
 
-#dock .dockeditem_container { 
+#dock .dockeditem_container {
     position: relative;
 }
 
-#dock .dockeditem.firstdockitem { 
+#dock .dockeditem.firstdockitem {
     margin-top: 50px;
 }
 
-#dock .dockeditem { 
+#dock .dockeditem {
     background-color: #fff;
     padding: 2px;
     padding-right: 0px;
 }
 
-#dock .dockedtitle { 
+#dock .dockedtitle {
     border-width: 0;
 }
 
-#dock .dockedtitle h2 { 
+#dock .dockedtitle h2 {
     margin: 0;
     padding: 10px 3px;
 }
 
-#dock .dockedtitle.activeitem { 
+#dock .dockedtitle.activeitem {
     background-color: #817b65;
     width: 35px;
 }
 
-#dockeditempanel { 
+#dockeditempanel {
     background-color: #817b65;
     margin-left: 5px;
 }
 
-#dockeditempanel .dockeditempanel_content { 
+#dockeditempanel .dockeditempanel_content {
     background-color: #eee9e0;
     margin: 0 3px;
     position: relative;
@@ -230,78 +230,77 @@ body.has_dock {
     border-color: #6f6856;
 }
 
-#dockeditempanel .dockeditempanel_hd { 
+#dockeditempanel .dockeditempanel_hd {
     background-image: url([[pix:theme|headingblock]]);
     border-width: 0;
 }
 
-#dockeditempanel .dockeditempanel_hd h2 { 
+#dockeditempanel .dockeditempanel_hd h2 {
     font-size: 1em;
     color: #fff;
 }
 
 /*cutom menu */
 /*YUI Reset */
-.yui3-skin-sam #page .yui3-menu-horizontal .yui3-menu-content,
-.yui3-skin-sam #page .yui3-menu-horizontal .yui3-menu-label,
-.yui3-skin-sam #page .yui3-menu-horizontal .yui3-menu-label-active,
-.yui3-skin-sam #page .yui3-menu-horizontal .yui3-menuitem-active .yui3-menuitem-content,
-.yui3-skin-sam #page .yui3-menu-horizontal .yui3-menu-label-menuvisible {background-position: -10000px -10000px;}
-.yui3-skin-sam #page .yui3-menu-label,
-.yui3-skin-sam #page .yui3-menu .yui3-menu .yui3-menu-label,
-.yui3-skin-sam #page .yui3-menubuttonnav .yui3-menu-label em {background-position: right center;}
-.yui3-skin-sam #page .yui3-splitbuttonnav .yui3-menu-label .yui3-menu-toggle {background-position: 3px center;}
-.yui3-skin-sam #page .yui3-splitbuttonnav .yui3-menu-label-menuvisible .yui3-menu-toggle {background-position: 0% 50%;}
-
+#custommenu .yui3-menu-horizontal .yui3-menu-content,
+#custommenu .yui3-menu-horizontal .yui3-menu-label,
+#custommenu .yui3-menu-horizontal .yui3-menu-label-active,
+#custommenu .yui3-menu-horizontal .yui3-menuitem-active .yui3-menuitem-content,
+#custommenu .yui3-menu-horizontal .yui3-menu-label-menuvisible {
+    background-position: -10000px -10000px;
+}
+#custommenu .yui3-menu-label,
+#custommenu .yui3-menu .yui3-menu .yui3-menu-label,
+#custommenu .yui3-menubuttonnav .yui3-menu-label em {
+    background-position: right center;
+}
+#custommenu .yui3-splitbuttonnav .yui3-menu-label .yui3-menu-toggle {
+    background-position: 3px center;
+}
+#custommenu .yui3-splitbuttonnav .yui3-menu-label-menuvisible .yui3-menu-toggle {
+    background-position: 0% 50%;
+}
 #custommenu {
     clear: both;
     background-image: url([[pix:theme|headingblock]]);
     margin-bottom: 5px;
 }
-
-.yui3-skin-sam #page .yui3-menu-label,
-.yui3-skin-sam #page .yui3-menuitem-content  {
+#custommenu .yui3-menu-label,
+#custommenu .yui3-menuitem-content {
     color: #fff;
     font-weight: 800;
     line-height: 30px;
 }
-
-.custom_menu_submenu .yui3-menu-label,
-.custom_menu_submenu .yui3-menuitem-content {
-    color: #000 !important;
-    text-shadow: none !important;
+#custommenu .custom_menu_submenu .yui3-menu-label,
+#custommenu .custom_menu_submenu .yui3-menuitem-content {
+    color: #333;
+    text-shadow: none;
     line-height: 25px;
 }
-
-.yui3-skin-sam #page .yui3-menu-label.yui3-menu-label-active,
-.yui3-skin-sam #page .yui3-menu-label.yui3-menu-label-menuvisible,
-.yui3-skin-sam #page .yui3-menuitem-active .yui3-menuitem-content {
+#custommenu .yui3-menu-label.yui3-menu-label-active,
+#custommenu .yui3-menu-label.yui3-menu-label-menuvisible,
+#custommenu .yui3-menuitem-active .yui3-menuitem-content {
     color: #000;
     background-color: #d8d2c6;
 }
-
-.yui3-skin-sam #page .yui3-menu-content,
-.yui3-skin-sam #page .yui3-menu-content,
-.yui3-skin-sam #page .yui3-menu .yui3-menu .yui3-menu-content,
-.yui3-skin-sam #page .yui3-menu-horizontal .yui3-menu-label,
-.yui3-skin-sam #page .yui3-menu-horizontal .yui3-menuitem-content  {
-    border: none !important;
+#custommenu .yui3-menu-content,
+#custommenu .yui3-menu-content,
+#custommenu .yui3-menu .yui3-menu .yui3-menu-content,
+#custommenu .yui3-menu-horizontal .yui3-menu-label,
+#custommenu .yui3-menu-horizontal .yui3-menuitem-content  {
+    border: 0 none;
 }
-
-.yui3-skin-sam .yui3-menu-horizontal .yui3-menu-label,
-.yui3-skin-sam .yui3-menu-horizontal .yui3-menuitem-content {
-    border-color:#808080;
-    border-style:solid;
-    border-width:0px 0;
+#custommenu .yui3-menu-horizontal .yui3-menu-label,
+#custommenu .yui3-menu-horizontal .yui3-menuitem-content {
+    border: 0 none;
 }
-
-#page .custom_menu_submenu {
-    border: 2px solid #d8d2c6 !important;
+#custommenu .custom_menu_submenu {
+    border: 2px solid #d8d2c6;
     background: #fff;
-     -webkit-border-radius: 2px;
-    -moz-border-radius: 2px;
-    border-radius: 2px;
+    -webkit-border-radius: 2px;
+       -moz-border-radius: 2px;
+            border-radius: 2px;
     -webkit-box-shadow: 0px 1px 3px #ccc;
-    -moz-box-shadow: 0px 1px 3px #ccc;
-    box-shadow: 0px 1px 3px #ccc;
+       -moz-box-shadow: 0px 1px 3px #ccc;
+            box-shadow: 0px 1px 3px #ccc;
 }
