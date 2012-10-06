@@ -101,11 +101,9 @@ $string['welcomep40'] = 'החבילה כוללת בנוסף
 $string['welcomep50'] = 'השימוש בכל היישומים בחבילה זו מפוקח ע"י הרשיונות המתאימים להם. החבילה
 <strong>{$a->installername}</strong>
 השלמה היא
-<a href="http://www.opensource.org/docs/definition_plain.html"> קוד פתוח
-</a>
-והיא מבוזרת תחת רישיון
-<a>
-href="http://www.gnu.org/copyleft/gpl.html">GPL</a>';
+<a href="http://www.opensource.org/docs/definition_plain.html">קוד פתוח</a>
+והיא מופצת תחת רשיון
+<a href="http://www.gnu.org/copyleft/gpl.html">GPL</a>';
 $string['welcomep60'] = 'העמודים הבאים יובילו אותך בצורה פשוטה דרך כמה צעדים לעיצוב הגדרות <strong>Moodle</strong> במחשבך.
 תוכל לאשר את הגדרות  ברירת המחדל או, באפשרותך, לשנותם לפי צרכיך.';
 $string['welcomep70'] = 'הקש על לחצן ה"המשך" למטה כדי להמשיך עם הגדרת ה-<strong>Moodle</strong>';
