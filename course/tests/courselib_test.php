@@ -36,7 +36,7 @@ class courselib_testcase extends advanced_testcase {
         $course = $this->getDataGenerator()->create_course(array('numsections'=>10), array('createsections'=>true));
         $oldsections = array();
         $sections = array();
-        foreach ($DB->get_records('course_sections', array('course'=>$course->id)) as $section) {
+        foreach ($DB->get_records('course_sections', array('course'=>$course->id), 'id') as $section) {
             $oldsections[$section->section] = $section->id;
             $sections[$section->id] = $section->section;
         }
