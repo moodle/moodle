@@ -233,6 +233,27 @@ class enrol_cohort_testcase extends advanced_testcase {
 
         cohort_remove_member($cohort1->id, $user1->id);
         $this->assertTrue(groups_is_member($group1->id, $user1->id));
+
+
+        // Test deleting of instances.
+
+        cohort_add_member($cohort1->id, $user1->id);
+        cohort_add_member($cohort1->id, $user2->id);
+        cohort_add_member($cohort1->id, $user3->id);
+
+        $this->assertEquals(7, $DB->count_records('user_enrolments', array()));
+        $this->assertEquals(5, $DB->count_records('role_assignments', array()));
+        $this->assertEquals(3, $DB->count_records('role_assignments', array('component'=>'enrol_cohort', 'itemid'=>$cohortinstance1->id)));
+        $this->assertEquals(5, $DB->count_records('groups_members', array()));
+        $this->assertEquals(3, $DB->count_records('groups_members', array('component'=>'enrol_cohort', 'itemid'=>$cohortinstance1->id)));
+
+        $cohortplugin->delete_instance($cohortinstance1);
+
+        $this->assertEquals(4, $DB->count_records('user_enrolments', array()));
+        $this->assertEquals(2, $DB->count_records('role_assignments', array()));
+        $this->assertEquals(0, $DB->count_records('role_assignments', array('component'=>'enrol_cohort', 'itemid'=>$cohortinstance1->id)));
+        $this->assertEquals(2, $DB->count_records('groups_members', array()));
+        $this->assertEquals(0, $DB->count_records('groups_members', array('component'=>'enrol_cohort', 'itemid'=>$cohortinstance1->id)));
     }
 
     public function test_sync_course() {
