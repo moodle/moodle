@@ -516,6 +516,21 @@ class grade_category_testcase extends grade_base_testcase {
         $this->assertEquals(count($grades), 1);
         $this->assertEquals($grades[$this->grade_items[2]->id], 6);
 
+        // MDL-35667 - There was an infinite loop if several items had the same grade and at least one was extra credit
+        $category = new grade_category();
+        $category->droplow     = 1;
+        $category->aggregation = GRADE_AGGREGATE_WEIGHTED_MEAN2; // simple weighted mean
+        $items[$this->grade_items[1]->id]->aggregationcoef = 1; // Mark grade item 1 as "extra credit"
+        $grades = array($this->grade_items[0]->id=>1, // 1 out of 110. Should be excluded from aggregation.
+                        $this->grade_items[1]->id=>1, // 1 out of 100. Extra credit. Should be retained.
+                        $this->grade_items[2]->id=>1, // 1 out of 6. Should be retained.
+                        $this->grade_items[4]->id=>1);// 1 out of 100. Should be retained.
+        $category->apply_limit_rules($grades, $items);
+        $this->assertEquals(count($grades), 3);
+        $this->assertEquals($grades[$this->grade_items[1]->id], 1);
+        $this->assertEquals($grades[$this->grade_items[2]->id], 1);
+        $this->assertEquals($grades[$this->grade_items[4]->id], 1);
+
     }
 
     /**
