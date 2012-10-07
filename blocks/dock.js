@@ -505,45 +505,51 @@ M.core_dock.fixTitleOrientation = function(item, title, text) {
             break;
     }
 
-    if (Y.UA.ie > 7) {
-        // IE8 can flip the text via CSS but not handle SVG
+    if (Y.UA.ie == 8) {
+        // IE8 can flip the text via CSS but not handle transform. IE9+ can handle the CSS3 transform attribute.
         title.setContent(text);
         title.setAttribute('style', 'writing-mode: tb-rl; filter: flipV flipH;display:inline;');
         title.addClass('filterrotate');
         return title;
     }
 
-    // Cool, we can use SVG!
-    var test = Y.Node.create('<h2><span style="font-size:10px;">'+text+'</span></h2>');
-    this.nodes.body.append(test);
-    var height = test.one('span').get('offsetWidth')+4;
-    var width = test.one('span').get('offsetHeight')*2;
-    var qwidth = width/4;
+    // We need to fix a font-size - sorry theme designers.
+    var fontsize = '11px';
+    var transform = (clockwise) ? 'rotate(90deg)' : 'rotate(270deg)';
+    var test = Y.Node.create('<h2><span style="font-size:'+fontsize+';position:absolute;">'+text+'</span></h2>');
+    this.nodes.body.insert(test, 0);
+    var width = test.one('span').get('offsetWidth') * 1.2;
+    var height = test.one('span').get('offsetHeight');
     test.remove();
 
-    // Create the text for the SVG
-    var txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    txt.setAttribute('font-size','10px');
-    if (clockwise) {
-        txt.setAttribute('transform','rotate(90 '+(qwidth/2)+' '+qwidth+')');
-    } else {
-        txt.setAttribute('y', height);
-        txt.setAttribute('transform','rotate(270 '+qwidth+' '+(height-qwidth)+')');
-    }
-    txt.appendChild(document.createTextNode(text));
+    title.setContent(text);
+    title.addClass('css3transform');
 
-    var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    svg.setAttribute('version', '1.1');
-    svg.setAttribute('height', height);
-    svg.setAttribute('width', width);
-    svg.appendChild(txt);
+    // Move the title into position
+    title.setStyles({
+        'margin' : '0',
+        'padding' : '0',
+        'position' : 'relative',
+        'fontSize' : fontsize,
+        'width' : width,
+        'top' : width/2,
+        'right' : width/2 - height
+    });
 
-    title.append(svg);
-    title.append(Y.Node.create('<span class="accesshide">'+text+'</span>'));
+    // Rotate the text
+    title.setStyles({
+        'transform' : transform,
+        '-ms-transform' : transform,
+        '-moz-transform' : transform,
+        '-webkit-transform' : transform,
+        '-o-transform' : transform
+    });
 
-    item.on('dockeditem:drawcomplete', function(txt, title){
-        txt.setAttribute('fill', Y.one(title).getStyle('color'));
-    }, item, txt, title);
+    var container = Y.Node.create('<div></div>');
+    container.append(title);
+    container.setStyle('height', width + (width / 4));
+    container.setStyle('position', 'relative');
+    return container;
 
     return title;
 };
@@ -998,7 +1004,7 @@ M.core_dock.item = function(Y, uid, title, contents, commands, blockclass){
     if (title && this.title==null) {
         this.titlestring = title.cloneNode(true);
         this.title = document.createElement(title.nodeName);
-        M.core_dock.fixTitleOrientation(this, this.title, this.titlestring.firstChild.nodeValue);
+        this.title = M.core_dock.fixTitleOrientation(this, this.title, this.titlestring.firstChild.nodeValue);
     }
     if (contents && this.contents==null) {
         this.contents = contents;
