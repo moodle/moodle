@@ -917,7 +917,10 @@ class grade_category extends grade_object {
 
                 $i = 1;
                 while ($originalindex+$i < count($grade_keys)) {
+
                     $possibleitemid = $grade_keys[$originalindex+$i];
+                    $i++;
+
                     if ($grade_values[$founditemid] != $grade_values[$possibleitemid]) {
                         // The next grade item has a different grade. Stop looking.
                         break;
@@ -934,8 +937,6 @@ class grade_category extends grade_object {
                         $founditemid = $possibleitemid;
                         // Continue searching to see if there is an even higher grademax...
                     }
-
-                    $i++;
                 }
 
                 // Now drop whatever grade item we have found
