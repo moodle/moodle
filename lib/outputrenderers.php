@@ -370,6 +370,9 @@ class core_renderer extends renderer_base {
         // flow player embedding support
         $this->page->requires->js_function_call('M.util.load_flowplayer');
 
+        // Set up help link popups for all links with the helplinkpopup class
+        $this->page->requires->js_init_call('M.util.help_popups.setup');
+
         $this->page->requires->js_function_call('setTimeout', array('fix_column_widths()', 20));
 
         $focus = $this->page->focuscontrol;
@@ -1514,9 +1517,10 @@ class core_renderer extends renderer_base {
      *
      * @param string $path The page link after doc root and language, no leading slash.
      * @param string $text The text to be displayed for the link
+     * @param boolean $forcepopup Whether to force a popup regardless of the value of $CFG->doctonewwindow
      * @return string
      */
-    public function doc_link($path, $text = '') {
+    public function doc_link($path, $text = '', $forcepopup = false) {
         global $CFG;
 
         $icon = $this->pix_icon('docs', $text, 'moodle', array('class'=>'iconhelp'));
@@ -1524,8 +1528,8 @@ class core_renderer extends renderer_base {
         $url = new moodle_url(get_docs_url($path));
 
         $attributes = array('href'=>$url);
-        if (!empty($CFG->doctonewwindow)) {
-            $attributes['id'] = $this->add_action_handler(new popup_action('click', $url));
+        if (!empty($CFG->doctonewwindow) || $forcepopup) {
+            $attributes['class'] = 'helplinkpopup';
         }
 
         return html_writer::tag('a', $icon.$text, $attributes);
