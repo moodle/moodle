@@ -505,7 +505,7 @@ M.core_dock.fixTitleOrientation = function(item, title, text) {
             break;
     }
 
-    if (Y.UA.ie > 7) {
+    if (Y.UA.ie == 8) {
         // IE8 can flip the text via CSS but not handle SVG
         title.setContent(text);
         title.setAttribute('style', 'writing-mode: tb-rl; filter: flipV flipH;display:inline;');
