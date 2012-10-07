@@ -42,7 +42,7 @@ if ($unrecognized) {
 
 if ($options['help']) {
     $help =
-        "Execute manual enrolments expiration sync.
+        "Execute manual enrolments expiration sync and send notifications.
 
 Options:
 -v, --verbose         Print verbose progress information
@@ -61,5 +61,7 @@ $verbose = !empty($options['verbose']);
 $plugin = enrol_get_plugin('manual');
 
 $result = $plugin->sync(null, $verbose);
+
+$plugin->send_notifications($verbose);
 
 exit($result);

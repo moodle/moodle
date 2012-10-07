@@ -42,10 +42,6 @@ class enrol_manual_edit_form extends moodleform {
         $mform->addHelpButton('status', 'status', 'enrol_manual');
         $mform->setDefault('status', $plugin->get_config('status'));
 
-        $mform->addElement('duration', 'enrolperiod', get_string('defaultperiod', 'enrol_manual'), array('optional' => true, 'defaultunit' => 86400));
-        $mform->setDefault('enrolperiod', $plugin->get_config('enrolperiod'));
-        $mform->addHelpButton('enrolperiod', 'defaultperiod', 'enrol_manual');
-
         if ($instance->id) {
             $roles = get_default_enrol_roles($context, $instance->roleid);
         } else {
@@ -54,10 +50,34 @@ class enrol_manual_edit_form extends moodleform {
         $mform->addElement('select', 'roleid', get_string('defaultrole', 'role'), $roles);
         $mform->setDefault('roleid', $plugin->get_config('roleid'));
 
+        $mform->addElement('duration', 'enrolperiod', get_string('defaultperiod', 'enrol_manual'), array('optional' => true, 'defaultunit' => 86400));
+        $mform->setDefault('enrolperiod', $plugin->get_config('enrolperiod'));
+        $mform->addHelpButton('enrolperiod', 'defaultperiod', 'enrol_manual');
+
+        $options = array(0 => get_string('no'), 1 => get_string('expirynotifyteacher', 'enrol_manual'), 2 => get_string('expirynotifyall', 'enrol_manual'));
+        $mform->addElement('select', 'expirynotify', get_string('expirynotify', 'enrol_manual'), $options);
+        $mform->addHelpButton('expirynotify', 'expirynotify', 'enrol_manual');
+
+        $mform->addElement('duration', 'expirythreshold', get_string('expirythreshold', 'enrol_manual'), array('optional' => false, 'defaultunit' => 86400));
+        $mform->addHelpButton('expirythreshold', 'expirythreshold', 'enrol_manual');
+        $mform->disabledIf('expirythreshold', 'expirynotify', 'eq', 0);
+
         $mform->addElement('hidden', 'courseid');
 
         $this->add_action_buttons(true, ($instance->id ? null : get_string('addinstance', 'enrol')));
 
         $this->set_data($instance);
+    }
+
+    function validation($data, $files) {
+        global $DB;
+
+        $errors = parent::validation($data, $files);
+
+        if ($data['expirynotify'] > 0 and $data['expirythreshold'] < 86400) {
+            $errors['expirythreshold'] = get_string('errorthresholdlow', 'enrol_manual');
+        }
+
+        return $errors;
     }
 }
