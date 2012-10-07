@@ -1429,6 +1429,334 @@ class available_update_info {
 
 
 /**
+ * Implements a communication bridge to the mdeploy.php utility
+ */
+class available_update_deployer {
+
+    const HTTP_PARAM_PREFIX     = 'updteautodpldata_';  // Hey, even Google has not heard of such a prefix! So it MUST be safe :-p
+    const HTTP_PARAM_CHECKER    = 'datapackagesize';    // Name of the parameter that holds the number of items in the received data items
+
+    /** @var available_update_deployer holds the singleton instance */
+    protected static $singletoninstance;
+    /** @var moodle_url URL of a page that includes the deployer UI */
+    protected $callerurl;
+    /** @var moodle_url URL to return after the deployment */
+    protected $returnurl;
+
+    /**
+     * Direct instantiation not allowed, use the factory method {@link self::instance()}
+     */
+    protected function __construct() {
+    }
+
+    /**
+     * Sorry, this is singleton
+     */
+    protected function __clone() {
+    }
+
+    /**
+     * Factory method for this class
+     *
+     * @return available_update_deployer the singleton instance
+     */
+    public static function instance() {
+        if (is_null(self::$singletoninstance)) {
+            self::$singletoninstance = new self();
+        }
+        return self::$singletoninstance;
+    }
+
+    /**
+     * Is automatic deployment enabled?
+     *
+     * @return bool
+     */
+    public function enabled() {
+        global $CFG;
+
+        if (!empty($CFG->disableupdateautodeploy)) {
+            // The feature is prohibited via config.php
+            return false;
+        }
+
+        return get_config('updateautodeploy');
+    }
+
+    /**
+     * Sets some base properties of the class to make it usable.
+     *
+     * @param moodle_url $callerurl the base URL of a script that will handle the class'es form data
+     * @param moodle_url $returnurl the final URL to return to when the deployment is finished
+     */
+    public function initialize(moodle_url $callerurl, moodle_url $returnurl) {
+
+        if (!$this->enabled()) {
+            throw new coding_exception('Unable to initialize the deployer, the feature is not enabled.');
+        }
+
+        $this->callerurl = $callerurl;
+        $this->returnurl = $returnurl;
+    }
+
+    /**
+     * Has the deployer been initialized?
+     *
+     * Initialized deployer means that the following properties were set:
+     * callerurl, returnurl
+     *
+     * @return bool
+     */
+    public function initialized() {
+
+        if (!$this->enabled()) {
+            return false;
+        }
+
+        if (empty($this->callerurl)) {
+            return false;
+        }
+
+        if (empty($this->returnurl)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Check if the available update info contains all required data for deployment.
+     *
+     * All instances of {@link available_update_info} class always provide at least the
+     * component name and component version. Additionally, we also need the URL to download
+     * the ZIP package from.
+     *
+     * @param available_update_info $info
+     * @return bool
+     */
+    public function can_deploy(available_update_info $info) {
+
+        if (empty($info->download)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Prepares a renderable widget to confirm installation of an available update.
+     *
+     * @param available_update_info $info component version to deploy
+     * @return renderable
+     */
+    public function make_confirm_widget(available_update_info $info) {
+
+        if (!$this->initialized()) {
+            throw new coding_exception('Illegal method call - deployer not initialized.');
+        }
+
+        $params = $this->data_to_params(array(
+            'updateinfo' => (array)$info,   // see http://www.php.net/manual/en/language.types.array.php#language.types.array.casting
+        ));
+
+        $widget = new single_button(
+            new moodle_url($this->callerurl, $params),
+            get_string('updateavailableinstall', 'core_admin'),
+            'post'
+        );
+
+        return $widget;
+    }
+
+    /**
+     * Prepares a renderable widget to execute installation of an available update.
+     *
+     * @param available_update_info $info component version to deploy
+     * @return renderable
+     */
+    public function make_execution_widget(available_update_info $info) {
+        global $CFG;
+
+        if (!$this->initialized()) {
+            throw new coding_exception('Illegal method call - deployer not initialized.');
+        }
+
+        $pluginrootpaths = get_plugin_types(true);
+
+        list($plugintype, $pluginname) = normalize_component($info->component);
+
+        if (empty($pluginrootpaths[$plugintype])) {
+            throw new coding_exception('Unknown plugin type root location', $plugintype);
+        }
+
+        $params = array(
+            'upgrade' => true,
+            'type' => $plugintype,
+            'name' => $pluginname,
+            'typeroot' => $pluginrootpaths[$plugintype],
+            'download' => $info->download,
+            'dataroot' => $CFG->dataroot,
+            'dirroot' => $CFG->dirroot,
+            'passfile' => '', // TODO
+            'password' => '', // TODO
+        );
+
+        $widget = new single_button(
+            new moodle_url('/mdeploy.php', $params),
+            get_string('updateavailableinstall', 'core_admin'),
+            'post'
+        );
+
+        return $widget;
+    }
+
+    /**
+     * Returns array of data objects passed to this tool.
+     *
+     * @return array
+     */
+    public function submitted_data() {
+
+        $data = $this->params_to_data($_POST);
+
+        if (empty($data) or empty($data[self::HTTP_PARAM_CHECKER])) {
+            return false;
+        }
+
+        if (!empty($data['updateinfo']) and is_object($data['updateinfo'])) {
+            $updateinfo = $data['updateinfo'];
+            if (!empty($updateinfo->component) and !empty($updateinfo->version)) {
+                $data['updateinfo'] = new available_update_info($updateinfo->component, (array)$updateinfo);
+            }
+        }
+
+        if (!empty($data['callerurl'])) {
+            $data['callerurl'] = new moodle_url($data['callerurl']);
+        }
+
+        if (!empty($data['returnurl'])) {
+            $data['returnurl'] = new moodle_url($data['returnurl']);
+        }
+
+        return $data;
+    }
+
+    /**
+     * Handles magic getters and setters for protected properties.
+     *
+     * @param string $name method name, e.g. set_returnurl()
+     * @param array $arguments arguments to be passed to the array
+     */
+    public function __call($name, array $arguments = array()) {
+
+        if (substr($name, 0, 4) === 'set_') {
+            $property = substr($name, 4);
+            if (empty($property)) {
+                throw new coding_exception('Invalid property name (empty)');
+            }
+            if (empty($arguments)) {
+                $arguments = array(true); // Default value for flag-like properties.
+            }
+            // Make sure it is a protected property.
+            $isprotected = false;
+            $reflection = new ReflectionObject($this);
+            foreach ($reflection->getProperties(ReflectionProperty::IS_PROTECTED) as $reflectionproperty) {
+                if ($reflectionproperty->getName() === $property) {
+                    $isprotected = true;
+                    break;
+                }
+            }
+            if (!$isprotected) {
+                throw new coding_exception('Unable to set property - it does not exist or it is not protected');
+            }
+            $value = reset($arguments);
+            $this->$property = $value;
+            return;
+        }
+
+        if (substr($name, 0, 4) === 'get_') {
+            $property = substr($name, 4);
+            if (empty($property)) {
+                throw new coding_exception('Invalid property name (empty)');
+            }
+            if (!empty($arguments)) {
+                throw new coding_exception('No parameter expected');
+            }
+            // Make sure it is a protected property.
+            $isprotected = false;
+            $reflection = new ReflectionObject($this);
+            foreach ($reflection->getProperties(ReflectionProperty::IS_PROTECTED) as $reflectionproperty) {
+                if ($reflectionproperty->getName() === $property) {
+                    $isprotected = true;
+                    break;
+                }
+            }
+            if (!$isprotected) {
+                throw new coding_exception('Unable to get property - it does not exist or it is not protected');
+            }
+            return $this->$property;
+        }
+    }
+
+    // End of external API
+
+    /**
+     * Prepares an array of HTTP parameters that can be passed to another page.
+     *
+     * @param array|object $data associative array or an object holding the data, data JSON-able
+     * @return array suitable as a param for moodle_url
+     */
+    protected function data_to_params($data) {
+
+        // Append some our own data
+        if (!empty($this->callerurl)) {
+            $data['callerurl'] = $this->callerurl->out(false);
+        }
+        if (!empty($this->callerurl)) {
+            $data['returnurl'] = $this->returnurl->out(false);
+        }
+
+        // Finally append the count of items in the package.
+        $data[self::HTTP_PARAM_CHECKER] = count($data);
+
+        // Generate params
+        $params = array();
+        foreach ($data as $name => $value) {
+            $transname = self::HTTP_PARAM_PREFIX.$name;
+            $transvalue = json_encode($value);
+            $params[$transname] = $transvalue;
+        }
+
+        return $params;
+    }
+
+    /**
+     * Converts HTTP parameters passed to the script into native PHP data
+     *
+     * @param array $params such as $_REQUEST or $_POST
+     * @return array data passed for this class
+     */
+    protected function params_to_data(array $params) {
+
+        if (empty($params)) {
+            return array();
+        }
+
+        $data = array();
+        foreach ($params as $name => $value) {
+            if (strpos($name, self::HTTP_PARAM_PREFIX) === 0) {
+                $realname = substr($name, strlen(self::HTTP_PARAM_PREFIX));
+                $realvalue = json_decode($value);
+                $data[$realname] = $realvalue;
+            }
+        }
+
+        return $data;
+    }
+}
+
+
+/**
  * Factory class producing required subclasses of {@link plugininfo_base}
  */
 class plugininfo_default_factory {

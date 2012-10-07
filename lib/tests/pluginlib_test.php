@@ -543,3 +543,17 @@ class testable_available_update_checker extends available_update_checker {
 class testable_available_update_checker_cron_executed extends Exception {
 
 }
+
+
+/**
+ * Test cases for {@link available_update_deployer} class
+ */
+class available_update_deployer_test extends advanced_testcase {
+
+    public function test_magic_setters() {
+        $deployer = available_update_deployer::instance();
+        $value = new moodle_url('/');
+        $deployer->set_returnurl($value);
+        $this->assertSame($deployer->get_returnurl(), $value);
+    }
+}

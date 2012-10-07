@@ -1005,6 +1005,7 @@ $string['updateavailableforplugin'] = 'There is a newer version for some of your
 $string['updateavailable_moreinfo'] = 'More info...';
 $string['updateavailable_release'] = 'Moodle {$a}';
 $string['updateavailable_version'] = 'Version {$a}';
+$string['updateavailableinstall'] = 'Install this update';
 $string['updateavailablenot'] = 'Your Moodle code is up-to-date!';
 $string['updatenotifications'] = 'Update notifications';
 $string['updatenotificationfooter'] = 'Your Moodle site {$a->siteurl} is configured to automatically check for available updates. You are receiving this message as the administrator of the site. You can disable automatic checks for available updates in the Site administration section of the Settings block. You can customize the delivery of this message via your personal Messaging setting in the My profile settings section.';
