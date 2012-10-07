@@ -103,6 +103,7 @@ $string['duedateno'] = 'No due date';
 $string['duedatereached'] = 'The due date for this assignment has now passed';
 $string['duedatevalidation'] = 'Due date must be after the allow submissions from date.';
 $string['editsubmission'] = 'Edit my submission';
+$string['editingstatus'] = 'Editing status';
 $string['editaction'] = 'Actions...';
 $string['extensionduedate'] = 'Extension due date';
 $string['extensionnotafterduedate'] = 'Extension date must be after the due date';
