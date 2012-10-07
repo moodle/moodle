@@ -36,36 +36,6 @@ YUI.add('moodle-course-modchooser', function(Y) {
 
             // Catch the page toggle
             Y.all('.block_settings #settingsnav .type_course .modchoosertoggle a').on('click', this.toggle_mod_chooser, this);
-
-            // Ensure that help links are opened in an appropriate popup
-            this.container.all('div.helpdoclink a').on('click', function(e) {
-                var anchor = e.target.ancestor('a', true);
-
-                var args = {
-                    'name'          : 'popup',
-                    'url'           : anchor.getAttribute('href'),
-                    'option'        : ''
-                };
-                var options = [
-                    'height=600',
-                    'width=800',
-                    'top=0',
-                    'left=0',
-                    'menubar=0',
-                    'location=0',
-                    'scrollbars',
-                    'resizable',
-                    'toolbar',
-                    'status',
-                    'directories=0',
-                    'fullscreen=0',
-                    'dependent'
-                ]
-                args.options = options.join(',');
-
-                // Note: openpopup is provided by lib/javascript-static.js
-                openpopup(e, args);
-            });
         },
         /**
          * Update any section areas within the scope of the specified
