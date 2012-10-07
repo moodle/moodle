@@ -1970,7 +1970,7 @@ function get_module_metadata($course, $modnames, $sectionreturn = null) {
                 if ($sm->string_exists('modulename_link', $modname)) {  // Link to further info in Moodle docs
                     $link = get_string('modulename_link', $modname);
                     $linktext = get_string('morehelp');
-                    $module->help .= html_writer::tag('div', $OUTPUT->doc_link($link, $linktext), array('class' => 'helpdoclink'));
+                    $module->help .= html_writer::tag('div', $OUTPUT->doc_link($link, $linktext, true), array('class' => 'helpdoclink'));
                 }
             }
             $module->archetype = plugin_supports('mod', $modname, FEATURE_MOD_ARCHETYPE, MOD_ARCHETYPE_OTHER);
