@@ -235,6 +235,60 @@ class core_admin_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Prints a page with a summary of plugin deployment to be confirmed.
+     *
+     * @param available_update_deployer $deployer
+     * @param array $data deployer's data package as returned by {@link available_update_deployer::submitted_data()}
+     * @return string
+     */
+    public function upgrade_plugin_confirm_deploy_page(available_update_deployer $deployer, array $data) {
+
+        if (!$deployer->initialized()) {
+            throw new coding_exception('Unable to render a page for non-initialized deployer.');
+        }
+
+        if (empty($data['updateinfo'])) {
+            throw new coding_exception('Missing required data component.');
+        }
+
+        $updateinfo = $data['updateinfo'];
+
+        $output  = '';
+        $output .= $this->header();
+        $output .= $this->container_start('generalbox', 'notice');
+
+        $a = new stdClass();
+        if (get_string_manager()->string_exists('pluginname', $updateinfo->component)) {
+            $a->name = get_string('pluginname', $updateinfo->component);
+        } else {
+            $a->name = $updateinfo->component;
+        }
+
+        if (isset($updateinfo->release)) {
+            $a->version = $updateinfo->release . ' (' . $updateinfo->version . ')';
+        } else {
+            $a->version = $updateinfo->version;
+        }
+        $a->url = $updateinfo->download;
+
+        $output .= $this->output->heading(get_string('updatepluginconfirm', 'core_plugin'));
+        $output .= $this->output->container(format_text(
+            get_string('updatepluginconfirminfo', 'core_plugin', $a) . PHP_EOL . PHP_EOL .
+            get_string('updatepluginconfirmwarning', 'core_plugin')
+        ));
+
+        $widget = $deployer->make_execution_widget($data['updateinfo']);
+        $output .= $this->output->render($widget);
+
+        $output .= $this->output->single_button($data['returnurl'], get_string('cancel', 'core'), 'get');
+
+        $output .= $this->container_end();
+        $output .= $this->footer();
+
+        return $output;
+    }
+
+    /**
      * Display the admin notifications page.
      * @param int $maturity
      * @param bool $insecuredataroot warn dataroot is invalid
