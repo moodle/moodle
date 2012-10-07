@@ -47,6 +47,7 @@ $string['editingchapter'] = 'Editing chapter';
 $string['chaptertitle'] = 'Chapter title';
 $string['content'] = 'Content';
 $string['subchapter'] = 'Subchapter';
+$string['nocontent'] = 'No content has been added to this book yet.';
 $string['numbering'] = 'Chapter formatting';
 $string['numbering_help'] = '* None - Chapter and subchapter titles have no formatting
 * Numbers - Chapters and subchapter titles are numbered 1, 1.1, 1.2, 2, ...
