@@ -1148,6 +1148,13 @@ class core_admin_renderer extends plugin_renderer_base {
         $box  = $this->output->box_start($boxclasses);
         $box .= html_writer::tag('div', get_string('updateavailable', 'core_plugin', $updateinfo->version), array('class' => 'version'));
         $box .= $this->output->box(implode(html_writer::tag('span', ' ', array('class' => 'separator')), $info), '');
+
+        $deployer = available_update_deployer::instance();
+        if ($deployer->initialized() and $deployer->can_deploy($updateinfo)) {
+            $widget = $deployer->make_confirm_widget($updateinfo);
+            $box .= $this->output->render($widget);
+        }
+
         $box .= $this->output->box_end();
 
         return $box;
