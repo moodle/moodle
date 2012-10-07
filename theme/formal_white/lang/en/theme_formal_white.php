@@ -67,7 +67,7 @@ $string['ctmo_onfrontpageonly'] = 'in the front page only'; // ctmo == credits t
 $string['customcss'] = 'Custom CSS';
 $string['customcssdesc'] = 'Any CSS you enter here will be added to every page allowing your to easily customise this theme.';
 $string['customlogourl'] = 'Custom logo';
-$string['customlogourldesc'] = 'Change the logo for this theme by entering the URL to an image you wish to use (i.e. http://www.yoursite.local/mylogo.png). As a reference the default logo is 200px wide, 50px high and a transparent png will work best.';
+$string['customlogourldesc'] = 'Change the logo for this theme by entering the full or relatve URL to an image you wish to use (i.e. http://www.yoursite.tld/mylogo.png or ../path/to/your/logo.png). As a reference the default logo is 200px wide, 50px high and a transparent png will work best.';
 $string['displayheading'] = 'Display page heading';
 $string['displaylogo'] = 'Display logo';
 $string['fontsizereference'] = 'Font size reference';
@@ -77,7 +77,7 @@ $string['footnotedesc'] = 'The content from this textarea will be displayed in t
 $string['framemargin'] = 'Frame margin';
 $string['framemargindesc'] = 'Room between the frame and the edge of the browser window. (This setting will be ignored if "{$a}" is requested).';
 $string['frontpagelogourl'] = 'Custom front page logo';
-$string['frontpagelogourldesc'] = 'Change the logo that is displayed on the front page of your site by entering the URL to the image you wish to use (i.e. http://www.yoursite.local/myfrontpagelogo.png). This setting overrides the custom logo setting. As a reference the default logo is 300px wide, 80px high and a transparent png will work best.';
+$string['frontpagelogourldesc'] = 'Change the logo that is displayed on the front page of your site by entering the full or relatve URL to the image you wish to use (i.e. http://www.yoursite.tld/myfrontpagelogo.png or ../path/to/your/logo.png). This setting overrides the custom logo setting. As a reference the default logo is 300px wide, 80px high and a transparent png will work best.';
 $string['headerbgc'] = 'Header background colour';
 $string['headerbgcdesc'] = 'This sets the blocks header background colour for the theme.';
 $string['headercontent'] = 'Header content';
