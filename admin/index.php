@@ -261,6 +261,18 @@ if ($version > $CFG->version) {  // upgrade
         }
 
         $output = $PAGE->get_renderer('core', 'admin');
+
+        $deployer = available_update_deployer::instance();
+        if ($deployer->enabled()) {
+            $deployer->initialize($reloadurl, $reloadurl);
+
+            $deploydata = $deployer->submitted_data();
+            if (!empty($deploydata)) {
+                echo $output->upgrade_plugin_confirm_deploy_page($deployer, $deploydata);
+                die();
+            }
+        }
+
         echo $output->upgrade_plugin_check_page(plugin_manager::instance(), available_update_checker::instance(),
                 $version, $showallplugins, $reloadurl,
                 new moodle_url('/admin/index.php', array('confirmupgrade'=>1, 'confirmrelease'=>1, 'confirmplugincheck'=>1)));

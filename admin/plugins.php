@@ -51,4 +51,17 @@ if ($fetchremote) {
 }
 
 $output = $PAGE->get_renderer('core', 'admin');
+
+$deployer = available_update_deployer::instance();
+if ($deployer->enabled()) {
+    $myurl = new moodle_url($PAGE->url, array('updatesonly' => $updatesonly, 'contribonly' => $contribonly));
+    $deployer->initialize($myurl, $myurl);
+
+    $deploydata = $deployer->submitted_data();
+    if (!empty($deploydata)) {
+        echo $output->upgrade_plugin_confirm_deploy_page($deployer, $deploydata);
+        die();
+    }
+}
+
 echo $output->plugin_management_page($pluginman, $checker, $options);
