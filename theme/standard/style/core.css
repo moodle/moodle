@@ -450,6 +450,7 @@ table#tag-management-list {margin: 10px auto;width: 80%;}
 .portfolio-add-icon {margin-left:5px;}
 
 /* Messaging options */
+#page-message-edit .mform fieldset div.messagesettingcomponent {float: left;}
 #page-message-edit table.generaltable th.c0 {text-align: left;}
 #page-message-edit table.generaltable td.c0 {text-align: right;}
 #page-message-edit table.generaltable td.disallowed {text-align: center;vertical-align:middle;}
