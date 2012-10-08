@@ -166,6 +166,19 @@ function scorm_get_attempts_array() {
 
     return $attempts;
 }
+
+/**
+ * Returns an array of the attempt status options
+ *
+ * @return array an array of attempt status options
+ */
+function scorm_get_attemptstatus_array() {
+    return array(SCORM_DISPLAY_ATTEMPTSTATUS_NO => get_string('no'),
+                 SCORM_DISPLAY_ATTEMPTSTATUS_ALL => get_string('attemptstatusall', 'scorm'),
+                 SCORM_DISPLAY_ATTEMPTSTATUS_MY => get_string('attemptstatusmy', 'scorm'),
+                 SCORM_DISPLAY_ATTEMPTSTATUS_ENTRY => get_string('attemptstatusentry', 'scorm'));
+}
+
 /**
  * Extracts scrom package, sets up all variables.
  * Called whenever scorm changes

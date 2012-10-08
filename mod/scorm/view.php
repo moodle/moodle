@@ -137,7 +137,8 @@ require($CFG->dirroot . '/mod/scorm/tabs.php');
 // Print the main part of the page
 echo $OUTPUT->heading(format_string($scorm->name));
 $attemptstatus = '';
-if ($scorm->displayattemptstatus == 1 && empty($launch)) {
+if (empty($launch) && ($scorm->displayattemptstatus == SCORM_DISPLAY_ATTEMPTSTATUS_ALL ||
+         $scorm->displayattemptstatus == SCORM_DISPLAY_ATTEMPTSTATUS_ENTRY)) {
     $attemptstatus = scorm_get_attempt_status($USER, $scorm, $cm);
 }
 echo $OUTPUT->box(format_module_intro('scorm', $scorm, $cm->id).$attemptstatus, 'generalbox boxaligncenter boxwidthwide', 'intro');
