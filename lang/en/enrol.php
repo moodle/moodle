@@ -35,7 +35,10 @@ $string['configenrolplugins'] = 'Please select all required plugins and arrange 
 $string['custominstancename'] = 'Custom instance name';
 $string['defaultenrol'] = 'Add instance to new courses';
 $string['defaultenrol_desc'] = 'It is possible to add this plugin to all new courses by default.';
-$string['deleteinstanceconfirm'] = 'Do you really want to delete enrol plugin instance "{$a->name}" with {$a->users} enrolled users?';
+$string['deleteinstanceconfirm'] = 'Do you really want to delete enrol plugin instance "{$a->name}"?
+
+All {$a->users} users currently enrolled via this instance will be unenrolled and course-related data including users\' grades, group membership or forum subscriptions may be deleted.';
+$string['deleteinstancenousersconfirm'] = 'Do you really want to delete enrol plugin instance "{$a->name}"?';
 $string['durationdays'] = '{$a} days';
 $string['enrol'] = 'Enrol';
 $string['enrolcandidates'] = 'Not enrolled users';

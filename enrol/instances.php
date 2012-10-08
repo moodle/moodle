@@ -105,7 +105,11 @@ if ($canconfig and $action and confirm_sesskey()) {
             $yesurl = new moodle_url('/enrol/instances.php', array('id'=>$course->id, 'action'=>'delete', 'instance'=>$instance->id, 'confirm'=>1,'sesskey'=>sesskey()));
             $displayname = $plugin->get_instance_name($instance);
             $users = $DB->count_records('user_enrolments', array('enrolid'=>$instance->id));
-            $message = get_string('deleteinstanceconfirm', 'enrol', array('name'=>$displayname, 'users'=>$users));
+            if ($users) {
+                $message = markdown_to_html(get_string('deleteinstanceconfirm', 'enrol', array('name'=>$displayname, 'users'=>$users)));
+            } else {
+                $message = markdown_to_html(get_string('deleteinstancenousersconfirm', 'enrol', array('name'=>$displayname)));
+            }
             echo $OUTPUT->confirm($message, $yesurl, $PAGE->url);
             echo $OUTPUT->footer();
             die();
