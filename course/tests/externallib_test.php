@@ -580,6 +580,5 @@ class core_course_external_testcase extends externallib_advanced_testcase {
 
         // Check that the course has been duplicated.
         $this->assertEquals($newcourse['shortname'], $duplicate['shortname']);
-        gc_collect_cycles();
     }
 }
