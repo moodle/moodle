@@ -21,6 +21,9 @@ optional - no changes needed:
   xxx_dndupload_register() and xxx_dndupload_handle($uploadinfo) see:
   http://docs.moodle.org/dev/Implementing_Course_drag_and_drop_upload_support_in_a_module
 
+* mod/data/lib.php data_get_all_recordids() now has two new optional variables:  $selectdata and $params.
+
+
 === 2.2 ===
 
 required changes in code:
@@ -29,11 +32,19 @@ required changes in code:
 * textlib->asort() replaced by specialized collatorlib::asort()
 * use new make_temp_directory() and make_cache_directory()
 
+optional - no changes needed:
+
+* mod/data/lib.php data_get_all_recordids() now has two new optional variables:  $selectdata and $params.
+
 
 === 2.1 ===
 
 required changes in code:
 * add new support for basic restore from 1.9
+
+optional - no changes needed:
+
+* mod/data/lib.php data_get_all_recordids() now has two new optional variables:  $selectdata and $params.
 
 
 === 2.0 ===
