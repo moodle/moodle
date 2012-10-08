@@ -31,10 +31,12 @@ class tinymce_moodleemoticon extends editor_tinymce_plugin {
             array $options = null) {
         global $OUTPUT;
 
-        // If emoticon filter is disabled, do not add button.
-        $filters = filter_get_active_in_context($context);
-        if (!array_key_exists('filter/emoticon', $filters)) {
-            return;
+        if ($this->get_config('requireemoticon', 1)) {
+            // If emoticon filter is disabled, do not add button.
+            $filters = filter_get_active_in_context($context);
+            if (!array_key_exists('filter/emoticon', $filters)) {
+                return;
+            }
         }
 
         // Add button after 'image' in advancedbuttons3.

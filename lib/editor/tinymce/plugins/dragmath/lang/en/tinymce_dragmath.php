@@ -24,6 +24,8 @@
 
 $string['javaneeded'] = 'To use this page you need a Java-enabled browser. Download the latest Java plug-in from {$a}.';
 $string['pluginname'] = 'Insert equation';
+$string['requiretex'] = 'Require TeX filter';
+$string['requiretex_desc'] = 'If enabled the Dragmath button is visible only when the TeX filter is enabled in the editor context. Disable if you have a custom TeX filter that is enabled in global scope.';
 $string['title'] = 'DragMath Equation Editor';
 
 /* All lang strings used from TinyMCE JavaScript code must be named 'pluginname:stringname', no need to create langs/en_dlg.js */
