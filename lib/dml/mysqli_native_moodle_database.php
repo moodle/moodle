@@ -570,7 +570,18 @@ class mysqli_native_moodle_database extends moodle_database {
 
                 } else if (preg_match('/([a-z]*int[a-z]*)\((\d+)\)/i', $rawcolumn->column_type, $matches)) {
                     $rawcolumn->data_type = $matches[1];
-                    $rawcolumn->character_maximum_length = $matches[2];
+                    // Return number of decimals, not bytes here.
+                    if ($matches[2] >= 8) {
+                        $rawcolumn->max_length = 18;
+                    } else if ($matches[2] >= 4) {
+                        $rawcolumn->max_length = 9;
+                    } else if ($matches[2] >= 2) {
+                        $rawcolumn->max_length = 4;
+                    } else if ($matches[2] >= 1) {
+                        $rawcolumn->max_length = 2;
+                    } else {
+                        $rawcolumn->max_length = 0;
+                    }
 
                 } else if (preg_match('/(decimal)\((\d+),(\d+)\)/i', $rawcolumn->column_type, $matches)) {
                     $rawcolumn->data_type = $matches[1];
@@ -631,7 +642,26 @@ class mysqli_native_moodle_database extends moodle_database {
                 $info->meta_type = 'R';
                 $info->unique    = true;
             }
+            // Return number of decimals, not bytes here.
             $info->max_length    = $rawcolumn->numeric_precision;
+            if (preg_match('/([a-z]*int[a-z]*)\((\d+)\)/i', $rawcolumn->column_type, $matches)) {
+                if ($matches[2] >= 8) {
+                    $maxlength = 18;
+                } else if ($matches[2] >= 4) {
+                    $maxlength = 9;
+                } else if ($matches[2] >= 2) {
+                    $maxlength = 4;
+                } else if ($matches[2] >= 1) {
+                    $maxlength = 2;
+                } else {
+                    $maxlength = 0;
+                }
+                // It is possible that display precision is different from storage type length,
+                // always use the smaller value to make sure our data fits.
+                if ($maxlength < $info->max_length) {
+                    $info->max_length = $maxlength;
+                }
+            }
             $info->unsigned      = (stripos($rawcolumn->column_type, 'unsigned') !== false);
             $info->auto_increment= (strpos($rawcolumn->extra, 'auto_increment') !== false);
 

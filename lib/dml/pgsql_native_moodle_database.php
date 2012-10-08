@@ -463,7 +463,18 @@ class pgsql_native_moodle_database extends moodle_database {
                     $info->auto_increment= false;
                     $info->has_default   = ($rawcolumn->atthasdef === 't');
                 }
-                $info->max_length    = $matches[1];
+                // Return number of decimals, not bytes here.
+                if ($matches[1] >= 8) {
+                    $info->max_length = 18;
+                } else if ($matches[1] >= 4) {
+                    $info->max_length = 9;
+                } else if ($matches[1] >= 2) {
+                    $info->max_length = 4;
+                } else if ($matches[1] >= 1) {
+                    $info->max_length = 2;
+                } else {
+                    $info->max_length = 0;
+                }
                 $info->scale         = null;
                 $info->not_null      = ($rawcolumn->attnotnull === 't');
                 if ($info->has_default) {

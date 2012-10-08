@@ -677,6 +677,17 @@ class dml_testcase extends database_driver_testcase {
         $table->add_field('negativedfltint', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '-1');
         $table->add_field('negativedfltnumber', XMLDB_TYPE_NUMBER, '10', null, XMLDB_NOTNULL, null, '-2');
         $table->add_field('negativedfltfloat', XMLDB_TYPE_FLOAT, '10', null, XMLDB_NOTNULL, null, '-3');
+        $table->add_field('someint1', XMLDB_TYPE_INTEGER, '1', null, null, null, '0');
+        $table->add_field('someint2', XMLDB_TYPE_INTEGER, '2', null, null, null, '0');
+        $table->add_field('someint3', XMLDB_TYPE_INTEGER, '3', null, null, null, '0');
+        $table->add_field('someint4', XMLDB_TYPE_INTEGER, '4', null, null, null, '0');
+        $table->add_field('someint5', XMLDB_TYPE_INTEGER, '5', null, null, null, '0');
+        $table->add_field('someint6', XMLDB_TYPE_INTEGER, '6', null, null, null, '0');
+        $table->add_field('someint7', XMLDB_TYPE_INTEGER, '7', null, null, null, '0');
+        $table->add_field('someint8', XMLDB_TYPE_INTEGER, '8', null, null, null, '0');
+        $table->add_field('someint9', XMLDB_TYPE_INTEGER, '9', null, null, null, '0');
+        $table->add_field('someint10', XMLDB_TYPE_INTEGER, '10', null, null, null, '0');
+        $table->add_field('someint18', XMLDB_TYPE_INTEGER, '18', null, null, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
 
@@ -697,6 +708,15 @@ class dml_testcase extends database_driver_testcase {
         $this->assertTrue($field->has_default);
         $this->assertEquals(0, $field->default_value);
         $this->assertTrue($field->not_null);
+
+        for($i=1;$i<=10;$i++) {
+            $field = $columns['someint'.$i];
+            $this->assertEquals('I', $field->meta_type);
+            $this->assertGreaterThanOrEqual($i, $field->max_length);
+        }
+        $field = $columns['someint18'];
+        $this->assertEquals('I', $field->meta_type);
+        $this->assertGreaterThanOrEqual(18, $field->max_length);
 
         $field = $columns['name'];
         $this->assertEquals('C', $field->meta_type);

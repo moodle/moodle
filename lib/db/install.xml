@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20120926" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20121002" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -140,7 +140,7 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="course"/>
         <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="criteriatype"/>
-        <FIELD NAME="criteriatype" TYPE="int" LENGTH="20" NOTNULL="false" SEQUENCE="false" COMMENT="The criteria type we are aggregating, or NULL if complete course aggregation" PREVIOUS="course" NEXT="method"/>
+        <FIELD NAME="criteriatype" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The criteria type we are aggregating, or NULL if complete course aggregation" PREVIOUS="course" NEXT="method"/>
         <FIELD NAME="method" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="1 = all, 2 = any, 3 = fraction, 4 = unit" PREVIOUS="criteriatype" NEXT="value"/>
         <FIELD NAME="value" TYPE="number" LENGTH="10" NOTNULL="false" SEQUENCE="false" DECIMALS="5" COMMENT="NULL = all/any, 0..1 for method 'fraction', &gt; 0 for method 'unit'" PREVIOUS="method"/>
       </FIELDS>
@@ -157,7 +157,7 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="course"/>
         <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="criteriatype"/>
-        <FIELD NAME="criteriatype" TYPE="int" LENGTH="20" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Type of criteria" PREVIOUS="course" NEXT="module"/>
+        <FIELD NAME="criteriatype" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Type of criteria" PREVIOUS="course" NEXT="module"/>
         <FIELD NAME="module" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false" COMMENT="Type of module (if using module criteria type)" PREVIOUS="criteriatype" NEXT="moduleinstance"/>
         <FIELD NAME="moduleinstance" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Module instance id (if using module criteria type)" PREVIOUS="module" NEXT="courseinstance"/>
         <FIELD NAME="courseinstance" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Course instance id (if using course criteria type)" PREVIOUS="moduleinstance" NEXT="enrolperiod"/>
@@ -2598,7 +2598,7 @@
         <FIELD NAME="externalserviceid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="userid" NEXT="sid"/>
         <FIELD NAME="sid" TYPE="char" LENGTH="128" NOTNULL="false" SEQUENCE="false" COMMENT="link to browser or emulated session" PREVIOUS="externalserviceid" NEXT="contextid"/>
         <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="context id where in token valid" PREVIOUS="sid" NEXT="creatorid"/>
-        <FIELD NAME="creatorid" TYPE="int" LENGTH="20" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="user id of the token creator (useful to know when the administrator created a token and so display the token to a specific administrator)" PREVIOUS="contextid" NEXT="iprestriction"/>
+        <FIELD NAME="creatorid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="user id of the token creator (useful to know when the administrator created a token and so display the token to a specific administrator)" PREVIOUS="contextid" NEXT="iprestriction"/>
         <FIELD NAME="iprestriction" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="ip restriction" PREVIOUS="creatorid" NEXT="validuntil"/>
         <FIELD NAME="validuntil" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="timestampt - valid until data" PREVIOUS="iprestriction" NEXT="timecreated"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="created timestamp" PREVIOUS="validuntil" NEXT="lastaccess"/>
