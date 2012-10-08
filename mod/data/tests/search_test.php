@@ -71,6 +71,11 @@ class data_advanced_search_sql_test extends advanced_testcase {
     public $datarecordcount = 100;
 
     /**
+     * @var int $groupdatarecordcount  The number of records in the database in groups 0 and 1.
+     */
+    public $groupdatarecordcount = 75;
+
+    /**
      * @var array $datarecordset   Expected record IDs.
      */
     public $datarecordset = array('0' => '6');
@@ -79,6 +84,11 @@ class data_advanced_search_sql_test extends advanced_testcase {
      * @var array $finalrecord   Final record for comparison with test four.
      */
     public $finalrecord = array();
+
+    /**
+     * @var int $approvedatarecordcount  The number of approved records in the database.
+     */
+    public $approvedatarecordcount = 89;
 
     /**
      * Set up function. In this instance we are setting up database
@@ -169,6 +179,13 @@ class data_advanced_search_sql_test extends advanced_testcase {
      * Test 4: data_get_advanced_search_sql provides an array which contains an sql string to be used for displaying records
      * to the user when they use the advanced search criteria and the parameters that go with the sql statement. This test
      * takes that information and does a search on the database, returning a record.
+     *
+     * Test 5: Returning to data_get_all_recordids(). Here we are ensuring that the total amount of record ids is reduced to
+     * match the group conditions that are provided. There are 25 entries which relate to group 2. They are removed
+     * from the total so we should only have 75 records total.
+     *
+     * Test 6: data_get_all_recordids() again. This time we are testing approved database records. We only want to
+     * display the records that have been approved. In this record set we have 89 approved records.
      */
     function test_advanced_search_sql_section() {
         global $DB;
@@ -193,5 +210,16 @@ class data_advanced_search_sql_test extends advanced_testcase {
         $allparams = array_merge($html['params'], array('dataid' => $this->recorddata->id));
         $records = $DB->get_records_sql($html['sql'], $allparams);
         $this->assertEquals($records, $this->finalrecord);
+
+        // Test 5
+        $groupsql = " AND (r.groupid = :currentgroup OR r.groupid = 0)";
+        $params = array('currentgroup' => 1);
+        $recordids = data_get_all_recordids($this->recorddata->id, $groupsql, $params);
+        $this->assertEquals($this->groupdatarecordcount, count($recordids));
+
+        // Test 6
+        $approvesql = ' AND r.approved=1 ';
+        $recordids = data_get_all_recordids($this->recorddata->id, $approvesql, $params);
+        $this->assertEquals($this->approvedatarecordcount, count($recordids));
     }
 }
