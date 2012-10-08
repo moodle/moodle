@@ -2691,27 +2691,37 @@ function add_course_module($mod) {
 }
 
 /**
- * Returns course section - creates new if does not exist yet
+ * Creates missing course section(s) and rebuilds course cache
  *
- * @param int $section relative section number (field course_sections.section)
- * @param int $courseid
- * @return stdClass record from table {course_sections}
+ * @param stdClass $course course object
+ * @param int|array $sections list of relative section numbers to create
+ * @return bool if there were any sections created
  */
-function get_course_section($section, $courseid) {
+function course_create_sections_if_missing(&$course, $sections) {
     global $DB;
-
-    if ($cw = $DB->get_record("course_sections", array("section"=>$section, "course"=>$courseid))) {
-        return $cw;
+    if (!is_array($sections)) {
+        $sections = array($sections);
     }
-    $cw = new stdClass();
-    $cw->course   = $courseid;
-    $cw->section  = $section;
-    $cw->summary  = "";
-    $cw->summaryformat = FORMAT_HTML;
-    $cw->sequence = "";
-    $id = $DB->insert_record("course_sections", $cw);
-    rebuild_course_cache($courseid, true);
-    return $DB->get_record("course_sections", array("id"=>$id));
+    $existing = array_keys(get_fast_modinfo($course)->get_section_info_all());
+    $coursechanged = false;
+    foreach ($sections as $sectionnum) {
+        if (!in_array($sectionnum, $existing)) {
+            $cw = new stdClass();
+            $cw->course   = $course->id;
+            $cw->section  = $sectionnum;
+            $cw->summary  = '';
+            $cw->summaryformat = FORMAT_HTML;
+            $cw->sequence = '';
+            $id = $DB->insert_record("course_sections", $cw);
+            $coursechanged = true;
+        }
+    }
+    if ($coursechanged) {
+        rebuild_course_cache($course->id, true);
+        $course->modinfo = null;
+        $course->sectioncache = null;
+    }
+    return $coursechanged;
 }
 
 /**
@@ -2742,7 +2752,8 @@ function course_add_cm_to_section($courseorid, $modid, $sectionnum, $beforemod =
             $course = $DB->get_record('course', array('id' => $courseorid), '*', MUST_EXIST);
         }
     }
-    $section = get_course_section($sectionnum, $courseid);
+    course_create_sections_if_missing($course, $sectionnum);
+    $section = get_fast_modinfo($course)->get_section_info($sectionnum);
     $modarray = explode(",", trim($section->sequence));
     if (empty($modarray)) {
         $newsequence = "$modid";
@@ -3745,11 +3756,8 @@ function create_course($data, $editoroptions = NULL) {
     // Setup the blocks
     blocks_add_default_course_blocks($course);
 
-    $section = new stdClass();
-    $section->course        = $course->id;   // Create a default section.
-    $section->section       = 0;
-    $section->summaryformat = FORMAT_HTML;
-    $DB->insert_record('course_sections', $section);
+    // Create a default section.
+    course_create_sections_if_missing($course, 0);
 
     fix_course_sortorder();
 

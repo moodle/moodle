@@ -59,7 +59,8 @@ if (!empty($add)) {
     $context = context_course::instance($course->id);
     require_capability('moodle/course:manageactivities', $context);
 
-    $cw = get_course_section($section, $course->id);
+    course_create_sections_if_missing($course, $section);
+    $cw = get_fast_modinfo($course)->get_section_info($section);
 
     if (!course_allowed_module($course, $module->name)) {
         print_error('moduledisable');

@@ -434,11 +434,8 @@ function process_group_tag($tagcontents) {
                     $course = $DB->get_record('course', array('id' => $courseid));
                     blocks_add_default_course_blocks($course);
 
-                    $section = new stdClass();
-                    $section->course = $course->id;   // Create a default section.
-                    $section->section = 0;
-                    $section->summaryformat = FORMAT_HTML;
-                    $section->id = $DB->insert_record("course_sections", $section);
+                    // Create default 0-section
+                    course_create_sections_if_missing($course, 0);
 
                     add_to_log(SITEID, "course", "new", "view.php?id=$course->id", "$course->fullname (ID $course->id)");
 

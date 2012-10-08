@@ -109,8 +109,8 @@
 
     } else {
         if ($editing) {
-            // make sure section with number 1 exists, this function will create section
-            get_course_section(1, $SITE->id);
+            // make sure section with number 1 exists
+            course_create_sections_if_missing($SITE, 1);
             // re-request modinfo in case section was created
             $modinfo = get_fast_modinfo($SITE);
         }

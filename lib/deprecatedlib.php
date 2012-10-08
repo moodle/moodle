@@ -3013,3 +3013,37 @@ function get_all_mods($courseid, &$mods, &$modnames, &$modnamesplural, &$modname
     $mods = $modinfo->get_cms();
     $modnamesused = $modinfo->get_used_module_names();
 }
+
+/**
+ * Returns course section - creates new if does not exist yet
+ *
+ * This function is deprecated. To create a course section call:
+ * course_create_sections_if_missing($course, $sections);
+ * to get the section call:
+ * get_fast_modinfo($course)->get_section_info($sectionnum);
+ *
+ * @see course_create_sections_if_missing()
+ * @see get_fast_modinfo()
+ * @deprecated since 2.4
+ *
+ * @param int $section relative section number (field course_sections.section)
+ * @param int $courseid
+ * @return stdClass record from table {course_sections}
+ */
+function get_course_section($section, $courseid) {
+    global $DB;
+    debugging('Function get_course_section() is deprecated. Please use course_create_sections_if_missing() and get_fast_modinfo() instead.', DEBUG_DEVELOPER);
+
+    if ($cw = $DB->get_record("course_sections", array("section"=>$section, "course"=>$courseid))) {
+        return $cw;
+    }
+    $cw = new stdClass();
+    $cw->course   = $courseid;
+    $cw->section  = $section;
+    $cw->summary  = "";
+    $cw->summaryformat = FORMAT_HTML;
+    $cw->sequence = "";
+    $id = $DB->insert_record("course_sections", $cw);
+    rebuild_course_cache($courseid, true);
+    return $DB->get_record("course_sections", array("id"=>$id));
+}

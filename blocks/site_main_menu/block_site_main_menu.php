@@ -61,8 +61,9 @@ class block_site_main_menu extends block_list {
 
 /// slow & hacky editing mode
         $ismoving = ismoving($course->id);
-        $section  = get_course_section(0, $course->id);
+        course_create_sections_if_missing($course, 0);
         $modinfo = get_fast_modinfo($course);
+        $section = $modinfo->get_section_info(0);
 
         $groupbuttons = $course->groupmode;
         $groupbuttonslink = (!$course->groupmodeforce);
