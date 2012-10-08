@@ -470,7 +470,7 @@ class core_admin_renderer extends plugin_renderer_base {
         $copyrighttext = '<a href="http://moodle.org/">Moodle</a> '.
                          '<a href="http://docs.moodle.org/dev/Releases" title="'.$CFG->version.'">'.$CFG->release.'</a><br />'.
                          'Copyright &copy; 1999 onwards, Martin Dougiamas<br />'.
-                         'and <a href="http://docs.moodle.org/dev/Credits">many other contributors</a>.<br />'.
+                         'and <a href="http://moodle.org/dev">many other contributors</a>.<br />'.
                          '<a href="http://docs.moodle.org/dev/License">GNU Public License</a>';
         //////////////////////////////////////////////////////////////////////////////////////////////////
 
