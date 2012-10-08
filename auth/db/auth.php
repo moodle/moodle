@@ -46,12 +46,22 @@ class auth_plugin_db extends auth_plugin_base {
         $extusername = textlib::convert($username, 'utf-8', $this->config->extencoding);
         $extpassword = textlib::convert($password, 'utf-8', $this->config->extencoding);
 
-        $authdb = $this->db_init();
-
         if ($this->is_internal()) {
             // lookup username externally, but resolve
             // password locally -- to support backend that
             // don't track passwords
+
+            if (isset($this->config->removeuser) and $this->config->removeuser == AUTH_REMOVEUSER_KEEP) {
+                // No need to connect to external database in this case because users are never removed and we verify password locally.
+                if ($user = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>$CFG->mnet_localhost_id, 'auth'=>$this->authtype))) {
+                    return validate_internal_user_password($user, $password);
+                } else {
+                    return false;
+                }
+            }
+
+            $authdb = $this->db_init();
+
             $rs = $authdb->Execute("SELECT * FROM {$this->config->table}
                                      WHERE {$this->config->fielduser} = '".$this->ext_addslashes($extusername)."' ");
             if (!$rs) {
@@ -77,6 +87,8 @@ class auth_plugin_db extends auth_plugin_base {
 
         } else {
             // normal case: use external db for both usernames and passwords
+
+            $authdb = $this->db_init();
 
             if ($this->config->passtype === 'md5') {   // Re-format password accordingly
                 $extpassword = md5($extpassword);
