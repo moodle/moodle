@@ -488,7 +488,7 @@ class tool_customlang_translator implements renderable {
         list($insql, $inparams) = $DB->get_in_or_equal($filter->component, SQL_PARAMS_NAMED);
 
         $csql = "SELECT COUNT(*)";
-        $fsql = "SELECT s.id, s.*, c.name AS component";
+        $fsql = "SELECT s.*, c.name AS component";
         $sql  = "  FROM {tool_customlang_components} c
                    JOIN {tool_customlang} s ON s.componentid = c.id
                   WHERE s.lang = :lang
