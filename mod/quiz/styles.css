@@ -115,6 +115,7 @@ table.quizattemptsummary .noreviewmessage {color: gray;}
 #page-mod-quiz-view .generalbox#feedback {width:70%;margin-left:auto;margin-right:auto;padding-bottom:15px;}
 #page-mod-quiz-view .generalbox#feedback h2 {margin: 0;}
 #page-mod-quiz-view .generalbox#feedback h3 {text-align: left;}
+#page-mod-quiz-view.dir-rtl .generalbox#feedback h3 {text-align: center;}
 #page-mod-quiz-view .generalbox#feedback .overriddennotice {text-align: center;font-size: 0.7em;}
 .quizstartbuttondiv.quizsecuremoderequired input { display: none; }
 .jsenabled .quizstartbuttondiv.quizsecuremoderequired input { display: inline; }
