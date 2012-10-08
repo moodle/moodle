@@ -7584,7 +7584,7 @@ class admin_setting_managewebservicetokens extends admin_setting {
                         array(array('id' => $token->userid)), $token->serviceid);
 
                 if (!is_siteadmin($token->userid) and
-                        key_exists($token->userid, $usermissingcaps)) {
+                        array_key_exists($token->userid, $usermissingcaps)) {
                     $missingcapabilities = implode(', ',
                             $usermissingcaps[$token->userid]);
                     if (!empty($missingcapabilities)) {
