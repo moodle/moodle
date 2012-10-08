@@ -1244,5 +1244,21 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012092600.00);
     }
 
+    if ($oldversion < 2012100500.01) {
+        // Find all orphaned blog associations that might exist.
+        $sql = "SELECT ba.id
+                  FROM {blog_association} ba
+             LEFT JOIN {post} p
+                    ON p.id = ba.blogid
+                 WHERE p.id IS NULL";
+        $orphanedrecordids = $DB->get_records_sql($sql);
+        // Now delete these associations.
+        foreach ($orphanedrecordids as $orphanedrecord) {
+            $DB->delete_records('blog_association', array('id' => $orphanedrecord->id));
+        }
+
+        upgrade_main_savepoint(true, 2012100500.01);
+    }
+
     return true;
 }
