@@ -41,6 +41,18 @@ if (!defined('AUTH_GID_NOGROUP')) {
     define('AUTH_GID_NOGROUP', -2);
 }
 
+// Regular expressions for a valid NTLM username and domain name.
+if (!defined('AUTH_NTLM_VALID_USERNAME')) {
+    define('AUTH_NTLM_VALID_USERNAME', '[^/\\\\\\\\\[\]:;|=,+*?<>@"]+');
+}
+if (!defined('AUTH_NTLM_VALID_DOMAINNAME')) {
+    define('AUTH_NTLM_VALID_DOMAINNAME', '[^\\\\\\\\\/:*?"<>|]+');
+}
+// Default format for remote users if using NTLM SSO
+if (!defined('AUTH_NTLM_DEFAULT_FORMAT')) {
+    define('AUTH_NTLM_DEFAULT_FORMAT', '%domain%\\%username%');
+}
+
 require_once($CFG->libdir.'/authlib.php');
 require_once($CFG->libdir.'/ldaplib.php');
 
@@ -1570,8 +1582,11 @@ class auth_plugin_ldap extends auth_plugin_base {
 
             switch ($this->config->ntlmsso_type) {
                 case 'ntlm':
-                    // Format is DOMAIN\username
-                    $username = substr(strrchr($username, '\\'), 1);
+                    // The format is now configurable, so try to extract the username
+                    $username = $this->get_ntlm_remote_user($username);
+                    if (empty($username)) {
+                        return false;
+                    }
                     break;
                 case 'kerberos':
                     // Format is username@DOMAIN
@@ -1779,6 +1794,9 @@ class auth_plugin_ldap extends auth_plugin_base {
         if (!isset($config->ntlmsso_type)) {
             $config->ntlmsso_type = 'ntlm';
         }
+        if (!isset($config->ntlmsso_remoteuserformat)) {
+            $config->ntlmsso_remoteuserformat = '';
+        }
 
         // Try to remove duplicates before storing the contexts (to avoid problems in sync_users()).
         $config->contexts = explode(';', $config->contexts);
@@ -1818,6 +1836,7 @@ class auth_plugin_ldap extends auth_plugin_base {
         set_config('ntlmsso_subnet', trim($config->ntlmsso_subnet), $this->pluginconfig);
         set_config('ntlmsso_ie_fastpath', (int)$config->ntlmsso_ie_fastpath, $this->pluginconfig);
         set_config('ntlmsso_type', $config->ntlmsso_type, 'auth/ldap');
+        set_config('ntlmsso_remoteuserformat', trim($config->ntlmsso_remoteuserformat), 'auth/ldap');
 
         return true;
     }
@@ -2016,6 +2035,62 @@ class auth_plugin_ldap extends auth_plugin_base {
 
         return ldap_find_userdn($ldapconnection, $extusername, $ldap_contexts, $this->config->objectclass,
                                 $this->config->user_attribute, $this->config->search_sub);
+    }
+
+
+    /**
+     * A chance to validate form data, and last chance to do stuff
+     * before it is inserted in config_plugin
+     *
+     * @param object object with submitted configuration settings (without system magic quotes)
+     * @param array $err array of error messages (passed by reference)
+     */
+    function validate_form($form, &$err) {
+        if ($form->ntlmsso_type == 'ntlm') {
+            $format = trim($form->ntlmsso_remoteuserformat);
+            if (!empty($format) && !preg_match('/%username%/i', $format)) {
+                $err['ntlmsso_remoteuserformat'] = get_string('auth_ntlmsso_missing_username', 'auth_ldap');
+            }
+        }
+    }
+
+
+    /**
+     * When using NTLM SSO, the format of the remote username we get in
+     * $_SERVER['REMOTE_USER'] may vary, depending on where from and how the web
+     * server gets the data. So we let the admin configure the format using two
+     * place holders (%domain% and %username%). This function tries to extract
+     * the username (stripping the domain part and any separators if they are
+     * present) from the value present in $_SERVER['REMOTE_USER'], using the
+     * configured format.
+     *
+     * @param string $remoteuser The value from $_SERVER['REMOTE_USER'] (converted to UTF-8)
+     *
+     * @return string The remote username (without domain part or
+     *                separators). Empty string if we can't extract the username.
+     */
+    protected function get_ntlm_remote_user($remoteuser) {
+        if (empty($this->config->ntlmsso_remoteuserformat)) {
+            $format = AUTH_NTLM_DEFAULT_FORMAT;
+        } else {
+            $format = $this->config->ntlmsso_remoteuserformat;
+        }
+
+        $format = preg_quote($format);
+        $formatregex = preg_replace(array('#%domain%#', '#%username%#'),
+                                    array('('.AUTH_NTLM_VALID_DOMAINNAME.')', '('.AUTH_NTLM_VALID_USERNAME.')'),
+                                    $format);
+        if (preg_match('#^'.$formatregex.'$#', $remoteuser, $matches)) {
+            $user = end($matches);
+            return $user;
+        }
+
+        /* We are unable to extract the username with the configured format. Probably
+         * the format specified is wrong, so log a warning for the admin and return
+         * an empty username.
+         */
+        error_log($this->errorlogtag.get_string ('auth_ntlmsso_maybeinvalidformat', 'auth_ldap'));
+        return '';
     }
 
 } // End of the class
