@@ -667,6 +667,12 @@ class dndupload_ajax_processor {
         $resp->commands = make_editing_buttons($mod, true, true, 0, $mod->sectionnum);
         $resp->onclick = $mod->get_on_click();
 
+        // if using groupings, then display grouping name
+        if (!empty($mod->groupingid) && has_capability('moodle/course:managegroups', $this->context)) {
+            $groupings = groups_get_all_groupings($this->course->id);
+            $resp->groupingname = format_string($groupings[$mod->groupingid]->name);        
+        }
+   
         echo $OUTPUT->header();
         echo json_encode($resp);
         die();
