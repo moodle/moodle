@@ -58,6 +58,7 @@ class quizaccess_safebrowser_testcase extends basic_testcase {
             $rule->description());
         $this->assertFalse($rule->prevent_new_attempt(0, $attempt));
         $this->assertFalse($rule->is_finished(0, $attempt));
-        $this->assertFalse($rule->time_left($attempt, 1));
+        $this->assertFalse($rule->end_time($attempt));
+        $this->assertFalse($rule->time_left_display($attempt, 0));
     }
 }

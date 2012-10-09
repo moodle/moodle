@@ -64,6 +64,7 @@ class quizaccess_numattempts_testcase extends basic_testcase {
         $this->assertTrue($rule->is_finished(666, $attempt));
 
         $this->assertFalse($rule->prevent_access());
-        $this->assertFalse($rule->time_left($attempt, 1));
+        $this->assertFalse($rule->end_time($attempt));
+        $this->assertFalse($rule->time_left_display($attempt, 0));
     }
 }

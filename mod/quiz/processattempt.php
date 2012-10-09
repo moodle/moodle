@@ -67,12 +67,17 @@ if ($page == -1) {
 // to show the student another page of the quiz. Just finish now.
 $graceperiodmin = null;
 $accessmanager = $attemptobj->get_access_manager($timenow);
-$timeleft = $accessmanager->get_time_left($attemptobj->get_attempt(), $timenow);
+$timeclose = $accessmanager->get_end_time($attemptobj->get_attempt());
+
+// Don't enforce timeclose for previews
+if ($attemptobj->is_preview()) {
+    $timeclose = false;
+}
 $toolate = false;
-if ($timeleft !== false && $timeleft < QUIZ_MIN_TIME_TO_CONTINUE) {
+if ($timeclose !== false && $timenow > $timeclose - QUIZ_MIN_TIME_TO_CONTINUE) {
     $timeup = true;
     $graceperiodmin = get_config('quiz', 'graceperiodmin');
-    if ($timeleft < -$graceperiodmin) {
+    if ($timenow > $timeclose + $graceperiodmin) {
         $toolate = true;
     }
 }
@@ -105,7 +110,7 @@ if ($timeup) {
         if (is_null($graceperiodmin)) {
             $graceperiodmin = get_config('quiz', 'graceperiodmin');
         }
-        if ($timeleft < -$attemptobj->get_quiz()->graceperiod - $graceperiodmin) {
+        if ($timenow > $timeclose + $attemptobj->get_quiz()->graceperiod + $graceperiodmin) {
             // Grace period has run out.
             $finishattempt = true;
             $becomingabandoned = true;
