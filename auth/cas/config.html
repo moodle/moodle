@@ -33,6 +33,9 @@ if (!isset ($config->certificate_check)) {
 if (!isset ($config->certificate_path)) {
     $config->certificate_path = '';
 }
+if (!isset($config->logout_return_url)) {
+    $config->logout_return_url = '';
+}
 
 // set to defaults if undefined (LDAP)
 if (!isset($config->host_url)) {
@@ -199,6 +202,16 @@ $yesno = array( get_string('no'), get_string('yes') );
     </td>
     <td>
         <?php print_string('auth_cas_certificate_path', 'auth_cas') ?>
+    </td>
+</tr>
+<tr valign="top" class="required">
+    <td align="right"><?php print_string('auth_cas_logout_return_url_key', 'auth_cas') ?>:</td>
+    <td>
+       <input name="logout_return_url" type="text" size="30" value="<?php echo $config->logout_return_url ?>" />
+       <?php if (isset($err['logout_return_url'])) { echo $OUTPUT->error_text($err['logout_return_url']); } ?>
+    </td>
+    <td>
+        <?php print_string('auth_cas_logout_return_url', 'auth_cas') ?>
     </td>
 </tr>
 <tr>
