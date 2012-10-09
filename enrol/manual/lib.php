@@ -456,7 +456,12 @@ class enrol_manual_plugin extends enrol_plugin {
     }
 
     /**
-     * Returns the user who is resposible for manual enrolments in given course
+     * Returns the user who is responsible for manual enrolments in given course.
+     *
+     * Usually it is the first editing teacher - the person with "highest authority"
+     * as defined by sort_by_roleassignment_authority() having 'enrol/manual:manage'
+     * capability.
+     *
      * @param int $courseid
      * @return stdClass user record
      */
@@ -480,7 +485,12 @@ class enrol_manual_plugin extends enrol_plugin {
     }
 
     /**
-     * Notify user about incoming expiration of their enrolment.
+     * Notify user about incoming expiration of their enrolment,
+     * it is called only if notification of enrolled users (aka students) is enabled in course.
+     *
+     * This is executed only once for each expiring enrolment right
+     * at the start of the expiration threshold.
+     *
      * @param stdClass $user
      * @param stdClass $ue
      * @param bool $verbose
@@ -537,7 +547,12 @@ class enrol_manual_plugin extends enrol_plugin {
     }
 
     /**
-     * Notify person responsible for enrolments that some user enrolments will be expired soon.
+     * Notify person responsible for enrolments that some user enrolments will be expired soon,
+     * it is called only if notification of enrollers (aka teachers) is enabled in course.
+     *
+     * This is called repeatedly every day for each course if there are any pending expiration
+     * in the expiration threshold.
+     *
      * @param int $eid
      * @param array $users
      * @param bool $verbose
