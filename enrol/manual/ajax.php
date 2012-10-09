@@ -53,9 +53,9 @@ echo $OUTPUT->header(); // send headers
 
 $manager = new course_enrolment_manager($PAGE, $course);
 
-$outcome = new stdClass;
+$outcome = new stdClass();
 $outcome->success = true;
-$outcome->response = new stdClass;
+$outcome->response = new stdClass();
 $outcome->error = '';
 
 switch ($action) {
@@ -79,6 +79,10 @@ switch ($action) {
             }
             $user->extrafields = implode(', ', $fieldvalues);
         }
+        // Chrome will display users in the order of the array keys, so we need
+        // to ensure that the results ordered array keys. Fortunately, the JavaScript
+        // does not care what the array keys are. It uses user.id where necessary.
+        $outcome->response['users'] = array_values($outcome->response['users']);
         $outcome->success = true;
         break;
     case 'enrol':
