@@ -1197,7 +1197,7 @@ class global_navigation extends navigation_node {
                 break;
             case CONTEXT_COURSECAT :
                 // This has already been loaded we just need to map the variable
-                if ($showcategories) {
+                if ($this->show_categories()) {
                     $this->load_all_categories($this->page->context->instanceid, true);
                 }
                 break;
