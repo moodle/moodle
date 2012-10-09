@@ -670,9 +670,9 @@ class dndupload_ajax_processor {
         // if using groupings, then display grouping name
         if (!empty($mod->groupingid) && has_capability('moodle/course:managegroups', $this->context)) {
             $groupings = groups_get_all_groupings($this->course->id);
-            $resp->groupingname = format_string($groupings[$mod->groupingid]->name);        
+            $resp->groupingname = format_string($groupings[$mod->groupingid]->name);
         }
-   
+
         echo $OUTPUT->header();
         echo json_encode($resp);
         die();

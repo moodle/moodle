@@ -728,13 +728,13 @@ M.course_dndupload = {
                             resel.icon.src = result.icon;
                             resel.a.href = result.link;
                             resel.namespan.innerHTML = result.name;
-                            
+
                             if (result.groupingname) {
                                 resel.groupingspan.innerHTML = '(' + result.groupingname + ')';
                             } else {
                                 resel.div.removeChild(resel.groupingspan);
                             }
-                            
+
                             resel.div.removeChild(resel.progressouter);
                             resel.li.id = result.elementid;
                             resel.div.innerHTML += result.commands;
@@ -915,13 +915,13 @@ M.course_dndupload = {
                             resel.icon.src = result.icon;
                             resel.a.href = result.link;
                             resel.namespan.innerHTML = result.name;
-                            
+
                             if (result.groupingname) {
                                 resel.groupingspan.innerHTML = '(' + result.groupingname + ')';
                             } else {
                                 resel.div.removeChild(resel.groupingspan);
-                            }                            
-                            
+                            }
+
                             resel.div.removeChild(resel.progressouter);
                             resel.li.id = result.elementid;
                             resel.div.innerHTML += result.commands;
