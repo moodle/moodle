@@ -55,12 +55,13 @@ class data_field_date extends data_field_base {
 
     //Enable the following three functions once core API issues have been addressed.
     function display_search_field($value=0) {
-        $selectors = html_writer::select_time('days', 'f_'.$this->field->id.'_d', $value)
-           . html_writer::select_time('months', 'f_'.$this->field->id.'_m', $value)
-           . html_writer::select_time('years', 'f_'.$this->field->id.'_y', $value);
-       return $selectors;
+        $selectors = html_writer::select_time('days', 'f_'.$this->field->id.'_d', $value['timestamp'])
+           . html_writer::select_time('months', 'f_'.$this->field->id.'_m', $value['timestamp'])
+           . html_writer::select_time('years', 'f_'.$this->field->id.'_y', $value['timestamp']);
+        $datecheck = html_writer::checkbox('f_'.$this->field->id.'_z', 1, $value['usedate']);
+        $str = $selectors . ' ' . $datecheck . ' ' . get_string('usedate', 'data');
 
-        //return print_date_selector('f_'.$this->field->id.'_d', 'f_'.$this->field->id.'_m', 'f_'.$this->field->id.'_y', $value, true);
+        return $str;
     }
 
     function generate_sql($tablealias, $value) {
@@ -70,21 +71,22 @@ class data_field_date extends data_field_base {
         $i++;
         $name = "df_date_$i";
         $varcharcontent = $DB->sql_compare_text("{$tablealias}.content");
-        return array(" ({$tablealias}.fieldid = {$this->field->id} AND $varcharcontent = :$name) ", array($name=>$value));
+        return array(" ({$tablealias}.fieldid = {$this->field->id} AND $varcharcontent = :$name) ", array($name => $value['timestamp']));
     }
 
     function parse_search_field() {
-
         $day   = optional_param('f_'.$this->field->id.'_d', 0, PARAM_INT);
         $month = optional_param('f_'.$this->field->id.'_m', 0, PARAM_INT);
         $year  = optional_param('f_'.$this->field->id.'_y', 0, PARAM_INT);
-        if (!empty($day) && !empty($month) && !empty($year)) {
-            return make_timestamp($year, $month, $day, 12, 0, 0, 0, false);
-        }
-        else {
+        $usedate = optional_param('f_'.$this->field->id.'_z', 0, PARAM_INT);
+        $data = array();
+        if (!empty($day) && !empty($month) && !empty($year) && $usedate == 1) {
+            $data['timestamp'] = make_timestamp($year, $month, $day, 12, 0, 0, 0, false);
+            $data['usedate'] = 1;
+            return $data;
+        } else {
             return 0;
         }
-
     }
 
     function update_content($recordid, $value, $name='') {
