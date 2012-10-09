@@ -138,6 +138,14 @@ function quiz_update_instance($quiz, $mform) {
         quiz_update_grades($quiz);
     }
 
+    $updateattempts = $oldquiz->timelimit != $quiz->timelimit
+                   || $oldquiz->timeclose != $quiz->timeclose
+                   || $oldquiz->graceperiod != $quiz->graceperiod;
+    if ($updateattempts) {
+        require_once($CFG->dirroot . '/mod/quiz/locallib.php');
+        quiz_update_open_attempts(array('quizid'=>$quiz->id));
+    }
+
     // Delete any previous preview attempts.
     quiz_delete_previews($quiz);
 
@@ -284,13 +292,25 @@ function quiz_update_effective_access($quiz, $userid) {
             $override->timeopen = min($opens);
         }
         if (is_null($override->timeclose) && count($closes)) {
-            $override->timeclose = max($closes);
+            if (in_array(0, $closes)) {
+                $override->timeclose = 0;
+            } else {
+                $override->timeclose = max($closes);
+            }
         }
         if (is_null($override->timelimit) && count($limits)) {
-            $override->timelimit = max($limits);
+            if (in_array(0, $limits)) {
+                $override->timelimit = 0;
+            } else {
+                $override->timelimit = max($limits);
+            }
         }
         if (is_null($override->attempts) && count($attempts)) {
-            $override->attempts = max($attempts);
+            if (in_array(0, $attempts)) {
+                $override->attempts = 0;
+            } else {
+                $override->attempts = max($attempts);
+            }
         }
         if (is_null($override->password) && count($passwords)) {
             $override->password = array_shift($passwords);
@@ -446,32 +466,20 @@ function quiz_user_complete($course, $user, $mod, $quiz) {
  */
 function quiz_cron() {
     global $CFG;
+
+    require_once($CFG->dirroot . '/mod/quiz/cronlib.php');
     mtrace('');
 
-    // Since the quiz specifies $module->cron = 60, so that the subplugins can
-    // have frequent cron if they need it, we now need to do our own scheduling.
-    $quizconfig = get_config('quiz');
-    if (!isset($quizconfig->overduelastrun)) {
-        $quizconfig->overduelastrun = 0;
-        $quizconfig->overduedoneto  = 0;
-    }
-
     $timenow = time();
-    if ($timenow > $quizconfig->overduelastrun + 3600) {
-        require_once($CFG->dirroot . '/mod/quiz/cronlib.php');
-        $overduehander = new mod_quiz_overdue_attempt_updater();
+    $overduehander = new mod_quiz_overdue_attempt_updater();
 
-        $processto = $timenow - $quizconfig->graceperiodmin;
+    $processto = $timenow - get_config('quiz', 'graceperiodmin');
 
-        mtrace('  Looking for quiz overdue quiz attempts between ' .
-                userdate($quizconfig->overduedoneto) . ' and ' . userdate($processto) . '...');
+    mtrace('  Looking for quiz overdue quiz attempts...');
 
-        list($count, $quizcount) = $overduehander->update_overdue_attempts($timenow, $quizconfig->overduedoneto, $processto);
-        set_config('overduelastrun', $timenow, 'quiz');
-        set_config('overduedoneto', $processto, 'quiz');
+    list($count, $quizcount) = $overduehander->update_overdue_attempts($timenow, $processto);
 
-        mtrace('  Considered ' . $count . ' attempts in ' . $quizcount . ' quizzes.');
-    }
+    mtrace('  Considered ' . $count . ' attempts in ' . $quizcount . ' quizzes.');
 
     // Run cron for our sub-plugin types.
     cron_execute_plugin_type('quiz', 'quiz reports');

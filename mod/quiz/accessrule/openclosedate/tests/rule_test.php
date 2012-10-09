@@ -55,15 +55,17 @@ class quizaccess_openclosedate_testcase extends basic_testcase {
         $this->assertFalse($rule->prevent_access());
         $this->assertFalse($rule->prevent_new_attempt(0, $attempt));
         $this->assertFalse($rule->is_finished(0, $attempt));
-        $this->assertFalse($rule->time_left($attempt, 10000));
-        $this->assertFalse($rule->time_left($attempt, 0));
+        $this->assertFalse($rule->end_time($attempt));
+        $this->assertFalse($rule->time_left_display($attempt, 10000));
+        $this->assertFalse($rule->time_left_display($attempt, 0));
 
         $rule = new quizaccess_openclosedate($quizobj, 0);
         $this->assertEmpty($rule->description());
         $this->assertFalse($rule->prevent_access());
         $this->assertFalse($rule->prevent_new_attempt(0, $attempt));
         $this->assertFalse($rule->is_finished(0, $attempt));
-        $this->assertFalse($rule->time_left($attempt, 0));
+        $this->assertFalse($rule->end_time($attempt));
+        $this->assertFalse($rule->time_left_display($attempt, 0));
     }
 
     public function test_start_date() {
@@ -85,7 +87,8 @@ class quizaccess_openclosedate_testcase extends basic_testcase {
             get_string('notavailable', 'quizaccess_openclosedate'));
         $this->assertFalse($rule->prevent_new_attempt(0, $attempt));
         $this->assertFalse($rule->is_finished(0, $attempt));
-        $this->assertFalse($rule->time_left($attempt, 0));
+        $this->assertFalse($rule->end_time($attempt));
+        $this->assertFalse($rule->time_left_display($attempt, 0));
 
         $rule = new quizaccess_openclosedate($quizobj, 10000);
         $this->assertEquals($rule->description(),
@@ -93,7 +96,8 @@ class quizaccess_openclosedate_testcase extends basic_testcase {
         $this->assertFalse($rule->prevent_access());
         $this->assertFalse($rule->prevent_new_attempt(0, $attempt));
         $this->assertFalse($rule->is_finished(0, $attempt));
-        $this->assertFalse($rule->time_left($attempt, 0));
+        $this->assertFalse($rule->end_time($attempt));
+        $this->assertFalse($rule->time_left_display($attempt, 0));
     }
 
     public function test_close_date() {
@@ -114,10 +118,12 @@ class quizaccess_openclosedate_testcase extends basic_testcase {
         $this->assertFalse($rule->prevent_access());
         $this->assertFalse($rule->prevent_new_attempt(0, $attempt));
         $this->assertFalse($rule->is_finished(0, $attempt));
-        $this->assertFalse($rule->time_left($attempt, 20000 - QUIZ_SHOW_TIME_BEFORE_DEADLINE));
-        $this->assertEquals($rule->time_left($attempt, 19900), 100);
-        $this->assertEquals($rule->time_left($attempt, 20000), 0);
-        $this->assertEquals($rule->time_left($attempt, 20100), -100);
+
+        $this->assertEquals($rule->end_time($attempt), 20000);
+        $this->assertFalse($rule->time_left_display($attempt, 20000 - QUIZ_SHOW_TIME_BEFORE_DEADLINE));
+        $this->assertEquals($rule->time_left_display($attempt, 19900), 100);
+        $this->assertEquals($rule->time_left_display($attempt, 20000), 0);
+        $this->assertEquals($rule->time_left_display($attempt, 20100), -100);
 
         $rule = new quizaccess_openclosedate($quizobj, 20001);
         $this->assertEquals($rule->description(),
@@ -126,10 +132,11 @@ class quizaccess_openclosedate_testcase extends basic_testcase {
             get_string('notavailable', 'quizaccess_openclosedate'));
         $this->assertFalse($rule->prevent_new_attempt(0, $attempt));
         $this->assertTrue($rule->is_finished(0, $attempt));
-        $this->assertFalse($rule->time_left($attempt, 20000 - QUIZ_SHOW_TIME_BEFORE_DEADLINE));
-        $this->assertEquals($rule->time_left($attempt, 19900), 100);
-        $this->assertEquals($rule->time_left($attempt, 20000), 0);
-        $this->assertEquals($rule->time_left($attempt, 20100), -100);
+        $this->assertEquals($rule->end_time($attempt), 20000);
+        $this->assertFalse($rule->time_left_display($attempt, 20000 - QUIZ_SHOW_TIME_BEFORE_DEADLINE));
+        $this->assertEquals($rule->time_left_display($attempt, 19900), 100);
+        $this->assertEquals($rule->time_left_display($attempt, 20000), 0);
+        $this->assertEquals($rule->time_left_display($attempt, 20100), -100);
     }
 
     public function test_both_dates() {
@@ -176,10 +183,11 @@ class quizaccess_openclosedate_testcase extends basic_testcase {
         $this->assertFalse($rule->prevent_new_attempt(0, $attempt));
         $this->assertTrue($rule->is_finished(0, $attempt));
 
-        $this->assertFalse($rule->time_left($attempt, 20000 - QUIZ_SHOW_TIME_BEFORE_DEADLINE));
-        $this->assertEquals($rule->time_left($attempt, 19900), 100);
-        $this->assertEquals($rule->time_left($attempt, 20000), 0);
-        $this->assertEquals($rule->time_left($attempt, 20100), -100);
+        $this->assertEquals($rule->end_time($attempt), 20000);
+        $this->assertFalse($rule->time_left_display($attempt, 20000 - QUIZ_SHOW_TIME_BEFORE_DEADLINE));
+        $this->assertEquals($rule->time_left_display($attempt, 19900), 100);
+        $this->assertEquals($rule->time_left_display($attempt, 20000), 0);
+        $this->assertEquals($rule->time_left_display($attempt, 20100), -100);
     }
 
     public function test_close_date_with_overdue() {

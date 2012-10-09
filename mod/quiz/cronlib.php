@@ -40,15 +40,13 @@ class mod_quiz_overdue_attempt_updater {
     /**
      * Do the processing required.
      * @param int $timenow the time to consider as 'now' during the processing.
-     * @param int $processfrom the value of $processupto the last time update_overdue_attempts was
-     *      called called and completed successfully.
-     * @param int $processto only process attempt modifed longer ago than this.
+     * @param int $processto only process attempt with timecheckstate longer ago than this.
      * @return array with two elements, the number of attempt considered, and how many different quizzes that was.
      */
-    public function update_overdue_attempts($timenow, $processfrom, $processto) {
+    public function update_overdue_attempts($timenow, $processto) {
         global $DB;
 
-        $attemptstoprocess = $this->get_list_of_overdue_attempts($processfrom, $processto);
+        $attemptstoprocess = $this->get_list_of_overdue_attempts($processto);
 
         $course = null;
         $quiz = null;
@@ -97,61 +95,27 @@ class mod_quiz_overdue_attempt_updater {
      * @return moodle_recordset of quiz_attempts that need to be processed because time has
      *     passed. The array is sorted by courseid then quizid.
      */
-    protected function get_list_of_overdue_attempts($processfrom, $processto) {
+    public function get_list_of_overdue_attempts($processto) {
         global $DB;
+
+
+        // SQL to compute timeclose and timelimit for each attempt:
+        $quizausersql = quiz_get_attempt_usertime_sql();
 
         // This query should have all the quiz_attempts columns.
         return $DB->get_recordset_sql("
          SELECT quiza.*,
-                group_by_results.usertimeclose,
-                group_by_results.usertimelimit
+                quizauser.usertimeclose,
+                quizauser.usertimelimit
 
-           FROM (
+           FROM {quiz_attempts} quiza
+           JOIN {quiz} quiz ON quiz.id = quiza.quiz
+           JOIN ( $quizausersql ) quizauser ON quizauser.id = quiza.id
 
-         SELECT iquiza.id AS attemptid,
-                quiz.course,
-                quiz.graceperiod,
-                COALESCE(quo.timeclose, MAX(qgo.timeclose), quiz.timeclose) AS usertimeclose,
-                COALESCE(quo.timelimit, MAX(qgo.timelimit), quiz.timelimit) AS usertimelimit
+          WHERE quiza.state IN ('inprogress', 'overdue')
+            AND quiza.timecheckstate <= :processto
+       ORDER BY quiz.course, quiza.quiz",
 
-           FROM {quiz_attempts} iquiza
-           JOIN {quiz} quiz ON quiz.id = iquiza.quiz
-      LEFT JOIN {quiz_overrides} quo ON quo.quiz = quiz.id AND quo.userid = iquiza.userid
-      LEFT JOIN {groups_members} gm ON gm.userid = iquiza.userid
-      LEFT JOIN {quiz_overrides} qgo ON qgo.quiz = quiz.id AND qgo.groupid = gm.groupid
-
-          WHERE iquiza.state IN ('inprogress', 'overdue')
-            AND iquiza.timemodified >= :processfrom
-            AND iquiza.timemodified < :processto
-
-       GROUP BY iquiza.id,
-                quiz.course,
-                quiz.timeclose,
-                quiz.timelimit,
-                quiz.graceperiod,
-                quo.timeclose,
-                quo.timelimit
-        ) group_by_results
-           JOIN {quiz_attempts} quiza ON quiza.id = group_by_results.attemptid
-
-          WHERE (
-                state = 'inprogress' AND (
-                    (usertimeclose > 0 AND :timenow1 > usertimeclose) OR
-                    (usertimelimit > 0 AND :timenow2 > quiza.timestart + usertimelimit)
-                )
-            )
-          OR
-            (
-                state = 'overdue' AND (
-                    (usertimeclose > 0 AND :timenow3 > graceperiod + usertimeclose) OR
-                    (usertimelimit > 0 AND :timenow4 > graceperiod + quiza.timestart + usertimelimit)
-                )
-            )
-
-       ORDER BY course, quiz",
-
-                array('processfrom' => $processfrom, 'processto' => $processto,
-                    'timenow1' => $processto, 'timenow2' => $processto,
-                    'timenow3' => $processto, 'timenow4' => $processto));
+                array('processto' => $processto));
     }
 }

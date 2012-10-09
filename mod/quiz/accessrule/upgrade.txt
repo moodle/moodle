@@ -13,3 +13,7 @@ Overview of this plugin type at http://docs.moodle.org/dev/Quiz_access_rules
 * This plugin type now supports cron in the standard way. If required, Create a
   lib.php file containing
 function quizaccess_mypluginname_cron() {};
+
+=== 2.4 ===
+
+* Replaced time_left() with new time_left_display() and end_time() functions.
