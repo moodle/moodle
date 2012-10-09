@@ -227,12 +227,13 @@ class qtype_multianswer_textfield_renderer extends qtype_multianswer_subq_render
                         $qa, 'question', 'answerfeedback', $matchinganswer->id),
                 s($correctanswer->answer), $options);
 
-        $output = '';
+        $output = html_writer::start_tag('span', array('class' => 'subquestion'));
         $output .= html_writer::tag('label', get_string('answer'),
                 array('class' => 'subq accesshide', 'for' => $inputattributes['id']));
         $output .= html_writer::empty_tag('input', $inputattributes);
         $output .= $feedbackimg;
         $output .= $feedbackpopup;
+        $output .= html_writer::end_tag('span');
 
         return $output;
     }
@@ -294,12 +295,13 @@ class qtype_multianswer_multichoice_inline_renderer
                 $subq->format_text($rightanswer->answer, $rightanswer->answerformat,
                         $qa, 'question', 'answer', $rightanswer->id), $options);
 
-        $output = '';
+        $output = html_writer::start_tag('span', array('class' => 'subquestion'));
         $output .= html_writer::tag('label', get_string('answer'),
                 array('class' => 'subq accesshide', 'for' => $inputattributes['id']));
         $output .= $select;
         $output .= $feedbackimg;
         $output .= $feedbackpopup;
+        $output .= html_writer::end_tag('span');
 
         return $output;
     }
