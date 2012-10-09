@@ -486,6 +486,7 @@ body.tag .managelink {padding: 5px;}
 #helppopupbox .yui3-widget-bd {margin:0 1em 1em 1em;border-top:1px solid #eee;}
 #helppopupbox .helpheading {font-size: 1em;}
 #helppopupbox .spinner {margin:1em;}
+.dir-rtl #helppopupbox .yui3-widget-hd {float:left;margin:3px 0 0 3px;}
 
 /**
  * Custom menu
