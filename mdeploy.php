@@ -572,6 +572,10 @@ class output_http_provider extends output_provider {
  */
 class worker extends singleton_pattern {
 
+    const EXIT_OK                       = 0;    // Success exit code.
+    const EXIT_HELP                     = 1;    // Explicit help required.
+    const EXIT_UNKNOWN_ACTION           = 127;  // Neither -i nor -u provided.
+
     /** @var input_manager */
     protected $input = null;
 
@@ -583,21 +587,34 @@ class worker extends singleton_pattern {
      */
     public function execute() {
 
-        if ($this->input->get_option('help')) {
-            $this->output->help();
-            exit(1);
-        }
-
         // Authorize access. None in CLI. Passphrase in HTTP.
         $this->authorize();
 
-        // Fetch the ZIP file into a temporary location.
+        // Asking for help in the CLI mode.
+        if ($this->input->get_option('help')) {
+            $this->output->help();
+            $this->done(self::EXIT_HELP);
+        }
 
-        // If the target location exists, backup it.
+        if ($this->input->get_option('upgrade')) {
+            // Fetch the ZIP file into a temporary location.
 
-        // Unzip the ZIP file into the target location.
+            // Compare MD5 checksum of the ZIP file.
 
-        // Redirect to the given URL (in HTTP) or exit (in CLI).
+            // If the target location exists, backup it.
+
+            // Unzip the ZIP file into the target location.
+
+            // Redirect to the given URL (in HTTP) or exit (in CLI).
+            $this->done();
+
+        } else if ($this->input->get_option('install')) {
+            // Installing a new plugin not implemented yet.
+        }
+
+        // Print help in CLI by default.
+        $this->output->help();
+        $this->done(self::EXIT_UNKNOWN_ACTION);
     }
 
     /**
@@ -609,6 +626,23 @@ class worker extends singleton_pattern {
     }
 
     // End of external API
+
+    /**
+     * Finish this script execution.
+     *
+     * @param int $exitcode
+     */
+    protected function done($exitcode = self::EXIT_OK) {
+
+        if (PHP_SAPI === 'cli') {
+            exit($exitcode);
+
+        } else {
+            $returnurl = $this->input->get_option('returnurl');
+            redirect($returnurl);
+            exit($exitcode);
+        }
+    }
 
     /**
      * Authorize access to the script.
