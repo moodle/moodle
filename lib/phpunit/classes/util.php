@@ -618,6 +618,10 @@ class phpunit_util {
         $GROUPLIB_CACHE = null;
         //TODO MDL-25290: add more resets here and probably refactor them to new core function
 
+        // Rest course and module caches.
+        $reset = 'reset';
+        get_fast_modinfo($reset);
+
         // purge dataroot directory
         self::reset_dataroot();
 
