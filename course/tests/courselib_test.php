@@ -62,6 +62,41 @@ class courselib_testcase extends advanced_testcase {
         $this->assertGreaterThan(0, $blockcount);
     }
 
+    public function test_create_course_with_generator() {
+        global $DB;
+        $this->resetAfterTest(true);
+        $course = $this->getDataGenerator()->create_course();
+
+        // Ensure default section is created.
+        $sectioncreated = $DB->record_exists('course_sections', array('course' => $course->id, 'section' => 0));
+        $this->assertTrue($sectioncreated);
+    }
+
+    public function test_create_course_sections() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $course = $this->getDataGenerator()->create_course(
+                array('shortname' => 'GrowingCourse',
+                    'fullname' => 'Growing Course',
+                    'numsections' => 5),
+                array('createsections' => true));
+
+        // Ensure all 6 (0-5) sections were created and modinfo/sectioninfo cache works properly
+        $sectionscreated = array_keys(get_fast_modinfo($course)->get_section_info_all());
+        $this->assertEquals(range(0, $course->numsections), $sectionscreated);
+
+        // this will do nothing, section already exists
+        $this->assertFalse(course_create_sections_if_missing($course, $course->numsections));
+
+        // this will create new section
+        $this->assertTrue(course_create_sections_if_missing($course, $course->numsections + 1));
+
+        // Ensure all 7 (0-6) sections were created and modinfo/sectioninfo cache works properly
+        $sectionscreated = array_keys(get_fast_modinfo($course)->get_section_info_all());
+        $this->assertEquals(range(0, $course->numsections + 1), $sectionscreated);
+    }
+
     public function test_reorder_sections() {
         global $DB;
         $this->resetAfterTest(true);
@@ -259,5 +294,32 @@ class courselib_testcase extends advanced_testcase {
         $this->assertGreaterThanOrEqual($category1->sortorder, $category2->sortorder);
         $this->assertGreaterThanOrEqual($category2->sortorder, $category3->sortorder);
         $this->assertGreaterThanOrEqual($category1->sortorder, $category3->sortorder);
+    }
+
+    public function test_move_module_in_course() {
+        $this->resetAfterTest(true);
+        // Setup fixture
+        $course = $this->getDataGenerator()->create_course(array('numsections'=>5));
+        $forum = $this->getDataGenerator()->create_module('forum', array('course'=>$course->id));
+
+        // reset cache inside $course because $course is not passed to create_module
+        $course->modinfo = null;
+        $course->sectioncache = null;
+
+        $cms = get_fast_modinfo($course)->get_cms();
+        $cm = reset($cms);
+
+        course_create_sections_if_missing($course, 3);
+        $section3 = get_fast_modinfo($course)->get_section_info(3);
+
+        moveto_module($cm, $section3);
+
+        // reset cache inside $course because $course is not passed to moveto_module
+        $course->modinfo = null;
+        $course->sectioncache = null;
+
+        $modinfo = get_fast_modinfo($course);
+        $this->assertTrue(empty($modinfo->sections[0]));
+        $this->assertFalse(empty($modinfo->sections[3]));
     }
 }
