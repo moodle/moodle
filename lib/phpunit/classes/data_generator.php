@@ -156,9 +156,11 @@ EOD;
         }
 
         if (!isset($record['username'])) {
-            $record['username'] = textlib::strtolower($record['firstname']).textlib::strtolower($record['lastname']);
+            $record['username'] = 'username'.$i;
+            $j = 2;
             while ($DB->record_exists('user', array('username'=>$record['username'], 'mnethostid'=>$record['mnethostid']))) {
-                $record['username'] = $record['username'].'_'.$i;
+                $record['username'] = 'username'.$i.'_'.$j;
+                $j++;
             }
         }
 
