@@ -1589,6 +1589,8 @@ class available_update_deployer {
             throw new coding_exception('Unknown plugin type root location', $plugintype);
         }
 
+        list($passfile, $password) = $this->prepare_authorization();
+
         $params = array(
             'upgrade' => true,
             'type' => $plugintype,
@@ -1597,8 +1599,8 @@ class available_update_deployer {
             'download' => $info->download,
             'dataroot' => $CFG->dataroot,
             'dirroot' => $CFG->dirroot,
-            'passfile' => '', // TODO
-            'password' => '', // TODO
+            'passfile' => $passfile,
+            'password' => $password,
         );
 
         $widget = new single_button(
@@ -1698,6 +1700,42 @@ class available_update_deployer {
         }
     }
 
+    /**
+     * Generates a random token and stores it in a file in moodledata directory.
+     *
+     * @return array of the (string)filename and (string)password in this order
+     */
+    public function prepare_authorization() {
+        global $CFG;
+
+        make_upload_directory('mdeploy/auth/');
+
+        $attempts = 0;
+        $success = false;
+
+        while (!$success and $attempts < 5) {
+            $attempts++;
+
+            $passfile = $this->generate_passfile();
+            $password = $this->generate_password();
+            $now = time();
+
+            $filepath = $CFG->dataroot.'/mdeploy/auth/'.$passfile;
+
+            if (!file_exists($filepath)) {
+                $success = file_put_contents($filepath, $password . PHP_EOL . $now . PHP_EOL, LOCK_EX);
+            }
+        }
+
+        if ($success) {
+            return array($passfile, $password);
+
+        } else {
+            throw new moodle_exception('unable_prepare_authorization', 'core_plugin');
+        }
+    }
+
+
     // End of external API
 
     /**
@@ -1752,6 +1790,24 @@ class available_update_deployer {
         }
 
         return $data;
+    }
+
+    /**
+     * Returns a random string to be used as a filename of the password storage.
+     *
+     * @return string
+     */
+    protected function generate_passfile() {
+        return clean_param(uniqid('mdeploy_', true), PARAM_FILE);
+    }
+
+    /**
+     * Returns a random string to be used as the authorization token
+     *
+     * @return string
+     */
+    protected function generate_password() {
+        return complex_random_string();
     }
 }
 

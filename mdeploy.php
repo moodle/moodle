@@ -453,7 +453,7 @@ class input_http_provider extends input_provider {
      * @return array of raw values passed via HTTP request
      */
     protected function parse_raw_options() {
-        return $_GET; // TODO switch to $_POST
+        return $_POST;
     }
 }
 
@@ -629,15 +629,34 @@ class worker extends singleton_pattern {
         $passfile = $this->input->get_option('passfile');
         $password = $this->input->get_option('password');
 
-        $passpath = $dataroot.'/temp/mdeploy/'.$passfile;
+        $passpath = $dataroot.'/mdeploy/auth/'.$passfile;
 
         if (!is_readable($passpath)) {
-            throw new unauthorized_access_exception('Unable to read passphrase file.');
+            throw new unauthorized_access_exception('Unable to read the passphrase file.');
         }
 
-        $stored = file_get_contents($passpath);
+        $stored = file($passpath, FILE_IGNORE_NEW_LINES);
 
-        if ($password !== $stored) {
+        // "This message will self-destruct in five seconds." -- Mission Commander Swanbeck, Mission: Impossible II
+        unlink($passpath);
+
+        if (is_readable($passpath)) {
+            throw new unauthorized_access_exception('Unable to remove the passphrase file.');
+        }
+
+        if (count($stored) < 2) {
+            throw new unauthorized_access_exception('Invalid format of the passphrase file.');
+        }
+
+        if (time() - (int)$stored[1] > 30 * 60) {
+            throw new unauthorized_access_exception('Passphrase timeout.');
+        }
+
+        if (strlen($stored[0]) < 24) {
+            throw new unauthorized_access_exception('Session passphrase not long enough.');
+        }
+
+        if ($password !== $stored[0]) {
             throw new unauthorized_access_exception('Session passphrase does not match the stored one.');
         }
     }
