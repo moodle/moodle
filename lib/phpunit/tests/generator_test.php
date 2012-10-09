@@ -44,6 +44,11 @@ class core_phpunit_generator_testcase extends advanced_testcase {
         $count = $DB->count_records('user');
         $user = $generator->create_user();
         $this->assertEquals($count+1, $DB->count_records('user'));
+        $this->assertSame($user->username, clean_param($user->username, PARAM_USERNAME));
+        $this->assertSame($user->email, clean_param($user->email, PARAM_EMAIL));
+        $user = $generator->create_user(array('firstname'=>'Žluťoučký', 'lastname'=>'Koníček'));
+        $this->assertSame($user->username, clean_param($user->username, PARAM_USERNAME));
+        $this->assertSame($user->email, clean_param($user->email, PARAM_EMAIL));
 
         $count = $DB->count_records('course_categories');
         $category = $generator->create_category();
