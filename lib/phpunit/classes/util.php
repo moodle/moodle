@@ -629,9 +629,9 @@ class phpunit_util {
         $GROUPLIB_CACHE = null;
         //TODO MDL-25290: add more resets here and probably refactor them to new core function
 
-        // Rest course and module caches.
+        // Reset course and module caches.
         if (class_exists('format_base')) {
-            // if file containing class is not loaded, there is no cache there anyway
+            // If file containing class is not loaded, there is no cache there anyway.
             format_base::reset_course_cache(0);
         }
         $reset = 'reset';
