@@ -264,6 +264,7 @@ class page_requirements_manager {
             'slasharguments'      => (int)(!empty($CFG->slasharguments)),
             'theme'               => $page->theme->name,
             'jsrev'               => ((empty($CFG->cachejs) or empty($CFG->jsrev)) ? -1 : $CFG->jsrev),
+            'svgicons'            => $page->theme->use_svg_icons()
         );
         if (debugging('', DEBUG_DEVELOPER)) {
             $this->M_cfg['developerdebug'] = true;

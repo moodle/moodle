@@ -3784,7 +3784,7 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null) {
                 }
                 // no redirect here because it is not cached
                 $theme = theme_config::load($themename);
-                $imagefile = $theme->resolve_image_location('u/'.$filename, 'moodle');
+                $imagefile = $theme->resolve_image_location('u/'.$filename, 'moodle', null);
                 send_file($imagefile, basename($imagefile), 60*60*24*14);
             }
 
