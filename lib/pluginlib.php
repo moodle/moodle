@@ -1315,13 +1315,11 @@ class available_update_checker {
         $html .= html_writer::tag('footer', html_writer::tag('p', get_string('updatenotificationfooter', 'core_admin', $a),
             array('style' => 'font-size:smaller; color:#333;')));
 
-        $mainadmin = reset($admins);
-
         foreach ($admins as $admin) {
             $message = new stdClass();
             $message->component         = 'moodle';
             $message->name              = 'availableupdate';
-            $message->userfrom          = $mainadmin;
+            $message->userfrom          = get_admin();
             $message->userto            = $admin;
             $message->subject           = get_string('updatenotifications', 'core_admin');
             $message->fullmessage       = $text;
