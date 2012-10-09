@@ -26,6 +26,9 @@ defined('MOODLE_INTERNAL') || die();
 
 class enrol_manual_plugin extends enrol_plugin {
 
+    protected $lasternoller = null;
+    protected $lasternollercourseid = 0;
+
     public function roles_protected() {
         // Users may tweak the roles later.
         return false;
@@ -147,7 +150,14 @@ class enrol_manual_plugin extends enrol_plugin {
      * @return int id of new instance, null if can not be created
      */
     public function add_default_instance($course) {
-        $fields = array('status'=>$this->get_config('status'), 'enrolperiod'=>$this->get_config('enrolperiod', 0), 'roleid'=>$this->get_config('roleid', 0));
+        $fields = array(
+            'status'          => $this->get_config('status'),
+            'roleid'          => $this->get_config('roleid', 0),
+            'enrolperiod'     => $this->get_config('enrolperiod', 0),
+            'expirynotify'    => $this->get_config('expirynotify', 0),
+            'notifyall'       => $this->get_config('notifyall', 0),
+            'expirythreshold' => $this->get_config('expirythreshold', 86400),
+        );
         return $this->add_instance($course, $fields);
     }
 
@@ -263,6 +273,7 @@ class enrol_manual_plugin extends enrol_plugin {
      */
     public function cron() {
         $this->sync(null, true);
+        $this->send_notifications(true);
     }
 
     /**
@@ -355,6 +366,254 @@ class enrol_manual_plugin extends enrol_plugin {
         }
 
         return 0;
+    }
+
+    /**
+     * Send notifications.
+     *
+     * @param bool $verbose verbose CLI output
+     */
+    public function send_notifications($verbose = false) {
+        global $DB, $CFG;
+
+        // Unfortunately this may take a long time, it should not be interrupted,
+        // otherwise users get duplicate notification.
+
+        @set_time_limit(0);
+        raise_memory_limit(MEMORY_HUGE);
+
+        $notifylast = $this->get_config('notifylast', 0);
+        $notifyhour = $this->get_config('notifyhour', 6);
+        $timenow    = time();
+
+        $notifytime = usergetmidnight($timenow, $CFG->timezone) + ($notifyhour * 3600);
+
+        if ($notifylast > $notifytime) {
+            if ($verbose) {
+                mtrace('Manual enrolment notifications were already sent today at '.userdate($notifylast, '', $CFG->timezone).'.');
+            }
+            return;
+        } else if ($timenow < $notifytime) {
+            if ($verbose) {
+                mtrace('Manual enrolment notifications will be sent at '.userdate($notifytime, '', $CFG->timezone).'.');
+            }
+            return;
+        }
+
+        if ($verbose) {
+            mtrace('Processing manual enrolment notifications...');
+        }
+
+        // Notify users responsible for enrolment once every day.
+        $sql = "SELECT ue.*, e.expirynotify, e.notifyall, e.expirythreshold, e.courseid, c.fullname
+                  FROM {user_enrolments} ue
+                  JOIN {enrol} e ON (e.id = ue.enrolid AND e.enrol = 'manual' AND e.expirynotify > 0 AND e.status = :enabled)
+                  JOIN {course} c ON (c.id = e.courseid)
+                  JOIN {user} u ON (u.id = ue.userid AND u.deleted = 0 AND u.suspended = 0)
+                 WHERE ue.status = :active AND ue.timeend > 0 AND ue.timeend > :now1 AND ue.timeend < (e.expirythreshold + :now2)
+              ORDER BY ue.enrolid ASC, u.lastname ASC, u.firstname ASC, u.id ASC";
+        $params = array('enabled'=>ENROL_INSTANCE_ENABLED, 'active'=>ENROL_USER_ACTIVE, 'now1'=>$timenow, 'now2'=>$timenow);
+
+        $rs = $DB->get_recordset_sql($sql, $params);
+
+        $lastenrollid = 0;
+        $users = array();
+
+        foreach($rs as $ue) {
+            if ($lastenrollid and $lastenrollid != $ue->enrolid) {
+                $this->notify_expiry_enroller($ue->enrolid, $users, $verbose);
+            }
+            $lastenrollid = $ue->enrolid;
+
+            $enroller = $this->get_enroller($ue->courseid);
+            $context = context_course::instance($ue->courseid);
+
+            $user = $DB->get_record('user', array('id'=>$ue->userid));
+
+            $users[] = array('fullname'=>fullname($user, has_capability('moodle/site:viewfullnames', $context, $enroller)), 'timeend'=>$ue->timeend);
+
+            if (!$ue->notifyall) {
+                continue;
+            }
+
+            if ($ue->timeend - $ue->expirythreshold + 86400 < $timenow) {
+                // Notify enrolled users only once at the start of the threshold.
+                continue;
+            }
+
+            $this->notify_expiry_enrolled($user, $ue, $verbose);
+        }
+        $rs->close();
+
+        if ($lastenrollid and $users) {
+            $this->notify_expiry_enroller($lastenrollid, $users, $verbose);
+        }
+
+        if ($verbose) {
+            mtrace('...notification processing finished.');
+        }
+        $this->set_config('notifylast', $timenow);
+    }
+
+    /**
+     * Returns the user who is responsible for manual enrolments in given course.
+     *
+     * Usually it is the first editing teacher - the person with "highest authority"
+     * as defined by sort_by_roleassignment_authority() having 'enrol/manual:manage'
+     * capability.
+     *
+     * @param int $courseid
+     * @return stdClass user record
+     */
+    protected function get_enroller($courseid) {
+        if ($this->lasternollercourseid == $courseid and $this->lasternoller) {
+            return $this->lasternoller;
+        }
+
+        $context = context_course::instance($courseid);
+        if ($users = get_enrolled_users($context, 'enrol/manual:manage')) {
+            $users = sort_by_roleassignment_authority($users, $context);
+            $this->lasternoller = reset($users);
+            unset($users);
+        } else {
+            $this->lasternoller = get_admin();
+        }
+
+        $this->lasternollercourseid = $courseid;
+
+        return $this->lasternoller;
+    }
+
+    /**
+     * Notify user about incoming expiration of their enrolment,
+     * it is called only if notification of enrolled users (aka students) is enabled in course.
+     *
+     * This is executed only once for each expiring enrolment right
+     * at the start of the expiration threshold.
+     *
+     * @param stdClass $user
+     * @param stdClass $ue
+     * @param bool $verbose
+     */
+    protected function notify_expiry_enrolled($user, $ue, $verbose) {
+        global $CFG, $SESSION;
+
+        // Some nasty hackery to get strings and dates localised for target user.
+        $sessionlang = isset($SESSION->lang) ? $SESSION->lang : null;
+        if (get_string_manager()->translation_exists($user->lang, false)) {
+            $SESSION->lang = $user->lang;
+            moodle_setlocale();
+        }
+
+        $enroller = $this->get_enroller($ue->courseid);
+        $context = context_course::instance($ue->courseid);
+
+        $subject = get_string('expirymessageenrolledsubject', 'enrol_manual', null);
+        $a = new stdClass();
+        $a->course   = format_string($ue->fullname, true, array('context'=>$context));
+        $a->user     = fullname($user, true);
+        $a->timeend  = userdate($ue->timeend, '', $user->timezone);
+        $a->enroller = fullname($enroller, has_capability('moodle/site:viewfullnames', $context, $user));
+        $body = get_string('expirymessageenrolledbody', 'enrol_manual', $a);
+
+        $message = new stdClass();
+        $message->notification      = 1;
+        $message->component         = 'enrol_manual';
+        $message->name              = 'expiry_notification';
+        $message->userfrom          = $enroller;
+        $message->userto            = $user;
+        $message->subject           = $subject;
+        $message->fullmessage       = $body;
+        $message->fullmessageformat = FORMAT_MARKDOWN;
+        $message->fullmessagehtml   = markdown_to_html($body);
+        $message->smallmessage      = $subject;
+        $message->contexturlname    = $a->course;
+        $message->contexturl        = (string)new moodle_url('/course/view.php', array('id'=>$ue->courseid));
+
+        if (message_send($message)) {
+            if ($verbose) {
+                mtrace("  notifying user $ue->userid that enrolment in course $ue->courseid expires on ".userdate($ue->timeend, '', $CFG->timezone));
+            }
+        } else {
+            if ($verbose) {
+                mtrace("  error notifying user $ue->userid that enrolment in course $ue->courseid expires on ".userdate($ue->timeend, '', $CFG->timezone));
+            }
+        }
+
+        if ($SESSION->lang !== $sessionlang) {
+            $SESSION->lang = $sessionlang;
+            moodle_setlocale();
+        }
+    }
+
+    /**
+     * Notify person responsible for enrolments that some user enrolments will be expired soon,
+     * it is called only if notification of enrollers (aka teachers) is enabled in course.
+     *
+     * This is called repeatedly every day for each course if there are any pending expiration
+     * in the expiration threshold.
+     *
+     * @param int $eid
+     * @param array $users
+     * @param bool $verbose
+     */
+    protected function notify_expiry_enroller($eid, $users, $verbose) {
+        global $DB, $SESSION;
+
+        $instance = $DB->get_record('enrol', array('id'=>$eid, 'enrol'=>'manual'));
+        $context = context_course::instance($instance->courseid);
+        $course = $DB->get_record('course', array('id'=>$instance->courseid));
+
+        $enroller = $this->get_enroller($instance->courseid);
+        $admin = get_admin();
+
+        // Some nasty hackery to get strings and dates localised for target user.
+        $sessionlang = isset($SESSION->lang) ? $SESSION->lang : null;
+        if (get_string_manager()->translation_exists($enroller->lang, false)) {
+            $SESSION->lang = $enroller->lang;
+            moodle_setlocale();
+        }
+
+        foreach($users as $key=>$info) {
+            $users[$key] = '* '.$info['fullname'].' - '.userdate($info['timeend'], '', $enroller->timezone);
+        }
+
+        $subject = get_string('expirymessageenrollersubject', 'enrol_manual', null);
+        $a = new stdClass();
+        $a->course    = format_string($course->fullname, true, array('context'=>$context));
+        $a->threshold = get_string('numdays', '', $instance->expirythreshold / (60*60*24));
+        $a->users     = implode("\n", $users);
+        $a->extendurl = (string)new moodle_url('/enrol/users.php', array('id'=>$instance->courseid));
+        $body = get_string('expirymessageenrollerbody', 'enrol_manual', $a);
+
+        $message = new stdClass();
+        $message->notification      = 1;
+        $message->component         = 'enrol_manual';
+        $message->name              = 'expiry_notification';
+        $message->userfrom          = $admin;
+        $message->userto            = $enroller;
+        $message->subject           = $subject;
+        $message->fullmessage       = $body;
+        $message->fullmessageformat = FORMAT_MARKDOWN;
+        $message->fullmessagehtml   = markdown_to_html($body);
+        $message->smallmessage      = $subject;
+        $message->contexturlname    = $a->course;
+        $message->contexturl        = $a->extendurl;
+
+        if (message_send($message)) {
+            if ($verbose) {
+                mtrace("  notifying user $enroller->id about all expiring manual enrolments in course $instance->courseid");
+            }
+        } else {
+            if ($verbose) {
+                mtrace("  error notifying user $enroller->id about all expiring manual enrolments in course $instance->courseid");
+            }
+        }
+
+        if ($SESSION->lang !== $sessionlang) {
+            $SESSION->lang = $sessionlang;
+            moodle_setlocale();
+        }
     }
 
     /**
