@@ -76,8 +76,10 @@ $string['badwordslist'] = 'Custom bad words list';
 $string['blockediplist'] = 'Blocked IP List';
 $string['blockinstances'] = 'Instances';
 $string['blockmultiple'] = 'Multiple';
-$string['blockprotect'] = 'Protect from delete';
-$string['blockprotect_help'] = 'Selected block instances will be protected from deletion from the site-wide context. This is primarily used to protect the navigation and settings blocks which can be very hard to get back if accidentally deleted.';
+$string['blockprotect'] = 'Protect instances';
+$string['blockprotect_help'] = 'If you lock a particular type of block, then no-one will be able to add or delete instances. (You can, of course, unlock again if you need to edit instances.)
+
+This is intended to protect blocks like the navigation and settings which are very hard to get back if accidentally deleted.';
 $string['blockunprotect'] = 'Unprotect';
 $string['blocksettings'] = 'Manage blocks';
 $string['bloglevel'] = 'Blog visibility';
