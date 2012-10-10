@@ -118,6 +118,9 @@ class user_picture_testcase extends advanced_testcase {
 
         $this->resetAfterTest();
 
+        // Force SVG on so that we have predictable URL's.
+        $CFG->svgicons = true;
+
         // verify new install contains expected defaults
         $this->assertEquals('standard', $CFG->theme);
         $this->assertEquals(1, $CFG->slasharguments);
