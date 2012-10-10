@@ -1058,7 +1058,7 @@ function scorm_debug_log_remove($type, $scoid) {
  * @return mixed
  */
 function scorm_print_overview($courses, &$htmlarray) {
-    global $USER, $CFG, $DB;
+    global $USER, $CFG;
 
     if (empty($courses) || !is_array($courses) || count($courses) == 0) {
         return array();
@@ -1068,47 +1068,38 @@ function scorm_print_overview($courses, &$htmlarray) {
         return;
     }
 
-    $scormids = array();
-
-    // Do scorm::isopen() here without loading the whole thing for speed
-    foreach ($scorms as $key => $scorm) {
-        $time = time();
-        if ($scorm->timeopen) {
-            $isopen = ($scorm->timeopen <= $time && $time <= $scorm->timeclose);
-        }
-        if (empty($scorm->displayattemptstatus) && (empty($isopen) || empty($scorm->timeclose))) {
-            unset($scorms[$key]);
-        } else {
-            $scormids[] = $scorm->id;
-        }
-    }
-
-    if (empty($scormids)) {
-        // no scorms to look at - we're done
-        return true;
-    }
     $strscorm   = get_string('modulename', 'scorm');
     $strduedate = get_string('duedate', 'scorm');
 
     foreach ($scorms as $scorm) {
-        $str = '<div class="scorm overview"><div class="name">'.$strscorm. ': '.
-               '<a '.($scorm->visible ? '':' class="dimmed"').
-               'title="'.$strscorm.'" href="'.$CFG->wwwroot.
-               '/mod/scorm/view.php?id='.$scorm->coursemodule.'">'.
-               $scorm->name.'</a></div>';
-        if ($scorm->timeclose) {
-            $str .= '<div class="info">'.$strduedate.': '.userdate($scorm->timeclose).'</div>';
+        $time = time();
+        $showattemptstatus = false;
+        if ($scorm->timeopen) {
+            $isopen = ($scorm->timeopen <= $time && $time <= $scorm->timeclose);
         }
         if ($scorm->displayattemptstatus == SCORM_DISPLAY_ATTEMPTSTATUS_ALL ||
                 $scorm->displayattemptstatus == SCORM_DISPLAY_ATTEMPTSTATUS_MY) {
-            require_once($CFG->dirroot.'/mod/scorm/locallib.php');
-            $str .= '<div class="details">'.scorm_get_attempt_status($USER, $scorm).'</div>';
+            $showattemptstatus = true;
         }
-        $str .= '</div>';
-        if (empty($htmlarray[$scorm->course]['scorm'])) {
-            $htmlarray[$scorm->course]['scorm'] = $str;
-        } else {
-            $htmlarray[$scorm->course]['scorm'] .= $str;
+        if ($showattemptstatus || !empty($isopen) || !empty($scorm->timeclose)) {
+            $str = '<div class="scorm overview"><div class="name">'.$strscorm. ': '.
+                '<a '.($scorm->visible ? '':' class="dimmed"').
+                'title="'.$strscorm.'" href="'.$CFG->wwwroot.
+                '/mod/scorm/view.php?id='.$scorm->coursemodule.'">'.
+                $scorm->name.'</a></div>';
+            if ($scorm->timeclose) {
+                $str .= '<div class="info">'.$strduedate.': '.userdate($scorm->timeclose).'</div>';
+            }
+            if ($showattemptstatus) {
+                require_once($CFG->dirroot.'/mod/scorm/locallib.php');
+                $str .= '<div class="details">'.scorm_get_attempt_status($USER, $scorm).'</div>';
+            }
+            $str .= '</div>';
+            if (empty($htmlarray[$scorm->course]['scorm'])) {
+                $htmlarray[$scorm->course]['scorm'] = $str;
+            } else {
+                $htmlarray[$scorm->course]['scorm'] .= $str;
+            }
         }
     }
 }
