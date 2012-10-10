@@ -398,7 +398,8 @@ class block_base {
     function html_attributes() {
         $attributes = array(
             'id' => 'inst' . $this->instance->id,
-            'class' => 'block_' . $this->name(). '  block'
+            'class' => 'block_' . $this->name(). '  block',
+            'role' => $this->get_aria_role()
         );
         if ($this->instance_can_be_docked() && get_user_preferences('docked_block_instance_'.$this->instance->id, 0)) {
             $attributes['class'] .= ' dock_on_load';
@@ -671,6 +672,37 @@ EOD;
     }
     public static function comment_add(&$comments, $options) {
         return true;
+    }
+
+    /**
+     * Returns the aria role attribute that best describes this block.
+     *
+     * Region is the default, but this should be overridden by a block is there is a region child, or even better
+     * a landmark child.
+     *
+     * Options are as follows:
+     *  - region
+     *    - alert
+     *    - article
+     *    - grid
+     *    - landmark
+     *      - application
+     *      - banner
+     *      - complementary
+     *      - contentinfo
+     *      - form
+     *      - main
+     *      - navigation
+     *      - search
+     *    - list
+     *    - log
+     *    - status
+     *    - tabpanel
+     *
+     * @return string
+     */
+    public function get_aria_role() {
+        return 'region';
     }
 }
 
