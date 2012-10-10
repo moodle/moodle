@@ -1216,16 +1216,14 @@ class cm_info extends stdClass {
  * Returns reference to full info about modules in course (including visibility).
  * Cached and as fast as possible (0 or 1 db query).
  *
- * @global object
- * @global object
- * @global moodle_database
  * @uses MAX_MODINFO_CACHE_SIZE
- * @param mixed $course object or 'reset' string to reset caches, modinfo may be updated in db
- * @param int $userid Defaults to current user id
- * @return course_modinfo Module information for course, or null if resetting
+ * @param int|stdClass $courseorid object or 'reset' string to reset caches, modinfo may be updated in db
+ * @param int $userid Set 0 (default) for current user
+ * @param bool $resetonly whether we want to get modinfo or just reset the cache
+ * @return course_modinfo|null Module information for course, or null if resetting
  */
-function get_fast_modinfo(&$course, $userid=0) {
-    global $CFG, $USER, $DB;
+function get_fast_modinfo($courseorid, $userid = 0, $resetonly = false) {
+    global $CFG, $USER;
     require_once($CFG->dirroot.'/course/lib.php');
 
     if (!empty($CFG->enableavailability)) {
@@ -1234,17 +1232,45 @@ function get_fast_modinfo(&$course, $userid=0) {
 
     static $cache = array();
 
-    if ($course === 'reset') {
-        $cache = array();
+    // compartibility with syntax prior to 2.4:
+    if ($courseorid === 'reset') {
+        debugging("Using the string 'reset' as the first argument of get_fast_modinfo() is deprecated. Use get_fast_modinfo(0,0,true) instead.", DEBUG_DEVELOPER);
+        $courseorid = 0;
+        $resetonly = true;
+    }
+
+    if (is_object($courseorid)) {
+        $course = $courseorid;
+    } else {
+        $course = (object)array('id' => $courseorid, 'modinfo' => null, 'sectioncache' => null);
+    }
+
+    // Function is called with $reset = true
+    if ($resetonly) {
+        if (isset($course->id) && $course->id > 0) {
+            $cache[$course->id] = false;
+        } else {
+            foreach (array_keys($cache) as $key) {
+                $cache[$key] = false;
+            }
+        }
         return null;
     }
 
+    // Function is called with $reset = false, retrieve modinfo
     if (empty($userid)) {
         $userid = $USER->id;
     }
 
-    if (array_key_exists($course->id, $cache) and $cache[$course->id]->userid == $userid) {
-        return $cache[$course->id];
+    if (array_key_exists($course->id, $cache)) {
+        if ($cache[$course->id] === false) {
+            // this course has been recently reset, do not rely on modinfo and sectioncache in $course
+            $course->modinfo = null;
+            $course->sectioncache = null;
+        } else if ($cache[$course->id]->userid == $userid) {
+            // this course's modinfo for the same user was recently retrieved, return cached
+            return $cache[$course->id];
+        }
     }
 
     if (!property_exists($course, 'modinfo')) {
@@ -1302,8 +1328,7 @@ function rebuild_course_cache($courseid=0, $clearonly=false) {
             $COURSE->sectioncache = null;
         }
         // reset the fast modinfo cache
-        $reset = 'reset';
-        get_fast_modinfo($reset);
+        get_fast_modinfo($courseid, 0, true);
         return;
     }
 
@@ -1331,8 +1356,7 @@ function rebuild_course_cache($courseid=0, $clearonly=false) {
     }
     $rs->close();
     // reset the fast modinfo cache
-    $reset = 'reset';
-    get_fast_modinfo($reset);
+    get_fast_modinfo($courseid, 0, true);
 }
 
 

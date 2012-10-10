@@ -302,10 +302,6 @@ class courselib_testcase extends advanced_testcase {
         $course = $this->getDataGenerator()->create_course(array('numsections'=>5));
         $forum = $this->getDataGenerator()->create_module('forum', array('course'=>$course->id));
 
-        // reset cache inside $course because $course is not passed to create_module
-        $course->modinfo = null;
-        $course->sectioncache = null;
-
         $cms = get_fast_modinfo($course)->get_cms();
         $cm = reset($cms);
 
@@ -313,10 +309,6 @@ class courselib_testcase extends advanced_testcase {
         $section3 = get_fast_modinfo($course)->get_section_info(3);
 
         moveto_module($cm, $section3);
-
-        // reset cache inside $course because $course is not passed to moveto_module
-        $course->modinfo = null;
-        $course->sectioncache = null;
 
         $modinfo = get_fast_modinfo($course);
         $this->assertTrue(empty($modinfo->sections[0]));

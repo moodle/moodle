@@ -640,8 +640,7 @@ class phpunit_util {
             // If file containing class is not loaded, there is no cache there anyway.
             format_base::reset_course_cache(0);
         }
-        $reset = 'reset';
-        get_fast_modinfo($reset);
+        get_fast_modinfo(0, 0, true);
 
         // purge dataroot directory
         self::reset_dataroot();

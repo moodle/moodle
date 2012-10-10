@@ -2937,13 +2937,13 @@ function get_generic_section_name($format, stdClass $section) {
  * from 2.4 $section may also be just the field course_sections.section
  *
  * If you need the list of all sections it is more efficient to get this data by calling
- * $modinfo = get_fast_modinfo($course);
+ * $modinfo = get_fast_modinfo($courseorid);
  * $sections = $modinfo->get_section_info_all()
  * {@link get_fast_modinfo()}
  * {@link course_modinfo::get_section_info_all()}
  *
  * Information about one section (instance of section_info):
- * get_fast_modinfo($course)->get_sections_info($section)
+ * get_fast_modinfo($courseorid)->get_sections_info($section)
  * {@link course_modinfo::get_section_info()}
  *
  * @deprecated since 2.4
@@ -2954,8 +2954,7 @@ function get_generic_section_name($format, stdClass $section) {
 function get_all_sections($courseid) {
     global $DB;
     debugging('get_all_sections() is deprecated. See phpdocs for this function', DEBUG_DEVELOPER);
-    $course = $DB->get_record('course', array('id' => $courseid));
-    return get_fast_modinfo($course)->get_section_info_all();
+    return get_fast_modinfo($courseid)->get_section_info_all();
 }
 
 /**
@@ -2974,8 +2973,7 @@ function get_all_sections($courseid) {
 function add_mod_to_section($mod, $beforemod=NULL) {
     debugging('Function add_mod_to_section() is deprecated, please use course_add_cm_to_section()', DEBUG_DEVELOPER);
     global $DB;
-    $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
-    return course_add_cm_to_section($course, $mod->coursemodule, $mod->section, $beforemod);
+    return course_add_cm_to_section($mod->course, $mod->coursemodule, $mod->section, $beforemod);
 }
 
 /**
@@ -2984,14 +2982,14 @@ function add_mod_to_section($mod, $beforemod=NULL) {
  * Function get_all_mods() is deprecated in 2.4
  * Instead of:
  * <code>
- * get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused);
+ * get_all_mods($courseid, $mods, $modnames, $modnamesplural, $modnamesused);
  * </code>
  * please use:
  * <code>
- * $mods = get_fast_modinfo($course)->get_cms();
+ * $mods = get_fast_modinfo($courseorid)->get_cms();
  * $modnames = get_module_types_names();
  * $modnamesplural = get_module_types_names(true);
- * $modnamesused = get_fast_modinfo($course)->get_used_module_names();
+ * $modnamesused = get_fast_modinfo($courseorid)->get_used_module_names();
  * </code>
  *
  * @deprecated since 2.4
@@ -3008,8 +3006,7 @@ function get_all_mods($courseid, &$mods, &$modnames, &$modnamesplural, &$modname
     global $COURSE;
     $modnames      = get_module_types_names();
     $modnamesplural= get_module_types_names(true);
-    $course = ($courseid==$COURSE->id) ? $COURSE : $DB->get_record('course',array('id'=>$courseid));
-    $modinfo = get_fast_modinfo($course);
+    $modinfo = get_fast_modinfo($courseid);
     $mods = $modinfo->get_cms();
     $modnamesused = $modinfo->get_used_module_names();
 }
@@ -3018,9 +3015,9 @@ function get_all_mods($courseid, &$mods, &$modnames, &$modnamesplural, &$modname
  * Returns course section - creates new if does not exist yet
  *
  * This function is deprecated. To create a course section call:
- * course_create_sections_if_missing($course, $sections);
+ * course_create_sections_if_missing($courseorid, $sections);
  * to get the section call:
- * get_fast_modinfo($course)->get_section_info($sectionnum);
+ * get_fast_modinfo($courseorid)->get_section_info($sectionnum);
  *
  * @see course_create_sections_if_missing()
  * @see get_fast_modinfo()

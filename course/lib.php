@@ -2695,21 +2695,24 @@ function add_course_module($mod) {
 /**
  * Creates missing course section(s) and rebuilds course cache
  *
- * @param stdClass $course course object
+ * @param int|stdClass $courseorid course id or course object
  * @param int|array $sections list of relative section numbers to create
  * @return bool if there were any sections created
  */
-function course_create_sections_if_missing(&$course, $sections) {
+function course_create_sections_if_missing($courseorid, $sections) {
     global $DB;
     if (!is_array($sections)) {
         $sections = array($sections);
     }
-    $existing = array_keys(get_fast_modinfo($course)->get_section_info_all());
+    $existing = array_keys(get_fast_modinfo($courseorid)->get_section_info_all());
+    if (is_object($courseorid)) {
+        $courseorid = $courseorid->id;
+    }
     $coursechanged = false;
     foreach ($sections as $sectionnum) {
         if (!in_array($sectionnum, $existing)) {
             $cw = new stdClass();
-            $cw->course   = $course->id;
+            $cw->course   = $courseorid;
             $cw->section  = $sectionnum;
             $cw->summary  = '';
             $cw->summaryformat = FORMAT_HTML;
@@ -2719,9 +2722,7 @@ function course_create_sections_if_missing(&$course, $sections) {
         }
     }
     if ($coursechanged) {
-        rebuild_course_cache($course->id, true);
-        $course->modinfo = null;
-        $course->sectioncache = null;
+        rebuild_course_cache($courseorid, true);
     }
     return $coursechanged;
 }
@@ -2745,17 +2746,8 @@ function course_add_cm_to_section($courseorid, $modid, $sectionnum, $beforemod =
     if (is_object($beforemod)) {
         $beforemod = $beforemod->id;
     }
-    if (is_object($courseorid)) {
-        $course = &$courseorid;
-    } else {
-        if (isset($COURSE->id) && $COURSE->id == $courseorid) {
-            $course = &$COURSE;
-        } else {
-            $course = $DB->get_record('course', array('id' => $courseorid), '*', MUST_EXIST);
-        }
-    }
-    course_create_sections_if_missing($course, $sectionnum);
-    $section = get_fast_modinfo($course)->get_section_info($sectionnum);
+    course_create_sections_if_missing($courseorid, $sectionnum);
+    $section = get_fast_modinfo($courseorid)->get_section_info($sectionnum);
     $modarray = explode(",", trim($section->sequence));
     if (empty($modarray)) {
         $newsequence = "$modid";
@@ -2768,9 +2760,11 @@ function course_add_cm_to_section($courseorid, $modid, $sectionnum, $beforemod =
     }
     $DB->set_field("course_sections", "sequence", $newsequence, array("id" => $section->id));
     $DB->set_field('course_modules', 'section', $section->id, array('id' => $modid));
-    rebuild_course_cache($course->id, true);
-    $course->modinfo = null;
-    $course->sectioncache = null;
+    if (is_object($courseorid)) {
+        rebuild_course_cache($courseorid->id, true);
+    } else {
+        rebuild_course_cache($courseorid, true);
+    }
     return $section->id;     // Return course_sections ID that was used.
 }
 

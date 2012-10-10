@@ -43,10 +43,6 @@ class conditionlib_testcase extends advanced_testcase {
         $CFG->enablecompletion = 1;
         $user = $this->getDataGenerator()->create_user();;
         $this->setUser($user);
-
-        // Reset modinfo cache before each request
-        $reset = 'reset';
-        get_fast_modinfo($reset);
     }
 
     function test_constructor() {
@@ -276,8 +272,7 @@ class conditionlib_testcase extends advanced_testcase {
         ));
 
         // Okay sweet, now get modinfo
-        $course = $DB->get_record('course',array('id'=>$courseid));
-        $modinfo=get_fast_modinfo($course);
+        $modinfo=get_fast_modinfo($courseid);
 
         // Test basic data
         $this->assertEquals(1,$modinfo->cms[$cmid1]->showavailability);
@@ -327,8 +322,7 @@ class conditionlib_testcase extends advanced_testcase {
 
         rebuild_course_cache($courseid, true);
         // Okay sweet, now get modinfo
-        $course = $DB->get_record('course', array('id' => $courseid));
-        $modinfo = get_fast_modinfo($course);
+        $modinfo = get_fast_modinfo($courseid);
 
         // Test basic data
         $section1 = $modinfo->get_section_info(1);

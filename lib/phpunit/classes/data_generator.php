@@ -400,9 +400,8 @@ EOD;
             throw new coding_exception('section must be present in phpunit_util::create_course_section() $record');
         }
 
-        $course = $DB->get_record('course', array('id' => $record['course']), '*', MUST_EXIST);
-        course_create_sections_if_missing($course, $record['section']);
-        return get_fast_modinfo($course)->get_section_info($record['section']);
+        course_create_sections_if_missing($record['course'], $record['section']);
+        return get_fast_modinfo($record['course'])->get_section_info($record['section']);
     }
 
     /**
