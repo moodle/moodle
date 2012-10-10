@@ -6,7 +6,7 @@
 .moodle-dialogue-base .moodle-dialogue-hd {font-size:110%;color:inherit;font-weight:bold;text-align:left;padding:5px 6px;margin:0;border-bottom:1px solid #ccc;background-color:#f6f6f6;}
 .moodle-dialogue-base .closebutton {background-image:url(sprite.png);width:25px;height:15px;background-repeat:no-repeat;float:right;vertical-align:middle;display:inline-block;cursor:pointer;}
 .moodle-dialogue-base .moodle-dialogue-bd {padding:5px; overflow: auto;}
-.moodle-dialogue-base .moodle-dialogue-fd {}
+.moodle-dialogue-base .moodle-dialogue-ft {}
 
 .moodle-dialogue-confirm .confirmation-dialogue {text-align:center;}
 .moodle-dialogue-confirm .confirmation-message {margin:0.5em 1em;}
