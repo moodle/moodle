@@ -90,6 +90,12 @@ if (!isset($CFG->wwwroot) or $CFG->wwwroot === 'http://example.com/moodle') {
     exit(1);
 }
 
+// If acceptance testing mode is enabled use test database and dataroot
+if (file_exists($CFG->dataroot . '/behat/test_environment_enabled.txt')) {
+    $CFG->prefix = $CFG->phpunit_prefix;
+    $CFG->dataroot = $CFG->phpunit_dataroot;
+}
+
 // Define admin directory
 if (!isset($CFG->admin)) {   // Just in case it isn't defined in config.php
     $CFG->admin = 'admin';   // This is relative to the wwwroot and dirroot
