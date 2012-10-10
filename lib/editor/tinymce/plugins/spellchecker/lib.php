@@ -35,6 +35,9 @@ class tinymce_spellchecker extends editor_tinymce_plugin {
         // Check at least one language is supported.
         $spelllanguagelist = $this->get_config('spelllanguagelist', '');
         if ($spelllanguagelist !== '') {
+            // Prevent the built-in spell checker in Firefox, Safari and other sane browsers.
+            unset($params['gecko_spellcheck']);
+
             // Add button after code button in advancedbuttons3.
             $added = $this->add_button_after($params, 3, 'spellchecker', 'code', false);
 
