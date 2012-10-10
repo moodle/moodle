@@ -364,8 +364,15 @@ class core_renderer extends renderer_base {
         // flow player embedding support
         $this->page->requires->js_function_call('M.util.load_flowplayer');
 
-        // Set up help link popups for all links with the helplinkpopup class
+        // Set up help link popups for all links with the helptooltip class
         $this->page->requires->js_init_call('M.util.help_popups.setup');
+
+        // Setup help icon overlays.
+        $this->page->requires->yui_module('moodle-core-popuphelp', 'M.core.init_popuphelp');
+        $this->page->requires->strings_for_js(array(
+            'morehelp',
+            'loadinghelp',
+        ), 'moodle');
 
         $this->page->requires->js_function_call('setTimeout', array('fix_column_widths()', 20));
 
@@ -1932,7 +1939,7 @@ class core_renderer extends renderer_base {
         $this->page->requires->string_for_js('close', 'form');
 
         // and finally span
-        return html_writer::tag('span', $output, array('class' => 'helplink'));
+        return html_writer::tag('span', $output, array('class' => 'helptooltip'));
     }
 
     /**
@@ -1989,14 +1996,11 @@ class core_renderer extends renderer_base {
         // note: this title is displayed only if JS is disabled, otherwise the link will have the new ajax tooltip
         $title = get_string('helpprefix2', '', trim($title, ". \t"));
 
-        $attributes = array('href'=>$url, 'title'=>$title, 'aria-haspopup' => 'true', 'class' => 'tooltip');
+        $attributes = array('href' => $url, 'title' => $title, 'aria-haspopup' => 'true');
         $output = html_writer::tag('a', $output, $attributes);
 
-        $this->page->requires->js_init_call('M.util.help_icon.setup');
-        $this->page->requires->string_for_js('close', 'form');
-
         // and finally span
-        return html_writer::tag('span', $output, array('class' => 'helplink'));
+        return html_writer::tag('span', $output, array('class' => 'helptooltip'));
     }
 
     /**

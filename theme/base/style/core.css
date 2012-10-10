@@ -516,18 +516,6 @@ body.tag .managelink {padding: 5px;}
 #webservice-doc-generator td {text-align: left;border: 0px solid black;}
 
 /**
- * Help Content (pop-up)
- */
-#helppopupbox {background-color: #eee; border: 1px solid #848484;z-index: 10000 !important;}
-#helppopupbox .yui3-widget-hd {float:right;margin:3px 3px 0 0;}
-#helppopupbox .yui3-widget-bd {margin:0 1em 1em 1em;border-top:1px solid #eee;}
-#helppopupbox .yui3-widget-ft {text-align: center;}
-#helppopupbox .yui3-widget-ft .closebtn {margin:0 1em 1em 1em;}
-#helppopupbox .helpheading {font-size: 1em;}
-#helppopupbox .spinner {margin:1em;}
-.dir-rtl #helppopupbox .yui3-widget-hd {float:left;margin:3px 0 0 3px;}
-
-/**
  * Custom menu
  */
 #custommenu {clear:both;}
@@ -1017,6 +1005,22 @@ sup {vertical-align: super;}
     padding-left:25px;
     margin-bottom:4px;
     padding-bottom:4px;
+}
+
+.moodle-dialogue .moodle-dialogue-bd .content-lightbox {
+    opacity: .75;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: white;
+    text-align: center;
+    padding: 10% 0;
+}
+
+/* Apply a default max-height on tooltip text */
+.moodle-dialogue .tooltiptext {
+    max-height: 300px;
 }
 
 
