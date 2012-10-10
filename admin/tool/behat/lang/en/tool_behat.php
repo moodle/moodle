@@ -22,5 +22,13 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Behat';
-$string['installationinfo'] = '';
+$string['actionnotsupported'] = 'Action not supported';
+$string['commandbuildconfigfile'] = 'Build config file';
+$string['commandinfo'] = 'Info';
+$string['commandruntests'] = 'Run tests';
+$string['commandstepsdefinitions'] = 'Steps definitions list';
+$string['finished'] = 'Process finished';
+$string['nobehatpath'] = 'You must specify the path to moodle-acceptance-tests.';
+$string['nostepsdefinitions'] = 'There aren\'t steps definitions matching this filter';
+$string['pluginname'] = 'Acceptance test tool';
+$string['wrongbehatsetup'] = 'Something is wrong with the setup, check moodle-acceptance-tests runs well on CLI and check your \'behatpath\' setting value is pointing to the right directory';
