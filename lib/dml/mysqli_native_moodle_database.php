@@ -570,17 +570,26 @@ class mysqli_native_moodle_database extends moodle_database {
 
                 } else if (preg_match('/([a-z]*int[a-z]*)\((\d+)\)/i', $rawcolumn->column_type, $matches)) {
                     $rawcolumn->data_type = $matches[1];
-                    // Return number of decimals, not bytes here.
-                    if ($matches[2] >= 8) {
-                        $rawcolumn->max_length = 18;
-                    } else if ($matches[2] >= 4) {
-                        $rawcolumn->max_length = 9;
-                    } else if ($matches[2] >= 2) {
-                        $rawcolumn->max_length = 4;
-                    } else if ($matches[2] >= 1) {
-                        $rawcolumn->max_length = 2;
+                    $rawcolumn->numeric_precision = $matches[2];
+                    $rawcolumn->max_length = $rawcolumn->numeric_precision;
+
+                    $type = strtoupper($matches[1]);
+                    if ($type === 'BIGINT') {
+                        $maxlength = 18;
+                    } else if ($type === 'INT' or $type === 'INTEGER') {
+                        $maxlength = 9;
+                    } else if ($type === 'MEDIUMINT') {
+                        $maxlength = 6;
+                    } else if ($type === 'SMALLINT') {
+                        $maxlength = 4;
+                    } else if ($type === 'TINYINT') {
+                        $maxlength = 2;
                     } else {
-                        $rawcolumn->max_length = 0;
+                        // This should not happen.
+                        $maxlength = 0;
+                    }
+                    if ($maxlength < $rawcolumn->max_length) {
+                        $rawcolumn->max_length = $maxlength;
                     }
 
                 } else if (preg_match('/(decimal)\((\d+),(\d+)\)/i', $rawcolumn->column_type, $matches)) {
@@ -645,15 +654,19 @@ class mysqli_native_moodle_database extends moodle_database {
             // Return number of decimals, not bytes here.
             $info->max_length    = $rawcolumn->numeric_precision;
             if (preg_match('/([a-z]*int[a-z]*)\((\d+)\)/i', $rawcolumn->column_type, $matches)) {
-                if ($matches[2] >= 8) {
+                $type = strtoupper($matches[1]);
+                if ($type === 'BIGINT') {
                     $maxlength = 18;
-                } else if ($matches[2] >= 4) {
+                } else if ($type === 'INT' or $type === 'INTEGER') {
                     $maxlength = 9;
-                } else if ($matches[2] >= 2) {
+                } else if ($type === 'MEDIUMINT') {
+                    $maxlength = 6;
+                } else if ($type === 'SMALLINT') {
                     $maxlength = 4;
-                } else if ($matches[2] >= 1) {
+                } else if ($type === 'TINYINT') {
                     $maxlength = 2;
                 } else {
+                    // This should not happen.
                     $maxlength = 0;
                 }
                 // It is possible that display precision is different from storage type length,
@@ -706,6 +719,7 @@ class mysqli_native_moodle_database extends moodle_database {
             case 'SMALLINT':
             case 'MEDIUMINT':
             case 'INT':
+            case 'INTEGER':
             case 'BIGINT':
                 $type = 'I';
                 break;
