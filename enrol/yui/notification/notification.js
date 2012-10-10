@@ -21,7 +21,7 @@ var DIALOGUE_NAME = 'Moodle dialogue',
         HEADER : 'moodle-dialogue-hd',
         BODY : 'moodle-dialogue-bd',
         CONTENT : 'moodle-dialogue-content',
-        FOOTER : 'moodle-dialogue-fd',
+        FOOTER : 'moodle-dialogue-ft',
         HIDDEN : 'hidden',
         LIGHTBOX : 'moodle-dialogue-lightbox'
     };
@@ -35,7 +35,7 @@ var DIALOGUE = function(config) {
             .append(C('<div id="'+id+'" class="'+CSS.WRAP+'"></div>')
                 .append(C('<div class="'+CSS.HEADER+' yui3-widget-hd"></div>'))
                 .append(C('<div class="'+CSS.BODY+' yui3-widget-bd"></div>'))
-                .append(C('<div class="'+CSS.CONTENT+' yui3-widget-ft"></div>')));
+                .append(C('<div class="'+CSS.FOOTER+' yui3-widget-ft"></div>')));
     Y.one(document.body).append(config.notificationBase);
     config.srcNode =    '#'+id;
     config.width =      config.width || '400px';
