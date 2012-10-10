@@ -422,6 +422,7 @@ class enrol_manual_plugin extends enrol_plugin {
         foreach($rs as $ue) {
             if ($lastenrollid and $lastenrollid != $ue->enrolid) {
                 $this->notify_expiry_enroller($ue->enrolid, $users, $verbose);
+                $users = array();
             }
             $lastenrollid = $ue->enrolid;
 
