@@ -1268,7 +1268,7 @@ function set_section_visible($courseid, $sectionnumber, $visibility) {
                 set_coursemodule_visible($moduleid, $visibility, true);
             }
         }
-        rebuild_course_cache($courseid);
+        rebuild_course_cache($courseid, true);
 
         // Determine which modules are visible for AJAX update
         if (!empty($modules)) {
@@ -2687,7 +2687,9 @@ function add_course_module($mod) {
     $mod->added = time();
     unset($mod->id);
 
-    return $DB->insert_record("course_modules", $mod);
+    $cmid = $DB->insert_record("course_modules", $mod);
+    rebuild_course_cache($mod->course, true);
+    return $cmid;
 }
 
 /**
@@ -2774,12 +2776,22 @@ function course_add_cm_to_section($courseorid, $modid, $sectionnum, $beforemod =
 
 function set_coursemodule_groupmode($id, $groupmode) {
     global $DB;
-    return $DB->set_field("course_modules", "groupmode", $groupmode, array("id"=>$id));
+    $cm = $DB->get_record('course_modules', array('id' => $id), 'id,course,groupmode', MUST_EXIST);
+    if ($cm->groupmode != $groupmode) {
+        $DB->set_field('course_modules', 'groupmode', $groupmode, array('id' => $cm->id));
+        rebuild_course_cache($cm->course, true);
+    }
+    return ($cm->groupmode != $groupmode);
 }
 
 function set_coursemodule_idnumber($id, $idnumber) {
     global $DB;
-    return $DB->set_field("course_modules", "idnumber", $idnumber, array("id"=>$id));
+    $cm = $DB->get_record('course_modules', array('id' => $id), 'id,course,idnumber', MUST_EXIST);
+    if ($cm->idnumber != $idnumber) {
+        $DB->set_field('course_modules', 'idnumber', $idnumber, array('id' => $cm->id));
+        rebuild_course_cache($cm->course, true);
+    }
+    return ($cm->idnumber != $idnumber);
 }
 
 /**
@@ -2823,10 +2835,13 @@ function set_coursemodule_visible($id, $visible, $prevstateoverrides=false) {
             $DB->set_field('course_modules', 'visibleold', $cm->visible, array('id'=>$id));
         } else {
             // Get the previous saved visible states.
-            return $DB->set_field('course_modules', 'visible', $cm->visibleold, array('id'=>$id));
+            $DB->set_field('course_modules', 'visible', $cm->visibleold, array('id'=>$id));
         }
+    } else {
+        $DB->set_field("course_modules", "visible", $visible, array("id"=>$id));
     }
-    return $DB->set_field("course_modules", "visible", $visible, array("id"=>$id));
+    rebuild_course_cache($cm->course, true);
+    return true;
 }
 
 /**
@@ -2867,7 +2882,9 @@ function delete_course_module($id) {
                                                             'criteriatype' => COMPLETION_CRITERIA_TYPE_ACTIVITY));
 
     delete_context(CONTEXT_MODULE, $cm->id);
-    return $DB->delete_records('course_modules', array('id'=>$cm->id));
+    $DB->delete_records('course_modules', array('id'=>$cm->id));
+    rebuild_course_cache($cm->course, true);
+    return true;
 }
 
 function delete_mod_from_section($modid, $sectionid) {
@@ -2880,7 +2897,9 @@ function delete_mod_from_section($modid, $sectionid) {
         if ($key = array_keys ($modarray, $modid)) {
             array_splice($modarray, $key[0], 1);
             $newsequence = implode(",", $modarray);
-            return $DB->set_field("course_sections", "sequence", $newsequence, array("id"=>$section->id));
+            $DB->set_field("course_sections", "sequence", $newsequence, array("id"=>$section->id));
+            rebuild_course_cache($section->course, true);
+            return true;
         } else {
             return false;
         }
@@ -2902,7 +2921,7 @@ function move_section($course, $section, $move) {
     debugging('This function will be removed before 2.5 is released please use move_section_to', DEBUG_DEVELOPER);
 
 /// Moves a whole course section up and down within the course
-    global $USER, $DB;
+    global $USER;
 
     if (!$move) {
         return true;
@@ -2915,10 +2934,6 @@ function move_section($course, $section, $move) {
     }
 
     $retval = move_section_to($course, $section, $sectiondest);
-    // If section moved, then rebuild course cache.
-    if ($retval) {
-        rebuild_course_cache($course->id, true);
-    }
     return $retval;
 }
 
@@ -2977,6 +2992,7 @@ function move_section_to($course, $section, $destination) {
     }
 
     $transaction->allow_commit();
+    rebuild_course_cache($course->id, true);
     return true;
 }
 
@@ -3058,7 +3074,7 @@ function reorder_sections($sections, $origin_position, $target_position) {
  * All parameters are objects
  */
 function moveto_module($mod, $section, $beforemod=NULL) {
-    global $DB, $OUTPUT;
+    global $OUTPUT;
 
 /// Remove original module from original section
     if (! delete_mod_from_section($mod->id, $mod->section)) {
@@ -3326,8 +3342,6 @@ function course_format_name ($course,$max=100) {
  * @return bool whether the current user is allowed to add this type of module to this course.
  */
 function course_allowed_module($course, $modname) {
-    global $DB;
-
     if (is_numeric($modname)) {
         throw new coding_exception('Function course_allowed_module no longer
                 supports numeric module ids. Please update your code to pass the module name.');
@@ -3852,6 +3866,8 @@ function update_course($data, $editoroptions = NULL) {
 
     // Update with the new data
     $DB->update_record('course', $data);
+    // make sure the modinfo cache is reset
+    rebuild_course_cache($data->id);
 
     $course = $DB->get_record('course', array('id'=>$data->id));
 

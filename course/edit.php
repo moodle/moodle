@@ -132,7 +132,6 @@ if ($editform->is_cancelled()) {
         // Save any changes to the files used in the editor
         update_course($data, $editoroptions);
     }
-    rebuild_course_cache($course->id);
 
     switch ($returnto) {
         case 'category':

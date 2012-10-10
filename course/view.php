@@ -179,8 +179,6 @@
                 if (!empty($move) and has_capability('moodle/course:movesections', $context) and confirm_sesskey()) {
                     $destsection = $section + $move;
                     if (move_section_to($course, $section, $destsection)) {
-                        // Rebuild course cache, after moving section
-                        rebuild_course_cache($course->id, true);
                         if ($course->id == SITEID) {
                             redirect($CFG->wwwroot . '/?redirect=0');
                         } else {

@@ -583,7 +583,6 @@ class generator {
 
                         $this->verbose("A $moduledata->name module was added to section $i (id $module->section) "
                             ."of course $courseid.");
-                        rebuild_course_cache($courseid);
 
                         $module_instance = $DB->get_field('course_modules', 'instance', array('id' => $module->coursemodule));
                         $module_record = $DB->get_record($moduledata->name, array('id' => $module_instance));

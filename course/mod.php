@@ -188,8 +188,6 @@ if (!empty($add)) {
                "view.php?id=$cm->course",
                "$cm->modname $cm->instance", $cm->id);
 
-    rebuild_course_cache($course->id);
-
     redirect($return);
 }
 
@@ -230,8 +228,6 @@ if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
     unset($USER->activitycopyname);
     unset($USER->activitycopysectionreturn);
 
-    rebuild_course_cache($section->course);
-
     redirect(course_get_url($course, $section->section, array('sr' => $sectionreturn)));
 
 } else if (!empty($indent) and confirm_sesskey()) {
@@ -268,8 +264,6 @@ if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
 
     set_coursemodule_visible($cm->id, 0);
 
-    rebuild_course_cache($cm->course);
-
     redirect(course_get_url($course, $cm->sectionnum, array('sr' => $sectionreturn)));
 
 } else if (!empty($show) and confirm_sesskey()) {
@@ -287,7 +281,6 @@ if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
 
     if ($module->visible and ($section->visible or (SITEID == $cm->course))) {
         set_coursemodule_visible($cm->id, 1);
-        rebuild_course_cache($cm->course);
     }
 
     redirect(course_get_url($course, $section->section, array('sr' => $sectionreturn)));
@@ -304,8 +297,6 @@ if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
     require_capability('moodle/course:manageactivities', $modcontext);
 
     set_coursemodule_groupmode($cm->id, $groupmode);
-
-    rebuild_course_cache($cm->course);
 
     redirect(course_get_url($course, $cm->sectionnum, array('sr' => $sectionreturn)));
 

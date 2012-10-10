@@ -208,7 +208,9 @@ class conditionlib_testcase extends advanced_testcase {
         foreach($params as $name=>$value) {
             $settings->{$name}=$value;
         }
-        return $DB->insert_record('course_modules',$settings);
+        $cmid = $DB->insert_record('course_modules',$settings);
+        rebuild_course_cache($courseid, true);
+        return $cmid;
     }
 
     private function make_section($courseid, $cmids, $sectionnum=0, $params=array()) {
@@ -220,7 +222,9 @@ class conditionlib_testcase extends advanced_testcase {
         foreach ($params as $name => $value) {
             $record->{$name} = $value;
         }
-        return $DB->insert_record('course_sections', $record);
+        $sectionid = $DB->insert_record('course_sections', $record);
+        rebuild_course_cache($courseid, true);
+        return $sectionid;
     }
 
     private function make_grouping($courseid, $name) {
@@ -321,6 +325,7 @@ class conditionlib_testcase extends advanced_testcase {
             'grademin' => 5.5
         ));
 
+        rebuild_course_cache($courseid, true);
         // Okay sweet, now get modinfo
         $course = $DB->get_record('course', array('id' => $courseid));
         $modinfo = get_fast_modinfo($course);
@@ -476,8 +481,6 @@ class conditionlib_testcase extends advanced_testcase {
 
         // Need to reset modinfo after changing the options
         rebuild_course_cache($courseid);
-        $reset = 'reset';
-        get_fast_modinfo($reset);
 
         $ci=new condition_info((object)array('id'=>$cmid),CONDITION_MISSING_EVERYTHING);
         $ci->add_completion_condition($oldid,COMPLETION_COMPLETE);
@@ -626,8 +629,6 @@ class conditionlib_testcase extends advanced_testcase {
 
         // Completion: Reset modinfo after changing the options
         rebuild_course_cache($courseid);
-        $reset = 'reset';
-        get_fast_modinfo($reset);
 
         // Completion: Add condition
         $ci = new condition_info_section((object)array('id' => $sectionid),
