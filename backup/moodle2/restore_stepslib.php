@@ -1391,6 +1391,8 @@ class restore_course_structure_step extends restore_structure_step {
         // Course record ready, update it
         $DB->update_record('course', $data);
 
+        course_get_format($data)->update_course_format_options($data);
+
         // Role name aliases
         restore_dbops::set_course_role_names($this->get_restoreid(), $this->get_courseid());
     }

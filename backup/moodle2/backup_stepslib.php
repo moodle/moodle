@@ -485,6 +485,12 @@ class backup_course_structure_step extends backup_structure_step {
         $courserec = $DB->get_record('course', array('id' => $this->task->get_courseid()));
         $courserec->contextid = $this->task->get_contextid();
 
+        $formatoptions = course_get_format($courserec)->get_format_options();
+        $course->add_final_elements(array_keys($formatoptions));
+        foreach ($formatoptions as $key => $value) {
+            $courserec->$key = $value;
+        }
+
         $course->set_source_array(array($courserec));
 
         $categoryrec = $DB->get_record('course_categories', array('id' => $courserec->category));
