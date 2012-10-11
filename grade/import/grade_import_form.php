@@ -118,11 +118,11 @@ class grade_import_mapping_form extends moodleform {
         $mform->setType('map', PARAM_INT);
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
+        $mform->addElement('hidden', 'iid');
+        $mform->setType('iid', PARAM_INT);
         $mform->addElement('hidden', 'importcode');
         $mform->setType('importcode', PARAM_FILE);
         $mform->addElement('hidden', 'verbosescales', 1);
-        $mform->setType('separator', PARAM_ALPHA);
-        $mform->addElement('hidden', 'separator', 'comma');
         $mform->setType('verbosescales', PARAM_INT);
         $mform->addElement('hidden', 'groupid', groups_get_course_group($COURSE));
         $mform->setType('groupid', PARAM_INT);
