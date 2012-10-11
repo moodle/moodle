@@ -394,6 +394,11 @@ class backup_section_structure_step extends backup_structure_step {
         $section->add_child($avail);
         $section->add_child($availfield);
 
+        // Add nested elements for course_format_options table
+        $formatoptions = new backup_nested_element('course_format_options', array('id'), array(
+            'format', 'name', 'value'));
+        $section->add_child($formatoptions);
+
         // Define sources
         $section->set_source_table('course_sections', array('id' => backup::VAR_SECTIONID));
         $avail->set_source_table('course_sections_availability', array('coursesectionid' => backup::VAR_SECTIONID));
@@ -402,6 +407,10 @@ class backup_section_structure_step extends backup_structure_step {
               FROM {course_sections_avail_fields} csaf
          LEFT JOIN {user_info_field} uif ON uif.id = csaf.customfieldid
              WHERE csaf.coursesectionid = ?', array(backup::VAR_SECTIONID));
+        $formatoptions->set_source_sql('SELECT cfo.id, cfo.format, cfo.name, cfo.value
+              FROM {course_format_options} cfo, {course} c
+              WHERE cfo.sectionid = ? AND cfo.courseid = c.id AND cfo.format = c.format',
+                array(backup::VAR_SECTIONID));
 
         // Aliases
         $section->set_source_alias('section', 'number');
