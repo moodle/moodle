@@ -2939,7 +2939,8 @@ function move_section($course, $section, $move) {
 
     $sectiondest = $section + $move;
 
-    if ($sectiondest > $course->numsections or $sectiondest < 1) {
+    $course = course_get_format($course)->get_course();
+    if (isset($course->numsections) && $sectiondest > $course->numsections or $sectiondest < 1) {
         return false;
     }
 
@@ -2965,7 +2966,8 @@ function move_section_to($course, $section, $destination) {
         return true;
     }
 
-    if (($destination > $course->numsections) || ($destination < 1)) {
+    $course = course_get_format($course)->get_course();
+    if ((isset($course->numsections) && ($destination > $course->numsections)) || ($destination < 1)) {
         return false;
     }
 
@@ -4232,8 +4234,6 @@ class course_request {
 
         // Apply course default settings
         $data->format             = $courseconfig->format;
-        $data->numsections        = $courseconfig->numsections;
-        $data->hiddensections     = $courseconfig->hiddensections;
         $data->newsitems          = $courseconfig->newsitems;
         $data->showgrades         = $courseconfig->showgrades;
         $data->showreports        = $courseconfig->showreports;

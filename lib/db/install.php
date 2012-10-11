@@ -86,6 +86,10 @@ function xmldb_main_install() {
         $newsite->id = $DB->insert_record('course', $newsite);
         define('SITEID', $newsite->id);
     }
+    // set the field 'numsections'. We can not use format_site::update_format_options() because
+    // the file is not loaded
+    $DB->insert_record('course_format_options', array('courseid' => SITEID, 'format' => 'site',
+        'sectionid' => 0, 'name' => 'numsections', 'value' => $newsite->numsections));
     $SITE = get_site();
     if ($newsite->id != $SITE->id) {
         throw new moodle_exception('generalexceptionmessage', 'error', '', 'Unexpected new site course id!');

@@ -448,6 +448,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
      */
     protected function get_nav_links($course, $sections, $sectionno) {
         // FIXME: This is really evil and should by using the navigation API.
+        $course = course_get_format($course)->get_course();
         $canviewhidden = has_capability('moodle/course:viewhiddensections', context_course::instance($course->id))
             or !$course->hiddensections;
 
@@ -542,6 +543,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         global $PAGE;
 
         $modinfo = get_fast_modinfo($course);
+        $course = course_get_format($course)->get_course();
 
         // Can we view the section in question?
         if (!($sectioninfo = $modinfo->get_section_info($displaysection))) {
@@ -637,6 +639,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         global $PAGE;
 
         $modinfo = get_fast_modinfo($course);
+        $course = course_get_format($course)->get_course();
 
         $context = context_course::instance($course->id);
         // Title with completion help icon.

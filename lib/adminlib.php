@@ -3174,7 +3174,7 @@ class admin_setting_sitesetselect extends admin_setting_configselect {
      * @return string The site name of the selected site
      */
     public function get_setting() {
-        $site = get_site();
+        $site = course_get_format(get_site())->get_course();
         return $site->{$this->name};
     }
 
@@ -3196,6 +3196,7 @@ class admin_setting_sitesetselect extends admin_setting_configselect {
         $record->timemodified = time();
         // update $SITE
         $SITE->{$this->name} = $data;
+        course_get_format($SITE)->update_course_format_options($record);
         return ($DB->update_record('course', $record) ? '' : get_string('errorsetting', 'admin'));
     }
 }
@@ -3366,7 +3367,7 @@ class admin_setting_sitesetcheckbox extends admin_setting_configcheckbox {
      * @return string
      */
     public function get_setting() {
-        $site = get_site();
+        $site = course_get_format(get_site())->get_course();
         return $site->{$this->name};
     }
 
@@ -3384,6 +3385,7 @@ class admin_setting_sitesetcheckbox extends admin_setting_configcheckbox {
         $record->timemodified  = time();
         // update $SITE
         $SITE->{$this->name} = $data;
+        course_get_format($SITE)->update_course_format_options($record);
         return ($DB->update_record('course', $record) ? '' : get_string('errorsetting', 'admin'));
     }
 }
@@ -3401,7 +3403,7 @@ class admin_setting_sitesettext extends admin_setting_configtext {
      * @return mixed string or null
      */
     public function get_setting() {
-        $site = get_site();
+        $site = course_get_format(get_site())->get_course();
         return $site->{$this->name} != '' ? $site->{$this->name} : NULL;
     }
 
@@ -3443,6 +3445,7 @@ class admin_setting_sitesettext extends admin_setting_configtext {
         $record->timemodified  = time();
         // update $SITE
         $SITE->{$this->name} = $data;
+        course_get_format($SITE)->update_course_format_options($record);
         return ($DB->update_record('course', $record) ? '' : get_string('dbupdatefailed', 'error'));
     }
 }
@@ -3467,7 +3470,7 @@ class admin_setting_special_frontpagedesc extends admin_setting {
      * @return string The current setting
      */
     public function get_setting() {
-        $site = get_site();
+        $site = course_get_format(get_site())->get_course();
         return $site->{$this->name};
     }
 
@@ -3484,6 +3487,7 @@ class admin_setting_special_frontpagedesc extends admin_setting {
         $record->{$this->name} = $data;
         $record->timemodified  = time();
         $SITE->{$this->name} = $data;
+        course_get_format($SITE)->update_course_format_options($record);
         return ($DB->update_record('course', $record) ? '' : get_string('errorsetting', 'admin'));
     }
 

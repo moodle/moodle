@@ -386,8 +386,6 @@ function process_group_tag($tagcontents) {
                     $course->idnumber = $coursecode;
                     $course->format = $courseconfig->format;
                     $course->visible = $courseconfig->visible;
-                    $course->numsections = $courseconfig->numsections;
-                    $course->hiddensections = $courseconfig->hiddensections;
                     $course->newsitems = $courseconfig->newsitems;
                     $course->showgrades = $courseconfig->showgrades;
                     $course->showreports = $courseconfig->showreports;

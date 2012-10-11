@@ -682,9 +682,10 @@ class enrol_database_testcase extends advanced_testcase {
 
         $this->assertEquals(2+1+4+1+count(self::$courses), $DB->count_records('course'));
         $course8['category'] = $defcat->id;
-        $course8['numsections'] = 666;
-        $this->assertTrue($DB->record_exists('course', $course8));
-
+        $record = $DB->get_record('course', $course8);
+        $this->assertFalse(empty($record));
+        $createdcourse = course_get_format($record)->get_course();
+        $this->assertEquals($createdcourse->numsections, 666);
 
         // Test invalid category.
 

@@ -59,6 +59,12 @@ function online_assignment_cleanup($output=false) {
         if ($output) echo $OUTPUT->heading($fullname);
 
         /// retrieve a list of sections beyond what is currently being shown
+        $course = course_get_format($course)->get_course();
+        if (!isset($course->numsections)) {
+            // Course format does not use numsections
+            if ($output) echo 'No extra sections<br />';
+            continue;
+        }
         $sql = "SELECT *
                   FROM {course_sections}
                  WHERE course=? AND section>?

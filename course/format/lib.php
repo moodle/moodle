@@ -355,35 +355,20 @@ abstract class format_base {
     public function get_view_url($section, $options = array()) {
         $course = $this->get_course();
         $url = new moodle_url('/course/view.php', array('id' => $course->id));
-
-        $sr = null;
+        
         if (array_key_exists('sr', $options)) {
-            $sr = $options['sr'];
-        }
-        if (is_object($section)) {
+            $sectionno = $options['sr'];
+        } else if (is_object($section)) {
             $sectionno = $section->section;
         } else {
             $sectionno = $section;
         }
-        if ($sectionno !== null) {
-            if ($sr !== null) {
-                if ($sr) {
-                    $usercoursedisplay = COURSE_DISPLAY_MULTIPAGE;
-                    $sectionno = $sr;
-                } else {
-                    $usercoursedisplay = COURSE_DISPLAY_SINGLEPAGE;
-                }
-            } else {
-                $usercoursedisplay = $course->coursedisplay;
-            }
-            if ($sectionno != 0 && $usercoursedisplay == COURSE_DISPLAY_MULTIPAGE) {
-                $url->param('section', $sectionno);
-            } else {
-                if (!empty($options['navigation'])) {
-                    return null;
-                }
-                $url->set_anchor('section-'.$sectionno);
-            }
+        if (!empty($options['navigation']) && $sectionno !== null) {
+            // by default assume that sections are never displayed on separate pages
+            return null;
+        }
+        if ($this->uses_sections() && $sectionno !== null) {
+            $url->set_anchor('section-'.$sectionno);
         }
         return $url;
     }
@@ -796,5 +781,33 @@ class format_site extends format_base {
     public function get_view_url($section, $options = array()) {
         return new moodle_url('/');
     }
-}
 
+    /**
+     * Returns the list of blocks to be automatically added on the site frontpage when moodle is installed
+     *
+     * @return array of default blocks, must contain two keys BLOCK_POS_LEFT and BLOCK_POS_RIGHT
+     *     each of values is an array of block names (for left and right side columns)
+     */
+    public function get_default_blocks() {
+        return blocks_get_default_site_course_blocks();
+    }
+
+    /**
+     * Definitions of the additional options that site uses
+     *
+     * @param bool $foreditform
+     * @return array of options
+     */
+    public function course_format_options($foreditform = false) {
+        static $courseformatoptions = false;
+        if ($courseformatoptions === false) {
+            $courseformatoptions = array(
+                'numsections' => array(
+                    'default' => 1,
+                    'type' => PARAM_INT,
+                ),
+            );
+        }
+        return $courseformatoptions;
+    }
+}

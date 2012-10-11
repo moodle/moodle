@@ -900,8 +900,6 @@ class enrol_ldap_plugin extends enrol_plugin {
             $template->summary        = '';
             $template->summaryformat  = FORMAT_HTML;
             $template->format         = $courseconfig->format;
-            $template->numsections    = $courseconfig->numsections;
-            $template->hiddensections = $courseconfig->hiddensections;
             $template->newsitems      = $courseconfig->newsitems;
             $template->showgrades     = $courseconfig->showgrades;
             $template->showreports    = $courseconfig->showreports;

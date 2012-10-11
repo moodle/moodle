@@ -71,7 +71,7 @@ class block_section_links extends block_base {
             return $this->content;
         }
 
-        $course = $this->page->course;
+        $course = course_get_format($this->page->course)->get_course();
         $context = context_course::instance($course->id);
 
         if ($course->format == 'weeks' or $course->format == 'weekscss') {

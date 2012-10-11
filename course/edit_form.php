@@ -126,28 +126,9 @@ class course_edit_form extends moodleform {
         $mform->registerNoSubmitButton('updatecourseformat');
         $mform->addElement('submit', 'updatecourseformat', get_string('courseformatudpate'));
 
-        $mform->addElement('select', 'coursedisplay', get_string('coursedisplay'),
-            array(COURSE_DISPLAY_SINGLEPAGE => get_string('coursedisplay_single'),
-                COURSE_DISPLAY_MULTIPAGE => get_string('coursedisplay_multi')));
-        $mform->addHelpButton('coursedisplay', 'coursedisplay');
-        $mform->setDefault('coursedisplay', $courseconfig->coursedisplay);
-
-        for ($i = 0; $i <= $courseconfig->maxsections; $i++) {
-            $sectionmenu[$i] = "$i";
-        }
-        $mform->addElement('select', 'numsections', get_string('numberweeks'), $sectionmenu);
-        $mform->setDefault('numsections', $courseconfig->numsections);
-
         $mform->addElement('date_selector', 'startdate', get_string('startdate'));
         $mform->addHelpButton('startdate', 'startdate');
         $mform->setDefault('startdate', time() + 3600 * 24);
-
-        $choices = array();
-        $choices['0'] = get_string('hiddensectionscollapsed');
-        $choices['1'] = get_string('hiddensectionsinvisible');
-        $mform->addElement('select', 'hiddensections', get_string('hiddensections'), $choices);
-        $mform->addHelpButton('hiddensections', 'hiddensections');
-        $mform->setDefault('hiddensections', $courseconfig->hiddensections);
 
         $options = range(0, 10);
         $mform->addElement('select', 'newsitems', get_string('newsitemsnumber'), $options);
