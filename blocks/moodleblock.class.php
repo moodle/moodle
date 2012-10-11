@@ -240,6 +240,9 @@ class block_base {
         if (!$this->hide_header()) {
             $bc->title = $this->title;
         }
+        if (empty($bc->title)) {
+            $bc->arialabel = new lang_string('pluginname', get_class($this));
+        }
 
         if ($this->page->user_is_editing()) {
             $bc->controls = $this->page->blocks->edit_controls($this);

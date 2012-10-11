@@ -914,6 +914,12 @@ class core_renderer extends renderer_base {
         if (empty($bc->blockinstanceid) || !strip_tags($bc->title)) {
             $bc->collapsible = block_contents::NOT_HIDEABLE;
         }
+        $skiptitle = strip_tags($bc->title);
+        if ($bc->blockinstanceid && !empty($skiptitle)) {
+            $bc->attributes['aria-labelledby'] = 'instance-'.$bc->blockinstanceid.'-header';
+        } else if (!empty($bc->arialabel)) {
+            $bc->attributes['aria-label'] = $bc->arialabel;
+        }
         if ($bc->collapsible == block_contents::HIDDEN) {
             $bc->add_class('hidden');
         }
@@ -921,7 +927,7 @@ class core_renderer extends renderer_base {
             $bc->add_class('block_with_controls');
         }
 
-        $skiptitle = strip_tags($bc->title);
+
         if (empty($skiptitle)) {
             $output = '';
             $skipdest = '';
@@ -955,7 +961,11 @@ class core_renderer extends renderer_base {
 
         $title = '';
         if ($bc->title) {
-            $title = html_writer::tag('h2', $bc->title, null);
+            $attributes = array();
+            if ($bc->blockinstanceid) {
+                $attributes['id'] = 'instance-'.$bc->blockinstanceid.'-header';
+            }
+            $title = html_writer::tag('h2', $bc->title, $attributes);
         }
 
         $controlshtml = $this->block_controls($bc->controls);
