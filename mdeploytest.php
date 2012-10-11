@@ -127,6 +127,14 @@ class mdeploytest extends PHPUnit_Framework_TestCase {
             array("!@#$%|/etc/qwerty\n\n\t\n\r", input_manager::TYPE_RAW, "!@#$%|/etc/qwerty\n\n\t\n\r"),
 
             array("\nrock'n'roll.mp3\t.exe", input_manager::TYPE_FILE, 'rocknroll.mp3.exe'),
+
+            array('http://localhost/moodle/dev/plugin.zip', input_manager::TYPE_URL, 'http://localhost/moodle/dev/plugin.zip'),
+            array(
+                'https://moodle.org/plugins/download.php/1292/mod_stampcoll_moodle23_2012062201.zip',
+                input_manager::TYPE_URL,
+                'https://moodle.org/plugins/download.php/1292/mod_stampcoll_moodle23_2012062201.zip'
+            ),
+            array('file:///etc/passwd', input_manager::TYPE_URL, ''),
         );
     }
 

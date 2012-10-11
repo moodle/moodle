@@ -1596,7 +1596,7 @@ class available_update_deployer {
             'type' => $plugintype,
             'name' => $pluginname,
             'typeroot' => $pluginrootpaths[$plugintype],
-            'download' => $info->download,
+            'package' => $info->download,
             'dataroot' => $CFG->dataroot,
             'dirroot' => $CFG->dirroot,
             'passfile' => $passfile,

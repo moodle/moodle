@@ -20,6 +20,11 @@
  *
  * This script looks after deploying available updates to the local Moodle site.
  *
+ * CLI usage example:
+ *  $ sudo -u apache php mdeploy.php --upgrade \
+ *                                   --package=https://moodle.org/plugins/download.php/...zip \
+ *                                   --dataroot=/home/mudrd8mz/moodledata/moodle24
+ *
  * @package     core
  * @copyright   2012 David Mudrak <david@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -34,7 +39,9 @@ if (defined('MOODLE_INTERNAL')) {
 
 class invalid_coding_exception extends Exception {}
 class missing_option_exception extends Exception {}
+class invalid_option_exception extends Exception {}
 class unauthorized_access_exception extends Exception {}
+class download_file_exception extends Exception {}
 
 
 // Various support classes /////////////////////////////////////////////////////
@@ -106,6 +113,7 @@ class input_manager extends singleton_pattern {
     const TYPE_INT          = 'int';    // Integer
     const TYPE_PATH         = 'path';   // Full path to a file or a directory
     const TYPE_RAW          = 'raw';    // Raw value, keep as is
+    const TYPE_URL          = 'url';    // URL to a file
 
     /** @var input_cli_provider|input_http_provider the provider of the input */
     protected $inputprovider = null;
@@ -155,12 +163,13 @@ class input_manager extends singleton_pattern {
     public function get_option_info($name=null) {
 
         $supportedoptions = array(
+            array('', 'passfile', input_manager::TYPE_FILE, 'File name of the passphrase file (HTTP access only)'),
+            array('', 'password', input_manager::TYPE_RAW, 'Session passphrase (HTTP access only)'),
             array('d', 'dataroot', input_manager::TYPE_PATH, 'Full path to the dataroot (moodledata) directory'),
             array('h', 'help', input_manager::TYPE_FLAG, 'Prints usage information'),
             array('i', 'install', input_manager::TYPE_FLAG, 'Installation mode'),
+            array('p', 'package', input_manager::TYPE_URL, 'URL to the ZIP package to deploy'),
             array('u', 'upgrade', input_manager::TYPE_FLAG, 'Upgrade mode'),
-            array('', 'passfile', input_manager::TYPE_FILE, 'File name of the passphrase file (HTTP access only)'),
-            array('', 'password', input_manager::TYPE_RAW, 'Session passphrase (HTTP access only)'),
         );
 
         if (is_null($name)) {
@@ -248,6 +257,20 @@ class input_manager extends singleton_pattern {
 
             case input_manager::TYPE_RAW:
                 return $raw;
+
+            case input_manager::TYPE_URL:
+                $regex  = '^(https?|ftp)\:\/\/'; // protocol
+                $regex .= '([a-z0-9+!*(),;?&=\$_.-]+(\:[a-z0-9+!*(),;?&=\$_.-]+)?@)?'; // optional user and password
+                $regex .= '[a-z0-9+\$_-]+(\.[a-z0-9+\$_-]+)*'; // hostname or IP (one word like http://localhost/ allowed)
+                $regex .= '(\:[0-9]{2,5})?'; // port (optional)
+                $regex .= '(\/([a-z0-9+\$_-]\.?)+)*\/?'; // path to the file
+                $regex .= '(\?[a-z+&\$_.-][a-z0-9;:@/&%=+\$_.-]*)?'; // HTTP params
+
+                if (preg_match('#'.$regex.'#i', $raw)) {
+                    return $raw;
+                } else {
+                    return '';
+                }
 
             default:
                 throw new invalid_coding_exception('Unknown option type.');
@@ -582,6 +605,15 @@ class worker extends singleton_pattern {
     /** @var output_manager */
     protected $output = null;
 
+    /** @var int the most recent cURL error number, zero for no error */
+    private $curlerrno = null;
+
+    /** @var string the most recent cURL error message, empty string for no error */
+    private $curlerror = null;
+
+    /** @var array|false the most recent cURL request info, if it was successful */
+    private $curlinfo = null;
+
     /**
      * Main - the one that actually does something
      */
@@ -598,10 +630,22 @@ class worker extends singleton_pattern {
 
         if ($this->input->get_option('upgrade')) {
             // Fetch the ZIP file into a temporary location.
+            $source = $this->input->get_option('package');
+            if (empty($source)) {
+                throw new invalid_option_exception('Not a valid package URL');
+            }
+            $target = $this->target_location($source);
 
-            // Compare MD5 checksum of the ZIP file.
+            if ($this->download_file($source, $target)) {
+                $this->log('ZIP fetched into '.$target);
+            } else {
+                $this->log('cURL error ' . $this->curlerrno . ' ' . $this->curlerror);
+                $this->log('Unable to download the file');
+            }
 
-            // If the target location exists, backup it.
+            // Compare MD5 checksum of the ZIP file - TODO
+
+            // If the target location exists, backup it - TODO
 
             // Unzip the ZIP file into the target location.
 
@@ -693,6 +737,103 @@ class worker extends singleton_pattern {
         if ($password !== $stored[0]) {
             throw new unauthorized_access_exception('Session passphrase does not match the stored one.');
         }
+    }
+
+    /**
+     * Choose the target location for the given ZIP's URL.
+     *
+     * @param string $source URL
+     * @return string
+     */
+    protected function target_location($source) {
+
+        $dataroot = $this->input->get_option('dataroot');
+        $pool = $dataroot.'/mdeploy/var';
+
+        if (!is_dir($pool)) {
+            mkdir($pool, 02777, true);
+        }
+
+        $target = $pool.'/'.md5($source);
+
+        $suffix = 0;
+        while (file_exists($target.'.'.$suffix.'.zip')) {
+            $suffix++;
+        }
+
+        return $target.'.'.$suffix.'.zip';
+    }
+
+    /**
+     * Downloads the given file into the given destination.
+     *
+     * This is basically a simplified version of {@link download_file_content()} from
+     * Moodle itself, tuned for fetching files from moodle.org servers.
+     *
+     * @param string $source file url starting with http(s)://
+     * @param string $target store the downloaded content to this file (full path)
+     * @return bool true on success, false otherwise
+     * @throws download_file_exception
+     */
+    protected function download_file($source, $target) {
+
+        $newlines = array("\r", "\n");
+        $source = str_replace($newlines, '', $source);
+        if (!preg_match('|^https?://|i', $source)) {
+            throw new download_file_exception('Unsupported transport protocol.');
+        }
+        if (!$ch = curl_init($source)) {
+            // $this->log('Unable to init cURL.');
+            return false;
+        }
+
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true); // verify the peer's certificate
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2); // check the existence of a common name and also verify that it matches the hostname provided
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // return the transfer as a string
+        curl_setopt($ch, CURLOPT_HEADER, false); // don't include the header in the output
+        curl_setopt($ch, CURLOPT_TIMEOUT, 3600);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 20); // nah, moodle.org is never unavailable! :-p
+        curl_setopt($ch, CURLOPT_URL, $source);
+
+        $targetfile = fopen($target, 'w');
+
+        if (!$targetfile) {
+            throw new download_file_exception('Unable to create local file '.$target);
+        }
+
+        curl_setopt($ch, CURLOPT_FILE, $targetfile);
+
+        $result = curl_exec($ch);
+
+        // try to detect encoding problems
+        if ((curl_errno($ch) == 23 or curl_errno($ch) == 61) and defined('CURLOPT_ENCODING')) {
+            curl_setopt($ch, CURLOPT_ENCODING, 'none');
+            $result = curl_exec($ch);
+        }
+
+        fclose($targetfile);
+
+        $this->curlerrno = curl_errno($ch);
+        $this->curlerror = curl_error($ch);
+        $this->curlinfo = curl_getinfo($ch);
+
+        if (!$result or $this->curlerrno) {
+            return false;
+
+        } else if (is_array($this->curlinfo) and (empty($this->curlinfo['http_code']) or $this->curlinfo['http_code'] != 200)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Log a message
+     *
+     * @param string $message
+     */
+    protected function log($message) {
+        // TODO
     }
 }
 
