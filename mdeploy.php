@@ -42,6 +42,7 @@ class missing_option_exception extends Exception {}
 class invalid_option_exception extends Exception {}
 class unauthorized_access_exception extends Exception {}
 class download_file_exception extends Exception {}
+class backup_folder_exception extends Exception{}
 
 
 // Various support classes /////////////////////////////////////////////////////
@@ -114,6 +115,7 @@ class input_manager extends singleton_pattern {
     const TYPE_PATH         = 'path';   // Full path to a file or a directory
     const TYPE_RAW          = 'raw';    // Raw value, keep as is
     const TYPE_URL          = 'url';    // URL to a file
+    const TYPE_PLUGIN       = 'plugin'; // Plugin name
 
     /** @var input_cli_provider|input_http_provider the provider of the input */
     protected $inputprovider = null;
@@ -165,10 +167,13 @@ class input_manager extends singleton_pattern {
         $supportedoptions = array(
             array('', 'passfile', input_manager::TYPE_FILE, 'File name of the passphrase file (HTTP access only)'),
             array('', 'password', input_manager::TYPE_RAW, 'Session passphrase (HTTP access only)'),
+            array('', 'returnurl', input_manager::TYPE_URL, 'Return URL (HTTP access only)'),
             array('d', 'dataroot', input_manager::TYPE_PATH, 'Full path to the dataroot (moodledata) directory'),
             array('h', 'help', input_manager::TYPE_FLAG, 'Prints usage information'),
             array('i', 'install', input_manager::TYPE_FLAG, 'Installation mode'),
+            array('n', 'name', input_manager::TYPE_PLUGIN, 'Plugin name (the name of its folder)'),
             array('p', 'package', input_manager::TYPE_URL, 'URL to the ZIP package to deploy'),
+            array('r', 'typeroot', input_manager::TYPE_PATH, 'Full path of the container for this plugin type'),
             array('u', 'upgrade', input_manager::TYPE_FLAG, 'Upgrade mode'),
         );
 
@@ -269,8 +274,17 @@ class input_manager extends singleton_pattern {
                 if (preg_match('#'.$regex.'#i', $raw)) {
                     return $raw;
                 } else {
-                    return '';
+                    throw new invalid_option_exception('Not a valid URL');
                 }
+
+            case input_manager::TYPE_PLUGIN:
+                if (!preg_match('/^[a-z][a-z0-9_]*[a-z0-9]$/', $raw)) {
+                    throw new invalid_option_exception('Invalid plugin name');
+                }
+                if (strpos($raw, '__') !== false) {
+                    throw new invalid_option_exception('Invalid plugin name');
+                }
+                return $raw;
 
             default:
                 throw new invalid_coding_exception('Unknown option type.');
@@ -631,9 +645,6 @@ class worker extends singleton_pattern {
         if ($this->input->get_option('upgrade')) {
             // Fetch the ZIP file into a temporary location.
             $source = $this->input->get_option('package');
-            if (empty($source)) {
-                throw new invalid_option_exception('Not a valid package URL');
-            }
             $target = $this->target_location($source);
 
             if ($this->download_file($source, $target)) {
@@ -645,9 +656,26 @@ class worker extends singleton_pattern {
 
             // Compare MD5 checksum of the ZIP file - TODO
 
-            // If the target location exists, backup it - TODO
+            // Backup the current version of the plugin
+            $plugintyperoot = $this->input->get_option('typeroot');
+            $pluginname = $this->input->get_option('name');
+            $sourcelocation = $plugintyperoot.'/'.$pluginname;
+            $backuplocation = $this->backup_location($sourcelocation);
 
-            // Unzip the ZIP file into the target location.
+            // We don't want to touch files unless we are pretty sure it would be all ok.
+            if (!$this->move_directory_source_precheck($sourcelocation)) {
+                throw new backup_folder_exception('Unable to backup the current version of the plugin (source precheck failed)');
+            }
+            if (!$this->move_directory_target_precheck($backuplocation)) {
+                throw new backup_folder_exception('Unable to backup the current version of the plugin (backup precheck failed)');
+            }
+
+            // Looking good, let's try it.
+            if (!$this->move_directory($sourcelocation, $backuplocation)) {
+                throw new backup_folder_exception('Unable to backup the current version of the plugin (moving failed)');
+            }
+
+            // Unzip the ZIP file into the target location - TODO
 
             // Redirect to the given URL (in HTTP) or exit (in CLI).
             $this->done();
@@ -765,6 +793,31 @@ class worker extends singleton_pattern {
     }
 
     /**
+     * Choose the location of the current plugin folder backup
+     *
+     * @param string $path full path to the current folder
+     * @return string
+     */
+    protected function backup_location($path) {
+
+        $dataroot = $this->input->get_option('dataroot');
+        $pool = $dataroot.'/mdeploy/archive';
+
+        if (!is_dir($pool)) {
+            mkdir($pool, 02777, true);
+        }
+
+        $target = $pool.'/'.basename($path).'_'.time();
+
+        $suffix = 0;
+        while (file_exists($target.'.'.$suffix)) {
+            $suffix++;
+        }
+
+        return $target.'.'.$suffix;
+    }
+
+    /**
      * Downloads the given file into the given destination.
      *
      * This is basically a simplified version of {@link download_file_content()} from
@@ -834,6 +887,99 @@ class worker extends singleton_pattern {
      */
     protected function log($message) {
         // TODO
+    }
+
+    /**
+     * Checks to see if the given source could be safely moved into a new location
+     *
+     * @param string $source full path to the existing directory
+     * @return bool
+     */
+    protected function move_directory_source_precheck($source) {
+
+        if (is_dir($source)) {
+            $handle = opendir($source);
+        } else {
+            return false;
+        }
+
+        $result = true;
+
+        while ($filename = readdir($handle)) {
+            $sourcepath = $source.'/'.$filename;
+
+            if ($filename === '.' or $filename === '..') {
+                continue;
+            }
+
+            if (is_dir($sourcepath)) {
+                $result = $result && $this->move_directory_source_precheck($sourcepath);
+
+            } else {
+                $result = $result && is_writable($sourcepath);
+            }
+        }
+
+        closedir($handle);
+        return $result && is_writable($source);
+    }
+
+    /**
+     * Checks to see if a source foldr could be safely moved into the given new location
+     *
+     * @param string $destination full path to the new expected location of a folder
+     * @return bool
+     */
+    protected function move_directory_target_precheck($target) {
+
+        if (file_exists($target)) {
+            return false;
+        }
+
+        $result = mkdir($target, 02777) && rmdir($target);
+
+        return $result;
+    }
+
+    /**
+     * Moves the given source into a new location recursively
+     *
+     * @param string $source full path to the existing directory
+     * @param string $destination full path to the new location of the folder
+     * @return bool
+     */
+    protected function move_directory($source, $target) {
+
+        if (file_exists($target)) {
+            throw new backup_location('Unable to move the directory - target location already exists');
+        }
+
+        if (is_dir($source)) {
+            $handle = opendir($source);
+        } else {
+            throw new backup_location('Source location is not a directory');
+        }
+
+        mkdir($target, 02777);
+
+        while ($filename = readdir($handle)) {
+            $sourcepath = $source.'/'.$filename;
+            $targetpath = $target.'/'.$filename;
+
+            if ($filename === '.' or $filename === '..') {
+                continue;
+            }
+
+            if (is_dir($sourcepath)) {
+                $this->move_directory($sourcepath, $targetpath);
+
+            } else {
+                rename($sourcepath, $targetpath);
+            }
+        }
+
+        closedir($handle);
+        return rmdir($source);
     }
 }
 
