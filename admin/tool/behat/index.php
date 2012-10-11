@@ -30,10 +30,6 @@ $action = optional_param('action', 'info', PARAM_ALPHAEXT);
 
 admin_externalpage_setup('toolbehat');
 
-$title = get_string('pluginname', 'tool_behat') . ' - ' . get_string('command' . $action, 'tool_behat');
-echo $OUTPUT->header();
-echo $OUTPUT->heading($title);
-
 call_user_func('tool_behat::' . $action);
 
 echo $OUTPUT->footer();

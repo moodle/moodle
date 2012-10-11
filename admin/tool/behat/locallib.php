@@ -33,9 +33,12 @@ class tool_behat {
      */
     public static function info() {
 
-        $html = tool_behat::get_info();
+        $html = tool_behat::get_header();
+        $html .= tool_behat::get_info();
+        $html .= tool_behat::get_switch_environment_form();
         $html .= tool_behat::get_steps_definitions_form();
         $html .= tool_behat::get_run_tests_form();
+        $html .= tool_behat::get_footer();
 
         echo $html;
     }
@@ -62,7 +65,8 @@ class tool_behat {
         chdir($currentcwd);
 
         // Outputing steps.
-        $html = tool_behat::get_steps_definitions_form($filter);
+        $html = tool_behat::get_header();
+        $html .= tool_behat::get_steps_definitions_form($filter);
 
         $content = '';
         if ($steps) {
@@ -80,9 +84,28 @@ class tool_behat {
         }
 
         $html .= html_writer::tag('div', $content, array('id' => 'steps-definitions'));
+        $html .= tool_behat::get_footer();
+
         echo $html;
     }
 
+    /**
+     * Switches from and to the regular environment to the testing environment
+     */
+    public static function switchenvironment() {
+        global $CFG;
+
+        confirm_sesskey();
+
+        $testenvironment = optional_param('testenvironment', 'enable', PARAM_ALPHA);
+        if ($testenvironment == 'enable') {
+            tool_behat::enable_test_environment();
+        } else if ($testenvironment == 'disable') {
+            tool_behat::disable_test_environment();
+        }
+
+        redirect(get_login_url());
+    }
 
     /**
      * Creates a file listing all the moodle with features and steps definitions
@@ -99,6 +122,8 @@ class tool_behat {
 
         confirm_sesskey();
         tool_behat::check_behat_setup();
+
+        echo tool_behat::get_header();
 
         @set_time_limit(0);
 
@@ -120,6 +145,8 @@ class tool_behat {
         // Switching back to regular environment
         tool_behat::disable_test_environment();
         chdir($currentcwd);
+
+        echo tool_behat::get_footer();
     }
 
 
@@ -173,12 +200,12 @@ class tool_behat {
     /**
      * Enables test mode checking the test environment setup
      *
-     * Stores a file in dataroot/behat to allow Moodle swap to
+     * Stores a file in dataroot/behat to allow Moodle switch to
      * test database and dataroot before the initial set up
      *
      * @throws file_exception
      */
-    public static function enable_test_environment() {
+    private static function enable_test_environment() {
         global $CFG;
 
         confirm_sesskey();
@@ -214,32 +241,101 @@ class tool_behat {
     /**
      * Disables test mode
      */
-    public static function disable_test_environment() {
-        global $CFG;
+    private static function disable_test_environment() {
 
         confirm_sesskey();
 
-        $testenvfile = $CFG->dataroot . '/behat/test_environment_enabled.txt';
+        $testenvfile = tool_behat::get_test_filepath();
 
         if (!tool_behat::is_test_environment_enabled()) {
             debugging('Test environment was already disabled');
         } else {
-            unlink($testenvfile);
+            if (!unlink($testenvfile)) {
+                throw new file_exception('cannotdeletetestenvironmentfile');
+            }
         }
     }
 
     /**
      * Checks whether test environment is enabled or disabled
+     *
+     * It does not return if the current script is running
+     * in test environment {@see tool_behat::is_test_environment_running()}
+     *
+     * @return bool
      */
     public static function is_test_environment_enabled() {
-        global $CFG;
 
-        $testenvfile = $CFG->dataroot . '/behat/test_environment_enabled.txt';
+        $testenvfile = tool_behat::get_test_filepath();
         if (file_exists($testenvfile)) {
             return true;
         }
 
         return false;
+    }
+
+
+    /**
+     * Returns true if Moodle is currently running with the test database and dataroot
+     * @return bool
+     */
+    public static function is_test_environment_running() {
+        global $CFG;
+
+        if (!empty($CFG->originaldataroot)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Returns the path to the file which specifies if test environment is enabled
+     * @return string
+     */
+    private static function get_test_filepath() {
+        global $CFG;
+
+        if (tool_behat::is_test_environment_running()) {
+            $testenvfile = $CFG->originaldataroot . '/behat/test_environment_enabled.txt';
+        } else {
+            $testenvfile = $CFG->dataroot . '/behat/test_environment_enabled.txt';
+        }
+
+        return $testenvfile;
+    }
+
+    /**
+     * Returns header output
+     * @return string
+     */
+    private static function get_header() {
+        global $OUTPUT;
+
+        if (CLI_SCRIPT) {
+            return get_string('command' . $action, 'tool_behat');
+        }
+
+        $action = optional_param('action', 'info', PARAM_ALPHAEXT);
+        $title = get_string('pluginname', 'tool_behat') . ' - ' . get_string('command' . $action, 'tool_behat');
+        $html = $OUTPUT->header();
+        $html .= $OUTPUT->heading($title);
+
+        return $html;
+    }
+
+    /**
+     * Returns footer output
+     * @return string
+     */
+    private static function get_footer() {
+        global $OUTPUT;
+
+        if (CLI_SCRIPT) {
+            return '';
+        }
+
+        return $OUTPUT->footer();
     }
 
     /**
@@ -263,6 +359,29 @@ class tool_behat {
         $installinstructions .= '3.- Set up the \'config_file_path\' param in /MOODLE-ACCEPTANCE-TEST/ROOT/PATH/behat.yml pointing to $CFG->dataroot/behat/config.yml (for example /YOUR/MOODLEDATA/PATH/behat/config.yml)<br/>';
         $installinstructions .= '4.- Set up $CFG->behatpath in your config.php with the path of your moodle-acceptance-test installation (for example /MOODLE-ACCEPTANCE-TEST/ROOT/PATH)<br/>';
         $html .= html_writer::tag('div', $installinstructions);
+        $html .= $OUTPUT->box_end();
+
+        return $html;
+    }
+
+    /**
+     * Returns a button to switch between environments
+     * @return string
+     */
+    private static function get_switch_environment_form() {
+        global $CFG, $OUTPUT;
+
+        if (tool_behat::is_test_environment_running()) {
+            $perform = 'disable';
+        } else {
+            $perform = 'enable';
+        }
+        $params = array('action' => 'switchenvironment', 'testenvironment' => $perform, 'sesskey' => sesskey());
+        $url = new moodle_url('/' . $CFG->admin . '/tool/behat/index.php', $params);
+
+        $html = $OUTPUT->box_start();
+        $html .= '<p>' . get_string('switchenvironmentinfo', 'tool_behat') . '</p>';
+        $html .= $OUTPUT->single_button($url, get_string('switchenvironment' . $perform, 'tool_behat'));
         $html .= $OUTPUT->box_end();
 
         return $html;

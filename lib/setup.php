@@ -92,6 +92,8 @@ if (!isset($CFG->wwwroot) or $CFG->wwwroot === 'http://example.com/moodle') {
 
 // If acceptance testing mode is enabled use test database and dataroot
 if (file_exists($CFG->dataroot . '/behat/test_environment_enabled.txt')) {
+    $CFG->passwordsaltmain = 'phpunit';
+    $CFG->originaldataroot = $CFG->dataroot;
     $CFG->prefix = $CFG->phpunit_prefix;
     $CFG->dataroot = $CFG->phpunit_dataroot;
 }
