@@ -317,6 +317,17 @@ if (moodle_needs_upgrading()) {
 
             $output = $PAGE->get_renderer('core', 'admin');
 
+            $deployer = available_update_deployer::instance();
+            if ($deployer->enabled()) {
+                $deployer->initialize($PAGE->url, $PAGE->url);
+
+                $deploydata = $deployer->submitted_data();
+                if (!empty($deploydata)) {
+                    echo $output->upgrade_plugin_confirm_deploy_page($deployer, $deploydata);
+                    die();
+                }
+            }
+
             // check plugin dependencies first
             $failed = array();
             if (!plugin_manager::instance()->all_plugins_ok($version, $failed)) {
