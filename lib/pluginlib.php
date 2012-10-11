@@ -1591,6 +1591,8 @@ class available_update_deployer {
 
         list($passfile, $password) = $this->prepare_authorization();
 
+        $upgradeurl = new moodle_url('/admin');
+
         $params = array(
             'upgrade' => true,
             'type' => $plugintype,
@@ -1601,6 +1603,7 @@ class available_update_deployer {
             'dirroot' => $CFG->dirroot,
             'passfile' => $passfile,
             'password' => $password,
+            'returnurl' => $upgradeurl->out(true),
         );
 
         $widget = new single_button(

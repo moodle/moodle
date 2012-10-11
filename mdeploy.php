@@ -42,7 +42,9 @@ class missing_option_exception extends Exception {}
 class invalid_option_exception extends Exception {}
 class unauthorized_access_exception extends Exception {}
 class download_file_exception extends Exception {}
-class backup_folder_exception extends Exception{}
+class backup_folder_exception extends Exception {}
+class zip_exception extends Exception {}
+class filesystem_exception extends Exception {}
 
 
 // Various support classes /////////////////////////////////////////////////////
@@ -675,7 +677,8 @@ class worker extends singleton_pattern {
                 throw new backup_folder_exception('Unable to backup the current version of the plugin (moving failed)');
             }
 
-            // Unzip the ZIP file into the target location - TODO
+            // Unzip the plugin package file into the target location.
+            $this->unzip_plugin($target, $plugintyperoot, $sourcelocation, $backuplocation);
 
             // Redirect to the given URL (in HTTP) or exit (in CLI).
             $this->done();
@@ -711,7 +714,7 @@ class worker extends singleton_pattern {
 
         } else {
             $returnurl = $this->input->get_option('returnurl');
-            redirect($returnurl);
+            $this->redirect($returnurl);
             exit($exitcode);
         }
     }
@@ -951,13 +954,13 @@ class worker extends singleton_pattern {
     protected function move_directory($source, $target) {
 
         if (file_exists($target)) {
-            throw new backup_location('Unable to move the directory - target location already exists');
+            throw new filesystem_exception('Unable to move the directory - target location already exists');
         }
 
         if (is_dir($source)) {
             $handle = opendir($source);
         } else {
-            throw new backup_location('Source location is not a directory');
+            throw new filesystem_exception('Source location is not a directory');
         }
 
         mkdir($target, 02777);
@@ -980,6 +983,92 @@ class worker extends singleton_pattern {
 
         closedir($handle);
         return rmdir($source);
+    }
+
+    /**
+     * Deletes the given directory recursively
+     *
+     * @param string $path full path to the directory
+     */
+    protected function remove_directory($path) {
+
+        if (!file_exists($path)) {
+            return;
+        }
+
+        if (is_dir($path)) {
+            $handle = opendir($path);
+        } else {
+            throw new filesystem_exception('Given path is not a directory');
+        }
+
+        while ($filename = readdir($handle)) {
+            $filepath = $path.'/'.$filename;
+
+            if ($filename === '.' or $filename === '..') {
+                continue;
+            }
+
+            if (is_dir($filepath)) {
+                $this->remove_directory($filepath);
+
+            } else {
+                unlink($filepath);
+            }
+        }
+
+        closedir($handle);
+        return rmdir($path);
+    }
+
+    /**
+     * Unzip the file obtained from the Plugins directory to this site
+     *
+     * @param string $ziplocation full path to the ZIP file
+     * @param string $plugintyperoot full path to the plugin's type location
+     * @param string $expectedlocation expected full path to the plugin after it is extracted
+     * @param string $backuplocation location of the previous version of the plugin
+     */
+    protected function unzip_plugin($ziplocation, $plugintyperoot, $expectedlocation, $backuplocation) {
+
+        $zip = new ZipArchive();
+        $result = $zip->open($ziplocation);
+
+        if ($result !== true) {
+            $this->move_directory($backuplocation, $expectedlocation);
+            throw new zip_exception('Unable to open the zip package');
+        }
+
+        // Make sure that the ZIP has expected structure
+        $pluginname = basename($expectedlocation);
+        for ($i = 0; $i < $zip->numFiles; $i++) {
+            $stat = $zip->statIndex($i);
+            $filename = $stat['name'];
+            $filename = explode('/', $filename);
+            if ($filename[0] !== $pluginname) {
+                $zip->close();
+                throw new zip_exception('Invalid structure of the zip package');
+            }
+        }
+
+        if (!$zip->extractTo($plugintyperoot)) {
+            $zip->close();
+            $this->remove_directory($expectedlocation); // just in case something was created
+            $this->move_directory($backuplocation, $expectedlocation);
+            throw new zip_exception('Unable to extract the zip package');
+        }
+
+        $zip->close();
+    }
+
+    /**
+     * Redirect the browser
+     *
+     * @todo check if there has been some output yet
+     * @param string $url
+     */
+    protected function redirect($url) {
+        header('Location: '.$url);
     }
 }
 
