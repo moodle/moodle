@@ -15,7 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Utility helper for automated backups run through cron.
  *
@@ -24,6 +23,8 @@
  * @copyright  2010 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * This class is an abstract class with methods that can be called to aid the
@@ -505,9 +506,9 @@ abstract class backup_cron_automated_helper {
     /**
      * Removes excess backups from the external system and the local file system.
      *
-     * The number of backups keep comes from $config->backup_auto_keep
+     * The number of backups keep comes from $config->backup_auto_keep.
      *
-     * @param stdClass $course
+     * @param stdClass $course object
      * @return bool
      */
     public static function remove_excess_backups($course) {
@@ -517,7 +518,7 @@ abstract class backup_cron_automated_helper {
         $dir =      $config->backup_auto_destination;
 
         if ($keep == 0) {
-            // means keep all backup files
+            // Means keep all backup files.
             return true;
         }
 
@@ -528,7 +529,7 @@ abstract class backup_cron_automated_helper {
             $dir = null;
         }
 
-        // Clean up excess backups in the course backup filearea
+        // Clean up excess backups in the course backup filearea.
         if ($storage == 0 || $storage == 2) {
             $fs = get_file_storage();
             $context = context_course::instance($course->id);
@@ -536,7 +537,7 @@ abstract class backup_cron_automated_helper {
             $filearea = 'automated';
             $itemid = 0;
             $files = array();
-            // Store all the matching files into timemodified => stored_file array
+            // Store all the matching files into timemodified => stored_file array.
             foreach ($fs->get_area_files($context->id, $component, $filearea, $itemid) as $file) {
                 if (strpos($file->get_filename(), $backupword) !== 0) {
                     continue;
@@ -544,11 +545,10 @@ abstract class backup_cron_automated_helper {
                 $files[$file->get_timemodified()] = $file;
             }
             if (count($files) <= $keep) {
-                // There are less matching files than the desired number to keep
-                // do there is nothing to clean up.
+                // There are less matching files than the desired number to keep there is nothing to clean up.
                 return 0;
             }
-            // Sort by keys descending (newer to older filemodified)
+            // Sort by keys descending (newer to older filemodified).
             krsort($files);
             $remove = array_splice($files, $keep);
             foreach ($remove as $file) {
@@ -557,26 +557,42 @@ abstract class backup_cron_automated_helper {
             //mtrace('Removed '.count($remove).' old backup file(s) from the automated filearea');
         }
 
-        // Clean up excess backups in the specified external directory
+        // Clean up excess backups in the specified external directory.
         if (!empty($dir) && ($storage == 1 || $storage == 2)) {
             // Calculate backup filename regex, ignoring the date/time/info parts that can be
-            // variable, depending of languages, formats and automated backup settings
-            $filename = $backupword . '-' . backup::FORMAT_MOODLE . '-' . backup::TYPE_1COURSE . '-' .$course->id . '-';
+            // variable, depending of languages, formats and automated backup settings.
+            $filename = $backupword . '-' . backup::FORMAT_MOODLE . '-' . backup::TYPE_1COURSE . '-' . $course->id . '-';
             $regex = '#^'.preg_quote($filename, '#').'.*\.mbz$#';
 
-            // Store all the matching files into fullpath => timemodified array
+            // Store all the matching files into filename => timemodified array.
             $files = array();
             foreach (scandir($dir) as $file) {
-                if (preg_match($regex, $file, $matches)) {
-                    $files[$file] = filemtime($dir . '/' . $file);
+                // Skip files not matching the naming convention.
+                if (!preg_match($regex, $file, $matches)) {
+                    continue;
+                }
+
+                // Read the information contained in the backup itself.
+                try {
+                    $bcinfo = backup_general_helper::get_backup_information_from_mbz($dir . '/' . $file);
+                } catch (backup_helper_exception $e) {
+                    mtrace('Error: ' . $file . ' does not appear to be a valid backup (' . $e->errorcode . ')');
+                    continue;
+                }
+
+                // Make sure this backup concerns the course and site we are looking for.
+                if ($bcinfo->format === backup::FORMAT_MOODLE &&
+                        $bcinfo->type === backup::TYPE_1COURSE &&
+                        $bcinfo->original_course_id == $course->id &&
+                        backup_general_helper::backup_is_samesite($bcinfo)) {
+                    $files[$file] = $bcinfo->backup_date;
                 }
             }
             if (count($files) <= $keep) {
-                // There are less matching files than the desired number to keep
-                // do there is nothing to clean up.
+                // There are less matching files than the desired number to keep there is nothing to clean up.
                 return 0;
             }
-            // Sort by values descending (newer to older filemodified)
+            // Sort by values descending (newer to older filemodified).
             arsort($files);
             $remove = array_splice($files, $keep);
             foreach (array_keys($remove) as $file) {
