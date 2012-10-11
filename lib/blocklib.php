@@ -2105,30 +2105,12 @@ function blocks_add_default_course_blocks($course) {
     } else if ($course->id == SITEID) {
         $blocknames = blocks_get_default_site_course_blocks();
 
+    } else if (!empty($CFG->{'defaultblocks_' . $course->format})) {
+        $blocknames = blocks_parse_default_blocks_list($CFG->{'defaultblocks_' . $course->format});
+
     } else {
-        $defaultblocks = 'defaultblocks_' . $course->format;
-        if (!empty($CFG->$defaultblocks)) {
-            $blocknames = blocks_parse_default_blocks_list($CFG->$defaultblocks);
+        $blocknames = course_get_format($course)->get_default_blocks();
 
-        } else {
-            $formatconfig = $CFG->dirroot.'/course/format/'.$course->format.'/config.php';
-            $format = array(); // initialize array in external file
-            if (is_readable($formatconfig)) {
-                include($formatconfig);
-            }
-            if (!empty($format['defaultblocks'])) {
-                $blocknames = blocks_parse_default_blocks_list($format['defaultblocks']);
-
-            } else if (!empty($CFG->defaultblocks)){
-                $blocknames = blocks_parse_default_blocks_list($CFG->defaultblocks);
-
-            } else {
-                $blocknames = array(
-                    BLOCK_POS_LEFT => array(),
-                    BLOCK_POS_RIGHT => array('search_forums', 'news_items', 'calendar_upcoming', 'recent_activity')
-                );
-            }
-        }
     }
 
     if ($course->id == SITEID) {
