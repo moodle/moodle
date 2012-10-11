@@ -3332,6 +3332,9 @@ class assign {
                 $eventdata->itemid       = $submission->id;
                 $eventdata->courseid     = $this->get_course()->id;
                 $eventdata->userid       = $USER->id;
+                $eventdata->params       = array(
+                    'submission_editable' => false,
+                );
                 events_trigger('assessable_submitted', $eventdata);
             }
         }
