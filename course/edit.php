@@ -41,7 +41,7 @@ if ($id) { // editing course
         print_error('cannoteditsiteform');
     }
 
-    $course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
+    $course = course_get_format($id)->get_course();
     require_login($course);
     $category = $DB->get_record('course_categories', array('id'=>$course->category), '*', MUST_EXIST);
     $coursecontext = context_course::instance($course->id);

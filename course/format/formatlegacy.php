@@ -202,4 +202,29 @@ class format_legacy extends format_base {
         }
         return parent::get_default_blocks();
     }
+
+    /**
+     * Updates format options for a course
+     *
+     * Legacy course formats may assume that course format options
+     * ('coursedisplay', 'numsections' and 'hiddensections') are shared between formats.
+     * Therefore we make sure to copy them from the previous format
+     *
+     * @param stdClass|array $data return value from {@link moodleform::get_data()} or array with data
+     * @param stdClass $oldcourse if this function is called from {@link update_course()}
+     *     this object contains information about the course before update
+     * @return bool whether there were any changes to the options values
+     */
+    public function update_course_format_options($data, $oldcourse = null) {
+        if ($oldcourse !== null) {
+            $data = (array)$data;
+            $oldcourse = (array)$oldcourse;
+            foreach ($this->course_format_options() as $key => $unused) {
+                if (array_key_exists($key, $oldcourse) && !array_key_exists($key, $data)) {
+                    $data[$key] = $oldcourse[$key];
+                }
+            }
+        }
+        return $this->update_format_options($data);
+    }
 }

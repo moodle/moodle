@@ -68,6 +68,8 @@ abstract class format_base {
     protected $format;
     /** @var stdClass data for course object, please use {@link format_base::get_course()} */
     protected $course = false;
+    /** @var array caches format options, please use {@link format_base::get_format_options()} */
+    protected $formatoptions = array();
     /** @var array cached instances */
     private static $instances = array();
 
@@ -180,6 +182,7 @@ abstract class format_base {
                 foreach (self::$instances[$courseid] as $format => $object) {
                     // in case somebody keeps the reference to course format object
                     self::$instances[$courseid][$format]->course = false;
+                    self::$instances[$courseid][$format]->formatoptions = array();
                 }
                 unset(self::$instances[$courseid]);
             }
@@ -219,6 +222,16 @@ abstract class format_base {
         }
         if ($this->course === false) {
             $this->course = $DB->get_record('course', array('id' => $this->courseid));
+            $options = $this->get_format_options();
+            foreach ($options as $optionname => $optionvalue) {
+                if (!isset($this->course->$optionname)) {
+                    $this->course->$optionname = $optionvalue;
+                } else {
+                    debugging('The option name '.$optionname.' in course format '.$this->format.
+                        ' is invalid because the field with the same name exists in {course} table',
+                        DEBUG_DEVELOPER);
+                }
+            }
         }
         return $this->course;
     }
@@ -410,6 +423,322 @@ abstract class format_base {
             BLOCK_POS_RIGHT => array('search_forums', 'news_items', 'calendar_upcoming', 'recent_activity')
         );
         return $blocknames;
+    }
+
+    /**
+     * Returns the localised name of this course format plugin
+     *
+     * @return lang_string
+     */
+    public final function get_format_name() {
+        return new lang_string('pluginname', 'format_'.$this->get_format());
+    }
+
+    /**
+     * Definitions of the additional options that this course format uses for course
+     *
+     * This function may be called often, it should be as fast as possible.
+     * Avoid using get_string() method, use "new lang_string()" instead
+     * It is not recommended to use dynamic or course-dependant expressions here
+     * This function may be also called when course does not exist yet.
+     *
+     * Option names must be different from fields in the {course} talbe or any form elements on
+     * course edit form, it may even make sence to use special prefix for them.
+     *
+     * Each option must have the option name as a key and the array of properties as a value:
+     * 'default' - default value for this option
+     * 'label' - localised human-readable label for the edit form
+     * 'type' - type of the option value (PARAM_INT, PARAM_RAW, etc.)
+     * 'element_type' - type of the form element, default 'text'
+     * 'element_attributes' - additional attributes for the form element, these are 4th and further
+     *    arguments in the moodleform::addElement() method
+     * 'help' - string for help button. Note that if 'help' value is 'myoption' then the string with
+     *    the name 'myoption_help' must exist in the language file
+     * 'help_component' - language component to look for help string, by default this the component
+     *    for this course format
+     *
+     * Note that all properties except 'default' and 'type' are used only in
+     * {@link format_base::create_edit_form_elements()}, which calls this function with the
+     * argument $foreditform = true
+     *
+     * This is an interface for creating simple form elements. If format plugin wants to use other
+     * methods such as disableIf, it can be done by overriding create_edit_form_elements().
+     *
+     * @param bool $foreditform
+     * @return array of options
+     */
+    public function course_format_options($foreditform = false) {
+        return array();
+    }
+
+    /**
+     * Definitions of the additional options that this course format uses for section
+     *
+     * See {@link format_base::course_format_options()} for return array definition.
+     *
+     * Additionally section format options may have property 'cache' set to true
+     * if this option needs to be cached in {@link get_fast_modinfo()}. The 'cache' property
+     * is recommended to be set only for fields used in {@link format_base::get_section_name()},
+     * {@link format_base::extend_course_navigation()} and {@link format_base::get_view_url()}
+     *
+     * @param bool $foreditform
+     * @return array
+     */
+    public function section_format_options($foreditform = false) {
+        return array();
+    }
+
+    /**
+     * Returns the format options stored for this course or course section
+     *
+     * @param null|int|stdClass|section_info $section if null the course format options will be returned
+     *     otherwise options for specified section will be returned. This can be either
+     *     section object or relative section number (field course_sections.section)
+     * @return array
+     */
+    public function get_format_options($section = null) {
+        global $DB;
+        if ($section === null) {
+            $options = $this->course_format_options();
+        } else {
+            $options = $this->section_format_options();
+        }
+        if (empty($options)) {
+            // there are no option for course/sections anyway, no need to go further
+            return array();
+        }
+        if ($section === null) {
+            // course format options will be returned
+            $sectionid = 0;
+        } else if ($this->courseid && isset($section->id)) {
+            // course section format options will be returned
+            $sectionid = $section->id;
+        } else if ($this->courseid && is_int($section) && ($sectionobj = $this->get_section($section))) {
+            // course section format options will be returned
+            $sectionid = $sectionobj->id;
+        } else {
+            // non-existing (yet) section was passed as an argument
+            // default format options for course section will be returned
+            $sectionid = -1;
+        }
+        if (!array_key_exists($sectionid, $this->formatoptions)) {
+            $this->formatoptions[$sectionid] = array();
+            // first fill with default values
+            foreach ($options as $optionname => $optionparams) {
+                $this->formatoptions[$sectionid][$optionname] = null;
+                if (array_key_exists('default', $optionparams)) {
+                    $this->formatoptions[$sectionid][$optionname] = $optionparams['default'];
+                }
+            }
+            if ($this->courseid && $sectionid !== -1) {
+                // overwrite the default options values with those stored in course_format_options table
+                // nothing can be stored if we are interested in generic course ($this->courseid == 0)
+                // or generic section ($sectionid === 0)
+                $records = $DB->get_records('course_format_options',
+                        array('courseid' => $this->courseid,
+                              'format' => $this->format,
+                              'sectionid' => $sectionid
+                            ), '', 'id,name,value');
+                foreach ($records as $record) {
+                    if (array_key_exists($record->name, $this->formatoptions[$sectionid])) {
+                        $value = $record->value;
+                        if ($value !== null && isset($options[$record->name]['type'])) {
+                            // this will convert string value to number if needed
+                            $value = clean_param($value, $options[$record->name]['type']);
+                        }
+                        $this->formatoptions[$sectionid][$record->name] = $value;
+                    }
+                }
+            }
+        }
+        return $this->formatoptions[$sectionid];
+    }
+
+    /**
+     * Adds format options elements to the course/section edit form
+     *
+     * This function is called from {@link course_edit_form::definition_after_data()}
+     *
+     * @param moodleform $mform form the elements are added to
+     * @param bool $forsection 'true' if this is a section edit form, 'false' if this is course edit form
+     * @return array array of references to the added form elements
+     */
+    public function create_edit_form_elements(&$mform, $forsection = false) {
+        $elements = array();
+        if ($forsection) {
+            $options = $this->section_format_options(true);
+        } else {
+            $options = $this->course_format_options(true);
+        }
+        foreach ($options as $optionname => $option) {
+            if (!isset($option['element_type'])) {
+                $option['element_type'] = 'text';
+            }
+            $args = array($option['element_type'], $optionname, $option['label']);
+            if (!empty($option['element_attributes'])) {
+                $args = array_merge($args, $option['element_attributes']);
+            }
+            $elements[] = &call_user_func_array(array($mform, 'addElement'), $args);
+            if (isset($option['help'])) {
+                $helpcomponent = 'format_'. $this->get_format();
+                if (isset($option['help_component'])) {
+                    $helpcomponent = $option['help_component'];
+                }
+                $mform->addHelpButton($optionname, $option['help'], $helpcomponent);
+            }
+            if (isset($option['type'])) {
+                $mform->setType($optionname, $option['type']);
+            }
+            if (is_null($mform->getElementValue($optionname)) && isset($option['default'])) {
+                $mform->setDefault($optionname, $option['default']);
+            }
+        }
+        return $elements;
+    }
+
+    /**
+     * Override if you need to perform some extra validation of the format options
+     *
+     * @param array $data array of ("fieldname"=>value) of submitted data
+     * @param array $files array of uploaded files "element_name"=>tmp_file_path
+     * @param array $errors errors already discovered in edit form validation
+     * @return array of "element_name"=>"error_description" if there are errors,
+     *         or an empty array if everything is OK.
+     *         Do not repeat errors from $errors param here
+     */
+    public function edit_form_validation($data, $files, $errors) {
+        return array();
+    }
+
+    /**
+     * Updates format options for a course or section
+     *
+     * If $data does not contain property with the option name, the option will not be updated
+     *
+     * @param stdClass|array $data return value from {@link moodleform::get_data()} or array with data
+     * @param null|int null if these are options for course or section id (course_sections.id)
+     *     if these are options for section
+     * @return bool whether there were any changes to the options values
+     */
+    protected function update_format_options($data, $sectionid = null) {
+        global $DB;
+        if (!$sectionid) {
+            $allformatoptions = $this->course_format_options();
+            $sectionid = 0;
+        } else {
+            $allformatoptions = $this->section_format_options();
+        }
+        if (empty($allformatoptions)) {
+            // nothing to update anyway
+            return false;
+        }
+        $defaultoptions = array();
+        $cached = array();
+        foreach ($allformatoptions as $key => $option) {
+            $defaultoptions[$key] = null;
+            if (array_key_exists('default', $option)) {
+                $defaultoptions[$key] = $option['default'];
+            }
+            $cached[$key] = ($sectionid === 0 || !empty($option['cache']));
+        }
+        $records = $DB->get_records('course_format_options',
+                array('courseid' => $this->courseid,
+                      'format' => $this->format,
+                      'sectionid' => $sectionid
+                    ), '', 'name,id,value');
+        $changed = $needrebuild = false;
+        $data = (array)$data;
+        foreach ($defaultoptions as $key => $value) {
+            if (isset($records[$key])) {
+                if (array_key_exists($key, $data) && $records[$key]->value !== $data[$key]) {
+                    $DB->set_field('course_format_options', 'value',
+                            $data[$key], array('id' => $records[$key]->id));
+                    $changed = true;
+                    $needrebuild = $needrebuild || $cached[$key];
+                }
+            } else {
+                if (array_key_exists($key, $data) && $data[$key] !== $value) {
+                    $newvalue = $data[$key];
+                    $changed = true;
+                    $needrebuild = $needrebuild || $cached[$key];
+                } else {
+                    $newvalue = $value;
+                    // we still insert entry in DB but there are no changes from user point of
+                    // view and no need to call rebuild_course_cache()
+                }
+                $DB->insert_record('course_format_options', array(
+                    'courseid' => $this->courseid,
+                    'format' => $this->format,
+                    'sectionid' => $sectionid,
+                    'name' => $key,
+                    'value' => $newvalue
+                ));
+            }
+        }
+        if ($needrebuild) {
+            rebuild_course_cache($this->courseid, true);
+        }
+        if ($changed) {
+            // reset internal caches
+            if (!$sectionid) {
+                $this->course = false;
+            }
+            unset($this->formatoptions[$sectionid]);
+        }
+        return $changed;
+    }
+
+    /**
+     * Updates format options for a course
+     *
+     * If $data does not contain property with the option name, the option will not be updated
+     *
+     * @param stdClass|array $data return value from {@link moodleform::get_data()} or array with data
+     * @param stdClass $oldcourse if this function is called from {@link update_course()}
+     *     this object contains information about the course before update
+     * @return bool whether there were any changes to the options values
+     */
+    public function update_course_format_options($data, $oldcourse = null) {
+        return $this->update_format_options($data);
+    }
+
+    /**
+     * Updates format options for a section
+     *
+     * Section id is expected in $data->id (or $data['id'])
+     * If $data does not contain property with the option name, the option will not be updated
+     *
+     * @param stdClass|array $data return value from {@link moodleform::get_data()} or array with data
+     * @return bool whether there were any changes to the options values
+     */
+    public function update_section_format_options($data) {
+        $data = (array)$data;
+        return $this->update_format_options($data, $data['id']);
+    }
+
+    /**
+     * Return an instance of moodleform to edit a specified section
+     *
+     * Default implementation returns instance of editsection_form that automatically adds
+     * additional fields defined in {@link format_base::section_format_options()}
+     *
+     * Format plugins may extend editsection_form if they want to have custom edit section form.
+     *
+     * @param mixed $action the action attribute for the form. If empty defaults to auto detect the
+     *              current url. If a moodle_url object then outputs params as hidden variables.
+     * @param array $customdata the array with custom data to be passed to the form
+     *     /course/editsection.php passes section_info object in 'cs' field
+     *     for filling availability fields
+     * @return moodleform
+     */
+    public function editsection_form($action, $customdata = array()) {
+        global $CFG;
+        require_once($CFG->dirroot. '/course/editsection_form.php');
+        $context = context_course::instance($this->courseid);
+        if (!array_key_exists('course', $customdata)) {
+            $customdata['course'] = $this->get_course();
+        }
+        return new editsection_form($action, $customdata);
     }
 }
 

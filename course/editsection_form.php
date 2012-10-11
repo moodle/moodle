@@ -5,7 +5,15 @@ if (!defined('MOODLE_INTERNAL')) {
 }
 
 require_once($CFG->libdir.'/formslib.php');
+require_once($CFG->libdir.'/filelib.php');
+require_once($CFG->libdir.'/completionlib.php');
+require_once($CFG->libdir.'/gradelib.php');
 
+/**
+ * Default form for editing course section
+ *
+ * Course format plugins may specify different editing form to use
+ */
 class editsection_form extends moodleform {
 
     function definition() {
@@ -27,6 +35,13 @@ class editsection_form extends moodleform {
 
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
+
+        // additional fields that course format has defined
+        $courseformat = course_get_format($course);
+        $formatoptions = $courseformat->section_format_options(true);
+        if (!empty($formatoptions)) {
+            $elements = $courseformat->create_edit_form_elements($mform, true);
+        }
 
         $mform->_registerCancelButton('cancel');
     }
@@ -195,8 +210,6 @@ class editsection_form extends moodleform {
                 CONDITION_STUDENTVIEW_HIDE => get_string('showavailabilitysection_hide', 'condition'));
             $mform->addElement('select', 'showavailability',
                     get_string('showavailabilitysection', 'condition'), $showhide);
-
-            $mform->setDefault('showavailability', $this->_customdata['showavailability']);
         }
 
         $this->add_action_buttons();
@@ -231,5 +244,48 @@ class editsection_form extends moodleform {
         }
 
         return $errors;
+    }
+
+    /**
+     * Load in existing data as form defaults
+     *
+     * @param stdClass|array $default_values object or array of default values
+     */
+    function set_data($default_values) {
+        if (!is_object($default_values)) {
+            // we need object for file_prepare_standard_editor
+            $default_values = (object)$default_values;
+        }
+        $editoroptions = $this->_customdata['editoroptions'];
+        $default_values = file_prepare_standard_editor($default_values, 'summary', $editoroptions,
+                $editoroptions['context'], 'course', 'section', $default_values->id);
+        $default_values->usedefaultname = (is_null($default_values->name));
+        parent::set_data($default_values);
+    }
+
+    /**
+     * Return submitted data if properly submitted or returns NULL if validation fails or
+     * if there is no submitted data.
+     *
+     * @return object submitted data; NULL if not valid or not submitted or cancelled
+     */
+    function get_data() {
+        $data = parent::get_data();
+        if ($data !== null) {
+            $editoroptions = $this->_customdata['editoroptions'];
+            if (!empty($data->usedefaultname)) {
+                $data->name = null;
+            }
+            $data = file_postupdate_standard_editor($data, 'summary', $editoroptions,
+                    $editoroptions['context'], 'course', 'section', $data->id);
+            $course = $this->_customdata['course'];
+            foreach (course_get_format($course)->section_format_options() as $option => $unused) {
+                // fix issue with unset checkboxes not being returned at all
+                if (!isset($data->$option)) {
+                    $data->$option = null;
+                }
+            }
+        }
+        return $data;
     }
 }

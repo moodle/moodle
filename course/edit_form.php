@@ -10,9 +10,11 @@ class course_edit_form extends moodleform {
     protected $context;
 
     function definition() {
-        global $USER, $CFG, $DB;
+        global $USER, $CFG, $DB, $PAGE;
 
         $mform    = $this->_form;
+        $PAGE->requires->yui_module('moodle-course-formatchooser', 'M.course.init_formatchooser',
+                array(array('formid' => $mform->getAttribute('id'))));
 
         $course        = $this->_customdata['course']; // this contains the data of this form
         $category      = $this->_customdata['category'];
@@ -120,6 +122,10 @@ class course_edit_form extends moodleform {
         $mform->addHelpButton('format', 'format');
         $mform->setDefault('format', $courseconfig->format);
 
+        // button to update format-specific options on format change (will be hidden by JavaScript)
+        $mform->registerNoSubmitButton('updatecourseformat');
+        $mform->addElement('submit', 'updatecourseformat', get_string('courseformatudpate'));
+
         $mform->addElement('select', 'coursedisplay', get_string('coursedisplay'),
             array(COURSE_DISPLAY_SINGLEPAGE => get_string('coursedisplay_single'),
                 COURSE_DISPLAY_MULTIPAGE => get_string('coursedisplay_multi')));
@@ -192,6 +198,9 @@ class course_edit_form extends moodleform {
             }
             $mform->addElement('select', 'theme', get_string('forcetheme'), $themes);
         }
+
+//--------------------------------------------------------------------------------
+        $mform->addElement('hidden', 'addcourseformatoptionshere');
 
 //--------------------------------------------------------------------------------
         enrol_course_edit_form($mform, $course, $context);
@@ -310,8 +319,22 @@ class course_edit_form extends moodleform {
             $gr_el =& $mform->getElement('defaultgroupingid');
             $gr_el->load($options);
         }
-    }
 
+        // add course format options
+        $formatvalue = $mform->getElementValue('format');
+        if (is_array($formatvalue) && !empty($formatvalue)) {
+            $courseformat = course_get_format((object)array('format' => $formatvalue[0]));
+            $newel = $mform->createElement('header', '', get_string('courseformatoptions', 'moodle',
+                    $courseformat->get_format_name()));
+            $mform->insertElementBefore($newel, 'addcourseformatoptionshere');
+
+            $elements = $courseformat->create_edit_form_elements($mform);
+            for ($i = 0; $i < count($elements); $i++) {
+                $mform->insertElementBefore($mform->removeElement($elements[$i]->getName(), false),
+                        'addcourseformatoptionshere');
+            }
+        }
+    }
 
 /// perform some extra moodle validation
     function validation($data, $files) {
@@ -332,6 +355,12 @@ class course_edit_form extends moodleform {
         }
 
         $errors = array_merge($errors, enrol_course_edit_validation($data, $this->context));
+
+        $courseformat = course_get_format((object)array('format' => $data['format']));
+        $formaterrors = $courseformat->edit_form_validation($data, $files, $errors);
+        if (!empty($formaterrors) && is_array($formaterrors)) {
+            $errors = array_merge($errors, $formaterrors);
+        }
 
         return $errors;
     }
