@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once "{$CFG->libdir}/bennu/bennu.inc.php";
+require_once($CFG->libdir.'/bennu/bennu.inc.php');
 
 /**
  *  These are read by the administration component to provide default values
@@ -2659,6 +2659,7 @@ class calendar_information {
 
 /**
  * Returns option list for the pollinterval setting.
+ * @return array        option list
  */
 function calendar_get_pollinterval_choices() {
     return array(
@@ -2672,7 +2673,10 @@ function calendar_get_pollinterval_choices() {
 }
 
 /**
- * Returns available options for the calendar event type.
+ * Returns option list of available options for the calendar event type, given
+ * the current user and course.
+ * @param int $courseid The id of the course
+ * @return array        option list
  */
 function calendar_get_eventtype_choices($courseid) {
     $choices = array();
@@ -2683,7 +2687,7 @@ function calendar_get_eventtype_choices($courseid) {
         $choices[0] = get_string('userevents', 'calendar');
     }
     if ($allowed->site) {
-        $choices[1] = get_string('globalevents', 'calendar');
+        $choices[SITEID] = get_string('globalevents', 'calendar');
     }
     if (!empty($allowed->courses)) {
         $choices[$courseid] = get_string('courseevents', 'calendar');
@@ -2717,12 +2721,12 @@ class calendar_addsubscription_form extends moodleform {
             }
           }
         //--></script>');
-        $mform->addElement('header', 'addsubscriptionform', '<a name="targetsubcriptionform" onclick="showhide_subform()">Import calendar...</a>');
+        $mform->addElement('header', 'addsubscriptionform', '<a name="targetsubcriptionform" onclick="showhide_subform()">'.get_string('importcalendarheading', 'calendar').'</a>');
 
         $mform->addElement('text', 'name', get_string('subscriptionname', 'calendar'), 'maxlength="255" size="40"');
         $mform->addRule('name', get_string('required'), 'required');
 
-        $mform->addElement('html', "Please provide either a URL to a remote calendar, or upload a file.");
+        $mform->addElement('html', get_string('importfrominstructions', 'calendar'));
         $choices = array(CALENDAR_IMPORT_FROM_FILE => get_string('importfromfile', 'calendar'),
                          CALENDAR_IMPORT_FROM_URL  => get_string('importfromurl',  'calendar'));
         $mform->addElement('select', 'importfrom', get_string('importcalendarfrom', 'calendar'), $choices);
@@ -2774,7 +2778,7 @@ class calendar_addsubscription_form extends moodleform {
             $calendar = $this->get_file_content('importfile');
             break;
           case CALENDAR_IMPORT_FROM_URL:
-            $calendar = file_get_contents($formdata->importurl);
+            $calendar = download_file_content($formdata->importurl);
             break;
         }
         return $calendar;
@@ -2833,7 +2837,7 @@ function calendar_add_icalendar_event($event, $courseid, $subscriptionid=null) {
     $name = str_replace('\n', '<br />', $name);
     $name = str_replace('\\', '', $name);
     $name = preg_replace('/\s+/', ' ', $name);
-    $eventrecord->name = clean_param($name, PARAM_CLEAN);
+    $eventrecord->name = clean_param($name, PARAM_NOTAGS);
 
     if (empty($event->properties['DESCRIPTION'][0]->value)) {
         $description = '';
@@ -2843,7 +2847,7 @@ function calendar_add_icalendar_event($event, $courseid, $subscriptionid=null) {
         $description = str_replace('\\', '', $description);
         $description = preg_replace('/\s+/', ' ', $description);
     }
-    $eventrecord->description = clean_param($description, PARAM_CLEAN);
+    $eventrecord->description = clean_param($description, PARAM_NOTAGS);
 
     // probably a repeating event with RRULE etc. TODO: skip for now
     if (empty($event->properties['DTSTART'][0]->value)) {
@@ -2899,15 +2903,21 @@ function calendar_show_subscriptions($courseid, $importresults='') {
     $sesskey = sesskey();
     $out = '';
 
+    $str = new object();
     $str->update = get_string('update');
     $str->remove = get_string('remove');
     $str->add    = get_string('add');
+    $str->colcalendar = get_string('colcalendar', 'calendar');
+    $str->collastupdated = get_string('collastupdated', 'calendar');
+    $str->colpoll = get_string('colpoll', 'calendar');
+    $str->colactions = get_string('colactions', 'calendar');
+    $str->nocalendarsubscriptions = get_string('nocalendarsubscriptions', 'calendar');
 
     $out .= $OUTPUT->box_start('generalbox calendarsubs');
     $out .= $importresults;
 
     $table = new html_table();
-    $table->head  = array('Calendar', 'Last Updated', 'Poll', 'Actions');
+    $table->head  = array($str->colcalendar, $str->collastupdated, $str->colpoll, $str->colactions);
     $table->align = array('left', 'left', 'left', 'center');
     $table->width = '100%';
     $table->data  = array();
@@ -2917,17 +2927,17 @@ function calendar_show_subscriptions($courseid, $importresults='') {
                    or (courseid = 0 and userid = :userid)',
                 array('courseid' => $courseid, 'userid' => $USER->id));
     if (empty($subs)) {
-        $c = new html_table_cell("No calendar subscriptions.");
+        $c = new html_table_cell($str->nocalendarsubscriptions);
         $c->colspan = 4;
         $table->data[] = new html_table_row(array($c));
     }
     foreach ($subs as $id => $sub) {
         $label = empty($sub->url) ? $sub->name : "<a href=\"{$sub->url}\">{$sub->name}</a>";
-        $c_url = new html_table_cell($label);
+        $cellurl = new html_table_cell($label);
         $lastupdated = empty($sub->lastupdated)
                 ? get_string('never', 'calendar')
-                : date('Y-m-d H:i:s', $sub->lastupdated);
-        $c_updated = new html_table_cell($lastupdated);
+                : userdate($sub->lastupdated, get_string('strftimedatetimeshort', 'langconfig'));
+        $cellupdated = new html_table_cell($lastupdated);
 
         if (empty($sub->url)) {
             // don't update an iCal file, which has no URL.
@@ -2958,9 +2968,9 @@ function calendar_show_subscriptions($courseid, $importresults='') {
                 <input type=\"submit\" name=\"action\" value=\"{$str->remove}\" />
               </div>
             </form>";
-        $c_form = new html_table_cell($rowform);
-        $c_form->colspan = 2;
-        $table->data[] = new html_table_row(array($c_url, $c_updated, $c_form));
+        $cellform = new html_table_cell($rowform);
+        $cellform->colspan = 2;
+        $table->data[] = new html_table_row(array($cellurl, $cellupdated, $cellform));
     }
     $out .= html_writer::table($table);
 
@@ -3100,7 +3110,7 @@ function calendar_import_icalendar_events($ical, $courseid, $subscriptionid=null
         $sql = "update {event} set timemodified = :time where subscriptionid = :id";
         $DB->execute($sql, array('time' => 0, 'id' => $subscriptionid));
     }
-    foreach($ical->components['VEVENT'] as $event) {
+    foreach ($ical->components['VEVENT'] as $event) {
         $res = calendar_add_icalendar_event($event, $courseid, $subscriptionid);
         switch ($res) {
           case CALENDAR_IMPORT_EVENT_UPDATED:
@@ -3110,12 +3120,12 @@ function calendar_import_icalendar_events($ical, $courseid, $subscriptionid=null
             $eventcount++;
             break;
           case 0:
-            $return .= '<p>Failed to add event: '.(empty($event->properties['SUMMARY'])?'(no title)':$event->properties['SUMMARY'][0]->value)." </p>\n";
+            $return .= '<p>'.get_string('erroraddingevent', 'calendar').': '.(empty($event->properties['SUMMARY'])?'('.get_string('notitle', 'calendar').')':$event->properties['SUMMARY'][0]->value)." </p>\n";
             break;
         }
     }
-    $return .= "<p> Events imported: {$eventcount} </p>\n";
-    $return .= "<p> Events updated: {$updatecount} </p>\n";
+    $return .= "<p> ".get_string('eventsimported', 'calendar').": {$eventcount} </p>\n";
+    $return .= "<p> ".get_string('eventsupdated', 'calendar').": {$updatecount} </p>\n";
 
     // delete remaining zero-marked events since they're not in remote calendar
     if (!empty($subscriptionid)) {
@@ -3123,7 +3133,7 @@ function calendar_import_icalendar_events($ical, $courseid, $subscriptionid=null
         if (!empty($deletecount)) {
             $sql = "delete from {event} where timemodified = :time and subscriptionid = :id";
             $DB->execute($sql, array('time' => 0, 'id' => $subscriptionid));
-            $return .= "<p> Events deleted: {$deletecount} </p>\n";
+            $return .= "<p> ".get_string('eventsdeleted', 'calendar').": {$deletecount} </p>\n";
         }
     }
 
@@ -3160,15 +3170,15 @@ function calendar_update_subscription_events($subscriptionid) {
  */
 function calendar_cron() {
     global $DB;
-    mtrace("Updating calendar subscriptions:");
+    mtrace(get_string('cronupdate', 'calendar'));
     $time = time();
-    foreach ($DB->get_records_sql('select * from {event_subscriptions}
-                where pollinterval > 0 and lastupdated + pollinterval < ?', array($time)) as $sub) {
-        mtrace("   Updating calendar subscription '{$sub->name}' in course {$sub->courseid}");
+    $subscriptions = $DB->get_records_sql('select * from {event_subscriptions} where pollinterval > 0 and lastupdated + pollinterval < ?', array($time));
+    foreach ($subscriptions as $sub) {
+        mtrace(get_string('cronupdatesub', 'calendar', $sub));
         $log = calendar_update_subscription_events($sub->id);
         mtrace(trim(strip_tags($log)));
     }
-    mtrace("Finished updating calendar subscriptions.");
+    mtrace(get_string('cronupdatefinished', 'calendar'));
     return true;
 }
 
