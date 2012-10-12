@@ -13,14 +13,14 @@
  */
 
 class Bennu {
-    function timestamp_to_datetime($t = NULL) {
+    static function timestamp_to_datetime($t = NULL) {
         if($t === NULL) {
             $t = time();
         }
         return gmstrftime('%Y%m%dT%H%M%SZ', $t);
     }
 
-    function generate_guid() {
+    static function generate_guid() {
         // Implemented as per the Network Working Group draft on UUIDs and GUIDs
     
         // These two octets get special treatment
