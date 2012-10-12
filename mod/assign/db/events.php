@@ -32,7 +32,7 @@ assessable_content_uploaded
     ->itemid         = // The submission id of the user submission.
     ->courseid       = // The course id of the course the assign belongs to.
     ->userid         = // The user id that the attempt belongs to.
-    ->content        = // The text content entered by the user (empty if no content submitted)
+    ->content        = // The text content entered by the user (empty if no content submitted).
     ->pathnamehashes = // An array of pathnamehashes of the files submitted by the user (var not passed if not set).
 
 assessable_file_uploaded
@@ -49,6 +49,6 @@ assessable_submitted
     ->itemid         = // The submission id of the user submission.
     ->courseid       = // The course id of the course the assign belongs to.
     ->userid         = // The user id that the attempt belongs to.
-    ->params         = // Array of module specific parameters
+    ->params         = // Array of module specific parameters.
         -> submission_editable = // Whether user can edit submission before assessment has been done.
 */

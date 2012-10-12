@@ -3325,7 +3325,7 @@ class assign {
                 $this->add_to_log('submit for grading', $this->format_submission_for_log($submission));
                 $this->notify_graders($submission);
                 $this->notify_student_submission_receipt($submission);
-                // Trigger assessable_submitted event on submission
+                // Trigger assessable_submitted event on submission.
                 $eventdata = new stdClass();
                 $eventdata->modulename   = 'assign';
                 $eventdata->cmid         = $this->get_course_module()->id;
