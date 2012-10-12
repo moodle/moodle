@@ -60,6 +60,17 @@ class mod_assign_grade_form extends moodleform {
     }
 
     /**
+     * This is required so when using "Save and next", each form is not defaulted to the previous form.
+     * Giving each form a unique identitifer is enough to prevent this (include the rownum in the form name).
+     *
+     * @return string - The unique identifier for this form.
+     */
+    protected function get_form_identifier() {
+        $params = $this->_customdata[2];
+        return get_class($this) . '_' . $params['rownum'];
+    }
+
+    /**
      * Perform minimal validation on the grade form
      * @param array $data
      * @param array $files
