@@ -255,7 +255,7 @@ class core_admin_renderer extends plugin_renderer_base {
 
         $output  = '';
         $output .= $this->header();
-        $output .= $this->container_start('generalbox', 'notice');
+        $output .= $this->container_start('generalbox updateplugin', 'notice');
 
         $a = new stdClass();
         if (get_string_manager()->string_exists('pluginname', $updateinfo->component)) {
@@ -272,10 +272,12 @@ class core_admin_renderer extends plugin_renderer_base {
         $a->url = $updateinfo->download;
 
         $output .= $this->output->heading(get_string('updatepluginconfirm', 'core_plugin'));
-        $output .= $this->output->container(format_text(
-            get_string('updatepluginconfirminfo', 'core_plugin', $a) . PHP_EOL . PHP_EOL .
-            get_string('updatepluginconfirmwarning', 'core_plugin')
-        ));
+        $output .= $this->output->container(format_text(get_string('updatepluginconfirminfo', 'core_plugin', $a)), 'updatepluginconfirminfo');
+        $output .= $this->output->container(get_string('updatepluginconfirmwarning', 'core_plugin', 'updatepluginconfirmwarning'));
+
+        if ($repotype = $deployer->plugin_external_source($data['updateinfo'])) {
+            $output .= $this->output->container(get_string('updatepluginconfirmexternal', 'core_plugin', $repotype), 'updatepluginconfirmexternal');
+        }
 
         $widget = $deployer->make_execution_widget($data['updateinfo']);
         $output .= $this->output->render($widget);

@@ -102,6 +102,11 @@
 #page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo a {padding-right:1em;}
 #page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo .separator {border-left:1px dotted #333;}
 
+#page-admin-index .updateplugin div,
+#page-admin-plugins .updateplugin div {margin-bottom:0.5em;}
+#page-admin-index .updateplugin .updatepluginconfirmexternal,
+#page-admin-plugins .updateplugin .updatepluginconfirmexternal {padding:1em;background-color:#ffd3d9;border:1px solid #EEAAAA}
+
 #page-admin-user-user_bulk #users .fgroup {white-space: nowrap;}
 #page-admin-report-stats-index .graph {text-align: center;margin-bottom: 1em;}
 #page-admin-report-courseoverview-index .graph {text-align: center;margin-bottom: 1em;}

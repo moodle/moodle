@@ -1544,6 +1544,33 @@ class available_update_deployer {
     }
 
     /**
+     * Check to see if the current version of the plugin seems to be a checkout of an external repository.
+     *
+     * @param available_update_info $info
+     * @return false|string
+     */
+    public function plugin_external_source(available_update_info $info) {
+
+        $paths = get_plugin_types(true);
+        list($plugintype, $pluginname) = normalize_component($info->component);
+        $pluginroot = $paths[$plugintype].'/'.$pluginname;
+
+        if (is_dir($pluginroot.'/.git')) {
+            return 'git';
+        }
+
+        if (is_dir($pluginroot.'/CVS')) {
+            return 'cvs';
+        }
+
+        if (is_dir($pluginroot.'/.svn')) {
+            return 'svn';
+        }
+
+        return false;
+    }
+
+    /**
      * Prepares a renderable widget to confirm installation of an available update.
      *
      * @param available_update_info $info component version to deploy

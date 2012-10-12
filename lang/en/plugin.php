@@ -133,6 +133,7 @@ $string['updateavailable_moreinfo'] = 'More info...';
 $string['updateavailable_release'] = 'Release {$a}';
 $string['updatepluginconfirm'] = 'Plugin update confirmation';
 $string['updatepluginconfirminfo'] = 'You are about to install a new version of the plugin <strong>{$a->name}</strong>. A zip package with version {$a->version} of the plugin will be downloaded from <a href="{$a->url}">{$a->url}</a> and extracted to your Moodle installation so it can upgrade your installation.';
+$string['updatepluginconfirmexternal'] = 'It appears that the current version of the plugin has been obtained via source code management system ({$a}) checkout. If you install this update, you will no longer be able to obtain plugin updates from the source code management system. Please ensure that you definitely want to update the plugin before continuing.';
 $string['updatepluginconfirmwarning'] = 'Please note that Moodle will not automatically make a backup of your database before the upgrade. We strongly recommend that you make a full snapshot backup now, to cope with the rare case that the new code has bugs that make your site unavailable or even corrupts your database. Proceed at your own risk.';
 $string['uninstall'] = 'Uninstall';
 $string['version'] = 'Version';
