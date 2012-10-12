@@ -204,6 +204,78 @@ class format_legacy extends format_base {
     }
 
     /**
+     * Definitions of the additional options that this course format uses for course
+     *
+     * By default course formats have the options that existed in Moodle 2.3:
+     * - coursedisplay
+     * - numsections
+     * - hiddensections
+     *
+     * @param bool $foreditform
+     * @return array of options
+     */
+    public function course_format_options($foreditform = false) {
+        static $courseformatoptions = false;
+        if ($courseformatoptions === false) {
+            $courseconfig = get_config('moodlecourse');
+            $courseformatoptions = array(
+                'numsections' => array(
+                    'default' => $courseconfig->numsections,
+                    'type' => PARAM_INT,
+                ),
+                'hiddensections' => array(
+                    'default' => $courseconfig->hiddensections,
+                    'type' => PARAM_INT,
+                ),
+                'coursedisplay' => array(
+                    'default' => $courseconfig->coursedisplay,
+                    'type' => PARAM_INT,
+                ),
+            );
+        }
+        if ($foreditform && !isset($courseformatoptions['coursedisplay']['label'])) {
+            $courseconfig = get_config('moodlecourse');
+            $sectionmenu = array();
+            for ($i = 0; $i <= $courseconfig->maxsections; $i++) {
+                $sectionmenu[$i] = "$i";
+            }
+            $courseformatoptionsedit = array(
+                'numsections' => array(
+                    'label' => new lang_string('numberweeks'),
+                    'element_type' => 'select',
+                    'element_attributes' => array($sectionmenu),
+                ),
+                'hiddensections' => array(
+                    'label' => new lang_string('hiddensections'),
+                    'help' => 'hiddensections',
+                    'help_component' => 'moodle',
+                    'element_type' => 'select',
+                    'element_attributes' => array(
+                        array(
+                            0 => new lang_string('hiddensectionscollapsed'),
+                            1 => new lang_string('hiddensectionsinvisible')
+                        )
+                    ),
+                ),
+                'coursedisplay' => array(
+                    'label' => new lang_string('coursedisplay'),
+                    'element_type' => 'select',
+                    'element_attributes' => array(
+                        array(
+                            COURSE_DISPLAY_SINGLEPAGE => new lang_string('coursedisplay_single'),
+                            COURSE_DISPLAY_MULTIPAGE => new lang_string('coursedisplay_multi')
+                        )
+                    ),
+                    'help' => 'coursedisplay',
+                    'help_component' => 'moodle',
+                )
+            );
+            $courseformatoptions = array_merge_recursive($courseformatoptions, $courseformatoptionsedit);
+        }
+        return $courseformatoptions;
+    }
+
+    /**
      * Updates format options for a course
      *
      * Legacy course formats may assume that course format options
