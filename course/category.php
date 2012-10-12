@@ -43,7 +43,7 @@ $sesskey = optional_param('sesskey', '', PARAM_RAW);
 // MDL-27824 - This is a temporary fix until we have the proper 
 // way to check/initialize $CFG value.
 // @todo MDL-35138 remove this temporary solution
-if (isset($CFG->coursesperpage)) {
+if (!empty($CFG->coursesperpage)) {
     $defaultperpage =  $CFG->coursesperpage;
 } else {
     $defaultperpage = 20;
