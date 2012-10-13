@@ -9,10 +9,11 @@ required changes in code:
   directly from database is not correct any more
 * new restore support: ENROL_RESTORE_EXACT, ENROL_RESTORE_NOUSERS
   and ENROL_RESTORE_CLASS were removed, implement new restore_* plugin methods instead
-* new support for protected group membership linked to enrol instance
 
-other changes:
+other changes and new features:
 * course enrolment manager now works with disabled plugins too
+* new support for protected group membership linked to enrol instance
+* new support for expiry notifications - see enrol_plugin::send_expiry_notifications() method
 
 
 === 2.2 ===
