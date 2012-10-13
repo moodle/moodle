@@ -280,7 +280,7 @@ class enrol_manual_plugin extends enrol_plugin {
      */
     public function cron() {
         $this->sync(null, true);
-        $this->send_notifications(true);
+        $this->send_expiry_notifications(true);
     }
 
     /**
@@ -380,7 +380,7 @@ class enrol_manual_plugin extends enrol_plugin {
      *
      * @param bool $verbose verbose CLI output
      */
-    public function send_notifications($verbose = false) {
+    public function send_expiry_notifications($verbose = false) {
         global $DB, $CFG;
 
         // Unfortunately this may take a long time, it should not be interrupted,
@@ -389,15 +389,15 @@ class enrol_manual_plugin extends enrol_plugin {
         @set_time_limit(0);
         raise_memory_limit(MEMORY_HUGE);
 
-        $notifylast = $this->get_config('notifylast', 0);
-        $notifyhour = $this->get_config('notifyhour', 6);
+        $expirynotifylast = $this->get_config('expirynotifylast', 0);
+        $expirynotifyhour = $this->get_config('expirynotifyhour', 6);
         $timenow    = time();
 
-        $notifytime = usergetmidnight($timenow, $CFG->timezone) + ($notifyhour * 3600);
+        $notifytime = usergetmidnight($timenow, $CFG->timezone) + ($expirynotifyhour * 3600);
 
-        if ($notifylast > $notifytime) {
+        if ($expirynotifylast > $notifytime) {
             if ($verbose) {
-                mtrace('Manual enrolment notifications were already sent today at '.userdate($notifylast, '', $CFG->timezone).'.');
+                mtrace('Manual enrolment notifications were already sent today at '.userdate($expirynotifylast, '', $CFG->timezone).'.');
             }
             return;
         } else if ($timenow < $notifytime) {
@@ -463,7 +463,7 @@ class enrol_manual_plugin extends enrol_plugin {
         if ($verbose) {
             mtrace('...notification processing finished.');
         }
-        $this->set_config('notifylast', $timenow);
+        $this->set_config('expirynotifylast', $timenow);
     }
 
     /**

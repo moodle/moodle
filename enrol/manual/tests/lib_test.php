@@ -316,8 +316,8 @@ class enrol_manual_lib_testcase extends advanced_testcase {
 
         // Note: hopefully nobody executes the unit tests the last second before midnight...
 
-        $manualplugin->set_config('notifylast', $now - 60*60*24);
-        $manualplugin->set_config('notifyhour', 0);
+        $manualplugin->set_config('expirynotifylast', $now - 60*60*24);
+        $manualplugin->set_config('expirynotifyhour', 0);
 
         $studentrole = $DB->get_record('role', array('shortname'=>'student'));
         $this->assertNotEmpty($studentrole);
@@ -394,7 +394,7 @@ class enrol_manual_lib_testcase extends advanced_testcase {
 
         $sink = $this->redirectMessages();
 
-        $manualplugin->send_notifications(false);
+        $manualplugin->send_expiry_notifications(false);
 
         $messages = $sink->get_messages();
 
@@ -451,18 +451,18 @@ class enrol_manual_lib_testcase extends advanced_testcase {
         // Make sure that notifications are not repeated.
         $sink->clear();
 
-        $manualplugin->send_notifications(false);
+        $manualplugin->send_expiry_notifications(false);
         $this->assertEquals(0, $sink->count());
 
         // use invalid notification hour to verify that before the hour the notifications are not sent.
-        $manualplugin->set_config('notifylast', time() - 60*60*24);
-        $manualplugin->set_config('notifyhour', '24');
+        $manualplugin->set_config('expirynotifylast', time() - 60*60*24);
+        $manualplugin->set_config('expirynotifyhour', '24');
 
-        $manualplugin->send_notifications(false);
+        $manualplugin->send_expiry_notifications(false);
         $this->assertEquals(0, $sink->count());
 
-        $manualplugin->set_config('notifyhour', '0');
-        $manualplugin->send_notifications(false);
+        $manualplugin->set_config('expirynotifyhour', '0');
+        $manualplugin->send_expiry_notifications(false);
         $this->assertEquals(6, $sink->count());
     }
 }

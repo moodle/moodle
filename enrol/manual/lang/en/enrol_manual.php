@@ -35,7 +35,6 @@ $string['editenrolment'] = 'Edit enrolment';
 $string['editselectedusers'] = 'Edit selected user enrolments';
 $string['enrolledincourserole'] = 'Enrolled in "{$a->course}" as "{$a->role}"';
 $string['enrolusers'] = 'Enrol users';
-$string['errorthresholdlow'] = 'Notification threshold must be at least 1 day.';
 $string['expiredaction'] = 'Enrolment expiration action';
 $string['expiredaction_help'] = 'Select action to carry out when user enrolment expires. Please note that some user data and settings are purged from course during course unenrolment.';
 $string['expirymessageenrollersubject'] = 'Enrolment expiry notification';
@@ -50,20 +49,12 @@ $string['expirymessageenrolledbody'] = 'Dear {$a->user},
 This is a notification that your enrolment in the course \'{$a->course}\' is due to expire on {$a->timeend}.
 
 If you need help, please contact {$a->enroller}.';
-$string['expirynotify'] = 'Notify before enrolment expires';
-$string['expirynotify_help'] = 'This setting determines whether enrolment expiry notification messages are sent.';
-$string['expirynotifyall'] = 'Enroller and enrolled user';
-$string['expirynotifyteacher'] = 'Enroller only';
-$string['expirythreshold'] = 'Notification threshold';
-$string['expirythreshold_help'] = 'This setting specifies the number of days before enrolment expiry that a notification message is sent.';
-$string['expirythreshold_help'] = 'How long before expiration should be users notified?';
 $string['manual:config'] = 'Configure manual enrol instances';
 $string['manual:enrol'] = 'Enrol users';
 $string['manual:manage'] = 'Manage user enrolments';
 $string['manual:unenrol'] = 'Unenrol users from the course';
 $string['manual:unenrolself'] = 'Unenrol self from the course';
 $string['messageprovider:expiry_notification'] = 'Manual enrolment expiry notifications';
-$string['notifyhour'] = 'Hour to send enrolment expiry notifications';
 $string['pluginname'] = 'Manual enrolments';
 $string['pluginname_desc'] = 'The manual enrolments plugin allows users to be enrolled manually via a link in the course administration settings, by a user with appropriate permissions such as a teacher. The plugin should normally be enabled, since certain other enrolment plugins, such as self enrolment, require it.';
 $string['status'] = 'Enable manual enrolments';

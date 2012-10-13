@@ -42,7 +42,7 @@ if ($ADMIN->fulltree) {
     for ($i=0; $i<24; $i++) {
         $options[$i] = $i;
     }
-    $settings->add(new admin_setting_configselect('enrol_manual/notifyhour', get_string('notifyhour', 'enrol_manual'), '', 6, $options));
+    $settings->add(new admin_setting_configselect('enrol_manual/expirynotifyhour', get_string('expirynotifyhour', 'core_enrol'), '', 6, $options));
 
 
     //--- enrol instance defaults ----------------------------------------------------------------------------
@@ -68,11 +68,11 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configduration('enrol_manual/enrolperiod',
         get_string('defaultperiod', 'enrol_manual'), get_string('defaultperiod_desc', 'enrol_manual'), 0));
 
-    $options = array(0 => get_string('no'), 1 => get_string('expirynotifyteacher', 'enrol_manual'), 2 => get_string('expirynotifyall', 'enrol_manual'));
+    $options = array(0 => get_string('no'), 1 => get_string('expirynotifyenroller', 'core_enrol'), 2 => get_string('expirynotifyall', 'core_enrol'));
     $settings->add(new admin_setting_configselect('enrol_manual/expirynotify',
-        get_string('expirynotify', 'enrol_manual'), get_string('expirynotify_help', 'enrol_manual'), 0, $options));
+        get_string('expirynotify', 'core_enrol'), get_string('expirynotify_help', 'core_enrol'), 0, $options));
 
     $settings->add(new admin_setting_configduration('enrol_manual/expirythreshold',
-        get_string('expirythreshold', 'enrol_manual'), get_string('expirythreshold_help', 'enrol_manual'), 86400, 86400));
+        get_string('expirythreshold', 'core_enrol'), get_string('expirythreshold_help', 'core_enrol'), 86400, 86400));
 
 }
