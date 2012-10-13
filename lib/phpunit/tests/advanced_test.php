@@ -317,4 +317,154 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         $this->assertTrue($DB->record_exists('user', array('username'=>'noidea')));
         $this->assertTrue($DB->record_exists('user', array('username'=>'onemore')));
     }
+
+    public function test_message_redirection() {
+        global $DB;
+
+        $this->preventResetByRollback(); // Messaging is not compatible with transactions...
+        $this->resetAfterTest(false);
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+
+        // Any core message will do here.
+        $message1 = new stdClass();
+        $message1->component         = 'moodle';
+        $message1->name              = 'instantmessage';
+        $message1->userfrom          = $user1;
+        $message1->userto            = $user2;
+        $message1->subject           = 'message subject 1';
+        $message1->fullmessage       = 'message body';
+        $message1->fullmessageformat = FORMAT_MARKDOWN;
+        $message1->fullmessagehtml   = '<p>message body</p>';
+        $message1->smallmessage      = 'small message';
+
+        $message2 = new stdClass();
+        $message2->component         = 'moodle';
+        $message2->name              = 'instantmessage';
+        $message2->userfrom          = $user2;
+        $message2->userto            = $user1;
+        $message2->subject           = 'message subject 2';
+        $message2->fullmessage       = 'message body';
+        $message2->fullmessageformat = FORMAT_MARKDOWN;
+        $message2->fullmessagehtml   = '<p>message body</p>';
+        $message2->smallmessage      = 'small message';
+
+        // There should be debugging message without redirection.
+        message_send($message1);
+        $this->assertDebuggingCalled(null, null, 'message_send() must print debug message that messaging is disabled in phpunit tests.');
+
+        // Sink should catch messages;
+        $sink = $this->redirectMessages();
+        $mid1 = message_send($message1);
+        $mid2 = message_send($message2);
+
+        $this->assertDebuggingNotCalled('message redirection must prevent debug messages from the message_send()');
+        $this->assertEquals(2, $sink->count());
+        $this->assertGreaterThanOrEqual(1, $mid1);
+        $this->assertGreaterThanOrEqual($mid1, $mid2);
+
+        $messages = $sink->get_messages();
+        $this->assertTrue(is_array($messages));
+        $this->assertEquals(2, count($messages));
+        $this->assertEquals($mid1, $messages[0]->id);
+        $this->assertEquals($message1->userto->id, $messages[0]->useridto);
+        $this->assertEquals($message1->userfrom->id, $messages[0]->useridfrom);
+        $this->assertEquals($message1->smallmessage, $messages[0]->smallmessage);
+        $this->assertEquals($mid2, $messages[1]->id);
+        $this->assertEquals($message2->userto->id, $messages[1]->useridto);
+        $this->assertEquals($message2->userfrom->id, $messages[1]->useridfrom);
+        $this->assertEquals($message2->smallmessage, $messages[1]->smallmessage);
+
+        // Test resetting.
+        $sink->clear();
+        $messages = $sink->get_messages();
+        $this->assertTrue(is_array($messages));
+        $this->assertEquals(0, count($messages));
+
+        message_send($message1);
+        $messages = $sink->get_messages();
+        $this->assertTrue(is_array($messages));
+        $this->assertEquals(1, count($messages));
+
+        // Test closing.
+        $sink->close();
+        $messages = $sink->get_messages();
+        $this->assertTrue(is_array($messages));
+        $this->assertEquals(1, count($messages), 'Messages in sink are supposed to stay there after close');
+
+        // Test debugging is enabled again.
+        message_send($message1);
+        $this->assertDebuggingCalled(null, null, 'message_send() must print debug message that messaging is disabled in phpunit tests.');
+
+        // Test invalid names and components.
+
+        $sink = $this->redirectMessages();
+
+        $message3 = new stdClass();
+        $message3->component         = 'xxxx_yyyyy';
+        $message3->name              = 'instantmessage';
+        $message3->userfrom          = $user2;
+        $message3->userto            = $user1;
+        $message3->subject           = 'message subject 2';
+        $message3->fullmessage       = 'message body';
+        $message3->fullmessageformat = FORMAT_MARKDOWN;
+        $message3->fullmessagehtml   = '<p>message body</p>';
+        $message3->smallmessage      = 'small message';
+
+        try {
+            message_send($message3);
+            $this->fail('coding expcetion expected if invalid component specified');
+        } catch (coding_exception $e) {
+            $this->assertTrue(true);
+        }
+
+        $message3->component = 'moodle';
+        $message3->name      = 'yyyyyy';
+        try {
+            message_send($message3);
+            $this->fail('coding expcetion expected if invalid name specified');
+        } catch (coding_exception $e) {
+            $this->assertTrue(true);
+        }
+
+        message_send($message1);
+        $this->assertEquals(1, $sink->count());
+
+        // Test if sink can be carried over to next test.
+        $this->assertTrue(phpunit_util::is_redirecting_messages());
+        return $sink;
+    }
+
+    /**
+     * @depends test_message_redirection
+     */
+    public function test_message_redirection_noreset($sink) {
+        $this->preventResetByRollback(); // Messaging is not compatible with transactions...
+        $this->resetAfterTest(true);
+
+        $this->assertTrue(phpunit_util::is_redirecting_messages());
+        $this->assertEquals(1, $sink->count());
+
+        $message = new stdClass();
+        $message->component         = 'moodle';
+        $message->name              = 'instantmessage';
+        $message->userfrom          = get_admin();
+        $message->userto            = get_admin();
+        $message->subject           = 'message subject 1';
+        $message->fullmessage       = 'message body';
+        $message->fullmessageformat = FORMAT_MARKDOWN;
+        $message->fullmessagehtml   = '<p>message body</p>';
+        $message->smallmessage      = 'small message';
+
+        message_send($message);
+        $this->assertEquals(2, $sink->count());
+    }
+
+    /**
+     * @depends test_message_redirection_noreset
+     */
+    public function test_message_redirection_reset() {
+        $this->assertFalse(phpunit_util::is_redirecting_messages(), 'Test reset must stop message redirection.');
+    }
 }
