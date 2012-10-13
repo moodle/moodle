@@ -29,6 +29,9 @@
  */
 class enrol_self_plugin extends enrol_plugin {
 
+    protected $lasternoller = null;
+    protected $lasternollerinstanceid = 0;
+
     /**
      * Returns optional enrolment information icons.
      *
@@ -261,12 +264,22 @@ class enrol_self_plugin extends enrol_plugin {
      * @return int id of new instance
      */
     public function add_default_instance($course) {
+        $expirynotify = $this->get_config('expirynotify', 0);
+        if ($expirynotify == 2) {
+            $expirynotify = 1;
+            $notifyall = 1;
+        } else {
+            $notifyall = 0;
+        }
         $fields = array('customint1'  => $this->get_config('groupkey'),
                         'customint2'  => $this->get_config('longtimenosee'),
                         'customint3'  => $this->get_config('maxenrolled'),
                         'customint4'  => $this->get_config('sendcoursewelcomemessage'),
                         'customint5'  => 0,
                         'enrolperiod' => $this->get_config('enrolperiod', 0),
+                        'expirynotify'=> $expirynotify,
+                        'notifyall'   => $notifyall,
+                        'expirythreshold' => $this->get_config('expirythreshold', 86400),
                         'status'      => $this->get_config('status'),
                         'roleid'      => $this->get_config('roleid', 0));
 
@@ -336,6 +349,7 @@ class enrol_self_plugin extends enrol_plugin {
      */
     public function cron() {
         $this->sync(null, true);
+        $this->send_expiry_notifications(true);
     }
 
     /**
@@ -475,7 +489,40 @@ class enrol_self_plugin extends enrol_plugin {
         return 0;
     }
 
-     /**
+    /**
+     * Returns the user who is responsible for self enrolments in given instance.
+     *
+     * Usually it is the first editing teacher - the person with "highest authority"
+     * as defined by sort_by_roleassignment_authority() having 'enrol/self:manage'
+     * capability.
+     *
+     * @param int $instanceid enrolment instance id
+     * @return stdClass user record
+     */
+    protected function get_enroller($instanceid) {
+        global $DB;
+
+        if ($this->lasternollerinstanceid == $instanceid and $this->lasternoller) {
+            return $this->lasternoller;
+        }
+
+        $instance = $DB->get_record('enrol', array('id'=>$instanceid, 'enrol'=>$this->get_name()), '*', MUST_EXIST);
+        $context = context_course::instance($instance->courseid);
+
+        if ($users = get_enrolled_users($context, 'enrol/self:manage')) {
+            $users = sort_by_roleassignment_authority($users, $context);
+            $this->lasternoller = reset($users);
+            unset($users);
+        } else {
+            $this->lasternoller = parent::get_enroller($instanceid);
+        }
+
+        $this->lasternollerinstanceid = $instanceid;
+
+        return $this->lasternoller;
+    }
+
+    /**
      * Gets an array of the user enrolment actions.
      *
      * @param course_enrolment_manager $manager

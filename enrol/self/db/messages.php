@@ -15,16 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Self enrolment plugin version specification.
+ * Defines message providers for self enrolments.
  *
  * @package    enrol_self
- * @copyright  2010 Petr Skoda  {@link http://skodak.org}
+ * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+$messageproviders = array (
 
-$plugin->version   = 2012101400;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2012100500;        // Requires this Moodle version
-$plugin->component = 'enrol_self';      // Full name of the plugin (used for diagnostics)
-$plugin->cron      = 600;
+    'expiry_notification' => array(),
+
+);
