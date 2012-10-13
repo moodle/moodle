@@ -58,6 +58,7 @@ Example:
 
 $verbose = !empty($options['verbose']);
 
+/** @var $plugin enrol_manual_plugin */
 $plugin = enrol_get_plugin('manual');
 
 $result = $plugin->sync(null, $verbose);

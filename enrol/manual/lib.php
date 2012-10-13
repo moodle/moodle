@@ -446,6 +446,9 @@ class enrol_manual_plugin extends enrol_plugin {
 
             if ($ue->timeend - $ue->expirythreshold + 86400 < $timenow) {
                 // Notify enrolled users only once at the start of the threshold.
+                if ($verbose) {
+                    mtrace("  user $ue->userid was already notified that enrolment in course $ue->courseid expires on ".userdate($ue->timeend, '', $CFG->timezone));
+                }
                 continue;
             }
 
