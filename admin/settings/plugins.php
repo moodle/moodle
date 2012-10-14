@@ -492,6 +492,22 @@ foreach (get_plugin_list('tool') as $plugin => $plugindir) {
     }
 }
 
+// Now add the Cache plugins
+if ($hassiteconfig) {
+    $ADMIN->add('modules', new admin_category('cache', new lang_string('caching', 'cache')));
+    $ADMIN->add('cache', new admin_externalpage('cacheconfig', new lang_string('cacheconfig', 'cache'), $CFG->wwwroot .'/cache/admin.php'));
+    $ADMIN->add('cache', new admin_externalpage('cachetestperformance', new lang_string('testperformance', 'cache'), $CFG->wwwroot . '/cache/testperformance.php'));
+    $ADMIN->add('cache', new admin_category('cachestores', new lang_string('cachestores', 'cache')));
+    foreach (get_plugin_list('cachestore') as $plugin => $path) {
+        $settingspath = $path.'/settings.php';
+        if (file_exists($settingspath)) {
+            $settings = new admin_settingpage('cachestore_'.$plugin.'_settings', new lang_string('pluginname', 'cachestore_'.$plugin), 'moodle/site:config');
+            include($settingspath);
+            $ADMIN->add('cachestores', $settings);
+        }
+    }
+}
+
 /// Add all local plugins - must be always last!
 if ($hassiteconfig) {
     $ADMIN->add('modules', new admin_category('localplugins', new lang_string('localplugins')));

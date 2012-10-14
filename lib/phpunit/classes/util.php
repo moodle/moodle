@@ -533,6 +533,12 @@ class phpunit_util {
         make_temp_directory('');
         make_cache_directory('');
         make_cache_directory('htmlpurifier');
+        // Reset the cache API so that it recreates it's required directories as well.
+        cache_factory::reset();
+        // Purge all data from the caches. This is required for consistency.
+        // Any file caches that happened to be within the data root will have already been clearer (because we just deleted cache)
+        // and now we will purge any other caches as well.
+        cache_helper::purge_all();
     }
 
     /**

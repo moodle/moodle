@@ -1,0 +1,207 @@
+MUC development code
+====================
+
+Congratulations you've found the MUC development code.
+This code is still very much in development and as such is not (and is know to not) function correctly or completely at the moment.
+Of course that will all be well and truly sorted out WELL before this gets integrated.
+
+Sample code snippets
+--------------------
+
+A definition:
+
+     $definitions = array(
+        'core_string' => array(                       // Required, unique
+            'mode' => cache_store::MODE_APPLICATION,  // Required
+            'component' => 'core',                    // Required
+            'area' => 'string',                       // Required
+            'requireidentifiers' => array(            // Optional
+                'lang',
+                'component'
+            ),
+            'requiredataguarantee' => false,          // Optional
+            'requiremultipleidentifiers' => false,    // Optional
+            'overrideclass' => null,                  // Optional
+            'overrideclassfile' => null,              // Optional
+            'datasource' => null,                     // Optional
+            'datasourcefile' => null,                 // Optional
+            'persistent' => false,                    // Optional
+            'ttl' => 0,                               // Optional
+            'mappingsonly' => false                   // Optional
+            'invalidationevents' => array(            // Optional
+                'contextmarkeddirty'
+            ),
+        )
+    );
+
+Getting a something from a cache using the definition:
+
+    $cache = cache::make('core', 'string');
+    if (!$component = $cache->get('component')) {
+        // get returns false if its not there and can't be loaded.
+        $component = generate_data();
+        $cache->set($component);
+    }
+
+The same thing but from using params:
+
+    $cache = cache::make_from_params(cache_store::MODE_APPLICATION, 'core', 'string');
+    if (!$component = $cache->get('component')) {
+        // get returns false if its not there and can't be loaded.
+        $component = generate_data();
+        $cache->set($component);
+    }
+
+If a data source had been specified in the definition the following would be all that was needed.
+
+    $cache = cache::make('core', 'string');
+    $component = $cache->get('component');
+
+The bits that make up the cache API
+-----------------------------------
+
+There are several parts that _**will**_ make up this solution:
+
+### Loader
+The loader is central to the whole thing.
+It is used by the end developer to get an object that handles caching.
+90% of end developers will not need to know or use anything else about the cache API.
+In order to get a loader you must use one of two static methods, make, or make_with_params.
+To the end developer interacting with the loader is simple and is dictated by the cache_loader interface.
+Internally there is lots of magic going on. The important parts to know about are:
+* There are two ways to get with a loader, the first with a definition (discussed below) the second with params. When params are used they are turned into an adhoc definition with default params.
+* A loader get passed three things when being constructed, a definition, a store, and another loader or datasource if there is either.
+* If a loader is the third arg then requests will be chained to provide redundancy.
+* If a data source is provided then requests for an item that is not cached will be passed to the data source and that will be expected to load the data. If it loads data that data is stored in each store on its way back to the user.
+* There are three core loaders. One for each application, session, and request.
+* A custom loader can be used. It will be provided by the definition (thus cannot be used with adhoc definitions) and must override the appropriate core loader
+* The loader handles ttl for stores that don't natively support ttl.
+* The application loader handles locking for stores that don't natively support locking.
+
+### Store
+The store is the bridge between the cache API and a cache solution.
+Cache store plugins exist within moodle/cache/store.
+The administrator of a site can configure multiple instances of each plugin, the configuration gets initialised as a store for the loader when required in code (during construction of the loader).
+The following points highlight things you should know about stores.
+* A cache_store interface is used to define the requirements of a store plugin.
+* The store plugin can inherit the cache_is_lockable interface to handle its own locking.
+* The store plugin can inherit the cache_is_key_aware interface to handle is own has checks.
+* Store plugins inform the cache API about the things they support. Features can be required by a definition.
+** Data guarantee - Data is guaranteed to exist in the cache once it is set there. It is never cleaned up to free space or because it has not been recently used.
+** Multiple identifiers - Rather than a single string key, the parts that make up the key are passed as an array.
+** Native TTL support - When required the store supports native ttl and doesn't require the cache API to manage ttl of things given to the store.
+
+### Definition
+_Definitions were not a part of the previous proposal._
+Definitions are cache definitions. They will be located within a new file for each component/plugin at **db/caches.php**.
+They can be used to set all of the requirements of a cache instance and are used to ensure that a cache can only be interacted with in the same way no matter where it is being used.
+It also ensure that caches are easy to use, the config is stored in the definition and the developer using the cache does not need to know anything about it.
+When getting a loader you can either provide a definition name, or a set or params.
+* If you provide a definition name then the matching definition is found and used to construct a loader for you.
+* If you provide params then an adhoc definition is created. It will have defaults and will not have any special requirements or options set.
+
+Definitions are designed to be used in situations where things are more than basic.
+
+The following settings are required for a definition:
+* name - Identifies the definition and must be unique.
+* mode - Application, session, request.
+* component - The component associated the definition is associated with.
+* area - Describes the stuff being cached.
+
+The following optional settings can also be defined:
+* requireidentifiers - Any identifiers the definition requires. Must be provided when creating the loader.
+* requiredataguarantee - If set to true then only stores that support data guarantee will be used.
+* requiremultipleidentifiers - If set to true then only stores that support multiple identifiers will be used.
+* overrideclass - If provided this class will be used for the loader. It must extend on of the core loader classes (based upon mode).
+* overrideclassfile - Included if required when using the overrideclass param.
+* datasource - If provided this class will be used as a data source for the definition. It must implement the cache_data_source interface.
+* datasourcefile - Included if required when using the datasource param.
+* persistent - If set to true the loader will be stored when first created and provided to subsequent requests. More on this later.
+* ttl - Can be used to set a ttl value for data being set for this cache.
+* mappingsonly - This definition can only be used if there is a store mapping for it. More on this later.
+* invalidationevents - An array of events that should trigger this cache to invalidate.
+
+The persist option.
+As noted the persist option causes the loader generated for this definition to be stored when first created. Subsequent requests for this definition will be given the original loader instance.
+Data passed to or retrieved from the loader and its chained loaders gets cached by the instance.
+This option should be used when you know you will require the loader several times and perhaps in different areas of code.
+Because it caches key=>value data it avoids the need to re-fetch things from stores after the first request. Its good for performance, bad for memory.
+It should be used sparingly.
+
+The mappingsonly option.
+The administrator of a site can create mappings between stores and definitions. Allowing them to designate stores for specific definitions (caches).
+Setting this option to true means that the definition can only be used if a mapping has been made for it.
+Normally if no mappings exist then the default store for the definition mode is used.
+
+### Data source
+Data sources allow cache _misses_ (requests for a key that doesn't exist) to be handled and loaded internally.
+The loader gets used as the last resort if provided and means that code using the cache doesn't need to handle the situation that information isn't cached.
+They can be specified in a cache definition and must implement the cache_data_source interface.
+
+### How it all chains together.
+Consider the following if you can:
+
+Basic request for information (no frills):
+
+    => Code calls get
+        => Loader handles get, passes the request to its store
+            <= Memcache doesn't have the data. sorry.
+        <= Loader returns the result.
+    |= Code couldn't get the data from the cache. It must generate it and then ask the loader to cache it.
+
+Advanced initial request for information not already cached (has chained stores and data source):
+
+    => Code calls get
+        => Loader handles get, passes the request to its store
+            => Memcache handles request, doesn't have it passes it to the chained store
+                => File (default store) doesn't have it requests it from the loader
+                    => Data source - makes required db calls, processes information
+                        ...database calls...
+                        ...processing and moulding...
+                    <= Data source returns the information
+                <= File caches the information on its way back through
+            <= Memcache caches the information on its way back through
+        <= Loader returns the data to the user.
+    |= Code the code now has the data.
+
+Subsequent request for information:
+
+    => Code calls get
+        => Loader handles get, passes the request to its store
+            <= Store returns the data
+        <= Loader returns the data
+    |= Code has the data
+
+Other internal magic you should be aware of
+-------------------------------------------
+The following should fill you in on a bit more of the behind the scenes stuff for the cache API.
+
+### Helper class
+There is a helper class called cache_helper which is abstract with static methods.
+This class handles much of the internal generation and initialisation requirements.
+In normal use this class will not be needed outside of the API (mostly internal use only)
+
+### Configuration
+There are two configuration classes cache_config and cache_config_writer.
+The reader class is used for every request, the writer is only used when modifying the configuration.
+Because the cache API is designed to cache database configuration and meta data it must be able to operate prior to database configuration being loaded.
+To get around this we store the configuration information in a file in the dataroot.
+The configuration file contains information on the configured store instances, definitions collected from definition files, and mappings.
+That information is stored and loaded in the same way we work with the lang string files.
+This means that we use the cache API as soon as it has been included.
+
+### Invalidation
+Cache information can be invalidated in two ways.
+1. pass a definition name and the keys to be invalidated (or none to invalidate the whole cache).
+2. pass an event and the keys to be invalidated.
+
+The first method is designed to be used when you have a single known definition you want to invalidate entries from within.
+The second method is a lot more intensive for the system. There are defined invalidation events that definitions can "subscribe" to (through the definitions invalidationevents option).
+When you invalidate by event the cache API finds all of the definitions that subscribe to the event, it then loads the stores for each of those definitions and purges the keys from each store.
+This is obviously a recursive and therefor intense process.
+
+TODO's and things still to think about
+--------------------------------------
+
+ 1. Definitions don't really need/use the component/area identifiers presently. They may be useful in the future... they may not be.
+    We should consider whether we leave them, or remove them.

@@ -1487,6 +1487,10 @@ function get_users_from_config($value, $capability, $includeadmins = true) {
 
 /**
  * Invalidates browser caches and cached data in temp
+ *
+ * IMPORTANT - If you are adding anything here to do with the cache directory you should also have a look at
+ * {@see phpunit_util::reset_dataroot()}
+ *
  * @return void
  */
 function purge_all_caches() {
@@ -1497,6 +1501,8 @@ function purge_all_caches() {
     theme_reset_all_caches();
     get_string_manager()->reset_caches();
     textlib::reset_caches();
+
+    cache_helper::purge_all();
 
     // purge all other caches: rss, simplepie, etc.
     remove_dir($CFG->cachedir.'', true);
@@ -7906,6 +7912,7 @@ function get_core_subsystems() {
             'block'       => 'blocks',
             'blog'        => 'blog',
             'bulkusers'   => NULL,
+            'cache'       => 'cache',
             'calendar'    => 'calendar',
             'cohort'      => 'cohort',
             'condition'   => NULL,
@@ -8004,6 +8011,8 @@ function get_plugin_types($fullpaths=true) {
                       'qformat'       => 'question/format',
                       'plagiarism'    => 'plagiarism',
                       'tool'          => $CFG->admin.'/tool',
+                      'cachestore'    => 'cache/stores',
+                      'cachelock'     => 'cache/locks',
                       'theme'         => 'theme',  // this is a bit hacky, themes may be in $CFG->themedir too
         );
 
@@ -10425,6 +10434,37 @@ function get_performance_info() {
         $info['txt'] .= 'rcache: '.
             "{$rcache->hits}/{$rcache->misses} ";
     }*/
+
+    if ($stats = cache_helper::get_stats()) {
+        $html = '<span class="cachesused">';
+        $html .= '<span class="cache-stats-heading">Caches interaction by definition then store</span>';
+        $text = 'Caches used (hits/misses/sets): ';
+        $hits = 0;
+        $misses = 0;
+        $sets = 0;
+        foreach ($stats as $definition => $stores) {
+            $html .= '<span class="cache-definition-stats">'.$definition.'</span>';
+            $text .= "$definition {";
+            foreach ($stores as $store => $data) {
+                $hits += $data['hits'];
+                $misses += $data['misses'];
+                $sets += $data['sets'];
+                $text .= "$store($data[hits]/$data[misses]/$data[sets]) ";
+                $html .= "<span class='cache-store-stats'>$store: $data[hits] / $data[misses] / $data[sets]</span>";
+            }
+            $text .= '} ';
+        }
+        $html .= "<span class='cache-total-stats'>Total Hits / Misses / Sets : $hits / $misses / $sets</span>";
+        $html .= '</span> ';
+        $info['cachesused'] = "$hits / $misses / $sets";
+        $info['html'] .= $html;
+        $info['txt'] .= $text.'. ';
+    } else {
+        $info['cachesused'] = '0 / 0 / 0';
+        $info['html'] .= '<span class="cachesused">Caches used (hits/misses/sets): 0/0/0</span>';
+        $info['txt'] .= 'Caches used (hits/misses/sets): 0/0/0 ';
+    }
+
     $info['html'] = '<div class="performanceinfo siteinfo">'.$info['html'].'</div>';
     return $info;
 }

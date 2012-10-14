@@ -216,6 +216,7 @@ $temp->add(new admin_setting_configselect('memcachedpconn', new lang_string('mem
                                           array( '0' => new lang_string('no'),
                                                  '1' => new lang_string('yes'))));
 */
+
 $ADMIN->add('server', $temp);
 
 

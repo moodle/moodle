@@ -1072,3 +1072,13 @@ $string['webproxyinfo'] = 'Fill in following options if your Moodle server can n
 $string['xmlrpcrecommended'] = 'The xmlrpc extension is needed for hub communication, and useful for web services and Moodle networking';
 $string['yuicomboloading'] = 'YUI combo loading';
 $string['ziprequired'] = 'The Zip PHP extension is now required by Moodle, info-ZIP binaries or PclZip library are not used anymore.';
+
+
+$string['caching'] = 'Caching';
+$string['cachesettings'] = 'Cache settings';
+$string['cacherequest'] = 'Request cache';
+$string['cacherequesthelp'] = 'User specific cache that expires when the request is complete. Designed to replace areas where we are using the static stores.';
+$string['cachesession'] = 'Session cache';
+$string['cachesessionhelp'] = 'User specific cache that expires when the users session ends. Designed to aleviate session bloat/strain.';
+$string['cacheapplication'] = 'Application cache';
+$string['cacheapplicationhelp'] = ' Cached items are shared amoung all users and expire by a determined ttl.';

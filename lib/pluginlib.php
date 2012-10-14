@@ -405,6 +405,14 @@ class plugin_manager {
                 'exportimscp', 'importhtml', 'print'
             ),
 
+            'cachelock' => array(
+                'file'
+            ),
+
+            'cachestore' => array(
+                'file', 'memcache', 'memcached', 'mongodb', 'session', 'static'
+            ),
+
             'coursereport' => array(
                 //deprecated!
             ),
