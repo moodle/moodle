@@ -300,6 +300,14 @@
     groups_print_activity_menu($cm, $returnurl);
     $currentgroup = groups_get_activity_group($cm);
     $groupmode = groups_get_activity_groupmode($cm);
+    // If a student is not part of a group and seperate groups is enabled, we don't
+    // want them seeing all records.
+    if ($currentgroup == 0 && $groupmode == 1 && !has_capability('mod/data:manageentries', $context)) {
+        $canviewallrecords = false;
+    } else {
+        $canviewallrecords = true;
+    }
+
 
     // deletect entries not approved yet and show hint instead of not found error
     if ($record and $data->approval and !$record->approved and $record->userid != $USER->id and !has_capability('mod/data:manageentries', $context)) {
@@ -439,7 +447,13 @@
             if ($currentgroup) {
                 $groupselect = " AND (r.groupid = '$currentgroup' OR r.groupid = 0)";
             } else {
-                $groupselect = ' ';
+                if ($canviewallrecords) {
+                    $groupselect = ' ';
+                } else {
+                    // If separate groups are enabled and the user isn't in a group or
+                    // a teacher, manager, admin etc, then just show them entries for 'All participants'.
+                    $groupselect = " AND r.groupid = 0";
+                }
             }
 
             $ilike = sql_ilike(); //Be case-insensitive
@@ -546,11 +560,12 @@
             $sqlmax     = "SELECT $count FROM $tables $where $groupselect $approveselect"; // number of all recoirds user may see
 
         /// Work out the paging numbers and counts
+            $selectdata = $groupselect . $approveselect;
+            $recordids = data_get_all_recordids($data->id, $selectdata);
 
-            $recordids = data_get_all_recordids($data->id);
             $newrecordids = data_get_advance_search_ids($recordids, $search_array, $data->id);
             $totalcount = count($newrecordids);
-            $selectdata = $groupselect . $approveselect;
+
             if (!empty($advanced)) {
                 $sqlselect = data_get_advanced_search_sql($sort, $data, $newrecordids, $selectdata, $sortorder);
             } else {
