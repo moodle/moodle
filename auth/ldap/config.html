@@ -94,9 +94,6 @@ if (!isset($config->ntlmsso_ie_fastpath)) {
 if (!isset($config->ntlmsso_type)) {
     $config->ntlmsso_type = 'ntlm';
 }
-if (!isset($config->ntlmsso_remoteuserformat)) {
-    $config->ntlmsso_remoteuserformat = '';
-}
 
 $yesno = array(get_string('no'), get_string('yes'));
 
@@ -540,18 +537,6 @@ $yesno = array(get_string('no'), get_string('yes'));
     </td>
     <td>
         <?php print_string('auth_ntlmsso_type','auth_ldap') ?>
-    </td>
-</tr>
-<tr valign="top">
-    <td align="right">
-        <label for="ntlmsso_remoteuserformat"><?php print_string('auth_ntlmsso_remoteuserformat_key', 'auth_ldap') ?></label>
-    </td>
-    <td>
-        <input name="ntlmsso_remoteuserformat" id="ntlmsso_remoteuserformat" type="text" size="30" value="<?php echo $config->ntlmsso_remoteuserformat?>" />
-        <?php if (isset($err['ntlmsso_remoteuserformat'])) { echo $OUTPUT->error_text($err['ntlmsso_remoteuserformat']); } ?>
-    </td>
-    <td>
-        <?php print_string('auth_ntlmsso_remoteuserformat', 'auth_ldap') ?>
     </td>
 </tr>
 <?php
