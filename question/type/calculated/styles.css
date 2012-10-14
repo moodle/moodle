@@ -6,3 +6,17 @@
 .que.calculated .answer input[type="text"] {
     width: 30%;
 }
+
+/* Numeric INPUT text boxes should be left aligned in RTL mode
+*/
+#page-question-type-calculated.dir-rtl input[name^="answer"],
+#page-question-type-calculated.dir-rtl input[name^="unit"],
+#page-question-type-calculated.dir-rtl input[name^="multiplier"],
+#page-question-type-calculated.dir-rtl input[name^="calcmax"],
+#page-question-type-calculated.dir-rtl input[name^="calcmin"],
+#page-question-type-calculated.dir-rtl input[name^="number"],
+#page-question-type-calculated.dir-rtl input[name^="tolerance"]
+{
+    direction: ltr;
+    text-align: left;
+}
