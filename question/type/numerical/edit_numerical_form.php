@@ -160,7 +160,6 @@ class qtype_numerical_edit_form extends question_edit_form {
             $firstunit = $mform->getElement('multiplier[0]');
             $firstunit->freeze();
             $firstunit->setValue('1.0');
-            $firstunit->setPersistantFreeze(true);
             $mform->addHelpButton('multiplier[0]', 'numericalmultiplier', 'qtype_numerical');
         }
     }
