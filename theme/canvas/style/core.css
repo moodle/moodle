@@ -244,7 +244,7 @@ input[type="radio"] {
     text-align: left;
     padding-left:10px
 }
-.dir-rtl .userinfobox .content {text-align: right;}
+.dir-rtl .userinfobox .content {text-align: right;padding-right:10px;padding-left:0px;}
 
 .userinfobox .links {
     vertical-align: top;
@@ -262,7 +262,7 @@ input[type="radio"] {
     float: left;
     margin-right: 10px;
 }
-.dir-rtl .profilepicture {float: right;}
+.dir-rtl .profilepicture {float: right;margin-left: 10px;margin-right: 0px;}
 
 .descriptionbox {
     margin-left: 110px;
