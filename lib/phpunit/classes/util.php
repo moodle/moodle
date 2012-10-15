@@ -60,6 +60,9 @@ class phpunit_util {
     /** @var array list of debugging messages triggered during the last test execution */
     protected static $debuggings = array();
 
+    /** @var phpunit_message_sink alternative target for moodle messaging */
+    protected static $messagesink = null;
+
     /**
      * Prevent parallel test execution - this can not work in Moodle because we modify database and dataroot.
      *
@@ -552,6 +555,9 @@ class phpunit_util {
      */
     public static function reset_all_data($logchanges = false) {
         global $DB, $CFG, $USER, $SITE, $COURSE, $PAGE, $OUTPUT, $SESSION, $GROUPLIB_CACHE;
+
+        // Stop any message redirection.
+        phpunit_util::stop_message_redirection();
 
         // Release memory and indirectly call destroy() methods to release resource handles, etc.
         gc_collect_cycles();
@@ -1249,5 +1255,54 @@ class phpunit_util {
         }
 
         return true;
+    }
+
+    /**
+     * Start message redirection.
+     *
+     * Note: Do not call directly from tests,
+     *       use $sink = $this->redirectMessages() instead.
+     *
+     * @return phpunit_message_sink
+     */
+    public static function start_message_redirection() {
+        if (self::$messagesink) {
+            self::stop_message_redirection();
+        }
+        self::$messagesink = new phpunit_message_sink();
+        return self::$messagesink;
+    }
+
+    /**
+     * End message redirection.
+     *
+     * Note: Do not call directly from tests,
+     *       use $sink->close() instead.
+     */
+    public static function stop_message_redirection() {
+        self::$messagesink = null;
+    }
+
+    /**
+     * Are messages redirected to some sink?
+     *
+     * Note: to be called from messagelib.php only!
+     *
+     * @return bool
+     */
+    public static function is_redirecting_messages() {
+        return !empty(self::$messagesink);
+    }
+
+    /**
+     * To be called from messagelib.php only!
+     *
+     * @param stdClass $message record from message_read table
+     * @return bool true means send message, false means message "sent" to sink.
+     */
+    public static function message_sent($message) {
+        if (self::$messagesink) {
+            self::$messagesink->add_message($message);
+        }
     }
 }
