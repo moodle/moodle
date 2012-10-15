@@ -27,7 +27,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 if ($ADMIN->fulltree) {
-    require_once('locallib.php');
+    require_once($CFG->dirroot.'/enrol/imsenterprise/locallib.php');
 
     $settings->add(new admin_setting_heading('enrol_imsenterprise_settings', '', get_string('pluginname_desc', 'enrol_imsenterprise')));
 

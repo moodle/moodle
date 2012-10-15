@@ -39,12 +39,23 @@ class plugininfo_tinymce extends plugininfo_base {
         return new moodle_url('/lib/editor/tinymce/subplugins.php', array('delete' => $this->name, 'sesskey' => sesskey()));
     }
 
-    public function get_settings_url() {
-        global $CFG;
-        if (file_exists("$CFG->dirroot/lib/editor/tinymce/plugins/$this->name/settings.php")) {
-            return new moodle_url('/admin/settings.php', array('section'=>'tinymce'.$this->name.'settings'));
-        } else {
-            return null;
+    public function get_settings_section_name() {
+        return 'tinymce'.$this->name.'settings';
+    }
+
+    public function load_settings(part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
+        global $CFG, $USER, $DB, $OUTPUT, $PAGE; // in case settings.php wants to refer to them
+        $ADMIN = $adminroot; // may be used in settings.php
+
+        $settings = null;
+        if ($hassiteconfig && file_exists($this->full_path('settings.php'))) {
+            $section = $this->get_settings_section_name();
+            $settings = new admin_settingpage($section, $this->displayname,
+                    'moodle/site:config', $this->is_enabled() === false);
+            include($this->full_path('settings.php')); // this may also set $settings to null
+        }
+        if ($settings) {
+            $ADMIN->add($parentnodename, $settings);
         }
     }
 

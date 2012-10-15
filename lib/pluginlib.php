@@ -1771,6 +1771,15 @@ abstract class plugininfo_base {
     }
 
     /**
+     * Returns the node name used in admin settings menu for this plugin settings (if applicable)
+     *
+     * @return null|string node name or null if plugin does not create settings node (default)
+     */
+    public function get_settings_section_name() {
+        return null;
+    }
+
+    /**
      * Returns the URL of the plugin settings screen
      *
      * Null value means that the plugin either does not have the settings screen
@@ -1779,7 +1788,31 @@ abstract class plugininfo_base {
      * @return null|moodle_url
      */
     public function get_settings_url() {
-        return null;
+        $section = $this->get_settings_section_name();
+        if ($section === null) {
+            return null;
+        }
+        $settings = admin_get_root()->locate($section);
+        if ($settings && $settings instanceof admin_settingpage) {
+            return new moodle_url('/admin/settings.php', array('section' => $section));
+        } else if ($settings && $settings instanceof admin_externalpage) {
+            return new moodle_url($settings->url);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Loads plugin settings to the settings tree
+     *
+     * This function usually includes settings.php file in plugins folder.
+     * Alternatively it can create a link to some settings page (instance of admin_externalpage)
+     *
+     * @param part_of_admin_tree $adminroot
+     * @param string $parentnodename
+     * @param bool $hassiteconfig whether the current user has moodle/site:config capability
+     */
+    public function load_settings(part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
     }
 
     /**
@@ -1875,6 +1908,23 @@ class plugininfo_block extends plugininfo_base {
         return $blocks;
     }
 
+    /**
+     * Magic method getter, redirects to read only values.
+     *
+     * For block plugins pretends the object has 'visible' property for compatibility
+     * with plugins developed for Moodle version below 2.4
+     *
+     * @param string $name
+     * @return mixed
+     */
+    public function __get($name) {
+        if ($name === 'visible') {
+            debugging('This is now an instance of plugininfo_block, please use $block->is_enabled() instead of $block->visible', DEBUG_DEVELOPER);
+            return ($this->is_enabled() !== false);
+        }
+        return parent::__get($name);
+    }
+
     public function init_display_name() {
 
         if (get_string_manager()->string_exists('pluginname', 'block_' . $this->name)) {
@@ -1911,21 +1961,35 @@ class plugininfo_block extends plugininfo_base {
         }
     }
 
-    public function get_settings_url() {
+    public function get_settings_section_name() {
+        return 'blocksetting' . $this->name;
+    }
 
-        if (($block = block_instance($this->name)) === false) {
-            return parent::get_settings_url();
+    public function load_settings(part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
+        global $CFG, $USER, $DB, $OUTPUT, $PAGE; // in case settings.php wants to refer to them
+        $ADMIN = $adminroot; // may be used in settings.php
+        $block = $this; // also can be used inside settings.php
+        $section = $this->get_settings_section_name();
 
-        } else if ($block->has_config()) {
+        if (!$hassiteconfig || (($blockinstance = block_instance($this->name)) === false)) {
+            return;
+        }
+
+        $settings = null;
+        if ($blockinstance->has_config()) {
             if (file_exists($this->full_path('settings.php'))) {
-                return new moodle_url('/admin/settings.php', array('section' => 'blocksetting' . $this->name));
+                $settings = new admin_settingpage($section, $this->displayname,
+                        'moodle/site:config', $this->is_enabled() === false);
+                include($this->full_path('settings.php')); // this may also set $settings to null
             } else {
                 $blocksinfo = self::get_blocks_info();
-                return new moodle_url('/admin/block.php', array('block' => $blocksinfo[$this->name]->id));
+                $settingsurl = new moodle_url('/admin/block.php', array('block' => $blocksinfo[$this->name]->id));
+                $settings = new admin_externalpage($section, $this->displayname,
+                        $settingsurl, 'moodle/site:config', $this->is_enabled() === false);
             }
-
-        } else {
-            return parent::get_settings_url();
+        }
+        if ($settings) {
+            $ADMIN->add($parentnodename, $settings);
         }
     }
 
@@ -2066,14 +2130,26 @@ class plugininfo_filter extends plugininfo_base {
         return null;
     }
 
-    public function get_settings_url() {
-
+    public function get_settings_section_name() {
         $globalstates = self::get_global_states();
         $legacyname = $globalstates[$this->name]->legacyname;
-        if (filter_has_global_settings($legacyname)) {
-            return new moodle_url('/admin/settings.php', array('section' => 'filtersetting' . str_replace('/', '', $legacyname)));
-        } else {
-            return null;
+        return 'filtersetting' . str_replace('/', '', $legacyname);
+    }
+
+    public function load_settings(part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
+        global $CFG, $USER, $DB, $OUTPUT, $PAGE; // in case settings.php wants to refer to them
+        $ADMIN = $adminroot; // may be used in settings.php
+        $filter = $this; // also can be used inside settings.php
+
+        $settings = null;
+        if ($hassiteconfig && file_exists($this->full_path('filtersettings.php'))) {
+            $section = $this->get_settings_section_name();
+            $settings = new admin_settingpage($section, $this->displayname,
+                    'moodle/site:config', $this->is_enabled() === false);
+            include($this->full_path('filtersettings.php')); // this may also set $settings to null
+        }
+        if ($settings) {
+            $ADMIN->add($parentnodename, $settings);
         }
     }
 
@@ -2175,6 +2251,23 @@ class plugininfo_mod extends plugininfo_base {
         return $modules;
     }
 
+    /**
+     * Magic method getter, redirects to read only values.
+     *
+     * For module plugins we pretend the object has 'visible' property for compatibility
+     * with plugins developed for Moodle version below 2.4
+     *
+     * @param string $name
+     * @return mixed
+     */
+    public function __get($name) {
+        if ($name === 'visible') {
+            debugging('This is now an instance of plugininfo_mod, please use $module->is_enabled() instead of $module->visible', DEBUG_DEVELOPER);
+            return ($this->is_enabled() !== false);
+        }
+        return parent::__get($name);
+    }
+
     public function init_display_name() {
         if (get_string_manager()->string_exists('pluginname', $this->component)) {
             $this->displayname = get_string('pluginname', $this->component);
@@ -2220,12 +2313,24 @@ class plugininfo_mod extends plugininfo_base {
         }
     }
 
-    public function get_settings_url() {
+    public function get_settings_section_name() {
+        return 'modsetting' . $this->name;
+    }
 
-        if (file_exists($this->full_path('settings.php')) or file_exists($this->full_path('settingstree.php'))) {
-            return new moodle_url('/admin/settings.php', array('section' => 'modsetting' . $this->name));
-        } else {
-            return parent::get_settings_url();
+    public function load_settings(part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
+        global $CFG, $USER, $DB, $OUTPUT, $PAGE; // in case settings.php wants to refer to them
+        $ADMIN = $adminroot; // may be used in settings.php
+        $module = $this; // also can be used inside settings.php
+        $section = $this->get_settings_section_name();
+
+        $settings = null;
+        if ($hassiteconfig && file_exists($this->full_path('settings.php'))) {
+            $settings = new admin_settingpage($section, $this->displayname,
+                    'moodle/site:config', $this->is_enabled() === false);
+            include($this->full_path('settings.php')); // this may also set $settings to null
+        }
+        if ($settings) {
+            $ADMIN->add($parentnodename, $settings);
         }
     }
 
@@ -2283,6 +2388,27 @@ class plugininfo_qtype extends plugininfo_base {
         return new moodle_url('/admin/qtypes.php',
                 array('delete' => $this->name, 'sesskey' => sesskey()));
     }
+
+    public function get_settings_section_name() {
+        return 'qtypesetting' . $this->name;
+    }
+
+    public function load_settings(part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
+        global $CFG, $USER, $DB, $OUTPUT, $PAGE; // in case settings.php wants to refer to them
+        $ADMIN = $adminroot; // may be used in settings.php
+        $qtype = $this; // also can be used inside settings.php
+        $section = $this->get_settings_section_name();
+
+        $settings = null;
+        if ($hassiteconfig && file_exists($this->full_path('settings.php'))) {
+            $settings = new admin_settingpage($section, $this->displayname,
+                    'moodle/site:config', $this->is_enabled() === false);
+            include($this->full_path('settings.php')); // this may also set $settings to null
+        }
+        if ($settings) {
+            $ADMIN->add($parentnodename, $settings);
+        }
+    }
 }
 
 
@@ -2308,11 +2434,31 @@ class plugininfo_auth extends plugininfo_base {
         return isset($enabled[$this->name]);
     }
 
-    public function get_settings_url() {
-        if (file_exists($this->full_path('settings.php'))) {
-            return new moodle_url('/admin/settings.php', array('section' => 'authsetting' . $this->name));
-        } else {
-            return new moodle_url('/admin/auth_config.php', array('auth' => $this->name));
+    public function get_settings_section_name() {
+        return 'authsetting' . $this->name;
+    }
+
+    public function load_settings(part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
+        global $CFG, $USER, $DB, $OUTPUT, $PAGE; // in case settings.php wants to refer to them
+        $ADMIN = $adminroot; // may be used in settings.php
+        $auth = $this; // also to be used inside settings.php
+        $section = $this->get_settings_section_name();
+
+        $settings = null;
+        if ($hassiteconfig) {
+            if (file_exists($this->full_path('settings.php'))) {
+                // TODO: finish implementation of common settings - locking, etc.
+                $settings = new admin_settingpage($section, $this->displayname,
+                        'moodle/site:config', $this->is_enabled() === false);
+                include($this->full_path('settings.php')); // this may also set $settings to null
+            } else {
+                $settingsurl = new moodle_url('/admin/auth_config.php', array('auth' => $this->name));
+                $settings = new admin_externalpage($section, $this->displayname,
+                        $settingsurl, 'moodle/site:config', $this->is_enabled() === false);
+            }
+        }
+        if ($settings) {
+            $ADMIN->add($parentnodename, $settings);
         }
     }
 }
@@ -2340,12 +2486,24 @@ class plugininfo_enrol extends plugininfo_base {
         return isset($enabled[$this->name]);
     }
 
-    public function get_settings_url() {
+    public function get_settings_section_name() {
+        return 'enrolsettings' . $this->name;
+    }
 
-        if ($this->is_enabled() or file_exists($this->full_path('settings.php'))) {
-            return new moodle_url('/admin/settings.php', array('section' => 'enrolsettings' . $this->name));
-        } else {
-            return parent::get_settings_url();
+    public function load_settings(part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
+        global $CFG, $USER, $DB, $OUTPUT, $PAGE; // in case settings.php wants to refer to them
+        $ADMIN = $adminroot; // may be used in settings.php
+        $enrol = $this; // also can be used inside settings.php
+        $section = $this->get_settings_section_name();
+
+        $settings = null;
+        if ($hassiteconfig && file_exists($this->full_path('settings.php'))) {
+            $settings = new admin_settingpage($section, $this->displayname,
+                    'moodle/site:config', $this->is_enabled() === false);
+            include($this->full_path('settings.php')); // this may also set $settings to null
+        }
+        if ($settings) {
+            $ADMIN->add($parentnodename, $settings);
         }
     }
 
@@ -2360,15 +2518,31 @@ class plugininfo_enrol extends plugininfo_base {
  */
 class plugininfo_message extends plugininfo_base {
 
-    public function get_settings_url() {
+    public function get_settings_section_name() {
+        return 'messagesetting' . $this->name;
+    }
+
+    public function load_settings(part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
+        global $CFG, $USER, $DB, $OUTPUT, $PAGE; // in case settings.php wants to refer to them
+        $ADMIN = $adminroot; // may be used in settings.php
+        if (!$hassiteconfig) {
+            return;
+        }
+        $section = $this->get_settings_section_name();
+
+        $settings = null;
         $processors = get_message_processors();
         if (isset($processors[$this->name])) {
             $processor = $processors[$this->name];
             if ($processor->available && $processor->hassettings) {
-                return new moodle_url('settings.php', array('section' => 'messagesetting'.$processor->name));
+                $settings = new admin_settingpage($section, $this->displayname,
+                        'moodle/site:config', $this->is_enabled() === false);
+                include($this->full_path('settings.php')); // this may also set $settings to null
             }
         }
-        return parent::get_settings_url();
+        if ($settings) {
+            $ADMIN->add($parentnodename, $settings);
+        }
     }
 
     /**
@@ -2389,7 +2563,7 @@ class plugininfo_message extends plugininfo_base {
     public function get_uninstall_url() {
         $processors = get_message_processors();
         if (isset($processors[$this->name])) {
-            return new moodle_url('message.php', array('uninstall' => $processors[$this->name]->id, 'sesskey' => sesskey()));
+            return new moodle_url('/admin/message.php', array('uninstall' => $processors[$this->name]->id, 'sesskey' => sesskey()));
         } else {
             return parent::get_uninstall_url();
         }
@@ -2409,12 +2583,19 @@ class plugininfo_repository extends plugininfo_base {
         return isset($enabled[$this->name]);
     }
 
-    public function get_settings_url() {
+    public function get_settings_section_name() {
+        return 'repositorysettings'.$this->name;
+    }
 
-        if ($this->is_enabled()) {
-            return new moodle_url('/admin/repository.php', array('sesskey' => sesskey(), 'action' => 'edit', 'repos' => $this->name));
-        } else {
-            return parent::get_settings_url();
+    public function load_settings(part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
+        if ($hassiteconfig && $this->is_enabled()) {
+            // completely no access to repository setting when it is not enabled
+            $sectionname = $this->get_settings_section_name();
+            $settingsurl = new moodle_url('/admin/repository.php',
+                    array('sesskey' => sesskey(), 'action' => 'edit', 'repos' => $this->name));
+            $settings = new admin_externalpage($sectionname, $this->displayname,
+                    $settingsurl, 'moodle/site:config', false);
+            $adminroot->add($parentnodename, $settings);
         }
     }
 
@@ -2543,12 +2724,117 @@ class plugininfo_local extends plugininfo_base {
     public function get_uninstall_url() {
         return new moodle_url('/admin/localplugins.php', array('delete' => $this->name, 'sesskey' => sesskey()));
     }
+}
 
-    public function get_settings_url() {
-        if (file_exists($this->full_path('settings.php'))) {
-            return new moodle_url('/admin/settings.php', array('section' => 'local_' . $this->name));
-        } else {
-            return parent::get_settings_url();
+/**
+ * Class for HTML editors
+ */
+class plugininfo_editor extends plugininfo_base {
+
+    public function get_settings_section_name() {
+        return 'editorsettings' . $this->name;
+    }
+
+    public function load_settings(part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
+        global $CFG, $USER, $DB, $OUTPUT, $PAGE; // in case settings.php wants to refer to them
+        $ADMIN = $adminroot; // may be used in settings.php
+        $editor = $this; // also can be used inside settings.php
+        $section = $this->get_settings_section_name();
+
+        $settings = null;
+        if ($hassiteconfig && file_exists($this->full_path('settings.php'))) {
+            $settings = new admin_settingpage($section, $this->displayname,
+                    'moodle/site:config', $this->is_enabled() === false);
+            include($this->full_path('settings.php')); // this may also set $settings to null
         }
+        if ($settings) {
+            $ADMIN->add($parentnodename, $settings);
+        }
+    }
+
+    /**
+     * Returns the information about plugin availability
+     *
+     * True means that the plugin is enabled. False means that the plugin is
+     * disabled. Null means that the information is not available, or the
+     * plugin does not support configurable availability or the availability
+     * can not be changed.
+     *
+     * @return null|bool
+     */
+    public function is_enabled() {
+        global $CFG;
+        if (empty($CFG->texteditors)) {
+            $CFG->texteditors = 'tinymce,textarea';
+        }
+        if (in_array($this->name, explode(',', $CFG->texteditors))) {
+            return true;
+        }
+        return false;
+    }
+}
+
+/**
+ * Class for plagiarism plugins
+ */
+class plugininfo_plagiarism extends plugininfo_base {
+
+    public function get_settings_section_name() {
+        return 'plagiarism'. $this->name;
+    }
+
+    public function load_settings(part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
+        // plagiarism plugin just redirect to settings.php in the plugins directory
+        if ($hassiteconfig && file_exists($this->full_path('settings.php'))) {
+            $section = $this->get_settings_section_name();
+            $settingsurl = new moodle_url($this->get_dir().'/settings.php');
+            $settings = new admin_externalpage($section, $this->displayname,
+                    $settingsurl, 'moodle/site:config', $this->is_enabled() === false);
+            $adminroot->add($parentnodename, $settings);
+        }
+    }
+}
+
+/**
+ * Class for webservice protocols
+ */
+class plugininfo_webservice extends plugininfo_base {
+
+    public function get_settings_section_name() {
+        return 'webservicesetting' . $this->name;
+    }
+
+    public function load_settings(part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
+        global $CFG, $USER, $DB, $OUTPUT, $PAGE; // in case settings.php wants to refer to them
+        $ADMIN = $adminroot; // may be used in settings.php
+        $webservice = $this; // also can be used inside settings.php
+        $section = $this->get_settings_section_name();
+
+        $settings = null;
+        if ($hassiteconfig && file_exists($this->full_path('settings.php'))) {
+            $settings = new admin_settingpage($section, $this->displayname,
+                    'moodle/site:config', $this->is_enabled() === false);
+            include($this->full_path('settings.php')); // this may also set $settings to null
+        }
+        if ($settings) {
+            $ADMIN->add($parentnodename, $settings);
+        }
+    }
+
+    public function is_enabled() {
+        global $CFG;
+        if (empty($CFG->enablewebservices)) {
+            return false;
+        }
+        $active_webservices = empty($CFG->webserviceprotocols) ? array() : explode(',', $CFG->webserviceprotocols);
+        if (in_array($this->name, $active_webservices)) {
+            return true;
+        }
+        return false;
+    }
+
+    public function get_uninstall_url() {
+        return new moodle_url('/admin/webservice/protocols.php',
+                array('sesskey' => sesskey(), 'action' => 'uninstall', 'webservice' => $this->name));
     }
 }
