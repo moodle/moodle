@@ -684,10 +684,6 @@ EOD;
      * a landmark child.
      *
      * Options are as follows:
-     *  - region
-     *    - alert
-     *    - article
-     *    - grid
      *    - landmark
      *      - application
      *      - banner
@@ -697,15 +693,11 @@ EOD;
      *      - main
      *      - navigation
      *      - search
-     *    - list
-     *    - log
-     *    - status
-     *    - tabpanel
      *
      * @return string
      */
     public function get_aria_role() {
-        return 'region';
+        return 'complementary';
     }
 }
 
