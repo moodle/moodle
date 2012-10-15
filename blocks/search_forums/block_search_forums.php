@@ -27,6 +27,7 @@ class block_search_forums extends block_base {
 
         $this->content->text  = '<div class="searchform">';
         $this->content->text .= '<form action="'.$CFG->wwwroot.'/mod/forum/search.php" style="display:inline"><fieldset class="invisiblefieldset">';
+        $this->content->text .= '<legend class="accesshide">'.$strsearch.'</legend>';
         $this->content->text .= '<input name="id" type="hidden" value="'.$this->page->course->id.'" />';  // course
         $this->content->text .= '<label class="accesshide" for="searchform_search">'.$strsearch.'</label>'.
                                 '<input id="searchform_search" name="search" type="text" size="16" />';
