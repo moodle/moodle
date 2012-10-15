@@ -419,13 +419,13 @@ function scorm_insert_track($userid, $scormid, $scoid, $attempt, $element, $valu
         }
         if (($element == 'cmi.success_status') && ($value == 'passed' || $value == 'failed')) {
             if ($DB->get_record('scorm_scoes_data', array('scoid' => $scoid, 'name' => 'objectivesetbycontent'))) {
-        	    $objectiveprogressstatus = true;
-        	    $objectivesatisfiedstatus = false;
-        	    if ($value == 'passed') {
-        		    $objectivesatisfiedstatus = true;
+                $objectiveprogressstatus = true;
+                $objectivesatisfiedstatus = false;
+                if ($value == 'passed') {
+                    $objectivesatisfiedstatus = true;
                 }
 
-        		if ($track = $DB->get_record('scorm_scoes_track', array('userid' => $userid,
+                if ($track = $DB->get_record('scorm_scoes_track', array('userid' => $userid,
                                                                         'scormid' => $scormid,
                                                                         'scoid' => $scoid,
                                                                         'attempt' => $attempt,
@@ -434,8 +434,8 @@ function scorm_insert_track($userid, $scormid, $scoid, $attempt, $element, $valu
                     $track->timemodified = time();
                     $DB->update_record('scorm_scoes_track', $track);
                     $id = $track->id;
-        		} else {
-        		    $track = new stdClass();
+                } else {
+                    $track = new stdClass();
                     $track->userid = $userid;
                     $track->scormid = $scormid;
                     $track->scoid = $scoid;
@@ -444,8 +444,8 @@ function scorm_insert_track($userid, $scormid, $scoid, $attempt, $element, $valu
                     $track->value = $objectiveprogressstatus;
                     $track->timemodified = time();
                     $id = $DB->insert_record('scorm_scoes_track', $track);
-        		}
-        		if ($objectivesatisfiedstatus) {
+                }
+                if ($objectivesatisfiedstatus) {
                     if ($track = $DB->get_record('scorm_scoes_track', array('userid' => $userid,
                                                                             'scormid' => $scormid,
                                                                             'scoid' => $scoid,
@@ -466,12 +466,12 @@ function scorm_insert_track($userid, $scormid, $scoid, $attempt, $element, $valu
                         $track->timemodified = time();
                         $id = $DB->insert_record('scorm_scoes_track', $track);
                         ob_start();
-                $filepath = $CFG->dataroot."\\temp\\tempfile.txt";
-                $fh = fopen($filepath, "a+");
-                var_dump($track);
-                $string = ob_get_clean();
-                fwrite($fh, $string);
-                fclose($fh);
+                        $filepath = $CFG->dataroot."\\temp\\tempfile.txt";
+                        $fh = fopen($filepath, "a+");
+                        var_dump($track);
+                        $string = ob_get_clean();
+                        fwrite($fh, $string);
+                        fclose($fh);
                     }
                 }
             }
@@ -1789,7 +1789,7 @@ function scorm_get_toc($user, $scorm, $cmid, $toclink=TOCJSLINK, $currentorg='',
         }
 
         $url = new moodle_url('/mod/scorm/player.php?a='.$scorm->id.'&currentorg='.$currentorg.$modestr);
-        $result->tocmenu = $OUTPUT->single_select($url, 'scoid', $tocmenu, $result->sco->id, null, "tocmenu"); 
+        $result->tocmenu = $OUTPUT->single_select($url, 'scoid', $tocmenu, $result->sco->id, null, "tocmenu");
     }
 
     $result->prerequisites = $treeview->prerequisites;
