@@ -1530,7 +1530,13 @@ class core_renderer extends renderer_base {
             $ratinghtml .= html_writer::empty_tag('input', $attributes);
 
             if (!$rating->settings->scale->isnumeric) {
-                $ratinghtml .= $this->help_icon_scale($rating->settings->scale->courseid, $rating->settings->scale);
+                // If a global scale, try to find current course ID from the context
+                if (empty($rating->settings->scale->courseid) and $coursecontext = $rating->context->get_course_context(false)) {
+                    $courseid = $coursecontext->instanceid;
+                } else {
+                    $courseid = $rating->settings->scale->courseid;
+                }
+                $ratinghtml .= $this->help_icon_scale($courseid, $rating->settings->scale);
             }
             $ratinghtml .= html_writer::end_tag('span');
             $ratinghtml .= html_writer::end_tag('div');
