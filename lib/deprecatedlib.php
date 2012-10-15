@@ -2970,7 +2970,7 @@ function get_all_sections($courseid) {
  * @param int $beforemod An existing ID which we will insert the new module before
  * @return int The course_sections ID where the mod is inserted
  */
-function add_mod_to_section($mod, $beforemod=NULL) {
+function add_mod_to_section($mod, $beforemod = null) {
     debugging('Function add_mod_to_section() is deprecated, please use course_add_cm_to_section()', DEBUG_DEVELOPER);
     global $DB;
     return course_add_cm_to_section($mod->course, $mod->coursemodule, $mod->section, $beforemod);

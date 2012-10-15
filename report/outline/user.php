@@ -87,7 +87,7 @@ foreach ($sections as $i => $section) {
                     echo "<table cellpadding=\"4\" cellspacing=\"0\">";
                 }
 
-                foreach($modinfo->sections[$i] as $cmid) {
+                foreach ($modinfo->sections[$i] as $cmid) {
                     $mod = $modinfo->cms[$cmid];
 
                     if (empty($mod->uservisible)) {

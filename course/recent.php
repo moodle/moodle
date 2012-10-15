@@ -141,7 +141,7 @@ foreach ($sections as $sectionnum => $section) {
         continue;
     }
 
-    foreach($modinfo->sections[$sectionnum] as $cmid) {
+    foreach ($modinfo->sections[$sectionnum] as $cmid) {
         $cm = $modinfo->cms[$cmid];
 
         if (!$cm->uservisible) {

@@ -2741,7 +2741,7 @@ function course_create_sections_if_missing($courseorid, $sections) {
  *     end of the section
  * @return int The course_sections ID where the module is inserted
  */
-function course_add_cm_to_section($courseorid, $modid, $sectionnum, $beforemod = NULL) {
+function course_add_cm_to_section($courseorid, $modid, $sectionnum, $beforemod = null) {
     global $DB, $COURSE;
     if (is_object($beforemod)) {
         $beforemod = $beforemod->id;

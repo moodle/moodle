@@ -204,7 +204,7 @@ class conditionlib_testcase extends advanced_testcase {
         foreach($params as $name=>$value) {
             $settings->{$name}=$value;
         }
-        $cmid = $DB->insert_record('course_modules',$settings);
+        $cmid = $DB->insert_record('course_modules', $settings);
         rebuild_course_cache($courseid, true);
         return $cmid;
     }
