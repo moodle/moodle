@@ -136,7 +136,8 @@ class cache_config_writer extends cache_config {
                 throw new cache_exception('Invalid cache plugin specified. The plugin does not contain the required class.');
             }
         }
-        if (!is_subclass_of($class, 'cache_store')) {
+        $reflection = new ReflectionClass($class);
+        if (!$reflection->implementsInterface('cache_store')) {
             throw new cache_exception('Invalid cache plugin specified. The plugin does not extend the required class.');
         }
         if (!$class::are_requirements_met()) {
@@ -400,7 +401,7 @@ class cache_config_writer extends cache_config {
                 $definition['component'] = $component;
                 $definition['area'] = $area;
                 if (array_key_exists($id, $definitions)) {
-                    debugging('Error: duplicate cache definition found with name '.$name, DEBUG_DEVELOPER);
+                    debugging('Error: duplicate cache definition found with id: '.$id, DEBUG_DEVELOPER);
                     continue;
                 }
                 $definitions[$id] = $definition;
