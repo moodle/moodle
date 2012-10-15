@@ -2132,6 +2132,9 @@ class plugininfo_filter extends plugininfo_base {
 
     public function get_settings_section_name() {
         $globalstates = self::get_global_states();
+        if (!isset($globalstates[$this->name])) {
+            return parent::get_settings_section_name();
+        }
         $legacyname = $globalstates[$this->name]->legacyname;
         return 'filtersetting' . str_replace('/', '', $legacyname);
     }
@@ -2141,8 +2144,9 @@ class plugininfo_filter extends plugininfo_base {
         $ADMIN = $adminroot; // may be used in settings.php
         $filter = $this; // also can be used inside settings.php
 
+        $globalstates = self::get_global_states();
         $settings = null;
-        if ($hassiteconfig && file_exists($this->full_path('filtersettings.php'))) {
+        if ($hassiteconfig && isset($globalstates[$this->name]) && file_exists($this->full_path('filtersettings.php'))) {
             $section = $this->get_settings_section_name();
             $settings = new admin_settingpage($section, $this->displayname,
                     'moodle/site:config', $this->is_enabled() === false);
@@ -2323,8 +2327,9 @@ class plugininfo_mod extends plugininfo_base {
         $module = $this; // also can be used inside settings.php
         $section = $this->get_settings_section_name();
 
+        $modulesinfo = self::get_modules_info();
         $settings = null;
-        if ($hassiteconfig && file_exists($this->full_path('settings.php'))) {
+        if ($hassiteconfig && isset($modulesinfo[$this->name]) && file_exists($this->full_path('settings.php'))) {
             $settings = new admin_settingpage($section, $this->displayname,
                     'moodle/site:config', $this->is_enabled() === false);
             include($this->full_path('settings.php')); // this may also set $settings to null
