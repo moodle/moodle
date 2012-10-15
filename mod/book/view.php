@@ -152,15 +152,8 @@ if ($nextid) {
     $chnavigation .= '<a title="'.get_string('navnext', 'book').'" href="view.php?id='.$cm->id.
             '&amp;chapterid='.$nextid.'"><img src="'.$OUTPUT->pix_url('nav_next', 'mod_book').'" class="bigicon" alt="'.get_string('navnext', 'book').'" /></a>';
 } else {
-    $sec = '';
-    if ($section = $DB->get_record('course_sections', array('id'=>$cm->section))) {
-        $sec = $section->section;
-    }
-    if ($course->id == $SITE->id) {
-        $returnurl = "$CFG->wwwroot/";
-    } else {
-        $returnurl = "$CFG->wwwroot/course/view.php?id=$course->id#section-$sec";
-    }
+    $sec = $DB->get_field('course_sections', 'section', array('id' => $cm->section));
+    $returnurl = course_get_url($course, $sec);
     $chnavigation .= '<a title="'.get_string('navexit', 'book').'" href="'.$returnurl.'"><img src="'.$OUTPUT->pix_url('nav_exit', 'mod_book').
             '" class="bigicon" alt="'.get_string('navexit', 'book').'" /></a>';
 
