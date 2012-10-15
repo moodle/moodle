@@ -124,7 +124,7 @@ $options->behaviour = $quba->get_preferred_behaviour();
 $options->maxmark = $quba->get_question_max_mark($slot);
 
 // Create the settings form, and initialise the fields.
-$optionsform = new preview_options_form(question_preview_form_url($question->id, $context),
+$optionsform = new preview_options_form(question_preview_form_url($question->id, $context, $previewid),
         array('quba' => $quba, 'maxvariant' => $maxvariant));
 $optionsform->set_data($options);
 
@@ -135,7 +135,9 @@ if ($newoptions = $optionsform->get_submitted_data()) {
     if (!isset($newoptions->variant)) {
         $newoptions->variant = $options->variant;
     }
-    restart_preview($previewid, $question->id, $newoptions, $context);
+    if (isset($newoptions->saverestart)) {
+        restart_preview($previewid, $question->id, $newoptions, $context);
+    }
 }
 
 // Prepare a URL that is used in various places.
