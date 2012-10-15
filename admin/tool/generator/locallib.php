@@ -556,7 +556,7 @@ class generator {
                         $module->name = ucfirst($moduledata->name) . ' ' . $moduledata->count++;
 
                         $module->course = $courseid;
-                        $module->section = $i;
+                        $module->section = 0;
                         $module->module = $moduledata->id;
                         $module->modulename = $moduledata->name;
                         $module->add = $moduledata->name;
@@ -564,10 +564,7 @@ class generator {
                         $module->coursemodule = '';
                         $add_instance_function = $moduledata->name . '_add_instance';
 
-                        $section = get_course_section($i, $courseid);
-                        $module->section = $section->id;
                         $module->coursemodule = add_course_module($module);
-                        $module->section = $i;
 
                         if (function_exists($add_instance_function)) {
                             $this->verbose("Calling module function $add_instance_function");
@@ -580,13 +577,12 @@ class generator {
                             }
                         }
 
-                        add_mod_to_section($module);
+                        $module->section = course_add_cm_to_section($courseid, $module->coursemodule, $i);
 
                         $module->cmidnumber = set_coursemodule_idnumber($module->coursemodule, '');
 
                         $this->verbose("A $moduledata->name module was added to section $i (id $module->section) "
                             ."of course $courseid.");
-                        rebuild_course_cache($courseid);
 
                         $module_instance = $DB->get_field('course_modules', 'instance', array('id' => $module->coursemodule));
                         $module_record = $DB->get_record($moduledata->name, array('id' => $module_instance));

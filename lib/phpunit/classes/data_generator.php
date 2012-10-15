@@ -371,10 +371,11 @@ EOD;
 
         $course = create_course((object)$record);
         context_course::instance($course->id);
-
         if (!empty($options['createsections'])) {
-            for($i=1; $i<$record['numsections']; $i++) {
-                self::create_course_section(array('course'=>$course->id, 'section'=>$i));
+            if (isset($course->numsections)) {
+                course_create_sections_if_missing($course, range(0, $course->numsections));
+            } else {
+                course_create_sections_if_missing($course, 0);
             }
         }
 
@@ -383,7 +384,7 @@ EOD;
 
     /**
      * Create course section if does not exist yet
-     * @param mixed $record
+     * @param array|stdClass $record must contain 'course' and 'section' attributes
      * @param array|null $options
      * @return stdClass
      * @throws coding_exception
@@ -401,31 +402,8 @@ EOD;
             throw new coding_exception('section must be present in phpunit_util::create_course_section() $record');
         }
 
-        if (!isset($record['name'])) {
-            $record['name'] = '';
-        }
-
-        if (!isset($record['summary'])) {
-            $record['summary'] = '';
-        }
-
-        if (!isset($record['summaryformat'])) {
-            $record['summaryformat'] = FORMAT_MOODLE;
-        }
-
-        if ($section = $DB->get_record('course_sections', array('course'=>$record['course'], 'section'=>$record['section']))) {
-            return $section;
-        }
-
-        $section = new stdClass();
-        $section->course        = $record['course'];
-        $section->section       = $record['section'];
-        $section->name          = $record['name'];
-        $section->summary       = $record['summary'];
-        $section->summaryformat = $record['summaryformat'];
-        $id = $DB->insert_record('course_sections', $section);
-
-        return $DB->get_record('course_sections', array('id'=>$id));
+        course_create_sections_if_missing($record['course'], $record['section']);
+        return get_fast_modinfo($record['course'])->get_section_info($record['section']);
     }
 
     /**

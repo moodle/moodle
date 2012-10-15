@@ -219,7 +219,6 @@
         $modinfo = get_fast_modinfo($course);
         if (isset($modinfo->instances['forum'])) {
             $forummenu = array();
-            $sections = get_all_sections($course->id);
             // Check forum types and eliminate simple discussions.
             $forumcheck = $DB->get_records('forum', array('course' => $course->id),'', 'id, type');
             foreach ($modinfo->instances['forum'] as $forumcm) {
@@ -228,7 +227,7 @@
                     continue;
                 }
                 $section = $forumcm->sectionnum;
-                $sectionname = get_section_name($course, $sections[$section]);
+                $sectionname = get_section_name($course, $section);
                 if (empty($forummenu[$section])) {
                     $forummenu[$section] = array($sectionname => array());
                 }

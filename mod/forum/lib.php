@@ -3001,19 +3001,12 @@ function forum_get_course_forum($courseid, $type) {
     $mod->module = $module->id;
     $mod->instance = $forum->id;
     $mod->section = 0;
-    if (! $mod->coursemodule = add_course_module($mod) ) {   // assumes course/lib.php is loaded
+    include_once("$CFG->dirroot/course/lib.php");
+    if (! $mod->coursemodule = add_course_module($mod) ) {
         echo $OUTPUT->notification("Could not add a new course module to the course '" . $courseid . "'");
         return false;
     }
-    if (! $sectionid = add_mod_to_section($mod) ) {   // assumes course/lib.php is loaded
-        echo $OUTPUT->notification("Could not add the new course module to that section");
-        return false;
-    }
-    $DB->set_field("course_modules", "section", $sectionid, array("id" => $mod->coursemodule));
-
-    include_once("$CFG->dirroot/course/lib.php");
-    rebuild_course_cache($courseid);
-
+    $sectionid = course_add_cm_to_section($courseid, $mod->coursemodule, 0);
     return $DB->get_record("forum", array("id" => "$forum->id"));
 }
 
@@ -7332,12 +7325,7 @@ function forum_convert_to_roles($forum, $forummodid, $teacherroles=array(),
             if (!$cmid = add_course_module($mod)) {
                 print_error('cannotcreateinstanceforteacher', 'forum');
             } else {
-                $mod->coursemodule = $cmid;
-                if (!$sectionid = add_mod_to_section($mod)) {
-                    print_error('cannotaddteacherforumto', 'forum');
-                } else {
-                    $DB->set_field('course_modules', 'section', $sectionid, array('id' => $cmid));
-                }
+                $sectionid = course_add_cm_to_section($forum->course, $mod->coursemodule, 0);
             }
 
             // Change the forum type to general.

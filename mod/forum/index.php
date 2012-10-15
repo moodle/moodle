@@ -104,7 +104,6 @@ if ($show_rss = (($can_subscribe || $course->id == SITEID) &&
 }
 
 $usesections = course_format_uses_sections($course->format);
-$sections = get_all_sections($course->id);
 
 $table = new html_table();
 
@@ -358,7 +357,7 @@ if ($course->id != SITEID) {    // Only real courses have learning forums
             $forum->intro = shorten_text(format_module_intro('forum', $forum, $cm->id), $CFG->forum_shortpost);
 
             if ($cm->sectionnum != $currentsection) {
-                $printsection = get_section_name($course, $sections[$cm->sectionnum]);
+                $printsection = get_section_name($course, $cm->sectionnum);
                 if ($currentsection) {
                     $learningtable->data[] = 'hr';
                 }

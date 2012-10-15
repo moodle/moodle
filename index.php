@@ -98,26 +98,24 @@
     echo $OUTPUT->header();
 
 /// Print Section or custom info
-    get_all_mods($SITE->id, $mods, $modnames, $modnamesplural, $modnamesused);
+    $modinfo = get_fast_modinfo($SITE);
+    $modnames = get_module_types_names();
+    $modnamesplural = get_module_types_names(true);
+    $modnamesused = $modinfo->get_used_module_names();
+    $mods = $modinfo->get_cms();
+
     if (!empty($CFG->customfrontpageinclude)) {
         include($CFG->customfrontpageinclude);
 
-    } else if ($SITE->numsections > 0) {
-
-        if (!$section = $DB->get_record('course_sections', array('course'=>$SITE->id, 'section'=>1))) {
-            $DB->delete_records('course_sections', array('course'=>$SITE->id, 'section'=>1)); // Just in case
-            $section = new stdClass();
-            $section->course = $SITE->id;
-            $section->section = 1;
-            $section->summary = '';
-            $section->summaryformat = FORMAT_HTML;
-            $section->sequence = '';
-            $section->visible = 1;
-            $section->id = $DB->insert_record('course_sections', $section);
-            rebuild_course_cache($SITE->id, true);
+    } else {
+        if ($editing) {
+            // make sure section with number 1 exists
+            course_create_sections_if_missing($SITE, 1);
+            // re-request modinfo in case section was created
+            $modinfo = get_fast_modinfo($SITE);
         }
-
-        if (!empty($section->sequence) or !empty($section->summary) or $editing) {
+        $section = $modinfo->get_section_info(1);
+        if (($section && (!empty($modinfo->sections[1]) or !empty($section->summary))) or $editing) {
             echo $OUTPUT->box_start('generalbox sitetopic');
 
             /// If currently moving a file then show the current clipboard

@@ -79,9 +79,6 @@ $timenow = time();
 $strname = get_string("name");
 $strsectionname  = get_string('sectionname', 'format_'.$course->format);
 $usesections = course_format_uses_sections($course->format);
-if ($usesections) {
-    $sections = get_all_sections($course->id);
-}
 
 $table = new html_table();
 $table->attributes['class'] = 'generaltable mod_index';
@@ -102,8 +99,8 @@ foreach ($basicltis as $basiclti) {
         $link = "<a href=\"view.php?id=$basiclti->coursemodule\">$basiclti->name</a>";
     }
 
-    if ($course->format == "weeks" or $course->format == "topics") {
-        $table->data[] = array ($basiclti->section, $link);
+    if ($usesections) {
+        $table->data[] = array (get_section_name($course, $basiclti->section), $link);
     } else {
         $table->data[] = array ($link);
     }

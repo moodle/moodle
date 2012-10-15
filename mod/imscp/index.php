@@ -54,9 +54,6 @@ if (!$imscps = get_all_instances_in_course('imscp', $course)) {
 }
 
 $usesections = course_format_uses_sections($course->format);
-if ($usesections) {
-    $sections = get_all_sections($course->id);
-}
 
 $table = new html_table();
 $table->attributes['class'] = 'generaltable mod_index';
@@ -77,7 +74,7 @@ foreach ($imscps as $imscp) {
         $printsection = '';
         if ($imscp->section !== $currentsection) {
             if ($imscp->section) {
-                $printsection = get_section_name($course, $sections[$imscp->section]);
+                $printsection = get_section_name($course, $imscp->section);
             }
             if ($currentsection !== '') {
                 $table->data[] = 'hr';

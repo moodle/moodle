@@ -105,13 +105,12 @@ class core_course_external extends external_api {
 
             //retrieve sections
             $modinfo = get_fast_modinfo($course);
-            $sections = get_all_sections($course->id);
+            $sections = $modinfo->get_section_info_all();
 
             //for each sections (first displayed to last displayed)
             foreach ($sections as $key => $section) {
 
-                $showsection = (has_capability('moodle/course:viewhiddensections', $context) or $section->visible or !$course->hiddensections);
-                if (!$showsection) {
+                if (!$section->uservisible) {
                     continue;
                 }
 

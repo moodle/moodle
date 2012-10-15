@@ -1209,81 +1209,30 @@ function get_array_of_activities($courseid) {
     return $mod;
 }
 
-
 /**
- * Returns a number of useful structures for course displays
+ * Returns the localised human-readable names of all used modules
+ *
+ * @param bool $plural if true returns the plural forms of the names
+ * @return array where key is the module name (component name without 'mod_') and
+ *     the value is the human-readable string. Array sorted alphabetically by value
  */
-function get_all_mods($courseid, &$mods, &$modnames, &$modnamesplural, &$modnamesused) {
-    global $CFG, $DB, $COURSE;
-
-    $mods          = array();    // course modules indexed by id
-    $modnames      = array();    // all course module names (except resource!)
-    $modnamesplural= array();    // all course module names (plural form)
-    $modnamesused  = array();    // course module names used
-
-    if ($allmods = $DB->get_records("modules")) {
-        foreach ($allmods as $mod) {
-            if (!file_exists("$CFG->dirroot/mod/$mod->name/lib.php")) {
-                continue;
+function get_module_types_names($plural = false) {
+    static $modnames = null;
+    global $DB, $CFG;
+    if ($modnames === null) {
+        $modnames = array(0 => array(), 1 => array());
+        if ($allmods = $DB->get_records("modules")) {
+            foreach ($allmods as $mod) {
+                if (file_exists("$CFG->dirroot/mod/$mod->name/lib.php") && $mod->visible) {
+                    $modnames[0][$mod->name] = get_string("modulename", "$mod->name");
+                    $modnames[1][$mod->name] = get_string("modulenameplural", "$mod->name");
+                }
             }
-            if ($mod->visible) {
-                $modnames[$mod->name] = get_string("modulename", "$mod->name");
-                $modnamesplural[$mod->name] = get_string("modulenameplural", "$mod->name");
-            }
-        }
-        collatorlib::asort($modnames);
-    } else {
-        print_error("nomodules", 'debug');
-    }
-
-    $course = ($courseid==$COURSE->id) ? $COURSE : $DB->get_record('course',array('id'=>$courseid));
-    $modinfo = get_fast_modinfo($course);
-
-    if ($rawmods=$modinfo->cms) {
-        foreach($rawmods as $mod) {    // Index the mods
-            if (empty($modnames[$mod->modname])) {
-                continue;
-            }
-            $mods[$mod->id] = $mod;
-            $mods[$mod->id]->modfullname = $modnames[$mod->modname];
-            if (!$mod->visible and !has_capability('moodle/course:viewhiddenactivities', context_course::instance($courseid))) {
-                continue;
-            }
-            // Check groupings
-            if (!groups_course_module_visible($mod)) {
-                continue;
-            }
-            $modnamesused[$mod->modname] = $modnames[$mod->modname];
-        }
-        if ($modnamesused) {
-            collatorlib::asort($modnamesused);
+            collatorlib::asort($modnames[0]);
+            collatorlib::asort($modnames[1]);
         }
     }
-}
-
-/**
- * Returns an array of sections for the requested course id
- *
- * This function stores the sections against the course id within a staticvar encase
- * of subsequent requests. This is used all over + in some standard libs and course
- * format callbacks so subsequent requests are a reality.
- *
- * Note: Since Moodle 2.3, it is more efficient to get this data by calling
- * get_fast_modinfo, then using $modinfo->get_section_info or get_section_info_all.
- *
- * @staticvar array $coursesections
- * @param int $courseid
- * @return array Array of sections
- */
-function get_all_sections($courseid) {
-    global $DB;
-    static $coursesections = array();
-    if (!array_key_exists($courseid, $coursesections)) {
-        $coursesections[$courseid] = $DB->get_records("course_sections", array("course"=>"$courseid"), "section",
-                'section, id, course, name, summary, summaryformat, sequence, visible, ' .
-                'availablefrom, availableuntil, showavailability, groupingid');
-    }
-    return $coursesections[$courseid];
+    return $modnames[(int)$plural];
 }
 
 /**
@@ -1319,7 +1268,7 @@ function set_section_visible($courseid, $sectionnumber, $visibility) {
                 set_coursemodule_visible($moduleid, $visibility, true);
             }
         }
-        rebuild_course_cache($courseid);
+        rebuild_course_cache($courseid, true);
 
         // Determine which modules are visible for AJAX update
         if (!empty($modules)) {
@@ -1383,9 +1332,9 @@ function get_print_section_cm_text(cm_info $cm, $course) {
  * Prints a section full of activity modules
  *
  * @param stdClass $course The course
- * @param stdClass $section The section
- * @param array $mods The modules in the section
- * @param array $modnamesused An array containing the list of modules and their names
+ * @param stdClass|section_info $section The section object containing properties id and section
+ * @param array $mods (argument not used)
+ * @param array $modnamesused (argument not used)
  * @param bool $absolute All links are absolute
  * @param string $width Width of the container
  * @param bool $hidecompletion Hide completion status
@@ -1404,7 +1353,6 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
     static $strmovehere;
     static $strmovefull;
     static $strunreadpostsone;
-    static $modulenames;
 
     if (!isset($initialised)) {
         $groupbuttons     = ($course->groupmode or (!$course->groupmodeforce));
@@ -1415,7 +1363,6 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
             $strmovehere  = get_string("movehere");
             $strmovefull  = strip_tags(get_string("movefull", "", "'$USER->activitycopyname'"));
         }
-        $modulenames      = array();
         $initialised = true;
     }
 
@@ -1423,61 +1370,36 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
     $completioninfo = new completion_info($course);
 
     //Accessibility: replace table with list <ul>, but don't output empty list.
-    if (!empty($section->sequence)) {
+    if (!empty($modinfo->sections[$section->section])) {
 
         // Fix bug #5027, don't want style=\"width:$width\".
         echo "<ul class=\"section img-text\">\n";
-        $sectionmods = explode(",", $section->sequence);
 
-        foreach ($sectionmods as $modnumber) {
-            if (empty($mods[$modnumber])) {
-                continue;
-            }
-
-            /**
-             * @var cm_info
-             */
-            $mod = $mods[$modnumber];
+        foreach ($modinfo->sections[$section->section] as $modnumber) {
+            $mod = $modinfo->cms[$modnumber];
 
             if ($ismoving and $mod->id == $USER->activitycopy) {
                 // do not display moving mod
                 continue;
             }
 
-            if (isset($modinfo->cms[$modnumber])) {
-                // We can continue (because it will not be displayed at all)
-                // if:
-                // 1) The activity is not visible to users
-                // and
-                // 2a) The 'showavailability' option is not set (if that is set,
-                //     we need to display the activity so we can show
-                //     availability info)
-                // or
-                // 2b) The 'availableinfo' is empty, i.e. the activity was
-                //     hidden in a way that leaves no info, such as using the
-                //     eye icon.
-                if (!$modinfo->cms[$modnumber]->uservisible &&
-                    (empty($modinfo->cms[$modnumber]->showavailability) ||
-                      empty($modinfo->cms[$modnumber]->availableinfo))) {
-                    // visibility shortcut
-                    continue;
-                }
-            } else {
-                if (!file_exists("$CFG->dirroot/mod/$mod->modname/lib.php")) {
-                    // module not installed
-                    continue;
-                }
-                if (!coursemodule_visible_for_user($mod) &&
-                    empty($mod->showavailability)) {
-                    // full visibility check
-                    continue;
-                }
+            // We can continue (because it will not be displayed at all)
+            // if:
+            // 1) The activity is not visible to users
+            // and
+            // 2a) The 'showavailability' option is not set (if that is set,
+            //     we need to display the activity so we can show
+            //     availability info)
+            // or
+            // 2b) The 'availableinfo' is empty, i.e. the activity was
+            //     hidden in a way that leaves no info, such as using the
+            //     eye icon.
+            if (!$mod->uservisible &&
+                (empty($mod->showavailability) ||
+                  empty($mod->availableinfo))) {
+                // visibility shortcut
+                continue;
             }
-
-            if (!isset($modulenames[$mod->modname])) {
-                $modulenames[$mod->modname] = get_string('modulename', $mod->modname);
-            }
-            $modulename = $modulenames[$mod->modname];
 
             // In some cases the activity is visible to user, but it is
             // dimmed. This is done if viewhiddenactivities is true and if:
@@ -1580,7 +1502,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                     // Display link itself
                     echo '<a ' . $linkcss . $mod->extra . $onclick .
                             ' href="' . $url . '"><img src="' . $mod->get_icon_url() .
-                            '" class="activityicon" alt="' . $modulename . '" /> ' .
+                            '" class="activityicon" alt="' . $mod->modfullname . '" /> ' .
                             $accesstext . '<span class="instancename">' .
                             $instancename . $altname . '</span></a>';
 
@@ -1761,7 +1683,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
              ' alt="'.$strmovehere.'" /></a></li>
              ';
     }
-    if (!empty($section->sequence) || $ismoving) {
+    if (!empty($modinfo->sections[$section->section]) || $ismoving) {
         echo "</ul><!--class='section'-->\n\n";
     }
 }
@@ -1771,18 +1693,28 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
  *
  * @param stdClass $course The course
  * @param int $section relative section number (field course_sections.section)
- * @param array $modnames An array containing the list of modules and their names
+ * @param null|array $modnames An array containing the list of modules and their names
+ *     if omitted will be taken from get_module_types_names()
  * @param bool $vertical Vertical orientation
  * @param bool $return Return the menus or send them to output
  * @param int $sectionreturn The section to link back to
  * @return void|string depending on $return
  */
-function print_section_add_menus($course, $section, $modnames, $vertical=false, $return=false, $sectionreturn=null) {
+function print_section_add_menus($course, $section, $modnames = null, $vertical=false, $return=false, $sectionreturn=null) {
     global $CFG, $OUTPUT;
 
-    // check to see if user can add menus
-    if (!has_capability('moodle/course:manageactivities', context_course::instance($course->id))) {
-        return false;
+    if ($modnames === null) {
+        $modnames = get_module_types_names();
+    }
+
+    // check to see if user can add menus and there are modules to add
+    if (!has_capability('moodle/course:manageactivities', context_course::instance($course->id))
+            || empty($modnames)) {
+        if ($return) {
+            return '';
+        } else {
+            return false;
+        }
     }
 
     // Retrieve all modules with associated metadata
@@ -2755,87 +2687,105 @@ function add_course_module($mod) {
     $mod->added = time();
     unset($mod->id);
 
-    return $DB->insert_record("course_modules", $mod);
+    $cmid = $DB->insert_record("course_modules", $mod);
+    rebuild_course_cache($mod->course, true);
+    return $cmid;
 }
 
 /**
- * Returns course section - creates new if does not exist yet.
- * @param int $relative section number
- * @param int $courseid
- * @return object $course_section object
- */
-function get_course_section($section, $courseid) {
-    global $DB;
-
-    if ($cw = $DB->get_record("course_sections", array("section"=>$section, "course"=>$courseid))) {
-        return $cw;
-    }
-    $cw = new stdClass();
-    $cw->course   = $courseid;
-    $cw->section  = $section;
-    $cw->summary  = "";
-    $cw->summaryformat = FORMAT_HTML;
-    $cw->sequence = "";
-    $id = $DB->insert_record("course_sections", $cw);
-    rebuild_course_cache($courseid, true);
-    return $DB->get_record("course_sections", array("id"=>$id));
-}
-
-/**
- * Given a full mod object with section and course already defined, adds this module to that section.
+ * Creates missing course section(s) and rebuilds course cache
  *
- * @param object $mod
- * @param int $beforemod An existing ID which we will insert the new module before
- * @return int The course_sections ID where the mod is inserted
+ * @param int|stdClass $courseorid course id or course object
+ * @param int|array $sections list of relative section numbers to create
+ * @return bool if there were any sections created
  */
-function add_mod_to_section($mod, $beforemod=NULL) {
+function course_create_sections_if_missing($courseorid, $sections) {
     global $DB;
-
-    if ($section = $DB->get_record("course_sections", array("course"=>$mod->course, "section"=>$mod->section))) {
-
-        $section->sequence = trim($section->sequence);
-
-        if (empty($section->sequence)) {
-            $newsequence = "$mod->coursemodule";
-
-        } else if ($beforemod) {
-            $modarray = explode(",", $section->sequence);
-
-            if ($key = array_keys($modarray, $beforemod->id)) {
-                $insertarray = array($mod->id, $beforemod->id);
-                array_splice($modarray, $key[0], 1, $insertarray);
-                $newsequence = implode(",", $modarray);
-
-            } else {  // Just tack it on the end anyway
-                $newsequence = "$section->sequence,$mod->coursemodule";
-            }
-
-        } else {
-            $newsequence = "$section->sequence,$mod->coursemodule";
-        }
-
-        $DB->set_field("course_sections", "sequence", $newsequence, array("id"=>$section->id));
-        return $section->id;     // Return course_sections ID that was used.
-
-    } else {  // Insert a new record
-        $section = new stdClass();
-        $section->course   = $mod->course;
-        $section->section  = $mod->section;
-        $section->summary  = "";
-        $section->summaryformat = FORMAT_HTML;
-        $section->sequence = $mod->coursemodule;
-        return $DB->insert_record("course_sections", $section);
+    if (!is_array($sections)) {
+        $sections = array($sections);
     }
+    $existing = array_keys(get_fast_modinfo($courseorid)->get_section_info_all());
+    if (is_object($courseorid)) {
+        $courseorid = $courseorid->id;
+    }
+    $coursechanged = false;
+    foreach ($sections as $sectionnum) {
+        if (!in_array($sectionnum, $existing)) {
+            $cw = new stdClass();
+            $cw->course   = $courseorid;
+            $cw->section  = $sectionnum;
+            $cw->summary  = '';
+            $cw->summaryformat = FORMAT_HTML;
+            $cw->sequence = '';
+            $id = $DB->insert_record("course_sections", $cw);
+            $coursechanged = true;
+        }
+    }
+    if ($coursechanged) {
+        rebuild_course_cache($courseorid, true);
+    }
+    return $coursechanged;
+}
+
+/**
+ * Adds an existing module to the section
+ *
+ * Updates both tables {course_sections} and {course_modules}
+ *
+ * @param int|stdClass $courseorid course id or course object
+ * @param int $modid id of the module already existing in course_modules table
+ * @param int $sectionnum relative number of the section (field course_sections.section)
+ *     If section does not exist it will be created
+ * @param int|stdClass $beforemod id or object with field id corresponding to the module
+ *     before which the module needs to be included. Null for inserting in the
+ *     end of the section
+ * @return int The course_sections ID where the module is inserted
+ */
+function course_add_cm_to_section($courseorid, $modid, $sectionnum, $beforemod = null) {
+    global $DB, $COURSE;
+    if (is_object($beforemod)) {
+        $beforemod = $beforemod->id;
+    }
+    course_create_sections_if_missing($courseorid, $sectionnum);
+    $section = get_fast_modinfo($courseorid)->get_section_info($sectionnum);
+    $modarray = explode(",", trim($section->sequence));
+    if (empty($modarray)) {
+        $newsequence = "$modid";
+    } else if ($beforemod && ($key = array_keys($modarray, $beforemod))) {
+        $insertarray = array($modid, $beforemod);
+        array_splice($modarray, $key[0], 1, $insertarray);
+        $newsequence = implode(",", $modarray);
+    } else {
+        $newsequence = "$section->sequence,$modid";
+    }
+    $DB->set_field("course_sections", "sequence", $newsequence, array("id" => $section->id));
+    $DB->set_field('course_modules', 'section', $section->id, array('id' => $modid));
+    if (is_object($courseorid)) {
+        rebuild_course_cache($courseorid->id, true);
+    } else {
+        rebuild_course_cache($courseorid, true);
+    }
+    return $section->id;     // Return course_sections ID that was used.
 }
 
 function set_coursemodule_groupmode($id, $groupmode) {
     global $DB;
-    return $DB->set_field("course_modules", "groupmode", $groupmode, array("id"=>$id));
+    $cm = $DB->get_record('course_modules', array('id' => $id), 'id,course,groupmode', MUST_EXIST);
+    if ($cm->groupmode != $groupmode) {
+        $DB->set_field('course_modules', 'groupmode', $groupmode, array('id' => $cm->id));
+        rebuild_course_cache($cm->course, true);
+    }
+    return ($cm->groupmode != $groupmode);
 }
 
 function set_coursemodule_idnumber($id, $idnumber) {
     global $DB;
-    return $DB->set_field("course_modules", "idnumber", $idnumber, array("id"=>$id));
+    $cm = $DB->get_record('course_modules', array('id' => $id), 'id,course,idnumber', MUST_EXIST);
+    if ($cm->idnumber != $idnumber) {
+        $DB->set_field('course_modules', 'idnumber', $idnumber, array('id' => $cm->id));
+        rebuild_course_cache($cm->course, true);
+    }
+    return ($cm->idnumber != $idnumber);
 }
 
 /**
@@ -2879,10 +2829,13 @@ function set_coursemodule_visible($id, $visible, $prevstateoverrides=false) {
             $DB->set_field('course_modules', 'visibleold', $cm->visible, array('id'=>$id));
         } else {
             // Get the previous saved visible states.
-            return $DB->set_field('course_modules', 'visible', $cm->visibleold, array('id'=>$id));
+            $DB->set_field('course_modules', 'visible', $cm->visibleold, array('id'=>$id));
         }
+    } else {
+        $DB->set_field("course_modules", "visible", $visible, array("id"=>$id));
     }
-    return $DB->set_field("course_modules", "visible", $visible, array("id"=>$id));
+    rebuild_course_cache($cm->course, true);
+    return true;
 }
 
 /**
@@ -2923,20 +2876,24 @@ function delete_course_module($id) {
                                                             'criteriatype' => COMPLETION_CRITERIA_TYPE_ACTIVITY));
 
     delete_context(CONTEXT_MODULE, $cm->id);
-    return $DB->delete_records('course_modules', array('id'=>$cm->id));
+    $DB->delete_records('course_modules', array('id'=>$cm->id));
+    rebuild_course_cache($cm->course, true);
+    return true;
 }
 
-function delete_mod_from_section($mod, $section) {
+function delete_mod_from_section($modid, $sectionid) {
     global $DB;
 
-    if ($section = $DB->get_record("course_sections", array("id"=>$section)) ) {
+    if ($section = $DB->get_record("course_sections", array("id"=>$sectionid)) ) {
 
         $modarray = explode(",", $section->sequence);
 
-        if ($key = array_keys ($modarray, $mod)) {
+        if ($key = array_keys ($modarray, $modid)) {
             array_splice($modarray, $key[0], 1);
             $newsequence = implode(",", $modarray);
-            return $DB->set_field("course_sections", "sequence", $newsequence, array("id"=>$section->id));
+            $DB->set_field("course_sections", "sequence", $newsequence, array("id"=>$section->id));
+            rebuild_course_cache($section->course, true);
+            return true;
         } else {
             return false;
         }
@@ -2958,7 +2915,7 @@ function move_section($course, $section, $move) {
     debugging('This function will be removed before 2.5 is released please use move_section_to', DEBUG_DEVELOPER);
 
 /// Moves a whole course section up and down within the course
-    global $USER, $DB;
+    global $USER;
 
     if (!$move) {
         return true;
@@ -2971,10 +2928,6 @@ function move_section($course, $section, $move) {
     }
 
     $retval = move_section_to($course, $section, $sectiondest);
-    // If section moved, then rebuild course cache.
-    if ($retval) {
-        rebuild_course_cache($course->id, true);
-    }
     return $retval;
 }
 
@@ -3033,6 +2986,7 @@ function move_section_to($course, $section, $destination) {
     }
 
     $transaction->allow_commit();
+    rebuild_course_cache($course->id, true);
     return true;
 }
 
@@ -3114,34 +3068,20 @@ function reorder_sections($sections, $origin_position, $target_position) {
  * All parameters are objects
  */
 function moveto_module($mod, $section, $beforemod=NULL) {
-    global $DB, $OUTPUT;
+    global $OUTPUT;
 
 /// Remove original module from original section
     if (! delete_mod_from_section($mod->id, $mod->section)) {
         echo $OUTPUT->notification("Could not delete module from existing section");
     }
 
-/// Update module itself if necessary
-
-    if ($mod->section != $section->id) {
-        $mod->section = $section->id;
-        $DB->update_record("course_modules", $mod);
-        // if moving to a hidden section then hide module
-        if (!$section->visible) {
-            set_coursemodule_visible($mod->id, 0);
-        }
+    // if moving to a hidden section then hide module
+    if (!$section->visible && $mod->visible) {
+        set_coursemodule_visible($mod->id, 0);
     }
 
 /// Add the module into the new section
-
-    $mod->course       = $section->course;
-    $mod->section      = $section->section;  // need relative reference
-    $mod->coursemodule = $mod->id;
-
-    if (! add_mod_to_section($mod, $beforemod)) {
-        return false;
-    }
-
+    course_add_cm_to_section($section->course, $mod->id, $section->section, $beforemod);
     return true;
 }
 
@@ -3396,8 +3336,6 @@ function course_format_name ($course,$max=100) {
  * @return bool whether the current user is allowed to add this type of module to this course.
  */
 function course_allowed_module($course, $modname) {
-    global $DB;
-
     if (is_numeric($modname)) {
         throw new coding_exception('Function course_allowed_module no longer
                 supports numeric module ids. Please update your code to pass the module name.');
@@ -3826,11 +3764,8 @@ function create_course($data, $editoroptions = NULL) {
     // Setup the blocks
     blocks_add_default_course_blocks($course);
 
-    $section = new stdClass();
-    $section->course        = $course->id;   // Create a default section.
-    $section->section       = 0;
-    $section->summaryformat = FORMAT_HTML;
-    $DB->insert_record('course_sections', $section);
+    // Create a default section.
+    course_create_sections_if_missing($course, 0);
 
     fix_course_sortorder();
 
@@ -3925,6 +3860,8 @@ function update_course($data, $editoroptions = NULL) {
 
     // Update with the new data
     $DB->update_record('course', $data);
+    // make sure the modinfo cache is reset
+    rebuild_course_cache($data->id);
 
     $course = $DB->get_record('course', array('id'=>$data->id));
 

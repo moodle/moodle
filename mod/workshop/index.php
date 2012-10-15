@@ -55,9 +55,6 @@ if (! $workshops = get_all_instances_in_course('workshop', $course)) {
 }
 
 $usesections = course_format_uses_sections($course->format);
-if ($usesections) {
-    $sections = get_all_sections($course->id);
-}
 
 $timenow        = time();
 $strsectionname = get_string('sectionname', 'format_'.$course->format);
@@ -82,7 +79,7 @@ foreach ($workshops as $workshop) {
     }
 
     if ($usesections) {
-        $table->data[] = array(get_section_name($course, $sections[$workshop->section]), $link);
+        $table->data[] = array(get_section_name($course, $workshop->section), $link);
     } else {
         $table->data[] = array($link);
     }

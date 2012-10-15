@@ -159,6 +159,24 @@ class course_modinfo extends stdClass {
     }
 
     /**
+     * Returns array of localised human-readable module names used in this course
+     *
+     * @param bool $plural if true returns the plural form of modules names
+     * @return array
+     */
+    public function get_used_module_names($plural = false) {
+        $modnames = get_module_types_names($plural);
+        $modnamesused = array();
+        foreach ($this->get_cms() as $cmid => $mod) {
+            if (isset($modnames[$mod->modname]) && $mod->uservisible) {
+                $modnamesused[$mod->modname] = $modnames[$mod->modname];
+            }
+        }
+        collatorlib::asort($modnamesused);
+        return $modnamesused;
+    }
+
+    /**
      * Obtains all instances of a particular module on this course.
      * @param $modname Name of module (not full frankenstyle) e.g. 'label'
      * @return array Array from instance id => cm_info for modules on this course; empty if none
@@ -348,7 +366,7 @@ class course_modinfo extends stdClass {
 
         // Remove unnecessary data and add availability
         foreach ($sections as $number => $section) {
-            // Clone just in case it is reused elsewhere (get_all_sections cache)
+            // Clone just in case it is reused elsewhere
             $compressedsections[$number] = clone($section);
             section_info::convert_for_section_cache($compressedsections[$number]);
         }
@@ -611,14 +629,6 @@ class cm_info extends stdClass {
     public $conditionsfield;
 
     /**
-     * Plural name of module type, e.g. 'Forums' - from lang file
-     * @deprecated Do not use this value (you can obtain it by calling get_string instead); it
-     *   will be removed in a future version (see later TODO in this file)
-     * @var string
-     */
-    public $modplural;
-
-    /**
      * True if this course-module is available to students i.e. if all availability conditions
      * are met - obtained dynamically
      * @var bool
@@ -691,6 +701,24 @@ class cm_info extends stdClass {
      * @var string
      */
     private $afterediticons;
+
+    /**
+     * Magic method getter
+     *
+     * @param string $name
+     * @return mixed
+     */
+    public function __get($name) {
+        switch ($name) {
+            case 'modplural':
+                return $this->get_module_type_name(true);
+            case 'modfullname':
+                return $this->get_module_type_name();
+            default:
+                debugging('Invalid cm_info property accessed: '.$name);
+                return null;
+        }
+    }
 
     /**
      * @return bool True if this module has a 'view' page that should be linked to in navigation
@@ -791,6 +819,21 @@ class cm_info extends stdClass {
             $icon = $output->pix_url('icon', $this->modname);
         }
         return $icon;
+    }
+
+    /**
+     * Returns a localised human-readable name of the module type
+     *
+     * @param bool $plural return plural form
+     * @return string
+     */
+    public function get_module_type_name($plural = false) {
+        $modnames = get_module_types_names($plural);
+        if (isset($modnames[$this->modname])) {
+            return $modnames[$this->modname];
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -1013,16 +1056,6 @@ class cm_info extends stdClass {
         $this->conditionsfield = isset($mod->conditionsfield)
                 ? $mod->conditionsfield : array();
 
-        // Get module plural name.
-        // TODO This was a very old performance hack and should now be removed as the information
-        // certainly doesn't belong in modinfo. On a 'normal' page this is only used in the
-        // activity_modules block, so if it needs caching, it should be cached there.
-        static $modplurals;
-        if (!isset($modplurals[$this->modname])) {
-            $modplurals[$this->modname] = get_string('modulenameplural', $this->modname);
-        }
-        $this->modplural = $modplurals[$this->modname];
-
         static $modviews;
         if (!isset($modviews[$this->modname])) {
             $modviews[$this->modname] = !plugin_supports('mod', $this->modname,
@@ -1183,16 +1216,14 @@ class cm_info extends stdClass {
  * Returns reference to full info about modules in course (including visibility).
  * Cached and as fast as possible (0 or 1 db query).
  *
- * @global object
- * @global object
- * @global moodle_database
  * @uses MAX_MODINFO_CACHE_SIZE
- * @param mixed $course object or 'reset' string to reset caches, modinfo may be updated in db
- * @param int $userid Defaults to current user id
- * @return course_modinfo Module information for course, or null if resetting
+ * @param int|stdClass $courseorid object or 'reset' string to reset caches, modinfo may be updated in db
+ * @param int $userid Set 0 (default) for current user
+ * @param bool $resetonly whether we want to get modinfo or just reset the cache
+ * @return course_modinfo|null Module information for course, or null if resetting
  */
-function get_fast_modinfo(&$course, $userid=0) {
-    global $CFG, $USER, $DB;
+function get_fast_modinfo($courseorid, $userid = 0, $resetonly = false) {
+    global $CFG, $USER;
     require_once($CFG->dirroot.'/course/lib.php');
 
     if (!empty($CFG->enableavailability)) {
@@ -1201,17 +1232,45 @@ function get_fast_modinfo(&$course, $userid=0) {
 
     static $cache = array();
 
-    if ($course === 'reset') {
-        $cache = array();
+    // compartibility with syntax prior to 2.4:
+    if ($courseorid === 'reset') {
+        debugging("Using the string 'reset' as the first argument of get_fast_modinfo() is deprecated. Use get_fast_modinfo(0,0,true) instead.", DEBUG_DEVELOPER);
+        $courseorid = 0;
+        $resetonly = true;
+    }
+
+    if (is_object($courseorid)) {
+        $course = $courseorid;
+    } else {
+        $course = (object)array('id' => $courseorid, 'modinfo' => null, 'sectioncache' => null);
+    }
+
+    // Function is called with $reset = true
+    if ($resetonly) {
+        if (isset($course->id) && $course->id > 0) {
+            $cache[$course->id] = false;
+        } else {
+            foreach (array_keys($cache) as $key) {
+                $cache[$key] = false;
+            }
+        }
         return null;
     }
 
+    // Function is called with $reset = false, retrieve modinfo
     if (empty($userid)) {
         $userid = $USER->id;
     }
 
-    if (array_key_exists($course->id, $cache) and $cache[$course->id]->userid == $userid) {
-        return $cache[$course->id];
+    if (array_key_exists($course->id, $cache)) {
+        if ($cache[$course->id] === false) {
+            // this course has been recently reset, do not rely on modinfo and sectioncache in $course
+            $course->modinfo = null;
+            $course->sectioncache = null;
+        } else if ($cache[$course->id]->userid == $userid) {
+            // this course's modinfo for the same user was recently retrieved, return cached
+            return $cache[$course->id];
+        }
     }
 
     if (!property_exists($course, 'modinfo')) {
@@ -1269,8 +1328,7 @@ function rebuild_course_cache($courseid=0, $clearonly=false) {
             $COURSE->sectioncache = null;
         }
         // reset the fast modinfo cache
-        $reset = 'reset';
-        get_fast_modinfo($reset);
+        get_fast_modinfo($courseid, 0, true);
         return;
     }
 
@@ -1298,8 +1356,7 @@ function rebuild_course_cache($courseid=0, $clearonly=false) {
     }
     $rs->close();
     // reset the fast modinfo cache
-    $reset = 'reset';
-    get_fast_modinfo($reset);
+    get_fast_modinfo($courseid, 0, true);
 }
 
 

@@ -57,9 +57,6 @@ if (!$books = get_all_instances_in_course('book', $course)) {
 }
 
 $usesections = course_format_uses_sections($course->format);
-if ($usesections) {
-    $sections = get_all_sections($course->id);
-}
 
 $table = new html_table();
 $table->attributes['class'] = 'generaltable mod_index';
@@ -80,7 +77,7 @@ foreach ($books as $book) {
         $printsection = '';
         if ($book->section !== $currentsection) {
             if ($book->section) {
-                $printsection = get_section_name($course, $sections[$book->section]);
+                $printsection = get_section_name($course, $book->section);
             }
             if ($currentsection !== '') {
                 $table->data[] = 'hr';

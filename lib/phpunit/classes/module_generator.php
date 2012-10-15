@@ -82,12 +82,13 @@ abstract class phpunit_module_generator {
         require_once("$CFG->dirroot/course/lib.php");
 
         $modulename = $this->get_modulename();
+        $sectionnum = isset($options['section']) ? $options['section'] : 0;
 
         $cm = new stdClass();
         $cm->course             = $courseid;
         $cm->module             = $DB->get_field('modules', 'id', array('name'=>$modulename));
         $cm->instance           = 0;
-        $cm->section            = isset($options['section']) ? $options['section'] : 0;
+        $cm->section            = 0;
         $cm->idnumber           = isset($options['idnumber']) ? $options['idnumber'] : 0;
         $cm->added              = time();
 
@@ -103,9 +104,8 @@ abstract class phpunit_module_generator {
         }
 
         $cm->id = $DB->insert_record('course_modules', $cm);
-        $cm->coursemodule = $cm->id;
 
-        add_mod_to_section($cm);
+        course_add_cm_to_section($courseid, $cm->id, $sectionnum);
 
         return $cm->id;
     }

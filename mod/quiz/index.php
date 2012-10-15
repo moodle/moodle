@@ -62,7 +62,6 @@ if (!$quizzes = get_all_instances_in_course("quiz", $course)) {
     notice(get_string('thereareno', 'moodle', $strquizzes), "../../course/view.php?id=$course->id");
     die;
 }
-$sections = get_all_sections($course->id);
 
 // Check if we need the closing date header.
 $showclosingheader = false;
@@ -132,7 +131,7 @@ foreach ($quizzes as $quiz) {
     if ($quiz->section != $currentsection) {
         if ($quiz->section) {
             $strsection = $quiz->section;
-            $strsection = get_section_name($course, $sections[$quiz->section]);
+            $strsection = get_section_name($course, $quiz->section);
         }
         if ($currentsection) {
             $learningtable->data[] = 'hr';

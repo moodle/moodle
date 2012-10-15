@@ -97,7 +97,6 @@ switch($requestmethod) {
                         }
                         break;
                 }
-                rebuild_course_cache($course->id);
                 break;
 
             case 'resource':
@@ -117,6 +116,7 @@ switch($requestmethod) {
                         $cm->indent = $value;
                         if ($cm->indent >= 0) {
                             $DB->update_record('course_modules', $cm);
+                            rebuild_course_cache($cm->course);
                         }
                         break;
 
@@ -159,6 +159,7 @@ switch($requestmethod) {
 
                         if (!empty($module->name)) {
                             $DB->update_record($cm->modname, $module);
+                            rebuild_course_cache($cm->course);
                         } else {
                             $module->name = $cm->name;
                         }
@@ -169,7 +170,6 @@ switch($requestmethod) {
                         echo json_encode(array('instancename' => format_string($module->name, true,  $stringoptions)));
                         break;
                 }
-                rebuild_course_cache($course->id);
                 break;
 
             case 'course':
@@ -221,8 +221,6 @@ switch($requestmethod) {
                 $eventdata->courseid   = $course->id;
                 $eventdata->userid     = $USER->id;
                 events_trigger('mod_deleted', $eventdata);
-
-                rebuild_course_cache($course->id);
 
                 add_to_log($courseid, "course", "delete mod",
                            "view.php?id=$courseid",
