@@ -1026,17 +1026,8 @@ class phpunit_util {
         $ftemplate = file_get_contents("$CFG->dirroot/phpunit.xml.dist");
         $ftemplate = preg_replace('|<!--All core suites.*</testsuites>|s', '<!--@component_suite@-->', $ftemplate);
 
-        // Get all the components
-        $components = self::get_all_plugins_with_tests() + self::get_all_subsystems_with_tests();
-
-        // Get all the directories having tests
-        $directories = self::get_all_directories_with_tests();
-
-        // Find any directory not covered by proper components
-        $remaining = array_diff($directories, $components);
-
-        // Add them to the list of components
-        $components += $remaining;
+        // Gets all the components with tests
+        $components = tests_finder::get_components_with_tests('phpunit');
 
         // Create the corresponding phpunit.xml file for each component
         foreach ($components as $cname => $cpath) {
@@ -1063,112 +1054,6 @@ class phpunit_util {
                 phpunit_bootstrap_error(PHPUNIT_EXITCODE_CONFIGWARNING, "Can not create $cpath/phpunit.xml configuration file, verify dir permissions");
             }
         }
-    }
-
-    /**
-     * Returns all the plugins having PHPUnit tests
-     *
-     * @return array all the plugins having PHPUnit tests
-     *
-     */
-    private static function get_all_plugins_with_tests() {
-        $pluginswithtests = array();
-
-        $plugintypes = get_plugin_types();
-        ksort($plugintypes);
-        foreach ($plugintypes as $type => $unused) {
-            $plugs = get_plugin_list($type);
-            ksort($plugs);
-            foreach ($plugs as $plug => $fullplug) {
-                // Look for tests recursively
-                if (self::directory_has_tests($fullplug)) {
-                    $pluginswithtests[$type . '_' . $plug] = $fullplug;
-                }
-            }
-        }
-        return $pluginswithtests;
-    }
-
-    /**
-     * Returns all the subsystems having PHPUnit tests
-     *
-     * Note we are hacking here the list of subsystems
-     * to cover some well-known subsystems that are not properly
-     * returned by the {@link get_core_subsystems()} function.
-     *
-     * @return array all the subsystems having PHPUnit tests
-     */
-    private static function get_all_subsystems_with_tests() {
-        global $CFG;
-
-        $subsystemswithtests = array();
-
-        $subsystems = get_core_subsystems();
-
-        // Hack the list a bit to cover some well-known ones
-        $subsystems['backup'] = 'backup';
-        $subsystems['db-dml'] = 'lib/dml';
-        $subsystems['db-ddl'] = 'lib/ddl';
-
-        ksort($subsystems);
-        foreach ($subsystems as $subsys => $relsubsys) {
-            if ($relsubsys === null) {
-                continue;
-            }
-            $fullsubsys = $CFG->dirroot . '/' . $relsubsys;
-            if (!is_dir($fullsubsys)) {
-                continue;
-            }
-            // Look for tests recursively
-            if (self::directory_has_tests($fullsubsys)) {
-                $subsystemswithtests['core_' . $subsys] = $fullsubsys;
-            }
-        }
-        return $subsystemswithtests;
-    }
-
-    /**
-     * Returns all the directories having tests
-     *
-     * @return array all directories having tests
-     */
-    private static function get_all_directories_with_tests() {
-        global $CFG;
-
-        $dirs = array();
-        $dirite = new RecursiveDirectoryIterator($CFG->dirroot);
-        $iteite = new RecursiveIteratorIterator($dirite);
-        $sep = preg_quote(DIRECTORY_SEPARATOR, '|');
-        $regite = new RegexIterator($iteite, '|'.$sep.'tests'.$sep.'.*_test\.php$|');
-        foreach ($regite as $path => $element) {
-            $key = dirname(dirname($path));
-            $value = trim(str_replace('/', '_', str_replace($CFG->dirroot, '', $key)), '_');
-            $dirs[$key] = $value;
-        }
-        ksort($dirs);
-        return array_flip($dirs);
-    }
-
-    /**
-     * Returns if a given directory has tests (recursively)
-     *
-     * @param $dir string full path to the directory to look for phpunit tests
-     * @return bool if a given directory has tests (true) or no (false)
-     */
-    private static function directory_has_tests($dir) {
-        if (!is_dir($dir)) {
-            return false;
-        }
-
-        $dirite = new RecursiveDirectoryIterator($dir);
-        $iteite = new RecursiveIteratorIterator($dirite);
-        $sep = preg_quote(DIRECTORY_SEPARATOR, '|');
-        $regite = new RegexIterator($iteite, '|'.$sep.'tests'.$sep.'.*_test\.php$|');
-        $regite->rewind();
-        if ($regite->valid()) {
-            return true;
-        }
-        return false;
     }
 
     /**
