@@ -24,7 +24,7 @@
 
 require_once($CFG->libdir . '/filestorage/file_exceptions.php');
 require_once($CFG->libdir . '/phpunit/bootstraplib.php');
-require_once($CFG->libdir . '/phpunit/classes/util.php');
+require_once($CFG->libdir . '/phpunit/classes/tests_finder.php');
 
 class tool_behat {
 
@@ -33,12 +33,13 @@ class tool_behat {
      */
     public static function info() {
 
-        $html = tool_behat::get_header();
-        $html .= tool_behat::get_info();
-        $html .= tool_behat::get_switch_environment_form();
-        $html .= tool_behat::get_steps_definitions_form();
-        $html .= tool_behat::get_run_tests_form();
-        $html .= tool_behat::get_footer();
+        $html = self::get_header();
+        $html .= self::get_info();
+        $html .= self::get_build_config_file_form();
+        $html .= self::get_switch_environment_form();
+        $html .= self::get_steps_definitions_form();
+        $html .= self::get_run_tests_form();
+        $html .= self::get_footer();
 
         echo $html;
     }
@@ -50,8 +51,10 @@ class tool_behat {
     public static function stepsdefinitions() {
         global $CFG;
 
-        confirm_sesskey();
-        tool_behat::check_behat_setup();
+        if (!CLI_SCRIPT) {
+            confirm_sesskey();
+        }
+        self::check_behat_setup();
 
         if ($filter = optional_param('filter', false, PARAM_ALPHANUMEXT)) {
             $filteroption = ' -d ' . $filter;
@@ -65,8 +68,8 @@ class tool_behat {
         chdir($currentcwd);
 
         // Outputing steps.
-        $html = tool_behat::get_header();
-        $html .= tool_behat::get_steps_definitions_form($filter);
+        $html = self::get_header();
+        $html .= self::get_steps_definitions_form($filter);
 
         $content = '';
         if ($steps) {
@@ -84,7 +87,7 @@ class tool_behat {
         }
 
         $html .= html_writer::tag('div', $content, array('id' => 'steps-definitions'));
-        $html .= tool_behat::get_footer();
+        $html .= self::get_footer();
 
         echo $html;
     }
@@ -95,13 +98,14 @@ class tool_behat {
     public static function switchenvironment() {
         global $CFG;
 
-        confirm_sesskey();
-
+        if (!CLI_SCRIPT) {
+            confirm_sesskey();
+        }
         $testenvironment = optional_param('testenvironment', 'enable', PARAM_ALPHA);
         if ($testenvironment == 'enable') {
-            tool_behat::enable_test_environment();
+            self::enable_test_environment();
         } else if ($testenvironment == 'disable') {
-            tool_behat::disable_test_environment();
+            self::disable_test_environment();
         }
 
         redirect(get_login_url());
@@ -111,7 +115,32 @@ class tool_behat {
      * Creates a file listing all the moodle with features and steps definitions
      */
     public static function buildconfigfile() {
+        global $CFG;
+
+        if (!CLI_SCRIPT) {
+            confirm_sesskey();
+        }
+
+        // Gets all the components with features
+        $components = tests_finder::get_components_with_tests('features');
+        if ($components) {
+            $contents = 'features:' . PHP_EOL;
+            foreach ($components as $componentname => $path) {
+                $contents .= '  - ' . $path . PHP_EOL;
+            }
+        }
+
+        // Gets all the components with steps definitions
         // TODO
+
+        $fullfilename = $CFG->dataroot . '/behat/config.yml';
+        if (!file_put_contents($fullfilename, $contents)) {
+            throw new file_exception('cannotcreatefile', $fullfilename);
+        }
+
+        echo self::get_header();
+        echo self::output_success(get_string('configfilesuccess', 'tool_behat'));
+        echo self::get_footer();
     }
 
     /**
@@ -120,10 +149,12 @@ class tool_behat {
     public static function runtests() {
         global $CFG;
 
-        confirm_sesskey();
-        tool_behat::check_behat_setup();
+        if (!CLI_SCRIPT) {
+            confirm_sesskey();
+        }
+        self::check_behat_setup();
 
-        echo tool_behat::get_header();
+        echo self::get_header();
 
         @set_time_limit(0);
 
@@ -133,20 +164,20 @@ class tool_behat {
         }
 
         // Switching database and dataroot to test environment.
-        tool_behat::enable_test_environment();
+        self::enable_test_environment();
         $currentcwd = getcwd();
 
         // Outputting runner form and tests results.
-        echo tool_behat::get_run_tests_form($tags);
+        echo self::get_run_tests_form($tags);
 
         chdir($CFG->behatpath);
         passthru('bin/behat --format html' . $tagsoption, $code);
 
         // Switching back to regular environment
-        tool_behat::disable_test_environment();
+        self::disable_test_environment();
         chdir($currentcwd);
 
-        echo tool_behat::get_footer();
+        echo self::get_footer();
     }
 
 
@@ -208,15 +239,13 @@ class tool_behat {
     private static function enable_test_environment() {
         global $CFG;
 
-        confirm_sesskey();
-
-        if (tool_behat::is_test_environment_enabled()) {
+        if (self::is_test_environment_enabled()) {
             debugging('Test environment was already enabled');
             return;
         }
 
         // Check that PHPUnit test environment is correctly set up.
-        tool_behat::test_environment_problem();
+        self::test_environment_problem();
 
         $behatdir = $CFG->dataroot . '/behat';
 
@@ -230,9 +259,9 @@ class tool_behat {
             throw new file_exception('storedfilecannotcreatefiledirs');
         }
 
-        $content = '$CFG->phpunit_prefix and $CFG->phpunit_dataroot are currently used as $CFG->prefix and $CFG->dataroot';
+        $contents = '$CFG->phpunit_prefix and $CFG->phpunit_dataroot are currently used as $CFG->prefix and $CFG->dataroot';
         $filepath = $behatdir . '/test_environment_enabled.txt';
-        if (!file_put_contents($filepath, $content)) {
+        if (!file_put_contents($filepath, $contents)) {
             throw new file_exception('cannotcreatefile', $filepath);
         }
 
@@ -243,11 +272,9 @@ class tool_behat {
      */
     private static function disable_test_environment() {
 
-        confirm_sesskey();
+        $testenvfile = self::get_test_filepath();
 
-        $testenvfile = tool_behat::get_test_filepath();
-
-        if (!tool_behat::is_test_environment_enabled()) {
+        if (!self::is_test_environment_enabled()) {
             debugging('Test environment was already disabled');
         } else {
             if (!unlink($testenvfile)) {
@@ -266,7 +293,7 @@ class tool_behat {
      */
     public static function is_test_environment_enabled() {
 
-        $testenvfile = tool_behat::get_test_filepath();
+        $testenvfile = self::get_test_filepath();
         if (file_exists($testenvfile)) {
             return true;
         }
@@ -296,7 +323,7 @@ class tool_behat {
     private static function get_test_filepath() {
         global $CFG;
 
-        if (tool_behat::is_test_environment_running()) {
+        if (self::is_test_environment_running()) {
             $testenvfile = $CFG->originaldataroot . '/behat/test_environment_enabled.txt';
         } else {
             $testenvfile = $CFG->dataroot . '/behat/test_environment_enabled.txt';
@@ -312,11 +339,12 @@ class tool_behat {
     private static function get_header() {
         global $OUTPUT;
 
+        $action = optional_param('action', 'info', PARAM_ALPHAEXT);
+
         if (CLI_SCRIPT) {
-            return get_string('command' . $action, 'tool_behat');
+            return '';
         }
 
-        $action = optional_param('action', 'info', PARAM_ALPHAEXT);
         $title = get_string('pluginname', 'tool_behat') . ' - ' . get_string('command' . $action, 'tool_behat');
         $html = $OUTPUT->header();
         $html .= $OUTPUT->heading($title);
@@ -336,6 +364,27 @@ class tool_behat {
         }
 
         return $OUTPUT->footer();
+    }
+
+    /**
+     * Returns a message and a button to continue if web execution
+     * @param string $html
+     * @param string $url
+     * @return string
+     */
+    private static function output_success($html, $url = false) {
+        global $CFG, $OUTPUT;
+
+        if (!$url) {
+            $url = $CFG->wwwroot . '/' . $CFG->admin . '/tool/behat/index.php';
+        }
+
+        if (!CLI_SCRIPT) {
+            $html = $OUTPUT->box($html, 'generalbox', 'notice');
+            $html .= $OUTPUT->continue_button($url);
+        }
+
+        return $html;
     }
 
     /**
@@ -371,7 +420,7 @@ class tool_behat {
     private static function get_switch_environment_form() {
         global $CFG, $OUTPUT;
 
-        if (tool_behat::is_test_environment_running()) {
+        if (self::is_test_environment_running()) {
             $perform = 'disable';
         } else {
             $perform = 'enable';
@@ -382,6 +431,24 @@ class tool_behat {
         $html = $OUTPUT->box_start();
         $html .= '<p>' . get_string('switchenvironmentinfo', 'tool_behat') . '</p>';
         $html .= $OUTPUT->single_button($url, get_string('switchenvironment' . $perform, 'tool_behat'));
+        $html .= $OUTPUT->box_end();
+
+        return $html;
+    }
+
+    /**
+     * Returns a button to execute the build config file form
+     * @return string
+     */
+    private static function get_build_config_file_form() {
+        global $OUTPUT, $CFG;
+
+        $params = array('action' => 'buildconfigfile', 'sesskey' => sesskey());
+        $url = new moodle_url('/' . $CFG->admin . '/tool/behat/index.php', $params);
+
+        $html = $OUTPUT->box_start();
+        $html .= '<p>' . get_string('buildconfigfileinfo', 'tool_behat') . '</p>';
+        $html .= $OUTPUT->single_button($url, get_string('commandbuildconfigfile', 'tool_behat'));
         $html .= $OUTPUT->box_end();
 
         return $html;
@@ -403,11 +470,10 @@ class tool_behat {
 
         $html = $OUTPUT->box_start();
         $html .= '<form method="get" action="index.php">';
-        $html .= '<p>';
         $html .= '<fieldset class="invisiblefieldset">';
         $html .= '<label for="id_filter">Steps definitions which contains</label> ';
         $html .= '<input type="text" id="id_filter" value="' . $filter . '" name="filter"/> (all steps definitions if empty)';
-        $html .= '</p>';
+        $html .= '<p></p>';
         $html .= '<input type="submit" value="View available steps definitions" />';
         $html .= '<input type="hidden" name="action" value="stepsdefinitions" />';
         $html .= '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
@@ -434,11 +500,10 @@ class tool_behat {
 
         $html = $OUTPUT->box_start();
         $html .= '<form method="get" action="index.php">';
-        $html .= '<p>';
         $html .= '<fieldset class="invisiblefieldset">';
         $html .= '<label for="id_tags">Tests tagged as</label> ';
         $html .= '<input type="text" id="id_tags" value="' . $tags . '" name="tags"/> (all available tests if empty)';
-        $html .= '</p>';
+        $html .= '<p></p>';
         $html .= '<input type="submit" value="Run tests" />';
         $html .= '<input type="hidden" name="action" value="runtests" />';
         $html .= '<input type="hidden" name="sesskey" value="'.sesskey().'" />';

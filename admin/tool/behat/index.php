@@ -31,5 +31,3 @@ $action = optional_param('action', 'info', PARAM_ALPHAEXT);
 admin_externalpage_setup('toolbehat');
 
 call_user_func('tool_behat::' . $action);
-
-echo $OUTPUT->footer();

@@ -69,12 +69,12 @@ if ($unrecognized) {
 
 $commands = array('stepsdefinitions', 'buildconfigfile', 'runtests');
 foreach ($commands as $command) {
-    if (isset($options[$command])) {
+    if ($options[$command]) {
         $action = $command;
     }
 }
 
-if (!$action) {
+if (empty($action)) {
     mtrace('No command selected');
     echo $help;
     exit(0);
