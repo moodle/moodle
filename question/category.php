@@ -61,10 +61,17 @@ $qcobject = new question_category_object($pagevars['cpage'], $thispageurl, $cont
 $streditingcategories = get_string('editcategories', 'question');
 if ($param->left || $param->right || $param->moveup || $param->movedown|| $param->moveupcontext || $param->movedowncontext){
     require_sesskey();
-    foreach ($qcobject->editlists as $list){
-        //processing of these actions is handled in the method where appropriate and page redirects.
-        $list->process_actions($param->left, $param->right, $param->moveup, $param->movedown,
-                                $param->moveupcontext, $param->movedowncontext, $param->tocontext);
+
+    if ($param->moveupcontext || $param->movedowncontext) {
+        $catid = ($param->moveupcontext > 0) ? $param->moveupcontext : $param->movedowncontext;
+        $oldcat = $DB->get_record('question_categories', array('id' => $catid));
+        $qcobject->update_category($catid, '0,'.$param->tocontext, $oldcat->name, $oldcat->info);
+    } else {
+        foreach ($qcobject->editlists as $list){
+            //processing of these actions is handled in the method where appropriate and page redirects.
+            $list->process_actions($param->left, $param->right, $param->moveup, $param->movedown,
+                                   $param->moveupcontext, $param->movedowncontext, $param->tocontext);
+        }
     }
 }
 if ($param->delete && ($questionstomove = $DB->count_records("question", array("category" => $param->delete)))){
