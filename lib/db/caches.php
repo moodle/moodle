@@ -30,8 +30,6 @@ $definitions = array(
     // Used to store processed lang files.
     'string' => array(
         'mode' => cache_store::MODE_APPLICATION,
-        'component' => 'core',
-        'area' => 'string',
         'persistent' => true,
         'persistentmaxsize' => 3
     ),

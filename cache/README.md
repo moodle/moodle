@@ -1,9 +1,5 @@
-MUC development code
-====================
-
-Congratulations you've found the MUC development code.
-This code is still very much in development and as such is not (and is know to not) function correctly or completely at the moment.
-Of course that will all be well and truly sorted out WELL before this gets integrated.
+Moodle Universal Cache / Cache API
+==================================
 
 Sample code snippets
 --------------------
@@ -11,13 +7,10 @@ Sample code snippets
 A definition:
 
      $definitions = array(
-        'core_string' => array(                       // Required, unique
+        'string' => array(                            // Required, unique to the component
             'mode' => cache_store::MODE_APPLICATION,  // Required
-            'component' => 'core',                    // Required
-            'area' => 'string',                       // Required
             'requireidentifiers' => array(            // Optional
-                'lang',
-                'component'
+                'lang'
             ),
             'requiredataguarantee' => false,          // Optional
             'requiremultipleidentifiers' => false,    // Optional
@@ -60,7 +53,7 @@ If a data source had been specified in the definition the following would be all
 The bits that make up the cache API
 -----------------------------------
 
-There are several parts that _**will**_ make up this solution:
+There are several parts that make up the Cache API.
 
 ### Loader
 The loader is central to the whole thing.
@@ -105,8 +98,6 @@ Definitions are designed to be used in situations where things are more than bas
 The following settings are required for a definition:
 * name - Identifies the definition and must be unique.
 * mode - Application, session, request.
-* component - The component associated the definition is associated with.
-* area - Describes the stuff being cached.
 
 The following optional settings can also be defined:
 * requireidentifiers - Any identifiers the definition requires. Must be provided when creating the loader.
@@ -120,6 +111,8 @@ The following optional settings can also be defined:
 * ttl - Can be used to set a ttl value for data being set for this cache.
 * mappingsonly - This definition can only be used if there is a store mapping for it. More on this later.
 * invalidationevents - An array of events that should trigger this cache to invalidate.
+
+Its important to note that internally the definition is also aware of the component. This is picked up when the definition is read based upon the location of the caches.php file.
 
 The persist option.
 As noted the persist option causes the loader generated for this definition to be stored when first created. Subsequent requests for this definition will be given the original loader instance.
@@ -199,9 +192,3 @@ The first method is designed to be used when you have a single known definition 
 The second method is a lot more intensive for the system. There are defined invalidation events that definitions can "subscribe" to (through the definitions invalidationevents option).
 When you invalidate by event the cache API finds all of the definitions that subscribe to the event, it then loads the stores for each of those definitions and purges the keys from each store.
 This is obviously a recursive and therefor intense process.
-
-TODO's and things still to think about
---------------------------------------
-
- 1. Definitions don't really need/use the component/area identifiers presently. They may be useful in the future... they may not be.
-    We should consider whether we leave them, or remove them.
