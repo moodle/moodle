@@ -132,38 +132,6 @@ class tool_behat {
     }
 
     /**
-     * Creates a file listing all the moodle with features and steps definitions
-     */
-    public static function buildconfigfile() {
-        global $CFG;
-
-        if (!CLI_SCRIPT) {
-            confirm_sesskey();
-        }
-
-        // Gets all the components with features
-        $components = tests_finder::get_components_with_tests('features');
-        if ($components) {
-            $contents = 'features:' . PHP_EOL;
-            foreach ($components as $componentname => $path) {
-                $contents .= '  - ' . $path . PHP_EOL;
-            }
-        }
-
-        // Gets all the components with steps definitions
-        // TODO
-
-        $fullfilename = $CFG->dataroot . '/behat/config.yml';
-        if (!file_put_contents($fullfilename, $contents)) {
-            throw new file_exception('cannotcreatefile', $fullfilename);
-        }
-
-        echo self::get_header();
-        echo self::output_success(get_string('configfilesuccess', 'tool_behat'));
-        echo self::get_footer();
-    }
-
-    /**
      * Runs the acceptance tests
      * @param string $tags Restricts the executed tests to the ones that matches the tags
      * @param string $extra Extra CLI behat options
@@ -175,6 +143,8 @@ class tool_behat {
             confirm_sesskey();
         }
         self::check_behat_setup();
+
+        self::update_config_file();
 
         echo self::get_header();
 
@@ -216,6 +186,30 @@ class tool_behat {
         echo self::get_footer();
     }
 
+    /**
+     * Updates the config file
+     * @throws file_exception
+     */
+    private static function update_config_file() {
+
+        // Gets all the components with features
+        $components = tests_finder::get_components_with_tests('features');
+        if ($components) {
+            $contents = 'features:' . PHP_EOL;
+            foreach ($components as $componentname => $path) {
+                $contents .= '  - ' . $path . PHP_EOL;
+            }
+        }
+
+        // Gets all the components with steps definitions
+        // TODO
+
+        // Stores the file
+        $fullfilepath = self::get_behat_dir() . '/config.yml';
+        if (!file_put_contents($fullfilepath, $contents)) {
+            throw new file_exception('cannotcreatefile', $fullfilepath);
+        }
+    }
 
     /**
      * Checks whether the test database and dataroot is ready
@@ -273,7 +267,6 @@ class tool_behat {
      * @throws file_exception
      */
     private static function enable_test_environment() {
-        global $CFG;
 
         if (self::is_test_environment_enabled()) {
             debugging('Test environment was already enabled');
@@ -283,17 +276,7 @@ class tool_behat {
         // Check that PHPUnit test environment is correctly set up.
         self::test_environment_problem();
 
-        $behatdir = $CFG->dataroot . '/behat';
-
-        if (!is_dir($behatdir)) {
-            if (!mkdir($behatdir, $CFG->directorypermissions, true)) {
-                throw new file_exception('storedfilecannotcreatefiledirs');
-            }
-        }
-
-        if (!is_writable($behatdir)) {
-            throw new file_exception('storedfilecannotcreatefiledirs');
-        }
+        $behatdir = self::get_behat_dir();
 
         $contents = '$CFG->phpunit_prefix and $CFG->phpunit_dataroot are currently used as $CFG->prefix and $CFG->dataroot';
         $filepath = $behatdir . '/test_environment_enabled.txt';
@@ -365,6 +348,30 @@ class tool_behat {
         }
 
         return $testenvfile;
+    }
+
+
+    /**
+     * Ensures the behat dir exists in moodledata
+     * @throws file_exception
+     * @return string Full path
+     */
+    private static function get_behat_dir() {
+        global $CFG;
+
+        $behatdir = $CFG->dataroot . '/behat';
+
+        if (!is_dir($behatdir)) {
+            if (!mkdir($behatdir, $CFG->directorypermissions, true)) {
+                throw new file_exception('storedfilecannotcreatefiledirs');
+            }
+        }
+
+        if (!is_writable($behatdir)) {
+            throw new file_exception('storedfilecannotcreatefiledirs');
+        }
+
+        return $behatdir;
     }
 
     /**

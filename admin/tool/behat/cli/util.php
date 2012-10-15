@@ -33,7 +33,6 @@ list($options, $unrecognized) = cli_get_params(
     array(
         'help'               => false,
         'stepsdefinitions'   => false,
-        'buildconfigfile'    => false,
         'runtests'           => false,
         'filter'             => false,
         'tags'               => false,
@@ -51,7 +50,6 @@ Ensure the user who executes the action has permissions over behat installation
 
 Options:
 --stepsdefinitions   Displays the available steps definitions (accepts --filter=\"\" option to restrict the list to the matching definitions)
---buildconfigfile    Updates the Moodle components config file
 --runtests           Runs the tests (accepts --tags=\"\" option to execute only the matching tests and --extra=\"\" to specify extra behat options)
 
 -h, --help     Print out this help
@@ -70,7 +68,7 @@ if ($unrecognized) {
     cli_error(get_string('cliunknowoption', 'admin', $unrecognized));
 }
 
-$commands = array('stepsdefinitions', 'buildconfigfile', 'runtests');
+$commands = array('stepsdefinitions', 'runtests');
 foreach ($commands as $command) {
     if ($options[$command]) {
         $action = $command;
@@ -91,10 +89,6 @@ switch ($action) {
 
     case 'runtests':
         tool_behat::runtests($options['tags'], $options['extra']);
-        break;
-
-    case 'buildconfigfile':
-        tool_behat::buildconfigfile();
         break;
 }
 

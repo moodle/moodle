@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Behat info page
+ * Behat web runner
  *
  * @package    tool_behat
  * @copyright  2012 David Monllaó
