@@ -26,6 +26,15 @@ require_once($CFG->libdir . '/filestorage/file_exceptions.php');
 require_once($CFG->libdir . '/phpunit/bootstraplib.php');
 require_once($CFG->libdir . '/phpunit/classes/tests_finder.php');
 
+/**
+ * Behat commands manager
+ *
+ * CLI + web execution
+ *
+ * @package    tool_behat
+ * @copyright  2012 David Monllaó
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class tool_behat {
 
     /**
@@ -44,11 +53,11 @@ class tool_behat {
         echo $html;
     }
 
-
     /**
      * Lists the available steps definitions
+     * @param string $filter Keyword to filter the list of steps definitions availables
      */
-    public static function stepsdefinitions() {
+    public static function stepsdefinitions($filter = false) {
         global $CFG;
 
         if (!CLI_SCRIPT) {
@@ -56,7 +65,12 @@ class tool_behat {
         }
         self::check_behat_setup();
 
-        if ($filter = optional_param('filter', false, PARAM_ALPHANUMEXT)) {
+        // Priority to the one specified as argument.
+        if (!$filter) {
+            $filter = optional_param('filter', false, PARAM_ALPHANUMEXT);
+        }
+
+        if ($filter) {
             $filteroption = ' -d ' . $filter;
         } else {
             $filteroption = ' -di';
@@ -94,14 +108,20 @@ class tool_behat {
 
     /**
      * Switches from and to the regular environment to the testing environment
+     * @param string $testenvironment enable|disable
      */
-    public static function switchenvironment() {
+    public static function switchenvironment($testenvironment = false) {
         global $CFG;
 
         if (!CLI_SCRIPT) {
             confirm_sesskey();
         }
-        $testenvironment = optional_param('testenvironment', 'enable', PARAM_ALPHA);
+
+        // Priority to the one specified as argument.
+        if (!$testenvironment) {
+            $testenvironment = optional_param('testenvironment', 'enable', PARAM_ALPHA);
+        }
+
         if ($testenvironment == 'enable') {
             self::enable_test_environment();
         } else if ($testenvironment == 'disable') {
@@ -145,8 +165,10 @@ class tool_behat {
 
     /**
      * Runs the acceptance tests
+     * @param string $tags Restricts the executed tests to the ones that matches the tags
+     * @param string $extra Extra CLI behat options
      */
-    public static function runtests() {
+    public static function runtests($tags = false, $extra = false) {
         global $CFG;
 
         if (!CLI_SCRIPT) {
@@ -158,9 +180,21 @@ class tool_behat {
 
         @set_time_limit(0);
 
+        // Priority to the one specified as argument.
+        if (!$tags) {
+            $tags = optional_param('tags', false, PARAM_ALPHANUMEXT);
+        }
+        // $extra only passed as CLI option (to simplify web runner usage).
+
         $tagsoption = '';
-        if ($tags = optional_param('tags', false, PARAM_ALPHANUMEXT)) {
+        if ($tags) {
             $tagsoption = ' --tags ' . $tags;
+        }
+
+        if (!$extra && !CLI_SCRIPT) {
+            $extra = ' --format html';
+        } else if(!$extra && CLI_SCRIPT) {
+            $extra = '';
         }
 
         // Switching database and dataroot to test environment.
@@ -168,10 +202,12 @@ class tool_behat {
         $currentcwd = getcwd();
 
         // Outputting runner form and tests results.
-        echo self::get_run_tests_form($tags);
+        if (!CLI_SCRIPT) {
+            echo self::get_run_tests_form($tags);
+        }
 
         chdir($CFG->behatpath);
-        passthru('bin/behat --format html' . $tagsoption, $code);
+        passthru('bin/behat ' . $tagsoption . ' ' .$extra, $code);
 
         // Switching back to regular environment
         self::disable_test_environment();
@@ -300,7 +336,6 @@ class tool_behat {
 
         return false;
     }
-
 
     /**
      * Returns true if Moodle is currently running with the test database and dataroot
@@ -513,5 +548,4 @@ class tool_behat {
 
         return $html;
     }
-
 }

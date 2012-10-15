@@ -31,10 +31,13 @@ require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/behat/locallib.php');
 // now get cli options
 list($options, $unrecognized) = cli_get_params(
     array(
-        'help            '   => false,
+        'help'               => false,
         'stepsdefinitions'   => false,
         'buildconfigfile'    => false,
-        'runtests'           => false
+        'runtests'           => false,
+        'filter'             => false,
+        'tags'               => false,
+        'extra'              => false,
     ),
     array(
         'h' => 'help'
@@ -47,14 +50,14 @@ Behat tool
 Ensure the user who executes the action has permissions over behat installation
 
 Options:
---stepsdefinitions   Displays the available steps definitions
+--stepsdefinitions   Displays the available steps definitions (accepts --filter=\"\" option to restrict the list to the matching definitions)
 --buildconfigfile    Updates the Moodle components config file
---runtests           Runs the tests
+--runtests           Runs the tests (accepts --tags=\"\" option to execute only the matching tests and --extra=\"\" to specify extra behat options)
 
 -h, --help     Print out this help
 
 Example from Moodle root directory:
-\$ php admin/tool/behat/cli/util --stepsdefinitions
+\$ php admin/tool/behat/cli/util.php --runtests --tags=\"tool_behat\" --extra=\"--format junit --out /path/report.html\"
 ";
 
 if (!empty($options['help'])) {
@@ -80,6 +83,20 @@ if (empty($action)) {
     exit(0);
 }
 
-call_user_func('tool_behat::' . $action);
+switch ($action) {
+
+    case 'stepsdefinitions':
+        tool_behat::stepsdefinitions($options['filter']);
+        break;
+
+    case 'runtests':
+        tool_behat::runtests($options['tags'], $options['extra']);
+        break;
+
+    case 'buildconfigfile':
+        tool_behat::buildconfigfile();
+        break;
+}
+
 
 mtrace(get_string('finished', 'tool_behat'));
