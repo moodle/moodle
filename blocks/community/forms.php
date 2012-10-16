@@ -140,7 +140,7 @@ class community_hub_search_form extends moodleform {
             $options = array();
             $firsthub = false;
             foreach ($hubs as $hub) {
-                if (key_exists('id', $hub)) {
+                if (array_key_exists('id', $hub)) {
                     $params = array('hubid' => $hub['id'],
                         'filetype' => HUB_HUBSCREENSHOT_FILE_TYPE);
                     $imgurl = new moodle_url(HUB_HUBDIRECTORYURL .
