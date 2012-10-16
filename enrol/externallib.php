@@ -388,7 +388,7 @@ class core_role_external extends external_api {
             // throw an exception if user is not able to assign the role in this context
             $roles = get_assignable_roles($context, ROLENAME_SHORT);
 
-            if (!key_exists($assignment['roleid'], $roles)) {
+            if (!array_key_exists($assignment['roleid'], $roles)) {
                 throw new invalid_parameter_exception('Can not assign roleid='.$assignment['roleid'].' in contextid='.$assignment['contextid']);
             }
 
@@ -451,7 +451,7 @@ class core_role_external extends external_api {
 
             // throw an exception if user is not able to unassign the role in this context
             $roles = get_assignable_roles($context, ROLENAME_SHORT);
-            if (!key_exists($unassignment['roleid'], $roles)) {
+            if (!array_key_exists($unassignment['roleid'], $roles)) {
                 throw new invalid_parameter_exception('Can not unassign roleid='.$unassignment['roleid'].' in contextid='.$unassignment['contextid']);
             }
 

@@ -964,7 +964,7 @@ function external_update_descriptions($component) {
             $dbfunction->classpath = $function['classpath'];
             $update = true;
         }
-        $functioncapabilities = key_exists('capabilities', $function)?$function['capabilities']:'';
+        $functioncapabilities = array_key_exists('capabilities', $function)?$function['capabilities']:'';
         if ($dbfunction->capabilities != $functioncapabilities) {
             $dbfunction->capabilities = $functioncapabilities;
             $update = true;
@@ -980,7 +980,7 @@ function external_update_descriptions($component) {
         $dbfunction->methodname = $function['methodname'];
         $dbfunction->classpath  = empty($function['classpath']) ? null : $function['classpath'];
         $dbfunction->component  = $component;
-        $dbfunction->capabilities = key_exists('capabilities', $function)?$function['capabilities']:'';
+        $dbfunction->capabilities = array_key_exists('capabilities', $function)?$function['capabilities']:'';
         $dbfunction->id = $DB->insert_record('external_functions', $dbfunction);
     }
     unset($functions);
