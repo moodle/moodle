@@ -87,4 +87,69 @@ class datalib_testcase extends advanced_testcase {
         $this->assertEquals(array('usersortexact1' => 'search', 'usersortexact2' => 'search',
                 'usersortexact3' => 'search', 'usersortexact4' => 'search', 'usersortexact5' => 'search'), $params);
     }
+
+    public function test_get_admin() {
+        global $CFG, $DB;
+
+        $this->resetAfterTest();
+
+        $this->assertSame('2', $CFG->siteadmins); // Admin always has id 2 in new installs.
+        $defaultadmin = get_admin();
+        $this->assertEquals($defaultadmin->id, 2);
+
+        unset_config('siteadmins');
+        $this->assertFalse(get_admin());
+
+        set_config('siteadmins', -1);
+        $this->assertFalse(get_admin());
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+
+        set_config('siteadmins', $user1->id.','.$user2->id);
+        $admin = get_admin();
+        $this->assertEquals($user1->id, $admin->id);
+
+        set_config('siteadmins', '-1,'.$user2->id.','.$user1->id);
+        $admin = get_admin();
+        $this->assertEquals($user2->id, $admin->id);
+
+        $odlread = $DB->perf_get_reads();
+        get_admin(); // No DB queries on repeated call expected.
+        get_admin();
+        get_admin();
+        $this->assertEquals($odlread, $DB->perf_get_reads());
+    }
+
+    public function test_get_admins() {
+        global $CFG, $DB;
+
+        $this->resetAfterTest();
+
+        $this->assertSame('2', $CFG->siteadmins); // Admin always has id 2 in new installs.
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+        $user4 = $this->getDataGenerator()->create_user();
+
+        $admins = get_admins();
+        $this->assertEquals(1, count($admins));
+        $admin = reset($admins);
+        $this->assertTrue(isset($admins[$admin->id]));
+        $this->assertEquals(2, $admin->id);
+
+        unset_config('siteadmins');
+        $this->assertSame(array(), get_admins());
+
+        set_config('siteadmins', -1);
+        $this->assertSame(array(), get_admins());
+
+        set_config('siteadmins', '-1,'.$user2->id.','.$user1->id.','.$user3->id);
+        $this->assertEquals(array($user2->id=>$user2, $user1->id=>$user1, $user3->id=>$user3), get_admins());
+
+        $odlread = $DB->perf_get_reads();
+        get_admins(); // This should make just one query.
+        $this->assertEquals($odlread+1, $DB->perf_get_reads());
+    }
 }

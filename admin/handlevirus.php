@@ -86,7 +86,7 @@ function notify_admins($user,$subject,$a) {
     foreach ($admins as $admin) {
         $eventdata = new stdClass();
         $eventdata->modulename        = 'moodle';
-        $eventdata->userfrom          = $admin;
+        $eventdata->userfrom          = get_admin();
         $eventdata->userto            = $admin;
         $eventdata->subject           = $subject;
         $eventdata->fullmessage       = $body;
@@ -107,7 +107,7 @@ function notify_admins_unknown($file,$a) {
     foreach ($admins as $admin) {
         $eventdata = new stdClass();
         $eventdata->modulename        = 'moodle';
-        $eventdata->userfrom          = $admin;
+        $eventdata->userfrom          = get_admin();
         $eventdata->userto            = $admin;
         $eventdata->subject           = $subject;
         $eventdata->fullmessage       = $body;

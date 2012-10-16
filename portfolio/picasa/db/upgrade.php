@@ -52,7 +52,6 @@ function portfolio_picasa_admin_upgrade_notification() {
     if (empty($admins)) {
         return;
     }
-    $mainadmin = reset($admins);
     $a = new stdClass;
     $a->docsurl = get_docs_url('Google_OAuth_2.0_setup');
 
@@ -60,7 +59,7 @@ function portfolio_picasa_admin_upgrade_notification() {
         $message = new stdClass();
         $message->component         = 'moodle';
         $message->name              = 'notices';
-        $message->userfrom          = $mainadmin;
+        $message->userfrom          = get_admin();
         $message->userto            = $admin;
         $message->smallmessage      = get_string('oauth2upgrade_message_small', 'portfolio_picasa');
         $message->subject           = get_string('oauth2upgrade_message_subject', 'portfolio_picasa');

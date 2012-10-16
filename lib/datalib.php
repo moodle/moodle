@@ -55,14 +55,17 @@ function get_admin() {
     global $CFG, $DB;
 
     static $mainadmin = null;
+    static $prevadmins = null;
 
-    if (isset($mainadmin)) {
+    if (empty($CFG->siteadmins)) {  // Should not happen on an ordinary site.
+        return false;
+    }
+
+    if (isset($mainadmin) and $prevadmins === $CFG->siteadmins) {
         return clone($mainadmin);
     }
 
-    if (empty($CFG->siteadmins)) {  // Should not happen on an ordinary site
-        return false;
-    }
+    $mainadmin = null;
 
     foreach (explode(',', $CFG->siteadmins) as $id) {
         if ($user = $DB->get_record('user', array('id'=>$id, 'deleted'=>0))) {
@@ -72,6 +75,7 @@ function get_admin() {
     }
 
     if ($mainadmin) {
+        $prevadmins = $CFG->siteadmins;
         return clone($mainadmin);
     } else {
         // this should not happen
@@ -95,7 +99,19 @@ function get_admins() {
               FROM {user} u
              WHERE u.deleted = 0 AND u.id IN ($CFG->siteadmins)";
 
-    return $DB->get_records_sql($sql);
+    // We want the same order as in $CFG->siteadmins.
+    $records = $DB->get_records_sql($sql);
+    $admins = array();
+    foreach (explode(',', $CFG->siteadmins) as $id) {
+        $id = (int)$id;
+        if (!isset($records[$id])) {
+            // User does not exist, this should not happen.
+            continue;
+        }
+        $admins[$records[$id]->id] = $records[$id];
+    }
+
+    return $admins;
 }
 
 /**
