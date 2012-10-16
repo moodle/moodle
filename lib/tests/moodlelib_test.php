@@ -1920,4 +1920,61 @@ class moodlelib_testcase extends advanced_testcase {
         );
         $this->assertEquals(convert_to_array($obj), $ar);
     }
+
+    /**
+     * Test the function date_format_string().
+     */
+    function test_date_format_string() {
+        // Forcing locale and timezone.
+        $oldlocale = setlocale(LC_TIME, '0');
+        setlocale(LC_TIME, 'en_AU.UTF-8');
+        $systemdefaulttimezone = date_default_timezone_get();
+        date_default_timezone_set('Australia/Perth');
+
+        $tests = array(
+            array(
+                'tz' => 99,
+                'str' => '%A, %d %B %Y, %I:%M %p',
+                'expected' => 'Saturday, 01 January 2011, 06:00 PM'
+            ),
+            array(
+                'tz' => 0,
+                'str' => '%A, %d %B %Y, %I:%M %p',
+                'expected' => 'Saturday, 01 January 2011, 10:00 AM'
+            ),
+            array(
+                'tz' => -12,
+                'str' => '%A, %d %B %Y, %I:%M %p',
+                'expected' => 'Saturday, 01 January 2011, 10:00 AM'
+            ),
+            array(
+                'tz' => 99,
+                'str' => 'Žluťoučký koníček %A',
+                'expected' => 'Žluťoučký koníček Saturday'
+            ),
+            array(
+                'tz' => 99,
+                'str' => '言語設定言語 %A',
+                'expected' => '言語設定言語 Saturday'
+            ),
+            array(
+                'tz' => 99,
+                'str' => '简体中文简体 %A',
+                'expected' => '简体中文简体 Saturday'
+            ),
+        );
+
+        // Note: date_format_string() uses the timezone only to differenciate
+        // the server time from the UTC time. It does not modify the timestamp.
+        // Hence similar results for timezones <= 13.
+        // On different systems case of AM PM changes so compare case insensitive.
+        foreach ($tests as $test) {
+            $str = date_format_string(1293876000, $test['str'], $test['tz']);
+            $this->assertEquals(textlib::strtolower($test['expected']), textlib::strtolower($str));
+        }
+
+        // Restore system default values.
+        date_default_timezone_set($systemdefaulttimezone);
+        setlocale(LC_TIME, $oldlocale);
+    }
 }
