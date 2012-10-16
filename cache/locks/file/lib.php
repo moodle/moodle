@@ -203,7 +203,7 @@ class cachelock_file implements cache_lock_interface {
      * @param string $ownerid
      */
     public function check_state($key, $ownerid) {
-        if (key_exists($key, $this->locks)) {
+        if (array_key_exists($key, $this->locks)) {
             // The key is locked and we own it.
             return true;
         }
