@@ -44,10 +44,13 @@ class tool_behat {
 
         $html = self::get_header();
         $html .= self::get_info();
-        $html .= self::get_build_config_file_form();
         $html .= self::get_switch_environment_form();
-        $html .= self::get_steps_definitions_form();
-        $html .= self::get_run_tests_form();
+
+        if (!self::is_test_environment_running()) {
+            $html .= self::get_steps_definitions_form();
+            $html .= self::get_run_tests_form();
+        }
+
         $html .= self::get_footer();
 
         echo $html;
@@ -128,7 +131,9 @@ class tool_behat {
             self::disable_test_environment();
         }
 
-        redirect(get_login_url());
+        if (!CLI_SCRIPT) {
+            redirect(get_login_url());
+        }
     }
 
     /**
@@ -267,6 +272,7 @@ class tool_behat {
      * @throws file_exception
      */
     private static function enable_test_environment() {
+        global $CFG;
 
         if (self::is_test_environment_enabled()) {
             debugging('Test environment was already enabled');
@@ -283,7 +289,7 @@ class tool_behat {
         if (!file_put_contents($filepath, $contents)) {
             throw new file_exception('cannotcreatefile', $filepath);
         }
-
+        chmod($filepath, $CFG->directorypermissions);
     }
 
     /**
@@ -310,7 +316,7 @@ class tool_behat {
      *
      * @return bool
      */
-    public static function is_test_environment_enabled() {
+    private static function is_test_environment_enabled() {
 
         $testenvfile = self::get_test_filepath();
         if (file_exists($testenvfile)) {
@@ -324,7 +330,7 @@ class tool_behat {
      * Returns true if Moodle is currently running with the test database and dataroot
      * @return bool
      */
-    public static function is_test_environment_running() {
+    private static function is_test_environment_running() {
         global $CFG;
 
         if (!empty($CFG->originaldataroot)) {
@@ -439,17 +445,11 @@ class tool_behat {
     private static function get_info() {
         global $OUTPUT;
 
-        $html = $OUTPUT->box_start();
-        $html .= html_writer::tag('h1', 'Info');
-        $info = 'This tool makes use of the phpunit test environment, during the automatic acceptance tests execution the site uses the test database and dataroot directories so this tool IS NOT intended to be used in production sites.';
-        $html .= html_writer::tag('div', $info);
+        $url = 'http://docs.moodle.org/dev/Behat_integration#Installation';
 
-        $html .= html_writer::tag('h1', 'Installation');
-        $installinstructions = '1.- Follow the PHPUnit installation instructions to set up the testing environment $CFG->wwwroot/admin/tool/phpunit/index.php<br/>';
-        $installinstructions .= '2.- Follow the moodle-acceptance-test installation instructions https://github.com/dmonllao/behat-moodle<br/>';
-        $installinstructions .= '3.- Set up the \'config_file_path\' param in /MOODLE-ACCEPTANCE-TEST/ROOT/PATH/behat.yml pointing to $CFG->dataroot/behat/config.yml (for example /YOUR/MOODLEDATA/PATH/behat/config.yml)<br/>';
-        $installinstructions .= '4.- Set up $CFG->behatpath in your config.php with the path of your moodle-acceptance-test installation (for example /MOODLE-ACCEPTANCE-TEST/ROOT/PATH)<br/>';
-        $html .= html_writer::tag('div', $installinstructions);
+        $html = $OUTPUT->box_start();
+        $html .= html_writer::tag('h1', 'Installation info');
+        $html .= html_writer::tag('div', 'Follow <a href="' . $url . '" target="_blank">' . $url . '</a> instructions');
         $html .= $OUTPUT->box_end();
 
         return $html;
@@ -473,24 +473,6 @@ class tool_behat {
         $html = $OUTPUT->box_start();
         $html .= '<p>' . get_string('switchenvironmentinfo', 'tool_behat') . '</p>';
         $html .= $OUTPUT->single_button($url, get_string('switchenvironment' . $perform, 'tool_behat'));
-        $html .= $OUTPUT->box_end();
-
-        return $html;
-    }
-
-    /**
-     * Returns a button to execute the build config file form
-     * @return string
-     */
-    private static function get_build_config_file_form() {
-        global $OUTPUT, $CFG;
-
-        $params = array('action' => 'buildconfigfile', 'sesskey' => sesskey());
-        $url = new moodle_url('/' . $CFG->admin . '/tool/behat/index.php', $params);
-
-        $html = $OUTPUT->box_start();
-        $html .= '<p>' . get_string('buildconfigfileinfo', 'tool_behat') . '</p>';
-        $html .= $OUTPUT->single_button($url, get_string('commandbuildconfigfile', 'tool_behat'));
         $html .= $OUTPUT->box_end();
 
         return $html;

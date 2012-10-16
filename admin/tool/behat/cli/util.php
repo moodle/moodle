@@ -51,6 +51,7 @@ Ensure the user who executes the action has permissions over behat installation
 Options:
 --stepsdefinitions   Displays the available steps definitions (accepts --filter=\"\" option to restrict the list to the matching definitions)
 --runtests           Runs the tests (accepts --tags=\"\" option to execute only the matching tests and --extra=\"\" to specify extra behat options)
+--testenvironment    Switches between the real and the test environment (accepts value 'enable' or 'disable', for example --testenvironment=\"enable\"
 
 -h, --help     Print out this help
 
@@ -89,6 +90,10 @@ switch ($action) {
 
     case 'runtests':
         tool_behat::runtests($options['tags'], $options['extra']);
+        break;
+
+    case 'testenvironment':
+        tool_behat::switchenvironment($options['testenvironment']);
         break;
 }
 

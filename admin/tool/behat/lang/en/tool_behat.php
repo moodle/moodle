@@ -23,7 +23,6 @@
  */
 
 $string['actionnotsupported'] = 'Action not supported';
-$string['buildconfigfileinfo'] = 'Update the list of available acceptance tests';
 $string['commandinfo'] = 'Info';
 $string['commandruntests'] = 'Run tests';
 $string['commandstepsdefinitions'] = 'Steps definitions list';
