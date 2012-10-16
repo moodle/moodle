@@ -29,22 +29,16 @@ require_once($CFG->dirroot . '/repository/lib.php');
  *
  * @since 2.0
  * @package    repository_local
+ * @copyright  2012 Marina Glancy
  * @copyright  2009 Dongsheng Cai {@link http://dongsheng.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class repository_local extends repository {
     /**
-     * local plugin doesn't require login, so list all files
-     * @return mixed
-     */
-    public function print_login() {
-        return $this->get_listing();
-    }
-
-    /**
      * Get file listing
      *
      * @param string $encodedpath
+     * @param string $page no paging is used in repository_local
      * @return mixed
      */
     public function get_listing($encodedpath = '', $page = '') {
@@ -53,11 +47,17 @@ class repository_local extends repository {
         $ret['dynload'] = true;
         $ret['nosearch'] = true;
         $ret['nologin'] = true;
-        $list = array();
+        $ret['list'] = array();
+
+        $itemid   = null;
+        $filename = null;
+        $filearea = null;
+        $filepath = null;
+        $component = null;
 
         if (!empty($encodedpath)) {
             $params = unserialize(base64_decode($encodedpath));
-            if (is_array($params)) {
+            if (is_array($params) && isset($params['contextid'])) {
                 $component = is_null($params['component']) ? NULL : clean_param($params['component'], PARAM_COMPONENT);
                 $filearea  = is_null($params['filearea']) ? NULL : clean_param($params['filearea'], PARAM_AREA);
                 $itemid    = is_null($params['itemid']) ? NULL : clean_param($params['itemid'], PARAM_INT);
@@ -65,52 +65,51 @@ class repository_local extends repository {
                 $filename  = is_null($params['filename']) ? NULL : clean_param($params['filename'], PARAM_FILE);
                 $context = get_context_instance_by_id(clean_param($params['contextid'], PARAM_INT));
             }
-        } else {
-            $itemid   = null;
-            $filename = null;
-            $filearea = null;
-            $filepath = null;
-            $component = null;
-            if (!empty($this->context)) {
-                list($context, $course, $cm) = get_context_info_array($this->context->id);
-                if (is_object($course)) {
-                    $context = get_context_instance(CONTEXT_COURSE, $course->id);
-                } else {
-                    $context = get_system_context();
-                }
-            } else {
-                $context = get_system_context();
-            }
+        }
+        if (empty($context) && !empty($this->context)) {
+            $context = $this->context->get_course_context(false);
+        }
+        if (empty($context)) {
+            $context = context_system::instance();
         }
 
-        $browser = get_file_browser();
-
-        $list = array();
-        if ($fileinfo = $browser->get_file_info($context, $component, $filearea, $itemid, $filepath, $filename)) {
-            // build file tree
-            $element = repository_local_file::retrieve_file_info($fileinfo, $this);
-            $nonemptychildren = $element->get_non_empty_children();
-            foreach ($nonemptychildren as $child) {
-                $list[] = (array)$child->get_node();
-            }
+        // prepare list of allowed extensions: $extensions is either string '*'
+        // or array of lowercase extensions, i.e. array('.gif','.jpg')
+        $extensions = optional_param_array('accepted_types', '', PARAM_RAW);
+        if (empty($extensions) || $extensions === '*' || (is_array($extensions) && in_array('*', $extensions))) {
+            $extensions = '*';
         } else {
+            if (!is_array($extensions)) {
+                $extensions = array($extensions);
+            }
+            $extensions = array_map('textlib::strtolower', $extensions);
+        }
+
+        // build file tree
+        $browser = get_file_browser();
+        if (!($fileinfo = $browser->get_file_info($context, $component, $filearea, $itemid, $filepath, $filename))) {
             // if file doesn't exist, build path nodes root of current context
             $fileinfo = $browser->get_file_info($context, null, null, null, null, null);
         }
+        $ret['list'] = $this->get_non_empty_children($fileinfo, $extensions);
+
         // build path navigation
+        $path = array();
+        for ($level = $fileinfo; $level; $level = $level->get_parent()) {
+            array_unshift($path, $level);
+        }
+        array_unshift($path, null);
         $ret['path'] = array();
-        $element = repository_local_file::retrieve_file_info($fileinfo, $this);
-        for ($level = $element; $level; $level = $level->get_parent()) {
-            if ($level == $element || !$level->can_skip()) {
-                array_unshift($ret['path'], $level->get_node_path());
+        for ($i=1; $i<count($path); $i++) {
+            if ($path[$i] == $fileinfo || !$this->can_skip($path[$i], $extensions, $path[$i-1])) {
+                $ret['path'][] = $this->get_node_path($path[$i]);
             }
         }
-        $ret['list'] = array_filter($list, array($this, 'filter'));
         return $ret;
     }
 
     /**
-     * Local file don't support to link to external links
+     * Tells how the file can be picked from this repository
      *
      * @return int
      */
@@ -137,111 +136,112 @@ class repository_local extends repository {
         // this should be realtime
         return 0;
     }
-}
-
-/**
- * Class to cache some information about file
- *
- * This class is a wrapper to instances of file_info. It caches such information as
- * parent and list of children. It also stores an array of already retrieved elements.
- *
- * It also implements more comprehensive algorithm for checking if folder is empty
- * (taking into account the filtering of the files). To decrease number of levels
- * we check if some subfolders can be skipped from the tree.
- *
- * As a result we display in Server files repository only non-empty folders and skip
- * filearea folders if this is the only filearea in the module.
- * For non-admin the course categories are not shown as well (courses are shown as a list)
- *
- * @package    repository_local
- * @copyright  2012 Marina Glancy
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class repository_local_file {
-    /** @var array stores already retrieved files */
-    private static $cachedfiles = array();
-    /** @var file_info Stores the original file */
-    public $fileinfo;
-    /** @var bool whether this file is directory */
-    private $isdir;
-    /** @var array caches retrieved children */
-    private $children = null;
-    /** @var array caches retrieved information whether this file is an empty directory */
-    protected $isempty = null;
-    /** @var repository link to the container repository (for filtering the results) */
-    private $repository;
-    /** @var repository_local_file link to parent directory */
-    protected $parent;
-    /** @var bool caches calculated information on whether this directory must be skipped in the tree */
-    private $skip = null;
 
     /**
-     * Creates (or retrieves from cache) the repository_local_file object for $file_info
+     * Returns all children elements that have one of the specified extensions
+     *
+     * This function may skip subfolders and recursively add their children
+     * {@link repository_local::can_skip()}
      *
      * @param file_info $fileinfo
-     * @param repository $repository
-     * @param repository_local_file $parent
-     * @return repository_local_file
+     * @param string|array $extensions, for example '*' or array('.gif','.jpg')
+     * @return array array of file_info elements
      */
-    public static function retrieve_file_info(file_info $fileinfo, repository $repository, repository_local_file $parent = null) {
-        $encodedpath = base64_encode(serialize($fileinfo->get_params()));
-        if (!isset(self::$cachedfiles[$encodedpath])) {
-            self::$cachedfiles[$encodedpath] = new repository_local_file($fileinfo, $repository, $parent);
+    private function get_non_empty_children(file_info $fileinfo, $extensions) {
+        $nonemptychildren = $fileinfo->get_non_empty_children($extensions);
+        $list = array();
+        foreach ($nonemptychildren as $child) {
+            if ($this->can_skip($child, $extensions, $fileinfo)) {
+                $list = array_merge($list, $this->get_non_empty_children($child, $extensions));
+            } else {
+                $list[] = $this->get_node($child);
+            }
         }
-        return self::$cachedfiles[$encodedpath];
+        return $list;
     }
 
     /**
-     * Creates an object
+     * Whether this folder may be skipped in folder hierarchy
+     *
+     * 1. Skip the name of a single filearea in a module
+     * 2. Skip course categories for non-admins who do not have navshowmycoursecategories setting
      *
      * @param file_info $fileinfo
-     * @param repository $repository
-     * @param repository_local_file $parent
+     * @param string|array $extensions, for example '*' or array('.gif','.jpg')
+     * @param file_info|int $parent specify parent here if we know it to avoid creating extra objects
+     * @return bool
      */
-    private function __construct(file_info $fileinfo, repository $repository, repository_local_file $parent = null) {
-        $this->repository = $repository;
-        $this->fileinfo = $fileinfo;
-        $this->isdir = $fileinfo->is_directory();
-        if (!$this->isdir) {
-            $node = array('title' => $this->fileinfo->get_visible_name());
-            $this->isempty = !$repository->filter($node);
-            $this->skip = false;
+    private function can_skip(file_info $fileinfo, $extensions, $parent = -1) {
+        global $CFG;
+        if (!$fileinfo->is_directory()) {
+            // do not skip files
+            return false;
         }
+        if ($fileinfo instanceof file_info_context_coursecat) {
+            // This is a course category. For non-admins we do not display categories
+            return empty($CFG->navshowmycoursecategories) &&
+                            !has_capability('moodle/course:update', context_system::instance());
+        } else if ($fileinfo instanceof file_info_context_course ||
+                $fileinfo instanceof file_info_context_user ||
+                $fileinfo instanceof file_info_area_course_legacy ||
+                $fileinfo instanceof file_info_context_module ||
+                $fileinfo instanceof file_info_context_system) {
+            // these instances can never be filearea inside an activity, they will never be skipped
+            return false;
+        } else {
+            $params = $fileinfo->get_params();
+            if (strlen($params['filearea']) &&
+                    ($params['filepath'] === '/' || empty($params['filepath'])) &&
+                    ($params['filename'] === '.' || empty($params['filename'])) &&
+                    context::instance_by_id($params['contextid'])->contextlevel == CONTEXT_MODULE) {
+                if ($parent === -1) {
+                    $parent = $fileinfo->get_parent();
+                }
+                // This is a filearea inside an activity, it can be skipped if it has no non-empty siblings
+                if ($parent && ($parent instanceof file_info_context_module)) {
+                    if ($parent->count_non_empty_children($extensions, 2) <= 1) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     /**
-     * Returns node for $ret['list']
+     * Converts file_info object to element of repository return list
      *
+     * @param file_info $fileinfo
      * @return array
      */
-    public function get_node() {
+    private function get_node(file_info $fileinfo) {
         global $OUTPUT;
-        $encodedpath = base64_encode(serialize($this->fileinfo->get_params()));
+        $encodedpath = base64_encode(serialize($fileinfo->get_params()));
         $node = array(
-            'title' => $this->fileinfo->get_visible_name(),
-            'datemodified' => $this->fileinfo->get_timemodified(),
-            'datecreated' => $this->fileinfo->get_timecreated()
+            'title' => $fileinfo->get_visible_name(),
+            'datemodified' => $fileinfo->get_timemodified(),
+            'datecreated' => $fileinfo->get_timecreated()
         );
-        if ($this->isdir) {
+        if ($fileinfo->is_directory()) {
             $node['path'] = $encodedpath;
             $node['thumbnail'] = $OUTPUT->pix_url(file_folder_icon(90))->out(false);
             $node['children'] = array();
         } else {
-            $node['size'] = $this->fileinfo->get_filesize();
-            $node['author'] = $this->fileinfo->get_author();
-            $node['license'] = $this->fileinfo->get_license();
-            $node['isref'] = $this->fileinfo->is_external_file();
-            if ($this->fileinfo->get_status() == 666) {
+            $node['size'] = $fileinfo->get_filesize();
+            $node['author'] = $fileinfo->get_author();
+            $node['license'] = $fileinfo->get_license();
+            $node['isref'] = $fileinfo->is_external_file();
+            if ($fileinfo->get_status() == 666) {
                 $node['originalmissing'] = true;
             }
             $node['source'] = $encodedpath;
-            $node['thumbnail'] = $OUTPUT->pix_url(file_file_icon($this->fileinfo, 90))->out(false);
-            $node['icon'] = $OUTPUT->pix_url(file_file_icon($this->fileinfo, 24))->out(false);
-            if ($imageinfo = $this->fileinfo->get_imageinfo()) {
+            $node['thumbnail'] = $OUTPUT->pix_url(file_file_icon($fileinfo, 90))->out(false);
+            $node['icon'] = $OUTPUT->pix_url(file_file_icon($fileinfo, 24))->out(false);
+            if ($imageinfo = $fileinfo->get_imageinfo()) {
                 // what a beautiful picture, isn't it
-                $fileurl = new moodle_url($this->fileinfo->get_url());
-                $node['realthumbnail'] = $fileurl->out(false, array('preview' => 'thumb', 'oid' => $this->fileinfo->get_timemodified()));
-                $node['realicon'] = $fileurl->out(false, array('preview' => 'tinyicon', 'oid' => $this->fileinfo->get_timemodified()));
+                $fileurl = new moodle_url($fileinfo->get_url());
+                $node['realthumbnail'] = $fileurl->out(false, array('preview' => 'thumb', 'oid' => $fileinfo->get_timemodified()));
+                $node['realicon'] = $fileurl->out(false, array('preview' => 'tinyicon', 'oid' => $fileinfo->get_timemodified()));
                 $node['image_width'] = $imageinfo['width'];
                 $node['image_height'] = $imageinfo['height'];
             }
@@ -250,155 +250,16 @@ class repository_local_file {
     }
 
     /**
-     * Returns node for $ret['path']
+     * Converts file_info object to element of repository return path
      *
+     * @param file_info $fileinfo
      * @return array
      */
-    public function get_node_path() {
-        $encodedpath = base64_encode(serialize($this->fileinfo->get_params()));
+    private function get_node_path(file_info $fileinfo) {
+        $encodedpath = base64_encode(serialize($fileinfo->get_params()));
         return array(
             'path' => $encodedpath,
-            'name' => $this->fileinfo->get_visible_name()
+            'name' => $fileinfo->get_visible_name()
         );
-    }
-
-    /**
-     * Checks if this is a directory
-     *
-     * @return bool
-     */
-    public function is_dir() {
-        return $this->isdir;
-    }
-
-    /**
-     * Returns children of this element
-     *
-     * @return array
-     */
-    public function get_children() {
-        if (!$this->isdir) {
-            return array();
-        }
-        if ($this->children === null) {
-            $this->children = array();
-            $children = $this->fileinfo->get_children();
-            for ($i=0; $i<count($children); $i++) {
-                $this->children[] = self::retrieve_file_info($children[$i], $this->repository, $this);
-            }
-        }
-        return $this->children;
-    }
-
-    /**
-     * Checks if this folder is empty (contains no non-empty children)
-     *
-     * @return bool
-     */
-    public function is_empty() {
-        if ($this->isempty === null) {
-            $this->isempty = true;
-            if (!$this->fileinfo->is_empty_area()) {
-                // even if is_empty_area() returns false, element still may be empty
-                $children = $this->get_children();
-                if (!empty($children)) {
-                    // 1. Let's look at already retrieved children
-                    foreach ($children as $childnode) {
-                        if ($childnode->isempty === false) {
-                            // we already calculated isempty for a child, and it is not empty
-                            $this->isempty = false;
-                            break;
-                        }
-                    }
-                    if ($this->isempty) {
-                        // 2. now we know that this directory contains children that are either empty or we don't know
-                        foreach ($children as $childnode) {
-                            if (!$childnode->is_empty()) {
-                                $this->isempty = false;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return $this->isempty;
-    }
-
-    /**
-     * Returns the parent element
-     *
-     * @return repository_local_file
-     */
-    public function get_parent() {
-        if ($this->parent === null) {
-            if ($parent = $this->fileinfo->get_parent()) {
-                $this->parent = self::retrieve_file_info($parent, $this->repository);
-            } else {
-                $this->parent = false;
-            }
-        }
-        return $this->parent;
-    }
-
-    /**
-     * Wether this folder may be skipped in tree view
-     *
-     * @return bool
-     */
-    public function can_skip() {
-        global $CFG;
-        if ($this->skip === null) {
-            $this->skip = false;
-            if ($this->fileinfo instanceof file_info_stored) {
-                $params = $this->fileinfo->get_params();
-                if (strlen($params['filearea']) && $params['filepath'] == '/' && $params['filename'] == '.') {
-                    // This is a filearea inside an activity, it can be skipped if it has no non-empty siblings
-                    if ($parent = $this->get_parent()) {
-                        $siblings = $parent->get_children();
-                        $countnonempty = 0;
-                        foreach ($siblings as $sibling) {
-                            if (!$sibling->is_empty()) {
-                                $countnonempty++;
-                                if ($countnonempty > 1) {
-                                    break;
-                                }
-                            }
-                        }
-                        if ($countnonempty <= 1) {
-                            $this->skip = true;
-                        }
-                    }
-                }
-            } else if ($this->fileinfo instanceof file_info_context_coursecat) {
-                // This is a course category. For non-admins we do not display categories
-                $this->skip = empty($CFG->navshowmycoursecategories) &&
-                        !has_capability('moodle/course:update', get_context_instance(CONTEXT_SYSTEM));
-            }
-        }
-        return $this->skip;
-    }
-
-    /**
-     * Returns array of children who have any elmenets
-     *
-     * If a subfolder can be skipped - list children of subfolder instead
-     * (recursive function)
-     *
-     * @return array
-     */
-    public function get_non_empty_children() {
-        $children = $this->get_children();
-        $nonemptychildren = array();
-        foreach ($children as $child) {
-            if (!$child->is_empty()) {
-                if ($child->can_skip()) {
-                    $nonemptychildren = array_merge($nonemptychildren, $child->get_non_empty_children());
-                } else {
-                    $nonemptychildren[] = $child;
-                }
-            }
-        }
-        return $nonemptychildren;
     }
 }
