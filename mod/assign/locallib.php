@@ -4063,7 +4063,7 @@ class assign {
      * @return void
      */
     private function process_revert_to_draft($userid = 0) {
-        global $DB;
+        global $DB, $USER;
 
         // Need grade permission
         require_capability('mod/assign:grade', $this->context);
@@ -4073,13 +4073,17 @@ class assign {
             $userid = required_param('userid', PARAM_INT);
         }
 
-        $submission = $this->get_user_submission($userid, false);
+        if ($this->get_instance()->teamsubmission) {
+            $submission = $this->get_group_submission($USER->id, 0, false);
+        } else {
+            $submission = $this->get_user_submission($USER->id, false);
+        }
 
         if (!$submission) {
             return;
         }
         $submission->status = ASSIGN_SUBMISSION_STATUS_DRAFT;
-        $this->update_submission($submission, $USER->id, true, $this->get_instance()->teamsubmission);
+        $this->update_submission($submission, $userid, true, $this->get_instance()->teamsubmission);
 
         // Update the modified time on the grade (grader modified).
         $grade = $this->get_user_grade($userid, true);
