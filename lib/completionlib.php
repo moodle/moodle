@@ -1069,7 +1069,8 @@ class completion_info {
         global $DB;
 
         list($enrolledsql, $params) = get_enrolled_sql(
-                context_course::instance($this->course->id), '', $groupid, true);
+                context_course::instance($this->course->id),
+                'moodle/course:isincompletionreports', $groupid, true);
 
         $sql = 'SELECT u.id, u.firstname, u.lastname, u.idnumber';
         if ($extracontext) {
