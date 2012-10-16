@@ -2116,7 +2116,8 @@ function userdate($date, $format = '', $timezone = 99, $fixday = true, $fixhour 
 function date_format_string($date, $format, $tz = 99) {
     global $CFG;
     if (abs($tz) > 13) {
-        if ($CFG->ostype == 'WINDOWS' and ($localewincharset = get_string('localewincharset', 'langconfig'))) {
+        if ($CFG->ostype == 'WINDOWS') {
+            $localewincharset = get_string('localewincharset', 'langconfig');
             $format = textlib::convert($format, 'utf-8', $localewincharset);
             $datestring = strftime($format, $date);
             $datestring = textlib::convert($datestring, $localewincharset, 'utf-8');
@@ -2124,7 +2125,8 @@ function date_format_string($date, $format, $tz = 99) {
             $datestring = strftime($format, $date);
         }
     } else {
-        if ($CFG->ostype == 'WINDOWS' and ($localewincharset = get_string('localewincharset', 'langconfig'))) {
+        if ($CFG->ostype == 'WINDOWS') {
+            $localewincharset = get_string('localewincharset', 'langconfig');
             $format = textlib::convert($format, 'utf-8', $localewincharset);
             $datestring = gmstrftime($format, $date);
             $datestring = textlib::convert($datestring, $localewincharset, 'utf-8');
