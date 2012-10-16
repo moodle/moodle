@@ -67,3 +67,7 @@
 #page-admin-tool-customlang-index .continuebutton {
     margin-top: 1em;
 }
+
+.path-admin-tool-customlang #translator .standard.master.cell.c2 {
+    word-break: break-all;
+}
