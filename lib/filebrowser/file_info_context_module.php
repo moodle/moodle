@@ -280,7 +280,7 @@ class file_info_context_module extends file_info {
             array('mod_'.$this->modname, 'intro'),
             array('backup', 'activity')
         );
-        foreach ($this->areas as $area=>$desctiption) {
+        foreach ($this->areas as $area => $desctiption) {
             $areas[] = array('mod_'.$this->modname, $area);
         }
 

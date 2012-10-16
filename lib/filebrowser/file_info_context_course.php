@@ -376,7 +376,7 @@ class file_info_context_course extends file_info {
             if ($child = $this->get_file_info($area[0], $area[1], 0, '/', '.')) {
                 if ($returnemptyfolders || $child->count_non_empty_children($extensions)) {
                     $children[] = $child;
-                    if (($countonly !== false) && count($children)>=$countonly) {
+                    if (($countonly !== false) && count($children) >= $countonly) {
                         return $countonly;
                     }
                 }
@@ -397,7 +397,7 @@ class file_info_context_course extends file_info {
                 if ($child = $this->browser->get_file_info($modcontext)) {
                     if ($returnemptyfolders || $child->count_non_empty_children($extensions)) {
                         $children[] = $child;
-                        if (($countonly !== false) && count($children)>=$countonly) {
+                        if (($countonly !== false) && count($children) >= $countonly) {
                             return $countonly;
                         }
                     }

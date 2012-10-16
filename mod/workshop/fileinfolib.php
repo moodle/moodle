@@ -98,7 +98,7 @@ class workshop_file_info_submissions_container extends file_info {
     }
 
     /**
-     * Help function to return files matching extensions or their count
+     * Helper function to return files matching extensions or their count
      *
      * @param string|array $extensions, either '*' or array of lowercase extensions, i.e. array('.gif','.jpg')
      * @param bool|int $countonly if false returns the children, if an int returns just the
