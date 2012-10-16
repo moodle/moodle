@@ -115,7 +115,7 @@ abstract class file_info {
                 $likes[] = $DB->sql_like($prefix.'filename', ':filename'.$cnt, false);
                 $params['filename'.$cnt] = '%'.$ext;
             }
-            $sql .= ' AND ('.join(' OR ', $likes).')';
+            $sql .= ' AND (' . join(' OR ', $likes) . ')';
         }
         return array($sql, $params);
      }
@@ -144,7 +144,7 @@ abstract class file_info {
             } else {
                 $filename = $fileinfo->get_visible_name();
                 $extension = textlib::strtolower(pathinfo($filename, PATHINFO_EXTENSION));
-                if (!empty($extension) && in_array('.'.$extension, $extensions)) {
+                if (!empty($extension) && in_array('.' . $extension, $extensions)) {
                     $nonemptylist[] = $fileinfo;
                 }
             }
@@ -178,7 +178,7 @@ abstract class file_info {
                 if ($extensions !== '*') {
                     $filename = $fileinfo->get_visible_name();
                     $extension = textlib::strtolower(pathinfo($filename, PATHINFO_EXTENSION));
-                    if (empty($extension) || !in_array('.'.$extension, $extensions)) {
+                    if (empty($extension) || !in_array('.' . $extension, $extensions)) {
                         continue;
                     }
                 }
@@ -213,12 +213,12 @@ abstract class file_info {
     public function get_params_rawencoded() {
         $params = $this->get_params();
         $encoded = array();
-        $encoded[] = 'contextid='.$params['contextid'];
-        $encoded[] = 'component='.$params['component'];
-        $encoded[] = 'filearea='.$params['filearea'];
-        $encoded[] = 'itemid='.(is_null($params['itemid']) ? -1 : $params['itemid']);
-        $encoded[] = 'filepath='.(is_null($params['filepath']) ? '' : rawurlencode($params['filepath']));
-        $encoded[] = 'filename='.((is_null($params['filename']) or $params['filename'] === '.') ? '' : rawurlencode($params['filename']));
+        $encoded[] = 'contextid=' . $params['contextid'];
+        $encoded[] = 'component=' . $params['component'];
+        $encoded[] = 'filearea=' . $params['filearea'];
+        $encoded[] = 'itemid=' . (is_null($params['itemid']) ? -1 : $params['itemid']);
+        $encoded[] = 'filepath=' . (is_null($params['filepath']) ? '' : rawurlencode($params['filepath']));
+        $encoded[] = 'filename=' . ((is_null($params['filename']) or $params['filename'] === '.') ? '' : rawurlencode($params['filename']));
 
         return $encoded;
     }
