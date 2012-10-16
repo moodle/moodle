@@ -118,7 +118,6 @@ class question_preview_options extends question_display_options {
      * Constructor.
      */
     public function __construct($question) {
-        global $CFG;
         $this->behaviour = 'deferredfeedback';
         $this->maxmark = $question->defaultmark;
         $this->variant = null;
@@ -164,9 +163,10 @@ class question_preview_options extends question_display_options {
      * Load the value of the options from the user_preferences table.
      */
     public function load_user_defaults() {
+        $defaults = get_config('question_preview');
         foreach ($this->get_user_pref_fields() as $field) {
             $this->$field = get_user_preferences(
-                    self::OPTIONPREFIX . $field, $this->$field);
+                    self::OPTIONPREFIX . $field, $defaults->$field);
         }
         $this->numpartscorrect = $this->feedback;
     }
