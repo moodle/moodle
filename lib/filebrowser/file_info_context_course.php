@@ -350,46 +350,88 @@ class file_info_context_course extends file_info {
      * @return array of file_info instances
      */
     public function get_children() {
-        $children = array();
+        return $this->get_filtered_children('*', false, true);
+    }
 
-        if ($child = $this->get_area_course_summary(0, '/', '.')) {
-            $children[] = $child;
-        }
-        if ($child = $this->get_area_course_section(null, null, null)) {
-            $children[] = $child;
-        }
-        if ($child = $this->get_area_backup_section(null, null, null)) {
-            $children[] = $child;
-        }
-        if ($child = $this->get_area_backup_course(0, '/', '.')) {
-            $children[] = $child;
-        }
-        if ($child = $this->get_area_backup_automated(0, '/', '.')) {
-            $children[] = $child;
-        }
-        if ($child = $this->get_area_course_legacy(0, '/', '.')) {
-            $children[] = $child;
+    /**
+     * Help function to return files matching extensions or their count
+     *
+     * @param string|array $extensions, either '*' or array of lowercase extensions, i.e. array('.gif','.jpg')
+     * @param bool|int $countonly if false returns the children, if an int returns just the
+     *    count of children but stops counting when $countonly number of children is reached
+     * @param bool $returnemptyfolders if true returns items that don't have matching files inside
+     * @return array|int array of file_info instances or the count
+     */
+    private function get_filtered_children($extensions = '*', $countonly = false, $returnemptyfolders = false) {
+        $areas = array(
+            array('course', 'summary'),
+            array('course', 'section'),
+            array('backup', 'section'),
+            array('backup', 'course'),
+            array('backup', 'automated'),
+            array('course', 'legacy')
+        );
+        $children = array();
+        foreach ($areas as $area) {
+            if ($child = $this->get_file_info($area[0], $area[1], 0, '/', '.')) {
+                if ($returnemptyfolders || $child->count_non_empty_children($extensions)) {
+                    $children[] = $child;
+                    if (($countonly !== false) && count($children)>=$countonly) {
+                        return $countonly;
+                    }
+                }
+            }
         }
 
         if (!has_capability('moodle/course:managefiles', $this->context)) {
             // 'managefiles' capability is checked in every activity module callback.
             // Don't even waste time on retrieving the modules if we can't browse the files anyway
-            return $children;
+        } else {
+            // now list all modules
+            $modinfo = get_fast_modinfo($this->course);
+            foreach ($modinfo->cms as $cminfo) {
+                if (empty($cminfo->uservisible)) {
+                    continue;
+                }
+                $modcontext = context_module::instance($cminfo->id, IGNORE_MISSING);
+                if ($child = $this->browser->get_file_info($modcontext)) {
+                    if ($returnemptyfolders || $child->count_non_empty_children($extensions)) {
+                        $children[] = $child;
+                        if (($countonly !== false) && count($children)>=$countonly) {
+                            return $countonly;
+                        }
+                    }
+                }
+            }
         }
 
-        // now list all modules
-        $modinfo = get_fast_modinfo($this->course);
-        foreach ($modinfo->cms as $cminfo) {
-            if (empty($cminfo->uservisible)) {
-                continue;
-            }
-            $modcontext = context_module::instance($cminfo->id, IGNORE_MISSING);
-            if ($child = $this->browser->get_file_info($modcontext)) {
-                $children[] = $child;
-            }
+        if ($countonly !== false) {
+            return count($children);
         }
-
         return $children;
+    }
+
+    /**
+     * Returns list of children which are either files matching the specified extensions
+     * or folders that contain at least one such file.
+     *
+     * @param string|array $extensions, either '*' or array of lowercase extensions, i.e. array('.gif','.jpg')
+     * @return array of file_info instances
+     */
+    public function get_non_empty_children($extensions = '*') {
+        return $this->get_filtered_children($extensions, false);
+    }
+
+    /**
+     * Returns the number of children which are either files matching the specified extensions
+     * or folders containing at least one such file.
+     *
+     * @param string|array $extensions, for example '*' or array('.gif','.jpg')
+     * @param int $limit stop counting after at least $limit non-empty children are found
+     * @return int
+     */
+    public function count_non_empty_children($extensions = '*', $limit = 1) {
+        return $this->get_filtered_children($extensions, $limit);
     }
 
     /**
@@ -469,6 +511,37 @@ class file_info_area_course_legacy extends file_info_stored {
         $storedfiles = $fs->get_directory_files($this->context->id, 'course', 'legacy', 0, $this->lf->get_filepath(), false, true, "filepath ASC, filename ASC");
         foreach ($storedfiles as $file) {
             $result[] = new file_info_area_course_legacy($this->browser, $this->context, $file);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Returns list of children which are either files matching the specified extensions
+     * or folders that contain at least one such file.
+     *
+     * @param string|array $extensions, either '*' or array of lowercase extensions, i.e. array('.gif','.jpg')
+     * @return array of file_info instances
+     */
+    public function get_non_empty_children($extensions = '*') {
+        if (!$this->lf->is_directory()) {
+            return array();
+        }
+
+        $result = array();
+        $fs = get_file_storage();
+
+        $storedfiles = $fs->get_directory_files($this->context->id, 'course', 'legacy', 0,
+                                                $this->lf->get_filepath(), false, true, "filepath, filename");
+        foreach ($storedfiles as $file) {
+            $extension = textlib::strtolower(pathinfo($file->get_filename(), PATHINFO_EXTENSION));
+            if ($file->is_directory() || $extensions === '*' || (!empty($extension) && in_array('.'.$extension, $extensions))) {
+                $fileinfo = new file_info_area_course_legacy($this->browser, $this->context, $file, $this->urlbase, $this->topvisiblename,
+                                                 $this->itemidused, $this->readaccess, $this->writeaccess, false);
+                if (!$file->is_directory() || $fileinfo->count_non_empty_children($extensions)) {
+                    $result[] = $fileinfo;
+                }
+            }
         }
 
         return $result;
@@ -576,6 +649,41 @@ class file_info_area_course_section extends file_info {
         }
 
         return $children;
+    }
+
+    /**
+     * Returns the number of children which are either files matching the specified extensions
+     * or folders containing at least one such file.
+     *
+     * @param string|array $extensions, for example '*' or array('.gif','.jpg')
+     * @param int $limit stop counting after at least $limit non-empty children are found
+     * @return int
+     */
+    public function count_non_empty_children($extensions = '*', $limit = 1) {
+        global $DB;
+        $params1 = array(
+            'courseid' => $this->course->id,
+            'contextid' => $this->context->id,
+            'component' => 'course',
+            'filearea' => 'section',
+            'emptyfilename' => '.');
+        $sql1 = "SELECT DISTINCT cs.id FROM {files} f, {course_sections} cs
+            WHERE cs.course = :courseid
+            AND f.contextid = :contextid
+            AND f.component = :component
+            AND f.filearea = :filearea
+            AND f.itemid = cs.id
+            AND f.filename <> :emptyfilename";
+        list($sql2, $params2) = $this->build_search_files_sql($extensions);
+        $rs = $DB->get_recordset_sql($sql1. ' '. $sql2, array_merge($params1, $params2));
+        $cnt = 0;
+        foreach ($rs as $record) {
+            if ((++$cnt) >= $limit) {
+                break;
+            }
+        }
+        $rs->close();
+        return $cnt;
     }
 
     /**
@@ -687,6 +795,41 @@ class file_info_area_backup_section extends file_info {
         }
 
         return $children;
+    }
+
+    /**
+     * Returns the number of children which are either files matching the specified extensions
+     * or folders containing at least one such file.
+     *
+     * @param string|array $extensions, for example '*' or array('.gif','.jpg')
+     * @param int $limit stop counting after at least $limit non-empty children are found
+     * @return int
+     */
+    public function count_non_empty_children($extensions = '*', $limit = 1) {
+        global $DB;
+        $params1 = array(
+            'courseid' => $this->course->id,
+            'contextid' => $this->context->id,
+            'component' => 'backup',
+            'filearea' => 'section',
+            'emptyfilename' => '.');
+        $sql1 = "SELECT DISTINCT cs.id sectionid FROM {files} f, {course_sections} cs
+            WHERE cs.course = :courseid
+            AND f.contextid = :contextid
+            AND f.component = :component
+            AND f.filearea = :filearea
+            AND f.itemid = cs.id
+            AND f.filename <> :emptyfilename";
+        list($sql2, $params2) = $this->build_search_files_sql($extensions);
+        $rs = $DB->get_recordset_sql($sql1. ' '. $sql2, array_merge($params1, $params2));
+        $cnt = 0;
+        foreach ($rs as $record) {
+            if ((++$cnt) >= $limit) {
+                break;
+            }
+        }
+        $rs->close();
+        return $cnt;
     }
 
     /**

@@ -41,6 +41,8 @@ class file_info_context_module extends file_info {
     protected $modname;
     /** @var array Available file areas */
     protected $areas;
+    /** @var array caches the result of last call to get_non_empty_children() */
+    protected $nonemptychildren;
 
     /**
      * Constructor
@@ -58,6 +60,7 @@ class file_info_context_module extends file_info {
         $this->course  = $course;
         $this->cm      = $cm;
         $this->modname = $modname;
+        $this->nonemptychildren = null;
 
         include_once("$CFG->dirroot/mod/$modname/lib.php");
 
@@ -258,22 +261,89 @@ class file_info_context_module extends file_info {
      * @return array of file_info instances
      */
     public function get_children() {
-        $children = array();
+        return $this->get_filtered_children('*', false, true);
+    }
 
-        if ($child = $this->get_area_backup(0, '/', '.')) {
-            $children[] = $child;
-        }
-        if ($child = $this->get_area_intro(0, '/', '.')) {
-            $children[] = $child;
-        }
-
+    /**
+     * Help function to return files matching extensions or their count
+     *
+     * @param string|array $extensions, either '*' or array of lowercase extensions, i.e. array('.gif','.jpg')
+     * @param bool|int $countonly if false returns the children, if an int returns just the
+     *    count of children but stops counting when $countonly number of children is reached
+     * @param bool $returnemptyfolders if true returns items that don't have matching files inside
+     * @return array|int array of file_info instances or the count
+     */
+    private function get_filtered_children($extensions = '*', $countonly = false, $returnemptyfolders = false) {
+        global $DB;
+        // prepare list of areas including intro and backup
+        $areas = array(
+            array('mod_'.$this->modname, 'intro'),
+            array('backup', 'activity')
+        );
         foreach ($this->areas as $area=>$desctiption) {
-            if ($child = $this->get_file_info('mod_'.$this->modname, $area, null, null, null)) {
-                $children[] = $child;
+            $areas[] = array('mod_'.$this->modname, $area);
+        }
+
+        $params1 = array('contextid' => $this->context->id, 'emptyfilename' => '.');
+        list($sql2, $params2) = $this->build_search_files_sql($extensions);
+        $children = array();
+        foreach ($areas as $area) {
+            if (!$returnemptyfolders) {
+                // fast pre-check if there are any files in the filearea
+                $params1['component'] = $area[0];
+                $params1['filearea'] = $area[1];
+                if (!$DB->record_exists_sql('SELECT 1 from {files}
+                        WHERE contextid = :contextid
+                        AND filename <> :emptyfilename
+                        AND component = :component
+                        AND filearea = :filearea '.$sql2,
+                        array_merge($params1, $params2))) {
+                    continue;
+                }
+            }
+            if ($child = $this->get_file_info($area[0], $area[1], null, null, null)) {
+                if ($returnemptyfolders || $child->count_non_empty_children($extensions)) {
+                    $children[] = $child;
+                    if ($countonly !== false && count($children) >= $countonly) {
+                        break;
+                    }
+                }
             }
         }
-
+        if ($countonly !== false) {
+            return count($children);
+        }
         return $children;
+    }
+
+    /**
+     * Returns list of children which are either files matching the specified extensions
+     * or folders that contain at least one such file.
+     *
+     * @param string|array $extensions either '*' or array of lowercase extensions, i.e. array('.gif','.jpg')
+     * @return array of file_info instances
+     */
+    public function get_non_empty_children($extensions = '*') {
+        if ($this->nonemptychildren !== null) {
+            return $this->nonemptychildren;
+        }
+        $this->nonemptychildren = $this->get_filtered_children($extensions);
+        return $this->nonemptychildren;
+    }
+
+    /**
+     * Returns the number of children which are either files matching the specified extensions
+     * or folders containing at least one such file.
+     *
+     * @param string|array $extensions for example '*' or array('.gif','.jpg')
+     * @param int $limit stop counting after at least $limit non-empty children are found
+     * @return int
+     */
+    public function count_non_empty_children($extensions = '*', $limit = 1) {
+        if ($this->nonemptychildren !== null) {
+            return count($this->nonemptychildren);
+        }
+        return $this->get_filtered_children($extensions, $limit);
     }
 
     /**

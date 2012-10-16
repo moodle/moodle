@@ -546,28 +546,84 @@ class glossary_file_info_container extends file_info {
      * @return array of file_info instances
      */
     public function get_children() {
-        global $DB;
+        return $this->get_filtered_children('*', false, true);
+    }
 
-        $sql = "SELECT DISTINCT f.itemid, ge.concept
+    /**
+     * Help function to return files matching extensions or their count
+     *
+     * @param string|array $extensions, either '*' or array of lowercase extensions, i.e. array('.gif','.jpg')
+     * @param bool|int $countonly if false returns the children, if an int returns just the
+     *    count of children but stops counting when $countonly number of children is reached
+     * @param bool $returnemptyfolders if true returns items that don't have matching files inside
+     * @return array|int array of file_info instances or the count
+     */
+    private function get_filtered_children($extensions = '*', $countonly = false, $returnemptyfolders = false) {
+        global $DB;
+        $sql = 'SELECT DISTINCT f.itemid, ge.concept
                   FROM {files} f
-                  JOIN {modules} m ON (m.name = 'glossary' AND m.visible = 1)
-                  JOIN {course_modules} cm ON (cm.module = m.id AND cm.id = ?)
+                  JOIN {modules} m ON (m.name = :modulename AND m.visible = 1)
+                  JOIN {course_modules} cm ON (cm.module = m.id AND cm.id = :instanceid)
                   JOIN {glossary} g ON g.id = cm.instance
                   JOIN {glossary_entries} ge ON (ge.glossaryid = g.id AND ge.id = f.itemid)
-                 WHERE f.contextid = ? AND f.component = ? AND f.filearea = ?
-              ORDER BY ge.concept, f.itemid";
-        $params = array($this->context->instanceid, $this->context->id, $this->component, $this->filearea);
+                 WHERE f.contextid = :contextid
+                  AND f.component = :component
+                  AND f.filearea = :filearea';
+        $params = array(
+            'modulename' => 'glossary',
+            'instanceid' => $this->context->instanceid,
+            'contextid' => $this->context->id,
+            'component' => $this->component,
+            'filearea' => $this->filearea);
+        if (!$returnemptyfolders) {
+            $sql .= ' AND f.filename <> :emptyfilename';
+            $params['emptyfilename'] = '.';
+        }
+        list($sql2, $params2) = $this->build_search_files_sql($extensions, 'f');
+        $sql .= ' '.$sql2;
+        $params = array_merge($params, $params2);
+        if ($countonly !== false) {
+            $sql .= ' ORDER BY ge.concept, f.itemid';
+        }
 
         $rs = $DB->get_recordset_sql($sql, $params);
         $children = array();
-        foreach ($rs as $file) {
-            if ($child = $this->browser->get_file_info($this->context, 'mod_glossary', $this->filearea, $file->itemid)) {
+        foreach ($rs as $record) {
+            if ($child = $this->browser->get_file_info($this->context, 'mod_glossary', $this->filearea, $record->itemid)) {
                 $children[] = $child;
+            }
+            if ($countonly !== false && count($children) >= $countonly) {
+                break;
             }
         }
         $rs->close();
-
+        if ($countonly !== false) {
+            return count($children);
+        }
         return $children;
+    }
+
+    /**
+     * Returns list of children which are either files matching the specified extensions
+     * or folders that contain at least one such file.
+     *
+     * @param string|array $extensions, either '*' or array of lowercase extensions, i.e. array('.gif','.jpg')
+     * @return array of file_info instances
+     */
+    public function get_non_empty_children($extensions = '*') {
+        return $this->get_filtered_children($extensions, false);
+    }
+
+    /**
+     * Returns the number of children which are either files matching the specified extensions
+     * or folders containing at least one such file.
+     *
+     * @param string|array $extensions, for example '*' or array('.gif','.jpg')
+     * @param int $limit stop counting after at least $limit non-empty children are found
+     * @return int
+     */
+    public function count_non_empty_children($extensions = '*', $limit = 1) {
+        return $this->get_filtered_children($extensions, $limit);
     }
 
     /**
