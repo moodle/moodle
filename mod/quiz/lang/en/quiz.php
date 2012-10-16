@@ -165,6 +165,7 @@ $string['configintro'] = 'The values you set here define the default values that
 $string['configmaximumgrade'] = 'The default grade that the quiz grade is scaled to be out of.';
 $string['confignewpageevery'] = 'When adding questions to the quiz page breaks will automatically be inserted according to the setting you choose here.';
 $string['confignavmethod'] = 'In Free navigation, questions may be answered in any order using navigation. In Sequential, questions must be answered in strict sequence.';
+$string['configoutcomesadvanced'] = 'If this option is turned on, then the Outcomes on the quiz editing form are advanced settings.';
 $string['configpenaltyscheme'] = 'Penalty subtracted for each wrong response in adaptive mode.';
 $string['configpopup'] = 'Force the attempt to open in a popup window, and use JavaScript tricks to try to restrict copy and paste, etc. during quiz attempts.';
 $string['configrequirepassword'] = 'Students must enter this password before they can attempt the quiz.';
@@ -517,6 +518,7 @@ To add page breaks after particular questions, tick the checkboxes next to the q
 To arrange the questions over a number of pages, click the Repaginate button and select the desired number of questions per page.';
 $string['orderingquiz'] = 'Order and paging';
 $string['orderingquizx'] = 'Order and paging: {$a}';
+$string['outcomesadvanced'] = 'Outcomes are advanced settings';
 $string['outof'] = '{$a->grade} out of a maximum of {$a->maxgrade}';
 $string['outofpercent'] = '{$a->grade} out of a maximum of {$a->maxgrade} ({$a->percent}%)';
 $string['outofshort'] = '{$a->grade}/{$a->maxgrade}';
