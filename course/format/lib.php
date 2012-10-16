@@ -446,9 +446,12 @@ abstract class format_base {
      * course edit form, it may even make sence to use special prefix for them.
      *
      * Each option must have the option name as a key and the array of properties as a value:
-     * 'default' - default value for this option
-     * 'label' - localised human-readable label for the edit form
+     * 'default' - default value for this option (assumed null if not specified)
      * 'type' - type of the option value (PARAM_INT, PARAM_RAW, etc.)
+     *
+     * Additional properties used by default implementation of
+     * {@link format_base::create_edit_form_elements()} (calls this method with $foreditform = true)
+     * 'label' - localised human-readable label for the edit form
      * 'element_type' - type of the form element, default 'text'
      * 'element_attributes' - additional attributes for the form element, these are 4th and further
      *    arguments in the moodleform::addElement() method
@@ -457,12 +460,15 @@ abstract class format_base {
      * 'help_component' - language component to look for help string, by default this the component
      *    for this course format
      *
-     * Note that all properties except 'default' and 'type' are used only in
-     * {@link format_base::create_edit_form_elements()}, which calls this function with the
-     * argument $foreditform = true
-     *
      * This is an interface for creating simple form elements. If format plugin wants to use other
      * methods such as disableIf, it can be done by overriding create_edit_form_elements().
+     *
+     * Course format options can be accessed as:
+     * $this->get_course()->OPTIONNAME (inside the format class)
+     * course_get_format($course)->get_course()->OPTIONNAME (outside of format class)
+     *
+     * All course options are returned by calling:
+     * $this->get_format_options();
      *
      * @param bool $foreditform
      * @return array of options
@@ -481,6 +487,18 @@ abstract class format_base {
      * is recommended to be set only for fields used in {@link format_base::get_section_name()},
      * {@link format_base::extend_course_navigation()} and {@link format_base::get_view_url()}
      *
+     * For better performance cached options are recommended to have 'cachedefault' property
+     * Unlike 'default', 'cachedefault' should be static and not access get_config().
+     *
+     * Regardless of value of 'cache' all options are accessed in the code as
+     * $sectioninfo->OPTIONNAME
+     * where $sectioninfo is instance of section_info, returned by
+     * get_fast_modinfo($course)->get_section_info($sectionnum)
+     * or get_fast_modinfo($course)->get_section_info_all()
+     *
+     * All format options for particular section are returned by calling:
+     * $this->get_format_options($section);
+     *
      * @param bool $foreditform
      * @return array
      */
@@ -490,6 +508,10 @@ abstract class format_base {
 
     /**
      * Returns the format options stored for this course or course section
+     *
+     * When overriding please note that this function is called from rebuild_course_cache()
+     * and section_info object, therefore using of get_fast_modinfo() and/or any function that
+     * accesses it may lead to recursion.
      *
      * @param null|int|stdClass|section_info $section if null the course format options will be returned
      *     otherwise options for specified section will be returned. This can be either
@@ -513,7 +535,9 @@ abstract class format_base {
         } else if ($this->courseid && isset($section->id)) {
             // course section format options will be returned
             $sectionid = $section->id;
-        } else if ($this->courseid && is_int($section) && ($sectionobj = $this->get_section($section))) {
+        } else if ($this->courseid && is_int($section) &&
+                ($sectionobj = $DB->get_record('course_sections',
+                        array('section' => $section, 'courseid' => $this->courseid), 'id'))) {
             // course section format options will be returned
             $sectionid = $sectionobj->id;
         } else {

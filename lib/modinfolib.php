@@ -364,8 +364,18 @@ class course_modinfo extends stdClass {
                 'availablefrom, availableuntil, showavailability, groupingid');
         $compressedsections = array();
 
+        $formatoptionsdef = course_get_format($courseid)->section_format_options();
         // Remove unnecessary data and add availability
         foreach ($sections as $number => $section) {
+            // Add cached options from course format to $section object
+            foreach ($formatoptionsdef as $key => $option) {
+                if (!empty($option['cache'])) {
+                    $formatoptions = course_get_format($courseid)->get_format_options($section);
+                    if (!array_key_exists('cachedefault', $option) || $option['cachedefault'] !== $formatoptions[$key]) {
+                        $section->$key = $formatoptions[$key];
+                    }
+                }
+            }
             // Clone just in case it is reused elsewhere
             $compressedsections[$number] = clone($section);
             section_info::convert_for_section_cache($compressedsections[$number]);
@@ -1569,6 +1579,13 @@ class section_info implements IteratorAggregate {
     );
 
     /**
+     * Stores format options that have been cached when building 'coursecache'
+     * When the format option is requested we look first if it has been cached
+     * @var array
+     */
+    private $cachedformatoptions = array();
+
+    /**
      * Constructs object from database information plus extra required data.
      * @param object $data Array entry from cached sectioncache
      * @param int $number Section number (array key)
@@ -1594,6 +1611,18 @@ class section_info implements IteratorAggregate {
                 $this->{'_'.$field} = $data->{$field};
             } else {
                 $this->{'_'.$field} = $value;
+            }
+        }
+
+        // cached course format data
+        $formatoptionsdef = course_get_format($courseid)->section_format_options();
+        foreach ($formatoptionsdef as $field => $option) {
+            if (!empty($option['cache'])) {
+                if (isset($data->{$field})) {
+                    $this->cachedformatoptions[$field] = $data->{$field};
+                } else if (array_key_exists('cachedefault', $option)) {
+                    $this->cachedformatoptions[$field] = $option['cachedefault'];
+                }
             }
         }
 
@@ -1674,6 +1703,9 @@ class section_info implements IteratorAggregate {
     public function __get($name) {
         if (property_exists($this, '_'.$name)) {
             return $this->{'_'.$name};
+        }
+        if (array_key_exists($name, $this->cachedformatoptions)) {
+            return $this->cachedformatoptions[$name];
         }
         $defaultformatoptions = course_get_format($this->_course)->section_format_options();
         // precheck if the option is defined in format to avoid unnecessary DB queries in get_format_options()
