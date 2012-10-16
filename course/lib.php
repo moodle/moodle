@@ -1766,6 +1766,9 @@ function print_section_add_menus($course, $section, $modnames = null, $vertical=
 
     $straddactivity = get_string('addactivity');
     $straddresource = get_string('addresource');
+    $sectionname = get_section_name($course, $section);
+    $strresourcelabel = get_string('addresourcetosection', null, $sectionname);
+    $stractivitylabel = get_string('addactivitytosection', null, $sectionname);
 
     $output = html_writer::start_tag('div', array('class' => 'section_add_menus', 'id' => 'add_menus-section-' . $section));
 
@@ -1776,12 +1779,14 @@ function print_section_add_menus($course, $section, $modnames = null, $vertical=
     if (!empty($resources)) {
         $select = new url_select($resources, '', array(''=>$straddresource), "ressection$section");
         $select->set_help_icon('resources');
+        $select->set_label($strresourcelabel, array('class' => 'accesshide'));
         $output .= $OUTPUT->render($select);
     }
 
     if (!empty($activities)) {
         $select = new url_select($activities, '', array(''=>$straddactivity), "section$section");
         $select->set_help_icon('activities');
+        $select->set_label($stractivitylabel, array('class' => 'accesshide'));
         $output .= $OUTPUT->render($select);
     }
 
