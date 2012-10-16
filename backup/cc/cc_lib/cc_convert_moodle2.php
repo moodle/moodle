@@ -83,14 +83,15 @@ abstract class cc_convert_moodle2 {
                 $coursef = new XMLGenericDocument();
                 $course_file = $dir . DIRECTORY_SEPARATOR .'course' . DIRECTORY_SEPARATOR . 'course.xml';
                 $coursef->load($course_file);
-                $numsections = (int)$coursef->nodeValue('/course/numsections');
+                //$numsections = (int)$coursef->nodeValue('/course/numsections');
+                // TODO MDL-35781, this is commented because numsections is now optional attribute
                 $section_list = $docp->nodeList('/moodle_backup/information/contents/sections/section');
                 if (!empty($section_list)) {
                     $count = 0;
                     foreach ($section_list as $node) {
-                        if ($count > $numsections) {
-                            break;
-                        }
+                        //if ($count > $numsections) {
+                        //    break;
+                        //}
                         $sectionid    = $docp->nodeValue('sectionid', $node);
                         $sectiontitle = $docp->nodeValue('title'    , $node);
                         $sectionpath  = $docp->nodeValue('directory', $node);
