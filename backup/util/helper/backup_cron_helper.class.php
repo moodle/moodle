@@ -69,6 +69,7 @@ abstract class backup_cron_automated_helper {
         $status = true;
         $emailpending = false;
         $now = time();
+        $config = get_config('backup');
 
         mtrace("Checking automated backup status",'...');
         $state = backup_cron_automated_helper::get_automated_backup_state($rundirective);
@@ -125,40 +126,69 @@ abstract class backup_cron_automated_helper {
                     $backupcourse = $DB->get_record('backup_courses', array('courseid'=>$course->id));
                 }
 
-                // Skip courses that do not yet need backup
+                // The last backup is considered as successful when OK or SKIPPED.
+                $lastbackupwassuccessful =  ($backupcourse->laststatus == self::BACKUP_STATUS_SKIPPED ||
+                                            $backupcourse->laststatus == self::BACKUP_STATUS_OK) && (
+                                            $backupcourse->laststarttime > 0 && $backupcourse->lastendtime > 0);
+
+                // Skip courses that do not yet need backup.
                 $skipped = !(($backupcourse->nextstarttime > 0 && $backupcourse->nextstarttime < $now) || $rundirective == self::RUN_IMMEDIATELY);
-                if ($skipped && $backupcourse->nextstarttime != $nextstarttime) {
-                    $backupcourse->nextstarttime = $nextstarttime;
-                    $backupcourse->laststatus = backup_cron_automated_helper::BACKUP_STATUS_SKIPPED;
-                    $DB->update_record('backup_courses', $backupcourse);
-                    mtrace('Backup of \'' . $course->fullname . '\' is scheduled on ' . $showtime);
+                $skippedmessage = 'Does not require backup';
+
+                // If config backup_auto_skip_hidden is set to true, skip courses that are not visible.
+                if (!$skipped && $config->backup_auto_skip_hidden) {
+                    $skipped = ($config->backup_auto_skip_hidden && !$course->visible);
+                    $skippedmessage = 'Not visible';
                 }
 
-                // Skip backup of unavailable courses that have remained unmodified in a month
-                if (!$skipped && empty($course->visible) && ($now - $course->timemodified) > 31*24*60*60) {  //Hidden + settings were unmodified last month
-                    //Check log if there were any modifications to the course content
-                    $sqlwhere = "course=:courseid AND time>:time AND ". $DB->sql_like('action', ':action', false, true, true);
-                    $params = array('courseid' => $course->id, 'time' => $now-31*24*60*60, 'action' => '%view%');
+                // If config backup_auto_skip_modif_days is set to true, skip courses
+                // that have not been modified since the number of days defined.
+                if (!$skipped && $lastbackupwassuccessful && $config->backup_auto_skip_modif_days) {
+                    $sqlwhere = "course=:courseid AND time>:time AND ".$DB->sql_like('action', ':action', false, true, true);
+                    $timenotmodifsincedays = $now - ($config->backup_auto_skip_modif_days * DAYSECS);
+                    // Check log if there were any modifications to the course content.
+                    $params = array('courseid' => $course->id,
+                                    'time' => $timenotmodifsincedays,
+                                    'action' => '%view%');
                     $logexists = $DB->record_exists_select('log', $sqlwhere, $params);
-                    if (!$logexists) {
-                        $backupcourse->laststatus = self::BACKUP_STATUS_SKIPPED;
-                        $backupcourse->nextstarttime = $nextstarttime;
-                        $DB->update_record('backup_courses', $backupcourse);
-                        mtrace('Skipping unchanged course '.$course->fullname);
-                        $skipped = true;
-                    }
+
+                    $skipped = ($course->timemodified <= $timenotmodifsincedays && !$logexists);
+                    $skippedmessage = 'Not modified in the past '.$config->backup_auto_skip_modif_days.' days';
                 }
 
-                //Now we backup every non-skipped course
-                if (!$skipped) {
+                // If config backup_auto_skip_modif_prev is set to true, skip courses
+                // that have not been modified since previous backup.
+                if (!$skipped && $lastbackupwassuccessful && $config->backup_auto_skip_modif_prev) {
+                    // Check log if there were any modifications to the course content.
+                    $params = array('courseid' => $course->id,
+                                    'time' => $backupcourse->laststarttime,
+                                    'action' => '%view%');
+                    $logexists = $DB->record_exists_select('log', $sqlwhere, $params);
+
+                    $skipped = ($course->timemodified <= $backupcourse->laststarttime && !$logexists);
+                    $skippedmessage = 'Not modified since previous backup';
+                }
+
+                // Skip courses not needed for backup.
+                if ($skipped) {
+                    // Output the next execution time when it has been updated.
+                    if ($backupcourse->nextstarttime != $nextstarttime) {
+                        mtrace('Backup of \'' . $course->fullname . '\' is scheduled on ' . $showtime);
+                    }
+                    $backupcourse->laststatus = self::BACKUP_STATUS_SKIPPED;
+                    $backupcourse->nextstarttime = $nextstarttime;
+                    $DB->update_record('backup_courses', $backupcourse);
+                    mtrace('Skipping '.$course->fullname.' ('.$skippedmessage.')');
+                } else {
+                    // Backup every non-skipped courses.
                     mtrace('Backing up '.$course->fullname.'...');
 
-                    //We have to send a email because we have included at least one backup
+                    // We have to send an email because we have included at least one backup.
                     $emailpending = true;
 
-                    //Only make the backup if laststatus isn't 2-UNFINISHED (uncontrolled error)
-                    if ($backupcourse->laststatus != 2) {
-                        //Set laststarttime
+                    // Only make the backup if laststatus isn't 2-UNFINISHED (uncontrolled error).
+                    if ($backupcourse->laststatus != self::BACKUP_STATUS_UNFINISHED) {
+                        // Set laststarttime.
                         $starttime = time();
 
                         $backupcourse->laststarttime = time();
