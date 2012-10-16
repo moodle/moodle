@@ -90,6 +90,8 @@ class csv_import_reader {
         $content = textlib::trim_utf8_bom($content);
         // Fix mac/dos newlines
         $content = preg_replace('!\r\n?!', "\n", $content);
+        // Remove any spaces or new lines at the end of the file.
+        $content = trim($content);
 
         $csv_delimiter = csv_import_reader::get_delimiter($delimiter_name);
         // $csv_encode    = csv_import_reader::get_encoded_delimiter($delimiter_name);
