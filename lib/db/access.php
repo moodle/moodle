@@ -979,6 +979,14 @@ $capabilities = array(
         )
     ),
 
+    'moodle/course:isincompletionreports' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'student' => CAP_ALLOW,
+        ),
+    ),
+
     'moodle/course:viewscales' => array(
 
         'captype' => 'read',
