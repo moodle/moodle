@@ -2018,59 +2018,56 @@ abstract class repository {
     public function get_listing($path = '', $page = '') {
     }
 
-    /**
-     * Prepares list of files before passing it to AJAX, makes sure data is in the correct
-     * format and stores formatted values.
-     *
-     * @param array|stdClass $listing result of get_listing() or search() or file_get_drafarea_files()
-     * @return array
-     */
-    public static function prepare_listing($listing) {
-        global $OUTPUT;
 
-        $defaultfoldericon = $OUTPUT->pix_url(file_folder_icon(24))->out(false);
-        // prepare $listing['path'] or $listing->path
-        if (is_array($listing) && isset($listing['path']) && is_array($listing['path'])) {
-            $path = &$listing['path'];
-        } else if (is_object($listing) && isset($listing->path) && is_array($listing->path)) {
-            $path = &$listing->path;
-        }
-        if (isset($path)) {
-            $len = count($path);
-            for ($i=0; $i<$len; $i++) {
-                if (is_array($path[$i]) && !isset($path[$i]['icon'])) {
-                    $path[$i]['icon'] = $defaultfoldericon;
-                } else if (is_object($path[$i]) && !isset($path[$i]->icon)) {
-                    $path[$i]->icon = $defaultfoldericon;
-                }
+    /**
+     * Prepare the breadcrumb.
+     *
+     * @param array $breadcrumb contains each element of the breadcrumb.
+     * @return array of breadcrumb elements.
+     * @since 2.3.3
+     */
+    protected static function prepare_breadcrumb($breadcrumb) {
+        global $OUTPUT;
+        $foldericon = $OUTPUT->pix_url(file_folder_icon(24))->out(false);
+        $len = count($breadcrumb);
+        for ($i = 0; $i < $len; $i++) {
+            if (is_array($breadcrumb[$i]) && !isset($breadcrumb[$i]['icon'])) {
+                $breadcrumb[$i]['icon'] = $foldericon;
+            } else if (is_object($breadcrumb[$i]) && !isset($breadcrumb[$i]->icon)) {
+                $breadcrumb[$i]->icon = $foldericon;
             }
         }
+        return $breadcrumb;
+    }
 
-        // prepare $listing['list'] or $listing->list
-        if (is_array($listing) && isset($listing['list']) && is_array($listing['list'])) {
-            $listing['list'] = array_values($listing['list']); // convert to array
-            $files = &$listing['list'];
-        } else if (is_object($listing) && isset($listing->list) && is_array($listing->list)) {
-            $listing->list = array_values($listing->list); // convert to array
-            $files = &$listing->list;
-        } else {
-            return $listing;
-        }
-        $len = count($files);
-        for ($i=0; $i<$len; $i++) {
-            if (is_object($files[$i])) {
-                $file = (array)$files[$i];
+    /**
+     * Prepare the file/folder listing.
+     *
+     * @param array $list of files and folders.
+     * @return array of files and folders.
+     * @since 2.3.3
+     */
+    protected static function prepare_list($list) {
+        global $OUTPUT;
+        $foldericon = $OUTPUT->pix_url(file_folder_icon(24))->out(false);
+
+        // Reset the array keys because non-numeric keys will create an object when converted to JSON.
+        $list = array_values($list);
+
+        $len = count($list);
+        for ($i = 0; $i < $len; $i++) {
+            if (is_object($list[$i])) {
+                $file = (array)$list[$i];
                 $converttoobject = true;
             } else {
-                $file = & $files[$i];
+                $file =& $list[$i];
                 $converttoobject = false;
             }
             if (isset($file['size'])) {
                 $file['size'] = (int)$file['size'];
                 $file['size_f'] = display_size($file['size']);
             }
-            if (isset($file['license']) &&
-                    get_string_manager()->string_exists($file['license'], 'license')) {
+            if (isset($file['license']) && get_string_manager()->string_exists($file['license'], 'license')) {
                 $file['license_f'] = get_string($file['license'], 'license');
             }
             if (isset($file['image_width']) && isset($file['image_height'])) {
@@ -2105,14 +2102,52 @@ abstract class repository {
             }
             if (!isset($file['icon'])) {
                 if ($isfolder) {
-                    $file['icon'] = $defaultfoldericon;
+                    $file['icon'] = $foldericon;
                 } else if ($filename) {
                     $file['icon'] = $OUTPUT->pix_url(file_extension_icon($filename, 24))->out(false);
                 }
             }
-            if ($converttoobject) {
-                $files[$i] = (object)$file;
+
+            // Recursively loop over children.
+            if (isset($file['children'])) {
+                $file['children'] = self::prepare_list($file['children']);
             }
+
+            // Convert the array back to an object.
+            if ($converttoobject) {
+                $list[$i] = (object)$file;
+            }
+        }
+        return $list;
+    }
+
+    /**
+     * Prepares list of files before passing it to AJAX, makes sure data is in the correct
+     * format and stores formatted values.
+     *
+     * @param array|stdClass $listing result of get_listing() or search() or file_get_drafarea_files()
+     * @return array
+     */
+    public static function prepare_listing($listing) {
+        $wasobject = false;
+        if (is_object($listing)) {
+            $listing = (array) $listing;
+            $wasobject = true;
+        }
+
+        // Prepare the breadcrumb, passed as 'path'.
+        if (isset($listing['path']) && is_array($listing['path'])) {
+            $listing['path'] = self::prepare_breadcrumb($listing['path']);
+        }
+
+        // Prepare the listing of objects.
+        if (isset($listing['list']) && is_array($listing['list'])) {
+            $listing['list'] = self::prepare_list($listing['list']);
+        }
+
+        // Convert back to an object.
+        if ($wasobject) {
+            $listing = (object) $listing;
         }
         return $listing;
     }
