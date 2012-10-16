@@ -70,7 +70,7 @@ if (!empty($CFG->debug) and $CFG->debug >= DEBUG_ALL){
  * @global moodle_page $PAGE
  */
 function form_init_date_js() {
-    global $PAGE;
+    global $CFG, $PAGE;
     static $done = false;
     if (!$done) {
         $module   = 'moodle-form-dateselector';
@@ -97,6 +97,21 @@ function form_init_date_js() {
             'november'          => strftime('%B', strtotime("November 1")),
             'december'          => strftime('%B', strtotime("December 1"))
         ));
+
+        // If we are running under Windows convert from windows encoding to UTF-8 (because it's impossible
+        // to specify UTF-8 to fetch locale info in Win32. Snippet copied from userdate().
+        if ($CFG->ostype == 'WINDOWS') {
+            if ($localewincharset = get_string('localewincharset', 'langconfig')) {
+                $textlib = textlib_get_instance();
+                foreach ($config[0] as $key => &$value) {
+                    if ($key == 'firstdayofweek') {
+                        continue;
+                    }
+                    $value = $textlib->convert($value, $localewincharset, 'utf-8');
+                }
+            }
+        }
+
         $PAGE->requires->yui_module($module, $function, $config);
         $done = true;
     }
