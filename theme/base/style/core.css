@@ -681,7 +681,6 @@ body.tag .managelink {padding: 5px;}
 .dir-rtl .mod-indent-15,
 .dir-rtl .mod-indent-huge {margin-right:300px;margin-left:0;}
 
-.dir-rtl .felement.feditor select {margin-right:18.75%;margin-left:auto;}
 .dir-rtl .mform .fitem .felement {margin-right: 16%;margin-left:auto;text-align: right;}
 .dir-rtl .mform .fitem .felement input[name=email],
 .dir-rtl .mform .fitem .felement input[name=email2],
