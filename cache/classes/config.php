@@ -170,7 +170,7 @@ class cache_config {
             $plugin = $store['plugin'];
             $class = 'cachestore_'.$plugin;
             $exists = array_key_exists($plugin, $availableplugins);
-            if (!$exists && (!class_exists($class) || !is_subclass_of($class, 'cache_store'))) {
+            if (!$exists) {
                 // Not a valid plugin, or has been uninstalled, just skip it an carry on.
                 debugging('Invalid cache store in config. Not an available plugin.', DEBUG_DEVELOPER);
                 continue;
