@@ -31,7 +31,8 @@ class block_online_users extends block_base {
         if (isset($CFG->block_online_users_timetosee)) {
             $timetoshowusers = $CFG->block_online_users_timetosee * 60;
         }
-        $timefrom = 100 * floor((time()-$timetoshowusers) / 100); // Round to nearest 100 seconds for better query cache
+        $now = time();
+        $timefrom = 100 * floor(($now - $timetoshowusers) / 100); // Round to nearest 100 seconds for better query cache
 
         //Calculate if we are in separate groups
         $isseparategroups = ($this->page->course->groupmode == SEPARATEGROUPS
@@ -53,18 +54,23 @@ class block_online_users extends block_base {
         }
 
         $userfields = user_picture::fields('u', array('username'));
-
+        $params['now'] = $now;
+        $params['timefrom'] = $timefrom;
         if ($this->page->course->id == SITEID or $this->page->context->contextlevel < CONTEXT_COURSE) {  // Site-level
             $sql = "SELECT $userfields, MAX(u.lastaccess) AS lastaccess
                       FROM {user} u $groupmembers
-                     WHERE u.lastaccess > $timefrom
+                     WHERE u.lastaccess > :timefrom
+                           AND u.lastaccess <= :now
+                           AND u.deleted = 0
                            $groupselect
                   GROUP BY $userfields
                   ORDER BY lastaccess DESC ";
 
            $csql = "SELECT COUNT(u.id)
                       FROM {user} u $groupmembers
-                     WHERE u.lastaccess > $timefrom
+                     WHERE u.lastaccess > :timefrom
+                           AND u.lastaccess <= :now
+                           AND u.deleted = 0
                            $groupselect";
 
         } else {
@@ -77,9 +83,11 @@ class block_online_users extends block_base {
             $sql = "SELECT $userfields, MAX(ul.timeaccess) AS lastaccess
                       FROM {user_lastaccess} ul $groupmembers, {user} u
                       JOIN ($esqljoin) euj ON euj.id = u.id
-                     WHERE ul.timeaccess > $timefrom
+                     WHERE ul.timeaccess > :timefrom
                            AND u.id = ul.userid
                            AND ul.courseid = :courseid
+                           AND ul.timeaccess <= :now
+                           AND u.deleted = 0
                            $groupselect
                   GROUP BY $userfields
                   ORDER BY lastaccess DESC";
@@ -87,9 +95,11 @@ class block_online_users extends block_base {
            $csql = "SELECT COUNT(u.id)
                       FROM {user_lastaccess} ul $groupmembers, {user} u
                       JOIN ($esqljoin) euj ON euj.id = u.id
-                     WHERE ul.timeaccess > $timefrom
+                     WHERE ul.timeaccess > :timefrom
                            AND u.id = ul.userid
                            AND ul.courseid = :courseid
+                           AND ul.timeaccess <= :now
+                           AND u.deleted = 0
                            $groupselect";
 
             $params['courseid'] = $this->page->course->id;
@@ -138,7 +148,7 @@ class block_online_users extends block_base {
             }
             foreach ($users as $user) {
                 $this->content->text .= '<li class="listentry">';
-                $timeago = format_time(time() - $user->lastaccess); //bruno to calculate correctly on frontpage
+                $timeago = format_time($now - $user->lastaccess); //bruno to calculate correctly on frontpage
 
                 if (isguestuser($user)) {
                     $this->content->text .= '<div class="user">'.$OUTPUT->user_picture($user, array('size'=>16));
