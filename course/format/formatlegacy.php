@@ -178,4 +178,28 @@ class format_legacy extends format_base {
             return parent::ajax_section_move();
         }
     }
+
+    /**
+     * Returns the list of blocks to be automatically added for the newly created course
+     *
+     * This function checks the existence of the file config.php in the course format folder.
+     * If file exists and contains the code
+     * $format['defaultblocks'] = 'leftblock1,leftblock2:rightblock1,rightblock2';
+     * these blocks are used, otherwise parent function is called
+     *
+     * @return array of default blocks, must contain two keys BLOCK_POS_LEFT and BLOCK_POS_RIGHT
+     *     each of values is an array of block names (for left and right side columns)
+     */
+    public function get_default_blocks() {
+        global $CFG;
+        $formatconfig = $CFG->dirroot.'/course/format/'.$this->format.'/config.php';
+        $format = array(); // initialize array in external file
+        if (is_readable($formatconfig)) {
+            include($formatconfig);
+        }
+        if (!empty($format['defaultblocks'])) {
+            return blocks_parse_default_blocks_list($format['defaultblocks']);
+        }
+        return parent::get_default_blocks();
+    }
 }

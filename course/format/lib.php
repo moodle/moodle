@@ -391,6 +391,26 @@ abstract class format_base {
         }
         return array();
     }
+
+    /**
+     * Returns the list of blocks to be automatically added for the newly created course
+     *
+     * @see blocks_add_default_course_blocks()
+     *
+     * @return array of default blocks, must contain two keys BLOCK_POS_LEFT and BLOCK_POS_RIGHT
+     *     each of values is an array of block names (for left and right side columns)
+     */
+    public function get_default_blocks() {
+        global $CFG;
+        if (!empty($CFG->defaultblocks)){
+            return blocks_parse_default_blocks_list($CFG->defaultblocks);
+        }
+        $blocknames = array(
+            BLOCK_POS_LEFT => array(),
+            BLOCK_POS_RIGHT => array('search_forums', 'news_items', 'calendar_upcoming', 'recent_activity')
+        );
+        return $blocknames;
+    }
 }
 
 /**
