@@ -2004,26 +2004,47 @@ class moodlelib_testcase extends advanced_testcase {
         $systemdefaulttimezone = date_default_timezone_get();
         date_default_timezone_set('Australia/Perth');
 
+        $tests = array(
+            array(
+                'tz' => 99,
+                'str' => '%A, %d %B %Y, %I:%M %p',
+                'expected' => 'Saturday, 01 January 2011, 06:00 PM'
+            ),
+            array(
+                'tz' => 0,
+                'str' => '%A, %d %B %Y, %I:%M %p',
+                'expected' => 'Saturday, 01 January 2011, 10:00 AM'
+            ),
+            array(
+                'tz' => -12,
+                'str' => '%A, %d %B %Y, %I:%M %p',
+                'expected' => 'Saturday, 01 January 2011, 10:00 AM'
+            ),
+            array(
+                'tz' => 99,
+                'str' => 'Žluťoučký koníček %A',
+                'expected' => 'Žluťoučký koníček Saturday'
+            ),
+            array(
+                'tz' => 99,
+                'str' => '言語設定言語 %A',
+                'expected' => '言語設定言語 Saturday'
+            ),
+            array(
+                'tz' => 99,
+                'str' => '简体中文简体 %A',
+                'expected' => '简体中文简体 Saturday'
+            ),
+        );
+
         // Note: date_format_string() uses the timezone only to differenciate
         // the server time from the UTC time. It does not modify the timestamp.
         // Hence similar results for timezones <= 13.
-        $str = date_format_string(1293876000, '%A, %d %B %Y, %I:%M %p', 99);
-        $this->assertEquals($str, 'Saturday, 01 January 2011, 06:00 PM');
-
-        $str = date_format_string(1293876000, '%A, %d %B %Y, %I:%M %p', 0);
-        $this->assertEquals($str, 'Saturday, 01 January 2011, 10:00 AM');
-
-        $str = date_format_string(1293876000, '%A, %d %B %Y, %I:%M %p', -12);
-        $this->assertEquals($str, 'Saturday, 01 January 2011, 10:00 AM');
-
-        $str = date_format_string(1293876000, 'Žluťoučký koníček %A', 99);
-        $this->assertEquals($str, 'Žluťoučký koníček Saturday');
-
-        $str = date_format_string(1293876000, '言語設定言語 %A', 99);
-        $this->assertEquals($str, '言語設定言語 Saturday');
-
-        $str = date_format_string(1293876000, '简体中文简体 %A', 99);
-        $this->assertEquals($str, '简体中文简体 Saturday');
+        // On different systems case of AM PM changes so compare case insensitive.
+        foreach ($tests as $test) {
+            $str = date_format_string(1293876000, $test['str'], $test['tz']);
+            $this->assertEquals(textlib::strtolower($test['expected']), textlib::strtolower($str));
+        }
 
         // Restore system default values.
         date_default_timezone_set($systemdefaulttimezone);
