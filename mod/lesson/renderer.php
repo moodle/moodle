@@ -364,9 +364,6 @@ class mod_lesson_renderer extends plugin_renderer_base {
         $importquestionsurl = new moodle_url('/mod/lesson/import.php',array('id'=>$this->page->cm->id, 'pageid'=>$prevpageid));
         $links[] = html_writer::link($importquestionsurl, get_string('importquestions', 'lesson'));
 
-        $importppturl = new moodle_url('/mod/lesson/importppt.php',array('id'=>$this->page->cm->id, 'pageid'=>$prevpageid));
-        $links[] = html_writer::link($importppturl, get_string('importppt', 'lesson'));
-
         $manager = lesson_page_type_manager::get($lesson);
         foreach ($manager->get_add_page_type_links($prevpageid) as $link) {
             $link['addurl']->param('firstpage', 1);
