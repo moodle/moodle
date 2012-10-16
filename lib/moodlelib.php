@@ -2071,13 +2071,7 @@ function userdate($date, $format = '', $timezone = 99, $fixday = true, $fixhour 
     // (because it's impossible to specify UTF-8 to fetch locale info in Win32)
 
     if (abs($timezone) > 13) {   /// Server time
-        if ($CFG->ostype == 'WINDOWS' and ($localewincharset = get_string('localewincharset', 'langconfig'))) {
-            $format = textlib::convert($format, 'utf-8', $localewincharset);
-            $datestring = strftime($format, $date);
-            $datestring = textlib::convert($datestring, $localewincharset, 'utf-8');
-        } else {
-            $datestring = strftime($format, $date);
-        }
+        $datestring = date_format_string($date, $format, $timezone);
         if ($fixday) {
             $daystring  = ltrim(str_replace(array(' 0', ' '), '', strftime(' %d', $date)));
             $datestring = str_replace('DD', $daystring, $datestring);
@@ -2089,13 +2083,7 @@ function userdate($date, $format = '', $timezone = 99, $fixday = true, $fixhour 
 
     } else {
         $date += (int)($timezone * 3600);
-        if ($CFG->ostype == 'WINDOWS' and ($localewincharset = get_string('localewincharset', 'langconfig'))) {
-            $format = textlib::convert($format, 'utf-8', $localewincharset);
-            $datestring = gmstrftime($format, $date);
-            $datestring = textlib::convert($datestring, $localewincharset, 'utf-8');
-        } else {
-            $datestring = gmstrftime($format, $date);
-        }
+        $datestring = date_format_string($date, $format, $timezone);
         if ($fixday) {
             $daystring  = ltrim(str_replace(array(' 0', ' '), '', gmstrftime(' %d', $date)));
             $datestring = str_replace('DD', $daystring, $datestring);
@@ -2106,6 +2094,46 @@ function userdate($date, $format = '', $timezone = 99, $fixday = true, $fixhour 
         }
     }
 
+    return $datestring;
+}
+
+/**
+ * Returns a formatted date ensuring it is UTF-8.
+ *
+ * If we are running under Windows convert to Windows encoding and then back to UTF-8
+ * (because it's impossible to specify UTF-8 to fetch locale info in Win32).
+ *
+ * This function does not do any calculation regarding the user preferences and should
+ * therefore receive the final date timestamp, format and timezone. Timezone being only used
+ * to differenciate the use of server time or not (strftime() against gmstrftime()).
+ *
+ * @param int $date the timestamp.
+ * @param string $format strftime format.
+ * @param int|float $timezone the numerical timezone, typically returned by {@link get_user_timezone_offset()}.
+ * @return string the formatted date/time.
+ * @since 2.3.3
+ */
+function date_format_string($date, $format, $tz = 99) {
+    global $CFG;
+    if (abs($tz) > 13) {
+        if ($CFG->ostype == 'WINDOWS') {
+            $localewincharset = get_string('localewincharset', 'langconfig');
+            $format = textlib::convert($format, 'utf-8', $localewincharset);
+            $datestring = strftime($format, $date);
+            $datestring = textlib::convert($datestring, $localewincharset, 'utf-8');
+        } else {
+            $datestring = strftime($format, $date);
+        }
+    } else {
+        if ($CFG->ostype == 'WINDOWS') {
+            $localewincharset = get_string('localewincharset', 'langconfig');
+            $format = textlib::convert($format, 'utf-8', $localewincharset);
+            $datestring = gmstrftime($format, $date);
+            $datestring = textlib::convert($datestring, $localewincharset, 'utf-8');
+        } else {
+            $datestring = gmstrftime($format, $date);
+        }
+    }
     return $datestring;
 }
 
