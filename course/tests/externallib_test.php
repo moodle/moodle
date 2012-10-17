@@ -339,6 +339,17 @@ class core_course_external_testcase extends externallib_advanced_testcase {
         $course2['completionnotify'] = 1;
         $course2['lang'] = 'en';
         $course2['forcetheme'] = 'base';
+        $course3['fullname'] = 'Test course 3';
+        $course3['shortname'] = 'Testcourse3';
+        $course3['categoryid'] = $category->id;
+        $course3['format'] = 'topics';
+        $course3options = array('numsections' => 8,
+            'hiddensections' => 1,
+            'coursedisplay' => 1);
+        $course3['formatoptions'] = array();
+        foreach ($course3options as $key => $value) {
+            $course3['formatoptions'][] = array('optionname' => $key, 'optionvalue' => $value);
+        }
         $courses = array($course1, $course2);
 
         $createdcourses = core_course_external::create_courses($courses);
@@ -348,7 +359,7 @@ class core_course_external_testcase extends externallib_advanced_testcase {
 
         // Check that the courses were correctly created.
         foreach ($createdcourses as $createdcourse) {
-            $dbcourse = $DB->get_record('course', array('id' => $createdcourse['id']));
+            $dbcourse = course_get_format($createdcourse['id'])->get_course();
 
             if ($createdcourse['shortname'] == $course2['shortname']) {
                 $this->assertEquals($dbcourse->fullname, $course2['fullname']);
@@ -393,13 +404,19 @@ class core_course_external_testcase extends externallib_advanced_testcase {
                 $this->assertEquals($dbcourse->format, $courseconfig->format);
                 $this->assertEquals($dbcourse->showgrades, $courseconfig->showgrades);
                 $this->assertEquals($dbcourse->newsitems, $courseconfig->newsitems);
-                $this->assertEquals($dbcourse->numsections, $courseconfig->numsections);
                 $this->assertEquals($dbcourse->maxbytes, $courseconfig->maxbytes);
                 $this->assertEquals($dbcourse->showreports, $courseconfig->showreports);
-                $this->assertEquals($dbcourse->hiddensections, $courseconfig->hiddensections);
                 $this->assertEquals($dbcourse->groupmode, $courseconfig->groupmode);
                 $this->assertEquals($dbcourse->groupmodeforce, $courseconfig->groupmodeforce);
                 $this->assertEquals($dbcourse->defaultgroupingid, 0);
+            } else if ($createdcourse['shortname'] == $course3['shortname']) {
+                $this->assertEquals($dbcourse->fullname, $course3['fullname']);
+                $this->assertEquals($dbcourse->shortname, $course3['shortname']);
+                $this->assertEquals($dbcourse->category, $course3['categoryid']);
+                $this->assertEquals($dbcourse->format, $course3['format']);
+                $this->assertEquals($dbcourse->hiddensections, $course3options['hiddensections']);
+                $this->assertEquals($dbcourse->numsections, $course3options['numsections']);
+                $this->assertEquals($dbcourse->coursedisplay, $course3options['coursedisplay']);
             } else {
                 throw moodle_exception('Unexpected shortname');
             }
@@ -459,7 +476,7 @@ class core_course_external_testcase extends externallib_advanced_testcase {
         $generatedcourses[$course1->id] = $course1;
         $course2  = self::getDataGenerator()->create_course();
         $generatedcourses[$course2->id] = $course2;
-        $course3  = self::getDataGenerator()->create_course();
+        $course3  = self::getDataGenerator()->create_course(array('format' => 'topics'));
         $generatedcourses[$course3->id] = $course3;
 
         // Set the required capabilities by the external function.
@@ -504,6 +521,13 @@ class core_course_external_testcase extends externallib_advanced_testcase {
             $this->assertEquals($course['completionstartonenrol'], $dbcourse->completionstartonenrol);
             $this->assertEquals($course['enablecompletion'], $dbcourse->enablecompletion);
             $this->assertEquals($course['completionstartonenrol'], $dbcourse->completionstartonenrol);
+            if ($dbcourse->format === 'topics') {
+                $this->assertEquals($course['formatoptions'], array(
+                    array('optionname' => 'numsections', 'optionvalue' => $dbcourse->numsections),
+                    array('optionname' => 'hiddensections', 'optionvalue' => $dbcourse->hiddensections),
+                    array('optionname' => 'coursedisplay', 'optionvalue' => $dbcourse->coursedisplay),
+                ));
+            }
         }
 
         // Get all courses in the DB
