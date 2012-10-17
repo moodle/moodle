@@ -1503,7 +1503,7 @@ class grade_structure {
 
             $url->param('action', 'show');
 
-            $hideicon = $OUTPUT->action_icon($url, new pix_icon('t/'.$type, $tooltip, 'moodle', array('alt'=>$strshow, 'class'=>'iconsmall')));
+            $hideicon = $OUTPUT->action_icon($url, new pix_icon('t/'.$type, $tooltip, 'moodle', array('alt'=>$strshow, 'class'=>'smallicon')));
 
         } else {
             $url->param('action', 'hide');
