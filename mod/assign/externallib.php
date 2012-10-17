@@ -191,7 +191,7 @@ class mod_assign_external extends external_api {
 
     /**
      * Returns description of method parameters
-     * 
+     *
      * @return external_function_parameters
      * @since  Moodle 2.4
      */
@@ -215,7 +215,7 @@ class mod_assign_external extends external_api {
     /**
      * Returns an array of courses the user is enrolled in, and for each course all of the assignments that the user can
      * view within that course.
-     * 
+     *
      * @param array $courseids An optional array of course ids. If provided only assignments within the given course
      * will be returned. If the user is not enrolled in a given course a warning will be generated and returned.
      * @param array $capabilities An array of additional capability checks you wish to be made on the course context.
@@ -254,10 +254,6 @@ class mod_assign_external extends external_api {
             $context = context_course::instance($id);
             try {
                 self::validate_context($context);
-                require_capability('moodle/course:view', $context);
-                if (!$course->visible) {
-                    require_capability('moodle/course:viewhiddencourses', $context);
-                }
             } catch (Exception $e) {
                 unset($courses[$id]);
                 $warnings[] = array(
@@ -352,7 +348,7 @@ class mod_assign_external extends external_api {
 
     /**
      * Creates an assignment external_single_structure
-     * 
+     *
      * @return external_single_structure
      * @since Moodle 2.4
      */
@@ -384,7 +380,7 @@ class mod_assign_external extends external_api {
 
     /**
      * Creates an assign_plugin_config external_single_structure
-     * 
+     *
      * @return external_single_structure
      * @since Moodle 2.4
      */
@@ -403,9 +399,9 @@ class mod_assign_external extends external_api {
 
     /**
      * Creates a course external_single_structure
-     * 
+     *
      * @return external_single_structure
-     * @since Moodle 2.4 
+     * @since Moodle 2.4
      */
     private static function get_assignments_course_structure() {
         return new external_single_structure(
@@ -419,9 +415,9 @@ class mod_assign_external extends external_api {
         );
     }
 
-    /** 
+    /**
      * Describes the return value for get_assignments
-     * 
+     *
      * @return external_single_structure
      * @since Moodle 2.4
      */

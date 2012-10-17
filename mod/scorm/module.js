@@ -88,8 +88,8 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, launc
             }
 
             if (node.title) {
-            	var el_scorm_api = document.getElementById("external-scormapi");
-            	el_scorm_api.parentNode.removeChild(el_scorm_api);
+                var el_scorm_api = document.getElementById("external-scormapi");
+                el_scorm_api.parentNode.removeChild(el_scorm_api);
                 el_scorm_api = document.createElement('script');
                 el_scorm_api.setAttribute('id','external-scormapi');
                 el_scorm_api.setAttribute('type','text/javascript');
