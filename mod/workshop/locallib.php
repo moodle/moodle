@@ -1747,7 +1747,7 @@ class workshop {
                       JOIN {user} e ON (s.authorid = e.id)
                      WHERE u.id $participantids AND s.workshopid = :workshopid
                   ORDER BY a.weight DESC, $sort";
-            $reviewees = $DB->get_records_sql($sql, array_merge($sortparams));
+            $reviewees = $DB->get_records_sql($sql, array_merge($params, $sortparams));
             foreach ($reviewees as $reviewee) {
                 if (!isset($userinfo[$reviewee->authorid])) {
                     $userinfo[$reviewee->authorid]            = new stdclass();
