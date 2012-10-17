@@ -41,9 +41,9 @@
 
     /// Check if the user has actually submitted login data to us
 
-        if ($shibbolethauth->user_login($frm->username, $frm->password)) {
+        if ($shibbolethauth->user_login($frm->username, $frm->password)
+                && $user = authenticate_user_login($frm->username, $frm->password)) {
 
-            $user = authenticate_user_login($frm->username, $frm->password);
             enrol_check_plugins($user);
             session_set_user($user);
 
@@ -87,7 +87,8 @@
         }
 
         else {
-            // For some weird reason the Shibboleth user couldn't be authenticated
+            // The Shibboleth user couldn't be mapped to a valid Moodle user
+            print_error('shib_invalid_account_error', 'auth_shibboleth');
         }
     }
 
