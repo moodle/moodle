@@ -57,7 +57,7 @@ if (!empty($CFG->enableavailability)) {
 }
 
 $mform = new editsection_form($PAGE->url, array('course' => $course, 'editoroptions' => $editoroptions,
-        'cs' => $section, 'showavailability' => $section->showavailability));
+        'cs' => $section));
 $mform->set_data($section); // set current value
 
 $returnurl = course_get_url($course, $sectionreturn);

@@ -54,11 +54,19 @@ class editsection_form extends moodleform {
                 $mform->addHelpButton('groupingid', 'groupingsection', 'group');
             }
 
-            // Date and time conditions
+            // Available from/to defaults to midnight because then the display
+            // will be nicer where it tells users when they can access it (it
+            // shows only the date and not time).
+            $date = usergetdate(time());
+            $midnight = make_timestamp($date['year'], $date['mon'], $date['mday']);
+
+            // Date and time conditions.
             $mform->addElement('date_time_selector', 'availablefrom',
-                    get_string('availablefrom', 'condition'), array('optional' => true));
+                    get_string('availablefrom', 'condition'),
+                    array('optional' => true, 'defaulttime' => $midnight));
             $mform->addElement('date_time_selector', 'availableuntil',
-                    get_string('availableuntil', 'condition'), array('optional' => true));
+                    get_string('availableuntil', 'condition'),
+                    array('optional' => true, 'defaulttime' => $midnight));
 
             // Conditions based on grades
             $gradeoptions = array();
@@ -162,8 +170,6 @@ class editsection_form extends moodleform {
                 CONDITION_STUDENTVIEW_HIDE => get_string('showavailabilitysection_hide', 'condition'));
             $mform->addElement('select', 'showavailability',
                     get_string('showavailabilitysection', 'condition'), $showhide);
-
-            $mform->setDefault('showavailability', $this->_customdata['showavailability']);
         }
 
         $this->add_action_buttons();
