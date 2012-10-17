@@ -28,7 +28,7 @@
 
     // Check whether Shibboleth is configured properly
     if (empty($pluginconfig->user_attribute)) {
-        print_error('shib_not_set_up_error', 'auth');
+        print_error('shib_not_set_up_error', 'auth_shibboleth');
      }
 
 /// If we can find the Shibboleth attribute, save it in session and return to main login page
@@ -94,9 +94,9 @@
     // If we can find any (user independent) Shibboleth attributes but no user
     // attributes we probably didn't receive any user attributes
     elseif (!empty($_SERVER['HTTP_SHIB_APPLICATION_ID']) || !empty($_SERVER['Shib-Application-ID'])) {
-        print_error('shib_no_attributes_error', 'auth' , '', '\''.$pluginconfig->user_attribute.'\', \''.$pluginconfig->field_map_firstname.'\', \''.$pluginconfig->field_map_lastname.'\' and \''.$pluginconfig->field_map_email.'\'');
+        print_error('shib_no_attributes_error', 'auth_shibboleth' , '', '\''.$pluginconfig->user_attribute.'\', \''.$pluginconfig->field_map_firstname.'\', \''.$pluginconfig->field_map_lastname.'\' and \''.$pluginconfig->field_map_email.'\'');
     } else {
-        print_error('shib_not_set_up_error', 'auth');
+        print_error('shib_not_set_up_error', 'auth_shibboleth');
     }
 
 
