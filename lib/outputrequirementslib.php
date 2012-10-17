@@ -677,8 +677,12 @@ class page_requirements_manager {
      * @param string $galleryversion The gallery version to use
      * @param bool $ondomready
      */
-    public function yui_module($modules, $function, array $arguments = null, $galleryversion = '2010.04.08-12-35', $ondomready = false) {
+    public function yui_module($modules, $function, array $arguments = null, $galleryversion = null, $ondomready = false) {
         global $CFG;
+
+        if (!$galleryversion) {
+            $galleryversion = '2010.04.08-12-35';
+        }
 
         if (!is_array($modules)) {
             $modules = array($modules);
