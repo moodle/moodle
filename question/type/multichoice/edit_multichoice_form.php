@@ -110,10 +110,10 @@ class qtype_multichoice_edit_form extends question_edit_form {
             //check no of choices
             $trimmedanswer = trim($answer['text']);
             $fraction = (float) $data['fraction'][$key];
-            if (empty($trimmedanswer) && empty($fraction)) {
+            if ($trimmedanswer === '' && empty($fraction)) {
                 continue;
             }
-            if (empty($trimmedanswer)) {
+            if ($trimmedanswer === '') {
                 $errors['fraction['.$key.']'] = get_string('errgradesetanswerblank', 'qtype_multichoice');
             }
 
