@@ -51,6 +51,7 @@ $string['auth_shib_no_organizations_warning'] = 'If you want to use the integrat
 $string['auth_shib_only'] = 'Shibboleth only';
 $string['auth_shib_only_description'] = 'Check this option if a Shibboleth authentication shall be enforced';
 $string['auth_shib_username_description'] = 'Name of the webserver Shibboleth environment variable that shall be used as Moodle username';
+$string['shib_invalid_account_error'] = 'You seem to be Shibboleth authenticated but Moodle has no valid account for your username. Your account may not exist or it may have been suspended.';
 $string['shib_no_attributes_error'] = 'You seem to be Shibboleth authenticated but Moodle didn\'t receive any user attributes. Please check that your Identity Provider releases the necessary attributes ({$a}) to the Service Provider Moodle is running on or inform the webmaster of this server.';
 $string['shib_not_all_attributes_error'] = 'Moodle needs certain Shibboleth attributes which are not present in your case. The attributes are: {$a}<br />Please contact the webmaster of this server or your Identity Provider.';
 $string['shib_not_set_up_error'] = 'Shibboleth authentication doesn\'t seem to be set up correctly because no Shibboleth environment variables are present for this page. Please consult the <a href="README.txt">README</a> for further instructions on how to set up Shibboleth authentication or contact the webmaster of this Moodle installation.';
