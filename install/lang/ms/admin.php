@@ -30,14 +30,13 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['clianswerno'] = 'n';
+$string['clianswerno'] = 't';
 $string['cliansweryes'] = 'y';
-$string['cliincorrectvalueerror'] = '錯誤，不正確的值 "{$a->value}" 用於 "{$a->option}"';
-$string['cliincorrectvalueretry'] = '不正確的值，請再試一次';
-$string['clitypevalue'] = '打入一值';
-$string['clitypevaluedefault'] = '打入一值，按Enter可使用預設值({$a})';
-$string['cliunknowoption'] = '不認得的選項：  {$a}
-請使用 --幫助 選項。';
-$string['cliyesnoprompt'] = '輸入y(是) 或n(否)';
-$string['environmentrequireinstall'] = '必須安裝/啟用';
-$string['environmentrequireversion'] = '要求版本為 {$a->needed} ，您目前版本為 {$a->current}';
+$string['cliincorrectvalueerror'] = 'Ralat, nilai tidak betul "{$a->value}" untuk "{$a->option}"';
+$string['cliincorrectvalueretry'] = 'Nilai yang salah, sila cuba lagi';
+$string['clitypevalue'] = 'taip nilai';
+$string['clitypevaluedefault'] = 'taip nilai, tekan Enter untuk gunakan nilai lalai ({$a})';
+$string['cliunknowoption'] = 'Pilihan yang tidak diketahui:
+  {$a}
+Sila gunakan pilihan --help';
+$string['cliyesnoprompt'] = 'tapi y (ya) atau t (tidak)';
