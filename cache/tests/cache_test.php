@@ -319,7 +319,8 @@ class cache_phpunit_tests extends advanced_testcase {
             'mode' => cache_store::MODE_APPLICATION,
             'component' => 'phpunit',
             'area' => 'datasourcetest',
-            'datasource' => 'cache_phpunit_dummy_datasource'
+            'datasource' => 'cache_phpunit_dummy_datasource',
+            'datasourcefile' => 'cache/tests/fixtures/lib.php'
         ));
 
         $cache = cache::make('phpunit', 'datasourcetest');
@@ -347,7 +348,8 @@ class cache_phpunit_tests extends advanced_testcase {
             'mode' => cache_store::MODE_APPLICATION,
             'component' => 'phpunit',
             'area' => 'overridetest',
-            'overrideclass' => 'cache_phpunit_dummy_overrideclass'
+            'overrideclass' => 'cache_phpunit_dummy_overrideclass',
+            'overrideclassfile' => 'cache/tests/fixtures/lib.php'
         ));
         $cache = cache::make('phpunit', 'overridetest');
         $this->assertInstanceOf('cache_phpunit_dummy_overrideclass', $cache);
