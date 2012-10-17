@@ -24,11 +24,20 @@
  */
 
 $functions = array(
+
         'mod_assign_get_grades' => array(
                 'classname'   => 'mod_assign_external',
                 'methodname'  => 'get_grades',
                 'classpath'   => 'mod/assign/externallib.php',
                 'description' => 'Returns grades from the assignment',
-                'type'        => 'read',
+                'type'        => 'read'
+        ),
+
+        'mod_assign_get_assignments' => array(
+                'classname'   => 'mod_assign_external',
+                'methodname'  => 'get_assignments',
+                'classpath'   => 'mod/assign/externallib.php',
+                'description' => 'Returns the courses and assignments for the users capability',
+                'type'        => 'read'
         )
 );

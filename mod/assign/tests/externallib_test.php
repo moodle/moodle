@@ -101,4 +101,85 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(75, $grade['grade']);
     }
 
+    /**
+     * Test get_assignments
+     */
+    public function test_get_assignments () {
+        global $DB, $USER;
+
+        $this->resetAfterTest(true);
+
+        $category = self::getDataGenerator()->create_category(array(
+            'name' => 'Test category'
+        ));
+
+        // Create a course.
+        $course1 = self::getDataGenerator()->create_course(array(
+            'idnumber' => 'idnumbercourse1',
+            'fullname' => 'Lightwork Course 1',
+            'summary' => 'Lightwork Course 1 description',
+            'summaryformat' => FORMAT_MOODLE,
+            'category' => $category->id
+        ));
+
+        // Create a second course, just for testing.
+        $course2 = self::getDataGenerator()->create_course(array(
+            'idnumber' => 'idnumbercourse2',
+            'fullname' => 'Lightwork Course 2',
+            'summary' => 'Lightwork Course 2 description',
+            'summaryformat' => FORMAT_MOODLE,
+            'category' => $category->id
+        ));
+
+        // Create the assignment module.
+        $assign1 = self::getDataGenerator()->create_module('assign', array(
+            'course' => $course1->id,
+            'name' => 'lightwork assignment'
+        ));
+
+        // Create manual enrolment record.
+        $enrolid = $DB->insert_record('enrol', (object)array(
+            'enrol' => 'manual',
+            'status' => 0,
+            'courseid' => $course1->id
+        ));
+
+        // Create the user and give them capabilities.
+        $context = context_course::instance($course1->id);
+        $roleid = $this->assignUserCapability('moodle/course:view', $context->id);
+        $context = context_module::instance($assign1->id);
+        $this->assignUserCapability('mod/assign:view', $context->id, $roleid);
+
+        // Create the user enrolment record.
+        $DB->insert_record('user_enrolments', (object)array(
+            'status' => 0,
+            'enrolid' => $enrolid,
+            'userid' => $USER->id
+        ));
+
+        $result = mod_assign_external::get_assignments();
+        // Check the course and assignment are returned.
+        $this->assertEquals(1, count($result['courses']));
+        $course = $result['courses'][0];
+        $this->assertEquals('Lightwork Course 1', $course['fullname']);
+        $this->assertEquals(1, count($course['assignments']));
+        $assignment = $course['assignments'][0];
+        $this->assertEquals($assign1->id, $assignment['id']);
+        $this->assertEquals($course1->id, $assignment['course']);
+        $this->assertEquals('lightwork assignment', $assignment['name']);
+
+        $result = mod_assign_external::get_assignments(array($course1->id));
+        $this->assertEquals(1, count($result['courses']));
+        $course = $result['courses'][0];
+        $this->assertEquals('Lightwork Course 1', $course['fullname']);
+        $this->assertEquals(1, count($course['assignments']));
+        $assignment = $course['assignments'][0];
+        $this->assertEquals($assign1->id, $assignment['id']);
+        $this->assertEquals($course1->id, $assignment['course']);
+        $this->assertEquals('lightwork assignment', $assignment['name']);
+
+        $result = mod_assign_external::get_assignments(array($course2->id));
+        $this->assertEquals(0, count($result['courses']));
+        $this->assertEquals(1, count($result['warnings']));
+    }
 }
