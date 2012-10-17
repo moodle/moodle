@@ -189,4 +189,248 @@ class mod_assign_external extends external_api {
         );
     }
 
+    /**
+     * Returns description of method parameters
+     * 
+     * @return external_function_parameters
+     * @since  Moodle 2.4
+     */
+    public static function get_assignments_parameters() {
+        return new external_function_parameters(
+            array(
+                'courseids' => new external_multiple_structure(
+                    new external_value(PARAM_INT, 'course id'),
+                    '0 or more course ids',
+                    VALUE_DEFAULT, array()
+                ),
+                'capabilities'  => new external_multiple_structure(
+                    new external_value(PARAM_CAPABILITY, 'capability'),
+                    'list of capabilities used to filter courses',
+                    VALUE_DEFAULT, array()
+                )
+            )
+        );
+    }
+
+    /**
+     * Returns an array of courses the user is enrolled in, and for each course all of the assignments that the user can
+     * view within that course.
+     * 
+     * @param array $courseids An optional array of course ids. If provided only assignments within the given course
+     * will be returned. If the user is not enrolled in a given course a warning will be generated and returned.
+     * @param array $capabilities An array of additional capability checks you wish to be made on the course context.
+     * @return An array of courses and warnings.
+     * @since  Moodle 2.4
+     */
+    public static function get_assignments($courseids = array(), $capabilities = array()) {
+        global $USER, $DB;
+
+        $params = self::validate_parameters(
+            self::get_assignments_parameters(),
+            array('courseids' => $courseids, 'capabilities' => $capabilities)
+        );
+
+        $warnings = array();
+        $fields = 'sortorder,shortname,fullname,timemodified';
+        $courses = enrol_get_users_courses($USER->id, true, $fields);
+        // Used to test for ids that have been requested but can't be returned.
+        if (count($params['courseids']) > 0) {
+            foreach ($params['courseids'] as $courseid) {
+                if (!in_array($courseid, array_keys($courses))) {
+                    unset($courses[$courseid]);
+                    $warnings[] = array(
+                        'item' => 'course',
+                        'itemid' => $courseid,
+                        'warningcode' => '2',
+                        'message' => 'User is not enrolled or does not have requested capability'
+                    );
+                }
+            }
+        }
+        foreach ($courses as $id => $course) {
+            if (count($params['courseids']) > 0 && !in_array($id, $params['courseids'])) {
+                unset($courses[$id]);
+            }
+            $context = context_course::instance($id);
+            try {
+                self::validate_context($context);
+                require_capability('moodle/course:view', $context);
+                if (!$course->visible) {
+                    require_capability('moodle/course:viewhiddencourses', $context);
+                }
+            } catch (Exception $e) {
+                unset($courses[$id]);
+                $warnings[] = array(
+                    'item' => 'course',
+                    'itemid' => $id,
+                    'warningcode' => '1',
+                    'message' => 'No access rights in course context '.$e->getMessage().$e->getTraceAsString()
+                );
+                continue;
+            }
+            if (count($params['capabilities']) > 0 && !has_all_capabilities($params['capabilities'], $context)) {
+                unset($courses[$id]);
+            }
+        }
+        $extrafields='m.id as assignmentid, m.course, m.nosubmissions, m.submissiondrafts, m.sendnotifications, '.
+                     'm.sendlatenotifications, m.duedate, m.allowsubmissionsfromdate, m.grade, m.timemodified, '.
+                     'm.completionsubmit, m.cutoffdate, m.teamsubmission, m.requireallteammemberssubmit, '.
+                     'm.teamsubmissiongroupingid, m.blindmarking, m.revealidentities, m.requiresubmissionstatement';
+        $coursearray = array();
+        foreach ($courses as $id => $course) {
+            $assignmentarray = array();
+            // Get a list of assignments for the course.
+            if ($modules = get_coursemodules_in_course('assign', $courses[$id]->id, $extrafields)) {
+                foreach ($modules as $module) {
+                    $context = context_module::instance($module->id);
+                    try {
+                        self::validate_context($context);
+                        require_capability('mod/assign:view', $context);
+                    } catch (Exception $e) {
+                        $warnings[] = array(
+                            'item' => 'module',
+                            'itemid' => $module->id,
+                            'warningcode' => '1',
+                            'message' => 'No access rights in module context'
+                        );
+                        continue;
+                    }
+                    $configrecords = $DB->get_recordset('assign_plugin_config', array('assignment' => $module->assignmentid));
+                    $configarray = array();
+                    foreach ($configrecords as $configrecord) {
+                        $configarray[] = array(
+                            'id' => $configrecord->id,
+                            'assignment' => $configrecord->assignment,
+                            'plugin' => $configrecord->plugin,
+                            'subtype' => $configrecord->subtype,
+                            'name' => $configrecord->name,
+                            'value' => $configrecord->value
+                        );
+                    }
+                    $configrecords->close();
+
+                    $assignmentarray[]= array(
+                        'id' => $module->assignmentid,
+                        'cmid' => $module->id,
+                        'course' => $module->course,
+                        'name' => $module->name,
+                        'nosubmissions' => $module->nosubmissions,
+                        'submissiondrafts' => $module->submissiondrafts,
+                        'sendnotifications' => $module->sendnotifications,
+                        'sendlatenotifications' => $module->sendlatenotifications,
+                        'duedate' => $module->duedate,
+                        'allowsubmissionsfromdate' => $module->allowsubmissionsfromdate,
+                        'grade' => $module->grade,
+                        'timemodified' => $module->timemodified,
+                        'completionsubmit' => $module->completionsubmit,
+                        'cutoffdate' => $module->cutoffdate,
+                        'teamsubmission' => $module->teamsubmission,
+                        'requireallteammemberssubmit' => $module->requireallteammemberssubmit,
+                        'teamsubmissiongroupingid' => $module->teamsubmissiongroupingid,
+                        'blindmarking' => $module->blindmarking,
+                        'revealidentities' => $module->revealidentities,
+                        'requiresubmissionstatement' => $module->requiresubmissionstatement,
+                        'configs' => $configarray
+                    );
+                }
+            }
+            $coursearray[]= array(
+                'id' => $courses[$id]->id,
+                'fullname' => $courses[$id]->fullname,
+                'shortname' => $courses[$id]->shortname,
+                'timemodified' => $courses[$id]->timemodified,
+                'assignments' => $assignmentarray
+            );
+        }
+
+        $result = array(
+            'courses' => $coursearray,
+            'warnings' => $warnings
+        );
+        return $result;
+    }
+
+    /**
+     * Creates an assignment external_single_structure
+     * 
+     * @return external_single_structure
+     * @since Moodle 2.4
+     */
+    private static function get_assignments_assignment_structure() {
+        return new external_single_structure(
+            array(
+                'id' => new external_value(PARAM_INT, 'assignment id'),
+                'course' => new external_value(PARAM_INT, 'course id'),
+                'name' => new external_value(PARAM_TEXT, 'assignment name'),
+                'nosubmissions' => new external_value(PARAM_INT, 'no submissions'),
+                'submissiondrafts' => new external_value(PARAM_INT, 'submissions drafts'),
+                'sendnotifications' => new external_value(PARAM_INT, 'send notifications'),
+                'sendlatenotifications' => new external_value(PARAM_INT, 'send notifications'),
+                'duedate' => new external_value(PARAM_INT, 'assignment due date'),
+                'allowsubmissionsfromdate' => new external_value(PARAM_INT, 'allow submissions from date'),
+                'grade' => new external_value(PARAM_INT, 'grade type'),
+                'timemodified' => new external_value(PARAM_INT, 'last time assignment was modified'),
+                'completionsubmit' => new external_value(PARAM_INT, 'if enabled, set activity as complete following submission'),
+                'cutoffdate' => new external_value(PARAM_INT, 'date after which submission is not accepted without an extension'),
+                'teamsubmission' => new external_value(PARAM_INT, 'if enabled, students submit as a team'),
+                'requireallteammemberssubmit' => new external_value(PARAM_INT, 'if enabled, all team members must submit'),
+                'teamsubmissiongroupingid' => new external_value(PARAM_INT, 'the grouping id for the team submission groups'),
+                'blindmarking' => new external_value(PARAM_INT, 'if enabled, hide identities until reveal identities actioned'),
+                'revealidentities' => new external_value(PARAM_INT, 'show identities for a blind marking assignment'),
+                'requiresubmissionstatement' => new external_value(PARAM_INT, 'student must accept submission statement'),
+                'configs' => new external_multiple_structure(self::get_assignments_config_structure(), 'configuration settings')
+            ), 'assignment information object');
+    }
+
+    /**
+     * Creates an assign_plugin_config external_single_structure
+     * 
+     * @return external_single_structure
+     * @since Moodle 2.4
+     */
+    private static function get_assignments_config_structure() {
+        return new external_single_structure(
+            array(
+                'id' => new external_value(PARAM_INT, 'assign_plugin_config id'),
+                'assignment' => new external_value(PARAM_INT, 'assignment id'),
+                'plugin' => new external_value(PARAM_TEXT, 'plugin'),
+                'subtype' => new external_value(PARAM_TEXT, 'subtype'),
+                'name' => new external_value(PARAM_TEXT, 'name'),
+                'value' => new external_value(PARAM_TEXT, 'value')
+            ), 'assignment configuration object'
+        );
+    }
+
+    /**
+     * Creates a course external_single_structure
+     * 
+     * @return external_single_structure
+     * @since Moodle 2.4 
+     */
+    private static function get_assignments_course_structure() {
+        return new external_single_structure(
+            array(
+                'id' => new external_value(PARAM_INT, 'course id'),
+                'fullname' => new external_value(PARAM_TEXT, 'course full name'),
+                'shortname' => new external_value(PARAM_TEXT, 'course short name'),
+                'timemodified' => new external_value(PARAM_INT, 'last time modified'),
+                'assignments' => new external_multiple_structure(self::get_assignments_assignment_structure(), 'assignment info')
+              ), 'course information object'
+        );
+    }
+
+    /** 
+     * Describes the return value for get_assignments
+     * 
+     * @return external_single_structure
+     * @since Moodle 2.4
+     */
+    public static function get_assignments_returns() {
+        return new external_single_structure(
+            array(
+                'courses' => new external_multiple_structure(self::get_assignments_course_structure(), 'list of courses'),
+                'warnings'  => new external_warnings()
+            )
+        );
+    }
 }
