@@ -51,8 +51,6 @@ abstract class question_bank {
     /** @var array question type name => 1. Records which question definitions have been loaded. */
     private static $loadedqdefs = array();
 
-    protected static $questionfinder = null;
-
     /** @var boolean nasty hack to allow unit tests to call {@link load_question()}. */
     private static $testmode = false;
     private static $testdata = array();
@@ -241,6 +239,23 @@ abstract class question_bank {
     }
 
     /**
+     * This method needs to be called whenever a question is edited.
+     */
+    public static function notify_question_edited($questionid) {
+        question_finder::get_instance()->uncache_question($questionid);
+    }
+
+    /**
+     * Load a question definition data from the database. The data will be
+     * returned as a plain stdClass object.
+     * @param int $questionid the id of the question to load.
+     * @return object question definition loaded from the database.
+     */
+    public static function load_question_data($questionid) {
+        return question_finder::get_instance()->load_question_data($questionid);
+    }
+
+    /**
      * Load a question definition from the database. The object returned
      * will actually be of an appropriate {@link question_definition} subclass.
      * @param int $questionid the id of the question to load.
@@ -256,12 +271,8 @@ abstract class question_bank {
             return self::return_test_question_data($questionid);
         }
 
-        $questiondata = $DB->get_record_sql('
-                SELECT q.*, qc.contextid
-                FROM {question} q
-                JOIN {question_categories} qc ON q.category = qc.id
-                WHERE q.id = :id', array('id' => $questionid), MUST_EXIST);
-        get_question_options($questiondata);
+        $questiondata = self::load_question_data($questionid);
+
         if (!$allowshuffle) {
             $questiondata->options->shuffleanswers = false;
         }
@@ -282,6 +293,7 @@ abstract class question_bank {
      * @return question_finder a question finder.
      */
     public static function get_finder() {
+        return question_finder::get_instance();
         if (is_null(self::$questionfinder)) {
             self::$questionfinder = new question_finder();
         }
@@ -418,7 +430,55 @@ abstract class question_bank {
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_finder {
+class question_finder implements cache_data_source {
+    /** @var question_finder the singleton instance of this class. */
+    protected static $questionfinder = null;
+
+    /** @var cache the question definition cache. */
+    protected $cache = null;
+
+    /**
+     * @return question_finder a question finder.
+     */
+    public static function get_instance() {
+        if (is_null(self::$questionfinder)) {
+            self::$questionfinder = new question_finder();
+        }
+        return self::$questionfinder;
+    }
+
+    /* See cache_data_source::get_instance_for_cache. */
+    public static function get_instance_for_cache(cache_definition $definition) {
+        return self::get_instance();
+    }
+
+    /**
+     * @return get the question definition cache we are using.
+     */
+    protected function get_data_cache() {
+        if ($this->cache == null) {
+            $this->cache = cache::make('core', 'questiondata');
+        }
+        return $this->cache;
+    }
+
+    /**
+     * This method needs to be called whenever a question is edited.
+     */
+    public function uncache_question($questionid) {
+        $this->get_data_cache()->delete($questionid);
+    }
+
+    /**
+     * Load a question definition data from the database. The data will be
+     * returned as a plain stdClass object.
+     * @param int $questionid the id of the question to load.
+     * @return object question definition loaded from the database.
+     */
+    public function load_question_data($questionid) {
+        return $this->get_data_cache()->get($questionid);
+    }
+
     /**
      * Get the ids of all the questions in a list of categoryies.
      * @param array $categoryids either a categoryid, or a comma-separated list
@@ -443,5 +503,36 @@ class question_finder {
                  AND parent = 0
                  AND hidden = 0
                  $extraconditions", $qcparams + $extraparams, '', 'id,id AS id2');
+    }
+
+    /* See cache_data_source::load_for_cache. */
+    public function load_for_cache($questionid) {
+        global $DB;
+        $questiondata = $DB->get_record_sql('
+                                    SELECT q.*, qc.contextid
+                                    FROM {question} q
+                                    JOIN {question_categories} qc ON q.category = qc.id
+                                    WHERE q.id = :id', array('id' => $questionid), MUST_EXIST);
+        get_question_options($questiondata);
+        return $questiondata;
+    }
+
+    /* See cache_data_source::load_many_for_cache. */
+    public function load_many_for_cache(array $questionids) {
+        global $DB;
+        list($idcondition, $params) = $DB->get_in_or_equal($questionids);
+        $questiondata = $DB->get_records_sql('
+                                            SELECT q.*, qc.contextid
+                                            FROM {question} q
+                                            JOIN {question_categories} qc ON q.category = qc.id
+                                            WHERE q.id ' . $idcondition, $params);
+
+        foreach ($questionids as $id) {
+            if (!array_key_exists($id, $questionids)) {
+                throw new dml_missing_record_exception('question', '', array('id' => $id));
+            }
+            get_question_options($questiondata[$id]);
+        }
+        return $questiondata;
     }
 }

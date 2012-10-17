@@ -343,6 +343,7 @@ function question_delete_question($questionid) {
 
     // Finally delete the question record itself
     $DB->delete_records('question', array('id' => $questionid));
+    question_bank::notify_question_edited($questionid);
 }
 
 /**
@@ -607,6 +608,11 @@ function question_move_questions_to_category($questionids, $newcategoryid) {
 
     // TODO Deal with datasets.
 
+    // Purge these questions from the cache.
+    foreach ($questions as $question) {
+        question_bank::notify_question_edited($question->id);
+    }
+
     return true;
 }
 
@@ -626,6 +632,8 @@ function question_move_category_to_context($categoryid, $oldcontextid, $newconte
     foreach ($questionids as $questionid => $qtype) {
         question_bank::get_qtype($qtype)->move_files(
                 $questionid, $oldcontextid, $newcontextid);
+        // Purge this question from the cache.
+        question_bank::notify_question_edited($questionid);
     }
 
     $subcatids = $DB->get_records_menu('question_categories',
@@ -860,8 +868,11 @@ function question_hash($question) {
  * Saves question options
  *
  * Simply calls the question type specific save_question_options() method.
+ * @deprecated all code should now call the question type method directly.
  */
 function save_question_options($question) {
+    debugging('Please do not call save_question_options any more. Call the question type method directly.',
+            DEBUG_DEVELOPER);
     question_bank::get_qtype($question->qtype)->save_question_options($question);
 }
 
@@ -1393,21 +1404,11 @@ function question_require_capability_on($question, $cap) {
  * Get the real state - the correct question id and answer - for a random
  * question.
  * @param object $state with property answer.
- * @return mixed return integer real question id or false if there was an
- * error..
+ * @deprecated this function has not been relevant since Moodle 2.1!
  */
 function question_get_real_state($state) {
-    global $OUTPUT;
-    $realstate = clone($state);
-    $matches = array();
-    if (!preg_match('|^random([0-9]+)-(.*)|', $state->answer, $matches)) {
-        echo $OUTPUT->notification(get_string('errorrandom', 'quiz_statistics'));
-        return false;
-    } else {
-        $realstate->question = $matches[1];
-        $realstate->answer = $matches[2];
-        return $realstate;
-    }
+    throw new coding_exception('question_get_real_state has not been relevant since Moodle 2.1. ' .
+            'I am not sure what you are trying to do, but stop it at once!');
 }
 
 /**
