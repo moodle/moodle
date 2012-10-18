@@ -759,6 +759,23 @@ class core_renderer extends renderer_base {
             $header = $this->doctype() . $header;
         }
 
+        // If this theme version is below 2.4 release and this is a course view page
+        if ((!isset($this->page->theme->settings->version) || $this->page->theme->settings->version < 2012101500) &&
+                $this->page->pagelayout === 'course' && $this->page->url->compare(new moodle_url('/course/view.php'), URL_MATCH_BASE)) {
+            // check if course content header/footer have not been output during render of theme layout
+            $coursecontentheader = $this->course_content_header(true);
+            $coursecontentfooter = $this->course_content_footer(true);
+            if (!empty($coursecontentheader)) {
+                // display debug message and add header and footer right above and below main content
+                // Please note that course header and footer (to be displayed above and below the whole page)
+                // are not displayed in this case at all.
+                // Besides the content header and footer are not displayed on any other course page
+                debugging('The current theme is not optimised for 2.4, the course-specific header and footer defined in course format will not be output', DEBUG_DEVELOPER);
+                $header .= $coursecontentheader;
+                $footer = $coursecontentfooter. $footer;
+            }
+        }
+
         send_headers($this->contenttype, $this->page->cacheable);
 
         $this->opencontainers->push('header/footer', $footer);
@@ -843,6 +860,100 @@ class core_renderer extends renderer_base {
      */
     public function container_end_all($shouldbenone = false) {
         return $this->opencontainers->pop_all_but_last($shouldbenone);
+    }
+
+    /**
+     * Returns course-specific information to be output immediately above content on any course page
+     * (for the current course)
+     *
+     * @param bool $onlyifnotcalledbefore output content only if it has not been output before
+     * @return string
+     */
+    public function course_content_header($onlyifnotcalledbefore = false) {
+        global $CFG;
+        if ($this->page->course->id == SITEID) {
+            // return immediately and do not include /course/lib.php if not necessary
+            return '';
+        }
+        static $functioncalled = false;
+        if ($functioncalled && $onlyifnotcalledbefore) {
+            // we have already output the content header
+            return '';
+        }
+        require_once($CFG->dirroot.'/course/lib.php');
+        $functioncalled = true;
+        $courseformat = course_get_format($this->page->course);
+        if (($obj = $courseformat->course_content_header()) !== null) {
+            return $courseformat->get_renderer($this->page)->render($obj);
+        }
+        return '';
+    }
+
+    /**
+     * Returns course-specific information to be output immediately below content on any course page
+     * (for the current course)
+     *
+     * @param bool $onlyifnotcalledbefore output content only if it has not been output before
+     * @return string
+     */
+    public function course_content_footer($onlyifnotcalledbefore = false) {
+        global $CFG;
+        if ($this->page->course->id == SITEID) {
+            // return immediately and do not include /course/lib.php if not necessary
+            return '';
+        }
+        static $functioncalled = false;
+        if ($functioncalled && $onlyifnotcalledbefore) {
+            // we have already output the content footer
+            return '';
+        }
+        $functioncalled = true;
+        require_once($CFG->dirroot.'/course/lib.php');
+        $courseformat = course_get_format($this->page->course);
+        if (($obj = $courseformat->course_content_footer()) !== null) {
+            return $courseformat->get_renderer($this->page)->render($obj);
+        }
+        return '';
+    }
+
+    /**
+     * Returns course-specific information to be output on any course page in the header area
+     * (for the current course)
+     *
+     * @return string
+     */
+    public function course_header() {
+        global $CFG;
+        if ($this->page->course->id == SITEID) {
+            // return immediately and do not include /course/lib.php if not necessary
+            return '';
+        }
+        require_once($CFG->dirroot.'/course/lib.php');
+        $courseformat = course_get_format($this->page->course);
+        if (($obj = $courseformat->course_header()) !== null) {
+            return $courseformat->get_renderer($this->page)->render($obj);
+        }
+        return '';
+    }
+
+    /**
+     * Returns course-specific information to be output on any course page in the footer area
+     * (for the current course)
+     *
+     * @return string
+     */
+    public function course_footer() {
+        global $CFG;
+        if ($this->page->course->id == SITEID) {
+            // return immediately and do not include /course/lib.php if not necessary
+            return '';
+        }
+        require_once($CFG->dirroot.'/course/lib.php');
+        $courseformat = course_get_format($this->page->course);
+        if (($obj = $courseformat->course_footer()) !== null) {
+            return $courseformat->get_renderer($this->page)->render($obj);
+        }
+        return '';
     }
 
     /**

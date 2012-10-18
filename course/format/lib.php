@@ -785,6 +785,73 @@ abstract class format_base {
      */
     public function page_set_cm(moodle_page $page) {
     }
+
+    /**
+     * Course-specific information to be output on any course page (usually above navigation bar)
+     *
+     * Example of usage:
+     * define
+     * class format_FORMATNAME_XXX implements renderable {}
+     *
+     * create format renderer in course/format/FORMATNAME/renderer.php, define rendering function:
+     * class format_FORMATNAME_renderer extends plugin_renderer_base {
+     *     protected function render_format_FORMATNAME_XXX(format_FORMATNAME_XXX $xxx) {
+     *         return html_writer::tag('div', 'This is my header/footer');
+     *     }
+     * }
+     *
+     * Return instance of format_FORMATNAME_XXX in this function, the appropriate method from
+     * plugin renderer will be called
+     *
+     * @return null|renderable null for no output or object with data for plugin renderer
+     */
+    public function course_header() {
+        return null;
+    }
+
+    /**
+     * Course-specific information to be output on any course page (usually in the beginning of
+     * standard footer)
+     *
+     * See {@link format_base::course_header()} for usage
+     *
+     * @return null|renderable null for no output or object with data for plugin renderer
+     */
+    public function course_footer() {
+        return null;
+    }
+
+    /**
+     * Course-specific information to be output immediately above content on any course page
+     *
+     * See {@link format_base::course_header()} for usage
+     *
+     * @return null|renderable null for no output or object with data for plugin renderer
+     */
+    public function course_content_header() {
+        return null;
+    }
+
+    /**
+     * Course-specific information to be output immediately below content on any course page
+     *
+     * See {@link format_base::course_header()} for usage
+     *
+     * @return null|renderable null for no output or object with data for plugin renderer
+     */
+    public function course_content_footer() {
+        return null;
+    }
+
+    /**
+     * Returns instance of page renderer used by this plugin
+     *
+     * @param moodle_page $page
+     * @return renderer_base
+     */
+    public function get_renderer(moodle_page $page) {
+        return $page->get_renderer('format_'. $this->get_format());
+    }
 }
 
 /**
