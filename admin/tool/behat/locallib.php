@@ -37,6 +37,8 @@ require_once($CFG->libdir . '/phpunit/classes/tests_finder.php');
  */
 class tool_behat {
 
+    private static $behat_tests_path = '/tests/behat';
+
     /**
      * Displays basic info about acceptance tests
      */
@@ -151,8 +153,6 @@ class tool_behat {
 
         self::update_config_file();
 
-        echo self::get_header();
-
         @set_time_limit(0);
 
         // Priority to the one specified as argument.
@@ -176,17 +176,27 @@ class tool_behat {
         self::enable_test_environment();
         $currentcwd = getcwd();
 
-        // Outputting runner form and tests results.
+        chdir($CFG->behatpath);
+        ob_start();
+        passthru('bin/behat --ansi ' . $tagsoption . ' ' .$extra, $code);
+        $output = ob_get_contents();
+        ob_end_clean();
+
+        // Switching back to regular environment.
+        self::disable_test_environment();
+        chdir($currentcwd);
+
+        // Output.
+        echo self::get_header();
         if (!CLI_SCRIPT) {
             echo self::get_run_tests_form($tags);
         }
+        echo $output;
 
-        chdir($CFG->behatpath);
-        passthru('bin/behat ' . $tagsoption . ' ' .$extra, $code);
-
-        // Switching back to regular environment
-        self::disable_test_environment();
-        chdir($currentcwd);
+        // Dirty hack to avoid behat bad HTML structure when test execution throws an exception and there are skipped steps.
+        if (strstr($output, 'class="skipped"') != false) {
+            echo '</ol></div></div></div></body></html>';
+        }
 
         echo self::get_footer();
     }
@@ -197,23 +207,55 @@ class tool_behat {
      */
     private static function update_config_file() {
 
-        // Gets all the components with features
+        $contents = '';
+
+        // Gets all the components with features.
         $components = tests_finder::get_components_with_tests('features');
         if ($components) {
-            $contents = 'features:' . PHP_EOL;
+            $contents .= 'features:' . PHP_EOL;
             foreach ($components as $componentname => $path) {
+                $path = self::clean_path($path) . self::$behat_tests_path;
                 $contents .= '  - ' . $path . PHP_EOL;
             }
         }
 
-        // Gets all the components with steps definitions
-        // TODO
+        // Gets all the components with steps definitions.
+        $components = tests_finder::get_components_with_tests('stepsdefinitions');
+        if ($components) {
+            $contents .= 'steps_definitions:' . PHP_EOL;
+            foreach ($components as $componentname => $filepath) {
+                $filepath = self::clean_path($path) . self::$behat_tests_path . '/behat_' . $componentname . '.php';
+                $contents .= '  ' . $componentname . ': ' . $filepath . PHP_EOL;
+            }
+        }
 
-        // Stores the file
+        // Stores the file.
         $fullfilepath = self::get_behat_dir() . '/config.yml';
         if (!file_put_contents($fullfilepath, $contents)) {
             throw new file_exception('cannotcreatefile', $fullfilepath);
         }
+    }
+
+
+    /**
+     * Cleans the path returned by get_components_with_tests() to standarize it
+     *
+     * {@see tests_finder::get_all_directories_with_tests()} it returns the path including /tests/
+     * @param string $path
+     * @return string The string without the last /tests part
+     */
+    private static function clean_path($path) {
+
+        $path = rtrim($path, '/');
+
+        $parttoremove = '/tests';
+
+        $substr = substr($path, strlen($path) - strlen($parttoremove));
+        if ($substr == $parttoremove) {
+            $path = substr($path, 0, strlen($path) - strlen($parttoremove));
+        }
+
+        return rtrim($path, '/');
     }
 
     /**
