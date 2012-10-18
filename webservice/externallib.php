@@ -155,6 +155,9 @@ class core_webservice_external extends external_api {
 
         $siteinfo['functions'] = $availablefunctions;
 
+        // Mobile CSS theme and alternative login url
+        $siteinfo['mobilecssurl'] = get_config('admin', 'mobilecssurl');
+
         return $siteinfo;
     }
 
@@ -191,7 +194,8 @@ class core_webservice_external extends external_api {
                 'downloadfiles'  => new external_value(PARAM_INT, '1 if users are allowed to download files, 0 if not',
                                                        VALUE_OPTIONAL),
                 'release'  => new external_value(PARAM_TEXT, 'Moodle release number', VALUE_OPTIONAL),
-                'version'  => new external_value(PARAM_TEXT, 'Moodle version number', VALUE_OPTIONAL)
+                'version'  => new external_value(PARAM_TEXT, 'Moodle version number', VALUE_OPTIONAL),
+                'mobilecssurl'  => new external_value(PARAM_URL, 'Mobile custom CSS theme', VALUE_OPTIONAL)
             )
         );
     }

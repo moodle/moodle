@@ -84,6 +84,7 @@ class core_webservice_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(true, $siteinfo['downloadfiles']);
         $this->assertEquals($CFG->release, $siteinfo['release']);
         $this->assertEquals($CFG->version, $siteinfo['version']);
+        $this->assertEquals(get_config('admin', 'mobilecssurl'), $siteinfo['mobilecssurl']);
     }
 
 }
