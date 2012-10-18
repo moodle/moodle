@@ -18,6 +18,15 @@ if (!$showsidepre) {
 if ($hascustommenu) {
     $bodyclasses[] = 'has_custom_menu';
 }
+$courseheader = $coursecontentheader = $coursecontentfooter = $coursefooter = '';
+if (empty($PAGE->layout_options['nocourseheaderfooter'])) {
+    $courseheader = $OUTPUT->course_header();
+    $coursecontentheader = $OUTPUT->course_content_header();
+    if (empty($PAGE->layout_options['nocoursefooter'])) {
+        $coursecontentfooter = $OUTPUT->course_content_footer();
+        $coursefooter = $OUTPUT->course_footer();
+    }
+}
 
 echo $OUTPUT->doctype() ?>
 <html <?php echo $OUTPUT->htmlattributes() ?>>
@@ -29,7 +38,7 @@ echo $OUTPUT->doctype() ?>
 <body id="<?php p($PAGE->bodyid) ?>" class="<?php p($PAGE->bodyclasses.' '.join(' ', $bodyclasses)) ?>">
 <?php echo $OUTPUT->standard_top_of_body_html() ?>
 <div id="page">
-<?php if ($hasheading || $hasnavbar) { ?>
+<?php if ($hasheading || $hasnavbar || !empty($courseheader)) { ?>
     <div id="page-header">
         <?php if ($hasheading) { ?>
         <h1 class="headermain"><?php echo $PAGE->heading ?></h1>
@@ -42,6 +51,9 @@ echo $OUTPUT->doctype() ?>
             }
             echo $PAGE->headingmenu
         ?></div><?php } ?>
+        <?php if (!empty($courseheader)) { ?>
+            <div id="course-header"><?php echo $courseheader; ?></div>
+        <?php } ?>
         <?php if ($hascustommenu) { ?>
         <div id="custommenu"><?php echo $custommenu; ?></div>
         <?php } ?>
@@ -58,7 +70,9 @@ echo $OUTPUT->doctype() ?>
     <div id="page-content" class="clearfix">
         <div id="report-main-content">
             <div class="region-content">
+                <?php echo $coursecontentheader; ?>
                 <?php echo $OUTPUT->main_content() ?>
+                <?php echo $coursecontentfooter; ?>
             </div>
         </div>
         <?php if ($hassidepre) { ?>
@@ -73,6 +87,9 @@ echo $OUTPUT->doctype() ?>
     </div>
 
 <!-- START OF FOOTER -->
+    <?php if (!empty($coursefooter)) { ?>
+        <div id="course-footer"><?php echo $coursefooter; ?></div>
+    <?php } ?>
     <?php if ($hasfooter) { ?>
     <div id="page-footer" class="clearfix">
         <p class="helplink"><?php echo page_doc_link(get_string('moodledocslink')) ?></p>
