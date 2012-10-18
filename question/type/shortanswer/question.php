@@ -131,7 +131,7 @@ class qtype_shortanswer_question extends question_graded_by_strategy
             $args, $forcedownload) {
         if ($component == 'question' && $filearea == 'answerfeedback') {
             $currentanswer = $qa->get_last_qt_var('answer');
-            $answer = $qa->get_question()->get_matching_answer(array('answer' => $currentanswer));
+            $answer = $this->get_matching_answer(array('answer' => $currentanswer));
             $answerid = reset($args); // itemid is answer id.
             return $options->feedback && $answer && $answerid == $answer->id;
 
