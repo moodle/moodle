@@ -41,8 +41,6 @@
     padding-right: 7px;
 }
 
-.dir-rtl .ui-li-count { left:38px; right:auto;}
-
 .dir-rtl .ui-checkbox .ui-btn, .dir-rtl .ui-radio .ui-btn {
     text-align: right;
 }
@@ -51,4 +49,14 @@
 
 .path-mod-quiz.dir-rtl .que .control {
     width: 75%;
+}
+
+.dir-rtl .categorybox .ui-btn-inner,
+.dir-rtl .coursebox .ui-btn-inner {
+    text-align: right;
+ }
+
+.dir-rtl .categorybox .ui-btn-text,
+.dir-rtl .coursebox .ui-btn-text {
+    padding-right: 25px;
 }
