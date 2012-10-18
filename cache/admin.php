@@ -54,6 +54,9 @@ if (!empty($action) && confirm_sesskey()) {
             break;
         case 'addstore' : // Add the requested store.
             $plugin = required_param('plugin', PARAM_PLUGIN);
+            if (!$plugins[$plugin]['canaddinstance']) {
+                print_error('ex_unmetstorerequirements', 'cache');
+            }
             $mform = cache_administration_helper::get_add_store_form($plugin);
             $title = get_string('addstore', 'cache', $plugins[$plugin]['name']);
             if ($mform->is_cancelled()) {
