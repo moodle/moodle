@@ -4512,6 +4512,35 @@ function include_course_ajax($course, $usedmodules = array(), $enabledmodules = 
 }
 
 /**
+ * Returns the sorted list of available course formats, filtered by enabled if necessary
+ *
+ * @param bool $enabledonly return only formats that are enabled
+ * @return array array of sorted format names
+ */
+function get_sorted_course_formats($enabledonly = false) {
+    global $CFG;
+    $formats = get_plugin_list('format');
+
+    $sortorderstr = '';
+    if (isset($CFG->format_plugins_sortorder)) {
+        $sortorderstr = $CFG->format_plugins_sortorder;
+    }
+    $order = explode(',', $sortorderstr);
+    $order = array_merge(array_intersect($order, array_keys($formats)),
+                    array_diff(array_keys($formats), $order));
+    if ($sortorderstr !== join(',', $order)) {
+        set_config('format_plugins_sortorder', join(',', $order));
+    }
+    $sortedformats = array();
+    foreach ($order as $formatname) {
+        if (!$enabledonly || !get_config('format_'.$formatname, 'disabled')) {
+            $sortedformats[] = $formatname;
+        }
+    }
+    return $sortedformats;
+}
+
+/**
  * The URL to use for the specified course (with section)
  *
  * @param int|stdClass $courseorid The course to get the section name for (either object or just course id)

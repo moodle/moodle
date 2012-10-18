@@ -97,13 +97,21 @@ abstract class format_base {
         if ($format === 'site') {
             return $format;
         }
-        $plugins = get_plugin_list('format'); // TODO MDL-35260 filter only enabled
-        if (isset($plugins[$format])) {
+        $plugins = get_sorted_course_formats();
+        if (in_array($format, $plugins)) {
             return $format;
         }
         // Else return default format
-        $defaultformat = reset($plugins); // TODO MDL-35260 get default format from config
-        debugging('Format plugin format_'.$format.' is not found or is not enabled. Using default format_'.$defaultformat, DEBUG_DEVELOPER);
+        $defaultformat = get_config('moodlecourse', 'format');
+        if (!in_array($defaultformat, $plugins)) {
+            // when default format is not set correctly, use the first available format
+            $defaultformat = reset($plugins);
+        }
+        static $warningprinted = array();
+        if (empty($warningprinted[$format])) {
+            debugging('Format plugin format_'.$format.' is not found. Using default format_'.$defaultformat, DEBUG_DEVELOPER);
+            $warningprinted[$format] = true;
+        }
         return $defaultformat;
     }
 
