@@ -79,7 +79,11 @@ if (!empty($scoid)) {
     if ($sco = scorm_get_sco($scoid)) {
         if ($sco->launch == '') {
             // Search for the next launchable sco
-            if ($scoes = $DB->get_records_select('scorm_scoes', "scorm = ? AND '.$DB->sql_isnotempty('scorm_scoes', 'launch', false, true).' AND id > ?", array($scorm->id, $sco->id), 'id ASC')) {
+            if ($scoes = $DB->get_records_select(
+                    'scorm_scoes',
+                    'scorm = ? AND '.$DB->sql_isnotempty('scorm_scoes', 'launch', false, true).' AND id > ?',
+                    array($scorm->id, $sco->id),
+                    'id ASC')) {
                 $sco = current($scoes);
             }
         }
@@ -89,7 +93,12 @@ if (!empty($scoid)) {
 // If no sco was found get the first of SCORM package
 //
 if (!isset($sco)) {
-    $scoes = $DB->get_records_select('scorm_scoes', "scorm = ? AND ".$DB->sql_isnotempty('scorm_scoes', 'launch', false, true), array($scorm->id), 'id ASC');
+    $scoes = $DB->get_records_select(
+        'scorm_scoes',
+        'scorm = ? AND '.$DB->sql_isnotempty('scorm_scoes', 'launch', false, true),
+        array($scorm->id),
+        'id ASC'
+    );
     $sco = current($scoes);
 }
 
