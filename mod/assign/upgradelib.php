@@ -162,6 +162,11 @@ class assign_upgrade_manager {
             }
             $completiondone = true;
 
+            // Migrate log entries so we don't lose them.
+            $logparams = array('cmid' => $oldcoursemodule->id, 'course' => $oldcoursemodule->course);
+            $DB->set_field('log', 'module', 'assign', $logparams);
+            $DB->set_field('log', 'cmid', $newcoursemodule->id, $logparams);
+
 
             // copy all the submission data (and get plugins to do their bit)
             $oldsubmissions = $DB->get_records('assignment_submissions', array('assignment'=>$oldassignmentid));
@@ -260,6 +265,10 @@ class assign_upgrade_manager {
                     $DB->update_record('course_completion_criteria', $criteria);
                 }
             }
+            // Roll back the log changes
+            $logparams = array('cmid' => $newcoursemodule->id, 'course' => $newcoursemodule->course);
+            $DB->set_field('log', 'module', 'assignment', $logparams);
+            $DB->set_field('log', 'cmid', $oldcoursemodule->id, $logparams);
             // roll back the advanced grading update
             if ($gradingarea) {
                 foreach ($gradeidmap as $newgradeid => $oldsubmissionid) {
