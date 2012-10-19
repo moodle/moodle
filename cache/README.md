@@ -14,11 +14,15 @@ A definition:
             ),
             'requiredataguarantee' => false,          // Optional
             'requiremultipleidentifiers' => false,    // Optional
+            'requirelockingread' => false,            // Optional
+            'requirelockingwrite' => false,           // Optional
+            'maxsize' => null,                        // Optional
             'overrideclass' => null,                  // Optional
             'overrideclassfile' => null,              // Optional
             'datasource' => null,                     // Optional
             'datasourcefile' => null,                 // Optional
             'persistent' => false,                    // Optional
+            'persistentmaxsize' => false,             // Optional
             'ttl' => 0,                               // Optional
             'mappingsonly' => false                   // Optional
             'invalidationevents' => array(            // Optional
@@ -27,7 +31,7 @@ A definition:
         )
     );
 
-Getting a something from a cache using the definition:
+Getting something from a cache using the definition:
 
     $cache = cache::make('core', 'string');
     if (!$component = $cache->get('component')) {
@@ -36,7 +40,7 @@ Getting a something from a cache using the definition:
         $cache->set($component);
     }
 
-The same thing but from using params:
+The same thing but using params:
 
     $cache = cache::make_from_params(cache_store::MODE_APPLICATION, 'core', 'string');
     if (!$component = $cache->get('component')) {
@@ -45,30 +49,30 @@ The same thing but from using params:
         $cache->set($component);
     }
 
-If a data source had been specified in the definition the following would be all that was needed.
+If a data source had been specified in the definition, the following would be all that was needed.
 
     $cache = cache::make('core', 'string');
     $component = $cache->get('component');
 
-The bits that make up the cache API
------------------------------------
+Cache API parts
+---------------
 
 There are several parts that make up the Cache API.
 
 ### Loader
 The loader is central to the whole thing.
 It is used by the end developer to get an object that handles caching.
-90% of end developers will not need to know or use anything else about the cache API.
-In order to get a loader you must use one of two static methods, make, or make_with_params.
-To the end developer interacting with the loader is simple and is dictated by the cache_loader interface.
+90% of end developers will not need to know or use anything else in the cache API.
+In order to get a loader you must use one of two static methods, make or make_with_params.
+The loader has been kept as simple as possible, interaction is summarised by the cache_loader interface.
 Internally there is lots of magic going on. The important parts to know about are:
-* There are two ways to get with a loader, the first with a definition (discussed below) the second with params. When params are used they are turned into an adhoc definition with default params.
-* A loader get passed three things when being constructed, a definition, a store, and another loader or datasource if there is either.
+* There are two ways to get a loader, the first with a definition (discussed below) the second with params. When params are used they are turned into an adhoc definition with default params.
+* A loader is passed three things when being constructed, a definition, a store, and another loader or datasource if there is either.
 * If a loader is the third arg then requests will be chained to provide redundancy.
-* If a data source is provided then requests for an item that is not cached will be passed to the data source and that will be expected to load the data. If it loads data that data is stored in each store on its way back to the user.
-* There are three core loaders. One for each application, session, and request.
-* A custom loader can be used. It will be provided by the definition (thus cannot be used with adhoc definitions) and must override the appropriate core loader
-* The loader handles ttl for stores that don't natively support ttl.
+* If a data source is provided then requests for an item that is not cached will be passed to the data source and that will be expected to load the data. If it loads data, that data is stored in each store on its way back to the user.
+* There are three core loaders. One for each application, session and request.
+* A custom loader can be used. It will be provided by the definition (thus cannot be used with ad hoc definitions) and must override the appropriate core loader
+* The loader handles ttl (time to live) for stores that don't natively support ttl.
 * The application loader handles locking for stores that don't natively support locking.
 
 ### Store
@@ -82,37 +86,41 @@ The following points highlight things you should know about stores.
 * Store plugins inform the cache API about the things they support. Features can be required by a definition.
 ** Data guarantee - Data is guaranteed to exist in the cache once it is set there. It is never cleaned up to free space or because it has not been recently used.
 ** Multiple identifiers - Rather than a single string key, the parts that make up the key are passed as an array.
-** Native TTL support - When required the store supports native ttl and doesn't require the cache API to manage ttl of things given to the store.
+** Native TTL support - When required, the store supports native ttl and doesn't require the cache API to manage ttl of things given to the store.
 
 ### Definition
 _Definitions were not a part of the previous proposal._
 Definitions are cache definitions. They will be located within a new file for each component/plugin at **db/caches.php**.
 They can be used to set all of the requirements of a cache instance and are used to ensure that a cache can only be interacted with in the same way no matter where it is being used.
-It also ensure that caches are easy to use, the config is stored in the definition and the developer using the cache does not need to know anything about it.
+It also ensures that caches are easy to use, the config is stored in the definition and the developer using the cache does not need to know anything about its inner workings.
 When getting a loader you can either provide a definition name, or a set or params.
 * If you provide a definition name then the matching definition is found and used to construct a loader for you.
-* If you provide params then an adhoc definition is created. It will have defaults and will not have any special requirements or options set.
+* If you provide params then an ad hoc definition is created. It will have defaults and will not have any special requirements or options set.
 
 Definitions are designed to be used in situations where things are more than basic.
 
 The following settings are required for a definition:
 * name - Identifies the definition and must be unique.
-* mode - Application, session, request.
+* mode - Application, session or request.
 
 The following optional settings can also be defined:
 * requireidentifiers - Any identifiers the definition requires. Must be provided when creating the loader.
 * requiredataguarantee - If set to true then only stores that support data guarantee will be used.
 * requiremultipleidentifiers - If set to true then only stores that support multiple identifiers will be used.
-* overrideclass - If provided this class will be used for the loader. It must extend on of the core loader classes (based upon mode).
+* requirelockingread - If set to true a lock will be acquired for reading. Don't use this setting unless you have a REALLY good reason to.
+* requirelockingwrite - If set to true a lock will be acquired before writing to the cache. Avoid this unless necessary.
+* maxsize - This gives a cache an indication about the maximum items it should store. Cache stores don't have to use this, it is up to them to decide if its required.
+* overrideclass - If provided this class will be used for the loader. It must extend one of the core loader classes (based upon mode).
 * overrideclassfile - Included if required when using the overrideclass param.
 * datasource - If provided this class will be used as a data source for the definition. It must implement the cache_data_source interface.
 * datasourcefile - Included if required when using the datasource param.
 * persistent - If set to true the loader will be stored when first created and provided to subsequent requests. More on this later.
+* persistentmaxsize - If set to an int this will be the maximum number of items stored in the persistent cache.
 * ttl - Can be used to set a ttl value for data being set for this cache.
 * mappingsonly - This definition can only be used if there is a store mapping for it. More on this later.
 * invalidationevents - An array of events that should trigger this cache to invalidate.
 
-Its important to note that internally the definition is also aware of the component. This is picked up when the definition is read based upon the location of the caches.php file.
+It's important to note that internally the definition is also aware of the component. This is picked up when the definition is read, based upon the location of the caches.php file.
 
 The persist option.
 As noted the persist option causes the loader generated for this definition to be stored when first created. Subsequent requests for this definition will be given the original loader instance.
@@ -132,7 +140,7 @@ The loader gets used as the last resort if provided and means that code using th
 They can be specified in a cache definition and must implement the cache_data_source interface.
 
 ### How it all chains together.
-Consider the following if you can:
+Consider the following:
 
 Basic request for information (no frills):
 
@@ -167,7 +175,7 @@ Subsequent request for information:
 
 Other internal magic you should be aware of
 -------------------------------------------
-The following should fill you in on a bit more of the behind the scenes stuff for the cache API.
+The following should fill you in on a bit more of the behind-the-scenes stuff for the cache API.
 
 ### Helper class
 There is a helper class called cache_helper which is abstract with static methods.
@@ -188,7 +196,7 @@ Cache information can be invalidated in two ways.
 1. pass a definition name and the keys to be invalidated (or none to invalidate the whole cache).
 2. pass an event and the keys to be invalidated.
 
-The first method is designed to be used when you have a single known definition you want to invalidate entries from within.
+The first method is designed to be used when you have a single known definition you want to invalidate entries within.
 The second method is a lot more intensive for the system. There are defined invalidation events that definitions can "subscribe" to (through the definitions invalidationevents option).
 When you invalidate by event the cache API finds all of the definitions that subscribe to the event, it then loads the stores for each of those definitions and purges the keys from each store.
-This is obviously a recursive and therefor intense process.
+This is obviously a recursive, and therefore, intense process.
