@@ -734,16 +734,19 @@ class flexible_table {
     function col_fullname($row) {
         global $COURSE, $CFG;
 
-        if (!$this->download) {
-            $profileurl = new moodle_url('/user/profile.php', array('id' => $row->{$this->useridfield}));
-            if ($COURSE->id != SITEID) {
-                $profileurl->param('course', $COURSE->id);
-            }
-            return html_writer::link($profileurl, fullname($row));
-
-        } else {
-            return fullname($row);
+        $name = fullname($row);
+        if ($this->download) {
+            return $name;
         }
+
+        $userid = $row->{$this->useridfield};
+        if ($COURSE->id == SITEID) {
+            $profileurl = new moodle_url('/user/profile.php', array('id' => $userid));
+        } else {
+            $profileurl = new moodle_url('/user/view.php',
+                    array('id' => $userid, 'course' => $COURSE->id));
+        }
+        return html_writer::link($profileurl, $name);
     }
 
     /**
