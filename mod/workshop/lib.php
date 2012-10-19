@@ -136,7 +136,6 @@ function workshop_update_instance(stdclass $workshop) {
     $workshop->useselfassessment     = (int)!empty($workshop->useselfassessment);
     $workshop->latesubmissions       = (int)!empty($workshop->latesubmissions);
     $workshop->phaseswitchassessment = (int)!empty($workshop->phaseswitchassessment);
-    $workshop->evaluation            = 'best';
 
     // todo - if the grading strategy is being changed, we must replace all aggregated peer grades with nulls
     // todo - if maximum grades are being changed, we should probably recalculate or invalidate them

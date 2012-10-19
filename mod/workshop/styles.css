@@ -520,3 +520,8 @@
 .path-mod-workshop div.buttonwithhelp div {
     display: inline;
 }
+
+.path-mod-workshop #evaluationmethodchooser {
+    margin: 2em auto;
+    text-align: center;
+}

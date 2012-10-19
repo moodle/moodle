@@ -38,6 +38,7 @@ $page       = optional_param('page', 0, PARAM_INT);
 $perpage    = optional_param('perpage', null, PARAM_INT);
 $sortby     = optional_param('sortby', 'lastname', PARAM_ALPHA);
 $sorthow    = optional_param('sorthow', 'ASC', PARAM_ALPHA);
+$eval       = optional_param('eval', null, PARAM_PLUGIN);
 
 if ($id) {
     $cm         = get_coursemodule_from_id('workshop', $id, 0, false, MUST_EXIST);
@@ -70,6 +71,13 @@ $PAGE->set_heading($course->fullname);
 if ($perpage and $perpage > 0 and $perpage <= 1000) {
     require_sesskey();
     set_user_preference('workshop_perpage', $perpage);
+    redirect($PAGE->url);
+}
+
+if ($eval) {
+    require_sesskey();
+    require_capability('mod/workshop:overridegrades', $workshop->context);
+    $workshop->set_grading_evaluation_method($eval);
     redirect($PAGE->url);
 }
 
@@ -395,6 +403,13 @@ case workshop::PHASE_EVALUATION:
             $showreviewernames  = has_capability('mod/workshop:viewreviewernames', $workshop->context);
 
             if (has_capability('mod/workshop:overridegrades', $PAGE->context)) {
+                // Print a drop-down selector to change the current evaluation method.
+                $selector = new single_select($PAGE->url, 'eval', workshop::available_evaluators_list(),
+                    $workshop->evaluation, false, 'evaluationmethodchooser');
+                $selector->set_label(get_string('evaluationmethod', 'mod_workshop'));
+                $selector->set_help_icon('evaluationmethod', 'mod_workshop');
+                $selector->method = 'post';
+                echo $output->render($selector);
                 // load the grading evaluator
                 $evaluator = $workshop->grading_evaluation_instance();
                 $form = $evaluator->get_settings_form(new moodle_url($workshop->aggregate_url(),
