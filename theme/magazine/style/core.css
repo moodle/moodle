@@ -1040,7 +1040,7 @@ table.glossarypost td.entry h3 {
 
 div#intro {
     border: none;
-    text-align: center;
+    text-align: left;
     font-size: 14px;
     color: #333333;
 }
