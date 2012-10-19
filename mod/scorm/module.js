@@ -493,6 +493,15 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, launc
         tree.expandAll();
         tree.render();
 
+        // On getting the window, always set the focus on the current item
+        Y.YUI2.util.Event.on(window, 'focus', function (e) {
+            var current = scorm_tree_node.getHighlightedNode();
+            var left = scorm_layout_widget.getUnitByPosition('left');
+            if (current && left.expand) {
+                current.focus();
+            }
+        });
+
         // navigation
         if (scorm_hide_nav == false) {
             scorm_nav_panel = new Y.YUI2.widget.Panel('scorm_navpanel', { visible:true, draggable:true, close:false, xy: [250, 450],
