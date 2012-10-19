@@ -1260,5 +1260,13 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012101500.01);
     }
 
+    if ($oldversion < 2012101800.01) {
+        // Renaming backups using previous file naming convention.
+        upgrade_rename_old_backup_files_using_shortname();
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2012101800.01);
+    }
+
     return true;
 }
