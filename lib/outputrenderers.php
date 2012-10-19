@@ -492,7 +492,13 @@ class core_renderer extends renderer_base {
      * @return string HTML fragment.
      */
     public function main_content() {
-        return $this->unique_main_content_token;
+        // This is here because it is the only place we can inject the "main" role over the entire main content area
+        // without requiring all theme's to manually do it, and without creating yet another thing people need to
+        // remember in the theme.
+        // This is an unfortunate hack. DO NO EVER add anything more here.
+        // DO NOT add classes.
+        // DO NOT add an id.
+        return '<div role="main">'.$this->unique_main_content_token.'</div>';
     }
 
     /**
