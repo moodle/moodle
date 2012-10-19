@@ -1227,7 +1227,7 @@ class qtype_calculated extends question_type {
                 echo $OUTPUT->notification(get_string('notvalidnumber', 'qtype_calculated', $a));
                 $val = 1.0;
             }
-            if ($val < 0) {
+            if ($val <= 0) { // MDL-36025 Use parentheses for "-0"
                 $str = str_replace('{'.$name.'}', '('.$val.')', $str);
             } else {
                 $str = str_replace('{'.$name.'}', $val, $str);
@@ -1255,6 +1255,7 @@ class qtype_calculated extends question_type {
         } else if ($formula === '*') {
             $str = '*';
         } else {
+            $str = null;
             eval('$str = '.$formula.';');
         }
         return $str;
@@ -1870,6 +1871,11 @@ function qtype_calculated_calculate_answer($formula, $individualdata,
     // Exchange formula variables with the correct values...
     $answer = question_bank::get_qtype('calculated')->substitute_variables_and_eval(
             $formula, $individualdata);
+    if (!is_numeric($answer)) {
+        // Something went wrong, so just return NaN.
+        $calculated->answer = NAN;
+        return $calculated;
+    }
     if ('1' == $answerformat) { /* Answer is to have $answerlength decimals */
         /*** Adjust to the correct number of decimals ***/
         if (stripos($answer, 'e')>0) {
