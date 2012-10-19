@@ -33,7 +33,11 @@ YUI.add('moodle-course-toolboxes', function(Y) {
         SECTIONIDPREFIX : 'section-',
         SECTIONLI : 'li.section',
         SHOW : 'a.editing_show',
-        SHOWHIDE : 'a.editing_showhide'
+        SHOWHIDE : 'a.editing_showhide',
+        CONDITIONALHIDDEN : 'conditionalhidden',
+        AVAILABILITYINFODIV : 'div.availabilityinfo',
+        SHOWCLASS : 'editing_show',
+        ACCESSHIDECLASS : 'accesshide'
     };
 
     /**
@@ -68,18 +72,14 @@ YUI.add('moodle-course-toolboxes', function(Y) {
 
             var status = '';
             var value;
-            if (dimarea.hasClass(toggle_class)) {
+            if (button.hasClass(CSS.SHOWCLASS)) {
                 status = 'hide';
                 value = 1;
             } else {
                 status = 'show';
                 value = 0;
             }
-
-            // Change the UI
-            dimarea.toggleClass(toggle_class);
-            // We need to toggle dimming on the description too
-            element.all(CSS.CONTENTAFTERLINK).toggleClass(CSS.DIMMEDTEXT);
+            // Update button info.
             var newstring = M.util.get_string(status, 'moodle');
             hideicon.setAttrs({
                 'alt' : newstring,
@@ -88,6 +88,19 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             button.set('title', newstring);
             button.set('className', 'editing_'+status);
 
+            // If activity is conditionally hidden, then don't toggle.
+            if (!dimarea.hasClass(CSS.CONDITIONALHIDDEN)) {
+                // Change the UI.
+                dimarea.toggleClass(toggle_class);
+                // We need to toggle dimming on the description too.
+                element.all(CSS.CONTENTAFTERLINK).toggleClass(CSS.DIMMEDTEXT);
+            }
+            // Toggle availablity info for conditional activities.
+            var availabilityinfo = element.one(CSS.AVAILABILITYINFODIV);
+
+            if (availabilityinfo) {
+                availabilityinfo.toggleClass(CSS.ACCESSHIDECLASS);
+            }
             return value;
         },
         /**
