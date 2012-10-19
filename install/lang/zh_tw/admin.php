@@ -30,5 +30,12 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['clianswerno'] = '否';
+$string['cliansweryes'] = '是';
+$string['cliincorrectvalueerror'] = '錯誤的值  "{$a->value}" 選項 "{$a->option}"';
+$string['cliincorrectvalueretry'] = '錯誤的值,請重新輸入';
+$string['clitypevalue'] = '輸入值';
+$string['clitypevaluedefault'] = '輸入值,輸入Enter會自動使用預設值({$a})';
+$string['cliyesnoprompt'] = '輸入y　(表示同意)或是輸入n（表示不同意）';
 $string['environmentrequireinstall'] = '必須安裝/啟用';
 $string['environmentrequireversion'] = '要求版本為 {$a->needed} ，您目前版本為 {$a->current}';
