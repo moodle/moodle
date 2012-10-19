@@ -1445,7 +1445,7 @@ class grade_item extends grade_object {
             $activity->modname    = $this->itemmodule;
             $activity->cmidnumber = $cm->idnumber;
 
-            grade_update_mod_grades($activity);
+            grade_update_mod_grades($activity, $userid);
         }
     }
 
