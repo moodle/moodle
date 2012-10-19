@@ -1141,7 +1141,7 @@ class quiz_question_bank_view extends question_bank_view {
                 'editaction', 'previewaction');
     }
 
-     /**
+    /**
      * Specify the column heading
      *
      * @return string Column name for the heading
