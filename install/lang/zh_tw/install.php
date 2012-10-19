@@ -34,10 +34,18 @@ $string['admindirname'] = '管理目錄';
 $string['availablelangs'] = '可使用的語言包';
 $string['chooselanguagehead'] = '選擇一種語言';
 $string['chooselanguagesub'] = '請選擇在安裝過程中使用的語言。稍後您可以根據需要重新選擇用於網站和使用者的語言。';
+$string['clialreadyconfigured'] = '檔案 config.php  已經存在，若你要安裝這一網站，請使用dmin/cli/install_database.php';
+$string['clialreadyinstalled'] = '檔案 config.php  已經存在，若你要升級這一網站，請使用admin/cli/upgrade.php';
+$string['cliinstallheader'] = 'Moodle {$a} 指令行安裝程式';
+$string['databasehost'] = '資料庫主機';
+$string['databasename'] = '資料庫名稱';
+$string['databasetypehead'] = '選擇資料庫磁碟機';
 $string['dataroot'] = '資料目錄';
+$string['datarootpermission'] = '資料目錄存取授權';
 $string['dbprefix'] = '資料表名稱的前置字元';
 $string['dirroot'] = 'Moodle目錄';
 $string['environmenthead'] = '檢查您的環境中...';
+$string['errorsinenvironment'] = '環境檢查失敗';
 $string['installation'] = '安裝';
 $string['langdownloaderror'] = '很不幸地，語言“{$a}”並未安裝。安裝過程將以英文繼續。';
 $string['memorylimithelp'] = '<p>PHP記憶體上限目前設定為{$a}。</p>
@@ -50,6 +58,14 @@ $string['memorylimithelp'] = '<p>PHP記憶體上限目前設定為{$a}。</p>
 <li>在一些PHP伺服器上，您可以在Moodle目錄下，建立.htaccess檔，包含這行:<p><blockquote>php_value memory_limit 16M</blockquote></p>
 <p>然而，在一些伺服器上，這將造成<b>所有的</b> PHP 網頁無法運作(當您看這些網頁時，您就會看到錯誤) 因此，您就必須將 .htaccess 檔案移除。
 </ol>';
+$string['paths'] = '路徑';
+$string['pathserrcreatedataroot'] = '資料目錄 ({$a->dataroot})無法由這安裝程式建立';
+$string['pathshead'] = '確認路徑';
+$string['pathsrodataroot'] = '資料根目錄是無法寫入的';
+$string['pathssubdirroot'] = 'Moodle安裝的完整目錄徑路';
+$string['pathsunsecuredataroot'] = '資料根(Dataroot)目錄的位置不安全';
+$string['pathswrongadmindir'] = '管理目錄不存在';
+$string['phpextension'] = '{$a} PHP擴展';
 $string['phpversion'] = 'PHP版本';
 $string['phpversionhelp'] = '<p>Moodle 需要至少4.1.0.的PHP版本 </p>
 <p>您目前執行的是{$a} 版</p>
