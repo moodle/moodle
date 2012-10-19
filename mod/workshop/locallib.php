@@ -1272,16 +1272,27 @@ class workshop {
         global $CFG;    // because we require other libs here
 
         if (is_null($this->evaluationinstance)) {
+            if (empty($this->evaluation)) {
+                $this->evaluation = 'best';
+            }
             $evaluationlib = dirname(__FILE__) . '/eval/' . $this->evaluation . '/lib.php';
             if (is_readable($evaluationlib)) {
                 require_once($evaluationlib);
             } else {
-                throw new coding_exception('the grading evaluation subplugin must contain library ' . $evaluationlib);
+                // Fall back in case the subplugin is not available.
+                $this->evaluation = 'best';
+                $evaluationlib = dirname(__FILE__) . '/eval/' . $this->evaluation . '/lib.php';
+                if (is_readable($evaluationlib)) {
+                    require_once($evaluationlib);
+                } else {
+                    // Fall back in case the subplugin is not available any more.
+                    throw new coding_exception('Missing default grading evaluation library ' . $evaluationlib);
+                }
             }
             $classname = 'workshop_' . $this->evaluation . '_evaluation';
             $this->evaluationinstance = new $classname($this);
-            if (!in_array('workshop_evaluation', class_implements($this->evaluationinstance))) {
-                throw new coding_exception($classname . ' does not implement workshop_evaluation interface');
+            if (!in_array('workshop_evaluation', class_parents($this->evaluationinstance))) {
+                throw new coding_exception($classname . ' does not extend workshop_evaluation class');
             }
         }
         return $this->evaluationinstance;
