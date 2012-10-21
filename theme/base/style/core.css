@@ -1025,3 +1025,15 @@ html[dir=rtl] #page-header {float: right;}
 html[dir=rtl] .formrow label.formlabel { float:right; }
 
 html[dir=rtl] .configphp {direction:ltr;text-align:left;}
+
+/* Forumpost unread
+-------------------------*/
+#page-mod-forum-view .unread,
+.forumpost.unread .row.header,
+.path-course-view .unread,
+span.unread {
+    background-color: #FFD;
+}
+.forumpost.unread .row.header {
+    border-bottom: 1px solid #DDD;
+}
