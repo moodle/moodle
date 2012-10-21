@@ -40,6 +40,152 @@ function xmldb_book_upgrade($oldversion) {
     // Moodle v2.3.0 release upgrade line
     // Put any upgrade step following this
 
+    // Note: The next steps (up to 2012061710 included, are a "replay" of old upgrade steps,
+    // because some sites updated to Moodle 2.3 didn't have the latest contrib mod_book
+    // installed, so some required changes were missing.
+    //
+    // All the steps are run conditionally so sites upgraded from latest contrib mod_book or
+    // new (2.3 and upwards) sites won't get affected.
+    //
+    // See MDL-35297 and commit msg for more information.
+
+    if ($oldversion < 2012061703) {
+        // Rename field summary on table book to intro
+        $table = new xmldb_table('book');
+        $field = new xmldb_field('summary', XMLDB_TYPE_TEXT, null, null, null, null, null, 'name');
+
+        // Launch rename field summary
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->rename_field($table, $field, 'intro');
+        }
+
+        // book savepoint reached
+        upgrade_mod_savepoint(true, 2012061703, 'book');
+    }
+
+    if ($oldversion < 2012061704) {
+        // Define field introformat to be added to book
+        $table = new xmldb_table('book');
+        $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'intro');
+
+        // Launch add field introformat
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+            // Conditionally migrate to html format in intro
+            // Si está activo el htmleditor!!!!!
+            if ($CFG->texteditors !== 'textarea') {
+                $rs = $DB->get_recordset('book', array('introformat'=>FORMAT_MOODLE), '', 'id,intro,introformat');
+                foreach ($rs as $b) {
+                    $b->intro       = text_to_html($b->intro, false, false, true);
+                    $b->introformat = FORMAT_HTML;
+                    $DB->update_record('book', $b);
+                    upgrade_set_timeout();
+                }
+                unset($b);
+                $rs->close();
+            }
+        }
+
+        // book savepoint reached
+        upgrade_mod_savepoint(true, 2012061704, 'book');
+    }
+
+    if ($oldversion < 2012061705) {
+        // Define field introformat to be added to book
+        $table = new xmldb_table('book_chapters');
+        $field = new xmldb_field('contentformat', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'content');
+
+        // Launch add field introformat
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+
+            $DB->set_field('book_chapters', 'contentformat', FORMAT_HTML, array());
+        }
+
+        // book savepoint reached
+        upgrade_mod_savepoint(true, 2012061705, 'book');
+    }
+
+    if ($oldversion < 2012061706) {
+        require_once("$CFG->dirroot/mod/book/db/upgradelib.php");
+
+        $sqlfrom = "FROM {book} b
+                    JOIN {modules} m ON m.name = 'book'
+                    JOIN {course_modules} cm ON (cm.module = m.id AND cm.instance = b.id)";
+
+        $count = $DB->count_records_sql("SELECT COUNT('x') $sqlfrom");
+
+        if ($rs = $DB->get_recordset_sql("SELECT b.id, b.course, cm.id AS cmid $sqlfrom ORDER BY b.course, b.id")) {
+
+            $pbar = new progress_bar('migratebookfiles', 500, true);
+
+            $i = 0;
+            foreach ($rs as $book) {
+                $i++;
+                upgrade_set_timeout(360); // set up timeout, may also abort execution
+                $pbar->update($i, $count, "Migrating book files - $i/$count.");
+
+                $context = context_module::instance($book->cmid);
+
+                mod_book_migrate_moddata_dir_to_legacy($book, $context, '/');
+
+                // remove dirs if empty
+                @rmdir("$CFG->dataroot/$book->course/$CFG->moddata/book/$book->id/");
+                @rmdir("$CFG->dataroot/$book->course/$CFG->moddata/book/");
+                @rmdir("$CFG->dataroot/$book->course/$CFG->moddata/");
+                @rmdir("$CFG->dataroot/$book->course/");
+            }
+            $rs->close();
+        }
+
+        // book savepoint reached
+        upgrade_mod_savepoint(true, 2012061706, 'book');
+    }
+
+    if ($oldversion < 2012061707) {
+        // Define field disableprinting to be dropped from book
+        $table = new xmldb_table('book');
+        $field = new xmldb_field('disableprinting');
+
+        // Conditionally launch drop field disableprinting
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // book savepoint reached
+        upgrade_mod_savepoint(true, 2012061707, 'book');
+    }
+
+    if ($oldversion < 2012061708) {
+        unset_config('book_tocwidth');
+
+        // book savepoint reached
+        upgrade_mod_savepoint(true, 2012061708, 'book');
+    }
+
+    if ($oldversion < 2012061709) {
+        require_once("$CFG->dirroot/mod/book/db/upgradelib.php");
+
+        mod_book_migrate_all_areas();
+
+        upgrade_mod_savepoint(true, 2012061709, 'book');
+    }
+
+    if ($oldversion < 2012061710) {
+
+        // Define field revision to be added to book
+        $table = new xmldb_table('book');
+        $field = new xmldb_field('revision', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'customtitles');
+
+        // Conditionally launch add field revision
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // book savepoint reached
+        upgrade_mod_savepoint(true, 2012061710, 'book');
+    }
+    // End of MDL-35297 "replayed" steps.
 
     return true;
 }
