@@ -710,7 +710,7 @@ M.core_filepicker.init = function(Y, options) {
                 this.process_dlg = new Y.Panel({
                     srcNode      : node,
                     headerContent: M.str.repository.fileexistsdialogheader,
-                    zIndex       : 800000,
+                    zIndex       : 8000,
                     centered     : true,
                     modal        : true,
                     visible      : false,
@@ -752,7 +752,7 @@ M.core_filepicker.init = function(Y, options) {
 
                 this.msg_dlg = new Y.Panel({
                     srcNode      : this.msg_dlg_node,
-                    zIndex       : 800000,
+                    zIndex       : 8000,
                     centered     : true,
                     modal        : true,
                     visible      : false,
@@ -1024,7 +1024,7 @@ M.core_filepicker.init = function(Y, options) {
             var nextpage = this.active_repo.page+1;
             var args = {
                 page: nextpage,
-                repo_id: this.active_repo.id,
+                repo_id: this.active_repo.id
             };
             var action = this.active_repo.issearchresult ? 'search' : 'list';
             this.request({
@@ -1280,7 +1280,7 @@ M.core_filepicker.init = function(Y, options) {
             this.mainui = new Y.Panel({
                 srcNode      : this.fpnode,
                 headerContent: M.str.repository.filepicker,
-                zIndex       : 500000,
+                zIndex       : 5000,
                 centered     : true,
                 modal        : true,
                 visible      : false,
@@ -1301,7 +1301,7 @@ M.core_filepicker.init = function(Y, options) {
                 set('id', 'filepicker-select-'+client_id);
             this.selectui = new Y.Panel({
                 srcNode      : this.selectnode,
-                zIndex       : 600000,
+                zIndex       : 6000,
                 centered     : true,
                 modal        : true,
                 close        : true,
