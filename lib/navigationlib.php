@@ -4194,7 +4194,7 @@ class settings_navigation extends navigation_node {
 
         // Messaging
         if (($currentuser && has_capability('moodle/user:editownmessageprofile', $systemcontext)) || (!isguestuser($user) && has_capability('moodle/user:editmessageprofile', $usercontext) && !is_primary_admin($user->id))) {
-            $url = new moodle_url('/message/edit.php', array('id'=>$user->id, 'course'=>$course->id));
+            $url = new moodle_url('/message/edit.php', array('id'=>$user->id));
             $usersetting->add(get_string('editmymessage', 'message'), $url, self::TYPE_SETTING);
         }
 
