@@ -414,32 +414,97 @@ function message_get_my_providers() {
 function message_get_providers_for_user($userid) {
     global $DB, $CFG;
 
-    $systemcontext = context_system::instance();
-
     $providers = get_message_providers();
 
-    // Remove all the providers we aren't allowed to see now
-    foreach ($providers as $providerid => $provider) {
-        if (!empty($provider->capability)) {
-            if (!has_capability($provider->capability, $systemcontext, $userid)) {
-                unset($providers[$providerid]);   // Not allowed to see this
-                continue;
+    // Ensure user is not allowed to configure instantmessage if it is globally disabled.
+    if (!$CFG->messaging) {
+        foreach ($providers as $providerid => $provider) {
+            if ($provider->name == 'instantmessage') {
+                unset($providers[$providerid]);
+                break;
             }
         }
+    }
 
-        // Ensure user is not allowed to configure instantmessage if it is globally disabled.
-        if (!$CFG->messaging && $provider->name == 'instantmessage') {
+    // If the component is an enrolment plugin, check it is enabled
+    foreach ($providers as $providerid => $provider) {
+        list($type, $name) = normalize_component($provider->component);
+        if ($type == 'enrol' && !enrol_is_enabled($name)) {
             unset($providers[$providerid]);
+        }
+    }
+
+    // Now we need to check capabilities. We need to eliminate the providers
+    // where the user does not have the corresponding capability anywhere.
+    // Here we deal with the common simple case of the user having the
+    // capability in the system context. That handles $CFG->defaultuserroleid.
+    // For the remaining providers/capabilities, we need to do a more complex
+    // query involving all overrides everywhere.
+    $unsureproviders = array();
+    $unsurecapabilities = array();
+    $systemcontext = context_system::instance();
+    foreach ($providers as $providerid => $provider) {
+        if (empty($provider->capability) || has_capability($provider->capability, $systemcontext, $userid)) {
+            // The provider is relevant to this user.
             continue;
         }
 
-        // If the component is an enrolment plugin, check it is enabled
-        list($type, $name) = normalize_component($provider->component);
-        if ($type == 'enrol') {
-            if (!enrol_is_enabled($name)) {
-                unset($providers[$providerid]);
-                continue;
-            }
+        $unsureproviders[$providerid] = $provider;
+        $unsurecapabilities[$provider->capability] = 1;
+        unset($providers[$providerid]);
+    }
+
+    if (empty($unsureproviders)) {
+        // More complex checks are not required.
+        return $providers;
+    }
+
+    // Now check the unsure capabilities.
+    list($capcondition, $params) = $DB->get_in_or_equal(
+            array_keys($unsurecapabilities), SQL_PARAMS_NAMED);
+    $params['userid'] = $userid;
+
+    $sql = "SELECT DISTINCT rc.capability, 1
+
+              FROM {role_assignments} ra
+              JOIN {context} actx ON actx.id = ra.contextid
+              JOIN {role_capabilities} rc ON rc.roleid = ra.roleid
+              JOIN {context} cctx ON cctx.id = rc.contextid
+
+             WHERE ra.userid = :userid
+               AND rc.capability $capcondition
+               AND rc.permission > 0
+               AND (CONCAT(actx.path, '/') LIKE CONCAT(cctx.path, '/%') OR CONCAT(cctx.path, '/') LIKE CONCAT(actx.path, '/%'))";
+
+    if (!empty($CFG->defaultfrontpageroleid)) {
+        $frontpagecontext = context_course::instance(SITEID);
+
+        list($capcondition2, $params2) = $DB->get_in_or_equal(
+                array_keys($unsurecapabilities), SQL_PARAMS_NAMED);
+        $params = array_merge($params, $params2);
+        $params['frontpageroleid'] = $CFG->defaultfrontpageroleid;
+        $params['frontpagepathpattern'] = $frontpagecontext->path . '/';
+
+        $sql .= "
+             UNION DISTINCT
+
+            SELECT DISTINCT rc.capability, 1
+
+              FROM {role_capabilities} rc
+              JOIN {context} cctx ON cctx.id = rc.contextid
+
+             WHERE rc.roleid = :frontpageroleid
+               AND rc.capability $capcondition2
+               AND rc.permission > 0
+               AND CONCAT(cctx.path, '/') LIKE :frontpagepathpattern";
+    }
+
+    $relevantcapabilities = $DB->get_records_sql_menu($sql, $params);
+
+    // Add back any providers based on the detailed capability check.
+    foreach ($unsureproviders as $providerid => $provider) {
+        if (array_key_exists($provider->capability, $relevantcapabilities)) {
+            $providers[$providerid] = $provider;
         }
     }
 

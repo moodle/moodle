@@ -1026,6 +1026,8 @@ function quiz_process_options($quiz) {
         $quiz->feedbackboundaries[-1] = $quiz->grade + 1;
         $quiz->feedbackboundaries[$numboundaries] = 0;
         $quiz->feedbackboundarycount = $numboundaries;
+    } else {
+        $quiz->feedbackboundarycount = -1;
     }
 
     // Combing the individual settings into the review columns.
