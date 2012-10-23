@@ -79,6 +79,67 @@ class messagelib_testcase extends advanced_testcase {
         $this->assertFalse($this->message_type_present('mod_quiz', 'submission', $providers));
     }
 
+    public function test_message_get_providers_for_user_more() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        // Create a course
+        $course = $this->getDataGenerator()->create_course();
+        $coursecontext = context_course::instance($course->id);
+
+        // It would probably be better to use a quiz instance as it has capability controlled messages
+        // however mod_quiz doesn't have a data generator
+        // Instead we're going to use backup notifications and give and take away the capability at various levels
+        $assign = $this->getDataGenerator()->create_module('assign', array('course'=>$course->id));
+        $modulecontext = context_module::instance($assign->id);
+
+        // Create and enrol a teacher
+        $teacherrole = $DB->get_record('role', array('shortname'=>'editingteacher'), '*', MUST_EXIST);
+        $teacher = $this->getDataGenerator()->create_user();
+        role_assign($teacherrole->id, $teacher->id, $coursecontext);
+        $enrolplugin = enrol_get_plugin('manual');
+        $enrolplugin->add_instance($course);
+        $enrolinstances = enrol_get_instances($course->id, false);
+        foreach ($enrolinstances as $enrolinstance) {
+            if ($enrolinstance->enrol === 'manual') {
+                break;
+            }
+        }
+        $enrolplugin->enrol_user($enrolinstance, $teacher->id);
+
+        // Make the teacher the current user
+        $this->setUser($teacher);
+
+        // Teacher shouldn't have the required capability so they shouldn't be able to see the backup message
+        $this->assertFalse(has_capability('moodle/site:config', $modulecontext));
+        $providers = message_get_providers_for_user($teacher->id);
+        $this->assertFalse($this->message_type_present('moodle', 'backup', $providers));
+
+        // Give the user the required capability in an activity module
+        // They should now be able to see the backup message
+        assign_capability('moodle/site:config', CAP_ALLOW, $teacherrole->id, $modulecontext->id, true);
+        accesslib_clear_all_caches_for_unit_testing();
+        $modulecontext = context_module::instance($assign->id);
+        $this->assertTrue(has_capability('moodle/site:config', $modulecontext));
+
+        $providers = message_get_providers_for_user($teacher->id);
+        $this->assertTrue($this->message_type_present('moodle', 'backup', $providers));
+
+        // Prohibit the capability for the user at the course level
+        // This overrules the CAP_ALLOW at the module level
+        // They should not be able to see the backup message
+        assign_capability('moodle/site:config', CAP_PROHIBIT, $teacherrole->id, $coursecontext->id, true);
+        accesslib_clear_all_caches_for_unit_testing();
+        $modulecontext = context_module::instance($assign->id);
+        $this->assertFalse(has_capability('moodle/site:config', $modulecontext));
+
+        $providers = message_get_providers_for_user($teacher->id);
+        // Actually, handling PROHIBITs would be too expensive. We do not
+        // care if users with PROHIBITs see a few more preferences than they should.
+        // $this->assertFalse($this->message_type_present('moodle', 'backup', $providers));
+    }
+
     /**
      * Is a particular message type in the list of message types.
      * @param string $name a message name.
