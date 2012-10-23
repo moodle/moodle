@@ -6668,7 +6668,7 @@ function db_replace($search, $replace) {
     global $DB, $CFG, $OUTPUT;
 
     // TODO: this is horrible hack, we should do whitelisting and each plugin should be responsible for proper replacing...
-    $skiptables = array('config', 'config_plugins', 'config_log', 'upgrade_log',
+    $skiptables = array('config', 'config_plugins', 'config_log', 'upgrade_log', 'log',
                         'filter_config', 'sessions', 'events_queue', 'repository_instance_config',
                         'block_instances', '');
 
