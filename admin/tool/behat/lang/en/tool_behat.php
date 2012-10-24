@@ -31,7 +31,4 @@ $string['finished'] = 'Process finished';
 $string['nobehatpath'] = 'You must specify the path to moodle-acceptance-tests.';
 $string['nostepsdefinitions'] = 'There aren\'t steps definitions matching this filter';
 $string['pluginname'] = 'Acceptance testing';
-$string['switchenvironmentinfo'] = 'Caution! Use only in non-production sites, if you switch to the test environment all the logged users, including you, will be logged out.';
-$string['switchenvironmentenable'] = 'Switch to test environment';
-$string['switchenvironmentdisable'] = 'Return to regular environment';
 $string['wrongbehatsetup'] = 'Something is wrong with the setup, check moodle-acceptance-tests runs well on CLI and check your \'behatpath\' setting value is pointing to the right directory';

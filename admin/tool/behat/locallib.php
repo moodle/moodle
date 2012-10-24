@@ -46,11 +46,9 @@ class tool_behat {
 
         $html = self::get_header();
         $html .= self::get_info();
-        $html .= self::get_switch_environment_form();
 
         if (!self::is_test_environment_running()) {
             $html .= self::get_steps_definitions_form();
-            $html .= self::get_run_tests_form();
         }
 
         $html .= self::get_footer();
@@ -83,12 +81,10 @@ class tool_behat {
 
         $currentcwd = getcwd();
         chdir($CFG->behatpath);
-        exec('bin/behat' . $filteroption, $steps, $code);
+        exec('bin/behat --ansi ' . $filteroption, $steps, $code);
         chdir($currentcwd);
 
         // Outputing steps.
-        $html = self::get_header();
-        $html .= self::get_steps_definitions_form($filter);
 
         $content = '';
         if ($steps) {
@@ -96,7 +92,12 @@ class tool_behat {
 
                 // Skipping the step definition context.
                 if (strpos($line, '#') == 0) {
-                    $content .= htmlentities($line) . '<br/>';
+                    if (CLI_SCRIPT) {
+                        $content .= $line . PHP_EOL;
+                    } else {
+                        $content .= htmlentities($line) . '<br/>';
+                    }
+
                 }
             }
         }
@@ -105,10 +106,15 @@ class tool_behat {
             $content = get_string('nostepsdefinitions', 'tool_behat');
         }
 
-        $html .= html_writer::tag('div', $content, array('id' => 'steps-definitions'));
-        $html .= self::get_footer();
-
-        echo $html;
+        if (!CLI_SCRIPT) {
+            $html = self::get_header();
+            $html .= self::get_steps_definitions_form($filter);
+            $html .= html_writer::tag('div', $content, array('id' => 'steps-definitions'));
+            $html .= self::get_footer();
+            echo $html;
+        } else {
+            echo $content;
+        }
     }
 
     /**
@@ -212,11 +218,14 @@ class tool_behat {
         // Gets all the components with features.
         $components = tests_finder::get_components_with_tests('features');
         if ($components) {
-            $contents .= 'features:' . PHP_EOL;
+            $featurespaths[] = '';
             foreach ($components as $componentname => $path) {
                 $path = self::clean_path($path) . self::$behat_tests_path;
-                $contents .= '  - ' . $path . PHP_EOL;
+                if (empty($featurespaths[$path]) && file_exists($path)) {
+                    $featurespaths[$path] = $path;
+                }
             }
+            $contents = 'features:' . implode(PHP_EOL . '  - ', $featurespaths) . PHP_EOL;
         }
 
         // Gets all the components with steps definitions.
@@ -234,6 +243,7 @@ class tool_behat {
         if (!file_put_contents($fullfilepath, $contents)) {
             throw new file_exception('cannotcreatefile', $fullfilepath);
         }
+
     }
 
 
@@ -487,34 +497,11 @@ class tool_behat {
     private static function get_info() {
         global $OUTPUT;
 
-        $url = 'http://docs.moodle.org/dev/Behat_integration#Installation';
+        $url = 'http://docs.moodle.org/dev/Acceptance_testing';
 
         $html = $OUTPUT->box_start();
-        $html .= html_writer::tag('h1', 'Installation info');
-        $html .= html_writer::tag('div', 'Follow <a href="' . $url . '" target="_blank">' . $url . '</a> instructions');
-        $html .= $OUTPUT->box_end();
-
-        return $html;
-    }
-
-    /**
-     * Returns a button to switch between environments
-     * @return string
-     */
-    private static function get_switch_environment_form() {
-        global $CFG, $OUTPUT;
-
-        if (self::is_test_environment_running()) {
-            $perform = 'disable';
-        } else {
-            $perform = 'enable';
-        }
-        $params = array('action' => 'switchenvironment', 'testenvironment' => $perform, 'sesskey' => sesskey());
-        $url = new moodle_url('/' . $CFG->admin . '/tool/behat/index.php', $params);
-
-        $html = $OUTPUT->box_start();
-        $html .= '<p>' . get_string('switchenvironmentinfo', 'tool_behat') . '</p>';
-        $html .= $OUTPUT->single_button($url, get_string('switchenvironment' . $perform, 'tool_behat'));
+        $html .= html_writer::tag('h1', 'Info');
+        $html .= html_writer::tag('div', 'Follow <a href="' . $url . '" target="_blank">' . $url . '</a> instructions for info about installation and tests execution');
         $html .= $OUTPUT->box_end();
 
         return $html;
@@ -550,33 +537,4 @@ class tool_behat {
         return $html;
     }
 
-    /**
-     * Returns the run tests form
-     * @param string $tags To execute only the tests that matches the specified tag
-     * @return string
-     */
-    private static function get_run_tests_form($tags = false) {
-        global $OUTPUT;
-
-        if ($tags === false) {
-            $tags = '';
-        } else {
-            $tags = s($tags);
-        }
-
-        $html = $OUTPUT->box_start();
-        $html .= '<form method="get" action="index.php">';
-        $html .= '<fieldset class="invisiblefieldset">';
-        $html .= '<label for="id_tags">Tests tagged as</label> ';
-        $html .= '<input type="text" id="id_tags" value="' . $tags . '" name="tags"/> (all available tests if empty)';
-        $html .= '<p></p>';
-        $html .= '<input type="submit" value="Run tests" />';
-        $html .= '<input type="hidden" name="action" value="runtests" />';
-        $html .= '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-        $html .= '</fieldset>';
-        $html .= '</form>';
-        $html .= $OUTPUT->box_end();
-
-        return $html;
-    }
 }

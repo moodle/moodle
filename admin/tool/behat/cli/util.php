@@ -37,6 +37,7 @@ list($options, $unrecognized) = cli_get_params(
         'filter'             => false,
         'tags'               => false,
         'extra'              => false,
+        'testenvironment'    => false
     ),
     array(
         'h' => 'help'
@@ -69,7 +70,7 @@ if ($unrecognized) {
     cli_error(get_string('cliunknowoption', 'admin', $unrecognized));
 }
 
-$commands = array('stepsdefinitions', 'runtests');
+$commands = array('stepsdefinitions', 'runtests', 'testenvironment');
 foreach ($commands as $command) {
     if ($options[$command]) {
         $action = $command;
