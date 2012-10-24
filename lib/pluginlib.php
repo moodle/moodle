@@ -87,6 +87,16 @@ class plugin_manager {
     }
 
     /**
+     * Reset any caches
+     * @param bool $phpunitreset
+     */
+    public static function reset_caches($phpunitreset = false) {
+        if ($phpunitreset) {
+            self::$singletoninstance = null;
+        }
+    }
+
+    /**
      * Returns a tree of known plugins and information about them
      *
      * @param bool $disablecache force reload, cache can be used otherwise
@@ -670,6 +680,16 @@ class available_update_checker {
             self::$singletoninstance = new self();
         }
         return self::$singletoninstance;
+    }
+
+    /**
+     * Reset any caches
+     * @param bool $phpunitreset
+     */
+    public static function reset_caches($phpunitreset = false) {
+        if ($phpunitreset) {
+            self::$singletoninstance = null;
+        }
     }
 
     /**
