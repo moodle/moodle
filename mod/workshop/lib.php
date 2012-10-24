@@ -104,6 +104,12 @@ function workshop_add_instance(stdclass $workshop) {
         $workshop->instructreviewersformat = $workshop->instructreviewerseditor['format'];
     }
 
+    if ($draftitemid = $workshop->conclusioneditor['itemid']) {
+        $workshop->conclusion = file_save_draft_area_files($draftitemid, $context->id, 'mod_workshop', 'conclusion',
+                0, workshop::instruction_editors_options($context), $workshop->conclusioneditor['text']);
+        $workshop->conclusionformat = $workshop->conclusioneditor['format'];
+    }
+
     // re-save the record with the replaced URLs in editor fields
     $DB->update_record('workshop', $workshop);
 
@@ -137,8 +143,7 @@ function workshop_update_instance(stdclass $workshop) {
     $workshop->latesubmissions       = (int)!empty($workshop->latesubmissions);
     $workshop->phaseswitchassessment = (int)!empty($workshop->phaseswitchassessment);
 
-    // todo - if the grading strategy is being changed, we must replace all aggregated peer grades with nulls
-    // todo - if maximum grades are being changed, we should probably recalculate or invalidate them
+    // todo - if the grading strategy is being changed, we may want to replace all aggregated peer grades with nulls
 
     $DB->update_record('workshop', $workshop);
     $context = context_module::instance($workshop->coursemodule);
@@ -154,6 +159,12 @@ function workshop_update_instance(stdclass $workshop) {
         $workshop->instructreviewers = file_save_draft_area_files($draftitemid, $context->id, 'mod_workshop', 'instructreviewers',
                 0, workshop::instruction_editors_options($context), $workshop->instructreviewerseditor['text']);
         $workshop->instructreviewersformat = $workshop->instructreviewerseditor['format'];
+    }
+
+    if ($draftitemid = $workshop->conclusioneditor['itemid']) {
+        $workshop->conclusion = file_save_draft_area_files($draftitemid, $context->id, 'mod_workshop', 'conclusion',
+                0, workshop::instruction_editors_options($context), $workshop->conclusioneditor['text']);
+        $workshop->conclusionformat = $workshop->conclusioneditor['format'];
     }
 
     // re-save the record with the replaced URLs in editor fields
@@ -1172,6 +1183,7 @@ function workshop_get_file_areas($course, $cm, $context) {
     $areas['instructreviewers']        = get_string('areainstructreviewers', 'workshop');
     $areas['submission_content']       = get_string('areasubmissioncontent', 'workshop');
     $areas['submission_attachment']    = get_string('areasubmissionattachment', 'workshop');
+    $areas['conclusion']               = get_string('areaconclusion', 'workshop');
 
     return $areas;
 }
@@ -1182,7 +1194,7 @@ function workshop_get_file_areas($course, $cm, $context) {
  * Apart from module intro (handled by pluginfile.php automatically), workshop files may be
  * media inserted into submission content (like images) and submission attachments. For these two,
  * the fileareas submission_content and submission_attachment are used.
- * Besides that, areas instructauthors and instructreviewers contain the media
+ * Besides that, areas instructauthors, instructreviewers and conclusion contain the media
  * embedded using the mod_form.php.
  *
  * @package  mod_workshop
@@ -1220,9 +1232,23 @@ function workshop_pluginfile($course, $cm, $context, $filearea, array $args, $fo
 
         // finally send the file
         send_stored_file($file, $lifetime, 0, $forcedownload, $options);
-    }
 
-    if ($filearea === 'instructreviewers') {
+    } else if ($filearea === 'instructreviewers') {
+        array_shift($args); // itemid is ignored here
+        $relativepath = implode('/', $args);
+        $fullpath = "/$context->id/mod_workshop/$filearea/0/$relativepath";
+
+        $fs = get_file_storage();
+        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+            send_file_not_found();
+        }
+
+        $lifetime = isset($CFG->filelifetime) ? $CFG->filelifetime : 86400;
+
+        // finally send the file
+        send_stored_file($file, $lifetime, 0, $forcedownload, $options);
+
+    } else if ($filearea === 'conclusion') {
         array_shift($args); // itemid is ignored here
         $relativepath = implode('/', $args);
         $fullpath = "/$context->id/mod_workshop/$filearea/0/$relativepath";
@@ -1397,7 +1423,7 @@ function workshop_get_file_info($browser, $areas, $course, $cm, $context, $filea
         return new file_info_stored($browser, $context, $storedfile, $urlbase, $topvisiblename, true, true, false, false);
     }
 
-    if ($filearea == 'instructauthors' or $filearea == 'instructreviewers') {
+    if ($filearea == 'instructauthors' or $filearea == 'instructreviewers' or $filearea == 'conclusion') {
         // always only itemid 0
 
         $filepath = is_null($filepath) ? '/' : $filepath;
