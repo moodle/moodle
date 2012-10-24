@@ -259,6 +259,7 @@ $string['switchphase50info'] = 'You are about to close the workshop. This will r
 $string['taskassesspeers'] = 'Assess peers';
 $string['taskassesspeersdetails'] = 'total: {$a->total}<br />pending: {$a->todo}';
 $string['taskassessself'] = 'Assess yourself';
+$string['taskconclusion'] = 'Provide a conclusion of the activity';
 $string['taskinstructauthors'] = 'Provide instructions for submission';
 $string['taskinstructreviewers'] = 'Provide instructions for assessment';
 $string['taskintro'] = 'Set the workshop introduction';
