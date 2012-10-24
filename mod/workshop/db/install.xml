@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/workshop/db" VERSION="20120331" COMMENT="XMLDB file for Moodle mod/workshop"
+<XMLDB PATH="mod/workshop/db" VERSION="20121024" COMMENT="XMLDB file for Moodle mod/workshop"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -33,7 +33,9 @@
         <FIELD NAME="submissionend" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="0 = will be closed manually, greater than 0 the timestamp of the end of the submission phase" PREVIOUS="submissionstart" NEXT="assessmentstart"/>
         <FIELD NAME="assessmentstart" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="0 = will be started manually, greater than 0 the timestamp of the start of the assessment phase" PREVIOUS="submissionend" NEXT="assessmentend"/>
         <FIELD NAME="assessmentend" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="0 = will be closed manually, greater than 0 the timestamp of the end of the assessment phase" PREVIOUS="assessmentstart" NEXT="phaseswitchassessment"/>
-        <FIELD NAME="phaseswitchassessment" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Automatically switch to the assessment phase after the submissions deadline" PREVIOUS="assessmentend"/>
+        <FIELD NAME="phaseswitchassessment" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Automatically switch to the assessment phase after the submissions deadline" PREVIOUS="assessmentend" NEXT="conclusion"/>
+        <FIELD NAME="conclusion" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="A text to be displayed at the end of the workshop." PREVIOUS="phaseswitchassessment" NEXT="conclusionformat"/>
+        <FIELD NAME="conclusionformat" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="The format of the conclusion field content." PREVIOUS="conclusion"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="course_fk"/>
