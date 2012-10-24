@@ -55,7 +55,7 @@ class restore_workshop_activity_task extends restore_activity_task {
         $contents = array();
 
         $contents[] = new restore_decode_content('workshop',
-                          array('intro', 'instructauthors', 'instructreviewers'), 'workshop');
+                          array('intro', 'instructauthors', 'instructreviewers', 'conclusion'), 'workshop');
         $contents[] = new restore_decode_content('workshop_submissions',
                           array('content', 'feedbackauthor'), 'workshop_submission');
         $contents[] = new restore_decode_content('workshop_assessments',
