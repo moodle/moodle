@@ -711,6 +711,56 @@ function enrol_get_users_courses($userid, $onlyactive = false, $fields = NULL, $
 }
 
 /**
+ * Can user access at least one enrolled course?
+ *
+ * Cheat if necessary, but find out as fast as possible!
+ *
+ * @param int|stdClass $user null means use current user
+ * @return bool
+ */
+function enrol_user_sees_own_courses($user = null) {
+    global $USER;
+
+    if ($user === null) {
+        $user = $USER;
+    }
+    $userid = is_object($user) ? $user->id : $user;
+
+    // Guest account does not have any courses
+    if (isguestuser($userid) or empty($userid)) {
+        return false;
+    }
+
+    // Let's cheat here if this is the current user,
+    // if user accessed any course recently, then most probably
+    // we do not need to query the database at all.
+    if ($USER->id == $userid) {
+        if (!empty($USER->enrol['enrolled'])) {
+            foreach ($USER->enrol['enrolled'] as $until) {
+                if ($until > time()) {
+                    return true;
+                }
+            }
+        }
+    }
+
+    // Now the slow way.
+    $courses = enrol_get_all_users_courses($userid, true);
+    foreach($courses as $course) {
+        if ($course->visible) {
+            return true;
+        }
+        context_helper::preload_from_record($course);
+        $context = context_course::instance($course->id);
+        if (has_capability('moodle/course:viewhiddencourses', $context, $user)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/**
  * Returns list of courses user is enrolled into without any capability checks
  * - $fields is an array of fieldnames to ADD
  *   so name the fields you really need, which will
