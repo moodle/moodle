@@ -572,7 +572,8 @@ class database_session extends session_stub {
         }
 
         try {
-            if (!$record = $this->database->get_record('sessions', array('sid'=>$sid))) {
+            // Do not fetch full record yet, wait until it is locked.
+            if (!$record = $this->database->get_record('sessions', array('sid'=>$sid), 'id, userid')) {
                 $record = new stdClass();
                 $record->state        = 0;
                 $record->sid          = $sid;
@@ -590,7 +591,14 @@ class database_session extends session_stub {
         }
 
         try {
-            $this->database->get_session_lock($record->id, SESSION_ACQUIRE_LOCK_TIMEOUT);
+            if (!empty($CFG->sessionlockloggedinonly) and (isguestuser($record->userid) or empty($record->userid))) {
+                // No session locking for guests and not-logged-in users,
+                // these users mostly read stuff, there should not be any major
+                // session race conditions. Hopefully they do not access other
+                // pages while being logged-in.
+            } else {
+                $this->database->get_session_lock($record->id, SESSION_ACQUIRE_LOCK_TIMEOUT);
+            }
         } catch (Exception $ex) {
             // This is a fatal error, better inform users.
             // It should not happen very often - all pages that need long time to execute
@@ -598,6 +606,13 @@ class database_session extends session_stub {
             error_log('Can not obtain session lock');
             $this->failed = true;
             throw $ex;
+        }
+
+        // Finally read the full session data because we know we have the lock now.
+        if (!$record = $this->database->get_record('sessions', array('id'=>$record->id))) {
+            error_log('Can read session record');
+            $this->failed = true;
+            return '';
         }
 
         // verify timeout

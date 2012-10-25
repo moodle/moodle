@@ -341,11 +341,11 @@ abstract class moodle_database {
             }
             $this->force_transaction_rollback();
         }
-        if ($this->used_for_db_sessions) {
-            // this is needed because we need to save session to db before closing it
-            session_get_instance()->write_close();
-            $this->used_for_db_sessions = false;
-        }
+        // Always terminate sessions here to make it consistent,
+        // this is needed because we need to save session to db before closing it.
+        session_get_instance()->write_close();
+        $this->used_for_db_sessions = false;
+
         if ($this->temptables) {
             $this->temptables->dispose();
             $this->temptables = null;

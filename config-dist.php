@@ -246,6 +246,11 @@ $CFG->admin = 'admin';
 // logs in. The site front page will always show the same (logged-out) view.
 //     $CFG->disablemycourses = true;
 //
+// By default all user sessions should be using locking, uncomment
+// the following setting to prevent locking for guests and not-logged-in
+// accounts. This may improve performance significantly.
+//     $CFG->sessionlockloggedinonly = 1;
+//
 // If this setting is set to true, then Moodle will track the IP of the
 // current user to make sure it hasn't changed during a session.  This
 // will prevent the possibility of sessions being hijacked via XSS, but it

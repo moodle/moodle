@@ -1649,6 +1649,10 @@ class oci_native_moodle_database extends moodle_database {
         if (!$this->session_lock_supported()) {
             return;
         }
+        if (!$this->used_for_db_sessions) {
+            return;
+        }
+
         parent::release_session_lock($rowid);
 
         $fullname = $this->dbname.'-'.$this->prefix.'-session-'.$rowid;
