@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
 $string['admindirname'] = '管理目錄';
 $string['availablelangs'] = '可使用的語言包';
 $string['chooselanguagehead'] = '選擇一種語言';
-$string['chooselanguagesub'] = '請選擇在安裝過程中使用的語言。稍後您可以根據需要重新選擇用於網站和使用者的語言。';
+$string['chooselanguagesub'] = '請選擇在安裝過程中使用的語言。這語言將成為此網站預設的語言。稍後您可以根據需要重新選擇。';
 $string['clialreadyconfigured'] = '檔案 config.php  已經存在，若你要安裝這一網站，請使用dmin/cli/install_database.php';
 $string['clialreadyinstalled'] = '檔案 config.php  已經存在，若你要升級這一網站，請使用admin/cli/upgrade.php';
 $string['cliinstallheader'] = 'Moodle {$a} 指令行安裝程式';
@@ -45,6 +45,8 @@ $string['datarootpermission'] = '資料目錄存取授權';
 $string['dbprefix'] = '資料表名稱的前置字元';
 $string['dirroot'] = 'Moodle目錄';
 $string['environmenthead'] = '檢查您的環境中...';
+$string['environmentsub2'] = '每一個Moodle版本都有一些PHP版本的最低要求和一堆強制開啟的PHP擴展。在進行安裝或升級之前都需要作完整的環境檢查。<br />
+若你不知道要怎樣新的PHP版本或啟用PHP擴展，請聯絡伺服器管理員。';
 $string['errorsinenvironment'] = '環境檢查失敗';
 $string['installation'] = '安裝';
 $string['langdownloaderror'] = '很不幸地，語言“{$a}”並未安裝。安裝過程將以英文繼續。';
@@ -53,15 +55,17 @@ $string['memorylimithelp'] = '<p>PHP記憶體上限目前設定為{$a}。</p>
 <p>建議您儘可能將PHP的上限設得高一點，比如16M。
 以下有幾種方式您可以試試:
 <ol>
-<li>如果可以的話，用<i>--enable-memory-limit</i>重新編譯PHP。讓Moodle自己設定記憶體上限.
-<li>如果您要使用php.ini檔, 您可以改變<b>memory_limit</b>這個設定值，例如到16M。如果您無法使用這個檔，您可以請您的管理者幫您做
-<li>在一些PHP伺服器上，您可以在Moodle目錄下，建立.htaccess檔，包含這行:<p><blockquote>php_value memory_limit 16M</blockquote></p>
+<li>如果可以的話，用<i>--enable-memory-limit</i>重新編譯PHP。讓 Moodle 自己設定記憶體上限。
+<li>如果您要使用 php.ini 檔，您可以改變<b>memory_limit</b>這個設定值，例如到16M。如果您無法使用這個檔，您可以請您的管理者幫您做
+<li>在一些PHP伺服器上，您可以在Moodle目錄下，建立 .htaccess 檔，包含這行:<p><blockquote>php_value memory_limit 16M</blockquote></p>
 <p>然而，在一些伺服器上，這將造成<b>所有的</b> PHP 網頁無法運作(當您看這些網頁時，您就會看到錯誤) 因此，您就必須將 .htaccess 檔案移除。
 </ol>';
 $string['paths'] = '路徑';
 $string['pathserrcreatedataroot'] = '資料目錄 ({$a->dataroot})無法由這安裝程式建立';
 $string['pathshead'] = '確認路徑';
 $string['pathsrodataroot'] = '資料根目錄是無法寫入的';
+$string['pathsroparentdataroot'] = '上層目錄({$a->parent})是不可寫入的。安裝程式無法建立資料目錄({$a->dataroot})。';
+$string['pathssubdataroot'] = '你需要有一個地方讓Moodle可以儲存上傳的檔案。這一目錄對於網頁伺服器用戶(通常是"nobody"或"apache")而言，應該是可讀的和<b>可寫的</b>。但是它必須不能經由網頁直接存取。若此目錄不存在，這安裝程式將會試著建立它。';
 $string['pathssubdirroot'] = 'Moodle安裝的完整目錄徑路';
 $string['pathsunsecuredataroot'] = '資料根(Dataroot)目錄的位置不安全';
 $string['pathswrongadmindir'] = '管理目錄不存在';
