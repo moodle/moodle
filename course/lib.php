@@ -1876,8 +1876,9 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
             $output = html_writer::tag('div', $output, array('class' => 'hiddenifjs addresourcedropdown'));
             $modchooser = html_writer::tag('div', $modchooser, array('class' => 'visibleifjs addresourcemodchooser'));
         } else {
-            $output = html_writer::tag('div', $output, array('class' => 'visibleifjs addresourcedropdown'));
-            $modchooser = html_writer::tag('div', $modchooser, array('class' => 'hiddenifjs addresourcemodchooser'));
+            // If the module chooser is disabled, we need to ensure that the dropdowns are shown even if javascript is disabled
+            $output = html_writer::tag('div', $output, array('class' => 'show addresourcedropdown'));
+            $modchooser = html_writer::tag('div', $modchooser, array('class' => 'hide addresourcemodchooser'));
         }
         $output = $modchooser . $output;
     }
