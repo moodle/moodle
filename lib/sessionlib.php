@@ -467,6 +467,9 @@ class database_session extends session_stub {
     /** @var bool $failed session read/init failed, do not write back to DB */
     protected $failed   = false;
 
+    /** @var string hash of the session data content */
+    protected $lasthash = null;
+
     public function __construct() {
         global $DB;
         $this->database = $DB;
@@ -484,7 +487,7 @@ class database_session extends session_stub {
 
     /**
      * Check for existing session with id $sid
-     * @param unknown_type $sid
+     * @param string $sid
      * @return boolean true if session found.
      */
     public function session_exists($sid){
@@ -665,7 +668,13 @@ class database_session extends session_stub {
             }
         }
 
-        $data = is_null($record->sessdata) ? '' : base64_decode($record->sessdata);
+        if (is_null($record->sessdata)) {
+            $data = '';
+            $this->lasthash = sha1('');
+        } else {
+            $data = base64_decode($record->sessdata);
+            $this->lasthash = sha1($record->sessdata);
+        }
 
         unset($record->sessdata); // conserve memory
         $this->record = $record;
@@ -703,16 +712,28 @@ class database_session extends session_stub {
         }
 
         if (isset($this->record->id)) {
-            $this->record->sessdata     = base64_encode($session_data); // there might be some binary mess :-(
+            $data = base64_encode($session_data);  // There might be some binary mess :-(
+
+            // Skip db update if nothing changed,
+            // do not update the timemodified each second.
+            $hash = sha1($data);
+            if ($this->lasthash === $hash
+                and $this->record->userid == $userid
+                and (time() - $this->record->timemodified < 20)
+                and $this->record->lastip == getremoteaddr()
+            ) {
+                // No need to update anything!
+                return true;
+            }
+
+            $this->record->sessdata     = $data;
             $this->record->userid       = $userid;
             $this->record->timemodified = time();
             $this->record->lastip       = getremoteaddr();
 
-            // TODO: verify session changed before doing update,
-            //       also make sure the timemodified field is changed only every 10s if nothing else changes  MDL-20462
-
             try {
                 $this->database->update_record_raw('sessions', $this->record);
+                $this->lasthash = $hash;
             } catch (dml_exception $ex) {
                 if ($this->database->get_dbfamily() === 'mysql') {
                     try {
@@ -740,7 +761,9 @@ class database_session extends session_stub {
                 $record->timecreated  = $record->timemodified = time();
                 $record->firstip      = $record->lastip = getremoteaddr();
                 $record->id           = $this->database->insert_record_raw('sessions', $record);
-                $this->record = $record;
+
+                $this->record = $this->database->get_record('sessions', array('id'=>$record->id));
+                $this->lasthash = sha1($record->sessdata);
 
                 $this->database->get_session_lock($this->record->id, SESSION_ACQUIRE_LOCK_TIMEOUT);
             } catch (Exception $ex) {
@@ -773,6 +796,8 @@ class database_session extends session_stub {
             }
             $this->record = null;
         }
+
+        $this->lasthash = null;
 
         return true;
     }
