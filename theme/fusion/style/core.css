@@ -390,3 +390,8 @@ h2.headingblock {
 #page-mod-assignment-submissions #attempts th.header {
     font-size: 80%;
 }
+
+.course-content ul.topics,
+.course-content ul.weeks {
+    clear: both;
+}
