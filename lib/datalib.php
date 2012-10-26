@@ -57,7 +57,9 @@ function get_admin() {
     static $mainadmin = null;
     static $prevadmins = null;
 
-    if (empty($CFG->siteadmins)) {  // Should not happen on an ordinary site.
+    if (empty($CFG->siteadmins)) {
+        // Should not happen on an ordinary site.
+        // It does however happen during unit tests.
         return false;
     }
 
