@@ -44,5 +44,5 @@ $string['invalidmd5'] = '無效的 md5';
 $string['missingrequiredfield'] = '缺少部份必填欄位';
 $string['remotedownloaderror'] = '下載元件至伺服器失敗，檢查代理伺服器的設定、高度建議安裝PHP cURL，您必須手動下載<a href="{$a->url}">{$a->url}</a>，並且複製到伺服器"{$a->dest}" 解壓縮';
 $string['wrongdestpath'] = '錯誤的目的路徑。';
-$string['wrongsourcebase'] = '錯誤的來源網址基礎。';
+$string['wrongsourcebase'] = '錯誤的來源基礎網址。';
 $string['wrongzipfilename'] = '錯誤的 ZIP 檔名。';
