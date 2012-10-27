@@ -519,6 +519,14 @@ case workshop::PHASE_CLOSED:
         echo $output->box(format_text($conclusion, $workshop->conclusionformat, array('overflowdiv'=>true)), array('generalbox', 'conclusion'));
         print_collapsible_region_end();
     }
+    $finalgrades = $workshop->get_gradebook_grades($USER->id);
+    if (!empty($finalgrades)) {
+        print_collapsible_region_start('', 'workshop-viewlet-yourgrades', get_string('yourgrades', 'workshop'));
+        echo $output->box_start('generalbox grades-yourgrades');
+        echo $output->render($finalgrades);
+        echo $output->box_end();
+        print_collapsible_region_end();
+    }
     if (has_capability('mod/workshop:viewallassessments', $PAGE->context)) {
         $perpage = get_user_preferences('workshop_perpage', 10);
         $groupid = groups_get_activity_group($workshop->cm, true);
