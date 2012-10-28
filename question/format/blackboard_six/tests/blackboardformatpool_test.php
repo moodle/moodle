@@ -58,10 +58,7 @@ class qformat_blackboard_six_pool_test extends question_testcase {
         $expectedq = new stdClass();
         $expectedq->qtype = 'match';
         $expectedq->name = 'Classify the animals.';
-        $expectedq->questiontext = array(
-                'text' => '<i>Classify the animals.</i>',
-                'format' => FORMAT_HTML,
-            );
+        $expectedq->questiontext = '<i>Classify the animals.</i>';
         $expectedq->questiontextformat = FORMAT_HTML;
         $expectedq->correctfeedback = array('text' => '',
                 'format' => FORMAT_HTML);
@@ -98,10 +95,7 @@ class qformat_blackboard_six_pool_test extends question_testcase {
         $expectedq->qtype = 'multichoice';
         $expectedq->single = 1;
         $expectedq->name = 'What\'s between orange and green in the spectrum?';
-        $expectedq->questiontext = array(
-                'text' =>'<span style="font-size:12pt">What\'s between orange and green in the spectrum?</span>',
-                'format' => FORMAT_HTML,
-            );
+        $expectedq->questiontext = '<span style="font-size:12pt">What\'s between orange and green in the spectrum?</span>';
         $expectedq->questiontextformat = FORMAT_HTML;
         $expectedq->correctfeedback = array('text' => 'You gave the right answer.',
                 'format' => FORMAT_HTML);
@@ -161,10 +155,7 @@ class qformat_blackboard_six_pool_test extends question_testcase {
         $expectedq->qtype = 'multichoice';
         $expectedq->single = 0;
         $expectedq->name = 'What\'s between orange and green in the spectrum?';
-        $expectedq->questiontext = array(
-                'text' => '<span style="font-size:12pt">What\'s between orange and green in the spectrum?</span>',
-                'format' => FORMAT_HTML,
-            );
+        $expectedq->questiontext = '<span style="font-size:12pt">What\'s between orange and green in the spectrum?</span>';
         $expectedq->questiontextformat = FORMAT_HTML;
         $expectedq->correctfeedback = array(
                 'text' => 'You gave the right answer.',
@@ -237,10 +228,7 @@ class qformat_blackboard_six_pool_test extends question_testcase {
         $expectedq = new stdClass();
         $expectedq->qtype = 'truefalse';
         $expectedq->name = '42 is the Absolute Answer to everything.';
-        $expectedq->questiontext = array(
-                'text' => '<span style="font-size:12pt">42 is the Absolute Answer to everything.</span>',
-                'format' => FORMAT_HTML,
-            );
+        $expectedq->questiontext = '<span style="font-size:12pt">42 is the Absolute Answer to everything.</span>';
         $expectedq->questiontextformat = FORMAT_HTML;
         $expectedq->generalfeedback = '';
         $expectedq->generalfeedbackformat = FORMAT_HTML;
@@ -270,10 +258,7 @@ class qformat_blackboard_six_pool_test extends question_testcase {
         $expectedq = new stdClass();
         $expectedq->qtype = 'shortanswer';
         $expectedq->name = 'Name an amphibian: __________.';
-        $expectedq->questiontext = array(
-                'text' => '<span style="font-size:12pt">Name an amphibian: __________.</span>',
-                'format' => FORMAT_HTML,
-            );
+        $expectedq->questiontext = '<span style="font-size:12pt">Name an amphibian: __________.</span>';
         $expectedq->questiontextformat = FORMAT_HTML;
         $expectedq->generalfeedback = '';
         $expectedq->generalfeedbackformat = FORMAT_HTML;
@@ -308,10 +293,7 @@ class qformat_blackboard_six_pool_test extends question_testcase {
         $expectedq = new stdClass();
         $expectedq->qtype = 'essay';
         $expectedq->name = 'How are you?';
-        $expectedq->questiontext = array(
-                'text' => 'How are you?',
-                'format' => FORMAT_HTML,
-            );
+        $expectedq->questiontext = 'How are you?';
         $expectedq->questiontextformat = FORMAT_HTML;
         $expectedq->generalfeedback = '';
         $expectedq->generalfeedbackformat = FORMAT_HTML;
