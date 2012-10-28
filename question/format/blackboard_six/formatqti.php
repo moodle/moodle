@@ -506,11 +506,13 @@ class qformat_blackboard_six_qti extends qformat_blackboard_six_base {
     public function process_common($quest) {
         $question = $this->defaultquestion();
         $text = $quest->QUESTION_BLOCK->text;
-
-        $question->questiontext = $this->cleaned_text_field($text);
-        $question->questiontextformat = FORMAT_HTML; // Needed because add_blank_combined_feedback uses it.
-
-        $question->name = $this->create_default_question_name($question->questiontext['text'],
+        $questiontext = $this->cleaned_text_field($text);
+        $question->questiontext = $questiontext['text'];
+        $question->questiontextformat = $questiontext['format']; // Needed because add_blank_combined_feedback uses it.
+        if (isset($questiontext['itemid'])) {
+            $question->questiontextitemid = $questiontext['itemid'];
+        }
+        $question->name = $this->create_default_question_name($question->questiontext,
                 get_string('defaultname', 'qformat_blackboard_six' , $quest->id));
         $question->generalfeedback = '';
         $question->generalfeedbackformat = FORMAT_HTML;
@@ -863,7 +865,7 @@ class qformat_blackboard_six_qti extends qformat_blackboard_six_base {
             $subanswercount++;
         }
         if ($subquestioncount < 2 || $subanswercount < 3) {
-                $this->error(get_string('notenoughtsubans', 'qformat_blackboard_six', $question->questiontext['text']));
+                $this->error(get_string('notenoughtsubans', 'qformat_blackboard_six', $question->questiontext));
         } else {
             $questions[] = $question;
         }

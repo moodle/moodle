@@ -413,20 +413,11 @@ class qformat_default {
                     'maxfiles' => -1,
                     'maxbytes' => 0,
                 );
-            if (is_array($question->questiontext)) {
-                // Importing images from draftfile.
-                $questiontext = $question->questiontext;
-                $question->questiontext = $questiontext['text'];
-            }
-            if (is_array($question->generalfeedback)) {
-                $generalfeedback = $question->generalfeedback;
-                $question->generalfeedback = $generalfeedback['text'];
-            }
 
             $question->id = $DB->insert_record('question', $question);
 
-            if (!empty($questiontext['itemid'])) {
-                $question->questiontext = file_save_draft_area_files($questiontext['itemid'],
+            if (isset($question->questiontextitemid)) {
+                $question->questiontext = file_save_draft_area_files($question->questiontextitemid,
                         $this->importcontext->id, 'question', 'questiontext', $question->id,
                         $fileoptions, $question->questiontext);
             } else if (isset($question->questiontextfiles)) {
@@ -435,8 +426,8 @@ class qformat_default {
                             $this->importcontext, 'question', 'questiontext', $question->id, $file);
                 }
             }
-            if (!empty($generalfeedback['itemid'])) {
-                $question->generalfeedback = file_save_draft_area_files($generalfeedback['itemid'],
+            if (isset($question->generalfeedbackitemid)) {
+                $question->generalfeedback = file_save_draft_area_files($question->generalfeedbackitemid,
                         $this->importcontext->id, 'question', 'generalfeedback', $question->id,
                         $fileoptions, $question->generalfeedback);
             } else if (isset($question->generalfeedbackfiles)) {
