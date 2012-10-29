@@ -172,6 +172,22 @@ function lti_delete_instance($id) {
     return $DB->delete_records("lti", array("id" => $basiclti->id));
 }
 
+function lti_get_types() {
+    $type = new stdClass();
+    $type->modclass = MOD_CLASS_ACTIVITY;
+    $type->type = 'lti';
+    $type->typestr = get_string('modulename', 'mod_lti');
+
+    $types = array($type);
+
+    foreach (get_plugin_list('ltisource') as $name => $dir) {
+        if ($moretypes = component_callback("ltisource_$name", 'get_types')) {
+            $types = array_merge($types, $moretypes);
+        }
+    }
+    return $types;
+}
+
 /**
  * Given a coursemodule object, this function returns the extra
  * information needed to print this activity in various places.
