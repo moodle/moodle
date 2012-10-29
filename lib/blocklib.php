@@ -224,12 +224,13 @@ class block_manager {
             return $this->addableblocks;
         }
 
+        $unaddableblocks = self::get_undeletable_block_types();
         $pageformat = $this->page->pagetype;
         foreach($allblocks as $block) {
             if (!$bi = block_instance($block->name)) {
                 continue;
             }
-            if ($block->visible &&
+            if ($block->visible && !in_array($block->name, $unaddableblocks) &&
                     ($bi->instance_allow_multiple() || !$this->is_block_present($block->name)) &&
                     blocks_name_allowed_in_format($block->name, $pageformat) &&
                     $bi->user_can_addto($this->page)) {
@@ -371,6 +372,19 @@ class block_manager {
             $this->allblocks = $DB->get_records('block');
         }
         return $this->allblocks;
+    }
+
+    /**
+     * @return array names of block types that cannot be added or deleted. E.g. array('navigation','settings').
+     */
+    public static function get_undeletable_block_types() {
+        if (!isset($CFG->undeletableblocktypes) || (!is_array($CFG->undeletableblocktypes) && !is_string($CFG->undeletableblocktypes))) {
+            return array('navigation','settings');
+        } else if (is_string($CFG->undeletableblocktypes)) {
+            return explode(',', $CFG->undeletableblocktypes);
+        } else {
+            return $CFG->undeletableblocktypes;
+        }
     }
 
 /// Setter methods =============================================================
@@ -800,7 +814,7 @@ class block_manager {
      * Find a given block by its instance id
      *
      * @param integer $instanceid
-     * @return object
+     * @return block_base
      */
     public function find_instance($instanceid) {
         foreach ($this->regions as $region => $notused) {
@@ -1009,14 +1023,6 @@ class block_manager {
     public function edit_controls($block) {
         global $CFG;
 
-        if (!isset($CFG->undeletableblocktypes) || (!is_array($CFG->undeletableblocktypes) && !is_string($CFG->undeletableblocktypes))) {
-            $undeletableblocktypes = array('navigation','settings');
-        } else if (is_string($CFG->undeletableblocktypes)) {
-            $undeletableblocktypes = explode(',', $CFG->undeletableblocktypes);
-        } else {
-            $undeletableblocktypes = $CFG->undeletableblocktypes;
-        }
-
         $controls = array();
         $actionurl = $this->page->url->out(false, array('sesskey'=> sesskey()));
 
@@ -1032,14 +1038,10 @@ class block_manager {
                     'icon' => 't/edit', 'caption' => get_string('configuration'), 'class' => 'editing_edit');
         }
 
-        if ($this->page->user_can_edit_blocks() && $block->user_can_edit() && $block->user_can_addto($this->page)) {
-            if (!in_array($block->instance->blockname, $undeletableblocktypes)
-                    || !in_array($block->instance->pagetypepattern, array('*', 'site-index'))
-                    || $block->instance->parentcontextid != SITEID) {
-                // Delete icon.
-                $controls[] = array('url' => $actionurl . '&bui_deleteid=' . $block->instance->id,
-                        'icon' => 't/delete', 'caption' => get_string('delete'), 'class' => 'editing_delete');
-            }
+        if ($this->user_can_delete_block($block)) {
+            // Delete icon.
+            $controls[] = array('url' => $actionurl . '&bui_deleteid=' . $block->instance->id,
+                    'icon' => 't/delete', 'caption' => get_string('delete'), 'class' => 'editing_delete');
         }
 
         if ($this->page->user_can_edit_blocks() && $block->instance_can_be_hidden()) {
@@ -1067,6 +1069,16 @@ class block_manager {
         }
 
         return $controls;
+    }
+
+    /**
+     * @param block_base $block a block that appears on this page.
+     * @return boolean boolean whether the currently logged in user is allowed to delete this block.
+     */
+    protected function user_can_delete_block($block) {
+        return $this->page->user_can_edit_blocks() && $block->user_can_edit() &&
+                $block->user_can_addto($this->page) &&
+                !in_array($block->instance->blockname, self::get_undeletable_block_types());
     }
 
     /**
@@ -1127,7 +1139,7 @@ class block_manager {
 
         require_sesskey();
         $block = $this->page->blocks->find_instance($blockid);
-        if (!$block->user_can_edit() || !$this->page->user_can_edit_blocks() || !$block->user_can_addto($this->page)) {
+        if (!$this->user_can_delete_block($block)) {
             throw new moodle_exception('nopermissions', '', $this->page->url->out(), get_string('deleteablock'));
         }
 
