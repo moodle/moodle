@@ -218,9 +218,11 @@ class zip_packer extends file_packer {
      * @todo MDL-31048 localise messages
      * @param string|stored_file $archivefile full pathname of zip file or stored_file instance
      * @param string $pathname target directory
+     * @param array $onlyfiles only extract files present in the array. The path to files MUST NOT
+     *              start with a /. Example: array('myfile.txt', 'directory/anotherfile.txt')
      * @return bool|array list of processed files; false if error
      */
-    public function extract_to_pathname($archivefile, $pathname) {
+    public function extract_to_pathname($archivefile, $pathname, array $onlyfiles = null) {
         global $CFG;
 
         if (!is_string($archivefile)) {
@@ -233,7 +235,7 @@ class zip_packer extends file_packer {
         if (!is_readable($archivefile)) {
             return false;
         }
-       $ziparch = new zip_archive();
+        $ziparch = new zip_archive();
         if (!$ziparch->open($archivefile, file_archive::OPEN)) {
             return false;
         }
@@ -243,7 +245,10 @@ class zip_packer extends file_packer {
             $name = $info->pathname;
 
             if ($name === '' or array_key_exists($name, $processed)) {
-                //probably filename collisions caused by filename cleaning/conversion
+                // Probably filename collisions caused by filename cleaning/conversion.
+                continue;
+            } else if (is_array($onlyfiles) && !in_array($name, $onlyfiles)) {
+                // Skipping files which are not in the list.
                 continue;
             }
 
