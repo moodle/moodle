@@ -269,12 +269,12 @@ switch ($mode) {
                 // Get all the users who have taken this lesson, order by their last name
                 $ufields = user_picture::fields('u');
                 if (!empty($cm->groupingid)) {
-                    $params["groupinid"] = $cm->groupingid;
+                    $params["groupingid"] = $cm->groupingid;
                     $sql = "SELECT DISTINCT $ufields
                             FROM {lesson_attempts} a
                                 INNER JOIN {user} u ON u.id = a.userid
                                 INNER JOIN {groups_members} gm ON gm.userid = u.id
-                                INNER JOIN {groupings_groups} gg ON gm.groupid = :groupinid
+                                INNER JOIN {groupings_groups} gg ON gm.groupid = gg.groupid AND gg.groupingid = :groupingid
                             WHERE a.lessonid = :lessonid
                             ORDER BY u.lastname";
                 } else {
