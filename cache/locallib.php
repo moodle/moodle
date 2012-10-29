@@ -566,7 +566,7 @@ abstract class cache_administration_helper extends cache_helper {
                     'nativelocking' => (in_array('cache_is_lockable', class_implements($class))),
                     'keyawareness' => (array_key_exists('cache_is_key_aware', class_implements($class))),
                 ),
-                'canaddinstance' => ($class::can_add_instance())
+                'canaddinstance' => ($class::can_add_instance() && $class::are_requirements_met())
             );
         }
 
@@ -702,7 +702,7 @@ abstract class cache_administration_helper extends cache_helper {
      */
     public static function get_store_plugin_actions($name, array $plugindetails) {
         $actions = array();
-        if (has_capability('moodle/site:config', get_system_context())) {
+        if (has_capability('moodle/site:config', context_system::instance())) {
             if (!empty($plugindetails['canaddinstance'])) {
                 $url = new moodle_url('/cache/admin.php', array('action' => 'addstore', 'plugin' => $name, 'sesskey' => sesskey()));
                 $actions[] = array(

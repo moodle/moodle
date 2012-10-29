@@ -63,6 +63,7 @@ $string['editdefinitionmappings'] = '{$a} definition store mappings';
 $string['ex_configcannotsave'] = 'Unable to save the cache config to file.';
 $string['ex_nodefaultlock'] = 'Unable to find a default lock instance.';
 $string['ex_unabletolock'] = 'Unable to acquire a lock for caching.';
+$string['ex_unmetstorerequirements'] = 'You are unable to use this store at the present time. Please refer to the documentation to determine its requirements.';
 $string['gethit'] = 'Get - Hit';
 $string['getmiss'] = 'Get - Miss';
 $string['invalidplugin'] = 'Invalid plugin';
