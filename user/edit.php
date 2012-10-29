@@ -293,6 +293,7 @@ $PAGE->set_title("$course->shortname: $streditmyprofile");
 $PAGE->set_heading($course->fullname);
 
 echo $OUTPUT->header();
+echo $OUTPUT->heading($userfullname);
 
 if ($email_changed) {
     echo $email_changed_html;
