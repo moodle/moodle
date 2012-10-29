@@ -59,8 +59,11 @@ Example:
 
 $verbose = !empty($options['verbose']);
 
+/** @var $plugin enrol_self_plugin */
 $plugin = enrol_get_plugin('self');
 
 $result = $plugin->sync(null, $verbose);
+
+$plugin->send_expiry_notifications($verbose);
 
 exit($result);

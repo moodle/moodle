@@ -63,6 +63,6 @@ $plugin = enrol_get_plugin('manual');
 
 $result = $plugin->sync(null, $verbose);
 
-$plugin->send_notifications($verbose);
+$plugin->send_expiry_notifications($verbose);
 
 exit($result);

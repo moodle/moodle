@@ -15,16 +15,31 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Self enrolment plugin version specification.
+ * This file keeps track of upgrades to the self enrolment plugin
  *
  * @package    enrol_self
- * @copyright  2010 Petr Skoda  {@link http://skodak.org}
+ * @copyright  2012 Petr Skoda {@link http://skodak.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2012101400;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2012100500;        // Requires this Moodle version
-$plugin->component = 'enrol_self';      // Full name of the plugin (used for diagnostics)
-$plugin->cron      = 600;
+function xmldb_enrol_self_upgrade($oldversion) {
+    global $CFG, $DB, $OUTPUT;
+
+    $dbman = $DB->get_manager();
+
+    // Moodle v2.3.0 release upgrade line
+    // Put any upgrade step following this
+
+    if ($oldversion < 2012101400) {
+        // Set default expiry threshold to 1 day.
+        $DB->execute("UPDATE {enrol} SET expirythreshold = 86400 WHERE enrol = 'self' AND expirythreshold = 0");
+        upgrade_plugin_savepoint(true, 2012101400, 'enrol', 'self');
+    }
+
+
+    return true;
+}
+
+

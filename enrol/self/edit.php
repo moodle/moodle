@@ -47,6 +47,12 @@ $plugin = enrol_get_plugin('self');
 
 if ($instanceid) {
     $instance = $DB->get_record('enrol', array('courseid'=>$course->id, 'enrol'=>'self', 'id'=>$instanceid), '*', MUST_EXIST);
+    // Merge these two settings to one value for the single selection element.
+    if ($instance->notifyall and $instance->expirynotify) {
+        $instance->expirynotify = 2;
+    }
+    unset($instance->notifyall);
+
 } else {
     require_capability('moodle/course:enrolconfig', $context);
     // No instance yet, we have to add new instance.
@@ -63,6 +69,16 @@ if ($mform->is_cancelled()) {
     redirect($return);
 
 } else if ($data = $mform->get_data()) {
+    if ($data->expirynotify == 2) {
+        $data->expirynotify = 1;
+        $data->notifyall = 1;
+    } else {
+        $data->notifyall = 0;
+    }
+    if (!$data->expirynotify) {
+        // Keep previous/default value of disabled expirythreshold option.
+        $data->expirythreshold = $instance->expirythreshold;
+    }
     if ($instance->id) {
         $reset = ($instance->status != $data->status);
 
@@ -77,6 +93,9 @@ if ($mform->is_cancelled()) {
         $instance->customtext1    = $data->customtext1;
         $instance->roleid         = $data->roleid;
         $instance->enrolperiod    = $data->enrolperiod;
+        $instance->expirynotify   = $data->expirynotify;
+        $instance->notifyall      = $data->notifyall;
+        $instance->expirythreshold = $data->expirythreshold;
         $instance->enrolstartdate = $data->enrolstartdate;
         $instance->enrolenddate   = $data->enrolenddate;
         $instance->timemodified   = time();
@@ -87,9 +106,23 @@ if ($mform->is_cancelled()) {
         }
 
     } else {
-        $fields = array('status'=>$data->status, 'name'=>$data->name, 'password'=>$data->password, 'customint1'=>$data->customint1, 'customint2'=>$data->customint2,
-                        'customint3'=>$data->customint3, 'customint4'=>$data->customint4, 'customint5'=>$data->customint5, 'customtext1'=>$data->customtext1,
-                        'roleid'=>$data->roleid, 'enrolperiod'=>$data->enrolperiod, 'enrolstartdate'=>$data->enrolstartdate, 'enrolenddate'=>$data->enrolenddate);
+        $fields = array(
+            'status'          => $data->status,
+            'name'            => $data->name,
+            'password'        => $data->password,
+            'customint1'      => $data->customint1,
+            'customint2'      => $data->customint2,
+            'customint3'      => $data->customint3,
+            'customint4'      => $data->customint4,
+            'customint5'      => $data->customint5,
+            'customtext1'     => $data->customtext1,
+            'roleid'          => $data->roleid,
+            'enrolperiod'     => $data->enrolperiod,
+            'expirynotify'    => $data->expirynotify,
+            'notifyall'       => $data->notifyall,
+            'expirythreshold' => $data->expirythreshold,
+            'enrolstartdate'  => $data->enrolstartdate,
+            'enrolenddate'    => $data->enrolenddate);
         $plugin->add_instance($course, $fields);
     }
 

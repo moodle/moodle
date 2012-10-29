@@ -659,26 +659,6 @@ $string['existingcreators'] = 'Existing course creators';
 $string['existingstudents'] = 'Enrolled students';
 $string['existingteachers'] = 'Existing teachers';
 $string['expandall'] = 'Expand all';
-$string['expirynotify'] = 'Enrolment expiry notification';
-$string['expirynotifyemail'] = 'The following students in this course are expiring after exactly {$a->threshold} days:
-
-{$a->current}
-
-The following students in this course are expiring in less than {$a->threshold} days:
-
-{$a->past}
-
-You may go to the following page to extend their enrolment period:
-{$a->extendurl}';
-$string['expirynotifystudents'] = 'Notify students';
-$string['expirynotifystudents_help'] = 'If an enrolment duration has been specified, then this setting determines whether students receive email notification when they are about to be unenrolled from the course.';
-$string['expirynotifystudentsemail'] = 'Dear {$a->studentstr}:
-
-This is a notification that your enrolment in the course {$a->course} will expire in {$a->threshold} days.
-
-Please contact {$a->teacherstr} for any further enquiries.';
-$string['expirythreshold'] = 'Threshold';
-$string['expirythreshold_help'] = 'If an enrolment duration has been specified, then this setting determines the number of days notice given before students are unenrolled from the course.';
 $string['explanation'] = 'Explanation';
 $string['extendenrol'] = 'Extend enrolment (individual)';
 $string['extendperiod'] = 'Extended period';

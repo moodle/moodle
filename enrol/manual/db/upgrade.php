@@ -38,6 +38,14 @@ function xmldb_enrol_manual_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2012100702, 'enrol', 'manual');
     }
 
+    if ($oldversion < 2012101400) {
+        // Delete obsoleted settings, now using expiry* prefix to make them more consistent.
+        unset_config('notifylast', 'enrol_manual');
+        unset_config('notifyhour', 'enrol_manual');
+        upgrade_plugin_savepoint(true, 2012101400, 'enrol', 'manual');
+    }
+
+
     return true;
 }
 
