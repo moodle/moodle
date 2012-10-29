@@ -519,7 +519,7 @@ if ($showactivity) {
 
             $what = ' DISTINCT r.id, r.approved, r.timecreated, r.timemodified, r.userid, u.firstname, u.lastname';
             $count = ' COUNT(DISTINCT c.recordid) ';
-            $tables = '{data_content} c,{data_records} r, {data_content} cs, {user} u ';
+            $tables = '{data_content} c,{data_records} r, {user} u ';
             $where =  'WHERE c.recordid = r.id
                          AND r.dataid = :dataid
                          AND r.userid = u.id ';
@@ -550,8 +550,7 @@ if ($showactivity) {
                     $advparams = array_merge($advparams, $val->params);
                 }
             } else if ($search) {
-                $where .= ' AND cs.recordid = r.id ';
-                $searchselect = " AND (".$DB->sql_like('cs.content', ':search1', false)." OR ".$DB->sql_like('u.firstname', ':search2', false)." OR ".$DB->sql_like('u.lastname', ':search3', false)." ) ";
+                $searchselect = " AND (".$DB->sql_like('c.content', ':search1', false)." OR ".$DB->sql_like('u.firstname', ':search2', false)." OR ".$DB->sql_like('u.lastname', ':search3', false)." ) ";
                 $params['search1'] = "%$search%";
                 $params['search2'] = "%$search%";
                 $params['search3'] = "%$search%";
@@ -566,7 +565,7 @@ if ($showactivity) {
 
             $what = ' DISTINCT r.id, r.approved, r.timecreated, r.timemodified, r.userid, u.firstname, u.lastname, ' . $sortcontentfull . ' AS sortorder ';
             $count = ' COUNT(DISTINCT c.recordid) ';
-            $tables = '{data_content} c, {data_records} r, {data_content} cs, {user} u ';
+            $tables = '{data_content} c, {data_records} r, {user} u ';
             $where =  'WHERE c.recordid = r.id
                          AND r.dataid = :dataid
                          AND r.userid = u.id ';
@@ -601,8 +600,7 @@ if ($showactivity) {
                     $advparams = array_merge($advparams, $val->params);
                 }
             } else if ($search) {
-                $where .= ' AND cs.recordid = r.id ';
-                $searchselect = " AND (".$DB->sql_like('cs.content', ':search1', false)." OR ".$DB->sql_like('u.firstname', ':search2', false)." OR ".$DB->sql_like('u.lastname', ':search3', false)." ) ";
+                $searchselect = " AND (".$DB->sql_like('c.content', ':search1', false)." OR ".$DB->sql_like('u.firstname', ':search2', false)." OR ".$DB->sql_like('u.lastname', ':search3', false)." ) ";
                 $params['search1'] = "%$search%";
                 $params['search2'] = "%$search%";
                 $params['search3'] = "%$search%";
