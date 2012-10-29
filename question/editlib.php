@@ -1521,6 +1521,10 @@ class question_bank_view {
         if(($unhide = optional_param('unhide', '', PARAM_INT)) and confirm_sesskey()) {
             question_require_capability_on($unhide, 'edit');
             $DB->set_field('question', 'hidden', 0, array('id' => $unhide));
+
+            // Purge these questions from the cache.
+            question_bank::notify_question_edited($unhide);
+
             redirect($this->baseurl);
         }
     }

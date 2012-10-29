@@ -281,6 +281,9 @@ if ($mform->is_cancelled()) {
         }
     }
 
+    // Purge this question from the cache.
+    question_bank::notify_question_edited($question->id);
+
     if (($qtypeobj->finished_edit_wizard($fromform)) || $movecontext) {
         if ($inpopup) {
             echo $OUTPUT->notification(get_string('changessaved'), '');

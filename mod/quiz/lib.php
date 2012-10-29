@@ -1371,54 +1371,6 @@ function quiz_reset_userdata($data) {
 }
 
 /**
- * Checks whether the current user is allowed to view a file uploaded in a quiz.
- * Teachers can view any from their courses, students can only view their own.
- *
- * @param int $attemptuniqueid int attempt id
- * @param int $questionid int question id
- * @return bool to indicate access granted or denied
- */
-function quiz_check_file_access($attemptuniqueid, $questionid, $context = null) {
-    global $USER, $DB, $CFG;
-    require_once($CFG->dirroot . '/mod/quiz/locallib.php');
-
-    $attempt = $DB->get_record('quiz_attempts', array('uniqueid' => $attemptuniqueid));
-    $attemptobj = quiz_attempt::create($attempt->id);
-
-    // Does the question exist?
-    if (!$question = $DB->get_record('question', array('id' => $questionid))) {
-        return false;
-    }
-
-    if ($context === null) {
-        $quiz = $DB->get_record('quiz', array('id' => $attempt->quiz));
-        $cm = get_coursemodule_from_id('quiz', $quiz->id);
-        $context = context_module::instance($cm->id);
-    }
-
-    // Load those questions and the associated states.
-    $attemptobj->load_questions(array($questionid));
-    $attemptobj->load_question_states(array($questionid));
-
-    // Obtain the state.
-    $state = $attemptobj->get_question_state($questionid);
-    // Obtain the question.
-    $question = $attemptobj->get_question($questionid);
-
-    // Access granted if the current user submitted this file.
-    if ($attempt->userid != $USER->id) {
-        return false;
-    }
-    // Access granted if the current user has permission to grade quizzes in this course.
-    if (!(has_capability('mod/quiz:viewreports', $context) ||
-            has_capability('mod/quiz:grade', $context))) {
-        return false;
-    }
-
-    return array($question, $state, array());
-}
-
-/**
  * Prints quiz summaries on MyMoodle Page
  * @param arry $courses
  * @param array $htmlarray

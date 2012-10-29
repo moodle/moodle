@@ -38,6 +38,7 @@ $string['cachedef_config'] = 'Config settings';
 $string['cachedef_databasemeta'] = 'Database meta information';
 $string['cachedef_eventinvalidation'] = 'Event invalidation';
 $string['cachedef_locking'] = 'Locking';
+$string['cachedef_questiondata'] = 'Question definitions';
 $string['cachedef_string'] = 'Language string cache';
 $string['cachelock_file_default'] = 'Default file locking';
 $string['cachestores'] = 'Cache stores';

@@ -458,7 +458,7 @@ abstract class question_behaviour {
                 $fraction = null;
             } else if ($fraction > 1 || $fraction < $this->qa->get_min_fraction()) {
                 throw new coding_exception('Score out of range when processing ' .
-                        'a manual grading action.', 'Question ' . $this->qa->get_question()->id .
+                        'a manual grading action.', 'Question ' . $this->question->id .
                                 ', slot ' . $this->qa->get_slot() . ', fraction ' . $fraction);
             }
             $pendingstep->set_fraction($fraction);

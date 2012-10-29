@@ -27,12 +27,14 @@
  */
 
 $definitions = array(
+
     // Used to store processed lang files.
     'string' => array(
         'mode' => cache_store::MODE_APPLICATION,
         'persistent' => true,
         'persistentmaxsize' => 3
     ),
+
     // Used to store database meta information.
     'databasemeta' => array(
         'mode' => cache_store::MODE_APPLICATION,
@@ -42,15 +44,27 @@ $definitions = array(
         'persistent' => true,
         'persistentmaxsize' => 2
     ),
+
     // Used to store data from the config + config_plugins table in the database.
     'config' => array(
         'mode' => cache_store::MODE_APPLICATION,
         'persistent' => true
     ),
+
     // Event invalidation cache.
     'eventinvalidation' => array(
         'mode' => cache_store::MODE_APPLICATION,
         'persistent' => true,
         'requiredataguarantee' => true
-    )
+    ),
+
+    // Cache for question definitions. This is used by the question_bank class.
+    // Users probably do not need to know about this cache. They will just call
+    // question_bank::load_question.
+    'questiondata' => array(
+        'mode' => cache_store::MODE_APPLICATION,
+        'requiredataguarantee' => false,
+        'datasource' => 'question_finder',
+        'datasourcefile' => 'question/engine/bank.php',
+    ),
 );
