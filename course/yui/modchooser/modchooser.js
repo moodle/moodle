@@ -24,7 +24,6 @@ YUI.add('moodle-course-modchooser', function(Y) {
             var dialogue = Y.one('.chooserdialoguebody');
             var header = Y.one('.choosertitle');
             var params = {
-                width: '540px'
             };
             this.setup_chooser_dialogue(dialogue, header, params);
 
