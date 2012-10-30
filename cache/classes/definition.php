@@ -265,6 +265,8 @@ class cache_definition {
      * @throws coding_exception
      */
     public static function load($id, array $definition, $datasourceaggregate = null) {
+        global $CFG;
+
         if (!array_key_exists('mode', $definition)) {
             throw new coding_exception('You must provide a mode when creating a cache definition');
         }
@@ -349,6 +351,12 @@ class cache_definition {
 
         if (!is_null($overrideclass)) {
             if (!is_null($overrideclassfile)) {
+                if (strpos($overrideclassfile, $CFG->dirroot) !== 0) {
+                    $overrideclassfile = $CFG->dirroot.'/'.$overrideclassfile;
+                }
+                if (strpos($overrideclassfile, '../') !== false) {
+                    throw new coding_exception('No path craziness allowed within override class file path.');
+                }
                 if (!file_exists($overrideclassfile)) {
                     throw new coding_exception('The override class file does not exist.');
                 }
@@ -366,13 +374,19 @@ class cache_definition {
 
         if (!is_null($datasource)) {
             if (!is_null($datasourcefile)) {
+                if (strpos($datasourcefile, $CFG->dirroot) !== 0) {
+                    $datasourcefile = $CFG->dirroot.'/'.$datasourcefile;
+                }
+                if (strpos($datasourcefile, '../') !== false) {
+                    throw new coding_exception('No path craziness allowed within data source file path.');
+                }
                 if (!file_exists($datasourcefile)) {
-                    throw new coding_exception('The override class file does not exist.');
+                    throw new coding_exception('The data source class file does not exist.');
                 }
                 require_once($datasourcefile);
             }
             if (!class_exists($datasource)) {
-                throw new coding_exception('The override class does not exist.');
+                throw new coding_exception('The data source class does not exist.');
             }
             if (!array_key_exists('cache_data_source', class_implements($datasource))) {
                 throw new coding_exception('Cache data source classes must implement the cache_data_source interface');
