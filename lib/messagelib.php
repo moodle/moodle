@@ -155,10 +155,11 @@ function message_send($eventdata) {
         if (isset($defaultpreferences->{$defaultpreference})) {
             $permitted = $defaultpreferences->{$defaultpreference};
         } else {
-            //MDL-25114 They supplied an $eventdata->component $eventdata->name combination which doesn't
-            //exist in the message_provider table (thus there is no default settings for them)
-            $preferrormsg = get_string('couldnotfindpreference', 'message', $defaultpreference);
-            throw new coding_exception($preferrormsg,'blah');
+            // MDL-25114 They supplied an $eventdata->component $eventdata->name combination which doesn't
+            // exist in the message_provider table (thus there is no default settings for them).
+            $preferrormsg = "Could not load preference $defaultpreference. Make sure the component and name you supplied
+                    to message_send() are valid.";
+            throw new coding_exception($preferrormsg);
         }
 
         // Find out if user has configured this output
