@@ -91,3 +91,16 @@
 
 /** Unknown Styles ??? */
 #email .unsubscribelink {margin-top:20px;}
+
+
+/* Forumpost unread
+-------------------------*/
+#page-mod-forum-view .unread,
+.forumpost.unread .row.header,
+.path-course-view .unread,
+span.unread {
+    background-color: #FFD;
+}
+.forumpost.unread .row.header {
+    border-bottom: 1px solid #DDD;
+}

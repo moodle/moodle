@@ -994,16 +994,3 @@ sup {vertical-align: super;}
     -webkit-box-shadow: 0px 0px 10px 0px #CCCCCC;
     -moz-box-shadow: 0px 0px 10px 0px #CCCCCC;
 }
-
-/* Forumpost unread
--------------------------*/
-
-#page-mod-forum-view .unread,
-.forumpost.unread .row.header,
-.path-course-view .unread,
-span.unread {
-    background-color: #FFD;
-}
-.forumpost.unread .row.header {
-    border-bottom: 1px solid #DDD;
-}
