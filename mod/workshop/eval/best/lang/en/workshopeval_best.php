@@ -33,4 +33,3 @@ $string['comparisonlevel7'] = 'lax';
 $string['comparisonlevel9'] = 'very lax';
 $string['configcomparison'] = 'Default value of the factor that influence the grading evaluation.';
 $string['pluginname'] = 'Comparison with the best assessment';
-$string['settings'] = 'Grading evaluation settings';

@@ -185,7 +185,6 @@ class workshop {
         } else {
             $this->context = $context;
         }
-        $this->evaluation   = 'best';   // todo make this configurable although we have no alternatives yet
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -281,6 +280,19 @@ class workshop {
             }
         }
         return $forms;
+    }
+
+    /**
+     * Returns the list of available grading evaluation methods
+     *
+     * @return array of (string)name => (string)localized title
+     */
+    public static function available_evaluators_list() {
+        $evals = array();
+        foreach (get_plugin_list_with_file('workshopeval', 'lib.php', false) as $eval => $evalpath) {
+            $evals[$eval] = get_string('pluginname', 'workshopeval_' . $eval);
+        }
+        return $evals;
     }
 
     /**
@@ -1230,6 +1242,28 @@ class workshop {
     }
 
     /**
+     * Sets the current evaluation method to the given plugin.
+     *
+     * @param string $method the name of the workshopeval subplugin
+     * @return bool true if successfully set
+     * @throws coding_exception if attempting to set a non-installed evaluation method
+     */
+    public function set_grading_evaluation_method($method) {
+        global $DB;
+
+        $evaluationlib = dirname(__FILE__) . '/eval/' . $method . '/lib.php';
+
+        if (is_readable($evaluationlib)) {
+            $this->evaluationinstance = null;
+            $this->evaluation = $method;
+            $DB->set_field('workshop', 'evaluation', $method, array('id' => $this->id));
+            return true;
+        }
+
+        throw new coding_exception('Attempt to set a non-existing evaluation method.');
+    }
+
+    /**
      * Returns instance of grading evaluation class
      *
      * @return stdclass Instance of a grading evaluation
@@ -1238,16 +1272,27 @@ class workshop {
         global $CFG;    // because we require other libs here
 
         if (is_null($this->evaluationinstance)) {
+            if (empty($this->evaluation)) {
+                $this->evaluation = 'best';
+            }
             $evaluationlib = dirname(__FILE__) . '/eval/' . $this->evaluation . '/lib.php';
             if (is_readable($evaluationlib)) {
                 require_once($evaluationlib);
             } else {
-                throw new coding_exception('the grading evaluation subplugin must contain library ' . $evaluationlib);
+                // Fall back in case the subplugin is not available.
+                $this->evaluation = 'best';
+                $evaluationlib = dirname(__FILE__) . '/eval/' . $this->evaluation . '/lib.php';
+                if (is_readable($evaluationlib)) {
+                    require_once($evaluationlib);
+                } else {
+                    // Fall back in case the subplugin is not available any more.
+                    throw new coding_exception('Missing default grading evaluation library ' . $evaluationlib);
+                }
             }
             $classname = 'workshop_' . $this->evaluation . '_evaluation';
             $this->evaluationinstance = new $classname($this);
-            if (!in_array('workshop_evaluation', class_implements($this->evaluationinstance))) {
-                throw new coding_exception($classname . ' does not implement workshop_evaluation interface');
+            if (!in_array('workshop_evaluation', class_parents($this->evaluationinstance))) {
+                throw new coding_exception($classname . ' does not extend workshop_evaluation class');
             }
         }
         return $this->evaluationinstance;
