@@ -2965,12 +2965,12 @@ function calendar_cron() {
     // In order to execute this we need bennu.
     require_once($CFG->libdir.'/bennu/bennu.inc.php');
 
-    mtrace(get_string('cronupdate', 'calendar'));
+    mtrace('Updating calendar subscriptions:');
 
     $time = time();
     $subscriptions = $DB->get_records_sql('SELECT * FROM {event_subscriptions} WHERE pollinterval > 0 AND lastupdated + pollinterval < ?', array($time));
     foreach ($subscriptions as $sub) {
-        mtrace(get_string('cronupdatesub', 'calendar', $sub));
+        mtrace("Updating calendar subscription {$sub->name} in course {$sub->courseid}");
         try {
             $log = calendar_update_subscription_events($sub->id);
         } catch (moodle_exception $ex) {
@@ -2979,7 +2979,7 @@ function calendar_cron() {
         mtrace(trim(strip_tags($log)));
     }
 
-    mtrace(get_string('cronupdatefinished', 'calendar'));
+    mtrace('Finished updating calendar subscriptions.');
 
     return true;
 }
