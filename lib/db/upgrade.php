@@ -1296,15 +1296,19 @@ function xmldb_main_upgrade($oldversion) {
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
+        upgrade_main_savepoint(true, 2012103002.00);
+    }
 
+    if ($oldversion < 2012103003.00) {
         // Fix uuid field in event table to match RFC-2445 UID property
+        $table = new xmldb_table('event');
         $field = new xmldb_field('uuid', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'visible');
         if ($dbman->field_exists($table, $field)) {
             // Changing precision of field uuid on table event to (255)
             $dbman->change_field_precision($table, $field);
         }
         // Main savepoint reached
-        upgrade_main_savepoint(true, 2012103002.00);
+        upgrade_main_savepoint(true, 2012103003.00);
     }
 
     return true;
