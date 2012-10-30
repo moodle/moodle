@@ -70,7 +70,7 @@ if (!empty($formdata)) {
     if ($formdata->importfrom == CALENDAR_IMPORT_FROM_FILE) {
         // Blank the URL if it's a file import.
         $formdata->url = '';
-        $calendar = $form->get_ical_data();
+        $calendar = $form->get_file_content('importfile');
         $ical = new iCalendar();
         $ical->unserialize($calendar);
         $importresults = calendar_import_icalendar_events($ical, $courseid, $subscriptionid);

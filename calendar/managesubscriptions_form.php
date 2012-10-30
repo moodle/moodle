@@ -112,22 +112,4 @@ class calendar_addsubscription_form extends moodleform {
         }
         return $errors;
     }
-
-    /**
-     * Returns the ical content either from the uploaded file, or from the URL.
-     *
-     * @return bool|mixed|string
-     */
-    public function get_ical_data() {
-        $formdata = $this->get_data();
-        switch ($formdata->importfrom) {
-            case CALENDAR_IMPORT_FROM_FILE:
-                $calendar = $this->get_file_content('importfile');
-                break;
-            case CALENDAR_IMPORT_FROM_URL:
-                $calendar = download_file_content($formdata->importurl);
-                break;
-        }
-        return $calendar;
-    }
 }
