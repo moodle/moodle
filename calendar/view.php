@@ -145,10 +145,13 @@ switch($view) {
     break;
 }
 
-//Link to calendar export page
+//Link to calendar export page.
 echo $OUTPUT->container_start('bottom');
 if (!empty($CFG->enablecalendarexport)) {
     echo $OUTPUT->single_button(new moodle_url('export.php', array('course'=>$courseid)), get_string('exportcalendar', 'calendar'));
+    if (calendar_user_can_add_event($course)) {
+        echo $OUTPUT->single_button(new moodle_url('/calendar/managesubscriptions.php', array('course'=>$courseid)), get_string('managesubscriptions', 'calendar'));
+    }
     if (isloggedin()) {
         $authtoken = sha1($USER->id . $USER->password . $CFG->calendar_exportsalt);
         $link = new moodle_url('/calendar/export_execute.php', array('preset_what'=>'all', 'preset_time'=>'recentupcoming', 'userid' => $USER->id, 'authtoken'=>$authtoken));

@@ -101,10 +101,7 @@ YUI.add('moodle-calendar-eventmanager', function(Y) {
             },
             node : {
                 setter : function(node) {
-                    var n = Y.one(node);
-                    if (!n) {
-                        Y.fail(ENAME+': invalid event node set');
-                    }
+                    var n = Y.one('#'+node);
                     return n;
                 }
             },

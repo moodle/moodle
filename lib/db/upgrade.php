@@ -1268,5 +1268,44 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012101800.02);
     }
 
+    if ($oldversion < 2012103001.00) {
+        // create new event_subscriptions table
+        $table = new xmldb_table('event_subscriptions');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('url', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('courseid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('groupid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('pollinterval', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('lastupdated', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2012103001.00);
+    }
+
+    if ($oldversion < 2012103002.00) {
+        // Add subscription field to the event table
+        $table = new xmldb_table('event');
+        $field = new xmldb_field('subscriptionid', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'timemodified');
+
+        // Conditionally launch add field subscriptionid
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Fix uuid field in event table to match RFC-2445 UID property
+        $field = new xmldb_field('uuid', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'visible');
+        if ($dbman->field_exists($table, $field)) {
+            // Changing precision of field uuid on table event to (255)
+            $dbman->change_field_precision($table, $field);
+        }
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2012103002.00);
+    }
+
     return true;
 }

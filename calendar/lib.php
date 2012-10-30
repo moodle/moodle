@@ -23,6 +23,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+if (!defined('MOODLE_INTERNAL')) {
+    die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
+}
+
 /**
  *  These are read by the administration component to provide default values
  */
@@ -85,6 +89,26 @@ define('CALENDAR_EVENT_GROUP', 4);
  */
 define('CALENDAR_EVENT_USER', 8);
 
+
+/**
+ * CALENDAR_IMPORT_FROM_FILE - import the calendar from a file
+ */
+define('CALENDAR_IMPORT_FROM_FILE', 0);
+
+/**
+ * CALENDAR_IMPORT_FROM_URL - import the calendar from a URL
+ */
+define('CALENDAR_IMPORT_FROM_URL',  1);
+
+/**
+ * CALENDAR_IMPORT_EVENT_UPDATED - imported event was updated
+ */
+define('CALENDAR_IMPORT_EVENT_UPDATED',  1);
+
+/**
+ * CALENDAR_IMPORT_EVENT_INSERTED - imported event was added by insert
+ */
+define('CALENDAR_IMPORT_EVENT_INSERTED', 2);
 
 /**
  * Return the days of the week
@@ -1037,7 +1061,7 @@ function calendar_get_link_href($linkbase, $d, $m, $y) {
         return '';
     }
     if (!($linkbase instanceof moodle_url)) {
-        $linkbase = new moodle_url();
+        $linkbase = new moodle_url($linkbase);
     }
     if (!empty($d)) {
         $linkbase->param('cal_d', $d);
@@ -1978,7 +2002,7 @@ class calendar_event {
             $cm = get_coursemodule_from_instance($data->modulename, $data->instance, 0, false, MUST_EXIST);
             $context =  context_course::instance($cm->course);
         } else {
-            $context =  context_user::instance();
+            $context =  context_user::instance($data->userid);
         }
 
         return $context;
@@ -2613,7 +2637,7 @@ class calendar_information {
         return make_timestamp($this->year, $this->month, $this->day+1);
     }
     /**
-     * Adds the pretend blocks for teh calendar
+     * Adds the pretend blocks for the calendar
      *
      * @param core_calendar_renderer $renderer
      * @param bool $showfilters display filters, false is set as default
@@ -2633,4 +2657,329 @@ class calendar_information {
         $block->title = get_string('monthlyview', 'calendar');
         $renderer->add_pretend_calendar_block($block, BLOCK_POS_RIGHT);
     }
+}
+
+/**
+ * Returns option list for the poll interval setting.
+ *
+ * @return array An array of poll interval options. Interval => description.
+ */
+function calendar_get_pollinterval_choices() {
+    return array(
+        '0' => new lang_string('never', 'calendar'),
+        '3600' => new lang_string('hourly', 'calendar'),
+        '86400' => new lang_string('daily', 'calendar'),
+        '604800' => new lang_string('weekly', 'calendar'),
+        '2628000' => new lang_string('monthly', 'calendar'),
+        '31536000' => new lang_string('annually', 'calendar')
+    );
+}
+
+/**
+ * Returns option list of available options for the calendar event type, given the current user and course.
+ *
+ * @param int $courseid The id of the course
+ * @return array An array containing the event types the user can create.
+ */
+function calendar_get_eventtype_choices($courseid) {
+    $choices = array();
+    $allowed = new stdClass;
+    calendar_get_allowed_types($allowed, $courseid);
+
+    if ($allowed->user) {
+        $choices[0] = get_string('userevents', 'calendar');
+    }
+    if ($allowed->site) {
+        $choices[SITEID] = get_string('globalevents', 'calendar');
+    }
+    if (!empty($allowed->courses)) {
+        $choices[$courseid] = get_string('courseevents', 'calendar');
+    }
+    if (!empty($allowed->groups) and is_array($allowed->groups)) {
+        $choices['group'] = get_string('group');
+    }
+
+    return array($choices, $allowed->groups);
+}
+
+/**
+ * Add an iCalendar subscription to the database.
+ *
+ * @param stdClass $sub The subscription object (e.g. from the form)
+ * @return int The insert ID, if any.
+ */
+function calendar_add_subscription($sub) {
+    global $DB, $USER;
+
+    $sub->courseid = $sub->eventtype;
+    if ($sub->eventtype == 'group') {
+        $sub->courseid = $sub->course;
+    }
+    $sub->userid = $USER->id;
+
+    // File subscriptions never update.
+    if (empty($sub->url)) {
+        $sub->pollinterval = 0;
+    }
+
+    if (!empty($sub->name)) {
+        if (empty($sub->id)) {
+            $id = $DB->insert_record('event_subscriptions', $sub);
+            return $id;
+        } else {
+            $DB->update_record('event_subscriptions', $sub);
+            return $sub->id;
+        }
+    } else {
+        print_error('errorbadsubscription', 'importcalendar');
+    }
+}
+
+/**
+ * Add an iCalendar event to the Moodle calendar.
+ *
+ * @param object $event The RFC-2445 iCalendar event
+ * @param int $courseid The course ID
+ * @param int $subscriptionid The iCalendar subscription ID
+ * @return int Code: 1=updated, 2=inserted, 0=error
+ */
+function calendar_add_icalendar_event($event, $courseid, $subscriptionid = null) {
+    global $DB, $USER;
+
+    // Probably an unsupported X-MICROSOFT-CDO-BUSYSTATUS event.
+    if (empty($event->properties['SUMMARY'])) {
+        return 0;
+    }
+
+    $name = $event->properties['SUMMARY'][0]->value;
+    $name = str_replace('\n', '<br />', $name);
+    $name = str_replace('\\', '', $name);
+    $name = preg_replace('/\s+/', ' ', $name);
+
+    $eventrecord = new stdClass;
+    $eventrecord->name = clean_param($name, PARAM_NOTAGS);
+
+    if (empty($event->properties['DESCRIPTION'][0]->value)) {
+        $description = '';
+    } else {
+        $description = $event->properties['DESCRIPTION'][0]->value;
+        $description = str_replace('\n', '<br />', $description);
+        $description = str_replace('\\', '', $description);
+        $description = preg_replace('/\s+/', ' ', $description);
+    }
+    $eventrecord->description = clean_param($description, PARAM_NOTAGS);
+
+    // Probably a repeating event with RRULE etc. TODO: skip for now.
+    if (empty($event->properties['DTSTART'][0]->value)) {
+        return 0;
+    }
+
+    $eventrecord->timestart = strtotime($event->properties['DTSTART'][0]->value);
+    if (empty($event->properties['DTEND'])) {
+        $eventrecord->timeduration = 3600; // one hour if no end time specified
+    } else {
+        $eventrecord->timeduration = strtotime($event->properties['DTEND'][0]->value) - $eventrecord->timestart;
+    }
+    $eventrecord->uuid = $event->properties['UID'][0]->value;
+    $eventrecord->timemodified = time();
+
+    // Add the iCal subscription details if required.
+    if ($sub = $DB->get_record('event_subscriptions', array('id' => $subscriptionid))) {
+        $eventrecord->subscriptionid = $subscriptionid;
+        $eventrecord->userid = $sub->userid;
+        $eventrecord->groupid = $sub->groupid;
+        $eventrecord->courseid = $sub->courseid;
+    } else {
+        $eventrecord->userid = $USER->id;
+        $eventrecord->groupid = 0; // TODO: ???
+        $eventrecord->courseid = $courseid;
+    }
+
+    if ($updaterecord = $DB->get_record('event', array('uuid' => $eventrecord->uuid))) {
+        $eventrecord->id = $updaterecord->id;
+        if ($DB->update_record('event', $eventrecord)) {
+            return CALENDAR_IMPORT_EVENT_UPDATED;
+        } else {
+            return 0;
+        }
+    } else {
+        if ($DB->insert_record('event', $eventrecord)) {
+            return CALENDAR_IMPORT_EVENT_INSERTED;
+        } else {
+            return 0;
+        }
+    }
+}
+
+/**
+ * Update a subscription from the form data in one of the rows in the existing subscriptions table.
+ *
+ * @param int $subscriptionid The ID of the subscription we are acting upon.
+ * @param int $pollinterval The poll interval to use.
+ * @param int $action The action to be performed. One of update or remove.
+ * @return string A log of the import progress, including errors
+ */
+function calendar_process_subscription_row($subscriptionid, $pollinterval, $action) {
+    global $DB;
+
+    if (empty($subscriptionid)) {
+        return '';
+    }
+
+    // Fetch the subscription from the database making sure it exists.
+    $sub = $DB->get_record('event_subscriptions', array('id' => $subscriptionid), '*', MUST_EXIST);
+
+    $strupdate = get_string('update');
+    $strremove = get_string('remove');
+    // Update or remove the subscription, based on action.
+    switch ($action) {
+        case $strupdate:
+            // Skip updating file subscriptions.
+            if (empty($sub->url)) {
+                break;
+            }
+            $sub->pollinterval = $pollinterval;
+            $DB->update_record('event_subscriptions', $sub);
+
+            // Update the events.
+            return "<p>".get_string('subscriptionupdated', 'calendar', $sub->name)."</p>" . calendar_update_subscription_events($subscriptionid);
+
+        case $strremove:
+            $DB->delete_records('event', array('subscriptionid' => $subscriptionid));
+            $DB->delete_records('event_subscriptions', array('id' => $subscriptionid));
+            return get_string('subscriptionremoved', 'calendar', $sub->name);
+            break;
+
+        default:
+            break;
+    }
+    return '';
+}
+
+/**
+ * From a URL, fetch the calendar and return an iCalendar object.
+ *
+ * @param string $url The iCalendar URL
+ * @return stdClass The iCalendar object
+ */
+function calendar_get_icalendar($url) {
+    global $CFG;
+
+    require_once($CFG->libdir.'/filelib.php');
+
+    $curl = new curl();
+    $calendar = $curl->get($url);
+    if (!$calendar) {
+        throw new moodle_exception('errorinvalidicalurl', 'calendar');
+    }
+
+    $ical = new iCalendar();
+    $ical->unserialize($calendar);
+    return $ical;
+}
+
+/**
+ * Import events from an iCalendar object into a course calendar.
+ *
+ * @param stdClass $ical The iCalendar object.
+ * @param int $courseid The course ID for the calendar.
+ * @param int $subscriptionid The subscription ID.
+ * @return string A log of the import progress, including errors.
+ */
+function calendar_import_icalendar_events($ical, $courseid, $subscriptionid = null) {
+    global $DB;
+    $return = '';
+    $eventcount = 0;
+    $updatecount = 0;
+
+    // Large calendars take a while...
+    set_time_limit(300);
+
+    // Mark all events in a subscription with a zero timestamp.
+    if (!empty($subscriptionid)) {
+        $sql = "UPDATE {event} SET timemodified = :time WHERE subscriptionid = :id";
+        $DB->execute($sql, array('time' => 0, 'id' => $subscriptionid));
+    }
+    foreach ($ical->components['VEVENT'] as $event) {
+        $res = calendar_add_icalendar_event($event, $courseid, $subscriptionid);
+        switch ($res) {
+          case CALENDAR_IMPORT_EVENT_UPDATED:
+            $updatecount++;
+            break;
+          case CALENDAR_IMPORT_EVENT_INSERTED:
+            $eventcount++;
+            break;
+          case 0:
+            $return .= '<p>'.get_string('erroraddingevent', 'calendar').': '.(empty($event->properties['SUMMARY'])?'('.get_string('notitle', 'calendar').')':$event->properties['SUMMARY'][0]->value)." </p>\n";
+            break;
+        }
+    }
+    $return .= "<p> ".get_string('eventsimported', 'calendar', $eventcount)."</p>";
+    $return .= "<p> ".get_string('eventsupdated', 'calendar', $updatecount)."</p>";
+
+    // Delete remaining zero-marked events since they're not in remote calendar.
+    if (!empty($subscriptionid)) {
+        $deletecount = $DB->count_records('event', array('timemodified' => 0, 'subscriptionid' => $subscriptionid));
+        if (!empty($deletecount)) {
+            $sql = "DELETE FROM {event} WHERE timemodified = :time AND subscriptionid = :id";
+            $DB->execute($sql, array('time' => 0, 'id' => $subscriptionid));
+            $return .= "<p> ".get_string('eventsdeleted', 'calendar').": {$deletecount} </p>\n";
+        }
+    }
+
+    return $return;
+}
+
+/**
+ * Fetch a calendar subscription and update the events in the calendar.
+ *
+ * @param int $subscriptionid The course ID for the calendar.
+ * @return string A log of the import progress, including errors.
+ */
+function calendar_update_subscription_events($subscriptionid) {
+    global $DB;
+
+    $sub = $DB->get_record('event_subscriptions', array('id' => $subscriptionid));
+    if (empty($sub)) {
+        print_error('errorbadsubscription', 'calendar');
+    }
+    // Don't update a file subscription. TODO: Update from a new uploaded file.
+    if (empty($sub->url)) {
+        return 'File subscription not updated.';
+    }
+    $ical = calendar_get_icalendar($sub->url);
+    $return = calendar_import_icalendar_events($ical, $sub->courseid, $subscriptionid);
+    $sub->lastupdated = time();
+    $DB->update_record('event_subscriptions', $sub);
+    return $return;
+}
+
+/**
+ * Update calendar subscriptions.
+ *
+ * @return bool
+ */
+function calendar_cron() {
+    global $CFG, $DB;
+
+    // In order to execute this we need bennu.
+    require_once($CFG->libdir.'/bennu/bennu.inc.php');
+
+    mtrace(get_string('cronupdate', 'calendar'));
+
+    $time = time();
+    $subscriptions = $DB->get_records_sql('SELECT * FROM {event_subscriptions} WHERE pollinterval > 0 AND lastupdated + pollinterval < ?', array($time));
+    foreach ($subscriptions as $sub) {
+        mtrace(get_string('cronupdatesub', 'calendar', $sub));
+        try {
+            $log = calendar_update_subscription_events($sub->id);
+        } catch (moodle_exception $ex) {
+
+        }
+        mtrace(trim(strip_tags($log)));
+    }
+
+    mtrace(get_string('cronupdatefinished', 'calendar'));
+
+    return true;
 }
