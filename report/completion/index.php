@@ -24,8 +24,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require('../../config.php');
-require_once($CFG->libdir.'/completionlib.php');
+require_once(dirname(__FILE__).'/../../config.php');
+require_once("{$CFG->libdir}/completionlib.php");
 
 /**
  * Configuration
@@ -55,6 +55,11 @@ $firstnamesort = ($sort == 'firstname');
 $excel = ($format == 'excelcsv');
 $csv = ($format == 'csv' || $excel);
 
+// Load CSV library
+if ($csv) {
+    require_once("{$CFG->libdir}/csvlib.class.php");
+}
+
 // Paging
 $start   = optional_param('start', 0, PARAM_INT);
 $sifirst = optional_param('sifirst', 'all', PARAM_ALPHA);
@@ -63,17 +68,6 @@ $silast  = optional_param('silast', 'all', PARAM_ALPHA);
 // Whether to show extra user identity information
 $extrafields = get_extra_user_fields($context);
 $leftcols = 1 + count($extrafields);
-
-// Function for quoting csv cell values
-function csv_quote($value) {
-    global $excel;
-    if ($excel) {
-        return textlib::convert('"'.str_replace('"',"'",$value).'"','UTF-8','UTF-16LE');
-    } else {
-        return '"'.str_replace('"',"'",$value).'"';
-    }
-}
-
 
 // Check permissions
 require_login($course);
@@ -146,20 +140,12 @@ if (!$csv) {
  * Setup page header
  */
 if ($csv) {
+
     $shortname = format_string($course->shortname, true, array('context' => $context));
-    header('Content-Disposition: attachment; filename=progress.'.
-        preg_replace('/[^a-z0-9-]/','_',textlib::strtolower(strip_tags($shortname))).'.csv');
-    // Unicode byte-order mark for Excel
-    if ($excel) {
-        header('Content-Type: text/csv; charset=UTF-16LE');
-        print chr(0xFF).chr(0xFE);
-        $sep="\t".chr(0);
-        $line="\n".chr(0);
-    } else {
-        header('Content-Type: text/csv; charset=UTF-8');
-        $sep=",";
-        $line="\n";
-    }
+    $shortname = preg_replace('/[^a-z0-9-]/', '_',textlib::strtolower(strip_tags($shortname)));
+
+    $export = new csv_export_writer();
+    $export->set_filename('completion-'.$shortname);
 
 } else {
     // Navigation and header
@@ -176,7 +162,6 @@ if ($csv) {
     // Handle groups (if enabled)
     groups_print_course_menu($course, $CFG->wwwroot.'/report/completion/?course='.$course->id);
 }
-
 
 // Generate where clause
 $where = array();
@@ -219,7 +204,6 @@ if ($total) {
         $context
     );
 }
-
 
 // Build link for paging
 $link = $CFG->wwwroot.'/report/completion/?course='.$course->id;
@@ -308,7 +292,6 @@ if ($total > COMPLETION_REPORT_PAGE) {
     $pagingbar .= '</div>';
 }
 
-
 /*
  * Draw table header
  */
@@ -328,7 +311,6 @@ if (!$csv) {
         exit;
     }
 
-    print '<div id="completion-progress-wrapper" class="no-overflow">';
     print '<table id="completion-progress" class="generaltable flexible boxaligncenter completionreport" style="text-align: left" cellpadding="5" border="1">';
 
     // Print criteria group names
@@ -423,7 +405,6 @@ if (!$csv) {
 
     print '</tr>';
 
-
     // Print criteria titles
     if (COMPLETION_REPORT_COL_TITLES) {
 
@@ -441,9 +422,7 @@ if (!$csv) {
 
         // Overall course completion status
         print '<th scope="col" class="colheader criterianame">';
-
         print '<span class="completion-criterianame">'.get_string('coursecomplete', 'completion').'</span>';
-
         print '</th></tr>';
     }
 
@@ -466,7 +445,6 @@ if (!$csv) {
     }
     print '</th>';
 
-
     // Print user identity columns
     foreach ($extrafields as $field) {
         echo '<th scope="col" class="completion-identifyfield">' .
@@ -486,6 +464,7 @@ if (!$csv) {
         switch ($criterion->criteriatype) {
 
             case COMPLETION_CRITERIA_TYPE_ACTIVITY:
+
                 // Display icon
                 $icon = $OUTPUT->pix_url('icon', $criterion->module);
                 $iconlink = $CFG->wwwroot.'/mod/'.$criterion->module.'/view.php?id='.$criterion->moduleinstance;
@@ -534,11 +513,37 @@ if (!$csv) {
 
     print '</tr>';
 
-
 } else {
-    // The CSV file does not contain any headers
-}
+    // The CSV headers
+    $row = array();
 
+    $row[] = get_string('id', 'report_completion');
+    $row[] = get_string('name', 'report_completion');
+    foreach ($extrafields as $field) {
+       $row[] = get_user_field_name($field);
+    }
+
+    // Add activity headers
+    foreach ($criteria as $criterion) {
+
+        // Handle activity completion differently
+        if ($criterion->criteriatype == COMPLETION_CRITERIA_TYPE_ACTIVITY) {
+
+            // Load activity
+            $mod = $criterion->get_mod_instance();
+            $row[] = $mod->name;
+            $row[] = $mod->name . ' - ' . get_string('completiondate', 'report_completion');
+        }
+        else {
+            // Handle all other criteria
+            $row[] = strip_tags($criterion->get_title_detailed());
+        }
+    }
+
+    $row[] = get_string('coursecomplete', 'completion');
+
+    $export->add_data($row);
+}
 
 ///
 /// Display a row for each user
@@ -547,22 +552,27 @@ foreach ($progress as $user) {
 
     // User name
     if ($csv) {
-        print csv_quote(fullname($user));
+        $row = array();
+        $row[] = $user->id;
+        $row[] = fullname($user);
         foreach ($extrafields as $field) {
-            echo $sep . csv_quote($user->{$field});
+            $row[] = $user->{$field};
         }
     } else {
         print PHP_EOL.'<tr id="user-'.$user->id.'">';
 
-        print '<th scope="row"><a href="'.$CFG->wwwroot.'/user/view.php?id='.
-            $user->id.'&amp;course='.$course->id.'">'.fullname($user).'</a></th>';
+        $userurl = new moodle_url('/user/view.php', array('id' => $user->id, 'course' => $course->id));
+        print '<th scope="row"><a href="'.$userurl->out().'">'.fullname($user).'</a></th>';
         foreach ($extrafields as $field) {
-            echo '<td>' . s($user->{$field}) . '</td>';
+            echo '<td>'.s($user->{$field}).'</td>';
         }
     }
 
     // Progress for each course completion criteria
     foreach ($criteria as $criterion) {
+
+        $criteria_completion = $completion->get_user_completion($user->id, $criterion);
+        $is_complete = $criteria_completion->is_complete();
 
         // Handle activity completion differently
         if ($criterion->criteriatype == COMPLETION_CRITERIA_TYPE_ACTIVITY) {
@@ -571,39 +581,42 @@ foreach ($progress as $user) {
             $activity = $modinfo->cms[$criterion->moduleinstance];
 
             // Get progress information and state
-            if (array_key_exists($activity->id,$user->progress)) {
-                $thisprogress=$user->progress[$activity->id];
-                $state=$thisprogress->completionstate;
-                $date=userdate($thisprogress->timemodified);
-            } else {
-                $state=COMPLETION_INCOMPLETE;
-                $date='';
-            }
+            if ($is_complete) {
+                $date = userdate($criteria_completion->timecompleted, get_string('strftimedatetimeshort', 'langconfig'));
 
-            $criteria_completion = $completion->get_user_completion($user->id, $criterion);
+                if (array_key_exists($activity->id, $user->progress)) {
+                    $thisprogress = $user->progress[$activity->id];
+                    $state = $thisprogress->completionstate;
+                } else {
+                    $state = COMPLETION_COMPLETE;
+                }
+            } else {
+                $date = '';
+                $state = COMPLETION_INCOMPLETE;
+            }
 
             // Work out how it corresponds to an icon
             switch($state) {
-                case COMPLETION_INCOMPLETE : $completiontype='n'; break;
-                case COMPLETION_COMPLETE : $completiontype='y'; break;
-                case COMPLETION_COMPLETE_PASS : $completiontype='pass'; break;
-                case COMPLETION_COMPLETE_FAIL : $completiontype='fail'; break;
+                case COMPLETION_INCOMPLETE    : $completiontype = 'n';    break;
+                case COMPLETION_COMPLETE      : $completiontype = 'y';    break;
+                case COMPLETION_COMPLETE_PASS : $completiontype = 'pass'; break;
+                case COMPLETION_COMPLETE_FAIL : $completiontype = 'fail'; break;
             }
 
-            $completionicon='completion-'.
-                ($activity->completion==COMPLETION_TRACKING_AUTOMATIC ? 'auto' : 'manual').
-                '-'.$completiontype;
+            $auto = $activity->completion == COMPLETION_TRACKING_AUTOMATIC;
+            $completionicon = 'completion-'.($auto ? 'auto' : 'manual').'-'.$completiontype;
 
-            $describe = get_string('completion-' . $completiontype, 'completion');
-            $a=new StdClass;
-            $a->state=$describe;
-            $a->date=$date;
-            $a->user=fullname($user);
-            $a->activity=strip_tags($activity->name);
-            $fulldescribe=get_string('progress-title','completion',$a);
+            $describe = get_string('completion-'.$completiontype, 'completion');
+            $a = new StdClass();
+            $a->state     = $describe;
+            $a->date      = $date;
+            $a->user      = fullname($user);
+            $a->activity  = strip_tags($activity->name);
+            $fulldescribe = get_string('progress-title', 'completion', $a);
 
             if ($csv) {
-                print $sep.csv_quote($describe).$sep.csv_quote($date);
+                $row[] = $describe;
+                $row[] = $date;
             } else {
                 print '<td class="completion-progresscell">';
 
@@ -617,37 +630,50 @@ foreach ($progress as $user) {
         }
 
         // Handle all other criteria
-        $criteria_completion = $completion->get_user_completion($user->id, $criterion);
-        $is_complete = $criteria_completion->is_complete();
-
         $completiontype = $is_complete ? 'y' : 'n';
         $completionicon = 'completion-auto-'.$completiontype;
 
-        $describe = get_string('completion-' . $completiontype, 'completion');
+        $describe = get_string('completion-'.$completiontype, 'completion');
 
         $a = new stdClass();
         $a->state    = $describe;
-        $a->date     = $is_complete ? userdate($criteria_completion->timecompleted) : '';
+
+        if ($is_complete) {
+            $a->date = userdate($criteria_completion->timecompleted, get_string('strftimedatetimeshort', 'langconfig'));
+        } else {
+            $a->date = '';
+        }
+
         $a->user     = fullname($user);
         $a->activity = strip_tags($criterion->get_title());
         $fulldescribe = get_string('progress-title', 'completion', $a);
 
         if ($csv) {
-            print $sep.csv_quote($describe);
+            $row[] = $a->date;
         } else {
 
-            if ($allow_marking_criteria === $criterion->id) {
-                $describe = get_string('completion-' . $completiontype, 'completion');
+            print '<td class="completion-progresscell">';
 
-                print '<td class="completion-progresscell">'.
-                    '<a href="'.$CFG->wwwroot.'/course/togglecompletion.php?user='.$user->id.'&amp;course='.$course->id.'&amp;rolec='.$allow_marking_criteria.'&amp;sesskey='.sesskey().'">'.
-                    '<img src="'.$OUTPUT->pix_url('i/completion-manual-'.($is_complete ? 'y' : 'n')).
+            if ($allow_marking_criteria === $criterion->id) {
+                $describe = get_string('completion-'.$completiontype, 'completion');
+
+                $toggleurl = new moodle_url(
+                    '/course/togglecompletion.php',
+                    array(
+                        'user' => $user->id,
+                        'course' => $course->id,
+                        'rolec' => $allow_marking_criteria,
+                        'sesskey' => sesskey()
+                    )
+                );
+
+                print '<a href="'.$toggleurl->out().'"><img src="'.$OUTPUT->pix_url('i/completion-manual-'.($is_complete ? 'y' : 'n')).
                     '" alt="'.$describe.'" class="icon" title="'.get_string('markcomplete', 'completion').'" /></a></td>';
             } else {
-                print '<td class="completion-progresscell">'.
-                    '<img src="'.$OUTPUT->pix_url('i/'.$completionicon).
-                    '" alt="'.$describe.'" class="icon" title="'.$fulldescribe.'" /></td>';
+                print '<img src="'.$OUTPUT->pix_url('i/'.$completionicon).'" alt="'.$describe.'" class="icon" title="'.$fulldescribe.'" /></td>';
             }
+
+            print '</td>';
         }
     }
 
@@ -662,17 +688,23 @@ foreach ($progress as $user) {
     $ccompletion = new completion_completion($params);
     $completiontype =  $ccompletion->is_complete() ? 'y' : 'n';
 
-    $describe = get_string('completion-' . $completiontype, 'completion');
+    $describe = get_string('completion-'.$completiontype, 'completion');
 
     $a = new StdClass;
+
+    if ($ccompletion->is_complete()) {
+        $a->date = userdate($ccompletion->timecompleted, get_string('strftimedatetimeshort', 'langconfig'));
+    } else {
+        $a->date = '';
+    }
+
     $a->state    = $describe;
-    $a->date     = '';
     $a->user     = fullname($user);
     $a->activity = strip_tags(get_string('coursecomplete', 'completion'));
     $fulldescribe = get_string('progress-title', 'completion', $a);
 
     if ($csv) {
-        print $sep.csv_quote($describe);
+        $row[] = $a->date;
     } else {
 
         print '<td class="completion-progresscell">';
@@ -685,22 +717,25 @@ foreach ($progress as $user) {
     }
 
     if ($csv) {
-        print $line;
+        $export->add_data($row);
     } else {
         print '</tr>';
     }
 }
 
 if ($csv) {
-    exit;
+    $export->download_file();
 }
+
 print '</table>';
-print '</div>';
 print $pagingbar;
 
-print '<ul class="progress-actions"><li><a href="index.php?course='.$course->id.
-    '&amp;format=csv">'.get_string('csvdownload','completion').'</a></li>
-    <li><a href="index.php?course='.$course->id.'&amp;format=excelcsv">'.
-    get_string('excelcsvdownload','completion').'</a></li></ul>';
+$csvurl = new moodle_url('/report/completion/index.php', array('course' => $course->id, 'format' => 'csv'));
+$excelurl = new moodle_url('/report/completion/index.php', array('course' => $course->id, 'format' => 'excelcsv'));
+
+print '<ul class="export-actions">';
+print '<li><a href="'.$csvurl->out().'">'.get_string('csvdownload','completion').'</a></li>';
+print '<li><a href="'.$excelurl->out().'">'.get_string('excelcsvdownload','completion').'</a></li>';
+print '</ul>';
 
 echo $OUTPUT->footer($course);
