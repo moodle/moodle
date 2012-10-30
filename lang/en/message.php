@@ -40,7 +40,6 @@ $string['blocknoncontacts'] = 'Prevent non-contacts from messaging me';
 $string['contactlistempty'] = 'Your contact list is empty';
 $string['contacts'] = 'Contacts';
 $string['context'] = 'context';
-$string['couldnotfindpreference'] = 'Could not load preference {$a}. Does the component and name you supplied to message_send() match a row in message_providers? Message providers must appear in the database so users can configure how they will be notified when they receive messages.';
 $string['defaultmessageoutputs'] = 'Default message outputs';
 $string['defaults'] = 'Defaults';
 $string['deletemessagesdays'] = 'Number of days before old messages are automatically deleted';
