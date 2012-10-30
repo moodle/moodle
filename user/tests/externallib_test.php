@@ -34,6 +34,164 @@ require_once($CFG->dirroot . '/user/externallib.php');
 class core_user_external_testcase extends externallib_advanced_testcase {
 
     /**
+     * Test get_users_by_field
+     */
+    public function test_get_users_by_field() {
+        global $USER, $CFG;
+
+        $this->resetAfterTest(true);
+
+        $course = self::getDataGenerator()->create_course();
+        $user1 = array(
+            'username' => 'usernametest1',
+            'idnumber' => 'idnumbertest1',
+            'firstname' => 'First Name User Test 1',
+            'lastname' => 'Last Name User Test 1',
+            'email' => 'usertest1@email.com',
+            'address' => '2 Test Street Perth 6000 WA',
+            'phone1' => '01010101010',
+            'phone2' => '02020203',
+            'icq' => 'testuser1',
+            'skype' => 'testuser1',
+            'yahoo' => 'testuser1',
+            'aim' => 'testuser1',
+            'msn' => 'testuser1',
+            'department' => 'Department of user 1',
+            'institution' => 'Institution of user 1',
+            'description' => 'This is a description for user 1',
+            'descriptionformat' => FORMAT_MOODLE,
+            'city' => 'Perth',
+            'url' => 'http://moodle.org',
+            'country' => 'au'
+            );
+        $user1 = self::getDataGenerator()->create_user($user1);
+        if (!empty($CFG->usetags)) {
+            require_once($CFG->dirroot . '/user/editlib.php');
+            require_once($CFG->dirroot . '/tag/lib.php');
+            $user1->interests = array('Cinema', 'Tennis', 'Dance', 'Guitar', 'Cooking');
+            useredit_update_interests($user1, $user1->interests);
+        }
+        $user2 = self::getDataGenerator()->create_user(
+                array('username' => 'usernametest2', 'idnumber' => 'idnumbertest2'));
+
+        $generatedusers = array();
+        $generatedusers[$user1->id] = $user1;
+        $generatedusers[$user2->id] = $user2;
+
+        $context = context_course::instance($course->id);
+        $roleid = $this->assignUserCapability('moodle/user:viewdetails', $context->id);
+
+        // Enrol the users in the course.
+        // We use the manual plugin.
+        $enrol = enrol_get_plugin('manual');
+        $enrolinstances = enrol_get_instances($course->id, true);
+        foreach ($enrolinstances as $courseenrolinstance) {
+            if ($courseenrolinstance->enrol == "manual") {
+                $instance = $courseenrolinstance;
+                break;
+            }
+        }
+        $enrol->enrol_user($instance, $user1->id, $roleid);
+        $enrol->enrol_user($instance, $user2->id, $roleid);
+        $enrol->enrol_user($instance, $USER->id, $roleid);
+
+        // call as admin and receive all possible fields.
+        $this->setAdminUser();
+
+        $fieldstosearch = array('id', 'idnumber', 'username', 'email');
+
+        foreach ($fieldstosearch as $fieldtosearch) {
+
+            // Call the external function.
+            $returnedusers = core_user_external::get_users_by_field($fieldtosearch,
+                        array($USER->{$fieldtosearch}, $user1->{$fieldtosearch}, $user2->{$fieldtosearch}));
+
+            // Expected result differ following the searched field
+            // Admin user in the PHPunit framework doesn't have email or idnumber.
+            if ($fieldtosearch == 'email' or $fieldtosearch == 'idnumber') {
+                $expectedreturnedusers = 2;
+            } else {
+                $expectedreturnedusers = 3;
+            }
+
+            // Check we retrieve the good total number of enrolled users + no error on capability.
+            $this->assertEquals($expectedreturnedusers, count($returnedusers));
+
+            foreach($returnedusers as $returneduser) {
+                $generateduser = ($returneduser['id'] == $USER->id) ?
+                                    $USER : $generatedusers[$returneduser['id']];
+                $this->assertEquals($generateduser->username, $returneduser['username']);
+                if (!empty($generateduser->idnumber)) {
+                    $this->assertEquals($generateduser->idnumber, $returneduser['idnumber']);
+                }
+                $this->assertEquals($generateduser->firstname, $returneduser['firstname']);
+                $this->assertEquals($generateduser->lastname, $returneduser['lastname']);
+                if ($generateduser->email != $USER->email) { //don't check the tmp modified $USER email
+                    $this->assertEquals($generateduser->email, $returneduser['email']);
+                }
+                if (!empty($generateduser->address)) {
+                    $this->assertEquals($generateduser->address, $returneduser['address']);
+                }
+                if (!empty($generateduser->phone1)) {
+                    $this->assertEquals($generateduser->phone1, $returneduser['phone1']);
+                }
+                if (!empty($generateduser->phone2)) {
+                    $this->assertEquals($generateduser->phone2, $returneduser['phone2']);
+                }
+                if (!empty($generateduser->icq)) {
+                    $this->assertEquals($generateduser->icq, $returneduser['icq']);
+                }
+                if (!empty($generateduser->skype)) {
+                    $this->assertEquals($generateduser->skype, $returneduser['skype']);
+                }
+                if (!empty($generateduser->yahoo)) {
+                    $this->assertEquals($generateduser->yahoo, $returneduser['yahoo']);
+                }
+                if (!empty($generateduser->aim)) {
+                    $this->assertEquals($generateduser->aim, $returneduser['aim']);
+                }
+                if (!empty($generateduser->msn)) {
+                    $this->assertEquals($generateduser->msn, $returneduser['msn']);
+                }
+                if (!empty($generateduser->department)) {
+                    $this->assertEquals($generateduser->department, $returneduser['department']);
+                }
+                if (!empty($generateduser->institution)) {
+                    $this->assertEquals($generateduser->institution, $returneduser['institution']);
+                }
+                if (!empty($generateduser->description)) {
+                    $this->assertEquals($generateduser->description, $returneduser['description']);
+                }
+                if (!empty($generateduser->descriptionformat)) {
+                    $this->assertEquals(FORMAT_HTML, $returneduser['descriptionformat']);
+                }
+                if (!empty($generateduser->city)) {
+                    $this->assertEquals($generateduser->city, $returneduser['city']);
+                }
+                if (!empty($generateduser->country)) {
+                    $this->assertEquals($generateduser->country, $returneduser['country']);
+                }
+                if (!empty($generateduser->url)) {
+                    $this->assertEquals($generateduser->url, $returneduser['url']);
+                }
+                if (!empty($CFG->usetags) and !empty($generateduser->interests)) {
+                    $this->assertEquals(implode(', ', $generateduser->interests), $returneduser['interests']);
+                }
+            }
+        }
+
+        // Test that no result are returned for search by username if we are not admin
+        $this->setGuestUser();
+
+        // Call the external function.
+        $returnedusers = core_user_external::get_users_by_field('username',
+                    array($USER->username, $user1->username, $user2->username));
+
+        // Only the own $USER username should be returned
+        $this->assertEquals(1, count($returnedusers));
+    }
+
+    /**
      * Test get_course_user_profiles
      */
     public function test_get_course_user_profiles() {

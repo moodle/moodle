@@ -486,12 +486,10 @@ function user_get_user_details($user, $course = null, array $userfields = array(
 
 /**
  * Tries to obtain user details, either recurring directly to the user's system profile
- * or trough one of the user's course enrollments (course profile).
+ * or through one of the user's course enrollments (course profile).
  *
- * @param $user The user.
- * @param $courses The courses that the user is enrolled in.
- * @param array $userfields The userfields that are to be returned.
- * @return null if unsuccessful or the allowed user details.
+ * @param object $user The user.
+ * @return array if unsuccessful or the allowed user details.
  */
 function user_get_user_details_courses($user) {
     global $USER;
@@ -500,21 +498,18 @@ function user_get_user_details_courses($user) {
     //  Get the courses that the user is enrolled in (only active).
     $courses = enrol_get_users_courses($user->id, true);
 
-    $systemprofile = can_view_user_details_cap($user);
-    $systemprofile |= ($user->id == $USER->id);
-    $systemprofile |= has_coursecontact_role($user->id);
+    $systemprofile = false;
+    if (can_view_user_details_cap($user) || ($user->id == $USER->id) || has_coursecontact_role($user->id)) {
+        $systemprofile = true;
+    }
 
-    // Try using system profile
+    // Try using system profile.
     if ($systemprofile) {
         $userdetails = user_get_user_details($user, null);
     } else {
-        // Try through course profile
+        // Try through course profile.
         foreach ($courses as $course) {
-            $courseprofile = can_view_user_details_cap($user, $course);
-            $courseprofile |= ($user->id == $USER->id);
-            $courseprofile |= has_coursecontact_role($user->id);
-
-            if ($courseprofile) {
+            if ($can_view_user_details_cap($user, $course) || ($user->id == $USER->id) || has_coursecontact_role($user->id)) {
                 $userdetails = user_get_user_details($user, $course);
             }
         }
@@ -524,22 +519,20 @@ function user_get_user_details_courses($user) {
 }
 
 /**
- * Does $USER have the necessary capabilities to obtain user details
- * using a mdl_user record?
- * @param $user The mdl_user record
- * @param null $course Null only to consider system profile or course to also consider that course's profile.
- * @return bool T if he does, false otherwise
+ * Check if $USER have the necessary capabilities to obtain user details.
+ *
+ * @param object $user
+ * @param object $course if null then only consider system profile otherwise also consider the course's profile.
+ * @return bool true if $USER can view user details.
  */
 function can_view_user_details_cap($user, $course = null) {
-    if (!empty($course)) {
+    // Check $USER has the capability to view the user details at user context.
+    $usercontext = get_context_instance(CONTEXT_USER, $user->id);
+    $result = has_capability('moodle/user:viewdetails', $usercontext);
+    // Otherwise can $USER see them at course context.
+    if (!$result && !empty($course)) {
         $context = get_context_instance(CONTEXT_COURSE, $course->id);
-        $usercontext = get_context_instance(CONTEXT_USER, $user->id);
-        $result = (has_capability('moodle/user:viewdetails', $context) || has_capability('moodle/user:viewdetails', $usercontext));
-    }
-    else {
-        $context = get_context_instance(CONTEXT_USER, $user->id);
-        $usercontext = $context;
-        $result = has_capability('moodle/user:viewdetails', $usercontext);
+        $result = has_capability('moodle/user:viewdetails', $context);
     }
     return $result;
 }
