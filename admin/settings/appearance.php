@@ -178,6 +178,8 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $temp->add(new admin_setting_configcheckbox('courselistshortnames',
             new lang_string('courselistshortnames', 'admin'),
             new lang_string('courselistshortnames_desc', 'admin'), 0));
+    $temp->add(new admin_setting_configtext('coursesperpage', new lang_string('coursesperpage', 'admin'), new lang_string('configcoursesperpage', 'admin'), 20, PARAM_INT));
+    $temp->add(new admin_setting_configtext('courseswithsummarieslimit', new lang_string('courseswithsummarieslimit', 'admin'), new lang_string('configcourseswithsummarieslimit', 'admin'), 10, PARAM_INT));
     $ADMIN->add('appearance', $temp);
 
     $temp = new admin_settingpage('ajax', new lang_string('ajaxuse'));

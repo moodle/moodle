@@ -284,23 +284,28 @@ if ($subcategorieswereshown) {
     echo html_writer::table($table);
 }
 
-// Print out all the courses
+// Print out all the courses.
 $courses = get_courses_page($category->id, 'c.sortorder ASC',
         'c.id,c.sortorder,c.shortname,c.fullname,c.summary,c.visible',
         $totalcount, $page*$perpage, $perpage);
 $numcourses = count($courses);
 
+// We can consider that we are using pagination when the total count of courses is different than the one returned.
+$pagingmode = $totalcount != $numcourses;
+
 if (!$courses) {
+    // There is no course to display.
     if (empty($subcategorieswereshown)) {
         echo $OUTPUT->heading(get_string("nocoursesyet"));
     }
-
-} else if ($numcourses <= COURSE_MAX_SUMMARIES_PER_PAGE and !$page and !$editingon) {
+} else if ($numcourses <= $CFG->courseswithsummarieslimit and !$pagingmode and !$editingon) {
+    // We display courses with their summaries as we have not reached the limit, also we are not
+    // in paging mode and not allowed to edit either.
     echo $OUTPUT->box_start('courseboxes');
     print_courses($category);
     echo $OUTPUT->box_end();
-
 } else {
+    // The conditions above have failed, we display a basic list of courses with paging/editing options.
     echo $OUTPUT->paging_bar($totalcount, $page, $perpage, "/course/category.php?id=$category->id&perpage=$perpage");
 
     echo '<form id="movecourses" action="category.php" method="post"><div>';
