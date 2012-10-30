@@ -169,18 +169,68 @@ class completion_completion extends data_object {
      * Save course completion status
      *
      * This method creates a course_completions record if none exists
+     * and also calculates the timeenrolled date if the record is being
+     * created
+     *
      * @access  private
      * @return  bool
      */
     private function _save() {
-        if ($this->timeenrolled === null) {
+        // Make sure timeenrolled is not null
+        if (!$this->timeenrolled) {
             $this->timeenrolled = 0;
         }
 
         // Save record
         if ($this->id) {
+            // Update
             return $this->update();
         } else {
+            // Create new
+            if (!$this->timeenrolled) {
+                global $DB;
+
+                // Get earliest current enrolment start date
+                // This means timeend > now() and timestart < now()
+                $sql = "
+                    SELECT
+                        ue.timestart
+                    FROM
+                        {user_enrolments} ue
+                    JOIN
+                        {enrol} e
+                    ON (e.id = ue.enrolid AND e.courseid = :courseid)
+                    WHERE
+                        ue.userid = :userid
+                    AND ue.status = :active
+                    AND e.status = :enabled
+                    AND (
+                        ue.timeend = 0
+                     OR ue.timeend > :now
+                    )
+                    AND ue.timeend < :now2
+                    ORDER BY
+                        ue.timestart ASC
+                ";
+                $params = array(
+                    'enabled'   => ENROL_INSTANCE_ENABLED,
+                    'active'    => ENROL_USER_ACTIVE,
+                    'userid'    => $this->userid,
+                    'courseid'  => $this->course,
+                    'now'       => time(),
+                    'now2'      => time()
+                );
+
+                if ($enrolments = $DB->get_record_sql($sql, $params, IGNORE_MULTIPLE)) {
+                    $this->timeenrolled = $enrolments->timestart;
+                }
+
+                // If no timeenrolled could be found, use current time
+                if (!$this->timeenrolled) {
+                    $this->timeenrolled = time();
+                }
+            }
+
             // Make sure reaggregate field is not null
             if (!$this->reaggregate) {
                 $this->reaggregate = 0;
