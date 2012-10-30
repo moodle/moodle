@@ -400,7 +400,7 @@ function feedback_get_recent_mod_activity(&$activities, &$index,
 
     $sql .= " WHERE fc.timemodified > ? AND fk.id = ? ";
     $sqlargs[] = $timemodified;
-    $sqlargs[] = $cm->instace;
+    $sqlargs[] = $cm->instance;
 
     if ($userid) {
         $sql .= " AND u.id = ? ";
