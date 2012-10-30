@@ -62,7 +62,12 @@ class user_filter_text extends user_filter_type {
                 // no data - no change except for empty filter
                 return false;
             }
-            return array('operator'=>(int)$formdata->$operator, 'value'=>$formdata->$field);
+            // If field value is set then use it, else it's null.
+            $fieldvalue = null;
+            if (isset($formdata->$field)) {
+                $fieldvalue = $formdata->$field;
+            }
+            return array('operator' => (int)$formdata->$operator, 'value' =>  $fieldvalue);
         }
 
         return false;
