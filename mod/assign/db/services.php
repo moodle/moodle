@@ -39,5 +39,13 @@ $functions = array(
                 'classpath'   => 'mod/assign/externallib.php',
                 'description' => 'Returns the courses and assignments for the users capability',
                 'type'        => 'read'
+        ),
+
+        'mod_assign_get_submissions' => array(
+                'classname' => 'mod_assign_external',
+                'methodname' => 'get_submissions',
+                'classpath' => 'mod/assign/externallib.php',
+                'description' => 'Returns the submissions for assignments',
+                'type' => 'read'
         )
 );

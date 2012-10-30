@@ -182,4 +182,81 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(0, count($result['courses']));
         $this->assertEquals(1, count($result['warnings']));
     }
+
+    /**
+     * Test get_submissions
+     */
+    public function test_get_submissions () {
+        global $DB, $USER;
+
+        $this->resetAfterTest(true);
+        // Create a course and assignment.
+        $coursedata['idnumber'] = 'idnumbercourse1';
+        $coursedata['fullname'] = 'Lightwork Course 1';
+        $coursedata['summary'] = 'Lightwork Course 1 description';
+        $coursedata['summaryformat'] = FORMAT_MOODLE;
+        $course1 = self::getDataGenerator()->create_course($coursedata);
+
+        $assigndata['course'] = $course1->id;
+        $assigndata['name'] = 'lightwork assignment';
+
+        $assign1 = self::getDataGenerator()->create_module('assign', $assigndata);
+
+        // Create a student with an online text submission.
+        $student = self::getDataGenerator()->create_user();
+        $submission = new stdClass();
+        $submission->assignment = $assign1->id;
+        $submission->userid = $student->id;
+        $submission->timecreated = time();
+        $submission->timemodified = $submission->timecreated;
+        $submission->status = 'submitted';
+        $sid = $DB->insert_record('assign_submission', $submission);
+        $submission->id = $sid;
+
+        $onlinetextsubmission = new stdClass();
+        $onlinetextsubmission->onlinetext = "online test text";
+        $onlinetextsubmission->onlineformat = 1;
+        $onlinetextsubmission->submission = $submission->id;
+        $onlinetextsubmission->assignment = $assign1->id;
+        $DB->insert_record('assignsubmission_onlinetext', $onlinetextsubmission);
+
+        // Create manual enrolment record.
+        $manual_enrol_data['enrol'] = 'manual';
+        $manual_enrol_data['status'] = 0;
+        $manual_enrol_data['courseid'] = $course1->id;
+        $enrolid = $DB->insert_record('enrol', $manual_enrol_data);
+
+        // Create a teacher and give them capabilities.
+        $context = context_course::instance($course1->id);
+        $roleid = $this->assignUserCapability('moodle/course:viewparticipants', $context->id, 3);
+        $context = context_module::instance($assign1->id);
+        $this->assignUserCapability('mod/assign:grade', $context->id, $roleid);
+
+        // Create the teacher's enrolment record.
+        $user_enrolment_data['status'] = 0;
+        $user_enrolment_data['enrolid'] = $enrolid;
+        $user_enrolment_data['userid'] = $USER->id;
+        $DB->insert_record('user_enrolments', $user_enrolment_data);
+
+        $assignmentids[] = $assign1->id;
+        $result = mod_assign_external::get_submissions($assignmentids);
+
+        // Check the online text submission is returned.
+        $this->assertEquals(1, count($result['assignments']));
+        $assignment = $result['assignments'][0];
+        $this->assertEquals($assign1->id, $assignment['assignmentid']);
+        $this->assertEquals(1, count($assignment['submissions']));
+        $submission = $assignment['submissions'][0];
+        $this->assertEquals($sid, $submission['id']);
+        $this->assertGreaterThanOrEqual(3, count($submission['plugins']));
+        $plugins = $submission['plugins'];
+        foreach ($plugins as $plugin) {
+            $foundonlinetext = false;
+            if ($plugin['type'] == 'onlinetext') {
+                $foundonlinetext = true;
+                break;
+            }
+        }
+        $this->assertTrue($foundonlinetext);
+    }
 }

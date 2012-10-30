@@ -429,4 +429,245 @@ class mod_assign_external extends external_api {
             )
         );
     }
+
+    /**
+     * Describes the parameters for get_submissions
+     *
+     * @return external_external_function_parameters
+     * @since Moodle 2.4
+     */
+    public static function get_submissions_parameters() {
+        return new external_function_parameters(
+            array(
+                'assignmentids' => new external_multiple_structure(
+                    new external_value(PARAM_INT, 'assignment id'),
+                    '1 or more assignment ids',
+                    VALUE_REQUIRED),
+                'status' => new external_value(PARAM_ALPHA, 'status', VALUE_DEFAULT, ''),
+                'since' => new external_value(PARAM_INT, 'submitted since', VALUE_DEFAULT, 0),
+                'before' => new external_value(PARAM_INT, 'submitted before', VALUE_DEFAULT, 0)
+            )
+        );
+    }
+
+    /**
+     * Returns submissions for the requested assignment ids
+     *
+     * @param array of ints $assignmentids
+     * @param string $status only return submissions with this status
+     * @param int $since only return submissions with timemodified >= since
+     * @param int $before only return submissions with timemodified <= before
+     * @return array of submissions for each requested assignment
+     * @since Moodle 2.4
+     */
+    public static function get_submissions($assignmentids, $status = '', $since = 0, $before = 0) {
+        global $DB, $CFG;
+        require_once("$CFG->dirroot/mod/assign/locallib.php");
+        $params = self::validate_parameters(self::get_submissions_parameters(),
+                        array('assignmentids' => $assignmentids,
+                              'status' => $status,
+                              'since' => $since,
+                              'before' => $before));
+
+        $warnings = array();
+        $assignments = array();
+
+        // Check the user is allowed to get the submissions for the assignments requested.
+        $placeholders = array();
+        list($inorequalsql, $placeholders) = $DB->get_in_or_equal($params['assignmentids'], SQL_PARAMS_NAMED);
+        $sql = "SELECT cm.id, cm.instance FROM {course_modules} cm JOIN {modules} md ON md.id = cm.module ".
+               "WHERE md.name = :modname AND cm.instance ".$inorequalsql;
+        $placeholders['modname'] = 'assign';
+        $cms = $DB->get_records_sql($sql, $placeholders);
+        $assigns = array();
+        foreach ($cms as $cm) {
+            try {
+                $context = context_module::instance($cm->id);
+                self::validate_context($context);
+                require_capability('mod/assign:grade', $context);
+                $assign = new assign($context, null, null);
+                $assigns[] = $assign;
+            } catch (Exception $e) {
+                $warnings[] = array(
+                    'item' => 'assignment',
+                    'itemid' => $cm->instance,
+                    'warningcode' => '1',
+                    'message' => 'No access rights in module context'
+                );
+            }
+        }
+
+        foreach ($assigns as $assign) {
+            $submissions = array();
+            $submissionplugins = $assign->get_submission_plugins();
+            $placeholders = array('assignment' => $assign->get_instance()->id);
+            $sql = "SELECT mas.id, mas.assignment,mas.userid,".
+                   "mas.timecreated,mas.timemodified,mas.status,mas.groupid ".
+                   "FROM {assign_submission} mas ".
+                   "WHERE mas.assignment = :assignment";
+
+            if (!empty($params['status'])) {
+                $placeholders['status'] = $params['status'];
+                $sql = $sql." AND mas.status = :status";
+            }
+            if (!empty($params['before'])) {
+                $placeholders['since'] = $params['since'];
+                $placeholders['before'] = $params['before'];
+                $sql = $sql." AND mas.timemodified BETWEEN :since AND :before";
+            } else {
+                $placeholders['since'] = $params['since'];
+                $sql = $sql." AND mas.timemodified >= :since";
+            }
+
+            $submissionrecords = $DB->get_records_sql($sql, $placeholders);
+
+            if (!empty($submissionrecords)) {
+                $fs = get_file_storage();
+                foreach ($submissionrecords as $submissionrecord) {
+                    $submission = array(
+                        'id' => $submissionrecord->id,
+                        'userid' => $submissionrecord->userid,
+                        'timecreated' => $submissionrecord->timecreated,
+                        'timemodified' => $submissionrecord->timemodified,
+                        'status' => $submissionrecord->status,
+                        'groupid' => $submissionrecord->groupid
+                    );
+                    foreach ($submissionplugins as $submissionplugin) {
+                        $plugin = array(
+                            'name' => $submissionplugin->get_name(),
+                            'type' => $submissionplugin->get_type()
+                        );
+                        // Subtype is 'assignsubmission', type is currently 'file' or 'onlinetext'.
+                        $component = $submissionplugin->get_subtype().'_'.$submissionplugin->get_type();
+
+                        $fileareas = $submissionplugin->get_file_areas();
+                        foreach ($fileareas as $filearea => $name) {
+                            $fileareainfo = array('area' => $filearea);
+                            $files = $fs->get_area_files(
+                                $assign->get_context()->id,
+                                $component,
+                                $filearea,
+                                $submissionrecord->id,
+                                "timemodified",
+                                false
+                            );
+                            foreach ($files as $file) {
+                                $filepath = array('filepath' => $file->get_filepath().$file->get_filename());
+                                $fileareainfo['files'][] = $filepath;
+                            }
+                            $plugin['fileareas'][] = $fileareainfo;
+                        }
+
+                        $editorfields = $submissionplugin->get_editor_fields();
+                        foreach ($editorfields as $name => $description) {
+                            $editorfieldinfo = array(
+                                'name' => $name,
+                                'description' => $description,
+                                'text' => $submissionplugin->get_editor_text($name, $submissionrecord->id),
+                                'format' => $submissionplugin->get_editor_format($name, $submissionrecord->id)
+                            );
+                            $plugin['editorfields'][] = $editorfieldinfo;
+                        }
+
+                        $submission['plugins'][] = $plugin;
+                    }
+                    $submissions[] = $submission;
+                }
+            } else {
+                $warnings[] = array(
+                    'item' => 'module',
+                    'itemid' => $assign->get_instance()->id,
+                    'warningcode' => '3',
+                    'message' => 'No submissions found'
+                );
+            }
+
+            $assignments[] = array(
+                'assignmentid' => $assign->get_instance()->id,
+                'submissions' => $submissions
+            );
+
+        }
+
+        $result = array(
+            'assignments' => $assignments,
+            'warnings' => $warnings
+        );
+        return $result;
+    }
+
+    /**
+     * Creates an assign_submissions external_single_structure
+     *
+     * @return external_single_structure
+     * @since Moodle 2.4
+     */
+    private static function get_submissions_structure() {
+        return new external_single_structure(
+            array (
+                'assignmentid' => new external_value(PARAM_INT, 'assignment id'),
+                'submissions' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'submission id'),
+                            'userid' => new external_value(PARAM_INT, 'student id'),
+                            'timecreated' => new external_value(PARAM_INT, 'submission creation time'),
+                            'timemodified' => new external_value(PARAM_INT, 'submission last modified time'),
+                            'status' => new external_value(PARAM_TEXT, 'submission status'),
+                            'groupid' => new external_value(PARAM_INT, 'group id'),
+                            'plugins' => new external_multiple_structure(
+                                new external_single_structure(
+                                    array(
+                                        'type' => new external_value(PARAM_TEXT, 'submission plugin type'),
+                                        'name' => new external_value(PARAM_TEXT, 'submission plugin name'),
+                                        'fileareas' => new external_multiple_structure(
+                                            new external_single_structure(
+                                                array (
+                                                    'area' => new external_value (PARAM_TEXT, 'file area'),
+                                                    'files' => new external_multiple_structure(
+                                                        new external_single_structure(
+                                                            array (
+                                                                'filepath' => new external_value (PARAM_TEXT, 'file path')
+                                                            )
+                                                        ), 'files', VALUE_OPTIONAL
+                                                    )
+                                                )
+                                            ), 'fileareas', VALUE_OPTIONAL
+                                        ),
+                                        'editorfields' => new external_multiple_structure(
+                                            new external_single_structure(
+                                                array(
+                                                    'name' => new external_value(PARAM_TEXT, 'field name'),
+                                                    'description' => new external_value(PARAM_TEXT, 'field description'),
+                                                    'text' => new external_value (PARAM_TEXT, 'field value'),
+                                                    'format' => new external_value (PARAM_INT, 'field format')
+                                                )
+                                            )
+                                            , 'editorfields', VALUE_OPTIONAL
+                                        )
+                                    )
+                                )
+                                , 'plugins', VALUE_OPTIONAL
+                            )
+                        )
+                    )
+                )
+            )
+        );
+    }
+
+    /**
+     * Describes the get_submissions return value
+     *
+     * @return external_single_structure
+     * @since Moodle 2.4
+     */
+    public static function get_submissions_returns() {
+        return new external_single_structure(
+            array(
+                'assignments' => new external_multiple_structure(self::get_submissions_structure(), 'assignment submissions'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }
