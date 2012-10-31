@@ -245,6 +245,15 @@ if ($hassiteconfig) {
 
 /// Web services
     $ADMIN->add('modules', new admin_category('webservicesettings', new lang_string('webservices', 'webservice')));
+    // Mobile
+    $temp = new admin_settingpage('mobile', new lang_string('mobile','admin'), 'moodle/site:config', false);
+    $enablemobiledocurl = new moodle_url(get_docs_url('Enable_mobile_web_services'));
+    $enablemobiledoclink = html_writer::link($enablemobiledocurl, new lang_string('documentation'));
+    $temp->add(new admin_setting_enablemobileservice('enablemobilewebservice',
+            new lang_string('enablemobilewebservice', 'admin'),
+            new lang_string('configenablemobilewebservice', 'admin', $enablemobiledoclink), 0));
+    $temp->add(new admin_setting_configtext('mobilecssurl', new lang_string('mobilecssurl', 'admin'), new lang_string('configmobilecssurl','admin'), '', PARAM_URL));
+    $ADMIN->add('webservicesettings', $temp);
     /// overview page
     $temp = new admin_settingpage('webservicesoverview', new lang_string('webservicesoverview', 'webservice'));
     $temp->add(new admin_setting_webservicesoverview());
@@ -253,6 +262,9 @@ if ($hassiteconfig) {
     $ADMIN->add('webservicesettings', new admin_externalpage('webservicedocumentation', new lang_string('wsdocapi', 'webservice'), "$CFG->wwwroot/$CFG->admin/webservice/documentation.php", 'moodle/site:config', false));
     /// manage service
     $temp = new admin_settingpage('externalservices', new lang_string('externalservices', 'webservice'));
+    $temp->add(new admin_setting_enablemobileservice('enablemobilewebservice',
+            new lang_string('enablemobilewebservice', 'admin'),
+            new lang_string('configenablemobilewebservice', 'admin', $enablemobiledoclink), 0));
     $temp->add(new admin_setting_heading('manageserviceshelpexplaination', new lang_string('information', 'webservice'), new lang_string('servicehelpexplanation', 'webservice')));
     $temp->add(new admin_setting_manageexternalservices());
     $ADMIN->add('webservicesettings', $temp);
