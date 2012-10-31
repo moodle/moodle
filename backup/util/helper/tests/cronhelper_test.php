@@ -281,9 +281,13 @@ class backup_cron_helper_testcase extends advanced_testcase {
         $this->assertEquals(date('w-15:00', strtotime('tomorrow')), date('w-H:i', $next));
 
         // Let's have a Belgian beer! (UTC+1 / UTC+2 DST).
+        // Warning: Some of these tests will fail if executed "around"
+        // 'Europe/Brussels' DST changes (last Sunday in March and
+        // last Sunday in October right now - 2012). Once Moodle
+        // moves to PHP TZ support this could be fixed properly.
         date_default_timezone_set('Europe/Brussels');
         $now = strtotime('18:00:00');
-        $dst = date('I');
+        $dst = date('I', $now);
 
         $timezone = -10.0; // 7am for the user.
         $next = backup_cron_automated_helper::calculate_next_automated_backup($timezone, $now);
@@ -321,9 +325,13 @@ class backup_cron_helper_testcase extends advanced_testcase {
         $this->assertEquals($expected, date('w-H:i', $next));
 
         // The big apple! (UTC-5 / UTC-4 DST).
+        // Warning: Some of these tests will fail if executed "around"
+        // 'America/New_York' DST changes (2nd Sunday in March and
+        // 1st Sunday in November right now - 2012). Once Moodle
+        // moves to PHP TZ support this could be fixed properly.
         date_default_timezone_set('America/New_York');
         $now = strtotime('18:00:00');
-        $dst = date('I');
+        $dst = date('I', $now);
 
         $timezone = -10.0; // 1pm for the user.
         $next = backup_cron_automated_helper::calculate_next_automated_backup($timezone, $now);
@@ -365,9 +373,14 @@ class backup_cron_helper_testcase extends advanced_testcase {
         set_config('backup_auto_hour', '20', 'backup');
         set_config('backup_auto_minute', '00', 'backup');
 
+        // Note: These tests should not fail because they are "unnafected"
+        // by DST changes, as far as execution always happens on Monday and
+        // Saturday and those week days are not, right now, the ones rulez
+        // to peform the DST changes (Sunday is). This may change if rules
+        // are modified in the future.
         date_default_timezone_set('Europe/Brussels');
         $now = strtotime('next Monday 18:00:00');
-        $dst = date('I');
+        $dst = date('I', $now);
 
         $timezone = -12.0;  // 1pm for the user.
         $next = backup_cron_automated_helper::calculate_next_automated_backup($timezone, $now);
@@ -404,9 +417,14 @@ class backup_cron_helper_testcase extends advanced_testcase {
         set_config('backup_auto_hour', '02', 'backup');
         set_config('backup_auto_minute', '00', 'backup');
 
+        // Note: These tests should not fail because they are "unnafected"
+        // by DST changes, as far as execution always happens on Monday and
+        // Saturday and those week days are not, right now, the ones rulez
+        // to peform the DST changes (Sunday is). This may change if rules
+        // are modified in the future.
         date_default_timezone_set('America/New_York');
         $now = strtotime('next Monday 04:00:00');
-        $dst = date('I');
+        $dst = date('I', $now);
 
         $timezone = -12.0;  // 8pm for the user.
         $next = backup_cron_automated_helper::calculate_next_automated_backup($timezone, $now);
