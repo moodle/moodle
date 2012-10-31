@@ -23,7 +23,7 @@
 .path-course-view .availabilityinfo strong {font-weight:normal;color:black;}
 .path-course-view .dimmed_text img {opacity:0.3;filter: alpha(opacity='30');}
 .path-course-view .section {font-size:0.95em;line-height:1.2em;}
-.path-course-view .section .activity {padding:0.2em 0;}
+.path-course-view .section .activity {padding:0.2em 0;line-height: 2em;}
 .path-course-view .section .activity a {line-height:1em;}
 .path-course-view .section .weekdates {margin: 0;font-weight: normal;font-size: 1em;}
 .path-course-view .section .groupinglabel {color: #666666;}
