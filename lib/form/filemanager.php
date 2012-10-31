@@ -48,7 +48,7 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
     // PHP doesn't support 'key' => $value1 | $value2 in class definition
     // We cannot do $_options = array('return_types'=> FILE_INTERNAL | FILE_REFERENCE);
     // So I have to set null here, and do it in constructor
-    protected $_options    = array('mainfile'=>'', 'subdirs'=>1, 'maxbytes'=>-1, 'maxfiles'=>-1, 'accepted_types'=>'*', 'return_types'=> null);
+    protected $_options    = array('mainfile'=>'', 'subdirs'=>1, 'maxbytes'=>-1, 'maxfiles'=>-1, 'accepted_types'=>'*', 'return_types'=> null, 'areamaxbytes' => -1);
 
     /**
      * Constructor
@@ -131,6 +131,24 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
     function setMaxbytes($maxbytes) {
         global $CFG, $PAGE;
         $this->_options['maxbytes'] = get_user_max_upload_file_size($PAGE->context, $CFG->maxbytes, $maxbytes);
+    }
+
+    /**
+     * Returns the maximum size of the area.
+     *
+     * @return int
+     */
+    function getAreamaxbytes() {
+        return $this->_options['areamaxbytes'];
+    }
+
+    /**
+     * Sets the maximum size of the area.
+     *
+     * @param int $areamaxbytes size limit
+     */
+    function setAreamaxbytes($areamaxbytes) {
+        $this->_options['areamaxbytes'] = $areamaxbytes;
     }
 
     /**
@@ -237,6 +255,7 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
         $options->accepted_types = $accepted_types;
         $options->return_types = $this->_options['return_types'];
         $options->context = $PAGE->context;
+        $options->areamaxbytes = $this->_options['areamaxbytes'];
 
         $html = $this->_getTabs();
         $fm = new form_filemanager($options);

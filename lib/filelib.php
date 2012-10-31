@@ -482,6 +482,25 @@ function file_get_draft_area_info($draftitemid) {
 }
 
 /**
+ * Returns whether a draft area has exceeded/will exceed its size limit.
+ *
+ * @param int $draftitemid the draft area item id.
+ * @param int $areamaxbytes the maximum size allowed in this draft area.
+ * @param int $newfilesize the size that would be added to the current area.
+ * @return bool true if the area will/has exceeded its limit.
+ * @since 2.4
+ */
+function file_is_draft_area_limit_reached($draftitemid, $areamaxbytes, $newfilesize = 0) {
+    if ($areamaxbytes != -1) {
+        $draftinfo = file_get_draft_area_info($draftitemid);
+        if ($draftinfo['filesize'] + $newfilesize > $areamaxbytes) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
  * Get used space of files
  * @global moodle_database $DB
  * @global stdClass $USER

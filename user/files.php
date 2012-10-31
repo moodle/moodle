@@ -53,7 +53,8 @@ $PAGE->set_pagetype('user-files');
 
 $data = new stdClass();
 $data->returnurl = $returnurl;
-$options = array('subdirs'=>1, 'maxbytes'=>$CFG->userquota, 'maxfiles'=>-1, 'accepted_types'=>'*');
+$options = array('subdirs' => 1, 'maxbytes' => $CFG->userquota, 'maxfiles' => -1, 'accepted_types' => '*',
+        'areamaxbytes' => $CFG->userquota);
 file_prepare_standard_filemanager($data, 'files', $options, $context, 'user', 'private', 0);
 
 $mform = new user_files_form(null, array('data'=>$data, 'options'=>$options));

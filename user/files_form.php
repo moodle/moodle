@@ -46,8 +46,7 @@ class user_files_form extends moodleform {
 
         $errors = array();
         $draftitemid = $data['files_filemanager'];
-        $fileinfo = file_get_draft_area_info($draftitemid);
-        if ($fileinfo['filesize'] > $CFG->userquota) {
+        if (file_is_draft_area_limit_reached($draftitemid, $this->_customdata['options']['areamaxbytes'])) {
             $errors['files_filemanager'] = get_string('userquotalimit', 'error');
         }
 

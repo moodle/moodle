@@ -346,6 +346,7 @@ $string['logfilenotavailable'] = 'Logs not available';
 $string['loginasnoenrol'] = 'You cannot use enrol or unenrol when in course "Login as" session';
 $string['loginasonecourse'] = 'You cannot enter this course.<br /> You have to terminate the "Login as" session before entering any other course.';
 $string['maxbytes'] = 'This file is bigger than the maximum size';
+$string['maxareabytes'] = 'Not enough available space to store this file';
 $string['messagingdisable'] = 'Messaging is disabled on this site';
 $string['mimetexisnotexist'] = 'Your system is not configured to run mimeTeX. You need to download the appropriate executable for you PHP_OS platform from <a href="http://moodle.org/download/mimetex/">http://moodle.org/download/mimetex/</a>, or obtain the C source from <a href="http://www.forkosh.com/mimetex.zip"> http://www.forkosh.com/mimetex.zip</a>, compile it and put the executable into your moodle/filter/tex/ directory.';
 $string['mimetexnotexecutable'] = 'Custom mimetex is not executable!';
