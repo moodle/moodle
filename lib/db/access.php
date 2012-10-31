@@ -574,6 +574,15 @@ $capabilities = array(
         )
     ),
 
+    // Can the user ignore the setting userquota?
+    // The permissions are cloned from ignorefilesizelimits as it was partly used for that purpose.
+    'moodle/user:ignoreuserquota' => array(
+        'riskbitmap' => RISK_SPAM,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'clonepermissionsfrom' => 'moodle/course:ignorefilesizelimits'
+    ),
+
     // can the user manage the system default dashboard page?
     'moodle/my:configsyspages' => array(
 
