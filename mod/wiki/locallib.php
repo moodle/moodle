@@ -767,7 +767,7 @@ function wiki_user_can_view($subwiki) {
         //      Each person owns a wiki.
         if ($wiki->wikimode == 'collaborative' || $wiki->wikimode == 'individual') {
             // Only members of subwiki group could view that wiki
-            if ($subwiki->groupid == groups_get_activity_group($cm)) {
+            if (groups_is_member($subwiki->groupid)) {
                 // Only view capability needed
                 return has_capability('mod/wiki:viewpage', $context);
 
