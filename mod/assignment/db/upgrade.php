@@ -150,6 +150,18 @@ function xmldb_assignment_upgrade($oldversion) {
     /// Launch rename field format
         $dbman->rename_field($table, $field, 'introformat');
 
+    /// Conditionally migrate to html format in intro
+        if ($CFG->texteditors !== 'textarea') {
+            $rs = $DB->get_recordset('assignment', array('introformat' => FORMAT_MOODLE), '', 'id,intro,introformat');
+            foreach ($rs as $a) {
+                $a->intro       = text_to_html($a->intro, false, false, true);
+                $a->introformat = FORMAT_HTML;
+                $DB->update_record('assignment', $a);
+                upgrade_set_timeout();
+            }
+            $rs->close();
+        }
+
     /// assignment savepoint reached
         upgrade_mod_savepoint(true, 2009042001, 'assignment');
     }
