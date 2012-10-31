@@ -665,12 +665,12 @@ class blog_listing {
             if (empty($userid) || (!empty($userid) && $userid == $USER->id)) {
 
                 $canaddentries = true;
+                $courseid = optional_param('courseid', null, PARAM_INT);
                 if ($modid = optional_param('modid', null, PARAM_INT)) {
                     if (!has_capability('moodle/blog:associatemodule', context_module::instance($modid))) {
                         $canaddentries = false;
                     }
-                }
-                if ($courseid = optional_param('courseid', null, PARAM_INT)) {
+                } else if ($courseid) {
                     if (!has_capability('moodle/blog:associatecourse', context_course::instance($courseid))) {
                         $canaddentries = false;
                     }
