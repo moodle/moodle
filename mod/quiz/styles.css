@@ -415,5 +415,6 @@ bank window's title is prominent enough*/
 #page-mod-quiz-edit.dir-rtl div.quizcontents {clear: right;float: right;}
 #page-mod-quiz-edit.dir-rtl .questionbankwindow.block {float: left;}
 #page-question-edit.dir-rtl td.creatorname, #page-question-edit.dir-rtl td.modifiername {text-align: center;}
+.path-question.dir-rtl input[name="maxmark"],
 .path-question-type.dir-rtl input[name="defaultmark"],
 #page-mod-quiz-edit.dir-rtl div.points input {direction: ltr;text-align: left;}
