@@ -3,7 +3,7 @@
 /**
  * @author Martin Dougiamas
  * @author Jerome GUTIERREZ
- * @author I�aki Arenaza
+ * @author Iñaki Arenaza
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package moodle multiauth
  *
@@ -206,6 +206,10 @@ class auth_plugin_cas extends auth_plugin_ldap {
             }
         }
 
+        if (!ldap_paged_results_supported($this->config->ldap_version)) {
+            echo $OUTPUT->notification(get_string('pagedresultsnotsupp', 'auth_ldap'));
+        }
+
         include($CFG->dirroot.'/auth/cas/config.html');
     }
 
@@ -279,6 +283,9 @@ class auth_plugin_cas extends auth_plugin_ldap {
         if (empty($config->ldapencoding)) {
             $config->ldapencoding = 'utf-8';
         }
+        if (!isset($config->pagesize)) {
+            $config->pagesize = LDAP_DEFAULT_PAGESIZE;
+        }
         if (!isset($config->contexts)) {
             $config->contexts = '';
         }
@@ -339,6 +346,7 @@ class auth_plugin_cas extends auth_plugin_ldap {
         // save LDAP settings
         set_config('host_url', trim($config->host_url), $this->pluginconfig);
         set_config('ldapencoding', trim($config->ldapencoding), $this->pluginconfig);
+        set_config('pagesize', (int)trim($config->pagesize), $this->pluginconfig);
         set_config('contexts', trim($config->contexts), $this->pluginconfig);
         set_config('user_type', textlib::strtolower(trim($config->user_type)), $this->pluginconfig);
         set_config('user_attribute', textlib::strtolower(trim($config->user_attribute)), $this->pluginconfig);

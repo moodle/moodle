@@ -39,9 +39,11 @@ class admin_setting_configtext_trim_lower extends admin_setting_configtext {
      * @param string $description long localised info
      * @param string $defaultsetting default value for the setting
      * @param boolean $lowercase if true, lowercase the value before writing it to the db.
+     * @param boolean $enabled if true, the input field is enabled, otherwise it's disabled.
      */
-    public function __construct($name, $visiblename, $description, $defaultsetting, $lowercase=false) {
+    public function __construct($name, $visiblename, $description, $defaultsetting, $lowercase=false, $enabled=true) {
         $this->lowercase = $lowercase;
+        $this->enabled = $enabled;
         parent::__construct($name, $visiblename, $description, $defaultsetting);
     }
 
@@ -65,8 +67,24 @@ class admin_setting_configtext_trim_lower extends admin_setting_configtext {
         if ($this->lowercase) {
             $data = textlib::strtolower($data);
         }
+        if (!$this->enabled) {
+            return '';
+        }
         return ($this->config_write($this->name, trim($data)) ? '' : get_string('errorsetting', 'admin'));
     }
+
+    /**
+     * Return an XHTML string for the setting
+     * @return string Returns an XHTML string
+     */
+    public function output_html($data, $query='') {
+        $default = $this->get_defaultsetting();
+        $disabled = $this->enabled ? '': ' disabled="disabled"';
+        return format_admin_setting($this, $this->visiblename,
+        '<div class="form-text defaultsnext"><input type="text" size="'.$this->size.'" id="'.$this->get_id().'" name="'.$this->get_full_name().'" value="'.s($data).'" '.$disabled.' /></div>',
+        $this->description, true, '', $default, $query);
+    }
+
 }
 
 class admin_setting_ldap_rolemapping extends admin_setting {

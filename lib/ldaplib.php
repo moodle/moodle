@@ -7,11 +7,11 @@
  * data structures, useful for both ldap authentication (or ldap based
  * authentication like CAS) and enrolment plugins.
  *
- * @author     I�aki Arenaza
+ * @author     Iñaki Arenaza
  * @package    core
  * @subpackage lib
  * @copyright  1999 onwards Martin Dougiamas  http://dougiamas.com
- * @copyright  2010 onwards I�aki Arenaza
+ * @copyright  2010 onwards Iñaki Arenaza
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -20,6 +20,11 @@ defined('MOODLE_INTERNAL') || die();
 // rootDSE is defined as the root of the directory data tree on a directory server.
 if (!defined('ROOTDSE')) {
     define ('ROOTDSE', '');
+}
+
+// Default page size when using LDAP paged results
+if (!defined('LDAP_DEFAULT_PAGESIZE')) {
+    define('LDAP_DEFAULT_PAGESIZE', 250);
 }
 
 /**
@@ -363,4 +368,25 @@ function ldap_stripslashes($text) {
     $text = preg_replace('/\\\([0-9A-Fa-f]{2})/e', "chr(hexdec('\\1'))", $text);
 
     return $text;
+}
+
+
+/**
+ * Check if PHP supports LDAP paged results and we can use them (we have to use LDAP 
+ * version 3, otherwise the server doesn't use them).
+ *
+ * @param ldapversion integer The LDAP protocol version we use.
+ *
+ * @return boolean true is paged results can be used, false otherwise.
+ */
+function ldap_paged_results_supported($ldapversion) {
+
+    if (((int)$ldapversion === 3) &&
+        function_exists('ldap_control_paged_result') &&
+        function_exists('ldap_control_paged_result_response')) {
+
+        return true;
+    }
+
+    return false;
 }
