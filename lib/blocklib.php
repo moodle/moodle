@@ -378,6 +378,8 @@ class block_manager {
      * @return array names of block types that cannot be added or deleted. E.g. array('navigation','settings').
      */
     public static function get_undeletable_block_types() {
+        global $CFG;
+
         if (!isset($CFG->undeletableblocktypes) || (!is_array($CFG->undeletableblocktypes) && !is_string($CFG->undeletableblocktypes))) {
             return array('navigation','settings');
         } else if (is_string($CFG->undeletableblocktypes)) {
