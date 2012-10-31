@@ -125,17 +125,24 @@ class assign_feedback_file extends assign_feedback_plugin {
      * @param stdClass $grade
      * @param MoodleQuickForm $mform
      * @param stdClass $data
+     * @param int $userid The userid we are currently grading
      * @return bool true if elements were added to the form
      */
-    public function get_form_elements($grade, MoodleQuickForm $mform, stdClass $data) {
+    public function get_form_elements_for_user($grade, MoodleQuickForm $mform, stdClass $data, $userid) {
 
         $fileoptions = $this->get_file_options();
         $gradeid = $grade ? $grade->id : 0;
+        $elementname = 'files_' . $userid;
 
+        $data = file_prepare_standard_filemanager($data,
+                                                  $elementname,
+                                                  $fileoptions,
+                                                  $this->assignment->get_context(),
+                                                  'assignfeedback_file',
+                                                  ASSIGNFEEDBACK_FILE_FILEAREA,
+                                                  $gradeid);
 
-        $data = file_prepare_standard_filemanager($data, 'files', $fileoptions, $this->assignment->get_context(), 'assignfeedback_file', ASSIGNFEEDBACK_FILE_FILEAREA, $gradeid);
-
-        $mform->addElement('filemanager', 'files_filemanager', '', null, $fileoptions);
+        $mform->addElement('filemanager', $elementname . '_filemanager', '', null, $fileoptions);
 
         return true;
     }
@@ -187,8 +194,11 @@ class assign_feedback_file extends assign_feedback_plugin {
     public function save(stdClass $grade, stdClass $data) {
         $fileoptions = $this->get_file_options();
 
+        $userid = $grade->userid;
+        $elementname = 'files_' . $userid;
+
         $data = file_postupdate_standard_filemanager($data,
-                                                     'files',
+                                                     $elementname,
                                                      $fileoptions,
                                                      $this->assignment->get_context(),
                                                      'assignfeedback_file',

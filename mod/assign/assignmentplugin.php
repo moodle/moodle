@@ -220,8 +220,25 @@ abstract class assign_plugin {
         return $this->get_config('enabled');
     }
 
+
     /**
      * Get any additional fields for the submission/grading form for this assignment.
+     *
+     * @param mixed $submissionorgrade submission|grade - For submission plugins this is the submission data,
+     *                                                    for feedback plugins it is the grade data
+     * @param MoodleQuickForm $mform - This is the form
+     * @param stdClass $data - This is the form data that can be modified for example by a filemanager element
+     * @param int $userid - This is the userid for the current submission.
+     *                      This is passed separately as there may not yet be a submission or grade.
+     * @return boolean - true if we added anything to the form
+     */
+    public function get_form_elements_for_user($submissionorgrade, MoodleQuickForm $mform, stdClass $data, $userid) {
+        return $this->get_form_elements($submissionorgrade, $mform, $data);
+    }
+
+    /**
+     * Get any additional fields for the submission/grading form for this assignment.
+     * This function is retained for backwards compatibility - new plugins should override {@link get_form_elements_for_user()}.
      *
      * @param mixed $submissionorgrade submission|grade - For submission plugins this is the submission data, for feedback plugins it is the grade data
      * @param MoodleQuickForm $mform - This is the form
