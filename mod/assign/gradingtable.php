@@ -527,7 +527,7 @@ class assign_grading_table extends table_sql implements renderable {
     function col_select(stdClass $row) {
         return '<label class="accesshide" for="selectuser_' . $row->userid . '">' .
             get_string('selectuser', 'assign', fullname($row)) . '</label>
-            <input type="checkbox" id=="selectuser_' . $row->userid . 'name="selectedusers" value="' . $row->userid . '"/>';
+            <input type="checkbox" id="selectuser_' . $row->userid . '" name="selectedusers" value="' . $row->userid . '"/>';
     }
 
     /**

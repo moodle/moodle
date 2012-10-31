@@ -1201,7 +1201,7 @@ class grade_edit_tree_column_select extends grade_edit_tree_column {
         if ($params['itemtype'] != 'course' && $params['itemtype'] != 'category') {
             $itemselect = '<label class="accesshide" for="select_'.$params['eid'].'">'.
                 get_string('select', 'grades', $item->itemname).'</label>
-                <input class="itemselect" type="checkbox" name="select_'.$params['eid'].
+                <input class="itemselect" type="checkbox" name="select_'.$params['eid'].'" id="select_'.$params['eid'].
                 '" onchange="toggleCategorySelector();"/>'; // TODO: convert to YUI handler
         }
         //html_writer::table() will wrap the item cell contents in a <TD> so don't do it here
