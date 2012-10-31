@@ -43,6 +43,7 @@ $string['criteriondelete'] = 'Delete criterion';
 $string['criterionempty'] = 'Click to edit criterion';
 $string['criterionmovedown'] = 'Move down';
 $string['criterionmoveup'] = 'Move up';
+$string['criterionname'] = 'Criterion name';
 $string['definemarkingguide'] = 'Define marking guide';
 $string['description'] = 'Description';
 $string['descriptionmarkers'] = 'Description for Markers';

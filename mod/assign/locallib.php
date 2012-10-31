@@ -761,7 +761,6 @@ class assign {
         $update->teamsubmissiongroupingid = $formdata->teamsubmissiongroupingid;
         $update->blindmarking = $formdata->blindmarking;
 
-
         $result = $DB->update_record('assign', $update);
         $this->instance = $DB->get_record('assign', array('id'=>$update->id), '*', MUST_EXIST);
 
@@ -1028,7 +1027,9 @@ class assign {
                 } else {
                     $displaygrade = format_float($grade);
                 }
-                $o = '<input type="text" name="quickgrade_' . $userid . '" value="' . $displaygrade . '" size="6" maxlength="10" class="quickgrade"/>';
+                $o = '<label class="accesshide" for="quickgrade_' . $userid . '">' . get_string('usergrade', 'assign') . '</label>';
+                $o .= '<input type="text" id="quickgrade_' . $userid . '" name="quickgrade_' . $userid . '" value="' . $displaygrade
+                        . '" size="6" maxlength="10" class="quickgrade"/>';
                 $o .= '&nbsp;/&nbsp;' . format_float($this->get_instance()->grade,2);
                 $o .= '<input type="hidden" name="grademodified_' . $userid . '" value="' . $modified . '"/>';
                 return $o;
@@ -1050,7 +1051,8 @@ class assign {
                 }
             }
             if ($editing) {
-                $o = '<select name="quickgrade_' . $userid . '" class="quickgrade">';
+                $o = '<label class="accesshide" for="quickgrade_' . $userid . '">' . get_string('usergrade', 'assign') . '</label>';
+                $o .= '<select name="quickgrade_' . $userid . '" class="quickgrade">';
                 $o .= '<option value="-1">' . get_string('nograde') . '</option>';
                 foreach ($this->cache['scale'] as $optionid => $option) {
                     $selected = '';
