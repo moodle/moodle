@@ -158,9 +158,9 @@ $preferences->blocknoncontacts  =  get_user_preferences( 'message_blocknoncontac
 //$preferences->beepnewmessage    =  get_user_preferences( 'message_beepnewmessage', '', $user->id);
 
 /// Display page header
-$streditmymessage = get_string('editmymessage', 'message');
-$PAGE->set_title($streditmymessage);
-$PAGE->set_heading($streditmymessage);
+$strmessaging = get_string('messaging', 'message');
+$PAGE->set_title($strmessaging);
+$PAGE->set_heading($strmessaging);
 
 // Grab the renderer
 $renderer = $PAGE->get_renderer('core', 'message');
