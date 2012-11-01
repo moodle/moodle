@@ -15,6 +15,16 @@ $hascustommenu = (empty($PAGE->layout_options['nocustommenu']) && !empty($custom
 
 $hasfootnote = (!empty($PAGE->theme->settings->footnote));
 
+$courseheader = $coursecontentheader = $coursecontentfooter = $coursefooter = '';
+if (empty($PAGE->layout_options['nocourseheaderfooter'])) {
+    $courseheader = $OUTPUT->course_header();
+    $coursecontentheader = $OUTPUT->course_content_header();
+    if (empty($PAGE->layout_options['nocoursefooter'])) {
+        $coursecontentfooter = $OUTPUT->course_content_footer();
+        $coursefooter = $OUTPUT->course_footer();
+    }
+}
+
 $bodyclasses = array();
 if ($showsidepre && !$showsidepost) {
     if (!right_to_left()) {
@@ -47,9 +57,8 @@ echo $OUTPUT->doctype() ?>
 <?php echo $OUTPUT->standard_top_of_body_html() ?>
 <div id="page-wrapper">
   <div id="page">
-   <?php if ($hasheading || $hasnavbar) { ?>
-    <div id="page-header">
-        <?php if ($hasheading) { ?>
+    <?php if ($hasheading) { ?>
+        <div id="page-header">
          <a class="logo" href="<?php echo $CFG->wwwroot; ?>" title="<?php print_string('home'); ?>"></a>
          <div class="headermenu"><?php
             if ($haslogininfo) {
@@ -60,9 +69,8 @@ echo $OUTPUT->doctype() ?>
             }
             echo $PAGE->headingmenu
             ?></div>
-        <?php } ?>
-    </div>
-<?php } ?>
+        </div>
+    <?php } ?>
 <!-- END OF HEADER -->
 <!-- START CUSTOMMENU AND NAVBAR -->
     <div id="navcontainer">
@@ -71,6 +79,10 @@ echo $OUTPUT->doctype() ?>
         <?php } ?>
 
     </div>
+
+        <?php if (!empty($courseheader)) { ?>
+            <div id="course-header"><?php echo $courseheader; ?></div>
+        <?php } ?>
 
         <?php if ($hasnavbar) { ?>
             <div class="navbar clearfix">
@@ -85,7 +97,9 @@ echo $OUTPUT->doctype() ?>
            <div id="region-pre-box">
                <div id="region-main">
                    <div class="region-content">
+                       <?php echo $coursecontentheader; ?>
                        <?php echo $OUTPUT->main_content() ?>
+                       <?php echo $coursecontentfooter; ?>
                    </div>
                </div>
 
@@ -121,6 +135,9 @@ echo $OUTPUT->doctype() ?>
     </div>
 
     <!-- START OF FOOTER -->
+    <?php if (!empty($coursefooter)) { ?>
+        <div id="course-footer"><?php echo $coursefooter; ?></div>
+    <?php } ?>
     <?php if ($hasfooter) { ?>
     <div id="page-footer" class="clearfix">
 
