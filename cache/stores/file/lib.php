@@ -58,6 +58,14 @@ class cachestore_file implements cache_store, cache_is_key_aware {
     protected $prescan = false;
 
     /**
+     * Set to true if we should store files within a single directory.
+     * By default we use a nested structure in order to reduce the chance of conflicts and avoid any file system
+     * limitations such as maximum files per directory.
+     * @var bool
+     */
+    protected $singledirectory = false;
+
+    /**
      * Set to true when the path should be automatically created if it does not yet exist.
      * @var bool
      */
@@ -122,7 +130,20 @@ class cachestore_file implements cache_store, cache_is_key_aware {
         }
         $this->isready = $path !== false;
         $this->path = $path;
-        $this->prescan = array_key_exists('prescan', $configuration) ? (bool)$configuration['prescan'] : false;
+        // Check if we should prescan the directory.
+        if (array_key_exists('prescan', $configuration)) {
+            $this->prescan =  (bool)$configuration['prescan'];
+        } else {
+            // Default is no, we should not prescan.
+            $this->prescan =  false;
+        }
+        // Check if we should be storing in a single directory.
+        if (array_key_exists('singledirectory', $configuration)) {
+            $this->singledirectory =  (bool)$configuration['singledirectory'];
+        } else {
+            // Default: No, we will use multiple directories.
+            $this->singledirectory =  false;
+        }
     }
 
     /**
@@ -226,10 +247,52 @@ class cachestore_file implements cache_store, cache_is_key_aware {
             $this->prescan = false;
         }
         if ($this->prescan) {
-            $pattern = $this->path.'/*.cache';
-            foreach (glob($pattern, GLOB_MARK | GLOB_NOSORT) as $filename) {
-                $this->keys[basename($filename)] = filemtime($filename);
+            $this->prescan_keys();
+        }
+    }
+
+    /**
+     * Pre-scan the cache to see which keys are present.
+     */
+    protected function prescan_keys() {
+        foreach (glob($this->glob_keys_pattern(), GLOB_MARK | GLOB_NOSORT) as $filename) {
+            $this->keys[basename($filename)] = filemtime($filename);
+        }
+    }
+
+    /**
+     * Gets a pattern suitable for use with glob to find all keys in the cache.
+     * @return string The pattern.
+     */
+    protected function glob_keys_pattern() {
+        if ($this->singledirectory) {
+            return $this->path . '/*.cache';
+        } else {
+            return $this->path . '/*/*/*.cache';
+        }
+    }
+
+    /**
+     * Returns the file path to use for the given key.
+     *
+     * @param string $key The key to generate a file path for.
+     * @param bool $create If set to the true the directory structure the key requires will be created.
+     * @return string The full path to the file that stores a particular cache key.
+     */
+    protected function file_path_for_key($key, $create = false) {
+        if ($this->singledirectory) {
+            // Its a single directory, easy, just the store instances path + the file name.
+            return $this->path . '/' . $key . '.cache';
+        } else {
+            // We are using multiple subdirectories. We want two levels.
+            $subdir1 = substr($key, 0, 2);
+            $subdir2 = substr($key, 2, 2);
+            $dir = $this->path . '/' . $subdir1 .'/'. $subdir2;
+            if ($create) {
+                // Create the directory. This function does it recursivily!
+                make_writable_directory($dir);
             }
+            return $dir . '/' . $key . '.cache';
         }
     }
 
@@ -241,7 +304,7 @@ class cachestore_file implements cache_store, cache_is_key_aware {
      */
     public function get($key) {
         $filename = $key.'.cache';
-        $file = $this->path.'/'.$filename;
+        $file = $this->file_path_for_key($key);
         $ttl = $this->definition->get_ttl();
         if ($ttl) {
             $maxtime = cache::now() - $ttl;
@@ -307,7 +370,7 @@ class cachestore_file implements cache_store, cache_is_key_aware {
      */
     public function delete($key) {
         $filename = $key.'.cache';
-        $file = $this->path.'/'.$filename;
+        $file = $this->file_path_for_key($key);
         $result = @unlink($file);
         unset($this->keys[$filename]);
         return $result;
@@ -339,7 +402,7 @@ class cachestore_file implements cache_store, cache_is_key_aware {
     public function set($key, $data) {
         $this->ensure_path_exists();
         $filename = $key.'.cache';
-        $file = $this->path.'/'.$filename;
+        $file = $this->file_path_for_key($key, true);
         $result = $this->write_file($file, $this->prep_data_before_save($data));
         if (!$result) {
             // Couldn't write the file.
@@ -404,11 +467,11 @@ class cachestore_file implements cache_store, cache_is_key_aware {
      */
     public function has($key) {
         $filename = $key.'.cache';
-        $file = $this->path.'/'.$key.'.cache';
         $maxtime = cache::now() - $this->definition->get_ttl();
         if ($this->prescan) {
             return array_key_exists($filename, $this->keys) && $this->keys[$filename] >= $maxtime;
         }
+        $file = $this->file_path_for_key($key);
         return (file_exists($file) && ($this->definition->get_ttl() == 0 || filemtime($file) >= $maxtime));
     }
 
@@ -448,8 +511,7 @@ class cachestore_file implements cache_store, cache_is_key_aware {
      * @return boolean True on success. False otherwise.
      */
     public function purge() {
-        $pattern = $this->path.'/*.cache';
-        foreach (glob($pattern, GLOB_MARK | GLOB_NOSORT) as $filename) {
+        foreach (glob($this->glob_keys_pattern(), GLOB_MARK | GLOB_NOSORT) as $filename) {
             @unlink($filename);
         }
         $this->keys = array();
