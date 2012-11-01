@@ -207,9 +207,10 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
             var select = this.get(UEP.BASE).one('.'+CSS.ENROLMENTOPTION+'.'+CSS.DURATION+' select');
             var defaultvalue = this.get(UEP.DEFAULTDURATION);
             var index = 0, count = 0;
+            var durationdays = M.util.get_string('durationdays', 'enrol', '{a}');
             for (var i = 1; i <= 365; i++) {
                 count++;
-                var option = create('<option value="'+i+'">'+M.util.get_string('durationdays', 'enrol', i)+'</option>');
+                var option = create('<option value="'+i+'">'+durationdays.replace('{a}', i)+'</option>');
                 if (i == defaultvalue) {
                     index = count;
                 }
