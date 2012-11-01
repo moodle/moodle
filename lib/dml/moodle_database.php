@@ -300,7 +300,7 @@ abstract class moodle_database {
      */
     protected function get_settings_hash() {
         if (empty($this->settingshash)) {
-            $this->settingshash = md5($this->dbhost . $this->dbuser . $this->prefix);
+            $this->settingshash = md5($this->dbhost . $this->dbuser . $this->dbname . $this->prefix);
         }
         return $this->settingshash;
     }
