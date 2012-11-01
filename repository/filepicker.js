@@ -544,6 +544,7 @@ M.core_filepicker.init = function(Y, options) {
             params['client_id'] = args.client_id;
             params['itemid'] = this.options.itemid?this.options.itemid:0;
             params['maxbytes'] = this.options.maxbytes?this.options.maxbytes:-1;
+            // The unlimited value of areamaxbytes is -1, it is defined by FILE_AREA_MAX_BYTES_UNLIMITED.
             params['areamaxbytes'] = this.options.areamaxbytes ? this.options.areamaxbytes : -1;
             if (this.options.context && this.options.context.id) {
                 params['ctx_id'] = this.options.context.id;

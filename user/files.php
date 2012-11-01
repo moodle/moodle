@@ -53,7 +53,7 @@ $PAGE->set_pagetype('user-files');
 
 $maxareabytes = $CFG->userquota;
 if (has_capability('moodle/user:ignoreuserquota', $context)) {
-    $maxareabytes = -1;
+    $maxareabytes = FILE_AREA_MAX_BYTES_UNLIMITED;
 }
 
 $data = new stdClass();

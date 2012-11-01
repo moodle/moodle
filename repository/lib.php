@@ -706,9 +706,11 @@ abstract class repository {
      *      attributes of the new file
      * @param int $maxbytes maximum allowed size of file, -1 if unlimited. If size of file exceeds
      *      the limit, the file_exception is thrown.
+     * @param int $areamaxbytes the maximum size of the area. A file_exception is thrown if the
+     *      new file will reach the limit.
      * @return array The information about the created file
      */
-    public function copy_to_area($source, $filerecord, $maxbytes = -1) {
+    public function copy_to_area($source, $filerecord, $maxbytes = -1, $areamaxbytes = FILE_AREA_MAX_BYTES_UNLIMITED) {
         global $USER;
         $fs = get_file_storage();
 
@@ -731,6 +733,10 @@ abstract class repository {
         $stored_file = self::get_moodle_file($source);
         if ($maxbytes != -1 && $stored_file->get_filesize() > $maxbytes) {
             throw new file_exception('maxbytes');
+        }
+        // Validate the size of the draft area.
+        if (file_is_draft_area_limit_reached($draftitemid, $areamaxbytes, $stored_file->get_filesize())) {
+            throw new file_exception('maxareabytes');
         }
 
         if (repository::draftfile_exists($draftitemid, $new_filepath, $new_filename)) {
