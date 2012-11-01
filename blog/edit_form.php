@@ -158,8 +158,8 @@ class blog_edit_form extends moodleform {
             $modcontextid = $data['modassoc'];
             $modcontext = context::instance_by_id($modcontextid, IGNORE_MISSING);
 
-            $canassociatemodule = has_capability('moodle/blog:associatecourse', $modcontext);
-            if ($modcontext->contextlevel == CONTEXT_MODULE && $canassociatemodule) {
+            $canassociatemodule = has_capability('moodle/blog:associatemodule', $modcontext);
+            if ($canassociatemodule) {
                 // get context of the mod's course
                 $coursecontext = $modcontext->get_course_context(true);
 
