@@ -49,7 +49,6 @@ $string['disableall_help'] = 'Temporarily disable all notifications except those
 $string['disabled'] = 'Messaging is disabled on this site';
 $string['disallowed'] = 'Disallowed';
 $string['discussion'] = 'Discussion';
-$string['editmymessage'] = 'Messaging';
 $string['emailmessages'] = 'Email messages when I am offline';
 $string['emailtagline'] = 'This is a copy of a message sent to you at "{$a->sitename}". Go to {$a->url} to reply.';
 $string['emptysearchstring'] = 'You must search for something';
