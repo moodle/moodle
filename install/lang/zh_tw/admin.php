@@ -34,8 +34,8 @@ $string['clianswerno'] = 'n';
 $string['cliansweryes'] = 'y';
 $string['cliincorrectvalueerror'] = '錯誤，不正確的值 "{$a->value}" 用於 "{$a->option}"';
 $string['cliincorrectvalueretry'] = '不正確的值，請再試一次';
-$string['clitypevalue'] = '打入一值';
-$string['clitypevaluedefault'] = '打入一值，按Enter可使用預設值({$a})';
+$string['clitypevalue'] = '輸入值';
+$string['clitypevaluedefault'] = '輸入值，按Enter可使用預設值({$a})';
 $string['cliunknowoption'] = '不認得的選項：  {$a}
 請使用 --幫助 選項。';
 $string['cliyesnoprompt'] = '輸入y(是) 或n(否)';
