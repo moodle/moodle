@@ -440,7 +440,8 @@ class qformat_xml extends qformat_default {
         $qo->name = $this->clean_question_name($this->import_text($question['#']['name'][0]['#']['text']));
         $qo->questiontextformat = $questiontext['format'];
         $qo->questiontext = $qo->questiontext['text'];
-        $qo->questiontextfiles = array();
+        $qo->questiontextfiles = $this->import_files($this->getpath($question,
+                array('#', 'questiontext', 0, '#', 'file'), array(), false));
 
         // restore files in generalfeedback
         $qo->generalfeedback = $this->getpath($question,
