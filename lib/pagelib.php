@@ -845,7 +845,7 @@ class moodle_page {
      * @param stdClass $course the course to set as the global course.
      */
     public function set_course($course) {
-        global $COURSE, $PAGE;
+        global $COURSE, $PAGE, $CFG, $SITE;
 
         if (empty($course->id)) {
             throw new coding_exception('$course passed to moodle_page::set_course does not look like a proper course object.');
@@ -866,6 +866,12 @@ class moodle_page {
 
         if (!$this->_context) {
             $this->set_context(context_course::instance($this->_course->id));
+        }
+
+        // notify course format that this page is set for the course
+        if ($this->_course->id != $SITE->id) {
+            require_once($CFG->dirroot.'/course/lib.php');
+            course_get_format($this->_course)->page_set_course($this);
         }
     }
 
@@ -911,7 +917,7 @@ class moodle_page {
      * @return void
      */
     public function set_cm($cm, $course = null, $module = null) {
-        global $DB;
+        global $DB, $CFG, $SITE;
 
         if (!isset($cm->id) || !isset($cm->course)) {
             throw new coding_exception('Invalid $cm parameter for $PAGE object, it has to be instance of cm_info or record from the course_modules table.');
@@ -942,6 +948,12 @@ class moodle_page {
 
         if ($module) {
             $this->set_activity_record($module);
+        }
+
+        // notify course format that this page is set for the course module
+        if ($this->_course->id != $SITE->id) {
+            require_once($CFG->dirroot.'/course/lib.php');
+            course_get_format($this->_course)->page_set_cm($this);
         }
     }
 
