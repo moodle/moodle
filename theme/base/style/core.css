@@ -90,7 +90,7 @@ img.resize {height: 1em;width: 1em;}
 .block img.resize,
 .breadcrumb img.resize {height: 0.9em;width: 0.8em;}
 img.icon {height:16px;vertical-align:middle;width:16px;padding-right:4px;}
-img.iconsmall {height:11px;margin-right:1px;vertical-align:middle;width:11px;}
+img.iconsmall {height:12px;margin-right:3px;vertical-align:middle;width:12px;}
 img.iconhelp {height:17px;margin-right:4px;vertical-align:middle;width:17px;}
 img.icontoggle {height:17px;vertical-align:middle;width:50px;}
 img.iconkbhelp {height:17px;width:49px;}
