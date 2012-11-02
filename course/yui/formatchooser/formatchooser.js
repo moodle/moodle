@@ -10,7 +10,7 @@ YUI.add('moodle-course-formatchooser', function(Y) {
                 var formatselect = Y.one('#'+params.formid+' #id_format');
                 if (updatebut && formatselect) {
                     updatebut.setStyle('display', 'none');
-                    formatselect.on('change', function() {                    
+                    formatselect.on('change', function() {
                         updatebut.simulate('click');
                     });
                 }

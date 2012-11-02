@@ -568,7 +568,7 @@ abstract class format_base {
      *
      * This function is called from {@link course_edit_form::definition_after_data()}
      *
-     * @param moodleform $mform form the elements are added to
+     * @param MoodleQuickForm $mform form the elements are added to
      * @param bool $forsection 'true' if this is a section edit form, 'false' if this is course edit form
      * @return array array of references to the added form elements
      */

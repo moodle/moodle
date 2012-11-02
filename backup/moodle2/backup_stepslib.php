@@ -408,9 +408,11 @@ class backup_section_structure_step extends backup_structure_step {
          LEFT JOIN {user_info_field} uif ON uif.id = csaf.customfieldid
              WHERE csaf.coursesectionid = ?', array(backup::VAR_SECTIONID));
         $formatoptions->set_source_sql('SELECT cfo.id, cfo.format, cfo.name, cfo.value
-              FROM {course_format_options} cfo, {course} c
-              WHERE cfo.sectionid = ? AND cfo.courseid = c.id AND cfo.format = c.format',
-                array(backup::VAR_SECTIONID));
+              FROM {course} c
+              JOIN {course_format_options} cfo
+              ON cfo.courseid = c.id AND cfo.format = c.format
+              WHERE c.id = ? AND cfo.sectionid = ?',
+                array(backup::VAR_COURSEID, backup::VAR_SECTIONID));
 
         // Aliases
         $section->set_source_alias('section', 'number');

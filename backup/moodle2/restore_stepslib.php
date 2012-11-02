@@ -1237,9 +1237,12 @@ class restore_section_structure_step extends restore_structure_step {
     public function process_course_format_options($data) {
         global $DB;
         $data = (object)$data;
+        $oldid = $data->id;
+        unset($data->id);
         $data->sectionid = $this->task->get_sectionid();
         $data->courseid = $this->get_courseid();
         $newid = $DB->insert_record('course_format_options', $data);
+        $this->set_mapping('course_format_options', $oldid, $newid);
     }
 
     protected function after_execute() {

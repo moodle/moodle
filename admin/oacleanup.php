@@ -62,7 +62,9 @@ function online_assignment_cleanup($output=false) {
         $course = course_get_format($course)->get_course();
         if (!isset($course->numsections)) {
             // Course format does not use numsections
-            if ($output) echo 'No extra sections<br />';
+            if ($output) {
+                echo 'No extra sections<br />';
+            }
             continue;
         }
         $sql = "SELECT *
