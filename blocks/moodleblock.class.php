@@ -558,18 +558,46 @@ class block_base {
     function user_can_addto($page) {
         global $USER;
 
-        if (has_capability('moodle/block:edit', $page->context)) {
+        $capability = 'block/' . $this->name() . ':addinstance';
+        if ($this->has_add_block_capability($page, $capability)
+                && has_capability('moodle/block:edit', $page->context)) {
             return true;
         }
 
         // The blocks in My Moodle are a special case and use a different capability.
         if (!empty($USER->id)
-            && $page->context->contextlevel == CONTEXT_USER             // Page belongs to a user
-            && $page->context->instanceid == $USER->id) {               // Page belongs to this user
-            return has_capability('moodle/my:manageblocks', $page->context);
+            && $page->context->contextlevel == CONTEXT_USER // Page belongs to a user
+            && $page->context->instanceid == $USER->id) { // Page belongs to this user
+            $capability = 'block/' . $this->name() . ':myaddinstance';
+            return $this->has_add_block_capability($page, $capability)
+                    && has_capability('moodle/my:manageblocks', $page->context);
         }
 
         return false;
+    }
+
+    /**
+     * Returns true if the user can add a block to a page.
+     *
+     * @param moodle_page $page
+     * @param string $capability the capability to check
+     * @return boolean true if user can add a block, false otherwise.
+     */
+    private function has_add_block_capability($page, $capability) {
+        // Check if the capability exists.
+        if (!get_capability_info($capability)) {
+            // Debug warning that the capability does not exist, but no more than once per page.
+            static $warned = array();
+            if (!isset($warned[$this->name()])) {
+                debugging('The block ' .$this->name() . ' does not define the standard capability ' .
+                        $capability , DEBUG_DEVELOPER);
+                $warned[$this->name()] = 1;
+            }
+            // If the capability does not exist, the block can always be added.
+            return true;
+        } else {
+            return has_capability($capability, $page->context);
+        }
     }
 
     static function get_extra_capabilities() {

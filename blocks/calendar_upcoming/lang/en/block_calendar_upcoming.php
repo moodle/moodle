@@ -23,4 +23,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['calendar_upcoming:addinstance'] = 'Add a new upcoming events block';
+$string['calendar_upcoming:myaddinstance'] = 'Add a new upcoming events block to the My Moodle page';
 $string['pluginname'] = 'Upcoming events';

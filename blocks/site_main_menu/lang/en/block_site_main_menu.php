@@ -24,4 +24,5 @@
  */
 
 $string['pluginname'] = 'Main menu';
-
+$string['site_main_menu:addinstance'] = 'Add a new main menu block';
+$string['site_main_menu:myaddinstance'] = 'Add a new main menu block to the My Moodle page';

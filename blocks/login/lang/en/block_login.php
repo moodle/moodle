@@ -23,4 +23,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['login:addinstance'] = 'Add a new login block';
+$string['login:myaddinstance'] = 'Add a new login block to the My Moodle page';
 $string['pluginname'] = 'Login';

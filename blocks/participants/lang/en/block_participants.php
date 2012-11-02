@@ -23,4 +23,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['participants:addinstance'] = 'Add a new people block';
+$string['participants:myaddinstance'] = 'Add a new people block to the My Moodle page';
 $string['pluginname'] = 'People';
