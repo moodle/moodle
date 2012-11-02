@@ -24,3 +24,5 @@
  */
 
 $string['pluginname'] = 'Recent activity';
+$string['recent_activity:addinstance'] = 'Add a new recent activity block';
+$string['recent_activity:myaddinstance'] = 'Add a new recent activity block to the My Moodle page';

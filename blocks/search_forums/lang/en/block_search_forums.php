@@ -25,3 +25,5 @@
 
 $string['advancedsearch'] = 'Advanced search';
 $string['pluginname'] = 'Search forums';
+$string['search_forums:addinstance'] = 'Add a new search forums block';
+$string['search_forums:myaddinstance'] = 'Add a new search forums block for the My Moodle page';

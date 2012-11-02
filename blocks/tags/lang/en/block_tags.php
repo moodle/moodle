@@ -70,5 +70,7 @@ $string['showcoursetags'] = 'Show course tags';
 $string['showcoursetagsdef'] = 'Display the course tagging features in the tags block, allowing students to tag courses.';
 $string['suggestedtagthisunit'] = 'Suggested tag to this course:';
 $string['tags'] = 'tags';
+$string['tags:addinstance'] = 'Add a new tags block';
+$string['tags:myaddinstance'] = 'Add a new tags block to the My Moodle page';
 $string['tagthisunit'] = 'Tag this course:';
 $string['tagunits'] = 'to tag your favourite courses';
