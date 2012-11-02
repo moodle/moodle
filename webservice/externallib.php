@@ -87,6 +87,7 @@ class core_webservice_external extends external_api {
             'firstname' => $USER->firstname,
             'lastname' => $USER->lastname,
             'fullname' => fullname($USER),
+            'lang' => current_language(),
             'userid' => $USER->id,
             'userpictureurl' => $profileimageurl->out(false)
         );
@@ -175,6 +176,7 @@ class core_webservice_external extends external_api {
                 'firstname'      => new external_value(PARAM_TEXT, 'first name'),
                 'lastname'       => new external_value(PARAM_TEXT, 'last name'),
                 'fullname'       => new external_value(PARAM_TEXT, 'user full name'),
+                'lang'           => new external_value(PARAM_LANG, 'user language'),
                 'userid'         => new external_value(PARAM_INT, 'user id'),
                 'siteurl'        => new external_value(PARAM_RAW, 'site url'),
                 'userpictureurl' => new external_value(PARAM_URL, 'the user profile picture.
