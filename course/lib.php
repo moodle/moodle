@@ -2939,8 +2939,10 @@ function move_section($course, $section, $move) {
 
     $sectiondest = $section + $move;
 
-    $course = course_get_format($course)->get_course();
-    if (isset($course->numsections) && $sectiondest > $course->numsections or $sectiondest < 1) {
+    // compartibility with course formats using field 'numsections'
+    $courseformatoptions = course_get_format($course)->get_format_options();
+    if (array_key_exists('numsections', $courseformatoptions) &&
+            $sectiondest > $courseformatoptions['numsections'] or $sectiondest < 1) {
         return false;
     }
 
@@ -2966,8 +2968,10 @@ function move_section_to($course, $section, $destination) {
         return true;
     }
 
-    $course = course_get_format($course)->get_course();
-    if ((isset($course->numsections) && ($destination > $course->numsections)) || ($destination < 1)) {
+    // compartibility with course formats using field 'numsections'
+    $courseformatoptions = course_get_format($course)->get_format_options();
+    if ((array_key_exists('numsections', $courseformatoptions) &&
+            ($destination > $courseformatoptions['numsections'])) || ($destination < 1)) {
         return false;
     }
 

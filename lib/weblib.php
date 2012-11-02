@@ -2187,7 +2187,7 @@ function navmenulist($course, $sections, $modinfo, $strsection, $strjumpto, $wid
     $menu = array();
     $doneheading = false;
 
-    $course = course_get_format($course)->get_course();
+    $courseformatoptions = course_get_format($course)->get_format_options();
     $coursecontext = context_course::instance($course->id);
 
     $menu[] = '<ul class="navmenulist"><li class="jumpto section"><span>'.$strjumpto.'</span><ul>';
@@ -2197,7 +2197,8 @@ function navmenulist($course, $sections, $modinfo, $strsection, $strjumpto, $wid
             continue;
         }
 
-        if (isset($course->numsections) && $mod->sectionnum > $course->numsections) {   /// Don't show excess hidden sections
+        // For course formats using 'numsections' do not show extra sections
+        if (isset($courseformatoptions['numsections']) && $mod->sectionnum > $courseformatoptions['numsections']) {
             break;
         }
 
@@ -2208,8 +2209,9 @@ function navmenulist($course, $sections, $modinfo, $strsection, $strjumpto, $wid
         if ($mod->sectionnum >= 0 and $section != $mod->sectionnum) {
             $thissection = $sections[$mod->sectionnum];
 
-            if ($thissection->visible or (isset($course->hiddensections) && !$course->hiddensections) or
-                      has_capability('moodle/course:viewhiddensections', $coursecontext)) {
+            if ($thissection->visible or
+                    (isset($courseformatoptions['hiddensections']) and !$courseformatoptions['hiddensections']) or
+                    has_capability('moodle/course:viewhiddensections', $coursecontext)) {
                 $thissection->summary = strip_tags(format_string($thissection->summary,true));
                 if (!$doneheading) {
                     $menu[] = '</ul></li>';

@@ -98,7 +98,7 @@
     echo $OUTPUT->header();
 
 /// Print Section or custom info
-    $site = course_get_format($SITE)->get_course();
+    $siteformatoptions = course_get_format($SITE)->get_format_options();
     $modinfo = get_fast_modinfo($SITE);
     $modnames = get_module_types_names();
     $modnamesplural = get_module_types_names(true);
@@ -108,7 +108,7 @@
     if (!empty($CFG->customfrontpageinclude)) {
         include($CFG->customfrontpageinclude);
 
-    } else if ($site->numsections > 0) {
+    } else if ($siteformatoptions['numsections'] > 0) {
         if ($editing) {
             // make sure section with number 1 exists
             course_create_sections_if_missing($SITE, 1);
