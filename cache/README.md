@@ -9,6 +9,7 @@ A definition:
      $definitions = array(
         'string' => array(                            // Required, unique to the component
             'mode' => cache_store::MODE_APPLICATION,  // Required
+            'simplekeys' => false,                    // Optional
             'simpledata' => false,                    // Optional
             'requireidentifiers' => array(            // Optional
                 'lang'
@@ -105,6 +106,7 @@ The following settings are required for a definition:
 * mode - Application, session or request.
 
 The following optional settings can also be defined:
+* simplekeys - Set to true if items will always and only have simple keys. Simple keys may contain a-zA-Z0-9_. If set to true we use the keys as they are without hashing them. Good for performance and possible because we know the keys are safe.
 * simpledata - Set to true if you know that you will only be storing scalar values or arrays of scalar values. Avoids costly investigation of data types.
 * requireidentifiers - Any identifiers the definition requires. Must be provided when creating the loader.
 * requiredataguarantee - If set to true then only stores that support data guarantee will be used.

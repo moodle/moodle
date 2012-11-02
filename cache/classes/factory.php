@@ -164,8 +164,6 @@ class cache_factory {
         $definition->set_identifiers($identifiers);
         $cache = $this->create_cache($definition, $identifiers);
         if ($definition->should_be_persistent()) {
-            $cache->persist = true;
-            $cache->persistcache = array();
             $this->cachesfromparams[$key] = $cache;
         }
         return $cache;
