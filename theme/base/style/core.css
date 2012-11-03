@@ -1028,3 +1028,6 @@ html[dir=rtl] #page-header {float: right;}
 html[dir=rtl] .formrow label.formlabel { float:right; }
 
 html[dir=rtl] .configphp {direction:ltr;text-align:left;}
+
+table.flexible .r0, table.generaltable .r0 {background-color: #F0F0F0;}
+table.flexible .r1, table.generaltable .r1 {background-color: #FAFAFA;}
