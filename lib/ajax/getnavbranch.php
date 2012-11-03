@@ -36,7 +36,7 @@ try {
     // Start buffer capture so that we can `remove` any errors
     ob_start();
     // Require id This is the key for whatever branch we want to get
-    $branchid = required_param('id', PARAM_INT);
+    $branchid = required_param('id', PARAM_ALPHANUM);
     // This identifies the type of the branch we want to get
     $branchtype = required_param('type', PARAM_INT);
     // This identifies the block instance requesting AJAX extension
@@ -87,8 +87,14 @@ try {
     }
     $converter = new navigation_json();
 
-    // Find the actuall branch we are looking for
-    $branch = $navigation->find($branchid, $branchtype);
+    // Find the actual branch we are looking for
+    if ($branchtype != 0) {
+        $branch = $navigation->find($branchid, $branchtype);
+    } else if ($branchid === 'mycourses' || $branchid === 'courses') {
+        $branch = $navigation->find($branchid, navigation_node::TYPE_ROOTNODE);
+    } else {
+        throw new coding_exception('Invalid branch type/id passed to AJAX call to load branches.');
+    }
 
     // Remove links to categories if required.
     if (!$linkcategories) {

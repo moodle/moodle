@@ -425,7 +425,7 @@ BRANCH.prototype = {
                         this.addChild(object.children[i]);
                     }
                 }
-                if (this.get('type') == 10 && coursecount >= M.block_navigation.courselimit) {
+                if ((this.get('type') == 10 || this.get('type') == 0) && coursecount >= M.block_navigation.courselimit) {
                     this.addViewAllCoursesChild(this);
                 }
                 this.get('tree').toggleExpansion({target:this.node});
@@ -468,10 +468,20 @@ BRANCH.prototype = {
      * Add a link to view all courses in a category
      */
     addViewAllCoursesChild: function(branch) {
+        var url = null;
+        if (branch.get('type') == 0 ) {
+            if (branch.get('key') == 'mycourses') {
+                url = M.cfg.wwwroot+'/my';
+            } else {
+                url = M.cfg.wwwroot+'/course/index.php';
+            }
+        } else {
+            url = M.cfg.wwwroot+'/course/category.php?id='+branch.get('key');
+        }
         branch.addChild({
             name : M.str.moodle.viewallcourses,
             title : M.str.moodle.viewallcourses,
-            link : M.cfg.wwwroot+'/course/category.php?id='+branch.get('key'),
+            link : url,
             haschildren : false,
             icon : {'pix':"i/navigationitem",'component':'moodle'}
         });
