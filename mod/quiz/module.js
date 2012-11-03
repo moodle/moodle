@@ -101,6 +101,7 @@ M.mod_quiz.timer = {
             if (form.one('input[name=finishattempt]')) {
                 form.one('input[name=finishattempt]').set('value', 0);
             }
+            M.core_formchangechecker.set_form_submitted();
             form.submit();
             return;
         }
