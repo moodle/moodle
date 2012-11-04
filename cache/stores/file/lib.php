@@ -465,9 +465,6 @@ class cachestore_file implements cache_store, cache_is_key_aware {
     public static function config_get_configuration_array($data) {
         $config = array();
 
-        if (isset($data->lock)) {
-            $config['lock'] = $data->lock;
-        }
         if (isset($data->path)) {
             $config['path'] = $data->path;
         }
