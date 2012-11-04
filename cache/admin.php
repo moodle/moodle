@@ -60,7 +60,7 @@ if (!empty($action) && confirm_sesskey()) {
             $mform = cache_administration_helper::get_add_store_form($plugin);
             $title = get_string('addstore', 'cache', $plugins[$plugin]['name']);
             if ($mform->is_cancelled()) {
-                rediect($PAGE->url);
+                redirect($PAGE->url);
             } else if ($data = $mform->get_data()) {
                 $config = cache_administration_helper::get_store_configuration_from_data($data);
                 $writer = cache_config_writer::instance();
@@ -80,7 +80,7 @@ if (!empty($action) && confirm_sesskey()) {
             $mform = cache_administration_helper::get_edit_store_form($plugin, $store);
             $title = get_string('addstore', 'cache', $plugins[$plugin]['name']);
             if ($mform->is_cancelled()) {
-                rediect($PAGE->url);
+                redirect($PAGE->url);
             } else if ($data = $mform->get_data()) {
                 $config = cache_administration_helper::get_store_configuration_from_data($data);
                 $writer = cache_config_writer::instance();
