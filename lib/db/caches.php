@@ -31,6 +31,7 @@ $definitions = array(
     // Used to store processed lang files.
     'string' => array(
         'mode' => cache_store::MODE_APPLICATION,
+        'simpledata' => true,
         'persistent' => true,
         'persistentmaxsize' => 3
     ),
@@ -48,14 +49,16 @@ $definitions = array(
     // Used to store data from the config + config_plugins table in the database.
     'config' => array(
         'mode' => cache_store::MODE_APPLICATION,
-        'persistent' => true
+        'persistent' => true,
+        'simpledata' => true
     ),
 
     // Event invalidation cache.
     'eventinvalidation' => array(
         'mode' => cache_store::MODE_APPLICATION,
         'persistent' => true,
-        'requiredataguarantee' => true
+        'requiredataguarantee' => true,
+        'simpledata' => true,
     ),
 
     // Cache for question definitions. This is used by the question_bank class.

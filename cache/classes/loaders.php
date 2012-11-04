@@ -498,6 +498,9 @@ class cache implements cache_loader {
      * @param stdClass|array $data
      */
     protected function unref($data) {
+        if ($this->definition->uses_simple_data()) {
+            return $data;
+        }
         // Check if it requires serialisation in order to produce a reference free copy.
         if ($this->requires_serialisation($data)) {
             // Damn, its going to have to be serialise.
