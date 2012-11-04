@@ -532,7 +532,10 @@ class cache_definition {
     }
 
     /**
-     * Returns the PARAM type that best describes the expected keys.
+     * Returns true if this definition is using simple keys.
+     *
+     * Simple keys contain only a-zA-Z0-9_
+     *
      * @return bool
      */
     public function uses_simple_keys() {

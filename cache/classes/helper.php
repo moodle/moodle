@@ -453,7 +453,8 @@ class cache_helper {
      */
     public static function hash_key($key, cache_definition $definition) {
         if ($definition->uses_simple_keys()) {
-            return $definition->generate_single_key_prefix() . '-' . (string)$key;
+            // We put the key first so that we can be sure the start of the key changes.
+            return (string)$key . '-' . $definition->generate_single_key_prefix();
         }
         $key = $definition->generate_single_key_prefix() . '-' . $key;
         return sha1($key);

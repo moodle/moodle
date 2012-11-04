@@ -132,17 +132,17 @@ class cachestore_file implements cache_store, cache_is_key_aware {
         $this->path = $path;
         // Check if we should prescan the directory.
         if (array_key_exists('prescan', $configuration)) {
-            $this->prescan =  (bool)$configuration['prescan'];
+            $this->prescan = (bool)$configuration['prescan'];
         } else {
             // Default is no, we should not prescan.
-            $this->prescan =  false;
+            $this->prescan = false;
         }
         // Check if we should be storing in a single directory.
         if (array_key_exists('singledirectory', $configuration)) {
-            $this->singledirectory =  (bool)$configuration['singledirectory'];
+            $this->singledirectory = (bool)$configuration['singledirectory'];
         } else {
             // Default: No, we will use multiple directories.
-            $this->singledirectory =  false;
+            $this->singledirectory = false;
         }
     }
 
@@ -268,7 +268,7 @@ class cachestore_file implements cache_store, cache_is_key_aware {
         if ($this->singledirectory) {
             return $this->path . '/*.cache';
         } else {
-            return $this->path . '/*/*/*.cache';
+            return $this->path . '/*/*.cache';
         }
     }
 
@@ -284,10 +284,9 @@ class cachestore_file implements cache_store, cache_is_key_aware {
             // Its a single directory, easy, just the store instances path + the file name.
             return $this->path . '/' . $key . '.cache';
         } else {
-            // We are using multiple subdirectories. We want two levels.
-            $subdir1 = substr($key, 0, 2);
-            $subdir2 = substr($key, 2, 2);
-            $dir = $this->path . '/' . $subdir1 .'/'. $subdir2;
+            // We are using a single subdirectory to achieve 1 level.
+            $subdir = substr($key, 0, 3);
+            $dir = $this->path . '/' . $subdir;
             if ($create) {
                 // Create the directory. This function does it recursivily!
                 make_writable_directory($dir);
