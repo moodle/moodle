@@ -31,4 +31,7 @@ $string['finished'] = 'Process finished';
 $string['nobehatpath'] = 'You must specify the path to moodle-acceptance-tests.';
 $string['nostepsdefinitions'] = 'There aren\'t steps definitions matching this filter';
 $string['pluginname'] = 'Acceptance testing';
+$string['stepsdefinitions'] = 'Steps definitions which contains';
+$string['stepsdefinitionsemptyfilter'] = 'all steps definitions if empty';
+$string['viewsteps'] = 'View available steps definitions';
 $string['wrongbehatsetup'] = 'Something is wrong with the setup, check moodle-acceptance-tests runs well on CLI and check your \'behatpath\' setting value is pointing to the right directory';

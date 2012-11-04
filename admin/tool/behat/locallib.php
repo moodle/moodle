@@ -63,10 +63,9 @@ class tool_behat {
     public static function stepsdefinitions($filter = false) {
         global $CFG;
 
-        if (!CLI_SCRIPT) {
-            confirm_sesskey();
-        }
         self::check_behat_setup();
+
+        self::update_config_file();
 
         // Priority to the one specified as argument.
         if (!$filter) {
@@ -79,9 +78,14 @@ class tool_behat {
             $filteroption = ' -di';
         }
 
+        $color = '';
+        if (CLI_SCRIPT) {
+            $color = '--ansi ';
+        }
+
         $currentcwd = getcwd();
         chdir($CFG->behatpath);
-        exec('bin/behat --ansi ' . $filteroption, $steps, $code);
+        exec('bin/behat ' . $color . ' --config="' . self::get_behat_config_filepath() . '" ' . $filteroption, $steps, $code);
         chdir($currentcwd);
 
         // Outputing steps.
@@ -124,10 +128,6 @@ class tool_behat {
     public static function switchenvironment($testenvironment = false) {
         global $CFG;
 
-        if (!CLI_SCRIPT) {
-            confirm_sesskey();
-        }
-
         // Priority to the one specified as argument.
         if (!$testenvironment) {
             $testenvironment = optional_param('testenvironment', 'enable', PARAM_ALPHA);
@@ -137,10 +137,6 @@ class tool_behat {
             self::enable_test_environment();
         } else if ($testenvironment == 'disable') {
             self::disable_test_environment();
-        }
-
-        if (!CLI_SCRIPT) {
-            redirect(get_login_url());
         }
     }
 
@@ -152,9 +148,6 @@ class tool_behat {
     public static function runtests($tags = false, $extra = false) {
         global $CFG;
 
-        if (!CLI_SCRIPT) {
-            confirm_sesskey();
-        }
         self::check_behat_setup();
 
         self::update_config_file();
@@ -165,16 +158,13 @@ class tool_behat {
         if (!$tags) {
             $tags = optional_param('tags', false, PARAM_ALPHANUMEXT);
         }
-        // $extra only passed as CLI option (to simplify web runner usage).
 
         $tagsoption = '';
         if ($tags) {
             $tagsoption = ' --tags ' . $tags;
         }
 
-        if (!$extra && !CLI_SCRIPT) {
-            $extra = ' --format html';
-        } else if(!$extra && CLI_SCRIPT) {
+        if (!$extra) {
             $extra = '';
         }
 
@@ -184,7 +174,7 @@ class tool_behat {
 
         chdir($CFG->behatpath);
         ob_start();
-        passthru('bin/behat --ansi ' . $tagsoption . ' ' .$extra, $code);
+        passthru('bin/behat --ansi --config="' . self::get_behat_config_filepath() .'" ' . $tagsoption . ' ' .$extra, $code);
         $output = ob_get_contents();
         ob_end_clean();
 
@@ -194,9 +184,6 @@ class tool_behat {
 
         // Output.
         echo self::get_header();
-        if (!CLI_SCRIPT) {
-            echo self::get_run_tests_form($tags);
-        }
         echo $output;
 
         // Dirty hack to avoid behat bad HTML structure when test execution throws an exception and there are skipped steps.
@@ -212,36 +199,64 @@ class tool_behat {
      * @throws file_exception
      */
     private static function update_config_file() {
+        global $CFG;
 
-        $contents = '';
+        $behatpath = rtrim($CFG->behatpath, '/');
+
+        // Basic behat dependencies.
+        $contents = 'default:
+  paths:
+    features: ' . $behatpath . '/features
+    bootstrap: ' . $behatpath . '/features/bootstrap
+  extensions:
+    Behat\MinkExtension\Extension:
+      base_url: ' . $CFG->wwwroot . '
+      goutte: ~
+      selenium2: ~
+    Sanpi\Behatch\Extension:
+      contexts:
+        browser: ~
+        system: ~
+        json: ~
+        table: ~
+        rest: ~
+    ' . $behatpath . '/vendor/moodlehq/behat-extension/init.php:
+';
 
         // Gets all the components with features.
         $components = tests_finder::get_components_with_tests('features');
         if ($components) {
-            $featurespaths[] = '';
+            $featurespaths = array('');
             foreach ($components as $componentname => $path) {
                 $path = self::clean_path($path) . self::$behat_tests_path;
                 if (empty($featurespaths[$path]) && file_exists($path)) {
                     $featurespaths[$path] = $path;
                 }
             }
-            $contents = 'features:' . implode(PHP_EOL . '  - ', $featurespaths) . PHP_EOL;
+            $contents .= '      features:' . implode(PHP_EOL . '        - ', $featurespaths) . PHP_EOL;
         }
 
         // Gets all the components with steps definitions.
         $components = tests_finder::get_components_with_tests('stepsdefinitions');
         if ($components) {
-            $contents .= 'steps_definitions:' . PHP_EOL;
-            foreach ($components as $componentname => $filepath) {
-                $filepath = self::clean_path($path) . self::$behat_tests_path . '/behat_' . $componentname . '.php';
-                $contents .= '  ' . $componentname . ': ' . $filepath . PHP_EOL;
+            $stepsdefinitions = array('');
+            foreach ($components as $componentname => $componentpath) {
+                $componentpath = self::clean_path($componentpath);
+                $diriterator = new DirectoryIterator($componentpath . self::$behat_tests_path);
+                $regite = new RegexIterator($diriterator, '|behat_.*\.php$|');
+
+                // All behat_*.php inside self::$behat_tests_path are added as steps definitions files
+                foreach ($regite as $file) {
+                    $key = $file->getBasename('.php');
+                    $stepsdefinitions[$key] = $key . ': ' . $file->getPathname();
+                }
             }
+            $contents .= '      steps_definitions:' . implode(PHP_EOL . '        ', $stepsdefinitions) . PHP_EOL;
         }
 
         // Stores the file.
-        $fullfilepath = self::get_behat_dir() . '/config.yml';
-        if (!file_put_contents($fullfilepath, $contents)) {
-            throw new file_exception('cannotcreatefile', $fullfilepath);
+        if (!file_put_contents(self::get_behat_config_filepath(), $contents)) {
+            throw new file_exception('cannotcreatefile', self::get_behat_config_filepath());
         }
 
     }
@@ -433,6 +448,14 @@ class tool_behat {
     }
 
     /**
+     * Returns the behat config file path
+     * @return string
+     */
+    private static function get_behat_config_filepath() {
+        return self::get_behat_dir() . '/behat.yml';
+    }
+
+    /**
      * Returns header output
      * @return string
      */
@@ -524,10 +547,10 @@ class tool_behat {
         $html = $OUTPUT->box_start();
         $html .= '<form method="get" action="index.php">';
         $html .= '<fieldset class="invisiblefieldset">';
-        $html .= '<label for="id_filter">Steps definitions which contains</label> ';
-        $html .= '<input type="text" id="id_filter" value="' . $filter . '" name="filter"/> (all steps definitions if empty)';
+        $html .= '<label for="id_filter">' . get_string('stepsdefinitions', 'tool_behat') . '</label> ';
+        $html .= '<input type="text" id="id_filter" value="' . $filter . '" name="filter"/> (' . get_string('stepsdefinitionsemptyfilter', 'tool_behat') . ')';
         $html .= '<p></p>';
-        $html .= '<input type="submit" value="View available steps definitions" />';
+        $html .= '<input type="submit" value="' . get_string('viewsteps', 'tool_behat') . '" />';
         $html .= '<input type="hidden" name="action" value="stepsdefinitions" />';
         $html .= '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
         $html .= '</fieldset>';
