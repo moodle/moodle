@@ -317,8 +317,8 @@ abstract class question_bank_column_base {
     /**
      * Output the closing column tag
      *
-     * @param type $question
-     * @param type $rowclasses
+     * @param object $question
+     * @param string $rowclasses
      */
     protected function display_end($question, $rowclasses) {
         $tag = 'td';
