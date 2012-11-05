@@ -191,6 +191,7 @@ $string['saving'] = 'Saving';
 $string['automatedbackup'] = 'Automated backups';
 $string['search'] = 'Search';
 $string['searching'] = 'Search in';
+$string['searchrepo'] = 'Search repository';
 $string['select'] = 'Select';
 $string['settings'] = 'Settings';
 $string['setupdefaultplugins'] = 'Setting up default repository plugins';

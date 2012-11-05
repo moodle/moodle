@@ -219,7 +219,9 @@ class repository_alfresco extends repository {
 
     public function print_search() {
         $str = parent::print_search();
-        $str .= '<label>Space: </label><br /><select name="space">';
+        $str .= html_writer::label(get_string('space', 'repository_alfresco'), 'space');
+        $str .= html_writer::empty_tag('br');
+        $str .= '<select id="space" name="space">';
         foreach ($this->user_session->stores as $v) {
             $str .= '<option ';
             if ($v->__toString() === 'workspace://SpacesStore') {
