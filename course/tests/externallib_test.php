@@ -346,9 +346,9 @@ class core_course_external_testcase extends externallib_advanced_testcase {
         $course3options = array('numsections' => 8,
             'hiddensections' => 1,
             'coursedisplay' => 1);
-        $course3['formatoptions'] = array();
+        $course3['courseformatoptions'] = array();
         foreach ($course3options as $key => $value) {
-            $course3['formatoptions'][] = array('optionname' => $key, 'optionvalue' => $value);
+            $course3['courseformatoptions'][] = array('name' => $key, 'value' => $value);
         }
         $courses = array($course1, $course2);
 
@@ -522,10 +522,10 @@ class core_course_external_testcase extends externallib_advanced_testcase {
             $this->assertEquals($course['enablecompletion'], $dbcourse->enablecompletion);
             $this->assertEquals($course['completionstartonenrol'], $dbcourse->completionstartonenrol);
             if ($dbcourse->format === 'topics') {
-                $this->assertEquals($course['formatoptions'], array(
-                    array('optionname' => 'numsections', 'optionvalue' => $dbcourse->numsections),
-                    array('optionname' => 'hiddensections', 'optionvalue' => $dbcourse->hiddensections),
-                    array('optionname' => 'coursedisplay', 'optionvalue' => $dbcourse->coursedisplay),
+                $this->assertEquals($course['courseformatoptions'], array(
+                    array('name' => 'numsections', 'value' => $dbcourse->numsections),
+                    array('name' => 'hiddensections', 'value' => $dbcourse->hiddensections),
+                    array('name' => 'coursedisplay', 'value' => $dbcourse->coursedisplay),
                 ));
             }
         }

@@ -346,11 +346,11 @@ class core_course_external extends external_api {
                 $courseinfo['enablecompletion'] = $course->enablecompletion;
                 $courseinfo['completionstartonenrol'] = $course->completionstartonenrol;
                 $courseinfo['completionnotify'] = $course->completionnotify;
-                $courseinfo['formatoptions'] = array();
+                $courseinfo['courseformatoptions'] = array();
                 foreach ($courseformatoptions as $key => $value) {
-                    $courseinfo['formatoptions'][] = array(
-                        'optionname' => $key,
-                        'optionvalue' => $value
+                    $courseinfo['courseformatoptions'][] = array(
+                        'name' => $key,
+                        'value' => $value
                     );
                 }
             }
@@ -392,7 +392,7 @@ class core_course_external extends external_api {
                             'startdate' => new external_value(PARAM_INT,
                                     'timestamp when the course start'),
                             'numsections' => new external_value(PARAM_INT,
-                                    '(deprecated, use formatsettings) number of weeks/topics',
+                                    '(deprecated, use courseformatoptions) number of weeks/topics',
                                     VALUE_OPTIONAL),
                             'maxbytes' => new external_value(PARAM_INT,
                                     'largest size of file that can be uploaded into the course',
@@ -402,7 +402,7 @@ class core_course_external extends external_api {
                             'visible' => new external_value(PARAM_INT,
                                     '1: available to student, 0:not available', VALUE_OPTIONAL),
                             'hiddensections' => new external_value(PARAM_INT,
-                                    '(deprecated, use formatsettings) How the hidden sections in the course are displayed to students',
+                                    '(deprecated, use courseformatoptions) How the hidden sections in the course are displayed to students',
                                     VALUE_OPTIONAL),
                             'groupmode' => new external_value(PARAM_INT, 'no group, separate, visible',
                                     VALUE_OPTIONAL),
@@ -428,10 +428,10 @@ class core_course_external extends external_api {
                                     'forced course language', VALUE_OPTIONAL),
                             'forcetheme' => new external_value(PARAM_PLUGIN,
                                     'name of the force theme', VALUE_OPTIONAL),
-                            'formatoptions' => new external_multiple_structure(
+                            'courseformatoptions' => new external_multiple_structure(
                                 new external_single_structure(
-                                    array('optionname' => new external_value(PARAM_ALPHANUMEXT, 'course format option name'),
-                                        'optionvalue' => new external_value(PARAM_RAW, 'course format option value')
+                                    array('name' => new external_value(PARAM_ALPHANUMEXT, 'course format option name'),
+                                        'value' => new external_value(PARAM_RAW, 'course format option value')
                                 )),
                                     'additional options for particular course format', VALUE_OPTIONAL
                              ),
@@ -471,7 +471,7 @@ class core_course_external extends external_api {
                             'startdate' => new external_value(PARAM_INT,
                                     'timestamp when the course start', VALUE_OPTIONAL),
                             'numsections' => new external_value(PARAM_INT,
-                                    '(deprecated, use formatsettings) number of weeks/topics',
+                                    '(deprecated, use courseformatoptions) number of weeks/topics',
                                     VALUE_OPTIONAL),
                             'maxbytes' => new external_value(PARAM_INT,
                                     'largest size of file that can be uploaded into the course',
@@ -482,7 +482,7 @@ class core_course_external extends external_api {
                             'visible' => new external_value(PARAM_INT,
                                     '1: available to student, 0:not available', VALUE_OPTIONAL),
                             'hiddensections' => new external_value(PARAM_INT,
-                                    '(deprecated, use formatsettings) How the hidden sections in the course are displayed to students',
+                                    '(deprecated, use courseformatoptions) How the hidden sections in the course are displayed to students',
                                     VALUE_OPTIONAL),
                             'groupmode' => new external_value(PARAM_INT, 'no group, separate, visible',
                                     VALUE_DEFAULT, $courseconfig->groupmode),
@@ -504,10 +504,10 @@ class core_course_external extends external_api {
                                     'forced course language', VALUE_OPTIONAL),
                             'forcetheme' => new external_value(PARAM_PLUGIN,
                                     'name of the force theme', VALUE_OPTIONAL),
-                            'formatoptions' => new external_multiple_structure(
+                            'courseformatoptions' => new external_multiple_structure(
                                 new external_single_structure(
-                                    array('optionname' => new external_value(PARAM_ALPHANUMEXT, 'course format option name'),
-                                        'optionvalue' => new external_value(PARAM_RAW, 'course format option value')
+                                    array('name' => new external_value(PARAM_ALPHANUMEXT, 'course format option name'),
+                                        'value' => new external_value(PARAM_RAW, 'course format option value')
                                 )),
                                     'additional options for particular course format', VALUE_OPTIONAL),
                         )
@@ -592,9 +592,9 @@ class core_course_external extends external_api {
             // Summary format.
             $course['summaryformat'] = external_validate_format($course['summaryformat']);
 
-            if (!empty($course['formatoptions'])) {
-                foreach ($course['formatoptions'] as $option) {
-                    $course[$option['optionname']] = $option['optionvalue'];
+            if (!empty($course['courseformatoptions'])) {
+                foreach ($course['courseformatoptions'] as $option) {
+                    $course[$option['name']] = $option['value'];
                 }
             }
 
