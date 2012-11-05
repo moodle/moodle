@@ -1126,7 +1126,7 @@ function disable_output_buffering() {
  */
 function redirect_if_major_upgrade_required() {
     global $CFG;
-    $lastmajordbchanges = 2012051700;
+    $lastmajordbchanges = 2012110201;
     if (empty($CFG->version) or (int)$CFG->version < $lastmajordbchanges or
             during_initial_install() or !empty($CFG->adminsetuppending)) {
         try {
