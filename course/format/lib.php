@@ -355,7 +355,7 @@ abstract class format_base {
     public function get_view_url($section, $options = array()) {
         $course = $this->get_course();
         $url = new moodle_url('/course/view.php', array('id' => $course->id));
-        
+
         if (array_key_exists('sr', $options)) {
             $sectionno = $options['sr'];
         } else if (is_object($section)) {
