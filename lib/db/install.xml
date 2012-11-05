@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20121012" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20121102" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -77,21 +77,19 @@
         <FIELD NAME="idnumber" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" PREVIOUS="shortname" NEXT="summary"/>
         <FIELD NAME="summary" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="idnumber" NEXT="summaryformat"/>
         <FIELD NAME="summaryformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="summary" NEXT="format"/>
-        <FIELD NAME="format" TYPE="char" LENGTH="10" NOTNULL="true" DEFAULT="topics" SEQUENCE="false" PREVIOUS="summaryformat" NEXT="showgrades"/>
+        <FIELD NAME="format" TYPE="char" LENGTH="21" NOTNULL="true" DEFAULT="topics" SEQUENCE="false" PREVIOUS="summaryformat" NEXT="showgrades"/>
         <FIELD NAME="showgrades" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="format" NEXT="sectioncache"/>
         <FIELD NAME="sectioncache" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="showgrades" NEXT="modinfo"/>
         <FIELD NAME="modinfo" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="sectioncache" NEXT="newsitems"/>
         <FIELD NAME="newsitems" TYPE="int" LENGTH="5" NOTNULL="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="modinfo" NEXT="startdate"/>
-        <FIELD NAME="startdate" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="newsitems" NEXT="numsections"/>
-        <FIELD NAME="numsections" TYPE="int" LENGTH="5" NOTNULL="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="startdate" NEXT="marker"/>
-        <FIELD NAME="marker" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="numsections" NEXT="maxbytes"/>
+        <FIELD NAME="startdate" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="newsitems" NEXT="marker"/>
+        <FIELD NAME="marker" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="startdate" NEXT="maxbytes"/>
         <FIELD NAME="maxbytes" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="marker" NEXT="legacyfiles"/>
         <FIELD NAME="legacyfiles" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="course files are not necessary any more: 0 no legacy files, 1 legacy files disabled, 2 legacy files enabled" PREVIOUS="maxbytes" NEXT="showreports"/>
         <FIELD NAME="showreports" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="legacyfiles" NEXT="visible"/>
         <FIELD NAME="visible" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="showreports" NEXT="visibleold"/>
-        <FIELD NAME="visibleold" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="the state of visible field when hiding parent category, this helps us to recover hidden states when unhiding the parent category later" PREVIOUS="visible" NEXT="hiddensections"/>
-        <FIELD NAME="hiddensections" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="visibleold" NEXT="groupmode"/>
-        <FIELD NAME="groupmode" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="hiddensections" NEXT="groupmodeforce"/>
+        <FIELD NAME="visibleold" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="the state of visible field when hiding parent category, this helps us to recover hidden states when unhiding the parent category later" PREVIOUS="visible" NEXT="groupmode"/>
+        <FIELD NAME="groupmode" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="visibleold" NEXT="groupmodeforce"/>
         <FIELD NAME="groupmodeforce" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="groupmode" NEXT="defaultgroupingid"/>
         <FIELD NAME="defaultgroupingid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="default grouping used in course modules, does not have key intentionally" PREVIOUS="groupmodeforce" NEXT="lang"/>
         <FIELD NAME="lang" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" PREVIOUS="defaultgroupingid" NEXT="theme"/>
@@ -101,8 +99,7 @@
         <FIELD NAME="requested" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timemodified" NEXT="enablecompletion"/>
         <FIELD NAME="enablecompletion" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="1 = allow use of 'completion' progress-tracking on this course. 0 = disable completion tracking on this course." PREVIOUS="requested" NEXT="completionstartonenrol"/>
         <FIELD NAME="completionstartonenrol" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="1 = allow use of 'activty completion' progress-tracking on this course. 0 = disable activity completion tracking on this course." PREVIOUS="enablecompletion" NEXT="completionnotify"/>
-        <FIELD NAME="completionnotify" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Notify users when they complete this course" PREVIOUS="completionstartonenrol" NEXT="coursedisplay"/>
-        <FIELD NAME="coursedisplay" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="How is the course displayed" PREVIOUS="completionnotify"/>
+        <FIELD NAME="completionnotify" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Notify users when they complete this course" PREVIOUS="completionstartonenrol"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -420,7 +417,7 @@
         <KEY NAME="coursesectionid" TYPE="foreign" FIELDS="coursesectionid" REFTABLE="course_sections" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="course_request" COMMENT="course requests" PREVIOUS="course_sections_avail_fields" NEXT="filter_active">
+    <TABLE NAME="course_request" COMMENT="course requests" PREVIOUS="course_sections_avail_fields" NEXT="course_format_options">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="fullname"/>
         <FIELD NAME="fullname" TYPE="char" LENGTH="254" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="shortname"/>
@@ -439,7 +436,24 @@
         <INDEX NAME="shortname" UNIQUE="false" FIELDS="shortname"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="filter_active" COMMENT="Stores information about which filters are active in which contexts. Also the filter sort order. See get_active_filters in lib/filterlib.php for how this data is used." PREVIOUS="course_request" NEXT="filter_config">
+    <TABLE NAME="course_format_options" COMMENT="Stores format-specific options for the course or course section" PREVIOUS="course_request" NEXT="filter_active">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="courseid"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Id of the course" PREVIOUS="id" NEXT="format"/>
+        <FIELD NAME="format" TYPE="char" LENGTH="21" NOTNULL="true" SEQUENCE="false" COMMENT="Format this option is for" PREVIOUS="courseid" NEXT="sectionid"/>
+        <FIELD NAME="sectionid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Null if this is a course option, otherwise id of the section this option is for" PREVIOUS="format" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" COMMENT="Name of the format option" PREVIOUS="sectionid" NEXT="value"/>
+        <FIELD NAME="value" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Value of the format option" PREVIOUS="name"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="courseid"/>
+        <KEY NAME="courseid" TYPE="foreign" FIELDS="courseid" REFTABLE="course" REFFIELDS="id" PREVIOUS="primary"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="formatoption" UNIQUE="true" FIELDS="courseid, format, sectionid, name"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="filter_active" COMMENT="Stores information about which filters are active in which contexts. Also the filter sort order. See get_active_filters in lib/filterlib.php for how this data is used." PREVIOUS="course_format_options" NEXT="filter_config">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="filter"/>
         <FIELD NAME="filter" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="The filter internal name, like 'filter/tex' or 'mod/glossary'." PREVIOUS="id" NEXT="contextid"/>

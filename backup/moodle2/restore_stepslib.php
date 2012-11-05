@@ -1100,6 +1100,7 @@ class restore_section_structure_step extends restore_structure_step {
             $paths[] = new restore_path_element('availability', '/section/availability');
             $paths[] = new restore_path_element('availability_field', '/section/availability_field');
         }
+        $paths[] = new restore_path_element('course_format_options', '/section/course_format_options');
 
         // Apply for 'format' plugins optional paths at section level
         $this->add_plugin_structure('format', $section);
@@ -1231,6 +1232,17 @@ class restore_section_structure_step extends restore_structure_step {
             $availfield->value = $data->value;
             $DB->insert_record('course_sections_avail_fields', $availfield);
         }
+    }
+
+    public function process_course_format_options($data) {
+        global $DB;
+        $data = (object)$data;
+        $oldid = $data->id;
+        unset($data->id);
+        $data->sectionid = $this->task->get_sectionid();
+        $data->courseid = $this->get_courseid();
+        $newid = $DB->insert_record('course_format_options', $data);
+        $this->set_mapping('course_format_options', $oldid, $newid);
     }
 
     protected function after_execute() {
@@ -1381,6 +1393,8 @@ class restore_course_structure_step extends restore_structure_step {
 
         // Course record ready, update it
         $DB->update_record('course', $data);
+
+        course_get_format($data)->update_course_format_options($data);
 
         // Role name aliases
         restore_dbops::set_course_role_names($this->get_restoreid(), $this->get_courseid());

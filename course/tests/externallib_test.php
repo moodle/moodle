@@ -339,6 +339,17 @@ class core_course_external_testcase extends externallib_advanced_testcase {
         $course2['completionnotify'] = 1;
         $course2['lang'] = 'en';
         $course2['forcetheme'] = 'base';
+        $course3['fullname'] = 'Test course 3';
+        $course3['shortname'] = 'Testcourse3';
+        $course3['categoryid'] = $category->id;
+        $course3['format'] = 'topics';
+        $course3options = array('numsections' => 8,
+            'hiddensections' => 1,
+            'coursedisplay' => 1);
+        $course3['courseformatoptions'] = array();
+        foreach ($course3options as $key => $value) {
+            $course3['courseformatoptions'][] = array('name' => $key, 'value' => $value);
+        }
         $courses = array($course1, $course2);
 
         $createdcourses = core_course_external::create_courses($courses);
@@ -348,58 +359,64 @@ class core_course_external_testcase extends externallib_advanced_testcase {
 
         // Check that the courses were correctly created.
         foreach ($createdcourses as $createdcourse) {
-            $dbcourse = $DB->get_record('course', array('id' => $createdcourse['id']));
+            $courseinfo = course_get_format($createdcourse['id'])->get_course();
 
             if ($createdcourse['shortname'] == $course2['shortname']) {
-                $this->assertEquals($dbcourse->fullname, $course2['fullname']);
-                $this->assertEquals($dbcourse->shortname, $course2['shortname']);
-                $this->assertEquals($dbcourse->category, $course2['categoryid']);
-                $this->assertEquals($dbcourse->idnumber, $course2['idnumber']);
-                $this->assertEquals($dbcourse->summary, $course2['summary']);
-                $this->assertEquals($dbcourse->summaryformat, $course2['summaryformat']);
-                $this->assertEquals($dbcourse->format, $course2['format']);
-                $this->assertEquals($dbcourse->showgrades, $course2['showgrades']);
-                $this->assertEquals($dbcourse->newsitems, $course2['newsitems']);
-                $this->assertEquals($dbcourse->startdate, $course2['startdate']);
-                $this->assertEquals($dbcourse->numsections, $course2['numsections']);
-                $this->assertEquals($dbcourse->maxbytes, $course2['maxbytes']);
-                $this->assertEquals($dbcourse->showreports, $course2['showreports']);
-                $this->assertEquals($dbcourse->visible, $course2['visible']);
-                $this->assertEquals($dbcourse->hiddensections, $course2['hiddensections']);
-                $this->assertEquals($dbcourse->groupmode, $course2['groupmode']);
-                $this->assertEquals($dbcourse->groupmodeforce, $course2['groupmodeforce']);
-                $this->assertEquals($dbcourse->defaultgroupingid, $course2['defaultgroupingid']);
-                $this->assertEquals($dbcourse->completionnotify, $course2['completionnotify']);
-                $this->assertEquals($dbcourse->lang, $course2['lang']);
+                $this->assertEquals($courseinfo->fullname, $course2['fullname']);
+                $this->assertEquals($courseinfo->shortname, $course2['shortname']);
+                $this->assertEquals($courseinfo->category, $course2['categoryid']);
+                $this->assertEquals($courseinfo->idnumber, $course2['idnumber']);
+                $this->assertEquals($courseinfo->summary, $course2['summary']);
+                $this->assertEquals($courseinfo->summaryformat, $course2['summaryformat']);
+                $this->assertEquals($courseinfo->format, $course2['format']);
+                $this->assertEquals($courseinfo->showgrades, $course2['showgrades']);
+                $this->assertEquals($courseinfo->newsitems, $course2['newsitems']);
+                $this->assertEquals($courseinfo->startdate, $course2['startdate']);
+                $this->assertEquals($courseinfo->numsections, $course2['numsections']);
+                $this->assertEquals($courseinfo->maxbytes, $course2['maxbytes']);
+                $this->assertEquals($courseinfo->showreports, $course2['showreports']);
+                $this->assertEquals($courseinfo->visible, $course2['visible']);
+                $this->assertEquals($courseinfo->hiddensections, $course2['hiddensections']);
+                $this->assertEquals($courseinfo->groupmode, $course2['groupmode']);
+                $this->assertEquals($courseinfo->groupmodeforce, $course2['groupmodeforce']);
+                $this->assertEquals($courseinfo->defaultgroupingid, $course2['defaultgroupingid']);
+                $this->assertEquals($courseinfo->completionnotify, $course2['completionnotify']);
+                $this->assertEquals($courseinfo->lang, $course2['lang']);
 
                 if (!empty($CFG->allowcoursethemes)) {
-                    $this->assertEquals($dbcourse->theme, $course2['forcetheme']);
+                    $this->assertEquals($courseinfo->theme, $course2['forcetheme']);
                 }
 
                 if (completion_info::is_enabled_for_site()) {
-                    $this->assertEquals($dbcourse->enablecompletion, $course2['enabledcompletion']);
-                    $this->assertEquals($dbcourse->completionstartonenrol, $course2['completionstartonenrol']);
+                    $this->assertEquals($courseinfo->enablecompletion, $course2['enabledcompletion']);
+                    $this->assertEquals($courseinfo->completionstartonenrol, $course2['completionstartonenrol']);
                 } else {
-                    $this->assertEquals($dbcourse->enablecompletion, 0);
-                    $this->assertEquals($dbcourse->completionstartonenrol, 0);
+                    $this->assertEquals($courseinfo->enablecompletion, 0);
+                    $this->assertEquals($courseinfo->completionstartonenrol, 0);
                 }
 
             } else if ($createdcourse['shortname'] == $course1['shortname']) {
                 $courseconfig = get_config('moodlecourse');
-                $this->assertEquals($dbcourse->fullname, $course1['fullname']);
-                $this->assertEquals($dbcourse->shortname, $course1['shortname']);
-                $this->assertEquals($dbcourse->category, $course1['categoryid']);
-                $this->assertEquals($dbcourse->summaryformat, FORMAT_HTML);
-                $this->assertEquals($dbcourse->format, $courseconfig->format);
-                $this->assertEquals($dbcourse->showgrades, $courseconfig->showgrades);
-                $this->assertEquals($dbcourse->newsitems, $courseconfig->newsitems);
-                $this->assertEquals($dbcourse->numsections, $courseconfig->numsections);
-                $this->assertEquals($dbcourse->maxbytes, $courseconfig->maxbytes);
-                $this->assertEquals($dbcourse->showreports, $courseconfig->showreports);
-                $this->assertEquals($dbcourse->hiddensections, $courseconfig->hiddensections);
-                $this->assertEquals($dbcourse->groupmode, $courseconfig->groupmode);
-                $this->assertEquals($dbcourse->groupmodeforce, $courseconfig->groupmodeforce);
-                $this->assertEquals($dbcourse->defaultgroupingid, 0);
+                $this->assertEquals($courseinfo->fullname, $course1['fullname']);
+                $this->assertEquals($courseinfo->shortname, $course1['shortname']);
+                $this->assertEquals($courseinfo->category, $course1['categoryid']);
+                $this->assertEquals($courseinfo->summaryformat, FORMAT_HTML);
+                $this->assertEquals($courseinfo->format, $courseconfig->format);
+                $this->assertEquals($courseinfo->showgrades, $courseconfig->showgrades);
+                $this->assertEquals($courseinfo->newsitems, $courseconfig->newsitems);
+                $this->assertEquals($courseinfo->maxbytes, $courseconfig->maxbytes);
+                $this->assertEquals($courseinfo->showreports, $courseconfig->showreports);
+                $this->assertEquals($courseinfo->groupmode, $courseconfig->groupmode);
+                $this->assertEquals($courseinfo->groupmodeforce, $courseconfig->groupmodeforce);
+                $this->assertEquals($courseinfo->defaultgroupingid, 0);
+            } else if ($createdcourse['shortname'] == $course3['shortname']) {
+                $this->assertEquals($courseinfo->fullname, $course3['fullname']);
+                $this->assertEquals($courseinfo->shortname, $course3['shortname']);
+                $this->assertEquals($courseinfo->category, $course3['categoryid']);
+                $this->assertEquals($courseinfo->format, $course3['format']);
+                $this->assertEquals($courseinfo->hiddensections, $course3options['hiddensections']);
+                $this->assertEquals($courseinfo->numsections, $course3options['numsections']);
+                $this->assertEquals($courseinfo->coursedisplay, $course3options['coursedisplay']);
             } else {
                 throw moodle_exception('Unexpected shortname');
             }
@@ -459,7 +476,7 @@ class core_course_external_testcase extends externallib_advanced_testcase {
         $generatedcourses[$course1->id] = $course1;
         $course2  = self::getDataGenerator()->create_course();
         $generatedcourses[$course2->id] = $course2;
-        $course3  = self::getDataGenerator()->create_course();
+        $course3  = self::getDataGenerator()->create_course(array('format' => 'topics'));
         $generatedcourses[$course3->id] = $course3;
 
         // Set the required capabilities by the external function.
@@ -504,6 +521,13 @@ class core_course_external_testcase extends externallib_advanced_testcase {
             $this->assertEquals($course['completionstartonenrol'], $dbcourse->completionstartonenrol);
             $this->assertEquals($course['enablecompletion'], $dbcourse->enablecompletion);
             $this->assertEquals($course['completionstartonenrol'], $dbcourse->completionstartonenrol);
+            if ($dbcourse->format === 'topics') {
+                $this->assertEquals($course['courseformatoptions'], array(
+                    array('name' => 'numsections', 'value' => $dbcourse->numsections),
+                    array('name' => 'hiddensections', 'value' => $dbcourse->hiddensections),
+                    array('name' => 'coursedisplay', 'value' => $dbcourse->coursedisplay),
+                ));
+            }
         }
 
         // Get all courses in the DB

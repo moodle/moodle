@@ -72,6 +72,7 @@ class block_section_links extends block_base {
         }
 
         $course = $this->page->course;
+        $courseformatoptions = course_get_format($course)->get_format_options();
         $context = context_course::instance($course->id);
 
         if ($course->format == 'weeks' or $course->format == 'weekscss') {
@@ -86,18 +87,18 @@ class block_section_links extends block_base {
         }
         $inc = 1;
 
-        if(!empty($config->numsections1) and ($course->numsections > $config->numsections1)) {
+        if(!empty($config->numsections1) and ($courseformatoptions['numsections'] > $config->numsections1)) {
             $inc = $config->incby1;
         } else {
-            if ($course->numsections > 22) {
+            if ($courseformatoptions['numsections'] > 22) {
                 $inc = 2;
             }
         }
 
-        if(!empty($config->numsections2) and ($course->numsections > $config->numsections2)) {
+        if(!empty($config->numsections2) and ($courseformatoptions['numsections'] > $config->numsections2)) {
             $inc = $config->incby2;
         } else {
-            if ($course->numsections > 40) {
+            if ($courseformatoptions['numsections'] > 40) {
                 $inc = 5;
             }
         }
@@ -105,12 +106,12 @@ class block_section_links extends block_base {
         $sql = "SELECT section, visible
                   FROM {course_sections}
                  WHERE course = ? AND
-                       section < ".($course->numsections+1)."
+                       section < ".($courseformatoptions['numsections']+1)."
               ORDER BY section";
 
         if ($sections = $DB->get_records_sql($sql, array($course->id))) {
             $text = '<ol class="inline-list">';
-            for ($i = $inc; $i <= $course->numsections; $i += $inc) {
+            for ($i = $inc; $i <= $courseformatoptions['numsections']; $i += $inc) {
                 if (!isset($sections[$i])) {
                     continue;
                 }

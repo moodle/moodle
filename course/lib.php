@@ -2939,7 +2939,10 @@ function move_section($course, $section, $move) {
 
     $sectiondest = $section + $move;
 
-    if ($sectiondest > $course->numsections or $sectiondest < 1) {
+    // compartibility with course formats using field 'numsections'
+    $courseformatoptions = course_get_format($course)->get_format_options();
+    if (array_key_exists('numsections', $courseformatoptions) &&
+            $sectiondest > $courseformatoptions['numsections'] or $sectiondest < 1) {
         return false;
     }
 
@@ -2965,7 +2968,10 @@ function move_section_to($course, $section, $destination) {
         return true;
     }
 
-    if (($destination > $course->numsections) || ($destination < 1)) {
+    // compartibility with course formats using field 'numsections'
+    $courseformatoptions = course_get_format($course)->get_format_options();
+    if ((array_key_exists('numsections', $courseformatoptions) &&
+            ($destination > $courseformatoptions['numsections'])) || ($destination < 1)) {
         return false;
     }
 
@@ -3775,7 +3781,10 @@ function create_course($data, $editoroptions = NULL) {
         $DB->set_field('course', 'summaryformat', $data->summary_format, array('id'=>$newcourseid));
     }
 
-    $course = $DB->get_record('course', array('id'=>$newcourseid));
+    // update course format options
+    course_get_format($newcourseid)->update_course_format_options($data);
+
+    $course = course_get_format($newcourseid)->get_course();
 
     // Setup the blocks
     blocks_add_default_course_blocks($course);
@@ -3843,7 +3852,7 @@ function update_course($data, $editoroptions = NULL) {
 
     $data->timemodified = time();
 
-    $oldcourse = $DB->get_record('course', array('id'=>$data->id), '*', MUST_EXIST);
+    $oldcourse = course_get_format($data->id)->get_course();
     $context   = context_course::instance($oldcourse->id);
 
     if ($editoroptions) {
@@ -3879,6 +3888,9 @@ function update_course($data, $editoroptions = NULL) {
     // make sure the modinfo cache is reset
     rebuild_course_cache($data->id);
 
+    // update course format options with full course data
+    course_get_format($data->id)->update_course_format_options($data, $oldcourse);
+
     $course = $DB->get_record('course', array('id'=>$data->id));
 
     if ($movecat) {
@@ -3901,6 +3913,14 @@ function update_course($data, $editoroptions = NULL) {
 
     // Trigger events
     events_trigger('course_updated', $course);
+
+    if ($oldcourse->format !== $course->format) {
+        // Remove all options stored for the previous format
+        // We assume that new course format migrated everything it needed watching trigger
+        // 'course_updated' and in method format_XXX::update_course_format_options()
+        $DB->delete_records('course_format_options',
+                array('courseid' => $course->id, 'format' => $oldcourse->format));
+    }
 }
 
 /**
@@ -4218,8 +4238,6 @@ class course_request {
 
         // Apply course default settings
         $data->format             = $courseconfig->format;
-        $data->numsections        = $courseconfig->numsections;
-        $data->hiddensections     = $courseconfig->hiddensections;
         $data->newsitems          = $courseconfig->newsitems;
         $data->showgrades         = $courseconfig->showgrades;
         $data->showreports        = $courseconfig->showreports;

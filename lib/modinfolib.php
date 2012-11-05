@@ -364,8 +364,18 @@ class course_modinfo extends stdClass {
                 'availablefrom, availableuntil, showavailability, groupingid');
         $compressedsections = array();
 
+        $formatoptionsdef = course_get_format($courseid)->section_format_options();
         // Remove unnecessary data and add availability
         foreach ($sections as $number => $section) {
+            // Add cached options from course format to $section object
+            foreach ($formatoptionsdef as $key => $option) {
+                if (!empty($option['cache'])) {
+                    $formatoptions = course_get_format($courseid)->get_format_options($section);
+                    if (!array_key_exists('cachedefault', $option) || $option['cachedefault'] !== $formatoptions[$key]) {
+                        $section->$key = $formatoptions[$key];
+                    }
+                }
+            }
             // Clone just in case it is reused elsewhere
             $compressedsections[$number] = clone($section);
             section_info::convert_for_section_cache($compressedsections[$number]);
@@ -1434,48 +1444,48 @@ class cached_cm_info {
  * Data about a single section on a course. This contains the fields from the
  * course_sections table, plus additional data when required.
  */
-class section_info extends stdClass {
+class section_info implements IteratorAggregate {
     /**
      * Section ID - from course_sections table
      * @var int
      */
-    public $id;
+    private $_id;
 
     /**
      * Course ID - from course_sections table
      * @var int
      */
-    public $course;
+    private $_course;
 
     /**
      * Section number - from course_sections table
      * @var int
      */
-    public $section;
+    private $_section;
 
     /**
      * Section name if specified - from course_sections table
      * @var string
      */
-    public $name;
+    private $_name;
 
     /**
      * Section visibility (1 = visible) - from course_sections table
      * @var int
      */
-    public $visible;
+    private $_visible;
 
     /**
      * Section summary text if specified - from course_sections table
      * @var string
      */
-    public $summary;
+    private $_summary;
 
     /**
      * Section summary text format (FORMAT_xx constant) - from course_sections table
      * @var int
      */
-    public $summaryformat;
+    private $_summaryformat;
 
     /**
      * When section is unavailable, this field controls whether it is shown to students (0 =
@@ -1483,28 +1493,28 @@ class section_info extends stdClass {
      * from course_sections table
      * @var int
      */
-    public $showavailability;
+    private $_showavailability;
 
     /**
      * Available date for this section (0 if not set, or set to seconds since epoch; before this
      * date, section does not display to students) - from course_sections table
      * @var int
      */
-    public $availablefrom;
+    private $_availablefrom;
 
     /**
      * Available until date for this section  (0 if not set, or set to seconds since epoch; from
      * this date, section does not display to students) - from course_sections table
      * @var int
      */
-    public $availableuntil;
+    private $_availableuntil;
 
     /**
      * If section is restricted to users of a particular grouping, this is its id
      * (0 if not set) - from course_sections table
      * @var int
      */
-    public $groupingid;
+    private $_groupingid;
 
     /**
      * Availability conditions for this section based on the completion of
@@ -1512,7 +1522,7 @@ class section_info extends stdClass {
      * for that module) - from cached data in sectioncache field
      * @var array
      */
-    public $conditionscompletion;
+    private $_conditionscompletion;
 
     /**
      * Availability conditions for this section based on course grades (array from
@@ -1520,14 +1530,20 @@ class section_info extends stdClass {
      * sectioncache field
      * @var array
      */
-    public $conditionsgrade;
+    private $_conditionsgrade;
+
+    /**
+     * Availability conditions for this section based on user fields
+     * @var array
+     */
+    private $_conditionsfield;
 
     /**
      * True if this section is available to students i.e. if all availability conditions
      * are met - obtained dynamically
      * @var bool
      */
-    public $available;
+    private $_available;
 
     /**
      * If section is not available to students, this string gives information about
@@ -1535,7 +1551,7 @@ class section_info extends stdClass {
      * January 2010') for display on main page - obtained dynamically
      * @var string
      */
-    public $availableinfo;
+    private $_availableinfo;
 
     /**
      * True if this section is available to the CURRENT user (for example, if current user
@@ -1543,7 +1559,7 @@ class section_info extends stdClass {
      * visible or not available, so this would be true in that case)
      * @var bool
      */
-    public $uservisible;
+    private $_uservisible;
 
     /**
      * Default values for sectioncache fields; if a field has this value, it won't
@@ -1563,6 +1579,13 @@ class section_info extends stdClass {
     );
 
     /**
+     * Stores format options that have been cached when building 'coursecache'
+     * When the format option is requested we look first if it has been cached
+     * @var array
+     */
+    private $cachedformatoptions = array();
+
+    /**
      * Constructs object from database information plus extra required data.
      * @param object $data Array entry from cached sectioncache
      * @param int $number Section number (array key)
@@ -1575,54 +1598,140 @@ class section_info extends stdClass {
         global $CFG;
 
         // Data that is always present
-        $this->id = $data->id;
+        $this->_id = $data->id;
+
+        $defaults = self::$sectioncachedefaults +
+                array('conditionscompletion' => array(),
+                    'conditionsgrade' => array(),
+                    'conditionsfield' => array());
 
         // Data that may use default values to save cache size
-        foreach (self::$sectioncachedefaults as $field => $value) {
+        foreach ($defaults as $field => $value) {
             if (isset($data->{$field})) {
-                $this->{$field} = $data->{$field};
+                $this->{'_'.$field} = $data->{$field};
             } else {
-                $this->{$field} = $value;
+                $this->{'_'.$field} = $value;
             }
         }
 
-        // Data with array defaults
-        $this->conditionscompletion = isset($data->conditionscompletion)
-                ? $data->conditionscompletion : array();
-        $this->conditionsgrade = isset($data->conditionsgrade)
-                ? $data->conditionsgrade : array();
-        $this->conditionsfield = isset($data->conditionsfield)
-                ? $data->conditionsfield : array();
+        // cached course format data
+        $formatoptionsdef = course_get_format($courseid)->section_format_options();
+        foreach ($formatoptionsdef as $field => $option) {
+            if (!empty($option['cache'])) {
+                if (isset($data->{$field})) {
+                    $this->cachedformatoptions[$field] = $data->{$field};
+                } else if (array_key_exists('cachedefault', $option)) {
+                    $this->cachedformatoptions[$field] = $option['cachedefault'];
+                }
+            }
+        }
 
         // Other data from other places
-        $this->course = $courseid;
-        $this->section = $number;
-        $this->sequence = $sequence;
+        $this->_course = $courseid;
+        $this->_section = $number;
+        $this->_sequence = $sequence;
 
         // Availability data
         if (!empty($CFG->enableavailability)) {
             // Get availability information
             $ci = new condition_info_section($this);
-            $this->available = $ci->is_available($this->availableinfo, true,
+            $this->_available = $ci->is_available($this->_availableinfo, true,
                     $userid, $modinfo);
             // Display grouping info if available & not already displaying
             // (it would already display if current user doesn't have access)
             // for people with managegroups - same logic/class as grouping label
             // on individual activities.
             $context = context_course::instance($courseid);
-            if ($this->availableinfo === '' && $this->groupingid &&
+            if ($this->_availableinfo === '' && $this->_groupingid &&
                     has_capability('moodle/course:managegroups', $context)) {
                 $groupings = groups_get_all_groupings($courseid);
-                $this->availableinfo = html_writer::tag('span', '(' . format_string(
-                        $groupings[$this->groupingid]->name, true, array('context' => $context)) .
+                $this->_availableinfo = html_writer::tag('span', '(' . format_string(
+                        $groupings[$this->_groupingid]->name, true, array('context' => $context)) .
                         ')', array('class' => 'groupinglabel'));
             }
         } else {
-            $this->available = true;
+            $this->_available = true;
         }
 
         // Update visibility for current user
         $this->update_user_visible($userid);
+    }
+
+    /**
+     * Magic method to check if the property is set
+     *
+     * @param string $name name of the property
+     * @return bool
+     */
+    public function __isset($name) {
+        if (property_exists($this, '_'.$name)) {
+            return isset($this->{'_'.$name});
+        }
+        $defaultformatoptions = course_get_format($this->_course)->section_format_options();
+        if (array_key_exists($name, $defaultformatoptions)) {
+            $value = $this->__get($name);
+            return isset($value);
+        }
+        return false;
+    }
+
+    /**
+     * Magic method to check if the property is empty
+     *
+     * @param string $name name of the property
+     * @return bool
+     */
+    public function __empty($name) {
+        if (property_exists($this, '_'.$name)) {
+            return empty($this->{'_'.$name});
+        }
+        $defaultformatoptions = course_get_format($this->_course)->section_format_options();
+        if (array_key_exists($name, $defaultformatoptions)) {
+            $value = $this->__get($name);
+            return empty($value);
+        }
+        return true;
+    }
+
+    /**
+     * Magic method to retrieve the property, this is either basic section property
+     * or availability information or additional properties added by course format
+     *
+     * @param string $name name of the property
+     * @return bool
+     */
+    public function __get($name) {
+        if (property_exists($this, '_'.$name)) {
+            return $this->{'_'.$name};
+        }
+        if (array_key_exists($name, $this->cachedformatoptions)) {
+            return $this->cachedformatoptions[$name];
+        }
+        $defaultformatoptions = course_get_format($this->_course)->section_format_options();
+        // precheck if the option is defined in format to avoid unnecessary DB queries in get_format_options()
+        if (array_key_exists($name, $defaultformatoptions)) {
+            $formatoptions = course_get_format($this->_course)->get_format_options($this);
+            return $formatoptions[$name];
+        }
+        debugging('Invalid section_info property accessed! '.$name);
+        return null;
+    }
+
+    /**
+     * Implementation of IteratorAggregate::getIterator(), allows to cycle through properties
+     * and use {@link convert_to_array()}
+     *
+     * @return ArrayIterator
+     */
+    public function getIterator() {
+        $ret = array();
+        foreach (get_object_vars($this) as $key => $value) {
+            if (substr($key, 0, 1) == '_') {
+                $ret[substr($key, 1)] = $this->$key;
+            }
+        }
+        $ret = array_merge($ret, course_get_format($this->_course)->get_format_options($this));
+        return new ArrayIterator($ret);
     }
 
     /**
@@ -1633,11 +1742,11 @@ class section_info extends stdClass {
      */
     private function update_user_visible($userid) {
         global $CFG;
-        $coursecontext = context_course::instance($this->course);
-        $this->uservisible = true;
-        if ((!$this->visible || !$this->available) &&
+        $coursecontext = context_course::instance($this->_course);
+        $this->_uservisible = true;
+        if ((!$this->_visible || !$this->_available) &&
                 !has_capability('moodle/course:viewhiddensections', $coursecontext, $userid)) {
-            $this->uservisible = false;
+            $this->_uservisible = false;
         }
     }
 

@@ -1887,7 +1887,14 @@ class global_navigation extends navigation_node {
         require_once($CFG->dirroot.'/course/lib.php');
 
         $modinfo = get_fast_modinfo($course);
-        $sections = array_slice($modinfo->get_section_info_all(), 0, $course->numsections+1, true);
+        $sections = $modinfo->get_section_info_all();
+
+        // For course formats using 'numsections' trim the sections list
+        $courseformatoptions = course_get_format($course)->get_format_options();
+        if (isset($courseformatoptions['numsections'])) {
+            $sections = array_slice($sections, 0, $courseformatoptions['numsections']+1, true);
+        }
+
         $activities = array();
 
         foreach ($sections as $key => $section) {

@@ -59,11 +59,19 @@ function online_assignment_cleanup($output=false) {
         if ($output) echo $OUTPUT->heading($fullname);
 
         /// retrieve a list of sections beyond what is currently being shown
+        $courseformatoptions = course_get_format($course)->get_format_options();
+        if (!isset($courseformatoptions['numsections'])) {
+            // Course format does not use numsections
+            if ($output) {
+                echo 'No extra sections<br />';
+            }
+            continue;
+        }
         $sql = "SELECT *
                   FROM {course_sections}
                  WHERE course=? AND section>?
               ORDER BY section ASC";
-        $params = array($course->id, $course->numsections);
+        $params = array($course->id, $courseformatoptions['numsections']);
         if (!($xsections = $DB->get_records_sql($sql, $params))) {
             if ($output) echo 'No extra sections<br />';
             continue;
@@ -94,7 +102,7 @@ function online_assignment_cleanup($output=false) {
                         /// the journal update erroneously stored it in course_sections->section
                         $newsection = $xsection->section;
                         /// double check the new section
-                        if ($newsection > $course->numsections) {
+                        if ($newsection > $courseformatoptions['numsections']) {
                             /// get the record for section 0 for this course
                             if (!($zerosection = $DB->get_record('course_sections', array('course'=>$course->id, 'section'=>'0')))) {
                                 continue;

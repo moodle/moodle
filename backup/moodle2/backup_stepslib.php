@@ -394,6 +394,11 @@ class backup_section_structure_step extends backup_structure_step {
         $section->add_child($avail);
         $section->add_child($availfield);
 
+        // Add nested elements for course_format_options table
+        $formatoptions = new backup_nested_element('course_format_options', array('id'), array(
+            'format', 'name', 'value'));
+        $section->add_child($formatoptions);
+
         // Define sources
         $section->set_source_table('course_sections', array('id' => backup::VAR_SECTIONID));
         $avail->set_source_table('course_sections_availability', array('coursesectionid' => backup::VAR_SECTIONID));
@@ -402,6 +407,12 @@ class backup_section_structure_step extends backup_structure_step {
               FROM {course_sections_avail_fields} csaf
          LEFT JOIN {user_info_field} uif ON uif.id = csaf.customfieldid
              WHERE csaf.coursesectionid = ?', array(backup::VAR_SECTIONID));
+        $formatoptions->set_source_sql('SELECT cfo.id, cfo.format, cfo.name, cfo.value
+              FROM {course} c
+              JOIN {course_format_options} cfo
+              ON cfo.courseid = c.id AND cfo.format = c.format
+              WHERE c.id = ? AND cfo.sectionid = ?',
+                array(backup::VAR_COURSEID, backup::VAR_SECTIONID));
 
         // Aliases
         $section->set_source_alias('section', 'number');
@@ -428,10 +439,10 @@ class backup_course_structure_step extends backup_structure_step {
 
         $course = new backup_nested_element('course', array('id', 'contextid'), array(
             'shortname', 'fullname', 'idnumber',
-            'summary', 'summaryformat', 'format', 'coursedisplay', 'showgrades',
-            'newsitems', 'startdate', 'numsections',
+            'summary', 'summaryformat', 'format', 'showgrades',
+            'newsitems', 'startdate',
             'marker', 'maxbytes', 'legacyfiles', 'showreports',
-            'visible', 'hiddensections', 'groupmode', 'groupmodeforce',
+            'visible', 'groupmode', 'groupmodeforce',
             'defaultgroupingid', 'lang', 'theme',
             'timecreated', 'timemodified',
             'requested',
@@ -475,6 +486,12 @@ class backup_course_structure_step extends backup_structure_step {
 
         $courserec = $DB->get_record('course', array('id' => $this->task->get_courseid()));
         $courserec->contextid = $this->task->get_contextid();
+
+        $formatoptions = course_get_format($courserec)->get_format_options();
+        $course->add_final_elements(array_keys($formatoptions));
+        foreach ($formatoptions as $key => $value) {
+            $courserec->$key = $value;
+        }
 
         $course->set_source_array(array($courserec));
 

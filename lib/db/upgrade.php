@@ -1311,5 +1311,93 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012103003.00);
     }
 
+    if ($oldversion < 2012110200.00) {
+
+        // Define table course_format_options to be created
+        $table = new xmldb_table('course_format_options');
+
+        // Adding fields to table course_format_options
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('courseid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('format', XMLDB_TYPE_CHAR, '21', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('sectionid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'format');
+        $table->add_field('name', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('value', XMLDB_TYPE_TEXT, null, null, null, null, null);
+
+        // Adding keys to table course_format_options
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('courseid', XMLDB_KEY_FOREIGN, array('courseid'), 'course', array('id'));
+
+        // Adding indexes to table course_format_options
+        $table->add_index('formatoption', XMLDB_INDEX_UNIQUE, array('courseid', 'format', 'sectionid', 'name'));
+
+        // Conditionally launch create table for course_format_options
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Changing type of field format on table course to char with length 21
+        $table = new xmldb_table('course');
+        $field = new xmldb_field('format', XMLDB_TYPE_CHAR, '21', null, XMLDB_NOTNULL, null, 'topics', 'summaryformat');
+
+        // Launch change of type for field format
+        $dbman->change_field_type($table, $field);
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2012110200.00);
+    }
+
+    if ($oldversion < 2012110201.00) {
+
+        // Copy fields 'coursedisplay', 'numsections', 'hiddensections' from table {course}
+        // to table {course_format_options} as the additional format options
+        $fields = array();
+        $table = new xmldb_table('course');
+        foreach (array('coursedisplay', 'numsections', 'hiddensections') as $fieldname) {
+            // first check that fields still exist
+            $field = new xmldb_field($fieldname);
+            if ($dbman->field_exists($table, $field)) {
+                $fields[] = $fieldname;
+            }
+        }
+
+        if (!empty($fields)) {
+            $transaction = $DB->start_delegated_transaction();
+            $rs = $DB->get_recordset_sql('SELECT id, format, '. join(',', $fields).'
+                FROM {course}
+                WHERE format <> ? AND format <> ?',
+                array('scorm', 'social'));
+            // (do not copy fields from scrom and social formats, we already know that they are not used)
+            foreach ($rs as $rec) {
+                foreach ($fields as $field) {
+                    try {
+                        $DB->insert_record('course_format_options',
+                                array(
+                                    'courseid'  => $rec->id,
+                                    'format'    => $rec->format,
+                                    'sectionid' => 0,
+                                    'name'      => $field,
+                                    'value'     => $rec->$field
+                                ));
+                    } catch (dml_exception $e) {
+                        // index 'courseid,format,sectionid,name' violation
+                        // continue; the entry in course_format_options already exists, use it
+                    }
+                }
+            }
+            $rs->close();
+            $transaction->allow_commit();
+
+            // Drop fields from table course
+            foreach ($fields as $fieldname) {
+                $field = new xmldb_field($fieldname);
+                $dbman->drop_field($table, $field);
+            }
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2012110201.00);
+    }
+
     return true;
 }
