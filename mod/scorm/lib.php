@@ -1328,22 +1328,25 @@ function scorm_dndupload_handle($uploadinfo) {
  * @param array $grades grades array of users with grades - used when $userid = 0
  */
 function scorm_set_completion($scorm, $userid, $completionstate = COMPLETION_COMPLETE, $grades = array()) {
-    if (!completion_info::is_enabled()) {
+    $course = new stdClass();
+    $course->id = $scorm->course;
+    $completion = new completion_info($course);
+
+    // Check if completion is enabled site-wide, or for the course
+    if (!$completion->is_enabled()) {
         return;
     }
 
-    $course = new stdClass();
-    $course->id = $scorm->course;
-
     $cm = get_coursemodule_from_instance('scorm', $scorm->id, $scorm->course);
-    if (!empty($cm)) {
-        $completion = new completion_info($course);
-        if (empty($userid)) { //we need to get all the relevant users from $grades param.
-            foreach ($grades as $grade) {
-                $completion->update_state($cm, $completionstate, $grade->userid);
-            }
-        } else {
-            $completion->update_state($cm, $completionstate, $userid);
+    if (empty($cm) || !$completion->is_enabled($cm)) {
+            return;
+    }
+
+    if (empty($userid)) { //we need to get all the relevant users from $grades param.
+        foreach ($grades as $grade) {
+            $completion->update_state($cm, $completionstate, $grade->userid);
         }
+    } else {
+        $completion->update_state($cm, $completionstate, $userid);
     }
 }
