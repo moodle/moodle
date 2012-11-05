@@ -15,10 +15,9 @@ if ($hassiteconfig
 /// NOTE: these settings must be applied after all other settings because they depend on them
     ///main course settings
     $temp = new admin_settingpage('coursesettings', new lang_string('coursesettings'));
-    require_once($CFG->dirroot.'/course/lib.php');
-    $courseformats = get_sorted_course_formats(true);
+    $courseformats = get_plugin_list('format');
     $formcourseformats = array();
-    foreach ($courseformats as $courseformat) {
+    foreach ($courseformats as $courseformat => $courseformatdir) {
         $formcourseformats[$courseformat] = new lang_string('pluginname', "format_$courseformat");
     }
     $temp->add(new admin_setting_configselect('moodlecourse/format', new lang_string('format'), new lang_string('coursehelpformat'), 'weeks',$formcourseformats));

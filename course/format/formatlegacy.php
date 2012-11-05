@@ -329,21 +329,9 @@ class format_legacy extends format_base {
         if ($oldcourse !== null) {
             $data = (array)$data;
             $oldcourse = (array)$oldcourse;
-            $options = $this->course_format_options();
-            foreach ($options as $key => $unused) {
-                if (!array_key_exists($key, $data)) {
-                    if (array_key_exists($key, $oldcourse)) {
-                        $data[$key] = $oldcourse[$key];
-                    } else if ($key === 'numsections') {
-                        // If previous format does not have the field 'numsections' and this one does,
-                        // and $data['numsections'] is not set fill it with the maximum section number from the DB
-                        $maxsection = $DB->get_field_sql('SELECT max(section) from {course_sections}
-                            WHERE course = ?', array($this->courseid));
-                        if ($maxsection) {
-                            // If there are no sections, or just default 0-section, 'numsections' will be set to default
-                            $data['numsections'] = $maxsection;
-                        }
-                    }
+            foreach ($this->course_format_options() as $key => $unused) {
+                if (array_key_exists($key, $oldcourse) && !array_key_exists($key, $data)) {
+                    $data[$key] = $oldcourse[$key];
                 }
             }
         }

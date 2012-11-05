@@ -12,7 +12,6 @@ format.
   functions callback_XXXX_request_key() are no longer used (where XXXX is the course format name)
 * functions get_generic_section_name(), get_all_sections(), add_mod_to_section(), get_all_mods()
   are deprecated. See their phpdocs in lib/deprecatedlib.php on how to replace them
-* Course formats may now have their settings.php file as the most of other plugin types
 
 === 2.3 ===
 

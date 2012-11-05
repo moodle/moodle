@@ -4572,8 +4572,7 @@ function delete_course($courseorid, $showfeedback = true) {
     // which should know about this updated property, as this event is meant to pass the full course record
     $course->timemodified = time();
 
-    $DB->delete_records("course", array("id" => $courseid));
-    $DB->delete_records("course_format_options", array("courseid" => $courseid));
+    $DB->delete_records("course", array("id"=>$courseid));
 
     //trigger events
     $course->context = $context; // you can not fetch context in the event because it was already deleted

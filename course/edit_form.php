@@ -113,20 +113,11 @@ class course_edit_form extends moodleform {
             $mform->hardFreeze('summary_editor');
         }
 
-        $courseformats = get_sorted_course_formats(true);
+        $courseformats = get_plugin_list('format');
         $formcourseformats = array();
-        foreach ($courseformats as $courseformat) {
+        foreach ($courseformats as $courseformat => $formatdir) {
             $formcourseformats[$courseformat] = get_string('pluginname', "format_$courseformat");
         }
-        if (isset($course->format)) {
-            $course->format = course_get_format($course)->get_format(); // replace with default if not found
-            if (!in_array($course->format, $courseformats)) {
-                // this format is disabled. Still display it in the dropdown
-                $formcourseformats[$course->format] = get_string('withdisablednote', 'moodle',
-                        get_string('pluginname', 'format_'.$course->format));
-            }
-        }
-
         $mform->addElement('select', 'format', get_string('format'), $formcourseformats);
         $mform->addHelpButton('format', 'format');
         $mform->setDefault('format', $courseconfig->format);
