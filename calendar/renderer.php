@@ -464,7 +464,7 @@ class core_calendar_renderer extends plugin_renderer_base {
         // Paddding (the first week may have blank days in the beginning)
         for($i = $display->minwday; $i < $startwday; ++$i) {
             $cell = new html_table_cell('&nbsp;');
-            $cell->attributes = array('class'=>'nottoday');
+            $cell->attributes = array('class'=>'nottoday dayblank');
             $row->cells[] = $cell;
         }
 
@@ -523,10 +523,10 @@ class core_calendar_renderer extends plugin_renderer_base {
             }
 
             // Special visual fx for today
-            if($display->thismonth && $calendar->day == $calendar->day) {
-                $cellclasses[] = 'today';
+            if ($display->thismonth && $calendar->day == $date['mday']) {
+                $cellclasses[] = 'day today';
             } else {
-                $cellclasses[] = 'nottoday';
+                $cellclasses[] = 'day nottoday';
             }
             $cell->attributes = array('class'=>join(' ',$cellclasses));
 
@@ -557,7 +557,7 @@ class core_calendar_renderer extends plugin_renderer_base {
         // Paddding (the last week may have blank days at the end)
         for($i = $dayweek; $i <= $display->maxwday; ++$i) {
             $cell = new html_table_cell('&nbsp;');
-            $cell->attributes = array('class'=>'nottoday');
+            $cell->attributes = array('class'=>'nottoday dayblank');
             $row->cells[] = $cell;
         }
         $table->data[] = $row;
