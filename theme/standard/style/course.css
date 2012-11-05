@@ -2,8 +2,8 @@
 .course-content ul.weeks li.section {border:1px solid #DDD;}
 .course-content ul.weeks li.section .content {background-color:#FAFAFA;padding:5px 10px;}
 .course-content ul.weeks li.section .content h3 {margin:0;color:#777;font-weight: normal;}
-.course-content ul.weeks li.section .left {padding:5px 0;}
-.course-content ul.weeks li.section .right {padding:5px 0;}
+.course-content ul.weeks li.section .left {padding:4px 0;}
+.course-content ul.weeks li.section .right {padding:4px 0;}
 
 /** Course **/
 .coursebox {border:1px solid #DDD;border-color:#DDDDDD;}
@@ -22,7 +22,7 @@
 .path-course-view .availabilityinfo {font-size:0.85em;color:#aaa;}
 .path-course-view .availabilityinfo strong {font-weight:normal;color:black;}
 .path-course-view .dimmed_text img {opacity:0.3;filter: alpha(opacity='30');}
-.path-course-view .section {font-size:0.95em;line-height:1.2em;}
+.path-course-view .section {font-size:1em;line-height:1.2em;}
 .path-course-view .section .activity {padding:0.2em 0;}
 .path-course-view .section .activity a {line-height:1em;}
 .path-course-view .section .weekdates {margin: 0;font-weight: normal;font-size: 1em;}
