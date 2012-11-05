@@ -31,7 +31,9 @@ $capabilities = array(
         'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => array(
             'user' => CAP_ALLOW
-        )
+        ),
+
+        'clonepermissionsfrom' => 'moodle/my:manageblocks'
     ),
 
     'block/login:addinstance' => array(
@@ -42,6 +44,8 @@ $capabilities = array(
         'archetypes' => array(
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW
-        )
+        ),
+
+        'clonepermissionsfrom' => 'moodle/site:manageblocks'
     ),
 );

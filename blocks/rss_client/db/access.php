@@ -31,7 +31,9 @@ $capabilities = array(
         'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => array(
             'user' => CAP_ALLOW
-        )
+        ),
+
+        'clonepermissionsfrom' => 'moodle/my:manageblocks'
     ),
 
     'block/rss_client:addinstance' => array(
@@ -42,7 +44,9 @@ $capabilities = array(
         'archetypes' => array(
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW
-        )
+        ),
+
+        'clonepermissionsfrom' => 'moodle/site:manageblocks'
     ),
 
     'block/rss_client:manageownfeeds' => array(
