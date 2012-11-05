@@ -68,6 +68,7 @@ class csvclass_testcase extends advanced_testcase {
     }
 
     public function test_csv_functions() {
+        global $CFG;
         $csvexport = new csv_export_writer();
         $csvexport->set_filename('unittest');
         foreach ($this->testdata as $data) {
@@ -113,5 +114,17 @@ class csvclass_testcase extends advanced_testcase {
         $csvimport->cleanup();
         $csvimport->close();
         $this->assertEquals($importerror, $errortext);
+
+        // Testing for a tab separated file.
+        // The tab separated file has a trailing tab and extra blank lines at the end of the file.
+        $filename = $CFG->dirroot . '/lib/tests/fixtures/tabfile.csv';
+        $fp = fopen($filename, 'r');
+        $tabdata = fread($fp, filesize($filename));
+        fclose($fp);
+        $iid = csv_import_reader::get_new_iid('tab');
+        $csvimport = new csv_import_reader($iid, 'tab');
+        $contentcount = $csvimport->load_csv_content($tabdata, 'utf-8', 'tab');
+        // This should import four rows including the headings.
+        $this->assertEquals($contentcount, 4);
     }
 }
