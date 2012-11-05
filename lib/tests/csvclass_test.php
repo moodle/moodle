@@ -34,6 +34,7 @@ class csvclass_testcase extends advanced_testcase {
     var $teststring = '';
     var $teststring2 = '';
     var $teststring3 = '';
+    var $teststring4 = '';
 
     protected function setUp(){
 
@@ -64,6 +65,16 @@ class csvclass_testcase extends advanced_testcase {
     $this->teststring2 = 'fullname,"description of things",beer
 "Fred Flint","<p>Find the stone inside the box</p>",Asahi,"A fourth column"
 "Sarah Smith","<p>How are the people next door?</p>,Yebisu,"Forget the next"
+';
+
+    $this->teststring4 = 'fullname,"description of things",beer
+"Douglas Dirk","<p>I am fine, thankyou.</p>",Becks
+
+"Addelyn Francis","<p>Thanks for the cake</p>",Becks
+"Josh Frankson","<p>Everything is fine</p>",Asahi
+
+
+"Heath Forscyth","<p>We are going to make you lose your mind</p>",Fosters
 ';
     }
 
@@ -113,5 +124,12 @@ class csvclass_testcase extends advanced_testcase {
         $csvimport->cleanup();
         $csvimport->close();
         $this->assertEquals($importerror, $errortext);
+
+        // Testing for empty lines.
+        $iid = csv_import_reader::get_new_iid('blanklines');
+        $csvimport = new csv_import_reader($iid, 'blanklines');
+        $contentcount = $csvimport->load_csv_content($this->teststring4, 'utf-8', 'comma');
+        // Five lines including the headings should be imported.
+        $this->assertEquals($contentcount, 5);
     }
 }
