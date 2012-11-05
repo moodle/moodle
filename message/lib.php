@@ -78,17 +78,6 @@ define('MESSAGE_PERMITTED_MASK', 0x0c); // 1100
  */
 define('MESSAGE_DEFAULT_PERMITTED', 'permitted');
 
-//TODO: defaults must be initialised via settings - this is a bad hack! (skodak)
-if (!isset($CFG->message_contacts_refresh)) {  // Refresh the contacts list every 60 seconds
-    $CFG->message_contacts_refresh = 60;
-}
-if (!isset($CFG->message_chat_refresh)) {      // Look for new comments every 5 seconds
-    $CFG->message_chat_refresh = 5;
-}
-if (!isset($CFG->message_offline_time)) {
-    $CFG->message_offline_time = 300;
-}
-
 /**
  * Print the selector that allows the user to view their contacts, course participants, their recent
  * conversations etc
@@ -186,7 +175,18 @@ function message_print_participants($context, $courseid, $contactselecturl=null,
     }
 
     $countparticipants = count_enrolled_users($context);
-    $participants = get_enrolled_users($context, '', 0, 'u.*', '', $page*MESSAGE_CONTACTS_PER_PAGE, MESSAGE_CONTACTS_PER_PAGE);
+
+    list($esql, $params) = get_enrolled_sql($context);
+    $params['mcuserid'] = $USER->id;
+    $ufields = user_picture::fields('u');
+
+    $sql = "SELECT $ufields, mc.id as contactlistid, mc.blocked
+              FROM {user} u
+              JOIN ($esql) je ON je.id = u.id
+              LEFT JOIN {message_contacts} mc ON mc.contactid = u.id AND mc.userid = :mcuserid
+             WHERE u.deleted = 0";
+
+    $participants = $DB->get_records_sql($sql, $params, $page * MESSAGE_CONTACTS_PER_PAGE, MESSAGE_CONTACTS_PER_PAGE);
 
     $pagingbar = new paging_bar($countparticipants, $page, MESSAGE_CONTACTS_PER_PAGE, $PAGE->url, 'page');
     echo $OUTPUT->render($pagingbar);
@@ -197,11 +197,23 @@ function message_print_participants($context, $courseid, $contactselecturl=null,
     echo html_writer::tag('td', $titletodisplay, array('colspan' => 3, 'class' => 'heading'));
     echo html_writer::end_tag('tr');
 
-    //todo these need to come from somewhere if the course participants list is to show users with unread messages
-    $iscontact = true;
-    $isblocked = false;
     foreach ($participants as $participant) {
         if ($participant->id != $USER->id) {
+
+            $iscontact = false;
+            $isblocked = false;
+            if ( $participant->contactlistid )  {
+                if ($participant->blocked == 0) {
+                    // Is contact. Is not blocked.
+                    $iscontact = true;
+                    $isblocked = false;
+                } else {
+                    // Is blocked.
+                    $iscontact = false;
+                    $isblocked = true;
+                }
+            }
+
             $participant->messagecount = 0;//todo it would be nice if the course participant could report new messages
             message_print_contactlist_user($participant, $iscontact, $isblocked, $contactselecturl, $showactionlinks, $user2);
         }
