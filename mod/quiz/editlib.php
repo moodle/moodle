@@ -1138,6 +1138,15 @@ class quiz_question_bank_view extends question_bank_view {
                 'editaction', 'previewaction');
     }
 
+    /**
+     * Specify the column heading
+     *
+     * @return string Column name for the heading
+     */
+    protected function heading_column() {
+        return 'questionnametext';
+    }
+
     protected function default_sort() {
         $this->requiredcolumns['qtype'] = $this->knowncolumntypes['qtype'];
         $this->requiredcolumns['questionnametext'] = $this->knowncolumntypes['questionnametext'];
