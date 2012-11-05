@@ -295,6 +295,8 @@ if ($hassiteconfig) {
 // Question type settings
 if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) {
     // Question behaviour settings.
+    require_once("$CFG->libdir/pluginlib.php");
+    $allplugins = plugin_manager::instance()->get_plugins();
     $ADMIN->add('modules', new admin_category('qbehavioursettings', new lang_string('questionbehaviours', 'admin')));
     $ADMIN->add('qbehavioursettings', new admin_page_manageqbehaviours());
 
