@@ -115,7 +115,7 @@ switch ($action) {
                 $message = get_string('formatuninstallconfirm', 'admin', $format->displayname);
             }
             $deleteurl->param('confirm', 1);
-            echo $OUTPUT->confirm($message, $deleteurl, $return);            
+            echo $OUTPUT->confirm($message, $deleteurl, $return);
         } else {
             $a = new stdClass();
             $a->plugin = $format->displayname;
