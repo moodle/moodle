@@ -87,6 +87,7 @@ class core_webservice_external extends external_api {
             'firstname' => $USER->firstname,
             'lastname' => $USER->lastname,
             'fullname' => fullname($USER),
+            'lang' => current_language(),
             'userid' => $USER->id,
             'userpictureurl' => $profileimageurl->out(false)
         );
@@ -155,6 +156,9 @@ class core_webservice_external extends external_api {
 
         $siteinfo['functions'] = $availablefunctions;
 
+        // Mobile CSS theme and alternative login url
+        $siteinfo['mobilecssurl'] = get_config('admin', 'mobilecssurl');
+
         return $siteinfo;
     }
 
@@ -172,6 +176,7 @@ class core_webservice_external extends external_api {
                 'firstname'      => new external_value(PARAM_TEXT, 'first name'),
                 'lastname'       => new external_value(PARAM_TEXT, 'last name'),
                 'fullname'       => new external_value(PARAM_TEXT, 'user full name'),
+                'lang'           => new external_value(PARAM_LANG, 'user language'),
                 'userid'         => new external_value(PARAM_INT, 'user id'),
                 'siteurl'        => new external_value(PARAM_RAW, 'site url'),
                 'userpictureurl' => new external_value(PARAM_URL, 'the user profile picture.
@@ -191,7 +196,8 @@ class core_webservice_external extends external_api {
                 'downloadfiles'  => new external_value(PARAM_INT, '1 if users are allowed to download files, 0 if not',
                                                        VALUE_OPTIONAL),
                 'release'  => new external_value(PARAM_TEXT, 'Moodle release number', VALUE_OPTIONAL),
-                'version'  => new external_value(PARAM_TEXT, 'Moodle version number', VALUE_OPTIONAL)
+                'version'  => new external_value(PARAM_TEXT, 'Moodle version number', VALUE_OPTIONAL),
+                'mobilecssurl'  => new external_value(PARAM_URL, 'Mobile custom CSS theme', VALUE_OPTIONAL)
             )
         );
     }
