@@ -102,6 +102,7 @@ if ($mform->is_cancelled()) {
         $newcategory->theme = $data->theme;
     }
 
+    $logaction = 'update';
     if ($id) {
         // Update an existing category.
         $newcategory->id = $category->id;
@@ -119,10 +120,12 @@ if ($mform->is_cancelled()) {
         $category = create_course_category($newcategory);
         $newcategory->id = $category->id;
         $categorycontext = $category->context;
+        $logaction = 'add';
     }
 
     $newcategory = file_postupdate_standard_editor($newcategory, 'description', $editoroptions, $categorycontext, 'coursecat', 'description', 0);
     $DB->update_record('course_categories', $newcategory);
+    add_to_log(SITEID, "category", $logaction, "editcategory.php?id=$newcategory->id", $newcategory->id);
     fix_course_sortorder();
 
     redirect('category.php?id='.$newcategory->id.'&categoryedit=on');
