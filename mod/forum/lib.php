@@ -8109,7 +8109,7 @@ function forum_get_forums_user_posted_in($user, array $courseids = null, $discus
                    ) j ON j.id = f.id
              WHERE m.name = :forum
                  {$coursewhere}";
-    
+
     $courseforums = $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
     return $courseforums;
 }
