@@ -1146,9 +1146,10 @@ class role_check_users_selector extends user_selector_base {
                      WHERE $wherecondition";
         }
 
-        $order = " ORDER BY lastname ASC, firstname ASC";
-
         $params['contextid'] = $this->accesscontext->id;
+
+        list($sort, $sortparams) = users_order_by_sql('u', $search, $this->accesscontext);
+        $order = ' ORDER BY ' . $sort;
 
         $result = array();
 
@@ -1168,7 +1169,7 @@ class role_check_users_selector extends user_selector_base {
                 $result[implode(' - ', array_keys($toomany))] = array();
 
             } else {
-                $enrolledusers = $DB->get_records_sql($fields . $sql1 . $order, $params);
+                $enrolledusers = $DB->get_records_sql($fields . $sql1 . $order, array_merge($params, $sortparams));
                 if ($enrolledusers) {
                     $result[$groupname1] = $enrolledusers;
                 }
@@ -1184,7 +1185,7 @@ class role_check_users_selector extends user_selector_base {
                 $toomany = $this->too_many_results($search, $otheruserscount);
                 $result[implode(' - ', array_keys($toomany))] = array();
             } else {
-                $otherusers = $DB->get_records_sql($fields . $sql2 . $order, $params);
+                $otherusers = $DB->get_records_sql($fields . $sql2 . $order, array_merge($params, $sortparams));
                 if ($otherusers) {
                     $result[$groupname2] = $otherusers;
                 }
