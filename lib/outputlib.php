@@ -821,8 +821,11 @@ class theme_config {
     /**
      * Generate a URL to the file that serves theme JavaScript files.
      *
+     * If we determine that the theme has no relevant files, then we return
+     * early with a null value.
+     *
      * @param bool $inhead true means head url, false means footer
-     * @return moodle_url
+     * @return moodle_url|null
      */
     public function javascript_url($inhead) {
         global $CFG;
@@ -830,6 +833,11 @@ class theme_config {
         $rev = theme_get_revision();
         $params = array('theme'=>$this->name,'rev'=>$rev);
         $params['type'] = $inhead ? 'head' : 'footer';
+
+        // Return early if there are no files to serve
+        if (count($this->javascript_files($params['type'])) === 0) {
+            return null;
+        }
 
         if (!empty($CFG->slasharguments) and $rev > 0) {
             $url = new moodle_url("$CFG->httpswwwroot/theme/javascript.php");
