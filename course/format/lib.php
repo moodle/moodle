@@ -587,7 +587,7 @@ abstract class format_base {
             if (!empty($option['element_attributes'])) {
                 $args = array_merge($args, $option['element_attributes']);
             }
-            $elements[] = &call_user_func_array(array($mform, 'addElement'), $args);
+            $elements[] = call_user_func_array(array($mform, 'addElement'), $args);
             if (isset($option['help'])) {
                 $helpcomponent = 'format_'. $this->get_format();
                 if (isset($option['help_component'])) {
