@@ -8079,29 +8079,37 @@ function forum_get_courses_user_posted_in($user, $discussionsonly = false, $incl
 function forum_get_forums_user_posted_in($user, array $courseids = null, $discussionsonly = false, $limitfrom = null, $limitnum = null) {
     global $DB;
 
-    $where = array("m.name = 'forum'");
-    $params = array();
     if (!is_null($courseids)) {
         list($coursewhere, $params) = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED, 'courseid');
-        $where[] = 'f.course '.$coursewhere;
-    }
-    if (!$discussionsonly) {
-        $joinsql = 'JOIN {forum_discussions} fd ON fd.forum = f.id
-                    JOIN {forum_posts} fp ON fp.discussion = fd.id';
-        $where[] = 'fp.userid = :userid';
+        $coursewhere = ' AND f.course '.$coursewhere;
     } else {
-        $joinsql = 'JOIN {forum_discussions} fd ON fd.forum = f.id';
-        $where[] = 'fd.userid = :userid';
+        $coursewhere = '';
+        $params = array();
     }
     $params['userid'] = $user->id;
-    $wheresql = join(' AND ', $where);
+    $params['forum'] = 'forum';
 
-    $sql = "SELECT DISTINCT f.*, cm.id AS cmid
-            FROM {forum} f
-            JOIN {course_modules} cm ON cm.instance = f.id
-            JOIN {modules} m ON m.id = cm.module
-            $joinsql
-            WHERE $wheresql";
+    if ($discussionsonly) {
+        $join = 'JOIN {forum_discussions} ff ON ff.forum = f.id';
+    } else {
+        $join = 'JOIN {forum_discussions} fd ON fd.forum = f.id
+                 JOIN {forum_posts} ff ON ff.discussion = fd.id';
+    }
+
+    $sql = "SELECT f.*, cm.id AS cmid
+              FROM {forum} f
+              JOIN {course_modules} cm ON cm.instance = f.id
+              JOIN {modules} m ON m.id = cm.module
+              JOIN (
+                  SELECT f.id
+                    FROM {forum} f
+                    {$join}
+                   WHERE ff.userid = :userid
+                GROUP BY f.id
+                   ) j ON j.id = f.id
+             WHERE m.name = :forum
+                 {$coursewhere}";
+    
     $courseforums = $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
     return $courseforums;
 }
@@ -8356,8 +8364,10 @@ function forum_get_posts_by_user($user, array $courses, $musthaveaccess = false,
         $forumsearchwhere[] = "(d.forum $fullidsql)";
     }
 
-    // Prepare SQL to both count and search
-    $userfields = user_picture::fields('u', null, 'userid');
+    // Prepare SQL to both count and search.
+    // We alias user.id to useridx because we forum_posts already has a userid field and not aliasing this would break
+    // oracle and mssql.
+    $userfields = user_picture::fields('u', null, 'useridx');
     $countsql = 'SELECT COUNT(*) ';
     $selectsql = 'SELECT p.*, d.forum, d.name AS discussionname, '.$userfields.' ';
     $wheresql = implode(" OR ", $forumsearchwhere);
