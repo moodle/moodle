@@ -83,6 +83,7 @@
     position:relative;
     width:17px;
     margin-left:-17px;
+    float:left;
 }
 
 #frameleft,
@@ -109,7 +110,8 @@
     background-repeat:no-repeat;
     background-position:100% 0;
     text-align:left;
-    margin:0 0 0 17px;
+    margin-left:0 0 0 17px;
+    height: 17px;
 }
 
 #framebottomright div,
@@ -124,6 +126,7 @@
     position:relative;
     width:17px;
     margin-left:-17px;
+    floaf: left;
 }
 
 #framebottom,
