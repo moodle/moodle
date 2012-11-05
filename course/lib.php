@@ -1591,6 +1591,11 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 if ($accessiblebutdim) {
                     $linkclasses .= ' dimmed';
                     $textclasses .= ' dimmed_text';
+                    // If mod is visible and is dimmed because of condition then handle it nicely with JS.
+                    if ($mod->visible) {
+                        $linkclasses .= ' conditionalhidden';
+                        $textclasses .= ' conditionalhidden';
+                    }
                     $accesstext = '<span class="accesshide">'.
                         get_string('hiddenfromstudents').': </span>';
                 } else {
