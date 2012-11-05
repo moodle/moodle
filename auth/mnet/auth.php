@@ -378,23 +378,28 @@ class auth_plugin_mnet extends auth_plugin_base {
                 $extra = $DB->get_records_sql($sql);
 
                 $keys = array_keys($courses);
-                $defaultrole = reset(get_archetype_roles('student'));
-                //$defaultrole = get_default_course_role($ccache[$shortname]); //TODO: rewrite this completely, there is no default course role any more!!!
-                foreach ($keys AS $id) {
-                    if ($courses[$id]->visible == 0) {
-                        unset($courses[$id]);
-                        continue;
-                    }
-                    $courses[$id]->cat_id          = $courses[$id]->category;
-                    $courses[$id]->defaultroleid   = $defaultrole->id;
-                    unset($courses[$id]->category);
-                    unset($courses[$id]->visible);
+                $studentroles = get_archetype_roles('student');
+                if (!empty($studentroles)) {
+                    $defaultrole = reset($studentroles);
+                    //$defaultrole = get_default_course_role($ccache[$shortname]); //TODO: rewrite this completely, there is no default course role any more!!!
+                    foreach ($keys AS $id) {
+                        if ($courses[$id]->visible == 0) {
+                            unset($courses[$id]);
+                            continue;
+                        }
+                        $courses[$id]->cat_id          = $courses[$id]->category;
+                        $courses[$id]->defaultroleid   = $defaultrole->id;
+                        unset($courses[$id]->category);
+                        unset($courses[$id]->visible);
 
-                    $courses[$id]->cat_name        = $extra[$id]->cat_name;
-                    $courses[$id]->cat_description = $extra[$id]->cat_description;
-                    $courses[$id]->defaultrolename = $defaultrole->name;
-                    // coerce to array
-                    $courses[$id] = (array)$courses[$id];
+                        $courses[$id]->cat_name        = $extra[$id]->cat_name;
+                        $courses[$id]->cat_description = $extra[$id]->cat_description;
+                        $courses[$id]->defaultrolename = $defaultrole->name;
+                        // coerce to array
+                        $courses[$id] = (array)$courses[$id];
+                    }
+                } else {
+                    throw new moodle_exception('unknownrole', 'error', '', 'student');
                 }
             } else {
                 // if the array is empty, send it anyway

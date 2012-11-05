@@ -62,7 +62,7 @@ echo $OUTPUT->heading($icon . s($course->fullname));
 
 // collapsible course summary
 if (!empty($course->summary)) {
-    unset($options);
+    $options = new stdClass();
     $options->trusted = false;
     $options->para    = false;
     $options->filter  = false;
