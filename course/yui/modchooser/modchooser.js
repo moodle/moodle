@@ -28,8 +28,6 @@ YUI.add('moodle-course-modchooser', function(Y) {
             };
             this.setup_chooser_dialogue(dialogue, header, params);
 
-            this.jumplink = this.container.one('#jump');
-
             // Initialize existing sections and register for dynamically created sections
             this.setup_for_section();
             M.course.coursebase.register_module(this);
