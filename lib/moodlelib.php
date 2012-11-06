@@ -6310,12 +6310,6 @@ function get_string_manager($forcereload=false) {
     if ($singleton === null) {
         if (empty($CFG->early_install_lang)) {
 
-            if (empty($CFG->langcacheroot)) {
-                $langcacheroot = $CFG->cachedir . '/lang';
-            } else {
-                $langcacheroot = $CFG->langcacheroot;
-            }
-
             if (empty($CFG->langlist)) {
                  $translist = array();
             } else {
@@ -6328,7 +6322,7 @@ function get_string_manager($forcereload=false) {
                 $langmenucache = $CFG->langmenucachefile;
             }
 
-            $singleton = new core_string_manager($CFG->langotherroot, $CFG->langlocalroot, $langcacheroot,
+            $singleton = new core_string_manager($CFG->langotherroot, $CFG->langlocalroot,
                                                  !empty($CFG->langstringcache), $translist, $langmenucache);
 
         } else {
@@ -6459,10 +6453,8 @@ class core_string_manager implements string_manager {
     protected $otherroot;
     /** @var string location of all lang pack local modifications */
     protected $localroot;
-    /** @var string location of on-disk cache of merged strings */
-    protected $cacheroot;
-    /** @var array lang string cache - it will be optimised more later */
-    protected $cache = array();
+    /** @var cache lang string cache - it will be optimised more later */
+    protected $cache;
     /** @var int get_string() counter */
     protected $countgetstring = 0;
     /** @var int in-memory cache hits counter */
@@ -6470,7 +6462,7 @@ class core_string_manager implements string_manager {
     /** @var int on-disk cache hits counter */
     protected $countdiskcache = 0;
     /** @var bool use disk cache */
-    protected $usediskcache;
+    protected $usecache;
     /** @var array limit list of translations */
     protected $translist;
     /** @var string location of a file that caches the list of available translations */
@@ -6481,18 +6473,24 @@ class core_string_manager implements string_manager {
      *
      * @param string $otherroot location of downlaoded lang packs - usually $CFG->dataroot/lang
      * @param string $localroot usually the same as $otherroot
-     * @param string $cacheroot usually lang dir in cache folder
-     * @param bool $usediskcache use disk cache
+     * @param bool $usecache use disk cache
      * @param array $translist limit list of visible translations
      * @param string $menucache the location of a file that caches the list of available translations
      */
-    public function __construct($otherroot, $localroot, $cacheroot, $usediskcache, $translist, $menucache) {
+    public function __construct($otherroot, $localroot, $usecache, $translist, $menucache) {
         $this->otherroot    = $otherroot;
         $this->localroot    = $localroot;
-        $this->cacheroot    = $cacheroot;
-        $this->usediskcache = $usediskcache;
+        $this->usecache     = $usecache;
         $this->translist    = $translist;
         $this->menucache    = $menucache;
+
+        if ($this->usecache) {
+            // We can use a proper cache, establish the cache using the 'String cache' definition.
+            $this->cache = cache::make('core', 'string');
+        } else {
+            // We only want a cache for the length of the request, create a static cache.
+            $this->cache = cache::make_from_params(cache_store::MODE_REQUEST, 'core', 'string');
+        }
     }
 
     /**
@@ -6539,18 +6537,13 @@ class core_string_manager implements string_manager {
             $component = $plugintype . '_' . $pluginname;
         }
 
-        if (!$disablecache and !$disablelocal) {
-            // try in-memory cache first
-            if (isset($this->cache[$lang][$component])) {
-                $this->countmemcache++;
-                return $this->cache[$lang][$component];
-            }
+        $cachekey = $lang.'/'.$component;
 
-            // try on-disk cache then
-            if ($this->usediskcache and file_exists($this->cacheroot . "/$lang/$component.php")) {
+        if (!$disablecache and !$disablelocal) {
+            $string = $this->cache->get($cachekey);
+            if ($string) {
                 $this->countdiskcache++;
-                include($this->cacheroot . "/$lang/$component.php");
-                return $this->cache[$lang][$component];
+                return $string;
             }
         }
 
@@ -6633,11 +6626,7 @@ class core_string_manager implements string_manager {
         if (!$disablelocal) {
             // now we have a list of strings from all possible sources. put it into both in-memory and on-disk
             // caches so we do not need to do all this merging and dependencies resolving again
-            $this->cache[$lang][$component] = $string;
-            if ($this->usediskcache) {
-                check_dir_exists("$this->cacheroot/$lang");
-                file_put_contents("$this->cacheroot/$lang/$component.php", "<?php \$this->cache['$lang']['$component'] = ".var_export($string, true).";");
-            }
+            $this->cache->set($cachekey, $string);
         }
         return $string;
     }
@@ -6716,12 +6705,12 @@ class core_string_manager implements string_manager {
                 // parentlanguage is a special string, undefined means use English if not defined
                 return 'en';
             }
-            if ($this->usediskcache) {
+            if ($this->usecache) {
                 // maybe the on-disk cache is dirty - let the last attempt be to find the string in original sources,
                 // do NOT write the results to disk cache because it may end up in race conditions see MDL-31904
-                $this->usediskcache = false;
+                $this->usecache = false;
                 $string = $this->load_component_strings($component, $lang, true);
-                $this->usediskcache = true;
+                $this->usecache = true;
             }
             if (!isset($string[$identifier])) {
                 // the string is still missing - should be fixed by developer
@@ -7013,10 +7002,7 @@ class core_string_manager implements string_manager {
         require_once("$CFG->libdir/filelib.php");
 
         // clear the on-disk disk with aggregated string files
-        fulldelete($this->cacheroot);
-
-        // clear the in-memory cache of loaded strings
-        $this->cache = array();
+        $this->cache->purge();
 
         if (!$phpunitreset) {
             // Increment the revision counter.
