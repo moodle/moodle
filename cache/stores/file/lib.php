@@ -457,6 +457,28 @@ class cachestore_file implements cache_store, cache_is_key_aware {
     }
 
     /**
+     * Given the data from the add instance form this function creates a configuration array.
+     *
+     * @param stdClass $data
+     * @return array
+     */
+    public static function config_get_configuration_array($data) {
+        $config = array();
+
+        if (isset($data->path)) {
+            $config['path'] = $data->path;
+        }
+        if (isset($data->autocreate)) {
+            $config['autocreate'] = $data->autocreate;
+        }
+        if (isset($data->prescan)) {
+            $config['prescan'] = $data->prescan;
+        }
+
+        return $config;
+    }
+
+    /**
      * Checks to make sure that the path for the file cache exists.
      *
      * @return bool
