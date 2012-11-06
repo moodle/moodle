@@ -532,6 +532,9 @@ class cachestore_file implements cache_store, cache_is_key_aware {
         if (isset($data->autocreate)) {
             $config['autocreate'] = $data->autocreate;
         }
+        if (isset($data->singledirectory)) {
+            $config['singledirectory'] = $data->singledirectory;
+        }
         if (isset($data->prescan)) {
             $config['prescan'] = $data->prescan;
         }
