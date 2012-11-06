@@ -844,6 +844,8 @@ M.core_filepicker.init = function(Y, options) {
             this.active_repo.norefresh = data.norefresh?true:false;
             this.active_repo.nologin = data.nologin?true:false;
             this.active_repo.logouttext = data.logouttext?data.logouttext:null;
+            this.active_repo.logouturl = (data.logouturl || '');
+            this.active_repo.message = (data.message || '');
             this.active_repo.help = data.help?data.help:null;
             this.active_repo.manage = data.manage?data.manage:null;
         },
@@ -1346,6 +1348,9 @@ M.core_filepicker.init = function(Y, options) {
                             scope.print_login(obj);
                         }
                     }, true);
+                    if (this.active_repo.logouturl) {
+                        window.open(this.active_repo.logouturl, 'repo_auth', 'location=0,status=0,width=500,height=300,scrollbars=yes');
+                    }
                 }, this);
                 toolbar.appendChild(logout);
             }
@@ -1363,6 +1368,11 @@ M.core_filepicker.init = function(Y, options) {
                 help.target = "_blank";
                 help.innerHTML = '<img src="'+M.util.image_url('a/help')+'" /> '+M.str.repository.help;
                 toolbar.appendChild(help);
+            }
+            if(r.message) {
+                var msg = document.createElement('div');
+                msg.innerHTML = r.message;
+                toolbar.appendChild(msg);
             }
 
             this.print_path();
