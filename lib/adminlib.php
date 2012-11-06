@@ -6806,7 +6806,7 @@ class admin_setting_enablemobileservice extends admin_setting_configcheckbox {
         if (!empty($assign)) {
             $systemcontext = get_system_context();
             assign_capability('webservice/xmlrpc:use', $permission, $CFG->defaultuserroleid, $systemcontext->id, true);
-            assign_capability('webservice/rest:use', $permission, $CFG->defaultuserroleid, $systemcontext->id, true); 
+            assign_capability('webservice/rest:use', $permission, $CFG->defaultuserroleid, $systemcontext->id, true);
         }
     }
 
