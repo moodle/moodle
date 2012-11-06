@@ -149,6 +149,12 @@ class workshop {
     /** @var bool automatically switch to the assessment phase after the submissions deadline */
     public $phaseswitchassessment;
 
+    /** @var string conclusion text to be displayed at the end of the activity */
+    public $conclusion;
+
+    /** @var int format of the conclusion text */
+    public $conclusionformat;
+
     /**
      * @var workshop_strategy grading strategy instance
      * Do not use directly, get the instance using {@link workshop::grading_strategy_instance()}
@@ -2800,6 +2806,19 @@ class workshop_user_plan implements renderable {
             $task->completed = 'info';
             $phase->tasks['evaluateinfo'] = $task;
         }
+
+        if (has_capability('moodle/course:manageactivities', $workshop->context, $userid)) {
+            $task = new stdclass();
+            $task->title = get_string('taskconclusion', 'workshop');
+            $task->link = $workshop->updatemod_url();
+            if (trim($workshop->conclusion)) {
+                $task->completed = true;
+            } elseif ($workshop->phase >= workshop::PHASE_EVALUATION) {
+                $task->completed = false;
+            }
+            $phase->tasks['conclusion'] = $task;
+        }
+
         $this->phases[workshop::PHASE_EVALUATION] = $phase;
 
         //---------------------------------------------------------

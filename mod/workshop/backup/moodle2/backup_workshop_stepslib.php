@@ -55,7 +55,8 @@ class backup_workshop_activity_structure_step extends backup_activity_structure_
             'usepeerassessment', 'useselfassessment', 'grade', 'gradinggrade',
             'strategy', 'evaluation', 'gradedecimals', 'nattachments',
             'latesubmissions', 'maxbytes', 'examplesmode', 'submissionstart',
-            'submissionend', 'assessmentstart', 'assessmentend'));
+            'submissionend', 'assessmentstart', 'assessmentend',
+            'conclusion', 'conclusionformat'));
 
         // assessment forms definition
         $this->add_subplugin_structure('workshopform', $workshop, true);
@@ -194,6 +195,7 @@ class backup_workshop_activity_structure_step extends backup_activity_structure_
         $workshop->annotate_files('mod_workshop', 'intro', null); // no itemid used
         $workshop->annotate_files('mod_workshop', 'instructauthors', null); // no itemid used
         $workshop->annotate_files('mod_workshop', 'instructreviewers', null); // no itemid used
+        $workshop->annotate_files('mod_workshop', 'conclusion', null); // no itemid used
 
         $examplesubmission->annotate_files('mod_workshop', 'submission_content', 'id');
         $examplesubmission->annotate_files('mod_workshop', 'submission_attachment', 'id');
