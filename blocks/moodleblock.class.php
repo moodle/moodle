@@ -558,12 +558,6 @@ class block_base {
     function user_can_addto($page) {
         global $USER;
 
-        $capability = 'block/' . $this->name() . ':addinstance';
-        if ($this->has_add_block_capability($page, $capability)
-                && has_capability('moodle/block:edit', $page->context)) {
-            return true;
-        }
-
         // The blocks in My Moodle are a special case and use a different capability.
         if (!empty($USER->id)
             && $page->context->contextlevel == CONTEXT_USER // Page belongs to a user
@@ -571,6 +565,12 @@ class block_base {
             $capability = 'block/' . $this->name() . ':myaddinstance';
             return $this->has_add_block_capability($page, $capability)
                     && has_capability('moodle/my:manageblocks', $page->context);
+        }
+
+        $capability = 'block/' . $this->name() . ':addinstance';
+        if ($this->has_add_block_capability($page, $capability)
+                && has_capability('moodle/block:edit', $page->context)) {
+            return true;
         }
 
         return false;
