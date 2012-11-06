@@ -7030,9 +7030,6 @@ class core_string_manager implements string_manager {
      */
     public function get_revision() {
         global $CFG;
-        if (!$this->usediskcache) {
-            return -1;
-        }
         if (isset($CFG->langrev)) {
             return (int)$CFG->langrev;
         } else {
