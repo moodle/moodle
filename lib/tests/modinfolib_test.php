@@ -167,7 +167,7 @@ class modinfolib_testcase extends advanced_testcase {
         // If the activity is unavailable and set to be hidden entirely its restricted unless user has 'moodle/course:viewhiddenactivities'
         $cm_info->available = false;
         $cm_info->showavailability = CONDITION_STUDENTVIEW_HIDE;
-        
+
         // Switch to a teacher and reload the context info
         $this->setUser($teacher);
         $cm_info = $this->refresh_cm_info($course, $assign);
@@ -175,7 +175,7 @@ class modinfolib_testcase extends advanced_testcase {
         $this->assertTrue(has_capability('moodle/course:viewhiddenactivities', $coursecontext));
         $this->assertFalse($cm_info->is_user_access_restricted_by_conditional_access());
     }
-    
+
     private function refresh_cm_info($course, $assign) {
         get_fast_modinfo(0, 0, true);
         return get_fast_modinfo($course)->instances['assign'][$assign->id];
