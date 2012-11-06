@@ -177,8 +177,7 @@ class modinfolib_testcase extends advanced_testcase {
     }
     
     private function refresh_cm_info($course, $assign) {
-        $reset = 'reset';
-        get_fast_modinfo($reset);
+        get_fast_modinfo(0, 0, true);
         return get_fast_modinfo($course)->instances['assign'][$assign->id];
     }
 }
