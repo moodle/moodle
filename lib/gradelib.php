@@ -1190,7 +1190,7 @@ function grade_update_mod_grades($modinstance, $userid=0) {
         $updategradesfunc($modinstance, $userid);
 
     } else {
-        // mudule does not support grading??
+        // Module does not support grading?
     }
 
     return true;
