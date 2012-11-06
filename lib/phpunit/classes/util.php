@@ -648,6 +648,14 @@ class phpunit_util {
         }
         get_fast_modinfo(0, 0, true);
 
+        // Reset other singletons.
+        if (class_exists('plugin_manager')) {
+            plugin_manager::reset_caches(true);
+        }
+        if (class_exists('available_update_checker')) {
+            available_update_checker::reset_caches(true);
+        }
+
         // purge dataroot directory
         self::reset_dataroot();
 
