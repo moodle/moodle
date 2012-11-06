@@ -35,7 +35,9 @@ require_once($CFG->dirroot.'/course/lib.php');
 try {
     // Start buffer capture so that we can `remove` any errors
     ob_start();
-    // Require id This is the key for whatever branch we want to get
+    // Require id This is the key for whatever branch we want to get.
+    // This accepts alphanum because the courses and my courses branches don't have numerical keys.
+    // For those branches we return the alphanum key, courses and mycourses.
     $branchid = required_param('id', PARAM_ALPHANUM);
     // This identifies the type of the branch we want to get
     $branchtype = required_param('type', PARAM_INT);
