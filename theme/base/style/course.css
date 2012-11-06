@@ -6,7 +6,7 @@
 .section_add_menus .horizontal form {display:inline;}
 .section_add_menus optgroup {font-weight:normal;font-style: italic;}
 
-.course-content .section .activity img.activityicon {vertical-align:middle;height:16px;width:16px;}
+.course-content .section .activity img.activityicon {vertical-align:text-bottom;height:24px;width:24px;margin-right: 3px;}
 .course-content .section .activity .commands img.iconsmall {vertical-align: baseline;}
 .course-content .section .activity .commands img {padding: 0 2px;}
 .course-content .section .activity:hover { background-color: #EEE; }
