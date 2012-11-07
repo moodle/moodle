@@ -14,7 +14,13 @@ Upgrade procedure:
 3/ bump up main version.php
 4/ update lib/thirdpartylibs.xml
 5/ execute cli/update_lang_files.php and review changes in lang/en/editor_tinymce.php
+6/ use search to find oversized zIndexes and divide them by 100
 
+
+Changes:
+
+1/ zIndex 300000 and 200000 changed to 3000 and 2000 - this prevents collision with YUI,
+   see MDL-35771
 
 TODO:
  * create some new automated script that sends other languages from upstream into AMOS
