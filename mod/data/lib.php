@@ -3577,7 +3577,7 @@ function data_get_recordids($alias, $searcharray, $dataid, $recordids) {
  * @param int $sort            DATA_*
  * @param stdClass $data       Data module object
  * @param array $recordids     An array of record IDs.
- * @param string $selectdata   Information for the select part of the sql statement.
+ * @param string $selectdata   Information for the where and select part of the sql statement.
  * @param string $sortorder    Additional sort parameters
  * @return array sqlselect     sqlselect['sql] has the sql string, sqlselect['params'] contains an array of parameters.
  */
@@ -3622,13 +3622,17 @@ function data_get_advanced_search_sql($sort, $data, $recordids, $selectdata, $so
                                  {user} u ';
         $groupsql = ' GROUP BY r.id, r.approved, r.timecreated, r.timemodified, r.userid, u.firstname, u.lastname, ' .$sortcontentfull;
     }
-    $nestfromsql = 'WHERE c.recordid = r.id
-                      AND r.dataid = :dataid
-                      AND r.userid = u.id';
+
+    // Default to a standard Where statement if $selectdata is empty.
+    if ($selectdata == '') {
+        $selectdata = 'WHERE c.recordid = r.id
+                         AND r.dataid = :dataid
+                         AND r.userid = u.id ';
+    }
 
     // Find the field we are sorting on
     if ($sort > 0 or data_get_field_from_id($sort, $data)) {
-        $nestfromsql .= ' AND c.fieldid = :sort';
+        $selectdata .= ' AND c.fieldid = :sort';
     }
 
     // If there are no record IDs then return an sql statment that will return no rows.
@@ -3637,7 +3641,7 @@ function data_get_advanced_search_sql($sort, $data, $recordids, $selectdata, $so
     } else {
         list($insql, $inparam) = $DB->get_in_or_equal(array('-1'), SQL_PARAMS_NAMED);
     }
-    $nestfromsql .= ' AND c.recordid ' . $insql . $selectdata . $groupsql;
+    $nestfromsql = $selectdata . ' AND c.recordid ' . $insql . $groupsql;
     $sqlselect['sql'] = "$nestselectsql $nestfromsql $sortorder";
     $sqlselect['params'] = $inparam;
     return $sqlselect;

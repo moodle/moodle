@@ -457,11 +457,15 @@ if ($showactivity) {
             $requiredentries_allowed = false;
         }
 
+        // Initialise the first group of params for advanced searches.
+        $initialparams   = array();
+
     /// setup group and approve restrictions
         if (!$approvecap && $data->approval) {
             if (isloggedin()) {
                 $approveselect = ' AND (r.approved=1 OR r.userid=:myid1) ';
                 $params['myid1'] = $USER->id;
+                $initialparams['myid1'] = $params['myid1'];
             } else {
                 $approveselect = ' AND r.approved=1 ';
             }
@@ -472,6 +476,7 @@ if ($showactivity) {
         if ($currentgroup) {
             $groupselect = " AND (r.groupid = :currentgroup OR r.groupid = 0)";
             $params['currentgroup'] = $currentgroup;
+            $initialparams['currentgroup'] = $params['currentgroup'];
         } else {
             if ($canviewallrecords) {
                 $groupselect = ' ';
@@ -487,6 +492,8 @@ if ($showactivity) {
         $advwhere        = '';
         $advtables       = '';
         $advparams       = array();
+        // This is used for the initial reduction of advanced search results with required entries.
+        $entrysql        = '';
 
     /// Find the field we are sorting on
         if ($sort <= 0 or !$sortfield = data_get_field_from_id($sort, $data)) {
@@ -515,8 +522,7 @@ if ($showactivity) {
             $tables = '{data_content} c,{data_records} r, {data_content} cs, {user} u ';
             $where =  'WHERE c.recordid = r.id
                          AND r.dataid = :dataid
-                         AND r.userid = u.id
-                         AND cs.recordid = r.id ';
+                         AND r.userid = u.id ';
             $params['dataid'] = $data->id;
             $sortorder = ' ORDER BY '.$ordering.', r.id ASC ';
             $searchselect = '';
@@ -524,7 +530,9 @@ if ($showactivity) {
             // If requiredentries is not reached, only show current user's entries
             if (!$requiredentries_allowed) {
                 $where .= ' AND u.id = :myid2 ';
+                $entrysql = ' AND r.userid = :myid3 ';
                 $params['myid2'] = $USER->id;
+                $initialparams['myid3'] = $params['myid2'];
             }
 
             if (!empty($advanced)) {                                                  //If advanced box is checked.
@@ -542,6 +550,7 @@ if ($showactivity) {
                     $advparams = array_merge($advparams, $val->params);
                 }
             } else if ($search) {
+                $where .= ' AND cs.recordid = r.id ';
                 $searchselect = " AND (".$DB->sql_like('cs.content', ':search1', false)." OR ".$DB->sql_like('u.firstname', ':search2', false)." OR ".$DB->sql_like('u.lastname', ':search3', false)." ) ";
                 $params['search1'] = "%$search%";
                 $params['search2'] = "%$search%";
@@ -559,10 +568,11 @@ if ($showactivity) {
             $count = ' COUNT(DISTINCT c.recordid) ';
             $tables = '{data_content} c, {data_records} r, {data_content} cs, {user} u ';
             $where =  'WHERE c.recordid = r.id
-                         AND c.fieldid = :sort
                          AND r.dataid = :dataid
-                         AND r.userid = u.id
-                         AND cs.recordid = r.id ';
+                         AND r.userid = u.id ';
+            if (!$advanced) {
+                $where .=  'AND c.fieldid = :sort';
+            }
             $params['dataid'] = $data->id;
             $params['sort'] = $sort;
             $sortorder = ' ORDER BY sortorder '.$order.' , r.id ASC ';
@@ -570,8 +580,10 @@ if ($showactivity) {
 
             // If requiredentries is not reached, only show current user's entries
             if (!$requiredentries_allowed) {
-                $where .= ' AND u.id = ' . $USER->id;
+                $where .= ' AND u.id = :myid2';
+                $entrysql = ' AND r.userid = :myid3';
                 $params['myid2'] = $USER->id;
+                $initialparams['myid3'] = $params['myid2'];
             }
 
             $i = 0;
@@ -589,6 +601,7 @@ if ($showactivity) {
                     $advparams = array_merge($advparams, $val->params);
                 }
             } else if ($search) {
+                $where .= ' AND cs.recordid = r.id ';
                 $searchselect = " AND (".$DB->sql_like('cs.content', ':search1', false)." OR ".$DB->sql_like('u.firstname', ':search2', false)." OR ".$DB->sql_like('u.lastname', ':search3', false)." ) ";
                 $params['search1'] = "%$search%";
                 $params['search2'] = "%$search%";
@@ -604,18 +617,12 @@ if ($showactivity) {
         $allparams  = array_merge($params, $advparams);
 
         // Provide initial sql statements and parameters to reduce the number of total records.
-        $selectdata = $groupselect . $approveselect;
-        $initialparams = array();
-        if ($currentgroup) {
-            $initialparams['currentgroup'] = $params['currentgroup'];
-        }
-        if (!$approvecap && $data->approval && isloggedin()) {
-            $initialparams['myid1'] = $params['myid1'];
-        }
+        $initialselect = $groupselect . $approveselect . $entrysql;
 
-        $recordids = data_get_all_recordids($data->id, $selectdata, $initialparams);
+        $recordids = data_get_all_recordids($data->id, $initialselect, $initialparams);
         $newrecordids = data_get_advance_search_ids($recordids, $search_array, $data->id);
         $totalcount = count($newrecordids);
+        $selectdata = $where . $groupselect . $approveselect;
 
         if (!empty($advanced)) {
             $advancedsearchsql = data_get_advanced_search_sql($sort, $data, $newrecordids, $selectdata, $sortorder);
