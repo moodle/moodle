@@ -30,6 +30,7 @@ $string['availability'] = 'Availability';
 $string['checkforupdates'] = 'Check for available updates';
 $string['checkforupdateslast'] = 'Last check done on {$a}';
 $string['displayname'] = 'Plugin name';
+$string['err_response_format_version'] = 'Unexpected version of the response format. Please try to re-check for available updates.';
 $string['filterall'] = 'Show all';
 $string['filtercontribonly'] = 'Show contributions only';
 $string['filtercontribonlyactive'] = 'Showing contributions only';
