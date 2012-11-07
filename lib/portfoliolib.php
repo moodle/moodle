@@ -1271,6 +1271,74 @@ function portfolio_rewrite_pluginfile_url_callback($contextid, $component, $file
     return $format->file_output($file, $options);
 }
 
+/**
+* Function to require any potential callback files, throwing exceptions
+* if an issue occurs.
+*
+* @param string $callbackfile This is the location of the callback file '/mod/forum/locallib.php'
+* @param string $class Name of the class containing the callback functions
+* activity components should ALWAYS use their name_portfolio_caller
+* other locations must use something unique
+*/
+function portfolio_include_callback_file($callbackfile, $class = null) {
+    global $CFG;
+    require_once($CFG->libdir . '/adminlib.php');
+
+    // Get the last occurrence of '/' in the file path.
+    $pos = strrpos($callbackfile, '/');
+    // Get rid of the first slash (if it exists).
+    $callbackfile = ltrim($callbackfile, '/');
+    // Get a list of valid plugin types.
+    $plugintypes = get_plugin_types(false);
+    // Assume it is not valid for now.
+    $isvalid = false;
+    // Go through the plugin types.
+    foreach ($plugintypes as $type => $path) {
+        if (strrpos($callbackfile, $path) === 0) {
+            // Found the plugin type.
+            $isvalid = true;
+            $plugintype = $type;
+            $pluginpath = $path;
+        }
+    }
+    // Throw exception if not a valid component.
+    if (!$isvalid) {
+        throw new coding_exception('Somehow a non-valid plugin path was passed, could be a hackz0r attempt, exiting.');
+    }
+    // Keep record of the filename.
+    $filename = substr($callbackfile, $pos);
+    // Remove the file name.
+    $component = trim(substr($callbackfile, 0, $pos), '/');
+    // Replace the path with the type.
+    $component = str_replace($pluginpath, $plugintype, $component);
+    // Ok, replace '/' with '_'.
+    $component = str_replace('/', '_', $component);
+    // Check that it is a valid component.
+    if (!get_component_version($component)) {
+        throw new portfolio_button_exception('nocallbackcomponent', 'portfolio', '', $component);
+    }
+
+    // Obtain the component's location.
+    if (!$componentloc = get_component_directory($component)) {
+        throw new portfolio_button_exception('nocallbackcomponent', 'portfolio', '', $component);
+    }
+
+    // Check if the filename does not meet any of the expected names.
+    if (($filename != 'locallib.php') && ($filename != 'portfoliolib.php') && ($filename != 'portfolio_callback.php')) {
+        debugging('Please standardise your plugin by keeping your portfolio callback functionality in the file locallib.php.', DEBUG_DEVELOPER);
+    }
+
+    // Throw error if file does not exist.
+    if (!file_exists($componentloc . '/' . $filename)) {
+        throw new portfolio_button_exception('nocallbackfile', 'portfolio', '', $callbackfile);
+    }
+
+    require_once($componentloc . '/' . $filename);
+
+    if (!is_null($class) && !class_exists($class)) {
+        throw new portfolio_button_exception('nocallbackclass', 'portfolio', '', $class);
+    }
+}
 
 /**
  * Go through all the @@PLUGINFILE@@ matches in some text,

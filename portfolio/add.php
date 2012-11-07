@@ -173,13 +173,10 @@ if (!empty($dataid)) {
             $callbackargs[substr($key, 3)] = $value;
         }
     }
-    // righto, now we have the callback args set up
-    // load up the caller file and class and tell it to set up all the data
-    // it needs
-    require_once($CFG->dirroot . $callbackfile);
-    if (!class_exists($callbackclass) || !is_subclass_of($callbackclass, 'portfolio_caller_base')) {
-        throw new portfolio_caller_exception('callbackclassinvalid', 'portfolio');
-    }
+
+    // Ensure that we found a file we can use, if not throw an exception.
+    portfolio_include_callback_file($callbackfile, $callbackclass);
+
     $caller = new $callbackclass($callbackargs);
     $caller->set('user', $USER);
     if ($formats = explode(',', $callerformats)) {
