@@ -611,6 +611,49 @@ class output_http_provider extends output_provider {
     public function help() {
         // No help available via HTTP
     }
+
+    /**
+     * Display the information about uncaught exception
+     *
+     * @param Exception $e uncaught exception
+     */
+    public function exception(Exception $e) {
+        $this->start_output();
+        echo('<h1>Oops! It did it again</h1>');
+        echo('<p><strong>Moodle deployment utility had a trouble with your request. See the debugging information for more details.</strong></p>');
+        echo('<pre>');
+        echo exception_handlers::format_exception_info($e);
+        echo('</pre>');
+        $this->end_output();
+    }
+
+    // End of external API
+
+    /**
+     * Produce the HTML page header
+     */
+    protected function start_output() {
+        echo '<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <style type="text/css">
+    body {background-color:#666;font-family:"DejaVu Sans","Liberation Sans",Freesans,sans-serif;}
+    h1 {text-align:center;}
+    pre {white-space: pre-wrap;}
+    #page {background-color:#eee;width:1024px;margin:5em auto;border:3px solid #333;border-radius: 15px;padding:1em;}
+  </style>
+</head>
+<body>
+<div id="page">';
+    }
+
+    /**
+     * Produce the HTML page footer
+     */
+    protected function end_output() {
+        echo '</div></body></html>';
+    }
 }
 
 // The main class providing all the functionality //////////////////////////////
@@ -726,6 +769,15 @@ class worker extends singleton_pattern {
     }
 
     /**
+     * Attempts to log a thrown exception
+     *
+     * @param Exception $e uncaught exception
+     */
+    public function log_exception(Exception $e) {
+        $this->log($e->__toString());
+    }
+
+    /**
      * Initialize the worker class.
      */
     protected function initialize() {
@@ -817,9 +869,9 @@ class worker extends singleton_pattern {
             return $this->logfile;
         }
 
-        $dataroot = $this->input->get_option('dataroot', false);
+        $dataroot = $this->input->get_option('dataroot', '');
 
-        if ($dataroot === false) {
+        if (empty($dataroot)) {
             $this->logfile = false;
             return $this->logfile;
         }
@@ -1170,6 +1222,77 @@ class worker extends singleton_pattern {
 }
 
 
+/**
+ * Provides exception handlers for this script
+ */
+class exception_handlers {
+
+    /**
+     * Sets the exception handler
+     *
+     *
+     * @param string $handler name
+     */
+    public static function set_handler($handler) {
+
+        if (PHP_SAPI === 'cli') {
+            // No custom handler available for CLI mode.
+            set_exception_handler(null);
+            return;
+        }
+
+        set_exception_handler('exception_handlers::'.$handler.'_exception_handler');
+    }
+
+    /**
+     * Returns the text describing the thrown exception
+     *
+     * By default, PHP displays full path to scripts when the exception is thrown. In order to prevent
+     * sensitive information leak (and yes, the path to scripts at a web server _is_ sensitive information)
+     * the path to scripts is removed from the message.
+     *
+     * @param Exception $e thrown exception
+     * @return string
+     */
+    public static function format_exception_info(Exception $e) {
+
+        $mydir = dirname(__FILE__).'/';
+        $text = $e->__toString();
+        $text = str_replace($mydir, '', $text);
+        return $text;
+    }
+
+    /**
+     * Very basic exception handler
+     *
+     * @param Exception $e uncaught exception
+     */
+    public static function bootstrap_exception_handler(Exception $e) {
+        echo('<h1>Oops! It did it again</h1>');
+        echo('<p><strong>Moodle deployment utility had a trouble with your request. See the debugging information for more details.</strong></p>');
+        echo('<pre>');
+        echo self::format_exception_info($e);
+        echo('</pre>');
+    }
+
+    /**
+     * Default exception handler
+     *
+     * When this handler is used, input_manager and output_manager singleton instances already
+     * exist in the memory and can be used.
+     *
+     * @param Exception $e uncaught exception
+     */
+    public static function default_exception_handler(Exception $e) {
+
+        $worker = worker::instance();
+        $worker->log_exception($e);
+
+        $output = output_manager::instance();
+        $output->exception($e);
+    }
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 // Check if the script is actually executed or if it was just included by someone
@@ -1177,8 +1300,10 @@ class worker extends singleton_pattern {
 // if __name__ == '__main__'
 if (!debug_backtrace()) {
     // We are executed by the SAPI.
+    exception_handlers::set_handler('bootstrap');
     // Initialize the worker class to actually make the job.
     $worker = worker::instance();
+    exception_handlers::set_handler('default');
 
     // Lights, Camera, Action!
     $worker->execute();
