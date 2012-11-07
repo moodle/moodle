@@ -767,6 +767,24 @@ abstract class format_base {
         }
         return new editsection_form($action, $customdata);
     }
+
+    /**
+     * Allows course format to execute code on moodle_page::set_course()
+     *
+     * @param moodle_page $page instance of page calling set_course
+     */
+    public function page_set_course(moodle_page $page) {
+    }
+
+    /**
+     * Allows course format to execute code on moodle_page::set_cm()
+     *
+     * Current module can be accessed as $page->cm (returns instance of cm_info)
+     *
+     * @param moodle_page $page instance of page calling set_cm
+     */
+    public function page_set_cm(moodle_page $page) {
+    }
 }
 
 /**
