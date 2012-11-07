@@ -392,6 +392,7 @@ $string['creatinguserroles'] = 'Creating user level role assignments and overrid
 $string['creatingusers'] = 'Creating users';
 $string['creatingxmlfile'] = 'Creating XML file';
 $string['currency'] = 'Currency';
+$string['currentcourse'] = 'Current course';
 $string['currentcourseadding'] = 'Current course, adding data to it';
 $string['currentcoursedeleting'] = 'Current course, deleting it first';
 $string['currentlanguage'] = 'Current language';
