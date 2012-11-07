@@ -54,16 +54,16 @@ class data_field_url extends data_field_base {
             $str .= '<table><tr><td align="right">';
             $str .= get_string('url','data').':</td><td>';
             $str .= '<label class="accesshide" for="' . $fieldid . '">'. $this->field->name .'</label>';
-            $str .= '<input type="text" name="field_'.$this->field->id.'_0" id="'.$fieldid.'" value="'.$url.'" size="60" /></td></tr>';
+            $str .= '<input type="text" name="field_'.$this->field->id.'_0" id="'.$fieldid.'" value="'.$url.'" size="60" />';
+            $str .= '<button id="filepicker-button-'.$options->client_id.'" style="display:none">'.$straddlink.'</button></td></tr>';
             $str .= '<tr><td align="right">'.get_string('text','data').':</td><td><input type="text" name="field_'.$this->field->id.'_1" id="field_'.$this->field->id.'_1" value="'.s($text).'" size="60" /></td></tr>';
             $str .= '</table>';
         } else {
             // Just the URL field
             $str .= '<label class="accesshide" for="' . $fieldid . '">'. $this->field->name .'</label>';
             $str .= '<input type="text" name="field_'.$this->field->id.'_0" id="'.$fieldid.'" value="'.s($url).'" size="60" />';
+            $str .= '<button id="filepicker-button-'.$options->client_id.'" style="display:none">'.$straddlink.'</button>';
         }
-
-        $str .= '<button id="filepicker-button-'.$options->client_id.'" style="display:none">'.$straddlink.'</button>';
 
         // print out file picker
         //$str .= $OUTPUT->render($fp);

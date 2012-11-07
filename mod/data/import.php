@@ -159,7 +159,10 @@ if (!$formdata = $form->get_data()) {
                     if (preg_match("/^(latlong|url)$/", $field->type)) {
                         $values = explode(" ", $value, 2);
                         $content->content  = $values[0];
-                        $content->content1 = $values[1];
+                        // The url field doesn't always have two values (unforced autolinking).
+                        if (count($values) > 1) {
+                            $content->content1 = $values[1];
+                        }
                     } else {
                         $content->content = $value;
                     }
