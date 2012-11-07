@@ -264,30 +264,42 @@ class enrol_self_plugin extends enrol_plugin {
      * @return int id of new instance
      */
     public function add_default_instance($course) {
-        $expirynotify = $this->get_config('expirynotify', 0);
-        if ($expirynotify == 2) {
-            $expirynotify = 1;
-            $notifyall = 1;
-        } else {
-            $notifyall = 0;
-        }
-        $fields = array('customint1'  => $this->get_config('groupkey'),
-                        'customint2'  => $this->get_config('longtimenosee'),
-                        'customint3'  => $this->get_config('maxenrolled'),
-                        'customint4'  => $this->get_config('sendcoursewelcomemessage'),
-                        'customint5'  => 0,
-                        'enrolperiod' => $this->get_config('enrolperiod', 0),
-                        'expirynotify'=> $expirynotify,
-                        'notifyall'   => $notifyall,
-                        'expirythreshold' => $this->get_config('expirythreshold', 86400),
-                        'status'      => $this->get_config('status'),
-                        'roleid'      => $this->get_config('roleid', 0));
+        $fields = $this->get_instance_defaults();
 
         if ($this->get_config('requirepassword')) {
             $fields['password'] = generate_password(20);
         }
 
         return $this->add_instance($course, $fields);
+    }
+
+    /**
+     * Returns defaults for new instances.
+     * @return array
+     */
+    public function get_instance_defaults() {
+        $expirynotify = $this->get_config('expirynotify');
+        if ($expirynotify == 2) {
+            $expirynotify = 1;
+            $notifyall = 1;
+        } else {
+            $notifyall = 0;
+        }
+
+        $fields = array();
+        $fields['status']          = $this->get_config('status');
+        $fields['roleid']          = $this->get_config('roleid');
+        $fields['enrolperiod']     = $this->get_config('enrolperiod');
+        $fields['expirynotify']    = $expirynotify;
+        $fields['notifyall']       = $notifyall;
+        $fields['expirythreshold'] = $this->get_config('expirythreshold');
+        $fields['customint1']      = $this->get_config('groupkey');
+        $fields['customint2']      = $this->get_config('longtimenosee');
+        $fields['customint3']      = $this->get_config('maxenrolled');
+        $fields['customint4']      = $this->get_config('sendcoursewelcomemessage');
+        $fields['customint5']      = 0;
+
+        return $fields;
     }
 
     /**
