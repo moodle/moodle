@@ -1492,6 +1492,8 @@ function upgrade_core($version, $verbose) {
         external_update_descriptions('moodle');
         events_update_definition('moodle');
         message_update_providers('moodle');
+        // Update core definitions.
+        cache_helper::update_definitions(true);
 
         // Reset caches again, just to be sure
         purge_all_caches();
@@ -1525,6 +1527,7 @@ function upgrade_noncore($verbose) {
         foreach ($plugintypes as $type=>$location) {
             upgrade_plugins($type, 'print_upgrade_part_start', 'print_upgrade_part_end', $verbose);
         }
+        cache_helper::update_definitions();
     } catch (Exception $ex) {
         upgrade_handle_exception($ex);
     }

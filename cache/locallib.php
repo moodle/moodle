@@ -364,18 +364,21 @@ class cache_config_writer extends cache_config {
      * Updates the definition in the configuration from those found in the cache files.
      *
      * Calls config_save further down, you should redirect immediately or asap after calling this method.
+     *
+     * @param bool $coreonly If set to true only core definitions will be updated.
      */
-    public static function update_definitions() {
+    public static function update_definitions($coreonly = false) {
         $config = self::instance();
-        $config->write_definitions_to_cache(self::locate_definitions());
+        $config->write_definitions_to_cache(self::locate_definitions($coreonly));
     }
 
     /**
      * Locates all of the definition files.
      *
+     * @param bool $coreonly If set to true only core definitions will be updated.
      * @return array
      */
-    protected static function locate_definitions() {
+    protected static function locate_definitions($coreonly = false) {
         global $CFG;
 
         $files = array();
@@ -383,12 +386,14 @@ class cache_config_writer extends cache_config {
             $files['core'] = $CFG->dirroot.'/lib/db/caches.php';
         }
 
-        $plugintypes = get_plugin_types();
-        foreach ($plugintypes as $type => $location) {
-            $plugins = get_plugin_list_with_file($type, 'db/caches.php');
-            foreach ($plugins as $plugin => $filepath) {
-                $component = clean_param($type.'_'.$plugin, PARAM_COMPONENT); // Standardised plugin name.
-                $files[$component] = $filepath;
+        if (!$coreonly) {
+            $plugintypes = get_plugin_types();
+            foreach ($plugintypes as $type => $location) {
+                $plugins = get_plugin_list_with_file($type, 'db/caches.php');
+                foreach ($plugins as $plugin => $filepath) {
+                    $component = clean_param($type.'_'.$plugin, PARAM_COMPONENT); // Standardised plugin name.
+                    $files[$component] = $filepath;
+                }
             }
         }
 
