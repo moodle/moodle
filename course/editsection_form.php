@@ -207,8 +207,39 @@ class editsection_form extends moodleform {
         // Conditions: Don't let them set dates which make no sense
         if (array_key_exists('availablefrom', $data) &&
                 $data['availablefrom'] && $data['availableuntil'] &&
-                $data['availablefrom'] > $data['availableuntil']) {
+                $data['availablefrom'] >= $data['availableuntil']) {
             $errors['availablefrom'] = get_string('badavailabledates', 'condition');
+        }
+
+        // Conditions: Verify that the grade conditions are numbers, and make sense.
+        if (array_key_exists('conditiongradegroup', $data)) {
+            foreach ($data['conditiongradegroup'] as $i => $gradedata) {
+                if ($gradedata['conditiongrademin'] !== '' &&
+                        !is_numeric(unformat_float($gradedata['conditiongrademin']))) {
+                    $errors["conditiongradegroup[{$i}]"] = get_string('gradesmustbenumeric', 'condition');
+                    continue;
+                }
+                if ($gradedata['conditiongrademax'] !== '' &&
+                        !is_numeric(unformat_float($gradedata['conditiongrademax']))) {
+                    $errors["conditiongradegroup[{$i}]"] = get_string('gradesmustbenumeric', 'condition');
+                    continue;
+                }
+                if ($gradedata['conditiongrademin'] !== '' && $gradedata['conditiongrademax'] !== '' &&
+                        unformat_float($gradedata['conditiongrademax']) <= unformat_float($gradedata['conditiongrademin'])) {
+                    $errors["conditiongradegroup[{$i}]"] = get_string('badgradelimits', 'condition');
+                    continue;
+                }
+                if ($gradedata['conditiongrademin'] === '' && $gradedata['conditiongrademax'] === '' &&
+                        $gradedata['conditiongradeitemid']) {
+                    $errors["conditiongradegroup[{$i}]"] = get_string('gradeitembutnolimits', 'condition');
+                    continue;
+                }
+                if (($gradedata['conditiongrademin'] !== '' || $gradedata['conditiongrademax'] !== '') &&
+                        !$gradedata['conditiongradeitemid']) {
+                    $errors["conditiongradegroup[{$i}]"] = get_string('gradelimitsbutnoitem', 'condition');
+                    continue;
+                }
+            }
         }
 
         // Conditions: Verify that the user profile field has not been declared more than once

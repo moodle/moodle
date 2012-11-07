@@ -341,7 +341,7 @@ abstract class moodleform_mod extends moodleform {
                     continue;
                 }
                 if ($gradedata['conditiongrademin'] !== '' && $gradedata['conditiongrademax'] !== '' &&
-                        unformat_float($gradedata['conditiongrademax']) < unformat_float($gradedata['conditiongrademin'])) {
+                        unformat_float($gradedata['conditiongrademax']) <= unformat_float($gradedata['conditiongrademin'])) {
                     $errors["conditiongradegroup[{$i}]"] = get_string('badgradelimits', 'condition');
                     continue;
                 }
