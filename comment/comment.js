@@ -309,16 +309,16 @@ bodyContent: '<div class="comment-delete-confirm"><a href="#" id="confirmdelete-
                             CommentHelper.confirmoverlay.set('xy', [e.pageX-width-5, e.pageY]);
                             CommentHelper.confirmoverlay.set('visible', true);
                             Y.one('#canceldelete-'+scope.client_id).on('click', function(e) {
-								e.preventDefault();
+                                e.preventDefault();
                                 scope.cancel_delete();
                                 });
                             Y.Event.purgeElement('#confirmdelete-'+scope.client_id, false, 'click');
                             Y.one('#confirmdelete-'+scope.client_id).on('click', function(e) {
-									e.preventDefault();
-                                    if (commentid[1]) {
-                                        scope.dodelete(commentid[1]);
-                                    }
-                                });
+                                e.preventDefault();
+                                if (commentid[1]) {
+                                    scope.dodelete(commentid[1]);
+                                }
+                            });
                         }, scope, node);
                     }
                 );
