@@ -376,16 +376,34 @@ abstract class format_base {
     /**
      * Loads all of the course sections into the navigation
      *
+     * This method is called from {@link global_navigation::load_course_sections()}
+     *
      * By default the method {@link global_navigation::load_generic_course_sections()} is called
+     *
+     * When overwriting please note that navigationlib relies on using the correct values for
+     * arguments $type and $key in {@link navigation_node::add()}
+     *
+     * Example of code creating a section node:
+     * $sectionnode = $node->add($sectionname, $url, navigation_node::TYPE_SECTION, null, $section->id);
+     * $sectionnode->nodetype = navigation_node::NODETYPE_BRANCH;
+     *
+     * Example of code creating an activity node:
+     * $activitynode = $sectionnode->add($activityname, $action, navigation_node::TYPE_ACTIVITY, null, $activity->id, $icon);
+     * if (global_navigation::module_extends_navigation($activity->modname)) {
+     *     $activitynode->nodetype = navigation_node::NODETYPE_BRANCH;
+     * } else {
+     *     $activitynode->nodetype = navigation_node::NODETYPE_LEAF;
+     * }
+     *
+     * Also note that if $navigation->includesectionnum is not null, the section with this relative
+     * number needs is expected to be loaded
      *
      * @param global_navigation $navigation
      * @param navigation_node $node The course node within the navigation
-     * @return array Array of sections where each element also contains the element 'sectionnode'
-     *     referring to the corresponding section node
      */
-    public function extend_course_navigation(&$navigation, navigation_node $node) {
+    public function extend_course_navigation($navigation, navigation_node $node) {
         if ($course = $this->get_course()) {
-            return $navigation->load_generic_course_sections($course, $node);
+            $navigation->load_generic_course_sections($course, $node);
         }
         return array();
     }

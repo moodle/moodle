@@ -175,27 +175,37 @@ class format_legacy extends format_base {
      * First this function calls callback_FORMATNAME_display_content() if it exists to check
      * if the navigation should be extended at all
      *
-     * Then it calls function callback_FORMATNAME_load_content() if it exist to actually extend
+     * Then it calls function callback_FORMATNAME_load_content() if it exists to actually extend
      * navigation
      *
      * By default the parent method is called
      *
      * @param global_navigation $navigation
      * @param navigation_node $node The course node within the navigation
-     * @return array Array of sections where each element also contains the element 'sectionnode'
-     *     referring to the corresponding section node
      */
-    public function extend_course_navigation(&$navigation, navigation_node $node) {
+    public function extend_course_navigation($navigation, navigation_node $node) {
+        global $PAGE;
+        // if course format displays section on separate pages and we are on course/view.php page
+        // and the section parameter is specified, make sure this section is expanded in
+        // navigation
+        if ($navigation->includesectionnum === false) {
+            $selectedsection = optional_param('section', null, PARAM_INT);
+            if ($selectedsection !== null && (!defined('AJAX_SCRIPT') || AJAX_SCRIPT == '0') &&
+                    $PAGE->url->compare(new moodle_url('/course/view.php'), URL_MATCH_BASE)) {
+                $navigation->includesectionnum = $selectedsection;
+            }
+        }
+
         // check if there are callbacks to extend course navigation
         $displayfunc = 'callback_'.$this->format.'_display_content';
         if (function_exists($displayfunc) && !$displayfunc()) {
-            return array();
+            return;
         }
         $featurefunction = 'callback_'.$this->format.'_load_content';
         if (function_exists($featurefunction) && ($course = $this->get_course())) {
-            return $featurefunction($navigation, $course, $node);
+            $featurefunction($navigation, $course, $node);
         } else {
-            return parent::extend_navigation($navigation, $node);
+            parent::extend_course_navigation($navigation, $node);
         }
     }
 

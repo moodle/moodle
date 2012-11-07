@@ -1144,7 +1144,7 @@ class global_navigation extends navigation_node {
                     // already been loaded.
                     // However we need to check if there is more content that can
                     // yet be loaded for the specific module instance.
-                    $activitynode = $this->rootnodes['site']->get($this->page->cm->id, navigation_node::TYPE_ACTIVITY);
+                    $activitynode = $this->rootnodes['site']->find($this->page->cm->id, navigation_node::TYPE_ACTIVITY);
                     if ($activitynode) {
                         $this->load_activity($this->page->cm, $this->page->course, $activitynode);
                     }
@@ -1173,62 +1173,15 @@ class global_navigation extends navigation_node {
 
                 $this->add_course_essentials($coursenode, $course);
 
-                // Get section number from $cm (if provided) - we need this
-                // before loading sections in order to tell it to load this section
-                // even if it would not normally display (=> it contains only
-                // a label, which we are now editing)
-                $sectionnum = isset($cm->sectionnum) ? $cm->sectionnum : 0;
-                if ($sectionnum) {
-                    // This value has to be stored in a member variable because
-                    // otherwise we would have to pass it through a public API
-                    // to course formats and they would need to change their
-                    // functions to pass it along again...
-                    $this->includesectionnum = $sectionnum;
-                } else {
-                    $this->includesectionnum = false;
-                }
-
                 // Load the course sections into the page
-                $sections = $this->load_course_sections($course, $coursenode);
-                if ($course->id != $SITE->id) {
-                    // Find the section for the $CM associated with the page and collect
-                    // its section number.
-                    if ($sectionnum) {
-                        $cm->sectionnumber = $sectionnum;
-                    } else {
-                        foreach ($sections as $section) {
-                            if ($section->id == $cm->section) {
-                                $cm->sectionnumber = $section->section;
-                                break;
-                            }
-                        }
-                    }
-
-                    // Load all of the section activities for the section the cm belongs to.
-                    if (isset($cm->sectionnumber) and !empty($sections[$cm->sectionnumber])) {
-                        list($sectionarray, $activityarray) = $this->generate_sections_and_activities($course);
-                        $activities = $this->load_section_activities($sections[$cm->sectionnumber]->sectionnode, $cm->sectionnumber, $activityarray);
-                    } else {
-                        $activities = array();
-                        if ($activity = $this->load_stealth_activity($coursenode, get_fast_modinfo($course))) {
-                            // "stealth" activity from unavailable section
-                            $activities[$cm->id] = $activity;
-                        }
-                    }
-                } else {
-                    $activities = array();
-                    $activities[$cm->id] = $coursenode->get($cm->id, navigation_node::TYPE_ACTIVITY);
-                }
-                if (!empty($activities[$cm->id])) {
-                    // Finally load the cm specific navigaton information
-                    $this->load_activity($cm, $course, $activities[$cm->id]);
-                    // Check if we have an active ndoe
-                    if (!$activities[$cm->id]->contains_active_node() && !$activities[$cm->id]->search_for_active_node()) {
-                        // And make the activity node active.
-                        $activities[$cm->id]->make_active();
-                    }
-                } else {
-                    //TODO: something is wrong, what to do? (Skodak)
+                $this->load_course_sections($course, $coursenode, null, $cm);
+                $activity = $coursenode->find($cm->id, navigation_node::TYPE_ACTIVITY);
+                // Finally load the cm specific navigaton information
+                $this->load_activity($cm, $course, $activity);
+                // Check if we have an active ndoe
+                if (!$activity->contains_active_node() && !$activity->search_for_active_node()) {
+                    // And make the activity node active.
+                    $activity->make_active();
                 }
                 break;
             case CONTEXT_USER :
@@ -1775,22 +1728,36 @@ class global_navigation extends navigation_node {
     /**
      * Loads all of the courses section into the navigation.
      *
-     * This function utilisies a callback that can be implemented within the course
-     * formats lib.php file to customise the navigation that is generated at this
-     * point for the course.
+     * This function calls method from current course format, see
+     * {@link format_base::extend_course_navigation()}
+     * If course module ($cm) is specified but course format failed to create the node,
+     * the activity node is created anyway.
      *
-     * By default (if not defined) the method {@link global_navigation::load_generic_course_sections()} is
-     * called instead.
+     * By default course formats call the method {@link global_navigation::load_generic_course_sections()}
      *
      * @param stdClass $course Database record for the course
      * @param navigation_node $coursenode The course node within the navigation
-     * @return array Array of navigation nodes for the section with key = section id
+     * @param null|int $sectionnum If specified load the contents of section with this relative number
+     * @param null|cm_info $cm If specified make sure that activity node is created (either
+     *    in containg section or by calling load_stealth_activity() )
      */
-    protected function load_course_sections(stdClass $course, navigation_node $coursenode) {
-        global $CFG;
+    protected function load_course_sections(stdClass $course, navigation_node $coursenode, $sectionnum = null, $cm = null) {
+        global $CFG, $SITE;
         require_once($CFG->dirroot.'/course/lib.php');
-        return course_get_format($course)->extend_course_navigation($this, $coursenode);
-    }
+        if (isset($cm->sectionnum)) {
+            $sectionnum = $cm->sectionnum;
+        }
+        if ($sectionnum !== null) {
+            $this->includesectionnum = $sectionnum;
+        }
+        course_get_format($course)->extend_course_navigation($this, $coursenode, $sectionnum, $cm);
+        if (isset($cm->id)) {
+            $activity = $coursenode->find($cm->id, self::TYPE_ACTIVITY);
+            if (empty($activity)) {
+                $activity = $this->load_stealth_activity($coursenode, get_fast_modinfo($course));
+            }
+        }
+   }
 
     /**
      * Generates an array of sections and an array of activities for the given course.
@@ -1873,11 +1840,6 @@ class global_navigation extends navigation_node {
 
         list($sections, $activities) = $this->generate_sections_and_activities($course);
 
-        $key = 0;
-        if (defined('AJAX_SCRIPT') && AJAX_SCRIPT == '0' && $this->page->url->compare(new moodle_url('/course/view.php'), URL_MATCH_BASE)) {
-            $key = optional_param('section', $key, PARAM_INT);
-        }
-
         $navigationsections = array();
         foreach ($sections as $sectionid => $section) {
             $section = clone($section);
@@ -1895,8 +1857,7 @@ class global_navigation extends navigation_node {
                 $sectionnode = $coursenode->add($sectionname, $url, navigation_node::TYPE_SECTION, null, $section->id);
                 $sectionnode->nodetype = navigation_node::NODETYPE_BRANCH;
                 $sectionnode->hidden = (!$section->visible || !$section->available);
-                if ($key != '0' && $section->section != '0' && $section->section == $key && $this->page->context->contextlevel != CONTEXT_MODULE && $section->hasactivites) {
-                    $sectionnode->make_active();
+                if ($this->includesectionnum !== false && $this->includesectionnum == $section->section) {
                     $this->load_section_activities($sectionnode, $section->section, $activities);
                 }
                 $section->sectionnode = $sectionnode;
@@ -1905,6 +1866,7 @@ class global_navigation extends navigation_node {
         }
         return $navigationsections;
     }
+
     /**
      * Loads all of the activities for a section into the navigation structure.
      *
@@ -2033,7 +1995,6 @@ class global_navigation extends navigation_node {
             $modinfo = get_fast_modinfo($course);
             $cm = $modinfo->get_cm($cm->id);
         }
-
         $activity->nodetype = navigation_node::NODETYPE_LEAF;
         $activity->make_active();
         $file = $CFG->dirroot.'/mod/'.$cm->modname.'/lib.php';
@@ -2317,7 +2278,7 @@ class global_navigation extends navigation_node {
      * @param string $modname
      * @return bool
      */
-    protected static function module_extends_navigation($modname) {
+    public static function module_extends_navigation($modname) {
         global $CFG;
         static $extendingmodules = array();
         if (!array_key_exists($modname, $extendingmodules)) {
@@ -2752,9 +2713,7 @@ class global_navigation_for_ajax extends global_navigation {
                 $this->page->set_context(context_course::instance($course->id));
                 $coursenode = $this->add_course($course);
                 $this->add_course_essentials($coursenode, $course);
-                $sections = $this->load_course_sections($course, $coursenode);
-                list($sectionarray, $activities) = $this->generate_sections_and_activities($course);
-                $this->load_section_activities($sections[$course->sectionnumber]->sectionnode, $course->sectionnumber, $activities);
+                $this->load_course_sections($course, $coursenode, $course->sectionnumber);
                 break;
             case self::TYPE_ACTIVITY :
                 $sql = "SELECT c.*
@@ -2768,14 +2727,10 @@ class global_navigation_for_ajax extends global_navigation {
                 require_course_login($course, true, $cm, false, true);
                 $this->page->set_context(context_module::instance($cm->id));
                 $coursenode = $this->load_course($course);
-                if ($course->id == $SITE->id) {
-                    $modulenode = $this->load_activity($cm, $course, $coursenode->find($cm->id, self::TYPE_ACTIVITY));
-                } else {
-                    $sections   = $this->load_course_sections($course, $coursenode);
-                    list($sectionarray, $activities) = $this->generate_sections_and_activities($course);
-                    $activities = $this->load_section_activities($sections[$cm->sectionnum]->sectionnode, $cm->sectionnum, $activities);
-                    $modulenode = $this->load_activity($cm, $course, $activities[$cm->id]);
+                if ($course->id != $SITE->id) {
+                    $this->load_course_sections($course, $coursenode, null, $cm);
                 }
+                $modulenode = $this->load_activity($cm, $course, $coursenode->find($cm->id, self::TYPE_ACTIVITY));
                 break;
             default:
                 throw new Exception('Unknown type');
