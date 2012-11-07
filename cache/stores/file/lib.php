@@ -543,6 +543,26 @@ class cachestore_file implements cache_store, cache_is_key_aware {
     }
 
     /**
+     * Allows the cache store to set its data against the edit form before it is shown to the user.
+     *
+     * @param moodleform $editform
+     * @param array $config
+     */
+    public static function config_set_edit_form_data(moodleform $editform, array $config) {
+        $data = array();
+        if (!empty($config['path'])) {
+            $data['path'] = $config['path'];
+        }
+        if (!empty($config['autocreate'])) {
+            $data['autocreate'] = $config['autocreate'];
+        }
+        if (!empty($config['prescan'])) {
+            $data['prescan'] = $config['prescan'];
+        }
+        $editform->set_data($data);
+    }
+
+    /**
      * Checks to make sure that the path for the file cache exists.
      *
      * @return bool
