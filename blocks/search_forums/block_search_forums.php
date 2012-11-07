@@ -42,6 +42,15 @@ class block_search_forums extends block_base {
     function applicable_formats() {
         return array('site' => true, 'course' => true);
     }
+
+    /**
+     * Returns the role that best describes the forum search block.
+     *
+     * @return string
+     */
+    public function get_aria_role() {
+        return 'search';
+    }
 }
 
 

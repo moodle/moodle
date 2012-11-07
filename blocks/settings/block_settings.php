@@ -148,4 +148,13 @@ class block_settings extends block_base {
         $this->contentgenerated = true;
         return true;
     }
+
+    /**
+     * Returns the role that best describes the settings block.
+     *
+     * @return string 'navigation'
+     */
+    public function get_aria_role() {
+        return 'navigation';
+    }
 }

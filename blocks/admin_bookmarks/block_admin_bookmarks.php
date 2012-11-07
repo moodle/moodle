@@ -126,6 +126,15 @@ class block_admin_bookmarks extends block_base {
 
         return $this->content;
     }
+
+    /**
+     * Returns the role that best describes the admin bookmarks block.
+     *
+     * @return string
+     */
+    public function get_aria_role() {
+        return 'navigation';
+    }
 }
 
 

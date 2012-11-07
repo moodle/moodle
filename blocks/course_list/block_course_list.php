@@ -142,6 +142,14 @@ class block_course_list extends block_list {
         return false;
     }
 
+    /**
+     * Returns the role that best describes the course list block.
+     *
+     * @return string
+     */
+    public function get_aria_role() {
+        return 'navigation';
+    }
 }
 
 

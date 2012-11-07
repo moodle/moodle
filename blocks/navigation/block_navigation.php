@@ -325,4 +325,13 @@ class block_navigation extends block_base {
         $string = $start.'...'.$end;
         return $string;
     }
+
+    /**
+     * Returns the role that best describes the navigation block... 'navigation'
+     *
+     * @return string 'navigation'
+     */
+    public function get_aria_role() {
+        return 'navigation';
+    }
 }
