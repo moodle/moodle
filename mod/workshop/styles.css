@@ -459,6 +459,38 @@
 }
 
 /**
+ * Final grades
+ */
+.path-mod-workshop #workshop-viewlet-yourgrades .finalgrades {
+    text-align: center;
+}
+
+.path-mod-workshop #workshop-viewlet-yourgrades .finalgrades .grade {
+    border: 1px solid #ddd;
+    margin: 1em;
+    padding: 2em;
+    display: inline-block;
+    -webkit-border-radius: 15px;
+    -moz-border-radius: 15px;
+    border-radius: 15px;
+}
+
+.path-mod-workshop #workshop-viewlet-yourgrades .finalgrades .grade.submissiongrade {
+    background-color: #d2ebff;
+}
+
+.path-mod-workshop #workshop-viewlet-yourgrades .finalgrades .grade.assessmentgrade {
+    background-color: #eee;
+    /*background-color: #e7f1c3;*/
+}
+
+.path-mod-workshop #workshop-viewlet-yourgrades .finalgrades .grade .gradevalue {
+    font-weight: bold;
+    font-size: x-large;
+    margin: 10px;
+}
+
+/**
  * Edit assessment form
  */
 #mod-workshop-editform fieldset.fgroup * {

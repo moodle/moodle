@@ -301,4 +301,5 @@ $string['workshop:viewauthorpublished'] = 'View authors of published submissions
 $string['workshop:viewpublishedsubmissions'] = 'View published submissions';
 $string['workshop:viewreviewernames'] = 'View reviewer names';
 $string['yourassessment'] = 'Your assessment';
+$string['yourgrades'] = 'Your grades';
 $string['yoursubmission'] = 'Your submission';

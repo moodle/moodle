@@ -2203,6 +2203,59 @@ class workshop {
                 'post', '', null, $editable);
     }
 
+    /**
+     * Returns the information about the user's grades as they are stored in the gradebook
+     *
+     * The submission grade is returned for users with the capability mod/workshop:submit and the
+     * assessment grade is returned for users with the capability mod/workshop:peerassess. Unless the
+     * user has the capability to view hidden grades, grades must be visible to be returned. Null
+     * grades are not returned. If none grade is to be returned, this method returns false.
+     *
+     * @param int $userid the user's id
+     * @return workshop_final_grades|false
+     */
+    public function get_gradebook_grades($userid) {
+        global $CFG;
+        require_once($CFG->libdir.'/gradelib.php');
+
+        if (empty($userid)) {
+            throw new coding_exception('User id expected, empty value given.');
+        }
+
+        // Read data via the Gradebook API
+        $gradebook = grade_get_grades($this->course->id, 'mod', 'workshop', $this->id, $userid);
+
+        $grades = new workshop_final_grades();
+
+        if (has_capability('mod/workshop:submit', $this->context, $userid)) {
+            if (!empty($gradebook->items[0]->grades)) {
+                $submissiongrade = reset($gradebook->items[0]->grades);
+                if (!is_null($submissiongrade->grade)) {
+                    if (!$submissiongrade->hidden or has_capability('moodle/grade:viewhidden', $this->context, $userid)) {
+                        $grades->submissiongrade = $submissiongrade;
+                    }
+                }
+            }
+        }
+
+        if ($this->usepeerassessment and has_capability('mod/workshop:peerassess', $this->context, $userid)) {
+            if (!empty($gradebook->items[1]->grades)) {
+                $assessmentgrade = reset($gradebook->items[1]->grades);
+                if (!is_null($assessmentgrade->grade)) {
+                    if (!$assessmentgrade->hidden or has_capability('moodle/grade:viewhidden', $this->context, $userid)) {
+                        $grades->assessmentgrade = $assessmentgrade;
+                    }
+                }
+            }
+        }
+
+        if (!is_null($grades->submissiongrade) or !is_null($grades->assessmentgrade)) {
+            return $grades;
+        }
+
+        return false;
+    }
+
     ////////////////////////////////////////////////////////////////////////////////
     // Internal methods (implementation details)                                  //
     ////////////////////////////////////////////////////////////////////////////////
@@ -3473,4 +3526,17 @@ class workshop_feedback_reviewer extends workshop_feedback implements renderable
         $this->content  = $assessment->feedbackreviewer;
         $this->format   = $assessment->feedbackreviewerformat;
     }
+}
+
+
+/**
+ * Holds the final grades for the activity as are stored in the gradebook
+ */
+class workshop_final_grades implements renderable {
+
+    /** @var object the info from the gradebook about the grade for submission */
+    public $submissiongrade = null;
+
+    /** @var object the infor from the gradebook about the grade for assessment */
+    public $assessmentgrade = null;
 }
