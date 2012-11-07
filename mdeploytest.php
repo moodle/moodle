@@ -135,6 +135,8 @@ class mdeploytest extends PHPUnit_Framework_TestCase {
                 'https://moodle.org/plugins/download.php/1292/mod_stampcoll_moodle23_2012062201.zip'
             ),
             array('file:///etc/passwd', input_manager::TYPE_URL, ''),
+
+            array('5e8d2ea4f50d154730100b1645fbad67', input_manager::TYPE_MD5, '5e8d2ea4f50d154730100b1645fbad67'),
         );
     }
 
@@ -153,6 +155,15 @@ class mdeploytest extends PHPUnit_Framework_TestCase {
         $input = testable_input_manager::instance();
         $o = new stdClass();
         $input->cast_value($o, input_manager::TYPE_INT); // must throw exception
+    }
+
+    /**
+     * @expectedException invalid_option_exception
+     */
+    public function test_cast_invalid_md5_value() {
+        $input = testable_input_manager::instance();
+        $invalid = 'this is not a valid md5 hash';
+        $input->cast_value($invalid, input_manager::TYPE_MD5); // must throw exception
     }
 
     public function test_has_option() {

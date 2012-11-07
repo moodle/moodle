@@ -45,6 +45,7 @@ class download_file_exception extends Exception {}
 class backup_folder_exception extends Exception {}
 class zip_exception extends Exception {}
 class filesystem_exception extends Exception {}
+class checksum_exception extends Exception {}
 
 
 // Various support classes /////////////////////////////////////////////////////
@@ -118,6 +119,7 @@ class input_manager extends singleton_pattern {
     const TYPE_RAW          = 'raw';    // Raw value, keep as is
     const TYPE_URL          = 'url';    // URL to a file
     const TYPE_PLUGIN       = 'plugin'; // Plugin name
+    const TYPE_MD5          = 'md5';    // MD5 hash
 
     /** @var input_cli_provider|input_http_provider the provider of the input */
     protected $inputprovider = null;
@@ -173,6 +175,7 @@ class input_manager extends singleton_pattern {
             array('d', 'dataroot', input_manager::TYPE_PATH, 'Full path to the dataroot (moodledata) directory'),
             array('h', 'help', input_manager::TYPE_FLAG, 'Prints usage information'),
             array('i', 'install', input_manager::TYPE_FLAG, 'Installation mode'),
+            array('m', 'md5', input_manager::TYPE_MD5, 'Expected MD5 hash of the ZIP package to deploy'),
             array('n', 'name', input_manager::TYPE_PLUGIN, 'Plugin name (the name of its folder)'),
             array('p', 'package', input_manager::TYPE_URL, 'URL to the ZIP package to deploy'),
             array('r', 'typeroot', input_manager::TYPE_PATH, 'Full path of the container for this plugin type'),
@@ -285,6 +288,12 @@ class input_manager extends singleton_pattern {
                 }
                 if (strpos($raw, '__') !== false) {
                     throw new invalid_option_exception('Invalid plugin name');
+                }
+                return $raw;
+
+            case input_manager::TYPE_MD5:
+                if (!preg_match('/^[a-f0-9]{32}$/', $raw)) {
+                    throw new invalid_option_exception('Invalid MD5 hash format');
                 }
                 return $raw;
 
@@ -654,9 +663,17 @@ class worker extends singleton_pattern {
             } else {
                 $this->log('cURL error ' . $this->curlerrno . ' ' . $this->curlerror);
                 $this->log('Unable to download the file');
+                throw new download_file_exception('Unable to download the ZIP package');
             }
 
-            // Compare MD5 checksum of the ZIP file - TODO
+            // Compare MD5 checksum of the ZIP file
+            $md5remote = $this->input->get_option('md5');
+            $md5local = md5_file($target);
+
+            if ($md5local !== $md5remote) {
+                $this->log('MD5 checksum failed. Expected: '.$md5remote.' Got: '.$md5local);
+                throw new checksum_exception('MD5 checksum failed');
+            }
 
             // Backup the current version of the plugin
             $plugintyperoot = $this->input->get_option('typeroot');

@@ -1407,6 +1407,8 @@ class available_update_info {
     public $url = null;
     /** @var string|null optional URL of a ZIP package that can be downloaded and installed */
     public $download = null;
+    /** @var string|null of self::download is set, then this must be the MD5 hash of the ZIP */
+    public $downloadmd5 = null;
 
     /**
      * Creates new instance of the class
@@ -1529,7 +1531,7 @@ class available_update_deployer {
      *
      * All instances of {@link available_update_info} class always provide at least the
      * component name and component version. Additionally, we also need the URL to download
-     * the ZIP package from.
+     * the ZIP package from and MD5 hash of the ZIP's content.
      *
      * @param available_update_info $info
      * @return bool
@@ -1537,6 +1539,10 @@ class available_update_deployer {
     public function can_deploy(available_update_info $info) {
 
         if (empty($info->download)) {
+            return false;
+        }
+
+        if (empty($info->downloadmd5)) {
             return false;
         }
 
@@ -1626,6 +1632,7 @@ class available_update_deployer {
             'name' => $pluginname,
             'typeroot' => $pluginrootpaths[$plugintype],
             'package' => $info->download,
+            'md5' => $info->downloadmd5,
             'dataroot' => $CFG->dataroot,
             'dirroot' => $CFG->dirroot,
             'passfile' => $passfile,
