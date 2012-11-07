@@ -117,7 +117,7 @@ class assignment_online extends assignment_base {
                     if ($CFG->enableportfolios) {
                         require_once($CFG->libdir . '/portfoliolib.php');
                         $button = new portfolio_add_button();
-                        $button->set_callback_options('assignment_portfolio_caller', array('id' => $this->cm->id), '/mod/assignment/locallib.php');
+                        $button->set_callback_options('assignment_portfolio_caller', array('id' => $this->cm->id), 'mod_assignment');
                         $fs = get_file_storage();
                         if ($files = $fs->get_area_files($this->context->id, 'mod_assignment', $this->filearea, $submission->id, "timemodified", false)) {
                             $button->set_formats(PORTFOLIO_FORMAT_RICHHTML);

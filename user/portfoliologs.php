@@ -117,7 +117,13 @@ if ($logcount > 0) {
     );
     $logs = $DB->get_records('portfolio_log', array('userid' => $USER->id), 'time DESC', '*', ($page * $perpage), $perpage);
     foreach ($logs as $log) {
-        require_once($CFG->dirroot . $log->caller_file);
+        if (!empty($log->caller_file)) {
+            portfolio_include_callback_file($log->caller_file);
+        } else if (!empty($log->caller_component)) {
+            portfolio_include_callback_file($log->caller_component);
+        } else { // Errrmahgerrrd - this should never happen. Skipping.
+            continue;
+        }
         $class = $log->caller_class;
         $pluginname = '';
         try {

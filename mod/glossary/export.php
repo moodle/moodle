@@ -70,7 +70,7 @@ $exporturl = moodle_url::make_pluginfile_url($context->id, 'mod_glossary', 'expo
     if (!empty($CFG->enableportfolios) && $DB->count_records('glossary_entries', array('glossaryid' => $glossary->id))) {
         require_once($CFG->libdir . '/portfoliolib.php');
         $button = new portfolio_add_button();
-        $button->set_callback_options('glossary_full_portfolio_caller', array('id' => $cm->id), '/mod/glossary/locallib.php');
+        $button->set_callback_options('glossary_full_portfolio_caller', array('id' => $cm->id), 'mod_glossary');
         $button->render();
     }
     echo $OUTPUT->box_end();

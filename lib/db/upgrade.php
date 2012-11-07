@@ -1399,5 +1399,20 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012110201.00);
     }
 
+    if ($oldversion < 2012110700.01) {
+
+        // Define field caller_component to be added to portfolio_log.
+        $table = new xmldb_table('portfolio_log');
+        $field = new xmldb_field('caller_component', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'caller_file');
+
+        // Conditionally launch add field caller_component.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2012110700.01);
+    }
+
     return true;
 }

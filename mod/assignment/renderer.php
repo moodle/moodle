@@ -100,7 +100,7 @@ class assignment_files implements renderable {
             $files = $fs->get_area_files($this->context->id, 'mod_assignment', $filearea, $itemid, "timemodified", false);
             if (count($files) >= 1 && has_capability('mod/assignment:exportownsubmission', $this->context)) {
                 $button = new portfolio_add_button();
-                $button->set_callback_options('assignment_portfolio_caller', array('id' => $this->cm->id, 'submissionid' => $itemid), '/mod/assignment/locallib.php');
+                $button->set_callback_options('assignment_portfolio_caller', array('id' => $this->cm->id, 'submissionid' => $itemid), 'mod_assignment');
                 $button->reset_formats();
                 $this->portfolioform = $button->to_html(PORTFOLIO_ADD_TEXT_LINK);
             }
@@ -117,7 +117,7 @@ class assignment_files implements renderable {
             if (!empty($CFG->enableportfolios)) {
                 $button = new portfolio_add_button();
                 if (has_capability('mod/assignment:exportownsubmission', $this->context)) {
-                    $button->set_callback_options('assignment_portfolio_caller', array('id' => $this->cm->id, 'fileid' => $file->get_id()), '/mod/assignment/locallib.php');
+                    $button->set_callback_options('assignment_portfolio_caller', array('id' => $this->cm->id, 'fileid' => $file->get_id()), 'mod_assignment');
                     $button->set_format_by_file($file);
                     $file->portfoliobutton = $button->to_html(PORTFOLIO_ADD_ICON_LINK);
                 }

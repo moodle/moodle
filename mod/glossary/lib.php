@@ -1273,7 +1273,7 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
     if (!empty($CFG->enableportfolios) && (has_capability('mod/glossary:exportentry', $context) || ($iscurrentuser && has_capability('mod/glossary:exportownentry', $context)))) {
         require_once($CFG->libdir . '/portfoliolib.php');
         $button = new portfolio_add_button();
-        $button->set_callback_options('glossary_entry_portfolio_caller',  array('id' => $cm->id, 'entryid' => $entry->id), '/mod/glossary/locallib.php');
+        $button->set_callback_options('glossary_entry_portfolio_caller',  array('id' => $cm->id, 'entryid' => $entry->id), 'mod_glossary');
 
         $filecontext = $context;
         if ($entry->sourceglossaryid == $cm->instance) {

@@ -3347,7 +3347,7 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
         $p = array('postid' => $post->id);
         require_once($CFG->libdir.'/portfoliolib.php');
         $button = new portfolio_add_button();
-        $button->set_callback_options('forum_portfolio_caller', array('postid' => $post->id), '/mod/forum/locallib.php');
+        $button->set_callback_options('forum_portfolio_caller', array('postid' => $post->id), 'mod_forum');
         if (empty($attachments)) {
             $button->set_formats(PORTFOLIO_FORMAT_PLAINHTML);
         } else {
@@ -4001,7 +4001,7 @@ function forum_print_attachments($post, $cm, $type) {
                 $output .= "<a href=\"$path\">$iconimage</a> ";
                 $output .= "<a href=\"$path\">".s($filename)."</a>";
                 if ($canexport) {
-                    $button->set_callback_options('forum_portfolio_caller', array('postid' => $post->id, 'attachment' => $file->get_id()), '/mod/forum/locallib.php');
+                    $button->set_callback_options('forum_portfolio_caller', array('postid' => $post->id, 'attachment' => $file->get_id()), 'mod_forum');
                     $button->set_format_by_file($file);
                     $output .= $button->to_html(PORTFOLIO_ADD_ICON_LINK);
                 }
@@ -4015,7 +4015,7 @@ function forum_print_attachments($post, $cm, $type) {
                     // Image attachments don't get printed as links
                     $imagereturn .= "<br /><img src=\"$path\" alt=\"\" />";
                     if ($canexport) {
-                        $button->set_callback_options('forum_portfolio_caller', array('postid' => $post->id, 'attachment' => $file->get_id()), '/mod/forum/locallib.php');
+                        $button->set_callback_options('forum_portfolio_caller', array('postid' => $post->id, 'attachment' => $file->get_id()), 'mod_forum');
                         $button->set_format_by_file($file);
                         $imagereturn .= $button->to_html(PORTFOLIO_ADD_ICON_LINK);
                     }
@@ -4023,7 +4023,7 @@ function forum_print_attachments($post, $cm, $type) {
                     $output .= "<a href=\"$path\">$iconimage</a> ";
                     $output .= format_text("<a href=\"$path\">".s($filename)."</a>", FORMAT_HTML, array('context'=>$context));
                     if ($canexport) {
-                        $button->set_callback_options('forum_portfolio_caller', array('postid' => $post->id, 'attachment' => $file->get_id()), '/mod/forum/locallib.php');
+                        $button->set_callback_options('forum_portfolio_caller', array('postid' => $post->id, 'attachment' => $file->get_id()), 'mod_forum');
                         $button->set_format_by_file($file);
                         $output .= $button->to_html(PORTFOLIO_ADD_ICON_LINK);
                     }

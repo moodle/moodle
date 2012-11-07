@@ -192,7 +192,7 @@
     if (!empty($CFG->enableportfolios) && has_capability('mod/forum:exportdiscussion', $modcontext)) {
         require_once($CFG->libdir.'/portfoliolib.php');
         $button = new portfolio_add_button();
-        $button->set_callback_options('forum_portfolio_caller', array('discussionid' => $discussion->id), '/mod/forum/locallib.php');
+        $button->set_callback_options('forum_portfolio_caller', array('discussionid' => $discussion->id), 'mod_forum');
         $button = $button->to_html(PORTFOLIO_ADD_FULL_FORM, get_string('exportdiscussion', 'mod_forum'));
         $buttonextraclass = '';
         if (empty($button)) {

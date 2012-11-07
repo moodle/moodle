@@ -1234,7 +1234,7 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
                 || (data_isowner($record->id) && has_capability('mod/data:exportownentry', $context))))) {
             require_once($CFG->libdir . '/portfoliolib.php');
             $button = new portfolio_add_button();
-            $button->set_callback_options('data_portfolio_caller', array('id' => $cm->id, 'recordid' => $record->id), '/mod/data/locallib.php');
+            $button->set_callback_options('data_portfolio_caller', array('id' => $cm->id, 'recordid' => $record->id), 'mod_data');
             list($formats, $files) = data_portfolio_caller::formats($fields, $record);
             $button->set_formats($formats);
             $replacement[] = $button->to_html(PORTFOLIO_ADD_ICON_LINK);

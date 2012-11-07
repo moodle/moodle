@@ -33,18 +33,18 @@ require_once($CFG->libdir . '/portfolio/exporter.php');
 require_once($CFG->libdir . '/portfolio/caller.php');
 require_once($CFG->libdir . '/portfolio/plugin.php');
 
-$dataid        = optional_param('id', 0, PARAM_INT);                          // id of partially completed export. corresponds to a record in portfolio_tempdata
-$type          = optional_param('type', null, PARAM_SAFEDIR);                 // if we're returning from an external system (postcontrol) for a single-export only plugin
-$cancel        = optional_param('cancel', 0, PARAM_RAW);                      // user has cancelled the request
-$cancelsure    = optional_param('cancelsure', 0, PARAM_BOOL);                 // make sure they confirm first
-$logreturn     = optional_param('logreturn', 0, PARAM_BOOL);                  // when cancelling, we can also come from the log page, rather than the caller
-$instanceid    = optional_param('instance', 0, PARAM_INT);                    // instanceof of configured portfolio plugin
-$courseid      = optional_param('course', 0, PARAM_INT);                      // courseid the data being exported belongs to (caller object should provide this later)
-$stage         = optional_param('stage', PORTFOLIO_STAGE_CONFIG, PARAM_INT);  // stage of the export we're at (stored in the exporter)
-$postcontrol   = optional_param('postcontrol', 0, PARAM_INT);                 // when returning from some bounce to an external system, this gets passed
-$callbackfile  = optional_param('callbackfile', null, PARAM_PATH);            // callback file eg /mod/forum/lib.php - the location of the exporting content
-$callbackclass = optional_param('callbackclass', null, PARAM_ALPHAEXT);       // callback class eg forum_portfolio_caller - the class to handle the exporting content.
-$callerformats = optional_param('callerformats', null, PARAM_TAGLIST);        // comma separated list of formats the specific place exporting content supports
+$dataid = optional_param('id', 0, PARAM_INT); // The ID of partially completed export, corresponds to a record in portfolio_tempdata.
+$type = optional_param('type', null, PARAM_SAFEDIR); // If we're returning from an external system (postcontrol) for a single-export only plugin.
+$cancel = optional_param('cancel', 0, PARAM_RAW); // User has cancelled the request.
+$cancelsure = optional_param('cancelsure', 0, PARAM_BOOL); // Make sure they confirm first.
+$logreturn = optional_param('logreturn', 0, PARAM_BOOL); // When cancelling, we can also come from the log page, rather than the caller.
+$instanceid = optional_param('instance', 0, PARAM_INT); // The instance of configured portfolio plugin.
+$courseid = optional_param('course', 0, PARAM_INT); // The courseid the data being exported belongs to (caller object should provide this later).
+$stage = optional_param('stage', PORTFOLIO_STAGE_CONFIG, PARAM_INT); // Stage of the export we're at (stored in the exporter).
+$postcontrol = optional_param('postcontrol', 0, PARAM_INT); // When returning from some bounce to an external system, this gets passed.
+$callbackcomponent = optional_param('callbackcomponent', null, PARAM_PATH); // Callback component eg mod_forum - the component of the exporting content.
+$callbackclass = optional_param('callbackclass', null, PARAM_ALPHAEXT); // Callback class eg forum_portfolio_caller - the class to handle the exporting content.
+$callerformats = optional_param('callerformats', null, PARAM_TAGLIST); // Comma separated list of formats the specific place exporting content supports.
 
 require_login();  // this is selectively called again with $course later when we know for sure which one we're in.
 $PAGE->set_context(get_system_context());
@@ -152,7 +152,7 @@ if (!empty($dataid)) {
 
     // we must be passed this from the caller, we cannot start a new export
     // without knowing information about what part of moodle we come from.
-    if (empty($callbackfile) || empty($callbackclass)) {
+    if (empty($callbackcomponent) || empty($callbackclass)) {
         debugging('no callback file or class');
         portfolio_exporter::print_expired_export();
     }
@@ -173,13 +173,10 @@ if (!empty($dataid)) {
             $callbackargs[substr($key, 3)] = $value;
         }
     }
-    // righto, now we have the callback args set up
-    // load up the caller file and class and tell it to set up all the data
-    // it needs
-    require_once($CFG->dirroot . $callbackfile);
-    if (!class_exists($callbackclass) || !is_subclass_of($callbackclass, 'portfolio_caller_base')) {
-        throw new portfolio_caller_exception('callbackclassinvalid', 'portfolio');
-    }
+
+    // Ensure that we found a file we can use, if not throw an exception.
+    portfolio_include_callback_file($callbackcomponent, $callbackclass);
+
     $caller = new $callbackclass($callbackargs);
     $caller->set('user', $USER);
     if ($formats = explode(',', $callerformats)) {
@@ -194,7 +191,7 @@ if (!empty($dataid)) {
     portfolio_export_pagesetup($PAGE, $caller); // this calls require_login($course) if it can..
 
     // finally! set up the exporter object with the portfolio instance, and caller information elements
-    $exporter = new portfolio_exporter($instance, $caller, $callbackfile);
+    $exporter = new portfolio_exporter($instance, $caller, $callbackcomponent);
 
     // set the export-specific variables, and save.
     $exporter->set('user', $USER);

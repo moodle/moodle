@@ -760,7 +760,7 @@ if ($showactivity) {
     if ($mode == '' && !empty($CFG->enableportfolios)) {
         require_once($CFG->libdir . '/portfoliolib.php');
         $button = new portfolio_add_button();
-        $button->set_callback_options('data_portfolio_caller', array('id' => $cm->id), '/mod/data/locallib.php');
+        $button->set_callback_options('data_portfolio_caller', array('id' => $cm->id), 'mod_data');
         if (data_portfolio_caller::has_files($data)) {
             $button->set_formats(array(PORTFOLIO_FORMAT_RICHHTML, PORTFOLIO_FORMAT_LEAP2A)); // no plain html for us
         }

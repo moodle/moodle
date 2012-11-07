@@ -113,7 +113,7 @@
                     'end'   => $end,
                 );
                 $button = new portfolio_add_button();
-                $button->set_callback_options('chat_portfolio_caller', $buttonoptions, '/mod/chat/locallib.php');
+                $button->set_callback_options('chat_portfolio_caller', $buttonoptions, 'mod_chat');
                 $button->render();
             }
             echo $OUTPUT->box_end();
@@ -239,7 +239,7 @@
                         'end'   => $sessionend,
                     );
                     $button = new portfolio_add_button();
-                    $button->set_callback_options('chat_portfolio_caller', $buttonoptions, '/mod/chat/locallib.php');
+                    $button->set_callback_options('chat_portfolio_caller', $buttonoptions, 'mod_chat');
                     $portfoliobutton = $button->to_html(PORTFOLIO_ADD_TEXT_LINK);
                     if (!empty($portfoliobutton)) {
                         echo '<br />' . $portfoliobutton;
@@ -265,7 +265,7 @@
     if (!empty($CFG->enableportfolios) && $canexportsess) {
         require_once($CFG->libdir . '/portfoliolib.php');
         $button = new portfolio_add_button();
-        $button->set_callback_options('chat_portfolio_caller', array('id' => $cm->id), '/mod/chat/locallib.php');
+        $button->set_callback_options('chat_portfolio_caller', array('id' => $cm->id), 'mod_chat');
         $button->render(null, get_string('addalltoportfolio', 'portfolio'));
     }
 
