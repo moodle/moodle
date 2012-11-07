@@ -93,7 +93,7 @@ switch ($action) {
             $strplugin = $editor;
         }
 
-        echo $PAGE->set_title($strplugin);
+        $PAGE->set_title($strplugin);
         echo $OUTPUT->header();
 
         if (!$confirm) {

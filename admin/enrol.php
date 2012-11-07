@@ -103,7 +103,7 @@ switch ($action) {
             $strplugin = $enrol;
         }
 
-        echo $PAGE->set_title($strplugin);
+        $PAGE->set_title($strplugin);
         echo $OUTPUT->header();
 
         if (!$confirm) {
