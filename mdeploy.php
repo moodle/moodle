@@ -639,10 +639,15 @@ class worker extends singleton_pattern {
     /** @var array|false the most recent cURL request info, if it was successful */
     private $curlinfo = null;
 
+    /** @var string the full path to the log file */
+    private $logfile = null;
+
     /**
      * Main - the one that actually does something
      */
     public function execute() {
+
+        $this->log('=== MDEPLOY EXECUTION START ===');
 
         // Authorize access. None in CLI. Passphrase in HTTP.
         $this->authorize();
@@ -654,16 +659,19 @@ class worker extends singleton_pattern {
         }
 
         if ($this->input->get_option('upgrade')) {
+            $this->log('Plugin upgrade requested');
+
             // Fetch the ZIP file into a temporary location.
             $source = $this->input->get_option('package');
             $target = $this->target_location($source);
+            $this->log('Downloading package '.$source);
 
             if ($this->download_file($source, $target)) {
-                $this->log('ZIP fetched into '.$target);
+                $this->log('Package downloaded into '.$target);
             } else {
                 $this->log('cURL error ' . $this->curlerrno . ' ' . $this->curlerror);
                 $this->log('Unable to download the file');
-                throw new download_file_exception('Unable to download the ZIP package');
+                throw new download_file_exception('Unable to download the package');
             }
 
             // Compare MD5 checksum of the ZIP file
@@ -674,12 +682,16 @@ class worker extends singleton_pattern {
                 $this->log('MD5 checksum failed. Expected: '.$md5remote.' Got: '.$md5local);
                 throw new checksum_exception('MD5 checksum failed');
             }
+            $this->log('MD5 checksum ok');
 
             // Backup the current version of the plugin
             $plugintyperoot = $this->input->get_option('typeroot');
             $pluginname = $this->input->get_option('name');
             $sourcelocation = $plugintyperoot.'/'.$pluginname;
             $backuplocation = $this->backup_location($sourcelocation);
+
+            $this->log('Current plugin code location: '.$sourcelocation);
+            $this->log('Moving the current code into archive: '.$backuplocation);
 
             // We don't want to touch files unless we are pretty sure it would be all ok.
             if (!$this->move_directory_source_precheck($sourcelocation)) {
@@ -696,6 +708,7 @@ class worker extends singleton_pattern {
 
             // Unzip the plugin package file into the target location.
             $this->unzip_plugin($target, $plugintyperoot, $sourcelocation, $backuplocation);
+            $this->log('Package successfully extracted');
 
             // Redirect to the given URL (in HTTP) or exit (in CLI).
             $this->done();
@@ -748,6 +761,7 @@ class worker extends singleton_pattern {
     protected function authorize() {
 
         if (PHP_SAPI === 'cli') {
+            $this->log('Successfully authorized using the CLI SAPI');
             return;
         }
 
@@ -785,6 +799,36 @@ class worker extends singleton_pattern {
         if ($password !== $stored[0]) {
             throw new unauthorized_access_exception('Session passphrase does not match the stored one.');
         }
+
+        $this->log('Successfully authorized using the passphrase file');
+    }
+
+    /**
+     * Returns the full path to the log file.
+     *
+     * @return string
+     */
+    protected function log_location() {
+
+        if (!is_null($this->logfile)) {
+            return $this->logfile;
+        }
+
+        $dataroot = $this->input->get_option('dataroot', false);
+
+        if ($dataroot === false) {
+            $this->logfile = false;
+            return $this->logfile;
+        }
+
+        $myroot = $dataroot.'/mdeploy';
+
+        if (!is_dir($myroot)) {
+            mkdir($myroot, 02777, true);
+        }
+
+        $this->logfile = $myroot.'/mdeploy.log';
+        return $this->logfile;
     }
 
     /**
@@ -856,7 +900,7 @@ class worker extends singleton_pattern {
             throw new download_file_exception('Unsupported transport protocol.');
         }
         if (!$ch = curl_init($source)) {
-            // $this->log('Unable to init cURL.');
+            $this->log('Unable to init cURL.');
             return false;
         }
 
@@ -906,7 +950,39 @@ class worker extends singleton_pattern {
      * @param string $message
      */
     protected function log($message) {
-        // TODO
+
+        $logpath = $this->log_location();
+
+        if (empty($logpath)) {
+            // no logging available
+            return;
+        }
+
+        $f = fopen($logpath, 'ab');
+
+        if ($f === false) {
+            throw new filesystem_exception('Unable to open the log file for appending');
+        }
+
+        $message = $this->format_log_message($message);
+
+        fwrite($f, $message);
+
+        fclose($f);
+    }
+
+    /**
+     * Prepares the log message for writing into the file
+     *
+     * @param string $msg
+     * @return string
+     */
+    protected function format_log_message($msg) {
+
+        $msg = trim($msg);
+        $timestamp = date("Y-m-d H:i:s");
+
+        return $timestamp . ' '. $msg . PHP_EOL;
     }
 
     /**
