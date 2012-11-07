@@ -1076,6 +1076,7 @@ class worker extends singleton_pattern {
         }
 
         $zip->close();
+        unlink($ziplocation);
     }
 
     /**
