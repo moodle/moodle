@@ -29,14 +29,19 @@
 $definitions = array(
 
     // Used to store processed lang files.
+    // The keys used are the component of the string file.
     'string' => array(
         'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true,
         'simpledata' => true,
         'persistent' => true,
         'persistentmaxsize' => 3
     ),
 
     // Used to store database meta information.
+    // The database meta information includes information about tables and there columns.
+    // Its keys are the table names.
+    // When creating an instance of this definition you must provide the database family that is being used.
     'databasemeta' => array(
         'mode' => cache_store::MODE_APPLICATION,
         'requireidentifiers' => array(
@@ -47,13 +52,24 @@ $definitions = array(
     ),
 
     // Used to store data from the config + config_plugins table in the database.
+    // The key used is the component:
+    //   - core for all core config settings
+    //   - plugin component for all plugin settings.
+    // Persistence is used because normally several settings within a script.
     'config' => array(
         'mode' => cache_store::MODE_APPLICATION,
         'persistent' => true,
+        'simplekeys' => true,
         'simpledata' => true
     ),
 
     // Event invalidation cache.
+    // This cache is used to manage event invalidation, its keys are the event names.
+    // Whenever something is invalidated it is both purged immediately and an event record created with the timestamp.
+    // When a new cache is initialised all timestamps are looked at and if past data is once more invalidated.
+    // Data guarantee is required in order to ensure invalidation always occurs.
+    // Persistence has been turned on as normally events are used for frequently used caches and this event invalidation
+    // cache will likely be used either lots or never.
     'eventinvalidation' => array(
         'mode' => cache_store::MODE_APPLICATION,
         'persistent' => true,
@@ -66,6 +82,7 @@ $definitions = array(
     // question_bank::load_question.
     'questiondata' => array(
         'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true, // The id of the question is used.
         'requiredataguarantee' => false,
         'datasource' => 'question_finder',
         'datasourcefile' => 'question/engine/bank.php',

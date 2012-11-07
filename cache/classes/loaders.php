@@ -794,12 +794,14 @@ class cache implements cache_loader {
      * @return string|array String unless the store supports multi-identifiers in which case an array if returned.
      */
     protected function parse_key($key) {
+        // First up if the store supports multiple keys we'll go with that.
         if ($this->store->supports_multiple_indentifiers()) {
             $result = $this->definition->generate_multi_key_parts();
             $result['key'] = $key;
             return $result;
         }
-        return cache_helper::hash_key($this->definition->generate_single_key_prefix().'-'.$key);
+        // If not we need to generate a hash and to for that we use the cache_helper.
+        return cache_helper::hash_key($key, $this->definition);
     }
 
     /**

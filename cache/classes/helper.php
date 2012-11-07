@@ -446,12 +446,18 @@ class cache_helper {
     }
 
     /**
-     * Hashes a descriptive key to make it shorter and stil unique.
-     * @param string $key
+     * Hashes a descriptive key to make it shorter and still unique.
+     * @param string|int $key
+     * @param cache_definition $definition
      * @return string
      */
-    public static function hash_key($key) {
-        return crc32($key);
+    public static function hash_key($key, cache_definition $definition) {
+        if ($definition->uses_simple_keys()) {
+            // We put the key first so that we can be sure the start of the key changes.
+            return (string)$key . '-' . $definition->generate_single_key_prefix();
+        }
+        $key = $definition->generate_single_key_prefix() . '-' . $key;
+        return sha1($key);
     }
 
     /**

@@ -364,6 +364,50 @@ class cache_phpunit_tests extends advanced_testcase {
         $this->assertEquals('Test has no value really.', $cache->get('Test'));
     }
 
+    /**
+     * Test a very basic definition.
+     */
+    public function test_definition() {
+        $instance = cache_config_phpunittest::instance();
+        $instance->phpunit_add_definition('phpunit/test', array(
+            'mode' => cache_store::MODE_APPLICATION,
+            'component' => 'phpunit',
+            'area' => 'test',
+        ));
+        $cache = cache::make('phpunit', 'test');
+
+        $this->assertTrue($cache->set('testkey1', 'test data 1'));
+        $this->assertEquals('test data 1', $cache->get('testkey1'));
+        $this->assertTrue($cache->set('testkey2', 'test data 2'));
+        $this->assertEquals('test data 2', $cache->get('testkey2'));
+    }
+
+    /**
+     * Test a definition using the simple keys.
+     */
+    public function test_definition_simplekeys() {
+        $instance = cache_config_phpunittest::instance();
+        $instance->phpunit_add_definition('phpunit/simplekeytest', array(
+            'mode' => cache_store::MODE_APPLICATION,
+            'component' => 'phpunit',
+            'area' => 'simplekeytest',
+            'simplekeys' => true
+        ));
+        $cache = cache::make('phpunit', 'simplekeytest');
+
+        $this->assertTrue($cache->set('testkey1', 'test data 1'));
+        $this->assertEquals('test data 1', $cache->get('testkey1'));
+        $this->assertTrue($cache->set('testkey2', 'test data 2'));
+        $this->assertEquals('test data 2', $cache->get('testkey2'));
+
+        $cache->purge();
+
+        $this->assertTrue($cache->set('1', 'test data 1'));
+        $this->assertEquals('test data 1', $cache->get('1'));
+        $this->assertTrue($cache->set('2', 'test data 2'));
+        $this->assertEquals('test data 2', $cache->get('2'));
+    }
+
     public function test_definition_ttl() {
         $instance = cache_config_phpunittest::instance(true);
         $instance->phpunit_add_definition('phpunit/ttltest', array(
@@ -515,13 +559,15 @@ class cache_phpunit_tests extends advanced_testcase {
 
         // OK data added, data invalidated, and invalidation time has been set.
         // Now we need to manually add back the data and adjust the invalidation time.
-        $timefile = $CFG->dataroot.'/cache/cachestore_file/default_application/phpunit_eventinvalidationtest/494515064.cache';
+        $timefile = $CFG->dataroot.'/cache/cachestore_file/default_application/phpunit_eventinvalidationtest/a65/a65b1dc524cf6e03c1795197c84d5231eb229b86.cache';
         $timecont = serialize(cache::now() - 60); // Back 60sec in the past to force it to re-invalidate.
+        make_writable_directory(dirname($timefile));
         file_put_contents($timefile, $timecont);
         $this->assertTrue(file_exists($timefile));
 
-        $datafile = $CFG->dataroot.'/cache/cachestore_file/default_application/phpunit_eventinvalidationtest/3140056538.cache';
+        $datafile = $CFG->dataroot.'/cache/cachestore_file/default_application/phpunit_eventinvalidationtest/626/626e9c7a45febd98f064c2b383de8d9d4ebbde7b.cache';
         $datacont = serialize("test data 1");
+        make_writable_directory(dirname($datafile));
         file_put_contents($datafile, $datacont);
         $this->assertTrue(file_exists($datafile));
 
