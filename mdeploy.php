@@ -258,6 +258,9 @@ class input_manager extends singleton_pattern {
                 return (int)$raw;
 
             case input_manager::TYPE_PATH:
+                if (strpos($raw, '~') !== false) {
+                    throw new invalid_option_exception('Using the tilde (~) character in paths is not supported');
+                }
                 $raw = str_replace('\\', '/', $raw);
                 $raw = preg_replace('~[[:cntrl:]]|[&<>"`\|\':]~u', '', $raw);
                 $raw = preg_replace('~\.\.+~', '', $raw);

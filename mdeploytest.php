@@ -174,6 +174,15 @@ class mdeploytest extends PHPUnit_Framework_TestCase {
         $input->cast_value($invalid, input_manager::TYPE_MD5); // must throw exception
     }
 
+    /**
+     * @expectedException invalid_option_exception
+     */
+    public function test_cast_tilde_in_path() {
+        $input = testable_input_manager::instance();
+        $invalid = '~/public_html/moodle_dev';
+        $input->cast_value($invalid, input_manager::TYPE_PATH); // must throw exception
+    }
+
     public function test_has_option() {
         $provider = input_fake_provider::instance();
 
