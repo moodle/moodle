@@ -1470,6 +1470,17 @@ class available_update_deployer {
     }
 
     /**
+     * Reset caches used by this script
+     *
+     * @param bool $phpunitreset is this called as a part of PHPUnit reset?
+     */
+    public static function reset_caches($phpunitreset = false) {
+        if ($phpunitreset) {
+            self::$singletoninstance = null;
+        }
+    }
+
+    /**
      * Is automatic deployment enabled?
      *
      * @return bool
