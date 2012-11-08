@@ -47,7 +47,6 @@ $string['error_emptyquizrecord'] = 'There is an error right now with this block:
 $string['error_nogroupsexist'] = 'There is an error right now with this block: it is set to display grades in group mode, but the course has no defined groups.';
 $string['pluginname'] = 'Quiz results';
 $string['quiz_results:addinstance'] = 'Add a new quiz results block';
-$string['quiz_results:myaddinstance'] = 'Add a new quiz results block to the My Moodle page';
 $string['worstgrade'] = 'The lowest grade:';
 $string['worstgrades'] = 'The {$a} lowest grades:';
 $string['worstgroupgrade'] = 'The group with the lowest average:';

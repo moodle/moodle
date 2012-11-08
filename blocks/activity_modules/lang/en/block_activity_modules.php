@@ -24,5 +24,4 @@
  */
 
 $string['activity_modules:addinstance'] = 'Add a new activities block';
-$string['activity_modules:myaddinstance'] = 'Add a new activities block to the My Moodle page';
 $string['pluginname'] = 'Activities';

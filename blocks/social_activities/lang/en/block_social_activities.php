@@ -25,4 +25,3 @@
 
 $string['pluginname'] = 'Social activities';
 $string['social_activities:addinstance'] = 'Add a new social activities block';
-$string['social_activities:myaddinstance'] = 'Add a new social activities block to the My Moodle page';

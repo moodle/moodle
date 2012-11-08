@@ -43,5 +43,4 @@ $string['pluginname'] = 'Youtube';
 $string['scienceandtech'] = 'Science &amp; Tech';
 $string['sports'] = 'Sports';
 $string['tag_youtube:addinstance'] = 'Add a new youtube block';
-$string['tag_youtube:myaddinstance'] = 'Add a new youtube block to the My Moodle page';
 $string['travel'] = 'Travel &amp; Places';

@@ -24,5 +24,4 @@
  */
 
 $string['blog_tags:addinstance'] = 'Add a new blog tags block';
-$string['blog_tags:myaddinstance'] = 'Add a new blog tags block to the My Moodle page';
 $string['pluginname'] = 'Blog tags';
