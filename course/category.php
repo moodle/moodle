@@ -40,7 +40,7 @@ $moveto = optional_param('moveto', 0, PARAM_INT);
 $resort = optional_param('resort', 0, PARAM_BOOL);
 $sesskey = optional_param('sesskey', '', PARAM_RAW);
 
-// MDL-27824 - This is a temporary fix until we have the proper 
+// MDL-27824 - This is a temporary fix until we have the proper
 // way to check/initialize $CFG value.
 // @todo MDL-35138 remove this temporary solution
 if (!empty($CFG->coursesperpage)) {
