@@ -326,6 +326,24 @@ class cachestore_memcache implements cache_store {
     }
 
     /**
+     * Allows the cache store to set its data against the edit form before it is shown to the user.
+     *
+     * @param moodleform $editform
+     * @param array $config
+     */
+    public static function config_set_edit_form_data(moodleform $editform, array $config) {
+        $data = array();
+        if (!empty($config['servers'])) {
+            $servers = array();
+            foreach ($config['servers'] as $server) {
+                $servers[] = join(":", $server);
+            }
+            $data['servers'] = join("\n", $servers);
+        }
+        $editform->set_data($data);
+    }
+
+    /**
      * Returns true if the user can add an instance of the store plugin.
      *
      * @return bool
