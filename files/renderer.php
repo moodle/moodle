@@ -454,14 +454,21 @@ class core_files_renderer extends plugin_renderer_base {
      */
     private function fm_print_restrictions($fm) {
         $maxbytes = display_size($fm->options->maxbytes);
-        if (empty($fm->options->maxfiles) || $fm->options->maxfiles == -1) {
-            $maxsize = get_string('maxfilesize', 'moodle', $maxbytes);
-        } else {
-            $strparam = (object)array('size' => $maxbytes, 'attachments' => $fm->options->maxfiles);
+        $strparam = (object) array('size' => $maxbytes, 'attachments' => $fm->options->maxfiles,
+            'areasize' => display_size($fm->options->areamaxbytes));
+        $hasmaxfiles = !empty($fm->options->maxfiles) && $fm->options->maxfiles > 0;
+        $hasarealimit = !empty($fm->options->areamaxbytes) && $fm->options->areamaxbytes != -1;
+        if ($hasmaxfiles && $hasarealimit) {
+            $maxsize = get_string('maxsizeandattachmentsandareasize', 'moodle', $strparam);
+        } else if ($hasmaxfiles) {
             $maxsize = get_string('maxsizeandattachments', 'moodle', $strparam);
+        } else if ($hasarealimit) {
+            $maxsize = get_string('maxsizeandareasize', 'moodle', $strparam);
+        } else {
+            $maxsize = get_string('maxfilesize', 'moodle', $maxbytes);
         }
         // TODO MDL-32020 also should say about 'File types accepted'
-        return '<span>'. $maxsize. '</span>';
+        return '<span>'. $maxsize . '</span>';
     }
 
     /**

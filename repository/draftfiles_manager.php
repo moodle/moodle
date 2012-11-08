@@ -55,6 +55,7 @@ $targetpath  = optional_param('targetpath', '',    PARAM_PATH);
 $maxfiles    = optional_param('maxfiles', -1, PARAM_INT);    // maxfiles
 $maxbytes    = optional_param('maxbytes',  0, PARAM_INT);    // maxbytes
 $subdirs     = optional_param('subdirs',  0, PARAM_INT);    // maxbytes
+$areamaxbytes = optional_param('areamaxbytes', FILE_AREA_MAX_BYTES_UNLIMITED, PARAM_INT);    // Area maxbytes.
 
 // draft area
 $newdirname  = optional_param('newdirname', '',    PARAM_FILE);
@@ -70,7 +71,7 @@ $PAGE->set_context($user_context);
 
 $fs = get_file_storage();
 
-$params = array('ctx_id' => $contextid, 'itemid' => $itemid, 'env' => $env, 'course'=>$courseid, 'maxbytes'=>$maxbytes, 'maxfiles'=>$maxfiles, 'subdirs'=>$subdirs, 'sesskey'=>sesskey());
+$params = array('ctx_id' => $contextid, 'itemid' => $itemid, 'env' => $env, 'course'=>$courseid, 'maxbytes'=>$maxbytes, 'areamaxbytes'=>$areamaxbytes, 'maxfiles'=>$maxfiles, 'subdirs'=>$subdirs, 'sesskey'=>sesskey());
 $PAGE->set_url('/repository/draftfiles_manager.php', $params);
 $filepicker_url = new moodle_url($CFG->httpswwwroot."/repository/filepicker.php", $params);
 

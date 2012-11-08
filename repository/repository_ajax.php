@@ -46,6 +46,7 @@ $maxbytes  = optional_param('maxbytes', 0, PARAM_INT);          // Maxbytes
 $req_path  = optional_param('p', '', PARAM_RAW);                // Path
 $accepted_types  = optional_param_array('accepted_types', '*', PARAM_RAW);
 $saveas_filename = optional_param('title', '', PARAM_FILE);     // save as file name
+$areamaxbytes  = optional_param('areamaxbytes', FILE_AREA_MAX_BYTES_UNLIMITED, PARAM_INT); // Area max bytes.
 $saveas_path   = optional_param('savepath', '/', PARAM_PATH);   // save as file path
 $search_text   = optional_param('s', '', PARAM_CLEANHTML);
 $linkexternal  = optional_param('linkexternal', '', PARAM_ALPHA);
@@ -289,7 +290,7 @@ switch ($action) {
 
                 // If the moodle file is an alias we copy this alias, otherwise we copy the file
                 // {@link repository::copy_to_area()}.
-                $fileinfo = $repo->copy_to_area($reference, $record, $maxbytes);
+                $fileinfo = $repo->copy_to_area($reference, $record, $maxbytes, $areamaxbytes);
 
                 echo json_encode($fileinfo);
                 die;
@@ -299,6 +300,11 @@ switch ($action) {
                 if (empty($downloadedfile['path'])) {
                     $err->error = get_string('cannotdownload', 'repository');
                     die(json_encode($err));
+                }
+
+                // Check if we exceed the max bytes of the area.
+                if (file_is_draft_area_limit_reached($itemid, $areamaxbytes, filesize($downloadedfile['path']))) {
+                    throw new file_exception('maxareabytes');
                 }
 
                 // Check if exceed maxbytes.

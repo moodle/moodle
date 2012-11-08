@@ -48,7 +48,8 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
     // PHP doesn't support 'key' => $value1 | $value2 in class definition
     // We cannot do $_options = array('return_types'=> FILE_INTERNAL | FILE_REFERENCE);
     // So I have to set null here, and do it in constructor
-    protected $_options    = array('mainfile'=>'', 'subdirs'=>1, 'maxbytes'=>-1, 'maxfiles'=>-1, 'accepted_types'=>'*', 'return_types'=> null);
+    protected $_options = array('mainfile' => '', 'subdirs' => 1, 'maxbytes' => -1, 'maxfiles' => -1,
+            'accepted_types' => '*', 'return_types' =>  null, 'areamaxbytes' => FILE_AREA_MAX_BYTES_UNLIMITED);
 
     /**
      * Constructor
@@ -131,6 +132,24 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
     function setMaxbytes($maxbytes) {
         global $CFG, $PAGE;
         $this->_options['maxbytes'] = get_user_max_upload_file_size($PAGE->context, $CFG->maxbytes, $maxbytes);
+    }
+
+    /**
+     * Returns the maximum size of the area.
+     *
+     * @return int
+     */
+    function getAreamaxbytes() {
+        return $this->_options['areamaxbytes'];
+    }
+
+    /**
+     * Sets the maximum size of the area.
+     *
+     * @param int $areamaxbytes size limit
+     */
+    function setAreamaxbytes($areamaxbytes) {
+        $this->_options['areamaxbytes'] = $areamaxbytes;
     }
 
     /**
@@ -237,6 +256,7 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
         $options->accepted_types = $accepted_types;
         $options->return_types = $this->_options['return_types'];
         $options->context = $PAGE->context;
+        $options->areamaxbytes = $this->_options['areamaxbytes'];
 
         $html = $this->_getTabs();
         $fm = new form_filemanager($options);
@@ -271,6 +291,7 @@ class form_filemanager implements renderable {
      * @param stdClass $options options for filemanager
      *   default options are:
      *       maxbytes=>-1,
+     *       areamaxbytes => FILE_AREA_MAX_BYTES_UNLIMITED,
      *       maxfiles=>-1,
      *       itemid=>0,
      *       subdirs=>false,
@@ -287,6 +308,7 @@ class form_filemanager implements renderable {
         require_once($CFG->dirroot. '/repository/lib.php');
         $defaults = array(
             'maxbytes'=>-1,
+            'areamaxbytes' => FILE_AREA_MAX_BYTES_UNLIMITED,
             'maxfiles'=>-1,
             'itemid'=>0,
             'subdirs'=>0,
@@ -362,6 +384,7 @@ class form_filemanager implements renderable {
             'itemid'=>$this->options->itemid,
             'subdirs'=>$this->options->subdirs,
             'maxbytes'=>$this->options->maxbytes,
+            'areamaxbytes' => $this->options->areamaxbytes,
             'maxfiles'=>$this->options->maxfiles,
             'ctx_id'=>$PAGE->context->id, // TODO ?
             'course'=>$PAGE->course->id, // TODO ?

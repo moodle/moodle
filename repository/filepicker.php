@@ -59,6 +59,7 @@ $search_text = optional_param('s', '',             PARAM_CLEANHTML);
 $maxfiles    = optional_param('maxfiles', -1,      PARAM_INT);    // maxfiles
 $maxbytes    = optional_param('maxbytes',  0,      PARAM_INT);    // maxbytes
 $subdirs     = optional_param('subdirs',  0,       PARAM_INT);    // maxbytes
+$areamaxbytes   = optional_param('areamaxbytes', FILE_AREA_MAX_BYTES_UNLIMITED, PARAM_INT);    // Area maxbytes.
 $accepted_types = optional_param_array('accepted_types', '*', PARAM_RAW);
 
 // the path to save files
@@ -93,7 +94,7 @@ $context = context::instance_by_id($contextid);
 // Make sure maxbytes passed is within site filesize limits.
 $maxbytes = get_user_max_upload_file_size($context, $CFG->maxbytes, $course->maxbytes, $maxbytes);
 
-$params = array('ctx_id' => $contextid, 'itemid' => $itemid, 'env' => $env, 'course'=>$courseid, 'maxbytes'=>$maxbytes, 'maxfiles'=>$maxfiles, 'subdirs'=>$subdirs, 'sesskey'=>sesskey());
+$params = array('ctx_id' => $contextid, 'itemid' => $itemid, 'env' => $env, 'course'=>$courseid, 'maxbytes'=>$maxbytes, 'areamaxbytes'=>$areamaxbytes, 'maxfiles'=>$maxfiles, 'subdirs'=>$subdirs, 'sesskey'=>sesskey());
 $params['action'] = 'browse';
 $params['draftpath'] = $draftpath;
 $home_url = new moodle_url('/repository/draftfiles_manager.php', $params);
@@ -318,7 +319,7 @@ case 'download':
     $record->sortorder = 0;
 
     if ($repo->has_moodle_files()) {
-        $fileinfo = $repo->copy_to_area($reference, $record, $maxbytes);
+        $fileinfo = $repo->copy_to_area($reference, $record, $maxbytes, $areamaxbytes);
         redirect($home_url, get_string('downloadsucc', 'repository'));
     } else {
         $thefile = $repo->get_file($reference, $filename);
@@ -327,6 +328,11 @@ case 'download':
             if ($maxbytes != -1 && $filesize>$maxbytes) {
                 unlink($thefile['path']);
                 print_error('maxbytes');
+            }
+            // Ensure the file will not make the area exceed its size limit.
+            if (file_is_draft_area_limit_reached($record->itemid, $areamaxbytes, $filesize)) {
+                unlink($thefile['path']);
+                print_error('maxareabytes');
             }
             try {
                 $info = repository::move_to_filepool($thefile['path'], $record);

@@ -29,6 +29,11 @@ defined('MOODLE_INTERNAL') || die();
  */
 define('BYTESERVING_BOUNDARY', 's1k2o3d4a5k6s7');
 
+/**
+ * Unlimited area size constant
+ */
+define('FILE_AREA_MAX_BYTES_UNLIMITED', -1);
+
 require_once("$CFG->libdir/filestorage/file_exceptions.php");
 require_once("$CFG->libdir/filestorage/file_storage.php");
 require_once("$CFG->libdir/filestorage/zip_packer.php");
@@ -482,6 +487,27 @@ function file_get_draft_area_info($draftitemid) {
 }
 
 /**
+ * Returns whether a draft area has exceeded/will exceed its size limit.
+ *
+ * Please note that the unlimited value for $areamaxbytes is -1 {@link FILE_AREA_MAX_BYTES_UNLIMITED}, not 0.
+ *
+ * @param int $draftitemid the draft area item id.
+ * @param int $areamaxbytes the maximum size allowed in this draft area.
+ * @param int $newfilesize the size that would be added to the current area.
+ * @return bool true if the area will/has exceeded its limit.
+ * @since 2.4
+ */
+function file_is_draft_area_limit_reached($draftitemid, $areamaxbytes, $newfilesize = 0) {
+    if ($areamaxbytes != FILE_AREA_MAX_BYTES_UNLIMITED) {
+        $draftinfo = file_get_draft_area_info($draftitemid);
+        if ($draftinfo['filesize'] + $newfilesize > $areamaxbytes) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
  * Get used space of files
  * @global moodle_database $DB
  * @global stdClass $USER
@@ -724,12 +750,22 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
     if (!isset($options['maxbytes']) || $options['maxbytes'] == USER_CAN_IGNORE_FILE_SIZE_LIMITS) {
         $options['maxbytes'] = 0; // unlimited
     }
+    if (!isset($options['areamaxbytes'])) {
+        $options['areamaxbytes'] = FILE_AREA_MAX_BYTES_UNLIMITED; // Unlimited.
+    }
     $allowreferences = true;
     if (isset($options['return_types']) && !($options['return_types'] & FILE_REFERENCE)) {
         // we assume that if $options['return_types'] is NOT specified, we DO allow references.
         // this is not exactly right. BUT there are many places in code where filemanager options
         // are not passed to file_save_draft_area_files()
         $allowreferences = false;
+    }
+
+    // Check if the draft area has exceeded the authorised limit. This should never happen as validation
+    // should have taken place before, unless the user is doing something nauthly. If so, let's just not save
+    // anything at all in the next area.
+    if (file_is_draft_area_limit_reached($draftitemid, $options['areamaxbytes'])) {
+        return null;
     }
 
     $draftfiles = $fs->get_area_files($usercontext->id, 'user', 'draft', $draftitemid, 'id');
