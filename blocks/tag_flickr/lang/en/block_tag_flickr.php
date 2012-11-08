@@ -38,4 +38,3 @@ $string['pluginname'] = 'Flickr';
 $string['relevance'] = 'Relevance';
 $string['sortby'] = 'Sort by';
 $string['tag_flickr:addinstance'] = 'Add a new flickr block';
-$string['tag_flickr:myaddinstance'] = 'Add a new flickr block to the My Moodle page';

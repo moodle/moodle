@@ -24,5 +24,4 @@
  */
 
 $string['blog_menu:addinstance'] = 'Add a new blog menu block';
-$string['blog_menu:myaddinstance'] = 'Add a new blog menu block to the My Moodle page';
 $string['pluginname'] = 'Blog menu';

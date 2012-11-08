@@ -24,7 +24,6 @@
  */
 
 $string['blog_recent:addinstance'] = 'Add a new recent blog entries block';
-$string['blog_recent:myaddinstance'] = 'Add a new recent blog entries block to the My Moodle page';
 $string['norecentblogentries'] = 'No recent entries';
 $string['numentriestodisplay'] = 'Number of recent entries to display';
 $string['pluginname'] = 'Recent blog entries';

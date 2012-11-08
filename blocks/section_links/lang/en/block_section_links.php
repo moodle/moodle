@@ -35,6 +35,5 @@ $string['numsections1'] = 'Number of sections';
 $string['numsections2'] = 'Alternative number of sections';
 $string['pluginname'] = 'Section links';
 $string['section_links:addinstance'] = 'Add a new section links block';
-$string['section_links:myaddinstance'] = 'Add a new section links block to the My Moodle page';
 $string['topics'] = 'Topics';
 $string['weeks'] = 'Weeks';
