@@ -419,6 +419,7 @@ class cachestore_mongodb implements cache_store {
             $return['usesafe'] = true;
             if (!empty($data->usesafevalue)) {
                 $return['usesafe'] = (int)$data->usesafevalue;
+                $return['usesafevalue'] = $return['usesafe'];
             }
         }
         return $return;
@@ -438,8 +439,8 @@ class cachestore_mongodb implements cache_store {
         if (!empty($config['database'])) {
             $data['database'] = $config['database'];
         }
-        if (!empty($config['extendedmode'])) {
-            $data['extendedmode'] = 1;
+        if (isset($config['extendedmode'])) {
+            $data['extendedmode'] = (bool)$config['extendedmode'];
         }
         if (!empty($config['username'])) {
             $data['username'] = $config['username'];
@@ -450,11 +451,11 @@ class cachestore_mongodb implements cache_store {
         if (!empty($config['replicaset'])) {
             $data['replicaset'] = $config['replicaset'];
         }
-        if (!empty($config['usesafe'])) {
-            $data['usesafe'] = 1;
-            if ($data['usesafe'] !== true) {
-                $data['usesafevalue'] = (int)$data['usesafe'];
-            }
+        if (isset($config['usesafevalue'])) {
+            $data['usesafe'] = true;
+            $data['usesafevalue'] = (int)$data['usesafe'];
+        } else if (isset($config['usesafe'])) {
+            $data['usesafe'] = (bool)$config['usesafe'];
         }
         $editform->set_data($data);
     }

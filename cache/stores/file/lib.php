@@ -553,11 +553,14 @@ class cachestore_file implements cache_store, cache_is_key_aware {
         if (!empty($config['path'])) {
             $data['path'] = $config['path'];
         }
-        if (!empty($config['autocreate'])) {
-            $data['autocreate'] = $config['autocreate'];
+        if (isset($config['autocreate'])) {
+            $data['autocreate'] = (bool)$config['autocreate'];
         }
-        if (!empty($config['prescan'])) {
-            $data['prescan'] = $config['prescan'];
+        if (isset($config['singledirectory'])) {
+            $data['singledirectory'] = (bool)$config['singledirectory'];
+        }
+        if (isset($config['prescan'])) {
+            $data['prescan'] = (bool)$config['prescan'];
         }
         $editform->set_data($data);
     }

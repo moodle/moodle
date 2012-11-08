@@ -408,8 +408,8 @@ class cachestore_memcached implements cache_store {
             }
             $data['servers'] = join("\n", $servers);
         }
-        if (!empty($config['compression'])) {
-            $data['compression'] = 1;
+        if (isset($config['compression'])) {
+            $data['compression'] = (bool)$config['compression'];
         }
         if (!empty($config['serialiser'])) {
             $data['serialiser'] = $config['serialiser'];
@@ -420,8 +420,8 @@ class cachestore_memcached implements cache_store {
         if (!empty($config['hash'])) {
             $data['hash'] = $config['hash'];
         }
-        if (!empty($config['bufferwrites'])) {
-            $data['bufferwrites'] = 1;
+        if (isset($config['bufferwrites'])) {
+            $data['bufferwrites'] = (bool)$config['bufferwrites'];
         }
         $editform->set_data($data);
     }
