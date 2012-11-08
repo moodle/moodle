@@ -57,7 +57,7 @@ if (!has_capability('moodle/grade:manage', $context)) {
 
 // default return url
 $gpr = new grade_plugin_return();
-$returnurl = $gpr->get_return_url($CFG->wwwroot.'/grade/report.php?id='.$course->id);
+$returnurl = $gpr->get_return_url($CFG->wwwroot.'/grade/report/index.php?id='.$course->id);
 
 // security checks!
 if (!empty($id)) {
