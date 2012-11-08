@@ -5706,6 +5706,8 @@ class admin_setting_manageeditors extends admin_setting {
         // display strings
         $txt = get_strings(array('administration', 'settings', 'edit', 'name', 'enable', 'disable',
             'up', 'down', 'none'));
+        $struninstall = get_string('uninstallplugin', 'admin');
+
         $txt->updown = "$txt->up/$txt->down";
 
         $editors_available = editors_get_available();
@@ -5729,8 +5731,8 @@ class admin_setting_manageeditors extends admin_setting {
         $return .= $OUTPUT->box_start('generalbox editorsui');
 
         $table = new html_table();
-        $table->head  = array($txt->name, $txt->enable, $txt->updown, $txt->settings);
-        $table->align = array('left', 'center', 'center', 'center');
+        $table->head  = array($txt->name, $txt->enable, $txt->updown, $txt->settings, $struninstall);
+        $table->align = array('left', 'center', 'center', 'center', 'center');
         $table->width = '90%';
         $table->data  = array();
 
@@ -5783,8 +5785,15 @@ class admin_setting_manageeditors extends admin_setting {
                 $settings = '';
             }
 
+            if ($editor === 'textarea') {
+                $uninstall = '';
+            } else {
+                $uurl = new moodle_url('/admin/editors.php', array('action'=>'uninstall', 'editor'=>$editor, 'sesskey'=>sesskey()));
+                $uninstall = html_writer::link($uurl, $struninstall);
+            }
+
             // add a row to the table
-            $table->data[] =array($displayname, $hideshow, $updown, $settings);
+            $table->data[] =array($displayname, $hideshow, $updown, $settings, $uninstall);
         }
         $return .= html_writer::table($table);
         $return .= get_string('configeditorplugins', 'editor').'<br />'.get_string('tablenosave', 'admin');
