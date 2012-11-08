@@ -1489,9 +1489,9 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                     $accesstext = '';
                 }
                 if ($linkclasses) {
-                    $linkcss = 'class="' . trim($linkclasses) . '" ';
+                    $linkcss = 'class="activityinstance ' . trim($linkclasses) . '" ';
                 } else {
-                    $linkcss = '';
+                    $linkcss = 'class="activityinstance"';
                 }
                 if ($textclasses) {
                     $textcss = 'class="' . trim($textclasses) . '" ';
@@ -1509,7 +1509,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                     // Display link itself
                     echo '<a ' . $linkcss . $mod->extra . $onclick .
                             ' href="' . $url . '"><img src="' . $mod->get_icon_url() .
-                            '" class="activityicon" alt="' . $mod->modfullname . '" /> ' .
+                            '" class="iconlarge activityicon" alt="' . $mod->modfullname . '" /> ' .
                             $accesstext . '<span class="instancename">' .
                             $instancename . $altname . '</span></a>';
 
@@ -1577,7 +1577,6 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 } else {
                     $mod->groupmode = false;
                 }
-                echo '&nbsp;&nbsp;';
                 echo make_editing_buttons($mod, $absolute, true, $mod->indent, $sectionreturn);
                 echo $mod->get_after_edit_icons();
             }

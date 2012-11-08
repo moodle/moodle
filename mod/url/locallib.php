@@ -540,21 +540,22 @@ function url_get_encrypted_parameter($url, $config) {
 /**
  * Optimised mimetype detection from general URL
  * @param $fullurl
+ * @param int $size of the icon.
  * @return string mimetype
  */
-function url_guess_icon($fullurl) {
+function url_guess_icon($fullurl, $size = null) {
     global $CFG;
     require_once("$CFG->libdir/filelib.php");
 
     if (substr_count($fullurl, '/') < 3 or substr($fullurl, -1) === '/') {
         // most probably default directory - index.php, index.html, etc.
-        return file_extension_icon('.htm');
+        return file_extension_icon('.htm', $size);
     }
 
-    $icon = file_extension_icon($fullurl);
+    $icon = file_extension_icon($fullurl, $size);
 
     if ($icon === file_extension_icon('')) {
-        return file_extension_icon('.htm');
+        return file_extension_icon('.htm', $size);
     }
 
     return $icon;

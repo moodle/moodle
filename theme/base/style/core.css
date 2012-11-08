@@ -91,7 +91,8 @@ img.resize {height: 1em;width: 1em;}
 .breadcrumb img.resize {height: 0.9em;width: 0.8em;}
 img.icon {height:16px;vertical-align:middle;width:16px;padding-right:4px;padding-top:2px;padding-bottom:2px;}
 img.iconsmall {height:12px;margin-right:3px;vertical-align:middle;width:12px;}
-img.iconhelp, .helplink img {height:17px;padding:0 3px;vertical-align:middle;width:17px;}
+img.iconhelp, .helplink img {height:16px; padding-left:3px;vertical-align:middle;width:16px;}
+img.iconlarge {height: 24px; width: 24px; vertical-align:middle;}
 img.icontoggle {height:17px;vertical-align:middle;width:50px;}
 img.iconkbhelp {height:17px;width:49px;}
 .categorybox .category {font-size:1.2em;font-weight:bold;}
@@ -642,7 +643,7 @@ body.tag .managelink {padding: 5px;}
 .restore-course-category .rcs-results .paging {text-align:left;margin:0;background-color:#eee;padding:3px;}
 
 .corelightbox {background-color:#CCC;position:absolute;top:0;left:0;width:100%;height:100%;text-align:center;}
-.corelightbox img {position:fixed;top:50%;}
+.corelightbox img {position:fixed;top:50%; left: 50%;}
 
 /**
  * IE - Overide for RTL layout
@@ -947,6 +948,12 @@ sup {vertical-align: super;}
 .choosercontainer #chooseform .nonoption span.modicon img.icon {
     padding: 0 0 0 0.5em;
 }
+.dir-rtl .choosercontainer #chooseform .option .typename,
+.dir-rtl .choosercontainer #chooseform .option span.modicon img.icon,
+.dir-rtl .choosercontainer #chooseform .nonoption .typename,
+.dir-rtl .choosercontainer #chooseform .nonoption span.modicon img.icon {
+    padding: 0 0.5em 0 0;
+}
 
 .choosercontainer #chooseform .option span.modicon img.icon,
 .choosercontainer #chooseform .nonoption span.modicon img.icon {
@@ -970,17 +977,24 @@ sup {vertical-align: super;}
     padding-top: 0.3em;
     padding-bottom: 0.1em;
 }
+.dir-rtl .choosercontainer #chooseform .nonoption {
+    padding-right: 2.7em;
+    padding-left: 0;
+}
 
 .choosercontainer #chooseform .subtype {
     margin-bottom: 0;
     padding: 0 1.6em 0 3.2em;
 }
 .dir-rtl .choosercontainer #chooseform .subtype {
-    padding: 0 2.6em 0 3.2em;
+    padding: 0 3.2em 0 1.6em;
 }
 
 .choosercontainer #chooseform .subtype .typename {
     margin: 0 0 0 0.2em;
+}
+.dir-rtl .choosercontainer #chooseform .subtype .typename {
+    margin: 0 0.2em 0 0;
 }
 
 /* The instruction/help area */
@@ -1021,6 +1035,7 @@ sup {vertical-align: super;}
     -moz-box-shadow: 0px 0px 10px 0px #CCCCCC;
 }
 .section-modchooser-link img.smallicon { padding-right: 3px; }
+.dir-rtl .section-modchooser-link img.smallicon { padding-left: 3px; padding-right: 0;}
 
 /* Install Process' text fields Forms, should always be justified to the left */
 form#installform #id_wwwroot,form#installform #id_dirroot ,form#installform #id_dataroot,

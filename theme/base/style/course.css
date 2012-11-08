@@ -5,10 +5,25 @@
 .section_add_menus .horizontal div,
 .section_add_menus .horizontal form {display:inline;}
 .section_add_menus optgroup {font-weight:normal;font-style: italic;}
+.section_add_menus .urlselect { margin-left: .4em;}
+.dir-rtl .section_add_menus .urlselect { margin-right: .4em; margin-left: 0;}
+.section_add_menus .urlselect select { margin-left: .2em;}
+.dir-rtl .section_add_menus .urlselect select { margin-right: .2em; margin-left: 0;}
+.section_add_menus .urlselect img.iconhelp { padding: 0; margin: 0; vertical-align: text-bottom;}
 
-.course-content .section .activity img.activityicon {vertical-align:text-bottom;height:24px;width:24px;margin-right: 3px;}
-.course-content .section .activity .commands img.iconsmall {vertical-align: baseline;}
-.course-content .section .activity .commands img {padding: 0 2px;}
+.sitetopic .section .activity img.activityicon,
+.course-content .section .activity img.activityicon {vertical-align:text-bottom;margin-right: 3px;}
+.dir-rtl .sitetopic .section .activity img.activityicon,
+.dir-rtl .course-content .section .activity img.activityicon {margin-left: 3px; margin-right: 0;}
+.sitetopic .section .activity .activityinstance,
+.course-content .section .activity .activityinstance { padding-right: 3em;}
+.dir-rtl .sitetopic .section .activity .activityinstance,
+.dir-rtl .course-content .section .activity .activityinstance { padding-right: 0; padding-left: 3em;}
+.sitetopic .section .activity .commands img,
+.course-content .section .activity .commands img { vertical-align: baseline; padding: 0 2px; }
+.sitetopic .section li.activity,
+.course-content .section li.activity {padding: .2em;}
+.sitetopic .section .activity:hover,
 .course-content .section .activity:hover { background-color: #EEE; }
 .course-content .section-summary { border: 1px solid #DDD; margin-top: 5px; list-style: none; }
 .course-content .section-summary .section-title  { margin: 2px 5px 2px 5px; }
@@ -40,15 +55,17 @@
 .path-course-view .single-section .completionprogress {margin-right: -3.5em; padding-left: 1.5em; padding-right: 0em;}
 .path-course-view .section .summary {line-height:normal;}
 
-.path-course-view li.activity {margin-right:20px; position:relative;}
+.path-course-view li.activity {position:relative;}
 .path-course-view li.activity span.autocompletion,
-.path-course-view li.activity form.togglecompletion {display:inline;position:absolute;right:-20px;top:0;padding:0.2em 0;}
+.path-course-view li.activity form.togglecompletion {position: absolute; top: .2em; right: .2em;}
+.path-course-view li.activity span.autocompletion img,
+.path-course-view li.activity form.togglecompletion input {position:absolute; top: 4px; right: 0px;}
+.path-course-view li.activity form.togglecompletion .ajaxworking {position:absolute; right: 22px; top: 5px; width: 16px; height: 16px; background: url([[pix:i/ajaxloader]]) no-repeat;}
 .path-course-view li.activity form.togglecompletion div {display:inline;}
-.path-course-view li.activity form.togglecompletion .ajaxworking {position:absolute;top:0; left:20px;width: 20px; height: 20px;background: url([[pix:i/ajaxloader]]) no-repeat;}
-.dir-rtl.path-course-view li.activity {margin-right:20px;margin-left:20px;}
 .dir-rtl.path-course-view li.activity form.togglecompletion,
-.dir-rtl.path-course-view li.activity span.autocompletion {right:-20px;left:auto;padding:0px;}
+.dir-rtl.path-course-view li.activity span.autocompletion {left:1.7em;right:auto;padding:0px;}
 .dir-rtl.path-course-view .completionprogress {float: none;}
+.dir-rtl.path-course-view li.activity form.togglecompletion .ajaxworking {right: -22px;}
 
 .section img.movetarget {height:16px;width:80px;}
 

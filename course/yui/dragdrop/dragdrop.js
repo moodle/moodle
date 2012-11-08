@@ -87,8 +87,7 @@ YUI.add('moodle-course-dragdrop', function(Y) {
 
                     if ((movedown || moveup) && cssleft) {
                         cssleft.setStyle('cursor', 'move');
-                        cssleft.appendChild(Y.Node.create('<br />'));
-                        cssleft.appendChild(this.get_drag_handle(title, CSS.SECTIONHANDLE));
+                        cssleft.appendChild(this.get_drag_handle(title, CSS.SECTIONHANDLE, 'icon', true));
 
                         if (moveup) {
                             moveup.remove();

@@ -9,6 +9,7 @@ required changes:
 optional changes:
 * new optional boolean parameter $withlinks for public function login_info() in lib/outputrenderers.php (MDL-31365)
 * new layout option "nologinlinks" and new page layout "secure" e.g. for safebrowser and securewindow (MDL-31365)
+* new class 'iconlarge' for 24x24 icons.
 
 === 2.3 ===
 
