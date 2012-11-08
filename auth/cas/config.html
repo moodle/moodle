@@ -44,6 +44,9 @@ if (!isset($config->host_url)) {
 if (empty($config->ldapencoding)) {
     $config->ldapencoding = 'utf-8';
 }
+if (!isset($config->pagesize)) {
+    $config->pagesize = LDAP_DEFAULT_PAGESIZE;
+}
 if (!isset($config->contexts)) {
     $config->contexts = '';
 }
@@ -256,6 +259,25 @@ $yesno = array( get_string('no'), get_string('yes') );
     </td>
     <td>
         <?php print_string('auth_ldap_ldap_encoding', 'auth_ldap') ?>
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right">
+        <label for="pagesize"><?php print_string('pagesize_key', 'auth_ldap') ?></label>
+    </td>
+    <td>
+        <?php $disabled = (!ldap_paged_results_supported($config->ldap_version)) ? ' disabled="disabled"' : '' ; ?>
+        <input id="pagesize" name="pagesize" type="text" value="<?php echo $config->pagesize ?>" <?php echo $disabled ?>/>
+        <?php
+            if (isset($err['pagesize'])) { echo $OUTPUT->error_text($err['pagesize']); }
+            if ($disabled) {
+                // Don't loose the page size value (disabled fields are not submitted!)
+        ?>
+            <input id="pagesize" name="pagesize" type="hidden" value="<?php echo $config->pagesize ?>" />
+        <?php } ?>
+    </td>
+    <td>
+        <?php print_string('pagesize', 'auth_ldap') ?>
     </td>
 </tr>
 <tr>
