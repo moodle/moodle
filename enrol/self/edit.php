@@ -43,25 +43,28 @@ if (!enrol_is_enabled('self')) {
     redirect($return);
 }
 
+/** @var enrol_self_plugin $plugin */
 $plugin = enrol_get_plugin('self');
 
 if ($instanceid) {
     $instance = $DB->get_record('enrol', array('courseid'=>$course->id, 'enrol'=>'self', 'id'=>$instanceid), '*', MUST_EXIST);
-    // Merge these two settings to one value for the single selection element.
-    if ($instance->notifyall and $instance->expirynotify) {
-        $instance->expirynotify = 2;
-    }
-    unset($instance->notifyall);
 
 } else {
     require_capability('moodle/course:enrolconfig', $context);
     // No instance yet, we have to add new instance.
     navigation_node::override_active_url(new moodle_url('/enrol/instances.php', array('id'=>$course->id)));
-    $instance = new stdClass();
-    $instance->id         = null;
-    $instance->courseid   = $course->id;
-    $instance->customint5 = 0;
+
+    $instance = (object)$plugin->get_instance_defaults();
+    $instance->id       = null;
+    $instance->courseid = $course->id;
+    $instance->status   = ENROL_INSTANCE_ENABLED; // Do not use default for automatically created instances here.
 }
+
+// Merge these two settings to one value for the single selection element.
+if ($instance->notifyall and $instance->expirynotify) {
+    $instance->expirynotify = 2;
+}
+unset($instance->notifyall);
 
 $mform = new enrol_self_edit_form(NULL, array($instance, $plugin, $context));
 
