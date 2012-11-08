@@ -3632,7 +3632,9 @@ class assign {
                                                                  'showquickgrading'=>false));
         if ($formdata = $mform->get_data()) {
             set_user_preference('assign_perpage', $formdata->perpage);
-            set_user_preference('assign_filter', $formdata->filter);
+            if (isset($formdata->filter)) {
+                set_user_preference('assign_filter', $formdata->filter);
+            }
         }
     }
 
