@@ -372,7 +372,7 @@ function ldap_stripslashes($text) {
 
 
 /**
- * Check if PHP supports LDAP paged results and we can use them (we have to use LDAP 
+ * Check if PHP supports LDAP paged results and we can use them (we have to use LDAP
  * version 3, otherwise the server doesn't use them).
  *
  * @param ldapversion integer The LDAP protocol version we use.

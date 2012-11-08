@@ -379,7 +379,7 @@ class enrol_ldap_plugin extends enrol_plugin {
                     unset($records);
                 } while ($ldap_pagedresults && !empty($ldap_cookie));
 
-                // If LDAP paged results were used, the current connection must be completely 
+                // If LDAP paged results were used, the current connection must be completely
                 // closed and a new one created, to work without paged results from here on.
                 if ($ldap_pagedresults) {
                     $this->ldap_close(true);
@@ -766,7 +766,7 @@ class enrol_ldap_plugin extends enrol_plugin {
                 unset($records);
             } while ($ldap_pagedresults && !empty($ldap_cookie));
 
-            // If LDAP paged results were used, the current connection must be completely 
+            // If LDAP paged results were used, the current connection must be completely
             // closed and a new one created, to work without paged results from here on.
             if ($ldap_pagedresults) {
                 $this->ldap_close(true);
