@@ -1206,9 +1206,14 @@ class core_admin_renderer extends plugin_renderer_base {
         $box .= $this->output->box(implode(html_writer::tag('span', ' ', array('class' => 'separator')), $info), '');
 
         $deployer = available_update_deployer::instance();
-        if ($deployer->initialized() and $deployer->can_deploy($updateinfo)) {
-            $widget = $deployer->make_confirm_widget($updateinfo);
-            $box .= $this->output->render($widget);
+        if ($deployer->initialized()) {
+            $impediments = $deployer->deployment_impediments($updateinfo);
+            if (empty($impediments)) {
+                $widget = $deployer->make_confirm_widget($updateinfo);
+                $box .= $this->output->render($widget);
+            } else if (isset($impediments['notwritable'])) {
+                $box .= $this->output->help_icon('notwritable', 'core_plugin', get_string('notwritable', 'core_plugin'));
+            }
         }
 
         $box .= $this->output->box_end();

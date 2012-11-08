@@ -1538,26 +1538,32 @@ class available_update_deployer {
     }
 
     /**
-     * Check if the available update info contains all required data for deployment.
+     * Returns a list of reasons why the deployment can not happen
      *
-     * All instances of {@link available_update_info} class always provide at least the
-     * component name and component version. Additionally, we also need the URL to download
-     * the ZIP package from and MD5 hash of the ZIP's content.
+     * If the returned array is empty, the deployment seems to be possible. The returned
+     * structure is an associative array with keys representing individual impediments.
+     * Possible keys are: missingdownloadurl, missingdownloadmd5, notwritable.
      *
      * @param available_update_info $info
-     * @return bool
+     * @return array
      */
-    public function can_deploy(available_update_info $info) {
+    public function deployment_impediments(available_update_info $info) {
+
+        $impediments = array();
 
         if (empty($info->download)) {
-            return false;
+            $impediments['missingdownloadurl'] = true;
         }
 
         if (empty($info->downloadmd5)) {
-            return false;
+            $impediments['missingdownloadmd5'] = true;
         }
 
-        return true;
+        if (!$this->component_writable($info->component)) {
+            $impediments['notwritable'] = true;
+        }
+
+        return $impediments;
     }
 
     /**
@@ -1783,7 +1789,6 @@ class available_update_deployer {
         }
     }
 
-
     // End of external API
 
     /**
@@ -1856,6 +1861,70 @@ class available_update_deployer {
      */
     protected function generate_password() {
         return complex_random_string();
+    }
+
+    /**
+     * Checks if the given component's directory is writable
+     *
+     * For the purpose of the deployment, the web server process has to have
+     * write access to all files in the component's directory (recursively) and for the
+     * directory itself.
+     *
+     * @see worker::move_directory_source_precheck()
+     * @param string $component normalized component name
+     * @return boolean
+     */
+    protected function component_writable($component) {
+
+        list($plugintype, $pluginname) = normalize_component($component);
+
+        $directory = get_plugin_directory($plugintype, $pluginname);
+
+        if (is_null($directory)) {
+            throw new coding_exception('Unknown component location', $component);
+        }
+
+        return $this->directory_writable($directory);
+    }
+
+    /**
+     * Checks if the directory and all its contents (recursively) is writable
+     *
+     * @param string $path full path to a directory
+     * @return boolean
+     */
+    private function directory_writable($path) {
+
+        if (!is_writable($path)) {
+            return false;
+        }
+
+        if (is_dir($path)) {
+            $handle = opendir($path);
+        } else {
+            return false;
+        }
+
+        $result = true;
+
+        while ($filename = readdir($handle)) {
+            $filepath = $path.'/'.$filename;
+
+            if ($filename === '.' or $filename === '..') {
+                continue;
+            }
+
+            if (is_dir($filepath)) {
+                $result = $result && $this->directory_writable($filepath);
+
+            } else {
+                $result = $result && is_writable($filepath);
+            }
+        }
+
+        closedir($handle);
+
+        return $result;
     }
 }
 

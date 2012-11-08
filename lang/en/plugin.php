@@ -41,6 +41,10 @@ $string['nonehighlighted'] = 'No plugins require your attention now';
 $string['nonehighlightedinfo'] = 'Display the list of all installed plugins anyway';
 $string['noneinstalled'] = 'No plugins of this type are installed';
 $string['notes'] = 'Notes';
+$string['notwritable'] = 'Plugin files not writable';
+$string['notwritable_help'] = 'You have enabled automatic updates deployment and there is available update for this plugin. However, the plugin files are not writable by the web server so the update can not be installed at the moment.
+
+Make the plugin folder and all its contents writable to be able to install the available update automatically.';
 $string['numtotal'] = 'Installed: {$a}';
 $string['numdisabled'] = 'Disabled: {$a}';
 $string['numextension'] = 'Contributions: {$a}';

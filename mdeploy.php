@@ -1048,6 +1048,10 @@ class worker extends singleton_pattern {
      */
     protected function move_directory_source_precheck($source) {
 
+        if (!is_writable($source)) {
+            return false;
+        }
+
         if (is_dir($source)) {
             $handle = opendir($source);
         } else {
@@ -1072,7 +1076,8 @@ class worker extends singleton_pattern {
         }
 
         closedir($handle);
-        return $result && is_writable($source);
+
+        return $result;
     }
 
     /**
