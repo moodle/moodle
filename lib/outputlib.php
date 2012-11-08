@@ -952,6 +952,7 @@ class theme_config {
             // as support for it in browsers is at best quirky.
             // When we choose to support SVG in background css we will need to remove this code and implement a solution that is
             // either consistent or varies the URL for serving CSS depending upon SVG being used if available, or not.
+            $originalsvguse = $this->use_svg_icons();
             $this->force_svg_use(false);
             $replaced = array();
             foreach ($matches as $match) {
@@ -966,6 +967,7 @@ class theme_config {
                 $imageurl = preg_replace('|^http.?://[^/]+|', '', $imageurl);
                 $css = str_replace($match[0], $imageurl, $css);
             }
+            $this->force_svg_use($originalsvguse);
         }
 
         // now resolve all theme settings or do any other postprocessing
