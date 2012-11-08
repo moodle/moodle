@@ -251,6 +251,8 @@ function css_minify_css($files) {
     Minify::setCache(null, false);
 
     $options = array(
+        // JSMin is not GNU GPL compatible, use the plus version instead.
+        'minifiers' => array(Minify::TYPE_JS => array('JSMinPlus', 'minify')),
         'bubbleCssImports' => false,
         // Don't gzip content we just want text for storage
         'encodeOutput' => false,
