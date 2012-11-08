@@ -78,7 +78,7 @@ if ($backup->get_stage() !== backup_ui::STAGE_COMPLETE) {
     echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string('publishcourseon', 'hub', !empty($hubname)?$hubname:$huburl), 3, 'main');
     if ($backup->enforce_changed_dependencies()) {
-        echo $renderer->dependency_notification(get_string('dependenciesenforced', 'backup'));
+        debugging('Your settings have been altered due to unmet dependencies', DEBUG_DEVELOPER);
     }
     echo $renderer->progress_bar($backup->get_progress_bar());
     echo $backup->display($renderer);
