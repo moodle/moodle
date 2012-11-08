@@ -176,12 +176,15 @@ class cache implements cache_loader {
      * @param string $component The component this cache relates to.
      * @param string $area The area this cache relates to.
      * @param array $identifiers Any additional identifiers that should be provided to the definition.
-     * @param bool $persistent If set to true the cache will persist construction requests.
+     * @param array $options An array of options, available options are:
+     *   - simplekeys : Set to true if the keys you will use are a-zA-Z0-9_
+     *   - simpledata : Set to true if the type of the data you are going to store is scalar, or an array of scalar vars
+     *   - persistent : If set to true the cache will persist construction requests.
      * @return cache_application|cache_session|cache_store
      */
-    public static function make_from_params($mode, $component, $area, array $identifiers = array(), $persistent = false) {
+    public static function make_from_params($mode, $component, $area, array $identifiers = array(), array $options = array()) {
         $factory = cache_factory::instance();
-        return $factory->create_cache_from_params($mode, $component, $area, $identifiers, $persistent);
+        return $factory->create_cache_from_params($mode, $component, $area, $identifiers, $options);
     }
 
     /**

@@ -47,9 +47,9 @@ $sessiontable = clone($applicationtable);
 $requesttable = clone($applicationtable);
 
 
-$application = cache_definition::load_adhoc(cache_store::MODE_APPLICATION, 'cache', 'applicationtest', null, false);
-$session = cache_definition::load_adhoc(cache_store::MODE_SESSION, 'cache', 'sessiontest', null, false);
-$request = cache_definition::load_adhoc(cache_store::MODE_REQUEST, 'cache', 'requesttest', null, false);
+$application = cache_definition::load_adhoc(cache_store::MODE_APPLICATION, 'cache', 'applicationtest');
+$session = cache_definition::load_adhoc(cache_store::MODE_SESSION, 'cache', 'sessiontest');
+$request = cache_definition::load_adhoc(cache_store::MODE_REQUEST, 'cache', 'requesttest');
 
 $strinvalidplugin = new lang_string('invalidplugin', 'cache');
 $strunsupportedmode = new lang_string('unsupportedmode', 'cache');
