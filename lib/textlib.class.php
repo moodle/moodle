@@ -161,8 +161,7 @@ class textlib {
 
     /**
      * Converts the text between different encodings. It uses iconv extension with //TRANSLIT parameter,
-     * falls back to typo3.
-     * Returns false if fails.
+     * falls back to typo3. If both source and target are utf-8 it tries to fix invalid characters only.
      *
      * @param string $text
      * @param string $fromCS source encoding
@@ -177,6 +176,10 @@ class textlib {
 
         if ($text === '') {
             return '';
+        }
+
+        if ($toCS === 'utf-8' and $fromCS === 'utf-8') {
+            return fix_utf8($text);
         }
 
         $result = iconv($fromCS, $toCS.'//TRANSLIT', $text);
