@@ -266,7 +266,8 @@ YUI.add('moodle-course-dragdrop', function(Y) {
                 });
                 del.dd.plug(Y.Plugin.DDProxy, {
                     // Don't move the node at the end of the drag
-                    moveOnEnd: false
+                    moveOnEnd: false,
+                    cloneNode: true
                 });
                 del.dd.plug(Y.Plugin.DDConstrained, {
                     // Keep it inside the .course-content

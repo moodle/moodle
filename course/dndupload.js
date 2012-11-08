@@ -524,6 +524,7 @@ M.course_dndupload = {
         preview.li.appendChild(preview.div);
 
         preview.icon.src = M.util.image_url('t/addfile');
+        preview.icon.className = 'icon';
         preview.div.appendChild(preview.icon);
 
         preview.div.appendChild(document.createTextNode(' '));
