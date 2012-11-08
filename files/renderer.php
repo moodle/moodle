@@ -929,7 +929,12 @@ class core_files_renderer extends plugin_renderer_base {
      * Default contents is one text input field with name="s"
      */
     public function repository_default_searchform() {
-        $str = '<div class="fp-def-search"><input name="s" value='.get_string('search', 'repository').' /></div>';
+        $searchinput = html_writer::label(get_string('searchrepo', 'repository'),
+            'reposearch', false, array('class' => 'accesshide'));
+        $searchinput .= html_writer::empty_tag('input', array('type' => 'text',
+            'id' => 'reposearch', 'name' => 's', 'value' => get_string('search', 'repository')));
+        $str = html_writer::tag('div', $searchinput, array('class' => "fp-def-search"));
+
         return $str;
     }
 }

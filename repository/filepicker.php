@@ -351,8 +351,8 @@ case 'confirm':
     echo '<form method="post">';
     echo '<table>';
     echo '  <tr>';
-    echo '    <td><label>'.get_string('filename', 'repository').'</label></td>';
-    echo '    <td><input type="text" name="filename" value="'.s($filename).'" /></td>';
+    echo '    <td>'. html_writer::label(get_string('filename', 'repository'), 'filename'). '</td>';
+    echo '    <td><input type="text" id="filename" name="filename" value="'.s($filename).'" /></td>';
     echo '    <td><input type="hidden" name="fileurl" value="'.s($fileurl).'" /></td>';
     echo '    <td><input type="hidden" name="action" value="download" /></td>';
     echo '    <td><input type="hidden" name="itemid" value="'.s($itemid).'" /></td>';
