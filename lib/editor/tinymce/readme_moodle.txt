@@ -19,9 +19,8 @@ Upgrade procedure:
 
 Changes:
 
- * zIndex 300000 and 200000 changed to 3000 and 2000 - this prevents collision with YUI,
+1/ zIndex 300000 and 200000 changed to 5003 and 5002 - this prevents collision with YUI,
    see MDL-35771
- * MDL-25736 - French spellchecker fixes.
 
 TODO:
  * create some new automated script that sends other languages from upstream into AMOS

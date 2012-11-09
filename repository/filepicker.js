@@ -1281,7 +1281,7 @@ M.core_filepicker.init = function(Y, options) {
             this.mainui = new Y.Panel({
                 srcNode      : this.fpnode,
                 headerContent: M.str.repository.filepicker,
-                zIndex       : 5000,
+                zIndex       : 7500,
                 centered     : true,
                 modal        : true,
                 visible      : false,
@@ -1302,7 +1302,7 @@ M.core_filepicker.init = function(Y, options) {
                 set('id', 'filepicker-select-'+client_id);
             this.selectui = new Y.Panel({
                 srcNode      : this.selectnode,
-                zIndex       : 6000,
+                zIndex       : 7600,
                 centered     : true,
                 modal        : true,
                 close        : true,
