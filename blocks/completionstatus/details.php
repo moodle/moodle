@@ -46,9 +46,25 @@ if ($userid) {
 
 
 // Check permissions
-require_login();
+require_login($course);
 
-if (!completion_can_view_data($user->id, $course)) {
+$coursecontext   = context_course::instance($course->id);
+$personalcontext = context_user::instance($user->id);
+
+$can_view = false;
+
+// Can view own report
+if ($USER->id == $user->id) {
+    $can_view = true;
+} else if (has_capability('moodle/user:viewuseractivitiesreport', $personalcontext)) {
+    $can_view = true;
+} else if (has_capability('report/completion:view', $coursecontext)) {
+    $can_view = true;
+} else if (has_capability('report/completion:view', $personalcontext)) {
+    $can_view = true;
+}
+
+if (!$can_view) {
     print_error('cannotviewreport');
 }
 

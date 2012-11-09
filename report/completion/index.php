@@ -561,12 +561,7 @@ foreach ($progress as $user) {
     } else {
         print PHP_EOL.'<tr id="user-'.$user->id.'">';
 
-        if (completion_can_view_data($user->id, $course)) {
-            $userurl = new moodle_url('/blocks/completionstatus/details.php', array('course' => $course->id, 'user' => $user->id));
-        } else {
-            $userurl = new moodle_url('/user/view.php', array('id' => $user->id, 'course' => $course->id));
-        }
-
+        $userurl = new moodle_url('/user/view.php', array('id' => $user->id, 'course' => $course->id));
         print '<th scope="row"><a href="'.$userurl->out().'">'.fullname($user).'</a></th>';
         foreach ($extrafields as $field) {
             echo '<td>'.s($user->{$field}).'</td>';
