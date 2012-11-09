@@ -265,6 +265,9 @@
 #page-admin-plugins #plugins-control-panel .notes .pluginupdateinfo span,
 #page-admin-plugins #plugins-control-panel .notes .pluginupdateinfo a {padding-right:1em;}
 #page-admin-plugins #plugins-control-panel .notes .pluginupdateinfo .separator {border-left:1px dotted #333;}
+.dir-rtl #plugins-check .pluginupdateinfo {text-align: center;direction: ltr;}
+.dir-rtl #plugins-check .rootdir,
+.dir-rtl #plugins-check .requires-ok {text-align: left;direction: ltr;}
 
 /** MNet networking */
 #page-admin-mnet-peers .box.deletedhosts {margin-bottom:1em;font-size:80%;}
