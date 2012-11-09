@@ -7165,7 +7165,7 @@ FROM
         upgrade_main_savepoint(true, 2011120504.12);
     }
 
-    if ($oldversion < 2011120505.08) {
+    if ($oldversion < 2011120505.09) {
         // Issue with Moodle version < 1.7 using postgres having null values in the user table.
         if ($DB->get_dbfamily() === 'postgres') {
             // Array to store columns we may need to change.
@@ -7244,7 +7244,7 @@ FROM
         }
 
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2011120505.08);
+        upgrade_main_savepoint(true, 2011120505.09);
     }
 
     return true;
