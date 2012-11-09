@@ -72,7 +72,7 @@ $string['pathssubwwwroot'] = 'Full webadresse til der hvor Moodle skal vises. De
 Dersom adressen ikke er korrekt, vennligst endre URL i nettleseren slik at at installasjonen restartes med andre verdier.';
 $string['pathsunsecuredataroot'] = 'Dataroot plassering er ikke sikker';
 $string['pathswrongadmindir'] = 'Adminkatalog finnes ikke';
-$string['phpextension'] = '{$a} PHP etternavn';
+$string['phpextension'] = '{$a} PHP-tillegg';
 $string['phpversion'] = 'PHP versjon';
 $string['phpversionhelp'] = '<p>Moodle trenger en PHP versjon minst 4.3.0 eller 5.1.0 (5.0.x har rekke kjente problem).</p>
 <Du kjører nå versjon {$a}</p>
