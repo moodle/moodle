@@ -431,7 +431,7 @@ class course_enrolment_table extends html_table implements renderable {
 
         $this->page           = optional_param(self::PAGEVAR, 0, PARAM_INT);
         $this->perpage        = optional_param(self::PERPAGEVAR, self::DEFAULTPERPAGE, PARAM_INT);
-        $this->sort           = optional_param(self::SORTVAR, self::DEFAULTSORT, PARAM_ALPHA);
+        $this->sort           = optional_param(self::SORTVAR, self::DEFAULTSORT, PARAM_ALPHANUM);
         $this->sortdirection  = optional_param(self::SORTDIRECTIONVAR, self::DEFAULTSORTDIRECTION, PARAM_ALPHA);
 
         $this->attributes = array('class'=>'userenrolment');
