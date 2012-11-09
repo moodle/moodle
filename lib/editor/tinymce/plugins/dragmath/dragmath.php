@@ -56,6 +56,7 @@ $relroot = preg_replace('|^http.?://[^/]+|', '', $CFG->wwwroot);
 
 $htmllang = get_html_lang();
 header('Content-Type: text/html; charset=utf-8');
+header('X-UA-Compatible: IE=edge');
 ?>
 <!DOCTYPE html>
 <html <?php echo $htmllang ?>

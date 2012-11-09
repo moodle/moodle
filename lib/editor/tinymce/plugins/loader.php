@@ -88,6 +88,8 @@ if ($mimetype === 'application/x-javascript' && $allowcache) {
     }
 
     $file = $cachefile;
+} else if ($mimetype === 'text/html') {
+    header('X-UA-Compatible: IE=edge');
 }
 
 // Serve file.

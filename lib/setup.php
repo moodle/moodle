@@ -182,6 +182,7 @@ if (defined('WEB_CRON_EMULATED_CLI')) {
 if (file_exists("$CFG->dataroot/climaintenance.html")) {
     if (!CLI_SCRIPT) {
         header('Content-type: text/html; charset=utf-8');
+        header('X-UA-Compatible: IE=edge');
         /// Headers to make it not cacheable and json
         header('Cache-Control: no-store, no-cache, must-revalidate');
         header('Cache-Control: post-check=0, pre-check=0', false);
