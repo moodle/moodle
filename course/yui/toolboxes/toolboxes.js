@@ -459,10 +459,16 @@ YUI.add('moodle-course-toolboxes', function(Y) {
          */
         add_moveleft : function(target) {
             var left_string = M.util.get_string('moveleft', 'moodle');
+            var moveimage = 't/left'; // ltr mode
+            if ( Y.one(document.body).hasClass('dir-rtl') ) {
+                moveimage = 't/right';
+            } else {
+                moveimage = 't/left';
+            }
             var newicon = Y.Node.create('<img />')
                 .addClass(CSS.GENERICICONCLASS)
                 .setAttrs({
-                    'src'   : M.util.image_url('t/left', 'moodle'),
+                    'src'   : M.util.image_url(moveimage, 'moodle'),
                     'alt'   : left_string
                 });
             var moveright = target.one(CSS.MOVERIGHT);
