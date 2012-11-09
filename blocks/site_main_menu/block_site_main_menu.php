@@ -50,7 +50,7 @@ class block_site_main_menu extends block_list {
                     } else {
                         $linkcss = $cm->visible ? '' : ' class="dimmed" ';
                         //Accessibility: incidental image - should be empty Alt text
-                        $icon = '<img src="' . $cm->get_icon_url() . '" class="icon" alt="" />&nbsp;';
+                        $icon = '<img src="' . $cm->get_icon_url() . '" class="icon" alt="" />';
                         $this->content->items[] = '<a title="'.$cm->modplural.'" '.$linkcss.' '.$cm->extra.
                                 ' href="' . $url . '">' . $icon . $instancename . '</a>';
                     }
@@ -120,7 +120,7 @@ class block_site_main_menu extends block_list {
                         $this->content->icons[] = '';
                     } else {
                         //Accessibility: incidental image - should be empty Alt text
-                        $icon = '<img src="' . $mod->get_icon_url() . '" class="icon" alt="" />&nbsp;';
+                        $icon = '<img src="' . $mod->get_icon_url() . '" class="icon" alt="" />';
                         $this->content->items[] = '<a title="' . $mod->modfullname . '" ' . $linkcss . ' ' . $mod->extra .
                             ' href="' . $url . '">' . $icon . $instancename . '</a>' . $editbuttons;
                     }

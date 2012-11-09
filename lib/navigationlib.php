@@ -3527,7 +3527,7 @@ class settings_navigation extends navigation_node {
         // Import data from other courses
         if (has_capability('moodle/restore:restoretargetimport', $coursecontext)) {
             $url = new moodle_url('/backup/import.php', array('id'=>$course->id));
-            $coursenode->add(get_string('import'), $url, self::TYPE_SETTING, null, 'import', new pix_icon('i/restore', ''));
+            $coursenode->add(get_string('import'), $url, self::TYPE_SETTING, null, 'import', new pix_icon('i/import', ''));
         }
 
         // Publish course on a hub
@@ -3597,7 +3597,7 @@ class settings_navigation extends navigation_node {
             $returnurl->param('sesskey', sesskey());
             foreach ($roles as $key => $name) {
                 $url = new moodle_url('/course/switchrole.php', array('id'=>$course->id,'sesskey'=>sesskey(), 'switchrole'=>$key, 'returnurl'=>$returnurl->out(false)));
-                $switchroles->add($name, $url, self::TYPE_SETTING, null, $key, new pix_icon('i/roles', ''));
+                $switchroles->add($name, $url, self::TYPE_SETTING, null, $key, new pix_icon('i/rolesm', ''));
             }
         }
         // Return we are done
@@ -4064,7 +4064,7 @@ class settings_navigation extends navigation_node {
         // Assign local roles
         if (has_capability('moodle/role:assign', $this->context)) {
             $assignurl = new moodle_url('/'.$CFG->admin.'/roles/assign.php', array('contextid'=>$this->context->id));
-            $categorynode->add(get_string('assignroles', 'role'), $assignurl, self::TYPE_SETTING, null, 'roles', new pix_icon('i/roles', ''));
+            $categorynode->add(get_string('assignroles', 'role'), $assignurl, self::TYPE_SETTING, null, 'roles', new pix_icon('i/rolesm', ''));
         }
 
         // Override roles

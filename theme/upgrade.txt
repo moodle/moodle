@@ -10,6 +10,8 @@ optional changes:
 * new optional boolean parameter $withlinks for public function login_info() in lib/outputrenderers.php (MDL-31365)
 * new layout option "nologinlinks" and new page layout "secure" e.g. for safebrowser and securewindow (MDL-31365)
 * new class 'iconlarge' for 24x24 icons.
+* new icons i/export and i/import. Previously export and import actions used i/backup and i/restore.
+* new icon i/rolesm (stands for 'roles medium') is 16x16 instead of 12x12 for i/roles
 
 === 2.3 ===
 

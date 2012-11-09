@@ -532,9 +532,15 @@ M.core_dock.fixTitleOrientation = function(item, title, text) {
         'position' : 'relative',
         'fontSize' : fontsize,
         'width' : width,
-        'top' : width/2,
-        'right' : width/2 - height
+        'top' : width/2
     });
+
+    // Positioning is different when in RTL mode.
+    if (Y.one(document.body).hasClass('dir-rtl')) {
+        title.setStyle('left', width/2 - height);
+    } else {
+        title.setStyle('right', width/2 - height);
+    }
 
     // Rotate the text
     title.setStyles({
