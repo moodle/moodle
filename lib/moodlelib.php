@@ -6489,7 +6489,11 @@ class core_string_manager implements string_manager {
             $this->cache = cache::make('core', 'string');
         } else {
             // We only want a cache for the length of the request, create a static cache.
-            $this->cache = cache::make_from_params(cache_store::MODE_REQUEST, 'core', 'string');
+            $options = array(
+                'simplekeys' => true,
+                'simpledata' => true
+            );
+            $this->cache = cache::make_from_params(cache_store::MODE_REQUEST, 'core', 'string', array(), $options);
         }
     }
 
