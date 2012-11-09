@@ -5252,7 +5252,7 @@ class admin_page_manageqbehaviours extends admin_externalpage {
     public function __construct() {
         global $CFG;
         parent::__construct('manageqbehaviours', get_string('manageqbehaviours', 'admin'),
-                new moodle_url('/admin/qbehaviours.php'));
+                new moodle_url('/admin/qbehaviours.php'), 'moodle/question:config');
     }
 
     /**
@@ -5299,7 +5299,8 @@ class admin_page_manageqtypes extends admin_externalpage {
      */
     public function __construct() {
         global $CFG;
-        parent::__construct('manageqtypes', get_string('manageqtypes', 'admin'), "$CFG->wwwroot/$CFG->admin/qtypes.php");
+        parent::__construct('manageqtypes', get_string('manageqtypes', 'admin'), "$CFG->wwwroot/$CFG->admin/qtypes.php",
+            'moodle/question:config');
     }
 
     /**
