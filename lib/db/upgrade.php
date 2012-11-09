@@ -1061,6 +1061,8 @@ function xmldb_main_upgrade($oldversion) {
     }
 
     if ($oldversion < 2009010602) {
+        // Issue with field in the user table being null in postgres.
+        $DB->execute("UPDATE {user} SET lastip = '' WHERE lastip IS NULL");
 
     /// Changing precision of field lastip on table user to (45)
         $table = new xmldb_table('user');
@@ -4708,6 +4710,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         if ($dbman->index_exists($table, $index)) {
             $dbman->drop_index($table, $index);
         }
+
+        // Issue with field in the user table being null in postgres.
+        $DB->execute("UPDATE {user} SET city = '' WHERE city IS NULL");
+
     /// Changing precision of field city on table user to (120)
         $field = new xmldb_field('city', XMLDB_TYPE_CHAR, '120', null, XMLDB_NOTNULL, null, null, 'address');
 
@@ -7157,6 +7163,65 @@ FROM
                             AND ' . $DB->sql_isnotempty('post', 'uniquehash', false, false);
         $DB->execute($sql);
         upgrade_main_savepoint(true, 2011120504.12);
+    }
+
+    if ($oldversion < 2011120505.08) {
+        // Issue with Moodle version < 1.7 using postgres having null values in the user table.
+        if ($DB->get_dbfamily() === 'postgres') {
+            // Update picture field to 0.
+            $DB->execute("UPDATE {user} SET picture = '0' WHERE picture IS NULL");
+            // Update the other fields to empty string.
+            $arrfields = array('idnumber', 'icq', 'skype', 'yahoo', 'aim', 'msn',
+                               'phone1', 'phone2', 'institution', 'department',
+                               'address', 'city', 'country', 'lastip', 'secret',
+                               'url');
+            foreach ($arrfields as $field) {
+                $DB->execute("UPDATE {user} SET $field = '' WHERE $field IS NULL");
+            }
+            $table = new xmldb_table('user');
+            // Need to remove indexes in order to edit some fields.
+            $arrindexes = array();
+            $arrindexes[] = new xmldb_index('idnumber', XMLDB_INDEX_NOTUNIQUE, array('idnumber'));
+            $arrindexes[] = new xmldb_index('city', XMLDB_INDEX_NOTUNIQUE, array('city'));
+            $arrindexes[] = new xmldb_index('country', XMLDB_INDEX_NOTUNIQUE, array('country'));
+            foreach ($arrindexes as $index) {
+                if ($dbman->index_exists($table, $index)) {
+                    $dbman->drop_index($table, $index);
+                }
+            }
+            $arrfields = array();
+            $arrfields[] = new xmldb_field('idnumber', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, '', 'password');
+            $arrfields[] = new xmldb_field('icq', XMLDB_TYPE_CHAR, '15', null, XMLDB_NOTNULL, null, '', 'emailstop');
+            $arrfields[] = new xmldb_field('skype', XMLDB_TYPE_CHAR, '50', null, XMLDB_NOTNULL, null, '', 'icq');
+            $arrfields[] = new xmldb_field('yahoo', XMLDB_TYPE_CHAR, '50', null, XMLDB_NOTNULL, null, '', 'skype');
+            $arrfields[] = new xmldb_field('aim', XMLDB_TYPE_CHAR, '50', null, XMLDB_NOTNULL, null, '', 'yahoo');
+            $arrfields[] = new xmldb_field('msn', XMLDB_TYPE_CHAR, '50', null, XMLDB_NOTNULL, null, '', 'aim');
+            $arrfields[] = new xmldb_field('phone1', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, '', 'msn');
+            $arrfields[] = new xmldb_field('phone2', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, '', 'phone1');
+            $arrfields[] = new xmldb_field('institution', XMLDB_TYPE_CHAR, '40', null, XMLDB_NOTNULL, null, '', 'phone2');
+            $arrfields[] = new xmldb_field('department', XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, '', 'institution');
+            $arrfields[] = new xmldb_field('address', XMLDB_TYPE_CHAR, '70', null, XMLDB_NOTNULL, null, '', 'department');
+            $arrfields[] = new xmldb_field('city', XMLDB_TYPE_CHAR, '120', null, XMLDB_NOTNULL, null, '', 'address');
+            $arrfields[] = new xmldb_field('country', XMLDB_TYPE_CHAR, '2', null, XMLDB_NOTNULL, null, '', 'city');
+            $arrfields[] = new xmldb_field('lastip', XMLDB_TYPE_CHAR, '45', null, XMLDB_NOTNULL, null, '', 'country');
+            $arrfields[] = new xmldb_field('secret', XMLDB_TYPE_CHAR, '15', null, XMLDB_NOTNULL, null, '', 'lastip');
+            $arrfields[] = new xmldb_field('picture', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, 'secret');
+            $arrfields[] = new xmldb_field('url', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, '', 'picture');
+            foreach ($arrfields as $field) {
+                if ($dbman->field_exists($table, $field)) {
+                    $dbman->change_field_notnull($table, $field);
+                }
+            }
+            // Re-add the indexes.
+            foreach ($arrindexes as $index) {
+                if (!$dbman->index_exists($table, $index)) {
+                    $dbman->add_index($table, $index);
+                }
+            }
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2011120505.08);
     }
 
     return true;
