@@ -6537,7 +6537,7 @@ class core_string_manager implements string_manager {
             $component = $plugintype . '_' . $pluginname;
         }
 
-        $cachekey = $lang.'/'.$component;
+        $cachekey = $lang.'_'.$component;
 
         if (!$disablecache and !$disablelocal) {
             $string = $this->cache->get($cachekey);
