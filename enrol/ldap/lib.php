@@ -341,6 +341,7 @@ class enrol_ldap_plugin extends enrol_plugin {
                     continue; // Next;
                 }
 
+                $flat_records = array();
                 do {
                     if ($ldap_pagedresults) {
                         ldap_control_paged_result($ldapconnection, $this->config->pagesize, true, $ldap_cookie);
@@ -371,7 +372,6 @@ class enrol_ldap_plugin extends enrol_plugin {
                     $records = ldap_get_entries($ldapconnection, $ldap_result);
 
                     // LDAP libraries return an odd array, really. fix it:
-                    $flat_records = array();
                     for ($c = 0; $c < $records['count']; $c++) {
                         array_push($flat_records, $records[$c]);
                     }
@@ -725,6 +725,7 @@ class enrol_ldap_plugin extends enrol_plugin {
                 continue;
             }
 
+            $flat_records = array();
             do {
                 if ($ldap_pagedresults) {
                     ldap_control_paged_result($ldapconnection, $this->config->pagesize, true, $ldap_cookie);
@@ -758,7 +759,6 @@ class enrol_ldap_plugin extends enrol_plugin {
                 $records = ldap_get_entries($ldapconnection, $ldap_result);
 
                 // LDAP libraries return an odd array, really. Fix it.
-                $flat_records = array();
                 for ($c = 0; $c < $records['count']; $c++) {
                     array_push($flat_records, $records[$c]);
                 }
