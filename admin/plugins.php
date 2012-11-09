@@ -32,15 +32,36 @@ require_capability('moodle/site:config', context_system::instance());
 admin_externalpage_setup('pluginsoverview');
 
 $fetchremote = optional_param('fetchremote', false, PARAM_BOOL);
+$updatesonly = optional_param('updatesonly', false, PARAM_BOOL);
+$contribonly = optional_param('contribonly', false, PARAM_BOOL);
 
 $pluginman = plugin_manager::instance();
 $checker = available_update_checker::instance();
 
+// Filtering options.
+$options = array(
+    'updatesonly' => $updatesonly,
+    'contribonly' => $contribonly,
+);
+
 if ($fetchremote) {
     require_sesskey();
     $checker->fetch();
-    redirect($PAGE->url);
+    redirect(new moodle_url($PAGE->url, $options));
 }
 
 $output = $PAGE->get_renderer('core', 'admin');
-echo $output->plugin_management_page($pluginman, $checker);
+
+$deployer = available_update_deployer::instance();
+if ($deployer->enabled()) {
+    $myurl = new moodle_url($PAGE->url, array('updatesonly' => $updatesonly, 'contribonly' => $contribonly));
+    $deployer->initialize($myurl, $myurl);
+
+    $deploydata = $deployer->submitted_data();
+    if (!empty($deploydata)) {
+        echo $output->upgrade_plugin_confirm_deploy_page($deployer, $deploydata);
+        die();
+    }
+}
+
+echo $output->plugin_management_page($pluginman, $checker, $options);

@@ -102,6 +102,11 @@
 #page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo a {padding-right:1em;}
 #page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo .separator {border-left:1px dotted #333;}
 
+#page-admin-index .updateplugin div,
+#page-admin-plugins .updateplugin div {margin-bottom:0.5em;}
+#page-admin-index .updateplugin .updatepluginconfirmexternal,
+#page-admin-plugins .updateplugin .updatepluginconfirmexternal {padding:1em;background-color:#ffd3d9;border:1px solid #EEAAAA}
+
 #page-admin-user-user_bulk #users .fgroup {white-space: nowrap;}
 #page-admin-report-stats-index .graph {text-align: center;margin-bottom: 1em;}
 #page-admin-report-courseoverview-index .graph {text-align: center;margin-bottom: 1em;}
@@ -248,6 +253,11 @@
 #page-admin-plugins #plugins-overview-panel .info {padding:5px 10px;}
 #page-admin-plugins #plugins-overview-panel .separator {border-left:1px dotted #999;}
 #page-admin-plugins #plugins-overview-panel .info.updatable {margin-left:10px;background-color:#d2ebff;font-weight:bold;-moz-border-radius: 10px;-webkit-border-radius: 10px;border-radius: 10px;}
+#page-admin-plugins #plugins-overview-filter {margin:1em auto;text-align:center;}
+#page-admin-plugins #plugins-overview-filter .filter-item {padding:5px 10px;}
+#page-admin-plugins #plugins-overview-filter .filter-item.active {font-weight:bold;}
+#page-admin-plugins #plugins-overview-filter .separator {border-left:1px dotted #999;}
+#page-admin-plugins #plugins-control-panel .actions .uninstall {color:#900;}
 #page-admin-plugins #plugins-control-panel .notes .pluginupdateinfo {padding:5px 10px;margin:10px;background-color:#d2ebff;-moz-border-radius: 10px;-webkit-border-radius: 10px;border-radius: 10px;}
 #page-admin-plugins #plugins-control-panel .notes .pluginupdateinfo.maturity50 {background-color:#ffd3d9;}
 #page-admin-plugins #plugins-control-panel .notes .pluginupdateinfo.maturity100,

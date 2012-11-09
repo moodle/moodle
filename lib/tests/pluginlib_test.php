@@ -543,3 +543,39 @@ class testable_available_update_checker extends available_update_checker {
 class testable_available_update_checker_cron_executed extends Exception {
 
 }
+
+
+/**
+ * Modified {@link available_update_deployer} suitable for testing purposes
+ */
+class testable_available_update_deployer extends available_update_deployer {
+
+}
+
+
+/**
+ * Test cases for {@link available_update_deployer} class
+ */
+class available_update_deployer_test extends advanced_testcase {
+
+    public function test_magic_setters() {
+        $deployer = testable_available_update_deployer::instance();
+        $value = new moodle_url('/');
+        $deployer->set_returnurl($value);
+        $this->assertSame($deployer->get_returnurl(), $value);
+    }
+
+    public function test_prepare_authorization() {
+        global $CFG;
+
+        $deployer = testable_available_update_deployer::instance();
+        list($passfile, $password) = $deployer->prepare_authorization();
+        $filename = $CFG->phpunit_dataroot.'/mdeploy/auth/'.$passfile;
+        $this->assertFileExists($filename);
+        $stored = file($filename, FILE_IGNORE_NEW_LINES);
+        $this->assertEquals(count($stored), 2);
+        $this->assertGreaterThan(23, strlen($stored[0]));
+        $this->assertSame($stored[0], $password);
+        $this->assertTrue(time() - (int)$stored[1] < 60);
+    }
+}
