@@ -52,6 +52,10 @@ div#headerinner {
     line-height: 30px;
     min-width: 400px;
 }
+.dir-rtl #headright {
+    float: left;
+    min-width: 300px;
+}
 
 #headright a {
     color: #fff;
@@ -66,12 +70,20 @@ div#headerinner {
     font-size: 9px;
 }
 
+.dir-rtl #headright div.langmenu {
+    float: left !important;
+}
+
 #headleft {
     float: left;
     height: 30px;
     line-height: 30px;
     color: #fff;
     font-size: 12px;
+}
+
+.dir-rtl #headleft {
+    float: right;
 }
 
 /** Logo and menu bar divs and wrap **/
@@ -99,6 +111,10 @@ div.thetitle {
     float: left;
 }
 
+.dir-rtl div.thetitle {
+    float: right;
+}
+
 #nologo {
     width: 337px;
     float: left;
@@ -106,6 +122,11 @@ div.thetitle {
     padding-left: 3px;
     margin-top: 40px;
     }
+
+.dir-rtl #nologo {
+    float: right;
+    padding-right: 3px;
+}
 
 #nologo.nomenu {
     width: 100%;
@@ -118,24 +139,26 @@ div.thetitle {
     font-weight: 800;
     letter-spacing: -1px;
     line-height: 45px;
-
-
 }
+
 #nologo a:hover {
     text-decoration: none;
 }
+
 div.rightinfo {
     float: right;
     min-width: 470px;
     height: 130px;
     overflow: hidden;
 }
+.dir-rtl div.rightinfo {
+    float: left;
+}
 
 #menucontainer {
     height: 45px;
     margin-top: 40px;
 }
-
 
 /** main content wraps **/
 
@@ -191,12 +214,21 @@ div.jcontrolsleft {
     float: left;
     min-width: 100px;
 }
+.dir-rtl div.jcontrolsleft {
+    float:right;
+    margin-right: 15px;
+}
 
 div.jcontrolsright {
     float: right;
     min-width: 100px;
     min-height: 35px;
     margin-right: 15px;
+}
+
+.dir-rtl div.jcontrolsright {
+    float: left;
+    margin-left: 15px;
 }
 
 div.jcontrolsright div.singlebutton, div.jcontrolsright div.forumsearch {
@@ -242,6 +274,9 @@ div.johndocsleft {
     width: 300px;
     color: #333333;
     font-size: 11px;
+}
+.dir-rtl div.johndocsleft {
+    float: right;
 }
 
 /** Some breadcrumb style **/
@@ -410,7 +445,12 @@ div#jcontrols_button span.arrow.sep {
 
 /** inner block style for decent display of recent news, etc **/
 
-.block_recent_activity.block_docked div.content h2.main, .block_recent_activity.block_docked div.content h3.main, .side-pre .block div.content h2.main,.side-post .block div.content h2.main,.block div.content h3.main,.block div.content h2 {
+.block_recent_activity.block_docked div.content h2.main,
+.block_recent_activity.block_docked div.content h3.main,
+.side-pre .block div.content h2.main,
+.side-post .block div.content h2.main,
+.block div.content h3.main,
+.block div.content h2 {
     font-size: 13px;
     color: #333;
     font-weight: 800;
@@ -448,7 +488,7 @@ div.yui3-widget-bd h1.helpheading {
 
 .yui-module.yui-overlay.yui-panel div.hd {
     background: #eeeeee url([[pix:theme|bart5]]) repeat-x 0% 90%;
-    }
+}
 
 /**moodle dropdown css for yui menu **/
 
@@ -851,6 +891,10 @@ div.coursebox h3.name a {
     padding-left: 5px !important;
 }
 
+.dir-rtl .unlist ul.teachers {
+    padding-right: 5px;
+}
+
 .unlist ul.teachers li {
     font-size: 10px;
 }
@@ -893,6 +937,9 @@ div.course_category_tree div.category,div.course_category_tree div.category_labe
 div.course_category_tree div.category.with_children div.category_label {
     background-position: 0 55% !important;
 }
+.dir-rtl div.course_category_tree div.category.with_children div.category_label {
+    background-position: right center !important;
+}
 
 div.course_category_tree div.course.odd {
     background: #eee;
@@ -904,6 +951,23 @@ div.course_category_tree div.course a {
 
 div.category.subcategory.with_children {
     margin-left: 20px;
+}
+
+.dir-rtl div.category.subcategory.with_children {
+    margin-right: 20px;
+}
+
+.dir-rtl .course_category_tree .category .course_info {
+    padding-right: 20px;
+}
+
+.dir-rtl.jsenabled .course_category_tree .category.with_children.collapsed .category_label {
+    backkground-position: right center !important;
+}
+
+.dir-rtl .course_category_tree .category_label,
+.dir-rtl .course_category_tree .category .course {
+    padding-right: 35px;
 }
 
 div.course_category_tree div.controls {
@@ -1024,6 +1088,9 @@ table.glossarypost td.entry h3 {
     text-align: left;
     margin-bottom: 3px;
     margin-top: 2px;
+}
+#page-mod-wiki-view.dir-rtl h2.wiki_headingtitle {
+    text-align: right;
 }
 
 /**HR in content blocks **/
