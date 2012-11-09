@@ -42,7 +42,7 @@ $string['componentisuptodate'] = 'Komponenten er oppdatert';
 $string['downloadedfilecheckfailed'] = 'Sjekk av nedlastet fil mislykkes.';
 $string['invalidmd5'] = 'Ugyldig md5, prøv igjen';
 $string['missingrequiredfield'] = 'Noen påkrevde felt mangler';
-$string['remotedownloaderror'] = 'Mislykkes i å laste ned komponenten til din server, vennligst sjekk proxy-innstillingene. PHP cURL tillegget er sterkt anbefalt. <br /><br />Du må laste ned <a href="{$a->url}">{$a->url}</a> filen manuelt, kopiere den til "{$a->dest}" på serveren din og pakke den ut der.';
+$string['remotedownloaderror'] = 'Mislykkes i å laste ned komponenten til din server, vennligst sjekk proxy-innstillingene. PHP cURL-tillegget er sterkt anbefalt. <br /><br />Du må laste ned <a href="{$a->url}">{$a->url}</a> filen manuelt, kopiere den til "{$a->dest}" på serveren din og pakke den ut der.';
 $string['wrongdestpath'] = 'Gal målmappe';
 $string['wrongsourcebase'] = 'Feil kilde URL base';
 $string['wrongzipfilename'] = 'Galt ZIP-filnavn.';
