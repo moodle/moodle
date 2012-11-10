@@ -1349,11 +1349,17 @@ function is_web_crawler() {
             return true;
         } else if (strpos($_SERVER['HTTP_USER_AGENT'], '[ZSEBOT]') !== false ) {  // Zoomspider
             return true;
-        } else if (strpos($_SERVER['HTTP_USER_AGENT'], 'MSNBOT') !== false ) {  // MSN Search
+        } else if (stripos($_SERVER['HTTP_USER_AGENT'], 'msnbot') !== false ) {  // MSN Search
+            return true;
+        } else if (strpos($_SERVER['HTTP_USER_AGENT'], 'bingbot') !== false ) {  // Bing
             return true;
         } else if (strpos($_SERVER['HTTP_USER_AGENT'], 'Yandex') !== false ) {
             return true;
         } else if (strpos($_SERVER['HTTP_USER_AGENT'], 'AltaVista') !== false ) {
+            return true;
+        } else if (stripos($_SERVER['HTTP_USER_AGENT'], 'baiduspider') !== false ) {  // Baidu
+            return true;
+        } else if (strpos($_SERVER['HTTP_USER_AGENT'], 'Teoma') !== false ) {  // Ask.com
             return true;
         }
     }
