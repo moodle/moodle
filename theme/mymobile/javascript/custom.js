@@ -127,14 +127,6 @@ $(document).ready(function() {
 
     //forum discussion page only stuff
     $('div#page-mod-forum-discussPAGE, #page-mod-forum-discuss div.generalpage, div.forumtype-single, .forumtype-single div.generalpage, div#page-mod-forum-postPAGE').live('pagebeforecreate',function(event, ui){
-        //remove parent post because of hash remove this if has listening is fixed
-        $('.options div.commands a').each(function(index) {
-            var url = $(this).attr("href");
-            if (url.indexOf("#") != -1) {
-                $(this).remove();
-            }
-        });
-
         //actual forum posting
         $('.forumpost div.row.header').addClass("ui-li ui-li-divider ui-btn ui-bar-" + mytheme);
         $('.options div.commands').attr("data-role", "controlgroup").attr("data-type", "horizontal");
