@@ -1848,7 +1848,10 @@ function send_headers($contenttype, $cacheable = true) {
     @header('Content-Type: ' . $contenttype);
     @header('Content-Script-Type: text/javascript');
     @header('Content-Style-Type: text/css');
-    @header('X-UA-Compatible: IE=edge');
+
+    if (empty($CFG->additionalhtmlhead) or stripos($CFG->additionalhtmlhead, 'X-UA-Compatible') === false) {
+        @header('X-UA-Compatible: IE=edge');
+    }
 
     if ($cacheable) {
         // Allow caching on "back" (but not on normal clicks)
