@@ -219,7 +219,6 @@ class tool_behat {
         system: ~
         json: ~
         table: ~
-        rest: ~
     ' . $behatpath . '/vendor/moodlehq/behat-extension/init.php:
 ';
 
