@@ -65,6 +65,10 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configselect('enrol_self/status',
         get_string('status', 'enrol_self'), get_string('status_desc', 'enrol_self'), ENROL_INSTANCE_DISABLED, $options));
 
+    $options = array(1  => get_string('yes'), 0 => get_string('no'));
+    $settings->add(new admin_setting_configselect('enrol_self/newenrols',
+        get_string('newenrols', 'enrol_self'), get_string('newenrols_desc', 'enrol_self'), 1, $options));
+
     $options = array(1  => get_string('yes'),
                      0 => get_string('no'));
     $settings->add(new admin_setting_configselect('enrol_self/groupkey',
