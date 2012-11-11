@@ -290,10 +290,10 @@ class cache_definition {
             throw new coding_exception('You must provide a mode when creating a cache definition');
         }
         if (!array_key_exists('component', $definition)) {
-            throw new coding_exception('You must provide a mode when creating a cache definition');
+            throw new coding_exception('You must provide a component when creating a cache definition');
         }
         if (!array_key_exists('area', $definition)) {
-            throw new coding_exception('You must provide a mode when creating a cache definition');
+            throw new coding_exception('You must provide an area when creating a cache definition');
         }
         $mode = (int)$definition['mode'];
         $component = (string)$definition['component'];
@@ -638,7 +638,7 @@ class cache_definition {
      */
     public function get_data_source() {
         if (!$this->has_data_source()) {
-            throw new coding_exception('This cache does not use a datasource.');
+            throw new coding_exception('This cache does not use a data source.');
         }
         return forward_static_call(array($this->datasource, 'get_instance_for_cache'), $this);
     }
