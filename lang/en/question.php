@@ -110,7 +110,7 @@ Each category has a context which determines where the questions in the category
 
 * Activity context - Questions only available in the activity module
 * Course context - Questions available in all activity modules in the course
-* Course category context - Questions available in all activity modules and courses in the course category 
+* Course category context - Questions available in all activity modules and courses in the course category
 * System context - Questions available in all courses and activities on the site
 
 Categories are also used for random questions, as questions are selected from a particular category.';
@@ -388,7 +388,7 @@ $string['rightanswer'] = 'Right answer';
 $string['rightanswer_help'] = 'an automatically generated summary of the correct response. This can be limited, so you may wish to consider explaining the correct solution in the general feedback for the question, and turning this option off.';
 $string['saved'] = 'Saved: {$a}';
 $string['saveflags'] = 'Save the state of the flags';
-$string['settingsformultipletries'] = 'Settings for multiple tries';
+$string['settingsformultipletries'] = 'Multiple tries';
 $string['showhidden'] = 'Also show old questions';
 $string['showmarkandmax'] = 'Show mark and max';
 $string['showmaxmarkonly'] = 'Show max mark only';
