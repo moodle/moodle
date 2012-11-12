@@ -85,7 +85,7 @@ class statslib_daily_testcase extends advanced_testcase {
         parent::setUp();
 
         // Settings to force statistic to run during testing
-        $CFG->timezone                = 99;
+        $CFG->timezone                = 8;
         $CFG->statsfirstrun           = 'all';
         $CFG->statslastdaily          = 0;
         $CFG->statslastexecution      = 0;
