@@ -90,8 +90,15 @@ if (!isset($CFG->wwwroot) or $CFG->wwwroot === 'http://example.com/moodle') {
     exit(1);
 }
 
-// If acceptance testing mode is enabled use test database and dataroot
-if (file_exists($CFG->dataroot . '/behat/test_environment_enabled.txt')) {
+// Default URL for acceptance testing.
+if (!isset($CFG->test_wwwroot)) {
+    $CFG->test_wwwroot = 'http://localhost:8000';
+}
+
+// Switch to test site only when test environment is enabled.
+if ((php_sapi_name() === 'cli-server' || defined('BEHAT_RUNNING')) && 
+        file_exists($CFG->dataroot . '/behat/test_environment_enabled.txt')) {
+    $CFG->wwwroot = $CFG->test_wwwroot;
     $CFG->passwordsaltmain = 'phpunit';
     $CFG->originaldataroot = $CFG->dataroot;
     $CFG->prefix = $CFG->phpunit_prefix;

@@ -29,8 +29,6 @@ require_once($CFG->libdir . '/phpunit/classes/tests_finder.php');
 /**
  * Behat commands manager
  *
- * CLI + web execution
- *
  * @package    tool_behat
  * @copyright  2012 David Monllaó
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -46,11 +44,7 @@ class tool_behat {
 
         $html = self::get_header();
         $html .= self::get_info();
-
-        if (!self::is_test_environment_running()) {
-            $html .= self::get_steps_definitions_form();
-        }
-
+        $html .= self::get_steps_definitions_form();
         $html .= self::get_footer();
 
         echo $html;
@@ -122,7 +116,10 @@ class tool_behat {
     }
 
     /**
-     * Switches from and to the regular environment to the testing environment
+     * Allows / disables the test environment to be accesses through the built-in server
+     *
+     * Built-in server must be started separately
+     *
      * @param string $testenvironment enable|disable
      */
     public static function switchenvironment($testenvironment = false) {
@@ -134,21 +131,29 @@ class tool_behat {
         }
 
         if ($testenvironment == 'enable') {
-            self::enable_test_environment();
+            self::start_test_mode();
         } else if ($testenvironment == 'disable') {
-            self::disable_test_environment();
+            self::stop_test_mode();
         }
     }
 
     /**
      * Runs the acceptance tests
+     *
+     * It starts test mode and runs the built-in php
+     * CLI server and stops it all then it's done
+     *
      * @param string $tags Restricts the executed tests to the ones that matches the tags
      * @param string $extra Extra CLI behat options
      */
     public static function runtests($tags = false, $extra = false) {
         global $CFG;
 
+        // Checks that the behat reference is properly set up
         self::check_behat_setup();
+
+        // Check that PHPUnit test environment is correctly set up.
+        self::test_environment_problem();
 
         self::update_config_file();
 
@@ -168,29 +173,26 @@ class tool_behat {
             $extra = '';
         }
 
-        // Switching database and dataroot to test environment.
-        self::enable_test_environment();
-        $currentcwd = getcwd();
+        // Starts built-in server and inits test mode
+        self::start_test_mode();
+        $server = self::start_test_server();
 
+        // Runs the tests switching the current working directory to CFG->behatpath.
+        $currentcwd = getcwd();
         chdir($CFG->behatpath);
         ob_start();
         passthru('bin/behat --ansi --config="' . self::get_behat_config_filepath() .'" ' . $tagsoption . ' ' .$extra, $code);
         $output = ob_get_contents();
         ob_end_clean();
-
-        // Switching back to regular environment.
-        self::disable_test_environment();
         chdir($currentcwd);
+
+        // Stops built-in server and stops test mode
+        self::stop_test_server($server[0], $server[1]);
+        self::stop_test_mode();
 
         // Output.
         echo self::get_header();
         echo $output;
-
-        // Dirty hack to avoid behat bad HTML structure when test execution throws an exception and there are skipped steps.
-        if (strstr($output, 'class="skipped"') != false) {
-            echo '</ol></div></div></div></body></html>';
-        }
-
         echo self::get_footer();
     }
 
@@ -210,7 +212,7 @@ class tool_behat {
     bootstrap: ' . $behatpath . '/features/bootstrap
   extensions:
     Behat\MinkExtension\Extension:
-      base_url: ' . $CFG->wwwroot . '
+      base_url: ' . $CFG->test_wwwroot . '
       goutte: ~
       selenium2: ~
     Sanpi\Behatch\Extension:
@@ -302,7 +304,10 @@ class tool_behat {
     }
 
     /**
-     * Checks the behat setup
+     * Checks if behat is set up and working
+     *
+     * It checks the behatpath setting value and runs the
+     * behat help command to ensure it works as expected
      */
     private static function check_behat_setup() {
         global $CFG;
@@ -330,23 +335,22 @@ class tool_behat {
     }
 
     /**
-     * Enables test mode checking the test environment setup
+     * Enables test mode
      *
-     * Stores a file in dataroot/behat to allow Moodle switch to
-     * test database and dataroot before the initial set up
+     * Stores a file in dataroot/behat to
+     * allow Moodle to switch to the test
+     * database and dataroot before the initial setup
      *
      * @throws file_exception
+     * @return array
      */
-    private static function enable_test_environment() {
+    private static function start_test_mode() {
         global $CFG;
 
-        if (self::is_test_environment_enabled()) {
+        if (self::is_test_mode_enabled()) {
             debugging('Test environment was already enabled');
             return;
         }
-
-        // Check that PHPUnit test environment is correctly set up.
-        self::test_environment_problem();
 
         $behatdir = self::get_behat_dir();
 
@@ -359,18 +363,62 @@ class tool_behat {
     }
 
     /**
+     * Runs the php built-in server
+     * @return array The process running the server and the pipes array
+     */
+    private static function start_test_server() {
+        global $CFG;
+
+        $descriptorspec = array(
+            array("pipe", "r"),
+            array("pipe", "w"),
+            array("pipe", "a")
+        );
+
+        $server = str_replace('http://', '', $CFG->test_wwwroot);
+        $process = proc_open('php -S ' . $server, $descriptorspec, $pipes, $CFG->dirroot);
+
+        if (!is_resource($process)) {
+            print_error('testservercantrun');
+        }
+
+        return array($process, $pipes);
+    }
+
+    /**
      * Disables test mode
      */
-    private static function disable_test_environment() {
+    private static function stop_test_mode() {
 
         $testenvfile = self::get_test_filepath();
 
-        if (!self::is_test_environment_enabled()) {
+        if (!self::is_test_mode_enabled()) {
             debugging('Test environment was already disabled');
         } else {
             if (!unlink($testenvfile)) {
                 throw new file_exception('cannotdeletetestenvironmentfile');
             }
+        }
+    }
+
+    /**
+     * Stops the built-in server
+     *
+     * @param resource $process
+     * @param array $pipes IN, OUT and error pipes
+     */
+    private static function stop_test_server($process, $pipes) {
+
+        if (is_resource($process)) {
+
+            // Closing pipes.
+            fclose($pipes[0]);
+            fclose($pipes[1]);
+            fclose($pipes[2]);
+
+            // Closing process.
+            proc_terminate($process);
+            proc_close($process);
         }
     }
 
@@ -382,7 +430,7 @@ class tool_behat {
      *
      * @return bool
      */
-    private static function is_test_environment_enabled() {
+    private static function is_test_mode_enabled() {
 
         $testenvfile = self::get_test_filepath();
         if (file_exists($testenvfile)) {
@@ -399,7 +447,7 @@ class tool_behat {
     private static function is_test_environment_running() {
         global $CFG;
 
-        if (!empty($CFG->originaldataroot)) {
+        if (!empty($CFG->originaldataroot) && php_sapi_name() === 'cli-server') {
             return true;
         }
 

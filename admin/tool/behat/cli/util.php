@@ -52,12 +52,12 @@ Ensure the user who executes the action has permissions over behat installation
 Options:
 --stepsdefinitions   Displays the available steps definitions (accepts --filter=\"\" option to restrict the list to the matching definitions)
 --runtests           Runs the tests (accepts --tags=\"\" option to execute only the matching tests and --extra=\"\" to specify extra behat options)
---testenvironment    Switches between the real and the test environment (accepts value 'enable' or 'disable', for example --testenvironment=\"enable\"
+--testenvironment    Allows the test environment to be accesses through the built-in server (accepts value 'enable' or 'disable')
 
 -h, --help     Print out this help
 
 Example from Moodle root directory:
-\$ php admin/tool/behat/cli/util.php --runtests --tags=\"tool_behat\" --extra=\"--format junit --out /path/report.html\"
+\$ php admin/tool/behat/cli/util.php --runtests --tags=\"tool_behat\"
 ";
 
 if (!empty($options['help'])) {
