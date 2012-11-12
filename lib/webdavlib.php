@@ -265,15 +265,17 @@ class webdav_client {
      * Public method get
      *
      * Gets a file from a webdav collection.
-     * @param string path, string &buffer
-     * @return status code and &$buffer (by reference) with response data from server on success. False on error.
+     * @param string $path the path to the file on the webdav server
+     * @param string &$buffer the buffer to store the data in
+     * @param resource $fp optional if included, the data is written directly to this resource and not to the buffer
+     * @return string|bool status code and &$buffer (by reference) with response data from server on success. False on error.
      */
-    function get($path, &$buffer) {
+    function get($path, &$buffer, $fp = null) {
         $this->_path = $this->translate_uri($path);
         $this->header_unset();
         $this->create_basic_request('GET');
         $this->send_request();
-        $this->get_respond();
+        $this->get_respond($fp);
         $response = $this->process_respond();
 
         $http_version = $response['status']['http-version'];
@@ -283,8 +285,13 @@ class webdav_client {
                 // seems to be http ... proceed
                 // We expect a 200 code
                 if ($response['status']['status-code'] == 200 ) {
-                    $this->_error_log('returning buffer with ' . strlen($response['body']) . ' bytes.');
-                    $buffer = $response['body'];
+                    if (!is_null($fp)) {
+                        $stat = fstat($fp);
+                        $this->_error_log('file created with ' . $stat['size'] . ' bytes.');
+                    } else {
+                        $this->_error_log('returning buffer with ' . strlen($response['body']) . ' bytes.');
+                        $buffer = $response['body'];
+                    }
                 }
                 return $response['status']['status-code'];
             }
@@ -387,27 +394,24 @@ class webdav_client {
      * Gets a file from a collection into local filesystem.
      *
      * fopen() is used.
-     * @param string srcpath, string localpath
-     * @return true on success. false on error.
+     * @param string $srcpath
+     * @param string $localpath
+     * @return bool true on success. false on error.
      */
     function get_file($srcpath, $localpath) {
 
-        if ($this->get($srcpath, $buffer)) {
-            // convert utf-8 filename to iso-8859-1
+        $localpath = $this->utf_decode_path($localpath);
 
-            $localpath = $this->utf_decode_path($localpath);
-
-            $handle = fopen ($localpath, 'w');
-            if ($handle) {
-                fwrite($handle, $buffer);
-                fclose($handle);
+        $handle = fopen($localpath, 'wb');
+        if ($handle) {
+            $unused = '';
+            $ret = $this->get($srcpath, $unused, $handle);
+            fclose($handle);
+            if ($ret) {
                 return true;
-            } else {
-                return false;
             }
-        } else {
-            return false;
         }
+        return false;
     }
 
     /**
@@ -1447,8 +1451,9 @@ EOD;
      * This routine is the weakest part of this class, because it very depends how php does handle a socket stream.
      * If the stream is blocked for some reason php is blocked as well.
      * @access private
+     * @param resource $fp optional the file handle to write the body content to (stored internally in the '_body' if not set)
      */
-    private function get_respond() {
+    private function get_respond($fp = null) {
         $this->_error_log('get_respond()');
         // init vars (good coding style ;-)
         $buffer = '';
@@ -1509,7 +1514,8 @@ EOD;
                     $read = 0;
                     // Reading the chunk in one bite is not secure, we read it byte by byte.
                     while ($read < $chunk_size) {
-                        $buffer .= fread($this->sock, 1);
+                        $chunk = fread($this->sock, 1);
+                        self::update_file_or_buffer($chunk, $fp, $buffer);
                         $read++;
                     }
                 }
@@ -1525,21 +1531,20 @@ EOD;
             if ($matches[1] <= $max_chunk_size ) {
                 // only read something if Content-Length is bigger than 0
                 if ($matches[1] > 0 ) {
-                    $buffer = fread($this->sock, $matches[1]);
-                    $loadsize = strlen($buffer);
+                    $chunk = fread($this->sock, $matches[1]);
+                    $loadsize = strlen($chunk);
                     //did we realy get the full length?
                     if ($loadsize < $matches[1]) {
                         $max_chunk_size = $loadsize;
                         do {
-                            $mod = $max_chunk_size % ($matches[1] - strlen($buffer));
-                            $chunk_size = ($mod == $max_chunk_size ? $max_chunk_size : $matches[1] - strlen($buffer));
-                            $buffer .= fread($this->sock, $chunk_size);
-                            $this->_error_log('mod: ' . $mod . ' chunk: ' . $chunk_size . ' total: ' . strlen($buffer));
+                            $mod = $max_chunk_size % ($matches[1] - strlen($chunk));
+                            $chunk_size = ($mod == $max_chunk_size ? $max_chunk_size : $matches[1] - strlen($chunk));
+                            $chunk .= fread($this->sock, $chunk_size);
+                            $this->_error_log('mod: ' . $mod . ' chunk: ' . $chunk_size . ' total: ' . strlen($chunk));
                         } while ($mod == $max_chunk_size);
-                        break;
-                    } else {
-                        break;
                     }
+                    self::update_file_or_buffer($chunk, $fp, $buffer);
+                    break;
                 } else {
                     $buffer = '';
                     break;
@@ -1548,20 +1553,23 @@ EOD;
 
             // data is to big to handle it as one. Get it chunk per chunk...
             //trying to get the full length of max_chunk_size
-            $buffer = fread($this->sock, $max_chunk_size);
-            $loadsize = strlen($buffer);
+            $chunk = fread($this->sock, $max_chunk_size);
+            $loadsize = strlen($chunk);
+            self::update_file_or_buffer($chunk, $fp, $buffer);
             if ($loadsize < $max_chunk_size) {
                 $max_chunk_size = $loadsize;
             }
             do {
-                $mod = $max_chunk_size % ($matches[1] - strlen($buffer));
-                $chunk_size = ($mod == $max_chunk_size ? $max_chunk_size : $matches[1] - strlen($buffer));
-                $buffer .= fread($this->sock, $chunk_size);
-                $this->_error_log('mod: ' . $mod . ' chunk: ' . $chunk_size . ' total: ' . strlen($buffer));
+                $mod = $max_chunk_size % ($matches[1] - $loadsize);
+                $chunk_size = ($mod == $max_chunk_size ? $max_chunk_size : $matches[1] - $loadsize);
+                $chunk = fread($this->sock, $chunk_size);
+                self::update_file_or_buffer($chunk, $fp, $buffer);
+                $loadsize += strlen($chunk);
+                $this->_error_log('mod: ' . $mod . ' chunk: ' . $chunk_size . ' total: ' . $loadsize);
             } while ($mod == $max_chunk_size);
-            $loadsize = strlen($buffer);
             if ($loadsize < $matches[1]) {
-                $buffer .= fread($this->sock, $matches[1] - $loadsize);
+                $chunk = fread($this->sock, $matches[1] - $loadsize);
+                self::update_file_or_buffer($chunk, $fp, $buffer);
             }
             break;
 
@@ -1577,7 +1585,8 @@ EOD;
             $this->_error_log('reading until feof...' . $header);
             socket_set_timeout($this->sock, 0, 0);
             while (!feof($this->sock)) {
-                $buffer .= fread($this->sock, 4096);
+                $chunk = fread($this->sock, 4096);
+                self::update_file_or_buffer($chunk, $fp, $buffer);
             }
             // renew the socket timeout...does it do something ???? Is it needed. More debugging needed...
             socket_set_timeout($this->sock, $this->_socket_timeout, 0);
@@ -1591,6 +1600,19 @@ EOD;
 
     }
 
+    /**
+     * Write the chunk to the file if $fp is set, otherwise append the data to the buffer
+     * @param string $chunk the data to add
+     * @param resource $fp the file handle to write to (or null)
+     * @param string &$buffer the buffer to append to (if $fp is null)
+     */
+    static private function update_file_or_buffer($chunk, $fp, &$buffer) {
+        if ($fp) {
+            fwrite($fp, $chunk);
+        } else {
+            $buffer .= $chunk;
+        }
+    }
 
     /**
      * Private method process_respond
