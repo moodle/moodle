@@ -122,12 +122,15 @@ class cache_config {
     /**
      * Loads the configuration file and parses its contents into the expected structure.
      *
+     * @param array|false $configuration Can be used to force a configuration. Should only be used when truly required.
      * @return boolean
      */
-    public function load() {
+    public function load($configuration = false) {
         global $CFG;
 
-        $configuration = $this->include_configuration();
+        if ($configuration === false) {
+            $configuration = $this->include_configuration();
+        }
 
         $this->configstores = array();
         $this->configdefinitions = array();
@@ -425,7 +428,8 @@ class cache_config {
      */
     public function get_stores_for_definition(cache_definition $definition) {
         // Check if MUC has been disabled.
-        if (defined('NO_CACHE_STORES') && NO_CACHE_STORES !== false) {
+        $factory = cache_factory::instance();
+        if ($factory->is_disabled()) {
             // Yip its been disabled.
             // To facilitate this we are going to always return an empty array of stores to use.
             // This will force all cache instances to use the cachestore_dummy.

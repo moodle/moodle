@@ -40,6 +40,19 @@ defined('MOODLE_INTERNAL') || die();
  */
 class cache_factory {
 
+    /** The cache has not been initialised yet. */
+    const STATE_UNINITIALISED = 0;
+    /** The cache is in the process of initialising itself. */
+    const STATE_INITIALISING = 1;
+    /** The cache is in the process of saving its configuration file. */
+    const STATE_SAVING = 2;
+    /** The cache is ready to use. */
+    const STATE_READY = 3;
+    /** The cache encountered an error while initialising. */
+    const STATE_ERROR_INITIALISING = 9;
+    /** The cache has been disabled. */
+    const STATE_DISABLED = 10;
+
     /**
      * An instance of the cache_factory class created upon the first request.
      * @var cache_factory
@@ -83,6 +96,12 @@ class cache_factory {
     protected $lockplugins = null;
 
     /**
+     * The current state of the cache API.
+     * @var int
+     */
+    protected $state = 0;
+
+    /**
      * Returns an instance of the cache_factor method.
      *
      * @param bool $forcereload If set to true a new cache_factory instance will be created and used.
@@ -91,6 +110,10 @@ class cache_factory {
     public static function instance($forcereload = false) {
         if ($forcereload || self::$instance === null) {
             self::$instance = new cache_factory();
+            if (defined('NO_CACHE_STORES') && NO_CACHE_STORES !== false) {
+                // The cache stores have been disabled.
+                self::$instance->set_state(self::STATE_DISABLED);;
+            }
         }
         return self::$instance;
     }
@@ -113,6 +136,8 @@ class cache_factory {
         $factory->configs = array();
         $factory->definitions = array();
         $factory->lockplugins = null; // MUST be null in order to force its regeneration.
+        // Reset the state to uninitialised.
+        $factory->state = self::STATE_UNINITIALISED;
     }
 
     /**
@@ -253,15 +278,30 @@ class cache_factory {
             $class = 'cache_config_phpunittest';
         }
 
+        $error = false;
         if ($needtocreate) {
             // Create the default configuration.
-            $class::create_default_configuration();
+            // Update the state, we are now initialising the cache.
+            self::set_state(self::STATE_INITIALISING);
+            $configuration = $class::create_default_configuration();
+            if ($configuration !== true) {
+                // Failed to create the default configuration. Disable the cache stores and update the state.
+                self::set_state(self::STATE_ERROR_INITIALISING);
+                $this->configs[$class] = new $class;
+                $this->configs[$class]->load($configuration);
+                $error = true;
+            }
         }
 
         if (!array_key_exists($class, $this->configs)) {
             // Create a new instance and call it to load it.
             $this->configs[$class] = new $class;
             $this->configs[$class]->load();
+        }
+
+        if (!$error) {
+            // The cache is now ready to use. Update the state.
+            self::set_state(self::STATE_READY);
         }
 
         // Return the instance.
@@ -337,5 +377,37 @@ class cache_factory {
         }
         $class = $this->lockplugins[$type];
         return new $class($name, $config);
+    }
+
+    /**
+     * Returns the current state of the cache API.
+     *
+     * @return int
+     */
+    public function get_state() {
+        return $this->state;
+    }
+
+    /**
+     * Updates the state fo the cache API.
+     *
+     * @param int $state
+     * @return bool
+     */
+    public function set_state($state) {
+        if ($state <= $this->state) {
+            return false;
+        }
+        $this->state = $state;
+        return true;
+    }
+
+    /**
+     * Returns true if the cache API has been disabled.
+     *
+     * @return bool
+     */
+    public function is_disabled() {
+        return $this->state === self::STATE_DISABLED;
     }
 }
