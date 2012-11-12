@@ -41,6 +41,19 @@ class cache_config_phpunittest extends cache_config_writer {
      * @param array $properties
      */
     public function phpunit_add_definition($area, array $properties) {
+        if (!array_key_exists('overrideclass', $properties)) {
+            switch ($properties['mode']) {
+                case cache_store::MODE_APPLICATION:
+                    $properties['overrideclass'] = 'cache_phpunit_application';
+                    break;
+                case cache_store::MDOE_SESSION:
+                    $properties['overrideclass'] = 'cache_phpunit_session';
+                    break;
+                case cache_store::MODE_REQUEST:
+                    $properties['overrideclass'] = 'cache_phpunit_request';
+                    break;
+            }
+        }
         $this->configdefinitions[$area] = $properties;
     }
 
@@ -134,6 +147,64 @@ class cache_phpunit_dummy_datasource implements cache_data_source {
             $return[$key] = $key.' has no value really.';
         }
         return $return;
+    }
+}
+
+/**
+ * PHPUnit application cache loader.
+ *
+ * Used to expose things we could not otherwise see within an application cache.
+ *
+ * @copyright  2012 Sam Hemelryk
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class cache_phpunit_application extends cache_application {
+
+    /**
+     * Returns the class of the store immediately associated with this cache.
+     * @return string
+     */
+    public function phpunit_get_store_class() {
+        return get_class($this->get_store());
+    }
+
+}
+
+/**
+ * PHPUnit session cache loader.
+ *
+ * Used to expose things we could not otherwise see within an session cache.
+ *
+ * @copyright  2012 Sam Hemelryk
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class cache_phpunit_session extends cache_session {
+
+    /**
+     * Returns the class of the store immediately associated with this cache.
+     * @return string
+     */
+    public function phpunit_get_store_class() {
+        return get_class($this->get_store());
+    }
+}
+
+/**
+ * PHPUnit request cache loader.
+ *
+ * Used to expose things we could not otherwise see within an request cache.
+ *
+ * @copyright  2012 Sam Hemelryk
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class cache_phpunit_request extends cache_request {
+
+    /**
+     * Returns the class of the store immediately associated with this cache.
+     * @return string
+     */
+    public function phpunit_get_store_class() {
+        return get_class($this->get_store());
     }
 }
 

@@ -52,6 +52,8 @@ class cache_factory {
     const STATE_ERROR_INITIALISING = 9;
     /** The cache has been disabled. */
     const STATE_DISABLED = 10;
+    /** The cache stores have been disabled */
+    const STATE_STORES_DISABLED = 11;
 
     /**
      * An instance of the cache_factory class created upon the first request.
@@ -112,7 +114,7 @@ class cache_factory {
             self::$instance = new cache_factory();
             if (defined('CACHE_DISABLE_STORES') && CACHE_DISABLE_STORES !== false) {
                 // The cache stores have been disabled.
-                self::$instance->set_state(self::STATE_DISABLED);;
+                self::$instance->set_state(self::STATE_STORES_DISABLED);;
             }
         }
         return self::$instance;
@@ -409,5 +411,34 @@ class cache_factory {
      */
     public function is_disabled() {
         return $this->state === self::STATE_DISABLED;
+    }
+
+    /**
+     * Returns true if the cache stores have been disabled.
+     *
+     * @return bool
+     */
+    public function stores_disabled() {
+        return $this->state === self::STATE_STORES_DISABLED;
+    }
+
+    /**
+     * Disables cache stores.
+     *
+     * The cache API will continue to function however none of the actual stores will be used.
+     * Instead the dummy store will be provided for all cache requests.
+     * This is useful in situations where you cannot be sure any stores are working.
+     *
+     * In order to re-enable the cache you must call the cache factories static reset method:
+     * <code>
+     * // Disable the cache factory.
+     * cache_factory::disable_stores();
+     * // Re-enable the cache factory by resetting it.
+     * cache_factory::reset();
+     * </code>
+     */
+    public static function disable_stores() {
+        $factory = self::instance();
+        $factory->set_state(self::STATE_STORES_DISABLED);
     }
 }

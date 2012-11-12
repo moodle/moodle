@@ -107,6 +107,11 @@ class cachestore_dummy implements cache_store {
      */
     public function initialise(cache_definition $definition) {
         // If the definition isn't persistent then we need to be persistent here.
+        // The reasoning behind this is that:
+        //   - If the definition is persistent then the cache loader is going to
+        //     store things in its persistent cache.
+        //   - If the definition is not persistent then the cache loader won't try to store anything
+        //     and we will need to store it here in order to make sure it is accessible.
         $this->persist = !$definition->should_be_persistent();
     }
 

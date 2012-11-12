@@ -429,7 +429,7 @@ class cache_config {
     public function get_stores_for_definition(cache_definition $definition) {
         // Check if MUC has been disabled.
         $factory = cache_factory::instance();
-        if ($factory->is_disabled()) {
+        if ($factory->stores_disabled()) {
             // Yip its been disabled.
             // To facilitate this we are going to always return an empty array of stores to use.
             // This will force all cache instances to use the cachestore_dummy.

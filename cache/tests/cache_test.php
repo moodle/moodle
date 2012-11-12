@@ -664,4 +664,33 @@ class cache_phpunit_tests extends advanced_testcase {
         $instance = cache_config_phpunittest::instance();
         $this->assertInstanceOf('cache_config', $instance);
     }
+
+    /**
+     * Test disabling the cache.
+     */
+    public function test_disable_stores() {
+        $instance = cache_config_phpunittest::instance();
+        $instance->phpunit_add_definition('phpunit/disabletest', array(
+            'mode' => cache_store::MODE_APPLICATION,
+            'component' => 'phpunit',
+            'area' => 'disabletest'
+        ));
+        $cache = cache::make('phpunit', 'disabletest');
+        $this->assertInstanceOf('cache_phpunit_application', $cache);
+        $this->assertEquals('cachestore_file', $cache->phpunit_get_store_class());
+
+        $this->assertFalse($cache->get('test'));
+        $this->assertTrue($cache->set('test', 'test'));
+        $this->assertEquals('test', $cache->get('test'));
+
+        cache_factory::disable_stores();
+
+        $cache = cache::make('phpunit', 'disabletest');
+        $this->assertInstanceOf('cache_phpunit_application', $cache);
+        $this->assertEquals('cachestore_dummy', $cache->phpunit_get_store_class());
+
+        $this->assertFalse($cache->get('test'));
+        $this->assertTrue($cache->set('test', 'test'));
+        $this->assertEquals('test', $cache->get('test'));
+    }
 }
