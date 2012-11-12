@@ -193,8 +193,8 @@ class theme_config_testcase extends advanced_testcase {
             'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; Trident/4.0)' => false,
             // IE9 on Windows 7.
             'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)' => true,
-            // IE9 on Windows 7 in compatability mode.
-            'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0; Trident/5.0)' => false,
+            // IE9 on Windows 7 in intranet mode.
+            'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0; Trident/5.0)' => true,
             // Chrome 11 on Windows.
             'Mozilla/5.0 (Windows; U; Windows NT 5.2; en-US) AppleWebKit/534.17 (KHTML, like Gecko) Chrome/11.0.652.0 Safari/534.17' => true,
             // Chrome 22 on Windows.

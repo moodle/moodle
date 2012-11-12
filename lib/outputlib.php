@@ -1120,7 +1120,7 @@ class theme_config {
                 if (empty($_SERVER['HTTP_USER_AGENT'])) {
                     // Can't be sure, just say no.
                     $this->usesvg = false;
-                } else if (preg_match('#MSIE +[5-8]\.#', $_SERVER['HTTP_USER_AGENT'])) {
+                } else if (check_browser_version('MSIE', 0) and !check_browser_version('MSIE', 9)) {
                     // IE < 9 doesn't support SVG. Say no.
                     $this->usesvg = false;
                 } else if (preg_match('#Android +[0-2]\.#', $_SERVER['HTTP_USER_AGENT'])) {

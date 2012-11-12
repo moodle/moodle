@@ -41,8 +41,10 @@ class moodlelib_testcase extends advanced_testcase {
             '6.0' => array('Windows XP SP2' => 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)'),
             '7.0' => array('Windows XP SP2' => 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; YPC 3.0.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727)'),
             '8.0' => array('Windows Vista' => 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; .NET CLR 2.0.50727; .NET CLR 1.1.4322; .NET CLR 3.0.04506.30; .NET CLR 3.0.04506.648)'),
-            '9.0' => array('Windows 7' => 'Mozilla/5.0 (Windows; U; MSIE 9.0; WIndows NT 9.0; en-US))'),
-
+            '9.0' => array('Windows 7' => 'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)'),
+            '9.0i' => array('Windows 7' => 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.1; WOW64; Trident/5.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0)'),
+            '10.0' => array('Windows 8' => 'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Trident/6.0; Touch)'),
+            '10.0i' => array('Windows 8' => 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.2; Trident/6.0; Touch; .NET4.0E; .NET4.0C; Tablet PC 2.0)'),
         ),
         'Firefox' => array(
             '1.0.6'   => array('Windows XP' => 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.10) Gecko/20050716 Firefox/1.0.6'),
@@ -253,6 +255,29 @@ class moodlelib_testcase extends advanced_testcase {
         $this->assertTrue(check_browser_version('MSIE', '9.0'));
         $this->assertFalse(check_browser_version('MSIE', '10'));
 
+        $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['MSIE']['9.0i']['Windows 7'];
+        $this->assertTrue(check_browser_version('MSIE'));
+        $this->assertTrue(check_browser_version('MSIE', 0));
+        $this->assertTrue(check_browser_version('MSIE', '5.0'));
+        $this->assertTrue(check_browser_version('MSIE', '9.0'));
+        $this->assertFalse(check_browser_version('MSIE', '10'));
+
+        $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['MSIE']['10.0']['Windows 8'];
+        $this->assertTrue(check_browser_version('MSIE'));
+        $this->assertTrue(check_browser_version('MSIE', 0));
+        $this->assertTrue(check_browser_version('MSIE', '5.0'));
+        $this->assertTrue(check_browser_version('MSIE', '9.0'));
+        $this->assertTrue(check_browser_version('MSIE', '10'));
+        $this->assertFalse(check_browser_version('MSIE', '11'));
+
+        $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['MSIE']['10.0i']['Windows 8'];
+        $this->assertTrue(check_browser_version('MSIE'));
+        $this->assertTrue(check_browser_version('MSIE', 0));
+        $this->assertTrue(check_browser_version('MSIE', '5.0'));
+        $this->assertTrue(check_browser_version('MSIE', '9.0'));
+        $this->assertTrue(check_browser_version('MSIE', '10'));
+        $this->assertFalse(check_browser_version('MSIE', '11'));
+
         $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['Firefox']['2.0']['Windows XP'];
         $this->assertTrue(check_browser_version('Firefox'));
         $this->assertTrue(check_browser_version('Firefox', '1.5'));
@@ -393,6 +418,18 @@ class moodlelib_testcase extends advanced_testcase {
 
         $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['MSIE']['8.0']['Windows Vista'];
         $this->assertEquals(array('ie', 'ie8'), get_browser_version_classes());
+
+        $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['MSIE']['9.0']['Windows 7'];
+        $this->assertEquals(array('ie', 'ie9'), get_browser_version_classes());
+
+        $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['MSIE']['9.0i']['Windows 7'];
+        $this->assertEquals(array('ie', 'ie9'), get_browser_version_classes());
+
+        $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['MSIE']['10.0']['Windows 8'];
+        $this->assertEquals(array('ie', 'ie10'), get_browser_version_classes());
+
+        $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['MSIE']['10.0i']['Windows 8'];
+        $this->assertEquals(array('ie', 'ie10'), get_browser_version_classes());
 
         $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['Firefox']['2.0']['Windows XP'];
         $this->assertEquals(array('gecko', 'gecko18'), get_browser_version_classes());
