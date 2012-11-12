@@ -82,12 +82,6 @@ if (confirm_sesskey() && (!empty($scoid))) {
                     }
                 }
             }
-            // Log every datamodel update requested
-            if (substr($element, 0, 15) == 'adl.nav.request' || substr($element, 0, 3) == 'cmi') {
-                if (scorm_debugging($scorm)) {
-                    add_to_log($course->id, 'scorm', 'trk: scoid/'.$scoid.' at: '.$attempt, 'view.php?id='.$cm->id, "$element => $value", $cm->id);
-                }
-            }
         }
     }
     if ($result) {
