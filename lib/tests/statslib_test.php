@@ -37,7 +37,7 @@ class statslib_daily_testcase extends advanced_testcase {
     const STID = 5;
 
     /** The day to use for testing **/
-    const DAY = 1272700810;  // 1272758400
+    const DAY = 1272657610; //1272700810;  // 1272758400
 
     /** @var array The list of temporary tables created for the statistic calculations **/
     protected $tables = array('temp_log1', 'temp_log2', 'temp_stats_daily', 'temp_stats_user_daily');
