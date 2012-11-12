@@ -102,18 +102,12 @@ function upgrade_mysql_fix_unsigned_and_lob_columns() {
     $i = 0;
     foreach ($tables as $table) {
         $i++;
-        // Set appropriate timeout - 1 minute per thousand of records should be enough, min 60 minutes just in case.
-        $count = $DB->count_records($table, array());
-        $timeout = ($count/1000)*60;
-        $timeout = ($timeout < 60*60) ? 60*60 : (int)$timeout;
 
         $changes = array();
 
         $sql = "SHOW COLUMNS FROM `{{$table}}`";
         $rs = $DB->get_recordset_sql($sql);
         foreach ($rs as $column) {
-            upgrade_set_timeout($timeout);
-
             $column = (object)array_change_key_case((array)$column, CASE_LOWER);
             if (stripos($column->type, 'unsigned') !== false) {
                 $maxvalue = 0;
@@ -138,7 +132,6 @@ function upgrade_mysql_fix_unsigned_and_lob_columns() {
                 $default = (!is_null($column->default) and $column->default !== '') ? "DEFAULT '$column->default'" : '';
                 $autoinc = (stripos($column->extra, 'auto_increment') !== false) ? 'AUTO_INCREMENT' : '';
                 // Primary and unique not necessary here, change_database_structure does not add prefix.
-
                 $changes[] = "MODIFY COLUMN `$column->field` $type $notnull $default $autoinc";
 
             } else if ($column->type === 'tinytext' or $column->type === 'mediumtext' or $column->type === 'text') {
@@ -158,6 +151,12 @@ function upgrade_mysql_fix_unsigned_and_lob_columns() {
         $rs->close();
 
         if ($changes) {
+            // Set appropriate timeout - 1 minute per thousand of records should be enough, min 60 minutes just in case.
+            $count = $DB->count_records($table, array());
+            $timeout = ($count/1000)*60;
+            $timeout = ($timeout < 60*60) ? 60*60 : (int)$timeout;
+            upgrade_set_timeout($timeout);
+
             $sql = "ALTER TABLE `{$prefix}$table` ".implode(', ', $changes);
             $DB->change_database_structure($sql);
         }
