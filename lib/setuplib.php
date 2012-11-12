@@ -1540,6 +1540,7 @@ width: 80%; -moz-border-radius: 20px; padding: 15px">
 
         // better disable any caching
         @header('Content-Type: text/html; charset=utf-8');
+        @header('X-UA-Compatible: IE=edge');
         @header('Cache-Control: no-store, no-cache, must-revalidate');
         @header('Cache-Control: post-check=0, pre-check=0', false);
         @header('Pragma: no-cache');
