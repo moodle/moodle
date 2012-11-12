@@ -650,39 +650,39 @@ body.tag .managelink {padding: 5px;}
  */
 .ie.dir-rtl .mform .fitem .felement {margin-right:0;text-align:right;float:right;}
 
-.mod-indent-1 {margin-left:27px;}
-.mod-indent-2 {margin-left:54px;}
-.mod-indent-3 {margin-left:81px;}
-.mod-indent-4 {margin-left:108px;}
-.mod-indent-5 {margin-left:135px;}
-.mod-indent-6 {margin-left:162px;}
-.mod-indent-7 {margin-left:189px;}
-.mod-indent-8 {margin-left:216px;}
-.mod-indent-9 {margin-left:243px;}
-.mod-indent-10 {margin-left:270px;}
-.mod-indent-11 {margin-left:297px;}
-.mod-indent-12 {margin-left:324px;}
-.mod-indent-13 {margin-left:351px;}
-.mod-indent-14 {margin-left:378px;}
+.mod-indent-1 {margin-left:30px;}
+.mod-indent-2 {margin-left:60px;}
+.mod-indent-3 {margin-left:90px;}
+.mod-indent-4 {margin-left:120px;}
+.mod-indent-5 {margin-left:150px;}
+.mod-indent-6 {margin-left:180px;}
+.mod-indent-7 {margin-left:210px;}
+.mod-indent-8 {margin-left:240px;}
+.mod-indent-9 {margin-left:270px;}
+.mod-indent-10 {margin-left:300px;}
+.mod-indent-11 {margin-left:330px;}
+.mod-indent-12 {margin-left:360px;}
+.mod-indent-13 {margin-left:390px;}
+.mod-indent-14 {margin-left:420px;}
 .mod-indent-15,
-.mod-indent-huge {margin-left:405px;}
+.mod-indent-huge {margin-left:420px;}
 
-.dir-rtl .mod-indent-1 {margin-right:27px;margin-left:0;}
-.dir-rtl .mod-indent-2 {margin-right:54px;margin-left:0;}
-.dir-rtl .mod-indent-3 {margin-right:81px;margin-left:0;}
-.dir-rtl .mod-indent-4 {margin-right:108px;margin-left:0;}
-.dir-rtl .mod-indent-5 {margin-right:135px;margin-left:0;}
-.dir-rtl .mod-indent-6 {margin-right:162px;margin-left:0;}
-.dir-rtl .mod-indent-7 {margin-right:189px;margin-left:0;}
-.dir-rtl .mod-indent-8 {margin-right:216px;margin-left:0;}
-.dir-rtl .mod-indent-9 {margin-right:243px;margin-left:0;}
-.dir-rtl .mod-indent-10 {margin-right:270px;margin-left:0;}
-.dir-rtl .mod-indent-11 {margin-right:297px;margin-left:0;}
-.dir-rtl .mod-indent-12 {margin-right:324px;margin-left:0;}
-.dir-rtl .mod-indent-13 {margin-right:351px;margin-left:0;}
-.dir-rtl .mod-indent-14 {margin-right:378px;margin-left:0;}
+.dir-rtl .mod-indent-1 {margin-right:30px;margin-left:0;}
+.dir-rtl .mod-indent-2 {margin-right:60px;margin-left:0;}
+.dir-rtl .mod-indent-3 {margin-right:90px;margin-left:0;}
+.dir-rtl .mod-indent-4 {margin-right:120px;margin-left:0;}
+.dir-rtl .mod-indent-5 {margin-right:150px;margin-left:0;}
+.dir-rtl .mod-indent-6 {margin-right:180px;margin-left:0;}
+.dir-rtl .mod-indent-7 {margin-right:210px;margin-left:0;}
+.dir-rtl .mod-indent-8 {margin-right:240px;margin-left:0;}
+.dir-rtl .mod-indent-9 {margin-right:270px;margin-left:0;}
+.dir-rtl .mod-indent-10 {margin-right:300px;margin-left:0;}
+.dir-rtl .mod-indent-11 {margin-right:330px;margin-left:0;}
+.dir-rtl .mod-indent-12 {margin-right:360px;margin-left:0;}
+.dir-rtl .mod-indent-13 {margin-right:390px;margin-left:0;}
+.dir-rtl .mod-indent-14 {margin-right:420px;margin-left:0;}
 .dir-rtl .mod-indent-15,
-.dir-rtl .mod-indent-huge {margin-right:405px;margin-left:0;}
+.dir-rtl .mod-indent-huge {margin-right:420px;margin-left:0;}
 
 .dir-rtl .mform .fitem .felement {margin-right: 16%;margin-left:auto;text-align: right;}
 .dir-rtl .mform .fitem .felement input[name=email],

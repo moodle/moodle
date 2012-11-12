@@ -2,6 +2,7 @@
  * CSS for displaying courses and everything in them
  */
 .section_add_menus {text-align:right;}
+.dir-rtl .section_add_menus {text-align:left;}
 .section_add_menus .horizontal div,
 .section_add_menus .horizontal form {display:inline;}
 .section_add_menus optgroup {font-weight:normal;font-style: italic;}
@@ -12,9 +13,9 @@
 .section_add_menus .urlselect img.iconhelp { padding: 0; margin: 0; vertical-align: text-bottom;}
 
 .sitetopic .section .activity img.activityicon,
-.course-content .section .activity img.activityicon {vertical-align:text-bottom;margin-right: 3px;}
+.course-content .section .activity img.activityicon {vertical-align:text-bottom;margin-right: 6px;}
 .dir-rtl .sitetopic .section .activity img.activityicon,
-.dir-rtl .course-content .section .activity img.activityicon {margin-left: 3px; margin-right: 0;}
+.dir-rtl .course-content .section .activity img.activityicon {margin-left: 6px; margin-right: 0;}
 .sitetopic .section .activity .activityinstance,
 .course-content .section .activity .activityinstance { padding-right: 3em;}
 .dir-rtl .sitetopic .section .activity .activityinstance,
@@ -23,6 +24,14 @@
 .course-content .section .activity .commands img { vertical-align: baseline; padding: 0 2px; }
 .sitetopic .section li.activity,
 .course-content .section li.activity {padding: .2em;}
+.sitetopic .section .activity .availabilityinfo,
+.sitetopic .section .activity .contentafterlink,
+.course-content .section .activity .availabilityinfo,
+.course-content .section .activity .contentafterlink { margin-top: 0.5em; margin-left: 30px;}
+.dir-rtl .sitetopic .section .activity .availabilityinfo,
+.dir-rtl .sitetopic .section .activity .contentafterlink,
+.dir-rtl .course-content .section .activity .availabilityinfo,
+.dir-rtl .course-content .section .activity .contentafterlink { margin-left: 0; margin-right: 30px;}
 .sitetopic .section .activity:hover,
 .course-content .section .activity:hover { background-color: #EEE; }
 .course-content .section-summary { border: 1px solid #DDD; margin-top: 5px; list-style: none; }
@@ -55,11 +64,12 @@
 .path-course-view .single-section .completionprogress {margin-right: -3.5em; padding-left: 1.5em; padding-right: 0em;}
 .path-course-view .section .summary {line-height:normal;}
 
-.path-course-view li.activity {position:relative;}
+.path-site li.activity > div,
+.path-course-view li.activity > div {position:relative;}
 .path-course-view li.activity span.autocompletion,
-.path-course-view li.activity form.togglecompletion {position: absolute; top: .2em; right: .2em;}
+.path-course-view li.activity form.togglecompletion {position: absolute; top: 0; right: .2em;}
 .path-course-view li.activity span.autocompletion img,
-.path-course-view li.activity form.togglecompletion input {position:absolute; top: 4px; right: 0px;}
+.path-course-view li.activity form.togglecompletion input {position:absolute; top: .25em; right: 0px;}
 .path-course-view li.activity form.togglecompletion .ajaxworking {position:absolute; right: 22px; top: 5px; width: 16px; height: 16px; background: url([[pix:i/ajaxloader]]) no-repeat;}
 .path-course-view li.activity form.togglecompletion div {display:inline;}
 .dir-rtl.path-course-view li.activity form.togglecompletion,
@@ -139,7 +149,6 @@
 
 .path-course .clearfloat {float:none; clear:both;height:0px;}
 
-
 /*all courses view*/
 #page-course-index .categorylist .course.clearfloat { height: auto; }
 
@@ -168,22 +177,26 @@
 table.category_subcategories {margin-bottom:1em;}
 table.category_subcategories td {white-space: nowrap;}
 
+.sitetopic .section .activity form.activityinstance,
+.course-content .section .activity form.activityinstance { display: inline; vertical-align: bottom; }
 span.editinstructions {
-    position: relative;
-    top: 5px;
-    left: 19px;
-    width: 329px;
-    padding: 3px;
-    background-color: #dddddd;
-    color: #000000;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    margin-top: -22px;
+    margin-left: 30px;
+    line-height: 16px;
+    font-size: .85em;
+    padding: .1em .4em;
+    background-color: #ffc;
+    color: #000;
     text-decoration: none;
-    z-index: 100;
-    border: 1px solid black;
+    z-index:9999;
+    box-shadow:2px 2px 5px 1px #ccc;
+    border:1px solid #ddd;
 }
-
-input.titleeditor {
-    width: 330px;
-}
+.dir-rtl span.editinstructions { left: auto; right: 32px;}
+input.titleeditor { width: 330px; vertical-align: text-bottom; }
 
 /* Course drag and drop upload styles */
 #dndupload-status {width:40%;margin:0 30%;padding:6px;border:1px solid #ddd;text-align:center;background:#ffc;position:absolute;z-index:9999;box-shadow:2px 2px 5px 1px #ccc;border-radius:0px 0px 8px 8px;z-index: 0;}
