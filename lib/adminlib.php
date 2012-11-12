@@ -266,6 +266,16 @@ function uninstall_plugin($type, $name) {
             // Delete block
             $DB->delete_records('block', array('id'=>$block->id));
         }
+    } else if ($type === 'format') {
+        if (($defaultformat = get_config('moodlecourse', 'format')) && $defaultformat !== $name) {
+            $courses = $DB->get_records('course', array('format' => $name), 'id');
+            $data = (object)array('id' => null, 'format' => $defaultformat);
+            foreach ($courses as $record) {
+                $data->id = $record->id;
+                update_course($data);
+            }
+        }
+        $DB->delete_records('course_format_options', array('format' => $name));
     }
 
     // perform clean-up task common for all the plugin/subplugin types
@@ -5897,6 +5907,147 @@ class admin_setting_managelicenses extends admin_setting {
     }
 }
 
+/**
+ * Course formats manager. Allows to enable/disable formats and jump to settings
+ */
+class admin_setting_manageformats extends admin_setting {
+
+    /**
+     * Calls parent::__construct with specific arguments
+     */
+    public function __construct() {
+        $this->nosave = true;
+        parent::__construct('formatsui', new lang_string('manageformats', 'core_admin'), '', '');
+    }
+
+    /**
+     * Always returns true
+     *
+     * @return true
+     */
+    public function get_setting() {
+        return true;
+    }
+
+    /**
+     * Always returns true
+     *
+     * @return true
+     */
+    public function get_defaultsetting() {
+        return true;
+    }
+
+    /**
+     * Always returns '' and doesn't write anything
+     *
+     * @param mixed $data string or array, must not be NULL
+     * @return string Always returns ''
+     */
+    public function write_setting($data) {
+        // do not write any setting
+        return '';
+    }
+
+    /**
+     * Search to find if Query is related to format plugin
+     *
+     * @param string $query The string to search for
+     * @return bool true for related false for not
+     */
+    public function is_related($query) {
+        if (parent::is_related($query)) {
+            return true;
+        }
+        $allplugins = plugin_manager::instance()->get_plugins();
+        $formats = $allplugins['format'];
+        foreach ($formats as $format) {
+            if (strpos($format->component, $query) !== false ||
+                    strpos(textlib::strtolower($format->displayname), $query) !== false) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Return XHTML to display control
+     *
+     * @param mixed $data Unused
+     * @param string $query
+     * @return string highlight
+     */
+    public function output_html($data, $query='') {
+        global $CFG, $OUTPUT;
+        $return = '';
+        $return = $OUTPUT->heading(new lang_string('courseformats'), 3, 'main');
+        $return .= $OUTPUT->box_start('generalbox formatsui');
+
+        $allplugins = plugin_manager::instance()->get_plugins();
+        $formats = $allplugins['format'];
+
+        // display strings
+        $txt = get_strings(array('settings', 'name', 'enable', 'disable', 'up', 'down', 'default', 'delete'));
+        $txt->updown = "$txt->up/$txt->down";
+
+        $table = new html_table();
+        $table->head  = array($txt->name, $txt->enable, $txt->updown, $txt->delete, $txt->settings);
+        $table->align = array('left', 'center', 'center', 'center', 'center');
+        $table->width = '90%';
+        $table->attributes['class'] = 'manageformattable generaltable';
+        $table->data  = array();
+
+        $cnt = 0;
+        $defaultformat = get_config('moodlecourse', 'format');
+        $spacer = $OUTPUT->pix_icon('spacer', '', 'moodle', array('class' => 'icon'));
+        foreach ($formats as $format) {
+            $url = new moodle_url('/admin/courseformats.php',
+                    array('sesskey' => sesskey(), 'format' => $format->name));
+            $isdefault = '';
+            if ($format->is_enabled()) {
+                $strformatname = html_writer::tag('span', $format->displayname);
+                if ($defaultformat === $format->name) {
+                    $hideshow = $txt->default;
+                } else {
+                    $hideshow = html_writer::link($url->out(false, array('action' => 'disable')),
+                            $OUTPUT->pix_icon('i/hide', $txt->disable, 'moodle', array('class' => 'icon')));
+                }
+            } else {
+                $strformatname = html_writer::tag('span', $format->displayname, array('class' => 'dimmed_text'));
+                $hideshow = html_writer::link($url->out(false, array('action' => 'enable')),
+                    $OUTPUT->pix_icon('i/show', $txt->enable, 'moodle', array('class' => 'icon')));
+            }
+            $updown = '';
+            if ($cnt) {
+                $updown .= html_writer::link($url->out(false, array('action' => 'up')),
+                    $OUTPUT->pix_icon('t/up', $txt->up, 'moodle')). '&nbsp;';
+            } else {
+                $updown .= $spacer;
+            }
+            if ($cnt < count($formats) - 1) {
+                $updown .= '&nbsp;'.html_writer::link($url->out(false, array('action' => 'down')),
+                    $OUTPUT->pix_icon('t/down', $txt->down, 'moodle'));
+            } else {
+                $updown .= $spacer;
+            }
+            $cnt++;
+            $settings = '';
+            if ($format->get_settings_url()) {
+                $settings = html_writer::link($format->get_settings_url(), $txt->settings);
+            }
+            $uninstall = '';
+            if ($defaultformat !== $format->name) {
+                $uninstall = html_writer::link($format->get_uninstall_url(), $txt->delete);
+            }
+            $table->data[] =array($strformatname, $hideshow, $updown, $uninstall, $settings);
+        }
+        $return .= html_writer::table($table);
+        $link = html_writer::link(new moodle_url('/admin/settings.php', array('section' => 'coursesettings')), new lang_string('coursesettings'));
+        $return .= html_writer::tag('p', get_string('manageformatsgotosettings', 'admin', $link));
+        $return .= $OUTPUT->box_end();
+        return highlight($query, $return);
+    }
+}
 
 /**
  * Special class for filter administration.
