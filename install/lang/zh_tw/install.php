@@ -51,12 +51,12 @@ $string['errorsinenvironment'] = '環境檢查失敗!';
 $string['installation'] = '安裝';
 $string['langdownloaderror'] = '很不幸地，語言“{$a}”並未安裝。安裝過程將以英文繼續。';
 $string['memorylimithelp'] = '<p>PHP記憶體上限目前設定為{$a}。</p>
-<p>稍後它可能會造成Moodle記憶體的問題，尤其是您啟動了很多的模組及大量的使用者後。
-<p>建議您儘可能將PHP的上限設得高一點，比如16M。
+<p>稍後它可能會造成Moodle記憶體的問題，尤其是您啟動了很多的模組及大量的用戶之後。
+<p>建議您儘可能將PHP的上限設得高一點，比如40M。
 以下有幾種方式您可以試試:
 <ol>
 <li>如果可以的話，用<i>--enable-memory-limit</i>重新編譯PHP。讓 Moodle 自己設定記憶體上限。
-<li>如果您要使用 php.ini 檔，您可以改變<b>memory_limit</b>這個設定值，例如到16M。如果您無法使用這個檔，您可以請您的管理者幫您做
+<li>如果您要使用 php.ini 檔，您可以改變<b>memory_limit</b>這個設定值，例如到40M。如果您無法使用這個檔，您可以請您的管理者幫您做
 <li>在一些PHP伺服器上，您可以在Moodle目錄下，建立 .htaccess 檔，包含這行:<p><blockquote>php_value memory_limit 16M</blockquote></p>
 <p>然而，在一些伺服器上，這將造成<b>所有的</b> PHP 網頁無法運作(當您看這些網頁時，您就會看到錯誤) 因此，您就必須將 .htaccess 檔案移除。
 </ol>';
@@ -68,7 +68,7 @@ $string['pathsroparentdataroot'] = '上層目錄({$a->parent})是不可寫入的
 $string['pathssubadmindir'] = '有些網站主機使用/admin這個網址來瀏覽控制面版或其他功能。很不幸，這個設定和Moodle管理頁面的標準路徑產生衝突。這個問題可以解決，只需在您的安裝目錄中把admin更換名稱，然後把新名稱輸入到這裡。例如<em>moodleadmin</em>這麼做會改變Moodle中的管理連接。';
 $string['pathssubdataroot'] = '你需要有一個地方讓Moodle可以儲存上傳的檔案。這一目錄對於網頁伺服器用戶(通常是"nobody"或"apache")而言，應該是可讀的和<b>可寫的</b>。但是它必須不能經由網頁直接存取。若此目錄不存在，這安裝程式將會試著建立它。';
 $string['pathssubdirroot'] = 'Moodle安裝的完整目錄路徑。';
-$string['pathssubwwwroot'] = '可以瀏覽到Moodle的完整網址。Moodle不支援透過多個網址瀏覽，如果您的往佔有多個公開網址，您必須把這個網址以外的網址都設定為永久重新導向。如果您的網站可以透過內部網址瀏覽，有可以透過這個公開網址瀏覽，那麼請設定DNS內部使網路使用者也能使用的空該網址。如果此網址不正確，請在瀏覽器中修改URL來重新安裝，並設定另一個網址。';
+$string['pathssubwwwroot'] = '可以瀏覽到Moodle的完整網址。Moodle不支援透過多個網址瀏覽，如果您的網站有多個公開網址，您必須把這個網址以外的網址都設定為永久重新導向。如果您的網站可以透過內部網址瀏覽，有可以透過這個公開網址瀏覽，那麼請設定DNS使網內用戶也能使用這公開的網址。如果此網址不正確，請在你的瀏覽器中修改URL來重新安裝，並設定另一個網址。';
 $string['pathsunsecuredataroot'] = '資料根(Dataroot)目錄的位置不安全';
 $string['pathswrongadmindir'] = '管理目錄不存在';
 $string['phpextension'] = '{$a} PHP擴展';
