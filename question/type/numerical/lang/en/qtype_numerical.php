@@ -78,7 +78,6 @@ $string['unitchoice'] = 'a multiple choice selection';
 $string['unitedit'] = 'Edit unit';
 $string['unitgraded'] = 'The unit must be given, and will be graded.';
 $string['unithandling'] = 'Unit handling';
-$string['unithdr'] = 'Unit {$a}';
 $string['unitincorrect'] = 'You did not give the correct unit.';
 $string['unitmandatory'] = 'Mandatory';
 $string['unitmandatory_help'] = '
@@ -102,7 +101,9 @@ $string['unitpenalty_help'] = 'The penalty is applied if
 * the wrong unit name is entered into the unit input, or
 * a unit is entered into the value input box';
 $string['unitposition'] = 'Units go';
+$string['units'] = 'Units';
 $string['unitselect'] = 'a drop-down menu';
+$string['unitx'] = 'Unit {no} ';
 $string['validnumberformats'] = 'Valid number formats';
 $string['validnumberformats_help'] = '
 * regular numbers 13500.67, 13 500.67, 13500,67 or 13 500,67

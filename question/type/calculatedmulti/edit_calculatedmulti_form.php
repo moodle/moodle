@@ -298,7 +298,8 @@ class qtype_calculatedmulti_edit_form extends question_edit_form {
                 }
                 if (!is_numeric($data['tolerance'][$key])) {
                     $errors['tolerance['.$key.']'] =
-                            get_string('mustbenumeric', 'qtype_calculated');
+                            get_string('mustbenumeric', 'qtype_calculated',
+                                get_string('acceptederror', 'qtype_numerical'));
                 }
                 if ($data['fraction'][$key] > 0) {
                     $totalfraction += $data['fraction'][$key];
