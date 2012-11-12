@@ -127,7 +127,7 @@ class cachestore_static extends static_data_store implements cache_store, cache_
      *
      * @return bool
      */
-    public function supports_multiple_indentifiers() {
+    public function supports_multiple_identifiers() {
         return false;
     }
 

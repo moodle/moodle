@@ -18,7 +18,7 @@
  * Cache loaders
  *
  * This file is part of Moodle's cache API, affectionately called MUC.
- * It contains the components that are requried in order to use caching.
+ * It contains the components that are required in order to use caching.
  *
  * @package    core
  * @category   cache
@@ -795,7 +795,7 @@ class cache implements cache_loader {
      */
     protected function parse_key($key) {
         // First up if the store supports multiple keys we'll go with that.
-        if ($this->store->supports_multiple_indentifiers()) {
+        if ($this->store->supports_multiple_identifiers()) {
             $result = $this->definition->generate_multi_key_parts();
             $result['key'] = $key;
             return $result;

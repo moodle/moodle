@@ -518,7 +518,7 @@ abstract class cache_administration_helper extends cache_helper {
                         ($store->get_supported_modes($return) & cache_store::MODE_REQUEST) == cache_store::MODE_REQUEST,
                 ),
                 'supports' => array(
-                    'multipleidentifiers' => $store->supports_multiple_indentifiers(),
+                    'multipleidentifiers' => $store->supports_multiple_identifiers(),
                     'dataguarantee' => $store->supports_data_guarantee(),
                     'nativettl' => $store->supports_native_ttl(),
                     'nativelocking' => ($store instanceof cache_is_lockable),

@@ -178,7 +178,7 @@ class cachestore_memcache implements cache_store {
      *
      * @return bool
      */
-    public function supports_multiple_indentifiers() {
+    public function supports_multiple_identifiers() {
         return false;
     }
 

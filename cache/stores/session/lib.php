@@ -127,7 +127,7 @@ class cachestore_session extends session_data_store implements cache_store, cach
      *
      * @return bool
      */
-    public function supports_multiple_indentifiers() {
+    public function supports_multiple_identifiers() {
         return false;
     }
 

@@ -194,8 +194,8 @@ interface cache_loader_with_locking {
      *
      * Please note that this happens automatically if the cache definition requires locking.
      * it is still made a public method so that adhoc caches can use it if they choose.
-     * However this doesn't guarantee consistent access. It will become the reponsiblity of the calling code to ensure locks
-     * are acquired, checked, and released.
+     * However this doesn't guarantee consistent access. It will become the responsibility of the calling code to ensure
+     * locks are acquired, checked, and released.
      *
      * @param string|int $key
      * @return bool True if the lock could be acquired, false otherwise.
@@ -207,8 +207,8 @@ interface cache_loader_with_locking {
      *
      * Please note that this happens automatically if the cache definition requires locking.
      * it is still made a public method so that adhoc caches can use it if they choose.
-     * However this doesn't guarantee consistent access. It will become the reponsiblity of the calling code to ensure locks
-     * are acquired, checked, and released.
+     * However this doesn't guarantee consistent access. It will become the responsibility of the calling code to ensure
+     * locks are acquired, checked, and released.
      *
      * @param string|int $key
      * @return bool True if this code has the lock, false if there is a lock but this code doesn't have it,
@@ -221,8 +221,8 @@ interface cache_loader_with_locking {
      *
      * Please note that this happens automatically if the cache definition requires locking.
      * it is still made a public method so that adhoc caches can use it if they choose.
-     * However this doesn't guarantee consistent access. It will become the reponsiblity of the calling code to ensure locks
-     * are acquired, checked, and released.
+     * However this doesn't guarantee consistent access. It will become the responsibility of the calling code to ensure
+     * locks are acquired, checked, and released.
      *
      * @param string|int $key
      * @return bool True if the lock has been released, false if there was a problem releasing the lock.
@@ -314,7 +314,7 @@ interface cache_store {
      *
      * @return bool
      */
-    public function supports_multiple_indentifiers();
+    public function supports_multiple_identifiers();
 
     /**
      * Returns true if this cache store instance promotes data guarantee.
