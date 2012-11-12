@@ -142,8 +142,8 @@ if (!defined('PHPUNIT_TEST')) {
 // The Cache API will continue to function however this will force the use of the cachestore_dummy so all requests
 // will be interacting with a static property and will never go to the proper cache stores.
 // Useful if you need to avoid the stores for one reason or another.
-if (!defined('NO_CACHE_STORES')) {
-    define('NO_CACHE_STORES', false);
+if (!defined('CACHE_DISABLE_STORES')) {
+    define('CACHE_DISABLE_STORES', false);
 }
 
 // Servers should define a default timezone in php.ini, but if they don't then make sure something is defined.

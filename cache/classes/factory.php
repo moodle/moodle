@@ -110,7 +110,7 @@ class cache_factory {
     public static function instance($forcereload = false) {
         if ($forcereload || self::$instance === null) {
             self::$instance = new cache_factory();
-            if (defined('NO_CACHE_STORES') && NO_CACHE_STORES !== false) {
+            if (defined('CACHE_DISABLE_STORES') && CACHE_DISABLE_STORES !== false) {
                 // The cache stores have been disabled.
                 self::$instance->set_state(self::STATE_DISABLED);;
             }
