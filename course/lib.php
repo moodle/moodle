@@ -3315,7 +3315,7 @@ function make_editing_buttons(stdClass $mod, $absolute_ignored = true, $movesele
     if (has_capability('moodle/role:assign', $modcontext)){
         $actions[] = new action_link(
             new moodle_url('/'.$CFG->admin.'/roles/assign.php', array('contextid' => $modcontext->id)),
-            new pix_icon('i/roles', $str->assign, 'moodle', array('class' => 'iconsmall', 'title' => '')),
+            new pix_icon('t/assignroles', $str->assign, 'moodle', array('class' => 'iconsmall', 'title' => '')),
             null,
             array('class' => 'editing_assign', 'title' => $str->assign)
         );

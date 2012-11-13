@@ -3597,7 +3597,7 @@ class settings_navigation extends navigation_node {
             $returnurl->param('sesskey', sesskey());
             foreach ($roles as $key => $name) {
                 $url = new moodle_url('/course/switchrole.php', array('id'=>$course->id,'sesskey'=>sesskey(), 'switchrole'=>$key, 'returnurl'=>$returnurl->out(false)));
-                $switchroles->add($name, $url, self::TYPE_SETTING, null, $key, new pix_icon('i/rolesm', ''));
+                $switchroles->add($name, $url, self::TYPE_SETTING, null, $key, new pix_icon('i/switchrole', ''));
             }
         }
         // Return we are done
@@ -4064,7 +4064,7 @@ class settings_navigation extends navigation_node {
         // Assign local roles
         if (has_capability('moodle/role:assign', $this->context)) {
             $assignurl = new moodle_url('/'.$CFG->admin.'/roles/assign.php', array('contextid'=>$this->context->id));
-            $categorynode->add(get_string('assignroles', 'role'), $assignurl, self::TYPE_SETTING, null, 'roles', new pix_icon('i/rolesm', ''));
+            $categorynode->add(get_string('assignroles', 'role'), $assignurl, self::TYPE_SETTING, null, 'roles', new pix_icon('i/assignroles', ''));
         }
 
         // Override roles
