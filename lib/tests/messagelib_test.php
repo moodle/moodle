@@ -91,8 +91,8 @@ class messagelib_testcase extends advanced_testcase {
         // It would probably be better to use a quiz instance as it has capability controlled messages
         // however mod_quiz doesn't have a data generator
         // Instead we're going to use backup notifications and give and take away the capability at various levels
-        $assign = $this->getDataGenerator()->create_module('assign', array('course'=>$course->id));
-        $modulecontext = context_module::instance($assign->id);
+        $assignment = $this->getDataGenerator()->create_module('assignment', array('course'=>$course->id));
+        $modulecontext = context_module::instance($assignment->id);
 
         // Create and enrol a teacher
         $teacherrole = $DB->get_record('role', array('shortname'=>'editingteacher'), '*', MUST_EXIST);
@@ -120,7 +120,7 @@ class messagelib_testcase extends advanced_testcase {
         // They should now be able to see the backup message
         assign_capability('moodle/site:config', CAP_ALLOW, $teacherrole->id, $modulecontext->id, true);
         accesslib_clear_all_caches_for_unit_testing();
-        $modulecontext = context_module::instance($assign->id);
+        $modulecontext = context_module::instance($assignment->id);
         $this->assertTrue(has_capability('moodle/site:config', $modulecontext));
 
         $providers = message_get_providers_for_user($teacher->id);
@@ -131,7 +131,7 @@ class messagelib_testcase extends advanced_testcase {
         // They should not be able to see the backup message
         assign_capability('moodle/site:config', CAP_PROHIBIT, $teacherrole->id, $coursecontext->id, true);
         accesslib_clear_all_caches_for_unit_testing();
-        $modulecontext = context_module::instance($assign->id);
+        $modulecontext = context_module::instance($assignment->id);
         $this->assertFalse(has_capability('moodle/site:config', $modulecontext));
 
         $providers = message_get_providers_for_user($teacher->id);
