@@ -4526,3 +4526,56 @@ function include_course_ajax($course, $usedmodules = array(), $enabledmodules = 
 function course_get_url($courseorid, $section = null, $options = array()) {
     return course_get_format($courseorid)->get_view_url($section, $options);
 }
+
+/**
+ * Determine whether a user can move a course to a different category.
+ *
+ * @param int|array $courseid  The course ID (int) or course IDs (array) that are being moved.
+ * @param int       $moveto    The category ID of where we are moving the course to.
+ * @param int       $movefrom  The current category ID. If not provided will be looked up.
+ * @return bool  True if the user can move the course. False if the user can't move the course.
+ */
+function can_move_courses_to_category($courseid, $moveto, $movefrom = null) {
+    global $DB;
+
+    $tocontext = context_coursecat::instance($moveto);
+
+    if (!has_capability('moodle/category:manage', $tocontext)) {
+        return false;
+    }
+
+    if (is_array($courseid)) {
+        foreach ($courseid as $id) {
+            if (!$movefrom) {
+                $movefrom = $DB->get_field('course', 'category', array('id' => $id));
+            }
+
+            $fromcontext = context_coursecat::instance($movefrom);
+            if (!has_capability('moodle/category:manage', $fromcontext)) {
+                return false;
+            }
+
+            $coursecontext = context_course::instance($id);
+            $capabilities = array('moodle/course:delete', 'moodle/course:create');
+            if (!has_all_capabilities($capabilities, $coursecontext)) {
+                return false;
+            }
+        }
+    } else {
+        if (!$movefrom) {
+            $movefrom = $DB->get_field('course', 'category', array('id' => $courseid));
+        }
+
+        $fromcontext = context_coursecat::instance($movefrom);
+        if (!has_capability('moodle/category:manage', $fromcontext)) {
+            return false;
+        }
+
+        $coursecontext = context_course::instance($courseid);
+        $capabilities = array('moodle/course:delete', 'moodle/course:create');
+        if (!has_all_capabilities($capabilities, $coursecontext)) {
+            return false;
+        }
+    }
+    return true;
+}

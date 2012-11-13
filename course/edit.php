@@ -129,6 +129,9 @@ if ($editform->is_cancelled()) {
             }
         }
     } else {
+        if (!can_move_courses_to_category($course->id, $data->category)) {
+            print_error('cannotmovecoursetocategory');
+        }
         // Save any changes to the files used in the editor
         update_course($data, $editoroptions);
     }

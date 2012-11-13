@@ -105,6 +105,7 @@ $string['cannotmigratedatacomments'] = 'Cannot migrate data module comments';
 $string['cannotmodulename'] = 'Cannot get the module name in build navigation';
 $string['cannotmoduletype'] = 'Cannot get the module type in build navigation';
 $string['cannotmoverolewithid'] = 'Cannot move role with ID {$a}';
+$string['cannotmovecoursetocategory'] = 'You can not move this course to the category specified';
 $string['cannotopencsv'] = 'Cannot open CSV file';
 $string['cannotopenfile'] = 'Cannot open file ({$a})';
 $string['cannotopenforwrit'] = 'Cannot open for writing: {$a}';
