@@ -209,6 +209,22 @@ class assign_grading_table extends table_sql implements renderable {
     }
 
     /**
+     * Before adding each row to the table make sure rownum is incremented
+     *
+     * @param array $row row of data from db used to make one row of the table.
+     * @return array one row for the table
+     */
+    function format_row($row) {
+        if ($this->rownum < 0) {
+            $this->rownum = $this->currpage * $this->pagesize;
+        } else {
+            $this->rownum += 1;
+        }
+
+        return parent::format_row($row);
+    }
+
+    /**
      * Add the userid to the row class so it can be updated via ajax
      *
      * @param stdClass $row The row of data
@@ -277,7 +293,7 @@ class assign_grading_table extends table_sql implements renderable {
 
 
     /**
-     * Format a user picture for display (and update rownum as a sideeffect)
+     * Format a user picture for display
      *
      * @param stdClass $row
      * @return string
@@ -435,11 +451,6 @@ class assign_grading_table extends table_sql implements renderable {
      */
     function col_userid(stdClass $row) {
         $edit = '';
-        if ($this->rownum < 0) {
-            $this->rownum = $this->currpage * $this->pagesize;
-        } else {
-            $this->rownum += 1;
-        }
 
         $actions = array();
 
