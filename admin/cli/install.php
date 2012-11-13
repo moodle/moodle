@@ -169,6 +169,9 @@ require_once($CFG->dirroot.'/cache/lib.php');
 require($CFG->dirroot.'/version.php');
 $CFG->target_release = $release;
 
+// Disable the cache API.
+cache_factory::disable();
+
 //Database types
 $databases = array('mysqli' => moodle_database::get_driver_instance('mysqli', 'native'),
                    'pgsql'  => moodle_database::get_driver_instance('pgsql',  'native'),

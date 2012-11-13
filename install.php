@@ -220,6 +220,9 @@ $hint_dataroot = '';
 $hint_admindir = '';
 $hint_database = '';
 
+// Disable the cache API.
+cache_factory::disable();
+
 // Are we in help mode?
 if (isset($_GET['help'])) {
     install_print_help_page($_GET['help']);

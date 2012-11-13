@@ -105,6 +105,9 @@ if (!$version or !$release) {
 }
 
 if (!core_tables_exist()) {
+    // Disable the Cache API as much as possible for installation.
+    cache_factory::disable();
+
     $PAGE->set_pagelayout('maintenance');
     $PAGE->set_popup_notification_allowed(false);
 
@@ -193,6 +196,10 @@ if (empty($CFG->version)) {
 
 if ($version > $CFG->version) {  // upgrade
     purge_all_caches();
+
+    // Disable the Cache API as much as possible for upgrade.
+    cache_factory::disable();
+
     $PAGE->set_pagelayout('maintenance');
     $PAGE->set_popup_notification_allowed(false);
 
@@ -297,6 +304,8 @@ if ($branch <> $CFG->branch) {  // Update the branch
 }
 
 if (moodle_needs_upgrading()) {
+    // Disable the Cache API as much as possible for upgrade.
+    cache_factory::disable();
     if (!$PAGE->headerprinted) {
         // means core upgrade or installation was not already done
         if (!$confirmplugins) {
