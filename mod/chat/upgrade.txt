@@ -1,0 +1,8 @@
+This files describes API changes in /mod/chat/*,
+information provided here is intended especially for developers.
+
+
+=== 2.4 ===
+
+optional - no changes needed:
+* previous references to icons c/user and c/group have been renamed to i/user and i/group.
