@@ -447,7 +447,8 @@ function message_get_providers_for_user($userid) {
              WHERE ra.userid = :userid
                AND rc.capability $capcondition
                AND rc.permission > 0
-               AND (CONCAT(actx.path, '/') LIKE CONCAT(cctx.path, '/%') OR CONCAT(cctx.path, '/') LIKE CONCAT(actx.path, '/%'))";
+               AND (".$DB->sql_concat('actx.path', "'/'")." LIKE ".$DB->sql_concat('cctx.path', "'/%'").
+               " OR ".$DB->sql_concat('cctx.path', "'/'")." LIKE ".$DB->sql_concat('actx.path', "'/%'").")";
 
     if (!empty($CFG->defaultfrontpageroleid)) {
         $frontpagecontext = context_course::instance(SITEID);
@@ -469,7 +470,7 @@ function message_get_providers_for_user($userid) {
              WHERE rc.roleid = :frontpageroleid
                AND rc.capability $capcondition2
                AND rc.permission > 0
-               AND CONCAT(cctx.path, '/') LIKE :frontpagepathpattern";
+               AND ".$DB->sql_concat('cctx.path', "'/'")." LIKE :frontpagepathpattern";
     }
 
     $relevantcapabilities = $DB->get_records_sql_menu($sql, $params);
