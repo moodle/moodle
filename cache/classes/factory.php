@@ -233,7 +233,7 @@ class cache_factory {
      * @param string $name The name of the store (must be unique remember)
      * @param array $details
      * @param cache_definition $definition The definition to instantiate it for.
-     * @return boolean
+     * @return boolean|cache_store
      */
     public function create_store_from_config($name, array $details, cache_definition $definition) {
         if (!array_key_exists($name, $this->stores)) {
@@ -414,12 +414,27 @@ class cache_factory {
     }
 
     /**
+     * Disables as much of the cache API as possible.
+     *
+     * All of the magic associated with the disabled cache is wrapped into this function.
+     * In switching out the factory for the disabled factory it gains full control over the initialisation of objects
+     * and can use all of the disabled alternatives.
+     * Simple!
+     */
+    public static function disable() {
+        global $CFG;
+        require_once($CFG->dirroot.'/cache/disabledlib.php');
+        self::$instance = null;
+        self::$instance = new cache_factory_disabled();
+    }
+
+    /**
      * Returns true if the cache stores have been disabled.
      *
      * @return bool
      */
     public function stores_disabled() {
-        return $this->state === self::STATE_STORES_DISABLED;
+        return $this->state === self::STATE_STORES_DISABLED || $this->is_disabled();
     }
 
     /**

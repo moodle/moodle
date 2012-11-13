@@ -51,6 +51,14 @@ class cache_config_writer_phpunit_tests extends advanced_testcase {
     }
 
     /**
+     * Final task is to reset the cache system
+     */
+    public static function tearDownAfterClass() {
+        parent::tearDownAfterClass();
+        cache_factory::reset();
+    }
+
+    /**
      * Test getting an instance. Pretty basic.
      */
     public function test_instance() {
@@ -295,6 +303,14 @@ class cache_administration_helper_phpunit_tests extends advanced_testcase {
         parent::setUp();
         cache_factory::reset();
         cache_config_phpunittest::create_default_configuration();
+    }
+
+    /**
+     * Final task is to reset the cache system
+     */
+    public static function tearDownAfterClass() {
+        parent::tearDownAfterClass();
+        cache_factory::reset();
     }
 
     /**

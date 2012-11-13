@@ -51,6 +51,14 @@ class cache_phpunit_tests extends advanced_testcase {
     }
 
     /**
+     * Final task is to reset the cache system
+     */
+    public static function tearDownAfterClass() {
+        parent::tearDownAfterClass();
+        cache_factory::reset();
+    }
+
+    /**
      * Tests cache configuration
      */
     public function test_cache_config() {
@@ -666,7 +674,7 @@ class cache_phpunit_tests extends advanced_testcase {
     }
 
     /**
-     * Test disabling the cache.
+     * Test disabling the cache stores.
      */
     public function test_disable_stores() {
         $instance = cache_config_phpunittest::instance();
@@ -692,5 +700,48 @@ class cache_phpunit_tests extends advanced_testcase {
         $this->assertFalse($cache->get('test'));
         $this->assertTrue($cache->set('test', 'test'));
         $this->assertEquals('test', $cache->get('test'));
+    }
+
+    /**
+     * Test disabling the cache.
+     */
+    public function test_disable() {
+        global $CFG;
+
+        $configfile = $CFG->dataroot.'/muc/config.php';
+
+        // That's right, we're deleting the config file.
+        $this->assertTrue(@unlink($configfile));
+
+        // Disable the cache
+        cache_factory::disable();
+
+        // Check we get the expected disabled factory.
+        $factory = cache_factory::instance();
+        $this->assertInstanceOf('cache_factory_disabled', $factory);
+
+        // Check we get the expected disabled config.
+        $config = $factory->create_config_instance();
+        $this->assertInstanceOf('cache_config_disabled', $config);
+
+        // Check we get the expected disabled caches.
+        $cache = cache::make('phpunit', 'disable');
+        $this->assertInstanceOf('cache_disabled', $cache);
+
+        $cache = cache::make_from_params(cache_store::MODE_APPLICATION, 'phpunit', 'disable');
+        $this->assertInstanceOf('cache_disabled', $cache);
+
+        $this->assertFalse(file_exists($configfile));
+
+        $this->assertFalse($cache->get('test'));
+        $this->assertFalse($cache->set('test', 'test'));
+        $this->assertFalse($cache->delete('test'));
+        $this->assertTrue($cache->purge());
+
+        cache_factory::reset();
+
+        $factory = cache_factory::instance(true);
+        $config = $factory->create_config_instance();
+        $this->assertEquals('cache_config_phpunittest', get_class($config));
     }
 }
