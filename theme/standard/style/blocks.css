@@ -1,19 +1,15 @@
 /** General **/
 .block {border:1px solid #DDD;}
 .block .header {border-bottom:1px solid #DDD;border-color: #dddddd;}
-.block .header h2 {margin-top:2px;font-size:1em;}
-.block .header .block_action {margin:0 4px;}
-.block .header .block_action img,
-.block .header .block_action input {width:11px; height:11px;}
+.block .header h2 {font-size:1em;}
 .block .content {border-color: #dddddd;background-color:#FCFCFC;}
 .block .content hr {border-top-color:#999999;}
 .block .header .commands {font-size:0.9em;clear:both;}
-.block .header .commands .icon {margin-right:2px;}
 .block .footer {font-size:0.9em;text-align:center;clear:both;}
 .block.beingmoved {border-color: #f88;}
 
 .block .header,
-.block h2.header {text-align: left;margin:0;padding:4px;padding-top:0;border-bottom-width: 0;}
+.block h2.header {text-align: left;margin:0;padding:4px;border-bottom-width: 0;}
 .block .content h2 {text-align: left;margin:1.5em 0 0;padding:0;}
 .block .content h3 {text-align: left;}
 .dir-rtl .block .content h3 {text-align: right;}
