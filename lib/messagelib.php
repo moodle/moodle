@@ -460,7 +460,7 @@ function message_get_providers_for_user($userid) {
         $params['frontpagepathpattern'] = $frontpagecontext->path . '/';
 
         $sql .= "
-             UNION DISTINCT
+             UNION
 
             SELECT DISTINCT rc.capability, 1
 
