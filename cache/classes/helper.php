@@ -389,16 +389,9 @@ class cache_helper {
      */
     public static function purge_all() {
         $config = cache_config::instance();
-        $stores = $config->get_all_stores();
-        $definition = cache_definition::load_adhoc(cache_store::MODE_REQUEST, 'core', 'cache_purge');
-        foreach ($stores as $store) {
-            $class = $store['class'];
-            $instance = new $class($store['name'], $store['configuration']);
-            if (!$instance->is_ready()) {
-                continue;
-            }
-            $instance->initialise($definition);
-            $instance->purge();
+
+        foreach ($config->get_all_stores() as $store) {
+            self::purge_store($store['name']);
         }
     }
 
@@ -410,21 +403,32 @@ class cache_helper {
      */
     public static function purge_store($storename) {
         $config = cache_config::instance();
-        foreach ($config->get_all_stores() as $store) {
-            if ($store['name'] !== $storename) {
-                continue;
-            }
-            $class = $store['class'];
+
+        $stores = $config->get_all_stores();
+        if (!array_key_exists($storename, $stores)) {
+            // The store does not exist.
+            return false;
+        }
+
+        $store = $stores[$storename];
+        $class = $store['class'];
+
+        // Found the store: is it ready?
+        $instance = new $class($store['name'], $store['configuration']);
+        if (!$instance->is_ready()) {
+            unset($instance);
+            return false;
+        }
+
+        foreach ($config->get_definitions_by_store($storename) as $id => $definition) {
+            $definition = cache_definition::load($id, $definition);
             $instance = new $class($store['name'], $store['configuration']);
-            if (!$instance->is_ready()) {
-                continue;
-            }
-            $definition = cache_definition::load_adhoc(cache_store::MODE_REQUEST, 'core', 'cache_purge');
             $instance->initialise($definition);
             $instance->purge();
-            return true;
+            unset($instance);
         }
-        return false;
+
+        return true;
     }
 
     /**
