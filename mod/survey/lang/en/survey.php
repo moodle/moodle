@@ -256,4 +256,4 @@ $string['thanksforanswers'] = 'Thanks for answering this survey, {$a}';
 $string['time'] = 'Time';
 $string['viewsurveyresponses'] = 'View {$a} survey responses';
 $string['notyetanswered'] = 'Not yet answered';
-$string['allquestionrequireanswer'] = 'All questions are required and must be answered';
+$string['allquestionrequireanswer'] = 'All questions are required and must be answered.';
