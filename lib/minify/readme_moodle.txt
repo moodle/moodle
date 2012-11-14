@@ -15,3 +15,4 @@ Changes:
  * Removed /builder/* - Not needed
  * Removed .htaccess - Not needed
  * Changed config.php - added moodle specific settings
+ * Removed lib/JSMin.php which is not GNU GPL compatible.
