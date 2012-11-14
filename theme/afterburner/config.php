@@ -91,13 +91,13 @@ $THEME->layouts = array(
     'popup' => array(
         'file' => 'default.php',
         'regions' => array(),
-        'options' => array('nofooter'=>true, 'nonavbar'=>true, 'nocustommenu'=>true, 'nologininfo'=>true),
+        'options' => array('nofooter'=>true, 'nonavbar'=>true, 'nocustommenu'=>true, 'nologininfo'=>true, 'nocourseheaderfooter'=>true),
     ),
     // No blocks and minimal footer - used for legacy frame layouts only!
     'frametop' => array(
         'file' => 'default.php',
         'regions' => array(),
-        'options' => array('nofooter'=>true),
+        'options' => array('nofooter'=>true, 'nocoursefooter'=>true),
     ),
     // Embedded pages, like iframe/object embeded in moodleform - it needs as much space as possible
     'embedded' => array(
@@ -110,13 +110,13 @@ $THEME->layouts = array(
     'maintenance' => array(
         'file' => 'default.php',
         'regions' => array(),
-        'options' => array('noblocks'=>true, 'nofooter'=>true, 'nonavbar'=>true, 'nocustommenu'=>true),
+        'options' => array('noblocks'=>true, 'nofooter'=>true, 'nonavbar'=>true, 'nocustommenu'=>true, 'nocourseheaderfooter'=>true),
     ),
     // Should display the content and basic headers only.
     'print' => array(
         'file' => 'default.php',
         'regions' => array(),
-        'options' => array('noblocks'=>true, 'nofooter'=>true, 'nonavbar'=>false, 'nocustommenu'=>true),
+        'options' => array('noblocks'=>true, 'nofooter'=>true, 'nonavbar'=>false, 'nocustommenu'=>true, 'nocourseheaderfooter'=>true),
     ),
     // The pagelayout used when a redirection is occuring.
     'redirect' => array(
@@ -134,7 +134,7 @@ $THEME->layouts = array(
         'file' => 'default.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-pre',
-        'options' => array('nofooter'=>true, 'nonavbar'=>true, 'nocustommenu'=>true, 'nologinlinks'=>true),
+        'options' => array('nofooter'=>true, 'nonavbar'=>true, 'nocustommenu'=>true, 'nologinlinks'=>true, 'nocourseheaderfooter'=>true),
     ),
 );
 

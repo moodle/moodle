@@ -120,29 +120,29 @@ $THEME->layouts = array(
     'popup' => array(
         'file' => 'general.php',
         'regions' => array(),
-        'options' => array('nofooter'=>true),
+        'options' => array('nofooter'=>true, 'nocourseheaderfooter'=>true),
     ),
     'frametop' => array(
         'file' => 'general.php',
         'regions' => array(),
-        'options' => array('nofooter'=>true),
+        'options' => array('nofooter'=>true, 'nocoursefooter'=>true),
     ),
     'maintenance' => array(
         'theme' => 'boxxie',
         'file' => 'general.php',
         'regions' => array(),
-        'options' => array('nofooter'=>true, 'nonavbar'=>true, 'noblocks'=>false, 'nocustommenu'=>true),
+        'options' => array('nofooter'=>true, 'nonavbar'=>true, 'noblocks'=>false, 'nocustommenu'=>true, 'nocourseheaderfooter'=>true),
     ),
     'embedded' => array(
         'file' => 'embedded.php',
         'regions' => array(),
-        'options' => array('nofooter'=>true, 'nonavbar'=>true, 'noblocks'=>false, 'nocustommenu'=>true),
+        'options' => array('nofooter'=>true, 'nonavbar'=>true, 'noblocks'=>false, 'nocustommenu'=>true, 'nocourseheaderfooter'=>true),
     ),
     // Should display the content and basic headers only.
     'print' => array(
         'file' => 'general.php',
         'regions' => array(),
-        'options' => array('nofooter'=>true, 'nonavbar'=>true, 'noblocks'=>false, 'nocustommenu'=>true),
+        'options' => array('nofooter'=>true, 'nonavbar'=>true, 'noblocks'=>false, 'nocustommenu'=>true, 'nocourseheaderfooter'=>true),
     ),
 
 );

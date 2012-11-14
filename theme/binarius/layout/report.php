@@ -20,6 +20,16 @@ if ($hascustommenu) {
     $bodyclasses[] = 'has-custom-menu';
 }
 
+$courseheader = $coursecontentheader = $coursecontentfooter = $coursefooter = '';
+if (empty($PAGE->layout_options['nocourseheaderfooter'])) {
+    $courseheader = $OUTPUT->course_header();
+    $coursecontentheader = $OUTPUT->course_content_header();
+    if (empty($PAGE->layout_options['nocoursefooter'])) {
+        $coursecontentfooter = $OUTPUT->course_content_footer();
+        $coursefooter = $OUTPUT->course_footer();
+    }
+}
+
 echo $OUTPUT->doctype() ?>
 <html <?php echo $OUTPUT->htmlattributes() ?>>
 <head>
@@ -33,7 +43,7 @@ echo $OUTPUT->doctype() ?>
 
 <div id="page">
 
-    <?php if ($hasheading || $hasnavbar) { ?>
+    <?php if ($hasheading || $hasnavbar || !empty($courseheader) || !empty($coursefooter)) { ?>
            <div id="wrapper" class="clearfix">
 
 <!-- START OF HEADER -->
@@ -56,6 +66,9 @@ echo $OUTPUT->doctype() ?>
                     <?php } ?>
                 </div>
             </div>
+            <?php if (!empty($courseheader)) { ?>
+                <div id="course-header"><?php echo $courseheader; ?></div>
+            <?php } ?>
 
             <?php if ($hasnavbar) { ?>
                 <div class="navbar">
@@ -77,7 +90,9 @@ echo $OUTPUT->doctype() ?>
             <div id="page-content" class="clearfix">
                 <div id="report-main-content">
                     <div class="region-content">
+                        <?php echo $coursecontentheader; ?>
                         <?php echo $OUTPUT->main_content() ?>
+                        <?php echo $coursecontentfooter; ?>
                     </div>
                 </div>
                 <?php if ($hassidepost) { ?>
@@ -94,7 +109,11 @@ echo $OUTPUT->doctype() ?>
 
 <!-- END OF CONTENT -->
 
-    <?php if ($hasheading || $hasnavbar) { ?>
+        <?php if (!empty($coursefooter)) { ?>
+            <div id="course-footer"><?php echo $coursefooter; ?></div>
+        <?php } ?>
+
+    <?php if ($hasheading || $hasnavbar || !empty($courseheader) || !empty($coursefooter)) { ?>
     <div class="myclear"></div>
         </div>
     <?php } ?>
