@@ -449,6 +449,19 @@ as it is parsed from the backup file. <br /><br /><img border="0" width="110" vs
     <br /><a href=\'$@FILEPHP@$$@SLASH@$MANUAL.DOC$@FORCEDOWNLOAD@$\'>download manual</a><br />');
     }
 
+    public function test_referenced_files_urlencoded() {
+        // This test covers MDL-36204
+        $text = 'This is a text containing links to file.php
+as it is parsed from the backup file. <br /><br /><img border="0" width="110" vspace="0" hspace="0" height="92" title="News" alt="News" src="$@FILEPHP@$$@SLASH@$pics$@SLASH@$news.gif" /><a href="$@FILEPHP@$$@SLASH@$pics$@SLASH@$news.gif$@FORCEDOWNLOAD@$">no space</a><br />
+    <br /><a href=\'$@FILEPHP@$$@SLASH@$pics$@SLASH@$news%20with%20spaces.gif$@FORCEDOWNLOAD@$\'>with urlencoded spaces</a><br />';
+
+        $files = moodle1_converter::find_referenced_files($text);
+        $this->assertEquals(gettype($files), 'array');
+        $this->assertEquals(2, count($files));
+        $this->assertTrue(in_array('/pics/news.gif', $files));
+        $this->assertTrue(in_array('/pics/news with spaces.gif', $files));
+    }
+
     public function test_question_bank_conversion() {
         global $CFG;
 
