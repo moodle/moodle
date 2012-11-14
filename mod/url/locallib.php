@@ -541,21 +541,25 @@ function url_get_encrypted_parameter($url, $config) {
  * Optimised mimetype detection from general URL
  * @param $fullurl
  * @param int $size of the icon.
- * @return string mimetype
+ * @return string|null mimetype or null when the filetype is not relevant.
  */
 function url_guess_icon($fullurl, $size = null) {
     global $CFG;
     require_once("$CFG->libdir/filelib.php");
 
     if (substr_count($fullurl, '/') < 3 or substr($fullurl, -1) === '/') {
-        // most probably default directory - index.php, index.html, etc.
-        return file_extension_icon('.htm', $size);
+        // Most probably default directory - index.php, index.html, etc. Return null because
+        // we want to use the default module icon instead of the HTML file icon.
+        return null;
     }
 
     $icon = file_extension_icon($fullurl, $size);
+    $htmlicon = file_extension_icon('.htm', $size);
+    $unknownicon = file_extension_icon('', $size);
 
-    if ($icon === file_extension_icon('')) {
-        return file_extension_icon('.htm', $size);
+    // We do not want to return those icon types, the module icon is more appropriate.
+    if ($icon === $unknownicon || $icon === $htmlicon) {
+        return null;
     }
 
     return $icon;
