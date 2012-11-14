@@ -35,43 +35,34 @@ class format_topics extends format_base {
     /**
      * Returns true if this course format uses sections
      *
-     * This function calls function callback_FORMATNAME_uses_sections() if it exists
-     *
      * @return bool
      */
     public function uses_sections() {
-        global $CFG;
-        // Note that lib.php in course format folder is already included by now
-        $featurefunction = 'callback_'.$this->format.'_uses_sections';
-        if (function_exists($featurefunction)) {
-            return $featurefunction();
-        }
-        return false;
+        return true;
     }
 
     /**
      * Returns the display name of the given section that the course prefers.
      *
-     * This function calls function callback_FORMATNAME_get_section_name() if it exists
+     * Use section name is specified by user. Otherwise use default ("Topic #")
      *
      * @param int|stdClass $section Section object from database or just field section.section
      * @return string Display name that the course format prefers, e.g. "Topic 2"
      */
     public function get_section_name($section) {
-        // Use course formatter callback if it exists
-        $namingfunction = 'callback_'.$this->format.'_get_section_name';
-        if (function_exists($namingfunction) && ($course = $this->get_course())) {
-            return $namingfunction($course, $this->get_section($section));
+        $section = $this->get_section($section);
+        if ((string)$section->name !== '') {
+            return format_string($section->name, true,
+                    array('context' => context_course::instance($this->courseid)));
+        } else if ($section->section == 0) {
+            return get_string('section0name', 'format_topics');
+        } else {
+            return get_string('topic').' '.$section->section;
         }
-
-        // else, default behavior:
-        return parent::get_section_name($section);
     }
 
     /**
      * The URL to use for the specified course (with section)
-     *
-     * This function calls function callback_FORMATNAME_get_section_url() if it exists
      *
      * @param int|stdClass $section Section object from database or just field course_sections.section
      *     if omitted the course view page is returned
@@ -81,29 +72,6 @@ class format_topics extends format_base {
      * @return null|moodle_url
      */
     public function get_view_url($section, $options = array()) {
-        // Use course formatter callback if it exists
-        $featurefunction = 'callback_'.$this->format.'_get_section_url';
-        if (function_exists($featurefunction) && ($course = $this->get_course())) {
-            if (is_object($section)) {
-                $sectionnum = $section->section;
-            } else {
-                $sectionnum = $section;
-            }
-            if ($sectionnum) {
-                $url = $featurefunction($course, $sectionnum);
-                if ($url || !empty($options['navigation'])) {
-                    return $url;
-                }
-            }
-        }
-
-        // if function is not defined
-        if (!$this->uses_sections() ||
-                !array_key_exists('coursedisplay', $this->course_format_options())) {
-            // default behaviour
-            return parent::get_view_url($section, $options);
-        }
-
         $course = $this->get_course();
         $url = new moodle_url('/course/view.php', array('id' => $course->id));
 
@@ -142,8 +110,6 @@ class format_topics extends format_base {
     /**
      * Returns the information about the ajax support in the given source format
      *
-     * This function calls function callback_FORMATNAME_ajax_support() if it exists
-     *
      * The returned object's property (boolean)capable indicates that
      * the course format supports Moodle course ajax features.
      * The property (array)testedbrowsers can be used as a parameter for {@link ajaxenabled()}.
@@ -151,42 +117,21 @@ class format_topics extends format_base {
      * @return stdClass
      */
     public function supports_ajax() {
-        // set up default values
-        $ajaxsupport = parent::supports_ajax();
-
-        // get the information from the course format library
-        $featurefunction = 'callback_'.$this->format.'_ajax_support';
-        if (function_exists($featurefunction)) {
-            $formatsupport = $featurefunction();
-            if (isset($formatsupport->capable)) {
-                $ajaxsupport->capable = $formatsupport->capable;
-            }
-            if (is_array($formatsupport->testedbrowsers)) {
-                $ajaxsupport->testedbrowsers = $formatsupport->testedbrowsers;
-            }
-        }
+        $ajaxsupport = new stdClass();
+        $ajaxsupport->capable = true;
+        $ajaxsupport->testedbrowsers = array('MSIE' => 6.0, 'Gecko' => 20061111, 'Safari' => 531, 'Chrome' => 6.0);
         return $ajaxsupport;
     }
 
     /**
      * Loads all of the course sections into the navigation
      *
-     * First this function calls callback_FORMATNAME_display_content() if it exists to check
-     * if the navigation should be extended at all
-     *
-     * Then it calls function callback_FORMATNAME_load_content() if it exists to actually extend
-     * navigation
-     *
-     * By default the parent method is called
-     *
      * @param global_navigation $navigation
      * @param navigation_node $node The course node within the navigation
      */
     public function extend_course_navigation($navigation, navigation_node $node) {
         global $PAGE;
-        // if course format displays section on separate pages and we are on course/view.php page
-        // and the section parameter is specified, make sure this section is expanded in
-        // navigation
+        // if section is specified in course/view.php, make sure it is expanded in navigation
         if ($navigation->includesectionnum === false) {
             $selectedsection = optional_param('section', null, PARAM_INT);
             if ($selectedsection !== null && (!defined('AJAX_SCRIPT') || AJAX_SCRIPT == '0') &&
@@ -196,16 +141,7 @@ class format_topics extends format_base {
         }
 
         // check if there are callbacks to extend course navigation
-        $displayfunc = 'callback_'.$this->format.'_display_content';
-        if (function_exists($displayfunc) && !$displayfunc()) {
-            return;
-        }
-        $featurefunction = 'callback_'.$this->format.'_load_content';
-        if (function_exists($featurefunction) && ($course = $this->get_course())) {
-            $featurefunction($navigation, $course, $node);
-        } else {
-            parent::extend_course_navigation($navigation, $node);
-        }
+        parent::extend_course_navigation($navigation, $node);
     }
 
     /**
@@ -213,47 +149,39 @@ class format_topics extends format_base {
      *
      * Used in course/rest.php
      *
-     * This function calls function callback_FORMATNAME_ajax_section_move() if it exists
-     *
      * @return array This will be passed in ajax respose
      */
     function ajax_section_move() {
-        $featurefunction = 'callback_'.$this->format.'_ajax_section_move';
-        if (function_exists($featurefunction) && ($course = $this->get_course())) {
-            return $featurefunction($course);
-        } else {
-            return parent::ajax_section_move();
+        global $PAGE;
+        $titles = array();
+        $course = $this->get_course();
+        $modinfo = get_fast_modinfo($course);
+        $renderer = $this->get_renderer($PAGE);
+        if ($renderer && ($sections = $modinfo->get_section_info_all())) {
+            foreach ($sections as $number => $section) {
+                $titles[$number] = $renderer->section_title($section, $course);
+            }
         }
+        return array('sectiontitles' => $titles, 'action' => 'move');
     }
 
     /**
      * Returns the list of blocks to be automatically added for the newly created course
      *
-     * This function checks the existence of the file config.php in the course format folder.
-     * If file exists and contains the code
-     * $format['defaultblocks'] = 'leftblock1,leftblock2:rightblock1,rightblock2';
-     * these blocks are used, otherwise parent function is called
-     *
      * @return array of default blocks, must contain two keys BLOCK_POS_LEFT and BLOCK_POS_RIGHT
      *     each of values is an array of block names (for left and right side columns)
      */
     public function get_default_blocks() {
-        global $CFG;
-        $formatconfig = $CFG->dirroot.'/course/format/'.$this->format.'/config.php';
-        $format = array(); // initialize array in external file
-        if (is_readable($formatconfig)) {
-            include($formatconfig);
-        }
-        if (!empty($format['defaultblocks'])) {
-            return blocks_parse_default_blocks_list($format['defaultblocks']);
-        }
-        return parent::get_default_blocks();
+        return array(
+            BLOCK_POS_LEFT => array(),
+            BLOCK_POS_RIGHT => array('search_forums', 'news_items', 'calendar_upcoming', 'recent_activity')
+        );
     }
 
     /**
      * Definitions of the additional options that this course format uses for course
      *
-     * By default course formats have the options that existed in Moodle 2.3:
+     * Topics format uses the following options:
      * - coursedisplay
      * - numsections
      * - hiddensections
@@ -325,9 +253,10 @@ class format_topics extends format_base {
     /**
      * Updates format options for a course
      *
-     * Legacy course formats may assume that course format options
-     * ('coursedisplay', 'numsections' and 'hiddensections') are shared between formats.
-     * Therefore we make sure to copy them from the previous format
+     * In case if course format was changed to 'topics', we try to copy options
+     * 'coursedisplay', 'numsections' and 'hiddensections' from the previous format.
+     * If previous course format did not have 'numsections' option, we populate it with the
+     * current number of sections
      *
      * @param stdClass|array $data return value from {@link moodleform::get_data()} or array with data
      * @param stdClass $oldcourse if this function is called from {@link update_course()}
@@ -344,8 +273,9 @@ class format_topics extends format_base {
                     if (array_key_exists($key, $oldcourse)) {
                         $data[$key] = $oldcourse[$key];
                     } else if ($key === 'numsections') {
-                        // If previous format does not have the field 'numsections' and this one does,
-                        // and $data['numsections'] is not set fill it with the maximum section number from the DB
+                        // If previous format does not have the field 'numsections'
+                        // and $data['numsections'] is not set,
+                        // we fill it with the maximum section number from the DB
                         $maxsection = $DB->get_field_sql('SELECT max(section) from {course_sections}
                             WHERE course = ?', array($this->courseid));
                         if ($maxsection) {
@@ -358,82 +288,4 @@ class format_topics extends format_base {
         }
         return $this->update_format_options($data);
     }
-}
-
-/**
- * Indicates this format uses sections.
- *
- * @return bool Returns true
- */
-function callback_topics_uses_sections() {
-    return true;
-}
-
-/**
- * Used to display the course structure for a course where format=topic
- *
- * This is called automatically by {@link load_course()} if the current course
- * format = weeks.
- *
- * @param array $path An array of keys to the course node in the navigation
- * @param stdClass $modinfo The mod info object for the current course
- * @return bool Returns true
- */
-function callback_topics_load_content(&$navigation, $course, $coursenode) {
-    return $navigation->load_generic_course_sections($course, $coursenode, 'topics');
-}
-
-/**
- * The string that is used to describe a section of the course
- * e.g. Topic, Week...
- *
- * @return string
- */
-function callback_topics_definition() {
-    return get_string('topic');
-}
-
-function callback_topics_get_section_name($course, $section) {
-    // We can't add a node without any text
-    if ((string)$section->name !== '') {
-        return format_string($section->name, true, array('context' => context_course::instance($course->id)));
-    } else if ($section->section == 0) {
-        return get_string('section0name', 'format_topics');
-    } else {
-        return get_string('topic').' '.$section->section;
-    }
-}
-
-/**
- * Declares support for course AJAX features
- *
- * @see course_format_ajax_support()
- * @return stdClass
- */
-function callback_topics_ajax_support() {
-    $ajaxsupport = new stdClass();
-    $ajaxsupport->capable = true;
-    $ajaxsupport->testedbrowsers = array('MSIE' => 6.0, 'Gecko' => 20061111, 'Safari' => 531, 'Chrome' => 6.0);
-    return $ajaxsupport;
-}
-
-/**
- * Callback function to do some action after section move
- *
- * @param stdClass $course The course entry from DB
- * @return array This will be passed in ajax respose.
- */
-function callback_topics_ajax_section_move($course) {
-    global $COURSE, $PAGE;
-
-    $titles = array();
-    rebuild_course_cache($course->id);
-    $modinfo = get_fast_modinfo($COURSE);
-    $renderer = $PAGE->get_renderer('format_topics');
-    if ($renderer && ($sections = $modinfo->get_section_info_all())) {
-        foreach ($sections as $number => $section) {
-            $titles[$number] = $renderer->section_title($section, $course);
-        }
-    }
-    return array('sectiontitles' => $titles, 'action' => 'move');
 }
