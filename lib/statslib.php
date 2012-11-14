@@ -251,7 +251,7 @@ function stats_cron_daily($maxdays=1) {
                         userid, COUNT(id) AS statsreads
                   FROM {temp_log1} l
                  WHERE action = 'login'
-              GROUP BY timeend, courseid, userid
+              GROUP BY userid
                 HAVING COUNT(id) > 0";
 
         if ($logspresent && !stats_run_query($sql)) {
@@ -429,7 +429,7 @@ function stats_cron_daily($maxdays=1) {
                        SUM(CASE WHEN action $viewactionssql THEN 1 ELSE 0 END) AS statsreads,
                        SUM(CASE WHEN action $postactionssql THEN 1 ELSE 0 END) AS statswrites
                   FROM {temp_log1} l
-              GROUP BY userid, courseid";
+              GROUP BY userid, course";
 
         if ($logspresent && !stats_run_query($sql, array_merge($params1, $params2))) {
             $failed = true;
@@ -446,7 +446,7 @@ function stats_cron_daily($maxdays=1) {
                        SUM(CASE WHEN l.action $postactionssql THEN 1 ELSE 0 END) AS stat2
                   FROM {course} c, {temp_log1} l
                  WHERE l.course = c.id
-              GROUP BY courseid";
+              GROUP BY c.id";
 
         if ($logspresent && !stats_run_query($sql, array_merge($params1, $params2))) {
             $failed = true;
@@ -477,7 +477,7 @@ function stats_cron_daily($maxdays=1) {
                        AND sud.stattype='activity'
                        ) inline_view
 
-              GROUP BY timeend, courseid, roleid
+              GROUP BY courseid, roleid
                 HAVING SUM(statsreads) > 0 OR SUM(statswrites) > 0";
 
         if ($logspresent && !stats_run_query($sql, array('courselevel'=>CONTEXT_COURSE))) {
@@ -508,7 +508,7 @@ function stats_cron_daily($maxdays=1) {
                                                                      ))
                        ) inline_view
 
-              GROUP BY timeend, courseid, roleid
+              GROUP BY courseid
                 HAVING SUM(statsreads) > 0 OR SUM(statswrites) > 0";
 
         if ($logspresent && !stats_run_query($sql, array())) {
@@ -541,7 +541,7 @@ function stats_cron_daily($maxdays=1) {
                        AND sud.stattype='activity'
                        ) inline_view
 
-              GROUP BY timeend, courseid, roleid
+              GROUP BY courseid, roleid
                 HAVING SUM(statsreads) > 0 OR SUM(statswrites) > 0";
 
         if ($logspresent && !stats_run_query($sql, array('fpcontext'=>$fpcontext->id))) {
@@ -573,7 +573,7 @@ function stats_cron_daily($maxdays=1) {
                            AND ra.contextid = :fpcontext)
                        ) inline_view
 
-              GROUP BY timeend, courseid, roleid
+              GROUP BY timeend, courseid
                 HAVING SUM(statsreads) > 0 OR SUM(statswrites) > 0";
 
         if ($logspresent && !stats_run_query($sql, array('fpcontext'=>$fpcontext->id, 'siteid'=>SITEID, 'nextm'=>$nextmidnight))) {
@@ -585,20 +585,19 @@ function stats_cron_daily($maxdays=1) {
         // How many view actions for guests or not-logged-in on frontpage
         $sql = "INSERT INTO {temp_stats_daily} (stattype, timeend, courseid, roleid, stat1, stat2)
 
-                SELECT 'activity', $nextmidnight AS timeend, ".SITEID." AS courseid, $guestrole AS roleid,
-                       SUM(statsreads), SUM(statswrites)
+                SELECT stattype, timeend, courseid, $guestrole AS roleid,
+                       SUM(statsreads) AS stat1, SUM(statswrites) AS stat2
                   FROM (
-
-                    SELECT sud.statsreads, sud.statswrites
+                    SELECT sud.stattype, sud.timeend, sud.courseid,
+                           sud.statsreads, sud.statswrites
                       FROM {temp_stats_user_daily} sud
                      WHERE (sud.userid = $guest OR sud.userid = 0)
                        AND sud.timeend = $nextmidnight
                        AND sud.courseid = ".SITEID."
                        AND sud.stattype='activity'
-                        ) inline_view
-
-              GROUP BY timeend, courseid, roleid
-                HAVING SUM(statsreads) > 0 OR SUM(statswrites) > 0";
+                       ) inline_view
+                 GROUP BY stattype, timeend, courseid 
+                 HAVING SUM(statsreads) > 0 OR SUM(statswrites) > 0";
 
         if ($logspresent && !stats_run_query($sql)) {
             $failed = true;
@@ -1549,7 +1548,6 @@ function stats_temp_table_create() {
     stats_temp_table_drop();
 
     $xmlfile  = $CFG->dirroot . '/lib/db/install.xml';
-    $tempfile = $CFG->dirroot . '/lib/db/temp_stats_log_template.xml';
     $tables   = array();
 
     // Allows for the additional xml files to be used (if necessary)
