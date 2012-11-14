@@ -317,11 +317,14 @@ class google_picasa {
      * @return mixes $files Array in the format get_listing uses for folders
      */
     public function get_albums() {
-        $content = $this->googleoauth->get(self::LIST_ALBUMS_URL);
-        $xml = new SimpleXMLElement($content);
-
         $files = array();
+        $content = $this->googleoauth->get(self::LIST_ALBUMS_URL);
 
+        if (empty($content)) {
+            return $files;
+        }
+
+        $xml = new SimpleXMLElement($content);
         foreach ($xml->entry as $album) {
             $gphoto = $album->children('http://schemas.google.com/photos/2007');
 
@@ -338,7 +341,6 @@ class google_picasa {
                 'thumbnail_height' => 160,
                 'children' => array(),
             );
-
         }
 
         return $files;
@@ -352,11 +354,13 @@ class google_picasa {
      * @return mixed $files A list of files for the file picker
      */
     public function get_photo_details($rawxml) {
+        $files = array();
+        if (empty($rawxml)) {
+            return $files;
+        }
 
         $xml = new SimpleXMLElement($rawxml);
         $this->lastalbumname = (string)$xml->title;
-
-        $files = array();
 
         foreach ($xml->entry as $photo) {
             $gphoto = $photo->children('http://schemas.google.com/photos/2007');
