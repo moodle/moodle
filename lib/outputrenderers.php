@@ -346,12 +346,6 @@ class core_renderer extends renderer_base {
     public function standard_head_html() {
         global $CFG, $SESSION;
         $output = '';
-        if ($this->page->theme->doctype === 'html5' or $this->page->theme->doctype === 'xhtml5') {
-            // Make sure we set 'X-UA-Compatible' only if script did not request something else (such as MDL-29213).
-            if (empty($CFG->additionalhtmlhead) or stripos($CFG->additionalhtmlhead, 'X-UA-Compatible') === false) {
-                $output .= '<meta http-equiv="X-UA-Compatible" content="IE=edge" />' . "\n";
-            }
-        }
         $output .= '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />' . "\n";
         $output .= '<meta name="keywords" content="moodle, ' . $this->page->title . '" />' . "\n";
         if (!$this->page->cacheable) {
