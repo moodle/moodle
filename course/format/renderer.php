@@ -108,7 +108,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
 
         if ($section->section != 0) {
             // Only in the non-general sections.
-            if ($this->is_section_current($section, $course)) {
+            if (course_get_format($course)->is_section_current($section)) {
                 $o = get_accesshide(get_string('currentsection', 'format_'.$course->format));
             }
         }
@@ -137,7 +137,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
             // Only in the non-general sections.
             if (!$section->visible) {
                 $sectionstyle = ' hidden';
-            } else if ($this->is_section_current($section, $course)) {
+            } else if (course_get_format($course)->is_section_current($section)) {
                 $sectionstyle = ' current';
             }
         }
@@ -282,7 +282,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         if (!$section->visible) {
             $classattr .= ' hidden';
             $linkclasses .= ' dimmed_text';
-        } else if ($this->is_section_current($section, $course)) {
+        } else if (course_get_format($course)->is_section_current($section)) {
             $classattr .= ' current';
         }
 
@@ -760,14 +760,18 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
     }
 
     /**
-     * Is the section passed in the current section? (Note this isn't strictly
-     * a renderering method, but neater here).
+     * Is the section passed in the current section?
+     *
+     * @deprecated since 2.4
+     * @see format_base::is_section_current()
      *
      * @param stdClass $course The course entry from DB
      * @param stdClass $section The course_section entry from the DB
      * @return bool true if the section is current
      */
-    protected function is_section_current($section, $course) {
-        return ($course->marker == $section->section);
+    protected final function is_section_current($section, $course) {
+        debugging('Function format_section_renderer_base::is_section_current() is deprecated. '.
+                'Use course_get_format($course)->is_section_current($section) instead', DEBUG_DEVELOPER);
+        return course_get_format($course)->is_section_current($section);
     }
 }

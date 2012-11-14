@@ -318,4 +318,24 @@ class format_weeks extends format_base {
 
         return $dates;
     }
+
+    /**
+     * Returns true if the specified week is current
+     *
+     * @param int|stdClass|section_info $section
+     * @return bool
+     */
+    public function is_section_current($section) {
+        if (is_object($section)) {
+            $sectionnum = $section->section;
+        } else {
+            $sectionnum = $section;
+        }
+        if ($sectionnum < 1) {
+            return false;
+        }
+        $timenow = time();
+        $dates = $this->get_section_dates($section);
+        return (($timenow >= $dates->start) && ($timenow < $dates->end));
+    }
 }

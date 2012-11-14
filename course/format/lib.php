@@ -860,6 +860,23 @@ abstract class format_base {
     public function get_renderer(moodle_page $page) {
         return $page->get_renderer('format_'. $this->get_format());
     }
+
+    /**
+     * Returns true if the specified section is current
+     *
+     * By default we analyze $course->marker
+     *
+     * @param int|stdClass|section_info $section
+     * @return bool
+     */
+    public function is_section_current($section) {
+        if (is_object($section)) {
+            $sectionnum = $section->section;
+        } else {
+            $sectionnum = $section;
+        }
+        return ($sectionnum && ($course = $this->get_course()) && $course->marker == $sectionnum);
+    }
 }
 
 /**

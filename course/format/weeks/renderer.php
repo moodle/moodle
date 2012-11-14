@@ -59,22 +59,4 @@ class format_weeks_renderer extends format_section_renderer_base {
     protected function page_title() {
         return get_string('weeklyoutline');
     }
-
-    /**
-     * Is the section passed in the current section?
-     *
-     * @param stdClass $section The course_section entry from the DB
-     * @param stdClass $course The course entry from DB
-     * @return bool true if the section is current
-     */
-    protected function is_section_current($section, $course) {
-        if ($section->section < 1) {
-            return false;
-        }
-
-        $timenow = time();
-        $dates = course_get_format($course)->get_section_dates($section);
-
-        return (($timenow >= $dates->start) && ($timenow < $dates->end));
-    }
 }
