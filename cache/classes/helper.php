@@ -270,6 +270,8 @@ class cache_helper {
     /**
      * Purges the cache for a specific definition.
      *
+     * @todo MDL-36660: Change the signature: $aggregate must be added.
+     *
      * @param string $component
      * @param string $area
      * @param array $identifiers
@@ -278,6 +280,14 @@ class cache_helper {
     public static function purge_by_definition($component, $area, array $identifiers = array()) {
         // Create the cache.
         $cache = cache::make($component, $area, $identifiers);
+        // Initialise, in case of a store.
+        if ($cache instanceof cache_store) {
+            $factory = cache_factory::instance();
+            // TODO MDL-36660: Providing $aggregate is required for purging purposes: $definition->get_id()
+            $definition = $factory->create_definition($component, $area, null);
+            $definition->set_identifiers($identifiers);
+            $cache->initialise($definition);
+        }
         // Purge baby, purge.
         $cache->purge();
         return true;
@@ -295,8 +305,13 @@ class cache_helper {
         foreach ($instance->get_definitions() as $name => $definitionarr) {
             $definition = cache_definition::load($name, $definitionarr);
             if ($definition->invalidates_on_event($event)) {
-                // Purge the cache.
+                // Create the cache.
                 $cache = $factory->create_cache($definition);
+                // Initialise, in case of a store.
+                if ($cache instanceof cache_store) {
+                    $cache->initialise($definition);
+                }
+                // Purge the cache.
                 $cache->purge();
 
                 // We need to flag the event in the "Event invalidation" cache if it hasn't already happened.
