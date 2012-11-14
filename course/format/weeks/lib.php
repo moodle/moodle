@@ -56,8 +56,7 @@ class format_weeks extends format_base {
             // Return the general section.
             return get_string('section0name', 'format_weeks');
         } else {
-            $course = $this->get_course();
-            $dates = format_weeks_get_section_dates($section, $course);
+            $dates = $this->get_section_dates($section);
 
             // We subtract 24 hours for display purposes.
             $dates->end = ($dates->end - 86400);
@@ -294,24 +293,29 @@ class format_weeks extends format_base {
         }
         return $this->update_format_options($data);
     }
-}
 
-/**
- * Return the start and end date of the passed section
- *
- * @param stdClass $section The course_section entry from the DB
- * @param stdClass $course The course entry from DB
- * @return stdClass property start for startdate, property end for enddate
- */
-function format_weeks_get_section_dates($section, $course) {
-    $oneweekseconds = 604800;
-    // Hack alert. We add 2 hours to avoid possible DST problems. (e.g. we go into daylight
-    // savings and the date changes.
-    $startdate = $course->startdate + 7200;
+    /**
+     * Return the start and end date of the passed section
+     *
+     * @param int|stdClass|section_info $section section to get the dates for
+     * @return stdClass property start for startdate, property end for enddate
+     */
+    public function get_section_dates($section) {
+        $course = $this->get_course();
+        if (is_object($section)) {
+            $sectionnum = $section->section;
+        } else {
+            $sectionnum = $section;
+        }
+        $oneweekseconds = 604800;
+        // Hack alert. We add 2 hours to avoid possible DST problems. (e.g. we go into daylight
+        // savings and the date changes.
+        $startdate = $course->startdate + 7200;
 
-    $dates = new stdClass();
-    $dates->start = $startdate + ($oneweekseconds * ($section->section - 1));
-    $dates->end = $dates->start + $oneweekseconds;
+        $dates = new stdClass();
+        $dates->start = $startdate + ($oneweekseconds * ($sectionnum - 1));
+        $dates->end = $dates->start + $oneweekseconds;
 
-    return $dates;
+        return $dates;
+    }
 }

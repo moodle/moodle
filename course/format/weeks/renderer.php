@@ -73,7 +73,7 @@ class format_weeks_renderer extends format_section_renderer_base {
         }
 
         $timenow = time();
-        $dates = format_weeks_get_section_dates($section, $course);
+        $dates = course_get_format($course)->get_section_dates($section);
 
         return (($timenow >= $dates->start) && ($timenow < $dates->end));
     }
