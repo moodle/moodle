@@ -1267,9 +1267,13 @@ class cm_info extends stdClass {
  * Returns reference to full info about modules in course (including visibility).
  * Cached and as fast as possible (0 or 1 db query).
  *
+ * use get_fast_modinfo($courseid, 0, true) to reset the static cache for particular course
+ * use get_fast_modinfo(0, 0, true) to reset the static cache for all courses
+ *
  * @uses MAX_MODINFO_CACHE_SIZE
- * @param int|stdClass $courseorid object or 'reset' string to reset caches, modinfo may be updated in db
- * @param int $userid Set 0 (default) for current user
+ * @param int|stdClass $courseorid object from DB table 'course' or just a course id
+ * @param int $userid User id to populate 'uservisible' attributes of modules and sections.
+ *     Set to 0 for current user (default)
  * @param bool $resetonly whether we want to get modinfo or just reset the cache
  * @return course_modinfo|null Module information for course, or null if resetting
  */
