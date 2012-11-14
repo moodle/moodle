@@ -913,7 +913,10 @@ class available_update_checker {
                 $this->recentfetch = $config->recentfetch;
                 $this->recentresponse = $this->decode_response($config->recentresponse);
             } catch (available_update_checker_exception $e) {
-                debugging('Invalid info about available updates detected and will be ignored: '.$e->getMessage(), DEBUG_ALL);
+                // The server response is not valid. Behave as if no data were fetched yet.
+                // This may happen when the most recent update info (cached locally) has been
+                // fetched with the previous branch of Moodle (like during an upgrade from 2.x
+                // to 2.y) or when the API of the response has changed.
                 $this->recentresponse = array();
             }
 
