@@ -6,10 +6,16 @@ information provided here is intended especially for theme designer.
 required changes:
 * output course and course content header/footer that may be returned by course format (see MDL-36048)
 
+deprecation:
+* i/roles: Use t/assignroles instead
+
 optional changes:
 * new optional boolean parameter $withlinks for public function login_info() in lib/outputrenderers.php (MDL-31365)
 * new layout option "nologinlinks" and new page layout "secure" e.g. for safebrowser and securewindow (MDL-31365)
 * new class 'iconlarge' for 24x24 icons.
+* new icons i/export and i/import (sized 16x16). Previously export and import actions used i/backup and i/restore.
+* new icon i/assignroles (sized 16x16), to prevent the use of i/roles which is 12x12.
+* new icon i/switchrole (sized 16x16), was previously using i/roles. Now is a copy of the new i/assignroles icon.
 
 === 2.3 ===
 

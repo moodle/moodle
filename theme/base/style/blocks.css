@@ -1,9 +1,11 @@
 .block {border:1px solid;margin-bottom:1em;}
-.block .header h2 {margin:4px;}
-.block .header .block_action {float:right;margin:2px 4px 0;vertical-align:top;}
-.block .header .block_action input {margin-right:2px;}
-.block .header .commands {margin-left:4px;}
-.block .header .commands .icon img {width:12px;height:12px;margin-right:3px;}
+.block .header h2 { padding: .2em 0 0 .2em; margin: 0;}
+.block .header .block_action {float:right;margin:4px 0 3px 0;vertical-align:top;}
+.block .header .block_action img,
+.block .header .block_action input {margin:0 3px; width: 12px; height: 12px;}
+.block .header .commands { text-align: right; clear: both;}
+.block .header .commands > a { margin:0 3px; }
+.block .header .commands .icon img {width:12px;height:12px;}
 .block .content {padding:4px;}
 .block.hidden .content {display: none;}
 .block .content .userpicture {width:16px;height:16px;margin-right:4px;}
@@ -32,4 +34,5 @@
 /** Overide for RTL layout **/
 .dir-rtl .block .header,
 .dir-rtl .block h2.header {text-align:right;}
-.dir-rtl .block .header .commands { text-align: right;}
+.dir-rtl .block .header .commands { text-align: left;}
+.dir-rtl .block .header .block_action { float: left; margin-left: 4px; margin-left: 0;}

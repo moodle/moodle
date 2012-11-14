@@ -532,9 +532,15 @@ M.core_dock.fixTitleOrientation = function(item, title, text) {
         'position' : 'relative',
         'fontSize' : fontsize,
         'width' : width,
-        'top' : width/2,
-        'right' : width/2 - height
+        'top' : width/2
     });
+
+    // Positioning is different when in RTL mode.
+    if (Y.one(document.body).hasClass('dir-rtl')) {
+        title.setStyle('left', width/2 - height);
+    } else {
+        title.setStyle('right', width/2 - height);
+    }
 
     // Rotate the text
     title.setStyles({
@@ -922,7 +928,7 @@ M.core_dock.genericblock.prototype = {
             }, this);
             // Add a close icon
             // Must set the image src seperatly of we get an error with XML strict headers
-            var closeicon = Y.Node.create('<span class="hidepanelicon" tabindex="0"><img alt="" style="width:11px;height:11px;cursor:pointer;" /></span>');
+            var closeicon = Y.Node.create('<span class="hidepanelicon" tabindex="0"><img alt="" /></span>');
             closeicon.one('img').setAttribute('src', M.util.image_url('t/dockclose', 'moodle'));
             closeicon.on('forceclose|click', this.hide, this);
             closeicon.on('dock:actionkey',this.hide, this, {actions:{enter:true,toggle:true}});

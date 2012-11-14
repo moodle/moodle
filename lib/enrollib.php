@@ -444,7 +444,7 @@ function enrol_add_course_navigation(navigation_node $coursenode, $course) {
         if ($course->id == SITEID or (!empty($CFG->adminsassignrolesincourse) and is_siteadmin())) {
             if (has_capability('moodle/role:assign', $coursecontext)) {
                 $url = new moodle_url('/admin/roles/assign.php', array('contextid'=>$coursecontext->id));
-                $permissionsnode->add(get_string('assignedroles', 'role'), $url, navigation_node::TYPE_SETTING, null, 'roles', new pix_icon('i/roles', ''));
+                $permissionsnode->add(get_string('assignedroles', 'role'), $url, navigation_node::TYPE_SETTING, null, 'roles', new pix_icon('i/assignroles', ''));
             }
         }
         // Check role permissions
@@ -459,7 +459,7 @@ function enrol_add_course_navigation(navigation_node $coursenode, $course) {
         //TODO, create some new UI for role assignments at course level
         if (has_capability('moodle/role:assign', $coursecontext)) {
             $url = new moodle_url('/enrol/otherusers.php', array('id'=>$course->id));
-            $usersnode->add(get_string('notenrolledusers', 'enrol'), $url, navigation_node::TYPE_SETTING, null, 'otherusers', new pix_icon('i/roles', ''));
+            $usersnode->add(get_string('notenrolledusers', 'enrol'), $url, navigation_node::TYPE_SETTING, null, 'otherusers', new pix_icon('i/assignroles', ''));
         }
     }
 

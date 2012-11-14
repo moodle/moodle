@@ -9,8 +9,8 @@
 
 /** For the panel the docked blocks are shown in */
 #dockeditempanel .dockeditempanel_content {border-color:#AAA;}
-#dockeditempanel .dockeditempanel_hd {border-bottom-color:#AAA;padding:3px 5px;background-image:url([[pix:theme|hgradient]]);}
-#dockeditempanel .dockeditempanel_hd h2 {font-size:80%;color:#999;}
+#dockeditempanel .dockeditempanel_hd {border-bottom-color:#AAA;padding:4px;background-image:url([[pix:theme|hgradient]]);}
+#dockeditempanel .dockeditempanel_hd h2 {font-size:95%;color:#999;}
 
 /* block expansion code */
 .block_js_expansion .block_tree {overflow-x:scroll;}

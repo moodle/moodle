@@ -2300,14 +2300,14 @@ function grade_extend_settings($plugininfo, $courseid) {
     if ($imports = grade_helper::get_plugins_import($courseid)) {
         $importnode = $gradenode->add($strings['import'], null, navigation_node::TYPE_CONTAINER);
         foreach ($imports as $import) {
-            $importnode->add($import->string, $import->link, navigation_node::TYPE_SETTING, null, $import->id, new pix_icon('i/restore', ''));
+            $importnode->add($import->string, $import->link, navigation_node::TYPE_SETTING, null, $import->id, new pix_icon('i/import', ''));
         }
     }
 
     if ($exports = grade_helper::get_plugins_export($courseid)) {
         $exportnode = $gradenode->add($strings['export'], null, navigation_node::TYPE_CONTAINER);
         foreach ($exports as $export) {
-            $exportnode->add($export->string, $export->link, navigation_node::TYPE_SETTING, null, $export->id, new pix_icon('i/backup', ''));
+            $exportnode->add($export->string, $export->link, navigation_node::TYPE_SETTING, null, $export->id, new pix_icon('i/export', ''));
         }
     }
 

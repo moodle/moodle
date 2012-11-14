@@ -11,7 +11,7 @@ body.has_dock {margin-left:30px;}
 #dock.nothingdocked {visibility: hidden;display:none;}
 #dock .dockeditem .firstdockitem {margin-top:1em;}
 #dock .dockedtitle {border-bottom:1px solid #000;border-top:1px solid #000;cursor:pointer;}
-#dock .dockedtitle h2 {font-size:0.8em;line-height:100%;text-align:center;}
+#dock .dockedtitle h2 {font-size:0.80em;line-height:100%;text-align:center;}
 #dock .dockedtitle .filterrotate {margin-left:8px;}
 #dock .controls {position:absolute;bottom:1em;text-align:center;width:100%;}
 #dock .controls img {cursor:pointer;}
@@ -23,19 +23,21 @@ body.has_dock {margin-left:30px;}
 #dockeditempanel .dockeditempanel_bd {overflow:auto;width:auto;}
 #dockeditempanel .dockeditempanel_bd .block_docked {margin:10px;}
 #dockeditempanel .dockeditempanel_bd .block_navigation .block_tree li {overflow:visible;}
-#dockeditempanel .dockeditempanel_hd {border-bottom:1px solid #000;text-align:right;}
-#dockeditempanel .dockeditempanel_hd h2 {display:inline;margin:0;padding-right:1em;}
-#dockeditempanel .dockeditempanel_hd .commands {display:inline;}
-#dockeditempanel .dockeditempanel_hd .commands img {margin-right:2px;vertical-align:middle;}
+#dockeditempanel .dockeditempanel_hd {border-bottom:1px solid #000;}
+#dockeditempanel .dockeditempanel_hd h2 {display:block;margin:0;padding-right:1em;}
+#dockeditempanel .dockeditempanel_hd .commands {display:block;text-align:right;}
+#dockeditempanel .dockeditempanel_hd .commands > a,
+#dockeditempanel .dockeditempanel_hd .commands > span { margin:0 3px; }
+#dockeditempanel .dockeditempanel_hd .commands img,
+#dockeditempanel .dockeditempanel_hd .commands input {vertical-align:middle; width: 12px; height: 12px;}
+#dockeditempanel .dockeditempanel_hd .commands .hidepanemicon img { cursor:pointer; }
 
 /** IE 6 doesn't support fixed pos elements **/
 .ie6 #dockeditempanel {position:absolute;}
 
-/** Overide for RTL layout **/
-.dir-rtl #dockeditempanel {left:670%;}
-
 /* right align the DOCK panel
 ------------------------------*/
+.dir-rtl #dockeditempanel .dockeditempanel_hd .commands {text-align: left;}
 .dir-rtl #dockeditempanel {right: 100%;}
 .dir-rtl #dock {left:auto;right: 0%; border-left: 1px solid #DDD;}
 .dir-rtl #dock .dockedtitle { border-bottom: 1px solid #DDD;border-top: 1px solid #EEE;  cursor: pointer;}

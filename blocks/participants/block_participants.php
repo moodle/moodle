@@ -37,7 +37,7 @@ class block_participants extends block_list {
             }
         }
 
-        $icon = '<img src="'.$OUTPUT->pix_url('i/users') . '" class="icon" alt="" />&nbsp;';
+        $icon = '<img src="'.$OUTPUT->pix_url('i/users') . '" class="icon" alt="" />';
         $this->content->items[] = '<a title="'.get_string('listofallpeople').'" href="'.
                                   $CFG->wwwroot.'/user/index.php?contextid='.$currentcontext->id.'">'.$icon.get_string('participants').'</a>';
 
