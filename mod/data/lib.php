@@ -2172,17 +2172,25 @@ abstract class data_preset_importer {
      * @param stored_file $fileobj the directory to look in. null if using a conventional directory
      * @param string $dir the directory to look in. null if using the Moodle file storage
      * @param string $filename the name of the file we want
-     * @return string the contents of the file
+     * @return string the contents of the file or null if the file doesn't exist.
      */
     public function data_preset_get_file_contents(&$filestorage, &$fileobj, $dir, $filename) {
         if(empty($filestorage) || empty($fileobj)) {
             if (substr($dir, -1)!='/') {
                 $dir .= '/';
             }
-            return file_get_contents($dir.$filename);
+            if (file_exists($dir.$filename)) {
+                return file_get_contents($dir.$filename);
+            } else {
+                return null;
+            }
         } else {
-            $file = $filestorage->get_file(DATA_PRESET_CONTEXT, DATA_PRESET_COMPONENT, DATA_PRESET_FILEAREA, 0, $fileobj->get_filepath(), $filename);
-            return $file->get_content();
+            if ($filestorage->file_exists(DATA_PRESET_CONTEXT, DATA_PRESET_COMPONENT, DATA_PRESET_FILEAREA, 0, $fileobj->get_filepath(), $filename)) {
+                $file = $filestorage->get_file(DATA_PRESET_CONTEXT, DATA_PRESET_COMPONENT, DATA_PRESET_FILEAREA, 0, $fileobj->get_filepath(), $filename);
+                return $file->get_content();
+            } else {
+                return null;
+            }
         }
 
     }
@@ -2202,7 +2210,8 @@ abstract class data_preset_importer {
             $files = $fs->get_area_files(DATA_PRESET_CONTEXT, DATA_PRESET_COMPONENT, DATA_PRESET_FILEAREA);
 
             //preset name to find will be the final element of the directory
-            $presettofind = end(explode('/',$this->directory));
+            $explodeddirectory = explode('/', $this->directory);
+            $presettofind = end($explodeddirectory);
 
             //now go through the available files available and see if we can find it
             foreach ($files as $file) {
@@ -2283,15 +2292,9 @@ abstract class data_preset_importer {
         $result->settings->rsstitletemplate   = $this->data_preset_get_file_contents($fs, $fileobj,$this->directory,"rsstitletemplate.html");
         $result->settings->csstemplate        = $this->data_preset_get_file_contents($fs, $fileobj,$this->directory,"csstemplate.css");
         $result->settings->jstemplate         = $this->data_preset_get_file_contents($fs, $fileobj,$this->directory,"jstemplate.js");
+        $result->settings->asearchtemplate    = $this->data_preset_get_file_contents($fs, $fileobj,$this->directory,"asearchtemplate.html");
 
-        //optional
-        if (file_exists($this->directory."/asearchtemplate.html")) {
-            $result->settings->asearchtemplate = $this->data_preset_get_file_contents($fs, $fileobj,$this->directory,"asearchtemplate.html");
-        } else {
-            $result->settings->asearchtemplate = NULL;
-        }
         $result->settings->instance = $this->module->id;
-
         return $result;
     }
 
