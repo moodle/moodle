@@ -64,14 +64,6 @@
         rss_add_http_header($modcontext, 'mod_forum', $forum, $rsstitle);
     }
 
-    if ($forum->type == 'news') {
-        if (!($USER->id == $discussion->userid || (($discussion->timestart == 0
-            || $discussion->timestart <= time())
-            && ($discussion->timeend == 0 || $discussion->timeend > time())))) {
-            print_error('invaliddiscussionid', 'forum', "$CFG->wwwroot/mod/forum/view.php?f=$forum->id");
-        }
-    }
-
 /// move discussion if requested
     if ($move > 0 and confirm_sesskey()) {
         $return = $CFG->wwwroot.'/mod/forum/discuss.php?d='.$discussion->id;
@@ -140,9 +132,8 @@
         print_error("notexists", 'forum', "$CFG->wwwroot/mod/forum/view.php?f=$forum->id");
     }
 
-
-    if (!forum_user_can_view_post($post, $course, $cm, $forum, $discussion)) {
-        print_error('nopermissiontoview', 'forum', "$CFG->wwwroot/mod/forum/view.php?id=$forum->id");
+    if (!forum_user_can_see_post($forum, $discussion, $post, null, $cm)) {
+        print_error('noviewdiscussionspermission', 'forum', "$CFG->wwwroot/mod/forum/view.php?id=$forum->id");
     }
 
     if ($mark == 'read' or $mark == 'unread') {
