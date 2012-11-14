@@ -485,13 +485,16 @@ class google_picasa {
      *
      * @return mixes $files Array in the format get_listing uses for folders
      */
-    public function get_albums(){
-        $content = $this->google_curl->get(google_picasa::LIST_ALBUMS_URL);
-        $xml = new SimpleXMLElement($content);
-
+    public function get_albums() {
         $files = array();
+        $content = $this->google_curl->get(google_picasa::LIST_ALBUMS_URL);
 
-        foreach($xml->entry as $album){
+        if (empty($content)) {
+            return $files;
+        }
+
+        $xml = new SimpleXMLElement($content);
+        foreach ($xml->entry as $album) {
             $gphoto = $album->children('http://schemas.google.com/photos/2007');
 
             $mediainfo = $album->children('http://search.yahoo.com/mrss/');
@@ -507,7 +510,6 @@ class google_picasa {
                 'thumbnail_height' => 160,
                 'children' => array(),
             );
-
         }
 
         return $files;
@@ -520,14 +522,16 @@ class google_picasa {
      * @param string $rawxml XML from picasa api
      * @return mixed $files A list of files for the file picker
      */
-    public function get_photo_details($rawxml){
+    public function get_photo_details($rawxml) {
+        $files = array();
+        if (empty($rawxml)) {
+            return $files;
+        }
 
         $xml = new SimpleXMLElement($rawxml);
         $this->lastalbumname = (string)$xml->title;
 
-        $files = array();
-
-        foreach($xml->entry as $photo){
+        foreach ($xml->entry as $photo) {
             $gphoto = $photo->children('http://schemas.google.com/photos/2007');
 
             $mediainfo = $photo->children('http://search.yahoo.com/mrss/');
