@@ -88,6 +88,13 @@ class core_phpunit_generator_testcase extends advanced_testcase {
 
         $page = $generator->create_module('page', array('course'=>$SITE->id));
         $this->assertNotEmpty($page);
+        $cm = get_coursemodule_from_instance('page', $page->id, $SITE->id, true);
+        $this->assertEquals(0, $cm->sectionnum);
+
+        $page = $generator->create_module('page', array('course'=>$SITE->id), array('section'=>3));
+        $this->assertNotEmpty($page);
+        $cm = get_coursemodule_from_instance('page', $page->id, $SITE->id, true);
+        $this->assertEquals(3, $cm->sectionnum);
     }
 
     public function test_create_block() {
