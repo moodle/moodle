@@ -5299,7 +5299,8 @@ class admin_page_manageqtypes extends admin_externalpage {
      */
     public function __construct() {
         global $CFG;
-        parent::__construct('manageqtypes', get_string('manageqtypes', 'admin'), "$CFG->wwwroot/$CFG->admin/qtypes.php");
+        parent::__construct('manageqtypes', get_string('manageqtypes', 'admin'),
+                new moodle_url('/admin/qtypes.php'));
     }
 
     /**

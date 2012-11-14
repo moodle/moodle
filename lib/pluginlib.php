@@ -2927,9 +2927,11 @@ class plugininfo_qtype extends plugininfo_base {
         $section = $this->get_settings_section_name();
 
         $settings = null;
-        if ($hassiteconfig && file_exists($this->full_path('settings.php'))) {
+        $systemcontext = context_system::instance();
+        if (($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) &&
+                file_exists($this->full_path('settings.php'))) {
             $settings = new admin_settingpage($section, $this->displayname,
-                    'moodle/site:config', $this->is_enabled() === false);
+                    'moodle/question:config', $this->is_enabled() === false);
             include($this->full_path('settings.php')); // this may also set $settings to null
         }
         if ($settings) {
