@@ -137,7 +137,7 @@ abstract class user_selector_base {
      * Clear the list of excluded user ids.
      */
     public function clear_exclusions() {
-        $exclude = array();
+        $this->exclude = array();
     }
 
     /**
