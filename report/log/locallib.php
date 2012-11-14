@@ -281,7 +281,10 @@ function report_log_print_mnet_selector_form($hostid, $course, $selecteduser=0, 
     $timemidnight = $today = usergetmidnight($timenow);
 
     // Put today up the top of the list
-    $dates = array("$timemidnight" => get_string("today").", ".userdate($timenow, $strftimedate) );
+    $dates = array(
+        "0" => get_string('alldays'),
+        "$timemidnight" => get_string("today").", ".userdate($timenow, $strftimedate)
+    );
 
     if (!$course->startdate or ($course->startdate > $timenow)) {
         $course->startdate = $course->timecreated;
@@ -295,7 +298,7 @@ function report_log_print_mnet_selector_form($hostid, $course, $selecteduser=0, 
         $numdates++;
     }
 
-    if ($selecteddate == "today") {
+    if ($selecteddate === "today") {
         $selecteddate = $today;
     }
 
@@ -355,7 +358,7 @@ function report_log_print_mnet_selector_form($hostid, $course, $selecteduser=0, 
     }
 
     echo html_writer::label(get_string('date'), 'menudate', false, array('class' => 'accesshide'));
-    echo html_writer::select($dates, "date", $selecteddate, get_string("alldays"));
+    echo html_writer::select($dates, "date", $selecteddate, false);
     echo html_writer::label(get_string('showreports'), 'menumodid', false, array('class' => 'accesshide'));
     echo html_writer::select($activities, "modid", $selectedactivity, get_string("allactivities"));
     echo html_writer::label(get_string('actions'), 'menumodaction', false, array('class' => 'accesshide'));
