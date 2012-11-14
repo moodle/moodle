@@ -4493,6 +4493,7 @@ function include_course_ajax($course, $usedmodules = array(), $enabledmodules = 
         'courseid' => $course->id,
         'pagetype' => $PAGE->pagetype,
         'pagelayout' => $PAGE->pagelayout,
+        'subpage' => $PAGE->subpage,
         'regions' => $PAGE->blocks->get_regions(),
     );
     $PAGE->requires->yui_module('moodle-core-blocks', 'M.core_blocks.init_dragdrop', array($params), null, true);
