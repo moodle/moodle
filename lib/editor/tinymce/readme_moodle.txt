@@ -50,6 +50,7 @@ Modified:
  * string processing - uses our lang framework
  * form hacks
  * MDL-27890 - allow editor to be smaller
+ * MDL-25736 - French spellchecker fixes.
 
  TODO:
  * update strings to integrate with AMOS
