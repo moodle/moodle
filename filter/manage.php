@@ -160,12 +160,13 @@ if (empty($availablefilters)) {
 
     $table = new html_table();
     $table->head  = array(get_string('filter'), get_string('isactive', 'filters'));
-    $table->align = array('left', 'left');
+    $table->colclasses = array('leftalign', 'leftalign');
     if ($settingscol) {
         $table->head[] = $strsettings;
-        $table->align[] = 'left';
+        $table->colclasses[] = 'leftalign';
     }
-    $table->width = ' ';
+    $table->id = 'frontpagefiltersettings';
+    $table->attributes['class'] = 'admintable';
     $table->data = array();
 
     // iterate through filters adding to display table

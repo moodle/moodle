@@ -3,7 +3,53 @@
  **/
 .formtable tbody th {font-weight: normal;text-align: right;}
 
-.path-admin .manageauthtable {width:100%;}
+.path-admin #manageauthtable,
+.path-admin .admintable {width: 100%;}
+
+.path-admin #assignrole {width: 60%;margin-left: auto;margin-right: auto;}
+.path-admin .admintable .leftalign {text-align: left;}
+.path-admin .admintable .centeralign {text-align: center;}
+
+.path-admin .admintable.environmenttable .name,
+.path-admin .admintable.environmenttable .status,
+.path-admin .admintable.environmenttable .info {width: 10%;white-space: nowrap;}
+
+.path-admin #cohorts .admintable .name {width: 20%;}
+.path-admin #cohorts .admintable .id,
+.path-admin #cohorts .admintable .size,
+.path-admin #cohorts .admintable .action,
+.path-admin #cohorts .admintable .source {width:10%;}
+.path-admin #cohorts .admintable .description {width: 40%;}
+
+.path-admin .admintable.externalservices .service {width: 30%;}
+.path-admin .admintable.externalservices .plugin,
+.path-admin .admintable.externalservices .delete {width: 20%;}
+.path-admin .admintable.externalservices .functions {width: 20%;}
+.path-admin .admintable.externalservices .users {width: 20%;}
+.path-admin .admintable.externalservices .action {width: 10%;}
+
+.path-admin .wsoverview.admintable .step {width: 30%;}
+.path-admin .wsoverview.admintable .status {width: 10%;}
+.path-admin .wsoverview.admintable .description {width: 60%;}
+
+.path-admin #assignrole .admintable .role,
+.path-admin #assignrole .admintable .userrole,
+.path-admin #assignrole .admintable .roleholder {white-space: nowrap;}
+
+.path-admin .admintable.environmenttable .report {width: 100%;}
+
+.path-admin #configchanges .admintable .date {width: 30%;}
+.path-admin #configchanges .admintable .name,
+.path-admin #configchanges .admintable .plugin,
+.path-admin #configchanges .admintable .setting {width: 10%;}
+.path-admin #configchanges .admintable .newvalue,
+.path-admin #configchanges .admintable .originalvalue {width: 20%;}
+
+.path-admin .securityreport.admintable .issue {width: 30%;}
+.path-admin .securityreport.admintable .status {width: 10%;}
+.path-admin .securityreport.admintable .desc {width: 50%;}
+.path-admin .securityreport.admintable .config {width: 10%;}
+.path-admin #securityreporttable .admintable  .desc {width: 60%;}
 
 #page-admin-index .c0 {vertical-align: top;}
 #page-admin-index .c1 {vertical-align: middle;}

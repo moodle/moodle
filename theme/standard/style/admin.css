@@ -128,7 +128,7 @@ table.flexible .r1 {background-color: #FAFAFA;}
 #page-admin-roles-manage .rolecap,
 #page-admin-roles-override .rolecap {border:none;border-bottom:1px solid #CECECE;}
 
-.path-admin .manageauthtable {width:90%;margin:0 auto;}
+.path-admin #manageauthtable {width:90%;margin:0 auto;}
 
 #explaincaps .rolecap.yes {background-color: #DDFFDD;}
 #explaincaps .rolecap.no {background-color: #FFDDDD;}
