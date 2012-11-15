@@ -58,6 +58,7 @@ class grade_item_testcase extends grade_base_testcase {
         $this->sub_test_grade_item_is_course_item();
         $this->sub_test_grade_item_fetch_course_item();
         $this->sub_test_grade_item_depends_on();
+        $this->sub_test_refresh_grades();
         $this->sub_test_grade_item_is_calculated();
         $this->sub_test_grade_item_set_calculation();
         $this->sub_test_grade_item_get_calculation();
@@ -481,6 +482,18 @@ class grade_item_testcase extends grade_base_testcase {
         sort($deps, SORT_NUMERIC); // for comparison
         $res = array($this->grade_items[4]->id, $this->grade_items[5]->id);
         $this->assertEquals($res, $deps);
+    }
+
+    protected function sub_test_refresh_grades() {
+        // Testing with the grade item for a mod_assignment instance.
+        $grade_item = new grade_item($this->grade_items[0], false);
+        $this->assertTrue(method_exists($grade_item, 'refresh_grades'));
+        $this->assertTrue($grade_item->refresh_grades());
+
+        // Break the grade item and check error handling.
+        $grade_item->iteminstance = 123456789;
+        $this->assertFalse($grade_item->refresh_grades());
+        $this->assertDebuggingCalled();
     }
 
     protected function sub_test_grade_item_is_calculated() {
