@@ -17,13 +17,6 @@ body.pagelayout-admin.has_dock {
     padding: 0;
     text-align: left;
 }
-.pagelayout-admin #page-header {
-    background:#97d3f4 url([[pix:theme|header]]) no-repeat top right;
-    margin-bottom: 0px;
-    height: 105px;
-    border-bottom: 1px solid #FFF;
-}
-
 .pagelayout-admin #page-header #custommenu {
     display: none;
 }
@@ -33,7 +26,6 @@ body.pagelayout-admin.has_dock {
     margin: 0;
     padding: 5px 0;
 }
-
 .pagelayout-admin #page-footer {
     text-align: center;
     height: auto;
@@ -44,7 +36,6 @@ body.pagelayout-admin.has_dock {
     padding: 0;
     text-align: center;
 }
-
 .pagelayout-admin #page-content {
     background: #FFF url([[pix:theme|top_bg]]) repeat-x center top;
     float: none;
