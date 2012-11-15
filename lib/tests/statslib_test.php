@@ -246,7 +246,7 @@ class statslib_daily_testcase extends advanced_testcase {
      *
      * @param array $stats An array of arrays of arrays of both types of stats
      */
-    protected function verify_stats($expected) {
+    protected function verify_stats($expected, $output = '') {
         global $DB;
 
         // Note: We can not use $this->assertDataSetEqual($expected, $actual) because there's no
@@ -257,8 +257,13 @@ class statslib_daily_testcase extends advanced_testcase {
 
             $rows = $table->getRowCount();
 
-            $this->assertEquals($rows, sizeof($records),
-                    'Incorrect number of results returned for '. $type);
+            $message = 'Incorrect number of results returned for '. $type;
+
+            if ($output != '') {
+                $message .= "\nCron output:\n$output";
+            }
+
+            $this->assertEquals($rows, sizeof($records), $message);
 
             for ($i = 0; $i < $rows; $i++) {
                 $row   = $table->getRow($i);
@@ -275,6 +280,7 @@ class statslib_daily_testcase extends advanced_testcase {
                         break;
                     }
                 }
+
                 $this->assertGreaterThan(0, $found, 'Expected log '. var_export($row, true)
                                         ." was not found in $type ". var_export($records, true));
                 unset($records[$found]);
@@ -569,16 +575,15 @@ class statslib_daily_testcase extends advanced_testcase {
     public function test_statslib_cron_daily($logs, $stats) {
         global $CFG, $DB;
 
-        $CFG->debug = DEBUG_NONE;
-
         $this->prepare_db($logs, array('log'));
 
         // Stats cron daily uses mtrace, turn on buffering to silence output.
         ob_start();
         stats_cron_daily(1);
+        $output = ob_get_contents();
         ob_end_clean();
 
-        $this->verify_stats($stats);
+        $this->verify_stats($stats, $output);
     }
 
     /**
@@ -599,15 +604,14 @@ class statslib_daily_testcase extends advanced_testcase {
 
         $dataset = $this->load_xml_data_file(__DIR__."/fixtures/statslib-test10.xml");
 
-        $CFG->debug = DEBUG_NONE;
-
         $this->prepare_db($dataset[0], array('log'));
 
         // Stats cron daily uses mtrace, turn on buffering to silence output.
         ob_start();
         stats_cron_daily($maxdays=1);
+        $output = ob_get_contents();
         ob_end_clean();
 
-        $this->verify_stats($dataset[1]);
+        $this->verify_stats($dataset[1], $output);
     }
 }
