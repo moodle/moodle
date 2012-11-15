@@ -613,7 +613,7 @@ class database_session extends session_stub {
 
         // Finally read the full session data because we know we have the lock now.
         if (!$record = $this->database->get_record('sessions', array('id'=>$record->id))) {
-            error_log('Can read session record');
+            error_log('Cannot read session record');
             $this->failed = true;
             return '';
         }
