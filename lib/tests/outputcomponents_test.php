@@ -148,7 +148,7 @@ class user_picture_testcase extends advanced_testcase {
         // try legacy picture == 1
         $user1->picture = 1;
         $up1 = new user_picture($user1);
-        $this->assertEquals($CFG->wwwroot.'/pluginfile.php/15/user/icon/standard/f2?rev=1', $up1->get_url($page, $renderer)->out(false));
+        $this->assertEquals($CFG->wwwroot.'/pluginfile.php/'.$context1->id.'/user/icon/standard/f2?rev=1', $up1->get_url($page, $renderer)->out(false));
         $user1->picture = 11;
 
         // try valid user with picture when user context is not cached - 1 query expected
@@ -156,7 +156,7 @@ class user_picture_testcase extends advanced_testcase {
         $reads = $DB->perf_get_reads();
         $up1 = new user_picture($user1);
         $this->assertEquals($reads, $DB->perf_get_reads());
-        $this->assertEquals($CFG->wwwroot.'/pluginfile.php/15/user/icon/standard/f2?rev=11', $up1->get_url($page, $renderer)->out(false));
+        $this->assertEquals($CFG->wwwroot.'/pluginfile.php/'.$context1->id.'/user/icon/standard/f2?rev=11', $up1->get_url($page, $renderer)->out(false));
         $this->assertEquals($reads+1, $DB->perf_get_reads());
 
         // try valid user with contextid hint - no queries expected
@@ -165,7 +165,7 @@ class user_picture_testcase extends advanced_testcase {
         $reads = $DB->perf_get_reads();
         $up1 = new user_picture($user1);
         $this->assertEquals($reads, $DB->perf_get_reads());
-        $this->assertEquals($CFG->wwwroot.'/pluginfile.php/15/user/icon/standard/f2?rev=11', $up1->get_url($page, $renderer)->out(false));
+        $this->assertEquals($CFG->wwwroot.'/pluginfile.php/'.$context1->id.'/user/icon/standard/f2?rev=11', $up1->get_url($page, $renderer)->out(false));
         $this->assertEquals($reads, $DB->perf_get_reads());
 
         // try valid user without image - no queries expected
@@ -214,13 +214,13 @@ class user_picture_testcase extends advanced_testcase {
         $this->assertEquals('http://www.gravatar.com/avatar/ab53a2911ddf9b4817ac01ddcd3d975f?s=35&d=http%3A%2F%2Fwww.example.com%2Fmoodle%2Fpix%2Fu%2Ff2.png', $up2->get_url($page, $renderer)->out(false));
         // uploaded image takes precedence before gravatar
         $up1 = new user_picture($user1);
-        $this->assertEquals($CFG->wwwroot.'/pluginfile.php/15/user/icon/standard/f2?rev=11', $up1->get_url($page, $renderer)->out(false));
+        $this->assertEquals($CFG->wwwroot.'/pluginfile.php/'.$context1->id.'/user/icon/standard/f2?rev=11', $up1->get_url($page, $renderer)->out(false));
 
         // https version
         $CFG->httpswwwroot = str_replace('http:', 'https:', $CFG->wwwroot);
 
         $up1 = new user_picture($user1);
-        $this->assertEquals($CFG->httpswwwroot.'/pluginfile.php/15/user/icon/standard/f2?rev=11', $up1->get_url($page, $renderer)->out(false));
+        $this->assertEquals($CFG->httpswwwroot.'/pluginfile.php/'.$context1->id.'/user/icon/standard/f2?rev=11', $up1->get_url($page, $renderer)->out(false));
 
         $up3 = new user_picture($user3);
         $this->assertEquals($CFG->httpswwwroot.'/theme/image.php/standard/core/1/u/f2', $up3->get_url($page, $renderer)->out(false));
@@ -258,7 +258,7 @@ class user_picture_testcase extends advanced_testcase {
         $renderer = $page->get_renderer('core');
 
         $up1 = new user_picture($user1);
-        $this->assertEquals($CFG->wwwroot.'/pluginfile.php/15/user/icon/formal_white/f2?rev=11', $up1->get_url($page, $renderer)->out(false));
+        $this->assertEquals($CFG->wwwroot.'/pluginfile.php/'.$context1->id.'/user/icon/formal_white/f2?rev=11', $up1->get_url($page, $renderer)->out(false));
 
         $up2 = new user_picture($user2);
         $this->assertEquals($CFG->wwwroot.'/theme/image.php/formal_white/core/1/u/f2', $up2->get_url($page, $renderer)->out(false));
