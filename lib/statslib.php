@@ -596,7 +596,7 @@ function stats_cron_daily($maxdays=1) {
                        AND sud.courseid = ".SITEID."
                        AND sud.stattype='activity'
                        ) inline_view
-                 GROUP BY stattype, timeend, courseid 
+                 GROUP BY stattype, timeend, courseid
                  HAVING SUM(statsreads) > 0 OR SUM(statswrites) > 0";
 
         if ($logspresent && !stats_run_query($sql)) {
