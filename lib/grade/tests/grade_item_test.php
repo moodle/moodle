@@ -489,11 +489,6 @@ class grade_item_testcase extends grade_base_testcase {
         $grade_item = new grade_item($this->grade_items[0], false);
         $this->assertTrue(method_exists($grade_item, 'refresh_grades'));
         $this->assertTrue($grade_item->refresh_grades());
-
-        // Break the grade item and check error handling.
-        $grade_item->iteminstance = 123456789;
-        $this->assertFalse($grade_item->refresh_grades());
-        $this->assertDebuggingCalled();
     }
 
     protected function sub_test_grade_item_is_calculated() {

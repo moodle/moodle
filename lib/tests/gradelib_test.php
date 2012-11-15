@@ -34,25 +34,17 @@ class gradelib_testcase extends advanced_testcase {
 
         $this->resetAfterTest(true);
 
-        // Create a broken module instance.
-        $modinstance = new stdClass();
-        $modinstance->modname = 'doesntexist';
-
-        $this->assertFalse(grade_update_mod_grades($modinstance));
-        // A debug message should have been generated.
-        $this->assertDebuggingCalled();
-
-        // Create a course and instance of mod_assign.
+        // Create a course and instance of mod_assignment.
         $course = $this->getDataGenerator()->create_course();
 
         $assigndata['course'] = $course->id;
         $assigndata['name'] = 'lightwork assignment';
-        $modinstance = self::getDataGenerator()->create_module('assign', $assigndata);
+        $modinstance = self::getDataGenerator()->create_module('assignment', $assigndata);
 
         // grade_update_mod_grades() requires 2 additional properties, cmidnumber and modname.
-        $cm = get_coursemodule_from_instance('assign', $modinstance->id, 0, false, MUST_EXIST);
+        $cm = get_coursemodule_from_instance('assignment', $modinstance->id, 0, false, MUST_EXIST);
         $modinstance->cmidnumber = $cm->id;
-        $modinstance->modname = 'assign';
+        $modinstance->modname = 'assignment';
 
         $this->assertTrue(grade_update_mod_grades($modinstance));
     }
