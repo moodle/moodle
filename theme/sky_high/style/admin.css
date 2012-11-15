@@ -1,10 +1,5 @@
 /** Admin layout **/
 
-body.pagelayout-admin {
-    background-image: none;
-    background-color: #fff;
-}
-
 body.pagelayout-admin.has_dock {
     margin-left: 30px;
 }
