@@ -1252,6 +1252,7 @@ function get_module_types_names($plural = false) {
 function course_set_marker($courseid, $marker) {
     global $DB;
     $DB->set_field("course", "marker", $marker, array('id' => $courseid));
+    format_base::reset_course_cache($courseid);
 }
 
 /**
