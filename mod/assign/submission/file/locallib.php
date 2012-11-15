@@ -90,7 +90,7 @@ class assign_submission_file extends assign_submission_plugin {
         if ($COURSE->maxbytes == 0) {
             $choices[0] = get_string('siteuploadlimit', 'assignsubmission_file');
         } else {
-            $choices[0] = get_string('courseuploadlimit') . ' (' . display_size($COURSE->maxbytes) . ')';
+            $choices = array(0=>get_string('courseuploadlimit') . ' (' . display_size($COURSE->maxbytes) . ')') + $choices;
         }
         $settings[] = array('type' => 'select',
                             'name' => 'maxsubmissionsizebytes',
