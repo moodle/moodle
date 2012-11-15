@@ -203,7 +203,7 @@ foreach ($users as $userid=>&$user) {
     $user['picture'] = $OUTPUT->render($user['picture']);
     $user['role'] = $renderer->user_roles_and_actions($userid, $user['roles'], $manager->get_assignable_roles(), $canassign, $PAGE->url);
     $user['group'] = $renderer->user_groups_and_actions($userid, $user['groups'], $manager->get_all_groups(), has_capability('moodle/course:managegroups', $manager->get_context()), $PAGE->url);
-    $user['enrol'] = $renderer->user_enrolments_and_actions($user['enrolments']);;
+    $user['enrol'] = $renderer->user_enrolments_and_actions($user['enrolments']);
 }
 $table->set_total_users($manager->get_total_users());
 $table->set_users($users);

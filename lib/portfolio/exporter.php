@@ -335,7 +335,7 @@ class portfolio_exporter {
                 $mform->display();
                 echo $OUTPUT->box_end();
                 echo $OUTPUT->footer();
-                return false;;
+                return false;
             }
         } else {
             $this->noexportconfig = true;

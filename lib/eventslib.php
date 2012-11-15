@@ -515,7 +515,7 @@ function events_trigger($eventname, $eventdata) {
                     events_get_handlers('reset');
 
                 } else {
-                    $errormessage = 'Unknown error';;
+                    $errormessage = 'Unknown error';
                     $result = events_dispatch($handler, $eventdata, $errormessage);
                     if ($result === true) {
                         // everything is fine - event dispatched

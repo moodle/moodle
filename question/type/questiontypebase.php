@@ -342,7 +342,7 @@ class question_type {
         if (empty($form->questiontext['text'])) {
             $question->questiontext = '';
         } else {
-            $question->questiontext = trim($form->questiontext['text']);;
+            $question->questiontext = trim($form->questiontext['text']);
         }
         $question->questiontextformat = !empty($form->questiontext['format']) ?
                 $form->questiontext['format'] : 0;

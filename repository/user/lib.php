@@ -63,7 +63,7 @@ class repository_user extends repository {
         if (!empty($encodedpath)) {
             $params = unserialize(base64_decode($encodedpath));
             if (is_array($params)) {
-                $filepath = clean_param($params['filepath'], PARAM_PATH);;
+                $filepath = clean_param($params['filepath'], PARAM_PATH);
                 $filename = clean_param($params['filename'], PARAM_FILE);
             }
         } else {

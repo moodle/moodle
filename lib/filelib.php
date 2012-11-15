@@ -1318,7 +1318,7 @@ function download_file_content($url, $headers=null, $postdata=null, $fullrespons
             $response->error         = 'Unknown cURL error';
 
         } else {
-            $response = new stdClass();;
+            $response = new stdClass();
             $response->status        = (string)$info['http_code'];
             $response->headers       = $received->headers;
             $response->response_code = $received->headers[0];

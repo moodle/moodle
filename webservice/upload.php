@@ -131,7 +131,7 @@ foreach ($files as $file) {
     $file_record->filepath  = $filepath;
     $file_record->itemid    = 0;
     $file_record->license   = $CFG->sitedefaultlicense;
-    $file_record->author    = fullname($authenticationinfo['user']);;
+    $file_record->author    = fullname($authenticationinfo['user']);
     $file_record->source    = '';
 
     //Check if the file already exist

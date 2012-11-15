@@ -122,7 +122,7 @@ class lesson_page_type_endofbranch extends lesson_page {
             $answer = new stdClass;
         }
 
-        $answer->timemodified = time();;
+        $answer->timemodified = time();
         if (isset($properties->jumpto[0])) {
             $answer->jumpto = $properties->jumpto[0];
         }

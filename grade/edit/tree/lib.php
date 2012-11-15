@@ -315,7 +315,7 @@ class grade_edit_tree {
             $endcell->colspan = (19 - $level);
             $endcell->attributes['class'] = 'colspan ' . $levelclass;
 
-            $returnrows[] = new html_table_row(array($endcell));;
+            $returnrows[] = new html_table_row(array($endcell));
 
         } else { // Dealing with a grade item
 

@@ -132,7 +132,7 @@ class qformat_xhtml extends qformat_default {
                 $quest_text = $this->repchar( $subquestion->questiontext );
                 $dropdown = html_writer::label(get_string('answer', 'qtype_match', $option+1), 'quest_'.$id.'_'.$option, false, array('class' => 'accesshide'));
                 $dropdown .= html_writer::select($selectoptions, "quest_{$id}_{$option}", '', false, array('id' => "quest_{$id}_{$option}"));
-                $expout .= html_writer::tag('li', $quest_text);;
+                $expout .= html_writer::tag('li', $quest_text);
                 $expout .= $dropdown;
                 $option++;
             }

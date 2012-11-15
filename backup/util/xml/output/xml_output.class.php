@@ -51,7 +51,7 @@ abstract class xml_output {
 
     public function __construct($usebuffer = true) {
         $this->inittime   = microtime(true);
-        $this->finishtime = $this->inittime;;
+        $this->finishtime = $this->inittime;
         $this->sentbytes  = 0;
 
         $this->usebuffer         = $usebuffer;

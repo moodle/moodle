@@ -82,7 +82,7 @@ function report_log_can_access_user_report($user, $course) {
         $today = true;
     }
     if (has_capability('report/log:viewtoday', $coursecontext)) {
-        $all = true;;
+        $all = true;
     }
 
     if ($today and $all) {

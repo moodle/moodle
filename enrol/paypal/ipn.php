@@ -184,7 +184,7 @@ if (strlen($result) > 0) {
         }
 
         if (!$course = $DB->get_record('course', array('id'=>$data->courseid))) { // Check that course exists
-            message_paypal_error_to_admin("Course $data->courseid doesn't exist", $data);;
+            message_paypal_error_to_admin("Course $data->courseid doesn't exist", $data);
             die;
         }
 

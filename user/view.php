@@ -288,7 +288,7 @@ if (!isset($hiddenfields['mycourses'])) {
         $courselisting = '';
         foreach ($mycourses as $mycourse) {
             if ($mycourse->category) {
-                $ccontext = context_course::instance($mycourse->id);;
+                $ccontext = context_course::instance($mycourse->id);
                 $cfullname = format_string($mycourse->fullname, true, array('context' => $ccontext));
                 if ($mycourse->id != $course->id){
                     $class = '';

@@ -310,7 +310,7 @@ function mnet_encrypt_message($message, $remote_certificate) {
  * @return  string              The signature over that text
  */
 function mnet_get_keypair() {
-    global $CFG, $DB;;
+    global $CFG, $DB;
     static $keypair = null;
     if (!is_null($keypair)) return $keypair;
     if ($result = get_config('mnet', 'openssl')) {

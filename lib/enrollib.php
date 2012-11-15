@@ -1545,7 +1545,7 @@ abstract class enrol_plugin {
             return NULL;
         }
 
-        return new moodle_url("/enrol/$name/unenrolself.php", array('enrolid'=>$instance->id));;
+        return new moodle_url("/enrol/$name/unenrolself.php", array('enrolid'=>$instance->id));
     }
 
     /**

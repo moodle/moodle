@@ -2089,7 +2089,7 @@ class core_renderer extends renderer_base {
         $attributes = array('src'=>$src, 'alt'=>$alt, 'title'=>$alt, 'class'=>$class, 'width'=>$size, 'height'=>$size);
 
         // get the image html output fisrt
-        $output = html_writer::empty_tag('img', $attributes);;
+        $output = html_writer::empty_tag('img', $attributes);
 
         // then wrap it in link if needed
         if (!$userpicture->link) {
