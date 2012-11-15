@@ -360,7 +360,7 @@ class cachestore_static extends static_data_store implements cache_store, cache_
         // Do something here perhaps.
         $cache = new cachestore_static('Static store');
         $cache->initialise($definition);
-        return $cache;;
+        return $cache;
     }
 
     /**

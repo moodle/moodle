@@ -239,7 +239,7 @@ class cachestore_mongodb implements cache_store {
      * @return bool
      */
     public function supports_native_ttl() {
-        return false;;
+        return false;
     }
 
     /**
