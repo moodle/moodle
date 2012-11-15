@@ -583,7 +583,7 @@ function print_log_csv($course, $user, $date, $order='l.time DESC', $modname,
             $ld = $DB->get_record('log_display', array('module'=>$log->module, 'action'=>$log->action));
             $ldcache[$log->module][$log->action] = $ld;
         }
-        if ($ld && !empty($log->info)) {
+        if ($ld && is_numeric($log->info)) {
             // ugly hack to make sure fullname is shown correctly
             if (($ld->mtable == 'user') and ($ld->field ==  $DB->sql_concat('firstname', "' '" , 'lastname'))) {
                 $log->info = fullname($DB->get_record($ld->mtable, array('id'=>$log->info)), true);
@@ -682,7 +682,7 @@ function print_log_xls($course, $user, $date, $order='l.time DESC', $modname,
             $ld = $DB->get_record('log_display', array('module'=>$log->module, 'action'=>$log->action));
             $ldcache[$log->module][$log->action] = $ld;
         }
-        if ($ld && !empty($log->info)) {
+        if ($ld && is_numeric($log->info)) {
             // ugly hack to make sure fullname is shown correctly
             if (($ld->mtable == 'user') and ($ld->field == $DB->sql_concat('firstname', "' '" , 'lastname'))) {
                 $log->info = fullname($DB->get_record($ld->mtable, array('id'=>$log->info)), true);
@@ -795,7 +795,7 @@ function print_log_ods($course, $user, $date, $order='l.time DESC', $modname,
             $ld = $DB->get_record('log_display', array('module'=>$log->module, 'action'=>$log->action));
             $ldcache[$log->module][$log->action] = $ld;
         }
-        if ($ld && !empty($log->info)) {
+        if ($ld && is_numeric($log->info)) {
             // ugly hack to make sure fullname is shown correctly
             if (($ld->mtable == 'user') and ($ld->field == $DB->sql_concat('firstname', "' '" , 'lastname'))) {
                 $log->info = fullname($DB->get_record($ld->mtable, array('id'=>$log->info)), true);
