@@ -58,7 +58,8 @@ class calendar_addsubscription_form extends moodleform {
 
         // URL.
         $mform->addElement('text', 'url', get_string('importfromurl', 'calendar'), array('maxsize' => '255', 'size' => '50'));
-        $mform->setType('url', PARAM_URL);
+        // Cannot set as PARAM_URL since we need to allow webcal:// protocol.
+        $mform->setType('url', PARAM_RAW);
 
         // Import file
         $mform->addElement('filepicker', 'importfile', get_string('importfromfile', 'calendar'));
@@ -103,11 +104,20 @@ class calendar_addsubscription_form extends moodleform {
      */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
-        if (empty($data['url']) && empty($data['importfile'])) {
+        $url = $data['url'];
+        if (empty($url) && empty($data['importfile'])) {
             if (!empty($data['importfrom']) && $data['importfrom'] == CALENDAR_IMPORT_FROM_FILE) {
                 $errors['importfile'] = get_string('errorrequiredurlorfile', 'calendar');
             } else {
                 $errors['url'] = get_string('errorrequiredurlorfile', 'calendar');
+            }
+        } elseif (!empty($url)) {
+            // Url is webcal protocol which is not accepted by PARAM_URL.
+            if (stripos($url, "webcal://") === 0) {
+                $url = substr($url, strlen("webcal://"));
+            }
+            if (clean_param($url, PARAM_URL) !== $url) {
+                $errors['url']  = get_string('invalidurl', 'error');
             }
         }
         return $errors;
