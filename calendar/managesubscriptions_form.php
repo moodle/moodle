@@ -104,22 +104,38 @@ class calendar_addsubscription_form extends moodleform {
      */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
-        $url = $data['url'];
-        if (empty($url) && empty($data['importfile'])) {
+
+        if (empty($data['url']) && empty($data['importfile'])) {
             if (!empty($data['importfrom']) && $data['importfrom'] == CALENDAR_IMPORT_FROM_FILE) {
                 $errors['importfile'] = get_string('errorrequiredurlorfile', 'calendar');
             } else {
                 $errors['url'] = get_string('errorrequiredurlorfile', 'calendar');
             }
-        } elseif (!empty($url)) {
-            // Url is webcal protocol which is not accepted by PARAM_URL.
-            if (stripos($url, "webcal://") === 0) {
-                $url = substr($url, strlen("webcal://"));
-            }
-            if (clean_param($url, PARAM_URL) !== $url) {
+        } else if (!empty($data['url'])) {
+            if (clean_param($data['url'], PARAM_URL) !== $data['url']) {
                 $errors['url']  = get_string('invalidurl', 'error');
             }
         }
         return $errors;
+    }
+
+    public function definition_after_data() {
+        $mform =& $this->_form;
+
+        $mform->applyFilter('url', 'calendar_addsubscription_form::strip_webcal');
+    }
+
+    /**
+     * Replace webcal:// urls with http:// as
+     * curl does not understand this protocol
+     *
+     * @param string @url url to examine
+     * @return string url with webcal:// replaced
+     */
+    public static function strip_webcal($url) {
+        if (strpos($url, 'webcal://') === 0) {
+            $url = str_replace('webcal://', 'http://', $url);
+        }
+        return $url;
     }
 }
