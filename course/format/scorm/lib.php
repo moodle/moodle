@@ -15,31 +15,60 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains general functions for the course format SCORM
+ * This file contains main class for the course format SCORM
  *
- * @since 2.0
- * @package moodlecore
+ * @since     2.0
+ * @package   format_scorm
  * @copyright 2009 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
- * The string that is used to describe a section of the course
- * e.g. Topic, Week...
+ * Main class for the Scorm course format
  *
- * @return string
+ * @package    format_scorm
+ * @copyright  2012 Marina Glancy
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-function callback_scorm_definition() {
-    return get_string('scorm');
+class format_scorm extends format_base {
+
+    /**
+     * The URL to use for the specified course
+     *
+     * @param int|stdClass $section Section object from database or just field course_sections.section
+     *     if null the course view page is returned
+     * @param array $options options for view URL. At the moment core uses:
+     *     'navigation' (bool) if true and section has no separate page, the function returns null
+     *     'sr' (int) used by multipage formats to specify to which section to return
+     * @return null|moodle_url
+     */
+    public function get_view_url($section, $options = array()) {
+        if (!empty($options['navigation']) && $section !== null) {
+            return null;
+        }
+        return new moodle_url('/course/view.php', array('id' => $this->courseid));
+    }
+
+    /**
+     * Loads all of the course sections into the navigation
+     *
+     * @param global_navigation $navigation
+     * @param navigation_node $node The course node within the navigation
+     */
+    public function extend_course_navigation($navigation, navigation_node $node) {
+        // Scorm course format does not extend course navigation
+    }
+
+    /**
+     * Returns the list of blocks to be automatically added for the newly created course
+     *
+     * @return array of default blocks, must contain two keys BLOCK_POS_LEFT and BLOCK_POS_RIGHT
+     *     each of values is an array of block names (for left and right side columns)
+     */
+    public function get_default_blocks() {
+        return array(
+            BLOCK_POS_LEFT => array(),
+            BLOCK_POS_RIGHT => array('news_items', 'recent_activity', 'calendar_upcoming')
+        );
+    }
 }
-
-/**
- * Toogle display of course contents (sections, activities)
- *
- * @return bool
- */
-function callback_scorm_display_content() {
-    return false;
-}
-
-

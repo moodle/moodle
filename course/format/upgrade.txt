@@ -13,6 +13,8 @@ format.
 * functions get_generic_section_name(), get_all_sections(), add_mod_to_section(), get_all_mods()
   are deprecated. See their phpdocs in lib/deprecatedlib.php on how to replace them
 * Course formats may now have their settings.php file as the most of other plugin types
+* Function format_section_renderer_base::is_section_current() is deprecated, overwrite/use
+  function is_section_current in format class
 
 === 2.3 ===
 

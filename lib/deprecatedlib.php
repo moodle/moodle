@@ -3044,3 +3044,24 @@ function get_course_section($section, $courseid) {
     rebuild_course_cache($courseid, true);
     return $DB->get_record("course_sections", array("id"=>$id));
 }
+
+/**
+ * Return the start and end date of the week in Weekly course format
+ *
+ * It is not recommended to use this function outside of format_weeks plugin
+ *
+ * @deprecated since 2.4
+ * @see format_weeks::get_section_dates()
+ *
+ * @param stdClass $section The course_section entry from the DB
+ * @param stdClass $course The course entry from DB
+ * @return stdClass property start for startdate, property end for enddate
+ */
+function format_weeks_get_section_dates($section, $course) {
+    debugging('Function format_weeks_get_section_dates() is deprecated. It is not recommended to'.
+            ' use it outside of format_weeks plugin', DEBUG_DEVELOPER);
+    if (isset($course->format) && $course->format === 'weeks') {
+        return course_get_format($course)->get_section_dates($section);
+    }
+    return null;
+}
