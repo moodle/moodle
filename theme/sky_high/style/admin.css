@@ -8,7 +8,6 @@ body.pagelayout-admin.has_dock {
     margin: 0 auto;
     position: relative;
 }
-.pagelayout-admin #page-header,
 .pagelayout-admin #page-footer {
     float: none;
     background: #f3f3f3 none;
