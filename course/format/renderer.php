@@ -245,7 +245,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
                 $strmoveup = get_string('moveup');
 
                 $controls[] = html_writer::link($url,
-                    html_writer::empty_tag('img', array('src' => $this->output->pix_url('t/up'),
+                    html_writer::empty_tag('img', array('src' => $this->output->pix_url('i/up'),
                     'class' => 'icon up', 'alt' => $strmoveup)),
                     array('title' => $strmoveup, 'class' => 'moveup'));
             }
@@ -257,7 +257,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
                 $strmovedown =  get_string('movedown');
 
                 $controls[] = html_writer::link($url,
-                    html_writer::empty_tag('img', array('src' => $this->output->pix_url('t/down'),
+                    html_writer::empty_tag('img', array('src' => $this->output->pix_url('i/down'),
                     'class' => 'icon down', 'alt' => $strmovedown)),
                     array('title' => $strmovedown, 'class' => 'movedown'));
             }
