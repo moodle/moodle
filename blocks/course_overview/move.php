@@ -27,47 +27,34 @@ require_once(dirname(__FILE__) . '/locallib.php');
 require_sesskey();
 require_login();
 
-$source = required_param('source', PARAM_INT);
-$move = required_param('move', PARAM_INT);
+$coursetomove = required_param('courseid', PARAM_INT);
+$moveto = required_param('moveto', PARAM_INT);
 
-list($courses_sorted, $sitecourses, $coursecount) = block_course_overview_get_sorted_courses();
-$sortorder = array_keys($courses_sorted);
-// Now resort based on new weight for chosen course.
-$neworder = array();
+list($courses, $sitecourses, $coursecount) = block_course_overview_get_sorted_courses();
+$sortedcourses = array_keys($courses);
 
-$sourcekey = array_search($source, $sortorder);
-if ($sourcekey === false) {
-    print_error("invalidcourseid", null, null, $source);
+$currentcourseindex = array_search($coursetomove, $sortedcourses);
+// If coursetomove is not found or moveto < 0 or > count($sortedcourses) then throw error.
+if ($currentcourseindex === false) {
+    print_error("invalidcourseid", null, null, $coursetomove);
+} else if (($moveto < 0) || ($moveto >= count($sortedcourses))) {
+    print_error("invalidaction");
 }
 
-$destination = $sourcekey + $move;
-if ($destination < 0) {
-    print_error("listcantmoveup");
-} else if ($destination >= count($courses_sorted)) {
-    print_error("listcantmovedown");
+// If current course index is same as destination index then don't do anything.
+if ($currentcourseindex === $moveto) {
+    redirect(new moodle_url('/my/index.php'));
 }
 
 // Create neworder list for courses.
-unset($sortorder[$sourcekey]);
-if ($move == -1) {
-    if ($destination > 0) {
-        $neworder = array_slice($sortorder, 0, $destination, true);
-    }
-    $neworder[] = $source;
-    $remaningcourses = array_slice($sortorder, $destination);
-    foreach ($remaningcourses as $courseid) {
-        $neworder[] = $courseid;
-    }
-} else if (($move == 1)) {
-    $neworder = array_slice($sortorder, 0, $destination);
-    $neworder[] = $source;
-    if (($destination) < count($courses_sorted)) {
-        $remaningcourses = array_slice($sortorder, $destination);
-        foreach ($remaningcourses as $courseid) {
-            $neworder[] = $courseid;
-        }
-    }
-}
+$neworder = array();
 
-block_course_overview_update_myorder($neworder);
+unset($sortedcourses[$currentcourseindex]);
+$neworder = array_slice($sortedcourses, 0, $moveto, true);
+$neworder[] = $coursetomove;
+$remaningcourses = array_slice($sortedcourses, $moveto);
+foreach ($remaningcourses as $courseid) {
+    $neworder[] = $courseid;
+}
+block_course_overview_update_myorder(array_values($neworder));
 redirect(new moodle_url('/my/index.php'));
