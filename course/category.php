@@ -368,7 +368,7 @@ if (!$courses) {
             // role assignment link
             if (has_capability('moodle/course:enrolreview', $coursecontext)) {
                 $url = new moodle_url('/enrol/users.php', array('id' => $acourse->id));
-                echo $OUTPUT->action_icon($url, new pix_icon('i/users', get_string('enrolledusers', 'enrol')));
+                echo $OUTPUT->action_icon($url, new pix_icon('t/enrolusers', get_string('enrolledusers', 'enrol')));
             }
 
             if (can_delete_course($acourse->id)) {
