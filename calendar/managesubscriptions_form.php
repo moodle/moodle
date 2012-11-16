@@ -123,6 +123,7 @@ class calendar_addsubscription_form extends moodleform {
         $mform =& $this->_form;
 
         $mform->applyFilter('url', 'calendar_addsubscription_form::strip_webcal');
+        $mform->applyFilter('url', 'trim');
     }
 
     /**
