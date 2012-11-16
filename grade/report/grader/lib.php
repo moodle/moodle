@@ -746,7 +746,8 @@ class grade_report_grader extends grade_report {
             'cfg'       => array('ajaxenabled'=>false),
             'items'     => array(),
             'users'     => array(),
-            'feedback'  => array()
+            'feedback'  => array(),
+            'grades'    => array(),
         );
         $jsscales = array();
 
