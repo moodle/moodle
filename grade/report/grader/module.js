@@ -594,57 +594,69 @@ M.gradereport_grader.classes.existingfield = function(ajax, userid, itemid) {
     this.editfeedback = ajax.showquickfeedback;
     this.grade = this.report.Y.one('#grade_'+userid+'_'+itemid);
 
-    if (this.report.grades) {
+    if (this.grade !== null) {
         for (var i = 0; i < this.report.grades.length; i++) {
             if (this.report.grades[i]['user']==this.userid && this.report.grades[i]['item']==this.itemid) {
                 this.oldgrade = this.report.grades[i]['grade'];
             }
         }
-    }
 
-    if (!this.oldgrade) {
-        // Assigning an empty string makes determining whether the grade has been changed easier
-        // This value is never sent to the server
-        this.oldgrade = '';
-    }
+        if (!this.oldgrade) {
+            // Assigning an empty string makes determining whether the grade has been changed easier
+            // This value is never sent to the server
+            this.oldgrade = '';
+        }
 
-    // On blur save any changes in the grade field
-    this.grade.on('blur', this.submit, this);
+        // On blur save any changes in the grade field
+        this.grade.on('blur', this.submit, this);
+
+    }
 
     // Check if feedback is enabled
     if (this.editfeedback) {
         // Get the feedback fields
         this.feedback = this.report.Y.one('#feedback_'+userid+'_'+itemid);
 
-        for(var i = 0; i < this.report.feedback.length; i++) {
-            if (this.report.feedback[i]['user']==this.userid && this.report.feedback[i]['item']==this.itemid) {
-                this.oldfeedback = this.report.feedback[i]['content'];
+        if (this.feedback !== null) {
+            for(var i = 0; i < this.report.feedback.length; i++) {
+                if (this.report.feedback[i]['user']==this.userid && this.report.feedback[i]['item']==this.itemid) {
+                    this.oldfeedback = this.report.feedback[i]['content'];
+                }
+            }
+
+            if(!this.oldfeedback) {
+                // Assigning an empty string makes determining whether the feedback has been changed easier
+                // This value is never sent to the server
+                this.oldfeedback = '';
+            }
+
+            // On blur save any changes in the feedback field
+            this.feedback.on('blur', this.submit, this);
+
+            // Override the default tab movements when moving between cells
+            this.keyevents.push(this.report.Y.on('key', this.keypress_tab, this.feedback, 'press:9', this, true));                   // Handle Tab
+            this.keyevents.push(this.report.Y.on('key', this.keypress_enter, this.feedback, 'press:13', this));                // Handle the Enter key being pressed
+            this.keyevents.push(this.report.Y.on('key', this.keypress_arrows, this.feedback, 'press:37,38,39,40+ctrl', this)); // Handle CTRL + arrow keys
+
+
+            if (this.grade !== null) {
+                // Override the default tab movements for fields in the same cell
+                this.keyevents.push(this.report.Y.on('key', function(e){e.preventDefault();this.grade.focus();}, this.feedback, 'press:9+shift', this));
+                this.keyevents.push(this.report.Y.on('key', function(e){if (e.shiftKey) {return;}e.preventDefault();this.feedback.focus();}, this.grade, 'press:9', this));
+
+                // Override the default tab movements when moving between cells
+                if (this.editfeedback) {
+                    this.keyevents.push(this.report.Y.on('key', this.keypress_tab, this.grade, 'press:9+shift', this));                // Handle Shift+Tab
+                }
             }
         }
-
-        if(!this.oldfeedback) {
-            // Assigning an empty string makes determining whether the feedback has been changed easier
-            // This value is never sent to the server
-            this.oldfeedback = '';
-        }
-
-        // On blur save any changes in the feedback field
-        this.feedback.on('blur', this.submit, this);
-
-        // Override the default tab movements when moving between cells
-        this.keyevents.push(this.report.Y.on('key', this.keypress_tab, this.grade, 'press:9+shift', this));                // Handle Shift+Tab
-        this.keyevents.push(this.report.Y.on('key', this.keypress_tab, this.feedback, 'press:9', this, true));                   // Handle Tab
-        this.keyevents.push(this.report.Y.on('key', this.keypress_enter, this.feedback, 'press:13', this));                // Handle the Enter key being pressed
-        this.keyevents.push(this.report.Y.on('key', this.keypress_arrows, this.feedback, 'press:37,38,39,40+ctrl', this)); // Handle CTRL + arrow keys
-
-        // Override the default tab movements for fields in the same cell
-        this.keyevents.push(this.report.Y.on('key', function(e){e.preventDefault();this.grade.focus();}, this.feedback, 'press:9+shift', this));
-        this.keyevents.push(this.report.Y.on('key', function(e){if (e.shiftKey) {return;}e.preventDefault();this.feedback.focus();}, this.grade, 'press:9', this));
-    } else {
+    } else if (this.grade !== null) {
         this.keyevents.push(this.report.Y.on('key', this.keypress_tab, this.grade, 'press:9', this));                      // Handle Tab and Shift+Tab
     }
-    this.keyevents.push(this.report.Y.on('key', this.keypress_enter, this.grade, 'press:13', this));                   // Handle the Enter key being pressed
-    this.keyevents.push(this.report.Y.on('key', this.keypress_arrows, this.grade, 'press:37,38,39,40+ctrl', this));    // Handle CTRL + arrow keys
+    if (this.feedback !== null) {
+        this.keyevents.push(this.report.Y.on('key', this.keypress_enter, this.grade, 'press:13', this));                   // Handle the Enter key being pressed
+        this.keyevents.push(this.report.Y.on('key', this.keypress_arrows, this.grade, 'press:37,38,39,40+ctrl', this));    // Handle CTRL + arrow keys
+    }
 };
 /**
  * Attach the required properties and methods to the existing field class
