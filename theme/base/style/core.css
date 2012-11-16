@@ -123,6 +123,8 @@ img.emoticon {vertical-align: middle;width: 15px;height: 15px;}
 form.popupform,
 form.popupform div {display: inline;}
 .arrow_button input {overflow:hidden;}
+.action-icon img.smallicon { vertical-align: text-bottom; margin-left: .45em;}
+.dir-rtl .action-icon img.smallicon { margin-right: .45em; margin-left: 0;}
 h1.main img,
 h2.main img,
 h3.main img,
@@ -279,6 +281,7 @@ input#id_externalurl {direction:ltr;}
 .addbloglink {text-align: center;}
 .blog_entry .audience {text-align: right;padding-right: 4px;}
 .blog_entry .tags {margin-top: 15px;}
+.blog_entry .tags .action-icon img.smallicon { height: 16px; width: 16px; }
 .blog_entry .content {margin-left: 43px;}
 
 /**
