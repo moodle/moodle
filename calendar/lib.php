@@ -1465,6 +1465,11 @@ function calendar_edit_event_allowed($event) {
         return false;
     }
 
+    // You cannot edit calendar subscription events presently.
+    if (!empty($event->subscriptionid)) {
+        return false;
+    }
+
     $sitecontext = context_system::instance();
     // if user has manageentries at site level, return true
     if (has_capability('moodle/calendar:manageentries', $sitecontext)) {
