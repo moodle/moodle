@@ -208,7 +208,7 @@ class theme_config_testcase extends advanced_testcase {
             // Firefox 15 on Ubuntu.
             'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:15.0) Gecko/20100101 Firefox/15.0.1' => true,
             // Opera 12.02 on Ubuntu.
-            'Opera/9.80 (X11; Linux x86_64; U; en) Presto/2.10.289 Version/12.02' => true,
+            'Opera/9.80 (X11; Linux x86_64; U; en) Presto/2.10.289 Version/12.02' => false,
             // Android browser pre 1.0
             'Mozilla/5.0 (Linux; U; Android 0.5; en-us) AppleWebKit/522+ (KHTML, like Gecko) Safari/419.3' => false,
             // Android browser 2.3 (HTC)
