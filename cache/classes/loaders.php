@@ -176,12 +176,15 @@ class cache implements cache_loader {
      * @param string $component The component this cache relates to.
      * @param string $area The area this cache relates to.
      * @param array $identifiers Any additional identifiers that should be provided to the definition.
-     * @param bool $persistent If set to true the cache will persist construction requests.
+     * @param array $options An array of options, available options are:
+     *   - simplekeys : Set to true if the keys you will use are a-zA-Z0-9_
+     *   - simpledata : Set to true if the type of the data you are going to store is scalar, or an array of scalar vars
+     *   - persistent : If set to true the cache will persist construction requests.
      * @return cache_application|cache_session|cache_store
      */
-    public static function make_from_params($mode, $component, $area, array $identifiers = array(), $persistent = false) {
+    public static function make_from_params($mode, $component, $area, array $identifiers = array(), array $options = array()) {
         $factory = cache_factory::instance();
-        return $factory->create_cache_from_params($mode, $component, $area, $identifiers, $persistent);
+        return $factory->create_cache_from_params($mode, $component, $area, $identifiers, $options);
     }
 
     /**
@@ -272,11 +275,11 @@ class cache implements cache_loader {
         // 1. Parse the key.
         $parsedkey = $this->parse_key($key);
         // 2. Get it from the persist cache if we can (only when persist is enabled and it has already been requested/set).
-        $result = $this->get_from_persist_cache($parsedkey);
+        $result = false;
+        if ($this->is_using_persist_cache()) {
+            $result = $this->get_from_persist_cache($parsedkey);
+        }
         if ($result !== false) {
-            if ($this->perfdebug) {
-                cache_helper::record_cache_hit('** static persist **', $this->definition->get_id());
-            }
             if (!is_scalar($result)) {
                 // If data is an object it will be a reference.
                 // If data is an array if may contain references.
@@ -285,8 +288,6 @@ class cache implements cache_loader {
                 $result = $this->unref($result);
             }
             return $result;
-        } else if ($this->perfdebug) {
-            cache_helper::record_cache_miss('** static persist **', $this->definition->get_id());
         }
         // 3. Get it from the store. Obviously wasn't in the persist cache.
         $result = $this->store->get($parsedkey);
@@ -906,23 +907,34 @@ class cache implements cache_loader {
             $key = $key['key'];
         }
         if (!$this->persist || !array_key_exists($key, $this->persistcache)) {
-            return false;
-        }
-        $data = $this->persistcache[$key];
-        if (!$this->has_a_ttl() || !$data instanceof cache_ttl_wrapper) {
-            if ($data instanceof cache_cached_object) {
-                $data = $data->restore_object();
-            }
-            return $data;
-        }
-        if ($data->has_expired()) {
-            $this->delete_from_persist_cache($key);
-            return false;
+            $result = false;
         } else {
-            if ($data instanceof cache_cached_object) {
-                $data = $data->restore_object();
+            $data = $this->persistcache[$key];
+            if (!$this->has_a_ttl() || !$data instanceof cache_ttl_wrapper) {
+                if ($data instanceof cache_cached_object) {
+                    $data = $data->restore_object();
+                }
+                $result = $data;
+            } else if ($data->has_expired()) {
+                $this->delete_from_persist_cache($key);
+                $result = false;
+            } else {
+                if ($data instanceof cache_cached_object) {
+                    $data = $data->restore_object();
+                }
+                $result = $data->data;
             }
-            return $data->data;
+        }
+        if ($result) {
+            if ($this->perfdebug) {
+                cache_helper::record_cache_hit('** static persist **', $this->definition->get_id());
+            }
+            return $result;
+        } else {
+            if ($this->perfdebug) {
+                cache_helper::record_cache_miss('** static persist **', $this->definition->get_id());
+            }
+            return false;
         }
     }
 

@@ -151,16 +151,19 @@ class cache_factory {
      * @param string $component
      * @param string $area
      * @param array $identifiers
-     * @param bool $persistent
+     * @param array $options An array of options, available options are:
+     *   - simplekeys : Set to true if the keys you will use are a-zA-Z0-9_
+     *   - simpledata : Set to true if the type of the data you are going to store is scalar, or an array of scalar vars
+     *   - persistent : If set to true the cache will persist construction requests.
      * @return cache_application|cache_session|cache_request
      */
-    public function create_cache_from_params($mode, $component, $area, array $identifiers = array(), $persistent = false) {
+    public function create_cache_from_params($mode, $component, $area, array $identifiers = array(), array $options = array()) {
         $key = "{$mode}_{$component}_{$area}";
         if (array_key_exists($key, $this->cachesfromparams)) {
             return $this->cachesfromparams[$key];
         }
         // Get the class. Note this is a late static binding so we need to use get_called_class.
-        $definition = cache_definition::load_adhoc($mode, $component, $area, null, $persistent);
+        $definition = cache_definition::load_adhoc($mode, $component, $area, $options);
         $definition->set_identifiers($identifiers);
         $cache = $this->create_cache($definition, $identifiers);
         if ($definition->should_be_persistent()) {
