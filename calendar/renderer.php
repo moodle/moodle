@@ -800,6 +800,7 @@ class core_calendar_renderer extends plugin_renderer_base {
                 if ($k == $subscription->pollinterval) {
                     $attributes['selected'] = 'selected';
                 }
+                $attributes['value'] = $k;
                 $html .= html_writer::tag('option', $v, $attributes);
             }
             $html .= html_writer::end_tag('select');
