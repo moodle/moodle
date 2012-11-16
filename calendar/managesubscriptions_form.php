@@ -60,15 +60,15 @@ class calendar_addsubscription_form extends moodleform {
         $mform->addElement('text', 'url', get_string('importfromurl', 'calendar'), array('maxsize' => '255', 'size' => '50'));
         $mform->setType('url', PARAM_URL);
 
-        // Import file
-        $mform->addElement('filepicker', 'importfile', get_string('importfromfile', 'calendar'));
-
         // Poll interval
         $choices = calendar_get_pollinterval_choices();
         $mform->addElement('select', 'pollinterval', get_string('pollinterval', 'calendar'), $choices);
         $mform->setDefault('pollinterval', 604800);
         $mform->addHelpButton('pollinterval', 'pollinterval', 'calendar');
         $mform->setType('pollinterval', PARAM_INT);
+
+        // Import file
+        $mform->addElement('filepicker', 'importfile', get_string('importfromfile', 'calendar'));
 
         // Disable appropriate elements depending on import from value.
         $mform->disabledIf('pollinterval', 'importfrom', 'eq', CALENDAR_IMPORT_FROM_FILE);
