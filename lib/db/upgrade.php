@@ -1465,6 +1465,14 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012111200.00);
     }
 
+    if ($oldversion < 2012111200.01) {
+        // Force the rebuild of the cache of every courses, some cached information could contain wrong icon references.
+        rebuild_course_cache();
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2012111200.01);
+    }
+
 
     return true;
 }
