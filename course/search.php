@@ -336,7 +336,7 @@ if ($courses) {
             // checks whether user can do role assignment
             if (has_capability('moodle/course:enrolreview', $coursecontext)) {
                 echo'<a title="'.get_string('enrolledusers', 'enrol').'" href="'.$CFG->wwwroot.'/enrol/users.php?id='.$course->id.'">';
-                echo '<img src="'.$OUTPUT->pix_url('i/users') . '" class="iconsmall" alt="'.get_string('enrolledusers', 'enrol').'" /></a> ' . "\n";
+                echo '<img src="'.$OUTPUT->pix_url('i/enrolusers') . '" class="iconsmall" alt="'.get_string('enrolledusers', 'enrol').'" /></a> ' . "\n";
             }
 
             // checks whether user can delete course

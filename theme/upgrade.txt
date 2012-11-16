@@ -16,6 +16,8 @@ optional changes:
 * new icons i/export and i/import (sized 16x16). Previously export and import actions used i/backup and i/restore.
 * new icon i/assignroles (sized 16x16), to prevent the use of i/roles which is 12x12.
 * new icon i/switchrole (sized 16x16), was previously using i/roles. Now is a copy of the new i/assignroles icon.
+* new icons i/enrolusers and t/enrolusers, previsouly i/users was used.
+* new icon t/cohorts (sized 12x12), to prevent the use of i/cohorts which is 16x16.
 
 === 2.3 ===
 
