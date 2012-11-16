@@ -2695,7 +2695,7 @@ function calendar_get_eventtype_choices($courseid) {
         $choices[0] = get_string('userevents', 'calendar');
     }
     if ($allowed->site) {
-        $choices[SITEID] = get_string('globalevents', 'calendar');
+        $choices[SITEID] = get_string('siteevents', 'calendar');
     }
     if (!empty($allowed->courses)) {
         $choices[$courseid] = get_string('courseevents', 'calendar');

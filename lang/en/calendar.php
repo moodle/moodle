@@ -161,6 +161,7 @@ $string['showglobalevents'] = 'Show global events';
 $string['showgroupsevents'] = 'Show group events';
 $string['showuserevents'] = 'Show user events';
 $string['shown'] = 'shown';
+$string['siteevents'] = 'Site events';
 $string['spanningevents'] = 'Events underway';
 $string['subscriptions'] = 'Subscriptions';
 $string['subscriptionname'] = 'Calendar name';
