@@ -1420,8 +1420,10 @@ class restore_ras_and_caps_structure_step extends restore_structure_step {
 
         } else if ((strpos($data->component, 'enrol_') === 0)) {
             // Deal with enrolment roles
-            if ($enrolid = $this->get_mappingid('enrol', $data->itemid)) {
-                if ($component = $DB->get_field('enrol', 'component', array('id'=>$enrolid))) {
+            
+            if ($enrolid = $this->get_mappingid('enrol', $data->itemid)) {    
+                if ($enrol_plugin_type = $DB->get_field('enrol', 'enrol', array('id'=>$enrolid))) {
+                    $component = 'enrol_' . $enrol_plugin_type;
                     //note: we have to verify component because it might have changed
                     if ($component === 'enrol_manual') {
                         // manual is a special case, we do not use components - this owudl happen when converting from other plugin
@@ -1548,7 +1550,7 @@ class restore_enrolments_structure_step extends restore_structure_step {
             // plugin requests to prevent restore of any users
             $newitemid = 0;
         }
-
+        
         $this->set_mapping('enrol', $oldid, $newitemid);
     }
 
