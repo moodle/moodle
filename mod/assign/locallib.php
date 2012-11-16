@@ -3050,7 +3050,9 @@ class assign {
         if (!$last){
             $buttonarray[] = $mform->createElement('submit', 'nosaveandnext', get_string('nosavebutnext', 'assign'));
         }
-        $mform->addGroup($buttonarray, 'navar', '', array(' '), false);
+        if (!empty($buttonarray)) {
+            $mform->addGroup($buttonarray, 'navar', '', array(' '), false);
+        }
     }
 
 
