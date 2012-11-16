@@ -74,11 +74,10 @@ class calendar_addsubscription_form extends moodleform {
         $mform->addHelpButton('pollinterval', 'pollinterval', 'calendar');
         $mform->setType('pollinterval', PARAM_INT);
 
-        // Eventtype: 0 = user, 1 = global, anything else = course ID.
         list($choices, $groups) = calendar_get_eventtype_choices($courseid);
         $mform->addElement('select', 'eventtype', get_string('eventkind', 'calendar'), $choices);
         $mform->addRule('eventtype', get_string('required'), 'required');
-        $mform->setType('eventtype', PARAM_INT);
+        $mform->setType('eventtype', PARAM_ALPHA);
 
         if (!empty($groups) and is_array($groups)) {
             $groupoptions = array();
