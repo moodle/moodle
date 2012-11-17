@@ -37,6 +37,7 @@ list($options, $unrecognized) = cli_get_params(
         'filter'             => false,
         'tags'               => false,
         'extra'              => false,
+        'with-javascript'    => false,
         'testenvironment'    => false
     ),
     array(
@@ -51,13 +52,15 @@ Ensure the user who executes the action has permissions over behat installation
 
 Options:
 --stepsdefinitions   Displays the available steps definitions (accepts --filter=\"\" option to restrict the list to the matching definitions)
---runtests           Runs the tests (accepts --tags=\"\" option to execute only the matching tests and --extra=\"\" to specify extra behat options)
+--runtests           Runs the tests (accepts --with-javascript option, --tags=\"\" option to execute only the matching tests and --extra=\"\" to specify extra behat options)
 --testenvironment    Allows the test environment to be accesses through the built-in server (accepts value 'enable' or 'disable')
 
 -h, --help     Print out this help
 
 Example from Moodle root directory:
 \$ php admin/tool/behat/cli/util.php --runtests --tags=\"tool_behat\"
+
+More info in http://docs.moodle.org/dev/Acceptance_testing#Usage
 ";
 
 if (!empty($options['help'])) {
@@ -90,7 +93,7 @@ switch ($action) {
         break;
 
     case 'runtests':
-        tool_behat::runtests($options['tags'], $options['extra']);
+        tool_behat::runtests($options['with-javascript'], $options['tags'], $options['extra']);
         break;
 
     case 'testenvironment':

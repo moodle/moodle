@@ -146,7 +146,7 @@ class tool_behat {
      * @param string $tags Restricts the executed tests to the ones that matches the tags
      * @param string $extra Extra CLI behat options
      */
-    public static function runtests($tags = false, $extra = false) {
+    public static function runtests($withjavascript = false, $tags = false, $extra = false) {
         global $CFG;
 
         // Checks that the behat reference is properly set up
@@ -159,14 +159,22 @@ class tool_behat {
 
         @set_time_limit(0);
 
-        // Priority to the one specified as argument.
-        if (!$tags) {
-            $tags = optional_param('tags', false, PARAM_ALPHANUMEXT);
+        // No javascript by default
+        if (!$withjavascript && strstr($tags, 'javascript') == false) {
+            $jsstr = '~javascript';
         }
 
+        // Adding javascript option to --tags.
         $tagsoption = '';
         if ($tags) {
+            if (!empty($jsstr)) {
+                $tags .= ',' . $jsstr;
+            }
             $tagsoption = ' --tags ' . $tags;
+
+        // No javascript by default.
+        } else if (!empty($jsstr)) {
+            $tagsoption = ' --tags ' . $jsstr;
         }
 
         if (!$extra) {
