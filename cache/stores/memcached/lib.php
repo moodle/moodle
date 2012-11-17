@@ -127,7 +127,21 @@ class cachestore_memcached extends cache_store implements cache_is_configurable 
         $this->options[Memcached::OPT_HASH] = $hashmethod;
         $this->options[Memcached::OPT_BUFFER_WRITES] = $bufferwrites;
 
-        $this->isready = true;
+        $this->connection = new Memcached(crc32($this->name));
+        $servers = $this->connection->getServerList();
+        if (empty($servers)) {
+            foreach ($this->options as $key => $value) {
+                $this->connection->setOption($key, $value);
+            }
+            $this->connection->addServers($this->servers);
+            foreach ($this->servers as $server) {
+                // Test the connection to this server.
+                if (@$this->connection->set("$server[0]:$server[1]:$server[2]", 'ping', MEMCACHE_COMPRESSED, 1)) {
+                    // We can connect at least to this server.
+                    $this->isready = true;
+                }
+            }
+        }
     }
 
     /**
@@ -142,14 +156,6 @@ class cachestore_memcached extends cache_store implements cache_is_configurable 
             throw new coding_exception('This memcached instance has already been initialised.');
         }
         $this->definition = $definition;
-        $this->connection = new Memcached(crc32($this->name));
-        $servers = $this->connection->getServerList();
-        if (empty($servers)) {
-            foreach ($this->options as $key => $value) {
-                $this->connection->setOption($key, $value);
-            }
-            $this->connection->addServers($this->servers);
-        }
     }
 
     /**
@@ -302,7 +308,10 @@ class cachestore_memcached extends cache_store implements cache_is_configurable 
      * @return boolean True on success. False otherwise.
      */
     public function purge() {
-        $this->connection->flush();
+        if ($this->isready) {
+            $this->connection->flush();
+        }
+
         return true;
     }
 
