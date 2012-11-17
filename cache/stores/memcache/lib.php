@@ -106,7 +106,15 @@ class cachestore_memcache extends cache_store implements cache_is_configurable {
             $this->servers[] = $server;
         }
 
-        $this->isready = true;
+        $this->connection = new Memcache;
+        foreach ($this->servers as $server) {
+            $this->connection->addServer($server[0], $server[1], true, $server[2]);
+            // Test the connection to this server.
+            if (@$this->connection->set("$server[0]:$server[1]:$server[2]", 'ping', MEMCACHE_COMPRESSED, 1)) {
+                // We can connect at least to this server.
+                $this->isready = true;
+            }
+        }
     }
 
     /**
@@ -121,10 +129,6 @@ class cachestore_memcache extends cache_store implements cache_is_configurable {
             throw new coding_exception('This memcache instance has already been initialised.');
         }
         $this->definition = $definition;
-        $this->connection = new Memcache;
-        foreach ($this->servers as $server) {
-            $this->connection->addServer($server[0], $server[1], true, $server[2]);
-        }
     }
 
     /**
@@ -276,7 +280,10 @@ class cachestore_memcache extends cache_store implements cache_is_configurable {
      * @return boolean True on success. False otherwise.
      */
     public function purge() {
-        $this->connection->flush();
+        if ($this->isready) {
+            $this->connection->flush();
+        }
+
         return true;
     }
 

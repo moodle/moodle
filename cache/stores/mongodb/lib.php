@@ -130,7 +130,13 @@ class cachestore_mongodb extends cache_store implements cache_is_configurable {
             $this->extendedmode = $configuration['extendedmode'];
         }
 
-        $this->isready = self::are_requirements_met();
+        try {
+            $this->connection = new Mongo($this->server, $this->options);
+            $this->database = $this->connection->selectDB($this->databasename);
+            $this->isready = true;
+        } catch (Exception $e) {
+            // Tipically, a MongoConnectionException.
+        }
     }
 
     /**
@@ -176,8 +182,6 @@ class cachestore_mongodb extends cache_store implements cache_is_configurable {
             throw new coding_exception('This mongodb instance has already been initialised.');
         }
         $this->definitionhash = $definition->generate_definition_hash();
-        $this->connection = new Mongo($this->server, $this->options);
-        $this->database = $this->connection->selectDB($this->databasename);
         $this->collection = $this->database->selectCollection($this->definitionhash);
         $this->collection->ensureIndex(array('key' => 1), array(
             'safe' => $this->usesafe,
@@ -366,8 +370,12 @@ class cachestore_mongodb extends cache_store implements cache_is_configurable {
      * @return boolean True on success. False otherwise.
      */
     public function purge() {
-        $this->collection->drop();
-        $this->collection = $this->database->selectCollection($this->definitionhash);
+        if ($this->isready) {
+            $this->collection->drop();
+            $this->collection = $this->database->selectCollection($this->definitionhash);
+        }
+
+        return true;
     }
 
     /**
