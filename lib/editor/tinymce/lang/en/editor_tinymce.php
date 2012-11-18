@@ -687,6 +687,7 @@ $string['table_dlg:bordercolor'] = 'Border color';
 $string['table_dlg:caption'] = 'Table caption';
 $string['table_dlg:cell_all'] = 'Update all cells in table';
 $string['table_dlg:cell_cell'] = 'Update current cell';
+$string['table_dlg:cell_col'] = 'Update all cells in column';
 $string['table_dlg:cell_limit'] = 'You\'ve exceeded the maximum number of cells of {$cells}.';
 $string['table_dlg:cell_row'] = 'Update all cells in row';
 $string['table_dlg:cell_title'] = 'Table cell properties';
