@@ -1292,41 +1292,6 @@ function make_cache_directory($directory, $exceptiononerror = true) {
     return make_writable_directory("$CFG->cachedir/$directory", $exceptiononerror);
 }
 
-
-/**
- * Initialises an Memcached instance
- * @global memcached $MCACHE
- * @return boolean Returns true if an mcached instance could be successfully initialised
- */
-function init_memcached() {
-    global $CFG, $MCACHE;
-
-    include_once($CFG->libdir . '/memcached.class.php');
-    $MCACHE = new memcached;
-    if ($MCACHE->status()) {
-        return true;
-    }
-    unset($MCACHE);
-    return false;
-}
-
-/**
- * Initialises an eAccelerator instance
- * @global eaccelerator $MCACHE
- * @return boolean Returns true if an eAccelerator instance could be successfully initialised
- */
-function init_eaccelerator() {
-    global $CFG, $MCACHE;
-
-    include_once($CFG->libdir . '/eaccelerator.class.php');
-    $MCACHE = new eaccelerator;
-    if ($MCACHE->status()) {
-        return true;
-    }
-    unset($MCACHE);
-    return false;
-}
-
 /**
  * Checks if current user is a web crawler.
  *
