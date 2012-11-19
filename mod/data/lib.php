@@ -1218,7 +1218,9 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
             $moreurl .= '&amp;filter=1';
         }
         $patterns[]='##more##';
-        $replacement[] = '<a href="' . $moreurl . '"><img src="' . $OUTPUT->pix_url('i/search') . '" class="iconsmall" alt="' . get_string('more', 'data') . '" title="' . get_string('more', 'data') . '" /></a>';
+        $replacement[] = '<a href="'.$moreurl.'"><img src="'.$OUTPUT->pix_url('t/preview').
+                        '" class="iconsmall" alt="'.get_string('more', 'data').'" title="'.get_string('more', 'data').
+                        '" /></a>';
 
         $patterns[]='##moreurl##';
         $replacement[] = $moreurl;
