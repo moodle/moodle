@@ -39,7 +39,6 @@ list($options, $unrecognized) = cli_get_params(
         'buildconfig'           => false,
         'buildcomponentconfigs' => false,
         'diag'                  => false,
-        'phpunitdir'            => false,
         'run'                   => false,
         'help'                  => false,
     ),
@@ -48,24 +47,12 @@ list($options, $unrecognized) = cli_get_params(
     )
 );
 
-if ($options['phpunitdir']) {
-    // nasty skodak's hack for testing of future PHPUnit versions - intentionally not documented
-    if (!file_exists($options['phpunitdir'])) {
-        cli_error('Invalid custom PHPUnit lib location');
-    }
-    $files = scandir($options['phpunitdir']);
-    foreach ($files as $file) {
-        $path = $options['phpunitdir'].'/'.$file;
-        if (!is_dir($path) or strpos($file, '.') === 0) {
-            continue;
-        }
-        ini_set('include_path', $path . PATH_SEPARATOR . ini_get('include_path'));
-    }
-    unset($files);
-    unset($file);
+if (file_exists(__DIR__.'/../../../../vendor/autoload.php')) {
+    // Composer packages present.
+    require_once(__DIR__.'/../../../../vendor/autoload.php');
 }
 
-// verify PHPUnit libs are loaded
+// Verify PHPUnit libs can be loaded.
 if (!include_once('PHPUnit/Autoload.php')) {
     phpunit_bootstrap_error(PHPUNIT_EXITCODE_PHPUNITMISSING);
 }
@@ -75,7 +62,7 @@ if ($options['run']) {
     unset($unrecognized);
 
     foreach ($_SERVER['argv'] as $k=>$v) {
-        if (strpos($v, '--run') === 0 or strpos($v, '--phpunitdir') === 0) {
+        if (strpos($v, '--run') === 0) {
             unset($_SERVER['argv'][$k]);
             $_SERVER['argc'] = $_SERVER['argc'] - 1;
         }
