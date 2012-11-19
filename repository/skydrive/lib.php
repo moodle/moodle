@@ -96,6 +96,24 @@ class repository_skydrive extends repository {
         $ret['dynload'] = true;
         $ret['nosearch'] = true;
         $ret['list'] = $this->skydrive->get_file_list($path);
+
+        // Generate path bar, always start with the plugin name.
+        $ret['path']   = array();
+        $ret['path'][] = array('name'=> $this->name, 'path'=>'');
+
+        // Now add each level folder.
+        $trail = '';
+        if (!empty($path)) {
+            $parts = explode('/', $path);
+            foreach ($parts as $folderid) {
+                if (!empty($folderid)) {
+                    $trail .= ('/'.$folderid);
+                    $ret['path'][] = array('name' => $this->skydrive->get_folder_name($folderid),
+                                           'path' => $trail);
+                }
+            }
+        }
+
         return $ret;
     }
 

@@ -44,6 +44,8 @@ class microsoft_skydrive extends oauth2_client {
     const SCOPE = 'wl.skydrive';
     /** @var string Base url to access API */
     const API = 'https://apis.live.net/v5.0';
+    /** @var cache_session cache of foldernames */
+    var $foldernamecache = null;
 
     /**
      * Construct a skydrive request object
@@ -54,6 +56,8 @@ class microsoft_skydrive extends oauth2_client {
      */
     public function __construct($clientid, $clientsecret, $returnurl) {
         parent::__construct($clientid, $clientsecret, $returnurl, self::SCOPE);
+        // Make a session cache
+        $this->foldernamecache = cache::make_from_params(cache_store::MODE_SESSION, 'repository_skydrive', 'foldernamelist');
     }
 
     /**
@@ -101,6 +105,35 @@ class microsoft_skydrive extends oauth2_client {
     }
 
     /**
+     * Returns a folder name property for a given folderid.
+     *
+     * @param string $folderid the folder id which is passed
+     * @return mixed folder name or false in case of error
+     */
+    public function get_folder_name($folderid) {
+        if (empty($folderid)) {
+            throw new coding_exception('Empty folderid passed to get_folder_name');
+        }
+
+        // Cache based on oauthtoken and folderid.
+        $cachekey = $this->folder_cache_key($folderid);
+
+        if ($foldername = $this->foldernamecache->get($cachekey)) {
+            return $foldername;
+        }
+
+        $url = self::API."/{$folderid}";
+        $ret = json_decode($this->get($url));
+        if (isset($ret->error)) {
+            $this->log_out();
+            return false;
+        }
+
+        $this->foldernamecache->set($cachekey, $ret->name);
+        return $ret->name;
+    }
+
+    /**
      * Returns a list of files the user has formated for files api
      *
      * @param string $path the path which we are in
@@ -109,10 +142,13 @@ class microsoft_skydrive extends oauth2_client {
     public function get_file_list($path = '') {
         global $OUTPUT;
 
+        $precedingpath = '';
         if (empty($path)) {
             $url = self::API."/me/skydrive/files/";
         } else {
-            $url = self::API."/{$path}/files/";
+            $parts = explode('/', $path);
+            $currentfolder = array_pop($parts);
+            $url = self::API."/{$currentfolder}/files/";
         }
 
         $ret = json_decode($this->get($url));
@@ -128,9 +164,13 @@ class microsoft_skydrive extends oauth2_client {
             switch($file->type) {
                 case 'folder':
                 case 'album':
+                    // Cache the foldername for future requests.
+                    $cachekey = $this->folder_cache_key($file->id);
+                    $this->foldernamecache->set($cachekey, $file->name);
+
                     $files[] = array(
                         'title' => $file->name,
-                        'path' => $file->id,
+                        'path' => $path.'/'.$file->id,
                         'size' => 0,
                         'date' => strtotime($file->updated_time),
                         'thumbnail' => $OUTPUT->pix_url(file_folder_icon(90))->out(false),
@@ -180,5 +220,16 @@ class microsoft_skydrive extends oauth2_client {
             }
         }
         return $files;
+    }
+
+    /**
+     * Returns a key for foldernane cache
+     *
+     * @param string $folderid the folder id which is to be cached
+     * @return string the cache key to use
+     */
+    private function folder_cache_key($folderid) {
+        // Cache based on oauthtoken and folderid.
+        return $this->get_tokenname().'_'.$folderid;
     }
 }
