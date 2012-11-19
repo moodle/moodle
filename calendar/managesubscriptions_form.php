@@ -61,18 +61,20 @@ class calendar_addsubscription_form extends moodleform {
         // Cannot set as PARAM_URL since we need to allow webcal:// protocol.
         $mform->setType('url', PARAM_RAW);
 
-        // Import file
-        $mform->addElement('filepicker', 'importfile', get_string('importfromfile', 'calendar'));
-
-        $mform->disabledIf('url',  'importfrom', 'eq', CALENDAR_IMPORT_FROM_FILE);
-        $mform->disabledIf('importfile', 'importfrom', 'eq', CALENDAR_IMPORT_FROM_URL);
-
         // Poll interval
         $choices = calendar_get_pollinterval_choices();
         $mform->addElement('select', 'pollinterval', get_string('pollinterval', 'calendar'), $choices);
         $mform->setDefault('pollinterval', 604800);
         $mform->addHelpButton('pollinterval', 'pollinterval', 'calendar');
         $mform->setType('pollinterval', PARAM_INT);
+
+        // Import file
+        $mform->addElement('filepicker', 'importfile', get_string('importfromfile', 'calendar'));
+
+        // Disable appropriate elements depending on import from value.
+        $mform->disabledIf('pollinterval', 'importfrom', 'eq', CALENDAR_IMPORT_FROM_FILE);
+        $mform->disabledIf('url',  'importfrom', 'eq', CALENDAR_IMPORT_FROM_FILE);
+        $mform->disabledIf('importfile', 'importfrom', 'eq', CALENDAR_IMPORT_FROM_URL);
 
         // Eventtype: 0 = user, 1 = global, anything else = course ID.
         list($choices, $groups) = calendar_get_eventtype_choices($courseid);
