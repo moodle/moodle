@@ -262,6 +262,7 @@ function lesson_save_question_options($question, $lesson) {
             // The first answer should always be the correct answer
             $correctanswer = clone($defaultanswer);
             $correctanswer->answer = get_string('thatsthecorrectanswer', 'lesson');
+            $correctanswer->jumpto = LESSON_NEXTPAGE;
             $DB->insert_record("lesson_answers", $correctanswer);
 
             // The second answer should always be the wrong answer
