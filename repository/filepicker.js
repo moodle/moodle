@@ -1024,7 +1024,7 @@ M.core_filepicker.init = function(Y, options) {
             var nextpage = this.active_repo.page+1;
             var args = {
                 page: nextpage,
-                repo_id: this.active_repo.id,
+                repo_id: this.active_repo.id
             };
             var action = this.active_repo.issearchresult ? 'search' : 'list';
             this.request({
