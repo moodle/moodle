@@ -81,4 +81,5 @@
 .block_rss_client .list li .description {color:#555555;font-size:0.8em;padding-left:1em;}
 
 /** Site main menu **/
-.block_site_main_menu .footer select {font-size: 0.8em;}
+.block_site_main_menu .footer select,
+.block_site_main_menu .footer input {font-size: 0.8em;}

@@ -1488,7 +1488,7 @@ class core_renderer extends renderer_base {
         $output .= html_writer::select($select->options, $select->name, $select->selected, $select->nothing, $select->attributes);
 
         $go = html_writer::empty_tag('input', array('type'=>'submit', 'value'=>get_string('go')));
-        $output .= html_writer::tag('noscript', html_writer::tag('div', $go), array('style'=>'inline'));
+        $output .= html_writer::tag('noscript', html_writer::tag('div', $go), array('class' => 'inline'));
 
         $nothing = empty($select->nothing) ? false : key($select->nothing);
         $this->page->requires->js_init_call('M.util.init_select_autosubmit', array($select->formid, $select->attributes['id'], $nothing));
@@ -1612,7 +1612,7 @@ class core_renderer extends renderer_base {
 
         if (!$select->showbutton) {
             $go = html_writer::empty_tag('input', array('type'=>'submit', 'value'=>get_string('go')));
-            $output .= html_writer::tag('noscript', html_writer::tag('div', $go), array('style'=>'inline'));
+            $output .= html_writer::tag('noscript', html_writer::tag('div', $go), array('class' => 'inline'));
             $nothing = empty($select->nothing) ? false : key($select->nothing);
             $output .= $this->page->requires->js_init_call('M.util.init_select_autosubmit', array($select->formid, $select->attributes['id'], $nothing));
         } else {
