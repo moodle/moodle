@@ -345,6 +345,61 @@ class cache_config {
     }
 
     /**
+     * Returns the definitions mapped into the given store name.
+     *
+     * @param string $storename
+     * @return array Associative array of definitions, id=>definition
+     */
+    public static function get_definitions_by_store($storename) {
+        $definitions = array();
+
+        $config = cache_config::instance();
+        $stores = $config->get_all_stores();
+        if (!array_key_exists($storename, $stores)) {
+            // The store does not exist.
+            return false;
+        }
+
+        $defmappings = $config->get_definition_mappings();
+        // Create an associative array for the definition mappings.
+        $thedefmappings = array();
+        foreach ($defmappings as $defmapping) {
+            $thedefmappings[$defmapping['definition']] = $defmapping;
+        }
+
+        // Search for matches in default mappings.
+        $defs = $config->get_definitions();
+        foreach($config->get_mode_mappings() as $modemapping) {
+            if ($modemapping['store'] !== $storename) {
+                continue;
+            }
+            foreach($defs as $id => $definition) {
+                if ($definition['mode'] !== $modemapping['mode']) {
+                    continue;
+                }
+                // Exclude custom definitions mapping: they will be managed few lines below.
+                if (array_key_exists($id, $thedefmappings)) {
+                    continue;
+                }
+                $definitions[$id] = $definition;
+            }
+        }
+
+        // Search for matches in the custom definitions mapping
+        foreach ($defmappings as $defmapping) {
+            if ($defmapping['store'] !== $storename) {
+                continue;
+            }
+            $definition = $config->get_definition_by_id($defmapping['definition']);
+            if ($definition) {
+                $definitions[$defmapping['definition']] = $definition;
+            }
+        }
+
+        return $definitions;
+    }
+
+    /**
      * Returns all of the stores that are suitable for the given mode and requirements.
      *
      * @param int $mode One of cache_store::MODE_*

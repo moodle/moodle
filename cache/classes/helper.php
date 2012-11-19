@@ -270,6 +270,8 @@ class cache_helper {
     /**
      * Purges the cache for a specific definition.
      *
+     * @todo MDL-36660: Change the signature: $aggregate must be added.
+     *
      * @param string $component
      * @param string $area
      * @param array $identifiers
@@ -278,6 +280,14 @@ class cache_helper {
     public static function purge_by_definition($component, $area, array $identifiers = array()) {
         // Create the cache.
         $cache = cache::make($component, $area, $identifiers);
+        // Initialise, in case of a store.
+        if ($cache instanceof cache_store) {
+            $factory = cache_factory::instance();
+            // TODO MDL-36660: Providing $aggregate is required for purging purposes: $definition->get_id()
+            $definition = $factory->create_definition($component, $area, null);
+            $definition->set_identifiers($identifiers);
+            $cache->initialise($definition);
+        }
         // Purge baby, purge.
         $cache->purge();
         return true;
@@ -295,8 +305,13 @@ class cache_helper {
         foreach ($instance->get_definitions() as $name => $definitionarr) {
             $definition = cache_definition::load($name, $definitionarr);
             if ($definition->invalidates_on_event($event)) {
-                // Purge the cache.
+                // Create the cache.
                 $cache = $factory->create_cache($definition);
+                // Initialise, in case of a store.
+                if ($cache instanceof cache_store) {
+                    $cache->initialise($definition);
+                }
+                // Purge the cache.
                 $cache->purge();
 
                 // We need to flag the event in the "Event invalidation" cache if it hasn't already happened.
@@ -389,16 +404,9 @@ class cache_helper {
      */
     public static function purge_all() {
         $config = cache_config::instance();
-        $stores = $config->get_all_stores();
-        $definition = cache_definition::load_adhoc(cache_store::MODE_REQUEST, 'core', 'cache_purge');
-        foreach ($stores as $store) {
-            $class = $store['class'];
-            $instance = new $class($store['name'], $store['configuration']);
-            if (!$instance->is_ready()) {
-                continue;
-            }
-            $instance->initialise($definition);
-            $instance->purge();
+
+        foreach ($config->get_all_stores() as $store) {
+            self::purge_store($store['name']);
         }
     }
 
@@ -410,21 +418,32 @@ class cache_helper {
      */
     public static function purge_store($storename) {
         $config = cache_config::instance();
-        foreach ($config->get_all_stores() as $store) {
-            if ($store['name'] !== $storename) {
-                continue;
-            }
-            $class = $store['class'];
+
+        $stores = $config->get_all_stores();
+        if (!array_key_exists($storename, $stores)) {
+            // The store does not exist.
+            return false;
+        }
+
+        $store = $stores[$storename];
+        $class = $store['class'];
+
+        // Found the store: is it ready?
+        $instance = new $class($store['name'], $store['configuration']);
+        if (!$instance->is_ready()) {
+            unset($instance);
+            return false;
+        }
+
+        foreach ($config->get_definitions_by_store($storename) as $id => $definition) {
+            $definition = cache_definition::load($id, $definition);
             $instance = new $class($store['name'], $store['configuration']);
-            if (!$instance->is_ready()) {
-                continue;
-            }
-            $definition = cache_definition::load_adhoc(cache_store::MODE_REQUEST, 'core', 'cache_purge');
             $instance->initialise($definition);
             $instance->purge();
-            return true;
+            unset($instance);
         }
-        return false;
+
+        return true;
     }
 
     /**
