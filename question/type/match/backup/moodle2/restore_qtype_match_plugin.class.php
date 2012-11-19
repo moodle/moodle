@@ -137,6 +137,25 @@ class restore_qtype_match_plugin extends restore_qtype_plugin {
                     array($newquestionid, $data->questiontext, $data->answertext),
                     'id', IGNORE_MULTIPLE);
 
+            // Not able to find the answer, let's try cleaning the answertext
+            // of all the question answers in DB as slower fallback. MDL-36683 / MDL-30018.
+            if (!$sub) {
+                $params = array('question' => $newquestionid);
+                $potentialsubs = $DB->get_records('question_match_sub', array('question' => $newquestionid), '', 'id, questiontext, answertext');
+                foreach ($potentialsubs as $potentialsub) {
+                    // Clean in the same way than {@link xml_writer::xml_safe_utf8()}.
+                    $cleanquestion = preg_replace('/[\x-\x8\xb-\xc\xe-\x1f\x7f]/is', '', $potentialsub->questiontext); // Clean CTRL chars.
+                    $cleanquestion = preg_replace("/\r\n|\r/", "\n", $cleanquestion); // Normalize line ending.
+
+                    $cleananswer = preg_replace('/[\x-\x8\xb-\xc\xe-\x1f\x7f]/is', '', $potentialsub->answertext); // Clean CTRL chars.
+                    $cleananswer = preg_replace("/\r\n|\r/", "\n", $cleananswer); // Normalize line ending.
+
+                    if ($cleanquestion === $data->questiontext && $cleananswer == $data->answertext) {
+                        $sub = $potentialsub;
+                    }
+                }
+            }
+
             // Found, let's create the mapping
             if ($sub) {
                 $this->set_mapping('question_match_sub', $oldid, $sub->id);
