@@ -536,7 +536,7 @@ M.core_dock.fixTitleOrientation = function(item, title, text) {
     });
 
     // Positioning is different when in RTL mode.
-    if (Y.one(document.body).hasClass('dir-rtl')) {
+    if (right_to_left()) {
         title.setStyle('left', width/2 - height);
     } else {
         title.setStyle('right', width/2 - height);
@@ -837,7 +837,11 @@ M.core_dock.genericblock.prototype = {
 
         // Must set the image src seperatly of we get an error with XML strict headers
         var moveto = Y.Node.create('<input type="image" class="moveto customcommand requiresjs" alt="'+M.str.block.addtodock+'" title="'+M.str.block.addtodock+'" />');
-        moveto.setAttribute('src', M.util.image_url('t/block_to_dock', 'moodle'));
+        var icon = 't/block_to_dock';
+        if (right_to_left()) {
+            icon = 't/block_to_dock_rtl';
+        }
+        moveto.setAttribute('src', M.util.image_url(icon, 'moodle'));
         moveto.on('movetodock|click', this.move_to_dock, this, commands);
 
         var blockaction = node.one('.block_action');
@@ -903,7 +907,11 @@ M.core_dock.genericblock.prototype = {
 
         // Must set the image src seperatly of we get an error with XML strict headers
         var movetoimg = Y.Node.create('<img alt="'+M.str.block.undockitem+'" title="'+M.str.block.undockitem+'" />');
-        movetoimg.setAttribute('src', M.util.image_url('t/dock_to_block', 'moodle'));
+        var icon = 't/dock_to_block';
+        if (right_to_left()) {
+            icon = 't/dock_to_block_rtl';
+        }
+        movetoimg.setAttribute('src', M.util.image_url(icon, 'moodle'));
         var moveto = Y.Node.create('<a class="moveto customcommand requiresjs"></a>').append(movetoimg);
         if (location.href.match(/\?/)) {
             moveto.set('href', location.href+'&dock='+this.id);
