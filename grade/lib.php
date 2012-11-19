@@ -2274,7 +2274,7 @@ function grade_button($type, $courseid, $object) {
         $url = new moodle_url('edit.php', array('courseid' => $courseid, 'id' => $object->id));
     }
 
-    return $OUTPUT->action_icon($url, new pix_icon('t/'.$type, ${'str'.$type}));
+    return $OUTPUT->action_icon($url, new pix_icon('t/'.$type, ${'str'.$type}, '', array('class' => 'iconsmall')));
 
 }
 

@@ -20,6 +20,7 @@ optional changes:
 * new icon t/cohorts (sized 12x12), to prevent the use of i/cohorts which is 16x16.
 * new icons t/sort_asc, t/sort_desc to use for ordering in table headers.
 * new class 'iconsort' for icons used for ordering in table headers.
+* new icons t/locked and t/unlocked (12x12) which should be used when there is no action associated to the icon.
 
 === 2.3 ===
 

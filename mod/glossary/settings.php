@@ -58,23 +58,19 @@ if ($ADMIN->fulltree) {
     asort($formats);
 
     $str = '<table>';
-    $pixpath = "$CFG->wwwroot/pix"; // ugly temporary hack until we get this rewritten to new setting
-    // TODO MDL-19674 We cannot refer to $CFG->pixpath here. This code is executed
-    // when the structure of the admin tree is being build. $CFG->pixpath is only
-    // set up once output has started.
     foreach ($formats as $formatid=>$formatname) {
         $recformat = $DB->get_record('glossary_formats', array('id'=>$formatid));
         $str .= '<tr>';
         $str .= '<td>' . $formatname . '</td>';
-        $eicon = "<a title=\"".get_string("edit")."\" href=\"$CFG->wwwroot/mod/glossary/formats.php?id=$formatid&amp;mode=edit\"><img class=\"iconsmall\" src=\"$pixpath/t/edit.gif\" alt=\"".get_string("edit")."\" /></a>";
+        $eicon = "<a title=\"".get_string("edit")."\" href=\"$CFG->wwwroot/mod/glossary/formats.php?id=$formatid&amp;mode=edit\"><img class=\"iconsmall\" src=\"".$OUTPUT->pix_url('t/edit')."\" alt=\"".get_string("edit")."\" /></a>";
         if ( $recformat->visible ) {
             $vtitle = get_string("hide");
-            $vicon  = "hide.gif";
+            $vicon  = "t/hide";
         } else {
             $vtitle = get_string("show");
-            $vicon  = "show.gif";
+            $vicon  = "t/show";
         }
-        $vicon = "<a title=\"".$vtitle."\" href=\"$CFG->wwwroot/mod/glossary/formats.php?id=$formatid&amp;mode=visible&amp;sesskey=".sesskey()."\"><img class=\"iconsmall\" src=\"$pixpath/t/".$vicon."\" alt=\"$vtitle\" /></a>";
+        $vicon = "<a title=\"".$vtitle."\" href=\"$CFG->wwwroot/mod/glossary/formats.php?id=$formatid&amp;mode=visible&amp;sesskey=".sesskey()."\"><img class=\"iconsmall\" src=\"".$OUTPUT->pix_url($vicon)."\" alt=\"$vtitle\" /></a>";
 
         $str .= '<td align="center">'.$eicon.'&nbsp;&nbsp;'.$vicon.'</td>';
         $str .= '</tr>';

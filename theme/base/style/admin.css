@@ -54,6 +54,7 @@
 #page-admin-qbehaviours #qbehaviours div,
 #page-admin-qbehaviours #qbehaviours form {display: inline;}
 #page-admin-qbehaviours #qbehaviours img.spacer {width: 16px;}
+#page-admin-qbehaviours #qbehaviours img { padding-right: .45em; }
 
 #page-admin-qtypes .disabled {color: gray;}
 #page-admin-qtypes th {white-space: normal;}
@@ -63,6 +64,7 @@
 #page-admin-qtypes #qtypes div,
 #page-admin-qtypes #qtypes form {display: inline;}
 #page-admin-qtypes #qtypes img.spacer {width: 16px;}
+#page-admin-qtypes #qtypes img { padding-right: .45em; vertical-align: text-bottom; }
 
 .path-admin-roles .buttons .singlebutton,
 #page-admin-course-index .buttons .singlebutton,
@@ -156,6 +158,8 @@
 #mnetconfig table,
 .environmenttable {margin-left:auto;margin-right:auto;}
 .environmenttable .cell {padding: 0.15em 0.5em;}
+.environmenttable img.iconhelp { padding-right: 0.3em;}
+.dir-rtl .environmenttable img.iconhelp { padding-left: 0.3em; padding-right: 0}
 #trustedhosts .generaltable {margin-left: auto;margin-right: auto;width: 500px;}
 #trustedhosts .standard {width: auto;}
 .form-buttons {margin: 10px 0 0 13em;}
@@ -257,6 +261,7 @@
 #page-admin-plugins #plugins-overview-filter .filter-item {padding:5px 10px;}
 #page-admin-plugins #plugins-overview-filter .filter-item.active {font-weight:bold;}
 #page-admin-plugins #plugins-overview-filter .separator {border-left:1px dotted #999;}
+#page-admin-plugins #plugins-control-panel .displayname img.icon { padding-top:0; padding-bottom: 0; }
 #page-admin-plugins #plugins-control-panel .actions .uninstall {color:#900;}
 #page-admin-plugins #plugins-control-panel .notes .pluginupdateinfo {padding:5px 10px;margin:10px;background-color:#d2ebff;-moz-border-radius: 10px;-webkit-border-radius: 10px;border-radius: 10px;}
 #page-admin-plugins #plugins-control-panel .notes .pluginupdateinfo.maturity50 {background-color:#ffd3d9;}
@@ -282,3 +287,5 @@
 #core-cache-store-summaries .default-store td {color:#333;font-style: italic;}
 #core-cache-rescan-definitions,
 #core-cache-mode-mappings .edit-link {margin-top:0.5em;text-align:center;}
+
+.tinymcesubplugins img.icon { padding-top: 0; padding-bottom: 0; }
