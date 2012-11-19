@@ -190,7 +190,7 @@ table#categoryquestions {width: 100%;overflow: hidden;table-layout: fixed;}
 #categoryquestions .iconcol {width: 15px;text-align: center;padding: 0;}
 #categoryquestions .checkbox {width: 19px;text-align: center;padding: 0;}
 #categoryquestions .qtype {text-align: center;}
-#categoryquestions .qtype {width: 24px;padding: 0;}
+#categoryquestions .qtype {width: 28px;padding: 0;}
 #categoryquestions .questiontext p {margin: 0;}
 
 #page-mod-quiz-edit div.quizcontents {float:left;width:70%;display:block;clear:left;}

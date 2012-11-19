@@ -512,7 +512,7 @@ class course_enrolment_table extends html_table implements renderable {
                     } else {
                         $link = html_writer::link(new moodle_url($url, array(self::SORTVAR=>$n)), $fields[$name][$n]);
                         if ($this->sort == $n) {
-                            $link .= ' '.html_writer::link(new moodle_url($url, array(self::SORTVAR=>$n, self::SORTDIRECTIONVAR=>$this->get_field_sort_direction($n))), $this->get_direction_icon($output, $n));
+                            $link .= html_writer::link(new moodle_url($url, array(self::SORTVAR=>$n, self::SORTDIRECTIONVAR=>$this->get_field_sort_direction($n))), $this->get_direction_icon($output, $n));
                         }
                         $bits[] = html_writer::tag('span', $link, array('class'=>'subheading_'.$n));
 
@@ -525,7 +525,7 @@ class course_enrolment_table extends html_table implements renderable {
                 } else {
                     $newlabel  = html_writer::link(new moodle_url($url, array(self::SORTVAR=>$name)), $fields[$name]);
                     if ($this->sort == $name) {
-                        $newlabel .= ' '.html_writer::link(new moodle_url($url, array(self::SORTVAR=>$name, self::SORTDIRECTIONVAR=>$this->get_field_sort_direction($name))), $this->get_direction_icon($output, $name));
+                        $newlabel .= html_writer::link(new moodle_url($url, array(self::SORTVAR=>$name, self::SORTDIRECTIONVAR=>$this->get_field_sort_direction($name))), $this->get_direction_icon($output, $name));
                     }
                 }
             }
@@ -633,9 +633,11 @@ class course_enrolment_table extends html_table implements renderable {
             $direction = $this->sortdirection;
         }
         if ($direction === 'ASC') {
-            return html_writer::empty_tag('img', array('alt'=>'', 'src'=>$output->pix_url('t/down')));
+            return html_writer::empty_tag('img', array('alt' => '', 'class' => 'iconsort',
+                'src' => $output->pix_url('t/sort_asc')));
         } else {
-            return html_writer::empty_tag('img', array('alt'=>'', 'src'=>$output->pix_url('t/up')));
+            return html_writer::empty_tag('img', array('alt' => '', 'class' => 'iconsort',
+                'src' => $output->pix_url('t/sort_desc')));
         }
     }
 

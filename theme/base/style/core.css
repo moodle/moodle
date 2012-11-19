@@ -94,6 +94,8 @@ img.icon {height:16px;vertical-align:text-bottom;width:16px;padding: 2px 6px 2px
 img.iconsmall {height:12px;margin-right:3px;vertical-align:middle;width:12px;}
 img.iconhelp, .helplink img {height:16px; padding-left:3px;vertical-align:middle;width:16px;}
 img.iconlarge {height: 24px; width: 24px; vertical-align:middle;}
+img.iconsort { vertical-align: text-bottom; padding-left: .3em; margin-bottom: .15em;}
+.dir-rtl img.iconsort { padding-right: .3em; padding-left: 0;}
 img.icontoggle {height:17px;vertical-align:middle;width:50px;}
 img.iconkbhelp {height:17px;width:49px;}
 .categorybox .category {font-size:1.2em;font-weight:bold;}

@@ -251,9 +251,9 @@ abstract class question_bank_column_base {
     protected function get_sort_icon($reverse) {
         global $OUTPUT;
         if ($reverse) {
-            return ' <img src="' . $OUTPUT->pix_url('t/up') . '" alt="' . get_string('desc') . '" />';
+            return $OUTPUT->pix_icon('t/sort_desc', get_string('desc'), '', array('class' => 'iconsort'));
         } else {
-            return ' <img src="' . $OUTPUT->pix_url('t/down') . '" alt="' . get_string('asc') . '" />';
+            return $OUTPUT->pix_icon('t/sort_asc', get_string('asc'), '', array('class' => 'iconsort'));
         }
     }
 

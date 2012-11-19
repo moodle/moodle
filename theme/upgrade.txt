@@ -18,6 +18,8 @@ optional changes:
 * new icon i/switchrole (sized 16x16), was previously using i/roles. Now is a copy of the new i/assignroles icon.
 * new icons i/enrolusers and t/enrolusers, previsouly i/users was used.
 * new icon t/cohorts (sized 12x12), to prevent the use of i/cohorts which is 16x16.
+* new icons t/sort_asc, t/sort_desc to use for ordering in table headers.
+* new class 'iconsort' for icons used for ordering in table headers.
 
 === 2.3 ===
 

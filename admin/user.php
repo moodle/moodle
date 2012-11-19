@@ -167,11 +167,11 @@
         } else {
             $columndir = $dir == "ASC" ? "DESC":"ASC";
             if ($column == "lastaccess") {
-                $columnicon = $dir == "ASC" ? "up":"down";
+                $columnicon = ($dir == "ASC") ? "sort_desc" : "sort_asc";
             } else {
-                $columnicon = $dir == "ASC" ? "down":"up";
+                $columnicon = ($dir == "ASC") ? "sort_asc" : "sort_desc";
             }
-            $columnicon = " <img src=\"" . $OUTPUT->pix_url('t/' . $columnicon) . "\" alt=\"\" />";
+            $columnicon = "<img class='iconsort' src=\"" . $OUTPUT->pix_url('t/' . $columnicon) . "\" alt=\"\" />";
 
         }
         $$column = "<a href=\"user.php?sort=$column&amp;dir=$columndir\">".$string[$column]."</a>$columnicon";
