@@ -126,10 +126,10 @@ abstract class qtype_multichoice_base extends question_graded_automatically {
     }
 
     public function make_html_inline($html) {
-        $html = preg_replace('~\s*<p>\s*~', '', $html);
-        $html = preg_replace('~\s*</p>\s*~', '<br />', $html);
-        $html = preg_replace('~<br />$~', '', $html);
-        return $html;
+        $html = preg_replace('~\s*<p>\s*~u', '', $html);
+        $html = preg_replace('~\s*</p>\s*~u', '<br />', $html);
+        $html = preg_replace('~(<br\s*/?>)+$~u', '', $html);
+        return trim($html);
     }
 }
 

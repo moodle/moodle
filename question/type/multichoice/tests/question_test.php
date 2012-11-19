@@ -147,6 +147,8 @@ class qtype_multichoice_single_question_test extends advanced_testcase {
         $this->assertEquals("Frog<br />XXX <img src='http://example.com/pic.png' alt='Graph' />",
                 $mc->make_html_inline(" <p> Frog </p> \n\r
                     <p> XXX <img src='http://example.com/pic.png' alt='Graph' /> </p> "));
+        $this->assertEquals('Frog', $mc->make_html_inline('<p>Frog</p><p></p>'));
+        $this->assertEquals('Frog<br />†', $mc->make_html_inline('<p>Frog</p><p>†</p>'));
     }
 }
 
