@@ -1473,6 +1473,19 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012111200.01);
     }
 
+    if ($oldversion < 2012111601.01) {
+        // Clea up after old shared memory caching support.
+        unset_config('cachetype');
+        unset_config('rcache');
+        unset_config('rcachettl');
+        unset_config('intcachemax');
+        unset_config('memcachedhosts');
+        unset_config('memcachedpconn');
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2012111601.01);
+    }
+
 
     return true;
 }
