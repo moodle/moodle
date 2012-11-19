@@ -543,4 +543,39 @@ EOD;
 
         return $DB->get_record('scale', array('id'=>$id), '*', MUST_EXIST);
     }
+
+    /**
+     * Simplified enrolment of user to course using default options.
+     *
+     * It is strongly recommended to use only this method for 'manual' and 'self' plugins only!!!
+     *
+     * @param int $userid
+     * @param int $courseid
+     * @param int $roleid optional role id, use only with manual plugin
+     * @param string $enrol name of enrol plugin,
+     *     there must be exactly one instance in course,
+     *     it must support enrol_user() method.
+     * @return bool success
+     */
+    public function enrol_user($userid, $courseid, $roleid = null, $enrol = 'manual') {
+        global $DB;
+
+        if (!$plugin = enrol_get_plugin($enrol)) {
+            return false;
+        }
+
+        $instances = $DB->get_records('enrol', array('courseid'=>$courseid, 'enrol'=>$enrol));
+        if (count($instances) != 1) {
+            return false;
+        }
+        $instance = reset($instances);
+
+        if (is_null($roleid) and $instance->roleid) {
+            $roleid = $instance->roleid;
+        }
+
+        $plugin->enrol_user($instance, $userid, $roleid);
+
+        return true;
+    }
 }
