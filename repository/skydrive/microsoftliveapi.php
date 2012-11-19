@@ -127,6 +127,7 @@ class microsoft_skydrive extends oauth2_client {
         foreach ($ret->data as $file) {
             switch($file->type) {
                 case 'folder':
+                case 'album':
                     $files[] = array(
                         'title' => $file->name,
                         'path' => $file->id,
