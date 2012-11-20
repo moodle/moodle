@@ -129,11 +129,6 @@ class block_glossary_random extends block_base {
         $course = $this->page->course;
         $modinfo = get_fast_modinfo($course);
         $glossaryid = $this->config->glossary;
-        $cm = $modinfo->instances['glossary'][$glossaryid];
-
-        if (!has_capability('mod/glossary:view', get_context_instance(CONTEXT_MODULE, $cm->id))) {
-            return '';
-        }
 
         if (!isset($modinfo->instances['glossary'][$glossaryid])) {
             // we can get here if the glossary has been deleted, so
@@ -145,6 +140,12 @@ class block_glossary_random extends block_base {
             $this->content->text   = get_string('notyetconfigured','block_glossary_random');
             $this->content->footer = '';
             return $this->content;
+        }
+
+        $cm = $modinfo->instances['glossary'][$glossaryid];
+
+        if (!has_capability('mod/glossary:view', get_context_instance(CONTEXT_MODULE, $cm->id))) {
+            return '';
         }
 
         if (empty($this->config->cache)) {
