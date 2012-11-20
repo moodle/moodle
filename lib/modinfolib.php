@@ -1358,7 +1358,7 @@ function get_fast_modinfo($courseorid, $userid = 0, $resetonly = false) {
  * @param boolean $clearonly - only clear the modinfo fields, gets rebuild automatically on the fly
  */
 function rebuild_course_cache($courseid=0, $clearonly=false) {
-    global $COURSE, $DB, $CFG;
+    global $COURSE, $SITE, $DB, $CFG;
 
     // Destroy navigation caches
     navigation_cache::destroy_volatile_caches();
@@ -1381,6 +1381,10 @@ function rebuild_course_cache($courseid=0, $clearonly=false) {
         if ($courseid == $COURSE->id or empty($courseid)) {
             $COURSE->modinfo = null;
             $COURSE->sectioncache = null;
+        }
+        if ($courseid == $SITE->id) {
+            $SITE->modinfo = null;
+            $SITE->sectioncache = null;
         }
         // reset the fast modinfo cache
         get_fast_modinfo($courseid, 0, true);
@@ -1407,6 +1411,10 @@ function rebuild_course_cache($courseid=0, $clearonly=false) {
         if ($course->id == $COURSE->id) {
             $COURSE->modinfo = $modinfo;
             $COURSE->sectioncache = $sectioncache;
+        }
+        if ($course->id == $SITE->id) {
+            $SITE->modinfo = $modinfo;
+            $SITE->sectioncache = $sectioncache;
         }
     }
     $rs->close();
