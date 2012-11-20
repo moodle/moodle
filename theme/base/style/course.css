@@ -19,13 +19,20 @@
 .dir-rtl .sitetopic .section .activity img.activityicon,
 .dir-rtl .course-content .section .activity img.activityicon {margin-left: 6px; margin-right: 0;}
 .sitetopic .section .activity .activityinstance,
-.course-content .section .activity .activityinstance { padding-right: 3em;}
+.course-content .section .activity .activityinstance
+.sitetopic .section .activity .activityinstance div,
+.course-content .section .activity .activityinstance div, { display: inline;}
+.sitetopic .section .activity .activityinstance,
+.course-content .section .activity .activityinstance { padding-right: 3em; }
 .dir-rtl .sitetopic .section .activity .activityinstance,
 .dir-rtl .course-content .section .activity .activityinstance { padding-right: 0; padding-left: 3em;}
+.sitetopic .section .activity .commands,
+.course-content .section .activity .commands { white-space: nowrap; display: inline; }
 .sitetopic .section .activity .commands img,
 .course-content .section .activity .commands img { vertical-align: baseline; padding: 0 2px; }
 .sitetopic .section li.activity,
 .course-content .section li.activity {padding: .2em;}
+.section .activity .activityinstance .groupinglabel { padding-left: .45em; }
 .sitetopic .section .activity .availabilityinfo,
 .sitetopic .section .activity .contentafterlink,
 .course-content .section .activity .availabilityinfo,
@@ -34,10 +41,11 @@
 .dir-rtl .sitetopic .section .activity .contentafterlink,
 .dir-rtl .course-content .section .activity .availabilityinfo,
 .dir-rtl .course-content .section .activity .contentafterlink { margin-left: 0; margin-right: 30px;}
+.section .activity .contentafterlink p { margin:.5em 0; }
 .sitetopic .section .activity:hover,
 .course-content .section .activity:hover { background-color: #EEE; }
 .course-content .section-summary { border: 1px solid #DDD; margin-top: 5px; list-style: none; }
-.course-content .section-summary .section-title  { margin: 2px 5px 2px 5px; }
+.course-content .section-summary .section-title  { margin: 2px 5px 10px 5px; }
 .course-content .section-summary .summarytext { margin: 2px 5px 2px 5px; }
 .course-content .section-summary .section-summary-activities .activity-count {margin-right: 10px;color: #AAA; font-size: 12px; margin-right: 15px;}
 .course-content .section-summary .summary { margin-top: 5px; }
@@ -61,9 +69,9 @@
 .path-course-view .subscribelink {text-align:right;}
 .path-course-view .unread {margin-left: 3em;}
 .path-course-view .block.drag .header {cursor: move;}
-.path-course-view .completionprogress {float:right;}
-.path-course-view .completionprogress img.iconhelp {vertical-align:top;}
-.path-course-view .single-section .completionprogress {margin-right: -3.5em; padding-left: 1.5em; padding-right: 0em;}
+.path-course-view .completionprogress { text-align: right; }
+.dir-rtl.path-course-view .completionprogress { text-align: left; }
+.path-course-view .single-section .completionprogress { margin-right: 5px; }
 .path-course-view .section .summary {line-height:normal;}
 
 .path-site li.activity > div,

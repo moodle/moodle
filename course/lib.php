@@ -1484,6 +1484,9 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 $altname = get_accesshide(' '.$altname);
             }
 
+            // Start the div for the activity title, excluding the edit icons.
+            echo html_writer::start_tag('div', array('class' => 'activityinstance'));
+
             // We may be displaying this just in order to show information
             // about visibility, without the actual link
             $contentpart = '';
@@ -1498,51 +1501,49 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                         $linkclasses .= ' conditionalhidden';
                         $textclasses .= ' conditionalhidden';
                     }
-                    $accesstext = '<span class="accesshide">'.
-                        get_string('hiddenfromstudents').': </span>';
+                    $accesstext = get_accesshide(get_string('hiddenfromstudents').': ');
                 } else {
                     $accesstext = '';
                 }
                 if ($linkclasses) {
-                    $linkcss = 'class="activityinstance ' . trim($linkclasses) . '" ';
+                    $linkcss = trim($linkclasses) . ' ';
                 } else {
-                    $linkcss = 'class="activityinstance"';
+                    $linkcss = '';
                 }
                 if ($textclasses) {
-                    $textcss = 'class="' . trim($textclasses) . '" ';
+                    $textcss = trim($textclasses) . ' ';
                 } else {
                     $textcss = '';
                 }
 
                 // Get on-click attribute value if specified
                 $onclick = $mod->get_on_click();
-                if ($onclick) {
-                    $onclick = ' onclick="' . $onclick . '"';
+
+                $groupinglabel = '';
+                if (!empty($mod->groupingid) && has_capability('moodle/course:managegroups', context_course::instance($course->id))) {
+                    $groupings = groups_get_all_groupings($course->id);
+                    $groupinglabel = html_writer::tag('span', '('.format_string($groupings[$mod->groupingid]->name).')',
+                            array('class' => 'groupinglabel'));
                 }
 
                 if ($url = $mod->get_url()) {
-                    // Display link itself
-                    echo '<a ' . $linkcss . $mod->extra . $onclick .
-                            ' href="' . $url . '"><img src="' . $mod->get_icon_url() .
-                            '" class="iconlarge activityicon" alt="' . $mod->modfullname . '" />' .
-                            $accesstext . '<span class="instancename">' .
-                            $instancename . $altname . '</span></a>';
+                    // Display link itself.
+                    $activitylink = html_writer::empty_tag('img', array('src' => $mod->get_icon_url(),
+                            'class' => 'iconlarge activityicon', 'alt' => $mod->modfullname)) . $accesstext .
+                            html_writer::tag('span', $instancename . $altname, array('class' => 'instancename'));
+                    echo html_writer::link($url, $activitylink, array('class' => $linkcss, 'onclick' => $onclick)) .
+                            $groupinglabel;
 
-                    // If specified, display extra content after link
+                    // If specified, display extra content after link.
                     if ($content) {
-                        $contentpart = '<div class="' . trim('contentafterlink' . $textclasses) .
-                                '">' . $content . '</div>';
+                        $contentpart = html_writer::tag('div', $content, array('class' =>
+                                trim('contentafterlink ' . $textclasses)));
                     }
                 } else {
-                    // No link, so display only content
-                    $contentpart = '<div ' . $textcss . $mod->extra . '>' .
-                            $accesstext . $content . '</div>';
+                    // No link, so display only content.
+                    $contentpart = html_writer::tag('div', $accesstext . $content, array('class' => $textcss));
                 }
 
-                if (!empty($mod->groupingid) && has_capability('moodle/course:managegroups', context_course::instance($course->id))) {
-                    $groupings = groups_get_all_groupings($course->id);
-                    echo " <span class=\"groupinglabel\">(".format_string($groupings[$mod->groupingid]->name).')</span>';
-                }
             } else {
                 $textclasses = $extraclasses;
                 $textclasses .= ' dimmed_text';
@@ -1572,6 +1573,9 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
 
             // Module can put text after the link (e.g. forum unread)
             echo $mod->get_after_link();
+
+            // Closing the tag which contains everything but edit icons. $contentpart should not be part of this.
+            echo html_writer::end_tag('div');
 
             // If there is content but NO link (eg label), then display the
             // content here (BEFORE any icons). In this case cons must be
@@ -3349,7 +3353,10 @@ function make_editing_buttons(stdClass $mod, $absolute_ignored = true, $movesele
         );
     }
 
-    $output = html_writer::start_tag('span', array('class' => 'commands'));
+    // The space added before the <span> is a ugly hack but required to set the CSS property white-space: nowrap
+    // and having it to work without attaching the preceding text along with it. Hopefully the refactoring of
+    // the course page HTML will allow this to be removed.
+    $output = ' ' . html_writer::start_tag('span', array('class' => 'commands'));
     foreach ($actions as $action) {
         if ($action instanceof renderable) {
             $output .= $OUTPUT->render($action);

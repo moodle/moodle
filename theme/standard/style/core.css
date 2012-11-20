@@ -92,6 +92,11 @@ table.formtable tbody th {background-color: transparent;background-image: none;}
 
 .mod_introbox {border-color:#DDDDDD;}
 
+.block_navigation .dimmed img,
+.block_site_main_menu .dimmed img,
+.sitetopic .dimmed img.activityicon,
+.path-course-view .dimmed img.activityicon {opacity:0.5;filter: alpha(opacity=50);}
+
 /**
  * Docs
  */

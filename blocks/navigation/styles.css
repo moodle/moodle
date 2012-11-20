@@ -7,6 +7,7 @@
 .block_navigation .block_tree li > p.hasicon img {vertical-align:middle;position:absolute;left:0;top:-1px;width:16px;height:16px;}
 .block_navigation .block_tree li.item_with_icon.contains_branch > p img {left:16px;}
 .block_navigation .block_tree .type_activity > p.branch.hasicon,
+.block_navigation .block_tree .type_activity > p.emptybranch.hasicon,
 .block_navigation .block_tree li.item_with_icon.contains_branch > .tree_item {padding-left:37px;}
 
 .block_navigation .block_tree li ul {padding-left:0;margin:0;}
@@ -16,7 +17,9 @@
 
 .block_navigation .block_tree .tree_item.branch {background-image: url([[pix:t/expanded]]);background-position: 0 0;background-repeat: no-repeat;}
 .block_navigation .block_tree .tree_item.branch.navigation_node {background-image:none;padding-left:0;}
+.block_navigation .block_tree .type_activity > .tree_item.emptybranch,
 .block_navigation .block_tree .type_activity > .tree_item.branch {background-image:none;position:relative;}
+.block_navigation .block_tree .type_activity > .tree_item.hasicon.emptybranch img,
 .block_navigation .block_tree .type_activity > .tree_item.branch img {left: 16px;}
 .block_navigation .block_tree .root_node.leaf {padding-left:0px;}
 .block_navigation .block_tree .active_tree_node {font-weight:bold;}
