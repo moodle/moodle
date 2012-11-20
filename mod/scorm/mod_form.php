@@ -499,7 +499,7 @@ class mod_scorm_mod_form extends moodleform_mod {
         }
 
         // Turn off completion settings if the checkboxes aren't ticked
-        $autocompletion = !empty($data->completion) && $data->completion == COMPLETION_TRACKING_AUTOMATIC;
+        $autocompletion = isset($data->completion) && $data->completion == COMPLETION_TRACKING_AUTOMATIC;
 
         if (isset($data->completionstatusrequired) && is_array($data->completionstatusrequired)) {
             $total = 0;
