@@ -641,7 +641,8 @@ class moodle1_converter extends base_converter {
             return $files;
         }
         foreach ($matches[2] as $match) {
-            $files[] = str_replace(array('$@FILEPHP@$', '$@SLASH@$', '$@FORCEDOWNLOAD@$'), array('', '/', ''), $match);
+            $file = str_replace(array('$@FILEPHP@$', '$@SLASH@$', '$@FORCEDOWNLOAD@$'), array('', '/', ''), $match);
+            $files[] = urldecode($file);
         }
 
         return array_unique($files);
