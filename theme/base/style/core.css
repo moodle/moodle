@@ -338,14 +338,8 @@ input#id_externalurl {direction:ltr;}
 /**
  * My Moodle
  */
-.path-my .coursebox .overview .name {margin-left:20px;}
-.dir-rtl .path-my .coursebox .overview .name {margin-right:20px;}
-.path-my .coursebox .overview .info {margin-left:25px;}
-.dir-rtl .path-my .coursebox .overview .info {margin-right:25px;}
-.path-my .coursebox .overview .details {margin-left:25px;}
-.dir-rtl .path-my .coursebox .overview .details {margin-right:25px;}
-.path-my .coursebox .overview {margin-bottom:10px;}
-.path-my .coursebox .info {float: none;}
+.path-my .coursebox .overview {margin: 15px 30px 10px 30px;}
+.path-my .coursebox .info {float: none; margin: 0;}
 
 /**
  * Logs

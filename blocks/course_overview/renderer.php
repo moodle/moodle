@@ -149,7 +149,7 @@ class block_course_overview_renderer extends plugin_renderer_base {
             $output .= html_writer::start_tag('div', array('class' => 'activity_overview'));
             $url = new moodle_url("/mod/$module/index.php", array('id' => $cid));
             $modulename = get_string('modulename', $module);
-            $icontext = html_writer::link($url, $this->output->pix_icon('icon', $modulename, 'mod_'.$module, array('class'=>'icon')).' ');
+            $icontext = html_writer::link($url, $this->output->pix_icon('icon', $modulename, 'mod_'.$module, array('class'=>'iconlarge')));
             if (get_string_manager()->string_exists("activityoverview", $module)) {
                 $icontext .= get_string("activityoverview", $module);
             } else {
