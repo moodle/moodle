@@ -993,7 +993,7 @@ class available_update_checker {
         if (!empty($CFG->config_php_settings['alternativeupdateproviderurl'])) {
             return $CFG->config_php_settings['alternativeupdateproviderurl'];
         } else {
-            return 'http://download.moodle.org/api/1.1/updates.php';
+            return 'https://download.moodle.org/api/1.1/updates.php';
         }
     }
 
