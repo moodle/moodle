@@ -101,8 +101,10 @@ YUI.add('moodle-calendar-eventmanager', function(Y) {
             },
             node : {
                 setter : function(node) {
-                    var n = Y.one('#'+node);
-                    return n;
+                    if (typeof(node) === 'string') {
+                        node = Y.one('#'+node);
+                    }
+                    return node;
                 }
             },
             title : {
