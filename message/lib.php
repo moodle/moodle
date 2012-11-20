@@ -1234,7 +1234,7 @@ function message_print_search_results($frm, $showicontext=false, $currentuser=nu
                 echo html_writer::end_tag('td');
 
                 echo html_writer::start_tag('td', array('class' => 'summary'));
-                echo message_get_fragment($message->fullmessage, $keywords);
+                echo message_get_fragment($message->smallmessage, $keywords);
                 echo html_writer::start_tag('div', array('class' => 'link'));
 
                 //If the user clicks the context link display message sender on the left
@@ -1621,10 +1621,10 @@ function message_search($searchterms, $fromme=true, $tome=true, $courseid='none'
     ///    c.  Messages to and from user
 
     if ($courseid == SITEID) { /// admin is searching all messages
-        $m_read   = $DB->get_records_sql("SELECT m.id, m.useridto, m.useridfrom, m.fullmessage, m.timecreated
+        $m_read   = $DB->get_records_sql("SELECT m.id, m.useridto, m.useridfrom, m.smallmessage, m.fullmessage, m.timecreated
                                             FROM {message_read} m
                                            WHERE $searchcond", $params, 0, MESSAGE_SEARCH_MAX_RESULTS);
-        $m_unread = $DB->get_records_sql("SELECT m.id, m.useridto, m.useridfrom, m.fullmessage, m.timecreated
+        $m_unread = $DB->get_records_sql("SELECT m.id, m.useridto, m.useridfrom, m.smallmessage, m.fullmessage, m.timecreated
                                             FROM {message} m
                                            WHERE $searchcond", $params, 0, MESSAGE_SEARCH_MAX_RESULTS);
 
@@ -1649,10 +1649,10 @@ function message_search($searchterms, $fromme=true, $tome=true, $courseid='none'
             $params['userid'] = $userid;
         }
 
-        $m_read   = $DB->get_records_sql("SELECT m.id, m.useridto, m.useridfrom, m.fullmessage, m.timecreated
+        $m_read   = $DB->get_records_sql("SELECT m.id, m.useridto, m.useridfrom, m.smallmessage, m.fullmessage, m.timecreated
                                             FROM {message_read} m
                                            WHERE $searchcond", $params, 0, MESSAGE_SEARCH_MAX_RESULTS);
-        $m_unread = $DB->get_records_sql("SELECT m.id, m.useridto, m.useridfrom, m.fullmessage, m.timecreated
+        $m_unread = $DB->get_records_sql("SELECT m.id, m.useridto, m.useridfrom, m.smallmessage, m.fullmessage, m.timecreated
                                             FROM {message} m
                                            WHERE $searchcond", $params, 0, MESSAGE_SEARCH_MAX_RESULTS);
 
