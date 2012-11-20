@@ -25,16 +25,43 @@ h1.headerheading {margin:14px 11px 8px 11px;float:left;font-size:200%;}
 h2.main, h3.main, h4.main {margin:1em;padding:0;text-align:center;}
 
 /* page-header */
-#page-header{line-height:0;overflow:hidden;}
+#page-header{
+    margin: 0;
+    overflow: hidden;
+    padding: 0;
+    width: 100%;
+}
 
 /* headerlogo */
-#headerlogo {position:relative;margin:0;}
-  /* if I use: position:absolute; I even need height:105px; in #page-header */
-  /* if I use: position:relative; z-index doesn't work*/
+#headerlogo {
+    float: left;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    width: auto;
+}
+
+.dir-rtl #headerlogo {
+    float: right;
+}
 
 /* headermenu */
-.headermenu {position:absolute;text-align:right;line-height:1.7em;font-size:90%;margin:0.5em;right:[[calculated:headermenuright]];top:15px;}
-.langmenu {margin-right:0.4em}
+.headermenu {
+    float: right;
+    font-size: 90%;
+    line-height: 1.7em;
+    margin: 0.5em;
+    position: relative;
+    right: 0;
+    text-align: right;
+    top: 0;
+}
+.dir-rtl .headermenu {
+    float: left;
+}
+.langmenu {
+    margin-right: 0.4em
+}
 
 #dock {background-color:[[setting:blockcontentbgc]];border-right:1px dashed #000;}
 #dock .dockeditem_container {margin-top: 10px;}
