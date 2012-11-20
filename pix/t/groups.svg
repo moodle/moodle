@@ -6,7 +6,7 @@
 <svg version="1.1"
 	 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:a="http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/"
 	 x="0px" y="0px" width="12px" height="12px" viewBox="0 0 12 12" style="overflow:visible;enable-background:new 0 0 12 12;"
-	 xml:space="preserve">
+	 xml:space="preserve" preserveAspectRatio="xMinYMid meet">
 <defs>
 </defs>
 <path style="fill:#999999;" d="M3,10H0V6.4l1.2-0.6C1.6,5.6,1.8,5,1.4,4.6c0,0-0.5-0.6-0.5-1.7c0-1.6,1-2.9,2.2-2.9
