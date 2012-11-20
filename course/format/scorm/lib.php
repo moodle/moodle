@@ -74,4 +74,28 @@ class format_scorm extends format_base {
             BLOCK_POS_RIGHT => array('news_items', 'recent_activity', 'calendar_upcoming')
         );
     }
+
+    /**
+     * Allows course format to execute code on moodle_page::set_course()
+     *
+     * If user is on course view page and there is no scorm module added to the course
+     * and the user has 'moodle/course:update' capability, redirect to create module
+     * form. This function is executed before the output starts
+     *
+     * @param moodle_page $page instance of page calling set_course
+     */
+    public function page_set_course(moodle_page $page) {
+        global $PAGE;
+        if ($PAGE == $page && $page->has_set_url() &&
+                $page->url->compare(new moodle_url('/course/view.php'), URL_MATCH_BASE)) {
+            $modinfo = get_fast_modinfo($this->courseid);
+            if (empty($modinfo->instances['scorm'])
+                    && has_capability('moodle/course:update', context_course::instance($this->courseid))) {
+                // Redirect to create a new activity
+                $url = new moodle_url('/course/modedit.php',
+                        array('course' => $this->courseid, 'section' => 0, 'add' => 'scorm'));
+                redirect($url);
+            }
+        }
+    }
 }
