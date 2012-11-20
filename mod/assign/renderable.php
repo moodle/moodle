@@ -505,6 +505,55 @@ class assign_grading_summary implements renderable {
 }
 
 /**
+ * Renderable course index summary
+ * @package   mod_assign
+ * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class assign_course_index_summary implements renderable {
+    /** @var array assignments - A list of course module info and submission counts or statuses */
+    public $assignments = array();
+    /** @var boolean usesections - Does this course format support sections? */
+    public $usesections = false;
+    /** @var string courseformat - The current course format name */
+    public $courseformatname = '';
+
+    /**
+     * constructor
+     *
+     * @param $usesections boolean - True if this course format uses sections
+     * @param $courseformatname string - The id of this course format
+     */
+    public function __construct($usesections, $courseformatname) {
+        $this->usesections = $usesections;
+        $this->courseformatname = $courseformatname;
+    }
+
+    /**
+     * Add a row of data to display on the course index page
+     *
+     * @param int $cmid - The course module id for generating a link
+     * @param string $cmname - The course module name for generating a link
+     * @param string $sectionname - The name of the course section (only if $usesections is true)
+     * @param int $timedue - The due date for the assignment - may be 0 if no duedate
+     * @param string $submissioninfo - A string with either the number of submitted assignments, or the
+     *                                 status of the current users submission depending on capabilities.
+     * @param string $gradeinfo - The current users grade if they have been graded and it is not hidden.
+     */
+    public function add_assign_info($cmid, $cmname, $sectionname, $timedue, $submissioninfo, $gradeinfo) {
+        $this->assignments[] = array('cmid'=>$cmid,
+                               'cmname'=>$cmname,
+                               'sectionname'=>$sectionname,
+                               'timedue'=>$timedue,
+                               'submissioninfo'=>$submissioninfo,
+                               'gradeinfo'=>$gradeinfo);
+    }
+
+
+}
+
+
+/**
  * An assign file class that extends rendererable class and is used by the assign module.
  *
  * @package   mod_assign

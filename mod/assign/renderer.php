@@ -788,6 +788,64 @@ class mod_assign_renderer extends plugin_renderer_base {
         return $o;
     }
 
+    /**
+     * Render a course index summary
+     *
+     * @param assign_course_index_summary $indexsummary
+     * @return string
+     */
+    public function render_assign_course_index_summary(assign_course_index_summary $indexsummary) {
+        $o = '';
+
+        $strplural = get_string('modulenameplural', 'assign');
+        $strsectionname  = $indexsummary->courseformatname;
+        $strduedate = get_string('duedate', 'assign');
+        $strsubmission = get_string('submission', 'assign');
+        $strgrade = get_string('grade');
+
+        $table = new html_table();
+        if ($indexsummary->usesections) {
+            $table->head  = array ($strsectionname, $strplural, $strduedate, $strsubmission, $strgrade);
+            $table->align = array ('left', 'left', 'center', 'right', 'right');
+        } else {
+            $table->head  = array ($strplural, $strduedate, $strsubmission, $strgrade);
+            $table->align = array ('left', 'left', 'center', 'right');
+        }
+        $table->data = array();
+
+        $currentsection = '';
+        foreach ($indexsummary->assignments as $info) {
+            $params = array('id' => $info['cmid']);
+            $link = html_writer::link(new moodle_url('/mod/assign/view.php', $params),
+                                      $info['cmname']);
+            $due = $info['timedue'] ? userdate($info['timedue']) : '-';
+
+            $printsection = '';
+            if ($indexsummary->usesections) {
+                if ($info['sectionname'] !== $currentsection) {
+                    if ($info['sectionname']) {
+                        $printsection = $info['sectionname'];
+                    }
+                    if ($currentsection !== '') {
+                        $table->data[] = 'hr';
+                    }
+                    $currentsection = $info['sectionname'];
+                }
+            }
+
+            if ($indexsummary->usesections) {
+                $row = array($printsection, $link, $due, $info['submissioninfo'], $info['gradeinfo']);
+            } else {
+                $row = array($link, $due, $info['submissioninfo'], $info['gradeinfo']);
+            }
+            $table->data[] = $row;
+        }
+
+        $o .= html_writer::table($table);
+
+        return $o;
+    }
+
 
 
     /**

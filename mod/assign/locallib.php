@@ -417,6 +417,8 @@ class assign {
             $o .= $this->view_plugin_grading_batch_operation($mform);
         } else if ($action == 'viewpluginpage') {
              $o .= $this->view_plugin_page();
+        } else if ($action == 'viewcourseindex') {
+             $o .= $this->view_course_index();
         } else {
             $o .= $this->view_submission_page();
         }
@@ -1687,7 +1689,84 @@ class assign {
     }
 
     /**
-     * View a page rendered by a plugin
+     * View a summary listing of all assignments in the current course.
+     *
+     * @return string
+     */
+    private function view_course_index() {
+        global $USER;
+
+        $o = '';
+
+        $course = $this->get_course();
+        $strplural = get_string('modulenameplural', 'assign');
+
+        if (!$cms = get_coursemodules_in_course('assign', $course->id, 'm.duedate')) {
+            $o .= $this->get_renderer()->notification(get_string('thereareno', 'moodle', $strplural));
+            $o .= $this->get_renderer()->continue_button(new moodle_url('/course/view.php', array('id' => $course->id)));
+            return $o;
+        }
+
+        $strsectionname  = get_string('sectionname', 'format_'.$course->format);
+        $usesections = course_format_uses_sections($course->format);
+        $modinfo = get_fast_modinfo($course);
+
+        if ($usesections) {
+            $sections = $modinfo->get_section_info_all();
+        }
+        $courseindexsummary = new assign_course_index_summary($usesections, $strsectionname);
+
+        $timenow = time();
+
+        $currentsection = '';
+        foreach ($modinfo->instances['assign'] as $cm) {
+            if (!$cm->uservisible) {
+                continue;
+            }
+
+            $timedue        = $cms[$cm->id]->duedate;
+
+            $sectionname = '';
+            if ($usesections && $cm->sectionnum) {
+                $sectionname = get_section_name($course, $sections[$cm->sectionnum]);
+            }
+
+            $submitted = '';
+            $context = context_module::instance($cm->id);
+
+            $assignment = new assign($context, $cm, $course);
+
+            if (has_capability('mod/assign:grade', $context)) {
+                $submitted = $assignment->count_submissions_with_status(ASSIGN_SUBMISSION_STATUS_SUBMITTED);
+
+            } else if (has_capability('mod/assign:submit', $context)) {
+                $usersubmission = $assignment->get_user_submission($USER->id, false);
+
+                if (!empty($usersubmission->status)) {
+                    $submitted = get_string('submissionstatus_' . $usersubmission->status, 'assign');
+                } else {
+                    $submitted = get_string('submissionstatus_', 'assign');
+                }
+            }
+            $grading_info = grade_get_grades($course->id, 'mod', 'assign', $cm->instance, $USER->id);
+            if (isset($grading_info->items[0]) && !$grading_info->items[0]->grades[$USER->id]->hidden ) {
+                $grade = $grading_info->items[0]->grades[$USER->id]->str_grade;
+            } else {
+                $grade = '-';
+            }
+
+            $courseindexsummary->add_assign_info($cm->id, $cm->name, $sectionname, $timedue, $submitted, $grade);
+
+        }
+
+        $o .= $this->get_renderer()->render($courseindexsummary);
+        $o .= $this->view_footer();
+
+        return $o;
+    }
+
+    /**
+     * View a page rendered by a plugin.
      *
      * Uses url parameters 'pluginaction', 'pluginsubtype', 'plugin', and 'id'
      *
