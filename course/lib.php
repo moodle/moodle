@@ -1484,15 +1484,16 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
             $modcontext = context_module::instance($mod->id);
             $canviewhidden = has_capability('moodle/course:viewhiddenactivities', $modcontext);
             $accessiblebutdim = false;
+            $conditionalhidden = false;
             if ($canviewhidden) {
                 $accessiblebutdim = !$mod->visible;
                 if (!empty($CFG->enableavailability)) {
-                    $accessiblebutdim = $accessiblebutdim ||
-                        $mod->availablefrom > time() ||
+                    $conditionalhidden = $mod->availablefrom > time() ||
                         ($mod->availableuntil && $mod->availableuntil < time()) ||
                         count($mod->conditionsgrade) > 0 ||
                         count($mod->conditionscompletion) > 0;
                 }
+                $accessiblebutdim = $conditionalhidden || $accessiblebutdim;
             }
 
             $liclasses = array();
@@ -1548,8 +1549,12 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 $linkclasses = '';
                 $textclasses = '';
                 if ($accessiblebutdim) {
-                    $linkclasses .= ' dimmed conditionalhidden';
-                    $textclasses .= ' dimmed_text conditionalhidden';
+                    $linkclasses .= ' dimmed';
+                    $textclasses .= ' dimmed_text';
+                    if ($conditionalhidden) {
+                        $linkclasses .= ' conditionalhidden';
+                        $textclasses .= ' conditionalhidden';
+                    }
                     $accesstext = '<span class="accesshide">'.
                         get_string('hiddenfromstudents').': </span>';
                 } else {
