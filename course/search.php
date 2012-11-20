@@ -175,13 +175,11 @@ if (!empty($moveto) and $data = data_submitted() and confirm_sesskey()) {   // S
 if (!empty($blocklist) and confirm_sesskey()) {
     $blockname = $DB->get_field('block', 'name', array('id' => $blocklist));
     $courses = array();
-    $courses = $DB->get_records_sql("
-            SELECT * FROM {course} WHERE id IN (
-                SELECT DISTINCT ctx.instanceid
-                FROM {context} ctx
-                JOIN {block_instances} bi ON bi.parentcontextid = ctx.id
-                WHERE ctx.contextlevel = " . CONTEXT_COURSE . " AND bi.blockname = ?)",
-            array($blockname));
+    list($select, $join) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
+    $sql = "SELECT C.* $select FROM {course} c
+            $join JOIN {block_instances} bi ON bi.parentcontextid = ctx.id
+            WHERE bi.blockname = ?";
+    $courses = $DB->get_records_sql($sql, array($blockname));
     $totalcount = count($courses);
     // Keep only chunk of array which you want to display
     if ($totalcount > $perpage) {
@@ -193,26 +191,24 @@ if (!empty($blocklist) and confirm_sesskey()) {
     }
 } elseif (!empty($modulelist) and confirm_sesskey()) { // get list of courses containing modules
     $modulename = $modulelist;
-    $sql =  "SELECT DISTINCT c.id FROM {".$modulelist."} module, {course} c"
-        ." WHERE module.course=c.id";
-
-    $courseids = $DB->get_records_sql($sql);
+    list($select, $join) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
+    $sql = "SELECT c.* $select FROM {course} c $join
+            WHERE c.id IN (SELECT DISTINCT cc.id FROM {".$modulelist."} module, {course} cc
+                           WHERE module.course = cc.id)";
+    $courselist = $DB->get_records_sql($sql);
     $courses = array();
-    if (!empty($courseids)) {
+    if (!empty($courselist)) {
         $firstcourse = $page*$perpage;
         $lastcourse = $page*$perpage + $perpage -1;
         $i = 0;
-        foreach ($courseids as $courseid) {
+        foreach ($courselist as $course) {
             if ($i >= $firstcourse && $i <= $lastcourse) {
-                $courses[$courseid->id] = $DB->get_record('course', array('id'=> $courseid->id));
+                $courses[$course->id] = $course;
             }
             $i++;
         }
-        $totalcount = count($courseids);
     }
-    else {
-        $totalcount = 0;
-    }
+    $totalcount = count($courselist);
 } else if (!empty($searchterm)) {
     // Donot do search for empty search request.
     $courses = get_courses_search($searchterms, "fullname ASC", $page, $perpage, $totalcount);
@@ -294,6 +290,7 @@ if ($courses) {
 
         foreach ($courses as $course) {
 
+            context_helper::preload_from_record($course);
             $coursecontext = context_course::instance($course->id);
 
             $linkcss = $course->visible ? "" : " class=\"dimmed\" ";
@@ -313,7 +310,7 @@ if ($courses) {
 
             echo "<tr>\n";
             echo "<td><a $linkcss href=\"view.php?id=$course->id\">"
-                . highlight($search, format_string($course->fullname)) . "</a></td>\n";
+                . highlight($search, $coursecontext->get_context_name(false)) . "</a></td>\n";
             echo "<td>".$displaylist[$course->category]."</td>\n";
             echo "<td>\n";
 

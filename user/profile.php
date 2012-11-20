@@ -321,15 +321,16 @@ if (!isset($hiddenfields['mycourses'])) {
         $courselisting = '';
         foreach ($mycourses as $mycourse) {
             if ($mycourse->category) {
+                context_helper::preload_from_record($mycourse);
+                $ccontext = context_course::instance($mycourse->id);
                 $class = '';
                 if ($mycourse->visible == 0) {
-                    $ccontext = context_course::instance($mycourse->id);
                     if (!has_capability('moodle/course:viewhiddencourses', $ccontext)) {
                         continue;
                     }
                     $class = 'class="dimmed"';
                 }
-                $courselisting .= "<a href=\"{$CFG->wwwroot}/user/view.php?id={$user->id}&amp;course={$mycourse->id}\" $class >" . format_string($mycourse->fullname) . "</a>, ";
+                $courselisting .= "<a href=\"{$CFG->wwwroot}/user/view.php?id={$user->id}&amp;course={$mycourse->id}\" $class >" . $ccontext->get_context_name(false) . "</a>, ";
             }
             $shown++;
             if($shown==20) {
