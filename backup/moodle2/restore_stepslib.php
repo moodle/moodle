@@ -3128,6 +3128,22 @@ class restore_create_categories_and_questions extends restore_structure_step {
                        AND ' . $DB->sql_compare_text('hint', 255) . ' = ' . $DB->sql_compare_text('?', 255);
             $params = array($newquestionid, $data->hint);
             $newitemid = $DB->get_field_sql($sql, $params);
+
+            // Not able to find the hint, let's try cleaning the hint text
+            // of all the question's hints in DB as slower fallback. MDL-33863.
+            if (!$newitemid) {
+                $potentialhints = $DB->get_records('question_hints',
+                        array('questionid' => $newquestionid), '', 'id, hint');
+                foreach ($potentialhints as $potentialhint) {
+                    // Clean in the same way than {@link xml_writer::xml_safe_utf8()}.
+                    $cleanhint = preg_replace('/[\x-\x8\xb-\xc\xe-\x1f\x7f]/is','', $potentialhint->hint); // Clean CTRL chars.
+                    $cleanhint = preg_replace("/\r\n|\r/", "\n", $cleanhint); // Normalize line ending.
+                    if ($cleanhint === $data->hint) {
+                        $newitemid = $data->id;
+                    }
+                }
+            }
+
             // If we haven't found the newitemid, something has gone really wrong, question in DB
             // is missing hints, exception
             if (!$newitemid) {
