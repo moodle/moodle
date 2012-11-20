@@ -3390,13 +3390,16 @@ class admin_setting_sitesetcheckbox extends admin_setting_configcheckbox {
     public function write_setting($data) {
         global $DB, $SITE;
         $record = new stdClass();
-        $record->id            = SITEID;
+        $record->id            = $SITE->id;
         $record->{$this->name} = ($data == '1' ? 1 : 0);
         $record->timemodified  = time();
         // update $SITE
         $SITE->{$this->name} = $data;
         course_get_format($SITE)->update_course_format_options($record);
-        return ($DB->update_record('course', $record) ? '' : get_string('errorsetting', 'admin'));
+        $DB->update_record('course', $record);
+        // There is something wrong in cache updates somewhere, let's reset everything.
+        format_base::reset_course_cache();
+        return '';
     }
 }
 
@@ -3450,13 +3453,16 @@ class admin_setting_sitesettext extends admin_setting_configtext {
         }
 
         $record = new stdClass();
-        $record->id            = SITEID;
+        $record->id            = $SITE->id;
         $record->{$this->name} = $data;
         $record->timemodified  = time();
         // update $SITE
         $SITE->{$this->name} = $data;
         course_get_format($SITE)->update_course_format_options($record);
-        return ($DB->update_record('course', $record) ? '' : get_string('dbupdatefailed', 'error'));
+        $DB->update_record('course', $record);
+        // There is something wrong in cache updates somewhere, let's reset everything.
+        format_base::reset_course_cache();
+        return '';
     }
 }
 
@@ -3493,12 +3499,15 @@ class admin_setting_special_frontpagedesc extends admin_setting {
     public function write_setting($data) {
         global $DB, $SITE;
         $record = new stdClass();
-        $record->id            = SITEID;
+        $record->id            = $SITE->id;
         $record->{$this->name} = $data;
         $record->timemodified  = time();
         $SITE->{$this->name} = $data;
         course_get_format($SITE)->update_course_format_options($record);
-        return ($DB->update_record('course', $record) ? '' : get_string('errorsetting', 'admin'));
+        $DB->update_record('course', $record);
+        // There is something wrong in cache updates somewhere, let's reset everything.
+        format_base::reset_course_cache();
+        return '';
     }
 
     /**
