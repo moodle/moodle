@@ -1732,17 +1732,20 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
             if (!$mod->uservisible) {
                 echo '<div class="availabilityinfo">'.$mod->availableinfo.'</div>';
             } else if ($canviewhidden && !empty($CFG->enableavailability)) {
-                $visibilityclass = '';
-                if (!$mod->visible) {
-                    $visibilityclass = 'hide';
-                }
-                $ci = new condition_info($mod);
-                $fullinfo = $ci->get_full_information();
-                if($fullinfo) {
-                    echo '<div class="availabilityinfo '.$visibilityclass.'">'.get_string($mod->showavailability
-                        ? 'userrestriction_visible'
-                        : 'userrestriction_hidden','condition',
-                        $fullinfo).'</div>';
+                // Don't add availability information if user is not editing and activity is hidden.
+                if ($mod->visible || $PAGE->user_is_editing()) {
+                    $hidinfoclass = '';
+                    if (!$mod->visible) {
+                        $hidinfoclass = 'hide';
+                    }
+                    $ci = new condition_info($mod);
+                    $fullinfo = $ci->get_full_information();
+                    if($fullinfo) {
+                        echo '<div class="availabilityinfo '.$hidinfoclass.'">'.get_string($mod->showavailability
+                            ? 'userrestriction_visible'
+                            : 'userrestriction_hidden','condition',
+                            $fullinfo).'</div>';
+                    }
                 }
             }
 
