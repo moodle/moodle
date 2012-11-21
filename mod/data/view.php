@@ -300,11 +300,16 @@
     $title = $courseshortname.': ' . format_string($data->name);
 
     if ($PAGE->user_allowed_editing()) {
-        $buttons = '<table><tr><td><form method="get" action="view.php"><div>'.
-            '<input type="hidden" name="id" value="'.$cm->id.'" />'.
-            '<input type="hidden" name="edit" value="'.($PAGE->user_is_editing()?'off':'on').'" />'.
-            '<input type="submit" value="'.get_string($PAGE->user_is_editing()?'blockseditoff':'blocksediton').'" /></div></form></td></tr></table>';
-        $PAGE->set_button($buttons);
+        // Change URL parameter and block display string value depending on whether editing is enabled or not
+        if ($PAGE->user_is_editing()) {
+            $urlediting = 'off';
+            $strediting = get_string('blockseditoff');
+        } else {
+            $urlediting = 'on';
+            $strediting = get_string('blocksediton');
+        }
+        $url = new moodle_url($CFG->wwwroot.'/mod/data/view.php', array('id' => $cm->id, 'edit' => $urlediting));
+        $PAGE->set_button($OUTPUT->single_button($url, $strediting));
     }
 
     if ($mode == 'asearch') {
