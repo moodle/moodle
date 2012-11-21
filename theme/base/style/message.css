@@ -60,6 +60,10 @@ table.message .searchresults td {padding:5px;}
 .messagesearchresults {margin-bottom:40px;}
 .messagesearchresults td {padding:0px 10px 0px 20px;}
 .messagesearchresults td span {white-space:nowrap;}
+.messagesearchresults td img.userpicture { padding-right: .45em; vertical-align: text-bottom; }
+.dir-rtl .messagesearchresults td img.userpicture { padding-left: .45em; padding-right: 0; }
+.messagesearchresults td span img { padding: 0 0 0 .45em; vertical-align: text-bottom; }
+.dir-rtl .messagesearchresults td span img { padding: 0 .45em 0 0; }
 
 #newmessageoverlay {background-color:LightGrey;border:1px solid black;padding:20px;position:fixed;bottom:0;right:0;}
 #newmessageoverlay #usermessage {padding:10px;}

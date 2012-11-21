@@ -8,6 +8,7 @@ required changes:
 
 deprecation:
 * i/roles: Use t/assignroles instead
+* t/userblue: Previously used to unblock a user, use t/unblock.
 
 optional changes:
 * new optional boolean parameter $withlinks for public function login_info() in lib/outputrenderers.php (MDL-31365)
@@ -20,6 +21,8 @@ optional changes:
 * new icon t/cohorts (sized 12x12), to prevent the use of i/cohorts which is 16x16.
 * new icons t/sort_asc, t/sort_desc to use for ordering in table headers.
 * new class 'iconsort' for icons used for ordering in table headers.
+* new icons t/addcontact, t/removecontact and t/messages, previously t/addgreen, t/delete and t/log were used in messaging.
+* new icons t/unblock and i/twoway.
 
 === 2.3 ===
 
