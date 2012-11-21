@@ -1944,11 +1944,9 @@ class core_renderer extends renderer_base {
         $title = get_string('helpprefix2', '', trim($title, ". \t"));
 
         $attributes = array('href'=>$url, 'title'=>$title, 'aria-haspopup' => 'true');
-        $id = html_writer::random_id('helpicon');
-        $attributes['id'] = $id;
         $output = html_writer::tag('a', $output, $attributes);
 
-        $this->page->requires->js_init_call('M.util.help_icon.add', array(array('id'=>$id, 'url'=>$url->out(false))));
+        $this->page->requires->js_init_call('M.util.help_icon.setup');
         $this->page->requires->string_for_js('close', 'form');
 
         // and finally span
