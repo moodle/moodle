@@ -517,10 +517,11 @@ class grade_report_grader extends grade_report {
     /**
      * Builds and returns a div with on/off toggles.
      * @return string HTML code
+     * @deprecated since 2.4 as it appears not to be used any more.
      */
     public function get_toggles_html() {
         global $CFG, $USER, $COURSE, $OUTPUT;
-
+        debugging('Call to deprecated function grade_report_grader::get_toggles_html().', DEBUG_DEVELOPER);
         $html = '';
         if ($USER->gradeediting[$this->courseid]) {
             if (has_capability('moodle/grade:manage', $this->context) or has_capability('moodle/grade:hide', $this->context)) {
@@ -557,10 +558,11 @@ class grade_report_grader extends grade_report {
     * @param string $type The type of toggle
     * @param bool $return Whether to return the HTML string rather than printing it
     * @return void
+    * @deprecated since 2.4 as it appears not to be used any more.
     */
     public function print_toggle($type) {
         global $CFG, $OUTPUT;
-
+        debugging('Call to deprecated function grade_report_grader::print_toggle().', DEBUG_DEVELOPER);
         $icons = array('eyecons' => 't/hide',
                        'calculations' => 't/calc',
                        'locks' => 't/lock',
