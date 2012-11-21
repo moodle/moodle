@@ -285,7 +285,8 @@ class mod_quiz_renderer extends plugin_renderer_base {
 
         return html_writer::tag('div', get_string('timeleft', 'quiz') . ' ' .
                 html_writer::tag('span', '', array('id' => 'quiz-time-left')),
-                array('id' => 'quiz-timer'));
+                array('id' => 'quiz-timer', 'role' => 'timer',
+                    'aria-atomic' => 'true', 'aria-relevant' => 'text'));
     }
 
     /**
