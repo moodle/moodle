@@ -343,7 +343,9 @@ abstract class moodle_database {
         }
         // Always terminate sessions here to make it consistent,
         // this is needed because we need to save session to db before closing it.
-        session_get_instance()->write_close();
+        if (function_exists('session_get_instance')) {
+            session_get_instance()->write_close();
+        }
         $this->used_for_db_sessions = false;
 
         if ($this->temptables) {
