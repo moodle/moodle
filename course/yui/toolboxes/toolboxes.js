@@ -37,7 +37,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
         CONDITIONALHIDDEN : 'conditionalhidden',
         AVAILABILITYINFODIV : 'div.availabilityinfo',
         SHOWCLASS : 'editing_show',
-        ACCESSHIDECLASS : 'accesshide'
+        HIDECLASS : 'hide'
     };
 
     /**
@@ -99,7 +99,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             var availabilityinfo = element.one(CSS.AVAILABILITYINFODIV);
 
             if (availabilityinfo) {
-                availabilityinfo.toggleClass(CSS.ACCESSHIDECLASS);
+                availabilityinfo.toggleClass(CSS.HIDECLASS);
             }
             return value;
         },

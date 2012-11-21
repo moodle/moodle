@@ -1676,7 +1676,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
             } else if ($canviewhidden && !empty($CFG->enableavailability)) {
                 $visibilityclass = '';
                 if (!$mod->visible) {
-                    $visibilityclass = 'accesshide';
+                    $visibilityclass = 'hide';
                 }
                 $ci = new condition_info($mod);
                 $fullinfo = $ci->get_full_information();
