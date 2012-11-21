@@ -72,10 +72,10 @@ Disabling the cache entirely.
 Like above there are times when you want the cache to avoid initialising anything it doesn't absolutely need. Things such as installation and upgrade require this functionality.
 When the cache API is disabled it is still functional however special "disabled" classes will be used instead of the regular classes that make the Cache API tick.
 These disabled classes do the least work possible and through this means we avoid all manner of intialisation and configuration.
-Once disabled its not recommened to reneable the Cache API. Instead if you need it, redirect.
+Once disabled it cannot be re-enabled.
 
     // To disable the cache entirely call the following:
-    cache_factory::disable();
+    define('CACHE_DISABLE_ALL', true);
 
 Cache API parts
 ---------------

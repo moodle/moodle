@@ -45,6 +45,7 @@ if (file_exists($configfile)) {
 
 define('CLI_SCRIPT', false); // prevents some warnings later
 define('AJAX_SCRIPT', false); // prevents some warnings later
+define('CACHE_DISABLE_ALL', true); // Disables caching.. just in case.
 
 // Servers should define a default timezone in php.ini, but if they don't then make sure something is defined.
 // This is a quick hack.  Ideally we should ask the admin for a value.  See MDL-22625 for more on this.
@@ -219,9 +220,6 @@ define('SITEID', 0);
 $hint_dataroot = '';
 $hint_admindir = '';
 $hint_database = '';
-
-// Disable the cache API.
-cache_factory::disable();
 
 // Are we in help mode?
 if (isset($_GET['help'])) {

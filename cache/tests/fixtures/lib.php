@@ -217,3 +217,20 @@ class cache_phpunit_request extends cache_request {
 class cache_phpunit_dummy_overrideclass extends cache_application {
     // Satisfying the code pre-checker is just part of my day job.
 }
+
+/**
+ * Cache PHPUnit specific factory.
+ *
+ * @copyright  2012 Sam Hemelryk
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class cache_phpunit_factory extends cache_factory {
+    /**
+     * Exposes the cache_factory's disable method.
+     *
+     * Perhaps one day that method will be made public, for the time being it is protected.
+     */
+    public static function phpunit_disable() {
+        parent::disable();
+    }
+}

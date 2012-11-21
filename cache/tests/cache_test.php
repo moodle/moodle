@@ -714,7 +714,7 @@ class cache_phpunit_tests extends advanced_testcase {
         $this->assertTrue(@unlink($configfile));
 
         // Disable the cache
-        cache_factory::disable();
+        cache_phpunit_factory::phpunit_disable();
 
         // Check we get the expected disabled factory.
         $factory = cache_factory::instance();

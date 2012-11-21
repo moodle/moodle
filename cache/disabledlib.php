@@ -225,10 +225,13 @@ class cache_factory_disabled extends cache_factory {
      * @param string $component
      * @param string $area
      * @param array $identifiers
-     * @param bool $persistent Unused.
+     * @param array $options An array of options, available options are:
+     *   - simplekeys : Set to true if the keys you will use are a-zA-Z0-9_
+     *   - simpledata : Set to true if the type of the data you are going to store is scalar, or an array of scalar vars
+     *   - persistent : If set to true the cache will persist construction requests.
      * @return cache_application|cache_session|cache_request
      */
-    public function create_cache_from_params($mode, $component, $area, array $identifiers = array(), $persistent = false) {
+    public function create_cache_from_params($mode, $component, $area, array $identifiers = array(), array $options = array()) {
         $definition = cache_definition::load_adhoc($mode, $component, $area);
         $cache = $this->create_cache($definition, $identifiers);
         return $cache;

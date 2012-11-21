@@ -110,11 +110,21 @@ class cache_factory {
      * @return cache_factory
      */
     public static function instance($forcereload = false) {
+        global $CFG;
         if ($forcereload || self::$instance === null) {
-            self::$instance = new cache_factory();
-            if (defined('CACHE_DISABLE_STORES') && CACHE_DISABLE_STORES !== false) {
-                // The cache stores have been disabled.
-                self::$instance->set_state(self::STATE_STORES_DISABLED);;
+            // Initialise a new factory to facilitate our needs.
+            if (defined('CACHE_DISABLE_ALL') && CACHE_DISABLE_ALL !== false) {
+                // The cache has been disabled. Load disabledlib and start using the factory designed to handle this
+                // situation. It will use disabled alternatives where available.
+                require_once($CFG->dirroot.'/cache/disabledlib.php');
+                self::$instance = new cache_factory_disabled();
+            } else {
+                // We're using the regular factory.
+                self::$instance = new cache_factory();
+                if (defined('CACHE_DISABLE_STORES') && CACHE_DISABLE_STORES !== false) {
+                    // The cache stores have been disabled.
+                    self::$instance->set_state(self::STATE_STORES_DISABLED);;
+                }
             }
         }
         return self::$instance;
@@ -420,11 +430,14 @@ class cache_factory {
      * In switching out the factory for the disabled factory it gains full control over the initialisation of objects
      * and can use all of the disabled alternatives.
      * Simple!
+     *
+     * This function has been marked as protected so that it cannot be abused through the public API presently.
+     * Perhaps in the future we will allow this, however as per the build up to the first release containing
+     * MUC it was decided that this was just to risky and abusable.
      */
-    public static function disable() {
+    protected static function disable() {
         global $CFG;
         require_once($CFG->dirroot.'/cache/disabledlib.php');
-        self::$instance = null;
         self::$instance = new cache_factory_disabled();
     }
 
