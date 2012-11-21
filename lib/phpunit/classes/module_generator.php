@@ -87,13 +87,12 @@ abstract class phpunit_module_generator {
         $cm->course             = $courseid;
         $cm->module             = $DB->get_field('modules', 'id', array('name'=>$modulename));
         $cm->instance           = 0;
-        $cm->section            = isset($options['section']) ? $options['section'] : 0;
         $cm->idnumber           = isset($options['idnumber']) ? $options['idnumber'] : 0;
         $cm->added              = time();
 
         $columns = $DB->get_columns('course_modules');
         foreach ($options as $key=>$value) {
-            if ($key === 'id' or !isset($columns[$key])) {
+            if ($key === 'id' or !isset($columns[$key]) or $key === 'section') {
                 continue;
             }
             if (property_exists($cm, $key)) {
@@ -105,7 +104,11 @@ abstract class phpunit_module_generator {
         $cm->id = $DB->insert_record('course_modules', $cm);
         $cm->coursemodule = $cm->id;
 
-        add_mod_to_section($cm);
+        // add_mod_to_section() expects sectionnum, not id, crazy!
+        $cm->section = isset($options['section']) ? $options['section'] : 0;
+        $sectionid = add_mod_to_section($cm);
+        // Store the real section id.
+        $DB->set_field('course_modules', 'section', $sectionid, array('id'=>$cm->id));
 
         return $cm->id;
     }
