@@ -266,7 +266,7 @@ class assignfeedback_file_zip_importer {
                     $fileplugin->update_file_count($grade);
 
                     // Update the last modified time on the grade which will trigger student notifications.
-                    $assignment->update_grade($grade);
+                    $assignment->notify_grade_modified($grade);
                 }
             }
         }

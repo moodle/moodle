@@ -1477,6 +1477,23 @@ class assign {
     }
 
     /**
+     * Mark in the database that this grade record should have an update notification sent by cron.
+     *
+     * @param stdClass $grade a grade record keyed on id
+     * @return bool true for success
+     */
+    public function notify_grade_modified($grade) {
+        global $DB;
+
+        $grade->timemodified = time();
+        if ($grade->mailed != 1) {
+            $grade->mailed = 0;
+        }
+
+        return $DB->update_record('assign_grades', $grade);
+    }
+
+    /**
      * Update a grade in the grade table for the assignment and in the gradebook
      *
      * @param stdClass $grade a grade record keyed on id
@@ -2175,6 +2192,10 @@ class assign {
             $grade->grade = -1;
             $grade->grader = $USER->id;
             $grade->extensionduedate = 0;
+
+            // The mailed flag can be one of 3 values: 0 is unsent, 1 is sent and 2 is do not send yet.
+            // This is because students only want to be notified about certain types of update (grades and feedback).
+            $grade->mailed = 2;
             $gid = $DB->insert_record('assign_grades', $grade);
             $grade->id = $gid;
             return $grade;
@@ -3712,6 +3733,7 @@ class assign {
             }
 
             $this->update_grade($grade);
+            $this->notify_grade_modified($grade);
 
             // save outcomes
             if ($CFG->enableoutcomes) {
@@ -4406,6 +4428,7 @@ class assign {
             }
         }
         $this->update_grade($grade);
+        $this->notify_grade_modified($grade);
         $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
 
         $this->add_to_log('grade submission', $this->format_grade_for_log($grade));
