@@ -5213,44 +5213,69 @@ function forum_user_can_post($forum, $discussion, $user=NULL, $cm=NULL, $course=
     }
 }
 
-
 /**
- * checks to see if a user can view a particular post
+ * Checks to see if a user can view a particular post.
  *
- * @global object
- * @global object
- * @uses CONTEXT_MODULE
- * @uses SEPARATEGROUPS
+ * @deprecated since Moodle 2.4 use forum_user_can_see_post() instead
+ *
  * @param object $post
  * @param object $course
  * @param object $cm
  * @param object $forum
  * @param object $discussion
  * @param object $user
+ * @return boolean
  */
-function forum_user_can_view_post($post, $course, $cm, $forum, $discussion, $user=NULL){
+function forum_user_can_view_post($post, $course, $cm, $forum, $discussion, $user=null){
+    debugging('forum_user_can_view_post() is deprecated. Please use forum_user_can_see_post() instead.', DEBUG_DEVELOPER);
+    return forum_user_can_see_post($forum, $discussion, $post, $user, $cm);
+}
 
-    global $CFG, $USER;
+/**
+* Check to ensure a user can view a timed discussion.
+*
+* @param object $discussion
+* @param object $user
+* @param object $context
+* @return boolean returns true if they can view post, false otherwise
+*/
+function forum_user_can_see_timed_discussion($discussion, $user, $context) {
+    global $CFG;
 
-    if (!$user){
-        $user = $USER;
-    }
-
-    $modcontext = context_module::instance($cm->id);
-    if (!has_capability('mod/forum:viewdiscussion', $modcontext)) {
-        return false;
-    }
-
-// If it's a grouped discussion, make sure the user is a member
-    if ($discussion->groupid > 0) {
-        $groupmode = groups_get_activity_groupmode($cm);
-        if ($groupmode == SEPARATEGROUPS) {
-            return groups_is_member($discussion->groupid) || has_capability('moodle/site:accessallgroups', $modcontext);
+    // Check that the user can view a discussion that is normally hidden due to access times.
+    if (!empty($CFG->forum_enabletimedposts)) {
+        $time = time();
+        if (($discussion->timestart != 0 && $discussion->timestart > $time)
+            || ($discussion->timeend != 0 && $discussion->timeend < $time)) {
+            if (!has_capability('mod/forum:viewhiddentimedposts', $context, $user->id)) {
+                return false;
+            }
         }
     }
+
     return true;
 }
 
+/**
+* Check to ensure a user can view a group discussion.
+*
+* @param object $discussion
+* @param object $cm
+* @param object $context
+* @return boolean returns true if they can view post, false otherwise
+*/
+function forum_user_can_see_group_discussion($discussion, $cm, $context) {
+
+    // If it's a grouped discussion, make sure the user is a member.
+    if ($discussion->groupid > 0) {
+        $groupmode = groups_get_activity_groupmode($cm);
+        if ($groupmode == SEPARATEGROUPS) {
+            return groups_is_member($discussion->groupid) || has_capability('moodle/site:accessallgroups', $context);
+        }
+    }
+
+    return true;
+}
 
 /**
  * @global object
@@ -5282,8 +5307,19 @@ function forum_user_can_see_discussion($forum, $discussion, $context, $user=NULL
             return false;
         }
     }
+    if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
+        print_error('invalidcoursemodule');
+    }
 
     if (!has_capability('mod/forum:viewdiscussion', $context)) {
+        return false;
+    }
+
+    if (!forum_user_can_see_timed_discussion($discussion, $user, $context)) {
+        return false;
+    }
+
+    if (!forum_user_can_see_group_discussion($discussion, $cm, $context)) {
         return false;
     }
 
@@ -5294,7 +5330,6 @@ function forum_user_can_see_discussion($forum, $discussion, $context, $user=NULL
     }
     return true;
 }
-
 
 /**
  * @global object
@@ -5308,6 +5343,9 @@ function forum_user_can_see_discussion($forum, $discussion, $context, $user=NULL
  */
 function forum_user_can_see_post($forum, $discussion, $post, $user=NULL, $cm=NULL) {
     global $CFG, $USER, $DB;
+
+    // Context used throughout function.
+    $modcontext = context_module::instance($cm->id);
 
     // retrieve objects (yuk)
     if (is_numeric($forum)) {
@@ -5329,6 +5367,7 @@ function forum_user_can_see_post($forum, $discussion, $post, $user=NULL, $cm=NUL
             return false;
         }
     }
+
     if (!isset($post->id) && isset($post->parent)) {
         $post->id = $post->parent;
     }
@@ -5344,7 +5383,7 @@ function forum_user_can_see_post($forum, $discussion, $post, $user=NULL, $cm=NUL
         $user = $USER;
     }
 
-    $canviewdiscussion = !empty($cm->cache->caps['mod/forum:viewdiscussion']) || has_capability('mod/forum:viewdiscussion', context_module::instance($cm->id), $user->id);
+    $canviewdiscussion = !empty($cm->cache->caps['mod/forum:viewdiscussion']) || has_capability('mod/forum:viewdiscussion', $modcontext, $user->id);
     if (!$canviewdiscussion && !has_all_capabilities(array('moodle/user:viewdetails', 'moodle/user:readuserposts'), context_user::instance($post->userid))) {
         return false;
     }
@@ -5359,9 +5398,16 @@ function forum_user_can_see_post($forum, $discussion, $post, $user=NULL, $cm=NUL
         }
     }
 
+    if (!forum_user_can_see_timed_discussion($discussion, $user, $modcontext)) {
+        return false;
+    }
+
+    if (!forum_user_can_see_group_discussion($discussion, $cm, $modcontext)) {
+        return false;
+    }
+
     if ($forum->type == 'qanda') {
         $firstpost = forum_get_firstpost_from_discussion($discussion->id);
-        $modcontext = context_module::instance($cm->id);
         $userfirstpost = forum_get_user_posted_time($discussion->id, $user->id);
 
         return (($userfirstpost !== false && (time() - $userfirstpost >= $CFG->maxeditingtime)) ||
