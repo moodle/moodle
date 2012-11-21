@@ -50,7 +50,7 @@ class backup_check_testcase extends advanced_testcase {
         $coursemodule = $DB->get_record('course_modules', array('id'=>$page->cmid));
 
         $this->moduleid  = $coursemodule->id;
-        $this->sectionid = $DB->get_field("course_sections", 'id', array("section"=>$coursemodule->section, "course"=>$course->id));
+        $this->sectionid = $coursemodule->section;
         $this->courseid  = $coursemodule->course;
         $this->userid = 2; // admin
 
