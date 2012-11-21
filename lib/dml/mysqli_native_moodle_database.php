@@ -1451,6 +1451,10 @@ class mysqli_native_moodle_database extends moodle_database {
     }
 
     public function release_session_lock($rowid) {
+        if (!$this->used_for_db_sessions) {
+            return;
+        }
+
         parent::release_session_lock($rowid);
         $fullname = $this->dbname.'-'.$this->prefix.'-session-'.$rowid;
         $sql = "SELECT RELEASE_LOCK('$fullname')";
