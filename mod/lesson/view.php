@@ -338,6 +338,7 @@ if ($pageid != LESSON_EOL) {
         if (lesson_display_teacher_warning($lesson)) {
             // This is the warning msg for teachers to inform them that cluster
             // and unseen does not work while logged in as a teacher
+            $warningvars = new stdClass();
             $warningvars->cluster = get_string('clusterjump', 'lesson');
             $warningvars->unseen = get_string('unseenpageinbranch', 'lesson');
             $lesson->add_message(get_string('teacherjumpwarning', 'lesson', $warningvars));
