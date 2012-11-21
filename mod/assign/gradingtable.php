@@ -585,7 +585,11 @@ class assign_grading_table extends table_sql implements renderable {
         $gradingdisabled = $this->assignment->grading_disabled($row->id);
 
         if (!$this->is_downloading()) {
-            $icon = $this->output->pix_icon('gradefeedback', get_string('grade'), 'mod_assign');
+            $name = fullname($row);
+            if ($this->assignment->is_blind_marking()) {
+                $name = get_string('hiddenuser', 'assign') . $this->assignment->get_uniqueid_for_user($row->userid);
+            }
+            $icon = $this->output->pix_icon('gradefeedback', get_string('gradeuser', 'assign', $name), 'mod_assign');
             $url = new moodle_url('/mod/assign/view.php',
                                             array('id' => $this->assignment->get_course_module()->id,
                                                   'rownum'=>$this->rownum,'action'=>'grade'));
