@@ -102,6 +102,7 @@ $string['gradersubmissionupdatedhtml'] = '{$a->username} has updated their assig
 for <i>\'{$a->assignment}\'  at {$a->timeupdated}</i><br /><br />
 It is <a href="{$a->url}">available on the web site</a>.';
 $string['gradersubmissionupdatedsmall'] = '{$a->username} has updated their submission for assignment {$a->assignment}.';
+$string['gradeuser'] = 'Grade {$a}';
 $string['enabled'] = 'Enabled';
 $string['errornosubmissions'] = 'There are no submissions to download';
 $string['errorquickgradingvsadvancedgrading'] = 'The grades were not saved because this assignment is currently using advanced grading';

@@ -354,7 +354,8 @@ class assign_grading_table extends table_sql implements renderable {
         $grade = '';
 
         if (!$this->is_downloading()) {
-            $icon = $this->output->pix_icon('gradefeedback', get_string('grade'), 'mod_assign');
+            $name = fullname($row);
+            $icon = $this->output->pix_icon('gradefeedback', get_string('gradeuser', 'assign', $name), 'mod_assign');
             $url = new moodle_url('/mod/assign/view.php',
                                             array('id' => $this->assignment->get_course_module()->id,
                                                   'rownum'=>$this->rownum,'action'=>'grade'));
