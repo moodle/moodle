@@ -80,7 +80,7 @@ class calendar_addsubscription_form extends moodleform {
         list($choices, $groups) = calendar_get_eventtype_choices($courseid);
         $mform->addElement('select', 'eventtype', get_string('eventkind', 'calendar'), $choices);
         $mform->addRule('eventtype', get_string('required'), 'required');
-        $mform->setType('eventtype', PARAM_INT);
+        $mform->setType('eventtype', PARAM_ALPHA);
 
         if (!empty($groups) and is_array($groups)) {
             $groupoptions = array();
