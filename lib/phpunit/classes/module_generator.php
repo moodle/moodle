@@ -83,6 +83,7 @@ abstract class phpunit_module_generator {
 
         $modulename = $this->get_modulename();
         $sectionnum = isset($options['section']) ? $options['section'] : 0;
+        unset($options['section']); // Prevent confusion, it would be overridden later in course_add_cm_to_section() anyway.
 
         $cm = new stdClass();
         $cm->course             = $courseid;
