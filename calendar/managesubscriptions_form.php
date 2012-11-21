@@ -69,7 +69,7 @@ class calendar_addsubscription_form extends moodleform {
         $mform->setType('pollinterval', PARAM_INT);
 
         // Import file
-        $mform->addElement('filepicker', 'importfile', get_string('importfromfile', 'calendar'));
+        $mform->addElement('filepicker', 'importfile', get_string('importfromfile', 'calendar'), null, array('accepted_types' => '.ics'));
 
         // Disable appropriate elements depending on import from value.
         $mform->disabledIf('pollinterval', 'importfrom', 'eq', CALENDAR_IMPORT_FROM_FILE);
