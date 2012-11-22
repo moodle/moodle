@@ -376,6 +376,10 @@ if (during_initial_install()) {
         }
     }
 
+    // Cleanup SESSION to make sure other code does not complain in the future.
+    unset($SESSION->has_timed_out);
+    unset($SESSION->wantsurl);
+
     // at this stage there can be only one admin unless more were added by install - users may change username, so do not rely on that
     $adminids = explode(',', $CFG->siteadmins);
     $adminuser = get_complete_user_data('id', reset($adminids));
