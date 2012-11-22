@@ -172,7 +172,7 @@ class oracle_sql_generator extends sql_generator {
     public function getTypeSQL($xmldb_type, $xmldb_length=null, $xmldb_decimals=null) {
 
         switch ($xmldb_type) {
-            case XMLDB_TYPE_INTEGER:    // From http://www.postgresql.org/docs/7.4/interactive/datatype.html
+            case XMLDB_TYPE_INTEGER:    // See http://www.acs.ilstu.edu/docs/oracle/server.101/b10759/sql_elements001.htm#sthref86.
                 if (empty($xmldb_length)) {
                     $xmldb_length = 10;
                 }
