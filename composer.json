@@ -1,0 +1,6 @@
+{
+    "require": {
+        "phpunit/phpunit": "3.7.*",
+        "phpunit/dbUnit": "1.2.*"
+    }
+}

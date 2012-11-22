@@ -26,3 +26,7 @@ CVS
 /.buildpath
 /.cache
 phpunit.xml
+# Composer support - only composer.json is to be in git, the rest is installed in each checkout.
+composer.phar
+composer.lock
+/vendor/

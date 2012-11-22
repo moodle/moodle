@@ -187,7 +187,10 @@ class moodle_page_test extends advanced_testcase {
     }
 
     public function test_pagetype_defaults_to_script() {
+        global $SCRIPT;
         // Exercise SUT and validate
+        $SCRIPT = '/index.php';
+        $this->testpage->initialise_default_pagetype();
         $this->assertEquals('site-index', $this->testpage->pagetype);
     }
 

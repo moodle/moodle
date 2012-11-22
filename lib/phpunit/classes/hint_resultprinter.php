@@ -88,10 +88,28 @@ class Hint_ResultPrinter extends PHPUnit_TextUI_ResultPrinter {
             $file = substr($file, strlen($cwd)+1);
         }
 
-        $executable = 'phpunit';
-        if (phpunit_bootstrap_is_cygwin()) {
-            $file = str_replace('\\', '/', $file);
-            $executable = 'phpunit.bat';
+        $executable = null;
+
+        if (isset($_SERVER['argv'][0])) {
+            if (preg_match('/phpunit(\.bat|\.cmd)?$/', $_SERVER['argv'][0])) {
+                $executable = $_SERVER['argv'][0];
+                for($i=1;$i<count($_SERVER['argv']);$i++) {
+                    if (!isset($_SERVER['argv'][$i])) {
+                        break;
+                    }
+                    if (in_array($_SERVER['argv'][$i], array('--colors', '--verbose', '-v', '--debug', '--strict'))) {
+                        $executable .= ' '.$_SERVER['argv'][$i];
+                    }
+                }
+            }
+        }
+
+        if (!$executable) {
+            $executable = 'phpunit';
+            if (phpunit_bootstrap_is_cygwin()) {
+                $file = str_replace('\\', '/', $file);
+                $executable = 'phpunit.bat';
+            }
         }
 
         $this->write("\nTo re-run:\n $executable $testName $file\n");
