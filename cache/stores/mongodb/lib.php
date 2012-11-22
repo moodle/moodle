@@ -37,7 +37,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cachestore_mongodb implements cache_store {
+class cachestore_mongodb extends cache_store_base {
 
     /**
      * The name of the store
@@ -142,14 +142,6 @@ class cachestore_mongodb implements cache_store {
     }
 
     /**
-     * Returns true if the user can add an instance of this store.
-     * @return bool
-     */
-    public static function can_add_instance() {
-        return true;
-    }
-
-    /**
      * Returns the supported features.
      * @param array $configuration
      * @return int
@@ -219,27 +211,11 @@ class cachestore_mongodb implements cache_store {
     }
 
     /**
-     * Returns true if this store guarantees its data is there once set.
-     * @return bool
-     */
-    public function supports_data_guarantee() {
-        return true;
-    }
-
-    /**
      * Returns true if this store is making use of multiple identifiers.
      * @return bool
      */
     public function supports_multiple_identifiers() {
         return $this->extendedmode;
-    }
-
-    /**
-     * Returns true if this store supports native TTL.
-     * @return bool
-     */
-    public function supports_native_ttl() {
-        return false;
     }
 
     /**

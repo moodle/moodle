@@ -114,33 +114,6 @@ class cachestore_static extends static_data_store implements cache_store, cache_
     }
 
     /**
-     * Returns true if the store instance guarantees data.
-     *
-     * @return bool
-     */
-    public function supports_data_guarantee() {
-        return true;
-    }
-
-    /**
-     * Returns true if the store instance supports multiple identifiers.
-     *
-     * @return bool
-     */
-    public function supports_multiple_identifiers() {
-        return false;
-    }
-
-    /**
-     * Returns true if the store instance supports native ttl.
-     *
-     * @return bool
-     */
-    public function supports_native_ttl() {
-        return true;
-    }
-
-    /**
      * Initialises the cache.
      *
      * Once this has been done the cache is all set to be used.
@@ -378,7 +351,7 @@ class cachestore_static extends static_data_store implements cache_store, cache_
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class static_data_store {
+abstract class static_data_store extends cache_store_base {
 
     /**
      * An array for storage.

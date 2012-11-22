@@ -89,6 +89,7 @@ The following points highlight things you should know about stores.
 ** Data guarantee - Data is guaranteed to exist in the cache once it is set there. It is never cleaned up to free space or because it has not been recently used.
 ** Multiple identifiers - Rather than a single string key, the parts that make up the key are passed as an array.
 ** Native TTL support - When required, the store supports native ttl and doesn't require the cache API to manage ttl of things given to the store.
+* There are two reserved store names, base and dummy. These are both used internally.
 
 ### Definition
 _Definitions were not a part of the previous proposal._
