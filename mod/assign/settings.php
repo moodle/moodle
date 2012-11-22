@@ -60,7 +60,7 @@ if ($ADMIN->fulltree) {
                        new lang_string('sendsubmissionreceipts_help', 'mod_assign'), 1));
     $settings->add(new admin_setting_configtextarea('assign/submissionstatement',
                        new lang_string('submissionstatement', 'mod_assign'),
-                       new lang_string('submissionstatement_help', 'mod_assign'), ''));
+                       new lang_string('submissionstatement_help', 'mod_assign'), get_string('submissionstatement_default', 'mod_assign')));
     $settings->add(new admin_setting_configcheckbox('assign/requiresubmissionstatement',
                        new lang_string('requiresubmissionstatement', 'mod_assign'),
                        new lang_string('requiresubmissionstatement_help', 'mod_assign'), 0));
