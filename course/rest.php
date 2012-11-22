@@ -150,6 +150,7 @@ switch($requestmethod) {
                         break;
                     case 'updatetitle':
                         require_capability('moodle/course:manageactivities', $modcontext);
+                        require_once($CFG->libdir . '/gradelib.php');
                         $cm = get_coursemodule_from_id('', $id, 0, false, MUST_EXIST);
                         $module = new stdClass();
                         $module->id = $cm->instance;
@@ -166,6 +167,12 @@ switch($requestmethod) {
                         } else {
                             $module->name = $cm->name;
                         }
+
+                        // Attempt to update the grade item if relevant
+                        $grademodule = $DB->get_record($cm->modname, array('id' => $cm->instance));
+                        $grademodule->cmidnumber = $cm->idnumber;
+                        $grademodule->modname = $cm->modname;
+                        grade_update_mod_grades($grademodule);
 
                         // We need to return strings after they've been through filters for multilang
                         $stringoptions = new stdClass;
