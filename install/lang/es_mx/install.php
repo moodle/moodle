@@ -48,12 +48,12 @@ $string['environmenthead'] = 'Comprobando su entorno';
 $string['environmentsub2'] = 'Cada versión de Moodle tiene algún requisito mínimo de la versión de PHP y un número obligatorio de extensiones de PHP. Una comprobación del entorno completo se realiza antes de cada instalación y actualización. Por favor, póngase en contacto con el administrador del servidor si no sabe cómo instalar la nueva versión o habilitar las extensiones PHP.';
 $string['errorsinenvironment'] = '¡La comprobación del entorno falló!';
 $string['installation'] = 'Instalación';
-$string['langdownloaderror'] = 'El idioma "{$a}" no pudo ser instalado. El proceso de instalación continuará en inglés.';
+$string['langdownloaderror'] = 'El idioma "{$a}" no pudo ser instalado. El proceso de instalación continuará en Inglés.';
 $string['memorylimithelp'] = '<p>El límite de memoria PHP en su servidor es actualmente {$a}.</p>
 
 <p>Esto puede ocasionar que Moodle tenga problemas de memoria más adelante, especialmente si usted tiene activados muchos módulos y/o muchos usuarios.</p>
 
-<p>Recomendamos que configure PHP con el límite más alto posible, e.g. 40M.
+<p>Recomendamos que configure PHP con el límite más alto posible, por ejemplo: 40M.
 Hay varias formas de hacer esto:</p>
 <ol>
 <li>Si puede hacerlo, recompile PHP con <i>--enable-memory-limit</i>.
