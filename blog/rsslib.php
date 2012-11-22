@@ -109,6 +109,13 @@ function blog_rss_get_feed($context, $args) {
         return '';
     }
 
+    if ($CFG->bloglevel == BLOG_SITE_LEVEL) {
+        if (isguestuser()) {
+            debugging(get_string('nopermissiontoshow','error'));
+            return '';
+        }
+    }
+
     $sitecontext = get_context_instance(CONTEXT_SYSTEM);
     if (!has_capability('moodle/blog:view', $sitecontext)) {
         return null;
