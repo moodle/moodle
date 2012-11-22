@@ -347,6 +347,12 @@ a.ygtvspacer:hover {color: transparent;text-decoration: none;}
 .dndupload-uploading .dndupload-uploadinprogress {display:block;}
 .dndupload-arrow {background:url([[pix:theme|fp/dnd_arrow]]) center no-repeat;width:60px;height:80px;position:absolute;margin-left: -28px;top: 5px;}
 .fitem.disabled .filepicker-container, .fitem.disabled .fm-empty-container {display:none;}
+.dndupload-progressbars {padding:10px;display:none;}
+.dndupload-inprogress .dndupload-progressbars {display:block;}
+.dndupload-inprogress .fp-content {display:none;}
+.filemanager.fm-noitems .dndupload-inprogress .fm-empty-container {display:none;}
+.filepicker-filelist.dndupload-inprogress .filepicker-container {display:none;}
+.filepicker-filelist.dndupload-inprogress a {display:none;}
 
 /*
  * Select Dialogue (File Manager only)
