@@ -41,6 +41,12 @@ function session_get_instance() {
 
     static $session = null;
 
+    if (!defined('NO_MOODLE_COOKIES')) {
+        // Moodle session was not initialised yet in lib/setup.php.
+        $session = new emergency_session();
+        return $session;
+    }
+
     if (is_null($session)) {
         if (empty($CFG->sessiontimeout)) {
             $CFG->sessiontimeout = 7200;
