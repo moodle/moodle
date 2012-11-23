@@ -26,6 +26,8 @@ require_once($CFG->libdir . '/filestorage/file_exceptions.php');
 require_once($CFG->libdir . '/phpunit/bootstraplib.php');
 require_once($CFG->libdir . '/phpunit/classes/tests_finder.php');
 
+require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/behat/steps_definitions_form.php');
+
 /**
  * Behat commands manager
  *
@@ -35,84 +37,60 @@ require_once($CFG->libdir . '/phpunit/classes/tests_finder.php');
  */
 class tool_behat {
 
+    /**
+     * Path where each component's tests are stored
+     * @var string
+     */
     private static $behat_tests_path = '/tests/behat';
 
     /**
-     * Displays basic info about acceptance tests
+     * Steps types
+     * @var array
      */
-    public static function info() {
+    private static $steps_types = array('given', 'when', 'then');
 
-        $html = self::get_header();
-        $html .= self::get_info();
-        $html .= self::get_steps_definitions_form();
-        $html .= self::get_footer();
-
-        echo $html;
-    }
+    public static $docsurl = 'http://docs.moodle.org/dev/Acceptance_testing';
 
     /**
      * Lists the available steps definitions
-     * @param string $filter Keyword to filter the list of steps definitions availables
+     *
+     * @param string $type
+     * @param string $component
+     * @param string $filter
+     * @return string
      */
-    public static function stepsdefinitions($filter = false) {
+    public static function stepsdefinitions($type, $component, $filter) {
         global $CFG;
 
         self::check_behat_setup();
 
-        self::update_config_file();
+        // The loaded steps depends on the component specified.
+        self::update_config_file($component);
 
-        // Priority to the one specified as argument.
-        if (!$filter) {
-            $filter = optional_param('filter', false, PARAM_ALPHANUMEXT);
+        if ($type) {
+            $filter .= '&&' . $type;
         }
 
         if ($filter) {
-            $filteroption = ' -d ' . $filter;
+            $filteroption = ' -d "' . $filter . '"';
         } else {
             $filteroption = ' -di';
         }
 
-        $color = '';
-        if (CLI_SCRIPT) {
-            $color = '--ansi ';
-        }
-
         $currentcwd = getcwd();
         chdir($CFG->behatpath);
-        exec('bin/behat ' . $color . ' --config="' . self::get_behat_config_filepath() . '" ' . $filteroption, $steps, $code);
+        exec('bin/behat --config="' . self::get_behat_config_filepath() . '" ' . $filteroption, $steps, $code);
         chdir($currentcwd);
 
-        // Outputing steps.
-
-        $content = '';
         if ($steps) {
-            foreach ($steps as $line) {
-
-                // Skipping the step definition context.
-                if (strpos($line, '#') == 0) {
-                    if (CLI_SCRIPT) {
-                        $content .= $line . PHP_EOL;
-                    } else {
-                        $content .= htmlentities($line) . '<br/>';
-                    }
-
-                }
-            }
+            $stepshtml = implode('', $steps);
         }
 
-        if ($content === '') {
-            $content = get_string('nostepsdefinitions', 'tool_behat');
+        if (!isset($stepshtml) || $stepshtml == '') {
+            $stepshtml = get_string('nostepsdefinitions', 'tool_behat');
         }
 
-        if (!CLI_SCRIPT) {
-            $html = self::get_header();
-            $html .= self::get_steps_definitions_form($filter);
-            $html .= html_writer::tag('div', $content, array('id' => 'steps-definitions'));
-            $html .= self::get_footer();
-            echo $html;
-        } else {
-            echo $content;
-        }
+        return $stepshtml;
     }
 
     /**
@@ -149,7 +127,7 @@ class tool_behat {
     public static function runtests($withjavascript = false, $tags = false, $extra = false) {
         global $CFG;
 
-        // Checks that the behat reference is properly set up
+        // Checks that the behat reference is properly set up.
         self::check_behat_setup();
 
         // Check that PHPUnit test environment is correctly set up.
@@ -159,7 +137,7 @@ class tool_behat {
 
         @set_time_limit(0);
 
-        // No javascript by default
+        // No javascript by default.
         if (!$withjavascript && strstr($tags, 'javascript') == false) {
             $jsstr = '~javascript';
         }
@@ -181,7 +159,7 @@ class tool_behat {
             $extra = '';
         }
 
-        // Starts built-in server and inits test mode
+        // Starts built-in server and inits test mode.
         self::start_test_mode();
         $server = self::start_test_server();
 
@@ -194,30 +172,38 @@ class tool_behat {
         ob_end_clean();
         chdir($currentcwd);
 
-        // Stops built-in server and stops test mode
+        // Stops built-in server and stops test mode.
         self::stop_test_server($server[0], $server[1]);
         self::stop_test_mode();
 
         // Output.
-        echo self::get_header();
         echo $output;
-        echo self::get_footer();
     }
 
     /**
      * Updates the config file
+     * @param string $component Restricts the obtained steps definitions to the specified component
      * @throws file_exception
      */
-    private static function update_config_file() {
+    private static function update_config_file($component = '') {
         global $CFG;
 
         $behatpath = rtrim($CFG->behatpath, '/');
+
+        // Not extra contexts when component is specified.
+        $loadbuiltincontexts = '0';
+        if ($component == '' || $component == 'nomoodle') {
+            $loadbuiltincontexts = '1';
+        }
 
         // Basic behat dependencies.
         $contents = 'default:
   paths:
     features: ' . $behatpath . '/features
     bootstrap: ' . $behatpath . '/features/bootstrap
+  context:
+    parameters:
+      loadbuiltincontexts: ' . $loadbuiltincontexts . '
   extensions:
     Behat\MinkExtension\Extension:
       base_url: ' . $CFG->test_wwwroot . '
@@ -245,19 +231,14 @@ class tool_behat {
             $contents .= '      features:' . implode(PHP_EOL . '        - ', $featurespaths) . PHP_EOL;
         }
 
-        // Gets all the components with steps definitions.
-        $components = tests_finder::get_components_with_tests('stepsdefinitions');
-        if ($components) {
-            $stepsdefinitions = array('');
-            foreach ($components as $componentname => $componentpath) {
-                $componentpath = self::clean_path($componentpath);
-                $diriterator = new DirectoryIterator($componentpath . self::$behat_tests_path);
-                $regite = new RegexIterator($diriterator, '|behat_.*\.php$|');
 
-                // All behat_*.php inside self::$behat_tests_path are added as steps definitions files
-                foreach ($regite as $file) {
-                    $key = $file->getBasename('.php');
-                    $stepsdefinitions[$key] = $key . ': ' . $file->getPathname();
+        // Gets all the components with steps definitions.
+        $steps = self::get_components_steps_definitions();
+        if ($steps && $component != 'nomoodle') {
+            $stepsdefinitions = array('');
+            foreach ($steps as $key => $filepath) {
+                if ($component == '' || $component === $key) {
+                    $stepsdefinitions[$key] = $key . ': ' . $filepath;
                 }
             }
             $contents .= '      steps_definitions:' . implode(PHP_EOL . '        ', $stepsdefinitions) . PHP_EOL;
@@ -268,6 +249,40 @@ class tool_behat {
             throw new file_exception('cannotcreatefile', self::get_behat_config_filepath());
         }
 
+    }
+
+
+    /**
+     * Gets the list of Moodle steps definitions
+     *
+     * Class name as a key and the filepath as value
+     *
+     * Externalized from update_config_file() to use
+     * it from the steps definitions web interface
+     *
+     * @return array
+     */
+    public static function get_components_steps_definitions() {
+
+        $components = tests_finder::get_components_with_tests('stepsdefinitions');
+        if (!$components) {
+            return false;
+        }
+
+        $stepsdefinitions = array();
+        foreach ($components as $componentname => $componentpath) {
+            $componentpath = self::clean_path($componentpath);
+            $diriterator = new DirectoryIterator($componentpath . self::$behat_tests_path);
+            $regite = new RegexIterator($diriterator, '|behat_.*\.php$|');
+
+            // All behat_*.php inside self::$behat_tests_path are added as steps definitions files.
+            foreach ($regite as $file) {
+                $key = $file->getBasename('.php');
+                $stepsdefinitions[$key] = $file->getPathname();
+            }
+        }
+
+        return $stepsdefinitions;
     }
 
 
@@ -323,11 +338,15 @@ class tool_behat {
         // Moodle setting.
         if (empty($CFG->behatpath)) {
             $msg = get_string('nobehatpath', 'tool_behat');
-            $url = $CFG->wwwroot . '/' . $CFG->admin . '/settings.php?section=systempaths';
 
+            // With HTML.
+            $docslink = tool_behat::$docsurl;
             if (!CLI_SCRIPT) {
-                $msg .= ' ' . html_writer::tag('a', get_string('systempaths', 'admin'), array('href' => $url));
+                $docslink = html_writer::tag('a', $docslink, array('href' => $docslink, 'target' => '_blank'));
+                $systempathsurl = $CFG->wwwroot . '/' . $CFG->admin . '/settings.php?section=systempaths';
+                $msg .= ' (' . html_writer::tag('a', get_string('systempaths', 'admin'), array('href' => $systempathsurl)) . ')';
             }
+            $msg .= '. ' . get_string('moreinfoin', 'tool_behat') . ' ' . $docslink;
             notice($msg);
         }
 
@@ -362,7 +381,8 @@ class tool_behat {
 
         $behatdir = self::get_behat_dir();
 
-        $contents = '$CFG->phpunit_prefix and $CFG->phpunit_dataroot are currently used as $CFG->prefix and $CFG->dataroot';
+        $contents = '$CFG->test_wwwroot, $CFG->phpunit_prefix and $CFG->phpunit_dataroot' .
+            ' are currently used as $CFG->wwwroot, $CFG->prefix and $CFG->dataroot';
         $filepath = $behatdir . '/test_environment_enabled.txt';
         if (!file_put_contents($filepath, $contents)) {
             throw new file_exception('cannotcreatefile', $filepath);
@@ -385,6 +405,8 @@ class tool_behat {
 
         $server = str_replace('http://', '', $CFG->test_wwwroot);
         $process = proc_open('php -S ' . $server, $descriptorspec, $pipes, $CFG->dirroot);
+
+        // TODO If it's already started close pipes.
 
         if (!is_resource($process)) {
             print_error('testservercantrun');
@@ -508,111 +530,6 @@ class tool_behat {
      */
     private static function get_behat_config_filepath() {
         return self::get_behat_dir() . '/behat.yml';
-    }
-
-    /**
-     * Returns header output
-     * @return string
-     */
-    private static function get_header() {
-        global $OUTPUT;
-
-        $action = optional_param('action', 'info', PARAM_ALPHAEXT);
-
-        if (CLI_SCRIPT) {
-            return '';
-        }
-
-        $title = get_string('pluginname', 'tool_behat') . ' - ' . get_string('command' . $action, 'tool_behat');
-        $html = $OUTPUT->header();
-        $html .= $OUTPUT->heading($title);
-
-        return $html;
-    }
-
-    /**
-     * Returns footer output
-     * @return string
-     */
-    private static function get_footer() {
-        global $OUTPUT;
-
-        if (CLI_SCRIPT) {
-            return '';
-        }
-
-        return $OUTPUT->footer();
-    }
-
-    /**
-     * Returns a message and a button to continue if web execution
-     * @param string $html
-     * @param string $url
-     * @return string
-     */
-    private static function output_success($html, $url = false) {
-        global $CFG, $OUTPUT;
-
-        if (!$url) {
-            $url = $CFG->wwwroot . '/' . $CFG->admin . '/tool/behat/index.php';
-        }
-
-        if (!CLI_SCRIPT) {
-            $html = $OUTPUT->box($html, 'generalbox', 'notice');
-            $html .= $OUTPUT->continue_button($url);
-        }
-
-        return $html;
-    }
-
-    /**
-     * Returns the installation instructions
-     *
-     * (hardcoded in English)
-     *
-     * @return string
-     */
-    private static function get_info() {
-        global $OUTPUT;
-
-        $url = 'http://docs.moodle.org/dev/Acceptance_testing';
-
-        $html = $OUTPUT->box_start();
-        $html .= html_writer::tag('h1', 'Info');
-        $html .= html_writer::tag('div', 'Follow <a href="' . $url . '" target="_blank">' . $url . '</a> instructions for info about installation and tests execution');
-        $html .= $OUTPUT->box_end();
-
-        return $html;
-    }
-
-    /**
-     * Returns the steps definitions form
-     * @param string $filter To filter the steps definitions list by keyword
-     * @return string
-     */
-    private static function get_steps_definitions_form($filter = false) {
-        global $OUTPUT;
-
-        if ($filter === false) {
-            $filter = '';
-        } else {
-            $filter = s($filter);
-        }
-
-        $html = $OUTPUT->box_start();
-        $html .= '<form method="get" action="index.php">';
-        $html .= '<fieldset class="invisiblefieldset">';
-        $html .= '<label for="id_filter">' . get_string('stepsdefinitions', 'tool_behat') . '</label> ';
-        $html .= '<input type="text" id="id_filter" value="' . $filter . '" name="filter"/> (' . get_string('stepsdefinitionsemptyfilter', 'tool_behat') . ')';
-        $html .= '<p></p>';
-        $html .= '<input type="submit" value="' . get_string('viewsteps', 'tool_behat') . '" />';
-        $html .= '<input type="hidden" name="action" value="stepsdefinitions" />';
-        $html .= '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-        $html .= '</fieldset>';
-        $html .= '</form>';
-        $html .= $OUTPUT->box_end();
-
-        return $html;
     }
 
 }

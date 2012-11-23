@@ -26,8 +26,29 @@ require(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/behat/locallib.php');
 
-$action = optional_param('action', 'info', PARAM_ALPHAEXT);
+$filter = optional_param('filter', '', PARAM_ALPHANUMEXT);
+$type = optional_param('type', false, PARAM_ALPHAEXT);
+$component = optional_param('component', '', PARAM_ALPHAEXT);
 
 admin_externalpage_setup('toolbehat');
 
-call_user_func('tool_behat::' . $action);
+// Getting available steps definitions from behat.
+$steps = tool_behat::stepsdefinitions($type, $component, $filter);
+
+// Form.
+$componentswithsteps = array(
+    '' => get_string('allavailablesteps', 'tool_behat'),
+    'nomoodle' => get_string('nomoodlesteps', 'tool_behat'),
+);
+$components = tool_behat::get_components_steps_definitions();
+if ($components) {
+    foreach ($components as $component => $filepath) {
+        $componentswithsteps[$component] = 'Moodle ' . substr($component, 6);
+    }
+}
+$form = new steps_definitions_form(null, array('components' => $componentswithsteps));
+
+// Output contents.
+$renderer = $PAGE->get_renderer('tool_behat');
+echo $renderer->render_stepsdefinitions($steps, $form);
+

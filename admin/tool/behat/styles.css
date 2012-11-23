@@ -1,3 +1,7 @@
 #region-main-box #behat .summary { position: relative;}
-div#steps-definitions{border-style:solid;border-width:1px;border-color:#BBB;padding:5px;margin:auto;width:50%;}
 #page-admin-tool-behat-index{padding-top: 0px;}
+div#steps-definitions{border-style:solid;border-width:1px;border-color:#BBB;padding:5px;margin:auto;width:50%;}
+div#steps-definitions .step{margin: 10px 0px 10px 0px;}
+div#steps-definitions .stepdescription{color:#bf8c12;}
+div#steps-definitions .steptype{color:#1467a6;margin-right: 5px;}
+div#steps-definitions .stepregex{color:#060;}

@@ -32,9 +32,7 @@ require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/behat/locallib.php');
 list($options, $unrecognized) = cli_get_params(
     array(
         'help'               => false,
-        'stepsdefinitions'   => false,
         'runtests'           => false,
-        'filter'             => false,
         'tags'               => false,
         'extra'              => false,
         'with-javascript'    => false,
@@ -51,7 +49,6 @@ Behat tool
 Ensure the user who executes the action has permissions over behat installation
 
 Options:
---stepsdefinitions   Displays the available steps definitions (accepts --filter=\"\" option to restrict the list to the matching definitions)
 --runtests           Runs the tests (accepts --with-javascript option, --tags=\"\" option to execute only the matching tests and --extra=\"\" to specify extra behat options)
 --testenvironment    Allows the test environment to be accesses through the built-in server (accepts value 'enable' or 'disable')
 
@@ -73,7 +70,7 @@ if ($unrecognized) {
     cli_error(get_string('cliunknowoption', 'admin', $unrecognized));
 }
 
-$commands = array('stepsdefinitions', 'runtests', 'testenvironment');
+$commands = array('runtests', 'testenvironment');
 foreach ($commands as $command) {
     if ($options[$command]) {
         $action = $command;
@@ -87,10 +84,6 @@ if (empty($action)) {
 }
 
 switch ($action) {
-
-    case 'stepsdefinitions':
-        tool_behat::stepsdefinitions($options['filter']);
-        break;
 
     case 'runtests':
         tool_behat::runtests($options['with-javascript'], $options['tags'], $options['extra']);
