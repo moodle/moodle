@@ -351,7 +351,7 @@ class cachestore_session extends session_data_store implements cache_is_key_awar
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class session_data_store extends cache_store_base {
+abstract class session_data_store extends cache_store {
 
     /**
      * Used for the actual storage.

@@ -37,7 +37,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cachestore_dummy implements cache_store {
+class cachestore_dummy extends cache_store {
 
     /**
      * The name of this store.
@@ -132,30 +132,6 @@ class cachestore_dummy implements cache_store {
      * @return bool
      */
     public static function is_supported_mode($mode) {
-        return true;
-    }
-
-    /**
-     * Returns true if this store supports data guarantee.
-     * @return bool
-     */
-    public function supports_data_guarantee() {
-        return false;
-    }
-
-    /**
-     * Returns true if this store supports multiple identifiers.
-     * @return bool
-     */
-    public function supports_multiple_identifiers() {
-        return false;
-    }
-
-    /**
-     * Returns true if this store supports a native ttl.
-     * @return bool
-     */
-    public function supports_native_ttl() {
         return true;
     }
 

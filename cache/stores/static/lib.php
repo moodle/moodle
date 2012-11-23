@@ -34,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cachestore_static extends static_data_store implements cache_store, cache_is_key_aware {
+class cachestore_static extends static_data_store implements cache_is_key_aware {
 
     /**
      * The name of the store
@@ -351,7 +351,7 @@ class cachestore_static extends static_data_store implements cache_store, cache_
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class static_data_store extends cache_store_base {
+abstract class static_data_store extends cache_store {
 
     /**
      * An array for storage.

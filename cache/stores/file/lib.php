@@ -37,7 +37,7 @@
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cachestore_file extends cache_store_base implements cache_is_key_aware {
+class cachestore_file extends cache_store implements cache_is_key_aware {
 
     /**
      * The name of the store.

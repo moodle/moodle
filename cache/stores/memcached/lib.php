@@ -43,7 +43,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cachestore_memcached extends cache_store_base {
+class cachestore_memcached extends cache_store {
 
     /**
      * The name of the store
