@@ -1035,7 +1035,7 @@ function workshop_get_extra_capabilities() {
  * Needed by grade_update_mod_grades() in lib/gradelib.php. Also used by
  * {@link workshop_update_grades()}.
  *
- * @param stdClass $workshop instance object with extra cmidnumber and modname property
+ * @param stdClass $workshop instance object with extra cmidnumber property
  * @param stdClass $submissiongrades data for the first grade item
  * @param stdClass $assessmentgrades data for the second grade item
  * @return void
