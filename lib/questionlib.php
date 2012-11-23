@@ -1803,10 +1803,10 @@ function question_pluginfile($course, $context, $component, $filearea, $args, $f
         send_file_not_found();
     }
 
-    list($context, $course, $cm) = get_context_info_array($context->id);
-    require_login($course, false, $cm);
-
     if ($filearea === 'export') {
+        list($context, $course, $cm) = get_context_info_array($context->id);
+        require_login($course, false, $cm);
+
         require_once($CFG->dirroot . '/question/editlib.php');
         $contexts = new question_edit_contexts($context);
         // check export capability
