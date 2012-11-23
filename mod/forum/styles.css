@@ -88,6 +88,8 @@
 #page-mod-forum-view .unread a:first-child {padding-right: 10px;}
 #page-mod-forum-index .unread img,
 #page-mod-forum-view .unread img {margin-left: 5px;}
+#page-mod-forum-view .unread img {margin-left: 5px;}
+.dir-rtl#page-mod-forum-view .unread img {margin-right: 5px; margin-left: 0; }
 
 /** Unknown Styles ??? */
 #email .unsubscribelink {margin-top:20px;}

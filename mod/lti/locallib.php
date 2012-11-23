@@ -325,7 +325,7 @@ function lti_build_request($instance, $typeconfig, $course) {
 }
 
 function lti_get_tool_table($tools, $id) {
-    global $CFG, $USER;
+    global $CFG, $OUTPUT, $USER;
     $html = '';
 
     $typename = get_string('typename', 'lti');
