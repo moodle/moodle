@@ -22,7 +22,8 @@
 .glossary-activity-content { margin-left: 40px; }
 
 /** Page specific styles **/
-#page-mod-glossary-view .glossarycontrol {float: right;text-align:right;white-space: nowrap;margin: 5px 0;}
+#page-mod-glossary-view .glossarycontrol {text-align:right;white-space: nowrap;margin: 5px 0;}
+.dir-rtl#page-mod-glossary-view .glossarycontrol { text-align: left; }
 #page-mod-glossary-view table.glossarycategoryheader,
 #page-mod-glossary-import table.glossaryimportexport {margin-left:auto;margin-right:auto;}
 

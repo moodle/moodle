@@ -8,6 +8,7 @@ required changes:
 
 deprecation:
 * i/roles: Use t/assignroles instead
+* mod/glossary/pix/print: Use t/print instead
 
 optional changes:
 * new optional boolean parameter $withlinks for public function login_info() in lib/outputrenderers.php (MDL-31365)
@@ -20,6 +21,7 @@ optional changes:
 * new icon t/cohorts (sized 12x12), to prevent the use of i/cohorts which is 16x16.
 * new icons t/sort_asc, t/sort_desc to use for ordering in table headers.
 * new class 'iconsort' for icons used for ordering in table headers.
+* new icon t/print (sized 12x12).
 
 === 2.3 ===
 
