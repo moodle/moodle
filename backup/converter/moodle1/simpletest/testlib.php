@@ -429,23 +429,37 @@ as it is parsed from the backup file. <br /><br /><img border="0" width="110" vs
         $this->assertTrue(in_array('/pics/news.gif', $files));
         $this->assertTrue(in_array('/MANUAL.DOC', $files));
 
-        $text = moodle1_converter::rewrite_filephp_usage($text, array('/pics/news.gif', '/another/file/notused.txt'), $files);
+        $text = moodle1_converter::rewrite_filephp_usage($text, array('/pics/news.gif', '/another/file/notused.txt'));
         $this->assertEqual($text, 'This is a text containing links to file.php
 as it is parsed from the backup file. <br /><br /><img border="0" width="110" vspace="0" hspace="0" height="92" title="News" alt="News" src="@@PLUGINFILE@@/pics/news.gif" /><a href="@@PLUGINFILE@@/pics/news.gif?forcedownload=1">download image</a><br />
     <br /><a href=\'$@FILEPHP@$$@SLASH@$MANUAL.DOC$@FORCEDOWNLOAD@$\'>download manual</a><br />');
     }
 
     public function test_referenced_files_urlencoded() {
-        // This test covers MDL-36204
+
         $text = 'This is a text containing links to file.php
 as it is parsed from the backup file. <br /><br /><img border="0" width="110" vspace="0" hspace="0" height="92" title="News" alt="News" src="$@FILEPHP@$$@SLASH@$pics$@SLASH@$news.gif" /><a href="$@FILEPHP@$$@SLASH@$pics$@SLASH@$news.gif$@FORCEDOWNLOAD@$">no space</a><br />
-    <br /><a href=\'$@FILEPHP@$$@SLASH@$pics$@SLASH@$news%20with%20spaces.gif$@FORCEDOWNLOAD@$\'>with urlencoded spaces</a><br />';
+    <br /><a href=\'$@FILEPHP@$$@SLASH@$pics$@SLASH@$news%20with%20spaces.gif$@FORCEDOWNLOAD@$\'>with urlencoded spaces</a><br />
+<a href="$@FILEPHP@$$@SLASH@$illegal%20pics%2Bmovies$@SLASH@$romeo%2Bjuliet.avi">Download the full AVI for free! (space and plus encoded)</a>
+<a href="$@FILEPHP@$$@SLASH@$illegal pics+movies$@SLASH@$romeo+juliet.avi">Download the full AVI for free! (none encoded)</a>
+<a href="$@FILEPHP@$$@SLASH@$illegal%20pics+movies$@SLASH@$romeo+juliet.avi">Download the full AVI for free! (only space encoded)</a>
+<a href="$@FILEPHP@$$@SLASH@$illegal pics%2Bmovies$@SLASH@$romeo%2Bjuliet.avi">Download the full AVI for free! (only plus)</a>';
 
         $files = moodle1_converter::find_referenced_files($text);
         $this->assertIsA($files, 'array');
-        $this->assertEqual(2, count($files));
+        $this->assertEqual(3, count($files));
         $this->assertTrue(in_array('/pics/news.gif', $files));
         $this->assertTrue(in_array('/pics/news with spaces.gif', $files));
+        $this->assertTrue(in_array('/illegal pics+movies/romeo+juliet.avi', $files));
+
+        $text = moodle1_converter::rewrite_filephp_usage($text, $files);
+        $this->assertEqual('This is a text containing links to file.php
+as it is parsed from the backup file. <br /><br /><img border="0" width="110" vspace="0" hspace="0" height="92" title="News" alt="News" src="@@PLUGINFILE@@/pics/news.gif" /><a href="@@PLUGINFILE@@/pics/news.gif?forcedownload=1">no space</a><br />
+    <br /><a href=\'@@PLUGINFILE@@/pics/news%20with%20spaces.gif?forcedownload=1\'>with urlencoded spaces</a><br />
+<a href="@@PLUGINFILE@@/illegal%20pics%2Bmovies/romeo%2Bjuliet.avi">Download the full AVI for free! (space and plus encoded)</a>
+<a href="@@PLUGINFILE@@/illegal%20pics%2Bmovies/romeo%2Bjuliet.avi">Download the full AVI for free! (none encoded)</a>
+<a href="$@FILEPHP@$$@SLASH@$illegal%20pics+movies$@SLASH@$romeo+juliet.avi">Download the full AVI for free! (only space encoded)</a>
+<a href="$@FILEPHP@$$@SLASH@$illegal pics%2Bmovies$@SLASH@$romeo%2Bjuliet.avi">Download the full AVI for free! (only plus)</a>', $text);
     }
 
     public function test_question_bank_conversion() {
