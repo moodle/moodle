@@ -156,6 +156,16 @@ table.minicalendar {
   -webkit-border-bottom-left-radius: 15px;
   border-bottom-left-radius: 15px;
 }
+.dir-rtl.path-calendar .eventlist .event .side,
+.dir-rtl .glossarypost .side,
+.dir-rtl#page-mod-journal-view .feedbackbox .side {
+  -moz-border-radius-bottomleft:0;
+  -webkit-border-bottom-left-radius: 0;
+  border-bottom-left-radius: 0;
+  -moz-border-radius-bottomright:15px;
+  -webkit-border-bottom-right-radius: 15px;
+  border-bottom-right-radius: 15px;
+}
 
 .path-calendar .eventlist .event .description,
 .encyclopedia .entrylowersection,
@@ -163,6 +173,16 @@ table.minicalendar {
   -moz-border-radius-bottomright:15px;
   -webkit-border-bottom-right-radius: 15px;
   border-bottom-right-radius: 15px;
+}
+.dir-rtl.path-calendar .eventlist .event .description,
+.dir-rtl .encyclopedia .entrylowersection,
+.dir-rtl#page-mod-journal-view .feedbackbox .entrycontent {
+  -moz-border-radius-bottomright:0;
+  -webkit-border-bottom-right-radius: 0;
+  border-bottom-right-radius: 0;
+  -moz-border-radius-bottomleft:15px;
+  -webkit-border-bottom-left-radius: 15px;
+  border-bottom-left-radius: 15px;
 }
 
 .path-calendar .maincalendar,
