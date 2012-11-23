@@ -142,21 +142,25 @@ foreach ($chapters as $ch) {
     $last = $ch->id;
 }
 
+$navprevicon = right_to_left() ? 'nav_next' : 'nav_prev';
+$navnexticon = right_to_left() ? 'nav_prev' : 'nav_next';
+$navprevdisicon = right_to_left() ? 'nav_next_dis' : 'nav_prev_dis';
+
 $chnavigation = '';
 if ($previd) {
     $chnavigation .= '<a title="'.get_string('navprev', 'book').'" href="view.php?id='.$cm->id.
-            '&amp;chapterid='.$previd.'"><img src="'.$OUTPUT->pix_url('nav_prev', 'mod_book').'" class="bigicon" alt="'.get_string('navprev', 'book').'"/></a>';
+            '&amp;chapterid='.$previd.'"><img src="'.$OUTPUT->pix_url($navprevicon, 'mod_book').'" class="icon" alt="'.get_string('navprev', 'book').'"/></a>';
 } else {
-    $chnavigation .= '<img src="'.$OUTPUT->pix_url('nav_prev_dis', 'mod_book').'" class="bigicon" alt="" />';
+    $chnavigation .= '<img src="'.$OUTPUT->pix_url($navprevdisicon, 'mod_book').'" class="icon" alt="" />';
 }
 if ($nextid) {
     $chnavigation .= '<a title="'.get_string('navnext', 'book').'" href="view.php?id='.$cm->id.
-            '&amp;chapterid='.$nextid.'"><img src="'.$OUTPUT->pix_url('nav_next', 'mod_book').'" class="bigicon" alt="'.get_string('navnext', 'book').'" /></a>';
+            '&amp;chapterid='.$nextid.'"><img src="'.$OUTPUT->pix_url($navnexticon, 'mod_book').'" class="icon" alt="'.get_string('navnext', 'book').'" /></a>';
 } else {
     $sec = $DB->get_field('course_sections', 'section', array('id' => $cm->section));
     $returnurl = course_get_url($course, $sec);
     $chnavigation .= '<a title="'.get_string('navexit', 'book').'" href="'.$returnurl.'"><img src="'.$OUTPUT->pix_url('nav_exit', 'mod_book').
-            '" class="bigicon" alt="'.get_string('navexit', 'book').'" /></a>';
+            '" class="icon" alt="'.get_string('navexit', 'book').'" /></a>';
 
     // we are cheating a bit here, viewing the last page means user has viewed the whole book
     $completion = new completion_info($course);
