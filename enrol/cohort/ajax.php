@@ -77,6 +77,8 @@ switch ($action) {
         $offset = optional_param('offset', 0, PARAM_INT);
         $search  = optional_param('search', '', PARAM_RAW);
         $outcome->response = enrol_cohort_search_cohorts($manager, $offset, 25, $search);
+        // Some browsers reorder collections by key.
+        $outcome->response['cohorts'] = array_values($outcome->response['cohorts']);
         break;
     case 'enrolcohort':
         require_capability('moodle/course:enrolconfig', $context);

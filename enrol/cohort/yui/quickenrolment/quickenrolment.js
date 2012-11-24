@@ -229,7 +229,7 @@ YUI.add('moodle-enrol_cohort-quickenrolment', function(Y) {
             var rawcohorts = response.cohorts;
             var cohorts = [], i=0;
             for (i in rawcohorts) {
-                cohorts[rawcohorts[i].cohortid] = new COHORT(rawcohorts[i]);
+                cohorts[i] = new COHORT(rawcohorts[i]);
             }
             this.set(COHORTS, cohorts);
         },
