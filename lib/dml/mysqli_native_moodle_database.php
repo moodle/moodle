@@ -377,6 +377,9 @@ class mysqli_native_moodle_database extends moodle_database {
         if (empty($dbport)) {
             $dbport = 3306;
         }
+        if ($dbhost and !empty($this->dboptions['dbpersist'])) {
+            $dbhost = "p:$dbhost";
+        }
         ob_start();
         $this->mysqli = new mysqli($dbhost, $dbuser, $dbpass, $dbname, $dbport, $dbsocket);
         $dberr = ob_get_contents();
