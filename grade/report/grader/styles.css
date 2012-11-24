@@ -377,6 +377,8 @@ float:left;
 clear:none;
 padding-top:20px;
 }
+.path-grade-report-grader.dir-rtl .left_scroller {float:right;}
+
 
 .path-grade-report-grader .right_scroller {
 width:auto;
@@ -636,3 +638,4 @@ position:absolute;
 .path-grade-report-grader.ie6 .excludedfloater {
 font-size:7px;
 }
+
