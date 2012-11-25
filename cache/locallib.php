@@ -790,7 +790,7 @@ abstract class cache_administration_helper extends cache_helper {
         // If it has a customised add instance form then it is going to want to.
         $storeclass = 'cachestore_'.$plugin;
         $storedata = $stores[$store];
-        if (array_key_exists('configuration', $storedata) && method_exists($storeclass, 'config_set_edit_form_data')) {
+        if (array_key_exists('configuration', $storedata) && array_key_exists('cache_is_configurable', class_implements($storeclass))) {
             $storeclass::config_set_edit_form_data($editform, $storedata['configuration']);
         }
         return $editform;
@@ -848,12 +848,11 @@ abstract class cache_administration_helper extends cache_helper {
         }
         require_once($file);
         $class = 'cachestore_'.$data->plugin;
-        $method = 'config_get_configuration_array';
         if (!class_exists($class)) {
             throw new coding_exception('Invalid cache plugin provided.');
         }
-        if (method_exists($class, $method)) {
-            return call_user_func(array($class, $method), $data);
+        if (array_key_exists('cache_is_configurable', class_implements($class))) {
+            return $class::config_get_configuration_array($data);
         }
         return array();
     }
