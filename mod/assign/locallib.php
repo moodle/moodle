@@ -296,11 +296,12 @@ class assign {
 
         $o = '';
         $mform = null;
+        $notices = array();
 
-        // handle form submissions first
+        // Handle form submissions first.
         if ($action == 'savesubmission') {
             $action = 'editsubmission';
-            if ($this->process_save_submission($mform)) {
+            if ($this->process_save_submission($mform, $notices)) {
                 $action = 'view';
             }
          } else if ($action == 'lock') {
@@ -351,7 +352,7 @@ class assign {
         $returnparams = array('rownum'=>optional_param('rownum', 0, PARAM_INT));
         $this->register_return_link($action, $returnparams);
 
-        // now show the right view page
+        // Now show the right view page.
         if ($action == 'previousgrade') {
             $mform = null;
             $o .= $this->view_single_grade_page($mform, -1);
@@ -368,7 +369,7 @@ class assign {
         } else if ($action == 'viewpluginassignsubmission') {
             $o .= $this->view_plugin_content('assignsubmission');
         } else if ($action == 'editsubmission') {
-            $o .= $this->view_edit_submission_page($mform);
+            $o .= $this->view_edit_submission_page($mform, $notices);
         } else if ($action == 'grading') {
             $o .= $this->view_grading_page();
         } else if ($action == 'downloadall') {
@@ -1939,9 +1940,10 @@ class assign {
      * View edit submissions page.
      *
      * @param moodleform $mform
+     * @param array $notices A list of notices to display at the top of the edit submission form (e.g. from plugins).
      * @return void
      */
-    private function view_edit_submission_page($mform) {
+    private function view_edit_submission_page($mform, $notices) {
         global $CFG;
 
         $o = '';
@@ -1963,6 +1965,10 @@ class assign {
 
         if (!$mform) {
             $mform = new mod_assign_submission_form(null, array($this, $data));
+        }
+
+        foreach ($notices as $notice) {
+            $o .= $this->output->notification($notice);
         }
 
         $o .= $this->output->render(new assign_form('editsubmissionform',$mform));
@@ -2821,15 +2827,16 @@ class assign {
      * save assignment submission
      *
      * @param  moodleform $mform
+     * @param  array $notices Any error messages that should be shown to the user at the top of the edit submission form.
      * @return bool
      */
-    private function process_save_submission(&$mform) {
+    private function process_save_submission(&$mform, &$notices) {
         global $USER, $CFG;
 
-        // Include submission form
+        // Include submission form.
         require_once($CFG->dirroot . '/mod/assign/submission_form.php');
 
-        // Need submit permission to submit an assignment
+        // Need submit permission to submit an assignment.
         require_capability('mod/assign:submit', $this->context);
         require_sesskey();
 
@@ -2847,12 +2854,24 @@ class assign {
             }
 
 
+            $allempty = true;
+            $pluginerror = false;
             foreach ($this->submissionplugins as $plugin) {
                 if ($plugin->is_enabled()) {
                     if (!$plugin->save($submission, $data)) {
-                        print_error($plugin->get_error());
+                        $notices[] = $plugin->get_error();
+                        $pluginerror = true;
+                    }
+                    if (!$allempty || !$plugin->is_empty($submission)) {
+                        $allempty = false;
                     }
                 }
+            }
+            if ($pluginerror || $allempty) {
+                if ($allempty) {
+                    $notices[] = get_string('submissionempty', 'mod_assign');
+                }
+                return false;
             }
 
             $this->update_submission($submission);
