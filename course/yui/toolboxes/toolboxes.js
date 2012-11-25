@@ -479,7 +479,6 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                 .setAttribute('href', newlink)
                 .setAttribute('title', left_string);
             anchor.appendChild(newicon);
-            anchor.on('click', this.move_left, this);
             moveright.insert(anchor, 'before');
         },
         /**
