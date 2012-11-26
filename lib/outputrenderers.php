@@ -1476,6 +1476,11 @@ class core_renderer extends renderer_base {
             $select->attributes['title'] = $select->tooltip;
         }
 
+        $select->attributes['class'] = 'autosubmit';
+        if ($select->class) {
+            $select->attributes['class'] .= ' ' . $select->class;
+        }
+
         if ($select->label) {
             $output .= html_writer::label($select->label, $select->attributes['id'], false, $select->labelattributes);
         }
@@ -1491,7 +1496,10 @@ class core_renderer extends renderer_base {
         $output .= html_writer::tag('noscript', html_writer::tag('div', $go), array('class' => 'inline'));
 
         $nothing = empty($select->nothing) ? false : key($select->nothing);
-        $this->page->requires->js_init_call('M.util.init_select_autosubmit', array($select->formid, $select->attributes['id'], $nothing));
+        $this->page->requires->yui_module('moodle-core-formautosubmit',
+            'M.core.init_formautosubmit',
+            array(array('selectid' => $select->attributes['id'], 'nothing' => $nothing))
+        );
 
         // then div wrapper for xhtml strictness
         $output = html_writer::tag('div', $output);
@@ -1557,6 +1565,11 @@ class core_renderer extends renderer_base {
             $output .= html_writer::label($select->label, $select->attributes['id'], false, $select->labelattributes);
         }
 
+        $select->attributes['class'] = 'autosubmit';
+        if ($select->class) {
+            $select->attributes['class'] .= ' ' . $select->class;
+        }
+
         if ($select->helpicon instanceof help_icon) {
             $output .= $this->render($select->helpicon);
         } else if ($select->helpicon instanceof old_help_icon) {
@@ -1614,7 +1627,10 @@ class core_renderer extends renderer_base {
             $go = html_writer::empty_tag('input', array('type'=>'submit', 'value'=>get_string('go')));
             $output .= html_writer::tag('noscript', html_writer::tag('div', $go), array('class' => 'inline'));
             $nothing = empty($select->nothing) ? false : key($select->nothing);
-            $output .= $this->page->requires->js_init_call('M.util.init_select_autosubmit', array($select->formid, $select->attributes['id'], $nothing));
+            $this->page->requires->yui_module('moodle-core-formautosubmit',
+                'M.core.init_formautosubmit',
+                array(array('selectid' => $select->attributes['id'], 'nothing' => $nothing))
+            );
         } else {
             $output .= html_writer::empty_tag('input', array('type'=>'submit', 'value'=>$select->showbutton));
         }
