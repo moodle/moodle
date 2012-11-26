@@ -3626,7 +3626,7 @@ class admin_settings_num_course_sections extends admin_setting_configselect {
     /** Lazy-load the available choices for the select box */
     public function load_choices() {
         $max = get_config('moodlecourse', 'maxsections');
-        if (empty($max)) {
+        if (!isset($max) || !is_numeric($max)) {
             $max = 52;
         }
         for ($i = 0; $i <= $max; $i++) {

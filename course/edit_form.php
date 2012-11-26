@@ -126,7 +126,11 @@ class course_edit_form extends moodleform {
         $mform->addHelpButton('coursedisplay', 'coursedisplay');
         $mform->setDefault('coursedisplay', $courseconfig->coursedisplay);
 
-        for ($i = 0; $i <= $courseconfig->maxsections; $i++) {
+        $max = $courseconfig->maxsections;
+        if (!isset($max) || !is_numeric($max)) {
+            $max = 52;
+        }
+        for ($i = 0; $i <= $max; $i++) {
             $sectionmenu[$i] = "$i";
         }
         $mform->addElement('select', 'numsections', get_string('numberweeks'), $sectionmenu);
