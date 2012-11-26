@@ -213,8 +213,12 @@ class format_topics extends format_base {
         }
         if ($foreditform && !isset($courseformatoptions['coursedisplay']['label'])) {
             $courseconfig = get_config('moodlecourse');
+            $max = $courseconfig->maxsections;
+            if (!isset($max) || !is_numeric($max)) {
+                $max = 52;
+            }
             $sectionmenu = array();
-            for ($i = 0; $i <= $courseconfig->maxsections; $i++) {
+            for ($i = 0; $i <= $max; $i++) {
                 $sectionmenu[$i] = "$i";
             }
             $courseformatoptionsedit = array(
