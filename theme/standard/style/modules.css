@@ -84,6 +84,9 @@ table.mod_index {width:90%;margin:1em auto;}
 .forumpost .options div {padding:4px;}
 .forumpost.unread {background: #9EBEFF;}
 .forumpost.unread .content {border:2px solid #0046C7;} /** inside border of unread posts in nested format in */
+.forumpost .comment-ctrl,
+.forumpost .comment-ctrl div { padding: 0; }
+.forumpost .comment-ctrl .picture img { margin: 0; }
 
 #page-mod-forum-view .forummode,
 .path-mod-forum .forumheaderlist .replies {text-align: center;}
@@ -117,6 +120,7 @@ table.mod_index {width:90%;margin:1em auto;}
 .path-mod-glossary .glossarypost .picture,
 .path-mod-glossary .glossarypost .entryattachment,
 .path-mod-glossary .glossarypost .left {background-color: #F0F0F0;}
+.path-mod-glossary .comment-message .picture { background-color: transparent; }
 .path-mod-glossary .glossarypost .entrylowersection {padding-top: 10px;}
 .path-mod-glossary .glossarypost .commands,
 .path-mod-glossary .glossarypost .author,
