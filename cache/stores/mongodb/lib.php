@@ -37,7 +37,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cachestore_mongodb extends cache_store {
+class cachestore_mongodb extends cache_store implements cache_is_configurable {
 
     /**
      * The name of the store
