@@ -50,7 +50,7 @@ M.mod_quiz.timer = {
 
     // Timestamp at which time runs out, according to the student's computer's clock.
     endtime: 0,
-    
+
     // Is this a quiz preview?
     preview: 0,
 
