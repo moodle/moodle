@@ -37,7 +37,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cachestore_memcache implements cache_store {
+class cachestore_memcache extends cache_store {
 
     /**
      * The name of the store
@@ -171,33 +171,6 @@ class cachestore_memcache implements cache_store {
      */
     public static function get_supported_features(array $configuration = array()) {
         return self::SUPPORTS_NATIVE_TTL;
-    }
-
-    /**
-     * Returns true if the store instance supports multiple identifiers.
-     *
-     * @return bool
-     */
-    public function supports_multiple_identifiers() {
-        return false;
-    }
-
-    /**
-     * Returns true if the store instance guarantees data.
-     *
-     * @return bool
-     */
-    public function supports_data_guarantee() {
-        return false;
-    }
-
-    /**
-     * Returns true if the store instance supports native ttl.
-     *
-     * @return bool
-     */
-    public function supports_native_ttl() {
-        return true;
     }
 
     /**
@@ -341,15 +314,6 @@ class cachestore_memcache implements cache_store {
             $data['servers'] = join("\n", $servers);
         }
         $editform->set_data($data);
-    }
-
-    /**
-     * Returns true if the user can add an instance of the store plugin.
-     *
-     * @return bool
-     */
-    public static function can_add_instance() {
-        return true;
     }
 
     /**

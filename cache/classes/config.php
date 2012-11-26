@@ -182,7 +182,7 @@ class cache_config {
             if (!class_exists($class)) {
                 continue;
             }
-            if (!array_key_exists('cache_store', class_implements($class))) {
+            if (!array_key_exists('cache_store', class_parents($class))) {
                 continue;
             }
             if (!array_key_exists('configuration', $store) || !is_array($store['configuration'])) {

@@ -36,6 +36,7 @@ require_once($CFG->dirroot.'/cache/classes/config.php');
 require_once($CFG->dirroot.'/cache/classes/helper.php');
 require_once($CFG->dirroot.'/cache/classes/factory.php');
 require_once($CFG->dirroot.'/cache/classes/loaders.php');
+require_once($CFG->dirroot.'/cache/classes/store.php');
 require_once($CFG->dirroot.'/cache/classes/definition.php');
 
 /**

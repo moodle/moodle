@@ -638,19 +638,22 @@ class cache implements cache_loader {
     public function has($key, $tryloadifpossible = false) {
         $parsedkey = $this->parse_key($key);
         if ($this->is_in_persist_cache($parsedkey)) {
+            // Hoorah, that was easy. It exists in the persist cache so we definitely have it.
             return true;
         }
-        if (($this->has_a_ttl() && !$this->store_supports_native_ttl()) || !$this->store_supports_key_awareness()) {
-            if ($this->store_supports_key_awareness() && !$this->store->has($parsedkey)) {
-                return false;
-            }
+        if ($this->has_a_ttl() && !$this->store_supports_native_ttl()) {
+            // The data has a TTL and the store doesn't support it natively.
+            // We must fetch the data and expect a ttl wrapper.
             $data = $this->store->get($parsedkey);
-            if (!$this->store_supports_native_ttl()) {
-                $has = ($data instanceof cache_ttl_wrapper && !$data->has_expired());
-            } else {
-                $has = ($data !== false);
-            }
+            $has = ($data instanceof cache_ttl_wrapper && !$data->has_expired());
+        } else if (!$this->store_supports_key_awareness()) {
+            // The store doesn't support key awareness, get the data and check it manually... puke.
+            // Either no TTL is set of the store supports its handling natively.
+            $data = $this->store->get($parsedkey);
+            $has = ($data !== false);
         } else {
+            // The store supports key awareness, this is easy!
+            // Either no TTL is set of the store supports its handling natively.
             $has = $this->store->has($parsedkey);
         }
         if (!$has && $tryloadifpossible) {

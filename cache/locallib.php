@@ -137,7 +137,7 @@ class cache_config_writer extends cache_config {
             }
         }
         $reflection = new ReflectionClass($class);
-        if (!$reflection->implementsInterface('cache_store')) {
+        if (!$reflection->isSubclassOf('cache_store')) {
             throw new cache_exception('Invalid cache plugin specified. The plugin does not extend the required class.');
         }
         if (!$class::are_requirements_met()) {
