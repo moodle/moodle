@@ -1702,7 +1702,7 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
                     $value = '';
                     // If we have a default value then export it.
                     if (isset($this->_defaultValues[$varname])) {
-                        $value = array($varname => $this->_defaultValues[$varname]);
+                        $value = $this->prepare_fixed_value($varname, $this->_defaultValues[$varname]);
                     }
                 } else {
                     $value = $this->_elements[$key]->exportValue($this->_submitValues, true);
@@ -1731,6 +1731,29 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
             $unfiltered = HTML_QuickForm::arrayMerge($unfiltered, $this->_constantValues);
         }
         return $unfiltered;
+    }
+
+    /**
+     * This is a bit of a hack, and it duplicates the code in
+     * HTML_QuickForm_element::_prepareValue, but I could not think of a way or
+     * reliably calling that code. (Think about date selectors, for example.)
+     * @param string $name the element name.
+     * @param mixed $value the fixed value to set.
+     * @return mixed the appropriate array to add to the $unfiltered array.
+     */
+    protected function prepare_fixed_value($name, $value) {
+        if (null === $value) {
+            return null;
+        } else {
+            if (!strpos($name, '[')) {
+                return array($name => $value);
+            } else {
+                $valueAry = array();
+                $myIndex  = "['" . str_replace(array(']', '['), array('', "']['"), $name) . "']";
+                eval("\$valueAry$myIndex = \$value;");
+                return $valueAry;
+            }
+        }
     }
 
     /**
