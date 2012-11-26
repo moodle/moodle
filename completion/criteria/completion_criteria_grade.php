@@ -45,7 +45,7 @@ class completion_criteria_grade extends completion_criteria {
     /**
      * Finds and returns a data_object instance based on params.
      *
-     * @param array $params associative array varname => value of various 
+     * @param array $params associative array varname => value of various
      * parameters used to fetch data_object
      * @return data_object data_object instance or false if none found.
      */

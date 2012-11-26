@@ -343,7 +343,7 @@ foreach ($results as $user => $rest) {
     foreach ($nestedorder as $key => $nestedquestions) {
         foreach ($nestedquestions as $key2 => $qid) {
             $question = $questions[$qid];
-        
+
             if ($question->type == "0" || $question->type == "1" || $question->type == "3" || $question->type == "-1")  {
                 echo $results[$user][$qid]["answer1"]."    ";
             }
