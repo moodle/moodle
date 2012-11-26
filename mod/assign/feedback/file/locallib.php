@@ -194,8 +194,12 @@ class assign_feedback_file extends assign_feedback_plugin {
     public function save(stdClass $grade, stdClass $data) {
         $fileoptions = $this->get_file_options();
 
-        $userid = $grade->userid;
-        $elementname = 'files_' . $userid;
+        // The element name may have been for a different user.
+        foreach ($data as $key => $value) {
+            if (strpos($key, 'files_') === 0 && strpos($key, '_filemanager')) {
+                $elementname = substr($key, 0, strpos($key, '_filemanager'));
+            }
+        }
 
         $data = file_postupdate_standard_filemanager($data,
                                                      $elementname,
