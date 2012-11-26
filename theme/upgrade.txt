@@ -22,6 +22,7 @@ deprecation:
 * i/tick_amber_big: Use i/caution or i/grade_partiallycorrect
 * No more small versions of i/cross_red_small, i/tick_green_small and i/tick_amber_small, use their big equivalent.
 * t/addgreen: Use t/add instead.
+* i/approve: Use t/approve instead
 
 optional changes:
 * new optional boolean parameter $withlinks for public function login_info() in lib/outputrenderers.php (MDL-31365)
@@ -44,6 +45,7 @@ optional changes:
 * new classes 'icon-pre' and 'icon-post' supposedly to be used when the icon is positioned before or after the text. This is not really used yet, but it's a start towards some standardisation of the icon selectors.
 * new icons i/valid, i/caution and i/invalid for generic statuses.
 * new icons i/grade_correct, i/grade_partiallycorrect and i/grade_incorrect for grades.
+* new icon t/approve (12x12).
 
 === 2.3 ===
 

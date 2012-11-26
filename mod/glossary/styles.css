@@ -7,6 +7,7 @@
 .path-mod-glossary .glossarypost .entrylowersection .aliases {text-align:center;}
 .path-mod-glossary .glossarypost .entrylowersection .icons {text-align:right;padding-right: 5px;}
 .path-mod-glossary .glossarypost .entrylowersection .ratings {text-align:right;padding-right: 5px;padding-bottom: 2px;}
+.path-mod-glossary .glossarypost .glossary-hidden-note { margin: 0 .45em; }
 
 .path-mod-glossary .glossarydisplay {margin-left:auto;margin-right:auto;}
 .path-mod-glossary .glossarydisplay .tabs {width: 100%;margin-bottom: 0px;}

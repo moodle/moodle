@@ -1251,8 +1251,12 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
         $replacement [] = userdate($record->timemodified);
 
         $patterns[]='##approve##';
-        if (has_capability('mod/data:approve', $context) && ($data->approval) && (!$record->approved)){
-            $replacement[] = '<span class="approve"><a href="'.$CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;approve='.$record->id.'&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('i/approve') . '" class="iconsmall" alt="'.get_string('approve').'" /></a></span>';
+        if (has_capability('mod/data:approve', $context) && ($data->approval) && (!$record->approved)) {
+            $approveurl = new moodle_url('/mod/data/view.php',
+                    array('d' => $data->id, 'approve' => $record->id, 'sesskey' => sesskey()));
+            $approveicon = new pix_icon('t/approve', get_string('approve'), '', array('class' => 'iconsmall'));
+            $replacement[] = html_writer::tag('span', $OUTPUT->action_icon($approveurl, $approveicon),
+                    array('class' => 'approve'));
         } else {
             $replacement[] = '';
         }

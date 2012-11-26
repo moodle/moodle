@@ -1234,7 +1234,8 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
 
     if (!$entry->approved) {
         $output = true;
-        $return .= get_string('entryishidden','glossary');
+        $return .= html_writer::tag('span', get_string('entryishidden','glossary'),
+            array('class' => 'glossary-hidden-note'));
     }
 
     $iscurrentuser = ($entry->userid == $USER->id);
@@ -1245,7 +1246,7 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
             $mainglossary = $DB->get_record('glossary', array('mainglossary'=>1,'course'=>$course->id));
             if ( $mainglossary ) {  // if there is a main glossary defined, allow to export the current entry
                 $output = true;
-                $return .= ' <a class="action-icon" title="'.get_string('exporttomainglossary','glossary') . '" href="exportentry.php?id='.$entry->id.'&amp;prevmode='.$mode.'&amp;hook='.urlencode($hook).'"><img src="'.$OUTPUT->pix_url('export', 'glossary').'" class="smallicon" alt="'.get_string('exporttomainglossary','glossary').$altsuffix.'" /></a>';
+                $return .= '<a class="action-icon" title="'.get_string('exporttomainglossary','glossary') . '" href="exportentry.php?id='.$entry->id.'&amp;prevmode='.$mode.'&amp;hook='.urlencode($hook).'"><img src="'.$OUTPUT->pix_url('export', 'glossary').'" class="smallicon" alt="'.get_string('exporttomainglossary','glossary').$altsuffix.'" /></a>';
             }
         }
 
@@ -1292,8 +1293,6 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
 
         $return .= $button->to_html(PORTFOLIO_ADD_ICON_LINK);
     }
-    $return .= "&nbsp;&nbsp;"; // just to make up a little the output in Mozilla ;)
-
     $return .= '</span>';
 
     if (!empty($CFG->usecomments) && has_capability('mod/glossary:comment', $context) and $glossary->allowcomments) {
@@ -1394,7 +1393,11 @@ function  glossary_print_entry_approval($cm, $entry, $mode, $align="right", $ins
         if ($insidetable) {
             echo '<table class="glossaryapproval" align="'.$align.'"><tr><td align="'.$align.'">';
         }
-        echo '<a title="'.get_string('approve','glossary').'" href="approve.php?eid='.$entry->id.'&amp;mode='.$mode.'&amp;sesskey='.sesskey().'"><img align="'.$align.'" src="'.$OUTPUT->pix_url('i/approve') . '" style="border:0px; width:34px; height:34px" alt="'.get_string('approve','glossary').'" /></a>';
+        echo $OUTPUT->action_icon(
+            new moodle_url('approve.php', array('eid' => $entry->id, 'mode' => $mode, 'sesskey' => sesskey())),
+            new pix_icon('t/approve', get_string('approve','glossary'), '',
+                array('class' => 'iconsmall', 'align' => $align))
+        );
         if ($insidetable) {
             echo '</td></tr></table>';
         }
