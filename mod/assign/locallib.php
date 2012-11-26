@@ -4312,9 +4312,11 @@ class assign {
                 foreach ($members as $member) {
                     // User may exist in multple groups (which should put them in the default group).
                     $this->apply_grade_to_user($formdata, $member->id);
+                    $this->process_outcomes($member->id, $formdata);
                 }
             } else {
                 $this->apply_grade_to_user($formdata, $userid);
+                $this->process_outcomes($userid, $formdata);
             }
         } else {
             return false;
