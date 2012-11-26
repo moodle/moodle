@@ -79,7 +79,7 @@ class backup_quiz_activity_structure_step extends backup_questions_activity_stru
 
         $attempt = new backup_nested_element('attempt', array('id'), array(
             'userid', 'attemptnum', 'uniqueid', 'layout', 'currentpage', 'preview',
-            'state', 'timestart', 'timefinish', 'timemodified', 'sumgrades'));
+            'state', 'timestart', 'timefinish', 'timemodified', 'timecheckstate', 'sumgrades'));
 
         // This module is using questions, so produce the related question states and sessions
         // attaching them to the $attempt element based in 'uniqueid' matching.

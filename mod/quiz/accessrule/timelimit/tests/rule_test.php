@@ -51,9 +51,11 @@ class quizaccess_timelimit_testcase extends basic_testcase {
             get_string('quiztimelimit', 'quizaccess_timelimit', format_time(3600)));
 
         $attempt->timestart = 10000;
-        $this->assertEquals($rule->time_left($attempt, 10000), 3600);
-        $this->assertEquals($rule->time_left($attempt, 12000), 1600);
-        $this->assertEquals($rule->time_left($attempt, 14000), -400);
+        $attempt->preview = 0;
+        $this->assertEquals($rule->end_time($attempt), 13600);
+        $this->assertEquals($rule->time_left_display($attempt, 10000), 3600);
+        $this->assertEquals($rule->time_left_display($attempt, 12000), 1600);
+        $this->assertEquals($rule->time_left_display($attempt, 14000), -400);
 
         $this->assertFalse($rule->prevent_access());
         $this->assertFalse($rule->prevent_new_attempt(0, $attempt));

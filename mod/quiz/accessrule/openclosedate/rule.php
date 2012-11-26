@@ -93,20 +93,24 @@ class quizaccess_openclosedate extends quiz_access_rule_base {
         return $this->quiz->timeclose && $this->timenow > $this->quiz->timeclose;
     }
 
-    public function time_left($attempt, $timenow) {
+    public function end_time($attempt) {
+        if ($this->quiz->timeclose) {
+            return $this->quiz->timeclose;
+        }
+        return false;
+    }
+
+    public function time_left_display($attempt, $timenow) {
         // If this is a teacher preview after the close date, do not show
         // the time.
         if ($attempt->preview && $timenow > $this->quiz->timeclose) {
             return false;
         }
-
-        // Otherwise, return to the time left until the close date, providing
-        // that is less than QUIZ_SHOW_TIME_BEFORE_DEADLINE.
-        if ($this->quiz->timeclose) {
-            $timeleft = $this->quiz->timeclose - $timenow;
-            if ($timeleft < QUIZ_SHOW_TIME_BEFORE_DEADLINE) {
-                return $timeleft;
-            }
+        // Otherwise, return to the time left until the close date, providing that is
+        // less than QUIZ_SHOW_TIME_BEFORE_DEADLINE.
+        $endtime = $this->end_time($attempt);
+        if ($endtime !== false && $timenow > $endtime - QUIZ_SHOW_TIME_BEFORE_DEADLINE) {
+            return $endtime - $timenow;
         }
         return false;
     }
