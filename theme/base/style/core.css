@@ -90,15 +90,21 @@ a.autolink.glossary:hover {cursor: help;}
 img.resize {height: 1em;width: 1em;}
 .block img.resize,
 .breadcrumb img.resize {height: 0.9em;width: 0.8em;}
+
+/* Icon styles */
 img.icon {height:16px;vertical-align:text-bottom;width:16px;padding-right: 6px;}
 .dir-rtl img.icon {padding-left: 6px; padding-right: 0; }
 img.iconsmall {height:12px;margin-right:3px;vertical-align:middle;width:12px;}
 img.iconhelp, .helplink img {height:16px; padding-left:3px;vertical-align:text-bottom;width:16px;}
+.dir-rtl img.iconhelp, .dir-rtl .helplink img {padding-right: 3px; padding-left: 0; }
 img.iconlarge {height: 24px; width: 24px; vertical-align:middle;}
 img.iconsort { vertical-align: text-bottom; padding-left: .3em; margin-bottom: .15em;}
 .dir-rtl img.iconsort { padding-right: .3em; padding-left: 0;}
 img.icontoggle {height:17px;vertical-align:middle;width:50px;}
 img.iconkbhelp {height:17px;width:49px;}
+img.icon-pre, .dir-rtl img.icon-post { padding-right: 3px; padding-left: 0; }
+img.icon-post, .dir-rtl img.icon-pre { padding-left: 3px; padding-right: 0; }
+
 .categorybox .category {font-size:1.2em;font-weight:bold;}
 .generalbox {border:1px solid;}
 .boxaligncenter {margin-left:auto;margin-right:auto;}
@@ -191,8 +197,6 @@ a.skip:active {position: static;display: block;}
 #page-footer .logininfo,
 #page-footer .sitelink,
 #page-footer .helplink {margin:0px 10px;}
-#page-footer .helplink img.iconhelp { margin: 0 .45em 0 0 ; padding: 0;}
-.dir-rtl #page-footer .helplink img.iconhelp { margin: 0 0 0 .45em ;}
 #page-footer .performanceinfo {text-align:center;margin:10px 20%;}
 #page-footer .performanceinfo span {display:block;}
 #page-footer .validators {margin-top:40px;padding-top:5px;border-top: 1px dotted gray;}

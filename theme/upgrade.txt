@@ -36,6 +36,7 @@ optional changes:
 * new icons i/courseevent, i/groupevent, i/siteevent and i/userevent (16x16) instead of c/* for calendar events.
 * new icon t/markasread (12x12) to replace t/clear used in forums.
 * new icon t/check (12x12) to replace t/clear which name does not reflect the icon meaning.
+* new classes 'icon-pre' and 'icon-post' supposedly to be used when the icon is positioned before or after the text. This is not really used yet, but it's a start towards some standardisation of the icon selectors.
 
 === 2.3 ===
 
