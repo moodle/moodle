@@ -272,8 +272,6 @@ function scorm_delete_instance($id) {
             }
         }
         $DB->delete_records('scorm_scoes', array('scorm'=>$scorm->id));
-    } else {
-        $result = false;
     }
     if (! $DB->delete_records('scorm', array('id'=>$scorm->id))) {
         $result = false;
