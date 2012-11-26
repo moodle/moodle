@@ -29,6 +29,62 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * The session data store class.
+ *
+ * @copyright  2012 Sam Hemelryk
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+abstract class session_data_store extends cache_store {
+
+    /**
+     * Used for the actual storage.
+     * @var array
+     */
+    private static $sessionstore = null;
+
+    /**
+     * Returns a static store by reference... REFERENCE SUPER IMPORTANT.
+     *
+     * @param string $id
+     * @return array
+     */
+    protected static function &register_store_id($id) {
+        if (is_null(self::$sessionstore)) {
+            global $SESSION;
+            if (!isset($SESSION->cachestore_session)) {
+                $SESSION->cachestore_session = array();
+            }
+            self::$sessionstore =& $SESSION->cachestore_session;
+        }
+        if (!array_key_exists($id, self::$sessionstore)) {
+            self::$sessionstore[$id] = array();
+        }
+        return self::$sessionstore[$id];
+    }
+
+    /**
+     * Flushes the data belong to the given store id.
+     * @param string $id
+     */
+    protected static function flush_store_by_id($id) {
+        unset(self::$sessionstore[$id]);
+        self::$sessionstore[$id] = array();
+    }
+
+    /**
+     * Flushes the store of all data.
+     */
+    protected static function flush_store() {
+        $ids = array_keys(self::$sessionstore);
+        unset(self::$sessionstore);
+        self::$sessionstore = array();
+        foreach ($ids as $id) {
+            self::$sessionstore[$id] = array();
+        }
+    }
+}
+
+/**
  * The Session store class.
  *
  * @copyright  2012 Sam Hemelryk
@@ -342,61 +398,5 @@ class cachestore_session extends session_data_store implements cache_is_key_awar
      */
     public function my_name() {
         return $this->name;
-    }
-}
-
-/**
- * The session data store class.
- *
- * @copyright  2012 Sam Hemelryk
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-abstract class session_data_store extends cache_store {
-
-    /**
-     * Used for the actual storage.
-     * @var array
-     */
-    private static $sessionstore = null;
-
-    /**
-     * Returns a static store by reference... REFERENCE SUPER IMPORTANT.
-     *
-     * @param string $id
-     * @return array
-     */
-    protected static function &register_store_id($id) {
-        if (is_null(self::$sessionstore)) {
-            global $SESSION;
-            if (!isset($SESSION->cachestore_session)) {
-                $SESSION->cachestore_session = array();
-            }
-            self::$sessionstore =& $SESSION->cachestore_session;
-        }
-        if (!array_key_exists($id, self::$sessionstore)) {
-            self::$sessionstore[$id] = array();
-        }
-        return self::$sessionstore[$id];
-    }
-
-    /**
-     * Flushes the data belong to the given store id.
-     * @param string $id
-     */
-    protected static function flush_store_by_id($id) {
-        unset(self::$sessionstore[$id]);
-        self::$sessionstore[$id] = array();
-    }
-
-    /**
-     * Flushes the store of all data.
-     */
-    protected static function flush_store() {
-        $ids = array_keys(self::$sessionstore);
-        unset(self::$sessionstore);
-        self::$sessionstore = array();
-        foreach ($ids as $id) {
-            self::$sessionstore[$id] = array();
-        }
     }
 }
