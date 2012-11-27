@@ -122,8 +122,10 @@ class calendar_addsubscription_form extends moodleform {
                     $errors['importfile'] = get_string('errorrequiredurlorfile', 'calendar');
                 }
             }
-        } else if (($data['importfrom'] == CALENDAR_IMPORT_FROM_URL) && (clean_param($data['url'], PARAM_URL) !== $data['url'])) {
-            $errors['url']  = get_string('invalidurl', 'error');
+        } else if (($data['importfrom'] == CALENDAR_IMPORT_FROM_URL)) {
+            if (clean_param($data['url'], PARAM_URL) !== $data['url']) {
+                $errors['url']  = get_string('invalidurl', 'error');
+            }
         } else {
             // Shouldn't happen.
             $errors['url'] = get_string('errorrequiredurlorfile', 'calendar');
