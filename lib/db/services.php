@@ -610,6 +610,30 @@ $functions = array(
         'type'        => 'read',
     ),
 
+    'core_get_string' => array(
+        'classname'   => 'core_external',
+        'methodname'  => 'get_string',
+        'classpath'   => 'lib/external/externallib.php',
+        'description' => 'Return a translated string - similar to core get_string() call',
+        'type'        => 'read',
+    ),
+
+    'core_get_strings' => array(
+        'classname'   => 'core_external',
+        'methodname'  => 'get_strings',
+        'classpath'   => 'lib/external/externallib.php',
+        'description' => 'Return some translated strings - like several core get_string() calls',
+        'type'        => 'read',
+    ),
+
+    'core_get_component_strings' => array(
+        'classname'   => 'core_external',
+        'methodname'  => 'get_component_strings',
+        'classpath'   => 'lib/external/externallib.php',
+        'description' => 'Return all raw strings (with {$a->xxx}) for a specific component
+            - similar to core get_component_strings() call',
+        'type'        => 'read',
+    ),
 );
 
 $services = array(
@@ -623,7 +647,8 @@ $services = array(
             'moodle_user_get_course_participants_by_id',
             'moodle_user_get_users_by_courseid',
             'moodle_message_send_instantmessages',
-            'core_course_get_contents'),
+            'core_course_get_contents',
+            'core_get_component_strings'),
         'enabled' => 0,
         'restrictedusers' => 0,
         'shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE,
