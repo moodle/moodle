@@ -74,8 +74,8 @@ class MoodleExcelWorkbook {
      * @param string $name Name of the sheet
      * @return object MoodleExcelWorksheet
      */
-    function &add_worksheet($name = '') {
-    /// Create the Moodle Worksheet. Returns one pointer to it
+    function add_worksheet($name = '') {
+        // Create the Moodle Worksheet. Returns one pointer to it
         $ws = new MoodleExcelWorksheet ($name, $this->pear_excel_workbook, $this->latin_output);
         return $ws;
     }
@@ -137,6 +137,9 @@ class MoodleExcelWorksheet {
      * @param bool $latin_output Only if don't want to use latin (win1252) stronger output
      */
     function MoodleExcelWorksheet($name, &$workbook, $latin_output=false) {
+
+        // Replace any characters in the name that Excel cannot cope with.
+        $name = strtr($name, '[]*/\?:', '       ');
 
         if (strlen($name) > 31) {
             // Excel does not seem able to cope with sheet names > 31 chars.
