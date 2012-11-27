@@ -1048,3 +1048,13 @@ h2.headingblock {
 #custommenu .yui3-menuitem .yui3-menuitem-content {
     border-width:0;
 }
+
+.block .header .commands .icon img {
+    background-color: #F3F8ED; /* adds light green background */
+    border: 2px solid #3B4C25; /* adds 2px dark green border */
+    border-radius: 5px; /* adds rounded corners in modern browsers */
+    height: 12px;
+    margin-right: 3px;
+    padding: 2px; /* adds padding to icon */
+    width: 12px;
+}
