@@ -1959,7 +1959,7 @@ class core_renderer extends renderer_base {
         // note: this title is displayed only if JS is disabled, otherwise the link will have the new ajax tooltip
         $title = get_string('helpprefix2', '', trim($title, ". \t"));
 
-        $attributes = array('href'=>$url, 'title'=>$title, 'aria-haspopup' => 'true');
+        $attributes = array('href'=>$url, 'title'=>$title, 'aria-haspopup' => 'true', 'class' => 'tooltip');
         $output = html_writer::tag('a', $output, $attributes);
 
         $this->page->requires->js_init_call('M.util.help_icon.setup');
