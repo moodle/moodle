@@ -11,6 +11,7 @@ deprecation:
 * i/roles: Use t/assignroles instead
 * t/manual_item: Use i/manual_item instead
 * t/unlock_gray: Use t/locked instead
+* t/userblue: Previously used to unblock a user, use t/unblock.
 
 optional changes:
 * new optional boolean parameter $withlinks for public function login_info() in lib/outputrenderers.php (MDL-31365)
@@ -25,6 +26,8 @@ optional changes:
 * new class 'iconsort' for icons used for ordering in table headers.
 * new icons t/locked and t/unlocked (12x12) which should be used when there is no action associated to the icon.
 * new icons i/folder (16x16), monochrome equivalent to f/folder.
+* new icons t/addcontact, t/removecontact and t/messages, previously t/addgreen, t/delete and t/log were used in messaging.
+* new icons t/unblock and i/twoway.
 
 === 2.3 ===
 

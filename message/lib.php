@@ -1270,7 +1270,10 @@ function message_print_user ($user=false, $iscontact=false, $isblocked=false, $i
         echo $OUTPUT->user_picture($USER, array('size' => 20, 'courseid' => SITEID));
     } else {
         echo $OUTPUT->user_picture($user, array('size' => 20, 'courseid' => SITEID));
-        echo '&nbsp;';
+
+        $link = new moodle_url("/message/index.php?id=$user->id");
+        echo $OUTPUT->action_link($link, fullname($user), null, array('title' =>
+                get_string('sendmessageto', 'message', fullname($user))));
 
         $return = false;
         $script = null;
@@ -1279,27 +1282,12 @@ function message_print_user ($user=false, $iscontact=false, $isblocked=false, $i
         } else {
             message_contact_link($user->id, 'add', $return, $script, $includeicontext);
         }
-        echo '&nbsp;';
+
         if ($isblocked) {
             message_contact_link($user->id, 'unblock', $return, $script, $includeicontext);
         } else {
             message_contact_link($user->id, 'block', $return, $script, $includeicontext);
         }
-
-        $popupoptions = array(
-                'height' => MESSAGE_DISCUSSION_HEIGHT,
-                'width' => MESSAGE_DISCUSSION_WIDTH,
-                'menubar' => false,
-                'location' => false,
-                'status' => true,
-                'scrollbars' => true,
-                'resizable' => true);
-
-        $link = new moodle_url("/message/index.php?id=$user->id");
-        //$action = new popup_action('click', $link, "message_$user->id", $popupoptions);
-        $action = null;
-        echo $OUTPUT->action_link($link, fullname($user), $action, array('title' => get_string('sendmessageto', 'message', fullname($user))));
-
     }
 }
 
@@ -1351,14 +1339,14 @@ function message_contact_link($userid, $linktype='add', $return=false, $script=n
                 $iconpath = 't/block';
                 break;
             case 'unblock':
-                $iconpath = 't/userblue';
+                $iconpath = 't/unblock';
                 break;
             case 'remove':
-                $iconpath = 'i/cross_red_big';
+                $iconpath = 't/removecontact';
                 break;
             case 'add':
             default:
-                $iconpath = 't/addgreen';
+                $iconpath = 't/addcontact';
         }
 
         $img = '<img src="'.$OUTPUT->pix_url($iconpath).'" class="iconsmall" alt="'.$safealttext.'" />';
@@ -1405,9 +1393,9 @@ function message_history_link($userid1, $userid2, $return=false, $keywords='', $
     }
 
     if ($linktext == 'icon') {  // Icon only
-        $fulllink = '<img src="'.$OUTPUT->pix_url('t/log') . '" class="iconsmall" alt="'.$strmessagehistory.'" />';
+        $fulllink = '<img src="'.$OUTPUT->pix_url('t/messages') . '" class="iconsmall" alt="'.$strmessagehistory.'" />';
     } else if ($linktext == 'both') {  // Icon and standard name
-        $fulllink = '<img src="'.$OUTPUT->pix_url('t/log') . '" class="iconsmall" alt="" />';
+        $fulllink = '<img src="'.$OUTPUT->pix_url('t/messages') . '" class="iconsmall" alt="" />';
         $fulllink .= '&nbsp;'.$strmessagehistory;
     } else if ($linktext) {    // Custom name
         $fulllink = $linktext;
@@ -1831,8 +1819,7 @@ function message_print_message_history($user1,$user2,$search='',$messagelimit=0,
     echo html_writer::end_tag('td');
 
     echo html_writer::start_tag('td', array('align' => 'center'));
-    echo html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('t/left'), 'alt' => get_string('from')));
-    echo html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('t/right'), 'alt' => get_string('to')));
+    echo html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('i/twoway'), 'alt' => ''));
     echo html_writer::end_tag('td');
 
     echo html_writer::start_tag('td', array('align' => 'center', 'id' => 'user2'));
