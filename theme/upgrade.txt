@@ -5,6 +5,7 @@ information provided here is intended especially for theme designer.
 
 required changes:
 * output course and course content header/footer that may be returned by course format (see MDL-36048)
+* span.completionprogress has been changed to a <div> and is not a float by default any more.
 
 deprecation:
 * i/roles: Use t/assignroles instead

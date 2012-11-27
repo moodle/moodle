@@ -39,8 +39,8 @@
 .path-course-view .section td.side {background: #FFFFFF;}
 .path-course-view .weeks .current,
 .path-course-view .topics .current,
-.path-course-view .current td.side {background: #FFD991;}
-.path-course-view .section-summary.current {border-color: #FFD991;}
+.path-course-view .current td.side {background: #9fc6fb;}
+.path-course-view .section-summary.current {border-color: #9fc6fb;}
 .path-course-view .weeks .hidden,
 .path-course-view .topics .hidden,
 .path-course-view .hidden td.side {background: #DDDDDD;}
@@ -63,7 +63,7 @@
 #page-import .plugin {margin-bottom: 20px;margin-left:10%;margin-right:10%;border: 1px solid #cecece;background-color: #fdfdfd;}
 
 .path-course-view .unread {background: #9EBEFF;}
-.path-course-view .completionprogress {font-size:0.80em; padding:8px 26px 5px 5px;}
+.path-course-view .completionprogress {font-size:0.80em; margin-right: 1.5em; }
 
 #page-course-category .courseboxes,
 #page-course-index .courseboxes {padding:20px;}
