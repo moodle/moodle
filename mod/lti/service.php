@@ -24,6 +24,8 @@
  * @author     Chris Scribner
  */
 
+define('NO_DEBUG_DISPLAY', true);
+
 require_once(dirname(__FILE__) . "/../../config.php");
 require_once($CFG->dirroot.'/mod/lti/locallib.php');
 require_once($CFG->dirroot.'/mod/lti/servicelib.php');

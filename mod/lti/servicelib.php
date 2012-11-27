@@ -252,6 +252,8 @@ function lti_extend_lti_services($data) {
                 $data->messageid,
                 $data->messagetype
             );
+
+            header('HTTP/1.0 400 bad request');
             echo $responsexml->asXML();
         }
         return true;
