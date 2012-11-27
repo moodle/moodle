@@ -480,8 +480,11 @@ class portfolio_format_leap2a_entry {
 
     /**
      * Hook function for subclasses to add extra links (like for files)
+     *
+     * @param DomDocument $dom feed object
+     * @param DomDocument $entry feed added link
      */
-    protected function add_extra_links() {}
+    protected function add_extra_links($dom, $entry) {}
 }
 
 /**
