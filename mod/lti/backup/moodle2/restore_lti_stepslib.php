@@ -64,20 +64,20 @@ class restore_lti_activity_structure_step extends restore_activity_structure_ste
     }
 
     protected function process_lti($data) {
-        global $DB, $CFG;
+        global $DB;
 
         $data = (object)$data;
         $oldid = $data->id;
         $data->course = $this->get_courseid();
+        $data->servicesalt = uniqid('', true);
 
-        require_once($CFG->dirroot.'/mod/lti/lib.php');
         // Clean any course or site typeid. All modules
         // are restored as self-contained. Note this is
         // an interim solution until the issue below is implemented.
         // TODO: MDL-34161 - Fix restore to support course/site tools & submissions.
         $data->typeid = 0;
 
-        $newitemid = lti_add_instance($data, null);
+        $newitemid = $DB->insert_record('lti', $data);
 
         // immediately after inserting "activity" record, call this
         $this->apply_activity_instance($newitemid);
