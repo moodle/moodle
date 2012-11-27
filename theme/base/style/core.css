@@ -377,16 +377,19 @@ table.mod_index {width:100%;}
 .comment-area textarea {width:100%;overflow:auto;}
 .comment-area .fd {text-align:right;}
 .comment-meta span {color:gray;}
+.comment-link img { vertical-align: text-bottom; }
 .comment-list {font-size: 11px;overflow:auto;list-style:none;padding:0;margin:0;}
-.comment-list li {margin: 2px;list-style:none;margin-bottom:5px;clear:both;}
+.comment-list li {margin: 2px;list-style:none;margin-bottom:5px;clear:both;padding: .3em;position: relative;}
 .comment-list li.first {display:none}
 .comment-paging{text-align:center;}
 .comment-paging .pageno{padding:2px;}
 .comment-paging .curpage{border:1px solid #CCC;}
 .comment-message .picture {width: 20px;float:left;}
+.dir-rtl .comment-message .picture {float:right;}
 .comment-message .text {margin:0;padding:0;}
 .comment-message .text p {padding:0;margin:0 18px 0 0;}
-.comment-delete {float:right;text-align:right;}
+.comment-delete {position: absolute; top: 0; right: 0;margin: .3em;}
+.dir-rtl .comment-delete {position: absolute; left: 0; right: auto;margin: .3em;}
 .comment-delete-confirm {background: #eee; padding: 2px; width: 5em;text-align:center;}
 .comment-container {float:left;margin: 4px;}
 .comment-report-selectall{display:none}
