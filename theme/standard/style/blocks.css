@@ -39,6 +39,7 @@
 
 /** Calendar Upcoming **/
 .block_calendar_upcoming .event .date {text-align:right;}
+.dir-rtl .block_calendar_upcoming .event .date {text-align:left;}
 
 /** Course Overview **/
 .block_course_overview .coursebox h3 {margin: 10px;}

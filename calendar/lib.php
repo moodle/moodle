@@ -322,13 +322,13 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
                     $popupalt  = $event->modulename;
                     $component = $event->modulename;
                 } else if ($event->courseid == SITEID) {                                // Site event
-                    $popupicon = 'c/site';
+                    $popupicon = 'i/siteevent';
                 } else if ($event->courseid != 0 && $event->courseid != SITEID && $event->groupid == 0) {      // Course event
-                    $popupicon = 'c/course';
+                    $popupicon = 'i/courseevent';
                 } else if ($event->groupid) {                                      // Group event
-                    $popupicon = 'c/group';
+                    $popupicon = 'i/groupevent';
                 } else if ($event->userid) {                                       // User event
-                    $popupicon = 'c/user';
+                    $popupicon = 'i/userevent';
                 }
 
                 $dayhref->set_anchor('event_'.$event->id);
@@ -607,14 +607,14 @@ function calendar_add_event_metadata($event) {
         $context = context_course::instance($module->course);
         $fullname = format_string($coursecache[$module->course]->fullname, true, array('context' => $context));
 
-        $event->icon = '<img height="16" width="16" src="'.$icon.'" alt="'.$eventtype.'" title="'.$modulename.'" style="vertical-align: middle;" />';
+        $event->icon = '<img src="'.$icon.'" alt="'.$eventtype.'" title="'.$modulename.'" class="icon" />';
         $event->referer = '<a href="'.$CFG->wwwroot.'/mod/'.$event->modulename.'/view.php?id='.$module->id.'">'.$event->name.'</a>';
         $event->courselink = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$module->course.'">'.$fullname.'</a>';
         $event->cmid = $module->id;
 
 
     } else if($event->courseid == SITEID) {                              // Site event
-        $event->icon = '<img height="16" width="16" src="'.$OUTPUT->pix_url('c/site') . '" alt="'.get_string('globalevent', 'calendar').'" style="vertical-align: middle;" />';
+        $event->icon = '<img src="'.$OUTPUT->pix_url('i/siteevent') . '" alt="'.get_string('globalevent', 'calendar').'" class="icon" />';
         $event->cssclass = 'calendar_event_global';
     } else if($event->courseid != 0 && $event->courseid != SITEID && $event->groupid == 0) {          // Course event
         calendar_get_course_cached($coursecache, $event->courseid);
@@ -622,14 +622,14 @@ function calendar_add_event_metadata($event) {
         $context = context_course::instance($event->courseid);
         $fullname = format_string($coursecache[$event->courseid]->fullname, true, array('context' => $context));
 
-        $event->icon = '<img height="16" width="16" src="'.$OUTPUT->pix_url('c/course') . '" alt="'.get_string('courseevent', 'calendar').'" style="vertical-align: middle;" />';
+        $event->icon = '<img src="'.$OUTPUT->pix_url('i/courseevent') . '" alt="'.get_string('courseevent', 'calendar').'" class="icon" />';
         $event->courselink = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$event->courseid.'">'.$fullname.'</a>';
         $event->cssclass = 'calendar_event_course';
     } else if ($event->groupid) {                                    // Group event
-        $event->icon = '<img height="16" width="16" src="'.$OUTPUT->pix_url('c/group') . '" alt="'.get_string('groupevent', 'calendar').'" style="vertical-align: middle;" />';
+        $event->icon = '<img src="'.$OUTPUT->pix_url('i/groupevent') . '" alt="'.get_string('groupevent', 'calendar').'" class="icon" />';
         $event->cssclass = 'calendar_event_group';
     } else if($event->userid) {                                      // User event
-        $event->icon = '<img height="16" width="16" src="'.$OUTPUT->pix_url('c/user') . '" alt="'.get_string('userevent', 'calendar').'" style="vertical-align: middle;" />';
+        $event->icon = '<img src="'.$OUTPUT->pix_url('i/userevent') . '" alt="'.get_string('userevent', 'calendar').'" class="icon" />';
         $event->cssclass = 'calendar_event_user';
     }
     return $event;
@@ -1153,7 +1153,7 @@ function calendar_get_block_upcoming($events, $linkhref = NULL) {
             continue;
         }
         $events[$i] = calendar_add_event_metadata($events[$i]);
-        $content .= '<div class="event"><span class="icon c0">'.$events[$i]->icon.'</span> ';
+        $content .= '<div class="event"><span class="icon c0">'.$events[$i]->icon.'</span>';
         if (!empty($events[$i]->referer)) {
             // That's an activity event, so let's provide the hyperlink
             $content .= $events[$i]->referer;
