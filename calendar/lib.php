@@ -1753,11 +1753,19 @@ function calendar_get_allowed_types(&$allowed, $course = null) {
                 $allowed->courses = array($course->id => 1);
 
                 if ($course->groupmode != NOGROUPS || !$course->groupmodeforce) {
-                    $allowed->groups = groups_get_all_groups($course->id);
+                    if (has_capability('moodle/site:accessallgroups', $coursecontext)) {
+                        $allowed->groups = groups_get_all_groups($course->id);
+                    } else {
+                        $allowed->groups = groups_get_all_groups($course->id, $USER->id);
+                    }
                 }
             } else if (has_capability('moodle/calendar:managegroupentries', $coursecontext)) {
                 if($course->groupmode != NOGROUPS || !$course->groupmodeforce) {
-                    $allowed->groups = groups_get_all_groups($course->id);
+                    if (has_capability('moodle/site:accessallgroups', $coursecontext)) {
+                        $allowed->groups = groups_get_all_groups($course->id);
+                    } else {
+                        $allowed->groups = groups_get_all_groups($course->id, $USER->id);
+                    }
                 }
             }
         }
