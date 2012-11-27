@@ -285,11 +285,16 @@
     background-color: #e7f1c3;
 }
 
+.path-mod-workshop .userplan th .actions {
+    display: inline;
+}
 .path-mod-workshop .userplan tr.phasetasks li {
     background-image: url([[pix:mod_workshop|userplan/task-todo]]);
     background-position: top left;
     background-repeat: no-repeat;
     list-style-type: none;
+    min-height: 16px;
+    margin: .3em 0;
 }
 
 .path-mod-workshop .userplan tr.phasetasks li.completed {
@@ -557,3 +562,5 @@
     margin: 2em auto;
     text-align: center;
 }
+
+.path-mod-workshop .workshop-risk-dataloss { vertical-align: text-bottom; }
