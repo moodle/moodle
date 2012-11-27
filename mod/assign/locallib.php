@@ -3475,7 +3475,7 @@ class assign {
         $modifiedusers = array();
         foreach ($currentgrades as $current) {
             $modified = $users[(int)$current->userid];
-            $grade = $this->get_user_grade($userid, false);
+            $grade = $this->get_user_grade($modified->userid, false);
 
             // check to see if the outcomes were modified
             if ($CFG->enableoutcomes) {
