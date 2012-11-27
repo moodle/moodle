@@ -94,7 +94,6 @@ print_grade_page_head($COURSE->id, 'report', 'grader', $reportname);
 
 echo $report->group_selector;
 echo '<div class="clearer"></div>';
-// echo $report->get_toggles_html();
 
 //show warnings if any
 foreach($warnings as $warning) {

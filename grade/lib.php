@@ -1182,7 +1182,7 @@ class grade_structure {
                                 '" alt="'.s($stroutcome).'"/>';
                     } else {
                         $strmanual = get_string('manualitem', 'grades');
-                        return '<img src="'.$OUTPUT->pix_url('t/manual_item') . '" '.
+                        return '<img src="'.$OUTPUT->pix_url('i/manual_item') . '" '.
                                 'class="icon itemicon" title="'.s($strmanual).
                                 '" alt="'.s($strmanual).'"/>';
                     }
@@ -1191,7 +1191,7 @@ class grade_structure {
 
             case 'category':
                 $strcat = get_string('category', 'grades');
-                return '<img src="'.$OUTPUT->pix_url(file_folder_icon()) . '" class="icon itemicon" ' .
+                return '<img src="'.$OUTPUT->pix_url('i/folder') . '" class="icon itemicon" ' .
                         'title="'.s($strcat).'" alt="'.s($strcat).'" />';
         }
 
@@ -1573,7 +1573,8 @@ class grade_structure {
             $strparamobj->itemname = $element['object']->grade_item->itemname;
             $strnonunlockable = get_string('nonunlockableverbose', 'grades', $strparamobj);
 
-            $action = $OUTPUT->pix_icon('t/unlock_gray', $strnonunlockable);
+            $action = html_writer::tag('span', $OUTPUT->pix_icon('t/locked', $strnonunlockable),
+                    array('class' => 'action-icon'));
 
         } else if ($element['object']->is_locked()) {
             $type = 'unlock';
@@ -1639,7 +1640,7 @@ class grade_structure {
 
                 $url = new moodle_url('/grade/edit/tree/calculation.php', array('courseid' => $this->courseid, 'id' => $object->id));
                 $url = $gpr->add_url_params($url);
-                return $OUTPUT->action_icon($url, new pix_icon($icon, $streditcalculation)) . "\n";
+                return $OUTPUT->action_icon($url, new pix_icon($icon, $streditcalculation));
             }
         }
 
@@ -2274,7 +2275,7 @@ function grade_button($type, $courseid, $object) {
         $url = new moodle_url('edit.php', array('courseid' => $courseid, 'id' => $object->id));
     }
 
-    return $OUTPUT->action_icon($url, new pix_icon('t/'.$type, ${'str'.$type}));
+    return $OUTPUT->action_icon($url, new pix_icon('t/'.$type, ${'str'.$type}, '', array('class' => 'iconsmall')));
 
 }
 

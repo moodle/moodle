@@ -86,7 +86,7 @@ class core_cache_renderer extends plugin_renderer_base {
 
             $info = '';
             if (!empty($store['default'])) {
-                $info = $this->output->pix_icon('i/info', $defaultstoreactions).' ';
+                $info = $this->output->pix_icon('i/info', $defaultstoreactions, '', array('class' => 'icon'));
             }
             $htmlactions = array();
             foreach ($actions as $action) {

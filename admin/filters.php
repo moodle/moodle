@@ -247,15 +247,15 @@ function get_table_row($filterinfo, $isfirstrow, $islastactive, $applytostrings)
 
     // Re-order
     $updown = '';
-    $spacer = '<img src="' . $OUTPUT->pix_url('spacer') . '" class="iconsmall" alt="" /> ';
+    $spacer = '<img src="' . $OUTPUT->pix_url('spacer') . '" class="iconsmall" alt="" />';
     if ($filterinfo->active != TEXTFILTER_DISABLED) {
         if (!$isfirstrow) {
-            $updown .= $OUTPUT->action_icon(filters_action_url($filter, 'up'), new pix_icon('t/up', get_string('up')));
+            $updown .= $OUTPUT->action_icon(filters_action_url($filter, 'up'), new pix_icon('t/up', get_string('up'), '', array('class' => 'iconsmall')));
         } else {
             $updown .= $spacer;
         }
         if (!$islastactive) {
-            $updown .= $OUTPUT->action_icon(filters_action_url($filter, 'down'), new pix_icon('t/down', get_string('down')));
+            $updown .= $OUTPUT->action_icon(filters_action_url($filter, 'down'), new pix_icon('t/down', get_string('down'), '', array('class' => 'iconsmall')));
         } else {
             $updown .= $spacer;
         }

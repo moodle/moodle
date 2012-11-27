@@ -187,16 +187,16 @@ class assign_plugin_manager {
             $visible = !get_config($this->subtype . '_' . $plugin, 'disabled');
 
             if ($visible) {
-                $row[] = $this->format_icon_link('hide', $plugin, 'i/hide', get_string('disable'));
+                $row[] = $this->format_icon_link('hide', $plugin, 't/hide', get_string('disable'));
             } else {
-                $row[] = $this->format_icon_link('show', $plugin, 'i/show', get_string('enable'));
+                $row[] = $this->format_icon_link('show', $plugin, 't/show', get_string('enable'));
             }
 
             $movelinks = '';
             if (!$idx == 0) {
                 $movelinks .= $this->format_icon_link('moveup', $plugin, 't/up', get_string('up'));
             } else {
-                $movelinks .= $OUTPUT->spacer(array('width'=>15));
+                $movelinks .= $OUTPUT->spacer(array('width'=>16));
             }
             if ($idx != count($plugins) - 1) {
                 $movelinks .= $this->format_icon_link('movedown', $plugin, 't/down', get_string('down'));

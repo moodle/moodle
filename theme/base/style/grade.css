@@ -19,7 +19,7 @@
 .gradetreebox table {font-size: 0.8em;width: 100%;}
 .gradetreebox td.colspan,
 .gradetreebox tr.category .cell {background-color: #DDD;}
-.gradetreebox th.actions {white-space: nowrap;width: 80px;}
+.gradetreebox th.actions {white-space: nowrap;width: 105px;}
 .gradetreebox td.name {white-space: nowrap;}
 .gradetreebox td.name h4 {display: inline;}
 .gradetreebox td.range {white-space: nowrap;}

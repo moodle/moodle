@@ -517,10 +517,11 @@ class grade_report_grader extends grade_report {
     /**
      * Builds and returns a div with on/off toggles.
      * @return string HTML code
+     * @deprecated since 2.4 as it appears not to be used any more.
      */
     public function get_toggles_html() {
         global $CFG, $USER, $COURSE, $OUTPUT;
-
+        debugging('Call to deprecated function grade_report_grader::get_toggles_html().', DEBUG_DEVELOPER);
         $html = '';
         if ($USER->gradeediting[$this->courseid]) {
             if (has_capability('moodle/grade:manage', $this->context) or has_capability('moodle/grade:hide', $this->context)) {
@@ -557,10 +558,11 @@ class grade_report_grader extends grade_report {
     * @param string $type The type of toggle
     * @param bool $return Whether to return the HTML string rather than printing it
     * @return void
+    * @deprecated since 2.4 as it appears not to be used any more.
     */
     public function print_toggle($type) {
         global $CFG, $OUTPUT;
-
+        debugging('Call to deprecated function grade_report_grader::print_toggle().', DEBUG_DEVELOPER);
         $icons = array('eyecons' => 't/hide',
                        'calculations' => 't/calc',
                        'locks' => 't/lock',
@@ -1673,6 +1675,8 @@ class grade_report_grader extends grade_report {
         $strsortdesc  = $this->get_lang_string('sortdesc', 'grades');
         $strfirstname = $this->get_lang_string('firstname');
         $strlastname  = $this->get_lang_string('lastname');
+        $iconasc = $OUTPUT->pix_icon('t/sort_asc', $strsortasc, '', array('class' => 'iconsmall sorticon'));
+        $icondesc = $OUTPUT->pix_icon('t/sort_desc', $strsortdesc, '', array('class' => 'iconsmall sorticon'));
 
         $firstlink = html_writer::link(new moodle_url($this->baseurl, array('sortitemid'=>'firstname')), $strfirstname);
         $lastlink = html_writer::link(new moodle_url($this->baseurl, array('sortitemid'=>'lastname')), $strlastname);
@@ -1681,9 +1685,9 @@ class grade_report_grader extends grade_report {
 
         if ($this->sortitemid === 'lastname') {
             if ($this->sortorder == 'ASC') {
-                $arrows['studentname'] .= print_arrow('up', $strsortasc, true);
+                $arrows['studentname'] .= $iconasc;
             } else {
-                $arrows['studentname'] .= print_arrow('down', $strsortdesc, true);
+                $arrows['studentname'] .= $icondesc;
             }
         }
 
@@ -1691,9 +1695,9 @@ class grade_report_grader extends grade_report {
 
         if ($this->sortitemid === 'firstname') {
             if ($this->sortorder == 'ASC') {
-                $arrows['studentname'] .= print_arrow('up', $strsortasc, true);
+                $arrows['studentname'] .= $iconasc;
             } else {
-                $arrows['studentname'] .= print_arrow('down', $strsortdesc, true);
+                $arrows['studentname'] .= $icondesc;
             }
         }
 
@@ -1704,9 +1708,9 @@ class grade_report_grader extends grade_report {
 
             if ($field == $this->sortitemid) {
                 if ($this->sortorder == 'ASC') {
-                    $arrows[$field] .= print_arrow('up', $strsortasc, true);
+                    $arrows[$field] .= $iconasc;
                 } else {
-                    $arrows[$field] .= print_arrow('down', $strsortdesc, true);
+                    $arrows[$field] .= $icondesc;
                 }
             }
         }
