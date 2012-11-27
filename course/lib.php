@@ -2289,7 +2289,7 @@ function print_category_info($category, $depth=0, $showcourses = false) {
                 $courseicon = '';
                 if ($icons = enrol_get_course_info_icons($course)) {
                     foreach ($icons as $pix_icon) {
-                        $courseicon = $OUTPUT->render($pix_icon).' ';
+                        $courseicon = $OUTPUT->render($pix_icon);
                     }
                 }
 

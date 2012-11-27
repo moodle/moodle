@@ -98,6 +98,8 @@
 #page-course-category #coursesearch,
 #page-course-category .singlebutton,
 #page-course-editsection .singlebutton {text-align:center;}
+#page-course-category #movecourses td img { margin: 0 .22em; vertical-align: text-bottom;}
+#page-course-category #movecourses td img.icon { padding: 0; }
 
 #coursesearch,
 #coursesearch2 {margin-top: 1em;text-align:center;}
@@ -110,26 +112,30 @@
 #page-course-pending .pendingcourserequests .cell {padding: 0 5px;}
 #page-course-pending .pendingcourserequests .cell.c6 {white-space: nowrap;}
 
-
 .coursebox {width: 100%;margin-bottom: 15px;}
 .coursebox .info {float: left;text-align:left;width: 40%;}
 .coursebox .summary {float: right;text-align:left;width: 55%;}
 .coursebox .summary .category {text-align:right;}
 .coursebox .teachers li {list-style-type:none;padding:0;margin:0;}
+.coursebox .enrolmenticons {margin-top: .3em;}
+.coursebox .enrolmenticons img {margin-right: .45em;}
 
 .categorylist {width: 100%;}
 .categorylist .category .numberofcourse {font-style: italic; font-size: 0.85em; font-style: normal;}
 .categorylist .category {padding-top: 5px; padding-bottom: 5px; }
 .categorylist .category .info,
-.categorylist .category .indentation,
 .categorylist .category .name,
 .categorylist .category .image,
 .categorylist .course .name,
-.categorylist .course .info {float:left;text-align: left;}
-.categorylist .course {padding-left:18px;}
-
-.categorylist .indentation {padding-left: 20px;}
-#page-course-index .category .image {padding-right: 2px;}
+.categorylist .course .info {float:left;text-align: left; margin-left: .45em;}
+.categorylist .course .name img.smallicon { vertical-align: text-bottom; margin-right: .45em;}
+.dir-rtl .categorylist .course .name img.smallicon { margin-left: .45em; margin-right: 0;}
+.categorylist .course .info {margin-left: .45em;}
+.categorylist .course .info img { vertical-align: text-bottom;}
+.dir-rtl .categorylist .course .info {margin-right: .45em; margin-left: 0;}
+.categorylist .course {padding-left:24px; margin-bottom: .5em; line-height: 1.5em;}
+.categorylist .course .indentation { margin-left: 24px;}
+.categorylist .category .indentation { margin-left: 24px;}
 
 .course ul.section {margin:5px;padding:0;}
 
@@ -142,16 +148,16 @@
 .course_category_tree .controls div {display:inline;cursor:pointer;}
 .course_category_tree .category.with_children>.category_label {background-image:url([[pix:moodle|t/expanded]]);background-repeat: no-repeat;}
 .course_category_tree .category_label {padding-left:13px;}
-.course_category_tree .category .category {margin:5px;}
+.course_category_tree .category .category {margin:5px 0;}
 .course_category_tree .category .courses {padding-left:16px;}
-.course_category_tree .category .courses .course_link {display:block;background-image:url([[pix:moodle|i/course]]);background-repeat: no-repeat;padding-left:18px;}
+.course_category_tree .category .courses .course_link {display:block;background-image:url([[pix:moodle|i/course]]);background-repeat: no-repeat;padding-left:21px;}
 .course_category_tree .category .course {position:relative;}
 .course_category_tree .category .course_info {position:absolute;right:0;top:0;}
 .dir-rtl .course_category_tree .category .course_info { position: static; }
 .dir-rtl .course_category_tree .category .course_info a, .dir-rtl .course_category_tree .category .course_info div {float: right;}
 .dir-rtl .course_category_tree .controls div {padding: 7px;}
-.course_category_tree .category .course_info a,
-.course_category_tree .category .course_info div {float:left;width:16px;height:16px;}
+.course_category_tree .category .course_info img { margin-left: .45em;}
+.dir-rtl .course_category_tree .category .course_info img { margin-right: .45em; margin-left: 0;}
 .jsenabled .course_category_tree .controls {visibility: visible;}
 .jsenabled .course_category_tree .category.with_children.collapsed .category_label {background-image:url([[pix:moodle|t/collapsed]]);}
 .jsenabled .course_category_tree .category.with_children.collapsed .subcategories,
