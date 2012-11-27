@@ -40,6 +40,21 @@ defined('MOODLE_INTERNAL') || die();
  */
 class cache_factory {
 
+    /** The cache has not been initialised yet. */
+    const STATE_UNINITIALISED = 0;
+    /** The cache is in the process of initialising itself. */
+    const STATE_INITIALISING = 1;
+    /** The cache is in the process of saving its configuration file. */
+    const STATE_SAVING = 2;
+    /** The cache is ready to use. */
+    const STATE_READY = 3;
+    /** The cache encountered an error while initialising. */
+    const STATE_ERROR_INITIALISING = 9;
+    /** The cache has been disabled. */
+    const STATE_DISABLED = 10;
+    /** The cache stores have been disabled */
+    const STATE_STORES_DISABLED = 11;
+
     /**
      * An instance of the cache_factory class created upon the first request.
      * @var cache_factory
@@ -83,14 +98,34 @@ class cache_factory {
     protected $lockplugins = null;
 
     /**
+     * The current state of the cache API.
+     * @var int
+     */
+    protected $state = 0;
+
+    /**
      * Returns an instance of the cache_factor method.
      *
      * @param bool $forcereload If set to true a new cache_factory instance will be created and used.
      * @return cache_factory
      */
     public static function instance($forcereload = false) {
+        global $CFG;
         if ($forcereload || self::$instance === null) {
-            self::$instance = new cache_factory();
+            // Initialise a new factory to facilitate our needs.
+            if (defined('CACHE_DISABLE_ALL') && CACHE_DISABLE_ALL !== false) {
+                // The cache has been disabled. Load disabledlib and start using the factory designed to handle this
+                // situation. It will use disabled alternatives where available.
+                require_once($CFG->dirroot.'/cache/disabledlib.php');
+                self::$instance = new cache_factory_disabled();
+            } else {
+                // We're using the regular factory.
+                self::$instance = new cache_factory();
+                if (defined('CACHE_DISABLE_STORES') && CACHE_DISABLE_STORES !== false) {
+                    // The cache stores have been disabled.
+                    self::$instance->set_state(self::STATE_STORES_DISABLED);;
+                }
+            }
         }
         return self::$instance;
     }
@@ -113,6 +148,8 @@ class cache_factory {
         $factory->configs = array();
         $factory->definitions = array();
         $factory->lockplugins = null; // MUST be null in order to force its regeneration.
+        // Reset the state to uninitialised.
+        $factory->state = self::STATE_UNINITIALISED;
     }
 
     /**
@@ -206,7 +243,7 @@ class cache_factory {
      * @param string $name The name of the store (must be unique remember)
      * @param array $details
      * @param cache_definition $definition The definition to instantiate it for.
-     * @return boolean
+     * @return boolean|cache_store
      */
     public function create_store_from_config($name, array $details, cache_definition $definition) {
         if (!array_key_exists($name, $this->stores)) {
@@ -253,15 +290,30 @@ class cache_factory {
             $class = 'cache_config_phpunittest';
         }
 
+        $error = false;
         if ($needtocreate) {
             // Create the default configuration.
-            $class::create_default_configuration();
+            // Update the state, we are now initialising the cache.
+            self::set_state(self::STATE_INITIALISING);
+            $configuration = $class::create_default_configuration();
+            if ($configuration !== true) {
+                // Failed to create the default configuration. Disable the cache stores and update the state.
+                self::set_state(self::STATE_ERROR_INITIALISING);
+                $this->configs[$class] = new $class;
+                $this->configs[$class]->load($configuration);
+                $error = true;
+            }
         }
 
         if (!array_key_exists($class, $this->configs)) {
             // Create a new instance and call it to load it.
             $this->configs[$class] = new $class;
             $this->configs[$class]->load();
+        }
+
+        if (!$error) {
+            // The cache is now ready to use. Update the state.
+            self::set_state(self::STATE_READY);
         }
 
         // Return the instance.
@@ -337,5 +389,84 @@ class cache_factory {
         }
         $class = $this->lockplugins[$type];
         return new $class($name, $config);
+    }
+
+    /**
+     * Returns the current state of the cache API.
+     *
+     * @return int
+     */
+    public function get_state() {
+        return $this->state;
+    }
+
+    /**
+     * Updates the state fo the cache API.
+     *
+     * @param int $state
+     * @return bool
+     */
+    public function set_state($state) {
+        if ($state <= $this->state) {
+            return false;
+        }
+        $this->state = $state;
+        return true;
+    }
+
+    /**
+     * Returns true if the cache API has been disabled.
+     *
+     * @return bool
+     */
+    public function is_disabled() {
+        return $this->state === self::STATE_DISABLED;
+    }
+
+    /**
+     * Disables as much of the cache API as possible.
+     *
+     * All of the magic associated with the disabled cache is wrapped into this function.
+     * In switching out the factory for the disabled factory it gains full control over the initialisation of objects
+     * and can use all of the disabled alternatives.
+     * Simple!
+     *
+     * This function has been marked as protected so that it cannot be abused through the public API presently.
+     * Perhaps in the future we will allow this, however as per the build up to the first release containing
+     * MUC it was decided that this was just to risky and abusable.
+     */
+    protected static function disable() {
+        global $CFG;
+        require_once($CFG->dirroot.'/cache/disabledlib.php');
+        self::$instance = new cache_factory_disabled();
+    }
+
+    /**
+     * Returns true if the cache stores have been disabled.
+     *
+     * @return bool
+     */
+    public function stores_disabled() {
+        return $this->state === self::STATE_STORES_DISABLED || $this->is_disabled();
+    }
+
+    /**
+     * Disables cache stores.
+     *
+     * The cache API will continue to function however none of the actual stores will be used.
+     * Instead the dummy store will be provided for all cache requests.
+     * This is useful in situations where you cannot be sure any stores are working.
+     *
+     * In order to re-enable the cache you must call the cache factories static reset method:
+     * <code>
+     * // Disable the cache factory.
+     * cache_factory::disable_stores();
+     * // Re-enable the cache factory by resetting it.
+     * cache_factory::reset();
+     * </code>
+     */
+    public static function disable_stores() {
+        $factory = self::instance();
+        $factory->set_state(self::STATE_STORES_DISABLED);
     }
 }

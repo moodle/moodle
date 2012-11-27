@@ -193,6 +193,7 @@ if (empty($CFG->version)) {
 
 if ($version > $CFG->version) {  // upgrade
     purge_all_caches();
+
     $PAGE->set_pagelayout('maintenance');
     $PAGE->set_popup_notification_allowed(false);
 

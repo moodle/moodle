@@ -56,6 +56,27 @@ If a data source had been specified in the definition, the following would be al
     $cache = cache::make('core', 'string');
     $component = $cache->get('component');
 
+Disabling the cache stores.
+There are times in code when you will want to disable the cache stores.
+While the cache API must still be functional in order for calls to it to work it is possible to disable the use of the cache stores separately so that you can be sure only the cache will function in all circumstances.
+
+    // Disable the cache store at the start of your script with:
+    define('CACHE_DISABLE_STORES', true);
+
+    // Disable the cache within your script when you want with:
+    cache_factory::disable_stores();
+    // If you disabled it using the above means you can re-enable it with:
+    cache_factory::reset();
+
+Disabling the cache entirely.
+Like above there are times when you want the cache to avoid initialising anything it doesn't absolutely need. Things such as installation and upgrade require this functionality.
+When the cache API is disabled it is still functional however special "disabled" classes will be used instead of the regular classes that make the Cache API tick.
+These disabled classes do the least work possible and through this means we avoid all manner of intialisation and configuration.
+Once disabled it cannot be re-enabled.
+
+    // To disable the cache entirely call the following:
+    define('CACHE_DISABLE_ALL', true);
+
 Cache API parts
 ---------------
 

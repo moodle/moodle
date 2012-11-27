@@ -1419,6 +1419,10 @@ function install_core($version, $verbose) {
     global $CFG, $DB;
 
     try {
+        // Disable the use of cache stores here. We will reset the factory after we've performed the installation.
+        // This ensures that we don't permanently cache anything during installation.
+        cache_factory::disable_stores();
+
         set_time_limit(600);
         print_upgrade_part_start('moodle', true, $verbose); // does not store upgrade running flag
 
@@ -1442,6 +1446,9 @@ function install_core($version, $verbose) {
         admin_apply_default_settings(NULL, true);
 
         print_upgrade_part_end(null, true, $verbose);
+
+        // Reset the cache, this returns it to a normal operation state.
+        cache_factory::reset();
     } catch (exception $ex) {
         upgrade_handle_exception($ex);
     }
@@ -1463,6 +1470,9 @@ function upgrade_core($version, $verbose) {
     try {
         // Reset caches before any output
         purge_all_caches();
+        // Disable the use of cache stores here. We will reset the factory after we've performed the installation.
+        // This ensures that we don't permanently cache anything during installation.
+        cache_factory::disable_stores();
 
         // Upgrade current language pack if we can
         upgrade_language_pack();
@@ -1495,7 +1505,9 @@ function upgrade_core($version, $verbose) {
         // Update core definitions.
         cache_helper::update_definitions(true);
 
-        // Reset caches again, just to be sure
+        // Reset the cache, this returns it to a normal operation state.
+        cache_factory::reset();
+        // Purge caches again, just to be sure we arn't holding onto old stuff now.
         purge_all_caches();
 
         // Clean up contexts - more and more stuff depends on existence of paths and contexts
@@ -1523,11 +1535,18 @@ function upgrade_noncore($verbose) {
 
     // upgrade all plugins types
     try {
+        // Disable the use of cache stores here. We will reset the factory after we've performed the installation.
+        // This ensures that we don't permanently cache anything during installation.
+        cache_factory::disable_stores();
+
         $plugintypes = get_plugin_types();
         foreach ($plugintypes as $type=>$location) {
             upgrade_plugins($type, 'print_upgrade_part_start', 'print_upgrade_part_end', $verbose);
         }
+        // Update cache definitions. Involves scanning each plugin for any changes.
         cache_helper::update_definitions();
+        // Reset the cache system to a normal state.
+        cache_factory::reset();
     } catch (Exception $ex) {
         upgrade_handle_exception($ex);
     }

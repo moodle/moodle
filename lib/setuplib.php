@@ -1444,7 +1444,12 @@ border-color:black; background-color:#ffffee; border-style:solid; border-radius:
 width: 80%; -moz-border-radius: 20px; padding: 15px">
 ' . $message . '
 </div>';
-        if (!empty($CFG->debug) && $CFG->debug >= DEBUG_DEVELOPER) {
+        // Check whether debug is set.
+        $debug = (!empty($CFG->debug) && $CFG->debug >= DEBUG_DEVELOPER);
+        // Also check we have it set in the config file. This occurs if the method to read the config table from the
+        // database fails, reading from the config table is the first database interaction we have.
+        $debug = $debug || (!empty($CFG->config_php_settings['debug'])  && $CFG->config_php_settings['debug'] >= DEBUG_DEVELOPER );
+        if ($debug) {
             if (!empty($debuginfo)) {
                 $debuginfo = s($debuginfo); // removes all nasty JS
                 $debuginfo = str_replace("\n", '<br />', $debuginfo); // keep newlines

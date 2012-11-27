@@ -138,12 +138,20 @@ if (!defined('PHPUNIT_TEST')) {
     define('PHPUNIT_TEST', false);
 }
 
+// When set to true MUC (Moodle caching) will be disabled as much as possible.
+// A special cache factory will be used to handle this situation and will use special "disabled" equivalents objects.
+// This ensure we don't attempt to read or create the config file, don't use stores, don't provide persistence or
+// storage of any kind.
+if (!defined('CACHE_DISABLE_ALL')) {
+    define('CACHE_DISABLE_ALL', false);
+}
+
 // When set to true MUC (Moodle caching) will not use any of the defined or default stores.
 // The Cache API will continue to function however this will force the use of the cachestore_dummy so all requests
 // will be interacting with a static property and will never go to the proper cache stores.
 // Useful if you need to avoid the stores for one reason or another.
-if (!defined('NO_CACHE_STORES')) {
-    define('NO_CACHE_STORES', false);
+if (!defined('CACHE_DISABLE_STORES')) {
+    define('CACHE_DISABLE_STORES', false);
 }
 
 // Servers should define a default timezone in php.ini, but if they don't then make sure something is defined.
