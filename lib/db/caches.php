@@ -51,18 +51,6 @@ $definitions = array(
         'persistentmaxsize' => 2
     ),
 
-    // Used to store data from the config + config_plugins table in the database.
-    // The key used is the component:
-    //   - core for all core config settings
-    //   - plugin component for all plugin settings.
-    // Persistence is used because normally several settings within a script.
-    'config' => array(
-        'mode' => cache_store::MODE_APPLICATION,
-        'persistent' => true,
-        'simplekeys' => true,
-        'simpledata' => true
-    ),
-
     // Event invalidation cache.
     // This cache is used to manage event invalidation, its keys are the event names.
     // Whenever something is invalidated it is both purged immediately and an event record created with the timestamp.
