@@ -83,7 +83,7 @@ class assignfeedback_file_import_zip_form extends moodleform implements renderab
                     $userdesc = fullname($user);
                     if ($assignment->is_blind_marking()) {
                         $userdesc = get_string('hiddenuser', 'assign') .
-                                    $assignment->get_unique_id_for_user($user->id);
+                                    $assignment->get_uniqueid_for_user($user->id);
                     }
                     $grade = $assignment->get_user_grade($user->id, false);
 
