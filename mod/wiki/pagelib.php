@@ -942,7 +942,7 @@ class page_wiki_create extends page_wiki {
         }
         if (empty($this->subwiki)) {
             // If subwiki is not set then try find one and set else create one.
-            if (!$this->subwiki = wiki_get_subwiki_by_group($this->wid, $groupid)) {
+            if (!$this->subwiki = wiki_get_subwiki_by_group($this->wid, $groupid, $this->uid)) {
                 $swid = wiki_add_subwiki($PAGE->activityrecord->id, $groupid, $this->uid);
                 $this->subwiki = wiki_get_subwiki($swid);
             }
