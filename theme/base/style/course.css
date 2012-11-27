@@ -19,9 +19,9 @@
 .dir-rtl .sitetopic .section .activity img.activityicon,
 .dir-rtl .course-content .section .activity img.activityicon {margin-left: 6px; margin-right: 0;}
 .sitetopic .section .activity .activityinstance,
-.course-content .section .activity .activityinstance
+.course-content .section .activity .activityinstance,
 .sitetopic .section .activity .activityinstance div,
-.course-content .section .activity .activityinstance div, { display: inline;}
+.course-content .section .activity .activityinstance div { display: inline;}
 .sitetopic .section .activity .activityinstance,
 .course-content .section .activity .activityinstance { padding-right: 3em; }
 .dir-rtl .sitetopic .section .activity .activityinstance,
