@@ -5,95 +5,85 @@
     font-size: large;
     font-weight: bold;
 
-    margin-left: 0px;
+    margin-left: 0;
     margin-bottom: 20px;
 }
-
-.path-mod-book img.bigicon {
-  vertical-align: middle;
-  margin-right: 4px;
-  margin-left: 4px;
-  width: 24px;
-  height: 24px;
-  border: 0px;
+.dir-rtl.path-mod-book .book_chapter_title {
+    text-align: right;
 }
 
+.path-mod-book .navtop img.icon,
+.path-mod-book .navbotton img.icon {
+  margin-right: 4px;
+  margin-left: 4px;
+  border: 0;
+  padding: 0;
+}
+
+
+.path-mod-book .navbottom,
 .path-mod-book .navtop {
     text-align: right;
+}
+.dir-rtl.path-mod-book .navbottom,
+.dir-rtl.path-mod-book .navtop {
+    text-align: left;
+}
+.path-mod-book .navtop {
     margin-bottom: 0.5em;
 }
 
-.path-mod-book .navbottom {
-    text-align: right;
-}
-
 /* == Fake toc block == */
+
+.path-mod-book .block_book_toc ul {
+    margin: 0 0 0 5px;
+    padding-left: 0;
+    padding-right: 0;
+}
+.dir-rtl.path-mod-book .block_book_toc ul { margin: 0 5px 0 0; }
+.path-mod-book .block_book_toc li {
+    clear: both;
+    list-style: none;
+    margin-top: .5em;
+}
+.path-mod-book .block_book_toc li li {
+    list-style: none;
+}
+.path-mod-book .block_book_toc .action-list { float: right; }
+.dir-rtl.path-mod-book .block_book_toc .action-list { float: left; }
+.path-mod-book .block_book_toc .action-list img.smallicon {
+    margin: 0 3px;
+}
 
 /* toc style NONE */
 .path-mod-book .book_toc_none {
   font-size: 0.8em;
 }
-.path-mod-book .book_toc_none ul {
-    margin-left: 5px;
-    padding-left: 0px;
+.path-mod-book .book_toc_none ul ul,
+.dir-rtl.path-mod-book .book_toc_none ul ul {
+    margin-left: 0;
+    margin-right: 0;
 }
-.path-mod-book .book_toc_none ul ul {
-    margin-left: 0px;
-    padding-left: 0px;
-}
-.path-mod-book .book_toc_none li {
-    margin-top: 5px;
-    list-style: none;
-}
-.path-mod-book .book_toc_none li li {
-    margin-top: 0px;
-    list-style: none;
-}
-
 
 /* toc style NUMBERED */
 .path-mod-book .book_toc_numbered {
   font-size: 0.8em;
 }
-.path-mod-book .book_toc_numbered ul {
-    margin-left: 5px;
-    padding-left: 0px;
-}
-.path-mod-book .book_toc_numbered ul ul {
-    margin-left: 0px;
-    padding-left: 0px;
-}
-.path-mod-book .book_toc_numbered li {
-    margin-top: 5px;
-    list-style: none;
-}
-.path-mod-book .book_toc_numbered li li {
-    margin-top: 0px;
-    list-style: none;
-}
-
 
 /*toc style BULLETS */
 .path-mod-book .book_toc_bullets {
   font-size: 0.8em;
 }
-.path-mod-book .book_toc_bullets ul {
-    margin-left: 5px;
-    padding-left: 0px;
-}
 .path-mod-book .book_toc_bullets ul ul {
     margin-left: 20px;
-    padding-left: 0px;
 }
-.path-mod-book .book_toc_bullets li {
-    margin-top: 5px;
-    list-style: none;
+.dir-rtl.path-mod-book .book_toc_bullets ul ul {
+    margin-left: 0;
+    margin-right: 20px;
 }
 .path-mod-book .book_toc_bullets li li {
-    margin-top: 0px;
     list-style: circle;
 }
-
 
 /* toc style INDENTED*/
 .path-mod-book .book_toc_indented {
@@ -101,17 +91,18 @@
 }
 .path-mod-book .book_toc_indented ul {
     margin-left: 5px;
-    padding-left: 0px;
+}
+.dir-rtl.path-mod-book .book_toc_indented ul {
+    margin-left: 0;
+    margin-right: 5px;
 }
 .path-mod-book .book_toc_indented ul ul {
     margin-left: 15px;
-    padding-left: 0px;
 }
-.path-mod-book .book_toc_indented li {
-    margin-top: 5px;
-    list-style: none;
+.dir-rtl.path-mod-book .book_toc_indented ul ul {
+    margin-left: 0;
+    margin-right: 15px;
 }
 .path-mod-book .book_toc_indented li li {
-    margin-top: 0px;
     list-style: none;
 }
