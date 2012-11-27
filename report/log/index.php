@@ -121,6 +121,11 @@ $strlogs = get_string('logs');
 $stradministration = get_string('administration');
 $strreports = get_string('reports');
 
+// Before we close session, make sure we have editing information in session.
+$adminediting = optional_param('adminedit', -1, PARAM_BOOL);
+if ($PAGE->user_allowed_editing() && $adminediting != -1) {
+    $USER->editing = $adminediting;
+}
 session_get_instance()->write_close();
 
 if (!empty($chooselog)) {
