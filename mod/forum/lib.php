@@ -3727,7 +3727,7 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
                     echo '</a>';
                     echo '<a title="'.$strmarkalldread.'" href="'.$CFG->wwwroot.'/mod/forum/markposts.php?f='.
                          $forum->id.'&amp;d='.$post->discussion.'&amp;mark=read&amp;returnpage=view.php">' .
-                         '<img src="'.$OUTPUT->pix_url('t/clear') . '" class="iconsmall" alt="'.$strmarkalldread.'" /></a>';
+                         '<img src="'.$OUTPUT->pix_url('t/markasread') . '" class="iconsmall" alt="'.$strmarkalldread.'" /></a>';
                     echo '</span>';
                 } else {
                     echo '<span class="read">';
@@ -5608,10 +5608,10 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=-1, $di
             if ($cantrack) {
                 echo '<th class="header replies" scope="col">'.get_string('unread', 'forum');
                 if ($forumtracked) {
-                    echo '&nbsp;<a title="'.get_string('markallread', 'forum').
+                    echo '<a title="'.get_string('markallread', 'forum').
                          '" href="'.$CFG->wwwroot.'/mod/forum/markposts.php?f='.
                          $forum->id.'&amp;mark=read&amp;returnpage=view.php">'.
-                         '<img src="'.$OUTPUT->pix_url('t/clear') . '" class="iconsmall" alt="'.get_string('markallread', 'forum').'" /></a>';
+                         '<img src="'.$OUTPUT->pix_url('t/markasread') . '" class="iconsmall" alt="'.get_string('markallread', 'forum').'" /></a>';
                 }
                 echo '</th>';
             }
