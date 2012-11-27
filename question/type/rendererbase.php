@@ -229,16 +229,11 @@ abstract class qtype_renderer extends plugin_renderer_base {
         $state = question_state::graded_state_for_fraction($fraction);
 
         if ($state == question_state::$gradedright) {
-            $icon = 'tick_green';
+            $icon = 'grade_correct';
         } else if ($state == question_state::$gradedpartial) {
-            $icon = 'tick_amber';
+            $icon = 'grade_partiallycorrect';
         } else {
-            $icon = 'cross_red';
-        }
-        if ($selected) {
-            $icon .= '_big';
-        } else {
-            $icon .= '_small';
+            $icon = 'grade_incorrect';
         }
 
         $attributes = array(

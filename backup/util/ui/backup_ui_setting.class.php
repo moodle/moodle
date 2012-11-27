@@ -400,9 +400,9 @@ class backup_setting_ui_checkbox extends backup_setting_ui {
         global $OUTPUT;
         // Checkboxes are always yes or no
         if ($this->get_value()) {
-            return $OUTPUT->pix_icon('i/tick_green_big', get_string('yes'));
+            return $OUTPUT->pix_icon('i/valid', get_string('yes'));
         } else {
-            return $OUTPUT->pix_icon('i/cross_red_big', get_string('no'));
+            return $OUTPUT->pix_icon('i/invalid', get_string('no'));
         }
     }
 

@@ -201,7 +201,7 @@ class mod_lti_mod_form extends moodleform_mod {
                         'edit_icon_url' => (string)$OUTPUT->pix_url('t/edit'),
                         'add_icon_url' => (string)$OUTPUT->pix_url('t/add'),
                         'delete_icon_url' => (string)$OUTPUT->pix_url('t/delete'),
-                        'green_check_icon_url' => (string)$OUTPUT->pix_url('i/tick_green_small'),
+                        'green_check_icon_url' => (string)$OUTPUT->pix_url('i/valid'),
                         'warning_icon_url' => (string)$OUTPUT->pix_url('warning', 'lti'),
                         'instructor_tool_type_edit_url' => $editurl->out(false),
                         'ajax_url' => $ajaxurl->out(true),
