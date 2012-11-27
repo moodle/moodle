@@ -2483,7 +2483,7 @@ class assign {
         $info->username = fullname($userfrom, true);
         $info->assignment = format_string($assignmentname,true, array('context'=>$context));
         $info->url = $CFG->wwwroot.'/mod/assign/view.php?id='.$coursemodule->id;
-        $info->timeupdated = strftime('%c',$updatetime);
+        $info->timeupdated = userdate($updatetime, get_string('strftimerecentfull'));
 
         $postsubject = get_string($messagetype . 'small', 'assign', $info);
         $posttext = self::format_notification_message_text($messagetype, $info, $course, $context, $modulename, $assignmentname);
