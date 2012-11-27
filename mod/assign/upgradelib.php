@@ -238,14 +238,10 @@ class assign_upgrade_manager {
 
             $newassignment->update_calendar($newcoursemodule->id);
 
-            // copy the grades from the old assignment to the new one
+            // reassociate grade_items from the old assignment instance to the new assign instance. This includes outcome linked grade_items
+            $sql = "UPDATE {grade_items} SET itemmodule = 'assign', iteminstance = ? WHERE itemmodule = 'assignment' AND iteminstance = ?";
+            $DB->execute($sql, array($newassignment->get_instance()->id, $oldassignment->id));
 
-            $gradeitem = $DB->get_record('grade_items', array('iteminstance'=>$oldassignment->id, 'itemmodule'=>'assignment'), 'id', IGNORE_MISSING);
-            if ($gradeitem) {
-                $gradeitem->iteminstance = $newassignment->get_instance()->id;
-                $gradeitem->itemmodule = 'assign';
-                $DB->update_record('grade_items', $gradeitem);
-            }
             $gradesdone = true;
 
         } catch (Exception $exception) {
@@ -256,13 +252,9 @@ class assign_upgrade_manager {
         if ($rollback) {
             // roll back the grades changes
             if ($gradesdone) {
-                // copy the grades from the old assignment to the new one
-                $gradeitem = $DB->get_record('grade_items', array('iteminstance'=>$newassignment->get_instance()->id, 'itemmodule'=>'assign'), 'id', IGNORE_MISSING);
-                if ($gradeitem) {
-                    $gradeitem->iteminstance = $oldassignment->id;
-                    $gradeitem->itemmodule = 'assignment';
-                    $DB->update_record('grade_items', $gradeitem);
-                }
+                // reassociate grade_items from the new assign instance to the old assignment instance
+                $sql = "UPDATE {grade_items} SET itemmodule = 'assign', iteminstance = ? WHERE itemmodule = 'assignment' AND iteminstance = ?";
+                $DB->execute($sql, array($oldassignment->id, $newassignment->get_instance()->id));
             }
             // roll back the completion changes
             if ($completiondone) {
