@@ -10,6 +10,16 @@ $showsidepost = $hassidepost && !$PAGE->blocks->region_completely_docked('side-p
 $custommenu = $OUTPUT->custom_menu();
 $hascustommenu = (empty($PAGE->layout_options['nocustommenu']) && !empty($custommenu));
 
+$courseheader = $coursecontentheader = $coursecontentfooter = $coursefooter = '';
+if (empty($PAGE->layout_options['nocourseheaderfooter'])) {
+    $courseheader = $OUTPUT->course_header();
+    $coursecontentheader = $OUTPUT->course_content_header();
+    if (empty($PAGE->layout_options['nocoursefooter'])) {
+        $coursecontentfooter = $OUTPUT->course_content_footer();
+        $coursefooter = $OUTPUT->course_footer();
+    }
+}
+
 $bodyclasses = array();
 if ($showsidepre && !$showsidepost) {
     $bodyclasses[] = 'side-pre-only';
@@ -85,6 +95,10 @@ echo $OUTPUT->doctype() ?>
 		</div>
 	</div>
 
+    <?php if (!empty($courseheader)) { ?>
+    <div id="course-header"><?php echo $courseheader; ?></div>
+    <?php } ?>
+
 <!-- end of logo and menu section -->
 
 
@@ -119,8 +133,9 @@ echo $OUTPUT->doctype() ?>
                 				<div id="region-main-wrap">
                     				<div id="region-main">
                         				<div class="region-content">
-
-                            			<?php echo $OUTPUT->main_content() ?>
+                                            <?php echo $coursecontentheader; ?>
+                                            <?php echo $OUTPUT->main_content() ?>
+                                            <?php echo $coursecontentfooter; ?>
                         				</div>
                     				</div>
                 				</div>
@@ -159,6 +174,9 @@ echo $OUTPUT->doctype() ?>
 	</div>
 
 <!-- START OF FOOTER -->
+    <?php if (!empty($coursefooter)) { ?>
+    <div id="course-footer"><?php echo $coursefooter; ?></div>
+    <?php } ?>
 	<div id="page-footer">
 		<div id="footer-container">
 			<div id="footer">

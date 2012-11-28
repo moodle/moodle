@@ -34,6 +34,16 @@ $hascustommenu = (empty($PAGE->layout_options['nocustommenu']) && !empty($custom
 splash_check_colourswitch();
 splash_initialise_colourswitcher($PAGE);
 
+$courseheader = $coursecontentheader = $coursecontentfooter = $coursefooter = '';
+if (empty($PAGE->layout_options['nocourseheaderfooter'])) {
+    $courseheader = $OUTPUT->course_header();
+    $coursecontentheader = $OUTPUT->course_content_header();
+    if (empty($PAGE->layout_options['nocoursefooter'])) {
+        $coursecontentfooter = $OUTPUT->course_content_footer();
+        $coursefooter = $OUTPUT->course_footer();
+    }
+}
+
 $bodyclasses = array();
 $bodyclasses[] = 'splash-'.splash_get_colour();
 if ($hassidepre && !$hassidepost) {
@@ -148,6 +158,9 @@ echo $OUTPUT->doctype() ?>
         <?php
     } ?>
     <!-- END CUSTOMMENU -->
+    <?php if (!empty($courseheader)) { ?>
+    <div id="course-header"><?php echo $courseheader; ?></div>
+    <?php } ?>
     <div class="navbar">
     <div class="wrapper clearfix">
     <div class="breadcrumb">
@@ -169,7 +182,9 @@ echo $OUTPUT->doctype() ?>
         <div id="page-content" class="clearfix">
             <div id="report-main-content">
                 <div class="region-content">
+                    <?php echo $coursecontentheader; ?>
                     <?php echo $OUTPUT->main_content() ?>
+                    <?php echo $coursecontentfooter; ?>
                 </div>
             </div>
             <?php if ($hassidepre) { ?>
@@ -185,6 +200,9 @@ echo $OUTPUT->doctype() ?>
         </div>
 
         <!-- END OF CONTENT -->
+        <?php if (!empty($coursefooter)) { ?>
+        <div id="course-footer"><?php echo $coursefooter; ?></div>
+        <?php } ?>
         <div class="clearfix"></div>
     <!-- END OF #Page -->
     </div>
