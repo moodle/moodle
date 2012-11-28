@@ -2303,7 +2303,7 @@ class assign {
             $gradebookurl = '/grade/report/grader/index.php?id=' . $this->get_course()->id;
             $links[$gradebookurl] = get_string('viewgradebook', 'assign');
         }
-        if ($this->is_any_submission_plugin_enabled()) {
+        if ($this->is_any_submission_plugin_enabled() && $this->count_submissions()) {
             $downloadurl = '/mod/assign/view.php?id=' . $this->get_course_module()->id . '&action=downloadall';
             $links[$downloadurl] = get_string('downloadall', 'assign');
         }
