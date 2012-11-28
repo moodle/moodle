@@ -32,6 +32,7 @@ $themename = min_optional_param('theme', 'standard', 'SAFEDIR');
 $type      = min_optional_param('type', '', 'SAFEDIR');
 $subtype   = min_optional_param('subtype', '', 'SAFEDIR');
 $sheet     = min_optional_param('sheet', '', 'SAFEDIR');
+$usesvg    = (bool)min_optional_param('svg', '1', 'INT');
 
 if (!defined('THEME_DESIGNER_CACHE_LIFETIME')) {
     define('THEME_DESIGNER_CACHE_LIFETIME', 4); // this can be also set in config.php
@@ -47,9 +48,15 @@ if (file_exists("$CFG->dirroot/theme/$themename/config.php")) {
 
 // no gzip compression when debugging
 
-$candidatesheet = "$CFG->cachedir/theme/$themename/designer.ser";
+if ($usesvg) {
+    $candidatesheet = "$CFG->cachedir/theme/$themename/designer.ser";
+} else {
+    // Add to the sheet name, one day we'll be able to just drop this.
+    $candidatesheet = "$CFG->cachedir/theme/$themename/designer_nosvg.ser";
+}
 
 if (!file_exists($candidatesheet)) {
+
     css_send_css_not_found();
 }
 

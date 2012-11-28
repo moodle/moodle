@@ -38,6 +38,15 @@ if ($slashargument = min_get_slash_argument()) {
     if (substr_count($slashargument, '/') < 2) {
         image_not_found();
     }
+
+    if (strpos($slashargument, '_s/') === 0) {
+        // Can't use SVG
+        $slashargument = substr($slashargument, 3);
+        $usesvg = false;
+    } else {
+        $usesvg = true;
+    }
+
     // image must be last because it may contain "/"
     list($themename, $rev, $type) = explode('/', $slashargument, 3);
     $themename = min_clean_param($themename, 'SAFEDIR');
@@ -48,6 +57,7 @@ if ($slashargument = min_get_slash_argument()) {
     $themename = min_optional_param('theme', 'standard', 'SAFEDIR');
     $rev       = min_optional_param('rev', 0, 'INT');
     $type      = min_optional_param('type', 'all', 'SAFEDIR');
+    $usesvg    = (bool)min_optional_param('svg', '1', 'INT');
 }
 
 if (!in_array($type, array('all', 'ie', 'editor', 'plugins', 'parents', 'theme'))) {
@@ -68,8 +78,15 @@ if ($type === 'ie') {
     css_send_ie_css($themename, $rev, $etag, !empty($slashargument));
 }
 
-$candidatesheet = "$CFG->cachedir/theme/$themename/css/$type.css";
-$etag = sha1("$themename/$rev/$type");
+$candidatedir = "$CFG->cachedir/theme/$themename/css";
+$etag = "$themename/$rev/$type";
+if (!$usesvg) {
+    // Add to the sheet name, one day we'll be able to just drop this.
+    $candidatedir .= '/nosvg';
+    $etag .= '/nosvg';
+}
+$candidatesheet = "$candidatedir/$type.css";
+$etag = sha1($etag);
 
 if (file_exists($candidatesheet)) {
     if (!empty($_SERVER['HTTP_IF_NONE_MATCH']) || !empty($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
@@ -90,14 +107,25 @@ define('NO_UPGRADE_CHECK', true);  // Ignore upgrade check
 require("$CFG->dirroot/lib/setup.php");
 
 $theme = theme_config::load($themename);
+$theme->force_svg_use($usesvg);
 
 $rev = theme_get_revision();
-$etag = sha1("$themename/$rev/$type");
+
+$etag = "$themename/$rev/$type";
+if (!$usesvg) {
+    // Add to the etag, one day we'll be able to just delete svg nonsense this.
+    $etag .= '/nosvg';
+}
+$etag = sha1($etag);
 
 if ($type === 'editor') {
     $cssfiles = $theme->editor_css_files();
     css_store_css($theme, $candidatesheet, $cssfiles);
 } else {
+    $basedir = "$CFG->cachedir/theme/$themename/css";
+    if (!$usesvg) {
+        $basedir .= '/nosvg';
+    }
     $css = $theme->css_files();
     $allfiles = array();
     foreach ($css as $key=>$value) {
@@ -111,11 +139,11 @@ if ($type === 'editor') {
                 $cssfiles[] = $val;
             }
         }
-        $cssfile = "$CFG->cachedir/theme/$themename/css/$key.css";
+        $cssfile = "$basedir/$key.css";
         css_store_css($theme, $cssfile, $cssfiles);
         $allfiles = array_merge($allfiles, $cssfiles);
     }
-    $cssfile = "$CFG->cachedir/theme/$themename/css/all.css";
+    $cssfile = "$basedir/all.css";
     css_store_css($theme, $cssfile, $allfiles);
 }
 
