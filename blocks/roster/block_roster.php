@@ -38,8 +38,9 @@ class block_roster extends block_list {
         }
 
         $icon = '<img src="'.$OUTPUT->pix_url('i/users') . '" class="icon" alt="" />&nbsp;';
+        // TODO: Localize the "Roster" string in the anchor text using get_string
         $this->content->items[] = '<a title="'.get_string('listofallpeople').'" href="'.
-                                  $CFG->wwwroot.'/user/roster.php?contextid='.$currentcontext->id.'">'.$icon.get_string('participants').'</a>';
+                                  $CFG->wwwroot.'/user/roster.php?contextid='.$currentcontext->id.'">'.$icon.'Roster</a>';
 
         return $this->content;
     }
