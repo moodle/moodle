@@ -14,6 +14,16 @@ $showsidepre = ($hassidepre && !$PAGE->blocks->region_completely_docked('side-pr
 $custommenu = $OUTPUT->custom_menu();
 $hascustommenu = (empty($PAGE->layout_options['nocustommenu']) && !empty($custommenu));
 
+$courseheader = $coursecontentheader = $coursecontentfooter = $coursefooter = '';
+if (empty($PAGE->layout_options['nocourseheaderfooter'])) {
+    $courseheader = $OUTPUT->course_header();
+    $coursecontentheader = $OUTPUT->course_content_header();
+    if (empty($PAGE->layout_options['nocoursefooter'])) {
+        $coursecontentfooter = $OUTPUT->course_content_footer();
+        $coursefooter = $OUTPUT->course_footer();
+    }
+}
+
 $bodyclasses = array();
 if (!$showsidepre) {
     $bodyclasses[] = 'content-only';
@@ -86,6 +96,12 @@ echo $OUTPUT->doctype() ?>
                             <?php } ?>
 <!-- end of page-header -->
 
+<!-- begin of course header -->
+                            <?php if (!empty($courseheader)) { ?>
+                            <div id="course-header"><?php echo $courseheader; ?></div>
+                            <?php } ?>
+<!-- end of course header -->
+
 <!-- begin of custom menu -->
                             <?php if ($hascustommenu) { ?>
                             <div id="custommenu"><?php echo $custommenu; ?></div>
@@ -107,7 +123,9 @@ echo $OUTPUT->doctype() ?>
                                 <!-- main mandatory content of the moodle page  -->
                                 <div id="report-main-content">
                                     <div class="region-content">
+                                        <?php echo $coursecontentheader; ?>
                                         <?php echo $OUTPUT->main_content() ?>
+                                        <?php echo $coursecontentfooter; ?>
                                     </div>
                                 </div>
                                 <!-- end of main mandatory content of the moodle page -->
@@ -126,6 +144,12 @@ echo $OUTPUT->doctype() ?>
 
                             </div>
 <!-- end of moodle content -->
+
+<!-- begin of course footer -->
+<?php if (!empty($coursefooter)) { ?>
+<div id="course-footer"><?php echo $coursefooter; ?></div>
+<?php } ?>
+<!-- end of course footer -->
 
                             <div class="clearfix"></div>
 

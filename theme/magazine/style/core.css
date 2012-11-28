@@ -160,6 +160,13 @@ div.rightinfo {
     margin-top: 40px;
 }
 
+#course-header {
+    width: 93%;
+    min-width: 910px;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
 /** main content wraps **/
 
 #outercontainer {
@@ -236,6 +243,13 @@ div.jcontrolsright div.singlebutton, div.jcontrolsright div.forumsearch {
 }
 
 /** foot wraps and inner divs **/
+
+#course-footer {
+    width: 93%;
+    min-width: 910px;
+    margin: 0 auto;
+    overflow: hidden;
+}
 
 #footer {
     width: 91%;

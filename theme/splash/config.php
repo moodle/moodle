@@ -109,19 +109,19 @@ $THEME->layouts = array(
     'popup' => array(
         'file' => 'general.php',
         'regions' => array(),
-        'options' => array('nofooter'=>true, 'nonavbar'=>true, 'noblocks'=>true),
+        'options' => array('nofooter'=>true, 'nonavbar'=>true, 'noblocks'=>true, 'nocourseheaderfooter'=>true),
     ),
     // No blocks and minimal footer - used for legacy frame layouts only!
     'frametop' => array(
         'file' => 'general.php',
         'regions' => array(),
-        'options' => array('nofooter', 'noblocks'=>true),
+        'options' => array('nofooter', 'noblocks'=>true, 'nocoursefooter'=>true),
     ),
     // Embeded pages, like iframe embeded in moodleform
     'embedded' => array(
         'file' => 'embedded.php',
         'regions' => array(),
-        'options' => array('nofooter'=>true, 'nonavbar'=>true),
+        'options' => array('nofooter'=>true, 'nonavbar'=>true, 'nocourseheaderfooter'=>true),
     ),
     // Used during upgrade and install, and for the 'This site is undergoing maintenance' message.
     // This must not have any blocks, and it is good idea if it does not have links to
@@ -129,19 +129,19 @@ $THEME->layouts = array(
     'maintenance' => array(
         'file' => 'general.php',
         'regions' => array(),
-        'options' => array('nofooter'=>true, 'nonavbar'=>true, 'noblocks'=>true),
+        'options' => array('nofooter'=>true, 'nonavbar'=>true, 'noblocks'=>true, 'nocourseheaderfooter'=>true),
     ),
     // Should display the content and basic headers only.
     'print' => array(
         'file' => 'general.php',
         'regions' => array(),
-        'options' => array('nofooter'=>true, 'nonavbar'=>false, 'noblocks'=>true),
+        'options' => array('nofooter'=>true, 'nonavbar'=>false, 'noblocks'=>true, 'nocourseheaderfooter'=>true),
     ),
     // The pagelayout used when a redirection is occuring.
     'redirect' => array(
         'file' => 'embedded.php',
         'regions' => array(),
-        'options' => array('nofooter'=>true, 'nonavbar'=>true, 'nocustommenu'=>true),
+        'options' => array('nofooter'=>true, 'nonavbar'=>true, 'nocustommenu'=>true, 'nocourseheaderfooter'=>true),
     ),
     'report' => array(
         'file' => 'report.php',
