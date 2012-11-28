@@ -336,6 +336,7 @@ $string['viewallreports'] = 'View reports for {$a} attempts';
 $string['viewalluserreports'] = 'View reports for {$a} users';
 $string['whatgrade'] = 'Attempts grading';
 $string['whatgrade_help'] = 'If multiple attempts are allowed, this setting specifies whether the highest, average (mean), first or last completed attempt is recorded in the gradebook.
+The last completed attempt option does not include attempts with a \'failed\' status.
 
 Handling of Multiple Attempts
 
