@@ -48,6 +48,7 @@
 .path-mod-data-field input.picturefieldsize {
     width:70px;
 }
+.path-mod-data .action-icon img.portfolio-add-icon { margin-left: 0; }
 
 /** UI Usability Hacks **/
 #page-mod-data-export #notice span {padding:0 10px;}
