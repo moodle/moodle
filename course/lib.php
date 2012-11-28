@@ -1882,7 +1882,7 @@ function get_module_metadata($course, $modnames, $sectionreturn = null) {
         if (!course_allowed_module($course, $modname)) {
             continue;
         }
-        if (isset($modlist[$modname])) {
+        if (isset($modlist[$course->id][$modname])) {
             // This module is already cached
             $return[$modname] = $modlist[$course->id][$modname];
             continue;
