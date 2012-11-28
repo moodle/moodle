@@ -565,7 +565,8 @@ class block_base {
         // The blocks in My Moodle are a special case and use a different capability.
         if (!empty($USER->id)
             && $page->context->contextlevel == CONTEXT_USER // Page belongs to a user
-            && $page->context->instanceid == $USER->id) { // Page belongs to this user
+            && $page->context->instanceid == $USER->id // Page belongs to this user
+            && $page->pagetype == 'my-index') { // Ensure we are on the My Moodle page
             $capability = 'block/' . $this->name() . ':myaddinstance';
             return $this->has_add_block_capability($page, $capability)
                     && has_capability('moodle/my:manageblocks', $page->context);
