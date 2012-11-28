@@ -35,12 +35,12 @@
 .gradingform_guide.editor .delete input,
 .gradingform_guide.editor .moveup input,
 .gradingform_guide.editor .movedown input{text-indent: -1000em;cursor:pointer;border:none;}
-.gradingform_guide.editor .criterion .controls .delete input {width:20px;height:16px;background: transparent url([[pix:i/cross_red_big]]) no-repeat center top;}
+.gradingform_guide.editor .criterion .controls .delete input {width:20px;height:16px;background: transparent url([[pix:t/delete]]) no-repeat center top;margin-top:4px;}
 .gradingform_guide.editor .moveup input {width:20px;height:15px;background: transparent url([[pix:t/up]]) no-repeat center top;margin-top:4px;}
 .gradingform_guide.editor .movedown input {width:20px;height:15px;background: transparent url([[pix:t/down]]) no-repeat center top;margin-top:4px;}
 
 .gradingform_guide.editor .addcriterion input,
-.gradingform_guide.editor .addcomment input {background: transparent url([[pix:t/addgreen]]) no-repeat;display:block;color:#555555;font-weight:bold;text-decoration:none;}
+.gradingform_guide.editor .addcomment input {background: transparent url([[pix:t/add]]) no-repeat;display:block;color:#555555;font-weight:bold;text-decoration:none;}
 .gradingform_guide.editor .addcriterion input,
 .gradingform_guide.editor .addcomment input {background-position: 5px 8px;height:30px;line-height:29px;margin-bottom:14px;padding-left:20px;padding-right:10px;}
 

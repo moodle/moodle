@@ -21,6 +21,7 @@ deprecation:
 * i/tick_green_big: Use i/valid or i/grade_correct
 * i/tick_amber_big: Use i/caution or i/grade_partiallycorrect
 * No more small versions of i/cross_red_small, i/tick_green_small and i/tick_amber_small, use their big equivalent.
+* t/addgreen: Use t/add instead.
 
 optional changes:
 * new optional boolean parameter $withlinks for public function login_info() in lib/outputrenderers.php (MDL-31365)
