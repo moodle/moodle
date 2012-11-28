@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'block_participants', language 'en', branch 'MOODLE_20_STABLE'
+ * Strings for component 'block_roster', language 'en', branch 'MOODLE_20_STABLE'
  *
  * @package   block_roster
  * @copyright 2012 UCLA SEASnet  {@link http://www.seasnet.ucla.edu}
@@ -24,3 +24,6 @@
  */
 
 $string['pluginname'] = 'Roster';
+$string['roster'] = 'Roster';
+$string['roster:addinstance'] = 'Add a new Roster block';
+$string['roster:myaddinstance'] = 'Add a new simple Roster to the My Moodle page';

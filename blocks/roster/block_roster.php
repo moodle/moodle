@@ -1,8 +1,8 @@
 <?php
 
-class block_participants extends block_list {
+class block_roster extends block_list {
     function init() {
-        $this->title = get_string('pluginname', 'block_participants');
+        $this->title = get_string('pluginname', 'block_roster');
     }
 
     function get_content() {
