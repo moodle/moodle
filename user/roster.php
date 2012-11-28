@@ -25,7 +25,7 @@
     $contextid    = optional_param('contextid', 0, PARAM_INT);                // one of this or
     $courseid     = optional_param('id', 0, PARAM_INT);                       // this are required
 
-    $PAGE->set_url('/user/index.php', array(
+    $PAGE->set_url('/user/roster.php', array(
             'page' => $page,
             'perpage' => $perpage,
             'mode' => $mode,
@@ -64,7 +64,7 @@
         require_capability('moodle/course:viewparticipants', $context);
     }
 
-    $rolenamesurl = new moodle_url("$CFG->wwwroot/user/index.php?contextid=$context->id&sifirst=&silast=");
+    $rolenamesurl = new moodle_url("$CFG->wwwroot/user/roster.php?contextid=$context->id&sifirst=&silast=");
 
     $allroles = get_all_roles();
     $roles = get_profile_roles($context);
@@ -157,7 +157,7 @@
 
 
     // Should use this variable so that we don't break stuff every time a variable is added or changed.
-    $baseurl = new moodle_url('/user/index.php', array(
+    $baseurl = new moodle_url('/user/roster.php', array(
             'contextid' => $context->id,
             'roleid' => $roleid,
             'id' => $course->id,
@@ -199,7 +199,7 @@
 /// Print my course menus
     if ($mycourses = enrol_get_my_courses()) {
         $courselist = array();
-        $popupurl = new moodle_url('/user/index.php?roleid='.$roleid.'&sifirst=&silast=');
+        $popupurl = new moodle_url('/user/roster.php?roleid='.$roleid.'&sifirst=&silast=');
         foreach ($mycourses as $mycourse) {
             $coursecontext = get_context_instance(CONTEXT_COURSE, $mycourse->id);
             $courselist[$mycourse->id] = format_string($mycourse->shortname, true, array('context' => $coursecontext));
