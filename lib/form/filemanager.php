@@ -323,7 +323,8 @@ class form_filemanager implements renderable {
             $defaults['defaultlicense'] = $CFG->sitedefaultlicense;
         }
         foreach ($defaults as $key=>$value) {
-            if (empty($options->$key)) {
+            // Using !isset() prevents us from overwriting falsey values with defaults (as empty() did).
+            if (!isset($options->$key)) {
                 $options->$key = $value;
             }
         }
