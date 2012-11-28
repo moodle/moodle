@@ -1,5 +1,7 @@
 <?php
 
+// TODO: Move this file to blocks/roster/view.php
+
 //  Lists all the users within a given course
 
     require_once('../config.php');
