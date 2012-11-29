@@ -254,6 +254,8 @@ a.skip:active {position: static;display: block;}
 .dir-rtl .mform .helplink img { margin: 0 .45em 0 0; padding: 0;}
 .mform legend .helplink img { margin-right: .2em; }
 .dir-rtl .mform legend .helplink img { margin: 0 .45em 0 .2em; }
+.singleselect label { margin-right: .3em; }
+.dir-rtl .singleselect label { margin-left: .3em; margin-right: 0; }
 
 input#id_externalurl {direction:ltr;}
 
