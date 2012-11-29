@@ -504,6 +504,9 @@ body.tag .managelink {padding: 5px;}
 .path-backup .backup_progress span.backup_stage.backup_stage_complete {color:inherit;}
 #page-backup-restore .filealiasesfailures {background-color:#ffd3d9}
 #page-backup-restore .filealiasesfailures .aliaseslist {width:90%;margin:0.8em auto;background-color:white;border:1px dotted #666;}
+.path-backup .fitemtitle .iconlarge.icon-post { padding-left: 6px; }
+.path-backup.dir-rtl .fitemtitle .iconlarge.icon-post { padding-right: 6px; padding-right: 0; }
+.path-backup .fitem .smallicon { vertical-align: text-bottom; }
 
 /**
  * Web Service
