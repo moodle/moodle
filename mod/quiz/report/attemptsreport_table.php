@@ -272,16 +272,8 @@ abstract class quiz_attempts_report_table extends table_sql {
     protected function icon_for_fraction($fraction) {
         global $OUTPUT;
 
-        $state = question_state::graded_state_for_fraction($fraction);
-        if ($state == question_state::$gradedright) {
-            $icon = 'i/grade_correct';
-        } else if ($state == question_state::$gradedpartial) {
-            $icon = 'i/grade_partiallycorrect';
-        } else {
-            $icon = 'i/grade_incorrect';
-        }
-
-        return $OUTPUT->pix_icon($icon, get_string($state->get_feedback_class(), 'question'),
+        $feedbackclass = question_state::graded_state_for_fraction($fraction)->get_feedback_class();
+        return $OUTPUT->pix_icon('i/grade_' . $feedbackclass, get_string($feedbackclass, 'question'),
                 'moodle', array('class' => 'icon'));
     }
 
