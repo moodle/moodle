@@ -118,6 +118,12 @@ class auth_plugin_base {
     );
 
     /**
+     * Moodle custom fields to sync with.
+     * @var array()
+     */
+    var $custom_fields = null;
+
+    /**
 
      * This is the primary method that is used by the authenticate_user_login()
      * function in moodlelib.php.
@@ -520,6 +526,32 @@ class auth_plugin_base {
      */
     function loginpage_idp_list($wantsurl) {
         return array();
+    }
+
+    /**
+     * Return custom user profile fields.
+     *
+     * @return array list of custom fields.
+     */
+    public function get_custom_user_profile_fields() {
+        global $DB;
+        // If already retrived then return.
+        if (!is_null($this->custom_fields)) {
+            return $this->custom_fields;
+        }
+
+        $this->custom_fields = array();
+
+        $customfields = array();
+        if ($proffields = $DB->get_records('user_info_field')) {
+            foreach ($proffields as $proffield) {
+                $customfields[] = 'profile_field_'.$proffield->shortname;
+            }
+        }
+        unset($proffields);
+        $this->custom_fields = $customfields;
+
+        return $customfields;
     }
 
 }

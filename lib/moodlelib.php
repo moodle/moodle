@@ -3846,21 +3846,25 @@ function create_user_record($username, $password, $auth = 'manual') {
     $authplugin = get_auth_plugin($auth);
 
     $newuser = new stdClass();
-	$customfield = new stdClass();
+    $customfield = new stdClass();
     if ($newinfo = $authplugin->get_userinfo($username)) {
         $newinfo = truncate_userinfo($newinfo);
         foreach ($newinfo as $key => $value){
-            if(in_array($key, $authplugin->userfields)) {
-				$newuser->$key = $value;
-			}else if(isset($authplugin->custom_fields) && in_array($key, $authplugin->custom_fields)) {
-				$info_field = $DB->get_record('user_info_field',array('shortname'=>$key));
-				$data = $info_field->defaultdata;
-				if(strcmp($data, $value) !== 0) {
-					$customfield->$key = new stdClass();
-					$customfield->$key->fieldid = $info_field->id;
-					$customfield->$key->data = $value;
-				}
-			}
+            if (in_array($key, $authplugin->userfields)) {
+                $newuser->$key = $value;
+            } else {
+                $customfields = $authplugin->get_custom_user_profile_fields();
+                if (!empty($customfields) && in_array($key, $customfields)) {
+                    $shortname = str_replace('profile_field_', '', $key);
+                    $infofield = $DB->get_record('user_info_field', array('shortname' => $shortname));
+                    $data = $infofield->defaultdata;
+                    if(strcmp($data, $value) !== 0) {
+                        $customfield->$key = new stdClass();
+                        $customfield->$key->fieldid = $infofield->id;
+                        $customfield->$key->data = $value;
+                    }
+                }
+            }
         }
     }
 
@@ -3890,12 +3894,12 @@ function create_user_record($username, $password, $auth = 'manual') {
     $newuser->mnethostid = $CFG->mnet_localhost_id;
 
     $newuser->id = $DB->insert_record('user', $newuser);
-	
-	foreach ($customfield as $key) {
-		$key->userid = $newuser->id;
-		$key->id = $DB->insert_record("user_info_data",$key);
-	}
-	
+
+    foreach ($customfield as $key) {
+        $key->userid = $newuser->id;
+        $key->id = $DB->insert_record("user_info_data", $key);
+    }
+
     $user = get_complete_user_data('id', $newuser->id);
     if (!empty($CFG->{'auth_'.$newuser->auth.'_forcechangepassword'})){
         set_user_preference('auth_forcepasswordchange', 1, $user);
@@ -3928,9 +3932,11 @@ function update_user_record($username) {
 
     if ($newinfo = $userauth->get_userinfo($username)) {
         $newinfo = truncate_userinfo($newinfo);
+        $customfields = $userauth->get_custom_user_profile_fields();
+
         foreach ($newinfo as $key => $value){
             $key = strtolower($key);
-			$iscustom = in_array($key, $userauth->custom_fields);
+            $iscustom = in_array($key, $customfields);
             if ((!property_exists($oldinfo, $key) && !$iscustom) or $key === 'username' or $key === 'id'
                     or $key === 'auth' or $key === 'mnethostid' or $key === 'deleted') {
                 // unknown or must not be changed
@@ -3948,47 +3954,48 @@ function update_user_record($username) {
                 // in a value for the selected field _if LDAP is giving
                 // nothing_ for this field. Thus it makes sense to let this value
                 // stand in until LDAP is giving a value for this field.
-                if (!(empty($value) && $lockval === 'unlockedifempty')) {
-					if(in_array($key, $userauth->userfields)) {
-                    if ((string)$oldinfo->$key !== (string)$value) {
-                        $newuser[$key] = (string)$value;
+                if (!empty($value) && ($lockval === 'unlockedifempty')) {
+                    if (in_array($key, $userauth->userfields)) {
+                        if ((string)$oldinfo->$key !== (string)$value) {
+                            $newuser[$key] = (string)$value;
+                        }
+                    } else if ($iscustom) {
+                        $shortname = str_replace('profile_field_', '', $key);
+                        // If there is no value in the user_info_data then.
+                        $infofield = $DB->get_record('user_info_field', array('shortname' => $shortname));
+                        $userid = $DB->get_field('user', 'id', array('username' => $username));
+                        $data = $DB->get_field('user_info_data', 'data', array('userid' => $userid, 'fieldid' => $infofield->id));
+                        if ($data === false) {
+                            $data = $infofield->defaultdata;
+                            if (strcmp($data, $value) !== 0) {
+                                $row = new stdClass();
+                                $row->userid = $userid;
+                                $row->fieldid = $infofield->id;
+                                $row->data = $data;
+                                $row->id = $DB->insert_record("user_info_data", $row);
+                            }
+                        }
+
+                        if (strcmp($data, $value) !== 0) {
+                            $valid = true;
+                            // Check to make sure that the value we are placing in is a valid one.
+                            if (strcmp($info_field->datatype, 'menu') == 0) {
+                                $validValues = explode("\n", $info_field->param1);
+                                if (!in_array($value, $validValues)) {
+                                    $valid = false;
+                                }
+                            } else if(strcmp($info_field->datatype, 'checkbox') == 0) {
+                                if ($value != 1 && $value != 0) {
+                                    $valid = false;
+                                }
+                            }
+
+                            // Update value if it is diffrent then old.
+                            if ($valid) {
+                                $DB->set_field('user_info_data', 'data', $value, array('userid'=>$userid, 'fieldid'=>$infofield->id));
+                            }
+                        }
                     }
-					}else if($iscustom) {
-						
-						//if there is no value in the user_info_data then
-						$info_field = $DB->get_record('user_info_field',array('shortname'=>$key));
-						$userid = $DB->get_field('user', 'id', array('username'=>$username));
-						$data = $DB->get_field('user_info_data', 'data', array('userid'=>$userid, 'fieldid'=>$info_field->id));
-						if($data === false) {
-							$data = $info_field->defaultdata;
-							if(strcmp($data, $value) !== 0) {
-								$row = new stdClass();
-								$row->userid = $userid;
-								$row->fieldid = $info_field->id;
-								$row->data = $data;
-								$row->id = $DB->insert_record("user_info_data", $row);
-							}
-						}
-	
-						if(strcmp($data, $value) !== 0) {
-							$valid = true;
-	
-								//check to make sure that the value we are placing in is a valid one
-							if(strcmp($info_field->datatype, 'menu') == 0){
-								$validValues = explode("\n", $info_field->param1);
-								if(!in_array($value, $validValues)) {
-									$valid = false;
-								}
-							} else if(strcmp($info_field->datatype, 'checkbox') == 0) {
-								if($value != 1 && $value != 0) {
-									$valid = false;
-								}
-							}
-							if($valid) {
-								$DB->set_field('user_info_data','data',$value, array('userid'=>$userid, 'fieldid'=>$info_field->id));
-							}
-						}
-					}
                 }
             }
         }

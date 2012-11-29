@@ -129,28 +129,16 @@ class auth_plugin_ldap extends auth_plugin_base {
             // so leave $this->config->objectclass as is.
         }
     }
-
-	
-	/**
-     * moodle custom fields to sync with
-     * @var array()
-	 */
-	 var $custom_fields = array();
-	 /*
 	 
     /**
      * Constructor with initialisation.
      */
     function auth_plugin_ldap() {
-		global $DB;
+        global $DB;
         $this->authtype = 'ldap';
         $this->roleauth = 'auth_ldap';
         $this->errorlogtag = '[AUTH LDAP] ';
         $this->init_plugin($this->authtype);
-		$custom_fields = $DB->get_records('user_info_field');
-        foreach($custom_fields as $cf) {
-            $this->custom_fields[] = $cf->shortname;
-        }
     }
 
     /**
@@ -306,9 +294,10 @@ class auth_plugin_ldap extends auth_plugin_base {
                 } else {
                     $newval = textlib::convert($entry[$value], $this->config->ldapencoding, 'utf-8');
                 }
-                
-                // Need to allow for 0 or '0' will ldap ever return an empty string or will the array_key_exists catch such things?
-                if (isset($newval) || $newval !== '') { // favour ldap entries that are set
+
+                // Need to allow for 0 or '0' will ldap ever return an empty string 
+                // or will the array_key_exists catch such things.
+                if (isset($newval) && ($newval !== '')) { // Favour ldap entries that are set.
                     $ldapval = $newval;
                 }
             }
@@ -1177,23 +1166,15 @@ class auth_plugin_ldap extends auth_plugin_base {
             foreach ($attrmap as $key => $ldapkeys) {
                 // Only process if the moodle field ($key) has changed and we
                 // are set to update LDAP with it
-				
-                //updating a custom field or a standard field/ 0 for none at all
-                $update_attr_type = 0;      
-
                 if (isset($olduser->$key) and isset($newuser->$key)
-                    and $olduser->$key !== $newuser->$key) {
-                        //updating a user profile field
-                    $update_attr_type = 2;
+                    and ($olduser->$key !== $newuser->$key)) {
                     $profile_field = $key;
-                } else if(isset($olduser->{'profile_field_' . $key}) and isset($newuser->{'profile_field_' . $key})
-                    and $olduser->{'profile_field_' . $key} !== $newuser->{'profile_field_' . $key}){
-                        //updating a custom profile field
-                    $update_attr_type = 1;
+                } else if (isset($olduser->{'profile_field_' . $key}) && isset($newuser->{'profile_field_' . $key})
+                    && $olduser->{'profile_field_' . $key} !== $newuser->{'profile_field_' . $key}) {
                     $profile_field = 'profile_field_' . $key;
                 }
 
-                if (!empty($profile_field) and !empty($this->config->{'field_updateremote_'. $key})) {
+                if (!empty($profile_field) && !empty($this->config->{'field_updateremote_' . $key})) {
                     // For ldap values that could be in more than one
                     // ldap key, we will do our best to match
                     // where they came from
@@ -1212,7 +1193,7 @@ class auth_plugin_ldap extends auth_plugin_base {
 
                     foreach ($ldapkeys as $ldapkey) {
                         $ldapkey   = $ldapkey;
-                        $ldapvalue = empty($user_entry[$ldapkey][0])? null: $ldapvalue;
+                        $ldapvalue = empty($user_entry[$ldapkey][0]) ? null : $ldapvalue;
                         
                         if (!$ambiguous) {
                             // Skip update if the values already match
@@ -1480,15 +1461,14 @@ class auth_plugin_ldap extends auth_plugin_base {
                 }
             }
         }
-		
-        //add custom fields
-        foreach($this->custom_fields as $field) {
-            if(!in_array($field, $this->userfields)) { //just in case so we don't overwrite any values in the user fields
-                if(!empty($this->config->{"field_map_$field"})) {
-                    $moodleattributes[$field] = $this->config->{"field_map_$field"};
-                    if (preg_match('/,/',$moodleattributes[$field])) {
-                        $moodleattributes[$field] = explode(',', $moodleattributes[$field]); // split ?
-                    }
+
+        // Add custom fields.
+        $customfields = $this->get_custom_user_profile_fields();
+        foreach ($customfields as $field) {
+            if (!empty($this->config->{"field_map_$field"})) {
+                $moodleattributes[$field] = $this->config->{"field_map_$field"};
+                if (preg_match('/,/',$moodleattributes[$field])) {
+                    $moodleattributes[$field] = explode(',', $moodleattributes[$field]);
                 }
             }
         }
@@ -1792,7 +1772,7 @@ class auth_plugin_ldap extends auth_plugin_base {
      *
      * @param array $page An object containing all the data for this page.
      */
-    function config_form($config, $err, $user_fields, $custom_fields=array()) {
+    function config_form($config, $err, $user_fields) {
         global $CFG, $OUTPUT;
 
         if (!function_exists('ldap_connect')) { // Is php-ldap really there?

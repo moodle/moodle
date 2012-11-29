@@ -37,25 +37,13 @@ require_once($CFG->dirroot.'/auth/cas/CAS/CAS.php');
 class auth_plugin_cas extends auth_plugin_ldap {
 
     /**
-     * moodle custom fields to sync with
-     * @var array()
-	 */
-	 var $custom_fields = array();
-	 /*
-    /**
      * Constructor.
      */
     function auth_plugin_cas() {
-		global $DB;
         $this->authtype = 'cas';
         $this->roleauth = 'auth_cas';
         $this->errorlogtag = '[AUTH CAS] ';
         $this->init_plugin($this->authtype);
-		$custom_fields = $DB->get_records('user_info_field');
-		
-        foreach($custom_fields as $cf) {
-            $this->custom_fields[] = $cf->shortname;
-        }
     }
 
     function prevent_local_passwords() {
@@ -234,7 +222,7 @@ class auth_plugin_cas extends auth_plugin_ldap {
      *
      * @param array $page An object containing all the data for this page.
      */
-    function config_form($config, $err, $user_fields, $custom_fields=array()) {
+    function config_form($config, $err, $user_fields) {
         global $CFG, $OUTPUT;
 
         if (!function_exists('ldap_connect')) { // Is php-ldap really there?

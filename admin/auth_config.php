@@ -49,7 +49,6 @@ if ($frm = data_submitted() and confirm_sesskey()) {
 }
 
 $user_fields = $authplugin->userfields;
-$custom_fields = $authplugin->custom_fields;
 //$user_fields = array("firstname", "lastname", "email", "phone1", "phone2", "institution", "department", "address", "city", "country", "description", "idnumber", "lang");
 
 /// Get the auth title (from core or own auth lang files)
@@ -73,7 +72,7 @@ echo $OUTPUT->box_start('informationbox');
 echo $authdescription;
 echo $OUTPUT->box_end();
 echo "<hr />\n";
-$authplugin->config_form($frm, $err, $user_fields, $custom_fields);
+$authplugin->config_form($frm, $err, $user_fields);
 echo $OUTPUT->box_end();
 echo '<p style="text-align: center"><input type="submit" value="' . get_string("savechanges") . "\" /></p>\n";
 echo "</div>\n";
@@ -88,7 +87,7 @@ exit;
 // but some may want a custom one if they are offering
 // other options
 // Note: lockconfig_ fields have special handling.
-function print_auth_lock_options ($auth, $user_fields, $helptext, $retrieveopts, $updateopts, $custom_fields = array()) {
+function print_auth_lock_options($auth, $user_fields, $helptext, $retrieveopts, $updateopts, $customfields = array()) {
     global $DB, $OUTPUT;
     echo '<tr><td colspan="3">';
     if ($retrieveopts) {
@@ -108,14 +107,18 @@ function print_auth_lock_options ($auth, $user_fields, $helptext, $retrieveopts,
 
     $pluginconfig = get_config("auth/$auth");
 
-    // helptext is on a field with rowspan
+    // Helptext is on a field with rowspan.
     if (empty($helptext)) {
-                $helptext = '&nbsp;';
+        $helptext = '&nbsp;';
+    }
+
+    // If we have custom fields then merge them with user fields.
+    if (!empty($customfields)) {
+        $user_fields = array_merge($user_fields, $customfields);
     }
 
     foreach ($user_fields as $field) {
-
-        // Define some vars we'll work with
+        // Define some vars we'll work with.
         if (!isset($pluginconfig->{"field_map_$field"})) {
             $pluginconfig->{"field_map_$field"} = '';
         }
@@ -129,7 +132,7 @@ function print_auth_lock_options ($auth, $user_fields, $helptext, $retrieveopts,
             $pluginconfig->{"field_lock_$field"} = '';
         }
 
-        // define the fieldname we display to the  user
+        // Define the fieldname we display to the  user.
         $fieldname = $field;
         if ($fieldname === 'lang') {
             $fieldname = get_string('language');
@@ -137,6 +140,10 @@ function print_auth_lock_options ($auth, $user_fields, $helptext, $retrieveopts,
             $fieldname =  get_string($matches[1]) . ' ' . $matches[2];
         } elseif ($fieldname == 'url') {
             $fieldname = get_string('webpage');
+        } elseif (!empty($customfields) && in_array($field, $customfields)) {
+            // If custom field then pick name from database.
+            $fieldshortname = str_replace('profile_field_', '', $fieldname);
+            $fieldname = $DB->get_field('user_info_field', 'name', array('shortname' => $fieldshortname));
         } else {
             $fieldname = get_string($fieldname);
         }
@@ -156,8 +163,6 @@ function print_auth_lock_options ($auth, $user_fields, $helptext, $retrieveopts,
                 echo '<label for="menulockconfig_field_updateremote_'.$field.'">'.get_string('auth_updateremote', 'auth') . '</label>&nbsp;';
                 echo html_writer::select($updateextoptions, "lockconfig_field_updateremote_{$field}", $pluginconfig->{"field_updateremote_$field"}, false);
                 echo '<br />';
-
-
             }
             echo '<label for="menulockconfig_field_lock_'.$field.'">'.get_string('auth_fieldlock', 'auth') . '</label>&nbsp;';
             echo html_writer::select($lockoptions, "lockconfig_field_lock_{$field}", $pluginconfig->{"field_lock_$field"}, false);
@@ -175,72 +180,4 @@ function print_auth_lock_options ($auth, $user_fields, $helptext, $retrieveopts,
         }
         echo '</tr>';
     }
-	if(!empty($custom_fields)) {
-        echo '<tr><td colspan="3">';
-
-        echo '<h4>' . get_string('profilefields', 'admin')  . '</h4>';
-
-        echo '</td></tr>';
-
-        foreach($custom_fields as $field) {
-
-            // Define some vars we'll work with
-            if (!isset($pluginconfig->{"field_map_$field"})) {
-                $pluginconfig->{"field_map_$field"} = '';
-            }
-            if (!isset($pluginconfig->{"field_updatelocal_$field"})) {
-                $pluginconfig->{"field_updatelocal_$field"} = '';
-            }
-            if (!isset($pluginconfig->{"field_updateremote_$field"})) {
-                $pluginconfig->{"field_updateremote_$field"} = '';
-            }
-            if (!isset($pluginconfig->{"field_lock_$field"})) {
-                $pluginconfig->{"field_lock_$field"} = '';
-            }
-
-            // define the fieldname we display to the  user
-            $fieldname = $field;
-            if ($fieldname === 'lang') {
-                $fieldname = get_string('language');
-            } elseif (preg_match('/^(.+?)(\d+)$/', $fieldname, $matches)) {
-                $fieldname =  get_string($matches[1]) . ' ' . $matches[2];
-            } elseif ($fieldname == 'url') {
-                $fieldname = get_string('webpage');
-            } else {
-                $fieldname = $DB->get_field('user_info_field', 'name', array('shortname'=>$fieldname));
-            }
-            if ($retrieveopts) {
-                $varname = 'field_map_' . $field;
-
-                echo '<tr valign="top"><td align="right">';
-                echo '<label for="lockconfig_'.$varname.'">'.$fieldname.'</label>';
-                echo '</td><td>';
-
-                echo "<input id=\"lockconfig_{$varname}\" name=\"lockconfig_{$varname}\" type=\"text\" size=\"30\" value=\"{$pluginconfig->$varname}\" />";
-                echo '<div style="text-align: right">';
-                echo '<label for="menulockconfig_field_updatelocal_'.$field.'">'.get_string('auth_updatelocal', 'auth') . '</label>&nbsp;';
-				echo html_writer::select($updatelocaloptions, "lockconfig_field_updatelocal_{$field}", $pluginconfig->{"field_updatelocal_$field"}, false);
-                echo '<br />';
-                if ($updateopts) {
-                    echo '<label for="menulockconfig_field_updateremote_'.$field.'">'.get_string('auth_updateremote', 'auth') . '</label>&nbsp;';
-					echo html_writer::select($updateextoptions, "lockconfig_field_updateremote_{$field}", $pluginconfig->{"field_updateremote_$field"}, false);
-                    echo '<br />';
-
-
-                }
-                echo '<label for="menulockconfig_field_lock_'.$field.'">'.get_string('auth_fieldlock', 'auth') . '</label>&nbsp;';
-				echo html_writer::select($lockoptions, "lockconfig_field_lock_{$field}", $pluginconfig->{"field_lock_$field"}, false);
-                echo '</div>';
-            } else {
-                echo '<tr valign="top"><td align="right">';
-                echo '<label for="menulockconfig_field_lock_'.$field.'">'.$fieldname.'</label>';
-                echo '</td><td>';
-				echo html_writer::select($lockoptions, "lockconfig_field_lock_{$field}", $pluginconfig->{"field_lock_$field"}, false);
-            }
-            echo '</td>';
-            echo '</tr>';
-        }
-    }
 }
-
-
