@@ -77,6 +77,7 @@ course_created - object course table record
 course_updated - object course table record
 course_content_removed - object course table record + context property
 course_deleted - object course table record + context property
+course_restored - custom object with courseid, userid and restore information
 
 user_enrolled - object record from user_enrolments table + courseid,enrol
 user_enrol_modified - object record from user_enrolments table + courseid,enrol
