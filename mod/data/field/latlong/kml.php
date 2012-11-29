@@ -75,8 +75,10 @@ if ($rid) {
 
 require_course_login($course, true, $cm);
 
+$context = context_module::instance($cm->id);
+
 /// If it's hidden then it's don't show anything.  :)
-if (empty($cm->visible) and !has_capability('moodle/course:viewhiddenactivities',get_context_instance(CONTEXT_MODULE, $cm->id))) {
+if (empty($cm->visible) and !has_capability('moodle/course:viewhiddenactivities', $context)) {
     $PAGE->set_title($data->name);
     echo $OUTPUT->header();
     notice(get_string("activityiscurrentlyhidden"));
