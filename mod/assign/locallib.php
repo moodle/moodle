@@ -1131,21 +1131,22 @@ class assign {
     /**
      * Load a count of users submissions in the current module that require grading
      * This means the submission modification time is more recent than the
-     * grading modification time.
+     * grading modification time and the status is SUBMITTED.
      *
      * @return int number of matching submissions
      */
     public function count_submissions_need_grading() {
         global $DB;
 
-        $params = array($this->get_course_module()->instance);
+        $params = array($this->get_course_module()->instance, ASSIGN_SUBMISSION_STATUS_SUBMITTED);
 
         return $DB->count_records_sql("SELECT COUNT('x')
                                        FROM {assign_submission} s
                                        LEFT JOIN {assign_grades} g ON s.assignment = g.assignment AND s.userid = g.userid
                                        WHERE s.assignment = ?
                                            AND s.timemodified IS NOT NULL
-                                           AND (s.timemodified > g.timemodified OR g.timemodified IS NULL)",
+                                           AND (s.timemodified > g.timemodified OR g.timemodified IS NULL)
+                                           AND s.status = ?",
                                        $params);
     }
 
@@ -1972,12 +1973,7 @@ class assign {
             $submission->userid       = $userid;
             $submission->timecreated = time();
             $submission->timemodified = $submission->timecreated;
-
-            if ($this->get_instance()->submissiondrafts) {
-                $submission->status = ASSIGN_SUBMISSION_STATUS_DRAFT;
-            } else {
-                $submission->status = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
-            }
+            $submission->status = ASSIGN_SUBMISSION_STATUS_DRAFT;
             $sid = $DB->insert_record('assign_submission', $submission);
             $submission->id = $sid;
             return $submission;
@@ -2121,6 +2117,9 @@ class assign {
                 $showsubmit = $showedit && $teamsubmission && ($teamsubmission->status == ASSIGN_SUBMISSION_STATUS_DRAFT);
             } else {
                 $showsubmit = $showedit && $submission && ($submission->status == ASSIGN_SUBMISSION_STATUS_DRAFT);
+            }
+            if (!$this->get_instance()->submissiondrafts) {
+                $showsubmit = false;
             }
             $viewfullnames = has_capability('moodle/site:viewfullnames', $this->get_course_context());
 
@@ -2659,6 +2658,9 @@ class assign {
                 $showsubmit = false;
             }
             if ($submission && ($submission->status == ASSIGN_SUBMISSION_STATUS_SUBMITTED)) {
+                $showsubmit = false;
+            }
+            if (!$this->get_instance()->submissiondrafts) {
                 $showsubmit = false;
             }
             $extensionduedate = null;

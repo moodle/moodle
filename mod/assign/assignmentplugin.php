@@ -592,7 +592,7 @@ abstract class assign_plugin {
 
     /**
      * If this plugin should not include a column in the grading table or a row on the summary page
-     * return false
+     * then return false
      *
      * @return bool
      */
