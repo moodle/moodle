@@ -442,6 +442,7 @@ M.course_dndupload = {
             parent: modsel,
             li: document.createElement('li'),
             div: document.createElement('div'),
+            indentdiv: document.createElement('div'),
             a: document.createElement('a'),
             icon: document.createElement('img'),
             namespan: document.createElement('span'),
@@ -452,23 +453,22 @@ M.course_dndupload = {
 
         resel.li.className = 'activity resource modtype_resource';
 
-        resel.div.className = 'mod-indent';
-        resel.li.appendChild(resel.div);
+        resel.indentdiv.className = 'mod-indent';
+        resel.li.appendChild(resel.indentdiv);
+
+        resel.div.className = 'activityinstance';
+        resel.indentdiv.appendChild(resel.div);
 
         resel.a.href = '#';
         resel.div.appendChild(resel.a);
 
         resel.icon.src = M.util.image_url('i/ajaxloader');
-        resel.icon.className = 'activityicon';
+        resel.icon.className = 'activityicon iconlarge';
         resel.a.appendChild(resel.icon);
-
-        resel.a.appendChild(document.createTextNode(' '));
 
         resel.namespan.className = 'instancename';
         resel.namespan.innerHTML = name;
         resel.a.appendChild(resel.namespan);
-
-        resel.div.appendChild(document.createTextNode(' '));
 
         resel.groupingspan.className = 'groupinglabel';
         resel.div.appendChild(resel.groupingspan);
@@ -738,7 +738,7 @@ M.course_dndupload = {
 
                             resel.div.removeChild(resel.progressouter);
                             resel.li.id = result.elementid;
-                            resel.div.innerHTML += result.commands;
+                            resel.indentdiv.innerHTML += result.commands;
                             if (result.onclick) {
                                 resel.a.onclick = result.onclick;
                             }
