@@ -39,7 +39,7 @@ class assignfeedback_file_import_zip_form extends moodleform implements renderab
     /**
      * Create this grade import form
      */
-    function definition() {
+    public function definition() {
         global $CFG, $PAGE;
 
         $mform = $this->_form;

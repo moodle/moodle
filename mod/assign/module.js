@@ -16,7 +16,6 @@ M.mod_assign.init_tree = function(Y, expand_all, htmlid) {
     });
 };
 
-
 M.mod_assign.init_grading_table = function(Y) {
     Y.use('node', function(Y) {
         checkboxes = Y.all('td.c0 input');
@@ -92,7 +91,6 @@ M.mod_assign.init_grading_table = function(Y) {
             }
         });
 
-
         Y.use('node-menunav', function(Y) {
             var menus = Y.all('.gradingtable .actionmenu');
 
@@ -103,13 +101,8 @@ M.mod_assign.init_grading_table = function(Y) {
                     submenus.each(function (n) {
                         n.removeClass('yui3-loading');
                     });
-
                 }, "#" + menu.getAttribute('id'));
-
-
             });
-
-
         });
         var quickgrade = Y.all('.gradingtable .quickgrade');
         quickgrade.each(function(quick) {
@@ -209,6 +202,4 @@ M.mod_assign.init_plugin_summary = function(Y, subtype, type, submissionid) {
             }
         });
     }
-
-
 }

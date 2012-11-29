@@ -34,32 +34,36 @@ defined('MOODLE_INTERNAL') || die();
 class restore_assign_activity_structure_step extends restore_activity_structure_step {
 
     /**
-     * Define the structure of the restore workflow
+     * Define the structure of the restore workflow.
+     *
      * @return restore_path_element $structure
      */
     protected function define_structure() {
 
         $paths = array();
-        // To know if we are including userinfo
+        // To know if we are including userinfo.
         $userinfo = $this->get_setting_value('userinfo');
 
-        // Define each element separated
+        // Define each element separated.
         $paths[] = new restore_path_element('assign', '/activity/assign');
         if ($userinfo) {
-            $submission = new restore_path_element('assign_submission', '/activity/assign/submissions/submission');
+            $submission = new restore_path_element('assign_submission',
+                                                   '/activity/assign/submissions/submission');
             $paths[] = $submission;
             $this->add_subplugin_structure('assignsubmission', $submission);
             $grade = new restore_path_element('assign_grade', '/activity/assign/grades/grade');
             $paths[] = $grade;
             $this->add_subplugin_structure('assignfeedback', $grade);
         }
-        $paths[] = new restore_path_element('assign_plugin_config', '/activity/assign/plugin_configs/plugin_config');
+        $paths[] = new restore_path_element('assign_plugin_config',
+                                            '/activity/assign/plugin_configs/plugin_config');
 
         return $this->prepare_activity_structure($paths);
     }
 
     /**
-     * Process an assign restore
+     * Process an assign restore.
+     *
      * @param object $data The data in object form
      * @return void
      */
@@ -74,7 +78,8 @@ class restore_assign_activity_structure_step extends restore_activity_structure_
         $data->allowsubmissionsfromdate = $this->apply_date_offset($data->allowsubmissionsfromdate);
         $data->duedate = $this->apply_date_offset($data->duedate);
         if (!empty($data->teamsubmissiongroupingid)) {
-            $data->teamsubmissiongroupingid = $this->get_mappingid('grouping', $data->teamsubmissiongroupingid);
+            $data->teamsubmissiongroupingid = $this->get_mappingid('grouping',
+                                                                   $data->teamsubmissiongroupingid);
         } else {
             $data->teamsubmissiongroupingid = 0;
         }
@@ -88,7 +93,6 @@ class restore_assign_activity_structure_step extends restore_activity_structure_
         } else {
             $data->cutoffdate = $this->apply_date_offset($data->cutoffdate);
         }
-
 
         $newitemid = $DB->insert_record('assign', $data);
 
@@ -122,7 +126,7 @@ class restore_assign_activity_structure_step extends restore_activity_structure_
         $newitemid = $DB->insert_record('assign_submission', $data);
 
         // Note - the old contextid is required in order to be able to restore files stored in
-        // sub plugin file areas attached to the submissionid
+        // sub plugin file areas attached to the submissionid.
         $this->set_mapping('submission', $oldid, $newitemid, false, null, $this->task->get_old_contextid());
     }
 
@@ -152,7 +156,7 @@ class restore_assign_activity_structure_step extends restore_activity_structure_
         $newitemid = $DB->insert_record('assign_grades', $data);
 
         // Note - the old contextid is required in order to be able to restore files stored in
-        // sub plugin file areas attached to the gradeid
+        // sub plugin file areas attached to the gradeid.
         $this->set_mapping('grade', $oldid, $newitemid, false, null, $this->task->get_old_contextid());
     }
 
@@ -170,7 +174,6 @@ class restore_assign_activity_structure_step extends restore_activity_structure_
         $data->assignment = $this->get_new_parentid('assign');
 
         $newitemid = $DB->insert_record('assign_plugin_config', $data);
-
     }
 
     /**

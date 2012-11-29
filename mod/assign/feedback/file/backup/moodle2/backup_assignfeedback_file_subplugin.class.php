@@ -24,9 +24,9 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Provides the information to backup feedback files
+ * Provides the information to backup feedback files.
  *
- * This just adds its filearea to the annotations and records the number of files
+ * This just adds its filearea to the annotations and records the number of files.
  *
  * @package   assignfeedback_file
  * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
@@ -40,19 +40,19 @@ class backup_assignfeedback_file_subplugin extends backup_subplugin {
      */
     protected function define_grade_subplugin_structure() {
 
-        // create XML elements
-        $subplugin = $this->get_subplugin_element(); // virtual optigroup element
+        // Create XML elements.
+        $subplugin = $this->get_subplugin_element();
         $subpluginwrapper = new backup_nested_element($this->get_recommended_name());
         $subpluginelement = new backup_nested_element('feedback_file', null, array('numfiles', 'grade'));
 
-        // connect XML elements into the tree
+        // Connect XML elements into the tree.
         $subplugin->add_child($subpluginwrapper);
         $subpluginwrapper->add_child($subpluginelement);
 
-        // set source to populate the data
+        // Set source to populate the data.
         $subpluginelement->set_source_table('assignfeedback_file', array('grade' => backup::VAR_PARENTID));
-
-        $subpluginelement->annotate_files('assignfeedback_file', 'feedback_files', 'grade');// The parent is the grade
+        // The parent is the grade.
+        $subpluginelement->annotate_files('assignfeedback_file', 'feedback_files', 'grade');
         return $subplugin;
     }
 

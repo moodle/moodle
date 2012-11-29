@@ -1,4 +1,3 @@
-
 M.tool_assignmentupgrade = {
     init_upgrade_table: function(Y) {
 

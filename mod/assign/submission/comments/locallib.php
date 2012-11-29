@@ -24,13 +24,11 @@
 
  defined('MOODLE_INTERNAL') || die();
 
- /** Include comment core lib.php */
  require_once($CFG->dirroot . '/comment/lib.php');
- /** Include submissionplugin.php */
  require_once($CFG->dirroot . '/mod/assign/submissionplugin.php');
 
 /**
- * library class for comment submission plugin extending submission plugin base class
+ * Library class for comment submission plugin extending submission plugin base class
  *
  * @package assignsubmission_comments
  * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
@@ -38,27 +36,27 @@
  */
 class assign_submission_comments extends assign_submission_plugin {
 
-   /**
-    * get the name of the online comment submission plugin
-    * @return string
-    */
+    /**
+     * Get the name of the online comment submission plugin
+     * @return string
+     */
     public function get_name() {
         return get_string('pluginname', 'assignsubmission_comments');
     }
 
-   /**
-    * display AJAX based comment in the submission status table
-    *
-    * @param stdClass $submission
-    * @param bool $showviewlink - If the comments are long this is set to true so they can be shown in a separate page
-    * @return string
-    */
-   public function view_summary(stdClass $submission, & $showviewlink) {
+    /**
+     * Display AJAX based comment in the submission status table
+     *
+     * @param stdClass $submission
+     * @param bool $showviewlink - If the comments are long this is
+     *                             set to true so they can be shown in a separate page
+     * @return string
+     */
+    public function view_summary(stdClass $submission, & $showviewlink) {
 
-        // never show a link to view full submission
+        // Never show a link to view full submission.
         $showviewlink = false;
-        // need to used this init() otherwise it shows up undefined !
-        // require js for commenting
+        // Need to used this init() otherwise it does not have the javascript includes.
         comment::init();
 
         $options = new stdClass();
@@ -74,7 +72,6 @@ class assign_submission_comments extends assign_submission_plugin {
         $comment->set_view_permission(true);
 
         return $comment->output(true);
-
     }
 
     /**
@@ -87,7 +84,7 @@ class assign_submission_comments extends assign_submission_plugin {
         return true;
     }
 
-  /**
+    /**
      * Return true if this plugin can upgrade an old Moodle 2.2 assignment of this type
      * and version.
      *
@@ -104,7 +101,7 @@ class assign_submission_comments extends assign_submission_plugin {
     }
 
 
-     /**
+    /**
      * Upgrade the settings from the old assignment to the new plugin based one
      *
      * @param context $oldcontext - the context for the old assignment
@@ -113,7 +110,7 @@ class assign_submission_comments extends assign_submission_plugin {
      * @return bool was it a success? (false will trigger a rollback)
      */
     public function upgrade_settings(context $oldcontext, stdClass $oldassignment, & $log) {
-        // first upgrade settings (nothing to do)
+        // No settings to upgrade.
         return true;
     }
 
@@ -127,12 +124,15 @@ class assign_submission_comments extends assign_submission_plugin {
      * @param string $log Record upgrade messages in the log
      * @return bool true or false - false will trigger a rollback
      */
-    public function upgrade(context $oldcontext, stdClass $oldassignment, stdClass $oldsubmission, stdClass $submission, & $log) {
+    public function upgrade(context $oldcontext,
+                            stdClass $oldassignment,
+                            stdClass $oldsubmission,
+                            stdClass $submission,
+                            & $log) {
 
         if ($oldsubmission->data1 != '') {
 
-            // need to used this innit() otherwise it shows up undefined !
-            // require js for commenting
+            // Need to used this init() otherwise it does not have the javascript includes.
             comment::init();
 
             $options = new stdClass();
@@ -148,10 +148,8 @@ class assign_submission_comments extends assign_submission_plugin {
             $comment->add($oldsubmission->data1);
             $comment->set_view_permission(true);
 
-
             return $comment->output(true);
         }
-
 
         return true;
     }

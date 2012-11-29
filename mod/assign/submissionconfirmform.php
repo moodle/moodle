@@ -24,10 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
 
-
-/** Include formslib.php */
-require_once ($CFG->libdir.'/formslib.php');
-/** Include locallib.php */
+require_once($CFG->libdir.'/formslib.php');
 require_once($CFG->dirroot . '/mod/assign/locallib.php');
 
 /**
@@ -41,10 +38,13 @@ class mod_assign_confirm_submission_form extends moodleform {
     /**
      * Define the form - called by parent constructor
      */
-    function definition() {
+    public function definition() {
         $mform = $this->_form;
 
-        list($requiresubmissionstatement, $submissionstatement, $coursemoduleid, $data) = $this->_customdata;
+        list($requiresubmissionstatement,
+             $submissionstatement,
+             $coursemoduleid,
+             $data) = $this->_customdata;
 
         if ($requiresubmissionstatement) {
             $mform->addElement('checkbox', 'submissionstatement', '', '&nbsp;' . $submissionstatement);

@@ -36,6 +36,7 @@ require_once($CFG->dirroot.'/mod/assign/locallib.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class tool_assignmentupgrade_assignments_table extends table_sql implements renderable {
+
     /** @var int $perpage */
     private $perpage = 10;
     /** @var int $rownum (global index of current row in table) */
@@ -46,12 +47,13 @@ class tool_assignmentupgrade_assignments_table extends table_sql implements rend
     public $anyupgradableassignments = false;
 
     /**
-     * This table loads a list of the old assignment instances and tests them to see if they can be upgraded
+     * This table loads a list of the old assignment instances and tests them to see
+     * if they can be upgraded
      *
      * @param int $perpage How many per page
      * @param int $rowoffset The starting row for pagination
      */
-    function __construct($perpage, $rowoffset=0) {
+    public function __construct($perpage, $rowoffset=0) {
         global $PAGE;
         parent::__construct('tool_assignmentupgrade_assignments');
         $this->perpage = $perpage;
@@ -61,12 +63,17 @@ class tool_assignmentupgrade_assignments_table extends table_sql implements rend
 
         $this->anyupgradableassignments = tool_assignmentupgrade_any_upgradable_assignments();
 
-        // do some business - then set the sql
+        // Do some business - then set the sql.
         if ($rowoffset) {
             $this->rownum = $rowoffset - 1;
         }
 
-        $fields = 'a.id as id, a.name as name, a.assignmenttype as type, c.shortname as courseshortname, c.id as courseid, COUNT(s.id) as submissioncount';
+        $fields = 'a.id as id,
+                   a.name as name,
+                   a.assignmenttype as type,
+                   c.shortname as courseshortname,
+                   c.id as courseid,
+                   COUNT(s.id) as submissioncount';
         $from = '{assignment} a JOIN {course} c ON a.course = c.id ' .
                         ' LEFT JOIN {assignment_submissions} s ON a.id = s.assignment';
 
@@ -80,7 +87,10 @@ class tool_assignmentupgrade_assignments_table extends table_sql implements rend
         $headers = array();
 
         $columns[] = 'select';
-        $headers[] = get_string('select', 'tool_assignmentupgrade') . '<div class="selectall"><input type="checkbox" name="selectall" title="' . get_string('selectall') . '"/></div>';
+        $headers[] = get_string('select', 'tool_assignmentupgrade') .
+                     '<div class="selectall">' .
+                     '<input type="checkbox" name="selectall" title="' . get_string('selectall') . '"/>' .
+                     '</div>';
         $columns[] = 'upgradable';
         $headers[] = get_string('upgradable', 'tool_assignmentupgrade');
         $columns[] = 'id';
@@ -94,7 +104,7 @@ class tool_assignmentupgrade_assignments_table extends table_sql implements rend
         $columns[] = 'submissioncount';
         $headers[] = get_string('submissions', 'tool_assignmentupgrade');
 
-        // set the columns
+        // Set the columns.
         $this->define_columns($columns);
         $this->define_headers($headers);
         $this->no_sorting('upgradable');
@@ -106,7 +116,7 @@ class tool_assignmentupgrade_assignments_table extends table_sql implements rend
      *
      * @return int The number of rows per page
      */
-    function get_rows_per_page() {
+    public function get_rows_per_page() {
         return $this->perpage;
     }
 
@@ -116,9 +126,9 @@ class tool_assignmentupgrade_assignments_table extends table_sql implements rend
      * @param stdClass $row
      * @return string
      */
-    function col_name(stdClass $row) {
-        return html_writer::link(new moodle_url('/mod/assignment/view.php',
-                array('a' => $row->id)), $row->name);
+    public function col_name(stdClass $row) {
+        $url = new moodle_url('/mod/assignment/view.php', array('a' => $row->id));
+        return html_writer::link($url, $row->name);
     }
 
 
@@ -128,10 +138,11 @@ class tool_assignmentupgrade_assignments_table extends table_sql implements rend
      * @param stdClass $row (contains cached result from previous upgradable check)
      * @return string
      */
-    function col_upgradable(stdClass $row) {
+    public function col_upgradable(stdClass $row) {
         if ($row->upgradable) {
-            return html_writer::link(new moodle_url('/admin/tool/assignmentupgrade/upgradesingleconfirm.php',
-                    array('id' => $row->id, 'sesskey' => sesskey())), get_string('supported', 'tool_assignmentupgrade'));
+            $urlparams = array('id' => $row->id, 'sesskey' => sesskey());
+            $url = new moodle_url('/admin/tool/assignmentupgrade/upgradesingleconfirm.php', $urlparams);
+            return html_writer::link($url, get_string('supported', 'tool_assignmentupgrade'));
         } else {
             return get_string('notsupported', 'tool_assignmentupgrade');
         }
@@ -143,7 +154,7 @@ class tool_assignmentupgrade_assignments_table extends table_sql implements rend
      * @param stdClass $row
      * @return string
      */
-    function col_select(stdClass $row) {
+    public function col_select(stdClass $row) {
         global $CFG;
         $version = get_config('assignment_' . $row->type, 'version');
         require_once($CFG->dirroot . '/mod/assign/locallib.php');

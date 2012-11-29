@@ -25,9 +25,7 @@
 defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
 
 
-/** Include formslib.php */
-require_once ($CFG->libdir.'/formslib.php');
-/** Include locallib.php */
+require_once($CFG->libdir.'/formslib.php');
 require_once($CFG->dirroot . '/mod/assign/locallib.php');
 
 /**
@@ -41,21 +39,22 @@ class mod_assign_quick_grading_form extends moodleform {
     /**
      * Define this form - called from the parent constructor
      */
-    function definition() {
+    public function definition() {
         $mform = $this->_form;
         $instance = $this->_customdata;
 
-        // visible elements
+        // Visible elements.
         $mform->addElement('html', $instance['gradingtable']);
 
-        // hidden params
+        // Hidden params.
         $mform->addElement('hidden', 'id', $instance['cm']);
         $mform->setType('id', PARAM_INT);
         $mform->addElement('hidden', 'action', 'quickgrade');
         $mform->setType('action', PARAM_ALPHA);
 
-        // buttons
-        $mform->addElement('submit', 'savequickgrades', get_string('saveallquickgradingchanges', 'assign'));
+        // Buttons.
+        $savemessage = get_string('saveallquickgradingchanges', 'assign');
+        $mform->addElement('submit', 'savequickgrades', $savemessage);
     }
 }
 

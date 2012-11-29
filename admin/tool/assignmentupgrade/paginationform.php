@@ -24,9 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
 
-
-/** Include formslib.php */
-require_once ($CFG->libdir.'/formslib.php');
+require_once($CFG->libdir.'/formslib.php');
 
 /**
  * Assignment upgrade table display options
@@ -39,20 +37,20 @@ class tool_assignmentupgrade_pagination_form extends moodleform {
     /**
      * Define this form - called from the parent constructor
      */
-    function definition() {
+    public function definition() {
         $mform = $this->_form;
         $instance = $this->_customdata;
 
         $mform->addElement('header', 'general', get_string('assignmentsperpage', 'tool_assignmentupgrade'));
-        // visible elements
+        // Visible elements.
         $options = array(10=>'10', 20=>'20', 50=>'50', 100=>'100');
         $mform->addElement('select', 'perpage', get_string('assignmentsperpage', 'assign'), $options);
 
-        // hidden params
+        // Hidden params.
         $mform->addElement('hidden', 'action', 'saveoptions');
         $mform->setType('action', PARAM_ALPHA);
 
-        // buttons
+        // Buttons.
         $this->add_action_buttons(false, get_string('updatetable', 'tool_assignmentupgrade'));
     }
 }
