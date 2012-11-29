@@ -238,9 +238,11 @@ class assign_upgrade_manager {
 
             $newassignment->update_calendar($newcoursemodule->id);
 
-            // reassociate grade_items from the old assignment instance to the new assign instance. This includes outcome linked grade_items
-            $sql = "UPDATE {grade_items} SET itemmodule = 'assign', iteminstance = ? WHERE itemmodule = 'assignment' AND iteminstance = ?";
-            $DB->execute($sql, array($newassignment->get_instance()->id, $oldassignment->id));
+            // Reassociate grade_items from the old assignment instance to the new assign instance.
+            // This includes outcome linked grade_items.
+            $params = array('assign', $newassignment->get_instance()->id, 'assignment', $oldassignment->id);
+            $sql = 'UPDATE {grade_items} SET itemmodule = ?, iteminstance = ? WHERE itemmodule = ? AND iteminstance = ?';
+            $DB->execute($sql, $params);
 
             $gradesdone = true;
 
@@ -252,9 +254,10 @@ class assign_upgrade_manager {
         if ($rollback) {
             // roll back the grades changes
             if ($gradesdone) {
-                // reassociate grade_items from the new assign instance to the old assignment instance
-                $sql = "UPDATE {grade_items} SET itemmodule = 'assign', iteminstance = ? WHERE itemmodule = 'assignment' AND iteminstance = ?";
-                $DB->execute($sql, array($oldassignment->id, $newassignment->get_instance()->id));
+                // Reassociate grade_items from the new assign instance to the old assignment instance.
+                $params = array('assignment', $oldassignment->id, 'assign', $newassignment->get_instance()->id);
+                $sql = 'UPDATE {grade_items} SET itemmodule = ?, iteminstance = ? WHERE itemmodule = ? AND iteminstance = ?';
+                $DB->execute($sql, $params);
             }
             // roll back the completion changes
             if ($completiondone) {
