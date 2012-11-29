@@ -25,7 +25,6 @@
 
 $string['completionprogressdetails'] = 'Completion progress details';
 $string['completionstatus:addinstance'] = 'Add a new course completion status block';
-$string['completionstatus:myaddinstance'] = 'Add a new course completion status block to the My Moodle page';
 $string['criteriagroup'] = 'Criteria group';
 $string['firstofsecond'] = '{$a->first} of {$a->second}';
 $string['pluginname'] = 'Course completion status';

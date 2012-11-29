@@ -36,7 +36,11 @@ require_once($CFG->libdir.'/completionlib.php');
 class block_selfcompletion extends block_base {
 
     public function init() {
-        $this->title   = get_string('pluginname', 'block_selfcompletion');
+        $this->title = get_string('pluginname', 'block_selfcompletion');
+    }
+
+    function applicable_formats() {
+        return array('all' => true, 'mod' => false, 'tag' => false, 'my' => false);
     }
 
     public function get_content() {
