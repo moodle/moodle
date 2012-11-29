@@ -1048,21 +1048,22 @@ class assign {
     /**
      * Load a count of users submissions in the current module that require grading
      * This means the submission modification time is more recent than the
-     * grading modification time.
+     * grading modification time and the status is SUBMITTED.
      *
      * @return int number of matching submissions
      */
     public function count_submissions_need_grading() {
         global $DB;
 
-        $params = array($this->get_course_module()->instance);
+        $params = array($this->get_course_module()->instance, ASSIGN_SUBMISSION_STATUS_SUBMITTED);
 
         return $DB->count_records_sql("SELECT COUNT('x')
                                        FROM {assign_submission} s
                                        LEFT JOIN {assign_grades} g ON s.assignment = g.assignment AND s.userid = g.userid
                                        WHERE s.assignment = ?
                                            AND s.timemodified IS NOT NULL
-                                           AND (s.timemodified > g.timemodified OR g.timemodified IS NULL)",
+                                           AND (s.timemodified > g.timemodified OR g.timemodified IS NULL)
+                                           AND s.status = ?",
                                        $params);
     }
 
@@ -1601,12 +1602,7 @@ class assign {
             $submission->userid       = $userid;
             $submission->timecreated = time();
             $submission->timemodified = $submission->timecreated;
-
-            if ($this->get_instance()->submissiondrafts) {
-                $submission->status = ASSIGN_SUBMISSION_STATUS_DRAFT;
-            } else {
-                $submission->status = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
-            }
+            $submission->status = ASSIGN_SUBMISSION_STATUS_DRAFT;
             $sid = $DB->insert_record('assign_submission', $submission);
             $submission->id = $sid;
             return $submission;
@@ -2094,6 +2090,9 @@ class assign {
             $showedit = has_capability('mod/assign:submit', $this->context) &&
                          $this->submissions_open() && ($this->is_any_submission_plugin_enabled()) && $showlinks;
             $showsubmit = $submission && ($submission->status == ASSIGN_SUBMISSION_STATUS_DRAFT) && $showlinks;
+            if (!$this->get_instance()->submissiondrafts) {
+                $showsubmit = false;
+            }
             $gradelocked = ($grade && $grade->locked) || $this->grading_disabled($user->id);
 
             $o .= $this->output->render(new assign_submission_status($this->get_instance()->allowsubmissionsfromdate,
@@ -2847,12 +2846,17 @@ class assign {
         }
         if ($data = $mform->get_data()) {
             $submission = $this->get_user_submission($USER->id, true); //create the submission if needed & its id
+            if ($this->get_instance()->submissiondrafts) {
+                $submission->status = ASSIGN_SUBMISSION_STATUS_DRAFT;
+            } else {
+                $submission->status = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
+            }
+
             $grade = $this->get_user_grade($USER->id, false); // get the grade to check if it is locked
             if ($grade && $grade->locked) {
                 print_error('submissionslocked', 'assign');
                 return true;
             }
-
 
             $allempty = true;
             $pluginerror = false;
