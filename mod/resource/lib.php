@@ -249,7 +249,7 @@ function resource_get_coursemodule_info($coursemodule) {
     }
 
     if ($resource->tobemigrated) {
-        $info->icon ='i/cross_red_big';
+        $info->icon ='i/invalid';
         return $info;
     }
     $fs = get_file_storage();

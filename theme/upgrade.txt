@@ -17,6 +17,10 @@ deprecation:
 * c/site: Use i/siteevent instead
 * c/user: Use i/userevent instead
 * t/clear: Use t/check instead
+* i/cross_red_big: Use i/invalid or i/grade_incorrect
+* i/tick_green_big: Use i/valid or i/grade_correct
+* i/tick_amber_big: Use i/caution or i/grade_partiallycorrect
+* No more small versions of i/cross_red_small, i/tick_green_small and i/tick_amber_small, use their big equivalent.
 
 optional changes:
 * new optional boolean parameter $withlinks for public function login_info() in lib/outputrenderers.php (MDL-31365)
@@ -36,6 +40,9 @@ optional changes:
 * new icons i/courseevent, i/groupevent, i/siteevent and i/userevent (16x16) instead of c/* for calendar events.
 * new icon t/markasread (12x12) to replace t/clear used in forums.
 * new icon t/check (12x12) to replace t/clear which name does not reflect the icon meaning.
+* new classes 'icon-pre' and 'icon-post' supposedly to be used when the icon is positioned before or after the text. This is not really used yet, but it's a start towards some standardisation of the icon selectors.
+* new icons i/valid, i/caution and i/invalid for generic statuses.
+* new icons i/grade_correct, i/grade_partiallycorrect and i/grade_incorrect for grades.
 
 === 2.3 ===
 

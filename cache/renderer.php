@@ -101,7 +101,7 @@ class core_cache_renderer extends plugin_renderer_base {
             $row = new html_table_row(array(
                 $storename,
                 get_string('pluginname', 'cachestore_'.$store['plugin']),
-                ($store['isready'] && $store['requirementsmet']) ? $this->output->pix_icon('i/tick_green_small', '1') : '',
+                ($store['isready'] && $store['requirementsmet']) ? $this->output->pix_icon('i/valid', '1') : '',
                 $store['mappings'],
                 join(', ', $modes),
                 join(', ', $supports),
@@ -171,7 +171,7 @@ class core_cache_renderer extends plugin_renderer_base {
 
             $row = new html_table_row(array(
                 $plugin['name'],
-                ($plugin['requirementsmet']) ? $this->output->pix_icon('i/tick_green_small', '1') : '',
+                ($plugin['requirementsmet']) ? $this->output->pix_icon('i/valid', '1') : '',
                 $plugin['instances'],
                 join(', ', $modes),
                 join(', ', $supports),
@@ -321,7 +321,7 @@ class core_cache_renderer extends plugin_renderer_base {
             // Useful later: get_string('actions', 'cache').
         );
         $table->data = array();
-        $tick = $this->output->pix_icon('i/tick_green_big', '');
+        $tick = $this->output->pix_icon('i/valid', '');
         foreach ($locks as $lock) {
             $table->data[] = new html_table_row(array(
                 new html_table_cell($lock['name']),

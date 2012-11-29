@@ -242,18 +242,17 @@ abstract class quiz_attempts_report_table extends table_sql {
 
         $flag = '';
         if ($stepdata->flagged) {
-            $flag = ' ' . $OUTPUT->pix_icon('i/flagged', get_string('flagged', 'question'),
+            $flag = $OUTPUT->pix_icon('i/flagged', get_string('flagged', 'question'),
                     'moodle', array('class' => 'questionflag'));
         }
 
         $feedbackimg = '';
         if ($state->is_finished() && $state != question_state::$needsgrading) {
-            $feedbackimg = ' ' . $this->icon_for_fraction($stepdata->fraction);
+            $feedbackimg = $this->icon_for_fraction($stepdata->fraction);
         }
 
-        $output = html_writer::tag('span', html_writer::tag('span',
-                $data . $feedbackimg . $flag,
-                array('class' => $state->get_state_class(true))), array('class' => 'que'));
+        $output = html_writer::tag('span', $feedbackimg . html_writer::tag('span',
+                $data, array('class' => $state->get_state_class(true))) . $flag, array('class' => 'que'));
 
         $url = new moodle_url('/mod/quiz/reviewquestion.php',
                 array('attempt' => $attempt->attempt, 'slot' => $slot));
@@ -275,11 +274,11 @@ abstract class quiz_attempts_report_table extends table_sql {
 
         $state = question_state::graded_state_for_fraction($fraction);
         if ($state == question_state::$gradedright) {
-            $icon = 'i/tick_green_big';
+            $icon = 'i/grade_correct';
         } else if ($state == question_state::$gradedpartial) {
-            $icon = 'i/tick_amber_big';
+            $icon = 'i/grade_partiallycorrect';
         } else {
-            $icon = 'i/cross_red_big';
+            $icon = 'i/grade_incorrect';
         }
 
         return $OUTPUT->pix_icon($icon, get_string($state->get_feedback_class(), 'question'),

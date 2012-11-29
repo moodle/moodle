@@ -1648,7 +1648,7 @@ function quiz_extend_settings_navigation($settings, $quiznode) {
                 array('cmid'=>$PAGE->cm->id, 'sesskey'=>sesskey()));
         $node = navigation_node::create(get_string('preview', 'quiz'), $url,
                 navigation_node::TYPE_SETTING, null, 'mod_quiz_preview',
-                new pix_icon('t/preview', ''));
+                new pix_icon('i/preview', ''));
         $quiznode->add_node($node, $beforekey);
     }
 

@@ -87,6 +87,10 @@
 .que .history table {width: 100%;margin: 0;}
 .que .history .current {font-weight: bold;}
 
+.que .questioncorrectnessicon { vertical-align: text-bottom; }
+.que input.questionflagimage { padding-right: 3px; }
+.dir-rtl .que input.questionflagimage { padding-left: 3px; padding-right: 0; }
+
 .importerror {margin-top: 10px;border-bottom: 1px solid #555;}
 .mform .que.comment .fitemtitle {width: 20%;}
 

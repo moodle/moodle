@@ -590,7 +590,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
             $flag = '';
             if ($attemptobj->is_question_flagged($slot)) {
                 $flag = html_writer::empty_tag('img', array('src' => $this->pix_url('i/flagged'),
-                        'alt' => get_string('flagged', 'question'), 'class' => 'questionflag'));
+                        'alt' => get_string('flagged', 'question'), 'class' => 'questionflag icon-post'));
             }
             if ($attemptobj->can_navigate_to($slot)) {
                 $row = array(html_writer::link($attemptobj->attempt_url($slot),

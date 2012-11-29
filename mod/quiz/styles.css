@@ -127,7 +127,7 @@ table.quizattemptsummary .noreviewmessage {color: gray;}
 
 /** Mod quiz summary **/
 #page-mod-quiz-summary #content {text-align: center;}
-#page-mod-quiz-summary .questionflag {width: 16px;height: 16px;vertical-align: middle;}
+#page-mod-quiz-summary .questionflag { vertical-align: text-bottom; }
 #page-mod-quiz-summary #quiz-timer {text-align: center; margin-top: 1em;}
 #page-mod-quiz-summary .submitbtns {margin-top: 1.5em;}
 @media print {
@@ -170,7 +170,8 @@ table.quizreviewsummary td.cell {padding: 1px 1em 1px 0.5em;text-align: left;bac
 #page-mod-quiz-report table#attempts.grades span.que,
 #page-mod-quiz-report table#attempts span.avgcell {white-space: nowrap;}
 #page-mod-quiz-report table#attempts span.que .requiresgrading {white-space: normal;}
-#page-mod-quiz-report table#attempts .questionflag {width: 16px; height: 16px; vertical-align: middle;}
+#page-mod-quiz-report table#attempts .questionflag { vertical-align: text-bottom; padding-left: 6px; }
+.dir-rtl#page-mod-quiz-report table#attempts .questionflag { padding-right: 6px; padding-left: 0; }
 
 #page-mod-quiz-report .graph.flexible-wrap {text-align:center; overflow:auto;}
 
