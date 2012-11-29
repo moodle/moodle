@@ -91,7 +91,7 @@ if (count($queued) > 0) {
         $iconstr = $OUTPUT->action_icon(new moodle_url($baseurl, array('cancel'=>1)), new pix_icon('t/stop', get_string('cancel')));
 
         if (!$e->get('queued') && $e->get('expirytime') > $now) {
-            $iconstr .= '&nbsp;' . $OUTPUT->action_icon($baseurl, new pix_icon('t/go', get_string('continue')));
+            $iconstr .= $OUTPUT->action_icon($baseurl, new pix_icon('t/go', get_string('continue')));
         }
         $table->data[] = array(
             $e->get('caller')->display_name(),

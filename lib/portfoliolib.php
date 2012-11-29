@@ -341,7 +341,7 @@ class portfolio_add_button {
 
         $formoutput = '<form method="post" action="' . $CFG->wwwroot . '/portfolio/add.php" id="portfolio-add-button">' . "\n";
         $formoutput .= html_writer::input_hidden_params($url);
-        $linkoutput = '<a class="portfolio-add-link" title="'.$addstr.'" href="' . $url->out();
+        $linkoutput = '';
 
         switch ($format) {
             case PORTFOLIO_ADD_FULL_FORM:
@@ -355,10 +355,12 @@ class portfolio_add_button {
                 $formoutput .= "\n" . '</form>';
             break;
             case PORTFOLIO_ADD_ICON_LINK:
-                $linkoutput .= '"><img class="portfolio-add-icon iconsmall" src="' . $OUTPUT->pix_url('t/portfolioadd') . '" alt="' . $addstr .'" /></a>';
+                $linkoutput = $OUTPUT->action_icon($url, new pix_icon('t/portfolioadd', $addstr, '',
+                    array('class' => 'portfolio-add-icon smallicon')));
             break;
             case PORTFOLIO_ADD_TEXT_LINK:
-                $linkoutput .= '">' . $addstr .'</a>';
+                $linkoutput = html_writer::link($url, $addstr, array('class' => 'portfolio-add-link',
+                    'title' => $addstr));
             break;
             default:
                 debugging(get_string('invalidaddformat', 'portfolio', $format));
