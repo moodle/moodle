@@ -1,5 +1,11 @@
 This files describes API changes for question import/export format plugins.
 
+=== 2.3 ===
+
+* This plugin type now supports cron in the standard way. If required, Create a
+  lib.php file containing
+function qformat_mypluginname_cron() {};
+
 === 2.1.5 / 2.2.3 / 2.3 ===
 
 * The readquestions method used to take a second argument $context. However, at
@@ -25,8 +31,3 @@ $string['pluginname_help'] = 'This is a simple format ...';
 $string['pluginname_link'] = 'qformat/aiken';
 
 
-=== 2.3 ===
-
-* This plugin type now supports cron in the standard way. If required, Create a
-  lib.php file containing
-function qformat_mypluginname_cron() {};
