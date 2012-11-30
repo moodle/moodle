@@ -97,15 +97,16 @@
 .gradingform_rubric.editor .delete input,
 .gradingform_rubric.editor .moveup input,
 .gradingform_rubric.editor .movedown input{text-indent: -1000em;cursor:pointer;border:none;}
-.gradingform_rubric.editor .criterion .controls .delete input {width:20px;height:16px;background: transparent url([[pix:i/cross_red_big]]) no-repeat center top;}
-.gradingform_rubric.editor .levels .level .delete input {width:20px;height:16px;background: transparent url([[pix:i/cross_red_small]]) no-repeat center top;}
-.gradingform_rubric.editor .moveup input {width:20px;height:15px;background: transparent url([[pix:t/up]]) no-repeat center top;margin-top:4px;}
-.gradingform_rubric.editor .movedown input {width:20px;height:15px;background: transparent url([[pix:t/down]]) no-repeat center top;margin-top:4px;}
+.gradingform_rubric.editor .criterion .controls .delete input {width:12px;height:12px;background: transparent url([[pix:t/delete]]) no-repeat center top; margin: .3em .3em 0 .3em;}
+.gradingform_rubric.editor .levels .level .delete input {width:12px;height:16px;background: transparent url([[pix:t/delete]]) no-repeat center center; }
+.dir-rtl .gradingform_rubric.editor .levels .level .delete input { margin-right: .45em; margin-left: 0; }
+.gradingform_rubric.editor .moveup input {width:12px;height:12px;background: transparent url([[pix:t/up]]) no-repeat center top; margin: .3em .3em 0 .3em; }
+.gradingform_rubric.editor .movedown input {width:12px;height:12px;background: transparent url([[pix:t/down]]) no-repeat center top; margin: .3em .3em 0 .3em; }
 
 .gradingform_rubric.editor .addcriterion input,
-.gradingform_rubric.editor .addlevel input {background: transparent url([[pix:t/addgreen]]) no-repeat;display:block;color:#555555;font-weight:bold;text-decoration:none;}
+.gradingform_rubric.editor .addlevel input {background: transparent url([[pix:t/add]]) no-repeat top left ;display:block;color:#555555;font-weight:bold;text-decoration:none;}
 .gradingform_rubric.editor .addcriterion input {background-position: 5px 8px;height:30px;line-height:29px;margin-bottom:14px;padding-left:20px;padding-right:10px;}
-.gradingform_rubric.editor .addlevel input {background-position: 5px 6px;height:25px;line-height:24px;margin-bottom:10px;padding-left:18px;padding-right:8px;}
+.gradingform_rubric.editor .addlevel input {background-position: 5px 5px;height:25px;line-height:24px;margin-bottom:10px;padding-left:18px;padding-right:8px;}
 
 .gradingform_rubric .options .optionsheading {font-weight:bold;font-size:1.1em;padding-bottom:5px;}
 .gradingform_rubric .options .option {padding-bottom:2px;}
