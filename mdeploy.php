@@ -967,6 +967,15 @@ class worker extends singleton_pattern {
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 20); // nah, moodle.org is never unavailable! :-p
         curl_setopt($ch, CURLOPT_URL, $source);
 
+        $dataroot = $this->input->get_option('dataroot');
+        $cacertfile = $dataroot.'/moodleorgca.crt';
+        if (is_readable($cacertfile)) {
+            // Do not use CA certs provided by the operating system. Instead,
+            // use this CA cert to verify the ZIP provider.
+            $this->log('Using custom CA certificate '.$cacertfile);
+            curl_setopt($ch, CURLOPT_CAINFO, $cacertfile);
+        }
+
         $targetfile = fopen($target, 'w');
 
         if (!$targetfile) {
