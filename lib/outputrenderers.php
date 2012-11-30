@@ -1565,9 +1565,15 @@ class core_renderer extends renderer_base {
             $output .= html_writer::label($select->label, $select->attributes['id'], false, $select->labelattributes);
         }
 
-        $select->attributes['class'] = 'autosubmit';
+        $classes = array();
+        if (!$select->showbutton) {
+            $classes[] = 'autosubmit';
+        }
         if ($select->class) {
-            $select->attributes['class'] .= ' ' . $select->class;
+            $classes[] = $select->class;
+        }
+        if (count($classes)) {
+            $select->attributes['class'] = implode(' ', $classes);
         }
 
         if ($select->helpicon instanceof help_icon) {
