@@ -73,7 +73,7 @@ if ($from_form = $export_form->get_data()) {
     echo get_string('yourfileshoulddownload', 'question', $export_url->out());
     echo $OUTPUT->box_end();
 
-    $PAGE->requires->js_function_call('document.location.replace', array($export_url->out()), false, 1);
+    $PAGE->requires->js_function_call('document.location.replace', array($export_url->out(false)), false, 1);
 
     echo $OUTPUT->continue_button(new moodle_url('edit.php', $thispageurl->params()));
     echo $OUTPUT->footer();
