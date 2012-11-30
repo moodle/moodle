@@ -32,12 +32,13 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['clianswerno'] = 'n';
 $string['cliansweryes'] = 'y';
-$string['cliincorrectvalueerror'] = '錯誤，不正確的值 "{$a->value}" 用於 "{$a->option}"';
-$string['cliincorrectvalueretry'] = '不正確的值，請再試一次';
+$string['cliincorrectvalueerror'] = '錯誤，將「{$a->option}」的值設為「{$a->value}」是不正確的';
+$string['cliincorrectvalueretry'] = '不正確的值，請重試';
 $string['clitypevalue'] = '輸入值';
-$string['clitypevaluedefault'] = '輸入值，按Enter可使用預設值({$a})';
-$string['cliunknowoption'] = '不認得的選項：  {$a}
-請使用 --幫助 選項。';
-$string['cliyesnoprompt'] = '輸入y(是) 或n(否)';
-$string['environmentrequireinstall'] = '必須安裝/啟用';
-$string['environmentrequireversion'] = '要求版本為 {$a->needed} ，您目前版本為 {$a->current}';
+$string['clitypevaluedefault'] = '輸入值，按ENTER使用預設值（{$a}）';
+$string['cliunknowoption'] = '錯誤選項：
+{$a}
+請使用 --help 選項。';
+$string['cliyesnoprompt'] = '輸入y（表示是）或n（表示否）';
+$string['environmentrequireinstall'] = '必須安裝並啟用';
+$string['environmentrequireversion'] = '需要 {$a->needed} 版本，而您的是 {$a->current}';
