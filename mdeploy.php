@@ -618,9 +618,12 @@ class output_http_provider extends output_provider {
      * @param Exception $e uncaught exception
      */
     public function exception(Exception $e) {
+
+        $docslink = 'http://docs.moodle.org/en/admin/mdeploy/'.get_class($e);
         $this->start_output();
         echo('<h1>Oops! It did it again</h1>');
-        echo('<p><strong>Moodle deployment utility had a trouble with your request. See the debugging information for more details.</strong></p>');
+        echo('<p><strong>Moodle deployment utility had a trouble with your request.
+            See <a href="'.$docslink.'">the docs page</a> and the debugging information for more details.</strong></p>');
         echo('<pre>');
         echo exception_handlers::format_exception_info($e);
         echo('</pre>');
