@@ -59,7 +59,7 @@ class mod_assign_grading_options_form extends moodleform {
 
         // quickgrading
         if ($instance['showquickgrading']) {
-            $mform->addElement('checkbox', 'quickgrading', get_string('quickgrading', 'assign'), '');
+            $mform->addElement('checkbox', 'quickgrading', get_string('quickgrading', 'assign'), '', $dirtyclass);
             $mform->addHelpButton('quickgrading', 'quickgrading', 'assign');
             $mform->setDefault('quickgrading', $instance['quickgrading']);
         }
