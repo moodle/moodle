@@ -171,6 +171,9 @@ class input_manager extends singleton_pattern {
         $supportedoptions = array(
             array('', 'passfile', input_manager::TYPE_FILE, 'File name of the passphrase file (HTTP access only)'),
             array('', 'password', input_manager::TYPE_RAW, 'Session passphrase (HTTP access only)'),
+            array('', 'proxy', input_manager::TYPE_RAW, 'HTTP proxy host and port (e.g. \'our.proxy.edu:8888\')'),
+            array('', 'proxytype', input_manager::TYPE_RAW, 'Proxy type (HTTP or SOCKS5)'),
+            array('', 'proxyuserpwd', input_manager::TYPE_RAW, 'Proxy username and password (e.g. \'username:password\')'),
             array('', 'returnurl', input_manager::TYPE_URL, 'Return URL (HTTP access only)'),
             array('d', 'dataroot', input_manager::TYPE_PATH, 'Full path to the dataroot (moodledata) directory'),
             array('h', 'help', input_manager::TYPE_FLAG, 'Prints usage information'),
@@ -977,6 +980,27 @@ class worker extends singleton_pattern {
             // use this CA cert to verify the ZIP provider.
             $this->log('Using custom CA certificate '.$cacertfile);
             curl_setopt($ch, CURLOPT_CAINFO, $cacertfile);
+        }
+
+        $proxy = $this->input->get_option('proxy', false);
+        if (!empty($proxy)) {
+            curl_setopt($ch, CURLOPT_PROXY, $proxy);
+
+            $proxytype = $this->input->get_option('proxytype', false);
+            if (strtoupper($proxytype) === 'SOCKS5') {
+                $this->log('Using SOCKS5 proxy');
+                curl_setopt($ch, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS5);
+            } else if (!empty($proxytype)) {
+                $this->log('Using HTTP proxy');
+                curl_setopt($ch, CURLOPT_PROXYTYPE, CURLPROXY_HTTP);
+                curl_setopt($ch, CURLOPT_HTTPPROXYTUNNEL, false);
+            }
+
+            $proxyuserpwd = $this->input->get_option('proxyuserpwd', false);
+            if (!empty($proxyuserpwd)) {
+                curl_setopt($ch, CURLOPT_PROXYUSERPWD, $proxyuserpwd);
+                curl_setopt($ch, CURLOPT_PROXYAUTH, CURLAUTH_BASIC | CURLAUTH_NTLM);
+            }
         }
 
         $targetfile = fopen($target, 'w');
