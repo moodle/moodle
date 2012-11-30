@@ -301,9 +301,28 @@ li a.dimmed span {
     padding-left: 10px;
 }
 */
-.course-content li.activity.ui-btn .ui-btn-text a {
-    padding-left: 35px;
+.sitetopic li.activity.ui-li-static div.activityinstance,
+.course-content li.activity.ui-li-static div.activityinstance,
+.sitetopic li.activity.ui-btn .ui-btn-text a,
+.course-content li.activity.ui-btn .ui-btn-text a,
+.sitetopic .section .activity .availabilityinfo,
+.sitetopic .section .activity .contentafterlink,
+.course-content .section .activity .availabilityinfo,
+.course-content .section .activity .contentafterlink {
+    padding-left: 45px;
     padding-right: 60px;
+    margin-left: 0;
+    margin-right: 0;
+    position: relative;
+}
+.sitetopic .section li.activity p.ui-li-desc a.autolink,
+.course-content .section li.activity p.ui-li-desc a.autolink {
+    padding: 0;
+    margin: 0;
+}
+.path-site li.activity.label > div,
+.path-course-view li.activity.label > div {
+    position: static;
 }
 .topics #section-0 div.left.side {
     display: none;
@@ -316,13 +335,9 @@ li a.dimmed span {
 .topics li.activity span.accesshide, .weeks li.activity span.accesshide, .ui-navbar span.accesshide {
     display: none;
 }
-.topics li.activity span.autocompletion, .weeks li.activity span.autocompletion {
-    display: block;
-    right: 70px;
-    top: -5px;
-}
+.sitetopic .section .activity img.activityicon,
 .course-content .section .activity img.activityicon {
-    margin-top: -.2em;
+    margin-top: -.5em;
 }
 li.activity.ui-li-static span, li.activity div.availabilityinfo {
     white-space: normal;
@@ -344,18 +359,20 @@ form.togglecompletion div {
 form.togglecompletion input {
     visibility: hidden;
 }
-.togglecompletion input[type="image"] {
+
+.path-course-view li.activity span.autocompletion {
+    position: static;
+}
+.path-course-view li.activity span.autocompletion img,
+.path-course-view li.activity form.togglecompletion [type="image"] {
     display: block !important;
     position: absolute !important;
     top: 21%;
-    right: 2em !important;
+    right: 4em !important;
     left:auto !important;
     visibility: visible;
     width: 26px;
     height: 23px;
-}
-li.activity.ui-li-static span, li.activity div.availabilityinfo{
-    margin-left: 1.3em;
 }
 .topics .content, .weeks .content {
     padding-left: 0px !important;
@@ -410,6 +427,11 @@ li.activity.label {
     padding: .6em !important;
     cursor:default;
 }
+li.activity.label form.togglecompletion { position: relative; }
+.sitetopic .section .activity .activityinstance,
+.course-content .section .activity .activityinstance,
+.sitetopic .section .activity .activityinstance div,
+.course-content .section .activity .activityinstance div { display: block; }
 li.label .no-overflow ul, li.label .no-overflow ul li {
     list-style-position: inside;
 }
