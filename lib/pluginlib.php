@@ -826,7 +826,11 @@ class available_update_checker {
         require_once($CFG->libdir.'/filelib.php');
 
         $curl = new curl(array('proxy' => true));
-        $response = $curl->post($this->prepare_request_url(), $this->prepare_request_params());
+        $response = $curl->post($this->prepare_request_url(), $this->prepare_request_params(), $this->prepare_request_options());
+        $curlerrno = $curl->get_errno();
+        if (!empty($curlerrno)) {
+            throw new available_update_checker_exception('err_response_curl', 'cURL error '.$curlerrno.': '.$curl->error);
+        }
         $curlinfo = $curl->get_info();
         if ($curlinfo['http_code'] != 200) {
             throw new available_update_checker_exception('err_response_http_code', $curlinfo['http_code']);
@@ -1067,6 +1071,29 @@ class available_update_checker {
         }
 
         return $params;
+    }
+
+    /**
+     * Returns the list of cURL options to use when fetching available updates data
+     *
+     * @return array of (string)param => (string)value
+     */
+    protected function prepare_request_options() {
+        global $CFG;
+
+        $options = array(
+            'CURLOPT_SSL_VERIFYHOST' => 2,      // this is the default in {@link curl} class but just in case
+            'CURLOPT_SSL_VERIFYPEER' => true,
+        );
+
+        $cacertfile = $CFG->dataroot.'/moodleorgca.crt';
+        if (is_readable($cacertfile)) {
+            // Do not use CA certs provided by the operating system. Instead,
+            // use this CA cert to verify the updates provider.
+            $options['CURLOPT_CAINFO'] = $cacertfile;
+        }
+
+        return $options;
     }
 
     /**
