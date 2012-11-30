@@ -334,6 +334,7 @@ input#id_externalurl {direction:ltr;}
 .loginbox .signupform {margin-top:1em;text-align:center;}
 .loginbox.twocolumns .loginpanel {float:left;width:49.5%;border-right: 1px solid;margin-bottom:-2000px;padding-bottom:2000px;}
 .loginbox.twocolumns .signuppanel {float:right;width:50%;margin-bottom:-2000px;padding-bottom:2000px;}
+.loginbox .potentialidp .smallicon { vertical-align: text-bottom; margin: 0 .3em; }
 
 /**
  * Notes
