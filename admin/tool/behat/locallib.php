@@ -78,7 +78,7 @@ class tool_behat {
         }
 
         $currentcwd = getcwd();
-        chdir($CFG->behatpath);
+        chdir($CFG->dirroot . '/lib/behat');
         exec('bin/behat --config="' . self::get_behat_config_filepath() . '" ' . $filteroption, $steps, $code);
         chdir($currentcwd);
 
@@ -163,9 +163,9 @@ class tool_behat {
         self::start_test_mode();
         $server = self::start_test_server();
 
-        // Runs the tests switching the current working directory to CFG->behatpath.
+        // Runs the tests switching the current working directory to behat path.
         $currentcwd = getcwd();
-        chdir($CFG->behatpath);
+        chdir($CFG->dirroot . '/lib/behat');
         ob_start();
         passthru('bin/behat --ansi --config="' . self::get_behat_config_filepath() .'" ' . $tagsoption . ' ' .$extra, $code);
         $output = ob_get_contents();
@@ -188,7 +188,7 @@ class tool_behat {
     private static function update_config_file($component = '') {
         global $CFG;
 
-        $behatpath = rtrim($CFG->behatpath, '/');
+        $behatpath = $CFG->dirroot . '/lib/behat';
 
         // Not extra contexts when component is specified.
         $loadbuiltincontexts = '0';
@@ -202,6 +202,7 @@ class tool_behat {
     features: ' . $behatpath . '/features
     bootstrap: ' . $behatpath . '/features/bootstrap
   context:
+    class: behat_init_context
     parameters:
       loadbuiltincontexts: ' . $loadbuiltincontexts . '
   extensions:
@@ -209,13 +210,7 @@ class tool_behat {
       base_url: ' . $CFG->test_wwwroot . '
       goutte: ~
       selenium2: ~
-    Sanpi\Behatch\Extension:
-      contexts:
-        browser: ~
-        system: ~
-        json: ~
-        table: ~
-    ' . $behatpath . '/vendor/moodlehq/behat-extension/init.php:
+    ' . $CFG->dirroot . '/vendor/moodlehq/behat-extension/init.php:
 ';
 
         // Gets all the components with features.
@@ -329,15 +324,16 @@ class tool_behat {
     /**
      * Checks if behat is set up and working
      *
-     * It checks the behatpath setting value and runs the
-     * behat help command to ensure it works as expected
+     * It checks behat dependencies have been installed and runs
+     * the behat help command to ensure it works as expected
      */
     private static function check_behat_setup() {
         global $CFG;
 
         // Moodle setting.
-        if (empty($CFG->behatpath)) {
-            $msg = get_string('nobehatpath', 'tool_behat');
+        if (!is_dir($vendor = __DIR__ . '/../../../vendor')) {
+
+            $msg = get_string('wrongbehatsetup', 'tool_behat');
 
             // With HTML.
             $docslink = tool_behat::$docsurl;
@@ -352,7 +348,7 @@ class tool_behat {
 
         // Behat test command.
         $currentcwd = getcwd();
-        chdir($CFG->behatpath);
+        chdir($CFG->dirroot . '/lib/behat');
         exec('bin/behat --help', $output, $code);
         chdir($currentcwd);
 
