@@ -1691,6 +1691,28 @@ class available_update_deployer {
             'returnurl' => $upgradeurl->out(true),
         );
 
+        if (!empty($CFG->proxyhost)) {
+            // Beware - we should call just !is_proxybypass() here. But currently, our cURL wrapper
+            // class does not do it. So, to have consistent behaviour, we pass proxy setting
+            // regardless the $CFG->proxybypass setting. Once the {@link curl} class is fixed,
+            // the condition should be amended.
+            if (true or !is_proxybypass($info->download)) {
+                if (empty($CFG->proxyport)) {
+                    $params['proxy'] = $CFG->proxyhost;
+                } else {
+                    $params['proxy'] = $CFG->proxyhost.':'.$CFG->proxyport;
+                }
+
+                if (!empty($CFG->proxyuser) and !empty($CFG->proxypassword)) {
+                    $params['proxyuserpwd'] = $CFG->proxyuser.':'.$CFG->proxypassword;
+                }
+
+                if (!empty($CFG->proxytype)) {
+                    $params['proxytype'] = $CFG->proxytype;
+                }
+            }
+        }
+
         $widget = new single_button(
             new moodle_url('/mdeploy.php', $params),
             get_string('updateavailableinstall', 'core_admin'),
