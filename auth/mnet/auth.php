@@ -46,10 +46,10 @@ class auth_plugin_mnet extends auth_plugin_base {
     }
 
     /**
-     * Return user data for the provided token
+     * Return user data for the provided token, compare with user_agent string.
      *
      * @param  string $token    The unique ID provided by remotehost.
-     * @param  string $UA       User Agent string (as seen by SP) - ignored
+     * @param  string $UA       User Agent string.
      * @return array  $userdata Array of user info for remote host
      */
     function user_authorise($token, $useragent) {
@@ -57,7 +57,7 @@ class auth_plugin_mnet extends auth_plugin_base {
         $remoteclient = get_mnet_remote_client();
         require_once $CFG->dirroot . '/mnet/xmlrpc/serverlib.php';
 
-        $mnet_session = $DB->get_record('mnet_session', array('token'=>$token));
+        $mnet_session = $DB->get_record('mnet_session', array('token'=>$token, 'useragent'=>$useragent));
         if (empty($mnet_session)) {
             throw new mnet_server_exception(1, 'authfail_nosessionexists');
         }
@@ -1087,14 +1087,14 @@ class auth_plugin_mnet extends auth_plugin_base {
      * calls the function (over xmlrpc) provides us with the mnethostid we need.
      *
      * @param   string  $username       Username for session to kill
-     * @param   string  $useragent      SHA1 hash of user agent as seen by IdP - ignored
+     * @param   string  $useragent      SHA1 hash of user agent to look for
      * @return  bool                    True on success
      */
     function kill_child($username, $useragent) {
         global $CFG, $DB;
         $remoteclient = get_mnet_remote_client();
-        $session = $DB->get_record('mnet_session', array('username'=>$username, 'mnethostid'=>$remoteclient->id));
-        $DB->delete_records('mnet_session', array('username'=>$username, 'mnethostid'=>$remoteclient->id));
+        $session = $DB->get_record('mnet_session', array('username'=>$username, 'mnethostid'=>$remoteclient->id, 'useragent'=>$useragent));
+        $DB->delete_records('mnet_session', array('username'=>$username, 'mnethostid'=>$remoteclient->id, 'useragent'=>$useragent));
         if (false != $session) {
             session_kill($session->session_id);
             return true;
