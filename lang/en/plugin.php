@@ -43,10 +43,14 @@ $string['nonehighlighted'] = 'No plugins require your attention now';
 $string['nonehighlightedinfo'] = 'Display the list of all installed plugins anyway';
 $string['noneinstalled'] = 'No plugins of this type are installed';
 $string['notes'] = 'Notes';
+$string['notdownloadable'] = 'Can not download the package';
+$string['notdownloadable_help'] = 'ZIP package with the update can not be downloaded automatically. Please refer to the documentation page for more help.';
+$string['notdownloadable_link'] = 'admin/mdeploy/notdownloadable';
 $string['notwritable'] = 'Plugin files not writable';
 $string['notwritable_help'] = 'You have enabled automatic updates deployment and there is available update for this plugin. However, the plugin files are not writable by the web server so the update can not be installed at the moment.
 
 Make the plugin folder and all its contents writable to be able to install the available update automatically.';
+$string['notwritable_link'] = 'admin/mdeploy/notwritable';
 $string['numtotal'] = 'Installed: {$a}';
 $string['numdisabled'] = 'Disabled: {$a}';
 $string['numextension'] = 'Contributions: {$a}';

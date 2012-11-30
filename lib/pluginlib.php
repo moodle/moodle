@@ -1589,6 +1589,10 @@ class available_update_deployer {
             $impediments['missingdownloadmd5'] = true;
         }
 
+        if (!empty($info->download) and !$this->update_downloadable($info->download)) {
+            $impediments['notdownloadable'] = true;
+        }
+
         if (!$this->component_writable($info->component)) {
             $impediments['notwritable'] = true;
         }
@@ -1915,6 +1919,40 @@ class available_update_deployer {
         }
 
         return $this->directory_writable($directory);
+    }
+
+    /**
+     * Checks if the mdeploy.php will be able to fetch the ZIP from the given URL
+     *
+     * This is mainly supposed to check if the transmission over HTTPS would
+     * work. That is, if the CA certificates are present at the server.
+     *
+     * @param string $downloadurl the URL of the ZIP package to download
+     * @return bool
+     */
+    protected function update_downloadable($downloadurl) {
+        global $CFG;
+
+        $curloptions = array(
+            'CURLOPT_SSL_VERIFYHOST' => 2,      // this is the default in {@link curl} class but just in case
+            'CURLOPT_SSL_VERIFYPEER' => true,
+        );
+
+        $cacertfile = $CFG->dataroot.'/moodleorgca.crt';
+        if (is_readable($cacertfile)) {
+            // Do not use CA certs provided by the operating system. Instead,
+            // use this CA cert to verify the updates provider.
+            $curloptions['CURLOPT_CAINFO'] = $cacertfile;
+        }
+
+        $curl = new curl(array('proxy' => true));
+        $result = $curl->head($downloadurl, $curloptions);
+        $errno = $curl->get_errno();
+        if (empty($errno)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**

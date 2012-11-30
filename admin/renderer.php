@@ -1211,8 +1211,13 @@ class core_admin_renderer extends plugin_renderer_base {
             if (empty($impediments)) {
                 $widget = $deployer->make_confirm_widget($updateinfo);
                 $box .= $this->output->render($widget);
-            } else if (isset($impediments['notwritable'])) {
-                $box .= $this->output->help_icon('notwritable', 'core_plugin', get_string('notwritable', 'core_plugin'));
+            } else {
+                if (isset($impediments['notwritable'])) {
+                    $box .= $this->output->help_icon('notwritable', 'core_plugin', get_string('notwritable', 'core_plugin'));
+                }
+                if (isset($impediments['notdownloadable'])) {
+                    $box .= $this->output->help_icon('notdownloadable', 'core_plugin', get_string('notdownloadable', 'core_plugin'));
+                }
             }
         }
 
