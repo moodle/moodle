@@ -46,6 +46,7 @@ optional changes:
 * new icons i/valid, i/caution and i/invalid for generic statuses.
 * new icons i/grade_correct, i/grade_partiallycorrect and i/grade_incorrect for grades.
 * new icon t/approve (12x12).
+* new icon t/contextmenu (12x12) for a monochrome version of i/menu.
 
 === 2.3 ===
 
