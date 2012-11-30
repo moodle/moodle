@@ -937,6 +937,8 @@ class page_wiki_create extends page_wiki {
         $data = $this->mform->get_data();
         if (isset($data->groupinfo)) {
             $groupid = $data->groupinfo;
+        } else if (!empty($this->gid)) {
+            $groupid = $this->gid;
         } else {
             $groupid = '0';
         }
