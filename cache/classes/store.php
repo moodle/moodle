@@ -261,6 +261,6 @@ abstract class cache_store implements cache_store_interface {
      * @return bool
      */
     public function supports_native_ttl() {
-        return $this::supports_data_guarantee() & self::SUPPORTS_NATIVE_TTL;
+        return $this::get_supported_features() & self::SUPPORTS_NATIVE_TTL;
     }
 }
