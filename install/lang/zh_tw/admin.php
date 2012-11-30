@@ -39,5 +39,5 @@ $string['clitypevaluedefault'] = '輸入值，按Enter可使用預設值({$a})';
 $string['cliunknowoption'] = '不認得的選項：  {$a}
 請使用 --幫助 選項。';
 $string['cliyesnoprompt'] = '輸入y(是) 或n(否)';
-$string['environmentrequireinstall'] = '必須安裝/啟用';
+$string['environmentrequireinstall'] = '必須安裝並啟用';
 $string['environmentrequireversion'] = '要求版本為 {$a->needed} ，您目前版本為 {$a->current}';
