@@ -136,6 +136,13 @@ abstract class cache_store implements cache_store_interface {
     abstract public function __construct($name, array $configuration = array());
 
     /**
+     * Performs any necessary operation when the store instance has been created.
+     *
+     * @link http://tracker.moodle.org/browse/MDL-36363
+     */
+    public function instance_created() {}
+
+    /**
      * Returns the name of this store instance.
      * @return string
      */
@@ -225,8 +232,23 @@ abstract class cache_store implements cache_store_interface {
 
     /**
      * Performs any necessary clean up when the store instance is being deleted.
+     *
+     * Please note that if the store has been already initialised with
+     * a definition ({@link initialise()}), cleanup will be performed against the scope
+     * of that definition.
+     *
+     * @see instance_deleted()
      */
     abstract public function cleanup();
+
+    /**
+     * Performs any necessary operation when the store instance is being deleted,
+     * regardless the store being initialised with a definition ({@link initialise()}).
+     *
+     * @link http://tracker.moodle.org/browse/MDL-36363
+     * @see cleanup()
+     */
+    public function instance_deleted() {}
 
     /**
      * Returns true if the user can add an instance of the store plugin.

@@ -178,6 +178,10 @@ class cache_config_writer extends cache_config {
             $this->configstores[$name]['lock'] = $configuration['lock'];
             unset($this->configstores[$name]['configuration']['lock']);
         }
+        // Call instance_created()
+        $store = new $class($name, $this->configstores[$name]['configuration']);
+        $store->instance_created();
+
         $this->config_save();
         return true;
     }
@@ -304,6 +308,11 @@ class cache_config_writer extends cache_config {
                 throw new cache_exception('You cannot delete a cache store that has definition mappings.');
             }
         }
+        // Call instance_deleted()
+        $class = 'cachestore_'.$this->configstores[$name]['plugin'];
+        $store = new $class($name, $this->configstores[$name]['configuration']);
+        $store->instance_deleted();
+
         unset($this->configstores[$name]);
         $this->config_save();
         return true;
