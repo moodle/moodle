@@ -324,6 +324,17 @@ class cachestore_memcache extends cache_store implements cache_is_configurable {
     }
 
     /**
+     * Performs any necessary operation when the store instance is being deleted,
+     * regardless the store being initialised with a definition ({@link initialise()}).
+     *
+     * @link http://tracker.moodle.org/browse/MDL-36363
+     * @see cleanup()
+     */
+    public function instance_deleted() {
+        $this->cleanup();
+    }
+
+    /**
      * Generates an instance of the cache store that can be used for testing.
      *
      * @param cache_definition $definition
