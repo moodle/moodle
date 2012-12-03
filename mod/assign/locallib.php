@@ -2795,7 +2795,7 @@ class assign {
                 }
 
                 $gradeddate = $gradebookgrade->dategraded;
-                $grader = $DB->get_record('user', array('id'=>$gradebookgrade->usermodified));
+                $grader = $DB->get_record('user', array('id'=>$grade->grader));
 
                 $feedbackstatus = new assign_feedback_status($gradefordisplay,
                                                       $gradeddate,
