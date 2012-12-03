@@ -229,14 +229,12 @@ class assign_upgrade_manager {
 
             $newassignment->update_calendar($newcoursemodule->id);
 
-            // copy the grades from the old assignment to the new one
+            // Reassociate grade_items from the old assignment instance to the new assign instance.
+            // This includes outcome linked grade_items.
+            $params = array('assign', $newassignment->get_instance()->id, 'assignment', $oldassignment->id);
+            $sql = 'UPDATE {grade_items} SET itemmodule = ?, iteminstance = ? WHERE itemmodule = ? AND iteminstance = ?';
+            $DB->execute($sql, $params);
 
-            $gradeitem = $DB->get_record('grade_items', array('iteminstance'=>$oldassignment->id, 'itemmodule'=>'assignment'), 'id', IGNORE_MISSING);
-            if ($gradeitem) {
-                $gradeitem->iteminstance = $newassignment->get_instance()->id;
-                $gradeitem->itemmodule = 'assign';
-                $DB->update_record('grade_items', $gradeitem);
-            }
             $gradesdone = true;
 
         } catch (Exception $exception) {
@@ -247,13 +245,10 @@ class assign_upgrade_manager {
         if ($rollback) {
             // roll back the grades changes
             if ($gradesdone) {
-                // copy the grades from the old assignment to the new one
-                $gradeitem = $DB->get_record('grade_items', array('iteminstance'=>$newassignment->get_instance()->id, 'itemmodule'=>'assign'), 'id', IGNORE_MISSING);
-                if ($gradeitem) {
-                    $gradeitem->iteminstance = $oldassignment->id;
-                    $gradeitem->itemmodule = 'assignment';
-                    $DB->update_record('grade_items', $gradeitem);
-                }
+                // Reassociate grade_items from the new assign instance to the old assignment instance.
+                $params = array('assignment', $oldassignment->id, 'assign', $newassignment->get_instance()->id);
+                $sql = 'UPDATE {grade_items} SET itemmodule = ?, iteminstance = ? WHERE itemmodule = ? AND iteminstance = ?';
+                $DB->execute($sql, $params);
             }
             // roll back the completion changes
             if ($completiondone) {
