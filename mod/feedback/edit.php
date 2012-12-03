@@ -157,6 +157,28 @@ $strfeedback  = get_string("modulename", "feedback");
 $PAGE->set_url('/mod/feedback/edit.php', array('id'=>$cm->id, 'do_show'=>$do_show));
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_title(format_string($feedback->name));
+
+// Adding the javascript module for the items dragdrop
+if ($do_show == 'edit') {
+    $jsmodule = array(
+            'name'     => 'mod_feedback',
+            'fullpath' => '/mod/feedback/module.js',
+            'requires' => array('io', 'json-parse', 'dd-constrain', 'dd-proxy', 'dd-drop'),
+            'strings' => array(array('pluginname', 'feedback'),
+                               array('move_item', 'feedback'))
+    );
+
+    $yuibase = $CFG->httpswwwroot.'/lib/yuilib/'.$CFG->yui3version . '/build/';
+    $ajaxscript = $CFG->httpswwwroot.'/mod/feedback/ajax.php';
+    $PAGE->requires->js_init_call('M.mod_feedback.init', array($cm->id,
+                                                                sesskey(),
+                                                                $yuibase,
+                                                                $ajaxscript,
+                                                                $CFG->httpswwwroot),
+                                                                false,
+                                                                $jsmodule);
+}
+
 echo $OUTPUT->header();
 
 /// print the tabs
@@ -265,6 +287,8 @@ if ($do_show == 'edit') {
         }
         //print the inserted items
         $itempos = 0;
+        echo '<div id="feedback_dragarea">'; //The container for the dragging area
+        echo '<ul id="feedback_draglist">'; //the list what includes the draggable items
         foreach ($feedbackitems as $feedbackitem) {
             $itempos++;
             //hiding the item to move
@@ -273,12 +297,16 @@ if ($do_show == 'edit') {
                     continue;
                 }
             }
+            //here come the draggable items, each one in a single li-element
+            echo '<li class="feedback_itemlist generalbox" id="feedback_item_'.$feedbackitem->id.'">';
+            echo '<span class="spinnertest"> </span>';
             if ($feedbackitem->dependitem > 0) {
                 $dependstyle = ' feedback_depend';
             } else {
                 $dependstyle = '';
             }
-            echo $OUTPUT->box_start('feedback_item_box_'.$align.$dependstyle);
+            echo $OUTPUT->box_start('feedback_item_box_'.$align.$dependstyle,
+                                    'feedback_item_box_'.$feedbackitem->id);
             //items without value only are labels
             if ($feedbackitem->hasvalue == 1 AND $feedback->autonumbering) {
                 $itemnr++;
@@ -286,7 +314,7 @@ if ($do_show == 'edit') {
                 echo $itemnr;
                 echo $OUTPUT->box_end();
             }
-            echo $OUTPUT->box_start('box generalbox boxalign_'.$align);
+            echo $OUTPUT->box_start('box boxalign_'.$align);
             echo $OUTPUT->box_start('feedback_item_commands_'.$align);
             echo '<span class="feedback_item_commands">';
             echo '('.get_string('position', 'feedback').':'.$itempos .')';
@@ -401,8 +429,11 @@ if ($do_show == 'edit') {
                 echo $OUTPUT->box_end();
             }
             echo '<div class="clearer">&nbsp;</div>';
+            echo '</li>';
         }
         echo $OUTPUT->box_end();
+        echo '</ul>';
+        echo '</div>';
     } else {
         echo $OUTPUT->box(get_string('no_items_available_yet', 'feedback'),
                          'generalbox boxaligncenter');

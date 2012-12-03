@@ -82,3 +82,9 @@ hr.feedback_pagebreak {
 	background-color:#aaaaaa;
 	border:0px;
 }
+
+ul#feedback_draglist {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
