@@ -1692,10 +1692,10 @@ class available_update_deployer {
         );
 
         if (!empty($CFG->proxyhost)) {
-            // Beware - we should call just !is_proxybypass() here. But currently, our cURL wrapper
-            // class does not do it. So, to have consistent behaviour, we pass proxy setting
-            // regardless the $CFG->proxybypass setting. Once the {@link curl} class is fixed,
-            // the condition should be amended.
+            // MDL-36973 - Beware - we should call just !is_proxybypass() here. But currently, our
+            // cURL wrapper class does not do it. So, to have consistent behaviour, we pass proxy
+            // setting regardless the $CFG->proxybypass setting. Once the {@link curl} class is
+            // fixed, the condition should be amended.
             if (true or !is_proxybypass($info->download)) {
                 if (empty($CFG->proxyport)) {
                     $params['proxy'] = $CFG->proxyhost;
