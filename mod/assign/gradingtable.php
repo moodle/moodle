@@ -772,7 +772,7 @@ class assign_grading_table extends table_sql implements renderable {
         $edit .= html_writer::start_tag('ul');
         $edit .= html_writer::start_tag('li', array('class'=>'menuicon'));
 
-        $menuicon = $this->output->pix_icon('i/menu', get_string('actions'));
+        $menuicon = $this->output->pix_icon('t/contextmenu', get_string('actions'));
         $edit .= $this->output->action_link('#menu' . $row->id, $menuicon, null, array('class'=>'yui3-menu-label'));
         $edit .= $this->output->container_start(array('yui3-menu', 'yui3-loading'), 'menu' . $row->id);
         $edit .= $this->output->container_start(array('yui3-menu-content'));
