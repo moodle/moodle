@@ -165,7 +165,8 @@ if ($do_show == 'edit') {
             'fullpath' => '/mod/feedback/module.js',
             'requires' => array('io', 'json-parse', 'dd-constrain', 'dd-proxy', 'dd-drop'),
             'strings' => array(array('pluginname', 'feedback'),
-                               array('move_item', 'feedback'))
+                               array('move_item', 'feedback'),
+                               array('position', 'feedback'))
     );
 
     $yuibase = $CFG->httpswwwroot.'/lib/yuilib/'.$CFG->yui3version . '/build/';
@@ -316,7 +317,7 @@ if ($do_show == 'edit') {
             }
             echo $OUTPUT->box_start('box boxalign_'.$align);
             echo $OUTPUT->box_start('feedback_item_commands_'.$align);
-            echo '<span class="feedback_item_commands">';
+            echo '<span class="feedback_item_commands position">';
             echo '('.get_string('position', 'feedback').':'.$itempos .')';
             echo '</span>';
             //print the moveup-button

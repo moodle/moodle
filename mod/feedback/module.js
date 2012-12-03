@@ -67,8 +67,13 @@ M.mod_feedback.init = function(Y, id, sesskey, yuibase, ajaxscript, moodlebase) 
                 drop.appendChild(drag);
             }
             myElements = '';
+            counter = 1;
             drop.get('children').each(function(v, k) {
+                poslabeltext = '(' + M.util.get_string('position', 'feedback') + ':' + counter + ')';
+                poslabel = v.one('.feedback_item_commands.position');
+                poslabel.setHTML(poslabeltext);
                 myElements = myElements + ',' + get_node_id(v.get('id'));
+                counter++;
             });
             var spinner = M.util.add_spinner(Y, dragnode);
             saveposition(Y, this, id, myElements, sesskey, spinner);
@@ -164,7 +169,8 @@ M.mod_feedback.init = function(Y, id, sesskey, yuibase, ajaxscript, moodlebase) 
         };
 
 
-        var iconname = MOVEICON.pix;
+        //~ var iconname = MOVEICON.pix;
+        var iconname = MOVEICON.largepix;
         var dragicon = Y.Node.create('<img />')
             .setStyle('cursor', 'move')
             .setAttrs({
