@@ -329,7 +329,7 @@ class backup_setting_ui_text extends backup_setting_ui {
         $icon = $this->get_icon();
         $label = $this->get_label($task);
         if (!empty($icon)) {
-            $label .= '&nbsp;'.$output->render($icon);
+            $label .= $output->render($icon);
         }
         // name, label, attributes
         return $this->apply_options(array('element'=>'text','name'=>self::NAME_PREFIX.$this->name, 'label'=>$label, 'attributes'=>$this->attributes));
@@ -380,7 +380,7 @@ class backup_setting_ui_checkbox extends backup_setting_ui {
         $icon = $this->get_icon();
         $label = $this->get_label($task);
         if (!empty($icon)) {
-            $label .= '&nbsp;'.$output->render($icon);
+            $label .= $output->render($icon);
         }
         return $this->apply_options(array('element'=>'checkbox','name'=>self::NAME_PREFIX.$this->name, 'label'=>$label, 'text'=>$this->text, 'attributes'=>$this->attributes));
     }
@@ -473,7 +473,7 @@ class backup_setting_ui_radio extends backup_setting_ui {
         $icon = $this->get_icon();
         $label = $this->get_label($task);
         if (!empty($icon)) {
-            $label .= '&nbsp;'.$output->render($icon);
+            $label .= $output->render($icon);
         }
         // name, label, text, value, attributes
         return $this->apply_options(array('element'=>'radio','name'=>self::NAME_PREFIX.$this->name, 'label'=>$label, 'text'=>$this->text, 'value'=>$this->value, 'attributes'=>$this->attributes));
@@ -538,7 +538,7 @@ class backup_setting_ui_select extends backup_setting_ui {
         $icon = $this->get_icon();
         $label = $this->get_label($task);
         if (!empty($icon)) {
-            $label .= '&nbsp;'.$output->render($icon);
+            $label .= $output->render($icon);
         }
         // name, label, options, attributes
         return $this->apply_options(array('element'=>'select','name'=>self::NAME_PREFIX.$this->name, 'label'=>$label, 'options'=>$this->values, 'attributes'=>$this->attributes));
