@@ -189,7 +189,7 @@ class core_webservice_external extends external_api {
                     new external_single_structure(
                         array(
                             'name' => new external_value(PARAM_RAW, 'function name'),
-                            'version' => new external_value(PARAM_FLOAT,
+                            'version' => new external_value(PARAM_TEXT,
                                         'The version number of the component to which the function belongs')
                         ), 'functions that are available')
                     ),
