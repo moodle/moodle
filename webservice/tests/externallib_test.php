@@ -64,6 +64,10 @@ class core_webservice_external_testcase extends externallib_advanced_testcase {
         $webservice->downloadfiles = true;
         $externalserviceid = $DB->insert_record('external_services', $webservice);
 
+        // Add a function to the service
+        $DB->insert_record('external_services_functions', array('externalserviceid' => $externalserviceid,
+            'functionname' => 'core_course_get_contents'));
+
         $_POST['wstoken'] = 'testtoken';
         $externaltoken = new stdClass();
         $externaltoken->token = 'testtoken';
@@ -86,6 +90,10 @@ class core_webservice_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($CFG->release, $siteinfo['release']);
         $this->assertEquals($CFG->version, $siteinfo['version']);
         $this->assertEquals(get_config('admin', 'mobilecssurl'), $siteinfo['mobilecssurl']);
+        $this->assertEquals(count($siteinfo['functions']), 1);
+        $function = array_pop($siteinfo['functions']);
+        $this->assertEquals($function['name'], 'core_course_get_contents');
+        $this->assertEquals($function['version'], $siteinfo['version']);
     }
 
 }
