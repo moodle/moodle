@@ -167,7 +167,7 @@ switch($requestmethod) {
                         // We need to return strings after they've been through filters for multilang
                         $stringoptions = new stdClass;
                         $stringoptions->context = $coursecontext;
-                        echo json_encode(array('instancename' => format_string($module->name, true,  $stringoptions)));
+                        echo json_encode(array('instancename' => html_entity_decode(format_string($module->name, true,  $stringoptions))));
                         break;
                 }
                 break;
