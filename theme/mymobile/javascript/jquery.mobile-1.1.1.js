@@ -5048,7 +5048,15 @@ $.widget( "mobile.listview", $.mobile.widget, {
 			// If we're creating the element, we update it regardless
 			if ( create || !item.hasClass( "ui-li" ) ) {
 				itemTheme = item.jqmData("theme") || o.theme;
-				a = this._getChildrenByTagName( item[ 0 ], "a", "A" );
+
+				// Moodle Hack to nicely display the activities on the course page.
+				// Activities <a> is not a children, we need to find it.
+				if (item.hasClass( "activity" ) && (!item.hasClass( "label" ))) {
+					a = item.find( "a" );
+				} else {
+					a = this._getChildrenByTagName( item[ 0 ], "a", "A" );
+				}
+
 				var isDivider = ( item.jqmData( "role" ) === "list-divider" );
 
 				if ( a.length && !isDivider ) {
@@ -5227,6 +5235,7 @@ $.widget( "mobile.listview", $.mobile.widget, {
 			newPage.page();
 
 			anchor = parent.find('a:first');
+			console.log(anchor);
 
 			if ( !anchor.length ) {
 				anchor = $( "<a/>" ).html( nodeEls || title ).prependTo( parent.empty() );
