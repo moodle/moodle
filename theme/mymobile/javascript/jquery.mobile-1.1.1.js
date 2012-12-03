@@ -5235,7 +5235,6 @@ $.widget( "mobile.listview", $.mobile.widget, {
 			newPage.page();
 
 			anchor = parent.find('a:first');
-			console.log(anchor);
 
 			if ( !anchor.length ) {
 				anchor = $( "<a/>" ).html( nodeEls || title ).prependTo( parent.empty() );
