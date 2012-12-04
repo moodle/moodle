@@ -435,6 +435,7 @@ $string['refoundtoorigi'] = 'Refunded to original amount: {$a}';
 $string['remotedownloaderror'] = 'Download of component to your server failed, please verify proxy settings, PHP cURL extension is highly recommended.<br /><br />You must download the <a href="{$a->url}">{$a->url}</a> file manually, copy it to "{$a->dest}" in your server and unzip it there.';
 $string['remotedownloadnotallowed'] = 'Download of components to your server isn\'t allowed (allow_url_fopen is disabled).<br /><br />You must download the <a href="{$a->url}">{$a->url}</a> file manually, copy it to "{$a->dest}" in your server and unzip it there.';
 $string['reportnotavailable'] = 'This type of report is only available for the site course';
+$string['requirecorrectaccess'] = 'Invalid url or port.';
 $string['requireloginerror'] = 'Course or activity not accessible.';
 $string['restorechecksumfailed'] = 'Some problem happened with the restore information stored in your session. Please check your PHP memory/DB package size limits. Restore stopped.';
 $string['restore_path_element_missingmethod'] = 'Restore method {$a} is missing. It must be defined by a developer.';
