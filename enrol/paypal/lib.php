@@ -207,4 +207,23 @@ class enrol_paypal_plugin extends enrol_plugin {
         return $OUTPUT->box(ob_get_clean());
     }
 
+    /**
+     * Gets an array of the user enrolment actions
+     *
+     * @param course_enrolment_manager $manager
+     * @param stdClass $ue A user enrolment object
+     * @return array An array of user_enrolment_actions
+     */
+    public function get_user_enrolment_actions(course_enrolment_manager $manager, $ue) {
+        $actions = array();
+        $context = $manager->get_context();
+        $instance = $ue->enrolmentinstance;
+        $params = $manager->get_moodlepage()->url->params();
+        $params['ue'] = $ue->id;
+        if ($this->allow_unenrol($instance) && has_capability("enrol/paypal:unenrol", $context)) {
+            $url = new moodle_url('/enrol/unenroluser.php', $params);
+            $actions[] = new user_enrolment_action(new pix_icon('t/delete', ''), get_string('unenrol', 'enrol'), $url, array('class'=>'unenrollink', 'rel'=>$ue->id));
+        }
+        return $actions;
+    }
 }
