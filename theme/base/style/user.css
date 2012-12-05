@@ -7,8 +7,11 @@
 
 .user-box {margin:8px;width:115px;height:160px;text-align:center;float:left;clear: none;}
 
+.userlist .main .action-icon img {vertical-align: middle;}
+
 .userlist #showall {margin: 10px 0px;}
 .userlist .buttons {text-align: center;}
+.userlist .buttons label {padding: 0 3px;}
 .userlist table#participants {text-align:center;}
 .userlist table#participants td,
 .userlist table#participants th {vertical-align: middle;text-align: left;padding: 4px;}
