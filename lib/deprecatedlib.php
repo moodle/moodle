@@ -351,6 +351,7 @@ function is_course_participant($userid, $courseid) {
  *
  * used to print recent activity
  *
+ * @todo MDL-36993 this function is still used in block_recent_activity, deprecate properly
  * @global object
  * @uses CONTEXT_COURSE
  * @param int $courseid The course in question.
@@ -3270,5 +3271,169 @@ function print_overview($courses, array $remote_courses=array()) {
             format_string($course->shortname),
             $attributes) . ' (' . format_string($course->hostname) . ')', 3);
         echo $OUTPUT->box_end();
+    }
+}
+
+/**
+ * This function trawls through the logs looking for
+ * anything new since the user's last login
+ *
+ * This function was only used to print the content of block recent_activity
+ * All functionality is moved into class {@link block_recent_activity}
+ * and renderer {@link block_recent_activity_renderer}
+ *
+ * @deprecated since 2.5
+ * @param stdClass $course
+ */
+function print_recent_activity($course) {
+    // $course is an object
+    global $CFG, $USER, $SESSION, $DB, $OUTPUT;
+    debugging('Function print_recent_activity() is deprecated. It is not recommended to'.
+            ' use it outside of block_recent_activity', DEBUG_DEVELOPER);
+
+    $context = context_course::instance($course->id);
+
+    $viewfullnames = has_capability('moodle/site:viewfullnames', $context);
+
+    $timestart = round(time() - COURSE_MAX_RECENT_PERIOD, -2); // better db caching for guests - 100 seconds
+
+    if (!isguestuser()) {
+        if (!empty($USER->lastcourseaccess[$course->id])) {
+            if ($USER->lastcourseaccess[$course->id] > $timestart) {
+                $timestart = $USER->lastcourseaccess[$course->id];
+            }
+        }
+    }
+
+    echo '<div class="activitydate">';
+    echo get_string('activitysince', '', userdate($timestart));
+    echo '</div>';
+    echo '<div class="activityhead">';
+
+    echo '<a href="'.$CFG->wwwroot.'/course/recent.php?id='.$course->id.'">'.get_string('recentactivityreport').'</a>';
+
+    echo "</div>\n";
+
+    $content = false;
+
+/// Firstly, have there been any new enrolments?
+
+    $users = get_recent_enrolments($course->id, $timestart);
+
+    //Accessibility: new users now appear in an <OL> list.
+    if ($users) {
+        echo '<div class="newusers">';
+        echo $OUTPUT->heading(get_string("newusers").':', 3);
+        $content = true;
+        echo "<ol class=\"list\">\n";
+        foreach ($users as $user) {
+            $fullname = fullname($user, $viewfullnames);
+            echo '<li class="name"><a href="'."$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">$fullname</a></li>\n";
+        }
+        echo "</ol>\n</div>\n";
+    }
+
+/// Next, have there been any modifications to the course structure?
+
+    $modinfo = get_fast_modinfo($course);
+
+    $changelist = array();
+
+    $logs = $DB->get_records_select('log', "time > ? AND course = ? AND
+                                            module = 'course' AND
+                                            (action = 'add mod' OR action = 'update mod' OR action = 'delete mod')",
+                                    array($timestart, $course->id), "id ASC");
+
+    if ($logs) {
+        $actions  = array('add mod', 'update mod', 'delete mod');
+        $newgones = array(); // added and later deleted items
+        foreach ($logs as $key => $log) {
+            if (!in_array($log->action, $actions)) {
+                continue;
+            }
+            $info = explode(' ', $log->info);
+
+            // note: in most cases I replaced hardcoding of label with use of
+            // $cm->has_view() but it was not possible to do this here because
+            // we don't necessarily have the $cm for it
+            if ($info[0] == 'label') {     // Labels are ignored in recent activity
+                continue;
+            }
+
+            if (count($info) != 2) {
+                debugging("Incorrect log entry info: id = ".$log->id, DEBUG_DEVELOPER);
+                continue;
+            }
+
+            $modname    = $info[0];
+            $instanceid = $info[1];
+
+            if ($log->action == 'delete mod') {
+                // unfortunately we do not know if the mod was visible
+                if (!array_key_exists($log->info, $newgones)) {
+                    $strdeleted = get_string('deletedactivity', 'moodle', get_string('modulename', $modname));
+                    $changelist[$log->info] = array ('operation' => 'delete', 'text' => $strdeleted);
+                }
+            } else {
+                if (!isset($modinfo->instances[$modname][$instanceid])) {
+                    if ($log->action == 'add mod') {
+                        // do not display added and later deleted activities
+                        $newgones[$log->info] = true;
+                    }
+                    continue;
+                }
+                $cm = $modinfo->instances[$modname][$instanceid];
+                if (!$cm->uservisible) {
+                    continue;
+                }
+
+                if ($log->action == 'add mod') {
+                    $stradded = get_string('added', 'moodle', get_string('modulename', $modname));
+                    $changelist[$log->info] = array('operation' => 'add', 'text' => "$stradded:<br /><a href=\"$CFG->wwwroot/mod/$cm->modname/view.php?id={$cm->id}\">".format_string($cm->name, true)."</a>");
+
+                } else if ($log->action == 'update mod' and empty($changelist[$log->info])) {
+                    $strupdated = get_string('updated', 'moodle', get_string('modulename', $modname));
+                    $changelist[$log->info] = array('operation' => 'update', 'text' => "$strupdated:<br /><a href=\"$CFG->wwwroot/mod/$cm->modname/view.php?id={$cm->id}\">".format_string($cm->name, true)."</a>");
+                }
+            }
+        }
+    }
+
+    if (!empty($changelist)) {
+        echo $OUTPUT->heading(get_string("courseupdates").':', 3);
+        $content = true;
+        foreach ($changelist as $changeinfo => $change) {
+            echo '<p class="activity">'.$change['text'].'</p>';
+        }
+    }
+
+/// Now display new things from each module
+
+    $usedmodules = array();
+    foreach($modinfo->cms as $cm) {
+        if (isset($usedmodules[$cm->modname])) {
+            continue;
+        }
+        if (!$cm->uservisible) {
+            continue;
+        }
+        $usedmodules[$cm->modname] = $cm->modname;
+    }
+
+    foreach ($usedmodules as $modname) {      // Each module gets it's own logs and prints them
+        if (file_exists($CFG->dirroot.'/mod/'.$modname.'/lib.php')) {
+            include_once($CFG->dirroot.'/mod/'.$modname.'/lib.php');
+            $print_recent_activity = $modname.'_print_recent_activity';
+            if (function_exists($print_recent_activity)) {
+                // NOTE: original $isteacher (second parameter below) was replaced with $viewfullnames!
+                $content = $print_recent_activity($course, $viewfullnames, $timestart) || $content;
+            }
+        } else {
+            debugging("Missing lib.php in lib/{$modname} - please reinstall files or uninstall the module");
+        }
+    }
+
+    if (! $content) {
+        echo '<p class="message">'.get_string('nothingnew').'</p>';
     }
 }

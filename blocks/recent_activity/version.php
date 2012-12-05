@@ -17,8 +17,7 @@
 /**
  * Version details
  *
- * @package    block
- * @subpackage recent_activity
+ * @package    block_recent_activity
  * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

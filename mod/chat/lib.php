@@ -238,7 +238,7 @@ function chat_user_complete($course, $user, $mod, $chat) {
 
 /**
  * Given a course and a date, prints a summary of all chat rooms past and present
- * This function is called from course/lib.php: print_recent_activity()
+ * This function is called from block_recent_activity
  *
  * @global object
  * @global object
