@@ -184,7 +184,7 @@ bodyContent: '<div class="comment-delete-confirm"><a href="#" id="confirmdelete-
                         val = val.replace('___name___', list[i].fullname);
                     }
                     if (list[i]['delete']||newcmt) {
-                        list[i].content = '<div class="comment-delete"><a href="#" id ="comment-delete-'+this.client_id+'-'+list[i].id+'" title="'+M.str.moodle.deletecomment+'"><img src="'+M.util.image_url('t/delete', 'core')+'" /></a></div>' + list[i].content;
+                        list[i].content = '<div class="comment-delete"><a href="#" id ="comment-delete-'+this.client_id+'-'+list[i].id+'" title="'+M.str.moodle.deletecomment+'"><img alt="" src="'+M.util.image_url('t/delete', 'core')+'" /></a></div>' + list[i].content;
                     }
                     val = val.replace('___time___', list[i].time);
                     val = val.replace('___picture___', list[i].avatar);
