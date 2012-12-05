@@ -1501,5 +1501,17 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012112100.00);
     }
 
+    if ($oldversion < 2012120300.01) {
+        // Make sure site-course has format='site' //MDL-36840
+
+        if ($SITE->format !== 'site') {
+            $DB->set_field('course', 'format', 'site', array('id' => $SITE->id));
+            $SITE->format = 'site';
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2012120300.01);
+    }
+
     return true;
 }
