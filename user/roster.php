@@ -15,15 +15,14 @@
     define('MODE_BRIEF', 0);
     define('MODE_USERDETAILS', 1);
 
-    $page         = optional_param('page', 0, PARAM_INT);                     // which page to show
-    $perpage      = optional_param('perpage', DEFAULT_PAGE_SIZE, PARAM_INT);  // how many per page
-    $mode         = optional_param('mode', NULL, PARAM_INT);                  // use the MODE_ constants
-    $accesssince  = optional_param('accesssince',0,PARAM_INT);                // filter by last access. -1 = never
-    $search       = optional_param('search','',PARAM_RAW);                    // make sure it is processed with p() or s() when sending to output!
-    $roleid       = optional_param('roleid', 0, PARAM_INT);                   // optional roleid, 0 means all enrolled users (or all on the frontpage)
+    $page         = 0;                                         // which page to show
+    $perpage      = SHOW_ALL_PAGE_SIZE;                        // how many per page
+    $mode         = $MODE_BRIEF;                               // use the MODE_ constants
+    $accesssince  = 0;                                         // filter by last access. -1 = never
+    $search       = '';                                        // make sure it is processed with p() or s() when sending to output!
 
-    $contextid    = optional_param('contextid', 0, PARAM_INT);                // one of this or
-    $courseid     = optional_param('id', 0, PARAM_INT);                       // this are required
+    $contextid    = optional_param('contextid', 0, PARAM_INT); // one of this or
+    $courseid     = optional_param('id', 0, PARAM_INT);        // this are required
 
     $PAGE->set_url('/user/roster.php', array(
             'page' => $page,
@@ -76,7 +75,11 @@
     }
 
     foreach ($allroles as $role) {
-        $allrolenames[$role->id] = strip_tags(role_get_name($role, $context));   // Used in menus etc later on
+        $rolename = strip_tags(role_get_name($role, $context));
+        if ($rolename === "Student") {
+            $roleid = $role->id;
+        }
+        $allrolenames[$role->id] = $rolename;   // Used in menus etc later on
         if (isset($roles[$role->id])) {
             $rolenames[$role->id] = $allrolenames[$role->id];
         }
@@ -99,7 +102,7 @@
 
     add_to_log($course->id, 'user', 'view all', 'index.php?id='.$course->id, '');
 
-    $bulkoperations = has_capability('moodle/course:bulkmessaging', $context);
+    $bulkoperations = false;
 
     $countries = get_string_manager()->get_list_of_countries();
 
@@ -190,12 +193,6 @@
         $accesssince = 0;
     }
 
-/// Print settings and things in a table across the top
-    $controlstable = new html_table();
-    $controlstable->attributes['class'] = 'controls';
-    $controlstable->cellspacing = 0;
-    $controlstable->data[] = new html_table_row();
-
 /// Print my course menus
     if ($mycourses = enrol_get_my_courses()) {
         $courselist = array();
@@ -210,10 +207,7 @@
         }
         $select = new single_select($popupurl, 'id', $courselist, $course->id, array(''=>'choosedots'), 'courseform');
         $select->set_label(get_string('mycourses'));
-        $controlstable->data[0]->cells[] = $OUTPUT->render($select);
     }
-
-    $controlstable->data[0]->cells[] = groups_print_course_menu($course, $baseurl->out(), true);
 
     if (!isset($hiddenfields['lastaccess'])) {
         // get minimum lastaccess for this course and display a dropbox to filter by lastaccess going back this far.
@@ -268,20 +262,12 @@
         if (count($timeoptions) > 1) {
             $select = new single_select($baseurl, 'accesssince', $timeoptions, $accesssince, null, 'timeoptions');
             $select->set_label(get_string('usersnoaccesssince'));
-            $controlstable->data[0]->cells[] = $OUTPUT->render($select);
         }
     }
 
-    $formatmenu = array( '0' => get_string('brief'),
-                         '1' => get_string('userdetails'));
-    $select = new single_select($baseurl, 'mode', $formatmenu, $mode, null, 'formatmenu');
-    $select->set_label(get_string('userlist'));
     $userlistcell = new html_table_cell();
     $userlistcell->attributes['class'] = 'right';
     $userlistcell->text = $OUTPUT->render($select);
-    $controlstable->data[0]->cells[] = $userlistcell;
-
-    echo html_writer::table($controlstable);
 
     if ($currentgroup and (!$isseparategroups or has_capability('moodle/site:accessallgroups', $context))) {    /// Display info about the group
         if ($group = groups_get_group($currentgroup)) {
@@ -458,45 +444,17 @@
 
     $matchcount = $DB->count_records_sql("SELECT COUNT(u.id) $from $where", $params);
 
-    $table->initialbars(true);
+    $table->initialbars(false);
     $table->pagesize($perpage, $matchcount);
 
     // list of users at the current visible page - paging makes it relatively short
     $userlist = $DB->get_recordset_sql("$select $from $where $sort", $params, $table->get_page_start(), $table->get_page_size());
 
-    /// If there are multiple Roles in the course, then show a drop down menu for switching
-    if (count($rolenames) > 1) {
-        echo '<div class="rolesform">';
-        echo '<label for="rolesform_jump">'.get_string('currentrole', 'role').'&nbsp;</label>';
-        echo $OUTPUT->single_select($rolenamesurl, 'roleid', $rolenames, $roleid, null, 'rolesform');
-        echo '</div>';
-
-    } else if (count($rolenames) == 1) {
-        // when all users with the same role - print its name
-        echo '<div class="rolesform">';
-        echo get_string('role').get_string('labelsep', 'langconfig');
-        $rolename = reset($rolenames);
-        echo $rolename;
-        echo '</div>';
-    }
-
     if ($roleid > 0) {
         $a = new stdClass();
         $a->number = $totalcount;
         $a->role = $rolenames[$roleid];
-        $heading = format_string(get_string('xuserswiththerole', 'role', $a));
-
-        if ($currentgroup and $group) {
-            $a->group = $group->name;
-            $heading .= ' ' . format_string(get_string('ingroup', 'role', $a));
-        }
-
-        if ($accesssince) {
-            $a->timeperiod = $timeoptions[$accesssince];
-            $heading .= ' ' . format_string(get_string('inactiveformorethan', 'role', $a));
-        }
-
-        $heading .= ": $a->number";
+        $heading = "Class Roster";
 
         if (user_can_assign($context, $roleid)) {
             $heading .= ' <a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?roleid='.$roleid.'&amp;contextid='.$context->id.'">';
@@ -817,17 +775,6 @@
         echo '<form action="index.php" class="searchform"><div><input type="hidden" name="id" value="'.$course->id.'" />';
         echo '<label for="search">' . get_string('search', 'search') . ' </label>';
         echo '<input type="text" id="search" name="search" value="'.s($search).'" />&nbsp;<input type="submit" value="'.get_string('search').'" /></div></form>'."\n";
-    }
-
-    $perpageurl = clone($baseurl);
-    $perpageurl->remove_params('perpage');
-    if ($perpage == SHOW_ALL_PAGE_SIZE) {
-        $perpageurl->param('perpage', DEFAULT_PAGE_SIZE);
-        echo $OUTPUT->container(html_writer::link($perpageurl, get_string('showperpage', '', DEFAULT_PAGE_SIZE)), array(), 'showall');
-
-    } else if ($matchcount > 0 && $perpage < $matchcount) {
-        $perpageurl->param('perpage', SHOW_ALL_PAGE_SIZE);
-        echo $OUTPUT->container(html_writer::link($perpageurl, get_string('showall', '', $matchcount)), array(), 'showall');
     }
 
     echo '</div>';  // userlist
