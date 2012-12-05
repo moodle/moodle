@@ -1195,15 +1195,18 @@ class available_update_checker {
                             // $componentupdate is a real update with higher version
                             $notifications[] = $componentupdate;
                         } else {
-                            // use the plugin_manager to check if the reported $componentchange
-                            // is a real update with higher version. such a real update must be
-                            // present in the 'availableupdates' property of one of the component's
-                            // available_update_info object
+                            // Use the plugin_manager to check if the detected $componentchange
+                            // is a real update with higher version. That is, the $componentchange
+                            // is present in the array of {@link available_update_info} objects
+                            // returned by the plugin's available_updates() method.
                             list($plugintype, $pluginname) = normalize_component($component);
-                            if (!empty($plugins[$plugintype][$pluginname]->availableupdates)) {
-                                foreach ($plugins[$plugintype][$pluginname]->availableupdates as $availableupdate) {
-                                    if ($availableupdate->version == $componentchange['version']) {
-                                        $notifications[] = $componentupdate;
+                            if (!empty($plugins[$plugintype][$pluginname])) {
+                                $availableupdates = $plugins[$plugintype][$pluginname]->available_updates();
+                                if (!empty($availableupdates)) {
+                                    foreach ($availableupdates as $availableupdate) {
+                                        if ($availableupdate->version == $componentchange['version']) {
+                                            $notifications[] = $componentupdate;
+                                        }
                                     }
                                 }
                             }
