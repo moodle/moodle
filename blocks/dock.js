@@ -516,7 +516,7 @@ M.core_dock.fixTitleOrientation = function(item, title, text) {
     // We need to fix a font-size - sorry theme designers.
     var fontsize = '11px';
     var transform = (clockwise) ? 'rotate(90deg)' : 'rotate(270deg)';
-    var test = Y.Node.create('<h2><span style="font-size:'+fontsize+';position:absolute;">'+text+'</span></h2>');
+    var test = Y.Node.create('<h2><span class="transform-test-node" style="font-size:'+fontsize+';">'+text+'</span></h2>');
     this.nodes.body.insert(test, 0);
     var width = test.one('span').get('offsetWidth') * 1.2;
     var height = test.one('span').get('offsetHeight');
