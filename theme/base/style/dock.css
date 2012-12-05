@@ -42,3 +42,6 @@ body.has_dock {margin-left:30px;}
 .dir-rtl #dock {left:auto;right: 0%; border-left: 1px solid #DDD;}
 .dir-rtl #dock .dockedtitle { border-bottom: 1px solid #DDD;border-top: 1px solid #EEE;  cursor: pointer;}
 body.dir-rtl.has_dock  {margin-left: 0px; margin-right: 30px}
+
+/* Test span used to calculate positioning of docked item labels */
+.transform-test-node { position:absolute;line-height:normal; }
