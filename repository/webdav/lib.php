@@ -138,6 +138,9 @@ class repository_webdav extends repository {
                 $filedate = '';
             }
 
+            // Remove the server URL from the path (if present), otherwise links will not work - MDL-37014
+            $server = preg_quote($this->options['webdav_server']);
+            $v['href'] = preg_replace("#https?://{$server}#", '', $v['href']);
             if (!empty($v['resourcetype']) && $v['resourcetype'] == 'collection') {
                 // a folder
                 if (ltrim($path, '/') != urldecode(ltrim($v['href'], '/'))) {
