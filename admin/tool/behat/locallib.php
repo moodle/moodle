@@ -331,7 +331,7 @@ class tool_behat {
         global $CFG;
 
         // Moodle setting.
-        if (!is_dir($vendor = __DIR__ . '/../../../vendor')) {
+        if (!is_dir($vendor = __DIR__ . '/../../../vendor/behat')) {
 
             $msg = get_string('wrongbehatsetup', 'tool_behat');
 
