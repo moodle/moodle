@@ -1191,9 +1191,15 @@ class available_update_checker {
                 foreach ($componentupdates as $componentupdate) {
                     if ($componentupdate->version == $componentchange['version']) {
                         if ($component == 'core') {
-                            // in case of 'core' this is enough, we already know that the
-                            // $componentupdate is a real update with higher version
-                            $notifications[] = $componentupdate;
+                            // In case of 'core', we already know that the $componentupdate
+                            // is a real update with higher version ({@see self::get_update_info()}).
+                            // We just perform additional check for the release property as there
+                            // can be two Moodle releases having the same version (e.g. 2.4.0 and 2.5dev shortly
+                            // after the release). We can do that because we have the release info
+                            // always available for the core.
+                            if ((string)$componentupdate->release === (string)$componentchange['release']) {
+                                $notifications[] = $componentupdate;
+                            }
                         } else {
                             // Use the plugin_manager to check if the detected $componentchange
                             // is a real update with higher version. That is, the $componentchange
