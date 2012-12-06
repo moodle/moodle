@@ -3813,7 +3813,7 @@ class dml_testcase extends database_driver_testcase {
         $this->assertEquals("Firstname Surname", $DB->get_field_sql($sql, $params));
     }
 
-    function sql_sql_order_by_text() {
+    function test_sql_order_by_text() {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
