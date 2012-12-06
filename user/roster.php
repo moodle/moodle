@@ -267,7 +267,7 @@
 
     $userlistcell = new html_table_cell();
     $userlistcell->attributes['class'] = 'right';
-    $userlistcell->text = $OUTPUT->render($select);
+    // $userlistcell->text = $OUTPUT->render($select);
 
     if ($currentgroup and (!$isseparategroups or has_capability('moodle/site:accessallgroups', $context))) {    /// Display info about the group
         if ($group = groups_get_group($currentgroup)) {
