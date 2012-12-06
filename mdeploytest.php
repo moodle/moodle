@@ -86,6 +86,30 @@ class testable_input_manager extends input_manager {
 
 
 /**
+ * Testable subclass
+ *
+ * @copyright 2012 David Mudrak <david@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class testable_worker extends worker {
+
+    /**
+     * Provides access to the protected method.
+     */
+    public function move_directory($source, $target, $keepsourceroot = false) {
+        return parent::move_directory($source, $target, $keepsourceroot);
+    }
+
+    /**
+     * Provides access to the protected method.
+     */
+    public function remove_directory($path, $keeppathroot = false) {
+        return parent::remove_directory($path, $keeppathroot);
+    }
+}
+
+
+/**
  * Test cases for the mdeploy utility
  *
  * @copyright 2012 David Mudrak <david@moodle.com>
@@ -211,5 +235,27 @@ class mdeploytest extends PHPUnit_Framework_TestCase {
         } catch (missing_option_exception $e) {
             $this->assertTrue(true);
         }
+    }
+
+    public function test_moving_and_removing_directories() {
+        $worker = testable_worker::instance();
+
+        $root = sys_get_temp_dir().'/'.uniqid('mdeploytest', true);
+        mkdir($root.'/a', 0777, true);
+        touch($root.'/a/a.txt');
+
+        $this->assertTrue(file_exists($root.'/a/a.txt'));
+        $this->assertFalse(file_exists($root.'/b/a.txt'));
+        $this->assertTrue($worker->move_directory($root.'/a', $root.'/b'));
+        $this->assertFalse(is_dir($root.'/a'));
+        $this->assertTrue(file_exists($root.'/b/a.txt'));
+        $this->assertTrue($worker->move_directory($root.'/b', $root.'/c', true));
+        $this->assertTrue(file_exists($root.'/c/a.txt'));
+        $this->assertFalse(file_exists($root.'/b/a.txt'));
+        $this->assertTrue(is_dir($root.'/b'));
+        $this->assertTrue($worker->remove_directory($root.'/c', true));
+        $this->assertFalse(file_exists($root.'/c/a.txt'));
+        $this->assertTrue($worker->remove_directory($root.'/c'));
+        $this->assertFalse(is_dir($root.'/c'));
     }
 }
