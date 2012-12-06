@@ -1136,15 +1136,33 @@ class worker extends singleton_pattern {
     /**
      * Moves the given source into a new location recursively
      *
+     * The target location can not exist.
+     *
      * @param string $source full path to the existing directory
      * @param string $destination full path to the new location of the folder
+     * @param bool $keepsourceroot should the root of the $source be kept or removed at the end
      * @return bool
      */
-    protected function move_directory($source, $target) {
+    protected function move_directory($source, $target, $keepsourceroot = false) {
 
         if (file_exists($target)) {
             throw new filesystem_exception('Unable to move the directory - target location already exists');
         }
+
+        return $this->move_directory_into($source, $target, $keepsourceroot);
+    }
+
+    /**
+     * Moves the given source into a new location recursively
+     *
+     * If the target already exists, files are moved into it. The target is created otherwise.
+     *
+     * @param string $source full path to the existing directory
+     * @param string $destination full path to the new location of the folder
+     * @param bool $keepsourceroot should the root of the $source be kept or removed at the end
+     * @return bool
+     */
+    protected function move_directory_into($source, $target, $keepsourceroot = false) {
 
         if (is_dir($source)) {
             $handle = opendir($source);
@@ -1152,7 +1170,11 @@ class worker extends singleton_pattern {
             throw new filesystem_exception('Source location is not a directory');
         }
 
-        mkdir($target, 02777);
+        if (is_dir($target)) {
+            $result = true;
+        } else {
+            $result = mkdir($target, 02777);
+        }
 
         while ($filename = readdir($handle)) {
             $sourcepath = $source.'/'.$filename;
@@ -1163,15 +1185,22 @@ class worker extends singleton_pattern {
             }
 
             if (is_dir($sourcepath)) {
-                $this->move_directory($sourcepath, $targetpath);
+                $result = $result && $this->move_directory($sourcepath, $targetpath, false);
 
             } else {
-                rename($sourcepath, $targetpath);
+                $result = $result && rename($sourcepath, $targetpath);
             }
         }
 
         closedir($handle);
-        return rmdir($source);
+
+        if (!$keepsourceroot) {
+            $result = $result && rmdir($source);
+        }
+
+        clearstatcache();
+
+        return $result;
     }
 
     /**
