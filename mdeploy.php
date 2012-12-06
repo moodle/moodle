@@ -1207,11 +1207,15 @@ class worker extends singleton_pattern {
      * Deletes the given directory recursively
      *
      * @param string $path full path to the directory
+     * @param bool $keeppathroot should the root of the $path be kept (i.e. remove the content only) or removed too
+     * @return bool
      */
-    protected function remove_directory($path) {
+    protected function remove_directory($path, $keeppathroot = false) {
+
+        $result = true;
 
         if (!file_exists($path)) {
-            return;
+            return $result;
         }
 
         if (is_dir($path)) {
@@ -1228,15 +1232,22 @@ class worker extends singleton_pattern {
             }
 
             if (is_dir($filepath)) {
-                $this->remove_directory($filepath);
+                $result = $result && $this->remove_directory($filepath, false);
 
             } else {
-                unlink($filepath);
+                $result = $result && unlink($filepath);
             }
         }
 
         closedir($handle);
-        return rmdir($path);
+
+        if (!$keeppathroot) {
+            $result = $result && rmdir($path);
+        }
+
+        clearstatcache();
+
+        return $result;
     }
 
     /**
