@@ -3850,7 +3850,7 @@ function sort_by_roleassignment_authority($users, context $context, $roles = arr
  * @param string $fields fields from user (u.) , role assignment (ra) or role (r.)
  * @param string $sort sort from user (u.) , role assignment (ra.) or role (r.).
  *      null => use default sort from users_order_by_sql.
- * @param bool $gethidden_ignored use enrolments instead
+ * @param bool $all true means all, false means limit to enrolled users
  * @param string $group defaults to ''
  * @param mixed $limitfrom defaults to ''
  * @param mixed $limitnum defaults to ''
@@ -3859,7 +3859,7 @@ function sort_by_roleassignment_authority($users, context $context, $roles = arr
  * @return array
  */
 function get_role_users($roleid, context $context, $parent = false, $fields = '',
-        $sort = null, $gethidden_ignored = null, $group = '',
+        $sort = null, $all = true, $group = '',
         $limitfrom = '', $limitnum = '', $extrawheretest = '', $whereorsortparams = array()) {
     global $DB;
 
@@ -3910,7 +3910,7 @@ function get_role_users($roleid, context $context, $parent = false, $fields = ''
     }
 
     if ($whereorsortparams) {
-        $params = array_merge($params, $whereparams);
+        $params = array_merge($params, $whereorsortparams);
     }
 
     if (!$sort) {
@@ -3918,10 +3918,24 @@ function get_role_users($roleid, context $context, $parent = false, $fields = ''
         $params = array_merge($params, $sortparams);
     }
 
+    if ($all === null) {
+        // Previously null was used to indicate that parameter was not used.
+        $all = true;
+    }
+    if (!$all and $coursecontext) {
+        // Do not use get_enrolled_sql() here for performance reasons.
+        $ejoin = "JOIN {user_enrolments} ue ON ue.userid = u.id
+                  JOIN {enrol} e ON (e.id = ue.enrolid AND e.courseid = :ecourseid)";
+        $params['ecourseid'] = $coursecontext->instanceid;
+    } else {
+        $ejoin = "";
+    }
+
     $sql = "SELECT DISTINCT $fields, ra.roleid
               FROM {role_assignments} ra
               JOIN {user} u ON u.id = ra.userid
               JOIN {role} r ON ra.roleid = r.id
+            $ejoin
          LEFT JOIN {role_names} rn ON (rn.contextid = :coursecontext AND rn.roleid = r.id)
         $groupjoin
              WHERE (ra.contextid = :contextid $parentcontexts)
