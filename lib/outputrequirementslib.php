@@ -198,7 +198,6 @@ class page_requirements_manager {
                 'base' => $CFG->httpswwwroot . '/theme/yui_combo.php'.$sep.'moodle/'.$jsrev.'/',
                 'comboBase' => $CFG->httpswwwroot . '/theme/yui_combo.php'.$sep,
                 'combine' => $this->yui3loader->combine,
-                'filter' => '',
                 'ext' => false,
                 'root' => 'moodle/'.$jsrev.'/', // Add the rev to the root path so that we can control caching.
                 'patterns' => array(
@@ -1062,7 +1061,7 @@ class page_requirements_manager {
         // Note: in JavaScript just use "YUI().use('overlay', function(Y) { .... });",
         //       this needs to be done before including any other script.
         $js = "var M = {}; M.yui = {};
-var moodleConfigFn = function(me) {var p = me.path, b = me.name.replace(/^moodle-/,'').split('-', 3), n = b.pop();if (/(skin|core)/.test(n)) {n = b.pop();me.type = 'css';};me.path = b.join('-')+'/'+n+'/'+n+'.'+me.type;};
+var moodleConfigFn = function(me) {var p = me.path, b = me.name.replace(/^moodle-/,'').split('-', 3), n = b.pop();if (/(skin|core)/.test(n)) {n = b.pop();me.type = 'css';};me.path = b.join('-')+'/'+n+'/'+n+'-min.'+me.type;};
 var galleryConfigFn = function(me) {var p = me.path,v=M.yui.galleryversion,f;if(/-(skin|core)/.test(me.name)) {me.type = 'css';p = p.replace(/-(skin|core)/, '').replace(/\.js/, '.css').split('/'), f = p.pop().replace(/(\-(min|debug))/, '');if (/-skin/.test(me.name)) {p.splice(p.length,0,v,'assets','skins','sam', f);} else {p.splice(p.length,0,v,'assets', f);};} else {p = p.split('/'), f = p.pop();p.splice(p.length,0,v, f);};me.path = p.join('/');};
 var yui2in3ConfigFn = function(me) {if(/-skin|reset|fonts|grids|base/.test(me.name)){me.type='css';me.path=me.path.replace(/\.js/,'.css');me.path=me.path.replace(/\/yui2-skin/,'/assets/skins/sam/yui2-skin');}};\n";
         $js .= js_writer::set_variable('YUI_config', $this->YUI_config, false) . "\n";
