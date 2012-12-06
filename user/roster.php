@@ -17,7 +17,7 @@
 
     $page         = 0;                                         // which page to show
     $perpage      = SHOW_ALL_PAGE_SIZE;                        // how many per page
-    $mode         = $MODE_BRIEF;                               // use the MODE_ constants
+    $mode         = MODE_BRIEF;                               // use the MODE_ constants
     $accesssince  = 0;                                         // filter by last access. -1 = never
     $search       = '';                                        // make sure it is processed with p() or s() when sending to output!
 
@@ -30,7 +30,7 @@
             'mode' => $mode,
             'accesssince' => $accesssince,
             'search' => $search,
-            'roleid' => $roleid,
+            'roleid' => 0,
             'contextid' => $contextid,
             'id' => $courseid));
 
