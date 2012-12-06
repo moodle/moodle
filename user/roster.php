@@ -744,30 +744,34 @@
           </th>
 
           <th class="header c2" scope="col">
-            <a href="#">Name</a>
+            <a href="#">First name</a>
           </th>
 
           <th class="header c3" scope="col">
-            <a href="#">Email</a>
+            <a href="#">Last name</a>
           </th>
 
           <th class="header c4" scope="col">
-            <a href="#">Major</a>
+            <a href="#">Email</a>
           </th>
 
           <th class="header c5" scope="col">
-            <a href="#">Level</a>
+            <a href="#">Major</a>
           </th>
 
           <th class="header c6" scope="col">
-            <a href="#">Section</a>
+            <a href="#">Level</a>
           </th>
 
           <th class="header c7" scope="col">
-            <a href="#">Status</a>
+            <a href="#">Section</a>
           </th>
 
           <th class="header c8" scope="col">
+            <a href="#">Status</a>
+          </th>
+
+          <th class="header c9" scope="col">
             <a href="#">Last access</a>
           </th>
         </tr>
@@ -781,13 +785,14 @@
 
           <td class="cell c1"><a href=
           "http://localhost:9000/moodle/user/view.php?id=2&amp;course=2">XXXXXXXXX</a></td>
-          <td class="cell c2"><strong>Soumya Jain</strong></td>
-          <td class="cell c3">student@ucla.edu</td>
-          <td class="cell c4">COM SCI</td>
-          <td class="cell c5">SR</td>
-          <td class="cell c6">1B</td>
-          <td class="cell c7">E</td>
-          <td class="cell c8">1 hour 18 mins<td>
+          <td class="cell c2"><strong>Soumya</strong></td>
+          <td class="cell c3"><strong>Jain</strong></td>
+          <td class="cell c4">student@ucla.edu</td>
+          <td class="cell c5">COM SCI</td>
+          <td class="cell c6">SR</td>
+          <td class="cell c7">1B</td>
+          <td class="cell c8">E</td>
+          <td class="cell c9">1 hour 18 mins<td>
         </tr>
 
         <tr class="r2">
@@ -799,13 +804,14 @@
 
           <td class="cell c1"><a href=
           "http://localhost:9000/moodle/user/view.php?id=2&amp;course=2">XXXXXXXXX</a></td>
-          <td class="cell c2"><strong>Angela Navarro</strong></td>
-          <td class="cell c3">student@ucla.edu</td>
-          <td class="cell c4">COM SCI</td>
-          <td class="cell c5">SR</td>
-          <td class="cell c6">1A</td>
-          <td class="cell c7">E</td>
-          <td class="cell c8">1 hour 27 mins<td>
+          <td class="cell c2"><strong>Angela</strong></td>
+          <td class="cell c3"><strong>Navarro</strong></td>
+          <td class="cell c4">student@ucla.edu</td>
+          <td class="cell c5">COM SCI</td>
+          <td class="cell c6">SR</td>
+          <td class="cell c7">1A</td>
+          <td class="cell c8">E</td>
+          <td class="cell c9">1 hour 27 mins<td>
         </tr>
 
         <tr class="r3">
@@ -817,13 +823,14 @@
 
           <td class="cell c1"><a href=
           "http://localhost:9000/moodle/user/view.php?id=2&amp;course=2">XXXXXXXXX</a></td>
-          <td class="cell c2"><strong>Bradley Shoemaker</strong></td>
-          <td class="cell c3">student@ucla.edu</td>
-          <td class="cell c4">COM SCI</td>
-          <td class="cell c5">SR</td>
-          <td class="cell c6">1B</td>
-          <td class="cell c7">E</td>
-          <td class="cell c8">3 hours 9 mins<td>
+          <td class="cell c2"><strong>Bradley</strong></td>
+          <td class="cell c3"><strong>Shoemaker</strong></td>
+          <td class="cell c4">student@ucla.edu</td>
+          <td class="cell c5">COM SCI</td>
+          <td class="cell c6">SR</td>
+          <td class="cell c7">1B</td>
+          <td class="cell c8">E</td>
+          <td class="cell c9">3 hours 9 mins<td>
         </tr>
 
         <tr class="r4">
@@ -835,13 +842,14 @@
 
           <td class="cell c1"><a href=
           "http://localhost:9000/moodle/user/view.php?id=2&amp;course=2">XXXXXXXXX</a></td>
-          <td class="cell c2"><strong>Dylan Vassallo</strong></td>
-          <td class="cell c3">student@ucla.edu</td>
-          <td class="cell c4">COM SCI</td>
-          <td class="cell c5">SR</td>
-          <td class="cell c6">1A</td>
-          <td class="cell c7">E</td>
-          <td class="cell c8">5 hours 54 mins<td>
+          <td class="cell c2"><strong>Dylan</strong></td>
+          <td class="cell c3"><strong>Vassallo</strong></td>
+          <td class="cell c4">student@ucla.edu</td>
+          <td class="cell c5">COM SCI</td>
+          <td class="cell c6">SR</td>
+          <td class="cell c7">1A</td>
+          <td class="cell c8">E</td>
+          <td class="cell c9">5 hours 54 mins<td>
         </tr>
 
         <tr class="r5">
@@ -853,13 +861,14 @@
 
           <td class="cell c1"><a href=
           "http://localhost:9000/moodle/user/view.php?id=2&amp;course=2">XXXXXXXXX</a></td>
-          <td class="cell c2"><strong>Prasanth Veerina</strong></td>
-          <td class="cell c3">student@ucla.edu</td>
-          <td class="cell c4">COM SCI</td>
-          <td class="cell c5">SR</td>
-          <td class="cell c6">1B</td>
-          <td class="cell c7">E</td>
-          <td class="cell c8">2 hours 49 mins<td>
+          <td class="cell c2"><strong>Prasanth</strong></td>
+          <td class="cell c3"><strong>Veerina</strong></td>
+          <td class="cell c4">student@ucla.edu</td>
+          <td class="cell c5">COM SCI</td>
+          <td class="cell c6">SR</td>
+          <td class="cell c7">1B</td>
+          <td class="cell c8">E</td>
+          <td class="cell c9">2 hours 49 mins<td>
         </tr>
     </table>
     <?php
