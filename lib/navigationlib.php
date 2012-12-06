@@ -4038,7 +4038,7 @@ class settings_navigation extends navigation_node {
     protected function load_category_settings() {
         global $CFG;
 
-        $categorynode = $this->add(print_context_name($this->context));
+        $categorynode = $this->add(print_context_name($this->context), null, null, null, 'categorysettings');
         $categorynode->force_open();
 
         if (has_any_capability(array('moodle/category:manage', 'moodle/course:create'), $this->context)) {
