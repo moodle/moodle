@@ -106,7 +106,9 @@ class block_course_overview_renderer extends plugin_renderer_base {
 
             $attributes = array('title' => s($course->fullname));
             if ($course->id > 0) {
-                $link = html_writer::link(new moodle_url('/course/view.php', array('id' => $course->id)), format_string($course->shortname, true, $course->id), $attributes);
+                $courseurl = new moodle_url('/course/view.php', array('id' => $course->id));
+                $coursefullname = format_string($course->fullname, true, $course->id);
+                $link = html_writer::link($courseurl, $coursefullname, $attributes);
                 $html .= $this->output->heading($link, 2, 'title');
             } else {
                 $html .= $this->output->heading(html_writer::link(
