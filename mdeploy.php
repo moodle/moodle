@@ -754,7 +754,7 @@ class worker extends singleton_pattern {
             }
 
             // Looking good, let's try it.
-            if (!$this->move_directory($sourcelocation, $backuplocation)) {
+            if (!$this->move_directory($sourcelocation, $backuplocation, true)) {
                 throw new backup_folder_exception('Unable to backup the current version of the plugin (moving failed)');
             }
 
@@ -1282,8 +1282,8 @@ class worker extends singleton_pattern {
 
         if (!$zip->extractTo($plugintyperoot)) {
             $zip->close();
-            $this->remove_directory($expectedlocation); // just in case something was created
-            $this->move_directory($backuplocation, $expectedlocation);
+            $this->remove_directory($expectedlocation, true); // just in case something was created
+            $this->move_directory_into($backuplocation, $expectedlocation);
             throw new zip_exception('Unable to extract the zip package');
         }
 
