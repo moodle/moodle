@@ -754,7 +754,7 @@ class worker extends singleton_pattern {
             }
 
             // Looking good, let's try it.
-            if (!$this->move_directory($sourcelocation, $backuplocation)) {
+            if (!$this->move_directory($sourcelocation, $backuplocation, true)) {
                 throw new backup_folder_exception('Unable to backup the current version of the plugin (moving failed)');
             }
 
@@ -1136,15 +1136,33 @@ class worker extends singleton_pattern {
     /**
      * Moves the given source into a new location recursively
      *
+     * The target location can not exist.
+     *
      * @param string $source full path to the existing directory
      * @param string $destination full path to the new location of the folder
+     * @param bool $keepsourceroot should the root of the $source be kept or removed at the end
      * @return bool
      */
-    protected function move_directory($source, $target) {
+    protected function move_directory($source, $target, $keepsourceroot = false) {
 
         if (file_exists($target)) {
             throw new filesystem_exception('Unable to move the directory - target location already exists');
         }
+
+        return $this->move_directory_into($source, $target, $keepsourceroot);
+    }
+
+    /**
+     * Moves the given source into a new location recursively
+     *
+     * If the target already exists, files are moved into it. The target is created otherwise.
+     *
+     * @param string $source full path to the existing directory
+     * @param string $destination full path to the new location of the folder
+     * @param bool $keepsourceroot should the root of the $source be kept or removed at the end
+     * @return bool
+     */
+    protected function move_directory_into($source, $target, $keepsourceroot = false) {
 
         if (is_dir($source)) {
             $handle = opendir($source);
@@ -1152,7 +1170,11 @@ class worker extends singleton_pattern {
             throw new filesystem_exception('Source location is not a directory');
         }
 
-        mkdir($target, 02777);
+        if (is_dir($target)) {
+            $result = true;
+        } else {
+            $result = mkdir($target, 02777);
+        }
 
         while ($filename = readdir($handle)) {
             $sourcepath = $source.'/'.$filename;
@@ -1163,26 +1185,37 @@ class worker extends singleton_pattern {
             }
 
             if (is_dir($sourcepath)) {
-                $this->move_directory($sourcepath, $targetpath);
+                $result = $result && $this->move_directory($sourcepath, $targetpath, false);
 
             } else {
-                rename($sourcepath, $targetpath);
+                $result = $result && rename($sourcepath, $targetpath);
             }
         }
 
         closedir($handle);
-        return rmdir($source);
+
+        if (!$keepsourceroot) {
+            $result = $result && rmdir($source);
+        }
+
+        clearstatcache();
+
+        return $result;
     }
 
     /**
      * Deletes the given directory recursively
      *
      * @param string $path full path to the directory
+     * @param bool $keeppathroot should the root of the $path be kept (i.e. remove the content only) or removed too
+     * @return bool
      */
-    protected function remove_directory($path) {
+    protected function remove_directory($path, $keeppathroot = false) {
+
+        $result = true;
 
         if (!file_exists($path)) {
-            return;
+            return $result;
         }
 
         if (is_dir($path)) {
@@ -1199,15 +1232,22 @@ class worker extends singleton_pattern {
             }
 
             if (is_dir($filepath)) {
-                $this->remove_directory($filepath);
+                $result = $result && $this->remove_directory($filepath, false);
 
             } else {
-                unlink($filepath);
+                $result = $result && unlink($filepath);
             }
         }
 
         closedir($handle);
-        return rmdir($path);
+
+        if (!$keeppathroot) {
+            $result = $result && rmdir($path);
+        }
+
+        clearstatcache();
+
+        return $result;
     }
 
     /**
@@ -1242,8 +1282,8 @@ class worker extends singleton_pattern {
 
         if (!$zip->extractTo($plugintyperoot)) {
             $zip->close();
-            $this->remove_directory($expectedlocation); // just in case something was created
-            $this->move_directory($backuplocation, $expectedlocation);
+            $this->remove_directory($expectedlocation, true); // just in case something was created
+            $this->move_directory_into($backuplocation, $expectedlocation);
             throw new zip_exception('Unable to extract the zip package');
         }
 
