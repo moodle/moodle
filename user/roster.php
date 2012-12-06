@@ -301,28 +301,9 @@
 
     /// Define a table showing a list of users in the current role selection
 
-    $tablecolumns = array('userpic', 'fullname');
+    $tablecolumns = array('bruincardphoto', 'id', 'fullname', 'email', 'major', 'classification', 'section', 'status', 'lastaccess');
     $extrafields = get_extra_user_fields($context);
-    $tableheaders = array(get_string('userpic'), get_string('fullnameuser'));
-    if ($mode === MODE_BRIEF) {
-        foreach ($extrafields as $field) {
-            $tablecolumns[] = $field;
-            $tableheaders[] = get_user_field_name($field);
-        }
-    }
-    if ($mode === MODE_BRIEF && !isset($hiddenfields['city'])) {
-        $tablecolumns[] = 'city';
-        $tableheaders[] = get_string('city');
-    }
-    if ($mode === MODE_BRIEF && !isset($hiddenfields['country'])) {
-        $tablecolumns[] = 'country';
-        $tableheaders[] = get_string('country');
-    }
-    if (!isset($hiddenfields['lastaccess'])) {
-        $tablecolumns[] = 'lastaccess';
-        $tableheaders[] = get_string('lastaccess');
-    }
-
+    $tableheaders = array('Photo', 'UID', 'Name', 'Email', 'Major', 'Level', 'Section', 'Status', 'Last access');
     if ($bulkoperations) {
         $tablecolumns[] = 'select';
         $tableheaders[] = get_string('select');
@@ -339,10 +320,14 @@
         $table->sortable(true, 'firstname', SORT_ASC);
     }
 
-    $table->no_sorting('roles');
-    $table->no_sorting('groups');
-    $table->no_sorting('groupings');
-    $table->no_sorting('select');
+    $table->sortable(true, 'id', SORT_ASC);
+    $table->sortable(true, 'fullname', SORT_ASC);
+    $table->sortable(true, 'email', SORT_ASC);
+    $table->sortable(true, 'major', SORT_ASC);
+    $table->sortable(true, 'classification', SORT_ASC);
+    $table->sortable(true, 'section', SORT_ASC);
+    $table->sortable(true, 'status', SORT_ASC);
+    $table->sortable(true, 'lastaccess', SORT_DESC);
 
     $table->set_attribute('cellspacing', '0');
     $table->set_attribute('id', 'participants');
@@ -488,262 +473,396 @@
         echo '<input type="hidden" name="returnto" value="'.s($PAGE->url->out(false)).'" />';
     }
 
-    if ($mode === MODE_USERDETAILS) {    // Print simple listing
-        if ($totalcount < 1) {
-            echo $OUTPUT->heading(get_string('nothingtodisplay'));
-        } else {
-            if ($totalcount > $perpage) {
+    // if ($mode === MODE_USERDETAILS) {    // Print simple listing
+    //     if ($totalcount < 1) {
+    //         echo $OUTPUT->heading(get_string('nothingtodisplay'));
+    //     } else {
+    //         if ($totalcount > $perpage) {
 
-                $firstinitial = $table->get_initial_first();
-                $lastinitial  = $table->get_initial_last();
-                $strall = get_string('all');
-                $alpha  = explode(',', get_string('alphabet', 'langconfig'));
+    //             $firstinitial = $table->get_initial_first();
+    //             $lastinitial  = $table->get_initial_last();
+    //             $strall = get_string('all');
+    //             $alpha  = explode(',', get_string('alphabet', 'langconfig'));
 
-                // Bar of first initials
+    //             // Bar of first initials
 
-                echo '<div class="initialbar firstinitial">'.get_string('firstname').' : ';
-                if(!empty($firstinitial)) {
-                    echo '<a href="'.$baseurl->out().'&amp;sifirst=">'.$strall.'</a>';
-                } else {
-                    echo '<strong>'.$strall.'</strong>';
-                }
-                foreach ($alpha as $letter) {
-                    if ($letter == $firstinitial) {
-                        echo ' <strong>'.$letter.'</strong>';
-                    } else {
-                        echo ' <a href="'.$baseurl->out().'&amp;sifirst='.$letter.'">'.$letter.'</a>';
-                    }
-                }
-                echo '</div>';
+    //             echo '<div class="initialbar firstinitial">'.get_string('firstname').' : ';
+    //             if(!empty($firstinitial)) {
+    //                 echo '<a href="'.$baseurl->out().'&amp;sifirst=">'.$strall.'</a>';
+    //             } else {
+    //                 echo '<strong>'.$strall.'</strong>';
+    //             }
+    //             foreach ($alpha as $letter) {
+    //                 if ($letter == $firstinitial) {
+    //                     echo ' <strong>'.$letter.'</strong>';
+    //                 } else {
+    //                     echo ' <a href="'.$baseurl->out().'&amp;sifirst='.$letter.'">'.$letter.'</a>';
+    //                 }
+    //             }
+    //             echo '</div>';
 
-                // Bar of last initials
+    //             // Bar of last initials
 
-                echo '<div class="initialbar lastinitial">'.get_string('lastname').' : ';
-                if(!empty($lastinitial)) {
-                    echo '<a href="'.$baseurl->out().'&amp;silast=">'.$strall.'</a>';
-                } else {
-                    echo '<strong>'.$strall.'</strong>';
-                }
-                foreach ($alpha as $letter) {
-                    if ($letter == $lastinitial) {
-                        echo ' <strong>'.$letter.'</strong>';
-                    } else {
-                        echo ' <a href="'.$baseurl->out().'&amp;silast='.$letter.'">'.$letter.'</a>';
-                    }
-                }
-                echo '</div>';
+    //             echo '<div class="initialbar lastinitial">'.get_string('lastname').' : ';
+    //             if(!empty($lastinitial)) {
+    //                 echo '<a href="'.$baseurl->out().'&amp;silast=">'.$strall.'</a>';
+    //             } else {
+    //                 echo '<strong>'.$strall.'</strong>';
+    //             }
+    //             foreach ($alpha as $letter) {
+    //                 if ($letter == $lastinitial) {
+    //                     echo ' <strong>'.$letter.'</strong>';
+    //                 } else {
+    //                     echo ' <a href="'.$baseurl->out().'&amp;silast='.$letter.'">'.$letter.'</a>';
+    //                 }
+    //             }
+    //             echo '</div>';
 
-                $pagingbar = new paging_bar($matchcount, intval($table->get_page_start() / $perpage), $perpage, $baseurl);
-                $pagingbar->pagevar = 'spage';
-                echo $OUTPUT->render($pagingbar);
-            }
+    //             $pagingbar = new paging_bar($matchcount, intval($table->get_page_start() / $perpage), $perpage, $baseurl);
+    //             $pagingbar->pagevar = 'spage';
+    //             echo $OUTPUT->render($pagingbar);
+    //         }
 
-            if ($matchcount > 0) {
-                $usersprinted = array();
-                foreach ($userlist as $user) {
-                    if (in_array($user->id, $usersprinted)) { /// Prevent duplicates by r.hidden - MDL-13935
-                        continue;
-                    }
-                    $usersprinted[] = $user->id; /// Add new user to the array of users printed
+    //         if ($matchcount > 0) {
+    //             $usersprinted = array();
+    //             foreach ($userlist as $user) {
+    //                 if (in_array($user->id, $usersprinted)) { /// Prevent duplicates by r.hidden - MDL-13935
+    //                     continue;
+    //                 }
+    //                 $usersprinted[] = $user->id; /// Add new user to the array of users printed
 
-                    context_instance_preload($user);
+    //                 context_instance_preload($user);
 
-                    $context = get_context_instance(CONTEXT_COURSE, $course->id);
-                    $usercontext = get_context_instance(CONTEXT_USER, $user->id);
+    //                 $context = get_context_instance(CONTEXT_COURSE, $course->id);
+    //                 $usercontext = get_context_instance(CONTEXT_USER, $user->id);
 
-                    $countries = get_string_manager()->get_list_of_countries();
+    //                 $countries = get_string_manager()->get_list_of_countries();
 
-                    /// Get the hidden field list
-                    if (has_capability('moodle/course:viewhiddenuserfields', $context)) {
-                        $hiddenfields = array();
-                    } else {
-                        $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
-                    }
-                    $table = new html_table();
-                    $table->attributes['class'] = 'userinfobox';
+    //                 /// Get the hidden field list
+    //                 if (has_capability('moodle/course:viewhiddenuserfields', $context)) {
+    //                     $hiddenfields = array();
+    //                 } else {
+    //                     $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
+    //                 }
+    //                 $table = new html_table();
+    //                 $table->attributes['class'] = 'userinfobox';
 
-                    $row = new html_table_row();
-                    $row->cells[0] = new html_table_cell();
-                    $row->cells[0]->attributes['class'] = 'left side';
+    //                 $row = new html_table_row();
+    //                 $row->cells[0] = new html_table_cell();
+    //                 $row->cells[0]->attributes['class'] = 'left side';
 
-                    $row->cells[0]->text = $OUTPUT->user_picture($user, array('size' => 100, 'courseid'=>$course->id));
-                    $row->cells[1] = new html_table_cell();
-                    $row->cells[1]->attributes['class'] = 'content';
+    //                 $row->cells[0]->text = $OUTPUT->user_picture($user, array('size' => 100, 'courseid'=>$course->id));
+    //                 $row->cells[1] = new html_table_cell();
+    //                 $row->cells[1]->attributes['class'] = 'content';
 
-                    $row->cells[1]->text = $OUTPUT->container(fullname($user, has_capability('moodle/site:viewfullnames', $context)), 'username');
-                    $row->cells[1]->text .= $OUTPUT->container_start('info');
+    //                 $row->cells[1]->text = $OUTPUT->container(fullname($user, has_capability('moodle/site:viewfullnames', $context)), 'username');
+    //                 $row->cells[1]->text .= $OUTPUT->container_start('info');
 
-                    if (!empty($user->role)) {
-                        $row->cells[1]->text .= get_string('role').get_string('labelsep', 'langconfig').$user->role.'<br />';
-                    }
-                    if ($user->maildisplay == 1 or ($user->maildisplay == 2 and ($course->id != SITEID) and !isguestuser()) or
-                                has_capability('moodle/course:viewhiddenuserfields', $context) or
-                                in_array('email', $extrafields)) {
-                        $row->cells[1]->text .= get_string('email').get_string('labelsep', 'langconfig').html_writer::link("mailto:$user->email", $user->email) . '<br />';
-                    }
-                    foreach ($extrafields as $field) {
-                        if ($field === 'email') {
-                            // Skip email because it was displayed with different
-                            // logic above (because this page is intended for
-                            // students too)
-                            continue;
-                        }
-                        $row->cells[1]->text .= get_user_field_name($field) .
-                                get_string('labelsep', 'langconfig') . s($user->{$field}) . '<br />';
-                    }
-                    if (($user->city or $user->country) and (!isset($hiddenfields['city']) or !isset($hiddenfields['country']))) {
-                        $row->cells[1]->text .= get_string('city').get_string('labelsep', 'langconfig');
-                        if ($user->city && !isset($hiddenfields['city'])) {
-                            $row->cells[1]->text .= $user->city;
-                        }
-                        if (!empty($countries[$user->country]) && !isset($hiddenfields['country'])) {
-                            if ($user->city && !isset($hiddenfields['city'])) {
-                                $row->cells[1]->text .= ', ';
-                            }
-                            $row->cells[1]->text .= $countries[$user->country];
-                        }
-                        $row->cells[1]->text .= '<br />';
-                    }
+    //                 if (!empty($user->role)) {
+    //                     $row->cells[1]->text .= get_string('role').get_string('labelsep', 'langconfig').$user->role.'<br />';
+    //                 }
+    //                 if ($user->maildisplay == 1 or ($user->maildisplay == 2 and ($course->id != SITEID) and !isguestuser()) or
+    //                             has_capability('moodle/course:viewhiddenuserfields', $context) or
+    //                             in_array('email', $extrafields)) {
+    //                     $row->cells[1]->text .= get_string('email').get_string('labelsep', 'langconfig').html_writer::link("mailto:$user->email", $user->email) . '<br />';
+    //                 }
+    //                 foreach ($extrafields as $field) {
+    //                     if ($field === 'email') {
+    //                         // Skip email because it was displayed with different
+    //                         // logic above (because this page is intended for
+    //                         // students too)
+    //                         continue;
+    //                     }
+    //                     $row->cells[1]->text .= get_user_field_name($field) .
+    //                             get_string('labelsep', 'langconfig') . s($user->{$field}) . '<br />';
+    //                 }
+    //                 if (($user->city or $user->country) and (!isset($hiddenfields['city']) or !isset($hiddenfields['country']))) {
+    //                     $row->cells[1]->text .= get_string('city').get_string('labelsep', 'langconfig');
+    //                     if ($user->city && !isset($hiddenfields['city'])) {
+    //                         $row->cells[1]->text .= $user->city;
+    //                     }
+    //                     if (!empty($countries[$user->country]) && !isset($hiddenfields['country'])) {
+    //                         if ($user->city && !isset($hiddenfields['city'])) {
+    //                             $row->cells[1]->text .= ', ';
+    //                         }
+    //                         $row->cells[1]->text .= $countries[$user->country];
+    //                     }
+    //                     $row->cells[1]->text .= '<br />';
+    //                 }
 
-                    if (!isset($hiddenfields['lastaccess'])) {
-                        if ($user->lastaccess) {
-                            $row->cells[1]->text .= get_string('lastaccess').get_string('labelsep', 'langconfig').userdate($user->lastaccess);
-                            $row->cells[1]->text .= '&nbsp; ('. format_time(time() - $user->lastaccess, $datestring) .')';
-                        } else {
-                            $row->cells[1]->text .= get_string('lastaccess').get_string('labelsep', 'langconfig').get_string('never');
-                        }
-                    }
+    //                 if (!isset($hiddenfields['lastaccess'])) {
+    //                     if ($user->lastaccess) {
+    //                         $row->cells[1]->text .= get_string('lastaccess').get_string('labelsep', 'langconfig').userdate($user->lastaccess);
+    //                         $row->cells[1]->text .= '&nbsp; ('. format_time(time() - $user->lastaccess, $datestring) .')';
+    //                     } else {
+    //                         $row->cells[1]->text .= get_string('lastaccess').get_string('labelsep', 'langconfig').get_string('never');
+    //                     }
+    //                 }
 
-                    $row->cells[1]->text .= $OUTPUT->container_end();
+    //                 $row->cells[1]->text .= $OUTPUT->container_end();
 
-                    $row->cells[2] = new html_table_cell();
-                    $row->cells[2]->attributes['class'] = 'links';
-                    $row->cells[2]->text = '';
+    //                 $row->cells[2] = new html_table_cell();
+    //                 $row->cells[2]->attributes['class'] = 'links';
+    //                 $row->cells[2]->text = '';
 
-                    $links = array();
+    //                 $links = array();
 
-                    if ($CFG->bloglevel > 0) {
-                        $links[] = html_writer::link(new moodle_url('/blog/index.php?userid='.$user->id), get_string('blogs','blog'));
-                    }
+    //                 if ($CFG->bloglevel > 0) {
+    //                     $links[] = html_writer::link(new moodle_url('/blog/index.php?userid='.$user->id), get_string('blogs','blog'));
+    //                 }
 
-                    if (!empty($CFG->enablenotes) and (has_capability('moodle/notes:manage', $context) || has_capability('moodle/notes:view', $context))) {
-                        $links[] = html_writer::link(new moodle_url('/notes/index.php?course=' . $course->id. '&user='.$user->id), get_string('notes','notes'));
-                    }
+    //                 if (!empty($CFG->enablenotes) and (has_capability('moodle/notes:manage', $context) || has_capability('moodle/notes:view', $context))) {
+    //                     $links[] = html_writer::link(new moodle_url('/notes/index.php?course=' . $course->id. '&user='.$user->id), get_string('notes','notes'));
+    //                 }
 
-                    if (has_capability('moodle/site:viewreports', $context) or has_capability('moodle/user:viewuseractivitiesreport', $usercontext)) {
-                        $links[] = html_writer::link(new moodle_url('/course/user.php?id='. $course->id .'&user='. $user->id), get_string('activity'));
-                    }
+    //                 if (has_capability('moodle/site:viewreports', $context) or has_capability('moodle/user:viewuseractivitiesreport', $usercontext)) {
+    //                     $links[] = html_writer::link(new moodle_url('/course/user.php?id='. $course->id .'&user='. $user->id), get_string('activity'));
+    //                 }
 
-                    if ($USER->id != $user->id && !session_is_loggedinas() && has_capability('moodle/user:loginas', $context) && !is_siteadmin($user->id)) {
-                        $links[] = html_writer::link(new moodle_url('/course/loginas.php?id='. $course->id .'&user='. $user->id .'&sesskey='. sesskey()), get_string('loginas'));
-                    }
+    //                 if ($USER->id != $user->id && !session_is_loggedinas() && has_capability('moodle/user:loginas', $context) && !is_siteadmin($user->id)) {
+    //                     $links[] = html_writer::link(new moodle_url('/course/loginas.php?id='. $course->id .'&user='. $user->id .'&sesskey='. sesskey()), get_string('loginas'));
+    //                 }
 
-                    $links[] = html_writer::link(new moodle_url('/user/view.php?id='. $user->id .'&course='. $course->id), get_string('fullprofile') . '...');
+    //                 $links[] = html_writer::link(new moodle_url('/user/view.php?id='. $user->id .'&course='. $course->id), get_string('fullprofile') . '...');
 
-                    $row->cells[2]->text .= implode('', $links);
+    //                 $row->cells[2]->text .= implode('', $links);
 
-                    if ($bulkoperations) {
-                        $row->cells[2]->text .= '<br /><input type="checkbox" class="usercheckbox" name="user'.$user->id.'" /> ';
-                    }
-                    $table->data = array($row);
-                    echo html_writer::table($table);
-                }
+    //                 if ($bulkoperations) {
+    //                     $row->cells[2]->text .= '<br /><input type="checkbox" class="usercheckbox" name="user'.$user->id.'" /> ';
+    //                 }
+    //                 $table->data = array($row);
+    //                 echo html_writer::table($table);
+    //             }
 
-            } else {
-                echo $OUTPUT->heading(get_string('nothingtodisplay'));
-            }
-        }
+    //         } else {
+    //             echo $OUTPUT->heading(get_string('nothingtodisplay'));
+    //         }
+    //     }
 
-    } else {
-        $countrysort = (strpos($sort, 'country') !== false);
-        $timeformat = get_string('strftimedate');
+    // } else {
+    //     $countrysort = (strpos($sort, 'country') !== false);
+    //     $timeformat = get_string('strftimedate');
 
 
-        if ($userlist)  {
+    //     if ($userlist)  {
 
-            $usersprinted = array();
-            foreach ($userlist as $user) {
-                if (in_array($user->id, $usersprinted)) { /// Prevent duplicates by r.hidden - MDL-13935
-                    continue;
-                }
-                $usersprinted[] = $user->id; /// Add new user to the array of users printed
+    //         $usersprinted = array();
+    //         foreach ($userlist as $user) {
 
-                context_instance_preload($user);
+    //             if (in_array($user->id, $usersprinted)) { /// Prevent duplicates by r.hidden - MDL-13935
+    //                 continue;
+    //             }
+    //             $usersprinted[] = $user->id; /// Add new user to the array of users printed
 
-                if ($user->lastaccess) {
-                    $lastaccess = format_time(time() - $user->lastaccess, $datestring);
-                } else {
-                    $lastaccess = $strnever;
-                }
+    //             context_instance_preload($user);
 
-                if (empty($user->country)) {
-                    $country = '';
+    //             if ($user->lastaccess) {
+    //                 $lastaccess = format_time(time() - $user->lastaccess, $datestring);
+    //             } else {
+    //                 $lastaccess = $strnever;
+    //             }
 
-                } else {
-                    if($countrysort) {
-                        $country = '('.$user->country.') '.$countries[$user->country];
-                    }
-                    else {
-                        $country = $countries[$user->country];
-                    }
-                }
+    //             if (empty($user->country)) {
+    //                 $country = '';
 
-                $usercontext = get_context_instance(CONTEXT_USER, $user->id);
+    //             } else {
+    //                 if($countrysort) {
+    //                     $country = '('.$user->country.') '.$countries[$user->country];
+    //                 }
+    //                 else {
+    //                     $country = $countries[$user->country];
+    //                 }
+    //             }
 
-                if ($piclink = ($USER->id == $user->id || has_capability('moodle/user:viewdetails', $context) || has_capability('moodle/user:viewdetails', $usercontext))) {
-                    $profilelink = '<strong><a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id.'">'.fullname($user).'</a></strong>';
-                } else {
-                    $profilelink = '<strong>'.fullname($user).'</strong>';
-                }
+    //             $usercontext = get_context_instance(CONTEXT_USER, $user->id);
 
-                $data = array ($OUTPUT->user_picture($user, array('size' => 35, 'courseid'=>$course->id)), $profilelink);
+    //             if ($piclink = ($USER->id == $user->id || has_capability('moodle/user:viewdetails', $context) || has_capability('moodle/user:viewdetails', $usercontext))) {
+    //                 $profilelink = '<strong><a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id.'">'.fullname($user).'</a></strong>';
+    //             } else {
+    //                 $profilelink = '<strong>'.fullname($user).'</strong>';
+    //             }
 
-                if ($mode === MODE_BRIEF) {
-                    foreach ($extrafields as $field) {
-                        $data[] = $user->{$field};
-                    }
-                }
-                if ($mode === MODE_BRIEF && !isset($hiddenfields['city'])) {
-                    $data[] = $user->city;
-                }
-                if ($mode === MODE_BRIEF && !isset($hiddenfields['country'])) {
-                    $data[] = $country;
-                }
-                if (!isset($hiddenfields['lastaccess'])) {
-                    $data[] = $lastaccess;
-                }
+    //             $data = array ($OUTPUT->user_picture($user, array('size' => 35, 'courseid'=>$course->id)), $profilelink);
 
-                if (isset($userlist_extra) && isset($userlist_extra[$user->id])) {
-                    $ras = $userlist_extra[$user->id]['ra'];
-                    $rastring = '';
-                    foreach ($ras AS $key=>$ra) {
-                        $rolename = $allrolenames[$ra['roleid']] ;
-                        if ($ra['ctxlevel'] == CONTEXT_COURSECAT) {
-                            $rastring .= $rolename. ' @ ' . '<a href="'.$CFG->wwwroot.'/course/category.php?id='.$ra['ctxinstanceid'].'">'.s($ra['ccname']).'</a>';
-                        } elseif ($ra['ctxlevel'] == CONTEXT_SYSTEM) {
-                            $rastring .= $rolename. ' - ' . get_string('globalrole','role');
-                        } else {
-                            $rastring .= $rolename;
-                        }
-                    }
-                    $data[] = $rastring;
-                    if ($groupmode != 0) {
-                        // htmlescape with s() and implode the array
-                        $data[] = implode(', ', array_map('s',$userlist_extra[$user->id]['group']));
-                        $data[] = implode(', ', array_map('s', $userlist_extra[$user->id]['gping']));
-                    }
-                }
+    //             // if ($mode === MODE_BRIEF) {
+    //             //     foreach ($extrafields as $field) {
+    //             //         $data[] = $user->{$field};
+    //             //     }
+    //             // }
+    //             // if ($mode === MODE_BRIEF && !isset($hiddenfields['city'])) {
+    //             //     $data[] = $user->city;
+    //             // }
+    //             // if ($mode === MODE_BRIEF && !isset($hiddenfields['country'])) {
+    //             //     $data[] = $country;
+    //             // }
+    //             // if (!isset($hiddenfields['lastaccess'])) {
+    //             //     $data[] = $lastaccess;
+    //             // }
 
-                if ($bulkoperations) {
-                    $data[] = '<input type="checkbox" class="usercheckbox" name="user'.$user->id.'" />';
-                }
-                $table->add_data($data);
-            }
-        }
+    //             if (isset($userlist_extra) && isset($userlist_extra[$user->id])) {
+    //                 $ras = $userlist_extra[$user->id]['ra'];
+    //                 $rastring = '';
+    //                 foreach ($ras AS $key=>$ra) {
+    //                     $rolename = $allrolenames[$ra['roleid']] ;
+    //                     if ($ra['ctxlevel'] == CONTEXT_COURSECAT) {
+    //                         $rastring .= $rolename. ' @ ' . '<a href="'.$CFG->wwwroot.'/course/category.php?id='.$ra['ctxinstanceid'].'">'.s($ra['ccname']).'</a>';
+    //                     } elseif ($ra['ctxlevel'] == CONTEXT_SYSTEM) {
+    //                         $rastring .= $rolename. ' - ' . get_string('globalrole','role');
+    //                     } else {
+    //                         $rastring .= $rolename;
+    //                     }
+    //                 }
+    //                 $data[] = $rastring;
+    //                 if ($groupmode != 0) {
+    //                     // htmlescape with s() and implode the array
+    //                     $data[] = implode(', ', array_map('s',$userlist_extra[$user->id]['group']));
+    //                     $data[] = implode(', ', array_map('s', $userlist_extra[$user->id]['gping']));
+    //                 }
+    //             }
 
-        $table->print_html();
+    //             if ($bulkoperations) {
+    //                 $data[] = '<input type="checkbox" class="usercheckbox" name="user'.$user->id.'" />';
+    //             }
+    //             $table->add_data($data);
+    //         }
+    //     }
 
-    }
+    //     $table->print_html();
+
+    // }
+
+    ?>
+    <script type="text/javascript" src="../theme/sorttable.js"></script>
+    <table cellspacing="0" id="participants" class="sortable flexible generaltable generalbox" align="center">
+        <tr>
+          <th class="header c0" scope="col">
+            <a href="#">Photo</a>
+          </th>
+
+          <th class="header c1" scope="col">
+            <a href="#">UID</a>
+          </th>
+
+          <th class="header c2" scope="col">
+            <a href="#">Name</a>
+          </th>
+
+          <th class="header c3" scope="col">
+            <a href="#">Email</a>
+          </th>
+
+          <th class="header c4" scope="col">
+            <a href="#">Major</a>
+          </th>
+
+          <th class="header c5" scope="col">
+            <a href="#">Level</a>
+          </th>
+
+          <th class="header c6" scope="col">
+            <a href="#">Section</a>
+          </th>
+
+          <th class="header c7" scope="col">
+            <a href="#">Status</a>
+          </th>
+
+          <th class="header c8" scope="col">
+            <a href="#">Last access</a>
+          </th>
+        </tr>
+
+        <tr class="r1">
+          <td class="cell c0"><a href=
+          "http://localhost:9000/moodle/user/view.php?id=2&amp;course=2"><img src=
+          "http://localhost:9000/moodle/theme/image.php/standard/core/1354064501/u/f2" alt=
+          "Picture of Admin User" title="Picture of Admin User" class=
+          "userpicture defaultuserpic" width="35" height="35" /></a></td>
+
+          <td class="cell c1"><a href=
+          "http://localhost:9000/moodle/user/view.php?id=2&amp;course=2">XXXXXXXXX</a></td>
+          <td class="cell c2"><strong>Soumya Jain</strong></td>
+          <td class="cell c3">student@ucla.edu</td>
+          <td class="cell c4">COM SCI</td>
+          <td class="cell c5">SR</td>
+          <td class="cell c6">1B</td>
+          <td class="cell c7">E</td>
+          <td class="cell c8">1 hour 18 mins<td>
+        </tr>
+
+        <tr class="r2">
+          <td class="cell c0"><a href=
+          "http://localhost:9000/moodle/user/view.php?id=2&amp;course=2"><img src=
+          "http://localhost:9000/moodle/theme/image.php/standard/core/1354064501/u/f2" alt=
+          "Picture of Admin User" title="Picture of Admin User" class=
+          "userpicture defaultuserpic" width="35" height="35" /></a></td>
+
+          <td class="cell c1"><a href=
+          "http://localhost:9000/moodle/user/view.php?id=2&amp;course=2">XXXXXXXXX</a></td>
+          <td class="cell c2"><strong>Angela Navarro</strong></td>
+          <td class="cell c3">student@ucla.edu</td>
+          <td class="cell c4">COM SCI</td>
+          <td class="cell c5">SR</td>
+          <td class="cell c6">1A</td>
+          <td class="cell c7">E</td>
+          <td class="cell c8">1 hour 27 mins<td>
+        </tr>
+
+        <tr class="r3">
+          <td class="cell c0"><a href=
+          "http://localhost:9000/moodle/user/view.php?id=2&amp;course=2"><img src=
+          "http://localhost:9000/moodle/theme/image.php/standard/core/1354064501/u/f2" alt=
+          "Picture of Admin User" title="Picture of Admin User" class=
+          "userpicture defaultuserpic" width="35" height="35" /></a></td>
+
+          <td class="cell c1"><a href=
+          "http://localhost:9000/moodle/user/view.php?id=2&amp;course=2">XXXXXXXXX</a></td>
+          <td class="cell c2"><strong>Bradley Shoemaker</strong></td>
+          <td class="cell c3">student@ucla.edu</td>
+          <td class="cell c4">COM SCI</td>
+          <td class="cell c5">SR</td>
+          <td class="cell c6">1B</td>
+          <td class="cell c7">E</td>
+          <td class="cell c8">3 hours 9 mins<td>
+        </tr>
+
+        <tr class="r4">
+          <td class="cell c0"><a href=
+          "http://localhost:9000/moodle/user/view.php?id=2&amp;course=2"><img src=
+          "http://localhost:9000/moodle/theme/image.php/standard/core/1354064501/u/f2" alt=
+          "Picture of Admin User" title="Picture of Admin User" class=
+          "userpicture defaultuserpic" width="35" height="35" /></a></td>
+
+          <td class="cell c1"><a href=
+          "http://localhost:9000/moodle/user/view.php?id=2&amp;course=2">XXXXXXXXX</a></td>
+          <td class="cell c2"><strong>Dylan Vassallo</strong></td>
+          <td class="cell c3">student@ucla.edu</td>
+          <td class="cell c4">COM SCI</td>
+          <td class="cell c5">SR</td>
+          <td class="cell c6">1A</td>
+          <td class="cell c7">E</td>
+          <td class="cell c8">5 hours 54 mins<td>
+        </tr>
+
+        <tr class="r5">
+          <td class="cell c0"><a href=
+          "http://localhost:9000/moodle/user/view.php?id=2&amp;course=2"><img src=
+          "http://localhost:9000/moodle/theme/image.php/standard/core/1354064501/u/f2" alt=
+          "Picture of Admin User" title="Picture of Admin User" class=
+          "userpicture defaultuserpic" width="35" height="35" /></a></td>
+
+          <td class="cell c1"><a href=
+          "http://localhost:9000/moodle/user/view.php?id=2&amp;course=2">XXXXXXXXX</a></td>
+          <td class="cell c2"><strong>Prasanth Veerina</strong></td>
+          <td class="cell c3">student@ucla.edu</td>
+          <td class="cell c4">COM SCI</td>
+          <td class="cell c5">SR</td>
+          <td class="cell c6">1B</td>
+          <td class="cell c7">E</td>
+          <td class="cell c8">2 hours 49 mins<td>
+        </tr>
+    </table>
+    <?php
 
     if ($bulkoperations) {
         echo '<br /><div class="buttons">';
