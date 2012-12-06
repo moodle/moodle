@@ -783,8 +783,7 @@
           "Picture of Admin User" title="Picture of Admin User" class=
           "userpicture defaultuserpic" width="35" height="35" /></a></td>
 
-          <td class="cell c1"><a href=
-          "http://localhost:9000/moodle/user/view.php?id=2&amp;course=2">XXXXXXXXX</a></td>
+          <td class="cell c1">XXXXXXXXX</td>
           <td class="cell c2"><strong>Soumya</strong></td>
           <td class="cell c3"><strong>Jain</strong></td>
           <td class="cell c4">student@ucla.edu</td>
@@ -802,8 +801,7 @@
           "Picture of Admin User" title="Picture of Admin User" class=
           "userpicture defaultuserpic" width="35" height="35" /></a></td>
 
-          <td class="cell c1"><a href=
-          "http://localhost:9000/moodle/user/view.php?id=2&amp;course=2">XXXXXXXXX</a></td>
+          <td class="cell c1">XXXXXXXXX</td>
           <td class="cell c2"><strong>Angela</strong></td>
           <td class="cell c3"><strong>Navarro</strong></td>
           <td class="cell c4">student@ucla.edu</td>
@@ -821,8 +819,7 @@
           "Picture of Admin User" title="Picture of Admin User" class=
           "userpicture defaultuserpic" width="35" height="35" /></a></td>
 
-          <td class="cell c1"><a href=
-          "http://localhost:9000/moodle/user/view.php?id=2&amp;course=2">XXXXXXXXX</a></td>
+          <td class="cell c1">XXXXXXXXX</td>
           <td class="cell c2"><strong>Bradley</strong></td>
           <td class="cell c3"><strong>Shoemaker</strong></td>
           <td class="cell c4">student@ucla.edu</td>
@@ -840,8 +837,7 @@
           "Picture of Admin User" title="Picture of Admin User" class=
           "userpicture defaultuserpic" width="35" height="35" /></a></td>
 
-          <td class="cell c1"><a href=
-          "http://localhost:9000/moodle/user/view.php?id=2&amp;course=2">XXXXXXXXX</a></td>
+          <td class="cell c1">XXXXXXXXX</td>
           <td class="cell c2"><strong>Dylan</strong></td>
           <td class="cell c3"><strong>Vassallo</strong></td>
           <td class="cell c4">student@ucla.edu</td>
@@ -859,8 +855,7 @@
           "Picture of Admin User" title="Picture of Admin User" class=
           "userpicture defaultuserpic" width="35" height="35" /></a></td>
 
-          <td class="cell c1"><a href=
-          "http://localhost:9000/moodle/user/view.php?id=2&amp;course=2">XXXXXXXXX</a></td>
+          <td class="cell c1">XXXXXXXXX</td>
           <td class="cell c2"><strong>Prasanth</strong></td>
           <td class="cell c3"><strong>Veerina</strong></td>
           <td class="cell c4">student@ucla.edu</td>
