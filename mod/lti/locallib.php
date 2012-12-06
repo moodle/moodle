@@ -228,11 +228,6 @@ function lti_build_request($instance, $typeconfig, $course) {
 
     $role = lti_get_ims_role($USER, $instance->cmid, $instance->course);
 
-    $locale = $course->lang;
-    if ( strlen($locale) < 1 ) {
-         $locale = $CFG->lang;
-    }
-
     $requestparams = array(
         'resource_link_id' => $instance->id,
         'resource_link_title' => $instance->name,
@@ -242,7 +237,7 @@ function lti_build_request($instance, $typeconfig, $course) {
         'context_id' => $course->id,
         'context_label' => $course->shortname,
         'context_title' => $course->fullname,
-        'launch_presentation_locale' => $locale,
+        'launch_presentation_locale' => current_language()
     );
 
     $placementsecret = $instance->servicesalt;
