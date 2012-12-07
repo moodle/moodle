@@ -733,6 +733,7 @@
 
     ?>
     <script type="text/javascript" src="../theme/sorttable.js"></script>
+
     <table cellspacing="0" id="participants" class="sortable flexible generaltable generalbox" align="center">
         <tr>
           <th class="header c0" scope="col">
@@ -777,11 +778,10 @@
         </tr>
 
         <tr class="r1">
-          <td class="cell c0"><a href=
-          "http://localhost:9000/moodle/user/view.php?id=2&amp;course=2"><img src=
+          <td class="cell c0"><img src=
           "http://localhost:9000/moodle/theme/image.php/standard/core/1354064501/u/f2" alt=
           "Picture of Admin User" title="Picture of Admin User" class=
-          "userpicture defaultuserpic" width="35" height="35" /></a></td>
+          "userpicture defaultuserpic" width="35" height="35" /></td>
 
           <td class="cell c1">XXXXXXXXX</td>
           <td class="cell c2"><strong>Soumya</strong></td>
@@ -795,11 +795,10 @@
         </tr>
 
         <tr class="r2">
-          <td class="cell c0"><a href=
-          "http://localhost:9000/moodle/user/view.php?id=2&amp;course=2"><img src=
+          <td class="cell c0"><img src=
           "http://localhost:9000/moodle/theme/image.php/standard/core/1354064501/u/f2" alt=
           "Picture of Admin User" title="Picture of Admin User" class=
-          "userpicture defaultuserpic" width="35" height="35" /></a></td>
+          "userpicture defaultuserpic" width="35" height="35" /></td>
 
           <td class="cell c1">XXXXXXXXX</td>
           <td class="cell c2"><strong>Angela</strong></td>
@@ -813,11 +812,10 @@
         </tr>
 
         <tr class="r3">
-          <td class="cell c0"><a href=
-          "http://localhost:9000/moodle/user/view.php?id=2&amp;course=2"><img src=
+          <td class="cell c0"><img src=
           "http://localhost:9000/moodle/theme/image.php/standard/core/1354064501/u/f2" alt=
           "Picture of Admin User" title="Picture of Admin User" class=
-          "userpicture defaultuserpic" width="35" height="35" /></a></td>
+          "userpicture defaultuserpic" width="35" height="35" /></td>
 
           <td class="cell c1">XXXXXXXXX</td>
           <td class="cell c2"><strong>Bradley</strong></td>
@@ -831,11 +829,10 @@
         </tr>
 
         <tr class="r4">
-          <td class="cell c0"><a href=
-          "http://localhost:9000/moodle/user/view.php?id=2&amp;course=2"><img src=
+          <td class="cell c0"><img src=
           "http://localhost:9000/moodle/theme/image.php/standard/core/1354064501/u/f2" alt=
           "Picture of Admin User" title="Picture of Admin User" class=
-          "userpicture defaultuserpic" width="35" height="35" /></a></td>
+          "userpicture defaultuserpic" width="35" height="35" /></td>
 
           <td class="cell c1">XXXXXXXXX</td>
           <td class="cell c2"><strong>Dylan</strong></td>
@@ -849,11 +846,10 @@
         </tr>
 
         <tr class="r5">
-          <td class="cell c0"><a href=
-          "http://localhost:9000/moodle/user/view.php?id=2&amp;course=2"><img src=
+          <td class="cell c0"><img src=
           "http://localhost:9000/moodle/theme/image.php/standard/core/1354064501/u/f2" alt=
           "Picture of Admin User" title="Picture of Admin User" class=
-          "userpicture defaultuserpic" width="35" height="35" /></a></td>
+          "userpicture defaultuserpic" width="35" height="35" /></td>
 
           <td class="cell c1">XXXXXXXXX</td>
           <td class="cell c2"><strong>Prasanth</strong></td>
@@ -866,6 +862,7 @@
           <td class="cell c9">2 hours 49 mins<td>
         </tr>
     </table>
+
     <?php
 
     if ($bulkoperations) {
