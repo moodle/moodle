@@ -15,7 +15,7 @@ Composer is a new dependency manager for PHP projects.
 It installs PHP libraries into /vendor/ subdirectory inside your moodle dirroot.
 
 1. install Composer - http://getcomposer.org/doc/00-intro.md
-2. go to your moodle dirroot and execute `php composer.phar install`
+2. go to your moodle dirroot and execute `php composer.phar install --dev`
 
 
 PEAR installation (not recommended)
