@@ -49,6 +49,7 @@ class tool_behat {
      */
     private static $steps_types = array('given', 'when', 'then');
 
+    /** @var string Docu url */
     public static $docsurl = 'http://docs.moodle.org/dev/Acceptance_testing';
 
     /**
@@ -67,6 +68,7 @@ class tool_behat {
         // The loaded steps depends on the component specified.
         self::update_config_file($component);
 
+        // The Moodle\BehatExtension\HelpPrinter\MoodleDefinitionsPrinter will parse this search format.
         if ($type) {
             $filter .= '&&' . $type;
         }
@@ -118,13 +120,14 @@ class tool_behat {
     /**
      * Runs the acceptance tests
      *
-     * It starts test mode and runs the built-in php
-     * CLI server and stops it all then it's done
+     * It starts test mode and runs the built-in PHP
+     * erver and stops it all then it's done
      *
+     * @param boolean $withjavascript Include tests with javascript
      * @param string $tags Restricts the executed tests to the ones that matches the tags
      * @param string $extra Extra CLI behat options
      */
-    public static function runtests($withjavascript = false, $tags = false, $extra = false) {
+    public static function runtests($withjavascript = false, $tags = false, $extra = '') {
         global $CFG;
 
         // Checks that the behat reference is properly set up.
@@ -133,30 +136,27 @@ class tool_behat {
         // Check that PHPUnit test environment is correctly set up.
         self::test_environment_problem();
 
+        // Updates all the Moodle features and steps definitions.
         self::update_config_file();
 
         @set_time_limit(0);
 
         // No javascript by default.
         if (!$withjavascript && strstr($tags, 'javascript') == false) {
-            $jsstr = '~javascript';
+            $jsstr = '~@javascript';
         }
 
         // Adding javascript option to --tags.
         $tagsoption = '';
         if ($tags) {
             if (!empty($jsstr)) {
-                $tags .= ',' . $jsstr;
+                $tags .= '&&' . $jsstr;
             }
-            $tagsoption = ' --tags ' . $tags;
+            $tagsoption = " --tags '" . $tags . "'";
 
         // No javascript by default.
         } else if (!empty($jsstr)) {
-            $tagsoption = ' --tags ' . $jsstr;
-        }
-
-        if (!$extra) {
-            $extra = '';
+            $tagsoption = " --tags '" . $jsstr . "'";
         }
 
         // Starts built-in server and inits test mode.
@@ -196,7 +196,8 @@ class tool_behat {
             $loadbuiltincontexts = '1';
         }
 
-        // Basic behat dependencies.
+        // Behat config file specifing the main context class,
+        // the required Behat extensions and Moodle test wwwroot.
         $contents = 'default:
   paths:
     features: ' . $behatpath . '/features
@@ -245,7 +246,6 @@ class tool_behat {
         }
 
     }
-
 
     /**
      * Gets the list of Moodle steps definitions
@@ -309,15 +309,12 @@ class tool_behat {
     private static function test_environment_problem() {
         global $CFG;
 
-        // phpunit --diag returns nothing if the test environment is set up correctly.
-        $currentcwd = getcwd();
-        chdir($CFG->dirroot . '/' . $CFG->admin . '/tool/phpunit/cli');
-        exec("php util.php --diag", $output, $code);
-        chdir($currentcwd);
+        // PHPUnit --diag returns nothing if the test environment is set up correctly.
+        exec('php ' . $CFG->dirroot . '/' . $CFG->admin . '/tool/phpunit/cli/util.php --diag', $output, $code);
 
         // If something is not ready stop execution and display the CLI command output.
         if ($code != 0) {
-            notice(implode(' ', $output));
+            notice(get_string('phpunitenvproblem', 'tool_behat') . ': ' . implode(' ', $output));
         }
     }
 
@@ -336,11 +333,9 @@ class tool_behat {
             $msg = get_string('wrongbehatsetup', 'tool_behat');
 
             // With HTML.
-            $docslink = tool_behat::$docsurl;
+            $docslink = tool_behat::$docsurl . '#Installation';
             if (!CLI_SCRIPT) {
                 $docslink = html_writer::tag('a', $docslink, array('href' => $docslink, 'target' => '_blank'));
-                $systempathsurl = $CFG->wwwroot . '/' . $CFG->admin . '/settings.php?section=systempaths';
-                $msg .= ' (' . html_writer::tag('a', get_string('systempaths', 'admin'), array('href' => $systempathsurl)) . ')';
             }
             $msg .= '. ' . get_string('moreinfoin', 'tool_behat') . ' ' . $docslink;
             notice($msg);
@@ -360,12 +355,10 @@ class tool_behat {
     /**
      * Enables test mode
      *
-     * Stores a file in dataroot/behat to
-     * allow Moodle to switch to the test
-     * database and dataroot before the initial setup
+     * Stores a file in dataroot/behat to allow Moodle to switch
+     * to the test environment when using cli-server
      *
      * @throws file_exception
-     * @return array
      */
     private static function start_test_mode() {
         global $CFG;
@@ -413,6 +406,7 @@ class tool_behat {
 
     /**
      * Disables test mode
+     * @throws file_exception
      */
     private static function stop_test_mode() {
 
@@ -451,12 +445,12 @@ class tool_behat {
     /**
      * Checks whether test environment is enabled or disabled
      *
-     * It does not return if the current script is running
-     * in test environment {@see tool_behat::is_test_environment_running()}
+     * To check is the current script is running in the test
+     * environment {@see tool_behat::is_test_environment_running()}
      *
      * @return bool
      */
-    private static function is_test_mode_enabled() {
+    public static function is_test_mode_enabled() {
 
         $testenvfile = self::get_test_filepath();
         if (file_exists($testenvfile)) {
@@ -473,7 +467,7 @@ class tool_behat {
     private static function is_test_environment_running() {
         global $CFG;
 
-        if (!empty($CFG->originaldataroot) && php_sapi_name() === 'cli-server') {
+        if (!empty($CFG->originaldataroot) || defined('BEHAT_RUNNING')) {
             return true;
         }
 

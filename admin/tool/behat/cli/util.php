@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * CLI script
+ * CLI tests runner
  *
  * @package    tool_behat
  * @copyright  2012 David Monllaó
@@ -28,13 +28,13 @@ require(__DIR__ . '/../../../../config.php');
 require_once($CFG->libdir . '/clilib.php');
 require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/behat/locallib.php');
 
-// now get cli options
+// CLI options.
 list($options, $unrecognized) = cli_get_params(
     array(
         'help'               => false,
         'runtests'           => false,
         'tags'               => false,
-        'extra'              => false,
+        'extra'              => '',
         'with-javascript'    => false,
         'testenvironment'    => false
     ),
@@ -57,7 +57,7 @@ Options:
 Example from Moodle root directory:
 \$ php admin/tool/behat/cli/util.php --runtests --tags=\"tool_behat\"
 
-More info in http://docs.moodle.org/dev/Acceptance_testing#Usage
+More info in http://docs.moodle.org/dev/Acceptance_testing#Running_tests
 ";
 
 if (!empty($options['help'])) {

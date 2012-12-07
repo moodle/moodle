@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Behat web runner
+ * Web interface to list and filter steps
  *
  * @package    tool_behat
  * @copyright  2012 David Monllaó
@@ -40,9 +40,12 @@ $componentswithsteps = array(
     '' => get_string('allavailablesteps', 'tool_behat'),
     'nomoodle' => get_string('nomoodlesteps', 'tool_behat'),
 );
+
+// Complete the components list with the moodle steps definitions.
 $components = tool_behat::get_components_steps_definitions();
 if ($components) {
     foreach ($components as $component => $filepath) {
+        // TODO Use a class static attribute instead of the class name.
         $componentswithsteps[$component] = 'Moodle ' . substr($component, 6);
     }
 }

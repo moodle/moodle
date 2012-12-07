@@ -536,11 +536,18 @@ $CFG->admin = 'admin';
 //                                        'otherplugin' => array('mysetting' => 'myvalue', 'thesetting' => 'thevalue'));
 //
 //=========================================================================
-// 9. PHPUNIT SUPPORT
+// 10. PHPUNIT SUPPORT
 //=========================================================================
 // $CFG->phpunit_prefix = 'phpu_';
 // $CFG->phpunit_dataroot = '/home/example/phpu_moodledata';
 // $CFG->phpunit_directorypermissions = 02777; // optional
+//
+//=========================================================================
+// 11. BEHAT SUPPORT
+//=========================================================================
+// Behat uses http://localhost:8000 as default URL to run
+// the acceptance tests, you can override this value
+// $CFG->test_wwwroot = '';
 
 //=========================================================================
 // ALL DONE!  To continue installation, visit your main page with a browser

@@ -22,8 +22,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once($CFG->libdir.'/formslib.php');
+defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->libdir.'/formslib.php');
 
 /**
  * Form to display the available steps definitions
@@ -39,7 +40,7 @@ class steps_definitions_form extends moodleform {
      */
     function definition() {
 
-        $mform =& $this->_form;
+        $mform = $this->_form;
 
         $mform->addElement('header', 'filters', get_string('stepsdefinitionsfilters', 'tool_behat'));
 

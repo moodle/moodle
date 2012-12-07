@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * PHPunit integration
+ * Adds behat tests link in admin tree
  *
  * @package    tool_behat
  * @copyright  2012 David Monllaó

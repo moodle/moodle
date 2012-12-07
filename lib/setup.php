@@ -95,7 +95,8 @@ if (!isset($CFG->test_wwwroot)) {
     $CFG->test_wwwroot = 'http://localhost:8000';
 }
 
-// Switch to test site only when test environment is enabled.
+// Switch to test site only when test environment is enabled: Both when the
+// acceptance tests are running and when Behat is requiring moodle codebase.
 if ((php_sapi_name() === 'cli-server' || defined('BEHAT_RUNNING')) &&
         file_exists($CFG->dataroot . '/behat/test_environment_enabled.txt')) {
     $CFG->wwwroot = $CFG->test_wwwroot;
