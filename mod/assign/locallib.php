@@ -2040,7 +2040,16 @@ class assign {
                 }
             }
         }
-        if ($zipfile = $this->pack_files($filesforzipping)) {
+        if (count($filesforzipping) == 0) {
+            $result = $this->get_renderer()->render(new assign_header($this->get_instance(),
+                $this->get_context(),
+                '',
+                $this->get_course_module()->id,
+                get_string('downloadall', 'assign')));
+            $result .= $this->get_renderer()->notification(get_string('nosubmission', 'assign'));
+            $result .= $this->view_footer();
+            return $result;
+        } else if ($zipfile = $this->pack_files($filesforzipping)) {
             $this->add_to_log('download all submissions', get_string('downloadall', 'assign'));
             // Send file and delete after sending.
             send_temp_file($zipfile, $filename);
