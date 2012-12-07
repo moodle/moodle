@@ -577,7 +577,8 @@ class core_renderer extends renderer_base {
                 }
                 $loggedinas = get_string('loggedinas', 'moodle', $username).$rolename;
                 if ($withlinks) {
-                    $loggedinas .= " (<a href=\"$CFG->wwwroot/course/view.php?id=$course->id&amp;switchrole=0&amp;sesskey=".sesskey()."\">".get_string('switchrolereturn').'</a>)';
+                    $url = new moodle_url('/course/switchrole.php', array('id'=>$course->id,'sesskey'=>sesskey(), 'switchrole'=>0, 'returnurl'=>$this->page->url->out_as_local_url(false)));
+                    $loggedinas .= '('.html_writer::tag('a', get_string('switchrolereturn'), array('href'=>$url)).')';
                 }
             } else {
                 $loggedinas = $realuserinfo.get_string('loggedinas', 'moodle', $username);
