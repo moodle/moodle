@@ -736,7 +736,7 @@
 
     <table cellspacing="0" id="participants" class="sortable flexible generaltable generalbox" align="center">
         <tr>
-          <th class="header c0" scope="col">
+          <th class="header c0 sorttable_nosort" scope="col">
             <a href="#">Photo</a>
           </th>
 
@@ -863,6 +863,40 @@
         </tr>
     </table>
 
+    <br/>
+    <h3 class="main">Totals</h3>
+
+    <table cellspacing="0" id="participants" class="flexible generaltable generalbox" align="center">
+        <tr>
+          <th class="header c0" scope="col">
+            <a href="#">Undergraduate</a>
+          </th>
+
+          <th class="header c1" scope="col">
+            <a href="#">Graduate</a>
+          </th>
+
+          <th class="header c2" scope="col">
+            <a href="#">Professional</a>
+          </th>
+
+          <th class="header c3" scope="col">
+            <a href="#">UNEX</a>
+          </th>
+
+          <th class="header c4" scope="col">
+            <a href="#">Total</a>
+          </th>
+        </tr>
+
+        <tr class="r1">
+          <td class="cell c0">5</td>
+          <td class="cell c1">0</td>
+          <td class="cell c2">0</td>
+          <td class="cell c3">0</td>
+          <td class="cell c4">5</td>
+        </tr>
+    </table>
     <?php
 
     if ($bulkoperations) {
