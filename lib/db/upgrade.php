@@ -985,5 +985,19 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012062502.07);
     }
 
+    if ($oldversion < 2012062503.07) {
+        // Remove "_utf8" suffix from all langs in course table.
+        $langs = $DB->get_records_sql("SELECT DISTINCT lang FROM {course} WHERE lang LIKE ?", array('%_utf8'));
+
+        foreach ($langs as $lang=>$unused) {
+            $newlang = str_replace('_utf8', '', $lang);
+            $sql = "UPDATE {course} SET lang = :newlang WHERE lang = :lang";
+            $DB->execute($sql, array('newlang'=>$newlang, 'lang'=>$lang));
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2012062503.07);
+    }
+
     return true;
 }
