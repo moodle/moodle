@@ -172,7 +172,7 @@ if (strlen($result) > 0) {
 
         }
 
-        if ($data->business != $plugin->get_config('paypalbusiness')) {   // Check that the email is the one we want it to be
+        if (textlib::strtolower($data->business) !== textlib::strtolower($plugin->get_config('paypalbusiness'))) {   // Check that the email is the one we want it to be
             message_paypal_error_to_admin("Business email is {$data->business} (not ".
                     $plugin->get_config('paypalbusiness').")", $data);
             die;
