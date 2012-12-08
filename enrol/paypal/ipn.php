@@ -90,13 +90,14 @@ if (! $plugin_instance = $DB->get_record("enrol", array("id"=>$data->instanceid,
 $plugin = enrol_get_plugin('paypal');
 
 /// Open a connection back to PayPal to validate the data
+$paypaladdr = empty($CFG->usepaypalsandbox) ? 'www.paypal.com' : 'www.sandbox.paypal.com';
 $c = new curl();
 $options = array(
     'returntransfer' => true,
-    'httpheader' => array('application/x-www-form-urlencoded'),
+    'httpheader' => array('application/x-www-form-urlencoded', "Host: $paypaladdr"),
     'timeout' => 30,
+    'CURLOPT_HTTP_VERSION' => CURL_HTTP_VERSION_1_1,
 );
-$paypaladdr = empty($CFG->usepaypalsandbox) ? 'www.paypal.com' : 'www.sandbox.paypal.com';
 $location = "https://$paypaladdr/cgi-bin/webscr";
 $result = $c->post($location, $req, $options);
 
