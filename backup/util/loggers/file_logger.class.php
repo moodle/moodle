@@ -75,7 +75,7 @@ class file_logger extends base_logger {
         if (substr($this->fullpath, -5) !== '.html') {
             $content = $prefix . str_repeat('  ', $depth) . $message . PHP_EOL;
         } else {
-            $content = $prefix . str_repeat('&nbsp;&nbsp;', $depth) . htmlentities($message, ENT_QUOTES) . '<br/>' . PHP_EOL;
+            $content = $prefix . str_repeat('&nbsp;&nbsp;', $depth) . htmlentities($message, ENT_QUOTES, 'UTF-8') . '<br/>' . PHP_EOL;
         }
         if (false === fwrite($this->fhandle, $content)) {
             throw new base_logger_exception('error_writing_file', $this->fullpath);
