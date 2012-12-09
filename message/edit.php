@@ -26,30 +26,14 @@ require_once(dirname(__FILE__) . '/../config.php');
 require_once($CFG->dirroot . '/message/lib.php');
 
 $userid = optional_param('id', $USER->id, PARAM_INT);    // user id
-$course = optional_param('course', SITEID, PARAM_INT);   // course id (defaults to Site)
 $disableall = optional_param('disableall', 0, PARAM_BOOL); //disable all of this user's notifications
 
 $url = new moodle_url('/message/edit.php');
 $url->param('id', $userid);
-$url->param('course', $course);
 
 $PAGE->set_url($url);
 
-if (!$course = $DB->get_record('course', array('id' => $course))) {
-    print_error('invalidcourseid');
-}
-
-if ($course->id != SITEID) {
-    require_login($course);
-
-} else {
-    if (!isloggedin()) {
-        if (empty($SESSION->wantsurl)) {
-            $SESSION->wantsurl = $CFG->httpswwwroot.'/message/edit.php';
-        }
-        redirect(get_login_url());
-    }
-}
+require_login();
 
 if (isguestuser()) {
     print_error('guestnoeditmessage', 'message');
@@ -71,10 +55,6 @@ $PAGE->requires->js_init_call('M.core_message.init_editsettings');
 if ($user->id == $USER->id) {
     //editing own message profile
     require_capability('moodle/user:editownmessageprofile', $systemcontext);
-    if ($course->id != SITEID && $node = $PAGE->navigation->find($course->id, navigation_node::TYPE_COURSE)) {
-        $node->make_active();
-        $PAGE->navbar->includesettingsbase = true;
-    }
 } else {
     // teachers, parents, etc.
     require_capability('moodle/user:editmessageprofile', $personalcontext);
@@ -144,7 +124,7 @@ if (($form = data_submitted()) && confirm_sesskey()) {
         print_error('cannotupdateusermsgpref');
     }
 
-    redirect("$CFG->wwwroot/message/edit.php?id=$user->id&course=$course->id");
+    redirect("$CFG->wwwroot/message/edit.php?id=$user->id");
 }
 
 /// Load preferences
@@ -179,14 +159,8 @@ $preferences->blocknoncontacts  =  get_user_preferences( 'message_blocknoncontac
 
 /// Display page header
 $streditmymessage = get_string('editmymessage', 'message');
-$strparticipants  = get_string('participants');
-
-$PAGE->set_title("$course->shortname: $streditmymessage");
-if ($course->id != SITEID) {
-    $PAGE->set_heading("$course->fullname: $streditmymessage");
-} else {
-    $PAGE->set_heading($course->fullname);
-}
+$PAGE->set_title($streditmymessage);
+$PAGE->set_heading($streditmymessage);
 
 // Grab the renderer
 $renderer = $PAGE->get_renderer('core', 'message');
