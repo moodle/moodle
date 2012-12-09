@@ -750,7 +750,7 @@ class cache_definition {
             if (!empty($this->identifiers)) {
                 $identifiers = array();
                 foreach ($this->identifiers as $key => $value) {
-                    $identifiers[] = htmlentities($key).'='.htmlentities($value);
+                    $identifiers[] = htmlentities($key, ENT_QUOTES, 'UTF-8').'='.htmlentities($value, ENT_QUOTES, 'UTF-8');
                 }
                 $this->keyprefixmulti['identifiers'] = join('&', $identifiers);
             }
