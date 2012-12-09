@@ -1069,6 +1069,10 @@ function get_moodle_cookie() {
 function session_set_user($user) {
     $_SESSION['USER'] = $user;
     unset($_SESSION['USER']->description); // conserve memory
+    if (isset($_SESSION['USER']->lang)) {
+        // Make sure it is a valid lang pack name.
+        $_SESSION['USER']->lang = clean_param($_SESSION['USER']->lang, PARAM_LANG);
+    }
     sesskey(); // init session key
 
     if (PHPUNIT_TEST) {
