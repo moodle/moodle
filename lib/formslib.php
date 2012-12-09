@@ -1964,7 +1964,7 @@ function qf_errorHandler(element, _qfMsg) {
             list($jsArr,$element)=$jsandelement;
             //end of fix
             $escapedElementName = preg_replace_callback(
-                '/[_\[\]]/',
+                '/[_\[\]-]/',
                 create_function('$matches', 'return sprintf("_%2x",ord($matches[0]));'),
                 $elementName);
             $js .= '
