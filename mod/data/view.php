@@ -764,7 +764,7 @@ if ($showactivity) {
         $records = array();
     }
 
-    if ($mode == '' && !empty($CFG->enableportfolios)) {
+    if ($mode == '' && !empty($CFG->enableportfolios) && !empty($records)) {
         require_once($CFG->libdir . '/portfoliolib.php');
         $button = new portfolio_add_button();
         $button->set_callback_options('data_portfolio_caller', array('id' => $cm->id), '/mod/data/locallib.php');
