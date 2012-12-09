@@ -886,7 +886,9 @@ class grade_category extends grade_object {
                 $droppedsomething = false;
 
                 $grade_keys = array_keys($grade_values);
-                if (count($grade_keys) === 0) {
+                $gradekeycount = count($grade_keys);
+
+                if ($gradekeycount === 0) {
                     //We've dropped all grade items
                     break;
                 }
@@ -912,7 +914,7 @@ class grade_category extends grade_object {
                 // Now iterate over the remaining grade items
                 // We're looking for other grade items with the same grade value but a higher grademax
                 $i = 1;
-                while ($originalindex+$i < count($grade_keys)) {
+                while ($originalindex + $i < $gradekeycount) {
 
                     $possibleitemid = $grade_keys[$originalindex+$i];
                     $i++;
