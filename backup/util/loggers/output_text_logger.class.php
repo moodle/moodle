@@ -37,7 +37,7 @@ class output_text_logger extends base_logger {
         if (defined('STDOUT')) {
             echo $prefix . $message . PHP_EOL;
         } else {
-            echo $prefix . htmlentities($message, ENT_QUOTES) . '<br/>' . PHP_EOL;
+            echo $prefix . htmlentities($message, ENT_QUOTES, 'UTF-8') . '<br/>' . PHP_EOL;
         }
         flush();
         return true;

@@ -1892,7 +1892,7 @@ function send_file($path, $filename, $lifetime = 'default' , $filter=0, $pathiss
             $options = new stdClass();
             $options->newlines = false;
             $options->noclean = true;
-            $text = htmlentities($pathisstring ? $path : implode('', file($path)));
+            $text = htmlentities($pathisstring ? $path : implode('', file($path)), ENT_QUOTES, 'UTF-8');
             $output = '<pre>'. format_text($text, FORMAT_MOODLE, $options, $COURSE->id) .'</pre>';
 
             header('Content-Length: '.strlen($output));

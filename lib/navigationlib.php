@@ -3138,9 +3138,9 @@ class settings_navigation extends navigation_node {
                         continue;
                     }
                     if ($type->modclass == MOD_CLASS_RESOURCE) {
-                        $resources[html_entity_decode($type->type)] = $type->typestr;
+                        $resources[html_entity_decode($type->type, ENT_QUOTES, 'UTF-8')] = $type->typestr;
                     } else {
-                        $activities[html_entity_decode($type->type)] = $type->typestr;
+                        $activities[html_entity_decode($type->type, ENT_QUOTES, 'UTF-8')] = $type->typestr;
                     }
                 }
             } else {
@@ -4070,7 +4070,7 @@ class navigation_json {
         }
 
         if ($child->forcetitle || $child->title !== $child->text) {
-            $attributes['title'] = htmlentities($child->title);
+            $attributes['title'] = htmlentities($child->title, ENT_QUOTES, 'UTF-8');
         }
         if (array_key_exists($child->key.':'.$child->type, $this->expandable)) {
             $attributes['expandable'] = $child->key;
