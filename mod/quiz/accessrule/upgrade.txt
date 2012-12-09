@@ -2,11 +2,9 @@ This files describes API changes for quiz access rule plugins.
 
 Overview of this plugin type at http://docs.moodle.org/dev/Quiz_access_rules
 
+=== 2.4 ===
 
-=== 2.2 ===
-
-* This plugin type was new in Moodle 2.2!
-
+* Replaced time_left() with new time_left_display() and end_time() functions.
 
 === 2.3 ===
 
@@ -14,6 +12,8 @@ Overview of this plugin type at http://docs.moodle.org/dev/Quiz_access_rules
   lib.php file containing
 function quizaccess_mypluginname_cron() {};
 
-=== 2.4 ===
+=== 2.2 ===
 
-* Replaced time_left() with new time_left_display() and end_time() functions.
+* This plugin type was new in Moodle 2.2!
+
+
