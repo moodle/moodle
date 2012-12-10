@@ -13,7 +13,6 @@
 #chooseqtype .submitbuttons {margin: 0.7em 0;text-align: center;}
 
 #qtypechoicecontainer {display: none;}
-body.jsenabled #qtypechoicecontainer {display: block;}
 
 #qtypechoicecontainer {background: white;}
 #qtypechoicecontainer #chooseqtype {width: 30em;}
