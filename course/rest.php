@@ -194,44 +194,7 @@ switch($requestmethod) {
         switch ($class) {
             case 'resource':
                 require_capability('moodle/course:manageactivities', $modcontext);
-                $modlib = "$CFG->dirroot/mod/$cm->modname/lib.php";
-
-                if (file_exists($modlib)) {
-                    include_once($modlib);
-                } else {
-                    throw new moodle_exception("Ajax rest.php: This module is missing mod/$cm->modname/lib.php");
-                }
-                $deleteinstancefunction = $cm->modname."_delete_instance";
-
-                // Run the module's cleanup funtion.
-                if (!$deleteinstancefunction($cm->instance)) {
-                    throw new moodle_exception("Ajax rest.php: Could not delete the $cm->modname $cm->name (instance)");
-                    die;
-                }
-
-                // remove all module files in case modules forget to do that
-                $fs = get_file_storage();
-                $fs->delete_area_files($modcontext->id);
-
-                if (!delete_course_module($cm->id)) {
-                    throw new moodle_exception("Ajax rest.php: Could not delete the $cm->modname $cm->name (coursemodule)");
-                }
-                // Remove the course_modules entry.
-                if (!delete_mod_from_section($cm->id, $cm->section)) {
-                    throw new moodle_exception("Ajax rest.php: Could not delete the $cm->modname $cm->name from section");
-                }
-
-                // Trigger a mod_deleted event with information about this module.
-                $eventdata = new stdClass();
-                $eventdata->modulename = $cm->modname;
-                $eventdata->cmid       = $cm->id;
-                $eventdata->courseid   = $course->id;
-                $eventdata->userid     = $USER->id;
-                events_trigger('mod_deleted', $eventdata);
-
-                add_to_log($courseid, "course", "delete mod",
-                           "view.php?id=$courseid",
-                           "$cm->modname $cm->instance", $cm->id);
+                course_delete_module($cm->id);
                 break;
         }
         break;
