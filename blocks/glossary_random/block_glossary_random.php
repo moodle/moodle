@@ -137,6 +137,7 @@ class block_glossary_random extends block_base {
             $this->config->cache = '';
             $this->instance_config_commit();
 
+            $this->content = new stdClass();
             $this->content->text   = get_string('notyetconfigured','block_glossary_random');
             $this->content->footer = '';
             return $this->content;
