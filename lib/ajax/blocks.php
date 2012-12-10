@@ -30,6 +30,7 @@ require_once(dirname(__FILE__) . '/../../config.php');
 $courseid = required_param('courseid', PARAM_INT);
 $pagelayout = required_param('pagelayout', PARAM_ALPHAEXT);
 $pagetype = required_param('pagetype', PARAM_ALPHAEXT);
+$subpage = optional_param('subpage', '', PARAM_ALPHANUMEXT);
 $cmid = optional_param('cmid', null, PARAM_INT);
 $action = optional_param('action', '', PARAM_ALPHA);
 // Params for blocks-move actions
@@ -51,6 +52,7 @@ require_sesskey();
 
 // Setting layout to replicate blocks configuration for the page we edit
 $PAGE->set_pagelayout($pagelayout);
+$PAGE->set_subpage($subpage);
 echo $OUTPUT->header(); // send headers
 
 switch ($action) {
