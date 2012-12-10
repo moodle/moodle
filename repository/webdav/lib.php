@@ -65,16 +65,12 @@ class repository_webdav extends repository {
         return true;
     }
     public function get_file($url, $title) {
-        global $CFG;
         $url = urldecode($url);
         $path = $this->prepare_file($title);
-        $buffer = '';
         if (!$this->dav->open()) {
             return false;
         }
-        $this->dav->get($url, $buffer);
-        $fp = fopen($path, 'wb');
-        fwrite($fp, $buffer);
+        $this->dav->get_file($url, $path);
         return array('path'=>$path);
     }
     public function global_search() {
