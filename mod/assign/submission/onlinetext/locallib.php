@@ -376,7 +376,9 @@ class assign_submission_onlinetext extends assign_submission_plugin {
      * @return bool
      */
     public function is_empty(stdClass $submission) {
-        return $this->view($submission) == '';
+        $onlinetextsubmission = $this->get_onlinetext_submission($submission->id);
+
+        return empty($onlinetextsubmission->onlinetext);
     }
 
     /**

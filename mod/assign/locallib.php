@@ -1056,22 +1056,32 @@ class assign {
     /**
      * Load a count of users submissions in the current module that require grading
      * This means the submission modification time is more recent than the
-     * grading modification time.
+     * grading modification time and the status is SUBMITTED.
      *
      * @return int number of matching submissions
      */
     public function count_submissions_need_grading() {
         global $DB;
 
-        $params = array($this->get_course_module()->instance);
+        $currentgroup = groups_get_activity_group($this->get_course_module(), true);
+        list($esql, $params) = get_enrolled_sql($this->get_context(), 'mod/assign:submit', $currentgroup, false);
 
-        return $DB->count_records_sql("SELECT COUNT('x')
-                                       FROM {assign_submission} s
-                                       LEFT JOIN {assign_grades} g ON s.assignment = g.assignment AND s.userid = g.userid
-                                       WHERE s.assignment = ?
-                                           AND s.timemodified IS NOT NULL
-                                           AND (s.timemodified > g.timemodified OR g.timemodified IS NULL)",
-                                       $params);
+        $params['assignid'] = $this->get_instance()->id;
+        $params['submitted'] = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
+
+        $sql = 'SELECT COUNT(s.userid)
+                   FROM {assign_submission} s
+                   LEFT JOIN {assign_grades} g ON
+                        s.assignment = g.assignment AND
+                        s.userid = g.userid
+                   JOIN(' . $esql . ') AS e ON e.id = s.userid
+                   WHERE
+                        s.assignment = :assignid AND
+                        s.timemodified IS NOT NULL AND
+                        s.status = :submitted AND
+                        (s.timemodified > g.timemodified OR g.timemodified IS NULL)';
+
+        return $DB->count_records_sql($sql, $params);
     }
 
     /**
@@ -1082,10 +1092,26 @@ class assign {
      */
     public function count_submissions_with_status($status) {
         global $DB;
-        return $DB->count_records_sql("SELECT COUNT('x')
-                                     FROM {assign_submission}
-                                    WHERE assignment = ? AND
-                                          status = ?", array($this->get_course_module()->instance, $status));
+
+        $currentgroup = groups_get_activity_group($this->get_course_module(), true);
+        list($esql, $params) = get_enrolled_sql($this->get_context(), 'mod/assign:submit', $currentgroup, false);
+
+        $params['assignid'] = $this->get_instance()->id;
+        $params['submissionstatus'] = $status;
+
+        $sql = 'SELECT COUNT(s.userid)
+                   FROM {assign_submission} s
+                   LEFT JOIN {assign_grades} g ON
+                        s.assignment = g.assignment AND
+                        s.userid = g.userid
+                   JOIN(' . $esql . ') AS e ON e.id = s.userid
+                   WHERE
+                        s.assignment = :assignid AND
+                        s.timemodified IS NOT NULL AND
+                        s.status = :submissionstatus AND
+                        (s.timemodified > g.timemodified OR g.timemodified IS NULL)';
+
+        return $DB->count_records_sql($sql, $params);
     }
 
     /**
@@ -1138,22 +1164,32 @@ class assign {
      * @return array The submission objects indexed by id
      */
     private function get_all_submissions( $sort="", $dir="DESC") {
-        global $CFG, $DB;
+        global $DB;
+
+        $currentgroup = groups_get_activity_group($this->get_course_module(), true);
+        list($esql, $params) = get_enrolled_sql($this->get_context(), 'mod/assign:submit', $currentgroup, false);
+
+        $params['assignid'] = $this->get_instance()->id;
+
+        $sql = 'SELECT s.*, u.lastname, u.firstname, u.username
+                   FROM {assign_submission} s
+                   JOIN {user} u ON s.userid = u.id
+                   JOIN(' . $esql . ') AS e ON e.id = s.userid
+                   WHERE
+                        s.assignment = :assignid AND
+                        s.timemodified IS NOT NULL';
 
         if ($sort == "lastname" or $sort == "firstname") {
             $sort = "u.$sort $dir";
         } else if (empty($sort)) {
-            $sort = "a.timemodified DESC";
+            $sort = "s.timemodified DESC";
         } else {
-            $sort = "a.$sort $dir";
+            $sort = "s.$sort $dir";
         }
 
-        return $DB->get_records_sql("SELECT a.*
-                                       FROM {assign_submission} a, {user} u
-                                      WHERE u.id = a.userid
-                                            AND a.assignment = ?
-                                   ORDER BY $sort", array($this->get_instance()->id));
+        $sql .= ' ORDER BY ' . $sort;
 
+        return $DB->get_records_sql($sql, $params);
     }
 
     /**
@@ -1542,9 +1578,7 @@ class assign {
             if ((groups_is_member($groupid,$userid) or !$groupmode or !$groupid)) {
                 // get the plugins to add their own files to the zip
 
-                $user = $DB->get_record("user", array("id"=>$userid),'id,username,firstname,lastname', MUST_EXIST);
-
-                $prefix = clean_filename(fullname($user) . "_" .$userid . "_");
+                $prefix = clean_filename(fullname($submission) . "_" .$userid . "_");
 
                 foreach ($this->submissionplugins as $plugin) {
                     if ($plugin->is_enabled() && $plugin->is_visible()) {
@@ -1609,12 +1643,7 @@ class assign {
             $submission->userid       = $userid;
             $submission->timecreated = time();
             $submission->timemodified = $submission->timecreated;
-
-            if ($this->get_instance()->submissiondrafts) {
-                $submission->status = ASSIGN_SUBMISSION_STATUS_DRAFT;
-            } else {
-                $submission->status = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
-            }
+            $submission->status = ASSIGN_SUBMISSION_STATUS_DRAFT;
             $sid = $DB->insert_record('assign_submission', $submission);
             $submission->id = $sid;
             return $submission;
@@ -2102,6 +2131,9 @@ class assign {
             $showedit = has_capability('mod/assign:submit', $this->context) &&
                          $this->submissions_open() && ($this->is_any_submission_plugin_enabled()) && $showlinks;
             $showsubmit = $submission && ($submission->status == ASSIGN_SUBMISSION_STATUS_DRAFT) && $showlinks;
+            if (!$this->get_instance()->submissiondrafts) {
+                $showsubmit = false;
+            }
             $gradelocked = ($grade && $grade->locked) || $this->grading_disabled($user->id);
 
             $o .= $this->output->render(new assign_submission_status($this->get_instance()->allowsubmissionsfromdate,
@@ -2852,12 +2884,17 @@ class assign {
         }
         if ($data = $mform->get_data()) {
             $submission = $this->get_user_submission($USER->id, true); //create the submission if needed & its id
+            if ($this->get_instance()->submissiondrafts) {
+                $submission->status = ASSIGN_SUBMISSION_STATUS_DRAFT;
+            } else {
+                $submission->status = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
+            }
+
             $grade = $this->get_user_grade($USER->id, false); // get the grade to check if it is locked
             if ($grade && $grade->locked) {
                 print_error('submissionslocked', 'assign');
                 return true;
             }
-
 
             $allempty = true;
             $pluginerror = false;
