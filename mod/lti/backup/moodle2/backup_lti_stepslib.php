@@ -70,6 +70,7 @@ class backup_lti_activity_structure_step extends backup_activity_structure_step 
             'timemodified',
             'typeid',
             'toolurl',
+            'securetoolurl',
             'preferheight',
             'launchcontainer',
             'instructorchoicesendname',
@@ -79,8 +80,11 @@ class backup_lti_activity_structure_step extends backup_activity_structure_step 
             'instructorchoiceallowsetting',
             'grade',
             'instructorcustomparameters',
+            'debuglaunch',
             'showtitlelaunch',
-            'showdescriptionlaunch'
+            'showdescriptionlaunch',
+            'icon',
+            'secureicon',
             )
         );
 
