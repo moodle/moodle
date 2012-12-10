@@ -643,6 +643,19 @@ $functions = array(
             - similar to core get_component_strings() call',
         'type'        => 'read',
     ),
+
+
+    // === Calendar related functions ===
+
+    'core_calendar_delete_calendar_events' => array(
+        'classname'   => 'core_calendar_external',
+        'methodname'  => 'delete_calendar_events',
+        'description' => 'Delete calendar events',
+        'classpath'   => 'calendar/externallib.php',
+        'type'        => 'write',
+        'capabilities'=> 'moodle/calendar:manageentries', 'moodle/calendar:manageownentries', 'moodle/calendar:managegroupentries'
+    ),
+
 );
 
 $services = array(
