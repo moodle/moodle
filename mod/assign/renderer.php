@@ -254,8 +254,10 @@ class mod_assign_renderer extends plugin_renderer_base {
         if ($summary->submissionsenabled) {
             $this->add_table_row_tuple($t, get_string('numberofsubmittedassignments', 'assign'),
                                        $summary->submissionssubmittedcount);
-            $this->add_table_row_tuple($t, get_string('numberofsubmissionsneedgrading', 'assign'),
-                                       $summary->submissionsneedgradingcount);
+            if (!$summary->teamsubmission) {
+                $this->add_table_row_tuple($t, get_string('numberofsubmissionsneedgrading', 'assign'),
+                                           $summary->submissionsneedgradingcount);
+            }
         }
 
         $time = time();
@@ -572,10 +574,11 @@ class mod_assign_renderer extends plugin_renderer_base {
             $t->data[] = $row;
 
             foreach ($status->submissionplugins as $plugin) {
+                $pluginshowsummary = !$plugin->is_empty($submission) || !$plugin->allow_submissions();
                 if ($plugin->is_enabled() &&
                     $plugin->is_visible() &&
                     $plugin->has_user_summary() &&
-                    !$plugin->is_empty($submission)) {
+                    $pluginshowsummary) {
 
                     $row = new html_table_row();
                     $cell1 = new html_table_cell($plugin->get_name());
