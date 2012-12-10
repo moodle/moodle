@@ -1022,6 +1022,8 @@ class assign {
 
         static $scalegrades = array();
 
+        $o = '';
+
         if ($this->get_instance()->grade >= 0) {
             // Normal number
             if ($editing && $this->get_instance()->grade > 0) {
@@ -1030,17 +1032,20 @@ class assign {
                 } else {
                     $displaygrade = format_float($grade);
                 }
-                $o = '<label class="accesshide" for="quickgrade_' . $userid . '">' . get_string('usergrade', 'assign') . '</label>';
-                $o .= '<input type="text" id="quickgrade_' . $userid . '" name="quickgrade_' . $userid . '" value="' . $displaygrade
-                        . '" size="6" maxlength="10" class="quickgrade"/>';
+                $o .= '<label class="accesshide" for="quickgrade_' . $userid . '">' . get_string('usergrade', 'assign') . '</label>';
+                $o .= '<input type="text" id="quickgrade_' . $userid . '" name="quickgrade_' . $userid . '" value="' . 
+                      $displaygrade . '" size="6" maxlength="10" class="quickgrade"/>';
                 $o .= '&nbsp;/&nbsp;' . format_float($this->get_instance()->grade,2);
                 $o .= '<input type="hidden" name="grademodified_' . $userid . '" value="' . $modified . '"/>';
                 return $o;
             } else {
+                $o .= '<input type="hidden" name="grademodified_' . $userid . '" value="' . $modified . '"/>';
                 if ($grade == -1 || $grade === null) {
-                    return '-';
+                    $o .= '-';
+                    return $o;
                 } else {
-                    return format_float(($grade),2) .'&nbsp;/&nbsp;'. format_float($this->get_instance()->grade,2);
+                    $o .= format_float(($grade),2) .'&nbsp;/&nbsp;'. format_float($this->get_instance()->grade,2);
+                    return $o;
                 }
             }
 
@@ -1050,11 +1055,12 @@ class assign {
                 if ($scale = $DB->get_record('scale', array('id'=>-($this->get_instance()->grade)))) {
                     $this->cache['scale'] = make_menu_from_list($scale->scale);
                 } else {
-                    return '-';
+                    $o .= '-';
+                    return $o;
                 }
             }
             if ($editing) {
-                $o = '<label class="accesshide" for="quickgrade_' . $userid . '">' . get_string('usergrade', 'assign') . '</label>';
+                $o .= '<label class="accesshide" for="quickgrade_' . $userid . '">' . get_string('usergrade', 'assign') . '</label>';
                 $o .= '<select name="quickgrade_' . $userid . '" class="quickgrade">';
                 $o .= '<option value="-1">' . get_string('nograde') . '</option>';
                 foreach ($this->cache['scale'] as $optionid => $option) {
@@ -1070,9 +1076,11 @@ class assign {
             } else {
                 $scaleid = (int)$grade;
                 if (isset($this->cache['scale'][$scaleid])) {
-                    return $this->cache['scale'][$scaleid];
+                    $o .= $this->cache['scale'][$scaleid];
+                    return $o;
                 }
-                return '-';
+                $o .= '-';
+                return $o;
             }
         }
     }
@@ -3448,19 +3456,16 @@ class assign {
         // gets a list of possible users and look for values based upon that.
         foreach ($participants as $userid => $unused) {
             $modified = optional_param('grademodified_' . $userid, -1, PARAM_INT);
-            if ($modified >= 0) {
-                // gather the userid, updated grade and last modified value
-                $record = new stdClass();
-                $record->userid = $userid;
-                $record->grade = unformat_float(required_param('quickgrade_' . $record->userid, PARAM_TEXT));
-                $record->lastmodified = $modified;
-                $record->gradinginfo = grade_get_grades($this->get_course()->id, 'mod', 'assign', $this->get_instance()->id, array($userid));
-                $users[$userid] = $record;
+            // Gather the userid, updated grade and last modified value.
+            $record = new stdClass();
+            $record->userid = $userid;
+            $gradevalue = optional_param('quickgrade_' . $userid, '', PARAM_TEXT);
+            if($modified >= 0) {
+                $record->grade = unformat_float(optional_param('quickgrade_' . $record->userid, -1, PARAM_TEXT));
             }
-        }
-        if (empty($users)) {
-            // Quick check to see whether we have any users to update and we don't
-            return get_string('quickgradingchangessaved', 'assign'); // Technical lie
+            $record->lastmodified = $modified;
+            $record->gradinginfo = grade_get_grades($this->get_course()->id, 'mod', 'assign', $this->get_instance()->id, array($userid));
+            $users[$userid] = $record;
         }
 
         list($userids, $params) = $DB->get_in_or_equal(array_keys($users), SQL_PARAMS_NAMED);
