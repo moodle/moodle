@@ -609,4 +609,14 @@ class assign_feedback_file extends assign_feedback_plugin {
     public function get_grading_actions() {
         return array('uploadzip'=>get_string('uploadzip', 'assignfeedback_file'));
     }
+
+    /**
+     * Return a description of external params suitable for uploading a feedback file from a webservice.
+     *
+     * @return external_description|null
+     */
+    public function get_external_parameters() {
+        return array('files_filemanager' => new external_value(PARAM_INT, 'The id of a draft area containing files for this feedback.'));
+    }
+
 }

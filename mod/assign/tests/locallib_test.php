@@ -83,26 +83,31 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
 
         // Test students cannot reveal identities.
         $nopermission = false;
+        $this->students[0]->ignoresesskey = true;
         $this->setUser($this->students[0]);
         $this->setExpectedException('required_capability_exception');
-        $assign->testable_process_reveal_identities();
+        $assign->reveal_identities();
+        $this->students[0]->ignoresesskey = false;
 
         // Test teachers cannot reveal identities.
         $nopermission = false;
+        $this->teachers[0]->ignoresesskey = true;
         $this->setUser($this->teachers[0]);
         $this->setExpectedException('required_capability_exception');
-        $assign->testable_process_reveal_identities();
+        $assign->reveal_identities();
+        $this->teachers[0]->ignoresesskey = false;
 
         // Test sesskey is required.
         $this->setUser($this->editingteachers[0]);
         $this->setExpectedException('moodle_exception');
-        $assign->testable_process_reveal_identities();
+        $assign->reveal_identities();
 
         // Test editingteacher can reveal identities if sesskey is ignored.
         $this->editingteachers[0]->ignoresesskey = true;
         $this->setUser($this->editingteachers[0]);
-        $assign->testable_process_reveal_identities();
+        $assign->reveal_identities();
         $this->assertEquals(false, $assign->is_blind_marking());
+        $this->editingteachers[0]->ignoresesskey = false;
 
         // Test student names are visible.
         $gradingtable = new assign_grading_table($assign, 1, '', 0, true);
@@ -1016,7 +1021,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $assign = $this->create_instance();
         $sink = $this->redirectEvents();
 
-        $assign->testable_process_lock($this->students[0]->id);
+        $assign->lock_submission($this->students[0]->id);
 
         $events = $sink->get_events();
         $this->assertCount(1, $events);
@@ -1049,7 +1054,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $assign = $this->create_instance(array('blindmarking'=>1));
         $sink = $this->redirectEvents();
 
-        $assign->testable_process_reveal_identities();
+        $assign->reveal_identities();
 
         $events = $sink->get_events();
         $this->assertCount(1, $events);
@@ -1083,7 +1088,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $assign->testable_update_submission($submission, $this->students[0]->id, true, false);
 
         $sink = $this->redirectEvents();
-        $assign->testable_process_revert_to_draft($this->students[0]->id);
+        $assign->revert_to_draft($this->students[0]->id);
 
         $events = $sink->get_events();
         $this->assertCount(1, $events);
@@ -1191,7 +1196,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
 
         $sink = $this->redirectEvents();
         $notices = null;
-        $assign->testable_process_copy_previous_attempt($notices);
+        $assign->copy_previous_attempt($notices);
 
         $events = $sink->get_events();
         $this->assertCount(1, $events);
@@ -1221,7 +1226,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $assign = $this->create_instance();
         $sink = $this->redirectEvents();
 
-        $assign->testable_process_unlock($this->students[0]->id);
+        $assign->unlock_submission($this->students[0]->id);
 
         $events = $sink->get_events();
         $this->assertCount(1, $events);

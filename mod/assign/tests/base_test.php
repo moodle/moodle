@@ -223,10 +223,6 @@ class mod_assign_base_testcase extends advanced_testcase {
  */
 class testable_assign extends assign {
 
-    public function testable_process_reveal_identities() {
-        return parent::process_reveal_identities();
-    }
-
     public function testable_show_intro() {
         return parent::show_intro();
     }
@@ -259,27 +255,11 @@ class testable_assign extends assign {
         return parent::process_add_attempt($userid);
     }
 
-    public function testable_process_lock($userid = 0) {
-        return parent::process_lock($userid);
-    }
-
     public function testable_process_save_quick_grades($postdata) {
         // Ugly hack to get something into the method.
         global $_POST;
         $_POST = $postdata;
         return parent::process_save_quick_grades();
-    }
-
-    public function testable_process_unlock($userid = 0) {
-        return parent::process_unlock($userid);
-    }
-
-    public function testable_process_copy_previous_attempt(&$notices) {
-        return parent::process_copy_previous_attempt($notices);
-    }
-
-    public function testable_process_revert_to_draft($userid = 0) {
-        return parent::process_revert_to_draft($userid);
     }
 
     public function testable_process_set_batch_marking_allocation($selectedusers, $markerid) {
