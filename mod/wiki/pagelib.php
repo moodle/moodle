@@ -656,7 +656,7 @@ class page_wiki_comments extends page_wiki {
                     $parsedcontent = wiki_parse_content('nwiki', $comment->content, $options);
                 }
 
-                $cell4->text = format_text(html_entity_decode($parsedcontent['parsed_text']), FORMAT_HTML);
+                $cell4->text = format_text(html_entity_decode($parsedcontent['parsed_text'], ENT_QUOTES, 'UTF-8'), FORMAT_HTML);
             } else {
                 $cell4->text = format_text($comment->content, FORMAT_HTML);
             }

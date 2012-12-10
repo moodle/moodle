@@ -38,7 +38,7 @@ class output_indented_logger extends base_logger {
         if (defined('STDOUT')) {
             echo $prefix . str_repeat('  ', $depth) . $message . PHP_EOL;
         } else {
-            echo $prefix . str_repeat('&nbsp;&nbsp;', $depth) . htmlentities($message, ENT_QUOTES) . '<br/>' . PHP_EOL;
+            echo $prefix . str_repeat('&nbsp;&nbsp;', $depth) . htmlentities($message, ENT_QUOTES, 'UTF-8') . '<br/>' . PHP_EOL;
         }
         flush();
         return true;
