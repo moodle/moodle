@@ -844,6 +844,11 @@ table#categoryquestions th a {
     padding: 5px;
 }
 
+.generaltable .header,
+.generaltable .header {
+    padding: 0;
+}
+
 tr.r1 td {
     background-color: #f9f9f9;
 }
