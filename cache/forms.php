@@ -101,7 +101,13 @@ class cachestore_addinstance_form extends moodleform {
         }
 
         if (method_exists($this, 'configuration_validation')) {
-            $errors = $this->configuration_validation($data, $files);
+            $newerrors = $this->configuration_validation($data, $files, $errors);
+            // We need to selectiviliy merge here
+            foreach ($newerrors as $element => $error) {
+                if (!array_key_exists($element, $errors)) {
+                    $errors[$element] = $error;
+                }
+            }
         }
 
         return $errors;
