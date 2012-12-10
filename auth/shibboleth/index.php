@@ -7,7 +7,10 @@
     $PAGE->set_url('/auth/shibboleth/index.php');
 
     // Support for WAYFless URLs.
-    $SESSION->wantsurl = optional_param('target', $SESSION->wantsurl, PARAM_LOCALURL);
+    $target = optional_param('target', '', PARAM_LOCALURL);
+    if (!empty($target)) {
+        $SESSION->wantsurl = $target;
+    }
 
     if (isloggedin() && !isguestuser()) {      // Nothing to do
         if (isset($SESSION->wantsurl) and (strpos($SESSION->wantsurl, $CFG->wwwroot) === 0)) {
