@@ -118,10 +118,6 @@ abstract class qtype_multianswer_subq_renderer_base extends qtype_renderer {
     protected function feedback_popup(question_graded_automatically $subq,
             $fraction, $feedbacktext, $rightanswer, question_display_options $options) {
 
-        if (!$options->feedback) {
-            return '';
-        }
-
         $feedback = array();
         if ($options->correctness) {
             if (is_null($fraction)) {
@@ -132,7 +128,7 @@ abstract class qtype_multianswer_subq_renderer_base extends qtype_renderer {
             $feedback[] = $state->default_string(true);
         }
 
-        if ($feedbacktext) { // Note $options->feedback is already checked above.
+        if ($options->feedback && $feedbacktext) {
             $feedback[] = $feedbacktext;
         }
 
@@ -141,7 +137,8 @@ abstract class qtype_multianswer_subq_renderer_base extends qtype_renderer {
         }
 
         $subfraction = '';
-        if ($options->marks >= question_display_options::MARK_AND_MAX && $subq->maxmark > 0) {
+        if ($options->marks >= question_display_options::MARK_AND_MAX && $subq->maxmark > 0
+                && (!is_null($fraction) || $feedback)) {
             $a = new stdClass();
             $a->mark = format_float($fraction * $subq->maxmark, $options->markdp);
             $a->max =  format_float($subq->maxmark, $options->markdp);
