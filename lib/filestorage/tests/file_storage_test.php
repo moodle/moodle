@@ -67,6 +67,10 @@ class filestoragelib_testcase extends advanced_testcase {
     public function test_get_file_preview(stored_file $file) {
         global $CFG;
 
+        if (empty($CFG->gdversion)) {
+            $this->markTestSkipped('GD extension is disabled');
+        }
+
         $this->resetAfterTest(true);
         $fs = get_file_storage();
 
