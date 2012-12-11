@@ -900,7 +900,11 @@ if ($formdata = $mform2->is_cancelled()) {
                     $newgroupdata = new stdClass();
                     $newgroupdata->name = $addgroup;
                     $newgroupdata->courseid = $ccache[$shortname]->id;
-                    if ($ccache[$shortname]->groups[$addgroup]->id = groups_create_group($newgroupdata)){
+                    $newgroupdata->description = '';
+                    $gid = groups_create_group($newgroupdata);
+                    if ($gid){
+                        $ccache[$shortname]->groups[$addgroup] = new stdClass();
+                        $ccache[$shortname]->groups[$addgroup]->id   = $gid;
                         $ccache[$shortname]->groups[$addgroup]->name = $newgroupdata->name;
                     } else {
                         $upt->track('enrolments', get_string('unknowngroup', 'error', s($addgroup)), 'error');
