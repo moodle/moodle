@@ -15,7 +15,7 @@ $cm = get_coursemodule_from_id('feedback', $id, 0, false, MUST_EXIST);
 $course = $DB->get_record("course", array("id"=>$cm->course), '*', MUST_EXIST);
 $feedback = $DB->get_record("feedback", array("id"=>$cm->instance), '*', MUST_EXIST);
 
-confirm_sesskey();
+require_sesskey();
 
 $context = context_module::instance($cm->id);
 require_login($course, true, $cm);
