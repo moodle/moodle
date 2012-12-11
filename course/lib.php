@@ -1307,42 +1307,18 @@ function set_section_visible($courseid, $sectionnumber, $visibility) {
  *
  * Calls format_text or format_string as appropriate, and obtains the correct icon.
  *
+ * @deprecated since 2.5
+ *
  * This data is also used in other areas of the code.
  * @param cm_info $cm Course-module data (must come from get_fast_modinfo)
- * @param object $course Moodle course object
+ * @param object $course (argument not used)
  * @return array An array with the following values in this order:
  *   $content (optional extra content for after link),
  *   $instancename (text of link)
  */
 function get_print_section_cm_text(cm_info $cm, $course) {
-    global $OUTPUT;
-
-    // Get content from modinfo if specified. Content displays either
-    // in addition to the standard link (below), or replaces it if
-    // the link is turned off by setting ->url to null.
-    if (($content = $cm->get_content()) !== '') {
-        // Improve filter performance by preloading filter setttings for all
-        // activities on the course (this does nothing if called multiple
-        // times)
-        filter_preload_activities($cm->get_modinfo());
-
-        // Get module context
-        $modulecontext = context_module::instance($cm->id);
-        $labelformatoptions = new stdClass();
-        $labelformatoptions->noclean = true;
-        $labelformatoptions->overflowdiv = true;
-        $labelformatoptions->context = $modulecontext;
-        $content = format_text($content, FORMAT_HTML, $labelformatoptions);
-    } else {
-        $content = '';
-    }
-
-    // Get course context
-    $coursecontext = context_course::instance($course->id);
-    $stringoptions = new stdClass;
-    $stringoptions->context = $coursecontext;
-    $instancename = format_string($cm->name, true,  $stringoptions);
-    return array($content, $instancename);
+    return array($cm->get_formatted_content(array('overflowdiv' => true, 'noclean' => true)),
+        $cm->get_formatted_name());
 }
 
 /**
@@ -1463,7 +1439,8 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
             echo html_writer::start_tag('div', array('class' => $indentclasses));
 
             // Get data about this course-module
-            list($content, $instancename) = get_print_section_cm_text($mod, $course);
+            $content = $mod->get_formatted_content(array('overflowdiv' => true, 'noclean' => true));
+            $instancename = $mod->get_formatted_name();
 
             //Accessibility: for files get description via icon, this is very ugly hack!
             $altname = '';

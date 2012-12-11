@@ -757,6 +757,52 @@ class cm_info extends stdClass {
     }
 
     /**
+     * Returns the content to display on course/overview page, formatted and passed through filters
+     *
+     * if $options['context'] is not specified, the module context is used
+     *
+     * @param array|stdClass $options formatting options, see {@link format_text()}
+     * @return string
+     */
+    public function get_formatted_content($options = array()) {
+        $this->obtain_view_data();
+        if (empty($this->content)) {
+            return '';
+        }
+        if ($this->modname === 'label') {
+            // special case, label returns already formatted content, see cm_info::__construct()
+            // and label_get_coursemodule_info()
+            return $this->content;
+        }
+        // Improve filter performance by preloading filter setttings for all
+        // activities on the course (this does nothing if called multiple
+        // times)
+        filter_preload_activities($this->get_modinfo());
+
+        $options = (array)$options;
+        if (!isset($options['context'])) {
+            $options['context'] = context_module::instance($this->id);
+        }
+        return format_text($this->content, FORMAT_HTML, $options);
+    }
+
+    /**
+     * Returns the name to display on course/overview page, formatted and passed through filters
+     *
+     * if $options['context'] is not specified, the module context is used
+     *
+     * @param array|stdClass $options formatting options, see {@link format_string()}
+     * @return string
+     */
+    public function get_formatted_name($options = array()) {
+        $options = (array)$options;
+        if (!isset($options['context'])) {
+            $options['context'] = context_module::instance($this->id);
+        }
+        return format_string($this->name, true,  $options);
+    }
+
+    /**
      * Note: Will collect view data, if not already obtained.
      * @return string Extra CSS classes to add to html output for this activity on main page
      */

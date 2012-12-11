@@ -43,8 +43,8 @@ class block_social_activities extends block_list {
                         continue;
                     }
 
-                    list($content, $instancename) =
-                            get_print_section_cm_text($cm, $course);
+                    $content = $cm->get_formatted_content(array('overflowdiv' => true, 'noclean' => true));
+                    $instancename = $cm->get_formatted_name();
 
                     if (!($url = $cm->get_url())) {
                         $this->content->items[] = $content;
@@ -113,8 +113,8 @@ class block_social_activities extends block_list {
                             '<img style="height:16px; width:80px; border:0px" src="'.$OUTPUT->pix_url('movehere') . '" alt="'.$strmovehere.'" /></a>';
                         $this->content->icons[] = '';
                     }
-                    list($content, $instancename) =
-                                get_print_section_cm_text($modinfo->cms[$modnumber], $course);
+                    $content = $mod->get_formatted_content(array('overflowdiv' => true, 'noclean' => true));
+                    $instancename = $mod->get_formatted_name();
 
                     $linkcss = $mod->visible ? '' : ' class="dimmed" ';
 
