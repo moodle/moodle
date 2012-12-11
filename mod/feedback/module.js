@@ -162,19 +162,17 @@ M.mod_feedback.init = function(Y, id, sesskey) {
 
     //this creates a new drag handle and return it as a new node
     function get_drag_handle(title, handleclass) {
-        var MOVEICON = {
+        var moveicon = {
             pix: "i/move_2d",
             largepix: "i/dragdrop",
             component: 'moodle'
         };
 
-
-        //~ var iconname = MOVEICON.pix;
-        var iconname = MOVEICON.largepix;
+        var iconname = moveicon.largepix;
         var dragicon = Y.Node.create('<img />')
             .setStyle('cursor', 'move')
             .setAttrs({
-                'src' : M.util.image_url(iconname, MOVEICON.component),
+                'src' : M.util.image_url(iconname, moveicon.component),
                 'alt' : title,
                 'class' : handleclass
             });
