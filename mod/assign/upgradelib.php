@@ -134,6 +134,8 @@ class assign_upgrade_manager {
                     if (!$plugin->upgrade_settings($oldcontext, $oldassignment, $log)) {
                         $rollback = true;
                     }
+                } else {
+                    $plugin->disable();
                 }
             }
             foreach ($newassignment->get_feedback_plugins() as $plugin) {
@@ -142,6 +144,8 @@ class assign_upgrade_manager {
                     if (!$plugin->upgrade_settings($oldcontext, $oldassignment, $log)) {
                         $rollback = true;
                     }
+                } else {
+                    $plugin->disable();
                 }
             }
 
