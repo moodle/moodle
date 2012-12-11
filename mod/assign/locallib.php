@@ -3049,7 +3049,7 @@ class assign {
      * @param int $userid - Optional userid so we can see if a different user can submit
      * @return bool
      */
-    private function submissions_open($userid = 0) {
+    public function submissions_open($userid = 0) {
         global $USER;
 
         if (!$userid) {
