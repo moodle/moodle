@@ -905,17 +905,18 @@ class qformat_xml extends qformat_default {
      */
     protected function readquestions($lines) {
         // We just need it as one big string
-        $text = implode($lines, ' ');
-        unset($lines);
+        $lines = implode('', $lines);
 
         // This converts xml to big nasty data structure
         // the 0 means keep white space as it is (important for markdown format)
         try {
-            $xml = xmlize($text, 0, 'UTF-8', true);
+            $xml = xmlize($lines, 0, 'UTF-8', true);
         } catch (xml_format_exception $e) {
             $this->error($e->getMessage(), '');
             return false;
         }
+        unset($lines); // No need to keep this in memory.
+
         // Set up array to hold all our questions
         $questions = array();
 
