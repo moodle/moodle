@@ -5,6 +5,7 @@ if (!defined('AJAX_SCRIPT')) {
 }
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
+require_once("lib.php");
 
 $id = required_param('id', PARAM_INT);
 $action = optional_param('action', '', PARAM_ALPHA);
@@ -34,20 +35,3 @@ switch ($action) {
 
 echo json_encode($return);
 die;
-
-////////////////////////////////////////
-
-function feedback_ajax_saveitemorder($itemlist, $feedback) {
-    global $DB;
-
-    $result = true;
-    $position = 0;
-    foreach ($itemlist as $itemid) {
-        $position++;
-        $result = $result && $DB->set_field('feedback_item',
-                                            'position',
-                                            $position,
-                                            array('id'=>$itemid, 'feedback'=>$feedback->id));
-    }
-    return $result;
-}

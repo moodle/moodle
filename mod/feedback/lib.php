@@ -3122,3 +3122,24 @@ function feedback_page_type_list($pagetype, $parentcontext, $currentcontext) {
     $module_pagetype = array('mod-feedback-*'=>get_string('page-mod-feedback-x', 'feedback'));
     return $module_pagetype;
 }
+
+/**
+ * Move save the items of the given $feedback in the order of $itemlist.
+ * @param string $itemlist a comma separated list with item ids
+ * @param stdClass $feedback
+ * @return bool true if success
+ */
+function feedback_ajax_saveitemorder($itemlist, $feedback) {
+    global $DB;
+
+    $result = true;
+    $position = 0;
+    foreach ($itemlist as $itemid) {
+        $position++;
+        $result = $result && $DB->set_field('feedback_item',
+                                            'position',
+                                            $position,
+                                            array('id'=>$itemid, 'feedback'=>$feedback->id));
+    }
+    return $result;
+}
