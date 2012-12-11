@@ -36,9 +36,13 @@ $attemptobj = quiz_attempt::create($attemptid);
 // Check login.
 require_login($attemptobj->get_course(), false, $attemptobj->get_cm());
 
-// If this is not our own attempt, display an error.
+// Check that this attempt belongs to this user.
 if ($attemptobj->get_userid() != $USER->id) {
-    print_error('notyourattempt', 'quiz', $attemptobj->view_url());
+    if ($attemptobj->has_capability('mod/quiz:viewreports')) {
+        redirect($attemptobj->review_url(null, $page));
+    } else {
+        throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'notyourattempt');
+    }
 }
 
 // Check capabilites.
