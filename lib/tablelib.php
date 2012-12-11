@@ -60,6 +60,7 @@ class flexible_table {
     var $column_class    = array();
     var $column_suppress = array();
     var $column_nosort   = array('userpic');
+    private $column_textsort = array();
     var $setup           = false;
     var $sess            = NULL;
     var $baseurl         = NULL;
@@ -223,6 +224,14 @@ class flexible_table {
         $this->is_sortable = $bool;
         $this->sort_default_column = $defaultcolumn;
         $this->sort_default_order  = $defaultorder;
+    }
+
+    /**
+     * Use text sorting functions for this column (required for text columns with Oracle).
+     * @param string column name
+     */
+    function text_sorting($column) {
+        $this->column_textsort[] = $column;
     }
 
     /**
@@ -520,10 +529,14 @@ class flexible_table {
      * @param array $cols column name => SORT_ASC or SORT_DESC
      * @return SQL fragment that can be used in an ORDER BY clause.
      */
-    public static function construct_order_by($cols) {
+    public static function construct_order_by($cols, $textsortcols=array()) {
+        global $DB;
         $bits = array();
 
         foreach ($cols as $column => $order) {
+            if (in_array($column, $textsortcols)) {
+                $column = $DB->sql_order_by_text($column);
+            }
             if ($order == SORT_ASC) {
                 $bits[] = $column . ' ASC';
             } else {
@@ -538,7 +551,7 @@ class flexible_table {
      * @return SQL fragment that can be used in an ORDER BY clause.
      */
     public function get_sql_sort() {
-        return self::construct_order_by($this->get_sort_columns());
+        return self::construct_order_by($this->get_sort_columns(), $this->column_textsort);
     }
 
     /**
