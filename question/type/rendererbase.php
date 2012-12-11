@@ -226,19 +226,11 @@ abstract class qtype_renderer extends plugin_renderer_base {
      * @return string html fragment.
      */
     protected function feedback_image($fraction, $selected = true) {
-        $state = question_state::graded_state_for_fraction($fraction);
-
-        if ($state == question_state::$gradedright) {
-            $icon = 'grade_correct';
-        } else if ($state == question_state::$gradedpartial) {
-            $icon = 'grade_partiallycorrect';
-        } else {
-            $icon = 'grade_incorrect';
-        }
+        $feedbackclass = question_state::graded_state_for_fraction($fraction)->get_feedback_class();
 
         $attributes = array(
-            'src' => $this->output->pix_url('i/' . $icon),
-            'alt' => get_string($state->get_feedback_class(), 'question'),
+            'src' => $this->output->pix_url('i/grade_' . $feedbackclass),
+            'alt' => get_string($feedbackclass, 'question'),
             'class' => 'questioncorrectnessicon',
         );
 
