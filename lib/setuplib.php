@@ -762,7 +762,7 @@ function initialise_fullme() {
                 define('NO_MOODLE_COOKIES', true);
             }
             // The login/token.php script should call the correct url/port.
-            if (defined('REQUIRE_CORRECT_ACCESS')) {
+            if (defined('REQUIRE_CORRECT_ACCESS') && REQUIRE_CORRECT_ACCESS) {
                 $wwwrootport = empty($wwwroot['port'])?'':$wwwroot['port'];
                 $calledurl = $rurl['host'];
                 if (!empty($rurl['port'])) {
