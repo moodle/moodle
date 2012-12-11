@@ -169,13 +169,9 @@ if ($do_show == 'edit') {
                                array('position', 'feedback'))
     );
 
-    $yuibase = $CFG->httpswwwroot.'/lib/yuilib/'.$CFG->yui3version . '/build/';
     $ajaxscript = $CFG->httpswwwroot.'/mod/feedback/ajax.php';
     $PAGE->requires->js_init_call('M.mod_feedback.init', array($cm->id,
-                                                                sesskey(),
-                                                                $yuibase,
-                                                                $ajaxscript,
-                                                                $CFG->httpswwwroot),
+                                                                sesskey()),
                                                                 false,
                                                                 $jsmodule);
 }

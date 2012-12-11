@@ -1,5 +1,5 @@
 M.mod_feedback = {};
-M.mod_feedback.init = function(Y, id, sesskey, yuibase, ajaxscript, moodlebase) {
+M.mod_feedback.init = function(Y, id, sesskey) {
     //Listen for all drop:over events
     Y.DD.DDM.on('drop:over', function(e) {
         //Get a reference to our drag and drop nodes
@@ -124,7 +124,7 @@ M.mod_feedback.init = function(Y, id, sesskey, yuibase, ajaxscript, moodlebase) 
     // here we save the new itemorder
     function saveposition(Y, objekt, id, itemorder, sesskey, spinner){
 
-        Y.io(ajaxscript, {
+        Y.io(M.cfg.wwwroot + '/mod/feedback/ajax.php', {
             //the needed paramaters
             data: {action: 'saveitemorder',
                    id: id,
