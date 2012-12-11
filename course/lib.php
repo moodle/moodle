@@ -1516,8 +1516,9 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                     $textcss = '';
                 }
 
-                // Get on-click attribute value if specified
-                $onclick = $mod->get_on_click();
+                // Get on-click attribute value if specified and decode the onclick - it
+                // has already been encoded for display (puke).
+                $onclick = htmlspecialchars_decode($mod->get_on_click(), ENT_QUOTES);
 
                 $groupinglabel = '';
                 if (!empty($mod->groupingid) && has_capability('moodle/course:managegroups', context_course::instance($course->id))) {
