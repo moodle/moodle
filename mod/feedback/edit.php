@@ -417,7 +417,11 @@ if ($do_show == 'edit') {
             }
             echo $OUTPUT->box_end();
             echo $OUTPUT->box_end();
+            echo '<div class="clearer">&nbsp;</div>';
+            echo '</li>';
+            //print out the target box if we ar moving an item
             if (isset($SESSION->feedback->moving) AND $SESSION->feedback->moving->shouldmoving == 1) {
+                echo '<li>';
                 $moveposition++;
                 $movehereurl->param('movehere', $moveposition);
                 echo $OUTPUT->box_start('clipboard'); //only shown if shouldmoving = 1
@@ -428,9 +432,8 @@ if ($do_show == 'edit') {
                         <img class="movetarget" alt="'.$strbutton.'" src="'.$src.'" />
                       </a>';
                 echo $OUTPUT->box_end();
+                echo '</li>';
             }
-            echo '<div class="clearer">&nbsp;</div>';
-            echo '</li>';
         }
         echo $OUTPUT->box_end();
         echo '</ul>';
