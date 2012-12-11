@@ -1838,6 +1838,7 @@ class assign {
         }
 
         $gradingactions = new url_select($links);
+        $gradingactions->set_label(get_string('choosegradingaction', 'assign'));
 
         $gradingmanager = get_grading_manager($this->get_context(), 'mod_assign', 'submissions');
 

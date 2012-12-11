@@ -58,7 +58,7 @@ class mod_assign_grading_batch_operations_form extends moodleform {
         $mform->addElement('hidden', 'returnaction', 'grading');
 
         $objs = array();
-        $objs[] =& $mform->createElement('select', 'operation', '', $options);
+        $objs[] =& $mform->createElement('select', 'operation', get_string('chooseoperation', 'assign'), $options);
         $objs[] =& $mform->createElement('submit', 'submit', get_string('go'));
         $mform->addElement('group', 'actionsgrp', get_string('batchoperationsdescription', 'assign'), $objs, ' ', false);
 
