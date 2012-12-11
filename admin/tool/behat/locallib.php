@@ -130,8 +130,8 @@ class tool_behat {
     public static function runtests($withjavascript = false, $tags = false, $extra = '') {
         global $CFG;
 
-        // Checks that the behat reference is properly set up.
-        self::check_behat_setup();
+        // Checks the behat set up and the PHP version.
+        self::check_behat_setup(true);
 
         // Check that PHPUnit test environment is correctly set up.
         self::test_environment_problem();
@@ -323,9 +323,14 @@ class tool_behat {
      *
      * It checks behat dependencies have been installed and runs
      * the behat help command to ensure it works as expected
+     * @param boolean $checkphp Extra check for the PHP version
      */
-    private static function check_behat_setup() {
+    private static function check_behat_setup($checkphp = false) {
         global $CFG;
+
+        if ($checkphp && version_compare(PHP_VERSION, '5.4.0', '<')) {
+            throw new Exception(get_string('wrongphpversion', 'tool_behat'));
+        }
 
         // Moodle setting.
         if (!is_dir($vendor = __DIR__ . '/../../../vendor/behat')) {

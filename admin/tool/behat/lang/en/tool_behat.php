@@ -40,4 +40,5 @@ $string['stepsdefinitionstype'] = 'Type';
 $string['theninfo'] = 'Then. Checkings to ensure the outcomes are the expected ones';
 $string['viewsteps'] = 'Filter';
 $string['wheninfo'] = 'When. Actions that provokes an event';
+$string['wrongphpversion'] = 'PHP 5.4.0 or higher is required to run acceptance tests';
 $string['wrongbehatsetup'] = 'Something is wrong with the setup, ensure you ran the composer installer and /lib/behat/bin/behat file has execution permissions';
