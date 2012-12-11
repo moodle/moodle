@@ -839,55 +839,57 @@ class auth_plugin_ldap extends auth_plugin_base {
         // Find users missing in DB that are in LDAP
         // and gives me a nifty object I don't want.
         // note: we do not care about deleted accounts anymore, this feature was replaced by suspending to nologin auth plugin
-        $sql = 'SELECT e.id, e.username
-                  FROM {tmp_extuser} e
-                  LEFT JOIN {user} u ON (e.username = u.username AND e.mnethostid = u.mnethostid)
-                 WHERE u.id IS NULL';
-        $add_users = $DB->get_records_sql($sql);
+        if ($CFG->cronsyncldap) {
+        	$sql = 'SELECT e.id, e.username
+            	      FROM {tmp_extuser} e
+                	  LEFT JOIN {user} u ON (e.username = u.username AND e.mnethostid = u.mnethostid)
+                 	WHERE u.id IS NULL';
+        	$add_users = $DB->get_records_sql($sql);
 
-        if (!empty($add_users)) {
-            print_string('userentriestoadd', 'auth_ldap', count($add_users));
+        	if (!empty($add_users)) {
+	            print_string('userentriestoadd', 'auth_ldap', count($add_users));
 
-            $sitecontext = context_system::instance();
-            if (!empty($this->config->creators) and !empty($this->config->memberattribute)
-              and $roles = get_archetype_roles('coursecreator')) {
-                $creatorrole = array_shift($roles);      // We can only use one, let's use the first one
-            } else {
-                $creatorrole = false;
-            }
+    	        $sitecontext = context_system::instance();
+            	if (!empty($this->config->creators) and !empty($this->config->memberattribute)
+              		and $roles = get_archetype_roles('coursecreator')) {
+                	$creatorrole = array_shift($roles);      // We can only use one, let's use the first one
+            	} else {
+	                $creatorrole = false;
+            	}
 
-            $transaction = $DB->start_delegated_transaction();
-            foreach ($add_users as $user) {
-                $user = $this->get_userinfo_asobj($user->username);
+            	$transaction = $DB->start_delegated_transaction();
+            	foreach ($add_users as $user) {
+	                $user = $this->get_userinfo_asobj($user->username);
 
-                // Prep a few params
-                $user->modified   = time();
-                $user->confirmed  = 1;
-                $user->auth       = $this->authtype;
-                $user->mnethostid = $CFG->mnet_localhost_id;
-                // get_userinfo_asobj() might have replaced $user->username with the value
-                // from the LDAP server (which can be mixed-case). Make sure it's lowercase
-                $user->username = trim(textlib::strtolower($user->username));
-                if (empty($user->lang)) {
-                    $user->lang = $CFG->lang;
-                }
+    	            // Prep a few params
+        	        $user->modified   = time();
+            	    $user->confirmed  = 1;
+                	$user->auth       = $this->authtype;
+                	$user->mnethostid = $CFG->mnet_localhost_id;
+	                // get_userinfo_asobj() might have replaced $user->username with the value
+    	            // from the LDAP server (which can be mixed-case). Make sure it's lowercase
+        	        $user->username = trim(textlib::strtolower($user->username));
+            	    if (empty($user->lang)) {
+                	    $user->lang = $CFG->lang;
+                	}
 
-                $id = $DB->insert_record('user', $user);
-                echo "\t"; print_string('auth_dbinsertuser', 'auth_db', array('name'=>$user->username, 'id'=>$id)); echo "\n";
-                if (!empty($this->config->forcechangepassword)) {
-                    set_user_preference('auth_forcepasswordchange', 1, $id);
-                }
+                	$id = $DB->insert_record('user', $user);
+                	echo "\t"; print_string('auth_dbinsertuser', 'auth_db', array('name'=>$user->username, 'id'=>$id)); echo "\n";
+                	if (!empty($this->config->forcechangepassword)) {
+	                    set_user_preference('auth_forcepasswordchange', 1, $id);
+    	            }
 
-                // Add course creators if needed
-                if ($creatorrole !== false and $this->iscreator($user->username)) {
-                    role_assign($creatorrole->id, $id, $sitecontext->id, $this->roleauth);
-                }
+        	        // Add course creators if needed
+                	if ($creatorrole !== false and $this->iscreator($user->username)) {
+                    	role_assign($creatorrole->id, $id, $sitecontext->id, $this->roleauth);
+                	}
 
-            }
-            $transaction->allow_commit();
-            unset($add_users); // free mem
-        } else {
-            print_string('nouserstobeadded', 'auth_ldap');
+            	}
+            	$transaction->allow_commit();
+            	unset($add_users); // free mem
+	        } else {
+    	        print_string('nouserstobeadded', 'auth_ldap');
+        	}
         }
 
         $dbman->drop_table($table);
