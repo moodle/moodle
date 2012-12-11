@@ -3036,6 +3036,11 @@ class assign {
                 $grademenu = make_grades_menu($this->get_instance()->grade);
                 if (count($grademenu) > 0) {
                     $gradingelement = $mform->addElement('select', 'grade', get_string('grade').':', $grademenu);
+
+                    // The grade is already formatted with format_float so it needs to be converted back to an integer.
+                    if (!empty($data->grade)) {
+                        $data->grade = (int)unformat_float($data->grade);
+                    }
                     $mform->setType('grade', PARAM_INT);
                     if ($gradingdisabled) {
                         $gradingelement->freeze();
