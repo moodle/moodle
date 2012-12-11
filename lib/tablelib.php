@@ -1487,7 +1487,7 @@ class table_spreadsheet_export_format_parent extends table_default_export_format
     }
 
     function start_table($sheettitle) {
-        $this->worksheet =& $this->workbook->add_worksheet($sheettitle);
+        $this->worksheet = $this->workbook->add_worksheet($sheettitle);
         $this->rownum=0;
     }
 
