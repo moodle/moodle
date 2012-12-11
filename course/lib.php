@@ -1385,6 +1385,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
 
     $modinfo = get_fast_modinfo($course);
     $completioninfo = new completion_info($course);
+    $courserenderer = $PAGE->get_renderer('core', 'course');
 
     // Get the list of modules visible to user (excluding the module being moved if there is one)
     $moduleslist = array();
@@ -3116,14 +3117,37 @@ function moveto_module($mod, $section, $beforemod=NULL) {
  * @global core_renderer $OUTPUT
  * @staticvar type $str
  * @param stdClass $mod The module to produce editing buttons for
- * @param bool $absolute_ignored ignored - all links are absolute
- * @param bool $moveselect If true a move seleciton process is used (default true)
+ * @param bool $absolute_ignored (argument ignored) - all links are absolute
+ * @param bool $moveselect (argument ignored)
  * @param int $indent The current indenting
  * @param int $section The section to link back to
  * @return string XHTML for the editing buttons
  */
 function make_editing_buttons(stdClass $mod, $absolute_ignored = true, $moveselect = true, $indent=-1, $section=null) {
-    global $CFG, $OUTPUT, $COURSE;
+    global $PAGE;
+    if (!($mod instanceof cm_info)) {
+        $modinfo = get_fast_modinfo($mod->course);
+        $mod = $modinfo->get_cm($mod->id);
+    }
+    $actions = course_get_cm_edit_actions($mod, $indent, $section);
+
+    $courserenderer = $PAGE->get_renderer('core', 'course');
+    // The space added before the <span> is a ugly hack but required to set the CSS property white-space: nowrap
+    // and having it to work without attaching the preceding text along with it. Hopefully the refactoring of
+    // the course page HTML will allow this to be removed.
+    return ' ' . $courserenderer->course_section_cm_edit_actions($actions);
+}
+
+/**
+ * Returns the list of all editing actions that current user can perform on the module
+ *
+ * @param cm_info $mod The module to produce editing buttons for
+ * @param int $indent The current indenting (default -1 means no move left-right actions)
+ * @param int $sr The section to link back to (used for creating the links)
+ * @return array array of action_link or pix_icon objects
+ */
+function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
+    global $COURSE, $SITE;
 
     static $str;
 
@@ -3135,43 +3159,36 @@ function make_editing_buttons(stdClass $mod, $absolute_ignored = true, $movesele
 
     // no permission to edit anything
     if (!has_any_capability($editcaps, $modcontext) and !has_all_capabilities($dupecaps, $coursecontext)) {
-        return false;
+        return array();
     }
 
     $hasmanageactivities = has_capability('moodle/course:manageactivities', $modcontext);
 
     if (!isset($str)) {
-        $str = new stdClass;
-        $str->assign         = get_string("assignroles", 'role');
-        $str->delete         = get_string("delete");
-        $str->move           = get_string("move");
-        $str->moveup         = get_string("moveup");
-        $str->movedown       = get_string("movedown");
-        $str->moveright      = get_string("moveright");
-        $str->moveleft       = get_string("moveleft");
-        $str->update         = get_string("update");
-        $str->duplicate      = get_string("duplicate");
-        $str->hide           = get_string("hide");
-        $str->show           = get_string("show");
+        $str = get_strings(array('delete', 'move', 'moveright', 'moveleft',
+            'update', 'duplicate', 'hide', 'show', 'edittitle'), 'moodle');
+        $str->assign         = get_string('assignroles', 'role');
         $str->groupsnone     = get_string('clicktochangeinbrackets', 'moodle', get_string("groupsnone"));
         $str->groupsseparate = get_string('clicktochangeinbrackets', 'moodle', get_string("groupsseparate"));
         $str->groupsvisible  = get_string('clicktochangeinbrackets', 'moodle', get_string("groupsvisible"));
         $str->forcedgroupsnone     = get_string('forcedmodeinbrackets', 'moodle', get_string("groupsnone"));
         $str->forcedgroupsseparate = get_string('forcedmodeinbrackets', 'moodle', get_string("groupsseparate"));
         $str->forcedgroupsvisible  = get_string('forcedmodeinbrackets', 'moodle', get_string("groupsvisible"));
-        $str->edittitle = get_string('edittitle', 'moodle');
     }
 
     $baseurl = new moodle_url('/course/mod.php', array('sesskey' => sesskey()));
 
-    if ($section !== null) {
-        $baseurl->param('sr', $section);
+    if ($sr !== null) {
+        $baseurl->param('sr', $sr);
     }
     $actions = array();
 
     // AJAX edit title
-    if ($mod->modname !== 'label' && $hasmanageactivities && course_ajax_enabled($COURSE)) {
-        $actions[] = new action_link(
+    if ($mod->modname !== 'label' && $hasmanageactivities &&
+                (($mod->course == $COURSE->id && course_ajax_enabled($COURSE)) ||
+                 ($mod->course == SITEID && course_ajax_enabled($SITE)))) {
+        // we will not display link if we are on some other-course page (where we should not see this module anyway)
+        $actions['title'] = new action_link(
             new moodle_url($baseurl, array('update' => $mod->id)),
             new pix_icon('t/editstring', $str->edittitle, 'moodle', array('class' => 'iconsmall visibleifjs', 'title' => '')),
             null,
@@ -3190,7 +3207,7 @@ function make_editing_buttons(stdClass $mod, $absolute_ignored = true, $movesele
         }
 
         if ($indent > 0) {
-            $actions[] = new action_link(
+            $actions['moveleft'] = new action_link(
                 new moodle_url($baseurl, array('id' => $mod->id, 'indent' => '-1')),
                 new pix_icon($leftarrow, $str->moveleft, 'moodle', array('class' => 'iconsmall', 'title' => '')),
                 null,
@@ -3198,7 +3215,7 @@ function make_editing_buttons(stdClass $mod, $absolute_ignored = true, $movesele
             );
         }
         if ($indent >= 0) {
-            $actions[] = new action_link(
+            $actions['moveright'] = new action_link(
                 new moodle_url($baseurl, array('id' => $mod->id, 'indent' => '1')),
                 new pix_icon($rightarrow, $str->moveright, 'moodle', array('class' => 'iconsmall', 'title' => '')),
                 null,
@@ -3209,32 +3226,17 @@ function make_editing_buttons(stdClass $mod, $absolute_ignored = true, $movesele
 
     // move
     if ($hasmanageactivities) {
-        if ($moveselect) {
-            $actions[] = new action_link(
-                new moodle_url($baseurl, array('copy' => $mod->id)),
-                new pix_icon('t/move', $str->move, 'moodle', array('class' => 'iconsmall', 'title' => '')),
-                null,
-                array('class' => 'editing_move', 'title' => $str->move)
-            );
-        } else {
-            $actions[] = new action_link(
-                new moodle_url($baseurl, array('id' => $mod->id, 'move' => '-1')),
-                new pix_icon('t/up', $str->moveup, 'moodle', array('class' => 'iconsmall', 'title' => '')),
-                null,
-                array('class' => 'editing_moveup', 'title' => $str->moveup)
-            );
-            $actions[] = new action_link(
-                new moodle_url($baseurl, array('id' => $mod->id, 'move' => '1')),
-                new pix_icon('t/down', $str->movedown, 'moodle', array('class' => 'iconsmall', 'title' => '')),
-                null,
-                array('class' => 'editing_movedown', 'title' => $str->movedown)
-            );
-        }
+        $actions['move'] = new action_link(
+            new moodle_url($baseurl, array('copy' => $mod->id)),
+            new pix_icon('t/move', $str->move, 'moodle', array('class' => 'iconsmall', 'title' => '')),
+            null,
+            array('class' => 'editing_move', 'title' => $str->move)
+        );
     }
 
     // Update
     if ($hasmanageactivities) {
-        $actions[] = new action_link(
+        $actions['update'] = new action_link(
             new moodle_url($baseurl, array('update' => $mod->id)),
             new pix_icon('t/edit', $str->update, 'moodle', array('class' => 'iconsmall', 'title' => '')),
             null,
@@ -3243,8 +3245,10 @@ function make_editing_buttons(stdClass $mod, $absolute_ignored = true, $movesele
     }
 
     // Duplicate (require both target import caps to be able to duplicate and backup2 support, see modduplicate.php)
-    if (has_all_capabilities($dupecaps, $coursecontext) && plugin_supports('mod', $mod->modname, FEATURE_BACKUP_MOODLE2)) {
-        $actions[] = new action_link(
+    // note that restoring on front page is never allowed
+    if ($mod->course != SITEID && has_all_capabilities($dupecaps, $coursecontext) &&
+            plugin_supports('mod', $mod->modname, FEATURE_BACKUP_MOODLE2)) {
+        $actions['duplicate'] = new action_link(
             new moodle_url($baseurl, array('duplicate' => $mod->id)),
             new pix_icon('t/copy', $str->duplicate, 'moodle', array('class' => 'iconsmall', 'title' => '')),
             null,
@@ -3254,7 +3258,7 @@ function make_editing_buttons(stdClass $mod, $absolute_ignored = true, $movesele
 
     // Delete
     if ($hasmanageactivities) {
-        $actions[] = new action_link(
+        $actions['delete'] = new action_link(
             new moodle_url($baseurl, array('delete' => $mod->id)),
             new pix_icon('t/delete', $str->delete, 'moodle', array('class' => 'iconsmall', 'title' => '')),
             null,
@@ -3265,14 +3269,14 @@ function make_editing_buttons(stdClass $mod, $absolute_ignored = true, $movesele
     // hideshow
     if (has_capability('moodle/course:activityvisibility', $modcontext)) {
         if ($mod->visible) {
-            $actions[] = new action_link(
+            $actions['hide'] = new action_link(
                 new moodle_url($baseurl, array('hide' => $mod->id)),
                 new pix_icon('t/hide', $str->hide, 'moodle', array('class' => 'iconsmall', 'title' => '')),
                 null,
                 array('class' => 'editing_hide', 'title' => $str->hide)
             );
         } else {
-            $actions[] = new action_link(
+            $actions['show'] = new action_link(
                 new moodle_url($baseurl, array('show' => $mod->id)),
                 new pix_icon('t/show', $str->show, 'moodle', array('class' => 'iconsmall', 'title' => '')),
                 null,
@@ -3284,59 +3288,47 @@ function make_editing_buttons(stdClass $mod, $absolute_ignored = true, $movesele
     // groupmode
     if ($hasmanageactivities and $mod->groupmode !== false) {
         if ($mod->groupmode == SEPARATEGROUPS) {
-            $groupmode = 0;
+            $groupmode = NOGROUPS;
             $grouptitle = $str->groupsseparate;
             $forcedgrouptitle = $str->forcedgroupsseparate;
-            $groupclass = 'editing_groupsseparate';
+            $actionname = 'groupsseparate';
             $groupimage = 't/groups';
         } else if ($mod->groupmode == VISIBLEGROUPS) {
-            $groupmode = 1;
+            $groupmode = SEPARATEGROUPS;
             $grouptitle = $str->groupsvisible;
             $forcedgrouptitle = $str->forcedgroupsvisible;
-            $groupclass = 'editing_groupsvisible';
+            $actionname = 'groupsvisible';
             $groupimage = 't/groupv';
         } else {
-            $groupmode = 2;
+            $groupmode = VISIBLEGROUPS;
             $grouptitle = $str->groupsnone;
             $forcedgrouptitle = $str->forcedgroupsnone;
-            $groupclass = 'editing_groupsnone';
+            $actionname = 'groupsnone';
             $groupimage = 't/groupn';
         }
         if ($mod->groupmodelink) {
-            $actions[] = new action_link(
+            $actions[$actionname] = new action_link(
                 new moodle_url($baseurl, array('id' => $mod->id, 'groupmode' => $groupmode)),
                 new pix_icon($groupimage, $grouptitle, 'moodle', array('class' => 'iconsmall', 'title' => '')),
                 null,
-                array('class' => $groupclass, 'title' => $grouptitle)
+                array('class' => 'editing_'. $actionname, 'title' => $grouptitle)
             );
         } else {
-            $actions[] = new pix_icon($groupimage, $forcedgrouptitle, 'moodle', array('title' => $forcedgrouptitle, 'class' => 'iconsmall'));
+            $actions[$actionname] = new pix_icon($groupimage, $forcedgrouptitle, 'moodle', array('title' => $forcedgrouptitle, 'class' => 'iconsmall'));
         }
     }
 
     // Assign
     if (has_capability('moodle/role:assign', $modcontext)){
-        $actions[] = new action_link(
-            new moodle_url('/'.$CFG->admin.'/roles/assign.php', array('contextid' => $modcontext->id)),
+        $actions['assign'] = new action_link(
+            new moodle_url('/admin/roles/assign.php', array('contextid' => $modcontext->id)),
             new pix_icon('t/assignroles', $str->assign, 'moodle', array('class' => 'iconsmall', 'title' => '')),
             null,
             array('class' => 'editing_assign', 'title' => $str->assign)
         );
     }
 
-    // The space added before the <span> is a ugly hack but required to set the CSS property white-space: nowrap
-    // and having it to work without attaching the preceding text along with it. Hopefully the refactoring of
-    // the course page HTML will allow this to be removed.
-    $output = ' ' . html_writer::start_tag('span', array('class' => 'commands'));
-    foreach ($actions as $action) {
-        if ($action instanceof renderable) {
-            $output .= $OUTPUT->render($action);
-        } else {
-            $output .= $action;
-        }
-    }
-    $output .= html_writer::end_tag('span');
-    return $output;
+    return $actions;
 }
 
 /**

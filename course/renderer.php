@@ -354,4 +354,25 @@ class core_course_renderer extends plugin_renderer_base {
         $module->help = '';
         return $this->course_modchooser_module($module, array('moduletypetitle'));
     }
+
+    /**
+     * Renders HTML for displaying the sequence of course module editing buttons
+     *
+     * @see course_get_cm_edit_actions()
+     *
+     * @param array $actions array of action_link or pix_icon objects
+     * @return string
+     */
+    public function course_section_cm_edit_actions($actions) {
+        $output = html_writer::start_tag('span', array('class' => 'commands'));
+        foreach ($actions as $action) {
+            if ($action instanceof renderable) {
+                $output .= $this->output->render($action);
+            } else {
+                $output .= $action;
+            }
+        }
+        $output .= html_writer::end_tag('span');
+        return $output;
+    }
 }
