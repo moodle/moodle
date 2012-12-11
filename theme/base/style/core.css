@@ -55,6 +55,8 @@ a.dimmed_text:visited,
 .block .list li,
 .sitetopic .section li.activity,
 .course-content .section li.activity,
+.sitetopic .section li.movehere,
+.course-content .section li.movehere,
 .tabtree li {list-style: none;margin:0;padding:0;}
 
 .course-content .current {background:#E3E3E3;}

@@ -1353,7 +1353,7 @@ function get_print_section_cm_text(cm_info $cm, $course) {
  * @param array $mods (argument not used)
  * @param array $modnamesused (argument not used)
  * @param bool $absolute All links are absolute
- * @param string $width Width of the container
+ * @param string $width (argument not used)
  * @param bool $hidecompletion Hide completion status
  * @param int $sectionreturn The section to return to
  * @return void
@@ -1367,7 +1367,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
     static $groupbuttonslink;
     static $isediting;
     static $ismoving;
-    static $strmovehere;
+    static $movingpix;
     static $strmovefull;
     static $strunreadpostsone;
 
@@ -1377,7 +1377,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
         $isediting        = $PAGE->user_is_editing();
         $ismoving         = $isediting && ismoving($course->id);
         if ($ismoving) {
-            $strmovehere  = get_string("movehere");
+            $movingpix    = new pix_icon('movehere', get_string('movehere'), 'moodle', array('class' => 'movetarget'));
             $strmovefull  = strip_tags(get_string("movefull", "", "'$USER->activitycopyname'"));
         }
         $initialised = true;
@@ -1386,12 +1386,9 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
     $modinfo = get_fast_modinfo($course);
     $completioninfo = new completion_info($course);
 
-    //Accessibility: replace table with list <ul>, but don't output empty list.
+    // Get the list of modules visible to user (excluding the module being moved if there is one)
+    $moduleslist = array();
     if (!empty($modinfo->sections[$section->section])) {
-
-        // Fix bug #5027, don't want style=\"width:$width\".
-        echo "<ul class=\"section img-text\">\n";
-
         foreach ($modinfo->sections[$section->section] as $modnumber) {
             $mod = $modinfo->cms[$modnumber];
 
@@ -1399,7 +1396,6 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 // do not display moving mod
                 continue;
             }
-
             // We can continue (because it will not be displayed at all)
             // if:
             // 1) The activity is not visible to users
@@ -1418,6 +1414,16 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 continue;
             }
 
+            $moduleslist[$modnumber] = $mod;
+        }
+    }
+
+    if (!empty($moduleslist) || $ismoving) {
+
+        echo html_writer::start_tag('ul', array('class' => 'section img-text'));
+
+        foreach ($moduleslist as $modnumber => $mod) {
+
             // In some cases the activity is visible to user, but it is
             // dimmed. This is done if viewhiddenactivities is true and if:
             // 1. the activity is not visible, or
@@ -1426,9 +1432,9 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
             //    current user meets them)
             $modcontext = context_module::instance($mod->id);
             $canviewhidden = has_capability('moodle/course:viewhiddenactivities', $modcontext);
-            $accessiblebutdim = false;
+            $accessiblebutdim = !$mod->uservisible;
             $conditionalhidden = false;
-            if ($canviewhidden) {
+            if (!$accessiblebutdim && $canviewhidden) {
                 $accessiblebutdim = !$mod->visible;
                 if (!empty($CFG->enableavailability)) {
                     $conditionalhidden = $mod->availablefrom > time() ||
@@ -1439,35 +1445,24 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 $accessiblebutdim = $conditionalhidden || $accessiblebutdim;
             }
 
-            $liclasses = array();
-            $liclasses[] = 'activity';
-            $liclasses[] = $mod->modname;
-            $liclasses[] = 'modtype_'.$mod->modname;
-            $extraclasses = $mod->get_extra_classes();
-            if ($extraclasses) {
-                $liclasses = array_merge($liclasses, explode(' ', $extraclasses));
-            }
-            echo html_writer::start_tag('li', array('class'=>join(' ', $liclasses), 'id'=>'module-'.$modnumber));
+            $modclasses = 'activity '. $mod->modname. 'modtype_'.$mod->modname. ' '. $mod->get_extra_classes();
             if ($ismoving) {
-                echo '<a title="'.$strmovefull.'"'.
-                     ' href="'.$CFG->wwwroot.'/course/mod.php?moveto='.$mod->id.'&amp;sesskey='.sesskey().'">'.
-                     '<img class="movetarget" src="'.$OUTPUT->pix_url('movehere') . '" '.
-                     ' alt="'.$strmovehere.'" /></a><br />
-                     ';
+                $movingurl = new moodle_url('/course/mod.php', array('moveto' => $mod->id, 'sesskey' => sesskey()));
+                echo html_writer::tag('li', html_writer::link($movingurl, $OUTPUT->render($movingpix)), array('class' => 'movehere'));
             }
 
-            $classes = array('mod-indent');
+            echo html_writer::start_tag('li', array('class' => $modclasses, 'id' => 'module-'. $modnumber));
+            $indentclasses = 'mod-indent';
             if (!empty($mod->indent)) {
-                $classes[] = 'mod-indent-'.$mod->indent;
+                $indentclasses .= ' mod-indent-'.$mod->indent;
                 if ($mod->indent > 15) {
-                    $classes[] = 'mod-indent-huge';
+                    $indentclasses .= ' mod-indent-huge';
                 }
             }
-            echo html_writer::start_tag('div', array('class'=>join(' ', $classes)));
+            echo html_writer::start_tag('div', array('class' => $indentclasses));
 
             // Get data about this course-module
-            list($content, $instancename) =
-                    get_print_section_cm_text($modinfo->cms[$modnumber], $course);
+            list($content, $instancename) = get_print_section_cm_text($mod, $course);
 
             //Accessibility: for files get description via icon, this is very ugly hack!
             $altname = '';
@@ -1488,12 +1483,11 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
             echo html_writer::start_tag('div', array('class' => 'activityinstance'));
 
             // We may be displaying this just in order to show information
-            // about visibility, without the actual link
+            // about visibility, without the actual link ($mod->uservisible)
             $contentpart = '';
-            if ($mod->uservisible) {
-                // Nope - in this case the link is fully working for user
                 $linkclasses = '';
                 $textclasses = '';
+                $accesstext = '';
                 if ($accessiblebutdim) {
                     $linkclasses .= ' dimmed';
                     $textclasses .= ' dimmed_text';
@@ -1501,19 +1495,10 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                         $linkclasses .= ' conditionalhidden';
                         $textclasses .= ' conditionalhidden';
                     }
-                    $accesstext = get_accesshide(get_string('hiddenfromstudents').': ');
-                } else {
-                    $accesstext = '';
-                }
-                if ($linkclasses) {
-                    $linkcss = trim($linkclasses) . ' ';
-                } else {
-                    $linkcss = '';
-                }
-                if ($textclasses) {
-                    $textcss = trim($textclasses) . ' ';
-                } else {
-                    $textcss = '';
+                    if ($mod->uservisible) {
+                        // show accessibility note only if user can access the module himself
+                        $accesstext = get_accesshide(get_string('hiddenfromstudents').': ');
+                    }
                 }
 
                 // Get on-click attribute value if specified and decode the onclick - it
@@ -1524,7 +1509,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 if (!empty($mod->groupingid) && has_capability('moodle/course:managegroups', context_course::instance($course->id))) {
                     $groupings = groups_get_all_groupings($course->id);
                     $groupinglabel = html_writer::tag('span', '('.format_string($groupings[$mod->groupingid]->name).')',
-                            array('class' => 'groupinglabel'));
+                            array('class' => 'groupinglabel '.$textclasses));
                 }
 
                 if ($url = $mod->get_url()) {
@@ -1532,8 +1517,13 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                     $activitylink = html_writer::empty_tag('img', array('src' => $mod->get_icon_url(),
                             'class' => 'iconlarge activityicon', 'alt' => $mod->modfullname)) . $accesstext .
                             html_writer::tag('span', $instancename . $altname, array('class' => 'instancename'));
-                    echo html_writer::link($url, $activitylink, array('class' => $linkcss, 'onclick' => $onclick)) .
-                            $groupinglabel;
+                    if ($mod->uservisible) {
+                        echo html_writer::link($url, $activitylink, array('class' => $linkclasses, 'onclick' => $onclick)) .
+                                $groupinglabel;
+                    } else {
+                        echo html_writer::tag('div', $activitylink, array('class' => $textclasses)) .
+                                $groupinglabel;
+                    }
 
                     // If specified, display extra content after link.
                     if ($content) {
@@ -1542,35 +1532,8 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                     }
                 } else {
                     // No link, so display only content.
-                    $contentpart = html_writer::tag('div', $accesstext . $content, array('class' => $textcss));
+                    $contentpart = html_writer::tag('div', $accesstext . $content, array('class' => $textclasses));
                 }
-
-            } else {
-                $textclasses = $extraclasses;
-                $textclasses .= ' dimmed_text';
-                if ($textclasses) {
-                    $textcss = 'class="' . trim($textclasses) . '" ';
-                } else {
-                    $textcss = '';
-                }
-                $accesstext = '<span class="accesshide">' .
-                        get_string('notavailableyet', 'condition') .
-                        ': </span>';
-
-                if ($url = $mod->get_url()) {
-                    // Display greyed-out text of link
-                    echo '<div ' . $textcss . $mod->extra .
-                            ' >' . '<img src="' . $mod->get_icon_url() .
-                            '" class="activityicon" alt="" /> <span>'. $instancename . $altname .
-                            '</span></div>';
-
-                    // Do not display content after link when it is greyed out like this.
-                } else {
-                    // No link, so display only content (also greyed)
-                    $contentpart = '<div ' . $textcss . $mod->extra . '>' .
-                            $accesstext . $content . '</div>';
-                }
-            }
 
             // Module can put text after the link (e.g. forum unread)
             echo $mod->get_after_link();
@@ -1716,19 +1679,12 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
             echo html_writer::end_tag('li')."\n";
         }
 
-    } elseif ($ismoving) {
-        echo "<ul class=\"section\">\n";
-    }
+        if ($ismoving) {
+            $movingurl = new moodle_url('/course/mod.php', array('movetosection' => $section->id, 'sesskey' => sesskey()));
+            echo html_writer::tag('li', html_writer::link($movingurl, $OUTPUT->render($movingpix)), array('class' => 'movehere'));
+        }
 
-    if ($ismoving) {
-        echo '<li><a title="'.$strmovefull.'"'.
-             ' href="'.$CFG->wwwroot.'/course/mod.php?movetosection='.$section->id.'&amp;sesskey='.sesskey().'">'.
-             '<img class="movetarget" src="'.$OUTPUT->pix_url('movehere') . '" '.
-             ' alt="'.$strmovehere.'" /></a></li>
-             ';
-    }
-    if (!empty($modinfo->sections[$section->section]) || $ismoving) {
-        echo "</ul><!--class='section'-->\n\n";
+        echo html_writer::end_tag('ul'); // .section
     }
 }
 
