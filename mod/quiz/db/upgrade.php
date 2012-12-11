@@ -392,6 +392,10 @@ function xmldb_quiz_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2012100801, 'quiz');
     }
 
+    // Moodle v2.4.0 release upgrade line
+    // Put any upgrade step following this
+
+
     return true;
 }
 

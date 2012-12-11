@@ -190,5 +190,9 @@ function xmldb_book_upgrade($oldversion) {
     }
     // End of MDL-35297 "replayed" steps.
 
+    // Moodle v2.4.0 release upgrade line
+    // Put any upgrade step following this
+
+
     return true;
 }
