@@ -24,4 +24,4 @@
  */
 
 $string['pluginname'] = 'Learnwise format';
-$string['plugidnname_help'] = 'This format enables the import of multiple choice questions saved in Learnwise\'s XML format.';
+$string['pluginname_help'] = 'This format enables the import of multiple choice questions saved in Learnwise\'s XML format.';
