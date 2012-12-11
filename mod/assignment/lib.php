@@ -1380,6 +1380,7 @@ class assignment_base {
 
         $table->no_sorting('finalgrade');
         $table->no_sorting('outcome');
+        $table->text_sorting('submissioncomment');
 
         // Start working -- this is necessary as soon as the niceties are over
         $table->setup();
