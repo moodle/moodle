@@ -180,7 +180,7 @@ M.mod_feedback.init = function(Y, id, sesskey) {
             });
 
         var dragelement = Y.Node.create('<span></span>')
-            .setAttribute('title', title)
+            .setAttribute('title', title);
         dragelement.appendChild(dragicon);
         return dragelement;
     };
