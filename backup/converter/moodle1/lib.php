@@ -254,7 +254,7 @@ class moodle1_converter extends base_converter {
             $path = '/MOODLE_BACKUP/COURSE/BLOCKS/BLOCK/' . $this->currentblock;
 
         } else if (strpos($path, '/MOODLE_BACKUP/COURSE/BLOCKS/BLOCK') === 0) {
-            $path = str_replace('/MOODLE_BACKUP/COURSE/BLOCKS/BLOCK', '/MOODLE_BACKUP/COURSE/BLOCKS/BLOCK/' . $this->currentmod, $path);
+            $path = str_replace('/MOODLE_BACKUP/COURSE/BLOCKS/BLOCK', '/MOODLE_BACKUP/COURSE/BLOCKS/BLOCK/' . $this->currentblock, $path);
         }
 
         if ($path !== $data['path']) {
@@ -350,12 +350,12 @@ class moodle1_converter extends base_converter {
         }
 
         if ($path === '/MOODLE_BACKUP/COURSE/BLOCKS/BLOCK') {
-            $this->currentmod = null;
+            $this->currentblock = null;
             $forbidden = true;
 
         } else if (strpos($path, '/MOODLE_BACKUP/COURSE/BLOCKS/BLOCK') === 0) {
             // expand the BLOCK paths so that they contain the module name
-            $path = str_replace('/MOODLE_BACKUP/COURSE/BLOCKS/BLOCK', '/MOODLE_BACKUP/COURSE/BLOCKS/BLOCK/' . $this->currentmod, $path);
+            $path = str_replace('/MOODLE_BACKUP/COURSE/BLOCKS/BLOCK', '/MOODLE_BACKUP/COURSE/BLOCKS/BLOCK/' . $this->currentblock, $path);
         }
 
         if (empty($this->pathelements[$path])) {
@@ -397,7 +397,7 @@ class moodle1_converter extends base_converter {
             $path = '/MOODLE_BACKUP/COURSE/BLOCKS/BLOCK/' . $this->currentblock;
 
         } else if (strpos($path, '/MOODLE_BACKUP/COURSE/BLOCKS/BLOCK') === 0) {
-            $path = str_replace('/MOODLE_BACKUP/COURSE/BLOCKS/BLOCK', '/MOODLE_BACKUP/COURSE/BLOCKS/BLOCK/' . $this->currentmod, $path);
+            $path = str_replace('/MOODLE_BACKUP/COURSE/BLOCKS/BLOCK', '/MOODLE_BACKUP/COURSE/BLOCKS/BLOCK/' . $this->currentblock, $path);
         }
 
         if (empty($this->pathelements[$path])) {
