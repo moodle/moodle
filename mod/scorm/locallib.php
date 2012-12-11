@@ -1864,3 +1864,27 @@ function scorm_get_adlnav_json ($scoes, &$adlnav = array(), $parentscoid = null)
     }
     return json_encode($adlnav);
 }
+
+/**
+ * Check for the availability of a resource by URL.
+ *
+ * Check is performed using an HTTP HEAD call.
+ *
+ * @param $url string A valid URL
+ * @return bool|string True if no issue is found. The error string message, otherwise
+ */
+function scorm_check_url($url) {
+    $curl = new curl;
+
+    if (!ini_get('open_basedir') and !ini_get('safe_mode')) {
+        // Same options as in {@link download_file_content()}, used in {@link scorm_parse_scorm()}.
+        $curl->setopt(array('CURLOPT_FOLLOWLOCATION' => true, 'CURLOPT_MAXREDIRS' => 5));
+    }
+    $cmsg = $curl->head($url);
+    $info = $curl->get_info();
+    if (empty($info['http_code']) || $info['http_code'] != 200) {
+        return get_string('invalidurlhttpcheck', 'scorm', array('cmsg' => $cmsg));
+    }
+
+    return true;
+}
