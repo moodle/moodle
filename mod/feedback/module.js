@@ -6,7 +6,7 @@ M.mod_feedback.init = function(Y, id, sesskey) {
         var drag = e.drag.get('node'),
             drop = e.drop.get('node');
 
-        //Are we dropping on a li node?
+        //Are we dropping on an li node?
         if (drop.get('tagName').toLowerCase() === 'li') {
             //Are we not going up?
             if (!goingUp) {
@@ -22,7 +22,7 @@ M.mod_feedback.init = function(Y, id, sesskey) {
     Y.DD.DDM.on('drag:drag', function(e) {
         //Get the last y point
         var y = e.target.lastXY[1];
-        //is it greater than the lastY var?
+        //Is it greater than the lastY var?
         if (y < lastY) {
             //We are going up
             goingUp = true;
@@ -61,7 +61,7 @@ M.mod_feedback.init = function(Y, id, sesskey) {
         var drop = e.drop.get('node'),
             drag = e.drag.get('node');
         dragnode = Y.one(drag);
-        //if we are not on an li, we must have been dropped on a ul
+        //If we are not on an li, we must have been dropped on a ul.
         if (drop.get('tagName').toLowerCase() !== 'li') {
             if (!drop.contains(drag)) {
                 drop.appendChild(drag);
@@ -83,9 +83,9 @@ M.mod_feedback.init = function(Y, id, sesskey) {
     //Static Vars
     var goingUp = false, lastY = 0;
 
-    //Get the list of li's in the lists and make them draggable
+    //Get the list of li's in the lists and make them draggable.
     var listitems = Y.Node.all('#feedback_dragarea ul li.feedback_itemlist');
-    listitems.each(function(v, k) { //make each item draggable
+    listitems.each(function(v, k) { //Make each item draggable.
         var dd = new Y.DD.Drag({
             node: v,
             target: {
@@ -94,17 +94,17 @@ M.mod_feedback.init = function(Y, id, sesskey) {
         }).plug(Y.Plugin.DDProxy, {
             moveOnEnd: false
         }).plug(Y.Plugin.DDConstrained, {
-            constrain2node: '#feedback_dragarea' //prevent dragging outside the dragarea
+            constrain2node: '#feedback_dragarea' //Prevent dragging outside the dragarea.
         });
 
-        item_id = get_node_id(v.get('id')); //get the id of the feedback item
-        item_box = Y.Node.one('#feedback_item_box_' + item_id); //get the current item box so we can add the drag handle
+        item_id = get_node_id(v.get('id')); //Get the id of the feedback item.
+        item_box = Y.Node.one('#feedback_item_box_' + item_id); //Get the current item box so we can add the drag handle.
         handletitle = M.util.get_string('move_item', 'feedback');
         mydraghandle = get_drag_handle(handletitle, 'itemhandle');
-        v.insert(mydraghandle, item_box); //insert the new handle into the item box
-        dd.addHandle(mydraghandle); //now we add the handle to the drag object, so the box only can be moved with this handle
+        v.insert(mydraghandle, item_box); //Insert the new handle into the item box.
+        dd.addHandle(mydraghandle); //Now we add the handle to the drag object, so the box only can be moved with this handle.
     });
-    // remove all legacy move icons
+    // Remove all legacy move icons.
     Y.Node.all('span.feedback_item_command_moveup').each(function(v, k) {
         v.remove();
     });;
@@ -121,20 +121,20 @@ M.mod_feedback.init = function(Y, id, sesskey) {
         node: droparea
     });
 
-    // here we save the new itemorder
+    // Here we save the new itemorder.
     function saveposition(Y, objekt, id, itemorder, sesskey, spinner){
 
         Y.io(M.cfg.wwwroot + '/mod/feedback/ajax.php', {
-            //the needed paramaters
+            //The needed paramaters
             data: {action: 'saveitemorder',
                    id: id,
                    itemorder: itemorder,
                    sesskey: sesskey
             },
 
-            timeout: 5000, //5 seconds for timeout I think it is enough
+            timeout: 5000, //5 seconds for timeout I think it is enough.
 
-            //define the events
+            //Define the events.
             on: {
                 start : function(transactionid) {
                     spinner.show();
@@ -155,12 +155,12 @@ M.mod_feedback.init = function(Y, id, sesskey) {
         });
     };
 
-    //this returns the numeric id from the dom id
+    //This returns the numeric id from the dom id.
     function get_node_id(id) {
         return Number(id.replace(/feedback_item_/i, ''));
     };
 
-    //this creates a new drag handle and return it as a new node
+    //This creates a new drag handle and return it as a new node.
     function get_drag_handle(title, handleclass) {
         var moveicon = {
             pix: "i/move_2d",
