@@ -28,6 +28,8 @@
 #categoryquestions { margin: 0; }
 #categoryquestions td,
 #categoryquestions th { padding: 0 0.2em; }
+#categoryquestions th { text-align: left; font-weight: normal; }
+.dir-rtl #categoryquestions th { text-align: right; }
 .questionbank .singleselect { margin: 0; }
 
 /* Question editing form */
