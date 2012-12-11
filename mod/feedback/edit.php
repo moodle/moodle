@@ -22,8 +22,8 @@
  * @package feedback
  */
 
-require_once("../../config.php");
-require_once("lib.php");
+require_once('../../config.php');
+require_once('lib.php');
 require_once('edit_form.php');
 
 feedback_init_feedback_session();
@@ -49,11 +49,11 @@ if (! $cm = get_coursemodule_from_id('feedback', $id)) {
     print_error('invalidcoursemodule');
 }
 
-if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
+if (! $course = $DB->get_record('course', array('id'=>$cm->course))) {
     print_error('coursemisconf');
 }
 
-if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
+if (! $feedback = $DB->get_record('feedback', array('id'=>$cm->instance))) {
     print_error('invalidcoursemodule');
 }
 
@@ -151,8 +151,8 @@ $use_template_form->set_form_elements();
 $use_template_form->set_data(array('id'=>$id));
 
 /// Print the page header
-$strfeedbacks = get_string("modulenameplural", "feedback");
-$strfeedback  = get_string("modulename", "feedback");
+$strfeedbacks = get_string('modulenameplural', 'feedback');
+$strfeedback  = get_string('modulename', 'feedback');
 
 $PAGE->set_url('/mod/feedback/edit.php', array('id'=>$cm->id, 'do_show'=>$do_show));
 $PAGE->set_heading(format_string($course->fullname));

@@ -27,7 +27,7 @@ if (!defined('AJAX_SCRIPT')) {
 }
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
-require_once("lib.php");
+require_once('lib.php');
 
 $id = required_param('id', PARAM_INT);
 $action = optional_param('action', '', PARAM_ALPHA);
@@ -35,8 +35,8 @@ $sesskey = optional_param('sesskey', false, PARAM_TEXT);
 $itemorder = optional_param('itemorder', false, PARAM_SEQUENCE);
 
 $cm = get_coursemodule_from_id('feedback', $id, 0, false, MUST_EXIST);
-$course = $DB->get_record("course", array("id"=>$cm->course), '*', MUST_EXIST);
-$feedback = $DB->get_record("feedback", array("id"=>$cm->instance), '*', MUST_EXIST);
+$course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
+$feedback = $DB->get_record('feedback', array('id'=>$cm->instance), '*', MUST_EXIST);
 
 require_sesskey();
 
