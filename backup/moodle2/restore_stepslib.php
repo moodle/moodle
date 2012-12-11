@@ -3081,9 +3081,6 @@ class restore_create_categories_and_questions extends restore_structure_step {
             $data->penalty = 1;
         }
 
-        $data->timecreated  = $this->apply_date_offset($data->timecreated);
-        $data->timemodified = $this->apply_date_offset($data->timemodified);
-
         $userid = $this->get_mappingid('user', $data->createdby);
         $data->createdby = $userid ? $userid : $this->task->get_userid();
 
