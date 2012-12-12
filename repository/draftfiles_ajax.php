@@ -222,8 +222,9 @@ switch ($action) {
 
         $filepath = explode('/', trim($file->get_filepath(), '/'));
         $filepath = array_pop($filepath);
+        $zipfile = repository::get_unused_filename($draftid, $parent_path, $filepath . '.zip');
 
-        if ($newfile = $zipper->archive_to_storage(array($filepath => $file), $user_context->id, 'user', 'draft', $draftid, $parent_path, $filepath.'.zip', $USER->id)) {
+        if ($newfile = $zipper->archive_to_storage(array($filepath => $file), $user_context->id, 'user', 'draft', $draftid, $parent_path, $zipfile, $USER->id)) {
             $return = new stdClass();
             $return->filepath = $parent_path;
             echo json_encode($return);
