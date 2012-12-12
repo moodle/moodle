@@ -165,7 +165,7 @@ class qtype_multianswer extends question_type {
             }
         }
 
-        $this->save_hints($question);
+        $this->save_hints($question, true);
     }
 
     public function save_question($authorizedquestion, $form) {
@@ -181,6 +181,10 @@ class qtype_multianswer extends question_type {
         $form->options = clone($question->options);
         unset($question->options);
         return parent::save_question($question, $form);
+    }
+
+    protected function make_hint($hint) {
+        return question_hint_with_parts::load_from_record($hint);
     }
 
     public function delete_question($questionid, $contextid) {

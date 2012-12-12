@@ -114,4 +114,67 @@ class qtype_multianswer_question_test extends advanced_testcase {
                 array('i' => 2, 'response' => 'Pussy-cat')), $question->summarise_response(
                 array('sub1_answer' => 'Owl', 'sub2_answer' => reset($rightchoice))));
     }
+
+    public function test_get_num_parts_right() {
+        $question = test_question_maker::make_question('multianswer');
+        $question->start_attempt(new question_attempt_step(), 1);
+
+        $rightchoice = $question->subquestions[2]->get_correct_response();
+        $right = reset($rightchoice);
+
+        $response = array('sub1_answer' => 'Frog', 'sub2_answer' => $right);
+        list($numpartsright, $numparts) = $question->get_num_parts_right($response);
+        $this->assertEquals(1, $numpartsright);
+        $this->assertEquals(2, $numparts);
+        $response = array('sub1_answer' => 'Owl', 'sub2_answer' => $right);
+        list($numpartsright, $numparts) = $question->get_num_parts_right($response);
+        $this->assertEquals(2, $numpartsright);
+        $response = array('sub1_answer' => 'Dog', 'sub2_answer' => 3);
+        list($numpartsright, $numparts) = $question->get_num_parts_right($response);
+        $this->assertEquals(0, $numpartsright);
+        $response = array('sub1_answer' => 'Owl');
+        list($numpartsright, $numparts) = $question->get_num_parts_right($response);
+        $this->assertEquals(1, $numpartsright);
+        $response = array('sub1_answer' => 'Dog');
+        list($numpartsright, $numparts) = $question->get_num_parts_right($response);
+        $this->assertEquals(0, $numpartsright);
+        $response = array('sub2_answer' => $right);
+        list($numpartsright, $numparts) = $question->get_num_parts_right($response);
+        $this->assertEquals(1, $numpartsright);
+    }
+
+    public function test_get_num_parts_right_fourmc() {
+        // Create a multianswer question with four mcq.
+        $question = test_question_maker::make_question('multianswer', 'fourmc');
+        $question->start_attempt(new question_attempt_step(), 1);
+
+        $response = array('sub1_answer' => '1', 'sub2_answer' => '1',
+                'sub3_answer' => '1', 'sub4_answer' => '1');
+        list($numpartsright, $numparts) = $question->get_num_parts_right($response);
+        $this->assertEquals(2, $numpartsright);
+    }
+
+    public function test_clear_wrong_from_response() {
+        $question = test_question_maker::make_question('multianswer');
+        $question->start_attempt(new question_attempt_step(), 1);
+
+        $rightchoice = $question->subquestions[2]->get_correct_response();
+        $right = reset($rightchoice);
+
+        $response = array('sub1_answer' => 'Frog', 'sub2_answer' => $right);
+        $this->assertEquals($question->clear_wrong_from_response($response),
+                array('sub1_answer' => '', 'sub2_answer' => $right));
+        $response = array('sub1_answer' => 'Owl', 'sub2_answer' => $right);
+        $this->assertEquals($question->clear_wrong_from_response($response),
+                array('sub1_answer' => 'Owl', 'sub2_answer' => $right));
+        $response = array('sub1_answer' => 'Dog', 'sub2_answer' => 3);
+        $this->assertEquals($question->clear_wrong_from_response($response),
+                array('sub1_answer' => '', 'sub2_answer' => ''));
+        $response = array('sub1_answer' => 'Owl');
+        $this->assertEquals($question->clear_wrong_from_response($response),
+                array('sub1_answer' => 'Owl'));
+        $response = array('sub2_answer' => $right);
+        $this->assertEquals($question->clear_wrong_from_response($response),
+                array('sub2_answer' => $right));
+    }
 }
