@@ -168,6 +168,7 @@ case 'zip':
         $filename = $filepath.'.zip';
     }
 
+    $filename = repository::get_unused_filename($itemid, $parent_path, $filename);
     $newfile = $zipper->archive_to_storage(array($filepath => $file), $user_context->id, 'user', 'draft', $itemid, $parent_path, $filename, $USER->id);
 
     $home_url->param('action', 'browse');
