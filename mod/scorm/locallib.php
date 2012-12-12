@@ -250,9 +250,6 @@ function scorm_parse($scorm, $full) {
         }
 
     } else if ($scorm->scormtype === SCORM_TYPE_EXTERNAL and $cfg_scorm->allowtypeexternal) {
-        if (!$full and $scorm->sha1hash === sha1($scorm->reference)) {
-            return;
-        }
         require_once("$CFG->dirroot/mod/scorm/datamodels/scormlib.php");
         // SCORM only, AICC can not be external
         if (!scorm_parse_scorm($scorm, $scorm->reference)) {
@@ -847,13 +844,13 @@ function scorm_simple_play($scorm, $user, $context, $cmid) {
 
     $result = false;
 
-    if ($scorm->scormtype != SCORM_TYPE_LOCAL && $scorm->updatefreq == SCORM_UPDATE_EVERYTIME) {
-        scorm_parse($scorm, false);
-    }
     if (has_capability('mod/scorm:viewreport', $context)) { //if this user can view reports, don't skipview so they can see links to reports.
         return $result;
     }
 
+    if ($scorm->scormtype != SCORM_TYPE_LOCAL && $scorm->updatefreq == SCORM_UPDATE_EVERYTIME) {
+        scorm_parse($scorm, false);
+    }
     $scoes = $DB->get_records_select('scorm_scoes', 'scorm = ? AND '.$DB->sql_isnotempty('scorm_scoes', 'launch', false, true), array($scorm->id), 'id', 'id');
 
     if ($scoes) {
