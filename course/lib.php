@@ -1679,7 +1679,11 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
  * @return void|string depending on $return
  */
 function print_section_add_menus($course, $section, $modnames = null, $vertical=false, $return=false, $sectionreturn=null) {
-    global $CFG, $OUTPUT;
+    global $PAGE, $CFG, $OUTPUT;
+    if ($course->id != $PAGE->course->id) {
+        debugging('print_section_add_menus() can be called only for the course set on the page', DEBUG_DEVELOPER);
+        return;
+    }
 
     if ($modnames === null) {
         $modnames = get_module_types_names();
@@ -1687,6 +1691,7 @@ function print_section_add_menus($course, $section, $modnames = null, $vertical=
 
     // check to see if user can add menus and there are modules to add
     if (!has_capability('moodle/course:manageactivities', context_course::instance($course->id))
+            || !$PAGE->user_is_editing()
             || empty($modnames)) {
         if ($return) {
             return '';
@@ -1702,16 +1707,14 @@ function print_section_add_menus($course, $section, $modnames = null, $vertical=
     $resources = array();
     $activities = array();
 
-    // We need to add the section section to the link for each module
-    $sectionlink = '&section=' . $section . '&sr=' . $sectionreturn;
-
     foreach ($modules as $module) {
         if (isset($module->types)) {
             // This module has a subtype
             // NOTE: this is legacy stuff, module subtypes are very strongly discouraged!!
             $subtypes = array();
             foreach ($module->types as $subtype) {
-                $subtypes[$subtype->link . $sectionlink] = $subtype->title;
+                $link = $subtype->link->out(true, array('section' => $section));
+                $subtypes[$link] = $subtype->title;
             }
 
             // Sort module subtypes into the list
@@ -1733,11 +1736,13 @@ function print_section_add_menus($course, $section, $modnames = null, $vertical=
         } else {
             // This module has no subtypes
             if ($module->archetype == MOD_ARCHETYPE_RESOURCE) {
-                $resources[$module->link . $sectionlink] = $module->title;
+                $link = $module->link->out(true, array('section' => $section));
+                $resources[$link] = $module->title;
             } else if ($module->archetype === MOD_ARCHETYPE_SYSTEM) {
                 // System modules cannot be added by user, do not add to dropdown
             } else {
-                $activities[$module->link . $sectionlink] = $module->title;
+                $link = $module->link->out(true, array('section' => $section));
+                $activities[$link] = $module->title;
             }
         }
     }
@@ -1826,7 +1831,10 @@ function get_module_metadata($course, $modnames, $sectionreturn = null) {
     }
 
     $return = array();
-    $urlbase = "/course/mod.php?id=$course->id&sesskey=".sesskey().'&sr='.$sectionreturn.'&add=';
+    $urlbase = new moodle_url('/course/mod.php', array('id' => $course->id, 'sesskey' => sesskey()));
+    if ($sectionreturn !== null) {
+        $urlbase->param('sr', $sectionreturn);
+    }
     foreach($modnames as $modname => $modnamestr) {
         if (!course_allowed_module($course, $modname)) {
             continue;
@@ -1873,16 +1881,16 @@ function get_module_metadata($course, $modnames, $sectionreturn = null) {
                     if (get_string_manager()->string_exists('help' . $subtype->name, $modname)) {
                         $subtype->help = get_string('help' . $subtype->name, $modname);
                     }
-                    $subtype->link = $urlbase . $subtype->type;
+                    $subtype->link = new moodle_url($urlbase, array('add' => $subtype->type));
                     $group->types[] = $subtype;
                 }
                 $modlist[$course->id][$modname] = $group;
             }
         } else {
             $module = new stdClass();
-            $module->title = get_string('modulename', $modname);
+            $module->title = $modnamestr;
             $module->name = $modname;
-            $module->link = $urlbase . $modname;
+            $module->link = new moodle_url($urlbase, array('add' => $modname));
             $module->icon = $OUTPUT->pix_icon('icon', '', $module->name, array('class' => 'icon'));
             $sm = get_string_manager();
             if ($sm->string_exists('modulename_help', $modname)) {

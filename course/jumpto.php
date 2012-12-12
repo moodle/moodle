@@ -34,7 +34,7 @@ if (!confirm_sesskey()) {
     print_error('confirmsesskeybad');
 }
 
-if (strpos($jump, '/') === 0) {
+if (strpos($jump, '/') === 0 || strpos($jump, $CFG->wwwroot) === 0) {
     redirect(new moodle_url($jump));
 } else {
     print_error('error');
