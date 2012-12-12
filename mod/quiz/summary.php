@@ -39,7 +39,7 @@ require_login($attemptobj->get_course(), false, $attemptobj->get_cm());
 // Check that this attempt belongs to this user.
 if ($attemptobj->get_userid() != $USER->id) {
     if ($attemptobj->has_capability('mod/quiz:viewreports')) {
-        redirect($attemptobj->review_url(null, $page));
+        redirect($attemptobj->review_url(null));
     } else {
         throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'notyourattempt');
     }
