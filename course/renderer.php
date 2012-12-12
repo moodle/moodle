@@ -211,7 +211,22 @@ class core_course_renderer extends plugin_renderer_base {
      * @return string The composed HTML for the module
      */
     public function course_modchooser($modules, $course) {
-        global $OUTPUT;
+        static $isdisplayed = false;
+        if ($isdisplayed) {
+            return '';
+        }
+        $isdisplayed = true;
+
+        // Add the module chooser
+        $this->page->requires->yui_module('moodle-course-modchooser',
+        'M.course.init_chooser',
+        array(array('courseid' => $course->id, 'closeButtonTitle' => get_string('close', 'editor')))
+        );
+        $this->page->requires->strings_for_js(array(
+                'addresourceoractivity',
+                'modchooserenable',
+                'modchooserdisable',
+        ), 'moodle');
 
         // Add the header
         $header = html_writer::tag('div', get_string('addresourceoractivity', 'moodle'),

@@ -1800,7 +1800,8 @@ function print_section_add_menus($course, $section, $modnames = null, $vertical=
             $output = html_writer::tag('div', $output, array('class' => 'show addresourcedropdown'));
             $modchooser = html_writer::tag('div', $modchooser, array('class' => 'hide addresourcemodchooser'));
         }
-        $output = $modchooser . $output;
+        $courserenderer = $PAGE->get_renderer('core', 'course');
+        $output = $courserenderer->course_modchooser($modules, $course) . $modchooser . $output;
     }
 
     if ($return) {
@@ -4480,17 +4481,6 @@ function include_course_ajax($course, $usedmodules = array(), $enabledmodules = 
 
     // Load drag and drop upload AJAX.
     dndupload_add_to_course($course, $enabledmodules);
-
-    // Add the module chooser
-    $PAGE->requires->yui_module('moodle-course-modchooser',
-        'M.course.init_chooser',
-        array(array('courseid' => $course->id, 'closeButtonTitle' => get_string('close', 'editor')))
-    );
-    $PAGE->requires->strings_for_js(array(
-            'addresourceoractivity',
-            'modchooserenable',
-            'modchooserdisable',
-    ), 'moodle');
 
     return true;
 }
