@@ -141,6 +141,11 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
             base.one('.'+CSS.HEADER+' h2').setStyle('cursor', 'move');
 
             this.get(UEP.BASE).one('.'+CSS.SEARCHOPTIONS+' .'+CSS.COLLAPSIBLEHEADING).one('img').setAttribute('src', M.util.image_url('t/collapsed', 'moodle'));
+            this.get(UEP.BASE).one('.'+CSS.SEARCHOPTIONS+' .'+CSS.COLLAPSIBLEHEADING).once('click', function() {
+                // We want to do this just once, the first time the controls are shown.
+                this.populateStartDates();
+                this.populateDuration();
+            }, this);
             this.get(UEP.BASE).one('.'+CSS.SEARCHOPTIONS+' .'+CSS.COLLAPSIBLEHEADING).on('click', function(){
                 this.get(UEP.BASE).one('.'+CSS.SEARCHOPTIONS+' .'+CSS.COLLAPSIBLEHEADING).toggleClass(CSS.ACTIVE);
                 this.get(UEP.BASE).one('.'+CSS.SEARCHOPTIONS+' .'+CSS.COLLAPSIBLEAREA).toggleClass(CSS.HIDDEN);
@@ -150,10 +155,7 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
                     this.get(UEP.BASE).one('.'+CSS.SEARCHOPTIONS+' .'+CSS.COLLAPSIBLEHEADING).one('img').setAttribute('src', M.util.image_url('t/expanded', 'moodle'));
                 }
             }, this);
-
             this.populateAssignableRoles();
-            this.populateStartDates();
-            this.populateDuration();
         },
         populateAssignableRoles : function() {
             this.on('assignablerolesloaded', function(){
@@ -192,9 +194,10 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
             var select = this.get(UEP.BASE).one('.'+CSS.ENROLMENTOPTION+'.'+CSS.DURATION+' select');
             var defaultvalue = this.get(UEP.DEFAULTDURATION);
             var index = 0, count = 0;
+            var durationdays = M.util.get_string('durationdays', 'enrol', '{a}');
             for (var i = 1; i <= 365; i++) {
                 count++;
-                var option = create('<option value="'+i+'">'+M.util.get_string('durationdays', 'enrol', i)+'</option>');
+                var option = create('<option value="'+i+'">'+durationdays.replace('{a}', i)+'</option>');
                 if (i == defaultvalue) {
                     index = count;
                 }
