@@ -276,8 +276,10 @@ class qtype_multianswer_test_helper extends question_test_helper {
             $mc->layout = qtype_multichoice_base::LAYOUT_DROPDOWN;
 
             $mc->answers = array(
-                10 * $i     => new question_answer(13, 'California', $data['California'] == 'OK', $data['California'], FORMAT_HTML),
-                10 * $i + 1 => new question_answer(14, 'Arizona', $data['Arizona'] == 'OK', $data['Arizona'], FORMAT_HTML),
+                10 * $i     => new question_answer(13, 'California', (float) ($data['California'] == 'OK'),
+                        $data['California'], FORMAT_HTML),
+                10 * $i + 1 => new question_answer(14, 'Arizona', (float) ($data['Arizona'] == 'OK'),
+                        $data['Arizona'], FORMAT_HTML),
             );
             $mc->qtype = question_bank::get_qtype('multichoice');
             $mc->maxmark = 1;

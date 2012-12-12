@@ -231,6 +231,38 @@ class qtype_multianswer_question extends question_graded_automatically {
         return array($fractionsum / $fractionmax, $overallstate);
     }
 
+    public function clear_wrong_from_response(array $response) {
+        foreach ($this->subquestions as $i => $subq) {
+            $substep = $this->get_substep(null, $i);
+            $subresp = $substep->filter_array($response);
+            list($subfraction, $newstate) = $subq->grade_response($subresp);
+            if ($newstate != question_state::$gradedright) {
+                foreach ($subresp as $ind => $resp) {
+                    if (($subq->layout == qtype_multichoice_base::LAYOUT_VERTICAL) 
+                            || ($subq->layout == qtype_multichoice_base::LAYOUT_HORIZONTAL)) {
+                        $response[$substep->add_prefix($ind)] = '-1';
+                    } else {
+                        $response[$substep->add_prefix($ind)] = '';
+                    }
+                }
+            }
+        }
+        return $response;
+    }
+
+    public function get_num_parts_right(array $response) {
+        $numright = 0;
+        foreach ($this->subquestions as $i => $subq) {
+            $substep = $this->get_substep(null, $i);
+            $subresp = $substep->filter_array($response);
+            list($subfraction, $newstate) = $subq->grade_response($subresp);
+            if ($newstate == question_state::$gradedright) {
+                $numright += 1;
+            }
+        }
+        return array($numright, count($this->subquestions));
+    }
+
     public function summarise_response(array $response) {
         $summary = array();
         foreach ($this->subquestions as $i => $subq) {
