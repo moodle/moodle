@@ -29,7 +29,6 @@ $string['installinfo'] = 'for installation and tests execution info';
 $string['moreinfoin'] = 'More info in';
 $string['newstepsinfo'] = 'for info about adding new steps definitions';
 $string['newtestsinfo'] = 'for info about writting new tests';
-$string['nomoodlesteps'] = 'Generic web application steps';
 $string['nostepsdefinitions'] = 'There aren\'t steps definitions matching this filter';
 $string['pluginname'] = 'Acceptance testing';
 $string['phpunitenvproblem'] = 'PHPUnit environment problem';

@@ -36,10 +36,7 @@ admin_externalpage_setup('toolbehat');
 $steps = tool_behat::stepsdefinitions($type, $component, $filter);
 
 // Form.
-$componentswithsteps = array(
-    '' => get_string('allavailablesteps', 'tool_behat'),
-    'nomoodle' => get_string('nomoodlesteps', 'tool_behat'),
-);
+$componentswithsteps = array('' => get_string('allavailablesteps', 'tool_behat'));
 
 // Complete the components list with the moodle steps definitions.
 $components = tool_behat::get_components_steps_definitions();

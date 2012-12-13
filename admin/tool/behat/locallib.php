@@ -190,12 +190,6 @@ class tool_behat {
 
         $behatpath = $CFG->dirroot . '/lib/behat';
 
-        // Not extra contexts when component is specified.
-        $loadbuiltincontexts = '0';
-        if ($component == '' || $component == 'nomoodle') {
-            $loadbuiltincontexts = '1';
-        }
-
         // Behat config file specifing the main context class,
         // the required Behat extensions and Moodle test wwwroot.
         $contents = 'default:
@@ -204,8 +198,6 @@ class tool_behat {
     bootstrap: ' . $behatpath . '/features/bootstrap
   context:
     class: behat_init_context
-    parameters:
-      loadbuiltincontexts: ' . $loadbuiltincontexts . '
   extensions:
     Behat\MinkExtension\Extension:
       base_url: ' . $CFG->test_wwwroot . '
@@ -230,7 +222,7 @@ class tool_behat {
 
         // Gets all the components with steps definitions.
         $steps = self::get_components_steps_definitions();
-        if ($steps && $component != 'nomoodle') {
+        if ($steps) {
             $stepsdefinitions = array('');
             foreach ($steps as $key => $filepath) {
                 if ($component == '' || $component === $key) {

@@ -48,12 +48,6 @@ class behat_init_context extends BehatContext {
      * @param array $parameters context parameters (set them up through behat.yml)
      */
     public function __construct(array $parameters) {
-
-        // Only load all subcontext if specified.
-        if ($parameters['loadbuiltincontexts']) {
-            $this->useContext('mink', new MinkContext($parameters));
-        }
-
         $this->useContext('moodle', new MoodleContext($parameters));
     }
 
