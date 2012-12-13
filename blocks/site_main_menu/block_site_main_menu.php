@@ -65,9 +65,6 @@ class block_site_main_menu extends block_list {
         $modinfo = get_fast_modinfo($course);
         $section = $modinfo->get_section_info(0);
 
-        $groupbuttons = $course->groupmode;
-        $groupbuttonslink = (!$course->groupmodeforce);
-
         if ($ismoving) {
             $strmovehere = get_string('movehere');
             $strmovefull = strip_tags(get_string('movefull', '', "'$USER->activitycopyname'"));
@@ -90,14 +87,6 @@ class block_site_main_menu extends block_list {
                     continue;
                 }
                 if (!$ismoving) {
-                    if ($groupbuttons) {
-                        if (! $mod->groupmodelink = $groupbuttonslink) {
-                            $mod->groupmode = $course->groupmode;
-                        }
-
-                    } else {
-                        $mod->groupmode = false;
-                    }
                     $editbuttons = '<div class="buttons">'.make_editing_buttons($mod, true, true).'</div>';
                 } else {
                     $editbuttons = '';

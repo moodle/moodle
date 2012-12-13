@@ -501,6 +501,22 @@ class cm_info extends stdClass {
     public $groupmembersonly;
 
     /**
+     * Indicates whether the course containing the module has forced the groupmode
+     * This means that cm_info::$groupmode should be ignored and cm_info::$coursegroupmode be
+     * used instead
+     * @var bool
+     */
+    public $coursegroupmodeforce;
+
+    /**
+     * Group mode (one of the constants NONE, SEPARATEGROUPS, or VISIBLEGROUPS) - from
+     * course table - as specified for the course containing the module
+     * Effective only if cm_info::$coursegroupmodeforce is set
+     * @var int
+     */
+    public $coursegroupmode;
+
+    /**
      * Indent level on course page (0 = no indent) - from course_modules table
      * @var int
      */
@@ -1063,6 +1079,8 @@ class cm_info extends stdClass {
         $this->groupmode        = isset($mod->groupmode) ? $mod->groupmode : 0;
         $this->groupingid       = isset($mod->groupingid) ? $mod->groupingid : 0;
         $this->groupmembersonly = isset($mod->groupmembersonly) ? $mod->groupmembersonly : 0;
+        $this->coursegroupmodeforce = $course->groupmodeforce;
+        $this->coursegroupmode  = $course->groupmode;
         $this->indent           = isset($mod->indent) ? $mod->indent : 0;
         $this->extra            = isset($mod->extra) ? $mod->extra : '';
         $this->extraclasses     = isset($mod->extraclasses) ? $mod->extraclasses : '';

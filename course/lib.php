@@ -1339,8 +1339,6 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
 
     static $initialised;
 
-    static $groupbuttons;
-    static $groupbuttonslink;
     static $isediting;
     static $ismoving;
     static $movingpix;
@@ -1348,8 +1346,6 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
     static $strunreadpostsone;
 
     if (!isset($initialised)) {
-        $groupbuttons     = ($course->groupmode or (!$course->groupmodeforce));
-        $groupbuttonslink = (!$course->groupmodeforce);
         $isediting        = $PAGE->user_is_editing();
         $ismoving         = $isediting && ismoving($course->id);
         if ($ismoving) {
@@ -1504,13 +1500,13 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                     }
 
                     // If specified, display extra content after link.
-                    if ($content) {
-                        $contentpart = html_writer::tag('div', $content, array('class' =>
-                                trim('contentafterlink ' . $textclasses)));
-                    }
-                } else {
-                    // No link, so display only content.
-                    $contentpart = html_writer::tag('div', $accesstext . $content, array('class' => $textclasses));
+                if ($content) {
+                    $contentpart = html_writer::tag('div', $content, array('class' =>
+                            trim('contentafterlink ' . $textclasses)));
+                }
+            } else {
+                // No link, so display only content.
+                $contentpart = html_writer::tag('div', $accesstext . $content, array('class' => $textclasses));
                 }
 
             // Module can put text after the link (e.g. forum unread)
@@ -1530,14 +1526,6 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
             }
 
             if ($isediting) {
-                if ($groupbuttons and plugin_supports('mod', $mod->modname, FEATURE_GROUPS, 0)) {
-                    if (! $mod->groupmodelink = $groupbuttonslink) {
-                        $mod->groupmode = $course->groupmode;
-                    }
-
-                } else {
-                    $mod->groupmode = false;
-                }
                 echo make_editing_buttons($mod, $absolute, true, $mod->indent, $sectionreturn);
                 echo $mod->get_after_edit_icons();
             }
@@ -3074,14 +3062,19 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
     }
 
     // groupmode
-    if ($hasmanageactivities and $mod->groupmode !== false) {
-        if ($mod->groupmode == SEPARATEGROUPS) {
+    if ($hasmanageactivities and plugin_supports('mod', $mod->modname, FEATURE_GROUPS, 0)) {
+        if ($mod->coursegroupmodeforce) {
+            $modgroupmode = $mod->coursegroupmode;
+        } else {
+            $modgroupmode = $mod->groupmode;
+        }
+        if ($modgroupmode == SEPARATEGROUPS) {
             $groupmode = NOGROUPS;
             $grouptitle = $str->groupsseparate;
             $forcedgrouptitle = $str->forcedgroupsseparate;
             $actionname = 'groupsseparate';
             $groupimage = 't/groups';
-        } else if ($mod->groupmode == VISIBLEGROUPS) {
+        } else if ($modgroupmode == VISIBLEGROUPS) {
             $groupmode = SEPARATEGROUPS;
             $grouptitle = $str->groupsvisible;
             $forcedgrouptitle = $str->forcedgroupsvisible;
@@ -3094,7 +3087,7 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
             $actionname = 'groupsnone';
             $groupimage = 't/groupn';
         }
-        if ($mod->groupmodelink) {
+        if (!$mod->coursegroupmodeforce) {
             $actions[$actionname] = new action_link(
                 new moodle_url($baseurl, array('id' => $mod->id, 'groupmode' => $groupmode)),
                 new pix_icon($groupimage, $grouptitle, 'moodle', array('class' => 'iconsmall', 'title' => '')),
