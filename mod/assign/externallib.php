@@ -184,7 +184,9 @@ class mod_assign_external extends external_api {
         return new external_single_structure(
             array(
                 'assignments' => new external_multiple_structure(self::assign_grades(), 'list of assignment grade information'),
-                'warnings'      => new external_warnings()
+                'warnings'      => new external_warnings('item is always \'assignment\'',
+                    'when errorcode is 3 then itemid is an assignment id. When errorcode is 1, itemid is a course module instance id',
+                    'errorcode can be 3 (no grades found) or 1 (no permission to get grades)')
             )
         );
     }
@@ -425,7 +427,9 @@ class mod_assign_external extends external_api {
         return new external_single_structure(
             array(
                 'courses' => new external_multiple_structure(self::get_assignments_course_structure(), 'list of courses'),
-                'warnings'  => new external_warnings()
+                'warnings'  => new external_warnings('item can be \'course\' (errorcode 1 or 2) or \'module\' (errorcode 1)',
+                    'When item is a course then itemid is a course id. When the item is a module then itemid is a module id',
+                    'errorcode can be 1 (no access rights) or 2 (not enrolled or no permissions)')
             )
         );
     }
