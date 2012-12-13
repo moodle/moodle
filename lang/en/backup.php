@@ -105,7 +105,6 @@ $string['currentstage2'] = 'Schema settings';
 $string['currentstage4'] = 'Confirmation and review';
 $string['currentstage8'] = 'Perform backup';
 $string['currentstage16'] = 'Complete';
-$string['dependenciesenforced'] = 'Your settings have been altered due to unmet dependencies';
 $string['enterasearch'] = 'Enter a search';
 $string['error_block_for_module_not_found'] = 'Orphan block instance (id: {$a->bid}) for course module (id: {$a->mid}) found. This block will not be backed up';
 $string['error_course_module_not_found'] = 'Orphan course module (id: {$a}) found. This module will not be backed up.';
