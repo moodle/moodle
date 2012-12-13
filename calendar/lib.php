@@ -737,6 +737,25 @@ function calendar_get_events($tstart, $tend, $users, $groups, $courses, $withdur
     return $events;
 }
 
+/** Get calendar events by id
+ *
+ * @since Moodle 2.5
+ * @param array $eventids list of event ids
+ * @return array Array of event entries, empty array if nothing found
+ */
+
+function calendar_get_events_by_id($eventids) {
+    global $DB;
+
+    if (!is_array($eventids) || empty($eventids)) {
+        return array();
+    }
+    list($wheresql, $params) = $DB->get_in_or_equal($eventids);
+    $wheresql = "id $wheresql";
+
+    return $DB->get_records_select('event', $wheresql, $params);
+}
+
 /**
  * Get control options for Calendar
  *

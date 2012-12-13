@@ -263,6 +263,24 @@ function groups_get_all_groups($courseid, $userid=0, $groupingid=0, $fields='g.*
                                ORDER BY name ASC", $params);
 }
 
+
+/**
+ * Gets array of all groups in current user.
+ *
+ * @since Moodle 2.5
+ * @category group
+ * @return array Returns an array of the group objects.
+ */
+function groups_get_my_groups() {
+    global $DB, $USER;
+    return $DB->get_records_sql("SELECT *
+                                   FROM {groups_members} gm
+                                   JOIN {groups} g
+                                    ON g.id = gm.groupid
+                                  WHERE gm.userid = ?
+                                   ORDER BY name ASC", array($USER->id));
+}
+
 /**
  * Returns info about user's groups in course.
  *
