@@ -1324,6 +1324,8 @@ function get_print_section_cm_text(cm_info $cm, $course) {
 /**
  * Prints a section full of activity modules
  *
+ * @deprecated since 2.5
+ *
  * @param stdClass $course The course
  * @param stdClass|section_info $section The section object containing properties id and section
  * @param array $mods (argument not used)
@@ -1335,135 +1337,10 @@ function get_print_section_cm_text(cm_info $cm, $course) {
  * @return void
  */
 function print_section($course, $section, $mods, $modnamesused, $absolute=false, $width="100%", $hidecompletion=false, $sectionreturn=null) {
-    global $CFG, $USER, $DB, $PAGE, $OUTPUT;
-
-    static $initialised;
-
-    static $isediting;
-    static $ismoving;
-    static $movingpix;
-    static $strmovefull;
-    static $strunreadpostsone;
-
-    if (!isset($initialised)) {
-        $isediting        = $PAGE->user_is_editing();
-        $ismoving         = $isediting && ismoving($course->id);
-        if ($ismoving) {
-            $movingpix    = new pix_icon('movehere', get_string('movehere'), 'moodle', array('class' => 'movetarget'));
-            $strmovefull  = strip_tags(get_string("movefull", "", "'$USER->activitycopyname'"));
-        }
-        $initialised = true;
-    }
-
+    global $PAGE;
     $displayoptions = array('hidecompletion' => $hidecompletion);
-    $modinfo = get_fast_modinfo($course);
-    $completioninfo = new completion_info($course);
     $courserenderer = $PAGE->get_renderer('core', 'course');
-
-    // Get the list of modules visible to user (excluding the module being moved if there is one)
-    $moduleslist = array();
-    if (!empty($modinfo->sections[$section->section])) {
-        foreach ($modinfo->sections[$section->section] as $modnumber) {
-            $mod = $modinfo->cms[$modnumber];
-
-            if ($ismoving and $mod->id == $USER->activitycopy) {
-                // do not display moving mod
-                continue;
-            }
-            // We can continue (because it will not be displayed at all)
-            // if:
-            // 1) The activity is not visible to users
-            // and
-            // 2a) The 'showavailability' option is not set (if that is set,
-            //     we need to display the activity so we can show
-            //     availability info)
-            // or
-            // 2b) The 'availableinfo' is empty, i.e. the activity was
-            //     hidden in a way that leaves no info, such as using the
-            //     eye icon.
-            if (!$mod->uservisible &&
-                (empty($mod->showavailability) ||
-                  empty($mod->availableinfo))) {
-                // visibility shortcut
-                continue;
-            }
-
-            $moduleslist[$modnumber] = $mod;
-        }
-    }
-
-    if (!empty($moduleslist) || $ismoving) {
-
-        echo html_writer::start_tag('ul', array('class' => 'section img-text'));
-
-        foreach ($moduleslist as $modnumber => $mod) {
-            $modclasses = 'activity '. $mod->modname. 'modtype_'.$mod->modname. ' '. $mod->get_extra_classes();
-            if ($ismoving) {
-                $movingurl = new moodle_url('/course/mod.php', array('moveto' => $mod->id, 'sesskey' => sesskey()));
-                echo html_writer::tag('li', html_writer::link($movingurl, $OUTPUT->render($movingpix)), array('class' => 'movehere'));
-            }
-
-            echo html_writer::start_tag('li', array('class' => $modclasses, 'id' => 'module-'. $modnumber));
-            $indentclasses = 'mod-indent';
-            if (!empty($mod->indent)) {
-                $indentclasses .= ' mod-indent-'.$mod->indent;
-                if ($mod->indent > 15) {
-                    $indentclasses .= ' mod-indent-huge';
-                }
-            }
-            echo html_writer::start_tag('div', array('class' => $indentclasses));
-
-            // Start the div for the activity title, excluding the edit icons.
-            echo html_writer::start_tag('div', array('class' => 'activityinstance'));
-
-            // Display the link to the module (or do nothing if module has no url)
-            echo $courserenderer->course_section_cm_name($mod, $displayoptions);
-
-            // Module can put text after the link (e.g. forum unread)
-            echo $mod->get_after_link();
-
-            // Closing the tag which contains everything but edit icons. Content part of the module should not be part of this.
-            echo html_writer::end_tag('div');
-
-            // If there is content but NO link (eg label), then display the
-            // content here (BEFORE any icons). In this case cons must be
-            // displayed after the content so that it makes more sense visually
-            // and for accessibility reasons, e.g. if you have a one-line label
-            // it should work similarly (at least in terms of ordering) to an
-            // activity.
-            $contentpart = $courserenderer->course_section_cm_text($mod, $displayoptions);
-            $url = $mod->get_url();
-            if (empty($url)) {
-                echo $contentpart;
-            }
-
-            if ($isediting) {
-                echo make_editing_buttons($mod, $absolute, true, $mod->indent, $sectionreturn);
-                echo $mod->get_after_edit_icons();
-            }
-
-            echo $courserenderer->course_section_cm_completion($course, $completioninfo, $mod, $displayoptions);
-
-            // If there is content AND a link, then display the content here
-            // (AFTER any icons). Otherwise it was displayed before
-            if (!empty($url)) {
-                echo $contentpart;
-            }
-
-            // show availability info (if module is not available)
-            echo $courserenderer->course_section_cm_availability($mod, $displayoptions);
-
-            echo html_writer::end_tag('div');
-            echo html_writer::end_tag('li')."\n";
-        }
-
-        if ($ismoving) {
-            $movingurl = new moodle_url('/course/mod.php', array('movetosection' => $section->id, 'sesskey' => sesskey()));
-            echo html_writer::tag('li', html_writer::link($movingurl, $OUTPUT->render($movingpix)), array('class' => 'movehere'));
-        }
-
-        echo html_writer::end_tag('ul'); // .section
-    }
+    echo $courserenderer->course_section_cm_list($course, $section, $sectionreturn, $displayoptions);
 }
 
 /**
