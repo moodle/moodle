@@ -430,6 +430,7 @@ class flexible_table {
             $SESSION->flextable[$this->uniqueid]->sortby   = array();
             $SESSION->flextable[$this->uniqueid]->i_first  = '';
             $SESSION->flextable[$this->uniqueid]->i_last   = '';
+            $SESSION->flextable[$this->uniqueid]->textsort = $this->column_textsort;
         }
 
         $this->sess = &$SESSION->flextable[$this->uniqueid];
@@ -520,8 +521,11 @@ class flexible_table {
         if (empty($sess->sortby)) {
             return '';
         }
+        if (empty($sess->textsort)) {
+            $sess->textsort = array();
+        }
 
-        return self::construct_order_by($sess->sortby);
+        return self::construct_order_by($sess->sortby, $sess->textsort);
     }
 
     /**
