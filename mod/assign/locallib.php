@@ -1154,7 +1154,7 @@ class assign {
                    LEFT JOIN {assign_grades} g ON
                         s.assignment = g.assignment AND
                         s.userid = g.userid
-                   JOIN(' . $esql . ') AS e ON e.id = s.userid
+                   JOIN(' . $esql . ') e ON e.id = s.userid
                    WHERE
                         s.assignment = :assignid AND
                         s.timemodified IS NOT NULL AND
@@ -1183,7 +1183,7 @@ class assign {
 
         $sql = 'SELECT COUNT(g.userid)
                    FROM {assign_grades} g
-                   JOIN(' . $esql . ') AS e ON e.id = g.userid
+                   JOIN(' . $esql . ') e ON e.id = g.userid
                    WHERE g.assignment = :assignid';
 
         return $DB->count_records_sql($sql, $params);
@@ -1222,7 +1222,7 @@ class assign {
 
             $sql = 'SELECT COUNT(s.userid)
                        FROM {assign_submission} s
-                       JOIN(' . $esql . ') AS e ON e.id = s.userid
+                       JOIN(' . $esql . ') e ON e.id = s.userid
                        WHERE
                             s.assignment = :assignid AND
                             s.timemodified IS NOT NULL';
@@ -1258,7 +1258,7 @@ class assign {
         } else {
             $sql = 'SELECT COUNT(s.userid)
                         FROM {assign_submission} s
-                        JOIN(' . $esql . ') AS e ON e.id = s.userid
+                        JOIN(' . $esql . ') e ON e.id = s.userid
                         WHERE
                             s.assignment = :assignid AND
                             s.timemodified IS NOT NULL AND
