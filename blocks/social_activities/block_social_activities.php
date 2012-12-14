@@ -63,6 +63,7 @@ class block_social_activities extends block_list {
 
 
 /// slow & hacky editing mode
+        $courserenderer = $this->page->get_renderer('core', 'course');
         $ismoving = ismoving($course->id);
         $modinfo = get_fast_modinfo($course);
         $section = $modinfo->get_section_info(0);
@@ -89,7 +90,9 @@ class block_social_activities extends block_list {
                     continue;
                 }
                 if (!$ismoving) {
-                    $editbuttons = '<br />'.make_editing_buttons($mod, true, true);
+                    $actions = course_get_cm_edit_actions($mod, -1);
+                    $editbuttons = '<br />'.
+                            $courserenderer->course_section_cm_edit_actions($actions);
                 } else {
                     $editbuttons = '';
                 }
@@ -126,7 +129,6 @@ class block_social_activities extends block_list {
             $this->content->icons[] = '';
         }
 
-        $courserenderer = $this->page->get_renderer('core', 'course');
         $this->content->footer = $courserenderer->course_section_add_cm_control($course,
                 0, null, array('inblock' => true));
 

@@ -665,7 +665,8 @@ class dndupload_ajax_processor {
      * @param cm_info $mod details of the mod just created
      */
     protected function send_response($mod) {
-        global $OUTPUT;
+        global $OUTPUT, $PAGE;
+        $courserenderer = $PAGE->get_renderer('core', 'course');
 
         $resp = new stdClass();
         $resp->error = self::ERROR_OK;
@@ -673,7 +674,8 @@ class dndupload_ajax_processor {
         $resp->name = $mod->name;
         $resp->link = $mod->get_url()->out();
         $resp->elementid = 'module-'.$mod->id;
-        $resp->commands = make_editing_buttons($mod, true, true, 0, $mod->sectionnum);
+        $actions = course_get_cm_edit_actions($mod, 0, $mod->sectionnum);
+        $resp->commands = ' '. $courserenderer->course_section_cm_edit_actions($actions);
         $resp->onclick = $mod->get_on_click();
 
         // if using groupings, then display grouping name

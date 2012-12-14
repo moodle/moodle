@@ -3084,3 +3084,134 @@ function format_weeks_get_section_dates($section, $course) {
     }
     return null;
 }
+
+/**
+ * Obtains shared data that is used in print_section when displaying a
+ * course-module entry.
+ *
+ * Deprecated. Instead of:
+ * list($content, $name) = get_print_section_cm_text($cm, $course);
+ * use:
+ * $content = $cm->get_formatted_content(array('overflowdiv' => true, 'noclean' => true));
+ * $name = $cm->get_formatted_name();
+ *
+ * @deprecated since 2.5
+ * @see cm_info::get_formatted_content()
+ * @see cm_info::get_formatted_name()
+ *
+ * This data is also used in other areas of the code.
+ * @param cm_info $cm Course-module data (must come from get_fast_modinfo)
+ * @param object $course (argument not used)
+ * @return array An array with the following values in this order:
+ *   $content (optional extra content for after link),
+ *   $instancename (text of link)
+ */
+function get_print_section_cm_text(cm_info $cm, $course) {
+    debugging('Function get_print_section_cm_text() is deprecated. Please use '.
+            'cm_info::get_formatted_content() and cm_info::get_formatted_name()',
+            DEBUG_DEVELOPER);
+    return array($cm->get_formatted_content(array('overflowdiv' => true, 'noclean' => true)),
+        $cm->get_formatted_name());
+}
+
+/**
+ * Prints the menus to add activities and resources.
+ *
+ * Deprecated. Please use:
+ * $courserenderer = $PAGE->get_renderer('core', 'course');
+ * $output = $courserenderer->course_section_add_cm_control($course, $section, $sectionreturn,
+ *    array('inblock' => $vertical));
+ * echo $output; // if $return argument in print_section_add_menus() set to false
+ *
+ * @deprecated since 2.5
+ * @see core_course_renderer::course_section_add_cm_control()
+ *
+ * @param stdClass $course course object, must be the same as set on the page
+ * @param int $section relative section number (field course_sections.section)
+ * @param null|array $modnames (argument ignored) get_module_types_names() is used instead of argument
+ * @param bool $vertical Vertical orientation
+ * @param bool $return Return the menus or send them to output
+ * @param int $sectionreturn The section to link back to
+ * @return void|string depending on $return
+ */
+function print_section_add_menus($course, $section, $modnames = null, $vertical=false, $return=false, $sectionreturn=null) {
+    global $PAGE;
+    debugging('Function print_section_add_menus() is deprecated. Please use course renderer '.
+            'function course_section_add_cm_control()', DEBUG_DEVELOPER);
+    $output = '';
+    $courserenderer = $PAGE->get_renderer('core', 'course');
+    $output = $courserenderer->course_section_add_cm_control($course, $section, $sectionreturn,
+            array('inblock' => $vertical));
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+        return !empty($output);
+    }
+}
+
+/**
+ * Produces the editing buttons for a module
+ *
+ * Deprecated. Please use:
+ * $courserenderer = $PAGE->get_renderer('core', 'course');
+ * $actions = course_get_cm_edit_actions($mod, $indent, $section);
+ * return ' ' . $courserenderer->course_section_cm_edit_actions($actions);
+ *
+ * @deprecated since 2.5
+ * @see course_get_cm_edit_actions()
+ * @see core_course_renderer->course_section_cm_edit_actions()
+ *
+ * @param stdClass $mod The module to produce editing buttons for
+ * @param bool $absolute_ignored (argument ignored) - all links are absolute
+ * @param bool $moveselect (argument ignored)
+ * @param int $indent The current indenting
+ * @param int $section The section to link back to
+ * @return string XHTML for the editing buttons
+ */
+function make_editing_buttons(stdClass $mod, $absolute_ignored = true, $moveselect = true, $indent=-1, $section=null) {
+    global $PAGE;
+    debugging('Function make_editing_buttons() is deprecated, please see PHPdocs in '.
+            'lib/deprecatedlib.php on how to replace it', DEBUG_DEVELOPER);
+    if (!($mod instanceof cm_info)) {
+        $modinfo = get_fast_modinfo($mod->course);
+        $mod = $modinfo->get_cm($mod->id);
+    }
+    $actions = course_get_cm_edit_actions($mod, $indent, $section);
+
+    $courserenderer = $PAGE->get_renderer('core', 'course');
+    // The space added before the <span> is a ugly hack but required to set the CSS property white-space: nowrap
+    // and having it to work without attaching the preceding text along with it. Hopefully the refactoring of
+    // the course page HTML will allow this to be removed.
+    return ' ' . $courserenderer->course_section_cm_edit_actions($actions);
+}
+
+/**
+ * Prints a section full of activity modules
+ *
+ * Deprecated. Please use:
+ * $courserenderer = $PAGE->get_renderer('core', 'course');
+ * echo $courserenderer->course_section_cm_list($course, $section, $sectionreturn,
+ *     array('hidecompletion' => $hidecompletion));
+ *
+ * @deprecated since 2.5
+ * @see core_course_renderer::course_section_cm_list()
+ *
+ * @param stdClass $course The course
+ * @param stdClass|section_info $section The section object containing properties id and section
+ * @param array $mods (argument not used)
+ * @param array $modnamesused (argument not used)
+ * @param bool $absolute (argument not used)
+ * @param string $width (argument not used)
+ * @param bool $hidecompletion Hide completion status
+ * @param int $sectionreturn The section to return to
+ * @return void
+ */
+function print_section($course, $section, $mods, $modnamesused, $absolute=false, $width="100%", $hidecompletion=false, $sectionreturn=null) {
+    global $PAGE;
+    debugging('Function print_section() is deprecated. Please use course renderer function '.
+            'course_section_cm_list() instead.', DEBUG_DEVELOPER);
+    $displayoptions = array('hidecompletion' => $hidecompletion);
+    $courserenderer = $PAGE->get_renderer('core', 'course');
+    echo $courserenderer->course_section_cm_list($course, $section, $sectionreturn, $displayoptions);
+}

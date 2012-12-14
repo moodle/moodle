@@ -125,7 +125,7 @@ class core_course_external extends external_api {
                 $sectioncontents = array();
 
                 //for each module of the section
-                foreach ($modinfo->sections[$section->section] as $cmid) { //matching /course/lib.php:print_section() logic
+                foreach ($modinfo->sections[$section->section] as $cmid) {
                     $cm = $modinfo->cms[$cmid];
 
                     // stop here if the module is not visible to the user
