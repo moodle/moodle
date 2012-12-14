@@ -544,6 +544,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
 
         $modinfo = get_fast_modinfo($course);
         $course = course_get_format($course)->get_course();
+        $courserenderer = $this->page->get_renderer('core', 'course');
 
         // Can we view the section in question?
         if (!($sectioninfo = $modinfo->get_section_info($displaysection))) {
@@ -569,9 +570,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
             echo $this->start_section_list();
             echo $this->section_header($thissection, $course, true, $displaysection);
             print_section($course, $thissection, null, null, true, "100%", false, $displaysection);
-            if ($PAGE->user_is_editing()) {
-                print_section_add_menus($course, 0, null, false, false, $displaysection);
-            }
+            echo $courserenderer->course_section_add_cm_control($course, 0, $displaysection);
             echo $this->section_footer();
             echo $this->end_section_list();
         }
@@ -606,9 +605,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         echo $completioninfo->display_help_icon();
 
         print_section($course, $thissection, null, null, true, '100%', false, $displaysection);
-        if ($PAGE->user_is_editing()) {
-            print_section_add_menus($course, $displaysection, null, false, false, $displaysection);
-        }
+        echo $courserenderer->course_section_add_cm_control($course, $displaysection, $displaysection);
         echo $this->section_footer();
         echo $this->end_section_list();
 
@@ -642,6 +639,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         $course = course_get_format($course)->get_course();
 
         $context = context_course::instance($course->id);
+        $courserenderer = $this->page->get_renderer('core', 'course');
         // Title with completion help icon.
         $completioninfo = new completion_info($course);
         echo $completioninfo->display_help_icon();
@@ -659,9 +657,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
                 if ($thissection->summary or !empty($modinfo->sections[0]) or $PAGE->user_is_editing()) {
                     echo $this->section_header($thissection, $course, false, 0);
                     print_section($course, $thissection, null, null, true, "100%", false, 0);
-                    if ($PAGE->user_is_editing()) {
-                        print_section_add_menus($course, 0, null, false, false, 0);
-                    }
+                    echo $courserenderer->course_section_add_cm_control($course, 0);
                     echo $this->section_footer();
                 }
                 continue;
@@ -691,9 +687,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
                 echo $this->section_header($thissection, $course, false, 0);
                 if ($thissection->uservisible) {
                     print_section($course, $thissection, null, null, true, "100%", false, 0);
-                    if ($PAGE->user_is_editing()) {
-                        print_section_add_menus($course, $section, null, false, false, 0);
-                    }
+                    echo $courserenderer->course_section_add_cm_control($course, $section);
                 }
                 echo $this->section_footer();
             }

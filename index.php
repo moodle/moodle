@@ -144,9 +144,7 @@
 
             print_section($SITE, $section, $mods, $modnamesused, true);
 
-            if ($editing) {
-                print_section_add_menus($SITE, $section->section, $modnames);
-            }
+            echo $courserenderer->course_section_add_cm_control($SITE, $section->section);
             echo $OUTPUT->box_end();
         }
     }

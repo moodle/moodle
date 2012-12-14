@@ -390,4 +390,120 @@ class core_course_renderer extends plugin_renderer_base {
         $output .= html_writer::end_tag('span');
         return $output;
     }
+
+    /**
+     * Renders HTML for the menus to add activities and resources to the current course
+     *
+     * @param stdClass $course
+     * @param int $section relative section number (field course_sections.section)
+     * @param int $sectionreturn The section to link back to
+     * @param array $displayoptions additional display options, for example blocks add
+     *     option 'inblock' => true, suggesting to display controls vertically
+     * @return string
+     */
+    function course_section_add_cm_control($course, $section, $sectionreturn = null, $displayoptions = array()) {
+        global $CFG;
+
+        $vertical = !empty($displayoptions['inblock']);
+
+        // check to see if user can add menus and there are modules to add
+        if (!has_capability('moodle/course:manageactivities', context_course::instance($course->id))
+                || !$this->page->user_is_editing()
+                || !($modnames = get_module_types_names()) || empty($modnames)) {
+            return '';
+        }
+
+        // Retrieve all modules with associated metadata
+        $modules = get_module_metadata($course, $modnames, $sectionreturn);
+        $urlparams = array('section' => $section);
+
+        // We'll sort resources and activities into two lists
+        $activities = array(MOD_CLASS_ACTIVITY => array(), MOD_CLASS_RESOURCE => array());
+
+        foreach ($modules as $module) {
+            if (!array_key_exists($module->archetype, $activities)) {
+                // System modules cannot be added by user, do not add to dropdown
+            } else if (isset($module->types)) {
+                // This module has a subtype
+                // NOTE: this is legacy stuff, module subtypes are very strongly discouraged!!
+                $subtypes = array();
+                foreach ($module->types as $subtype) {
+                    $link = $subtype->link->out(true, $urlparams);
+                    $subtypes[$link] = $subtype->title;
+                }
+
+                // Sort module subtypes into the list
+                if (!empty($module->title)) {
+                    // This grouping has a name
+                    $activities[$module->archetype][] = array($module->title => $subtypes);
+                } else {
+                    // This grouping does not have a name
+                    $activities[$module->archetype] = array_merge($activities[$module->archetype], $subtypes);
+                }
+            } else {
+                // This module has no subtypes
+                $link = $module->link->out(true, $urlparams);
+                $activities[$module->archetype][$link] = $module->title;
+            }
+        }
+
+        $straddactivity = get_string('addactivity');
+        $straddresource = get_string('addresource');
+        $sectionname = get_section_name($course, $section);
+        $strresourcelabel = get_string('addresourcetosection', null, $sectionname);
+        $stractivitylabel = get_string('addactivitytosection', null, $sectionname);
+
+        $output = html_writer::start_tag('div', array('class' => 'section_add_menus', 'id' => 'add_menus-section-' . $section));
+
+        if (!$vertical) {
+            $output .= html_writer::start_tag('div', array('class' => 'horizontal'));
+        }
+
+        if (!empty($activities[MOD_CLASS_RESOURCE])) {
+            $select = new url_select($activities[MOD_CLASS_RESOURCE], '', array(''=>$straddresource), "ressection$section");
+            $select->set_help_icon('resources');
+            $select->set_label($strresourcelabel, array('class' => 'accesshide'));
+            $output .= $this->output->render($select);
+        }
+
+        if (!empty($activities[MOD_CLASS_ACTIVITY])) {
+            $select = new url_select($activities[MOD_CLASS_ACTIVITY], '', array(''=>$straddactivity), "section$section");
+            $select->set_help_icon('activities');
+            $select->set_label($stractivitylabel, array('class' => 'accesshide'));
+            $output .= $this->output->render($select);
+        }
+
+        if (!$vertical) {
+            $output .= html_writer::end_tag('div');
+        }
+
+        $output .= html_writer::end_tag('div');
+
+        if (course_ajax_enabled($course) && $course->id == $this->page->course->id) {
+            // modchooser can be added only for the current course set on the page!
+            $straddeither = get_string('addresourceoractivity');
+            // The module chooser link
+            $modchooser = html_writer::start_tag('div', array('class' => 'mdl-right'));
+            $modchooser.= html_writer::start_tag('div', array('class' => 'section-modchooser'));
+            $icon = $this->output->pix_icon('t/add', '');
+            $span = html_writer::tag('span', $straddeither, array('class' => 'section-modchooser-text'));
+            $modchooser .= html_writer::tag('span', $icon . $span, array('class' => 'section-modchooser-link'));
+            $modchooser.= html_writer::end_tag('div');
+            $modchooser.= html_writer::end_tag('div');
+
+            // Wrap the normal output in a noscript div
+            $usemodchooser = get_user_preferences('usemodchooser', $CFG->modchooserdefault);
+            if ($usemodchooser) {
+                $output = html_writer::tag('div', $output, array('class' => 'hiddenifjs addresourcedropdown'));
+                $modchooser = html_writer::tag('div', $modchooser, array('class' => 'visibleifjs addresourcemodchooser'));
+            } else {
+                // If the module chooser is disabled, we need to ensure that the dropdowns are shown even if javascript is disabled
+                $output = html_writer::tag('div', $output, array('class' => 'show addresourcedropdown'));
+                $modchooser = html_writer::tag('div', $modchooser, array('class' => 'hide addresourcemodchooser'));
+            }
+            $output = $this->course_modchooser($modules, $course) . $modchooser . $output;
+        }
+
+        return $output;
+    }
 }

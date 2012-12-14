@@ -137,7 +137,9 @@ class block_social_activities extends block_list {
             $this->content->icons[] = '';
         }
 
-        $this->content->footer = print_section_add_menus($course, 0, null, true, true);
+        $courserenderer = $this->page->get_renderer('core', 'course');
+        $this->content->footer = $courserenderer->course_section_add_cm_control($course,
+                0, null, array('inblock' => true));
 
         return $this->content;
     }

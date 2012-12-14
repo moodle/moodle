@@ -1669,145 +1669,27 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
 /**
  * Prints the menus to add activities and resources.
  *
- * @param stdClass $course The course
+ * @deprecated since 2.5
+ *
+ * @param stdClass $course course object, must be the same as set on the page
  * @param int $section relative section number (field course_sections.section)
- * @param null|array $modnames An array containing the list of modules and their names
- *     if omitted will be taken from get_module_types_names()
+ * @param null|array $modnames (argument ignored) get_module_types_names() is used instead of argument
  * @param bool $vertical Vertical orientation
  * @param bool $return Return the menus or send them to output
  * @param int $sectionreturn The section to link back to
  * @return void|string depending on $return
  */
 function print_section_add_menus($course, $section, $modnames = null, $vertical=false, $return=false, $sectionreturn=null) {
-    global $PAGE, $CFG, $OUTPUT;
-    if ($course->id != $PAGE->course->id) {
-        debugging('print_section_add_menus() can be called only for the course set on the page', DEBUG_DEVELOPER);
-        return;
-    }
-
-    if ($modnames === null) {
-        $modnames = get_module_types_names();
-    }
-
-    // check to see if user can add menus and there are modules to add
-    if (!has_capability('moodle/course:manageactivities', context_course::instance($course->id))
-            || !$PAGE->user_is_editing()
-            || empty($modnames)) {
-        if ($return) {
-            return '';
-        } else {
-            return false;
-        }
-    }
-
-    // Retrieve all modules with associated metadata
-    $modules = get_module_metadata($course, $modnames, $sectionreturn);
-
-    // We'll sort resources and activities into two lists
-    $resources = array();
-    $activities = array();
-
-    foreach ($modules as $module) {
-        if (isset($module->types)) {
-            // This module has a subtype
-            // NOTE: this is legacy stuff, module subtypes are very strongly discouraged!!
-            $subtypes = array();
-            foreach ($module->types as $subtype) {
-                $link = $subtype->link->out(true, array('section' => $section));
-                $subtypes[$link] = $subtype->title;
-            }
-
-            // Sort module subtypes into the list
-            if (!empty($module->title)) {
-                // This grouping has a name
-                if ($module->archetype == MOD_CLASS_RESOURCE) {
-                    $resources[] = array($module->title=>$subtypes);
-                } else {
-                    $activities[] = array($module->title=>$subtypes);
-                }
-            } else {
-                // This grouping does not have a name
-                if ($module->archetype == MOD_CLASS_RESOURCE) {
-                    $resources = array_merge($resources, $subtypes);
-                } else {
-                    $activities = array_merge($activities, $subtypes);
-                }
-            }
-        } else {
-            // This module has no subtypes
-            if ($module->archetype == MOD_ARCHETYPE_RESOURCE) {
-                $link = $module->link->out(true, array('section' => $section));
-                $resources[$link] = $module->title;
-            } else if ($module->archetype === MOD_ARCHETYPE_SYSTEM) {
-                // System modules cannot be added by user, do not add to dropdown
-            } else {
-                $link = $module->link->out(true, array('section' => $section));
-                $activities[$link] = $module->title;
-            }
-        }
-    }
-
-    $straddactivity = get_string('addactivity');
-    $straddresource = get_string('addresource');
-    $sectionname = get_section_name($course, $section);
-    $strresourcelabel = get_string('addresourcetosection', null, $sectionname);
-    $stractivitylabel = get_string('addactivitytosection', null, $sectionname);
-
-    $output = html_writer::start_tag('div', array('class' => 'section_add_menus', 'id' => 'add_menus-section-' . $section));
-
-    if (!$vertical) {
-        $output .= html_writer::start_tag('div', array('class' => 'horizontal'));
-    }
-
-    if (!empty($resources)) {
-        $select = new url_select($resources, '', array(''=>$straddresource), "ressection$section");
-        $select->set_help_icon('resources');
-        $select->set_label($strresourcelabel, array('class' => 'accesshide'));
-        $output .= $OUTPUT->render($select);
-    }
-
-    if (!empty($activities)) {
-        $select = new url_select($activities, '', array(''=>$straddactivity), "section$section");
-        $select->set_help_icon('activities');
-        $select->set_label($stractivitylabel, array('class' => 'accesshide'));
-        $output .= $OUTPUT->render($select);
-    }
-
-    if (!$vertical) {
-        $output .= html_writer::end_tag('div');
-    }
-
-    $output .= html_writer::end_tag('div');
-
-    if (course_ajax_enabled($course)) {
-        $straddeither = get_string('addresourceoractivity');
-        // The module chooser link
-        $modchooser = html_writer::start_tag('div', array('class' => 'mdl-right'));
-        $modchooser.= html_writer::start_tag('div', array('class' => 'section-modchooser'));
-        $icon = $OUTPUT->pix_icon('t/add', '');
-        $span = html_writer::tag('span', $straddeither, array('class' => 'section-modchooser-text'));
-        $modchooser .= html_writer::tag('span', $icon . $span, array('class' => 'section-modchooser-link'));
-        $modchooser.= html_writer::end_tag('div');
-        $modchooser.= html_writer::end_tag('div');
-
-        // Wrap the normal output in a noscript div
-        $usemodchooser = get_user_preferences('usemodchooser', $CFG->modchooserdefault);
-        if ($usemodchooser) {
-            $output = html_writer::tag('div', $output, array('class' => 'hiddenifjs addresourcedropdown'));
-            $modchooser = html_writer::tag('div', $modchooser, array('class' => 'visibleifjs addresourcemodchooser'));
-        } else {
-            // If the module chooser is disabled, we need to ensure that the dropdowns are shown even if javascript is disabled
-            $output = html_writer::tag('div', $output, array('class' => 'show addresourcedropdown'));
-            $modchooser = html_writer::tag('div', $modchooser, array('class' => 'hide addresourcemodchooser'));
-        }
-        $courserenderer = $PAGE->get_renderer('core', 'course');
-        $output = $courserenderer->course_modchooser($modules, $course) . $modchooser . $output;
-    }
-
+    global $PAGE;
+    $output = '';
+    $courserenderer = $PAGE->get_renderer('core', 'course');
+    $output = $courserenderer->course_section_add_cm_control($course, $section, $sectionreturn,
+            array('inblock' => $vertical));
     if ($return) {
         return $output;
     } else {
         echo $output;
+        return !empty($output);
     }
 }
 
