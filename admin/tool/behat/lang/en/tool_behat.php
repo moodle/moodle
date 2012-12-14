@@ -23,12 +23,12 @@
  */
 
 $string['allavailablesteps'] = 'All the available steps';
-$string['finished'] = 'Process finished';
 $string['giveninfo'] = 'Given. Processes to set up the environment';
 $string['installinfo'] = 'for installation and tests execution info';
 $string['moreinfoin'] = 'More info in';
 $string['newstepsinfo'] = 'for info about adding new steps definitions';
 $string['newtestsinfo'] = 'for info about writting new tests';
+$string['noaction'] = 'No action selected';
 $string['nostepsdefinitions'] = 'There aren\'t steps definitions matching this filter';
 $string['pluginname'] = 'Acceptance testing';
 $string['phpunitenvproblem'] = 'PHPUnit environment problem';
@@ -36,6 +36,8 @@ $string['stepsdefinitionscomponent'] = 'Area';
 $string['stepsdefinitionscontains'] = 'Contains';
 $string['stepsdefinitionsfilters'] = 'Steps definitions';
 $string['stepsdefinitionstype'] = 'Type';
+$string['testenvironmentenable'] = 'Test environment enabled';
+$string['testenvironmentdisable'] = 'Test environment disabled';
 $string['theninfo'] = 'Then. Checkings to ensure the outcomes are the expected ones';
 $string['viewsteps'] = 'Filter';
 $string['wheninfo'] = 'When. Actions that provokes an event';

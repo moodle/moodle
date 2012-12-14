@@ -38,15 +38,10 @@ require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/behat/steps_definitions_
 class tool_behat {
 
     /**
-     * Path where each component's tests are stored
-     * @var string
-     */
+     * @var string Path where each component's tests are stored */
     private static $behat_tests_path = '/tests/behat';
 
-    /**
-     * Steps types
-     * @var array
-     */
+    /** @var array Steps types */
     private static $steps_types = array('given', 'when', 'then');
 
     /** @var string Docu url */
@@ -66,7 +61,7 @@ class tool_behat {
         self::check_behat_setup();
 
         // The loaded steps depends on the component specified.
-        self::update_config_file($component);
+        self::update_config_file($component, false);
 
         // The Moodle\BehatExtension\HelpPrinter\MoodleDefinitionsPrinter will parse this search format.
         if ($type) {
@@ -80,8 +75,8 @@ class tool_behat {
         }
 
         $currentcwd = getcwd();
-        chdir($CFG->dirroot . '/lib/behat');
-        exec('bin/behat --config="' . self::get_behat_config_filepath() . '" ' . $filteroption, $steps, $code);
+        chdir($CFG->dirroot);
+        exec(self::get_behat_command() . ' --config="' . self::get_steps_list_config_filepath() . '" ' . $filteroption, $steps, $code);
         chdir($currentcwd);
 
         if ($steps) {
@@ -96,20 +91,13 @@ class tool_behat {
     }
 
     /**
-     * Allows / disables the test environment to be accesses through the built-in server
+     * Allows / disables the test environment to be accessed through the built-in server
      *
      * Built-in server must be started separately
      *
      * @param string $testenvironment enable|disable
      */
-    public static function switchenvironment($testenvironment = false) {
-        global $CFG;
-
-        // Priority to the one specified as argument.
-        if (!$testenvironment) {
-            $testenvironment = optional_param('testenvironment', 'enable', PARAM_ALPHA);
-        }
-
+    public static function switchenvironment($testenvironment) {
         if ($testenvironment == 'enable') {
             self::start_test_mode();
         } else if ($testenvironment == 'disable') {
@@ -118,84 +106,38 @@ class tool_behat {
     }
 
     /**
-     * Runs the acceptance tests
+     * Updates a config file
      *
-     * It starts test mode and runs the built-in PHP
-     * erver and stops it all then it's done
+     * The tests runner and the steps definitions list uses different
+     * config files to avoid problems with concurrent executions.
      *
-     * @param boolean $withjavascript Include tests with javascript
-     * @param string $tags Restricts the executed tests to the ones that matches the tags
-     * @param string $extra Extra CLI behat options
-     */
-    public static function runtests($withjavascript = false, $tags = false, $extra = '') {
-        global $CFG;
-
-        // Checks the behat set up and the PHP version.
-        self::check_behat_setup(true);
-
-        // Check that PHPUnit test environment is correctly set up.
-        self::test_environment_problem();
-
-        // Updates all the Moodle features and steps definitions.
-        self::update_config_file();
-
-        @set_time_limit(0);
-
-        // No javascript by default.
-        if (!$withjavascript && strstr($tags, 'javascript') == false) {
-            $jsstr = '~@javascript';
-        }
-
-        // Adding javascript option to --tags.
-        $tagsoption = '';
-        if ($tags) {
-            if (!empty($jsstr)) {
-                $tags .= '&&' . $jsstr;
-            }
-            $tagsoption = " --tags '" . $tags . "'";
-
-        // No javascript by default.
-        } else if (!empty($jsstr)) {
-            $tagsoption = " --tags '" . $jsstr . "'";
-        }
-
-        // Starts built-in server and inits test mode.
-        self::start_test_mode();
-        $server = self::start_test_server();
-
-        // Runs the tests switching the current working directory to behat path.
-        $currentcwd = getcwd();
-        chdir($CFG->dirroot . '/lib/behat');
-        ob_start();
-        passthru('bin/behat --ansi --config="' . self::get_behat_config_filepath() .'" ' . $tagsoption . ' ' .$extra, $code);
-        $output = ob_get_contents();
-        ob_end_clean();
-        chdir($currentcwd);
-
-        // Stops built-in server and stops test mode.
-        self::stop_test_server($server[0], $server[1]);
-        self::stop_test_mode();
-
-        // Output.
-        echo $output;
-    }
-
-    /**
-     * Updates the config file
+     * The steps definitions list can be filtered by component so it's
+     * behat.yml can be different from the dirroot one.
+     *
      * @param string $component Restricts the obtained steps definitions to the specified component
+     * @param string $testsrunner If the config file will be used to run tests
      * @throws file_exception
      */
-    private static function update_config_file($component = '') {
+    private static function update_config_file($component = '', $testsrunner = true) {
         global $CFG;
 
-        $behatpath = $CFG->dirroot . '/lib/behat';
+        // Behat must run with the whole set of features and steps definitions.
+        if ($testsrunner === true) {
+            $prefix = '';
+            $configfilepath = $CFG->dirroot . '/behat.yml';
+
+        // Alternative for steps definitions filtering
+        } else {
+            $configfilepath = self::get_steps_list_config_filepath();
+            $prefix = $CFG->dirroot .'/';
+        }
 
         // Behat config file specifing the main context class,
         // the required Behat extensions and Moodle test wwwroot.
         $contents = 'default:
   paths:
-    features: ' . $behatpath . '/features
-    bootstrap: ' . $behatpath . '/features/bootstrap
+    features: ' . $prefix . 'lib/behat/features
+    bootstrap: ' . $prefix . 'lib/behat/features/bootstrap
   context:
     class: behat_init_context
   extensions:
@@ -233,8 +175,8 @@ class tool_behat {
         }
 
         // Stores the file.
-        if (!file_put_contents(self::get_behat_config_filepath(), $contents)) {
-            throw new file_exception('cannotcreatefile', self::get_behat_config_filepath());
+        if (!file_put_contents($configfilepath, $contents)) {
+            throw new file_exception('cannotcreatefile', $configfilepath);
         }
 
     }
@@ -272,6 +214,18 @@ class tool_behat {
         return $stepsdefinitions;
     }
 
+    /**
+     * Checks if $CFG->test_wwwroot is available
+     *
+     * @return boolean
+     */
+    public static function is_server_running() {
+        global $CFG;
+
+        $request = new curl();
+        $request->get($CFG->test_wwwroot);
+        return (true && !$request->get_errno());
+    }
 
     /**
      * Cleans the path returned by get_components_with_tests() to standarize it
@@ -325,7 +279,7 @@ class tool_behat {
         }
 
         // Moodle setting.
-        if (!is_dir($vendor = __DIR__ . '/../../../vendor/behat')) {
+        if (!is_dir(__DIR__ . '/../../../vendor/behat')) {
 
             $msg = get_string('wrongbehatsetup', 'tool_behat');
 
@@ -340,8 +294,8 @@ class tool_behat {
 
         // Behat test command.
         $currentcwd = getcwd();
-        chdir($CFG->dirroot . '/lib/behat');
-        exec('bin/behat --help', $output, $code);
+        chdir($CFG->dirroot);
+        exec(self::get_behat_command() . ' --help', $output, $code);
         chdir($currentcwd);
 
         if ($code != 0) {
@@ -352,6 +306,10 @@ class tool_behat {
     /**
      * Enables test mode
      *
+     * Starts the test mode checking the composer installation and
+     * the phpunit test environment and updating the available
+     * features and steps definitions.
+     *
      * Stores a file in dataroot/behat to allow Moodle to switch
      * to the test environment when using cli-server
      *
@@ -359,6 +317,15 @@ class tool_behat {
      */
     private static function start_test_mode() {
         global $CFG;
+
+        // Checks the behat set up and the PHP version.
+        self::check_behat_setup(true);
+
+        // Check that PHPUnit test environment is correctly set up.
+        self::test_environment_problem();
+
+        // Updates all the Moodle features and steps definitions.
+        self::update_config_file();
 
         if (self::is_test_mode_enabled()) {
             debugging('Test environment was already enabled');
@@ -377,31 +344,6 @@ class tool_behat {
     }
 
     /**
-     * Runs the php built-in server
-     * @return array The process running the server and the pipes array
-     */
-    private static function start_test_server() {
-        global $CFG;
-
-        $descriptorspec = array(
-            array("pipe", "r"),
-            array("pipe", "w"),
-            array("pipe", "a")
-        );
-
-        $server = str_replace('http://', '', $CFG->test_wwwroot);
-        $process = proc_open('php -S ' . $server, $descriptorspec, $pipes, $CFG->dirroot);
-
-        // TODO If it's already started close pipes.
-
-        if (!is_resource($process)) {
-            print_error('testservercantrun');
-        }
-
-        return array($process, $pipes);
-    }
-
-    /**
      * Disables test mode
      * @throws file_exception
      */
@@ -415,27 +357,6 @@ class tool_behat {
             if (!unlink($testenvfile)) {
                 throw new file_exception('cannotdeletetestenvironmentfile');
             }
-        }
-    }
-
-    /**
-     * Stops the built-in server
-     *
-     * @param resource $process
-     * @param array $pipes IN, OUT and error pipes
-     */
-    private static function stop_test_server($process, $pipes) {
-
-        if (is_resource($process)) {
-
-            // Closing pipes.
-            fclose($pipes[0]);
-            fclose($pipes[1]);
-            fclose($pipes[2]);
-
-            // Closing process.
-            proc_terminate($process);
-            proc_close($process);
         }
     }
 
@@ -464,7 +385,7 @@ class tool_behat {
     private static function is_test_environment_running() {
         global $CFG;
 
-        if (!empty($CFG->originaldataroot) || defined('BEHAT_RUNNING')) {
+        if (!empty($CFG->originaldataroot)) {
             return true;
         }
 
@@ -473,20 +394,24 @@ class tool_behat {
 
     /**
      * Returns the path to the file which specifies if test environment is enabled
+     *
+     * The file is in dataroot/behat/ but we need to
+     * know if test mode is running because then we swap
+     * it to phpunit_dataroot and we need the original value
+     *
      * @return string
      */
     private static function get_test_filepath() {
         global $CFG;
 
         if (self::is_test_environment_running()) {
-            $testenvfile = $CFG->originaldataroot . '/behat/test_environment_enabled.txt';
+            $prefix = $CFG->originaldataroot;
         } else {
-            $testenvfile = $CFG->dataroot . '/behat/test_environment_enabled.txt';
+            $prefix = $CFG->dataroot;
         }
 
-        return $testenvfile;
+        return $prefix . '/behat/test_environment_enabled.txt';
     }
-
 
     /**
      * Ensures the behat dir exists in moodledata
@@ -512,10 +437,18 @@ class tool_behat {
     }
 
     /**
-     * Returns the behat config file path
+     * Returns the executable path
      * @return string
      */
-    private static function get_behat_config_filepath() {
+    private static function get_behat_command() {
+        return 'vendor' . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'behat';
+    }
+
+    /**
+     * Returns the behat config file path used by the steps definition list
+     * @return string
+     */
+    private static function get_steps_list_config_filepath() {
         return self::get_behat_dir() . '/behat.yml';
     }
 

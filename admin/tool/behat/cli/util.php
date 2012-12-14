@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * CLI tests runner
+ * CLI tool
  *
  * @package    tool_behat
  * @copyright  2012 David Monllaó
@@ -31,12 +31,9 @@ require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/behat/locallib.php');
 // CLI options.
 list($options, $unrecognized) = cli_get_params(
     array(
-        'help'               => false,
-        'runtests'           => false,
-        'tags'               => false,
-        'extra'              => '',
-        'with-javascript'    => false,
-        'testenvironment'    => false
+        'help'    => false,
+        'enable'  => false,
+        'disable' => false,
     ),
     array(
         'h' => 'help'
@@ -46,16 +43,14 @@ list($options, $unrecognized) = cli_get_params(
 $help = "
 Behat tool
 
-Ensure the user who executes the action has permissions over behat installation
-
 Options:
---runtests           Runs the tests (accepts --with-javascript option, --tags=\"\" option to execute only the matching tests and --extra=\"\" to specify extra behat options)
---testenvironment    Allows the test environment to be accesses through the built-in server (accepts value 'enable' or 'disable')
+--enable Enables test environment
+--disable Disables test environment
 
 -h, --help     Print out this help
 
 Example from Moodle root directory:
-\$ php admin/tool/behat/cli/util.php --runtests --tags=\"tool_behat\"
+\$ php admin/tool/behat/cli/util.php --enable
 
 More info in http://docs.moodle.org/dev/Acceptance_testing#Running_tests
 ";
@@ -70,29 +65,17 @@ if ($unrecognized) {
     cli_error(get_string('cliunknowoption', 'admin', $unrecognized));
 }
 
-$commands = array('runtests', 'testenvironment');
-foreach ($commands as $command) {
-    if ($options[$command]) {
-        $action = $command;
-    }
-}
-
-if (empty($action)) {
-    mtrace('No command selected');
+// Run command.
+if ($options['enable']) {
+    $action = 'enable';
+} else if ($options['disable']) {
+    $action = 'disable';
+} else {
     echo $help;
     exit(0);
 }
 
-switch ($action) {
+tool_behat::switchenvironment($action);
 
-    case 'runtests':
-        tool_behat::runtests($options['with-javascript'], $options['tags'], $options['extra']);
-        break;
+mtrace(get_string('testenvironment' . $action, 'tool_behat'));
 
-    case 'testenvironment':
-        tool_behat::switchenvironment($options['testenvironment']);
-        break;
-}
-
-
-mtrace(get_string('finished', 'tool_behat'));
