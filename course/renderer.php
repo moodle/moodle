@@ -612,4 +612,197 @@ class core_course_renderer extends plugin_renderer_base {
         }
         return $output;
     }
+
+    /**
+     * Checks if course module has any conditions that may make it unavailable for
+     * all or some of the students
+     *
+     * This function is internal and is only used to create CSS classes for the module name/text
+     *
+     * @param cm_info $mod
+     * @return bool
+     */
+    protected function is_cm_conditionally_hidden(cm_info $mod) {
+        global $CFG;
+        $conditionalhidden = false;
+        if (!empty($CFG->enableavailability)) {
+            $conditionalhidden = $mod->availablefrom > time() ||
+                ($mod->availableuntil && $mod->availableuntil < time()) ||
+                count($mod->conditionsgrade) > 0 ||
+                count($mod->conditionscompletion) > 0;
+        }
+        return $conditionalhidden;
+    }
+
+    /**
+     * Renders html to display a name with the link to the course module on a course page
+     *
+     * If module is unavailable for user but still needs to be displayed
+     * in the list, just the name is returned without a link
+     *
+     * Note, that for course modules that never have separate pages (i.e. labels)
+     * this function return an empty string
+     *
+     * @param cm_info $mod
+     * @param array $displayoptions
+     * @return string
+     */
+    public function course_section_cm_name(cm_info $mod, $displayoptions = array()) {
+        global $CFG;
+        $output = '';
+        if (!$mod->uservisible &&
+                (empty($mod->showavailability) || empty($mod->availableinfo))) {
+            // nothing to be displayed to the user
+            return $output;
+        }
+        $url = $mod->get_url();
+        if (!$url) {
+            return $output;
+        }
+
+        //Accessibility: for files get description via icon, this is very ugly hack!
+        $instancename = $mod->get_formatted_name();
+        $altname = '';
+        $altname = $mod->modfullname;
+        // Avoid unnecessary duplication: if e.g. a forum name already
+        // includes the word forum (or Forum, etc) then it is unhelpful
+        // to include that in the accessible description that is added.
+        if (false !== strpos(textlib::strtolower($instancename),
+                textlib::strtolower($altname))) {
+            $altname = '';
+        }
+        // File type after name, for alphabetic lists (screen reader).
+        if ($altname) {
+            $altname = get_accesshide(' '.$altname);
+        }
+
+        $conditionalhidden = $this->is_cm_conditionally_hidden($mod);
+        $accessiblebutdim = !$mod->visible || $conditionalhidden;
+
+        $linkclasses = '';
+        $accesstext = '';
+        $textclasses = '';
+        if ($accessiblebutdim) {
+            $linkclasses .= ' dimmed';
+            $textclasses .= ' dimmed_text';
+            if ($conditionalhidden) {
+                $linkclasses .= ' conditionalhidden';
+                $textclasses .= ' conditionalhidden';
+            }
+            if ($mod->uservisible) {
+                // show accessibility note only if user can access the module himself
+                $accesstext = get_accesshide(get_string('hiddenfromstudents').': ');
+            }
+        }
+
+        // Get on-click attribute value if specified and decode the onclick - it
+        // has already been encoded for display (puke).
+        $onclick = htmlspecialchars_decode($mod->get_on_click(), ENT_QUOTES);
+
+        $groupinglabel = '';
+        if (!empty($mod->groupingid) && has_capability('moodle/course:managegroups', context_course::instance($mod->course))) {
+            $groupings = groups_get_all_groupings($mod->course);
+            $groupinglabel = html_writer::tag('span', '('.format_string($groupings[$mod->groupingid]->name).')',
+                    array('class' => 'groupinglabel '.$textclasses));
+        }
+
+        // Display link itself.
+        $activitylink = html_writer::empty_tag('img', array('src' => $mod->get_icon_url(),
+                'class' => 'iconlarge activityicon', 'alt' => $mod->modfullname)) . $accesstext .
+                html_writer::tag('span', $instancename . $altname, array('class' => 'instancename'));
+        if ($mod->uservisible) {
+            $output .= html_writer::link($url, $activitylink, array('class' => $linkclasses, 'onclick' => $onclick)) .
+                    $groupinglabel;
+        } else {
+            // We may be displaying this just in order to show information
+            // about visibility, without the actual link ($mod->uservisible)
+            $output .= html_writer::tag('div', $activitylink, array('class' => $textclasses)) .
+                    $groupinglabel;
+        }
+        return $output;
+    }
+
+    /**
+     * Renders html to display the module content on the course page (i.e. text of the labels)
+     *
+     * @param cm_info $mod
+     * @param array $displayoptions
+     * @return string
+     */
+    public function course_section_cm_text(cm_info $mod, $displayoptions = array()) {
+        $output = '';
+        if (!$mod->uservisible &&
+                (empty($mod->showavailability) || empty($mod->availableinfo))) {
+            // nothing to be displayed to the user
+            return $output;
+        }
+        $content = $mod->get_formatted_content(array('overflowdiv' => true, 'noclean' => true));
+        $conditionalhidden = $this->is_cm_conditionally_hidden($mod);
+        $accessiblebutdim = !$mod->visible || $conditionalhidden;
+        $textclasses = '';
+        $accesstext = '';
+        if ($accessiblebutdim) {
+            $textclasses .= ' dimmed_text';
+            if ($conditionalhidden) {
+                $textclasses .= ' conditionalhidden';
+            }
+            if ($mod->uservisible) {
+                // show accessibility note only if user can access the module himself
+                $accesstext = get_accesshide(get_string('hiddenfromstudents').': ');
+            }
+        }
+        if ($mod->get_url()) {
+            if ($content) {
+                // If specified, display extra content after link.
+                $output = html_writer::tag('div', $content, array('class' =>
+                        trim('contentafterlink ' . $textclasses)));
+            }
+        } else {
+            // No link, so display only content.
+            $output = html_writer::tag('div', $accesstext . $content, array('class' => $textclasses));
+        }
+        return $output;
+    }
+
+    /**
+     * Renders HTML to show course module availability information (for someone who isn't allowed
+     * to see the activity itself, or for staff)
+     *
+     * @param cm_info $mod
+     * @param array $displayoptions
+     * @return string
+     */
+    public function course_section_cm_availability(cm_info $mod, $displayoptions = array()) {
+        global $CFG;
+        if (!$mod->uservisible) {
+            // this is a student who is not allowed to see the module but might be allowed
+            // to see availability info (i.e. "Available from ...")
+            if (!empty($mod->showavailability) && !empty($mod->availableinfo)) {
+                $output = html_writer::tag('div', $mod->availableinfo, array('class' => 'availabilityinfo'));
+            }
+            return $output;
+        }
+        // this is a teacher who is allowed to see module but still should see the
+        // information that module is not available to all/some students
+        $modcontext = context_module::instance($mod->id);
+        $canviewhidden = has_capability('moodle/course:viewhiddenactivities', $modcontext);
+        if ($canviewhidden && !empty($CFG->enableavailability)) {
+            // Don't add availability information if user is not editing and activity is hidden.
+            if ($mod->visible || $this->page->user_is_editing()) {
+                $hidinfoclass = '';
+                if (!$mod->visible) {
+                    $hidinfoclass = 'hide';
+                }
+                $ci = new condition_info($mod);
+                $fullinfo = $ci->get_full_information();
+                if($fullinfo) {
+                    echo '<div class="availabilityinfo '.$hidinfoclass.'">'.get_string($mod->showavailability
+                        ? 'userrestriction_visible'
+                        : 'userrestriction_hidden','condition',
+                        $fullinfo).'</div>';
+                }
+            }
+        }
+        return '';
+    }
 }

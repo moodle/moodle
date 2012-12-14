@@ -1355,6 +1355,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
         $initialised = true;
     }
 
+    $displayoptions = array('hidecompletion' => $hidecompletion);
     $modinfo = get_fast_modinfo($course);
     $completioninfo = new completion_info($course);
     $courserenderer = $PAGE->get_renderer('core', 'course');
@@ -1396,28 +1397,6 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
         echo html_writer::start_tag('ul', array('class' => 'section img-text'));
 
         foreach ($moduleslist as $modnumber => $mod) {
-
-            // In some cases the activity is visible to user, but it is
-            // dimmed. This is done if viewhiddenactivities is true and if:
-            // 1. the activity is not visible, or
-            // 2. the activity has dates set which do not include current, or
-            // 3. the activity has any other conditions set (regardless of whether
-            //    current user meets them)
-            $modcontext = context_module::instance($mod->id);
-            $canviewhidden = has_capability('moodle/course:viewhiddenactivities', $modcontext);
-            $accessiblebutdim = !$mod->uservisible;
-            $conditionalhidden = false;
-            if (!$accessiblebutdim && $canviewhidden) {
-                $accessiblebutdim = !$mod->visible;
-                if (!empty($CFG->enableavailability)) {
-                    $conditionalhidden = $mod->availablefrom > time() ||
-                        ($mod->availableuntil && $mod->availableuntil < time()) ||
-                        count($mod->conditionsgrade) > 0 ||
-                        count($mod->conditionscompletion) > 0;
-                }
-                $accessiblebutdim = $conditionalhidden || $accessiblebutdim;
-            }
-
             $modclasses = 'activity '. $mod->modname. 'modtype_'.$mod->modname. ' '. $mod->get_extra_classes();
             if ($ismoving) {
                 $movingurl = new moodle_url('/course/mod.php', array('moveto' => $mod->id, 'sesskey' => sesskey()));
@@ -1434,85 +1413,16 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
             }
             echo html_writer::start_tag('div', array('class' => $indentclasses));
 
-            // Get data about this course-module
-            $content = $mod->get_formatted_content(array('overflowdiv' => true, 'noclean' => true));
-            $instancename = $mod->get_formatted_name();
-
-            //Accessibility: for files get description via icon, this is very ugly hack!
-            $altname = '';
-            $altname = $mod->modfullname;
-            // Avoid unnecessary duplication: if e.g. a forum name already
-            // includes the word forum (or Forum, etc) then it is unhelpful
-            // to include that in the accessible description that is added.
-            if (false !== strpos(textlib::strtolower($instancename),
-                    textlib::strtolower($altname))) {
-                $altname = '';
-            }
-            // File type after name, for alphabetic lists (screen reader).
-            if ($altname) {
-                $altname = get_accesshide(' '.$altname);
-            }
-
             // Start the div for the activity title, excluding the edit icons.
             echo html_writer::start_tag('div', array('class' => 'activityinstance'));
 
-            // We may be displaying this just in order to show information
-            // about visibility, without the actual link ($mod->uservisible)
-            $contentpart = '';
-                $linkclasses = '';
-                $textclasses = '';
-                $accesstext = '';
-                if ($accessiblebutdim) {
-                    $linkclasses .= ' dimmed';
-                    $textclasses .= ' dimmed_text';
-                    if ($conditionalhidden) {
-                        $linkclasses .= ' conditionalhidden';
-                        $textclasses .= ' conditionalhidden';
-                    }
-                    if ($mod->uservisible) {
-                        // show accessibility note only if user can access the module himself
-                        $accesstext = get_accesshide(get_string('hiddenfromstudents').': ');
-                    }
-                }
-
-                // Get on-click attribute value if specified and decode the onclick - it
-                // has already been encoded for display (puke).
-                $onclick = htmlspecialchars_decode($mod->get_on_click(), ENT_QUOTES);
-
-                $groupinglabel = '';
-                if (!empty($mod->groupingid) && has_capability('moodle/course:managegroups', context_course::instance($course->id))) {
-                    $groupings = groups_get_all_groupings($course->id);
-                    $groupinglabel = html_writer::tag('span', '('.format_string($groupings[$mod->groupingid]->name).')',
-                            array('class' => 'groupinglabel '.$textclasses));
-                }
-
-                if ($url = $mod->get_url()) {
-                    // Display link itself.
-                    $activitylink = html_writer::empty_tag('img', array('src' => $mod->get_icon_url(),
-                            'class' => 'iconlarge activityicon', 'alt' => $mod->modfullname)) . $accesstext .
-                            html_writer::tag('span', $instancename . $altname, array('class' => 'instancename'));
-                    if ($mod->uservisible) {
-                        echo html_writer::link($url, $activitylink, array('class' => $linkclasses, 'onclick' => $onclick)) .
-                                $groupinglabel;
-                    } else {
-                        echo html_writer::tag('div', $activitylink, array('class' => $textclasses)) .
-                                $groupinglabel;
-                    }
-
-                    // If specified, display extra content after link.
-                if ($content) {
-                    $contentpart = html_writer::tag('div', $content, array('class' =>
-                            trim('contentafterlink ' . $textclasses)));
-                }
-            } else {
-                // No link, so display only content.
-                $contentpart = html_writer::tag('div', $accesstext . $content, array('class' => $textclasses));
-                }
+            // Display the link to the module (or do nothing if module has no url)
+            echo $courserenderer->course_section_cm_name($mod, $displayoptions);
 
             // Module can put text after the link (e.g. forum unread)
             echo $mod->get_after_link();
 
-            // Closing the tag which contains everything but edit icons. $contentpart should not be part of this.
+            // Closing the tag which contains everything but edit icons. Content part of the module should not be part of this.
             echo html_writer::end_tag('div');
 
             // If there is content but NO link (eg label), then display the
@@ -1521,6 +1431,8 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
             // and for accessibility reasons, e.g. if you have a one-line label
             // it should work similarly (at least in terms of ordering) to an
             // activity.
+            $contentpart = $courserenderer->course_section_cm_text($mod, $displayoptions);
+            $url = $mod->get_url();
             if (empty($url)) {
                 echo $contentpart;
             }
@@ -1530,8 +1442,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 echo $mod->get_after_edit_icons();
             }
 
-            echo $courserenderer->course_section_cm_completion($course, $completioninfo, $mod,
-                    array('hidecompletion' => $hidecompletion));
+            echo $courserenderer->course_section_cm_completion($course, $completioninfo, $mod, $displayoptions);
 
             // If there is content AND a link, then display the content here
             // (AFTER any icons). Otherwise it was displayed before
@@ -1539,27 +1450,8 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 echo $contentpart;
             }
 
-            // Show availability information (for someone who isn't allowed to
-            // see the activity itself, or for staff)
-            if (!$mod->uservisible) {
-                echo '<div class="availabilityinfo">'.$mod->availableinfo.'</div>';
-            } else if ($canviewhidden && !empty($CFG->enableavailability)) {
-                // Don't add availability information if user is not editing and activity is hidden.
-                if ($mod->visible || $PAGE->user_is_editing()) {
-                    $hidinfoclass = '';
-                    if (!$mod->visible) {
-                        $hidinfoclass = 'hide';
-                    }
-                    $ci = new condition_info($mod);
-                    $fullinfo = $ci->get_full_information();
-                    if($fullinfo) {
-                        echo '<div class="availabilityinfo '.$hidinfoclass.'">'.get_string($mod->showavailability
-                            ? 'userrestriction_visible'
-                            : 'userrestriction_hidden','condition',
-                            $fullinfo).'</div>';
-                    }
-                }
-            }
+            // show availability info (if module is not available)
+            echo $courserenderer->course_section_cm_availability($mod, $displayoptions);
 
             echo html_writer::end_tag('div');
             echo html_writer::end_tag('li')."\n";
