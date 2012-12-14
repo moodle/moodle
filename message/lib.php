@@ -1024,11 +1024,14 @@ function message_print_search_results($frm, $showicontext=false, $currentuser=nu
     if ($personsearch) {
         if (optional_param('mycourses', 0, PARAM_BOOL)) {
             $users = array();
-            $mycourses = enrol_get_my_courses();
+            $mycourses = enrol_get_my_courses('id');
+            $mycoursesids = array();
             foreach ($mycourses as $mycourse) {
-                if (is_array($susers = message_search_users($mycourse->id, $personsearchstring))) {
-                    foreach ($susers as $suser) $users[$suser->id] = $suser;
-                }
+                $mycoursesids[] = $mycourse->id;
+            }
+            $susers = message_search_users($mycoursesids, $personsearchstring);
+            foreach ($susers as $suser) {
+                $users[$suser->id] = $suser;
             }
         } else {
             $users = message_search_users(SITEID, $personsearchstring);
@@ -1440,18 +1443,29 @@ function message_history_link($userid1, $userid2, $return=false, $keywords='', $
 
 
 /**
- * Search through course users
+ * Search through course users.
  *
- * If $coursid specifies the site course then this function searches
- * through all undeleted and confirmed users
- * @param int $courseid The course in question.
- * @param string $searchtext the text to search for
- * @param string $sort the column name to order by
+ * If $courseids contains the site course then this function searches
+ * through all undeleted and confirmed users.
+ *
+ * @param int|array $courseids Course ID or array of course IDs.
+ * @param string $searchtext the text to search for.
+ * @param string $sort the column name to order by.
  * @param string $exceptions comma separated list of user IDs to exclude
- * @return array  An array of {@link $USER} records.
+ * @return array An array of {@link $USER} records.
  */
-function message_search_users($courseid, $searchtext, $sort='', $exceptions='') {
+function message_search_users($courseids, $searchtext, $sort='', $exceptions='') {
     global $CFG, $USER, $DB;
+
+    // Basic validation to ensure that the parameter $courseids is not an empty array or an empty value.
+    if (!$courseids) {
+        $courseids = array(SITEID);
+    }
+
+    // Allow an integer to be passed.
+    if (!is_array($courseids)) {
+        $courseids = array($courseids);
+    }
 
     $fullname = $DB->sql_fullname();
 
@@ -1468,7 +1482,9 @@ function message_search_users($courseid, $searchtext, $sort='', $exceptions='') 
     }
 
     $ufields = user_picture::fields('u');
-    if (!$courseid or $courseid == SITEID) {
+
+    if (in_array(SITEID, $courseids)) {
+        // Search on site level.
         $params = array($USER->id, "%$searchtext%");
         return $DB->get_records_sql("SELECT $ufields, mc.id as contactlistid, mc.blocked
                                        FROM {user} u
@@ -1479,20 +1495,28 @@ function message_search_users($courseid, $searchtext, $sort='', $exceptions='') 
                                             $except
                                      $order", $params);
     } else {
-//TODO: add enabled enrolment join here (skodak)
-        $context = context_course::instance($courseid);
-        $contextlists = get_related_contexts_string($context);
-
-        // everyone who has a role assignment in this course or higher
+        // Search in courses.
         $params = array($USER->id, "%$searchtext%");
+
+        // Getting the context IDs or each course.
+        $contextids = array();
+        foreach ($courseids as $courseid) {
+            $context = context_course::instance($courseid);
+            $contextids = array_merge($contextids, $context->get_parent_context_ids(true));
+        }
+        list($contextwhere, $contextparams) = $DB->get_in_or_equal(array_unique($contextids));
+        $params = array_merge($params, $contextparams);
+
+        // Everyone who has a role assignment in this course or higher.
+        // TODO: add enabled enrolment join here (skodak)
         $users = $DB->get_records_sql("SELECT DISTINCT $ufields, mc.id as contactlistid, mc.blocked
                                          FROM {user} u
                                          JOIN {role_assignments} ra ON ra.userid = u.id
                                          LEFT JOIN {message_contacts} mc
                                               ON mc.contactid = u.id AND mc.userid = ?
                                         WHERE u.deleted = '0' AND u.confirmed = '1'
-                                              AND ra.contextid $contextlists
                                               AND (".$DB->sql_like($fullname, '?', false).")
+                                              AND ra.contextid $contextwhere
                                               $except
                                        $order", $params);
 
