@@ -1328,7 +1328,7 @@ function get_print_section_cm_text(cm_info $cm, $course) {
  * @param stdClass|section_info $section The section object containing properties id and section
  * @param array $mods (argument not used)
  * @param array $modnamesused (argument not used)
- * @param bool $absolute All links are absolute
+ * @param bool $absolute (argument not used)
  * @param string $width (argument not used)
  * @param bool $hidecompletion Hide completion status
  * @param int $sectionreturn The section to return to
@@ -1542,88 +1542,8 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 echo $mod->get_after_edit_icons();
             }
 
-            // Completion
-            $completion = $hidecompletion
-                ? COMPLETION_TRACKING_NONE
-                : $completioninfo->is_enabled($mod);
-            if ($completion!=COMPLETION_TRACKING_NONE && isloggedin() &&
-                !isguestuser() && $mod->uservisible) {
-                $completiondata = $completioninfo->get_data($mod,true);
-                $completionicon = '';
-                if ($isediting) {
-                    switch ($completion) {
-                        case COMPLETION_TRACKING_MANUAL :
-                            $completionicon = 'manual-enabled'; break;
-                        case COMPLETION_TRACKING_AUTOMATIC :
-                            $completionicon = 'auto-enabled'; break;
-                        default: // wtf
-                    }
-                } else if ($completion==COMPLETION_TRACKING_MANUAL) {
-                    switch($completiondata->completionstate) {
-                        case COMPLETION_INCOMPLETE:
-                            $completionicon = 'manual-n'; break;
-                        case COMPLETION_COMPLETE:
-                            $completionicon = 'manual-y'; break;
-                    }
-                } else { // Automatic
-                    switch($completiondata->completionstate) {
-                        case COMPLETION_INCOMPLETE:
-                            $completionicon = 'auto-n'; break;
-                        case COMPLETION_COMPLETE:
-                            $completionicon = 'auto-y'; break;
-                        case COMPLETION_COMPLETE_PASS:
-                            $completionicon = 'auto-pass'; break;
-                        case COMPLETION_COMPLETE_FAIL:
-                            $completionicon = 'auto-fail'; break;
-                    }
-                }
-                if ($completionicon) {
-                    $imgsrc = $OUTPUT->pix_url('i/completion-'.$completionicon);
-                    $formattedname = format_string($mod->name, true, array('context' => $modcontext));
-                    $imgalt = get_string('completion-alt-' . $completionicon, 'completion', $formattedname);
-                    if ($completion == COMPLETION_TRACKING_MANUAL && !$isediting) {
-                        $imgtitle = get_string('completion-title-' . $completionicon, 'completion', $formattedname);
-                        $newstate =
-                            $completiondata->completionstate==COMPLETION_COMPLETE
-                            ? COMPLETION_INCOMPLETE
-                            : COMPLETION_COMPLETE;
-                        // In manual mode the icon is a toggle form...
-
-                        // If this completion state is used by the
-                        // conditional activities system, we need to turn
-                        // off the JS.
-                        if (!empty($CFG->enableavailability) &&
-                            condition_info::completion_value_used_as_condition($course, $mod)) {
-                            $extraclass = ' preventjs';
-                        } else {
-                            $extraclass = '';
-                        }
-                        echo html_writer::start_tag('form', array(
-                                'class' => 'togglecompletion' . $extraclass,
-                                'method' => 'post',
-                                'action' => $CFG->wwwroot . '/course/togglecompletion.php'));
-                        echo html_writer::start_tag('div');
-                        echo html_writer::empty_tag('input', array(
-                                'type' => 'hidden', 'name' => 'id', 'value' => $mod->id));
-                        echo html_writer::empty_tag('input', array(
-                                'type' => 'hidden', 'name' => 'modulename',
-                                'value' => $mod->name));
-                        echo html_writer::empty_tag('input', array(
-                                'type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()));
-                        echo html_writer::empty_tag('input', array(
-                                'type' => 'hidden', 'name' => 'completionstate',
-                                'value' => $newstate));
-                        echo html_writer::empty_tag('input', array(
-                                'type' => 'image', 'src' => $imgsrc, 'alt' => $imgalt, 'title' => $imgtitle));
-                        echo html_writer::end_tag('div');
-                        echo html_writer::end_tag('form');
-                    } else {
-                        // In auto mode, or when editing, the icon is just an image
-                        echo "<span class='autocompletion'>";
-                        echo "<img src='$imgsrc' alt='$imgalt' title='$imgalt' /></span>";
-                    }
-                }
-            }
+            echo $courserenderer->course_section_cm_completion($course, $completioninfo, $mod,
+                    array('hidecompletion' => $hidecompletion));
 
             // If there is content AND a link, then display the content here
             // (AFTER any icons). Otherwise it was displayed before
