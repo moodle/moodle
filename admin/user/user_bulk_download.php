@@ -81,7 +81,7 @@ function user_download_ods($fields) {
 
     $worksheet = array();
 
-    $worksheet[0] =& $workbook->add_worksheet('');
+    $worksheet[0] = $workbook->add_worksheet('');
     $col = 0;
     foreach ($fields as $fieldname) {
         $worksheet[0]->write(0, $col, $fieldname);
@@ -119,7 +119,7 @@ function user_download_xls($fields) {
 
     $worksheet = array();
 
-    $worksheet[0] =& $workbook->add_worksheet('');
+    $worksheet[0] = $workbook->add_worksheet('');
     $col = 0;
     foreach ($fields as $fieldname) {
         $worksheet[0]->write(0, $col, $fieldname);

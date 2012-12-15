@@ -76,7 +76,7 @@
     /// Send HTTP headers
         $workbook->send($filename);
     /// Creating the first worksheet
-        $myxls =& $workbook->add_worksheet($strresponses);
+        $myxls = $workbook->add_worksheet($strresponses);
 
     /// Print names of all the fields
         $myxls->write_string(0,0,get_string("lastname"));
@@ -129,7 +129,7 @@
     /// Send HTTP headers
         $workbook->send($filename);
     /// Creating the first worksheet
-        $myxls =& $workbook->add_worksheet($strresponses);
+        $myxls = $workbook->add_worksheet($strresponses);
 
     /// Print names of all the fields
         $myxls->write_string(0,0,get_string("lastname"));
