@@ -41,7 +41,7 @@ class grade_export_ods extends grade_export {
     /// Sending HTTP headers
         $workbook->send($downloadfilename);
     /// Adding the worksheet
-        $myxls =& $workbook->add_worksheet($strgrades);
+        $myxls = $workbook->add_worksheet($strgrades);
 
     /// Print names of all the fields
         $myxls->write_string(0,0,get_string("firstname"));

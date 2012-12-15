@@ -2764,7 +2764,7 @@ function data_export_xls($export, $dataname, $count) {
     $workbook = new MoodleExcelWorkbook($filearg);
     $workbook->send($filename);
     $worksheet = array();
-    $worksheet[0] =& $workbook->add_worksheet('');
+    $worksheet[0] = $workbook->add_worksheet('');
     $rowno = 0;
     foreach ($export as $row) {
         $colno = 0;
@@ -2798,7 +2798,7 @@ function data_export_ods($export, $dataname, $count) {
     $workbook = new MoodleODSWorkbook($filearg);
     $workbook->send($filename);
     $worksheet = array();
-    $worksheet[0] =& $workbook->add_worksheet('');
+    $worksheet[0] = $workbook->add_worksheet('');
     $rowno = 0;
     foreach ($export as $row) {
         $colno = 0;
