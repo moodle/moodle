@@ -125,8 +125,8 @@ $xls_formats->procent = $workbook->add_format(array(
 // Creating the worksheets
 $sheetname = clean_param($feedback->name, PARAM_ALPHANUM);
 error_reporting(0);
-$worksheet1 =& $workbook->add_worksheet(substr($sheetname, 0, 31));
-$worksheet2 =& $workbook->add_worksheet('detailed');
+$worksheet1 = $workbook->add_worksheet(substr($sheetname, 0, 31));
+$worksheet2 = $workbook->add_worksheet('detailed');
 error_reporting($CFG->debug);
 $worksheet1->hide_gridlines();
 $worksheet1->set_column(0, 0, 10);
