@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,8 +17,7 @@
 /**
  * Keeps track of upgrades to the enrol_flatfile plugin
  *
- * @package    enrol
- * @subpackage flatfile
+ * @package    enrol_flatfile
  * @copyright  2010 Aparup Banerjee <aparup@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
