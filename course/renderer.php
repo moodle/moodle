@@ -168,6 +168,7 @@ class core_course_renderer extends plugin_renderer_base {
         if ($hascourses) {
             $content .= html_writer::start_tag('div', array('class'=>'courses'));
             $coursecount = 0;
+            $strinfo = new lang_string('info');
             foreach ($category->courses as $course) {
                 $classes = array('course');
                 $linkclass = 'course_link';
@@ -188,8 +189,9 @@ class core_course_renderer extends plugin_renderer_base {
                 }
 
                 if ($course->summary) {
+                    $url = new moodle_url('/course/info.php', array('id' => $course->id));
                     $image = html_writer::empty_tag('img', array('src'=>$this->output->pix_url('i/info'), 'alt'=>$this->strings->summary));
-                    $content .= html_writer::link(new moodle_url('/course/info.php', array('id'=>$course->id)), $image, array('title'=>$this->strings->summary));
+                    $content .= $this->action_link($url, $image, new popup_action('click', $url, 'courseinfo'), array('title' => $this->strings->summary));
                 }
                 $content .= html_writer::end_tag('div');
                 $content .= html_writer::end_tag('div');
