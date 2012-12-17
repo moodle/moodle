@@ -387,12 +387,14 @@ switch ($mode) {
         // Grading form
         // Expects the following to be set: $attemptid, $answer, $user, $page, $attempt
         $essayinfo = unserialize($attempt->useranswer);
+        $currentpage = $lesson->load_page($attempt->pageid);
 
         $mform = new essay_grading_form(null, array('scoreoptions'=>$scoreoptions, 'user'=>$user));
         $data = new stdClass;
         $data->id = $cm->id;
         $data->attemptid = $attemptid;
         $data->score = $essayinfo->score;
+        $data->question = format_string($currentpage->contents, $currentpage->contentsformat);
         $data->studentanswer = format_string($essayinfo->answer, $essayinfo->answerformat);
         $data->response = $essayinfo->response;
         $mform->set_data($data);
