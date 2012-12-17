@@ -1074,7 +1074,7 @@ class assign {
                    LEFT JOIN {assign_grades} g ON
                         s.assignment = g.assignment AND
                         s.userid = g.userid
-                   JOIN(' . $esql . ') AS e ON e.id = s.userid
+                   JOIN(' . $esql . ') e ON e.id = s.userid
                    WHERE
                         s.assignment = :assignid AND
                         s.timemodified IS NOT NULL AND
@@ -1104,7 +1104,7 @@ class assign {
                    LEFT JOIN {assign_grades} g ON
                         s.assignment = g.assignment AND
                         s.userid = g.userid
-                   JOIN(' . $esql . ') AS e ON e.id = s.userid
+                   JOIN(' . $esql . ') e ON e.id = s.userid
                    WHERE
                         s.assignment = :assignid AND
                         s.timemodified IS NOT NULL AND
@@ -1173,7 +1173,7 @@ class assign {
         $sql = 'SELECT s.*, u.lastname, u.firstname, u.username
                    FROM {assign_submission} s
                    JOIN {user} u ON s.userid = u.id
-                   JOIN(' . $esql . ') AS e ON e.id = s.userid
+                   JOIN(' . $esql . ') e ON e.id = s.userid
                    WHERE
                         s.assignment = :assignid AND
                         s.timemodified IS NOT NULL';
