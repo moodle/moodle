@@ -65,7 +65,7 @@ define('QUIZ_MIN_TIME_TO_CONTINUE', '2');
  * user starting at the current time. The ->id field is not set. The object is
  * NOT written to the database.
  *
- * @param object $quiz the quiz to create an attempt for.
+ * @param object $quizobj the quiz object to create an attempt for.
  * @param int $attemptnumber the sequence number for the attempt.
  * @param object $lastattempt the previous attempt by this user, if any. Only needed
  *         if $attemptnumber > 1 and $quiz->attemptonlast is true.
@@ -74,9 +74,10 @@ define('QUIZ_MIN_TIME_TO_CONTINUE', '2');
  *
  * @return object the newly created attempt object.
  */
-function quiz_create_attempt($quiz, $attemptnumber, $lastattempt, $timenow, $ispreview = false) {
+function quiz_create_attempt(quiz $quizobj, $attemptnumber, $lastattempt, $timenow, $ispreview = false) {
     global $USER;
 
+    $quiz = $quizobj->get_quiz();
     if ($quiz->sumgrades < 0.000005 && $quiz->grade > 0.000005) {
         throw new moodle_exception('cannotstartgradesmismatch', 'quiz',
                 new moodle_url('/mod/quiz/view.php', array('q' => $quiz->id)),
@@ -110,6 +111,13 @@ function quiz_create_attempt($quiz, $attemptnumber, $lastattempt, $timenow, $isp
     // If this is a preview, mark it as such.
     if ($ispreview) {
         $attempt->preview = 1;
+    }
+
+    $timeclose = $quizobj->get_access_manager($timenow)->get_end_time($attempt);
+    if ($timeclose === false || $ispreview) {
+        $attempt->timecheckstate = null;
+    } else {
+        $attempt->timecheckstate = $timeclose;
     }
 
     return $attempt;
@@ -752,6 +760,142 @@ function quiz_update_all_final_grades($quiz) {
         $DB->delete_records_select('quiz_grades', 'quiz = ? AND userid ' . $test,
                 array_merge(array($quiz->id), $params));
     }
+}
+
+/**
+ * Efficiently update check state time on all open attempts
+ *
+ * @param array $conditions optional restrictions on which attempts to update
+ *                    Allowed conditions:
+ *                      courseid => (array|int) attempts in given course(s)
+ *                      userid   => (array|int) attempts for given user(s)
+ *                      quizid   => (array|int) attempts in given quiz(s)
+ *                      groupid  => (array|int) quizzes with some override for given group(s)
+ *
+ */
+function quiz_update_open_attempts(array $conditions) {
+    global $DB;
+
+    foreach ($conditions as &$value) {
+        if (!is_array($value)) {
+            $value = array($value);
+        }
+    }
+
+    $params = array();
+    $coursecond = '';
+    $usercond = '';
+    $quizcond = '';
+    $groupcond = '';
+
+    if (isset($conditions['courseid'])) {
+        list ($incond, $inparams) = $DB->get_in_or_equal($conditions['courseid'], SQL_PARAMS_NAMED, 'cid');
+        $params = array_merge($params, $inparams);
+        $coursecond = "AND quiza.quiz IN (SELECT q.id FROM {quiz} q WHERE q.course $incond)";
+    }
+    if (isset($conditions['userid'])) {
+        list ($incond, $inparams) = $DB->get_in_or_equal($conditions['userid'], SQL_PARAMS_NAMED, 'uid');
+        $params = array_merge($params, $inparams);
+        $usercond = "AND quiza.userid $incond";
+    }
+    if (isset($conditions['quizid'])) {
+        list ($incond, $inparams) = $DB->get_in_or_equal($conditions['quizid'], SQL_PARAMS_NAMED, 'qid');
+        $params = array_merge($params, $inparams);
+        $quizcond = "AND quiza.quiz $incond";
+    }
+    if (isset($conditions['groupid'])) {
+        list ($incond, $inparams) = $DB->get_in_or_equal($conditions['groupid'], SQL_PARAMS_NAMED, 'gid');
+        $params = array_merge($params, $inparams);
+        $groupcond = "AND quiza.quiz IN (SELECT qo.quiz FROM {quiz_overrides} qo WHERE qo.groupid $incond)";
+    }
+
+    // SQL to compute timeclose and timelimit for each attempt:
+    $quizausersql = quiz_get_attempt_usertime_sql();
+
+    // SQL to compute the new timecheckstate
+    $timecheckstatesql = "
+          CASE WHEN quizauser.usertimelimit = 0 AND quizauser.usertimeclose = 0 THEN NULL
+               WHEN quizauser.usertimelimit = 0 THEN quizauser.usertimeclose
+               WHEN quizauser.usertimeclose = 0 THEN quiza.timestart + quizauser.usertimelimit
+               WHEN quiza.timestart + quizauser.usertimelimit < quizauser.usertimeclose THEN quiza.timestart + quizauser.usertimelimit
+               ELSE quizauser.usertimeclose END +
+          CASE WHEN quiza.state = 'overdue' THEN quiz.graceperiod ELSE 0 END";
+
+    // SQL to select which attempts to process
+    $attemptselect = " quiza.state IN ('inprogress', 'overdue')
+                       $coursecond
+                       $usercond
+                       $quizcond
+                       $groupcond";
+
+   /*
+    * Each database handles updates with inner joins differently:
+    *  - mysql does not allow a FROM clause
+    *  - postgres and mssql allow FROM but handle table aliases differently
+    *  - oracle requires a subquery
+    *
+    * Different code for each database.
+    */
+
+    $dbfamily = $DB->get_dbfamily();
+    if ($dbfamily == 'mysql') {
+        $updatesql = "UPDATE {quiz_attempts} quiza
+                        JOIN {quiz} quiz ON quiz.id = quiza.quiz
+                        JOIN ( $quizausersql ) quizauser ON quizauser.id = quiza.id
+                         SET quiza.timecheckstate = $timecheckstatesql
+                       WHERE $attemptselect";
+    } else if ($dbfamily == 'postgres') {
+        $updatesql = "UPDATE {quiz_attempts} quiza
+                         SET timecheckstate = $timecheckstatesql
+                        FROM {quiz} quiz, ( $quizausersql ) quizauser
+                       WHERE quiz.id = quiza.quiz
+                         AND quizauser.id = quiza.id
+                         AND $attemptselect";
+    } else if ($dbfamily == 'mssql') {
+        $updatesql = "UPDATE quiza
+                         SET timecheckstate = $timecheckstatesql
+                        FROM {quiz_attempts} quiza
+                        JOIN {quiz} quiz ON quiz.id = quiza.quiz
+                        JOIN ( $quizausersql ) quizauser ON quizauser.id = quiza.id
+                       WHERE $attemptselect";
+    } else {
+        // oracle, sqlite and others
+        $updatesql = "UPDATE {quiz_attempts} quiza
+                         SET timecheckstate = (
+                           SELECT $timecheckstatesql
+                             FROM {quiz} quiz, ( $quizausersql ) quizauser
+                            WHERE quiz.id = quiza.quiz
+                              AND quizauser.id = quiza.id
+                         )
+                         WHERE $attemptselect";
+    }
+
+    $DB->execute($updatesql, $params);
+}
+
+/**
+ * Returns SQL to compute timeclose and timelimit for every attempt, taking into account user and group overrides.
+ *
+ * @return string         SQL select with columns attempt.id, usertimeclose, usertimelimit
+ */
+function quiz_get_attempt_usertime_sql() {
+    // The multiple qgo JOINS are necessary because we want timeclose/timelimit = 0 (unlimited) to supercede
+    // any other group override
+    $quizausersql = "
+          SELECT iquiza.id,
+           COALESCE(MAX(quo.timeclose), MAX(qgo1.timeclose), MAX(qgo2.timeclose), iquiz.timeclose) AS usertimeclose,
+           COALESCE(MAX(quo.timelimit), MAX(qgo3.timelimit), MAX(qgo4.timelimit), iquiz.timelimit) AS usertimelimit
+
+           FROM {quiz_attempts} iquiza
+           JOIN {quiz} iquiz ON iquiz.id = iquiza.quiz
+      LEFT JOIN {quiz_overrides} quo ON quo.quiz = iquiza.quiz AND quo.userid = iquiza.userid
+      LEFT JOIN {groups_members} gm ON gm.userid = iquiza.userid
+      LEFT JOIN {quiz_overrides} qgo1 ON qgo1.quiz = iquiza.quiz AND qgo1.groupid = gm.groupid AND qgo1.timeclose = 0
+      LEFT JOIN {quiz_overrides} qgo2 ON qgo2.quiz = iquiza.quiz AND qgo2.groupid = gm.groupid AND qgo2.timeclose > 0
+      LEFT JOIN {quiz_overrides} qgo3 ON qgo3.quiz = iquiza.quiz AND qgo3.groupid = gm.groupid AND qgo3.timelimit = 0
+      LEFT JOIN {quiz_overrides} qgo4 ON qgo4.quiz = iquiza.quiz AND qgo4.groupid = gm.groupid AND qgo4.timelimit > 0
+       GROUP BY iquiza.id, iquiz.id, iquiz.timeclose, iquiz.timelimit";
+    return $quizausersql;
 }
 
 /**
@@ -1443,6 +1587,61 @@ function quiz_attempt_overdue_handler($event) {
 
     return quiz_send_overdue_message($course, $quiz, $attempt,
             get_context_instance(CONTEXT_MODULE, $cm->id), $cm);
+}
+
+/**
+ * Handle groups_member_added event
+ *
+ * @param object $event the event object.
+ */
+function quiz_groups_member_added_handler($event) {
+    quiz_update_open_attempts(array('userid'=>$event->userid, 'groupid'=>$event->groupid));
+}
+
+/**
+ * Handle groups_member_removed event
+ *
+ * @param object $event the event object.
+ */
+function quiz_groups_member_removed_handler($event) {
+    quiz_update_open_attempts(array('userid'=>$event->userid, 'groupid'=>$event->groupid));
+}
+
+/**
+ * Handle groups_group_deleted event
+ *
+ * @param object $event the event object.
+ */
+function quiz_groups_group_deleted_handler($event) {
+    global $DB;
+
+    // It would be nice if we got the groupid that was deleted.
+    // Instead, we just update all quizzes with orphaned group overrides
+    $sql = "SELECT o.id, o.quiz
+              FROM {quiz_overrides} o
+              JOIN {quiz} quiz ON quiz.id = o.quiz
+         LEFT JOIN {groups} grp ON grp.id = o.groupid
+             WHERE quiz.course = :courseid AND grp.id IS NULL";
+    $params = array('courseid'=>$event->courseid);
+    $records = $DB->get_records_sql_menu($sql, $params);
+    if (!$records) {
+        return; // Nothing to do.
+    }
+    $DB->delete_records_list('quiz_overrides', 'id', array_keys($records));
+    quiz_update_open_attempts(array('quizid'=>array_unique(array_values($records))));
+}
+
+/**
+ * Handle groups_members_removed event
+ *
+ * @param object $event the event object.
+ */
+function quiz_groups_members_removed_handler($event) {
+    if ($event->userid == 0) {
+        quiz_update_open_attempts(array('courseid'=>$event->courseid));
+    } else {
+        quiz_update_open_attempts(array('courseid'=>$event->courseid, 'userid'=>$event->userid));
+    }
 }
 
 /**

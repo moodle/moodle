@@ -392,17 +392,35 @@ class quiz_access_manager {
     }
 
     /**
-     * Compute how much time is left before this attempt must be submitted.
+     * Compute when the attempt must be submitted.
+     *
+     * @param object $attempt the data from the relevant quiz_attempts row.
+     * @return int|false the attempt close time.
+     *      False if there is no limit.
+     */
+    public function get_end_time($attempt) {
+        $timeclose = false;
+        foreach ($this->rules as $rule) {
+            $ruletimeclose = $rule->end_time($attempt);
+            if ($ruletimeclose !== false && ($timeclose === false || $ruletimeclose < $timeclose)) {
+                $timeclose = $ruletimeclose;
+            }
+        }
+        return $timeclose;
+    }
+
+    /**
+     * Compute what should be displayed to the user for time remaining in this attempt.
      *
      * @param object $attempt the data from the relevant quiz_attempts row.
      * @param int $timenow the time to consider as 'now'.
      * @return int|false the number of seconds remaining for this attempt.
-     *      False if there is no limit.
+     *      False if no limit should be displayed.
      */
-    public function get_time_left($attempt, $timenow) {
+    public function get_time_left_display($attempt, $timenow) {
         $timeleft = false;
         foreach ($this->rules as $rule) {
-            $ruletimeleft = $rule->time_left($attempt, $timenow);
+            $ruletimeleft = $rule->time_left_display($attempt, $timenow);
             if ($ruletimeleft !== false && ($timeleft === false || $ruletimeleft < $timeleft)) {
                 $timeleft = $ruletimeleft;
             }

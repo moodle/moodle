@@ -169,6 +169,7 @@ if ($mform->is_cancelled()) {
         $fromform->id = $DB->insert_record('quiz_overrides', $fromform);
     }
 
+    quiz_update_open_attempts(array('quizid'=>$quiz->id));
     quiz_update_events($quiz, $fromform);
 
     add_to_log($cm->course, 'quiz', 'edit override',

@@ -51,17 +51,22 @@ M.mod_quiz.timer = {
     // Timestamp at which time runs out, according to the student's computer's clock.
     endtime: 0,
 
+    // Is this a quiz preview?
+    preview: 0,
+
     // This records the id of the timeout that updates the clock periodically,
     // so we can cancel.
     timeoutid: null,
 
     /**
      * @param Y the YUI object
-     * @param timeleft, the time remaining, in seconds.
+     * @param start, the timer starting time, in seconds.
+     * @param preview, is this a quiz preview?
      */
-    init: function(Y, timeleft) {
+    init: function(Y, start, preview) {
         M.mod_quiz.timer.Y = Y;
-        M.mod_quiz.timer.endtime = new Date().getTime() + timeleft*1000;
+        M.mod_quiz.timer.endtime = new Date().getTime() + start*1000;
+        M.mod_quiz.timer.preview = preview;
         M.mod_quiz.timer.update();
         Y.one('#quiz-timer').setStyle('display', 'block');
     },
@@ -90,6 +95,12 @@ M.mod_quiz.timer = {
     update: function() {
         var Y = M.mod_quiz.timer.Y;
         var secondsleft = Math.floor((M.mod_quiz.timer.endtime - new Date().getTime())/1000);
+        
+        // If this is a preview and time expired, display timeleft 0 and don't renew the timer.
+        if (M.mod_quiz.timer.preview && secondsleft < 0) {
+            Y.one('#quiz-time-left').setContent('0:00:00');
+            return;
+        }
 
         // If time has expired, Set the hidden form field that says time has expired.
         if (secondsleft < 0) {

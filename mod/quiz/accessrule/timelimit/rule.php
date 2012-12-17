@@ -52,7 +52,17 @@ class quizaccess_timelimit extends quiz_access_rule_base {
                 format_time($this->quiz->timelimit));
     }
 
-    public function time_left($attempt, $timenow) {
-        return $attempt->timestart + $this->quiz->timelimit - $timenow;
+    public function end_time($attempt) {
+        return $attempt->timestart + $this->quiz->timelimit;
+    }
+
+    public function time_left_display($attempt, $timenow) {
+        // If this is a teacher preview after the time limit expires, don't show the time_left
+        $endtime = $this->end_time($attempt);
+        if ($attempt->preview && $timenow > $endtime) {
+            return false;
+        }
+        return $endtime - $timenow;
+
     }
 }

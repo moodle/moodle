@@ -360,6 +360,38 @@ function xmldb_quiz_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2012061703, 'quiz');
     }
 
+    if ($oldversion < 2012061704) {
+
+        // Define field timecheckstate to be added to quiz_attempts
+        $table = new xmldb_table('quiz_attempts');
+        $field = new xmldb_field('timecheckstate', XMLDB_TYPE_INTEGER, '10', null, null, null, '0', 'timemodified');
+
+        // Conditionally launch add field timecheckstate
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define index state-timecheckstate (not unique) to be added to quiz_attempts
+        $table = new xmldb_table('quiz_attempts');
+        $index = new xmldb_index('state-timecheckstate', XMLDB_INDEX_NOTUNIQUE, array('state', 'timecheckstate'));
+
+        // Conditionally launch add index state-timecheckstate
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Overdue cron no longer needs these
+        unset_config('overduelastrun', 'quiz');
+        unset_config('overduedoneto', 'quiz');
+
+        // Update timecheckstate on all open attempts
+        require_once($CFG->dirroot . '/mod/quiz/locallib.php');
+        quiz_update_open_attempts(array());
+
+        // quiz savepoint reached
+        upgrade_mod_savepoint(true, 2012061704, 'quiz');
+    }
+
     return true;
 }
 
