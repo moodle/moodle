@@ -61,7 +61,7 @@ $PAGE->navbar->add($restore->get_stage_name());
 $renderer = $PAGE->get_renderer('core','backup');
 echo $OUTPUT->header();
 if (!$restore->is_independent() && $restore->enforce_changed_dependencies()) {
-    echo $renderer->dependency_notification(get_string('dependenciesenforced','backup'));
+    debugging('Your settings have been altered due to unmet dependencies', DEBUG_DEVELOPER);
 }
 echo $renderer->progress_bar($restore->get_progress_bar());
 echo $restore->display($renderer);
