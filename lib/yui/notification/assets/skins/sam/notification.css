@@ -9,7 +9,7 @@
 .moodle-dialogue-base .closebutton {background-image:url(sprite.png);width:25px;height:15px;background-repeat:no-repeat;float:right;vertical-align:middle;display:inline-block;cursor:pointer;padding:0px;border-style:none;}
 .moodle-dialogue-base .moodle-dialogue-bd {padding:5px; overflow: auto;}
 .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-content {background:#FFF;padding:0px;}
-.moodle-dialogue-base .moodle-dialogue-ft {}
+.moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft {padding:0px;}
 
 .moodle-dialogue-confirm .confirmation-dialogue {text-align:center;}
 .moodle-dialogue-confirm .confirmation-message {margin:0.5em 1em;}
