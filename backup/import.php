@@ -154,7 +154,7 @@ $PAGE->navbar->add($backup->get_stage_name());
 // Display the current stage
 echo $OUTPUT->header();
 if ($backup->enforce_changed_dependencies()) {
-    echo $renderer->dependency_notification(get_string('dependenciesenforced','backup'));
+    debugging('Your settings have been altered due to unmet dependencies', DEBUG_DEVELOPER);
 }
 echo $renderer->progress_bar($backup->get_progress_bar());
 echo $backup->display($renderer);
