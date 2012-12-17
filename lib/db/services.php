@@ -99,6 +99,25 @@ $functions = array(
         'type'        => 'read',
         'capabilities'=> 'moodle/cohort:view',
     ),
+    // === grade related functions ===
+
+    'core_grade_get_grades' => array(
+        'classname'   => 'core_grade_external',
+        'methodname'  => 'get_grades',
+        'classpath'   => 'lib/grade/externallib.php',
+        'description' => 'Returns grade item details and optionally student grades.',
+        'type'        => 'read',
+        'capabilities'=> 'moodle/grade:view, moodle/grade:viewall',
+    ),
+
+    'core_grade_update_grades' => array(
+        'classname'   => 'core_grade_external',
+        'methodname'  => 'update_grades',
+        'classpath'   => 'lib/grade/externallib.php',
+        'description' => 'Update a grade item and associated student grades.',
+        'type'        => 'write',
+        'capabilities'=> '',
+    ),
 
     // === group related functions ===
 
