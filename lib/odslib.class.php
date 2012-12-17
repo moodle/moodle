@@ -50,7 +50,7 @@ class MoodleODSWorkbook {
     /* Create one Moodle Worksheet
      * @param string $name Name of the sheet
      */
-    function &add_worksheet($name = '') {
+    function add_worksheet($name = '') {
     /// Create the Moodle Worksheet. Returns one pointer to it
         $ws = new MoodleODSWorksheet($name);
         $this->worksheets[] =& $ws;
