@@ -1268,11 +1268,11 @@ class restore_section_structure_step extends restore_structure_step {
         $sectionid = $this->get_task()->get_sectionid();
 
         // Get data object for current section availability (if any).
-        $data = $DB->get_record('course_sections_availability',
-                array('coursesectionid' => $sectionid), 'id, sourcecmid, gradeitemid', IGNORE_MISSING);
+        $records = $DB->get_records('course_sections_availability',
+                array('coursesectionid' => $sectionid), 'id, sourcecmid, gradeitemid');
 
         // If it exists, update mappings.
-        if ($data) {
+        foreach ($records as $data) {
             // Only update mappings for entries which are created by this restore.
             // Otherwise, when you restore to an existing course, it will mess up
             // existing section availability entries.
