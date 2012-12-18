@@ -56,7 +56,7 @@ var DIALOGUE = function(config) {
                 value     : '',
                 classNames: 'closebutton',
                 action: function (e) {
-                	e.preventDefault();
+                    e.preventDefault();
                     this.hide();
                 }
             }
