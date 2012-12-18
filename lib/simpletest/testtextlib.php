@@ -56,29 +56,35 @@ class textlib_test extends UnitTestCase {
         $this->assertIdentical(textlib::convert($iso2, 'iso-8859-2', 'win-1250'), $win);
         $this->assertIdentical(textlib::convert($iso2, 'iso-8859-2', 'iso-8859-2'), $iso2);
         $this->assertIdentical(textlib::convert($win, 'win-1250', 'cp1250'), $win);
+        $this->assertIdentical(textlib::convert($utf8, 'utf-8', 'utf-8'), $utf8);
 
 
         $utf8 = '言語設定';
         $str = pack("H*", "b8c0b8ecc0dfc4ea"); //EUC-JP
         $this->assertIdentical(textlib::convert($utf8, 'utf-8', 'EUC-JP'), $str);
         $this->assertIdentical(textlib::convert($str, 'EUC-JP', 'utf-8'), $utf8);
+        $this->assertIdentical(textlib::convert($utf8, 'utf-8', 'utf-8'), $utf8);
 
         $str = pack("H*", "1b24423840386c405f446a1b2842"); //ISO-2022-JP
         $this->assertIdentical(textlib::convert($utf8, 'utf-8', 'ISO-2022-JP'), $str);
         $this->assertIdentical(textlib::convert($str, 'ISO-2022-JP', 'utf-8'), $utf8);
+        $this->assertIdentical(textlib::convert($utf8, 'utf-8', 'utf-8'), $utf8);
 
         $str = pack("H*", "8cbe8cea90dd92e8"); //SHIFT-JIS
         $this->assertIdentical(textlib::convert($utf8, 'utf-8', 'SHIFT-JIS'), $str);
         $this->assertIdentical(textlib::convert($str, 'SHIFT-JIS', 'utf-8'), $utf8);
+        $this->assertIdentical(textlib::convert($utf8, 'utf-8', 'utf-8'), $utf8);
 
         $utf8 = '简体中文';
         $str = pack("H*", "bcf2cce5d6d0cec4"); //GB2312
         $this->assertIdentical(textlib::convert($utf8, 'utf-8', 'GB2312'), $str);
         $this->assertIdentical(textlib::convert($str, 'GB2312', 'utf-8'), $utf8);
+        $this->assertIdentical(textlib::convert($utf8, 'utf-8', 'utf-8'), $utf8);
 
         $str = pack("H*", "bcf2cce5d6d0cec4"); //GB18030
         $this->assertIdentical(textlib::convert($utf8, 'utf-8', 'GB18030'), $str);
         $this->assertIdentical(textlib::convert($str, 'GB18030', 'utf-8'), $utf8);
+        $this->assertIdentical(textlib::convert($utf8, 'utf-8', 'utf-8'), $utf8);
     }
 
     public function test_substr() {
