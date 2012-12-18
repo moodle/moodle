@@ -1,12 +1,15 @@
 .moodle-dialogue-base .hidden,
 .moodle-dialogue-base .moodle-dialogue-hidden {display:none;}
-.moodle-dialogue-base .moodle-dialogue-lightbox {background-color:#AAA;position:absolute;top:0;left:0;width:100%;height:100%;}
+.moodle-dialogue-base .moodle-dialogue-lightbox {background-color:#AAA;}
 .moodle-dialogue-base .moodle-dialogue {background-color:#666;border:0 solid #666;border-right-width:3px;border-bottom-width:3px;}
 .moodle-dialogue-base .moodle-dialogue-wrap {background-color:#FFF;margin-top:-3px;margin-left:-3px;border:1px solid #555;height:auto;}
-.moodle-dialogue-base .moodle-dialogue-hd {font-size:110%;color:inherit;font-weight:bold;text-align:left;padding:5px 6px;margin:0;border-bottom:1px solid #ccc;background-color:#f6f6f6;}
-.moodle-dialogue-base .closebutton {background-image:url(sprite.png);width:25px;height:15px;background-repeat:no-repeat;float:right;vertical-align:middle;display:inline-block;cursor:pointer;}
+.moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd {font-size:110%;color:inherit;font-weight:bold;text-align:left;padding:5px 6px;margin:0;border-bottom:1px solid #ccc;background:#f6f6f6;}
+.moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd h1{font-size:100%;font-weight:bold;margin:0;padding:0;display:inline;}
+.moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd .yui3-widget-buttons {padding: 5px;}
+.moodle-dialogue-base .closebutton {background-image:url(sprite.png);width:25px;height:15px;background-repeat:no-repeat;float:right;vertical-align:middle;display:inline-block;cursor:pointer;padding:0px;border-style:none;}
 .moodle-dialogue-base .moodle-dialogue-bd {padding:5px; overflow: auto;}
-.moodle-dialogue-base .moodle-dialogue-ft {}
+.moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-content {background:#FFF;padding:0px;}
+.moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft {padding:0px;}
 
 .moodle-dialogue-confirm .confirmation-dialogue {text-align:center;}
 .moodle-dialogue-confirm .confirmation-message {margin:0.5em 1em;}
