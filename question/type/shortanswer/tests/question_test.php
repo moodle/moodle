@@ -106,6 +106,18 @@ class qtype_shortanswer_question_test extends advanced_testcase {
         // See http://moodle.org/mod/forum/discuss.php?d=120557
         $this->assertTrue((bool)qtype_shortanswer_question::compare_string_with_wildcard(
                 'ITÁLIE', 'Itálie', true));
+
+        if (function_exists('normalizer_normalize')) {
+            // Test ambiguous unicode representations
+            $this->assertTrue((bool)qtype_shortanswer_question::compare_string_with_wildcard(
+                    'départ', 'DÉPART', true));
+            $this->assertFalse((bool)qtype_shortanswer_question::compare_string_with_wildcard(
+                    'départ', 'DÉPART', false));
+            $this->assertTrue((bool)qtype_shortanswer_question::compare_string_with_wildcard(
+                    'd'."\xC3\xA9".'part', 'd'."\x65\xCC\x81".'part', false));
+            $this->assertTrue((bool)qtype_shortanswer_question::compare_string_with_wildcard(
+                    'd'."\xC3\xA9".'part', 'D'."\x45\xCC\x81".'PART', true));
+        }
     }
 
     public function test_is_complete_response() {
