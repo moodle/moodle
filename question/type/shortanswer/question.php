@@ -102,6 +102,11 @@ class qtype_shortanswer_question extends question_graded_by_strategy
             $regexp .= 'i';
         }
 
+        if (function_exists('normalizer_normalize')) {
+            $regexp = normalizer_normalize($regexp, Normalizer::FORM_C);
+            $string = normalizer_normalize($string, Normalizer::FORM_C);
+        }
+
         return preg_match($regexp, trim($string));
     }
 
