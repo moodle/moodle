@@ -41,19 +41,22 @@ class enrol_meta_addinstance_form extends moodleform {
 
         // TODO: this has to be done via ajax or else it will fail very badly on large sites!
         $courses = array('' => get_string('choosedots'));
-        $rs = $DB->get_recordset('course', array(), 'sortorder ASC', 'id, fullname, shortname, visible');
+        list ($select, $join) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
+        $sql = "SELECT c.id, c.fullname, c.shortname, c.visible $select FROM {course} c $join ORDER BY c.sortorder ASC";
+        $rs = $DB->get_recordset_sql($sql);
         foreach ($rs as $c) {
             if ($c->id == SITEID or $c->id == $course->id or isset($existing[$c->id])) {
                 continue;
             }
-            $coursecontext = get_context_instance(CONTEXT_COURSE, $c->id);
+            context_helper::preload_from_record($c);
+            $coursecontext = context_course::instance($c->id);
             if (!$c->visible and !has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
                 continue;
             }
             if (!has_capability('enrol/meta:selectaslinked', $coursecontext)) {
                 continue;
             }
-            $courses[$c->id] = format_string($c->fullname). ' ['.format_string($c->shortname, true, array('context' => $coursecontext)).']';
+            $courses[$c->id] = $coursecontext->get_context_name(false);
         }
         $rs->close();
 

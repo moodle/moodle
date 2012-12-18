@@ -190,12 +190,12 @@ function report_log_print_mnet_selector_form($hostid, $course, $selecteduser=0, 
         $sites = array();
         if ($CFG->mnet_localhost_id == $hostid) {
             if (has_capability('report/log:view', $sitecontext) && $showcourses) {
-                if ($ccc = $DB->get_records("course", null, "fullname","id,fullname,category")) {
+                if ($ccc = $DB->get_records("course", null, "fullname","id,shortname,fullname,category")) {
                     foreach ($ccc as $cc) {
                         if ($cc->id == SITEID) {
                             $sites["$hostid/$cc->id"]   = format_string($cc->fullname).' ('.get_string('site').')';
                         } else {
-                            $courses["$hostid/$cc->id"] = format_string($cc->fullname);
+                            $courses["$hostid/$cc->id"] = format_string(get_course_display_name_for_list($cc));
                         }
                     }
                 }
@@ -313,7 +313,7 @@ function report_log_print_mnet_selector_form($hostid, $course, $selecteduser=0, 
         echo html_writer::select($dropdown, "host_course", $hostid.'/'.$cid);
     } else {
         $courses = array();
-        $courses[$course->id] = $course->fullname . ((empty($course->category)) ? ' ('.get_string('site').') ' : '');
+        $courses[$course->id] = get_course_display_name_for_list($course) . ((empty($course->category)) ? ' ('.get_string('site').') ' : '');
         echo html_writer::label(get_string('selectacourse'), 'menuid', false, array('class' => 'accesshide'));
         echo html_writer::select($courses,"id",$course->id, false);
         if (has_capability('report/log:view', $sitecontext)) {
@@ -461,10 +461,10 @@ function report_log_print_selector_form($course, $selecteduser=0, $selecteddate=
     }
 
     if (has_capability('report/log:view', $sitecontext) && $showcourses) {
-        if ($ccc = $DB->get_records("course", null, "fullname", "id,fullname,category")) {
+        if ($ccc = $DB->get_records("course", null, "fullname", "id,shortname,fullname,category")) {
             foreach ($ccc as $cc) {
                 if ($cc->category) {
-                    $courses["$cc->id"] = format_string($cc->fullname);
+                    $courses["$cc->id"] = format_string(get_course_display_name_for_list($cc));
                 } else {
                     $courses["$cc->id"] = format_string($cc->fullname) . ' (Site)';
                 }
@@ -563,7 +563,7 @@ function report_log_print_selector_form($course, $selecteduser=0, $selecteddate=
     } else {
         //        echo '<input type="hidden" name="id" value="'.$course->id.'" />';
         $courses = array();
-        $courses[$course->id] = $course->fullname . (($course->id == SITEID) ? ' ('.get_string('site').') ' : '');
+        $courses[$course->id] = get_course_display_name_for_list($course) . (($course->id == SITEID) ? ' ('.get_string('site').') ' : '');
         echo html_writer::label(get_string('selectacourse'), 'menuid', false, array('class' => 'accesshide'));
         echo html_writer::select($courses,"id",$course->id, false);
         if (has_capability('report/log:view', $sitecontext)) {
