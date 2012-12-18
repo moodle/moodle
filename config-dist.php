@@ -546,8 +546,28 @@ $CFG->admin = 'admin';
 // 11. BEHAT SUPPORT
 //=========================================================================
 // Behat uses http://localhost:8000 as default URL to run
-// the acceptance tests, you can override this value
-// $CFG->test_wwwroot = '';
+// the acceptance tests, you can override this value.
+// Example:
+//   $CFG->test_wwwroot = 'http://192.168.1.250:8000';
+//
+// You can override default Moodle configuration for Behat and add your own
+// params; here you can add more profiles, use different Mink drivers than Selenium...
+// This params will be merged with the default Moodle behat.yml, giving priority
+// to the ones specified here. The array format is a YAML following the behat
+// params hierarchy. More info: http://docs.behat.org/guides/7.config.html
+// Example:
+//   $CFG->behatconfig = array(
+//       'default' => array(
+//           'formatter' => array(
+//               'name' => 'pretty',
+//               'parameters' => array(
+//                   'decorated' => true,
+//                   'verbose' => false
+//               )
+//           )
+//       )
+//   );
+//
 
 //=========================================================================
 // ALL DONE!  To continue installation, visit your main page with a browser

@@ -22,6 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+global $CFG;
 require_once($CFG->libdir . '/filestorage/file_exceptions.php');
 require_once($CFG->libdir . '/phpunit/bootstraplib.php');
 require_once($CFG->libdir . '/phpunit/classes/tests_finder.php');
@@ -118,7 +119,7 @@ class tool_behat {
      * @param string $testsrunner If the config file will be used to run tests
      * @throws file_exception
      */
-    private static function update_config_file($component = '', $testsrunner = true) {
+    protected static function update_config_file($component = '', $testsrunner = true) {
         global $CFG;
 
         // Behat must run with the whole set of features and steps definitions.
@@ -132,53 +133,125 @@ class tool_behat {
             $prefix = $CFG->dirroot .'/';
         }
 
-        // Behat config file specifing the main context class,
-        // the required Behat extensions and Moodle test wwwroot.
-        $contents = 'default:
-  paths:
-    features: ' . $prefix . 'lib/behat/features
-    bootstrap: ' . $prefix . 'lib/behat/features/bootstrap
-  context:
-    class: behat_init_context
-  extensions:
-    Behat\MinkExtension\Extension:
-      base_url: ' . $CFG->test_wwwroot . '
-      goutte: ~
-      selenium2: ~
-    ' . $CFG->dirroot . '/vendor/moodlehq/behat-extension/init.php:
-';
-
         // Gets all the components with features.
+        $features = array();
         $components = tests_finder::get_components_with_tests('features');
         if ($components) {
-            $featurespaths = array('');
             foreach ($components as $componentname => $path) {
                 $path = self::clean_path($path) . self::$behat_tests_path;
                 if (empty($featurespaths[$path]) && file_exists($path)) {
                     $featurespaths[$path] = $path;
                 }
             }
-            $contents .= '      features:' . implode(PHP_EOL . '        - ', $featurespaths) . PHP_EOL;
+            $features = array_values($featurespaths);
         }
-
 
         // Gets all the components with steps definitions.
+        $stepsdefinitions = array();
         $steps = self::get_components_steps_definitions();
         if ($steps) {
-            $stepsdefinitions = array('');
             foreach ($steps as $key => $filepath) {
                 if ($component == '' || $component === $key) {
-                    $stepsdefinitions[$key] = $key . ': ' . $filepath;
+                    $stepsdefinitions[$key] = $filepath;
                 }
             }
-            $contents .= '      steps_definitions:' . implode(PHP_EOL . '        ', $stepsdefinitions) . PHP_EOL;
         }
+
+        // Behat config file specifing the main context class,
+        // the required Behat extensions and Moodle test wwwroot.
+        $contents = self::get_config_file_contents($prefix, $features, $stepsdefinitions);
 
         // Stores the file.
         if (!file_put_contents($configfilepath, $contents)) {
             throw new file_exception('cannotcreatefile', $configfilepath);
         }
 
+    }
+
+    /**
+     * Behat config file specifing the main context class,
+     * the required Behat extensions and Moodle test wwwroot.
+     *
+     * @param string $prefix The filesystem prefix
+     * @param array $features The system feature files
+     * @param array $stepsdefinitions The system steps definitions
+     * @return string
+     */
+    protected static function get_config_file_contents($prefix, $features, $stepsdefinitions) {
+        global $CFG;
+
+        // We require here when we are sure behat dependencies are available.
+        require_once($CFG->dirroot . '/vendor/autoload.php');
+
+        $config = array(
+            'default' => array(
+                'paths' => array(
+                    'features' => $prefix . 'lib/behat/features',
+                    'bootstrap' => $prefix . 'lib/behat/features/bootstrap',
+                ),
+                'context' => array(
+                    'class' => 'behat_init_context'
+                ),
+                'extensions' => array(
+                    'Behat\MinkExtension\Extension' => array(
+                        'base_url' => $CFG->test_wwwroot,
+                        'goutte' => null,
+                        'selenium2' => null
+                    ),
+                    'Moodle\BehatExtension\Extension' => array(
+                        'features' => $features,
+                        'steps_definitions' => $stepsdefinitions
+                    )
+                )
+            )
+        );
+
+        // In case user defined overrides respect them over our default ones.
+        if (!empty($CFG->behatconfig)) {
+            $config = self::merge_config($config, $CFG->behatconfig);
+        }
+
+        return Symfony\Component\Yaml\Yaml::dump($config, 10, 2);
+    }
+
+    /**
+     * Overrides default config with local config values
+     *
+     * array_merge does not merge completely the array's values
+     *
+     * @param mixed $config The node of the default config
+     * @param mixed $localconfig The node of the local config
+     * @return mixed The merge result
+     */
+    protected static function merge_config($config, $localconfig) {
+
+        if (!is_array($config) && !is_array($localconfig)) {
+            return $localconfig;
+        }
+
+        // Local overrides also deeper default values.
+        if (is_array($config) && !is_array($localconfig)) {
+            return $localconfig;
+        }
+
+        foreach ($localconfig as $key => $value) {
+
+            // If defaults are not as deep as local values let locals override.
+            if (!is_array($config)) {
+                unset($config);
+            }
+
+            // Add the param if it doesn't exists.
+            if (empty($config[$key])) {
+                $config[$key] = $value;
+
+            // Merge branches if the key exists in both branches.
+            } else {
+                $config[$key] = self::merge_config($config[$key], $localconfig[$key]);
+            }
+        }
+
+        return $config;
     }
 
     /**
@@ -234,7 +307,7 @@ class tool_behat {
      * @param string $path
      * @return string The string without the last /tests part
      */
-    private static function clean_path($path) {
+    protected static function clean_path($path) {
 
         $path = rtrim($path, '/');
 
@@ -252,7 +325,7 @@ class tool_behat {
      * Checks whether the test database and dataroot is ready
      * Stops execution if something went wrong
      */
-    private static function test_environment_problem() {
+    protected static function test_environment_problem() {
         global $CFG;
 
         // PHPUnit --diag returns nothing if the test environment is set up correctly.
@@ -271,7 +344,7 @@ class tool_behat {
      * the behat help command to ensure it works as expected
      * @param boolean $checkphp Extra check for the PHP version
      */
-    private static function check_behat_setup($checkphp = false) {
+    protected static function check_behat_setup($checkphp = false) {
         global $CFG;
 
         if ($checkphp && version_compare(PHP_VERSION, '5.4.0', '<')) {
@@ -279,7 +352,7 @@ class tool_behat {
         }
 
         // Moodle setting.
-        if (!is_dir(__DIR__ . '/../../../vendor/behat')) {
+        if (!tool_behat::are_behat_dependencies_installed()) {
 
             $msg = get_string('wrongbehatsetup', 'tool_behat');
 
@@ -315,7 +388,7 @@ class tool_behat {
      *
      * @throws file_exception
      */
-    private static function start_test_mode() {
+    protected static function start_test_mode() {
         global $CFG;
 
         // Checks the behat set up and the PHP version.
@@ -347,7 +420,7 @@ class tool_behat {
      * Disables test mode
      * @throws file_exception
      */
-    private static function stop_test_mode() {
+    protected static function stop_test_mode() {
 
         $testenvfile = self::get_test_filepath();
 
@@ -382,7 +455,7 @@ class tool_behat {
      * Returns true if Moodle is currently running with the test database and dataroot
      * @return bool
      */
-    private static function is_test_environment_running() {
+    public static function is_test_environment_running() {
         global $CFG;
 
         if (!empty($CFG->originaldataroot)) {
@@ -390,6 +463,17 @@ class tool_behat {
         }
 
         return false;
+    }
+
+    /**
+     * Has the site installed composer with --dev option
+     * @return boolean
+     */
+    public static function are_behat_dependencies_installed() {
+        if (!is_dir(__DIR__ . '/../../../vendor/behat')) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -401,7 +485,7 @@ class tool_behat {
      *
      * @return string
      */
-    private static function get_test_filepath() {
+    protected static function get_test_filepath() {
         global $CFG;
 
         if (self::is_test_environment_running()) {
@@ -418,7 +502,7 @@ class tool_behat {
      * @throws file_exception
      * @return string Full path
      */
-    private static function get_behat_dir() {
+    protected static function get_behat_dir() {
         global $CFG;
 
         $behatdir = $CFG->dataroot . '/behat';
@@ -440,7 +524,7 @@ class tool_behat {
      * Returns the executable path
      * @return string
      */
-    private static function get_behat_command() {
+    protected static function get_behat_command() {
         return 'vendor' . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'behat';
     }
 
@@ -448,7 +532,7 @@ class tool_behat {
      * Returns the behat config file path used by the steps definition list
      * @return string
      */
-    private static function get_steps_list_config_filepath() {
+    protected static function get_steps_list_config_filepath() {
         return self::get_behat_dir() . '/behat.yml';
     }
 
