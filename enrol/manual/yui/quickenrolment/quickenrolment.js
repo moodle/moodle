@@ -89,8 +89,8 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
                         .append(create('<h2>'+M.str.enrol.enrolusers+'</h2>')))
                     .append(create('<div class="'+CSS.CONTENT+'"></div>')
                         .append(create('<div class="'+CSS.SEARCHCONTROLS+'"></div>')
-                            .append(create('<div class="'+CSS.ENROLMENTOPTION+' '+CSS.ROLE+'">'+M.str.role.assignroles+'</div>')
-                                    .append(create('<select><option value="">'+M.str.enrol.none+'</option></select>'))
+                            .append(create('<div class="'+CSS.ENROLMENTOPTION+' '+CSS.ROLE+'"><label for="id_enrol_manual_assignable_roles">'+M.str.role.assignroles+'</label></div>')
+                                    .append(create('<select id="id_enrol_manual_assignable_roles"><option value="">'+M.str.enrol.none+'</option></select>'))
                             )
                             .append(create('<div class="'+CSS.SEARCHOPTIONS+'"></div>')
                                 .append(create('<div class="'+CSS.COLLAPSIBLEHEADING+'"><img alt="" />'+M.str.enrol.enrolmentoptions+'</div>'))
@@ -180,6 +180,7 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
                     s.append(option);
                 }
                 s.set('selectedIndex', index);
+                Y.one('#id_enrol_manual_assignable_roles').focus();
             }, this);
             this.getAssignableRoles();
         },
@@ -271,6 +272,10 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
             }
 
             this._escCloseEvent = Y.on('key', this.hide, document.body, 'down:27', this);
+            var rolesselect = Y.one('#id_enrol_manual_assignable_roles');
+            if (rolesselect) {
+                rolesselect.focus();
+            }
         },
         hide : function(e) {
             if (this._escCloseEvent) {

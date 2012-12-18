@@ -4599,7 +4599,7 @@ function include_course_ajax($course, $usedmodules = array(), $enabledmodules = 
     // Add the module chooser
     $PAGE->requires->yui_module('moodle-course-modchooser',
         'M.course.init_chooser',
-        array(array('courseid' => $course->id))
+        array(array('courseid' => $course->id, 'closeButtonTitle' => get_string('close', 'editor')))
     );
     $PAGE->requires->strings_for_js(array(
             'addresourceoractivity',

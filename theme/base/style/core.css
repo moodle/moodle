@@ -849,7 +849,7 @@ sup {vertical-align: super;}
     -moz-box-shadow: 5px 5px 20px 0px #666666;
 }
 
-.chooserdialogue .moodle-dialogue-hd {
+.chooserdialogue .moodle-dialogue-wrap .moodle-dialogue-hd {
     font-size:12px!important;
     font-weight: normal!important;
     letter-spacing: 1px;
@@ -870,7 +870,7 @@ sup {vertical-align: super;}
 /* Question Bank - Question Chooser "Close" button */
 #page-question-edit.dir-rtl a.container-close {right:auto;left:6px;}
 
-.chooserdialogue .moodle-dialogue-bd {
+.chooserdialogue .moodle-dialogue-wrap .moodle-dialogue-bd {
     font-size: 12px;
     color: #555555;
     overflow: auto;

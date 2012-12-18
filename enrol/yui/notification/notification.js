@@ -8,8 +8,6 @@ var DIALOGUE_NAME = 'Moodle dialogue',
     ALERT_NAME = 'Moodle alert',
     C = Y.Node.create,
     BASE = 'notificationBase',
-    LIGHTBOX = 'lightbox',
-    NODELIGHTBOX = 'nodeLightbox',
     COUNT = 0,
     CONFIRMYES = 'yesLabel',
     CONFIRMNO = 'noLabel',
@@ -31,7 +29,6 @@ var DIALOGUE = function(config) {
     var id = 'moodle-dialogue-'+COUNT;
     config.notificationBase =
         C('<div class="'+CSS.BASE+'">')
-            .append(C('<div class="'+CSS.LIGHTBOX+' '+CSS.HIDDEN+'"></div>'))
             .append(C('<div id="'+id+'" class="'+CSS.WRAP+'"></div>')
                 .append(C('<div class="'+CSS.HEADER+' yui3-widget-hd"></div>'))
                 .append(C('<div class="'+CSS.BODY+' yui3-widget-bd"></div>'))
@@ -42,41 +39,50 @@ var DIALOGUE = function(config) {
     config.visible =    config.visible || false;
     config.center =     config.centered || true;
     config.centered =   false;
-    DIALOGUE.superclass.constructor.apply(this, [config]);
-};
-Y.extend(DIALOGUE, Y.Overlay, {
-    initializer : function(config) {
-        this.set(NODELIGHTBOX, this.get(BASE).one('.'+CSS.LIGHTBOX).setStyle('opacity', 0.5));
-        this.after('visibleChange', this.visibilityChanged, this);
-        this.after('headerContentChange', function(e){
-            var h = (this.get('closeButton'))?this.get(BASE).one('.'+CSS.HEADER):false;
-            if (h && !h.one('.closebutton')) {
-                var c = C('<div class="closebutton"></div>');
-                c.on('click', this.hide, this);
-                h.append(c);
+
+    // lightbox param to keep the stable versions API.
+    if (config.lightbox !== false) {
+        config.modal = true;
+    }
+    delete config.lightbox;
+
+    // closeButton param to keep the stable versions API.
+    if (config.closeButton === false) {
+        config.buttons = null;
+    } else {
+        config.buttons = [
+            {
+                section: Y.WidgetStdMod.HEADER,
+                classNames: 'closebutton',
+                action: function (e) {
+                    this.hide();
+                }
             }
-        }, this);
+        ];
+    }
+    DIALOGUE.superclass.constructor.apply(this, [config]);
+
+    if (config.closeButton !== false) {
+        // The buttons constructor does not allow custom attributes
+        this.get('buttons').header[0].setAttribute('title', this.get('closeButtonTitle'));
+    }
+};
+Y.extend(DIALOGUE, Y.Panel, {
+    initializer : function(config) {
+        this.after('visibleChange', this.visibilityChanged, this);
         this.render();
         this.show();
     },
     visibilityChanged : function(e) {
         switch (e.attrName) {
             case 'visible':
-                if (this.get(LIGHTBOX)) {
-                    var l = this.get(NODELIGHTBOX);
-                    if (!e.prevVal && e.newVal) {
-                        l.setStyle('height',l.get('docHeight')+'px').removeClass(CSS.HIDDEN);
-                    } else if (e.prevVal && !e.newVal) {
-                        l.addClass(CSS.HIDDEN);
-                    }
-                }
+                this.get('maskNode').addClass(CSS.LIGHTBOX);
                 if (this.get('center') && !e.prevVal && e.newVal) {
                     this.centerDialogue();
                 }
                 if (this.get('draggable')) {
                     var titlebar = '#' + this.get('id') + ' .' + CSS.HEADER;
                     this.plug(Y.Plugin.Drag, {handles : [titlebar]});
-                    this.dd.addInvalid('div.closebutton');
                     Y.one(titlebar).setStyle('cursor', 'move');
                 }
                 break;
@@ -102,9 +108,6 @@ Y.extend(DIALOGUE, Y.Overlay, {
         notificationBase : {
 
         },
-        nodeLightbox : {
-            value : null
-        },
         lightbox : {
             validator : Y.Lang.isBoolean,
             value : true
@@ -112,6 +115,10 @@ Y.extend(DIALOGUE, Y.Overlay, {
         closeButton : {
             validator : Y.Lang.isBoolean,
             value : true
+        },
+        closeButtonTitle : {
+            validator : Y.Lang.isString,
+            value : 'Close'
         },
         center : {
             validator : Y.Lang.isBoolean,
@@ -132,14 +139,14 @@ Y.extend(ALERT, DIALOGUE, {
     _enterKeypress : null,
     initializer : function(config) {
         this.publish('complete');
-        var yes = C('<input type="button" value="'+this.get(CONFIRMYES)+'" />'),
+        var yes = C('<input type="button" id="id_yuialertconfirm-' + this.COUNT + '" value="'+this.get(CONFIRMYES)+'" />'),
             content = C('<div class="confirmation-dialogue"></div>')
                     .append(C('<div class="confirmation-message">'+this.get('message')+'</div>'))
                     .append(C('<div class="confirmation-buttons"></div>')
                             .append(yes));
         this.get(BASE).addClass('moodle-dialogue-confirm');
         this.setStdModContent(Y.WidgetStdMod.BODY, content, Y.WidgetStdMod.REPLACE);
-        this.setStdModContent(Y.WidgetStdMod.HEADER, this.get(TITLE), Y.WidgetStdMod.REPLACE);
+        this.setStdModContent(Y.WidgetStdMod.HEADER, '<h1>' + this.get(TITLE) + '</h1>', Y.WidgetStdMod.REPLACE);
         this.after('destroyedChange', function(){this.get(BASE).remove();}, this);
         this._enterKeypress = Y.on('key', this.submit, window, 'down:13', this);
         yes.on('click', this.submit, this);
@@ -185,8 +192,8 @@ Y.extend(CONFIRM, DIALOGUE, {
         this.publish('complete');
         this.publish('complete-yes');
         this.publish('complete-no');
-        var yes = C('<input type="button" value="'+this.get(CONFIRMYES)+'" />'),
-            no = C('<input type="button" value="'+this.get(CONFIRMNO)+'" />'),
+        var yes = C('<input type="button" id="id_yuiconfirmyes-' + this.COUNT + '" value="'+this.get(CONFIRMYES)+'" />'),
+            no = C('<input type="button" id="id_yuiconfirmno-' + this.COUNT + '" value="'+this.get(CONFIRMNO)+'" />'),
             content = C('<div class="confirmation-dialogue"></div>')
                         .append(C('<div class="confirmation-message">'+this.get(QUESTION)+'</div>'))
                         .append(C('<div class="confirmation-buttons"></div>')
@@ -194,7 +201,7 @@ Y.extend(CONFIRM, DIALOGUE, {
                             .append(no));
         this.get(BASE).addClass('moodle-dialogue-confirm');
         this.setStdModContent(Y.WidgetStdMod.BODY, content, Y.WidgetStdMod.REPLACE);
-        this.setStdModContent(Y.WidgetStdMod.HEADER, this.get(TITLE), Y.WidgetStdMod.REPLACE);
+        this.setStdModContent(Y.WidgetStdMod.HEADER, '<h1>' + this.get(TITLE) + '</h1>', Y.WidgetStdMod.REPLACE);
         this.after('destroyedChange', function(){this.get(BASE).remove();}, this);
         this._enterKeypress = Y.on('key', this.submit, window, 'down:13', this, true);
         this._escKeypress = Y.on('key', this.submit, window, 'down:27', this, false);
@@ -247,7 +254,7 @@ Y.extend(EXCEPTION, DIALOGUE, {
     _keypress : null,
     initializer : function(config) {
         this.get(BASE).addClass('moodle-dialogue-exception');
-        this.setStdModContent(Y.WidgetStdMod.HEADER, config.name, Y.WidgetStdMod.REPLACE);
+        this.setStdModContent(Y.WidgetStdMod.HEADER, '<h1>' + config.name + '</h1>', Y.WidgetStdMod.REPLACE);
         var content = C('<div class="moodle-exception"></div>')
                     .append(C('<div class="moodle-exception-message">'+this.get('message')+'</div>'))
                     .append(C('<div class="moodle-exception-param hidden param-filename"><label>File:</label> '+this.get('fileName')+'</div>'))
@@ -318,7 +325,7 @@ Y.extend(AJAXEXCEPTION, DIALOGUE, {
     _keypress : null,
     initializer : function(config) {
         this.get(BASE).addClass('moodle-dialogue-exception');
-        this.setStdModContent(Y.WidgetStdMod.HEADER, config.name, Y.WidgetStdMod.REPLACE);
+        this.setStdModContent(Y.WidgetStdMod.HEADER, '<h1>' + config.name + '</h1>', Y.WidgetStdMod.REPLACE);
         var content = C('<div class="moodle-ajaxexception"></div>')
                     .append(C('<div class="moodle-exception-message">'+this.get('error')+'</div>'))
                     .append(C('<div class="moodle-exception-param hidden param-debuginfo"><label>URL:</label> '+this.get('reproductionlink')+'</div>'))
@@ -382,4 +389,4 @@ M.core.confirm = CONFIRM;
 M.core.exception = EXCEPTION;
 M.core.ajaxException = AJAXEXCEPTION;
 
-}, '@VERSION@', {requires:['base','node','overlay','event-key', 'moodle-enrol-notification-skin', 'dd-plugin']});
+}, '@VERSION@', {requires:['base','node','panel','event-key', 'moodle-enrol-notification-skin', 'dd-plugin']});

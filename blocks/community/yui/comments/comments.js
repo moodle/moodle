@@ -9,8 +9,8 @@ YUI.add('moodle-block_community-comments', function(Y) {
     Y.extend(COMMENTS, Y.Base, {
 
         event:null,
-        overlayevent:null,
-        overlays: [], //all the comment boxes
+        panelevent: null,
+        panels: [], //all the comment boxes
 
         initializer : function(params) {
 
@@ -18,17 +18,19 @@ YUI.add('moodle-block_community-comments', function(Y) {
             for (var i=0;i<this.get('commentids').length;i++)
             {
                 var commentid = this.get('commentids')[i];
-                this.overlays[commentid] = new M.core.dialogue({
-                    headerContent:Y.one('#commentoverlay-'+commentid+' .commenttitle').get('innerHTML'),
+                this.panels[commentid] = new M.core.dialogue({
+                    headerContent:Y.Node.create('<h1>')
+                        .append(Y.one('#commentoverlay-'+commentid+' .commenttitle').get('innerHTML')),
                     bodyContent:Y.one('#commentoverlay-'+commentid).get('innerHTML'),
                     visible: false, //by default it is not displayed
                     lightbox : false,
-                    zIndex:100
+                    zIndex:100,
+                    closeButtonTitle: this.get('closeButtonTitle')
                 });
 
-                this.overlays[commentid].get('contentBox').one('.commenttitle').remove();
-                this.overlays[commentid].render();
-                this.overlays[commentid].hide();
+                this.panels[commentid].get('contentBox').one('.commenttitle').remove();
+                this.panels[commentid].render();
+                this.panels[commentid].hide();
 
                 Y.one('#comments-'+commentid).on('click', this.show, this, commentid);
             }
@@ -37,34 +39,37 @@ YUI.add('moodle-block_community-comments', function(Y) {
 
         show : function (e, commentid) {
 
-            //hide all overlays
+            // Hide all panels.
             for (var i=0;i<this.get('commentids').length;i++)
             {
                 this.hide(e, this.get('commentids')[i]);
             }
 
-            this.overlays[commentid].show(); //show the overlay
+            this.panels[commentid].show(); //show the panel
 
-            e.halt(); // we are going to attach a new 'hide overlay' event to the body,
+            e.halt(); // we are going to attach a new 'hide panel' event to the body,
             // because javascript always propagate event to parent tag,
             // we need to tell Yahoo to stop to call the event on parent tag
             // otherwise the hide event will be call right away.
 
-            //we add a new event on the body in order to hide the overlay for the next click
+            // We add a new event on the body in order to hide the panel for the next click.
             this.event = Y.one(document.body).on('click', this.hide, this, commentid);
-            //we add a new event on the overlay in order to hide the overlay for the next click (touch device)
-            this.overlayevent = Y.one("#commentoverlay-"+commentid).on('click', this.hide, this, commentid);
+            // We add a new event on the panel in order to hide the panel for the next click (touch device).
+            this.panelevent = Y.one("#commentoverlay-"+commentid).on('click', this.hide, this, commentid);
+
+            // Focus on the close button
+            this.panels[commentid].get('buttons').header[0].focus();
         },
 
         hide : function (e, commentid) {
-            this.overlays[commentid].hide(); //hide the overlay
+            this.panels[commentid].hide(); //hide the panel
             if (this.event != null) {
                 this.event.detach(); //we need to detach the body hide event
             //Note: it would work without but create js warning everytime
             //we click on the body
             }
-            if (this.overlayevent != null) {
-                this.overlayevent.detach(); //we need to detach the overlay hide event
+            if (this.panelevent != null) {
+                this.panelevent.detach(); //we need to detach the panel hide event
             //Note: it would work without but create js warning everytime
             //we click on the body
             }
@@ -74,7 +79,11 @@ YUI.add('moodle-block_community-comments', function(Y) {
     }, {
         NAME : COMMENTSNAME,
         ATTRS : {
-            commentids: {}
+            commentids: {},
+            closeButtonTitle : {
+                validator : Y.Lang.isString,
+                value : 'Close'
+            }
         }
     });
 
@@ -84,5 +93,5 @@ YUI.add('moodle-block_community-comments', function(Y) {
     }
 
 }, '@VERSION@', {
-    requires:['base','overlay', 'moodle-enrol-notification']
+    requires:['base', 'moodle-enrol-notification']
 });

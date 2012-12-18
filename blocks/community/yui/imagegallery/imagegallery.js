@@ -11,8 +11,8 @@ YUI.add('moodle-block_community-imagegallery', function(Y) {
         event:null,
         previousevent:null,
         nextevent:null,
-        overlayevent:null,
-        overlay:null, //all the comment boxes
+        panelevent: null,
+        panel: null, //all the images boxes
         imageidnumbers: [],
         imageloadingevent: null,
         loadingimage: null,
@@ -26,15 +26,15 @@ YUI.add('moodle-block_community-imagegallery', function(Y) {
                 +'</div>');
             objBody.append(this.loadingimage);
 
-            /// create the div for overlay
+            // Create the div for panel.
             var objBody = Y.one(document.body);
-            var overlaytitle = Y.Node.create('<div id="imagetitleoverlay" class="hiddenoverlay"></div>');
-            objBody.append(overlaytitle);
-            var overlay = Y.Node.create('<div id="imageoverlay" class="hiddenoverlay"></div>');
-            objBody.append(overlay);
+            var paneltitle = Y.Node.create('<div id="imagetitleoverlay" class="hiddenoverlay"></div>');
+            objBody.append(paneltitle);
+            var panel = Y.Node.create('<div id="imageoverlay" class="hiddenoverlay"></div>');
+            objBody.append(panel);
 
-            /// create the overlay
-            this.overlay = new M.core.dialogue({
+            /// Create the panel.
+            this.panel = new M.core.dialogue({
                 headerContent:Y.one('#imagetitleoverlay').get('innerHTML'),
                 bodyContent:Y.one('#imageoverlay').get('innerHTML'),
                 visible: false, //by default it is not displayed
@@ -42,8 +42,8 @@ YUI.add('moodle-block_community-imagegallery', function(Y) {
                 zIndex:100
             });
 
-            this.overlay.render();
-            this.overlay.hide();
+            this.panel.render();
+            this.panel.hide();
 
             //attach a show event on the image divs (<tag id='image-X'>)
             for (var i=0;i<this.get('imageids').length;i++)
@@ -85,31 +85,31 @@ YUI.add('moodle-block_community-imagegallery', function(Y) {
             var maxheight = windowheight - 150;
 
             //load the title + link to next image
-            var overlaytitle = Y.one('#imagetitleoverlay');
+            var paneltitle = Y.one('#imagetitleoverlay');
             var previousimagelink = "<div id=\"previousarrow\" class=\"imagearrow\">←</div>";
             var nextimagelink = "<div id=\"nextarrow\" class=\"imagearrow\">→</div>";
 
-            /// need to load the images in the overlay
-            var overlay = Y.one('#imageoverlay');
-            overlay.setContent('');
+            // Need to load the images in the panel.
+            var panel = Y.one('#imageoverlay');
+            panel.setContent('');
 
-
-            overlay.append(Y.Node.create('<div style="text-align:center"><img id=\"imagetodisplay\" src="' + url
+            panel.append(Y.Node.create('<div style="text-align:center"><img id=\"imagetodisplay\" src="' + url
                 + '" style="max-height:' + maxheight + 'px;"></div>'));
-            this.overlay.destroy();
-            this.overlay = new M.core.dialogue({
-                headerContent:previousimagelink + '<div id=\"imagenumber\" class=\"imagetitle\"> Image '
-                + screennumber + ' / ' + this.imageidnumbers[imageid] + ' </div>' + nextimagelink,
+            this.panel.destroy();
+            this.panel = new M.core.dialogue({
+                headerContent:previousimagelink + '<div id=\"imagenumber\" class=\"imagetitle\"><h1> Image '
+                + screennumber + ' / ' + this.imageidnumbers[imageid] + ' </h1></div>' + nextimagelink,
                 bodyContent:Y.one('#imageoverlay').get('innerHTML'),
                 visible: false, //by default it is not displayed
                 lightbox : false,
-                zIndex:100
+                zIndex:100,
+                closeButtonTitle: this.get('closeButtonTitle')
             });
-            this.overlay.render();
-            this.overlay.hide(); //show the overlay
-            this.overlay.set("centered", true);
+            this.panel.render();
+            this.panel.hide(); //show the panel
+            this.panel.set("centered", true);
 
-            e.halt(); // we are going to attach a new 'hide overlay' event to the body,
+            e.halt(); // we are going to attach a new 'hide panel' event to the body,
             // because javascript always propagate event to parent tag,
             // we need to tell Yahoo to stop to call the event on parent tag
             // otherwise the hide event will be call right away.
@@ -123,14 +123,17 @@ YUI.add('moodle-block_community-imagegallery', function(Y) {
                 var screenshot = new Image();
                 screenshot.src = url;
 
-                var overlaywidth = windowwidth - 100;
-                if(overlaywidth > screenshot.width) {
-                    overlaywidth = screenshot.width;
+                var panelwidth = windowwidth - 100;
+                if(panelwidth > screenshot.width) {
+                    panelwidth = screenshot.width;
                 }
 
-                this.overlay.set('width', overlaywidth);
-                this.overlay.set("centered", true);
-                this.overlay.show();
+                this.panel.set('width', panelwidth);
+                this.panel.set("centered", true);
+                this.panel.show();
+
+                // Focus on the close button
+                this.panel.get('buttons').header[0].focus();
 
             }, this, url);
 
@@ -147,12 +150,12 @@ YUI.add('moodle-block_community-imagegallery', function(Y) {
             Y.one('#nextarrow').on('click', this.show, this, imageid, nextnumber);
             Y.one('#imagenumber').on('click', this.show, this, imageid, nextnumber);
 
-            //we add a new event on the body in order to hide the overlay for the next click
+            //we add a new event on the body in order to hide the panel for the next click
             this.event = Y.one(document.body).on('click', this.hide, this);
-            //we add a new event on the overlay in order to hide the overlay for the next click (touch device)
-            this.overlayevent = Y.one("#imageoverlay").on('click', this.hide, this);
+            //we add a new event on the panel in order to hide the panel for the next click (touch device)
+            this.panelevent = Y.one("#imageoverlay").on('click', this.hide, this);
 
-            this.overlay.on('visibleChange',function(e){
+            this.panel.on('visibleChange',function(e){
                 if(e.newVal == 0){
                     this.get('maskNode').remove()
                 }
@@ -167,14 +170,14 @@ YUI.add('moodle-block_community-imagegallery', function(Y) {
             //hide the loading image
             Y.one('#hubloadingimage').setStyle('display', 'none');
 
-            this.overlay.hide(); //hide the overlay
+            this.panel.hide(); //hide the panel
             if (this.event != null) {
                 this.event.detach(); //we need to detach the body hide event
             //Note: it would work without but create js warning everytime
             //we click on the body
             }
-            if (this.overlayevent != null) {
-                this.overlayevent.detach(); //we need to detach the overlay hide event
+            if (this.panelevent != null) {
+                this.panelevent.detach(); //we need to detach the panel hide event
             //Note: it would work without but create js warning everytime
             //we click on the body
             }
@@ -185,7 +188,11 @@ YUI.add('moodle-block_community-imagegallery', function(Y) {
         ATTRS : {
             imageids: {},
             imagenumbers: {},
-            huburl: {}
+            huburl: {},
+            closeButtonTitle : {
+                validator : Y.Lang.isString,
+                value : 'Close'
+            }
         }
     });
 
@@ -195,5 +202,5 @@ YUI.add('moodle-block_community-imagegallery', function(Y) {
     }
 
 }, '@VERSION@', {
-    requires:['base','node','overlay', 'moodle-enrol-notification']
+    requires:['base','node', 'moodle-enrol-notification']
 });
