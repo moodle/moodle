@@ -157,8 +157,7 @@ bodyContent: '<div class="comment-delete-confirm"><a href="#" id="confirmdelete-
                         scope: scope
                     },
                     headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-                        'User-Agent': 'MoodleComment/3.0'
+                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
                     },
                     data: build_querystring(params)
                 };
@@ -472,8 +471,7 @@ bodyContent: '<div class="comment-delete-confirm"><a href="#" id="confirmdelete-
                             scope: this
                         },
                         headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-                            'User-Agent': 'MoodleComment/3.0'
+                            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
                         },
                         data: build_querystring(data)
                     };
