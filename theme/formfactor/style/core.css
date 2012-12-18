@@ -11,6 +11,7 @@ body,h1,h2,h3,h4,h5,h6,p,ul,ol,dl,input,textarea { font-family: "Trebuchet MS", 
 
 
 #page-site-index .headermain { margin:0.85em 0;font-size:2.5em; }
+#course-header { margin:0 50px; }
 
 /* Menu Navigation 
 --------------------------*/
@@ -53,6 +54,8 @@ body,h1,h2,h3,h4,h5,h6,p,ul,ol,dl,input,textarea { font-family: "Trebuchet MS", 
 
 #page-footer { margin:25px 0; }
 #page-footer .logininfo  { margin: 1em 0; }
+
+#course-footer { margin:0 50px; }
 
 /* custum menu */
 #custommenu {

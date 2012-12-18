@@ -57,6 +57,9 @@ body {margin:auto 0px;
     padding: 20px 20px 20px 0;
     min-height: 100%;
 }
+#page-content #course-header {
+    padding-right: 20px;
+}
 .pagelayout-report #page-content #region-main .region-content {
     overflow: auto;
     padding-bottom: 0;
