@@ -176,7 +176,7 @@ if (!empty($blocklist) and confirm_sesskey()) {
     $blockname = $DB->get_field('block', 'name', array('id' => $blocklist));
     $courses = array();
     list($select, $join) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
-    $sql = "SELECT C.* $select FROM {course} c
+    $sql = "SELECT c.* $select FROM {course} c
             $join JOIN {block_instances} bi ON bi.parentcontextid = ctx.id
             WHERE bi.blockname = ?";
     $courses = $DB->get_records_sql($sql, array($blockname));
