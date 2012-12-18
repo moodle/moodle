@@ -155,7 +155,7 @@ class tool_behat_testcase extends advanced_testcase {
      public function test_config_file_contents() {
          global $CFG;
 
-         unset($CFG->behatconfig);
+         unset($CFG->behat_config);
 
          // List.
          $features = array(
@@ -174,7 +174,7 @@ class tool_behat_testcase extends advanced_testcase {
 
          $this->assertContains('features: /i/am/a/prefix/lib/behat/features', $contents);
          $this->assertContains('micarro: /me/lo/robaron', $contents);
-         $this->assertContains('base_url: \'' . $CFG->test_wwwroot . '\'', $contents);
+         $this->assertContains('base_url: \'' . $CFG->behat_wwwroot . '\'', $contents);
          $this->assertContains('class: behat_init_context', $contents);
          $this->assertContains('- feature1', $contents);
          $this->assertContains('- feature3', $contents);

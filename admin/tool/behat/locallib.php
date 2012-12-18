@@ -194,7 +194,7 @@ class tool_behat {
                 ),
                 'extensions' => array(
                     'Behat\MinkExtension\Extension' => array(
-                        'base_url' => $CFG->test_wwwroot,
+                        'base_url' => $CFG->behat_wwwroot,
                         'goutte' => null,
                         'selenium2' => null
                     ),
@@ -207,8 +207,8 @@ class tool_behat {
         );
 
         // In case user defined overrides respect them over our default ones.
-        if (!empty($CFG->behatconfig)) {
-            $config = self::merge_config($config, $CFG->behatconfig);
+        if (!empty($CFG->behat_config)) {
+            $config = self::merge_config($config, $CFG->behat_config);
         }
 
         return Symfony\Component\Yaml\Yaml::dump($config, 10, 2);
@@ -288,7 +288,7 @@ class tool_behat {
     }
 
     /**
-     * Checks if $CFG->test_wwwroot is available
+     * Checks if $CFG->behat_wwwroot is available
      *
      * @return boolean
      */
@@ -296,7 +296,7 @@ class tool_behat {
         global $CFG;
 
         $request = new curl();
-        $request->get($CFG->test_wwwroot);
+        $request->get($CFG->behat_wwwroot);
         return (true && !$request->get_errno());
     }
 
@@ -347,7 +347,8 @@ class tool_behat {
     protected static function check_behat_setup($checkphp = false) {
         global $CFG;
 
-        if ($checkphp && version_compare(PHP_VERSION, '5.4.0', '<')) {
+        // We don't check the PHP version if $CFG->behat_switchcompletely has been enabled.
+        if (empty($CFG->behat_switchcompletely) && $checkphp && version_compare(PHP_VERSION, '5.4.0', '<')) {
             throw new Exception(get_string('wrongphpversion', 'tool_behat'));
         }
 
@@ -384,7 +385,7 @@ class tool_behat {
      * features and steps definitions.
      *
      * Stores a file in dataroot/behat to allow Moodle to switch
-     * to the test environment when using cli-server
+     * to the test environment when using cli-server (or $CFG->behat_switchcompletely)
      *
      * @throws file_exception
      */
@@ -407,7 +408,7 @@ class tool_behat {
 
         $behatdir = self::get_behat_dir();
 
-        $contents = '$CFG->test_wwwroot, $CFG->phpunit_prefix and $CFG->phpunit_dataroot' .
+        $contents = '$CFG->behat_wwwroot, $CFG->phpunit_prefix and $CFG->phpunit_dataroot' .
             ' are currently used as $CFG->wwwroot, $CFG->prefix and $CFG->dataroot';
         $filepath = $behatdir . '/test_environment_enabled.txt';
         if (!file_put_contents($filepath, $contents)) {

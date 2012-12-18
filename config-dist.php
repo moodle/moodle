@@ -548,15 +548,15 @@ $CFG->admin = 'admin';
 // Behat uses http://localhost:8000 as default URL to run
 // the acceptance tests, you can override this value.
 // Example:
-//   $CFG->test_wwwroot = 'http://192.168.1.250:8000';
+//   $CFG->behat_wwwroot = 'http://192.168.1.250:8000';
 //
 // You can override default Moodle configuration for Behat and add your own
 // params; here you can add more profiles, use different Mink drivers than Selenium...
-// This params will be merged with the default Moodle behat.yml, giving priority
-// to the ones specified here. The array format is a YAML following the behat
+// This params would be merged with the default Moodle behat.yml, giving priority
+// to the ones specified here. The array format is YAML, following the behat
 // params hierarchy. More info: http://docs.behat.org/guides/7.config.html
 // Example:
-//   $CFG->behatconfig = array(
+//   $CFG->behat_config = array(
 //       'default' => array(
 //           'formatter' => array(
 //               'name' => 'pretty',
@@ -567,6 +567,16 @@ $CFG->admin = 'admin';
 //           )
 //       )
 //   );
+//
+// You can completely switch to test environment when "php admin/tool/behatcli/util --enable",
+// this means that all the site accesses will be routed to the test environment instead of
+// the regular one, so NEVER USE THIS SETTING IN PRODUCTION SITES. This setting is useful
+// when working with cloud CI (continous integration) servers which requires public sites to run the
+// tests, or in testing/development installations when you are developing in a pre-PHP 5.4 server.
+// Note that with this setting enabled $CFG->behat_wwwroot is ignored and $CFG->behat_wwwroot
+// value will be the regular $CFG->wwwroot value.
+// Example:
+//   $CFG->behat_switchcompletely = true;
 //
 
 //=========================================================================
