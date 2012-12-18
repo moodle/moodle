@@ -70,7 +70,8 @@ YUI.add('moodle-filter_glossary-autolinker', function(Y) {
 
                     for (key in data.entries) {
                         definition = data.entries[key].definition + data.entries[key].attachments
-                        new M.core.alert({title:data.entries[key].concept, message:definition, lightbox:false});
+                        var alertpanel = new M.core.alert({title:data.entries[key].concept, message:definition, lightbox:false});
+                        Y.Node.one('#id_yuialertconfirm-' + alertpanel.COUNT).focus();
                     }
 
                     return true;
