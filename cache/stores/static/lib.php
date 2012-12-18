@@ -357,6 +357,7 @@ class cachestore_static extends static_data_store implements cache_is_key_aware 
      */
     public function purge() {
         $this->flush_store_by_id($this->storeid);
+        $this->store = &self::register_store_id($this->storeid);
     }
 
     /**
