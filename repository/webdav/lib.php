@@ -120,6 +120,9 @@ class repository_webdav extends repository {
                 $v['lastmodified'] = null;
             }
 
+            // Remove the server URL from the path (if present), otherwise links will not work - MDL-37014
+            $server = preg_quote($this->options['webdav_server']);
+            $v['href'] = preg_replace("#https?://{$server}#", '', $v['href']);
             // Extracting object title from absolute path
             $v['href'] = substr(urldecode($v['href']), strlen($webdavpath));
             $title = substr($v['href'], strlen($path));
