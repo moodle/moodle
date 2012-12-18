@@ -2040,20 +2040,26 @@ class assign {
                 }
             }
         }
+        $result = '';
         if (count($filesforzipping) == 0) {
-            $result = $this->get_renderer()->render(new assign_header($this->get_instance(),
-                $this->get_context(),
-                '',
-                $this->get_course_module()->id,
-                get_string('downloadall', 'assign')));
+            $header = new assign_header($this->get_instance(),
+                                        $this->get_context(),
+                                        '',
+                                        $this->get_course_module()->id,
+                                        get_string('downloadall', 'assign'));
+            $result .= $this->get_renderer()->render($header);
             $result .= $this->get_renderer()->notification(get_string('nosubmission', 'assign'));
+            $url = new moodle_url('/mod/assign/view.php', array('id'=>$this->get_course_module()->id,
+                                                                    'action'=>'grading'));
+            $result .= $this->get_renderer()->continue_button($url);
             $result .= $this->view_footer();
-            return $result;
         } else if ($zipfile = $this->pack_files($filesforzipping)) {
             $this->add_to_log('download all submissions', get_string('downloadall', 'assign'));
             // Send file and delete after sending.
             send_temp_file($zipfile, $filename);
+            // We will not get here - send_temp_file calls exit.
         }
+        return $result;
     }
 
     /**
