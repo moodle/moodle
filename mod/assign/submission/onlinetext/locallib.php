@@ -255,29 +255,16 @@ class assign_submission_onlinetext extends assign_submission_plugin {
      * Produce a list of files suitable for export that represent this submission
      *
      * @param stdClass $submission - For this is the submission data
+     * @param stdClass $user - This is the user record for this submission
      * @return array - return an array of files indexed by filename
      */
-    public function get_files(stdClass $submission) {
+    public function get_files(stdClass $submission, stdClass $user) {
         global $DB;
         $files = array();
         $onlinetextsubmission = $this->get_onlinetext_submission($submission->id);
         if ($onlinetextsubmission) {
-            $user = $DB->get_record("user", array("id"=>$submission->userid),'id,username,firstname,lastname', MUST_EXIST);
-
-            if (!$this->assignment->is_blind_marking()) {
-                $filename = str_replace('_', '', fullname($user)) . '_' .
-                            $this->assignment->get_uniqueid_for_user($submission->userid) . '_' .
-                            $this->get_name() . '_';
-                $prefix = clean_filename($filename);
-            } else {
-                $filename = get_string('participant', 'assign') . '_' .
-                            $this->assignment->get_uniqueid_for_user($submission->userid) . '_' .
-                            $this->get_name() . '_';
-                $prefix = clean_filename($filename);
-            }
-
-            $finaltext = str_replace('@@PLUGINFILE@@/', $prefix, $onlinetextsubmission->onlinetext);
-            $submissioncontent = "<html><body>". format_text($finaltext, $onlinetextsubmission->onlineformat, array('context'=>$this->assignment->get_context())). "</body></html>";      //fetched from database
+            $finaltext = $this->assignment->download_rewrite_pluginfile_urls($onlinetextsubmission->onlinetext, $user, $this);
+            $submissioncontent = "<html><body>". format_text($finaltext, $onlinetextsubmission->onlineformat, array('context'=>$this->assignment->get_context())). "</body></html>";
 
             $files[get_string('onlinetextfilename', 'assignsubmission_onlinetext')] = array($submissioncontent);
 

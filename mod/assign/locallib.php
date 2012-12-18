@@ -1880,6 +1880,39 @@ class assign {
     }
 
     /**
+     * Rewrite plugin file urls so they resolve correctly in an exported zip.
+     *
+     * @param stdClass $user - The user record
+     * @param assign_plugin $plugin - The assignment plugin
+     */
+    public function download_rewrite_pluginfile_urls($text, $user, $plugin) {
+        $groupmode = groups_get_activity_groupmode($this->get_course_module());
+        $groupname = '';
+        if ($groupmode) {
+            $groupid = groups_get_activity_group($this->get_course_module(), true);
+            $groupname = groups_get_group_name($groupid).'-';
+        }
+
+        if ($this->is_blind_marking()) {
+            $prefix = $groupname . get_string('participant', 'assign');
+            $prefix = str_replace('_', ' ', $prefix);
+            $prefix = clean_filename($prefix . '_' . $this->get_uniqueid_for_user($user->id) . '_');
+        } else {
+            $prefix = $groupname . fullname($user);
+            $prefix = str_replace('_', ' ', $prefix);
+            $prefix = clean_filename($prefix . '_' . $this->get_uniqueid_for_user($user->id) . '_');
+        }
+
+        $subtype = $plugin->get_subtype();
+        $type = $plugin->get_type();
+        $prefix = $prefix . $subtype . '_' . $type . '_';
+
+        $result = str_replace('@@PLUGINFILE@@/', $prefix, $text);
+
+        return $result;
+    }
+
+    /**
      * render the content in editor that is often used by plugin
      *
      * @param string $filearea
@@ -2028,7 +2061,7 @@ class assign {
                 if ($submission) {
                     foreach ($this->submissionplugins as $plugin) {
                         if ($plugin->is_enabled() && $plugin->is_visible()) {
-                            $pluginfiles = $plugin->get_files($submission);
+                            $pluginfiles = $plugin->get_files($submission, $student);
                             foreach ($pluginfiles as $zipfilename => $file) {
                                 $subtype = $plugin->get_subtype();
                                 $type = $plugin->get_type();

@@ -415,9 +415,11 @@ abstract class assign_plugin {
      *
      * @param stdClass $submissionorgrade assign_submission or assign_grade
      *                 For submission plugins this is the submission data, for feedback plugins it is the grade data
+     * @param stdClass $user The user record for the current submission.
+     *                         Needed for url rewriting if this is a group submission.
      * @return array - return an array of files indexed by filename
      */
-    public function get_files(stdClass $submissionorgrade) {
+    public function get_files(stdClass $submissionorgrade, stdClass $user) {
         return array();
     }
 
