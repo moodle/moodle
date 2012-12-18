@@ -184,6 +184,16 @@ class tinymce_texteditor extends texteditor {
             $params['theme_advanced_buttons1'] = '';
         }
 
+        if (!empty($config->customconfig)) {
+            $config->customconfig = trim($config->customconfig);
+            $decoded = json_decode($config->customconfig, true);
+            if (is_array($decoded)) {
+                foreach ($decoded as $k=>$v) {
+                    $params[$k] = $v;
+                }
+            }
+        }
+
         if (!empty($options['legacy']) or !empty($options['noclean']) or !empty($options['trusted'])) {
             // now deal somehow with non-standard tags, people scream when we do not make moodle code xtml strict,
             // but they scream even more when we strip all tags that are not strict :-(
