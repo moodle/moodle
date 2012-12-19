@@ -38,10 +38,6 @@ require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/behat/steps_definitions_
  */
 class tool_behat {
 
-    /**
-     * @var string Path where each component's tests are stored */
-    private static $behat_tests_path = '/tests/behat';
-
     /** @var array Steps types */
     private static $steps_types = array('given', 'when', 'then');
 
@@ -138,9 +134,10 @@ class tool_behat {
         $components = tests_finder::get_components_with_tests('features');
         if ($components) {
             foreach ($components as $componentname => $path) {
-                $path = self::clean_path($path) . self::$behat_tests_path;
+                $path = self::clean_path($path) . self::get_behat_tests_path();
                 if (empty($featurespaths[$path]) && file_exists($path)) {
-                    $featurespaths[$path] = $path;
+                    $uniquekey = str_replace('\\', '/', $path);
+                    $featurespaths[$uniquekey] = $path;
                 }
             }
             $features = array_values($featurespaths);
@@ -274,10 +271,10 @@ class tool_behat {
         $stepsdefinitions = array();
         foreach ($components as $componentname => $componentpath) {
             $componentpath = self::clean_path($componentpath);
-            $diriterator = new DirectoryIterator($componentpath . self::$behat_tests_path);
+            $diriterator = new DirectoryIterator($componentpath . self::get_behat_tests_path());
             $regite = new RegexIterator($diriterator, '|behat_.*\.php$|');
 
-            // All behat_*.php inside self::$behat_tests_path are added as steps definitions files.
+            // All behat_*.php inside self::get_behat_tests_path() are added as steps definitions files.
             foreach ($regite as $file) {
                 $key = $file->getBasename('.php');
                 $stepsdefinitions[$key] = $file->getPathname();
@@ -309,16 +306,16 @@ class tool_behat {
      */
     protected static function clean_path($path) {
 
-        $path = rtrim($path, '/');
+        $path = rtrim($path, DIRECTORY_SEPARATOR);
 
-        $parttoremove = '/tests';
+        $parttoremove = DIRECTORY_SEPARATOR . 'tests';
 
         $substr = substr($path, strlen($path) - strlen($parttoremove));
         if ($substr == $parttoremove) {
             $path = substr($path, 0, strlen($path) - strlen($parttoremove));
         }
 
-        return rtrim($path, '/');
+        return rtrim($path, DIRECTORY_SEPARATOR);
     }
 
     /**
@@ -496,6 +493,16 @@ class tool_behat {
         }
 
         return $prefix . '/behat/test_environment_enabled.txt';
+    }
+
+
+    /**
+     * The relative path where components stores their behat tests
+     *
+     * @return string
+     */
+    protected static function get_behat_tests_path() {
+        return DIRECTORY_SEPARATOR . 'tests' . DIRECTORY_SEPARATOR . 'behat';
     }
 
     /**
