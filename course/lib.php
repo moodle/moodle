@@ -2149,6 +2149,13 @@ function set_coursemodule_visible($id, $visible) {
     if (!$cm = $DB->get_record('course_modules', array('id'=>$id))) {
         return false;
     }
+
+    // Create events and propagate visibility to associated grade items if the value has changed.
+    // Only do this if it's changed to avoid accidently overwriting manual showing/hiding of student grades.
+    if ($cm->visible == $visible) {
+        return true;
+    }
+
     if (!$modulename = $DB->get_field('modules', 'name', array('id'=>$cm->module))) {
         return false;
     }
@@ -2162,7 +2169,7 @@ function set_coursemodule_visible($id, $visible) {
         }
     }
 
-    // hide the associated grade items so the teacher doesn't also have to go to the gradebook and hide them there
+    // Hide the associated grade items so the teacher doesn't also have to go to the gradebook and hide them there.
     $grade_items = grade_item::fetch_all(array('itemtype'=>'mod', 'itemmodule'=>$modulename, 'iteminstance'=>$cm->instance, 'courseid'=>$cm->course));
     if ($grade_items) {
         foreach ($grade_items as $grade_item) {
