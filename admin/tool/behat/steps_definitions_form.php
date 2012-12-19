@@ -38,7 +38,7 @@ class steps_definitions_form extends moodleform {
     /**
      * Form definition
      */
-    function definition() {
+    public function definition() {
 
         $mform = $this->_form;
 
@@ -52,7 +52,12 @@ class steps_definitions_form extends moodleform {
         );
         $mform->addElement('select', 'type', get_string('stepsdefinitionstype', 'tool_behat'), $types);
 
-        $mform->addElement('select', 'component', get_string('stepsdefinitionscomponent', 'tool_behat'), $this->_customdata['components']);
+        $mform->addElement(
+            'select',
+            'component',
+            get_string('stepsdefinitionscomponent', 'tool_behat'),
+            $this->_customdata['components']
+        );
 
         $mform->addElement('text', 'filter', get_string('stepsdefinitionscontains', 'tool_behat'));
 

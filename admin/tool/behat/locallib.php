@@ -73,7 +73,7 @@ class tool_behat {
 
         $currentcwd = getcwd();
         chdir($CFG->dirroot);
-        exec(self::get_behat_command() . ' --config="' . self::get_steps_list_config_filepath() . '" ' . $filteroption, $steps, $code);
+        exec(self::get_behat_command() . ' --config="'.self::get_steps_list_config_filepath(). '" '.$filteroption, $steps, $code);
         chdir($currentcwd);
 
         if ($steps) {
@@ -123,7 +123,7 @@ class tool_behat {
             $prefix = '';
             $configfilepath = $CFG->dirroot . '/behat.yml';
 
-        // Alternative for steps definitions filtering
+            // Alternative for steps definitions filtering.
         } else {
             $configfilepath = self::get_steps_list_config_filepath();
             $prefix = $CFG->dirroot .'/';
@@ -238,11 +238,9 @@ class tool_behat {
                 unset($config);
             }
 
-            // Add the param if it doesn't exists.
+            // Add the param if it doesn't exists or merge branches.
             if (empty($config[$key])) {
                 $config[$key] = $value;
-
-            // Merge branches if the key exists in both branches.
             } else {
                 $config[$key] = self::merge_config($config[$key], $localconfig[$key]);
             }
@@ -350,12 +348,12 @@ class tool_behat {
         }
 
         // Moodle setting.
-        if (!tool_behat::are_behat_dependencies_installed()) {
+        if (!self::are_behat_dependencies_installed()) {
 
             $msg = get_string('wrongbehatsetup', 'tool_behat');
 
             // With HTML.
-            $docslink = tool_behat::$docsurl . '#Installation';
+            $docslink = self::$docsurl . '#Installation';
             if (!CLI_SCRIPT) {
                 $docslink = html_writer::tag('a', $docslink, array('href' => $docslink, 'target' => '_blank'));
             }

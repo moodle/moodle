@@ -560,10 +560,10 @@ class plugin_manager {
             ),
 
             'tool' => array(
-                'assignmentupgrade', 'capability', 'customlang', 'dbtransfer', 'generator',
-                'health', 'innodb', 'langimport', 'multilangupgrade', 'phpunit', 'profiling',
-                'qeupgradehelper', 'replace', 'spamcleaner', 'timezoneimport', 'unittest',
-                'uploaduser', 'unsuproles', 'xmldb'
+                'assignmentupgrade', 'behat', 'capability', 'customlang', 'dbtransfer',
+                'generator', 'health', 'innodb', 'langimport', 'multilangupgrade', 'phpunit',
+                'profiling', 'qeupgradehelper', 'replace', 'spamcleaner', 'timezoneimport',
+                'unittest', 'uploaduser', 'unsuproles', 'xmldb'
             ),
 
             'webservice' => array(

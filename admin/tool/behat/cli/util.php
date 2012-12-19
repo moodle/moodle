@@ -44,7 +44,7 @@ $help = "
 Behat tool
 
 Options:
---enable Enables test environment
+--enable Enables test environment and updates tests list
 --disable Disables test environment
 
 -h, --help     Print out this help

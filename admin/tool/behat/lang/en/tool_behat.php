@@ -22,14 +22,13 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['allavailablesteps'] = 'All the available steps';
+$string['allavailablesteps'] = 'All the available steps definitions';
 $string['giveninfo'] = 'Given. Processes to set up the environment';
 $string['installinfo'] = 'for installation and tests execution info';
 $string['moreinfoin'] = 'More info in';
-$string['newstepsinfo'] = 'for info about adding new steps definitions';
-$string['newtestsinfo'] = 'for info about writting new tests';
-$string['noaction'] = 'No action selected';
-$string['nostepsdefinitions'] = 'There aren\'t steps definitions matching this filter';
+$string['newstepsinfo'] = 'for info about how to add new steps definitions';
+$string['newtestsinfo'] = 'for info about how to write new tests';
+$string['nostepsdefinitions'] = 'There aren\'t steps definitions matching this filters';
 $string['pluginname'] = 'Acceptance testing';
 $string['phpunitenvproblem'] = 'PHPUnit environment problem';
 $string['stepsdefinitionscomponent'] = 'Area';
@@ -41,5 +40,5 @@ $string['testenvironmentdisable'] = 'Test environment disabled';
 $string['theninfo'] = 'Then. Checkings to ensure the outcomes are the expected ones';
 $string['viewsteps'] = 'Filter';
 $string['wheninfo'] = 'When. Actions that provokes an event';
-$string['wrongphpversion'] = 'PHP 5.4.0 or higher is required to run acceptance tests';
+$string['wrongphpversion'] = 'PHP 5.4 or higher is required to run acceptance tests. See config-dist.php for alternatives.';
 $string['wrongbehatsetup'] = 'Something is wrong with the setup, ensure you ran the composer installer and vendor/bin/behat file has execution permissions';
