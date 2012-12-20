@@ -94,8 +94,8 @@ if (!isset($CFG->wwwroot) or $CFG->wwwroot === 'http://example.com/moodle') {
 if (isset($CFG->behat_switchcompletely)) {
     $CFG->behat_wwwroot = $CFG->wwwroot;
 
-// Default URL for acceptance testing, only accessible from localhost.
 } else if (!isset($CFG->behat_wwwroot)) {
+    // Default URL for acceptance testing, only accessible from localhost.
     $CFG->behat_wwwroot = 'http://localhost:8000';
 }
 

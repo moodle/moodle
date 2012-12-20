@@ -17,8 +17,7 @@
 /**
  * Contexts initializer class
  *
- * @package    core
- * @category   behat
+ * @package    tool_behat
  * @copyright  2012 David Monllaó
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -35,8 +34,7 @@ use Behat\Behat\Context\BehatContext,
  * Renamed from behat FeatureContext class according
  * to Moodle coding styles conventions
  *
- * @package    core
- * @category   behat
+ * @package    tool_behat
  * @copyright  2012 David Monllaó
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

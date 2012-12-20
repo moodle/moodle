@@ -29,6 +29,10 @@ require_once($CFG->dirroot.'/' . $CFG->admin .'/tool/behat/locallib.php');
 
 /**
  * Allows access to internal methods without exposing them
+ *
+ * @package    tool_behat
+ * @copyright  2012 David Monllaó
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class testable_tool_behat extends tool_behat {
 
@@ -58,6 +62,10 @@ class testable_tool_behat extends tool_behat {
 
 /**
  * Tool behat tests
+ *
+ * @package    tool_behat
+ * @copyright  2012 David Monllaó
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class tool_behat_testcase extends advanced_testcase {
 

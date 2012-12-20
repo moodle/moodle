@@ -56,9 +56,9 @@ class tool_behat_renderer extends plugin_renderer_base {
         $writestepsurl = tool_behat::$docsurl . '#Adding_steps_definitions';
         $writestepslink = html_writer::tag('a', $writestepsurl, array('href' => $writestepsurl, 'target' => '_blank'));
         $infos = array(
-            'Read ' . $installlink . ' ' . get_string('installinfo', 'tool_behat'),
-            'Read ' . $writetestslink . ' ' . get_string('newtestsinfo', 'tool_behat'),
-            'Read ' . $writestepslink . ' ' . get_string('newstepsinfo', 'tool_behat')
+            get_string('installinfo', 'tool_behat', $installlink),
+            get_string('newtestsinfo', 'tool_behat', $writetestslink),
+            get_string('newstepsinfo', 'tool_behat', $writestepslink)
         );
         $html .= $this->output->box_start();
         $html .= html_writer::tag('h1', 'Info');

@@ -24,10 +24,10 @@
 
 $string['allavailablesteps'] = 'All the available steps definitions';
 $string['giveninfo'] = 'Given. Processes to set up the environment';
-$string['installinfo'] = 'for installation and tests execution info';
+$string['installinfo'] = 'Read {$a} for installation and tests execution info';
 $string['moreinfoin'] = 'More info in';
-$string['newstepsinfo'] = 'for info about how to add new steps definitions';
-$string['newtestsinfo'] = 'for info about how to write new tests';
+$string['newstepsinfo'] = 'Read {$a} for info about how to add new steps definitions';
+$string['newtestsinfo'] = 'Read {$a} for info about how to write new tests';
 $string['nostepsdefinitions'] = 'There aren\'t steps definitions matching this filters';
 $string['pluginname'] = 'Acceptance testing';
 $string['phpunitenvproblem'] = 'PHPUnit environment problem';

@@ -298,11 +298,11 @@ class tool_behat {
     /**
      * Cleans the path returned by get_components_with_tests() to standarize it
      *
-     * {@see tests_finder::get_all_directories_with_tests()} it returns the path including /tests/
+     * @see tests_finder::get_all_directories_with_tests() it returns the path including /tests/
      * @param string $path
      * @return string The string without the last /tests part
      */
-    protected static function clean_path($path) {
+    protected final static function clean_path($path) {
 
         $path = rtrim($path, DIRECTORY_SEPARATOR);
 
@@ -433,8 +433,9 @@ class tool_behat {
      * Checks whether test environment is enabled or disabled
      *
      * To check is the current script is running in the test
-     * environment {@see tool_behat::is_test_environment_running()}
+     * environment
      *
+     * @see tool_behat::is_test_environment_running()
      * @return bool
      */
     public static function is_test_mode_enabled() {
@@ -481,7 +482,7 @@ class tool_behat {
      *
      * @return string
      */
-    protected static function get_test_filepath() {
+    protected final static function get_test_filepath() {
         global $CFG;
 
         if (self::is_test_environment_running()) {
@@ -499,7 +500,7 @@ class tool_behat {
      *
      * @return string
      */
-    protected static function get_behat_tests_path() {
+    protected final static function get_behat_tests_path() {
         return DIRECTORY_SEPARATOR . 'tests' . DIRECTORY_SEPARATOR . 'behat';
     }
 
@@ -530,7 +531,7 @@ class tool_behat {
      * Returns the executable path
      * @return string
      */
-    protected static function get_behat_command() {
+    protected final static function get_behat_command() {
         return 'vendor' . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'behat';
     }
 
