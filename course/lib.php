@@ -2457,7 +2457,9 @@ function update_category_button($categoryid = 0) {
 }
 
 /**
- * Category is 0 (for all courses) or an object
+ * Print courses in category. If category is 0 then all courses are printed.
+ * @param int|stdClass $category category object or id.
+ * @return bool true if courses found and printed, else false.
  */
 function print_courses($category) {
     global $CFG, $OUTPUT;
@@ -2505,8 +2507,10 @@ function print_courses($category) {
             echo html_writer::start_tag('div', array('class'=>'addcoursebutton'));
             echo $OUTPUT->single_button(new moodle_url('/course/edit.php', $options), get_string("addnewcourse"));
             echo html_writer::end_tag('div');
+            return false;
         }
     }
+    return true;
 }
 
 /**
