@@ -208,9 +208,13 @@ if ($editform->is_cancelled()) {
                 groups_add_member($groupid, $user->id);
             }
             if ($grouping) {
-                groups_assign_grouping($grouping->id, $groupid);
+                // Ask this function not to invalidate the cache, we'll do that manually once at the end.
+                groups_assign_grouping($grouping->id, $groupid, null, false);
             }
         }
+
+        // Invalidate the course groups cache seeing as we've changed it.
+        cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($courseid));
 
         if ($failed) {
             foreach ($createdgroups as $groupid) {
