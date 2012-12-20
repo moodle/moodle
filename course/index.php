@@ -67,12 +67,11 @@ $straction = get_string('action');
 $strfulllistofcourses = get_string('fulllistofcourses');
 
 
-/// Unless it's an editing admin, just print the regular listing of courses/categories
+// Unless it's an editing admin, just print the regular listing of courses/categories.
 if (!$adminediting) {
-
-/// Print form for creating new categories
+    $showaddcoursebutton = true;
+    // Print form for creating new categories.
     $countcategories = $DB->count_records('course_categories');
-
     if ($countcategories > 1 || ($countcategories == 1 && $DB->count_records('course') > 200)) {
         $strcourses = get_string('courses');
         $strcategories = get_string('categories');
@@ -96,14 +95,13 @@ if (!$adminediting) {
         echo $OUTPUT->header();
         echo $OUTPUT->skip_link_target();
         echo $OUTPUT->box_start('courseboxes');
-        print_courses(0);
+        $showaddcoursebutton = print_courses(0);
         echo $OUTPUT->box_end();
     }
 
     echo $OUTPUT->container_start('buttons');
-    if (has_capability('moodle/course:create', $systemcontext)) {
-    /// Print link to create a new course
-    /// Get the 1st available category
+    if (has_capability('moodle/course:create', $systemcontext) && $showaddcoursebutton) {
+        // Print link to create a new course, for the 1st available category.
         $options = array('category' => $CFG->defaultrequestcategory);
         echo $OUTPUT->single_button(new moodle_url('edit.php', $options), get_string('addnewcourse'), 'get');
     }
