@@ -71,21 +71,39 @@ class data_field_file extends data_field_base {
         $html .= '<input type="hidden" name="field_'.$this->field->id.'_file" value="'.$itemid.'" />';
 
         $options = new stdClass();
-        $options->maxbytes  = $this->field->param3;
+        $options->areamaxbytes  = $this->field->param3;
+        $options->maxbytes = $this->field->param3;
+        $options->maxfiles  = 1; // Limit to one file for the moment, this may be changed if requested as a feature in the future.
         $options->itemid    = $itemid;
         $options->accepted_types = '*';
         $options->return_types = FILE_INTERNAL;
         $options->context = $PAGE->context;
 
-        $fp = new file_picker($options);
-        // print out file picker
-        $html .= $OUTPUT->render($fp);
+        $fm = new form_filemanager($options);
+        // Print out file manager.
+
+        $output = $PAGE->get_renderer('core', 'files');
+        $html .= $output->render($fm);
 
         $html .= '</fieldset>';
         $html .= '</div>';
 
-        $module = array('name'=>'data_filepicker', 'fullpath'=>'/mod/data/data.js', 'requires'=>array('core_filepicker'));
-        $PAGE->requires->js_init_call('M.data_filepicker.init', array($fp->options), true, $module);
+        $module = array(
+            'name'=>'form_filemanager',
+            'fullpath'=>'/lib/form/filemanager.js',
+            'requires' => array('core_filepicker', 'base', 'io-base', 'node',
+                    'json', 'core_dndupload', 'panel', 'resize-plugin', 'dd-plugin'),
+            'strings' => array(
+                array('error', 'moodle'), array('info', 'moodle'), array('confirmdeletefile', 'repository'),
+                array('draftareanofiles', 'repository'), array('entername', 'repository'), array('enternewname', 'repository'),
+                array('invalidjson', 'repository'), array('popupblockeddownload', 'repository'),
+                array('unknownoriginal', 'repository'), array('confirmdeletefolder', 'repository'),
+                array('confirmdeletefilewithhref', 'repository'), array('confirmrenamefolder', 'repository'),
+                array('confirmrenamefile', 'repository')
+            )
+        );
+
+        $PAGE->requires->js_init_call('M.form_filemanager.init', array($fm->options), true, $module);
 
         return $html;
     }

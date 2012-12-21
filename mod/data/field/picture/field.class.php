@@ -67,13 +67,17 @@ class data_field_picture extends data_field_base {
 
         $str = '<div title="'.s($this->field->description).'">';
         $str .= '<fieldset><legend><span class="accesshide">'.$this->field->name.'</span></legend>';
+        $str .= '<noscript>';
         if ($file) {
             $src = file_encode_url($CFG->wwwroot.'/pluginfile.php/', $this->context->id.'/mod_data/content/'.$content->id.'/'.$file->get_filename());
             $str .= '<img width="'.s($this->previewwidth).'" height="'.s($this->previewheight).'" src="'.$src.'" alt="" />';
         }
+        $str .= '</noscript>';
 
         $options = new stdClass();
+        $options->areamaxbytes = $this->field->param3;
         $options->maxbytes  = $this->field->param3;
+        $options->maxfiles  = 1; // Only one picture permitted.
         $options->itemid    = $itemid;
         $options->accepted_types = array('web_image');
         $options->return_types = FILE_INTERNAL;
@@ -82,9 +86,12 @@ class data_field_picture extends data_field_base {
             $options->filename = $file->get_filename();
             $options->filepath = '/';
         }
-        $fp = new file_picker($options);
-        $str .= $OUTPUT->render($fp);
 
+        $fm = new form_filemanager($options);
+        // Print out file manager.
+
+        $output = $PAGE->get_renderer('core', 'files');
+        $str .= $output->render($fm);
 
         $str .= '<div class="mdl-left">';
         $str .= '<input type="hidden" name="field_'.$this->field->id.'_file" value="'.$itemid.'" />';
@@ -95,8 +102,23 @@ class data_field_picture extends data_field_base {
         $str .= '</fieldset>';
         $str .= '</div>';
 
-        $module = array('name'=>'data_imagepicker', 'fullpath'=>'/mod/data/data.js', 'requires'=>array('core_filepicker'));
-        $PAGE->requires->js_init_call('M.data_imagepicker.init', array($fp->options), true, $module);
+        $module = array(
+            'name'=>'form_filemanager',
+            'fullpath'=>'/lib/form/filemanager.js',
+            'requires' => array('core_filepicker', 'base', 'io-base', 'node',
+                    'json', 'core_dndupload', 'panel', 'resize-plugin', 'dd-plugin'),
+            'strings' => array(
+                array('error', 'moodle'), array('info', 'moodle'), array('confirmdeletefile', 'repository'),
+                array('draftareanofiles', 'repository'), array('entername', 'repository'), array('enternewname', 'repository'),
+                array('invalidjson', 'repository'), array('popupblockeddownload', 'repository'),
+                array('unknownoriginal', 'repository'), array('confirmdeletefolder', 'repository'),
+                array('confirmdeletefilewithhref', 'repository'), array('confirmrenamefolder', 'repository'),
+                array('confirmrenamefile', 'repository')
+            )
+        );
+
+        $PAGE->requires->js_init_call('M.form_filemanager.init', array($fm->options), true, $module);
+
         return $str;
     }
 

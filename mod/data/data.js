@@ -48,9 +48,15 @@ M.data_filepicker.callback = function(params) {
 };
 
 /**
+ * Deprecated since 2.5, will be removed in 2.7.
+ * Please don't use this function.
+ * Use the filemanager instead. (/lib/form/filemanager.js)
  * This fucntion is called for each file picker on page.
  */
 M.data_filepicker.init = function(Y, options) {
+    if (M.cfg.developerdebug) {
+        Y.log("You are using a deprecated function call (M.data_filepicker). Please look at rewriting your call to use M.form_filemanager");
+    }
     options.formcallback = M.data_filepicker.callback;
     if (!M.core_filepicker.instances[options.client_id]) {
         M.core_filepicker.init(Y, options);
@@ -96,9 +102,15 @@ M.data_imagepicker.callback = function(params) {
 };
 
 /**
+ * Deprecated since 2.5, will be removed in 2.7.
+ * Please don't use this function.
+ * Use the filemanager instead. (/lib/form/filemanager.js)
  * This fucntion is called for each file picker on page.
  */
 M.data_imagepicker.init = function(Y, options) {
+    if (M.cfg.developerdebug) {
+        Y.log("You are using a deprecated function call (M.data_imagepicker). Please look at rewriting your call to use M.form_filemanager");
+    }
     options.formcallback = M.data_imagepicker.callback;
     if (!M.core_filepicker.instances[options.client_id]) {
         M.core_filepicker.init(Y, options);
