@@ -273,12 +273,6 @@ class grade_edit_tree {
                 $root = true;
             }
 
-            $row_count_offset = 0;
-
-            if (empty($category_total_item) && !$this->moving) {
-                $row_count_offset = -1;
-            }
-
             $levelclass = "level$level";
 
             $courseclass = '';
@@ -297,7 +291,7 @@ class grade_edit_tree {
             $headercell->scope = 'row';
             $headercell->attributes['title'] = $object->stripped_name;
             $headercell->attributes['class'] = 'cell rowspan ' . $levelclass;
-            $headercell->rowspan = $row_count+1+$row_count_offset;
+            $headercell->rowspan = $row_count + 1;
             $row->cells[] = $headercell;
 
             foreach ($this->columns as $column) {
