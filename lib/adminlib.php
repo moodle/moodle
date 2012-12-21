@@ -123,6 +123,9 @@ define('INSECURE_DATAROOT_ERROR', 2);
 function uninstall_plugin($type, $name) {
     global $CFG, $DB, $OUTPUT;
 
+    // This may take a long time.
+    @set_time_limit(0);
+
     // recursively uninstall all module subplugins first
     if ($type === 'mod') {
         if (file_exists("$CFG->dirroot/mod/$name/db/subplugins.php")) {
