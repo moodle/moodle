@@ -1,3 +1,5 @@
+Version 2.0.6.1 (2012-11-16)
+	Fixed security issue with google spellchecker.
 Version 2.0.6 (2011-09-29)
 	Fixed incorrect position of suggestion menu.
 	Fixed handling of mispelled words with no suggestions in PSpellShell engine.
