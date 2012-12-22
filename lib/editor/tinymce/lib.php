@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 class tinymce_texteditor extends texteditor {
     /** @var string active version - this is the directory name where to find tinymce code */
-    public $version = '3.5.7b';
+    public $version = '3.5.8';
 
     /**
      * Is the current browser supported by this editor?
