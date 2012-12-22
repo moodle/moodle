@@ -803,45 +803,24 @@ class mysqli_native_moodle_database extends moodle_database {
     }
 
     /**
-     * Is db in unicode mode?
+     * Is this database compatible with utf8?
      * @return bool
      */
     public function setup_is_unicodedb() {
-        $sql = "SHOW LOCAL VARIABLES LIKE 'character_set_database'";
-        $this->query_start($sql, null, SQL_QUERY_AUX);
+        // All new tables are created with this collation, we just have to make sure it is utf8 compatible,
+        // if config table already exists it has this collation too.
+        $collation = $this->get_dbcollation();
+
+        $sql = "SHOW COLLATION WHERE Collation ='$collation' AND Charset = 'utf8'";
+        $this->query_start($sql, NULL, SQL_QUERY_AUX);
         $result = $this->mysqli->query($sql);
         $this->query_end($result);
-
-        $return = false;
-        if ($result) {
-            while($row = $result->fetch_assoc()) {
-                if (isset($row['Value'])) {
-                    $return = (strtoupper($row['Value']) === 'UTF8' or strtoupper($row['Value']) === 'UTF-8');
-                }
-                break;
-            }
-            $result->close();
+        if ($result->fetch_assoc()) {
+            $return = true;
+        } else {
+            $return = false;
         }
-
-        if (!$return) {
-            return false;
-        }
-
-        $sql = "SHOW LOCAL VARIABLES LIKE 'collation_database'";
-        $this->query_start($sql, null, SQL_QUERY_AUX);
-        $result = $this->mysqli->query($sql);
-        $this->query_end($result);
-
-        $return = false;
-        if ($result) {
-            while($row = $result->fetch_assoc()) {
-                if (isset($row['Value'])) {
-                    $return = (strpos($row['Value'], 'latin1') !== 0);
-                }
-                break;
-            }
-            $result->close();
-        }
+        $result->close();
 
         return $return;
     }
