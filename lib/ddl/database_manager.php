@@ -300,6 +300,8 @@ class database_manager {
         }
 
         if ($xmldb_tables = $structure->getTables()) {
+            // Delete in opposite order, this should help with foreign keys in the future.
+            $xmldb_tables = array_reverse($xmldb_tables);
             foreach($xmldb_tables as $table) {
                 if ($this->table_exists($table)) {
                     $this->drop_table($table);
