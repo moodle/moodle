@@ -63,6 +63,8 @@ class qformat_learnwise extends qformat_default {
     }
 
     function readquestion($lines) {
+        global $OUTPUT;
+
         $text = implode(' ', $lines);
         $text = str_replace(array('\t','\n','\r','\''), array('','','','\\\''), $text);
 
@@ -121,7 +123,7 @@ class qformat_learnwise extends qformat_default {
             }
 
         } else {
-            echo "<p>I don't understand this question type (type = <strong>$type</strong>).</p>\n";
+            echo $OUTPUT->notification(get_string('unknownorunhandledtype', 'question', $type));
         }
 
         $question = $this->defaultquestion();

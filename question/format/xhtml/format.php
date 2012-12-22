@@ -137,10 +137,8 @@ class qformat_xhtml extends qformat_default {
         case DESCRIPTION:
             break;
         case MULTIANSWER:
-            $expout .= "<!-- CLOZE type is not supported  -->\n";
-            break;
         default:
-            echo $OUTPUT->notification("No handler for qtype $question->qtype for GIFT export" );
+            $expout .= "<!-- export of $question->qtype type is not supported  -->\n";
         }
         // close off div
         $expout .= "</div>\n\n\n";
