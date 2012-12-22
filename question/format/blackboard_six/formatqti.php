@@ -87,7 +87,7 @@ class qformat_blackboard_six_qti extends qformat_blackboard_six_base {
                     $this->process_essay($question, $questions);
                     break;
                 default:
-                    $this->error(get_string('unknownorunhandledtype', 'qformat_blackboard_six', $question->qtype));
+                    $this->error(get_string('unknownorunhandledtype', 'question', $question->qtype));
                     break;
             }
         }

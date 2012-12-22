@@ -31,4 +31,3 @@ $string['notenoughtsubans'] = 'Unable to import matching question \'{$a}\' becau
 $string['pluginname'] = 'Blackboard V6+';
 $string['pluginname_help'] = 'Blackboard V6+ format enables questions saved in all Blackboard export formats to be imported via a dat or zip file. For zip files, images import is supported.';
 $string['unhandledpresblock'] = 'Unhandled presentation block';
-$string['unknownorunhandledtype'] = 'Unknown or unhandled question type: {$a}';
