@@ -212,4 +212,89 @@ class web_testcase extends advanced_testcase {
         $PAGE->set_url('/course/view.php', array('id'=>1));
         $this->assertEquals($CFG->wwwroot.'/course/view.php?id=1', qualified_me());
     }
+
+    public function test_null_progres_trace() {
+        $this->resetAfterTest(false);
+
+        $trace = new null_progress_trace();
+        ob_start();
+        $trace->output('do');
+        $trace->output('re', 1);
+        $trace->output('mi', 2);
+        $trace->finished();
+        $output = ob_get_contents();
+        ob_end_clean();
+        $this->assertSame('', $output);
+    }
+
+    public function test_text_progres_trace() {
+        $this->resetAfterTest(false);
+
+        $trace = new text_progress_trace();
+        ob_start();
+        $trace->output('do');
+        $trace->output('re', 1);
+        $trace->output('mi', 2);
+        $trace->finished();
+        $output = ob_get_contents();
+        ob_end_clean();
+        $this->assertSame("do\n  re\n    mi\n", $output);
+    }
+
+    public function test_html_progres_trace() {
+        $this->resetAfterTest(false);
+
+        $trace = new html_progress_trace();
+        ob_start();
+        $trace->output('do');
+        $trace->output('re', 1);
+        $trace->output('mi', 2);
+        $trace->finished();
+        $output = ob_get_contents();
+        ob_end_clean();
+        $this->assertSame("<p>do</p>\n<p>&#160;&#160;re</p>\n<p>&#160;&#160;&#160;&#160;mi</p>\n", $output);
+    }
+
+    public function test_html_list_progress_trace() {
+        $this->resetAfterTest(false);
+
+        $trace = new html_list_progress_trace();
+        ob_start();
+        $trace->output('do');
+        $trace->output('re', 1);
+        $trace->output('mi', 2);
+        $trace->finished();
+        $output = ob_get_contents();
+        ob_end_clean();
+        $this->assertSame("<ul>\n<li>do<ul>\n<li>re<ul>\n<li>mi</li>\n</ul>\n</li>\n</ul>\n</li>\n</ul>\n", $output);
+    }
+
+    public function test_progres_trace_buffer() {
+        $this->resetAfterTest(false);
+
+        $trace = new progress_trace_buffer(new html_progress_trace());
+        ob_start();
+        $trace->output('do');
+        $trace->output('re', 1);
+        $trace->output('mi', 2);
+        $trace->finished();
+        $output = ob_get_contents();
+        ob_end_clean();
+        $this->assertSame("<p>do</p>\n<p>&#160;&#160;re</p>\n<p>&#160;&#160;&#160;&#160;mi</p>\n", $output);
+        $this->assertSame($output, $trace->get_buffer());
+
+        $trace = new progress_trace_buffer(new html_progress_trace(), false);
+        ob_start();
+        $trace->output('do');
+        $trace->output('re', 1);
+        $trace->output('mi', 2);
+        $trace->finished();
+        $output = ob_get_contents();
+        ob_end_clean();
+        $this->assertSame('', $output);
+        $this->assertSame("<p>do</p>\n<p>&#160;&#160;re</p>\n<p>&#160;&#160;&#160;&#160;mi</p>\n", $trace->get_buffer());
+        $this->assertSame("<p>do</p>\n<p>&#160;&#160;re</p>\n<p>&#160;&#160;&#160;&#160;mi</p>\n", $trace->get_buffer());
+        $trace->reset_buffer();
+        $this->assertSame('', $trace->get_buffer());
+    }
 }

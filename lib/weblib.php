@@ -3144,7 +3144,8 @@ EOT;
  */
 abstract class progress_trace {
     /**
-     * Ouput an progress message in whatever format.
+     * Output an progress message in whatever format.
+     *
      * @param string $message the message to output.
      * @param integer $depth indent depth for this message.
      */
@@ -3183,7 +3184,7 @@ class null_progress_trace extends progress_trace {
  */
 class text_progress_trace extends progress_trace {
     /**
-     * Output the trace message
+     * Output the trace message.
      *
      * @param string $message
      * @param int $depth
@@ -3203,7 +3204,7 @@ class text_progress_trace extends progress_trace {
  */
 class html_progress_trace extends progress_trace {
     /**
-     * Output the trace message
+     * Output the trace message.
      *
      * @param string $message
      * @param int $depth
@@ -3262,6 +3263,81 @@ class html_list_progress_trace extends progress_trace {
             echo "</li>\n</ul>\n";
             $this->currentdepth -= 1;
         }
+    }
+}
+
+/**
+ * Special type of traced that can be used for catching of
+ * output of other traces.
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package moodlecore
+ */
+class progress_trace_buffer extends progress_trace {
+    /** @var progres_trace */
+    protected $trace;
+    /** @var bool do we pass output out */
+    protected $passthrough;
+    /** @var string output buffer */
+    protected $buffer;
+
+    /**
+     * Constructor.
+     *
+     * @param progress_trace $trace
+     * @param bool $passthrough true means output and buffer, false means just buffer and no output
+     */
+    public function __construct(progress_trace $trace, $passthrough = true) {
+        $this->trace       = $trace;
+        $this->passthrough = $passthrough;
+        $this->buffer      = '';
+    }
+
+    /**
+     * Output the trace message.
+     *
+     * @param string $message the message to output.
+     * @param int $depth indent depth for this message.
+     * @return void output stored in buffer
+     */
+    public function output($message, $depth = 0) {
+        ob_start();
+        $this->trace->output($message, $depth);
+        $this->buffer .= ob_get_contents();
+        if ($this->passthrough) {
+            ob_end_flush();
+        } else {
+            ob_end_clean();
+        }
+    }
+
+    /**
+     * Called when the processing is finished.
+     */
+    public function finished() {
+        ob_start();
+        $this->trace->finished();
+        $this->buffer .= ob_get_contents();
+        if ($this->passthrough) {
+            ob_end_flush();
+        } else {
+            ob_end_clean();
+        }
+    }
+
+    /**
+     * Reset internal text buffer.
+     */
+    public function reset_buffer() {
+        $this->buffer = '';
+    }
+
+    /**
+     * Return internal text buffer.
+     * @return string buffered plain text
+     */
+    public function get_buffer() {
+        return $this->buffer;
     }
 }
 
