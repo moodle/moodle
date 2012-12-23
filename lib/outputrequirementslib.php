@@ -480,7 +480,7 @@ class page_requirements_manager {
                     $module = array('name'     => 'core_dock',
                                     'fullpath' => '/blocks/dock.js',
                                     'requires' => array('base', 'node', 'event-custom', 'event-mouseenter', 'event-resize'),
-                                    'strings' => array(array('addtodock', 'block'),array('undockitem', 'block'),array('undockall', 'block'),array('thisdirectionvertical', 'langconfig')));
+                                    'strings' => array(array('addtodock', 'block'),array('undockitem', 'block'),array('undockall', 'block'),array('thisdirectionvertical', 'langconfig'),array('hidedockpanel', 'block'),array('hidepanel', 'block')));
                     break;
                 case 'core_message':
                     $module = array('name'     => 'core_message',

@@ -916,7 +916,7 @@ M.core_dock.genericblock.prototype = {
             }, this);
             // Add a close icon
             // Must set the image src seperatly of we get an error with XML strict headers
-            var closeicon = Y.Node.create('<span class="hidepanelicon" tabindex="0"><img alt="" style="width:11px;height:11px;cursor:pointer;" /></span>');
+            var closeicon = Y.Node.create('<span class="hidepanelicon" tabindex="0"><img alt="'+M.str.block.hidepanel+'" title="'+M.str.block.hidedockpanel+'" style="width:11px;height:11px;cursor:pointer;"/></span>');
             closeicon.one('img').setAttribute('src', M.util.image_url('t/dockclose', 'moodle'));
             closeicon.on('forceclose|click', this.hide, this);
             closeicon.on('dock:actionkey',this.hide, this, {actions:{enter:true,toggle:true}});
