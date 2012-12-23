@@ -5,6 +5,10 @@ class block_course_summary extends block_base {
         $this->title = get_string('pluginname', 'block_course_summary');
     }
 
+    function applicable_formats() {
+        return array('all' => true, 'mod' => false, 'tag' => false, 'my' => false);
+    }
+
     function specialization() {
         if($this->page->pagetype == PAGE_COURSE_VIEW && $this->page->course->id != SITEID) {
             $this->title = get_string('coursesummary', 'block_course_summary');

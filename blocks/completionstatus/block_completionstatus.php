@@ -38,6 +38,10 @@ class block_completionstatus extends block_base {
         $this->title = get_string('pluginname', 'block_completionstatus');
     }
 
+    function applicable_formats() {
+        return array('all' => true, 'mod' => false, 'tag' => false, 'my' => false);
+    }
+
     public function get_content() {
         global $USER;
 

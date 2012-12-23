@@ -7,7 +7,7 @@ class block_mentees extends block_base {
     }
 
     function applicable_formats() {
-        return array('all' => true, 'tag' => false);
+        return array('all' => true, 'tag' => false, 'my' => false);
     }
 
     function specialization() {
