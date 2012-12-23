@@ -283,4 +283,125 @@ class enrol_paypal_plugin extends enrol_plugin {
         }
         return $actions;
     }
+
+    public function cron() {
+        $trace = new text_progress_trace();
+        $this->process_expirations($trace);
+    }
+
+    /**
+     * Execute synchronisation.
+     * @param progress_trace $trace
+     * @return int exit code, 0 means ok
+     */
+    public function sync(progress_trace $trace) {
+        $this->process_expirations($trace);
+        return 0;
+    }
+
+    /**
+     * Do any enrolment expiration processing.
+     *
+     * @param progress_trace $trace
+     * @return bool true if any data processed, false if not
+     */
+    protected function process_expirations(progress_trace $trace) {
+        global $DB;
+
+        //TODO: this method should be moved to parent class once we refactor all existing enrols, see MDL-36504.
+
+        $processed = false;
+        $name = $this->get_name();
+
+        // Deal with expired accounts.
+        $action = $this->get_config('expiredaction', ENROL_EXT_REMOVED_KEEP);
+
+        if ($action == ENROL_EXT_REMOVED_UNENROL) {
+            $instances = array();
+            $sql = "SELECT ue.*, e.courseid, c.id AS contextid
+                      FROM {user_enrolments} ue
+                      JOIN {enrol} e ON (e.id = ue.enrolid AND e.enrol = :enrol)
+                      JOIN {context} c ON (c.instanceid = e.courseid AND c.contextlevel = :courselevel)
+                     WHERE ue.timeend > 0 AND ue.timeend < :now";
+            $params = array('now'=>time(), 'courselevel'=>CONTEXT_COURSE, 'enrol'=>$name);
+
+            $rs = $DB->get_recordset_sql($sql, $params);
+            foreach ($rs as $ue) {
+                if (!$processed) {
+                    $trace->output("Starting processing of enrol_$name expirations...");
+                    $processed = true;
+                }
+                if (empty($instances[$ue->enrolid])) {
+                    $instances[$ue->enrolid] = $DB->get_record('enrol', array('id'=>$ue->enrolid));
+                }
+                $instance = $instances[$ue->enrolid];
+                if (!$this->roles_protected()) {
+                    // Let's just guess what extra roles are supposed to be removed.
+                    if ($instance->roleid) {
+                        role_unassign($instance->roleid, $ue->userid, $ue->contextid);
+                    }
+                }
+                // The unenrol cleans up all subcontexts if this is the only course enrolment for this user.
+                $this->unenrol_user($instance, $ue->userid);
+                $trace->output("Unenrolling expired user $ue->userid from course $instance->courseid", 1);
+            }
+            $rs->close();
+            unset($instances);
+
+        } else if ($action == ENROL_EXT_REMOVED_SUSPENDNOROLES) {
+            $instances = array();
+            $sql = "SELECT ue.*, e.courseid, c.id AS contextid
+                      FROM {user_enrolments} ue
+                      JOIN {enrol} e ON (e.id = ue.enrolid AND e.enrol = :enrol)
+                      JOIN {context} c ON (c.instanceid = e.courseid AND c.contextlevel = :courselevel)
+                     WHERE ue.timeend > 0 AND ue.timeend < :now
+                           AND ue.status = :useractive";
+            $params = array('now'=>time(), 'courselevel'=>CONTEXT_COURSE, 'useractive'=>ENROL_USER_ACTIVE, 'enrol'=>$name);
+            $rs = $DB->get_recordset_sql($sql, $params);
+            foreach ($rs as $ue) {
+                if (!$processed) {
+                    $trace->output("Starting processing of enrol_$name expirations...");
+                    $processed = true;
+                }
+                if (empty($instances[$ue->enrolid])) {
+                    $instances[$ue->enrolid] = $DB->get_record('enrol', array('id'=>$ue->enrolid));
+                }
+                $instance = $instances[$ue->enrolid];
+
+                if (!$this->roles_protected()) {
+                    // Let's just guess what roles should be removed.
+                    $count = $DB->count_records('role_assignments', array('userid'=>$ue->userid, 'contextid'=>$ue->contextid));
+                    if ($count == 1) {
+                        role_unassign_all(array('userid'=>$ue->userid, 'contextid'=>$ue->contextid, 'component'=>'', 'itemid'=>0));
+
+                    } else if ($count > 1 and $instance->roleid) {
+                        role_unassign($instance->roleid, $ue->userid, $ue->contextid, '', 0);
+                    }
+                }
+                // In any case remove all roles that belong to this instance and user.
+                role_unassign_all(array('userid'=>$ue->userid, 'contextid'=>$ue->contextid, 'component'=>'enrol_'.$name, 'itemid'=>$instance->id), true);
+                // Final cleanup of subcontexts if there are no more course roles.
+                if (0 == $DB->count_records('role_assignments', array('userid'=>$ue->userid, 'contextid'=>$ue->contextid))) {
+                    role_unassign_all(array('userid'=>$ue->userid, 'contextid'=>$ue->contextid, 'component'=>'', 'itemid'=>0), true);
+                }
+
+                $this->update_user_enrol($instance, $ue->userid, ENROL_USER_SUSPENDED);
+                $trace->output("Suspending expired user $ue->userid in course $instance->courseid", 1);
+            }
+            $rs->close();
+            unset($instances);
+
+        } else {
+            // ENROL_EXT_REMOVED_KEEP means no changes.
+        }
+
+        if ($processed) {
+            $trace->output("...finished processing of enrol_$name expirations");
+        } else {
+            $trace->output("No expired enrol_$name enrolments detected");
+        }
+        $trace->finished();
+
+        return $processed;
+    }
 }
