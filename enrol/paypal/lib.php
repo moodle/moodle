@@ -34,6 +34,20 @@ defined('MOODLE_INTERNAL') || die();
  */
 class enrol_paypal_plugin extends enrol_plugin {
 
+    public function get_currencies() {
+        // See https://www.paypal.com/cgi-bin/webscr?cmd=p/sell/mc/mc_intro-outside,
+        // 3-character ISO-4217: https://cms.paypal.com/us/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_api_currency_codes
+        $codes = array(
+            'AUD', 'BRL', 'CAD', 'CHF', 'CZK', 'DKK', 'EUR', 'GBP', 'HKD', 'HUF', 'ILS', 'JPY',
+            'MXN', 'MYR', 'NOK', 'NZD', 'PHP', 'PLN', 'SEK', 'SGD', 'THB', 'TRY', 'TWD', 'USD');
+        $currencies = array();
+        foreach ($codes as $c) {
+            $currencies[$c] = new lang_string($c, 'core_currencies');
+        }
+
+        return $currencies;
+    }
+
     /**
      * Returns optional enrolment information icons.
      *
