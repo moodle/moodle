@@ -123,7 +123,6 @@ class core_course_renderer extends plugin_renderer_base {
         if ($hascourses) {
             $content .= html_writer::start_tag('div', array('class'=>'courses'));
             $coursecount = 0;
-            $strinfo = new lang_string('info');
             foreach ($category->courses as $course) {
                 $classes = array('course');
                 $linkclass = 'course_link';
