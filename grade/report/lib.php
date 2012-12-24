@@ -352,7 +352,7 @@ abstract class grade_report {
 
         // If we're dealing with multiple users we need to know when we've moved on to a new user.
         static $previous_userid = null;
-        
+
         // If we're dealing with multiple courses we need to know when we've moved on to a new course.
         static $previous_courseid = null;
 
