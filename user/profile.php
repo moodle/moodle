@@ -297,9 +297,13 @@ if ($user->icq && !isset($hiddenfields['icqnumber'])) {
 }
 
 if ($user->skype && !isset($hiddenfields['skypeid'])) {
-    print_row(get_string('skypeid').':','<a href="skype:'.urlencode($user->skype).'?call">'.s($user->skype).
-        ' <img src="http://mystatus.skype.com/smallicon/'.urlencode($user->skype).'" alt="'.get_string('status').'" '.
-        ' /></a>');
+    if (strpos($CFG->httpswwwroot, 'https:') === 0) {
+        // Bad luck, skype devs are lazy to set up SSL on their servers - see MDL-37233.
+        $statusicon = '';
+    } else {
+        $statusicon = ' '.html_writer::empty_tag('img', array('src'=>'http://mystatus.skype.com/smallicon/'.urlencode($user->skype), 'alt'=>get_string('status')));
+    }
+    print_row(get_string('skypeid').':','<a href="skype:'.urlencode($user->skype).'?call">'.s($user->skype).$statusicon.'</a>');
 }
 if ($user->yahoo && !isset($hiddenfields['yahooid'])) {
     print_row(get_string('yahooid').':', '<a href="http://edit.yahoo.com/config/send_webmesg?.target='.urlencode($user->yahoo).'&amp;.src=pg">'.s($user->yahoo)." <img src=\"http://opi.yahoo.com/online?u=".urlencode($user->yahoo)."&m=g&t=0\" alt=\"\"></a>");
