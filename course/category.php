@@ -191,6 +191,7 @@ if ($editingon && can_edit_in_category()) {
     // Integrate into the admin tree only if the user can edit categories at the top level,
     // otherwise the admin block does not appear to this user, and you get an error.
     require_once($CFG->libdir . '/adminlib.php');
+    navigation_node::override_active_url(new moodle_url('/course/category.php', array('id' => $id)));
     admin_externalpage_setup('coursemgmt', '', $urlparams, $CFG->wwwroot . '/course/category.php');
     $PAGE->set_context($context);   // Ensure that we are actually showing blocks etc for the cat context
 
