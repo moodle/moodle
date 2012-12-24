@@ -435,8 +435,11 @@ if (!$courses) {
         $movetocategories[$category->id] = get_string('moveselectedcoursesto');
         echo '<tr><td colspan="3" align="right">';
         echo html_writer::label(get_string('moveselectedcoursesto'), 'movetoid', false, array('class' => 'accesshide'));
-        echo html_writer::select($movetocategories, 'moveto', $category->id, null, array('id'=>'movetoid'));
-        $PAGE->requires->js_init_call('M.util.init_select_autosubmit', array('movecourses', 'movetoid', false));
+        echo html_writer::select($movetocategories, 'moveto', $category->id, null, array('id'=>'movetoid', 'class' => 'autosubmit'));
+        $PAGE->requires->yui_module('moodle-core-formautosubmit',
+            'M.core.init_formautosubmit',
+            array(array('selectid' => 'movetoid', 'nothing' => $category->id))
+        );
         echo '<input type="hidden" name="id" value="'.$category->id.'" />';
         echo '</td></tr>';
     }

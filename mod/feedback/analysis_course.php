@@ -187,10 +187,12 @@ if ($courseitemfilter > 0) {
 
          echo ' '. html_writer::label(get_string('filter_by_course', 'feedback'), 'coursefilterid'). ': ';
          echo html_writer::select($courses, 'coursefilter', $coursefilter,
-                                  null, array('id'=>'coursefilterid'));
+                                  null, array('id'=>'coursefilterid', 'class' => 'autosubmit'));
 
-         $PAGE->requires->js_init_call('M.util.init_select_autosubmit',
-                                        array('analysis-form', 'coursefilterid', false));
+        $PAGE->requires->yui_module('moodle-core-formautosubmit',
+            'M.core.init_formautosubmit',
+            array(array('selectid' => 'coursefilterid', 'nothing' => false))
+        );
     }
     echo '<hr />';
     $itemnr = 0;

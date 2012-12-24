@@ -375,8 +375,11 @@ if ($courses) {
         echo "<input type=\"button\" onclick=\"checknone()\" value=\"$strdeselectall\" />\n";
         // Select box should only show categories in which user has min capability to move course.
         echo html_writer::label(get_string('moveselectedcoursesto'), 'movetoid', false, array('class' => 'accesshide'));
-        echo html_writer::select($usercatlist, 'moveto', '', array(''=>get_string('moveselectedcoursesto')), array('id'=>'movetoid'));
-        $PAGE->requires->js_init_call('M.util.init_select_autosubmit', array('movecourses', 'movetoid', false));
+        echo html_writer::select($usercatlist, 'moveto', '', array(''=>get_string('moveselectedcoursesto')), array('id'=>'movetoid', 'class' => 'autosubmit'));
+        $PAGE->requires->yui_module('moodle-core-formautosubmit',
+            'M.core.init_formautosubmit',
+            array(array('selectid' => 'movetoid', 'nothing' => false))
+        );
         echo "</td>\n</tr>\n";
         echo "</table>\n</form>";
 
