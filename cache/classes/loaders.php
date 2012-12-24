@@ -1093,6 +1093,10 @@ class cache_application extends cache implements cache_loader_with_locking {
             $todelete = array();
             // Iterate the returned data for the events.
             foreach ($events as $event => $keys) {
+                if ($keys === false) {
+                    // There are no keys.
+                    continue;
+                }
                 // Look at each key and check the timestamp.
                 foreach ($keys as $key => $timestamp) {
                     // If the timestamp of the event is more than or equal to the last invalidation (happened between the last
