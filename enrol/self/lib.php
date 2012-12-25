@@ -360,21 +360,23 @@ class enrol_self_plugin extends enrol_plugin {
      * @return void
      */
     public function cron() {
-        $this->sync(null, true);
-        $this->send_expiry_notifications(true);
+        $trace = new text_progress_trace();
+        $this->sync($trace, null);
+        $this->send_expiry_notifications($trace);
     }
 
     /**
      * Sync all meta course links.
      *
+     * @param progress_trace $trace
      * @param int $courseid one course, empty mean all
-     * @param bool $verbose verbose CLI output
      * @return int 0 means ok, 1 means error, 2 means plugin disabled
      */
-    public function sync($courseid = null, $verbose = false) {
+    public function sync(progress_trace $trace, $courseid = null) {
         global $DB;
 
         if (!enrol_is_enabled('self')) {
+            $trace->finished();
             return 2;
         }
 
@@ -382,9 +384,7 @@ class enrol_self_plugin extends enrol_plugin {
         @set_time_limit(0);
         raise_memory_limit(MEMORY_HUGE);
 
-        if ($verbose) {
-            mtrace('Verifying self-enrolments...');
-        }
+        $trace->output('Verifying self-enrolments...');
 
         $params = array('now'=>time(), 'useractive'=>ENROL_USER_ACTIVE, 'courselevel'=>CONTEXT_COURSE);
         $coursesql = "";
@@ -408,10 +408,8 @@ class enrol_self_plugin extends enrol_plugin {
             $userid = $instance->userid;
             unset($instance->userid);
             $this->unenrol_user($instance, $userid);
-            if ($verbose) {
-                $days = $instance->customint2 / 60*60*24;
-                mtrace("  unenrolling user $userid from course $instance->courseid as they have did not log in for at least $days days");
-            }
+            $days = $instance->customint2 / 60*60*24;
+            $trace->output("unenrolling user $userid from course $instance->courseid as they have did not log in for at least $days days", 1);
         }
         $rs->close();
 
@@ -427,10 +425,8 @@ class enrol_self_plugin extends enrol_plugin {
             $userid = $instance->userid;
             unset($instance->userid);
             $this->unenrol_user($instance, $userid);
-            if ($verbose) {
                 $days = $instance->customint2 / 60*60*24;
-                mtrace("  unenrolling user $userid from course $instance->courseid as they have did not access course for at least $days days");
-            }
+            $trace->output("unenrolling user $userid from course $instance->courseid as they have did not access course for at least $days days", 1);
         }
         $rs->close();
 
@@ -455,9 +451,7 @@ class enrol_self_plugin extends enrol_plugin {
                     role_unassign($instance->roleid, $ue->userid, $ue->contextid, '', 0);
                 }
                 $this->unenrol_user($instance, $ue->userid);
-                if ($verbose) {
-                    mtrace("  unenrolling expired user $ue->userid from course $instance->courseid");
-                }
+                $trace->output("unenrolling expired user $ue->userid from course $instance->courseid", 1);
             }
             $rs->close();
             unset($instances);
@@ -483,9 +477,7 @@ class enrol_self_plugin extends enrol_plugin {
                     role_unassign($instance->roleid, $ue->userid, $ue->contextid, '', 0);
                 }
                 $this->update_user_enrol($instance, $ue->userid, ENROL_USER_SUSPENDED);
-                if ($verbose) {
-                    mtrace("  suspending expired user $ue->userid in course $instance->courseid");
-                }
+                $trace->output("suspending expired user $ue->userid in course $instance->courseid", 1);
             }
             $rs->close();
             unset($instances);
@@ -494,9 +486,8 @@ class enrol_self_plugin extends enrol_plugin {
             // ENROL_EXT_REMOVED_KEEP means no changes.
         }
 
-        if ($verbose) {
-            mtrace('...user self-enrolment updates finished.');
-        }
+        $trace->output('...user self-enrolment updates finished.');
+        $trace->finished();
 
         return 0;
     }

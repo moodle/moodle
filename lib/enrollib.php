@@ -1832,9 +1832,9 @@ abstract class enrol_plugin {
      * - upgrade code that sets default thresholds for existing courses (should be 1 day),
      * - something that calls this method, such as cron.
      *
-     * @param bool $verbose verbose CLI output
+     * @param progress_trace $trace (accepts bool for backwards compatibility only)
      */
-    public function send_expiry_notifications($verbose = false) {
+    public function send_expiry_notifications($trace) {
         global $DB, $CFG;
 
         // Unfortunately this may take a long time, it should not be interrupted,
@@ -1849,27 +1849,30 @@ abstract class enrol_plugin {
         $expirynotifyhour = $this->get_config('expirynotifyhour');
         if (is_null($expirynotifyhour)) {
             debugging("send_expiry_notifications() in $name enrolment plugin needs expirynotifyhour setting");
+            $trace->finished();
             return;
+        }
+
+        if (!($trace instanceof progress_trace)) {
+            $trace = $trace ? new text_progress_trace() : new null_progress_trace();
+            debugging('enrol_plugin::send_expiry_notifications() now expects progress_trace instance as parameter!', DEBUG_DEVELOPER);
         }
 
         $timenow = time();
         $notifytime = usergetmidnight($timenow, $CFG->timezone) + ($expirynotifyhour * 3600);
 
         if ($expirynotifylast > $notifytime) {
-            if ($verbose) {
-                mtrace($name.' enrolment expiry notifications were already sent today at '.userdate($expirynotifylast, '', $CFG->timezone).'.');
-            }
+            $trace->output($name.' enrolment expiry notifications were already sent today at '.userdate($expirynotifylast, '', $CFG->timezone).'.');
+            $trace->finished();
             return;
+
         } else if ($timenow < $notifytime) {
-            if ($verbose) {
-                mtrace($name.' enrolment expiry notifications will be sent at '.userdate($notifytime, '', $CFG->timezone).'.');
-            }
+            $trace->output($name.' enrolment expiry notifications will be sent at '.userdate($notifytime, '', $CFG->timezone).'.');
+            $trace->finished();
             return;
         }
 
-        if ($verbose) {
-            mtrace('Processing '.$name.' enrolment expiration notifications...');
-        }
+        $trace->output('Processing '.$name.' enrolment expiration notifications...');
 
         // Notify users responsible for enrolment once every day.
         $sql = "SELECT ue.*, e.expirynotify, e.notifyall, e.expirythreshold, e.courseid, c.fullname
@@ -1888,7 +1891,7 @@ abstract class enrol_plugin {
 
         foreach($rs as $ue) {
             if ($lastenrollid and $lastenrollid != $ue->enrolid) {
-                $this->notify_expiry_enroller($lastenrollid, $users, $verbose);
+                $this->notify_expiry_enroller($lastenrollid, $users, $trace);
                 $users = array();
             }
             $lastenrollid = $ue->enrolid;
@@ -1906,23 +1909,21 @@ abstract class enrol_plugin {
 
             if ($ue->timeend - $ue->expirythreshold + 86400 < $timenow) {
                 // Notify enrolled users only once at the start of the threshold.
-                if ($verbose) {
-                    mtrace("  user $ue->userid was already notified that enrolment in course $ue->courseid expires on ".userdate($ue->timeend, '', $CFG->timezone));
-                }
+                $trace->output("user $ue->userid was already notified that enrolment in course $ue->courseid expires on ".userdate($ue->timeend, '', $CFG->timezone), 1);
                 continue;
             }
 
-            $this->notify_expiry_enrolled($user, $ue, $verbose);
+            $this->notify_expiry_enrolled($user, $ue, $trace);
         }
         $rs->close();
 
         if ($lastenrollid and $users) {
-            $this->notify_expiry_enroller($lastenrollid, $users, $verbose);
+            $this->notify_expiry_enroller($lastenrollid, $users, $trace);
         }
 
-        if ($verbose) {
-            mtrace('...notification processing finished.');
-        }
+        $trace->output('...notification processing finished.');
+        $trace->finished();
+
         $this->set_config('expirynotifylast', $timenow);
     }
 
@@ -1947,9 +1948,9 @@ abstract class enrol_plugin {
      *
      * @param stdClass $user
      * @param stdClass $ue
-     * @param bool $verbose
+     * @param progress_trace $trace
      */
-    protected function notify_expiry_enrolled($user, $ue, $verbose) {
+    protected function notify_expiry_enrolled($user, $ue, progress_trace $trace) {
         global $CFG, $SESSION;
 
         $name = $this->get_name();
@@ -1988,13 +1989,9 @@ abstract class enrol_plugin {
         $message->contexturl        = (string)new moodle_url('/course/view.php', array('id'=>$ue->courseid));
 
         if (message_send($message)) {
-            if ($verbose) {
-                mtrace("  notifying user $ue->userid that enrolment in course $ue->courseid expires on ".userdate($ue->timeend, '', $CFG->timezone));
-            }
+            $trace->output("notifying user $ue->userid that enrolment in course $ue->courseid expires on ".userdate($ue->timeend, '', $CFG->timezone), 1);
         } else {
-            if ($verbose) {
-                mtrace("  error notifying user $ue->userid that enrolment in course $ue->courseid expires on ".userdate($ue->timeend, '', $CFG->timezone));
-            }
+            $trace->output("error notifying user $ue->userid that enrolment in course $ue->courseid expires on ".userdate($ue->timeend, '', $CFG->timezone), 1);
         }
 
         if ($SESSION->lang !== $sessionlang) {
@@ -2012,9 +2009,9 @@ abstract class enrol_plugin {
      *
      * @param int $eid
      * @param array $users
-     * @param bool $verbose
+     * @param progress_trace $trace
      */
-    protected function notify_expiry_enroller($eid, $users, $verbose) {
+    protected function notify_expiry_enroller($eid, $users, progress_trace $trace) {
         global $DB, $SESSION;
 
         $name = $this->get_name();
@@ -2061,13 +2058,9 @@ abstract class enrol_plugin {
         $message->contexturl        = $a->extendurl;
 
         if (message_send($message)) {
-            if ($verbose) {
-                mtrace("  notifying user $enroller->id about all expiring $name enrolments in course $instance->courseid");
-            }
+            $trace->output("notifying user $enroller->id about all expiring $name enrolments in course $instance->courseid", 1);
         } else {
-            if ($verbose) {
-                mtrace("  error notifying user $enroller->id about all expiring $name enrolments in course $instance->courseid");
-            }
+            $trace->output("error notifying user $enroller->id about all expiring $name enrolments in course $instance->courseid", 1);
         }
 
         if ($SESSION->lang !== $sessionlang) {
