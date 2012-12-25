@@ -252,14 +252,15 @@ function enrol_category_sync_course($course) {
  * - reorder categories
  * - disable enrol_category and enable it again
  *
- * @param bool $verbose
+ * @param progress_trace $trace
  * @return int exit code - 0 is ok, 1 means error, 2 if plugin disabled
  */
-function enrol_category_sync_full($verbose = false) {
+function enrol_category_sync_full(progress_trace $trace) {
     global $DB;
 
 
     if (!enrol_is_enabled('category')) {
+        $trace->finished();
         return 2;
     }
 
@@ -273,23 +274,20 @@ function enrol_category_sync_full($verbose = false) {
     // Any interesting roles worth synchronising?
     if (!$roles = get_roles_with_capability('enrol/category:synchronised', CAP_ALLOW, $syscontext)) {
         // yay, nothing to do, so let's remove all leftovers
-        if ($verbose) {
-            mtrace("No roles with 'enrol/category:synchronised' capability found.");
-        }
+        $trace->output("No roles with 'enrol/category:synchronised' capability found.");
         if ($instances = $DB->get_records('enrol', array('enrol'=>'category'))) {
+            $trace->output("Deleting all category enrol instances...");
             foreach ($instances as $instance) {
-                if ($verbose) {
-                    mtrace("  deleting category enrol instance from course {$instance->courseid}");
-                }
+                $trace->output("deleting category enrol instance from course {$instance->courseid}", 1);
                 $plugin->delete_instance($instance);
             }
+            $trace->output("...all instances deleted.");
         }
+        $trace->finished();
         return 0;
     }
     $rolenames = role_fix_names($roles, null, ROLENAME_SHORT, true);
-    if ($verbose) {
-        mtrace('Synchronising category enrolments for roles: '.implode(', ', $rolenames).'...');
-    }
+    $trace->output('Synchronising category enrolments for roles: '.implode(', ', $rolenames).'...');
 
     list($roleids, $params) = $DB->get_in_or_equal(array_keys($roles), SQL_PARAMS_NAMED, 'r');
     $params['courselevel'] = CONTEXT_COURSE;
@@ -357,9 +355,7 @@ function enrol_category_sync_full($verbose = false) {
         unset($instance->userid);
         unset($instance->estart);
         $plugin->enrol_user($instance, $userid, null, $estart);
-        if ($verbose) {
-            mtrace("  enrolling: user $userid ==> course $instance->courseid");
-        }
+        $trace->output("enrolling: user $userid ==> course $instance->courseid", 1);
     }
     $rs->close();
 
@@ -378,15 +374,12 @@ function enrol_category_sync_full($verbose = false) {
         $userid = $instance->userid;
         unset($instance->userid);
         $plugin->unenrol_user($instance, $userid);
-        if ($verbose) {
-            mtrace("  unenrolling: user $userid ==> course $instance->courseid");
-        }
+        $trace->output("unenrolling: user $userid ==> course $instance->courseid", 1);
     }
     $rs->close();
 
-    if ($verbose) {
-        mtrace('...user enrolment synchronisation finished.');
-    }
+    $trace->output('...user enrolment synchronisation finished.');
+    $trace->finished();
 
     return 0;
 }

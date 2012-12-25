@@ -32,7 +32,7 @@
 
 define('CLI_SCRIPT', true);
 
-require(dirname(dirname(dirname(dirname(__FILE__)))).'/config.php');
+require(__DIR__.'/../../../config.php');
 require_once("$CFG->dirroot/enrol/category/locallib.php");
 require_once("$CFG->libdir/clilib.php");
 
@@ -49,7 +49,7 @@ if ($options['help']) {
         "Execute course category enrolment sync.
 
 Options:
--v, --verbose         Print verbose progess information
+-v, --verbose         Print verbose progress information
 -h, --help            Print out this help
 
 Example:
@@ -64,5 +64,12 @@ if (!enrol_is_enabled('category')) {
     cli_error('enrol_category plugin is disabled, synchronisation stopped', 2);
 }
 
-$verbose = !empty($options['verbose']);
-return enrol_category_sync_full($verbose);
+if (empty($options['verbose'])) {
+    $trace = new null_progress_trace();
+} else {
+    $trace = new text_progress_trace();
+}
+
+$result = enrol_category_sync_full($trace);
+
+exit($result);

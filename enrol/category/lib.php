@@ -70,7 +70,8 @@ class enrol_category_plugin extends enrol_plugin {
         }
 
         require_once("$CFG->dirroot/enrol/category/locallib.php");
-        enrol_category_sync_full();
+        $trace = new null_progress_trace();
+        enrol_category_sync_full($trace);
     }
 
     /**
