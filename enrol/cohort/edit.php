@@ -92,7 +92,9 @@ if ($mform->is_cancelled()) {
     }  else {
         $enrol->add_instance($course, array('name'=>$data->name, 'status'=>$data->status, 'customint1'=>$data->customint1, 'roleid'=>$data->roleid, 'customint2'=>$data->customint2));
     }
-    enrol_cohort_sync($course->id);
+    $trace = new null_progress_trace();
+    enrol_cohort_sync($trace, $course->id);
+    $trace->finished();
     redirect($returnurl);
 }
 
