@@ -37,7 +37,7 @@ $time = optional_param('preset_time', 'weeknow', PARAM_ALPHA);
 $now = usergetdate(time());
 // Let's see if we have sufficient and correct data
 $allowed_what = array('all', 'courses');
-$allowed_time = array('weeknow', 'weeknext', 'monthnow', 'monthnext', 'recentupcoming');
+$allowed_time = array('weeknow', 'weeknext', 'monthnow', 'monthnext', 'recentupcoming', 'custom');
 
 if (!empty($generateurl)) {
     $authtoken = sha1($user->id . $user->password . $CFG->calendar_exportsalt);
@@ -126,6 +126,11 @@ if(!empty($what) && !empty($time)) {
                 //Events in the last 5 or next 60 days
                 $timestart = time() - 432000;
                 $timeend = time() + 5184000;
+            break;
+            case 'custom':
+                // Events based on custom date range.
+                $timestart = time() - $CFG->calendar_exportlookback * DAYSECS;
+                $timeend = time() + $CFG->calendar_exportlookahead * DAYSECS;
             break;
         }
     }

@@ -67,6 +67,19 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     }
     $temp->add(new admin_setting_configselect('calendar_maxevents',new lang_string('configmaxevents','admin'),new lang_string('helpupcomingmaxevents', 'admin'),10,$options));
     $temp->add(new admin_setting_configcheckbox('enablecalendarexport', new lang_string('enablecalendarexport', 'admin'), new lang_string('configenablecalendarexport','admin'), 1));
+
+    // Calendar custom export settings.
+    $days = array(365 => new lang_string('numdays', '', 365),
+            180 => new lang_string('numdays', '', 180),
+            150 => new lang_string('numdays', '', 150),
+            120 => new lang_string('numdays', '', 120),
+            90  => new lang_string('numdays', '', 90),
+            60  => new lang_string('numdays', '', 60),
+            30  => new lang_string('numdays', '', 30),
+            5  => new lang_string('numdays', '', 5));
+    $temp->add(new admin_setting_configcheckbox('calendar_customexport', new lang_string('configcalendarcustomexport', 'admin'), new lang_string('helpcalendarcustomexport','admin'), 1));
+    $temp->add(new admin_setting_configselect('calendar_exportlookahead', new lang_string('configexportlookahead','admin'), new lang_string('helpexportlookahead', 'admin'), 365, $days));
+    $temp->add(new admin_setting_configselect('calendar_exportlookback', new lang_string('configexportlookback','admin'), new lang_string('helpexportlookback', 'admin'), 5, $days));
     $temp->add(new admin_setting_configtext('calendar_exportsalt', new lang_string('calendarexportsalt','admin'), new lang_string('configcalendarexportsalt', 'admin'), random_string(60)));
     $ADMIN->add('appearance', $temp);
 
