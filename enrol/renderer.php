@@ -189,7 +189,7 @@ class core_enrol_renderer extends plugin_renderer_base {
         // get list of roles
         $rolesoutput = '';
         foreach ($roles as $roleid=>$role) {
-            if ($canassign && !$role['unchangeable']) {
+            if ($canassign and (is_siteadmin() or isset($assignableroles[$roleid])) and !$role['unchangeable']) {
                 $strunassign = get_string('unassignarole', 'role', $role['text']);
                 $icon = html_writer::empty_tag('img', array('alt'=>$strunassign, 'src'=>$iconenrolremove));
                 $url = new moodle_url($pageurl, array('action'=>'unassign', 'role'=>$roleid, 'user'=>$userid));

@@ -586,7 +586,8 @@ class course_enrolment_manager {
      */
     public function unassign_role_from_user($userid, $roleid) {
         global $DB;
-        if (!array_key_exists($roleid, $this->get_assignable_roles())) {
+        // Admins may unassign any role, others only those they could assign.
+        if (!is_siteadmin() and !array_key_exists($roleid, $this->get_assignable_roles())) {
             if (defined('AJAX_SCRIPT')) {
                 throw new moodle_exception('invalidrole');
             }
@@ -922,7 +923,11 @@ class course_enrolment_manager {
             // Roles
             $details['roles'] = array();
             foreach ($this->get_user_roles($user->id) as $rid=>$rassignable) {
-                $details['roles'][$rid] = array('text'=>$allroles[$rid]->localname, 'unchangeable'=>(!$rassignable || !isset($assignable[$rid])));
+                $unchangeable = !$rassignable;
+                if (!is_siteadmin() and !isset($assignable[$rid])) {
+                    $unchangeable = true;
+                }
+                $details['roles'][$rid] = array('text'=>$allroles[$rid]->localname, 'unchangeable'=>$unchangeable);
             }
 
             // Users
