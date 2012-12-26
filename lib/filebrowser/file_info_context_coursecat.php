@@ -204,7 +204,7 @@ class file_info_context_coursecat extends file_info {
             return $cnt;
         }
 
-        $rs = $DB->get_recordset_sql('SELECT ctx.id contextid, c.visible
+        $rs = $DB->get_recordset_sql('SELECT ctx.id AS contextid, c.visible
                 FROM {context} ctx, {course} c
                 WHERE ctx.instanceid = c.id
                 AND ctx.contextlevel = :courselevel
@@ -226,7 +226,7 @@ class file_info_context_coursecat extends file_info {
             return $cnt;
         }
 
-        $rs = $DB->get_recordset_sql('SELECT ctx.id contextid, cat.visible
+        $rs = $DB->get_recordset_sql('SELECT ctx.id AS contextid, cat.visible
                 FROM {context} ctx, {course_categories} cat
                 WHERE ctx.instanceid = cat.id
                 AND ctx.contextlevel = :catlevel
