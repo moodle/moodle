@@ -167,6 +167,7 @@ $string['subscriptions'] = 'Subscriptions';
 $string['subscriptionname'] = 'Calendar name';
 $string['subscriptionremoved'] = 'Calendar subscription {$a} removed';
 $string['subscriptionupdated'] = 'Calendar subscription {$a} updated';
+$string['subsource'] = 'Event source: {$a->name}';
 $string['sun'] = 'Sun';
 $string['sunday'] = 'Sunday';
 $string['thu'] = 'Thu';

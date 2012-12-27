@@ -307,6 +307,11 @@ class core_calendar_renderer extends plugin_renderer_base {
         if (!empty($event->courselink)) {
             $table->data[0]->cells[1]->text .= html_writer::tag('div', $event->courselink, array('class'=>'course'));
         }
+        if (!empty($event->subscription)) {
+            $table->data[0]->cells[1]->text .= html_writer::tag('div',
+                    html_writer::link($event->subscription->url, get_string('subsource', 'calendar',
+                    $event->subscription)), array('class' => 'subscription'));
+        }
         if (!empty($event->time)) {
             $table->data[0]->cells[1]->text .= html_writer::tag('span', $event->time, array('class'=>'date'));
         } else {

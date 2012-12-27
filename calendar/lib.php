@@ -1895,7 +1895,7 @@ class calendar_event {
      *                  an event
      */
     public function __construct($data=null) {
-        global $CFG, $USER;
+        global $CFG, $USER, $DB;
 
         // First convert to object if it is not already (should either be object or assoc array)
         if (!is_object($data)) {
@@ -1908,6 +1908,10 @@ class calendar_event {
 
         if (empty($data->id)) {
             $data->id = null;
+        }
+
+        if (!empty($data->subscriptionid)) {
+            $data->subscription = $DB->get_record('event_subscriptions', array('id' => $data->subscriptionid));
         }
 
         // Default to a user event

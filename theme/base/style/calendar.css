@@ -32,6 +32,8 @@
 .dir-rtl.path-calendar .maincalendar .eventlist .event .topic .name {float:right;}
 .path-calendar .maincalendar .eventlist .event .topic .date {float:right;}
 .dir-rtl.path-calendar .maincalendar .eventlist .event .topic .date {float:left;}
+.path-calendar .maincalendar .eventlist .event .subscription {float:left;clear:left;}
+.dir-rtl.path-calendar .maincalendar .eventlist .event .subscription {float:right;clear:right;}
 .path-calendar .maincalendar .eventlist .event .course {float:left;clear:left;}
 .dir-rtl.path-calendar .maincalendar .eventlist .event .course {float:right;clear:right;}
 .path-calendar .maincalendar .eventlist .event .side {width:32px;}
