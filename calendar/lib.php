@@ -314,7 +314,7 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
                 if (!isset($events[$eventid])) {
                     continue;
                 }
-                $event = $events[$eventid];
+                $event = new calendar_event($events[$eventid]);
                 $popupalt  = '';
                 $component = 'moodle';
                 if(!empty($event->modulename)) {
@@ -335,7 +335,14 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
 
                 $popupcontent .= html_writer::start_tag('div');
                 $popupcontent .= $OUTPUT->pix_icon($popupicon, $popupalt, $component);
-                $popupcontent .= html_writer::link($dayhref, format_string($event->name, true));
+                $name = format_string($event->name, true);
+                if (!empty($event->subscription)) {
+                    $a = new stdClass();
+                    $a->name = $name;
+                    $a->source = $event->subscription->name;
+                    $name = get_string('namewithsource', 'calendar', $a);
+                }
+                $popupcontent .= html_writer::link($dayhref, $name);
                 $popupcontent .= html_writer::end_tag('div');
             }
 
