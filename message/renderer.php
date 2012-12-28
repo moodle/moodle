@@ -365,4 +365,201 @@ class core_message_renderer extends plugin_renderer_base {
         return $output;
     }
 
+    public function create_message($context, $viewing, $user1, $user2=null, $currentuser=true, $history=MESSAGE_HISTORY_ALL, $viewingnewmessages=false, $countunread=0, $search='', $advancedsearch=0)
+    {
+        global $PAGE, $DB;
+        $output = html_writer::start_tag('div', array('class' => 'messagearea mdl-align'));
+        if (!empty($user2)) {
+
+            $output .= html_writer::start_tag('div', array('class' => 'mdl-left messagehistory'));
+
+            $visible = 'visible';
+            $hidden = 'hiddenelement'; //cant just use hidden as mform adds that class to its fieldset for something else
+
+            $recentlinkclass = $recentlabelclass = $historylinkclass = $historylabelclass = $visible;
+            if ($history == MESSAGE_HISTORY_ALL) {
+                $displaycount = 0;
+
+                $recentlabelclass = $historylinkclass = $hidden;
+            } else if($viewingnewmessages) {
+                //if user is viewing new messages only show them the new messages
+                $displaycount = $countunread;
+
+                $recentlabelclass = $historylabelclass = $hidden;
+            } else {
+                //default to only showing the last few messages
+                $displaycount = MESSAGE_SHORTVIEW_LIMIT;
+
+                if ($countunread>MESSAGE_SHORTVIEW_LIMIT) {
+                    $displaycount = $countunread;
+                }
+
+                $recentlinkclass = $historylabelclass = $hidden;
+            }
+
+            $messagehistorylink =  html_writer::start_tag('div', array('class' => 'mdl-align messagehistorytype'));
+            $messagehistorylink .= html_writer::link($PAGE->url->out(false).'&history='.MESSAGE_HISTORY_ALL,
+                get_string('messagehistoryfull','message'),
+                array('class' => $historylinkclass));
+
+            $messagehistorylink .=  html_writer::start_tag('span', array('class' => $historylabelclass));
+            $messagehistorylink .= get_string('messagehistoryfull','message');
+            $messagehistorylink .= html_writer::end_tag('span');
+
+            $messagehistorylink .= '&nbsp;|&nbsp;'.html_writer::link($PAGE->url->out(false).'&history='.MESSAGE_HISTORY_SHORT,
+                get_string('mostrecent','message'),
+                array('class' => $recentlinkclass));
+
+            $messagehistorylink .=  html_writer::start_tag('span', array('class' => $recentlabelclass));
+            $messagehistorylink .= get_string('mostrecent','message');
+            $messagehistorylink .= html_writer::end_tag('span');
+
+            if ($viewingnewmessages) {
+                $messagehistorylink .=  '&nbsp;|&nbsp;'.html_writer::start_tag('span');
+                $messagehistorylink .= get_string('unreadnewmessages','message',$displaycount);
+                $messagehistorylink .= html_writer::end_tag('span');
+            }
+
+            $messagehistorylink .= html_writer::end_tag('div');
+
+            $output .= $this->message_print_message_history($user1, $user2, $search, $displaycount, $messagehistorylink, $viewingnewmessages);
+            
+            $output .= html_writer::end_tag('div');
+
+            //send message form
+            if ($currentuser && has_capability('moodle/site:sendmessage', $context)) {
+                $output .= html_writer::start_tag('div', array('class' => 'mdl-align messagesend'));
+                if (!empty($messageerror)) {
+                    $output .= html_writer::tag('span', $messageerror, array('id' => 'messagewarning'));
+                } else {
+                    // Display a warning if the current user is blocking non-contacts and is about to message to a non-contact
+                    // Otherwise they may wonder why they never get a reply
+                    $blocknoncontacts = get_user_preferences('message_blocknoncontacts', '', $user1->id);
+                    if (!empty($blocknoncontacts)) {
+                        $contact = $DB->get_record('message_contacts', array('userid' => $user1->id, 'contactid' => $user2->id));
+                        if (empty($contact)) {
+                            $msg = get_string('messagingblockednoncontact', 'message', fullname($user2));
+                            $output .= html_writer::tag('span', $msg, array('id' => 'messagewarning'));
+                        }
+                    }
+
+                    $mform = new send_form();
+                    $defaultmessage = new stdClass;
+                    $defaultmessage->id = $user2->id;
+                    $defaultmessage->message = '';
+                    $mform->set_data($defaultmessage);
+                    $output .= $mform->toHtml();
+                }
+                $output .= html_writer::end_tag('div');
+            }
+        } else if ($viewing == MESSAGE_VIEW_SEARCH) {
+            message_print_search($advancedsearch, $user1);
+        } else if ($viewing == MESSAGE_VIEW_RECENT_CONVERSATIONS) {
+            message_print_recent_conversations($user1);
+        } else if ($viewing == MESSAGE_VIEW_RECENT_NOTIFICATIONS) {
+            message_print_recent_notifications($user1);
+        }
+        $output .= html_writer::end_tag('div');
+        return $output;
+    }
+
+    /**
+     * Return the message history between two users
+     *
+     * @param object $user1 the current user
+     * @param object $user2 the other user
+     * @param string $search search terms to highlight
+     * @param int $messagelimit maximum number of messages to return
+     * @param string $messagehistorylink the html for the message history link or false
+     * @param bool $viewingnewmessages are we currently viewing new messages?
+     */
+    function message_print_message_history($user1,$user2,$search='',$messagelimit=0, $messagehistorylink=false, $viewingnewmessages=false) {
+        global $OUTPUT;
+
+        $output = $OUTPUT->box_start('center');
+        $output .= html_writer::start_tag('table', array('cellpadding' => '10', 'class' => 'message_user_pictures'));
+        $output .= html_writer::start_tag('tr');
+
+        $output .= html_writer::start_tag('td', array('align' => 'center', 'id' => 'user1'));
+        $output .= $OUTPUT->user_picture($user1, array('size' => 100, 'courseid' => SITEID));
+        $output .= html_writer::tag('div', fullname($user1), array('class' => 'heading'));
+        $output .= html_writer::end_tag('td');
+
+        $output .= html_writer::start_tag('td', array('align' => 'center'));
+        $output .= html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('i/twoway'), 'alt' => ''));
+        $output .= html_writer::end_tag('td');
+
+        $output .= html_writer::start_tag('td', array('align' => 'center', 'id' => 'user2'));
+        $output .= $OUTPUT->user_picture($user2, array('size' => 100, 'courseid' => SITEID));
+        $output .= html_writer::tag('div', fullname($user2), array('class' => 'heading'));
+
+        if (isset($user2->iscontact) && isset($user2->isblocked)) {
+            $incontactlist = $user2->iscontact;
+            $isblocked = $user2->isblocked;
+
+            $script = null;
+            $text = true;
+            $icon = false;
+
+            $strcontact = message_get_contact_add_remove_link($incontactlist, $isblocked, $user2, $script, $text, $icon);
+            $strblock   = message_get_contact_block_link($incontactlist, $isblocked, $user2, $script, $text, $icon);
+            $useractionlinks = $strcontact.'&nbsp;|'.$strblock;
+
+            $output .= html_writer::tag('div', $useractionlinks, array('class' => 'useractionlinks'));
+        }
+
+        $output .= html_writer::end_tag('td');
+        $output .= html_writer::end_tag('tr');
+        $output .= html_writer::end_tag('table');
+        $output .= $OUTPUT->box_end();
+
+        if (!empty($messagehistorylink)) {
+            $output .= $messagehistorylink;
+        }
+
+        /// Get all the messages and print them
+        if ($messages = message_get_history($user1, $user2, $messagelimit, $viewingnewmessages)) {
+            $tablecontents = '';
+
+            $current = new stdClass();
+            $current->mday = '';
+            $current->month = '';
+            $current->year = '';
+            $messagedate = get_string('strftimetime');
+            $blockdate   = get_string('strftimedaydate');
+            foreach ($messages as $message) {
+                if ($message->notification) {
+                    $notificationclass = ' notification';
+                } else {
+                    $notificationclass = null;
+                }
+                $date = usergetdate($message->timecreated);
+                if ($current->mday != $date['mday'] | $current->month != $date['month'] | $current->year != $date['year']) {
+                    $current->mday = $date['mday'];
+                    $current->month = $date['month'];
+                    $current->year = $date['year'];
+
+                    $datestring = html_writer::empty_tag('a', array('name' => $date['year'].$date['mon'].$date['mday']));
+                    $tablecontents .= html_writer::tag('div', $datestring, array('class' => 'mdl-align heading'));
+
+                    $tablecontents .= $OUTPUT->heading(userdate($message->timecreated, $blockdate), 4, 'mdl-align');
+                }
+
+                $side = null;
+                if ($message->useridfrom == $user1->id) {
+                    $formatted_message = message_format_message($message, $messagedate, $search, 'me');
+                    $side = 'left';
+                } else {
+                    $formatted_message = message_format_message($message, $messagedate, $search, 'other');
+                    $side = 'right';
+                }
+                $tablecontents .= html_writer::tag('div', $formatted_message, array('class' => "mdl-left $side $notificationclass"));
+            }
+
+            $output .= html_writer::nonempty_tag('div', $tablecontents, array('class' => 'mdl-left messagehistory'));
+        } else {
+            $output .= html_writer::nonempty_tag('div', '('.get_string('nomessagesfound', 'message').')', array('class' => 'mdl-align messagehistory'));
+        }
+        return $output;
+    }
 }
