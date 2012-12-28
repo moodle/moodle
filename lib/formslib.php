@@ -918,6 +918,18 @@ abstract class moodleform {
     }
 
     /**
+     * Print html form.
+     */
+    function toHtml() {
+        //finalize the form definition if not yet done
+        if (!$this->_definition_finalized) {
+            $this->_definition_finalized = true;
+            $this->definition_after_data();
+        }
+        return $this->_form->toHtml();
+    }
+
+    /**
      * Form definition. Abstract method - always override!
      */
     protected abstract function definition();
