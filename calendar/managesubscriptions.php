@@ -78,7 +78,7 @@ if (!empty($formdata)) {
         $importresults = calendar_update_subscription_events($subscriptionid);
     }
     // Redirect to prevent refresh issues.
-    redirect($PAGE->url);
+    redirect($PAGE->url, $importresults);
 } else if (!empty($subscriptionid)) {
     // The user is wanting to perform an action upon an existing subscription.
     require_sesskey(); // Must have sesskey for all actions.
