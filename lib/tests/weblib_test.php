@@ -297,4 +297,24 @@ class web_testcase extends advanced_testcase {
         $trace->reset_buffer();
         $this->assertSame('', $trace->get_buffer());
     }
+
+    public function test_combined_progres_trace() {
+        $this->resetAfterTest(false);
+
+        $trace1 = new progress_trace_buffer(new html_progress_trace(), false);
+        $trace2 = new progress_trace_buffer(new text_progress_trace(), false);
+
+        $trace = new combined_progress_trace(array($trace1, $trace2));
+
+        ob_start();
+        $trace->output('do');
+        $trace->output('re', 1);
+        $trace->output('mi', 2);
+        $trace->finished();
+        $output = ob_get_contents();
+        ob_end_clean();
+        $this->assertSame('', $output);
+        $this->assertSame("<p>do</p>\n<p>&#160;&#160;re</p>\n<p>&#160;&#160;&#160;&#160;mi</p>\n", $trace1->get_buffer());
+        $this->assertSame("do\n  re\n    mi\n", $trace2->get_buffer());
+    }
 }

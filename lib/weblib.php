@@ -3297,7 +3297,7 @@ class error_log_progress_trace extends progress_trace {
 }
 
 /**
- * Special type of traced that can be used for catching of
+ * Special type of trace that can be used for catching of
  * output of other traces.
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -3368,6 +3368,45 @@ class progress_trace_buffer extends progress_trace {
      */
     public function get_buffer() {
         return $this->buffer;
+    }
+}
+
+/**
+ * Special type of trace that can be used for redirecting to multiple
+ * other traces.
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package moodlecore
+ */
+class combined_progress_trace extends progress_trace {
+    protected $traces;
+
+    /**
+     * @param array $traces multiple traces
+     */
+    public function __construct(array $traces) {
+        $this->traces = $traces;
+    }
+
+    /**
+     * Output an progress message in whatever format.
+     *
+     * @param string $message the message to output.
+     * @param integer $depth indent depth for this message.
+     */
+    public function output($message, $depth = 0) {
+        foreach($this->traces as $trace) {
+            $trace->output($message, $depth);
+        }
+    }
+
+    /**
+     * Called when the processing is finished.
+     */
+    public function finished() {
+        foreach($this->traces as $trace) {
+            $trace->finished();
+        }
     }
 }
 
