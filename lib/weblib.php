@@ -3267,6 +3267,36 @@ class html_list_progress_trace extends progress_trace {
 }
 
 /**
+ * This subclass of progress_trace outputs to error log.
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package moodlecore
+ */
+class error_log_progress_trace extends progress_trace {
+    /** @var string log prefix */
+    protected $prefix;
+
+    /**
+     * Constructor.
+     * @param string $prefix optional log prefix
+     */
+    public function __construct($prefix = '') {
+        $this->prefix = $prefix;
+    }
+
+    /**
+     * Output the trace message.
+     *
+     * @param string $message
+     * @param int $depth
+     * @return void Output is sent to error log.
+     */
+    public function output($message, $depth = 0) {
+        error_log($this->prefix . str_repeat('  ', $depth) . $message);
+    }
+}
+
+/**
  * Special type of traced that can be used for catching of
  * output of other traces.
  *
