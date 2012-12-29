@@ -653,7 +653,7 @@ class enrol_ldap_plugin extends enrol_plugin {
      * @param object role is a record from the mdl_role table.
      * @return array
      */
-    protected function find_ext_enrolments ($ldapconnection, $memberuid, $role) {
+    protected function find_ext_enrolments (&$ldapconnection, $memberuid, $role) {
         global $CFG;
         require_once($CFG->libdir.'/ldaplib.php');
 
@@ -718,13 +718,13 @@ class enrol_ldap_plugin extends enrol_plugin {
         // Get all contexts and look for first matching user
         $ldap_contexts = explode(';', $ldap_contexts);
         $ldap_pagedresults = ldap_paged_results_supported($this->get_config('ldap_version'));
-        $ldap_cookie = '';
         foreach ($ldap_contexts as $context) {
             $context = trim($context);
             if (empty($context)) {
                 continue;
             }
 
+            $ldap_cookie = '';
             $flat_records = array();
             do {
                 if ($ldap_pagedresults) {
