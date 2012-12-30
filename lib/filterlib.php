@@ -136,12 +136,6 @@ class filter_manager {
             return new $filterclassname($context, $localconfig);
         }
 
-        // TODO: deprecated since 2.2, will be out in 2.3, see MDL-29996
-        $legacyfunctionname = basename($filtername) . '_filter';
-        if (function_exists($legacyfunctionname)) {
-            return new legacy_filter($legacyfunctionname, $context, $localconfig);
-        }
-
         return null;
     }
 
@@ -406,50 +400,6 @@ abstract class moodle_text_filter {
      * @return the HTML content after the filtering has been applied.
      */
     public abstract function filter($text, array $options = array());
-}
-
-/**
- * moodle_text_filter implementation that encapsulates an old-style filter that
- * only defines a function, not a class.
- *
- * @deprecated since 2.2, see MDL-29995
- * @todo will be out in 2.3, see MDL-29996
- * @package    core
- * @subpackage filter
- * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class legacy_filter extends moodle_text_filter {
-    /** @var string */
-    protected $filterfunction;
-    protected $courseid;
-
-    /**
-     * Set any context-specific configuration for this filter.
-     *
-     * @param string $filterfunction
-     * @param object $context The current context.
-     * @param array $config Any context-specific configuration for this filter.
-     */
-    public function __construct($filterfunction, $context, array $localconfig) {
-        parent::__construct($context, $localconfig);
-        $this->filterfunction = $filterfunction;
-        $this->courseid = get_courseid_from_context($this->context);
-    }
-
-    /**
-     * @param string $text
-     * @param array $options options - not supported for legacy filters
-     * @return mixed
-     */
-    public function filter($text, array $options = array()) {
-        if ($this->courseid) {
-            // old filters are called only when inside courses
-            return call_user_func($this->filterfunction, $this->courseid, $text);
-        } else {
-            return $text;
-        }
-    }
 }
 
 /**
