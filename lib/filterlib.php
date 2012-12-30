@@ -891,12 +891,10 @@ function filter_get_active_in_context($context) {
              JOIN {context} ctx ON f.contextid = ctx.id
              WHERE ctx.id IN ($contextids)
              GROUP BY filter
-             HAVING MAX(f.active * " . $DB->sql_cast_2signed('ctx.depth') .
-                    ") > -MIN(f.active * " . $DB->sql_cast_2signed('ctx.depth') . ")
+             HAVING MAX(f.active * ctx.depth) > -MIN(f.active * ctx.depth)
          ) active
          LEFT JOIN {filter_config} fc ON fc.filter = active.filter AND fc.contextid = $context->id
          ORDER BY active.sortorder";
-    //TODO: remove sql_cast_2signed() once we do not support upgrade from Moodle 2.2
     $rs = $DB->get_recordset_sql($sql);
 
     // Masssage the data into the specified format to return.
@@ -1072,8 +1070,7 @@ function filter_get_available_in_context($context) {
                 ELSE fa.active END AS localstate,
              parent_states.inheritedstate
          FROM (SELECT f.filter, MAX(f.sortorder) AS sortorder,
-                    CASE WHEN MAX(f.active * " . $DB->sql_cast_2signed('ctx.depth') .
-                            ") > -MIN(f.active * " . $DB->sql_cast_2signed('ctx.depth') . ") THEN " . TEXTFILTER_ON . "
+                    CASE WHEN MAX(f.active * ctx.depth) > -MIN(f.active * ctx.depth) THEN " . TEXTFILTER_ON . "
                     ELSE " . TEXTFILTER_OFF . " END AS inheritedstate
              FROM {filter_active} f
              JOIN {context} ctx ON f.contextid = ctx.id
