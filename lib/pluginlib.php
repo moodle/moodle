@@ -2654,12 +2654,12 @@ class plugininfo_filter extends plugininfo_base {
         // get the list of filters from both /filter and /mod location
         $installed = filter_get_all_installed();
 
-        foreach ($installed as $filterlegacyname => $displayname) {
+        foreach ($installed as $name => $displayname) {
             $plugin                 = new $typeclass();
             $plugin->type           = $type;
             $plugin->typerootdir    = $typerootdir;
-            $plugin->name           = self::normalize_legacy_name($filterlegacyname);
-            $plugin->rootdir        = $CFG->dirroot . '/' . $filterlegacyname;
+            $plugin->name           = $name;
+            $plugin->rootdir        = "$CFG->dirroot/filter/$name";
             $plugin->displayname    = $displayname;
 
             $plugin->load_disk_version();
@@ -2676,9 +2676,9 @@ class plugininfo_filter extends plugininfo_base {
             // if we're upgrading from 1.9, the table does not exist yet
             // if it does, make sure that all installed filters are registered
             $needsreload  = false;
-            foreach (array_keys($installed) as $filterlegacyname) {
-                if (!isset($globalstates[self::normalize_legacy_name($filterlegacyname)])) {
-                    filter_set_global_state($filterlegacyname, TEXTFILTER_DISABLED);
+            foreach (array_keys($installed) as $name) {
+                if (!isset($globalstates[$name])) {
+                    filter_set_global_state($name, TEXTFILTER_DISABLED);
                     $needsreload = true;
                 }
             }
@@ -2695,8 +2695,8 @@ class plugininfo_filter extends plugininfo_base {
                 $plugin->type           = $type;
                 $plugin->typerootdir    = $typerootdir;
                 $plugin->name           = $name;
-                $plugin->rootdir        = $CFG->dirroot . '/' . $info->legacyname;
-                $plugin->displayname    = $info->legacyname;
+                $plugin->rootdir        = "$CFG->dirroot/filter/$name";
+                $plugin->displayname    = $name;
 
                 $plugin->load_db_version();
 
@@ -2721,11 +2721,6 @@ class plugininfo_filter extends plugininfo_base {
      * @see load_version_php()
      */
     protected function load_version_php() {
-        if (strpos($this->name, 'mod_') === 0) {
-            // filters bundled with modules do not have a version.php and so
-            // do not provide their own versioning information.
-            return new stdClass();
-        }
         return parent::load_version_php();
     }
 
@@ -2733,8 +2728,7 @@ class plugininfo_filter extends plugininfo_base {
 
         $globalstates = self::get_global_states();
 
-        foreach ($globalstates as $filterlegacyname => $info) {
-            $name = self::normalize_legacy_name($filterlegacyname);
+        foreach ($globalstates as $name => $info) {
             if ($name === $this->name) {
                 if ($info->active == TEXTFILTER_DISABLED) {
                     return false;
@@ -2753,8 +2747,7 @@ class plugininfo_filter extends plugininfo_base {
         if (!isset($globalstates[$this->name])) {
             return parent::get_settings_section_name();
         }
-        $legacyname = $globalstates[$this->name]->legacyname;
-        return 'filtersetting' . str_replace('/', '', $legacyname);
+        return 'filtersetting' . $this->name;
     }
 
     public function load_settings(part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
@@ -2776,33 +2769,7 @@ class plugininfo_filter extends plugininfo_base {
     }
 
     public function get_uninstall_url() {
-
-        if (strpos($this->name, 'mod_') === 0) {
-            return null;
-        } else {
-            $globalstates = self::get_global_states();
-            $legacyname = $globalstates[$this->name]->legacyname;
-            return new moodle_url('/admin/filters.php', array('sesskey' => sesskey(), 'filterpath' => $legacyname, 'action' => 'delete'));
-        }
-    }
-
-    /**
-     * Convert legacy filter names like 'filter/foo' or 'mod/bar' into frankenstyle
-     *
-     * @param string $legacyfiltername legacy filter name
-     * @return string frankenstyle-like name
-     */
-    protected static function normalize_legacy_name($legacyfiltername) {
-
-        $name = str_replace('/', '_', $legacyfiltername);
-        if (strpos($name, 'filter_') === 0) {
-            $name = substr($name, 7);
-            if (empty($name)) {
-                throw new coding_exception('Unable to determine filter name: ' . $legacyfiltername);
-            }
-        }
-
-        return $name;
+        return new moodle_url('/admin/filters.php', array('sesskey' => sesskey(), 'filterpath' => $this->name, 'action' => 'delete'));
     }
 
     /**
@@ -2826,10 +2793,8 @@ class plugininfo_filter extends plugininfo_base {
                 $globalstatescache = array();
 
             } else {
-                foreach (filter_get_global_states() as $legacyname => $info) {
-                    $name                       = self::normalize_legacy_name($legacyname);
+                foreach (filter_get_global_states() as $name => $info) {
                     $filterinfo                 = new stdClass();
-                    $filterinfo->legacyname     = $legacyname;
                     $filterinfo->active         = $info->active;
                     $filterinfo->sortorder      = $info->sortorder;
                     $globalstatescache[$name]   = $filterinfo;

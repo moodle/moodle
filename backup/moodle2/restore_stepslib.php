@@ -1817,6 +1817,14 @@ class restore_filters_structure_step extends restore_structure_step {
 
         $data = (object)$data;
 
+        if (strpos($data->filter, 'filter/') === 0) {
+            $data->filter = substr($data->filter, 7);
+
+        } else if (strpos($data->filter, '/') !== false) {
+            // Unsupported old filter.
+            return;
+        }
+
         if (!filter_is_enabled($data->filter)) { // Not installed or not enabled, nothing to do
             return;
         }
@@ -1826,6 +1834,14 @@ class restore_filters_structure_step extends restore_structure_step {
     public function process_config($data) {
 
         $data = (object)$data;
+
+        if (strpos($data->filter, 'filter/') === 0) {
+            $data->filter = substr($data->filter, 7);
+
+        } else if (strpos($data->filter, '/') !== false) {
+            // Unsupported old filter.
+            return;
+        }
 
         if (!filter_is_enabled($data->filter)) { // Not installed or not enabled, nothing to do
             return;

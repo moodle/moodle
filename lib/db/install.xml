@@ -456,7 +456,7 @@
     <TABLE NAME="filter_active" COMMENT="Stores information about which filters are active in which contexts. Also the filter sort order. See get_active_filters in lib/filterlib.php for how this data is used." PREVIOUS="course_format_options" NEXT="filter_config">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="filter"/>
-        <FIELD NAME="filter" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="The filter internal name, like 'filter/tex' or 'mod/glossary'." PREVIOUS="id" NEXT="contextid"/>
+        <FIELD NAME="filter" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="The filter internal name, like 'tex'." PREVIOUS="id" NEXT="contextid"/>
         <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="References context.id." PREVIOUS="filter" NEXT="active"/>
         <FIELD NAME="active" TYPE="int" LENGTH="4" NOTNULL="true" SEQUENCE="false" COMMENT="Whether this filter is active in this context. +1 = On, -1 = Off, no row with this contextid = inherit. As a special case, when contextid points to the system context, -9999 means this filter is completely disabled." PREVIOUS="contextid" NEXT="sortorder"/>
         <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Only relevant if contextid points to the system context. In other cases this field should contain 0. The order in which the filters should be applied." PREVIOUS="active"/>
@@ -472,7 +472,7 @@
     <TABLE NAME="filter_config" COMMENT="Stores per-context configuration settings for filters which have them." PREVIOUS="filter_active" NEXT="event">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="filter"/>
-        <FIELD NAME="filter" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="The filter internal name, like 'filter/tex' or 'mod/glossary'." PREVIOUS="id" NEXT="contextid"/>
+        <FIELD NAME="filter" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="The filter internal name, like 'tex'." PREVIOUS="id" NEXT="contextid"/>
         <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="References context.id." PREVIOUS="filter" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The config variable name." PREVIOUS="contextid" NEXT="value"/>
         <FIELD NAME="value" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The correspoding config variable value." PREVIOUS="name"/>

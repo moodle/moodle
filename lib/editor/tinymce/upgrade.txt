@@ -2,6 +2,11 @@ This files describes API changes in /lib/editor/tinymce/* - TinyMCE editor,
 information provided here is intended especially for developers.
 
 
+=== 2.5 ===
+
+* update filter related code to use short filter names instead
+  of original paths, ex.: 'filter/tex' ---> 'tex'
+
 === 2.4 ===
 
 new features:

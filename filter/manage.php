@@ -27,7 +27,7 @@ require_once(dirname(__FILE__) . '/../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 
 $contextid = required_param('contextid',PARAM_INT);
-$forfilter = optional_param('filter', '', PARAM_SAFEPATH);
+$forfilter = optional_param('filter', '', PARAM_SAFEDIR);
 
 list($context, $course, $cm) = get_context_info_array($contextid);
 
@@ -82,8 +82,8 @@ if ($forfilter) {
         print_error('filterdoesnothavelocalconfig', 'error', $forfilter);
     }
     require_once($CFG->dirroot . '/filter/local_settings_form.php');
-    require_once($CFG->dirroot . '/' . $forfilter . '/filterlocalsettings.php');
-    $formname = basename($forfilter) . '_filter_local_settings_form';
+    require_once($CFG->dirroot . '/filter/' . $forfilter . '/filterlocalsettings.php');
+    $formname = $forfilter . '_filter_local_settings_form';
     $settingsform = new $formname($CFG->wwwroot . '/filter/manage.php', $forfilter, $context);
     if ($settingsform->is_cancelled()) {
         redirect($baseurl);
@@ -96,7 +96,7 @@ if ($forfilter) {
 /// Process any form submission.
 if ($forfilter == '' && optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
     foreach ($availablefilters as $filter => $filterinfo) {
-        $newstate = optional_param(str_replace('/', '_', $filter), false, PARAM_INT);
+        $newstate = optional_param($filter, false, PARAM_INT);
         if ($newstate !== false && $newstate != $filterinfo->localstate) {
             filter_set_local_state($filter, $context->id, $newstate);
         }
@@ -181,9 +181,8 @@ if (empty($availablefilters)) {
         } else {
             $activechoices[TEXTFILTER_INHERIT] = $strdefaultoff;
         }
-        $filtername = str_replace('/', '_', $filter);
-        $select = html_writer::label($filterinfo->localstate, 'menu'. $filtername, false, array('class' => 'accesshide'));
-        $select .= html_writer::select($activechoices, $filtername, $filterinfo->localstate, false);
+        $select = html_writer::label($filterinfo->localstate, 'menu'. $filter, false, array('class' => 'accesshide'));
+        $select .= html_writer::select($activechoices, $filter, $filterinfo->localstate, false);
         $row[] = $select;
 
         // Settings link, if required
