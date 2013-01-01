@@ -72,7 +72,7 @@ foreach (get_plugin_list('tinymce') as $component => $ignored) {
     $componentstrings = get_string_manager()->load_component_strings(
             'tinymce_' . $component, $lang);
     foreach ($componentstrings as $key => $value) {
-        if (strpos($key, "$component:") !== 0) {
+        if (strpos($key, "$component:") !== 0 and strpos($key, $component.'_dlg:') !== 0) {
             // Ignore normal lang strings.
             continue;
         }
