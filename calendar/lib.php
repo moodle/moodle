@@ -2978,6 +2978,48 @@ function calendar_update_subscription_events($subscriptionid) {
 }
 
 /**
+ * Checks to see if the user can edit a given subscription feed.
+ *
+ * @param mixed $subscriptionorid Subscription object or id
+ * @return bool true if current user can edit the subscription else false
+ */
+function calendar_can_edit_subscription($subscriptionorid) {
+    global $DB;
+
+    if (is_array($subscriptionorid)) {
+        $subscription = (object)$subscriptionorid;
+    } else if (is_object($subscriptionorid)) {
+        $subscription = $subscriptionorid;
+    } else {
+        $subscription = $DB->get_record('event_subscriptions', array('id' => $subscriptionorid), '*', MUST_EXIST);
+    }
+    $allowed = new stdClass;
+    $courseid = $subscription->courseid;
+    $groupid = $subscription->groupid;
+    calendar_get_allowed_types($allowed, $courseid);
+    switch ($subscription->eventtype) {
+        case 'user':
+            return $allowed->user;
+        case 'course':
+            if (isset($allowed->courses[$courseid])) {
+                return $allowed->courses[$courseid];
+            } else {
+                return false;
+            }
+        case 'site':
+            return $allowed->site;
+        case 'group':
+            if (isset($allowed->groups[$groupid])) {
+                return $allowed->groups[$groupid];
+            } else {
+                return false;
+            }
+        default:
+            return false;
+    }
+}
+
+/**
  * Update calendar subscriptions.
  *
  * @return bool
