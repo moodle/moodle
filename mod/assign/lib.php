@@ -131,10 +131,10 @@ function assign_reset_course_form_defaults($course) {
  *
  * This is done by calling the update_instance() method of the assignment type class
  * @param stdClass $data
- * @param mod_assign_mod_form $form
+ * @param $form
  * @return object
  */
-function assign_update_instance(stdClass $data, mod_assign_mod_form $form) {
+function assign_update_instance(stdClass $data, $form) {
     global $CFG;
     require_once($CFG->dirroot . '/mod/assign/locallib.php');
     $context = context_module::instance($data->coursemodule);

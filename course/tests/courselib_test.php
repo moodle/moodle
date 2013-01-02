@@ -30,6 +30,236 @@ require_once($CFG->dirroot.'/course/lib.php');
 
 class courselib_testcase extends advanced_testcase {
 
+    /**
+     * Test create_module()
+     */
+    public function test_create_module() {
+        global $DB, $CFG;
+
+        $this->resetAfterTest(true);
+
+        $this->setAdminUser();
+
+        require_once($CFG->dirroot.'/mod/forum/lib.php');
+
+        $course = $this->getDataGenerator()->create_course(array('numsections'=>1),
+           array('createsections'=>true));
+
+        $grouping = $this->getDataGenerator()->create_grouping(array('courseid' => $course->id));
+
+        // FORUM MODULE
+
+        $moduleinfo = new stdClass();
+
+        // Always mandatory generic values to any module
+        $moduleinfo->modulename = 'forum';
+        $moduleinfo->section= 1;
+        $moduleinfo->course= $course->id;
+        $moduleinfo->groupingid= $grouping->id;
+        $moduleinfo->groupmembersonly= '';
+        $moduleinfo->visible= true;
+
+        // Sometimes optional generic values for some modules
+        $moduleinfo->name= 'My test forum';
+        $moduleinfo->completion= '';
+        $moduleinfo->completionview= '';
+        $moduleinfo->completiongradeitemonly= '';
+        $moduleinfo->completionexpected= false;
+        $moduleinfo->availablefrom= 0;
+        $moduleinfo->availableuntil= 0;
+        $moduleinfo->showavailability= false;
+        $moduleinfo->showdescription= true;
+        $moduleinfo->gradecat= '';
+        $moduleinfo->groupmod = VISIBLEGROUPS;
+        $moduleinfo->cmidnumber= 'idnumber_XXX';
+
+        // Optional intro editor (depends of module)
+        $draftid_editor = 0;
+        file_prepare_draft_area($draftid_editor, null, null, null, null);
+        $moduleinfo->introeditor = array('text'=>'This is a forum', 'format'=>FORMAT_HTML, 'itemid'=>$draftid_editor);
+
+        // Specific values to the Forum module
+        $moduleinfo->forcesubscribe = FORUM_INITIALSUBSCRIBE;
+        $moduleinfo->type = 'single';
+
+        // create the module
+        $forum = create_module($moduleinfo);
+
+        // Retriev the module
+
+        // Compare the module values
+
+        // error_log(print_r($forum, true));
+
+        // ASSIGN MODULE
+
+        $moduleinfo = new stdClass();
+
+        // Always mandatory generic values to any module
+        $moduleinfo->modulename = 'assign';
+        $moduleinfo->section= 1;
+        $moduleinfo->course= $course->id;
+        $moduleinfo->groupingid= $grouping->id;
+        $moduleinfo->groupmembersonly= '';
+        $moduleinfo->visible= true;
+
+        // Sometimes optional generic values for some modules
+        $moduleinfo->name= 'My test assignment';
+        $moduleinfo->completion= '';
+        $moduleinfo->completionview= '';
+        $moduleinfo->completiongradeitemonly= '';
+        $moduleinfo->completionexpected= false;
+        $moduleinfo->availablefrom= 0;
+        $moduleinfo->availableuntil= 0;
+        $moduleinfo->showavailability= false;
+        $moduleinfo->showdescription= true;
+        $moduleinfo->gradecat= 1;
+        $moduleinfo->groupmod = VISIBLEGROUPS;
+        $moduleinfo->cmidnumber= 'idnumber_XXXY';
+
+        // Optional intro editor (depends of module)
+        // TODO: way to support file - see Damyon assignment solution
+        $draftid_editor = 0;
+        file_prepare_draft_area($draftid_editor, null, null, null, null);
+        $moduleinfo->introeditor = array('text'=>'This is a assignmenet', 'format'=>FORMAT_HTML, 'itemid'=>$draftid_editor);
+
+        // Specific values to the Assign module
+        $moduleinfo->alwaysshowdescription = true;
+        $moduleinfo->submissiondrafts = true;
+        $moduleinfo->requiresubmissionstatement = true;
+        $moduleinfo->sendnotifications = true;
+        $moduleinfo->sendlatenotifications = true;
+        $moduleinfo->duedate = time()+7*24*3600;
+        $moduleinfo->cutoffdate = time()+7*24*3600;
+        $moduleinfo->allowsubmissionsfromdate = '';
+        $moduleinfo->teamsubmission = true;
+        $moduleinfo->requireallteammemberssubmit = true;
+        $moduleinfo->teamsubmissiongroupingid = true;
+        $moduleinfo->blindmarking = true;
+        $moduleinfo->assignsubmission_onlinetext_enabled = true;
+        $moduleinfo->assignsubmission_file_enabled = true;
+        $moduleinfo->assignsubmission_file_maxfiles = 1;
+        $moduleinfo->assignsubmission_file_maxsizebytes = 1000000;
+        $moduleinfo->assignsubmission_comments_enabled = true;
+        $moduleinfo->assignfeedback_comments_enabled = true;
+        $moduleinfo->assignfeedback_offline_enabled = true;
+        $moduleinfo->assignfeedback_file_enabled = true;
+
+        // Following is the advanced grading method area called 'submissions' for the 'assign' module :
+        $moduleinfo->grade = 100;
+        $moduleinfo->advancedgradingmethod_submissions = '';
+
+        // Plagiarism form values
+        // No plagiarism plugin installed by default. Use this space to make your own test.
+
+        // create the module
+        $assign = create_module($moduleinfo);
+
+        // Retrieve the module
+
+        // Compare the module values
+
+        // error_log(print_r($assign, true));
+
+    }
+
+    /**
+     * Test update_module()
+     */
+    public function test_update_module() {
+        global $DB, $CFG;
+
+        $this->resetAfterTest(true);
+
+        $this->setAdminUser();
+
+        require_once($CFG->dirroot.'/mod/forum/lib.php');
+
+        $course = $this->getDataGenerator()->create_course(array('numsections'=>2),
+           array('createsections'=>true));
+
+        $grouping = $this->getDataGenerator()->create_grouping(array('courseid' => $course->id));
+
+
+        // UPDATE ASSIGN MODULE
+        $assigninfo = array('course' => $course->id);
+        $sectionnumber = 1;
+        $assign = $this->getDataGenerator()->create_module('assign', $assigninfo, array('section' => $sectionnumber));
+
+        // Retrieve course modulei
+        $cm = get_coursemodule_from_instance('assign', $assign->id);
+
+        $moduleinfo = new stdClass();
+
+        // Always mandatory generic values to any module
+        $moduleinfo->coursemodule = $cm->id;
+        $moduleinfo->modulename = 'assign';
+        $moduleinfo->section= 1;
+        $moduleinfo->course= $course->id;
+        $moduleinfo->groupingid= $grouping->id;
+        $moduleinfo->groupmembersonly= '';
+        $moduleinfo->visible= true;
+
+        // Sometimes optional generic values for some modules
+        $moduleinfo->name= 'My test assignment';
+        $moduleinfo->completion= '';
+        $moduleinfo->completionview= '';
+        $moduleinfo->completiongradeitemonly= '';
+        $moduleinfo->completionexpected= false;
+        $moduleinfo->availablefrom= 0;
+        $moduleinfo->availableuntil= 0;
+        $moduleinfo->showavailability= false;
+        $moduleinfo->showdescription= true;
+        $moduleinfo->gradecat= 1;
+        $moduleinfo->groupmod = VISIBLEGROUPS;
+        $moduleinfo->cmidnumber= 'idnumber_XXXY';
+
+        // Optional intro editor (depends of module)
+        // TODO: way to support file - see Damyon assignment solution
+        $draftid_editor = 0;
+        file_prepare_draft_area($draftid_editor, null, null, null, null);
+        $moduleinfo->introeditor = array('text'=>'This is a assignmenet', 'format'=>FORMAT_HTML, 'itemid'=>$draftid_editor);
+
+        // Specific values to the Assign module
+        $moduleinfo->alwaysshowdescription = true;
+        $moduleinfo->submissiondrafts = true;
+        $moduleinfo->requiresubmissionstatement = true;
+        $moduleinfo->sendnotifications = true;
+        $moduleinfo->sendlatenotifications = true;
+        $moduleinfo->duedate = time()+7*24*3600;
+        $moduleinfo->cutoffdate = time()+7*24*3600;
+        $moduleinfo->allowsubmissionsfromdate = '';
+        $moduleinfo->teamsubmission = true;
+        $moduleinfo->requireallteammemberssubmit = true;
+        $moduleinfo->teamsubmissiongroupingid = true;
+        $moduleinfo->blindmarking = true;
+        $moduleinfo->assignsubmission_onlinetext_enabled = true;
+        $moduleinfo->assignsubmission_file_enabled = true;
+        $moduleinfo->assignsubmission_file_maxfiles = 1;
+        $moduleinfo->assignsubmission_file_maxsizebytes = 1000000;
+        $moduleinfo->assignsubmission_comments_enabled = true;
+        $moduleinfo->assignfeedback_comments_enabled = true;
+        $moduleinfo->assignfeedback_offline_enabled = true;
+        $moduleinfo->assignfeedback_file_enabled = true;
+
+        // Following is the advanced grading method area called 'submissions' for the 'assign' module :
+        $moduleinfo->grade = 100;
+        $moduleinfo->advancedgradingmethod_submissions = '';
+
+        // Plagiarism form values
+        // No plagiarism plugin installed by default. Use this space to make your own test.
+
+        // update the module
+        $assign = update_module($moduleinfo);
+
+        // Retrieve the module
+
+        // Compare the module values
+
+        // error_log(print_r($assign, true));
+    }
+
+
     public function test_create_course() {
         global $DB;
         $this->resetAfterTest(true);
