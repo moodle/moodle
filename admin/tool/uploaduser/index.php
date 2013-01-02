@@ -285,7 +285,11 @@ if ($formdata = $mform2->is_cancelled()) {
             $userserrors++;
             continue;
         }
-
+        if ($user->username !== clean_param($user->username, PARAM_USERNAME)) {
+            $upt->track('status', get_string('invalidusername', 'error', 'username'), 'error');
+            $upt->track('username', $errorstr, 'error');
+            $userserrors++;
+        }
         if ($existinguser = $DB->get_record('user', array('username'=>$user->username, 'mnethostid'=>$CFG->mnet_localhost_id))) {
             $upt->track('id', $existinguser->id, 'normal', false);
         }
