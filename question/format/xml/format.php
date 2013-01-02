@@ -149,6 +149,40 @@ class qformat_xml extends qformat_default {
         return $xml;
     }
 
+    public function import_text_with_files($data, $path, $defaultvalue = '', $defaultformat = 'html') {
+        $field  = array();
+        $field['text'] = $this->getpath($data,
+                array_merge($path, array('#', 'text', 0, '#')), $defaultvalue, true);
+        $field['format'] = $this->trans_format($this->getpath($data,
+                array_merge($path, array('@', 'format')), $defaultformat));
+        $itemid = $this->import_files_as_draft($this->getpath($data,
+                array_merge($path, array('#', 'file')), array(), false));
+        if (!empty($itemid)) {
+            $field['itemid'] = $itemid;
+        }
+        return $field;
+    }
+
+    public function import_files_as_draft($xml) {
+        global $USER;
+        if (empty($xml)) {
+            return null;
+        }
+        $fs = get_file_storage();
+        $itemid = file_get_unused_draft_itemid();
+        foreach ($xml as $file) {
+            $filerecord = array(
+                'contextid' => context_user::instance($USER->id)->id,
+                'component' => 'user',
+                'filearea'  => 'draft',
+                'itemid'    => $itemid,
+                'filepath'  => '/',
+                'filename'  => $file['@']['name'],
+            );
+            $fs->create_file_from_string($filerecord, base64_decode($file['#']));
+        }
+        return $itemid;
+    }
 
     /**
      * import parts of question common to all types
@@ -156,7 +190,7 @@ class qformat_xml extends qformat_default {
      * @return object question object
      */
     public function import_headers($question) {
-        global $CFG;
+        global $CFG, $USER;
 
         // get some error strings
         $error_noname = get_string('xmlimportnoname', 'qformat_xml');
@@ -169,35 +203,42 @@ class qformat_xml extends qformat_default {
         $qo->name = $this->clean_question_name($this->getpath($question,
                 array('#', 'name', 0, '#', 'text', 0, '#'), '', true,
                 get_string('xmlimportnoname', 'qformat_xml')));
-        $qo->questiontext = $this->getpath($question,
-                array('#', 'questiontext', 0, '#', 'text', 0, '#'), '', true);
-        $qo->questiontextformat = $this->trans_format($this->getpath(
-                $question, array('#', 'questiontext', 0, '@', 'format'), 'html'));
-
-        $qo->questiontextfiles = $this->import_files($this->getpath($question,
-                array('#', 'questiontext', 0, '#', 'file'), array(), false));
-
+        $questiontext = $this->import_text_with_files($question,
+                array('#', 'questiontext', 0));
+        $qo->questiontext = $questiontext['text'];
+        $qo->questiontextformat = $questiontext['format'];
+        if (!empty($questiontext['itemid'])) {
+            $qo->questiontextitemid = $questiontext['itemid'];
+        }
         // Backwards compatibility, deal with the old image tag.
         $filedata = $this->getpath($question, array('#', 'image_base64', '0', '#'), null, false);
         $filename = $this->getpath($question, array('#', 'image', '0', '#'), null, false);
         if ($filedata && $filename) {
-            $data = new stdClass();
-            $data->content = $filedata;
-            $data->encoding = 'base64';
-            // Question file areas don't support subdirs, so convert path to filename if necessary.
-            $data->name = clean_param(str_replace('/', '_', $filename), PARAM_FILE);
-            $qo->questiontextfiles[] = $data;
-            $qo->questiontext .= ' <img src="@@PLUGINFILE@@/' . $data->name . '" />';
+            $fs = get_file_storage();
+            if (empty($qo->questiontextitemid)) {
+                $qo->questiontextitemid = file_get_unused_draft_itemid();
+            }
+            $filename = clean_param(str_replace('/', '_', $filename), PARAM_FILE);
+            $filerecord = array(
+                'contextid' => context_user::instance($USER->id)->id,
+                'component' => 'user',
+                'filearea'  => 'draft',
+                'itemid'    => $qo->questiontextitemid,
+                'filepath'  => '/',
+                'filename'  => $filename,
+            );
+            $fs->create_file_from_string($filerecord, base64_decode($filedata));
+            $qo->questiontext .= ' <img src="@@PLUGINFILE@@/' . $filename . '" />';
         }
 
         // restore files in generalfeedback
-        $qo->generalfeedback = $this->getpath($question,
-                array('#', 'generalfeedback', 0, '#', 'text', 0, '#'), $qo->generalfeedback, true);
-        $qo->generalfeedbackfiles = array();
-        $qo->generalfeedbackformat = $this->trans_format($this->getpath($question,
-                array('#', 'generalfeedback', 0, '@', 'format'), $this->get_format($qo->questiontextformat)));
-        $qo->generalfeedbackfiles = $this->import_files($this->getpath($question,
-                array('#', 'generalfeedback', 0, '#', 'file'), array(), false));
+        $generalfeedback = $this->import_text_with_files($question,
+                array('#', 'generalfeedback', 0), $qo->generalfeedback, $this->get_format($qo->questiontextformat));
+        $qo->generalfeedback = $generalfeedback['text'];
+        $qo->generalfeedbackformat = $generalfeedback['format'];
+        if (!empty($generalfeedback['itemid'])) {
+            $qo->generalfeedbackitemid = $generalfeedback['itemid'];
+        }
 
         $qo->defaultmark = $this->getpath($question,
                 array('#', 'defaultgrade', 0, '#'), $qo->defaultmark);
@@ -234,24 +275,15 @@ class qformat_xml extends qformat_default {
     public function import_answer($answer, $withanswerfiles = false, $defaultformat = 'html') {
         $ans = new stdClass();
 
-        $ans->answer = array();
-        $ans->answer['text']   = $this->getpath($answer, array('#', 'text', 0, '#'), '', true);
-        $ans->answer['format'] = $this->trans_format($this->getpath($answer,
-                array('@', 'format'), $defaultformat));
         if ($withanswerfiles) {
-            $ans->answer['files']  = $this->import_files($this->getpath($answer,
-                    array('#', 'file'), array()));
+            $ans->answer = $this->import_text_with_files($answer, array(), '', $defaultformat);
         } else {
+            $ans->answer = array();
+            $ans->answer['text']   = $this->getpath($answer, array('#', 'text', 0, '#'), '', true);
             $ans->answer['format'] = FORMAT_PLAIN;
         }
 
-        $ans->feedback = array();
-        $ans->feedback['text']   = $this->getpath($answer,
-                array('#', 'feedback', 0, '#', 'text', 0, '#'), '', true);
-        $ans->feedback['format'] = $this->trans_format($this->getpath($answer,
-                array('#', 'feedback', 0, '@', 'format'), $defaultformat));
-        $ans->feedback['files']  = $this->import_files($this->getpath($answer,
-                array('#', 'feedback', 0, '#', 'file'), array()));
+        $ans->feedback = $this->import_text_with_files($answer, array('#', 'feedback', 0), '', $defaultformat);
 
         $ans->fraction = $this->getpath($answer, array('@', 'fraction'), 0) / 100;
 
@@ -267,15 +299,8 @@ class qformat_xml extends qformat_default {
     public function import_combined_feedback($qo, $questionxml, $withshownumpartscorrect = false) {
         $fields = array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback');
         foreach ($fields as $field) {
-            $text = array();
-            $text['text'] = $this->getpath($questionxml,
-                    array('#', $field, 0, '#', 'text', 0, '#'), '', true);
-            $text['format'] = $this->trans_format($this->getpath($questionxml,
-                    array('#', $field, 0, '@', 'format'), $this->get_format($qo->questiontextformat)));
-            $text['files'] = $this->import_files($this->getpath($questionxml,
-                    array('#', $field, 0, '#', 'file'), array(), false));
-
-            $qo->$field = $text;
+            $qo->$field = $this->import_text_with_files($questionxml,
+                    array('#', $field, 0), '', $this->get_format($qo->questiontextformat));
         }
 
         if ($withshownumpartscorrect) {
@@ -296,15 +321,13 @@ class qformat_xml extends qformat_default {
      * @return object hint for storing in the database.
      */
     public function import_hint($hintxml, $defaultformat) {
+        $hint = new stdClass();
         if (array_key_exists('hintcontent', $hintxml['#'])) {
             // Backwards compatibility:
 
-            $hint = new stdClass();
-            $hint->hint = array('format' => FORMAT_HTML, 'files' => array());
-            $hint->hint['text'] = $this->getpath($hintxml,
-                    array('#', 'hintcontent', 0, '#', 'text', 0, '#'), '', true);
-            $hint->hint['format'] = $this->trans_format($defaultformat);
-            $hint->hint['files'] = array();
+            $hint->hint = $this->import_text_with_files($hintxml,
+                    array('#', 'hintcontent', 0), '', $defaultformat);
+
             $hint->shownumcorrect = $this->getpath($hintxml,
                     array('#', 'statenumberofcorrectresponses', 0, '#'), 0);
             $hint->clearwrong = $this->getpath($hintxml,
@@ -314,14 +337,7 @@ class qformat_xml extends qformat_default {
 
             return $hint;
         }
-
-        $hint = new stdClass();
-        $hint->hint['text'] = $this->getpath($hintxml,
-                array('#', 'text', 0, '#'), '', true);
-        $hint->hint['format'] = $this->trans_format($this->getpath($hintxml,
-                array('@', 'format'), $defaultformat));
-        $hint->hint['files'] = $this->import_files($this->getpath($hintxml,
-                array('#', 'file'), array(), false));
+        $hint->hint = $this->import_text_with_files($hintxml, array(), '', $defaultformat);
         $hint->shownumcorrect = array_key_exists('shownumcorrect', $hintxml['#']);
         $hint->clearwrong = array_key_exists('clearwrong', $hintxml['#']);
         $hint->options = $this->getpath($hintxml, array('#', 'options', 0, '#'), '', true);
@@ -440,9 +456,11 @@ class qformat_xml extends qformat_default {
         $qo->name = $this->clean_question_name($this->import_text($question['#']['name'][0]['#']['text']));
         $qo->questiontextformat = $questiontext['format'];
         $qo->questiontext = $qo->questiontext['text'];
-        $qo->questiontextfiles = $this->import_files($this->getpath($question,
+        $itemid = $this->import_files($this->getpath($question,
                 array('#', 'questiontext', 0, '#', 'file'), array(), false));
-
+        if (!empty($itemid)) {
+            $qo->questiontextitemid = $itemid;
+        }
         // Backwards compatibility, deal with the old image tag.
         $filedata = $this->getpath($question, array('#', 'image_base64', '0', '#'), null, false);
         $filename = $this->getpath($question, array('#', 'image', '0', '#'), null, false);
@@ -457,12 +475,13 @@ class qformat_xml extends qformat_default {
         }
 
         // restore files in generalfeedback
-        $qo->generalfeedback = $this->getpath($question,
-                array('#', 'generalfeedback', 0, '#', 'text', 0, '#'), $qo->generalfeedback, true);
-        $qo->generalfeedbackformat = $this->trans_format($this->getpath($question,
-                array('#', 'generalfeedback', 0, '@', 'format'), $this->get_format($qo->questiontextformat)));
-        $qo->generalfeedbackfiles = $this->import_files($this->getpath($question,
-                array('#', 'generalfeedback', 0, '#', 'file'), array(), false));
+        $generalfeedback = $this->import_text_with_files($question,
+                array('#', 'generalfeedback', 0), $qo->generalfeedback, $this->get_format($qo->questiontextformat));
+        $qo->generalfeedback = $generalfeedback['text'];
+        $qo->generalfeedbackformat = $generalfeedback['format'];
+        if (!empty($generalfeedback['itemid'])) {
+            $qo->generalfeedbackitemid = $generalfeedback['itemid'];
+        }
 
         $qo->penalty = $this->getpath($question,
                 array('#', 'penalty', 0, '#'), $this->defaultquestion()->penalty);
@@ -498,20 +517,9 @@ class qformat_xml extends qformat_default {
         foreach ($question['#']['answer'] as $answer) {
             $answertext = $this->getpath($answer,
                     array('#', 'text', 0, '#'), '', true);
-            $feedback = $this->getpath($answer,
-                    array('#', 'feedback', 0, '#', 'text', 0, '#'), '', true);
-            $feedbackformat = $this->getpath($answer,
-                    array('#', 'feedback', 0, '@', 'format'), $this->get_format($qo->questiontextformat));
-            $feedbackfiles = $this->getpath($answer,
-                    array('#', 'feedback', 0, '#', 'file'), array());
-            $files = array();
-            foreach ($feedbackfiles as $file) {
-                $data = new stdClass();
-                $data->content = $file['#'];
-                $data->encoding = $file['@']['encoding'];
-                $data->name = $file['@']['name'];
-                $files[] = $data;
-            }
+            $feedback = $this->import_text_with_files($answer,
+                    array('#', 'feedback', 0), '', $this->get_format($qo->questiontextformat));
+            
             if ($answertext != 'true' && $answertext != 'false') {
                 // Old style file, assume order is true/false.
                 $warning = true;
@@ -525,17 +533,11 @@ class qformat_xml extends qformat_default {
             if ($answertext == 'true') {
                 $qo->answer = ($answer['@']['fraction'] == 100);
                 $qo->correctanswer = $qo->answer;
-                $qo->feedbacktrue = array();
-                $qo->feedbacktrue['text'] = $feedback;
-                $qo->feedbacktrue['format'] = $this->trans_format($feedbackformat);
-                $qo->feedbacktrue['files'] = $files;
+                $qo->feedbacktrue = $feedback;
             } else {
                 $qo->answer = ($answer['@']['fraction'] != 100);
                 $qo->correctanswer = $qo->answer;
-                $qo->feedbackfalse = array();
-                $qo->feedbackfalse['text'] = $feedback;
-                $qo->feedbackfalse['format'] = $this->trans_format($feedbackformat);
-                $qo->feedbackfalse['files'] = $files;
+                $qo->feedbackfalse = $feedback;
             }
             $first = false;
         }
@@ -650,13 +652,8 @@ class qformat_xml extends qformat_default {
         $qo->instructions['format'] = FORMAT_HTML;
         $instructions = $this->getpath($question, array('#', 'instructions'), array());
         if (!empty($instructions)) {
-            $qo->instructions = array();
-            $qo->instructions['text'] = $this->getpath($instructions,
-                    array('0', '#', 'text', '0', '#'), '', true);
-            $qo->instructions['format'] = $this->trans_format($this->getpath($instructions,
-                    array('0', '@', 'format'), $this->get_format($qo->questiontextformat)));
-            $qo->instructions['files'] = $this->import_files($this->getpath(
-                    $instructions, array('0', '#', 'file'), array()));
+            $qo->instructions = $this->import_text_with_files($instructions,
+                    array('0'), '', $this->get_format($qo->questiontextformat));
         }
 
         if (is_null($qo->showunits)) {
@@ -691,14 +688,9 @@ class qformat_xml extends qformat_default {
         $qo->subquestions = array();
         $qo->subanswers = array();
         foreach ($question['#']['subquestion'] as $subqxml) {
-            $subquestion = array();
-            $subquestion['text'] = $this->getpath($subqxml, array('#', 'text', 0, '#'), '', true);
-            $subquestion['format'] = $this->trans_format($this->getpath($subqxml,
-                    array('@', 'format'), $this->get_format($qo->questiontextformat)));
-            $subquestion['files'] = $this->import_files($this->getpath($subqxml,
-                    array('#', 'file'), array()));
+            $qo->subquestions[] = $this->import_text_with_files($subqxml,
+                    array(), '', $this->get_format($qo->questiontextformat));
 
-            $qo->subquestions[] = $subquestion;
             $answers = $this->getpath($subqxml, array('#', 'answer'), array());
             $qo->subanswers[] = $this->getpath($subqxml,
                     array('#', 'answer', 0, '#', 'text', 0, '#'), '', true);
@@ -728,12 +720,8 @@ class qformat_xml extends qformat_default {
                 array('#', 'responsefieldlines', 0, '#'), 15);
         $qo->attachments = $this->getpath($question,
                 array('#', 'attachments', 0, '#'), 0);
-        $qo->graderinfo['text'] = $this->getpath($question,
-                array('#', 'graderinfo', 0, '#', 'text', 0, '#'), '', true);
-        $qo->graderinfo['format'] = $this->trans_format($this->getpath($question,
-                array('#', 'graderinfo', 0, '@', 'format'), $this->get_format($qo->questiontextformat)));
-        $qo->graderinfo['files'] = $this->import_files($this->getpath($question,
-                array('#', 'graderinfo', '0', '#', 'file'), array()));
+        $qo->graderinfo = $this->import_text_with_files($question,
+                array('#', 'graderinfo', 0), '', $this->get_format($qo->questiontextformat));
 
         return $qo;
     }
@@ -767,13 +755,8 @@ class qformat_xml extends qformat_default {
         $qo->instructions = $this->getpath($question,
                 array('#', 'instructions', 0, '#', 'text', 0, '#'), '', true);
         if (!empty($instructions)) {
-            $qo->instructions = array();
-            $qo->instructions['text'] = $this->getpath($instructions,
-                    array('0', '#', 'text', '0', '#'), '', true);
-            $qo->instructions['format'] = $this->trans_format($this->getpath($instructions,
-                    array('0', '@', 'format'), $this->get_format($qo->questiontextformat)));
-            $qo->instructions['files'] = $this->import_files($this->getpath($instructions,
-                    array('0', '#', 'file'), array()));
+            $qo->instructions = $this->import_text_with_files($instructions,
+                    array('0'), '', $this->get_format($qo->questiontextformat));
         }
 
         // get answers array
@@ -817,13 +800,8 @@ class qformat_xml extends qformat_default {
         }
         $instructions = $this->getpath($question, array('#', 'instructions'), array());
         if (!empty($instructions)) {
-            $qo->instructions = array();
-            $qo->instructions['text'] = $this->getpath($instructions,
-                    array('0', '#', 'text', '0', '#'), '', true);
-            $qo->instructions['format'] = $this->trans_format($this->getpath($instructions,
-                    array('0', '@', 'format'), $this->get_format($qo->questiontextformat)));
-            $qo->instructions['files'] = $this->import_files($this->getpath($instructions,
-                    array('0', '#', 'file'), array()));
+            $qo->instructions = $this->import_text_with_files($instructions,
+                    array('0'), '', $this->get_format($qo->questiontextformat));
         }
 
         if (is_null($qo->unitpenalty)) {
