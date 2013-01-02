@@ -82,7 +82,11 @@ if (!empty($formdata)) {
 } else if (!empty($subscriptionid)) {
     // The user is wanting to perform an action upon an existing subscription.
     require_sesskey(); // Must have sesskey for all actions.
-    $importresults = calendar_process_subscription_row($subscriptionid, $pollinterval, $action);
+    if (calendar_can_edit_subscription($subscriptionid)) {
+        $importresults = calendar_process_subscription_row($subscriptionid, $pollinterval, $action);
+    } else {
+        print_error('nopermissions', 'error', $PAGE->url, get_string('managesubscriptions', 'calendar'));
+    }
 }
 
 $sql = 'SELECT *
