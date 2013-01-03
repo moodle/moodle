@@ -148,8 +148,6 @@ if ($frm and isset($frm->username)) {                             // Login WITH 
         die;
     }
 
-    update_login_count();
-
     if ($user) {
 
         // language setup
@@ -241,8 +239,6 @@ if ($frm and isset($frm->username)) {                             // Login WITH 
                 exit;
             }
         }
-
-        reset_login_count();
 
         // test the session actually works by redirecting to self
         $SESSION->wantsurl = $urltogo;

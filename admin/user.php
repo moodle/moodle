@@ -2,6 +2,7 @@
 
     require_once('../config.php');
     require_once($CFG->libdir.'/adminlib.php');
+    require_once($CFG->libdir.'/authlib.php');
     require_once($CFG->dirroot.'/user/filters/lib.php');
 
     $delete       = optional_param('delete', 0, PARAM_INT);
@@ -16,6 +17,7 @@
     $acl          = optional_param('acl', '0', PARAM_INT);           // id of user to tweak mnet ACL (requires $access)
     $suspend      = optional_param('suspend', 0, PARAM_INT);
     $unsuspend    = optional_param('unsuspend', 0, PARAM_INT);
+    $unlock       = optional_param('unlock', 0, PARAM_INT);
 
     admin_externalpage_setup('editusers');
 
@@ -32,6 +34,7 @@
     $strshowallusers = get_string('showallusers');
     $strsuspend = get_string('suspenduser', 'admin');
     $strunsuspend = get_string('unsuspenduser', 'admin');
+    $strunlock = get_string('unlockaccount', 'admin');
     $strconfirm = get_string('confirm');
 
     if (empty($CFG->loginhttps)) {
@@ -141,6 +144,14 @@
                 $DB->set_field('user', 'timemodified', $user->timemodified, array('id'=>$user->id));
                 events_trigger('user_updated', $user);
             }
+        }
+        redirect($returnurl);
+
+    } else if ($unlock and confirm_sesskey()) {
+        require_capability('moodle/user:update', $sitecontext);
+
+        if ($user = $DB->get_record('user', array('id'=>$unlock, 'mnethostid'=>$CFG->mnet_localhost_id, 'deleted'=>0))) {
+            login_unlock_account($user);
         }
         redirect($returnurl);
     }
@@ -303,6 +314,9 @@
                         }
                     }
 
+                    if (login_is_lockedout($user)) {
+                        $buttons[] = html_writer::link(new moodle_url($returnurl, array('unlock'=>$user->id, 'sesskey'=>sesskey())), html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('t/unlock'), 'alt'=>$strunlock, 'class'=>'iconsmall')), array('title'=>$strunlock));
+                    }
                 }
             }
 
