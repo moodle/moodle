@@ -177,8 +177,22 @@
         $$column = "<a href=\"user.php?sort=$column&amp;dir=$columndir\">".$string[$column]."</a>$columnicon";
     }
 
-    if ($sort == "name") {
-        $sort = "firstname";
+    $override = new stdClass();
+    $override->firstname = 'firstname';
+    $override->lastname = 'lastname';
+    $fullnamelanguage = get_string('fullnamedisplay', '', $override);
+    if (($CFG->fullnamedisplay == 'firstname lastname') or
+        ($CFG->fullnamedisplay == 'firstname') or
+        ($CFG->fullnamedisplay == 'language' and $fullnamelanguage == 'firstname lastname' )) {
+        $fullnamedisplay = "$firstname / $lastname";
+        if ($sort == "name") { // If sort has already been set to something else then ignore.
+            $sort = "firstname";
+        }
+    } else { // ($CFG->fullnamedisplay == 'language' and $fullnamelanguage == 'lastname firstname').
+        $fullnamedisplay = "$lastname / $firstname";
+        if ($sort == "name") { // This should give the desired sorting based on fullnamedisplay.
+            $sort = "lastname";
+        }
     }
 
     list($extrasql, $params) = $ufiltering->get_sql_filter();
@@ -229,18 +243,6 @@
                 $nusers[] = $users[$key];
             }
             $users = $nusers;
-        }
-
-        $override = new stdClass();
-        $override->firstname = 'firstname';
-        $override->lastname = 'lastname';
-        $fullnamelanguage = get_string('fullnamedisplay', '', $override);
-        if (($CFG->fullnamedisplay == 'firstname lastname') or
-            ($CFG->fullnamedisplay == 'firstname') or
-            ($CFG->fullnamedisplay == 'language' and $fullnamelanguage == 'firstname lastname' )) {
-            $fullnamedisplay = "$firstname / $lastname";
-        } else { // ($CFG->fullnamedisplay == 'language' and $fullnamelanguage == 'lastname firstname')
-            $fullnamedisplay = "$lastname / $firstname";
         }
 
         $table = new html_table();
