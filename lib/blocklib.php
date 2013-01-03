@@ -1176,6 +1176,27 @@ class block_manager {
             $strdeletecheck = get_string('deletecheck', 'block', $blocktitle);
             $message = get_string('deleteblockcheck', 'block', $blocktitle);
 
+            // If the block is being shown in sub contexts display a warning.
+            if ($block->instance->showinsubcontexts == 1) {
+                $parentcontext = context::instance_by_id($block->instance->parentcontextid);
+                $systemcontext = context_system::instance();
+                $messagestring = new stdClass();
+                $messagestring->location = $parentcontext->get_context_name();
+
+                // Checking for blocks that may have visibility on the front page and pages added on that.
+                if ($parentcontext->id != $systemcontext->id && is_inside_frontpage($parentcontext)) {
+                    $messagestring->pagetype = get_string('showonfrontpageandsubs', 'block');
+                } else {
+                    $pagetypes = generate_page_type_patterns($this->page->pagetype, $parentcontext);
+                    $messagestring->pagetype = $block->instance->pagetypepattern;
+                    if (isset($pagetypes[$block->instance->pagetypepattern])) {
+                        $messagestring->pagetype = $pagetypes[$block->instance->pagetypepattern];
+                    }
+                }
+
+                $message = get_string('deleteblockwarning', 'block', $messagestring);
+            }
+
             $PAGE->navbar->add($strdeletecheck);
             $PAGE->set_title($blocktitle . ': ' . $strdeletecheck);
             $PAGE->set_heading($site->fullname);
