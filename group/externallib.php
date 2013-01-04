@@ -576,7 +576,7 @@ class core_group_external extends external_api {
                             'courseid' => new external_value(PARAM_INT, 'id of course'),
                             'name' => new external_value(PARAM_TEXT, 'multilang compatible name, course unique'),
                             'description' => new external_value(PARAM_RAW, 'grouping description text'),
-                            'descriptionformat' => new external_format_value('descripiton', VALUE_DEFAULT)
+                            'descriptionformat' => new external_format_value('description', VALUE_DEFAULT)
                         )
                     ), 'List of grouping object. A grouping has a courseid, a name and a description.'
                 )
