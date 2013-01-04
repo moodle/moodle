@@ -24,6 +24,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['configdndmedia'] = 'Offer to create a label when media files are dragged & dropped onto a course';
+$string['dndmedia'] = 'Media drag and drop';
+$string['dnduploadlabel'] = 'Create a label';
 $string['label:addinstance'] = 'Add a new label';
 $string['labeltext'] = 'Label text';
 $string['modulename'] = 'Label';

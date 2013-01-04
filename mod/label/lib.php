@@ -202,3 +202,55 @@ function label_supports($feature) {
     }
 }
 
+/**
+ * Register the ability to handle drag and drop file uploads
+ * @return array containing details of the files / types the mod can handle
+ */
+function label_dndupload_register() {
+    if (get_config('label', 'dndmedia')) {
+        $mediaextensions = file_get_typegroup('extension', 'web_image');
+        $strdnd = get_string('dnduploadlabel', 'mod_label');
+        $files = array();
+        foreach ($mediaextensions as $extn) {
+            $extn = trim($extn, '.');
+            $files[] = array('extension' => $extn, 'message' => $strdnd);
+        }
+        return array('files' => $files);
+    } else {
+        return array();
+    }
+}
+
+/**
+ * Handle a file that has been uploaded
+ * @param object $uploadinfo details of the file / content that has been uploaded
+ * @return int instance id of the newly created mod
+ */
+function label_dndupload_handle($uploadinfo) {
+    global $USER;
+
+    // Gather the required info.
+    $data = new stdClass();
+    $data->course = $uploadinfo->course->id;
+    $data->name = $uploadinfo->displayname;
+    $data->intro = '';
+    $data->introformat = FORMAT_HTML;
+    $data->coursemodule = $uploadinfo->coursemodule;
+
+    if (!empty($uploadinfo->draftitemid)) {
+        $fs = get_file_storage();
+        $draftcontext = context_user::instance($USER->id);
+        $context = context_module::instance($uploadinfo->coursemodule);
+        $files = $fs->get_area_files($draftcontext->id, 'user', 'draft', $uploadinfo->draftitemid, '', false);
+        if ($file = reset($files)) {
+            $filelink = moodle_url::make_draftfile_url($uploadinfo->draftitemid, $file->get_filepath(), $file->get_filename());
+            if (file_mimetype_in_typegroup($file->get_mimetype(), 'web_image')) {
+                $data->intro = html_writer::empty_tag('img', array('src' => $filelink, 'alt' => $file->get_filename()));
+                $data->intro = file_save_draft_area_files($uploadinfo->draftitemid, $context->id, 'mod_label', 'intro', 0,
+                                                          null, $data->intro);
+            }
+        }
+    }
+
+    return label_add_instance($data, null);
+}

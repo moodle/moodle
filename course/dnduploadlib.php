@@ -678,7 +678,12 @@ class dndupload_ajax_processor {
         $resp->error = self::ERROR_OK;
         $resp->icon = $mod->get_icon_url()->out();
         $resp->name = $mod->name;
-        $resp->link = $mod->get_url()->out();
+        if ($mod->has_view()) {
+            $resp->link = $mod->get_url()->out();
+        } else {
+            $resp->link = null;
+        }
+        $resp->content = $mod->get_content();
         $resp->elementid = 'module-'.$mod->id;
         $actions = course_get_cm_edit_actions($mod, 0, $mod->sectionnum);
         $resp->commands = ' '. $courserenderer->course_section_cm_edit_actions($actions);
