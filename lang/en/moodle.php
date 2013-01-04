@@ -649,7 +649,6 @@ $string['error'] = 'Error';
 $string['errorcreatingactivity'] = 'Unable to create an instance of activity \'{$a}\'';
 $string['errorfiletoobig'] = 'The file was bigger than the limit of {$a} bytes';
 $string['errornouploadrepo'] = 'There is no upload repository enabled for this site';
-$string['errortoomanylogins'] = 'Sorry, you have exceeded the allowed number of login attempts. Restart your browser.';
 $string['errorwhenconfirming'] = 'You are not confirmed yet because an error occurred.  If you clicked on a link in an email to get here, make sure that the line in your email wasn\'t broken or wrapped. You may have to use cut and paste to reconstruct the link properly.';
 $string['everybody'] = 'Everybody';
 $string['executeat'] = 'Execute at';

@@ -36,9 +36,8 @@ defined('MOODLE_INTERNAL') || die();
  * @deprecated
  */
 function update_login_count() {
-    // note: remove 'errortoomanylogins' string from moodle.php too
-    // TODO: uncomment in Moodle 2.5, delete function in Moodle 2.6
-    //debugging('update_login_count() is deprecated, all calls need to be removed');
+    // TODO: delete function in Moodle 2.6
+    debugging('update_login_count() is deprecated, all calls need to be removed');
 }
 
 /**
@@ -46,8 +45,8 @@ function update_login_count() {
  * @deprecated
  */
 function reset_login_count() {
-    // TODO: uncomment in Moodle 2.5, delete function in Moodle 2.6
-    //debugging('reset_login_count() is deprecated, all calls need to be removed');
+    // TODO: delete function in Moodle 2.6
+    debugging('reset_login_count() is deprecated, all calls need to be removed');
 }
 
 /**
