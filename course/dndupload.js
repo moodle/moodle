@@ -728,6 +728,9 @@ M.course_dndupload = {
                             resel.icon.src = result.icon;
                             resel.a.href = result.link;
                             resel.namespan.innerHTML = result.name;
+                            if (!parseInt(result.visible, 10)) {
+                                resel.a.className = 'dimmed';
+                            }
 
                             if (result.groupingname) {
                                 resel.groupingspan.innerHTML = '(' + result.groupingname + ')';
@@ -915,6 +918,9 @@ M.course_dndupload = {
                             resel.icon.src = result.icon;
                             resel.a.href = result.link;
                             resel.namespan.innerHTML = result.name;
+                            if (!parseInt(result.visible, 10)) {
+                                resel.a.className = 'dimmed';
+                            }
 
                             if (result.groupingname) {
                                 resel.groupingspan.innerHTML = '(' + result.groupingname + ')';
