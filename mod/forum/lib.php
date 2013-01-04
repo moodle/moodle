@@ -4263,10 +4263,10 @@ function forum_pluginfile($course, $cm, $context, $filearea, $args, $forcedownlo
  * @param object $forum
  * @param object $cm
  * @param mixed $mform
- * @param string $message
+ * @param string $unused
  * @return bool
  */
-function forum_add_attachment($post, $forum, $cm, $mform=null, &$message=null) {
+function forum_add_attachment($post, $forum, $cm, $mform=null, $unused=null) {
     global $DB;
 
     if (empty($mform)) {
@@ -4386,16 +4386,13 @@ function forum_update_post($post, $mform, &$message) {
  * Given an object containing all the necessary data,
  * create a new discussion and return the id
  *
- * @global object
- * @global object
- * @global object
  * @param object $post
  * @param mixed $mform
- * @param string $message
+ * @param string $unused
  * @param int $userid
  * @return object
  */
-function forum_add_discussion($discussion, $mform=null, &$message=null, $userid=null) {
+function forum_add_discussion($discussion, $mform=null, $unused=null, $userid=null) {
     global $USER, $CFG, $DB;
 
     $timenow = time();
@@ -4449,7 +4446,7 @@ function forum_add_discussion($discussion, $mform=null, &$message=null, $userid=
     $DB->set_field("forum_posts", "discussion", $post->discussion, array("id"=>$post->id));
 
     if (!empty($cm->id)) {
-        forum_add_attachment($post, $forum, $cm, $mform, $message);
+        forum_add_attachment($post, $forum, $cm, $mform, $unused);
     }
 
     if (forum_tp_can_track_forums($forum) && forum_tp_is_tracked($forum)) {
