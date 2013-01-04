@@ -56,7 +56,6 @@ YUI.add('moodle-enrol-rolemanager', function(Y) {
     Y.extend(ROLE, Y.Base, {
         users : [],
         roleAssignmentPanel : null,
-        panelsubmitevent : null,
         rolesLoadedEvent : null,
         escCloseEvent  : null,
         initializer : function(config) {
@@ -75,14 +74,16 @@ YUI.add('moodle-enrol-rolemanager', function(Y) {
             this.rolesLoadedEvent = this.on('assignablerolesloaded', function(){
                 this.rolesLoadedEvent.detach();
                 var panel = this._getRoleAssignmentPanel();
-                this.panelsubmitevent = panel.on('submit', this.addRoleCallback, this);
-                panel.hide().display(user);
+                panel.hide();
+                panel.submitevent = panel.on('submit', this.addRoleCallback, this);
+                panel.display(user);
             }, this);
             this._loadAssignableRoles();
         },
         addRoleCallback : function(e, roleid, userid) {
-            this.panelsubmitevent.detach();
             var panel = this._getRoleAssignmentPanel();
+            panel.submitevent.detach();
+            panel.submitevent = null;
             Y.io(M.cfg.wwwroot+'/enrol/ajax.php', {
                 method:'POST',
                 data:'id='+this.get(COURSEID)+'&action=assign&sesskey='+M.cfg.sesskey+'&roleid='+roleid+'&user='+userid,
@@ -350,6 +351,7 @@ YUI.add('moodle-enrol-rolemanager', function(Y) {
     Y.extend(ROLEPANEL, Y.Base, {
         user : null,
         roles : [],
+        submitevent : null,
         initializer : function() {
             var i, m = this.get(MANIPULATOR);
             var element = Y.Node.create('<div class="enrolpanel roleassign"><div class="container"><div class="header"><h2>'+M.str.role.assignroles+'</h2><div class="close"></div></div><div class="content"></div></div></div>');
@@ -398,6 +400,10 @@ YUI.add('moodle-enrol-rolemanager', function(Y) {
             this.roles = [];
             this.user = null;
             this.get('elementNode').removeClass('visible');
+            if (this.submitevent) {
+                this.submitevent.detach();
+                this.submitevent = null;
+            }
             this.displayed = false;
             return this;
         },
