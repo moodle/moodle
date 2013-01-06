@@ -586,15 +586,28 @@ class course_enrolment_manager {
      */
     public function unassign_role_from_user($userid, $roleid) {
         global $DB;
-        require_capability('moodle/role:assign', $this->context);
-        $user = $DB->get_record('user', array('id'=>$userid), '*', MUST_EXIST);
-        try {
-            role_unassign($roleid, $user->id, $this->context->id, '', NULL);
-        } catch (Exception $e) {
+        // Admins may unassign any role, others only those they could assign.
+        if (!is_siteadmin() and !array_key_exists($roleid, $this->get_assignable_roles())) {
             if (defined('AJAX_SCRIPT')) {
-                throw $e;
+                throw new moodle_exception('invalidrole');
             }
             return false;
+        }
+        $user = $DB->get_record('user', array('id'=>$userid), '*', MUST_EXIST);
+        $ras = $DB->get_records('role_assignments', array('contextid'=>$this->context->id, 'userid'=>$user->id, 'roleid'=>$roleid));
+        foreach ($ras as $ra) {
+            if ($ra->component) {
+                if (strpos($ra->component, 'enrol_') !== 0) {
+                    continue;
+                }
+                if (!$plugin = enrol_get_plugin(substr($ra->component, 6))) {
+                    continue;
+                }
+                if ($plugin->roles_protected()) {
+                    continue;
+                }
+            }
+            role_unassign($ra->roleid, $ra->userid, $ra->contextid, $ra->component, $ra->itemid);
         }
         return true;
     }
@@ -706,6 +719,7 @@ class course_enrolment_manager {
     public function get_user_roles($userid) {
         $roles = array();
         $ras = get_user_roles($this->context, $userid, true, 'c.contextlevel DESC, r.sortorder ASC');
+        $plugins = $this->get_enrolment_plugins(false);
         foreach ($ras as $ra) {
             if ($ra->contextid != $this->context->id) {
                 if (!array_key_exists($ra->roleid, $roles)) {
@@ -717,7 +731,18 @@ class course_enrolment_manager {
             if (array_key_exists($ra->roleid, $roles) && $roles[$ra->roleid] === false) {
                 continue;
             }
-            $roles[$ra->roleid] = ($ra->itemid == 0 and $ra->component === '');
+            $changeable = true;
+            if ($ra->component) {
+                $changeable = false;
+                if (strpos($ra->component, 'enrol_') === 0) {
+                    $plugin = substr($ra->component, 6);
+                    if (isset($plugins[$plugin])) {
+                        $changeable = !$plugins[$plugin]->roles_protected();
+                    }
+                }
+            }
+
+            $roles[$ra->roleid] = $changeable;
         }
         return $roles;
     }
@@ -807,6 +832,7 @@ class course_enrolment_manager {
 
         $userroles = $this->get_other_users($sort, $direction, $page, $perpage);
         $roles = $this->get_all_roles();
+        $plugins = $this->get_enrolment_plugins(false);
 
         $context    = $this->get_context();
         $now = time();
@@ -821,8 +847,17 @@ class course_enrolment_manager {
             }
             $a = new stdClass;
             $a->role = $roles[$userrole->roleid]->localname;
-            $changeable = ($userrole->component == '');
             if ($contextid == $this->context->id) {
+                $changeable = true;
+                if ($userrole->component) {
+                    $changeable = false;
+                    if (strpos($userrole->component, 'enrol_') === 0) {
+                        $plugin = substr($userrole->component, 6);
+                        if (isset($plugins[$plugin])) {
+                            $changeable = !$plugin[$plugin]->roles_protected();
+                        }
+                    }
+                }
                 $roletext = get_string('rolefromthiscourse', 'enrol', $a);
             } else {
                 $changeable = false;
@@ -888,7 +923,11 @@ class course_enrolment_manager {
             // Roles
             $details['roles'] = array();
             foreach ($this->get_user_roles($user->id) as $rid=>$rassignable) {
-                $details['roles'][$rid] = array('text'=>$allroles[$rid]->localname, 'unchangeable'=>(!$rassignable || !isset($assignable[$rid])));
+                $unchangeable = !$rassignable;
+                if (!is_siteadmin() and !isset($assignable[$rid])) {
+                    $unchangeable = true;
+                }
+                $details['roles'][$rid] = array('text'=>$allroles[$rid]->localname, 'unchangeable'=>$unchangeable);
             }
 
             // Users
