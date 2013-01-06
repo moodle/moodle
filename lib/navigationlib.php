@@ -1663,19 +1663,21 @@ class global_navigation extends navigation_node {
                     $categoryids[] = $category->key;
                 }
             }
-            list($categoriessql, $params) = $DB->get_in_or_equal($categoryids, SQL_PARAMS_NAMED);
-            $params['limit'] = (!empty($CFG->navcourselimit))?$CFG->navcourselimit:20;
-            $sql = "SELECT cc.id, COUNT(c.id) AS coursecount
-                      FROM {course_categories} cc
-                      JOIN {course} c ON c.category = cc.id
-                     WHERE cc.id {$categoriessql}
-                  GROUP BY cc.id
-                    HAVING COUNT(c.id) > :limit";
-            $excessivecategories = $DB->get_records_sql($sql, $params);
-            foreach ($categories as &$category) {
-                if (array_key_exists($category->key, $excessivecategories) && !$this->can_add_more_courses_to_category($category)) {
-                    $url = new moodle_url('/course/category.php', array('id'=>$category->key));
-                    $category->add(get_string('viewallcourses'), $url, self::TYPE_SETTING);
+            if ($categoryids) {
+                list($categoriessql, $params) = $DB->get_in_or_equal($categoryids, SQL_PARAMS_NAMED);
+                $params['limit'] = (!empty($CFG->navcourselimit))?$CFG->navcourselimit:20;
+                $sql = "SELECT cc.id, COUNT(c.id) AS coursecount
+                          FROM {course_categories} cc
+                          JOIN {course} c ON c.category = cc.id
+                         WHERE cc.id {$categoriessql}
+                      GROUP BY cc.id
+                        HAVING COUNT(c.id) > :limit";
+                $excessivecategories = $DB->get_records_sql($sql, $params);
+                foreach ($categories as &$category) {
+                    if (array_key_exists($category->key, $excessivecategories) && !$this->can_add_more_courses_to_category($category)) {
+                        $url = new moodle_url('/course/category.php', array('id'=>$category->key));
+                        $category->add(get_string('viewallcourses'), $url, self::TYPE_SETTING);
+                    }
                 }
             }
         }
