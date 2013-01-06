@@ -333,10 +333,11 @@ class core_message_renderer extends plugin_renderer_base {
 
         $output .= html_writer::start_tag('fieldset', array('id' => 'messageprocessor_general', 'class' => 'clearfix'));
         $output .= html_writer::nonempty_tag('legend', get_string('generalsettings','admin'), array('class' => 'ftoggler'));
+
         $output .= html_writer::start_tag('div');
-        $output .= get_string('blocknoncontacts', 'message').': ';
-        $output .= html_writer::checkbox('blocknoncontacts', 1, $preferences->blocknoncontacts, '');
+        $output .= html_writer::checkbox('blocknoncontacts', 1, $preferences->blocknoncontacts, get_string('blocknoncontacts', 'message'));
         $output .= html_writer::end_tag('div');
+
         $output .= html_writer::end_tag('fieldset');
         $output .= html_writer::start_tag('div', array('class' => 'mdl-align'));
         $output .= html_writer::empty_tag('input', array('type' => 'submit', 'value' => get_string('updatemyprofile'), 'class' => 'form-submit'));
