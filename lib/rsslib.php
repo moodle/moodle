@@ -173,8 +173,26 @@ function rss_get_file_full_name($componentname, $filename) {
     return "$CFG->cachedir/rss/$componentname/$filename.xml";
 }
 
-function rss_get_file_name($instance, $sql) {
-    return $instance->id.'_'.md5($sql);
+/**
+ * Construct the file name of the RSS File
+ *
+ * @param stdClass $instance the instance of the source of the RSS feed
+ * @param string $sql the SQL used to produce the RSS feed
+ * @param array $params the parameters used in the SQL query
+ * @return string the name of the RSS file
+ */
+function rss_get_file_name($instance, $sql, $params = array()) {
+    if ($params) {
+        // If a parameters array is passed, then we want to
+        // serialize it and then concatenate it with the sql.
+        // The reason for this is to generate a unique filename
+        // for queries using the same sql but different parameters.
+        asort($parms);
+        $serializearray = serialize($params);
+        return $instance->id.'_'.md5($sql . $serializearray);
+    } else {
+        return $instance->id.'_'.md5($sql);
+    }
 }
 
 /**
