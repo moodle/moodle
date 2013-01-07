@@ -193,6 +193,13 @@ $quizsettings->add(new mod_quiz_admin_setting_browsersecurity('quiz/browsersecur
         get_string('showinsecurepopup', 'quiz'), get_string('configpopup', 'quiz'),
         array('value' => '-', 'adv' => true), null));
 
+// Allow user to specify if setting outcomes is an advanced setting
+if (!empty($CFG->enableoutcomes)) {
+    $quizsettings->add(new admin_setting_configcheckbox('quiz/outcomes_adv',
+        get_string('outcomesadvanced', 'quiz'), get_string('configoutcomesadvanced', 'quiz'),
+        '0'));
+}
+
 // Now, depending on whether any reports have their own settings page, add
 // the quiz setting page to the appropriate place in the tree.
 if (empty($reportsbyname)) {
