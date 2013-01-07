@@ -38,7 +38,7 @@ $action    = optional_param('action',    '',  PARAM_ALPHA);
 $area      = optional_param('area',      '',  PARAM_AREA);
 $content   = optional_param('content',   '',  PARAM_RAW);
 $itemid    = optional_param('itemid',    '',  PARAM_INT);
-$returnurl = optional_param('returnurl', '/', PARAM_URL);
+$returnurl = optional_param('returnurl', '/', PARAM_LOCALURL);
 $component = optional_param('component', '',  PARAM_COMPONENT);
 
 // Currently this script can only add comments

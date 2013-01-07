@@ -35,7 +35,7 @@ require_once($CFG->dirroot.'/course/lib.php');
 
 $id         = required_param('id', PARAM_INT);
 $switchrole = optional_param('switchrole',-1, PARAM_INT);
-$returnurl  = optional_param('returnurl', false, PARAM_URL);
+$returnurl  = optional_param('returnurl', false, PARAM_LOCALURL);
 
 $PAGE->set_url('/course/switchrole.php', array('id'=>$id));
 
