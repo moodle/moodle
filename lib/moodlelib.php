@@ -3469,39 +3469,6 @@ function set_bounce_count($user,$reset=false) {
 }
 
 /**
- * Keeps track of login attempts
- *
- * @global object
- */
-function update_login_count() {
-    global $SESSION;
-
-    $max_logins = 10;
-
-    if (empty($SESSION->logincount)) {
-        $SESSION->logincount = 1;
-    } else {
-        $SESSION->logincount++;
-    }
-
-    if ($SESSION->logincount > $max_logins) {
-        unset($SESSION->wantsurl);
-        print_error('errortoomanylogins');
-    }
-}
-
-/**
- * Resets login attempts
- *
- * @global object
- */
-function reset_login_count() {
-    global $SESSION;
-
-    $SESSION->logincount = 0;
-}
-
-/**
  * Determines if the currently logged in user is in editing mode.
  * Note: originally this function had $userid parameter - it was not usable anyway
  *
@@ -4134,10 +4101,13 @@ function guest_user() {
  *
  * @param string $username  User's username
  * @param string $password  User's password
- * @return user|flase A {@link $USER} object or false if error
+ * @param bool $ignorelockout useful when guessing is prevented by other mechanism such as captcha or SSO
+ * @param int $failurereason login failure reason, can be used in renderers (it may disclose if account exists)
+ * @return stdClass|false A {@link $USER} object or false if error
  */
-function authenticate_user_login($username, $password) {
+function authenticate_user_login($username, $password, $ignorelockout=false, &$failurereason=null) {
     global $CFG, $DB;
+    require_once("$CFG->libdir/authlib.php");
 
     $authsenabled = get_enabled_auth_plugins();
 
@@ -4146,11 +4116,13 @@ function authenticate_user_login($username, $password) {
         if (!empty($user->suspended)) {
             add_to_log(SITEID, 'login', 'error', 'index.php', $username);
             error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Suspended Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
+            $failurereason = AUTH_LOGIN_SUSPENDED;
             return false;
         }
         if ($auth=='nologin' or !is_enabled_auth($auth)) {
             add_to_log(SITEID, 'login', 'error', 'index.php', $username);
             error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Disabled Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
+            $failurereason = AUTH_LOGIN_SUSPENDED; // Legacy way to suspend user.
             return false;
         }
         $auths = array($auth);
@@ -4159,6 +4131,7 @@ function authenticate_user_login($username, $password) {
         // Check if there's a deleted record (cheaply), this should not happen because we mangle usernames in delete_user().
         if ($DB->get_field('user', 'id', array('username'=>$username, 'mnethostid'=>$CFG->mnet_localhost_id,  'deleted'=>1))) {
             error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Deleted Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
+            $failurereason = AUTH_LOGIN_NOUSER;
             return false;
         }
 
@@ -4166,6 +4139,7 @@ function authenticate_user_login($username, $password) {
         if (!empty($CFG->authpreventaccountcreation)) {
             add_to_log(SITEID, 'login', 'error', 'index.php', $username);
             error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Unknown user, can not create new accounts:  $username  ".$_SERVER['HTTP_USER_AGENT']);
+            $failurereason = AUTH_LOGIN_NOUSER;
             return false;
         }
 
@@ -4173,6 +4147,24 @@ function authenticate_user_login($username, $password) {
         $auths = $authsenabled;
         $user = new stdClass();
         $user->id = 0;
+    }
+
+    if ($ignorelockout) {
+        // Some other mechanism protects against brute force password guessing,
+        // for example login form might include reCAPTCHA or this function
+        // is called from a SSO script.
+
+    } else if ($user->id) {
+        // Verify login lockout after other ways that may prevent user login.
+        if (login_is_lockedout($user)) {
+            add_to_log(SITEID, 'login', 'error', 'index.php', $username);
+            error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Login lockout:  $username  ".$_SERVER['HTTP_USER_AGENT']);
+            $failurereason = AUTH_LOGIN_LOCKOUT;
+            return false;
+        }
+
+    } else {
+        // We can not lockout non-existing accounts.
     }
 
     foreach ($auths as $auth) {
@@ -4208,6 +4200,7 @@ function authenticate_user_login($username, $password) {
         }
 
         if (empty($user->id)) {
+            $failurereason = AUTH_LOGIN_NOUSER;
             return false;
         }
 
@@ -4215,9 +4208,12 @@ function authenticate_user_login($username, $password) {
             // just in case some auth plugin suspended account
             add_to_log(SITEID, 'login', 'error', 'index.php', $username);
             error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Suspended Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
+            $failurereason = AUTH_LOGIN_SUSPENDED;
             return false;
         }
 
+        login_attempt_valid($user);
+        $failurereason = AUTH_LOGIN_OK;
         return $user;
     }
 
@@ -4226,6 +4222,14 @@ function authenticate_user_login($username, $password) {
     if (debugging('', DEBUG_ALL)) {
         error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Failed Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
     }
+
+    if ($user->id) {
+        login_attempt_failed($user);
+        $failurereason = AUTH_LOGIN_FAILED;
+    } else {
+        $failurereason = AUTH_LOGIN_NOUSER;
+    }
+
     return false;
 }
 

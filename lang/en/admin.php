@@ -625,6 +625,28 @@ $string['localstringcustomization'] = 'Local string customization';
 $string['location'] = 'Location';
 $string['locationsettings'] = 'Location settings';
 $string['locked'] = 'locked';
+$string['lockoutduration'] = 'Account lockout duration';
+$string['lockoutduration_desc'] = 'Locked out account is automatically unlocked after this duration.';
+$string['lockoutemailbody'] = 'Your account with username {$a->username} on server \'{$a->sitename}\'
+was locked out after multiple invalid login attempts.
+
+To unlock the account immediately go to the following address
+
+{$a->link}
+
+In most mail programs, this should appear as a blue link
+which you can just click on.  If that doesn\'t work,
+then cut and paste the address into the address
+line at the top of your web browser window.
+
+If you need help, please contact the site administrator,
+{$a->admin}';
+$string['lockoutemailsubject'] = 'Your account on {$a} was locked out';
+$string['lockouterrorunlock'] = 'Invalid account unlock information supplied.';
+$string['lockoutthreshold'] = 'Account lockout threshold';
+$string['lockoutthreshold_desc'] = 'Select number of failed login attempts that result in account lockout. This feature may be abused in denial of service attacks.';
+$string['lockoutwindow'] = 'Account lockout observation window';
+$string['lockoutwindow_desc'] = 'Observation time for lockout threshold, if there are no failed attempts the threshold counter is reset after this time.';
 $string['log'] = 'Logs';
 $string['logguests'] = 'Log guest access';
 $string['logguests_help'] = 'This setting enables logging of actions by guest account and not logged in users. High profile sites may want to disable this logging for performance reasons. It is recommended to keep this setting enabled on production sites.';
@@ -989,6 +1011,7 @@ $string['unbookmarkthispage'] = 'Unbookmark this page';
 $string['unicoderecommended'] = 'Storing all your data in Unicode (UTF-8) is recommended. New installations should be performed into databases that have their default character set as Unicode.  If you are upgrading, you should perform the UTF-8 migration process (see the Admin page).';
 $string['unicoderequired'] = 'It is required that you store all your data in Unicode format (UTF-8). New installations must be performed into databases that have their default character set as Unicode.  If you are upgrading, you should perform the UTF-8 migration process (see the Admin page).';
 $string['uninstallplugin'] = 'Uninstall';
+$string['unlockaccount'] = 'Unlock account';
 $string['unsettheme'] = 'Unset theme';
 $string['unsupported'] = 'Unsupported';
 $string['unsuspenduser'] = 'Activate user account';

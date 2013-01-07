@@ -31,6 +31,25 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * Not used any more, the account lockout handling is now
+ * part of authenticate_user_login().
+ * @deprecated
+ */
+function update_login_count() {
+    // TODO: delete function in Moodle 2.6
+    debugging('update_login_count() is deprecated, all calls need to be removed');
+}
+
+/**
+ * Not used any more, replaced by proper account lockout.
+ * @deprecated
+ */
+function reset_login_count() {
+    // TODO: delete function in Moodle 2.6
+    debugging('reset_login_count() is deprecated, all calls need to be removed');
+}
+
+/**
  * Unsupported session id rewriting.
  * @deprecated
  * @param string $buffer

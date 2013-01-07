@@ -73,15 +73,11 @@ class login_change_password_form extends moodleform {
         global $USER;
         $errors = parent::validation($data, $files);
 
-        update_login_count();
-
         // ignore submitted username
-        if (!$user = authenticate_user_login($USER->username, $data['password'])) {
+        if (!$user = authenticate_user_login($USER->username, $data['password'], true)) {
             $errors['password'] = get_string('invalidlogin');
             return $errors;
         }
-
-        reset_login_count();
 
         if ($data['newpassword1'] <> $data['newpassword2']) {
             $errors['newpassword1'] = get_string('passwordsdiffer');

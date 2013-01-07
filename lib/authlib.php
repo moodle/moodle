@@ -61,6 +61,22 @@ define('AUTH_REMOVEUSER_KEEP', 0);
 define('AUTH_REMOVEUSER_SUSPEND', 1);
 define('AUTH_REMOVEUSER_FULLDELETE', 2);
 
+/** Login attempt successful. */
+define('AUTH_LOGIN_OK', 0);
+
+/** Can not login because user does not exist. */
+define('AUTH_LOGIN_NOUSER', 1);
+
+/** Can not login because user is suspended. */
+define('AUTH_LOGIN_SUSPENDED', 2);
+
+/** Can not login, most probably password did not match. */
+define('AUTH_LOGIN_FAILED', 3);
+
+/** Can not login because user is locked out. */
+define('AUTH_LOGIN_LOCKOUT', 4);
+
+
 /**
  * Abstract authentication plugin.
  *
@@ -506,4 +522,179 @@ class auth_plugin_base {
         return array();
     }
 
+}
+
+/**
+ * Verify if user is locked out.
+ *
+ * @param stdClass $user
+ * @return bool true if user locked out
+ */
+function login_is_lockedout($user) {
+    global $CFG;
+
+    if ($user->mnethostid != $CFG->mnet_localhost_id) {
+        return false;
+    }
+    if (isguestuser($user)) {
+        return false;
+    }
+
+    if (empty($CFG->lockoutthreshold)) {
+        // Lockout not enabled.
+        return false;
+    }
+
+    if (get_user_preferences('login_lockout_ignored', 0, $user)) {
+        // This preference may be used for accounts that must not be locked out.
+        return false;
+    }
+
+    $locked = get_user_preferences('login_lockout', 0, $user);
+    if (!$locked) {
+        return false;
+    }
+
+    if (empty($CFG->lockoutduration)) {
+        // Locked out forever.
+        return true;
+    }
+
+    if (time() - $locked < $CFG->lockoutduration) {
+        return true;
+    }
+
+    login_unlock_account($user);
+
+    return false;
+}
+
+/**
+ * To be called after valid user login.
+ * @param stdClass $user
+ */
+function login_attempt_valid($user) {
+    global $CFG;
+
+    if ($user->mnethostid != $CFG->mnet_localhost_id) {
+        return;
+    }
+    if (isguestuser($user)) {
+        return;
+    }
+
+    // Always unlock here, there might be some race conditions or leftovers when switching threshold.
+    login_unlock_account($user);
+}
+
+/**
+ * To be called after failed user login.
+ * @param stdClass $user
+ */
+function login_attempt_failed($user) {
+    global $CFG;
+
+    if ($user->mnethostid != $CFG->mnet_localhost_id) {
+        return;
+    }
+    if (isguestuser($user)) {
+        return;
+    }
+
+    if (empty($CFG->lockoutthreshold)) {
+        // No threshold means no lockout.
+        // Always unlock here, there might be some race conditions or leftovers when switching threshold.
+        login_unlock_account($user);
+        return;
+    }
+
+    $count = get_user_preferences('login_failed_count', 0, $user);
+    $last = get_user_preferences('login_failed_last', 0, $user);
+
+    if (!empty($CFG->lockoutwindow) and time() - $last > $CFG->lockoutwindow) {
+        $count = 0;
+    }
+
+    $count = $count+1;
+
+    set_user_preference('login_failed_count', $count, $user);
+    set_user_preference('login_failed_last', time(), $user);
+
+    if ($count >= $CFG->lockoutthreshold) {
+        login_lock_account($user);
+    }
+}
+
+/**
+ * Lockout user and send notification email.
+ *
+ * @param stdClass $user
+ */
+function login_lock_account($user) {
+    global $CFG, $SESSION;
+
+    if ($user->mnethostid != $CFG->mnet_localhost_id) {
+        return;
+    }
+    if (isguestuser($user)) {
+        return;
+    }
+
+    if (get_user_preferences('login_lockout_ignored', 0, $user)) {
+        // This user can not be locked out.
+        return;
+    }
+
+    $alreadylockedout = get_user_preferences('login_lockout', 0, $user);
+
+    set_user_preference('login_lockout', time(), $user);
+
+    if ($alreadylockedout == 0) {
+        $secret = random_string(15);
+        set_user_preference('login_lockout_secret', $secret, $user);
+
+        // Some nasty hackery to get strings and dates localised for target user.
+        $sessionlang = isset($SESSION->lang) ? $SESSION->lang : null;
+        if (get_string_manager()->translation_exists($user->lang, false)) {
+            $SESSION->lang = $user->lang;
+            moodle_setlocale();
+        }
+
+        $site = get_site();
+        $supportuser = generate_email_supportuser();
+
+        $data = new stdClass();
+        $data->firstname = $user->firstname;
+        $data->lastname  = $user->lastname;
+        $data->username  = $user->username;
+        $data->sitename  = format_string($site->fullname);
+        $data->link      = $CFG->wwwroot.'/login/unlock_account.php?u='.$user->id.'&s='.$secret;
+        $data->admin     = generate_email_signoff();
+
+        $message = get_string('lockoutemailbody', 'admin', $data);
+        $subject = get_string('lockoutemailsubject', 'admin', format_string($site->fullname));
+
+        if ($message) {
+            // Directly email rather than using the messaging system to ensure its not routed to a popup or jabber.
+            email_to_user($user, $supportuser, $subject, $message);
+        }
+
+        if ($SESSION->lang !== $sessionlang) {
+            $SESSION->lang = $sessionlang;
+            moodle_setlocale();
+        }
+    }
+}
+
+/**
+ * Unlock user account and reset timers.
+ *
+ * @param stdClass $user
+ */
+function login_unlock_account($user) {
+    unset_user_preference('login_lockout', $user);
+    unset_user_preference('login_failed_count', $user);
+    unset_user_preference('login_failed_last', $user);
+
+    // Note: do not clear the lockout secret because user might click on the link repeatedly.
 }

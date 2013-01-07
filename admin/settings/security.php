@@ -59,6 +59,11 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $temp->add(new admin_setting_configcheckbox('cronclionly', new lang_string('cronclionly', 'admin'), new lang_string('configcronclionly', 'admin'), 0));
     $temp->add(new admin_setting_configpasswordunmask('cronremotepassword', new lang_string('cronremotepassword', 'admin'), new lang_string('configcronremotepassword', 'admin'), ''));
 
+    $options = array(0=>get_string('no'), 3=>3, 5=>5, 7=>7, 10=>10, 20=>20, 30=>30, 50=>50, 100=>100);
+    $temp->add(new admin_setting_configselect('lockoutthreshold', new lang_string('lockoutthreshold', 'admin'), new lang_string('lockoutthreshold_desc', 'admin'), 0, $options));
+    $temp->add(new admin_setting_configduration('lockoutwindow', new lang_string('lockoutwindow', 'admin'), new lang_string('lockoutwindow_desc', 'admin'), 60*30));
+    $temp->add(new admin_setting_configduration('lockoutduration', new lang_string('lockoutduration', 'admin'), new lang_string('lockoutduration_desc', 'admin'), 60*30));
+
     $temp->add(new admin_setting_configcheckbox('passwordpolicy', new lang_string('passwordpolicy', 'admin'), new lang_string('configpasswordpolicy', 'admin'), 1));
     $temp->add(new admin_setting_configtext('minpasswordlength', new lang_string('minpasswordlength', 'admin'), new lang_string('configminpasswordlength', 'admin'), 8, PARAM_INT));
     $temp->add(new admin_setting_configtext('minpassworddigits', new lang_string('minpassworddigits', 'admin'), new lang_string('configminpassworddigits', 'admin'), 1, PARAM_INT));
