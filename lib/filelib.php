@@ -1461,6 +1461,7 @@ function &get_mimetypes_array() {
         'isf'  => array ('type'=>'application/inspiration', 'icon'=>'isf'),
         'ist'  => array ('type'=>'application/inspiration.template', 'icon'=>'isf'),
         'java' => array ('type'=>'text/plain', 'icon'=>'sourcecode'),
+        'jar'  => array ('type'=>'application/java-archive', 'icon' => 'archive'),
         'jcb'  => array ('type'=>'text/xml', 'icon'=>'markup'),
         'jcl'  => array ('type'=>'text/xml', 'icon'=>'markup'),
         'jcw'  => array ('type'=>'text/xml', 'icon'=>'markup'),
