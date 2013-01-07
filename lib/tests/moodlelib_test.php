@@ -2144,4 +2144,56 @@ class moodlelib_testcase extends advanced_testcase {
         date_default_timezone_set($systemdefaulttimezone);
         setlocale(LC_TIME, $oldlocale);
     }
+
+    public function test_get_config() {
+        global $CFG;
+
+        $this->resetAfterTest();
+
+        // Preparation.
+        set_config('phpunit_test_get_config_1', 'test 1');
+        set_config('phpunit_test_get_config_2', 'test 2', 'mod_forum');
+        if (!is_array($CFG->config_php_settings)) {
+            $CFG->config_php_settings = array();
+        }
+        $CFG->config_php_settings['phpunit_test_get_config_3'] = 'test 3';
+
+        if (!is_array($CFG->forced_plugin_settings)) {
+            $CFG->forced_plugin_settings = array();
+        }
+        if (!array_key_exists('mod_forum', $CFG->forced_plugin_settings)) {
+            $CFG->forced_plugin_settings['mod_forum'] = array();
+        }
+        $CFG->forced_plugin_settings['mod_forum']['phpunit_test_get_config_4'] = 'test 4';
+        $CFG->phpunit_test_get_config_5 = 'test 5';
+
+        // Testing.
+        $this->assertEquals('test 1', get_config('core', 'phpunit_test_get_config_1'));
+        $this->assertEquals('test 2', get_config('mod_forum', 'phpunit_test_get_config_2'));
+        $this->assertEquals('test 3', get_config('core', 'phpunit_test_get_config_3'));
+        $this->assertEquals('test 4', get_config('mod_forum', 'phpunit_test_get_config_4'));
+        $this->assertFalse(get_config('core', 'phpunit_test_get_config_5'));
+        $this->assertFalse(get_config('core', 'phpunit_test_get_config_x'));
+        $this->assertFalse(get_config('mod_forum', 'phpunit_test_get_config_x'));
+
+        // Test config we know to exist.
+        $this->assertEquals($CFG->dataroot, get_config('core', 'dataroot'));
+        $this->assertEquals($CFG->phpunit_dataroot, get_config('core', 'phpunit_dataroot'));
+        $this->assertEquals($CFG->dataroot, get_config('core', 'phpunit_dataroot'));
+        $this->assertEquals(get_config('core', 'dataroot'), get_config('core', 'phpunit_dataroot'));
+
+        // Test setting a config var that already exists.
+        set_config('phpunit_test_get_config_1', 'test a');
+        $this->assertEquals('test a', $CFG->phpunit_test_get_config_1);
+        $this->assertEquals('test a', get_config('core', 'phpunit_test_get_config_1'));
+
+        // Test cache invalidation.
+        $cache = cache::make('core', 'config');
+        $this->assertInternalType('array', $cache->get('core'));
+        $this->assertInternalType('array', $cache->get('mod_forum'));
+        set_config('phpunit_test_get_config_1', 'test b');
+        $this->assertFalse($cache->get('core'));
+        set_config('phpunit_test_get_config_4', 'test c', 'mod_forum');
+        $this->assertFalse($cache->get('mod_forum'));
+    }
 }
