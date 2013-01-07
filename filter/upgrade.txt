@@ -1,6 +1,13 @@
 This file describes API changes in core filter API and plugins,
 information provided here is intended especially for developers.
 
+=== 2.5 ===
+
+* legacy_filter emulation was removed
+* support for 'mod/*' filters was removed
+* use short filter name instead of old path, ex.: 'filter/tex' ---> 'tex'
+  in all filter API functions and methods
+
 === 2.3 ===
 
 * new setup() method added to moodle_text_filter, invoked before

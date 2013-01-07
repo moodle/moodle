@@ -1524,5 +1524,46 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012120300.04);
     }
 
+    if ($oldversion < 2012120300.07) {
+        // Purge removed module filters and all their settings.
+
+        $tables = array('filter_active', 'filter_config');
+        foreach ($tables as $table) {
+            $DB->delete_records_select($table, "filter LIKE 'mod/%'");
+            $filters = $DB->get_records_sql("SELECT DISTINCT filter FROM {{$table}} WHERE filter LIKE 'filter/%'");
+            foreach ($filters as $filter) {
+                $DB->set_field($table, 'filter', substr($filter->filter, 7), array('filter'=>$filter->filter));
+            }
+        }
+
+        $configs = array('stringfilters', 'filterall');
+        foreach ($configs as $config) {
+            if ($filters = get_config(null, $config)) {
+                $filters = explode(',', $filters);
+                $newfilters = array();
+                foreach($filters as $filter) {
+                    if (strpos($filter, '/') === false) {
+                        $newfilters[] = $filter;
+                    } else if (strpos($filter, 'filter/') === 0) {
+                        $newfilters[] = substr($filter, 7);
+                    }
+                }
+                $filters = implode(',', $newfilters);
+                set_config($config, $filters);
+            }
+        }
+
+        unset($tables);
+        unset($table);
+        unset($configs);
+        unset($newfilters);
+        unset($filters);
+        unset($filter);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2012120300.07);
+    }
+
+
     return true;
 }

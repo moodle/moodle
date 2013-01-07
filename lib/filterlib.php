@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,8 +17,7 @@
 /**
  * Library functions for managing text filter plugins.
  *
- * @package    core
- * @subpackage filter
+ * @package    core_filter
  * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -50,8 +48,7 @@ define('TEXTFILTER_EXCL_SEPARATOR', '-%-');
  *
  * This class is a singleton.
  *
- * @package    core
- * @subpackage filter
+ * @package    core_filter
  * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -115,31 +112,25 @@ class filter_manager {
     }
 
     /**
-     * Factory method for creating a filter
+     * Factory method for creating a filter.
      *
-     * @param string $filter The filter name, for example 'filter/tex' or 'mod/glossary'.
-     * @param object $context context object.
+     * @param string $filtername The filter name, for example 'tex'.
+     * @param context $context context object.
      * @param array $localconfig array of local configuration variables for this filter.
-     * @return object moodle_text_filter The filter, or null, if this type of filter is
+     * @return moodle_text_filter The filter, or null, if this type of filter is
      *      not recognised or could not be created.
      */
     protected function make_filter_object($filtername, $context, $localconfig) {
         global $CFG;
-        $path = $CFG->dirroot .'/'. $filtername .'/filter.php';
+        $path = $CFG->dirroot .'/filter/'. $filtername .'/filter.php';
         if (!is_readable($path)) {
             return null;
         }
         include_once($path);
 
-        $filterclassname = 'filter_' . basename($filtername);
+        $filterclassname = 'filter_' . $filtername;
         if (class_exists($filterclassname)) {
             return new $filterclassname($context, $localconfig);
-        }
-
-        // TODO: deprecated since 2.2, will be out in 2.3, see MDL-29996
-        $legacyfunctionname = basename($filtername) . '_filter';
-        if (function_exists($legacyfunctionname)) {
-            return new legacy_filter($legacyfunctionname, $context, $localconfig);
         }
 
         return null;
@@ -193,7 +184,7 @@ class filter_manager {
      */
     public function filter_text($text, $context, array $options = array()) {
         $text = $this->apply_filter_chain($text, $this->get_text_filters($context), $options);
-        /// <nolink> tags removed for XHTML compatibility
+        // <nolink> tags removed for XHTML compatibility
         $text = str_replace(array('<nolink>', '</nolink>'), '', $text);
         return $text;
     }
@@ -202,7 +193,7 @@ class filter_manager {
      * Filter a piece of string
      *
      * @param string $string The text to filter
-     * @param object $context
+     * @param context $context
      * @return string resulting string
      */
     public function filter_string($string, $context) {
@@ -211,7 +202,7 @@ class filter_manager {
 
     /**
      * @todo Document this function
-     * @param object $context
+     * @param context $context
      * @return object A string filter
      */
     public function text_filtering_hash($context) {
@@ -253,8 +244,7 @@ class filter_manager {
  *
  * @todo Document this class
  *
- * @package    core
- * @subpackage filter
+ * @package    core_filter
  * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -286,8 +276,7 @@ class null_filter_manager {
  *
  * @todo Document this class
  *
- * @package    core
- * @subpackage filter
+ * @package    core_filter
  * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -351,8 +340,7 @@ class performance_measuring_filter_manager extends filter_manager {
  * Base class for text filters. You just need to override this class and
  * implement the filter method.
  *
- * @package    core
- * @subpackage filter
+ * @package    core_filter
  * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -364,9 +352,9 @@ abstract class moodle_text_filter {
 
     /**
      * Set any context-specific configuration for this filter.
-     * @param object $context The current course id.
-     * @param object $context The current context.
-     * @param array $config Any context-specific configuration for this filter.
+     *
+     * @param context $context The current context.
+     * @param array $localconfig Any context-specific configuration for this filter.
      */
     public function __construct($context, array $localconfig) {
         $this->context = $context;
@@ -406,50 +394,6 @@ abstract class moodle_text_filter {
      * @return the HTML content after the filtering has been applied.
      */
     public abstract function filter($text, array $options = array());
-}
-
-/**
- * moodle_text_filter implementation that encapsulates an old-style filter that
- * only defines a function, not a class.
- *
- * @deprecated since 2.2, see MDL-29995
- * @todo will be out in 2.3, see MDL-29996
- * @package    core
- * @subpackage filter
- * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class legacy_filter extends moodle_text_filter {
-    /** @var string */
-    protected $filterfunction;
-    protected $courseid;
-
-    /**
-     * Set any context-specific configuration for this filter.
-     *
-     * @param string $filterfunction
-     * @param object $context The current context.
-     * @param array $config Any context-specific configuration for this filter.
-     */
-    public function __construct($filterfunction, $context, array $localconfig) {
-        parent::__construct($context, $localconfig);
-        $this->filterfunction = $filterfunction;
-        $this->courseid = get_courseid_from_context($this->context);
-    }
-
-    /**
-     * @param string $text
-     * @param array $options options - not supported for legacy filters
-     * @return mixed
-     */
-    public function filter($text, array $options = array()) {
-        if ($this->courseid) {
-            // old filters are called only when inside courses
-            return call_user_func($this->filterfunction, $this->courseid, $text);
-        } else {
-            return $text;
-        }
-    }
 }
 
 /**
@@ -509,66 +453,40 @@ class filterobject {
 }
 
 /**
- * Look up the name of this filter in the most appropriate location.
- * If $filterlocation = 'mod' then does get_string('filtername', $filter);
- * else if $filterlocation = 'filter' then does get_string('filtername', 'filter_' . $filter);
- * with a fallback to get_string('filtername', $filter) for backwards compatibility.
- * These are the only two options supported at the moment.
+ * Look up the name of this filter
  *
- * @param string $filter the folder name where the filter lives.
+ * @param string $filter the filter name
  * @return string the human-readable name for this filter.
  */
 function filter_get_name($filter) {
-    // TODO: should we be using pluginname here instead? , see MDL-29998
-    list($type, $filter) = explode('/', $filter);
-    switch ($type) {
-        case 'filter':
-            $strfiltername = get_string('filtername', 'filter_' . $filter);
-            if (substr($strfiltername, 0, 2) != '[[') {
-                // found a valid string.
-                return $strfiltername;
-            }
-            // Fall through to try the legacy location.
+    if (strpos($filter, 'filter/') === 0) {
+        debugging("Old '$filter'' parameter used in filter_get_name()");
+        $filter = substr($filter, 7);
+    } else if (strpos($filter, '/') !== false) {
+        throw new coding_exception('Unknown filter type ' . $filter);
+    }
 
-        // TODO: deprecated since 2.2, will be out in 2.3, see MDL-29996
-        case 'mod':
-            $strfiltername = get_string('filtername', $filter);
-            if (substr($strfiltername, 0, 2) == '[[') {
-                $strfiltername .= ' (' . $type . '/' . $filter . ')';
-            }
-            return $strfiltername;
-
-        default:
-            throw new coding_exception('Unknown filter type ' . $type);
+    if (get_string_manager()->string_exists('filtername', 'filter_' . $filter)) {
+        return get_string('filtername', 'filter_' . $filter);
+    } else {
+        return $filter;
     }
 }
 
 /**
  * Get the names of all the filters installed in this Moodle.
  *
- * @global object
  * @return array path => filter name from the appropriate lang file. e.g.
- * array('mod/glossary' => 'Glossary Auto-linking', 'filter/tex' => 'TeX Notation');
+ * array('tex' => 'TeX Notation');
  * sorted in alphabetical order of name.
  */
 function filter_get_all_installed() {
     global $CFG;
+
     $filternames = array();
-    // TODO: deprecated since 2.2, will be out in 2.3, see MDL-29996
-    $filterlocations = array('mod', 'filter');
-    foreach ($filterlocations as $filterlocation) {
-        // TODO: move get_list_of_plugins() to get_plugin_list()
-        $filters = get_list_of_plugins($filterlocation);
-        foreach ($filters as $filter) {
-            // MDL-29994 - Ignore mod/data and mod/glossary filters forever, this will be out in 2.3
-            if ($filterlocation == 'mod' && ($filter == 'data' || $filter == 'glossary')) {
-                continue;
-            }
-            $path = $filterlocation . '/' . $filter;
-            if (is_readable($CFG->dirroot . '/' . $path . '/filter.php')) {
-                $strfiltername = filter_get_name($path);
-                $filternames[$path] = $strfiltername;
-            }
+    foreach (get_list_of_plugins('filter') as $filter) {
+        if (is_readable("$CFG->dirroot/filter/$filter/filter.php")) {
+            $filternames[$filter] = filter_get_name($filter);
         }
     }
     collatorlib::asort($filternames);
@@ -578,17 +496,11 @@ function filter_get_all_installed() {
 /**
  * Set the global activated state for a text filter.
  *
- * @global object
- * @param string $filter The filter name, for example 'filter/tex' or 'mod/glossary'.
- * @param integer $state One of the values TEXTFILTER_ON, TEXTFILTER_OFF or TEXTFILTER_DISABLED.
- * @param integer $sortorder (optional) a position in the sortorder to place this filter.
- *      If not given defaults to:
- *      No change in order if we are updating an existing record, and not changing to or from TEXTFILTER_DISABLED.
- *      Just after the last currently active filter when adding an unknown filter
- *          in state TEXTFILTER_ON or TEXTFILTER_OFF, or enabling/disabling an existing filter.
- *      Just after the very last filter when adding an unknown filter in state TEXTFILTER_DISABLED
+ * @param string $filtername The filter name, for example 'tex'.
+ * @param int $state One of the values TEXTFILTER_ON, TEXTFILTER_OFF or TEXTFILTER_DISABLED.
+ * @param int $move 1 means up, 0 means the same, -1 means down
  */
-function filter_set_global_state($filter, $state, $sortorder = false) {
+function filter_set_global_state($filtername, $state, $move = 0) {
     global $DB;
 
     // Check requested state is valid.
@@ -597,84 +509,141 @@ function filter_set_global_state($filter, $state, $sortorder = false) {
                 "Must be one of TEXTFILTER_ON, TEXTFILTER_OFF or TEXTFILTER_DISABLED.");
     }
 
-    // Check sortorder is valid.
-    if ($sortorder !== false) {
-        if ($sortorder < 1 || $sortorder > $DB->get_field('filter_active', 'MAX(sortorder)', array()) + 1) {
-            throw new coding_exception("Invalid sort order passed to filter_set_global_state.");
-        }
+    if ($move > 0) {
+        $move = 1;
+    } else if ($move < 0) {
+        $move = -1;
     }
 
-    // See if there is an existing record.
+    if (strpos($filtername, 'filter/') === 0) {
+        //debugging("Old filtername '$filtername' parameter used in filter_set_global_state()", DEBUG_DEVELOPER);
+        $filtername = substr($filtername, 7);
+    } else if (strpos($filtername, '/') !== false) {
+        throw new coding_exception("Invalid filter name '$filtername' used in filter_set_global_state()");
+    }
+
+    $transaction = $DB->start_delegated_transaction();
+
     $syscontext = context_system::instance();
-    $rec = $DB->get_record('filter_active', array('filter' => $filter, 'contextid' => $syscontext->id));
-    if (empty($rec)) {
-        $insert = true;
-        $rec = new stdClass;
-        $rec->filter = $filter;
-        $rec->contextid = $syscontext->id;
-    } else {
-        $insert = false;
-        if ($sortorder === false && !($rec->active == TEXTFILTER_DISABLED xor $state == TEXTFILTER_DISABLED)) {
-            $sortorder = $rec->sortorder;
+    $filters = $DB->get_records('filter_active', array('contextid' => $syscontext->id), 'sortorder ASC');
+
+    $on = array();
+    $off = array();
+
+    foreach($filters as $f) {
+        if ($f->active == TEXTFILTER_DISABLED) {
+            $off[$f->filter] = $f;
+        } else {
+            $on[$f->filter] = $f;
         }
     }
 
-    // Automatic sort order.
-    if ($sortorder === false) {
-        if ($state == TEXTFILTER_DISABLED && $insert) {
-            $prevmaxsortorder = $DB->get_field('filter_active', 'MAX(sortorder)', array());
-        } else {
-            $prevmaxsortorder = $DB->get_field_select('filter_active', 'MAX(sortorder)', 'active <> ?', array(TEXTFILTER_DISABLED));
-        }
-        if (empty($prevmaxsortorder)) {
-            $sortorder = 1;
-        } else {
-            $sortorder = $prevmaxsortorder + 1;
-            if (!$insert && $state == TEXTFILTER_DISABLED) {
-                $sortorder = $prevmaxsortorder;
+    // Update the state or add new record.
+    if (isset($on[$filtername])) {
+        $filter = $on[$filtername];
+        if ($filter->active != $state) {
+            $filter->active = $state;
+            $DB->update_record('filter_active', $filter);
+            if ($filter->active == TEXTFILTER_DISABLED) {
+                unset($on[$filtername]);
+                $off = array($filter->filter => $filter) + $off;
             }
         }
-    }
 
-    // Move any existing records out of the way of the sortorder.
-    if ($insert) {
-        $DB->execute('UPDATE {filter_active} SET sortorder = sortorder + 1 WHERE sortorder >= ?', array($sortorder));
-    } else if ($sortorder != $rec->sortorder) {
-        $sparesortorder = $DB->get_field('filter_active', 'MIN(sortorder)', array()) - 1;
-        $DB->set_field('filter_active', 'sortorder', $sparesortorder, array('filter' => $filter, 'contextid' => $syscontext->id));
-        if ($sortorder < $rec->sortorder) {
-            $DB->execute('UPDATE {filter_active} SET sortorder = sortorder + 1 WHERE sortorder >= ? AND sortorder < ?',
-                    array($sortorder, $rec->sortorder));
-        } else if ($sortorder > $rec->sortorder) {
-            $DB->execute('UPDATE {filter_active} SET sortorder = sortorder - 1 WHERE sortorder <= ? AND sortorder > ?',
-                    array($sortorder, $rec->sortorder));
+    } else if (isset($off[$filtername])) {
+        $filter = $off[$filtername];
+        if ($filter->active != $state) {
+            $filter->active = $state;
+            $DB->update_record('filter_active', $filter);
+            if ($filter->active != TEXTFILTER_DISABLED) {
+                unset($off[$filtername]);
+                $on[$filter->filter] = $filter;
+            }
+        }
+
+    } else {
+        $filter = new stdClass();
+        $filter->filter    = $filtername;
+        $filter->contextid = $syscontext->id;
+        $filter->active    = $state;
+        $filter->sortorder = 99999;
+        $filter->id = $DB->insert_record('filter_active', $filter);
+
+        $filters[$filter->id] = $filter;
+        if ($state == TEXTFILTER_DISABLED) {
+            $off[$filter->filter] = $filter;
+        } else {
+            $on[$filter->filter] = $filter;
         }
     }
 
-    // Insert/update the new record.
-    $rec->active = $state;
-    $rec->sortorder = $sortorder;
-    if ($insert) {
-        $DB->insert_record('filter_active', $rec);
-    } else {
-        $DB->update_record('filter_active', $rec);
+    // Move only active.
+    if ($move != 0 and isset($on[$filter->filter])) {
+        $i = 1;
+        foreach ($on as $f) {
+            $f->newsortorder = $i;
+            $i++;
+        }
+
+        $filter->newsortorder = $filter->newsortorder + $move;
+
+        foreach ($on as $f) {
+            if ($f->id == $filter->id) {
+                continue;
+            }
+            if ($f->newsortorder == $filter->newsortorder) {
+                if ($move == 1) {
+                    $f->newsortorder = $f->newsortorder - 1;
+                } else {
+                    $f->newsortorder = $f->newsortorder + 1;
+                }
+            }
+        }
+
+        collatorlib::asort_objects_by_property($on, 'newsortorder', collatorlib::SORT_NUMERIC);
     }
+
+    // Inactive are sorted by filter name.
+    collatorlib::asort_objects_by_property($off, 'filter', collatorlib::SORT_NATURAL);
+
+    // Update records if necessary.
+    $i = 1;
+    foreach ($on as $f) {
+        if ($f->sortorder != $i) {
+            $DB->set_field('filter_active', 'sortorder', $i, array('id'=>$f->id));
+        }
+        $i++;
+    }
+    foreach ($off as $f) {
+        if ($f->sortorder != $i) {
+            $DB->set_field('filter_active', 'sortorder', $i, array('id'=>$f->id));
+        }
+        $i++;
+    }
+
+    $transaction->allow_commit();
 }
 
 /**
- * @param string $filter The filter name, for example 'filter/tex' or 'mod/glossary'.
+ * @param string $filtername The filter name, for example 'tex'.
  * @return boolean is this filter allowed to be used on this site. That is, the
  *      admin has set the global 'active' setting to On, or Off, but available.
  */
-function filter_is_enabled($filter) {
-    return array_key_exists($filter, filter_get_globally_enabled());
+function filter_is_enabled($filtername) {
+    if (strpos($filtername, 'filter/') === 0) {
+        //debugging("Old filtername '$filtername' parameter used in filter_is_enabled()", DEBUG_DEVELOPER);
+        $filtername = substr($filtername, 7);
+    } else if (strpos($filtername, '/') !== false) {
+        throw new coding_exception("Invalid filter name '$filtername' used in filter_is_enabled()");
+    }
+    return array_key_exists($filtername, filter_get_globally_enabled());
 }
 
 /**
  * Return a list of all the filters that may be in use somewhere.
  *
  * @staticvar array $enabledfilters
- * @return array where the keys and values are both the filter name, like 'filter/tex'.
+ * @return array where the keys and values are both the filter name, like 'tex'.
  */
 function filter_get_globally_enabled() {
     static $enabledfilters = null;
@@ -694,8 +663,7 @@ function filter_get_globally_enabled() {
  * Return the names of the filters that should also be applied to strings
  * (when they are enabled).
  *
- * @global object
- * @return array where the keys and values are both the filter name, like 'filter/tex'.
+ * @return array where the keys and values are both the filter name, like 'tex'.
  */
 function filter_get_string_filters() {
     global $CFG;
@@ -711,7 +679,7 @@ function filter_get_string_filters() {
  * Sets whether a particular active filter should be applied to all strings by
  * format_string, or just used by format_text.
  *
- * @param string $filter The filter name, for example 'filter/tex' or 'mod/glossary'.
+ * @param string $filter The filter name, for example 'tex'.
  * @param boolean $applytostrings if true, this filter will apply to format_string
  *      and format_text, when it is enabled.
  */
@@ -732,8 +700,7 @@ function filter_set_applies_to_strings($filter, $applytostrings) {
 /**
  * Set the local activated state for a text filter.
  *
- * @global object
- * @param string $filter The filter name, for example 'filter/tex' or 'mod/glossary'.
+ * @param string $filter The filter name, for example 'tex'.
  * @param integer $contextid The id of the context to get the local config for.
  * @param integer $state One of the values TEXTFILTER_ON, TEXTFILTER_OFF or TEXTFILTER_INHERIT.
  * @return void
@@ -778,8 +745,7 @@ function filter_set_local_state($filter, $contextid, $state) {
 /**
  * Set a particular local config variable for a filter in a context.
  *
- * @global object
- * @param string $filter The filter name, for example 'filter/tex' or 'mod/glossary'.
+ * @param string $filter The filter name, for example 'tex'.
  * @param integer $contextid The id of the context to get the local config for.
  * @param string $name the setting name.
  * @param string $value the corresponding value.
@@ -808,8 +774,7 @@ function filter_set_local_config($filter, $contextid, $name, $value) {
 /**
  * Remove a particular local config variable for a filter in a context.
  *
- * @global object
- * @param string $filter The filter name, for example 'filter/tex' or 'mod/glossary'.
+ * @param string $filter The filter name, for example 'tex'.
  * @param integer $contextid The id of the context to get the local config for.
  * @param string $name the setting name.
  */
@@ -824,8 +789,7 @@ function filter_unset_local_config($filter, $contextid, $name) {
  * for you automatically. You only need this, for example, when you are getting
  * the config so you can show the user an editing from.
  *
- * @global object
- * @param string $filter The filter name, for example 'filter/tex' or 'mod/glossary'.
+ * @param string $filter The filter name, for example 'tex'.
  * @param integer $contextid The ID of the context to get the local config for.
  * @return array of name => value pairs.
  */
@@ -838,7 +802,6 @@ function filter_get_local_config($filter, $contextid) {
  * This function is for use by backup. Gets all the filter information specific
  * to one context.
  *
- * @global object
  * @param int $contextid
  * @return array Array with two elements. The first element is an array of objects with
  *      fields filter and active. These come from the filter_active table. The
@@ -847,7 +810,6 @@ function filter_get_local_config($filter, $contextid) {
  */
 function filter_get_all_local_settings($contextid) {
     global $DB;
-    $context = context_system::instance();
     return array(
         $DB->get_records('filter_active', array('contextid' => $contextid), 'filter', 'filter,active'),
         $DB->get_records('filter_config', array('contextid' => $contextid), 'filter,name', 'filter,name,value'),
@@ -858,14 +820,13 @@ function filter_get_all_local_settings($contextid) {
  * Get the list of active filters, in the order that they should be used
  * for a particular context, along with any local configuration variables.
  *
- * @global object
- * @param object $context a context
+ * @param context $context a context
  * @return array an array where the keys are the filter names, for example
- *      'filter/tex' or 'mod/glossary' and the values are any local
+ *      'tex' and the values are any local
  *      configuration for that filter, as an array of name => value pairs
  *      from the filter_config table. In a lot of cases, this will be an
  *      empty array. So, an example return value for this function might be
- *      array('filter/tex' => array(), 'mod/glossary' => array('glossaryid', 123))
+ *      array(tex' => array())
  */
 function filter_get_active_in_context($context) {
     global $DB, $FILTERLIB_PRIVATE;
@@ -891,15 +852,13 @@ function filter_get_active_in_context($context) {
              JOIN {context} ctx ON f.contextid = ctx.id
              WHERE ctx.id IN ($contextids)
              GROUP BY filter
-             HAVING MAX(f.active * " . $DB->sql_cast_2signed('ctx.depth') .
-                    ") > -MIN(f.active * " . $DB->sql_cast_2signed('ctx.depth') . ")
+             HAVING MAX(f.active * ctx.depth) > -MIN(f.active * ctx.depth)
          ) active
          LEFT JOIN {filter_config} fc ON fc.filter = active.filter AND fc.contextid = $context->id
          ORDER BY active.sortorder";
-    //TODO: remove sql_cast_2signed() once we do not support upgrade from Moodle 2.2
     $rs = $DB->get_recordset_sql($sql);
 
-    // Masssage the data into the specified format to return.
+    // Massage the data into the specified format to return.
     $filters = array();
     foreach ($rs as $row) {
         if (!isset($filters[$row->filter])) {
@@ -918,6 +877,7 @@ function filter_get_active_in_context($context) {
 /**
  * Preloads the list of active filters for all activities (modules) on the course
  * using two database queries.
+ *
  * @param course_modinfo $modinfo Course object from get_fast_modinfo
  */
 function filter_preload_activities(course_modinfo $modinfo) {
@@ -1000,7 +960,7 @@ function filter_preload_activities(course_modinfo $modinfo) {
         }
     }
 
-    // Chuck away the ones that aren't active
+    // Chuck away the ones that aren't active.
     foreach ($courseactive as $filter=>$score) {
         if ($score <= 0) {
             unset($courseactive[$filter]);
@@ -1010,7 +970,7 @@ function filter_preload_activities(course_modinfo $modinfo) {
     }
 
     // Loop through the contexts to reconstruct filter_active lists for each
-    // cm on the course
+    // cm on the course.
     if (!isset($FILTERLIB_PRIVATE->active)) {
         $FILTERLIB_PRIVATE->active = array();
     }
@@ -1023,18 +983,18 @@ function filter_preload_activities(course_modinfo $modinfo) {
             foreach ($remainingactives[$contextid] as $row) {
                 if ($row->active > 0 && empty($banned[$row->filter])) {
                     // If it's marked active for specific context, add entry
-                    // (doesn't matter if one exists already)
+                    // (doesn't matter if one exists already).
                     $FILTERLIB_PRIVATE->active[$contextid][$row->filter] = array();
                 } else {
                     // If it's marked inactive, remove entry (doesn't matter
-                    // if it doesn't exist)
+                    // if it doesn't exist).
                     unset($FILTERLIB_PRIVATE->active[$contextid][$row->filter]);
                 }
             }
         }
     }
 
-    // Process all config rows to add config data to these entries
+    // Process all config rows to add config data to these entries.
     foreach ($filterconfigs as $row) {
         if (isset($FILTERLIB_PRIVATE->active[$row->contextid][$row->filter])) {
             $FILTERLIB_PRIVATE->active[$row->contextid][$row->filter][$row->name] = $row->value;
@@ -1046,10 +1006,9 @@ function filter_preload_activities(course_modinfo $modinfo) {
  * List all of the filters that are available in this context, and what the
  * local and inherited states of that filter are.
  *
- * @global object
- * @param object $context a context that is not the system context.
- * @return array an array with filter names, for example 'filter/tex' or
- *      'mod/glossary' as keys. and and the values are objects with fields:
+ * @param context $context a context that is not the system context.
+ * @return array an array with filter names, for example 'tex'
+ *      as keys. and and the values are objects with fields:
  *      ->filter filter name, same as the key.
  *      ->localstate TEXTFILTER_ON/OFF/INHERIT
  *      ->inheritedstate TEXTFILTER_ON/OFF - the state that will be used if localstate is set to TEXTFILTER_INHERIT.
@@ -1072,8 +1031,7 @@ function filter_get_available_in_context($context) {
                 ELSE fa.active END AS localstate,
              parent_states.inheritedstate
          FROM (SELECT f.filter, MAX(f.sortorder) AS sortorder,
-                    CASE WHEN MAX(f.active * " . $DB->sql_cast_2signed('ctx.depth') .
-                            ") > -MIN(f.active * " . $DB->sql_cast_2signed('ctx.depth') . ") THEN " . TEXTFILTER_ON . "
+                    CASE WHEN MAX(f.active * ctx.depth) > -MIN(f.active * ctx.depth) THEN " . TEXTFILTER_ON . "
                     ELSE " . TEXTFILTER_OFF . " END AS inheritedstate
              FROM {filter_active} f
              JOIN {context} ctx ON f.contextid = ctx.id
@@ -1089,7 +1047,6 @@ function filter_get_available_in_context($context) {
 /**
  * This function is for use by the filter administration page.
  *
- * @global object
  * @return array 'filtername' => object with fields 'filter' (=filtername), 'active' and 'sortorder'
  */
 function filter_get_global_states() {
@@ -1101,14 +1058,12 @@ function filter_get_global_states() {
 /**
  * Delete all the data in the database relating to a filter, prior to deleting it.
  *
- * @global object
- * @param string $filter The filter name, for example 'filter/tex' or 'mod/glossary'.
+ * @param string $filter The filter name, for example 'tex'.
  */
 function filter_delete_all_for_filter($filter) {
     global $DB;
-    if (substr($filter, 0, 7) == 'filter/') {
-        unset_all_config_for_plugin('filter_' . basename($filter));
-    }
+
+    unset_all_config_for_plugin('filter_' . $filter);
     $DB->delete_records('filter_active', array('filter' => $filter));
     $DB->delete_records('filter_config', array('filter' => $filter));
 }
@@ -1126,27 +1081,26 @@ function filter_delete_all_for_context($contextid) {
 
 /**
  * Does this filter have a global settings page in the admin tree?
- * (The settings page for a filter must be called, for example,
- * filtersettingfiltertex or filtersettingmodglossay.)
+ * (The settings page for a filter must be called, for example, filtersettingfiltertex.)
  *
- * @param string $filter The filter name, for example 'filter/tex' or 'mod/glossary'.
+ * @param string $filter The filter name, for example 'tex'.
  * @return boolean Whether there should be a 'Settings' link on the config page.
  */
 function filter_has_global_settings($filter) {
     global $CFG;
-    $settingspath = $CFG->dirroot . '/' . $filter . '/filtersettings.php';
+    $settingspath = $CFG->dirroot . '/filter/' . $filter . '/filtersettings.php';
     return is_readable($settingspath);
 }
 
 /**
  * Does this filter have local (per-context) settings?
  *
- * @param string $filter The filter name, for example 'filter/tex' or 'mod/glossary'.
+ * @param string $filter The filter name, for example 'tex'.
  * @return boolean Whether there should be a 'Settings' link on the manage filters in context page.
  */
 function filter_has_local_settings($filter) {
     global $CFG;
-    $settingspath = $CFG->dirroot . '/' . $filter . '/filterlocalsettings.php';
+    $settingspath = $CFG->dirroot . '/filter/' . $filter . '/filterlocalsettings.php';
     return is_readable($settingspath);
 }
 
@@ -1162,7 +1116,7 @@ function filter_context_may_have_filter_settings($context) {
 }
 
 /**
- * Process phrases intelligently found within a HTML text (such as adding links)
+ * Process phrases intelligently found within a HTML text (such as adding links).
  *
  * @staticvar array $usedpharses
  * @param string $text             the text that we are filtering
@@ -1179,8 +1133,8 @@ function filter_phrases($text, &$link_array, $ignoretagsopen=NULL, $ignoretagscl
 
     static $usedphrases;
 
-    $ignoretags = array();  //To store all the enclosig tags to be completely ignored
-    $tags = array();        //To store all the simple tags to be ignored
+    $ignoretags = array();  // To store all the enclosig tags to be completely ignored.
+    $tags = array();        // To store all the simple tags to be ignored.
 
     if (!$overridedefaultignore) {
         // A list of open/close tags that we should not replace within
@@ -1192,12 +1146,12 @@ function filter_phrases($text, &$link_array, $ignoretagsopen=NULL, $ignoretagscl
         $filterignoretagsclose = array('</head>', '</nolink>', '</span>',
                  '</script>', '</textarea>', '</select>','</a>');
     } else {
-        // Set an empty default list
+        // Set an empty default list.
         $filterignoretagsopen = array();
         $filterignoretagsclose = array();
     }
 
-    // Add the user defined ignore tags to the default list
+    // Add the user defined ignore tags to the default list.
     if ( is_array($ignoretagsopen) ) {
         foreach ($ignoretagsopen as $open) {
             $filterignoretagsopen[] = $open;
@@ -1207,41 +1161,41 @@ function filter_phrases($text, &$link_array, $ignoretagsopen=NULL, $ignoretagscl
         }
     }
 
-/// Invalid prefixes and suffixes for the fullmatch searches
-/// Every "word" character, but the underscore, is a invalid suffix or prefix.
-/// (nice to use this because it includes national characters (accents...) as word characters.
+    // Invalid prefixes and suffixes for the fullmatch searches
+    // Every "word" character, but the underscore, is a invalid suffix or prefix.
+    // (nice to use this because it includes national characters (accents...) as word characters.
     $filterinvalidprefixes = '([^\W_])';
     $filterinvalidsuffixes = '([^\W_])';
 
-    //// Double up some magic chars to avoid "accidental matches"
+    // Double up some magic chars to avoid "accidental matches"
     $text = preg_replace('/([#*%])/','\1\1',$text);
 
 
-////Remove everything enclosed by the ignore tags from $text
+    //Remove everything enclosed by the ignore tags from $text
     filter_save_ignore_tags($text,$filterignoretagsopen,$filterignoretagsclose,$ignoretags);
 
-/// Remove tags from $text
+    // Remove tags from $text
     filter_save_tags($text,$tags);
 
-/// Time to cycle through each phrase to be linked
+    // Time to cycle through each phrase to be linked
     $size = sizeof($link_array);
     for ($n=0; $n < $size; $n++) {
         $linkobject =& $link_array[$n];
 
-    /// Set some defaults if certain properties are missing
-    /// Properties may be missing if the filterobject class has not been used to construct the object
+        // Set some defaults if certain properties are missing
+        // Properties may be missing if the filterobject class has not been used to construct the object
         if (empty($linkobject->phrase)) {
             continue;
         }
 
-    /// Avoid integers < 1000 to be linked. See bug 1446.
+        // Avoid integers < 1000 to be linked. See bug 1446.
         $intcurrent = intval($linkobject->phrase);
         if (!empty($intcurrent) && strval($intcurrent) == $linkobject->phrase && $intcurrent < 1000) {
             continue;
         }
 
-    /// All this work has to be done ONLY it it hasn't been done before
-    if (!$linkobject->work_calculated) {
+        // All this work has to be done ONLY it it hasn't been done before
+         if (!$linkobject->work_calculated) {
             if (!isset($linkobject->hreftagbegin) or !isset($linkobject->hreftagend)) {
                 $linkobject->work_hreftagbegin = '<span class="highlight"';
                 $linkobject->work_hreftagend   = '</span>';
@@ -1250,8 +1204,8 @@ function filter_phrases($text, &$link_array, $ignoretagsopen=NULL, $ignoretagscl
                 $linkobject->work_hreftagend   = $linkobject->hreftagend;
             }
 
-        /// Double up chars to protect true duplicates
-        /// be cleared up before returning to the user.
+            // Double up chars to protect true duplicates
+            // be cleared up before returning to the user.
             $linkobject->work_hreftagbegin = preg_replace('/([#*%])/','\1\1',$linkobject->work_hreftagbegin);
 
             if (empty($linkobject->casesensitive)) {
@@ -1265,41 +1219,41 @@ function filter_phrases($text, &$link_array, $ignoretagsopen=NULL, $ignoretagscl
                 $linkobject->work_fullmatch = true;
             }
 
-        /// Strip tags out of the phrase
+            // Strip tags out of the phrase
             $linkobject->work_phrase = strip_tags($linkobject->phrase);
 
-        /// Double up chars that might cause a false match -- the duplicates will
-        /// be cleared up before returning to the user.
+            // Double up chars that might cause a false match -- the duplicates will
+            // be cleared up before returning to the user.
             $linkobject->work_phrase = preg_replace('/([#*%])/','\1\1',$linkobject->work_phrase);
 
-        /// Set the replacement phrase properly
+            // Set the replacement phrase properly
             if ($linkobject->replacementphrase) {    //We have specified a replacement phrase
-            /// Strip tags
+                // Strip tags
                 $linkobject->work_replacementphrase = strip_tags($linkobject->replacementphrase);
             } else {                                 //The replacement is the original phrase as matched below
                 $linkobject->work_replacementphrase = '$1';
             }
 
-        /// Quote any regular expression characters and the delimiter in the work phrase to be searched
+            // Quote any regular expression characters and the delimiter in the work phrase to be searched
             $linkobject->work_phrase = preg_quote($linkobject->work_phrase, '/');
 
-        /// Work calculated
+            // Work calculated
             $linkobject->work_calculated = true;
 
         }
 
-    /// If $CFG->filtermatchoneperpage, avoid previously (request) linked phrases
+        // If $CFG->filtermatchoneperpage, avoid previously (request) linked phrases
         if (!empty($CFG->filtermatchoneperpage)) {
             if (!empty($usedphrases) && in_array($linkobject->work_phrase,$usedphrases)) {
                 continue;
             }
         }
 
-    /// Regular expression modifiers
+        // Regular expression modifiers
         $modifiers = ($linkobject->work_casesensitive) ? 's' : 'isu'; // works in unicode mode!
 
-    /// Do we need to do a fullmatch?
-    /// If yes then go through and remove any non full matching entries
+        // Do we need to do a fullmatch?
+        // If yes then go through and remove any non full matching entries
         if ($linkobject->work_fullmatch) {
             $notfullmatches = array();
             $regexp = '/'.$filterinvalidprefixes.'('.$linkobject->work_phrase.')|('.$linkobject->work_phrase.')'.$filterinvalidsuffixes.'/'.$modifiers;
@@ -1316,7 +1270,7 @@ function filter_phrases($text, &$link_array, $ignoretagsopen=NULL, $ignoretagscl
             }
         }
 
-    /// Finally we do our highlighting
+        // Finally we do our highlighting
         if (!empty($CFG->filtermatchonepertext) || !empty($CFG->filtermatchoneperpage)) {
             $resulttext = preg_replace('/('.$linkobject->work_phrase.')/'.$modifiers,
                                       $linkobject->work_hreftagbegin.
@@ -1330,43 +1284,43 @@ function filter_phrases($text, &$link_array, $ignoretagsopen=NULL, $ignoretagscl
         }
 
 
-    /// If the text has changed we have to look for links again
+        // If the text has changed we have to look for links again
         if ($resulttext != $text) {
-        /// Set $text to $resulttext
+            // Set $text to $resulttext
             $text = $resulttext;
-        /// Remove everything enclosed by the ignore tags from $text
+            // Remove everything enclosed by the ignore tags from $text
             filter_save_ignore_tags($text,$filterignoretagsopen,$filterignoretagsclose,$ignoretags);
-        /// Remove tags from $text
+            // Remove tags from $text
             filter_save_tags($text,$tags);
-        /// If $CFG->filtermatchoneperpage, save linked phrases to request
+            // If $CFG->filtermatchoneperpage, save linked phrases to request
             if (!empty($CFG->filtermatchoneperpage)) {
                 $usedphrases[] = $linkobject->work_phrase;
             }
         }
 
 
-    /// Replace the not full matches before cycling to next link object
+        // Replace the not full matches before cycling to next link object
         if (!empty($notfullmatches)) {
             $text = str_replace(array_keys($notfullmatches),$notfullmatches,$text);
             unset($notfullmatches);
         }
     }
 
-/// Rebuild the text with all the excluded areas
+    // Rebuild the text with all the excluded areas
 
     if (!empty($tags)) {
         $text = str_replace(array_keys($tags), $tags, $text);
     }
 
     if (!empty($ignoretags)) {
-        $ignoretags = array_reverse($ignoretags); /// Reversed so "progressive" str_replace() will solve some nesting problems.
+        $ignoretags = array_reverse($ignoretags);     // Reversed so "progressive" str_replace() will solve some nesting problems.
         $text = str_replace(array_keys($ignoretags),$ignoretags,$text);
     }
 
-    //// Remove the protective doubleups
+    // Remove the protective doubleups
     $text =  preg_replace('/([#*%])(\1)/','\1',$text);
 
-/// Add missing javascript for popus
+    // Add missing javascript for popus
     $text = filter_add_javascript($text);
 
 
@@ -1415,10 +1369,10 @@ function filter_remove_duplicates($linkarray) {
  **/
 function filter_save_ignore_tags(&$text, $filterignoretagsopen, $filterignoretagsclose, &$ignoretags) {
 
-/// Remove everything enclosed by the ignore tags from $text
+    // Remove everything enclosed by the ignore tags from $text
     foreach ($filterignoretagsopen as $ikey=>$opentag) {
         $closetag = $filterignoretagsclose[$ikey];
-    /// form regular expression
+        // form regular expression
         $opentag  = str_replace('/','\/',$opentag); // delimit forward slashes
         $closetag = str_replace('/','\/',$closetag); // delimit forward slashes
         $pregexp = '/'.$opentag.'(.*?)'.$closetag.'/is';
@@ -1464,10 +1418,10 @@ function filter_add_javascript($text) {
     global $CFG;
 
     if (stripos($text, '</html>') === FALSE) {
-        return $text; // this is not a html file
+        return $text; // This is not a html file.
     }
     if (strpos($text, 'onclick="return openpopup') === FALSE) {
-        return $text; // no popup - no need to add javascript
+        return $text; // No popup - no need to add javascript.
     }
     $js ="
     <script type=\"text/javascript\">
@@ -1485,11 +1439,11 @@ function filter_add_javascript($text) {
     // -->
     </script>";
     if (stripos($text, '</head>') !== FALSE) {
-        //try to add it into the head element
+        // Try to add it into the head element.
         $text = str_ireplace('</head>', $js.'</head>', $text);
         return $text;
     }
 
-    //last chance - try adding head element
+    // Last chance - try adding head element.
     return preg_replace("/<html.*?>/is", "\\0<head>".$js.'</head>', $text);
 }

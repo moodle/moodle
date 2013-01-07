@@ -6092,8 +6092,7 @@ class admin_page_managefilters extends admin_externalpage {
                 $found = true;
                 break;
             }
-            list($type, $filter) = explode('/', $path);
-            if (strpos($filter, $query) !== false) {
+            if (strpos($path, $query) !== false) {
                 $found = true;
                 break;
             }

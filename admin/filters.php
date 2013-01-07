@@ -35,7 +35,7 @@
     require_once($CFG->libdir . '/adminlib.php');
 
     $action = optional_param('action', '', PARAM_ALPHANUMEXT);
-    $filterpath = optional_param('filterpath', '', PARAM_PATH);
+    $filterpath = optional_param('filterpath', '', PARAM_SAFEDIR);
 
     require_login();
     $systemcontext = context_system::instance();
@@ -84,39 +84,22 @@
 
     case 'down':
         if (isset($filters[$filterpath])) {
-            $oldpos = $filters[$filterpath]->sortorder;
-            if ($oldpos <= count($filters)) {
-                filter_set_global_state($filterpath, $filters[$filterpath]->active, $oldpos + 1);
-            }
+            filter_set_global_state($filterpath, $filters[$filterpath]->active, 1);
         }
         break;
 
     case 'up':
         if (isset($filters[$filterpath])) {
             $oldpos = $filters[$filterpath]->sortorder;
-            if ($oldpos >= 1) {
-                filter_set_global_state($filterpath, $filters[$filterpath]->active, $oldpos - 1);
-            }
+            filter_set_global_state($filterpath, $filters[$filterpath]->active, -1);
         }
         break;
 
     case 'delete':
-        if (!empty($filternames[$filterpath])) {
-            $filtername = $filternames[$filterpath];
-        } else {
-            $filtername = $filterpath;
-        }
-
-        if (substr($filterpath, 0, 4) == 'mod/') {
-            $mod = basename($filterpath);
-            $a = new stdClass;
-            $a->filter = $filtername;
-            $a->module = get_string('modulename', $mod);
-            print_error('cannotdeletemodfilter', 'admin', $returnurl, $a);
-        }
-
         // If not yet confirmed, display a confirmation message.
         if (!optional_param('confirm', '', PARAM_BOOL)) {
+            $filtername = filter_get_name($filterpath);
+
             $title = get_string('deletefilterareyousure', 'admin', $filtername);
             echo $OUTPUT->header();
             echo $OUTPUT->heading($title);
@@ -129,7 +112,7 @@
         }
 
         // Do the deletion.
-        $title = get_string('deletingfilter', 'admin', $filtername);
+        $title = get_string('deletingfilter', 'admin', $filterpath);
         echo $OUTPUT->header();
         echo $OUTPUT->heading($title);
 
@@ -137,8 +120,8 @@
         filter_delete_all_for_filter($filterpath);
 
         $a = new stdClass;
-        $a->filter = $filtername;
-        $a->directory = $filterpath;
+        $a->filter = $filterpath;
+        $a->directory = "$CFG->dirroot/filter/$filterpath";
         echo $OUTPUT->box(get_string('deletefilterfiles', 'admin', $a), 'generalbox', 'notice');
         echo $OUTPUT->continue_button($returnurl);
         echo $OUTPUT->footer();
@@ -241,7 +224,7 @@ function get_table_row($filterinfo, $isfirstrow, $islastactive, $applytostrings)
     }
 
     // Disable/off/on
-    $select = new single_select(filters_action_url($filter, 'setstate'), 'newstate', $activechoices, $filterinfo->active, null, 'active' . basename($filter));
+    $select = new single_select(filters_action_url($filter, 'setstate'), 'newstate', $activechoices, $filterinfo->active, null, 'active' . $filter);
     $select->set_label(get_string('isactive', 'filters'), array('class' => 'accesshide'));
     $row[] = $OUTPUT->render($select);
 
@@ -263,25 +246,20 @@ function get_table_row($filterinfo, $isfirstrow, $islastactive, $applytostrings)
     $row[] = $updown;
 
     // Apply to strings.
-    $select = new single_select(filters_action_url($filter, 'setapplyto'), 'stringstoo', $applytochoices, $applytostrings, null, 'applyto' . basename($filter));
+    $select = new single_select(filters_action_url($filter, 'setapplyto'), 'stringstoo', $applytochoices, $applytostrings, null, 'applyto' . $filter);
     $select->set_label(get_string('applyto', 'filters'), array('class' => 'accesshide'));
     $select->disabled = $filterinfo->active == TEXTFILTER_DISABLED;
     $row[] = $OUTPUT->render($select);
 
     // Settings link, if required
     if (filter_has_global_settings($filter)) {
-        $row[] = '<a href="' . $CFG->wwwroot . '/' . $CFG->admin . '/settings.php?section=filtersetting' .
-                str_replace('/', '',$filter) . '">' . get_string('settings') . '</a>';
+        $row[] = '<a href="' . $CFG->wwwroot . '/' . $CFG->admin . '/settings.php?section=filtersetting' . $filter . '">' . get_string('settings') . '</a>';
     } else {
         $row[] = '';
     }
 
     // Delete
-    if (substr($filter, 0, 4) != 'mod/') {
-        $row[] = '<a href="' . filters_action_url($filter, 'delete') . '">' . get_string('delete') . '</a>';
-    } else {
-        $row[] = '';
-    }
+    $row[] = '<a href="' . filters_action_url($filter, 'delete') . '">' . get_string('delete') . '</a>';
 
     return $row;
 }

@@ -2,6 +2,10 @@ This files describes API changes in /mod/* - activity modules,
 information provided here is intended especially for developers.
 
 
+=== 2.5 ===
+
+* support for 'mod/*' filters was removed
+
 === 2.4 ===
 
 new features:
