@@ -33,7 +33,7 @@ $currentcontext = required_param('currentcontext', PARAM_INT);
 // file parameters
 $component  = optional_param('component', null, PARAM_COMPONENT);
 $filearea   = optional_param('filearea', null, PARAM_AREA);
-$returnurl  = optional_param('returnurl', null, PARAM_URL);
+$returnurl  = optional_param('returnurl', null, PARAM_LOCALURL);
 
 list($context, $course, $cm) = get_context_info_array($currentcontext);
 $filecontext = context::instance_by_id($contextid, IGNORE_MISSING);
