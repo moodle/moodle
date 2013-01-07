@@ -31,6 +31,7 @@ $string['arrowtitle'] = 'Click here to enter the suggested text (grey letters).'
 $string['communitytags'] = 'Community tags:';
 $string['communitytags1'] = 'community tags';
 $string['communitytags2'] = 'Show all user created course tags';
+$string['configtitle'] = 'Block title';
 $string['coursetags'] = 'Course tags:';
 $string['coursetags1'] = 'course tags';
 $string['coursetags2'] = 'Show tags for this course';
