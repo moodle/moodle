@@ -306,7 +306,11 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
         $data->timestart = $this->apply_date_offset($data->timestart);
         $data->timefinish = $this->apply_date_offset($data->timefinish);
         $data->timemodified = $this->apply_date_offset($data->timemodified);
-        $data->timecheckstate = $this->apply_date_offset($data->timecheckstate);
+        if (!empty($data->timecheckstate)) {
+            $data->timecheckstate = $this->apply_date_offset($data->timecheckstate);
+        } else {
+            $data->timecheckstate = 0;
+        }
 
         // Deals with up-grading pre-2.3 back-ups to 2.3+.
         if (!isset($data->state)) {
