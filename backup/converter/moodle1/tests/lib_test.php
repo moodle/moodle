@@ -273,6 +273,15 @@ class moodle1_converter_testcase extends advanced_testcase {
         $fileids = $fileman->get_fileids();
         $this->assertEquals(gettype($fileids), 'array');
         $this->assertEquals(0, count($fileids));
+        // try to migrate an invalid file
+        $fileman->itemid = 1;
+        $thrown = false;
+        try {
+            $fileman->migrate_file('/../../../../../../../../../../../../../../etc/passwd');
+        } catch (moodle1_convert_exception $e) {
+            $thrown = true;
+        }
+        $this->assertTrue($thrown);
         // migrate a single file
         $fileman->itemid = 4;
         $fileman->migrate_file('moddata/unittest/4/icon.gif');
@@ -435,6 +444,8 @@ class moodle1_converter_testcase extends advanced_testcase {
 
         $text = 'This is a text containing links to file.php
 as it is parsed from the backup file. <br /><br /><img border="0" width="110" vspace="0" hspace="0" height="92" title="News" alt="News" src="$@FILEPHP@$$@SLASH@$pics$@SLASH@$news.gif" /><a href="$@FILEPHP@$$@SLASH@$pics$@SLASH@$news.gif$@FORCEDOWNLOAD@$">download image</a><br />
+    <div><a href=\'$@FILEPHP@$/../../../../../../../../../../../../../../../etc/passwd\'>download passwords</a></div>
+    <div><a href=\'$@FILEPHP@$$@SLASH@$..$@SLASH@$..$@SLASH@$..$@SLASH@$..$@SLASH@$..$@SLASH@$..$@SLASH@$..$@SLASH@$..$@SLASH@$..$@SLASH@$..$@SLASH@$..$@SLASH@$..$@SLASH@$..$@SLASH@$..$@SLASH@$..$@SLASH@$etc$@SLASH@$shadow\'>download shadows</a></div>
     <br /><a href=\'$@FILEPHP@$$@SLASH@$MANUAL.DOC$@FORCEDOWNLOAD@$\'>download manual</a><br />';
 
         $files = moodle1_converter::find_referenced_files($text);
@@ -446,6 +457,8 @@ as it is parsed from the backup file. <br /><br /><img border="0" width="110" vs
         $text = moodle1_converter::rewrite_filephp_usage($text, array('/pics/news.gif', '/another/file/notused.txt'));
         $this->assertEquals($text, 'This is a text containing links to file.php
 as it is parsed from the backup file. <br /><br /><img border="0" width="110" vspace="0" hspace="0" height="92" title="News" alt="News" src="@@PLUGINFILE@@/pics/news.gif" /><a href="@@PLUGINFILE@@/pics/news.gif?forcedownload=1">download image</a><br />
+    <div><a href=\'$@FILEPHP@$/../../../../../../../../../../../../../../../etc/passwd\'>download passwords</a></div>
+    <div><a href=\'$@FILEPHP@$$@SLASH@$..$@SLASH@$..$@SLASH@$..$@SLASH@$..$@SLASH@$..$@SLASH@$..$@SLASH@$..$@SLASH@$..$@SLASH@$..$@SLASH@$..$@SLASH@$..$@SLASH@$..$@SLASH@$..$@SLASH@$..$@SLASH@$..$@SLASH@$etc$@SLASH@$shadow\'>download shadows</a></div>
     <br /><a href=\'$@FILEPHP@$$@SLASH@$MANUAL.DOC$@FORCEDOWNLOAD@$\'>download manual</a><br />');
     }
 
