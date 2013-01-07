@@ -1384,7 +1384,7 @@ function format_text_email($text, $format) {
         case FORMAT_WIKI:
             // there should not be any of these any more!
             $text = wikify_links($text);
-            return strtr(strip_tags($text), array_flip(get_html_translation_table(HTML_ENTITIES)));
+            return textlib::entities_to_utf8(strip_tags($text), true);
             break;
 
         case FORMAT_HTML:
@@ -1395,7 +1395,7 @@ function format_text_email($text, $format) {
         case FORMAT_MARKDOWN:
         default:
             $text = wikify_links($text);
-            return strtr(strip_tags($text), array_flip(get_html_translation_table(HTML_ENTITIES)));
+            return textlib::entities_to_utf8(strip_tags($text), true);
             break;
     }
 }

@@ -442,6 +442,34 @@ class textlib {
     }
 
     /**
+     * Returns HTML entity transliteration table.
+     * @return array with (html entity => utf-8) elements
+     */
+    protected static function get_entities_table() {
+        static $trans_tbl = null;
+
+        // Generate/create $trans_tbl
+        if (!isset($trans_tbl)) {
+            if (version_compare(phpversion(), '5.3.4') < 0) {
+                $trans_tbl = array();
+                foreach (get_html_translation_table(HTML_ENTITIES) as $val=>$key) {
+                    $trans_tbl[$key] = textlib::convert($val, 'ISO-8859-1', 'utf-8');
+                }
+
+            } else if (version_compare(phpversion(), '5.4.0') < 0) {
+                $trans_tbl = get_html_translation_table(HTML_ENTITIES, ENT_COMPAT, 'UTF-8');
+                $trans_tbl = array_flip($trans_tbl);
+
+            } else {
+                $trans_tbl = get_html_translation_table(HTML_ENTITIES, ENT_COMPAT | ENT_HTML401, 'UTF-8');
+                $trans_tbl = array_flip($trans_tbl);
+            }
+        }
+
+        return $trans_tbl;
+    }
+
+    /**
      * Converts all the numeric entities &#nnnn; or &#xnnn; to UTF-8
      * Original from laurynas dot butkus at gmail at:
      * http://php.net/manual/en/function.html-entity-decode.php#75153
@@ -450,28 +478,24 @@ class textlib {
      * @param string $str input string
      * @param boolean $htmlent convert also html entities (defaults to true)
      * @return string encoded UTF-8 string
-     *
-     * NOTE: we could have used typo3 entities_to_utf8() here
-     *       but the direct alternative used runs 400% quicker
-     *       and uses 0.5Mb less memory, so, let's use it
-     *       (tested against 10^6 conversions)
      */
     public static function entities_to_utf8($str, $htmlent=true) {
-        static $trans_tbl; // Going to use static transliteration table
+        static $callback1 = null ;
+        static $callback2 = null ;
 
-        // Replace numeric entities
-        $result = preg_replace('~&#x([0-9a-f]+);~ei', 'textlib::code2utf8(hexdec("\\1"))', $str);
-        $result = preg_replace('~&#([0-9]+);~e', 'textlib::code2utf8(\\1)', $result);
+        if (!$callback1 or !$callback2) {
+            $callback1 = create_function('$matches', 'return textlib::code2utf8(hexdec($matches[1]));');
+            $callback2 = create_function('$matches', 'return textlib::code2utf8($matches[1]);');
+        }
+
+        $result = (string)$str;
+        $result = preg_replace_callback('/&#x([0-9a-f]+);/i', $callback1, $result);
+        $result = preg_replace_callback('/&#([0-9]+);/', $callback2, $result);
 
         // Replace literal entities (if desired)
         if ($htmlent) {
-            // Generate/create $trans_tbl
-            if (!isset($trans_tbl)) {
-                $trans_tbl = array();
-                foreach (get_html_translation_table(HTML_ENTITIES) as $val=>$key) {
-                    $trans_tbl[$key] = utf8_encode($val);
-                }
-            }
+            $trans_tbl = self::get_entities_table();
+            // It should be safe to search for ascii strings and replace them with utf-8 here.
             $result = strtr($result, $trans_tbl);
         }
         // Return utf8-ised string
@@ -487,17 +511,24 @@ class textlib {
      * @return string converted string
      */
     public static function utf8_to_entities($str, $dec=false, $nonnum=false) {
+        static $callback = null ;
+
+        if ($nonnum) {
+            $str = self::entities_to_utf8($str, true);
+        }
+
         // Avoid some notices from Typo3 code
         $oldlevel = error_reporting(E_PARSE);
-        if ($nonnum) {
-            $str = self::typo3()->entities_to_utf8((string)$str, true);
-        }
         $result = self::typo3()->utf8_to_entities((string)$str);
-        if ($dec) {
-            $result = preg_replace('/&#x([0-9a-f]+);/ie', "'&#'.hexdec('$1').';'", $result);
-        }
-        // Restore original debug level
         error_reporting($oldlevel);
+
+        if ($dec) {
+            if (!$callback) {
+                $callback = create_function('$matches', 'return \'&#\'.(hexdec($matches[1])).\';\';');
+            }
+            $result = preg_replace_callback('/&#x([0-9a-f]+);/i', $callback, $result);
+        }
+
         return $result;
     }
 

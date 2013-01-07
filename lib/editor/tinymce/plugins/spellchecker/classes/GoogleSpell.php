@@ -128,6 +128,7 @@ class GoogleSpell extends SpellChecker {
 	}
 
 	function _unhtmlentities($string) {
+        return textlib::entities_to_utf8($string); // Moodle hack
 		$string = preg_replace('~&#x([0-9a-f]+);~ei', 'chr(hexdec("\\1"))', $string);
 		$string = preg_replace('~&#([0-9]+);~e', 'chr(\\1)', $string);
 

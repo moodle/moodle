@@ -293,8 +293,8 @@ class core_textlib_testcase extends advanced_testcase {
      * @return void
      */
     public function test_entities_to_utf8() {
-        $str = "&#x17d;lu&#x165;ou&#x10d;k&#xfd; kon&#237;&#269;ek";
-        $this->assertSame(textlib::entities_to_utf8($str), "Žluťoučký koníček");
+        $str = "&#x17d;lu&#x165;ou&#x10d;k&#xfd; kon&iacute;&#269;ek&copy;&quot;&amp;&lt;&gt;&sect;&laquo;";
+        $this->assertSame("Žluťoučký koníček©\"&<>§«", textlib::entities_to_utf8($str));
     }
 
     /**
@@ -302,10 +302,13 @@ class core_textlib_testcase extends advanced_testcase {
      * @return void
      */
     public function test_utf8_to_entities() {
-        $str = "Žluťoučký koníček";
-        $this->assertSame(textlib::utf8_to_entities($str), "&#x17d;lu&#x165;ou&#x10d;k&#xfd; kon&#xed;&#x10d;ek");
-        $this->assertSame(textlib::utf8_to_entities($str, true), "&#381;lu&#357;ou&#269;k&#253; kon&#237;&#269;ek");
+        $str = "&#x17d;luťoučký kon&iacute;ček&copy;&quot;&amp;&lt;&gt;&sect;&laquo;";
+        $this->assertSame("&#x17d;lu&#x165;ou&#x10d;k&#xfd; kon&iacute;&#x10d;ek&copy;&quot;&amp;&lt;&gt;&sect;&laquo;", textlib::utf8_to_entities($str));
+        $this->assertSame("&#381;lu&#357;ou&#269;k&#253; kon&iacute;&#269;ek&copy;&quot;&amp;&lt;&gt;&sect;&laquo;", textlib::utf8_to_entities($str, true));
 
+        $str = "&#381;luťoučký kon&iacute;ček&copy;&quot;&amp;&lt;&gt;&sect;&laquo;";
+        $this->assertSame("&#x17d;lu&#x165;ou&#x10d;k&#xfd; kon&#xed;&#x10d;ek&#xa9;\"&<>&#xa7;&#xab;", textlib::utf8_to_entities($str, false, true));
+        $this->assertSame("&#381;lu&#357;ou&#269;k&#253; kon&#237;&#269;ek&#169;\"&<>&#167;&#171;", textlib::utf8_to_entities($str, true, true));
     }
 
     /**
