@@ -2677,7 +2677,7 @@ class plugininfo_filter extends plugininfo_base {
             // if it does, make sure that all installed filters are registered
             $needsreload  = false;
             foreach (array_keys($installed) as $name) {
-                if (!isset($globalstates[$name])) {
+                if (!isset($globalstates[$name]) && !isset($globalstates['filter/'.$name])) {
                     filter_set_global_state($name, TEXTFILTER_DISABLED);
                     $needsreload = true;
                 }
