@@ -35,7 +35,7 @@ if (empty($CFG->usetags)) {
     print_error('tagsaredisabled', 'tag');
 }
 
-$returnurl = optional_param('returnurl', null, PARAM_TEXT);
+$returnurl = optional_param('returnurl', null, PARAM_LOCALURL);
 $keyword = optional_param('coursetag_new_tag', '', PARAM_TEXT);
 $courseid = optional_param('entryid', 0, PARAM_INT);
 $userid = optional_param('userid', 0, PARAM_INT);

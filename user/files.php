@@ -32,7 +32,7 @@ if (isguestuser()) {
     die();
 }
 
-$returnurl = optional_param('returnurl', '', PARAM_URL);
+$returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
 
 if (empty($returnurl)) {
     $returnurl = new moodle_url('/user/files.php');
