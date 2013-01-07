@@ -74,4 +74,65 @@ class externallib_testcase extends basic_testcase {
         $this->assertTrue($result['someid'] === 6);
         $this->assertTrue($result['text'] === 'aaa');
     }
+
+    /**
+     * Test for clean_returnvalue().
+     */
+    public function test_clean_returnvalue() {
+
+        // Build some return value decription.
+        $returndesc = new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'object' => new external_single_structure(
+                                array('value1' => new external_value(PARAM_INT, 'this is a int'))),
+                    'value2' => new external_value(PARAM_TEXT, 'some text', VALUE_OPTIONAL))
+            ));
+
+        // Clean an object (it should be cast into an array).
+        $object = new stdClass();
+        $object->value1 = 1;
+        $singlestructure['object'] = $object;
+        $singlestructure['value2'] = 'Some text';
+        $testdata = array($singlestructure);
+        $cleanedvalue = external_api::clean_returnvalue($returndesc, $testdata);
+        $cleanedsinglestructure = array_pop($cleanedvalue);
+        $this->assertEquals($object->value1, $cleanedsinglestructure['object']['value1']);
+        $this->assertEquals($singlestructure['value2'], $cleanedsinglestructure['value2']);
+
+        // Missing VALUE_OPTIONAL.
+        $object = new stdClass();
+        $object->value1 = 1;
+        $singlestructure = new stdClass();
+        $singlestructure->object = $object;
+        $testdata = array($singlestructure);
+        $cleanedvalue = external_api::clean_returnvalue($returndesc, $testdata);
+        $cleanedsinglestructure = array_pop($cleanedvalue);
+        $this->assertEquals($object->value1, $cleanedsinglestructure['object']['value1']);
+        $this->assertEquals(false, array_key_exists('value2', $cleanedsinglestructure));
+
+        // Unknown attribut (the value should be ignored).
+        $object = array();
+        $object['value1'] = 1;
+        $singlestructure = array();
+        $singlestructure['object'] = $object;
+        $singlestructure['value2'] = 'Some text';
+        $singlestructure['unknownvalue'] = 'Some text to ignore';
+        $testdata = array($singlestructure);
+        $cleanedvalue = external_api::clean_returnvalue($returndesc, $testdata);
+        $cleanedsinglestructure = array_pop($cleanedvalue);
+        $this->assertEquals($object['value1'], $cleanedsinglestructure['object']['value1']);
+        $this->assertEquals($singlestructure['value2'], $cleanedsinglestructure['value2']);
+        $this->assertEquals(false, array_key_exists('unknownvalue', $cleanedsinglestructure));
+
+
+        // Missing required value (an exception is thrown).
+        $object = array();
+        $singlestructure = array();
+        $singlestructure['object'] = $object;
+        $singlestructure['value2'] = 'Some text';
+        $testdata = array($singlestructure);
+        $this->setExpectedException('invalid_response_exception');
+        $cleanedvalue = external_api::clean_returnvalue($returndesc, $testdata);
+    }
 }
