@@ -47,6 +47,7 @@ $PAGE->set_pagelayout('admin');
 $manager = new course_enrolment_manager($PAGE, $course, $filter);
 $table = new course_enrolment_other_users_table($manager, $PAGE);
 $PAGE->set_url('/enrol/otherusers.php', $manager->get_url_params()+$table->get_url_params());
+navigation_node::override_active_url(new moodle_url('/enrol/otherusers.php', array('id' => $id)));
 
 $userdetails = array (
     'picture' => false,
