@@ -92,9 +92,9 @@ if (($CFG->fullnamedisplay == 'firstname lastname') or
 
 $table = new html_table();
 $table->head  = array($hcolumns['timemodified'], $fullnamedisplay, $hcolumns['plugin'], $hcolumns['name'], $hcolumns['value'], $hcolumns['oldvalue']);
-$table->align = array('left',                    'left',           'left',              'left',            'left',             'left');
-$table->size  = array('30%',                     '10%',            '10%',               '10%',             '20%',              '20%');
-$table->width = '95%';
+$table->colclasses = array('leftalign date', 'leftalign name', 'leftalign plugin', 'leftalign setting', 'leftalign newvalue', 'leftalign originalvalue');
+$table->id = 'configchanges';
+$table->attributes['class'] = 'admintable generaltable';
 $table->data  = array();
 
 if ($sort == 'firstname' or $sort == 'lastname') {

@@ -186,10 +186,9 @@
 
 /// Initialise table.
     $table = new html_table();
-    $table->tablealign = 'center';
-    $table->align = array('left', 'left', 'left', 'left');
-    $table->wrap = array('nowrap', '', 'nowrap','nowrap');
-    $table->width = '90%';
+    $table->colclasses = array('leftalign', 'leftalign', 'leftalign', 'leftalign');
+    $table->id = 'roles';
+    $table->attributes['class'] = 'admintable generaltable';
     $table->head = array(
         get_string('role') . ' ' . $OUTPUT->help_icon('roles', 'role'),
         get_string('description'),

@@ -256,25 +256,26 @@
 
         $table = new html_table();
         $table->head = array ();
-        $table->align = array();
+        $table->colclasses = array();
         $table->head[] = $fullnamedisplay;
-        $table->align[] = 'left';
+        $table->attributes['class'] = 'admintable generaltable';
+        $table->colclasses[] = 'leftalign';
         foreach ($extracolumns as $field) {
             $table->head[] = ${$field};
-            $table->align[] = 'left';
+            $table->colclasses[] = 'leftalign';
         }
         $table->head[] = $city;
-        $table->align[] = 'left';
+        $table->colclasses[] = 'leftalign';
         $table->head[] = $country;
-        $table->align[] = 'left';
+        $table->colclasses[] = 'leftalign';
         $table->head[] = $lastaccess;
-        $table->align[] = 'left';
+        $table->colclasses[] = 'leftalign';
         $table->head[] = get_string('edit');
-        $table->align[] = 'center';
+        $table->colclasses[] = 'centeralign';
         $table->head[] = "";
-        $table->align[] = 'center';
+        $table->colclasses[] = 'centeralign';
 
-        $table->width = "95%";
+        $table->id = "users";
         foreach ($users as $user) {
             if (isguestuser($user)) {
                 continue; // do not display guest here
