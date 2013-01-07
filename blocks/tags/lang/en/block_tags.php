@@ -25,6 +25,7 @@
 $string['add'] = 'Add';
 $string['alltags'] = 'All tags:';
 $string['arrowtitle'] = 'Click here to enter the suggested text (grey letters).';
+$string['configtitle'] = 'Block title';
 $string['coursetags'] = 'Course tags:';
 $string['disabledtags'] = 'Tags are disabled';
 $string['defaultdisplay'] = 'Tag type to display';
