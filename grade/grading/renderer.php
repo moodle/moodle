@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Standard HTML output renderer for core_grading subsystem
  *
+ * @package    core_grading
  * @copyright  2011 David Mudrak <david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @category   grading

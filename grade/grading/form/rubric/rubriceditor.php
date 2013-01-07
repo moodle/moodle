@@ -37,6 +37,7 @@ require_once("HTML/QuickForm/input.php");
  * If Javascript is disabled when one of those special buttons is pressed, the form
  * element is not validated and, instead of submitting the form, we process button presses.
  *
+ * @package    gradingform_rubric
  * @copyright  2011 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

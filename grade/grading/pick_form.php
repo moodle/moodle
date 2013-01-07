@@ -29,6 +29,7 @@ require_once($CFG->dirroot.'/lib/formslib.php');
 /**
  * Allows to search for a specific shared template
  *
+ * @package    core_grading
  * @copyright  2011 David Mudrak <david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

@@ -31,6 +31,7 @@ MoodleQuickForm::registerElementType('rubriceditor', $CFG->dirroot.'/grade/gradi
 /**
  * Defines the rubric edit form
  *
+ * @package    gradingform_rubric
  * @copyright  2011 Marina Glancy <marina@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

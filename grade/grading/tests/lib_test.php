@@ -32,6 +32,8 @@ require_once($CFG->dirroot . '/grade/grading/lib.php'); // Include the code to t
 /**
  * Makes protected method accessible for testing purposes
  *
+ * @package    core_grading
+ * @category   phpunit
  * @copyright  2011 David Mudrak <david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -42,6 +44,8 @@ class testable_grading_manager extends grading_manager {
 /**
  * Test cases for the grading manager API
  *
+ * @package    core_grading
+ * @category   phpunit
  * @copyright  2011 David Mudrak <david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

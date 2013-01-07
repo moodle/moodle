@@ -41,6 +41,7 @@ defined('MOODLE_INTERNAL') || die();
  * to overwrite functions responsible for loading and saving of the
  * definition to include additional data stored.
  *
+ * @package    core_grading
  * @copyright  2011 David Mudrak <david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @category   grading
@@ -390,7 +391,8 @@ abstract class gradingform_controller {
                 'status1'  => gradingform_instance::INSTANCE_STATUS_ACTIVE,
                 'status2'  => gradingform_instance::INSTANCE_STATUS_NEEDUPDATE);
         $select = 'definitionid=:definitionid and itemid=:itemid and (status=:status1 or status=:status2)';
-        if (false /* TODO MDL-31237 $manager->allow_multiple_raters() */) {
+        if (false) {
+            // TODO MDL-31237 should be: if ($manager->allow_multiple_raters())
             $select .= ' and raterid=:raterid';
             $params['raterid'] = $raterid;
         }
@@ -664,6 +666,7 @@ abstract class gradingform_controller {
  * included in the grading form, so this class must implement functions for rendering
  * and validation of this form element. See {@link MoodleQuickForm_grading}
  *
+ * @package    core_grading
  * @copyright  2011 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @category   grading

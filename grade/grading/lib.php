@@ -85,6 +85,7 @@ function get_grading_manager($context_or_areaid = null, $component = null, $area
  * It is also possible to change context, component and area of an existing
  * manager. Such pattern is used when copying form definitions, for example.
  *
+ * @package    core_grading
  * @copyright  2011 David Mudrak <david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @category   grading

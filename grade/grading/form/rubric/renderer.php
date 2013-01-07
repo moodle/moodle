@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Grading method plugin renderer
  *
+ * @package    gradingform_rubric
  * @copyright  2011 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
