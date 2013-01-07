@@ -2651,7 +2651,7 @@ class plugininfo_filter extends plugininfo_base {
 
         $filters = array();
 
-        // get the list of filters from both /filter and /mod location
+        // get the list of filters in /filter location
         $installed = filter_get_all_installed();
 
         foreach ($installed as $name => $displayname) {
@@ -2670,22 +2670,9 @@ class plugininfo_filter extends plugininfo_base {
             $filters[$plugin->name] = $plugin;
         }
 
-        $globalstates = self::get_global_states();
+        // Do not mess with filter registration here!
 
-        if ($DB->get_manager()->table_exists('filter_active')) {
-            // if we're upgrading from 1.9, the table does not exist yet
-            // if it does, make sure that all installed filters are registered
-            $needsreload  = false;
-            foreach (array_keys($installed) as $name) {
-                if (!isset($globalstates[$name]) && !isset($globalstates['filter/'.$name])) {
-                    filter_set_global_state($name, TEXTFILTER_DISABLED);
-                    $needsreload = true;
-                }
-            }
-            if ($needsreload) {
-                $globalstates = self::get_global_states(true);
-            }
-        }
+        $globalstates = self::get_global_states();
 
         // make sure that all registered filters are installed, just in case
         foreach ($globalstates as $name => $info) {
@@ -2743,10 +2730,6 @@ class plugininfo_filter extends plugininfo_base {
     }
 
     public function get_settings_section_name() {
-        $globalstates = self::get_global_states();
-        if (!isset($globalstates[$this->name])) {
-            return parent::get_settings_section_name();
-        }
         return 'filtersetting' . $this->name;
     }
 
@@ -2755,9 +2738,8 @@ class plugininfo_filter extends plugininfo_base {
         $ADMIN = $adminroot; // may be used in settings.php
         $filter = $this; // also can be used inside settings.php
 
-        $globalstates = self::get_global_states();
         $settings = null;
-        if ($hassiteconfig && isset($globalstates[$this->name]) && file_exists($this->full_path('filtersettings.php'))) {
+        if ($hassiteconfig && file_exists($this->full_path('filtersettings.php'))) {
             $section = $this->get_settings_section_name();
             $settings = new admin_settingpage($section, $this->displayname,
                     'moodle/site:config', $this->is_enabled() === false);
@@ -2786,19 +2768,23 @@ class plugininfo_filter extends plugininfo_base {
         static $globalstatescache = null;
 
         if ($disablecache or is_null($globalstatescache)) {
+            $globalstatescache = array();
 
             if (!$DB->get_manager()->table_exists('filter_active')) {
-                // we're upgrading from 1.9 and the table used by {@link filter_get_global_states()}
-                // does not exist yet
-                $globalstatescache = array();
+                // Not installed yet.
+                return $globalstatescache;
+            }
 
-            } else {
-                foreach (filter_get_global_states() as $name => $info) {
-                    $filterinfo                 = new stdClass();
-                    $filterinfo->active         = $info->active;
-                    $filterinfo->sortorder      = $info->sortorder;
-                    $globalstatescache[$name]   = $filterinfo;
+            foreach (filter_get_global_states() as $name => $info) {
+                if (strpos($name, '/') !== false) {
+                    // Skip existing before upgrade to new names.
+                    continue;
                 }
+
+                $filterinfo                 = new stdClass();
+                $filterinfo->active         = $info->active;
+                $filterinfo->sortorder      = $info->sortorder;
+                $globalstatescache[$name]   = $filterinfo;
             }
         }
 
