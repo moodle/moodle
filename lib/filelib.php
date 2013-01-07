@@ -465,6 +465,8 @@ function file_rewrite_pluginfile_urls($text, $file, $contextid, $component, $fil
  * @param int $draftitemid the draft area item id.
  * @return array with the following entries:
  *      'filecount' => number of files in the draft area.
+ *      'filesize' => total size of the area.
+ *      'filesize_without_references' => total size of the area excluding file references.
  * (more information will be added as needed).
  */
 function file_get_draft_area_info($draftitemid) {
@@ -475,12 +477,17 @@ function file_get_draft_area_info($draftitemid) {
 
     $results = array();
 
-    // The number of files
+    // The number of files.
     $draftfiles = $fs->get_area_files($usercontext->id, 'user', 'draft', $draftitemid, 'id', false);
     $results['filecount'] = count($draftfiles);
     $results['filesize'] = 0;
+    $results['filesize_without_references'] = 0;
     foreach ($draftfiles as $file) {
-        $results['filesize'] += $file->get_filesize();
+        $filesize = $file->get_filesize();
+        $results['filesize'] += $filesize;
+        if (!$file->is_external_file()) {
+            $results['filesize_without_references'] += $filesize;
+        }
     }
 
     return $results;
@@ -494,13 +501,18 @@ function file_get_draft_area_info($draftitemid) {
  * @param int $draftitemid the draft area item id.
  * @param int $areamaxbytes the maximum size allowed in this draft area.
  * @param int $newfilesize the size that would be added to the current area.
+ * @param bool $includereferences true to include the size of the references in the area size.
  * @return bool true if the area will/has exceeded its limit.
  * @since 2.4
  */
-function file_is_draft_area_limit_reached($draftitemid, $areamaxbytes, $newfilesize = 0) {
+function file_is_draft_area_limit_reached($draftitemid, $areamaxbytes, $newfilesize = 0, $includereferences = false) {
     if ($areamaxbytes != FILE_AREA_MAX_BYTES_UNLIMITED) {
         $draftinfo = file_get_draft_area_info($draftitemid);
-        if ($draftinfo['filesize'] + $newfilesize > $areamaxbytes) {
+        $areasize = $draftinfo['filesize_without_references'];
+        if ($includereferences) {
+            $areasize = $draftinfo['filesize'];
+        }
+        if ($areasize + $newfilesize > $areamaxbytes) {
             return true;
         }
     }
