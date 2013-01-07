@@ -41,9 +41,7 @@ if (empty($CFG->enablenotes)) {
 if (data_submitted() && confirm_sesskey()) {
 //if data was submitted and is valid, then delete note
     $returnurl = $CFG->wwwroot . '/notes/index.php?course=' . $course->id . '&amp;user=' . $note->userid;
-    if (note_delete($noteid)) {
-        add_to_log($note->courseid, 'notes', 'delete', 'index.php?course='.$note->courseid.'&amp;user='.$note->userid . '#note-' . $note->id , 'delete note');
-    } else {
+    if (!note_delete($noteid)) {
         print_error('cannotdeletepost', 'notes', $returnurl);
     }
     redirect($returnurl);

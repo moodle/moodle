@@ -100,10 +100,18 @@ function note_save(&$note) {
         // insert new note
         $note->created = $note->lastmodified;
         $id = $DB->insert_record('post', $note);
-        $note = $DB->get_record('post', array('id'=>$id));
+        $note = note_load($id);
+        $logurl = new moodle_url('index.php', array('course'=> $note->courseid, 'user'=>$note->userid));
+        $logurl->set_anchor('note-' . $id);
+
+        add_to_log($note->courseid, 'notes', 'add', $logurl, 'add note');
     } else {
         // update old note
         $DB->update_record('post', $note);
+        $note = note_load($note->id);
+        $logurl = new moodle_url('index.php', array('course'=> $note->courseid, 'user'=>$note->userid));
+        $logurl->set_anchor('note-' . $note->id);
+        add_to_log($note->courseid, 'notes', 'update', $logurl , 'update note');
     }
     unset($note->module);
     return true;
@@ -112,13 +120,19 @@ function note_save(&$note) {
 /**
  * Deletes a note object based on its id.
  *
- * @param int    $note_id id of the note to delete
+ * @param int|object    $note id of the note to delete, or a note object which is to be deleted.
  * @return boolean true if the object was deleted; false otherwise
  */
-function note_delete($noteid) {
+function note_delete($note) {
     global $DB;
-
-    return $DB->delete_records('post', array('id'=>$noteid, 'module'=>'notes'));
+    if (is_int($note)) {
+        $note = note_load($note);
+        debugging('Warning: providing note_delete with a note object would improve performance.',DEBUG_DEVELOPER);
+    }
+    $logurl = new moodle_url('index.php', array('course'=> $note->courseid, 'user'=>$note->userid));
+    $logurl->set_anchor('note-' . $note->id);
+    add_to_log($note->courseid, 'notes', 'delete', $logurl, 'delete note');
+    return $DB->delete_records('post', array('id'=>$note->id, 'module'=>'notes'));
 }
 
 /**
