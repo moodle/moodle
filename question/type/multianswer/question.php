@@ -238,8 +238,8 @@ class qtype_multianswer_question extends question_graded_automatically_with_coun
             list($subfraction, $newstate) = $subq->grade_response($subresp);
             if ($newstate != question_state::$gradedright) {
                 foreach ($subresp as $ind => $resp) {
-                    if (($subq->layout == qtype_multichoice_base::LAYOUT_VERTICAL)
-                            || ($subq->layout == qtype_multichoice_base::LAYOUT_HORIZONTAL)) {
+                    if ($subq->qtype == 'multichoice' && ($subq->layout == qtype_multichoice_base::LAYOUT_VERTICAL
+                            || $subq->layout == qtype_multichoice_base::LAYOUT_HORIZONTAL)) {
                         $response[$substep->add_prefix($ind)] = '-1';
                     } else {
                         $response[$substep->add_prefix($ind)] = '';
