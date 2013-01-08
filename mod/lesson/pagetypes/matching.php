@@ -115,9 +115,9 @@ class lesson_page_type_matching extends lesson_page {
                 $answer->answer = $properties->answer_editor[$i]['text'];
                 $answer->answerformat = $properties->answer_editor[$i]['format'];
             }
-            if (!empty($properties->response_editor[$i]) && is_array($properties->response_editor[$i])) {
-                $answer->response = $properties->response_editor[$i]['text'];
-                $answer->responseformat = $properties->response_editor[$i]['format'];
+            if (!empty($properties->response_editor[$i])) {
+                $answer->response = $properties->response_editor[$i];
+                $answer->responseformat = 0;
             }
 
             if (isset($properties->jumpto[$i])) {
@@ -315,9 +315,9 @@ class lesson_page_type_matching extends lesson_page {
                 $this->answers[$i]->answer = $properties->answer_editor[$i]['text'];
                 $this->answers[$i]->answerformat = $properties->answer_editor[$i]['format'];
             }
-            if (!empty($properties->response_editor[$i]) && is_array($properties->response_editor[$i])) {
-                $this->answers[$i]->response = $properties->response_editor[$i]['text'];
-                $this->answers[$i]->responseformat = $properties->response_editor[$i]['format'];
+            if (!empty($properties->response_editor[$i])) {
+                $this->answers[$i]->response = $properties->response_editor[$i];
+                $this->answers[$i]->responseformat = 0;
             }
 
             if (isset($properties->jumpto[$i])) {
@@ -473,11 +473,17 @@ class lesson_add_page_form_matching extends lesson_add_page_form_base {
         for ($i = 2; $i < $this->_customdata['lesson']->maxanswers+2; $i++) {
             $this->_form->addElement('header', 'matchingpair'.($i-1), get_string('matchingpair', 'lesson', $i-1));
             $this->add_answer($i, NULL, ($i < 4));
-            $this->add_response($i, get_string('matchesanswer','lesson'), ($i < 4));
+            $required = ($i < 4);
+            $label = get_string('matchesanswer','lesson');
+            $count = $i;
+            $this->_form->addElement('text', 'response_editor['.$count.']', $label, array('size'=>'50'));
+            $this->_form->setDefault('response_editor['.$count.']', '');
+            if ($required) {
+                $this->_form->addRule('response_editor['.$count.']', get_string('required'), 'required', null, 'client');
+            }
         }
     }
 }
-
 
 class lesson_display_answer_form_matching extends moodleform {
 
