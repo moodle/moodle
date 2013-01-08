@@ -220,7 +220,11 @@ switch ($action) {
 
         $parent_path = $file->get_parent_directory()->get_filepath();
 
-        if ($newfile = $zipper->archive_to_storage(array($file), $user_context->id, 'user', 'draft', $draftid, $parent_path, $filepath.'.zip', $USER->id)) {
+        $filepath = explode('/', trim($file->get_filepath(), '/'));
+        $filepath = array_pop($filepath);
+        $zipfile = repository::get_unused_filename($draftid, $parent_path, $filepath . '.zip');
+
+        if ($newfile = $zipper->archive_to_storage(array($filepath => $file), $user_context->id, 'user', 'draft', $draftid, $parent_path, $zipfile, $USER->id)) {
             $return = new stdClass();
             $return->filepath = $parent_path;
             echo json_encode($return);
@@ -242,19 +246,18 @@ switch ($action) {
 
         $stored_file = $fs->get_file($user_context->id, 'user', 'draft', $draftid, $filepath, '.');
         if ($filepath === '/') {
-            $parent_path = '/';
             $filename = get_string('files').'.zip';
         } else {
-            $parent_path = $stored_file->get_parent_directory()->get_filepath();
-            $filename = trim($filepath, '/').'.zip';
+            $filename = explode('/', trim($filepath, '/'));
+            $filename = array_pop($filename) . '.zip';
         }
 
         // archive compressed file to an unused draft area
         $newdraftitemid = file_get_unused_draft_itemid();
-        if ($newfile = $zipper->archive_to_storage(array($stored_file), $user_context->id, 'user', 'draft', $newdraftitemid, '/', $filename, $USER->id)) {
+        if ($newfile = $zipper->archive_to_storage(array('/' => $stored_file), $user_context->id, 'user', 'draft', $newdraftitemid, '/', $filename, $USER->id)) {
             $return = new stdClass();
             $return->fileurl  = moodle_url::make_draftfile_url($newdraftitemid, '/', $filename)->out();
-            $return->filepath = $parent_path;
+            $return->filepath = $filepath;
             echo json_encode($return);
         } else {
             echo json_encode(false);

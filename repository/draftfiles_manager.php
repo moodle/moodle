@@ -137,17 +137,17 @@ case 'downloaddir':
     $zipper = new zip_packer();
 
     $file = $fs->get_file($user_context->id, 'user', 'draft', $itemid, $draftpath, '.');
-    if ($file->get_parent_directory()) {
-        $parent_path = $file->get_parent_directory()->get_filepath();
-        $filename = trim($draftpath, '/').'.zip';
-    } else {
-        $parent_path = '/';
+    if ($draftpath === '/') {
         $filename = get_string('files').'.zip';
+    } else {
+        $filename = explode('/', trim($draftpath, '/'));
+        $filename = array_pop($filename) . '.zip';
     }
 
-    if ($newfile = $zipper->archive_to_storage(array($file), $user_context->id, 'user', 'draft', $itemid, $parent_path, $filename, $USER->id)) {
-        $fileurl = moodle_url::make_draftfile_url($itemid, '/', $filename)->out();
-        header('Location: ' . $fileurl );
+    $newdraftitemid = file_get_unused_draft_itemid();
+    if ($newfile = $zipper->archive_to_storage(array('/' => $file), $user_context->id, 'user', 'draft', $newdraftitemid, '/', $filename, $USER->id)) {
+        $fileurl = moodle_url::make_draftfile_url($newdraftitemid, '/', $filename)->out();
+        header('Location: ' . $fileurl);
     } else {
         print_error('cannotdownloaddir', 'repository');
     }
@@ -159,14 +159,17 @@ case 'zip':
     $file = $fs->get_file($user_context->id, 'user', 'draft', $itemid, $draftpath, '.');
     if (!$file->get_parent_directory()) {
         $parent_path = '/';
+        $filepath = '/';
         $filename = get_string('files').'.zip';
     } else {
         $parent_path = $file->get_parent_directory()->get_filepath();
         $filepath = explode('/', trim($file->get_filepath(), '/'));
-        $filename = array_pop($filepath).'.zip';
+        $filepath = array_pop($filepath);
+        $filename = $filepath.'.zip';
     }
 
-    $newfile = $zipper->archive_to_storage(array($file), $user_context->id, 'user', 'draft', $itemid, $parent_path, $filename, $USER->id);
+    $filename = repository::get_unused_filename($itemid, $parent_path, $filename);
+    $newfile = $zipper->archive_to_storage(array($filepath => $file), $user_context->id, 'user', 'draft', $itemid, $parent_path, $filename, $USER->id);
 
     $home_url->param('action', 'browse');
     $home_url->param('draftpath', $parent_path);
@@ -266,7 +269,7 @@ default:
             $path = '/' . trim($draftpath, '/') . '/';
             $parts = explode('/', $path);
             foreach ($parts as $part) {
-                if (!empty($part)) {
+                if ($part != '') {
                     $trail .= ('/'.$part.'/');
                     $data->path[] = array('name'=>$part, 'path'=>$trail);
                     $home_url->param('draftpath', $trail);
@@ -292,8 +295,10 @@ default:
             $home_url->param('action', 'mkdirform');
             echo ' <a href="'.$home_url->out().'">'.get_string('makeafolder', 'moodle').'</a>';
         }
-        $home_url->param('action', 'downloaddir');
-        echo html_writer::link($home_url, get_string('downloadfolder', 'repository'), array('target'=>'_blank'));
+        if (!empty($files->list)) {
+            $home_url->param('action', 'downloaddir');
+            echo ' ' . html_writer::link($home_url, get_string('downloadfolder', 'repository'), array('target'=>'_blank'));
+        }
     }
     echo '</div>';
 
