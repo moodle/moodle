@@ -24,10 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
 
-
-/** Include formslib.php */
-require_once ($CFG->libdir.'/formslib.php');
-/** Include locallib.php */
+require_once($CFG->libdir.'/formslib.php');
 require_once($CFG->dirroot . '/mod/assign/locallib.php');
 
 /**
@@ -39,13 +36,13 @@ require_once($CFG->dirroot . '/mod/assign/locallib.php');
  */
 class mod_assign_grading_batch_operations_form extends moodleform {
     /**
-     * Define this form - called by the parent constructor
+     * Define this form - called by the parent constructor.
      */
-    function definition() {
+    public function definition() {
         $mform = $this->_form;
         $instance = $this->_customdata;
 
-        // visible elements
+        // Visible elements.
         $options = array();
         $options['lock'] = get_string('locksubmissions', 'assign');
         $options['unlock'] = get_string('unlocksubmissions', 'assign');
@@ -59,7 +56,8 @@ class mod_assign_grading_batch_operations_form extends moodleform {
         foreach ($instance['feedbackplugins'] as $plugin) {
             if ($plugin->is_visible() && $plugin->is_enabled()) {
                 foreach ($plugin->get_grading_batch_operations() as $action => $description) {
-                    $options['plugingradingbatchoperation_' . $plugin->get_type() . '_' . $action] = $description;
+                    $operationkey = 'plugingradingbatchoperation_' . $plugin->get_type() . '_' . $action;
+                    $options[$operationkey] = $description;
                 }
             }
         }
@@ -72,9 +70,8 @@ class mod_assign_grading_batch_operations_form extends moodleform {
         $objs = array();
         $objs[] =& $mform->createElement('select', 'operation', get_string('chooseoperation', 'assign'), $options);
         $objs[] =& $mform->createElement('submit', 'submit', get_string('go'));
-        $mform->addElement('group', 'actionsgrp', get_string('batchoperationsdescription', 'assign'), $objs, ' ', false);
-
+        $batchdescription = get_string('batchoperationsdescription', 'assign');
+        $mform->addElement('group', 'actionsgrp', $batchdescription, $objs, ' ', false);
     }
-
 }
 

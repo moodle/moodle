@@ -24,19 +24,17 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/** Include eventslib.php */
 require_once($CFG->libdir.'/eventslib.php');
 
 defined('MOODLE_INTERNAL') || die();
-/**
- * File areas for file submission assignment
- */
+
+// File areas for file submission assignment.
 define('ASSIGNSUBMISSION_FILE_MAXFILES', 20);
 define('ASSIGNSUBMISSION_FILE_MAXSUMMARYFILES', 5);
 define('ASSIGNSUBMISSION_FILE_FILEAREA', 'submission_files');
 
 /**
- * library class for file submission plugin extending submission plugin base class
+ * Library class for file submission plugin extending submission plugin base class
  *
  * @package   assignsubmission_file
  * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
@@ -77,19 +75,25 @@ class assign_submission_file extends assign_submission_plugin {
 
         $settings = array();
         $options = array();
-        for($i = 1; $i <= ASSIGNSUBMISSION_FILE_MAXFILES; $i++) {
+        for ($i = 1; $i <= ASSIGNSUBMISSION_FILE_MAXFILES; $i++) {
             $options[$i] = $i;
         }
 
-        $mform->addElement('select', 'assignsubmission_file_maxfiles', get_string('maxfilessubmission', 'assignsubmission_file'), $options);
-        $mform->addHelpButton('assignsubmission_file_maxfiles', 'maxfilessubmission', 'assignsubmission_file');
+        $name = get_string('maxfilessubmission', 'assignsubmission_file');
+        $mform->addElement('select', 'assignsubmission_file_maxfiles', $name, $options);
+        $mform->addHelpButton('assignsubmission_file_maxfiles',
+                              'maxfilessubmission',
+                              'assignsubmission_file');
         $mform->setDefault('assignsubmission_file_maxfiles', $defaultmaxfilesubmissions);
         $mform->disabledIf('assignsubmission_file_maxfiles', 'assignsubmission_file_enabled', 'eq', 0);
 
-        $choices = get_max_upload_sizes($CFG->maxbytes, $COURSE->maxbytes, get_config('assignsubmission_file', 'maxbytes'));
+        $choices = get_max_upload_sizes($CFG->maxbytes,
+                                        $COURSE->maxbytes,
+                                        get_config('assignsubmission_file', 'maxbytes'));
 
         // Remove the option for 0 bytes.
         unset($choices[0]);
+
         if ($COURSE->maxbytes == 0) {
             $choices = array(0=>get_string('siteuploadlimit', 'assignsubmission_file')) + $choices;
         } else {
@@ -101,10 +105,15 @@ class assign_submission_file extends assign_submission_plugin {
                             'options'=> $choices,
                             'default'=> $defaultmaxsubmissionsizebytes);
 
-        $mform->addElement('select', 'assignsubmission_file_maxsizebytes', get_string('maximumsubmissionsize', 'assignsubmission_file'), $choices);
-        $mform->addHelpButton('assignsubmission_file_maxsizebytes', 'maximumsubmissionsize', 'assignsubmission_file');
+        $name = get_string('maximumsubmissionsize', 'assignsubmission_file');
+        $mform->addElement('select', 'assignsubmission_file_maxsizebytes', $name, $choices);
+        $mform->addHelpButton('assignsubmission_file_maxsizebytes',
+                              'maximumsubmissionsize',
+                              'assignsubmission_file');
         $mform->setDefault('assignsubmission_file_maxsizebytes', $defaultmaxsubmissionsizebytes);
-        $mform->disabledIf('assignsubmission_file_maxsizebytes', 'assignsubmission_file_enabled', 'eq', 0);
+        $mform->disabledIf('assignsubmission_file_maxsizebytes',
+                           'assignsubmission_file_enabled',
+                           'eq', 0);
     }
 
     /**
@@ -150,8 +159,13 @@ class assign_submission_file extends assign_submission_plugin {
         $fileoptions = $this->get_file_options();
         $submissionid = $submission ? $submission->id : 0;
 
-
-        $data = file_prepare_standard_filemanager($data, 'files', $fileoptions, $this->assignment->get_context(), 'assignsubmission_file', ASSIGNSUBMISSION_FILE_FILEAREA, $submissionid);
+        $data = file_prepare_standard_filemanager($data,
+                                                  'files',
+                                                  $fileoptions,
+                                                  $this->assignment->get_context(),
+                                                  'assignsubmission_file',
+                                                  ASSIGNSUBMISSION_FILE_FILEAREA,
+                                                  $submissionid);
         $mform->addElement('filemanager', 'files_filemanager', '', null, $fileoptions);
         return true;
     }
@@ -166,13 +180,19 @@ class assign_submission_file extends assign_submission_plugin {
     private function count_files($submissionid, $area) {
 
         $fs = get_file_storage();
-        $files = $fs->get_area_files($this->assignment->get_context()->id, 'assignsubmission_file', $area, $submissionid, "id", false);
+        $files = $fs->get_area_files($this->assignment->get_context()->id,
+                                     'assignsubmission_file',
+                                     $area,
+                                     $submissionid,
+                                     'id',
+                                     false);
 
         return count($files);
     }
 
     /**
-     * Save the files and trigger plagiarism plugin, if enabled, to scan the uploaded files via events trigger
+     * Save the files and trigger plagiarism plugin, if enabled,
+     * to scan the uploaded files via events trigger
      *
      * @param stdClass $submission
      * @param stdClass $data
@@ -183,19 +203,30 @@ class assign_submission_file extends assign_submission_plugin {
 
         $fileoptions = $this->get_file_options();
 
-
-        $data = file_postupdate_standard_filemanager($data, 'files', $fileoptions, $this->assignment->get_context(), 'assignsubmission_file', ASSIGNSUBMISSION_FILE_FILEAREA, $submission->id);
-
+        $data = file_postupdate_standard_filemanager($data,
+                                                     'files',
+                                                     $fileoptions,
+                                                     $this->assignment->get_context(),
+                                                     'assignsubmission_file',
+                                                     ASSIGNSUBMISSION_FILE_FILEAREA,
+                                                     $submission->id);
 
         $filesubmission = $this->get_file_submission($submission->id);
 
-        //plagiarism code event trigger when files are uploaded
+        // Plagiarism code event trigger when files are uploaded.
 
         $fs = get_file_storage();
-        $files = $fs->get_area_files($this->assignment->get_context()->id, 'assignsubmission_file', ASSIGNSUBMISSION_FILE_FILEAREA, $submission->id, "id", false);
+        $files = $fs->get_area_files($this->assignment->get_context()->id,
+                                     'assignsubmission_file',
+                                     ASSIGNSUBMISSION_FILE_FILEAREA,
+                                     $submission->id,
+                                     'id',
+                                     false);
+
         $count = $this->count_files($submission->id, ASSIGNSUBMISSION_FILE_FILEAREA);
-        // send files to event system
-        // Let Moodle know that an assessable file was uploaded (eg for plagiarism detection)
+
+        // Send files to event system.
+        // This lets Moodle know that an assessable file was uploaded (eg for plagiarism detection).
         $eventdata = new stdClass();
         $eventdata->modulename = 'assign';
         $eventdata->cmid = $this->assignment->get_course_module()->id;
@@ -203,19 +234,20 @@ class assign_submission_file extends assign_submission_plugin {
         $eventdata->courseid = $this->assignment->get_course()->id;
         $eventdata->userid = $USER->id;
         if ($count > 1) {
-            $eventdata->files = $files; // This is depreceated - please use pathnamehashes instead!
+            $eventdata->files = $files;
         }
-        $eventdata->file = $files; // This is depreceated - please use pathnamehashes instead!
+        $eventdata->file = $files;
         $eventdata->pathnamehashes = array_keys($files);
         events_trigger('assessable_file_uploaded', $eventdata);
 
-
         if ($filesubmission) {
-            $filesubmission->numfiles = $this->count_files($submission->id, ASSIGNSUBMISSION_FILE_FILEAREA);
+            $filesubmission->numfiles = $this->count_files($submission->id,
+                                                           ASSIGNSUBMISSION_FILE_FILEAREA);
             return $DB->update_record('assignsubmission_file', $filesubmission);
         } else {
             $filesubmission = new stdClass();
-            $filesubmission->numfiles = $this->count_files($submission->id, ASSIGNSUBMISSION_FILE_FILEAREA);
+            $filesubmission->numfiles = $this->count_files($submission->id,
+                                                           ASSIGNSUBMISSION_FILE_FILEAREA);
             $filesubmission->submission = $submission->id;
             $filesubmission->assignment = $this->assignment->get_instance()->id;
             return $DB->insert_record('assignsubmission_file', $filesubmission) > 0;
@@ -232,7 +264,12 @@ class assign_submission_file extends assign_submission_plugin {
         $result = array();
         $fs = get_file_storage();
 
-        $files = $fs->get_area_files($this->assignment->get_context()->id, 'assignsubmission_file', ASSIGNSUBMISSION_FILE_FILEAREA, $submission->id, "timemodified", false);
+        $files = $fs->get_area_files($this->assignment->get_context()->id,
+                                     'assignsubmission_file',
+                                     ASSIGNSUBMISSION_FILE_FILEAREA,
+                                     $submission->id,
+                                     'timemodified',
+                                     false);
 
         foreach ($files as $file) {
             $result[$file->get_filename()] = $file;
@@ -250,10 +287,12 @@ class assign_submission_file extends assign_submission_plugin {
     public function view_summary(stdClass $submission, & $showviewlink) {
         $count = $this->count_files($submission->id, ASSIGNSUBMISSION_FILE_FILEAREA);
 
-        // show we show a link to view all files for this plugin?
+        // Show we show a link to view all files for this plugin?
         $showviewlink = $count > ASSIGNSUBMISSION_FILE_MAXSUMMARYFILES;
         if ($count <= ASSIGNSUBMISSION_FILE_MAXSUMMARYFILES) {
-            return $this->assignment->render_area_files('assignsubmission_file', ASSIGNSUBMISSION_FILE_FILEAREA, $submission->id);
+            return $this->assignment->render_area_files('assignsubmission_file',
+                                                        ASSIGNSUBMISSION_FILE_FILEAREA,
+                                                        $submission->id);
         } else {
             return get_string('countfiles', 'assignsubmission_file', $count);
         }
@@ -266,7 +305,9 @@ class assign_submission_file extends assign_submission_plugin {
      * @return string
      */
     public function view(stdClass $submission) {
-        return $this->assignment->render_area_files('assignsubmission_file', ASSIGNSUBMISSION_FILE_FILEAREA, $submission->id);
+        return $this->assignment->render_area_files('assignsubmission_file',
+                                                    ASSIGNSUBMISSION_FILE_FILEAREA,
+                                                    $submission->id);
     }
 
 
@@ -300,20 +341,16 @@ class assign_submission_file extends assign_submission_plugin {
      * @param string $log record log events here
      * @return bool Was it a success? (false will trigger rollback)
      */
-    public function upgrade_settings(context $oldcontext,stdClass $oldassignment, & $log) {
+    public function upgrade_settings(context $oldcontext, stdClass $oldassignment, & $log) {
         if ($oldassignment->assignmenttype == 'uploadsingle') {
             $this->set_config('maxfilesubmissions', 1);
             $this->set_config('maxsubmissionsizebytes', $oldassignment->maxbytes);
             return true;
-        }else {
-
+        } else {
             $this->set_config('maxfilesubmissions', $oldassignment->var1);
             $this->set_config('maxsubmissionsizebytes', $oldassignment->maxbytes);
             return true;
         }
-
-
-
     }
 
     /**
@@ -326,7 +363,11 @@ class assign_submission_file extends assign_submission_plugin {
      * @param string $log Record upgrade messages in the log
      * @return bool true or false - false will trigger a rollback
      */
-    public function upgrade(context $oldcontext, stdClass $oldassignment, stdClass $oldsubmission, stdClass $submission, & $log) {
+    public function upgrade(context $oldcontext,
+                            stdClass $oldassignment,
+                            stdClass $oldsubmission,
+                            stdClass $submission,
+                            & $log) {
         global $DB;
 
         $filesubmission = new stdClass();
@@ -340,23 +381,15 @@ class assign_submission_file extends assign_submission_plugin {
             return false;
         }
 
-
-
-
-        // now copy the area files
+        // Now copy the area files.
         $this->assignment->copy_area_files_for_upgrade($oldcontext->id,
                                                         'mod_assignment',
                                                         'submission',
                                                         $oldsubmission->id,
-                                                        // New file area
                                                         $this->assignment->get_context()->id,
                                                         'assignsubmission_file',
                                                         ASSIGNSUBMISSION_FILE_FILEAREA,
                                                         $submission->id);
-
-
-
-
 
         return true;
     }
@@ -368,8 +401,9 @@ class assign_submission_file extends assign_submission_plugin {
      */
     public function delete_instance() {
         global $DB;
-        // will throw exception on failure
-        $DB->delete_records('assignsubmission_file', array('assignment'=>$this->assignment->get_instance()->id));
+        // Will throw exception on failure.
+        $DB->delete_records('assignsubmission_file',
+                            array('assignment'=>$this->assignment->get_instance()->id));
 
         return true;
     }
@@ -378,16 +412,13 @@ class assign_submission_file extends assign_submission_plugin {
      * Formatting for log info
      *
      * @param stdClass $submission The submission
-     *
      * @return string
      */
     public function format_for_log(stdClass $submission) {
-        // format the info for each submission plugin add_to_log
+        // Format the info for each submission plugin (will be added to log).
         $filecount = $this->count_files($submission->id, ASSIGNSUBMISSION_FILE_FILEAREA);
-        $fileloginfo = '';
-        $fileloginfo .= ' the number of file(s) : ' . $filecount . " file(s).<br>";
 
-        return $fileloginfo;
+        return get_string('numfilesforlog', 'assignsubmission_file', $filecount);
     }
 
     /**

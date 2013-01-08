@@ -29,7 +29,7 @@ require_once($CFG->dirroot . '/'.$CFG->admin.'/tool/assignmentupgrade/upgradable
 require_once($CFG->dirroot . '/'.$CFG->admin.'/tool/assignmentupgrade/upgradableassignmentsbatchform.php');
 require_once($CFG->dirroot . '/'.$CFG->admin.'/tool/assignmentupgrade/paginationform.php');
 
-// admin_externalpage_setup calls require_login and checks moodle/site:config
+// This calls require_login and checks moodle/site:config.
 admin_externalpage_setup('assignmentupgrade', '', array(), tool_assignmentupgrade_url('listnotupgraded'));
 $PAGE->navbar->add(get_string('listnotupgraded', 'tool_assignmentupgrade'));
 
@@ -56,5 +56,4 @@ if ($data && $data->selectedassignments != '' || $data && isset($data->upgradeal
     $paginationform->set_data($pagedata);
     echo $renderer->assignment_list_page($assignments, $batchform, $paginationform);
 }
-
 

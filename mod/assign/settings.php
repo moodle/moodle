@@ -48,21 +48,42 @@ if ($ADMIN->fulltree) {
         }
     }
 
-    // The default here is feedback_comments (if it exists)
+    // The default here is feedback_comments (if it exists).
+    $name = new lang_string('feedbackplugin', 'mod_assign');
+    $description = new lang_string('feedbackpluginforgradebook', 'mod_assign');
     $settings->add(new admin_setting_configselect('assign/feedback_plugin_for_gradebook',
-                       new lang_string('feedbackplugin', 'mod_assign'),
-                       new lang_string('feedbackpluginforgradebook', 'mod_assign'), 'assignfeedback_comments', $menu));
+                                                  $name,
+                                                  $description,
+                                                  'assignfeedback_comments',
+                                                  $menu));
+
+    $name = new lang_string('showrecentsubmissions', 'mod_assign');
+    $description = new lang_string('configshowrecentsubmissions', 'mod_assign');
     $settings->add(new admin_setting_configcheckbox('assign/showrecentsubmissions',
-                       new lang_string('showrecentsubmissions', 'mod_assign'),
-                       new lang_string('configshowrecentsubmissions', 'mod_assign'), 0));
+                                                    $name,
+                                                    $description,
+                                                    0));
+
+    $name = new lang_string('sendsubmissionreceipts', 'mod_assign');
+    $description = new lang_string('sendsubmissionreceipts_help', 'mod_assign');
     $settings->add(new admin_setting_configcheckbox('assign/submissionreceipts',
-                       new lang_string('sendsubmissionreceipts', 'mod_assign'),
-                       new lang_string('sendsubmissionreceipts_help', 'mod_assign'), 1));
+                                                    $name,
+                                                    $description,
+                                                    1));
+
+    $name = new lang_string('submissionstatement', 'mod_assign');
+    $description = new lang_string('submissionstatement_help', 'mod_assign');
+    $default = get_string('submissionstatementdefault', 'mod_assign');
     $settings->add(new admin_setting_configtextarea('assign/submissionstatement',
-                       new lang_string('submissionstatement', 'mod_assign'),
-                       new lang_string('submissionstatement_help', 'mod_assign'), get_string('submissionstatementdefault', 'mod_assign')));
+                                                    $name,
+                                                    $description,
+                                                    $default));
+
+    $name = new lang_string('requiresubmissionstatement', 'mod_assign');
+    $description = new lang_string('requiresubmissionstatement_help', 'mod_assign');
     $settings->add(new admin_setting_configcheckbox('assign/requiresubmissionstatement',
-                       new lang_string('requiresubmissionstatement', 'mod_assign'),
-                       new lang_string('requiresubmissionstatement_help', 'mod_assign'), 0));
+                                                    $name,
+                                                    $description,
+                                                    0));
 
 }

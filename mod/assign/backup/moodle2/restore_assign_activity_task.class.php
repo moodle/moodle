@@ -36,23 +36,23 @@ require_once($CFG->dirroot . '/mod/assign/backup/moodle2/restore_assign_stepslib
 class restore_assign_activity_task extends restore_activity_task {
 
     /**
-     * Define (add) particular settings this activity can have
+     * Define (add) particular settings this activity can have.
      */
     protected function define_my_settings() {
-        // No particular settings for this activity
+        // No particular settings for this activity.
     }
 
     /**
-     * Define (add) particular steps this activity can have
+     * Define (add) particular steps this activity can have.
      */
     protected function define_my_steps() {
-        // Assign only has one structure step
+        // Assignment only has one structure step.
         $this->add_step(new restore_assign_activity_structure_step('assign_structure', 'assign.xml'));
     }
 
     /**
      * Define the contents in the activity that must be
-     * processed by the link decoder
+     * processed by the link decoder.
      *
      * @return array
      */
@@ -66,15 +66,19 @@ class restore_assign_activity_task extends restore_activity_task {
 
     /**
      * Define the decoding rules for links belonging
-     * to the activity to be executed by the link decoder
+     * to the activity to be executed by the link decoder.
      *
      * @return array of restore_decode_rule
      */
     static public function define_decode_rules() {
         $rules = array();
 
-        $rules[] = new restore_decode_rule('ASSIGNVIEWBYID', '/mod/assign/view.php?id=$1', 'course_module');
-        $rules[] = new restore_decode_rule('ASSIGNINDEX', '/mod/assign/index.php?id=$1', 'course_module');
+        $rules[] = new restore_decode_rule('ASSIGNVIEWBYID',
+                                           '/mod/assign/view.php?id=$1',
+                                           'course_module');
+        $rules[] = new restore_decode_rule('ASSIGNINDEX',
+                                           '/mod/assign/index.php?id=$1',
+                                           'course_module');
 
         return $rules;
 
@@ -84,7 +88,7 @@ class restore_assign_activity_task extends restore_activity_task {
      * Define the restore log rules that will be applied
      * by the {@link restore_logs_processor} when restoring
      * assign logs. It must return one array
-     * of {@link restore_log_rule} objects
+     * of {@link restore_log_rule} objects.
      *
      * @return array of restore_log_rule
      */
@@ -94,7 +98,6 @@ class restore_assign_activity_task extends restore_activity_task {
         $rules[] = new restore_log_rule('assign', 'add', 'view.php?id={course_module}', '{assign}');
         $rules[] = new restore_log_rule('assign', 'update', 'view.php?id={course_module}', '{assign}');
         $rules[] = new restore_log_rule('assign', 'view', 'view.php?id={course_module}', '{assign}');
-        // more...
 
         return $rules;
     }

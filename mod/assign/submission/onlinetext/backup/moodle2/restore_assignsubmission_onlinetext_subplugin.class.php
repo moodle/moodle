@@ -23,7 +23,8 @@
  */
 
 /**
- * restore subplugin class that provides the necessary information needed to restore one assign_submission subplugin.
+ * restore subplugin class that provides the necessary information needed to restore
+ * one assign_submission subplugin.
  *
  * @package assignsubmission_onlinetext
  * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
@@ -32,7 +33,6 @@
 class restore_assignsubmission_onlinetext_subplugin extends restore_subplugin {
 
     /**
-     *
      * Returns array the paths to be handled by the subplugin at assignment level
      * @return array
      */
@@ -41,10 +41,12 @@ class restore_assignsubmission_onlinetext_subplugin extends restore_subplugin {
         $paths = array();
 
         $elename = $this->get_namefor('submission');
-        $elepath = $this->get_pathfor('/submission_onlinetext'); // we used get_recommended_name() so this works
+
+        // We used get_recommended_name() so this works.
+        $elepath = $this->get_pathfor('/submission_onlinetext');
         $paths[] = new restore_path_element($elename, $elepath);
 
-        return $paths; // And we return the interesting paths
+        return $paths;
     }
 
     /**
@@ -58,7 +60,8 @@ class restore_assignsubmission_onlinetext_subplugin extends restore_subplugin {
         $data = (object)$data;
         $data->assignment = $this->get_new_parentid('assign');
         $oldsubmissionid = $data->submission;
-        // the mapping is set in the restore for the core assign activity. When a submission node is processed
+        // The mapping is set in the restore for the core assign activity
+        // when a submission node is processed.
         $data->submission = $this->get_mappingid('submission', $data->submission);
 
         $DB->insert_record('assignsubmission_onlinetext', $data);

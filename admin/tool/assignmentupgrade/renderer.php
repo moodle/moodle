@@ -100,7 +100,9 @@ class tool_assignmentupgrade_renderer extends plugin_renderer_base {
         $output = '';
 
         if ($confirm->continueurl) {
-            $output .= $this->output->confirm($confirm->continuemessage, $confirm->continueurl, tool_assignmentupgrade_url('listnotupgraded'));
+            $output .= $this->output->confirm($confirm->continuemessage,
+                                              $confirm->continueurl,
+                                              tool_assignmentupgrade_url('listnotupgraded'));
         } else {
             $output .= $this->output->box($confirm->continuemessage);
             $output .= $this->output->continue_button(tool_assignmentupgrade_url('listnotupgraded'));
@@ -115,7 +117,9 @@ class tool_assignmentupgrade_renderer extends plugin_renderer_base {
      * @param tool_assignmentupgrade_pagination_form $paginationform Form which contains the preferences for paginating the table
      * @return string html to output.
      */
-    public function assignment_list_page(tool_assignmentupgrade_assignments_table $assignments, tool_assignmentupgrade_batchoperations_form $batchform, tool_assignmentupgrade_pagination_form $paginationform) {
+    public function assignment_list_page(tool_assignmentupgrade_assignments_table $assignments,
+                                         tool_assignmentupgrade_batchoperations_form $batchform,
+                                         tool_assignmentupgrade_pagination_form $paginationform) {
         $output = '';
         $output .= $this->header();
         $this->page->requires->js_init_call('M.tool_assignmentupgrade.init_upgrade_table', array());
@@ -161,7 +165,8 @@ class tool_assignmentupgrade_renderer extends plugin_renderer_base {
             $output .= $this->container(get_string('conversionfailed', 'tool_assignmentupgrade', $log));
         } else {
             $output .= $this->container(get_string('upgradeassignmentsuccess', 'tool_assignmentupgrade'));
-            $output .= $this->container(html_writer::link(new moodle_url('/course/view.php', array('id'=>$assignmentsummary->courseid)) ,get_string('viewcourse', 'tool_assignmentupgrade')));
+            $url = new moodle_url('/course/view.php', array('id'=>$assignmentsummary->courseid));
+            $output .= $this->container(html_writer::link($url, get_string('viewcourse', 'tool_assignmentupgrade')));
         }
         $output .= $this->container_end();
 

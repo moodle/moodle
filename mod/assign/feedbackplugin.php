@@ -17,7 +17,6 @@
 /**
  * This file contains the function for feedback_plugin abstract class
  *
- *
  * @package   mod_assign
  * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -25,7 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-/** Include assignmentplugin.php */
 require_once($CFG->dirroot.'/mod/assign/assignmentplugin.php');
 
 /**
@@ -38,7 +36,7 @@ require_once($CFG->dirroot.'/mod/assign/assignmentplugin.php');
 abstract class assign_feedback_plugin extends assign_plugin {
 
     /**
-     * return subtype name of the plugin
+     * Return subtype name of the plugin.
      *
      * @return string
      */
@@ -48,7 +46,7 @@ abstract class assign_feedback_plugin extends assign_plugin {
 
     /**
      * If this plugin adds to the gradebook comments field, it must specify the format
-     * of the comment
+     * of the comment.
      *
      * (From weblib.php)
      * define('FORMAT_MOODLE',   '0');   // Does all sorts of transformations and filtering
@@ -69,7 +67,7 @@ abstract class assign_feedback_plugin extends assign_plugin {
 
     /**
      * If this plugin adds to the gradebook comments field, it must format the text
-     * of the comment
+     * of the comment.
      *
      * Only one feedback plugin can push comments to the gradebook and that is chosen by the assignment
      * settings page.
@@ -82,7 +80,7 @@ abstract class assign_feedback_plugin extends assign_plugin {
     }
 
     /**
-     * Override to indicate a plugin supports quickgrading
+     * Override to indicate a plugin supports quickgrading.
      *
      * @return boolean - True if the plugin supports quickgrading
      */
@@ -91,11 +89,13 @@ abstract class assign_feedback_plugin extends assign_plugin {
     }
 
     /**
-     * Get quickgrading form elements as html
+     * Get quickgrading form elements as html.
      *
      * @param int $userid The user id in the table this quickgrading element relates to
-     * @param mixed $grade grade or null - The grade data. May be null if there are no grades for this user (yet)
-     * @return mixed - A html string containing the html form elements required for quickgrading or false to indicate this plugin does not support quickgrading
+     * @param mixed $grade grade or null - The grade data.
+     *                     May be null if there are no grades for this user (yet)
+     * @return mixed - A html string containing the html form elements required for
+     *                 quickgrading or false to indicate this plugin does not support quickgrading
      */
     public function get_quickgrading_html($userid, $grade) {
         return false;
@@ -113,7 +113,7 @@ abstract class assign_feedback_plugin extends assign_plugin {
     }
 
     /**
-     * Save quickgrading changes
+     * Save quickgrading changes.
      *
      * @param int $userid The user id in the table this quickgrading element relates to
      * @param stdClass $grade The grade
@@ -124,19 +124,21 @@ abstract class assign_feedback_plugin extends assign_plugin {
     }
 
     /**
-     * Return a list of the batch grading operations supported by this plugin
+     * Return a list of the batch grading operations supported by this plugin.
      *
-     * @return array - An array of action and description strings. The action will be passed to grading_batch_operation.
+     * @return array - An array of action and description strings.
+     *                 The action will be passed to grading_batch_operation.
      */
     public function get_grading_batch_operations() {
         return array();
     }
 
     /**
-     * Return a list of the grading actions supported by this plugin
+     * Return a list of the grading actions supported by this plugin.
      *
      * A grading action is a page that is not specific to a user but to the whole assignment.
-     * @return array - An array of action and description strings. The action will be passed to grading_action.
+     * @return array - An array of action and description strings.
+     *                 The action will be passed to grading_action.
      */
     public function get_grading_actions() {
         return array();

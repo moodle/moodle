@@ -22,20 +22,14 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/** config.php */
 require_once('../../config.php');
-/** Include locallib.php */
 require_once($CFG->dirroot . '/mod/assign/locallib.php');
 
-$id = required_param('id', PARAM_INT);  // Course Module ID
-$url = new moodle_url('/mod/assign/view.php', array('id' => $id)); // Base URL
-
-// get the request parameters
+$id = required_param('id', PARAM_INT);
+$url = new moodle_url('/mod/assign/view.php', array('id' => $id));
 $cm = get_coursemodule_from_id('assign', $id, 0, false, MUST_EXIST);
-
 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
-// Auth
 require_login($course, true, $cm);
 $PAGE->set_url($url);
 
@@ -43,11 +37,11 @@ $context = context_module::instance($cm->id);
 
 require_capability('mod/assign:view', $context);
 
-$assign = new assign($context,$cm,$course);
+$assign = new assign($context, $cm, $course);
 
-// Mark as viewed
 $completion=new completion_info($course);
 $completion->set_module_viewed($cm);
 
-// Get the assign to render the page
+// Get the assign class to
+// render the page.
 echo $assign->view(optional_param('action', '', PARAM_TEXT));
