@@ -825,8 +825,11 @@ class restore_groups_structure_step extends restore_structure_step {
 
     public function process_grouping_group($data) {
         global $CFG;
+
         require_once($CFG->dirroot.'/group/lib.php');
-        groups_assign_grouping($this->get_new_parentid('grouping'), $this->get_mappingid('group', $data->groupid));
+
+        $data = (object)$data;
+        groups_assign_grouping($this->get_new_parentid('grouping'), $this->get_mappingid('group', $data->groupid), $data->timeadded);
     }
 
     protected function after_execute() {
