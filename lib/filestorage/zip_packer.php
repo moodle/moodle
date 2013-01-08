@@ -137,6 +137,12 @@ class zip_packer extends file_packer {
             }
         }
 
+        // We can consider that there was an error if the file generated does not contain anything.
+        if ($ziparch->count() == 0) {
+            $result = false;
+            debugging("Nothing was added to the zip file", DEBUG_DEVELOPER);
+        }
+
         return ($ziparch->close() && $result);
     }
 

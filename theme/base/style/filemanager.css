@@ -268,7 +268,7 @@ a.ygtvspacer:hover {color: transparent;text-decoration: none;}
 .filemanager.fm-loaded .filemanager-loading {display:none;}
 .filemanager.fm-maxfiles .fp-btn-add {display:none;}
 .filemanager.fm-maxfiles .dndupload-message {display:none;}
-.filemanager.fm-nofiles .fp-btn-download {display:none;}
+.filemanager.fm-noitems .fp-btn-download {display:none;}
 .filemanager .fm-empty-container {display:none;}
 .filemanager.fm-noitems .filemanager-container .fp-content {display:none;}
 .filemanager .filemanager-updating {display:none;text-align:center;}
