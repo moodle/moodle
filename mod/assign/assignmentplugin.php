@@ -244,7 +244,7 @@ abstract class assign_plugin {
      * Get any additional fields for the submission/grading form for this assignment.
      * This function is retained for backwards compatibility - new plugins should override {@link get_form_elements_for_user()}.
      *
-     * @param mixed $submissionorgrade submission|grade - For submission plugins this is the submission data, 
+     * @param mixed $submissionorgrade submission|grade - For submission plugins this is the submission data,
      *                                                    for feedback plugins it is the grade data
      * @param MoodleQuickForm $mform - This is the form
      * @param stdClass $data - This is the form data that can be modified for example by a filemanager element
