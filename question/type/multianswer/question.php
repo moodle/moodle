@@ -238,7 +238,7 @@ class qtype_multianswer_question extends question_graded_automatically {
             list($subfraction, $newstate) = $subq->grade_response($subresp);
             if ($newstate != question_state::$gradedright) {
                 foreach ($subresp as $ind => $resp) {
-                    if (($subq->layout == qtype_multichoice_base::LAYOUT_VERTICAL) 
+                    if (($subq->layout == qtype_multichoice_base::LAYOUT_VERTICAL)
                             || ($subq->layout == qtype_multichoice_base::LAYOUT_HORIZONTAL)) {
                         $response[$substep->add_prefix($ind)] = '-1';
                     } else {
