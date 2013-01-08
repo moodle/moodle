@@ -279,21 +279,23 @@ class enrol_manual_plugin extends enrol_plugin {
      * @return void
      */
     public function cron() {
-        $this->sync(null, true);
-        $this->send_expiry_notifications(true);
+        $trace = new text_progress_trace();
+        $this->sync($trace, null);
+        $this->send_expiry_notifications($trace);
     }
 
     /**
      * Sync all meta course links.
      *
+     * @param progress_trace $trace
      * @param int $courseid one course, empty mean all
-     * @param bool $verbose verbose CLI output
      * @return int 0 means ok, 1 means error, 2 means plugin disabled
      */
-    public function sync($courseid = null, $verbose = false) {
+    public function sync(progress_trace $trace, $courseid = null) {
         global $DB;
 
         if (!enrol_is_enabled('manual')) {
+            $trace->finished();
             return 2;
         }
 
@@ -301,9 +303,7 @@ class enrol_manual_plugin extends enrol_plugin {
         @set_time_limit(0);
         raise_memory_limit(MEMORY_HUGE);
 
-        if ($verbose) {
-            mtrace('Verifying manual enrolment expiration...');
-        }
+        $trace->output('Verifying manual enrolment expiration...');
 
         $params = array('now'=>time(), 'useractive'=>ENROL_USER_ACTIVE, 'courselevel'=>CONTEXT_COURSE);
         $coursesql = "";
@@ -332,9 +332,7 @@ class enrol_manual_plugin extends enrol_plugin {
                 // Always remove all manually assigned roles here, this may break enrol_self roles but we do not want hardcoded hacks here.
                 role_unassign_all(array('userid'=>$ue->userid, 'contextid'=>$ue->contextid, 'component'=>'', 'itemid'=>0), true);
                 $this->unenrol_user($instance, $ue->userid);
-                if ($verbose) {
-                    mtrace("  unenrolling expired user $ue->userid from course $instance->courseid");
-                }
+                $trace->output("unenrolling expired user $ue->userid from course $instance->courseid", 1);
             }
             $rs->close();
             unset($instances);
@@ -357,9 +355,7 @@ class enrol_manual_plugin extends enrol_plugin {
                 // Always remove all manually assigned roles here, this may break enrol_self roles but we do not want hardcoded hacks here.
                 role_unassign_all(array('userid'=>$ue->userid, 'contextid'=>$ue->contextid, 'component'=>'', 'itemid'=>0), true);
                 $this->update_user_enrol($instance, $ue->userid, ENROL_USER_SUSPENDED);
-                if ($verbose) {
-                    mtrace("  suspending expired user $ue->userid in course $instance->courseid");
-                }
+                $trace->output("suspending expired user $ue->userid in course $instance->courseid", 1);
             }
             $rs->close();
             unset($instances);
@@ -368,9 +364,8 @@ class enrol_manual_plugin extends enrol_plugin {
             // ENROL_EXT_REMOVED_KEEP means no changes.
         }
 
-        if ($verbose) {
-            mtrace('...manual enrolment updates finished.');
-        }
+        $trace->output('...manual enrolment updates finished.');
+        $trace->finished();
 
         return 0;
     }

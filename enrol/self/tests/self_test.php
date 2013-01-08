@@ -44,9 +44,11 @@ class enrol_self_testcase extends advanced_testcase {
 
         $selfplugin = enrol_get_plugin('self');
 
+        $trace = new null_progress_trace();
+
         // Just make sure the sync does not throw any errors when nothing to do.
-        $selfplugin->sync(NULL, false);
-        $selfplugin->sync($SITE->id, false);
+        $selfplugin->sync($trace, null);
+        $selfplugin->sync($trace, $SITE->id);
     }
 
     public function test_longtimnosee() {
@@ -58,6 +60,8 @@ class enrol_self_testcase extends advanced_testcase {
         $this->assertNotEmpty($manualplugin);
 
         $now = time();
+
+        $trace = new null_progress_trace();
 
         // Prepare some data.
 
@@ -128,14 +132,14 @@ class enrol_self_testcase extends advanced_testcase {
 
         // Execute sync - this is the same thing used from cron.
 
-        $selfplugin->sync($course2->id, false);
+        $selfplugin->sync($trace, $course2->id);
         $this->assertEquals(10, $DB->count_records('user_enrolments'));
 
         $this->assertTrue($DB->record_exists('user_enrolments', array('enrolid'=>$instance1->id, 'userid'=>$user1->id)));
         $this->assertTrue($DB->record_exists('user_enrolments', array('enrolid'=>$instance1->id, 'userid'=>$user2->id)));
         $this->assertTrue($DB->record_exists('user_enrolments', array('enrolid'=>$instance3->id, 'userid'=>$user1->id)));
         $this->assertTrue($DB->record_exists('user_enrolments', array('enrolid'=>$instance3->id, 'userid'=>$user3->id)));
-        $selfplugin->sync(null, false);
+        $selfplugin->sync($trace, null);
         $this->assertEquals(6, $DB->count_records('user_enrolments'));
         $this->assertFalse($DB->record_exists('user_enrolments', array('enrolid'=>$instance1->id, 'userid'=>$user1->id)));
         $this->assertFalse($DB->record_exists('user_enrolments', array('enrolid'=>$instance1->id, 'userid'=>$user2->id)));
@@ -156,6 +160,8 @@ class enrol_self_testcase extends advanced_testcase {
         $this->assertNotEmpty($manualplugin);
 
         $now = time();
+
+        $trace = new null_progress_trace();
 
         // Prepare some data.
 
@@ -221,17 +227,17 @@ class enrol_self_testcase extends advanced_testcase {
         // Execute tests.
 
         $this->assertEquals(ENROL_EXT_REMOVED_KEEP, $selfplugin->get_config('expiredaction'));
-        $selfplugin->sync(null, false);
+        $selfplugin->sync($trace, null);
         $this->assertEquals(10, $DB->count_records('user_enrolments'));
         $this->assertEquals(10, $DB->count_records('role_assignments'));
 
 
         $selfplugin->set_config('expiredaction', ENROL_EXT_REMOVED_SUSPENDNOROLES);
-        $selfplugin->sync($course2->id, false);
+        $selfplugin->sync($trace, $course2->id);
         $this->assertEquals(10, $DB->count_records('user_enrolments'));
         $this->assertEquals(10, $DB->count_records('role_assignments'));
 
-        $selfplugin->sync(null, false);
+        $selfplugin->sync($trace, null);
         $this->assertEquals(10, $DB->count_records('user_enrolments'));
         $this->assertEquals(7, $DB->count_records('role_assignments'));
         $this->assertEquals(5, $DB->count_records('role_assignments', array('roleid'=>$studentrole->id)));
@@ -252,7 +258,7 @@ class enrol_self_testcase extends advanced_testcase {
         $this->assertEquals(7, $DB->count_records('role_assignments', array('roleid'=>$studentrole->id)));
         $this->assertEquals(2, $DB->count_records('role_assignments', array('roleid'=>$teacherrole->id)));
 
-        $selfplugin->sync(null, false);
+        $selfplugin->sync($trace, null);
         $this->assertEquals(7, $DB->count_records('user_enrolments'));
         $this->assertFalse($DB->record_exists('user_enrolments', array('enrolid'=>$instance1->id, 'userid'=>$user3->id)));
         $this->assertFalse($DB->record_exists('user_enrolments', array('enrolid'=>$instance3->id, 'userid'=>$user2->id)));
@@ -273,6 +279,8 @@ class enrol_self_testcase extends advanced_testcase {
         $manualplugin = enrol_get_plugin('manual');
         $now = time();
         $admin = get_admin();
+
+        $trace = new null_progress_trace();
 
         // Note: hopefully nobody executes the unit tests the last second before midnight...
 
@@ -363,7 +371,7 @@ class enrol_self_testcase extends advanced_testcase {
 
         $sink = $this->redirectMessages();
 
-        $selfplugin->send_expiry_notifications(false);
+        $selfplugin->send_expiry_notifications($trace);
 
         $messages = $sink->get_messages();
 
@@ -420,18 +428,18 @@ class enrol_self_testcase extends advanced_testcase {
         // Make sure that notifications are not repeated.
         $sink->clear();
 
-        $selfplugin->send_expiry_notifications(false);
+        $selfplugin->send_expiry_notifications($trace);
         $this->assertEquals(0, $sink->count());
 
         // use invalid notification hour to verify that before the hour the notifications are not sent.
         $selfplugin->set_config('expirynotifylast', time() - 60*60*24);
         $selfplugin->set_config('expirynotifyhour', '24');
 
-        $selfplugin->send_expiry_notifications(false);
+        $selfplugin->send_expiry_notifications($trace);
         $this->assertEquals(0, $sink->count());
 
         $selfplugin->set_config('expirynotifyhour', '0');
-        $selfplugin->send_expiry_notifications(false);
+        $selfplugin->send_expiry_notifications($trace);
         $this->assertEquals(6, $sink->count());
     }
 }

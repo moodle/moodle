@@ -210,6 +210,8 @@ class enrol_manual_lib_testcase extends advanced_testcase {
         /** @var $manualplugin enrol_manual_plugin */
         $manualplugin = enrol_get_plugin('manual');
 
+        $trace = new null_progress_trace();
+
         $now = time();
 
         // Prepare some data.
@@ -263,19 +265,19 @@ class enrol_manual_lib_testcase extends advanced_testcase {
         // Execute tests.
 
         $this->assertEquals(ENROL_EXT_REMOVED_KEEP, $manualplugin->get_config('expiredaction'));
-        $manualplugin->sync(null, false);
+        $manualplugin->sync($trace, null);
         $this->assertEquals(6, $DB->count_records('user_enrolments'));
         $this->assertEquals(7, $DB->count_records('role_assignments'));
 
 
         $manualplugin->set_config('expiredaction', ENROL_EXT_REMOVED_SUSPENDNOROLES);
-        $manualplugin->sync($course2->id, false);
+        $manualplugin->sync($trace, $course2->id);
         $this->assertEquals(6, $DB->count_records('user_enrolments'));
         $this->assertEquals(7, $DB->count_records('role_assignments'));
 
         $this->assertTrue($DB->record_exists('role_assignments', array('contextid'=>$context1->id, 'userid'=>$user3->id, 'roleid'=>$studentrole->id)));
         $this->assertTrue($DB->record_exists('role_assignments', array('contextid'=>$context3->id, 'userid'=>$user3->id, 'roleid'=>$teacherrole->id)));
-        $manualplugin->sync(null, false);
+        $manualplugin->sync($trace, null);
         $this->assertEquals(6, $DB->count_records('user_enrolments'));
         $this->assertEquals(5, $DB->count_records('role_assignments'));
         $this->assertEquals(4, $DB->count_records('role_assignments', array('roleid'=>$studentrole->id)));
@@ -294,7 +296,7 @@ class enrol_manual_lib_testcase extends advanced_testcase {
         $this->assertEquals(1, $DB->count_records('role_assignments', array('roleid'=>$teacherrole->id)));
         $this->assertEquals(1, $DB->count_records('role_assignments', array('roleid'=>$managerrole->id)));
 
-        $manualplugin->sync(null, false);
+        $manualplugin->sync($trace, null);
         $this->assertEquals(4, $DB->count_records('user_enrolments'));
         $this->assertFalse($DB->record_exists('user_enrolments', array('enrolid'=>$instance1->id, 'userid'=>$user3->id)));
         $this->assertFalse($DB->record_exists('user_enrolments', array('enrolid'=>$instance3->id, 'userid'=>$user3->id)));
@@ -308,6 +310,8 @@ class enrol_manual_lib_testcase extends advanced_testcase {
         global $DB, $CFG;
         $this->resetAfterTest();
         $this->preventResetByRollback(); // Messaging does not like transactions...
+
+        $trace = new null_progress_trace();
 
         /** @var $manualplugin enrol_manual_plugin */
         $manualplugin = enrol_get_plugin('manual');
@@ -394,7 +398,7 @@ class enrol_manual_lib_testcase extends advanced_testcase {
 
         $sink = $this->redirectMessages();
 
-        $manualplugin->send_expiry_notifications(false);
+        $manualplugin->send_expiry_notifications($trace);
 
         $messages = $sink->get_messages();
 
@@ -451,18 +455,18 @@ class enrol_manual_lib_testcase extends advanced_testcase {
         // Make sure that notifications are not repeated.
         $sink->clear();
 
-        $manualplugin->send_expiry_notifications(false);
+        $manualplugin->send_expiry_notifications($trace);
         $this->assertEquals(0, $sink->count());
 
         // use invalid notification hour to verify that before the hour the notifications are not sent.
         $manualplugin->set_config('expirynotifylast', time() - 60*60*24);
         $manualplugin->set_config('expirynotifyhour', '24');
 
-        $manualplugin->send_expiry_notifications(false);
+        $manualplugin->send_expiry_notifications($trace);
         $this->assertEquals(0, $sink->count());
 
         $manualplugin->set_config('expirynotifyhour', '0');
-        $manualplugin->send_expiry_notifications(false);
+        $manualplugin->send_expiry_notifications($trace);
         $this->assertEquals(6, $sink->count());
     }
 }
