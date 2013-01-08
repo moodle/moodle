@@ -1748,6 +1748,9 @@ class auth_plugin_ldap extends auth_plugin_base {
         if (!isset($config->host_url)) {
              $config->host_url = '';
         }
+        if (!isset($config->start_tls)) {
+             $config->start_tls = false;
+        }
         if (empty($config->ldapencoding)) {
          $config->ldapencoding = 'utf-8';
         }
@@ -1853,6 +1856,7 @@ class auth_plugin_ldap extends auth_plugin_base {
 
         // Save settings
         set_config('host_url', trim($config->host_url), $this->pluginconfig);
+        set_config('start_tls', $config->start_tls, $this->pluginconfig);
         set_config('ldapencoding', trim($config->ldapencoding), $this->pluginconfig);
         set_config('pagesize', (int)trim($config->pagesize), $this->pluginconfig);
         set_config('contexts', $config->contexts, $this->pluginconfig);
@@ -2045,7 +2049,7 @@ class auth_plugin_ldap extends auth_plugin_base {
         if($ldapconnection = ldap_connect_moodle($this->config->host_url, $this->config->ldap_version,
                                                  $this->config->user_type, $this->config->bind_dn,
                                                  $this->config->bind_pw, $this->config->opt_deref,
-                                                 $debuginfo)) {
+                                                 $debuginfo, $this->config->start_tls)) {
             $this->ldapconns = 1;
             $this->ldapconnection = $ldapconnection;
             return $ldapconnection;

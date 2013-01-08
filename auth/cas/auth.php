@@ -280,6 +280,9 @@ class auth_plugin_cas extends auth_plugin_ldap {
         if (!isset($config->host_url)) {
             $config->host_url = '';
         }
+        if (!isset($config->start_tls)) {
+             $config->start_tls = false;
+        }
         if (empty($config->ldapencoding)) {
             $config->ldapencoding = 'utf-8';
         }
@@ -345,6 +348,7 @@ class auth_plugin_cas extends auth_plugin_ldap {
 
         // save LDAP settings
         set_config('host_url', trim($config->host_url), $this->pluginconfig);
+        set_config('start_tls', $config->start_tls, $this->pluginconfig);
         set_config('ldapencoding', trim($config->ldapencoding), $this->pluginconfig);
         set_config('pagesize', (int)trim($config->pagesize), $this->pluginconfig);
         set_config('contexts', trim($config->contexts), $this->pluginconfig);

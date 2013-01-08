@@ -4,6 +4,9 @@
 if (!isset($config->host_url)) {
     $config->host_url = '';
 }
+if (!isset($config->start_tls)) {
+    $config->start_tls = false;
+}
 if (empty($config->ldapencoding)) {
     $config->ldapencoding = 'utf-8';
 }
@@ -124,7 +127,7 @@ $yesno = array(get_string('no'), get_string('yes'));
 </tr>
 <tr valign="top" class="required">
     <td align="right">
-        <label for="menuldap_version"><?php print_string('auth_ldap_version_key', 'auth_ldap') ?></label>
+        <label for="ldap_version"><?php print_string('auth_ldap_version_key', 'auth_ldap') ?></label>
     </td>
     <td>
         <?php
@@ -137,6 +140,17 @@ $yesno = array(get_string('no'), get_string('yes'));
     </td>
     <td>
         <?php print_string('auth_ldap_version', 'auth_ldap') ?>
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right">
+        <label for="start_tls"><?php print_string('start_tls_key', 'auth_ldap') ?></label>
+    </td>
+    <td>
+        <?php echo html_writer::select($yesno, 'start_tls', $config->start_tls, false); ?>
+    </td>
+    <td>
+        <?php print_string('start_tls', 'auth_ldap') ?>
     </td>
 </tr>
 <tr valign="top" class="required">
