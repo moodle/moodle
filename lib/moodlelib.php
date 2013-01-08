@@ -5161,9 +5161,8 @@ function moodle_process_email($modargs,$body) {
 /**
  * Get mailer instance, enable buffering, flush buffer or disable buffering.
  *
- * @global object
  * @param string $action 'get', 'buffer', 'close' or 'flush'
- * @return object|null mailer instance if 'get' used or nothing
+ * @return moodle_phpmailer|null mailer instance if 'get' used or nothing
  */
 function get_mailer($action='get') {
     global $CFG;
@@ -5502,7 +5501,6 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
 
     if ($mail->Send()) {
         set_send_count($user);
-        $mail->IsSMTP();                               // use SMTP directly
         if (!empty($mail->SMTPDebug)) {
             echo '</pre>';
         }
