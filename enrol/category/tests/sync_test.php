@@ -276,6 +276,8 @@ class enrol_category_testcase extends advanced_testcase {
 
         $this->resetAfterTest();
 
+        $trace = new null_progress_trace();
+
         // Setup a few courses and categories.
 
         $studentrole = $DB->get_record('role', array('shortname'=>'student'));
@@ -309,13 +311,13 @@ class enrol_category_testcase extends advanced_testcase {
         role_assign($managerrole->id, $user3->id, context_course::instance($course2->id));
         $this->assertEquals(0, $DB->count_records('user_enrolments', array()));
 
-        $result = enrol_category_sync_full();
+        $result = enrol_category_sync_full($trace);
         $this->assertSame(0, $result);
 
         $this->disable_plugin();
         role_assign($studentrole->id, $user1->id, context_coursecat::instance($cat2->id));
         $this->enable_plugin();
-        $result = enrol_category_sync_full();
+        $result = enrol_category_sync_full($trace);
         $this->assertSame(0, $result);
         $this->assertEquals(3, $DB->count_records('user_enrolments', array()));
         $this->assertTrue(is_enrolled(context_course::instance($course2->id), $user1->id));
@@ -329,7 +331,7 @@ class enrol_category_testcase extends advanced_testcase {
         role_assign($teacherrole->id, $user3->id, context_coursecat::instance($cat2->id));
         role_assign($managerrole->id, $user3->id, context_course::instance($course3->id));
         $this->enable_plugin();
-        $result = enrol_category_sync_full();
+        $result = enrol_category_sync_full($trace);
         $this->assertSame(0, $result);
         $this->assertEquals(5, $DB->count_records('user_enrolments', array()));
         $this->assertTrue(is_enrolled(context_course::instance($course1->id), $user2->id));
@@ -348,7 +350,7 @@ class enrol_category_testcase extends advanced_testcase {
         role_unassign_all(array('roleid'=>$managerrole->id));
         role_unassign_all(array('roleid'=>$teacherrole->id));
 
-        $result = enrol_category_sync_full();
+        $result = enrol_category_sync_full($trace);
         $this->assertSame(2, $result);
         $this->assertEquals(0, $DB->count_records('role_assignments', array()));
         $this->assertNotEmpty($DB->count_records('user_enrolments', array()));
@@ -356,7 +358,7 @@ class enrol_category_testcase extends advanced_testcase {
         $this->disable_role_sync($teacherrole->id);
 
         $this->enable_plugin();
-        $result = enrol_category_sync_full();
+        $result = enrol_category_sync_full($trace);
         $this->assertSame(0, $result);
         $this->assertEquals(0, $DB->count_records('role_assignments', array()));
         $this->assertEquals(0, $DB->count_records('user_enrolments', array()));
