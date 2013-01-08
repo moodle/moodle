@@ -177,4 +177,65 @@ class qtype_multianswer_question_test extends advanced_testcase {
         $this->assertEquals($question->clear_wrong_from_response($response),
                 array('sub2_answer' => $right));
     }
+
+    public function test_compute_final_grade() {
+        $question = test_question_maker::make_question('multianswer');
+        // Set penalty to 0.2 to ease calculations.
+        $question->penalty = 0.2;
+        // Set subquestion 2 defaultmark to 2, to make it a better test,
+        // even thought (at the moment) that never happens for real.
+        $question->subquestions[2]->defaultmark = 2;
+
+        $question->start_attempt(new question_attempt_step(), 1);
+
+        // Compute right and wrong response for subquestion 2.
+        $rightchoice = $question->subquestions[2]->get_correct_response();
+        $right = reset($rightchoice);
+        $wrong = ($right +1) % 3;
+
+        // Get subquestion 1 right at 2nd try and subquestion 2 right at 3rd try.
+        $responses = array(0 => array('sub1_answer' => 'Dog', 'sub2_answer' => $wrong),
+                           1 => array('sub1_answer' => 'Owl', 'sub2_answer' => $wrong),
+                           2 => array('sub1_answer' => 'Owl', 'sub2_answer' => $right),
+                          );
+        $finalgrade = $question->compute_final_grade($responses, 1);
+        $this->assertEquals(1/3*(1 - 0.2) + 2/3*(1 - 2*0.2), $finalgrade);
+
+        // Get subquestion 1 right at 3rd try and subquestion 2 right at 2nd try.
+        $responses = array(0 => array('sub1_answer' => 'Dog', 'sub2_answer' => $wrong),
+                           1 => array('sub1_answer' => 'Cat', 'sub2_answer' => $right),
+                           2 => array('sub1_answer' => 'Owl', 'sub2_answer' => $right),
+                           3 => array('sub1_answer' => 'Owl', 'sub2_answer' => $right),
+                          );
+        $finalgrade = $question->compute_final_grade($responses, 1);
+        $this->assertEquals(1/3*(1 - 2*0.2) + 2/3*(1 - 0.2), $finalgrade);
+
+        // Get subquestion 1 right at 4th try and subquestion 2 right at 1st try.
+        $responses = array(0 => array('sub1_answer' => 'Dog', 'sub2_answer' => $right),
+                           1 => array('sub1_answer' => 'Dog', 'sub2_answer' => $right),
+                           2 => array('sub1_answer' => 'Dog', 'sub2_answer' => $right),
+                           3 => array('sub1_answer' => 'Owl', 'sub2_answer' => $right),
+                          );
+        $finalgrade = $question->compute_final_grade($responses, 1);
+        $this->assertEquals(1/3*(1 - 3*0.2) + 2/3, $finalgrade);
+
+        // Get subquestion 1 right at 4th try and subquestion 2 right 3rd try.
+        // Subquestion 2 was right at 1st try, but last change is at 3rd try.
+        $responses = array(0 => array('sub1_answer' => 'Dog', 'sub2_answer' => $right),
+                           1 => array('sub1_answer' => 'Cat', 'sub2_answer' => $wrong),
+                           2 => array('sub1_answer' => 'Frog', 'sub2_answer' => $right),
+                           3 => array('sub1_answer' => 'Owl', 'sub2_answer' => $right),
+                          );
+        $finalgrade = $question->compute_final_grade($responses, 1);
+        $this->assertEquals(1/3*(1 - 3*0.2) + 2/3*(1 - 2*0.2), $finalgrade);
+
+        // Incomplete responses. Subquestion 1 is right at 4th try and subquestion 2 at 3rd try.
+        $responses = array(0 => array('sub1_answer' => 'Dog'),
+                           1 => array('sub1_answer' => 'Cat'),
+                           2 => array('sub1_answer' => 'Frog', 'sub2_answer' => $right),
+                           3 => array('sub1_answer' => 'Owl', 'sub2_answer' => $right),
+                          );
+        $finalgrade = $question->compute_final_grade($responses, 1);
+        $this->assertEquals(1/3*(1 - 3*0.2) + 2/3*(1 - 2*0.2), $finalgrade);
+    }
 }
