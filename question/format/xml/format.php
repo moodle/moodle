@@ -471,7 +471,7 @@ class qformat_xml extends qformat_default {
             $qo->penalty = 0.3333333;
         }
 
-        $this->import_hints($qo, $question, false, false, $this->get_format($qo->questiontextformat));
+        $this->import_hints($qo, $question, true, false, $this->get_format($qo->questiontextformat));
 
         return $qo;
     }
