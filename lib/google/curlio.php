@@ -28,10 +28,10 @@ require_once($CFG->libdir . '/google/io/Google_IO.php');
 
 /**
  * Class moodle_google_curlio.
- * 
+ *
  * The initial purpose of this class is to add support for our
  * class curl in Google_CurlIO.
- * 
+ *
  * @package core_google
  * @copyright 2013 Frédéric Massart
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -125,31 +125,31 @@ class moodle_google_curlio extends Google_CurlIO {
             'CURLOPT_USERAGENT' => $request->getUserAgent()
         ));
 
-        $respData = $this->do_request($curl, $request);
+        $respdata = $this->do_request($curl, $request);
 
         // Retry if certificates are missing.
         if ($curl->get_errno() == CURLE_SSL_CACERT) {
             error_log('SSL certificate problem, verify that the CA cert is OK.' .
                     ' Retrying with the CA cert bundle from google-api-php-client.');
             $curl->setopt(array('CURLOPT_CAINFO' => dirname(__FILE__) . '/io/cacerts.pem'));
-            $respData = $this->do_request($curl, $request);
+            $respdata = $this->do_request($curl, $request);
         }
 
         $infos = $curl->get_info();
-        $respHeaderSize = $infos['header_size'];
-        $respHttpCode = (int) $infos['http_code'];
-        $curlErrorNum = $curl->get_errno();
-        $curlError = $curl->error;
+        $respheadersize = $infos['header_size'];
+        $resphttpcode = (int) $infos['http_code'];
+        $curlerrornum = $curl->get_errno();
+        $curlerror = $curl->error;
 
-        if ($curlErrorNum != CURLE_OK) {
-          throw new Google_IOException("HTTP Error: ($respHttpCode) $curlError");
+        if ($curlerrornum != CURLE_OK) {
+          throw new Google_IOException("HTTP Error: ($resphttpcode) $curlerror");
         }
 
         // Parse out the raw response into usable bits.
-        list($responseHeaders, $responseBody) = self::parseHttpResponse($respData, $respHeaderSize);
+        list($responseHeaders, $responseBody) = self::parseHttpResponse($respdata, $respheadersize);
 
         // Fill in the apiHttpRequest with the response values.
-        $request->setResponseHttpCode($respHttpCode);
+        $request->setResponseHttpCode($resphttpcode);
         $request->setResponseHeaders($responseHeaders);
         $request->setResponseBody($responseBody);
 

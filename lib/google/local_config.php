@@ -32,7 +32,7 @@ $GoogleConfigTempDir = $CFG->tempdir . '/googleapi';
 
 global $apiConfig;
 $apiConfig = array(
-    // The application_name is included in the User-Agent HTTP header.
+    // Application name.
     'application_name' => 'Moodle ' . $CFG->release,
 
     // Site name to show in the Google's OAuth 1 authentication screen.
@@ -41,7 +41,12 @@ $apiConfig = array(
     // Which HTTP IO classes to use.
     'ioClass' => 'moodle_google_curlio',
 
-    // IO Class dependent configuration, you only have to configure the values
-    // for the class that was configured as the ioClass above
-    'ioFileCache_directory' => $GoogleConfigTempDir
+    // Cache class directory, it should never be used but created just in case.
+    'ioFileCache_directory' => $GoogleConfigTempDir,
+
+    // Default Access Type for OAuth 2.0.
+    'oauth2_access_type' => 'online',
+
+    // Default Approval Prompt for OAuth 2.0.
+    'oauth2_approval_prompt' => 'auto'
 );
