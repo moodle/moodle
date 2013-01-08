@@ -636,7 +636,7 @@ To unlock the account immediately go to the following address
 
 In most mail programs, this should appear as a blue link
 which you can just click on.  If that doesn\'t work,
-then cut and paste the address into the address
+then copy and paste the address into the address
 line at the top of your web browser window.
 
 If you need help, please contact the site administrator,

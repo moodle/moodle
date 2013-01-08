@@ -1643,7 +1643,7 @@ class auth_plugin_ldap extends auth_plugin_base {
         $username   = $cf[$key];
         // Here we want to trigger the whole authentication machinery
         // to make sure no step is bypassed...
-        $user = authenticate_user_login($username, $key, false);
+        $user = authenticate_user_login($username, $key);
         if ($user) {
             add_to_log(SITEID, 'user', 'login', "view.php?id=$USER->id&course=".SITEID,
                        $user->id, 0, $user->id);
