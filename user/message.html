@@ -1,5 +1,6 @@
 <form id="theform" method="post" action="messageselect.php">
 <input type="hidden" name="id" value="<?php p($id) ?>" />
+<input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
 <input type="hidden" name="returnto" value="<?php p($returnto) ?>" />
 <input type="hidden" name="deluser" value="" />
 <?php echo $OUTPUT->box_start(); ?>

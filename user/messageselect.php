@@ -91,7 +91,7 @@ $messagebody = $SESSION->emailselect[$id]['messagebody'];
 
 $count = 0;
 
-if ($data = data_submitted()) {
+if (($data = data_submitted()) && confirm_sesskey()) {
     foreach ($data as $k => $v) {
         if (preg_match('/^(user|teacher)(\d+)$/',$k,$m)) {
             if (!array_key_exists($m[2],$SESSION->emailto[$id])) {
@@ -136,12 +136,13 @@ if (!empty($messagebody) && !$edit && !$deluser && ($preview || $send)) {
 <input type="hidden" name="returnto" value="'.s($returnto).'" />
 <input type="hidden" name="id" value="'.$id.'" />
 <input type="hidden" name="format" value="'.$format.'" />
+<input type="hidden" name="sesskey" value="' . sesskey() . '" />
 ';
             echo "<h3>".get_string('previewhtml')."</h3><div class=\"messagepreview\">\n".format_text($messagebody,$format)."\n</div>\n";
             echo '<p align="center"><input type="submit" name="send" value="'.get_string('sendmessage', 'message').'" />'."\n";
             echo '<input type="submit" name="edit" value="'.get_string('update').'" /></p>';
             echo "\n</form>";
-        } else if (!empty($send)) {
+        } else if (!empty($send) && require_sesskey()) {
             $good = 1;
             foreach ($SESSION->emailto[$id] as $user) {
                 $good = $good && message_post_message($USER,$user,$messagebody,$format);
