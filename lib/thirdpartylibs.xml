@@ -64,6 +64,13 @@
     <licenseversion>2.1+</licenseversion>
   </library>
   <library>
+    <location>google</location>
+    <name>Google APIs Client Library</name>
+    <license>Apache</license>
+    <version>0.6.0</version>
+    <licenseversion>2.0</licenseversion>
+  </library>
+  <library>
     <location>htmlpurifier</location>
     <name>HTML Purifier</name>
     <license>LGPL</license>
