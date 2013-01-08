@@ -40,8 +40,7 @@ if ($show_instructions) {
             </form>
             <p>
             <?php
-                print_string("auth_shibboleth_contact_administrator", "auth_shibboleth");
-                echo '<a href="mailto:'.get_admin()->email.'"> Moodle Administrator</a>.';
+                print_string("auth_shib_contact_administrator", "auth_shibboleth", get_admin()->email);
             ?>
             </p>
           </div>
