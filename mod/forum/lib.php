@@ -720,9 +720,9 @@ function forum_cron() {
                 $eventdata->contexturl = "{$CFG->wwwroot}/mod/forum/discuss.php?d={$discussion->id}#p{$post->id}";
                 $eventdata->contexturlname = $discussion->name;
 
-                // If forum_replytouser is not set then set mail display to 0.
-                if (!$CFG->forum_replytouser) {
-                    $eventdata->userfrom->maildisplay = 0;
+                // If forum_replytouser is not set then send mail using the noreplyaddress.
+                if (empty($CFG->forum_replytouser)) {
+                    $eventdata->userfrom->email = $CFG->noreplyaddress;
                 }
 
                 $mailresult = message_send($eventdata);
@@ -1016,10 +1016,9 @@ function forum_cron() {
                 }
 
                 $attachment = $attachname='';
-                $usetrueaddress = true;
                 // Directly email forum digests rather than sending them via messaging, use the
                 // site shortname as 'from name', the noreply address will be used by email_to_user.
-                $mailresult = email_to_user($userto, $site->shortname, $postsubject, $posttext, $posthtml, $attachment, $attachname, $usetrueaddress);
+                $mailresult = email_to_user($userto, $site->shortname, $postsubject, $posttext, $posthtml, $attachment, $attachname);
 
                 if (!$mailresult) {
                     mtrace("ERROR!");
