@@ -123,7 +123,7 @@ class cache_factory {
                 self::$instance = new cache_factory();
                 if (defined('CACHE_DISABLE_STORES') && CACHE_DISABLE_STORES !== false) {
                     // The cache stores have been disabled.
-                    self::$instance->set_state(self::STATE_STORES_DISABLED);;
+                    self::$instance->set_state(self::STATE_STORES_DISABLED);
                 }
             }
         }
