@@ -282,6 +282,15 @@ $functions = array(
         'capabilities'=> 'moodle/user:viewdetails, moodle/user:viewhiddendetails, moodle/course:useremail, moodle/user:update',
     ),
 
+    'core_user_get_users_by_field' => array(
+        'classname'   => 'core_user_external',
+        'methodname'  => 'get_users_by_field',
+        'classpath'   => 'user/externallib.php',
+        'description' => 'Retrieve users information for a specified unique field - If you want to do a user search, use core_user_get_users()',
+        'type'        => 'read',
+        'capabilities'=> 'moodle/user:viewdetails, moodle/user:viewhiddendetails, moodle/course:useremail, moodle/user:update',
+    ),
+
     'core_user_get_users_by_id' => array(
         'classname'   => 'core_user_external',
         'methodname'  => 'get_users_by_id',
