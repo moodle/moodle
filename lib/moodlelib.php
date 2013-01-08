@@ -5881,7 +5881,7 @@ function get_file_browser() {
 function get_file_packer($mimetype='application/zip') {
     global $CFG;
 
-    static $fp = array();;
+    static $fp = array();
 
     if (isset($fp[$mimetype])) {
         return $fp[$mimetype];

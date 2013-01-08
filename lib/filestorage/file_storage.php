@@ -1674,7 +1674,7 @@ class file_storage {
         $reference['component'] = is_null($params['component']) ? null : clean_param($params['component'], PARAM_COMPONENT);
         $reference['itemid']    = is_null($params['itemid'])    ? null : clean_param($params['itemid'],    PARAM_INT);
         $reference['filearea']  = is_null($params['filearea'])  ? null : clean_param($params['filearea'],  PARAM_AREA);
-        $reference['filepath']  = is_null($params['filepath'])  ? null : clean_param($params['filepath'],  PARAM_PATH);;
+        $reference['filepath']  = is_null($params['filepath'])  ? null : clean_param($params['filepath'],  PARAM_PATH);
         $reference['filename']  = is_null($params['filename'])  ? null : clean_param($params['filename'],  PARAM_FILE);
         return base64_encode(serialize($reference));
     }

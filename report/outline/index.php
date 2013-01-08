@@ -127,7 +127,7 @@ foreach ($modinfo->sections as $sectionnum=>$section) {
             $attributes['class'] = 'dimmed';
         }
 
-        $activitycell->text = $activityicon . html_writer::link("$CFG->wwwroot/mod/$cm->modname/view.php?id=$cm->id", format_string($cm->name), $attributes);;
+        $activitycell->text = $activityicon . html_writer::link("$CFG->wwwroot/mod/$cm->modname/view.php?id=$cm->id", format_string($cm->name), $attributes);
 
         $reportrow->cells[] = $activitycell;
 

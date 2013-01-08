@@ -72,7 +72,7 @@ if ($mform->is_cancelled()) {
         $data->reset_start_date_old = $course->startdate;
         $status = reset_course_userdata($data);
 
-        $data = array();;
+        $data = array();
         foreach ($status as $item) {
             $line = array();
             $line[] = $item['component'];

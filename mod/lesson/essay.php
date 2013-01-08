@@ -32,7 +32,7 @@ require_once($CFG->libdir.'/eventslib.php');
 $id   = required_param('id', PARAM_INT);             // Course Module ID
 $mode = optional_param('mode', 'display', PARAM_ALPHA);
 
-$cm = get_coursemodule_from_id('lesson', $id, 0, false, MUST_EXIST);;
+$cm = get_coursemodule_from_id('lesson', $id, 0, false, MUST_EXIST);
 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 $lesson = new lesson($DB->get_record('lesson', array('id' => $cm->instance), '*', MUST_EXIST));
 

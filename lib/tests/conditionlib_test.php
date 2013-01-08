@@ -41,7 +41,7 @@ class conditionlib_testcase extends advanced_testcase {
 
         $CFG->enableavailability = 1;
         $CFG->enablecompletion = 1;
-        $user = $this->getDataGenerator()->create_user();;
+        $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
     }
 

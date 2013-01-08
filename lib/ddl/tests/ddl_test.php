@@ -1213,7 +1213,7 @@ class ddl_testcase extends database_driver_testcase {
         try {
             $result = $DB->insert_record('test_table_cust0', $record, false);
         } catch (dml_exception $e) {
-            $result = false;;
+            $result = false;
         }
         $this->resetDebugging();
         $this->assertFalse($result);

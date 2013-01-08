@@ -1150,7 +1150,7 @@ class qtype_calculated extends question_type {
                 }
                 $qtext = $qtext.$str;
             }
-            $answer->answer = $qtext.$qtextremaining;;
+            $answer->answer = $qtext.$qtextremaining;
             $comment->stranswers[$key]= $answer->answer;
 
         }

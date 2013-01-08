@@ -406,7 +406,7 @@ function stats_cron_daily($maxdays=1) {
 
                     SELECT 'enrolments', $nextmidnight, ".SITEID.", $defaultfproleid,
                            $totalactiveusers AS stat1, $dailyactiveusers AS stat2" .
-                    $DB->sql_null_from_clause();;
+                    $DB->sql_null_from_clause();
 
             if ($logspresent && !stats_run_query($sql)) {
                 $failed = true;

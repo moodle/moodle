@@ -120,7 +120,7 @@ abstract class xml_database_importer extends database_importer {
 
             case 'record' :
                 $this->import_table_data($this->current_table, $this->current_row);
-                $this->current_row = null;;
+                $this->current_row = null;
                 break;
 
             case 'field' :

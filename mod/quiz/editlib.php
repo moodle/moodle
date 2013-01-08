@@ -1317,7 +1317,7 @@ function quiz_print_status_bar($quiz) {
     if (empty($dates)) {
         $dates[] = get_string('alwaysavailable', 'quiz');
     }
-    $tooltip = implode(', ', $dates);;
+    $tooltip = implode(', ', $dates);
 
     // Brief summary on the page.
     if ($timenow < $quiz->timeopen) {

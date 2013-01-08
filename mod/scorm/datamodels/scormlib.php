@@ -367,7 +367,7 @@ function scorm_get_manifest($blocks, $scoes) {
                             }
                             if ($sequencing['name']=='IMSSS:ROLLUPRULES') {
                                 if (isset($sequencing['attrs']['ROLLUPOBJECTIVESATISFIED'])) {
-                                    $scoes->elements[$manifest][$parent->organization][$parent->identifier]->rollupobjectivesatisfied = $sequencing['attrs']['ROLLUPOBJECTIVESATISFIED'] == 'true'?1:0;;
+                                    $scoes->elements[$manifest][$parent->organization][$parent->identifier]->rollupobjectivesatisfied = $sequencing['attrs']['ROLLUPOBJECTIVESATISFIED'] == 'true'?1:0;
                                 }
                                 if (isset($sequencing['attrs']['ROLLUPPROGRESSCOMPLETION'])) {
                                     $scoes->elements[$manifest][$parent->organization][$parent->identifier]->rollupprogresscompletion = $sequencing['attrs']['ROLLUPPROGRESSCOMPLETION'] == 'true'?1:0;

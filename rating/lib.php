@@ -180,7 +180,7 @@ class rating implements renderable {
         $ratingoptions->scaleid = $this->scaleid;
         $ratingoptions->userid = $this->userid;
 
-        $rm = new rating_manager();;
+        $rm = new rating_manager();
         $items = $rm->get_ratings($ratingoptions);
         $firstitem = $items[0]->rating;
 

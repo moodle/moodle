@@ -786,7 +786,7 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
                 require_once($fullblock.'/db/install.php');
                 // Set installation running flag, we need to recover after exception or error
                 set_config('installrunning', 1, 'block_'.$blockname);
-                $post_install_function = 'xmldb_block_'.$blockname.'_install';;
+                $post_install_function = 'xmldb_block_'.$blockname.'_install';
                 $post_install_function();
                 unset_config('installrunning', 'block_'.$blockname);
             }

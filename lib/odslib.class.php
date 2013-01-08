@@ -65,7 +65,7 @@ class MoodleODSWorkbook {
      */
     function &add_format($properties = array()) {
         $format = new MoodleODSFormat($properties);
-        return $format;;
+        return $format;
     }
 
     /* Close the Moodle Workbook

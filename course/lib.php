@@ -527,7 +527,7 @@ function print_mnet_log($hostid, $course, $user=0, $date=0, $order="l.time ASC",
         echo "</td>\n";
         echo "<td class=\"r$row c4\">\n";
         echo $log->action .': '.$log->module;
-        echo "</td>\n";;
+        echo "</td>\n";
         echo "<td class=\"r$row c5\">{$log->info}</td>\n";
         echo "</tr>\n";
     }
