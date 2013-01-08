@@ -51,13 +51,7 @@ if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_configtext('enrol_paypal/cost', get_string('cost', 'enrol_paypal'), '', 0, PARAM_FLOAT, 4));
 
-    $paypalcurrencies = array('USD' => 'US Dollars',
-                              'EUR' => 'Euros',
-                              'JPY' => 'Japanese Yen',
-                              'GBP' => 'British Pounds',
-                              'CAD' => 'Canadian Dollars',
-                              'AUD' => 'Australian Dollars'
-                             );
+    $paypalcurrencies = enrol_get_plugin('paypal')->get_currencies();
     $settings->add(new admin_setting_configselect('enrol_paypal/currency', get_string('currency', 'enrol_paypal'), '', 'USD', $paypalcurrencies));
 
     if (!during_initial_install()) {

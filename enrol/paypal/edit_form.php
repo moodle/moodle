@@ -48,13 +48,7 @@ class enrol_paypal_edit_form extends moodleform {
         $mform->addElement('text', 'cost', get_string('cost', 'enrol_paypal'), array('size'=>4));
         $mform->setDefault('cost', $plugin->get_config('cost'));
 
-        $paypalcurrencies = array('USD' => 'US Dollars',
-                                  'EUR' => 'Euros',
-                                  'JPY' => 'Japanese Yen',
-                                  'GBP' => 'British Pounds',
-                                  'CAD' => 'Canadian Dollars',
-                                  'AUD' => 'Australian Dollars'
-                                 );
+        $paypalcurrencies = $plugin->get_currencies();
         $mform->addElement('select', 'currency', get_string('currency', 'enrol_paypal'), $paypalcurrencies);
         $mform->setDefault('currency', $plugin->get_config('currency'));
 
