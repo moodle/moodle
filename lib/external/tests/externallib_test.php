@@ -105,9 +105,13 @@ class core_external_testcase extends externallib_advanced_testcase {
         $wsstrings = $stringmanager->load_component_strings('webservice', current_language());
 
         $componentstrings = core_external::get_component_strings('webservice');
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $componentstrings = external_api::clean_returnvalue(core_external::get_component_strings_returns(), $componentstrings);
+
         $this->assertEquals(count($componentstrings), count($wsstrings));
-        foreach($wsstrings as $name => $string) {
-            $this->assertEquals($string, $componentstrings[$name]);
+        foreach($componentstrings as $string) {
+            $this->assertEquals($string['string'], $wsstrings[$string['stringid']]);
         }
     }
 }
