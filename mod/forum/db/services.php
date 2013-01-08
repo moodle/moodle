@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,17 +16,23 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information
+ * Forum external functions and service definitions.
  *
- * @package    mod
- * @subpackage forum
- * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @package    mod_forum
+ * @copyright  2012 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+$functions = array(
 
-$module->version   = 2012112901;       // The current module version (Date: YYYYMMDDXX)
-$module->requires  = 2012112900;    // Requires this Moodle version
-$module->component = 'mod_forum';      // Full name of the plugin (used for diagnostics)
-$module->cron      = 60;
+    'mod_forum_get_forums_by_courses' => array(
+        'classname' => 'mod_forum_external',
+        'methodname' => 'get_forums_by_courses',
+        'classpath' => 'mod/forum/externallib.php',
+        'description' => 'Returns a list of forum instances in a provided set of courses, if
+            no courses are provided then all the forum instances the user has access to will be
+            returned.',
+        'type' => 'read',
+        'capabilities' => 'mod/forum:viewdiscussion'
+    )
+);
