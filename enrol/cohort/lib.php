@@ -132,7 +132,9 @@ class enrol_cohort_plugin extends enrol_plugin {
         global $CFG;
 
         require_once("$CFG->dirroot/enrol/cohort/locallib.php");
-        enrol_cohort_sync();
+        $trace = new null_progress_trace();
+        enrol_cohort_sync($trace);
+        $trace->finished();
     }
 
     /**
@@ -160,7 +162,9 @@ class enrol_cohort_plugin extends enrol_plugin {
         parent::update_status($instance, $newstatus);
 
         require_once("$CFG->dirroot/enrol/cohort/locallib.php");
-        enrol_cohort_sync($instance->courseid);
+        $trace = new null_progress_trace();
+        enrol_cohort_sync($trace, $instance->courseid);
+        $trace->finished();
     }
 
     /**
@@ -279,7 +283,9 @@ class enrol_cohort_plugin extends enrol_plugin {
             $step->set_mapping('enrol', $oldid, $instanceid);
 
             require_once("$CFG->dirroot/enrol/cohort/locallib.php");
-            enrol_cohort_sync($course->id, false);
+            $trace = new null_progress_trace();
+            enrol_cohort_sync($trace, $course->id);
+            $trace->finished();
 
         } else if ($this->get_config('unenrolaction') == ENROL_EXT_REMOVED_SUSPENDNOROLES) {
             $data->customint1 = 0;
@@ -294,7 +300,9 @@ class enrol_cohort_plugin extends enrol_plugin {
             $step->set_mapping('enrol', $oldid, $instanceid);
 
             require_once("$CFG->dirroot/enrol/cohort/locallib.php");
-            enrol_cohort_sync($course->id, false);
+            $trace = new null_progress_trace();
+            enrol_cohort_sync($trace, $course->id);
+            $trace->finished();
 
         } else {
             $step->set_mapping('enrol', $oldid, 0);

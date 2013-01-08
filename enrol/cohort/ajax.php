@@ -90,7 +90,9 @@ switch ($action) {
         }
         $enrol = enrol_get_plugin('cohort');
         $enrol->add_instance($manager->get_course(), array('customint1' => $cohortid, 'roleid' => $roleid));
-        enrol_cohort_sync($manager->get_course()->id);
+        $trace = new null_progress_trace();
+        enrol_cohort_sync($trace, $manager->get_course()->id);
+        $trace->finished();
         break;
     case 'enrolcohortusers':
         //TODO: this should be moved to enrol_manual, see MDL-35618.
