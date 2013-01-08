@@ -174,8 +174,14 @@ class pgsql_native_moodle_database extends moodle_database {
         pg_set_client_encoding($this->pgsql, 'utf8');
         $this->query_end(true);
 
+        $sql = '';
+        // Select schema if specified, otherwise the first one wins.
+        if (isset($this->dboptions['dbschema'])) {
+            $sql .= "SET search_path = '".$this->dboptions['dbschema']."'; ";
+        }
+
         // find out the bytea oid
-        $sql = "SELECT oid FROM pg_type WHERE typname = 'bytea'";
+        $sql .= "SELECT oid FROM pg_type WHERE typname = 'bytea'";
         $this->query_start($sql, null, SQL_QUERY_AUX);
         $result = pg_query($this->pgsql, $sql);
         $this->query_end($result);
@@ -278,21 +284,13 @@ class pgsql_native_moodle_database extends moodle_database {
         }
         $this->tables = array();
         $prefix = str_replace('_', '|_', $this->prefix);
-        if ($this->is_min_version('9.1')) {
-            // Use ANSI standard information_schema in recent versions where it is fast enough.
-            $sql = "SELECT table_name
-                      FROM information_schema.tables
-                     WHERE table_name LIKE '$prefix%' ESCAPE '|'
-                       AND table_type IN ('BASE TABLE', 'LOCAL TEMPORARY')";
-        } else {
-            // information_schema is horribly slow in <= 9.0, so use pg internals.
-            // Note the pg_is_other_temp_schema. We only want temp objects from our own session.
-            $sql = "SELECT c.relname
-                      FROM pg_class c
-                     WHERE c.relname LIKE '$prefix%' ESCAPE '|'
+        $sql = "SELECT c.relname
+                  FROM pg_catalog.pg_class c
+                  JOIN pg_catalog.pg_namespace as ns ON ns.oid = c.relnamespace
+                 WHERE c.relname LIKE '$prefix%' ESCAPE '|'
                        AND c.relkind = 'r'
-                       AND NOT pg_is_other_temp_schema(c.relnamespace)";
-        }
+                       AND NOT pg_is_other_temp_schema(c.relnamespace)
+                       AND (ns.nspname = current_schema() OR ns.oid = pg_my_temp_schema())";
         $this->query_start($sql, null, SQL_QUERY_AUX);
         $result = pg_query($this->pgsql, $sql);
         $this->query_end($result);
@@ -319,9 +317,11 @@ class pgsql_native_moodle_database extends moodle_database {
         $indexes = array();
         $tablename = $this->prefix.$table;
 
-        $sql = "SELECT *
-                  FROM pg_catalog.pg_indexes
-                 WHERE tablename = '$tablename'";
+        $sql = "SELECT i.*
+                  FROM pg_catalog.pg_indexes i
+                  JOIN pg_catalog.pg_namespace as ns ON ns.nspname = i.schemaname
+                 WHERE i.tablename = '$tablename'
+                       AND (i.schemaname = current_schema() OR ns.oid = pg_my_temp_schema())";
 
         $this->query_start($sql, null, SQL_QUERY_AUX);
         $result = pg_query($this->pgsql, $sql);
@@ -362,10 +362,12 @@ class pgsql_native_moodle_database extends moodle_database {
 
         $sql = "SELECT a.attnum, a.attname AS field, t.typname AS type, a.attlen, a.atttypmod, a.attnotnull, a.atthasdef, d.adsrc
                   FROM pg_catalog.pg_class c
+                  JOIN pg_catalog.pg_namespace as ns ON ns.oid = c.relnamespace
                   JOIN pg_catalog.pg_attribute a ON a.attrelid = c.oid
                   JOIN pg_catalog.pg_type t ON t.oid = a.atttypid
              LEFT JOIN pg_catalog.pg_attrdef d ON (d.adrelid = c.oid AND d.adnum = a.attnum)
                  WHERE relkind = 'r' AND c.relname = '$tablename' AND c.reltype > 0 AND a.attnum > 0
+                       AND (ns.nspname = current_schema() OR ns.oid = pg_my_temp_schema())
               ORDER BY a.attnum";
 
         $this->query_start($sql, null, SQL_QUERY_AUX);
