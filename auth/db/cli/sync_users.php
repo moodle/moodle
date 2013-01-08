@@ -23,7 +23,7 @@
  *
  * Sample cron entry:
  * # 5 minutes past 4am
- * 5 4 * * * $sudo -u www-data /usr/bin/php /var/www/moodle/auth/db/cli/sync_users.php
+ * 5 4 * * * sudo -u www-data /usr/bin/php /var/www/moodle/auth/db/cli/sync_users.php
  *
  * Notes:
  *   - it is required to use the web server account when executing PHP CLI scripts
@@ -37,19 +37,17 @@
  * Performance notes:
  * + The code is simpler, but not as optimized as its LDAP counterpart.
  *
- * @package    auth
- * @subpackage db
+ * @package    auth_db
  * @copyright  2006 Martin Langhoff
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 define('CLI_SCRIPT', true);
 
-require(dirname(dirname(dirname(dirname(__FILE__)))).'/config.php');
-require_once($CFG->dirroot.'/course/lib.php');
-require_once($CFG->libdir.'/clilib.php');
+require(__DIR__.'/../../../config.php');
+require_once("$CFG->libdir/clilib.php");
 
-// now get cli options
+// Now get cli options.
 list($options, $unrecognized) = cli_get_params(array('noupdate'=>false, 'verbose'=>false, 'help'=>false), array('n'=>'noupdate', 'v'=>'verbose', 'h'=>'help'));
 
 if ($unrecognized) {
@@ -64,15 +62,15 @@ The auth_db plugin must be enabled and properly configured.
 
 Options:
 -n, --noupdate        Skip update of existing users
--v, --verbose         Print verbose progess information
+-v, --verbose         Print verbose progress information
 -h, --help            Print out this help
 
 Example:
-\$sudo -u www-data /usr/bin/php auth/db/cli/sync_users.php
+\$ sudo -u www-data /usr/bin/php auth/db/cli/sync_users.php
 
 Sample cron entry:
 # 5 minutes past 4am
-5 4 * * * \$sudo -u www-data /usr/bin/php /var/www/moodle/auth/db/cli/sync_users.php
+5 4 * * * sudo -u www-data /usr/bin/php /var/www/moodle/auth/db/cli/sync_users.php
 ";
 
     echo $help;
@@ -80,13 +78,19 @@ Sample cron entry:
 }
 
 if (!is_enabled_auth('db')) {
-    echo "Plugin not enabled!";
-    exit(1);
+    cli_error('auth_db plugin is disabled, synchronisation stopped', 2);
 }
 
-$verbose = !empty($options['verbose']);
+if (empty($options['verbose'])) {
+    $trace = new null_progress_trace();
+} else {
+    $trace = new text_progress_trace();
+}
+
 $update = empty($options['noupdate']);
 
+/** @var auth_plugin_db $dbauth */
 $dbauth = get_auth_plugin('db');
-return $dbauth->sync_users($update, $verbose);
+$result = $dbauth->sync_users($trace, $update);
 
+exit($result);
