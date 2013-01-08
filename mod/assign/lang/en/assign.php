@@ -324,4 +324,7 @@ $string['viewfull'] = 'View full';
 $string['viewsummary'] = 'View summary';
 $string['viewsubmissiongradingtable'] = 'View submission grading table.';
 $string['viewrevealidentitiesconfirm'] = 'View reveal student identities confirmation page.';
+$string['submissiontypes'] = 'Submission types';
+$string['feedbacktypes'] = 'Feedback types';
+$string['groupsubmissionsettings'] = 'Group submission settings';
 

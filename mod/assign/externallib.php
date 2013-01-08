@@ -185,7 +185,7 @@ class mod_assign_external extends external_api {
             array(
                 'assignments' => new external_multiple_structure(self::assign_grades(), 'list of assignment grade information'),
                 'warnings'      => new external_warnings('item is always \'assignment\'',
-                    'when errorcode is 3 then itemid is an assignment id. When errorcode is 1, itemid is a course module instance id',
+                    'when errorcode is 3 then itemid is an assignment id. When errorcode is 1, itemid is a course module id',
                     'errorcode can be 3 (no grades found) or 1 (no permission to get grades)')
             )
         );
