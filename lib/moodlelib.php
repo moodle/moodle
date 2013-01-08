@@ -10390,6 +10390,11 @@ function get_performance_info() {
     $info['html'] .= '<span class="included">Included '.$info['includecount'].' files</span> ';
     $info['txt']  .= 'includecount: '.$info['includecount'].' ';
 
+    if (!empty($CFG->early_install_lang)) {
+        // We can not track more performance before installation, sorry.
+        return $info;
+    }
+
     $filtermanager = filter_manager::instance();
     if (method_exists($filtermanager, 'get_performance_summary')) {
         list($filterinfo, $nicenames) = $filtermanager->get_performance_summary();
