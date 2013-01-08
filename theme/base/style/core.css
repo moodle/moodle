@@ -899,7 +899,6 @@ sup {vertical-align: super;}
 
 /* Only set these options if we're showing the js container */
 .jsenabled .choosercontainer #chooseform .alloptions {
-    max-height: 550px;
     overflow-x: hidden;
     overflow-y: auto;
     max-width: 20.3em;
@@ -973,7 +972,6 @@ sup {vertical-align: super;}
     background-color: #FFFFFF;
     overflow-x: hidden;
     overflow-y: auto;
-    max-height: 550px;
     line-height: 2em;
 }
 

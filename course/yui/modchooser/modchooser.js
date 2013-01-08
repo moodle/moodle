@@ -152,6 +152,9 @@ YUI.add('moodle-course-modchooser', function(Y) {
     {
         NAME : MODCHOOSERNAME,
         ATTRS : {
+            maxheight : {
+                value : 800
+            }
         }
     });
     M.course = M.course || {};
