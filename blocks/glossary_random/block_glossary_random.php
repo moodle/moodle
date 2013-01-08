@@ -3,6 +3,7 @@
 define('BGR_RANDOMLY',     '0');
 define('BGR_LASTMODIFIED', '1');
 define('BGR_NEXTONE',      '2');
+define('BGR_NEXTALPHA',    '3');
 
 class block_glossary_random extends block_base {
 
@@ -55,6 +56,8 @@ class block_glossary_random extends block_base {
             $limitfrom = 0;
             $limitnum = 1;
 
+            $BROWSE = 'timemodified';
+
             switch ($this->config->type) {
 
                 case BGR_RANDOMLY:
@@ -64,6 +67,20 @@ class block_glossary_random extends block_base {
                     break;
 
                 case BGR_NEXTONE:
+                    if (isset($this->config->previous)) {
+                        $i = $this->config->previous + 1;
+                    } else {
+                        $i = 1;
+                    }
+                    if ($i > $numberofentries) {  // Loop back to beginning
+                        $i = 1;
+                    }
+                    $limitfrom = $i-1;
+                    $SORT = 'ASC';
+                    break;
+
+                case BGR_NEXTALPHA:
+                    $BROWSE = 'concept';
                     if (isset($this->config->previous)) {
                         $i = $this->config->previous + 1;
                     } else {
@@ -86,7 +103,7 @@ class block_glossary_random extends block_base {
             if ($entry = $DB->get_records_sql("SELECT id, concept, definition, definitionformat, definitiontrust
                                                  FROM {glossary_entries}
                                                 WHERE glossaryid = ? AND approved = 1
-                                             ORDER BY timemodified $SORT", array($this->config->glossary), $limitfrom, $limitnum)) {
+                                             ORDER BY $BROWSE $SORT", array($this->config->glossary), $limitfrom, $limitnum)) {
 
                 $entry = reset($entry);
 

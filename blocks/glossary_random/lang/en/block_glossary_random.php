@@ -31,6 +31,7 @@ $string['glossary_random:addinstance'] = 'Add a new random glossary entry block'
 $string['intro'] = 'Make sure you have at least one glossary with at least one entry added to this course. Then you can adjust the following settings';
 $string['invisible'] = '(to be continued)';
 $string['lastmodified'] = 'Last modified entry';
+$string['nextalpha'] = 'Alphabetical order';
 $string['nextone'] = 'Next entry';
 $string['noentriesyet'] = 'There are no entries yet in the chosen glossary.';
 $string['notyetconfigured'] = 'Please configure this block using the edit icon.';

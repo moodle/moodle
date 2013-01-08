@@ -55,7 +55,8 @@ class block_glossary_random_edit_form extends block_edit_form {
         $types = array(
             0 => get_string('random','block_glossary_random'),
             1 => get_string('lastmodified','block_glossary_random'),
-            2 => get_string('nextone','block_glossary_random')
+            2 => get_string('nextone','block_glossary_random'),
+            3 => get_string('nextalpha','block_glossary_random')
         );
         $mform->addElement('select', 'config_type', get_string('type', 'block_glossary_random'), $types);
 
