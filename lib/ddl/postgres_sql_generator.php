@@ -414,9 +414,11 @@ class postgres_sql_generator extends sql_generator {
         $tablename = $this->getTableName($xmldb_table);
         $sequencename = $tablename . '_id_seq';
 
-        if (!$this->mdb->get_record_sql("SELECT *
-                                           FROM pg_class
-                                          WHERE relname = ? AND relkind = 'S'",
+        if (!$this->mdb->get_record_sql("SELECT c.*
+                                           FROM pg_catalog.pg_class c
+                                           JOIN pg_catalog.pg_namespace as ns ON ns.oid = c.relnamespace
+                                          WHERE c.relname = ? AND c.relkind = 'S'
+                                                AND (ns.nspname = current_schema() OR ns.oid = pg_my_temp_schema())",
                                         array($sequencename))) {
             $sequencename = false;
         }
@@ -442,9 +444,11 @@ class postgres_sql_generator extends sql_generator {
             case 'ix':
             case 'uix':
             case 'seq':
-                if ($check = $this->mdb->get_records_sql("SELECT relname
-                                                            FROM pg_class
-                                                           WHERE lower(relname) = ?", array(strtolower($object_name)))) {
+                if ($check = $this->mdb->get_records_sql("SELECT c.relname
+                                                                FROM pg_class c
+                                                                JOIN pg_catalog.pg_namespace as ns ON ns.oid = c.relnamespace
+                                                               WHERE lower(c.relname) = ?
+                                                                     AND (ns.nspname = current_schema() OR ns.oid = pg_my_temp_schema())", array(strtolower($object_name)))) {
                     return true;
                 }
                 break;
@@ -452,9 +456,11 @@ class postgres_sql_generator extends sql_generator {
             case 'uk':
             case 'fk':
             case 'ck':
-                if ($check = $this->mdb->get_records_sql("SELECT conname
-                                                            FROM pg_constraint
-                                                           WHERE lower(conname) = ?", array(strtolower($object_name)))) {
+                if ($check = $this->mdb->get_records_sql("SELECT c.conname
+                                                                FROM pg_constraint c
+                                                                JOIN pg_catalog.pg_namespace as ns ON ns.oid = c.connamespace
+                                                               WHERE lower(c.conname) = ?
+                                                                     AND (ns.nspname = current_schema() OR ns.oid = pg_my_temp_schema())", array(strtolower($object_name)))) {
                     return true;
                 }
                 break;
