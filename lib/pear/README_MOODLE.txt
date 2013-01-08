@@ -15,8 +15,6 @@ and documented for Moodle at:
     http://tracker.moodle.org/browse/MDL-9911
 
 2/ Changed ereg_ to preg_
-* http://cvs.moodle.org/moodle/lib/excel/Parser.php.diff?r1=1.1&r2=1.2
-* http://cvs.moodle.org/moodle/lib/excel/Worksheet.php.diff?r1=1.1&r2=1.2
 
 3/ removed deprecated "=& new"
 
