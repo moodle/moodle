@@ -269,10 +269,9 @@ function get_role_access($roleid) {
 
     $accessdata['ra']['/'.SYSCONTEXTID] = array((int)$roleid => (int)$roleid);
 
-    //
-    // Overrides for the role IN ANY CONTEXTS
-    // down to COURSE - not below -
-    //
+    // Overrides for the role IN ANY CONTEXTS down to COURSE - not below -.
+
+    /*
     $sql = "SELECT ctx.path,
                    rc.capability, rc.permission
               FROM {context} ctx
@@ -281,6 +280,19 @@ function get_role_access($roleid) {
                    ON (cctx.contextlevel = ".CONTEXT_COURSE." AND ctx.path LIKE ".$DB->sql_concat('cctx.path',"'/%'").")
              WHERE rc.roleid = ? AND cctx.id IS NULL";
     $params = array($roleid);
+    */
+
+    // Note: the commented out query is 100% accurate but slow, so let's cheat instead by hardcoding the blocks mess directly.
+
+    $sql = "SELECT COALESCE(ctx.path, bctx.path) AS path, rc.capability, rc.permission
+              FROM {role_capabilities} rc
+         LEFT JOIN {context} ctx ON (ctx.id = rc.contextid AND ctx.contextlevel <= ".CONTEXT_COURSE.")
+         LEFT JOIN ({context} bctx
+                    JOIN {block_instances} bi ON (bi.id = bctx.instanceid)
+                    JOIN {context} pctx ON (pctx.id = bi.parentcontextid AND pctx.contextlevel < ".CONTEXT_COURSE.")
+                   ) ON (bctx.id = rc.contextid AND bctx.contextlevel = ".CONTEXT_BLOCK.")
+             WHERE rc.roleid = :roleid AND (ctx.id IS NOT NULL OR bctx.id IS NOT NULL)";
+    $params = array('roleid'=>$roleid);
 
     // we need extra caching in CLI scripts and cron
     $rs = $DB->get_recordset_sql($sql, $params);
