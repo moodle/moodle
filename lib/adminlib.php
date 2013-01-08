@@ -123,6 +123,9 @@ define('INSECURE_DATAROOT_ERROR', 2);
 function uninstall_plugin($type, $name) {
     global $CFG, $DB, $OUTPUT;
 
+    // This may take a long time.
+    @set_time_limit(0);
+
     // recursively uninstall all module/editor subplugins first
     if ($type === 'mod' || $type === 'editor') {
         $base = get_component_directory($type . '_' . $name);
