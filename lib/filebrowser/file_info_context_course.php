@@ -813,7 +813,7 @@ class file_info_area_backup_section extends file_info {
             'component' => 'backup',
             'filearea' => 'section',
             'emptyfilename' => '.');
-        $sql1 = "SELECT DISTINCT cs.id sectionid FROM {files} f, {course_sections} cs
+        $sql1 = "SELECT DISTINCT cs.id AS sectionid FROM {files} f, {course_sections} cs
             WHERE cs.course = :courseid
             AND f.contextid = :contextid
             AND f.component = :component
