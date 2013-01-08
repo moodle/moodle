@@ -14,7 +14,7 @@ Upgrade procedure:
 3/ bump up main version.php
 4/ update lib/thirdpartylibs.xml
 5/ execute cli/update_lang_files.php and review changes in lang/en/editor_tinymce.php
-6/ use search to find oversized zIndexes and divide them by 100
+6/ use search/replace to fix oversized zIndexes
 
 
 Changes:
