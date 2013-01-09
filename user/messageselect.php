@@ -91,7 +91,8 @@ $messagebody = $SESSION->emailselect[$id]['messagebody'];
 
 $count = 0;
 
-if (($data = data_submitted()) && confirm_sesskey()) {
+if ($data = data_submitted()) {
+    require_sesskey();
     foreach ($data as $k => $v) {
         if (preg_match('/^(user|teacher)(\d+)$/',$k,$m)) {
             if (!array_key_exists($m[2],$SESSION->emailto[$id])) {
@@ -130,6 +131,7 @@ if ($count) {
 }
 
 if (!empty($messagebody) && !$edit && !$deluser && ($preview || $send)) {
+    require_sesskey();
     if (count($SESSION->emailto[$id])) {
         if (!empty($preview)) {
             echo '<form method="post" action="messageselect.php" style="margin: 0 20px;">
@@ -142,7 +144,7 @@ if (!empty($messagebody) && !$edit && !$deluser && ($preview || $send)) {
             echo '<p align="center"><input type="submit" name="send" value="'.get_string('sendmessage', 'message').'" />'."\n";
             echo '<input type="submit" name="edit" value="'.get_string('update').'" /></p>';
             echo "\n</form>";
-        } else if (!empty($send) && require_sesskey()) {
+        } else if (!empty($send)) {
             $good = 1;
             foreach ($SESSION->emailto[$id] as $user) {
                 $good = $good && message_post_message($USER,$user,$messagebody,$format);
@@ -170,6 +172,7 @@ if ((!empty($send) || !empty($preview) || !empty($edit)) && (empty($messagebody)
 }
 
 if (count($SESSION->emailto[$id])) {
+    require_sesskey();
     $usehtmleditor = can_use_html_editor();
     require("message.html");
 }
