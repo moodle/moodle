@@ -341,14 +341,16 @@ function question_preview_cron() {
             'quba.component = :qubacomponent
                     AND NOT EXISTS (
                         SELECT 1
-                          FROM {question_attempts} qa
-                          JOIN {question_attempt_steps} qas ON qas.questionattemptid = qa.id
-                         WHERE qa.questionusageid = quba.id
-                           AND (qa.timemodified > :qamodifiedcutoff
-                                    OR qas.timecreated > :stepcreatedcutoff)
+                          FROM {question_attempts}      subq_qa
+                          JOIN {question_attempt_steps} subq_qas ON subq_qas.questionattemptid = subq_qa.id
+                          JOIN {question_usages}        subq_qu  ON subq_qu.id = subq_qa.questionusageid
+                         WHERE subq_qa.questionusageid = quba.id
+                           AND subq_qu.component = :qubacomponent2
+                           AND (subq_qa.timemodified > :qamodifiedcutoff
+                                    OR subq_qas.timecreated > :stepcreatedcutoff)
                     )
             ',
-            array('qubacomponent' => 'core_question_preview',
+            array('qubacomponent' => 'core_question_preview', 'qubacomponent2' => 'core_question_preview',
                 'qamodifiedcutoff' => $lastmodifiedcutoff, 'stepcreatedcutoff' => $lastmodifiedcutoff));
 
     question_engine::delete_questions_usage_by_activities($oldpreviews);
