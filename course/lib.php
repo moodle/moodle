@@ -3144,13 +3144,16 @@ function moveto_module($mod, $section, $beforemod=NULL) {
 
 /// Update module itself if necessary
 
-    if ($mod->section != $section->id) {
-        $mod->section = $section->id;
-        $DB->update_record("course_modules", $mod);
-        // if moving to a hidden section then hide module
-        if (!$section->visible) {
-            set_coursemodule_visible($mod->id, 0);
-        }
+    // If moving to a hidden section then hide module.
+    if (!$section->visible && $mod->visible) {
+        // Set this in the object because it is sent as a response to ajax calls.
+        set_coursemodule_visible($mod->id, 0, true);
+        $mod->visible = 0;
+    }
+    if ($section->visible && !$mod->visible) {
+        set_coursemodule_visible($mod->id, 1, true);
+        // Set this in the object because it is sent as a response to ajax calls.
+        $mod->visible = $mod->visibleold;
     }
 
 /// Add the module into the new section
