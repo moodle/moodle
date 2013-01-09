@@ -601,6 +601,26 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                 }
             }, this);
             listenevents.push(thisevent);
+        },
+        /**
+         * Set the visibility of the current resource (identified by the element)
+         * to match the hidden parameter (this is not a toggle).
+         * Only changes the visibility in the browser (no ajax update).
+         * @param args An object with 'element' being the A node containing the resource
+         *             and 'visible' being the state that the visiblity should be set to.
+         * @return void
+         */
+        set_visibility_resource_ui: function(args) {
+            var element = args.element;
+            var shouldbevisible = args.visible;
+            var buttonnode = element.one(CSS.SHOW);
+            var visible = (buttonnode === null);
+            if (visible) {
+                buttonnode = element.one(CSS.HIDE);
+            }
+            if (visible != shouldbevisible) {
+                this.toggle_hide_resource_ui(buttonnode);
+            }
         }
     }, {
         NAME : 'course-resource-toolbox',
