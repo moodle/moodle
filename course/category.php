@@ -101,13 +101,8 @@ if ($editingon && $sesskeyprovided) {
 
     // Move a specified course to a new category
     if (!empty($moveto) and $data = data_submitted()) {
-        // Some courses are being moved
-        // user must have category update in both cats to perform this
-        require_capability('moodle/category:manage', $context);
-        require_capability('moodle/category:manage', context_coursecat::instance($moveto));
-
-        if (!$destcategory = $DB->get_record('course_categories', array('id' => $data->moveto))) {
-            print_error('cannotfindcategory', '', '', $data->moveto);
+        if (!$destcategory = $DB->get_record('course_categories', array('id' => $moveto))) {
+            print_error('cannotfindcategory', '', '', $moveto);
         }
 
         $courses = array();
@@ -126,7 +121,10 @@ if ($editingon && $sesskeyprovided) {
                 }
             }
         }
-        move_courses($courses, $data->moveto);
+        if (!can_move_courses_to_category($courses, $moveto, $category->id)) {
+            print_error('cannotmovecoursetocategory');
+        }
+        move_courses($courses, $moveto);
     }
 
     // Hide or show a course
@@ -436,7 +434,7 @@ if (!$courses) {
     if ($abletomovecourses) {
         $movetocategories = array();
         $notused = array();
-        make_categories_list($movetocategories, $notused, 'moodle/category:manage');
+        make_categories_list($movetocategories, $notused, array('moodle/course:create', 'moodle/course:delete', 'moodle/category:manage'));
         $movetocategories[$category->id] = get_string('moveselectedcoursesto');
         echo '<tr><td colspan="3" align="right">';
         echo html_writer::label(get_string('moveselectedcoursesto'), 'movetoid', false, array('class' => 'accesshide'));

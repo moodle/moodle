@@ -50,7 +50,7 @@ class course_edit_form extends moodleform {
             if (has_capability('moodle/course:create', $categorycontext)) {
                 $displaylist = array();
                 $parentlist = array();
-                make_categories_list($displaylist, $parentlist, 'moodle/course:create');
+                make_categories_list($displaylist, $parentlist, array('moodle/course:create', 'moodle/course:delete', 'moodle/category:manage'));
                 $mform->addElement('select', 'category', get_string('category'), $displaylist);
                 $mform->addHelpButton('category', 'category');
                 $mform->setDefault('category', $category->id);
@@ -63,7 +63,7 @@ class course_edit_form extends moodleform {
             if (has_capability('moodle/course:changecategory', $coursecontext)) {
                 $displaylist = array();
                 $parentlist = array();
-                make_categories_list($displaylist, $parentlist, 'moodle/course:create');
+                make_categories_list($displaylist, $parentlist, array('moodle/course:create', 'moodle/course:delete', 'moodle/category:manage'));
                 if (!isset($displaylist[$course->category])) {
                     //always keep current
                     $displaylist[$course->category] = format_string($DB->get_field('course_categories', 'name', array('id'=>$course->category)));

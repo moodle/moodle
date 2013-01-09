@@ -435,4 +435,100 @@ class courselib_testcase extends advanced_testcase {
         }
     }
 
+    /**
+     * These tests check for moving courses around categories with different permissions enabled and disabled.
+     * (@see course/lib.php can_move_courses_to_category())
+     */
+    function test_move_course_to_category_check() {
+        $this->resetAfterTest(true);
+
+        // Create a user.
+        $user = $this->getDataGenerator()->create_user();
+
+        // Log in as the user.
+        $this->setUser($user);
+
+        $catstructure[] = array(
+                    'fromcategory' => array('catcap' => 'moodle/category:manage', 'allow' => CAP_ALLOW),
+                    'tocategory' => array('catcap' => 'moodle/category:manage', 'allow' => CAP_ALLOW),
+                    'courses' => array(
+                        array('coursecap' => array('moodle/course:create')),
+                        array('coursecap' => array('moodle/course:delete')),
+                        array('coursecap' => array('moodle/course:delete', 'moodle/course:create'))
+                    ),
+                    'movecourse' => array(
+                        array('course' => 0, 'result' => false),
+                        array('course' => 1, 'result' => false),
+                        array('course' => 2, 'result' => true),
+                        array('course' => array(0,1), 'result' => false),
+                        array('course' => array(0,1,2), 'result' => false),
+                    )
+            );
+
+        // Create a system context to ascertain the correct role id.
+        $systemcontext = context_system::instance();
+
+        $roleid = 4; // role id of student?
+        // This is to ensure that we get the correct role id.
+        $roles = role_get_names($systemcontext);
+        foreach ($roles as $role) {
+            if ($role->shortname == 'student') {
+                $roleid = $role->id;
+            }
+        }
+
+        // Create category.
+        foreach ($catstructure as $key => $value) {
+            // Create to catgory.
+            $cat = $this->getDataGenerator()->create_category(array('name' => 'FromTestCat '.$key));
+            $catstructure[$key]['tocategory']['catid'] = $cat->id;
+            $catstructure[$key]['tocategory']['catcontext'] = context_coursecat::instance($cat->id);
+            $catcap = $catstructure[$key]['tocategory']['catcap'];
+            $catallow = $catstructure[$key]['tocategory']['allow'];
+            assign_capability($catcap, $catallow, $roleid, $catstructure[$key]['tocategory']['catcontext'], true);
+
+            // Create from category.
+            $fromcat = $this->getDataGenerator()->create_category(array('name' => 'ToTestCat '.$key));
+            $catstructure[$key]['fromcategory']['catid'] = $fromcat->id;
+            $catstructure[$key]['fromcategory']['catcontext'] = context_coursecat::instance($fromcat->id);
+            $catcap = $catstructure[$key]['fromcategory']['catcap'];
+            $catallow = $catstructure[$key]['fromcategory']['allow'];
+            assign_capability($catcap, $catallow, $roleid, $catstructure[$key]['fromcategory']['catcontext'], true);
+
+            // Create course in from category.
+            foreach($value['courses'] as $coursekey => $coursedata) {
+                $coursed = array('category' => $fromcat->id,
+                                    'fullname' => 'Coursefullname '.$fromcat->id.$coursekey,
+                                    'shortname' => 'Courseshortname'.$fromcat->id.$coursekey);
+
+                $course = $this->getDataGenerator()->create_course($coursed);
+                $catstructure[$key]['courses'][$coursekey]['id'] = $course->id;
+                $coursecontext = context_course::instance($course->id);
+
+                foreach ($coursedata['coursecap'] as $coursecap) {
+                    assign_capability($coursecap, CAP_ALLOW, $roleid, $coursecontext, true);
+                }
+            }
+            // Assign course creator to user on category.
+            role_assign($roleid, $user->id, $catstructure[$key]['tocategory']['catcontext']);
+            role_assign($roleid, $user->id, $catstructure[$key]['fromcategory']['catcontext']);
+        }
+
+        // We loop through the catstructure array and test moving courses to different categories with different permissions.
+        foreach ($catstructure as $key => $data) {
+            foreach ($data['movecourse'] as $move) {
+                if (is_array($move['course'])) {
+                    $courseids = array();
+                    foreach ($move['course'] as $courseindex) {
+                        $courseids[] = $data['courses'][$courseindex]['id'];
+                    }
+                } else {
+                    $courseids = $data['courses'][$move['course']]['id'];
+                }
+
+                $canmove = can_move_courses_to_category($courseids, $data['tocategory']['catid']);
+                $this->assertEquals($canmove, $move['result']);
+            }
+        }
+    }
 }
