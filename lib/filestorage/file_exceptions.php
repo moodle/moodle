@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Basic file related exception class
+ * Basic file related exception class.
  *
  * @package   core_files
  * @category  files
@@ -46,7 +46,7 @@ class file_exception extends moodle_exception {
 }
 
 /**
- * Can not create file exception
+ * Can not create file exception.
  *
  * @package   core_files
  * @category  files
@@ -55,7 +55,7 @@ class file_exception extends moodle_exception {
  */
 class stored_file_creation_exception extends file_exception {
     /**
-     * Constructor
+     * Constructor.
      *
      * @param int $contextid context ID
      * @param string $component component
@@ -87,7 +87,7 @@ class stored_file_creation_exception extends file_exception {
  */
 class file_access_exception extends file_exception {
     /**
-     * Constructor
+     * Constructor.
      *
      * @param string $debuginfo extra debug info
      */
@@ -106,7 +106,7 @@ class file_access_exception extends file_exception {
  */
 class file_pool_content_exception extends file_exception {
     /**
-     * Constructor
+     * Constructor.
      *
      * @param string $contenthash content hash
      * @param string $debuginfo extra debug info
@@ -118,7 +118,7 @@ class file_pool_content_exception extends file_exception {
 
 
 /**
- * Problem with records in the {files_reference} table
+ * Problem with records in the {files_reference} table.
  *
  * @package   core_files
  * @catehory  files
@@ -127,7 +127,7 @@ class file_pool_content_exception extends file_exception {
  */
 class file_reference_exception extends file_exception {
     /**
-     * Constructor
+     * Constructor.
      *
      * @param int $repositoryid the id of the repository that provides the referenced file
      * @param string $reference the information for the repository to locate the file

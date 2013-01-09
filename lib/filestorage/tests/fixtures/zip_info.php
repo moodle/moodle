@@ -36,14 +36,24 @@ $archive = $_SERVER['argv'][1];
 
 // Note: the ZIP structure is described at http://www.pkware.com/documents/casestudies/APPNOTE.TXT
 if (!$filesize = filesize($archive) or !$fp = fopen($archive, 'rb+')) {
-    cli_error("Can not open file file $archive");
+    cli_error("Can not open ZIP archive: $archive");
+}
+
+if ($filesize == 22) {
+    $info = unpack('Vsig', fread($fp, 4));
+    fclose($fp);
+    if ($info['sig'] == 0x6054b50) {
+        cli_error("This ZIP archive is empty: $archive");
+    } else {
+        cli_error("This is not a ZIP archive: $archive");
+    }
 }
 
 fseek($fp, 0);
 $info = unpack('Vsig', fread($fp, 4));
 if ($info['sig'] !== 0x04034b50) {
     fclose($fp);
-    cli_error("This is not a zip file: $archive");
+    cli_error("This is not a ZIP archive: $archive");
 }
 
 // Find end of central directory record.
