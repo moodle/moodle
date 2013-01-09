@@ -66,6 +66,9 @@ class core_group_external_testcase extends externallib_advanced_testcase {
         // Call the external function.
         $groups = core_group_external::create_groups(array($group1, $group2));
 
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $groups = external_api::clean_returnvalue(core_group_external::create_groups_returns(), $groups);
+
         // Checks against DB values
         $this->assertEquals(2, count($groups));
         foreach ($groups as $group) {
@@ -125,6 +128,9 @@ class core_group_external_testcase extends externallib_advanced_testcase {
         // Call the external function.
         $groups = core_group_external::get_groups(array($group1->id, $group2->id));
 
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $groups = external_api::clean_returnvalue(core_group_external::get_groups_returns(), $groups);
+
         // Checks against DB values
         $this->assertEquals(2, count($groups));
         foreach ($groups as $group) {
@@ -151,7 +157,7 @@ class core_group_external_testcase extends externallib_advanced_testcase {
         // Call without required capability
         $this->unassignUserCapability('moodle/course:managegroups', $context->id, $roleid);
         $this->setExpectedException('required_capability_exception');
-        $froups = core_group_external::get_groups(array($group1->id, $group2->id));
+        $groups = core_group_external::get_groups(array($group1->id, $group2->id));
     }
 
     /**

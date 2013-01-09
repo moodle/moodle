@@ -91,6 +91,9 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $assignmentids[] = $assign->id;
         $result = mod_assign_external::get_grades($assignmentids);
 
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(mod_assign_external::get_grades_returns(), $result);
+
         // Check that the correct grade information for the student is returned.
         $this->assertEquals(1, count($result['assignments']));
         $assignment = $result['assignments'][0];
@@ -158,6 +161,10 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         ));
 
         $result = mod_assign_external::get_assignments();
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(mod_assign_external::get_assignments_returns(), $result);
+
         // Check the course and assignment are returned.
         $this->assertEquals(1, count($result['courses']));
         $course = $result['courses'][0];
@@ -169,6 +176,10 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals('lightwork assignment', $assignment['name']);
 
         $result = mod_assign_external::get_assignments(array($course1->id));
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(mod_assign_external::get_assignments_returns(), $result);
+
         $this->assertEquals(1, count($result['courses']));
         $course = $result['courses'][0];
         $this->assertEquals('Lightwork Course 1', $course['fullname']);
@@ -179,6 +190,10 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals('lightwork assignment', $assignment['name']);
 
         $result = mod_assign_external::get_assignments(array($course2->id));
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(mod_assign_external::get_assignments_returns(), $result);
+
         $this->assertEquals(0, count($result['courses']));
         $this->assertEquals(1, count($result['warnings']));
     }
