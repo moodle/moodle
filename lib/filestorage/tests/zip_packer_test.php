@@ -147,9 +147,17 @@ class zip_packer_testcase extends advanced_testcase {
 
         $this->assertFalse(file_exists(__DIR__.'/xx/yy/ee.txt'));
         $files = array('xtest.txt'=>__DIR__.'/xx/yy/ee.txt');
+
+        // TODO MDL-37429 Ugly hack to handle multiple debugging message. To be
+        // removed once this issue has been integrated.
+        ob_start();
         $result = $packer->archive_to_pathname($files, $archive);
+        $d = ob_end_clean();
+        $this->assertTrue($d !== '');
         $this->assertFalse($result);
-        $this->assertDebuggingCalled();
+        // TODO MDL-37429 Uncomment the following line and remove the ugly hack above once this
+        // issue has been integrated. In a nutshell, we need support for multiple debug messages.
+        // $this->assertDebuggingCalled();
 
         $this->assertTrue(file_exists(__DIR__.'/fixtures/test.txt'));
         $files = array();
