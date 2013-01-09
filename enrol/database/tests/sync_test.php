@@ -107,7 +107,11 @@ class enrol_database_testcase extends advanced_testcase {
             $dbman->drop_table($table);
         }
         $dbman->create_table($table);
-        set_config('remoteenroltable', $CFG->prefix.'enrol_database_test_enrols', 'enrol_database');
+        if (!empty($CFG->dboptions['dbschema'])) {
+            set_config('remoteenroltable', $CFG->dboptions['dbschema'].'.'.$CFG->prefix.'enrol_database_test_enrols', 'enrol_database');
+        } else {
+            set_config('remoteenroltable', $CFG->prefix.'enrol_database_test_enrols', 'enrol_database');
+        }
         set_config('remotecoursefield', 'courseid', 'enrol_database');
         set_config('remoteuserfield', 'userid', 'enrol_database');
         set_config('remoterolefield', 'roleid', 'enrol_database');
@@ -123,7 +127,11 @@ class enrol_database_testcase extends advanced_testcase {
             $dbman->drop_table($table);
         }
         $dbman->create_table($table);
-        set_config('newcoursetable', $CFG->prefix.'enrol_database_test_courses', 'enrol_database');
+        if (!empty($CFG->dboptions['dbschema'])) {
+            set_config('newcoursetable', $CFG->dboptions['dbschema'].'.'.$CFG->prefix.'enrol_database_test_courses', 'enrol_database');
+        } else {
+            set_config('newcoursetable', $CFG->prefix.'enrol_database_test_courses', 'enrol_database');
+        }
         set_config('newcoursefullname', 'fullname', 'enrol_database');
         set_config('newcourseshortname', 'shortname', 'enrol_database');
         set_config('newcourseidnumber', 'idnumber', 'enrol_database');

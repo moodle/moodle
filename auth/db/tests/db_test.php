@@ -104,7 +104,11 @@ class auth_db_testcase extends advanced_testcase {
             $dbman->drop_table($table);
         }
         $dbman->create_table($table);
-        set_config('table', $CFG->prefix.'auth_db_users', 'auth/db');
+        if (!empty($CFG->dboptions['dbschema'])) {
+            set_config('table', $CFG->dboptions['dbschema'].'.'.$CFG->prefix.'auth_db_users', 'auth/db');
+        } else {
+            set_config('table', $CFG->prefix.'auth_db_users', 'auth/db');
+        }
         set_config('fielduser', 'name', 'auth/db');
         set_config('fieldpass', 'pass', 'auth/db');
 
