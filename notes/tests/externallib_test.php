@@ -59,6 +59,9 @@ class core_notes_external_testcase extends externallib_advanced_testcase {
 
         $creatednotes = core_notes_external::create_notes($notes);
 
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $creatednotes = external_api::clean_returnvalue(core_notes_external::create_notes_returns(), $creatednotes);
+
         $thenote = $DB->get_record('post', array('id' => $creatednotes[0]['noteid']));
 
         // Confirm that base note data was inserted correctly.
