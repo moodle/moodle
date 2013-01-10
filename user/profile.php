@@ -243,45 +243,53 @@ echo '</div>';
 
 // Print all the little details in a list
 
-echo '<table class="list" summary="">';
-
-if (! isset($hiddenfields['country']) && $user->country) {
-    print_row(get_string('country') . ':', get_string($user->country, 'countries'));
+echo html_writer::start_tag('dl', array('class'=>'list'));
+if (!isset($hiddenfields['country']) && $user->country) {
+    echo html_writer::tag('dt', get_string('country'));
+    echo html_writer::tag('dd', get_string($user->country, 'countries'));
 }
 
-if (! isset($hiddenfields['city']) && $user->city) {
-    print_row(get_string('city') . ':', $user->city);
+if (!isset($hiddenfields['city']) && $user->city) {
+    echo html_writer::tag('dt', get_string('city'));
+    echo html_writer::tag('dd', $user->city);
 }
 
 if (isset($identityfields['address']) && $user->address) {
-    print_row(get_string("address").":", "$user->address");
+    echo html_writer::tag('dt', get_string('address'));
+    echo html_writer::tag('dd', $user->address);
 }
 
 if (isset($identityfields['phone1']) && $user->phone1) {
-    print_row(get_string("phone").":", "$user->phone1");
+    echo html_writer::tag('dt', get_string('phone'));
+    echo html_writer::tag('dd', $user->phone1);
 }
 
 if (isset($identityfields['phone2']) && $user->phone2) {
-    print_row(get_string("phone2").":", "$user->phone2");
+    echo html_writer::tag('dt', get_string('phone2'));
+    echo html_writer::tag('dd', $user->phone2);
 }
 
 if (isset($identityfields['institution']) && $user->institution) {
-    print_row(get_string("institution").":", "$user->institution");
+    echo html_writer::tag('dt', get_string('institution'));
+    echo html_writer::tag('dd', $user->institution);
 }
 
 if (isset($identityfields['department']) && $user->department) {
-    print_row(get_string("department").":", "$user->department");
+    echo html_writer::tag('dt', get_string('department'));
+    echo html_writer::tag('dd', $user->department);
 }
 
 if (isset($identityfields['idnumber']) && $user->idnumber) {
-    print_row(get_string("idnumber").":", "$user->idnumber");
+    echo html_writer::tag('dt', get_string('idnumber'));
+    echo html_writer::tag('dd', $user->idnumber);
 }
 
 if (isset($identityfields['email']) and ($currentuser
   or $user->maildisplay == 1
   or has_capability('moodle/course:useremail', $context)
   or ($user->maildisplay == 2 and enrol_sharing_course($user, $USER)))) {
-    print_row(get_string("email").":", obfuscate_mailto($user->email, ''));
+    echo html_writer::tag('dt', get_string('email'));
+    echo html_writer::tag('dd', obfuscate_mailto($user->email, ''));
 }
 
 if ($user->url && !isset($hiddenfields['webpage'])) {
@@ -289,30 +297,46 @@ if ($user->url && !isset($hiddenfields['webpage'])) {
     if (strpos($user->url, '://') === false) {
         $url = 'http://'. $url;
     }
-    print_row(get_string("webpage") .":", '<a href="'.s($url).'">'.s($user->url).'</a>');
+    $webpageurl = new moodle_url($url);
+    echo html_writer::tag('dt', get_string('webpage'));
+    echo html_writer::tag('dd', html_writer::link($webpageurl, s($user->url)));
 }
 
 if ($user->icq && !isset($hiddenfields['icqnumber'])) {
-    print_row(get_string('icqnumber').':',"<a href=\"http://web.icq.com/wwp?uin=".urlencode($user->icq)."\">".s($user->icq)." <img src=\"http://web.icq.com/whitepages/online?icq=".urlencode($user->icq)."&amp;img=5\" alt=\"\" /></a>");
+    $imurl = new moodle_url('http://web.icq.com/wwp', array('uin'=>$user->icq) );
+    $iconurl = new moodle_url('http://web.icq.com/whitepages/online', array('icq'=>$user->icq, 'img'=>'5'));
+    $statusicon = html_writer::tag('img', '', array('src'=>$iconurl, 'class'=>'icon icon-post', 'alt'=>get_string('status')));
+    echo html_writer::tag('dt', get_string('icqnumber'));
+    echo html_writer::tag('dd', html_writer::link($imurl, s($user->icq) . $statusicon));
 }
 
 if ($user->skype && !isset($hiddenfields['skypeid'])) {
+    $imurl = 'skype:'.urlencode($user->skype).'?call';
+    $iconurl = new moodle_url('http://mystatus.skype.com/smallicon/'.$user->skype);
     if (strpos($CFG->httpswwwroot, 'https:') === 0) {
         // Bad luck, skype devs are lazy to set up SSL on their servers - see MDL-37233.
         $statusicon = '';
     } else {
-        $statusicon = ' '.html_writer::empty_tag('img', array('src'=>'http://mystatus.skype.com/smallicon/'.urlencode($user->skype), 'alt'=>get_string('status')));
+        $statusicon = html_writer::empty_tag('img', array('src'=>$iconurl, 'class'=>'icon icon-post', 'alt'=>get_string('status')));
     }
-    print_row(get_string('skypeid').':','<a href="skype:'.urlencode($user->skype).'?call">'.s($user->skype).$statusicon.'</a>');
+    echo html_writer::tag('dt', get_string('skypeid'));
+    echo html_writer::tag('dd', html_writer::link($imurl, s($user->skype) . $statusicon));
 }
 if ($user->yahoo && !isset($hiddenfields['yahooid'])) {
-    print_row(get_string('yahooid').':', '<a href="http://edit.yahoo.com/config/send_webmesg?.target='.urlencode($user->yahoo).'&amp;.src=pg">'.s($user->yahoo)." <img src=\"http://opi.yahoo.com/online?u=".urlencode($user->yahoo)."&m=g&t=0\" alt=\"\"></a>");
+    $imurl = new moodle_url('http://edit.yahoo.com/config/send_webmesg', array('.target'=>$user->yahoo, '.src'=>'pg'));
+    $iconurl = new moodle_url('http://opi.yahoo.com/online', array('u'=>$user->yahoo, 'm'=>'g', 't'=>'0'));
+    $statusicon = html_writer::tag('img', '', array('src'=>$iconurl, 'class'=>'iconsmall icon-post', 'alt'=>get_string('status')));
+    echo html_writer::tag('dt', get_string('yahooid'));
+    echo html_writer::tag('dd', html_writer::link($imurl, s($user->yahoo) . $statusicon));
 }
 if ($user->aim && !isset($hiddenfields['aimid'])) {
-    print_row(get_string('aimid').':', '<a href="aim:goim?screenname='.urlencode($user->aim).'">'.s($user->aim).'</a>');
+    $imurl = 'aim:goim?screenname='.urlencode($user->aim);
+    echo html_writer::tag('dt', get_string('aimid'));
+    echo html_writer::tag('dd', html_writer::link($imurl, s($user->aim)));
 }
 if ($user->msn && !isset($hiddenfields['msnid'])) {
-    print_row(get_string('msnid').':', s($user->msn));
+    echo html_writer::tag('dt', get_string('msnid'));
+    echo html_writer::tag('dd', s($user->msn));
 }
 
 /// Print the Custom User Fields
@@ -342,7 +366,8 @@ if (!isset($hiddenfields['mycourses'])) {
                 break;
             }
         }
-        print_row(get_string('courseprofiles').':', rtrim($courselisting,', '));
+        echo html_writer::tag('dt', get_string('courseprofiles'));
+        echo html_writer::tag('dd', rtrim($courselisting,', '));
     }
 }
 if (!isset($hiddenfields['firstaccess'])) {
@@ -351,7 +376,8 @@ if (!isset($hiddenfields['firstaccess'])) {
     } else {
         $datestring = get_string("never");
     }
-    print_row(get_string("firstaccess").":", $datestring);
+    echo html_writer::tag('dt', get_string('firstaccess'));
+    echo html_writer::tag('dd', $datestring);
 }
 if (!isset($hiddenfields['lastaccess'])) {
     if ($user->lastaccess) {
@@ -359,24 +385,27 @@ if (!isset($hiddenfields['lastaccess'])) {
     } else {
         $datestring = get_string("never");
     }
-    print_row(get_string("lastaccess").":", $datestring);
+    echo html_writer::tag('dt', get_string('lastaccess'));
+    echo html_writer::tag('dd', $datestring);
 }
 
 /// Printing tagged interests
 if (!empty($CFG->usetags)) {
     if ($interests = tag_get_tags_csv('user', $user->id) ) {
-        print_row(get_string('interests') .": ", $interests);
+        echo html_writer::tag('dt', get_string('interests'));
+        echo html_writer::tag('dd', $interests);
     }
 }
 
 if (!isset($hiddenfields['suspended'])) {
     if ($user->suspended) {
-        print_row('', get_string('suspended', 'auth'));
+        echo html_writer::tag('dt', '&nbsp;');
+        echo html_writer::tag('dd', get_string('suspended', 'auth'));
     }
 }
 
-echo "</table></div></div>";
-
+echo html_writer::end_tag('dl');
+echo "</div></div>"; // Closing desriptionbox and userprofilebox.
 echo '<div id="region-content" class="block-region"><div class="region-content">';
 echo $OUTPUT->blocks_for_region('content');
 echo '</div></div>';
@@ -397,8 +426,3 @@ if ($CFG->debugdisplay && debugging('', DEBUG_DEVELOPER) && $currentuser) {  // 
 
 echo '</div>';  // userprofile class
 echo $OUTPUT->footer();
-
-
-function print_row($left, $right) {
-    echo "\n<tr><th class=\"label c0\">$left</th><td class=\"info c1\">$right</td></tr>\n";
-}

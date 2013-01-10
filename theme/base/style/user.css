@@ -1,9 +1,11 @@
 /*$$$$$$$$$$$$$$$$$ User $$$$$$$$$$$$$$$$$$$$*/
-
 .userprofile .fullprofilelink {text-align:center; margin:10px;}
 .userprofile .profilepicture {float:left; margin-right:20px;}
 .userprofile .description {margin-bottom:20px;}
-.userprofile .label {font-weight:normal;text-align:left;}
+.userprofile dl {margin-top:10px;  margin-left:0px;  width:100%;}
+.userprofile dl dt, .userprofile dl dd {padding-top:3px;  padding-bottom:3px;}
+.userprofile dl dt {margin:0px;  font-weight:bold;  display:block; float:left; width:110px; margin-right:10px;}
+.userprofile dl dd {display:block; margin:0px; margin-left:120px;}
 
 .user-box {margin:8px;width:115px;height:160px;text-align:center;float:left;clear: none;}
 
@@ -31,7 +33,6 @@
 .userinfobox .list td {padding: 3px;}
 .userinfobox .username {padding-bottom: 20px;font-weight: bold;}
 .userinfobox td.label {text-align:right;white-space: nowrap;vertical-align: top;font-weight:bold;}
-
 .groupinfobox {border:1px solid;}
 .groupinfobox .left {padding: 10px;width: 100px;vertical-align: top;}
 
@@ -57,9 +58,9 @@
 
 /** Overide for RTL layout **/
 .dir-rtl .userprofile .profilepicture {float:right; margin-left:20px;margin-right:0px;}
-.dir-rtl .descriptionbox {margin-right: 110px;margin-left: 0px; }
 .dir-rtl .userlist table#participants td,
 .dir-rtl .userlist table#participants th {text-align: right;}
 .dir-rtl .userlist table#participants {margin: 0 auto;}
-
+.dir-rtl .userprofile dl dt {float:right; width:110px; margin-left:10px;}
+.dir-rtl .userprofile dl dd {margin-right: 120px;}
 #page-my-index.dir-rtl .block h3.main { text-align: right;}
