@@ -275,18 +275,27 @@ input[type="radio"] {
     border-bottom: 1px solid #eee;
 }
 
-.userprofile .list {
+.userprofile dl {
     margin-top: 10px;
 }
 
-.userprofile .list td {
+.userprofile dl dt, .userprofile dl dd {
     padding-top: 3px;
     padding-bottom: 3px;
+    float: left;
 }
 
-.userprofile .list .c0 {
+.userprofile dl dt {
     padding-left: 0;
     font-weight: bold;
+    display: inline-block;
+    width: 180px;
+    clear: both;
+}
+
+.userprofile dl dd {
+    display: inline-block;
+    margin: 0px;
 }
 
 #page-user-view .buttons {
