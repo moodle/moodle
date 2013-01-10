@@ -578,7 +578,7 @@ background-color:#f3ead8;
     vertical-align:middle;
 }
 
-.path-grade-report-grader .yui-overlay {
+.path-grade-report-grader .yui3-overlay {
     background-color: #FFEE69;
     border-color: #D4C237 #A6982B #A6982B;
     border-style: solid;
@@ -588,15 +588,15 @@ background-color:#f3ead8;
     font-size: 0.7em;
 }
 
-.path-grade-report-grader .yui-overlay .fullname {
+.path-grade-report-grader .yui3-overlay .fullname {
     color: #5F3E00;
     font-weight: bold;
 }
-.path-grade-report-grader .yui-overlay .itemname {
+.path-grade-report-grader .yui3-overlay .itemname {
     color: #194F3E;
     font-weight: bold;
 }
-.path-grade-report-grader .yui-overlay .feedback {
+.path-grade-report-grader .yui3-overlay .feedback {
     color: #5F595E;
 }
 /* table#user-grades td */
@@ -605,7 +605,7 @@ background-color:#f3ead8;
   text-align: left;
 }
 
-.path-grade-report-grader .yui-overlay a.container-close {
+.path-grade-report-grader .yui3-overlay a.container-close {
   margin-top: -3px;
 }
 
