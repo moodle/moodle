@@ -18,7 +18,7 @@
  * Data generator.
  *
  * @package    core
- * @category   phpunit
+ * @category   testing
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -29,7 +29,7 @@
  * that need to create fake test sites.
  *
  * @package    core
- * @category   phpunit
+ * @category   testing
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -395,11 +395,11 @@ EOD;
         $record = (array)$record;
 
         if (empty($record['course'])) {
-            throw new coding_exception('course must be present in phpunit_util::create_course_section() $record');
+            throw new coding_exception('course must be present in phpunit_data_generator::create_course_section() $record');
         }
 
         if (!isset($record['section'])) {
-            throw new coding_exception('section must be present in phpunit_util::create_course_section() $record');
+            throw new coding_exception('section must be present in phpunit_data_generator::create_course_section() $record');
         }
 
         course_create_sections_if_missing($record['course'], $record['section']);
@@ -453,7 +453,7 @@ EOD;
         $record = (array)$record;
 
         if (empty($record['courseid'])) {
-            throw new coding_exception('courseid must be present in phpunit_util::create_group() $record');
+            throw new coding_exception('courseid must be present in phpunit_data_generator::create_group() $record');
         }
 
         if (!isset($record['name'])) {
@@ -496,7 +496,7 @@ EOD;
         $record = (array)$record;
 
         if (empty($record['courseid'])) {
-            throw new coding_exception('courseid must be present in phpunit_util::create_grouping() $record');
+            throw new coding_exception('courseid must be present in phpunit_data_generator::create_grouping() $record');
         }
 
         if (!isset($record['name'])) {

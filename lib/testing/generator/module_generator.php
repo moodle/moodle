@@ -18,7 +18,7 @@
  * Module generator base class.
  *
  * @package    core
- * @category   phpunit
+ * @category   testing
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,7 +30,7 @@
  * Extend in mod/xxxx/tests/generator/lib.php as class mod_xxxx_generator.
  *
  * @package    core
- * @category   phpunit
+ * @category   testing
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

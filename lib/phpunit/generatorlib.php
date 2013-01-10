@@ -25,7 +25,7 @@
 
 // NOTE: MOODLE_INTERNAL is not verified here because we load this before setup.php!
 
-require_once(__DIR__.'/classes/data_generator.php');
-require_once(__DIR__.'/classes/module_generator.php');
-require_once(__DIR__.'/classes/block_generator.php');
+require_once(__DIR__.'/../testing/generator/data_generator.php');
+require_once(__DIR__.'/../testing/generator/module_generator.php');
+require_once(__DIR__.'/../testing/generator/block_generator.php');
 
