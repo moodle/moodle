@@ -1,7 +1,11 @@
 This files describes API changes in /calendar/* ,
 information provided here is intended especially for developers.
 
+=== 2.5 ===
 
+required changes in code:
+
+* calendar_get_mini() function now has optional $placement and $courseid paramaters.
 === 2.4 ===
 
 required changes in code:
