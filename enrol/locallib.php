@@ -867,7 +867,7 @@ class course_enrolment_manager {
                 $details['enrolments'][$ue->id] = array(
                     'text' => $ue->enrolmentinstancename,
                     'period' => $period,
-                    'dimmed' =>  ($periodoutside or $ue->status != ENROL_USER_ACTIVE or $ue->enrolmentinstance->status != ENROL_INSTANCE_ENABLED),
+                    'dimmed' =>  ($periodoutside || $ue->status != ENROL_USER_ACTIVE),
                     'actions' => $ue->enrolmentplugin->get_user_enrolment_actions($manager, $ue)
                 );
             }
