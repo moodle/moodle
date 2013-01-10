@@ -5,6 +5,7 @@ information provided here is intended especially for theme designer.
 
 DOM changes:
 * changed the h1 title in the help popup to a h2.
+* Re-wrote the user profile views to definition lists.
 
 === 2.4 ===
 
