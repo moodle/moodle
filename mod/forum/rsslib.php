@@ -69,14 +69,15 @@ function forum_rss_get_feed($context, $args) {
     if (file_exists($cachedfilepath)) {
         $cachedfilelastmodified = filemtime($cachedfilepath);
     }
-    //if the cache is more than 60 seconds old and there's new stuff
+    // Used to determine if we need to generate a new RSS feed.
     $dontrecheckcutoff = time()-60;
-    if ($dontrecheckcutoff > $cachedfilelastmodified && forum_rss_newstuff($forum, $cm, $cachedfilelastmodified)) {
-        //need to regenerate the cached version
+    // If it hasn't been generated we will need to create it, otherwise only update
+    // if there is new stuff to show and it is older than the cut off date set above.
+    if (($cachedfilelastmodified == 0) || (($dontrecheckcutoff > $cachedfilelastmodified) &&
+        forum_rss_newstuff($forum, $cm, $cachedfilelastmodified))) {
+        // Need to regenerate the cached version.
         $result = forum_rss_feed_contents($forum, $sql, $params, $modcontext);
-        if (!empty($result)) {
-            $status = rss_save_file('mod_forum',$filename,$result);
-        }
+        $status = rss_save_file('mod_forum', $filename, $result);
     }
 
     //return the path to the cached version
@@ -109,11 +110,8 @@ function forum_rss_newstuff($forum, $cm, $time) {
     global $DB;
 
     list($sql, $params) = forum_rss_get_sql($forum, $cm, $time);
-    if ($DB->count_records_sql($sql, $params) > 0) {
-        return true;
-    }
 
-    return false;
+    return $DB->record_exists_sql($sql, $params);
 }
 
 function forum_rss_get_sql($forum, $cm, $time=0) {
@@ -338,29 +336,17 @@ function forum_rss_feed_contents($forum, $sql, $params, $context) {
         }
     $recs->close();
 
-
+    // Create the RSS header.
+    $header = rss_standard_header(strip_tags(format_string($forum->name,true)),
+                                  $CFG->wwwroot."/mod/forum/view.php?f=".$forum->id,
+                                  format_string($forum->intro,true)); // TODO: fix format
+    // Now all the RSS items, if there are any.
+    $articles = '';
     if (!empty($items)) {
-        //First the RSS header
-        $header = rss_standard_header(strip_tags(format_string($forum->name,true)),
-                                      $CFG->wwwroot."/mod/forum/view.php?f=".$forum->id,
-                                      format_string($forum->intro,true)); // TODO: fix format
-        //Now all the rss items
-        if (!empty($header)) {
-            $articles = rss_add_items($items);
-        }
-        //Now the RSS footer
-        if (!empty($header) && !empty($articles)) {
-            $footer = rss_standard_footer();
-        }
-        //Now, if everything is ok, concatenate it
-        if (!empty($header) && !empty($articles) && !empty($footer)) {
-            $status = $header.$articles.$footer;
-        } else {
-            $status = false;
-        }
-    } else {
-        $status = false;
+        $articles = rss_add_items($items);
     }
+    // Create the RSS footer.
+    $footer = rss_standard_footer();
 
-    return $status;
+    return $header . $articles . $footer;
 }
