@@ -1023,13 +1023,15 @@ class block_manager {
         if ($this->page->user_can_edit_blocks()) {
             // Move icon.
             $controls[] = array('url' => $actionurl . '&bui_moveid=' . $block->instance->id,
-                    'icon' => 't/move', 'caption' => get_string('move'), 'class' => 'editing_move');
+                    'icon' => 't/move', 'caption' => get_string('moveblock', 'block', $block->title),
+                    'class' => 'editing_move');
         }
 
         if ($this->page->user_can_edit_blocks() || $block->user_can_edit()) {
             // Edit config icon - always show - needed for positioning UI.
             $controls[] = array('url' => $actionurl . '&bui_editid=' . $block->instance->id,
-                    'icon' => 't/edit', 'caption' => get_string('configuration'), 'class' => 'editing_edit');
+                    'icon' => 't/edit', 'caption' => get_string('configureblock', 'block', $block->title),
+                    'class' => 'editing_edit');
         }
 
         if ($this->page->user_can_edit_blocks() && $block->user_can_edit() && $block->user_can_addto($this->page)) {
@@ -1038,7 +1040,8 @@ class block_manager {
                     || $block->instance->parentcontextid != SITEID) {
                 // Delete icon.
                 $controls[] = array('url' => $actionurl . '&bui_deleteid=' . $block->instance->id,
-                        'icon' => 't/delete', 'caption' => get_string('delete'), 'class' => 'editing_delete');
+                        'icon' => 't/delete', 'caption' => get_string('deleteblock', 'block', $block->title),
+                        'class' => 'editing_delete');
             }
         }
 
@@ -1046,10 +1049,12 @@ class block_manager {
             // Show/hide icon.
             if ($block->instance->visible) {
                 $controls[] = array('url' => $actionurl . '&bui_hideid=' . $block->instance->id,
-                        'icon' => 't/hide', 'caption' => get_string('hide'), 'class' => 'editing_hide');
+                        'icon' => 't/hide', 'caption' => get_string('hideblock', 'block', $block->title),
+                        'class' => 'editing_hide');
             } else {
                 $controls[] = array('url' => $actionurl . '&bui_showid=' . $block->instance->id,
-                        'icon' => 't/show', 'caption' => get_string('show'), 'class' => 'editing_show');
+                        'icon' => 't/show', 'caption' => get_string('showblock', 'block', $block->title),
+                        'class' => 'editing_show');
             }
         }
 
@@ -1063,7 +1068,8 @@ class block_manager {
 
             $controls[] = array('url' => $CFG->wwwroot . '/' . $CFG->admin .
                     '/roles/assign.php?contextid=' . $block->context->id . '&returnurl=' . urlencode($return),
-                    'icon' => 'i/roles', 'caption' => get_string('assignroles', 'role'), 'class' => 'editing_roles');
+                    'icon' => 't/roles', 'caption' => get_string('assignrolesinblock', 'block', $block->title),
+                    'class' => 'editing_roles');
         }
 
         return $controls;
