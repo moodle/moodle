@@ -93,8 +93,6 @@ class mod_forum_external extends external_api {
                         }
                         // Set the forum object.
                         $forum = $forums[$forumid];
-                        // Get the course module.
-                        $cm = get_coursemodule_from_instance('forum', $forum->id, 0, false, MUST_EXIST);
                         // Get the module context.
                         $context = context_module::instance($cm->id);
                         // Check they have the view forum capability.
