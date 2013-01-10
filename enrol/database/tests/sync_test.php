@@ -73,7 +73,11 @@ class enrol_database_testcase extends advanced_testcase {
 
             case 'pgsql_native_moodle_database':
                 set_config('dbtype', 'postgres7', 'enrol_database');
-                set_config('dbsetupsql', "SET NAMES 'UTF-8'", 'enrol_database');
+                $setupsql = "SET NAMES 'UTF-8'";
+                if (!empty($CFG->dboptions['dbschema'])) {
+                    $setupsql .= "; SET search_path = '".$CFG->dboptions['dbschema']."'";
+                }
+                set_config('dbsetupsql', $setupsql, 'enrol_database');
                 set_config('dbsybasequoting', '0', 'enrol_database');
                 if (!empty($CFG->dboptions['dbsocket']) and ($CFG->dbhost === 'localhost' or $CFG->dbhost === '127.0.0.1')) {
                     if (strpos($CFG->dboptions['dbsocket'], '/') !== false) {
@@ -107,11 +111,7 @@ class enrol_database_testcase extends advanced_testcase {
             $dbman->drop_table($table);
         }
         $dbman->create_table($table);
-        if (!empty($CFG->dboptions['dbschema'])) {
-            set_config('remoteenroltable', $CFG->dboptions['dbschema'].'.'.$CFG->prefix.'enrol_database_test_enrols', 'enrol_database');
-        } else {
-            set_config('remoteenroltable', $CFG->prefix.'enrol_database_test_enrols', 'enrol_database');
-        }
+        set_config('remoteenroltable', $CFG->prefix.'enrol_database_test_enrols', 'enrol_database');
         set_config('remotecoursefield', 'courseid', 'enrol_database');
         set_config('remoteuserfield', 'userid', 'enrol_database');
         set_config('remoterolefield', 'roleid', 'enrol_database');
@@ -127,11 +127,7 @@ class enrol_database_testcase extends advanced_testcase {
             $dbman->drop_table($table);
         }
         $dbman->create_table($table);
-        if (!empty($CFG->dboptions['dbschema'])) {
-            set_config('newcoursetable', $CFG->dboptions['dbschema'].'.'.$CFG->prefix.'enrol_database_test_courses', 'enrol_database');
-        } else {
-            set_config('newcoursetable', $CFG->prefix.'enrol_database_test_courses', 'enrol_database');
-        }
+        set_config('newcoursetable', $CFG->prefix.'enrol_database_test_courses', 'enrol_database');
         set_config('newcoursefullname', 'fullname', 'enrol_database');
         set_config('newcourseshortname', 'shortname', 'enrol_database');
         set_config('newcourseidnumber', 'idnumber', 'enrol_database');
