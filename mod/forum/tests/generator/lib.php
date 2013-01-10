@@ -18,7 +18,7 @@
  * mod_forum data generator
  *
  * @package    mod_forum
- * @category   phpunit
+ * @category   testing
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,14 +27,14 @@ defined('MOODLE_INTERNAL') || die();
 
 
 /**
- * Assignment module PHPUnit data generator class
+ * Forum module data generator class
  *
  * @package    mod_forum
- * @category   phpunit
+ * @category   testing
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_forum_generator extends phpunit_module_generator {
+class mod_forum_generator extends testing_module_generator {
 
     /**
      * Create new forum module instance

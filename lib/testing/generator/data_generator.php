@@ -33,7 +33,7 @@
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class phpunit_data_generator {
+class testing_data_generator {
     protected $usercounter = 0;
     protected $categorycount = 0;
     protected $cohortcount = 0;
@@ -84,7 +84,7 @@ EOD;
         $this->coursecount = 0;
         $this->scalecount = 0;
 
-        foreach($this->generators as $generator) {
+        foreach ($this->generators as $generator) {
             $generator->reset();
         }
     }
@@ -395,11 +395,11 @@ EOD;
         $record = (array)$record;
 
         if (empty($record['course'])) {
-            throw new coding_exception('course must be present in phpunit_data_generator::create_course_section() $record');
+            throw new coding_exception('course must be present in testing_data_generator::create_course_section() $record');
         }
 
         if (!isset($record['section'])) {
-            throw new coding_exception('section must be present in phpunit_data_generator::create_course_section() $record');
+            throw new coding_exception('section must be present in testing_data_generator::create_course_section() $record');
         }
 
         course_create_sections_if_missing($record['course'], $record['section']);
@@ -453,7 +453,7 @@ EOD;
         $record = (array)$record;
 
         if (empty($record['courseid'])) {
-            throw new coding_exception('courseid must be present in phpunit_data_generator::create_group() $record');
+            throw new coding_exception('courseid must be present in testing_data_generator::create_group() $record');
         }
 
         if (!isset($record['name'])) {
@@ -496,7 +496,7 @@ EOD;
         $record = (array)$record;
 
         if (empty($record['courseid'])) {
-            throw new coding_exception('courseid must be present in phpunit_data_generator::create_grouping() $record');
+            throw new coding_exception('courseid must be present in testing_data_generator::create_grouping() $record');
         }
 
         if (!isset($record['name'])) {

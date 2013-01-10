@@ -34,14 +34,14 @@
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class phpunit_block_generator {
-    /** @var phpunit_data_generator@var  */
+abstract class testing_block_generator {
+    /** @var testing_data_generator */
     protected $datagenerator;
 
     /** @var number of created instances */
     protected $instancecount = 0;
 
-    public function __construct(phpunit_data_generator $datagenerator) {
+    public function __construct(testing_data_generator $datagenerator) {
         $this->datagenerator = $datagenerator;
     }
 

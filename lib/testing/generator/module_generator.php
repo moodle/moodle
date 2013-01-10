@@ -34,14 +34,14 @@
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class phpunit_module_generator {
-    /** @var phpunit_data_generator@var  */
+abstract class testing_module_generator {
+    /** @var testing_data_generator@var  */
     protected $datagenerator;
 
     /** @var number of created instances */
     protected $instancecount = 0;
 
-    public function __construct(phpunit_data_generator $datagenerator) {
+    public function __construct(testing_data_generator $datagenerator) {
         $this->datagenerator = $datagenerator;
     }
 
@@ -94,7 +94,7 @@ abstract class phpunit_module_generator {
         $cm->added              = time();
 
         $columns = $DB->get_columns('course_modules');
-        foreach ($options as $key=>$value) {
+        foreach ($options as $key => $value) {
             if ($key === 'id' or !isset($columns[$key])) {
                 continue;
             }
