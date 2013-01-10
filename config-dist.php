@@ -520,6 +520,10 @@ $CFG->admin = 'admin';
 // Example:
 //   $CFG->forced_plugin_settings = array('pluginname'  => array('settingname' => 'value', 'secondsetting' => 'othervalue'),
 //                                        'otherplugin' => array('mysetting' => 'myvalue', 'thesetting' => 'thevalue'));
+// Module default settings with advanced/locked checkboxes can be set too. To do this, add
+// an extra config with '_adv' or '_locked' as a suffix and set the value to true or false.
+// Example:
+//   $CFG->forced_plugin_settings = array('pluginname'  => array('settingname' => 'value', 'settingname_locked' => true, 'settingname_adv' => true));
 //
 //=========================================================================
 // 9. PHPUNIT SUPPORT

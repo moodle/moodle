@@ -1506,6 +1506,8 @@ abstract class admin_setting {
     public $nosave = false;
     /** @var bool if set, indicates that a change to this setting requires rebuild course cache */
     public $affectsmodinfo = false;
+    /** @var array of admin_setting_flag - These are extra checkboxes attached to a setting. */
+    private $flags = array();
 
     /**
      * Constructor
@@ -1520,6 +1522,114 @@ abstract class admin_setting {
         $this->visiblename    = $visiblename;
         $this->description    = $description;
         $this->defaultsetting = $defaultsetting;
+    }
+
+    /**
+     * Generic function to add a flag to this admin setting.
+     *
+     * @param bool $enabled - One of self::OPTION_ENABLED or self::OPTION_DISABLED
+     * @param bool $default - The default for the flag
+     * @param string $shortname - The shortname for this flag. Used as a suffix for the setting name.
+     * @param string $displayname - The display name for this flag. Used as a label next to the checkbox.
+     */
+    protected function set_flag_options($enabled, $default, $shortname, $displayname) {
+        if (empty($this->flags[$shortname])) {
+            $this->flags[$shortname] = new admin_setting_flag($enabled, $default, $shortname, $displayname);
+        } else {
+            $this->flags[$shortname]->set_options($enabled, $default);
+        }
+    }
+
+    /**
+     * Set the enabled options flag on this admin setting.
+     *
+     * @param bool $enabled - One of self::OPTION_ENABLED or self::OPTION_DISABLED
+     * @param bool $default - The default for the flag
+     */
+    public function set_enabled_flag_options($enabled, $default) {
+        $this->set_flag_options($enabled, $default, 'enabled', new lang_string('enabled', 'core_admin'));
+    }
+
+    /**
+     * Set the advanced options flag on this admin setting.
+     *
+     * @param bool $enabled - One of self::OPTION_ENABLED or self::OPTION_DISABLED
+     * @param bool $default - The default for the flag
+     */
+    public function set_advanced_flag_options($enabled, $default) {
+        $this->set_flag_options($enabled, $default, 'adv', new lang_string('advanced'));
+    }
+
+
+    /**
+     * Set the locked options flag on this admin setting.
+     *
+     * @param bool $enabled - One of self::OPTION_ENABLED or self::OPTION_DISABLED
+     * @param bool $default - The default for the flag
+     */
+    public function set_locked_flag_options($enabled, $default) {
+        $this->set_flag_options($enabled, $default, 'locked', new lang_string('locked', 'core_admin'));
+    }
+
+    /**
+     * Get the currently saved value for a setting flag
+     *
+     * @param admin_setting_flag $flag - One of the admin_setting_flag for this admin_setting.
+     * @return bool
+     */
+    public function get_setting_flag_value(admin_setting_flag $flag) {
+        $value = $this->config_read($this->name . '_' . $flag->get_shortname());
+        if (!isset($value)) {
+            $value = $flag->get_default();
+        }
+
+        return !empty($value);
+    }
+
+    /**
+     * Get the list of defaults for the flags on this setting.
+     *
+     * @param array of strings describing the defaults for this setting. This is appended to by this function.
+     */
+    public function get_setting_flag_defaults(& $defaults) {
+        foreach ($this->flags as $flag) {
+            if ($flag->is_enabled() && $flag->get_default()) {
+                $defaults[] = $flag->get_displayname();
+            }
+        }
+    }
+
+    /**
+     * Output the input fields for the advanced and locked flags on this setting.
+     *
+     * @param bool $adv - The current value of the advanced flag.
+     * @param bool $locked - The current value of the locked flag.
+     * @return string $output - The html for the flags.
+     */
+    public function output_setting_flags() {
+        $output = '';
+
+        foreach ($this->flags as $flag) {
+            if ($flag->is_enabled()) {
+                $output .= $flag->output_setting_flag($this);
+            }
+        }
+
+        return $output;
+    }
+
+    /**
+     * Write the values of the flags for this admin setting.
+     *
+     * @param array $data - The data submitted from the form.
+     * @return bool - true if successful.
+     */
+    public function write_setting_flags($data) {
+        $result = true;
+        foreach ($this->flags as $flag) {
+            $result = $result && $flag->write_setting_flag($this, $data);
+        }
+        return $result;
     }
 
     /**
@@ -1743,6 +1853,126 @@ abstract class admin_setting {
             }
         }
         return false;
+    }
+}
+
+/**
+ * An additional option that can be applied to an admin setting.
+ * The currently supported options are 'ADVANCED' and 'LOCKED'.
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class admin_setting_flag {
+    /** @var bool Flag to indicate if this option can be toggled for this setting */
+    private $enabled = false;
+    /** @var bool Flag to indicate if this option defaults to true or false */
+    private $default = false;
+    /** @var string Short string used to create setting name - e.g. 'adv' */
+    private $shortname = '';
+    /** @var string String used as the label for this flag */
+    private $displayname = '';
+    /** @const Checkbox for this flag is displayed in admin page */
+    const ENABLED = true;
+    /** @const Checkbox for this flag is not displayed in admin page */
+    const DISABLED = false;
+
+    /**
+     * Constructor
+     *
+     * @param bool $enabled Can this option can be toggled.
+     *                      Should be one of admin_setting_flag::ENABLED or admin_setting_flag::DISABLED.
+     * @param bool $default The default checked state for this setting option.
+     * @param string $shortname The shortname of this flag. Currently supported flags are 'locked' and 'adv'
+     * @param string $displayname The displayname of this flag. Used as a label for the flag.
+     */
+    public function __construct($enabled, $default, $shortname, $displayname) {
+        $this->shortname = $shortname;
+        $this->displayname = $displayname;
+        $this->set_options($enabled, $default);
+    }
+
+    /**
+     * Update the values of this setting options class
+     *
+     * @param bool $enabled Can this option can be toggled.
+     *                      Should be one of admin_setting_flag::ENABLED or admin_setting_flag::DISABLED.
+     * @param bool $default The default checked state for this setting option.
+     */
+    public function set_options($enabled, $default) {
+        $this->enabled = $enabled;
+        $this->default = $default;
+    }
+
+    /**
+     * Should this option appear in the interface and be toggleable?
+     *
+     * @return bool Is it enabled?
+     */
+    public function is_enabled() {
+        return $this->enabled;
+    }
+
+    /**
+     * Should this option be checked by default?
+     *
+     * @return bool Is it on by default?
+     */
+    public function get_default() {
+        return $this->default;
+    }
+
+    /**
+     * Return the short name for this flag. e.g. 'adv' or 'locked'
+     *
+     * @return string
+     */
+    public function get_shortname() {
+        return $this->shortname;
+    }
+
+    /**
+     * Return the display name for this flag. e.g. 'Advanced' or 'Locked'
+     *
+     * @return string
+     */
+    public function get_displayname() {
+        return $this->displayname;
+    }
+
+    /**
+     * Save the submitted data for this flag - or set it to the default if $data is null.
+     *
+     * @param admin_setting $setting - The admin setting for this flag
+     * @param array $data - The data submitted from the form.
+     * @return bool
+     */
+    public function write_setting_flag(admin_setting $setting, $data) {
+        $result = true;
+        if ($this->is_enabled()) {
+            $value = !empty($data[$setting->get_full_name() . '_' . $this->get_shortname()]);
+            $result = $setting->config_write($setting->name . '_' . $this->get_shortname(), $value);
+        }
+
+        return $result;
+
+    }
+
+    /**
+     * Output the checkbox for this setting flag. Should only be called if the flag is enabled.
+     *
+     * @param admin_setting $setting - The admin setting for this flag
+     * @return string - The html for the checkbox.
+     */
+    public function output_setting_flag(admin_setting $setting) {
+        $value = $setting->get_setting_flag_value($this);
+        $output = ' <input type="checkbox" class="form-checkbox" ' .
+                        ' id="' .  $setting->get_id() . '_' . $this->get_shortname() . '" ' .
+                        ' name="' . $setting->get_full_name() .  '_' . $this->get_shortname() . '" ' .
+                        ' value="1" ' . ($value ? 'checked="checked"' : '') . ' />' .
+                        ' <label for="' . $setting->get_id() . '_' . $this->get_shortname() . '">' .
+                        $this->get_displayname() .
+                        ' </label> ';
+        return $output;
     }
 }
 
@@ -4230,73 +4460,8 @@ class admin_setting_configtext_with_advanced extends admin_setting_configtext {
      * @param int $size default field size
      */
     public function __construct($name, $visiblename, $description, $defaultsetting, $paramtype=PARAM_RAW, $size=null) {
-        parent::__construct($name, $visiblename, $description, $defaultsetting, $paramtype, $size);
-    }
-
-    /**
-     * Loads the current setting and returns array
-     *
-     * @return array Returns array value=>xx, __construct=>xx
-     */
-    public function get_setting() {
-        $value = parent::get_setting();
-        $adv = $this->config_read($this->name.'_adv');
-        if (is_null($value) or is_null($adv)) {
-            return NULL;
-        }
-        return array('value' => $value, 'adv' => $adv);
-    }
-
-    /**
-     * Saves the new settings passed in $data
-     *
-     * @todo Add vartype handling to ensure $data is an array
-     * @param array $data
-     * @return mixed string or Array
-     */
-    public function write_setting($data) {
-        $error = parent::write_setting($data['value']);
-        if (!$error) {
-            $value = empty($data['adv']) ? 0 : 1;
-            $this->config_write($this->name.'_adv', $value);
-        }
-        return $error;
-    }
-
-    /**
-     * Return XHTML for the control
-     *
-     * @param array $data Default data array
-     * @param string $query
-     * @return string XHTML to display control
-     */
-    public function output_html($data, $query='') {
-        $default = $this->get_defaultsetting();
-        $defaultinfo = array();
-        if (isset($default['value'])) {
-            if ($default['value'] === '') {
-                $defaultinfo[] = "''";
-            } else {
-                $defaultinfo[] = $default['value'];
-            }
-        }
-        if (!empty($default['adv'])) {
-            $defaultinfo[] = get_string('advanced');
-        }
-        $defaultinfo = implode(', ', $defaultinfo);
-
-        $adv = !empty($data['adv']);
-        $return = '<div class="form-text defaultsnext">' .
-            '<input type="text" size="' . $this->size . '" id="' . $this->get_id() .
-            '" name="' . $this->get_full_name() . '[value]" value="' . s($data['value']) . '" />' .
-            ' <input type="checkbox" class="form-checkbox" id="' .
-            $this->get_id() . '_adv" name="' . $this->get_full_name() .
-            '[adv]" value="1" ' . ($adv ? 'checked="checked"' : '') . ' />' .
-            ' <label for="' . $this->get_id() . '_adv">' .
-            get_string('advanced') . '</label></div>';
-
-        return format_admin_setting($this, $this->visiblename, $return,
-        $this->description, true, '', $defaultinfo, $query);
+        parent::__construct($name, $visiblename, $description, $defaultsetting['value'], $paramtype, $size);
+        $this->set_advanced_flag_options(admin_setting_flag::ENABLED, !empty($defaultsetting['adv']));
     }
 }
 
@@ -4319,90 +4484,10 @@ class admin_setting_configcheckbox_with_advanced extends admin_setting_configche
      * @param string $no value used when not checked
      */
     public function __construct($name, $visiblename, $description, $defaultsetting, $yes='1', $no='0') {
-        parent::__construct($name, $visiblename, $description, $defaultsetting, $yes, $no);
+        parent::__construct($name, $visiblename, $description, $defaultsetting['value'], $yes, $no);
+        $this->set_advanced_flag_options(admin_setting_flag::ENABLED, !empty($defaultsetting['adv']));
     }
 
-    /**
-     * Loads the current setting and returns array
-     *
-     * @return array Returns array value=>xx, adv=>xx
-     */
-    public function get_setting() {
-        $value = parent::get_setting();
-        $adv = $this->config_read($this->name.'_adv');
-        if (is_null($value) or is_null($adv)) {
-            return NULL;
-        }
-        return array('value' => $value, 'adv' => $adv);
-    }
-
-    /**
-     * Sets the value for the setting
-     *
-     * Sets the value for the setting to either the yes or no values
-     * of the object by comparing $data to yes
-     *
-     * @param mixed $data Gets converted to str for comparison against yes value
-     * @return string empty string or error
-     */
-    public function write_setting($data) {
-        $error = parent::write_setting($data['value']);
-        if (!$error) {
-            $value = empty($data['adv']) ? 0 : 1;
-            $this->config_write($this->name.'_adv', $value);
-        }
-        return $error;
-    }
-
-    /**
-     * Returns an XHTML checkbox field and with extra advanced cehckbox
-     *
-     * @param string $data If $data matches yes then checkbox is checked
-     * @param string $query
-     * @return string XHTML field
-     */
-    public function output_html($data, $query='') {
-        $defaults = $this->get_defaultsetting();
-        $defaultinfo = array();
-        if (!is_null($defaults)) {
-            if ((string)$defaults['value'] === $this->yes) {
-                $defaultinfo[] = get_string('checkboxyes', 'admin');
-            } else {
-                $defaultinfo[] = get_string('checkboxno', 'admin');
-            }
-            if (!empty($defaults['adv'])) {
-                $defaultinfo[] = get_string('advanced');
-            }
-        }
-        $defaultinfo = implode(', ', $defaultinfo);
-
-        if ((string)$data['value'] === $this->yes) { // convert to strings before comparison
-            $checked = 'checked="checked"';
-        } else {
-            $checked = '';
-        }
-        if (!empty($data['adv'])) {
-            $advanced = 'checked="checked"';
-        } else {
-            $advanced = '';
-        }
-
-        $fullname    = $this->get_full_name();
-        $novalue     = s($this->no);
-        $yesvalue    = s($this->yes);
-        $id          = $this->get_id();
-        $stradvanced = get_string('advanced');
-        $return = <<<EOT
-<div class="form-checkbox defaultsnext" >
-<input type="hidden" name="{$fullname}[value]" value="$novalue" />
-<input type="checkbox" id="$id" name="{$fullname}[value]" value="$yesvalue" $checked />
-<input type="checkbox" class="form-checkbox" id="{$id}_adv" name="{$fullname}[adv]" value="1" $advanced />
-<label for="{$id}_adv">$stradvanced</label>
-</div>
-EOT;
-        return format_admin_setting($this, $this->visiblename, $return, $this->description,
-        true, '', $defaultinfo, $query);
-    }
 }
 
 
@@ -4425,86 +4510,10 @@ class admin_setting_configcheckbox_with_lock extends admin_setting_configcheckbo
      * @param string $no value used when not checked
      */
     public function __construct($name, $visiblename, $description, $defaultsetting, $yes='1', $no='0') {
-        parent::__construct($name, $visiblename, $description, $defaultsetting, $yes, $no);
+        parent::__construct($name, $visiblename, $description, $defaultsetting['value'], $yes, $no);
+        $this->set_locked_flag_options(admin_setting_flag::ENABLED, !empty($defaultsetting['locked']));
     }
 
-    /**
-     * Loads the current setting and returns array
-     *
-     * @return array Returns array value=>xx, adv=>xx
-     */
-    public function get_setting() {
-        $value = parent::get_setting();
-        $locked = $this->config_read($this->name.'_locked');
-        if (is_null($value) or is_null($locked)) {
-            return NULL;
-        }
-        return array('value' => $value, 'locked' => $locked);
-    }
-
-    /**
-     * Sets the value for the setting
-     *
-     * Sets the value for the setting to either the yes or no values
-     * of the object by comparing $data to yes
-     *
-     * @param mixed $data Gets converted to str for comparison against yes value
-     * @return string empty string or error
-     */
-    public function write_setting($data) {
-        $error = parent::write_setting($data['value']);
-        if (!$error) {
-            $value = empty($data['locked']) ? 0 : 1;
-            $this->config_write($this->name.'_locked', $value);
-        }
-        return $error;
-    }
-
-    /**
-     * Returns an XHTML checkbox field and with extra locked checkbox
-     *
-     * @param string $data If $data matches yes then checkbox is checked
-     * @param string $query
-     * @return string XHTML field
-     */
-    public function output_html($data, $query='') {
-        $defaults = $this->get_defaultsetting();
-        $defaultinfo = array();
-        if (!is_null($defaults)) {
-            if ((string)$defaults['value'] === $this->yes) {
-                $defaultinfo[] = get_string('checkboxyes', 'admin');
-            } else {
-                $defaultinfo[] = get_string('checkboxno', 'admin');
-            }
-            if (!empty($defaults['locked'])) {
-                $defaultinfo[] = get_string('locked', 'admin');
-            }
-        }
-        $defaultinfo = implode(', ', $defaultinfo);
-
-        $fullname    = $this->get_full_name();
-        $novalue     = s($this->no);
-        $yesvalue    = s($this->yes);
-        $id          = $this->get_id();
-
-        $checkboxparams = array('type'=>'checkbox', 'id'=>$id,'name'=>$fullname.'[value]', 'value'=>$yesvalue);
-        if ((string)$data['value'] === $this->yes) { // convert to strings before comparison
-            $checkboxparams['checked'] = 'checked';
-        }
-
-        $lockcheckboxparams = array('type'=>'checkbox', 'id'=>$id.'_locked','name'=>$fullname.'[locked]', 'value'=>1, 'class'=>'form-checkbox locked-checkbox');
-        if (!empty($data['locked'])) { // convert to strings before comparison
-            $lockcheckboxparams['checked'] = 'checked';
-        }
-
-        $return  = html_writer::start_tag('div', array('class'=>'form-checkbox defaultsnext'));
-        $return .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>$fullname.'[value]', 'value'=>$novalue));
-        $return .= html_writer::empty_tag('input', $checkboxparams);
-        $return .= html_writer::empty_tag('input', $lockcheckboxparams);
-        $return .= html_writer::tag('label', get_string('locked', 'admin'), array('for'=>$id.'_locked'));
-        $return .= html_writer::end_tag('div');
-        return format_admin_setting($this, $this->visiblename, $return, $this->description, true, '', $defaultinfo, $query);
-    }
 }
 
 
@@ -4518,79 +4527,10 @@ class admin_setting_configselect_with_advanced extends admin_setting_configselec
      * Calls parent::__construct with specific arguments
      */
     public function __construct($name, $visiblename, $description, $defaultsetting, $choices) {
-        parent::__construct($name, $visiblename, $description, $defaultsetting, $choices);
+        parent::__construct($name, $visiblename, $description, $defaultsetting['value'], $choices);
+        $this->set_advanced_flag_options(admin_setting_flag::ENABLED, !empty($defaultsetting['adv']));
     }
 
-    /**
-     * Loads the current setting and returns array
-     *
-     * @return array Returns array value=>xx, adv=>xx
-     */
-    public function get_setting() {
-        $value = parent::get_setting();
-        $adv = $this->config_read($this->name.'_adv');
-        if (is_null($value) or is_null($adv)) {
-            return NULL;
-        }
-        return array('value' => $value, 'adv' => $adv);
-    }
-
-    /**
-     * Saves the new settings passed in $data
-     *
-     * @todo Add vartype handling to ensure $data is an array
-     * @param array $data
-     * @return mixed string or Array
-     */
-    public function write_setting($data) {
-        $error = parent::write_setting($data['value']);
-        if (!$error) {
-            $value = empty($data['adv']) ? 0 : 1;
-            $this->config_write($this->name.'_adv', $value);
-        }
-        return $error;
-    }
-
-    /**
-     * Return XHTML for the control
-     *
-     * @param array $data Default data array
-     * @param string $query
-     * @return string XHTML to display control
-     */
-    public function output_html($data, $query='') {
-        $default = $this->get_defaultsetting();
-        $current = $this->get_setting();
-
-        list($selecthtml, $warning) = $this->output_select_html($data['value'],
-            $current['value'], $default['value'], '[value]');
-        if (!$selecthtml) {
-            return '';
-        }
-
-        if (!is_null($default) and array_key_exists($default['value'], $this->choices)) {
-            $defaultinfo = array();
-            if (isset($this->choices[$default['value']])) {
-                $defaultinfo[] = $this->choices[$default['value']];
-            }
-            if (!empty($default['adv'])) {
-                $defaultinfo[] = get_string('advanced');
-            }
-            $defaultinfo = implode(', ', $defaultinfo);
-        } else {
-            $defaultinfo = '';
-        }
-
-        $adv = !empty($data['adv']);
-        $return = '<div class="form-select defaultsnext">' . $selecthtml .
-            ' <input type="checkbox" class="form-checkbox" id="' .
-            $this->get_id() . '_adv" name="' . $this->get_full_name() .
-            '[adv]" value="1" ' . ($adv ? 'checked="checked"' : '') . ' />' .
-            ' <label for="' . $this->get_id() . '_adv">' .
-            get_string('advanced') . '</label></div>';
-
-        return format_admin_setting($this, $this->visiblename, $return, $this->description, true, $warning, $defaultinfo, $query);
-    }
 }
 
 
@@ -6466,6 +6406,8 @@ function admin_write_settings($formdata) {
             $adminroot->errors[$fullname]->data  = $data[$fullname];
             $adminroot->errors[$fullname]->id    = $setting->get_id();
             $adminroot->errors[$fullname]->error = $error;
+        } else {
+            $setting->write_setting_flags($data);
         }
         if ($setting->post_write_settings($original)) {
             $count++;
@@ -6654,6 +6596,7 @@ function format_admin_setting($setting, $title='', $form='', $description='', $l
     } else {
         $labelfor = '';
     }
+    $form .= $setting->output_setting_flags();
 
     $override = '';
     if (empty($setting->plugin)) {
@@ -6670,12 +6613,18 @@ function format_admin_setting($setting, $title='', $form='', $description='', $l
         $warning = '<div class="form-warning">'.$warning.'</div>';
     }
 
-    if (is_null($defaultinfo)) {
-        $defaultinfo = '';
-    } else {
+    $defaults = array();
+    if (!is_null($defaultinfo)) {
         if ($defaultinfo === '') {
             $defaultinfo = get_string('emptysettingvalue', 'admin');
         }
+        $defaults[] = $defaultinfo;
+    }
+
+    $setting->get_setting_flag_defaults($defaults);
+
+    if (!empty($defaults)) {
+        $defaultinfo = implode(', ', $defaults);
         $defaultinfo = highlight($query, nl2br(s($defaultinfo)));
         $defaultinfo = '<div class="form-defaultinfo">'.get_string('defaultsettinginfo', 'admin', $defaultinfo).'</div>';
     }
