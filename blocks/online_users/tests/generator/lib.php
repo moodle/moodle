@@ -18,7 +18,7 @@
  * block_online_users data generator
  *
  * @package    block_online_users
- * @category   testing
+ * @category   test
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -29,8 +29,8 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Online users block data generator class
  *
- * @package    mod_page
- * @category   testing
+ * @package    block_online_users
+ * @category   test
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

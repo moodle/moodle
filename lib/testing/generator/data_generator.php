@@ -18,18 +18,17 @@
  * Data generator.
  *
  * @package    core
- * @category   testing
+ * @category   test
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
 /**
- * Data generator class for unit tests and other tools
- * that need to create fake test sites.
+ * Data generator class for unit tests and other tools that need to create fake test sites.
  *
  * @package    core
- * @category   testing
+ * @category   test
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -437,8 +436,8 @@ EOD;
      * At the very least it needs to contain courseid.
      * Default values are added for name, description, and descriptionformat if they are not present.
      *
-     * This function calls {@see groups_create_group()} to create the group within the database.
-     *
+     * This function calls groups_create_group() to create the group within the database.
+     * @see groups_create_group
      * @param array|stdClass $record
      * @return stdClass group record
      */
@@ -480,8 +479,8 @@ EOD;
      * At the very least it needs to contain courseid.
      * Default values are added for name, description, and descriptionformat if they are not present.
      *
-     * This function calls {@see groups_create_grouping()} to create the grouping within the database.
-     *
+     * This function calls groups_create_grouping() to create the grouping within the database.
+     * @see groups_create_grouping
      * @param array|stdClass $record
      * @return stdClass grouping record
      */
@@ -600,5 +599,26 @@ EOD;
         $plugin->enrol_user($instance, $userid, $roleid);
 
         return true;
+    }
+}
+
+/**
+ * Deprecated in favour of testing_data_generator
+ *
+ * @deprecated since Moodle 2.5 MDL-37457 - please do not use this function any more.
+ * @todo       MDL-37517 This will be deleted in Moodle 2.7
+ * @see        testing_data_generator
+ * @package    core
+ * @category   test
+ * @copyright  2012 David Monllaó
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class phpunit_data_generator extends testing_data_generator {
+
+    /**
+     * Dumb constructor to throw the deprecated notification
+     */
+    public function __construct() {
+        debugging('Class phpunit_data_generator is deprecated, please use class testing_module_generator instead', DEBUG_DEVELOPER);
     }
 }

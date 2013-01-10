@@ -18,7 +18,7 @@
  * Block generator base class.
  *
  * @package    core
- * @category   testing
+ * @category   test
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,7 +30,7 @@
  * Extend in blocks/xxxx/tests/generator/lib.php as class block_xxxx_generator.
  *
  * @package    core
- * @category   testing
+ * @category   test
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -41,6 +41,10 @@ abstract class testing_block_generator {
     /** @var number of created instances */
     protected $instancecount = 0;
 
+    /**
+     * Dumb constructor to throw the deprecated notification
+     * @param testing_data_generator $datagenerator
+     */
     public function __construct(testing_data_generator $datagenerator) {
         $this->datagenerator = $datagenerator;
     }
@@ -109,4 +113,27 @@ abstract class testing_block_generator {
      * @return stdClass activity record
      */
     abstract public function create_instance($record = null, array $options = null);
+}
+
+/**
+ * Deprecated in favour of testing_block_generator
+ *
+ * @deprecated since Moodle 2.5 MDL-37457 - please do not use this function any more.
+ * @todo       MDL-37517 This will be deleted in Moodle 2.7
+ * @see        testing_block_generator
+ * @package    core
+ * @category   test
+ * @copyright  2012 David Monllaó
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+abstract class phpunit_block_generator extends testing_block_generator {
+
+    /**
+     * Dumb constructor to throw the deprecated notification
+     * @param testing_data_generator $datagenerator
+     */
+    public function __construct(testing_data_generator $datagenerator) {
+        debugging('Class phpunit_block_generator is deprecated, please use class testing_block_generator instead', DEBUG_DEVELOPER);
+        parent::__construct($datagenerator);
+    }
 }

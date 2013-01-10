@@ -18,7 +18,7 @@
  * mod_lti data generator
  *
  * @package    mod_lti
- * @category   testing
+ * @category   test
  * @copyright  Copyright (c) 2012 Moodlerooms Inc. (http://www.moodlerooms.com)
  * @author     Mark Nielsen
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die();
  * LTI module data generator class
  *
  * @package    mod_lti
- * @category   testing
+ * @category   test
  * @copyright  Copyright (c) 2012 Moodlerooms Inc. (http://www.moodlerooms.com)
  * @author     Mark Nielsen
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
