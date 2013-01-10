@@ -69,39 +69,44 @@ class mod_forum_external extends external_api {
         // Array to store the forums to return.
         $arrforums = array();
 
-        // Go through the courseids and return the forums.
+        // Ensure there are courseids to loop through.
         if (!empty($courseids)) {
-            // Keep track of the course ids we have performed a require_course_login check on to avoid repeating.
-            $arrcourseschecked = array();
-            // Convert array to string to use in query.
-            list($subsql, $params) = $DB->get_in_or_equal($courseids);
-            $sql = "SELECT *
-                    FROM {forum}
-                    WHERE course $subsql";
-            if ($forums = $DB->get_records_sql($sql, $params)) {
-                foreach ($forums as $forum) {
-                    // Check that that user can view this course if check not performed yet.
-                    if (!in_array($forum->course, $arrcourseschecked)) {
-                        // Get the course context.
-                        $context = context_course::instance($forum->course);
-                        // Check the user can function in this context.
-                        self::validate_context($context);
-                        // Add to the array.
-                        $arrcourseschecked[] = $forum->course;
+            // Go through the courseids and return the forums.
+            foreach ($courseids as $cid) {
+                // Get the course context.
+                $context = context_course::instance($cid);
+                // Check the user can function in this context.
+                self::validate_context($context);
+                // Get the forums in this course
+                if ($forums = $DB->get_records('forum', array('course' => $cid))) {
+                    // Get the modinfo for the course.
+                    $modinfo = get_fast_modinfo($cid);
+                    // If modinfo returns no forum instances, set it to empty array.
+                    if (!isset($modinfo->instances['forum'])) {
+                        $modinfo->instances['forum'] = array();
                     }
-                    // Get the course module.
-                    $cm = get_coursemodule_from_instance('forum', $forum->id, 0, false, MUST_EXIST);
-                    // Get the module context.
-                    $context = context_module::instance($cm->id);
-                    // Check they have the view forum capability.
-                    require_capability('mod/forum:viewdiscussion', $context);
-                    // Format the intro before being returning using the format setting.
-                    list($forum->intro, $forum->introformat) = external_format_text($forum->intro, $forum->introformat,
-                        $context->id, 'mod_forum', 'intro', 0);
-                    // Add the course module id to the object, this information is useful.
-                    $forum->cmid = $cm->id;
-                    // Add the forum to the array to return.
-                    $arrforums[$forum->id] = (array) $forum;
+                    // Loop through the courses returned by modinfo.
+                    foreach ($modinfo->instances['forum'] as $forumid => $cm) {
+                        // If it is not visible or present in the forums get_records call, continue.
+                        if (!$cm->uservisible || !isset($forums[$forumid])) {
+                            continue;
+                        }
+                        // Set the forum object.
+                        $forum = $forums[$forumid];
+                        // Get the course module.
+                        $cm = get_coursemodule_from_instance('forum', $forum->id, 0, false, MUST_EXIST);
+                        // Get the module context.
+                        $context = context_module::instance($cm->id);
+                        // Check they have the view forum capability.
+                        require_capability('mod/forum:viewdiscussion', $context);
+                        // Format the intro before being returning using the format setting.
+                        list($forum->intro, $forum->introformat) = external_format_text($forum->intro, $forum->introformat,
+                            $context->id, 'mod_forum', 'intro', 0);
+                        // Add the course module id to the object, this information is useful.
+                        $forum->cmid = $cm->id;
+                        // Add the forum to the array to return.
+                        $arrforums[$forum->id] = (array) $forum;
+                    }
                 }
             }
         }
