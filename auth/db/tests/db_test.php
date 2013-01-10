@@ -72,7 +72,11 @@ class auth_db_testcase extends advanced_testcase {
 
             case 'pgsql_native_moodle_database':
                 set_config('type', 'postgres7', 'auth/db');
-                set_config('setupsql', "SET NAMES 'UTF-8'", 'auth/db');
+                $setupsql = "SET NAMES 'UTF-8'";
+                if (!empty($CFG->dboptions['dbschema'])) {
+                    $setupsql .= "; SET search_path = '".$CFG->dboptions['dbschema']."'";
+                }
+                set_config('setupsql', $setupsql, 'auth/db');
                 set_config('sybasequoting', '0', 'auth/db');
                 if (!empty($CFG->dboptions['dbsocket']) and ($CFG->dbhost === 'localhost' or $CFG->dbhost === '127.0.0.1')) {
                     if (strpos($CFG->dboptions['dbsocket'], '/') !== false) {
@@ -104,11 +108,7 @@ class auth_db_testcase extends advanced_testcase {
             $dbman->drop_table($table);
         }
         $dbman->create_table($table);
-        if (!empty($CFG->dboptions['dbschema'])) {
-            set_config('table', $CFG->dboptions['dbschema'].'.'.$CFG->prefix.'auth_db_users', 'auth/db');
-        } else {
-            set_config('table', $CFG->prefix.'auth_db_users', 'auth/db');
-        }
+        set_config('table', $CFG->prefix.'auth_db_users', 'auth/db');
         set_config('fielduser', 'name', 'auth/db');
         set_config('fieldpass', 'pass', 'auth/db');
 

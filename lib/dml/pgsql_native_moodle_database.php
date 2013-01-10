@@ -185,7 +185,7 @@ class pgsql_native_moodle_database extends moodle_database {
         }
 
         // Select schema if specified, otherwise the first one wins.
-        if (isset($this->dboptions['dbschema'])) {
+        if (!empty($this->dboptions['dbschema'])) {
             $sql .= "SET search_path = '".$this->dboptions['dbschema']."'; ";
         }
 
