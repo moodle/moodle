@@ -846,7 +846,7 @@ function groups_calculate_role_people($rs, $context) {
                 $roles[$roledata->id] = $roledata;
             }
             // Record that user has role
-            $users[$rec->userid]->roles[] = $roles[$rec->roleid];
+            $users[$rec->userid]->roles[$rec->roleid] = $roles[$rec->roleid];
         }
     }
     $rs->close();
@@ -876,7 +876,8 @@ function groups_calculate_role_people($rs, $context) {
         } else if($rolecount > 1) {
             $roleid = '*';
         } else {
-            $roleid = $userdata->roles[0]->id;
+            $userrole = reset($userdata->roles);
+            $roleid = $userrole->id;
         }
         $roles[$roleid]->users[$userid] = $userdata;
     }
