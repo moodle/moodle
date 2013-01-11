@@ -1772,7 +1772,7 @@ function scorm_get_toc($user, $scorm, $cmid, $toclink=TOCJSLINK, $currentorg='',
     }
 
     if (empty($scoid)) {
-        $result->sco = $scoes['scoes'][0]->children;
+        $result->sco = $scoes['scoes'][0]->children[0];
     } else {
         $result->sco = scorm_get_sco($scoid);
     }
