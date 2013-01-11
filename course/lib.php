@@ -2193,9 +2193,9 @@ function print_whole_category_list($category=NULL, $displaylist=NULL, $parentsli
 
     if (!$categorycourses) {
         if ($category) {
-            $categorycourses = flattened_course_category_tree($category->id);
+            $categorycourses = get_category_courses($category->id);
         } else {
-            $categorycourses = flattened_course_category_tree();
+            $categorycourses = get_category_courses();
         }
     }
 
@@ -2231,31 +2231,32 @@ function print_whole_category_list($category=NULL, $displaylist=NULL, $parentsli
 }
 
 /**
- * Gets an array whose keys are category ids an whose values are arrays of courses in the
- * corresponding category.
+ * Gets an array whose keys are category ids and whose values are arrays of courses in the corresponding category.
  *
  * @param int $categoryid
  * @return array
  */
-function flattened_course_category_tree($categoryid=0) {
+function get_category_courses_array($categoryid = 0) {
     $tree = get_course_category_tree($categoryid);
     $flattened = array();
     foreach ($tree as $category) {
-        gather_flattened_courses($flattened, $category);
+        get_category_courses_array_recursively($flattened, $category);
     }
     return $flattened;
 }
 
 /**
- * Recursive function to help flatten the course category tree
+ * Recursive function to help flatten the course category tree.
  *
- * @param $flattened
- * @param $category
+ * Do not call this function directly, instead calll its parent function {@link get_category_courses_array}
+ *
+ * @param array &$flattened An array passed by reference in which to store courses for each category.
+ * @param stdClass $category The category to get courses for.
  */
-function gather_flattened_courses(&$flattened, $category) {
+function get_category_courses_array_recursively(array &$flattened, $category) {
     $flattened[$category->id] = $category->courses;
     foreach ($category->categories as $childcategory) {
-        gather_flattened_courses($flattened, $childcategory);
+        get_category_courses_array_recursively($flattened, $childcategory);
     }
 }
 
@@ -2277,10 +2278,16 @@ function make_categories_options() {
 }
 
 /**
- * Prints the category info in indented fashion
+ * Prints the category information.
+ *
  * This function is only used by print_whole_category_list() above
+ *
+ * @param stdClass $category
+ * @param int $depth The depth of the category.
+ * @param bool $showcourses If set to true course information will also be printed.
+ * @param array|null $courses An array of courses belonging to the category, or null if you don't have it yet.
  */
-function print_category_info($category, $depth=0, $showcourses = false, $courses=NULL) {
+function print_category_info($category, $depth = 0, $showcourses = false, array $courses = null) {
     global $CFG, $DB, $OUTPUT;
 
     $strsummary = get_string('summary');
