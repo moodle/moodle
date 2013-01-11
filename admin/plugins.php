@@ -28,8 +28,8 @@ require_once(dirname(dirname(__FILE__)) . '/config.php');
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->libdir . '/pluginlib.php');
 
-require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 admin_externalpage_setup('pluginsoverview');
+require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 
 $fetchremote = optional_param('fetchremote', false, PARAM_BOOL);
 
