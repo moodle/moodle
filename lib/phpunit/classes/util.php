@@ -54,9 +54,6 @@ class phpunit_util {
     /** @var testing_data_generator */
     protected static $generator = null;
 
-    /** @var resource used for prevention of parallel test execution */
-    protected static $lockhandle = null;
-
     /** @var array list of debugging messages triggered during the last test execution */
     protected static $debuggings = array();
 
@@ -73,30 +70,7 @@ class phpunit_util {
      * @return void
      */
     public static function acquire_test_lock() {
-        global $CFG;
-        if (!file_exists("$CFG->phpunit_dataroot/phpunit")) {
-            // dataroot not initialised yet
-            return;
-        }
-        if (!file_exists("$CFG->phpunit_dataroot/phpunit/lock")) {
-            file_put_contents("$CFG->phpunit_dataroot/phpunit/lock", 'This file prevents concurrent execution of Moodle PHPUnit tests');
-            phpunit_boostrap_fix_file_permissions("$CFG->phpunit_dataroot/phpunit/lock");
-        }
-        if (self::$lockhandle = fopen("$CFG->phpunit_dataroot/phpunit/lock", 'r')) {
-            $wouldblock = null;
-            $locked = flock(self::$lockhandle, (LOCK_EX | LOCK_NB), $wouldblock);
-            if (!$locked) {
-                if ($wouldblock) {
-                    echo "Waiting for other test execution to complete...\n";
-                }
-                $locked = flock(self::$lockhandle, LOCK_EX);
-            }
-            if (!$locked) {
-                fclose(self::$lockhandle);
-                self::$lockhandle = null;
-            }
-        }
-        register_shutdown_function(array('phpunit_util', 'release_test_lock'));
+        test_lock::acquire('phpunit');
     }
 
     /**
@@ -106,11 +80,7 @@ class phpunit_util {
      * @return void
      */
     public static function release_test_lock() {
-        if (self::$lockhandle) {
-            flock(self::$lockhandle, LOCK_UN);
-            fclose(self::$lockhandle);
-            self::$lockhandle = null;
-        }
+        test_lock::release('phpunit');
     }
 
     /**
