@@ -77,12 +77,27 @@ function xmldb_scorm_upgrade($oldversion) {
 
 
     // Moodle v2.4.0 release upgrade line
-    // Put any upgrade step following this
-
+    // Put any upgrade step following this.
 
     // Moodle v2.5.0 release upgrade line.
     // Put any upgrade step following this.
 
+    // Fix AICC parent/child relationships (MDL-37394).
+    if ($oldversion < 2013050101) {
+        // Get all AICC packages.
+        $aiccpackages = $DB->get_recordset('scorm', array('version' => 'AICC'), '', 'id');
+        foreach ($aiccpackages as $aicc) {
+            $sql = "UPDATE {scorm_scoes}
+                       SET parent = organization
+                     WHERE scorm = ?
+                       AND " . $DB->sql_isempty('scorm_scoes', 'manifest', false, false) . "
+                       AND " . $DB->sql_isnotempty('scorm_scoes', 'organization', false, false) . "
+                       AND parent = '/'";
+            $DB->execute($sql, array($aicc->id));
+        }
+        $aiccpackages->close();
+        upgrade_mod_savepoint(true, 2013050101, 'scorm');
+    }
 
     return true;
 }
