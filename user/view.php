@@ -233,12 +233,16 @@ echo '</div>';
 
 echo '<table class="list" summary="">';
 
-//checks were performed above that ensure that if we've got to here either the user
-//is viewing their own profile ($USER->id == $user->id) or $user is enrolled in the course
+// Show email if any of the following conditions match.
+// 1. User is viewing his own profile.
+// 2. Has allowed everyone to see email
+// 3. User has allowed course members to can see email and current user is in same course
+// 4. Has either course:viewhiddenuserfields or site:viewuseridentity capability.
 if ($currentuser
-   or $user->maildisplay == 1 //allow everyone to see email address
-   or ($user->maildisplay == 2 && is_enrolled($coursecontext, $USER)) //fellow course members can see email. Already know $user is enrolled
-   or has_capability('moodle/course:useremail', $coursecontext)) {
+   or $user->maildisplay == 1
+   or ($user->maildisplay == 2 && is_enrolled($coursecontext, $USER))
+   or has_capability('moodle/course:viewhiddenuserfields', $coursecontext)
+   or has_capability('moodle/site:viewuseridentity', $coursecontext)) {
     print_row(get_string("email").":", obfuscate_mailto($user->email, ''));
 }
 
