@@ -337,7 +337,14 @@ abstract class question_edit_form extends question_wizard_form {
 
         $this->repeat_elements($repeated, $repeatsatstart, $repeatedoptions,
                 'noanswers', 'addanswers', $addoptions,
-                get_string('addmorechoiceblanks', 'qtype_multichoice'));
+                $this->get_more_choices_string());
+    }
+
+    /**
+     * Language string to use for 'Add {no} more {whatever we call answers}'.
+     */
+    protected function get_more_choices_string() {
+        return get_string('addmorechoiceblanks', 'question');
     }
 
     protected function add_combined_feedback_fields($withshownumpartscorrect = false) {

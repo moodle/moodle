@@ -70,7 +70,6 @@ $string['answerhowmany'] = 'One or multiple answers?';
 $string['answers'] = 'Answers';
 $string['answersingleno'] = 'Multiple answers allowed';
 $string['answersingleyes'] = 'One answer only';
-$string['answerswithacceptederrormarginmustbenumeric'] = 'Answers with accepted error must be numeric';
 $string['answertoolong'] = 'Answer too long after line {$a} (255 char. max)';
 $string['aon'] = 'AON format';
 $string['areyousureremoveselected'] = 'Are you sure you want to remove all the selected questions?';

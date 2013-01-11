@@ -54,6 +54,10 @@ class qtype_shortanswer_edit_form extends question_edit_form {
         $this->add_interactive_settings();
     }
 
+    protected function get_more_choices_string() {
+        return get_string('addmoreanswerblanks', 'qtype_shortanswer');
+    }
+
     protected function data_preprocessing($question) {
         $question = parent::data_preprocessing($question);
         $question = $this->data_preprocessing_answers($question);

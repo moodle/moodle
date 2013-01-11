@@ -23,7 +23,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['addmorechoiceblanks'] = 'Blanks for {no} more choices';
 $string['answerhowmany'] = 'One or multiple answers?';
 $string['answernumbering'] = 'Number the choices?';
 $string['answernumbering123'] = '1., 2., 3., ...';

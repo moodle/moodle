@@ -366,8 +366,8 @@ class qtype_calculated extends question_type {
                         $form->tolerance[$key] = 0.0;
                     }
                     if (! is_numeric($form->tolerance[$key])) {
-                        $calculatedmessages[] = get_string(
-                                'tolerancemustbenumeric', 'qtype_calculated');
+                        $calculatedmessages[] = get_string('xmustbenumeric', 'qtype_numerical',
+                                get_string('tolerance', 'qtype_calculated'));
                     }
                 }
 

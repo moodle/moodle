@@ -25,7 +25,6 @@
 
 $string['additem'] = 'Add item';
 $string['addmoreanswerblanks'] = 'Add another answer blank.';
-$string['addmoreunitblanks'] = 'Blanks for {$a} more units';
 $string['addsets'] = 'Add set(s)';
 $string['answerhdr'] = 'Answer';
 $string['answerstoleranceparam'] = 'Answers tolerance parameters';
@@ -91,9 +90,7 @@ $string['minmax'] = 'Range of Values';
 $string['missingformula'] = 'Missing formula';
 $string['missingname'] = 'Missing question name';
 $string['missingquestiontext'] = 'Missing question text';
-$string['mustbenumeric'] = '{$a} must be a number.';
 $string['mustenteraformulaorstar'] = 'You must enter a formula or \'*\'.';
-$string['mustnotbenumeric'] = '{$a} can\'t be a number.';
 $string['newcategory1'] = 'will use a new shared dataset';
 $string['newcategory2'] = 'a file from a new set of files that may also be used by other questions in this category';
 $string['newcategory3'] = 'a link from a new set of links that may also be used by other questions in this category';
@@ -142,7 +139,6 @@ $string['updatetolerancesparam'] = 'Update the answers tolerance parameters';
 $string['usedinquestion'] = 'Used in Question';
 $string['youmustaddatleastoneitem'] = 'You must add at least one dataset item before you can save this question.';
 $string['youmustaddatleastonevalue'] = 'You must add at least one set of wild card(s) values before you can save this question.';
-$string['youmustenteramultiplierhere'] = 'You must enter a multiplier here.';
 $string['newsetwildcardvalues'] = 'new set(s) of wild card(s) values';
 $string['setno'] = 'Set {$a}';
 $string['setwildcardvalues'] = 'set(s) of wild card(s) values';

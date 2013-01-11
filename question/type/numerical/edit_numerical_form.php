@@ -63,6 +63,10 @@ class qtype_numerical_edit_form extends question_edit_form {
         return $repeated;
     }
 
+    protected function get_more_choices_string() {
+        return get_string('addmoreanswerblanks', 'qtype_numerical');
+    }
+
     /**
      * Add the unit handling options to the form.
      * @param object $mform the form being built.
@@ -132,9 +136,8 @@ class qtype_numerical_edit_form extends question_edit_form {
         $mform->addElement('header', 'unithdr',
                     get_string('units', 'qtype_numerical'), '');
 
-        $textboxgroup = array();
-        $textboxgroup[] = $mform->createElement('group', 'units',
-                 get_string('unitx', 'qtype_numerical'), $this->unit_group($mform), null, false);
+        $unitfields = array($mform->createElement('group', 'units',
+                 get_string('unitx', 'qtype_numerical'), $this->unit_group($mform), null, false));
 
         $repeatedoptions['unit']['disabledif'] =
                  array('unitrole', 'eq', qtype_numerical::UNITNONE);
@@ -153,8 +156,8 @@ class qtype_numerical_edit_form extends question_edit_form {
             $repeatsatstart = $countunits;
         }
 
-        $this->repeat_elements($textboxgroup, $repeatsatstart, $repeatedoptions, 'nounits',
-                'addunits', 2, get_string('addmoreunitblanks', 'qtype_calculated', '{no}'), true);
+        $this->repeat_elements($unitfields, $repeatsatstart, $repeatedoptions, 'nounits',
+                'addunits', 2, get_string('addmoreunitblanks', 'qtype_numerical', '{no}'), true);
 
         // The following strange-looking if statement is to do with when the
         // form is used to move questions between categories. See MDL-15159.
@@ -173,6 +176,11 @@ class qtype_numerical_edit_form extends question_edit_form {
         }
     }
 
+    /**
+     * Get the form fields needed to edit one unit.
+     * @param MoodleQuickForm $mform the form being built.
+     * @return array of form fields.
+     */
     protected function unit_group($mform) {
         $grouparray = array();
         $grouparray[] = $mform->createElement('text', 'unit', get_string('unit', 'quiz'),
@@ -286,7 +294,7 @@ class qtype_numerical_edit_form extends question_edit_form {
                 }
                 if ($answer !== '*' && !is_numeric($data['tolerance'][$key])) {
                     $errors['tolerance['.$key.']'] =
-                            get_string('mustbenumeric', 'qtype_calculated',
+                            get_string('xmustbenumeric', 'qtype_numerical',
                                 get_string('acceptederror', 'qtype_numerical'));
                 }
             } else if ($data['fraction'][$key] != 0 ||
@@ -356,8 +364,8 @@ class qtype_numerical_edit_form extends question_edit_form {
         foreach ($data['unit'] as $key => $unit) {
             if (is_numeric($unit)) {
                 $errors['units[' . $key . ']'] =
-                        get_string('mustnotbenumeric', 'qtype_calculated',
-                            get_string('unit', 'quiz'));
+                        get_string('xmustnotbenumeric', 'qtype_numerical',
+                            get_string('unit', 'qtype_numerical'));
             }
 
             $trimmedunit = trim($unit);
@@ -368,11 +376,11 @@ class qtype_numerical_edit_form extends question_edit_form {
             $trimmedmultiplier = trim($data['multiplier'][$key]);
             if (empty($trimmedmultiplier)) {
                 $errors['units[' . $key . ']'] =
-                        get_string('youmustenteramultiplierhere', 'qtype_calculated');
+                        get_string('youmustenteramultiplierhere', 'qtype_numerical');
             } else if (!is_numeric($trimmedmultiplier)) {
                 $errors['units[' . $key . ']'] =
-                        get_string('mustbenumeric', 'qtype_calculated',
-                            get_string('multiplier', 'quiz'));
+                        get_string('xmustbenumeric', 'qtype_numerical',
+                            get_string('multiplier', 'qtype_numerical'));
             }
         }
 

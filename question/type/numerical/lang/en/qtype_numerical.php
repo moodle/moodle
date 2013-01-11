@@ -24,8 +24,8 @@
  */
 
 $string['acceptederror'] = 'Accepted error';
-$string['addmoreanswerblanks'] = 'Blanks for {no} More Answers';
-$string['addmoreunitblanks'] = 'Blanks for {no} More Units';
+$string['addmoreanswerblanks'] = 'Blanks for {no} more answers';
+$string['addmoreunitblanks'] = 'Blanks for {no} more units';
 $string['answercolon'] = 'Answer:';
 $string['answermustbenumberorstar'] = 'The answer must be a number, for example -1.234 or 3e8, or \'*\'.';
 $string['answerno'] = 'Answer {$a}';
@@ -115,3 +115,6 @@ $string['validnumberformats_help'] = '
  1.350067 E4 : 1.350067 E04 ';
 
 $string['validnumbers'] = '13500.67, 13 500.67, 13,500.67, 13500,67, 13 500,67, 1.350067 E4 or 1.350067 E04';
+$string['xmustbenumeric'] = '{$a} must be a number.';
+$string['xmustnotbenumeric'] = '{$a} cannot be a number.';
+$string['youmustenteramultiplierhere'] = 'You must enter a multiplier here.';
