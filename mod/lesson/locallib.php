@@ -2309,7 +2309,7 @@ abstract class lesson_page extends lesson_base {
         }
         if (count($this->answers)>0) {
             $count = 0;
-            $properties->qtype;
+            $qtype = $properties->qtype;
             foreach ($this->answers as $answer) {
                 $properties->{'answer_editor['.$count.']'} = array('text'=>$answer->answer, 'format'=>$answer->answerformat);
                 if ($qtype != LESSON_PAGE_MATCHING) {
