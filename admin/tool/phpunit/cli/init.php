@@ -28,6 +28,7 @@ if (isset($_SERVER['REMOTE_ADDR'])) {
 
 require_once(__DIR__.'/../../../../lib/clilib.php');
 require_once(__DIR__.'/../../../../lib/phpunit/bootstraplib.php');
+require_once(__DIR__.'/../../../../lib/testing/lib.php');
 
 echo "Initialising Moodle PHPUnit test environment...\n";
 

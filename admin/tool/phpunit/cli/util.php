@@ -30,6 +30,7 @@ if (isset($_SERVER['REMOTE_ADDR'])) {
 
 require_once(__DIR__.'/../../../../lib/clilib.php');
 require_once(__DIR__.'/../../../../lib/phpunit/bootstraplib.php');
+require_once(__DIR__.'/../../../../lib/testing/lib.php');
 
 // now get cli options
 list($options, $unrecognized) = cli_get_params(
@@ -110,7 +111,7 @@ Options:
 -h, --help     Print out this help
 
 Example:
-\$ php ".phpunit_bootstrap_cli_argument_path('/admin/tool/phpunit/cli/util.php')." --install
+\$ php ".testing_cli_argument_path('/admin/tool/phpunit/cli/util.php')." --install
 ";
     echo $help;
     exit(0);
