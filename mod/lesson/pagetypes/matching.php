@@ -72,16 +72,18 @@ class lesson_page_type_matching extends lesson_page {
         foreach ($answers as $answer) {
             // get all the response
             if ($answer->response != NULL) {
-                $responses[] = trim($answer->response);
+                $responses[$answer->id] = trim($answer->response);
             }
         }
 
         $responseoptions = array(''=>get_string('choosedots'));
         if (!empty($responses)) {
-            shuffle($responses);
-            $responses = array_unique($responses);
-            foreach ($responses as $response) {
-                $responseoptions[htmlspecialchars(trim($response))] = $response;
+            $shuffleresponses = $responses;
+            shuffle($shuffleresponses);
+            $shuffleresponses = array_unique($shuffleresponses);
+            foreach ($shuffleresponses as  $response) {
+                $key = array_search($response, $responses);
+                $responseoptions[$key] = $response;
             }
         }
         if (isset($USER->modattempts[$this->lesson->id]) && !empty($attempt->useranswer)) {
@@ -171,27 +173,26 @@ class lesson_page_type_matching extends lesson_page {
         $wrong   = array_shift($answers);
 
         foreach ($answers as $key=>$answer) {
-            if ($answer->answer === '' or $answer->response === '') {
-                // incomplete option!
-                unset($answers[$key]);
+            if ($answer->answer !== '' or $answer->response !== '') {
+                $answers[$answer->id] = $answer;
             }
+            unset($answers[$key]);
         }
         // get he users exact responses for record keeping
         $hits = 0;
         $userresponse = array();
-        foreach ($response as $key => $value) {
-            foreach($answers as $answer) {
-                if ($value === $answer->response) {
-                    $userresponse[] = $answer->id;
-                }
-                if ((int)$answer->id === (int)$key) {
-                    $result->studentanswer .= '<br />'.format_text($answer->answer, $answer->answerformat, $formattextdefoptions).' = '.$value;
-                }
-                if ((int)$answer->id === (int)$key and $value === $answer->response) {
+        foreach ($response as $id => $value) {
+            $userresponse[] = $value;
+            // Make sure the user's answer is exist in question's answer
+            if (array_key_exists($id, $answers)) {
+                $answer = $answers[$id];
+                $result->studentanswer .= '<br />'.format_text($answer->answer, $answer->answerformat, $formattextdefoptions).' = '.$answers[$value]->response;
+                if ($id == $value) {
                     $hits++;
                 }
             }
         }
+
         $result->userresponse = implode(",", $userresponse);
 
         if ($hits == count($answers)) {
