@@ -54,7 +54,7 @@ function toolbook_importhtml_import_chapters($package, $type, $book, $context, $
     }
     if ($type == 0) {
         $chapterfile = reset($chapterfiles);
-        if ($file = $fs->get_file_by_hash("$context->id/mod_book/importhtmltemp/0/$chapterfile->pathname")) {
+        if ($file = $fs->get_file_by_hash(sha1("$context->id/mod_book/importhtmltemp/0/$chapterfile->pathname"))) {
             $htmlcontent = toolbook_importhtml_fix_encoding($file->get_content());
             $htmlchapters = toolbook_importhtml_parse_headings(toolbook_importhtml_parse_body($htmlcontent));
             // TODO: process h1 as main chapter and h2 as subchapters
