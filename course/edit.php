@@ -130,16 +130,8 @@ if ($editform->is_cancelled()) {
     }
     rebuild_course_cache($course->id);
 
-    switch ($returnto) {
-        case 'category':
-        case 'topcat': //redirecting to where the new course was created by default.
-            $url = new moodle_url($CFG->wwwroot.'/course/category.php', array('id'=>$categoryid));
-            break;
-        default:
-            $url = new moodle_url($CFG->wwwroot.'/course/view.php', array('id'=>$course->id));
-            break;
-    }
-    redirect($url);
+    // Redirect user to newly created/updated course.
+    redirect(new moodle_url('/course/view.php', array('id' => $course->id)));
 }
 
 
