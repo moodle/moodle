@@ -134,8 +134,7 @@ class enrol_ldap_plugin extends enrol_plugin {
         // Do not try to print anything to the output because this method is called during interactive login.
         $trace = new error_log_progress_trace($this->errorlogtag);
 
-        $ldapconnection = $this->ldap_connect($trace);
-        if (!$ldapconnection) {
+        if (!$this->ldap_connect($trace)) {
             $trace->finished();
             return;
         }
@@ -158,7 +157,7 @@ class enrol_ldap_plugin extends enrol_plugin {
         $enrolments = array();
         foreach($roles as $role) {
             // Get external enrolments according to LDAP server
-            $enrolments[$role->id]['ext'] = $this->find_ext_enrolments($ldapconnection, $user->idnumber, $role);
+            $enrolments[$role->id]['ext'] = $this->find_ext_enrolments($user->idnumber, $role);
 
             // Get the list of current user enrolments that come from LDAP
             $sql= "SELECT e.courseid, ue.status, e.id as enrolid, c.shortname
@@ -290,7 +289,7 @@ class enrol_ldap_plugin extends enrol_plugin {
             $transaction->allow_commit();
         }
 
-        $this->ldap_close($ldapconnection);
+        $this->ldap_close();
 
         $trace->finished();
     }
@@ -306,8 +305,7 @@ class enrol_ldap_plugin extends enrol_plugin {
     public function sync_enrolments(progress_trace $trace, $onecourse = null) {
         global $CFG, $DB;
 
-        $ldapconnection = $this->ldap_connect($trace);
-        if (!$ldapconnection) {
+        if (!$this->ldap_connect($trace)) {
             $trace->finished();
             return;
         }
@@ -372,18 +370,18 @@ class enrol_ldap_plugin extends enrol_plugin {
                 $flat_records = array();
                 do {
                     if ($ldap_pagedresults) {
-                        ldap_control_paged_result($ldapconnection, $this->config->pagesize, true, $ldap_cookie);
+                        ldap_control_paged_result($this->ldapconnection, $this->config->pagesize, true, $ldap_cookie);
                     }
 
                     if ($this->config->course_search_sub) {
                         // Use ldap_search to find first user from subtree
-                        $ldap_result = @ldap_search($ldapconnection,
+                        $ldap_result = @ldap_search($this->ldapconnection,
                                                     $ldap_context,
                                                     $ldap_search_pattern,
                                                     $ldap_fields_wanted);
                     } else {
                         // Search only in this context
-                        $ldap_result = @ldap_list($ldapconnection,
+                        $ldap_result = @ldap_list($this->ldapconnection,
                                                   $ldap_context,
                                                   $ldap_search_pattern,
                                                   $ldap_fields_wanted);
@@ -393,11 +391,11 @@ class enrol_ldap_plugin extends enrol_plugin {
                     }
 
                     if ($ldap_pagedresults) {
-                        ldap_control_paged_result_response($ldapconnection, $ldap_result, $ldap_cookie);
+                        ldap_control_paged_result_response($this->ldapconnection, $ldap_result, $ldap_cookie);
                     }
 
                     // Check and push results
-                    $records = ldap_get_entries($ldapconnection, $ldap_result);
+                    $records = ldap_get_entries($this->ldapconnection, $ldap_result);
 
                     // LDAP libraries return an odd array, really. fix it:
                     for ($c = 0; $c < $records['count']; $c++) {
@@ -410,8 +408,8 @@ class enrol_ldap_plugin extends enrol_plugin {
                 // If LDAP paged results were used, the current connection must be completely
                 // closed and a new one created, to work without paged results from here on.
                 if ($ldap_pagedresults) {
-                    $this->ldap_close(true);
-                    $ldapconnection = $this->ldap_connect($trace);
+                    $this->ldap_close();
+                    $this->ldap_connect($trace);
                 }
 
                 if (count($flat_records)) {
@@ -455,8 +453,7 @@ class enrol_ldap_plugin extends enrol_plugin {
                             if ($this->config->nested_groups) {
                                 $users = array();
                                 foreach ($ldapmembers as $ldapmember) {
-                                    $grpusers = $this->ldap_explode_group($ldapconnection,
-                                                                          $ldapmember,
+                                    $grpusers = $this->ldap_explode_group($ldapmember,
                                                                           $this->config->{'memberattribute_role'.$role->id});
 
                                     $users = array_merge($users, $grpusers);
@@ -473,10 +470,10 @@ class enrol_ldap_plugin extends enrol_plugin {
                                 // as the idnumber does not match their dn and we get dn's from membership.
                                 $memberidnumbers = array();
                                 foreach ($ldapmembers as $ldapmember) {
-                                    $result = ldap_read($ldapconnection, $ldapmember, '(objectClass=*)',
+                                    $result = ldap_read($this->ldapconnection, $ldapmember, '(objectClass=*)',
                                                         array($this->config->idnumber_attribute));
-                                    $entry = ldap_first_entry($ldapconnection, $result);
-                                    $values = ldap_get_values($ldapconnection, $entry, $this->config->idnumber_attribute);
+                                    $entry = ldap_first_entry($this->ldapconnection, $result);
+                                    $values = ldap_get_values($this->ldapconnection, $entry, $this->config->idnumber_attribute);
                                     array_push($memberidnumbers, $values[0]);
                                 }
 
@@ -627,29 +624,22 @@ class enrol_ldap_plugin extends enrol_plugin {
      * settings. It's actually a wrapper around ldap_connect_moodle()
      *
      * @param progress_trace $trace
-     * @return mixed A valid LDAP connection or false.
+     * @return bool success
      */
     protected function ldap_connect(progress_trace $trace = null) {
         global $CFG;
         require_once($CFG->libdir.'/ldaplib.php');
 
-        // Cache ldap connections. They are expensive to set up
-        // and can drain the TCP/IP ressources on the server if we
-        // are syncing a lot of users (as we try to open a new connection
-        // to get the user details). This is the least invasive way
-        // to reuse existing connections without greater code surgery.
-        if(!empty($this->ldapconnection)) {
-            $this->ldapconns++;
-            return $this->ldapconnection;
+        if (isset($this->ldapconnection)) {
+            return true;
         }
 
         if ($ldapconnection = ldap_connect_moodle($this->get_config('host_url'), $this->get_config('ldap_version'),
                                                   $this->get_config('user_type'), $this->get_config('bind_dn'),
                                                   $this->get_config('bind_pw'), $this->get_config('opt_deref'),
                                                   $debuginfo, $this->get_config('start_tls'))) {
-            $this->ldapconns = 1;
             $this->ldapconnection = $ldapconnection;
-            return $ldapconnection;
+            return true;
         }
 
         if ($trace) {
@@ -666,23 +656,22 @@ class enrol_ldap_plugin extends enrol_plugin {
      *
      */
     protected function ldap_close() {
-        $this->ldapconns--;
-        if($this->ldapconns == 0) {
+        if (isset($this->ldapconnection)) {
             @ldap_close($this->ldapconnection);
-            unset($this->ldapconnection);
+            $this->ldapconnection = null;
         }
+        return;
     }
 
     /**
      * Return multidimensional array with details of user courses (at
      * least dn and idnumber).
      *
-     * @param resource $ldapconnection a valid LDAP connection.
      * @param string $memberuid user idnumber (without magic quotes).
      * @param object role is a record from the mdl_role table.
      * @return array
      */
-    protected function find_ext_enrolments (&$ldapconnection, $memberuid, $role) {
+    protected function find_ext_enrolments($memberuid, $role) {
         global $CFG;
         require_once($CFG->libdir.'/ldaplib.php');
 
@@ -700,14 +689,14 @@ class enrol_ldap_plugin extends enrol_plugin {
         $extmemberuid = textlib::convert($memberuid, 'utf-8', $this->get_config('ldapencoding'));
 
         if($this->get_config('memberattribute_isdn')) {
-            if (!($extmemberuid = $this->ldap_find_userdn ($ldapconnection, $extmemberuid))) {
+            if (!($extmemberuid = $this->ldap_find_userdn($extmemberuid))) {
                 return array();
             }
         }
 
         $ldap_search_pattern = '';
         if($this->get_config('nested_groups')) {
-            $usergroups = $this->ldap_find_user_groups($ldapconnection, $extmemberuid);
+            $usergroups = $this->ldap_find_user_groups($extmemberuid);
             if(count($usergroups) > 0) {
                 foreach ($usergroups as $group) {
                     $ldap_search_pattern .= '('.$this->get_config('memberattribute_role'.$role->id).'='.$group.')';
@@ -757,18 +746,18 @@ class enrol_ldap_plugin extends enrol_plugin {
             $flat_records = array();
             do {
                 if ($ldap_pagedresults) {
-                    ldap_control_paged_result($ldapconnection, $this->config->pagesize, true, $ldap_cookie);
+                    ldap_control_paged_result($this->ldapconnection, $this->config->pagesize, true, $ldap_cookie);
                 }
 
                 if ($this->get_config('course_search_sub')) {
                     // Use ldap_search to find first user from subtree
-                    $ldap_result = @ldap_search($ldapconnection,
+                    $ldap_result = @ldap_search($this->ldapconnection,
                                                 $context,
                                                 $ldap_search_pattern,
                                                 $ldap_fields_wanted);
                 } else {
                     // Search only in this context
-                    $ldap_result = @ldap_list($ldapconnection,
+                    $ldap_result = @ldap_list($this->ldapconnection,
                                               $context,
                                               $ldap_search_pattern,
                                               $ldap_fields_wanted);
@@ -779,13 +768,13 @@ class enrol_ldap_plugin extends enrol_plugin {
                 }
 
                 if ($ldap_pagedresults) {
-                    ldap_control_paged_result_response($ldapconnection, $ldap_result, $ldap_cookie);
+                    ldap_control_paged_result_response($this->ldapconnection, $ldap_result, $ldap_cookie);
                 }
 
                 // Check and push results. ldap_get_entries() already
                 // lowercases the attribute index, so there's no need to
                 // use array_change_key_case() later.
-                $records = ldap_get_entries($ldapconnection, $ldap_result);
+                $records = ldap_get_entries($this->ldapconnection, $ldap_result);
 
                 // LDAP libraries return an odd array, really. Fix it.
                 for ($c = 0; $c < $records['count']; $c++) {
@@ -798,8 +787,8 @@ class enrol_ldap_plugin extends enrol_plugin {
             // If LDAP paged results were used, the current connection must be completely
             // closed and a new one created, to work without paged results from here on.
             if ($ldap_pagedresults) {
-                $this->ldap_close(true);
-                $ldapconnection = $this->ldap_connect();
+                $this->ldap_close();
+                $this->ldap_connect();
             }
 
             if (count($flat_records)) {
@@ -815,18 +804,17 @@ class enrol_ldap_plugin extends enrol_plugin {
      * user dn like: cn=username,ou=suborg,o=org. It's actually a wrapper
      * around ldap_find_userdn().
      *
-     * @param resource $ldapconnection a valid LDAP connection
      * @param string $userid the userid to search for (in external LDAP encoding, no magic quotes).
      * @return mixed the user dn or false
      */
-    protected function ldap_find_userdn($ldapconnection, $userid) {
+    protected function ldap_find_userdn($userid) {
         global $CFG;
         require_once($CFG->libdir.'/ldaplib.php');
 
         $ldap_contexts = explode(';', $this->get_config('user_contexts'));
         $ldap_defaults = ldap_getdefaults();
 
-        return ldap_find_userdn($ldapconnection, $userid, $ldap_contexts,
+        return ldap_find_userdn($this->ldapconnection, $userid, $ldap_contexts,
                                 '(objectClass='.$ldap_defaults['objectclass'][$this->get_config('user_type')].')',
                                 $this->get_config('idnumber_attribute'), $this->get_config('user_search_sub'));
     }
@@ -835,14 +823,13 @@ class enrol_ldap_plugin extends enrol_plugin {
      * Find the groups a given distinguished name belongs to, both directly
      * and indirectly via nested groups membership.
      *
-     * @param resource $ldapconnection a valid LDAP connection
      * @param string $memberdn distinguished name to search
      * @return array with member groups' distinguished names (can be emtpy)
      */
-    protected function ldap_find_user_groups($ldapconnection, $memberdn) {
+    protected function ldap_find_user_groups($memberdn) {
         $groups = array();
 
-        $this->ldap_find_user_groups_recursively($ldapconnection, $memberdn, $groups);
+        $this->ldap_find_user_groups_recursively($memberdn, $groups);
         return $groups;
     }
 
@@ -850,23 +837,22 @@ class enrol_ldap_plugin extends enrol_plugin {
      * Recursively process the groups the given member distinguished name
      * belongs to, adding them to the already processed groups array.
      *
-     * @param resource $ldapconnection
      * @param string $memberdn distinguished name to search
      * @param array reference &$membergroups array with already found
      *                        groups, where we'll put the newly found
      *                        groups.
      */
-    protected function ldap_find_user_groups_recursively($ldapconnection, $memberdn, &$membergroups) {
-        $result = @ldap_read($ldapconnection, $memberdn, '(objectClass=*)', array($this->get_config('group_memberofattribute')));
+    protected function ldap_find_user_groups_recursively($memberdn, &$membergroups) {
+        $result = @ldap_read($this->ldapconnection, $memberdn, '(objectClass=*)', array($this->get_config('group_memberofattribute')));
         if (!$result) {
             return;
         }
 
-        if ($entry = ldap_first_entry($ldapconnection, $result)) {
+        if ($entry = ldap_first_entry($this->ldapconnection, $result)) {
             do {
-                $attributes = ldap_get_attributes($ldapconnection, $entry);
+                $attributes = ldap_get_attributes($this->ldapconnection, $entry);
                 for ($j = 0; $j < $attributes['count']; $j++) {
-                    $groups = ldap_get_values_len($ldapconnection, $entry, $attributes[$j]);
+                    $groups = ldap_get_values_len($this->ldapconnection, $entry, $attributes[$j]);
                     foreach ($groups as $key => $group) {
                         if ($key === 'count') {  // Skip the entries count
                             continue;
@@ -875,12 +861,12 @@ class enrol_ldap_plugin extends enrol_plugin {
                             // Only push and recurse if we haven't 'seen' this group before
                             // to prevent loops (MS Active Directory allows them!!).
                             array_push($membergroups, $group);
-                            $this->ldap_find_user_groups_recursively($ldapconnection, $group, $membergroups);
+                            $this->ldap_find_user_groups_recursively($group, $membergroups);
                         }
                     }
                 }
             }
-            while ($entry = ldap_next_entry($ldapconnection, $entry));
+            while ($entry = ldap_next_entry($this->ldapconnection, $entry));
         }
     }
 
@@ -890,30 +876,29 @@ class enrol_ldap_plugin extends enrol_plugin {
      * the intermediate groups and return the full list of users that
      * directly or indirectly belong to the group.
      *
-     * @param resource $ldapconnection a valid LDAP connection
      * @param string $group the group name to search
      * @param string $memberattibute the attribute that holds the members of the group
      * @return array the list of users belonging to the group. If $group
      *         is not actually a group, returns array($group).
      */
-    protected function ldap_explode_group($ldapconnection, $group, $memberattribute) {
+    protected function ldap_explode_group($group, $memberattribute) {
         switch ($this->get_config('user_type')) {
             case 'ad':
                 // $group is already the distinguished name to search.
                 $dn = $group;
 
-                $result = ldap_read($ldapconnection, $dn, '(objectClass=*)', array('objectClass'));
-                $entry = ldap_first_entry($ldapconnection, $result);
-                $objectclass = ldap_get_values($ldapconnection, $entry, 'objectClass');
+                $result = ldap_read($this->ldapconnection, $dn, '(objectClass=*)', array('objectClass'));
+                $entry = ldap_first_entry($this->ldapconnection, $result);
+                $objectclass = ldap_get_values($this->ldapconnection, $entry, 'objectClass');
 
                 if (!in_array('group', $objectclass)) {
                     // Not a group, so return immediately.
                     return array($group);
                 }
 
-                $result = ldap_read($ldapconnection, $dn, '(objectClass=*)', array($memberattribute));
-                $entry = ldap_first_entry($ldapconnection, $result);
-                $members = @ldap_get_values($ldapconnection, $entry, $memberattribute); // Can be empty and throws a warning
+                $result = ldap_read($this->ldapconnection, $dn, '(objectClass=*)', array($memberattribute));
+                $entry = ldap_first_entry($this->ldapconnection, $result);
+                $members = @ldap_get_values($this->ldapconnection, $entry, $memberattribute); // Can be empty and throws a warning
                 if ($members['count'] == 0) {
                     // There are no members in this group, return nothing.
                     return array();
@@ -922,7 +907,7 @@ class enrol_ldap_plugin extends enrol_plugin {
 
                 $users = array();
                 foreach ($members as $member) {
-                    $group_members = $this->ldap_explode_group($ldapconnection, $member, $memberattribute);
+                    $group_members = $this->ldap_explode_group($member, $memberattribute);
                     $users = array_merge($users, $group_members);
                 }
 
