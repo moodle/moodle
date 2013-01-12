@@ -300,7 +300,7 @@ class enrol_ldap_plugin extends enrol_plugin {
      * It creates courses if the plugin is configured to do so.
      *
      * @param progress_trace $trace
-     * @param int|null $onecourse limit sync to one course, null if all courses
+     * @param int|null $onecourse limit sync to one course->id, null if all courses
      * @return void
      */
     public function sync_enrolments(progress_trace $trace, $onecourse = null) {
@@ -320,8 +320,8 @@ class enrol_ldap_plugin extends enrol_plugin {
 
         $oneidnumber = null;
         if ($onecourse) {
-            if (!$course = $DB->get_record('course', array('id'=>$onecourse), 'id,idnumber')) {
-                // Course does nto exist, nothing to do.
+            if (!$course = $DB->get_record('course', array('id'=>$onecourse), 'id,'.$this->enrol_localcoursefield)) {
+                // Course does not exist, nothing to do.
                 $trace->output("Requested course $onecourse does not exist, no sync performed.");
                 $trace->finished();
                 return;
@@ -331,7 +331,7 @@ class enrol_ldap_plugin extends enrol_plugin {
                 $trace->finished();
                 return;
             }
-            $oneidnumber = textlib::convert(ldap_addslashes($course->idnumber), 'utf-8', $this->get_config('ldapencoding'));
+            $oneidnumber = ldap_filter_addslashes(textlib::convert($course->idnumber, 'utf-8', $this->get_config('ldapencoding')));
         }
 
         // Get enrolments for each type of role.
