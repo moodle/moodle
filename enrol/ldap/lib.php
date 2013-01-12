@@ -499,9 +499,9 @@ class enrol_ldap_plugin extends enrol_plugin {
                             unset($params2);
                         } else {
                             $shortname = format_string($course_obj->shortname, true, array('context' => $context));
-                            print_string('emptyenrolment', 'enrol_ldap',
+                            $trace->output(get_string('emptyenrolment', 'enrol_ldap',
                                          array('role_shortname'=> $role->shortname,
-                                               'course_shortname' => $shortname));
+                                               'course_shortname' => $shortname)));
                         }
                         $todelete = $DB->get_records_sql($sql, $params);
 
@@ -573,26 +573,25 @@ class enrol_ldap_plugin extends enrol_plugin {
                             $sql = 'SELECT id,username,1 FROM {user} WHERE idnumber = ? AND deleted = 0';
                             $member = $DB->get_record_sql($sql, array($ldapmember));
                             if(empty($member) || empty($member->id)){
-                                print_string ('couldnotfinduser', 'enrol_ldap', $ldapmember);
+                                $trace->output(get_string('couldnotfinduser', 'enrol_ldap', $ldapmember));
                                 continue;
                             }
 
                             $sql= "SELECT ue.status
                                      FROM {user_enrolments} ue
-                                     JOIN {enrol} e ON (e.id = ue.enrolid)
-                                     JOIN {role_assignments} ra ON (ra.itemid = e.id AND ra.component = 'enrol_ldap')
+                                     JOIN {enrol} e ON (e.id = ue.enrolid AND e.enrol = 'ldap')
                                     WHERE e.courseid = :courseid AND ue.userid = :userid";
                             $params = array('courseid'=>$course_obj->id, 'userid'=>$member->id);
                             $userenrolment = $DB->get_record_sql($sql, $params, IGNORE_MULTIPLE);
 
-                            if(empty($userenrolment)) {
+                            if (empty($userenrolment)) {
                                 $this->enrol_user($instance, $member->id, $role->id);
                                 // Make sure we set the enrolment status to active. If the user wasn't
                                 // previously enrolled to the course, enrol_user() sets it. But if we
                                 // configured the plugin to suspend the user enrolments _AND_ remove
                                 // the role assignments on external unenrol, then enrol_user() doesn't
                                 // set it back to active on external re-enrolment. So set it
-                                // unconditionnally to cover both cases.
+                                // unconditionally to cover both cases.
                                 $DB->set_field('user_enrolments', 'status', ENROL_USER_ACTIVE, array('enrolid'=>$instance->id, 'userid'=>$member->id));
                                 $trace->output(get_string('enroluser', 'enrol_ldap',
                                     array('user_username'=> $member->username,
@@ -600,6 +599,12 @@ class enrol_ldap_plugin extends enrol_plugin {
                                           'course_id'=>$course_obj->id)));
 
                             } else {
+                                if (!$DB->record_exists('role_assignments', array('roleid'=>$role->id, 'userid'=>$member->id, 'contextid'=>$context->id, 'component'=>'enrol_ldap', 'itemid'=>$instance->id))) {
+                                    // This happens when reviving users or when user has multiple roles in one course.
+                                    $context = context_course::instance($course_obj->id);
+                                    role_assign($role->id, $member->id, $context->id, 'enrol_ldap', $instance->id);
+                                    $trace->output("Assign role to user '$member->username' in course '$course_obj->shortname ($course_obj->id)'");
+                                }
                                 if ($userenrolment->status == ENROL_USER_SUSPENDED) {
                                     // Reenable enrolment that was previously disabled. Enrolment refreshed
                                     $DB->set_field('user_enrolments', 'status', ENROL_USER_ACTIVE, array('enrolid'=>$instance->id, 'userid'=>$member->id));
