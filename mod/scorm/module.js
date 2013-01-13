@@ -527,6 +527,9 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, launc
 
         // finally activate the chosen item
         var scorm_first_url = tree.getRoot().children[0];
+        if (scorm_first_url == null) { // This is probably a single sco with no children (AICC Direct uses this).
+            scorm_first_url = tree.getRoot();
+        }
         scorm_first_url.title = scoes_nav[launch_sco].url;
         scorm_activate_item(scorm_first_url);
 
