@@ -40,6 +40,15 @@ if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_configcheckbox('enrol_paypal/mailadmins', get_string('mailadmins', 'enrol_paypal'), '', 0));
 
+    // Note: let's reuse the ext sync constants and strings here, internally it is very similar,
+    //       it describes what should happen when users are not supposed to be enrolled any more.
+    $options = array(
+        ENROL_EXT_REMOVED_KEEP           => get_string('extremovedkeep', 'enrol'),
+        ENROL_EXT_REMOVED_SUSPENDNOROLES => get_string('extremovedsuspendnoroles', 'enrol'),
+        ENROL_EXT_REMOVED_UNENROL        => get_string('extremovedunenrol', 'enrol'),
+    );
+    $settings->add(new admin_setting_configselect('enrol_paypal/expiredaction', get_string('expiredaction', 'enrol_paypal'), get_string('expiredaction_help', 'enrol_paypal'), ENROL_EXT_REMOVED_SUSPENDNOROLES, $options));
+
     //--- enrol instance defaults ----------------------------------------------------------------------------
     $settings->add(new admin_setting_heading('enrol_paypal_defaults',
         get_string('enrolinstancedefaults', 'admin'), get_string('enrolinstancedefaults_desc', 'admin')));
