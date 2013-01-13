@@ -716,7 +716,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
                     continue;
                 }
                 echo $this->stealth_section_header($section);
-                print_section($course, $thissection, $mods, $modnamesused, true, "100%", false, $displaysection);
+                print_section($course, $thissection, $mods, $modnamesused, true, "100%", false, 0);
                 echo $this->stealth_section_footer();
             }
 
