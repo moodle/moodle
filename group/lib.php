@@ -713,9 +713,10 @@ function groups_parse_name($format, $groupnumber) {
  *
  * @param int groupingid
  * @param int groupid
+ * @param int $timeadded  The time the group was added to the grouping.
  * @return bool true or exception
  */
-function groups_assign_grouping($groupingid, $groupid) {
+function groups_assign_grouping($groupingid, $groupid, $timeadded = null) {
     global $DB;
 
     if ($DB->record_exists('groupings_groups', array('groupingid'=>$groupingid, 'groupid'=>$groupid))) {
@@ -724,7 +725,11 @@ function groups_assign_grouping($groupingid, $groupid) {
     $assign = new stdClass();
     $assign->groupingid = $groupingid;
     $assign->groupid    = $groupid;
-    $assign->timeadded  = time();
+    if ($timeadded != null) {
+        $assign->timeadded = (integer)$timeadded;
+    } else {
+        $assign->timeadded = time();
+    }
     $DB->insert_record('groupings_groups', $assign);
 
     return true;
