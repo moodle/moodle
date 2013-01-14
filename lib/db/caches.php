@@ -75,4 +75,12 @@ $definitions = array(
         'datasource' => 'question_finder',
         'datasourcefile' => 'question/engine/bank.php',
     ),
+
+    // HTML Purifier cache
+    // This caches the html purifier cleaned text. This is done because the text is usually cleaned once for every user
+    // and context combo. Text caching handles caching for the combonation, this cache is responsible for caching the
+    // cleaned text which is shareable.
+    'htmlpurifier' => array(
+        'mode' => cache_store::MODE_APPLICATION,
+    )
 );
