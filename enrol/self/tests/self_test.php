@@ -442,4 +442,69 @@ class enrol_self_testcase extends advanced_testcase {
         $selfplugin->send_expiry_notifications($trace);
         $this->assertEquals(6, $sink->count());
     }
+
+    public function test_show_enrolme_link() {
+        global $DB, $CFG;
+        $this->resetAfterTest();
+        $this->preventResetByRollback(); // Messaging does not like transactions...
+
+        /** @var $selfplugin enrol_self_plugin */
+        $selfplugin = enrol_get_plugin('self');
+
+        $user1 = $this->getDataGenerator()->create_user();
+
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+        $course3 = $this->getDataGenerator()->create_course();
+        $course4 = $this->getDataGenerator()->create_course();
+        $course5 = $this->getDataGenerator()->create_course();
+
+        $cohort1 = $this->getDataGenerator()->create_cohort();
+        $cohort2 = $this->getDataGenerator()->create_cohort();
+
+        $instance1 = $DB->get_record('enrol', array('courseid'=>$course1->id, 'enrol'=>'self'), '*', MUST_EXIST);
+        $instance1->customint6 = 1;
+        $DB->update_record('enrol', $instance1);
+        $selfplugin->update_status($instance1, ENROL_INSTANCE_ENABLED);
+
+        $instance2 = $DB->get_record('enrol', array('courseid'=>$course2->id, 'enrol'=>'self'), '*', MUST_EXIST);
+        $instance2->customint6 = 0;
+        $DB->update_record('enrol', $instance2);
+        $selfplugin->update_status($instance2, ENROL_INSTANCE_ENABLED);
+
+        $instance3 = $DB->get_record('enrol', array('courseid'=>$course3->id, 'enrol'=>'self'), '*', MUST_EXIST);
+        $instance3->customint6 = 1;
+        $DB->update_record('enrol', $instance3);
+        $selfplugin->update_status($instance3, ENROL_INSTANCE_DISABLED);
+
+        $instance4 = $DB->get_record('enrol', array('courseid'=>$course4->id, 'enrol'=>'self'), '*', MUST_EXIST);
+        $instance4->customint6 = 0;
+        $DB->update_record('enrol', $instance4);
+        $selfplugin->update_status($instance4, ENROL_INSTANCE_DISABLED);
+
+        $instance5 = $DB->get_record('enrol', array('courseid'=>$course5->id, 'enrol'=>'self'), '*', MUST_EXIST);
+        $instance5->customint6 = 1;
+        $instance5->customint5 = $cohort1->id;
+        $DB->update_record('enrol', $instance1);
+        $selfplugin->update_status($instance5, ENROL_INSTANCE_ENABLED);
+
+        $id = $selfplugin->add_instance($course5, $selfplugin->get_instance_defaults());
+        $instance6 = $DB->get_record('enrol', array('id'=>$id), '*', MUST_EXIST);
+        $instance6->customint6 = 1;
+        $instance6->customint5 = $cohort2->id;
+        $DB->update_record('enrol', $instance1);
+        $selfplugin->update_status($instance6, ENROL_INSTANCE_ENABLED);
+
+        $this->setUser($user1);
+        $this->assertTrue($selfplugin->show_enrolme_link($instance1));
+        $this->assertFalse($selfplugin->show_enrolme_link($instance2));
+        $this->assertFalse($selfplugin->show_enrolme_link($instance3));
+        $this->assertFalse($selfplugin->show_enrolme_link($instance4));
+
+        require_once("$CFG->dirroot/cohort/lib.php");
+        cohort_add_member($cohort1->id, $user1->id);
+
+        $this->assertTrue($selfplugin->show_enrolme_link($instance5));
+        $this->assertFalse($selfplugin->show_enrolme_link($instance6));
+    }
 }
