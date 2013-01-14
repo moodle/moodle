@@ -115,6 +115,14 @@ $PAGE->set_button(calendar_preferences_button($course));
 $renderer = $PAGE->get_renderer('core_calendar');
 
 echo $OUTPUT->header();
+
+// Filter subscriptions which user can't edit.
+foreach($subscriptions as $subscription) {
+    if (!calendar_can_edit_subscription($subscription)) {
+        unset($subscriptions[$subscription->id]);
+    }
+}
+
 // Display a table of subscriptions.
 echo $renderer->subscription_details($courseid, $subscriptions, $importresults);
 // Display the add subscription form.
