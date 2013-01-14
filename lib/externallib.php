@@ -598,15 +598,15 @@ class external_warnings extends external_multiple_structure {
      *
      * @since Moodle 2.3
      */
-    public function __construct() {
+    public function __construct($itemdesc = 'item', $itemiddesc = 'item id',
+        $warningcodedesc = 'the warning code can be used by the client app to implement specific behaviour') {
 
         parent::__construct(
             new external_single_structure(
                 array(
-                    'item' => new external_value(PARAM_TEXT, 'item', VALUE_OPTIONAL),
-                    'itemid' => new external_value(PARAM_INT, 'item id', VALUE_OPTIONAL),
-                    'warningcode' => new external_value(PARAM_ALPHANUM,
-                            'the warning code can be used by the client app to implement specific behaviour'),
+                    'item' => new external_value(PARAM_TEXT, $itemdesc, VALUE_OPTIONAL),
+                    'itemid' => new external_value(PARAM_INT, $itemiddesc, VALUE_OPTIONAL),
+                    'warningcode' => new external_value(PARAM_ALPHANUM, $warningcodedesc),
                     'message' => new external_value(PARAM_TEXT,
                             'untranslated english message to explain the warning')
                 ), 'warning'),
