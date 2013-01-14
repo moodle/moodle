@@ -64,7 +64,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             var toggle_class;
             if (this.is_label(element)) {
                 toggle_class = CSS.DIMMEDTEXT;
-                dimarea = element.one(CSS.MODINDENTDIV + ' div');
+                dimarea = element.all(CSS.MODINDENTDIV + ' > div').item(1);
             } else {
                 toggle_class = CSS.DIMCLASS;
                 dimarea = element.one('a');
