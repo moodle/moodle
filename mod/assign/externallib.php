@@ -438,7 +438,7 @@ class mod_assign_external extends external_api {
      * Describes the parameters for get_submissions
      *
      * @return external_external_function_parameters
-     * @since Moodle 2.4
+     * @since Moodle 2.5
      */
     public static function get_submissions_parameters() {
         return new external_function_parameters(
@@ -462,7 +462,7 @@ class mod_assign_external extends external_api {
      * @param int $since only return submissions with timemodified >= since
      * @param int $before only return submissions with timemodified <= before
      * @return array of submissions for each requested assignment
-     * @since Moodle 2.4
+     * @since Moodle 2.5
      */
     public static function get_submissions($assignmentids, $status = '', $since = 0, $before = 0) {
         global $DB, $CFG;
@@ -604,7 +604,7 @@ class mod_assign_external extends external_api {
      * Creates an assign_submissions external_single_structure
      *
      * @return external_single_structure
-     * @since Moodle 2.4
+     * @since Moodle 2.5
      */
     private static function get_submissions_structure() {
         return new external_single_structure(
@@ -664,7 +664,7 @@ class mod_assign_external extends external_api {
      * Describes the get_submissions return value
      *
      * @return external_single_structure
-     * @since Moodle 2.4
+     * @since Moodle 2.5
      */
     public static function get_submissions_returns() {
         return new external_single_structure(
