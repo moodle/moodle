@@ -1,10 +1,10 @@
 
  --------------------------------------------------------------------------
- September 6, 2008                                             Version 1.70
+ March 31, 2012                                                Version 1.74
 
                   m i m e T e X   R e a d m e   F i l e
 
- Copyright(c) 2002-2008, John Forkosh Associates, Inc. All rights reserved.
+ Copyright(c) 2002-2012, John Forkosh Associates, Inc. All rights reserved.
  --------------------------------------------------------------------------
 
                             by: John Forkosh
@@ -179,6 +179,8 @@ IV.  REVISION HISTORY
   A more detailed account of mimeTeX's revision history
   is maintained at  http://www.forkosh.com/mimetexchangelog.html
   ---
+  03/31/12  J.Forkosh      version 1.74 released.
+  08/24/11  J.Forkosh      version 1.72 released.
   09/06/08  J.Forkosh      version 1.70 released.
   11/30/04  J.Forkosh      version 1.60 released
   10/02/04  J.Forkosh      version 1.50 released on CTAN with various new
