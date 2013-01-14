@@ -25,7 +25,9 @@
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once($CFG->dirroot.'/' . $CFG->admin .'/tool/behat/locallib.php');
+require_once($CFG->dirroot . '/' . $CFG->admin .'/tool/behat/locallib.php');
+require_once($CFG->libdir . '/behat/classes/behat_util.php');
+require_once($CFG->libdir . '/behat/classes/behat_config_manager.php');
 
 /**
  * Allows access to internal methods without exposing them
@@ -34,7 +36,7 @@ require_once($CFG->dirroot.'/' . $CFG->admin .'/tool/behat/locallib.php');
  * @copyright  2012 David Monllaó
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class testable_tool_behat extends tool_behat {
+class testable_behat_config_manager extends behat_config_manager {
 
     /**
      * Allow access to protected method
@@ -70,37 +72,37 @@ class testable_tool_behat extends tool_behat {
 class tool_behat_testcase extends advanced_testcase {
 
     /**
-     * test_switch_environment
+     * behat_util tests
      */
     public function test_switch_environment() {
 
         // Only run the tests if behat dependencies are installed.
         // We don't need to pre-check PHPUnit initialisation because we are running on it.
-        if (version_compare(PHP_VERSION, '5.4.0', '>=') && tool_behat::are_behat_dependencies_installed()) {
-             tool_behat::switchenvironment('enable');
-             $this->assertTrue(tool_behat::is_test_mode_enabled());
-             $this->assertFalse(tool_behat::is_test_environment_running());
+        if (version_compare(PHP_VERSION, '5.4.0', '>=') && behat_command::are_behat_dependencies_installed()) {
+             behat_util::switchenvironment('enable');
+             $this->assertTrue(behat_util::is_test_mode_enabled());
+             $this->assertFalse(behat_util::is_test_environment_running());
 
              // We trigger a debugging() if it's already enabled.
-             tool_behat::switchenvironment('enable');
+             behat_util::switchenvironment('enable');
              $this->assertDebuggingCalled();
 
-             tool_behat::switchenvironment('disable');
-             $this->assertFalse(tool_behat::is_test_mode_enabled());
-             $this->assertFalse(tool_behat::is_test_environment_running());
+             behat_util::switchenvironment('disable');
+             $this->assertFalse(behat_util::is_test_mode_enabled());
+             $this->assertFalse(behat_util::is_test_environment_running());
 
              // We trigger a debugging() if it's already enabled.
-             tool_behat::switchenvironment('disable');
+             behat_util::switchenvironment('disable');
              $this->assertDebuggingCalled();
 
              // Ensure all continues disabled.
-             $this->assertFalse(tool_behat::is_test_mode_enabled());
-             $this->assertFalse(tool_behat::is_test_environment_running());
+             $this->assertFalse(behat_util::is_test_mode_enabled());
+             $this->assertFalse(behat_util::is_test_environment_running());
         }
     }
 
     /**
-     * test_merge_configs
+     * behat_config_manager tests
      */
     public function test_merge_configs() {
 
@@ -130,7 +132,7 @@ class tool_behat_testcase extends advanced_testcase {
             )
         );
 
-        $array = testable_tool_behat::merge_config($array1, $array2);
+        $array = testable_behat_config_manager::merge_config($array1, $array2);
 
         // Overriddes are applied.
         $this->assertEquals('OVERRIDDEN1', $array['simple']);
@@ -155,7 +157,7 @@ class tool_behat_testcase extends advanced_testcase {
             'array' => 'one'
         );
 
-        $array = testable_tool_behat::merge_config($array1, $array2);
+        $array = testable_behat_config_manager::merge_config($array1, $array2);
 
         // Overrides applied.
         $this->assertNotEmpty($array['simple']);
@@ -168,7 +170,7 @@ class tool_behat_testcase extends advanced_testcase {
     }
 
     /**
-     * test_config_file_contents
+     * behat_config_manager tests
      */
     public function test_config_file_contents() {
         global $CFG;
@@ -188,7 +190,7 @@ class tool_behat_testcase extends advanced_testcase {
             'anoche' => '/cuando/yo/dormia'
         );
 
-        $contents = testable_tool_behat::get_config_file_contents('/i/am/a/prefix/', $features, $stepsdefinitions);
+        $contents = testable_behat_config_manager::get_config_file_contents('/i/am/a/prefix/', $features, $stepsdefinitions);
 
         $this->assertContains('features: /i/am/a/prefix/lib/behat/features', $contents);
         $this->assertContains('micarro: /me/lo/robaron', $contents);

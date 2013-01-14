@@ -25,6 +25,7 @@
 require(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/behat/locallib.php');
+require_once($CFG->libdir . '/behat/classes/behat_config_manager.php');
 
 $filter = optional_param('filter', '', PARAM_ALPHANUMEXT);
 $type = optional_param('type', false, PARAM_ALPHAEXT);
@@ -39,7 +40,7 @@ $steps = tool_behat::stepsdefinitions($type, $component, $filter);
 $componentswithsteps = array('' => get_string('allavailablesteps', 'tool_behat'));
 
 // Complete the components list with the moodle steps definitions.
-$components = tool_behat::get_components_steps_definitions();
+$components = behat_config_manager::get_components_steps_definitions();
 if ($components) {
     foreach ($components as $component => $filepath) {
         // TODO Use a class static attribute instead of the class name.

@@ -34,6 +34,11 @@ defined('MOODLE_INTERNAL') || die;
 class tool_behat_renderer extends plugin_renderer_base {
 
     /**
+     * @var string Docs url
+     */
+    protected $docsurl = 'http://docs.moodle.org/dev/Acceptance_testing';
+
+    /**
      * Renders the list of available steps according to the submitted filters
      *
      * @param string     $stepsdefinitions HTML from behat with the available steps
@@ -49,11 +54,11 @@ class tool_behat_renderer extends plugin_renderer_base {
         $html .= $this->output->heading($title);
 
         // Info.
-        $installurl = tool_behat::$docsurl . '#Installation';
+        $installurl = $this->docsurl . '#Installation';
         $installlink = html_writer::tag('a', $installurl, array('href' => $installurl, 'target' => '_blank'));
-        $writetestsurl = tool_behat::$docsurl . '#Writting_features';
+        $writetestsurl = $this->docsurl . '#Writting_features';
         $writetestslink = html_writer::tag('a', $writetestsurl, array('href' => $writetestsurl, 'target' => '_blank'));
-        $writestepsurl = tool_behat::$docsurl . '#Adding_steps_definitions';
+        $writestepsurl = $this->docsurl . '#Adding_steps_definitions';
         $writestepslink = html_writer::tag('a', $writestepsurl, array('href' => $writestepsurl, 'target' => '_blank'));
         $infos = array(
             get_string('installinfo', 'tool_behat', $installlink),

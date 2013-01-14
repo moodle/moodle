@@ -26,7 +26,7 @@ define('CLI_SCRIPT', true);
 
 require(__DIR__ . '/../../../../config.php');
 require_once($CFG->libdir . '/clilib.php');
-require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/behat/locallib.php');
+require_once($CFG->libdir . '/behat/behat_util.php');
 
 // CLI options.
 list($options, $unrecognized) = cli_get_params(
@@ -75,7 +75,7 @@ if ($options['enable']) {
     exit(0);
 }
 
-tool_behat::switchenvironment($action);
+behat_util::switchenvironment($action);
 
 mtrace(get_string('testenvironment' . $action, 'tool_behat'));
 
