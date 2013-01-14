@@ -351,23 +351,26 @@ class core_message_external_testcase extends externallib_advanced_testcase {
         $user5 = self::getDataGenerator()->create_user($user5);
         self::getDataGenerator()->enrol_user($user5->id, $course2->id);
 
-        // Searching for users, keep in mind that 'Admin User' and 'Guest user' can be returned for now.
-        // See MDL-37164 which should fix that. Once fixed, remove the +2's.
         $this->setUser($user1);
+
         $results = core_message_external::search_contacts('r');
         $results = external_api::clean_returnvalue(core_message_external::search_contacts_returns(), $results);
-        $this->assertCount(4 + 2, $results);
+        $this->assertCount(5, $results); // Users 2 through 5 + admin
+
         $results = core_message_external::search_contacts('r', true);
         $results = external_api::clean_returnvalue(core_message_external::search_contacts_returns(), $results);
         $this->assertCount(2, $results);
+
         $results = core_message_external::search_contacts('Kyle', false);
         $results = external_api::clean_returnvalue(core_message_external::search_contacts_returns(), $results);
         $this->assertCount(1, $results);
         $result = reset($results);
         $this->assertEquals($user4->id, $result['id']);
+
         $results = core_message_external::search_contacts('y', false);
         $results = external_api::clean_returnvalue(core_message_external::search_contacts_returns(), $results);
         $this->assertCount(2, $results);
+
         $results = core_message_external::search_contacts('y', true);
         $results = external_api::clean_returnvalue(core_message_external::search_contacts_returns(), $results);
         $this->assertCount(1, $results);
