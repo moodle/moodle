@@ -474,7 +474,8 @@ function wiki_search_form($cm, $search = '') {
     $output = '<div class="wikisearch">';
     $output .= '<form method="post" action="' . $CFG->wwwroot . '/mod/wiki/search.php" style="display:inline">';
     $output .= '<fieldset class="invisiblefieldset">';
-    $output .= '<label class="accesshide" for="searchwiki">' . get_string("searchwikis", "wiki") . '</label>';
+    $output .= '<legend class="accesshide">'. get_string('searchwikis', 'wiki') .'</legend>';
+    $output .= '<label class="accesshide" for="searchwiki">' . get_string("searchterms", "wiki") . '</label>';
     $output .= '<input id="searchwiki" name="searchstring" type="text" size="18" value="' . s($search, true) . '" alt="search" />';
     $output .= '<input name="courseid" type="hidden" value="' . $cm->course . '" />';
     $output .= '<input name="cmid" type="hidden" value="' . $cm->id . '" />';
