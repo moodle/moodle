@@ -45,7 +45,7 @@ $section    = $DB->get_record('course_sections', array('id' => $cm->section, 'co
 require_login($course);
 require_sesskey();
 require_capability('moodle/course:manageactivities', $context);
-// Require both target import caps to be able to duplicate, see make_editing_buttons()
+// Require both target import caps to be able to duplicate, see course_get_cm_edit_actions()
 require_capability('moodle/backup:backuptargetimport', $context);
 require_capability('moodle/restore:restoretargetimport', $context);
 

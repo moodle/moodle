@@ -123,7 +123,7 @@ switch($targetstate) {
 }
 
 // Get course-modules entry
-$cm = get_coursemodule_from_id(null, $cmid, null, false, MUST_EXIST);
+$cm = get_coursemodule_from_id(null, $cmid, null, true, MUST_EXIST);
 $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
 
 // Check user is logged in
@@ -152,8 +152,12 @@ if ($fromajax) {
 } else {
     // In case of use in other areas of code we allow a 'backto' parameter,
     // otherwise go back to course page
-    $backto = optional_param('backto', 'view.php?id='.$course->id, PARAM_URL);
-    redirect($backto);
+
+    if ($backto = optional_param('backto', null, PARAM_URL)) {
+        redirect($backto);
+    } else {
+        redirect(course_get_url($course, $cm->sectionnum));
+    }
 }
 
 // utility functions

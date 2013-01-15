@@ -501,6 +501,22 @@ class cm_info extends stdClass {
     public $groupmembersonly;
 
     /**
+     * Indicates whether the course containing the module has forced the groupmode
+     * This means that cm_info::$groupmode should be ignored and cm_info::$coursegroupmode be
+     * used instead
+     * @var bool
+     */
+    public $coursegroupmodeforce;
+
+    /**
+     * Group mode (one of the constants NONE, SEPARATEGROUPS, or VISIBLEGROUPS) - from
+     * course table - as specified for the course containing the module
+     * Effective only if cm_info::$coursegroupmodeforce is set
+     * @var int
+     */
+    public $coursegroupmode;
+
+    /**
      * Indent level on course page (0 = no indent) - from course_modules table
      * @var int
      */
@@ -754,6 +770,52 @@ class cm_info extends stdClass {
     public function get_content() {
         $this->obtain_view_data();
         return $this->content;
+    }
+
+    /**
+     * Returns the content to display on course/overview page, formatted and passed through filters
+     *
+     * if $options['context'] is not specified, the module context is used
+     *
+     * @param array|stdClass $options formatting options, see {@link format_text()}
+     * @return string
+     */
+    public function get_formatted_content($options = array()) {
+        $this->obtain_view_data();
+        if (empty($this->content)) {
+            return '';
+        }
+        if ($this->modname === 'label') {
+            // special case, label returns already formatted content, see cm_info::__construct()
+            // and label_get_coursemodule_info()
+            return $this->content;
+        }
+        // Improve filter performance by preloading filter setttings for all
+        // activities on the course (this does nothing if called multiple
+        // times)
+        filter_preload_activities($this->get_modinfo());
+
+        $options = (array)$options;
+        if (!isset($options['context'])) {
+            $options['context'] = context_module::instance($this->id);
+        }
+        return format_text($this->content, FORMAT_HTML, $options);
+    }
+
+    /**
+     * Returns the name to display on course/overview page, formatted and passed through filters
+     *
+     * if $options['context'] is not specified, the module context is used
+     *
+     * @param array|stdClass $options formatting options, see {@link format_string()}
+     * @return string
+     */
+    public function get_formatted_name($options = array()) {
+        $options = (array)$options;
+        if (!isset($options['context'])) {
+            $options['context'] = context_module::instance($this->id);
+        }
+        return format_string($this->name, true,  $options);
     }
 
     /**
@@ -1017,6 +1079,8 @@ class cm_info extends stdClass {
         $this->groupmode        = isset($mod->groupmode) ? $mod->groupmode : 0;
         $this->groupingid       = isset($mod->groupingid) ? $mod->groupingid : 0;
         $this->groupmembersonly = isset($mod->groupmembersonly) ? $mod->groupmembersonly : 0;
+        $this->coursegroupmodeforce = $course->groupmodeforce;
+        $this->coursegroupmode  = $course->groupmode;
         $this->indent           = isset($mod->indent) ? $mod->indent : 0;
         $this->extra            = isset($mod->extra) ? $mod->extra : '';
         $this->extraclasses     = isset($mod->extraclasses) ? $mod->extraclasses : '';

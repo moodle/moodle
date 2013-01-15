@@ -41,8 +41,8 @@ class block_site_main_menu extends block_list {
                         continue;
                     }
 
-                    list($content, $instancename) =
-                            get_print_section_cm_text($cm, $course);
+                    $content = $cm->get_formatted_content(array('overflowdiv' => true, 'noclean' => true));
+                    $instancename = $cm->get_formatted_name();
 
                     if (!($url = $cm->get_url())) {
                         $this->content->items[] = $content;
@@ -60,13 +60,11 @@ class block_site_main_menu extends block_list {
         }
 
 /// slow & hacky editing mode
+        $courserenderer = $this->page->get_renderer('core', 'course');
         $ismoving = ismoving($course->id);
         course_create_sections_if_missing($course, 0);
         $modinfo = get_fast_modinfo($course);
         $section = $modinfo->get_section_info(0);
-
-        $groupbuttons = $course->groupmode;
-        $groupbuttonslink = (!$course->groupmodeforce);
 
         if ($ismoving) {
             $strmovehere = get_string('movehere');
@@ -90,15 +88,10 @@ class block_site_main_menu extends block_list {
                     continue;
                 }
                 if (!$ismoving) {
-                    if ($groupbuttons) {
-                        if (! $mod->groupmodelink = $groupbuttonslink) {
-                            $mod->groupmode = $course->groupmode;
-                        }
-
-                    } else {
-                        $mod->groupmode = false;
-                    }
-                    $editbuttons = '<div class="buttons">'.make_editing_buttons($mod, true, true).'</div>';
+                    $actions = course_get_cm_edit_actions($mod, -1);
+                    $editbuttons = html_writer::tag('div',
+                            $courserenderer->course_section_cm_edit_actions($actions),
+                            array('class' => 'buttons'));
                 } else {
                     $editbuttons = '';
                 }
@@ -111,8 +104,8 @@ class block_site_main_menu extends block_list {
                             '<img style="height:16px; width:80px; border:0px" src="'.$OUTPUT->pix_url('movehere') . '" alt="'.$strmovehere.'" /></a>';
                         $this->content->icons[] = '';
                     }
-                    list($content, $instancename) =
-                            get_print_section_cm_text($modinfo->cms[$modnumber], $course);
+                    $content = $mod->get_formatted_content(array('overflowdiv' => true, 'noclean' => true));
+                    $instancename = $mod->get_formatted_name();
                     $linkcss = $mod->visible ? '' : ' class="dimmed" ';
 
                     if (!($url = $mod->get_url())) {
@@ -134,7 +127,8 @@ class block_site_main_menu extends block_list {
             $this->content->icons[] = '';
         }
 
-        $this->content->footer = print_section_add_menus($course, 0, null, true, true);
+        $this->content->footer = $courserenderer->course_section_add_cm_control($course,
+                0, null, array('inblock' => true));
 
         return $this->content;
     }

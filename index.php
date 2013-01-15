@@ -142,20 +142,15 @@
                      " class=\"iconsmall\" alt=\"$streditsummary\" /></a><br /><br />";
             }
 
-            print_section($SITE, $section, $mods, $modnamesused, true);
+            $courserenderer = $PAGE->get_renderer('core', 'course');
+            echo $courserenderer->course_section_cm_list($SITE, $section);
 
-            if ($editing) {
-                print_section_add_menus($SITE, $section->section, $modnames);
-            }
+            echo $courserenderer->course_section_add_cm_control($SITE, $section->section);
             echo $OUTPUT->box_end();
         }
     }
     // Include course AJAX
-    if (include_course_ajax($SITE, $modnamesused)) {
-        // Add the module chooser
-        $renderer = $PAGE->get_renderer('core', 'course');
-        echo $renderer->course_modchooser(get_module_metadata($SITE, $modnames), $SITE);
-    }
+    include_course_ajax($SITE, $modnamesused);
 
     if (isloggedin() and !isguestuser() and isset($CFG->frontpageloggedin)) {
         $frontpagelayout = $CFG->frontpageloggedin;

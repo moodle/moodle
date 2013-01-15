@@ -279,10 +279,6 @@
     echo html_writer::end_tag('div');
 
     // Include course AJAX
-    if (include_course_ajax($course, $modnamesused)) {
-        // Add the module chooser
-        $renderer = $PAGE->get_renderer('core', 'course');
-        echo $renderer->course_modchooser(get_module_metadata($course, $modnames, $displaysection), $course);
-    }
+    include_course_ajax($course, $modnamesused);
 
     echo $OUTPUT->footer();
