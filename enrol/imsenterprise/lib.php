@@ -97,6 +97,8 @@ function cron() {
 
         // Make sure we understand how to map the IMS-E roles to Moodle roles
         $this->load_role_mappings();
+        // Make sure we understand how to map the IMS-E course names to Moodle course names.
+        $this->load_course_mappings();
 
         $md5 = md5_file($filename); // NB We'll write this value back to the database at the end of the cron
         $filemtime = filemtime($filename);
@@ -315,15 +317,17 @@ function process_group_tag($tagcontents) {
     if (preg_match('{<sourcedid>.*?<id>(.+?)</id>.*?</sourcedid>}is', $tagcontents, $matches)) {
         $group->coursecode = trim($matches[1]);
     }
-    if (preg_match('{<description>.*?<long>(.*?)</long>.*?</description>}is', $tagcontents, $matches)){
-        $group->description = trim($matches[1]);
+
+    if (preg_match('{<description>.*?<long>(.*?)</long>.*?</description>}is', $tagcontents, $matches)) {
+        $group->long = trim($matches[1]);
     }
     if (preg_match('{<description>.*?<short>(.*?)</short>.*?</description>}is', $tagcontents, $matches)) {
-        $group->shortName = trim($matches[1]);
+        $group->short = trim($matches[1]);
     }
     if (preg_match('{<description>.*?<full>(.*?)</full>.*?</description>}is', $tagcontents, $matches)) {
-        $group->fulldescription = trim($matches[1]);
+        $group->full = trim($matches[1]);
     }
+
     if (preg_match('{<org>.*?<orgunit>(.*?)</orgunit>.*?</org>}is', $tagcontents, $matches)) {
         $group->category = trim($matches[1]);
     }
@@ -361,28 +365,36 @@ function process_group_tag($tagcontents) {
                 if (!$createnewcourses) {
                     $this->log_line("Course $coursecode not found in Moodle's course idnumbers.");
                 } else {
-                    // Set shortname to description or description to shortname if one is set but not the other.
-                    $nodescription = !isset($group->description);
-                    $noshortname = !isset($group->shortName);
-                    if ( $nodescription && $noshortname) {
-                        // If neither short nor long description are set let if fail
-                        $this->log_line("Neither long nor short name are set for $coursecode");
-                    } else if ($nodescription) {
-                        // If short and ID exist, then give the long short's value, then give short the ID's value
-                        $group->description = $group->shortName;
-                        $group->shortName = $coursecode;
-                    } else if ($noshortname) {
-                        // If long and ID exist, then map long to long, then give short the ID's value.
-                        $group->shortName = $coursecode;
-                    }
+
                     // Create the (hidden) course(s) if not found
                     $courseconfig = get_config('moodlecourse'); // Load Moodle Course shell defaults
+
+                    // New course.
                     $course = new stdClass();
-                    $course->fullname = $group->description;
-                    $course->shortname = $group->shortName;
-                    if (!empty($group->fulldescription)) {
-                        $course->summary = format_text($group->fulldescription, FORMAT_HTML);
+                    foreach ($this->coursemappings as $courseattr => $imsname) {
+
+                        if ($imsname == 'ignore') {
+                            continue;
+                        }
+
+                        // Check if the IMS file contains the mapped tag, otherwise fallback on coursecode.
+                        if ($imsname == 'coursecode') {
+                            $course->{$courseattr} = $coursecode;
+                        } else if (!empty($group->{$imsname})) {
+                            $course->{$courseattr} = $group->{$imsname};
+                        } else {
+                            $this->log_line('No ' . $imsname . ' description tag found for ' . $coursecode . ' coursecode, using ' . $coursecode . ' instead');
+                            $course->{$courseattr} = $coursecode;
+                        }
+
+                        if ($courseattr == 'summary') {
+                            $format = FORMAT_HTML;
+                        } else {
+                            $format = FORMAT_PLAIN;
+                        }
+                        $course->{$courseattr} = format_text($course->$courseattr, $format);
                     }
+
                     $course->idnumber = $coursecode;
                     $course->format = $courseconfig->format;
                     $course->visible = $courseconfig->visible;
@@ -421,7 +433,6 @@ function process_group_tag($tagcontents) {
                     $course->startdate = time();
                     // Choose a sort order that puts us at the start of the list!
                     $course->sortorder = 0;
-
                     $courseid = $DB->insert_record('course', $course);
 
                     // Setup default enrolment plugins
@@ -748,7 +759,10 @@ function process_properties_tag($tagcontents){
 * @param string $string Text to write (newline will be added automatically)
 */
 function log_line($string){
-    mtrace($string);
+
+    if (!PHPUNIT_TEST) {
+        mtrace($string);
+    }
     if($this->logfp) {
         fwrite($this->logfp, $string . "\n");
     }
@@ -790,6 +804,22 @@ function load_role_mappings() {
 }
 
     /**
+     * Load the name mappings (from the config), so we can easily refer to
+     * how an IMS-E course properties corresponds to a Moodle course properties
+     */
+    function load_course_mappings() {
+        require_once('locallib.php');
+
+        $imsnames = new imsenterprise_courses();
+        $courseattrs = $imsnames->get_courseattrs();
+
+        $this->coursemappings = array();
+        foreach($courseattrs as $courseattr) {
+            $this->coursemappings[$courseattr] = $this->get_config('imscoursemap' . $courseattr);
+        }
+    }
+
+    /**
      * Called whenever anybody tries (from the normal interface) to remove a group
      * member which is registered as being created by this component. (Not called
      * when deleting an entire group or course at once.)
@@ -801,6 +831,7 @@ function load_role_mappings() {
     function enrol_imsenterprise_allow_group_member_remove($itemid, $groupid, $userid) {
         return false;
     }
+
 
 } // end of class
 
