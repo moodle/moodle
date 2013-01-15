@@ -81,6 +81,9 @@ class core_webservice_external_testcase extends externallib_advanced_testcase {
 
         $siteinfo = core_webservice_external::get_site_info();
 
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $siteinfo = external_api::clean_returnvalue(core_webservice_external::get_site_info_returns(), $siteinfo);
+
         $this->assertEquals('johnd', $siteinfo['username']);
         $this->assertEquals('John', $siteinfo['firstname']);
         $this->assertEquals('Doe', $siteinfo['lastname']);

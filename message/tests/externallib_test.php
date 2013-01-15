@@ -64,6 +64,9 @@ class core_message_external_testcase extends externallib_advanced_testcase {
 
         $sentmessages = core_message_external::send_instant_messages($messages);
 
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $sentmessages = external_api::clean_returnvalue(core_message_external::send_instant_messages_returns(), $sentmessages);
+
         $themessage = $DB->get_record('message', array('id' => $sentmessages[0]['msgid']));
 
         // Confirm that the message was inserted correctly.

@@ -96,6 +96,9 @@ class core_user_external_testcase extends externallib_advanced_testcase {
                     array('userid' => $user1->id, 'courseid' => $course->id),
                     array('userid' => $user2->id, 'courseid' => $course->id)));
 
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $enrolledusers = external_api::clean_returnvalue(core_user_external::get_course_user_profiles_returns(), $enrolledusers);
+
         // Check we retrieve the good total number of enrolled users + no error on capability.
         $this->assertEquals(3, count($enrolledusers));
 
@@ -108,6 +111,9 @@ class core_user_external_testcase extends externallib_advanced_testcase {
                     array('userid' => $USER->id, 'courseid' => $course->id),
                     array('userid' => $user1->id, 'courseid' => $course->id),
                     array('userid' => $user2->id, 'courseid' => $course->id)));
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $enrolledusers = external_api::clean_returnvalue(core_user_external::get_course_user_profiles_returns(), $enrolledusers);
 
         foreach($enrolledusers as $enrolleduser) {
             if ($enrolleduser['username'] == $user1->username) {
@@ -162,6 +168,9 @@ class core_user_external_testcase extends externallib_advanced_testcase {
 
         // Call the external function.
         $createdusers = core_user_external::create_users(array($user1));
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $createdusers = external_api::clean_returnvalue(core_user_external::create_users_returns(), $createdusers);
 
         // Check we retrieve the good total number of created users + no error on capability.
         $this->assertEquals(1, count($createdusers));
@@ -261,6 +270,9 @@ class core_user_external_testcase extends externallib_advanced_testcase {
         $returnedusers = core_user_external::get_users_by_id(array(
                     $USER->id, $user1->id, $user2->id));
 
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $returnedusers = external_api::clean_returnvalue(core_user_external::get_users_by_id_returns(), $returnedusers);
+
         // Check we retrieve the good total number of enrolled users + no error on capability.
         $this->assertEquals(3, count($returnedusers));
 
@@ -271,6 +283,9 @@ class core_user_external_testcase extends externallib_advanced_testcase {
         // Call the external function.
         $returnedusers = core_user_external::get_users_by_id(array(
                     $USER->id, $user1->id, $user2->id));
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $returnedusers = external_api::clean_returnvalue(core_user_external::get_users_by_id_returns(), $returnedusers);
 
         foreach($returnedusers as $enrolleduser) {
             if ($enrolleduser['username'] == $user1->username) {
