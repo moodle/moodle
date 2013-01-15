@@ -1612,7 +1612,7 @@ function get_course_category_tree($id = 0, $depth = 0) {
  * Recursive function to print out all the categories in a nice format
  * with or without courses included
  */
-function print_whole_category_list($category=NULL, $displaylist=NULL, $parentslist=NULL, $depth=-1, $showcourses = true) {
+function print_whole_category_list($category=NULL, $displaylist=NULL, $parentslist=NULL, $depth=-1, $showcourses = true, $categorycourses=NULL) {
     global $CFG;
 
     // maxcategorydepth == 0 meant no limit
@@ -1624,9 +1624,17 @@ function print_whole_category_list($category=NULL, $displaylist=NULL, $parentsli
         make_categories_list($displaylist, $parentslist);
     }
 
+    if (!$categorycourses) {
+        if ($category) {
+            $categorycourses = get_category_courses($category->id);
+        } else {
+            $categorycourses = get_category_courses();
+        }
+    }
+
     if ($category) {
         if ($category->visible or has_capability('moodle/category:viewhiddencategories', context_system::instance())) {
-            print_category_info($category, $depth, $showcourses);
+            print_category_info($category, $depth, $showcourses, $categorycourses[$category->id]);
         } else {
             return;  // Don't bother printing children of invisible categories
         }
@@ -1650,8 +1658,38 @@ function print_whole_category_list($category=NULL, $displaylist=NULL, $parentsli
             $down = $last ? false : true;
             $first = false;
 
-            print_whole_category_list($cat, $displaylist, $parentslist, $depth + 1, $showcourses);
+            print_whole_category_list($cat, $displaylist, $parentslist, $depth + 1, $showcourses, $categorycourses);
         }
+    }
+}
+
+/**
+ * Gets an array whose keys are category ids and whose values are arrays of courses in the corresponding category.
+ *
+ * @param int $categoryid
+ * @return array
+ */
+function get_category_courses_array($categoryid = 0) {
+    $tree = get_course_category_tree($categoryid);
+    $flattened = array();
+    foreach ($tree as $category) {
+        get_category_courses_array_recursively($flattened, $category);
+    }
+    return $flattened;
+}
+
+/**
+ * Recursive function to help flatten the course category tree.
+ *
+ * Do not call this function directly, instead calll its parent function {@link get_category_courses_array}
+ *
+ * @param array &$flattened An array passed by reference in which to store courses for each category.
+ * @param stdClass $category The category to get courses for.
+ */
+function get_category_courses_array_recursively(array &$flattened, $category) {
+    $flattened[$category->id] = $category->courses;
+    foreach ($category->categories as $childcategory) {
+        get_category_courses_array_recursively($flattened, $childcategory);
     }
 }
 
@@ -1673,10 +1711,16 @@ function make_categories_options() {
 }
 
 /**
- * Prints the category info in indented fashion
+ * Prints the category information.
+ *
  * This function is only used by print_whole_category_list() above
+ *
+ * @param stdClass $category
+ * @param int $depth The depth of the category.
+ * @param bool $showcourses If set to true course information will also be printed.
+ * @param array|null $courses An array of courses belonging to the category, or null if you don't have it yet.
  */
-function print_category_info($category, $depth=0, $showcourses = false) {
+function print_category_info($category, $depth = 0, $showcourses = false, array $courses = null) {
     global $CFG, $DB, $OUTPUT;
 
     $strsummary = get_string('summary');
@@ -1697,7 +1741,9 @@ function print_category_info($category, $depth=0, $showcourses = false) {
         $catimage = "&nbsp;";
     }
 
-    $courses = get_courses($category->id, 'c.sortorder ASC', 'c.id,c.sortorder,c.visible,c.fullname,c.shortname,c.summary');
+    if (is_null($courses)) {
+        $courses = get_courses($category->id, 'c.sortorder ASC', 'c.id,c.sortorder,c.visible,c.fullname,c.shortname,c.summary');
+    }
     $context = context_coursecat::instance($category->id);
     $fullname = format_string($category->name, true, array('context' => $context));
 
