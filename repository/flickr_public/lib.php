@@ -440,7 +440,7 @@ class repository_flickr_public extends repository {
     }
 
     public function get_link($photoid) {
-        return $this->build_photo_id($photoid);
+        return $this->build_photo_url($photoid);
     }
 
     /**
