@@ -519,7 +519,7 @@ class qformat_xml extends qformat_default {
                     array('#', 'text', 0, '#'), '', true);
             $feedback = $this->import_text_with_files($answer,
                     array('#', 'feedback', 0), '', $this->get_format($qo->questiontextformat));
-            
+
             if ($answertext != 'true' && $answertext != 'false') {
                 // Old style file, assume order is true/false.
                 $warning = true;
