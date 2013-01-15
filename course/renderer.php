@@ -49,6 +49,47 @@ class core_course_renderer extends plugin_renderer_base {
     public function __construct(moodle_page $page, $target) {
         $this->strings = new stdClass;
         parent::__construct($page, $target);
+        $this->add_modchoosertoggle();
+    }
+
+    /**
+     * Adds the item in course settings navigation to toggle modchooser
+     *
+     * Theme can overwrite as an empty function to exclude it (for example if theme does not
+     * use modchooser at all)
+     */
+    protected function add_modchoosertoggle() {
+        global $CFG;
+        static $modchoosertoggleadded = false;
+        // Add the module chooser toggle to the course page
+        if ($modchoosertoggleadded || $this->page->state > moodle_page::STATE_PRINTING_HEADER ||
+                $this->page->course->id == SITEID ||
+                !($coursenode = $this->page->settingsnav->find('courseadmin', navigation_node::TYPE_COURSE))) {
+            // too late or we are on site page or we could not find the course settings node
+            return;
+        }
+        $modchoosertoggleadded = true;
+        if ($this->page->url->compare(new moodle_url('/course/view.php'), URL_MATCH_BASE)) {
+            // We are on the course page, retain the current page params e.g. section.
+            $modchoosertoggleurl = clone($this->page->url);
+        } else {
+            // Edit on the main course page.
+            $modchoosertoggleurl = new moodle_url('/course/view.php', array('id' => $this->page->course->id,
+                'return' => $this->page->url->out_as_local_url(false)));
+        }
+        $modchoosertoggleurl->param('sesskey', sesskey());
+        if ($usemodchooser = get_user_preferences('usemodchooser', $CFG->modchooserdefault)) {
+            $modchoosertogglestring = get_string('modchooserdisable', 'moodle');
+            $modchoosertoggleurl->param('modchooser', 'off');
+        } else {
+            $modchoosertogglestring = get_string('modchooserenable', 'moodle');
+            $modchoosertoggleurl->param('modchooser', 'on');
+        }
+        $modchoosertoggle = navigation_node::create($modchoosertogglestring, $modchoosertoggleurl, navigation_node::TYPE_SETTING);
+        $coursenode->add_node($modchoosertoggle, 'editsettings');
+        $modchoosertoggle->add_class('modchoosertoggle');
+        $modchoosertoggle->add_class('visibleifjs');
+        user_preference_allow_ajax_update('usemodchooser', PARAM_BOOL);
     }
 
     /**
@@ -393,6 +434,9 @@ class core_course_renderer extends plugin_renderer_base {
 
     /**
      * Renders HTML for the menus to add activities and resources to the current course
+     *
+     * Note, if theme overwrites this function and it does not use modchooser,
+     * see also {@link core_course_renderer::add_modchoosertoggle()}
      *
      * @param stdClass $course
      * @param int $section relative section number (field course_sections.section)
