@@ -7949,7 +7949,6 @@ class admin_setting_configcolourpicker extends admin_setting {
      * @return string|false
      */
     protected function validate($data) {
-    
         /**
          * List of valid HTML colour names
          *
