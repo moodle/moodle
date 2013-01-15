@@ -76,6 +76,9 @@ class core_course_external_testcase extends externallib_advanced_testcase {
 
         $createdcats = core_course_external::create_categories($categories);
 
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $createdcats = external_api::clean_returnvalue(core_course_external::create_categories_returns(), $createdcats);
+
         // Initially confirm that base data was inserted correctly.
         $this->assertEquals($category1->name, $createdcats[0]['name']);
         $this->assertEquals($category2->name, $createdcats[1]['name']);
@@ -92,6 +95,9 @@ class core_course_external_testcase extends externallib_advanced_testcase {
         );
 
         $createdsubcats = core_course_external::create_categories($subcategories);
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $createdsubcats = external_api::clean_returnvalue(core_course_external::create_categories_returns(), $createdsubcats);
 
         // Confirm that sub categories were inserted correctly.
         $this->assertEquals($category3->name, $createdsubcats[0]['name']);
@@ -197,6 +203,9 @@ class core_course_external_testcase extends externallib_advanced_testcase {
             array('key' => 'id', 'value' => $category1->id),
             array('key' => 'visible', 'value' => 1)), 1);
 
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $categories = external_api::clean_returnvalue(core_course_external::get_categories_returns(), $categories);
+
         // Check we retrieve the good total number of categories.
         $this->assertEquals(2, count($categories));
 
@@ -214,6 +223,10 @@ class core_course_external_testcase extends externallib_advanced_testcase {
             array('key' => 'id', 'value' => $category1->id),
             array('key' => 'idnumber', 'value' => $category1->idnumber),
             array('key' => 'visible', 'value' => 1)), 0);
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $categories = external_api::clean_returnvalue(core_course_external::get_categories_returns(), $categories);
+
         $this->assertEquals(1, count($categories));
 
         // Retrieve categories from parent.
@@ -223,6 +236,10 @@ class core_course_external_testcase extends externallib_advanced_testcase {
 
         // Retrieve all categories.
         $categories = core_course_external::get_categories();
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $categories = external_api::clean_returnvalue(core_course_external::get_categories_returns(), $categories);
+
         $this->assertEquals($DB->count_records('course_categories'), count($categories));
 
         // Call without required capability (it will fail cause of the search on idnumber).
@@ -342,6 +359,9 @@ class core_course_external_testcase extends externallib_advanced_testcase {
         $courses = array($course1, $course2);
 
         $createdcourses = core_course_external::create_courses($courses);
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $createdcourses = external_api::clean_returnvalue(core_course_external::create_courses_returns(), $createdcourses);
 
         // Check that right number of courses were created.
         $this->assertEquals(2, count($createdcourses));
@@ -475,6 +495,9 @@ class core_course_external_testcase extends externallib_advanced_testcase {
         $courses = core_course_external::get_courses(array('ids' =>
             array($course1->id, $course2->id)));
 
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $courses = external_api::clean_returnvalue(core_course_external::get_courses_returns(), $courses);
+
         // Check we retrieve the good total number of categories.
         $this->assertEquals(2, count($courses));
 
@@ -508,6 +531,10 @@ class core_course_external_testcase extends externallib_advanced_testcase {
 
         // Get all courses in the DB
         $courses = core_course_external::get_courses(array());
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $courses = external_api::clean_returnvalue(core_course_external::get_courses_returns(), $courses);
+
         $this->assertEquals($DB->count_records('course'), count($courses));
     }
 
@@ -534,6 +561,9 @@ class core_course_external_testcase extends externallib_advanced_testcase {
         $this->assignUserCapability('moodle/course:update', $context->id, $roleid);
 
         $courses = core_course_external::get_course_contents($course->id, array());
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $courses = external_api::clean_returnvalue(core_course_external::get_course_contents_returns(), $courses);
 
         // Check that the course has the 3 created modules
         $this->assertEquals(3, count($courses[0]['modules']));
@@ -577,6 +607,9 @@ class core_course_external_testcase extends externallib_advanced_testcase {
 
         $duplicate = core_course_external::duplicate_course($course->id, $newcourse['fullname'],
                 $newcourse['shortname'], $newcourse['categoryid'], $newcourse['visible'], $newcourse['options']);
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $duplicate = external_api::clean_returnvalue(core_course_external::duplicate_course_returns(), $duplicate);
 
         // Check that the course has been duplicated.
         $this->assertEquals($newcourse['shortname'], $duplicate['shortname']);
