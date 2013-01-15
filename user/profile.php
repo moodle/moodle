@@ -377,8 +377,9 @@ if (!isset($hiddenfields['suspended'])) {
 
 echo "</table></div></div>";
 
-
+echo '<div id="region-content" class="block-region"><div class="region-content">';
 echo $OUTPUT->blocks_for_region('content');
+echo '</div></div>';
 
 // Print messaging link if allowed
 if (isloggedin() && has_capability('moodle/site:sendmessage', $context)

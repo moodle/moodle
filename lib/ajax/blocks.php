@@ -30,6 +30,7 @@ require_once(dirname(__FILE__) . '/../../config.php');
 $courseid = required_param('courseid', PARAM_INT);
 $pagelayout = required_param('pagelayout', PARAM_ALPHAEXT);
 $pagetype = required_param('pagetype', PARAM_ALPHAEXT);
+$contextid = required_param('contextid', PARAM_INT);
 $subpage = optional_param('subpage', '', PARAM_ALPHANUMEXT);
 $cmid = optional_param('cmid', null, PARAM_INT);
 $action = optional_param('action', '', PARAM_ALPHA);
@@ -50,9 +51,33 @@ if (!is_null($cmid)) {
 require_login($courseid, false, $cm);
 require_sesskey();
 
+// Set context from ID, so we don't have to guess it from other info.
+$PAGE->set_context(context::instance_by_id($contextid));
+
 // Setting layout to replicate blocks configuration for the page we edit
 $PAGE->set_pagelayout($pagelayout);
 $PAGE->set_subpage($subpage);
+$pagetype = explode('-', $pagetype);
+switch ($pagetype[0]) {
+    case 'my':
+        // My Home page needs to have 'content' block region set up.
+        $PAGE->set_blocks_editing_capability('moodle/my:manageblocks');
+        $PAGE->blocks->add_region('content');
+        break;
+    case 'user':
+        if ($pagelayout == 'mydashboard') {
+            // User profile pages also need the 'content' block region set up.
+            $PAGE->blocks->add_region('content');
+            // If it's not the current user's profile, we need a different capability.
+            if ($PAGE->context->contextlevel == CONTEXT_USER && $PAGE->context->instanceid != $USER->id) {
+                $PAGE->set_blocks_editing_capability('moodle/user:manageblocks');
+            } else {
+                $PAGE->set_blocks_editing_capability('moodle/user:manageownblocks');
+            }
+        }
+        break;
+}
+
 echo $OUTPUT->header(); // send headers
 
 switch ($action) {
