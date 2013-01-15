@@ -2311,9 +2311,9 @@ abstract class lesson_page extends lesson_base {
             $count = 0;
             $qtype = $properties->qtype;
             foreach ($this->answers as $answer) {
-                $properties->{'answer_editor['.$count.']'} = array('text'=>$answer->answer, 'format'=>$answer->answerformat);
+                $properties->{'answer_editor['.$count.']'} = array('text' => $answer->answer, 'format' => $answer->answerformat);
                 if ($qtype != LESSON_PAGE_MATCHING) {
-                    $properties->{'response_editor['.$count.']'} = array('text'=>$answer->response, 'format'=>$answer->responseformat);
+                    $properties->{'response_editor['.$count.']'} = array('text' => $answer->response, 'format' => $answer->responseformat);
                 } else {
                     $properties->{'response_editor['.$count.']'} = $answer->response;
                 }
