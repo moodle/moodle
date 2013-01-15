@@ -177,7 +177,7 @@ function plagiarism_cron() {
         $plagiarismplugin->cron();
     }
 }
-/** 
+/**
  * helper function - also loads lib file of plagiarism plugin
  * @return array of available plugins
  */
