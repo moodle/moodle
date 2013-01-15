@@ -316,6 +316,7 @@ if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) 
         require_once("$CFG->libdir/pluginlib.php");
         $allplugins = plugin_manager::instance()->get_plugins();
     }
+
     // Question behaviour settings.
     $ADMIN->add('modules', new admin_category('qbehavioursettings', new lang_string('questionbehaviours', 'admin')));
     $ADMIN->add('qbehavioursettings', new admin_page_manageqbehaviours());
@@ -323,6 +324,54 @@ if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) 
     // Question type settings.
     $ADMIN->add('modules', new admin_category('qtypesettings', new lang_string('questiontypes', 'admin')));
     $ADMIN->add('qtypesettings', new admin_page_manageqtypes());
+
+    // Question preview defaults.
+    $settings = new admin_settingpage('qdefaultsetting',
+            get_string('questionpreviewdefaults', 'question'),
+            'moodle/question:config');
+    $ADMIN->add('qtypesettings', $settings);
+
+    $settings->add(new admin_setting_heading('qdefaultsetting_preview_options',
+            '', get_string('questionpreviewdefaults_desc', 'question')));
+
+    // These keys are question_display_options::HIDDEN and VISIBLE.
+    $hiddenofvisible = array(
+        0 => get_string('notshown', 'question'),
+        1 => get_string('shown', 'question'),
+    );
+
+    $settings->add(new admin_setting_question_behaviour('question_preview/behaviour',
+            get_string('howquestionsbehave', 'question'), '',
+                    'deferredfeedback'));
+
+    $settings->add(new admin_setting_configselect('question_preview/correctness',
+            get_string('whethercorrect', 'question'), '', 1, $hiddenofvisible));
+
+    // These keys are question_display_options::HIDDEN, MARK_ONLY and MARK_AND_MAX.
+    $marksoptions = array(
+        0 => get_string('notshown', 'question'),
+        1 => get_string('showmaxmarkonly', 'question'),
+        2 => get_string('showmarkandmax', 'question'),
+    );
+    $settings->add(new admin_setting_configselect('question_preview/marks',
+            get_string('marks', 'question'), '', 1, $marksoptions));
+
+    $settings->add(new admin_setting_configselect('question_preview/markdp',
+            get_string('decimalplacesingrades', 'question'), '', 2, array(0, 1, 2, 3, 4, 5, 6, 7)));
+
+    $settings->add(new admin_setting_configselect('question_preview/feedback',
+            get_string('specificfeedback', 'question'), '', 1, $hiddenofvisible));
+
+    $settings->add(new admin_setting_configselect('question_preview/generalfeedback',
+            get_string('generalfeedback', 'question'), '', 1, $hiddenofvisible));
+
+    $settings->add(new admin_setting_configselect('question_preview/rightanswer',
+            get_string('rightanswer', 'question'), '', 1, $hiddenofvisible));
+
+    $settings->add(new admin_setting_configselect('question_preview/history',
+            get_string('responsehistory', 'question'), '', 0, $hiddenofvisible));
+
+    // Settings for particular question types.
     foreach ($allplugins['qtype'] as $qtype) {
         $qtype->load_settings($ADMIN, 'qtypesettings', $hassiteconfig);
     }
