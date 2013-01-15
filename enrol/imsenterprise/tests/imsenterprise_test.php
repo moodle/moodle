@@ -276,12 +276,6 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
         if (!empty($courses)) {
             foreach ($courses as $course) {
 
-                // orgunit tag value is used by moodle as category name.
-                // If the category does not exists the id is used as name.
-                if ($categoryname = $DB->get_field('course_categories', 'name', array('id' => $course->category))) {
-                    $categoryname = $course->category;
-                }
-
                 $xmlcontent .= '
   <group>
     <sourcedid>
@@ -308,10 +302,11 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
       <full>'.$course->imsfull.'</full>';
                 }
 
+                // orgunit tag value is used by moodle as category name.
                 $xmlcontent .= '
     </description>
     <org>
-      <orgunit>'.$categoryname.'</orgunit>
+      <orgunit>'.$course->category.'</orgunit>
     </org>
   </group>';
             }
