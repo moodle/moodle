@@ -820,7 +820,7 @@ class core_course_renderer extends plugin_renderer_base {
      * {@link core_course_renderer::course_section_cm_completion()}
      * {@link course_get_cm_edit_actions()}
      * {@link core_course_renderer::course_section_cm_edit_actions()}
-     * 
+     *
      * @param stdClass $course
      * @param completion_info $completioninfo
      * @param cm_info $mod
