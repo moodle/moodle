@@ -17,8 +17,7 @@
 /**
  * Unit tests for the advanced grading subsystem
  *
- * @package    core
- * @subpackage grading
+ * @package    core_grading
  * @category   phpunit
  * @copyright  2011 David Mudrak <david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -32,6 +31,11 @@ require_once($CFG->dirroot . '/grade/grading/lib.php'); // Include the code to t
 
 /**
  * Makes protected method accessible for testing purposes
+ *
+ * @package    core_grading
+ * @category   phpunit
+ * @copyright  2011 David Mudrak <david@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class testable_grading_manager extends grading_manager {
 }
@@ -39,6 +43,11 @@ class testable_grading_manager extends grading_manager {
 
 /**
  * Test cases for the grading manager API
+ *
+ * @package    core_grading
+ * @category   phpunit
+ * @copyright  2011 David Mudrak <david@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class grading_manager_testcase extends advanced_testcase {
     public function test_basic_instantiation() {
@@ -56,6 +65,9 @@ class grading_manager_testcase extends advanced_testcase {
         $manager4 = get_grading_manager($fakecontext, 'assignment_upload', 'submission');
     }
 
+    /**
+     * Unit test to set and get grading areas
+     */
     public function test_set_and_get_grading_area() {
         global $DB;
 
@@ -95,6 +107,9 @@ class grading_manager_testcase extends advanced_testcase {
         $gradingman->set_active_method('no_one_should_ever_try_to_implement_a_method_with_this_silly_name');
     }
 
+    /**
+     * Unit test to check the tokenize method
+     */
     public function test_tokenize() {
 
         $UTFfailuremessage = 'A test using UTF-8 characters has failed. Consider updating PHP and PHP\'s PCRE or INTL extensions (MDL-30494)';

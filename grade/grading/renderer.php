@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,8 +17,7 @@
 /**
  * Renderer for core_grading subsystem
  *
- * @package    core
- * @subpackage grading
+ * @package    core_grading
  * @copyright  2011 David Mudrak <david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,13 +26,18 @@ defined('MOODLE_INTERNAL') || die();
 
 /**
  * Standard HTML output renderer for core_grading subsystem
+ *
+ * @package    core_grading
+ * @copyright  2011 David Mudrak <david@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @category   grading
  */
 class core_grading_renderer extends plugin_renderer_base {
 
     /**
      * Renders the active method selector at the grading method management screen
      *
-     * @param grading_manager $gradingman
+     * @param grading_manager $manager
      * @param moodle_url $targeturl
      * @return string
      */

@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,8 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    gradingform
- * @subpackage rubric
+ * Contains renderer used for displaying rubric
+ *
+ * @package    gradingform_rubric
  * @copyright  2011 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -26,6 +26,10 @@ defined('MOODLE_INTERNAL') || die();
 
 /**
  * Grading method plugin renderer
+ *
+ * @package    gradingform_rubric
+ * @copyright  2011 Marina Glancy
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class gradingform_rubric_renderer extends plugin_renderer_base {
 
@@ -44,7 +48,8 @@ class gradingform_rubric_renderer extends plugin_renderer_base {
      * Also JavaScript relies on the class names of elements and when developer changes them
      * script might stop working.
      *
-     * @param int $mode rubric display mode @see gradingform_rubric_controller
+     * @param int $mode rubric display mode, see {@link gradingform_rubric_controller}
+     * @param array $options display options for this rubric, defaults are: {@link gradingform_rubric_controller::get_default_options()}
      * @param string $elementname the name of the form element (in editor mode) or the prefix for div ids (in view mode)
      * @param array|null $criterion criterion data
      * @param string $levelsstr evaluated templates for this criterion levels
@@ -52,7 +57,7 @@ class gradingform_rubric_renderer extends plugin_renderer_base {
      * @return string
      */
     public function criterion_template($mode, $options, $elementname = '{NAME}', $criterion = null, $levelsstr = '{LEVELS}', $value = null) {
-        // TODO description format, remark format
+        // TODO MDL-31235 description format, remark format
         if ($criterion === null || !is_array($criterion) || !array_key_exists('id', $criterion)) {
             $criterion = array('id' => '{CRITERION-id}', 'description' => '{CRITERION-description}', 'sortorder' => '{CRITERION-sortorder}', 'class' => '{CRITERION-class}');
         } else {
@@ -111,7 +116,7 @@ class gradingform_rubric_renderer extends plugin_renderer_base {
             } else if ($mode == gradingform_rubric_controller::DISPLAY_EVAL_FROZEN) {
                 $criteriontemplate .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => '{NAME}[criteria][{CRITERION-id}][remark]', 'value' => $currentremark));
             }else if ($mode == gradingform_rubric_controller::DISPLAY_REVIEW || $mode == gradingform_rubric_controller::DISPLAY_VIEW) {
-                $criteriontemplate .= html_writer::tag('td', $currentremark, array('class' => 'remark')); // TODO maybe some prefix here like 'Teacher remark:'
+                $criteriontemplate .= html_writer::tag('td', $currentremark, array('class' => 'remark'));
             }
         }
         $criteriontemplate .= html_writer::end_tag('tr'); // .criterion
@@ -136,14 +141,15 @@ class gradingform_rubric_renderer extends plugin_renderer_base {
      * Also JavaScript relies on the class names of elements and when developer changes them
      * script might stop working.
      *
-     * @param int $mode rubric display mode @see gradingform_rubric_controller
+     * @param int $mode rubric display mode see {@link gradingform_rubric_controller}
+     * @param array $options display options for this rubric, defaults are: {@link gradingform_rubric_controller::get_default_options()}
      * @param string $elementname the name of the form element (in editor mode) or the prefix for div ids (in view mode)
      * @param string|int $criterionid either id of the nesting criterion or a macro for template
      * @param array|null $level level data, also in view mode it might also have property $level['checked'] whether this level is checked
      * @return string
      */
     public function level_template($mode, $options, $elementname = '{NAME}', $criterionid = '{CRITERION-id}', $level = null) {
-        // TODO definition format
+        // TODO MDL-31235 definition format
         if (!isset($level['id'])) {
             $level = array('id' => '{LEVEL-id}', 'definition' => '{LEVEL-definition}', 'score' => '{LEVEL-score}', 'class' => '{LEVEL-class}', 'checked' => false);
         } else {
@@ -229,7 +235,8 @@ class gradingform_rubric_renderer extends plugin_renderer_base {
      * Also JavaScript relies on the class names of elements and when developer changes them
      * script might stop working.
      *
-     * @param int $mode rubric display mode @see gradingform_rubric_controller
+     * @param int $mode rubric display mode see {@link gradingform_rubric_controller}
+     * @param array $options display options for this rubric, defaults are: {@link gradingform_rubric_controller::get_default_options()}
      * @param string $elementname the name of the form element (in editor mode) or the prefix for div ids (in view mode)
      * @param string $criteriastr evaluated templates for this rubric's criteria
      * @return string
@@ -271,8 +278,8 @@ class gradingform_rubric_renderer extends plugin_renderer_base {
      * Generates html template to view/edit the rubric options. Expression {NAME} is used in
      * template for the form element name
      *
-     * @param int $mode
-     * @param array $options
+     * @param int $mode rubric display mode see {@link gradingform_rubric_controller}
+     * @param array $options display options for this rubric, defaults are: {@link gradingform_rubric_controller::get_default_options()}
      * @return string
      */
     protected function rubric_edit_options($mode, $options) {
@@ -297,7 +304,6 @@ class gradingform_rubric_renderer extends plugin_renderer_base {
                         $selectoptions = array(0 => get_string($option.'0', 'gradingform_rubric'), 1 => get_string($option.'1', 'gradingform_rubric'));
                         $valuestr = html_writer::select($selectoptions, $attrs['name'], $value, false, array('id' => $attrs['id']));
                         $html .= html_writer::tag('span', $valuestr, array('class' => 'value'));
-                        // TODO add here button 'Sort levels'
                     } else {
                         $html .= html_writer::tag('span', get_string($option.$value, 'gradingform_rubric'), array('class' => 'value'));
                         if ($mode == gradingform_rubric_controller::DISPLAY_EDIT_FROZEN) {
@@ -339,7 +345,8 @@ class gradingform_rubric_renderer extends plugin_renderer_base {
      * rubric_template
      *
      * @param array $criteria data about the rubric design
-     * @param int $mode rubric display mode @see gradingform_rubric_controller
+     * @param array $options display options for this rubric, defaults are: {@link gradingform_rubric_controller::get_default_options()}
+     * @param int $mode rubric display mode, see {@link gradingform_rubric_controller}
      * @param string $elementname the name of the form element (in editor mode) or the prefix for div ids (in view mode)
      * @param array $values evaluation result
      * @return string
@@ -424,8 +431,8 @@ class gradingform_rubric_renderer extends plugin_renderer_base {
      * Displays one grading instance
      *
      * @param gradingform_rubric_instance $instance
-     * @param int idx unique number of instance on page
-     * @param boolean $cangrade whether current user has capability to grade in this context
+     * @param int $idx unique number of instance on page
+     * @param bool $cangrade whether current user has capability to grade in this context
      */
     public function display_instance(gradingform_rubric_instance $instance, $idx, $cangrade) {
         $criteria = $instance->get_controller()->get_definition()->rubric_criteria;
@@ -446,6 +453,14 @@ class gradingform_rubric_renderer extends plugin_renderer_base {
         return $output;
     }
 
+    /**
+     * Displays confirmation that students require re-grading
+     *
+     * @param string $elementname
+     * @param int $changelevel
+     * @param string $value
+     * @return string
+     */
     public function display_regrade_confirmation($elementname, $changelevel, $value) {
         $html = html_writer::start_tag('div', array('class' => 'gradingform_rubric-regrade'));
         if ($changelevel<=2) {

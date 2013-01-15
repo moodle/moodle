@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,8 +17,7 @@
 /**
  * Grading method controller for the Rubric plugin
  *
- * @package    gradingform
- * @subpackage rubric
+ * @package    gradingform_rubric
  * @copyright  2011 David Mudrak <david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,6 +28,10 @@ require_once($CFG->dirroot.'/grade/grading/form/lib.php');
 
 /**
  * This controller encapsulates the rubric grading logic
+ *
+ * @package    gradingform_rubric
+ * @copyright  2011 David Mudrak <david@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class gradingform_rubric_controller extends gradingform_controller {
     // Modes of displaying the rubric (used in gradingform_rubric_renderer)
@@ -160,7 +162,7 @@ class gradingform_rubric_controller extends gradingform_controller {
             $criterionmaxscore = null;
             if (preg_match('/^NEWID\d+$/', $id)) {
                 // insert criterion into DB
-                $data = array('definitionid' => $this->definition->id, 'descriptionformat' => FORMAT_MOODLE); // TODO format is not supported yet
+                $data = array('definitionid' => $this->definition->id, 'descriptionformat' => FORMAT_MOODLE); // TODO MDL-31235 format is not supported yet
                 foreach ($criteriafields as $key) {
                     if (array_key_exists($key, $criterion)) {
                         $data[$key] = $criterion[$key];
@@ -203,13 +205,12 @@ class gradingform_rubric_controller extends gradingform_controller {
                 if (isset($level['score'])) {
                     $level['score'] = (float)$level['score'];
                     if ($level['score']<0) {
-                        // TODO why we can't allow negative score for rubric?
                         $level['score'] = 0;
                     }
                 }
                 if (preg_match('/^NEWID\d+$/', $levelid)) {
                     // insert level into DB
-                    $data = array('criterionid' => $id, 'definitionformat' => FORMAT_MOODLE); // TODO format is not supported yet
+                    $data = array('criterionid' => $id, 'definitionformat' => FORMAT_MOODLE); // TODO MDL-31235 format is not supported yet
                     foreach ($levelfields as $key) {
                         if (array_key_exists($key, $level)) {
                             $data[$key] = $level[$key];
@@ -592,7 +593,7 @@ class gradingform_rubric_controller extends gradingform_controller {
         return $this->get_renderer($page)->display_instances($this->get_active_instances($itemid), $defaultcontent, $cangrade);
     }
 
-    //// full-text search support /////////////////////////////////////////////
+    // ///// full-text search support /////////////////////////////////////////////
 
     /**
      * Prepare the part of the search query to append to the FROM statement
@@ -656,13 +657,17 @@ class gradingform_rubric_controller extends gradingform_controller {
 }
 
 /**
- * Class to manage one rubric grading instance. Stores information and performs actions like
- * update, copy, validate, submit, etc.
+ * Class to manage one rubric grading instance.
  *
+ * Stores information and performs actions like update, copy, validate, submit, etc.
+ *
+ * @package    gradingform_rubric
  * @copyright  2011 Marina Glancy
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class gradingform_rubric_instance extends gradingform_instance {
 
+    /** @var array stores the rubric, has two keys: 'criteria' and 'options' */
     protected $rubric;
 
     /**
@@ -753,7 +758,8 @@ class gradingform_rubric_instance extends gradingform_instance {
                 $DB->insert_record('gradingform_rubric_fillings', $newrecord);
             } else {
                 $newrecord = array('id' => $currentgrade['criteria'][$criterionid]['id']);
-                foreach (array('levelid', 'remark'/*, 'remarkformat' TODO */) as $key) {
+                foreach (array('levelid', 'remark'/*, 'remarkformat' */) as $key) {
+                    // TODO MDL-31235 format is not supported yet
                     if (isset($record[$key]) && $currentgrade['criteria'][$criterionid][$key] != $record[$key]) {
                         $newrecord[$key] = $record[$key];
                     }
@@ -803,7 +809,7 @@ class gradingform_rubric_instance extends gradingform_instance {
      * Returns html for form element of type 'grading'.
      *
      * @param moodle_page $page
-     * @param MoodleQuickForm_grading $formelement
+     * @param MoodleQuickForm_grading $gradingformelement
      * @return string
      */
     public function render_grading_element($page, $gradingformelement) {

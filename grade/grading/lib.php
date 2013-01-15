@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,8 +17,7 @@
 /**
  * Advanced grading methods support
  *
- * @package    core
- * @subpackage grading
+ * @package    core_grading
  * @copyright  2011 David Mudrak <david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -35,10 +33,11 @@ defined('MOODLE_INTERNAL') || die();
  * can be provided. Note that null values are allowed in the second case as the context,
  * component and the area name can be set explicitly later.
  *
+ * @category grading
  * @example $manager = get_grading_manager($areaid);
  * @example $manager = get_grading_manager(get_system_context());
  * @example $manager = get_grading_manager($context, 'mod_assignment', 'submission');
- * @param stdClass|int|null $context or $areaid if $areaid is passed, no other parameter is needed
+ * @param stdClass|int|null $context_or_areaid if $areaid is passed, no other parameter is needed
  * @param string|null $component the frankenstyle name of the component
  * @param string|null $area the name of the gradable area
  * @return grading_manager
@@ -85,6 +84,11 @@ function get_grading_manager($context_or_areaid = null, $component = null, $area
  * that knows just context and component without known area, for example.
  * It is also possible to change context, component and area of an existing
  * manager. Such pattern is used when copying form definitions, for example.
+ *
+ * @package    core_grading
+ * @copyright  2011 David Mudrak <david@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @category   grading
  */
 class grading_manager {
 
@@ -101,6 +105,8 @@ class grading_manager {
     private $areacache = null;
 
     /**
+     * Returns grading manager context
+     *
      * @return stdClass grading manager context
      */
     public function get_context() {
@@ -118,6 +124,8 @@ class grading_manager {
     }
 
     /**
+     * Returns grading manager component
+     *
      * @return string grading manager component
      */
     public function get_component() {
@@ -136,6 +144,8 @@ class grading_manager {
     }
 
     /**
+     * Returns grading manager area name
+     *
      * @return string grading manager area name
      */
     public function get_area() {
@@ -654,7 +664,7 @@ class grading_manager {
         return array_values($tokens);
     }
 
-    ////////////////////////////////////////////////////////////////////////////
+    // //////////////////////////////////////////////////////////////////////////
 
     /**
      * Make sure that the given properties were set to some not-null value
