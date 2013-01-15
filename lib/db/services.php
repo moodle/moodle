@@ -581,6 +581,60 @@ $functions = array(
         'capabilities'=> 'moodle/site:sendmessage',
     ),
 
+    'core_message_create_contacts' => array(
+        'classname'   => 'core_message_external',
+        'methodname'  => 'create_contacts',
+        'classpath'   => 'message/externallib.php',
+        'description' => 'Add contacts to the contact list',
+        'type'        => 'write',
+        'capabilities'=> '',
+    ),
+
+    'core_message_delete_contacts' => array(
+        'classname'   => 'core_message_external',
+        'methodname'  => 'delete_contacts',
+        'classpath'   => 'message/externallib.php',
+        'description' => 'Remove contacts from the contact list',
+        'type'        => 'write',
+        'capabilities'=> '',
+    ),
+
+    'core_message_block_contacts' => array(
+        'classname'   => 'core_message_external',
+        'methodname'  => 'block_contacts',
+        'classpath'   => 'message/externallib.php',
+        'description' => 'Block contacts',
+        'type'        => 'write',
+        'capabilities'=> '',
+    ),
+
+    'core_message_unblock_contacts' => array(
+        'classname'   => 'core_message_external',
+        'methodname'  => 'unblock_contacts',
+        'classpath'   => 'message/externallib.php',
+        'description' => 'Unblock contacts',
+        'type'        => 'write',
+        'capabilities'=> '',
+    ),
+
+    'core_message_get_contacts' => array(
+        'classname'   => 'core_message_external',
+        'methodname'  => 'get_contacts',
+        'classpath'   => 'message/externallib.php',
+        'description' => 'Retrieve the contact list',
+        'type'        => 'read',
+        'capabilities'=> '',
+    ),
+
+    'core_message_search_contacts' => array(
+        'classname'   => 'core_message_external',
+        'methodname'  => 'search_contacts',
+        'classpath'   => 'message/externallib.php',
+        'description' => 'Search for contacts',
+        'type'        => 'read',
+        'capabilities'=> '',
+    ),
+
     // === notes related functions ===
 
     'moodle_notes_create_notes' => array(

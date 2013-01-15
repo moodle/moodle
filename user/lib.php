@@ -195,7 +195,7 @@ function user_get_default_fields() {
  * @param stdClass $context context object
  * @param stdClass $course moodle course
  * @param array $userfields required fields
- * @return array
+ * @return array|null
  */
 function user_get_user_details($user, $course = null, array $userfields = array()) {
     global $USER, $DB, $CFG;
