@@ -47,6 +47,9 @@
 .dir-rtl.path-course-view li.activity span.autocompletion {right:-20px;left:auto;padding:0px;}
 .dir-rtl.path-course-view .completionprogress {float: none;}
 
+li.section.hidden span.commands a.editing_hide,
+li.section.hidden span.commands a.editing_show {cursor:default;}
+
 .section img.movetarget {height:16px;width:80px;}
 
 #page-course-enrol .generalbox,
