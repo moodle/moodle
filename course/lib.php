@@ -847,54 +847,6 @@ function print_log_ods($course, $user, $date, $order='l.time DESC', $modname,
     return true;
 }
 
-
-function print_overview($courses, array $remote_courses=array()) {
-    global $CFG, $USER, $DB, $OUTPUT;
-
-    $htmlarray = array();
-    if ($modules = $DB->get_records('modules')) {
-        foreach ($modules as $mod) {
-            if (file_exists(dirname(dirname(__FILE__)).'/mod/'.$mod->name.'/lib.php')) {
-                include_once(dirname(dirname(__FILE__)).'/mod/'.$mod->name.'/lib.php');
-                $fname = $mod->name.'_print_overview';
-                if (function_exists($fname)) {
-                    $fname($courses,$htmlarray);
-                }
-            }
-        }
-    }
-    foreach ($courses as $course) {
-        $fullname = format_string($course->fullname, true, array('context' => context_course::instance($course->id)));
-        echo $OUTPUT->box_start('coursebox');
-        $attributes = array('title' => s($fullname));
-        if (empty($course->visible)) {
-            $attributes['class'] = 'dimmed';
-        }
-        echo $OUTPUT->heading(html_writer::link(
-            new moodle_url('/course/view.php', array('id' => $course->id)), $fullname, $attributes), 3);
-        if (array_key_exists($course->id,$htmlarray)) {
-            foreach ($htmlarray[$course->id] as $modname => $html) {
-                echo $html;
-            }
-        }
-        echo $OUTPUT->box_end();
-    }
-
-    if (!empty($remote_courses)) {
-        echo $OUTPUT->heading(get_string('remotecourses', 'mnet'));
-    }
-    foreach ($remote_courses as $course) {
-        echo $OUTPUT->box_start('coursebox');
-        $attributes = array('title' => s($course->fullname));
-        echo $OUTPUT->heading(html_writer::link(
-            new moodle_url('/auth/mnet/jump.php', array('hostid' => $course->hostid, 'wantsurl' => '/course/view.php?id='.$course->remoteid)),
-            format_string($course->shortname),
-            $attributes) . ' (' . format_string($course->hostname) . ')', 3);
-        echo $OUTPUT->box_end();
-    }
-}
-
-
 /**
  * This function trawls through the logs looking for
  * anything new since the user's last login
