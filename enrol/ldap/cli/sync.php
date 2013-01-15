@@ -44,17 +44,22 @@
 
 define('CLI_SCRIPT', true);
 
-require(dirname(dirname(dirname(dirname(__FILE__)))).'/config.php');
+require(__DIR__.'/../../../config.php');
+require_once("$CFG->libdir/clilib.php");
 
-// Ensure errors are well explained
-$CFG->debug = DEBUG_NORMAL;
+// Ensure errors are well explained.
+$CFG->debug = DEBUG_DEVELOPER;
 
 if (!enrol_is_enabled('ldap')) {
-    error_log('[ENROL LDAP] '.get_string('pluginnotenabled', 'enrol_ldap'));
-    die;
+    cli_error(get_string('pluginnotenabled', 'enrol_ldap'), 2);
 }
 
-// Update enrolments -- these handlers should autocreate courses if required
+/** @var enrol_ldap_plugin $enrol */
 $enrol = enrol_get_plugin('ldap');
-$enrol->sync_enrolments();
 
+$trace = new text_progress_trace();
+
+// Update enrolments -- these handlers should autocreate courses if required.
+$enrol->sync_enrolments($trace);
+
+exit(0);
