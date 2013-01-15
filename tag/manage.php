@@ -201,7 +201,7 @@ $table->sortable(true, 'flag', SORT_DESC);
 
 $table->set_attribute('cellspacing', '0');
 $table->set_attribute('id', 'tag-management-list');
-$table->set_attribute('class', 'generaltable generalbox');
+$table->set_attribute('class', 'admintable generaltable');
 
 $table->set_control_variables(array(
 TABLE_VAR_SORT    => 'ssort',

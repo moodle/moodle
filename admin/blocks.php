@@ -127,7 +127,8 @@
     $table->define_columns(array('name', 'instances', 'version', 'hideshow', 'undeletable', 'delete', 'settings'));
     $table->define_headers(array($strname, $strcourses, $strversion, $strhide.'/'.$strshow, $strprotecthdr, $strdelete, $strsettings));
     $table->define_baseurl($CFG->wwwroot.'/'.$CFG->admin.'/blocks.php');
-    $table->set_attribute('class', 'compatibleblockstable blockstable generaltable');
+    $table->set_attribute('class', 'admintable blockstable generaltable');
+    $table->set_attribute('id', 'compatibleblockstable');
     $table->setup();
     $tablerows = array();
 

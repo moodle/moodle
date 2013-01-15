@@ -195,7 +195,7 @@ $table->define_headers(array(get_string('questiontype', 'question'), get_string(
         get_string('version'), get_string('requires', 'admin'), get_string('availableq', 'question'),
         get_string('delete'), get_string('settings')));
 $table->set_attribute('id', 'qtypes');
-$table->set_attribute('class', 'generaltable generalbox boxaligncenter boxwidthwide');
+$table->set_attribute('class', 'admintable generaltable');
 $table->setup();
 
 // Add a row for each question type.

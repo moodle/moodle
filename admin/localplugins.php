@@ -77,7 +77,7 @@ $table->define_columns(array('name', 'version', 'delete'));
 $table->define_headers(array(get_string('plugin'), get_string('version'), get_string('delete')));
 $table->define_baseurl($PAGE->url);
 $table->set_attribute('id', 'localplugins');
-$table->set_attribute('class', 'generaltable generalbox boxaligncenter boxwidthwide');
+$table->set_attribute('class', 'admintable generaltable');
 $table->setup();
 
 $plugins = array();

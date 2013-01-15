@@ -135,7 +135,7 @@ th.header,
 .formtable tbody th,
 .generalbox th,
 .generaltable th.header {background-image:url([[pix:theme|gradient_h]]);background-repeat:repeat-x;border-top:1px solid #C6BDA8;background-color:#E3DFD4;}
-/*#modules, .compatibleblockstable {margin-left:auto; margin-right:auto;} waiting for MDL-26760*/
+#modules, #compatibleblockstable {margin-left:auto; margin-right:auto;}
 table.flexible .r0, table.generaltable .r0 {background-color: #F0F0F0;}
 table.flexible .r1, table.generaltable .r1 {background-color: #FAFAFA;}
 
