@@ -1,6 +1,11 @@
 This files describes API changes in core lbraries and APIs,
 information provided here is intended especially for developers.
 
+=== 2.5 ===
+
+* zip_packer may create empty zip archives, there is a new option to ignore
+  problematic files when creating archive
+
 === 2.4 ===
 
 * Pagelib: Numerous deprecated functions were removed as classes page_base, page_course
