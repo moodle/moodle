@@ -2,6 +2,11 @@ This files describes API changes in /enrol/* - plugins,
 information provided here is intended especially for developers.
 
 
+=== 2.5 ===
+
+* plugins may use general enrol/editenrolment.php page to let users edit
+  enrolments manually
+
 === 2.4 ===
 
 required changes in code:
