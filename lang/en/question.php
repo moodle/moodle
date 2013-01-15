@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -322,6 +321,7 @@ $string['complete'] = 'Complete';
 $string['contexterror'] = 'You shouldn\'t have got here if you\'re not moving a category to another context.';
 $string['correct'] = 'Correct';
 $string['correctfeedback'] = 'For any correct response';
+$string['correctfeedbackdefault'] = 'Your answer is correct.';
 $string['decimalplacesingrades'] = 'Decimal places in grades';
 $string['defaultmark'] = 'Default mark';
 $string['errorsavingflags'] = 'Error saving the flag state.';
@@ -347,6 +347,7 @@ $string['importfromupload'] = 'Select a file to upload ...';
 $string['includesubcategories'] = 'Also show questions from sub-categories';
 $string['incorrect'] = 'Incorrect';
 $string['incorrectfeedback'] = 'For any incorrect response';
+$string['incorrectfeedbackdefault'] = 'Your answer is incorrect.';
 $string['information'] = 'Information';
 $string['invalidanswer'] = 'Incomplete answer';
 $string['makecopy'] = 'Make copy';
@@ -368,6 +369,7 @@ $string['options'] = 'Options';
 $string['parent'] = 'Parent';
 $string['partiallycorrect'] = 'Partially correct';
 $string['partiallycorrectfeedback'] = 'For any partially correct response';
+$string['partiallycorrectfeedbackdefault'] = 'Your answer is partially correct.';
 $string['penaltyforeachincorrecttry'] = 'Penalty for each incorrect try';
 $string['penaltyforeachincorrecttry_help'] = 'When you run your questions using the \'Interactive with multiple tries\' or \'Adaptive mode\' behaviour, so that the the student will have several tries to get the question right, then this option controls how much they are penalised for each incorrect try.
 
