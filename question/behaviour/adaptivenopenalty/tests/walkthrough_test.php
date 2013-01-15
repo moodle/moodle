@@ -131,7 +131,7 @@ class qbehaviour_adaptivenopenalty_walkthrough_test extends qbehaviour_walkthrou
         $this->check_current_mark(1);
         $this->check_current_output(
                 $this->get_contains_mark_summary(1),
-                new question_pattern_expectation('/' . preg_quote('Not good enough!') . '/'));
+                new question_pattern_expectation('/' . preg_quote('Not good enough!', '/') . '/'));
 
         // Now change the correct answer to the question, and regrade.
         $mc->answers[13]->fraction = -0.33333333;

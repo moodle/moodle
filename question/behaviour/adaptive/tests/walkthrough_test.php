@@ -43,35 +43,35 @@ class qbehaviour_adaptive_walkthrough_test extends qbehaviour_walkthrough_test_b
     protected function get_contains_penalty_info_expectation($penalty) {
         $penaltyinfo = get_string('gradingdetailspenalty', 'qbehaviour_adaptive',
                                   format_float($penalty, $this->displayoptions->markdp));
-        return new question_pattern_expectation('/'.preg_quote($penaltyinfo).'/');
+        return new question_pattern_expectation('/'.preg_quote($penaltyinfo, '/').'/');
     }
 
     protected function get_does_not_contain_penalty_info_expectation() {
         $penaltyinfo = get_string('gradingdetailspenalty', 'qbehaviour_adaptive', 'XXXXX');
-        $penaltypattern = '/'.str_replace('XXXXX', '\\w*', preg_quote($penaltyinfo)).'/';
+        $penaltypattern = '/'.str_replace('XXXXX', '\\w*', preg_quote($penaltyinfo, '/')).'/';
         return new question_no_pattern_expectation($penaltypattern);
     }
 
     protected function get_contains_total_penalty_expectation($penalty) {
         $penaltyinfo = get_string('gradingdetailspenaltytotal', 'qbehaviour_adaptive',
                                   format_float($penalty, $this->displayoptions->markdp));
-        return new question_pattern_expectation('/'.preg_quote($penaltyinfo).'/');
+        return new question_pattern_expectation('/'.preg_quote($penaltyinfo, '/').'/');
     }
 
     protected function get_does_not_contain_total_penalty_expectation() {
         $penaltyinfo = get_string('gradingdetailspenaltytotal', 'qbehaviour_adaptive', 'XXXXX');
-        $penaltypattern = '/'.str_replace('XXXXX', '\\w*', preg_quote($penaltyinfo)).'/';
+        $penaltypattern = '/'.str_replace('XXXXX', '\\w*', preg_quote($penaltyinfo, '/')).'/';
         return new question_no_pattern_expectation($penaltypattern);
     }
 
     protected function get_contains_disregarded_info_expectation() {
         $penaltyinfo = get_string('disregardedwithoutpenalty', 'qbehaviour_adaptive');
-        return new question_pattern_expectation('/'.preg_quote($penaltyinfo).'/');
+        return new question_pattern_expectation('/'.preg_quote($penaltyinfo, '/').'/');
     }
 
     protected function get_does_not_contain_disregarded_info_expectation() {
         $penaltyinfo = get_string('disregardedwithoutpenalty', 'qbehaviour_adaptive');
-        return new question_no_pattern_expectation('/'.preg_quote($penaltyinfo).'/');
+        return new question_no_pattern_expectation('/'.preg_quote($penaltyinfo, '/').'/');
     }
 
     public function test_adaptive_multichoice() {
@@ -165,7 +165,7 @@ class qbehaviour_adaptive_walkthrough_test extends qbehaviour_walkthrough_test_b
         $this->check_current_mark(1);
         $this->check_current_output(
                 $this->get_contains_mark_summary(1),
-                new question_pattern_expectation('/' . preg_quote('Not good enough!') . '/'));
+                new question_pattern_expectation('/' . preg_quote('Not good enough!', '/') . '/'));
 
         // Now change the correct answer to the question, and regrade.
         $mc->answers[13]->fraction = -0.33333333;

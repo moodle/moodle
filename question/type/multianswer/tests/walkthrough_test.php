@@ -367,7 +367,7 @@ class qtype_multianswer_walkthrough_test extends qbehaviour_walkthrough_test_bas
                 $this->get_contains_try_again_button_expectation(true),
                 $this->get_does_not_contain_correctness_expectation(),
                 new question_pattern_expectation('/' .
-                        preg_quote(get_string('notcomplete', 'qbehaviour_interactive')) . '/'),
+                        preg_quote(get_string('notcomplete', 'qbehaviour_interactive'), '/') . '/'),
                 $this->get_contains_hint_expectation('This is the first hint.'));
 
         // Check that extract responses will return the reset data.
