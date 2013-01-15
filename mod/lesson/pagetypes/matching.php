@@ -80,7 +80,6 @@ class lesson_page_type_matching extends lesson_page {
         if (!empty($responses)) {
             $shuffleresponses = $responses;
             shuffle($shuffleresponses);
-            $shuffleresponses = array_unique($shuffleresponses);
             foreach ($shuffleresponses as  $response) {
                 $key = array_search($response, $responses);
                 $responseoptions[$key] = $response;
