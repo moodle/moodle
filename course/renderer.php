@@ -70,7 +70,7 @@ class core_course_renderer extends plugin_renderer_base {
         if (!empty($CFG->coursecontact)) {
             $coursecontactroles = explode(',', $CFG->coursecontact);
             foreach ($coursecontactroles as $roleid) {
-                if ($users = get_role_users($roleid, $context, true)) {
+                if ($users = get_role_users($roleid, $context, true, '', null, false)) {
                     foreach ($users as $teacher) {
                         $role = new stdClass();
                         $role->id = $teacher->roleid;
