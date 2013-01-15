@@ -142,6 +142,7 @@
                      " class=\"iconsmall\" alt=\"$streditsummary\" /></a><br /><br />";
             }
 
+            $courserenderer = $PAGE->get_renderer('core', 'course');
             echo $courserenderer->course_section_cm_list($SITE, $section);
 
             echo $courserenderer->course_section_add_cm_control($SITE, $section->section);
