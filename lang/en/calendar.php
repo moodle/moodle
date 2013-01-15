@@ -42,6 +42,7 @@ $string['course'] = 'Course';
 $string['courseevent'] = 'Course event';
 $string['courseevents'] = 'Course events';
 $string['courses'] = 'Courses';
+$string['customexport'] = 'Custom range ({$a->timestart} - {$a->timeend})';
 $string['daily'] = 'Daily';
 $string['dayview'] = 'Day view';
 $string['dayviewtitle'] = 'Day view: {$a}';
