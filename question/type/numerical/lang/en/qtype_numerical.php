@@ -24,8 +24,8 @@
  */
 
 $string['acceptederror'] = 'Accepted error';
-$string['addmoreanswerblanks'] = 'Blanks for {no} More Answers';
-$string['addmoreunitblanks'] = 'Blanks for {no} More Units';
+$string['addmoreanswerblanks'] = 'Blanks for {no} more answers';
+$string['addmoreunitblanks'] = 'Blanks for {no} more units';
 $string['answercolon'] = 'Answer:';
 $string['answermustbenumberorstar'] = 'The answer must be a number, for example -1.234 or 3e8, or \'*\'.';
 $string['answerno'] = 'Answer {$a}';
@@ -78,7 +78,6 @@ $string['unitchoice'] = 'a multiple choice selection';
 $string['unitedit'] = 'Edit unit';
 $string['unitgraded'] = 'The unit must be given, and will be graded.';
 $string['unithandling'] = 'Unit handling';
-$string['unithdr'] = 'Unit {$a}';
 $string['unitincorrect'] = 'You did not give the correct unit.';
 $string['unitmandatory'] = 'Mandatory';
 $string['unitmandatory_help'] = '
@@ -102,7 +101,9 @@ $string['unitpenalty_help'] = 'The penalty is applied if
 * the wrong unit name is entered into the unit input, or
 * a unit is entered into the value input box';
 $string['unitposition'] = 'Units go';
+$string['units'] = 'Units';
 $string['unitselect'] = 'a drop-down menu';
+$string['unitx'] = 'Unit {no} ';
 $string['validnumberformats'] = 'Valid number formats';
 $string['validnumberformats_help'] = '
 * regular numbers 13500.67, 13 500.67, 13500,67 or 13 500,67
@@ -114,3 +115,6 @@ $string['validnumberformats_help'] = '
  1.350067 E4 : 1.350067 E04 ';
 
 $string['validnumbers'] = '13500.67, 13 500.67, 13,500.67, 13500,67, 13 500,67, 1.350067 E4 or 1.350067 E04';
+$string['xmustbenumeric'] = '{$a} must be a number.';
+$string['xmustnotbenumeric'] = '{$a} cannot be a number.';
+$string['youmustenteramultiplierhere'] = 'You must enter a multiplier here.';
