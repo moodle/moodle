@@ -44,6 +44,10 @@ class core_external_testcase extends externallib_advanced_testcase {
         $returnedstring = core_external::get_string('addservice', 'webservice',
                 array(array('name' => 'name', 'value' => $service->name),
                       array('name' => 'id', 'value' => $service->id)));
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $returnedstring = external_api::clean_returnvalue(core_external::get_string_returns(), $returnedstring);
+
         $corestring = get_string('addservice', 'webservice', $service);
         $this->assertEquals($corestring, $returnedstring);
 
@@ -51,11 +55,19 @@ class core_external_testcase extends externallib_advanced_testcase {
         $acapname = 'A capability name';
         $returnedstring = core_external::get_string('missingrequiredcapability', 'webservice',
                 array(array('value' => $acapname)));
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $returnedstring = external_api::clean_returnvalue(core_external::get_string_returns(), $returnedstring);
+
         $corestring = get_string('missingrequiredcapability', 'webservice', $acapname);
         $this->assertEquals($corestring, $returnedstring);
 
         // String without parameters.
         $returnedstring = core_external::get_string('missingpassword', 'webservice');
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $returnedstring = external_api::clean_returnvalue(core_external::get_string_returns(), $returnedstring);
+
         $corestring = get_string('missingpassword', 'webservice');
         $this->assertEquals($corestring, $returnedstring);
 
@@ -86,6 +98,9 @@ class core_external_testcase extends externallib_advanced_testcase {
                     ),
                     array('stringid' =>  'addaservice', 'component' => 'webservice')
                 ));
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $returnedstrings = external_api::clean_returnvalue(core_external::get_strings_returns(), $returnedstrings);
 
         foreach($returnedstrings as $returnedstring) {
             $corestring = get_string($returnedstring['stringid'], $returnedstring['component'], $service);
