@@ -160,8 +160,9 @@ class comment_manager {
             get_string('content'),
             get_string('action')
         );
-        $table->align = array ('left', 'left', 'left', 'left');
-        $table->attributes = array('class'=>'generaltable commentstable');
+        $table->colclasses = array ('leftalign', 'leftalign', 'leftalign', 'leftalign');
+        $table->attributes = array('class'=>'admintable generaltable');
+        $table->id = 'commentstable';
         $table->data = array();
 
         $link = new moodle_url('/comment/index.php', array('action' => 'delete', 'sesskey' => sesskey()));

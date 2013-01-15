@@ -254,7 +254,7 @@ $parentlist = array();
 $displaylist[0] = get_string('top');
 make_categories_list($displaylist, $parentlist);
 
-echo '<table class="generaltable editcourse boxaligncenter"><tr class="header">';
+echo '<table id="coursecategories" class="admintable generaltable editcourse"><tr class="header">';
 echo '<th class="header" scope="col">'.$strcategories.'</th>';
 echo '<th class="header" scope="col">'.$strcourses.'</th>';
 echo '<th class="header" scope="col">'.$stredit.'</th>';
@@ -309,7 +309,7 @@ function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $
             $category->context = context_coursecat::instance($category->id);
         }
 
-        echo '<tr><td align="left" class="name">';
+        echo '<tr><td class="leftalign name">';
         for ($i=0; $i<$depth;$i++) {
             echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
         }
@@ -319,9 +319,9 @@ function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $
              format_string($category->name, true, array('context' => $category->context)).'</a>';
         echo '</td>';
 
-        echo '<td class="count">'.$category->coursecount.'</td>';
+        echo '<td class="centeralign count">'.$category->coursecount.'</td>';
 
-        echo '<td class="icons">';    /// Print little icons
+        echo '<td class="centeralign icons">';  /// Print little icons
 
         if (has_capability('moodle/category:manage', $category->context)) {
             echo '<a title="'.$str->edit.'" href="editcategory.php?id='.$category->id.'"><img'.
@@ -358,7 +358,7 @@ function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $
         }
         echo '</td>';
 
-        echo '<td align="left">';
+        echo '<td class="leftalign">';
         if (has_capability('moodle/category:manage', $category->context)) {
             $tempdisplaylist = $displaylist;
             unset($tempdisplaylist[$category->id]);

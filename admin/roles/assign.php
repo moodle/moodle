@@ -189,7 +189,7 @@ $assignurl = new moodle_url($PAGE->url, array('roleid'=>$roleid));
 <form id="assignform" method="post" action="<?php echo $assignurl ?>"><div>
   <input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
 
-  <table summary="" class="roleassigntable generaltable generalbox boxaligncenter" cellspacing="0">
+  <table id="assigningrole" summary="" class="admintable roleassigntable generaltable" cellspacing="0">
     <tr>
       <td id="existingcell">
           <p><label for="removeselect"><?php print_string('extusers', 'role'); ?></label></p>
@@ -278,15 +278,13 @@ $assignurl = new moodle_url($PAGE->url, array('roleid'=>$roleid));
 
     // Print overview table
     $table = new html_table();
-    $table->tablealign = 'center';
-    $table->width = '60%';
+    $table->id = 'assignrole';
     $table->head = array(get_string('role'), get_string('description'), get_string('userswiththisrole', 'role'));
-    $table->wrap = array('nowrap', '', 'nowrap');
-    $table->align = array('left', 'left', 'center');
+    $table->colclasses = array('leftalign role', 'leftalign', 'centeralign userrole');
+    $table->attributes['class'] = 'admintable generaltable';
     if ($showroleholders) {
         $table->headspan = array(1, 1, 2);
-        $table->wrap[] = 'nowrap';
-        $table->align[] = 'left';
+        $table->colclasses[] = 'leftalign roleholder';
     }
 
     foreach ($assignableroles as $roleid => $rolename) {
