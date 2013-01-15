@@ -266,10 +266,16 @@ class external_api {
             }
 
         } else if ($description instanceof external_single_structure) {
-            if (!is_array($response)) {
-                throw new invalid_response_exception('Only arrays accepted. The bad value is: \'' .
+            if (!is_array($response) && !is_object($response)) {
+                throw new invalid_response_exception('Only arrays/objects accepted. The bad value is: \'' .
                         print_r($response, true) . '\'');
             }
+
+            // Cast objects into arrays.
+            if (is_object($response)) {
+                $response = (array) $response;
+            }
+
             $result = array();
             foreach ($description->keys as $key=>$subdesc) {
                 if (!array_key_exists($key, $response)) {
