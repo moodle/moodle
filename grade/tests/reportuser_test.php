@@ -38,7 +38,7 @@ class gradereportuserlib_testcase extends advanced_testcase {
     /**
      * Tests grade_report_user::inject_rowspans()
      *
-     * inject_rowspans() returns the count of the number of elements, sets maxdepth on the 
+     * inject_rowspans() returns the count of the number of elements, sets maxdepth on the
      *  report object and sets the rowspan property on any element that has children.
      */
     public function test_inject_rowspans() {
@@ -63,7 +63,7 @@ class gradereportuserlib_testcase extends advanced_testcase {
         $teacher = $this->getDataGenerator()->create_user(array('username' => 'Teacher T'));
         $role = $DB->get_record('role', array('shortname' => 'editingteacher'), '*', MUST_EXIST);
         $this->getDataGenerator()->enrol_user($teacher->id, $course->id, $role->id);
-        
+
         // An array so we can test with both users in a loop.
         $users = array($student, $teacher);
 
