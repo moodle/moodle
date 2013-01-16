@@ -64,8 +64,14 @@ class core_course_renderer extends plugin_renderer_base {
         // Add the module chooser toggle to the course page
         if ($modchoosertoggleadded || $this->page->state > moodle_page::STATE_PRINTING_HEADER ||
                 $this->page->course->id == SITEID ||
-                !($coursenode = $this->page->settingsnav->find('courseadmin', navigation_node::TYPE_COURSE))) {
+                !$this->page->user_is_editing() ||
+                !($context = context_course::instance($this->page->course->id)) ||
+                !has_capability('moodle/course:update', $context) ||
+                !course_ajax_enabled($this->page->course) ||
+                !($coursenode = $this->page->settingsnav->find('courseadmin', navigation_node::TYPE_COURSE)) ||
+                !$coursenode->get('editsettings')) {
             // too late or we are on site page or we could not find the course settings node
+            // or we are not allowed to edit
             return;
         }
         $modchoosertoggleadded = true;
