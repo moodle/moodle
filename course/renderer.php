@@ -840,7 +840,7 @@ class core_course_renderer extends plugin_renderer_base {
                 $ci = new condition_info($mod);
                 $fullinfo = $ci->get_full_information();
                 if($fullinfo) {
-                    echo '<div class="availabilityinfo '.$hidinfoclass.'">'.get_string($mod->showavailability
+                    return '<div class="availabilityinfo '.$hidinfoclass.'">'.get_string($mod->showavailability
                         ? 'userrestriction_visible'
                         : 'userrestriction_hidden','condition',
                         $fullinfo).'</div>';
