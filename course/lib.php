@@ -1423,9 +1423,9 @@ function print_whole_category_list($category=NULL, $displaylist=NULL, $parentsli
 
     if (!$categorycourses) {
         if ($category) {
-            $categorycourses = get_category_courses($category->id);
+            $categorycourses = get_category_courses_array($category->id);
         } else {
-            $categorycourses = get_category_courses();
+            $categorycourses = get_category_courses_array();
         }
     }
 
