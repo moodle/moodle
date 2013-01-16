@@ -616,13 +616,13 @@ function assign_get_recent_mod_activity(&$activities,
 
     $userfields = user_picture::fields('u', null, 'userid');
 
-    if (!$submissions = $DB->get_records_sql('SELECT asb.id, asb.timemodified,
-                                                     $userfields
-                                                FROM {assign_submission} asb
-                                                JOIN {assign} a      ON a.id = asb.assignment
-                                                JOIN {user} u            ON u.id = asb.userid
-                                          $groupjoin
-                                               WHERE asb.timemodified > :timestart AND
+    if (!$submissions = $DB->get_records_sql('SELECT asb.id, asb.timemodified, ' .
+                                                     $userfields .
+                                             '  FROM {assign_submission} asb
+                                                JOIN {assign} a ON a.id = asb.assignment
+                                                JOIN {user} u ON u.id = asb.userid ' .
+                                          $groupjoin .
+                                            '  WHERE asb.timemodified > :timestart AND
                                                      a.id = :cminstance
                                                      ' . $userselect . ' ' . $groupselect .
                                             ' ORDER BY asb.timemodified ASC', $params)) {
