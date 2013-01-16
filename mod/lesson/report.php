@@ -45,13 +45,14 @@ $ufields = user_picture::fields('u'); // These fields are enough
 $params = array("lessonid" => $lesson->id);
 // TODO: Improve this. Fetching all students always is crazy!
 if (!empty($cm->groupingid)) {
-    $params["groupid"] = $cm->groupingid;
+    $params["groupingid"] = $cm->groupingid;
     $sql = "SELECT DISTINCT $ufields
                 FROM {lesson_attempts} a
                     INNER JOIN {user} u ON u.id = a.userid
                     INNER JOIN {groups_members} gm ON gm.userid = u.id
-                    INNER JOIN {groupings_groups} gg ON gm.groupid = :groupid
-                WHERE a.lessonid = :lessonid
+                    INNER JOIN {groupings_groups} gg ON gm.groupid = gg.groupid
+                WHERE a.lessonid = :lessonid AND
+                      gg.groupingid = :groupingid
                 ORDER BY u.lastname";
 } else {
     $sql = "SELECT DISTINCT $ufields
