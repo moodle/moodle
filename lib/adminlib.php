@@ -3608,7 +3608,7 @@ class admin_setting_emoticons extends admin_setting {
     public function output_html($data, $query='') {
         global $OUTPUT;
 
-        $out  = html_writer::start_tag('table', array('border' => 1, 'id' => 'emoticonsetting', 'class' => 'admintable generaltable'));
+        $out  = html_writer::start_tag('table', array('id' => 'emoticonsetting', 'class' => 'admintable generaltable'));
         $out .= html_writer::start_tag('thead');
         $out .= html_writer::start_tag('tr');
         $out .= html_writer::tag('th', get_string('emoticontext', 'admin'));
