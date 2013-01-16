@@ -47,7 +47,7 @@ abstract class file_archive implements Iterator {
     protected $encoding = 'utf-8';
 
     /**
-     * Open or create archive (depending on $mode)
+     * Open or create archive (depending on $mode).
      *
      * @param string $archivepathname archive path name
      * @param int $mode OPEN, CREATE or OVERWRITE constant
@@ -57,14 +57,14 @@ abstract class file_archive implements Iterator {
     public abstract function open($archivepathname, $mode=file_archive::CREATE, $encoding='utf-8');
 
     /**
-     * Close archive
+     * Close archive.
      *
      * @return bool success
      */
     public abstract function close();
 
     /**
-     * Returns file stream for reading of content
+     * Returns file stream for reading of content.
      *
      * @param int $index index of file
      * @return stream|bool stream or false if error
@@ -72,7 +72,7 @@ abstract class file_archive implements Iterator {
     public abstract function get_stream($index);
 
     /**
-     * Returns file information
+     * Returns file information.
      *
      * @param int $index index of file
      * @return stdClass|bool object or false if error
@@ -80,21 +80,21 @@ abstract class file_archive implements Iterator {
     public abstract function get_info($index);
 
     /**
-     * Returns array of info about all files in archive
+     * Returns array of info about all files in archive.
      *
      * @return array of file infos
      */
     public abstract function list_files();
 
     /**
-     * Returns number of files in archive
+     * Returns number of files in archive.
      *
      * @return int number of files
      */
     public abstract function count();
 
     /**
-     * Add file into archive
+     * Add file into archive.
      *
      * @param string $localname name of file in archive
      * @param string $pathname location of file
@@ -103,7 +103,7 @@ abstract class file_archive implements Iterator {
     public abstract function add_file_from_pathname($localname, $pathname);
 
     /**
-     * Add content of string into archive
+     * Add content of string into archive.
      *
      * @param string $localname name of file in archive
      * @param string $contents contents
@@ -112,7 +112,7 @@ abstract class file_archive implements Iterator {
     public abstract function add_file_from_string($localname, $contents);
 
     /**
-     * Add empty directory into archive
+     * Add empty directory into archive.
      *
      * @param string $localname name of file in archive
      * @return bool success
@@ -182,25 +182,25 @@ abstract class file_archive implements Iterator {
     }
 
     /**
-     * Returns current file info
+     * Returns current file info.
      * @return object
      */
     //public abstract function current();
 
     /**
-     * Returns the index of current file
+     * Returns the index of current file.
      * @return int current file index
      */
     //public abstract function key();
 
     /**
-     * Moves forward to next file
+     * Moves forward to next file.
      * @return void
      */
     //public abstract function next();
 
     /**
-     * Rewinds back to the first file
+     * Rewinds back to the first file.
      * @return void
      */
     //public abstract function rewind();
