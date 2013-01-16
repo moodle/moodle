@@ -86,7 +86,7 @@ There are several parts that make up the Cache API.
 The loader is central to the whole thing.
 It is used by the end developer to get an object that handles caching.
 90% of end developers will not need to know or use anything else in the cache API.
-In order to get a loader you must use one of two static methods, make or make_with_params.
+In order to get a loader you must use one of two static methods, make or make_from_params.
 The loader has been kept as simple as possible, interaction is summarised by the cache_loader interface.
 Internally there is lots of magic going on. The important parts to know about are:
 * There are two ways to get a loader, the first with a definition (discussed below) the second with params. When params are used they are turned into an adhoc definition with default params.
