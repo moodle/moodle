@@ -51,7 +51,7 @@ class MoodleQuickForm_selectyesno extends MoodleQuickForm_select{
     {
         HTML_QuickForm_element::HTML_QuickForm_element($elementName, $elementLabel, $attributes, null);
         $this->_type = 'selectyesno';
-
+        $this->_persistantFreeze = true;
     }
 
     /**
