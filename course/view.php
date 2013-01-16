@@ -18,7 +18,7 @@
     $section     = optional_param('section', 0, PARAM_INT);
     $move        = optional_param('move', 0, PARAM_INT);
     $marker      = optional_param('marker',-1 , PARAM_INT);
-    $switchrole  = optional_param('switchrole',-1, PARAM_INT);
+    $switchrole  = optional_param('switchrole',-1, PARAM_INT); // Deprecated, use course/switchrole.php instead.
     $modchooser  = optional_param('modchooser', -1, PARAM_BOOL);
     $return      = optional_param('return', 0, PARAM_LOCALURL);
 
