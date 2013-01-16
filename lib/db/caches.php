@@ -82,5 +82,16 @@ $definitions = array(
     // cleaned text which is shareable.
     'htmlpurifier' => array(
         'mode' => cache_store::MODE_APPLICATION,
-    )
+    ),
+
+    // Used to store data from the config + config_plugins table in the database.
+    // The key used is the component:
+    //   - core for all core config settings
+    //   - plugin component for all plugin settings.
+    // Persistence is used because normally several settings within a script.
+    'config' => array(
+        'mode' => cache_store::MODE_APPLICATION,
+        'persistent' => true,
+        'simpledata' => true
+    ),
 );

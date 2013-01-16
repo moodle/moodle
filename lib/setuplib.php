@@ -713,8 +713,8 @@ function initialise_cfg() {
 
     try {
         if ($DB) {
-            $localcfg = $DB->get_records_menu('config', array(), '', 'name,value');
-            foreach ($localcfg as $name=>$value) {
+            $localcfg = get_config('core');
+            foreach ($localcfg as $name => $value) {
                 if (property_exists($CFG, $name)) {
                     // config.php settings always take precedence
                     continue;
