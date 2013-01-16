@@ -481,7 +481,7 @@ function file_get_draft_area_info($draftitemid, $filepath = '/') {
         'filecount' => 0,
         'foldercount' => 0,
         'filesize' => 0,
-        'filesize_without_references'
+        'filesize_without_references' => 0
     );
 
     if ($filepath != '/') {
