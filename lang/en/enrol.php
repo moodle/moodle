@@ -40,6 +40,7 @@ $string['deleteinstanceconfirm'] = 'You are about to delete the enrolment method
 Are you sure you want to continue?';
 $string['deleteinstancenousersconfirm'] = 'You are about to delete the enrolment method "{$a->name}". Are you sure you want to continue?';
 $string['durationdays'] = '{$a} days';
+$string['editenrolment'] = 'Edit enrolment';
 $string['enrol'] = 'Enrol';
 $string['enrolcandidates'] = 'Not enrolled users';
 $string['enrolcandidatesmatching'] = 'Matching not enrolled users';

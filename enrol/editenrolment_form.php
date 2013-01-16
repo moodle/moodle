@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Contains the form used to edit self enrolments for a user.
+ * Contains the form used to edit enrolments for a user.
  *
- * @package    enrol_self
+ * @package    core_enrol
  * @copyright  2011 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once("$CFG->libdir/formslib.php");
 
-class enrol_self_user_enrolment_form extends moodleform {
+class enrol_user_enrolment_form extends moodleform {
     function definition() {
         global $CFG, $DB;
 
