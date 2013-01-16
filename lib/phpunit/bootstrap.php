@@ -93,6 +93,9 @@ $CFG->filepermissions = ($CFG->directorypermissions & 0666);
 if (!isset($CFG->phpunit_dataroot)) {
     phpunit_bootstrap_error(PHPUNIT_EXITCODE_CONFIGERROR, 'Missing $CFG->phpunit_dataroot in config.php, can not run tests!');
 }
+// Ensure we access to phpunit_dataroot realpath always.
+$CFG->phpunit_dataroot = realpath($CFG->phpunit_dataroot);
+
 if (isset($CFG->dataroot) and $CFG->phpunit_dataroot === $CFG->dataroot) {
     phpunit_bootstrap_error(PHPUNIT_EXITCODE_CONFIGERROR, '$CFG->dataroot and $CFG->phpunit_dataroot must not be identical, can not run tests!');
 }
