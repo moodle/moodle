@@ -401,8 +401,11 @@ class cache_config_writer extends cache_config {
      * @param bool $coreonly If set to true only core definitions will be updated.
      */
     public static function update_definitions($coreonly = false) {
-        $config = self::instance();
+        $factory = cache_factory::instance();
+        $factory->updating_started();
+        $config = $factory->create_config_instance(true);
         $config->write_definitions_to_cache(self::locate_definitions($coreonly));
+        $factory->updating_finished();
     }
 
     /**

@@ -48,6 +48,8 @@ class cache_factory {
     const STATE_SAVING = 2;
     /** The cache is ready to use. */
     const STATE_READY = 3;
+    /** The cache is currently updating itself */
+    const STATE_UPDATING = 4;
     /** The cache encountered an error while initialising. */
     const STATE_ERROR_INITIALISING = 9;
     /** The cache has been disabled. */
@@ -220,7 +222,12 @@ class cache_factory {
      */
     public function create_cache(cache_definition $definition) {
         $class = $definition->get_cache_class();
-        $stores = cache_helper::get_cache_stores($definition);
+        if ($this->is_initialising()) {
+            // Do nothing we just want the dummy store.
+            $stores = array();
+        } else {
+            $stores = cache_helper::get_cache_stores($definition);
+        }
         if (count($stores) === 0) {
             // Hmm no stores, better provide a dummy store to mimick functionality. The dev will be none the wiser.
             $stores[] = $this->create_dummy_store($definition);
@@ -333,21 +340,52 @@ class cache_factory {
             $id .= '::'.$aggregate;
         }
         if (!array_key_exists($id, $this->definitions)) {
-            $instance = $this->create_config_instance();
-            $definition = $instance->get_definition_by_id($id);
-            if (!$definition) {
-                $this->reset();
-                $instance = $this->create_config_instance(true);
-                $instance->update_definitions();
+            // This is the first time this definition has been requested.
+            if ($this->is_initialising()) {
+                // We're initialising the cache right now. Don't try to create another config instance.
+                // We'll just use an ad-hoc cache for the time being.
+                $definition = cache_definition::load_adhoc(cache_store::MODE_REQUEST, $component, $area);
+            } else {
+                // Load all the known definitions and find the desired one.
+                $instance = $this->create_config_instance();
                 $definition = $instance->get_definition_by_id($id);
                 if (!$definition) {
-                    throw new coding_exception('The requested cache definition does not exist.'. $id, $id);
+                    // Oh-oh the definition doesn't exist.
+                    // There are several things that could be going on here.
+                    // We may be installing/upgrading a site and have hit a definition that hasn't been used before.
+                    // Of the developer may be trying to use a newly created definition.
+                    if ($this->is_updating()) {
+                        // The cache is presently initialising and the requested cache definition has not been found.
+                        // This means that the cache initialisation has requested something from a cache (I had recursive nightmares about this).
+                        // To serve this purpose and avoid errors we are going to make use of an ad-hoc cache rather than
+                        // search for the definition which would possibly cause an infitite loop trying to initialise the cache.
+                        $definition = cache_definition::load_adhoc(cache_store::MODE_REQUEST, $component, $area);
+                        if ($aggregate !== null) {
+                            // If you get here you deserve a warning. We have to use an ad-hoc cache here, so we can't find the definition and therefor
+                            // can't find any information about the datasource or any of its aggregated.
+                            // Best of luck.
+                            debugging('An unknown cache was requested during development with an aggregate that could not be loaded. Ad-hoc cache used instead.', DEBUG_DEVELOPER);
+                            $aggregate = null;
+                        }
+                    } else {
+                        // Either a typo of the developer has just created the definition and is using it for the first time.
+                        $this->reset();
+                        $instance = $this->create_config_instance(true);
+                        $instance->update_definitions();
+                        $definition = $instance->get_definition_by_id($id);
+                        if (!$definition) {
+                            throw new coding_exception('The requested cache definition does not exist.'. $id, $id);
+                        } else {
+                            debugging('Cache definitions reparsed causing cache reset in order to locate definition.
+                                You should bump the version number to ensure definitions are reprocessed.', DEBUG_DEVELOPER);
+                        }
+                        $definition = cache_definition::load($id, $definition, $aggregate);
+                    }
                 } else {
-                    debugging('Cache definitions reparsed causing cache reset in order to locate definition.
-                        You should bump the version number to ensure definitions are reprocessed.', DEBUG_DEVELOPER);
+                    $definition = cache_definition::load($id, $definition, $aggregate);
                 }
             }
-            $this->definitions[$id] = cache_definition::load($id, $definition, $aggregate);
+            $this->definitions[$id] = $definition;
         }
         return $this->definitions[$id];
     }
@@ -415,12 +453,55 @@ class cache_factory {
     }
 
     /**
+     * Informs the factory that the cache is currently updating itself.
+     *
+     * This forces the state to upgrading and can only be called once the cache is ready to use.
+     * Calling it ensure we don't try to reinstantite things when requesting cache definitions that don't exist yet.
+     */
+    public function updating_started() {
+        if ($this->state !== self::STATE_READY) {
+            return false;
+        }
+        $this->state = self::STATE_UPDATING;
+        return true;
+    }
+
+    /**
+     * Informs the factory that the upgrading has finished.
+     *
+     * This forces the state back to ready.
+     */
+    public function updating_finished() {
+        $this->state = self::STATE_READY;
+    }
+
+    /**
      * Returns true if the cache API has been disabled.
      *
      * @return bool
      */
     public function is_disabled() {
         return $this->state === self::STATE_DISABLED;
+    }
+
+    /**
+     * Returns true if the cache is currently initialising itself.
+     *
+     * This includes both initialisation and saving the cache config file as part of that initialisation.
+     *
+     * @return bool
+     */
+    public function is_initialising() {
+        return $this->state === self::STATE_INITIALISING || $this->state === self::STATE_SAVING;
+    }
+
+    /**
+     * Returns true if the cache is currently updating itself.
+     *
+     * @return bool
+     */
+    public function is_updating() {
+        return $this->state === self::STATE_UPDATING;
     }
 
     /**
