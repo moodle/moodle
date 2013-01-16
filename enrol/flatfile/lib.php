@@ -20,350 +20,811 @@
  * This plugin lets the user specify a "flatfile" (CSV) containing enrolment information.
  * On a regular cron cycle, the specified file is parsed and then deleted.
  *
- * @package    enrol
- * @subpackage flatfile
+ * @package    enrol_flatfile
  * @copyright  2010 Eugene Venter
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
+
 /**
  * Flatfile enrolment plugin implementation.
+ *
+ * Comma separated file assumed to have four or six fields per line:
+ *   operation, role, idnumber(user), idnumber(course) [, starttime [, endtime]]
+ * where:
+ *   operation        = add | del
+ *   role             = student | teacher | teacheredit
+ *   idnumber(user)   = idnumber in the user table NB not id
+ *   idnumber(course) = idnumber in the course table NB not id
+ *   starttime        = start time (in seconds since epoch) - optional
+ *   endtime          = end time (in seconds since epoch) - optional
+ *
  * @author  Eugene Venter - based on code by Petr Skoda, Martin Dougiamas, Martin Langhoff and others
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class enrol_flatfile_plugin extends enrol_plugin {
+    protected $lasternoller = null;
+    protected $lasternollercourseid = 0;
 
     /**
-     * Override the base cron() function to read in a file
-     *
-     * Comma separated file assumed to have four or six fields per line:
-     *   operation, role, idnumber(user), idnumber(course) [, starttime, endtime]
-     * where:
-     *   operation        = add | del
-     *   role             = student | teacher | teacheredit
-     *   idnumber(user)   = idnumber in the user table NB not id
-     *   idnumber(course) = idnumber in the course table NB not id
-     *   starttime        = start time (in seconds since epoch) - optional
-     *   endtime          = end time (in seconds since epoch) - optional
+     * Does this plugin assign protected roles are can they be manually removed?
+     * @return bool - false means anybody may tweak roles, it does not use itemid and component when assigning roles
      */
-    private $log;
+    public function roles_protected() {
+        return false;
+    }
 
-    public function cron() {
-        $this->process_file();
+    /**
+     * Does this plugin allow manual unenrolment of all users?
+     * All plugins allowing this must implement 'enrol/xxx:unenrol' capability
+     *
+     * @param stdClass $instance course enrol instance
+     * @return bool - true means user with 'enrol/xxx:unenrol' may unenrol others freely, false means nobody may touch user_enrolments
+     */
+    public function allow_unenrol(stdClass $instance) {
+        return true;
+    }
 
-        $this->process_buffer();
+    /**
+     * Does this plugin allow manual unenrolment of a specific user?
+     * All plugins allowing this must implement 'enrol/xxx:unenrol' capability
+     *
+     * This is useful especially for synchronisation plugins that
+     * do suspend instead of full unenrolment.
+     *
+     * @param stdClass $instance course enrol instance
+     * @param stdClass $ue record from user_enrolments table, specifies user
+     *
+     * @return bool - true means user with 'enrol/xxx:unenrol' may unenrol this user, false means nobody may touch this user enrolment
+     */
+    public function allow_unenrol_user(stdClass $instance, stdClass $ue) {
+        return true;
+    }
 
-        echo $this->log;
-    } // end of function
+    /**
+     * Does this plugin allow manual changes in user_enrolments table?
+     *
+     * All plugins allowing this must implement 'enrol/xxx:manage' capability
+     *
+     * @param stdClass $instance course enrol instance
+     * @return bool - true means it is possible to change enrol period and status in user_enrolments table
+     */
+    public function allow_manage(stdClass $instance) {
+        return true;
+    }
 
-    protected function process_file() {
-        global $CFG, $DB;
+    /**
+     * Is it possible to delete enrol instance via standard UI?
+     *
+     * @param object $instance
+     * @return bool
+     */
+    public function instance_deleteable($instance) {
+        return true;
+    }
 
-        $filelocation = $this->get_config('location');
-        $mailadmins   = $this->get_config('mailadmins');
-        if (empty($filelocation)) {
-            $filename = "$CFG->dataroot/1/enrolments.txt";  // Default location
-        } else {
-            $filename = $filelocation;
+    /**
+     * Gets an array of the user enrolment actions.
+     *
+     * @param course_enrolment_manager $manager
+     * @param stdClass $ue A user enrolment object
+     * @return array An array of user_enrolment_actions
+     */
+    public function get_user_enrolment_actions(course_enrolment_manager $manager, $ue) {
+        $actions = array();
+        $context = $manager->get_context();
+        $instance = $ue->enrolmentinstance;
+        $params = $manager->get_moodlepage()->url->params();
+        $params['ue'] = $ue->id;
+        if ($this->allow_unenrol_user($instance, $ue) && has_capability("enrol/flatfile:unenrol", $context)) {
+            $url = new moodle_url('/enrol/unenroluser.php', $params);
+            $actions[] = new user_enrolment_action(new pix_icon('t/delete', ''), get_string('unenrol', 'enrol'), $url, array('class'=>'unenrollink', 'rel'=>$ue->id));
         }
+        if ($this->allow_manage($instance) && has_capability("enrol/flatfile:manage", $context)) {
+            $url = new moodle_url('/enrol/editenrolment.php', $params);
+            $actions[] = new user_enrolment_action(new pix_icon('t/edit', ''), get_string('edit'), $url, array('class'=>'editenrollink', 'rel'=>$ue->id));
+        }
+        return $actions;
+    }
 
-        if ( file_exists($filename) ) {
-            $this->log  = userdate(time()) . "\n";
-            $this->log .= "Flatfile enrol cron found file: $filename\n\n";
-
-            if (($fh = fopen($filename, "r")) != false) {
-
-                list($roles, $rolemap) = $this->get_roles();
-
-                $line = 0;
-                while (!feof($fh)) {
-
-                    $line++;
-                    $fields = explode( ",", str_replace( "\r", "", fgets($fh) ) );
-
-                /// If a line is incorrectly formatted ie does not have 4 comma separated fields then ignore it
-                    if (count($fields) != 4 and count($fields) !=6) {
-                        if ( count($fields) > 1 or strlen($fields[0]) > 1) { // no error for blank lines
-                            $this->log .= "$line: Line incorrectly formatted - ignoring\n";
-                        }
-                        continue;
-                    }
-
-                    $fields[0] = trim(strtolower($fields[0]));
-                    $fields[1] = trim(strtolower($fields[1]));
-                    $fields[2] = trim($fields[2]);
-                    $fields[3] = trim($fields[3]);
-
-                    $this->log .= "$line: $fields[0] $fields[1] $fields[2] $fields[3] ";
-
-                    if (!empty($fields[5])) {
-                        $fields[4] = (int)trim($fields[4]);
-                        $fields[5] = (int)trim($fields[5]);
-                        $this->log .= "$fields[4] $fields[5]";
-                    } else {
-                        $fields[4] = 0;
-                        $fields[5] = 0;
-                    }
-
-                    $this->log .= ":";
-
-                /// check correct formatting of operation field
-                    if ($fields[0] != "add" and $fields[0] != "del") {
-                        $this->log .= "Unknown operation in field 1 - ignoring line\n";
-                        continue;
-                    }
-
-                /// check correct formatting of role field
-                    if (!isset($rolemap[$fields[1]]) && !isset($roles[$fields[1]])) {
-                        $this->log .= "Unknown role in field2 - ignoring line\n";
-                        continue;
-                    }
-
-                    if (! $user = $DB->get_record("user", array("idnumber"=>$fields[2]))) {
-                        $this->log .= "Unknown user idnumber in field 3 - ignoring line\n";
-                        continue;
-                    }
-
-                    if (! $course = $DB->get_record("course", array("idnumber"=>$fields[3]))) {
-                        $this->log .= "Unknown course idnumber in field 4 - ignoring line\n";
-                        continue;
-                    }
-
-                    // Either field[1] is a name that appears in the mapping,
-                    // or it's an actual short name. It has to be one or the
-                    // other, or we don't get to this point.
-                    $roleid = isset($rolemap[$fields[1]]) ? $roles[$rolemap[$fields[1]]] : $roles[$fields[1]];
-
-                    if ($fields[4] > $fields[5]) {
-                        $this->log .= "Start time was later than end time - ignoring line\n";
-                        continue;
-                    }
-
-                    $this->process_records($fields[0],$roleid,$user,$course,$fields[4],$fields[5]);
-
-                 } // end of while loop
-
-            fclose($fh);
-            } // end of if(file_open)
-
-            if(! @unlink($filename)) {
-                $eventdata = new stdClass();
-                $eventdata->modulename        = 'moodle';
-                $eventdata->component         = 'enrol_flatfile';
-                $eventdata->name              = 'flatfile_enrolment';
-                $eventdata->userfrom          = get_admin();
-                $eventdata->userto            = get_admin();
-                $eventdata->subject           = get_string("filelockedmailsubject", "enrol_flatfile");
-                $eventdata->fullmessage       = get_string("filelockedmail", "enrol_flatfile", $filename);
-                $eventdata->fullmessageformat = FORMAT_PLAIN;
-                $eventdata->fullmessagehtml   = '';
-                $eventdata->smallmessage      = '';
-                message_send($eventdata);
-                $this->log .= "Error unlinking file $filename\n";
-            }
-
-            if (!empty($mailadmins)) {
-
-                // Send mail to admin
-                $eventdata = new stdClass();
-                $eventdata->modulename        = 'moodle';
-                $eventdata->component         = 'enrol_flatfile';
-                $eventdata->name              = 'flatfile_enrolment';
-                $eventdata->userfrom          = get_admin();
-                $eventdata->userto            = get_admin();
-                $eventdata->subject           = "Flatfile Enrolment Log";
-                $eventdata->fullmessage       = $this->log;
-                $eventdata->fullmessageformat = FORMAT_PLAIN;
-                $eventdata->fullmessagehtml   = '';
-                $eventdata->smallmessage      = '';
-                message_send($eventdata);
-            }
-
-        } // end of if(file_exists)
-
-    } // end of function
-
-    protected function process_buffer() {
-        global $DB;
-        // get records from enrol_flatfile table and process any records that are due.
-        if ($future_enrols = $DB->get_records('enrol_flatfile', null, '')) {
-            foreach($future_enrols as $id => $future_en) {
-                    $this->log .= "Processing buffered enrolments.\n";
-                    $user = $DB->get_record("user", array("id"=>$future_en->userid));
-                    $course = $DB->get_record("course", array("id"=>$future_en->courseid));
-                    // enrol the person.
-                    if($this->process_records($future_en->action, $future_en->roleid,
-                            $user, $course, $future_en->timestart, $future_en->timeend, false)) {
-                        //ok record went thru, get rid of the record.
-                        $DB->delete_records('enrol_flatfile', array('id'=>$future_en->id));
-                    }
-            }
+    /**
+     * Enrol user into course via enrol instance.
+     *
+     * @param stdClass $instance
+     * @param int $userid
+     * @param int $roleid optional role id
+     * @param int $timestart 0 means unknown
+     * @param int $timeend 0 means forever
+     * @param int $status default to ENROL_USER_ACTIVE for new enrolments, no change by default in updates
+     * @return void
+     */
+    public function enrol_user(stdClass $instance, $userid, $roleid = null, $timestart = 0, $timeend = 0, $status = null) {
+        parent::enrol_user($instance, $userid, null, $timestart, $timeend, $status);
+        if ($roleid) {
+            $context = context_course::instance($instance->courseid, MUST_EXIST);
+            role_assign($roleid, $userid, $context->id, 'enrol_'.$this->get_name(), $instance->id);
         }
     }
 
-    private function process_records($action, $roleid, $user, $course, $timestart, $timeend, $store_to_buffer = true) {
+    public function cron() {
+        $trace = new text_progress_trace();
+        $this->sync($trace);
+    }
+
+    /**
+     * Execute synchronisation.
+     * @param progress_trace
+     * @return int exit code, 0 means ok, 2 means plugin disabled
+     */
+    public function sync(progress_trace $trace) {
+        if (!enrol_is_enabled('flatfile')) {
+            return 2;
+        }
+
+        $mailadmins = $this->get_config('mailadmins', 0);
+
+        if ($mailadmins) {
+            $buffer = new progress_trace_buffer(new text_progress_trace(), false);
+            $trace = new combined_progress_trace(array($trace, $buffer));
+        }
+
+        $processed = false;
+
+        $processed = $this->process_file($trace) || $processed;
+        $processed = $this->process_buffer($trace) || $processed;
+        $processed = $this->process_expirations($trace) || $processed;
+
+        if ($processed and $mailadmins) {
+            if ($log = $buffer->get_buffer()) {
+                $eventdata = new stdClass();
+                $eventdata->modulename        = 'moodle';
+                $eventdata->component         = 'enrol_flatfile';
+                $eventdata->name              = 'flatfile_enrolment';
+                $eventdata->userfrom          = get_admin();
+                $eventdata->userto            = get_admin();
+                $eventdata->subject           = 'Flatfile Enrolment Log';
+                $eventdata->fullmessage       = $log;
+                $eventdata->fullmessageformat = FORMAT_PLAIN;
+                $eventdata->fullmessagehtml   = '';
+                $eventdata->smallmessage      = '';
+                message_send($eventdata);
+            }
+            $buffer->reset_buffer();
+        }
+
+        return 0;
+    }
+
+    /**
+     * Sorry, we do not want to show paths in cron output.
+     *
+     * @param string $filepath
+     * @return string
+     */
+    protected function obfuscate_filepath($filepath) {
+        global $CFG;
+
+        if (strpos($filepath, $CFG->dataroot.'/') === 0 or strpos($filepath, $CFG->dataroot.'\\') === 0) {
+            $disclosefile = '$CFG->dataroot'.substr($filepath, strlen($CFG->dataroot));
+
+        } else if (strpos($filepath, $CFG->dirroot.'/') === 0 or strpos($filepath, $CFG->dirroot.'\\') === 0) {
+            $disclosefile = '$CFG->dirroot'.substr($filepath, strlen($CFG->dirroot));
+
+        } else {
+            $disclosefile = basename($filepath);
+        }
+
+        return $disclosefile;
+    }
+
+    /**
+     * Process flatfile.
+     * @param progress_trace $trace
+     * @return bool true if any data processed, false if not
+     */
+    protected function process_file(progress_trace $trace) {
         global $CFG, $DB;
 
-        $mailstudents = $this->get_config('mailstudents');
-        $mailteachers = $this->get_config('mailteachers');
+        // We may need more memory here.
+        @set_time_limit(0);
+        raise_memory_limit(MEMORY_HUGE);
 
-        // check if timestart is for future processing.
-        if ($timestart > time()) {
-            if ($store_to_buffer) {
-                // populate into enrol_flatfile table as a future role to be assigned by cron.
-                $future_en = new stdClass();
-                $future_en->action = $action;
-                $future_en->roleid = $roleid;
-                $future_en->userid = $user->id;
-                $future_en->courseid = $course->id;
-                $future_en->timestart = $timestart;
-                $future_en->timeend     = $timeend;
-                $future_en->timemodified  = time();
-                $future_en->id = $DB->insert_record('enrol_flatfile', $future_en);
-            }
+        $filelocation = $this->get_config('location');
+        if (empty($filelocation)) {
+            // Default legacy location.
+            $filelocation = "$CFG->dataroot/1/enrolments.txt";
+        }
+        $disclosefile = $this->obfuscate_filepath($filelocation);
+
+        if (!file_exists($filelocation)) {
+            $trace->output("Flatfile enrolments file not found: $disclosefile");
+            $trace->finished();
             return false;
         }
+        $trace->output("Processing flat file enrolments from: $disclosefile ...");
 
-        unset($elog);
+        $content = file_get_contents($filelocation);
 
-        // Create/resurrect a context object
-        $context = context_course::instance($course->id);
+        if ($content !== false) {
 
-        if ($action == 'add') {
-            $instance = $DB->get_record('enrol',
-                            array('courseid' => $course->id, 'enrol' => 'flatfile'));
-            if (empty($instance)) {
-                // Only add an enrol instance to the course if non-existent
-                $enrolid = $this->add_instance($course);
-                $instance = $DB->get_record('enrol', array('id' => $enrolid));
-            }
-            // Enrol the user with this plugin instance
-            $this->enrol_user($instance, $user->id, $roleid, $timestart, $timeend);
-        } else {
-            $instances = $DB->get_records('enrol',
-                            array('enrol' => 'flatfile', 'courseid' => $course->id));
-            foreach ($instances as $instance) {
-                // Unenrol the user from all flatfile enrolment instances
-                $this->unenrol_user($instance, $user->id);
-            }
-        }
+            $rolemap = $this->get_role_map($trace);
 
+            $content = textlib::convert($content, $this->get_config('encoding', 'utf-8'), 'utf-8');
+            $content = str_replace("\r", '', $content);
+            $content = explode("\n", $content);
 
-        if ( empty($elog) and ($action== "add") ) {
-            $role = $DB->get_record("role", array("id"=>$roleid));
+            $line = 0;
+            foreach($content as $fields) {
+                $line++;
 
-            if ($role->archetype == "student") {
+                if (trim($fields) === '') {
+                    // Empty lines are ignored.
+                    continue;
+                }
 
-                // TODO: replace this with check for $CFG->couremanager, 'moodle/course:update' is definitely wrong
-                if ($teachers = get_users_by_capability($context, 'moodle/course:update', 'u.*')) {
-                    foreach ($teachers as $u) {
-                        $teacher = $u;
+                // Deal with different separators.
+                if (strpos($fields, ',') !== false) {
+                    $fields = explode(',', $fields);
+                } else {
+                    $fields = explode(';', $fields);
+                }
+
+                // If a line is incorrectly formatted ie does not have 4 comma separated fields then ignore it.
+                if (count($fields) < 4 or count($fields) > 6) {
+                    $trace->output("Line incorrectly formatted - ignoring $line", 1);
+                    continue;
+                }
+
+                $fields[0] = trim(textlib::strtolower($fields[0]));
+                $fields[1] = trim(textlib::strtolower($fields[1]));
+                $fields[2] = trim($fields[2]);
+                $fields[3] = trim($fields[3]);
+                $fields[4] = isset($fields[4]) ? (int)trim($fields[4]) : 0;
+                $fields[5] = isset($fields[5]) ? (int)trim($fields[5]) : 0;
+
+                // Deal with quoted values - all or nothing, we need to support "' in idnumbers, sorry.
+                if (strpos($fields[0], "'") === 0) {
+                    foreach ($fields as $k=>$v) {
+                        $fields[$k] = trim($v, "'");
+                    }
+                } else if (strpos($fields[0], '"') === 0) {
+                    foreach ($fields as $k=>$v) {
+                        $fields[$k] = trim($v, '"');
                     }
                 }
 
-                if (!isset($teacher)) {
-                    $teacher = get_admin();
+                $trace->output("$line: $fields[0], $fields[1], $fields[2], $fields[3], $fields[4], $fields[5]", 1);
+
+                // Check correct formatting of operation field.
+                if ($fields[0] !== "add" and $fields[0] !== "del") {
+                    $trace->output("Unknown operation in field 1 - ignoring line $line", 1);
+                    continue;
                 }
-            } else {
-                $teacher = get_admin();
+
+                // Check correct formatting of role field.
+                if (!isset($rolemap[$fields[1]])) {
+                    $trace->output("Unknown role in field2 - ignoring line $line", 1);
+                    continue;
+                }
+                $roleid = $rolemap[$fields[1]];
+
+                if (!$user = $DB->get_record("user", array("idnumber"=>$fields[2]))) {
+                    $trace->output("Unknown user idnumber in field 3 - ignoring line $line", 1);
+                    continue;
+                }
+
+                if (!$course = $DB->get_record("course", array("idnumber"=>$fields[3]))) {
+                    $trace->output("Unknown course idnumber in field 4 - ignoring line $line", 1);
+                    continue;
+                }
+
+                if ($fields[4] > $fields[5] and $fields[5] != 0) {
+                    $trace->output("Start time was later than end time - ignoring line $line", 1);
+                    continue;
+                }
+
+                $this->process_records($trace, $fields[0], $roleid, $user, $course, $fields[4], $fields[5]);
             }
 
+            unset($content);
+        }
 
-            if (!empty($mailstudents)) {
-                // Send mail to students
+        if (!unlink($filelocation)) {
+            $eventdata = new stdClass();
+            $eventdata->modulename        = 'moodle';
+            $eventdata->component         = 'enrol_flatfile';
+            $eventdata->name              = 'flatfile_enrolment';
+            $eventdata->userfrom          = get_admin();
+            $eventdata->userto            = get_admin();
+            $eventdata->subject           = get_string('filelockedmailsubject', 'enrol_flatfile');
+            $eventdata->fullmessage       = get_string('filelockedmail', 'enrol_flatfile', $filelocation);
+            $eventdata->fullmessageformat = FORMAT_PLAIN;
+            $eventdata->fullmessagehtml   = '';
+            $eventdata->smallmessage      = '';
+            message_send($eventdata);
+            $trace->output("Error deleting enrolment file: $disclosefile", 1);
+        } else {
+            $trace->output("Deleted enrolment file", 1);
+        }
+
+        $trace->output("...finished enrolment file processing.");
+        $trace->finished();
+
+        return true;
+    }
+
+    /**
+     * Process any future enrollments stored in the buffer.
+     * @param progress_trace $trace
+     * @return bool true if any data processed, false if not
+     */
+    protected function process_buffer(progress_trace $trace) {
+        global $DB;
+
+        if (!$future_enrols = $DB->get_records_select('enrol_flatfile', "timestart < ?", array(time()))) {
+            $trace->output("No enrolments to be processed in flatfile buffer");
+            $trace->finished();
+            return false;
+        }
+
+        $trace->output("Starting processing of flatfile buffer");
+        foreach($future_enrols as $en) {
+            $user = $DB->get_record('user', array('id'=>$en->userid));
+            $course = $DB->get_record('course', array('id'=>$en->courseid));
+            if ($user and $course) {
+                $trace->output("buffer: $en->action $en->roleid $user->id $course->id $en->timestart $en->timeend", 1);
+                $this->process_records($trace, $en->action, $en->roleid, $user, $course, $en->timestart, $en->timeend, false);
+            }
+            $DB->delete_records('enrol_flatfile', array('id'=>$en->id));
+        }
+        $trace->output("Finished processing of flatfile buffer");
+        $trace->finished();
+
+        return true;
+    }
+
+    /**
+     * Process user enrolment line.
+     *
+     * @param progress_trace $trace
+     * @param string $action
+     * @param int $roleid
+     * @param stdClass $user
+     * @param stdClass $course
+     * @param int $timestart
+     * @param int $timeend
+     * @param bool $buffer_if_future
+     */
+    protected function process_records(progress_trace $trace, $action, $roleid, $user, $course, $timestart, $timeend, $buffer_if_future = true) {
+        global $CFG, $DB, $SESSION;
+
+        // Check if timestart is for future processing.
+        if ($timestart > time() and $buffer_if_future) {
+            // Populate into enrol_flatfile table as a future role to be assigned by cron.
+            // Note: since 2.0 future enrolments do not cause problems if you disable guest access.
+            $future_en = new stdClass();
+            $future_en->action       = $action;
+            $future_en->roleid       = $roleid;
+            $future_en->userid       = $user->id;
+            $future_en->courseid     = $course->id;
+            $future_en->timestart    = $timestart;
+            $future_en->timeend      = $timeend;
+            $future_en->timemodified = time();
+            $DB->insert_record('enrol_flatfile', $future_en);
+            $trace->output("User $user->id will be enrolled later into course $course->id using role $roleid ($timestart, $timeend)", 1);
+            return;
+        }
+
+        $context = context_course::instance($course->id);
+
+        if ($action === 'add') {
+            // Clear the buffer just in case there were some future enrolments.
+            $DB->delete_records('enrol_flatfile', array('userid'=>$user->id, 'courseid'=>$course->id, 'roleid'=>$roleid));
+
+            $instance = $DB->get_record('enrol', array('courseid' => $course->id, 'enrol' => 'flatfile'));
+            if (empty($instance)) {
+                // Only add an enrol instance to the course if non-existent.
+                $enrolid = $this->add_instance($course);
+                $instance = $DB->get_record('enrol', array('id' => $enrolid));
+            }
+
+            $notify = false;
+            if ($ue = $DB->get_record('user_enrolments', array('enrolid'=>$instance->id, 'userid'=>$user->id))) {
+                // Update only.
+                $this->update_user_enrol($instance, $user->id, ENROL_USER_ACTIVE, $roleid, $timestart, $timeend);
+                if (!$DB->record_exists('role_assignments', array('contextid'=>$context->id, 'roleid'=>$roleid, 'userid'=>$user->id, 'component'=>'enrol_flatfile', 'itemid'=>$instance->id))) {
+                    role_assign($roleid, $user->id, $context->id, 'enrol_flatfile', $instance->id);
+                }
+                $trace->output("User $user->id enrolment updated in course $course->id using role $roleid ($timestart, $timeend)", 1);
+
+            } else {
+                // Enrol the user with this plugin instance.
+                $this->enrol_user($instance, $user->id, $roleid, $timestart, $timeend);
+                $trace->output("User $user->id enrolled in course $course->id using role $roleid ($timestart, $timeend)", 1);
+                $notify = true;
+            }
+
+            if ($notify and $this->get_config('mailstudents')) {
+                // Some nasty hackery to get strings and dates localised for target user.
+                $sessionlang = isset($SESSION->lang) ? $SESSION->lang : null;
+                if (get_string_manager()->translation_exists($user->lang, false)) {
+                    $SESSION->lang = $user->lang;
+                    moodle_setlocale();
+                }
+
+                // Send welcome notification to enrolled users.
                 $a = new stdClass();
                 $a->coursename = format_string($course->fullname, true, array('context' => $context));
                 $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id";
-                $subject = get_string("enrolmentnew", 'enrol', format_string($course->shortname, true, array('context' => $context)));
+                $subject = get_string('enrolmentnew', 'enrol', format_string($course->shortname, true, array('context' => $context)));
 
                 $eventdata = new stdClass();
                 $eventdata->modulename        = 'moodle';
                 $eventdata->component         = 'enrol_flatfile';
                 $eventdata->name              = 'flatfile_enrolment';
-                $eventdata->userfrom          = $teacher;
+                $eventdata->userfrom          = $this->get_enroller($course->id);
                 $eventdata->userto            = $user;
                 $eventdata->subject           = $subject;
                 $eventdata->fullmessage       = get_string('welcometocoursetext', '', $a);
                 $eventdata->fullmessageformat = FORMAT_PLAIN;
                 $eventdata->fullmessagehtml   = '';
                 $eventdata->smallmessage      = '';
-                message_send($eventdata);
-            }
+                if (message_send($eventdata)) {
+                    $trace->output("Notified enrolled user", 1);
+                } else {
+                    $trace->output("Failed to notify enrolled user", 1);
+                }
 
-            if (!empty($mailteachers) && $teachers) {
-
-                // Send mail to teachers
-                foreach($teachers as $teacher) {
-                    $a = new stdClass();
-                    $a->course = format_string($course->fullname, true, array('context' => $context));
-                    $a->user = fullname($user);
-                    $subject = get_string("enrolmentnew", 'enrol', format_string($course->shortname, true, array('context' => $context)));
-
-                    $eventdata = new stdClass();
-                    $eventdata->modulename        = 'moodle';
-                    $eventdata->component         = 'enrol_flatfile';
-                    $eventdata->name              = 'flatfile_enrolment';
-                    $eventdata->userfrom          = $user;
-                    $eventdata->userto            = $teacher;
-                    $eventdata->subject           = $subject;
-                    $eventdata->fullmessage       = get_string('enrolmentnewuser', 'enrol', $a);
-                    $eventdata->fullmessageformat = FORMAT_PLAIN;
-                    $eventdata->fullmessagehtml   = '';
-                    $eventdata->smallmessage      = '';
-                    message_send($eventdata);
+                if ($SESSION->lang !== $sessionlang) {
+                    $SESSION->lang = $sessionlang;
+                    moodle_setlocale();
                 }
             }
+
+            if ($notify and $this->get_config('mailteachers', 0)) {
+                // Notify person responsible for enrolments.
+                $enroller = $this->get_enroller($course->id);
+
+                // Some nasty hackery to get strings and dates localised for target user.
+                $sessionlang = isset($SESSION->lang) ? $SESSION->lang : null;
+                if (get_string_manager()->translation_exists($enroller->lang, false)) {
+                    $SESSION->lang = $enroller->lang;
+                    moodle_setlocale();
+                }
+
+                $a = new stdClass();
+                $a->course = format_string($course->fullname, true, array('context' => $context));
+                $a->user = fullname($user);
+                $subject = get_string('enrolmentnew', 'enrol', format_string($course->shortname, true, array('context' => $context)));
+
+                $eventdata = new stdClass();
+                $eventdata->modulename        = 'moodle';
+                $eventdata->component         = 'enrol_flatfile';
+                $eventdata->name              = 'flatfile_enrolment';
+                $eventdata->userfrom          = get_admin();
+                $eventdata->userto            = $enroller;
+                $eventdata->subject           = $subject;
+                $eventdata->fullmessage       = get_string('enrolmentnewuser', 'enrol', $a);
+                $eventdata->fullmessageformat = FORMAT_PLAIN;
+                $eventdata->fullmessagehtml   = '';
+                $eventdata->smallmessage      = '';
+                if (message_send($eventdata)) {
+                    $trace->output("Notified enroller {$eventdata->userto->id}", 1);
+                } else {
+                    $trace->output("Failed to notify enroller {$eventdata->userto->id}", 1);
+                }
+
+                if ($SESSION->lang !== $sessionlang) {
+                    $SESSION->lang = $sessionlang;
+                    moodle_setlocale();
+                }
+            }
+            return;
+
+        } else if ($action === 'del') {
+            // Clear the buffer just in case there were some future enrolments.
+            $DB->delete_records('enrol_flatfile', array('userid'=>$user->id, 'courseid'=>$course->id, 'roleid'=>$roleid));
+
+            $action = $this->get_config('unenrolaction');
+            if ($action == ENROL_EXT_REMOVED_KEEP) {
+                $trace->output("del action is ignored", 1);
+                return;
+            }
+
+            // Loops through all enrolment methods, try to unenrol if roleid somehow matches.
+            $instances = $DB->get_records('enrol', array('courseid' => $course->id));
+            $unenrolled = false;
+            foreach ($instances as $instance) {
+                if (!$ue = $DB->get_record('user_enrolments', array('enrolid'=>$instance->id, 'userid'=>$user->id))) {
+                    continue;
+                }
+                if ($instance->enrol === 'flatfile') {
+                    $plugin = $this;
+                } else {
+                    if (!enrol_is_enabled($instance->enrol)) {
+                        continue;
+                    }
+                    if (!$plugin = enrol_get_plugin($instance->enrol)) {
+                        continue;
+                    }
+                    if (!$plugin->allow_unenrol_user($instance, $ue)) {
+                        continue;
+                    }
+                }
+
+                // For some reason the del action includes a role name, this complicates everything.
+                $componentroles = array();
+                $manualroles = array();
+                $ras = $DB->get_records('role_assignments', array('userid'=>$user->id, 'contextid'=>$context->id));
+                foreach ($ras as $ra) {
+                    if ($ra->component === '') {
+                        $manualroles[$ra->roleid] = $ra->roleid;
+                    } else if ($ra->component === 'enrol_'.$instance->enrol and $ra->itemid == $instance->id) {
+                        $componentroles[$ra->roleid] = $ra->roleid;
+                    }
+                }
+
+                if ($componentroles and !isset($componentroles[$roleid])) {
+                    // Do not unenrol using this method, user has some other protected role!
+                    continue;
+
+                } else if (empty($ras)) {
+                    // If user does not have any roles then let's just suspend as many methods as possible.
+
+                } else if (!$plugin->roles_protected()) {
+                    if (!$componentroles and $manualroles and !isset($manualroles[$roleid])) {
+                        // Most likely we want to keep users enrolled because they have some other course roles.
+                        continue;
+                    }
+                }
+
+                if ($action == ENROL_EXT_REMOVED_UNENROL) {
+                    $unenrolled = true;
+                    if (!$plugin->roles_protected()) {
+                        role_unassign_all(array('contextid'=>$context->id, 'userid'=>$user->id, 'roleid'=>$roleid, 'component'=>'', 'itemid'=>0), true);
+                    }
+                    $plugin->unenrol_user($instance, $user->id);
+                    $trace->output("User $user->id was unenrolled from course $course->id (enrol_$instance->enrol)", 1);
+
+                } else if ($action == ENROL_EXT_REMOVED_SUSPENDNOROLES) {
+                    if ($plugin->allow_manage($instance)) {
+                        if ($ue->status == ENROL_USER_ACTIVE) {
+                            $unenrolled = true;
+                            $plugin->update_user_enrol($instance, $user->id, ENROL_USER_SUSPENDED);
+                            if (!$plugin->roles_protected()) {
+                                role_unassign_all(array('contextid'=>$context->id, 'userid'=>$user->id, 'component'=>'enrol_'.$instance->enrol, 'itemid'=>$instance->id), true);
+                                role_unassign_all(array('contextid'=>$context->id, 'userid'=>$user->id, 'roleid'=>$roleid, 'component'=>'', 'itemid'=>0), true);
+                            }
+                            $trace->output("User $user->id enrolment was suspended in course $course->id (enrol_$instance->enrol)", 1);
+                        }
+                    }
+                }
+            }
+
+            if (!$unenrolled) {
+                if (0 == $DB->count_records('role_assignments', array('userid'=>$user->id, 'contextid'=>$context->id))) {
+                    role_unassign_all(array('contextid'=>$context->id, 'userid'=>$user->id, 'component'=>'', 'itemid'=>0), true);
+                }
+                $trace->output("User $user->id (with role $roleid) not unenrolled from course $course->id", 1);
+            }
+
+            return;
         }
-
-
-        if (empty($elog)) {
-            $elog = "OK\n";
-        }
-        $this->log .= $elog;
-
-        return true;
     }
 
     /**
-     * Returns a pair of arrays.  The first is the set of roleids, indexed by
-     * their shortnames.  The second is the set of shortnames that have
-     * mappings, indexed by those mappings.
+     * Do any enrolment expiration processing.
      *
-     * @return array ($roles, $rolemap)
+     * @param progress_trace $trace
+     * @return bool true if any data processed, false if not
      */
-    function get_roles() {
+    protected function process_expirations(progress_trace $trace) {
         global $DB;
 
-        // Get all roles
-        $roles = $DB->get_records('role', null, '', 'id, name, shortname');
+        //TODO: this method should be moved to parent class once we refactor all existing enrols, see MDL-36504.
 
-        $config = get_config('enrol_flatfile');
+        $processed = false;
+        $name = $this->get_name();
 
-        // Set some usable mapping configs for later
-        foreach($roles as $id => $role) {
-            if (isset($config->{"map_{$id}"})) {
-                set_config('map_'.$role->shortname, $config->{"map_{$id}"}, 'enrol_flatfile');
-            } else {
-                set_config('map_'.$role->shortname, $role->shortname, 'enrol_flatfile');
+        // Deal with expired accounts.
+        $action = $this->get_config('expiredaction', ENROL_EXT_REMOVED_KEEP);
+
+        if ($action == ENROL_EXT_REMOVED_UNENROL) {
+            $instances = array();
+            $sql = "SELECT ue.*, e.courseid, c.id AS contextid
+                      FROM {user_enrolments} ue
+                      JOIN {enrol} e ON (e.id = ue.enrolid AND e.enrol = :enrol)
+                      JOIN {context} c ON (c.instanceid = e.courseid AND c.contextlevel = :courselevel)
+                     WHERE ue.timeend > 0 AND ue.timeend < :now";
+            $params = array('now'=>time(), 'courselevel'=>CONTEXT_COURSE, 'enrol'=>$name);
+
+            $rs = $DB->get_recordset_sql($sql, $params);
+            foreach ($rs as $ue) {
+                if (!$processed) {
+                    $trace->output("Starting processing of enrol_$name expirations...");
+                    $processed = true;
+                }
+                if (empty($instances[$ue->enrolid])) {
+                    $instances[$ue->enrolid] = $DB->get_record('enrol', array('id'=>$ue->enrolid));
+                }
+                $instance = $instances[$ue->enrolid];
+                if (!$this->roles_protected()) {
+                    // Let's just guess what extra roles are supposed to be removed.
+                    if ($instance->roleid) {
+                        role_unassign($instance->roleid, $ue->userid, $ue->contextid);
+                    }
+                }
+                // The unenrol cleans up all subcontexts if this is the only course enrolment for this user.
+                $this->unenrol_user($instance, $ue->userid);
+                $trace->output("Unenrolling expired user $ue->userid from course $instance->courseid", 1);
             }
-        }
-        // Get the updated config
-        $config = get_config('enrol_flatfile');
-        // Get a list of all the roles in the database, indexed by their short names.
-        $roles = $DB->get_records('role', null, '', 'shortname, id');
+            $rs->close();
+            unset($instances);
 
-        // Get any name mappings. These will be of the form 'map_shortname' => 'flatfilename'.
-        array_walk($roles, create_function('&$value', '$value = $value->id;'));
-        $rolemap = array();
-        foreach($config as $name => $value) {
-            if (strpos($name, 'map_') === 0 && isset($roles[$key = substr($name, 4)])) {
-                $rolemap[$value] = $key;
+        } else if ($action == ENROL_EXT_REMOVED_SUSPENDNOROLES) {
+            $instances = array();
+            $sql = "SELECT ue.*, e.courseid, c.id AS contextid
+                      FROM {user_enrolments} ue
+                      JOIN {enrol} e ON (e.id = ue.enrolid AND e.enrol = :enrol)
+                      JOIN {context} c ON (c.instanceid = e.courseid AND c.contextlevel = :courselevel)
+                     WHERE ue.timeend > 0 AND ue.timeend < :now
+                           AND ue.status = :useractive";
+            $params = array('now'=>time(), 'courselevel'=>CONTEXT_COURSE, 'useractive'=>ENROL_USER_ACTIVE, 'enrol'=>$name);
+            $rs = $DB->get_recordset_sql($sql, $params);
+            foreach ($rs as $ue) {
+                if (!$processed) {
+                    $trace->output("Starting processing of enrol_$name expirations...");
+                    $processed = true;
+                }
+                if (empty($instances[$ue->enrolid])) {
+                    $instances[$ue->enrolid] = $DB->get_record('enrol', array('id'=>$ue->enrolid));
+                }
+                $instance = $instances[$ue->enrolid];
+
+                if (!$this->roles_protected()) {
+                    // Let's just guess what roles should be removed.
+                    $count = $DB->count_records('role_assignments', array('userid'=>$ue->userid, 'contextid'=>$ue->contextid));
+                    if ($count == 1) {
+                        role_unassign_all(array('userid'=>$ue->userid, 'contextid'=>$ue->contextid, 'component'=>'', 'itemid'=>0));
+
+                    } else if ($count > 1 and $instance->roleid) {
+                        role_unassign($instance->roleid, $ue->userid, $ue->contextid, '', 0);
+                    }
+                }
+                // In any case remove all roles that belong to this instance and user.
+                role_unassign_all(array('userid'=>$ue->userid, 'contextid'=>$ue->contextid, 'component'=>'enrol_'.$name, 'itemid'=>$instance->id), true);
+                // Final cleanup of subcontexts if there are no more course roles.
+                if (0 == $DB->count_records('role_assignments', array('userid'=>$ue->userid, 'contextid'=>$ue->contextid))) {
+                    role_unassign_all(array('userid'=>$ue->userid, 'contextid'=>$ue->contextid, 'component'=>'', 'itemid'=>0), true);
+                }
+
+                $this->update_user_enrol($instance, $ue->userid, ENROL_USER_SUSPENDED);
+                $trace->output("Suspending expired user $ue->userid in course $instance->courseid", 1);
             }
+            $rs->close();
+            unset($instances);
+
+        } else {
+            // ENROL_EXT_REMOVED_KEEP means no changes.
         }
 
-        return array($roles, $rolemap);
+        if ($processed) {
+            $trace->output("...finished processing of enrol_$name expirations");
+        } else {
+            $trace->output("No expired enrol_$name enrolments detected");
+        }
+        $trace->finished();
+
+        return $processed;
     }
 
-} // end of class
+    /**
+     * Returns the user who is responsible for flatfile enrolments in given curse.
+     *
+     * Usually it is the first editing teacher - the person with "highest authority"
+     * as defined by sort_by_roleassignment_authority() having 'enrol/flatfile:manage'
+     * or 'moodle/role:assign' capability.
+     *
+     * @param int $courseid enrolment instance id
+     * @return stdClass user record
+     */
+    protected function get_enroller($courseid) {
+        if ($this->lasternollercourseid == $courseid and $this->lasternoller) {
+            return $this->lasternoller;
+        }
+
+        $context = context_course::instance($courseid);
+
+        $users = get_enrolled_users($context, 'enrol/flatfile:manage');
+        if (!$users) {
+            $users = get_enrolled_users($context, 'moodle/role:assign');
+        }
+
+        if ($users) {
+            $users = sort_by_roleassignment_authority($users, $context);
+            $this->lasternoller = reset($users);
+            unset($users);
+        } else {
+            $this->lasternoller = get_admin();
+        }
+
+        $this->lasternollercourseid == $courseid;
+
+        return $this->lasternoller;
+    }
+
+    /**
+     * Returns a mapping of ims roles to role ids.
+     *
+     * @param progress_trace $trace
+     * @return array imsrolename=>roleid
+     */
+    protected function get_role_map(progress_trace $trace) {
+        global $DB;
+
+        // Get all roles.
+        $rolemap = array();
+        $roles = $DB->get_records('role', null, '', 'id, name, shortname');
+        foreach ($roles as $id=>$role) {
+            $alias = $this->get_config('map_'.$id, $role->shortname, '');
+            $alias = trim(textlib::strtolower($alias));
+            if ($alias === '') {
+                // Either not configured yet or somebody wants to skip these intentionally.
+                continue;
+            }
+            if (isset($rolemap[$alias])) {
+                $trace->output("Duplicate role alias $alias detected!");
+            } else {
+                $rolemap[$alias] = $id;
+            }
+        }
+
+        return $rolemap;
+    }
+
+    /**
+     * Restore instance and map settings.
+     *
+     * @param restore_enrolments_structure_step $step
+     * @param stdClass $data
+     * @param stdClass $course
+     * @param int $oldid
+     */
+    public function restore_instance(restore_enrolments_structure_step $step, stdClass $data, $course, $oldid) {
+        global $DB;
+
+        if ($instance = $DB->get_record('enrol', array('courseid'=>$course->id, 'enrol'=>$this->get_name()))) {
+            $instanceid = $instance->id;
+        } else {
+            $instanceid = $this->add_instance($course);
+        }
+        $step->set_mapping('enrol', $oldid, $instanceid);
+    }
+
+    /**
+     * Restore user enrolment.
+     *
+     * @param restore_enrolments_structure_step $step
+     * @param stdClass $data
+     * @param stdClass $instance
+     * @param int $oldinstancestatus
+     * @param int $userid
+     */
+    public function restore_user_enrolment(restore_enrolments_structure_step $step, $data, $instance, $userid, $oldinstancestatus) {
+        $this->enrol_user($instance, $userid, null, $data->timestart, $data->timeend, $data->status);
+    }
+
+    /**
+     * Restore role assignment.
+     *
+     * @param stdClass $instance
+     * @param int $roleid
+     * @param int $userid
+     * @param int $contextid
+     */
+    public function restore_role_assignment($instance, $roleid, $userid, $contextid) {
+        role_assign($roleid, $userid, $contextid, 'enrol_'.$instance->enrol, $instance->id);
+    }
+}
