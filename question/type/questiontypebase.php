@@ -454,7 +454,7 @@ class question_type {
                 $options->$questionidcolname = $question->id;
             }
             foreach ($extraquestionfields as $field) {
-                if (property_exists($question->$field)) {
+                if (property_exists($question, $field)) {
                     $options->$field = $question->$field;
                 }
             }
