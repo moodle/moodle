@@ -1280,7 +1280,7 @@ class block_manager {
 
             // This may get overwritten by the special case handling below.
             $bi->pagetypepattern = $data->bui_pagetypepattern;
-            $bi->showinsubcontexts = $data->bui_contexts;
+            $bi->showinsubcontexts = (bool) $data->bui_contexts;
             if (empty($data->bui_subpagepattern) || $data->bui_subpagepattern == '%@NULL@%') {
                 $bi->subpagepattern = null;
             } else {
