@@ -194,7 +194,7 @@ if ($mform_post->is_cancelled()) {
                         echo $OUTPUT->notification(get_string('groupnotaddederror', 'error', $groupname));
                         continue;
                     }
-                    
+
                     // Add group to grouping
                     if (isset($newgroup->groupingname)) {
                         $groupingname = $newgroup->groupingname;
