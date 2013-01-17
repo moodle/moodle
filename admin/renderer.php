@@ -918,9 +918,11 @@ class core_admin_renderer extends plugin_renderer_base {
             } else {
                 $str = 'otherplugin';
             }
+            $componenturl = new moodle_url('https://moodle.org/plugins/view.php?plugin='.$component);
+            $componenturl = html_writer::tag('a', $component, array('href' => $componenturl->out()));
             $requires[] = html_writer::tag('li',
                     get_string($str, 'core_plugin',
-                            array('component' => $component, 'version' => $requiredversion)),
+                            array('component' => $componenturl, 'version' => $requiredversion)),
                     array('class' => $class));
         }
 
