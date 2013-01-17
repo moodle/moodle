@@ -110,7 +110,12 @@ class assign_submission_comments extends assign_submission_plugin {
      * @return bool was it a success? (false will trigger a rollback)
      */
     public function upgrade_settings(context $oldcontext, stdClass $oldassignment, & $log) {
-        // No settings to upgrade.
+        if ($oldassignment->assignmenttype == 'upload') {
+            // Disable if allow notes was not enabled.
+            if (!$oldassignment->var2) {
+                $this->disable();
+            }
+        }
         return true;
     }
 
