@@ -229,7 +229,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $submission->id = $sid;
 
         $onlinetextsubmission = new stdClass();
-        $onlinetextsubmission->onlinetext = "online test text";
+        $onlinetextsubmission->onlinetext = "<p>online test text</p>";
         $onlinetextsubmission->onlineformat = 1;
         $onlinetextsubmission->submission = $submission->id;
         $onlinetextsubmission->assignment = $assign1->id;

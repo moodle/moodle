@@ -643,8 +643,8 @@ class mod_assign_external extends external_api {
                                                 array(
                                                     'name' => new external_value(PARAM_TEXT, 'field name'),
                                                     'description' => new external_value(PARAM_TEXT, 'field description'),
-                                                    'text' => new external_value (PARAM_TEXT, 'field value'),
-                                                    'format' => new external_value (PARAM_INT, 'field format')
+                                                    'text' => new external_value (PARAM_RAW, 'field value'),
+                                                    'format' => new external_format_value ('text')
                                                 )
                                             )
                                             , 'editorfields', VALUE_OPTIONAL
