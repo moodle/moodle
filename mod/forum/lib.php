@@ -705,6 +705,14 @@ function forum_cron() {
                 $eventdata->fullmessagehtml  = $posthtml;
                 $eventdata->notification = 1;
 
+                // If forum_replytouser is not set then send mail using the noreplyaddress.
+                if (empty($CFG->forum_replytouser)) {
+                    // Clone userfrom as it is referenced by $users.
+                    $cloneduserfrom = clone($userfrom);
+                    $cloneduserfrom->email = $CFG->noreplyaddress;
+                    $eventdata->userfrom = $cloneduserfrom;
+                }
+
                 $smallmessagestrings = new stdClass();
                 $smallmessagestrings->user = fullname($userfrom);
                 $smallmessagestrings->forumname = "$shortname: ".format_string($forum->name,true).": ".$discussion->name;
@@ -714,11 +722,6 @@ function forum_cron() {
 
                 $eventdata->contexturl = "{$CFG->wwwroot}/mod/forum/discuss.php?d={$discussion->id}#p{$post->id}";
                 $eventdata->contexturlname = $discussion->name;
-
-                // If forum_replytouser is not set then send mail using the noreplyaddress.
-                if (empty($CFG->forum_replytouser)) {
-                    $eventdata->userfrom->email = $CFG->noreplyaddress;
-                }
 
                 $mailresult = message_send($eventdata);
                 if (!$mailresult){
