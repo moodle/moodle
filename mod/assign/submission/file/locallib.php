@@ -316,6 +316,16 @@ class assign_submission_file extends assign_submission_plugin {
                            'submissiondrafts',
                            $oldassignment->var4,
                            array('id'=>$this->assignment->get_instance()->id));
+
+            // Convert advanced file upload "hide description before due date" setting.
+            $alwaysshow = 0;
+            if (!$oldassignment->var3) {
+                $alwaysshow = 1;
+            }
+            $DB->set_field('assign',
+                           'alwaysshowdescription',
+                           $alwaysshow,
+                           array('id'=>$this->assignment->get_instance()->id));
             return true;
         }
 
