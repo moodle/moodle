@@ -86,9 +86,11 @@ function groups_get_grouping_name($groupingid) {
  * @return int $groupid
  */
 function groups_get_group_by_name($courseid, $name) {
-    global $DB;
-    if ($groups = $DB->get_records('groups', array('courseid'=>$courseid, 'name'=>$name))) {
-        return key($groups);
+    $data = groups_get_course_data($courseid);
+    foreach ($data->groups as $group) {
+        if ($group->name == $name) {
+            return $group->id;
+        }
     }
     return false;
 }
@@ -103,11 +105,14 @@ function groups_get_group_by_name($courseid, $name) {
  * @return group object
  */
 function groups_get_group_by_idnumber($courseid, $idnumber) {
-    global $DB;
     if (empty($idnumber)) {
         return false;
-    } else if ($group = $DB->get_record('groups', array('courseid' => $courseid, 'idnumber' => $idnumber))) {
-        return $group;
+    }
+    $data = groups_get_course_data($courseid);
+    foreach ($data->groups as $group) {
+        if ($group->idnumber == $idnumber) {
+            return $group;
+        }
     }
     return false;
 }
@@ -122,9 +127,11 @@ function groups_get_group_by_idnumber($courseid, $idnumber) {
  * @return int $groupid
  */
 function groups_get_grouping_by_name($courseid, $name) {
-    global $DB;
-    if ($groupings = $DB->get_records('groupings', array('courseid'=>$courseid, 'name'=>$name))) {
-        return key($groupings);
+    $data = groups_get_course_data($courseid);
+    foreach ($data->groupings as $grouping) {
+        if ($grouping->name == $name) {
+            return $grouping->id;
+        }
     }
     return false;
 }
@@ -139,11 +146,14 @@ function groups_get_grouping_by_name($courseid, $name) {
  * @return grouping object
  */
 function groups_get_grouping_by_idnumber($courseid, $idnumber) {
-    global $DB;
     if (empty($idnumber)) {
         return false;
-    } else if ($grouping = $DB->get_record('groupings', array('courseid' => $courseid, 'idnumber' => $idnumber))) {
-        return $grouping;
+    }
+    $data = groups_get_course_data($courseid);
+    foreach ($data->groupings as $grouping) {
+        if ($grouping->idnumber == $idnumber) {
+            return $grouping;
+        }
     }
     return false;
 }
@@ -188,6 +198,42 @@ function groups_get_grouping($groupingid, $fields='*', $strictness=IGNORE_MISSIN
  */
 function groups_get_all_groups($courseid, $userid=0, $groupingid=0, $fields='g.*') {
     global $DB;
+
+    // We need to check that we each field in the fields list belongs to the group table and that it has not being
+    // aliased. If its something else we need to avoid the cache and run the query as who knows whats going on.
+    $knownfields = true;
+    if ($fields !== 'g.*') {
+        $fieldbits = explode(',', $fields);
+        foreach ($fieldbits as $bit) {
+            $bit = trim($bit);
+            if (strpos($bit, 'g.') !== 0 or stripos($bit, ' AS ') !== false) {
+                $knownfields = false;
+                break;
+            }
+        }
+    }
+
+    if (empty($userid) && $knownfields) {
+        // We can use the cache.
+        $data = groups_get_course_data($courseid);
+        if (empty($groupingid)) {
+            // All groups.. Easy!
+            $groups = $data->groups;
+        } else {
+            $groups = array();
+            foreach ($data->mappings as $mapping) {
+                if ($mapping->groupingid != $groupingid) {
+                    continue;
+                }
+                if (isset($data->groups[$mapping->groupid])) {
+                    $groups[$mapping->groupid] = $data->groups[$mapping->groupid];
+                }
+            }
+        }
+        // Yay! We could use the cache. One more query saved.
+        return $groups;
+    }
+
 
     if (empty($userid)) {
         $userfrom  = "";
@@ -276,22 +322,8 @@ function groups_get_user_groups($courseid, $userid=0) {
  * @return array Returns an array of the grouping objects (empty if none)
  */
 function groups_get_all_groupings($courseid) {
-    global $CFG, $DB, $GROUPLIB_CACHE;
-
-    // Use cached data if available. (Note: We only cache a single request, so
-    // as not to waste memory if processing is happening for multiple courses.)
-    if (!empty($GROUPLIB_CACHE->groupings) &&
-            $GROUPLIB_CACHE->groupings->courseid == $courseid) {
-        return $GROUPLIB_CACHE->groupings->result;
-    }
-    if (empty($GROUPLIB_CACHE)) {
-        $GROUPLIB_CACHE = new stdClass();
-    }
-    $GROUPLIB_CACHE->groupings = new stdClass();
-    $GROUPLIB_CACHE->groupings->courseid = $courseid;
-    $GROUPLIB_CACHE->groupings->result =
-            $DB->get_records('groupings', array('courseid' => $courseid), 'name ASC');
-    return $GROUPLIB_CACHE->groupings->result;
+    $data = groups_get_course_data($courseid);
+    return $data->groupings;
 }
 
 /**
@@ -809,4 +841,75 @@ function _group_verify_activegroup($courseid, $groupmode, $groupingid, array $al
             $SESSION->activegroup[$courseid][$groupmode][$groupingid] = 0;
         }
     }
+}
+
+/**
+ * Caches group data for a particular course to speed up subsequent requests.
+ *
+ * @param int $courseid The course id to cache data for.
+ * @param cache $cache The cache if it has already been initialised. If not a new one will be created.
+ * @return stdClass A data object containing groups, groupings, and mappings.
+ */
+function groups_cache_groupdata($courseid, cache $cache = null) {
+    global $DB;
+
+    if ($cache === null) {
+        // Initialise a cache if we wern't given one.
+        $cache = cache::make('core', 'groupdata');
+    }
+
+    // Get the groups that belong to the course.
+    $groups = $DB->get_records('groups', array('courseid' => $courseid), 'name ASC');
+    // Get the groupings that belong to the course.
+    $groupings = $DB->get_records('groupings', array('courseid' => $courseid), 'name ASC');
+
+    if (!is_array($groups)) {
+        $groups = array();
+    }
+
+    if (!is_array($groupings)) {
+        $groupings = array();
+    }
+
+    if (!empty($groupings)) {
+        // Finally get the mappings between the two.
+        $mappings = $DB->get_records_list('groupings_groups', 'groupingid', array_keys($groupings), '', 'id,groupingid,groupid');
+    } else {
+        $mappings = array();
+    }
+
+    // Prepare the data array.
+    $data = new stdClass;
+    $data->groups = $groups;
+    $data->groupings = $groupings;
+    $data->mappings = $mappings;
+    // Cache the data.
+    $cache->set($courseid, $data);
+    // Finally return it so it can be used if desired.
+    return $data;
+}
+
+/**
+ * Gets group data for a course.
+ *
+ * This returns an object with the following properties:
+ *   - groups : An array of all the groups in the course.
+ *   - groupings : An array of all the groupings within the course.
+ *   - mappings : An array of group to grouping mappings.
+ *
+ * @param int $courseid The course id to get data for.
+ * @param cache $cache The cache if it has already been initialised. If not a new one will be created.
+ * @return stdClass
+ */
+function groups_get_course_data($courseid, cache $cache = null) {
+    if ($cache === null) {
+        // Initialise a cache if we wern't given one.
+        $cache = cache::make('core', 'groupdata');
+    }
+    // Try to retrieve it from the cache.
+    $data = $cache->get($courseid);
+    if ($data === false) {
+        $data = groups_cache_groupdata($courseid, $cache);
+    }
+    return $data;
 }

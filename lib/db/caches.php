@@ -94,4 +94,15 @@ $definitions = array(
         'persistent' => true,
         'simpledata' => true
     ),
+
+    // Groupings belonging to a course.
+    // A simple cache designed to replace $GROUPLIB_CACHE->groupings.
+    // Items are organised by course id and are essentially course records.
+    'groupdata' => array(
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true, // The course id the groupings exist for.
+        'simpledata' => true, // Array of stdClass objects containing only strings.
+        'persist' => true, // Likely there will be a couple of calls to this.
+        'persistmaxsize' => 2, // The original cache used 1, we've increased that to two.
+    )
 );

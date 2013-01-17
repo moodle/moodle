@@ -704,6 +704,8 @@ function process_membership_tag($tagcontents){
                                 $this->log_line('Added a new group for this course: '.$group->name);
                                 $groupids[$member->groupname] = $groupid; // Store ID in cache
                                 $member->groupid = $groupid;
+                                // Invalidate the course group data cache just in case.
+                                cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($ship->courseid));
                             }
                         }
                         // Add the user-to-group association if it doesn't already exist

@@ -554,7 +554,7 @@ class phpunit_util {
      * @return void
      */
     public static function reset_all_data($logchanges = false) {
-        global $DB, $CFG, $USER, $SITE, $COURSE, $PAGE, $OUTPUT, $SESSION, $GROUPLIB_CACHE;
+        global $DB, $CFG, $USER, $SITE, $COURSE, $PAGE, $OUTPUT, $SESSION;
 
         // Stop any message redirection.
         phpunit_util::stop_message_redirection();
@@ -638,7 +638,6 @@ class phpunit_util {
         if (class_exists('repository')) {
             repository::reset_caches();
         }
-        $GROUPLIB_CACHE = null;
         //TODO MDL-25290: add more resets here and probably refactor them to new core function
 
         // Reset course and module caches.

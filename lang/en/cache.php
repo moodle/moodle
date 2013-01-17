@@ -37,6 +37,7 @@ $string['cacheconfig'] = 'Configuration';
 $string['cachedef_config'] = 'Config settings';
 $string['cachedef_databasemeta'] = 'Database meta information';
 $string['cachedef_eventinvalidation'] = 'Event invalidation';
+$string['cachedef_groupdata'] = 'Course group information';
 $string['cachedef_htmlpurifier'] = 'HTML Purifier - cleaned content';
 $string['cachedef_locking'] = 'Locking';
 $string['cachedef_questiondata'] = 'Question definitions';
