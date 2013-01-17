@@ -1169,7 +1169,7 @@ function get_module_metadata($course, $modnames, $sectionreturn = null) {
                     if (get_string_manager()->string_exists('help' . $subtype->name, $modname)) {
                         $subtype->help = get_string('help' . $subtype->name, $modname);
                     }
-                    $subtype->link = new moodle_url($urlbase, array('add' => $subtype->type));
+                    $subtype->link = new moodle_url($urlbase, array('add' => $modname, 'type' => $subtype->name));
                     $group->types[] = $subtype;
                 }
                 $modlist[$course->id][$modname] = $group;
