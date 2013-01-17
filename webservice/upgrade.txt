@@ -1,0 +1,13 @@
+This files describes API changes in /webservice/*
+information provided here is intended especially for developers.
+
+This information is intended for authors of webservices, not people writing webservice clients.
+
+=== 2.6 ===
+
+* webservice/upload.php
+Accepts 2 new post parameters to allow uploading of files to a users draft area.
+ - filearea should be either 'private' (default) or 'draft'
+ - itemid unused if the filearea is 'private', for 'draft' it can be the id of a previously
+   created draft area - or 0 which will generate a new draft area for the files.
+
