@@ -131,9 +131,28 @@ class qtype_numerical_answer_processor_test extends advanced_testcase {
         $ap = new qtype_numerical_answer_processor(array(), false, ',', ' ');
 
         $this->assertEquals(array(-1000, '', null), $ap->apply_units('-1 000'));
+        $this->assertEquals(array(-1000000, '', null), $ap->apply_units('-1 000 000'));
+        $this->assertEquals(array(-1000000, '', null), $ap->apply_units('-1.000.000'));
+        $this->assertEquals(array(-1000000, '', null), $ap->apply_units('-1,000,000'));
+        $this->assertEquals(array(-1000.1, '', null), $ap->apply_units('-1000,1'));
+        $this->assertEquals(array(-1000.1, '', null), $ap->apply_units('-1.000,1'));
+        $this->assertEquals(array(-1000.1, '', null), $ap->apply_units('-1,000.1'));
         $this->assertEquals(array(3.14159, '', null), $ap->apply_units('3,14159'));
     }
 
+    public function test_deutsch_style() {
+        $ap = new qtype_numerical_answer_processor(array(), false, ',', '.');
+
+        $this->assertEquals(array(-1000, '', null), $ap->apply_units('-1 000'));
+        $this->assertEquals(array(-1000000, '', null), $ap->apply_units('-1 000 000'));
+        $this->assertEquals(array(-1000000, '', null), $ap->apply_units('-1.000.000'));
+        $this->assertEquals(array(-1000000, '', null), $ap->apply_units('-1.000.000,'));
+        $this->assertEquals(array(-1000.1, '', null), $ap->apply_units('-1000,1'));
+        $this->assertEquals(array(-1000.1, '', null), $ap->apply_units('-1.000,1'));
+        $this->assertEquals(array(-1000.1, '', null), $ap->apply_units('-1,000.1'));
+        $this->assertEquals(array(3.14159, '', null), $ap->apply_units('3.14159'));
+        $this->assertEquals(array(3.14159, '', null), $ap->apply_units('3,14159'));
+    }
     public function test_percent() {
         $ap = new qtype_numerical_answer_processor(array('%' => 100), false, '.', ',');
 

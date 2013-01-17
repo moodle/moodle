@@ -75,8 +75,8 @@ class qtype_numerical extends question_type {
                 array('questionid' => $question->id), 'id ASC');
 
         $this->get_numerical_units($question);
-        // get_numerical_options() need to know if there are units
-        // to set correctly default values
+        // Function get_numerical_options() need to know if there are units
+        // to set correctly default values.
         $this->get_numerical_options($question);
 
         // If units are defined we strip off the default unit from the answer, if
@@ -153,7 +153,7 @@ class qtype_numerical extends question_type {
         global $DB;
         $context = $question->context;
 
-        // Get old versions of the objects
+        // Get old versions of the objects.
         $oldanswers = $DB->get_records('question_answers',
                 array('question' => $question->id), 'id ASC');
         $oldoptions = $DB->get_records('question_numerical',
@@ -167,7 +167,7 @@ class qtype_numerical extends question_type {
             $units = $result->units;
         }
 
-        // Insert all the new answers
+        // Insert all the new answers.
         foreach ($question->answer as $key => $answerdata) {
             // Check for, and ingore, completely blank answer from the form.
             if (trim($answerdata) == '' && $question->fraction[$key] == 0 &&
@@ -200,7 +200,7 @@ class qtype_numerical extends question_type {
             $answer->feedbackformat = $question->feedback[$key]['format'];
             $DB->update_record('question_answers', $answer);
 
-            // Set up the options object
+            // Set up the options object.
             if (!$options = array_shift($oldoptions)) {
                 $options = new stdClass();
             }
@@ -323,7 +323,7 @@ class qtype_numerical extends question_type {
         $units = array();
         $unitalreadyinsert = array();
         foreach ($question->multiplier as $i => $multiplier) {
-            // Discard any unit which doesn't specify the unit or the multiplier
+            // Discard any unit which doesn't specify the unit or the multiplier.
             if (!empty($question->multiplier[$i]) && !empty($question->unit[$i]) &&
                     !array_key_exists($question->unit[$i], $unitalreadyinsert)) {
                 $unitalreadyinsert[$question->unit[$i]] = 1;
@@ -632,17 +632,35 @@ class qtype_numerical_answer_processor {
         // Strip spaces (which may be thousands separators) and change other forms
         // of writing e to e.
         $response = str_replace(' ', '', $response);
-        $response = preg_replace('~(?:e|E|(?:x|\*|×)10(?:\^|\*\*))([+-]?\d+)~', 'e$1', $response);
-
-        // If a . is present or there are multiple , (i.e. 2,456,789 ) assume ,
-        // is a thouseands separator, and strip it, else assume it is a decimal
-        // separator, and change it to ..
-        if (strpos($response, '.') !== false || substr_count($response, ',') > 1) {
-            $response = str_replace(',', '', $response);
-        } else {
-            $response = str_replace(',', '.', $response);
+        // Strip thousand separators like half space.
+        if (!in_array($this->thousandssep, array(',', '.', ' '))) {
+            if (strpos($value, $this->thousandssep) !== false) {
+                $response = str_replace($this->thousandssep, '', $response);
+            }
         }
-
+        $response = preg_replace('~(?:e|E|(?:x|\*|×)10(?:\^|\*\*))([+-]?\d+)~', 'e$1', $response);
+        // Dot . is mostly a decimal separator there a few exceptions where it is a thousand separator
+        // If a . is present or there are multiple , (i.e. 2,456,789 ) assume,
+        // is a thousands separator and strip it or else assume it is a decimal
+        // separator and change it to .
+        // if only one and it is , then change to .
+        if (substr_count($response, ',')+ substr_count($response, '.') == 1 ) {
+            if (strpos($response, ',') !== false) {
+                $response = str_replace(',', '.', $response);
+            }
+        } else if (substr_count($response, ',') == 1 && substr_count($response, '.') == 1) {
+            if (strpos($response, '.') > strpos($response, ',')) { // Then , is thousand.
+                $response = str_replace(',', '', $response);
+            } else {
+                $response = str_replace('.', '', $response);
+                $response = str_replace(',', '.', $response);
+            }
+        } else if (substr_count($response, ',') > 1) {
+              $response = str_replace(',', '', $response);
+        } else if (substr_count($response, '.') > 1) {
+              $response = str_replace('.', '', $response);
+              $response = str_replace(',', '.', $response);
+        }
         $regex = '[+-]?(?:\d+(?:\\.\d*)?|\\.\d+)(?:e[-+]?\d+)?';
         if ($this->unitsbefore) {
             $regex = "/$regex$/";
@@ -655,7 +673,7 @@ class qtype_numerical_answer_processor {
 
         $numberstring = $matches[0];
         if ($this->unitsbefore) {
-            // substr returns false when it means '', so cast back to string.
+            // Function substr returns false when it means '', so cast back to string.
             $unit = (string) substr($response, 0, -strlen($numberstring));
         } else {
             $unit = (string) substr($response, strlen($numberstring));
@@ -671,7 +689,7 @@ class qtype_numerical_answer_processor {
             $multiplier = null;
         }
 
-        return array($numberstring + 0, $unit, $multiplier); // + 0 to convert to number.
+        return array($numberstring + 0, $unit, $multiplier); // Add + 0 to convert to number.
     }
 
     /**
