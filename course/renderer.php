@@ -1011,7 +1011,7 @@ class core_course_renderer extends plugin_renderer_base {
                 }
 
                 $mod = $modinfo->cms[$modnumber];
-                $modclasses = 'activity '. $mod->modname. 'modtype_'.$mod->modname. ' '. $mod->get_extra_classes();
+                $modclasses = 'activity '. $mod->modname. ' modtype_'.$mod->modname. ' '. $mod->get_extra_classes();
                 $output .= html_writer::start_tag('li', array('class' => $modclasses, 'id' => 'module-'. $mod->id));
                 $output .= $modulehtml;
                 $output .= html_writer::end_tag('li');
