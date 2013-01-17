@@ -552,8 +552,8 @@ $CFG->admin = 'admin';
 //
 // You can override default Moodle configuration for Behat and add your own
 // params; here you can add more profiles, use different Mink drivers than Selenium...
-// This params would be merged with the default Moodle behat.yml, giving priority
-// to the ones specified here. The array format is YAML, following the behat
+// These params would be merged with the default Moodle behat.yml, giving priority
+// to the ones specified here. The array format is YAML, following the Behat
 // params hierarchy. More info: http://docs.behat.org/guides/7.config.html
 // Example:
 //   $CFG->behat_config = array(
@@ -568,7 +568,7 @@ $CFG->admin = 'admin';
 //       )
 //   );
 //
-// You can completely switch to test environment when "php admin/tool/behatcli/util --enable",
+// You can completely switch to test environment when "php admin/tool/behat/cli/util --enable",
 // this means that all the site accesses will be routed to the test environment instead of
 // the regular one, so NEVER USE THIS SETTING IN PRODUCTION SITES. This setting is useful
 // when working with cloud CI (continous integration) servers which requires public sites to run the

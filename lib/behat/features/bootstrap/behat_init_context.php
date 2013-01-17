@@ -17,7 +17,8 @@
 /**
  * Contexts initializer class
  *
- * @package    tool_behat
+ * @package    core
+ * @category   test
  * @copyright  2012 David Monllaó
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -34,7 +35,8 @@ use Behat\Behat\Context\BehatContext,
  * Renamed from behat FeatureContext class according
  * to Moodle coding styles conventions
  *
- * @package    tool_behat
+ * @package    core
+ * @category   test
  * @copyright  2012 David Monllaó
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -43,7 +45,8 @@ class behat_init_context extends BehatContext {
     /**
      * Initializes subcontexts
      *
-     * @param array $parameters context parameters (set them up through behat.yml)
+     * @param  array $parameters context parameters (set them up through behat.yml)
+     * @return void
      */
     public function __construct(array $parameters) {
         $this->useContext('moodle', new MoodleContext($parameters));

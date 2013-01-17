@@ -23,8 +23,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
+require_once(__DIR__ . '/../lib.php');
 require_once(__DIR__ . '/behat_command.php');
-require_once(__DIR__ . '/../../filestorage/file_exceptions.php');
 require_once(__DIR__ . '/../../testing/classes/tests_finder.php');
 
 /**
@@ -47,24 +49,21 @@ class behat_config_manager {
      * config files to avoid problems with concurrent executions.
      *
      * The steps definitions list can be filtered by component so it's
-     * behat.yml can be different from the dirroot one.
+     * behat.yml is different from the $CFG->dirroot one.
      *
-     * @param string $component Restricts the obtained steps definitions to the specified component
-     * @param string $testsrunner If the config file will be used to run tests
-     * @throws file_exception
+     * @param  string $component Restricts the obtained steps definitions to the specified component
+     * @param  string $testsrunner If the config file will be used to run tests
+     * @return void
      */
     public static function update_config_file($component = '', $testsrunner = true) {
         global $CFG;
 
-        // Behat must run with the whole set of features and steps definitions.
+        // Behat must have a separate behat.yml to have access to the whole set of features and steps definitions.
         if ($testsrunner === true) {
-            $prefix = '';
-            $configfilepath = $CFG->dirroot . '/behat.yml';
-
-            // Alternative for steps definitions filtering.
+            $configfilepath = behat_command::get_behat_dir() . '/behat.yml';
         } else {
+            // Alternative for steps definitions filtering, one for each user.
             $configfilepath = self::get_steps_list_config_filepath();
-            $prefix = $CFG->dirroot .'/';
         }
 
         // Gets all the components with features.
@@ -74,6 +73,8 @@ class behat_config_manager {
             foreach ($components as $componentname => $path) {
                 $path = self::clean_path($path) . self::get_behat_tests_path();
                 if (empty($featurespaths[$path]) && file_exists($path)) {
+
+                    // Standarizes separator (some dirs. comes with OS-dependant separator).
                     $uniquekey = str_replace('\\', '/', $path);
                     $featurespaths[$uniquekey] = $path;
                 }
@@ -94,11 +95,11 @@ class behat_config_manager {
 
         // Behat config file specifing the main context class,
         // the required Behat extensions and Moodle test wwwroot.
-        $contents = self::get_config_file_contents($prefix, $features, $stepsdefinitions);
+        $contents = self::get_config_file_contents($features, $stepsdefinitions);
 
         // Stores the file.
         if (!file_put_contents($configfilepath, $contents)) {
-            throw new file_exception('cannotcreatefile', $configfilepath);
+            behat_error(BEHAT_EXITCODE_PERMISSIONS, 'File ' . $configfilepath . ' can not be created');
         }
 
     }
@@ -138,32 +139,42 @@ class behat_config_manager {
 
     /**
      * Returns the behat config file path used by the steps definition list
+     *
+     * Note this can only be called from web-based scripts so it will return the
+     * production dataroot not behat_dataroot. With this the steps definitions
+     * list is accessible without having to install the behat test site.
+     *
      * @return string
      */
     public static function get_steps_list_config_filepath() {
-        return behat_command::get_behat_dir() . '/behat.yml';
+        global $USER;
+
+        $userdir = behat_command::get_behat_dir() . '/users/' . $USER->id;
+        make_writable_directory($userdir);
+
+        return $userdir . '/behat.yml';
     }
 
     /**
      * Behat config file specifing the main context class,
      * the required Behat extensions and Moodle test wwwroot.
      *
-     * @param string $prefix The filesystem prefix
      * @param array $features The system feature files
      * @param array $stepsdefinitions The system steps definitions
      * @return string
      */
-    protected static function get_config_file_contents($prefix, $features, $stepsdefinitions) {
+    protected static function get_config_file_contents($features, $stepsdefinitions) {
         global $CFG;
 
         // We require here when we are sure behat dependencies are available.
         require_once($CFG->dirroot . '/vendor/autoload.php');
 
+        $basedir = $CFG->dirroot . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'behat';
         $config = array(
             'default' => array(
                 'paths' => array(
-                    'features' => $prefix . 'lib/behat/features',
-                    'bootstrap' => $prefix . 'lib/behat/features/bootstrap',
+                    'features' => $basedir . DIRECTORY_SEPARATOR . 'features',
+                    'bootstrap' => $basedir . DIRECTORY_SEPARATOR . 'features' . DIRECTORY_SEPARATOR . 'bootstrap',
                 ),
                 'context' => array(
                     'class' => 'behat_init_context'

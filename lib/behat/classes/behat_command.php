@@ -23,7 +23,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(__DIR__ . '/../../filestorage/file_exceptions.php');
+defined('MOODLE_INTERNAL') || die();
+
+require_once(__DIR__ . '/../lib.php');
 
 /**
  * Behat command related utils
@@ -36,23 +38,27 @@ require_once(__DIR__ . '/../../filestorage/file_exceptions.php');
 class behat_command {
 
     /**
+     * Docs url
+     */
+    const DOCS_URL = 'http://docs.moodle.org/dev/Acceptance_testing';
+
+    /**
      * Ensures the behat dir exists in moodledata
-     * @throws file_exception
      * @return string Full path
      */
     public static function get_behat_dir() {
         global $CFG;
 
-        $behatdir = $CFG->dataroot . '/behat';
+        $behatdir = $CFG->behat_dataroot . '/behat';
 
         if (!is_dir($behatdir)) {
             if (!mkdir($behatdir, $CFG->directorypermissions, true)) {
-                throw new file_exception('storedfilecannotcreatefiledirs');
+                behat_error(BEHAT_EXITCODE_PERMISSIONS, 'Directory ' . $behatdir . ' can not be created');
             }
         }
 
         if (!is_writable($behatdir)) {
-            throw new file_exception('storedfilecannotcreatefiledirs');
+            behat_error(BEHAT_EXITCODE_PERMISSIONS, 'Directory ' . $behatdir . ' is not writable');
         }
 
         return $behatdir;
@@ -67,20 +73,43 @@ class behat_command {
     }
 
     /**
+     * Runs behat command with provided options
+     *
+     * Execution continues when the process finishes
+     *
+     * @param  string $options  Defaults to '' so tests would be executed
+     * @return array            CLI command outputs [0] => string, [1] => integer
+     */
+    public final static function run($options = '') {
+        global $CFG;
+
+        $currentcwd = getcwd();
+        chdir($CFG->dirroot);
+        exec(self::get_behat_command() . ' ' . $options, $output, $code);
+        chdir($currentcwd);
+
+        return array($output, $code);
+    }
+
+    /**
      * Checks if behat is set up and working
+     *
+     * Uses notice() instead of behat_error() because is
+     * also called from web interface
      *
      * It checks behat dependencies have been installed and runs
      * the behat help command to ensure it works as expected
      *
-     * @throw  Exception
-     * @param  boolean $checkphp Extra check for the PHP version
+     * @param  bool $checkphp Extra check for the PHP version
+     * @return void
      */
     public static function check_behat_setup($checkphp = false) {
         global $CFG;
 
         // We don't check the PHP version if $CFG->behat_switchcompletely has been enabled.
+        // Here we are in CLI.
         if (empty($CFG->behat_switchcompletely) && $checkphp && version_compare(PHP_VERSION, '5.4.0', '<')) {
-            throw new Exception(get_string('wrongphpversion', 'tool_behat'));
+            behat_error(BEHAT_EXITCODE_REQUIREMENT, 'PHP 5.4 is required. See config-dist.php for possible alternatives');
         }
 
         // Moodle setting.
@@ -89,7 +118,7 @@ class behat_command {
             $msg = get_string('wrongbehatsetup', 'tool_behat');
 
             // With HTML.
-            $docslink = 'http://docs.moodle.org/dev/Acceptance_testing#Installation';
+            $docslink = self::DOCS_URL . '#Installation';
             if (!CLI_SCRIPT) {
                 $docslink = html_writer::tag('a', $docslink, array('href' => $docslink, 'target' => '_blank'));
             }
@@ -98,10 +127,7 @@ class behat_command {
         }
 
         // Behat test command.
-        $currentcwd = getcwd();
-        chdir($CFG->dirroot);
-        exec(self::get_behat_command() . ' --help', $output, $code);
-        chdir($currentcwd);
+        list($output, $code) = self::run(' --help');
 
         if ($code != 0) {
             notice(get_string('wrongbehatsetup', 'tool_behat'));
@@ -110,7 +136,7 @@ class behat_command {
 
     /**
      * Has the site installed composer with --dev option
-     * @return boolean
+     * @return bool
      */
     public static function are_behat_dependencies_installed() {
         if (!is_dir(__DIR__ . '/../../../vendor/behat')) {

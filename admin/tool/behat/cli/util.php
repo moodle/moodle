@@ -15,23 +15,32 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * CLI tool
+ * CLI tool with utilities to manage Behat integration in Moodle
+ *
+ * All CLI utilities uses $CFG->behat_dataroot and $CFG->prefix_dataroot as
+ * $CFG->dataroot and $CFG->prefix
  *
  * @package    tool_behat
  * @copyright  2012 David Monllaó
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define('CLI_SCRIPT', true);
 
-require(__DIR__ . '/../../../../config.php');
-require_once($CFG->libdir . '/clilib.php');
-require_once($CFG->libdir . '/behat/behat_util.php');
+if (isset($_SERVER['REMOTE_ADDR'])) {
+    die(); // No access from web!.
+}
+
+// Basic functions.
+require_once(__DIR__ . '/../../../../lib/clilib.php');
+require_once(__DIR__ . '/../../../../lib/behat/lib.php');
+
 
 // CLI options.
 list($options, $unrecognized) = cli_get_params(
     array(
         'help'    => false,
+        'install' => false,
+        'drop'    => false,
         'enable'  => false,
         'disable' => false,
     ),
@@ -40,12 +49,16 @@ list($options, $unrecognized) = cli_get_params(
     )
 );
 
+
+// Checking util.php CLI script usage.
 $help = "
-Behat tool
+Behat utilities to manage the test environment
 
 Options:
---enable Enables test environment and updates tests list
---disable Disables test environment
+--install  Installs the test environment for acceptance tests
+--drop     Drops the database tables and the dataroot contents
+--enable   Enables test environment and updates tests list
+--disable  Disables test environment
 
 -h, --help     Print out this help
 
@@ -60,22 +73,110 @@ if (!empty($options['help'])) {
     exit(0);
 }
 
+
+// Checking $CFG->behat_* vars and values.
+define('BEHAT_UTIL', true);
+define('CLI_SCRIPT', true);
+define('ABORT_AFTER_CONFIG', true);
+define('NO_OUTPUT_BUFFERING', true);
+
+error_reporting(E_ALL | E_STRICT);
+ini_set('display_errors', '1');
+ini_set('log_errors', '1');
+
+require_once(__DIR__ . '/../../../../config.php');
+
+// CFG->behat_prefix must be set and with value different than CFG->prefix and phpunit_prefix.
+if (!isset($CFG->behat_prefix) ||
+   (isset($CFG->behat_prefix) &&
+       ($CFG->behat_prefix == $CFG->prefix ||
+       $CFG->behat_prefix == $CFG->phpunit_prefix))) {
+    behat_error(BEHAT_EXITCODE_CONFIG,
+        'Define $CFG->behat_prefix in config.php with a value different than $CFG->prefix and $CFG->phpunit_prefix');
+}
+
+// CFG->behat_dataroot must be set and with value different than CFG->dataroot and phpunit_dataroot.
+if (!isset($CFG->behat_dataroot) ||
+   (isset($CFG->behat_dataroot) &&
+       ($CFG->behat_dataroot == $CFG->dataroot ||
+       $CFG->behat_dataroot == $CFG->phpunit_dataroot))) {
+    behat_error(BEHAT_EXITCODE_CONFIG,
+        'Define $CFG->behat_dataroot in config.php with a value different than $CFG->dataroot and $CFG->phpunit_dataroot');
+}
+
+// Create behat_dataroot if it doesn't exists.
+if (!file_exists($CFG->behat_dataroot)) {
+    if (!mkdir($CFG->behat_dataroot, $CFG->directorypermissions)) {
+        behat_error(BEHAT_EXITCODE_PERMISSIONS, '$CFG->behat_dataroot directory can not be created');
+    }
+}
+if (!is_dir($CFG->behat_dataroot) || !is_writable($CFG->behat_dataroot)) {
+    behat_error(BEHAT_EXITCODE_PERMISSIONS, '$CFG->behat_dataroot directory has no permissions or is not a directory');
+}
+
+// Check that the directory does not contains other things.
+if (!file_exists("$CFG->behat_dataroot/behattestdir.txt")) {
+    if ($dh = opendir($CFG->behat_dataroot)) {
+        while (($file = readdir($dh)) !== false) {
+            if ($file === 'behat' or $file === '.' or $file === '..' or $file === '.DS_Store') {
+                continue;
+            }
+            behat_error(BEHAT_EXITCODE_CONFIG, '$CFG->behat_dataroot directory is not empty, ensure this is the directory where you want to install behat test dataroot');
+        }
+        closedir($dh);
+        unset($dh);
+        unset($file);
+    }
+
+    // Now we create dataroot directory structure for behat tests.
+    testing_initdataroot($CFG->behat_dataroot, 'behat');
+}
+
+// Overrides vars with behat-test ones.
+$vars = array('wwwroot', 'prefix', 'dataroot');
+foreach ($vars as $var) {
+    $CFG->{$var} = $CFG->{'behat_' . $var};
+}
+
+$CFG->noemailever = true;
+$CFG->passwordsaltmain = 'moodle';
+
+// Continues setup.
+define('ABORT_AFTER_CONFIG_CANCEL', true);
+require("$CFG->dirroot/lib/setup.php");
+
+require_once($CFG->libdir.'/adminlib.php');
+require_once($CFG->libdir.'/upgradelib.php');
+require_once($CFG->libdir.'/clilib.php');
+require_once($CFG->libdir.'/pluginlib.php');
+require_once($CFG->libdir.'/installlib.php');
+
 if ($unrecognized) {
     $unrecognized = implode("\n  ", $unrecognized);
     cli_error(get_string('cliunknowoption', 'admin', $unrecognized));
 }
 
-// Run command.
-if ($options['enable']) {
-    $action = 'enable';
+// Behat utilities.
+require_once($CFG->libdir . '/behat/classes/util.php');
+require_once($CFG->libdir . '/behat/classes/behat_command.php');
+
+// Run command (only one per time).
+if ($options['install']) {
+    behat_util::install_site();
+    mtrace("Acceptance tests site installed");
+} else if ($options['drop']) {
+    behat_util::drop_site();
+    mtrace("Acceptance tests site dropped");
+} else if ($options['enable']) {
+    behat_util::start_test_mode();
+    $runtestscommand = behat_command::get_behat_command() . ' --config '
+        . $CFG->behat_dataroot . DIRECTORY_SEPARATOR . 'behat' . DIRECTORY_SEPARATOR . 'behat.yml';
+    mtrace("Acceptance tests environment enabled, to run the tests use:\n " . $runtestscommand);
 } else if ($options['disable']) {
-    $action = 'disable';
+    behat_util::stop_test_mode();
+    mtrace("Acceptance tests environment disabled");
 } else {
     echo $help;
-    exit(0);
 }
 
-behat_util::switchenvironment($action);
-
-mtrace(get_string('testenvironment' . $action, 'tool_behat'));
-
+exit(0);

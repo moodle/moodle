@@ -30,4 +30,4 @@ phpunit.xml
 composer.phar
 composer.lock
 /vendor/
-behat.yml
+/behat.yml

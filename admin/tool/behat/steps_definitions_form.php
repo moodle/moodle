@@ -37,6 +37,7 @@ class steps_definitions_form extends moodleform {
 
     /**
      * Form definition
+     * @return void
      */
     public function definition() {
 

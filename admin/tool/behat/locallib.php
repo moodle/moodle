@@ -22,6 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 global $CFG;
 require_once($CFG->libdir . '/behat/classes/behat_command.php');
 require_once($CFG->libdir . '/behat/classes/behat_config_manager.php');
@@ -45,8 +47,9 @@ class tool_behat {
      * @return string
      */
     public static function stepsdefinitions($type, $component, $filter) {
-        global $CFG;
 
+        // We don't require the test environment to be enabled to list the steps definitions
+        // so test writers can more easily set up the environment.
         behat_command::check_behat_setup();
 
         // The loaded steps depends on the component specified.
@@ -63,16 +66,15 @@ class tool_behat {
             $filteroption = ' -di';
         }
 
-        $currentcwd = getcwd();
-        chdir($CFG->dirroot);
-        exec(behat_command::get_behat_command() . ' --config="'.behat_config_manager::get_steps_list_config_filepath(). '" '.$filteroption, $steps, $code);
-        chdir($currentcwd);
+        // Get steps definitions from Behat.
+        $options = ' --config="'.behat_config_manager::get_steps_list_config_filepath(). '" '.$filteroption;
+        list($steps, $code) = behat_command::run($options);
 
         if ($steps) {
             $stepshtml = implode('', $steps);
         }
 
-        if (!isset($stepshtml) || $stepshtml == '') {
+        if (empty($stepshtml)) {
             $stepshtml = get_string('nostepsdefinitions', 'tool_behat');
         }
 

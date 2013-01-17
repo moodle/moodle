@@ -22,7 +22,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once($CFG->libdir . '/behat/classes/behat_command.php');
 
 /**
  * Renderer for behat tool web features
@@ -32,11 +35,6 @@ defined('MOODLE_INTERNAL') || die;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class tool_behat_renderer extends plugin_renderer_base {
-
-    /**
-     * @var string Docs url
-     */
-    protected $docsurl = 'http://docs.moodle.org/dev/Acceptance_testing';
 
     /**
      * Renders the list of available steps according to the submitted filters
@@ -54,20 +52,28 @@ class tool_behat_renderer extends plugin_renderer_base {
         $html .= $this->output->heading($title);
 
         // Info.
-        $installurl = $this->docsurl . '#Installation';
+        $installurl = behat_command::DOCS_URL . '#Installation';
         $installlink = html_writer::tag('a', $installurl, array('href' => $installurl, 'target' => '_blank'));
-        $writetestsurl = $this->docsurl . '#Writting_features';
+        $writetestsurl = behat_command::DOCS_URL . '#Writting_features';
         $writetestslink = html_writer::tag('a', $writetestsurl, array('href' => $writetestsurl, 'target' => '_blank'));
-        $writestepsurl = $this->docsurl . '#Adding_steps_definitions';
+        $writestepsurl = behat_command::DOCS_URL . '#Adding_steps_definitions';
         $writestepslink = html_writer::tag('a', $writestepsurl, array('href' => $writestepsurl, 'target' => '_blank'));
         $infos = array(
             get_string('installinfo', 'tool_behat', $installlink),
             get_string('newtestsinfo', 'tool_behat', $writetestslink),
             get_string('newstepsinfo', 'tool_behat', $writestepslink)
         );
+
+        // List of steps
         $html .= $this->output->box_start();
         $html .= html_writer::tag('h1', 'Info');
-        $html .= html_writer::tag('div', '<ul><li>' . implode('</li><li>', $infos) . '</li></ul>');
+        $html .= html_writer::empty_tag('div');
+        $html .= html_writer::empty_tag('ul');
+        $html .= html_writer::empty_tag('li');
+        $html .= implode(html_writer::end_tag('li') . html_writer::empty_tag('li'), $infos);
+        $html .= html_writer::end_tag('li');
+        $html .= html_writer::end_tag('ul');
+        $html .= html_writer::end_tag('div');
         $html .= $this->output->box_end();
 
         // Form.
@@ -77,7 +83,7 @@ class tool_behat_renderer extends plugin_renderer_base {
         ob_end_clean();
 
         // Steps definitions.
-        $html .= html_writer::tag('div', $stepsdefinitions, array('id' => 'steps-definitions'));
+        $html .= html_writer::tag('div', $stepsdefinitions, array('class' => 'steps-definitions'));
 
         $html .= $this->output->footer();
 
