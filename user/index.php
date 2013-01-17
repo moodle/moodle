@@ -618,7 +618,7 @@
                     }
                     if ($user->maildisplay == 1 or ($user->maildisplay == 2 and ($course->id != SITEID) and !isguestuser()) or
                                 has_capability('moodle/course:viewhiddenuserfields', $context) or
-                                in_array('email', $extrafields)) {
+                                in_array('email', $extrafields) or ($user->id == $USER->id)) {
                         $row->cells[1]->text .= get_string('email').get_string('labelsep', 'langconfig').html_writer::link("mailto:$user->email", $user->email) . '<br />';
                     }
                     foreach ($extrafields as $field) {
