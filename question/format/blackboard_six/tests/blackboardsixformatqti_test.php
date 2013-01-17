@@ -41,14 +41,15 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
 class qformat_blackboard_six_qti_test extends question_testcase {
 
     public function make_test_xml() {
-        $xml = file_get_contents(__DIR__ . '/fixtures/sample_blackboard_qti.dat');
-        return array(0=>$xml);
+        $xmlfile = new qformat_blackboard_six_file();
+        $xmlfile->filetype = 1;
+        $xmlfile->text = file_get_contents(__DIR__ . '/fixtures/sample_blackboard_qti.dat');
+        return array(0=>$xmlfile);
     }
     public function test_import_match() {
         $xml = $this->make_test_xml();
 
         $importer = new qformat_blackboard_six();
-        $importer->set_filetype(1);
         $questions = $importer->readquestions($xml);
         $q = $questions[3];
 
@@ -83,7 +84,6 @@ class qformat_blackboard_six_qti_test extends question_testcase {
         $xml = $this->make_test_xml();
 
         $importer = new qformat_blackboard_six();
-        $importer->set_filetype(1);
         $questions = $importer->readquestions($xml);
         $q = $questions[1];
 
@@ -143,7 +143,6 @@ class qformat_blackboard_six_qti_test extends question_testcase {
         $xml = $this->make_test_xml();
 
         $importer = new qformat_blackboard_six();
-        $importer->set_filetype(1);
         $questions = $importer->readquestions($xml);
         $q = $questions[2];
 
@@ -220,7 +219,6 @@ class qformat_blackboard_six_qti_test extends question_testcase {
         $xml = $this->make_test_xml();
 
         $importer = new qformat_blackboard_six();
-        $importer->set_filetype(1);
         $questions = $importer->readquestions($xml);
         $q = $questions[0];
 
@@ -251,7 +249,6 @@ class qformat_blackboard_six_qti_test extends question_testcase {
         $xml = $this->make_test_xml();
 
         $importer = new qformat_blackboard_six();
-        $importer->set_filetype(1);
         $questions = $importer->readquestions($xml);
         $q = $questions[4];
 
@@ -286,7 +283,6 @@ class qformat_blackboard_six_qti_test extends question_testcase {
         $xml = $this->make_test_xml();
 
         $importer = new qformat_blackboard_six();
-        $importer->set_filetype(1);
         $questions = $importer->readquestions($xml);
         $q = $questions[5];
 
