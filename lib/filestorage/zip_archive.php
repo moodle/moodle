@@ -57,6 +57,12 @@ class zip_archive extends file_archive {
     /** @var array unicode decoding array, created by decoding zip file */
     protected $namelookup = null;
 
+    /** @var string base64 encoded contents of empty zip file */
+    protected static $emptyzipcontent = 'UEsFBgAAAAAAAAAAAAAAAAAAAAAAAA==';
+
+    /** @var bool ugly hack for broken empty zip handling in < PHP 5.3.10 */
+    protected $emptyziphack = false;
+
     /**
      * Create new zip_archive instance.
      */
@@ -91,6 +97,17 @@ class zip_archive extends file_archive {
         }
 
         $result = $this->za->open($archivepathname, $flags);
+
+        if ($flags == 0 and $result === ZIPARCHIVE::ER_NOZIP and filesize($archivepathname) === 22) {
+            // Legacy PHP versions < 5.3.10 can not deal with empty zip archives.
+            if (file_get_contents($archivepathname) === base64_decode(self::$emptyzipcontent)) {
+                if ($temp = make_temp_directory('zip')) {
+                    $this->emptyziphack = tempnam($temp, 'zip');
+                    $this->za = new ZipArchive();
+                    $result = $this->za->open($this->emptyziphack, ZIPARCHIVE::CREATE);
+                }
+            }
+        }
 
         if ($result === true) {
             if (file_exists($archivepathname)) {
@@ -173,7 +190,17 @@ class zip_archive extends file_archive {
             return false;
         }
 
-        if ($this->za->numFiles == 0) {
+        if ($this->emptyziphack) {
+            $this->za->close();
+            $this->za = null;
+            $this->mode = null;
+            $this->namelookup = null;
+            $this->modified = false;
+            @unlink($this->emptyziphack);
+            $this->emptyziphack = false;
+            return true;
+
+        } else if ($this->za->numFiles == 0) {
             // PHP can not create empty archives, so let's fake it.
             $this->za->close();
             $this->za = null;
@@ -181,7 +208,7 @@ class zip_archive extends file_archive {
             $this->namelookup = null;
             $this->modified = false;
             @unlink($this->archivepathname);
-            $data = base64_decode('UEsFBgAAAAAAAAAAAAAAAAAAAAAAAA==');
+            $data = base64_decode(self::$emptyzipcontent);
             if (!file_put_contents($this->archivepathname, $data)) {
                 return false;
             }
@@ -302,6 +329,11 @@ class zip_archive extends file_archive {
      * @return bool success
      */
     public function add_file_from_pathname($localname, $pathname) {
+        if ($this->emptyziphack) {
+            $this->close();
+            $this->open($this->archivepathname, file_archive::OVERWRITE, $this->encoding);
+        }
+
         if (!isset($this->za)) {
             return false;
         }
@@ -341,6 +373,11 @@ class zip_archive extends file_archive {
      * @return bool success
      */
     public function add_file_from_string($localname, $contents) {
+        if ($this->emptyziphack) {
+            $this->close();
+            $this->open($this->archivepathname, file_archive::OVERWRITE, $this->encoding);
+        }
+
         if (!isset($this->za)) {
             return false;
         }
@@ -377,6 +414,11 @@ class zip_archive extends file_archive {
      * @return bool success
      */
     public function add_directory($localname) {
+        if ($this->emptyziphack) {
+            $this->close();
+            $this->open($this->archivepathname, file_archive::OVERWRITE, $this->encoding);
+        }
+
         if (!isset($this->za)) {
             return false;
         }
@@ -451,6 +493,11 @@ class zip_archive extends file_archive {
      * @return void
      */
     protected function init_namelookup() {
+        if ($this->emptyziphack) {
+            $this->namelookup = array();
+            return;
+        }
+
         if (!isset($this->za)) {
             return;
         }
@@ -593,6 +640,10 @@ class zip_archive extends file_archive {
      * @return bool success, modifies the file contents
      */
     protected function fix_utf8_flags() {
+        if ($this->emptyziphack) {
+            return true;
+        }
+
         if (!file_exists($this->archivepathname)) {
             return true;
         }
