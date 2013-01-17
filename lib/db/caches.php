@@ -75,4 +75,14 @@ $definitions = array(
         'datasource' => 'question_finder',
         'datasourcefile' => 'question/engine/bank.php',
     ),
+
+     // Used to cache calendar subscriptions.
+    'calendar_subscriptions' => array(
+        'mode' => cache_store::MODE_APPLICATION,
+        'requiredataguarantee' => false,
+        'requiremultipleidentifiers' => false,
+        'requirelockingread' => false,
+        'requirelockingwrite' => false,
+        'persistent' => true,
+    ),
 );
