@@ -1068,7 +1068,7 @@ class block_manager {
 
             $controls[] = array('url' => $CFG->wwwroot . '/' . $CFG->admin .
                     '/roles/assign.php?contextid=' . $block->context->id . '&returnurl=' . urlencode($return),
-                    'icon' => 't/roles', 'caption' => get_string('assignrolesinblock', 'block', $block->title),
+                    'icon' => 'i/roles', 'caption' => get_string('assignrolesinblock', 'block', $block->title),
                     'class' => 'editing_roles');
         }
 
