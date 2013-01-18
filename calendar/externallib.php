@@ -206,35 +206,38 @@ class core_calendar_external extends external_api {
             $funcparam['courses'][] = $SITE->id;
         }
 
-        $events = calendar_get_events($params['options']['timestart'], $params['options']['timeend'], $funcparam['users'], $funcparam['groups'],
+        $eventlist = calendar_get_events($params['options']['timestart'], $params['options']['timeend'], $funcparam['users'], $funcparam['groups'],
                 $funcparam['courses'], true, $params['options']['ignorehidden']);
+        // WS expects arrays.
+        $events = array();
+        foreach ($eventlist as $id  => $event) {
+            $events[$id] = (array) $event;
+        }
 
         // We need to get events asked for eventids.
         $eventsbyid = calendar_get_events_by_id($params['events']['eventids']);
-        foreach ($eventsbyid as $eventid => $event) {
+        foreach ($eventsbyid as $eventid => $eventobj) {
+            $event = (array) $eventobj;
+            if (isset($events[$eventid])) {
+                   continue;
+            }
             if ($hassystemcap) {
                 // User can see everything, no further check is needed.
-                if (!in_array($event, $events)) {
-                    $events[] = (array)$event;
-                }
-            } else if (!empty($event->modulename)) {
-                $cm = get_coursemodule_from_instance($event->modulename, $event->instance);
-                if (!groups_course_module_visible($cm)) {
-                    unset($eventsbyid[$eventid]);
-                } else if (!in_array($event, $events)) {
-                    $events[] = (array)$event;
+                $events[$eventid] = $event;
+            } else if (!empty($eventobj->modulename)) {
+                $cm = get_coursemodule_from_instance($eventobj->modulename, $eventobj->instance);
+                if (groups_course_module_visible($cm)) {
+                    $events[$eventid] = $event;
                 }
             } else {
                 // Can the user actually see this event?
-                $eventobj = calendar_event::load($eventid);
-                if (!in_array($event, $events) ||
-                        ($hassystemcap) ||
-                        ($event->courseid == $SITE->id) ||
-                        (!empty($event->groupid) && in_array($event->groupid, $groups)) ||
-                        (!empty($event->courseid) && in_array($event->courseid, $courses)) ||
-                        ($USER->id == $event->userid) ||
+                $eventobj = calendar_event::load($eventobj);
+            if (($eventobj->courseid == $SITE->id) ||
+                        (!empty($eventobj->groupid) && in_array($eventobj->groupid, $groups)) ||
+                        (!empty($eventobj->courseid) && in_array($eventobj->courseid, $courses)) ||
+                        ($USER->id == $eventobj->userid) ||
                         (calendar_edit_event_allowed($eventid))) {
-                    $events[] = (array)$event;
+                    $events[$eventid] = $event;
                 }
             }
         }
