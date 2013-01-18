@@ -168,15 +168,22 @@ class core_calendar_external extends external_api {
         require_once($CFG->dirroot."/calendar/lib.php");
 
         // Parameter validation.
-        $params = self::validate_parameters(self:: get_calendar_events_parameters(), array('events' => $events, 'options' => $options));
-        $funcparam = array();
+        $params = self::validate_parameters(self::get_calendar_events_parameters(), array('events' => $events, 'options' => $options));
+        $funcparam = array('courses' => array(), 'groups' => array());
         $hassystemcap = has_capability('moodle/calendar:manageentries', context_system::instance());
+        $warnings = array();
 
         // Let us findout courses that we can return events from.
         if (!$hassystemcap) {
             $courses = enrol_get_my_courses();
             $courses = array_keys($courses);
-            $funcparam['courses'] = array_intersect($params['events']['courseids'], $courses);
+            foreach ($params['events']['courseids'] as $id) {
+                if (in_array($id, $courses)) {
+                    $funcparam['courses'][] = $id;
+                } else {
+                    $warnings[] = array('item' => $id, 'warningcode' => 'nopermissions', 'message' => 'you donot have permissions to access this course');
+                }
+            }
         } else {
             $courses = $params['events']['courseids'];
             $funcparam['courses'] = $courses;
@@ -186,13 +193,17 @@ class core_calendar_external extends external_api {
         if (!$hassystemcap) {
             $groups = groups_get_my_groups();
             $groups = array_keys($groups);
-            $funcparam['groups'] = array_intersect($params['events']['groupids'], $groups);
+            foreach ($params['events']['groupids'] as $id) {
+                if (in_array($id, $groups)) {
+                    $funcparam['groups'][] = $id;
+                } else {
+                    $warnings[] = array('item' => $id, 'warningcode' => 'nopermissions', 'message' => 'you donot have permissions to access this group');
+                }
+            }
         } else {
             $groups = $params['events']['groupids'];
             $funcparam['groups'] = $groups;
         }
-
-
 
         // Do we need user events?
         if (!empty($params['options']['userevents'])) {
@@ -210,7 +221,7 @@ class core_calendar_external extends external_api {
                 $funcparam['courses'], true, $params['options']['ignorehidden']);
         // WS expects arrays.
         $events = array();
-        foreach ($eventlist as $id  => $event) {
+        foreach ($eventlist as $id => $event) {
             $events[$id] = (array) $event;
         }
 
@@ -232,17 +243,18 @@ class core_calendar_external extends external_api {
             } else {
                 // Can the user actually see this event?
                 $eventobj = calendar_event::load($eventobj);
-            if (($eventobj->courseid == $SITE->id) ||
-                        (!empty($eventobj->groupid) && in_array($eventobj->groupid, $groups)) ||
-                        (!empty($eventobj->courseid) && in_array($eventobj->courseid, $courses)) ||
-                        ($USER->id == $eventobj->userid) ||
-                        (calendar_edit_event_allowed($eventid))) {
+                if (($eventobj->courseid == $SITE->id) ||
+                            (!empty($eventobj->groupid) && in_array($eventobj->groupid, $groups)) ||
+                            (!empty($eventobj->courseid) && in_array($eventobj->courseid, $courses)) ||
+                            ($USER->id == $eventobj->userid) ||
+                            (calendar_edit_event_allowed($eventid))) {
                     $events[$eventid] = $event;
+                } else {
+                    $warnings[] = array('item' => $eventid, 'warningcode' => 'nopermissions', 'message' => 'you donot have permissions to view this event');
                 }
             }
         }
-
-        return $events;
+        return array('events' => $events, 'warnings' => $warnings);
     }
 
     /**
@@ -252,28 +264,30 @@ class core_calendar_external extends external_api {
      * @since Moodle 2.5
      */
     public static function  get_calendar_events_returns() {
-        return new external_multiple_structure(
-                new external_single_structure(
+        return new external_single_structure(array(
+                'events' => new external_multiple_structure( new external_single_structure(
                         array(
                             'id' => new external_value(PARAM_INT, 'event id'),
                             'name' => new external_value(PARAM_TEXT, 'event name'),
-                            'description' => new external_value(PARAM_RAW, 'Description', VALUE_DEFAULT, null, NULL_ALLOWED),
+                            'description' => new external_value(PARAM_RAW, 'Description', VALUE_OPTIONAL, null, NULL_ALLOWED),
                             'format' => new external_format_value('description'),
                             'courseid' => new external_value(PARAM_INT, 'course id'),
                             'groupid' => new external_value(PARAM_INT, 'group id'),
                             'userid' => new external_value(PARAM_INT, 'user id'),
                             'repeatid' => new external_value(PARAM_INT, 'repeat id'),
-                            'modulename' => new external_value(PARAM_TEXT, 'module name', VALUE_DEFAULT, null, NULL_ALLOWED),
+                            'modulename' => new external_value(PARAM_TEXT, 'module name', VALUE_OPTIONAL, null, NULL_ALLOWED),
                             'instance' => new external_value(PARAM_INT, 'instance id'),
                             'eventtype' => new external_value(PARAM_TEXT, 'Event type'),
                             'timestart' => new external_value(PARAM_INT, 'timestart'),
                             'timeduration' => new external_value(PARAM_INT, 'time duration'),
                             'visible' => new external_value(PARAM_INT, 'visible'),
-                            'uuid' => new external_value(PARAM_TEXT, 'unique id of ical events', VALUE_DEFAULT, null, NULL_NOT_ALLOWED),
+                            'uuid' => new external_value(PARAM_TEXT, 'unique id of ical events', VALUE_OPTIONAL, null, NULL_NOT_ALLOWED),
                             'sequence' => new external_value(PARAM_INT, 'sequence'),
                             'timemodified' => new external_value(PARAM_INT, 'time modified'),
-                            'subscriptionid' => new external_value(PARAM_INT, 'Subscription id', VALUE_DEFAULT, null, NULL_ALLOWED),
-                        ), 'event'
+                            'subscriptionid' => new external_value(PARAM_INT, 'Subscription id', VALUE_OPTIONAL, null, NULL_ALLOWED),
+                        ), 'event')
+                 ),
+                 'warnings' => new external_warnings()
                 )
         );
     }
