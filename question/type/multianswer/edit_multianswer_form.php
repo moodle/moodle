@@ -26,6 +26,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot . '/question/type/numerical/questiontype.php');
+
 
 /**
  * Form for editing multi-answer questions.
@@ -35,11 +37,11 @@ defined('MOODLE_INTERNAL') || die();
  */
 class qtype_multianswer_edit_form extends question_edit_form {
 
-    //  $questiondisplay will contain the qtype_multianswer_extract_question from
-    // the questiontext
+    // The variable $questiondisplay will contain the qtype_multianswer_extract_question from
+    // the questiontext.
     public $questiondisplay;
-    //  $savedquestiondisplay will contain the qtype_multianswer_extract_question
-    // from the questiontext in database
+    // The variable $savedquestiondisplay will contain the qtype_multianswer_extract_question
+    // from the questiontext in database.
     public $savedquestion;
     public $savedquestiondisplay;
     public $used_in_quiz = false;
@@ -49,6 +51,9 @@ class qtype_multianswer_edit_form extends question_edit_form {
     public $nb_of_attempts = 0;
     public $confirm = 0;
     public $reload = false;
+    /** @var qtype_numerical_answer_processor used when validating numerical answers. */
+    protected $ap = null;
+
 
     public function __construct($submiturl, $question, $category, $contexts, $formeditable = true) {
         global $SESSION, $CFG, $DB;
@@ -86,14 +91,14 @@ class qtype_multianswer_edit_form extends question_edit_form {
         // Make questiontext a required field for this question type.
         $mform->addRule('questiontext', null, 'required', null, 'client');
 
-        // display the questions from questiontext;
+        // Display the questions from questiontext.
         if ($questiontext = optional_param_array('questiontext', false, PARAM_RAW)) {
             $this->questiondisplay = fullclone(qtype_multianswer_extract_question($questiontext));
 
         } else {
             if (!$this->reload && !empty($this->savedquestiondisplay->id)) {
-                // use database data as this is first pass
-                // question->id == 0 so no stored datasets
+                // Use database data as this is first pass
+                // question->id == 0 so no stored datasets.
                 $this->questiondisplay = fullclone($this->savedquestiondisplay);
                 foreach ($this->questiondisplay->options->questions as $subquestion) {
                     if (!empty($subquestion)) {
@@ -261,7 +266,7 @@ class qtype_multianswer_edit_form extends question_edit_form {
             foreach ($question->options->questions as $key => $wrapped) {
                 if (!empty($wrapped)) {
                     // The old way of restoring the definitions is kept to gradually
-                    // update all multianswer questions
+                    // update all multianswer questions.
                     if (empty($wrapped->questiontext)) {
                         $parsableanswerdef = '{' . $wrapped->defaultmark . ':';
                         switch ($wrapped->qtype) {
@@ -288,7 +293,7 @@ class qtype_multianswer_edit_form extends question_edit_form {
                                 $parsableanswerdef .= $subanswer->answer;
                             }
                             if (!empty($wrapped->options->tolerance)) {
-                                // Special for numerical answers:
+                                // Special for numerical answers.
                                 $parsableanswerdef .= ":{$wrapped->options->tolerance}";
                                 // We only want tolerance for the first alternative, it will
                                 // be applied to all of the alternatives.
@@ -300,7 +305,7 @@ class qtype_multianswer_edit_form extends question_edit_form {
                             $separator = '~';
                         }
                         $parsableanswerdef .= '}';
-                        // Fix the questiontext fields of old questions
+                        // Fix the questiontext fields of old questions.
                         $DB->set_field('question', 'questiontext', $parsableanswerdef,
                                 array('id' => $wrapped->id));
                     } else {
@@ -312,7 +317,7 @@ class qtype_multianswer_edit_form extends question_edit_form {
             }
         }
 
-        // set default to $questiondisplay questions elements
+        // Set default to $questiondisplay questions elements.
         if ($this->reload) {
             if (isset($this->questiondisplay->options->questions)) {
                 $subquestions = fullclone($this->questiondisplay->options->questions);
@@ -321,7 +326,7 @@ class qtype_multianswer_edit_form extends question_edit_form {
                     foreach ($subquestions as $subquestion) {
                         $prefix = 'sub_'.$sub.'_';
 
-                        // validate parameters
+                        // Validate parameters.
                         $answercount = 0;
                         $maxgrade = false;
                         $maxfraction = -1;
@@ -370,7 +375,7 @@ class qtype_multianswer_edit_form extends question_edit_form {
                             if ($trimmedanswer !== '') {
                                 $answercount++;
                                 if ($subquestion->qtype == 'numerical' &&
-                                        !(is_numeric($trimmedanswer) || $trimmedanswer == '*')) {
+                                        !($this->is_valid_number($trimmedanswer) || $trimmedanswer == '*')) {
                                     $this->_form->setElementError($prefix.'answer['.$key.']',
                                             get_string('answermustbenumberorstar',
                                                     'qtype_numerical'));
@@ -423,6 +428,22 @@ class qtype_multianswer_edit_form extends question_edit_form {
         parent::set_data($question);
     }
 
+    /**
+     * Validate that a string is a nubmer formatted correctly for the current locale.
+     * @param string $x a string
+     * @return bool whether $x is a number that the numerical question type can interpret.
+     */
+    protected function is_valid_number($x) {
+        if (is_null($this->ap)) {
+            $this->ap = new qtype_numerical_answer_processor(array());
+        }
+
+        list($value, $unit) = $this->ap->apply_units($x);
+
+        return !is_null($value) && !$unit;
+    }
+
+
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
@@ -451,7 +472,7 @@ class qtype_multianswer_edit_form extends question_edit_form {
                         if ($trimmedanswer !== '') {
                             $answercount++;
                             if ($subquestion->qtype == 'numerical' &&
-                                    !(is_numeric($trimmedanswer) || $trimmedanswer == '*')) {
+                                    !($this->is_valid_number($trimmedanswer) || $trimmedanswer == '*')) {
                                 $errors[$prefix.'answer['.$key.']'] =
                                         get_string('answermustbenumberorstar', 'qtype_numerical');
                             }
