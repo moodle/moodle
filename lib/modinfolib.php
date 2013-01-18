@@ -785,11 +785,6 @@ class cm_info extends stdClass {
         if (empty($this->content)) {
             return '';
         }
-        if ($this->modname === 'label') {
-            // special case, label returns already formatted content, see cm_info::__construct()
-            // and label_get_coursemodule_info()
-            return $this->content;
-        }
         // Improve filter performance by preloading filter setttings for all
         // activities on the course (this does nothing if called multiple
         // times)
@@ -1093,13 +1088,6 @@ class cm_info extends stdClass {
         $this->context          = context_module::instance($mod->cm);
         $this->showdescription  = isset($mod->showdescription) ? $mod->showdescription : 0;
         $this->state = self::STATE_BASIC;
-
-        // This special case handles old label data. Labels used to use the 'name' field for
-        // content
-        if ($this->modname === 'label' && $this->content === '') {
-            $this->content = $this->extra;
-            $this->extra = '';
-        }
 
         // Note: These fields from $cm were not present in cm_info in Moodle
         // 2.0.2 and prior. They may not be available if course cache hasn't
@@ -1491,8 +1479,8 @@ function rebuild_course_cache($courseid=0, $clearonly=false) {
  * Class that is the return value for the _get_coursemodule_info module API function.
  *
  * Note: For backward compatibility, you can also return a stdclass object from that function.
- * The difference is that the stdclass object may contain an 'extra' field (deprecated because
- * it was crazy, except for label which uses it differently). The stdclass object may not contain
+ * The difference is that the stdclass object may contain an 'extra' field (deprecated,
+ * use extraclasses and onclick instead). The stdclass object may not contain
  * the new fields defined here (content, extraclasses, customdata).
  */
 class cached_cm_info {

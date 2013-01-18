@@ -129,9 +129,9 @@ function label_get_coursemodule_info($coursemodule) {
             $label->name = "label{$label->id}";
             $DB->set_field('label', 'name', $label->name, array('id'=>$label->id));
         }
-        $info = new stdClass();
+        $info = new cached_cm_info();
         // no filtering hre because this info is cached and filtered later
-        $info->extra = format_module_intro('label', $label, $coursemodule->id, false);
+        $info->content = format_module_intro('label', $label, $coursemodule->id, false);
         $info->name  = $label->name;
         return $info;
     } else {
