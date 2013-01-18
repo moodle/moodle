@@ -100,7 +100,8 @@ class mod_quiz_overdue_attempt_updater {
 
 
         // SQL to compute timeclose and timelimit for each attempt:
-        $quizausersql = quiz_get_attempt_usertime_sql();
+        $quizausersql = quiz_get_attempt_usertime_sql(
+                "iquiza.state IN ('inprogress', 'overdue') AND iquiza.timecheckstate <= :iprocessto");
 
         // This query should have all the quiz_attempts columns.
         return $DB->get_recordset_sql("
@@ -116,6 +117,6 @@ class mod_quiz_overdue_attempt_updater {
             AND quiza.timecheckstate <= :processto
        ORDER BY quiz.course, quiza.quiz",
 
-                array('processto' => $processto));
+                array('processto' => $processto, 'iprocessto' => $processto));
     }
 }
