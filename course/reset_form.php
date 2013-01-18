@@ -107,6 +107,11 @@ class course_reset_form extends moodleform {
 
         $defaults = array ('reset_events'=>1, 'reset_logs'=>1, 'reset_roles_local'=>1, 'reset_gradebook_grades'=>1, 'reset_notes'=>1);
 
+        // Set student as default in unenrol user list, if role with student archetype exist.
+        if ($studentrole = get_archetype_roles('student')) {
+            $defaults['unenrol_users'] = array_keys($studentrole);
+        }
+
         if ($allmods = $DB->get_records('modules') ) {
             foreach ($allmods as $mod) {
                 $modname = $mod->name;
