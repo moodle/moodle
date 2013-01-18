@@ -1,5 +1,15 @@
 YUI.add('moodle-mod_feedback-dragdrop', function(Y) {
     var DRAGDROPNAME = 'mod_feedback_dragdrop';
+    var CSS = {
+        OLDMOVESELECTOR : 'span.feedback_item_command_move',
+        OLDMOVEUPSELECTOR : 'span.feedback_item_command_moveup',
+        OLDMOVEDOWNSELECTOR : 'span.feedback_item_command_movedown',
+        DRAGAREASELECTOR : '#feedback_dragarea',
+        DRAGITEMSELECTOR : '#feedback_dragarea ul li.feedback_itemlist',
+        DRAGTARGETSELECTOR : '#feedback_dragarea ul#feedback_draglist',
+        POSITIONLABEL : '.feedback_item_commands.position',
+        ITEMBOXSELECTOR : '#feedback_item_box_'
+    };
 
     var DRAGDROP = function() {
         DRAGDROP.superclass.constructor.apply(this, arguments);
@@ -82,7 +92,7 @@ YUI.add('moodle-mod_feedback-dragdrop', function(Y) {
                     counter = 1;
                     drop.get('children').each(function(v) {
                         poslabeltext = '(' + M.util.get_string('position', 'feedback') + ':' + counter + ')';
-                        poslabel = v.one('.feedback_item_commands.position');
+                        poslabel = v.one(CSS.POSITIONLABEL);
                         poslabel.setHTML(poslabeltext);
                         myElements = myElements + ',' + this.get_node_id(v.get('id'));
                         counter++;
@@ -96,7 +106,7 @@ YUI.add('moodle-mod_feedback-dragdrop', function(Y) {
             var goingUp = false, lastY = 0;
 
             //Get the list of li's in the lists and make them draggable.
-            listitems = Y.Node.all('#feedback_dragarea ul li.feedback_itemlist');
+            listitems = Y.Node.all(CSS.DRAGITEMSELECTOR);
 
             listitems.each(function(v) { //Make each item draggable.
                 var dd = new Y.DD.Drag({
@@ -107,11 +117,11 @@ YUI.add('moodle-mod_feedback-dragdrop', function(Y) {
                 }).plug(Y.Plugin.DDProxy, {
                     moveOnEnd: false
                 }).plug(Y.Plugin.DDConstrained, {
-                    constrain2node: '#feedback_dragarea' //Prevent dragging outside the dragarea.
+                    constrain2node: CSS.DRAGAREASELECTOR //Prevent dragging outside the dragarea.
                 });
 
                 item_id = this.get_node_id(v.get('id')); //Get the id of the feedback item.
-                item_box = Y.Node.one('#feedback_item_box_' + item_id); //Get the current item box so we can add the drag handle.
+                item_box = Y.Node.one(CSS.ITEMBOXSELECTOR + item_id); //Get the current item box so we can add the drag handle.
                 handletitle = M.util.get_string('move_item', 'feedback');
                 mydraghandle = this.get_drag_handle(handletitle, 'itemhandle');
                 v.insert(mydraghandle, item_box); //Insert the new handle into the item box.
@@ -119,18 +129,18 @@ YUI.add('moodle-mod_feedback-dragdrop', function(Y) {
             }, this);
 
             // Remove all legacy move icons.
-            Y.Node.all('span.feedback_item_command_moveup').each(function(v, k) {
+            Y.Node.all(CSS.OLDMOVEUPSELECTOR).each(function(v, k) {
                 v.remove();
             });;
-            Y.Node.all('span.feedback_item_command_movedown').each(function(v, k) {
+            Y.Node.all(CSS.OLDMOVEDOWNSELECTOR).each(function(v, k) {
                 v.remove();
             });;
-            Y.Node.all('span.feedback_item_command_move').each(function(v, k) {
+            Y.Node.all(CSS.OLDMOVESELECTOR).each(function(v, k) {
                 v.remove();
             });;
 
             //Create targets for drop.
-            var droparea = Y.Node.one('#feedback_dragarea ul#feedback_draglist');
+            var droparea = Y.Node.one(CSS.DRAGTARGETSELECTOR);
             var tar = new Y.DD.Drop({
                 node: droparea
             });
