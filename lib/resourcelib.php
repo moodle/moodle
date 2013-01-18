@@ -262,35 +262,17 @@ function resourcelib_embed_general($fullurl, $title, $clicktoopen, $mimetype) {
         $fullurl = $fullurl->out();
     }
 
-    $iframe = false;
-
     $param = '<param name="src" value="'.$fullurl.'" />';
 
-    // IE can not embed stuff properly, that is why we use iframe instead.
-    // Unfortunately this tag does not validate in xhtml strict mode,
-    // but in any case it is undeprecated in HTML 5 - we will use it everywhere soon!
-    if ($mimetype === 'text/html' and check_browser_version('MSIE', 5)) {
-        $iframe = true;
-    }
-
-    if ($iframe) {
-        $code = <<<EOT
+    // Always use iframe embedding because object tag does not work much,
+    // this is ok in HTML5.
+    $code = <<<EOT
 <div class="resourcecontent resourcegeneral">
   <iframe id="resourceobject" src="$fullurl">
     $clicktoopen
   </iframe>
 </div>
 EOT;
-    } else {
-        $code = <<<EOT
-<div class="resourcecontent resourcegeneral">
-  <object id="resourceobject" data="$fullurl" type="$mimetype"  width="800" height="600">
-    $param
-    $clicktoopen
-  </object>
-</div>
-EOT;
-    }
 
     // the size is hardcoded in the boject obove intentionally because it is adjusted by the following function on-the-fly
     $PAGE->requires->js_init_call('M.util.init_maximised_embed', array('resourceobject'), true);
