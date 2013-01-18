@@ -5,10 +5,6 @@ class block_news_items extends block_base {
         $this->title = get_string('pluginname', 'block_news_items');
     }
 
-    function applicable_formats() {
-        return array('all' => true, 'mod' => false, 'tag' => false, 'my' => false);
-    }
-
     function get_content() {
         global $CFG, $USER;
 

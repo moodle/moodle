@@ -10,10 +10,6 @@ class block_glossary_random extends block_base {
         $this->title = get_string('pluginname','block_glossary_random');
     }
 
-    function applicable_formats() {
-        return array('all' => true, 'mod' => false, 'tag' => false, 'my' => false);
-    }
-
     function specialization() {
         global $CFG, $DB;
 
