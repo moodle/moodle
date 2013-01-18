@@ -140,7 +140,7 @@ M.mod_feedback.init = function(Y, id, sesskey) {
                     spinner.show();
                 },
                 success: function(transactionid, xhr) {
-                    var response = xhr.response;
+                    var response = xhr.responseText;
                     var ergebnis = Y.JSON.parse(response);
                     window.setTimeout(function(e) {
                         spinner.hide();
