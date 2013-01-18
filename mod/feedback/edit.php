@@ -160,20 +160,8 @@ $PAGE->set_title(format_string($feedback->name));
 
 //Adding the javascript module for the items dragdrop.
 if ($do_show == 'edit') {
-    $jsmodule = array(
-            'name'     => 'mod_feedback',
-            'fullpath' => '/mod/feedback/module.js',
-            'requires' => array('io', 'json-parse', 'dd-constrain', 'dd-proxy', 'dd-drop'),
-            'strings' => array(array('pluginname', 'feedback'),
-                               array('move_item', 'feedback'),
-                               array('position', 'feedback'))
-    );
-
-    $ajaxscript = $CFG->httpswwwroot.'/mod/feedback/ajax.php';
-    $PAGE->requires->js_init_call('M.mod_feedback.init', array($cm->id,
-                                                                sesskey()),
-                                                                false,
-                                                                $jsmodule);
+    $PAGE->requires->yui_module('moodle-mod_feedback-dragdrop', 'M.mod_feedback.init_dragdrop',
+            array(array('cmid' => $cm->id)));
 }
 
 echo $OUTPUT->header();
