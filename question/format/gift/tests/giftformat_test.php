@@ -743,7 +743,7 @@ class qformat_gift_test extends question_testcase {
             'qtype' => 'shortanswer',
             'options' => (object) array(
                 'id' => 123,
-                'question' => 666,
+                'questionid' => 666,
                 'usecase' => 1,
                 'answers' => array(
                     1 => (object) array(
@@ -803,7 +803,7 @@ class qformat_gift_test extends question_testcase {
             'qtype' => 'shortanswer',
             'options' => (object) array(
                 'id' => 123,
-                'question' => 666,
+                'questionid' => 666,
                 'usecase' => 1,
                 'answers' => array(
                     1 => (object) array(
