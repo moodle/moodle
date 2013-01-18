@@ -60,10 +60,10 @@ YUI.add('moodle-mod_feedback-dragdrop', function(Y) {
                 //Get our drag object
                 var drag = e.target;
                 //Set some styles here
-                drag.get('node').setStyle('opacity', '.25');
+                drag.get('node').addClass('drag_target_active');
                 drag.get('dragNode').set('innerHTML', drag.get('node').get('innerHTML'));
+                drag.get('dragNode').addClass('drag_item_active');
                 drag.get('dragNode').setStyles({
-                    opacity: '.5',
                     borderColor: drag.get('node').getStyle('borderColor'),
                     backgroundColor: drag.get('node').getStyle('backgroundColor')
                 });
@@ -72,10 +72,7 @@ YUI.add('moodle-mod_feedback-dragdrop', function(Y) {
             Y.DD.DDM.on('drag:end', function(e) {
                 var drag = e.target;
                 //Put our styles back
-                drag.get('node').setStyles({
-                    visibility: '',
-                    opacity: '1'
-                });
+                drag.get('node').removeClass('drag_target_active');
 
             });
             //Listen for all drag:drophit events

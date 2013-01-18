@@ -83,6 +83,14 @@ hr.feedback_pagebreak {
 	border:0px;
 }
 
+.drag_target_active {
+	opacity: .25;
+}
+
+.drag_item_active {
+	opacity: .5;
+}
+
 ul#feedback_draglist {
 	list-style: none;
 	padding: 0;
