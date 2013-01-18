@@ -486,7 +486,7 @@ function message_print_usergroup_selector($viewing, $courses, $coursecontexts, $
         $options[MESSAGE_VIEW_UNREAD_MESSAGES] = $strunreadmessages;
     }
 
-    $str = get_string('mycontacts', 'message');
+    $str = get_string('contacts', 'message');
     $options[MESSAGE_VIEW_CONTACTS] = $str;
 
     $options[MESSAGE_VIEW_RECENT_CONVERSATIONS] = get_string('mostrecentconversations', 'message');
