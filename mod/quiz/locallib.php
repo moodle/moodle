@@ -783,34 +783,48 @@ function quiz_update_open_attempts(array $conditions) {
     }
 
     $params = array();
-    $coursecond = '';
-    $usercond = '';
-    $quizcond = '';
-    $groupcond = '';
+    $wheres = array("quiza.state IN ('inprogress', 'overdue')");
+    $iwheres = array("iquiza.state IN ('inprogress', 'overdue')");
 
     if (isset($conditions['courseid'])) {
         list ($incond, $inparams) = $DB->get_in_or_equal($conditions['courseid'], SQL_PARAMS_NAMED, 'cid');
         $params = array_merge($params, $inparams);
-        $coursecond = "AND quiza.quiz IN (SELECT q.id FROM {quiz} q WHERE q.course $incond)";
+        $wheres[] = "quiza.quiz IN (SELECT q.id FROM {quiz} q WHERE q.course $incond)";
+        list ($incond, $inparams) = $DB->get_in_or_equal($conditions['courseid'], SQL_PARAMS_NAMED, 'icid');
+        $params = array_merge($params, $inparams);
+        $iwheres[] = "iquiza.quiz IN (SELECT q.id FROM {quiz} q WHERE q.course $incond)";
     }
+
     if (isset($conditions['userid'])) {
         list ($incond, $inparams) = $DB->get_in_or_equal($conditions['userid'], SQL_PARAMS_NAMED, 'uid');
         $params = array_merge($params, $inparams);
-        $usercond = "AND quiza.userid $incond";
+        $wheres[] = "quiza.userid $incond";
+        list ($incond, $inparams) = $DB->get_in_or_equal($conditions['userid'], SQL_PARAMS_NAMED, 'iuid');
+        $params = array_merge($params, $inparams);
+        $iwheres[] = "iquiza.userid $incond";
     }
+
     if (isset($conditions['quizid'])) {
         list ($incond, $inparams) = $DB->get_in_or_equal($conditions['quizid'], SQL_PARAMS_NAMED, 'qid');
         $params = array_merge($params, $inparams);
-        $quizcond = "AND quiza.quiz $incond";
+        $wheres[] = "quiza.quiz $incond";
+        list ($incond, $inparams) = $DB->get_in_or_equal($conditions['quizid'], SQL_PARAMS_NAMED, 'iqid');
+        $params = array_merge($params, $inparams);
+        $iwheres[] = "iquiza.quiz $incond";
     }
+
     if (isset($conditions['groupid'])) {
         list ($incond, $inparams) = $DB->get_in_or_equal($conditions['groupid'], SQL_PARAMS_NAMED, 'gid');
         $params = array_merge($params, $inparams);
-        $groupcond = "AND quiza.quiz IN (SELECT qo.quiz FROM {quiz_overrides} qo WHERE qo.groupid $incond)";
+        $wheres[] = "quiza.quiz IN (SELECT qo.quiz FROM {quiz_overrides} qo WHERE qo.groupid $incond)";
+        list ($incond, $inparams) = $DB->get_in_or_equal($conditions['groupid'], SQL_PARAMS_NAMED, 'igid');
+        $params = array_merge($params, $inparams);
+        $iwheres[] = "iquiza.quiz IN (SELECT qo.quiz FROM {quiz_overrides} qo WHERE qo.groupid $incond)";
     }
 
     // SQL to compute timeclose and timelimit for each attempt:
-    $quizausersql = quiz_get_attempt_usertime_sql();
+    $quizausersql = quiz_get_attempt_usertime_sql(
+            implode("\n                AND ", $iwheres));
 
     // SQL to compute the new timecheckstate
     $timecheckstatesql = "
@@ -822,11 +836,7 @@ function quiz_update_open_attempts(array $conditions) {
           CASE WHEN quiza.state = 'overdue' THEN quiz.graceperiod ELSE 0 END";
 
     // SQL to select which attempts to process
-    $attemptselect = " quiza.state IN ('inprogress', 'overdue')
-                       $coursecond
-                       $usercond
-                       $quizcond
-                       $groupcond";
+    $attemptselect = implode("\n                         AND ", $wheres);
 
    /*
     * Each database handles updates with inner joins differently:
@@ -876,9 +886,14 @@ function quiz_update_open_attempts(array $conditions) {
 /**
  * Returns SQL to compute timeclose and timelimit for every attempt, taking into account user and group overrides.
  *
- * @return string         SQL select with columns attempt.id, usertimeclose, usertimelimit
+ * @param string $redundantwhereclauses extra where clauses to add to the subquery
+ *      for performance. These can use the table alias iquiza for the quiz attempts table.
+ * @return string SQL select with columns attempt.id, usertimeclose, usertimelimit.
  */
-function quiz_get_attempt_usertime_sql() {
+function quiz_get_attempt_usertime_sql($redundantwhereclauses = '') {
+    if ($redundantwhereclauses) {
+        $redundantwhereclauses = 'WHERE ' . $redundantwhereclauses;
+    }
     // The multiple qgo JOINS are necessary because we want timeclose/timelimit = 0 (unlimited) to supercede
     // any other group override
     $quizausersql = "
@@ -894,6 +909,7 @@ function quiz_get_attempt_usertime_sql() {
       LEFT JOIN {quiz_overrides} qgo2 ON qgo2.quiz = iquiza.quiz AND qgo2.groupid = gm.groupid AND qgo2.timeclose > 0
       LEFT JOIN {quiz_overrides} qgo3 ON qgo3.quiz = iquiza.quiz AND qgo3.groupid = gm.groupid AND qgo3.timelimit = 0
       LEFT JOIN {quiz_overrides} qgo4 ON qgo4.quiz = iquiza.quiz AND qgo4.groupid = gm.groupid AND qgo4.timelimit > 0
+          $redundantwhereclauses
        GROUP BY iquiza.id, iquiz.id, iquiz.timeclose, iquiz.timelimit";
     return $quizausersql;
 }
