@@ -20,94 +20,32 @@ YUI.add('moodle-mod_feedback-dragdrop', function(Y) {
         event:null,
 
         initializer : function(params) {
+            //Static Vars
             var cmid = params.cmid;
+            var goingUp = false, lastY = 0;
 
             //Listen for all drop:over events
-            Y.DD.DDM.on('drop:over', function(e) {
-                //Get a reference to our drag and drop nodes
-                var drag = e.drag.get('node'),
-                    drop = e.drop.get('node');
-
-                //Are we dropping on an li node?
-                if (drop.get('tagName').toLowerCase() === 'li') {
-                    //Are we not going up?
-                    if (!goingUp) {
-                        drop = drop.get('nextSibling');
-                    }
-                    //Add the node to this list
-                    e.drop.get('node').get('parentNode').insertBefore(drag, drop);
-                    //Resize this nodes shim, so we can drop on it later.
-                    e.drop.sizeShim();
-                }
-            });
+            Y.DD.DDM.on('drop:over', this.drop_over_handler, this);
             //Listen for all drag:drag events
-            Y.DD.DDM.on('drag:drag', function(e) {
-                //Get the last y point
-                var y = e.target.lastXY[1];
-                //Is it greater than the lastY var?
-                if (y < lastY) {
-                    //We are going up
-                    goingUp = true;
-                } else {
-                    //We are going down.
-                    goingUp = false;
-                }
-                //Cache for next check
-                lastY = y;
-            });
+            Y.DD.DDM.on('drag:drag',  this.drag_drag_handler, this);
             //Listen for all drag:start events
-            Y.DD.DDM.on('drag:start', function(e) {
-                //Get our drag object
-                var drag = e.target;
-                //Set some styles here
-                drag.get('node').addClass('drag_target_active');
-                drag.get('dragNode').set('innerHTML', drag.get('node').get('innerHTML'));
-                drag.get('dragNode').addClass('drag_item_active');
-                drag.get('dragNode').setStyles({
-                    borderColor: drag.get('node').getStyle('borderColor'),
-                    backgroundColor: drag.get('node').getStyle('backgroundColor')
-                });
-            });
+            Y.DD.DDM.on('drag:start',  this.drag_start_handler, this);
             //Listen for a drag:end events
-            Y.DD.DDM.on('drag:end', function(e) {
-                var drag = e.target;
-                //Put our styles back
-                drag.get('node').removeClass('drag_target_active');
-
-            });
+            Y.DD.DDM.on('drag:end',  this.drag_end_handler, this);
             //Listen for all drag:drophit events
-            Y.DD.DDM.on('drag:drophit', function(e) {
-                var drop = e.drop.get('node'),
-                    drag = e.drag.get('node');
-                dragnode = Y.one(drag);
-                //If we are not on an li, we must have been dropped on a ul.
-                if (drop.get('tagName').toLowerCase() !== 'li') {
-                    if (!drop.contains(drag)) {
-                        drop.appendChild(drag);
-                    }
-                    myElements = '';
-                    counter = 1;
-                    drop.get('children').each(function(v) {
-                        poslabeltext = '(' + M.util.get_string('position', 'feedback') + ':' + counter + ')';
-                        poslabel = v.one(CSS.POSITIONLABEL);
-                        poslabel.setHTML(poslabeltext);
-                        myElements = myElements + ',' + this.get_node_id(v.get('id'));
-                        counter++;
-                    }, this);
-                    var spinner = M.util.add_spinner(Y, dragnode);
-                    this.saveposition(cmid, myElements, spinner);
-               }
-            }, this);
+            Y.DD.DDM.on('drag:drophit',  this.drag_drophit_handler, this);
+            //Listen for all drag:dropmiss events
+            Y.DD.DDM.on('drag:dropmiss',  this.drag_dropmiss_handler, this);
 
-            //Static Vars
-            var goingUp = false, lastY = 0;
 
             //Get the list of li's in the lists and make them draggable.
             listitems = Y.Node.all(CSS.DRAGITEMSELECTOR);
 
             listitems.each(function(v) { //Make each item draggable.
+                var groups = ['feedbackdragdrop'];
                 var dd = new Y.DD.Drag({
                     node: v,
+                    groups: groups,
                     target: {
                         padding: '0 0 0 20'
                     }
@@ -115,7 +53,7 @@ YUI.add('moodle-mod_feedback-dragdrop', function(Y) {
                     moveOnEnd: false
                 }).plug(Y.Plugin.DDConstrained, {
                     constrain2node: CSS.DRAGAREASELECTOR //Prevent dragging outside the dragarea.
-                });
+                }).plug(Y.Plugin.DDWinScroll);
 
                 item_id = this.get_node_id(v.get('id')); //Get the id of the feedback item.
                 item_box = Y.Node.one(CSS.ITEMBOXSELECTOR + item_id); //Get the current item box so we can add the drag handle.
@@ -126,22 +64,138 @@ YUI.add('moodle-mod_feedback-dragdrop', function(Y) {
             }, this);
 
             // Remove all legacy move icons.
-            Y.Node.all(CSS.OLDMOVEUPSELECTOR).each(function(v, k) {
-                v.remove();
-            });;
-            Y.Node.all(CSS.OLDMOVEDOWNSELECTOR).each(function(v, k) {
-                v.remove();
-            });;
-            Y.Node.all(CSS.OLDMOVESELECTOR).each(function(v, k) {
-                v.remove();
-            });;
+            Y.all(CSS.OLDMOVEUPSELECTOR).remove();
+            Y.all(CSS.OLDMOVEDOWNSELECTOR).remove();
+            Y.all(CSS.OLDMOVESELECTOR).remove();
 
             //Create targets for drop.
             var droparea = Y.Node.one(CSS.DRAGTARGETSELECTOR);
+            var groups = ['feedbackdragdrop'];
             var tar = new Y.DD.Drop({
+                groups: groups,
                 node: droparea
             });
 
+        },
+
+        /**
+         * Handles the drop:over event.
+         *
+         * @param e the event
+         * @return void
+         */
+        drop_over_handler : function(e) {
+            //Get a reference to our drag and drop nodes
+            var drag = e.drag.get('node'),
+                drop = e.drop.get('node');
+
+            //Are we dropping on an li node?
+            if (drop.get('tagName').toLowerCase() === 'li') {
+                //Are we not going up?
+                if (!this.goingUp) {
+                    drop = drop.get('nextSibling');
+                }
+                //Add the node to this list
+                e.drop.get('node').get('parentNode').insertBefore(drag, drop);
+                //Resize this nodes shim, so we can drop on it later.
+                e.drop.sizeShim();
+            }
+        },
+
+        /**
+         * Handles the drag:drag event.
+         *
+         * @param e the event
+         * @return void
+         */
+        drag_drag_handler : function(e) {
+            //Get the last y point
+            var y = e.target.lastXY[1];
+            //Is it greater than the lastY var?
+            if (y < this.lastY) {
+                //We are going up
+                this.goingUp = true;
+            } else {
+                //We are going down.
+                this.goingUp = false;
+            }
+            //Cache for next check
+            this.lastY = y;
+        },
+
+        /**
+         * Handles the drag:start event.
+         *
+         * @param e the event
+         * @return void
+         */
+        drag_start_handler : function(e) {
+            //Get our drag object
+            var drag = e.target;
+
+            //Set some styles here
+            drag.get('node').addClass('drag_target_active');
+            drag.get('dragNode').set('innerHTML', drag.get('node').get('innerHTML'));
+            drag.get('dragNode').addClass('drag_item_active');
+            drag.get('dragNode').setStyles({
+                borderColor: drag.get('node').getStyle('borderColor'),
+                backgroundColor: drag.get('node').getStyle('backgroundColor')
+            });
+        },
+
+        /**
+         * Handles the drag:end event.
+         *
+         * @param e the event
+         * @return void
+         */
+        drag_end_handler : function(e) {
+            var drag = e.target;
+            //Put our styles back
+            drag.get('node').removeClass('drag_target_active');
+        },
+
+        /**
+         * Handles the drag:drophit event.
+         *
+         * @param e the event
+         * @return void
+         */
+        drag_drophit_handler : function(e) {
+            var drop = e.drop.get('node'),
+                drag = e.drag.get('node');
+            dragnode = Y.one(drag);
+            //If we are not on an li, we must have been dropped on a ul.
+            if (drop.get('tagName').toLowerCase() !== 'li') {
+                if (!drop.contains(drag)) {
+                    drop.appendChild(drag);
+                }
+                myElements = '';
+                counter = 1;
+                drop.get('children').each(function(v) {
+                    poslabeltext = '(' + M.util.get_string('position', 'feedback') + ':' + counter + ')';
+                    poslabel = v.one(CSS.POSITIONLABEL);
+                    poslabel.setHTML(poslabeltext);
+                    myElements = myElements + ',' + this.get_node_id(v.get('id'));
+                    counter++;
+                }, this);
+                var spinner = M.util.add_spinner(Y, dragnode);
+                this.saveposition(this.cmid, myElements, spinner);
+           }
+        },
+
+        /**
+         * Handles the drag:dropmiss event.
+         *
+         * @param e the event
+         * @return void
+         */
+        drag_dropmiss_handler : function(e) {
+            var msg = {
+                name : 'dropmiss',
+                message : 'dropmiss'
+            };
+            return new M.core.exception(msg);
         },
 
         /**
@@ -198,19 +252,24 @@ YUI.add('moodle-mod_feedback-dragdrop', function(Y) {
                     start : function(transactionid) {
                         spinner.show();
                     },
-                    success: function(transactionid, xhr) {
+                    success : function(transactionid, xhr) {
                         var response = xhr.responseText;
                         var ergebnis = Y.JSON.parse(response);
                         window.setTimeout(function(e) {
                             spinner.hide();
                         }, 250);
                     },
-                    failure: function() {
-                        window.setTimeout(function(e) {
-                            spinner.hide();
-                        }, 250);
+                    failure : function(transactionid, xhr) {
+                        var msg = {
+                            name : xhr.status+' '+xhr.statusText,
+                            message : xhr.responseText
+                        };
+                        return new M.core.exception(msg);
+                        //~ this.ajax_failure(xhr);
+                        spinner.hide();
                     }
-                }
+                },
+                context:this
             });
         },
 
@@ -240,5 +299,5 @@ YUI.add('moodle-mod_feedback-dragdrop', function(Y) {
     }
 
 }, '@VERSION@', {
-    requires:['io', 'json-parse', 'dd-constrain', 'dd-proxy', 'dd-drop']
+    requires:['io', 'json-parse', 'dd-constrain', 'dd-proxy', 'dd-drop', 'dd-scroll', 'moodle-core-notification']
 });
