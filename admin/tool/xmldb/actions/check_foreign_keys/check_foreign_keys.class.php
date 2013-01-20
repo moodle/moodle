@@ -130,7 +130,7 @@ class check_foreign_keys extends XMLDBCheckAction {
     }
 
     protected function display_results(array $violatedkeys) {
-        $r = '<table class="generalbox boxaligncenter boxwidthwide" border="0" cellpadding="5" cellspacing="0" id="results">';
+        $r = '<table class="generaltable boxaligncenter boxwidthwide" border="0" cellpadding="5" cellspacing="0" id="results">';
         $r.= '  <tr><td class="generalboxcontent">';
         $r.= '    <h2 class="main">' . $this->str['searchresults'] . '</h2>';
         $r.= '    <p class="centerpara">' . $this->str['violatedforeignkeys'] . ': ' . count($violatedkeys) . '</p>';
