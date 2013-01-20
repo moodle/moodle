@@ -1,76 +1,84 @@
 YUI.add('moodle-mod_feedback-dragdrop', function(Y) {
     var DRAGDROPNAME = 'mod_feedback_dragdrop';
     var CSS = {
-        OLDMOVESELECTOR : 'span.feedback_item_command_move',
-        OLDMOVEUPSELECTOR : 'span.feedback_item_command_moveup',
-        OLDMOVEDOWNSELECTOR : 'span.feedback_item_command_movedown',
-        DRAGAREASELECTOR : '#feedback_dragarea',
-        DRAGITEMSELECTOR : '#feedback_dragarea ul li.feedback_itemlist',
-        DRAGTARGETSELECTOR : '#feedback_dragarea ul#feedback_draglist',
+        OLDMOVE : 'span.feedback_item_command_move',
+        OLDMOVEUP : 'span.feedback_item_command_moveup',
+        OLDMOVEDOWN : 'span.feedback_item_command_movedown',
+        DRAGAREA : '#feedback_dragarea',
+        DRAGITEM : 'li.feedback_itemlist',
+        DRAGLIST : '#feedback_dragarea ul#feedback_draglist',
         POSITIONLABEL : '.feedback_item_commands.position',
-        ITEMBOXSELECTOR : '#feedback_item_box_'
+        ITEMBOX : '#feedback_item_box_',
+        DRAGHANDLE : 'itemhandle'
     };
 
     var DRAGDROP = function() {
         DRAGDROP.superclass.constructor.apply(this, arguments);
     };
 
-    Y.extend(DRAGDROP, Y.Base, {
-
-        event:null,
+    Y.extend(DRAGDROP, M.core.dragdrop, {
 
         initializer : function(params) {
             //Static Vars
-            var cmid = params.cmid;
-            var goingUp = false, lastY = 0;
+            this.cmid = params.cmid;
+            this.goingUp = false, lastY = 0;
 
-            //Listen for all drop:over events
-            Y.DD.DDM.on('drop:over', this.drop_over_handler, this);
-            //Listen for all drag:drag events
-            Y.DD.DDM.on('drag:drag',  this.drag_drag_handler, this);
-            //Listen for all drag:start events
-            Y.DD.DDM.on('drag:start',  this.drag_start_handler, this);
-            //Listen for a drag:end events
-            Y.DD.DDM.on('drag:end',  this.drag_end_handler, this);
-            //Listen for all drag:drophit events
-            Y.DD.DDM.on('drag:drophit',  this.drag_drophit_handler, this);
-            //Listen for all drag:dropmiss events
-            Y.DD.DDM.on('drag:dropmiss',  this.drag_dropmiss_handler, this);
+            var groups = ['feedbackitem'];
 
+            handletitle = M.util.get_string('move_item', 'feedback');
+            this.mydraghandle = this.get_drag_handle(handletitle, CSS.DRAGHANDLE, 'icon');
 
-            //Get the list of li's in the lists and make them draggable.
-            listitems = Y.Node.all(CSS.DRAGITEMSELECTOR);
-
-            listitems.each(function(v) { //Make each item draggable.
-                var groups = ['feedbackdragdrop'];
-                var dd = new Y.DD.Drag({
-                    node: v,
-                    groups: groups,
-                    target: {
-                        padding: '0 0 0 20'
-                    }
-                }).plug(Y.Plugin.DDProxy, {
-                    moveOnEnd: false
-                }).plug(Y.Plugin.DDConstrained, {
-                    constrain2node: CSS.DRAGAREASELECTOR //Prevent dragging outside the dragarea.
-                }).plug(Y.Plugin.DDWinScroll);
-
+            //Get the list of li's in the lists and add the drag handle.
+            basenode = Y.Node.one(CSS.DRAGLIST);
+            listitems = basenode.all(CSS.DRAGITEM).each(function(v) {
                 item_id = this.get_node_id(v.get('id')); //Get the id of the feedback item.
-                item_box = Y.Node.one(CSS.ITEMBOXSELECTOR + item_id); //Get the current item box so we can add the drag handle.
-                handletitle = M.util.get_string('move_item', 'feedback');
-                mydraghandle = this.get_drag_handle(handletitle, 'itemhandle');
-                v.insert(mydraghandle, item_box); //Insert the new handle into the item box.
-                dd.addHandle(mydraghandle); //Now we add the handle to the drag object, so the box only can be moved with this handle.
+                item_box = Y.Node.one(CSS.ITEMBOX + item_id); //Get the current item box so we can add the drag handle.
+                v.insert(this.mydraghandle.cloneNode(true), item_box); //Insert the new handle into the item box.
             }, this);
 
+            //We use a delegate to make all items draggable
+            var del = new Y.DD.Delegate({
+                container: CSS.DRAGLIST,
+                nodes: CSS.DRAGITEM,
+                target: {
+                    padding: '0 0 0 20'
+                },
+                handles: ['.' + CSS.DRAGHANDLE],
+                dragConfig: {groups: groups}
+            });
+
+            //Add plugins to the delegate
+            del.dd.plug(Y.Plugin.DDProxy, {
+                // Don't move the node at the end of the drag
+                moveOnEnd: false,
+                cloneNode: true
+            });
+            del.dd.plug(Y.Plugin.DDConstrained, {
+                // Keep it inside the .course-content
+                constrain: CSS.DRAGAREA
+            });
+            del.dd.plug(Y.Plugin.DDWinScroll);
+
+            //Listen for all drop:over events
+            del.on('drop:over', this.drop_over_handler, this);
+            //Listen for all drag:drag events
+            del.on('drag:drag',  this.drag_drag_handler, this);
+            //Listen for all drag:start events
+            del.on('drag:start',  this.drag_start_handler, this);
+            //Listen for a drag:end events
+            del.on('drag:end',  this.drag_end_handler, this);
+            //Listen for all drag:drophit events
+            del.on('drag:drophit',  this.drag_drophit_handler, this);
+            //Listen for all drag:dropmiss events
+            del.on('drag:dropmiss',  this.drag_dropmiss_handler, this);
+
             // Remove all legacy move icons.
-            Y.all(CSS.OLDMOVEUPSELECTOR).remove();
-            Y.all(CSS.OLDMOVEDOWNSELECTOR).remove();
-            Y.all(CSS.OLDMOVESELECTOR).remove();
+            Y.all(CSS.OLDMOVEUP).remove();
+            Y.all(CSS.OLDMOVEDOWN).remove();
+            Y.all(CSS.OLDMOVE).remove();
 
             //Create targets for drop.
-            var droparea = Y.Node.one(CSS.DRAGTARGETSELECTOR);
-            var groups = ['feedbackdragdrop'];
+            var droparea = Y.Node.one(CSS.DRAGLIST);
             var tar = new Y.DD.Drop({
                 groups: groups,
                 node: droparea
@@ -180,7 +188,7 @@ YUI.add('moodle-mod_feedback-dragdrop', function(Y) {
                     counter++;
                 }, this);
                 var spinner = M.util.add_spinner(Y, dragnode);
-                this.saveposition(this.cmid, myElements, spinner);
+                this.save_item_order(this.cmid, myElements, spinner);
            }
         },
 
@@ -199,35 +207,6 @@ YUI.add('moodle-mod_feedback-dragdrop', function(Y) {
         },
 
         /**
-         * Creates a new drag handle and return it as a new node.
-         *
-         * @param title The title of the drag icon
-         * @param handleclass The css class for the drag handle
-         * @return void
-         */
-        get_drag_handle : function(title, handleclass) {
-            var moveicon = {
-                pix: "i/move_2d",
-                largepix: "i/dragdrop",
-                component: 'moodle'
-            };
-
-            var iconname = moveicon.largepix;
-            var dragicon = Y.Node.create('<img />')
-                .setStyle('cursor', 'move')
-                .setAttrs({
-                    'src' : M.util.image_url(iconname, moveicon.component),
-                    'alt' : title,
-                    'class' : handleclass
-                });
-
-            var dragelement = Y.Node.create('<span></span>')
-                .setAttribute('title', title);
-            dragelement.appendChild(dragicon);
-            return dragelement;
-        },
-
-        /**
          * Save the new item order.
          *
          * @param cmid the coursemodule id
@@ -235,7 +214,7 @@ YUI.add('moodle-mod_feedback-dragdrop', function(Y) {
          * @param spinner The spinner icon shown while saving
          * @return void
          */
-        saveposition : function(cmid, itemorder, spinner) {
+        save_item_order : function(cmid, itemorder, spinner) {
 
             Y.io(M.cfg.wwwroot + '/mod/feedback/ajax.php', {
                 //The needed paramaters
@@ -299,5 +278,5 @@ YUI.add('moodle-mod_feedback-dragdrop', function(Y) {
     }
 
 }, '@VERSION@', {
-    requires:['io', 'json-parse', 'dd-constrain', 'dd-proxy', 'dd-drop', 'dd-scroll', 'moodle-core-notification']
+    requires:['io', 'json-parse', 'dd-constrain', 'dd-proxy', 'dd-drop', 'dd-scroll', 'moodle-core-dragdrop', 'moodle-core-notification']
 });
