@@ -30,9 +30,10 @@ if (empty($CFG->xmlstrictheaders) and !empty($CFG->loginpasswordautocomplete)) {
         </div>
         <?php
           if (!empty($errormsg)) {
-              echo '<div class="loginerrors">';
+              echo html_writer::start_tag('div', array('class' => 'loginerrors'));
+              echo html_writer::link('#', $errormsg, array('id' => 'loginerrormessage', 'class' => 'accesshide'));
               echo $OUTPUT->error_text($errormsg);
-              echo '</div>';
+              echo html_writer::end_tag('div');
           }
         ?>
         <form action="<?php echo $CFG->httpswwwroot; ?>/login/index.php" method="post" id="login" <?php echo $autocomplete; ?> >
