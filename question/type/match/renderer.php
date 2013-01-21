@@ -17,10 +17,9 @@
 /**
  * Matching question renderer class.
  *
- * @package    qtype
- * @subpackage match
- * @copyright  2009 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   qtypematch
+ * @copyright 2009 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -30,8 +29,8 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Generates the output for matching questions.
  *
- * @copyright  2009 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2009 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_match_renderer extends qtype_with_combined_feedback_renderer {
 
@@ -81,7 +80,9 @@ class qtype_match_renderer extends qtype_with_combined_feedback_renderer {
             }
 
             $result .= html_writer::tag('td',
-                    html_writer::label(get_string('answer', 'qtype_match', $i), 'menu' . $qa->get_qt_field_name('sub' . $key), false, array('class' => 'accesshide')) .
+                    html_writer::label(get_string('answer', 'qtype_match', $i),
+                            'menu' . $qa->get_qt_field_name('sub' . $key), false,
+                            array('class' => 'accesshide')) .
                     html_writer::select($choices, $qa->get_qt_field_name('sub' . $key), $selected,
                             array('0' => 'choose'), array('disabled' => $options->readonly)) .
                     ' ' . $feedbackimage, array('class' => $classes));
@@ -93,7 +94,7 @@ class qtype_match_renderer extends qtype_with_combined_feedback_renderer {
         $result .= html_writer::end_tag('tbody');
         $result .= html_writer::end_tag('table');
 
-        $result .= html_writer::end_tag('div'); // ablock
+        $result .= html_writer::end_tag('div'); // Closes <div class="ablock">.
 
         if ($qa->get_state() == question_state::$invalid) {
             $result .= html_writer::nonempty_tag('div',

@@ -55,7 +55,7 @@ class qtype_match extends question_type {
         $oldsubquestions = $DB->get_records('qtype_match_subquestions',
                 array('questionid' => $question->id), 'id ASC');
 
-        // Insert all the new question+answer pairs
+        // Insert all the new question & answer pairs.
         foreach ($question->subquestions as $key => $questiontext) {
             if ($questiontext['text'] == '' && trim($question->subanswers[$key]) == '') {
                 continue;
@@ -82,7 +82,7 @@ class qtype_match extends question_type {
             $DB->update_record('qtype_match_subquestions', $subquestion);
         }
 
-        // Delete old subquestions records
+        // Delete old subquestions records.
         $fs = get_file_storage();
         foreach ($oldsubquestions as $oldsub) {
             $fs->delete_area_files($context->id, 'qtype_match', 'subquestion', $oldsub->id);

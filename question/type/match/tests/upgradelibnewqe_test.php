@@ -18,10 +18,9 @@
  * Tests of the upgrade to the new Moodle question engine for attempts at
  * match questions.
  *
- * @package    qtype
- * @subpackage match
- * @copyright  2009 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   qtype_match
+ * @copyright 2009 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -34,8 +33,8 @@ require_once($CFG->dirroot . '/question/engine/upgrade/tests/helper.php');
 /**
  * Testing the upgrade of match question attempts.
  *
- * @copyright  2009 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2009 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_match_attempt_upgrader_test extends question_attempt_upgrader_test_base {
 
@@ -226,9 +225,24 @@ class qtype_match_attempt_upgrader_test extends question_attempt_upgrader_test_b
             'maxmark' => 3,
             'minfraction' => 0,
             'flagged' => 0,
-            'questionsummary' => 'Associate the appropriate definition with each term. {Active adjacent system; Autonomous adjacent system; Cooperative adjacent system} -> {A system that interacts with or participates in the work.; An external entity that acts independently of the work under study.; A system that is involved in the response to a business event.; A system which does not supply or receive data from the work.; An external entity that performs part of the work under study.}',
-            'rightanswer' => 'Active adjacent system -> A system that interacts with or participates in the work.; Autonomous adjacent system -> An external entity that acts independently of the work under study.; Cooperative adjacent system -> A system that is involved in the response to a business event.',
-            'responsesummary' => 'Active adjacent system -> A system that interacts with or participates in the work.; Autonomous adjacent system -> An external entity that acts independently of the work under study.; Cooperative adjacent system -> A system that is involved in the response to a business event.',
+            'questionsummary' => 'Associate the appropriate definition with each term. ' .
+                    '{Active adjacent system; Autonomous adjacent system; ' .
+                    'Cooperative adjacent system} -> {A system that interacts with ' .
+                    'or participates in the work.; An external entity that acts ' .
+                    'independently of the work under study.; A system that is involved ' .
+                    'in the response to a business event.; A system which does not supply ' .
+                    'or receive data from the work.; An external entity that performs part ' .
+                    'of the work under study.}',
+            'rightanswer' => 'Active adjacent system -> A system that interacts with ' .
+                    'or participates in the work.; Autonomous adjacent system -> ' .
+                    'An external entity that acts independently of the work under study.; ' .
+                    'Cooperative adjacent system -> A system that is involved in the response ' .
+                    'to a business event.',
+            'responsesummary' => 'Active adjacent system -> A system that interacts with ' .
+                    'or participates in the work.; Autonomous adjacent system -> ' .
+                    'An external entity that acts independently of the work under study.; ' .
+                    'Cooperative adjacent system -> A system that is involved in the response ' .
+                    'to a business event.',
             'timemodified' => 1177419956,
             'steps' => array(
                 0 => (object) array(
@@ -237,7 +251,8 @@ class qtype_match_attempt_upgrader_test extends question_attempt_upgrader_test_b
                     'fraction' => null,
                     'timecreated' => 1177419915,
                     'userid' => 91483,
-                    'data' => array('_stemorder' => '148,149,150', '_choiceorder' => 'todo - see below'),
+                    'data' => array('_stemorder' => '148,149,150',
+                            '_choiceorder' => 'todo - see below'),
                 ),
                 1 => (object) array(
                     'sequencenumber' => 1,
@@ -266,7 +281,7 @@ class qtype_match_attempt_upgrader_test extends question_attempt_upgrader_test_b
             ),
         );
 
-        // This is a random thing, so just set expected to actual:
+        // This is a random thing, so just set expected to actual.
         $expectedqa->steps[0]->data['_choiceorder'] = $qa->steps[0]->data['_choiceorder'];
         $order = explode(',', $qa->steps[0]->data['_choiceorder']);
         $order = array_combine(array_values($order), array_keys($order));
@@ -285,7 +300,8 @@ class qtype_match_attempt_upgrader_test extends question_attempt_upgrader_test_b
             'id' => '60',
             'course' => '2304',
             'name' => 'Types of resources available quiz',
-            'intro' => 'This quiz covers the different types of information resources available and how to select which is most appropriate. ',
+            'intro' => 'This quiz covers the different types of information resources available ' .
+                    'and how to select which is most appropriate. ',
             'introformat' => FORMAT_HTML,
             'questiondecimalpoints' => '-1',
             'showuserpicture' => '1',
@@ -377,7 +393,8 @@ class qtype_match_attempt_upgrader_test extends question_attempt_upgrader_test_b
                     ),
                     216 => (object) array(
                         'questionid' => '738',
-                        'questiontext' => 'Subject gateways can provide a more direct route to websites containing academic content ',
+                        'questiontext' => 'Subject gateways can provide a more direct route ' .
+                                'to websites containing academic content ',
                         'answertext' => 'True',
                         'id' => 216,
                     ),
@@ -439,9 +456,21 @@ class qtype_match_attempt_upgrader_test extends question_attempt_upgrader_test_b
             'maxmark' => 1,
             'minfraction' => 0,
             'flagged' => 0,
-            'questionsummary' => 'Which of the following statements about subject gateways are true, and which are false? {Subject gateways provide links to sites that have been quality checked; Subject gateways offer more variety than search engines; Subject gateways index websites automatically; Subject gateways can provide a more direct route to websites containing academic content} -> {True; False}',
-            'rightanswer' => 'Subject gateways provide links to sites that have been quality checked -> True; Subject gateways offer more variety than search engines -> False; Subject gateways index websites automatically -> False; Subject gateways can provide a more direct route to websites containing academic content -> True',
-            'responsesummary' => 'Subject gateways provide links to sites that have been quality checked -> True; Subject gateways offer more variety than search engines -> False; Subject gateways index websites automatically -> False; Subject gateways can provide a more direct route to websites containing academic content -> True',
+            'questionsummary' => 'Which of the following statements about subject ' .
+                    'gateways are true, and which are false? {Subject gateways ' .
+                    'provide links to sites that have been quality checked; ' .
+                    'Subject gateways offer more variety than search engines; ' .
+                    'Subject gateways index websites automatically; ' .
+                    'Subject gateways can provide a more direct route to websites containing academic content} -> ' .
+                    '{True; False}',
+            'rightanswer' => 'Subject gateways provide links to sites that have been quality checked -> True; ' .
+                    'Subject gateways offer more variety than search engines -> False; ' .
+                    'Subject gateways index websites automatically -> False; ' .
+                    'Subject gateways can provide a more direct route to websites containing academic content -> True',
+            'responsesummary' => 'Subject gateways provide links to sites that have been quality checked -> True; ' .
+                    'Subject gateways offer more variety than search engines -> False; ' .
+                    'Subject gateways index websites automatically -> False; ' .
+                    'Subject gateways can provide a more direct route to websites containing academic content -> True',
             'timemodified' => 1168267508,
             'steps' => array(
                 0 => (object) array(
@@ -458,12 +487,12 @@ class qtype_match_attempt_upgrader_test extends question_attempt_upgrader_test_b
                     'fraction' => 1,
                     'timecreated' => 1168267508,
                     'userid' => 182682,
-                    'data' => array('sub0' => 213, 'sub1' => 214,'sub2' => 214,'sub3' => 213, '-finish' => 1),
+                    'data' => array('sub0' => 213, 'sub1' => 214, 'sub2' => 214, 'sub3' => 213, '-finish' => 1),
                 ),
             ),
         );
 
-        // This is a random thing, so just set expected to actual:
+        // This is a random thing, so just set expected to actual.
         $expectedqa->steps[0]->data['_choiceorder'] = $qa->steps[0]->data['_choiceorder'];
         $order = explode(',', $qa->steps[0]->data['_choiceorder']);
         $order = array_combine(array_values($order), array_keys($order));
@@ -541,11 +570,13 @@ class qtype_match_attempt_upgrader_test extends question_attempt_upgrader_test_b
             'generalfeedback' => '<ul>
             <li>Subject gateways provide links to sites that have been quality checked = True </li>
  </ul>
- <p>All links in a subject gateway have been added by a knowledgeable subject specialist and so have to be of a certain quality to be added to the collection.</p>
+ <p>All links in a subject gateway have been added by a knowledgeable subject specialist and ' .
+                                'so have to be of a certain quality to be added to the collection.</p>
  <ul>
             <li>Subject gateways offer more variety than search engines = False </li>
  </ul>
- <p>Subject gateways will most likely provide fewer links than a search engine, but this is because they are selected with a particular subject area in mind </p>
+ <p>Subject gateways will most likely provide fewer links than a search engine, but this is because ' .
+                                'they are selected with a particular subject area in mind </p>
  <ul>
             <li>Subject gateways index websites automatically = False </li>
  </ul>
@@ -553,7 +584,8 @@ class qtype_match_attempt_upgrader_test extends question_attempt_upgrader_test_b
  <ul>
             <li>Subject gateways can provide a more direct route to websites containing academic content = True </li>
  </ul>
- <p>All links in a subject gateway have been added by a knowledgeable subject specialist and so you can find academic content easier than using a web search engine.</p>',
+ <p>All links in a subject gateway have been added by a knowledgeable subject specialist ' .
+                                'and so you can find academic content easier than using a web search engine.</p>',
             'generalfeedbackformat' => '1',
             'timecreated' => '0',
             'timemodified' => '0',
@@ -585,7 +617,8 @@ class qtype_match_attempt_upgrader_test extends question_attempt_upgrader_test_b
                     ),
                     1635 => (object) array(
                         'questionid' => '11135',
-                        'questiontext' => 'Subject gateways can provide a more direct route to websites containing academic content',
+                        'questiontext' => 'Subject gateways can provide a more direct route to websites ' .
+                                'containing academic content',
                         'answertext' => 'True',
                         'id' => 1635,
                     ),
@@ -680,7 +713,7 @@ class qtype_match_attempt_upgrader_test extends question_attempt_upgrader_test_b
                 'question' => '11135',
                 'originalquestion' => '0',
                 'seq_number' => '5',
-                'answer' => '1633-1632,1635-1635,1634-1635,1632-1632',
+                'answer' => '1633-1633,1635-1635,1634-1635,1632-1632',
                 'timestamp' => '1200507467',
                 'event' => '6',
                 'grade' => '0.75',
@@ -699,9 +732,20 @@ class qtype_match_attempt_upgrader_test extends question_attempt_upgrader_test_b
             'maxmark' => 1,
             'minfraction' => 0,
             'flagged' => 0,
-            'questionsummary' => 'Which of the following statements about subject gateways are true, and which are false? {Subject gateways provide links to sites that have been quality checked; Subject gateways offer more variety than search engines; Subject gateways index websites automatically; Subject gateways can provide a more direct route to websites containing academic content} -> {True; False}',
-            'rightanswer' => 'Subject gateways provide links to sites that have been quality checked -> True; Subject gateways offer more variety than search engines -> False; Subject gateways index websites automatically -> False; Subject gateways can provide a more direct route to websites containing academic content -> True',
-            'responsesummary' => 'Subject gateways offer more variety than search engines -> False; Subject gateways can provide a more direct route to websites containing academic content -> True; Subject gateways index websites automatically -> True; Subject gateways provide links to sites that have been quality checked -> True',
+            'questionsummary' => 'Which of the following statements about subject gateways are true, and which are false? ' .
+                    '{Subject gateways provide links to sites that have been quality checked; ' .
+                    'Subject gateways offer more variety than search engines; ' .
+                    'Subject gateways index websites automatically; ' .
+                    'Subject gateways can provide a more direct route to websites containing academic content} ' .
+                    '-> {True; False}',
+            'rightanswer' => 'Subject gateways provide links to sites that have been quality checked -> True; ' .
+                    'Subject gateways offer more variety than search engines -> False; ' .
+                    'Subject gateways index websites automatically -> False; ' .
+                    'Subject gateways can provide a more direct route to websites containing academic content -> True',
+            'responsesummary' => 'Subject gateways offer more variety than search engines -> False; ' .
+                    'Subject gateways can provide a more direct route to websites containing academic content -> True; ' .
+                    'Subject gateways index websites automatically -> True; ' .
+                    'Subject gateways provide links to sites that have been quality checked -> True',
             'timemodified' => 1200507467,
             'steps' => array(
                 0 => (object) array(
@@ -710,7 +754,8 @@ class qtype_match_attempt_upgrader_test extends question_attempt_upgrader_test_b
                     'fraction' => null,
                     'timecreated' => 1200506648,
                     'userid' => 6584,
-                    'data' => array('_stemorder' => '1633,1635,1634,1632', '_choiceorder' => 'todo - see below'),
+                    'data' => array('_stemorder' => '1633,1635,1634,1632',
+                            '_choiceorder' => 'todo - see below'),
                 ),
                 1 => (object) array(
                     'sequencenumber' => 1,
@@ -755,7 +800,7 @@ class qtype_match_attempt_upgrader_test extends question_attempt_upgrader_test_b
             ),
         );
 
-        // This is a random thing, so just set expected to actual:
+        // This is a random thing, so just set expected to actual.
         $expectedqa->steps[0]->data['_choiceorder'] = $qa->steps[0]->data['_choiceorder'];
         $order = explode(',', $qa->steps[0]->data['_choiceorder']);
         $order = array_combine(array_values($order), array_keys($order));
