@@ -327,12 +327,24 @@ function assign_print_overview($courses, &$htmlarray) {
     //
     list($sqlassignmentids, $assignmentidparams) = $DB->get_in_or_equal($assignmentids);
 
-    // build up and array of unmarked submissions indexed by assignment id/ userid
-    // for use where the user has grading rights on assignment
-    $rs = $DB->get_recordset_sql("SELECT s.assignment as assignment, s.userid as userid, s.id as id, s.status as status, g.timemodified as timegraded
-                            FROM {assign_submission} s LEFT JOIN {assign_grades} g ON s.userid = g.userid and s.assignment = g.assignment
-                            WHERE g.timemodified = 0 OR s.timemodified > g.timemodified
-                            AND s.assignment $sqlassignmentids", $assignmentidparams);
+    // Build up and array of unmarked submissions indexed by assignment id/ userid
+    // for use where the user has grading rights on assignment.
+    $rs = $DB->get_recordset_sql('SELECT
+                                      s.assignment as assignment,
+                                      s.userid as userid,
+                                      s.id as id,
+                                      s.status as status,
+                                      g.timemodified as timegraded
+                                  FROM {assign_submission} s
+                                  LEFT JOIN {assign_grades} g ON
+                                      s.userid = g.userid AND
+                                      s.assignment = g.assignment
+                                  WHERE
+                                      ( g.timemodified is NULL OR
+                                      s.timemodified > g.timemodified ) AND
+                                      s.timemodified IS NOT NULL AND
+                                      s.status = "submitted" AND
+                                      s.assignment ' . $sqlassignmentids, $assignmentidparams);
 
     $unmarkedsubmissions = array();
     foreach ($rs as $rd) {
