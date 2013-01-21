@@ -205,7 +205,7 @@ if ( $action ) {
 ?>
 
 <form method="post" action="editcategories.php">
-<table width="40%" class="boxaligncenter generalbox" cellpadding="5">
+<table width="40%" class="boxaligncenter generaltable" cellpadding="5">
         <tr>
           <th style="width:90%" align="center">
           <?php p(get_string("categories","glossary")) ?></th>
