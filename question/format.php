@@ -348,18 +348,19 @@ class qformat_default {
         foreach ($questions as $question) {
             if (!empty($question->fraction) and (is_array($question->fraction))) {
                 $fractions = $question->fraction;
-                $answersvalid = true; // in case they are!
+                $invalidfractions = array();
                 foreach ($fractions as $key => $fraction) {
                     $newfraction = match_grade_options($gradeoptionsfull, $fraction,
                             $this->matchgrades);
                     if ($newfraction === false) {
-                        $answersvalid = false;
+                        $invalidfractions[] = $fraction;
                     } else {
                         $fractions[$key] = $newfraction;
                     }
                 }
-                if (!$answersvalid) {
-                    echo $OUTPUT->notification(get_string('invalidgrade', 'question'));
+                if ($invalidfractions) {
+                    echo $OUTPUT->notification(get_string('invalidgrade', 'question',
+                            implode(', ', $invalidfractions)));
                     ++$gradeerrors;
                     continue;
                 } else {
