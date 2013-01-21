@@ -179,8 +179,23 @@ class web_testcase extends advanced_testcase {
     }
 
     function test_out_as_local_url() {
+        global $CFG;
+        // Test http url.
         $url1 = new moodle_url('/lib/tests/weblib_test.php');
         $this->assertEquals('/lib/tests/weblib_test.php', $url1->out_as_local_url());
+
+        // Test https url.
+        $httpswwwroot = str_replace("http://", "https://", $CFG->wwwroot);
+        $url2 = new moodle_url($httpswwwroot.'/login/profile.php');
+        $this->assertEquals('/login/profile.php', $url2->out_as_local_url());
+
+        // Test http url matching wwwroot.
+        $url3 = new moodle_url($CFG->wwwroot);
+        $this->assertEquals('', $url3->out_as_local_url());
+
+        // Test http url matching wwwroot ending with slash (/).
+        $url3 = new moodle_url($CFG->wwwroot.'/');
+        $this->assertEquals('/', $url3->out_as_local_url());
     }
 
     /**
@@ -190,6 +205,31 @@ class web_testcase extends advanced_testcase {
     function test_out_as_local_url_error() {
         $url2 = new moodle_url('http://www.google.com/lib/tests/weblib_test.php');
         $url2->out_as_local_url();
+    }
+
+    /**
+     * You should get error with modified url
+     *
+     * @expectedException coding_exception
+     * @return void
+     */
+    public function test_modified_url_out_as_local_url_error() {
+        global $CFG;
+
+        $modifiedurl = $CFG->wwwroot.'1';
+        $url3 = new moodle_url($modifiedurl.'/login/profile.php');
+        $url3->out_as_local_url();
+    }
+
+    /**
+     * Try get local url from external https url and you should get error
+     *
+     * @expectedException coding_exception
+     * @return void
+     */
+    public function test_https_out_as_local_url_error() {
+        $url4 = new moodle_url('https://www.google.com/lib/tests/weblib_test.php');
+        $url4->out_as_local_url();
     }
 
     public function test_clean_text() {
