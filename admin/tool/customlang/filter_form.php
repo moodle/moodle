@@ -60,8 +60,8 @@ class tool_customlang_filter_form extends moodleform {
 
         // Modified only
         $mform->addElement('advcheckbox', 'modified', get_string('filtermodified', 'tool_customlang'));
-        $mform->setType('filtermodified', PARAM_BOOL);
-        $mform->setDefault('filtermodified', 0);
+        $mform->setType('modified', PARAM_BOOL);
+        $mform->setDefault('modified', 0);
 
         // Substring
         $mform->addElement('text', 'substring', get_string('filtersubstring', 'tool_customlang'));
