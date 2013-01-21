@@ -58,6 +58,8 @@ function xmldb_block_section_links_upgrade($oldversion, $block) {
 
     if ($oldversion < 2013012200.00) {
 
+        // The section links block used to use its own crazy plugin name.
+        // Here we are converting it to the proper component name.
         $oldplugin = 'blocks/section_links';
         $newplugin = 'block_section_links';
 
@@ -73,7 +75,7 @@ function xmldb_block_section_links_upgrade($oldversion, $block) {
         }
 
         // Main savepoint reached.
-        upgrade_block_savepoint(true, 2013012200.00, 'block_section_links');
+        upgrade_block_savepoint(true, 2013012200.00, 'section_links');
     }
 
     return true;

@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,50 +14,60 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * This file contains the main class for the section links block.
+ *
+ * @package    block_section_links
+ * @copyright  Jason Hardin
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 /**
- * Section links block
+ * Section links block class.
  *
- * @package    moodlecore
+ * @package    block_section_links
+ * @copyright  Jason Hardin
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class block_section_links extends block_base {
 
-    function init() {
+    /**
+     * Initialises the block instance.
+     */
+    public function init() {
         $this->title = get_string('pluginname', 'block_section_links');
     }
 
-    function instance_config($instance) {
-        global $DB;
-
-        parent::instance_config($instance);
-        $course = $this->page->course;
-        if (isset($course->format)) {
-            if ($course->format == 'topics') {
-                $this->title = get_string('topics', 'block_section_links');
-            } else if ($course->format == 'weeks') {
-                $this->title = get_string('weeks', 'block_section_links');
-            } else {
-                $this->title = get_string('pluginname', 'block_section_links');
-            }
-        }
+    /**
+     * Returns an array of formats for which this block can be used.
+     *
+     * @return array
+     */
+    public function applicable_formats() {
+        return array(
+            'course-view-weeks' => true,
+            'course-view-topics' => true
+        );
     }
 
-    function applicable_formats() {
-        return (array('course-view-weeks' => true, 'course-view-topics' => true));
-    }
+    /**
+     * Generates the content of the block and returns it.
+     *
+     * If the content has already been generated then the previously generated content is returned.
+     *
+     * @return stdClass
+     */
+    public function get_content() {
 
-    function get_content() {
-        global $CFG, $USER, $DB;
-
-        $highlight = 0;
-        if(isset($this->config)){
+        // The config should be loaded by now.
+        // If its empty then we will use the global config for the section links block.
+        if (isset($this->config)){
             $config = $this->config;
         } else{
             $config = get_config('block_section_links');
         }
 
-        if ($this->content !== NULL) {
+        if ($this->content !== null) {
             return $this->content;
         }
 
@@ -71,30 +80,28 @@ class block_section_links extends block_base {
         }
 
         $course = $this->page->course;
-        $courseformatoptions = course_get_format($course)->get_format_options();
+        $courseformat = course_get_format($course);
+        $courseformatoptions = $courseformat->get_format_options();
         $context = context_course::instance($course->id);
 
-        if ($course->format == 'weeks' or $course->format == 'weekscss') {
-            $highlight = ceil((time()-$course->startdate)/604800);
-            $linktext = get_string('jumptocurrentweek', 'block_section_links');
-            $sectionname = 'week';
-        }
-        else if ($course->format == 'topics') {
+        // Prepare the highlight value.
+        if ($course->format == 'weeks') {
+            $highlight = ceil((time() - $course->startdate) / 604800);
+        } else if ($course->format == 'topics') {
             $highlight = $course->marker;
-            $linktext = get_string('jumptocurrenttopic', 'block_section_links');
-            $sectionname = 'topic';
-        }
-        $inc = 1;
-
-        if(!empty($config->numsections1) and ($courseformatoptions['numsections'] > $config->numsections1)) {
-            $inc = $config->incby1;
         } else {
-            if ($courseformatoptions['numsections'] > 22) {
-                $inc = 2;
-            }
+            $highlight = 0;
         }
 
-        if(!empty($config->numsections2) and ($courseformatoptions['numsections'] > $config->numsections2)) {
+        // Prepare the increment value.
+        if (!empty($config->numsections1) and ($courseformatoptions['numsections'] > $config->numsections1)) {
+            $inc = $config->incby1;
+        } else if ($courseformatoptions['numsections'] > 22) {
+            $inc = 2;
+        } else {
+            $inc = 1;
+        }
+        if (!empty($config->numsections2) and ($courseformatoptions['numsections'] > $config->numsections2)) {
             $inc = $config->incby2;
         } else {
             if ($courseformatoptions['numsections'] > 40) {
@@ -102,51 +109,52 @@ class block_section_links extends block_base {
             }
         }
 
-        $sql = "SELECT section, visible
-                  FROM {course_sections}
-                 WHERE course = ? AND
-                       section < ".($courseformatoptions['numsections']+1)."
-              ORDER BY section";
-
-        if ($sections = $DB->get_records_sql($sql, array($course->id))) {
-            $text = '<ol class="inline-list">';
-            for ($i = $inc; $i <= $courseformatoptions['numsections']; $i += $inc) {
-                if (!isset($sections[$i])) {
-                    continue;
-                }
-                $isvisible = $sections[$i]->visible;
-                if (!$isvisible and !has_capability('moodle/course:update', $context)) {
-                    continue;
-                }
-                $style = ($isvisible) ? '' : ' class="dimmed"';
-                if ($i == $highlight) {
-                    $text .= '<li><a href="'.course_get_url($course, $i)."\"$style><strong>$i</strong></a></li>\n";
-                } else {
-                    $text .= '<li><a href="'.course_get_url($course, $i)."\"$style>$i</a></li>\n";
-                }
+        // Prepare an array of sections to create links for.
+        $sections = array();
+        $canviewhidden = has_capability('moodle/course:update', $context);
+        $coursesections = $courseformat->get_sections();
+        $coursesectionscount = count($coursesections);
+        for ($i = $inc; $i <= $coursesectionscount; $i += $inc) {
+            if ($i > $courseformatoptions['numsections'] || !isset($coursesections[$i])) {
+                continue;
             }
-            $text .= '</ol>';
-            if ($highlight and isset($sections[$highlight])) {
-                $isvisible = $sections[$highlight]->visible;
-                if ($isvisible or has_capability('moodle/course:update', $context)) {
-                    $style = ($isvisible) ? '' : ' class="dimmed"';
-                    $text .= "\n<a href=\"".course_get_url($course, $highlight)."\"$style>$linktext</a>";
-                }
+            $section = $coursesections[$i];
+            if ($section->section && ($section->visible || $canviewhidden)) {
+                $sections[$i] = (object)array(
+                    'section' => $section->section,
+                    'visible' => $section->visible,
+                    'highlight' => ($section->section == $highlight)
+                );
             }
         }
 
-        $this->content->text = $text;
+        if (!empty($sections)) {
+            $sectiontojumpto = false;
+            if ($highlight && isset($sections[$highlight]) && ($sections[$highlight]->visible || $canviewhidden)) {
+                $sectiontojumpto = $highlight;
+            }
+            // Render the sections.
+            $renderer = $this->page->get_renderer('block_section_links');
+            $this->content->text = $renderer->render_section_links($this->page->course, $sections, $sectiontojumpto);
+        }
+
         return $this->content;
     }
     /**
-     * Has instance config
-     * @return boolean
+     * Returns true if this block has instance config.
+     *
+     * @return bool
      **/
-    function instance_allow_config() {
+    public function instance_allow_config() {
         return true;
     }
 
-    function has_config() {
+    /**
+     * Returns true if this block has global config.
+     *
+     * @return bool
+     */
+    public function has_config() {
         return true;
     }
 }

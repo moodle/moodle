@@ -14,11 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Section links block
  *
- * @package    moodlecore
+ * @package    block_section_links
+ * @copyright  Jason Hardin
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -41,11 +41,11 @@ if ($ADMIN->fulltree) {
 
     for($i = 1; $i < 3; $i++){
         $settings->add(new admin_setting_configselect('block_section_links/numsections'.$i, get_string('numsections'.$i, 'block_section_links'),
-                            get_string('numsectionsdesc'.$i, 'block_section_links'),
+                            get_string('numsections'.$i.'_help', 'block_section_links'),
                             $selected[$i][0], $numberofsections));
 
         $settings->add(new admin_setting_configselect('block_section_links/incby'.$i, get_string('incby'.$i, 'block_section_links'),
-                            get_string('incbydesc'.$i, 'block_section_links'),
+                            get_string('incby'.$i.'_help', 'block_section_links'),
                             $selected[$i][1], $increments));
     }
 }

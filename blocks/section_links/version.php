@@ -17,9 +17,8 @@
 /**
  * Version details
  *
- * @package    block
- * @subpackage section_links
- * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
+ * @package    block_section_links
+ * @copyright  Jason Hardin
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
