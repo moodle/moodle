@@ -747,12 +747,18 @@ class moodle_url {
         global $CFG;
 
         $url = $this->out($escaped, $overrideparams);
+        $httpswwwroot = str_replace("http://", "https://", $CFG->wwwroot);
 
-        if (strpos($url, $CFG->wwwroot) !== 0) {
+        // $url should be equal to wwwroot or httpswwwroot. If not then throw exception.
+        if (($url === $CFG->wwwroot) || (strpos($url, $CFG->wwwroot.'/') === 0)) {
+            $localurl = substr($url, strlen($CFG->wwwroot));
+            return !empty($localurl) ? $localurl : '';
+        } else if (($url === $httpswwwroot) || (strpos($url, $httpswwwroot.'/') === 0)) {
+            $localurl = substr($url, strlen($httpswwwroot));
+            return !empty($localurl) ? $localurl : '';
+        } else {
             throw new coding_exception('out_as_local_url called on a non-local URL');
         }
-
-        return str_replace($CFG->wwwroot, '', $url);
     }
 
     /**
