@@ -55,8 +55,7 @@ class block_section_links extends block_base {
         if(isset($this->config)){
             $config = $this->config;
         } else{
-            // TODO: Move these config settings to proper ones using component name
-            $config = get_config('blocks/section_links');
+            $config = get_config('block_section_links');
         }
 
         if ($this->content !== NULL) {
@@ -145,13 +144,6 @@ class block_section_links extends block_base {
      **/
     function instance_allow_config() {
         return true;
-    }
-    function before_delete() {
-        global $DB;
-        // TODO: Move these config settings to proper ones using component name
-        $DB->delete_records('config_plugins', array('plugin' => 'blocks/section_links'));
-        // Have to manually purge the cache as well
-        cache_helper::invalidate_by_definition('core', 'config', array(), 'blocks/section_links');
     }
 
     function has_config() {
