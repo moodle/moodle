@@ -32,6 +32,7 @@ ini_set('display_errors', '1');
 ini_set('log_errors', '1');
 
 require_once(__DIR__.'/bootstraplib.php');
+require_once(__DIR__.'/../testing/lib.php');
 
 if (isset($_SERVER['REMOTE_ADDR'])) {
     phpunit_bootstrap_error(1, 'Unit tests can be executed only from command line!');
@@ -133,7 +134,7 @@ if (!file_exists("$CFG->phpunit_dataroot/phpunittestdir.txt")) {
     }
 
     // now we are 100% sure this dir is used only for phpunit tests
-    phpunit_bootstrap_initdataroot($CFG->phpunit_dataroot);
+    testing_initdataroot($CFG->phpunit_dataroot, 'phpunit');
 }
 
 // verify db prefix

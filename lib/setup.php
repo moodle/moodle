@@ -480,7 +480,7 @@ setup_DB();
 
 if (PHPUNIT_TEST and !PHPUNIT_UTIL) {
     // make sure tests do not run in parallel
-    phpunit_util::acquire_test_lock();
+    test_lock::acquire('phpunit');
     $dbhash = null;
     try {
         if ($dbhash = $DB->get_field('config', 'value', array('name'=>'phpunittest'))) {
