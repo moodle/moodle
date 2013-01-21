@@ -35,6 +35,15 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class core_phpunit_basic_testcase extends basic_testcase {
+    protected $testassertexecuted = false;
+
+    public function setUp() {
+        if ($this->getName() === 'test_setup_assert') {
+            $this->assertTrue(true);
+            $this->testassertexecuted = true;
+            return;
+        }
+    }
 
     /**
      * Tests that bootstrapping has occurred correctly
@@ -111,6 +120,14 @@ class core_phpunit_basic_testcase extends basic_testcase {
         $this->assertNotEmpty(true);
         $this->assertNotEmpty(array(null));
         $this->assertNotEmpty(new stdClass());
+    }
+
+    /**
+     * Make sure asserts in setUp() do not create problems.
+     */
+    public function test_setup_assert() {
+        $this->assertTrue($this->testassertexecuted);
+        $this->testassertexecuted = false;
     }
 
 // Uncomment following tests to see logging of unexpected changes in global state and database
