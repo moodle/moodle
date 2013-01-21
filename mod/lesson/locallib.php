@@ -2309,9 +2309,14 @@ abstract class lesson_page extends lesson_base {
         }
         if (count($this->answers)>0) {
             $count = 0;
+            $qtype = $properties->qtype;
             foreach ($this->answers as $answer) {
-                $properties->{'answer_editor['.$count.']'} = array('text'=>$answer->answer, 'format'=>$answer->answerformat);
-                $properties->{'response_editor['.$count.']'} = array('text'=>$answer->response, 'format'=>$answer->responseformat);
+                $properties->{'answer_editor['.$count.']'} = array('text' => $answer->answer, 'format' => $answer->answerformat);
+                if ($qtype != LESSON_PAGE_MATCHING) {
+                    $properties->{'response_editor['.$count.']'} = array('text' => $answer->response, 'format' => $answer->responseformat);
+                } else {
+                    $properties->{'response_editor['.$count.']'} = $answer->response;
+                }
                 $properties->{'jumpto['.$count.']'} = $answer->jumpto;
                 $properties->{'score['.$count.']'} = $answer->score;
                 $count++;
