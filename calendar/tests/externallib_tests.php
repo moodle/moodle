@@ -360,4 +360,82 @@ class core_calendar_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(1, count($events['events'])); // site.
         $this->assertEquals(0, count($events['warnings']));
     }
+
+    /**
+     * Test core_calendar_external::create_calendar_events
+     */
+    public function test_core_create_calendar_events() {
+        global $DB, $USER, $SITE;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        // Create a few stuff to test with.
+        $user = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course();
+        $record = new stdClass();
+        $record->courseid = $course->id;
+        $group = $this->getDataGenerator()->create_group($record);
+
+        $prevcount = $DB->count_records('event');
+
+        // Let's create a few events.
+        $events = array (
+                array('name' => 'site', 'courseid' => $SITE->id, 'eventtype' => 'site'),
+                array('name' => 'course', 'courseid' => $course->id, 'eventtype' => 'course', 'repeats' => 2),
+                array('name' => 'group', 'courseid' => $course->id, 'groupid' => $group->id, 'eventtype' => 'group'),
+                array('name' => 'user')
+                );
+        $eventsret = core_calendar_external::create_calendar_events($events);
+
+        // Check to see if things were created properly.
+        $aftercount = $DB->count_records('event');
+        $this->assertEquals($prevcount + 5, $aftercount);
+        $this->assertEquals(5, count($eventsret['events']));
+        $this->assertEquals(0, count($eventsret['warnings']));
+
+        $sitecontext = context_system::instance();
+        $coursecontext = context_course::instance($course->id);
+
+        $this->setUser($user);
+        $prevcount = $aftercount;
+        $events = array (
+                array('name' => 'course', 'courseid' => $course->id, 'eventtype' => 'course', 'repeats' => 2),
+                array('name' => 'group', 'courseid' => $course->id, 'groupid' => $group->id, 'eventtype' => 'group'),
+                array('name' => 'user')
+        );
+        $role = $DB->get_record('role', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, $role->id);
+        groups_add_member($group, $user);
+        $this->assignUserCapability('moodle/calendar:manageentries', $coursecontext->id, $role->id);
+        $this->assignUserCapability('moodle/calendar:managegroupentries', $coursecontext->id, $role->id);
+        $eventsret = core_calendar_external::create_calendar_events($events);
+        $eventsret = external_api::clean_returnvalue(core_calendar_external::create_calendar_events_returns(), $eventsret);
+        // Check to see if things were created properly.
+        $aftercount = $DB->count_records('event');
+        $this->assertEquals($prevcount + 4, $aftercount);
+        $this->assertEquals(4, count($eventsret['events']));
+        $this->assertEquals(0, count($eventsret['warnings']));
+
+        // Check to see nothing was created without proper permission.
+        $this->setGuestUser();
+        $prevcount = $DB->count_records('event');
+        $eventsret = core_calendar_external::create_calendar_events($events);
+        $eventsret = external_api::clean_returnvalue(core_calendar_external::create_calendar_events_returns(), $eventsret);
+        $aftercount = $DB->count_records('event');
+        $this->assertEquals($prevcount, $aftercount);
+        $this->assertEquals(0, count($eventsret['events']));
+        $this->assertEquals(3, count($eventsret['warnings']));
+
+        $this->setUser($user);
+        $this->unassignUserCapability('moodle/calendar:manageentries', $coursecontext->id, $role->id);
+        $this->unassignUserCapability('moodle/calendar:managegroupentries', $coursecontext->id, $role->id);
+        $prevcount = $DB->count_records('event');
+        $eventsret = core_calendar_external::create_calendar_events($events);
+        $eventsret = external_api::clean_returnvalue(core_calendar_external::create_calendar_events_returns(), $eventsret);
+        $aftercount = $DB->count_records('event');
+        $this->assertEquals($prevcount + 1, $aftercount); // User event.
+        $this->assertEquals(1, count($eventsret['events']));
+        $this->assertEquals(2, count($eventsret['warnings']));
+    }
 }
