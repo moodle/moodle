@@ -128,7 +128,7 @@ function xmldb_resource_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
         // Define field mainfile to be added to resource
-        $field = new xmldb_field('mainfile', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'tobemigrated');
+        $field = new xmldb_field('mainfile', XMLDB_TYPE_CHAR, '256', null, null, null, null, 'tobemigrated');
         // Conditionally launch add field mainfile
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
