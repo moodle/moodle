@@ -156,6 +156,20 @@ class assign_upgrade_manager {
                 $gradingdefinitions = $DB->get_records('grading_definitions', array('areaid'=>$gradingarea->id));
             }
 
+            // Upgrade availability data.
+            $DB->set_field('course_modules_availability',
+                           'coursemoduleid',
+                           $newcoursemodule->id,
+                           array('coursemoduleid'=>$oldcoursemodule->id));
+            $DB->set_field('course_modules_availability',
+                           'sourcecmid',
+                           $newcoursemodule->id,
+                           array('sourcecmid'=>$oldcoursemodule->id));
+            $DB->set_field('course_sections_availability',
+                           'sourcecmid',
+                           $newcoursemodule->id,
+                           array('sourcecmid'=>$oldcoursemodule->id));
+
             // upgrade completion data
             $DB->set_field('course_modules_completion', 'coursemoduleid', $newcoursemodule->id, array('coursemoduleid'=>$oldcoursemodule->id));
             $allcriteria = $DB->get_records('course_completion_criteria', array('moduleinstance'=>$oldcoursemodule->id));
