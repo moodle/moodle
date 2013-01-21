@@ -53,6 +53,20 @@ require_sesskey();
 // Setting layout to replicate blocks configuration for the page we edit
 $PAGE->set_pagelayout($pagelayout);
 $PAGE->set_subpage($subpage);
+$pagetype = explode('-', $pagetype);
+switch ($pagetype[0]) {
+    case 'admin':
+        // Admin pages need to be in the system context, not Site Course context.
+        $PAGE->set_context(context_system::instance());
+        break;
+    case 'my':
+        // My Home page needs to be in user context, and to have 'content' block region set up.
+        $PAGE->set_context(context_user::instance($USER->id));
+        $PAGE->set_blocks_editing_capability('moodle/my:manageblocks');
+        $PAGE->blocks->add_region('content');
+        break;
+}
+
 echo $OUTPUT->header(); // send headers
 
 switch ($action) {

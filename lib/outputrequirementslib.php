@@ -282,6 +282,21 @@ class page_requirements_manager {
         if ($page->pagelayout === 'frametop') {
             $this->js_init_call('M.util.init_frametop');
         }
+
+        // Include block drag/drop if editing is on
+        if ($page->user_is_editing()) {
+            $params = array(
+                'courseid' => $page->course->id,
+                'pagetype' => $page->pagetype,
+                'pagelayout' => $page->pagelayout,
+                'subpage' => $page->subpage,
+                'regions' => $page->blocks->get_regions(),
+            );
+            if (!empty($page->cm->id)) {
+                $params['cmid'] = $page->cm->id;
+            }
+            $page->requires->yui_module('moodle-core-blocks', 'M.core_blocks.init_dragdrop', array($params), null, true);
+        }
     }
 
     /**
