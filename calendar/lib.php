@@ -2866,8 +2866,7 @@ function calendar_process_subscription_row($subscriptionid, $pollinterval, $acti
             return "<p>".get_string('subscriptionupdated', 'calendar', $sub->name)."</p>" . calendar_update_subscription_events($subscriptionid);
 
         case $strremove:
-            $DB->delete_records('event', array('subscriptionid' => $subscriptionid));
-            $DB->delete_records('event_subscriptions', array('id' => $subscriptionid));
+            calendar_delete_subscription($subscriptionid);
             return get_string('subscriptionremoved', 'calendar', $sub->name);
             break;
 
@@ -2877,6 +2876,21 @@ function calendar_process_subscription_row($subscriptionid, $pollinterval, $acti
     return '';
 }
 
+/**
+ * Delete subscription and all related events.
+ *
+ * @param int|stdClass $subscription subscription or it's id, which needs to be deleted.
+ */
+function calendar_delete_subscription($subscription) {
+    global $DB;
+
+    if (is_object($subscription)) {
+        $subscription = $subscription->id;
+    }
+    // Delete subscription and related events.
+    $DB->delete_records('event', array('subscriptionid' => $subscription));
+    $DB->delete_records('event_subscriptions', array('id' => $subscription));
+}
 /**
  * From a URL, fetch the calendar and return an iCalendar object.
  *
