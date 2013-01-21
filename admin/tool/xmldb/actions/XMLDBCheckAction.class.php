@@ -90,7 +90,7 @@ abstract class XMLDBCheckAction extends XMLDBAction {
 
         // If  not confirmed, show confirmation box
         if (!$confirmed) {
-            $o = '<table class="generalbox" border="0" cellpadding="5" cellspacing="0" id="notice">';
+            $o = '<table class="generaltable" border="0" cellpadding="5" cellspacing="0" id="notice">';
             $o.= '  <tr><td class="generalboxcontent">';
             $o.= '    <p class="centerpara">' . $this->str[$this->introstr] . '</p>';
             $o.= '    <table class="boxaligncenter" cellpadding="20"><tr><td>';
