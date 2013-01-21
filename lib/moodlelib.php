@@ -920,8 +920,7 @@ function clean_param($param, $type) {
         case PARAM_FILE:         // Strip all suspicious characters from filename
             $param = fix_utf8($param);
             $param = preg_replace('~[[:cntrl:]]|[&<>"`\|\':\\\\/]~u', '', $param);
-            $param = preg_replace('~\.\.+~', '', $param);
-            if ($param === '.') {
+            if ($param === '.' || $param === '..') {
                 $param = '';
             }
             return $param;
@@ -929,10 +928,23 @@ function clean_param($param, $type) {
         case PARAM_PATH:         // Strip all suspicious characters from file path
             $param = fix_utf8($param);
             $param = str_replace('\\', '/', $param);
-            $param = preg_replace('~[[:cntrl:]]|[&<>"`\|\':]~u', '', $param);
-            $param = preg_replace('~\.\.+~', '', $param);
+
+            // Explode the path and clean each element using the PARAM_FILE rules.
+            $breadcrumb = explode('/', $param);
+            foreach ($breadcrumb as $key => $crumb) {
+                if ($crumb === '.' && $key === 0) {
+                    // Special condition to allow for relative current path such as ./currentdirfile.txt.
+                } else {
+                    $crumb = clean_param($crumb, PARAM_FILE);
+                }
+                $breadcrumb[$key] = $crumb;
+            }
+            $param = implode('/', $breadcrumb);
+
+            // Remove multiple current path (./././) and multiple slashes (///).
             $param = preg_replace('~//+~', '/', $param);
-            return preg_replace('~/(\./)+~', '/', $param);
+            $param = preg_replace('~/(\./)+~', '/', $param);
+            return $param;
 
         case PARAM_HOST:         // allow FQDN or IPv4 dotted quad
             $param = preg_replace('/[^\.\d\w-]/','', $param ); // only allowed chars

@@ -558,11 +558,11 @@ function file_get_user_used_space() {
  * @param string $str
  * @return string path
  */
-function file_correct_filepath($str) { //TODO: what is this? (skodak)
+function file_correct_filepath($str) { //TODO: what is this? (skodak) - No idea (Fred)
     if ($str == '/' or empty($str)) {
         return '/';
     } else {
-        return '/'.trim($str, './@#$ ').'/';
+        return '/'.trim($str, '/').'/';
     }
 }
 

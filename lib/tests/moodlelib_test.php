@@ -872,13 +872,52 @@ class moodlelib_testcase extends advanced_testcase {
     function test_clean_param_file() {
         $this->assertEquals(clean_param('correctfile.txt', PARAM_FILE), 'correctfile.txt');
         $this->assertEquals(clean_param('b\'a<d`\\/fi:l>e.t"x|t', PARAM_FILE), 'badfile.txt');
-        $this->assertEquals(clean_param('../parentdirfile.txt', PARAM_FILE), 'parentdirfile.txt');
+        $this->assertEquals(clean_param('../parentdirfile.txt', PARAM_FILE), '..parentdirfile.txt');
+        $this->assertEquals(clean_param('../../grandparentdirfile.txt', PARAM_FILE), '....grandparentdirfile.txt');
+        $this->assertEquals(clean_param('..\winparentdirfile.txt', PARAM_FILE), '..winparentdirfile.txt');
+        $this->assertEquals(clean_param('../../wingrandparentdir.txt', PARAM_FILE), '....wingrandparentdir.txt');
+        $this->assertEquals(clean_param('myfile.a.b.txt', PARAM_FILE), 'myfile.a.b.txt');
+        $this->assertEquals(clean_param('myfile..a..b.txt', PARAM_FILE), 'myfile..a..b.txt');
+        $this->assertEquals(clean_param('myfile.a..b...txt', PARAM_FILE), 'myfile.a..b...txt');
+        $this->assertEquals(clean_param('myfile.a.txt', PARAM_FILE), 'myfile.a.txt');
+        $this->assertEquals(clean_param('myfile...txt', PARAM_FILE), 'myfile...txt');
+        $this->assertEquals(clean_param('...jpg', PARAM_FILE), '...jpg');
+        $this->assertEquals(clean_param('.a.b.', PARAM_FILE), '.a.b.');
+        $this->assertEquals(clean_param('.', PARAM_FILE), '');
+        $this->assertEquals(clean_param('..', PARAM_FILE), '');
+        $this->assertEquals(clean_param('...', PARAM_FILE), '...');
+        $this->assertEquals(clean_param('. . . .', PARAM_FILE), '. . . .');
+        $this->assertEquals(clean_param('dontrtrim.me. .. .. . ', PARAM_FILE), 'dontrtrim.me. .. .. . ');
+        $this->assertEquals(clean_param(' . .dontltrim.me', PARAM_FILE), ' . .dontltrim.me');
+        $this->assertEquals(clean_param("here is a tab\t.txt", PARAM_FILE), 'here is a tab.txt');
+        $this->assertEquals(clean_param("here is a line\r\nbreak.txt", PARAM_FILE), 'here is a linebreak.txt');
+
         //The following behaviours have been maintained although they seem a little odd
         $this->assertEquals(clean_param('funny:thing', PARAM_FILE), 'funnything');
         $this->assertEquals(clean_param('./currentdirfile.txt', PARAM_FILE), '.currentdirfile.txt');
         $this->assertEquals(clean_param('c:\temp\windowsfile.txt', PARAM_FILE), 'ctempwindowsfile.txt');
         $this->assertEquals(clean_param('/home/user/linuxfile.txt', PARAM_FILE), 'homeuserlinuxfile.txt');
         $this->assertEquals(clean_param('~/myfile.txt', PARAM_FILE), '~myfile.txt');
+    }
+
+    function test_clean_param_path() {
+        $this->assertEquals(clean_param('correctfile.txt', PARAM_PATH), 'correctfile.txt');
+        $this->assertEquals(clean_param('b\'a<d`\\/fi:l>e.t"x|t', PARAM_PATH), 'bad/file.txt');
+        $this->assertEquals(clean_param('../parentdirfile.txt', PARAM_PATH), '/parentdirfile.txt');
+        $this->assertEquals(clean_param('../../grandparentdirfile.txt', PARAM_PATH), '/grandparentdirfile.txt');
+        $this->assertEquals(clean_param('..\winparentdirfile.txt', PARAM_PATH), '/winparentdirfile.txt');
+        $this->assertEquals(clean_param('../../wingrandparentdir.txt', PARAM_PATH), '/wingrandparentdir.txt');
+        $this->assertEquals(clean_param('funny:thing', PARAM_PATH), 'funnything');
+        $this->assertEquals(clean_param('./././here', PARAM_PATH), './here');
+        $this->assertEquals(clean_param('./currentdirfile.txt', PARAM_PATH), './currentdirfile.txt');
+        $this->assertEquals(clean_param('c:\temp\windowsfile.txt', PARAM_PATH), 'c/temp/windowsfile.txt');
+        $this->assertEquals(clean_param('/home/user/linuxfile.txt', PARAM_PATH), '/home/user/linuxfile.txt');
+        $this->assertEquals(clean_param('/home../user ./.linuxfile.txt', PARAM_PATH), '/home../user ./.linuxfile.txt');
+        $this->assertEquals(clean_param('~/myfile.txt', PARAM_PATH), '~/myfile.txt');
+        $this->assertEquals(clean_param('~/../myfile.txt', PARAM_PATH), '~/myfile.txt');
+        $this->assertEquals(clean_param('/..b../.../myfile.txt', PARAM_PATH), '/..b../.../myfile.txt');
+        $this->assertEquals(clean_param('..b../.../myfile.txt', PARAM_PATH), '..b../.../myfile.txt');
+        $this->assertEquals(clean_param('/super//slashes///', PARAM_PATH), '/super/slashes/');
     }
 
     function test_clean_param_username() {
