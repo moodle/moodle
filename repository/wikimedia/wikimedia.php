@@ -150,7 +150,7 @@ class wikimedia {
         $this->_param['gsrlimit'] = WIKIMEDIA_THUMBS_PER_PAGE;
         $this->_param['gsroffset'] = $page * WIKIMEDIA_THUMBS_PER_PAGE;
         $this->_param['prop']   = 'imageinfo';
-        $this->_param['iiprop'] = 'url|dimensions|mime';
+        $this->_param['iiprop'] = 'url|dimensions|mime|timestamp|size|user';
         $this->_param['iiurlwidth'] = WIKIMEDIA_IMAGE_SIDE_LENGTH;
         $this->_param['iiurlheight'] = WIKIMEDIA_IMAGE_SIDE_LENGTH;
         //didn't work with POST
@@ -162,26 +162,45 @@ class wikimedia {
                 $file_type = $page['imageinfo'][0]['mime'];
                 $image_types = array('image/jpeg', 'image/png', 'image/gif', 'image/svg+xml');
                 if (in_array($file_type, $image_types)) {  //is image
-                    $thumbnail = $this->get_thumb_url($page['imageinfo'][0]['url'], $page['imageinfo'][0]['width'], $page['imageinfo'][0]['height']);
-                    $source = $page['imageinfo'][0]['thumburl'];        //upload scaled down image
                     $extension = pathinfo($title, PATHINFO_EXTENSION);
                     if (strcmp($extension, 'svg') == 0) {               //upload png version of svg-s
                         $title .= '.png';
                     }
-                } else {                                   //other file types
-                    $thumbnail = '';
-                    $source = $page['imageinfo'][0]['url'];
+                    if ($page['imageinfo'][0]['thumbwidth'] < $page['imageinfo'][0]['width']) {
+                        $attrs = array(
+                            //upload scaled down image
+                            'source' => $page['imageinfo'][0]['thumburl'],
+                            'image_width' => $page['imageinfo'][0]['thumbwidth'],
+                            'image_height' => $page['imageinfo'][0]['thumbheight']
+                        );
+                    } else {
+                        $attrs = array(
+                            //upload full size image
+                            'source' => $page['imageinfo'][0]['url'],
+                            'image_width' => $page['imageinfo'][0]['width'],
+                            'image_height' => $page['imageinfo'][0]['height'],
+                            'size' => $page['imageinfo'][0]['size']
+                        );
+                    }
+                    $attrs += array(
+                        'thumbnail' => $this->get_thumb_url($page['imageinfo'][0]['url'], $page['imageinfo'][0]['width'], $page['imageinfo'][0]['height'], 120),
+                        'icon' => $this->get_thumb_url($page['imageinfo'][0]['url'], $page['imageinfo'][0]['width'], $page['imageinfo'][0]['height'], 24),
+                        'author' => $page['imageinfo'][0]['user'],
+                        'datemodified' => strtotime($page['imageinfo'][0]['timestamp']),
+                        );
+                } else {  // other file types
+                    $attrs = array(
+                        $thumbnail = '',
+                        $source = $page['imageinfo'][0]['url']);
                 }
                 $files_array[] = array(
                     'title'=>substr($title, 5),         //chop off 'File:'
-                    'thumbnail'=>$thumbnail,
                     'thumbnail_width'=>120,
                     'thumbnail_height'=>120,
-                    // plugin-dependent unique path to the file (id, url, path, etc.)
-                    'source'=>$source,
+                    'license' => 'cc-sa',
                     // the accessible url of the file
                     'url'=>$page['imageinfo'][0]['descriptionurl']
-                );
+                ) + $attrs;
             }
         }
         return $files_array;
