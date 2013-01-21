@@ -2245,4 +2245,95 @@ class moodlelib_testcase extends advanced_testcase {
         set_config('phpunit_test_get_config_4', 'test c', 'mod_forum');
         $this->assertFalse($cache->get('mod_forum'));
     }
+
+    function test_get_max_upload_sizes() {
+        // Test with very low limits so we are not affected by php upload limits.
+        // Test activity limit smallest.
+        $sitebytes = 102400;
+        $coursebytes = 51200;
+        $modulebytes = 10240;
+        $result = get_max_upload_sizes($sitebytes, $coursebytes, $modulebytes);
+
+        $this->assertEquals('Activity upload limit (10KB)', $result['0']);
+        $this->assertEquals(2, count($result));
+
+        // Test course limit smallest.
+        $sitebytes = 102400;
+        $coursebytes = 10240;
+        $modulebytes = 51200;
+        $result = get_max_upload_sizes($sitebytes, $coursebytes, $modulebytes);
+
+        $this->assertEquals('Course upload limit (10KB)', $result['0']);
+        $this->assertEquals(2, count($result));
+
+        // Test site limit smallest.
+        $sitebytes = 10240;
+        $coursebytes = 102400;
+        $modulebytes = 51200;
+        $result = get_max_upload_sizes($sitebytes, $coursebytes, $modulebytes);
+
+        $this->assertEquals('Site upload limit (10KB)', $result['0']);
+        $this->assertEquals(2, count($result));
+
+        // Test site limit not set.
+        $sitebytes = 0;
+        $coursebytes = 102400;
+        $modulebytes = 51200;
+        $result = get_max_upload_sizes($sitebytes, $coursebytes, $modulebytes);
+
+        $this->assertEquals('Activity upload limit (50KB)', $result['0']);
+        $this->assertEquals(3, count($result));
+
+        $sitebytes = 0;
+        $coursebytes = 51200;
+        $modulebytes = 102400;
+        $result = get_max_upload_sizes($sitebytes, $coursebytes, $modulebytes);
+
+        $this->assertEquals('Course upload limit (50KB)', $result['0']);
+        $this->assertEquals(3, count($result));
+
+        // Test no limits.
+        $sitebytes = 0;
+        $coursebytes = 0;
+        $modulebytes = 0;
+        $result = get_max_upload_sizes($sitebytes, $coursebytes, $modulebytes);
+
+        $this->assertEquals(6, count($result));
+
+        // Test custom bytes in range.
+        $sitebytes = 102400;
+        $coursebytes = 51200;
+        $modulebytes = 51200;
+        $custombytes = 10240;
+        $result = get_max_upload_sizes($sitebytes, $coursebytes, $modulebytes, $custombytes);
+
+        $this->assertEquals(3, count($result));
+
+        // Test custom bytes in range but non-standard.
+        $sitebytes = 102400;
+        $coursebytes = 51200;
+        $modulebytes = 51200;
+        $custombytes = 25600;
+        $result = get_max_upload_sizes($sitebytes, $coursebytes, $modulebytes, $custombytes);
+
+        $this->assertEquals(4, count($result));
+
+        // Test custom bytes out of range.
+        $sitebytes = 102400;
+        $coursebytes = 51200;
+        $modulebytes = 51200;
+        $custombytes = 102400;
+        $result = get_max_upload_sizes($sitebytes, $coursebytes, $modulebytes, $custombytes);
+
+        $this->assertEquals(3, count($result));
+
+        // Test custom bytes out of range and non-standard.
+        $sitebytes = 102400;
+        $coursebytes = 51200;
+        $modulebytes = 51200;
+        $custombytes = 256000;
+        $result = get_max_upload_sizes($sitebytes, $coursebytes, $modulebytes, $custombytes);
+
+        $this->assertEquals(3, count($result));
+    }
 }
