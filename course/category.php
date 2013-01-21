@@ -320,7 +320,7 @@ if (!$courses) {
 
     echo '<form id="movecourses" action="category.php" method="post"><div>';
     echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-    echo '<table border="0" cellspacing="2" cellpadding="4" class="generalbox boxaligncenter"><tr>';
+    echo '<table border="0" cellspacing="2" cellpadding="4" class="generaltable boxaligncenter"><tr>';
     echo '<th class="header" scope="col">'.get_string('courses').'</th>';
     if ($editingon) {
         echo '<th class="header" scope="col">'.get_string('edit').'</th>';

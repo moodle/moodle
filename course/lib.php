@@ -355,7 +355,7 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
     echo $OUTPUT->paging_bar($totalcount, $page, $perpage, "$url&perpage=$perpage");
 
     $table = new html_table();
-    $table->classes = array('logtable','generalbox');
+    $table->classes = array('logtable','generaltable');
     $table->align = array('right', 'left', 'left');
     $table->head = array(
         get_string('time'),
