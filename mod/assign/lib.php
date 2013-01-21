@@ -347,8 +347,10 @@ function assign_print_overview($courses, &$htmlarray) {
                                       s.userid = g.userid AND
                                       s.assignment = g.assignment
                                   WHERE
-                                      g.timemodified = 0 OR
-                                      s.timemodified > g.timemodified AND
+                                      ( g.timemodified is NULL OR
+                                      s.timemodified > g.timemodified ) AND
+                                      s.timemodified IS NOT NULL AND
+                                      s.status = "submitted" AND
                                       s.assignment ' . $sqlassignmentids, $assignmentidparams);
 
     $unmarkedsubmissions = array();
