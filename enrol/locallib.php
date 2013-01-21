@@ -840,7 +840,9 @@ class course_enrolment_manager {
                         break;
                 }
             }
-            $users[$userrole->id]['roles'] = array();
+            if (!isset($users[$userrole->id]['roles'])) {
+                $users[$userrole->id]['roles'] = array();
+            }
             $users[$userrole->id]['roles'][$userrole->roleid] = array(
                 'text' => $roletext,
                 'unchangeable' => !$changeable
