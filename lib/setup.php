@@ -888,6 +888,19 @@ if (!empty($_SERVER['HTTP_USER_AGENT']) and strpos($_SERVER['HTTP_USER_AGENT'], 
     }
 }
 
+// Switch to CLI maintenance mode if required, we need to do it here after all the settings are initialised.
+if (isset($CFG->maintenance_later) and $CFG->maintenance_later <= time()) {
+    if (!file_exists("$CFG->dataroot/climaintenance.html")) {
+        require_once("$CFG->libdir/adminlib.php");
+        enable_cli_maintenance_mode();
+    }
+    unset_config('maintenance_later');
+    if (AJAX_SCRIPT) {
+        die;
+    } else if (!CLI_SCRIPT) {
+        redirect(new moodle_url('/'));
+    }
+}
 
 // note: we can not block non utf-8 installations here, because empty mysql database
 // might be converted to utf-8 in admin/index.php during installation

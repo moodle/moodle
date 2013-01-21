@@ -105,6 +105,7 @@ $string['cliincorrectvalueerror'] = 'Error, incorrect value "{$a->value}" for "{
 $string['cliincorrectvalueretry'] = 'Incorrect value, please retry';
 $string['clistatusdisabled'] = 'Status: disabled';
 $string['clistatusenabled'] = 'Status: enabled';
+$string['clistatusenabledlater'] = 'status: CLI maintenance mode will be enabled on {$a}';
 $string['clitypevalue'] = 'type value';
 $string['clitypevaluedefault'] = 'type value, press Enter to use default value ({$a})';
 $string['cliunknowoption'] = 'Unrecognised options:
@@ -664,6 +665,7 @@ $string['loginpasswordautocomplete_help'] = 'Having this off will let users save
 $string['loglifetime'] = 'Keep logs for';
 $string['longtimewarning'] = '<b>Please note that this process can take a long time.</b>';
 $string['maintenancemode'] = 'In maintenance mode';
+$string['maintenancemodeisscheduled'] = 'Site is switching to maintenance mode in {$a} minutes';
 $string['maintfileopenerror'] = 'Error opening maintenance files!';
 $string['maintinprogress'] = 'Maintenance is in progress...';
 $string['manageformats'] = 'Manage course formats';
@@ -955,6 +957,7 @@ $string['sitemaintenance'] = 'The site is undergoing maintenance and is currentl
 $string['sitemaintenancemode'] = 'Maintenance mode';
 $string['sitemaintenanceoff'] = 'Maintenance mode has been disabled and the site is running normally again';
 $string['sitemaintenanceon'] = 'Your site is currently in maintenance mode (only admins can log in or use the site).';
+$string['sitemaintenanceoncli'] = 'Your site is currently in CLI maintenance mode, no web access is allowed.';
 $string['sitemaintenancewarning'] = 'Your site is currently in maintenance mode (only admins can log in).  To return this site to normal operation, <a href="maintenance.php">disable maintenance mode</a>.';
 $string['sitemaintenancewarning2'] = 'Your site is currently in maintenance mode (only admins can log in).  To return this site to normal operation, <a href="{$a}">disable maintenance mode</a>.';
 $string['sitepolicies'] = 'Site policies';

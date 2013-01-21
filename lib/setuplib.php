@@ -1596,15 +1596,15 @@ width: 80%; -moz-border-radius: 20px; padding: 15px">
      * @param string $meta meta tag
      * @return string html page
      */
-    protected static function plain_page($title, $content, $meta = '') {
+    public static function plain_page($title, $content, $meta = '') {
         if (function_exists('get_string') && function_exists('get_html_lang')) {
             $htmllang = get_html_lang();
         } else {
             $htmllang = '';
         }
 
-        return '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" ' . $htmllang . '>
+        return '<!DOCTYPE html>
+<html ' . $htmllang . '>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 '.$meta.'
