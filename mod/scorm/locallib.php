@@ -745,7 +745,7 @@ function scorm_course_format_display($user, $course) {
 }
 
 function scorm_view_display ($user, $scorm, $action, $cm) {
-    global $CFG, $DB, $PAGE, $OUTPUT;
+    global $CFG, $DB, $PAGE, $OUTPUT, $COURSE;
 
     if ($scorm->scormtype != SCORM_TYPE_LOCAL && $scorm->updatefreq == SCORM_UPDATE_EVERYTIME) {
         scorm_parse($scorm, false);
@@ -824,7 +824,7 @@ function scorm_view_display ($user, $scorm, $action, $cm) {
                       <label for="a"><?php print_string('newattempt', 'scorm') ?></label>
             <?php
         }
-        if (!empty($scorm->popup)) {
+        if ($COURSE->format != 'scorm' && !empty($scorm->popup)) {
             echo '<input type="hidden" name="display" value="popup" />'."\n";
         }
         ?>
