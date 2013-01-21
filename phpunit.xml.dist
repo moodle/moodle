@@ -27,6 +27,9 @@
         <testsuite name="core_phpunit">
             <directory suffix="_test.php">lib/phpunit/tests</directory>
         </testsuite>
+        <testsuite name="core_test">
+            <directory suffix="_test.php">lib/testing/tests</directory>
+        </testsuite>
         <testsuite name="core_db">
             <directory suffix="_test.php">lib/ddl/tests</directory>
             <directory suffix="_test.php">lib/dml/tests</directory>

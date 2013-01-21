@@ -18,7 +18,7 @@
  * mod_lti data generator
  *
  * @package    mod_lti
- * @category   phpunit
+ * @category   test
  * @copyright  Copyright (c) 2012 Moodlerooms Inc. (http://www.moodlerooms.com)
  * @author     Mark Nielsen
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -27,15 +27,15 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Assignment module PHPUnit data generator class
+ * LTI module data generator class
  *
  * @package    mod_lti
- * @category   phpunit
+ * @category   test
  * @copyright  Copyright (c) 2012 Moodlerooms Inc. (http://www.moodlerooms.com)
  * @author     Mark Nielsen
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_lti_generator extends phpunit_module_generator {
+class mod_lti_generator extends testing_module_generator {
 
     /**
      * Create new lti module instance

@@ -51,7 +51,7 @@ class phpunit_util {
     /** @var int last value of db writes counter, used for db resetting */
     public static $lastdbwrites = null;
 
-    /** @var phpunit_data_generator */
+    /** @var testing_data_generator */
     protected static $generator = null;
 
     /** @var resource used for prevention of parallel test execution */
@@ -140,12 +140,12 @@ class phpunit_util {
     /**
      * Get data generator
      * @static
-     * @return phpunit_data_generator
+     * @return testing_data_generator
      */
     public static function get_data_generator() {
         if (is_null(self::$generator)) {
-            require_once(__DIR__.'/../generatorlib.php');
-            self::$generator = new phpunit_data_generator();
+            require_once(__DIR__.'/../../testing/generator/lib.php');
+            self::$generator = new testing_data_generator();
         }
         return self::$generator;
     }

@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * PHPUnit integration tests
+ * Data generators tests
  *
  * @package    core
- * @category   phpunit
+ * @category   test
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,11 +30,11 @@ defined('MOODLE_INTERNAL') || die();
  * Test data generator
  *
  * @package    core
- * @category   phpunit
+ * @category   test
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_phpunit_generator_testcase extends advanced_testcase {
+class core_test_generator_testcase extends advanced_testcase {
     public function test_create() {
         global $DB;
 

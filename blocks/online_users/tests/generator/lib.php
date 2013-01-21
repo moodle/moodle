@@ -18,7 +18,7 @@
  * block_online_users data generator
  *
  * @package    block_online_users
- * @category   phpunit
+ * @category   test
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,14 +27,14 @@ defined('MOODLE_INTERNAL') || die();
 
 
 /**
- * Page module PHPUnit data generator class
+ * Online users block data generator class
  *
- * @package    mod_page
- * @category   phpunit
+ * @package    block_online_users
+ * @category   test
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class block_online_users_generator extends phpunit_block_generator {
+class block_online_users_generator extends testing_block_generator {
 
     /**
      * Create new block instance

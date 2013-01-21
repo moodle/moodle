@@ -18,7 +18,7 @@
  * mod_data data generator
  *
  * @package    mod_data
- * @category   phpunit
+ * @category   test
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,14 +27,14 @@ defined('MOODLE_INTERNAL') || die();
 
 
 /**
- * Page module PHPUnit data generator class
+ * Database module data generator class
  *
  * @package    mod_data
- * @category   phpunit
+ * @category   test
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_data_generator extends phpunit_module_generator {
+class mod_data_generator extends testing_module_generator {
 
     /**
      * Create new data module instance

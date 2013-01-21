@@ -18,7 +18,7 @@
  * Module generator base class.
  *
  * @package    core
- * @category   phpunit
+ * @category   test
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,18 +30,27 @@
  * Extend in mod/xxxx/tests/generator/lib.php as class mod_xxxx_generator.
  *
  * @package    core
- * @category   phpunit
+ * @category   test
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class phpunit_module_generator {
-    /** @var phpunit_data_generator@var  */
+abstract class testing_module_generator {
+
+    /**
+     * @var testing_data_generator
+     */
     protected $datagenerator;
 
-    /** @var number of created instances */
+    /**
+     * @var number of created instances
+     */
     protected $instancecount = 0;
 
-    public function __construct(phpunit_data_generator $datagenerator) {
+    /**
+     * Dumb constructor to throw the deprecated notification
+     * @param testing_data_generator $datagenerator
+     */
+    public function __construct(testing_data_generator $datagenerator) {
         $this->datagenerator = $datagenerator;
     }
 
@@ -73,9 +82,9 @@ abstract class phpunit_module_generator {
 
     /**
      * Create course module and link it to course
-     * @param int $courseid
-     * @param array $options: section, visible
-     * @return int $cm instance id
+     * @param integer $courseid
+     * @param array $options section, visible
+     * @return integer $cm instance id
      */
     protected function precreate_course_module($courseid, array $options) {
         global $DB, $CFG;
@@ -94,7 +103,7 @@ abstract class phpunit_module_generator {
         $cm->added              = time();
 
         $columns = $DB->get_columns('course_modules');
-        foreach ($options as $key=>$value) {
+        foreach ($options as $key => $value) {
             if ($key === 'id' or !isset($columns[$key])) {
                 continue;
             }
@@ -139,4 +148,27 @@ abstract class phpunit_module_generator {
      * @return stdClass activity record
      */
     abstract public function create_instance($record = null, array $options = null);
+}
+
+/**
+ * Deprecated in favour of testing_module_generator
+ *
+ * @deprecated since Moodle 2.5 MDL-37457 - please do not use this function any more.
+ * @todo       MDL-37517 This will be deleted in Moodle 2.7
+ * @see        testing_module_generator
+ * @package    core
+ * @category   test
+ * @copyright  2012 David Monllaó
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+abstract class phpunit_module_generator extends testing_module_generator {
+
+    /**
+     * Dumb constructor to throw the deprecated notification
+     * @param testing_data_generator $datagenerator
+     */
+    public function __construct(testing_data_generator $datagenerator) {
+        debugging('Class phpunit_module_generator is deprecated, please use class testing_module_generator instead', DEBUG_DEVELOPER);
+        parent::__construct($datagenerator);
+    }
 }
