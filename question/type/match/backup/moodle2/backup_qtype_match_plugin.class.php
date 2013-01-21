@@ -49,14 +49,14 @@ class backup_qtype_match_plugin extends backup_qtype_plugin {
 
         // Now create the qtype own structures
         $matchoptions = new backup_nested_element('matchoptions', array('id'), array(
-            'subquestions', 'shuffleanswers', 'correctfeedback', 'correctfeedbackformat',
+            'shuffleanswers', 'correctfeedback', 'correctfeedbackformat',
             'partiallycorrectfeedback', 'partiallycorrectfeedbackformat',
             'incorrectfeedback', 'incorrectfeedbackformat', 'shownumcorrect'));
 
         $matches = new backup_nested_element('matches');
 
         $match = new backup_nested_element('match', array('id'), array(
-            'code', 'questiontext', 'questiontextformat', 'answertext'));
+            'questiontext', 'questiontextformat', 'answertext'));
 
         // Now the own qtype tree
         $pluginwrapper->add_child($matchoptions);
@@ -64,14 +64,14 @@ class backup_qtype_match_plugin extends backup_qtype_plugin {
         $matches->add_child($match);
 
         // set source to populate the data
-        $matchoptions->set_source_table('question_match',
-                array('question' => backup::VAR_PARENTID));
+        $matchoptions->set_source_table('qtype_match_options',
+                array('questionid' => backup::VAR_PARENTID));
         $match->set_source_sql('
                 SELECT *
-                FROM {question_match_sub}
-                WHERE question = :question
+                FROM {qtype_match_subquestions}
+                WHERE questionid = :questionid
                 ORDER BY id',
-                array('question' => backup::VAR_PARENTID));
+                array('questionid' => backup::VAR_PARENTID));
 
         // don't need to annotate ids nor files
 
@@ -86,6 +86,6 @@ class backup_qtype_match_plugin extends backup_qtype_plugin {
      */
     public static function get_qtype_fileareas() {
         return array(
-            'subquestion' => 'question_match_sub');
+            'subquestion' => 'qtype_match_subquestions');
     }
 }

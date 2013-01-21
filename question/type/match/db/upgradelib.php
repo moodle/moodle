@@ -98,7 +98,7 @@ class qtype_match_qe2_attempt_updater extends question_qtype_attempt_updater {
 
     protected function lookup_choice($choice) {
         foreach ($this->question->options->subquestions as $matchsub) {
-            if ($matchsub->code == $choice) {
+            if ($matchsub->id == $choice) {
                 if (array_key_exists($matchsub->id, $this->choices)) {
                     return $matchsub->id;
                 } else {

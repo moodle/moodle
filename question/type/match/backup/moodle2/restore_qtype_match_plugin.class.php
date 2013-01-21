@@ -69,7 +69,7 @@ class restore_qtype_match_plugin extends restore_qtype_plugin {
         $newquestionid   = $this->get_new_parentid('question');
         $questioncreated = $this->get_mappingid('question_created', $oldquestionid) ? true : false;
 
-        // If the question has been created by restore, we need to create its question_match too
+        // If the question has been created by restore, we need to create its qtype_match_options too
         if ($questioncreated) {
             // Fill in some field that were added in 2.1, and so which may be missing
             // from backups made in older versions of Moodle.
@@ -90,14 +90,9 @@ class restore_qtype_match_plugin extends restore_qtype_plugin {
             }
 
             // Adjust some columns
-            $data->question = $newquestionid;
-            // Keep question_match->subquestions unmodified
-            // after_execute_question() will perform the remapping once all subquestions
-            // have been created
-            // Insert record
-            $newitemid = $DB->insert_record('question_match', $data);
-            // Create mapping
-            $this->set_mapping('question_match', $oldid, $newitemid);
+            $data->questionid = $newquestionid;
+            $newitemid = $DB->insert_record('qtype_match_options', $data);
+            $this->set_mapping('qtype_match_options', $oldid, $newitemid);
         }
     }
 
@@ -117,31 +112,33 @@ class restore_qtype_match_plugin extends restore_qtype_plugin {
 
         if ($questioncreated) {
             // If the question has been created by restore, we need to create its
-            // question_match_sub too
+            // qtype_match_subquestions too.
 
             // Adjust some columns
-            $data->question = $newquestionid;
+            $data->questionid = $newquestionid;
             // Insert record
-            $newitemid = $DB->insert_record('question_match_sub', $data);
+            $newitemid = $DB->insert_record('qtype_match_subquestions', $data);
             // Create mapping (there are files and states based on this)
-            $this->set_mapping('question_match_sub', $oldid, $newitemid);
+            $this->set_mapping('qtype_match_subquestions', $oldid, $newitemid);
+            if (isset($data->code)) {
+                $this->set_mapping('qtype_match_subquestion_codes', $data->code, $newitemid);
+            }
 
         } else {
-            // match questions require mapping of question_match_sub, because
+            // match questions require mapping of qtype_match_subquestions, because
             // they are used by question_states->answer
 
-            // Look for matching subquestion (by question, questiontext and answertext)
-            $sub = $DB->get_record_select('question_match_sub', 'question = ? AND ' .
+            // Look for matching subquestion (by questionid, questiontext and answertext)
+            $sub = $DB->get_record_select('qtype_match_subquestions', 'questionid = ? AND ' .
                     $DB->sql_compare_text('questiontext') . ' = ' .
                     $DB->sql_compare_text('?').' AND answertext = ?',
-                    array($newquestionid, $data->questiontext, $data->answertext),
-                    'id', IGNORE_MULTIPLE);
+                            array($newquestionid, $data->questiontext, $data->answertext),
+                            'id', IGNORE_MULTIPLE);
 
             // Not able to find the answer, let's try cleaning the answertext
-            // of all the question answers in DB as slower fallback. MDL-36683 / MDL-30018.
+            // of all the match subquestions in DB as slower fallback. MDL-36683 / MDL-30018.
             if (!$sub) {
-                $params = array('question' => $newquestionid);
-                $potentialsubs = $DB->get_records('question_match_sub', array('question' => $newquestionid), '', 'id, questiontext, answertext');
+                $potentialsubs = $DB->get_records('qtype_match_subquestions', array('questionid' => $newquestionid), '', 'id, questiontext, answertext');
                 foreach ($potentialsubs as $potentialsub) {
                     // Clean in the same way than {@link xml_writer::xml_safe_utf8()}.
                     $cleanquestion = preg_replace('/[\x-\x8\xb-\xc\xe-\x1f\x7f]/is', '', $potentialsub->questiontext); // Clean CTRL chars.
@@ -158,43 +155,11 @@ class restore_qtype_match_plugin extends restore_qtype_plugin {
 
             // Found, let's create the mapping
             if ($sub) {
-                $this->set_mapping('question_match_sub', $oldid, $sub->id);
+                $this->set_mapping('qtype_match_subquestions', $oldid, $sub->id);
             } else {
-                throw new restore_step_exception('error_question_match_sub_missing_in_db', $data);
+                throw new restore_step_exception('error_qtype_match_subquestion_missing_in_db', $data);
             }
         }
-    }
-
-    /**
-     * This method is executed once the whole restore_structure_step,
-     * more exactly ({@link restore_create_categories_and_questions})
-     * has ended processing the whole xml structure. Its name is:
-     * "after_execute_" + connectionpoint ("question")
-     *
-     * For match qtype we use it to restore the subquestions column,
-     * containing one list of question_match_sub ids
-     */
-    public function after_execute_question() {
-        global $DB;
-        // Now that all the question_match_subs have been restored, let's process
-        // the created question_match subquestions (list of question_match_sub ids)
-        $rs = $DB->get_recordset_sql(
-                "SELECT qm.id, qm.subquestions
-                   FROM {question_match} qm
-                   JOIN {backup_ids_temp} bi ON bi.newitemid = qm.question
-                  WHERE bi.backupid = ?
-                    AND bi.itemname = 'question_created'", array($this->get_restoreid()));
-        foreach ($rs as $rec) {
-            $subquestionsarr = explode(',', $rec->subquestions);
-            foreach ($subquestionsarr as $key => $subquestion) {
-                $subquestionsarr[$key] = $this->get_mappingid(
-                        'question_match_sub', $subquestion);
-            }
-            $subquestions = implode(',', $subquestionsarr);
-            $DB->set_field('question_match', 'subquestions', $subquestions,
-                    array('id' => $rec->id));
-        }
-        $rs->close();
     }
 
     public function recode_response($questionid, $sequencenumber, array $response) {
@@ -212,7 +177,8 @@ class restore_qtype_match_plugin extends restore_qtype_plugin {
      * recoded pointing to all the restored stuff for match questions
      *
      * answer is one comma separated list of hypen separated pairs
-     * containing question_match_sub->id and question_match_sub->code
+     * containing question_match_sub->id and question_match_sub->code, which
+     * has been remapped to be qtype_match_subquestions->id, since code no longer exists.
      */
     public function recode_legacy_state_answer($state) {
         $answer = $state->answer;
@@ -221,8 +187,13 @@ class restore_qtype_match_plugin extends restore_qtype_plugin {
             $pairarr = explode('-', $pair);
             $id = $pairarr[0];
             $code = $pairarr[1];
-            $newid = $this->get_mappingid('question_match_sub', $id);
-            $resultarr[] = implode('-', array($newid, $code));
+            $newid = $this->get_mappingid('qtype_match_subquestions', $id);
+            if ($code) {
+                $newcode = $this->get_mappingid('qtype_match_subquestion_codes', $code);
+            } else {
+                $newcode = $code;
+            }
+            $resultarr[] = $newid . '-' . $newcode;
         }
         return implode(',', $resultarr);
     }
@@ -235,7 +206,7 @@ class restore_qtype_match_plugin extends restore_qtype_plugin {
     protected function recode_match_sub_order($order) {
         $neworder = array();
         foreach (explode(',', $order) as $id) {
-            if ($newid = $this->get_mappingid('question_match_sub', $id)) {
+            if ($newid = $this->get_mappingid('qtype_match_subquestions', $id)) {
                 $neworder[] = $newid;
             }
         }
@@ -249,11 +220,11 @@ class restore_qtype_match_plugin extends restore_qtype_plugin {
 
         $contents = array();
 
-        $contents[] = new restore_decode_content('question_match_sub',
-                array('questiontext'), 'question_match_sub');
+        $contents[] = new restore_decode_content('qtype_match_subquestions',
+                array('questiontext'), 'qtype_match_subquestions');
 
         $fields = array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback');
-        $contents[] = new restore_decode_content('question_match', $fields, 'question_match');
+        $contents[] = new restore_decode_content('qtype_match_options', $fields, 'qtype_match_options');
 
         return $contents;
     }
