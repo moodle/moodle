@@ -8248,6 +8248,12 @@ function get_plugin_types($fullpaths=true) {
 function get_plugin_list($plugintype) {
     global $CFG;
 
+    $cache = cache::make('core', 'pluginlist');
+    $cached = $cache->get($plugintype);
+    if ($cached !== false) {
+        return $cached;
+    }
+
     $ignored = array('CVS', '_vti_cnf', 'simpletest', 'db', 'yui', 'tests');
     if ($plugintype == 'auth') {
         // Historically we have had an auth plugin called 'db', so allow a special case.
@@ -8281,10 +8287,12 @@ function get_plugin_list($plugintype) {
     } else {
         $types = get_plugin_types(true);
         if (!array_key_exists($plugintype, $types)) {
+            $cache->set($plugintype, array());
             return array();
         }
         $fulldir = $types[$plugintype];
         if (!file_exists($fulldir)) {
+            $cache->set($plugintype, array());
             return array();
         }
         $fulldirs[] = $fulldir;
@@ -8317,6 +8325,7 @@ function get_plugin_list($plugintype) {
 
     //TODO: implement better sorting once we migrated all plugin names to 'pluginname', ksort does not work for unicode, that is why we have to sort by the dir name, not the strings!
     ksort($result);
+    $cache->set($plugintype, $result);
     return $result;
 }
 
@@ -9119,7 +9128,11 @@ function moodle_needs_upgrading() {
         return true;
     }
 
-    // main versio nfirst
+    // We have to purge plugin related caches now to be sure we have fresh data
+    // and new plugins can be detected.
+    cache::make('core', 'pluginlist')->purge();
+
+    // Check the main version first.
     $version = null;
     include($CFG->dirroot.'/version.php');  // defines $version and upgrades
     if ($version > $CFG->version) {

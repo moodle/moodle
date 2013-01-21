@@ -105,11 +105,23 @@ $definitions = array(
         'persistent' => true, // Likely there will be a couple of calls to this.
         'persistmaxsize' => 2, // The original cache used 1, we've increased that to two.
     ),
-     // Used to cache calendar subscriptions.
+
+    // Used to cache calendar subscriptions.
     'calendar_subscriptions' => array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
         'simpledata' => true,
         'persistent' => true,
-    )
+    ),
+
+    // Cache for the list of installed plugins - {@see get_plugin_list()}.
+    // The key consists of the plugin type string (e.g. mod, block, enrol etc).
+    // The value is an associative array of plugin name => plugin location.
+    'pluginlist' => array(
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true,
+        'simpledata' => true,
+        'persistent' => true,
+        'persistentmaxsize' => 2,
+    ),
 );
