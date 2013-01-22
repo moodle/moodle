@@ -55,6 +55,43 @@ class repository_wikimedia extends repository {
             $SESSION->{$sess_keyword} = $this->keyword;
         }
     }
+
+    /**
+     * Returns maximum width for images
+     *
+     * Takes the maximum width for images eithre from search form or from
+     * user preferences, updates user preferences if needed
+     *
+     * @return int
+     */
+    public function get_maxwidth() {
+        $param = optional_param('wikimedia_maxwidth', 0, PARAM_INT);
+        $pref = get_user_preferences('repository_wikimedia_maxwidth', WIKIMEDIA_IMAGE_SIDE_LENGTH);
+        if ($param > 0 && $param != $pref) {
+            $pref = $param;
+            set_user_preference('repository_wikimedia_maxwidth', $pref);
+        }
+        return $pref;
+    }
+
+    /**
+     * Returns maximum height for images
+     *
+     * Takes the maximum height for images eithre from search form or from
+     * user preferences, updates user preferences if needed
+     *
+     * @return int
+     */
+    public function get_maxheight() {
+        $param = optional_param('wikimedia_maxheight', 0, PARAM_INT);
+        $pref = get_user_preferences('repository_wikimedia_maxheight', WIKIMEDIA_IMAGE_SIDE_LENGTH);
+        if ($param > 0 && $param != $pref) {
+            $pref = $param;
+            set_user_preference('repository_wikimedia_maxheight', $pref);
+        }
+        return $pref;
+    }
+
     public function get_listing($path = '', $page = '') {
         $client = new wikimedia;
         $list = array();
@@ -62,7 +99,9 @@ class repository_wikimedia extends repository {
         if ($list['page'] < 1) {
             $list['page'] = 1;
         }
-        $list['list'] = $client->search_images($this->keyword, $list['page'] - 1);
+        $list['list'] = $client->search_images($this->keyword, $list['page'] - 1,
+                array('iiurlwidth' => $this->get_maxwidth(),
+                    'iiurlheight' => $this->get_maxheight()));
         $list['nologin'] = true;
         $list['norefresh'] = true;
         $list['nosearch'] = true;
@@ -88,13 +127,26 @@ class repository_wikimedia extends repository {
         $keyword->type  = 'text';
         $keyword->name  = 'wikimedia_keyword';
         $keyword->value = '';
+        $maxwidth = array(
+            'label' => get_string('maxwidth', 'repository_wikimedia').': ',
+            'type' => 'text',
+            'name' => 'wikimedia_maxwidth',
+            'value' => get_user_preferences('repository_wikimedia_maxwidth', WIKIMEDIA_IMAGE_SIDE_LENGTH),
+        );
+        $maxheight = array(
+            'label' => get_string('maxheight', 'repository_wikimedia').': ',
+            'type' => 'text',
+            'name' => 'wikimedia_maxheight',
+            'value' => get_user_preferences('repository_wikimedia_maxheight', WIKIMEDIA_IMAGE_SIDE_LENGTH),
+        );
         if ($this->options['ajax']) {
             $form = array();
-            $form['login'] = array($keyword);
+            $form['login'] = array($keyword, (object)$maxwidth, (object)$maxheight);
             $form['nologin'] = true;
             $form['norefresh'] = true;
             $form['nosearch'] = true;
-            $form['allowcaching'] = true; // indicates that login form can be cached in filepicker.js
+            $form['allowcaching'] = false; // indicates that login form can NOT
+            // be cached in filepicker.js (maxwidth and maxheight are dynamic)
             return $form;
         } else {
             echo <<<EOD
