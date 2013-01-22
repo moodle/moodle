@@ -385,6 +385,9 @@ YUI.add('moodle-course-dragdrop', function(Y) {
                         spinner.show();
                     },
                     success: function(tid, response) {
+                        var responsetext = Y.JSON.parse(response.responseText);
+                        var params = {element: dragnode, visible: responsetext.visible};
+                        M.course.coursebase.invoke_function('set_visibility_resource_ui', params);
                         this.unlock_drag_handle(drag, CSS.EDITINGMOVE);
                         window.setTimeout(function(e) {
                             spinner.hide();
