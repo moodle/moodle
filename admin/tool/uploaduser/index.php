@@ -292,7 +292,7 @@ if ($formdata = $mform2->is_cancelled()) {
             $upt->track('username', $errorstr, 'error');
             $userserrors++;
         }
-        
+
         if (empty($user->mnethostid)) {
             $user->mnethostid = $CFG->mnet_localhost_id;
         }
