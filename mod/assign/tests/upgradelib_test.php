@@ -136,7 +136,7 @@ class mod_assign_upgradelib_testcase extends advanced_testcase {
         $plugin = $assign->get_submission_plugin_by_type('onlinetext');
         $this->assertEmpty($plugin->is_enabled());
         $plugin = $assign->get_submission_plugin_by_type('comments');
-        $this->assertNotEmpty($plugin->is_enabled());
+        $this->assertEmpty($plugin->is_enabled());
         $plugin = $assign->get_submission_plugin_by_type('file');
         $this->assertNotEmpty($plugin->is_enabled());
         $plugin = $assign->get_feedback_plugin_by_type('comments');
