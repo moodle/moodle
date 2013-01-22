@@ -3960,7 +3960,6 @@ function add_moduleinfo($moduleinfo, $course, $mform = null) {
 
     $addinstancefunction    = $moduleinfo->modulename."_add_instance";
     $returnfromfunc = $addinstancefunction($moduleinfo, $mform);
-
     if (!$returnfromfunc or !is_number($returnfromfunc)) {
         // undo everything we can
         $modcontext = context_module::instance($moduleinfo->coursemodule);
@@ -4014,7 +4013,7 @@ function add_moduleinfo($moduleinfo, $course, $mform = null) {
                "view.php?id=$moduleinfo->coursemodule",
                "$moduleinfo->instance", $moduleinfo->coursemodule);
 
-    edit_module_post_actions($moduleinfo, $course, 'mod_created');
+    $moduleinfo = edit_module_post_actions($moduleinfo, $course, 'mod_created');
 
     return $moduleinfo;
 }
@@ -4028,6 +4027,8 @@ function add_moduleinfo($moduleinfo, $course, $mform = null) {
  * @param object $moduleinfo the module info
  * @param object $course the course of the module
  * @param string $eventname the event name to trigger
+ *
+ * return object moduleinfo update with grading management info
  */
 function edit_module_post_actions($moduleinfo, $course, $eventname) {
     global $USER, $CFG;
@@ -4149,12 +4150,17 @@ function edit_module_post_actions($moduleinfo, $course, $eventname) {
                 $showgradingmanagement = $showgradingmanagement || $methodchanged;
             }
         }
+        // Update grading management information.
+        $moduleinfo->gradingman = $gradingman;
+        $moduleinfo->showgradingmanagement = $showgradingmanagement;
     }
 
     rebuild_course_cache($course->id);
     grade_regrade_final_grades($course->id);
     require_once($CFG->libdir.'/plagiarismlib.php');
     plagiarism_save_form_elements($moduleinfo); //save plagiarism settings
+
+    return $moduleinfo;
 }
 
 
@@ -4273,7 +4279,7 @@ function can_update_moduleinfo($cm) {
  * @param object $cm course module
  * @param object $moduleinfo module info
  * @param object $course course of the module
- * @param object $mform - the mform is required by some specific module in the function MODULE_update_instance(). This is due to a hack in this function. 
+ * @param object $mform - the mform is required by some specific module in the function MODULE_update_instance(). This is due to a hack in this function.
  * TODO: remove the $mform from MODULE_update_instance()
  * @return array list of course module and module info.
  */
@@ -4356,7 +4362,7 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
                    "view.php?id=$moduleinfo->coursemodule",
                    "$moduleinfo->instance", $moduleinfo->coursemodule);
 
-        edit_module_post_actions($moduleinfo, $course, 'mod_updated');
+        $moduleinfo = edit_module_post_actions($moduleinfo, $course, 'mod_updated');
 
         return array($cm, $moduleinfo);
 }
