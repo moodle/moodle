@@ -104,12 +104,14 @@ class auth_plugin_cas extends auth_plugin_ldap {
         $this->connectCAS();
 
         if (phpCAS::checkAuthentication()) {
+            $frm = new stdClass();
             $frm->username = phpCAS::getUser();
             $frm->password = 'passwdCas';
             return;
         }
 
         if (isset($_GET['loginguest']) && ($_GET['loginguest'] == true)) {
+            $frm = new stdClass();
             $frm->username = 'guest';
             $frm->password = 'guest';
             return;
