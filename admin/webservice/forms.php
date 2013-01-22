@@ -163,6 +163,7 @@ class external_service_functions_form extends moodleform {
 
         $mform->addElement('searchableselector', 'fids', get_string('name'),
                 $functions, array('multiple'));
+        $mform->addRule('fids', get_string('required'), 'required', null, 'client');
 
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
