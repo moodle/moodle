@@ -80,6 +80,13 @@ class qtype_essay extends question_type {
         $question->graderinfoformat = $questiondata->options->graderinfoformat;
     }
 
+    public function delete_question($questionid, $contextid) {
+        global $DB;
+
+        $DB->delete_records('qtype_essay_options', array('questionid' => $questionid));
+        parent::delete_question($questionid, $contextid);
+    }
+
     /**
      * @return array the different response formats that the question type supports.
      * internal name => human-readable name.
