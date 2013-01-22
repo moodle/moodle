@@ -292,6 +292,8 @@ class core_calendar_renderer extends plugin_renderer_base {
      * @return string
      */
     public function event(calendar_event $event, $showactions=true) {
+        global $CFG;
+
         $event = calendar_add_event_metadata($event);
 
         $anchor  = html_writer::tag('a', '', array('name'=>'event_'.$event->id));
@@ -319,6 +321,16 @@ class core_calendar_renderer extends plugin_renderer_base {
         }
         if (!empty($event->courselink)) {
             $table->data[0]->cells[1]->text .= html_writer::tag('div', $event->courselink, array('class'=>'course'));
+        }
+        // Show subscription source if needed.
+        if (!empty($event->subscription) && $CFG->calendar_showicalsource) {
+            if (!empty($event->subscription->url)) {
+                $source = html_writer::link($event->subscription->url, get_string('subsource', 'calendar', $event->subscription));
+            } else {
+                // File based ical.
+                $source = get_string('subsource', 'calendar', $event->subscription);
+            }
+            $table->data[0]->cells[1]->text .= html_writer::tag('div', $source, array('class' => 'subscription'));
         }
         if (!empty($event->time)) {
             $table->data[0]->cells[1]->text .= html_writer::tag('span', $event->time, array('class'=>'date'));

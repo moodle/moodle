@@ -120,6 +120,27 @@ function calendar_get_days() {
 }
 
 /**
+ * Get the subscription from a given id
+ *
+ * @since Moodle 2.5
+ * @param int $id id of the subscription
+ * @return stdClass Subscription record from DB
+ * @throws moodle_exception for an invalid id
+ */
+function calendar_get_subscription($id) {
+    global $DB;
+
+    $cache = cache::make('core', 'calendar_subscriptions');
+    $subscription = $cache->get($id);
+    if (empty($subscription)) {
+        $subscription = $DB->get_record('event_subscriptions', array('id' => $id), '*', MUST_EXIST);
+        // cache the data.
+        $cache->set($id, $subscription);
+    }
+    return $subscription;
+}
+
+/**
  * Gets the first day of the week
  *
  * Used to be define('CALENDAR_STARTING_WEEKDAY', blah);
@@ -314,7 +335,7 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
                 if (!isset($events[$eventid])) {
                     continue;
                 }
-                $event = $events[$eventid];
+                $event = new calendar_event($events[$eventid]);
                 $popupalt  = '';
                 $component = 'moodle';
                 if(!empty($event->modulename)) {
@@ -335,7 +356,15 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
 
                 $popupcontent .= html_writer::start_tag('div');
                 $popupcontent .= $OUTPUT->pix_icon($popupicon, $popupalt, $component);
-                $popupcontent .= html_writer::link($dayhref, format_string($event->name, true));
+                $name = format_string($event->name, true);
+                // Show ical source if needed.
+                if (!empty($event->subscription) && $CFG->calendar_showicalsource) {
+                    $a = new stdClass();
+                    $a->name = $name;
+                    $a->source = $event->subscription->name;
+                    $name = get_string('namewithsource', 'calendar', $a);
+                }
+                $popupcontent .= html_writer::link($dayhref, $name);
                 $popupcontent .= html_writer::end_tag('div');
             }
 
@@ -1910,6 +1939,10 @@ class calendar_event {
             $data->id = null;
         }
 
+        if (!empty($data->subscriptionid)) {
+            $data->subscription = calendar_get_subscription($data->subscriptionid);
+        }
+
         // Default to a user event
         if (empty($data->eventtype)) {
             $data->eventtype = 'user';
@@ -2743,12 +2776,18 @@ function calendar_add_subscription($sub) {
         $sub->pollinterval = 0;
     }
 
+    $cache = cache::make('core', 'calendar_subscriptions');
+
     if (!empty($sub->name)) {
         if (empty($sub->id)) {
             $id = $DB->insert_record('event_subscriptions', $sub);
+            // we cannot cache the data here because $sub is not complete.
             return $id;
         } else {
+            // Why are we doing an update here?
             $DB->update_record('event_subscriptions', $sub);
+            // update cache.
+            $cache->set($sub->id, $sub);
             return $sub->id;
         }
     } else {
@@ -2762,9 +2801,10 @@ function calendar_add_subscription($sub) {
  * @param object $event The RFC-2445 iCalendar event
  * @param int $courseid The course ID
  * @param int $subscriptionid The iCalendar subscription ID
+ * @throws dml_exception A DML specific exception is thrown for invalid subscriptionids.
  * @return int Code: 1=updated, 2=inserted, 0=error
  */
-function calendar_add_icalendar_event($event, $courseid, $subscriptionid = null) {
+function calendar_add_icalendar_event($event, $courseid, $subscriptionid) {
     global $DB, $USER;
 
     // Probably an unsupported X-MICROSOFT-CDO-BUSYSTATUS event.
@@ -2805,16 +2845,13 @@ function calendar_add_icalendar_event($event, $courseid, $subscriptionid = null)
     $eventrecord->timemodified = time();
 
     // Add the iCal subscription details if required.
-    if ($sub = $DB->get_record('event_subscriptions', array('id' => $subscriptionid))) {
-        $eventrecord->subscriptionid = $subscriptionid;
-        $eventrecord->userid = $sub->userid;
-        $eventrecord->groupid = $sub->groupid;
-        $eventrecord->courseid = $sub->courseid;
-        $eventrecord->eventtype = $sub->eventtype;
-    } else {
-        // We should never do anything with an event without a subscription reference.
-        return 0;
-    }
+    // We should never do anything with an event without a subscription reference.
+    $sub = calendar_get_subscription($subscriptionid);
+    $eventrecord->subscriptionid = $subscriptionid;
+    $eventrecord->userid = $sub->userid;
+    $eventrecord->groupid = $sub->groupid;
+    $eventrecord->courseid = $sub->courseid;
+    $eventrecord->eventtype = $sub->eventtype;
 
     if ($updaterecord = $DB->get_record('event', array('uuid' => $eventrecord->uuid))) {
         $eventrecord->id = $updaterecord->id;
@@ -2838,20 +2875,18 @@ function calendar_add_icalendar_event($event, $courseid, $subscriptionid = null)
  * @param int $subscriptionid The ID of the subscription we are acting upon.
  * @param int $pollinterval The poll interval to use.
  * @param int $action The action to be performed. One of update or remove.
+ * @throws dml_exception if invalid subscriptionid is provided
  * @return string A log of the import progress, including errors
  */
 function calendar_process_subscription_row($subscriptionid, $pollinterval, $action) {
     global $DB;
 
-    if (empty($subscriptionid)) {
-        return '';
-    }
-
     // Fetch the subscription from the database making sure it exists.
-    $sub = $DB->get_record('event_subscriptions', array('id' => $subscriptionid), '*', MUST_EXIST);
+    $sub = calendar_get_subscription($subscriptionid);
 
     $strupdate = get_string('update');
     $strremove = get_string('remove');
+
     // Update or remove the subscription, based on action.
     switch ($action) {
         case $strupdate:
@@ -2861,6 +2896,10 @@ function calendar_process_subscription_row($subscriptionid, $pollinterval, $acti
             }
             $sub->pollinterval = $pollinterval;
             $DB->update_record('event_subscriptions', $sub);
+
+            // update the cache.
+            $cache = cache::make('core', 'calendar_subscriptions');
+            $cache->set($sub->id, $sub);
 
             // Update the events.
             return "<p>".get_string('subscriptionupdated', 'calendar', $sub->name)."</p>" . calendar_update_subscription_events($subscriptionid);
@@ -2890,6 +2929,7 @@ function calendar_delete_subscription($subscription) {
     // Delete subscription and related events.
     $DB->delete_records('event', array('subscriptionid' => $subscription));
     $DB->delete_records('event_subscriptions', array('id' => $subscription));
+    cache_helper::invalidate_by_definition('core', 'calendar_subscriptions', array(), array($subscription));
 }
 /**
  * From a URL, fetch the calendar and return an iCalendar object.
@@ -2976,10 +3016,7 @@ function calendar_import_icalendar_events($ical, $courseid, $subscriptionid = nu
 function calendar_update_subscription_events($subscriptionid) {
     global $DB;
 
-    $sub = $DB->get_record('event_subscriptions', array('id' => $subscriptionid));
-    if (empty($sub)) {
-        print_error('errorbadsubscription', 'calendar');
-    }
+    $sub = calendar_get_subscription($subscriptionid);
     // Don't update a file subscription. TODO: Update from a new uploaded file.
     if (empty($sub->url)) {
         return 'File subscription not updated.';
@@ -2988,6 +3025,9 @@ function calendar_update_subscription_events($subscriptionid) {
     $return = calendar_import_icalendar_events($ical, $sub->courseid, $subscriptionid);
     $sub->lastupdated = time();
     $DB->update_record('event_subscriptions', $sub);
+    // Update the cache.
+    $cache = cache::make('core', 'calendar_subscriptions');
+    $cache->set($subscriptionid, $sub);
     return $return;
 }
 
@@ -3005,7 +3045,7 @@ function calendar_can_edit_subscription($subscriptionorid) {
     } else if (is_object($subscriptionorid)) {
         $subscription = $subscriptionorid;
     } else {
-        $subscription = $DB->get_record('event_subscriptions', array('id' => $subscriptionorid), '*', MUST_EXIST);
+        $subscription = calendar_get_subscription($subscriptionorid);
     }
     $allowed = new stdClass;
     $courseid = $subscription->courseid;

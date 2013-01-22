@@ -105,4 +105,11 @@ $definitions = array(
         'persist' => true, // Likely there will be a couple of calls to this.
         'persistmaxsize' => 2, // The original cache used 1, we've increased that to two.
     )
+     // Used to cache calendar subscriptions.
+    'calendar_subscriptions' => array(
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true,
+        'simpledata' => true,
+        'persistent' => true,
+    ),
 );
