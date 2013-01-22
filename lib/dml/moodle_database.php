@@ -408,6 +408,7 @@ abstract class moodle_database {
             // free memory
             $this->last_sql    = null;
             $this->last_params = null;
+            $this->print_debug_time();
             return;
         }
 
@@ -415,7 +416,6 @@ abstract class moodle_database {
         $type   = $this->last_type;
         $sql    = $this->last_sql;
         $params = $this->last_params;
-        $time   = microtime(true) - $this->last_time;
         $error  = $this->get_last_error();
 
         $this->query_log($error);
@@ -516,6 +516,25 @@ abstract class moodle_database {
             if (!is_null($params)) {
                 echo "[".s(var_export($params, true))."]\n";
             }
+            echo "<hr />\n";
+        }
+    }
+
+    /**
+     * Prints the time a query took to run.
+     * @return void
+     */
+    protected function print_debug_time() {
+        if (!$this->get_debug()) {
+            return;
+        }
+        $time = microtime(true) - $this->last_time;
+        $message = "Query took: {$time} seconds.\n";
+        if (CLI_SCRIPT) {
+            echo $message;
+            echo "--------------------------------\n";
+        } else {
+            echo s($message);
             echo "<hr />\n";
         }
     }
