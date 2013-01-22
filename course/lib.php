@@ -68,6 +68,7 @@ function make_log_url($module, $url) {
         case 'lib':
         case 'admin':
         case 'calendar':
+        case 'category':
         case 'mnet course':
             if (strpos($url, '../') === 0) {
                 $url = ltrim($url, '.');
@@ -3493,6 +3494,7 @@ function category_delete_full($category, $showfeedback=true) {
     // finally delete the category and it's context
     $DB->delete_records('course_categories', array('id'=>$category->id));
     delete_context(CONTEXT_COURSECAT, $category->id);
+    add_to_log(SITEID, "category", "delete", "index.php", "$category->name (ID $category->id)");
 
     events_trigger('course_category_deleted', $category);
 
@@ -3548,6 +3550,7 @@ function category_delete_move($category, $newparentid, $showfeedback=true) {
     // finally delete the category and it's context
     $DB->delete_records('course_categories', array('id'=>$category->id));
     delete_context(CONTEXT_COURSECAT, $category->id);
+    add_to_log(SITEID, "category", "delete", "index.php", "$category->name (ID $category->id)");
 
     events_trigger('course_category_deleted', $category);
 
@@ -3594,6 +3597,7 @@ function move_courses($courseids, $categoryid) {
             }
 
             $DB->update_record('course', $course);
+            add_to_log($course->id, "course", "move", "edit.php?id=$course->id", $course->id);
 
             $context   = context_course::instance($course->id);
             context_moved($context, $newparent);
@@ -3626,6 +3630,7 @@ function course_category_hide($category) {
             $DB->set_field('course', 'visible', 0, array('category' => $cat->id));
         }
     }
+    add_to_log(SITEID, "category", "hide", "editcategory.php?id=$category->id", $category->id);
 }
 
 /**
@@ -3649,6 +3654,7 @@ function course_category_show($category) {
             $DB->execute("UPDATE {course} SET visible = visibleold WHERE category = ?", array($cat->id));
         }
     }
+    add_to_log(SITEID, "category", "show", "editcategory.php?id=$category->id", $category->id);
 }
 
 /**
@@ -3662,12 +3668,10 @@ function move_category($category, $newparentcat) {
 
     $hidecat = false;
     if (empty($newparentcat->id)) {
-        $DB->set_field('course_categories', 'parent', 0, array('id'=>$category->id));
-
+        $DB->set_field('course_categories', 'parent', 0, array('id' => $category->id));
         $newparent = context_system::instance();
-
     } else {
-        $DB->set_field('course_categories', 'parent', $newparentcat->id, array('id'=>$category->id));
+        $DB->set_field('course_categories', 'parent', $newparentcat->id, array('id' => $category->id));
         $newparent = context_coursecat::instance($newparentcat->id);
 
         if (!$newparentcat->visible and $category->visible) {
@@ -3680,6 +3684,9 @@ function move_category($category, $newparentcat) {
 
     // now make it last in new category
     $DB->set_field('course_categories', 'sortorder', MAX_COURSES_IN_CATEGORY*MAX_COURSE_CATEGORIES, array('id'=>$category->id));
+
+    // Log action.
+    add_to_log(SITEID, "category", "move", "editcategory.php?id=$category->id", $category->id);
 
     // and fix the sortorders
     fix_course_sortorder();
