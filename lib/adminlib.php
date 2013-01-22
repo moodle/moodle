@@ -5012,9 +5012,9 @@ class admin_setting_manageenrols extends admin_setting {
      * @return string
      */
     public function output_html($data, $query='') {
-        global $CFG, $OUTPUT, $DB;
+        global $CFG, $OUTPUT, $DB, $PAGE;
 
-        // display strings
+        // Display strings.
         $strup        = get_string('up');
         $strdown      = get_string('down');
         $strsettings  = get_string('settings');
@@ -5022,6 +5022,9 @@ class admin_setting_manageenrols extends admin_setting {
         $strdisable   = get_string('disable');
         $struninstall = get_string('uninstallplugin', 'admin');
         $strusage     = get_string('enrolusage', 'enrol');
+        $strversion   = get_string('version');
+
+        $pluginmanager = plugin_manager::instance();
 
         $enrols_available = enrol_get_plugins(false);
         $active_enrols    = enrol_get_plugins(true);
@@ -5033,8 +5036,7 @@ class admin_setting_manageenrols extends admin_setting {
         foreach ($enrols_available as $key=>$enrol) {
             $allenrols[$key] = true;
         }
-        // now find all borked plugins and at least allow then to uninstall
-        $borked = array();
+        // Now find all borked plugins and at least allow then to uninstall.
         $condidates = $DB->get_fieldset_sql("SELECT DISTINCT enrol FROM {enrol}");
         foreach ($condidates as $candidate) {
             if (empty($allenrols[$candidate])) {
@@ -5046,29 +5048,35 @@ class admin_setting_manageenrols extends admin_setting {
         $return .= $OUTPUT->box_start('generalbox enrolsui');
 
         $table = new html_table();
-        $table->head  = array(get_string('name'), $strusage, $strenable, $strup.'/'.$strdown, $strsettings, $struninstall);
-        $table->colclasses = array('leftalign', 'centeralign', 'centeralign', 'centeralign', 'centeralign', 'centeralign');
+        $table->head  = array(get_string('name'), $strusage, $strversion, $strenable, $strup.'/'.$strdown, $strsettings, $struninstall);
+        $table->colclasses = array('leftalign', 'centeralign', 'centeralign', 'centeralign', 'centeralign', 'centeralign', 'centeralign');
         $table->id = 'courseenrolmentplugins';
         $table->attributes['class'] = 'admintable generaltable';
         $table->data  = array();
 
-        // iterate through enrol plugins and add to the display table
+        // Iterate through enrol plugins and add to the display table.
         $updowncount = 1;
         $enrolcount = count($active_enrols);
         $url = new moodle_url('/admin/enrol.php', array('sesskey'=>sesskey()));
         $printed = array();
         foreach($allenrols as $enrol => $unused) {
+            $plugininfo = $pluginmanager->get_plugin_info('enrol_'.$enrol);
+            $version = get_config('enrol_'.$enrol, 'version');
+            if ($version === false) {
+                $version = '';
+            }
+
             if (get_string_manager()->string_exists('pluginname', 'enrol_'.$enrol)) {
                 $name = get_string('pluginname', 'enrol_'.$enrol);
             } else {
                 $name = $enrol;
             }
-            //usage
+            // Usage.
             $ci = $DB->count_records('enrol', array('enrol'=>$enrol));
             $cp = $DB->count_records_select('user_enrolments', "enrolid IN (SELECT id FROM {enrol} WHERE enrol = ?)", array($enrol));
             $usage = "$ci / $cp";
 
-            // hide/show link
+            // Hide/show links.
             if (isset($active_enrols[$enrol])) {
                 $aurl = new moodle_url($url, array('action'=>'disable', 'enrol'=>$enrol));
                 $hideshow = "<a href=\"$aurl\">";
@@ -5086,8 +5094,13 @@ class admin_setting_manageenrols extends admin_setting {
                 $enabled = false;
                 $displayname = '<span class="notifyproblem">'.$name.'</span>';
             }
+            if ($PAGE->theme->resolve_image_location('icon', 'enrol_' . $name, false)) {
+                $icon = $OUTPUT->pix_icon('icon', '', 'enrol_' . $name, array('class' => 'icon pluginicon'));
+            } else {
+                $icon = $OUTPUT->pix_icon('spacer', '', 'moodle', array('class' => 'icon pluginicon noicon'));
+            }
 
-            // up/down link (only if enrol is enabled)
+            // Up/down link (only if enrol is enabled).
             $updown = '';
             if ($enabled) {
                 if ($updowncount > 1) {
@@ -5107,20 +5120,25 @@ class admin_setting_manageenrols extends admin_setting {
                 ++$updowncount;
             }
 
-            // settings link
-            if (isset($active_enrols[$enrol]) or file_exists($CFG->dirroot.'/enrol/'.$enrol.'/settings.php')) {
-                $surl = new moodle_url('/admin/settings.php', array('section'=>'enrolsettings'.$enrol));
-                $settings = "<a href=\"$surl\">$strsettings</a>";
+            // Add settings link.
+            if (!$version) {
+                $settings = '';
+            } else if ($url = $plugininfo->get_settings_url()) {
+                $settings = html_writer::link($url, $strsettings);
             } else {
                 $settings = '';
             }
 
-            // uninstall
-            $aurl = new moodle_url($url, array('action'=>'uninstall', 'enrol'=>$enrol));
-            $uninstall = "<a href=\"$aurl\">$struninstall</a>";
+            // Add uninstall info.
+            if ($version) {
+                $url = new moodle_url($plugininfo->get_uninstall_url(), array('return'=>'settings'));
+                $uninstall = html_writer::link($url, $struninstall);
+            } else {
+                $uninstall = '';
+            }
 
-            // add a row to the table
-            $table->data[] = array($displayname, $usage, $hideshow, $updown, $settings, $uninstall);
+            // Add a row to the table.
+            $table->data[] = array($icon.$displayname, $usage, $version, $hideshow, $updown, $settings, $uninstall);
 
             $printed[$enrol] = true;
         }
