@@ -26,6 +26,7 @@
 define('WIKIMEDIA_THUMBS_PER_PAGE', 24);
 define('WIKIMEDIA_FILE_NS', 6);
 define('WIKIMEDIA_IMAGE_SIDE_LENGTH', 1024);
+define('WIKIMEDIA_THUMB_SIZE', 120);
 
 class wikimedia {
     private $_conn  = null;
@@ -135,13 +136,16 @@ class wikimedia {
             return $thumb_url;
         }
     }
+
     /**
      * Search for images and return photos array.
      *
      * @param string $keyword
+     * @param int $page
+     * @param array $params additional query params
      * @return array
      */
-    public function search_images($keyword, $page = 0) {
+    public function search_images($keyword, $page = 0, $params = array()) {
         global $OUTPUT;
         $files_array = array();
         $this->_param['action'] = 'query';
@@ -152,8 +156,9 @@ class wikimedia {
         $this->_param['gsroffset'] = $page * WIKIMEDIA_THUMBS_PER_PAGE;
         $this->_param['prop']   = 'imageinfo';
         $this->_param['iiprop'] = 'url|dimensions|mime|timestamp|size|user';
-        $this->_param['iiurlwidth'] = WIKIMEDIA_IMAGE_SIDE_LENGTH;
-        $this->_param['iiurlheight'] = WIKIMEDIA_IMAGE_SIDE_LENGTH;
+        $this->_param += $params;
+        $this->_param += array('iiurlwidth' => WIKIMEDIA_IMAGE_SIDE_LENGTH,
+            'iiurlheight' => WIKIMEDIA_IMAGE_SIDE_LENGTH);
         //didn't work with POST
         $content = $this->_conn->get($this->api, $this->_param);
         $result = unserialize($content);
@@ -174,6 +179,12 @@ class wikimedia {
                             'image_width' => $page['imageinfo'][0]['thumbwidth'],
                             'image_height' => $page['imageinfo'][0]['thumbheight']
                         );
+                        if ($attrs['image_width'] <= WIKIMEDIA_THUMB_SIZE && $attrs['image_height'] <= WIKIMEDIA_THUMB_SIZE) {
+                            $attrs['realthumbnail'] = $attrs['source'];
+                        }
+                        if ($attrs['image_width'] <= 24 && $attrs['image_height'] <= 24) {
+                            $attrs['realicon'] = $attrs['source'];
+                        }
                     } else {
                         $attrs = array(
                             //upload full size image
@@ -184,20 +195,19 @@ class wikimedia {
                         );
                     }
                     $attrs += array(
-                        'thumbnail' => $this->get_thumb_url($page['imageinfo'][0]['url'], $page['imageinfo'][0]['width'], $page['imageinfo'][0]['height'], 120),
-                        'icon' => $this->get_thumb_url($page['imageinfo'][0]['url'], $page['imageinfo'][0]['width'], $page['imageinfo'][0]['height'], 24),
+                        'realthumbnail' => $this->get_thumb_url($page['imageinfo'][0]['url'], $page['imageinfo'][0]['width'], $page['imageinfo'][0]['height'], WIKIMEDIA_THUMB_SIZE),
+                        'realicon' => $this->get_thumb_url($page['imageinfo'][0]['url'], $page['imageinfo'][0]['width'], $page['imageinfo'][0]['height'], 24),
                         'author' => $page['imageinfo'][0]['user'],
                         'datemodified' => strtotime($page['imageinfo'][0]['timestamp']),
                         );
                 } else {  // other file types
-                    $attrs = array(
-                        'thumbnail' => $OUTPUT->pix_url(file_extension_icon(substr($title, 5), 120))->out(false),
-                        'source' => $page['imageinfo'][0]['url']);
+                    $attrs = array('source' => $page['imageinfo'][0]['url']);
                 }
                 $files_array[] = array(
                     'title'=>substr($title, 5),         //chop off 'File:'
-                    'thumbnail_width'=>120,
-                    'thumbnail_height'=>120,
+                    'thumbnail' => $OUTPUT->pix_url(file_extension_icon(substr($title, 5), WIKIMEDIA_THUMB_SIZE))->out(false),
+                    'thumbnail_width' => WIKIMEDIA_THUMB_SIZE,
+                    'thumbnail_height' => WIKIMEDIA_THUMB_SIZE,
                     'license' => 'cc-sa',
                     // the accessible url of the file
                     'url'=>$page['imageinfo'][0]['descriptionurl']
