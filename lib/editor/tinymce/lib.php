@@ -95,12 +95,12 @@ class tinymce_texteditor extends texteditor {
      * @param null $fpoptions
      */
     public function use_editor($elementid, array $options=null, $fpoptions=null) {
-        global $PAGE;
-        // Note: use full moodle_url instance to prevent standard JS loader.
+        global $PAGE, $CFG;
+        // Note: use full moodle_url instance to prevent standard JS loader, make sure we are using https on profile page if required.
         if (debugging('', DEBUG_DEVELOPER)) {
-            $PAGE->requires->js(new moodle_url('/lib/editor/tinymce/tiny_mce/'.$this->version.'/tiny_mce_src.js'));
+            $PAGE->requires->js(new moodle_url($CFG->httpswwwroot.'/lib/editor/tinymce/tiny_mce/'.$this->version.'/tiny_mce_src.js'));
         } else {
-            $PAGE->requires->js(new moodle_url('/lib/editor/tinymce/tiny_mce/'.$this->version.'/tiny_mce.js'));
+            $PAGE->requires->js(new moodle_url($CFG->httpswwwroot.'/lib/editor/tinymce/tiny_mce/'.$this->version.'/tiny_mce.js'));
         }
         $PAGE->requires->js_init_call('M.editor_tinymce.init_editor', array($elementid, $this->get_init_params($elementid, $options)), true);
         if ($fpoptions) {
