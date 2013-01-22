@@ -41,14 +41,14 @@ class courselib_testcase extends advanced_testcase {
         $moduleinfo->completiondiscussions = 1;
         $moduleinfo->completionreplies = 2;
 
-        // Specific values to the Forum module
+        // Specific values to the Forum module.
         $moduleinfo->forcesubscribe = FORUM_INITIALSUBSCRIBE;
         $moduleinfo->type = 'single';
         $moduleinfo->trackingtype = FORUM_TRACKING_ON;
         $moduleinfo->maxbytes = 10240;
         $moduleinfo->maxattachments = 2;
 
-        // Post threshold for blocking - specific to forum
+        // Post threshold for blocking - specific to forum.
         $moduleinfo->blockperiod = 60*60*24;
         $moduleinfo->blockafter = 10;
         $moduleinfo->warnafter = 5;
@@ -87,7 +87,7 @@ class courselib_testcase extends advanced_testcase {
      * @param object $moduleinfo - the moduleinfo to add some specific values - passed in reference.
      */
     private function assign_create_set_values(&$moduleinfo) {
-        // Specific values to the Assign module
+        // Specific values to the Assign module.
         $moduleinfo->alwaysshowdescription = true;
         $moduleinfo->submissiondrafts = true;
         $moduleinfo->requiresubmissionstatement = true;
@@ -109,7 +109,7 @@ class courselib_testcase extends advanced_testcase {
         $moduleinfo->assignfeedback_offline_enabled = true;
         $moduleinfo->assignfeedback_file_enabled = true;
 
-        // Advanced grading
+        // Advanced grading.
         $gradingmethods = grading_manager::available_methods();
         $moduleinfo->advancedgradingmethod_submissions = current(array_keys($gradingmethods));
     }
@@ -136,7 +136,7 @@ class courselib_testcase extends advanced_testcase {
         $this->assertEquals($moduleinfo->blindmarking, $dbmodinstance->blindmarking);
         // The goal not being to fully test assign_add_instance() we'll stop here for the assign tests - to avoid too many DB queries.
 
-        // Advanced grading
+        // Advanced grading.
         $contextmodule = context_module::instance($dbmodinstance->id);
         $advancedgradingmethod = $DB->get_record('grading_areas',
             array('contextid' => $contextmodule->id,
@@ -179,7 +179,7 @@ class courselib_testcase extends advanced_testcase {
 
         $grouping = $this->getDataGenerator()->create_grouping(array('courseid' => $course->id));
 
-        // Create assign module instance for test
+        // Create assign module instance for test.
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
         $params['course'] = $course->id;
         $instance = $generator->create_instance($params);
@@ -209,7 +209,7 @@ class courselib_testcase extends advanced_testcase {
         // Completion common to all module.
         $moduleinfo->completion = COMPLETION_TRACKING_AUTOMATIC;
         $moduleinfo->completionview = COMPLETION_VIEW_REQUIRED;
-        $moduleinfo->completiongradeitemnumber = 1; // TODO: seems to be 0 or 1 only (completionusegrade set it) - can it be other values for other module?
+        $moduleinfo->completiongradeitemnumber = 1;
         $moduleinfo->completionexpected = time() + (7 * 24 * 3600);
 
         // Conditional activity.
@@ -228,12 +228,11 @@ class courselib_testcase extends advanced_testcase {
         $moduleinfo->assesstimestart = time();
         $moduleinfo->assesstimefinish = time() + (7 * 24 * 3600);
 
-        // RSS
+        // RSS.
         $moduleinfo->rsstype = 2;
         $moduleinfo->rssarticles = 10;
 
         // Optional intro editor (depends of module).
-        // TODO: file support.
         $draftid_editor = 0;
         file_prepare_draft_area($draftid_editor, null, null, null, null);
         $moduleinfo->introeditor = array('text' => 'This is a module', 'format' => FORMAT_HTML, 'itemid' => $draftid_editor);
@@ -242,6 +241,7 @@ class courselib_testcase extends advanced_testcase {
         if (plugin_supports('mod', $modulename, FEATURE_GRADE_HAS_GRADE, false) && !plugin_supports('mod', $modulename, FEATURE_RATE, false)) {
             $moduleinfo->grade = 100;
         }
+
         // Plagiarism form values.
         // No plagiarism plugin installed by default. Use this space to make your own test.
 
@@ -258,7 +258,7 @@ class courselib_testcase extends advanced_testcase {
         // We passed the course section number to create_courses but $dbcm contain the section id.
         // We need to retrieve the db course section number.
         $section = $DB->get_record('course_sections', array('course' => $dbcm->course, 'id' => $dbcm->section));
-        // Retrieve the grade item
+        // Retrieve the grade item.
         $gradeitem = $DB->get_record('grade_items', array('courseid' => $moduleinfo->course,
             'iteminstance' => $dbmodinstance->id, 'itemmodule' => $moduleinfo->modulename));
 
@@ -310,10 +310,9 @@ class courselib_testcase extends advanced_testcase {
             $this->assertEquals(1, $iscompletiongroupsaved);
         }
 
-        // Test specific to the module
+        // Test specific to the module.
         $modulerunasserts = $modulename.'_create_run_asserts';
         $this->$modulerunasserts($moduleinfo, $dbmodinstance);
-
     }
 
     /**
@@ -321,7 +320,7 @@ class courselib_testcase extends advanced_testcase {
      */
     public function test_create_module() {
         // Add the module name you want to test here.
-        // Create the match MODULENAME_create_set_values() and MODULENAME_create_run_asserts()
+        // Create the match MODULENAME_create_set_values() and MODULENAME_create_run_asserts().
         $modules = array('forum', 'assign');
         // Run all tests.
         foreach ($modules as $modulename) {
@@ -334,7 +333,7 @@ class courselib_testcase extends advanced_testcase {
      */
     public function test_update_module() {
         // Add the module name you want to test here.
-        // Create the match MODULENAME_update_set_values() and MODULENAME_update_run_asserts()
+        // Create the match MODULENAME_update_set_values() and MODULENAME_update_run_asserts().
         $modules = array('forum');
         // Run all tests.
         foreach ($modules as $modulename) {
@@ -353,14 +352,14 @@ class courselib_testcase extends advanced_testcase {
         $moduleinfo->completiondiscussions = 1;
         $moduleinfo->completionreplies = 2;
 
-        // Specific values to the Forum module
+        // Specific values to the Forum module.
         $moduleinfo->forcesubscribe = FORUM_INITIALSUBSCRIBE;
         $moduleinfo->type = 'single';
         $moduleinfo->trackingtype = FORUM_TRACKING_ON;
         $moduleinfo->maxbytes = 10240;
         $moduleinfo->maxattachments = 2;
 
-        // Post threshold for blocking - specific to forum
+        // Post threshold for blocking - specific to forum.
         $moduleinfo->blockperiod = 60*60*24;
         $moduleinfo->blockafter = 10;
         $moduleinfo->warnafter = 5;
@@ -427,19 +426,19 @@ class courselib_testcase extends advanced_testcase {
 
         $grouping = $this->getDataGenerator()->create_grouping(array('courseid' => $course->id));
 
-        // Create assign module instance for testing gradeitem
+        // Create assign module instance for testing gradeitem.
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
         $params['course'] = $course->id;
         $instance = $generator->create_instance($params);
         $assigncm = get_coursemodule_from_instance('assign', $instance->id);
 
-        // Create the test forum to update
+        // Create the test forum to update.
         $initvalues = new stdClass();
         $initvalues->introformat = FORMAT_HTML;
         $initvalues->course = $course->id;
         $forum = self::getDataGenerator()->create_module('forum', $initvalues);
 
-        // Retrieve course module
+        // Retrieve course module.
         $cm = get_coursemodule_from_instance('forum', $forum->id);
 
         // Module test values.
@@ -466,7 +465,7 @@ class courselib_testcase extends advanced_testcase {
         // Completion common to all module.
         $moduleinfo->completion = COMPLETION_TRACKING_AUTOMATIC;
         $moduleinfo->completionview = COMPLETION_VIEW_REQUIRED;
-        $moduleinfo->completiongradeitemnumber = 1; // TODO: seems to be 0 or 1 only (completionusegrade set it) - can it be other values for other module?
+        $moduleinfo->completiongradeitemnumber = 1;
         $moduleinfo->completionexpected = time() + (7 * 24 * 3600);
 
         // Conditional activity.
@@ -485,12 +484,11 @@ class courselib_testcase extends advanced_testcase {
         $moduleinfo->assesstimestart = time();
         $moduleinfo->assesstimefinish = time() + (7 * 24 * 3600);
 
-        // RSS
+        // RSS.
         $moduleinfo->rsstype = 2;
         $moduleinfo->rssarticles = 10;
 
         // Optional intro editor (depends of module).
-        // TODO: file support.
         $draftid_editor = 0;
         file_prepare_draft_area($draftid_editor, null, null, null, null);
         $moduleinfo->introeditor = array('text' => 'This is a module', 'format' => FORMAT_HTML, 'itemid' => $draftid_editor);
@@ -512,7 +510,7 @@ class courselib_testcase extends advanced_testcase {
         // Retrieve the module info.
         $dbmodinstance = $DB->get_record($moduleinfo->modulename, array('id' => $result->instance));
         $dbcm = get_coursemodule_from_instance($moduleinfo->modulename, $result->instance);
-        // Retrieve the grade item
+        // Retrieve the grade item.
         $gradeitem = $DB->get_record('grade_items', array('courseid' => $moduleinfo->course,
             'iteminstance' => $dbmodinstance->id, 'itemmodule' => $moduleinfo->modulename));
 
@@ -563,7 +561,7 @@ class courselib_testcase extends advanced_testcase {
             $this->assertEquals(1, $iscompletiongroupsaved);
         }
 
-        // Test specific to the module
+        // Test specific to the module.
         $modulerunasserts = $modulename.'_update_run_asserts';
         $this->$modulerunasserts($moduleinfo, $dbmodinstance);
    }
