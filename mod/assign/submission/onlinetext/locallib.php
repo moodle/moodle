@@ -90,9 +90,10 @@ class assign_submission_onlinetext extends assign_submission_plugin {
 
         }
 
-
         $data = file_prepare_standard_editor($data, 'onlinetext', $editoroptions, $this->assignment->get_context(), 'assignsubmission_onlinetext', ASSIGNSUBMISSION_ONLINETEXT_FILEAREA, $submissionid);
-        $mform->addElement('editor', 'onlinetext_editor', '', null, $editoroptions);
+        $mform->addElement('editor', 'onlinetext_editor', html_writer::tag('span', $this->get_name(),
+            array('class' => 'accesshide')), null, $editoroptions);
+
         return true;
     }
 
