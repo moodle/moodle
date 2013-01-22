@@ -358,7 +358,7 @@ function assign_print_overview($courses, &$htmlarray) {
     $rs->close();
 
     // Get all user submissions, indexed by assignment id.
-    $dbparams = array($USER->id, $USER->id);
+    $dbparams = array_merge(array($USER->id, $USER->id), $assignmentidparams);
     $mysubmissions = $DB->get_records_sql('SELECT
                                                a.id AS assignment,
                                                a.nosubmissions AS nosubmissions,
