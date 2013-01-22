@@ -39,11 +39,7 @@ require_once($CFG->dirroot . '/question/type/shortanswer/question.php');
  */
 class qtype_shortanswer extends question_type {
     public function extra_question_fields() {
-        return array('question_shortanswer', 'answers', 'usecase');
-    }
-
-    public function questionid_column_name() {
-        return 'question';
+        return array('qtype_shortanswer_options', 'usecase');
     }
 
     public function move_files($questionid, $oldcontextid, $newcontextid) {
@@ -67,7 +63,6 @@ class qtype_shortanswer extends question_type {
         $oldanswers = $DB->get_records('question_answers',
                 array('question' => $question->id), 'id ASC');
 
-        $answers = array();
         $maxfraction = -1;
 
         // Insert all the new answers
@@ -95,13 +90,11 @@ class qtype_shortanswer extends question_type {
             $answer->feedbackformat = $question->feedback[$key]['format'];
             $DB->update_record('question_answers', $answer);
 
-            $answers[] = $answer->id;
             if ($question->fraction[$key] > $maxfraction) {
                 $maxfraction = $question->fraction[$key];
             }
         }
 
-        $question->answers = implode(',', $answers);
         $parentresult = parent::save_question_options($question);
         if ($parentresult !== null) {
             // Parent function returns null if all is OK
