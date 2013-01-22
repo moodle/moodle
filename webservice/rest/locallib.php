@@ -120,7 +120,7 @@ class webservice_rest_server extends webservice_base_server {
             } else {
                 $response = '<?xml version="1.0" encoding="UTF-8" ?>'."\n";
                 $response .= '<RESPONSE>'."\n";
-                $response .= self::xmlize_result($this->returns, $this->function->returns_desc);
+                $response .= self::xmlize_result($validatedvalues, $this->function->returns_desc);
                 $response .= '</RESPONSE>'."\n";
             }
         }
