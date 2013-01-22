@@ -30,6 +30,7 @@ $string['csvdelimiter'] = 'CSV delimiter';
 $string['defaultvalues'] = 'Default values';
 $string['deleteerrors'] = 'Delete errors';
 $string['encoding'] = 'Encoding';
+$string['errormnetadd'] = 'Can not add remote users';
 $string['errors'] = 'Errors';
 $string['nochanges'] = 'No changes';
 $string['pluginname'] = 'User upload';
