@@ -155,3 +155,21 @@ font {
     margin-top: 0px;
     list-style: none;
 }
+
+/* Print dialog link icon */
+.book_print_icon {
+    padding-left: 0;
+    padding-right: 3px;
+    height: 16px;
+    vertical-align: text-bottom;
+    width: 16px;
+    border-width: 0;
+}
+
+/* Exclude elements from printing */
+@media print
+{
+    .book_no_print {
+        display: none;
+    }
+}
