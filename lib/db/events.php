@@ -121,4 +121,10 @@ mod_deleted - int courseid, int cmid, text modulename - happens when a module is
 mod_created - int courseid, int cmid, text modulename - happens when a module is created
 mod_updated - int courseid, int cmid, text modulename - happens when a module is updated
 
+=== blog events
+
+blog_entry_added - blog post object
+blog_entry_edited - blog post object
+blog_entry_deleteded - blog post object
+
 */

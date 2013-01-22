@@ -76,7 +76,7 @@ class blog_entry implements renderable {
      * @param mixed $idorparams A blog entry id if INT, or data for a new entry if array
      */
     public function __construct($id=null, $params=null, $form=null) {
-        global $DB, $PAGE;
+        global $DB, $PAGE, $CFG;
 
         if (!empty($id)) {
             $object = $DB->get_record('post', array('id' => $id));
@@ -86,6 +86,18 @@ class blog_entry implements renderable {
         } else if (!empty($params) && (is_array($params) || is_object($params))) {
             foreach ($params as $var => $val) {
                 $this->$var = $val;
+            }
+        }
+
+        if (!empty($CFG->useblogassociations)) {
+            $associations = $DB->get_records('blog_association', array('blogid' => $this->id));
+            foreach ($associations as $association) {
+                $context = context::instance_by_id($association->contextid);
+                if ($context->contextlevel == CONTEXT_COURSE) {
+                    $this->courseassoc = $association->contextid;
+                } else if ($context->contextlevel == CONTEXT_MODULE) {
+                    $this->modassoc = $association->contextid;
+                }
             }
         }
 
@@ -251,6 +263,7 @@ class blog_entry implements renderable {
         }
 
         tag_set('post', $this->id, $this->tags);
+        events_trigger('blog_entry_added', $this);
     }
 
     /**
@@ -284,6 +297,7 @@ class blog_entry implements renderable {
         tag_set('post', $entry->id, $entry->tags);
 
         add_to_log(SITEID, 'blog', 'update', 'index.php?userid='.$USER->id.'&entryid='.$entry->id, $entry->subject);
+        events_trigger('blog_entry_edited', $entry);
     }
 
     /**
@@ -301,6 +315,7 @@ class blog_entry implements renderable {
         tag_set('post', $this->id, array());
 
         add_to_log(SITEID, 'blog', 'delete', 'index.php?userid='. $this->userid, 'deleted blog entry with entry id# '. $this->id);
+        events_trigger('blog_entry_deleted', $this);
     }
 
     /**
