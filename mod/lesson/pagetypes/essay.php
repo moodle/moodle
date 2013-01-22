@@ -213,6 +213,7 @@ class lesson_page_type_essay extends lesson_page {
             } else {
                 $essayinfo = new stdClass();
                 $essayinfo->answer = get_string("didnotanswerquestion", "lesson");
+                $essayinfo->answerformat = null;
             }
 
             if (isset($pagestats[$this->properties->id])) {
