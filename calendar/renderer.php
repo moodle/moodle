@@ -171,16 +171,13 @@ class core_calendar_renderer extends plugin_renderer_base {
         list($nextmon, $nextyr) = calendar_add_month($calendar->month, $calendar->year);
 
         $content  = html_writer::start_tag('div', array('class'=>'minicalendarblock'));
-        $content .= calendar_top_controls('display', array('id' => $calendar->courseid, 'm' => $prevmon, 'y' => $prevyr));
-        $content .= calendar_get_mini($calendar->courses, $calendar->groups, $calendar->users, $prevmon, $prevyr);
+        $content .= calendar_get_mini( $calendar->courses, $calendar->groups, $calendar->users, $prevmon, $prevyr, 'display', $calendar->courseid);
         $content .= html_writer::end_tag('div');
         $content .= html_writer::start_tag('div', array('class'=>'minicalendarblock'));
-        $content .= calendar_top_controls('display', array('id' => $calendar->courseid, 'm' => $calendar->month, 'y' => $calendar->year));
-        $content .= calendar_get_mini($calendar->courses, $calendar->groups, $calendar->users, $calendar->month, $calendar->year);
+        $content .= calendar_get_mini($calendar->courses, $calendar->groups, $calendar->users, $calendar->month, $calendar->year, 'display', $calendar->courseid);
         $content .= html_writer::end_tag('div');
         $content .= html_writer::start_tag('div', array('class'=>'minicalendarblock'));
-        $content .= calendar_top_controls('display', array('id' => $calendar->courseid, 'm' => $nextmon, 'y' => $nextyr));
-        $content .= calendar_get_mini($calendar->courses, $calendar->groups, $calendar->users, $nextmon, $nextyr);
+        $content .= calendar_get_mini($calendar->courses, $calendar->groups, $calendar->users, $nextmon, $nextyr, 'display', $calendar->courseid);
         $content .= html_writer::end_tag('div');
         return $content;
     }

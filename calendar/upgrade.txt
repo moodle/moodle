@@ -6,6 +6,7 @@ required changes in code:
 * calendar_add_icalendar_event() now requires a valid subscriptionid
 * calendar_process_subscription_row() throws exception for invalid subscriptionid
 * calendar_update_subscription_events() now throws a dml_exception instead of moodle_exception for bad subscriptions
+* calendar_get_mini() function now has optional $placement and $courseid paramaters.
 
 === 2.4 ===
 

@@ -166,14 +166,16 @@ function calendar_get_starting_weekday() {
 /**
  * Generates the HTML for a miniature calendar
  *
- * @param array $courses list of course
+ * @param array $courses list of course to list events from
  * @param array $groups list of group
  * @param array $users user's info
  * @param int $cal_month calendar month in numeric, default is set to false
  * @param int $cal_year calendar month in numeric, default is set to false
+ * @param string $placement the place/page the calendar is set to appear - passed on the the controls function
+ * @param int $courseid id of the course the calendar is displayed on - passed on the the controls function
  * @return string $content return html table for mini calendar
  */
-function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_year = false) {
+function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_year = false, $placement = false, $courseid = false ) {
     global $CFG, $USER, $OUTPUT;
 
     $display = new stdClass;
@@ -280,6 +282,9 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
 
     $summary = get_string('calendarheading', 'calendar', userdate(make_timestamp($y, $m), get_string('strftimemonthyear')));
     $content .= '<table class="minicalendar calendartable" summary="'.$summary.'">'; // Begin table
+    if (($placement !== false) && ($courseid  !== false)) {
+        $content .= '<caption>'. calendar_top_controls($placement, array('id' => $courseid, 'm' => $m, 'y' => $y)) .'</caption>';
+    }
     $content .= '<tr class="weekdays">'; // Header row: day names
 
     // Print out the names of the weekdays

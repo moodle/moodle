@@ -42,13 +42,11 @@ class block_calendar_month extends block_base {
         list($courses, $group, $user) = calendar_set_filters($filtercourse);
         if ($issite) {
             // For the front page
-            $this->content->text .= calendar_top_controls('frontpage', array('id' => $courseid, 'm' => $cal_m, 'y' => $cal_y));
-            $this->content->text .= calendar_get_mini($courses, $group, $user, $cal_m, $cal_y);
+            $this->content->text .= calendar_get_mini($courses, $group, $user, $cal_m, $cal_y, 'frontpage', $courseid);
             // No filters for now
         } else {
             // For any other course
-            $this->content->text .= calendar_top_controls('course', array('id' => $courseid, 'm' => $cal_m, 'y' => $cal_y));
-            $this->content->text .= calendar_get_mini($courses, $group, $user, $cal_m, $cal_y);
+            $this->content->text .= calendar_get_mini($courses, $group, $user, $cal_m, $cal_y, 'course', $courseid);
             $this->content->text .= '<h3 class="eventskey">'.get_string('eventskey', 'calendar').'</h3>';
             $this->content->text .= '<div class="filters calendar_filters">'.calendar_filter_controls($this->page->url).'</div>';
         }
