@@ -875,7 +875,7 @@ class moodlelib_testcase extends advanced_testcase {
         $this->assertEquals(clean_param('../parentdirfile.txt', PARAM_FILE), '..parentdirfile.txt');
         $this->assertEquals(clean_param('../../grandparentdirfile.txt', PARAM_FILE), '....grandparentdirfile.txt');
         $this->assertEquals(clean_param('..\winparentdirfile.txt', PARAM_FILE), '..winparentdirfile.txt');
-        $this->assertEquals(clean_param('../../wingrandparentdir.txt', PARAM_FILE), '....wingrandparentdir.txt');
+        $this->assertEquals(clean_param('..\..\wingrandparentdir.txt', PARAM_FILE), '....wingrandparentdir.txt');
         $this->assertEquals(clean_param('myfile.a.b.txt', PARAM_FILE), 'myfile.a.b.txt');
         $this->assertEquals(clean_param('myfile..a..b.txt', PARAM_FILE), 'myfile..a..b.txt');
         $this->assertEquals(clean_param('myfile.a..b...txt', PARAM_FILE), 'myfile.a..b...txt');
@@ -906,7 +906,7 @@ class moodlelib_testcase extends advanced_testcase {
         $this->assertEquals(clean_param('../parentdirfile.txt', PARAM_PATH), '/parentdirfile.txt');
         $this->assertEquals(clean_param('../../grandparentdirfile.txt', PARAM_PATH), '/grandparentdirfile.txt');
         $this->assertEquals(clean_param('..\winparentdirfile.txt', PARAM_PATH), '/winparentdirfile.txt');
-        $this->assertEquals(clean_param('../../wingrandparentdir.txt', PARAM_PATH), '/wingrandparentdir.txt');
+        $this->assertEquals(clean_param('..\..\wingrandparentdir.txt', PARAM_PATH), '/wingrandparentdir.txt');
         $this->assertEquals(clean_param('funny:thing', PARAM_PATH), 'funnything');
         $this->assertEquals(clean_param('./././here', PARAM_PATH), './here');
         $this->assertEquals(clean_param('./currentdirfile.txt', PARAM_PATH), './currentdirfile.txt');
