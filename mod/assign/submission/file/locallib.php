@@ -302,14 +302,21 @@ class assign_submission_file extends assign_submission_plugin {
      * @return bool Was it a success? (false will trigger rollback)
      */
     public function upgrade_settings(context $oldcontext,stdClass $oldassignment, & $log) {
+        global $DB;
+
         if ($oldassignment->assignmenttype == 'uploadsingle') {
             $this->set_config('maxfilesubmissions', 1);
             $this->set_config('maxsubmissionsizebytes', $oldassignment->maxbytes);
             return true;
-        }else {
-
+        } else if ($oldassignment->assignmenttype == 'upload') {
             $this->set_config('maxfilesubmissions', $oldassignment->var1);
             $this->set_config('maxsubmissionsizebytes', $oldassignment->maxbytes);
+
+            // Advanced file upload uses a different setting to do the same thing.
+            $DB->set_field('assign',
+                           'submissiondrafts',
+                           $oldassignment->var4,
+                           array('id'=>$this->assignment->get_instance()->id));
             return true;
         }
 
