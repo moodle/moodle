@@ -481,6 +481,7 @@ if ($mform->is_cancelled()) {
         // make sure visibility is set correctly (in particular in calendar)
         // note: allow them to set it even without moodle/course:activityvisibility
         set_coursemodule_visible($fromform->coursemodule, $fromform->visible);
+        $DB->set_field('course_modules', 'visibleold', 1, array('id' => $fromform->coursemodule));
 
         if (isset($fromform->cmidnumber)) { //label
             // set cm idnumber - uniqueness is already verified by form validation
