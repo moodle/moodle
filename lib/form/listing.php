@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Listing form element
+ * Listing form element.
  *
- * Contains HTML class for a listing form element
+ * Contains HTML class for a listing form element.
  *
  * @package   core_form
  * @copyright 2012 Jerome Mouneyrac
@@ -27,7 +27,6 @@
 require_once("HTML/QuickForm/button.php");
 
 /**
-* What is it:
 * The listing element is a simple customizable "select" without the input type=select.
 * One main div contains the "large" html of an item.
 * A show/hide div shows a hidden div containing the list of all items.
@@ -51,7 +50,7 @@ require_once("HTML/QuickForm/button.php");
 class MoodleQuickForm_listing extends HTML_QuickForm_input {
 
     /** @var array items to display */
-    protected $items    = array();
+    protected $items = array();
 
     /** @var string language string for Show All */
     protected $showall;
@@ -60,7 +59,7 @@ class MoodleQuickForm_listing extends HTML_QuickForm_input {
     protected $hideall;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param string $elementName (optional) name of the listing
      * @param string $elementLabel (optional) listing label
@@ -90,7 +89,7 @@ class MoodleQuickForm_listing extends HTML_QuickForm_input {
     /**
      * Returns HTML for listing form element.
      *
-     * @return string
+     * @return string the HTML
      */
     function toHtml() {
         global $CFG, $PAGE;
@@ -98,18 +97,18 @@ class MoodleQuickForm_listing extends HTML_QuickForm_input {
         $mainhtml = html_writer::tag('div', $this->items[$this->getValue()]->mainhtml,
                 array('id' => $this->getName().'_items_main', 'class' => 'formlistingmain'));
 
-        // Add the main div containing the selected item (+ the caption: "More items")
+        // Add the main div containing the selected item (+ the caption: "More items").
         $html = html_writer::tag('div', $mainhtml .
                     html_writer::tag('div', $this->showall,
                         array('id' => $this->getName().'_items_caption', 'class' => 'formlistingmore')),
                     array('id'=>$this->getName().'_items', 'class' => 'formlisting hide'));
 
-        // Add collapsible region: all the items
+        // Add collapsible region: all the items.
         $itemrows = '';
         $html .= html_writer::tag('div', $itemrows,
                 array('id' => $this->getName().'_items_all', 'class' => 'formlistingall'));
 
-        // Add radio buttons for non javascript support
+        // Add radio buttons for non javascript support.
         $radiobuttons = '';
         foreach($this->items as $itemid => $item) {
             $radioparams = array('name' => $this->getName(), 'value' => $itemid,
@@ -123,7 +122,7 @@ class MoodleQuickForm_listing extends HTML_QuickForm_input {
             ;
         }
 
-        // Container for the hidden hidden input which will contain the selected item
+        // Container for the hidden hidden input which will contain the selected item.
         $html .= html_writer::tag('div', $radiobuttons,
                 array('id' => 'formlistinginputcontainer', 'class' => 'formlistinginputcontainer'));
 
@@ -131,16 +130,15 @@ class MoodleQuickForm_listing extends HTML_QuickForm_input {
             'requires'=>array('node', 'event', 'transition'));
 
         $PAGE->requires->js_init_call('M.form_listing.init',
-                 array(array('hiddeninputid' => $this->getAttribute('id'),
+                 array(array(
                 'elementid' => $this->getName().'_items',
                 'hideall' => $this->hideall,
                 'showall' => $this->showall,
+                'hiddeninputid' => $this->getAttribute('id'),
                 'items' => $this->items,
-                'attributid' => $this->getAttribute('id'),
                 'inputname' => $this->getName(),
                 'currentvalue' => $this->getValue())), true, $module);
 
         return $html;
     }
-
 }

@@ -140,7 +140,7 @@ class community_hub_search_form extends moodleform {
                 $smalllogohtml = '';
                 if (array_key_exists('id', $hub)) {
 
-                    // Retrieve hub logo + generate small logo
+                    // Retrieve hub logo + generate small logo.
                     $params = array('hubid' => $hub['id'],
                         'filetype' => HUB_HUBSCREENSHOT_FILE_TYPE);
                     $imgurl = new moodle_url(HUB_HUBDIRECTORYURL .
@@ -194,7 +194,7 @@ class community_hub_search_form extends moodleform {
                                     array('class' => '', 'href' => $hub['url']));
                 }
 
-                // Add hub to the hub items
+                // Add hub to the hub items.
                 $hubinfo = new stdClass();
                 $hubinfo->mainhtml = $hubfulldesc;
                 $hubinfo->rowhtml = html_writer::tag('div', $smalllogohtml ,
@@ -202,7 +202,7 @@ class community_hub_search_form extends moodleform {
                 $hubitems[$hub['url']] = $hubinfo;
             }
 
-            // Hub listing form element
+            // Hub listing form element.
             $mform->addElement('listing','huburl', '', '', array('items' => $hubitems,
                 'showall' => get_string('showall', 'block_community'),
                 'hideall' => get_string('hideall', 'block_community')));
