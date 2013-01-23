@@ -26,6 +26,11 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+/** Display folder contents on a separate page */
+define('FOLDER_DISPLAY_PAGE', 0);
+/** Display folder contents inline in a course */
+define('FOLDER_DISPLAY_INLINE', 1);
+
 /**
  * List of features supported in Folder module
  * @param string $feature FEATURE_xx constant for requested feature
@@ -405,4 +410,37 @@ function folder_dndupload_handle($uploadinfo) {
 
     $DB->delete_records('folder', array('id' => $data->id));
     return false;
+}
+
+/**
+ * Sets dynamic information about a course module
+ *
+ * This function is called from cm_info when displaying the module
+ * mod_folder can be displayed inline on course page and therefore have no course link
+ *
+ * @param cm_info $cm
+ */
+function folder_cm_info_dynamic(cm_info $cm) {
+    global $DB;
+    $folder = $DB->get_record('folder', array('id' => $cm->instance), '*', MUST_EXIST);
+    if ($folder->display == FOLDER_DISPLAY_INLINE) {
+        $cm->set_no_view_link();
+    }
+}
+
+/**
+ * Adds information about unread messages, that is only required for the course
+ * view page (and similar), to the course-module object.
+ *
+ * @param cm_info $cm
+ */
+function folder_cm_info_view(cm_info $cm) {
+    global $PAGE, $DB;
+    if ($cm->uservisible && has_capability('mod/folder:view', $cm->context)) {
+        $folder = $DB->get_record('folder', array('id' => $cm->instance), '*', MUST_EXIST);
+        if ($folder->display == FOLDER_DISPLAY_INLINE) {
+            $renderer = $PAGE->get_renderer('mod_folder');
+            $cm->set_content($renderer->display_folder($folder));
+        }
+    }
 }

@@ -62,6 +62,20 @@ function xmldb_folder_upgrade($oldversion) {
     // Moodle v2.4.0 release upgrade line
     // Put any upgrade step following this
 
+    if ($oldversion < 2013012100) {
+
+        // Define field display to be added to folder
+        $table = new xmldb_table('folder');
+        $field = new xmldb_field('display', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'timemodified');
+
+        // Conditionally launch add field display
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // folder savepoint reached
+        upgrade_mod_savepoint(true, 2013012100, 'folder');
+    }
 
     return true;
 }

@@ -34,10 +34,10 @@ $f  = optional_param('f', 0, PARAM_INT);   // Folder instance id
 
 if ($f) {  // Two ways to specify the module
     $folder = $DB->get_record('folder', array('id'=>$f), '*', MUST_EXIST);
-    $cm = get_coursemodule_from_instance('folder', $folder->id, $folder->course, false, MUST_EXIST);
+    $cm = get_coursemodule_from_instance('folder', $folder->id, $folder->course, true, MUST_EXIST);
 
 } else {
-    $cm = get_coursemodule_from_id('folder', $id, 0, false, MUST_EXIST);
+    $cm = get_coursemodule_from_id('folder', $id, 0, true, MUST_EXIST);
     $folder = $DB->get_record('folder', array('id'=>$cm->instance), '*', MUST_EXIST);
 }
 
@@ -46,6 +46,9 @@ $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
 require_course_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 require_capability('mod/folder:view', $context);
+if ($folder->display == FOLDER_DISPLAY_INLINE) {
+    redirect(course_get_url($folder->course, $cm->sectionnum));
+}
 
 add_to_log($course->id, 'folder', 'view', 'view.php?id='.$cm->id, $folder->id, $cm->id);
 
@@ -66,20 +69,6 @@ echo $output->header();
 
 echo $output->heading(format_string($folder->name), 2);
 
-if (trim(strip_tags($folder->intro))) {
-    echo $output->box_start('mod_introbox', 'pageintro');
-    echo format_module_intro('folder', $folder, $cm->id);
-    echo $output->box_end();
-}
-
-echo $output->box_start('generalbox foldertree');
-echo $output->folder_tree($folder, $cm, $course);
-echo $output->box_end();
-
-if (has_capability('mod/folder:managefiles', $context)) {
-    echo $output->container_start('mdl-align');
-    echo $output->single_button(new moodle_url('/mod/folder/edit.php', array('id'=>$id)), get_string('edit'));
-    echo $output->container_end();
-}
+echo $output->display_folder($folder);
 
 echo $output->footer();
