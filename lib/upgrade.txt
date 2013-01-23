@@ -9,6 +9,11 @@ information provided here is intended especially for developers.
 * Function get_print_section_cm_text() is deprecated, replaced with methods in cm_info
 * zip_packer may create empty zip archives, there is a new option to ignore
   problematic files when creating archive
+* The function delete_course_module was deprecated and has been replaced with
+  course_delete_module. The reason for this was because the function delete_course_module
+  only partially deletes data, so wherever it was called extra code was needed to
+  perform the whole deletion process. The function course_delete_module now takes care
+  of the whole process.
 
 === 2.4 ===
 
