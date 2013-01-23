@@ -3437,3 +3437,50 @@ function print_recent_activity($course) {
         echo '<p class="message">'.get_string('nothingnew').'</p>';
     }
 }
+
+/**
+ * Delete a course module and any associated data at the course level (events)
+ * Until 1.5 this function simply marked a deleted flag ... now it
+ * deletes it completely.
+ *
+ * @deprecated since 2.5
+ *
+ * @param int $id the course module id
+ * @return boolean true on success, false on failure
+ */
+function delete_course_module($id) {
+    debugging('Function delete_course_module() is deprecated. Please use course_delete_module() instead.', DEBUG_DEVELOPER);
+
+    global $CFG, $DB;
+
+    require_once($CFG->libdir.'/gradelib.php');
+    require_once($CFG->dirroot.'/blog/lib.php');
+
+    if (!$cm = $DB->get_record('course_modules', array('id'=>$id))) {
+        return true;
+    }
+    $modulename = $DB->get_field('modules', 'name', array('id'=>$cm->module));
+    //delete events from calendar
+    if ($events = $DB->get_records('event', array('instance'=>$cm->instance, 'modulename'=>$modulename))) {
+        foreach($events as $event) {
+            delete_event($event->id);
+        }
+    }
+    //delete grade items, outcome items and grades attached to modules
+    if ($grade_items = grade_item::fetch_all(array('itemtype'=>'mod', 'itemmodule'=>$modulename,
+                                                   'iteminstance'=>$cm->instance, 'courseid'=>$cm->course))) {
+        foreach ($grade_items as $grade_item) {
+            $grade_item->delete('moddelete');
+        }
+    }
+    // Delete completion and availability data; it is better to do this even if the
+    // features are not turned on, in case they were turned on previously (these will be
+    // very quick on an empty table)
+    $DB->delete_records('course_modules_completion', array('coursemoduleid' => $cm->id));
+    $DB->delete_records('course_modules_availability', array('coursemoduleid'=> $cm->id));
+    $DB->delete_records('course_completion_criteria', array('moduleinstance' => $cm->id,
+                                                            'criteriatype' => COMPLETION_CRITERIA_TYPE_ACTIVITY));
+
+    delete_context(CONTEXT_MODULE, $cm->id);
+    return $DB->delete_records('course_modules', array('id'=>$cm->id));
+}

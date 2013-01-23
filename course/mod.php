@@ -120,7 +120,6 @@ if (!empty($add)) {
     $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
     require_login($course, false, $cm);
-    $coursecontext = context_course::instance($course->id);
     $modcontext = context_module::instance($cm->id);
     require_capability('moodle/course:manageactivities', $modcontext);
 
@@ -138,9 +137,8 @@ if (!empty($add)) {
         $PAGE->set_title($strdeletecheck);
         $PAGE->set_heading($course->fullname);
         $PAGE->navbar->add($strdeletecheck);
-        echo $OUTPUT->header();
 
-        // print_simple_box_start('center', '60%', '#FFAAAA', 20, 'noticebox');
+        echo $OUTPUT->header();
         echo $OUTPUT->box_start('noticebox');
         $formcontinue = new single_button(new moodle_url("$CFG->wwwroot/course/mod.php", $optionsyes), get_string('yes'));
         $formcancel = new single_button($return, get_string('no'), 'get');
@@ -151,42 +149,8 @@ if (!empty($add)) {
         exit;
     }
 
-    $modlib = "$CFG->dirroot/mod/$cm->modname/lib.php";
-
-    if (file_exists($modlib)) {
-        require_once($modlib);
-    } else {
-        print_error('modulemissingcode', '', '', $modlib);
-    }
-
-    $deleteinstancefunction = $cm->modname."_delete_instance";
-
-    if (!$deleteinstancefunction($cm->instance)) {
-        echo $OUTPUT->notification("Could not delete the $cm->modname (instance)");
-    }
-
-    // remove all module files in case modules forget to do that
-    $fs = get_file_storage();
-    $fs->delete_area_files($modcontext->id);
-
-    if (!delete_course_module($cm->id)) {
-        echo $OUTPUT->notification("Could not delete the $cm->modname (coursemodule)");
-    }
-    if (!delete_mod_from_section($cm->id, $cm->section)) {
-        echo $OUTPUT->notification("Could not delete the $cm->modname from that section");
-    }
-
-    // Trigger a mod_deleted event with information about this module.
-    $eventdata = new stdClass();
-    $eventdata->modulename = $cm->modname;
-    $eventdata->cmid       = $cm->id;
-    $eventdata->courseid   = $course->id;
-    $eventdata->userid     = $USER->id;
-    events_trigger('mod_deleted', $eventdata);
-
-    add_to_log($course->id, 'course', "delete mod",
-               "view.php?id=$cm->course",
-               "$cm->modname $cm->instance", $cm->id);
+    // Delete the module.
+    course_delete_module($cm->id);
 
     redirect($return);
 }

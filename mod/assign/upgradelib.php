@@ -26,6 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/mod/assign/locallib.php');
 require_once($CFG->libdir.'/accesslib.php');
+require_once($CFG->dirroot.'/course/lib.php');
 
 /*
  * The maximum amount of time to spend upgrading a single assignment.
@@ -344,7 +345,7 @@ class assign_upgrade_manager {
         // Delete the old assignment (use object delete).
         $cm = get_coursemodule_from_id('', $oldcoursemodule->id, $oldcoursemodule->course);
         if ($cm) {
-            $this->delete_course_module($cm);
+            course_delete_module($cm->id);
         }
         rebuild_course_cache($oldcoursemodule->course);
         return true;
@@ -403,59 +404,4 @@ class assign_upgrade_manager {
 
         return $newcm;
     }
-
-    /**
-     * This function deletes the old assignment course module after
-     * it has been upgraded. This code is adapted from "course/mod.php".
-     *
-     * @param stdClass $cm The course module to delete.
-     * @return bool
-     */
-    private function delete_course_module($cm) {
-        global $CFG, $USER, $DB, $OUTPUT;
-        $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-
-        $coursecontext = context_course::instance($course->id);
-        $modcontext = context_module::instance($cm->id);
-
-        $modlib = "$CFG->dirroot/mod/$cm->modname/lib.php";
-
-        if (file_exists($modlib)) {
-            require_once($modlib);
-        } else {
-            print_error('modulemissingcode', '', '', $modlib);
-        }
-
-        $deleteinstancefunction = $cm->modname."_delete_instance";
-
-        if (!$deleteinstancefunction($cm->instance)) {
-            echo $OUTPUT->notification("Could not delete the $cm->modname (instance)");
-        }
-
-        // Remove all module files in case modules forget to do that.
-        $fs = get_file_storage();
-        $fs->delete_area_files($modcontext->id);
-
-        if (!delete_course_module($cm->id)) {
-            echo $OUTPUT->notification("Could not delete the $cm->modname (coursemodule)");
-        }
-        if (!delete_mod_from_section($cm->id, $cm->section)) {
-            echo $OUTPUT->notification("Could not delete the $cm->modname from that section");
-        }
-
-        // Trigger a mod_deleted event with information about this module.
-        $eventdata = new stdClass();
-        $eventdata->modulename = $cm->modname;
-        $eventdata->cmid       = $cm->id;
-        $eventdata->courseid   = $course->id;
-        $eventdata->userid     = $USER->id;
-        events_trigger('mod_deleted', $eventdata);
-
-        add_to_log($course->id, 'course', "delete mod",
-                   "view.php?id=$cm->course",
-                   "$cm->modname $cm->instance", $cm->id);
-
-        return true;
-    }
-
 }
