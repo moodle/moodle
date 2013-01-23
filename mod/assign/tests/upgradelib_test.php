@@ -147,7 +147,7 @@ class mod_assign_upgradelib_testcase extends advanced_testcase {
         $this->assertEmpty($plugin->is_enabled());
 
         $assign->delete_instance();
-        delete_course_module($cm->id);
+        course_delete_module($cm->id);
         delete_mod_from_section($cm->id, $cm->section);
     }
 
@@ -188,7 +188,7 @@ class mod_assign_upgradelib_testcase extends advanced_testcase {
         $this->assertEmpty($plugin->is_enabled());
 
         $assign->delete_instance();
-        delete_course_module($cm->id);
+        course_delete_module($cm->id);
         delete_mod_from_section($cm->id, $cm->section);
     }
 
@@ -229,7 +229,7 @@ class mod_assign_upgradelib_testcase extends advanced_testcase {
         $this->assertEmpty($plugin->is_enabled());
 
         $assign->delete_instance();
-        delete_course_module($cm->id);
+        course_delete_module($cm->id);
         delete_mod_from_section($cm->id, $cm->section);
     }
 
@@ -270,7 +270,7 @@ class mod_assign_upgradelib_testcase extends advanced_testcase {
         $this->assertEmpty($plugin->is_enabled());
 
         $assign->delete_instance();
-        delete_course_module($cm->id);
+        course_delete_module($cm->id);
         delete_mod_from_section($cm->id, $cm->section);
     }
 }
