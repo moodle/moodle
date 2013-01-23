@@ -90,12 +90,12 @@ class qtype_shortanswer_question extends question_graded_by_strategy
         // Break the string on non-escaped asterisks.
         $bits = preg_split('/(?<!\\\\)\*/', $pattern);
         // Escape regexp special characters in the bits.
-        $excapedbits = array();
+        $escapedbits = array();
         foreach ($bits as $bit) {
-            $excapedbits[] = preg_quote(str_replace('\*', '*', $bit));
+            $escapedbits[] = preg_quote(str_replace('\*', '*', $bit), '|');
         }
         // Put it back together to make the regexp.
-        $regexp = '|^' . implode('.*', $excapedbits) . '$|u';
+        $regexp = '|^' . implode('.*', $escapedbits) . '$|u';
 
         // Make the match insensitive if requested to.
         if ($ignorecase) {

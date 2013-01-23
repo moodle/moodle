@@ -85,7 +85,7 @@ class qtype_numerical_walkthrough_test extends qbehaviour_walkthrough_test_base 
                 $this->get_does_not_contain_feedback_expectation(),
                 $this->get_contains_validation_error_expectation(),
                 new question_pattern_expectation('/' .
-                        preg_quote(get_string('invalidnumber', 'qtype_numerical') . '/')),
+                        preg_quote(get_string('invalidnumber', 'qtype_numerical'), '/') . '/'),
                 $this->get_does_not_contain_try_again_button_expectation(),
                 $this->get_no_hint_visible_expectation());
 
@@ -145,7 +145,7 @@ class qtype_numerical_walkthrough_test extends qbehaviour_walkthrough_test_base 
                 $this->get_does_not_contain_feedback_expectation(),
                 $this->get_contains_validation_error_expectation(),
                 new question_pattern_expectation('/' .
-                        preg_quote(get_string('invalidnumber', 'qtype_numerical') . '/')),
+                        preg_quote(get_string('invalidnumber', 'qtype_numerical'), '/') . '/'),
                 $this->get_does_not_contain_try_again_button_expectation(),
                 $this->get_no_hint_visible_expectation());
 
@@ -227,7 +227,7 @@ class qtype_numerical_walkthrough_test extends qbehaviour_walkthrough_test_base 
                 $this->get_does_not_contain_feedback_expectation(),
                 $this->get_contains_validation_error_expectation(),
                 new question_pattern_expectation('/' .
-                        preg_quote(get_string('invalidnumber', 'qtype_numerical') . '/')),
+                        preg_quote(get_string('invalidnumber', 'qtype_numerical'), '/') . '/'),
                 $this->get_contains_select_expectation('unit', $unitchoices, 'cm', true),
                 $this->get_does_not_contain_try_again_button_expectation(),
                 $this->get_no_hint_visible_expectation());
@@ -242,7 +242,7 @@ class qtype_numerical_walkthrough_test extends qbehaviour_walkthrough_test_base 
                 $this->get_does_not_contain_feedback_expectation(),
                 $this->get_contains_validation_error_expectation(),
                 new question_pattern_expectation('/' .
-                        preg_quote(get_string('unitnotselected', 'qtype_numerical') . '/')),
+                        preg_quote(get_string('unitnotselected', 'qtype_numerical'), '/') . '/'),
                 $this->get_contains_select_expectation('unit', $unitchoices, '', true),
                 $this->get_does_not_contain_try_again_button_expectation(),
                 $this->get_no_hint_visible_expectation());

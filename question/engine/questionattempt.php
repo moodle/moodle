@@ -958,7 +958,7 @@ class question_attempt {
             $postdata = $_POST;
         }
 
-        $pattern = '/^' . preg_quote($this->get_field_prefix()) . '[^-:]/';
+        $pattern = '/^' . preg_quote($this->get_field_prefix(), '/') . '[^-:]/';
         $prefixlen = strlen($this->get_field_prefix());
 
         $submitteddata = array();

@@ -52,7 +52,7 @@ class qbehaviour_deferredfeedback_walkthrough_test extends qbehaviour_walkthroug
                 $this->get_does_not_contain_feedback_expectation());
         $this->assertEquals(get_string('true', 'qtype_truefalse'),
                 $this->quba->get_right_answer_summary($this->slot));
-        $this->assertRegExp('/' . preg_quote($tf->questiontext) . '/',
+        $this->assertRegExp('/' . preg_quote($tf->questiontext, '/') . '/',
                 $this->quba->get_question_summary($this->slot));
         $this->assertNull($this->quba->get_response_summary($this->slot));
 
@@ -97,7 +97,7 @@ class qbehaviour_deferredfeedback_walkthrough_test extends qbehaviour_walkthroug
         $this->check_current_state(question_state::$mangrpartial);
         $this->check_current_mark(1);
         $this->check_current_output(
-                new question_pattern_expectation('/' . preg_quote('Not good enough!') . '/'));
+                new question_pattern_expectation('/' . preg_quote('Not good enough!', '/') . '/'));
 
         // Now change the correct answer to the question, and regrade.
         $tf->rightanswer = false;
