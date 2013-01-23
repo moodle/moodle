@@ -524,7 +524,7 @@ class qformat_default {
     }
 
 
-    function readquestion($lines) {
+    protected function readquestion($lines) {
     /// Given an array of lines known to define a question in
     /// this format, this function converts it into a question
     /// object suitable for processing and insertion into Moodle.
