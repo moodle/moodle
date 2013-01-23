@@ -66,9 +66,9 @@ class core_calendar_external_testcase extends externallib_advanced_testcase {
 
         require_once("$CFG->dirroot/calendar/lib.php");
         if (!empty($prop)) {
-           if (is_array($prop)) {
-               $prop = (object)$prop;
-           }
+            if (is_array($prop)) {
+                $prop = (object)$prop;
+            }
         } else {
             $prop = new stdClass();
         }
@@ -91,11 +91,11 @@ class core_calendar_external_testcase extends externallib_advanced_testcase {
             $prop->repeat = 1;
         }
         if (empty($prop->userid)) {
-           if (!empty($userid)) {
+            if (!empty($userid)) {
                 $prop->userid = $userid;
-           } else {
-               return false;
-           }
+            } else {
+                return false;
+            }
         }
         if (empty($prop->courseid)) {
             $prop->courseid = $SITE->id;
@@ -127,7 +127,7 @@ class core_calendar_external_testcase extends externallib_advanced_testcase {
     }
 
     /**
-     * Test delete_courses
+     * Test delete_calendar_events
      */
     public function test_delete_calendar_events() {
         global $DB, $USER;
@@ -254,4 +254,110 @@ class core_calendar_external_testcase extends externallib_advanced_testcase {
         core_calendar_external::delete_calendar_events($events);
     }
 
+    /**
+     * Test get_calendar_events
+     */
+    public function test_get_calendar_events() {
+        global $DB, $USER;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        // Create a few stuff to test with.
+        $user = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course();
+        $record = new stdClass();
+        $record->courseid = $course->id;
+        $group = $this->getDataGenerator()->create_group($record);
+
+        $beforecount = $DB->count_records('event');
+
+        // Let's create a few events.
+        $siteevent = $this->create_calendar_event('site', $USER->id, 'site');
+        $record = new stdClass();
+        $record->courseid = $course->id;
+        $courseevent = $this->create_calendar_event('course', $USER->id, 'course', 2, time(), $record);
+        $userevent = $this->create_calendar_event('user', $USER->id);
+        $record = new stdClass();
+        $record->courseid = $course->id;
+        $record->groupid = $group->id;
+        $groupevent = $this->create_calendar_event('group', $USER->id, 'group', 0, time(), $record);
+
+        $paramevents = array ('eventids' => array($siteevent->id), 'courseids' => array($course->id), 'groupids' => array($group->id));
+        $options = array ('siteevents' => true, 'userevents' => true);
+        $events = core_calendar_external::get_calendar_events($paramevents, $options);
+        $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
+
+        // Check to see if we got all events.
+        $this->assertEquals(4, count($events['events']));
+        $this->assertEquals(0, count($events['warnings']));
+        $options = array ('siteevents' => true, 'userevents' => true, 'timeend' => time() + 7*WEEKSECS);
+        $events = core_calendar_external::get_calendar_events($paramevents, $options);
+        $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
+        $this->assertEquals(5, count($events['events']));
+        $this->assertEquals(0, count($events['warnings']));
+
+        // Let's play around with caps.
+        $this->setUser($user);
+        $events = core_calendar_external::get_calendar_events($paramevents, $options);
+        $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
+        $this->assertEquals(2, count($events['events'])); // site, user.
+        $this->assertEquals(2, count($events['warnings'])); // course, group.
+
+        $role = $DB->get_record('role', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, $role->id);
+        $events = core_calendar_external::get_calendar_events($paramevents, $options);
+        $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
+        $this->assertEquals(4, count($events['events'])); // site, user, both course events.
+        $this->assertEquals(1, count($events['warnings'])); // group.
+
+        $options = array ('siteevents' => true, 'userevents' => true);
+        $events = core_calendar_external::get_calendar_events($paramevents, $options);
+        $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
+        $this->assertEquals(3, count($events['events'])); // site, user, one course event.
+        $this->assertEquals(1, count($events['warnings'])); // group.
+
+        groups_add_member($group, $user);
+        $events = core_calendar_external::get_calendar_events($paramevents, $options);
+        $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
+        $this->assertEquals(4, count($events['events'])); // site, user, group, one course event.
+        $this->assertEquals(0, count($events['warnings']));
+
+        $paramevents = array ('courseids' => array($course->id), 'groupids' => array($group->id));
+        $events = core_calendar_external::get_calendar_events($paramevents, $options);
+        $this->assertEquals(4, count($events['events'])); // site, user, group, one course event.
+        $this->assertEquals(0, count($events['warnings']));
+
+        $paramevents = array ('groupids' => array($group->id, 23));
+        $events = core_calendar_external::get_calendar_events($paramevents, $options);
+        $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
+        $this->assertEquals(3, count($events['events'])); // site, user, group.
+        $this->assertEquals(1, count($events['warnings']));
+
+        $paramevents = array ('courseids' => array(23));
+        $events = core_calendar_external::get_calendar_events($paramevents, $options);
+        $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
+        $this->assertEquals(2, count($events['events'])); // site, user.
+        $this->assertEquals(1, count($events['warnings']));
+
+        $paramevents = array ();
+        $options = array ('siteevents' => false, 'userevents' => false, 'timeend' => time() + 7*WEEKSECS);
+        $events = core_calendar_external::get_calendar_events($paramevents, $options);
+        $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
+        $this->assertEquals(0, count($events['events'])); // nothing returned.
+        $this->assertEquals(0, count($events['warnings']));
+
+        $paramevents = array ('eventids' => array($siteevent->id, $groupevent->id));
+        $options = array ('siteevents' => false, 'userevents' => false, 'timeend' => time() + 7*WEEKSECS);
+        $events = core_calendar_external::get_calendar_events($paramevents, $options);
+        $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
+        $this->assertEquals(2, count($events['events'])); // site, group.
+        $this->assertEquals(0, count($events['warnings']));
+
+        $paramevents = array ('eventids' => array($siteevent->id));
+        $events = core_calendar_external::get_calendar_events($paramevents, $options);
+        $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
+        $this->assertEquals(1, count($events['events'])); // site.
+        $this->assertEquals(0, count($events['warnings']));
+    }
 }

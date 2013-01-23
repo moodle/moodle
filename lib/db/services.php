@@ -710,6 +710,16 @@ $functions = array(
         'capabilities'=> 'moodle/calendar:manageentries', 'moodle/calendar:manageownentries', 'moodle/calendar:managegroupentries'
     ),
 
+
+    'core_calendar_get_calendar_events' => array(
+        'classname'   => 'core_calendar_external',
+        'methodname'  => 'get_calendar_events',
+        'description' => 'Get calendar events',
+        'classpath'   => 'calendar/externallib.php',
+        'type'        => 'read',
+        'capabilities'=> 'moodle/calendar:manageentries', 'moodle/calendar:manageownentries', 'moodle/calendar:managegroupentries'
+    ),
+
 );
 
 $services = array(
