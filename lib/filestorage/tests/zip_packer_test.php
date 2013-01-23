@@ -362,6 +362,7 @@ class zip_packer_testcase extends advanced_testcase {
         $zip_archive->close();
         $zip_archive->open($archive, file_archive::OPEN);
         $this->assertEquals(2, $zip_archive->count());
+        $zip_archive->close();
 
         unlink($archive);
     }
@@ -398,6 +399,7 @@ class zip_packer_testcase extends advanced_testcase {
         $zip_archive->close();
         $zip_archive->open($archive, file_archive::OPEN);
         $this->assertEquals(1, $zip_archive->count());
+        $zip_archive->close();
 
         unlink($archive);
         $zip_archive = new zip_archive();
@@ -407,5 +409,8 @@ class zip_packer_testcase extends advanced_testcase {
         $zip_archive->close();
         $zip_archive->open($archive, file_archive::OPEN);
         $this->assertEquals(1, $zip_archive->count());
+        $zip_archive->close();
+
+        unlink($archive);
     }
 }
