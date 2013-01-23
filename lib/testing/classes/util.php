@@ -121,7 +121,7 @@ abstract class testing_util {
     /**
      * Returns whether test database and dataroot were created using the current version codebase
      *
-     * @return boolean
+     * @return bool
      */
     protected static function is_test_data_updated() {
         global $CFG;
@@ -490,9 +490,9 @@ abstract class testing_util {
     }
 
     /**
-     * Resets the database
+     * Reset all database tables to default values.
      * @static
-     * @return boolean Returns whether database has been modified or not
+     * @return bool true if reset done, false if skipped
      */
     public static function reset_database() {
         global $DB;
@@ -610,7 +610,7 @@ abstract class testing_util {
     /**
      * Drop the whole test database
      * @static
-     * @param boolean $displayprogress
+     * @param bool $displayprogress
      */
     protected static function drop_database($displayprogress = false) {
         global $DB;
@@ -670,11 +670,6 @@ abstract class testing_util {
         }
     }
 
-    /**
-     * Reset all database tables to default values.
-     * @static
-     * @return bool true if reset done, false if skipped
-     */
     /**
      * Calculate unique version hash for all plugins and core.
      * @static
