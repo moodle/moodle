@@ -192,12 +192,12 @@ class mod_assign_lib_testcase extends advanced_testcase {
 
         $this->setUser($this->teachers[0]);
         $data = $assign->get_user_grade($this->students[0]->id, true);
-        $data->grade = '50.0';
+        $data->grade = '50.5';
         $assign->update_grade($data);
 
         $result = assign_user_outline($this->course, $this->students[0], $assign->get_course_module(), $assign->get_instance());
 
-        $this->assertRegExp('/50.0/', $result->info);
+        $this->assertRegExp('/50.5/', $result->info);
     }
 
     public function test_assign_get_completion_state() {
