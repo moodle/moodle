@@ -273,6 +273,15 @@ $functions = array(
         'capabilities'=> 'moodle/user:create',
     ),
 
+    'core_user_get_users' => array(
+        'classname'   => 'core_user_external',
+        'methodname'  => 'get_users',
+        'classpath'   => 'user/externallib.php',
+        'description' => 'search for users matching the parameters',
+        'type'        => 'read',
+        'capabilities'=> 'moodle/user:viewdetails, moodle/user:viewhiddendetails, moodle/course:useremail, moodle/user:update',
+    ),
+
     'moodle_user_get_users_by_id' => array(
         'classname'   => 'core_user_external',
         'methodname'  => 'get_users_by_id',
