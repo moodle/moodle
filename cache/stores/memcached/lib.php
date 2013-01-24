@@ -75,6 +75,12 @@ class cachestore_memcached extends cache_store implements cache_is_configurable 
     protected $isready = false;
 
     /**
+     * Set to true when this store instance has been initialised.
+     * @var bool
+     */
+    protected $isinitialised = false;
+
+    /**
      * The cache definition this store was initialised with.
      * @var cache_definition
      */
@@ -134,13 +140,7 @@ class cachestore_memcached extends cache_store implements cache_is_configurable 
                 $this->connection->setOption($key, $value);
             }
             $this->connection->addServers($this->servers);
-            foreach ($this->servers as $server) {
-                // Test the connection to this server.
-                if (@$this->connection->set("$server[0]:$server[1]:$server[2]", 'ping', MEMCACHE_COMPRESSED, 1)) {
-                    // We can connect at least to this server.
-                    $this->isready = true;
-                }
-            }
+            $this->isready = @$this->connection->set("ping", 'ping', 1);
         }
     }
 
@@ -156,6 +156,7 @@ class cachestore_memcached extends cache_store implements cache_is_configurable 
             throw new coding_exception('This memcached instance has already been initialised.');
         }
         $this->definition = $definition;
+        $this->isinitialised = true;
     }
 
     /**
@@ -164,7 +165,7 @@ class cachestore_memcached extends cache_store implements cache_is_configurable 
      * @return bool
      */
     public function is_initialised() {
-        return ($this->connection !== null);
+        return ($this->isinitialised);
     }
 
     /**
