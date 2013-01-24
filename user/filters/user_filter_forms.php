@@ -25,9 +25,6 @@ class user_add_filter_form extends moodleform {
 
         // Add button
         $mform->addElement('submit', 'addfilter', get_string('addfilter','filters'));
-
-        // Don't use last advanced state
-        $mform->setShowAdvanced(false);
     }
 }
 
