@@ -401,19 +401,22 @@ class cachestore_memcached extends cache_store implements cache_is_configurable 
     /**
      * Performs any necessary clean up when the store instance is being deleted.
      */
-    public function cleanup() {
-        $this->purge();
-    }
-
-    /**
-     * Performs any necessary operation when the store instance is being deleted,
-     * regardless the store being initialised with a definition ({@link initialise()}).
-     *
-     * @link http://tracker.moodle.org/browse/MDL-36363
-     * @see cleanup()
-     */
     public function instance_deleted() {
-        $this->cleanup();
+        if ($this->connection) {
+            $connection = $this->connection;
+        } else {
+            $connection = new Memcached(crc32($this->name));
+            $servers = $connection->getServerList();
+            if (empty($servers)) {
+                foreach ($this->options as $key => $value) {
+                    $connection->setOption($key, $value);
+                }
+                $connection->addServers($this->servers);
+            }
+        }
+        $connection->flush();
+        unset($connection);
+        unset($this->connection);
     }
 
     /**

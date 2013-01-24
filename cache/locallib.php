@@ -308,6 +308,7 @@ class cache_config_writer extends cache_config {
                 throw new cache_exception('You cannot delete a cache store that has definition mappings.');
             }
         }
+
         // Call instance_deleted()
         $class = 'cachestore_'.$this->configstores[$name]['plugin'];
         $store = new $class($name, $this->configstores[$name]['configuration']);

@@ -100,7 +100,7 @@ foreach (get_plugin_list_with_file('cachestore', 'lib.php', true) as $plugin => 
             }
             $result[5] = sprintf('%01.4f', microtime(true) - $start);
             $applicationtable->data[] = $result;
-            $store->cleanup();
+            $store->instance_deleted();
         }
     }
 
@@ -136,7 +136,7 @@ foreach (get_plugin_list_with_file('cachestore', 'lib.php', true) as $plugin => 
             }
             $result[5] = sprintf('%01.4f', microtime(true) - $start);
             $sessiontable->data[] = $result;
-            $store->cleanup();
+            $store->instance_deleted();
         }
     }
 
@@ -172,7 +172,7 @@ foreach (get_plugin_list_with_file('cachestore', 'lib.php', true) as $plugin => 
             }
             $result[5] = sprintf('%01.4f', microtime(true) - $start);
             $requesttable->data[] = $result;
-            $store->cleanup();
+            $store->instance_deleted();
         }
     }
 
