@@ -82,10 +82,11 @@ foreach ($parts as $part) {
     //debug($bits);
     $version = array_shift($bits);
     if ($version === 'moodle') {
-        //TODO: this is a ugly hack because we should not load any libs here!
-        if (!defined('MOODLE_INTERNAL')) {
-            define('MOODLE_INTERNAL', true);
-            require_once($CFG->libdir.'/moodlelib.php');
+        if (!defined('ABORT_AFTER_CONFIG_CANCEL')) {
+            define('ABORT_AFTER_CONFIG_CANCEL', true);
+            define('NO_UPGRADE_CHECK', true);
+            define('NO_MOODLE_COOKIES', true);
+            require($CFG->libdir.'/setup.php');
         }
         $revision = (int)array_shift($bits);
         if ($revision === -1) {
