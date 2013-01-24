@@ -8183,10 +8183,18 @@ function get_core_subsystems() {
 function get_plugin_types($fullpaths=true) {
     global $CFG;
 
-    static $info     = null;
-    static $fullinfo = null;
+    $cache = cache::make('core', 'plugintypes');
 
-    if (!$info) {
+    if ($fullpaths) {
+        $cached = $cache->get(1);
+    } else {
+        $cached = $cache->get(0);
+    }
+
+    if ($cached !== false) {
+        return $cached;
+
+    } else {
         $info = array('qtype'         => 'question/type',
                       'mod'           => 'mod',
                       'auth'          => 'auth',
@@ -8235,9 +8243,12 @@ function get_plugin_types($fullpaths=true) {
         foreach ($info as $type => $dir) {
             $fullinfo[$type] = $CFG->dirroot.'/'.$dir;
         }
-    }
 
-    return ($fullpaths ? $fullinfo : $info);
+        $cache->set(0, $info);
+        $cache->set(1, $fullinfo);
+
+        return ($fullpaths ? $fullinfo : $info);
+    }
 }
 
 /**
@@ -9130,6 +9141,7 @@ function moodle_needs_upgrading() {
 
     // We have to purge plugin related caches now to be sure we have fresh data
     // and new plugins can be detected.
+    cache::make('core', 'plugintypes')->purge();
     cache::make('core', 'pluginlist')->purge();
 
     // Check the main version first.
