@@ -136,15 +136,6 @@ abstract class cache_store implements cache_store_interface {
     abstract public function __construct($name, array $configuration = array());
 
     /**
-     * Performs any necessary operation when the store instance has been created.
-     *
-     * @link http://tracker.moodle.org/browse/MDL-36363
-     */
-    public function instance_created() {
-        // By default, do nothing.
-    }
-
-    /**
      * Returns the name of this store instance.
      * @return string
      */
@@ -235,23 +226,35 @@ abstract class cache_store implements cache_store_interface {
     /**
      * Performs any necessary clean up when the store instance is being deleted.
      *
-     * Please note that if the store has been already initialised with
-     * a definition ({@link initialise()}), cleanup will be performed against the scope
-     * of that definition i.e. the result depends on the specific store implementation.
-     *
-     * @see instance_deleted()
+     * @deprecated since 2.5
      */
-    abstract public function cleanup();
+    public function cleanup() {
+        debugging('This function has been renamed to instance_deleted. Please update your calls.', DEBUG_DEVELOPER);
+    }
 
     /**
-     * Performs any necessary operation when the store instance is being deleted,
-     * regardless the store being initialised with a definition ({@link initialise()}).
+     * Performs any necessary operation when the store instance has been created.
      *
-     * @link http://tracker.moodle.org/browse/MDL-36363
+     * @since 2.5
+     */
+    public function instance_created() {
+        // By default, do nothing.
+    }
+
+    /**
+     * Performs any necessary operation when the store instance is being deleted.
+     *
+     * This method may be called before the store has been initialised.
+     *
+     * @since 2.5
      * @see cleanup()
      */
     public function instance_deleted() {
-        // By default, do nothing
+        if (method_exists($this, 'cleanup')) {
+            // There used to be a legacy function called cleanup, it was renamed to instance delete.
+            // To be removed in 2.6.
+            $this->cleanup();
+        }
     }
 
     /**

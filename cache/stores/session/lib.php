@@ -375,19 +375,8 @@ class cachestore_session extends session_data_store implements cache_is_key_awar
     /**
      * Performs any necessary clean up when the store instance is being deleted.
      */
-    public function cleanup() {
-        $this->purge();
-    }
-
-    /**
-     * Performs any necessary operation when the store instance is being deleted,
-     * regardless the store being initialised with a definition ({@link initialise()}).
-     *
-     * @link http://tracker.moodle.org/browse/MDL-36363
-     * @see cleanup()
-     */
     public function instance_deleted() {
-        $this->cleanup();
+        $this->purge();
     }
 
     /**

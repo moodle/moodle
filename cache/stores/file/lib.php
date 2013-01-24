@@ -46,16 +46,16 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
     protected $name;
 
     /**
-     * The path to use for the file storage. False otherwise.
-     * @var string
-     */
-    protected $filestorepath = false;
-
-    /**
-     * The path to use when the store instance has been initialised. False otherwise.
+     * The path used to store files for this store and the definition it was initialised with.
      * @var string
      */
     protected $path = false;
+
+    /**
+     * The path in which definition specific sub directories will be created for caching.
+     * @var string
+     */
+    protected $filestorepath = false;
 
     /**
      * Set to true when a prescan has been performed.
@@ -136,6 +136,7 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
         }
         $this->isready = $path !== false;
         $this->filestorepath = $path;
+        // This will be updated once the store has been initialised for a definition.
         $this->path = $path;
 
         // Check if we should prescan the directory.
@@ -517,7 +518,6 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
             }
             $this->keys = array();
         }
-
         return true;
     }
 
@@ -609,22 +609,9 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
      * 1. Purges the cache directory.
      * 2. Deletes the directory we created for the given definition.
      */
-    public function cleanup() {
-        $this->purge();
-        @rmdir($this->path);
-    }
-
-    /**
-     * Performs any necessary operation when the file store instance is being deleted,
-     * regardless the file store being initialised with a definition ({@link initialise()}).
-     *
-     * @see cleanup()
-     */
     public function instance_deleted() {
-        if ($this->isready && !$this->prescan) {
-            // Remove the content related to this file store.
-            $this->purge_all_definitions();
-        }
+        $this->purge_all_definitions();
+        @rmdir($this->filestorepath);
     }
 
     /**

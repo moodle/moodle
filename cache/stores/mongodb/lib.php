@@ -67,7 +67,7 @@ class cachestore_mongodb extends cache_store implements cache_is_configurable {
      * The Connection object
      * @var Mongo
      */
-    protected $connection;
+    protected $connection = false;
 
     /**
      * The Database Object
@@ -439,19 +439,22 @@ class cachestore_mongodb extends cache_store implements cache_is_configurable {
     /**
      * Performs any necessary clean up when the store instance is being deleted.
      */
-    public function cleanup() {
-        $this->purge();
-    }
-
-    /**
-     * Performs any necessary operation when the store instance is being deleted,
-     * regardless the store being initialised with a definition ({@link initialise()}).
-     *
-     * @link http://tracker.moodle.org/browse/MDL-36363
-     * @see cleanup()
-     */
     public function instance_deleted() {
-        $this->cleanup();
+        // We can't use purge here that acts upon a collection.
+        // Instead we must drop the named database.
+        if ($this->connection) {
+            $connection = $this->connection;
+        } else {
+            $connection = new Mongo($this->server, $this->options);
+        }
+        $database = $connection->selectDB($this->databasename);
+        $database->drop();
+        $connection = null;
+        $database = null;
+        // Explicitly unset things to cause a close.
+        $this->collection = null;
+        $this->database = null;
+        $this->connection = null;
     }
 
     /**
