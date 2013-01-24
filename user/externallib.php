@@ -51,7 +51,7 @@ class core_user_external extends external_api {
                 'users' => new external_multiple_structure(
                     new external_single_structure(
                         array(
-                            'username'    => new external_value(PARAM_USERNAME, 'Username policy is defined in Moodle security config. Must be lowercase.'),
+                            'username'    => new external_value(PARAM_USERNAME, 'Username policy is defined in Moodle security config.'),
                             'password'    => new external_value(PARAM_RAW, 'Plain text password consisting of any characters'),
                             'firstname'   => new external_value(PARAM_NOTAGS, 'The first name(s) of the user'),
                             'lastname'    => new external_value(PARAM_NOTAGS, 'The family name of the user'),
@@ -276,7 +276,7 @@ class core_user_external extends external_api {
                     new external_single_structure(
                         array(
                             'id'    => new external_value(PARAM_INT, 'ID of the user'),
-                            'username'    => new external_value(PARAM_USERNAME, 'Username policy is defined in Moodle security config. Must be lowercase.', VALUE_OPTIONAL, '',NULL_NOT_ALLOWED),
+                            'username'    => new external_value(PARAM_USERNAME, 'Username policy is defined in Moodle security config.', VALUE_OPTIONAL, '',NULL_NOT_ALLOWED),
                             'password'    => new external_value(PARAM_RAW, 'Plain text password consisting of any characters', VALUE_OPTIONAL, '',NULL_NOT_ALLOWED),
                             'firstname'   => new external_value(PARAM_NOTAGS, 'The first name(s) of the user', VALUE_OPTIONAL, '',NULL_NOT_ALLOWED),
                             'lastname'    => new external_value(PARAM_NOTAGS, 'The family name of the user', VALUE_OPTIONAL),
@@ -412,7 +412,7 @@ class core_user_external extends external_api {
                 $paramtype = PARAM_RAW;
                 break;
             case 'username':
-                $paramtype = PARAM_USERNAME;
+                $paramtype = PARAM_RAW;
                 break;
             case 'email':
                 $paramtype = PARAM_EMAIL;
@@ -529,7 +529,7 @@ class core_user_external extends external_api {
                     $paramtype = PARAM_RAW;
                     break;
                 case 'username':
-                    $paramtype = PARAM_USERNAME;
+                    $paramtype = PARAM_RAW;
                     break;
                 case 'email':
                     // we use PARAM_RAW to allow searches with %
@@ -835,7 +835,7 @@ class core_user_external extends external_api {
     public static function user_description($additionalfiels = array()) {
         $userfields = array(
                     'id'    => new external_value(PARAM_INT, 'ID of the user'),
-                    'username'    => new external_value(PARAM_USERNAME, 'Username policy is defined in Moodle security config', VALUE_OPTIONAL),
+                    'username'    => new external_value(PARAM_RAW, 'The username', VALUE_OPTIONAL),
                     'firstname'   => new external_value(PARAM_NOTAGS, 'The first name(s) of the user', VALUE_OPTIONAL),
                     'lastname'    => new external_value(PARAM_NOTAGS, 'The family name of the user', VALUE_OPTIONAL),
                     'fullname'    => new external_value(PARAM_NOTAGS, 'The fullname of the user'),
