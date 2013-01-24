@@ -132,10 +132,9 @@ class cachestore_mongodb extends cache_store implements cache_is_configurable {
 
         try {
             $this->connection = new Mongo($this->server, $this->options);
-            $this->database = $this->connection->selectDB($this->databasename);
             $this->isready = true;
-        } catch (Exception $e) {
-            // Tipically, a MongoConnectionException.
+        } catch (MongoConnectionException $e) {
+            // We only want to catch MongoConnectionExceptions here.
         }
     }
 
@@ -181,6 +180,7 @@ class cachestore_mongodb extends cache_store implements cache_is_configurable {
         if ($this->is_initialised()) {
             throw new coding_exception('This mongodb instance has already been initialised.');
         }
+        $this->database = $this->connection->selectDB($this->databasename);
         $this->definitionhash = $definition->generate_definition_hash();
         $this->collection = $this->database->selectCollection($this->definitionhash);
         $this->collection->ensureIndex(array('key' => 1), array(
