@@ -319,6 +319,9 @@ function assign_print_overview($courses, &$htmlarray) {
         return true;
     }
 
+    // Definitely something to print, now include the constants we need.
+    require_once($CFG->dirroot . '/mod/assign/locallib.php');
+
     $strduedate = get_string('duedate', 'assign');
     $strcutoffdate = get_string('nosubmissionsacceptedafter', 'assign');
     $strnolatesubmissions = get_string('nolatesubmissions', 'assign');
@@ -336,6 +339,7 @@ function assign_print_overview($courses, &$htmlarray) {
 
     // Build up and array of unmarked submissions indexed by assignment id/ userid
     // for use where the user has grading rights on assignment.
+    $dbparams = array_merge(array(ASSIGN_SUBMISSION_STATUS_SUBMITTED), $assignmentidparams);
     $rs = $DB->get_recordset_sql('SELECT
                                       s.assignment as assignment,
                                       s.userid as userid,
@@ -350,8 +354,8 @@ function assign_print_overview($courses, &$htmlarray) {
                                       ( g.timemodified is NULL OR
                                       s.timemodified > g.timemodified ) AND
                                       s.timemodified IS NOT NULL AND
-                                      s.status = "submitted" AND
-                                      s.assignment ' . $sqlassignmentids, $assignmentidparams);
+                                      s.status = ? AND
+                                      s.assignment ' . $sqlassignmentids, $dbparams);
 
     $unmarkedsubmissions = array();
     foreach ($rs as $rd) {
