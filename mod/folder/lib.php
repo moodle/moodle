@@ -413,6 +413,44 @@ function folder_dndupload_handle($uploadinfo) {
 }
 
 /**
+ * Given a coursemodule object, this function returns the extra
+ * information needed to print this activity in various places.
+ *
+ * If folder needs to be displayed inline we store additional information
+ * in customdata, so functions {@link folder_cm_info_dynamic()} and
+ * {@link folder_cm_info_view()} do not need to do DB queries
+ *
+ * @param cm_info $cm
+ * @return cached_cm_info info
+ */
+function folder_get_coursemodule_info($cm) {
+    global $DB;
+    if (!($folder = $DB->get_record('folder', array('id' => $cm->instance),
+            'id, name, display, intro, introformat'))) {
+        return NULL;
+    }
+    $cminfo = new cached_cm_info();
+    $cminfo->name = $folder->name;
+    if ($folder->display == FOLDER_DISPLAY_INLINE) {
+        // prepare folder object to store in customdata
+        $fdata = new stdClass;
+        if ($cm->showdescription && strlen(trim($folder->intro))) {
+            $fdata->intro = $folder->intro;
+            if ($folder->introformat != FORMAT_MOODLE) {
+                $fdata->introformat = $folder->introformat;
+            }
+        }
+        $cminfo->customdata = json_encode($fdata);
+    } else {
+        if ($cm->showdescription) {
+            // Convert intro to html. Do not filter cached version, filters run at display time.
+            $cminfo->content = format_module_intro('folder', $folder, $cm->id, false);
+        }
+    }
+    return $cminfo;
+}
+
+/**
  * Sets dynamic information about a course module
  *
  * This function is called from cm_info when displaying the module
@@ -421,26 +459,35 @@ function folder_dndupload_handle($uploadinfo) {
  * @param cm_info $cm
  */
 function folder_cm_info_dynamic(cm_info $cm) {
-    global $DB;
-    $folder = $DB->get_record('folder', array('id' => $cm->instance), '*', MUST_EXIST);
-    if ($folder->display == FOLDER_DISPLAY_INLINE) {
+    if (strlen($cm->get_custom_data())) {
         $cm->set_no_view_link();
     }
 }
 
 /**
- * Adds information about unread messages, that is only required for the course
- * view page (and similar), to the course-module object.
+ * Overwrites the content in the course-module object with the folder files list
+ * if folder.display == FOLDER_DISPLAY_INLINE
  *
  * @param cm_info $cm
  */
 function folder_cm_info_view(cm_info $cm) {
-    global $PAGE, $DB;
-    if ($cm->uservisible && has_capability('mod/folder:view', $cm->context)) {
-        $folder = $DB->get_record('folder', array('id' => $cm->instance), '*', MUST_EXIST);
-        if ($folder->display == FOLDER_DISPLAY_INLINE) {
-            $renderer = $PAGE->get_renderer('mod_folder');
-            $cm->set_content($renderer->display_folder($folder));
+    global $PAGE;
+    if ($cm->uservisible && strlen($cm->get_custom_data()) &&
+            has_capability('mod/folder:view', $cm->context)) {
+        // restore folder object from customdata
+        $folder = json_decode($cm->get_custom_data());
+        $folder->id = (int)$cm->instance;
+        $folder->course = (int)$cm->course;
+        $folder->display = FOLDER_DISPLAY_INLINE;
+        $folder->name = $cm->name;
+        if (empty($folder->intro)) {
+            $folder->intro = '';
         }
+        if (empty($folder->introformat)) {
+            $folder->introformat = FORMAT_MOODLE;
+        }
+        // display folder
+        $renderer = $PAGE->get_renderer('mod_folder');
+        $cm->set_content($renderer->display_folder($folder));
     }
 }

@@ -31,7 +31,8 @@ class mod_folder_renderer extends plugin_renderer_base {
      * Returns html to display the content of mod_folder
      * (Description, folder files and optionally Edit button)
      *
-     * @param stdClass $folder record from 'folder' table
+     * @param stdClass $folder record from 'folder' table (please note
+     *     it may not contain fields 'revision' and 'timemodified')
      * @return string
      */
     public function display_folder(stdClass $folder) {
