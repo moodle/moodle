@@ -159,7 +159,7 @@ $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_title(format_string($feedback->name));
 
 //Adding the javascript module for the items dragdrop.
-if ($do_show == 'edit') {
+if ($do_show == 'edit' and $CFG->enableajax) {
     $PAGE->requires->strings_for_js(array(
            'pluginname',
            'move_item',
