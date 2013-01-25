@@ -55,7 +55,7 @@ class auth_ldap_testcase extends advanced_testcase {
         // Make sure we can connect the server.
         $debuginfo = '';
         if (!$connection = ldap_connect_moodle(TEST_AUTH_LDAP_HOST_URL, 3, 'rfc2307', TEST_AUTH_LDAP_BIND_DN, TEST_AUTH_LDAP_BIND_PW, LDAP_DEREF_NEVER, $debuginfo, false)) {
-            $this->markTestSkipped('Can not connect to LDAP test server.');
+            $this->markTestSkipped('Can not connect to LDAP test server: '.$debuginfo);
         }
 
         $this->enable_plugin();
