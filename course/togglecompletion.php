@@ -45,6 +45,11 @@ if ($courseid) {
     require_login($course);
 
     $completion = new completion_info($course);
+    if (!$completion->is_enabled()) {
+        throw new moodle_exception('completionnotenabled', 'completion');
+    } elseif (!$completion->is_tracked_user($USER->id)) {
+        throw new moodle_exception('nottracked', 'completion');
+    }
 
     // Check if we are marking a user complete via the completion report
     $user = optional_param('user', 0, PARAM_INT);
@@ -136,7 +141,9 @@ if (isguestuser() or !confirm_sesskey()) {
 // Now change state
 $completion = new completion_info($course);
 if (!$completion->is_enabled()) {
-    die;
+    throw new moodle_exception('completionnotenabled', 'completion');
+} elseif (!$completion->is_tracked_user($USER->id)) {
+    throw new moodle_exception('nottracked', 'completion');
 }
 
 // Check completion state is manual
