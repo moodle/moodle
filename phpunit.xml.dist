@@ -65,9 +65,40 @@
             <directory suffix="_test.php">question/engine/tests</directory>
             <directory suffix="_test.php">question/tests</directory>
             <directory suffix="_test.php">question/type/tests</directory>
+            <directory suffix="_test.php">question/engine/upgrade/tests</directory>
         </testsuite>
         <testsuite name="core_cache">
             <directory suffix="_test.php">cache/tests</directory>
+        </testsuite>
+        <testsuite name="core_enrol">
+            <directory suffix="_test.php">enrol/tests</directory>
+        </testsuite>
+        <testsuite name="core_group">
+            <directory suffix="_test.php">group/tests</directory>
+        </testsuite>
+        <testsuite name="core_external">
+            <directory suffix="_test.php">lib/external/tests</directory>
+        </testsuite>
+        <testsuite name="core_message">
+            <directory suffix="_test.php">message/tests</directory>
+        </testsuite>
+        <testsuite name="quiz_report">
+            <directory suffix="_test.php">mod/quiz/report/tests</directory>
+        </testsuite>
+        <testsuite name="core_notes">
+            <directory suffix="_test.php">notes/tests</directory>
+        </testsuite>
+        <testsuite name="core_rating">
+            <directory suffix="_test.php">rating/tests</directory>
+        </testsuite>
+        <testsuite name="core_repository">
+            <directory suffix="_test.php">repository/tests</directory>
+        </testsuite>
+        <testsuite name="core_user">
+            <directory suffix="_test.php">user/tests</directory>
+        </testsuite>
+        <testsuite name="core_webservice">
+            <directory suffix="_test.php">webservice/tests</directory>
         </testsuite>
 
         <!--Plugin suites: use admin/tool/phpunit/cli/util.php to build phpunit.xml from phpunit.xml.dist with up-to-date list of plugins in current install-->
