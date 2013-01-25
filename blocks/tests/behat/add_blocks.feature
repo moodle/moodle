@@ -1,0 +1,24 @@
+@blocks
+Feature: Add blocks
+  In order to add more functionality to pages
+  As a teacher
+  I need to add blocks to pages
+
+  @javascript
+  Scenario: Add a block to a course
+    Given the following "users" exists:
+      | username | firstname | lastname | email |
+      | student1 | Student | 1 | student1@asd.com |
+      | student2 | Student | 2 | student2@asd.com |
+    And the following "courses" exists:
+      | fullname | shortname | format |
+      | Course 1 | C1 | topics |
+    And the following "course enrolments" exists:
+      | user | course | role |
+      | student1 | C1 | student |
+      | student2 | C1 | student |
+    And I log in as "admin"
+    And I follow "Course 1"
+    And I turn editing mode on
+    When I add the "Blog menu" block
+    Then I should see "View all of my entries"
