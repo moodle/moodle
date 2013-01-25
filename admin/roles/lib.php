@@ -661,7 +661,7 @@ class define_role_table_advanced extends capability_table_with_risks {
     public function make_copy() {
         $this->roleid = 0;
         unset($this->role->id);
-        $this->role->name .= ' ' . get_string('copyasnoun');
+        $this->role->name = role_get_name($this->role, null, ROLENAME_ORIGINAL) . ' ' . get_string('copyasnoun');
         $this->role->shortname .= 'copy';
     }
 
