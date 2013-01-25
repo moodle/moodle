@@ -217,7 +217,7 @@ class block_completionstatus extends block_base {
             $this->content->footer = '<br><a href="'.$details->out().'">'.get_string('moredetails', 'completion').'</a>';
         } else {
             // If user is not enrolled, show error
-            $this->content->text = get_string('notenroled', 'completion');
+            $this->content->text = get_string('nottracked', 'completion');
         }
 
         if (has_capability('report/completion:view', $context)) {
