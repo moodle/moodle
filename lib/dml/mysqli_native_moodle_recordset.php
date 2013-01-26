@@ -49,9 +49,16 @@ class mysqli_native_moodle_recordset extends moodle_recordset {
     }
 
     private function fetch_next() {
-        if ($row = $this->result->fetch_assoc()) {
-            $row = array_change_key_case($row, CASE_LOWER);
+        if (!$this->result) {
+            return false;
         }
+        if (!$row = $this->result->fetch_assoc()) {
+            $this->result->close();
+            $this->result = null;
+            return false;
+        }
+
+        $row = array_change_key_case($row, CASE_LOWER);
         return $row;
     }
 
