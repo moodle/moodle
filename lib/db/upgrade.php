@@ -7261,5 +7261,12 @@ FROM
         upgrade_main_savepoint(true, 2011120506.06);
     }
 
+    if ($oldversion < 2011120507.03) {
+        // Make sure the sortorder is not above the unsigned integer MySQL range.
+        fix_course_sortorder();
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2011120507.03);
+    }
+
     return true;
 }
