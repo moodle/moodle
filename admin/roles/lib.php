@@ -767,6 +767,10 @@ class define_role_table_advanced extends capability_table_with_risks {
         }
     }
 
+    protected function get_role_risks_info() {
+        return '';
+    }
+
     protected function print_field($name, $caption, $field) {
         global $OUTPUT;
         // Attempt to generate HTML like formslib.
@@ -813,6 +817,9 @@ class define_role_table_advanced extends capability_table_with_risks {
         $this->print_field('', get_string('allowassign', 'role'), $this->get_allow_role_control('assign'));
         $this->print_field('', get_string('allowoverride', 'role'), $this->get_allow_role_control('override'));
         $this->print_field('', get_string('allowswitch', 'role'), $this->get_allow_role_control('switch'));
+        if ($risks = $this->get_role_risks_info()) {
+            $this->print_field('', get_string('rolerisks', 'role'), $risks);
+        }
         echo "</div>";
 
         $this->print_show_hide_advanced_button();
@@ -912,6 +919,36 @@ class view_role_definition_table extends define_role_table_advanced {
 
     protected function print_show_hide_advanced_button() {
         // Do nothing.
+    }
+
+    protected function get_role_risks_info() {
+        global $OUTPUT;
+
+        if (empty($this->roleid)) {
+            return '';
+        }
+
+        $risks = array();
+        $allrisks = get_all_risks();
+        foreach ($this->capabilities as $capability) {
+            $perm = $this->permissions[$capability->name];
+            if ($perm != CAP_ALLOW) {
+                continue;
+            }
+            foreach ($allrisks as $type=>$risk) {
+                if ($risk & (int)$capability->riskbitmask) {
+                    $risks[$type] = $risk;
+                }
+            }
+        }
+
+        $risksurl = new moodle_url(get_docs_url(s(get_string('risks', 'role'))));
+        foreach ($risks as $type=>$risk) {
+            $pixicon = new pix_icon('/i/' . str_replace('risk', 'risk_', $type), get_string($type . 'short', 'admin'));
+            $risks[$type] = $OUTPUT->action_icon($risksurl, $pixicon, new popup_action('click', $risksurl));
+        }
+
+        return implode(' ', $risks);
     }
 
     protected function skip_row($capability) {

@@ -313,6 +313,7 @@ $string['role:override'] = 'Override permissions for others';
 $string['role:review'] = 'Review permissions for others';
 $string['roleprohibitheader'] = 'Prohibit role';
 $string['roleprohibitinfo'] = 'Select a role to be added to the list of prohibited roles in context {$a->context}, capability {$a->cap}:';
+$string['rolerisks'] = 'Role risks';
 $string['roles'] = 'Roles';
 $string['roles_help'] = 'A role is a collection of permissions defined for the whole system that you can assign to specific users in specific contexts.';
 $string['roles_link'] = 'roles';
