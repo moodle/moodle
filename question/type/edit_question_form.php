@@ -104,7 +104,7 @@ abstract class question_edit_form extends question_wizard_form {
         $this->context = context::instance_by_id($record->contextid);
 
         $this->editoroptions = array('subdirs' => 1, 'maxfiles' => EDITOR_UNLIMITED_FILES,
-                'context' => $this->context);
+                'context' => $this->context, 'collapsed' => 1);
         $this->fileoptions = array('subdirs' => 1, 'maxfiles' => -1, 'maxbytes' => -1);
 
         $this->category = $category;
@@ -186,7 +186,7 @@ abstract class question_edit_form extends question_wizard_form {
         $mform->addRule('name', null, 'required', null, 'client');
 
         $mform->addElement('editor', 'questiontext', get_string('questiontext', 'question'),
-                array('rows' => 15), $this->editoroptions);
+                array('rows' => 15), $this->get_non_collabsible_editor_options());
         $mform->setType('questiontext', PARAM_RAW);
 
         $mform->addElement('text', 'defaultmark', get_string('defaultmark', 'question'),
@@ -196,7 +196,7 @@ abstract class question_edit_form extends question_wizard_form {
         $mform->addRule('defaultmark', null, 'required', null, 'client');
 
         $mform->addElement('editor', 'generalfeedback', get_string('generalfeedback', 'question'),
-                array('rows' => 10), $this->editoroptions);
+                array('rows' => 10), $this->get_non_collabsible_editor_options());
         $mform->setType('generalfeedback', PARAM_RAW);
         $mform->addHelpButton('generalfeedback', 'generalfeedback', 'question');
 
@@ -673,4 +673,12 @@ abstract class question_edit_form extends question_wizard_form {
      *      in the question type class.
      */
     public abstract function qtype();
+
+    /**
+     * Returns an array of editor options with collapsed options turned off.
+     * @return array
+     */
+    protected function get_non_collabsible_editor_options() {
+        return array_merge($this->editoroptions, array('collapsed' => 0));
+    }
 }
