@@ -51,15 +51,6 @@ function assignsubmission_comments_comment_validate(stdClass $options) {
     if (!has_capability('mod/assign:grade', $context)) {
         if (!has_capability('mod/assign:submit', $context)) {
             throw new comment_exception('nopermissiontocomment');
-        } else if ($assignment->get_instance()->teamsubmission) {
-            $group = $assignment->get_submission_group($USER->id);
-            $groupid = 0;
-            if ($group) {
-                $groupid = $group->id;
-            }
-            if ($groupid != $submission->groupid) {
-                throw new comment_exception('nopermissiontocomment');
-            }
         } else if ($submission->userid != $USER->id) {
             throw new comment_exception('nopermissiontocomment');
         }
@@ -95,15 +86,6 @@ function assignsubmission_comments_comment_permissions(stdClass $options) {
     if (!has_capability('mod/assign:grade', $context)) {
         if (!has_capability('mod/assign:submit', $context)) {
             return array('post' => false, 'view' => false);
-        } else if ($assignment->get_instance()->teamsubmission) {
-            $group = $assignment->get_submission_group($USER->id);
-            $groupid = 0;
-            if ($group) {
-                $groupid = $group->id;
-            }
-            if ($groupid != $submission->groupid) {
-                return array('post' => false, 'view' => false);
-            }
         } else if ($submission->userid != $USER->id) {
             return array('post' => false, 'view' => false);
         }
