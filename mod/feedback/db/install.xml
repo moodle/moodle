@@ -4,25 +4,25 @@
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE NAME="feedback" COMMENT="all feedbacks" NEXT="feedback_template">
+    <TABLE NAME="feedback" COMMENT="all feedbacks">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="course"/>
-        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>
-        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="course" NEXT="intro"/>
-        <FIELD NAME="intro" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="introformat"/>
-        <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="intro" NEXT="anonymous"/>
-        <FIELD NAME="anonymous" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="introformat" NEXT="email_notification"/>
-        <FIELD NAME="email_notification" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="anonymous" NEXT="multiple_submit"/>
-        <FIELD NAME="multiple_submit" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="email_notification" NEXT="autonumbering"/>
-        <FIELD NAME="autonumbering" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="multiple_submit" NEXT="site_after_submit"/>
-        <FIELD NAME="site_after_submit" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="autonumbering" NEXT="page_after_submit"/>
-        <FIELD NAME="page_after_submit" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="site_after_submit" NEXT="page_after_submitformat"/>
-        <FIELD NAME="page_after_submitformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="page_after_submit" NEXT="publish_stats"/>
-        <FIELD NAME="publish_stats" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="page_after_submitformat" NEXT="timeopen"/>
-        <FIELD NAME="timeopen" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="publish_stats" NEXT="timeclose"/>
-        <FIELD NAME="timeclose" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timeopen" NEXT="timemodified"/>
-        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timeclose" NEXT="completionsubmit"/>
-        <FIELD NAME="completionsubmit" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If this field is set to 1, then the activity will be automatically marked as 'complete' once the user submits their choice." PREVIOUS="timemodified"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="intro" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="anonymous" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="email_notification" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="multiple_submit" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="autonumbering" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="site_after_submit" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="page_after_submit" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="page_after_submitformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="publish_stats" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timeopen" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timeclose" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="completionsubmit" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If this field is set to 1, then the activity will be automatically marked as 'complete' once the user submits their choice."/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for feedback"/>
@@ -31,12 +31,12 @@
         <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="feedback_template" COMMENT="templates of feedbackstructures" PREVIOUS="feedback" NEXT="feedback_item">
+    <TABLE NAME="feedback_template" COMMENT="templates of feedbackstructures">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="course"/>
-        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="ispublic"/>
-        <FIELD NAME="ispublic" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="course" NEXT="name"/>
-        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="ispublic"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="ispublic" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for feedback_template"/>
@@ -45,123 +45,123 @@
         <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="feedback_item" COMMENT="feedback_items" PREVIOUS="feedback_template" NEXT="feedback_completed">
+    <TABLE NAME="feedback_item" COMMENT="feedback_items">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="feedback"/>
-        <FIELD NAME="feedback" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="template"/>
-        <FIELD NAME="template" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="feedback" NEXT="name"/>
-        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="template" NEXT="label"/>
-        <FIELD NAME="label" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="presentation"/>
-        <FIELD NAME="presentation" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="label" NEXT="typ"/>
-        <FIELD NAME="typ" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="presentation" NEXT="hasvalue"/>
-        <FIELD NAME="hasvalue" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="typ" NEXT="position"/>
-        <FIELD NAME="position" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="hasvalue" NEXT="required"/>
-        <FIELD NAME="required" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="position" NEXT="dependitem"/>
-        <FIELD NAME="dependitem" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="required" NEXT="dependvalue"/>
-        <FIELD NAME="dependvalue" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="dependitem" NEXT="options"/>
-        <FIELD NAME="options" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="dependvalue"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="feedback" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="template" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="label" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="presentation" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="typ" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="hasvalue" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="position" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="required" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="dependitem" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="dependvalue" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="options" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for feedback_item" NEXT="feedback"/>
-        <KEY NAME="feedback" TYPE="foreign" FIELDS="feedback" REFTABLE="feedback" REFFIELDS="id" PREVIOUS="primary" NEXT="template"/>
-        <KEY NAME="template" TYPE="foreign" FIELDS="template" REFTABLE="feedback_template" REFFIELDS="id" PREVIOUS="feedback"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for feedback_item"/>
+        <KEY NAME="feedback" TYPE="foreign" FIELDS="feedback" REFTABLE="feedback" REFFIELDS="id"/>
+        <KEY NAME="template" TYPE="foreign" FIELDS="template" REFTABLE="feedback_template" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="feedback_completed" COMMENT="filled out feedback" PREVIOUS="feedback_item" NEXT="feedback_completedtmp">
+    <TABLE NAME="feedback_completed" COMMENT="filled out feedback">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="feedback"/>
-        <FIELD NAME="feedback" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="feedback" NEXT="timemodified"/>
-        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="userid" NEXT="random_response"/>
-        <FIELD NAME="random_response" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timemodified" NEXT="anonymous_response"/>
-        <FIELD NAME="anonymous_response" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="random_response"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="feedback" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="random_response" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="anonymous_response" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for feedback_completed" NEXT="feedback"/>
-        <KEY NAME="feedback" TYPE="foreign" FIELDS="feedback" REFTABLE="feedback" REFFIELDS="id" PREVIOUS="primary"/>
-      </KEYS>
-      <INDEXES>
-        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
-      </INDEXES>
-    </TABLE>
-    <TABLE NAME="feedback_completedtmp" COMMENT="filled out feedback" PREVIOUS="feedback_completed" NEXT="feedback_value">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="feedback"/>
-        <FIELD NAME="feedback" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="feedback" NEXT="guestid"/>
-        <FIELD NAME="guestid" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="userid" NEXT="timemodified"/>
-        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="guestid" NEXT="random_response"/>
-        <FIELD NAME="random_response" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timemodified" NEXT="anonymous_response"/>
-        <FIELD NAME="anonymous_response" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="random_response"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for feedback_completedtmp" NEXT="feedback"/>
-        <KEY NAME="feedback" TYPE="foreign" FIELDS="feedback" REFTABLE="feedback" REFFIELDS="id" PREVIOUS="primary"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for feedback_completed"/>
+        <KEY NAME="feedback" TYPE="foreign" FIELDS="feedback" REFTABLE="feedback" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="feedback_value" COMMENT="values of the completeds" PREVIOUS="feedback_completedtmp" NEXT="feedback_valuetmp">
+    <TABLE NAME="feedback_completedtmp" COMMENT="filled out feedback">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="course_id"/>
-        <FIELD NAME="course_id" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="item"/>
-        <FIELD NAME="item" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="course_id" NEXT="completed"/>
-        <FIELD NAME="completed" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="item" NEXT="tmp_completed"/>
-        <FIELD NAME="tmp_completed" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="completed" NEXT="value"/>
-        <FIELD NAME="value" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="tmp_completed"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="feedback" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="guestid" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="random_response" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="anonymous_response" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for feedback_value" NEXT="item"/>
-        <KEY NAME="item" TYPE="foreign" FIELDS="item" REFTABLE="feedback_item" REFFIELDS="id" PREVIOUS="primary"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for feedback_completedtmp"/>
+        <KEY NAME="feedback" TYPE="foreign" FIELDS="feedback" REFTABLE="feedback" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="feedback_value" COMMENT="values of the completeds">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="course_id" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="item" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="completed" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="tmp_completed" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="value" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for feedback_value"/>
+        <KEY NAME="item" TYPE="foreign" FIELDS="item" REFTABLE="feedback_item" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="course_id" UNIQUE="false" FIELDS="course_id"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="feedback_valuetmp" COMMENT="values of the completedstmp" PREVIOUS="feedback_value" NEXT="feedback_tracking">
+    <TABLE NAME="feedback_valuetmp" COMMENT="values of the completedstmp">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="course_id"/>
-        <FIELD NAME="course_id" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="item"/>
-        <FIELD NAME="item" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="course_id" NEXT="completed"/>
-        <FIELD NAME="completed" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="item" NEXT="tmp_completed"/>
-        <FIELD NAME="tmp_completed" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="completed" NEXT="value"/>
-        <FIELD NAME="value" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="tmp_completed"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="course_id" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="item" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="completed" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="tmp_completed" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="value" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for feedback_valuetmp" NEXT="item"/>
-        <KEY NAME="item" TYPE="foreign" FIELDS="item" REFTABLE="feedback_item" REFFIELDS="id" PREVIOUS="primary"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for feedback_valuetmp"/>
+        <KEY NAME="item" TYPE="foreign" FIELDS="item" REFTABLE="feedback_item" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="course_id" UNIQUE="false" FIELDS="course_id"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="feedback_tracking" COMMENT="feedback trackingdata" PREVIOUS="feedback_valuetmp" NEXT="feedback_sitecourse_map">
+    <TABLE NAME="feedback_tracking" COMMENT="feedback trackingdata">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="feedback"/>
-        <FIELD NAME="feedback" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="userid" NEXT="completed"/>
-        <FIELD NAME="completed" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="feedback" NEXT="tmp_completed"/>
-        <FIELD NAME="tmp_completed" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="completed"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="feedback" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="completed" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="tmp_completed" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for feedback_tracking" NEXT="feedback"/>
-        <KEY NAME="feedback" TYPE="foreign" FIELDS="feedback" REFTABLE="feedback" REFFIELDS="id" PREVIOUS="primary" NEXT="completed"/>
-        <KEY NAME="completed" TYPE="foreign" FIELDS="completed" REFTABLE="feedback_completed" REFFIELDS="id" PREVIOUS="feedback"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for feedback_tracking"/>
+        <KEY NAME="feedback" TYPE="foreign" FIELDS="feedback" REFTABLE="feedback" REFFIELDS="id"/>
+        <KEY NAME="completed" TYPE="foreign" FIELDS="completed" REFTABLE="feedback_completed" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="feedback_sitecourse_map" COMMENT="feedback sitecourse map" PREVIOUS="feedback_tracking">
+    <TABLE NAME="feedback_sitecourse_map" COMMENT="feedback sitecourse map">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="feedbackid"/>
-        <FIELD NAME="feedbackid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="courseid"/>
-        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="feedbackid"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="feedbackid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for feedback_tracking" NEXT="feedbackid"/>
-        <KEY NAME="feedbackid" TYPE="foreign" FIELDS="feedbackid" REFTABLE="feedback" REFFIELDS="id" PREVIOUS="primary"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for feedback_tracking"/>
+        <KEY NAME="feedbackid" TYPE="foreign" FIELDS="feedbackid" REFTABLE="feedback" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid"/>

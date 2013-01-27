@@ -4,18 +4,18 @@
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE NAME="survey" COMMENT="Each record is one SURVEY module with its configuration" NEXT="survey_questions">
+    <TABLE NAME="survey" COMMENT="Each record is one SURVEY module with its configuration">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="course"/>
-        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="template"/>
-        <FIELD NAME="template" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="course" NEXT="days"/>
-        <FIELD NAME="days" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="template" NEXT="timecreated"/>
-        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="days" NEXT="timemodified"/>
-        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timecreated" NEXT="name"/>
-        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="timemodified" NEXT="intro"/>
-        <FIELD NAME="intro" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="introformat"/>
-        <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="intro text field format" PREVIOUS="intro" NEXT="questions"/>
-        <FIELD NAME="questions" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="introformat"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="template" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="days" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="intro" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="intro text field format"/>
+        <FIELD NAME="questions" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -24,49 +24,49 @@
         <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="survey_questions" COMMENT="the questions conforming one survey" PREVIOUS="survey" NEXT="survey_answers">
+    <TABLE NAME="survey_questions" COMMENT="the questions conforming one survey">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="text"/>
-        <FIELD NAME="text" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="shorttext"/>
-        <FIELD NAME="shorttext" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" PREVIOUS="text" NEXT="multi"/>
-        <FIELD NAME="multi" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" PREVIOUS="shorttext" NEXT="intro"/>
-        <FIELD NAME="intro" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" PREVIOUS="multi" NEXT="type"/>
-        <FIELD NAME="type" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="intro" NEXT="options"/>
-        <FIELD NAME="options" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="type"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="text" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="shorttext" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="multi" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="intro" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="type" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="options" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="survey_answers" COMMENT="the answers to each questions filled by the users" PREVIOUS="survey_questions" NEXT="survey_analysis">
+    <TABLE NAME="survey_answers" COMMENT="the answers to each questions filled by the users">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="survey"/>
-        <FIELD NAME="survey" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="userid" NEXT="question"/>
-        <FIELD NAME="question" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="survey" NEXT="time"/>
-        <FIELD NAME="time" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="question" NEXT="answer1"/>
-        <FIELD NAME="answer1" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="time" NEXT="answer2"/>
-        <FIELD NAME="answer2" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="answer1"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="survey" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="question" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="time" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="answer1" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="answer2" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="survey"/>
-        <KEY NAME="survey" TYPE="foreign" FIELDS="survey" REFTABLE="survey" REFFIELDS="id" PREVIOUS="primary" NEXT="question"/>
-        <KEY NAME="question" TYPE="foreign" FIELDS="question" REFTABLE="survey_questions" REFFIELDS="id" PREVIOUS="survey"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="survey" TYPE="foreign" FIELDS="survey" REFTABLE="survey" REFFIELDS="id"/>
+        <KEY NAME="question" TYPE="foreign" FIELDS="question" REFTABLE="survey_questions" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="survey_analysis" COMMENT="text about each survey submission" PREVIOUS="survey_answers">
+    <TABLE NAME="survey_analysis" COMMENT="text about each survey submission">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="survey"/>
-        <FIELD NAME="survey" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="survey" NEXT="notes"/>
-        <FIELD NAME="notes" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="userid"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="survey" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="notes" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="survey"/>
-        <KEY NAME="survey" TYPE="foreign" FIELDS="survey" REFTABLE="survey" REFFIELDS="id" PREVIOUS="primary"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="survey" TYPE="foreign" FIELDS="survey" REFTABLE="survey" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>

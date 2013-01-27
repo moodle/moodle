@@ -4,48 +4,48 @@
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE NAME="lesson" COMMENT="Defines lesson" NEXT="lesson_pages">
+    <TABLE NAME="lesson" COMMENT="Defines lesson">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="course"/>
-        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>
-        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="course" NEXT="practice"/>
-        <FIELD NAME="practice" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="name" NEXT="modattempts"/>
-        <FIELD NAME="modattempts" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="practice" NEXT="usepassword"/>
-        <FIELD NAME="usepassword" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="modattempts" NEXT="password"/>
-        <FIELD NAME="password" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" PREVIOUS="usepassword" NEXT="dependency"/>
-        <FIELD NAME="dependency" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="password" NEXT="conditions"/>
-        <FIELD NAME="conditions" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="dependency" NEXT="grade"/>
-        <FIELD NAME="grade" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="conditions" NEXT="custom"/>
-        <FIELD NAME="custom" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="grade" NEXT="ongoing"/>
-        <FIELD NAME="ongoing" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="custom" NEXT="usemaxgrade"/>
-        <FIELD NAME="usemaxgrade" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="ongoing" NEXT="maxanswers"/>
-        <FIELD NAME="maxanswers" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="4" SEQUENCE="false" PREVIOUS="usemaxgrade" NEXT="maxattempts"/>
-        <FIELD NAME="maxattempts" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="5" SEQUENCE="false" PREVIOUS="maxanswers" NEXT="review"/>
-        <FIELD NAME="review" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="maxattempts" NEXT="nextpagedefault"/>
-        <FIELD NAME="nextpagedefault" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="review" NEXT="feedback"/>
-        <FIELD NAME="feedback" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="nextpagedefault" NEXT="minquestions"/>
-        <FIELD NAME="minquestions" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="feedback" NEXT="maxpages"/>
-        <FIELD NAME="maxpages" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="minquestions" NEXT="timed"/>
-        <FIELD NAME="timed" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="maxpages" NEXT="maxtime"/>
-        <FIELD NAME="maxtime" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timed" NEXT="retake"/>
-        <FIELD NAME="retake" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="maxtime" NEXT="activitylink"/>
-        <FIELD NAME="activitylink" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="retake" NEXT="mediafile"/>
-        <FIELD NAME="mediafile" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="activitylink" NEXT="mediaheight" COMMENT="Local file path or full external URL"/>
-        <FIELD NAME="mediaheight" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="100" SEQUENCE="false" PREVIOUS="mediafile" NEXT="mediawidth"/>
-        <FIELD NAME="mediawidth" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="650" SEQUENCE="false" PREVIOUS="mediaheight" NEXT="mediaclose"/>
-        <FIELD NAME="mediaclose" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="mediawidth" NEXT="slideshow"/>
-        <FIELD NAME="slideshow" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="mediaclose" NEXT="width"/>
-        <FIELD NAME="width" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="640" SEQUENCE="false" PREVIOUS="slideshow" NEXT="height"/>
-        <FIELD NAME="height" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="480" SEQUENCE="false" PREVIOUS="width" NEXT="bgcolor"/>
-        <FIELD NAME="bgcolor" TYPE="char" LENGTH="7" NOTNULL="true" DEFAULT="#FFFFFF" SEQUENCE="false" PREVIOUS="height" NEXT="displayleft"/>
-        <FIELD NAME="displayleft" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="bgcolor" NEXT="displayleftif"/>
-        <FIELD NAME="displayleftif" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="displayleft" NEXT="progressbar"/>
-        <FIELD NAME="progressbar" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="displayleftif" NEXT="highscores"/>
-        <FIELD NAME="highscores" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="progressbar" NEXT="maxhighscores"/>
-        <FIELD NAME="maxhighscores" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="highscores" NEXT="available"/>
-        <FIELD NAME="available" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="maxhighscores" NEXT="deadline"/>
-        <FIELD NAME="deadline" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="available" NEXT="timemodified"/>
-        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="deadline"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="practice" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="modattempts" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="usepassword" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="password" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="dependency" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="conditions" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="grade" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="custom" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="ongoing" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="usemaxgrade" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="maxanswers" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="4" SEQUENCE="false"/>
+        <FIELD NAME="maxattempts" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="5" SEQUENCE="false"/>
+        <FIELD NAME="review" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="nextpagedefault" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="feedback" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="minquestions" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="maxpages" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timed" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="maxtime" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="retake" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="activitylink" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="mediafile" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Local file path or full external URL"/>
+        <FIELD NAME="mediaheight" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="100" SEQUENCE="false"/>
+        <FIELD NAME="mediawidth" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="650" SEQUENCE="false"/>
+        <FIELD NAME="mediaclose" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="slideshow" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="width" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="640" SEQUENCE="false"/>
+        <FIELD NAME="height" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="480" SEQUENCE="false"/>
+        <FIELD NAME="bgcolor" TYPE="char" LENGTH="7" NOTNULL="true" DEFAULT="#FFFFFF" SEQUENCE="false"/>
+        <FIELD NAME="displayleft" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="displayleftif" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="progressbar" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="highscores" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="maxhighscores" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="available" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="deadline" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -54,134 +54,134 @@
         <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="lesson_pages" COMMENT="Defines lesson_pages" PREVIOUS="lesson" NEXT="lesson_answers">
+    <TABLE NAME="lesson_pages" COMMENT="Defines lesson_pages">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="lessonid"/>
-        <FIELD NAME="lessonid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="prevpageid"/>
-        <FIELD NAME="prevpageid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="lessonid" NEXT="nextpageid"/>
-        <FIELD NAME="nextpageid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="prevpageid" NEXT="qtype"/>
-        <FIELD NAME="qtype" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="nextpageid" NEXT="qoption"/>
-        <FIELD NAME="qoption" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="qtype" NEXT="layout"/>
-        <FIELD NAME="layout" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="qoption" NEXT="display"/>
-        <FIELD NAME="display" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="layout" NEXT="timecreated"/>
-        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="display" NEXT="timemodified"/>
-        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timecreated" NEXT="title"/>
-        <FIELD NAME="title" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="timemodified" NEXT="contents"/>
-        <FIELD NAME="contents" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="title" NEXT="contentsformat"/>
-        <FIELD NAME="contentsformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="contents"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="lessonid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="prevpageid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="nextpageid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="qtype" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="qoption" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="layout" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="display" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="title" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="contents" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="contentsformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="lessonid"/>
-        <KEY NAME="lessonid" TYPE="foreign" FIELDS="lessonid" REFTABLE="lesson" REFFIELDS="id" PREVIOUS="primary"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="lessonid" TYPE="foreign" FIELDS="lessonid" REFTABLE="lesson" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="lesson_answers" COMMENT="Defines lesson_answers" PREVIOUS="lesson_pages" NEXT="lesson_attempts">
+    <TABLE NAME="lesson_answers" COMMENT="Defines lesson_answers">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="lessonid"/>
-        <FIELD NAME="lessonid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="pageid"/>
-        <FIELD NAME="pageid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="lessonid" NEXT="jumpto"/>
-        <FIELD NAME="jumpto" TYPE="int" LENGTH="11" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="pageid" NEXT="grade"/>
-        <FIELD NAME="grade" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="jumpto" NEXT="score"/>
-        <FIELD NAME="score" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="grade" NEXT="flags"/>
-        <FIELD NAME="flags" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="score" NEXT="timecreated"/>
-        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="flags" NEXT="timemodified"/>
-        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timecreated" NEXT="answer"/>
-        <FIELD NAME="answer" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="timemodified" NEXT="answerformat"/>
-        <FIELD NAME="answerformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="answer" NEXT="response"/>
-        <FIELD NAME="response" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="answerformat" NEXT="responseformat"/>
-        <FIELD NAME="responseformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="response"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="lessonid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="pageid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="jumpto" TYPE="int" LENGTH="11" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="grade" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="score" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="flags" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="answer" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="answerformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="response" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="responseformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="lessonid"/>
-        <KEY NAME="lessonid" TYPE="foreign" FIELDS="lessonid" REFTABLE="lesson" REFFIELDS="id" PREVIOUS="primary" NEXT="pageid"/>
-        <KEY NAME="pageid" TYPE="foreign" FIELDS="pageid" REFTABLE="lesson_pages" REFFIELDS="id" PREVIOUS="lessonid"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="lessonid" TYPE="foreign" FIELDS="lessonid" REFTABLE="lesson" REFFIELDS="id"/>
+        <KEY NAME="pageid" TYPE="foreign" FIELDS="pageid" REFTABLE="lesson_pages" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="lesson_attempts" COMMENT="Defines lesson_attempts" PREVIOUS="lesson_answers" NEXT="lesson_grades">
+    <TABLE NAME="lesson_attempts" COMMENT="Defines lesson_attempts">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="lessonid"/>
-        <FIELD NAME="lessonid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="pageid"/>
-        <FIELD NAME="pageid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="lessonid" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="pageid" NEXT="answerid"/>
-        <FIELD NAME="answerid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="userid" NEXT="retry"/>
-        <FIELD NAME="retry" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="answerid" NEXT="correct"/>
-        <FIELD NAME="correct" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="retry" NEXT="useranswer"/>
-        <FIELD NAME="useranswer" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="correct" NEXT="timeseen"/>
-        <FIELD NAME="timeseen" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="useranswer"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="lessonid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="pageid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="answerid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="retry" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="correct" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="useranswer" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="timeseen" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="lessonid"/>
-        <KEY NAME="lessonid" TYPE="foreign" FIELDS="lessonid" REFTABLE="lesson" REFFIELDS="id" PREVIOUS="primary" NEXT="pageid"/>
-        <KEY NAME="pageid" TYPE="foreign" FIELDS="pageid" REFTABLE="lesson_pages" REFFIELDS="id" PREVIOUS="lessonid" NEXT="answerid"/>
-        <KEY NAME="answerid" TYPE="foreign" FIELDS="answerid" REFTABLE="lesson_answers" REFFIELDS="id" PREVIOUS="pageid"/>
-      </KEYS>
-      <INDEXES>
-        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
-      </INDEXES>
-    </TABLE>
-    <TABLE NAME="lesson_grades" COMMENT="Defines lesson_grades" PREVIOUS="lesson_attempts" NEXT="lesson_timer">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="lessonid"/>
-        <FIELD NAME="lessonid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="lessonid" NEXT="grade"/>
-        <FIELD NAME="grade" TYPE="float" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="userid" NEXT="late"/>
-        <FIELD NAME="late" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="grade" NEXT="completed"/>
-        <FIELD NAME="completed" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="late"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="lessonid"/>
-        <KEY NAME="lessonid" TYPE="foreign" FIELDS="lessonid" REFTABLE="lesson" REFFIELDS="id" PREVIOUS="primary"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="lessonid" TYPE="foreign" FIELDS="lessonid" REFTABLE="lesson" REFFIELDS="id"/>
+        <KEY NAME="pageid" TYPE="foreign" FIELDS="pageid" REFTABLE="lesson_pages" REFFIELDS="id"/>
+        <KEY NAME="answerid" TYPE="foreign" FIELDS="answerid" REFTABLE="lesson_answers" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="lesson_timer" COMMENT="lesson timer for each lesson" PREVIOUS="lesson_grades" NEXT="lesson_branch">
+    <TABLE NAME="lesson_grades" COMMENT="Defines lesson_grades">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="lessonid"/>
-        <FIELD NAME="lessonid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="lessonid" NEXT="starttime"/>
-        <FIELD NAME="starttime" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="userid" NEXT="lessontime"/>
-        <FIELD NAME="lessontime" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="starttime"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="lessonid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="grade" TYPE="float" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="late" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="completed" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="lessonid"/>
-        <KEY NAME="lessonid" TYPE="foreign" FIELDS="lessonid" REFTABLE="lesson" REFFIELDS="id" PREVIOUS="primary"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="lessonid" TYPE="foreign" FIELDS="lessonid" REFTABLE="lesson" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="lesson_branch" COMMENT="branches for each lesson/user" PREVIOUS="lesson_timer" NEXT="lesson_high_scores">
+    <TABLE NAME="lesson_timer" COMMENT="lesson timer for each lesson">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="lessonid"/>
-        <FIELD NAME="lessonid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="lessonid" NEXT="pageid"/>
-        <FIELD NAME="pageid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="userid" NEXT="retry"/>
-        <FIELD NAME="retry" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="pageid" NEXT="flag"/>
-        <FIELD NAME="flag" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="retry" NEXT="timeseen"/>
-        <FIELD NAME="timeseen" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="flag"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="lessonid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="starttime" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="lessontime" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="lessonid"/>
-        <KEY NAME="lessonid" TYPE="foreign" FIELDS="lessonid" REFTABLE="lesson" REFFIELDS="id" PREVIOUS="primary" NEXT="pageid"/>
-        <KEY NAME="pageid" TYPE="foreign" FIELDS="pageid" REFTABLE="lesson_pages" REFFIELDS="id" PREVIOUS="lessonid"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="lessonid" TYPE="foreign" FIELDS="lessonid" REFTABLE="lesson" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="lesson_high_scores" COMMENT="high scores for each lesson" PREVIOUS="lesson_branch">
+    <TABLE NAME="lesson_branch" COMMENT="branches for each lesson/user">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="lessonid"/>
-        <FIELD NAME="lessonid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="lessonid" NEXT="gradeid"/>
-        <FIELD NAME="gradeid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="userid" NEXT="nickname"/>
-        <FIELD NAME="nickname" TYPE="char" LENGTH="5" NOTNULL="true" SEQUENCE="false" PREVIOUS="gradeid"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="lessonid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="pageid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="retry" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="flag" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timeseen" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="lessonid"/>
-        <KEY NAME="lessonid" TYPE="foreign" FIELDS="lessonid" REFTABLE="lesson" REFFIELDS="id" PREVIOUS="primary"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="lessonid" TYPE="foreign" FIELDS="lessonid" REFTABLE="lesson" REFFIELDS="id"/>
+        <KEY NAME="pageid" TYPE="foreign" FIELDS="pageid" REFTABLE="lesson_pages" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="lesson_high_scores" COMMENT="high scores for each lesson">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="lessonid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="gradeid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="nickname" TYPE="char" LENGTH="5" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="lessonid" TYPE="foreign" FIELDS="lessonid" REFTABLE="lesson" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>

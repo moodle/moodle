@@ -4,21 +4,21 @@
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE NAME="resource" COMMENT="Each record is one resource and its config data" NEXT="resource_old">
+    <TABLE NAME="resource" COMMENT="Each record is one resource and its config data">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="course"/>
-        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>
-        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="course" NEXT="intro"/>
-        <FIELD NAME="intro" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="name" NEXT="introformat"/>
-        <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="intro" NEXT="tobemigrated"/>
-        <FIELD NAME="tobemigrated" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="introformat" NEXT="legacyfiles"/>
-        <FIELD NAME="legacyfiles" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="tobemigrated" NEXT="legacyfileslast"/>
-        <FIELD NAME="legacyfileslast" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="legacyfiles" NEXT="display"/>
-        <FIELD NAME="display" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="legacyfileslast" NEXT="displayoptions"/>
-        <FIELD NAME="displayoptions" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="display" NEXT="filterfiles"/>
-        <FIELD NAME="filterfiles" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="displayoptions" NEXT="revision"/>
-        <FIELD NAME="revision" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="incremented when after each file changes, solves browser caching issues" PREVIOUS="filterfiles" NEXT="timemodified"/>
-        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="revision"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="intro" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="tobemigrated" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="legacyfiles" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="legacyfileslast" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="display" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="displayoptions" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="filterfiles" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="revision" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="incremented when after each file changes, solves browser caching issues"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -27,31 +27,31 @@
         <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="resource_old" COMMENT="backup of all old resource instances from 1.9" PREVIOUS="resource">
+    <TABLE NAME="resource_old" COMMENT="backup of all old resource instances from 1.9">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="course"/>
-        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>
-        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="course" NEXT="type"/>
-        <FIELD NAME="type" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="reference"/>
-        <FIELD NAME="reference" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="type" NEXT="intro"/>
-        <FIELD NAME="intro" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="reference" NEXT="introformat"/>
-        <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="intro" NEXT="alltext"/>
-        <FIELD NAME="alltext" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="introformat" NEXT="popup"/>
-        <FIELD NAME="popup" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="alltext" NEXT="options"/>
-        <FIELD NAME="options" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="popup" NEXT="timemodified"/>
-        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="options" NEXT="oldid"/>
-        <FIELD NAME="oldid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="timemodified" NEXT="cmid"/>
-        <FIELD NAME="cmid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="oldid" NEXT="newmodule"/>
-        <FIELD NAME="newmodule" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false" PREVIOUS="cmid" NEXT="newid"/>
-        <FIELD NAME="newid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="newmodule" NEXT="migrated"/>
-        <FIELD NAME="migrated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="newid"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="type" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="reference" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="intro" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="alltext" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="popup" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="options" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="oldid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="cmid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="newmodule" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="newid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="migrated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="oldid" UNIQUE="true" FIELDS="oldid" NEXT="cmid"/>
-        <INDEX NAME="cmid" UNIQUE="false" FIELDS="cmid" PREVIOUS="oldid"/>
+        <INDEX NAME="oldid" UNIQUE="true" FIELDS="oldid"/>
+        <INDEX NAME="cmid" UNIQUE="false" FIELDS="cmid"/>
       </INDEXES>
     </TABLE>
   </TABLES>

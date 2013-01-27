@@ -6,27 +6,27 @@
   <TABLES>
     <TABLE NAME="enrol_paypal" COMMENT="Holds all known information about PayPal transactions">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="business"/>
-        <FIELD NAME="business" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="receiver_email"/>
-        <FIELD NAME="receiver_email" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="business" NEXT="receiver_id"/>
-        <FIELD NAME="receiver_id" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="receiver_email" NEXT="item_name"/>
-        <FIELD NAME="item_name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="receiver_id" NEXT="courseid"/>
-        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="item_name" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="courseid" NEXT="instanceid"/>
-        <FIELD NAME="instanceid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="userid" NEXT="memo"/>
-        <FIELD NAME="memo" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="instanceid" NEXT="tax"/>
-        <FIELD NAME="tax" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="memo" NEXT="option_name1"/>
-        <FIELD NAME="option_name1" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="tax" NEXT="option_selection1_x"/>
-        <FIELD NAME="option_selection1_x" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="option_name1" NEXT="option_name2"/>
-        <FIELD NAME="option_name2" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="option_selection1_x" NEXT="option_selection2_x"/>
-        <FIELD NAME="option_selection2_x" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="option_name2" NEXT="payment_status"/>
-        <FIELD NAME="payment_status" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="option_selection2_x" NEXT="pending_reason"/>
-        <FIELD NAME="pending_reason" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="payment_status" NEXT="reason_code"/>
-        <FIELD NAME="reason_code" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" PREVIOUS="pending_reason" NEXT="txn_id"/>
-        <FIELD NAME="txn_id" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="reason_code" NEXT="parent_txn_id"/>
-        <FIELD NAME="parent_txn_id" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="txn_id" NEXT="payment_type"/>
-        <FIELD NAME="payment_type" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" PREVIOUS="parent_txn_id" NEXT="timeupdated"/>
-        <FIELD NAME="timeupdated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="payment_type"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="business" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="receiver_email" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="receiver_id" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="item_name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="instanceid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="memo" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="tax" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="option_name1" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="option_selection1_x" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="option_name2" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="option_selection2_x" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="payment_status" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="pending_reason" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="reason_code" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="txn_id" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="parent_txn_id" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="payment_type" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timeupdated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

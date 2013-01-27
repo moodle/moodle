@@ -4,18 +4,18 @@
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE NAME="chat" COMMENT="Each of these is a chat room" NEXT="chat_messages">
+    <TABLE NAME="chat" COMMENT="Each of these is a chat room">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="course"/>
-        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>
-        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="course" NEXT="intro"/>
-        <FIELD NAME="intro" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="introformat"/>
-        <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="text format of intro field" PREVIOUS="intro" NEXT="keepdays"/>
-        <FIELD NAME="keepdays" TYPE="int" LENGTH="11" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="introformat" NEXT="studentlogs"/>
-        <FIELD NAME="studentlogs" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="keepdays" NEXT="chattime"/>
-        <FIELD NAME="chattime" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="studentlogs" NEXT="schedule"/>
-        <FIELD NAME="schedule" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="chattime" NEXT="timemodified"/>
-        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="schedule"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="intro" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="text format of intro field"/>
+        <FIELD NAME="keepdays" TYPE="int" LENGTH="11" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="studentlogs" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="chattime" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="schedule" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -24,69 +24,69 @@
         <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="chat_messages" COMMENT="Stores all the actual chat messages" PREVIOUS="chat" NEXT="chat_messages_current">
+    <TABLE NAME="chat_messages" COMMENT="Stores all the actual chat messages">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="chatid"/>
-        <FIELD NAME="chatid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="chatid" NEXT="groupid"/>
-        <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="userid" NEXT="system"/>
-        <FIELD NAME="system" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="groupid" NEXT="message"/>
-        <FIELD NAME="message" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="system" NEXT="timestamp"/>
-        <FIELD NAME="timestamp" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="message"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="chatid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="system" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="message" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timestamp" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="chatid"/>
-        <KEY NAME="chatid" TYPE="foreign" FIELDS="chatid" REFTABLE="chat" REFFIELDS="id" PREVIOUS="primary"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="chatid" TYPE="foreign" FIELDS="chatid" REFTABLE="chat" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid" NEXT="groupid"/>
-        <INDEX NAME="groupid" UNIQUE="false" FIELDS="groupid" PREVIOUS="userid" NEXT="timestamp-chatid"/>
-        <INDEX NAME="timestamp-chatid" UNIQUE="false" FIELDS="timestamp, chatid" PREVIOUS="groupid"/>
+        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
+        <INDEX NAME="groupid" UNIQUE="false" FIELDS="groupid"/>
+        <INDEX NAME="timestamp-chatid" UNIQUE="false" FIELDS="timestamp, chatid"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="chat_messages_current" COMMENT="Stores current session" PREVIOUS="chat_messages" NEXT="chat_users">
+    <TABLE NAME="chat_messages_current" COMMENT="Stores current session">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="chatid"/>
-        <FIELD NAME="chatid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="chatid" NEXT="groupid"/>
-        <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="userid" NEXT="system"/>
-        <FIELD NAME="system" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="groupid" NEXT="message"/>
-        <FIELD NAME="message" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="system" NEXT="timestamp"/>
-        <FIELD NAME="timestamp" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="message"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="chatid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="system" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="message" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timestamp" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="chatid"/>
-        <KEY NAME="chatid" TYPE="foreign" FIELDS="chatid" REFTABLE="chat" REFFIELDS="id" PREVIOUS="primary"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="chatid" TYPE="foreign" FIELDS="chatid" REFTABLE="chat" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid" NEXT="groupid"/>
-        <INDEX NAME="groupid" UNIQUE="false" FIELDS="groupid" PREVIOUS="userid" NEXT="timestamp-chatid"/>
-        <INDEX NAME="timestamp-chatid" UNIQUE="false" FIELDS="timestamp, chatid" PREVIOUS="groupid"/>
+        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
+        <INDEX NAME="groupid" UNIQUE="false" FIELDS="groupid"/>
+        <INDEX NAME="timestamp-chatid" UNIQUE="false" FIELDS="timestamp, chatid"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="chat_users" COMMENT="Keeps track of which users are in which chat rooms" PREVIOUS="chat_messages_current">
+    <TABLE NAME="chat_users" COMMENT="Keeps track of which users are in which chat rooms">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="chatid"/>
-        <FIELD NAME="chatid" TYPE="int" LENGTH="11" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="11" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="chatid" NEXT="groupid"/>
-        <FIELD NAME="groupid" TYPE="int" LENGTH="11" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="userid" NEXT="version"/>
-        <FIELD NAME="version" TYPE="char" LENGTH="16" NOTNULL="true" SEQUENCE="false" PREVIOUS="groupid" NEXT="ip"/>
-        <FIELD NAME="ip" TYPE="char" LENGTH="45" NOTNULL="true" SEQUENCE="false" PREVIOUS="version" NEXT="firstping"/>
-        <FIELD NAME="firstping" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="ip" NEXT="lastping"/>
-        <FIELD NAME="lastping" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="firstping" NEXT="lastmessageping"/>
-        <FIELD NAME="lastmessageping" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="lastping" NEXT="sid"/>
-        <FIELD NAME="sid" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" PREVIOUS="lastmessageping" NEXT="course"/>
-        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="sid" NEXT="lang"/>
-        <FIELD NAME="lang" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" PREVIOUS="course"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="chatid" TYPE="int" LENGTH="11" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="11" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="groupid" TYPE="int" LENGTH="11" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="version" TYPE="char" LENGTH="16" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="ip" TYPE="char" LENGTH="45" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="firstping" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="lastping" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="lastmessageping" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="sid" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="lang" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="chatid"/>
-        <KEY NAME="chatid" TYPE="foreign" FIELDS="chatid" REFTABLE="chat" REFFIELDS="id" PREVIOUS="primary"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="chatid" TYPE="foreign" FIELDS="chatid" REFTABLE="chat" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid" NEXT="lastping"/>
-        <INDEX NAME="lastping" UNIQUE="false" FIELDS="lastping" PREVIOUS="userid" NEXT="groupid"/>
-        <INDEX NAME="groupid" UNIQUE="false" FIELDS="groupid" PREVIOUS="lastping"/>
+        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
+        <INDEX NAME="lastping" UNIQUE="false" FIELDS="lastping"/>
+        <INDEX NAME="groupid" UNIQUE="false" FIELDS="groupid"/>
       </INDEXES>
     </TABLE>
   </TABLES>

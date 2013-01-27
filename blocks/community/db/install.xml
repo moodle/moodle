@@ -6,12 +6,12 @@
   <TABLES>
     <TABLE NAME="block_community" COMMENT="Community block">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="coursename"/>
-        <FIELD NAME="coursename" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="userid" NEXT="coursedescription"/>
-        <FIELD NAME="coursedescription" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" PREVIOUS="coursename" NEXT="courseurl"/>
-        <FIELD NAME="courseurl" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="coursedescription" NEXT="imageurl"/>
-        <FIELD NAME="imageurl" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="courseurl"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="coursename" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="coursedescription" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="courseurl" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="imageurl" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
