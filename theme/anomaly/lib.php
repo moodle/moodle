@@ -1,8 +1,26 @@
 <?php
 
-/**
- * Functions needed by the anomaly theme should be put here.
- *
- * Any functions that get created here should ALWAYS contain the theme name
- * to reduce complications for other theme designers who may be copying this theme.
- */
+function anomaly_process_css($css, $theme) {
+
+    // Set custom CSS
+    if (!empty($theme->settings->customcss)) {
+        $customcss = $theme->settings->customcss;
+    } else {
+        $customcss = null;
+    }
+    $css = anomaly_set_customcss($css, $customcss);
+
+    return $css;
+}
+
+function anomaly_set_customcss($css, $customcss) {
+    $tag = '[[setting:customcss]]';
+    $replacement = $customcss;
+    if (is_null($replacement)) {
+        $replacement = '';
+    }
+
+    $css = str_replace($tag, $replacement, $css);
+
+    return $css;
+}
