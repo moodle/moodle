@@ -738,6 +738,35 @@ class define_role_table_advanced extends capability_table_with_risks {
         return $output;
     }
 
+    protected function get_allow_roles_list($type) {
+        global $DB;
+
+        if ($type !== 'assign' and $type !== 'switch' and $type !== 'override') {
+            debugging('Invalid role allowed type specified', DEBUG_DEVELOPER);
+            return array();
+        }
+
+        if (empty($this->roleid)) {
+            return array();
+        }
+
+        $sql = "SELECT r.*
+                  FROM {role} r
+                  JOIN {role_allow_{$type}} a ON a.allow{$type} = r.id
+                 WHERE a.roleid = :roleid
+              ORDER BY r.sortorder ASC";
+        return $DB->get_records_sql($sql, array('roleid'=>$this->roleid));
+    }
+
+    protected function get_allow_role_control($type) {
+        if ($roles = $this->get_allow_roles_list($type)) {
+            $roles = role_fix_names($roles, null, ROLENAME_ORIGINAL, true);
+            return implode(', ', $roles);
+        } else {
+            return get_string('none');
+        }
+    }
+
     protected function print_field($name, $caption, $field) {
         global $OUTPUT;
         // Attempt to generate HTML like formslib.
@@ -781,6 +810,9 @@ class define_role_table_advanced extends capability_table_with_risks {
         $this->print_field('edit-description', get_string('customroledescription', 'role').'&nbsp;'.$OUTPUT->help_icon('customroledescription', 'role'), $this->get_description_field('description'));
         $this->print_field('menuarchetype', get_string('archetype', 'role').'&nbsp;'.$OUTPUT->help_icon('archetype', 'role'), $this->get_archetype_field('archetype'));
         $this->print_field('', get_string('maybeassignedin', 'role'), $this->get_assignable_levels_control());
+        $this->print_field('', get_string('allowassign', 'role'), $this->get_allow_role_control('assign'));
+        $this->print_field('', get_string('allowoverride', 'role'), $this->get_allow_role_control('override'));
+        $this->print_field('', get_string('allowswitch', 'role'), $this->get_allow_role_control('switch'));
         echo "</div>";
 
         $this->print_show_hide_advanced_button();
