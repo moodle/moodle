@@ -914,6 +914,16 @@ class view_role_definition_table extends define_role_table_advanced {
         // Do nothing.
     }
 
+    protected function skip_row($capability) {
+        $perm = $this->permissions[$capability->name];
+        if ($perm == CAP_INHERIT) {
+            // Do not print empty rows in role overview, admins need to know quickly what is allowed and prohibited,
+            // if they want to see the list of all capabilities they can go to edit role page.
+            return true;
+        }
+        parent::skip_row($capability);
+    }
+
     protected function add_permission_cells($capability) {
         $perm = $this->permissions[$capability->name];
         $permname = $this->allpermissions[$perm];
