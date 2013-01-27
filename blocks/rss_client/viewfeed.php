@@ -71,11 +71,10 @@ $strviewfeed = get_string('viewfeed', 'block_rss_client');
 $PAGE->set_title($strviewfeed);
 $PAGE->set_heading($strviewfeed);
 
-$settingsurl = new moodle_url('/admin/settings.php?section=blocksettingrss_client');
 $managefeeds = new moodle_url('/blocks/rss_client/managefeeds.php', $urlparams);
 $PAGE->navbar->add(get_string('blocks'));
-$PAGE->navbar->add(get_string('pluginname', 'block_rss_client'), $settingsurl);
-$PAGE->navbar->add(get_string('managefeeds', 'block_rss_client'));
+$PAGE->navbar->add(get_string('pluginname', 'block_rss_client'));
+$PAGE->navbar->add(get_string('managefeeds', 'block_rss_client'), $managefeeds);
 $PAGE->navbar->add($strviewfeed);
 echo $OUTPUT->header();
 

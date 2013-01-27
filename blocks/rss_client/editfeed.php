@@ -177,7 +177,7 @@ if ($returnurl) {
 $managefeeds = new moodle_url('/blocks/rss_client/managefeeds.php', $urlparams);
 
 $PAGE->set_url('/blocks/rss_client/editfeed.php', $urlparams);
-$PAGE->set_pagelayout('base');
+$PAGE->set_pagelayout('standard');
 
 if ($rssid) {
     $isadding = false;
@@ -218,10 +218,9 @@ if ($mform->is_cancelled()) {
     $PAGE->set_title($strtitle);
     $PAGE->set_heading($strtitle);
 
-    $settingsurl = new moodle_url('/admin/settings.php?section=blocksettingrss_client');
     $PAGE->navbar->add(get_string('blocks'));
-    $PAGE->navbar->add(get_string('pluginname', 'block_rss_client'), $settingsurl);
-    $PAGE->navbar->add(get_string('managefeeds', 'block_rss_client'));
+    $PAGE->navbar->add(get_string('pluginname', 'block_rss_client'));
+    $PAGE->navbar->add(get_string('managefeeds', 'block_rss_client'), $managefeeds );
     $PAGE->navbar->add($strtitle);
 
     echo $OUTPUT->header();
