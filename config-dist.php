@@ -498,17 +498,8 @@ $CFG->admin = 'admin';
 // Divert all outgoing emails to this address to test and debug emailing features
 // $CFG->divertallemailsto = 'root@localhost.local'; // NOT FOR PRODUCTION SERVERS!
 //
-// special magic evil developer only wanting to edit the xmldb files manually
-// AND don't use the XMLDBEditor nor the prev/next stuff at all (Mahara and others)
-// Uncomment these if you're lazy like Penny
+// Uncomment if you want to allow empty comments when modifying install.xml files.
 // $CFG->xmldbdisablecommentchecking = true;    // NOT FOR PRODUCTION SERVERS!
-// $CFG->xmldbdisablenextprevchecking = true;   // NOT FOR PRODUCTION SERVERS!
-//
-// Special magic - evil developer only wanting to edit xmldb files manually
-// AND allowing the XMLDBEditor to reconstruct the prev/next elements every
-// time one file is loaded and saved (Moodle).
-// Uncomment this if you're lazy like Petr
-// $CFG->xmldbreconstructprevnext = true;   // NOT FOR PRODUCTION SERVERS!
 //
 // Since 2.0 sql queries are not shown during upgrade by default.
 // Please note that this setting may produce very long upgrade page on large sites.

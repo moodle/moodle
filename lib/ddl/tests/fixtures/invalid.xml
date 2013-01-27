@@ -3,7 +3,7 @@
   <TABLES>
     <TABLE NAME="test_table1" COMMENT="Just a test table">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="incorrect_next_field"/> <!-- invalid because of NEXT value -->
+        <FIELD NAME="id" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="incorrect_next_field"/> <!-- missing TYPE -->
         <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="30" NOTNULL="false" SEQUENCE="false" DEFAULT="Moodle" PREVIOUS="course" NEXT="secondname"/>
         <FIELD NAME="secondname" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="intro"/>
