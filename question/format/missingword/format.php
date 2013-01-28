@@ -70,27 +70,22 @@ class qformat_missingword extends qformat_default {
 
         $answerstart = strpos($text, "{");
         if ($answerstart === false) {
-            if ($this->displayerrors) {
-                echo "<p>$text<p>Could not find a {";
-            }
+            $this->error(get_string('beginanswernotfound', 'qformat_missingword'), $text);
             return false;
         }
 
         $answerfinish = strpos($text, "}");
         if ($answerfinish === false) {
-            if ($this->displayerrors) {
-                echo "<p>$text<p>Could not find a }";
-            }
+            $this->error(get_string('endanswernotfound', 'qformat_missingword'), $text);
             return false;
         }
 
         $answerlength = $answerfinish - $answerstart;
         $answertext = substr($text, $answerstart + 1, $answerlength - 1);
 
-        /// Save the new question text
+        // Save the new question text.
         $question->questiontext = substr_replace($text, "_____", $answerstart, $answerlength+1);
         $question->name = $this->create_default_question_name($question->questiontext, get_string('questionname', 'question'));
-
 
         /// Parse the answers
         $answertext = str_replace("=", "~=", $answertext);
@@ -105,10 +100,8 @@ class qformat_missingword extends qformat_default {
         $countanswers = count($answers);
 
         switch ($countanswers) {
-            case 0:  // invalid question
-                if ($this->displayerrors) {
-                    echo "<p>No answers found in $answertext";
-                }
+            case 0:  // Invalid question.
+                $this->error(get_string('noanswerfound', 'qformat_missingword'), $answertext);
                 return false;
 
             case 1:
@@ -120,12 +113,15 @@ class qformat_missingword extends qformat_default {
                 }
                 $question->answer[]   = $answer;
                 $question->fraction[] = 1;
-                $question->feedback[] = "";
+                $question->feedback[] = array('text' => '', 'format' => FORMAT_HTML);
 
                 return $question;
 
             default:
                 $question->qtype = MULTICHOICE;
+
+                $question = $this->add_blank_combined_feedback($question);
+                $question->single = 1; // Only one answer allowed.
 
                 foreach ($answers as $key => $answer) {
                     $answer = trim($answer);
@@ -166,8 +162,8 @@ class qformat_missingword extends qformat_default {
 #                       $question->fraction[$key] = 0;
                         $question->fraction[$key] = $answeight;
                     }
-                    $question->answer[$key]   = $answer;
-                    $question->feedback[$key] = $comment;
+                    $question->answer[$key]   = array('text' => $answer, 'format' => FORMAT_HTML);
+                    $question->feedback[$key] = array('text' => $comment, 'format' => FORMAT_HTML);
                 }
 
                 return $question;

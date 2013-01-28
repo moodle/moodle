@@ -184,6 +184,7 @@ class qformat_examview extends qformat_based_on_xml {
     }
 
     public function readquestion($qrec) {
+        global $OUTPUT;
 
         $type = trim($qrec['@']['type']);
         $question = $this->defaultquestion();
@@ -224,7 +225,7 @@ class qformat_examview extends qformat_based_on_xml {
                 break;
                 break;
             default:
-                print("<p>Question type ".$type." import not supported for ".$question->questiontext."<p>");
+                echo $OUTPUT->notification(get_string('unknownorunhandledtype', 'question', $type));
                 $question = null;
         }
 
