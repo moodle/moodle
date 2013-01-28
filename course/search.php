@@ -282,7 +282,7 @@ if ($courses) {
         } else if (!empty($blocklist) and confirm_sesskey()) {
             echo "<input type=\"hidden\" name=\"blocklist\" value=\"$blocklist\" /></div>\n";
         }
-        echo "<table border=\"0\" cellspacing=\"2\" cellpadding=\"4\" class=\"generalbox boxaligncenter\">\n<tr>\n";
+        echo "<table border=\"0\" cellspacing=\"2\" cellpadding=\"4\" class=\"generaltable boxaligncenter\">\n<tr>\n";
         echo "<th scope=\"col\">$strcourses</th>\n";
         echo "<th scope=\"col\">$strcategory</th>\n";
         echo "<th scope=\"col\">$strselect</th>\n";
