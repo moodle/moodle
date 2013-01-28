@@ -371,22 +371,34 @@ abstract class question_edit_form extends question_wizard_form {
         }
     }
 
+    /**
+     * Create the form elements required by one hint.
+     * @param string $withclearwrong whether this quesiton type uses the 'Clear wrong' option on hints.
+     * @param string $withshownumpartscorrect whether this quesiton type uses the 'Show num parts correct' option on hints.
+     * @return array form field elements for one hint.
+     */
     protected function get_hint_fields($withclearwrong = false, $withshownumpartscorrect = false) {
         $mform = $this->_form;
 
+        $repeatedoptions = array();
         $repeated = array();
-        $repeated[] = $mform->createElement('header', 'hinthdr', get_string('hintn', 'question'));
-        $repeated[] = $mform->createElement('editor', 'hint', get_string('hinttext', 'question'),
+        $repeated[] = $mform->createElement('editor', 'hint', get_string('hintn', 'question'),
                 array('rows' => 5), $this->editoroptions);
         $repeatedoptions['hint']['type'] = PARAM_RAW;
 
+        $optionelements = array();
         if ($withclearwrong) {
-            $repeated[] = $mform->createElement('advcheckbox', 'hintclearwrong',
+            $optionelements[] = $mform->createElement('advcheckbox', 'hintclearwrong',
                     get_string('options', 'question'), get_string('clearwrongparts', 'question'));
         }
         if ($withshownumpartscorrect) {
-            $repeated[] = $mform->createElement('advcheckbox', 'hintshownumcorrect', '',
+            $optionelements[] = $mform->createElement('advcheckbox', 'hintshownumcorrect', '',
                     get_string('shownumpartscorrect', 'question'));
+        }
+
+        if (count($optionelements)) {
+            $repeated[] = $mform->createElement('group', 'hintoptions',
+                 get_string('hintnoptions', 'question'), $optionelements, null, false);
         }
 
         return array($repeated, $repeatedoptions);
@@ -437,7 +449,7 @@ abstract class question_edit_form extends question_wizard_form {
         list($repeated, $repeatedoptions) = $this->get_hint_fields(
                 $withclearwrong, $withshownumpartscorrect);
         $this->repeat_elements($repeated, $repeatsatstart, $repeatedoptions,
-                'numhints', 'addhint', 1, get_string('addanotherhint', 'question'));
+                'numhints', 'addhint', 1, get_string('addanotherhint', 'question'), true);
     }
 
     public function set_data($question) {
