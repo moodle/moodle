@@ -7679,7 +7679,7 @@ class admin_setting_configcolourpicker extends admin_setting {
         $PAGE->requires->js_init_call('M.util.init_colour_picker', array($this->get_id(), $this->previewconfig));
         $content  = html_writer::start_tag('div', array('class'=>'form-colourpicker defaultsnext'));
         $content .= html_writer::tag('div', $OUTPUT->pix_icon('i/loading', get_string('loading', 'admin'), 'moodle', array('class'=>'loadingicon')), array('class'=>'admin_colourpicker clearfix'));
-        $content .= html_writer::empty_tag('input', array('type'=>'text','id'=>$this->get_id(), 'name'=>$this->get_full_name(), 'value'=>$this->get_setting(), 'size'=>'12'));
+        $content .= html_writer::empty_tag('input', array('type'=>'text','id'=>$this->get_id(), 'name'=>$this->get_full_name(), 'value'=>$data, 'size'=>'12'));
         if (!empty($this->previewconfig)) {
             $content .= html_writer::empty_tag('input', array('type'=>'button','id'=>$this->get_id().'_preview', 'value'=>get_string('preview'), 'class'=>'admin_colourpicker_preview'));
         }
