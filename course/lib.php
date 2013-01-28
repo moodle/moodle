@@ -1914,7 +1914,8 @@ function get_module_metadata($course, $modnames, $sectionreturn = null) {
         // NOTE: this is legacy stuff, module subtypes are very strongly discouraged!!
         $gettypesfunc =  $modname.'_get_types';
         if (function_exists($gettypesfunc)) {
-            if ($types = $gettypesfunc()) {
+            $types = $gettypesfunc();
+            if (is_array($types) && count($types) > 0) {
                 $group = new stdClass();
                 $group->name = $modname;
                 $group->icon = $OUTPUT->pix_icon('icon', '', $modname, array('class' => 'icon'));
@@ -1963,7 +1964,11 @@ function get_module_metadata($course, $modnames, $sectionreturn = null) {
             $module->archetype = plugin_supports('mod', $modname, FEATURE_MOD_ARCHETYPE, MOD_ARCHETYPE_OTHER);
             $modlist[$course->id][$modname] = $module;
         }
-        $return[$modname] = $modlist[$course->id][$modname];
+        if (isset($modlist[$course->id][$modname])) {
+            $return[$modname] = $modlist[$course->id][$modname];
+        } else {
+            debugging("Invalid module metadata configuration for {$modname}");
+        }
     }
 
     return $return;
