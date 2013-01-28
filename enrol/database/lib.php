@@ -407,7 +407,7 @@ class enrol_database_plugin extends enrol_plugin {
             $localnotempty = "";
             if ($localcoursefield !== 'id') {
                 $localnotempty =  "AND c.$localcoursefield <> :lcfe";
-                $params['lcfe'] = $DB->sql_empty();
+                $params['lcfe'] = '';
             }
             $sql = "SELECT c.id, c.visible, c.$localcoursefield AS mapping, c.shortname
                       FROM {course} c

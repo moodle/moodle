@@ -52,9 +52,7 @@ class oci_native_moodle_database extends moodle_database {
     /** @var To store unique_session_id. Needed for temp tables unique naming.*/
     private $unique_session_id;
     /** @var To cache locks support along the connection life.*/
-    private $dblocks_supported = null;
-    /** @var To cache bitwise operations support along the connection life.*/
-    private $bitwise_supported = null;
+    private $oci_package_installed = null;
 
     /**
      * Detects if all needed PHP stuff installed.
@@ -129,7 +127,7 @@ class oci_native_moodle_database extends moodle_database {
      * @return string null means everything ok, string means problem found.
      */
     public function diagnose() {
-        if (!$this->bitwise_supported() or !$this->session_lock_supported()) {
+        if (!$this->oci_package_installed()) {
             return 'Oracle PL/SQL Moodle support packages are not installed! Database administrator has to execute /lib/dml/oci_native_moodle_package.sql script.';
         }
         return null;
@@ -758,10 +756,27 @@ class oci_native_moodle_database extends moodle_database {
      */
     private function oracle_dirty_hack ($table, $field, $value) {
 
+        // General bound parameter, just hack the spaces and pray it will work.
+        if (!$table) {
+            if ($value === '') {
+                return ' ';
+            } else if (is_bool($value)) {
+                return (int)$value;
+            } else {
+                return $value;
+            }
+        }
+
         // Get metadata
         $columns = $this->get_columns($table);
         if (!isset($columns[$field])) {
-            return $value;
+            if ($value === '') {
+                return ' ';
+            } else if (is_bool($value)) {
+                return (int)$value;
+            } else {
+                return $value;
+            }
         }
         $column = $columns[$field];
 
@@ -778,7 +793,7 @@ class oci_native_moodle_database extends moodle_database {
         // In the opposite, when retrieving records from Oracle, we'll decode " " back to
         // empty strings to allow everything to work properly. DIRTY HACK.
 
-        // !! These paragraphs explain the rationale about the change for Moodle 2.0:
+        // !! These paragraphs explain the rationale about the change for Moodle 2.5:
         //
         // Before Moodle 2.0, we only used to apply this DIRTY HACK to NOT NULL columns, as
         // stated above, but it causes one problem in NULL columns where both empty strings
@@ -791,19 +806,17 @@ class oci_native_moodle_database extends moodle_database {
         // to rely in NULL/empty/content contents without problems, until now that wasn't
         // possible at all.
         //
-        // No breakage with old data is expected as long as at the time of writing this
-        // (20090922) all the current uses of both sql_empty() and sql_isempty() has been
-        // revised in 2.0 and all them were being performed against NOT NULL columns,
-        // where nothing has changed (the DIRTY HACK was already being applied).
+        // One space DIRTY HACK is now applied automatically for all query parameters
+        // and results. The only problem is string concatenation where the glue must
+        // be specified as "' '" sql fragment.
         //
         // !! Conclusions:
         //
-        // From Moodle 2.0 onwards, ALL empty strings in Oracle DBs will be stored as
+        // From Moodle 2.5 onwards, ALL empty strings in Oracle DBs will be stored as
         // 1-whitespace char, ALL NULLs as NULLs and, obviously, content as content. And
         // those 1-whitespace chars will be converted back to empty strings by all the
         // get_field/record/set() functions transparently and any SQL needing direct handling
-        // of empties will need to use the sql_empty() and sql_isempty() helper functions.
-        // MDL-17491.
+        // of empties will have to use placeholders or sql_isempty() helper function.
 
         // If the field isn't VARCHAR or CLOB, skip
         if ($column->meta_type != 'C' and $column->meta_type != 'X') {
@@ -1445,26 +1458,6 @@ class oci_native_moodle_database extends moodle_database {
         return ' FROM dual';
     }
 
-   protected function bitwise_supported() {
-        if (isset($this->bitwise_supported)) { // Use cached value if available
-            return $this->bitwise_supported;
-        }
-        $sql = "SELECT 1
-                FROM user_objects
-                WHERE object_type = 'PACKAGE BODY'
-                  AND object_name = 'MOODLE_BITS'
-                  AND status = 'VALID'";
-        $this->query_start($sql, null, SQL_QUERY_AUX);
-        $stmt = $this->parse_query($sql);
-        $result = oci_execute($stmt, $this->commit_status);
-        $this->query_end($result, $stmt);
-        $records = null;
-        oci_fetch_all($stmt, $records, 0, -1, OCI_FETCHSTATEMENT_BY_ROW);
-        oci_free_statement($stmt);
-        $this->bitwise_supported = isset($records[0]) && reset($records[0]) ? true : false;
-        return $this->bitwise_supported;
-    }
-
     public function sql_bitand($int1, $int2) {
         return 'bitand((' . $int1 . '), (' . $int2 . '))';
     }
@@ -1474,18 +1467,18 @@ class oci_native_moodle_database extends moodle_database {
     }
 
     public function sql_bitor($int1, $int2) {
-        // Use the MOODLE_BITS package if available
-        if ($this->bitwise_supported()) {
-            return 'MOODLE_BITS.BITOR(' . $int1 . ', ' . $int2 . ')';
+        // Use the MOODLELIB package if available
+        if ($this->oci_package_installed()) {
+            return 'MOODLELIB.BITOR(' . $int1 . ', ' . $int2 . ')';
         }
         // fallback to PHP bool operations, can break if using placeholders
         return '((' . $int1 . ') + (' . $int2 . ') - ' . $this->sql_bitand($int1, $int2) . ')';
     }
 
     public function sql_bitxor($int1, $int2) {
-        // Use the MOODLE_BITS package if available
-        if ($this->bitwise_supported()) {
-            return 'MOODLE_BITS.BITXOR(' . $int1 . ', ' . $int2 . ')';
+        // Use the MOODLELIB package if available
+        if ($this->oci_package_installed()) {
+            return 'MOODLELIB.BITXOR(' . $int1 . ', ' . $int2 . ')';
         }
         // fallback to PHP bool operations, can break if using placeholders
         return '(' . $this->sql_bitor($int1, $int2) . ' - ' . $this->sql_bitand($int1, $int2) . ')';
@@ -1552,22 +1545,38 @@ class oci_native_moodle_database extends moodle_database {
         // NULLs and empty strings. So this function will cause some tests to fail. Hopefully
         // it's only a side case and it won't affect normal concatenation operations in Moodle.
         $arr = func_get_args();
+        if ($this->oci_package_installed()) {
+            foreach ($arr as $k => $v) {
+                if (strpos($v, "'") === 0) {
+                    continue;
+                }
+                $arr[$k] = "MOODLELIB.UNDO_DIRTY_HACK($v)";
+            }
+        }
         $s = implode(' || ', $arr);
         if ($s === '') {
-            return " '' ";
+            return " ' ' ";
         }
-        return " $s ";
+        return " MOODLELIB.DIRTY_HACK($s) ";
     }
 
     public function sql_concat_join($separator="' '", $elements=array()) {
-        for ($n=count($elements)-1; $n > 0 ; $n--) {
+        if ($this->oci_package_installed()) {
+            foreach ($elements as $k => $v) {
+                if (strpos($v, "'") === 0) {
+                    continue;
+                }
+                $elements[$k] = "MOODLELIB.UNDO_DIRTY_HACK($v)";
+            }
+        }
+        for ($n = count($elements)-1; $n > 0 ; $n--) {
             array_splice($elements, $n, 0, $separator);
         }
         $s = implode(' || ', $elements);
         if ($s === '') {
-            return " '' ";
+            return " ' ' ";
         }
-        return " $s ";
+        return " MOODLELIB.DIRTY_HACK($s) ";
     }
 
     /**
@@ -1577,36 +1586,52 @@ class oci_native_moodle_database extends moodle_database {
         return "INSTR(($haystack), ($needle))";
     }
 
+    /**
+     * Returns the SQL to know if one field is empty.
+     *
+     * @param string $tablename Name of the table (without prefix). Not used for now but can be
+     *                          necessary in the future if we want to use some introspection using
+     *                          meta information against the DB.
+     * @param string $fieldname Name of the field we are going to check
+     * @param bool $nullablefield For specifying if the field is nullable (true) or no (false) in the DB.
+     * @param bool $textfield For specifying if it is a text (also called clob) field (true) or a varchar one (false)
+     * @return string the sql code to be added to check for empty values
+     */
     public function sql_isempty($tablename, $fieldname, $nullablefield, $textfield) {
         if ($textfield) {
-            return " (".$this->sql_compare_text($fieldname)." = '".$this->sql_empty()."') ";
+            return " (".$this->sql_compare_text($fieldname)." = ' ') ";
         } else {
-            return " ($fieldname = '".$this->sql_empty()."') ";
+            return " ($fieldname = ' ') ";
         }
     }
 
     /**
-     * Returns the empty string char used by every supported DB. To be used when
-     * we are searching for that values in our queries. Only Oracle uses this
-     * for now (will be out, once we migrate to proper NULLs if that days arrives)
-     * @return string A string with single whitespace.
+     * This used to return empty string replacement character.
+     *
+     * @deprecated use bound parameter with empty string instead
+     *
+     * @return string An empty string.
      */
     public function sql_empty() {
-        return ' ';
+        return '';
     }
 
     public function sql_order_by_text($fieldname, $numchars=32) {
         return 'dbms_lob.substr(' . $fieldname . ', ' . $numchars . ',1)';
     }
 
-    public function session_lock_supported() {
-        if (isset($this->dblocks_supported)) { // Use cached value if available
-            return $this->dblocks_supported;
+    /**
+     * Is the required OCI server package installed?
+     * @return bool
+     */
+    protected function oci_package_installed() {
+        if (isset($this->oci_package_installed)) { // Use cached value if available.
+            return $this->oci_package_installed;
         }
         $sql = "SELECT 1
                 FROM user_objects
                 WHERE object_type = 'PACKAGE BODY'
-                  AND object_name = 'MOODLE_LOCKS'
+                  AND object_name = 'MOODLELIB'
                   AND status = 'VALID'";
         $this->query_start($sql, null, SQL_QUERY_AUX);
         $stmt = $this->parse_query($sql);
@@ -1615,8 +1640,8 @@ class oci_native_moodle_database extends moodle_database {
         $records = null;
         oci_fetch_all($stmt, $records, 0, -1, OCI_FETCHSTATEMENT_BY_ROW);
         oci_free_statement($stmt);
-        $this->dblocks_supported = isset($records[0]) && reset($records[0]) ? true : false;
-        return $this->dblocks_supported;
+        $this->oci_package_installed = isset($records[0]) && reset($records[0]) ? true : false;
+        return $this->oci_package_installed;
     }
 
     /**
@@ -1626,13 +1651,13 @@ class oci_native_moodle_database extends moodle_database {
      * @return void
      */
     public function get_session_lock($rowid, $timeout) {
-        if (!$this->session_lock_supported()) {
+        if (!$this->oci_package_installed()) {
             return;
         }
         parent::get_session_lock($rowid, $timeout);
 
         $fullname = $this->dbname.'-'.$this->prefix.'-session-'.$rowid;
-        $sql = 'SELECT MOODLE_LOCKS.GET_LOCK(:lockname, :locktimeout) FROM DUAL';
+        $sql = 'SELECT MOODLELIB.GET_LOCK(:lockname, :locktimeout) FROM DUAL';
         $params = array('lockname' => $fullname , 'locktimeout' => $timeout);
         $this->query_start($sql, $params, SQL_QUERY_AUX);
         $stmt = $this->parse_query($sql);
@@ -1646,7 +1671,7 @@ class oci_native_moodle_database extends moodle_database {
     }
 
     public function release_session_lock($rowid) {
-        if (!$this->session_lock_supported()) {
+        if (!$this->oci_package_installed()) {
             return;
         }
         if (!$this->used_for_db_sessions) {
@@ -1657,7 +1682,7 @@ class oci_native_moodle_database extends moodle_database {
 
         $fullname = $this->dbname.'-'.$this->prefix.'-session-'.$rowid;
         $params = array('lockname' => $fullname);
-        $sql = 'SELECT MOODLE_LOCKS.RELEASE_LOCK(:lockname) FROM DUAL';
+        $sql = 'SELECT MOODLELIB.RELEASE_LOCK(:lockname) FROM DUAL';
         $this->query_start($sql, $params, SQL_QUERY_AUX);
         $stmt = $this->parse_query($sql);
         $this->bind_params($stmt, $params);

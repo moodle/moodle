@@ -853,7 +853,8 @@ function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $record
     if ($DB->get_dbfamily() == 'oracle') {
         $concat = $DB->sql_concat('c.summary', "' '", 'c.fullname', "' '", 'c.idnumber', "' '", 'c.shortname');
     } else {
-        $concat = $DB->sql_concat("COALESCE(c.summary, '". $DB->sql_empty() ."')", "' '", 'c.fullname', "' '", 'c.idnumber', "' '", 'c.shortname');
+        $concat = $DB->sql_concat("COALESCE(c.summary, :empty)", "' '", 'c.fullname', "' '", 'c.idnumber', "' '", 'c.shortname');
+        $params['empty'] = '';
     }
 
     foreach ($searchterms as $searchterm) {

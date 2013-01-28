@@ -3926,6 +3926,8 @@ class dml_testcase extends database_driver_testcase {
         $table = $this->get_test_table();
         $tablename = $table->getName();
 
+        $this->assertSame('', $DB->sql_empty()); // Since 2.5 the hack is applied automatically to all bound params.
+
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null);
         $table->add_field('namenotnull', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, 'default value');
@@ -3938,17 +3940,17 @@ class dml_testcase extends database_driver_testcase {
         $DB->insert_record($tablename, array('name'=>'lalala'));
         $DB->insert_record($tablename, array('name'=>0));
 
-        $records = $DB->get_records_sql("SELECT * FROM {{$tablename}} WHERE name = '".$DB->sql_empty()."'");
+        $records = $DB->get_records_sql("SELECT * FROM {{$tablename}} WHERE name = ?", array(''));
         $this->assertEquals(count($records), 1);
         $record = reset($records);
         $this->assertEquals($record->name, '');
 
-        $records = $DB->get_records_sql("SELECT * FROM {{$tablename}} WHERE namenotnull = '".$DB->sql_empty()."'");
+        $records = $DB->get_records_sql("SELECT * FROM {{$tablename}} WHERE namenotnull = ?", array(''));
         $this->assertEquals(count($records), 1);
         $record = reset($records);
         $this->assertEquals($record->namenotnull, '');
 
-        $records = $DB->get_records_sql("SELECT * FROM {{$tablename}} WHERE namenotnullnodeflt = '".$DB->sql_empty()."'");
+        $records = $DB->get_records_sql("SELECT * FROM {{$tablename}} WHERE namenotnullnodeflt = ?", array(''));
         $this->assertEquals(count($records), 4);
         $record = reset($records);
         $this->assertEquals($record->namenotnullnodeflt, '');

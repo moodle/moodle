@@ -1634,8 +1634,6 @@ function role_assign($roleid, $userid, $contextid, $component = '', $itemid = 0,
     }
 
     // Check for existing entry
-    // TODO: Revisit this sql_empty() use once Oracle bindings are improved. MDL-29765
-    $component = ($component === '') ? $DB->sql_empty() : $component;
     $ras = $DB->get_records('role_assignments', array('roleid'=>$roleid, 'contextid'=>$context->id, 'userid'=>$userid, 'component'=>$component, 'itemid'=>$itemid), 'id');
 
     if ($ras) {
@@ -1748,10 +1746,6 @@ function role_unassign_all(array $params, $subcontexts = false, $includemanual =
         }
     }
 
-    // TODO: Revisit this sql_empty() use once Oracle bindings are improved. MDL-29765
-    if (isset($params['component'])) {
-        $params['component'] = ($params['component'] === '') ? $DB->sql_empty() : $params['component'];
-    }
     $ras = $DB->get_records('role_assignments', $params);
     foreach($ras as $ra) {
         $DB->delete_records('role_assignments', array('id'=>$ra->id));

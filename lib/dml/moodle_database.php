@@ -2012,9 +2012,10 @@ abstract class moodle_database {
     }
 
     /**
-     * Returns the empty string char used by every supported DB. To be used when
-     * we are searching for that values in our queries. Only Oracle uses this
-     * for now (will be out, once we migrate to proper NULLs if that days arrives)
+     * This used to return empty string replacement character.
+     *
+     * @deprecated use bound parameter with empty string instead
+     *
      * @return string An empty string.
      */
     function sql_empty() {
@@ -2036,9 +2037,13 @@ abstract class moodle_database {
      *
      *     ... AND fieldname = '';
      *
-     * are being used. Final result should be:
+     * are being used. Final result for text fields should be:
      *
-     *     ... AND ' . sql_isempty('tablename', 'fieldname', true/false, true/false);
+     *     ... AND ' . sql_isempty('tablename', 'fieldname', true/false, true);
+     *
+     * and for varchar fields result should be:
+     *
+     *    ... AND fieldname = :empty; "; $params['empty'] = '';
      *
      * (see parameters description below)
      *
@@ -2066,9 +2071,13 @@ abstract class moodle_database {
      *
      *     ... AND fieldname != '';
      *
-     * are being used. Final result should be:
+     * are being used. Final result for text fields should be:
      *
      *     ... AND ' . sql_isnotempty('tablename', 'fieldname', true/false, true/false);
+     *
+     * and for varchar fields result should be:
+     *
+     *    ... AND fieldname != :empty; "; $params['empty'] = '';
      *
      * (see parameters description below)
      *

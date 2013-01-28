@@ -24,22 +24,30 @@
  * This sql script generates various PL/SQL packages needed to provide
  * cross-db compatibility in the Moodle 2.x DB API with some operations
  * not natively supported by Oracle, namely:
- *  - MOODLE_LOCKS: Application locks used by Moodle DB sessions. It uses
- *                  the DBMS_LOCK package so execution must be granted
- *                  to the Moodle DB user by SYS to work properly.
- *  - MOODLE_BITS: To provide cross-db bitwise operations to be used by the
- *                 sql_bitXXX() helper functions
+ *  - locking: Application locks used by Moodle DB sessions. It uses
+ *             the DBMS_LOCK package so execution must be granted
+ *             to the Moodle DB user by SYS to work properly.
+ *  - bit ops: To provide cross-db bitwise operations to be used by the
+ *             sql_bitXXX() helper functions
+ *  - one space hacks: One space empty string substitute hacks.
  */
 
-CREATE OR REPLACE PACKAGE MOODLE_BITS AS
+CREATE OR REPLACE PACKAGE MOODLELIB AS
 
 FUNCTION BITOR (value1 IN INTEGER, value2 IN INTEGER) RETURN INTEGER;
 FUNCTION BITXOR(value1 IN INTEGER, value2 IN INTEGER) RETURN INTEGER;
 
-END MOODLE_BITS;
+FUNCTION GET_HANDLE  (lock_name IN VARCHAR2) RETURN VARCHAR2;
+FUNCTION GET_LOCK    (lock_name IN VARCHAR2, lock_timeout IN INTEGER) RETURN INTEGER;
+FUNCTION RELEASE_LOCK(lock_name IN VARCHAR2) RETURN INTEGER;
+
+FUNCTION DIRTY_HACK(somestring IN VARCHAR2) RETURN VARCHAR2;
+FUNCTION UNDO_DIRTY_HACK(hackedstring IN VARCHAR2) RETURN VARCHAR2;
+
+END MOODLELIB;
 /
 
-CREATE OR REPLACE PACKAGE BODY MOODLE_BITS AS
+CREATE OR REPLACE PACKAGE BODY MOODLELIB AS
 
 FUNCTION BITOR(value1 IN INTEGER, value2 IN INTEGER) RETURN INTEGER IS
 
@@ -50,22 +58,8 @@ END BITOR;
 FUNCTION BITXOR(value1 IN INTEGER, value2 IN INTEGER) RETURN INTEGER IS
 
 BEGIN
-    RETURN MOODLE_BITS.BITOR(value1,value2) - BITAND(value1,value2);
+    RETURN MOODLELIB.BITOR(value1,value2) - BITAND(value1,value2);
 END BITXOR;
-
-END MOODLE_BITS;
-/
-
-CREATE OR REPLACE PACKAGE MOODLE_LOCKS AS
-
-FUNCTION GET_HANDLE  (lock_name IN VARCHAR2) RETURN VARCHAR2;
-FUNCTION GET_LOCK    (lock_name IN VARCHAR2, lock_timeout IN INTEGER) RETURN INTEGER;
-FUNCTION RELEASE_LOCK(lock_name IN VARCHAR2) RETURN INTEGER;
-
-END MOODLE_LOCKS;
-/
-
-CREATE OR REPLACE PACKAGE BODY MOODLE_LOCKS AS
 
 FUNCTION GET_HANDLE(lock_name IN VARCHAR2) RETURN VARCHAR2 IS
     PRAGMA AUTONOMOUS_TRANSACTION;
@@ -107,5 +101,23 @@ BEGIN
     RETURN 1;
 END RELEASE_LOCK;
 
-END MOODLE_LOCKS;
+FUNCTION DIRTY_HACK(somestring IN VARCHAR2) RETURN VARCHAR2 IS
+
+BEGIN
+    IF somestring = '' THEN
+      RETURN ' ';
+    END IF;
+    RETURN somestring;
+END DIRTY_HACK;
+
+FUNCTION UNDO_DIRTY_HACK(hackedstring IN VARCHAR2) RETURN VARCHAR2 IS
+
+BEGIN
+    IF hackedstring = ' ' THEN
+        RETURN '';
+    END IF;
+    RETURN hackedstring;
+END UNDO_DIRTY_HACK;
+
+END MOODLELIB;
 /

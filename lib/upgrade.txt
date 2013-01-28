@@ -34,6 +34,8 @@ information provided here is intended especially for developers.
 * condition_info:get_condition_user_fields($formatoptions) now accepts the optional
   param $formatoptions, that will determine if the field names are processed by
   format_string() with the passed options.
+* $DB->sql_empty() is deprecated, you have to use sql parameters with empty values instead,
+  please note hardcoding of empty strings in SQL queries breaks execution in Oracle database.
 
 YUI changes:
 * M.util.help_icon has been deprecated. Code should be updated to use moodle-core-popuphelp
