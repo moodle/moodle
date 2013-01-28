@@ -1,0 +1,2 @@
+You can use the missing word format to import questions
+into both Moodle's Question bank and {=Lesson} activity.
