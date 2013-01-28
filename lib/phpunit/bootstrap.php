@@ -93,17 +93,20 @@ $CFG->filepermissions = ($CFG->directorypermissions & 0666);
 if (!isset($CFG->phpunit_dataroot)) {
     phpunit_bootstrap_error(PHPUNIT_EXITCODE_CONFIGERROR, 'Missing $CFG->phpunit_dataroot in config.php, can not run tests!');
 }
-// Ensure we access to phpunit_dataroot realpath always.
-$CFG->phpunit_dataroot = realpath($CFG->phpunit_dataroot);
 
-if (isset($CFG->dataroot) and $CFG->phpunit_dataroot === $CFG->dataroot) {
-    phpunit_bootstrap_error(PHPUNIT_EXITCODE_CONFIGERROR, '$CFG->dataroot and $CFG->phpunit_dataroot must not be identical, can not run tests!');
-}
+// Create test dir if does not exists yet.
 if (!file_exists($CFG->phpunit_dataroot)) {
     mkdir($CFG->phpunit_dataroot, $CFG->directorypermissions);
 }
 if (!is_dir($CFG->phpunit_dataroot)) {
     phpunit_bootstrap_error(PHPUNIT_EXITCODE_CONFIGERROR, '$CFG->phpunit_dataroot directory can not be created, can not run tests!');
+}
+
+// Ensure we access to phpunit_dataroot realpath always.
+$CFG->phpunit_dataroot = realpath($CFG->phpunit_dataroot);
+
+if (isset($CFG->dataroot) and $CFG->phpunit_dataroot === $CFG->dataroot) {
+    phpunit_bootstrap_error(PHPUNIT_EXITCODE_CONFIGERROR, '$CFG->dataroot and $CFG->phpunit_dataroot must not be identical, can not run tests!');
 }
 
 if (!is_writable($CFG->phpunit_dataroot)) {
