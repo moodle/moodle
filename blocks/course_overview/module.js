@@ -2,12 +2,23 @@ M.block_course_overview = {}
 
 M.block_course_overview.add_handles = function(Y) {
     M.block_course_overview.Y = Y;
+    var MOVEICON = {
+        pix: "i/move_2d",
+        component: 'moodle'
+    };
+
     YUI().use('dd-constrain', 'dd-proxy', 'dd-drop', 'dd-plugin', function(Y) {
         //Static Vars
         var goingUp = false, lastY = 0;
 
-        var list = Y.Node.all('#course_list .coursebox');
+        var list = Y.Node.all('.course_list .coursebox');
         list.each(function(v, k) {
+            // Replace move link and image with move_2d image.
+            var imagenode = v.one('.course_title .move a img');
+            imagenode.setAttribute('src', M.util.image_url(MOVEICON.pix, MOVEICON.component));
+            imagenode.addClass('cursor');
+            v.one('.course_title .move a').replace(imagenode);
+
             var dd = new Y.DD.Drag({
                 node: v,
                 target: {
@@ -16,16 +27,9 @@ M.block_course_overview.add_handles = function(Y) {
             }).plug(Y.Plugin.DDProxy, {
                 moveOnEnd: false
             }).plug(Y.Plugin.DDConstrained, {
-                constrain2node: '#course_list'
+                constrain2node: '.course_list'
             });
             dd.addHandle('.course_title .move');
-        });
-
-        var drops = Y.Node.all('#coursebox');
-        drops.each(function(v, k) {
-            var tar = new Y.DD.Drop({
-                node: v
-            });
         });
 
         Y.DD.DDM.on('drag:start', function(e) {
@@ -101,7 +105,7 @@ M.block_course_overview.add_handles = function(Y) {
 
 M.block_course_overview.save = function() {
     var Y = M.block_course_overview.Y;
-    var sortorder = Y.one('#course_list').get('children').getAttribute('id');
+    var sortorder = Y.one('.course_list').get('children').getAttribute('id');
     for (var i = 0; i < sortorder.length; i++) {
         sortorder[i] = sortorder[i].substring(7);
     }

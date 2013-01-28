@@ -41,67 +41,64 @@ class block_course_overview_renderer extends plugin_renderer_base {
     public function course_overview($courses, $overviews) {
         $html = '';
         $config = get_config('block_course_overview');
-
-        $html .= html_writer::start_tag('div', array('id' => 'course_list'));
+        $ismovingcourse = false;
         $courseordernumber = 0;
         $maxcourses = count($courses);
-        // Intialize string/icon etc if user is editing.
-        $url = null;
-        $moveicon = null;
-        $moveup[] = null;
-        $movedown[] = null;
-        if ($this->page->user_is_editing()) {
+        $userediting = false;
+        // Intialise string/icon etc if user is editing and courses > 1
+        if ($this->page->user_is_editing() && (count($courses) > 1)) {
+            $userediting = true;
+            // If ajaxenabled then include DND JS and replace link with move image.
             if (ajaxenabled()) {
-                $moveicon = html_writer::tag('div',
-                    html_writer::empty_tag('img',
-                        array('src' => $this->pix_url('i/move_2d')->out(false),
-                            'alt' => get_string('move'), 'class' => 'cursor',
-                            'title' => get_string('move'))
-                    ), array('class' => 'move')
-                );
-            } else {
-                $url = new moodle_url('/blocks/course_overview/move.php', array('sesskey' => sesskey()));
-                $moveup['str'] = get_string('moveup');
-                $moveup['icon'] = $this->pix_url('t/up');
-                $movedown['str'] =  get_string('movedown');
-                $movedown['icon'] = $this->pix_url('t/down');
+                $this->page->requires->js_init_call('M.block_course_overview.add_handles');
             }
+
+            // Check if course is moving
+            $ismovingcourse = optional_param('movecourse', FALSE, PARAM_BOOL);
+            $movingcourseid = optional_param('courseid', 0, PARAM_INT);
+        }
+
+        // Render first movehere icon.
+        if ($ismovingcourse) {
+            // Remove movecourse param from url.
+            $this->page->ensure_param_not_in_url('movecourse');
+
+            // Show moving course notice, so user knows what is being moved.
+            $html .= $this->output->box_start('notice');
+            $a = new stdClass();
+            $a->fullname = $courses[$movingcourseid]->fullname;
+            $a->cancellink = html_writer::link($this->page->url, get_string('cancel'));
+            $html .= get_string('movingcourse', 'block_course_overview', $a);
+            $html .= $this->output->box_end();
+
+            $moveurl = new moodle_url('/blocks/course_overview/move.php',
+                        array('sesskey' => sesskey(), 'moveto' => 0, 'courseid' => $movingcourseid));
+            // Create move icon, so it can be used.
+            $movetofirsticon = html_writer::empty_tag('img',
+                    array('src' => $this->output->pix_url('movehere'),
+                        'alt' => get_string('movetofirst', 'block_course_overview', $courses[$movingcourseid]->fullname),
+                        'title' => get_string('movehere')));
+            $moveurl = html_writer::link($moveurl, $movetofirsticon);
+            $html .= html_writer::tag('div', $moveurl, array('class' => 'movehere'));
         }
 
         foreach ($courses as $key => $course) {
+            // If moving course, then don't show course which needs to be moved.
+            if ($ismovingcourse && ($course->id == $movingcourseid)) {
+                continue;
+            }
             $html .= $this->output->box_start('coursebox', "course-{$course->id}");
             $html .= html_writer::start_tag('div', array('class' => 'course_title'));
-            // Ajax enabled then add moveicon html
-            if (!is_null($moveicon)) {
-                $html .= $moveicon;
-            } else if (!is_null($url)) {
-                // Add course id to move link
-                $url->param('source', $course->id);
-                $html .= html_writer::start_tag('div', array('class' => 'moveicons'));
-                // Add an arrow to move course up.
-                if ($courseordernumber > 0) {
-                    $url->param('move', -1);
-                    $html .= html_writer::link($url,
-                    html_writer::empty_tag('img', array('src' => $moveup['icon'],
-                        'class' => 'up', 'alt' => $moveup['str'])),
-                        array('title' => $moveup['str'], 'class' => 'moveup'));
-                } else {
-                    // Add a spacer to keep keep down arrow icons at right position.
-                    $html .= html_writer::empty_tag('img', array('src' => $this->pix_url('spacer'),
-                        'class' => 'movedownspacer'));
-                }
-                // Add an arrow to move course down.
-                if ($courseordernumber <= $maxcourses-2) {
-                    $url->param('move', 1);
-                    $html .= html_writer::link($url, html_writer::empty_tag('img',
-                        array('src' => $movedown['icon'], 'class' => 'down', 'alt' => $movedown['str'])),
-                        array('title' => $movedown['str'], 'class' => 'movedown'));
-                } else {
-                    // Add a spacer to keep keep up arrow icons at right position.
-                    $html .= html_writer::empty_tag('img', array('src' => $this->pix_url('spacer'),
-                        'class' => 'moveupspacer'));
-                }
-                $html .= html_writer::end_tag('div');
+            // If user is editing, then add move icons.
+            if ($userediting && !$ismovingcourse) {
+                $moveicon = html_writer::empty_tag('img',
+                        array('src' => $this->pix_url('t/move')->out(false),
+                            'alt' => get_string('movecourse', 'block_course_overview', $course->fullname),
+                            'title' => get_string('move')));
+                $moveurl = new moodle_url($this->page->url, array('sesskey' => sesskey(), 'movecourse' => 1, 'courseid' => $course->id));
+                $moveurl = html_writer::link($moveurl, $moveicon);
+                $html .= html_writer::tag('div', $moveurl, array('class' => 'move'));
+
             }
 
             $attributes = array('title' => s($course->fullname));
@@ -125,17 +122,30 @@ class block_course_overview_renderer extends plugin_renderer_base {
                 }
             }
 
-            if (isset($overviews[$course->id])) {
+            // If user is moving courses, then down't show overview.
+            if (isset($overviews[$course->id]) && !$ismovingcourse) {
                 $html .= $this->activity_display($course->id, $overviews[$course->id]);
             }
 
             $html .= $this->output->box('', 'flush');
             $html .= $this->output->box_end();
             $courseordernumber++;
+            if ($ismovingcourse) {
+                $moveurl = new moodle_url('/blocks/course_overview/move.php',
+                            array('sesskey' => sesskey(), 'moveto' => $courseordernumber, 'courseid' => $movingcourseid));
+                $a = new stdClass();
+                $a->movingcoursename = $courses[$movingcourseid]->fullname;
+                $a->currentcoursename = $course->fullname;
+                $movehereicon = html_writer::empty_tag('img',
+                        array('src' => $this->output->pix_url('movehere'),
+                            'alt' => get_string('moveafterhere', 'block_course_overview', $a),
+                            'title' => get_string('movehere')));
+                $moveurl = html_writer::link($moveurl, $movehereicon);
+                $html .= html_writer::tag('div', $moveurl, array('class' => 'movehere'));
+            }
         }
-        $html .= html_writer::end_tag('div');
-
-        return $html;
+        // Wrap course list in a div and return.
+        return html_writer::tag('div', $html, array('class' => 'course_list'));
     }
 
     /**

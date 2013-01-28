@@ -85,9 +85,6 @@ class block_course_overview extends block_base {
             // For each course, build category cache.
             $this->content->text .= $renderer->course_overview($sortedcourses, $overviews);
             $this->content->text .= $renderer->hidden_courses($totalcourses - count($sortedcourses));
-            if ($this->page->user_is_editing() && ajaxenabled()) {
-                $this->page->requires->js_init_call('M.block_course_overview.add_handles');
-            }
         }
 
         return $this->content;
