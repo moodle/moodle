@@ -458,12 +458,11 @@ if ($quiz_qbanktool) {
 echo '<div class="questionbankwindow ' . $bankclass . 'block">';
 echo '<div class="header"><div class="title"><h2>';
 echo get_string('questionbankcontents', 'quiz') .
-        ' <a href="' . $thispageurl->out(true, array('qbanktool' => '1')) .
-       '" id="showbankcmd">[' . get_string('show').
-       ']</a>
-       <a href="' . $thispageurl->out(true, array('qbanktool' => '0')) .
-       '" id="hidebankcmd">[' . get_string('hide').
-       ']</a>';
+       '&nbsp;[<a href="' . $thispageurl->out(true, array('qbanktool' => '1')) .
+       '" id="showbankcmd">' . get_string('show').
+       '</a><a href="' . $thispageurl->out(true, array('qbanktool' => '0')) .
+       '" id="hidebankcmd">' . get_string('hide').
+       '</a>]';
 echo '</h2></div></div><div class="content">';
 
 echo '<span id="questionbank"></span>';
