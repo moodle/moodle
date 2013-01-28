@@ -428,6 +428,27 @@ class core_renderer extends renderer_base {
         if (!empty($CFG->additionalhtmltopofbody)) {
             $output .= "\n".$CFG->additionalhtmltopofbody;
         }
+        $output .= $this->maintenance_warning();
+        return $output;
+    }
+
+    /**
+     * Scheduled maintenance warning message.
+     *
+     * Note: This is a nasty hack to display maintenance notice, this should be moved
+     *       to some general notification area once we have it.
+     *
+     * @return string
+     */
+    public function maintenance_warning() {
+        global $CFG;
+
+        $output = '';
+        if (isset($CFG->maintenance_later) and $CFG->maintenance_later > time()) {
+            $output .= $this->box_start('errorbox maintenancewarning');
+            $output .= get_string('maintenancemodeisscheduled', 'admin', (int)(($CFG->maintenance_later-time())/60));
+            $output .= $this->box_end();
+        }
         return $output;
     }
 

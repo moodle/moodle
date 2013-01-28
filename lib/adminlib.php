@@ -679,6 +679,34 @@ function is_dataroot_insecure($fetchtest=false) {
     return INSECURE_DATAROOT_WARNING;
 }
 
+/**
+ * Enables CLI maintenance mode by creating new dataroot/climaintenance.html file.
+ */
+function enable_cli_maintenance_mode() {
+    global $CFG;
+
+    if (file_exists("$CFG->dataroot/climaintenance.html")) {
+        unlink("$CFG->dataroot/climaintenance.html");
+    }
+
+    if (isset($CFG->maintenance_message) and !html_is_blank($CFG->maintenance_message)) {
+        $data = $CFG->maintenance_message;
+        $data = bootstrap_renderer::early_error_content($data, null, null, null);
+        $data = bootstrap_renderer::plain_page(get_string('sitemaintenance', 'admin'), $data);
+
+    } else if (file_exists("$CFG->dataroot/climaintenance.template.html")) {
+        $data = file_get_contents("$CFG->dataroot/climaintenance.template.html");
+
+    } else {
+        $data = get_string('sitemaintenance', 'admin');
+        $data = bootstrap_renderer::early_error_content($data, null, null, null);
+        $data = bootstrap_renderer::plain_page(get_string('sitemaintenance', 'admin'), $data);
+    }
+
+    file_put_contents("$CFG->dataroot/climaintenance.html", $data);
+    chmod("$CFG->dataroot/climaintenance.html", $CFG->filepermissions);
+}
+
 /// CLASS DEFINITIONS /////////////////////////////////////////////////////////
 
 
