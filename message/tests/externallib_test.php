@@ -40,6 +40,8 @@ class core_message_external_testcase extends externallib_advanced_testcase {
         global $DB, $USER, $CFG;
 
         $this->resetAfterTest(true);
+        // Transactions used in tests, tell phpunit use alternative reset method.
+        $this->preventResetByRollback();
 
         // Turn off all message processors (so nothing is really sent)
         require_once($CFG->dirroot . '/message/lib.php');
