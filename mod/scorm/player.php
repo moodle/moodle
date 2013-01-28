@@ -196,7 +196,6 @@ $PAGE->requires->data_for_js('scormplayerdata', Array('launch' => false,
                                                        'popupoptions' => $scorm->options), true);
 $PAGE->requires->js('/mod/scorm/request.js', true);
 $PAGE->requires->js('/lib/cookies.js', true);
-$PAGE->requires->css('/mod/scorm/styles.css');
 echo $OUTPUT->header();
 
 // NEW IMS TOC
