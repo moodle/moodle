@@ -6477,10 +6477,6 @@ class core_string_manager implements string_manager {
     protected $cache;
     /** @var int get_string() counter */
     protected $countgetstring = 0;
-    /** @var int in-memory cache hits counter */
-    protected $countmemcache = 0;
-    /** @var int on-disk cache hits counter */
-    protected $countdiskcache = 0;
     /** @var bool use disk cache */
     protected $usecache;
     /** @var array limit list of translations */
@@ -6566,7 +6562,6 @@ class core_string_manager implements string_manager {
         if (!$disablecache and !$disablelocal) {
             $string = $this->cache->get($cachekey);
             if ($string) {
-                $this->countdiskcache++;
                 return $string;
             }
         }
@@ -6792,12 +6787,8 @@ class core_string_manager implements string_manager {
     public function get_performance_summary() {
         return array(array(
             'langcountgetstring' => $this->countgetstring,
-            'langcountmemcache' => $this->countmemcache,
-            'langcountdiskcache' => $this->countdiskcache,
         ), array(
             'langcountgetstring' => 'get_string calls',
-            'langcountmemcache' => 'strings mem cache hits',
-            'langcountdiskcache' => 'strings disk cache hits',
         ));
     }
 
