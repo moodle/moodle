@@ -135,6 +135,12 @@ $attemptstr = '&amp;attempt=' . $attempt;
 
 $result = scorm_get_toc($USER, $scorm, $cm->id, TOCJSLINK, $currentorg, $scoid, $mode, $attempt, true, true);
 $sco = $result->sco;
+if ($scorm->lastattemptlock == 1 && $result->attemptleft == 0) {
+    echo $OUTPUT->header();
+    echo $OUTPUT->notification(get_string('exceededmaxattempts', 'scorm'));
+    echo $OUTPUT->footer();
+    exit;
+}
 
 if (($mode == 'browse') && ($scorm->hidebrowse == 1)) {
     $mode = 'normal';
