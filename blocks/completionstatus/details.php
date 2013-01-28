@@ -91,7 +91,7 @@ echo $OUTPUT->header();
 
 
 // Display completion status
-echo '<table class="generalbox boxaligncenter"><tbody>';
+echo '<table class="generaltable boxaligncenter"><tbody>';
 
 // If not display logged in user, show user name
 if ($USER->id != $user->id) {
@@ -148,7 +148,7 @@ if (empty($completions)) {
     echo '</td></tr></tbody></table>';
 
     // Generate markup for criteria statuses
-    echo '<table class="generalbox logtable boxaligncenter" id="criteriastatus" width="100%"><tbody>';
+    echo '<table class="generaltable logtable boxaligncenter" id="criteriastatus" width="100%"><tbody>';
     echo '<tr class="ccheader">';
     echo '<th class="c0 header" scope="col">'.get_string('criteriagroup', 'block_completionstatus').'</th>';
     echo '<th class="c1 header" scope="col">'.get_string('criteria', 'completion').'</th>';
