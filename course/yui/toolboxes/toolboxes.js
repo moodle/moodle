@@ -558,8 +558,9 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             // Cancel the edit if we lose focus or the escape key is pressed
             thisevent = editor.on('blur', cancel_edittitle);
             listenevents.push(thisevent);
-            thisevent = Y.one('document').on('keyup', function(e) {
-                if (e.keyCode == 27) {
+            thisevent = Y.one('document').on('keydown', function(e) {
+                if (e.keyCode === 27) {
+                    e.preventDefault();
                     cancel_edittitle(e);
                 }
             });
