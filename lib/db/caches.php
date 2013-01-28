@@ -102,7 +102,7 @@ $definitions = array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true, // The course id the groupings exist for.
         'simpledata' => true, // Array of stdClass objects containing only strings.
-        'persist' => true, // Likely there will be a couple of calls to this.
+        'persistent' => true, // Likely there will be a couple of calls to this.
         'persistmaxsize' => 2, // The original cache used 1, we've increased that to two.
     ),
      // Used to cache calendar subscriptions.
