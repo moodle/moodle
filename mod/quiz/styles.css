@@ -319,9 +319,14 @@ but in terms of usability, as testing showed,
 http://docs.moodle.org/dev/Quiz_UI_redesign/usability_testing_of_August_2008/Issues#Question_bank_.2F_question_adding_controls_visibility
 it must be ensured that the question
 bank window's title is prominent enough*/
-#page-mod-quiz-edit .questionbankwindow div.header {background-color:#009;color:#fff;background-image:none;padding-top:0.2em;font-weight:bold;}
-#page-mod-quiz-edit .questionbankwindow div.header a{text-decoration:underline;color:#FFF;}
+#page-mod-quiz-edit .questionbankwindow.block div.header {background-color:#009;background-image:none;padding-top:0.2em;font-weight:bold;border:0 none;}
+#page-mod-quiz-edit .questionbankwindow.block div.header div.title h2 {color:#FFF;text-align: center;}
 #page-mod-quiz-edit .collapsed .container{display: none;}
+
+#page-mod-quiz-edit .questionbankwindow a#showbankcmd,
+#page-mod-quiz-edit .questionbankwindow a#hidebankcmd {color: #FFF;text-decoration:underline;}
+#page-mod-quiz-edit .questionbankwindow a#showbankcmd:hover,
+#page-mod-quiz-edit .questionbankwindow a#hidebankcmd:hover {color:#009;background-color:#fff;text-decoration:none;}
 #page-mod-quiz-edit .questionbankwindow #showbankcmd{display:none;}
 #page-mod-quiz-edit .collapsed #showbankcmd{display:inline;}
 #page-mod-quiz-edit .questionbankwindow #hidebankcmd{display:inline;}
