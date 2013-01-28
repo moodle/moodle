@@ -2951,7 +2951,7 @@ function forum_subscribed_users($course, $forum, $groupid=0, $context = null, $f
  */
 function forum_get_course_forum($courseid, $type) {
 // How to set up special 1-per-course forums
-    global $CFG, $DB, $OUTPUT;
+    global $CFG, $DB, $OUTPUT, $USER;
 
     if ($forums = $DB->get_records_select("forum", "course = ? AND type = ?", array($courseid, $type), "id ASC")) {
         // There should always only be ONE, but with the right combination of
@@ -2965,6 +2965,9 @@ function forum_get_course_forum($courseid, $type) {
     $forum = new stdClass();
     $forum->course = $courseid;
     $forum->type = "$type";
+    if (!empty($USER->htmleditor)) {
+        $forum->introformat = $USER->htmleditor;
+    }
     switch ($forum->type) {
         case "news":
             $forum->name  = get_string("namenews", "forum");
