@@ -720,6 +720,14 @@ $functions = array(
         'capabilities'=> 'moodle/calendar:manageentries', 'moodle/calendar:manageownentries', 'moodle/calendar:managegroupentries'
     ),
 
+    'core_calendar_create_calendar_events' => array(
+        'classname'   => 'core_calendar_external',
+        'methodname'  => 'create_calendar_events',
+        'description' => 'Create calendar events',
+        'classpath'   => 'calendar/externallib.php',
+        'type'        => 'write',
+        'capabilities'=> 'moodle/calendar:manageentries', 'moodle/calendar:manageownentries', 'moodle/calendar:managegroupentries'
+    ),
 );
 
 $services = array(
