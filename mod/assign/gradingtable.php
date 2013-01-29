@@ -105,7 +105,10 @@ class assign_grading_table extends table_sql implements renderable {
             $where .= ' AND s.timecreated > 0 ';
         }
         if ($filter == ASSIGN_FILTER_REQUIRE_GRADING) {
-            $where .= ' AND (s.timemodified > g.timemodified OR (s.timemodified IS NOT NULL AND g.timemodified IS NULL))';
+            $where .= ' AND (s.timemodified IS NOT NULL AND
+                             s.status = :submitted AND
+                             (s.timemodified > g.timemodified OR g.timemodified IS NULL))';
+            $params['submitted'] = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
         }
         if (strpos($filter, ASSIGN_FILTER_SINGLE_USER) === 0) {
             $userfilter = (int) array_pop(explode('=', $filter));
