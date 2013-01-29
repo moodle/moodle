@@ -145,6 +145,12 @@ class tool_behat_testcase extends advanced_testcase {
     public function test_config_file_contents() {
         global $CFG;
 
+        // Skip tests if behat is not installed.
+        $vendorpath = $CFG->dirroot . '/vendor';
+        if (!file_exists($vendorpath . '/autoload.php') || !is_dir($vendorpath . '/behat')) {
+            $this->markTestSkipped('Behat not installed.');
+        }
+
         // To avoid user value at config.php level.
         unset($CFG->behat_config);
 
