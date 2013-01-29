@@ -1,0 +1,14 @@
+default:
+  paths:
+    features: lib/behat/features
+    bootstrap: lib/behat/features/bootstrap
+  context:
+    class: behat_init_context
+  extensions:
+    Behat\MinkExtension\Extension:
+      base_url: 'http://localhost:8000'
+      goutte: null
+      selenium2: null
+    Moodle\BehatExtension\Extension:
+      features: {  }
+      steps_definitions: {  }

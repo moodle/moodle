@@ -181,7 +181,7 @@ class tests_finder {
                 $regexp = '|'.$sep.'tests'.$sep.'behat'.$sep.'.*\.feature$|';
                 break;
             case 'stepsdefinitions':
-                $regexp = '|'.$sep.'tests'.$sep.'behat'.$sep.'.*\.php$|';
+                $regexp = '|'.$sep.'tests'.$sep.'behat'.$sep.'behat_.*\.php$|';
                 break;
         }
 

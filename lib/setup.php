@@ -90,6 +90,44 @@ if (!isset($CFG->wwwroot) or $CFG->wwwroot === 'http://example.com/moodle') {
     exit(1);
 }
 
+// Ignore $CFG->behat_wwwroot and use the same wwwroot.
+if (isset($CFG->behat_switchcompletely)) {
+    $CFG->behat_wwwroot = $CFG->wwwroot;
+
+} else if (!isset($CFG->behat_wwwroot)) {
+    // Default URL for acceptance testing, only accessible from localhost.
+    $CFG->behat_wwwroot = 'http://localhost:8000';
+}
+
+
+// Test environment is requested if:
+// * Behat is running (constant set hooking the behat init process before requiring config.php).
+// * If we are accessing though the built-in web server (cli-server).
+// * If $CFG->behat_switchcompletely has been set (maintains CLI scripts behaviour, which ATM is only preventive).
+// Test environment is enabled if:
+// * User has previously enabled through admin/tool/behat/cli/util.php --enable.
+// Both are required to switch to test mode
+if (isset($CFG->behat_dataroot) && isset($CFG->behat_prefix) && file_exists($CFG->behat_dataroot)) {
+
+    $CFG->behat_dataroot = realpath($CFG->behat_dataroot);
+
+    $switchcompletely = isset($CFG->behat_switchcompletely) && php_sapi_name() !== 'cli';
+    $builtinserver = php_sapi_name() === 'cli-server';
+    $behatrunning = defined('BEHAT_RUNNING');
+    $testenvironmentrequested = $switchcompletely || $builtinserver || $behatrunning;
+
+    // Only switch to test environment if it has been enabled.
+    $testenvironmentenabled = file_exists($CFG->behat_dataroot . '/behat/test_environment_enabled.txt');
+
+    if ($testenvironmentenabled && $testenvironmentrequested) {
+        $CFG->wwwroot = $CFG->behat_wwwroot;
+        $CFG->passwordsaltmain = 'moodle';
+        $CFG->originaldataroot = $CFG->dataroot;
+        $CFG->prefix = $CFG->behat_prefix;
+        $CFG->dataroot = $CFG->behat_dataroot;
+    }
+}
+
 // Define admin directory
 if (!isset($CFG->admin)) {   // Just in case it isn't defined in config.php
     $CFG->admin = 'admin';   // This is relative to the wwwroot and dirroot
