@@ -122,7 +122,7 @@ class behat_command {
             if (!CLI_SCRIPT) {
                 $docslink = html_writer::tag('a', $docslink, array('href' => $docslink, 'target' => '_blank'));
             }
-            $msg .= '. ' . get_string('moreinfoin', 'tool_behat') . ' ' . $docslink;
+            $msg .= '. ' . get_string('moreinfoin', 'tool_behat', $docslink);
             notice($msg);
         }
 

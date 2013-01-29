@@ -25,7 +25,7 @@
 $string['allavailablesteps'] = 'All the available steps definitions';
 $string['giveninfo'] = 'Given. Processes to set up the environment';
 $string['installinfo'] = 'Read {$a} for installation and tests execution info';
-$string['moreinfoin'] = 'More info in';
+$string['moreinfoin'] = 'More info in {$a}';
 $string['newstepsinfo'] = 'Read {$a} for info about how to add new steps definitions';
 $string['newtestsinfo'] = 'Read {$a} for info about how to write new tests';
 $string['nostepsdefinitions'] = 'There aren\'t steps definitions matching this filters';

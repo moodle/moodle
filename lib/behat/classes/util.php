@@ -120,7 +120,11 @@ class behat_util extends testing_util {
 
         $request = new curl();
         $request->get($CFG->behat_wwwroot);
-        return (true && !$request->get_errno());
+
+        if ($request->get_errno() === 0) {
+            return true;
+        }
+        return false;
     }
 
     /**
