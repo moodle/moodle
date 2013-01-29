@@ -225,8 +225,37 @@ abstract class cache_store implements cache_store_interface {
 
     /**
      * Performs any necessary clean up when the store instance is being deleted.
+     *
+     * @deprecated since 2.5
      */
-    abstract public function cleanup();
+    public function cleanup() {
+        debugging('This function has been renamed to instance_deleted. Please update your calls.', DEBUG_DEVELOPER);
+    }
+
+    /**
+     * Performs any necessary operation when the store instance has been created.
+     *
+     * @since 2.5
+     */
+    public function instance_created() {
+        // By default, do nothing.
+    }
+
+    /**
+     * Performs any necessary operation when the store instance is being deleted.
+     *
+     * This method may be called before the store has been initialised.
+     *
+     * @since 2.5
+     * @see cleanup()
+     */
+    public function instance_deleted() {
+        if (method_exists($this, 'cleanup')) {
+            // There used to be a legacy function called cleanup, it was renamed to instance delete.
+            // To be removed in 2.6.
+            $this->cleanup();
+        }
+    }
 
     /**
      * Returns true if the user can add an instance of the store plugin.

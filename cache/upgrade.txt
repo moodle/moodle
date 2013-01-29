@@ -1,0 +1,8 @@
+This files describes API changes in /cache/stores/* - cache store plugins.
+Information provided here is intended especially for developers.
+
+=== 2.5 ===
+* cleanup method renamed to instance_deleted.
+  It is now called when the store is deleted as all comments suggested anyway.
+* instance_created method added.
+  It is called when the store is created for the very first time.
