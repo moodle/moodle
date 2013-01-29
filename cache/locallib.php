@@ -698,6 +698,10 @@ abstract class cache_administration_helper extends cache_helper {
                 array(
                     'text' => get_string('editmappings', 'cache'),
                     'url' => new moodle_url('/cache/admin.php', array('action' => 'editdefinitionmapping', 'sesskey' => sesskey()))
+                ),
+                array(
+                    'text' => get_string('purge', 'cache'),
+                    'url' => new moodle_url('/cache/admin.php', array('action' => 'purgedefinition', 'sesskey' => sesskey()))
                 )
             );
         }
@@ -727,7 +731,7 @@ abstract class cache_administration_helper extends cache_helper {
             }
             $actions[] = array(
                 'text' => get_string('purge', 'cache'),
-                'url' => new moodle_url($baseurl, array('action' => 'purge'))
+                'url' => new moodle_url($baseurl, array('action' => 'purgestore'))
             );
         }
         return $actions;

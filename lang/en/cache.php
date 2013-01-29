@@ -92,6 +92,7 @@ $string['none'] = 'None';
 $string['plugin'] = 'Plugin';
 $string['pluginsummaries'] = 'Installed cache stores';
 $string['purge'] = 'Purge';
+$string['purgedefinitionsuccess'] = 'Successfully purged the requested definition.';
 $string['purgestoresuccess'] = 'Successfully purged the requested store.';
 $string['requestcount'] = 'Test with {$a} requests';
 $string['rescandefinitions'] = 'Rescan definitions';

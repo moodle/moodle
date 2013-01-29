@@ -129,7 +129,7 @@ if (!empty($action) && confirm_sesskey()) {
             }
             break;
         case 'editdefinitionmapping' : // Edit definition mappings.
-            $definition = required_param('definition', PARAM_TEXT);
+            $definition = required_param('definition', PARAM_ALPHANUMEXT);
             $title = get_string('editdefinitionmappings', 'cache', $definition);
             $mform = new cache_definition_mappings_form($PAGE->url, array('definition' => $definition));
             if ($mform->is_cancelled()) {
@@ -167,6 +167,14 @@ if (!empty($action) && confirm_sesskey()) {
             }
             break;
 
+        case 'purgedefinition': // Purge a specific definition.
+            $definition = required_param('definition', PARAM_ALPHANUMEXT);
+            list($component, $area) = explode('/', $definition, 2);
+            cache_helper::purge_by_definition($component, $area);
+            redirect($PAGE->url, get_string('purgedefinitionsuccess', 'cache'), 5);
+            break;
+
+        case 'purgestore':
         case 'purge': // Purge a store cache.
             $store = required_param('store', PARAM_TEXT);
             cache_helper::purge_store($store);
