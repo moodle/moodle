@@ -232,20 +232,9 @@ abstract class backup_questions_activity_structure_step extends backup_activity_
         // Set the sources
         $quba->set_source_table('question_usages',
                 array('id'                => '../' . $usageidname));
-        $qa->set_source_sql('
-                SELECT *
-                FROM {question_attempts}
-                WHERE questionusageid = :questionusageid
-                ORDER BY slot',
-                array('questionusageid'   => backup::VAR_PARENTID));
-        $step->set_source_sql('
-                SELECT *
-                FROM {question_attempt_steps}
-                WHERE questionattemptid = :questionattemptid
-                ORDER BY sequencenumber',
-                array('questionattemptid' => backup::VAR_PARENTID));
-        $variable->set_source_table('question_attempt_step_data',
-                array('attemptstepid'     => backup::VAR_PARENTID));
+        $qa->set_source_table('question_attempts', array('questionusageid' => backup::VAR_PARENTID), 'slot ASC');
+        $step->set_source_table('question_attempt_steps', array('questionattemptid' => backup::VAR_PARENTID), 'sequencenumber ASC');
+        $variable->set_source_table('question_attempt_step_data', array('attemptstepid' => backup::VAR_PARENTID));
 
         // Annotate ids
         $qa->annotate_ids('question', 'questionid');
@@ -569,7 +558,7 @@ class backup_enrolments_structure_step extends backup_structure_step {
         $userenrolments->add_child($enrolment);
 
         // Define sources - the instances are restored using the same sortorder, we do not need to store it in xml and deal with it afterwards.
-        $enrol->set_source_sql("SELECT * FROM {enrol} WHERE courseid = :courseid ORDER BY sortorder", array('courseid' => backup::VAR_COURSEID));
+        $enrol->set_source_table('enrol', array('courseid' => backup::VAR_COURSEID), 'sortorder ASC');
 
         // User enrolments only added only if users included
         if ($users) {
