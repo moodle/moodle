@@ -322,6 +322,9 @@ class core_course_external_testcase extends externallib_advanced_testcase {
 
         $this->resetAfterTest(true);
 
+        // Enable course completion.
+        set_config('enablecompletion', 1);
+
         // Set the required capabilities by the external function
         $contextid = context_system::instance()->id;
         $roleid = $this->assignUserCapability('moodle/course:create', $contextid);
@@ -396,13 +399,8 @@ class core_course_external_testcase extends externallib_advanced_testcase {
                     $this->assertEquals($dbcourse->theme, $course2['forcetheme']);
                 }
 
-                if (completion_info::is_enabled_for_site()) {
-                    $this->assertEquals($dbcourse->enablecompletion, $course2['enabledcompletion']);
-                    $this->assertEquals($dbcourse->completionstartonenrol, $course2['completionstartonenrol']);
-                } else {
-                    $this->assertEquals($dbcourse->enablecompletion, 0);
-                    $this->assertEquals($dbcourse->completionstartonenrol, 0);
-                }
+                $this->assertEquals($dbcourse->enablecompletion, $course2['enablecompletion']);
+                $this->assertEquals($dbcourse->completionstartonenrol, $course2['completionstartonenrol']);
 
             } else if ($createdcourse['shortname'] == $course1['shortname']) {
                 $courseconfig = get_config('moodlecourse');
