@@ -43,7 +43,7 @@ class enrol_database_plugin extends enrol_plugin {
         if (!enrol_is_enabled('database')) {
             return true;
         }
-        if (!$this->get_config('dbtype') or !$this->get_config('dbhost') or !$this->get_config('remoteenroltable') or !$this->get_config('remotecoursefield') or !$this->get_config('remoteuserfield')) {
+        if (!$this->get_config('dbtype') or !$this->get_config('remoteenroltable') or !$this->get_config('remotecoursefield') or !$this->get_config('remoteuserfield')) {
             return true;
         }
 
@@ -99,7 +99,7 @@ class enrol_database_plugin extends enrol_plugin {
         global $CFG, $DB;
 
         // we do not create courses here intentionally because it requires full sync and is slow
-        if (!$this->get_config('dbtype') or !$this->get_config('dbhost') or !$this->get_config('remoteenroltable') or !$this->get_config('remotecoursefield') or !$this->get_config('remoteuserfield')) {
+        if (!$this->get_config('dbtype') or !$this->get_config('remoteenroltable') or !$this->get_config('remotecoursefield') or !$this->get_config('remoteuserfield')) {
             return;
         }
 
@@ -288,7 +288,7 @@ class enrol_database_plugin extends enrol_plugin {
         global $CFG, $DB;
 
         // we do not create courses here intentionally because it requires full sync and is slow
-        if (!$this->get_config('dbtype') or !$this->get_config('dbhost') or !$this->get_config('remoteenroltable') or !$this->get_config('remotecoursefield') or !$this->get_config('remoteuserfield')) {
+        if (!$this->get_config('dbtype') or !$this->get_config('remoteenroltable') or !$this->get_config('remotecoursefield') or !$this->get_config('remoteuserfield')) {
             if ($verbose) {
                 mtrace('User enrolment synchronisation skipped.');
             }
@@ -593,7 +593,7 @@ class enrol_database_plugin extends enrol_plugin {
         global $CFG, $DB;
 
         // make sure we sync either enrolments or courses
-        if (!$this->get_config('dbtype') or !$this->get_config('dbhost') or !$this->get_config('newcoursetable') or !$this->get_config('newcoursefullname') or !$this->get_config('newcourseshortname')) {
+        if (!$this->get_config('dbtype') or !$this->get_config('newcoursetable') or !$this->get_config('newcoursefullname') or !$this->get_config('newcourseshortname')) {
             if ($verbose) {
                 mtrace('Course synchronisation skipped.');
             }
