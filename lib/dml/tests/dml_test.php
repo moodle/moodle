@@ -4444,6 +4444,35 @@ class dml_testcase extends database_driver_testcase {
         }
         $rs1->close();
         $this->assertEquals(3, $i);
+
+        // Test nested recordsets isolation without transaction.
+        $DB->delete_records($tablename);
+        $DB->insert_record($tablename, array('course'=>1));
+        $DB->insert_record($tablename, array('course'=>2));
+        $DB->insert_record($tablename, array('course'=>3));
+
+        $DB->delete_records($tablename2);
+        $DB->insert_record($tablename2, array('course'=>5));
+        $DB->insert_record($tablename2, array('course'=>6));
+        $DB->insert_record($tablename2, array('course'=>7));
+        $DB->insert_record($tablename2, array('course'=>8));
+
+        $rs1 = $DB->get_recordset($tablename);
+        $i = 0;
+        foreach ($rs1 as $record1) {
+            $i++;
+            $rs2 = $DB->get_recordset($tablename2);
+            $j = 0;
+            foreach ($rs2 as $record2) {
+                $DB->set_field($tablename, 'course', $record1->course+1, array('id'=>$record1->id));
+                $DB->set_field($tablename2, 'course', $record2->course+1, array('id'=>$record2->id));
+                $j++;
+            }
+            $rs2->close();
+            $this->assertEquals(4, $j);
+        }
+        $rs1->close();
+        $this->assertEquals(3, $i);
     }
 
     function test_transactions_forbidden() {
