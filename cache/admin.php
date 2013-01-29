@@ -129,7 +129,7 @@ if (!empty($action) && confirm_sesskey()) {
             }
             break;
         case 'editdefinitionmapping' : // Edit definition mappings.
-            $definition = required_param('definition', PARAM_TEXT);
+            $definition = required_param('definition', PARAM_SAFEPATH);
             $title = get_string('editdefinitionmappings', 'cache', $definition);
             $mform = new cache_definition_mappings_form($PAGE->url, array('definition' => $definition));
             if ($mform->is_cancelled()) {
