@@ -366,6 +366,7 @@ abstract class question_edit_form extends question_wizard_form {
                 $mform->addElement('advcheckbox', 'shownumcorrect',
                         get_string('options', 'question'),
                         get_string('shownumpartscorrectwhenfinished', 'question'));
+                $mform->setDefault('shownumcorrect', true);
             }
         }
     }
