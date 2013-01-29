@@ -41,10 +41,17 @@ class sqlsrv_native_moodle_recordset extends moodle_recordset {
     }
 
     private function fetch_next() {
-        if ($row = sqlsrv_fetch_array($this->rsrc, SQLSRV_FETCH_ASSOC)) {
-            unset($row['sqlsrvrownumber']);
-            $row = array_change_key_case($row, CASE_LOWER);
+        if (!$this->rsrc) {
+            return false;
         }
+        if (!$row = sqlsrv_fetch_array($this->rsrc, SQLSRV_FETCH_ASSOC)) {
+            sqlsrv_free_stmt($this->rsrc);
+            $this->rsrc = null;
+            return false;
+        }
+
+        unset($row['sqlsrvrownumber']);
+        $row = array_change_key_case($row, CASE_LOWER);
         return $row;
     }
 

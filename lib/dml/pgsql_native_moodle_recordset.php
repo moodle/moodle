@@ -62,7 +62,14 @@ class pgsql_native_moodle_recordset extends moodle_recordset {
     }
 
     private function fetch_next() {
-        $row = pg_fetch_assoc($this->result);
+        if (!$this->result) {
+            return false;
+        }
+        if (!$row = pg_fetch_assoc($this->result)) {
+            pg_free_result($this->result);
+            $this->result = null;
+            return false;
+        }
 
         if ($this->blobs) {
             foreach ($this->blobs as $blob) {

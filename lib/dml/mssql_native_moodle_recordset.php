@@ -41,9 +41,16 @@ class mssql_native_moodle_recordset extends moodle_recordset {
     }
 
     private function fetch_next() {
-        if ($row = mssql_fetch_assoc($this->rsrc)) {
-            $row = array_change_key_case($row, CASE_LOWER);
+        if (!$this->rsrc) {
+            return false;
         }
+        if (!$row = mssql_fetch_assoc($this->rsrc)) {
+            mssql_free_result($this->rsrc);
+            $this->rsrc = null;
+            return false;
+        }
+
+        $row = array_change_key_case($row, CASE_LOWER);
         return $row;
     }
 

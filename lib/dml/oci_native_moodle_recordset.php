@@ -41,11 +41,18 @@ class oci_native_moodle_recordset extends moodle_recordset {
     }
 
     private function fetch_next() {
-        if ($row = oci_fetch_array($this->stmt, OCI_ASSOC + OCI_RETURN_NULLS + OCI_RETURN_LOBS)) {
-            $row = array_change_key_case($row, CASE_LOWER);
-            unset($row['oracle_rownum']);
-            array_walk($row, array('oci_native_moodle_database', 'onespace2empty'));
+        if (!$this->stmt) {
+            return false;
         }
+        if (!$row = oci_fetch_array($this->stmt, OCI_ASSOC + OCI_RETURN_NULLS + OCI_RETURN_LOBS)) {
+            oci_free_statement($this->stmt);
+            $this->stmt = null;
+            return false;
+        }
+
+        $row = array_change_key_case($row, CASE_LOWER);
+        unset($row['oracle_rownum']);
+        array_walk($row, array('oci_native_moodle_database', 'onespace2empty'));
         return $row;
     }
 
