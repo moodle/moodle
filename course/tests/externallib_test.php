@@ -322,6 +322,9 @@ class core_course_external_testcase extends externallib_advanced_testcase {
 
         $this->resetAfterTest(true);
 
+        // Enable course completion.
+        set_config('enablecompletion', 1);
+
         // Set the required capabilities by the external function
         $contextid = context_system::instance()->id;
         $roleid = $this->assignUserCapability('moodle/course:create', $contextid);
@@ -367,7 +370,7 @@ class core_course_external_testcase extends externallib_advanced_testcase {
         foreach ($course3options as $key => $value) {
             $course3['courseformatoptions'][] = array('name' => $key, 'value' => $value);
         }
-        $courses = array($course1, $course2);
+        $courses = array($course1, $course2, $course3);
 
         $createdcourses = core_course_external::create_courses($courses);
 
@@ -375,7 +378,7 @@ class core_course_external_testcase extends externallib_advanced_testcase {
         $createdcourses = external_api::clean_returnvalue(core_course_external::create_courses_returns(), $createdcourses);
 
         // Check that right number of courses were created.
-        $this->assertEquals(2, count($createdcourses));
+        $this->assertEquals(3, count($createdcourses));
 
         // Check that the courses were correctly created.
         foreach ($createdcourses as $createdcourse) {
@@ -407,13 +410,9 @@ class core_course_external_testcase extends externallib_advanced_testcase {
                     $this->assertEquals($courseinfo->theme, $course2['forcetheme']);
                 }
 
-                if (completion_info::is_enabled_for_site()) {
-                    $this->assertEquals($courseinfo->enablecompletion, $course2['enabledcompletion']);
-                    $this->assertEquals($courseinfo->completionstartonenrol, $course2['completionstartonenrol']);
-                } else {
-                    $this->assertEquals($courseinfo->enablecompletion, 0);
-                    $this->assertEquals($courseinfo->completionstartonenrol, 0);
-                }
+                // We enabled completion at the beginning of the test.
+                $this->assertEquals($courseinfo->enablecompletion, $course2['enablecompletion']);
+                $this->assertEquals($courseinfo->completionstartonenrol, $course2['completionstartonenrol']);
 
             } else if ($createdcourse['shortname'] == $course1['shortname']) {
                 $courseconfig = get_config('moodlecourse');
