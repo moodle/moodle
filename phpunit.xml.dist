@@ -88,9 +88,6 @@
         <testsuite name="core_message">
             <directory suffix="_test.php">message/tests</directory>
         </testsuite>
-        <testsuite name="quiz_report">
-            <directory suffix="_test.php">mod/quiz/report/tests</directory>
-        </testsuite>
         <testsuite name="core_notes">
             <directory suffix="_test.php">notes/tests</directory>
         </testsuite>
