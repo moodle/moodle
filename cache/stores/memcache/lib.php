@@ -319,8 +319,18 @@ class cachestore_memcache extends cache_store implements cache_is_configurable {
     /**
      * Performs any necessary clean up when the store instance is being deleted.
      */
-    public function cleanup() {
-        $this->purge();
+    public function instance_deleted() {
+        if ($this->connection) {
+            $connection = $this->connection;
+        } else {
+            $connection = new Memcache;
+            foreach ($this->servers as $server) {
+                $connection->addServer($server[0], $server[1], true, $server[2]);
+            }
+        }
+        $connection->flush();
+        unset($connection);
+        unset($this->connection);
     }
 
     /**

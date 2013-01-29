@@ -46,10 +46,16 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
     protected $name;
 
     /**
-     * The path to use for the file storage.
+     * The path used to store files for this store and the definition it was initialised with.
      * @var string
      */
-    protected $path = null;
+    protected $path = false;
+
+    /**
+     * The path in which definition specific sub directories will be created for caching.
+     * @var string
+     */
+    protected $filestorepath = false;
 
     /**
      * Set to true when a prescan has been performed.
@@ -129,7 +135,10 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
             $path = make_cache_directory('cachestore_file/'.preg_replace('#[^a-zA-Z0-9\.\-_]+#', '', $name));
         }
         $this->isready = $path !== false;
+        $this->filestorepath = $path;
+        // This will be updated once the store has been initialised for a definition.
         $this->path = $path;
+
         // Check if we should prescan the directory.
         if (array_key_exists('prescan', $configuration)) {
             $this->prescan = (bool)$configuration['prescan'];
@@ -143,6 +152,16 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
         } else {
             // Default: No, we will use multiple directories.
             $this->singledirectory = false;
+        }
+    }
+
+    /**
+     * Performs any necessary operation when the file store instance has been created.
+     */
+    public function instance_created() {
+        if ($this->isready && !$this->prescan) {
+            // It is supposed the store instance to expect an empty folder.
+            $this->purge_all_definitions();
         }
     }
 
@@ -214,7 +233,7 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
     public function initialise(cache_definition $definition) {
         $this->definition = $definition;
         $hash = preg_replace('#[^a-zA-Z0-9]+#', '_', $this->definition->get_id());
-        $this->path .= '/'.$hash;
+        $this->path = $this->filestorepath.'/'.$hash;
         make_writable_directory($this->path);
         if ($this->prescan && $definition->get_mode() !== self::MODE_REQUEST) {
             $this->prescan = false;
@@ -485,19 +504,37 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
     }
 
     /**
-     * Purges the cache deleting all items within it.
+     * Purges the cache definition deleting all the items within it.
      *
      * @return boolean True on success. False otherwise.
      */
     public function purge() {
-        $files = glob($this->glob_keys_pattern(), GLOB_MARK | GLOB_NOSORT);
-        if (is_array($files)) {
-            foreach ($files as $filename) {
-                @unlink($filename);
+        if ($this->isready) {
+            $files = glob($this->glob_keys_pattern(), GLOB_MARK | GLOB_NOSORT);
+            if (is_array($files)) {
+                foreach ($files as $filename) {
+                    @unlink($filename);
+                }
             }
+            $this->keys = array();
         }
-        $this->keys = array();
         return true;
+    }
+
+    /**
+     * Purges all the cache definitions deleting all items within them.
+     *
+     * @return boolean True on success. False otherwise.
+     */
+    protected function purge_all_definitions() {
+        // Warning: limit the deletion to what file store is actually able
+        // to create using the internal {@link purge()} providing the
+        // {@link $path} with a wildcard to perform a purge action over all the definitions.
+        $currpath = $this->path;
+        $this->path = $this->filestorepath.'/*';
+        $result = $this->purge();
+        $this->path = $currpath;
+        return $result;
     }
 
     /**
@@ -567,14 +604,14 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
     }
 
     /**
-     * Performs any necessary clean up when the store instance is being deleted.
+     * Performs any necessary clean up when the file store instance is being deleted.
      *
      * 1. Purges the cache directory.
-     * 2. Deletes the directory we created for this cache instances data.
+     * 2. Deletes the directory we created for the given definition.
      */
-    public function cleanup() {
-        $this->purge();
-        @rmdir($this->path);
+    public function instance_deleted() {
+        $this->purge_all_definitions();
+        @rmdir($this->filestorepath);
     }
 
     /**
