@@ -132,6 +132,11 @@ class behat_command {
         if ($code != 0) {
             notice(get_string('wrongbehatsetup', 'tool_behat'));
         }
+
+        // Checking behat dataroot existence otherwise notice about admin/tool/behat/cli/util.php.
+        if (empty($CFG->behat_dataroot) || !is_dir($CFG->behat_dataroot) || !is_writable($CFG->behat_dataroot)) {
+            notice(get_string('runclitool', 'tool_behat', 'php admin/tool/behat/cli/util.php'));
+        }
     }
 
     /**

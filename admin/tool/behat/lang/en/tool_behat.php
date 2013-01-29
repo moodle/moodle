@@ -30,6 +30,7 @@ $string['newstepsinfo'] = 'Read {$a} for info about how to add new steps definit
 $string['newtestsinfo'] = 'Read {$a} for info about how to write new tests';
 $string['nostepsdefinitions'] = 'There aren\'t steps definitions matching this filters';
 $string['pluginname'] = 'Acceptance testing';
+$string['runclitool'] = 'To list the steps definitions you need to run the Behat CLI tool to create the $CFG->behat_dataroot directory. Go to your moodle dirroot and run "{$a}"';
 $string['stepsdefinitionscomponent'] = 'Area';
 $string['stepsdefinitionscontains'] = 'Contains';
 $string['stepsdefinitionsfilters'] = 'Steps definitions';
