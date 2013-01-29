@@ -121,8 +121,8 @@ class delete_category_form extends moodleform {
             $mform->addElement('static', 'emptymessage', '', get_string('deletecategoryempty'));
         }
 
-        $mform->addElement('hidden', 'delete');
-        $mform->setType('delete', PARAM_ALPHANUM);
+        $mform->addElement('hidden', 'deletecat');
+        $mform->setType('deletecat', PARAM_ALPHANUM);
         $mform->addElement('hidden', 'sure');
         $mform->setType('sure', PARAM_ALPHANUM);
         $mform->setDefault('sure', md5(serialize($category)));

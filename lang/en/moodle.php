@@ -977,6 +977,7 @@ $string['makeafolder'] = 'Create folder';
 $string['makeeditable'] = 'If you make \'{$a}\' editable by the web server process (eg apache) then you could edit this file directly from this page';
 $string['makethismyhome'] = 'Make this my default home page';
 $string['manageblocks'] = 'Blocks';
+$string['managecategorythis'] = 'Manage this category';
 $string['managecourses'] = 'Manage courses';
 $string['managedatabase'] = 'Database';
 $string['manageeditorfiles'] = 'Manage files used by editor';

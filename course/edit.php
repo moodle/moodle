@@ -90,6 +90,12 @@ if ($editform->is_cancelled()) {
             case 'category':
                 $url = new moodle_url($CFG->wwwroot.'/course/category.php', array('id'=>$categoryid));
                 break;
+            case 'catmanage':
+                $url = new moodle_url($CFG->wwwroot.'/course/manage.php', array('id'=>$categoryid));
+                break;
+            case 'topcatmanage':
+                $url = new moodle_url($CFG->wwwroot.'/course/manage.php');
+                break;
             case 'topcat':
                 $url = new moodle_url($CFG->wwwroot.'/course/');
                 break;

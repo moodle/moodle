@@ -558,7 +558,7 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
     $params = array();
 
     $categoryselect = "";
-    if ($categoryid != "all" && is_numeric($categoryid)) {
+    if ($categoryid !== "all" && is_numeric($categoryid)) {
         $categoryselect = "WHERE c.category = :catid";
         $params['catid'] = $categoryid;
     } else {
