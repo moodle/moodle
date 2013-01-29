@@ -7,12 +7,19 @@
 
 $THEME->name = 'anomaly';
 
-$THEME->sheets = array('base', 'general', 'browser', 'dock', 'menu');
+$THEME->sheets = array(
+    'base',
+    'general',
+    'browser',
+    'dock',
+    'menu',
+    'settings'
+);
 /// This variable is an array containing the names of all the
 /// stylesheet files you want included in this theme, and in what order
 ////////////////////////////////////////////////////////////////////////////////
 
-$THEME->parents = array('base');  // TODO: new themes can not be based on standardold, instead use 'base' as the base
+$THEME->parents = array('base');
 /// This variable can be set to the name of a parent theme
 /// which you want to have included before the current theme.
 /// This can make it easy to make modifications to another
@@ -54,7 +61,7 @@ $THEME->layouts = array(
         'options' => array('langmenu' => true)
     ),
     'frontpage' => array(
-        'file' => 'general.php',
+        'file' => 'frontpage.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-pre',
         'options' => array('langmenu' => true)
@@ -113,15 +120,31 @@ $THEME->layouts = array(
         'regions' => array(),
         'options' => array('nofooter'=>true, 'nonavbar'=>false, 'noblocks'=>true, 'nocourseheaderfooter'=>true),
     ),
+    // The pagelayout used when a redirection is occuring.
+    'redirect' => array(
+        'file' => 'embedded.php',
+        'regions' => array(),
+        'options' => array('nofooter'=>true, 'nonavbar'=>true, 'nocustommenu'=>true, 'nocourseheaderfooter'=>true),
+    ),
+    // The pagelayout used for reports.
     'report' => array(
         'file' => 'report.php',
         'regions' => array('side-pre'),
         'defaultregion' => 'side-pre',
-        'options' => array('langmenu' => true)
+        'options' => array('langmenu' => true),
+    ),
+    // The pagelayout used for safebrowser and securewindow.
+    'secure' => array(
+        'file' => 'general.php',
+        'regions' => array('side-pre', 'side-post'),
+        'defaultregion' => 'side-pre',
+        'options' => array('nofooter'=>true, 'nonavbar'=>true, 'nocustommenu'=>true, 'nologinlinks'=>true, 'nocourseheaderfooter'=>true),
     ),
 );
 
 $THEME->rendererfactory = 'theme_overridden_renderer_factory';
+
+$THEME->csspostprocess = 'anomaly_process_css';
 
 $THEME->enable_dock = true;
 
