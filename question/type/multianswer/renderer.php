@@ -194,7 +194,7 @@ class qtype_multianswer_textfield_renderer extends qtype_multianswer_subq_render
             $size = max($size, strlen(trim($ans->answer)));
         }
         $size = min(60, round($size + rand(0, $size*0.15)));
-        // The rand bit is to make guessing harder
+        // The rand bit is to make guessing harder.
 
         $inputattributes = array(
             'type' => 'text',
