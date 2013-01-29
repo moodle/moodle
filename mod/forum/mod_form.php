@@ -82,6 +82,11 @@ class mod_forum_mod_form extends moodleform_mod {
         $mform->addHelpButton('maxattachments', 'maxattachments', 'forum');
         $mform->setDefault('maxattachments', $CFG->forum_maxattachments);
 
+        $mform->addElement('selectyesno', 'displaywordcount', get_string('displaywordcount', 'forum'));
+        $mform->addHelpButton('displaywordcount', 'displaywordcount', 'forum');
+        $mform->setDefault('displaywordcount', 0);
+        $mform->setAdvanced('displaywordcount');
+
         if ($CFG->enablerssfeeds && isset($CFG->forum_enablerssfeeds) && $CFG->forum_enablerssfeeds) {
 //-------------------------------------------------------------------------------
             $mform->addElement('header', '', get_string('rss'));

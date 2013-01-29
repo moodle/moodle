@@ -465,7 +465,7 @@ h2.tagline {
     padding-right: 10px;
 }
 .forumpost .content .shortenedpost a,
-.forumpost .content .shortenedpost span.post-word-count,
+.forumpost .content .post-word-count,
 .forumpost .commands,
 .forumpost .topic .author,
 .forumpost .options .link {
