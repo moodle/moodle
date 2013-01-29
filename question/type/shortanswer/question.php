@@ -87,6 +87,11 @@ class qtype_shortanswer_question extends question_graded_by_strategy
     }
 
     public static function compare_string_with_wildcard($string, $pattern, $ignorecase) {
+
+        // Normalise any non-canonical UTF-8 characters before we start.
+        $pattern = self::safe_normalize($pattern);
+        $string = self::safe_normalize($string);
+
         // Break the string on non-escaped asterisks.
         $bits = preg_split('/(?<!\\\\)\*/', $pattern);
         // Escape regexp special characters in the bits.
@@ -102,12 +107,32 @@ class qtype_shortanswer_question extends question_graded_by_strategy
             $regexp .= 'i';
         }
 
-        if (function_exists('normalizer_normalize')) {
-            $regexp = normalizer_normalize($regexp, Normalizer::FORM_C);
-            $string = normalizer_normalize($string, Normalizer::FORM_C);
+        return preg_match($regexp, trim($string));
+    }
+
+    /**
+     * Normalise a UTf-8 string to FORM_C, avoiding the pitfalls in PHP's
+     * normalizer_normalize function.
+     * @param string $string the input string.
+     * @return string the normalised string.
+     */
+    protected static function safe_normalize($string) {
+        if (!$string) {
+            return '';
         }
 
-        return preg_match($regexp, trim($string));
+        if (!function_exists('normalizer_normalize')) {
+            return $string;
+        }
+
+        $normalised = normalizer_normalize($string, Normalizer::FORM_C);
+        if (!$normalised) {
+            // An error occurred in normalizer_normalize, but we have no idea what.
+            debugging('Failed to normalise string: ' . $string, DEBUG_DEVELOPER);
+            return $string; // Return the original string, since it is the best we have.
+        }
+
+        return $normalised;
     }
 
     public function get_correct_response() {
