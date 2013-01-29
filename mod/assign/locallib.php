@@ -2785,6 +2785,30 @@ class assign {
     }
 
     /**
+     * Perform an access check to see if the current $USER can view this group submission.
+     *
+     * @param int $groupid
+     * @return bool
+     */
+    public function can_view_group_submission($groupid) {
+        global $USER;
+
+        if (!is_enrolled($this->get_course_context(), $USER->id)) {
+            return false;
+        }
+        if (has_capability('mod/assign:grade', $this->context)) {
+            return true;
+        }
+        $members = $this->get_submission_group_members($groupid, true);
+        foreach ($members as $member) {
+            if ($member->id == $USER->id) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Perform an access check to see if the current $USER can view this users submission.
      *
      * @param int $userid
