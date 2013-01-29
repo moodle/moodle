@@ -17,10 +17,9 @@
 /**
  * Matching question definition class.
  *
- * @package    qtype
- * @subpackage match
- * @copyright  2009 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   qtype_match
+ * @copyright 2009 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -30,8 +29,8 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Represents a matching question.
  *
- * @copyright  2009 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2009 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_match_question extends question_graded_automatically_with_countback {
     /** @var boolean Whether the question stems should be shuffled. */
@@ -273,7 +272,7 @@ class qtype_match_question extends question_graded_automatically_with_countback 
 
     public function check_file_access($qa, $options, $component, $filearea, $args, $forcedownload) {
         if ($component == 'qtype_match' && $filearea == 'subquestion') {
-            $subqid = reset($args); // itemid is sub question id
+            $subqid = reset($args); // Itemid is sub question id.
             return array_key_exists($subqid, $this->stems);
 
         } else if ($component == 'question' && in_array($filearea,

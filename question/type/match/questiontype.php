@@ -17,10 +17,9 @@
 /**
  * Question type class for the matching question type.
  *
- * @package    qtype
- * @subpackage match
- * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   qtype_match
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -33,17 +32,18 @@ require_once($CFG->dirroot . '/question/engine/lib.php');
 /**
  * The matching question type class.
  *
- * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_match extends question_type {
 
     public function get_question_options($question) {
         global $DB;
         parent::get_question_options($question);
-        $question->options = $DB->get_record('question_match', array('question' => $question->id));
-        $question->options->subquestions = $DB->get_records('question_match_sub',
-                array('question' => $question->id), 'id ASC');
+        $question->options = $DB->get_record('qtype_match_options',
+                array('questionid' => $question->id));
+        $question->options->subquestions = $DB->get_records('qtype_match_subquestions',
+                array('questionid' => $question->id), 'id ASC');
         return true;
     }
 
@@ -52,13 +52,10 @@ class qtype_match extends question_type {
         $context = $question->context;
         $result = new stdClass();
 
-        $oldsubquestions = $DB->get_records('question_match_sub',
-                array('question' => $question->id), 'id ASC');
+        $oldsubquestions = $DB->get_records('qtype_match_subquestions',
+                array('questionid' => $question->id), 'id ASC');
 
-        // $subquestions will be an array with subquestion ids
-        $subquestions = array();
-
-        // Insert all the new question+answer pairs
+        // Insert all the new question & answer pairs.
         foreach ($question->subquestions as $key => $questiontext) {
             if ($questiontext['text'] == '' && trim($question->subanswers[$key]) == '') {
                 continue;
@@ -71,16 +68,10 @@ class qtype_match extends question_type {
             $subquestion = array_shift($oldsubquestions);
             if (!$subquestion) {
                 $subquestion = new stdClass();
-                // Determine a unique random code
-                $subquestion->code = rand(1, 999999999);
-                while ($DB->record_exists('question_match_sub',
-                        array('code' => $subquestion->code, 'question' => $question->id))) {
-                    $subquestion->code = rand(1, 999999999);
-                }
-                $subquestion->question = $question->id;
+                $subquestion->questionid = $question->id;
                 $subquestion->questiontext = '';
                 $subquestion->answertext = '';
-                $subquestion->id = $DB->insert_record('question_match_sub', $subquestion);
+                $subquestion->id = $DB->insert_record('qtype_match_subquestions', $subquestion);
             }
 
             $subquestion->questiontext = $this->import_or_save_files($questiontext,
@@ -88,42 +79,34 @@ class qtype_match extends question_type {
             $subquestion->questiontextformat = $questiontext['format'];
             $subquestion->answertext = trim($question->subanswers[$key]);
 
-            $DB->update_record('question_match_sub', $subquestion);
-
-            $subquestions[] = $subquestion->id;
+            $DB->update_record('qtype_match_subquestions', $subquestion);
         }
 
-        // Delete old subquestions records
+        // Delete old subquestions records.
         $fs = get_file_storage();
         foreach ($oldsubquestions as $oldsub) {
             $fs->delete_area_files($context->id, 'qtype_match', 'subquestion', $oldsub->id);
-            $DB->delete_records('question_match_sub', array('id' => $oldsub->id));
+            $DB->delete_records('qtype_match_subquestions', array('id' => $oldsub->id));
         }
 
         // Save the question options.
-        $options = $DB->get_record('question_match', array('question' => $question->id));
+        $options = $DB->get_record('qtype_match_options', array('questionid' => $question->id));
         if (!$options) {
             $options = new stdClass();
-            $options->question = $question->id;
+            $options->questionid = $question->id;
             $options->correctfeedback = '';
             $options->partiallycorrectfeedback = '';
             $options->incorrectfeedback = '';
-            $options->id = $DB->insert_record('question_match', $options);
+            $options->id = $DB->insert_record('qtype_match_options', $options);
         }
 
-        $options->subquestions = implode(',', $subquestions);
         $options->shuffleanswers = $question->shuffleanswers;
         $options = $this->save_combined_feedback_helper($options, $question, $context, true);
-        $DB->update_record('question_match', $options);
+        $DB->update_record('qtype_match_options', $options);
 
         $this->save_hints($question, true);
 
         if (!empty($result->notice)) {
-            return $result;
-        }
-
-        if (count($subquestions) < 3) {
-            $result->notice = get_string('notenoughanswers', 'question', 3);
             return $result;
         }
 
@@ -162,8 +145,8 @@ class qtype_match extends question_type {
 
     public function delete_question($questionid, $contextid) {
         global $DB;
-        $DB->delete_records('question_match', array('question' => $questionid));
-        $DB->delete_records('question_match_sub', array('question' => $questionid));
+        $DB->delete_records('qtype_match_options', array('questionid' => $questionid));
+        $DB->delete_records('qtype_match_subquestions', array('questionid' => $questionid));
 
         parent::delete_question($questionid, $contextid);
     }
@@ -200,8 +183,8 @@ class qtype_match extends question_type {
 
         parent::move_files($questionid, $oldcontextid, $newcontextid);
 
-        $subquestionids = $DB->get_records_menu('question_match_sub',
-                array('question' => $questionid), 'id', 'id,1');
+        $subquestionids = $DB->get_records_menu('qtype_match_subquestions',
+                array('questionid' => $questionid), 'id', 'id,1');
         foreach ($subquestionids as $subquestionid => $notused) {
             $fs->move_area_files_to_new_context($oldcontextid,
                     $newcontextid, 'qtype_match', 'subquestion', $subquestionid);
@@ -217,8 +200,8 @@ class qtype_match extends question_type {
 
         parent::delete_files($questionid, $contextid);
 
-        $subquestionids = $DB->get_records_menu('question_match_sub',
-                array('question' => $questionid), 'id', 'id,1');
+        $subquestionids = $DB->get_records_menu('qtype_match_subquestions',
+                array('questionid' => $questionid), 'id', 'id,1');
         foreach ($subquestionids as $subquestionid => $notused) {
             $fs->delete_area_files($contextid, 'qtype_match', 'subquestion', $subquestionid);
         }
