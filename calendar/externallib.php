@@ -179,7 +179,7 @@ class core_calendar_external extends external_api {
                 if (in_array($id, $courses)) {
                     $funcparam['courses'][] = $id;
                 } else {
-                    $warnings[] = array('item' => $id, 'warningcode' => 'nopermissions', 'message' => 'you donot have permissions to access this course');
+                    $warnings[] = array('item' => $id, 'warningcode' => 'nopermissions', 'message' => 'you do not have permissions to access this course');
                 }
             }
         } else {
@@ -195,7 +195,7 @@ class core_calendar_external extends external_api {
                 if (in_array($id, $groups)) {
                     $funcparam['groups'][] = $id;
                 } else {
-                    $warnings[] = array('item' => $id, 'warningcode' => 'nopermissions', 'message' => 'you donot have permissions to access this group');
+                    $warnings[] = array('item' => $id, 'warningcode' => 'nopermissions', 'message' => 'you do not have permissions to access this group');
                 }
             }
         } else {
@@ -248,7 +248,7 @@ class core_calendar_external extends external_api {
                             (calendar_edit_event_allowed($eventid))) {
                     $events[$eventid] = $event;
                 } else {
-                    $warnings[] = array('item' => $eventid, 'warningcode' => 'nopermissions', 'message' => 'you donot have permissions to view this event');
+                    $warnings[] = array('item' => $eventid, 'warningcode' => 'nopermissions', 'message' => 'you do not have permissions to view this event');
                 }
             }
         }
@@ -359,7 +359,7 @@ class core_calendar_external extends external_api {
 
             // Let's check if the user is allowed to delete an event.
             if (!calendar_add_event_allowed($eventobj)) {
-                $warnings [] = array('item' => $event['name'], 'warningcode' => 'nopermissions', 'message' => 'you donot have permissions to create this event');
+                $warnings [] = array('item' => $event['name'], 'warningcode' => 'nopermissions', 'message' => 'you do not have permissions to create this event');
                 continue;
             }
             // Let's create the event.
