@@ -17,14 +17,13 @@
 /**
  * Version details
  *
- * @package    block
- * @subpackage section_links
- * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
+ * @package    block_section_links
+ * @copyright  Jason Hardin
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2012112900;        // The current plugin version (Date: YYYYMMDDXX)
+$plugin->version   = 2013012200;        // The current plugin version (Date: YYYYMMDDXX)
 $plugin->requires  = 2012112900;        // Requires this Moodle version
 $plugin->component = 'block_section_links'; // Full name of the plugin (used for diagnostics)
