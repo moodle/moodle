@@ -83,17 +83,11 @@ if ($viewing != MESSAGE_VIEW_UNREAD_MESSAGES) {
 
 $PAGE->set_url($url);
 
-$PAGE->set_context(get_context_instance(CONTEXT_USER, $USER->id));
-$PAGE->navigation->extend_for_user($USER);
-$PAGE->set_pagelayout('course');
-
 $navigationurl = new moodle_url('/message/index.php', array('user1' => $user1id));
 navigation_node::override_active_url($navigationurl);
 
 // Disable message notification popups while the user is viewing their messages
 $PAGE->set_popup_notification_allowed(false);
-
-//$context = get_context_instance(CONTEXT_SYSTEM);
 
 $user1 = null;
 $currentuser = true;
