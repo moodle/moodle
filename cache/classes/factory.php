@@ -263,7 +263,13 @@ class cache_factory {
         if (!$store->is_ready() || !$store->is_supported_mode($definition->get_mode())) {
             return false;
         }
-        $store = clone($this->stores[$name]);
+        // We always create a clone of the original store.
+        // If we were to clone a store that had already been initialised with a definition then
+        // we'd run into a myriad of issues.
+        // We use a method of the store to create a clone rather than just creating it ourselves
+        // so that if any store out there doesn't handle cloning they can override this method in
+        // order to address the issues.
+        $store = $this->stores[$name]->create_clone($details);
         $store->initialise($definition);
         return $store;
     }
