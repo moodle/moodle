@@ -86,4 +86,142 @@ if ($ADMIN->fulltree) {
                                                     $description,
                                                     0));
 
+    $name = new lang_string('defaultsettings', 'mod_assign');
+    $description = new lang_string('defaultsettings_help', 'mod_assign');
+    $settings->add(new admin_setting_heading('defaultsettings', $name, $description));
+
+    $name = new lang_string('alwaysshowdescription', 'mod_assign');
+    $description = new lang_string('alwaysshowdescription_help', 'mod_assign');
+    $setting = new admin_setting_configcheckbox('assign/alwaysshowdescription',
+                                                    $name,
+                                                    $description,
+                                                    1);
+    $setting->set_advanced_flag_options(admin_setting_flag::ENABLED, false);
+    $setting->set_locked_flag_options(admin_setting_flag::ENABLED, false);
+    $settings->add($setting);
+
+    $name = new lang_string('allowsubmissionsfromdate', 'mod_assign');
+    $description = new lang_string('allowsubmissionsfromdate_help', 'mod_assign');
+    $setting = new admin_setting_configduration('assign/allowsubmissionsfromdate',
+                                                    $name,
+                                                    $description,
+                                                    0);
+    $setting->set_enabled_flag_options(admin_setting_flag::ENABLED, true);
+    $setting->set_advanced_flag_options(admin_setting_flag::ENABLED, false);
+    $setting->set_locked_flag_options(admin_setting_flag::ENABLED, false);
+    $settings->add($setting);
+
+    $name = new lang_string('duedate', 'mod_assign');
+    $description = new lang_string('duedate_help', 'mod_assign');
+    $setting = new admin_setting_configduration('assign/duedate',
+                                                    $name,
+                                                    $description,
+                                                    604800);
+    $setting->set_enabled_flag_options(admin_setting_flag::ENABLED, true);
+    $setting->set_advanced_flag_options(admin_setting_flag::ENABLED, false);
+    $setting->set_locked_flag_options(admin_setting_flag::ENABLED, false);
+    $settings->add($setting);
+
+    $name = new lang_string('cutoffdate', 'mod_assign');
+    $description = new lang_string('cutoffdate_help', 'mod_assign');
+    $setting = new admin_setting_configduration('assign/cutoffdate',
+                                                    $name,
+                                                    $description,
+                                                    1209600);
+    $setting->set_enabled_flag_options(admin_setting_flag::ENABLED, false);
+    $setting->set_advanced_flag_options(admin_setting_flag::ENABLED, false);
+    $setting->set_locked_flag_options(admin_setting_flag::ENABLED, false);
+    $settings->add($setting);
+
+    $name = new lang_string('submissiondrafts', 'mod_assign');
+    $description = new lang_string('submissiondrafts_help', 'mod_assign');
+    $setting = new admin_setting_configcheckbox('assign/submissiondrafts',
+                                                    $name,
+                                                    $description,
+                                                    0);
+    $setting->set_advanced_flag_options(admin_setting_flag::ENABLED, false);
+    $setting->set_locked_flag_options(admin_setting_flag::ENABLED, false);
+    $settings->add($setting);
+
+    // Constants from locallib.php
+    $options = array(
+        'none' => get_string('attemptreopenmethod_none', 'mod_assign'),
+        'manual' => get_string('attemptreopenmethod_manual', 'mod_assign'),
+        'untilpass' => get_string('attemptreopenmethod_untilpass', 'mod_assign')
+    );
+    $name = new lang_string('attemptreopenmethod', 'mod_assign');
+    $description = new lang_string('attemptreopenmethod_help', 'mod_assign');
+    $setting = new admin_setting_configselect('assign/attemptreopenmethod',
+                                                    $name,
+                                                    $description,
+                                                    'none',
+                                                    $options);
+    $setting->set_advanced_flag_options(admin_setting_flag::ENABLED, false);
+    $setting->set_locked_flag_options(admin_setting_flag::ENABLED, false);
+    $settings->add($setting);
+
+    // Constants from locallib.php
+    $options = array(-1 => get_string('unlimitedattempts', 'mod_assign'));
+    $options += array_combine(range(1, 30), range(1, 30));
+    $name = new lang_string('maxattempts', 'mod_assign');
+    $description = new lang_string('maxattempts_help', 'mod_assign');
+    $setting = new admin_setting_configselect('assign/maxattempts',
+                                                    $name,
+                                                    $description,
+                                                    -1,
+                                                    $options);
+    $setting->set_advanced_flag_options(admin_setting_flag::ENABLED, false);
+    $setting->set_locked_flag_options(admin_setting_flag::ENABLED, false);
+    $settings->add($setting);
+
+    $name = new lang_string('teamsubmission', 'mod_assign');
+    $description = new lang_string('teamsubmission_help', 'mod_assign');
+    $setting = new admin_setting_configcheckbox('assign/teamsubmission',
+                                                    $name,
+                                                    $description,
+                                                    0);
+    $setting->set_advanced_flag_options(admin_setting_flag::ENABLED, false);
+    $setting->set_locked_flag_options(admin_setting_flag::ENABLED, false);
+    $settings->add($setting);
+
+    $name = new lang_string('requireallteammemberssubmit', 'mod_assign');
+    $description = new lang_string('requireallteammemberssubmit_help', 'mod_assign');
+    $setting = new admin_setting_configcheckbox('assign/requireallteammemberssubmit',
+                                                    $name,
+                                                    $description,
+                                                    0);
+    $setting->set_advanced_flag_options(admin_setting_flag::ENABLED, false);
+    $setting->set_locked_flag_options(admin_setting_flag::ENABLED, false);
+    $settings->add($setting);
+
+    $name = new lang_string('sendnotifications', 'mod_assign');
+    $description = new lang_string('sendnotifications_help', 'mod_assign');
+    $setting = new admin_setting_configcheckbox('assign/sendnotifications',
+                                                    $name,
+                                                    $description,
+                                                    0);
+    $setting->set_advanced_flag_options(admin_setting_flag::ENABLED, false);
+    $setting->set_locked_flag_options(admin_setting_flag::ENABLED, false);
+    $settings->add($setting);
+
+    $name = new lang_string('sendlatenotifications', 'mod_assign');
+    $description = new lang_string('sendlatenotifications_help', 'mod_assign');
+    $setting = new admin_setting_configcheckbox('assign/sendlatenotifications',
+                                                    $name,
+                                                    $description,
+                                                    0);
+    $setting->set_advanced_flag_options(admin_setting_flag::ENABLED, false);
+    $setting->set_locked_flag_options(admin_setting_flag::ENABLED, false);
+    $settings->add($setting);
+
+    $name = new lang_string('blindmarking', 'mod_assign');
+    $description = new lang_string('blindmarking_help', 'mod_assign');
+    $setting = new admin_setting_configcheckbox('assign/blindmarking',
+                                                    $name,
+                                                    $description,
+                                                    0);
+    $setting->set_advanced_flag_options(admin_setting_flag::ENABLED, false);
+    $setting->set_locked_flag_options(admin_setting_flag::ENABLED, false);
+    $settings->add($setting);
+
 }
