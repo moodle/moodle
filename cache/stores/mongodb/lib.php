@@ -100,7 +100,17 @@ class cachestore_mongodb extends cache_store implements cache_is_configurable {
     protected $definitionhash = null;
 
     /**
-     * Constructs a new instance of the Mongo store but does not connect to it.
+     * Set to true once this store is ready to be initialised and used.
+     * @var bool
+     */
+    protected $isready = false;
+
+    /**
+     * Constructs a new instance of the Mongo store.
+     *
+     * Noting that this function is not an initialisation. It is used to prepare the store for use.
+     * The store will be initialised when required and will be provided with a cache_definition at that time.
+     *
      * @param string $name
      * @param array $configuration
      */
@@ -171,7 +181,7 @@ class cachestore_mongodb extends cache_store implements cache_is_configurable {
     /**
      * Initialises the store instance for use.
      *
-     * This function is reponsible for making the connection.
+     * Once this has been done the cache is all set to be used.
      *
      * @param cache_definition $definition
      * @throws coding_exception
