@@ -306,4 +306,22 @@ abstract class cache_store implements cache_store_interface {
     public function supports_native_ttl() {
         return $this::get_supported_features() & self::SUPPORTS_NATIVE_TTL;
     }
+
+    /**
+     * Creates a clone of this store instance ready to be initialised.
+     *
+     * This method is used so that a cache store needs only be constructed once.
+     * Future requests for an instance of the store will be given a cloned instance.
+     *
+     * If you are writing a cache store that isn't compatible with the clone operation
+     * you can override this method to handle any situations you want before cloning.
+     *
+     * @param array $details An array containing the details of the store from the cache config.
+     * @return cache_store
+     */
+    public function create_clone(array $details = array()) {
+        // By default we just run clone.
+        // Any stores that have an issue with this will need to override the create_clone method.
+        return clone($this);
+    }
 }
