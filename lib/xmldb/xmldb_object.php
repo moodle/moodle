@@ -239,11 +239,6 @@ class xmldb_object {
      * @return bool true if $arr modified
      */
     public function fixPrevNext(&$arr) {
-        global $CFG;
-
-        if (empty($CFG->xmldbreconstructprevnext)) {
-            return false;
-        }
         $tweaked = false;
 
         $prev = null;
@@ -268,124 +263,14 @@ class xmldb_object {
     }
 
     /**
-     * This function will check that all the elements in one array
-     * have a consistent info in their previous/next fields
-     * @param array $arr
-     * @return bool true means ok, false invalid prev/next present
-     */
-    public function checkPreviousNextValues($arr) {
-        global $CFG;
-        if (!empty($CFG->xmldbdisablenextprevchecking)) {
-            return true;
-        }
-        $result = true;
-        // Check that only one element has the previous not set
-        if ($arr) {
-            $counter = 0;
-            foreach($arr as $element) {
-                if (!$element->getPrevious()) {
-                    $counter++;
-                }
-            }
-            if ($counter != 1) {
-                debugging('The number of objects with previous not set is different from 1', DEBUG_DEVELOPER);
-                $result = false;
-            }
-        }
-        // Check that only one element has the next not set
-        if ($result && $arr) {
-            $counter = 0;
-            foreach($arr as $element) {
-                if (!$element->getNext()) {
-                    $counter++;
-                }
-            }
-            if ($counter != 1) {
-                debugging('The number of objects with next not set is different from 1', DEBUG_DEVELOPER);
-                $result = false;
-            }
-        }
-        // Check that all the previous elements are existing elements
-        if ($result && $arr) {
-            foreach($arr as $element) {
-                if ($element->getPrevious()) {
-                    $i = $this->findObjectInArray($element->getPrevious(), $arr);
-                    if ($i === null) {
-                        debugging('Object ' . $element->getName() . ' says PREVIOUS="' . $element->getPrevious() . '" but that other object does not exist.', DEBUG_DEVELOPER);
-                        $result = false;
-                    }
-                }
-            }
-        }
-        // Check that all the next elements are existing elements
-        if ($result && $arr) {
-            foreach($arr as $element) {
-                if ($element->getNext()) {
-                    $i = $this->findObjectInArray($element->getNext(), $arr);
-                    if ($i === null) {
-                        debugging('Object ' . $element->getName() . ' says NEXT="' . $element->getNext() . '" but that other object does not exist.', DEBUG_DEVELOPER);
-                        $result = false;
-                    }
-                }
-            }
-        }
-        // Check that there aren't duplicates in the previous values
-        if ($result && $arr) {
-            $existarr = array();
-            foreach($arr as $element) {
-                if (in_array($element->getPrevious(), $existarr)) {
-                    $result = false;
-                    debugging('Object ' . $element->getName() . ' says PREVIOUS="' . $element->getPrevious() . '" but another object has already said that!', DEBUG_DEVELOPER);
-                } else {
-                    $existarr[] = $element->getPrevious();
-                }
-            }
-        }
-        // Check that there aren't duplicates in the next values
-        if ($result && $arr) {
-            $existarr = array();
-            foreach($arr as $element) {
-                if (in_array($element->getNext(), $existarr)) {
-                    $result = false;
-                    debugging('Object ' . $element->getName() . ' says NEXT="' . $element->getNext() . '" but another object has already said that!', DEBUG_DEVELOPER);
-                } else {
-                    $existarr[] = $element->getNext();
-                }
-            }
-        }
-        // Check that there aren't next values pointing to themselves
-        if ($result && $arr) {
-            foreach($arr as $element) {
-                if ($element->getNext() == $element->getName()) {
-                    $result = false;
-                    debugging('Object ' . $element->getName() . ' says NEXT="' . $element->getNext() . '" and that is wrongly recursive!', DEBUG_DEVELOPER);
-                }
-            }
-        }
-        // Check that there aren't prev values pointing to themselves
-        if ($result && $arr) {
-            foreach($arr as $element) {
-                if ($element->getPrevious() == $element->getName()) {
-                    $result = false;
-                    debugging('Object ' . $element->getName() . ' says PREVIOUS="' . $element->getPrevious() . '" and that is wrongly recursive!', DEBUG_DEVELOPER);
-                }
-            }
-        }
-        return $result;
-    }
-
-    /**
      * This function will order all the elements in one array, following
      * the previous/next rules
      * @param array $arr
      * @return array|bool
      */
     public function orderElements($arr) {
-        global $CFG;
         $result = true;
-        if (!empty($CFG->xmldbdisablenextprevchecking)) {
-            return $arr;
-        }
+
         // Create a new array
         $newarr = array();
         if (!empty($arr)) {
@@ -411,9 +296,7 @@ class xmldb_object {
             // Compare number of elements between original and new array
             if ($result && count($arr) != count($newarr)) {
                 $result = false;
-            }
-            // Check that previous/next is ok (redundant but...)
-            if ($this->checkPreviousNextValues($newarr)) {
+            } else if ($newarr) {
                 $result = $newarr;
             } else {
                 $result = false;

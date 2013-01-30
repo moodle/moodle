@@ -4,34 +4,34 @@
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE NAME="lti" COMMENT="This table contains Basic LTI activities instances" NEXT="lti_types">
+    <TABLE NAME="lti" COMMENT="This table contains Basic LTI activities instances">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="course"/>
-        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Course basiclti activity belongs to" PREVIOUS="id" NEXT="name"/>
-        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="name field for moodle instances" PREVIOUS="course" NEXT="intro"/>
-        <FIELD NAME="intro" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="General introduction of the basiclti activity" PREVIOUS="name" NEXT="introformat"/>
-        <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Format of the intro field (MOODLE, HTML, MARKDOWN...)" PREVIOUS="intro" NEXT="timecreated"/>
-        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="introformat" NEXT="timemodified"/>
-        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timecreated" NEXT="typeid"/>
-        <FIELD NAME="typeid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Basic LTI type" PREVIOUS="timemodified" NEXT="toolurl"/>
-        <FIELD NAME="toolurl" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Remote tool url" PREVIOUS="typeid" NEXT="securetoolurl"/>
-        <FIELD NAME="securetoolurl" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="toolurl" NEXT="instructorchoicesendname"/>
-        <FIELD NAME="instructorchoicesendname" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Send user's name" PREVIOUS="securetoolurl" NEXT="instructorchoicesendemailaddr"/>
-        <FIELD NAME="instructorchoicesendemailaddr" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Send user's email" PREVIOUS="instructorchoicesendname" NEXT="instructorchoiceallowroster"/>
-        <FIELD NAME="instructorchoiceallowroster" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Allow the roster to be retrieved" PREVIOUS="instructorchoicesendemailaddr" NEXT="instructorchoiceallowsetting"/>
-        <FIELD NAME="instructorchoiceallowsetting" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Allow a tool to store a setting" PREVIOUS="instructorchoiceallowroster" NEXT="instructorcustomparameters"/>
-        <FIELD NAME="instructorcustomparameters" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Additional custom parameters provided by the instructor" PREVIOUS="instructorchoiceallowsetting" NEXT="instructorchoiceacceptgrades"/>
-        <FIELD NAME="instructorchoiceacceptgrades" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Accept grades from tool" PREVIOUS="instructorcustomparameters" NEXT="grade"/>
-        <FIELD NAME="grade" TYPE="number" LENGTH="10" NOTNULL="true" DEFAULT="100" SEQUENCE="false" DECIMALS="5" COMMENT="Grade scale" PREVIOUS="instructorchoiceacceptgrades" NEXT="launchcontainer"/>
-        <FIELD NAME="launchcontainer" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Launch external tool in a pop-up" PREVIOUS="grade" NEXT="resourcekey"/>
-        <FIELD NAME="resourcekey" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" PREVIOUS="launchcontainer" NEXT="password"/>
-        <FIELD NAME="password" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" PREVIOUS="resourcekey" NEXT="debuglaunch"/>
-        <FIELD NAME="debuglaunch" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Enable the debug-style launch which pauses before auto-submit" PREVIOUS="password" NEXT="showtitlelaunch"/>
-        <FIELD NAME="showtitlelaunch" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="debuglaunch" NEXT="showdescriptionlaunch"/>
-        <FIELD NAME="showdescriptionlaunch" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="showtitlelaunch" NEXT="servicesalt"/>
-        <FIELD NAME="servicesalt" TYPE="char" LENGTH="40" NOTNULL="false" SEQUENCE="false" PREVIOUS="showdescriptionlaunch" NEXT="icon"/>
-        <FIELD NAME="icon" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="servicesalt" NEXT="secureicon"/>
-        <FIELD NAME="secureicon" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="icon"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Course basiclti activity belongs to"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="name field for moodle instances"/>
+        <FIELD NAME="intro" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="General introduction of the basiclti activity"/>
+        <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Format of the intro field (MOODLE, HTML, MARKDOWN...)"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="typeid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Basic LTI type"/>
+        <FIELD NAME="toolurl" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Remote tool url"/>
+        <FIELD NAME="securetoolurl" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="instructorchoicesendname" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Send user's name"/>
+        <FIELD NAME="instructorchoicesendemailaddr" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Send user's email"/>
+        <FIELD NAME="instructorchoiceallowroster" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Allow the roster to be retrieved"/>
+        <FIELD NAME="instructorchoiceallowsetting" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Allow a tool to store a setting"/>
+        <FIELD NAME="instructorcustomparameters" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Additional custom parameters provided by the instructor"/>
+        <FIELD NAME="instructorchoiceacceptgrades" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Accept grades from tool"/>
+        <FIELD NAME="grade" TYPE="number" LENGTH="10" NOTNULL="true" DEFAULT="100" SEQUENCE="false" DECIMALS="5" COMMENT="Grade scale"/>
+        <FIELD NAME="launchcontainer" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Launch external tool in a pop-up"/>
+        <FIELD NAME="resourcekey" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="password" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="debuglaunch" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Enable the debug-style launch which pauses before auto-submit"/>
+        <FIELD NAME="showtitlelaunch" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="showdescriptionlaunch" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="servicesalt" TYPE="char" LENGTH="40" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="icon" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="secureicon" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -40,33 +40,33 @@
         <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="lti_types" COMMENT="Basic LTI pre-configured activities" PREVIOUS="lti" NEXT="lti_types_config">
+    <TABLE NAME="lti_types" COMMENT="Basic LTI pre-configured activities">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="name"/>
-        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT="basiclti Activity" SEQUENCE="false" COMMENT="Activity name" PREVIOUS="id" NEXT="baseurl"/>
-        <FIELD NAME="baseurl" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="tooldomain"/>
-        <FIELD NAME="tooldomain" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="baseurl" NEXT="state"/>
-        <FIELD NAME="state" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="2" SEQUENCE="false" COMMENT="Active = 1, Pending = 2, Rejected = 3" PREVIOUS="tooldomain" NEXT="course"/>
-        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="state" NEXT="coursevisible"/>
-        <FIELD NAME="coursevisible" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="course" NEXT="createdby"/>
-        <FIELD NAME="createdby" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="coursevisible" NEXT="timecreated"/>
-        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="createdby" NEXT="timemodified"/>
-        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="timecreated"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT="basiclti Activity" SEQUENCE="false" COMMENT="Activity name"/>
+        <FIELD NAME="baseurl" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="tooldomain" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="state" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="2" SEQUENCE="false" COMMENT="Active = 1, Pending = 2, Rejected = 3"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="coursevisible" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="createdby" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="course" UNIQUE="false" FIELDS="course" NEXT="tooldomain"/>
-        <INDEX NAME="tooldomain" UNIQUE="false" FIELDS="tooldomain" PREVIOUS="course"/>
+        <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
+        <INDEX NAME="tooldomain" UNIQUE="false" FIELDS="tooldomain"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="lti_types_config" COMMENT="Basic LTI types configuration" PREVIOUS="lti_types" NEXT="lti_submission">
+    <TABLE NAME="lti_types_config" COMMENT="Basic LTI types configuration">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="typeid"/>
-        <FIELD NAME="typeid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Basic LTI type id" PREVIOUS="id" NEXT="name"/>
-        <FIELD NAME="name" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" COMMENT="Basic LTI param" PREVIOUS="typeid" NEXT="value"/>
-        <FIELD NAME="value" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Param value" PREVIOUS="name"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="typeid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Basic LTI type id"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" COMMENT="Basic LTI param"/>
+        <FIELD NAME="value" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Param value"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -75,17 +75,17 @@
         <INDEX NAME="typeid" UNIQUE="false" FIELDS="typeid"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="lti_submission" COMMENT="Keeps track of individual submissions for LTI activities." PREVIOUS="lti_types_config">
+    <TABLE NAME="lti_submission" COMMENT="Keeps track of individual submissions for LTI activities.">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="ltiid"/>
-        <FIELD NAME="ltiid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="ID of the LTI tool instance" PREVIOUS="id" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="ltiid" NEXT="datesubmitted"/>
-        <FIELD NAME="datesubmitted" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="userid" NEXT="dateupdated"/>
-        <FIELD NAME="dateupdated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="datesubmitted" NEXT="gradepercent"/>
-        <FIELD NAME="gradepercent" TYPE="number" LENGTH="10" NOTNULL="true" SEQUENCE="false" DECIMALS="5" PREVIOUS="dateupdated" NEXT="originalgrade"/>
-        <FIELD NAME="originalgrade" TYPE="number" LENGTH="10" NOTNULL="true" SEQUENCE="false" DECIMALS="5" PREVIOUS="gradepercent" NEXT="launchid"/>
-        <FIELD NAME="launchid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="originalgrade" NEXT="state"/>
-        <FIELD NAME="state" TYPE="int" LENGTH="2" NOTNULL="true" SEQUENCE="false" PREVIOUS="launchid"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="ltiid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="ID of the LTI tool instance"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="datesubmitted" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="dateupdated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="gradepercent" TYPE="number" LENGTH="10" NOTNULL="true" SEQUENCE="false" DECIMALS="5"/>
+        <FIELD NAME="originalgrade" TYPE="number" LENGTH="10" NOTNULL="true" SEQUENCE="false" DECIMALS="5"/>
+        <FIELD NAME="launchid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="state" TYPE="int" LENGTH="2" NOTNULL="true" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

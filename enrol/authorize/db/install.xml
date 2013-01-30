@@ -4,44 +4,44 @@
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE NAME="enrol_authorize" COMMENT="Holds all known information about authorize.net transactions" NEXT="enrol_authorize_refunds">
+    <TABLE NAME="enrol_authorize" COMMENT="Holds all known information about authorize.net transactions">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="paymentmethod"/>
-        <FIELD NAME="paymentmethod" TYPE="char" LENGTH="6" NOTNULL="true" DEFAULT="cc" SEQUENCE="false" PREVIOUS="id" NEXT="refundinfo"/>
-        <FIELD NAME="refundinfo" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="paymentmethod" NEXT="ccname"/>
-        <FIELD NAME="ccname" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="refundinfo" NEXT="courseid"/>
-        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="ccname" NEXT="instanceid"/>
-        <FIELD NAME="instanceid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="courseid" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="instanceid" NEXT="transid"/>
-        <FIELD NAME="transid" TYPE="int" LENGTH="20" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="userid" NEXT="status"/>
-        <FIELD NAME="status" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="transid" NEXT="timecreated"/>
-        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="status" NEXT="settletime"/>
-        <FIELD NAME="settletime" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timecreated" NEXT="amount"/>
-        <FIELD NAME="amount" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="settletime" NEXT="currency"/>
-        <FIELD NAME="currency" TYPE="char" LENGTH="3" NOTNULL="true" DEFAULT="USD" SEQUENCE="false" PREVIOUS="amount"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="paymentmethod" TYPE="char" LENGTH="6" NOTNULL="true" DEFAULT="cc" SEQUENCE="false"/>
+        <FIELD NAME="refundinfo" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="ccname" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="instanceid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="transid" TYPE="int" LENGTH="20" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="status" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="settletime" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="amount" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="currency" TYPE="char" LENGTH="3" NOTNULL="true" DEFAULT="USD" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid" NEXT="userid"/>
-        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid" PREVIOUS="courseid" NEXT="status"/>
-        <INDEX NAME="status" UNIQUE="false" FIELDS="status" PREVIOUS="userid" NEXT="transid"/>
-        <INDEX NAME="transid" UNIQUE="false" FIELDS="transid" PREVIOUS="status"/>
+        <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid"/>
+        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
+        <INDEX NAME="status" UNIQUE="false" FIELDS="status"/>
+        <INDEX NAME="transid" UNIQUE="false" FIELDS="transid"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="enrol_authorize_refunds" COMMENT="Authorize.net refunds" PREVIOUS="enrol_authorize">
+    <TABLE NAME="enrol_authorize_refunds" COMMENT="Authorize.net refunds">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="orderid"/>
-        <FIELD NAME="orderid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="status"/>
-        <FIELD NAME="status" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="orderid" NEXT="amount"/>
-        <FIELD NAME="amount" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="status" NEXT="transid"/>
-        <FIELD NAME="transid" TYPE="int" LENGTH="20" NOTNULL="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="amount" NEXT="settletime"/>
-        <FIELD NAME="settletime" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="transid"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="orderid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="status" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="amount" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="transid" TYPE="int" LENGTH="20" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="settletime" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="orderid"/>
-        <KEY NAME="orderid" TYPE="foreign" FIELDS="orderid" REFTABLE="enrol_authorize" REFFIELDS="id" COMMENT="Reference to enrol_authorize.id" PREVIOUS="primary"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="orderid" TYPE="foreign" FIELDS="orderid" REFTABLE="enrol_authorize" REFFIELDS="id" COMMENT="Reference to enrol_authorize.id"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="transid" UNIQUE="false" FIELDS="transid"/>

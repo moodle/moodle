@@ -511,12 +511,6 @@ class xmldb_table extends xmldb_object {
             $this->debug($this->errormsg);
             $result = false;
         }
-        if (isset($xmlarr['@']['PREVIOUS'])) {
-            $this->previous = trim($xmlarr['@']['PREVIOUS']);
-        }
-        if (isset($xmlarr['@']['NEXT'])) {
-            $this->next = trim($xmlarr['@']['NEXT']);
-        }
 
         // Iterate over fields
         if (isset($xmlarr['#']['FIELDS']['0']['#']['FIELD'])) {
@@ -548,13 +542,8 @@ class xmldb_table extends xmldb_object {
                 $this->debug($this->errormsg);
                 $result = false;
             }
-            // Check previous & next are ok (duplicates and existing fields)
+            // Compute prev/next.
             $this->fixPrevNext($this->fields);
-            if ($result && !$this->checkPreviousNextValues($this->fields)) {
-                $this->errormsg = 'Some FIELDS previous/next values are incorrect';
-                $this->debug($this->errormsg);
-                $result = false;
-            }
             // Order fields
             if ($result && !$this->orderFields($this->fields)) {
                 $this->errormsg = 'Error ordering the fields';
@@ -593,13 +582,8 @@ class xmldb_table extends xmldb_object {
                 $this->debug($this->errormsg);
                 $result = false;
             }
-            // Check previous & next are ok (duplicates and existing keys)
+            // Compute prev/next.
             $this->fixPrevNext($this->keys);
-            if ($result && !$this->checkPreviousNextValues($this->keys)) {
-                $this->errormsg = 'Some KEYS previous/next values are incorrect';
-                $this->debug($this->errormsg);
-                $result = false;
-            }
             // Order keys
             if ($result && !$this->orderKeys($this->keys)) {
                 $this->errormsg = 'Error ordering the keys';
@@ -637,13 +621,8 @@ class xmldb_table extends xmldb_object {
                 $this->debug($this->errormsg);
                 $result = false;
             }
-            // Check previous & next are ok (duplicates and existing INDEXES)
+            // Compute prev/next.
             $this->fixPrevNext($this->indexes);
-            if ($result && !$this->checkPreviousNextValues($this->indexes)) {
-                $this->errormsg = 'Some INDEXES previous/next values are incorrect';
-                $this->debug($this->errormsg);
-                $result = false;
-            }
             // Order indexes
             if ($result && !$this->orderIndexes($this->indexes)) {
                 $this->errormsg = 'Error ordering the indexes';
@@ -734,13 +713,7 @@ class xmldb_table extends xmldb_object {
         if ($this->comment) {
             $o.= ' COMMENT="' . htmlspecialchars($this->comment) . '"';
         }
-        if ($this->previous) {
-            $o.= ' PREVIOUS="' . $this->previous . '"';
-        }
-        if ($this->next) {
-            $o.= ' NEXT="' . $this->next . '"';
-        }
-            $o.= '>' . "\n";
+        $o.= '>' . "\n";
         // Now the fields
         if ($this->fields) {
             $o.= '      <FIELDS>' . "\n";

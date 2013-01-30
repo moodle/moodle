@@ -4,41 +4,41 @@
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE NAME="data" COMMENT="all database activities" NEXT="data_fields">
+    <TABLE NAME="data" COMMENT="all database activities">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="course"/>
-        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>
-        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="course" NEXT="intro"/>
-        <FIELD NAME="intro" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="introformat"/>
-        <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="intro" NEXT="comments"/>
-        <FIELD NAME="comments" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="introformat" NEXT="timeavailablefrom"/>
-        <FIELD NAME="timeavailablefrom" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="comments" NEXT="timeavailableto"/>
-        <FIELD NAME="timeavailableto" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timeavailablefrom" NEXT="timeviewfrom"/>
-        <FIELD NAME="timeviewfrom" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timeavailableto" NEXT="timeviewto"/>
-        <FIELD NAME="timeviewto" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timeviewfrom" NEXT="requiredentries"/>
-        <FIELD NAME="requiredentries" TYPE="int" LENGTH="8" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timeviewto" NEXT="requiredentriestoview"/>
-        <FIELD NAME="requiredentriestoview" TYPE="int" LENGTH="8" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="requiredentries" NEXT="maxentries"/>
-        <FIELD NAME="maxentries" TYPE="int" LENGTH="8" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="requiredentriestoview" NEXT="rssarticles"/>
-        <FIELD NAME="rssarticles" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="maxentries" NEXT="singletemplate"/>
-        <FIELD NAME="singletemplate" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="rssarticles" NEXT="listtemplate"/>
-        <FIELD NAME="listtemplate" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="singletemplate" NEXT="listtemplateheader"/>
-        <FIELD NAME="listtemplateheader" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="listtemplate" NEXT="listtemplatefooter"/>
-        <FIELD NAME="listtemplatefooter" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="listtemplateheader" NEXT="addtemplate"/>
-        <FIELD NAME="addtemplate" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="listtemplatefooter" NEXT="rsstemplate"/>
-        <FIELD NAME="rsstemplate" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="addtemplate" NEXT="rsstitletemplate"/>
-        <FIELD NAME="rsstitletemplate" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="rsstemplate" NEXT="csstemplate"/>
-        <FIELD NAME="csstemplate" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="rsstitletemplate" NEXT="jstemplate"/>
-        <FIELD NAME="jstemplate" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="csstemplate" NEXT="asearchtemplate"/>
-        <FIELD NAME="asearchtemplate" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="jstemplate" NEXT="approval"/>
-        <FIELD NAME="approval" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="asearchtemplate" NEXT="scale"/>
-        <FIELD NAME="scale" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="approval" NEXT="assessed"/>
-        <FIELD NAME="assessed" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="scale" NEXT="assesstimestart"/>
-        <FIELD NAME="assesstimestart" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="assessed" NEXT="assesstimefinish"/>
-        <FIELD NAME="assesstimefinish" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="assesstimestart" NEXT="defaultsort"/>
-        <FIELD NAME="defaultsort" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="assesstimefinish" NEXT="defaultsortdir"/>
-        <FIELD NAME="defaultsortdir" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="defaultsort" NEXT="editany"/>
-        <FIELD NAME="editany" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="defaultsortdir" NEXT="notification"/>
-        <FIELD NAME="notification" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Notify people when things change" PREVIOUS="editany"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="intro" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="comments" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timeavailablefrom" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timeavailableto" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timeviewfrom" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timeviewto" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="requiredentries" TYPE="int" LENGTH="8" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="requiredentriestoview" TYPE="int" LENGTH="8" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="maxentries" TYPE="int" LENGTH="8" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="rssarticles" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="singletemplate" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="listtemplate" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="listtemplateheader" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="listtemplatefooter" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="addtemplate" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="rsstemplate" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="rsstitletemplate" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="csstemplate" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="jstemplate" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="asearchtemplate" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="approval" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="scale" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="assessed" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="assesstimestart" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="assesstimefinish" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="defaultsort" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="defaultsortdir" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="editany" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="notification" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Notify people when things change"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -47,62 +47,62 @@
         <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="data_fields" COMMENT="every field available" PREVIOUS="data" NEXT="data_records">
+    <TABLE NAME="data_fields" COMMENT="every field available">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="dataid"/>
-        <FIELD NAME="dataid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="type"/>
-        <FIELD NAME="type" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="dataid" NEXT="name"/>
-        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="type" NEXT="description"/>
-        <FIELD NAME="description" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="param1"/>
-        <FIELD NAME="param1" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="description" NEXT="param2"/>
-        <FIELD NAME="param2" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="param1" NEXT="param3"/>
-        <FIELD NAME="param3" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="param2" NEXT="param4"/>
-        <FIELD NAME="param4" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="param3" NEXT="param5"/>
-        <FIELD NAME="param5" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="param4" NEXT="param6"/>
-        <FIELD NAME="param6" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="param5" NEXT="param7"/>
-        <FIELD NAME="param7" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="param6" NEXT="param8"/>
-        <FIELD NAME="param8" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="param7" NEXT="param9"/>
-        <FIELD NAME="param9" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="param8" NEXT="param10"/>
-        <FIELD NAME="param10" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="param9"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="dataid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="type" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="param1" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="param2" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="param3" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="param4" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="param5" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="param6" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="param7" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="param8" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="param9" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="param10" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="dataid"/>
-        <KEY NAME="dataid" TYPE="foreign" FIELDS="dataid" REFTABLE="data" REFFIELDS="id" PREVIOUS="primary"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="dataid" TYPE="foreign" FIELDS="dataid" REFTABLE="data" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="type-dataid" UNIQUE="false" FIELDS="type, dataid" COMMENT="used by data linking filter"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="data_records" COMMENT="every record introduced" PREVIOUS="data_fields" NEXT="data_content">
+    <TABLE NAME="data_records" COMMENT="every record introduced">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="groupid"/>
-        <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="userid" NEXT="dataid"/>
-        <FIELD NAME="dataid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="groupid" NEXT="timecreated"/>
-        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="dataid" NEXT="timemodified"/>
-        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timecreated" NEXT="approved"/>
-        <FIELD NAME="approved" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timemodified"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="dataid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="approved" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="dataid"/>
-        <KEY NAME="dataid" TYPE="foreign" FIELDS="dataid" REFTABLE="data" REFFIELDS="id" PREVIOUS="primary"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="dataid" TYPE="foreign" FIELDS="dataid" REFTABLE="data" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="data_content" COMMENT="the content introduced in each record/fields" PREVIOUS="data_records">
+    <TABLE NAME="data_content" COMMENT="the content introduced in each record/fields">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="fieldid"/>
-        <FIELD NAME="fieldid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="recordid"/>
-        <FIELD NAME="recordid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="fieldid" NEXT="content"/>
-        <FIELD NAME="content" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" PREVIOUS="recordid" NEXT="content1"/>
-        <FIELD NAME="content1" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" PREVIOUS="content" NEXT="content2"/>
-        <FIELD NAME="content2" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" PREVIOUS="content1" NEXT="content3"/>
-        <FIELD NAME="content3" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" PREVIOUS="content2" NEXT="content4"/>
-        <FIELD NAME="content4" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" PREVIOUS="content3"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="fieldid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="recordid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="content" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="content1" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="content2" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="content3" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="content4" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="recordid"/>
-        <KEY NAME="recordid" TYPE="foreign" FIELDS="recordid" REFTABLE="data_records" REFFIELDS="id" PREVIOUS="primary" NEXT="fieldid"/>
-        <KEY NAME="fieldid" TYPE="foreign" FIELDS="fieldid" REFTABLE="data_fields" REFFIELDS="id" PREVIOUS="recordid"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="recordid" TYPE="foreign" FIELDS="recordid" REFTABLE="data_records" REFFIELDS="id"/>
+        <KEY NAME="fieldid" TYPE="foreign" FIELDS="fieldid" REFTABLE="data_fields" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
   </TABLES>

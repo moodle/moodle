@@ -1400,21 +1400,12 @@ class ddl_testcase extends database_driver_testcase {
             $this->assertTrue($e instanceof moodle_exception);
         }
 
-        // Real file but invalid xml file
-        $devhack = false;
-        if (!empty($CFG->xmldbdisablenextprevchecking)) {
-            $CFG->xmldbdisablenextprevchecking = false;
-            $devhack = true;
-        }
         try {
             $dbman->delete_tables_from_xmldb_file(__DIR__ . '/fixtures/invalid.xml');
             $this->assertTrue(false);
         } catch (Exception $e) {
             $this->resetDebugging();
             $this->assertTrue($e instanceof moodle_exception);
-        }
-        if ($devhack) {
-            $CFG->xmldbdisablenextprevchecking = true;
         }
 
         // Check that the table has not been deleted from DB
@@ -1441,21 +1432,12 @@ class ddl_testcase extends database_driver_testcase {
             $this->assertTrue($e instanceof moodle_exception);
         }
 
-        // Real but invalid xml file
-        $devhack = false;
-        if (!empty($CFG->xmldbdisablenextprevchecking)) {
-            $CFG->xmldbdisablenextprevchecking = false;
-            $devhack = true;
-        }
         try {
             $dbman->install_from_xmldb_file(__DIR__ . '/fixtures/invalid.xml');
             $this->assertTrue(false);
         } catch (Exception $e) {
             $this->resetDebugging();
             $this->assertTrue($e instanceof moodle_exception);
-        }
-        if ($devhack) {
-            $CFG->xmldbdisablenextprevchecking = true;
         }
 
         // Check that the table has not yet been created in DB
