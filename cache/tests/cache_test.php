@@ -744,4 +744,26 @@ class cache_phpunit_tests extends advanced_testcase {
         $config = $factory->create_config_instance();
         $this->assertEquals('cache_config_phpunittest', get_class($config));
     }
+
+    /**
+     * Test that multiple loaders work ok.
+     */
+    public function test_multiple_loaders() {
+        $instance = cache_config_phpunittest::instance(true);
+        $instance->phpunit_add_file_store('phpunittest1');
+        $instance->phpunit_add_file_store('phpunittest2');
+        $instance->phpunit_add_definition('phpunit/multi_loader', array(
+            'mode' => cache_store::MODE_APPLICATION,
+            'component' => 'phpunit',
+            'area' => 'multi_loader'
+        ));
+        $instance->phpunit_add_definition_mapping('phpunit/multi_loader', 'phpunittest1', 3);
+        $instance->phpunit_add_definition_mapping('phpunit/multi_loader', 'phpunittest2', 2);
+
+        $cache = cache::make('phpunit', 'multi_loader');
+        $this->assertInstanceOf('cache_application', $cache);
+        $this->assertFalse($cache->get('test'));
+        $this->assertTrue($cache->set('test', 'test'));
+        $this->assertEquals('test', $cache->get('test'));
+    }
 }
