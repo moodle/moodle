@@ -63,6 +63,45 @@ class cache_config_phpunittest extends cache_config_writer {
     public function phpunit_remove_stores() {
         $this->configstores = array();
     }
+
+    /**
+     * Forcefully adds a file store.
+     *
+     * @param string $name
+     */
+    public function phpunit_add_file_store($name) {
+        $this->configstores[$name] = array(
+            'name' => $name,
+            'plugin' => 'file',
+            'configuration' => array(
+                'path' => ''
+            ),
+            'features' => 6,
+            'modes' => 3,
+            'mappingsonly' => false,
+            'class' => 'cachestore_file',
+            'default' => false,
+            'lock' => 'cachelock_file_default'
+        );
+    }
+
+    /**
+     * Forcefully injects a definition => store mapping.
+     *
+     * This function does no validation, you should only be calling if it you know
+     * exactly what to expect.
+     *
+     * @param string $definition
+     * @param string $store
+     * @param int $sort
+     */
+    public function phpunit_add_definition_mapping($definition, $store, $sort) {
+        $this->configdefinitionmappings[] = array(
+            'store' => $store,
+            'definition' => $definition,
+            'sort' => (int)$sort
+        );
+    }
 }
 
 /**
