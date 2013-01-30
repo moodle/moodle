@@ -314,7 +314,10 @@ class cache implements cache_loader {
                 cache_helper::record_cache_miss($this->storetype, $this->definition->get_id());
             }
             if ($this->loader !== false) {
-                $result = $this->loader->get($parsedkey);
+                // We must pass the original (unparsed) key to the next loader in the chain.
+                // The next loader will parse the key as it sees fit. It may be parsed differently
+                // depending upon the capabilities of the store associated with the loader.
+                $result = $this->loader->get($key);
             } else if ($this->datasource !== false) {
                 $result = $this->datasource->load_for_cache($key);
             }
