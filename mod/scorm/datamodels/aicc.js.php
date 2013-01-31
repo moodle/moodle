@@ -246,7 +246,7 @@ require_once($CFG->dirroot.'/mod/scorm/datamodels/callback.js.php');
                 // trigger TOC update
                 var sURL = "<?php echo $CFG->wwwroot; ?>" + "/mod/scorm/prereqs.php?a=<?php echo $scorm->id ?>&scoid=<?php echo $scoid ?>&attempt=<?php echo $attempt ?>&mode=<?php echo $mode ?>&currentorg=<?php echo $currentorg ?>&sesskey=<?php echo sesskey(); ?>";
                 var callback = this.connectPrereqCallback;
-                YUI.use('yui2-connection', function(Y) {
+                YUI().use('yui2-connection', function(Y) {
                     Y.YUI2.util.Connect.asyncRequest('GET', sURL, callback, null);
                 });
                 return "true";
