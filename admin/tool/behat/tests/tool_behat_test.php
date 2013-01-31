@@ -169,10 +169,19 @@ class tool_behat_testcase extends advanced_testcase {
 
         $contents = testable_behat_config_manager::get_config_file_contents($features, $stepsdefinitions);
 
-        $this->assertContains('features: ' . $CFG->dirroot . '/lib/behat/features', $contents);
+        // YAML decides when is is necessary to wrap strings between single quotes, so not controlled
+        // values like paths should not be asserted including the key name as they would depend on the
+        // directories values.
+        $this->assertContains($CFG->dirroot . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'behat' . DIRECTORY_SEPARATOR . 'features', $contents);
+
+        // Not quoted strings.
         $this->assertContains('micarro: /me/lo/robaron', $contents);
-        $this->assertContains('base_url: \'' . $CFG->behat_wwwroot . '\'', $contents);
         $this->assertContains('class: behat_init_context', $contents);
+
+        // YAML uses single quotes to wrap URL strings.
+        $this->assertContains("base_url: '" . $CFG->behat_wwwroot . "'", $contents);
+
+        // Lists.
         $this->assertContains('- feature1', $contents);
         $this->assertContains('- feature3', $contents);
     }
