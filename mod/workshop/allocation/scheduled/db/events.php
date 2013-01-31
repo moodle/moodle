@@ -16,21 +16,25 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Scheduled allocator that internally executes the random one
+ * Defines event handlers
  *
  * @package     workshopallocation_scheduled
  * @subpackage  mod_workshop
- * @copyright   2012 David Mudrak <david@moodle.com>
+ * @category    event
+ * @copyright   2013 David Mudrak <david@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component  = 'workshopallocation_scheduled';
-$plugin->version    = 2013013100;
-$plugin->requires   = 2013012500;
-$plugin->dependencies = array(
-    'workshopallocation_random'  => 2012112900,
+$handlers = array(
+
+    // The workshop main page is displayed to the user
+    'workshop_viewed' => array(
+        'handlerfile'       => '/mod/workshop/allocation/scheduled/lib.php',
+        'handlerfunction'   => 'workshopallocation_scheduled_workshop_viewed',
+        'schedule'          => 'instant',
+        'internal'          => 1,
+    ),
+
 );
-$plugin->maturity   = MATURITY_ALPHA;
-$plugin->cron       = 60;
