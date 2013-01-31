@@ -2325,12 +2325,14 @@ EOD;
      * If the error message is blank, nothing is output.
      *
      * @param string $message the error message.
+     * @param bool $icon display the icon along with the error message.
      * @return string the HTML to output.
      */
     public function error_text($message) {
         if (empty($message)) {
             return '';
         }
+        $message = $this->pix_icon('i/warning', get_string('error'), '', array('class' => 'icon icon-pre', 'title'=>'')) . $message;
         return html_writer::tag('span', $message, array('class' => 'error'));
     }
 
