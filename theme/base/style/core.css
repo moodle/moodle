@@ -781,8 +781,6 @@ sup {vertical-align: super;}
 .dir-rtl .ygtvcancel {background-position: 0 -8822px;}
 .dir-rtl .ygtvcancel:hover {background-position: 0 -8866px;}
 
-.dir-rtl .file-picker .yui-layout-unit-left  {left:500px !important;}
-.dir-rtl .file-picker .yui-layout-unit-center {left:0px !important;}
 .dir-rtl.yui-skin-sam .yui-panel .hd {text-align:left;}
 .dir-rtl .yui-skin-sam .yui-layout .yui-layout-unit div.yui-layout-bd {text-align:right;}
 
