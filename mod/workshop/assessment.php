@@ -128,9 +128,15 @@ $strategy = $workshop->grading_strategy_instance();
 if (is_null($assessment->grade) and !$assessmenteditable) {
     $mform = null;
 } else {
+    // Are there any other pending assessments to do but this one?
+    if ($assessmenteditable) {
+        $pending = $workshop->get_pending_assessments_by_reviewer($assessment->reviewerid, $assessment->id);
+    } else {
+        $pending = array();
+    }
     // load the assessment form and process the submitted data eventually
     $mform = $strategy->get_assessment_form($PAGE->url, 'assessment', $assessment, $assessmenteditable,
-                                        array('editableweight' => $cansetassessmentweight));
+                                        array('editableweight' => $cansetassessmentweight, 'pending' => !empty($pending)));
     $mform->set_data(array('weight' => $assessment->weight)); // other values are set by subplugins
     if ($mform->is_cancelled()) {
         redirect($workshop->view_url());
@@ -146,6 +152,13 @@ if (is_null($assessment->grade) and !$assessmenteditable) {
         }
         if (!is_null($rawgrade) and isset($data->saveandclose)) {
             redirect($workshop->view_url());
+        } else if (!is_null($rawgrade) and isset($data->saveandshownext)) {
+            $next = reset($pending);
+            if (!empty($next)) {
+                redirect($workshop->assess_url($next->id));
+            } else {
+                redirect($PAGE->url); // This should never happen but just in case...
+            }
         } else {
             // either it is not possible to calculate the $rawgrade
             // or the reviewer has chosen "Save and continue"

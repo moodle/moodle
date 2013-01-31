@@ -208,6 +208,7 @@ $string['recentsubmissions'] = 'Workshop submissions:';
 $string['saveandclose'] = 'Save and close';
 $string['saveandcontinue'] = 'Save and continue editing';
 $string['saveandpreview'] = 'Save and preview';
+$string['saveandshownext'] = 'Save and show next';
 $string['selfassessmentdisabled'] = 'Self-assessment disabled';
 $string['showingperpage'] = 'Showing {$a} items per page';
 $string['showingperpagechange'] = 'Change ...';
