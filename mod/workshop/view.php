@@ -59,6 +59,24 @@ $workshop->log('view');
 $completion = new completion_info($course);
 $completion->set_module_viewed($cm);
 
+// Fire the event
+events_trigger('workshop_viewed', (object)array(
+    'workshop' => $workshop,
+    'user' => $USER,
+));
+
+// If the phase is to be switched, do it asap. This just has to happen after triggering
+// the event so that the scheduled allocator had a chance to allocate submissions.
+if ($workshop->phase == workshop::PHASE_SUBMISSION and $workshop->phaseswitchassessment
+        and $workshop->submissionend > 0 and $workshop->submissionend < time()) {
+    $workshop->switch_phase(workshop::PHASE_ASSESSMENT);
+    $workshop->log('update switch phase', $workshop->view_url(), $workshop->phase);
+    // Disable the automatic switching now so that it is not executed again by accident
+    // if the teacher changes the phase back to the submission one.
+    $DB->set_field('workshop', 'phaseswitchassessment', 0, array('id' => $workshop->id));
+    $workshop->phaseswitchassessment = 0;
+}
+
 if (!is_null($editmode) && $PAGE->user_allowed_editing()) {
     $USER->editing = $editmode;
 }
