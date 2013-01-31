@@ -1322,10 +1322,11 @@ function scorm_get_toc($user,$scorm,$cmid,$toclink=TOCJSLINK,$currentorg='',$sco
     //
     // If not specified retrieve the last attempt number
     //
+    $attemptsmade = scorm_get_attempt_count($user->id, $scorm);
     if (empty($attempt)) {
-        $attempt = scorm_get_attempt_count($user->id, $scorm);
+        $attempt = $attemptsmade;
     }
-    $result->attemptleft = $scorm->maxattempt == 0 ? 1 : $scorm->maxattempt - $attempt;
+    $result->attemptleft = $scorm->maxattempt == 0 ? 1 : $scorm->maxattempt - $attemptsmade;
     if ($scoes = scorm_get_scoes($scorm->id, $currentorg)){
         //
         // Retrieve user tracking data for each learning object
