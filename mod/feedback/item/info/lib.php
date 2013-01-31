@@ -112,8 +112,8 @@ class feedback_item_info extends feedback_item_base {
         $values = feedback_get_group_values($item, $groupid, $courseid);
         if ($values) {
             $data = array();
-            $datavalue = new stdClass();
             foreach ($values as $value) {
+                $datavalue = new stdClass();
 
                 switch($presentation) {
                     case 1:
@@ -279,7 +279,12 @@ class feedback_item_info extends feedback_item_base {
         $requiredmark =  ($item->required == 1)?'<span class="feedback_required_mark">*</span>':'';
 
         $feedback = $DB->get_record('feedback', array('id'=>$item->feedback));
-        $course = $DB->get_record('course', array('id'=>$feedback->course));
+
+        if ($courseid = optional_param('courseid', 0, PARAM_INT)) {
+            $course = $DB->get_record('course', array('id'=>$courseid));
+        } else {
+            $course = $DB->get_record('course', array('id'=>$feedback->course));
+        }
 
         if ($course->id !== SITEID) {
             $coursecategory = $DB->get_record('course_categories', array('id'=>$course->category));
@@ -289,8 +294,13 @@ class feedback_item_info extends feedback_item_base {
 
         switch($presentation) {
             case 1:
-                $itemvalue = time();
-                $itemshowvalue = userdate($itemvalue);
+                if ($feedback->anonymous == FEEDBACK_ANONYMOUS_YES) {
+                    $itemvalue = 0;
+                    $itemshowvalue = '-';
+                } else {
+                    $itemvalue = time();
+                    $itemshowvalue = userdate($itemvalue);
+                }
                 break;
             case 2:
                 $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
@@ -390,7 +400,7 @@ class feedback_item_info extends feedback_item_base {
     }
 
     public function value_type() {
-        return PARAM_INT;
+        return PARAM_TEXT;
     }
 
     public function clean_input_value($value) {
