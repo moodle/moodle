@@ -200,7 +200,7 @@ if ($courseitemfilter > 0) {
         if ($item->hasvalue == 0) {
             continue;
         }
-        echo '<table width="100%" class="generaltable">';
+        echo '<table width="100%" class="generalbox">';
         //get the class from item-typ
         $itemobj = feedback_get_item_class($item->typ);
         $itemnr++;

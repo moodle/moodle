@@ -1490,7 +1490,7 @@ class page_wiki_map extends page_wiki {
 
         $table = new html_table();
         $table->head = array(get_string('contributions', 'wiki') . $OUTPUT->help_icon('contributions', 'wiki'));
-        $table->attributes['class'] = 'wiki_editor generaltable';
+        $table->attributes['class'] = 'wiki_editor generalbox';
         $table->data = array();
         $table->rowclasses = array();
 
@@ -1610,7 +1610,7 @@ class page_wiki_map extends page_wiki {
 
         $table = new html_table();
         $table->head = array(get_string('pageindex', 'wiki') . $OUTPUT->help_icon('pageindex', 'wiki'));
-        $table->attributes['class'] = 'wiki_editor generaltable';
+        $table->attributes['class'] = 'wiki_editor generalbox';
         $table->data[] = array($this->render_navigation_node($tree));
 
         echo html_writer::table($table);
@@ -1649,7 +1649,7 @@ class page_wiki_map extends page_wiki {
 
         $table = new html_table();
         $table->head = array(get_string('pagelist', 'wiki') . $OUTPUT->help_icon('pagelist', 'wiki'));
-        $table->attributes['class'] = 'wiki_editor generaltable';
+        $table->attributes['class'] = 'wiki_editor generalbox';
         $table->align = array('center');
         foreach ($stdaux as $key => $elem) {
             $table->data[] = array($key);
@@ -1679,7 +1679,7 @@ class page_wiki_map extends page_wiki {
 
         $table = new html_table();
         $table->head = array(get_string('orphaned', 'wiki') . $OUTPUT->help_icon('orphaned', 'wiki'));
-        $table->attributes['class'] = 'wiki_editor generaltable';
+        $table->attributes['class'] = 'wiki_editor generalbox';
         $table->data = array();
         $table->rowclasses = array();
 
@@ -1715,7 +1715,7 @@ class page_wiki_map extends page_wiki {
 
         $table = new html_table();
         $table->head = array(get_string('updatedpages', 'wiki') . $OUTPUT->help_icon('updatedpages', 'wiki'));
-        $table->attributes['class'] = 'wiki_editor generaltable';
+        $table->attributes['class'] = 'wiki_editor generalbox';
         $table->data = array();
         $table->rowclasses = array();
 
