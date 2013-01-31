@@ -189,6 +189,9 @@ class behat_config_manager {
                         'features' => $features,
                         'steps_definitions' => $stepsdefinitions
                     )
+                ),
+                'formatter' => array(
+                    'name' => 'progress'
                 )
             )
         );
