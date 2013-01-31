@@ -123,7 +123,7 @@ abstract class testing_util {
      *
      * @return bool
      */
-    protected static function is_test_data_updated() {
+    public static function is_test_data_updated() {
         global $CFG;
 
         $framework = self::get_framework();
