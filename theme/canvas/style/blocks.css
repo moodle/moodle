@@ -112,3 +112,10 @@
     font-size: 0.9em;
     margin: 0.25em 0;
 }
+
+/* Add block
+------------------------------*/
+
+.block_adminblock .content .singleselect {
+    text-align: left;
+}
