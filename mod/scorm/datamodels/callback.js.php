@@ -18,7 +18,7 @@
    this.connectPrereqCallback = {
 
         success: function(o) {
-            YUI.use('yui2-treeview', 'yui2-layout', function(Y) {
+            YUI().use('yui2-treeview', 'yui2-layout', function(Y) {
                 scorm_tree_node = Y.YUI2.widget.TreeView.getTree('scorm_tree');
                 if (o.responseText !== undefined) {
                     //alert('got a response: ' + o.responseText);
