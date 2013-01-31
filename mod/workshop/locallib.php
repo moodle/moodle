@@ -1170,6 +1170,37 @@ class workshop {
     }
 
     /**
+     * Get allocated assessments not graded yet by the given reviewer
+     *
+     * @see self::get_assessments_by_reviewer()
+     * @param int $reviewerid the reviewer id
+     * @param null|int|array $exclude optional assessment id (or list of them) to be excluded
+     * @return array
+     */
+    public function get_pending_assessments_by_reviewer($reviewerid, $exclude = null) {
+
+        $assessments = $this->get_assessments_by_reviewer($reviewerid);
+
+        foreach ($assessments as $id => $assessment) {
+            if (!is_null($assessment->grade)) {
+                unset($assessments[$id]);
+                continue;
+            }
+            if (!empty($exclude)) {
+                if (is_array($exclude) and in_array($id, $exclude)) {
+                    unset($assessments[$id]);
+                    continue;
+                } else if ($id == $exclude) {
+                    unset($assessments[$id]);
+                    continue;
+                }
+            }
+        }
+
+        return $assessments;
+    }
+
+    /**
      * Allocate a submission to a user for review
      *
      * @param stdClass $submission Submission object with at least id property
