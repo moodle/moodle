@@ -65,6 +65,10 @@ class backup_glossary_activity_task extends backup_activity_task {
         $search="/(".$base."\/mod\/glossary\/view.php\?id\=)([0-9]+)/";
         $content= preg_replace($search, '$@GLOSSARYVIEWBYID*$2@$', $content);
 
+        // Link to glossary entry
+        $search="/(".$base."\/mod\/glossary\/showentry.php\?courseid=)([0-9]+)(&|&amp;)eid=([0-9]+)/";
+        $content = preg_replace($search, '$@GLOSSARYSHOWENTRY*$2*$4@$', $content);
+
         return $content;
     }
 }
