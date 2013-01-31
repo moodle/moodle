@@ -285,3 +285,50 @@ function workshopallocation_scheduled_cron() {
         // todo inform the teachers about the results
     }
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// Events API
+////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Handler for the 'workshop_viewed' event
+ *
+ * This does the same job as {@link workshopallocation_scheduled_cron()} but for the
+ * single workshop. The idea is that we do not need to wait forcron to execute.
+ * Displaying the workshop main view.php can trigger the scheduled allocation, too.
+ *
+ * @param stdClass $event event data
+ * @return bool
+ */
+function workshopallocation_scheduled_workshop_viewed($event) {
+    global $DB;
+
+    $workshop = $event->workshop;
+    $now = time();
+
+    // Non-expensive check to see if the scheduled allocation can even happen.
+    if ($workshop->phase == workshop::PHASE_SUBMISSION and $workshop->submissionend > 0 and $workshop->submissionend < $now) {
+
+        // Make sure the scheduled allocation has been configured for this workshop, that it has not
+        // been executed yet and that the passed workshop record is still valid.
+        $sql = "SELECT a.id
+                  FROM {workshopallocation_scheduled} a
+                  JOIN {workshop} w ON a.workshopid = w.id
+                 WHERE w.id = :workshopid
+                       AND a.enabled = 1
+                       AND w.phase = :phase
+                       AND w.submissionend > 0
+                       AND w.submissionend < :now
+                       AND (a.timeallocated IS NULL OR a.timeallocated < w.submissionend)";
+        $params = array('workshopid' => $workshop->id, 'phase' => workshop::PHASE_SUBMISSION, 'now' => $now);
+
+        if ($DB->record_exists_sql($sql, $params)) {
+            // Allocate submissions for assessments.
+            $allocator = $workshop->allocator_instance('scheduled');
+            $result = $allocator->execute();
+            // todo inform the teachers about the results
+        }
+    }
+
+    return true;
+}
