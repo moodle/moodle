@@ -3897,7 +3897,7 @@ function create_user_record($username, $password, $auth = 'manual') {
 
     foreach ($customfield as $key) {
         $key->userid = $newuser->id;
-        $key->id = $DB->insert_record("user_info_data", $key);
+        $key->id = $DB->insert_record('user_info_data', $key);
     }
 
     $user = get_complete_user_data('id', $newuser->id);
@@ -3961,24 +3961,18 @@ function update_user_record($username) {
                         }
                     } else if ($iscustom) {
                         $shortname = str_replace('profile_field_', '', $key);
-                        // If there is no value in the user_info_data then.
                         $infofield = $DB->get_record('user_info_field', array('shortname' => $shortname));
-                        $userid = $DB->get_field('user', 'id', array('username' => $username));
-                        $data = $DB->get_field('user_info_data', 'data', array('userid' => $userid, 'fieldid' => $infofield->id));
+                        $data = $DB->get_field('user_info_data', 'data', array('userid' => $oldinfo->id, 'fieldid' => $infofield->id));
+                        // If there is no value in the user_info_data then use default value for comparison.
                         if ($data === false) {
-                            $data = $infofield->defaultdata;
-                            if (strcmp($data, $value) !== 0) {
-                                $row = new stdClass();
-                                $row->userid = $userid;
-                                $row->fieldid = $infofield->id;
-                                $row->data = $data;
-                                $row->id = $DB->insert_record("user_info_data", $row);
-                            }
+                            $originalvalue = $infofield->defaultdata;
+                        } else {
+                            $originalvalue = $data;
                         }
-
-                        if (strcmp($data, $value) !== 0) {
+                        // If passed value is different then original value then update/insert.
+                        if (strcmp($originalvalue, $value) !== 0) {
                             $valid = true;
-                            // Check to make sure that the value we are placing in is a valid one.
+                            // Check to make sure that the value is a valid.
                             if (strcmp($info_field->datatype, 'menu') == 0) {
                                 $validValues = explode("\n", $info_field->param1);
                                 if (!in_array($value, $validValues)) {
@@ -3990,9 +3984,18 @@ function update_user_record($username) {
                                 }
                             }
 
-                            // Update value if it is diffrent then old.
+                            // Insert/update if value is valid.
                             if ($valid) {
-                                $DB->set_field('user_info_data', 'data', $value, array('userid'=>$userid, 'fieldid'=>$infofield->id));
+                                if ($data === false) {
+                                    $row = new stdClass();
+                                    $row->userid = $oldinfo->id;
+                                    $row->fieldid = $infofield->id;
+                                    $row->data = $value;
+                                    $row->id = $DB->insert_record('user_info_data', $row);
+                                } else {
+                                    $DB->set_field('user_info_data', 'data', $value,
+                                            array('userid' => $oldinfo->id, 'fieldid' => $infofield->id));
+                                }
                             }
                         }
                     }

@@ -129,12 +129,11 @@ class auth_plugin_ldap extends auth_plugin_base {
             // so leave $this->config->objectclass as is.
         }
     }
-	 
+
     /**
      * Constructor with initialisation.
      */
     function auth_plugin_ldap() {
-        global $DB;
         $this->authtype = 'ldap';
         $this->roleauth = 'auth_ldap';
         $this->errorlogtag = '[AUTH LDAP] ';
@@ -294,10 +293,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                 } else {
                     $newval = textlib::convert($entry[$value], $this->config->ldapencoding, 'utf-8');
                 }
-
-                // Need to allow for 0 or '0' will ldap ever return an empty string 
-                // or will the array_key_exists catch such things.
-                if (isset($newval) && ($newval !== '')) { // Favour ldap entries that are set.
+                if (!empty($newval)) { // favour ldap entries that are set
                     $ldapval = $newval;
                 }
             }
@@ -1164,17 +1160,18 @@ class auth_plugin_ldap extends auth_plugin_base {
             $user_entry = array_change_key_case($user_entry[0], CASE_LOWER);
 
             foreach ($attrmap as $key => $ldapkeys) {
+                $profilefield = '';
                 // Only process if the moodle field ($key) has changed and we
                 // are set to update LDAP with it
                 if (isset($olduser->$key) and isset($newuser->$key)
                     and ($olduser->$key !== $newuser->$key)) {
-                    $profile_field = $key;
+                    $profilefield = $key;
                 } else if (isset($olduser->{'profile_field_' . $key}) && isset($newuser->{'profile_field_' . $key})
                     && $olduser->{'profile_field_' . $key} !== $newuser->{'profile_field_' . $key}) {
-                    $profile_field = 'profile_field_' . $key;
+                    $profilefield = 'profile_field_' . $key;
                 }
 
-                if (!empty($profile_field) && !empty($this->config->{'field_updateremote_' . $key})) {
+                if (!empty($profilefield) && !empty($this->config->{'field_updateremote_' . $key})) {
                     // For ldap values that could be in more than one
                     // ldap key, we will do our best to match
                     // where they came from
@@ -1187,14 +1184,13 @@ class auth_plugin_ldap extends auth_plugin_base {
                         $ambiguous = false;
                     }
 
-                    $nuvalue = textlib::convert($newuser->$profile_field, 'utf-8', $this->config->ldapencoding);
+                    $nuvalue = textlib::convert($newuser->$profilefield, 'utf-8', $this->config->ldapencoding);
                     empty($nuvalue) ? $nuvalue = array() : $nuvalue;
-                    $ouvalue = textlib::convert($olduser->$profile_field, 'utf-8', $this->config->ldapencoding);
+                    $ouvalue = textlib::convert($olduser->$profilefield, 'utf-8', $this->config->ldapencoding);
 
                     foreach ($ldapkeys as $ldapkey) {
                         $ldapkey   = $ldapkey;
-                        $ldapvalue = empty($user_entry[$ldapkey][0]) ? null : $ldapvalue;
-                        
+                        $ldapvalue = $user_entry[$ldapkey][0];
                         if (!$ambiguous) {
                             // Skip update if the values already match
                             if ($nuvalue !== $ldapvalue) {
@@ -1453,7 +1449,15 @@ class auth_plugin_ldap extends auth_plugin_base {
 
     function ldap_attributes () {
         $moodleattributes = array();
-        foreach ($this->userfields as $field) {
+        // If we have custom fields then merge them with user fields.
+        $customfields = $this->get_custom_user_profile_fields();
+        if (!empty($customfields) && !empty($this->userfields)) {
+            $userfields = array_merge($this->userfields, $customfields);
+        } else {
+            $userfields = $this->userfields;
+        }
+
+        foreach ($userfields as $field) {
             if (!empty($this->config->{"field_map_$field"})) {
                 $moodleattributes[$field] = textlib::strtolower(trim($this->config->{"field_map_$field"}));
                 if (preg_match('/,/', $moodleattributes[$field])) {
@@ -1461,18 +1465,6 @@ class auth_plugin_ldap extends auth_plugin_base {
                 }
             }
         }
-
-        // Add custom fields.
-        $customfields = $this->get_custom_user_profile_fields();
-        foreach ($customfields as $field) {
-            if (!empty($this->config->{"field_map_$field"})) {
-                $moodleattributes[$field] = $this->config->{"field_map_$field"};
-                if (preg_match('/,/',$moodleattributes[$field])) {
-                    $moodleattributes[$field] = explode(',', $moodleattributes[$field]);
-                }
-            }
-        }
-
         $moodleattributes['username'] = textlib::strtolower(trim($this->config->user_attribute));
         return $moodleattributes;
     }

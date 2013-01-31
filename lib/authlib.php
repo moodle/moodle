@@ -121,7 +121,7 @@ class auth_plugin_base {
      * Moodle custom fields to sync with.
      * @var array()
      */
-    var $custom_fields = null;
+    var $customfields = null;
 
     /**
 
@@ -535,23 +535,20 @@ class auth_plugin_base {
      */
     public function get_custom_user_profile_fields() {
         global $DB;
-        // If already retrived then return.
-        if (!is_null($this->custom_fields)) {
-            return $this->custom_fields;
+        // If already retrieved then return.
+        if (!is_null($this->customfields)) {
+            return $this->customfields;
         }
 
-        $this->custom_fields = array();
-
-        $customfields = array();
+        $this->customfields = array();
         if ($proffields = $DB->get_records('user_info_field')) {
             foreach ($proffields as $proffield) {
-                $customfields[] = 'profile_field_'.$proffield->shortname;
+                $this->customfields[] = 'profile_field_'.$proffield->shortname;
             }
         }
         unset($proffields);
-        $this->custom_fields = $customfields;
 
-        return $customfields;
+        return $this->customfields;
     }
 
 }
