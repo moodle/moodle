@@ -162,15 +162,19 @@ class format_weeks extends format_base {
     function ajax_section_move() {
         global $PAGE;
         $titles = array();
+        $current = -1;
         $course = $this->get_course();
         $modinfo = get_fast_modinfo($course);
         $renderer = $this->get_renderer($PAGE);
         if ($renderer && ($sections = $modinfo->get_section_info_all())) {
             foreach ($sections as $number => $section) {
                 $titles[$number] = $renderer->section_title($section, $course);
+                if ($this->is_section_current($section)) {
+                    $current = $number;
+                }
             }
         }
-        return array('sectiontitles' => $titles, 'action' => 'move');
+        return array('sectiontitles' => $titles, 'current' => $current, 'action' => 'move');
     }
 
     /**
