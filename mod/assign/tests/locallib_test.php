@@ -658,6 +658,63 @@ class mod_assign_locallib_testcase extends advanced_testcase {
         }
     }
 
+    public function test_show_student_summary() {
+        global $CFG;
+
+        $this->setUser($this->editingteachers[0]);
+        $assign = $this->create_instance();
+
+        // No feedback should be available because this student has not been graded.
+        $this->setUser($this->students[0]);
+        $output = $assign->view_student_summary($this->students[0], true);
+        $this->assertEquals(false, strpos($output, 'Feedback'), 'Do not show feedback if there is no grade');
+        // Simulate adding a grade.
+        $this->setUser($this->teachers[0]);
+        $data = new stdClass();
+        $data->grade = '50.0';
+        $assign->testable_apply_grade_to_user($data, $this->students[0]->id);
+
+        // Now we should see the feedback
+        $this->setUser($this->students[0]);
+        $output = $assign->view_student_summary($this->students[0], true);
+        $this->assertNotEquals(false, strpos($output, 'Feedback'), 'Show feedback if there is a grade');
+
+        // Now hide the grade in gradebook.
+        $this->setUser($this->teachers[0]);
+        require_once($CFG->libdir.'/gradelib.php');
+        $gradeitem = new grade_item(array(
+            'itemtype'      => 'mod',
+            'itemmodule'    => 'assign',
+            'iteminstance'  => $assign->get_instance()->id,
+            'courseid'      => $this->course->id));
+
+        $gradeitem->set_hidden(1, false);
+
+        // No feedback should be available because the grade is hidden.
+        $this->setUser($this->students[0]);
+        $output = $assign->view_student_summary($this->students[0], true);
+        $this->assertEquals(false, strpos($output, 'Feedback'), 'Do not show feedback if the grade is hidden in the gradebook');
+
+        // Do the same but add feedback
+        $assign = $this->create_instance(array('assignfeedback_comments_enabled' => 1));
+
+        $this->setUser($this->teachers[0]);
+        $grade = $assign->get_user_grade($this->students[0]->id, true);
+        $data = new stdClass();
+        $data->assignfeedbackcomments_editor = array('text'=>'Tomato sauce',
+                                         'format'=>FORMAT_MOODLE);
+        $plugin = $assign->get_feedback_plugin_by_type('comments');
+        $plugin->save($grade, $data);
+
+        // Should have feedback but no grade
+        $this->setUser($this->students[0]);
+        $output = $assign->view_student_summary($this->students[0], true);
+        $this->assertNotEquals(false, strpos($output, 'Tomato sauce'), 'Show feedback even if there is no grade');
+        $this->assertEquals(false, strpos($output, 'Grade'), 'Do not show grade when there is no grade.');
+        $this->assertEquals(false, strpos($output, 'Graded on'), 'Do not show graded date when there is no grade.');
+    }
+
+
 }
 
 /**

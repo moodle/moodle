@@ -1806,7 +1806,8 @@ class assign {
                 }
             }
             $grading_info = grade_get_grades($course->id, 'mod', 'assign', $cm->instance, $USER->id);
-            if (isset($grading_info->items[0]) && !$grading_info->items[0]->grades[$USER->id]->hidden ) {
+            if (isset($grading_info->items[0]->grades[$USER->id]) &&
+                    !$grading_info->items[0]->grades[$USER->id]->hidden ) {
                 $grade = $grading_info->items[0]->grades[$USER->id]->str_grade;
             } else {
                 $grade = '-';
@@ -3040,8 +3041,12 @@ class assign {
                                         $instance->id,
                                         $user->id);
 
-            $gradingitem = $gradinginfo->items[0];
-            $gradebookgrade = $gradingitem->grades[$user->id];
+            $gradingitem = null;
+            $gradebookgrade = null;
+            if (isset($gradinginfo->items[0])) {
+                $gradingitem = $gradinginfo->items[0];
+                $gradebookgrade = $gradingitem->grades[$user->id];
+            }
 
             // Check to see if all feedback plugins are empty.
             $emptyplugins = true;
@@ -3055,25 +3060,34 @@ class assign {
                 }
             }
 
-            if (!($gradebookgrade->hidden) && ($gradebookgrade->grade !== null || !$emptyplugins)) {
+            $cangrade = has_capability('mod/assign:grade', $this->get_context());
+            // If there is feedback or a visible grade, show the summary.
+            if ((!empty($gradebookgrade->grade) && ($cangrade || !$gradebookgrade->hidden)) ||
+                    !$emptyplugins) {
 
-                $gradefordisplay = '';
+                $gradefordisplay = null;
+                $gradeddate = null;
+                $grader = null;
                 $gradingmanager = get_grading_manager($this->get_context(), 'mod_assign', 'submissions');
 
-                if ($controller = $gradingmanager->get_active_controller()) {
-                    $controller->set_grade_range(make_grades_menu($this->get_instance()->grade));
-                    $cangrade = has_capability('mod/assign:grade', $this->get_context());
-                    $gradefordisplay = $controller->render_grade($PAGE,
-                                                                 $grade->id,
-                                                                 $gradingitem,
-                                                                 $gradebookgrade->str_long_grade,
-                                                                 $cangrade);
-                } else {
-                    $gradefordisplay = $this->display_grade($gradebookgrade->grade, false);
+                // Only show the grade if it is not hidden in gradebook.
+                if (!empty($gradebookgrade->grade) && ($cangrade || !$gradebookgrade->hidden)) {
+                    if ($controller = $gradingmanager->get_active_controller()) {
+                        $controller->set_grade_range(make_grades_menu($this->get_instance()->grade));
+                        $gradefordisplay = $controller->render_grade($PAGE,
+                                                                     $grade->id,
+                                                                     $gradingitem,
+                                                                     $gradebookgrade->str_long_grade,
+                                                                     $cangrade);
+                    } else {
+                        $gradefordisplay = $this->display_grade($gradebookgrade->grade, false);
+                    }
+                    $gradeddate = $gradebookgrade->dategraded;
+                    if (isset($grade->grader)) {
+                        $grader = $DB->get_record('user', array('id'=>$grade->grader));
+                    }
                 }
 
-                $gradeddate = $gradebookgrade->dategraded;
-                $grader = $DB->get_record('user', array('id'=>$grade->grader));
 
                 $feedbackstatus = new assign_feedback_status($gradefordisplay,
                                                       $gradeddate,
@@ -4401,10 +4415,18 @@ class assign {
         if (has_all_capabilities($capabilitylist, $this->get_course_context())) {
             $urlparams = array('id'=>$this->get_course()->id);
             $url = new moodle_url('/grade/report/grader/index.php', $urlparams);
-            $usergrade = $gradinginfo->items[0]->grades[$userid]->str_grade;
+            $usergrade = '-';
+            if (isset($gradinginfo->items[0]->grades[$userid]->str_grade)) {
+                $usergrade = $gradinginfo->items[0]->grades[$userid]->str_grade;
+            }
             $gradestring = $this->get_renderer()->action_link($url, $usergrade);
         } else {
-            $gradestring = $gradinginfo->items[0]->grades[$userid]->str_grade;
+            $usergrade = '-';
+            if (isset($gradinginfo->items[0]->grades[$userid]) &&
+                    !$grading_info->items[0]->grades[$userid]->hidden) {
+                $usergrade = $gradinginfo->items[0]->grades[$userid]->str_grade;
+            }
+            $gradestring = $usergrade;
         }
         $name = get_string('currentgrade', 'assign') . ':' . $gradestring;
         $mform->addElement('static', 'finalgrade', $name);

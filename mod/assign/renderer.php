@@ -321,18 +321,20 @@ class mod_assign_renderer extends plugin_renderer_base {
         $t = new html_table();
 
         // Grade.
-        $row = new html_table_row();
-        $cell1 = new html_table_cell(get_string('grade'));
-        $cell2 = new html_table_cell($status->gradefordisplay);
-        $row->cells = array($cell1, $cell2);
-        $t->data[] = $row;
+        if (isset($status->gradefordisplay)) {
+            $row = new html_table_row();
+            $cell1 = new html_table_cell(get_string('grade'));
+            $cell2 = new html_table_cell($status->gradefordisplay);
+            $row->cells = array($cell1, $cell2);
+            $t->data[] = $row;
 
-        // Grade date.
-        $row = new html_table_row();
-        $cell1 = new html_table_cell(get_string('gradedon', 'assign'));
-        $cell2 = new html_table_cell(userdate($status->gradeddate));
-        $row->cells = array($cell1, $cell2);
-        $t->data[] = $row;
+            // Grade date.
+            $row = new html_table_row();
+            $cell1 = new html_table_cell(get_string('gradedon', 'assign'));
+            $cell2 = new html_table_cell(userdate($status->gradeddate));
+            $row->cells = array($cell1, $cell2);
+            $t->data[] = $row;
+        }
 
         if ($status->grader) {
             // Grader.
