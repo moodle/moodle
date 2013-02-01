@@ -41,7 +41,7 @@ class block_glossary_random_edit_form extends block_edit_form {
         $mform->setType('config_title', PARAM_TEXT);
 
         // Select glossaries to put in dropdown box ...
-        $glossaries = $DB->get_records_menu('glossary', array('course' => $this->block->course->id), 'name', 'id,name');
+        $glossaries = $DB->get_records_select_menu('glossary', 'course = ? OR globalglossary = ?', array($this->block->course->id, 1), 'name', 'id,name');
         foreach($glossaries as $key => $value) {
             $glossaries[$key] = strip_tags(format_string($value, true));
         }
