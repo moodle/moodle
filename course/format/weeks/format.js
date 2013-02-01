@@ -75,6 +75,7 @@ M.course.format.process_sections = function(Y, sectionlist, response, sectionfro
         for (var i = sectionfrom; i <= sectionto; i++) {
             // Update section title.
             sectionlist.item(i).one('.'+CSS.SECTIONNAME).setContent(response.sectiontitles[i]);
+
             // Update move icon.
             ele = sectionlist.item(i).one(SELECTORS.SECTIONLEFTSIDE);
             str = ele.getAttribute('alt');
@@ -82,6 +83,14 @@ M.course.format.process_sections = function(Y, sectionlist, response, sectionfro
             newstr = str.substr(0, stridx +1) + i;
             ele.setAttribute('alt', newstr);
             ele.setAttribute('title', newstr); // For FireFox as 'alt' is not refreshed.
+
+            // Remove the current class as section has been moved.
+            sectionlist.item(i).removeClass('current');
+        }
+        // If there is a current section, apply corresponding class in order to highlight it.
+        if (response.current !== -1) {
+            // Add current class to the required section.
+            sectionlist.item(response.current).addClass('current');
         }
     }
 }
