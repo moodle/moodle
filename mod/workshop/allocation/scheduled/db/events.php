@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,16 +16,25 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Defines the version of workshop
+ * Defines event handlers
  *
- * @package    mod_workshop
- * @copyright  2009 David Mudrak <david.mudrak@gmail.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package     workshopallocation_scheduled
+ * @subpackage  mod_workshop
+ * @category    event
+ * @copyright   2013 David Mudrak <david@moodle.com>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$module->version   = 2013013100;        // the current module version (YYYYMMDDXX)
-$module->requires  = 2013012500;        // requires this Moodle version
-$module->component = 'mod_workshop';    // full name of the plugin (used for diagnostics)
-$module->cron      = 60;                // give as a chance every minute
+$handlers = array(
+
+    // The workshop main page is displayed to the user
+    'workshop_viewed' => array(
+        'handlerfile'       => '/mod/workshop/allocation/scheduled/lib.php',
+        'handlerfunction'   => 'workshopallocation_scheduled_workshop_viewed',
+        'schedule'          => 'instant',
+        'internal'          => 1,
+    ),
+
+);
