@@ -53,11 +53,6 @@ use Behat\Behat\Event\StepEvent as StepEvent;
 class behat_hooks extends behat_base {
 
     /**
-     * @var string The last visited URL.
-     */
-    private $lasturl = null;
-
-    /**
      * Gives access to moodle codebase, ensures all is ready and sets up the test lock.
      *
      * Includes config.php to use moodle codebase with $CFG->behat_*
@@ -162,12 +157,8 @@ class behat_hooks extends behat_base {
             return;
         }
 
-        // Wait until the page is ready if we are in a new URL.
-        $currenturl = $this->getSession()->getCurrentUrl();
-        if (is_null($this->lasturl) || $currenturl !== $this->lasturl) {
-            $this->lasturl = $currenturl;
-            $this->getSession()->wait(self::TIMEOUT, '(document.readyState === "complete")');
-        }
+        // Wait until the page is ready.
+        $this->getSession()->wait(self::TIMEOUT, '(document.readyState === "complete")');
     }
 
 }
