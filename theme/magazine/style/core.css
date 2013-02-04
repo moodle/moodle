@@ -494,7 +494,7 @@ div.yui3-widget-bd {
     background: none;
 }
 
-div.yui3-widget-bd h1.helpheading {
+div.yui3-widget-bd h2.helpheading {
     font-size: 16px !important;
     font-weight: 800;
     margin-top: 5px;

@@ -33,7 +33,8 @@ ul {
     color:inherit;
     font-size:inherit;
 }
-h1.helpheading {
+h1.helpheading,
+h2.helpheading {
     font-size: 1.6em;
 }
 /*extra line abve labels and remove padding right for no icon */
