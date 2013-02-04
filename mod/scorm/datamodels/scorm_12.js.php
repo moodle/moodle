@@ -427,6 +427,12 @@ function SCORMapi1_2() {
         if (param == "") {
             if (Initialized) {
                 result = StoreData(cmi,false);
+                // trigger TOC update
+                var sURL = "<?php echo $CFG->wwwroot; ?>" + "/mod/scorm/prereqs.php?a=<?php echo $scorm->id ?>&scoid=<?php echo $scoid ?>&attempt=<?php echo $attempt ?>&mode=<?php echo $mode ?>&currentorg=<?php echo $currentorg ?>&sesskey=<?php echo sesskey(); ?>";
+                var callback = M.mod_scorm.connectPrereqCallback;
+                YUI().use('yui2-connection', function(Y) {
+                    Y.YUI2.util.Connect.asyncRequest('GET', sURL, callback, null);
+                });
                 <?php
                     if (scorm_debugging($scorm)) {
                         echo 'LogAPICall("Commit", param, "", 0);';
