@@ -580,11 +580,35 @@ abstract class repository {
      * @return boolean
      */
     public static function check_capability($contextid, $instance) {
+        global $USER;
+
         $context = get_context_instance_by_id($contextid);
-        $capability = has_capability('repository/'.$instance->type.':view', $context);
-        if (!$capability) {
-            throw new repository_exception('nopermissiontoaccess', 'repository');
+        $can = has_capability('repository/'.$instance->type.':view', $context);
+
+        // Context in which the repository has been created.
+        $repocontext = get_context_instance_by_id($instance->contextid);
+
+        // Prevent access to private repositories when logged in as.
+        if (session_is_loggedinas()) {
+            $can = false;
         }
+
+        // Ensure that the user can view the repository in the context of the repository.
+        // Ne need to perform the check when already disallowed.
+        if ($can) {
+            if ($repocontext->contextlevel == CONTEXT_USER && $repocontext->instanceid != $USER->id) {
+                // Prevent URL hijack to access someone else's repository.
+                $can = false;
+            } else {
+                $can = has_capability('repository/'.$instance->type.':view', $repocontext);
+            }
+        }
+
+        if ($can) {
+            return true;
+        }
+
+        throw new repository_exception('nopermissiontoaccess', 'repository');
     }
 
     /**

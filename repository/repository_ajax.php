@@ -71,7 +71,7 @@ if (!confirm_sesskey()) {
 }
 
 /// Get repository instance information
-$sql = 'SELECT i.name, i.typeid, r.type FROM {repository} r, {repository_instances} i WHERE i.id=? AND i.typeid=r.id';
+$sql = 'SELECT i.name, i.typeid, i.contextid, r.type FROM {repository} r, {repository_instances} i WHERE i.id=? AND i.typeid=r.id';
 
 if (!$repository = $DB->get_record_sql($sql, array($repo_id))) {
     $err->error = get_string('invalidrepositoryid', 'repository');

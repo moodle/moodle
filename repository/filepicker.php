@@ -76,9 +76,10 @@ if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
 $PAGE->set_course($course);
 
 // init repository plugin
-$sql = 'SELECT i.name, i.typeid, r.type FROM {repository} r, {repository_instances} i '.
+$sql = 'SELECT i.name, i.typeid, i.contextid, r.type FROM {repository} r, {repository_instances} i '.
        'WHERE i.id=? AND i.typeid=r.id';
 if ($repository = $DB->get_record_sql($sql, array($repo_id))) {
+    repository::check_capability($contextid, $repository);
     $type = $repository->type;
     if (file_exists($CFG->dirroot.'/repository/'.$type.'/lib.php')) {
         require_once($CFG->dirroot.'/repository/'.$type.'/lib.php');
