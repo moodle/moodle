@@ -335,6 +335,7 @@ $string['generalfeedback_help'] = 'General feedback is shown to the student afte
 You can use the general feedback to give students a fully worked answer and perhaps a link to more information they can use if they did not understand the questions.';
 $string['hidden'] = 'Hidden';
 $string['hintn'] = 'Hint {no}';
+$string['hintnoptions'] = 'Hint {no} options';
 $string['hinttext'] = 'Hint text';
 $string['howquestionsbehave'] = 'How questions behave';
 $string['howquestionsbehave_help'] = 'Students can interact with the questions in the quiz in various different ways. For example, you may wish the students to enter an answer to each question and then submit the entire quiz, before anything is graded or they get any feedback. That would be \'Deferred feedback\' mode.

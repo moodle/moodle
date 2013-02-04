@@ -40,6 +40,10 @@
 #combinedfeedbackhdr div.fhtmleditor {padding: 0;}
 #combinedfeedbackhdr div.fcheckbox {margin-bottom: 1em;}
 
+#multitriesheader div.fitem_feditor {margin-top: 1em;}
+#multitriesheader div.fitem_fgroup {margin-bottom: 1em;}
+#multitriesheader div.fitem_fgroup fieldset.felement label {margin-left: 0.3em; margin-right: 0.3em;}
+
 .que {clear: left;text-align: left;margin: 0 auto 1.8em auto;}
 .dir-rtl .que {text-align: right;}
 
