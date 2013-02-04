@@ -619,8 +619,14 @@ abstract class qbehaviour_walkthrough_test_base extends question_testcase {
     protected $displayoptions;
     /** @var question_usage_by_activity */
     protected $quba;
-    /** @var unknown_type integer */
+    /** @var integer */
+
     protected $slot;
+    /**
+     * @var string after {@link render()} has been called, this contains the
+     * display of the question in its current state.
+     */
+    protected $currentoutput = '';
 
     protected function setUp() {
         parent::setUp();
@@ -668,6 +674,14 @@ abstract class qbehaviour_walkthrough_test_base extends question_testcase {
             $this->assertEquals($mark, $this->quba->get_question_mark($this->slot),
                 'Expected mark and actual mark differ.', 0.000001);
         }
+    }
+
+    /**
+     * Generate the HTML rendering of the question in its current state in
+     * $this->currentoutput so that it can be verified.
+     */
+    protected function render() {
+        $this->currentoutput = $this->quba->render_question($this->slot, $this->displayoptions);
     }
 
     /**
