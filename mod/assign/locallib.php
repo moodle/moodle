@@ -2701,6 +2701,9 @@ class assign {
             $gradevalue = optional_param('quickgrade_' . $userid, '', PARAM_TEXT);
             if($modified >= 0) {
                 $record->grade = unformat_float(optional_param('quickgrade_' . $record->userid, -1, PARAM_TEXT));
+            } else {
+                // This user was not in the grading table.
+                continue;
             }
             $record->lastmodified = $modified;
             $record->gradinginfo = grade_get_grades($this->get_course()->id, 'mod', 'assign', $this->get_instance()->id, array($userid));
