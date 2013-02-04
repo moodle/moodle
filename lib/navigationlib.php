@@ -195,8 +195,6 @@ class navigation_node implements renderable {
         if ($this->text === null) {
             throw new coding_exception('You must set the text for the node when you create it.');
         }
-        // Default the title to the text
-        $this->title = $this->text;
         // Instantiate a new navigation node collection for this nodes children
         $this->children = new navigation_node_collection();
     }
