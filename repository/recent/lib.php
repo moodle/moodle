@@ -203,4 +203,13 @@ class repository_recent extends repository {
     public function has_moodle_files() {
         return true;
     }
+
+    /**
+     * Is this repository accessing private data?
+     *
+     * @return bool
+     */
+    public function contains_private_data() {
+        return false;
+    }
 }

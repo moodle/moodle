@@ -333,4 +333,13 @@ class repository_filesystem extends repository {
             send_file_not_found();
         }
     }
+
+    /**
+     * Is this repository accessing private data?
+     *
+     * @return bool
+     */
+    public function contains_private_data() {
+        return false;
+    }
 }

@@ -262,4 +262,13 @@ class repository_local extends repository {
             'name' => $fileinfo->get_visible_name()
         );
     }
+
+    /**
+     * Is this repository accessing private data?
+     *
+     * @return bool
+     */
+    public function contains_private_data() {
+        return false;
+    }
 }

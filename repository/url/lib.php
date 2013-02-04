@@ -237,4 +237,13 @@ EOD;
     public function supported_filetypes() {
         return array('web_image');
     }
+
+    /**
+     * Is this repository accessing private data?
+     *
+     * @return bool
+     */
+    public function contains_private_data() {
+        return false;
+    }
 }

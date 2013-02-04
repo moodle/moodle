@@ -437,4 +437,13 @@ class repository_equella extends repository {
             return get_string('lostsource', 'repository', '');
         }
     }
+
+    /**
+     * Is this repository accessing private data?
+     *
+     * @return bool
+     */
+    public function contains_private_data() {
+        return false;
+    }
 }

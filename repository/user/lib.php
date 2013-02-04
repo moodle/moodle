@@ -169,4 +169,13 @@ class repository_user extends repository {
         // this should be realtime
         return 0;
     }
+
+    /**
+     * Is this repository accessing private data?
+     *
+     * @return bool
+     */
+    public function contains_private_data() {
+        return false;
+    }
 }

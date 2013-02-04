@@ -161,5 +161,14 @@ class repository_merlot extends repository {
     public function supported_filetypes() {
         return array('link');
     }
+
+    /**
+     * Is this repository accessing private data?
+     *
+     * @return bool
+     */
+    public function contains_private_data() {
+        return false;
+    }
 }
 

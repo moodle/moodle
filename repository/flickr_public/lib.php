@@ -550,4 +550,13 @@ class repository_flickr_public extends repository {
     public function get_file_source_info($photoid) {
         return $this->build_photo_url($photoid);
     }
+
+    /**
+     * Is this repository accessing private data?
+     *
+     * @return bool
+     */
+    public function contains_private_data() {
+        return false;
+    }
 }

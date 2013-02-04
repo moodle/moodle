@@ -8,6 +8,11 @@ http://docs.moodle.org/dev/Repository_API
 * repository::append_suffix() has been deprecated, use repository::get_unused_filename() if you need
   to get a file name which has not yet been used in the draft area.
 
+* contains_private_data() is a new method to determine if a user 'logged in as' another user
+  can access the content of the repository. The default is to return True (no access).
+
+* get_typename() returns the type of repository: dropbox, googledocs, etc...
+
 === 2.4 ===
 
 * copy_to_area() can receive a new parameter called $areamaxbytes which controls the maximum

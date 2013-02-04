@@ -189,4 +189,13 @@ EOD;
     public function get_file_source_info($url) {
         return $url;
     }
+
+    /**
+     * Is this repository accessing private data?
+     *
+     * @return bool
+     */
+    public function contains_private_data() {
+        return false;
+    }
 }

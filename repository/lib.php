@@ -487,6 +487,9 @@ abstract class repository {
     public $returntypes;
     /** @var stdClass repository instance database record */
     public $instance;
+    /** @var string Type of repository (webdav, google_docs, dropbox, ...). Read from $this->get_typename(). */
+    protected $typename;
+
     /**
      * Constructor
      *
@@ -559,6 +562,24 @@ abstract class repository {
     }
 
     /**
+     * Returns the type name of the repository.
+     *
+     * @return string type name of the repository.
+     * @since  2.5
+     */
+    public function get_typename() {
+        if (empty($this->typename)) {
+            $matches = array();
+            if (!preg_match("/^repository_(.*)$/", get_class($this), $matches)) {
+                throw new coding_exception('The class name of a repository should be repository_<typeofrepository>, '.
+                        'e.g. repository_dropbox');
+            }
+            $this->typename = $matches[1];
+        }
+        return $this->typename;
+    }
+
+    /**
      * Get a repository type object by a given type name.
      *
      * @static
@@ -620,19 +641,43 @@ abstract class repository {
     }
 
     /**
-     * Checks if user has a capability to view the current repository in current context
+     * Checks if user has a capability to view the current repository.
      *
-     * @return bool
+     * @return bool true when the user can, otherwise throws an exception.
+     * @throws repository_exception when the user does not meet the requirements.
      */
     public final function check_capability() {
-        $capability = false;
-        if (preg_match("/^repository_(.*)$/", get_class($this), $matches)) {
-            $type = $matches[1];
-            $capability = has_capability('repository/'.$type.':view', $this->context);
+        global $USER;
+
+        // Ensure that the user can view the repository in the current context.
+        $can = has_capability('repository/'.$this->get_typename().':view', $this->context);
+
+        // Context in which the repository has been created.
+        $repocontext = context::instance_by_id($this->instance->contextid);
+
+        // Prevent access to private repositories when logged in as.
+        if ($can && session_is_loggedinas()) {
+            if ($this->contains_private_data() || $repocontext->contextlevel == CONTEXT_USER) {
+                $can = false;
+            }
         }
-        if (!$capability) {
-            throw new repository_exception('nopermissiontoaccess', 'repository');
+
+        // Ensure that the user can view the repository in the context of the repository.
+        // We need to perform the check when already disallowed.
+        if ($can) {
+            if ($repocontext->contextlevel == CONTEXT_USER && $repocontext->instanceid != $USER->id) {
+                // Prevent URL hijack to access someone else's repository.
+                $can = false;
+            } else {
+                $can = has_capability('repository/'.$this->get_typename().':view', $repocontext);
+            }
         }
+
+        if ($can) {
+            return true;
+        }
+
+        throw new repository_exception('nopermissiontoaccess', 'repository');
     }
 
     /**
@@ -1767,11 +1812,34 @@ abstract class repository {
      */
     public function get_name() {
         global $DB;
-        if ( $name = $this->instance->name ) {
+        if ($name = $this->instance->name) {
             return $name;
         } else {
-            return get_string('pluginname', 'repository_' . $this->options['type']);
+            return get_string('pluginname', 'repository_' . $this->get_typename());
         }
+    }
+
+    /**
+     * Is this repository accessing private data?
+     *
+     * This function should return true for the repositories which access external private
+     * data from a user. This is the case for repositories such as Dropbox, Google Docs or Box.net
+     * which authenticate the user and then store the auth token.
+     *
+     * Of course, many repositories store 'private data', but we only want to set
+     * contains_private_data() to repositories which are external to Moodle and shouldn't be accessed
+     * to by the users having the capability to 'login as' someone else. For instance, the repository
+     * 'Private files' is not considered as private because it's part of Moodle.
+     *
+     * You should not set contains_private_data() to true on repositories which allow different types
+     * of instances as the levels other than 'user' are, by definition, not private. Also
+     * the user instances will be protected when they need to.
+     *
+     * @return boolean True when the repository accesses private external data.
+     * @since  2.5
+     */
+    public function contains_private_data() {
+        return true;
     }
 
     /**
@@ -1806,7 +1874,7 @@ abstract class repository {
         $meta = new stdClass();
         $meta->id   = $this->id;
         $meta->name = format_string($this->get_name());
-        $meta->type = $this->options['type'];
+        $meta->type = $this->get_typename();
         $meta->icon = $OUTPUT->pix_url('icon', 'repository_'.$meta->type)->out(false);
         $meta->supported_types = file_get_typegroup('extension', $this->supported_filetypes());
         $meta->return_types = $this->supported_returntypes();
