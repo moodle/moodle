@@ -47,7 +47,6 @@ class behat_general extends behat_base {
     /**
      * Opens Moodle homepage.
      *
-     * @see Behat\MinkExtension\Context\MinkContext
      * @Given /^I am on homepage$/
      */
     public function i_am_on_homepage() {
@@ -57,12 +56,14 @@ class behat_general extends behat_base {
     /**
      * Clicks link with specified id|title|alt|text.
      *
-     * @see Behat\MinkExtension\Context\MinkContext
      * @When /^I follow "(?P<link_string>(?:[^"]|\\")*)"$/
+     * @throws ElementNotFoundException Thrown by behat_base::find
      */
     public function click_link($link) {
         $link = $this->fixStepArgument($link);
-        $this->getSession()->getPage()->clickLink($link);
+
+        $linknode = $this->find_link($link);
+        $linknode->click();
     }
 
     /**
@@ -87,16 +88,17 @@ class behat_general extends behat_base {
     /**
      * Mouse over a CSS element.
      *
-     * @throws ExpectationException
-     * @see Sanpi/Behatch/Context/BrowserContext.php
      * @When /^I hover "(?P<element_string>(?:[^"]|\\")*)"$/
+     * @throws ExpectationException Thrown by behat_base::find
      * @param string $element
      */
     public function i_hover($element) {
-        $node = $this->getSession()->getPage()->find('css', $element);
-        if ($node === null) {
-            throw new ExpectationException('The hovered element "' . $element . '" was not found anywhere in the page', $this->getSession());
-        }
+
+        $exception = new ExpectationException(
+            'The hovered element "' . $element . '" was not found anywhere in the page', $this->getSession()
+        );
+
+        $node = $this->find('css', $element, $exception);
         $node->mouseOver();
     }
 
@@ -126,7 +128,6 @@ class behat_general extends behat_base {
      * @Then /^I should see "(?P<text_string>(?:[^"]|\\")*)" in the "(?P<element_string>(?:[^"]|\\")*)" element$/
      */
     public function assert_element_contains_text($element, $text) {
-        $element = $this->fixStepArgument($element);
         $this->assertSession()->elementTextContains('css', $element, $this->fixStepArgument($text));
     }
 
@@ -136,26 +137,20 @@ class behat_general extends behat_base {
      * @Then /^I should not see "(?P<text_string>(?:[^"]|\\")*)" in the "(?P<element_string>(?:[^"]|\\")*)" element$/
      */
     public function assert_element_not_contains_text($element, $text) {
-        $element = $this->fixStepArgument($element);
         $this->assertSession()->elementTextNotContains('css', $element, $this->fixStepArgument($text));
     }
 
     /**
      * Checks, that element with given CSS is disabled.
      *
-     * @throws ExpectationException
-     * @see Sanpi/Behatch/Context/BrowserContext
      * @Then /^the element "(?P<element_string>(?:[^"]|\\")*)" should be disabled$/
+     * @throws ExpectationException Thrown by behat_base::find
      * @param string $element
      */
     public function the_element_should_be_disabled($element) {
 
-        $element = $this->fixStepArgument($element);
-
-        $node = $this->getSession()->getPage()->find('css', $element);
-        if ($node == null) {
-            throw new ExpectationException('There is no "' . $element . '" element', $this->getSession());
-        }
+        $exception = new ExpectationException('There is no "' . $element . '" element', $this->getSession());
+        $node = $this->find('css', $element, $exception);
 
         if (!$node->hasAttribute('disabled')) {
             throw new ExpectationException('The element "' . $element . '" is not disabled', $this->getSession());
@@ -165,16 +160,14 @@ class behat_general extends behat_base {
     /**
      * Checks, that element with given CSS is enabled.
      *
-     * @throws ExpectationException
-     * @see Sanpi/Behatch/Context/BrowserContext.php
      * @Then /^the element "(?P<element_string>(?:[^"]|\\")*)" should be enabled$/
+     * @throws ExpectationException Thrown by behat_base::find
      * @param string $element
      */
     public function the_element_should_be_enabled($element) {
-        $node = $this->getSession()->getPage()->find('css', $element);
-        if ($node == null) {
-            throw new ExpectationException('There is no "' . $element . '" element', $this->getSession());
-        }
+
+        $exception = new ExpectationException('There is no "' . $element . '" element', $this->getSession());
+        $node = $this->find('css', $element, $exception);
 
         if ($node->hasAttribute('disabled')) {
             throw new ExpectationException('The element "' . $element . '" is not enabled', $this->getSession());

@@ -222,7 +222,7 @@ class behat_data_generators extends behat_base {
         global $DB;
 
         if (!$id = $DB->get_field('user', 'id', array('username' => $username))) {
-            throw new Exception('The specified user with username "' . $username . '" does not exists');
+            throw new Exception('The specified user with username "' . $username . '" does not exist');
         }
         return $id;
     }
@@ -237,7 +237,7 @@ class behat_data_generators extends behat_base {
         global $DB;
 
         if (!$id = $DB->get_field('role', 'id', array('shortname' => $roleshortname))) {
-            throw new Exception('The specified role with shortname"' . $roleshortname . '" does not exists');
+            throw new Exception('The specified role with shortname"' . $roleshortname . '" does not exist');
         }
 
         return $id;
@@ -258,7 +258,7 @@ class behat_data_generators extends behat_base {
         }
 
         if (!$id = $DB->get_field('course_categories', 'id', array('idnumber' => $idnumber))) {
-            throw new Exception('The specified category with idnumber "' . $idnumber . '" does not exists');
+            throw new Exception('The specified category with idnumber "' . $idnumber . '" does not exist');
         }
 
         return $id;
@@ -274,7 +274,7 @@ class behat_data_generators extends behat_base {
         global $DB;
 
         if (!$id = $DB->get_field('course', 'id', array('shortname' => $shortname))) {
-            throw new Exception('The specified course with shortname"' . $shortname . '" does not exists');
+            throw new Exception('The specified course with shortname"' . $shortname . '" does not exist');
         }
         return $id;
     }
@@ -289,7 +289,7 @@ class behat_data_generators extends behat_base {
         global $DB;
 
         if (!$id = $DB->get_field('groups', 'id', array('idnumber' => $idnumber))) {
-            throw new Exception('The specified group with idnumber "' . $idnumber . '" does not exists');
+            throw new Exception('The specified group with idnumber "' . $idnumber . '" does not exist');
         }
         return $id;
     }
@@ -304,7 +304,7 @@ class behat_data_generators extends behat_base {
         global $DB;
 
         if (!$id = $DB->get_field('groupings', 'id', array('idnumber' => $idnumber))) {
-            throw new Exception('The specified grouping with idnumber "' . $idnumber . '" does not exists');
+            throw new Exception('The specified grouping with idnumber "' . $idnumber . '" does not exist');
         }
         return $id;
     }

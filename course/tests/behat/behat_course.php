@@ -66,10 +66,6 @@ class behat_course extends behat_base {
      */
     public function i_add_to_section_and_i_fill_the_form_with($activity, $section, TableNode $data) {
 
-        $activity = $this->fixStepArgument($activity);
-        $section = $this->fixStepArgument($section);
-
-        // The 'I wait until the page is ready' is just in case.
         return array(
             new Given('I add a "'.$activity.'" to section "'.$section.'"'),
             new Given('I fill the moodle form with:', $data),
@@ -81,6 +77,7 @@ class behat_course extends behat_base {
      * Opens the activity chooser and opens the activity/resource form page.
      *
      * @Given /^I add a "(?P<activity_or_resource_string>(?:[^"]|\\")*)" to section "(?P<section_number>\d+)"$/
+     * @throws ElementNotFoundException Thrown by behat_base::find
      * @param string $activity
      * @param string $section
      */
@@ -90,14 +87,14 @@ class behat_course extends behat_base {
         $section = $this->fixStepArgument($section);
 
         // Clicks add activity or resource section link.
-        $sectionxpath = "//*[@id='section-" . $section . "']/*/*/*/div[@class='section-modchooser']/*/*";
-        $section = $this->getSession()->getPage()->find('xpath', $sectionxpath);
-        $section->click();
+        $sectionxpath = "//*[@id='section-" . $section . "']/*/*/*/div[@class='section-modchooser']/span/a";
+        $sectionnode = $this->find('xpath', $sectionxpath);
+        $sectionnode->click();
 
         // Clicks the selected activity if it exists.
         $activityxpath = ".//label[contains(.,'" . $activity . "')]/input";
-        $activity = $this->getSession()->getPage()->find('xpath', $activityxpath);
-        $activity->doubleClick();
+        $activitynode = $this->find('xpath', $activityxpath);
+        $activitynode->doubleClick();
     }
 
 }
