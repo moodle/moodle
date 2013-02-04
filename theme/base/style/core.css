@@ -867,8 +867,166 @@ sup {vertical-align: super;}
 #page-admin-grade-edit-scale-edit.dir-rtl .error input#id_name {margin-right: 170px;}
 .initialbar a {padding-right: 2px;}
 
+/* Moodle Dialogue Settings (moodle-core-dialogue)  */
+.moodle-dialogue-base .moodle-dialogue-lightbox {
+    background-color:#AAA;
+}
+
+.moodle-dialogue-base .hidden,
+.moodle-dialogue-base .moodle-dialogue-hidden {display:none;}
+.moodle-dialogue-base .moodle-dialogue {
+    padding: 0;
+    margin: 0;
+    background: none;
+    border: none;
+    /* Override the z-index set incorrectly by the YUI dialogue */
+    z-index: 600!important;
+}
+
+
+.moodle-dialogue-base .moodle-dialogue-wrap {
+    margin-top:-3px;
+    margin-left:-3px;
+    background-color: #FFFFFF;
+    border: 1px solid #CCCCCC;
+    border-radius:10px;
+    box-shadow: 5px 5px 20px 0px #666666;
+    -webkit-box-shadow: 5px 5px 20px 0px #666666;
+    -moz-box-shadow: 5px 5px 20px 0px #666666;
+}
+
+.moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd {
+    margin:0;
+    padding:5px;
+    font-size:12px;
+    font-weight: normal;
+    letter-spacing: 1px;
+    color:#333333;
+    text-align: center;
+    text-shadow: 1px 1px 1px #FFFFFF;
+    border-radius: 10px 10px 0px 0px;
+    border-bottom: 1px solid #BBBBBB;
+    background: #CCCCCC;
+    background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#CCCCCC));
+    background: -moz-linear-gradient(top,  #FFFFFF,  #CCCCCC);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFFFF', endColorstr='#CCCCCC')!important;
+    filter: dropshadow(color=#FFFFFF, offx=1, offy=1);
+}
+
+.moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd h1 {
+    margin:0;
+    padding:0;
+    display:inline;
+    font-size: 100%;
+    font-weight: bold;
+}
+.moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd .yui3-widget-buttons {
+    padding: 5px;
+}
+.moodle-dialogue-base .closebutton {
+    width:25px;
+    height:15px;
+    float:right;
+    vertical-align:middle;
+    display:inline-block;
+    cursor:pointer;
+    padding:0px;
+    background-image:url([[pix:theme|sprite]]);
+    background-repeat:no-repeat;
+    border-style:none;
+}
+.dir-rtl .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd .yui3-widget-buttons {
+    left: 0px;
+    right: auto;
+}
+
+.moodle-dialogue-base .moodle-dialogue .moodle-dialogue-bd {
+    overflow: auto;
+    padding: 1em;
+    line-height: 2em;
+    color: #555;
+    font-size: 12px;
+}
+
+.moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-content {
+  padding:0px;
+  background:#FFF;
+}
+
+.moodle-dialogue-confirm .confirmation-dialogue {text-align:center;}
+.moodle-dialogue-confirm .confirmation-dialogue input {text-align:center;}
+.moodle-dialogue-exception .moodle-exception-message {text-align:center}
+.moodle-dialogue-exception .moodle-exception-param label {font-weight:bold;}
+.moodle-dialogue-exception .param-stacktrace label {
+    background-color:#EEE;
+    border:1px solid #ccc;
+    border-bottom-width:0;
+}
+
+.moodle-dialogue-exception .param-stacktrace pre {
+    border:1px solid #ccc;
+    background-color:#fff;
+}
+
+.moodle-dialogue-exception .param-stacktrace .stacktrace-file {
+    color:navy
+    font-size:80%
+}
+.moodle-dialogue-exception .param-stacktrace .stacktrace-line {
+    color:#AA0000
+    font-size:80%
+}
+.moodle-dialogue-exception .param-stacktrace .stacktrace-call {
+    color:#333
+    font-size:90%
+    border-bottom:1px solid #eee
+}
+
+.moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft {
+    padding:0px;
+    margin: 0.7em 1em;
+    text-align: right;
+    background-color: #FFF;
+    font-size: 12px;
+}
+
+.moodle-dialogue-confirm .confirmation-message {margin:0.5em 1em;}
+.moodle-dialogue-confirm .confirmation-dialogue input {min-width:80px}
+.moodle-dialogue-exception .moodle-exception-message {margin:1em;}
+.moodle-dialogue-exception .moodle-exception-param {margin-bottom:0.5em;}
+.moodle-dialogue-exception .moodle-exception-param label {width:150px;}
+.moodle-dialogue-exception .param-stacktrace label {
+    display:block;
+    margin:0;
+    padding:4px 1em;
+}
+.moodle-dialogue-exception .param-stacktrace pre {
+    display:block;
+    height:200px;
+    overflow:auto;
+}
+
+.moodle-dialogue-exception .param-stacktrace .stacktrace-file {
+    display:inline-block
+    margin:4px 0
+}
+.moodle-dialogue-exception .param-stacktrace .stacktrace-line {
+    display:inline-block
+    width:50px
+    margin:4px 1em
+}
+.moodle-dialogue-exception .param-stacktrace .stacktrace-call {
+    padding-left:25px
+    margin-bottom:4px
+    padding-bottom:4px
+}
+
+
+/* Question Bank - Question Chooser "Close" button */
+#page-question-edit.dir-rtl a.container-close {right:auto;left:6px;}
+
 /**
- * Chooser Dialogue
+ * Chooser Dialogues (moodle-core-chooserdialogue)
  *
  * This CSS belong to the chooser dialogue which should work both with, and
  * without javascript enabled
@@ -878,47 +1036,11 @@ sup {vertical-align: super;}
 .choosertitle {
     display:none;
 }
-
-.moodle-dialogue-base .moodle-dialogue {
-    background: none!important;
-    border: 0 none!important;
+.moodle-dialogue.chooserdialogue .moodle-dialogue-content .moodle-dialogue-ft {
+    margin: 0;
 }
-
-.chooserdialogue .moodle-dialogue-wrap {
-    height: auto;
-    background-color: #FFFFFF;
-    border: 1px solid #CCCCCC!important;
-    border-radius:10px;
-    box-shadow: 5px 5px 20px 0px #666666;
-    -webkit-box-shadow: 5px 5px 20px 0px #666666;
-    -moz-box-shadow: 5px 5px 20px 0px #666666;
-}
-
-.chooserdialogue .moodle-dialogue-wrap .moodle-dialogue-hd {
-    font-size:12px!important;
-    font-weight: normal!important;
-    letter-spacing: 1px;
-    color:#333333!important;
-    text-align: center!important;
-    text-shadow: 1px 1px 1px #FFFFFF;
-    padding:5px 5px 5px 5px;
-    border-radius: 10px 10px 0px 0px;
-    border-bottom: 1px solid #BBBBBB!important;
-    background: #CCCCCC!important;
-    background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#CCCCCC))!important;
-    background: -moz-linear-gradient(top,  #FFFFFF,  #CCCCCC)!important;
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFFFF', endColorstr='#CCCCCC')!important;
-    filter: dropshadow(color=#FFFFFF, offx=1, offy=1);
-}
-/* Activity Chooser "Close" button */
-.dir-rtl .moodle-dialogue-base .closebutton {float: left;}
-/* Question Bank - Question Chooser "Close" button */
-#page-question-edit.dir-rtl a.container-close {right:auto;left:6px;}
 
 .chooserdialogue .moodle-dialogue-wrap .moodle-dialogue-bd {
-    font-size: 12px;
-    color: #555555;
-    overflow: auto;
     padding: 0px;
     background: #F2F2F2;
     border-bottom-left-radius: 10px;
