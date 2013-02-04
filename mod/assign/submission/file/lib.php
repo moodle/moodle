@@ -40,7 +40,7 @@ function assignsubmission_file_pluginfile($course,
                                           $filearea,
                                           $args,
                                           $forcedownload) {
-    global $USER, $DB;
+    global $DB, $CFG;
 
     if ($context->contextlevel != CONTEXT_MODULE) {
         return false;
@@ -50,20 +50,26 @@ function assignsubmission_file_pluginfile($course,
     $itemid = (int)array_shift($args);
     $record = $DB->get_record('assign_submission',
                               array('id'=>$itemid),
-                              'userid, assignment',
+                              'userid, assignment, groupid',
                               MUST_EXIST);
     $userid = $record->userid;
+    $groupid = $record->groupid;
 
-    if (!$assign = $DB->get_record('assign', array('id'=>$cm->instance))) {
+    require_once($CFG->dirroot . '/mod/assign/locallib.php');
+
+    $assign = new assign($context, $cm, $course);
+
+    if ($assign->get_instance()->id != $record->assignment) {
         return false;
     }
 
-    if ($assign->id != $record->assignment) {
+    if ($assign->get_instance()->teamsubmission &&
+        !$assign->can_view_group_submission($groupid)) {
         return false;
     }
 
-    // Check if this is the current users submission or the user has grading permission.
-    if ($USER->id != $userid and !has_capability('mod/assign:grade', $context)) {
+    if (!$assign->get_instance()->teamsubmission &&
+        !$assign->can_view_submission($userid)) {
         return false;
     }
 
@@ -72,7 +78,7 @@ function assignsubmission_file_pluginfile($course,
     $fullpath = "/{$context->id}/assignsubmission_file/$filearea/$itemid/$relativepath";
 
     $fs = get_file_storage();
-    if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+    if (!($file = $fs->get_file_by_hash(sha1($fullpath))) || $file->is_directory()) {
         return false;
     }
 
