@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$module->version   = 2012061700;        // the current module version (YYYYMMDDXX)
+$module->version   = 2012061701;        // the current module version (YYYYMMDDXX)
 $module->requires  = 2012061700;        // requires this Moodle version
 $module->component = 'mod_workshop';    // full name of the plugin (used for diagnostics)
 $module->cron      = 60;                // give as a chance every minute
