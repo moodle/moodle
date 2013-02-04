@@ -70,7 +70,7 @@ if ($sm->string_exists($identifier.'_help', $component)) {
     if ($ajax) {
         // When using AJAX, the header should be H2 as it is in the same DOM as the calling page.
         echo $OUTPUT->heading(format_string(get_string($identifier, $component)), 2, 'helpheading');
-    } else { 
+    } else {
         // When not using AJAX, the header should be H1 as it is in it's own window.
         echo $OUTPUT->heading(format_string(get_string($identifier, $component)), 1, 'helpheading');
     }
