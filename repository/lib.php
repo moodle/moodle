@@ -487,6 +487,9 @@ abstract class repository {
     public $returntypes;
     /** @var stdClass repository instance database record */
     public $instance;
+    /** @var string Type of repository (webdav, google_docs, dropbox, ...). */
+    public $type;
+
     /**
      * Constructor
      *
@@ -519,6 +522,16 @@ abstract class repository {
         $this->name = $this->get_name();
         $this->returntypes = $this->supported_returntypes();
         $this->super_called = true;
+
+        // Determining the type of repository if not set.
+        if (empty($this->type)) {
+            $matches = array();
+            if (!preg_match("/^repository_(.*)$/", get_class($this), $matches)) {
+                throw new coding_exception('The class name of a repository should be repository_<typeofrepository>, '.
+                        'e.g. repository_dropbox');
+            }
+            $this->type = $matches[1];
+        }
     }
 
     /**
@@ -620,19 +633,41 @@ abstract class repository {
     }
 
     /**
-     * Checks if user has a capability to view the current repository in current context
+     * Checks if user has a capability to view the current repository.
      *
-     * @return bool
+     * @return bool true when the user can, otherwise throws an exception.
+     * @throws repository_exception when the user does not meet the requirements.
      */
     public final function check_capability() {
-        $capability = false;
-        if (preg_match("/^repository_(.*)$/", get_class($this), $matches)) {
-            $type = $matches[1];
-            $capability = has_capability('repository/'.$type.':view', $this->context);
+        global $USER;
+
+        // Ensure that the user can view the repository in the current context.
+        $can = has_capability('repository/'.$this->type.':view', $this->context);
+
+        // Context in which the repository has been created.
+        $repocontext = context::instance_by_id($this->instance->contextid);
+
+        // Prevent access to private repositories when logged in as.
+        if (session_is_loggedinas()) {
+            $can = false;
         }
-        if (!$capability) {
-            throw new repository_exception('nopermissiontoaccess', 'repository');
+
+        // Ensure that the user can view the repository in the context of the repository.
+        // Ne need to perform the check when already disallowed.
+        if ($can) {
+            if ($repocontext->contextlevel == CONTEXT_USER && $repocontext->instanceid != $USER->id) {
+                // Prevent URL hijack to access someone else's repository.
+                $can = false;
+            } else {
+                $can = has_capability('repository/'.$this->type.':view', $repocontext);
+            }
         }
+
+        if ($can) {
+            return true;
+        }
+
+        throw new repository_exception('nopermissiontoaccess', 'repository');
     }
 
     /**
