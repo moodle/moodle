@@ -34,8 +34,13 @@ defined('MOODLE_INTERNAL') || die();
  * @param bool $forcedownload
  * @return bool false if file not found, does not return if found - just send the file
  */
-function assignsubmission_file_pluginfile($course, $cm, context $context, $filearea, $args, $forcedownload) {
-    global $USER, $DB;
+function assignsubmission_file_pluginfile($course,
+                                          $cm,
+                                          context $context,
+                                          $filearea,
+                                          $args,
+                                          $forcedownload) {
+    global $DB, $CFG;
 
     if ($context->contextlevel != CONTEXT_MODULE) {
         return false;
@@ -43,19 +48,28 @@ function assignsubmission_file_pluginfile($course, $cm, context $context, $filea
 
     require_login($course, false, $cm);
     $itemid = (int)array_shift($args);
-    $record = $DB->get_record('assign_submission', array('id'=>$itemid), 'userid, assignment', MUST_EXIST);
+    $record = $DB->get_record('assign_submission',
+                              array('id'=>$itemid),
+                              'userid, assignment, groupid',
+                              MUST_EXIST);
     $userid = $record->userid;
+    $groupid = $record->groupid;
 
-    if (!$assign = $DB->get_record('assign', array('id'=>$cm->instance))) {
+    require_once($CFG->dirroot . '/mod/assign/locallib.php');
+
+    $assign = new assign($context, $cm, $course);
+
+    if ($assign->get_instance()->id != $record->assignment) {
         return false;
     }
 
-    if ($assign->id != $record->assignment) {
+    if ($assign->get_instance()->teamsubmission &&
+        !$assign->can_view_group_submission($groupid)) {
         return false;
     }
 
-    // check is users submission or has grading permission
-    if ($USER->id != $userid and !has_capability('mod/assign:grade', $context)) {
+    if (!$assign->get_instance()->teamsubmission &&
+        !$assign->can_view_submission($userid)) {
         return false;
     }
 
@@ -64,7 +78,7 @@ function assignsubmission_file_pluginfile($course, $cm, context $context, $filea
     $fullpath = "/{$context->id}/assignsubmission_file/$filearea/$itemid/$relativepath";
 
     $fs = get_file_storage();
-    if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+    if (!($file = $fs->get_file_by_hash(sha1($fullpath))) || $file->is_directory()) {
         return false;
     }
     send_stored_file($file, 0, 0, true); // download MUST be forced - security!
