@@ -1405,46 +1405,46 @@ class moodlelib_testcase extends advanced_testcase {
         $longvalue = str_repeat('a', 1334);
         try {
             set_user_preference('_test_long_user_preference', $longvalue);
-            $this->assertFail('Exception expected - longer than 1333 chars not allowed as preference value');
-        } catch (Exception $e) {
-            $this->assertTrue($e instanceof coding_exception);
+            $this->fail('Exception expected - longer than 1333 chars not allowed as preference value');
+        } catch (coding_exception $ex) {
+            $this->assertTrue(true);
         }
 
         //test invalid params
         try {
             set_user_preference('_test_user_preferences_pref', array());
-            $this->assertFail('Exception expected - array not valid preference value');
-        } catch (Exception $ex) {
+            $this->fail('Exception expected - array not valid preference value');
+        } catch (coding_exception $ex) {
             $this->assertTrue(true);
         }
         try {
             set_user_preference('_test_user_preferences_pref', new stdClass);
-            $this->assertFail('Exception expected - class not valid preference value');
-        } catch (Exception $ex) {
+            $this->fail('Exception expected - class not valid preference value');
+        } catch (coding_exception $ex) {
             $this->assertTrue(true);
         }
         try {
-            set_user_preference('_test_user_preferences_pref', 1, array('xx'=>1));
-            $this->assertFail('Exception expected - user instance expected');
-        } catch (Exception $ex) {
+            set_user_preference('_test_user_preferences_pref', 1, array('xx' => 1));
+            $this->fail('Exception expected - user instance expected');
+        } catch (coding_exception $ex) {
             $this->assertTrue(true);
         }
         try {
             set_user_preference('_test_user_preferences_pref', 1, 'abc');
-            $this->assertFail('Exception expected - user instance expected');
-        } catch (Exception $ex) {
+            $this->fail('Exception expected - user instance expected');
+        } catch (coding_exception $ex) {
             $this->assertTrue(true);
         }
         try {
             set_user_preference('', 1);
-            $this->assertFail('Exception expected - invalid name accepted');
-        } catch (Exception $ex) {
+            $this->fail('Exception expected - invalid name accepted');
+        } catch (coding_exception $ex) {
             $this->assertTrue(true);
         }
         try {
             set_user_preference('1', 1);
-            $this->assertFail('Exception expected - invalid name accepted');
-        } catch (Exception $ex) {
+            $this->fail('Exception expected - invalid name accepted');
+        } catch (coding_exception $ex) {
             $this->assertTrue(true);
         }
 

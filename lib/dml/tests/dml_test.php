@@ -1797,7 +1797,7 @@ class dml_testcase extends database_driver_testcase {
         $this->assertSame(false, $DB->get_field($tablename, 'course', array('course' => 11), IGNORE_MISSING));
         try {
             $DB->get_field($tablename, 'course', array('course' => 4), MUST_EXIST);
-            $this->assertFail('Exception expected due to missing record');
+            $this->fail('Exception expected due to missing record');
         } catch (dml_exception $ex) {
             $this->assertTrue(true);
         }
@@ -1952,7 +1952,7 @@ class dml_testcase extends database_driver_testcase {
         // custom sequence - missing id error
         try {
             $DB->insert_record_raw($tablename, array('course' => 3, 'onechar' => 'bb'), true, false, true);
-            $this->assertFail('Exception expected due to missing record');
+            $this->fail('Exception expected due to missing record');
         } catch (coding_exception $ex) {
             $this->assertTrue(true);
         }
@@ -1960,7 +1960,7 @@ class dml_testcase extends database_driver_testcase {
         // wrong column error
         try {
             $DB->insert_record_raw($tablename, array('xxxxx' => 3, 'onechar' => 'bb'));
-            $this->assertFail('Exception expected due to invalid column');
+            $this->fail('Exception expected due to invalid column');
         } catch (dml_exception $ex) {
             $this->assertTrue(true);
         }
