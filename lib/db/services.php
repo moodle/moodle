@@ -514,6 +514,15 @@ $functions = array(
         'capabilities'=> 'moodle/backup:backupcourse,moodle/restore:restorecourse,moodle/course:create',
     ),
 
+    'core_course_update_courses' => array(
+        'classname'   => 'core_course_external',
+        'methodname'  => 'update_courses',
+        'classpath'   => 'course/externallib.php',
+        'description' => 'Update courses',
+        'type'        => 'write',
+        'capabilities'=> 'moodle/course:update,moodle/course:changecategory,moodle/course:changefullname,moodle/course:changeshortname,moodle/course:changeidnumber,moodle/course:changesummary,moodle/course:visibility',
+    ),
+
     // === course category related functions ===
 
     'core_course_get_categories' => array(

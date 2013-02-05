@@ -627,6 +627,212 @@ class core_course_external extends external_api {
     }
 
     /**
+     * Update courses
+     *
+     * @return external_function_parameters
+     * @since Moodle 2.5
+     */
+    public static function update_courses_parameters() {
+        return new external_function_parameters(
+            array(
+                'courses' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'ID of the course'),
+                            'fullname' => new external_value(PARAM_TEXT, 'full name', VALUE_OPTIONAL),
+                            'shortname' => new external_value(PARAM_TEXT, 'course short name', VALUE_OPTIONAL),
+                            'categoryid' => new external_value(PARAM_INT, 'category id', VALUE_OPTIONAL),
+                            'idnumber' => new external_value(PARAM_RAW, 'id number', VALUE_OPTIONAL),
+                            'summary' => new external_value(PARAM_RAW, 'summary', VALUE_OPTIONAL),
+                            'summaryformat' => new external_format_value('summary', VALUE_OPTIONAL),
+                            'format' => new external_value(PARAM_PLUGIN,
+                                    'course format: weeks, topics, social, site,..', VALUE_OPTIONAL),
+                            'showgrades' => new external_value(PARAM_INT,
+                                    '1 if grades are shown, otherwise 0', VALUE_OPTIONAL),
+                            'newsitems' => new external_value(PARAM_INT,
+                                    'number of recent items appearing on the course page', VALUE_OPTIONAL),
+                            'startdate' => new external_value(PARAM_INT,
+                                    'timestamp when the course start', VALUE_OPTIONAL),
+                            'numsections' => new external_value(PARAM_INT,
+                                    '(deprecated, use courseformatoptions) number of weeks/topics', VALUE_OPTIONAL),
+                            'maxbytes' => new external_value(PARAM_INT,
+                                    'largest size of file that can be uploaded into the course', VALUE_OPTIONAL),
+                            'showreports' => new external_value(PARAM_INT,
+                                    'are activity report shown (yes = 1, no =0)', VALUE_OPTIONAL),
+                            'visible' => new external_value(PARAM_INT,
+                                    '1: available to student, 0:not available', VALUE_OPTIONAL),
+                            'hiddensections' => new external_value(PARAM_INT,
+                                    '(deprecated, use courseformatoptions) How the hidden sections in the course are 
+                                        displayed to students', VALUE_OPTIONAL),
+                            'groupmode' => new external_value(PARAM_INT, 'no group, separate, visible', VALUE_OPTIONAL),
+                            'groupmodeforce' => new external_value(PARAM_INT, '1: yes, 0: no', VALUE_OPTIONAL),
+                            'defaultgroupingid' => new external_value(PARAM_INT, 'default grouping id', VALUE_OPTIONAL),
+                            'enablecompletion' => new external_value(PARAM_INT,
+                                    'Enabled, control via completion and activity settings. Disabled,
+                                        not shown in activity settings.', VALUE_OPTIONAL),
+                            'completionstartonenrol' => new external_value(PARAM_INT,
+                                    '1: begin tracking a student\'s progress in course completion after
+                                        course enrolment. 0: does not', VALUE_OPTIONAL),
+                            'completionnotify' => new external_value(PARAM_INT, '1: yes 0: no', VALUE_OPTIONAL),
+                            'lang' => new external_value(PARAM_SAFEDIR, 'forced course language', VALUE_OPTIONAL),
+                            'forcetheme' => new external_value(PARAM_PLUGIN, 'name of the force theme', VALUE_OPTIONAL),
+                            'courseformatoptions' => new external_multiple_structure(
+                                new external_single_structure(
+                                    array('name' => new external_value(PARAM_ALPHANUMEXT, 'course format option name'),
+                                        'value' => new external_value(PARAM_RAW, 'course format option value')
+                                )),
+                                    'additional options for particular course format', VALUE_OPTIONAL),
+                        )
+                    ), 'courses to update'
+                )
+            )
+        );
+    }
+
+    /**
+     * Update courses
+     *
+     * @param array $courses
+     * @since Moodle 2.5
+     */
+    public static function update_courses($courses) {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . "/course/lib.php");
+        $warnings = array();
+
+        $params = self::validate_parameters(self::update_courses_parameters(),
+                        array('courses' => $courses));
+
+        $availablethemes = get_plugin_list('theme');
+        $availablelangs = get_string_manager()->get_list_of_translations();
+
+        foreach ($params['courses'] as $course) {
+            // Catch any exception while updating course and return as warning to user.
+            try {
+                // Ensure the current user is allowed to run this function.
+                $context = context_course::instance($course['id'], MUST_EXIST);
+                self::validate_context($context);
+
+                $oldcourse = course_get_format($course['id'])->get_course();
+
+                require_capability('moodle/course:update', $context);
+
+                // Check if user can change category.
+                if (array_key_exists('categoryid', $course) && ($oldcourse->category != $course['categoryid'])) {
+                    require_capability('moodle/course:changecategory', $context);
+                    $course['category'] = $course['categoryid'];
+                }
+
+                // Check if the user can change fullname.
+                if (array_key_exists('fullname', $course) && ($oldcourse->fullname != $course['fullname'])) {
+                    require_capability('moodle/course:changefullname', $context);
+                }
+
+                // Check if the shortname already exist and user have capability.
+                if (array_key_exists('shortname', $course) && ($oldcourse->shortname != $course['shortname'])) {
+                    require_capability('moodle/course:changeshortname', $context);
+                    if ($DB->record_exists('course', array('shortname' => $course['shortname']))) {
+                        throw new moodle_exception('shortnametaken');
+                    }
+                }
+
+                // Check if the id number already exist and user have capability.
+                if (array_key_exists('idnumber', $course) && ($oldcourse->idnumber != $course['idnumber'])) {
+                    require_capability('moodle/course:changeidnumber', $context);
+                    if ($DB->record_exists('course', array('idnumber' => $course['idnumber']))) {
+                        throw new moodle_exception('idnumbertaken');
+                    }
+                }
+
+                // Check if user can change summary.
+                if (array_key_exists('summary', $course) && ($oldcourse->summary != $course['summary'])) {
+                    require_capability('moodle/course:changesummary', $context);
+                }
+
+                // Summary format.
+                if (array_key_exists('summaryformat', $course) && ($oldcourse->summaryformat != $course['summaryformat'])) {
+                    require_capability('moodle/course:changesummary', $context);
+                    $course['summaryformat'] = external_validate_format($course['summaryformat']);
+                }
+
+                // Check if user can change visibility.
+                if (array_key_exists('visible', $course) && ($oldcourse->visible != $course['visible'])) {
+                    require_capability('moodle/course:visibility', $context);
+                }
+
+                // Make sure lang is valid.
+                if (array_key_exists('lang', $course) && empty($availablelangs[$course['lang']])) {
+                    throw new moodle_exception('errorinvalidparam', 'webservice', '', 'lang');
+                }
+
+                // Make sure theme is valid.
+                if (array_key_exists('forcetheme', $course)) {
+                    if (!empty($CFG->allowcoursethemes)) {
+                        if (empty($availablethemes[$course['forcetheme']])) {
+                            throw new moodle_exception('errorinvalidparam', 'webservice', '', 'forcetheme');
+                        } else {
+                            $course['theme'] = $course['forcetheme'];
+                        }
+                    }
+                }
+
+                // Make sure completion is enabled before setting it.
+                if ((array_key_exists('enabledcompletion', $course) ||
+                        array_key_exists('completionstartonenrol', $course)) &&
+                        !completion_info::is_enabled_for_site()) {
+                    $course['enabledcompletion'] = 0;
+                    $course['completionstartonenrol'] = 0;
+                }
+
+                // Make sure maxbytes are less then CFG->maxbytes.
+                if (array_key_exists('maxbytes', $course)) {
+                    $course['maxbytes'] = get_max_upload_file_size($CFG->maxbytes, $course['maxbytes']);
+                }
+
+                if (!empty($course['courseformatoptions'])) {
+                    foreach ($course['courseformatoptions'] as $option) {
+                        if (isset($option['name']) && isset($option['value'])) {
+                            $course[$option['name']] = $option['value'];
+                        }
+                    }
+                }
+
+                // Update course if user has all required capabilities.
+                update_course((object) $course);
+            } catch (Exception $e) {
+                $warning = array();
+                $warning['item'] = 'course';
+                $warning['itemid'] = $course['id'];
+                if ($e instanceof moodle_exception) {
+                    $warning['warningcode'] = $e->errorcode;
+                } else {
+                    $warning['warningcode'] = $e->getCode();
+                }
+                $warning['message'] = $e->getMessage();
+                $warnings[] = $warning;
+            }
+        }
+
+        $result = array();
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 2.5
+     */
+    public static function update_courses_returns() {
+        return new external_single_structure(
+            array(
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    /**
      * Returns description of method parameters
      *
      * @return external_function_parameters
