@@ -1,6 +1,5 @@
 {
     "browser":      true,
-    "node":         true,
     "yui":          true,
     "bitwise":      true,
     "curly":        true,
