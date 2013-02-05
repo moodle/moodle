@@ -70,6 +70,12 @@ class cachestore_memcache extends cache_store implements cache_is_configurable {
     protected $isready = false;
 
     /**
+     * Set to true once this store instance has been initialised.
+     * @var bool
+     */
+    protected $isinitialised = false;
+
+    /**
      * The cache definition this store was initialised for.
      * @var cache_definition
      */
@@ -106,7 +112,12 @@ class cachestore_memcache extends cache_store implements cache_is_configurable {
             $this->servers[] = $server;
         }
 
-        $this->isready = true;
+        $this->connection = new Memcache;
+        foreach ($this->servers as $server) {
+            $this->connection->addServer($server[0], $server[1], true, $server[2]);
+            // Test the connection to this server.
+            $this->isready = @$this->connection->set("ping", 'ping', MEMCACHE_COMPRESSED, 1);
+        }
     }
 
     /**
@@ -121,10 +132,7 @@ class cachestore_memcache extends cache_store implements cache_is_configurable {
             throw new coding_exception('This memcache instance has already been initialised.');
         }
         $this->definition = $definition;
-        $this->connection = new Memcache;
-        foreach ($this->servers as $server) {
-            $this->connection->addServer($server[0], $server[1], true, $server[2]);
-        }
+        $this->isinitialised = true;
     }
 
     /**
@@ -133,7 +141,7 @@ class cachestore_memcache extends cache_store implements cache_is_configurable {
      * @return bool
      */
     public function is_initialised() {
-        return ($this->connection !== null);
+        return ($this->isinitialised);
     }
 
     /**
@@ -276,7 +284,10 @@ class cachestore_memcache extends cache_store implements cache_is_configurable {
      * @return boolean True on success. False otherwise.
      */
     public function purge() {
-        $this->connection->flush();
+        if ($this->isready) {
+            $this->connection->flush();
+        }
+
         return true;
     }
 
