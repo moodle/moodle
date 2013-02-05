@@ -1140,3 +1140,7 @@ table.flexible .r1, table.generaltable .r1 {background-color: #FAFAFA;}
 body.jsenabled .formlistingradio {
     display: none;
 }
+
+body.jsenabled .formlisting {
+    display: block;
+}

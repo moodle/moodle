@@ -137,68 +137,58 @@ class community_hub_search_form extends moodleform {
         if (!empty($hubs)) {
             $htmlhubs = array();
             foreach ($hubs as $hub) {
+                // Name can come from hub directory - need some cleaning.
+                $hubname = clean_text($hub['name'], PARAM_TEXT);
                 $smalllogohtml = '';
                 if (array_key_exists('id', $hub)) {
 
                     // Retrieve hub logo + generate small logo.
-                    $params = array('hubid' => $hub['id'],
-                        'filetype' => HUB_HUBSCREENSHOT_FILE_TYPE);
-                    $imgurl = new moodle_url(HUB_HUBDIRECTORYURL .
-                                    "/local/hubdirectory/webservice/download.php", $params);
+                    $params = array('hubid' => $hub['id'], 'filetype' => HUB_HUBSCREENSHOT_FILE_TYPE);
+                    $imgurl = new moodle_url(HUB_HUBDIRECTORYURL . "/local/hubdirectory/webservice/download.php", $params);
                     $imgsize = getimagesize($imgurl->out(false));
                     if ($imgsize[0] > 1) {
-                        $ascreenshothtml = html_writer::empty_tag('img',
-                                    array('src' => $imgurl, 'alt' => $hub['name']));
-                        $smalllogohtml = html_writer::empty_tag('img',
-                                        array('src' => $imgurl, 'alt' => $hub['name']
+                        $ascreenshothtml = html_writer::empty_tag('img', array('src' => $imgurl, 'alt' => $hubname));
+                        $smalllogohtml = html_writer::empty_tag('img', array('src' => $imgurl, 'alt' => $hubname
                                         , 'height' => 30, 'width' => 40));
                     } else {
                         $ascreenshothtml = '';
                     }
-                    $hubimage = html_writer::tag('div', $ascreenshothtml,
-                                    array('class' => 'hubimage'));
+                    $hubimage = html_writer::tag('div', $ascreenshothtml, array('class' => 'hubimage'));
 
-                    // Statistics + trusted info
+                    // Statistics + trusted info.
                     $hubstats = '';
                     if (isset($hub['enrollablecourses'])) { //check needed to avoid warnings for Moodle version < 2011081700
                         $additionaldesc = get_string('enrollablecourses', 'block_community') . ': ' . $hub['enrollablecourses'] . ' - ' .
                                 get_string('downloadablecourses', 'block_community') . ': ' . $hub['downloadablecourses'];
-                        $hubstats .= html_writer::tag('div', $additionaldesc,
-                                        array('class' => ''));
+                        $hubstats .= html_writer::tag('div', $additionaldesc);
                     }
                     if ($hub['trusted']) {
                         $hubtrusted =  get_string('hubtrusted', 'block_community');
-                        $hubstats .= html_writer::tag('div', $hubtrusted . ' ' . $OUTPUT->doc_link('trusted_hubs'), array('class' => ''));
+                        $hubstats .= $OUTPUT->doc_link('trusted_hubs') . html_writer::tag('div', $hubtrusted);
                     }
                     $hubstats = html_writer::tag('div', $hubstats, array('class' => 'hubstats'));
 
-                    // hub name link + hub description
-                    $hubnamelink = html_writer::tag('a',
-                                    html_writer::tag('h2',$hub['name']),
-                                    array('class' => 'hubtitlelink', 'href' => $hub['url'],
-                                        'onclick' => 'this.target="_blank"'));
-                    $hubdescriptiontext = html_writer::tag('div', format_text($hub['description'], FORMAT_PLAIN),
+                    // hub name link + hub description.
+                    $hubnamelink = html_writer::link($hub['url'], html_writer::tag('h2',$hubname),
+                                    array('class' => 'hubtitlelink'));
+                    // The description can come from the hub directory - need to clean.
+                    $hubdescription = clean_param($hub['description'], PARAM_TEXT);
+                    $hubdescriptiontext = html_writer::tag('div', format_text($hubdescription, FORMAT_PLAIN),
                                     array('class' => 'hubdescription'));
 
-                    $hubtext = html_writer::tag('div', $hubdescriptiontext . $hubstats,
-                        array('class' => 'hubtext'));
+                    $hubtext = html_writer::tag('div', $hubdescriptiontext . $hubstats, array('class' => 'hubtext'));
 
-                    $hubimgandtext = html_writer::tag('div', $hubimage . $hubtext,
-                        array('class' => 'hubimgandtext'));
+                    $hubimgandtext = html_writer::tag('div', $hubimage . $hubtext, array('class' => 'hubimgandtext'));
 
-                    $hubfulldesc = html_writer::tag('div',
-                                    $hubnamelink . $hubimgandtext,
-                                    array('class' => 'hubmainhmtl'));
+                    $hubfulldesc = html_writer::tag('div', $hubnamelink . $hubimgandtext, array('class' => 'hubmainhmtl'));
                 } else {
-                    $hubfulldesc = html_writer::tag('a', $hub['name'],
-                                    array('class' => '', 'href' => $hub['url']));
+                    $hubfulldesc = html_writer::link($hub['url'], $hubname);
                 }
 
                 // Add hub to the hub items.
                 $hubinfo = new stdClass();
                 $hubinfo->mainhtml = $hubfulldesc;
-                $hubinfo->rowhtml = html_writer::tag('div', $smalllogohtml ,
-                                    array('class' => 'hubsmalllogo')) . $hub['name'];
+                $hubinfo->rowhtml = html_writer::tag('div', $smalllogohtml , array('class' => 'hubsmalllogo')) . $hubname;
                 $hubitems[$hub['url']] = $hubinfo;
             }
 

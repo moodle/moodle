@@ -3,12 +3,13 @@
 /* HUB SELECTOR */
 #page-blocks-community-communitycourse .hubscreenshot {float: left; }
 #page-blocks-community-communitycourse .hubtitlelink {color: #999; }
-#page-blocks-community-communitycourse .hubsmalllogo {padding-right: 7px; float: left; }
+#page-blocks-community-communitycourse .hubsmalllogo {padding-left: 3px; padding-right: 7px; float: left; }
 #page-blocks-community-communitycourse .hubtext {display: block; width: 68%; padding-left: 165px;}
 #page-blocks-community-communitycourse .hubimgandtext {display:table;}
 #page-blocks-community-communitycourse .hubimage {float: left; display: block; width: 100px;}
 #page-blocks-community-communitycourse .hubdescriptiontext {}
 #page-blocks-community-communitycourse .hubstats {padding-top: 10px}
+#page-blocks-community-communitycourse .hubstats .iconhelp {float: left; padding-right: 3px;}
 #page-blocks-community-communitycourse .hubadditionaldesc {color: #666666; font-size: 90%; display:block;}
 #page-blocks-community-communitycourse .hubscreenshot {margin-right: 10px;}
 #page-blocks-community-communitycourse .hubnottrusted {}
