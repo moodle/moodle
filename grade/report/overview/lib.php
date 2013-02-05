@@ -39,13 +39,20 @@ class grade_report_overview extends grade_report {
     public $user;
 
     /**
+     * The user's courses
+     * @var array $courses
+     */
+    public $courses;
+
+    /**
      * A flexitable to hold the data.
      * @var object $table
      */
     public $table;
 
     /**
-     * show student ranks
+     * Show student ranks within each course.
+     * @var array $showrank
      */
     public $showrank;
 
@@ -63,12 +70,26 @@ class grade_report_overview extends grade_report {
     public function __construct($userid, $gpr, $context) {
         global $CFG, $COURSE, $DB;
         parent::__construct($COURSE->id, $gpr, $context);
-
-        $this->showrank = grade_get_setting($this->courseid, 'report_overview_showrank', !empty($CFG->grade_report_overview_showrank));
+        
         $this->showtotalsifcontainhidden = grade_get_setting($this->courseid, 'report_overview_showtotalsifcontainhidden', $CFG->grade_report_overview_showtotalsifcontainhidden);
 
-        // get the user (for full name)
+        // Get the user (for full name).
         $this->user = $DB->get_record('user', array('id' => $userid));
+
+        // Load the user's courses.
+        $this->courses = enrol_get_users_courses($this->user->id, false, 'id, shortname, showgrades');
+
+        $this->showrank = array();
+        $this->showrank['any'] = false;
+        if ($this->courses) {
+            foreach ($this->courses as $course) {
+                $this->showrank[$course->id] = grade_get_setting($course->id, 'report_overview_showrank', !empty($CFG->grade_report_overview_showrank));
+                if ($this->showrank[$course->id]) {
+                    $this->showrank['any'] = true;
+                }
+            }
+        }
+
 
         // base url for sorting by first/last name
         $this->baseurl = $CFG->wwwroot.'/grade/overview/index.php?id='.$userid;
@@ -87,7 +108,7 @@ class grade_report_overview extends grade_report {
          */
 
         // setting up table headers
-        if ($this->showrank) {
+        if ($this->showrank['any']) {
             $tablecolumns = array('coursename', 'grade', 'rank');
             $tableheaders = array($this->get_lang_string('coursename', 'grades'),
                                   $this->get_lang_string('grade'),
@@ -113,11 +134,11 @@ class grade_report_overview extends grade_report {
     public function fill_table() {
         global $CFG, $DB, $OUTPUT;
 
-        // MDL-11679, only show user's courses instead of all courses
-        if ($courses = enrol_get_users_courses($this->user->id, false, 'id, shortname, showgrades')) {
+        // Only show user's courses instead of all courses.
+        if ($this->courses) {
             $numusers = $this->get_numusers(false);
 
-            foreach ($courses as $course) {
+            foreach ($this->courses as $course) {
                 if (!$course->showgrades) {
                     continue;
                 }
@@ -151,10 +172,10 @@ class grade_report_overview extends grade_report {
 
                 $data = array($courselink, grade_format_gradevalue($finalgrade, $course_item, true));
 
-                if (!$this->showrank) {
+                if (!$this->showrank['any']) {
                     //nothing to do
 
-                } else if (!is_null($finalgrade)) {
+                } else if ($this->showrank[$course->id] && !is_null($finalgrade)) {
                     /// find the number of users with a higher grade
                     /// please note this can not work if hidden grades involved :-( to be fixed in 2.0
                     $params = array($finalgrade, $course_item->id);
@@ -167,7 +188,8 @@ class grade_report_overview extends grade_report {
                     $data[] = "$rank/$numusers";
 
                 } else {
-                    // no grade, no rank
+                    // No grade, no rank.
+                    // Or this course wants rank hidden.
                     $data[] = '-';
                 }
 
