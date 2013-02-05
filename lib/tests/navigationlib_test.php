@@ -76,7 +76,6 @@ class navigation_node_testcase extends basic_testcase {
         global $CFG;
         $node = new navigation_node($this->fakeproperties);
         $this->assertEquals($node->text, $this->fakeproperties['text']);
-        $this->assertEquals($node->title, $this->fakeproperties['text']);
         $this->assertTrue(strpos($this->fakeproperties['shorttext'], substr($node->shorttext,0, -3))===0);
         $this->assertEquals($node->key, $this->fakeproperties['key']);
         $this->assertEquals($node->type, $this->fakeproperties['type']);
