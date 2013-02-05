@@ -2325,7 +2325,6 @@ EOD;
      * If the error message is blank, nothing is output.
      *
      * @param string $message the error message.
-     * @param bool $icon display the icon along with the error message.
      * @return string the HTML to output.
      */
     public function error_text($message) {
