@@ -85,11 +85,11 @@ $mform->set_data($category);
 
 if ($mform->is_cancelled()) {
     if ($id) {
-        redirect($CFG->wwwroot . '/course/category.php?id=' . $id . '&categoryedit=on');
+        redirect($CFG->wwwroot . '/course/manage.php?id=' . $id);
     } else if ($parent) {
-        redirect($CFG->wwwroot .'/course/category.php?id=' . $parent . '&categoryedit=on');
+        redirect($CFG->wwwroot .'/course/manage.php?id=' . $parent);
     } else {
-        redirect($CFG->wwwroot .'/course/index.php?categoryedit=on');
+        redirect($CFG->wwwroot .'/course/manage.php');
     }
 } else if ($data = $mform->get_data()) {
     $newcategory = new stdClass();
@@ -128,7 +128,7 @@ if ($mform->is_cancelled()) {
     add_to_log(SITEID, "category", $logaction, "editcategory.php?id=$newcategory->id", $newcategory->id);
     fix_course_sortorder();
 
-    redirect('category.php?id='.$newcategory->id.'&categoryedit=on');
+    redirect('manage.php?id='.$newcategory->id);
 }
 
 // Unfortunately the navigation never generates correctly for this page because technically this page doesn't actually
@@ -150,7 +150,7 @@ if ($node) {
     // Failing that we'll override the URL, not as accurate and chances are things
     // won't be 100% correct all the time but should work most times.
     // A common reason to arrive here is having the management capability within only a particular category (not at system level).
-    navigation_node::override_active_url(new moodle_url('/course/index.php', array('categoryedit' => 'on')));
+    navigation_node::override_active_url(new moodle_url('/course/manage.php'));
 }
 
 $PAGE->set_title($title);

@@ -8,7 +8,7 @@ if ($hassiteconfig
  or has_capability('moodle/course:create', $systemcontext)
  or has_capability('moodle/site:approvecourse', $systemcontext)) { // speedup for non-admins, add all caps used on this page
 
-    $ADMIN->add('courses', new admin_externalpage('coursemgmt', new lang_string('coursemgmt', 'admin'), $CFG->wwwroot . '/course/index.php?categoryedit=on',
+    $ADMIN->add('courses', new admin_externalpage('coursemgmt', new lang_string('coursemgmt', 'admin'), $CFG->wwwroot . '/course/manage.php',
             array('moodle/category:manage', 'moodle/course:create')));
 
 /// Course Default Settings Page

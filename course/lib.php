@@ -1666,41 +1666,6 @@ function can_edit_in_category($categoryid = 0) {
 }
 
 /**
- * Prints the turn editing on/off button on course/index.php or course/category.php.
- *
- * @param integer $categoryid The id of the category we are showing, or 0 for system context.
- * @return string HTML of the editing button, or empty string, if this user is not allowed
- *      to see it.
- */
-function update_category_button($categoryid = 0) {
-    global $CFG, $PAGE, $OUTPUT;
-
-    // Check permissions.
-    if (!can_edit_in_category($categoryid)) {
-        return '';
-    }
-
-    // Work out the appropriate action.
-    if ($PAGE->user_is_editing()) {
-        $label = get_string('turneditingoff');
-        $edit = 'off';
-    } else {
-        $label = get_string('turneditingon');
-        $edit = 'on';
-    }
-
-    // Generate the button HTML.
-    $options = array('categoryedit' => $edit, 'sesskey' => sesskey());
-    if ($categoryid) {
-        $options['id'] = $categoryid;
-        $page = 'category.php';
-    } else {
-        $page = 'index.php';
-    }
-    return $OUTPUT->single_button(new moodle_url('/course/' . $page, $options), $label, 'get');
-}
-
-/**
  * Print courses in category. If category is 0 then all courses are printed.
  * @param int|stdClass $category category object or id.
  * @return bool true if courses found and printed, else false.
