@@ -414,58 +414,6 @@ class user_picture implements renderable {
 /**
  * Data structure representing a help icon.
  *
- * @copyright 2009 Nicolas Connault, 2010 Petr Skoda
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since Moodle 2.0
- * @package core
- * @category output
- */
-class old_help_icon implements renderable {
-
-    /**
-     * @var string Lang pack identifier
-     */
-    public $helpidentifier;
-
-    /**
-     * @var string A descriptive text for title tooltip
-     */
-    public $title = null;
-
-    /**
-     * @var string Component name, the same as in get_string()
-     */
-    public $component = 'moodle';
-
-    /**
-     * @var string Extra descriptive text next to the icon
-     */
-    public $linktext = null;
-
-    /**
-     * Constructor: sets up the other components in case they are needed
-     *
-     * @param string $helpidentifier  The keyword that defines a help page
-     * @param string $title A descriptive text for accessibility only
-     * @param string $component
-     */
-    public function __construct($helpidentifier, $title, $component = 'moodle') {
-        if (empty($title)) {
-            throw new coding_exception('A help_icon object requires a $text parameter');
-        }
-        if (empty($helpidentifier)) {
-            throw new coding_exception('A help_icon object requires a $helpidentifier parameter');
-        }
-
-        $this->helpidentifier  = $helpidentifier;
-        $this->title           = $title;
-        $this->component       = $component;
-    }
-}
-
-/**
- * Data structure representing a help icon.
- *
  * @copyright 2010 Petr Skoda (info@skodak.org)
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
@@ -807,12 +755,10 @@ class single_select implements renderable {
     /**
      * Adds help icon.
      *
-     * @param string $helppage  The keyword that defines a help page
-     * @param string $title A descriptive text for accessibility only
-     * @param string $component
+     * @deprecated since Moodle 2.0
      */
     public function set_old_help_icon($helppage, $title, $component = 'moodle') {
-        $this->helpicon = new old_help_icon($helppage, $title, $component);
+        throw new coding_exception('set_old_help_icon() can not be used any more, please see set_help_icon().');
     }
 
     /**
@@ -931,12 +877,10 @@ class url_select implements renderable {
     /**
      * Adds help icon.
      *
-     * @param string $helppage  The keyword that defines a help page
-     * @param string $title A descriptive text for accessibility only
-     * @param string $component
+     * @deprecated since Moodle 2.0
      */
     public function set_old_help_icon($helppage, $title, $component = 'moodle') {
-        $this->helpicon = new old_help_icon($helppage, $title, $component);
+        throw new coding_exception('set_old_help_icon() can not be used any more, please see set_help_icon().');
     }
 
     /**
