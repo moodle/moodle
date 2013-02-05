@@ -127,7 +127,7 @@ class behat_general extends behat_base {
      *
      * @Then /^I should see "(?P<text_string>(?:[^"]|\\")*)" in the "(?P<element_string>(?:[^"]|\\")*)" element$/
      */
-    public function assert_element_contains_text($element, $text) {
+    public function assert_element_contains_text($text, $element) {
         $this->assertSession()->elementTextContains('css', $element, $this->fixStepArgument($text));
     }
 
@@ -136,7 +136,7 @@ class behat_general extends behat_base {
      *
      * @Then /^I should not see "(?P<text_string>(?:[^"]|\\")*)" in the "(?P<element_string>(?:[^"]|\\")*)" element$/
      */
-    public function assert_element_not_contains_text($element, $text) {
+    public function assert_element_not_contains_text($text, $element) {
         $this->assertSession()->elementTextNotContains('css', $element, $this->fixStepArgument($text));
     }
 
