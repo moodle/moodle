@@ -34,5 +34,14 @@ $functions = array(
             returned.',
         'type' => 'read',
         'capabilities' => 'mod/forum:viewdiscussion'
+    ),
+
+    'mod_forum_get_forum_discussions' => array(
+        'classname' => 'mod_forum_external',
+        'methodname' => 'get_forum_discussions',
+        'classpath' => 'mod/forum/externallib.php',
+        'description' => 'Returns a list of forum discussions contained within a given set of forums.',
+        'type' => 'read',
+        'capabilities' => 'mod/forum:viewdiscussion, mod/forum:viewqandawithoutposting'
     )
 );
