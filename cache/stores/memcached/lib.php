@@ -75,6 +75,12 @@ class cachestore_memcached extends cache_store implements cache_is_configurable 
     protected $isready = false;
 
     /**
+     * Set to true when this store instance has been initialised.
+     * @var bool
+     */
+    protected $isinitialised = false;
+
+    /**
      * The cache definition this store was initialised with.
      * @var cache_definition
      */
@@ -127,7 +133,15 @@ class cachestore_memcached extends cache_store implements cache_is_configurable 
         $this->options[Memcached::OPT_HASH] = $hashmethod;
         $this->options[Memcached::OPT_BUFFER_WRITES] = $bufferwrites;
 
-        $this->isready = true;
+        $this->connection = new Memcached(crc32($this->name));
+        $servers = $this->connection->getServerList();
+        if (empty($servers)) {
+            foreach ($this->options as $key => $value) {
+                $this->connection->setOption($key, $value);
+            }
+            $this->connection->addServers($this->servers);
+            $this->isready = @$this->connection->set("ping", 'ping', 1);
+        }
     }
 
     /**
@@ -142,14 +156,7 @@ class cachestore_memcached extends cache_store implements cache_is_configurable 
             throw new coding_exception('This memcached instance has already been initialised.');
         }
         $this->definition = $definition;
-        $this->connection = new Memcached(crc32($this->name));
-        $servers = $this->connection->getServerList();
-        if (empty($servers)) {
-            foreach ($this->options as $key => $value) {
-                $this->connection->setOption($key, $value);
-            }
-            $this->connection->addServers($this->servers);
-        }
+        $this->isinitialised = true;
     }
 
     /**
@@ -158,7 +165,7 @@ class cachestore_memcached extends cache_store implements cache_is_configurable 
      * @return bool
      */
     public function is_initialised() {
-        return ($this->connection !== null);
+        return ($this->isinitialised);
     }
 
     /**
@@ -302,7 +309,10 @@ class cachestore_memcached extends cache_store implements cache_is_configurable 
      * @return boolean True on success. False otherwise.
      */
     public function purge() {
-        $this->connection->flush();
+        if ($this->isready) {
+            $this->connection->flush();
+        }
+
         return true;
     }
 

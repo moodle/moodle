@@ -361,6 +361,7 @@ class cachestore_session extends session_data_store implements cache_is_key_awar
      */
     public function purge() {
         $this->store = array();
+        return true;
     }
 
     /**
