@@ -26,6 +26,7 @@ Feature: Add activities to courses
       | Required entries | 9 |
       | Comments | Yes |
       | ID number | ASD123 |
+    And I turn editing mode off
     Then I should not see "Adding a new"
     And I follow "Test name"
     And I follow "Edit settings"
