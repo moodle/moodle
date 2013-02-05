@@ -662,7 +662,7 @@ class core_course_external extends external_api {
                             'visible' => new external_value(PARAM_INT,
                                     '1: available to student, 0:not available', VALUE_OPTIONAL),
                             'hiddensections' => new external_value(PARAM_INT,
-                                    '(deprecated, use courseformatoptions) How the hidden sections in the course are 
+                                    '(deprecated, use courseformatoptions) How the hidden sections in the course are
                                         displayed to students', VALUE_OPTIONAL),
                             'groupmode' => new external_value(PARAM_INT, 'no group, separate, visible', VALUE_OPTIONAL),
                             'groupmodeforce' => new external_value(PARAM_INT, '1: yes, 0: no', VALUE_OPTIONAL),
