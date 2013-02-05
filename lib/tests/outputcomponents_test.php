@@ -28,7 +28,6 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->libdir . '/outputcomponents.php');
 
-
 /**
  * Unit tests for the user_picture class
  */
@@ -196,7 +195,6 @@ class outputcomponents_testcase extends advanced_testcase {
         $this->assertEquals($reads, $DB->perf_get_reads());
         $this->assertEquals($CFG->wwwroot.'/theme/image.php/standard/core/1/u/f2', $up3->get_url($page, $renderer)->out(false));
         $this->assertTrue($reads < $DB->perf_get_reads());
-
 
         // test gravatar
         set_config('enablegravatar', 1);
@@ -388,7 +386,7 @@ EOF;
         $infomenu = array_pop( $children);
         $this->assertFalse($infomenu->has_children());
     }
-    
+
     public function test_prepare() {
         $expecteda = array('1',
                            '<a href="index.php?page=1">2</a>',
