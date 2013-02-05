@@ -2131,9 +2131,15 @@ class moodlelib_testcase extends advanced_testcase {
      * Test the function date_format_string().
      */
     function test_date_format_string() {
+        global $CFG;
+
         // Forcing locale and timezone.
         $oldlocale = setlocale(LC_TIME, '0');
-        setlocale(LC_TIME, 'en_AU.UTF-8');
+        if ($CFG->ostype == 'WINDOWS') {
+            setlocale(LC_TIME, 'English_Australia.1252');
+        } else {
+            setlocale(LC_TIME, 'en_AU.UTF-8');
+        }
         $systemdefaulttimezone = date_default_timezone_get();
         date_default_timezone_set('Australia/Perth');
 
@@ -2153,6 +2159,10 @@ class moodlelib_testcase extends advanced_testcase {
                 'str' => '%A, %d %B %Y, %I:%M %p',
                 'expected' => 'Saturday, 01 January 2011, 10:00 AM'
             ),
+            // Following tests pass on Windows only because en lang pack does
+            // not contain localewincharset, in real life lang pack maintainers
+            // may use only characters that are present in localewincharset
+            // in format strings!
             array(
                 'tz' => 99,
                 'str' => 'Žluťoučký koníček %A',

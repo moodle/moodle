@@ -1210,11 +1210,15 @@ class moodle1_file_manager implements loggable {
      */
     public function migrate_file($sourcepath, $filepath = '/', $filename = null, $sortorder = 0, $timecreated = null, $timemodified = null) {
 
-        $sourcefullpath = $this->basepath.'/'.$sourcepath;
+        // Normalise Windows paths a bit.
+        $sourcepath = str_replace('\\', '/', $sourcepath);
 
-        if ($sourcefullpath !== clean_param($sourcefullpath, PARAM_PATH)) {
-            throw new moodle1_convert_exception('file_invalid_path', $sourcefullpath);
+        // PARAM_PATH must not be used on full OS path!
+        if ($sourcepath !== clean_param($sourcepath, PARAM_PATH)) {
+            throw new moodle1_convert_exception('file_invalid_path', $sourcepath);
         }
+
+        $sourcefullpath = $this->basepath.'/'.$sourcepath;
 
         if (!is_readable($sourcefullpath)) {
             throw new moodle1_convert_exception('file_not_readable', $sourcefullpath);

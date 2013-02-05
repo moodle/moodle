@@ -123,6 +123,19 @@ class core_phpunit_basic_testcase extends basic_testcase {
     }
 
     /**
+     * Make sure there are no sloppy Windows line endings
+     * that would break our tests.
+     */
+    public function test_lineendings() {
+        $string = <<<STRING
+a
+b
+STRING;
+        $this->assertSame("a\nb", $string, 'Make sure all project files are checked out with unix line endings.');
+
+    }
+
+    /**
      * Make sure asserts in setUp() do not create problems.
      */
     public function test_setup_assert() {
