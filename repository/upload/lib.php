@@ -195,13 +195,14 @@ class repository_upload extends repository {
             $record->itemid = 0;
         }
 
+        if (($maxbytes!==-1) && (filesize($_FILES[$elname]['tmp_name']) > $maxbytes)) {
+            throw new file_exception('maxbytes');
+        }
+
         if (file_is_draft_area_limit_reached($record->itemid, $areamaxbytes, filesize($_FILES[$elname]['tmp_name']))) {
             throw new file_exception('maxareabytes');
         }
 
-        if (($maxbytes!==-1) && (filesize($_FILES[$elname]['tmp_name']) > $maxbytes)) {
-            throw new file_exception('maxbytes');
-        }
         $record->contextid = $context->id;
         $record->userid    = $USER->id;
 

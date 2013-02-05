@@ -302,14 +302,14 @@ switch ($action) {
                     die(json_encode($err));
                 }
 
-                // Check if we exceed the max bytes of the area.
-                if (file_is_draft_area_limit_reached($itemid, $areamaxbytes, filesize($downloadedfile['path']))) {
-                    throw new file_exception('maxareabytes');
-                }
-
                 // Check if exceed maxbytes.
                 if ($maxbytes != -1 && filesize($downloadedfile['path']) > $maxbytes) {
                     throw new file_exception('maxbytes');
+                }
+
+                // Check if we exceed the max bytes of the area.
+                if (file_is_draft_area_limit_reached($itemid, $areamaxbytes, filesize($downloadedfile['path']))) {
+                    throw new file_exception('maxareabytes');
                 }
 
                 $info = repository::move_to_filepool($downloadedfile['path'], $record);
