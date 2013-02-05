@@ -70,7 +70,7 @@ class grade_report_overview extends grade_report {
     public function __construct($userid, $gpr, $context) {
         global $CFG, $COURSE, $DB;
         parent::__construct($COURSE->id, $gpr, $context);
-        
+
         $this->showtotalsifcontainhidden = grade_get_setting($this->courseid, 'report_overview_showtotalsifcontainhidden', $CFG->grade_report_overview_showtotalsifcontainhidden);
 
         // Get the user (for full name).
