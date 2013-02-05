@@ -969,17 +969,17 @@ sup {vertical-align: super;}
 }
 
 .moodle-dialogue-exception .param-stacktrace .stacktrace-file {
-    color:navy
-    font-size:80%
+    color:navy;
+    font-size:80%;
 }
 .moodle-dialogue-exception .param-stacktrace .stacktrace-line {
-    color:#AA0000
-    font-size:80%
+    color:#AA0000;
+    font-size:80%;
 }
 .moodle-dialogue-exception .param-stacktrace .stacktrace-call {
-    color:#333
-    font-size:90%
-    border-bottom:1px solid #eee
+    color:#333;
+    font-size:90%;
+    border-bottom:1px solid #eee;
 }
 
 .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft {
@@ -1008,17 +1008,17 @@ sup {vertical-align: super;}
 
 .moodle-dialogue-exception .param-stacktrace .stacktrace-file {
     display:inline-block
-    margin:4px 0
+    margin:4px 0;
 }
 .moodle-dialogue-exception .param-stacktrace .stacktrace-line {
-    display:inline-block
-    width:50px
-    margin:4px 1em
+    display:inline-block;
+    width:50px;
+    margin:4px 1em;
 }
 .moodle-dialogue-exception .param-stacktrace .stacktrace-call {
-    padding-left:25px
-    margin-bottom:4px
-    padding-bottom:4px
+    padding-left:25px;
+    margin-bottom:4px;
+    padding-bottom:4px;
 }
 
 
