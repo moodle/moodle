@@ -2223,15 +2223,22 @@ function course_delete_module($cmid) {
     if (file_exists($modlib)) {
         require_once($modlib);
     } else {
-        throw new moodle_exception("This module is missing mod/$modulename/lib.php", '', '',
-            null, 'failedtodeletemodulemissinglibfile');
+        throw new moodle_exception('cannotdeletemodulemissinglib', '', '', null,
+            "Cannot delete this module as the file mod/$modulename/lib.php is missing.");
     }
 
-    $deleteinstancefunction = $modulename . "_delete_instance";
+    $deleteinstancefunction = $modulename . '_delete_instance';
 
+    // Ensure the delete_instance function exists for this module.
+    if (!function_exists($deleteinstancefunction)) {
+        throw new moodle_exception('cannotdeletemodulemissingfunc', '', '', null,
+            "Cannot delete this module as the function {$modulename}_delete_instance is missing in mod/$modulename/lib.php.");
+    }
+
+    // Call the delete_instance function, if it returns false throw an exception.
     if (!$deleteinstancefunction($cm->instance)) {
-        throw new moodle_exception("Could not delete the $modulename (instance)", '', '',
-            null, 'failedtodeletemoduleinstance');
+        throw new moodle_exception('cannotdeletemoduleinstance', '', '', null,
+            "Cannot delete the module $modulename (instance).");
     }
 
     // Remove all module files in case modules forget to do that.
@@ -2270,8 +2277,8 @@ function course_delete_module($cmid) {
 
     // Delete module from that section.
     if (!delete_mod_from_section($cm->id, $cm->section)) {
-        throw new moodle_exception("Could not delete the $modulename from section", '', '',
-            null, 'failedtodeletemodulefromsection');
+        throw new moodle_exception('cannotdeletemodulefromsection', '', '', null,
+            "Cannot delete the module $modulename (instance) from section.");
     }
 
     // Trigger a mod_deleted event with information about this module.
