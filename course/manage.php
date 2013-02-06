@@ -215,7 +215,7 @@ if (isset($category) && $canmanage && $resort && confirm_sesskey()) {
     }
 }
 
-if (!empty($moveto) && $data = data_submitted() && confirm_sesskey()) {
+if (!empty($moveto) && ($data = data_submitted()) && confirm_sesskey()) {
     // Move a specified course to a new category.
     // User must have category update in both cats to perform this.
     require_capability('moodle/category:manage', $context);
