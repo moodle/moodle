@@ -131,6 +131,8 @@ class assign_feedback_offline extends assign_feedback_plugin {
                 } else {
                     $record->grade = '';
                 }
+            } else {
+                $record->grade = unformat_float($record->grade);
             }
 
             // Note: Do not count the seconds when comparing modified dates.
@@ -148,6 +150,10 @@ class assign_feedback_offline extends assign_feedback_plugin {
                 $skip = true;
             } else if ($this->assignment->grading_disabled($record->user->id)) {
                 // Skip grade is locked.
+                $skip = true;
+            } else if (($this->assignment->get_instance()->grade > -1) &&
+                      (($record->grade < 0) || ($record->grade > $this->assignment->get_instance()->grade))) {
+                // Out of range.
                 $skip = true;
             }
 
