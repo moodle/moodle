@@ -111,6 +111,12 @@ if (!is_null($mode) and has_capability('mod/forum:managesubscriptions', $context
             redirect($returnto, get_string("everyoneisnowsubscribed", "forum"), 1);
             break;
         case FORUM_INITIALSUBSCRIBE : // 2
+            if ($forum->forcesubscribe <> FORUM_INITIALSUBSCRIBE) {
+                $users = forum_get_potential_subscribers($context, 0, 'u.id, u.email', '');
+                foreach ($users as $user) {
+                    forum_subscribe($user->id, $forum->id);
+                }
+            }
             forum_forcesubscribe($forum->id, FORUM_INITIALSUBSCRIBE);
             redirect($returnto, get_string("everyoneisnowsubscribed", "forum"), 1);
             break;
