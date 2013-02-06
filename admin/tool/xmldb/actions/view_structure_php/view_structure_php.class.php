@@ -170,10 +170,10 @@ class view_structure_php extends XMLDBAction {
 
         // Add contents
         $result .= XMLDB_LINEFEED;
-        $result .= '        // Define table ' . $table->getName() . ' to be created' . XMLDB_LINEFEED;
+        $result .= '        // Define table ' . $table->getName() . ' to be created.' . XMLDB_LINEFEED;
         $result .= '        $table = new xmldb_table(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
         $result .= XMLDB_LINEFEED;
-        $result .= '        // Adding fields to table ' . $table->getName() . XMLDB_LINEFEED;
+        $result .= '        // Adding fields to table ' . $table->getName() . '.' . XMLDB_LINEFEED;
         // Iterate over each field
         foreach ($table->getFields() as $field) {
             // The field header, with name
@@ -186,7 +186,7 @@ class view_structure_php extends XMLDBAction {
         // Iterate over each key
         if ($keys = $table->getKeys()) {
             $result .= XMLDB_LINEFEED;
-            $result .= '        // Adding keys to table ' . $table->getName() . XMLDB_LINEFEED;
+            $result .= '        // Adding keys to table ' . $table->getName() . '.' . XMLDB_LINEFEED;
             foreach ($keys as $key) {
                 // The key header, with name
                 $result .= '        $table->add_key(' . "'" . $key->getName() . "', ";
@@ -199,7 +199,7 @@ class view_structure_php extends XMLDBAction {
         // Iterate over each index
         if ($indexes = $table->getIndexes()) {
             $result .= XMLDB_LINEFEED;
-            $result .= '        // Adding indexes to table ' . $table->getName() . XMLDB_LINEFEED;
+            $result .= '        // Adding indexes to table ' . $table->getName() . '.' . XMLDB_LINEFEED;
             foreach ($indexes as $index) {
                 // The index header, with name
                 $result .= '        $table->add_index(' . "'" . $index->getName() . "', ";
@@ -212,7 +212,7 @@ class view_structure_php extends XMLDBAction {
 
         // Launch the proper DDL
         $result .= XMLDB_LINEFEED;
-        $result .= '        // Conditionally launch create table for ' . $table->getName() . XMLDB_LINEFEED;
+        $result .= '        // Conditionally launch create table for ' . $table->getName() . '.' . XMLDB_LINEFEED;
         $result .= '        if (!$dbman->table_exists($table)) {' . XMLDB_LINEFEED;
         $result .= '            $dbman->create_table($table);' . XMLDB_LINEFEED;
         $result .= '        }' . XMLDB_LINEFEED;
@@ -250,12 +250,12 @@ class view_structure_php extends XMLDBAction {
 
         // Add contents
         $result .= XMLDB_LINEFEED;
-        $result .= '        // Define table ' . $table->getName() . ' to be dropped' . XMLDB_LINEFEED;
+        $result .= '        // Define table ' . $table->getName() . ' to be dropped.' . XMLDB_LINEFEED;
         $result .= '        $table = new xmldb_table(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
 
         // Launch the proper DDL
         $result .= XMLDB_LINEFEED;
-        $result .= '        // Conditionally launch drop table for ' . $table->getName() . XMLDB_LINEFEED;
+        $result .= '        // Conditionally launch drop table for ' . $table->getName() . '.' . XMLDB_LINEFEED;
         $result .= '        if ($dbman->table_exists($table)) {' . XMLDB_LINEFEED;
         $result .= '            $dbman->drop_table($table);' . XMLDB_LINEFEED;
         $result .= '        }' . XMLDB_LINEFEED;
@@ -293,12 +293,12 @@ class view_structure_php extends XMLDBAction {
 
         // Add contents
         $result .= XMLDB_LINEFEED;
-        $result .= '        // Define table ' . $table->getName() . ' to be renamed to NEWNAMEGOESHERE' . XMLDB_LINEFEED;
+        $result .= '        // Define table ' . $table->getName() . ' to be renamed to NEWNAMEGOESHERE.' . XMLDB_LINEFEED;
         $result .= '        $table = new xmldb_table(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
 
         // Launch the proper DDL
         $result .= XMLDB_LINEFEED;
-        $result .= '        // Launch rename table for ' . $table->getName() . XMLDB_LINEFEED;
+        $result .= '        // Launch rename table for ' . $table->getName() . '.' . XMLDB_LINEFEED;
         $result .= '        $dbman->rename_table($table, ' . "'NEWNAMEGOESHERE'" . ');' . XMLDB_LINEFEED;
 
         // Add the proper upgrade_xxxx_savepoint call

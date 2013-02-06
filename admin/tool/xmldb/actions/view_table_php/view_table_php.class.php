@@ -314,13 +314,13 @@ class view_table_php extends XMLDBAction {
 
         // Add contents
         $result .= XMLDB_LINEFEED;
-        $result .= '        // Define field ' . $field->getName() . ' to be added to ' . $table->getName() . XMLDB_LINEFEED;
+        $result .= '        // Define field ' . $field->getName() . ' to be added to ' . $table->getName() . '.' . XMLDB_LINEFEED;
         $result .= '        $table = new xmldb_table(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
         $result .= '        $field = new xmldb_field(' . "'" . $field->getName() . "', " . $field->getPHP(true) . ');' . XMLDB_LINEFEED;
 
         // Launch the proper DDL
         $result .= XMLDB_LINEFEED;
-        $result .= '        // Conditionally launch add field ' . $field->getName() . XMLDB_LINEFEED;
+        $result .= '        // Conditionally launch add field ' . $field->getName() . '.' . XMLDB_LINEFEED;
         $result .= '        if (!$dbman->field_exists($table, $field)) {'. XMLDB_LINEFEED;
         $result .= '            $dbman->add_field($table, $field);' . XMLDB_LINEFEED;
         $result .= '        }'. XMLDB_LINEFEED;
@@ -362,13 +362,13 @@ class view_table_php extends XMLDBAction {
 
         // Add contents
         $result .= XMLDB_LINEFEED;
-        $result .= '        // Define field ' . $field->getName() . ' to be dropped from ' . $table->getName() . XMLDB_LINEFEED;
+        $result .= '        // Define field ' . $field->getName() . ' to be dropped from ' . $table->getName() . '.' . XMLDB_LINEFEED;
         $result .= '        $table = new xmldb_table(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
         $result .= '        $field = new xmldb_field(' . "'" . $field->getName() . "'" . ');' . XMLDB_LINEFEED;
 
         // Launch the proper DDL
         $result .= XMLDB_LINEFEED;
-        $result .= '        // Conditionally launch drop field ' . $field->getName() . XMLDB_LINEFEED;
+        $result .= '        // Conditionally launch drop field ' . $field->getName() . '.' . XMLDB_LINEFEED;
         $result .= '        if ($dbman->field_exists($table, $field)) {' . XMLDB_LINEFEED;
         $result .= '            $dbman->drop_field($table, $field);' . XMLDB_LINEFEED;
         $result .= '        }' . XMLDB_LINEFEED;
@@ -410,13 +410,13 @@ class view_table_php extends XMLDBAction {
 
         // Add contents
         $result .= XMLDB_LINEFEED;
-        $result .= '        // Rename field ' . $field->getName() . ' on table ' . $table->getName() . ' to NEWNAMEGOESHERE'. XMLDB_LINEFEED;
+        $result .= '        // Rename field ' . $field->getName() . ' on table ' . $table->getName() . ' to NEWNAMEGOESHERE.'. XMLDB_LINEFEED;
         $result .= '        $table = new xmldb_table(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
         $result .= '        $field = new xmldb_field(' . "'" . $field->getName() . "', " . $field->getPHP(true) . ');' . XMLDB_LINEFEED;
 
         // Launch the proper DDL
         $result .= XMLDB_LINEFEED;
-        $result .= '        // Launch rename field ' . $field->getName() . XMLDB_LINEFEED;
+        $result .= '        // Launch rename field ' . $field->getName() . '.' . XMLDB_LINEFEED;
         $result .= '        $dbman->rename_field($table, $field, ' . "'" . 'NEWNAMEGOESHERE' . "'" . ');' . XMLDB_LINEFEED;
 
         // Add the proper upgrade_xxxx_savepoint call
@@ -465,13 +465,13 @@ class view_table_php extends XMLDBAction {
 
         // Add contents
         $result .= XMLDB_LINEFEED;
-        $result .= '        // Changing type of field ' . $field->getName() . ' on table ' . $table->getName() . ' to ' . $type . XMLDB_LINEFEED;
+        $result .= '        // Changing type of field ' . $field->getName() . ' on table ' . $table->getName() . ' to ' . $type . '.' . XMLDB_LINEFEED;
         $result .= '        $table = new xmldb_table(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
         $result .= '        $field = new xmldb_field(' . "'" . $field->getName() . "', " . $field->getPHP(true) . ');' . XMLDB_LINEFEED;
 
         // Launch the proper DDL
         $result .= XMLDB_LINEFEED;
-        $result .= '        // Launch change of type for field ' . $field->getName() . XMLDB_LINEFEED;
+        $result .= '        // Launch change of type for field ' . $field->getName() . '.' . XMLDB_LINEFEED;
         $result .= '        $dbman->change_field_type($table, $field);' . XMLDB_LINEFEED;
 
         // Add the proper upgrade_xxxx_savepoint call
@@ -517,13 +517,13 @@ class view_table_php extends XMLDBAction {
 
         // Add contents
         $result .= XMLDB_LINEFEED;
-        $result .= '        // Changing precision of field ' . $field->getName() . ' on table ' . $table->getName() . ' to ' . $precision . XMLDB_LINEFEED;
+        $result .= '        // Changing precision of field ' . $field->getName() . ' on table ' . $table->getName() . ' to ' . $precision . '.' . XMLDB_LINEFEED;
         $result .= '        $table = new xmldb_table(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
-        $result .= '        $field = new xmldb_field(' . "'" . $field->getName() . "', " .$field->getPHP(true) . ');' . XMLDB_LINEFEED;
+        $result .= '        $field = new xmldb_field(' . "'" . $field->getName() . "', " . $field->getPHP(true) . ');' . XMLDB_LINEFEED;
 
         // Launch the proper DDL
         $result .= XMLDB_LINEFEED;
-        $result .= '        // Launch change of precision for field ' . $field->getName() . XMLDB_LINEFEED;
+        $result .= '        // Launch change of precision for field ' . $field->getName() . '.' . XMLDB_LINEFEED;
         $result .= '        $dbman->change_field_precision($table, $field);' . XMLDB_LINEFEED;
 
         // Add the proper upgrade_xxxx_savepoint call
@@ -565,13 +565,13 @@ class view_table_php extends XMLDBAction {
 
         // Add contents
         $result .= XMLDB_LINEFEED;
-        $result .= '        // Changing nullability of field ' . $field->getName() . ' on table ' . $table->getName() . ' to ' . $notnull . XMLDB_LINEFEED;
+        $result .= '        // Changing nullability of field ' . $field->getName() . ' on table ' . $table->getName() . ' to ' . $notnull . '.' . XMLDB_LINEFEED;
         $result .= '        $table = new xmldb_table(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
         $result .= '        $field = new xmldb_field(' . "'" . $field->getName() . "', " . $field->getPHP(true) . ');' . XMLDB_LINEFEED;
 
         // Launch the proper DDL
         $result .= XMLDB_LINEFEED;
-        $result .= '        // Launch change of nullability for field ' . $field->getName() . XMLDB_LINEFEED;
+        $result .= '        // Launch change of nullability for field ' . $field->getName() . '.' . XMLDB_LINEFEED;
         $result .= '        $dbman->change_field_notnull($table, $field);' . XMLDB_LINEFEED;
 
         // Add the proper upgrade_xxxx_savepoint call
@@ -613,13 +613,13 @@ class view_table_php extends XMLDBAction {
 
         // Add contents
         $result .= XMLDB_LINEFEED;
-        $result .= '        // Changing the default of field ' . $field->getName() . ' on table ' . $table->getName() . ' to ' . $default . XMLDB_LINEFEED;
+        $result .= '        // Changing the default of field ' . $field->getName() . ' on table ' . $table->getName() . ' to ' . $default . '.' . XMLDB_LINEFEED;
         $result .= '        $table = new xmldb_table(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
         $result .= '        $field = new xmldb_field(' . "'" . $field->getName() . "', " . $field->getPHP(true) . ');' . XMLDB_LINEFEED;
 
         // Launch the proper DDL
         $result .= XMLDB_LINEFEED;
-        $result .= '        // Launch change of default for field ' . $field->getName() . XMLDB_LINEFEED;
+        $result .= '        // Launch change of default for field ' . $field->getName() . '.' . XMLDB_LINEFEED;
         $result .= '        $dbman->change_field_default($table, $field);' . XMLDB_LINEFEED;
 
         // Add the proper upgrade_xxxx_savepoint call
@@ -659,13 +659,13 @@ class view_table_php extends XMLDBAction {
 
         // Add contents
         $result .= XMLDB_LINEFEED;
-        $result .= '        // Define key ' . $key->getName() . ' ('. $key->getXMLDBKeyName($key->getType()) . ') to be added to ' . $table->getName() . XMLDB_LINEFEED;
+        $result .= '        // Define key ' . $key->getName() . ' ('. $key->getXMLDBKeyName($key->getType()) . ') to be added to ' . $table->getName() . '.' . XMLDB_LINEFEED;
         $result .= '        $table = new xmldb_table(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
         $result .= '        $key = new xmldb_key(' . "'" . $key->getName() . "', " . $key->getPHP(true) . ');' . XMLDB_LINEFEED;
 
         // Launch the proper DDL
         $result .= XMLDB_LINEFEED;
-        $result .= '        // Launch add key ' . $key->getName() . XMLDB_LINEFEED;
+        $result .= '        // Launch add key ' . $key->getName() . '.' . XMLDB_LINEFEED;
         $result .= '        $dbman->add_key($table, $key);' . XMLDB_LINEFEED;
 
         // Add the proper upgrade_xxxx_savepoint call
@@ -705,13 +705,13 @@ class view_table_php extends XMLDBAction {
 
         // Add contents
         $result .= XMLDB_LINEFEED;
-        $result .= '        // Define key ' . $key->getName() . ' ('. $key->getXMLDBKeyName($key->getType()) . ') to be dropped form ' . $table->getName() . XMLDB_LINEFEED;
+        $result .= '        // Define key ' . $key->getName() . ' ('. $key->getXMLDBKeyName($key->getType()) . ') to be dropped form ' . $table->getName() . '.' . XMLDB_LINEFEED;
         $result .= '        $table = new xmldb_table(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
         $result .= '        $key = new xmldb_key(' . "'" . $key->getName() . "', " . $key->getPHP(true) . ');' . XMLDB_LINEFEED;
 
         // Launch the proper DDL
         $result .= XMLDB_LINEFEED;
-        $result .= '        // Launch drop key ' . $key->getName() . XMLDB_LINEFEED;
+        $result .= '        // Launch drop key ' . $key->getName() . '.' . XMLDB_LINEFEED;
         $result .= '        $dbman->drop_key($table, $key);' . XMLDB_LINEFEED;
 
         // Add the proper upgrade_xxxx_savepoint call
@@ -754,13 +754,13 @@ class view_table_php extends XMLDBAction {
 
         // Add contents
         $result .= XMLDB_LINEFEED;
-        $result .= '        // Define key ' . $key->getName() . ' ('. $key->getXMLDBKeyName($key->getType()) . ') to be renamed to NEWNAMEGOESHERE' . XMLDB_LINEFEED;
+        $result .= '        // Define key ' . $key->getName() . ' ('. $key->getXMLDBKeyName($key->getType()) . ') to be renamed to NEWNAMEGOESHERE.' . XMLDB_LINEFEED;
         $result .= '        $table = new xmldb_table(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
         $result .= '        $key = new xmldb_key(' . "'" . $key->getName() . "', " . $key->getPHP(true) . ');' . XMLDB_LINEFEED;
 
         // Launch the proper DDL
         $result .= XMLDB_LINEFEED;
-        $result .= '        // Launch rename key ' . $key->getName() . XMLDB_LINEFEED;
+        $result .= '        // Launch rename key ' . $key->getName() . '.' . XMLDB_LINEFEED;
         $result .= '        $dbman->rename_key($table, $key, ' . "'" . 'NEWNAMEGOESHERE' . "'" . ');' . XMLDB_LINEFEED;
 
         // Add the proper upgrade_xxxx_savepoint call
@@ -800,13 +800,13 @@ class view_table_php extends XMLDBAction {
 
         // Add contents
         $result .= XMLDB_LINEFEED;
-        $result .= '        // Define index ' . $index->getName() . ' ('. ($index->getUnique() ? 'unique' : 'not unique') . ') to be added to ' . $table->getName() . XMLDB_LINEFEED;
+        $result .= '        // Define index ' . $index->getName() . ' ('. ($index->getUnique() ? 'unique' : 'not unique') . ') to be added to ' . $table->getName() . '.' . XMLDB_LINEFEED;
         $result .= '        $table = new xmldb_table(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
         $result .= '        $index = new xmldb_index(' . "'" . $index->getName() . "', " . $index->getPHP(true) . ');' . XMLDB_LINEFEED;
 
         // Launch the proper DDL
         $result .= XMLDB_LINEFEED;
-        $result .= '        // Conditionally launch add index ' . $index->getName() . XMLDB_LINEFEED;
+        $result .= '        // Conditionally launch add index ' . $index->getName() . '.' . XMLDB_LINEFEED;
         $result .= '        if (!$dbman->index_exists($table, $index)) {' . XMLDB_LINEFEED;
         $result .= '            $dbman->add_index($table, $index);' . XMLDB_LINEFEED;
         $result .= '        }' . XMLDB_LINEFEED;
@@ -848,13 +848,13 @@ class view_table_php extends XMLDBAction {
 
         // Add contents
         $result .= XMLDB_LINEFEED;
-        $result .= '        // Define index ' . $index->getName() . ' ('. ($index->getUnique() ? 'unique' : 'not unique') . ') to be dropped form ' . $table->getName() . XMLDB_LINEFEED;
+        $result .= '        // Define index ' . $index->getName() . ' ('. ($index->getUnique() ? 'unique' : 'not unique') . ') to be dropped form ' . $table->getName() . '.' . XMLDB_LINEFEED;
         $result .= '        $table = new xmldb_table(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
         $result .= '        $index = new xmldb_index(' . "'" . $index->getName() . "', " . $index->getPHP(true) . ');' . XMLDB_LINEFEED;
 
         // Launch the proper DDL
         $result .= XMLDB_LINEFEED;
-        $result .= '        // Conditionally launch drop index ' . $index->getName() . XMLDB_LINEFEED;
+        $result .= '        // Conditionally launch drop index ' . $index->getName() . '.' . XMLDB_LINEFEED;
         $result .= '        if ($dbman->index_exists($table, $index)) {' . XMLDB_LINEFEED;
         $result .= '            $dbman->drop_index($table, $index);' . XMLDB_LINEFEED;
         $result .= '        }' . XMLDB_LINEFEED;
@@ -899,13 +899,13 @@ class view_table_php extends XMLDBAction {
 
         // Add contents
         $result .= XMLDB_LINEFEED;
-        $result .= '        // Define index ' . $index->getName() . ' ('. ($index->getUnique() ? 'unique' : 'not unique') . ') to be renamed to NEWNAMEGOESHERE' . XMLDB_LINEFEED;
+        $result .= '        // Define index ' . $index->getName() . ' ('. ($index->getUnique() ? 'unique' : 'not unique') . ') to be renamed to NEWNAMEGOESHERE.' . XMLDB_LINEFEED;
         $result .= '        $table = new xmldb_table(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
         $result .= '        $index = new xmldb_index(' . "'" . $index->getName() . "', " . $index->getPHP(true) . ');' . XMLDB_LINEFEED;
 
         // Launch the proper DDL
         $result .= XMLDB_LINEFEED;
-        $result .= '        // Launch rename index ' . $index->getName() . XMLDB_LINEFEED;
+        $result .= '        // Launch rename index ' . $index->getName() . '.' . XMLDB_LINEFEED;
         $result .= '        $dbman->rename_index($table, $index, ' . "'" . 'NEWNAMEGOESHERE' . "'" . ');' . XMLDB_LINEFEED;
 
         // Add the proper upgrade_xxxx_savepoint call
