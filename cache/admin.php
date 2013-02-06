@@ -131,6 +131,9 @@ if (!empty($action) && confirm_sesskey()) {
             break;
         case 'editdefinitionmapping' : // Edit definition mappings.
             $definition = required_param('definition', PARAM_SAFEPATH);
+            if (!array_key_exists($definition, $definitions)) {
+                throw new cache_exception('Invalid cache definition requested');
+            }
             $title = get_string('editdefinitionmappings', 'cache', $definition);
             $mform = new cache_definition_mappings_form($PAGE->url, array('definition' => $definition));
             if ($mform->is_cancelled()) {
@@ -144,6 +147,31 @@ if (!empty($action) && confirm_sesskey()) {
                     }
                 }
                 $writer->set_definition_mappings($definition, $mappings);
+                redirect($PAGE->url);
+            }
+            break;
+        case 'editdefinitionsharing' :
+            $definition = required_param('definition', PARAM_SAFEPATH);
+            if (!array_key_exists($definition, $definitions)) {
+                throw new cache_exception('Invalid cache definition requested');
+            }
+            $title = get_string('editdefinitionmappings', 'cache', $definition);
+            $sharingoptions = $definitions[$definition]['sharingoptions'];
+            $mform = new cache_definition_sharing_form($PAGE->url, array('definition' => $definition, 'sharingoptions' => $sharingoptions));
+            $mform->set_data(array(
+                'sharing' => $definitions[$definition]['selectedsharingoption'],
+                'userinputsharingkey' => $definitions[$definition]['userinputsharingkey']
+            ));
+            if ($mform->is_cancelled()) {
+                redirect($PAGE->url);
+            } else if ($data = $mform->get_data()) {
+                $component = $definitions[$definition]['component'];
+                $area = $definitions[$definition]['area'];
+                cache_helper::purge_by_definition($component, $area);
+                $writer = cache_config_writer::instance();
+                $sharing = array_sum(array_keys($data->sharing));
+                $userinputsharingkey = $data->userinputsharingkey;
+                $writer->set_definition_sharing($definition, $sharing, $userinputsharingkey);
                 redirect($PAGE->url);
             }
             break;

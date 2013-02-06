@@ -231,6 +231,21 @@ class cache_config {
                 // Invalid cache mode used for the definition.
                 continue;
             }
+            // Default the sharing option as it was added for 2.5.
+            // This can be removed sometime after the release of 2.6.
+            if (!array_key_exists('sharingoptions', $conf)) {
+                $conf['sharingoptions'] = cache_definition::SHARING_DEFAULTOPTIONS;
+            }
+            // Default the selected sharing option as it was added for 2.5.
+            // This can be removed sometime after the release of 2.6.
+            if (!array_key_exists('selectedsharingoption', $conf)) {
+                $conf['selectedsharingoption'] = cache_definition::SHARING_DEFAULT;
+            }
+            // Default the user input sharing key as it was added for 2.5.
+            // This can be removed sometime after the release of 2.6.
+            if (!array_key_exists('userinputsharingkey', $conf)) {
+                $conf['userinputsharingkey'] = '';
+            }
             $this->configdefinitions[$id] = $conf;
         }
 

@@ -222,6 +222,7 @@ class core_cache_renderer extends plugin_renderer_base {
             get_string('component', 'cache'),
             get_string('area', 'cache'),
             get_string('mappings', 'cache'),
+            get_string('sharing', 'cache'),
             get_string('actions', 'cache'),
         );
         $table->colclasses = array(
@@ -230,6 +231,7 @@ class core_cache_renderer extends plugin_renderer_base {
             'component',
             'area',
             'mappings',
+            'sharing',
             'actions'
         );
         $table->data = array();
@@ -253,6 +255,7 @@ class core_cache_renderer extends plugin_renderer_base {
                 $definition['component'],
                 $definition['area'],
                 $mapping,
+                join(', ', $definition['selectedsharingoption']),
                 join(', ', $htmlactions)
             ));
             $row->attributes['class'] = 'definition-'.$definition['component'].'-'.$definition['area'];

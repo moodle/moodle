@@ -181,6 +181,55 @@ class cache_definition_mappings_form extends moodleform {
 }
 
 /**
+ * Form to set definition sharing option
+ *
+ * @package    core
+ * @category   cache
+ * @copyright  2013 Sam Hemelryk
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class cache_definition_sharing_form extends moodleform {
+    /**
+     * The definition of the form
+     */
+    protected final function definition() {
+        $definition = $this->_customdata['definition'];
+        $sharingoptions = $this->_customdata['sharingoptions'];
+        $form = $this->_form;
+
+        $form->addElement('hidden', 'definition', $definition);
+        $form->setType('sharing', PARAM_SAFEPATH);
+        $form->addElement('hidden', 'action', 'editdefinitionsharing');
+        $form->setType('sharing', PARAM_ALPHA);
+
+        $count = 0;
+        foreach ($sharingoptions as $value => $text) {
+            $count++;
+            $name = ($count == 1) ? get_string('sharing', 'cache') : null;
+            $form->addElement('checkbox', 'sharing['.$value.']', $name, $text);
+        }
+        $form->setType('sharing', PARAM_INT);
+        $form->setDefault('sharing', cache_administration_helper::get_definition_sharing_options(cache_definition::SHARING_DEFAULT));
+
+        $form->addElement('text', 'userinputsharingkey', get_string('userinputsharingkey', 'cache'));
+        $form->addHelpButton('userinputsharingkey', 'userinputsharingkey', 'cache');
+        $form->disabledIf('userinputsharingkey', 'sharing['.cache_definition::SHARING_INPUT.']', 'notchecked');
+        $form->setType('userinputsharingkey', PARAM_ALPHANUMEXT);
+
+        $values = array_keys($sharingoptions);
+        if (in_array(cache_definition::SHARING_ALL, $values)) {
+            // If you share with all thenthe other options don't really make sense.
+            foreach ($values as $value) {
+                $form->disabledIf('sharing['.$value.']', 'sharing['.cache_definition::SHARING_ALL.']', 'checked');
+            }
+            $form->disabledIf('userinputsharingkey', 'sharing['.cache_definition::SHARING_ALL.']', 'checked');
+        }
+
+        $this->add_action_buttons();
+    }
+}
+
+/**
  * Form to set the mappings for a mode.
  *
  * @package    core
