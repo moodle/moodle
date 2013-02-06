@@ -234,6 +234,7 @@ class cache_helper {
         $factory = cache_factory::instance();
         foreach ($instance->get_definitions() as $name => $definitionarr) {
             $definition = cache_definition::load($name, $definitionarr);
+            $definition->set_cache_identifier($instance->get_site_identifier());
             if ($definition->invalidates_on_event($event)) {
                 // OK at this point we know that the definition has information to invalidate on the event.
                 // There are two routes, either its an application cache in which case we can invalidate it now.
@@ -304,6 +305,7 @@ class cache_helper {
         $factory = cache_factory::instance();
         foreach ($instance->get_definitions() as $name => $definitionarr) {
             $definition = cache_definition::load($name, $definitionarr);
+            $definition->set_cache_identifier($instance->get_site_identifier());
             if ($definition->invalidates_on_event($event)) {
                 // Create the cache.
                 $cache = $factory->create_cache($definition);
@@ -494,6 +496,23 @@ class cache_helper {
         // First update definitions
         cache_config_writer::update_definitions($coreonly);
         // Second reset anything we have already initialised to ensure we're all up to date.
+        cache_factory::reset();
+    }
+
+    /**
+     * Update the site identifier stored by the cache API.
+     *
+     * @param string $siteidentifier
+     */
+    public static function update_site_identifier($siteidentifier) {
+        global $CFG;
+        // Include locallib
+        require_once($CFG->dirroot.'/cache/locallib.php');
+        $factory = cache_factory::instance();
+        $factory->updating_started();
+        $config = $factory->create_config_instance(true);
+        $config->update_site_identifier($siteidentifier);
+        $factory->updating_finished();
         cache_factory::reset();
     }
 }
