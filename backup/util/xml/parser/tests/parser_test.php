@@ -632,6 +632,93 @@ class progressive_parser_test extends advanced_testcase {
         $this->assertEquals($errcount, 0); // No errors found, plz
     }
 
+    /**
+     */
+    function test_grouped_at_empty_node() {
+        global $CFG;
+        // Instantiate progressive_parser.
+        $pp =  new progressive_parser();
+        // Instantiate grouped_parser_processor.
+        $pr = new mock_grouped_parser_processor();
+        $this->assertTrue($pr instanceof progressive_parser_processor);
+        // Add interesting paths - moodle1 style.
+        $pr->add_path('/test/MOODLE_BACKUP/COURSE/FORMATDATA', true);
+        $pr->add_path('/test/MOODLE_BACKUP/COURSE/FORMATDATA/WEEKS/WEEK');
+        $pr->add_path('/test/MOODLE_BACKUP/COURSE/EMPTYGROUPED', true);
+        $pr->add_path('/test/MOODLE_BACKUP/COURSE/SECONDGROUPED', true);
+        $pr->add_path('/test/MOODLE_BACKUP/COURSE/SECONDGROUPED/SUBS/SUB');
+        // Add interesting paths - moodle2 style.
+        $pr->add_path('/test/moodle2/grouped', true);
+        $pr->add_path('/test/moodle2/grouped/subs/sub');
+        $pr->add_path('/test/moodle2/groupedemptywithattr', true);
+        $pr->add_path('/test/moodle2/groupednonemptywithattr', true);
+        $pr->add_path('/test/moodle2/groupednonemptywithattr/subs/sub');
+        // Assign processor to parser.
+        $pp->set_processor($pr);
+        // Set file from fixtures.
+        $pp->set_file($CFG->dirroot . '/backup/util/xml/parser/tests/fixtures/test6.xml');
+        // Process the file.
+        $pp->process();
+
+        // Get all the simplified chunks and perform various validations.
+        $chunks = $pr->get_chunks();
+        $this->assertEquals(count($chunks), 6); // All grouped elements.
+
+        // Check some random data.
+        $this->assertEquals('/test/MOODLE_BACKUP/COURSE/FORMATDATA', $chunks[0]['path']);
+        $this->assertEquals(2, $chunks[0]['tags']['WEEKS']['WEEK'][1]['SECTION']);
+
+        $this->assertEquals('/test/MOODLE_BACKUP/COURSE/EMPTYGROUPED', $chunks[1]['path']);
+        $this->assertEquals(array(), $chunks[1]['tags']);
+
+        $this->assertEquals('/test/MOODLE_BACKUP/COURSE/SECONDGROUPED', $chunks[2]['path']);
+        $this->assertEquals('Unit tests rock!', $chunks[2]['tags']['SUBS']['SUB'][0]['PROP']);
+
+        $this->assertEquals('/test/moodle2/grouped', $chunks[3]['path']);
+        $this->assertFalse(isset($chunks[3]['tags']['id'])); // No final elements, this should be fixed one day.
+        $this->assertEquals(34, $chunks[3]['tags']['subs']['sub'][0]['id']); // We have final element so this is parsed.
+        $this->assertEquals('Oh yeah', $chunks[3]['tags']['subs']['sub'][0]['prop']);
+
+        $this->assertEquals('/test/moodle2/groupednonemptywithattr', $chunks[4]['path']);
+        $this->assertEquals(78, $chunks[4]['tags']['id']); // We have final element so this is parsed.
+        $this->assertEquals('Go baby go', $chunks[4]['tags']['prop']);
+        $this->assertEquals(89, $chunks[4]['tags']['subs']['sub'][0]['id']);
+        $this->assertEquals('http://moodle.org', $chunks[4]['tags']['subs']['sub'][0]['prop']);
+
+        $this->assertEquals('/test/moodle2/groupedemptywithattr', $chunks[5]['path']);
+        $this->assertFalse(isset($chunks[5]['tags']['attr'])); // No final elements, this should be fixed one day.
+
+        // Now check start notifications.
+        $snotifs = $pr->get_start_notifications();
+        // Check we have received the correct number of notifications.
+        $this->assertEquals(count($snotifs), 6);
+        // Check the order of notifications (in order they appear in test6.xml).
+        $this->assertEquals('/test/MOODLE_BACKUP/COURSE/FORMATDATA', $snotifs[0]);
+        $this->assertEquals('/test/MOODLE_BACKUP/COURSE/EMPTYGROUPED', $snotifs[1]);
+        $this->assertEquals('/test/MOODLE_BACKUP/COURSE/SECONDGROUPED', $snotifs[2]);
+        $this->assertEquals('/test/moodle2/grouped', $snotifs[3]);
+        $this->assertEquals('/test/moodle2/groupednonemptywithattr', $snotifs[4]);
+        $this->assertEquals('/test/moodle2/groupedemptywithattr', $snotifs[5]);
+
+        // Now check end notifications.
+        $enotifs = $pr->get_end_notifications();
+        // Check we have received the correct number of notifications.
+        $this->assertEquals(count($enotifs), 6);
+        // Check the order of notifications (in order they appear in test6.xml).
+        $this->assertEquals('/test/MOODLE_BACKUP/COURSE/FORMATDATA', $enotifs[0]);
+        $this->assertEquals('/test/MOODLE_BACKUP/COURSE/EMPTYGROUPED', $enotifs[1]);
+        $this->assertEquals('/test/MOODLE_BACKUP/COURSE/SECONDGROUPED', $enotifs[2]);
+        $this->assertEquals('/test/moodle2/grouped', $enotifs[3]);
+        $this->assertEquals('/test/moodle2/groupednonemptywithattr', $enotifs[4]);
+        $this->assertEquals('/test/moodle2/groupedemptywithattr', $enotifs[5]);
+
+        // Now verify that the start/process/end order is correct.
+        $allnotifs = $pr->get_all_notifications();
+        $this->assertEquals(count($allnotifs), count($snotifs) + count($enotifs) + count($chunks));
+        // Check integrity of the notifications.
+        $errcount = $this->helper_check_notifications_order_integrity($allnotifs);
+        $this->assertEquals(0, $errcount); // This fails at the moment.
+    }
 
     /**
      * Helper function that given one array of ordered start/process/end notifications will
