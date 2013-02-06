@@ -1005,7 +1005,7 @@ sup {vertical-align: super;}
 }
 
 .moodle-dialogue-exception .param-stacktrace .stacktrace-file {
-    display:inline-block
+    display:inline-block;
     margin:4px 0;
 }
 .moodle-dialogue-exception .param-stacktrace .stacktrace-line {
