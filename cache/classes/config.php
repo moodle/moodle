@@ -72,6 +72,12 @@ class cache_config {
     protected $configlocks = array();
 
     /**
+     * The site identifier used when the cache config was last saved.
+     * @var string
+     */
+    protected $siteidentifier = null;
+
+    /**
      * Please use cache_config::instance to get an instance of the cache config that is ready to be used.
      */
     public function __construct() {
@@ -138,6 +144,12 @@ class cache_config {
         $this->configmodemappings = array();
         $this->configdefinitionmappings = array();
         $this->configlockmappings = array();
+
+        $siteidentifier = 'unknown';
+        if (array_key_exists('siteidentifier', $configuration)) {
+            $siteidentifier = $configuration['siteidentifier'];
+        }
+        $this->siteidentifier = $siteidentifier;
 
         // Filter the lock instances.
         $defaultlock = null;
@@ -269,6 +281,14 @@ class cache_config {
         usort($this->configdefinitionmappings, array($this, 'sort_mappings'));
 
         return true;
+    }
+
+    /**
+     * Returns the site identifier used by the cache API.
+     * @return string
+     */
+    public function get_site_identifier() {
+        return $this->siteidentifier;
     }
 
     /**
