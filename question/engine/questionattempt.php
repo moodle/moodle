@@ -64,7 +64,7 @@ class question_attempt {
      * @var string special value to indicate a response variable that is uploaded
      * files.
      */
-    const PARAM_CLEANHTML_FILES = 'paramcleanhtmlfiles';
+    const PARAM_RAW_FILES = 'paramrawfiles';
 
     /** @var integer if this attempts is stored in the question_attempts table, the id of that row. */
     protected $id = null;
@@ -888,8 +888,8 @@ class question_attempt {
             case self::PARAM_FILES:
                 return $this->process_response_files($name, $name, $postdata);
 
-            case self::PARAM_CLEANHTML_FILES:
-                $var = $this->get_submitted_var($name, PARAM_CLEANHTML, $postdata);
+            case self::PARAM_RAW_FILES:
+                $var = $this->get_submitted_var($name, PARAM_RAW, $postdata);
                 return $this->process_response_files($name, $name . ':itemid', $postdata, $var);
 
             default:
