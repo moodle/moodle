@@ -76,6 +76,17 @@ abstract class grouped_parser_processor extends simplified_parser_processor {
      * @param string $path xml path which parsing has started
      */
     public function before_path($path) {
+        if ($this->path_is_grouped($path) and !isset($this->currentdata[$path])) {
+            // If the grouped element itself does not contain any final tags,
+            // we would not get any chunk data for it. So we add an artificial
+            // empty data chunk here that will be eventually replaced with
+            // real data later in {@link self::postprocess_chunk()}.
+            $this->currentdata[$path] = array(
+                'path' => $path,
+                'level' => substr_count($path, '/') + 1,
+                'tags' => array(),
+            );
+        }
         if (!$this->grouped_parent_exists($path)) {
             parent::before_path($path);
         }
@@ -167,7 +178,7 @@ abstract class grouped_parser_processor extends simplified_parser_processor {
      */
     protected function build_currentdata($grouped, $data) {
         // Check the grouped already exists into currentdata
-        if (!array_key_exists($grouped, $this->currentdata)) {
+        if (!is_array($this->currentdata) or !array_key_exists($grouped, $this->currentdata)) {
             $a = new stdclass();
             $a->grouped = $grouped;
             $a->child = $data['path'];
