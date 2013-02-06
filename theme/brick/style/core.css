@@ -137,6 +137,11 @@ h2,h3,h4,h5,h6 {
     font-weight: normal;
 }
 
+h2.helpheading {
+    color: #333;
+    font-weight: bold;
+}
+
 blockquote {
     border-left: 1px solid #eee;
     padding-left: 15px;
