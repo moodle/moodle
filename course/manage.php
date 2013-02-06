@@ -505,7 +505,7 @@ if (!$courses) {
 
         // Change visibility.
         // Users with no capability to view hidden courses, should not be able to lock themselves out.
-        if (has_all_capability(array('moodle/course:visibility', 'moodle/course:viewhiddencourses'), $coursecontext)) {
+        if (has_any_capability(array('moodle/course:visibility', 'moodle/course:viewhiddencourses'), $coursecontext)) {
             if (!empty($acourse->visible)) {
                 $url = new moodle_url($baseurl, array('hide' => $acourse->id));
                 $icons[] = $OUTPUT->action_icon($url, new pix_icon('t/hide', get_string('hide')));
