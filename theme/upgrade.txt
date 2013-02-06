@@ -1,6 +1,11 @@
 This files describes API changes in /theme/* themes,
 information provided here is intended especially for theme designer.
 
+=== 2.5 ===
+
+DOM changes:
+* changed the h1 title in the help popup to a h2.
+
 === 2.4 ===
 
 required changes:

@@ -82,6 +82,12 @@ h2{
   letter-spacing: -0.04em;
 }
 
+h2.helpheading {
+  font-family: "Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, Sans, FreeSans, Jamrul, Garuda, Kalimati;
+    line-height: 1.5;
+    color: #333;
+}
+
 h3{
   font-family: "Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, Sans, FreeSans, Jamrul, Garuda, Kalimati;
   font-size: 150%;
