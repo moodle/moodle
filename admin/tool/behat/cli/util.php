@@ -150,6 +150,7 @@ require_once($CFG->libdir.'/upgradelib.php');
 require_once($CFG->libdir.'/clilib.php');
 require_once($CFG->libdir.'/pluginlib.php');
 require_once($CFG->libdir.'/installlib.php');
+require_once($CFG->libdir.'/testing/classes/test_lock.php');
 
 if ($unrecognized) {
     $unrecognized = implode("\n  ", $unrecognized);
@@ -165,6 +166,8 @@ if ($options['install']) {
     behat_util::install_site();
     mtrace("Acceptance tests site installed");
 } else if ($options['drop']) {
+    // Ensure no tests are running.
+    test_lock::acquire('behat');
     behat_util::drop_site();
     mtrace("Acceptance tests site dropped");
 } else if ($options['enable']) {
