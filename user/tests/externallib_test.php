@@ -42,6 +42,7 @@ class core_user_external_testcase extends externallib_advanced_testcase {
         $this->resetAfterTest(true);
 
         $course = self::getDataGenerator()->create_course();
+
         $user1 = array(
             'username' => 'usernametest1',
             'idnumber' => 'idnumbertest1',
@@ -64,6 +65,7 @@ class core_user_external_testcase extends externallib_advanced_testcase {
             'url' => 'http://moodle.org',
             'country' => 'au'
             );
+ 
         $user1 = self::getDataGenerator()->create_user($user1);
         if (!empty($CFG->usetags)) {
             require_once($CFG->dirroot . '/user/editlib.php');
@@ -71,6 +73,7 @@ class core_user_external_testcase extends externallib_advanced_testcase {
             $user1->interests = array('Cinema', 'Tennis', 'Dance', 'Guitar', 'Cooking');
             useredit_update_interests($user1, $user1->interests);
         }
+
         $user2 = self::getDataGenerator()->create_user(
                 array('username' => 'usernametest2', 'idnumber' => 'idnumbertest2'));
 
@@ -82,18 +85,9 @@ class core_user_external_testcase extends externallib_advanced_testcase {
         $roleid = $this->assignUserCapability('moodle/user:viewdetails', $context->id);
 
         // Enrol the users in the course.
-        // We use the manual plugin.
-        $enrol = enrol_get_plugin('manual');
-        $enrolinstances = enrol_get_instances($course->id, true);
-        foreach ($enrolinstances as $courseenrolinstance) {
-            if ($courseenrolinstance->enrol == "manual") {
-                $instance = $courseenrolinstance;
-                break;
-            }
-        }
-        $enrol->enrol_user($instance, $user1->id, $roleid);
-        $enrol->enrol_user($instance, $user2->id, $roleid);
-        $enrol->enrol_user($instance, $USER->id, $roleid);
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id, $roleid);
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id, $roleid);
+        $this->getDataGenerator()->enrol_user($USER->id, $course->id, $roleid);
 
         // call as admin and receive all possible fields.
         $this->setAdminUser();
@@ -104,6 +98,9 @@ class core_user_external_testcase extends externallib_advanced_testcase {
 
         // Call the external function.
         $result = core_user_external::get_users($searchparams);
+
+        // We need to execute the return values cleaning process to simulate the web service server
+        $result = external_api::clean_returnvalue(core_user_external::get_users_returns(), $result);
 
         // Check we retrieve the good total number of enrolled users + no error on capability.
         $expectedreturnedusers = 1;
@@ -119,7 +116,7 @@ class core_user_external_testcase extends externallib_advanced_testcase {
             }
             $this->assertEquals($generateduser->firstname, $returneduser['firstname']);
             $this->assertEquals($generateduser->lastname, $returneduser['lastname']);
-            if ($generateduser->email != $USER->email) { //don't check the tmp modified $USER email
+            if ($generateduser->email != $USER->email) { // Don't check the tmp modified $USER email.
                 $this->assertEquals($generateduser->email, $returneduser['email']);
             }
             if (!empty($generateduser->address)) {
@@ -171,16 +168,6 @@ class core_user_external_testcase extends externallib_advanced_testcase {
                 $this->assertEquals(implode(', ', $generateduser->interests), $returneduser['interests']);
             }
         }
-
-        // Test that no result are returned for search by username if we are not admin
-        $this->setGuestUser();
-
-        // Call the external function.
-        $returnedusers = core_user_external::get_users_by_field('username',
-                    array($USER->username, $user1->username, $user2->username));
-
-        // Only the own $USER username should be returned
-        $this->assertEquals(1, count($returnedusers));
     }
 
     /**
