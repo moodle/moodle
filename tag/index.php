@@ -96,7 +96,7 @@ tag_print_description_box($tag);
 require_once($CFG->dirroot.'/tag/coursetagslib.php');
 $courses = coursetag_get_tagged_courses($tag->id);
 
-if (has_capability('moodle/blog:view', $systemcontext)) {
+if (!empty($CFG->bloglevel) && has_capability('moodle/blog:view', $systemcontext)) {
     require_once($CFG->dirroot.'/blog/lib.php');
     require_once($CFG->dirroot.'/blog/locallib.php');
 
