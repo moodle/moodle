@@ -81,6 +81,7 @@ abstract class base_moodleform extends moodleform {
     function definition() {
         $ui = $this->uistage->get_ui();
         $mform = $this->_form;
+        $mform->setDisableShortforms();
         $stage = $mform->addElement('hidden', 'stage', $this->uistage->get_stage());
         $stage = $mform->addElement('hidden', $ui->get_name(), $ui->get_uniqueid());
         $params = $this->uistage->get_params();
