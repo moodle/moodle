@@ -49,10 +49,21 @@ class behat_form_editor extends behat_form_field {
      */
     public function set_value($value) {
 
-        // Set the value to the iframe and save it to the textarea.
-        $editorid = $this->field->getAttribute('id');
-        $this->session->executeScript('tinyMCE.get("'.$editorid.'").setContent("' . $value . '");');
-        $this->session->executeScript('tinyMCE.get("'.$editorid.'").save();');
+        // If tinyMCE var exists means that we are using that editor.
+        if ($this->is_editor_available()) {
+
+            // Set the value to the iframe and save it to the textarea.
+            $editorid = $this->field->getAttribute('id');
+
+            $this->session->executeScript('
+                tinyMCE.get("'.$editorid.'").setContent("' . $value . '");
+                tinyMCE.get("'.$editorid.'").save();
+            ');
+
+        } else {
+            // Set the value to a textarea otherwise.
+            parent::set_value($value);
+        }
     }
 
     /**
@@ -62,12 +73,36 @@ class behat_form_editor extends behat_form_field {
      */
     public function get_value() {
 
-        // Save the current iframe value in case default value has been edited.
-        $editorid = $this->field->getAttribute('id');
-        $this->session->executeScript('tinyMCE.get("'.$editorid.'").save();');
+        // If tinyMCE var exists means that we are using that editor.
+        if ($this->is_editor_available()) {
+
+            // Save the current iframe value in case default value has been edited.
+            $editorid = $this->field->getAttribute('id');
+            $this->session->executeScript('tinyMCE.get("'.$editorid.'").save();');
+        }
 
         return $this->field->getValue();
     }
 
+    /**
+     * Returns if the HTML editor is available.
+     *
+     * The editor availability depends on the driver running the tests; Goutte
+     * can not execute Javascript, also some Moodle settings disables the HTML
+     * editor.
+     *
+     * @return bool
+     */
+    protected function is_editor_available() {
+
+        // Non-JS drivers throws exceptions when running JS.
+        try {
+            $available = $this->session->evaluateScript('return (typeof tinyMCE != "undefined")');
+        } catch (Exception $e) {
+            $available = false;
+        }
+
+        return $available;
+    }
 }
 
