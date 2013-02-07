@@ -1368,6 +1368,18 @@ function stats_get_report_options($courseid,$mode) {
     return $reportoptions;
 }
 
+/**
+ * Fix missing entries in the statistics.
+ *
+ * This creates a dummy stat when nothing happened during a day/week/month.
+ *
+ * @param array $stats array of statistics.
+ * @param int $timeafter unused.
+ * @param string $timestr type of statistics to generate (dayly, weekly, monthly).
+ * @param boolean $line2
+ * @param boolean $line3
+ * @return array of fixed statistics.
+ */
 function stats_fix_zeros($stats,$timeafter,$timestr,$line2=true,$line3=false) {
 
     if (empty($stats)) {
@@ -1375,23 +1387,29 @@ function stats_fix_zeros($stats,$timeafter,$timestr,$line2=true,$line3=false) {
     }
 
     $timestr = str_replace('user_','',$timestr); // just in case.
-    $fun = 'stats_get_base_'.$timestr;
 
+    // Gets the current user base time.
+    $fun = 'stats_get_base_'.$timestr;
     $now = $fun();
 
-    $times = array();
-    // add something to timeafter since it is our absolute base
+    // Extract the ending time of the statistics.
     $actualtimes = array();
-    foreach ($stats as $statid=>$s) {
-        //normalize the times in stats - those might have been created in different timezone, DST etc.
-        $s->timeend = $fun($s->timeend + 60*60*5);
+    foreach ($stats as $statid => $s) {
+        // Normalise the month date to the 1st if for any reason it's set to later. But we ignore
+        // anything above or equal to 29 because sometimes we get the end of the month.
+        if ($timestr == 'monthly' && date('d', $s->timeend) > 1 && date('d', $s->timeend) < 29) {
+            $s->timeend = mktime(date('H', $s->timeend), date('i', $s->timeend), date('s', $s->timeend),
+                date('m', $s->timeend), 1, date('Y', $s->timeend));
+        }
         $stats[$statid] = $s;
-
         $actualtimes[] = $s->timeend;
     }
 
-    $timeafter = array_pop(array_values($actualtimes));
+    $actualtimesvalues = array_values($actualtimes);
+    $timeafter = array_pop($actualtimesvalues);
 
+    // Generate a base timestamp for each possible month/week/day.
+    $times = array();
     while ($timeafter < $now) {
         $times[] = $timeafter;
         if ($timestr == 'daily') {
@@ -1399,12 +1417,26 @@ function stats_fix_zeros($stats,$timeafter,$timestr,$line2=true,$line3=false) {
         } else if ($timestr == 'weekly') {
             $timeafter = stats_get_next_week_start($timeafter);
         } else if ($timestr == 'monthly') {
-            $timeafter = stats_get_next_month_start($timeafter);
+            // We can't just simply +1 month because the 31st Jan + 1 month = 2nd of March.
+            $year = date('Y', $timeafter);
+            $month = date('m', $timeafter);
+            $day = date('d', $timeafter);
+            $dayofnextmonth = $day;
+            if ($day >= 29) {
+                $daysinmonth = date('n', mktime(0, 0, 0, $month+1, 1, $year));
+                if ($day > $daysinmonth) {
+                    $dayofnextmonth = $daysinmonth;
+                }
+            }
+            $timeafter = mktime(date('H', $timeafter), date('i', $timeafter), date('s', $timeafter), $month+1,
+                $dayofnextmonth, $year);
         } else {
-            return $stats; // this will put us in a never ending loop.
+            // This will put us in a never ending loop.
+            return $stats;
         }
     }
 
+    // Add the base timestamp to the statistics if not present.
     foreach ($times as $count => $time) {
         if (!in_array($time,$actualtimes) && $count != count($times) -1) {
             $newobj = new StdClass;
@@ -1425,7 +1457,6 @@ function stats_fix_zeros($stats,$timeafter,$timestr,$line2=true,$line3=false) {
 
     usort($stats,"stats_compare_times");
     return $stats;
-
 }
 
 // helper function to sort arrays by $obj->timeend
