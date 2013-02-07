@@ -463,7 +463,13 @@ class cachestore_mongodb extends cache_store implements cache_is_configurable {
         if ($this->connection) {
             $connection = $this->connection;
         } else {
-            $connection = new Mongo($this->server, $this->options);
+            try {
+               $connection = new Mongo($this->server, $this->options);
+            } catch (MongoConnectionException $e) {
+                // We only want to catch MongoConnectionExceptions here.
+                // If the server cannot be connected to we cannot clean it.
+                return;
+            }
         }
         $database = $connection->selectDB($this->databasename);
         $database->drop();
