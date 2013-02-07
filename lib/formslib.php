@@ -1069,6 +1069,9 @@ abstract class moodleform {
                                 $mform->setType($elementname, $params);
                             }
                             break;
+                        case 'expanded' :
+                            $mform->setExpanded($realelementname, $params);
+                            break;
                     }
                 }
             }
@@ -1260,7 +1263,25 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
     /** @var array Array whose keys are element names. If the key exists this is a advanced element */
     var $_advancedElements = array();
 
-    /** @var bool Whether to display advanced elements (on page load) */
+    /**
+     * Array whose keys are element names and the the boolean values reflect the current state. If the key exists this is a collapsible element.
+     *
+     * @var array
+     */
+    var $_collapsibleElements = array();
+
+    /**
+     * Whether to enable shortforms for this form
+     *
+     * @var boolean
+     */
+    var $_disableShortforms = false;
+
+    /**
+     * Whether to display advanced elements (on page load)
+     *
+     * @var boolean
+     */
     var $_showAdvanced = null;
 
     /** @var bool whether to automatically initialise M.formchangechecker for this form. */
@@ -1279,6 +1300,14 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
      * @var string
      */
     var $_pageparams = '';
+
+    /**
+     * The maximum number of headers the form should contain in order not to be
+     * defined as collapsible.
+     *
+     * @var int
+     */
+    var $_non_collapsible_headers = 2;
 
     /**
      * Class constructor - same parameters as HTML_QuickForm_DHTMLRulesTableless
@@ -1348,6 +1377,39 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
             $this->setType('mform_showadvanced_last', PARAM_INT);
         }
     }
+
+    /**
+     * Use this method to indicate that the fieldset should be shown as expanded.
+     * The method is applicable to header elements only.
+     *
+     * @param string $headerName header element name
+     * @param boolean $expanded default true sets the element to expanded. False makes the element collapsed.
+     */
+    function setExpanded($headerName, $expanded=true){
+        if ($this->getElementType('mform_isexpanded_'.$headerName)===false) {
+            // see if we the form has been submitted already
+            $formexpanded = optional_param('mform_isexpanded_'.$headerName, -1, PARAM_INT);
+            if (!$expanded && $formexpanded != -1) {
+                // override expanded state with the form variable
+                $expanded = $formexpanded;
+            }
+            // create the form element for storing expanded state
+            $this->addElement('hidden', 'mform_isexpanded_'.$headerName);
+            $this->setType('mform_isexpanded_'.$headerName, PARAM_INT);
+            $this->setConstant('mform_isexpanded_' . $headerName, (int)$expanded);
+        }
+        $this->_collapsibleElements[$headerName] = !$expanded;
+    }
+
+    /**
+     * Use this method to indicate that the form will not be using shortforms.
+     *
+     * @param boolean $disable default true, controls if the shortforms are disabled.
+     */
+    function setDisableShortforms ($disable = true) {
+        $this->_disableShortforms = $disable;
+    }
+
     /**
      * Set whether to show advanced elements in the form on first displaying form. Default is not to
      * display advanced elements in the form until 'Show Advanced' is pressed.
@@ -1427,9 +1489,9 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
     */
     function accept(&$renderer) {
         if (method_exists($renderer, 'setAdvancedElements')){
-            //check for visible fieldsets where all elements are advanced
+            //Check for visible fieldsets where all elements are advanced
             //and mark these headers as advanced as well.
-            //And mark all elements in a advanced header as advanced
+            //Also mark all elements in a advanced header as advanced.
             $stopFields = $renderer->getStopFieldSetElements();
             $lastHeader = null;
             $lastHeaderAdvanced = false;
@@ -1462,7 +1524,58 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
                 $this->setAdvanced($lastHeader->getName());
             }
             $renderer->setAdvancedElements($this->_advancedElements);
-
+        }
+        if (method_exists($renderer, 'setCollapsibleElements') && !$this->_disableShortforms){
+            // Check how many headers we have in total, if less than $_non_collapsible_headers,
+            // the form should not be collapsible at all (unless overidden in the form definition).
+            $headercounter = 0;
+            foreach (array_keys($this->_elements) as $elementIndex){
+                $element =& $this->_elements[$elementIndex];
+                if ($element->getType()=='header') {
+                    $headercounter++;
+                }
+            }
+            if ($headercounter > $this->_non_collapsible_headers) {
+                // So, we have more than $_non_collapsible_headers headers
+                // add all headers to collapsible elements array (if they have not been added yet).
+                unset($lastHeader);
+                $lastHeader = null;
+                $anyRequiredOrError = false;
+                $headercounter = 0;
+                foreach (array_keys($this->_elements) as $elementIndex){
+                    $element =& $this->_elements[$elementIndex];
+                    if ($element->getType()=='header') {
+                        if (!is_null($lastHeader)) {
+                            // Check if we had any required elements or
+                            // we are at the top header that should be expanded by default.
+                            if ($anyRequiredOrError || $headercounter === 1) {
+                                $this->setExpanded($lastHeader->getName());
+                            } elseif (!isset($this->_collapsibleElements[$lastHeader->getName()])) {
+                                // Define element as collapsed by default.
+                                $this->setExpanded($lastHeader->getName(), false);
+                            }
+                        }
+                        $headercounter++;
+                        $lastHeader =& $element;
+                        $anyRequiredOrError = false;
+                    } elseif (in_array($element->getName(), $this->_required) || isset($this->_errors[$element->getName()])) {
+                        $anyRequiredOrError = true;
+                    }
+                }
+                // Process very last header.
+                if (!is_null($lastHeader)){
+                    // Check if we had any required elements or
+                    // we are at the top header that should be expanded by default.
+                    if ($anyRequiredOrError || $headercounter === 1) {
+                        $this->setExpanded($lastHeader->getName());
+                    } elseif (!isset($this->_collapsibleElements[$lastHeader->getName()])) {
+                        // Define element as collapsed by default.
+                        $this->setExpanded($lastHeader->getName(), false);
+                    }
+                }
+            }
+            // Pass the array to renderer object.
+            $renderer->setCollapsibleElements($this->_collapsibleElements, $this->getAttribute('id'));
         }
         parent::accept($renderer);
     }
@@ -2228,7 +2341,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
        "\n\t\t<legend class=\"ftoggler\">{header}</legend>\n\t\t<div class=\"advancedbutton\">{advancedimg}{button}</div><div class=\"fcontainer clearfix\">\n\t\t";
 
     /** @var string Template used when opening a fieldset */
-    var $_openFieldsetTemplate = "\n\t<fieldset class=\"clearfix\" {id}>";
+    var $_openFieldsetTemplate = "\n\t<fieldset class=\"{classes}\" {id}>";
 
     /** @var string Template used when closing a fieldset */
     var $_closeFieldsetTemplate = "\n\t\t</div></fieldset>";
@@ -2236,11 +2349,25 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
     /** @var string Required Note template string */
     var $_requiredNoteTemplate =
         "\n\t\t<div class=\"fdescription required\">{requiredNote}</div>";
-
-    /** @var array list of elements which are marked as advance and will be grouped together */
+    /**
+     * Array whose keys are element names. If the key exists this is a advanced element
+     *
+     * @var array
+     */
     var $_advancedElements = array();
 
-    /** @var int Whether to display advanced elements (on page load) 1 => show, 0 => hide */
+    /**
+     * Array whose keys are element names and the the boolean values reflect the current state. If the key exists this is a collapsible element.
+     *
+     * @var array
+     */
+    var $_collapsibleElements = array();
+
+    /**
+     * Whether to display advanced elements (on page load)
+     *
+     * @var integer 1 means show 0 means hide
+     */
     var $_showAdvanced;
 
     /**
@@ -2275,6 +2402,14 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
     }
 
     /**
+     * Setting collapsible elements
+     *
+     * @param array $elements
+     */
+    function setCollapsibleElements($elements) {
+        $this->_collapsibleElements = $elements;
+    }
+    /**
      * What to do when starting the form
      *
      * @param MoodleQuickForm $form reference of the form
@@ -2285,6 +2420,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
         $this->_elementTemplates = str_replace('{req}', $this->_reqHTML, $this->_elementTemplates);
         $this->_advancedHTML = $form->getAdvancedHTML();
         $this->_showAdvanced = $form->getShowAdvanced();
+        $formid = $form->getAttribute('id');
         parent::startForm($form);
         if ($form->isFrozen()){
             $this->_formTemplate = "\n<div class=\"mform frozen\">\n{content}\n</div>";
@@ -2297,10 +2433,13 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
             $PAGE->requires->yui_module('moodle-core-formchangechecker',
                     'M.core_formchangechecker.init',
                     array(array(
-                        'formid' => $form->getAttribute('id')
+                        'formid' => $formid
                     ))
             );
             $PAGE->requires->string_for_js('changesmadereallygoaway', 'moodle');
+        }
+        if (count($this->_collapsibleElements)) {
+            $PAGE->requires->yui_module('moodle-form-shortforms', 'M.form.shortforms', array(array('formid' => $formid)));
         }
     }
 
@@ -2472,17 +2611,18 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
             $this->_fieldsetsOpen--;
         }
 
+        // Define collapsible classes for fieldsets
+        $fieldsetclasses = array('clearfix');
+        if (isset($this->_collapsibleElements[$name])) {
+            $fieldsetclasses[] = 'collapsible';
+            if ($this->_collapsibleElements[$name]) {
+                $fieldsetclasses[] = 'collapsed';
+            }
+        }
+
         $openFieldsetTemplate = str_replace('{id}', $id, $this->_openFieldsetTemplate);
-        if ($this->_showAdvanced){
-            $advclass = ' class="advanced"';
-        } else {
-            $advclass = ' class="advanced hide"';
-        }
-        if (isset($this->_advancedElements[$name])){
-            $openFieldsetTemplate = str_replace('{advancedclass}', $advclass, $openFieldsetTemplate);
-        } else {
-            $openFieldsetTemplate = str_replace('{advancedclass}', '', $openFieldsetTemplate);
-        }
+        $openFieldsetTemplate = str_replace('{classes}', join(' ', $fieldsetclasses), $openFieldsetTemplate);
+
         $this->_html .= $openFieldsetTemplate . $header_html;
         $this->_fieldsetsOpen++;
     }
