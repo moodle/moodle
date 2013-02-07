@@ -78,6 +78,16 @@ if (!empty($fromform) and confirm_sesskey()) {
     set_config('site_geolocation_' . $cleanhuburl, $fromform->geolocation, 'hub');
     set_config('site_contactable_' . $cleanhuburl, $fromform->contactable, 'hub');
     set_config('site_emailalert_' . $cleanhuburl, $fromform->emailalert, 'hub');
+
+    // Set to -1 all optional data marked as "don't send" by the admin.
+    // The function get_site_info() will not calculate the optional data if config is set to -1.
+    $inputnames = array('courses', 'users', 'roleassignments', 'posts', 'questions', 'resources',
+        'modulenumberaverage', 'participantnumberaverage');
+    foreach ($inputnames as $inputname) {
+        if (empty($fromform->{$inputname})) {
+            $fromform->{$inputname} = -1;
+        }
+    }
     set_config('site_coursesnumber_' . $cleanhuburl, $fromform->courses, 'hub');
     set_config('site_usersnumber_' . $cleanhuburl, $fromform->users, 'hub');
     set_config('site_roleassignmentsnumber_' . $cleanhuburl, $fromform->roleassignments, 'hub');
@@ -113,6 +123,19 @@ if ($update and confirm_sesskey()) {
 if (!empty($fromform) and empty($update) and confirm_sesskey()) {
 
     if (!empty($fromform) and confirm_sesskey()) { // if the register button has been clicked
+
+        // Retrieve the optional info (specially course number, user number, module number average...).
+        $siteinfo = $registrationmanager->get_site_info($huburl);
+        $fromform->courses = $siteinfo['courses'];
+        $fromform->users = $siteinfo['users'];
+        $fromform->enrolments = $siteinfo['enrolments'];
+        $fromform->posts = $siteinfo['posts'];
+        $fromform->questions = $siteinfo['questions'];
+        $fromform->resources = $siteinfo['resources'];
+        $fromform->modulenumberaverage = $siteinfo['modulenumberaverage'];
+        $fromform->participantnumberaverage = $siteinfo['participantnumberaverage'];
+        $fromform->street = $siteinfo['street'];
+
         $params = (array) $fromform; //we are using the form input as the redirection parameters (token, url and name)
 
         $unconfirmedhub = $registrationmanager->get_unconfirmedhub($huburl);
