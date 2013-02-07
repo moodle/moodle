@@ -174,11 +174,10 @@ if ((!empty($moveupcat) or !empty($movedowncat)) and confirm_sesskey()) {
     fix_course_sortorder();
     $swapcategory = null;
 
-    $params = array($movecategory->sortorder, $movecategory->parent);
-
     if (!empty($moveupcat)) {
         require_capability('moodle/category:manage', context_coursecat::instance($moveupcat));
         if ($movecategory = $DB->get_record('course_categories', array('id' => $moveupcat))) {
+            $params = array($movecategory->sortorder, $movecategory->parent);
             if ($swapcategory = $DB->get_records_select('course_categories', "sortorder<? AND parent=?", $params, 'sortorder DESC', '*', 0, 1)) {
                 $swapcategory = reset($swapcategory);
             }
@@ -186,6 +185,7 @@ if ((!empty($moveupcat) or !empty($movedowncat)) and confirm_sesskey()) {
     } else {
         require_capability('moodle/category:manage', context_coursecat::instance($movedowncat));
         if ($movecategory = $DB->get_record('course_categories', array('id' => $movedowncat))) {
+            $params = array($movecategory->sortorder, $movecategory->parent);
             if ($swapcategory = $DB->get_records_select('course_categories', "sortorder>? AND parent=?", $params, 'sortorder ASC', '*', 0, 1)) {
                 $swapcategory = reset($swapcategory);
             }
