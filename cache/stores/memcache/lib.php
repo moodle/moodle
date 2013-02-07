@@ -339,7 +339,7 @@ class cachestore_memcache extends cache_store implements cache_is_configurable {
                 $connection->addServer($server[0], $server[1], true, $server[2]);
             }
         }
-        $connection->flush();
+        @$connection->flush();
         unset($connection);
         unset($this->connection);
     }
