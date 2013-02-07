@@ -4032,7 +4032,7 @@ class settings_navigation extends navigation_node {
             $categorynode->add($editstring, $url, self::TYPE_SETTING, null, null, new pix_icon('i/edit', ''));
         }
 
-        if ($onmanagepage && has_capability('moodle/category:manage', $this->context)) {
+        if (has_capability('moodle/category:manage', $this->context)) {
             $editurl = new moodle_url('/course/editcategory.php', array('id' => $this->context->instanceid));
             $categorynode->add(get_string('editcategorythis'), $editurl, self::TYPE_SETTING, null, 'edit', new pix_icon('i/edit', ''));
 
