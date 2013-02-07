@@ -104,7 +104,10 @@ abstract class grouped_parser_processor extends simplified_parser_processor {
             // currentdata, properly built
             $data = $this->currentdata[$path];
             unset($this->currentdata[$path]);
+            // Always, before dispatching any chunk, send all pending start notifications.
+            $this->process_pending_startend_notifications($path, 'start');
             // TODO: If running under DEBUG_DEVELOPER notice about >1MB grouped chunks
+            // And, finally, dispatch it.
             $this->dispatch_chunk($data);
         }
         // Normal notification of path end
