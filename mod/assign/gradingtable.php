@@ -140,19 +140,22 @@ class assign_grading_table extends table_sql implements renderable {
         $where = 'u.id ' . $userwhere;
         $params = array_merge($params, $userparams);
 
-        if ($filter == ASSIGN_FILTER_SUBMITTED) {
-            $where .= ' AND s.timecreated > 0 ';
-        }
-        if ($filter == ASSIGN_FILTER_REQUIRE_GRADING) {
-            $where .= ' AND (s.timemodified IS NOT NULL AND
-                             s.status = :submitted AND
-                             (s.timemodified > g.timemodified OR g.timemodified IS NULL))';
-            $params['submitted'] = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
-        }
-        if (strpos($filter, ASSIGN_FILTER_SINGLE_USER) === 0) {
-            $userfilter = (int) array_pop(explode('=', $filter));
-            $where .= ' AND (u.id = :userid)';
-            $params['userid'] = $userfilter;
+        // The filters do not make sense when there are no submissions, so do not apply them.
+        if ($this->assignment->is_any_submission_plugin_enabled()) {
+            if ($filter == ASSIGN_FILTER_SUBMITTED) {
+                $where .= ' AND s.timecreated > 0 ';
+            }
+            if ($filter == ASSIGN_FILTER_REQUIRE_GRADING) {
+                $where .= ' AND (s.timemodified IS NOT NULL AND
+                                 s.status = :submitted AND
+                                 (s.timemodified > g.timemodified OR g.timemodified IS NULL))';
+                $params['submitted'] = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
+            }
+            if (strpos($filter, ASSIGN_FILTER_SINGLE_USER) === 0) {
+                $userfilter = (int) array_pop(explode('=', $filter));
+                $where .= ' AND (u.id = :userid)';
+                $params['userid'] = $userfilter;
+            }
         }
         $this->set_sql($fields, $from, $where, $params);
 
