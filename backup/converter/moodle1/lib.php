@@ -1275,6 +1275,12 @@ class moodle1_file_manager implements loggable {
      */
     public function migrate_directory($rootpath, $relpath='/') {
 
+        // Check the trailing slash in the $rootpath
+        if (substr($rootpath, -1) === '/') {
+            debugging('moodle1_file_manager::migrate_directory() expects $rootpath without the trailing slash', DEBUG_DEVELOPER);
+            $rootpath = substr($rootpath, 0, strlen($rootpath) - 1);
+        }
+
         if (!file_exists($this->basepath.'/'.$rootpath.$relpath)) {
             return array();
         }
