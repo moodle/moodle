@@ -821,8 +821,7 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
 
             if ($currblock->cron != $block->cron) {
                 // update cron flag if needed
-                $currblock->cron = $block->cron;
-                $DB->update_record('block', $currblock);
+                $DB->set_field('block', 'cron', $block->cron, array('id' => $currblock->id));
             }
 
             // Upgrade various components
