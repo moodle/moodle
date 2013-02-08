@@ -60,7 +60,6 @@ class behat_general extends behat_base {
      * @throws ElementNotFoundException Thrown by behat_base::find
      */
     public function click_link($link) {
-        $link = $this->fixStepArgument($link);
 
         $linknode = $this->find_link($link);
         $linknode->click();
@@ -109,7 +108,7 @@ class behat_general extends behat_base {
      * @Then /^I should see "(?P<text_string>(?:[^"]|\\")*)"$/
      */
     public function assert_page_contains_text($text) {
-        $this->assertSession()->pageTextContains($this->fixStepArgument($text));
+        $this->assertSession()->pageTextContains($text);
     }
 
     /**
@@ -119,7 +118,7 @@ class behat_general extends behat_base {
      * @Then /^I should not see "(?P<text_string>(?:[^"]|\\")*)"$/
      */
     public function assert_page_not_contains_text($text) {
-        $this->assertSession()->pageTextNotContains($this->fixStepArgument($text));
+        $this->assertSession()->pageTextNotContains($text);
     }
 
     /**
@@ -128,7 +127,7 @@ class behat_general extends behat_base {
      * @Then /^I should see "(?P<text_string>(?:[^"]|\\")*)" in the "(?P<element_string>(?:[^"]|\\")*)" element$/
      */
     public function assert_element_contains_text($text, $element) {
-        $this->assertSession()->elementTextContains('css', $element, $this->fixStepArgument($text));
+        $this->assertSession()->elementTextContains('css', $element, $text);
     }
 
     /**
@@ -137,7 +136,7 @@ class behat_general extends behat_base {
      * @Then /^I should not see "(?P<text_string>(?:[^"]|\\")*)" in the "(?P<element_string>(?:[^"]|\\")*)" element$/
      */
     public function assert_element_not_contains_text($text, $element) {
-        $this->assertSession()->elementTextNotContains('css', $element, $this->fixStepArgument($text));
+        $this->assertSession()->elementTextNotContains('css', $element, $text);
     }
 
     /**

@@ -52,7 +52,6 @@ class behat_forms extends behat_base {
      * @throws ElementNotFoundException Thrown by behat_base::find
      */
     public function press_button($button) {
-        $button = $this->fixStepArgument($button);
 
         // Ensures the button is present.
         $buttonnode = $this->find_button($button);
@@ -75,9 +74,6 @@ class behat_forms extends behat_base {
 
             unset($fieldnode);
 
-            // Removing \\ that escapes " of the steps arguments.
-            $locator = $this->fixStepArgument($locator);
-
             // Getting the NodeElement.
             $fieldnode = $this->find_field($locator);
 
@@ -85,7 +81,6 @@ class behat_forms extends behat_base {
             $field = $this->get_field($fieldnode, $locator);
 
             // Delegates to the field class.
-            $value = $this->fixStepArgument($value);
             $field->set_value($value);
         }
     }
@@ -97,8 +92,6 @@ class behat_forms extends behat_base {
      * @throws ElementNotFoundException Thrown by behat_base::find
      */
     public function fill_field($field, $value) {
-        $field = $this->fixStepArgument($field);
-        $value = $this->fixStepArgument($value);
 
         $fieldnode = $this->find_field($field);
         $fieldnode->setValue($value);
@@ -111,8 +104,6 @@ class behat_forms extends behat_base {
      * @throws ElementNotFoundException Thrown by behat_base::find
      */
     public function select_option($option, $select) {
-        $select = $this->fixStepArgument($select);
-        $option = $this->fixStepArgument($option);
 
         $selectnode = $this->find_field($select);
         $selectnode->selectOption($option);
@@ -128,7 +119,6 @@ class behat_forms extends behat_base {
      * @throws ElementNotFoundException Thrown by behat_base::find
      */
     public function check_option($option) {
-        $option = $this->fixStepArgument($option);
 
         $checkboxnode = $this->find_field($option);
         $checkboxnode->check();
@@ -141,7 +131,6 @@ class behat_forms extends behat_base {
      * @throws ElementNotFoundException Thrown by behat_base::find
      */
     public function uncheck_option($option) {
-        $option = $this->fixStepArgument($option);
 
         $checkboxnode = $this->find_field($option);
         $checkboxnode->uncheck();
@@ -157,9 +146,6 @@ class behat_forms extends behat_base {
      * @param mixed $value
      */
     public function the_field_should_match_value($locator, $value) {
-
-        $locator = $this->fixStepArgument($locator);
-        $value = $this->fixStepArgument($value);
 
         $fieldnode = $this->find_field($locator);
 
@@ -182,7 +168,6 @@ class behat_forms extends behat_base {
      * @see Behat\MinkExtension\Context\MinkContext
      */
     public function assert_checkbox_checked($checkbox) {
-        $checkbox = $this->fixStepArgument($checkbox);
         $this->assertSession()->checkboxChecked($checkbox);
     }
 
@@ -193,7 +178,6 @@ class behat_forms extends behat_base {
      * @see Behat\MinkExtension\Context\MinkContext
      */
     public function assert_checkbox_not_checked($checkbox) {
-        $checkbox = $this->fixStepArgument($checkbox);
         $this->assertSession()->checkboxNotChecked($checkbox);
     }
 
@@ -207,9 +191,6 @@ class behat_forms extends behat_base {
      * @param string $option The option text/value
      */
     public function the_select_box_should_contain($select, $option) {
-
-        $select = $this->fixStepArgument($select);
-        $option = $this->fixStepArgument($option);
 
         $selectnode = $this->find_field($select);
 
@@ -234,9 +215,6 @@ class behat_forms extends behat_base {
      */
     public function the_select_box_should_not_contain($select, $option) {
 
-        $select = $this->fixStepArgument($select);
-        $option = $this->fixStepArgument($option);
-
         $selectnode = $this->find_field($select);
 
         $regex = '/' . preg_quote($option, '/') . '/ui';
@@ -257,8 +235,6 @@ class behat_forms extends behat_base {
      */
     protected function get_field(NodeElement $fieldnode, $locator) {
         global $CFG;
-
-        $locator = $this->fixStepArgument($locator);
 
         // Get the field type.
         $type = $this->get_node_type($fieldnode, $locator);
@@ -288,8 +264,6 @@ class behat_forms extends behat_base {
      * @return mixed String or NodeElement depending if we have reached the felement node
      */
     protected function get_node_type(NodeElement $fieldnode, $locator) {
-
-        $locator = $this->fixStepArgument($locator);
 
         // We look for a parent node with 'felement' class.
         if ($class = $fieldnode->getParent()->getAttribute('class')) {

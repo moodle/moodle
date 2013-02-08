@@ -47,8 +47,6 @@ class behat_navigation extends behat_base {
      */
     public function i_expand_node($nodetext) {
 
-        $nodetext = $this->fixStepArgument($nodetext);
-
         $xpath = "//ul[contains(concat(' ', normalize-space(@class), ' '), ' block_tree ')]
 /descendant::li
 /descendant::p[contains(concat(' ', normalize-space(@class), ' '), ' branch')]
