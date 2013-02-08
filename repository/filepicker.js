@@ -1320,8 +1320,10 @@ M.core_filepicker.init = function(Y, options) {
                 this.pathbar.removeChild(this.pathnode);
             }
             // assign callbacks for view mode switch buttons
-            this.fpnode.all('.fp-vb-icons,.fp-vb-tree,.fp-vb-details').
-                on('click', this.viewbar_clicked, this);
+            this.fpnode.one('.fp-vb-icons').on('click', this.viewbar_clicked, this);
+            this.fpnode.one('.fp-vb-tree').on('click', this.viewbar_clicked, this);
+            this.fpnode.one('.fp-vb-details').on('click', this.viewbar_clicked, this);
+
             // assign callbacks for toolbar links
             this.setup_toolbar();
             this.setup_select_file();
