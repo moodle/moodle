@@ -323,9 +323,9 @@ M.gradereport_grader.classes.ajax = function(report, cfg) {
                 this.existingfields[userid][itemid] = new M.gradereport_grader.classes.existingfield(this, userid, itemid);
             }
         }
-        // Hide the Update button
+        // Disable the Update button as we're saving using ajax.
         submitbutton = this.report.Y.one('#gradersubmit');
-        submitbutton.setStyle('visibility', 'hidden');
+        submitbutton.set('disabled', true);
     }
 };
 /**
