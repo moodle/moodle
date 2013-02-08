@@ -156,7 +156,12 @@ if (!$formdata = $form->get_data()) {
                     // for now, only for "latlong" and "url" fields, but that should better be looked up from
                     // $CFG->dirroot . '/mod/data/field/' . $field->type . '/field.class.php'
                     // once there is stored how many contents the field can have.
-                    if (preg_match("/^(latlong|url)$/", $field->type)) {
+                    if ($field->type == 'latlong') {
+                        $values = explode(" ", $value, 2);
+                        // The lat, long values might be in a different float format.
+                        $content->content  = unformat_float($values[0]);
+                        $content->content1 = unformat_float($values[1]);
+                    } else if ($field->type == 'url') {
                         $values = explode(" ", $value, 2);
                         $content->content  = $values[0];
                         // The url field doesn't always have two values (unforced autolinking).
