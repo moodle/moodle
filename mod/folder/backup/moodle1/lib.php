@@ -65,7 +65,11 @@ class moodle1_mod_folder_handler extends moodle1_resource_successor_handler {
         // migrate the folder files
         $this->fileman->filearea = 'content';
         $this->fileman->itemid   = 0;
-        $this->fileman->migrate_directory('course_files/'.$data['reference']);
+        if (empty($data['reference'])) {
+            $this->fileman->migrate_directory('course_files');
+        } else {
+            $this->fileman->migrate_directory('course_files/'.$data['reference']);
+        }
 
         // write folder.xml
         $this->open_xml_writer("activities/folder_{$moduleid}/folder.xml");
