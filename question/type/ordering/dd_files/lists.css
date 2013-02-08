@@ -1,0 +1,24 @@
+ul.sortable li {
+	position: relative;
+}
+
+ul.boxy {
+	list-style-type: none;
+	padding: 4px 4px 0 4px;
+	margin: 0px;
+	font-size: 13px;
+	font-family: Arial, sans-serif;
+	border: 1px solid #ccc;
+	width: 360px;
+	float: left;
+	margin-left: 5px;
+}
+ul.boxy li {
+cursor: move;
+margin-bottom: 1px;
+padding: 8px 2px;
+border: 1px solid #CCC;
+background-color: #EEE;
+min-height: 20px;
+border-image: initial;
+}
