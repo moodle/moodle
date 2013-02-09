@@ -45,6 +45,10 @@ define('FORUM_TRACKING_OFF', 0);
 define('FORUM_TRACKING_OPTIONAL', 1);
 define('FORUM_TRACKING_ON', 2);
 
+define('FORUM_MAILED_NOTYET', 0);
+define('FORUM_MAILED_SUCCESS', 1);
+define('FORUM_MAILED_ERROR', 2);
+
 if (!defined('FORUM_CRON_USER_CACHE')) {
     /** Defines how many full user records are cached in forum cron. */
     define('FORUM_CRON_USER_CACHE', 5000);
@@ -752,7 +756,7 @@ function forum_cron() {
         foreach ($posts as $post) {
             mtrace($mailcount[$post->id]." users were sent post $post->id, '$post->subject'");
             if ($errorcount[$post->id]) {
-                $DB->set_field("forum_posts", "mailed", "2", array("id" => "$post->id"));
+                $DB->set_field("forum_posts", "mailed", FORUM_MAILED_ERROR, array("id" => "$post->id"));
             }
         }
     }
@@ -2150,7 +2154,7 @@ function forum_get_unmailed_posts($starttime, $endtime, $now=null) {
     return $DB->get_records_sql("SELECT p.*, d.course, d.forum
                               FROM {forum_posts} p
                                    JOIN {forum_discussions} d ON d.id = p.discussion
-                             WHERE p.mailed = 0
+                             WHERE p.mailed = ".FORUM_MAILED_NOTYET."
                                    AND p.created >= ?
                                    AND (p.created < ? OR p.mailnow = 1)
                                    $timedsql
@@ -2174,18 +2178,18 @@ function forum_mark_old_posts_as_mailed($endtime, $now=null) {
 
     if (empty($CFG->forum_enabletimedposts)) {
         return $DB->execute("UPDATE {forum_posts}
-                               SET mailed = '1'
+                               SET mailed = ".FORUM_MAILED_SUCCESS."
                              WHERE (created < ? OR mailnow = 1)
-                                   AND mailed = 0", array($endtime));
+                                   AND mailed = " . FORUM_MAILED_NOTYET, array($endtime));
 
     } else {
         return $DB->execute("UPDATE {forum_posts}
-                               SET mailed = '1'
+                               SET mailed = ".FORUM_MAILED_SUCCESS."
                              WHERE discussion NOT IN (SELECT d.id
                                                         FROM {forum_discussions} d
                                                        WHERE d.timestart > ?)
                                    AND (created < ? OR mailnow = 1)
-                                   AND mailed = 0", array($now, $endtime));
+                                   AND mailed = " . FORUM_MAILED_NOTYET, array($now, $endtime));
     }
 }
 
@@ -4312,7 +4316,7 @@ function forum_add_new_post($post, $mform, &$message) {
     $context    = context_module::instance($cm->id);
 
     $post->created    = $post->modified = time();
-    $post->mailed     = "0";
+    $post->mailed     = FORUM_MAILED_NOTYET;
     $post->userid     = $USER->id;
     $post->attachment = "";
 
@@ -4416,7 +4420,7 @@ function forum_add_discussion($discussion, $mform=null, $unused=null, $userid=nu
     $post->userid        = $userid;
     $post->created       = $timenow;
     $post->modified      = $timenow;
-    $post->mailed        = 0;
+    $post->mailed        = FORUM_MAILED_NOTYET;
     $post->subject       = $discussion->name;
     $post->message       = $discussion->message;
     $post->messageformat = $discussion->messageformat;
