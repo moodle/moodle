@@ -50,6 +50,10 @@ class qtype_essay_edit_form extends question_edit_form {
                 get_string('allowattachments', 'qtype_essay'), $qtype->attachment_options());
         $mform->setDefault('attachments', 0);
 
+        $mform->addElement('editor', 'responsetemplate', get_string('responsetemplate', 'qtype_essay'),
+                array('rows' => 10),  array_merge($this->editoroptions, array('maxfiles' => 0)));
+        $mform->addHelpButton('responsetemplate', 'responsetemplate', 'qtype_essay');
+
         $mform->addElement('editor', 'graderinfo', get_string('graderinfo', 'qtype_essay'),
                 array('rows' => 10), $this->editoroptions);
     }
@@ -78,6 +82,11 @@ class qtype_essay_edit_form extends question_edit_form {
         );
         $question->graderinfo['format'] = $question->options->graderinfoformat;
         $question->graderinfo['itemid'] = $draftid;
+
+        $question->responsetemplate = array(
+            'text' => $question->options->responsetemplate,
+            'format' => $question->options->responsetemplateformat,
+        );
 
         return $question;
     }

@@ -68,6 +68,8 @@ class qtype_essay extends question_type {
         $options->graderinfo = $this->import_or_save_files($formdata->graderinfo,
                 $context, 'qtype_essay', 'graderinfo', $formdata->id);
         $options->graderinfoformat = $formdata->graderinfo['format'];
+        $options->responsetemplate = $formdata->responsetemplate['text'];
+        $options->responsetemplateformat = $formdata->responsetemplate['format'];
         $DB->update_record('qtype_essay_options', $options);
     }
 
@@ -78,6 +80,8 @@ class qtype_essay extends question_type {
         $question->attachments = $questiondata->options->attachments;
         $question->graderinfo = $questiondata->options->graderinfo;
         $question->graderinfoformat = $questiondata->options->graderinfoformat;
+        $question->responsetemplate = $questiondata->options->responsetemplate;
+        $question->responsetemplateformat = $questiondata->options->responsetemplateformat;
     }
 
     public function delete_question($questionid, $contextid) {

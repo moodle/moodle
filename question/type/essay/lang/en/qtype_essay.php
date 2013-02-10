@@ -38,3 +38,5 @@ $string['pluginnameediting'] = 'Editing an Essay question';
 $string['pluginnamesummary'] = 'Allows a response of a few sentences or paragraphs. This must then be graded manually.';
 $string['responsefieldlines'] = 'Input box size';
 $string['responseformat'] = 'Response format';
+$string['responsetemplate'] = 'Response template';
+$string['responsetemplate_help'] = 'Any text entered here will be displayed in the response input box when a new attempt at the question starts.';

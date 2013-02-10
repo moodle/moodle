@@ -360,6 +360,8 @@ END;
         $expectedq->attachments = 0;
         $expectedq->graderinfo['text'] = '';
         $expectedq->graderinfo['format'] = FORMAT_MOODLE;
+        $expectedq->responsetemplate['text'] = '';
+        $expectedq->responsetemplate['format'] = FORMAT_MOODLE;
 
         $this->assert(new question_check_specified_fields_expectation($expectedq), $q);
     }
@@ -384,6 +386,9 @@ END;
     <graderinfo format="html">
         <text><![CDATA[<p>Grade <b>generously</b>!</p>]]></text>
     </graderinfo>
+    <responsetemplate format="html">
+        <text><![CDATA[<p>Here is something <b>really</b> interesting.</p>]]></text>
+    </responsetemplate>
   </question>';
         $xmldata = xmlize($xml);
 
@@ -404,6 +409,8 @@ END;
         $expectedq->attachments = -1;
         $expectedq->graderinfo['text'] = '<p>Grade <b>generously</b>!</p>';
         $expectedq->graderinfo['format'] = FORMAT_HTML;
+        $expectedq->responsetemplate['text'] = '<p>Here is something <b>really</b> interesting.</p>';
+        $expectedq->responsetemplate['format'] = FORMAT_HTML;
 
         $this->assert(new question_check_specified_fields_expectation($expectedq), $q);
     }
@@ -430,7 +437,8 @@ END;
         $qdata->options->attachments = -1;
         $qdata->options->graderinfo = '<p>Grade <b>generously</b>!</p>';
         $qdata->options->graderinfoformat = FORMAT_HTML;
-
+        $qdata->options->responsetemplate = '<p>Here is something <b>really</b> interesting.</p>';
+        $qdata->options->responsetemplateformat = FORMAT_HTML;
         $exporter = new qformat_xml();
         $xml = $exporter->writequestion($qdata);
 
@@ -454,6 +462,9 @@ END;
     <graderinfo format="html">
       <text><![CDATA[<p>Grade <b>generously</b>!</p>]]></text>
     </graderinfo>
+    <responsetemplate format="html">
+      <text><![CDATA[<p>Here is something <b>really</b> interesting.</p>]]></text>
+    </responsetemplate>
   </question>
 ';
 

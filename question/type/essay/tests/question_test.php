@@ -49,4 +49,92 @@ class qtype_essay_question_test extends advanced_testcase {
         $this->assertEquals($longstring,
                 $essay->summarise_response(array('answer' => $longstring)));
     }
+
+    public function test_is_same_response() {
+        $essay = test_question_maker::make_an_essay_question();
+
+        $essay->responsetemplate = '';
+
+        $essay->start_attempt(new question_attempt_step(), 1);
+
+        $this->assertTrue($essay->is_same_response(
+                array(),
+                array('answer' => '')));
+
+        $this->assertTrue($essay->is_same_response(
+                array('answer' => ''),
+                array('answer' => '')));
+
+        $this->assertTrue($essay->is_same_response(
+                array('answer' => ''),
+                array()));
+
+        $this->assertFalse($essay->is_same_response(
+                array('answer' => 'Hello'),
+                array()));
+
+        $this->assertFalse($essay->is_same_response(
+                array('answer' => 'Hello'),
+                array('answer' => '')));
+
+        $this->assertFalse($essay->is_same_response(
+                array('answer' => 0),
+                array('answer' => '')));
+
+        $this->assertFalse($essay->is_same_response(
+                array('answer' => ''),
+                array('answer' => 0)));
+
+        $this->assertFalse($essay->is_same_response(
+                array('answer' => '0'),
+                array('answer' => '')));
+
+        $this->assertFalse($essay->is_same_response(
+                array('answer' => ''),
+                array('answer' => '0')));
+    }
+
+    public function test_is_same_response_with_template() {
+        $essay = test_question_maker::make_an_essay_question();
+
+        $essay->responsetemplate = 'Once upon a time';
+
+        $essay->start_attempt(new question_attempt_step(), 1);
+
+        $this->assertTrue($essay->is_same_response(
+                array(),
+                array('answer' => 'Once upon a time')));
+
+        $this->assertTrue($essay->is_same_response(
+                array('answer' => ''),
+                array('answer' => 'Once upon a time')));
+
+        $this->assertTrue($essay->is_same_response(
+                array('answer' => 'Once upon a time'),
+                array('answer' => '')));
+
+        $this->assertTrue($essay->is_same_response(
+                array('answer' => ''),
+                array()));
+
+        $this->assertTrue($essay->is_same_response(
+                array('answer' => 'Once upon a time'),
+                array()));
+
+        $this->assertFalse($essay->is_same_response(
+                array('answer' => 0),
+                array('answer' => '')));
+
+        $this->assertFalse($essay->is_same_response(
+                array('answer' => ''),
+                array('answer' => 0)));
+
+        $this->assertFalse($essay->is_same_response(
+                array('answer' => '0'),
+                array('answer' => '')));
+
+        $this->assertFalse($essay->is_same_response(
+                array('answer' => ''),
+                array('answer' => '0')));
+    }
 }

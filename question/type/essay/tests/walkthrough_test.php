@@ -52,7 +52,7 @@ class qtype_essay_walkthrough_test extends qbehaviour_walkthrough_test_base {
 
     public function test_deferred_feedback_html_editor() {
 
-        // Create a matching question.
+        // Create an essay question.
         $q = test_question_maker::make_question('essay', 'editor');
         $this->start_attempt_at_question($q, 'deferredfeedback', 1);
 
@@ -104,7 +104,7 @@ class qtype_essay_walkthrough_test extends qbehaviour_walkthrough_test_base {
 
     public function test_deferred_feedback_plain_text() {
 
-        // Create a matching question.
+        // Create an essay question.
         $q = test_question_maker::make_question('essay', 'plain');
         $this->start_attempt_at_question($q, 'deferredfeedback', 1);
 
@@ -149,6 +149,57 @@ class qtype_essay_walkthrough_test extends qbehaviour_walkthrough_test_base {
         $this->check_current_mark(null);
         $this->render();
         $this->assertRegExp('/' . preg_quote(s($response), '/') . '/', $this->currentoutput);
+        $this->check_current_output(
+                $this->get_contains_question_text_expectation($q),
+                $this->get_contains_general_feedback_expectation($q));
+    }
+
+    public function test_responsetemplate() {
+
+        // Create an essay question.
+        $q = test_question_maker::make_question('essay', 'responsetemplate');
+        $this->start_attempt_at_question($q, 'deferredfeedback', 1);
+
+        $prefix = $this->quba->get_field_prefix($this->slot);
+        $fieldname = $prefix . 'answer';
+
+        // Check the initial state.
+        $this->check_current_state(question_state::$todo);
+        $this->check_current_mark(null);
+        $this->render();
+        $this->check_contains_textarea('answer', 'Once upon a time');
+        $this->check_current_output(
+                $this->get_contains_question_text_expectation($q),
+                $this->get_does_not_contain_feedback_expectation());
+        $this->check_step_count(1);
+
+        // Save.
+        $this->quba->process_all_actions(null, array(
+            'slots'                    => $this->slot,
+            $fieldname                 => 'Once upon a time there was a little green frog.',
+            $fieldname . 'format'      => FORMAT_HTML,
+            $prefix . ':sequencecheck' => '1',
+        ));
+
+        // Verify.
+        $this->check_current_state(question_state::$complete);
+        $this->check_current_mark(null);
+        $this->check_step_count(2);
+        $this->render();
+        $this->check_contains_textarea('answer', 'Once upon a time there was a little green frog.');
+        $this->check_current_output(
+                $this->get_contains_question_text_expectation($q),
+                $this->get_does_not_contain_feedback_expectation());
+        $this->check_step_count(2);
+
+        // Finish the attempt.
+        $this->quba->finish_all_questions();
+
+        // Verify.
+        $this->check_current_state(question_state::$needsgrading);
+        $this->check_current_mark(null);
+        $this->render();
+        $this->assertRegExp('/' . preg_quote(s('Once upon a time there was a little green frog.'), '/') . '/', $this->currentoutput);
         $this->check_current_output(
                 $this->get_contains_question_text_expectation($q),
                 $this->get_contains_general_feedback_expectation($q));

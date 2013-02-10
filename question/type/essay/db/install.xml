@@ -13,6 +13,8 @@
         <FIELD NAME="attachments" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether, and how many, attachments a student is allowed to include with their response. -1 means unlimited."/>
         <FIELD NAME="graderinfo" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Information shown to people with permission to manually grade the question, when they are grading."/>
         <FIELD NAME="graderinfoformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The text format for graderinfo."/>
+        <FIELD NAME="responsetemplate" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The template to pre-populate student's response field during attempt."/>
+        <FIELD NAME="responsetemplateformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The text format for responsetemplate."/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

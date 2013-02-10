@@ -34,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class qtype_essay_test_helper extends question_test_helper {
     public function get_test_questions() {
-        return array('editor', 'editorfilepicker', 'plain', 'monospaced');
+        return array('editor', 'editorfilepicker', 'plain', 'monospaced', 'responsetemplate');
     }
 
     /**
@@ -95,6 +95,13 @@ class qtype_essay_test_helper extends question_test_helper {
     public function make_essay_question_monospaced() {
         $q = $this->initialise_essay_question();
         $q->responseformat = 'monospaced';
+        return $q;
+    }
+    
+    public function make_essay_question_responsetemplate() {
+        $q = $this->initialise_essay_question();
+        $q->responsetemplate = 'Once upon a time';
+        $q->responsetemplateformat = FORMAT_HTML;
         return $q;
     }
 }

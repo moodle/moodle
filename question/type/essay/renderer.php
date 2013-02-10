@@ -42,6 +42,12 @@ class qtype_essay_renderer extends qtype_renderer {
 
         // Answer field.
         $step = $qa->get_last_step_with_qt_var('answer');
+
+        if (!$step->has_qt_var('answer') && empty($options->readonly)) {
+            // Question has never been answered, fill it with response template.
+            $step = new question_attempt_step(array('answer'=>$question->responsetemplate));
+        }
+
         if (empty($options->readonly)) {
             $answer = $responseoutput->response_area_input('answer', $qa,
                     $step, $question->responsefieldlines, $options->context);
