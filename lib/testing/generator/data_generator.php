@@ -204,7 +204,8 @@ EOD;
         $record['timemodified'] = $record['timecreated'];
         $record['lastip'] = '0.0.0.0';
 
-        $record['password'] = hash_internal_user_password($record['password']);
+        // Use fast hash during testing.
+        $record['password'] = hash_internal_user_password($record['password'], true);
 
         if ($record['deleted']) {
             $delname = $record['email'].'.'.time();
