@@ -40,7 +40,7 @@ M.course.format.swap_sections = function(Y, node1, node2) {
     };
 
     var sectionlist = Y.Node.all('.'+CSS.COURSECONTENT+' '+M.course.format.get_section_selector(Y));
-    // Swap menus
+    // Swap menus.
     sectionlist.item(node1).one('.'+CSS.SECTIONADDMENUS).swap(sectionlist.item(node2).one('.'+CSS.SECTIONADDMENUS));
 }
 
@@ -59,7 +59,13 @@ M.course.format.process_sections = function(Y, sectionlist, response, sectionfro
     };
 
     if (response.action == 'move') {
-        // update titles in all affected sections
+        // If moving up swap around 'sectionfrom' and 'sectionto' so the that loop operates.
+        if (sectionfrom > sectionto) {
+            var temp = sectionto;
+            sectionto = sectionfrom;
+            sectionfrom = temp;
+        }
+        // Update titles in all affected sections.
         for (var i = sectionfrom; i <= sectionto; i++) {
             sectionlist.item(i).one('.'+CSS.SECTIONNAME).setContent(response.sectiontitles[i]);
         }
