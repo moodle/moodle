@@ -116,6 +116,15 @@ class auth_plugin_none extends auth_plugin_base {
     }
 
     /**
+     * Returns true if plugin can be manually set.
+     *
+     * @return bool
+     */
+    function can_be_manually_set() {
+        return true;
+    }
+
+    /**
      * Prints a form for configuring this authentication plugin.
      *
      * This function is called from admin/auth.php, and outputs a full page with
