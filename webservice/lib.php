@@ -1191,7 +1191,7 @@ class '.$classname.' {
                     } else {
                         switch($keydesc->type) {
                             case PARAM_BOOL:
-                                $paramanddefault .= '='.$keydesc->default; break;
+                                $paramanddefault .= '='. (int) $keydesc->default; break;
                             case PARAM_INT:
                                 $paramanddefault .= '='.$keydesc->default; break;
                             case PARAM_FLOAT;
