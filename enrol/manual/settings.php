@@ -33,6 +33,7 @@ if ($ADMIN->fulltree) {
     //       it describes what should happend when users are not supposed to be enerolled any more.
     $options = array(
         ENROL_EXT_REMOVED_KEEP           => get_string('extremovedkeep', 'enrol'),
+        ENROL_EXT_REMOVED_SUSPEND        => get_string('extremovedsuspend', 'enrol'),
         ENROL_EXT_REMOVED_SUSPENDNOROLES => get_string('extremovedsuspendnoroles', 'enrol'),
         ENROL_EXT_REMOVED_UNENROL        => get_string('extremovedunenrol', 'enrol'),
     );
