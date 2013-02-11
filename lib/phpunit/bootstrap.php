@@ -189,8 +189,6 @@ error_reporting($CFG->debug);
 ini_set('display_errors', '1');
 ini_set('log_errors', '1');
 
-$CFG->passwordsaltmain = 'phpunit'; // makes login via normal UI impossible
-
 $CFG->noemailever = true; // better not mail anybody from tests, override temporarily if necessary
 $CFG->cachetext = 0; // disable this very nasty setting
 

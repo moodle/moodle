@@ -85,6 +85,9 @@ class auth_plugin_webservice extends auth_plugin_base {
      */
     function user_update_password($user, $newpassword) {
         $user = get_complete_user_data('id', $user->id);
+        // This will also update the stored hash to the latest algorithm
+        // if the existing hash is using an out-of-date algorithm (or the
+        // legacy md5 algorithm).
         return update_internal_user_password($user, $newpassword);
     }
 

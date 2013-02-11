@@ -529,6 +529,9 @@ class auth_plugin_ldap extends auth_plugin_base {
         profile_save_data($user);
 
         $this->update_user_record($user->username);
+        // This will also update the stored hash to the latest algorithm
+        // if the existing hash is using an out-of-date algorithm (or the
+        // legacy md5 algorithm).
         update_internal_user_password($user, $plainslashedpassword);
 
         $user = $DB->get_record('user', array('id'=>$user->id));

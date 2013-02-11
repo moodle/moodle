@@ -1140,8 +1140,8 @@ function disable_output_buffering() {
  */
 function redirect_if_major_upgrade_required() {
     global $CFG;
-    $lastmajordbchanges = 2012110201;
-    if (empty($CFG->version) or (int)$CFG->version < $lastmajordbchanges or
+    $lastmajordbchanges = 2013021100.01;
+    if (empty($CFG->version) or (float)$CFG->version < $lastmajordbchanges or
             during_initial_install() or !empty($CFG->adminsetuppending)) {
         try {
             @session_get_instance()->terminate_current();

@@ -94,15 +94,6 @@ Do not make the requirements too strict though, as this can result in users not 
 $string['check_passwordpolicy_error'] = 'Password policy not set.';
 $string['check_passwordpolicy_name'] = 'Password policy';
 $string['check_passwordpolicy_ok'] = 'Password policy enabled.';
-$string['check_passwordsaltmain_details'] = '<p>Setting a password salt greatly reduces the risk of password theft.</p>
-<p>To set a password salt, add the following line to your config.php file:</p>
-<code>$CFG->passwordsaltmain = \'some long random string here with lots of characters\';</code>
-<p>The random string of characters should be a mix of letters, numbers and other characters. A string length of at least 40 characters is recommended.</p>
-<p>Please refer to the <a href="{$a}" target="_blank">password salting documentation</a> if you wish to change the password salt. Once set, do NOT delete your password salt otherwise you will no longer be able to login to your site!</p>';
-$string['check_passwordsaltmain_name'] = 'Password salt';
-$string['check_passwordsaltmain_ok'] = 'Password salt is OK';
-$string['check_passwordsaltmain_warning'] = 'No password salt has been set';
-$string['check_passwordsaltmain_weak'] = 'Password salt is weak';
 $string['check_riskadmin_detailsok'] = '<p>Please verify the following list of system administrators:</p>{$a}';
 $string['check_riskadmin_detailswarning'] = '<p>Please verify the following list of system administrators:</p>{$a->admins}
 <p>It is recommended to assign administrator role in the system context only. The following users have (unsupported) admin role assignments in other contexts:</p>{$a->unsupported}';

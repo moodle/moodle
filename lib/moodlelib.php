@@ -493,6 +493,11 @@ define('USER_CAN_IGNORE_FILE_SIZE_LIMITS', -1);
 define('COURSE_DISPLAY_SINGLEPAGE', 0); // display all sections on one page
 define('COURSE_DISPLAY_MULTIPAGE', 1); // split pages into a page per section
 
+/**
+ * Authentication constants.
+ */
+define('AUTH_PASSWORD_NOT_CACHED', 'not cached'); // String used in password field when password is not stored.
+
 /// PARAMETER HANDLING ////////////////////////////////////////////////////
 
 /**
@@ -3845,6 +3850,7 @@ function create_user_record($username, $password, $auth = 'manual') {
     if (!empty($CFG->{'auth_'.$newuser->auth.'_forcechangepassword'})){
         set_user_preference('auth_forcepasswordchange', 1, $user);
     }
+    // Set the password.
     update_internal_user_password($user, $password);
 
     // fetch full user record for the event, the complete user data contains too much info
@@ -4197,7 +4203,10 @@ function authenticate_user_login($username, $password, $ignorelockout=false, &$f
                 $user->auth = $auth;
             }
 
-            update_internal_user_password($user, $password); // just in case salt or encoding were changed (magic quotes too one day)
+            // If the existing hash is using an out-of-date algorithm (or the
+            // legacy md5 algorithm), then we should update to the current
+            // hash algorithm while we have access to the user's password.
+            update_internal_user_password($user, $password);
 
             if ($authplugin->is_synchronised_with_external()) { // update user record from external DB
                 $user = update_user_record($username);
@@ -4307,28 +4316,81 @@ function complete_user_login($user) {
 }
 
 /**
- * Compare password against hash stored in internal user table.
- * If necessary it also updates the stored hash to new format.
+ * Check a password hash to see if it was hashed using the
+ * legacy hash algorithm (md5).
  *
- * @param stdClass $user (password property may be updated)
- * @param string $password plain text password
- * @return bool is password valid?
+ * @param string $password String to check.
+ * @return boolean True if the $password matches the format of an md5 sum.
+ */
+function password_is_legacy_hash($password) {
+    return (bool) preg_match('/^[0-9a-f]{32}$/', $password);
+}
+
+/**
+ * Checks whether the password compatibility library will work with the current
+ * version of PHP. This cannot be done using PHP version numbers since the fix
+ * has been backported to earlier versions in some distributions.
+ *
+ * See https://github.com/ircmaxell/password_compat/issues/10 for
+ * more details.
+ *
+ * @return bool True if the library is NOT supported.
+ */
+function password_compat_not_supported() {
+
+    $hash = '$2y$04$usesomesillystringfore7hnbRJHxXVLeakoG8K30oukPsA.ztMG';
+
+    // Create a one off application cache to store bcrypt support status as
+    // the support status doesn't change and crypt() is slow.
+    $cache = cache::make_from_params(cache_store::MODE_APPLICATION, 'core', 'password_compat');
+
+    if (!$bcryptsupport = $cache->get('bcryptsupport')) {
+        $test = crypt('password', $hash);
+        // Cache string instead of boolean to avoid MDL-37472.
+        if ($test == $hash) {
+            $bcryptsupport = 'supported';
+        } else {
+            $bcryptsupport = 'not supported';
+        }
+        $cache->set('bcryptsupport', $bcryptsupport);
+    }
+
+    // Return true if bcrypt *not* supported.
+    return ($bcryptsupport !== 'supported');
+}
+
+/**
+ * Compare password against hash stored in user object to determine if it is valid.
+ *
+ * If necessary it also updates the stored hash to the current format.
+ *
+ * @param stdClass $user (Password property may be updated).
+ * @param string $password Plain text password.
+ * @return bool True if password is valid.
  */
 function validate_internal_user_password($user, $password) {
     global $CFG;
+    require_once($CFG->libdir.'/password_compat/lib/password.php');
 
-    if (!isset($CFG->passwordsaltmain)) {
-        $CFG->passwordsaltmain = '';
+    if ($user->password === AUTH_PASSWORD_NOT_CACHED) {
+        // Internal password is not used at all, it can not validate.
+        return false;
     }
 
+    // If hash isn't a legacy (md5) hash, validate using the library function.
+    if (!password_is_legacy_hash($user->password)) {
+        return password_verify($password, $user->password);
+    }
+
+    // Otherwise we need to check for a legacy (md5) hash instead. If the hash
+    // is valid we can then update it to the new algorithm.
+
+    $sitesalt = isset($CFG->passwordsaltmain) ? $CFG->passwordsaltmain : '';
     $validated = false;
 
-    if ($user->password === 'not cached') {
-        // internal password is not used at all, it can not validate
-
-    } else if ($user->password === md5($password.$CFG->passwordsaltmain)
+    if ($user->password === md5($password.$sitesalt)
             or $user->password === md5($password)
-            or $user->password === md5(addslashes($password).$CFG->passwordsaltmain)
+            or $user->password === md5(addslashes($password).$sitesalt)
             or $user->password === md5(addslashes($password))) {
         // note: we are intentionally using the addslashes() here because we
         //       need to accept old password hashes of passwords with magic quotes
@@ -4347,7 +4409,8 @@ function validate_internal_user_password($user, $password) {
     }
 
     if ($validated) {
-        // force update of password hash using latest main password salt and encoding if needed
+        // If the password matches the existing md5 hash, update to the
+        // current hash algorithm while we have access to the user's password.
         update_internal_user_password($user, $password);
     }
 
@@ -4355,39 +4418,85 @@ function validate_internal_user_password($user, $password) {
 }
 
 /**
- * Calculate hashed value from password using current hash mechanism.
+ * Calculate hash for a plain text password.
  *
- * @param string $password
- * @return string password hash
+ * @param string $password Plain text password to be hashed.
+ * @param bool $fasthash If true, use a low cost factor when generating the hash
+ *                       This is much faster to generate but makes the hash
+ *                       less secure. It is used when lots of hashes need to
+ *                       be generated quickly.
+ * @return string The hashed password.
+ *
+ * @throws moodle_exception If a problem occurs while generating the hash.
  */
-function hash_internal_user_password($password) {
+function hash_internal_user_password($password, $fasthash = false) {
     global $CFG;
+    require_once($CFG->libdir.'/password_compat/lib/password.php');
 
-    if (isset($CFG->passwordsaltmain)) {
-        return md5($password.$CFG->passwordsaltmain);
-    } else {
-        return md5($password);
+    // Use the legacy hashing algorithm (md5) if PHP is not new enough
+    // to support bcrypt properly
+    if (password_compat_not_supported()) {
+        if (isset($CFG->passwordsaltmain)) {
+            return md5($password.$CFG->passwordsaltmain);
+        } else {
+            return md5($password);
+        }
     }
+
+    // Set the cost factor to 4 for fast hashing, otherwise use default cost.
+    $options = ($fasthash) ? array('cost' => 4) : array();
+
+    $generatedhash = password_hash($password, PASSWORD_DEFAULT, $options);
+
+    if ($generatedhash === false) {
+        throw new moodle_exception('Failed to generate password hash.');
+    }
+
+    return $generatedhash;
 }
 
 /**
- * Update password hash in user object.
+ * Update password hash in user object (if necessary).
  *
- * @param stdClass $user (password property may be updated)
- * @param string $password plain text password
- * @return bool always returns true
+ * The password is updated if:
+ * 1. The password has changed (the hash of $user->password is different
+ *    to the hash of $password).
+ * 2. The existing hash is using an out-of-date algorithm (or the legacy
+ *    md5 algorithm).
+ *
+ * Updating the password will modify the $user object and the database
+ * record to use the current hashing algorithm.
+ *
+ * @param stdClass $user User object (password property may be updated).
+ * @param string $password Plain text password.
+ * @return bool Always returns true.
  */
 function update_internal_user_password($user, $password) {
-    global $DB;
+    global $CFG, $DB;
+    require_once($CFG->libdir.'/password_compat/lib/password.php');
 
+    // Use the legacy hashing algorithm (md5) if PHP doesn't support
+    // bcrypt properly.
+    $legacyhash = password_compat_not_supported();
+
+    // Figure out what the hashed password should be.
     $authplugin = get_auth_plugin($user->auth);
     if ($authplugin->prevent_local_passwords()) {
-        $hashedpassword = 'not cached';
+        $hashedpassword = AUTH_PASSWORD_NOT_CACHED;
     } else {
         $hashedpassword = hash_internal_user_password($password);
     }
 
-    if ($user->password !== $hashedpassword) {
+    if ($legacyhash) {
+        $passwordchanged = ($user->password !== $hashedpassword);
+        $algorithmchanged = false;
+    } else {
+        // If verification fails then it means the password has changed.
+        $passwordchanged = !password_verify($password, $user->password);
+        $algorithmchanged = password_needs_rehash($user->password, PASSWORD_DEFAULT);
+    }
+
+    if ($passwordchanged || $algorithmchanged) {
         $DB->set_field('user', 'password',  $hashedpassword, array('id'=>$user->id));
         $user->password = $hashedpassword;
     }
@@ -5588,9 +5697,10 @@ function generate_email_supportuser() {
  * @global object
  * @global object
  * @param user $user A {@link $USER} object
+ * @param boolean $fasthash If true, use a low cost factor when generating the hash for speed.
  * @return boolean|string Returns "true" if mail was sent OK and "false" if there was an error
  */
-function setnew_password_and_mail($user) {
+function setnew_password_and_mail($user, $fasthash = false) {
     global $CFG, $DB;
 
     // we try to send the mail in language the user understands,
@@ -5604,7 +5714,8 @@ function setnew_password_and_mail($user) {
 
     $newpassword = generate_password();
 
-    $DB->set_field('user', 'password', hash_internal_user_password($newpassword), array('id'=>$user->id));
+    $hashedpassword = hash_internal_user_password($newpassword, $fasthash);
+    $DB->set_field('user', 'password', $hashedpassword, array('id'=>$user->id));
 
     $a = new stdClass();
     $a->firstname   = fullname($user, true);

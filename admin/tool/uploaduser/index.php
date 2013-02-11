@@ -619,7 +619,7 @@ if ($formdata = $mform2->is_cancelled()) {
                 // Do not mess with passwords of remote users.
 
             } else if (!$isinternalauth) {
-                $existinguser->password = 'not cached';
+                $existinguser->password = AUTH_PASSWORD_NOT_CACHED;
                 $upt->track('password', '-', 'normal', false);
                 // clean up prefs
                 unset_user_preference('create_password', $existinguser);
@@ -627,6 +627,8 @@ if ($formdata = $mform2->is_cancelled()) {
 
             } else if (!empty($user->password)) {
                 if ($updatepasswords) {
+                    // Check for passwords that we want to force users to reset next
+                    // time they log in.
                     $errmsg = null;
                     $weak = !check_password_policy($user->password, $errmsg);
                     if ($resetpasswords == UU_PWRESET_ALL or ($resetpasswords == UU_PWRESET_WEAK and $weak)) {
@@ -639,7 +641,12 @@ if ($formdata = $mform2->is_cancelled()) {
                         unset_user_preference('auth_forcepasswordchange', $existinguser);
                     }
                     unset_user_preference('create_password', $existinguser); // no need to create password any more
-                    $existinguser->password = hash_internal_user_password($user->password);
+
+                    // Use a low cost factor when generating bcrypt hash otherwise
+                    // hashing would be slow when uploading lots of users. Hashes
+                    // will be automatically updated to a higher cost factor the first
+                    // time the user logs in.
+                    $existinguser->password = hash_internal_user_password($user->password, true);
                     $upt->track('password', $user->password, 'normal', false);
                 } else {
                     // do not print password when not changed
@@ -772,10 +779,14 @@ if ($formdata = $mform2->is_cancelled()) {
                         }
                         $forcechangepassword = true;
                     }
-                    $user->password = hash_internal_user_password($user->password);
+                    // Use a low cost factor when generating bcrypt hash otherwise
+                    // hashing would be slow when uploading lots of users. Hashes
+                    // will be automatically updated to a higher cost factor the first
+                    // time the user logs in.
+                    $user->password = hash_internal_user_password($user->password, true);
                 }
             } else {
-                $user->password = 'not cached';
+                $user->password = AUTH_PASSWORD_NOT_CACHED;
                 $upt->track('password', '-', 'normal', false);
             }
 
