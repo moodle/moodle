@@ -180,9 +180,6 @@ table td.cell p {margin:0;}
 #page-footer .logininfo {padding:0.3em 0 0.7em 0;}
 #page-footer .moodledocs {text-align:center;background-color:#EFEFEF;padding:0.7em 0 0.8em 0;}
 
-/* js help messages */
-#helppopupbox .helpheading {margin-top:1em;}
-
 /* pre, code, tt */
 pre, code, tt {
     font: 1em/1.3 monospace;

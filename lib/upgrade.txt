@@ -15,6 +15,11 @@ information provided here is intended especially for developers.
   perform the whole deletion process. The function course_delete_module now takes care
   of the whole process.
 
+YUI changes:
+* M.util.help_icon has been deprecated. Code should be updated to use moodle-core-popuphelp
+  instead. To do so, remove any existing JS calls to M.util.help_icon from your PHP and ensure
+  that your help link is placed in a span which has the class 'helplink'.
+
 === 2.4 ===
 
 * Pagelib: Numerous deprecated functions were removed as classes page_base, page_course

@@ -48,14 +48,14 @@ $PAGE->set_context(context_system::instance());
 
 if ($ajax) {
     @header('Content-Type: text/plain; charset=utf-8');
-} else {
-    echo $OUTPUT->header();
 }
 
 if (!$sm->string_exists($identifier.'_help', $component)) {
-    // strings on-diskc cache may be dirty - try to rebuild it and check again
+    // strings on disk-cache may be dirty - try to rebuild it and check again
     $sm->load_component_strings($component, current_language(), true);
 }
+
+$data = new stdClass();
 
 if ($sm->string_exists($identifier.'_help', $component)) {
     $options = new stdClass();
@@ -67,26 +67,38 @@ if ($sm->string_exists($identifier.'_help', $component)) {
     $options->newlines = false;
     $options->overflowdiv = !$ajax;
 
-    if ($ajax) {
-        // When using AJAX, the header should be H2 as it is in the same DOM as the calling page.
-        echo $OUTPUT->heading(format_string(get_string($identifier, $component)), 2, 'helpheading');
-    } else {
-        // When not using AJAX, the header should be H1 as it is in it's own window.
-        echo $OUTPUT->heading(format_string(get_string($identifier, $component)), 1, 'helpheading');
-    }
+    $data->heading = format_string(get_string($identifier, $component));
     // Should be simple wiki only MDL-21695
-    echo format_text(get_string($identifier.'_help', $component), FORMAT_MARKDOWN, $options);
+    $data->text =  format_text(get_string($identifier.'_help', $component), FORMAT_MARKDOWN, $options);
 
-    if ($sm->string_exists($identifier.'_link', $component)) {  // Link to further info in Moodle docs
-        $link = get_string($identifier.'_link', $component);
+    $helplink = $identifier . '_link';
+    if ($sm->string_exists($helplink, $component)) {  // Link to further info in Moodle docs
+        $link = get_string($helplink, $component);
         $linktext = get_string('morehelp');
-        echo '<div class="helpdoclink">'.$OUTPUT->doc_link($link, $linktext).'</div>';
-    }
 
+        $data->doclink = new stdClass();
+        $url = new moodle_url(get_docs_url($link));
+        $data->doclink->link = $url->out();
+        $data->doclink->linktext = $linktext;
+        $data->doclink->class = ($CFG->doctonewwindow) ? 'helplinkpopup' : '';
+
+        $completedoclink = html_writer::tag('div', $OUTPUT->doc_link($link, $linktext), array('class' => 'helpdoclink'));
+    }
 } else {
-    echo "<p><strong>TODO</strong>: missing help string [{$identifier}_help, $component]</p>";
+    $data->text = html_writer::tag('p',
+            html_writer::tag('strong', 'TODO') . ": missing help string [{$identifier}_help, {$component}]");
 }
 
-if (!$ajax) {
+if ($ajax) {
+    echo json_encode($data);
+} else {
+    echo $OUTPUT->header();
+    if (isset($data->heading)) {
+        echo $OUTPUT->heading($data->heading, 1, 'helpheading');
+    }
+    echo $data->text;
+    if (isset($completedoclink)) {
+        echo $completedoclink;
+    }
     echo $OUTPUT->footer();
 }

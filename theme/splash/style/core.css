@@ -286,18 +286,6 @@ textarea#id_message {width:420px;}
 .helplink img {
     margin-left:5px;
 }
-#helppopupbox {
-    padding:10px 0;
-}
-#helppopupbox p {
-    padding:0 0 5px;
-    margin:0;
-    line-height:1.3em;
-}
-#helppopupbox .helpheading {
-    font-size:1.2em;
-    padding-bottom:10px;
-}
 /* Icons
 -------------------------*/
 img.icon {
