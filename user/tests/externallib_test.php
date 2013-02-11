@@ -65,14 +65,13 @@ class core_user_external_testcase extends externallib_advanced_testcase {
             'url' => 'http://moodle.org',
             'country' => 'au'
             );
- 
+
         $user1 = self::getDataGenerator()->create_user($user1);
-        if (!empty($CFG->usetags)) {
-            require_once($CFG->dirroot . '/user/editlib.php');
-            require_once($CFG->dirroot . '/tag/lib.php');
-            $user1->interests = array('Cinema', 'Tennis', 'Dance', 'Guitar', 'Cooking');
-            useredit_update_interests($user1, $user1->interests);
-        }
+        set_config('usetags', 1);
+        require_once($CFG->dirroot . '/user/editlib.php');
+        require_once($CFG->dirroot . '/tag/lib.php');
+        $user1->interests = array('Cinema', 'Tennis', 'Dance', 'Guitar', 'Cooking');
+        useredit_update_interests($user1, $user1->interests);
 
         $user2 = self::getDataGenerator()->create_user(
                 array('username' => 'usernametest2', 'idnumber' => 'idnumbertest2'));
@@ -93,6 +92,7 @@ class core_user_external_testcase extends externallib_advanced_testcase {
         $this->setAdminUser();
 
         $searchparams = array(
+            array('key' => 'invalidkey', 'value' => 'invalidkey'),
             array('key' => 'email', 'value' => $user1->email),
             array('key' => 'firstname', 'value' => $user1->firstname));
 
@@ -168,6 +168,13 @@ class core_user_external_testcase extends externallib_advanced_testcase {
                 $this->assertEquals(implode(', ', $generateduser->interests), $returneduser['interests']);
             }
         }
+
+        // Test the invalid key warning.
+        $warnings = $result['warnings'];
+        $this->assertEquals(count($warnings), 1);
+        $warning = array_pop($warnings);
+        $this->assertEquals($warning['item'], 'invalidkey');
+        $this->assertEquals($warning['warningcode'], 'invalidfieldparameter');
     }
 
     /**

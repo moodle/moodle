@@ -486,7 +486,8 @@ class core_user_external extends external_api {
                     ), 'the key/value pairs to be considered in user search. Values can not be empty.
                         Specify different keys only once (fullname => \'user1\', auth => \'manual\', ...) -
                         key occurences are ignored, only the last occurence is considered.
-                        The search is executed with AND operator on the criterias.'
+                        The search is executed with AND operator on the criterias. Invalid criterias (keys) are ignored,
+                        the search is still executed on the valid criterias.'
                 )
             )
         );
@@ -514,7 +515,8 @@ class core_user_external extends external_api {
         $sql = '';
         $sqlparams = array();
 
-        foreach ($params['criteria'] as $criteria) {
+        foreach ($params['criteria'] as $criteriaindex => $criteria) {
+            $invalidcriteria = false;
             // Clean the parameters.
             $paramtype = PARAM_RAW;
             switch ($criteria['key']) {
@@ -542,38 +544,44 @@ class core_user_external extends external_api {
                     // Send back a warning that this search key is not supported in this version.
                     // This warning will make the function extandable without breaking clients.
                     $warnings[] = array(
-                        'item' => 'key',
-                        'itemid' => $criteria['key'],
+                        'item' => $criteria['key'],
                         'warningcode' => 'invalidfieldparameter',
                         'message' => 'The search key \'' . $criteria['key'] . '\' is not supported, look at the web service documentation'
                     );
-            }
-            $cleanedvalue = clean_param($criteria['value'], $paramtype);
-
-            // If first criteria do not add AND to the query.
-            if ($firstcriteria) {
-                $firstcriteria = false;
-            } else {
-                $sql .= ' AND ';
+                    // Do not add this invalid criteria to the created SQL request.
+                    $invalidcriteria = true;
+                    unset($params['criteria'][$criteriaindex]);
+                    break;
             }
 
-            // Create the SQL.
-            switch ($criteria['key']) {
-                case 'id':
-                case 'idnumber':
-                case 'username':
-                case 'auth':
-                    $sql .= $criteria['key'] . ' = :' . $criteria['key'];
-                    $sqlparams[$criteria['key']] = $cleanedvalue;
-                    break;
-                case 'email':
-                case 'lastname':
-                case 'firstname':
-                    $sql .= $DB->sql_like($criteria['key'], ':' . $criteria['key'], false);
-                    $sqlparams[$criteria['key']] = $cleanedvalue;
-                    break;
-                default:
-                    break;
+            if (!$invalidcriteria) {
+                $cleanedvalue = clean_param($criteria['value'], $paramtype);
+
+                // If first criteria do not add AND to the query.
+                if ($firstcriteria) {
+                    $firstcriteria = false;
+                } else {
+                    $sql .= ' AND ';
+                }
+
+                // Create the SQL.
+                switch ($criteria['key']) {
+                    case 'id':
+                    case 'idnumber':
+                    case 'username':
+                    case 'auth':
+                        $sql .= $criteria['key'] . ' = :' . $criteria['key'];
+                        $sqlparams[$criteria['key']] = $cleanedvalue;
+                        break;
+                    case 'email':
+                    case 'lastname':
+                    case 'firstname':
+                        $sql .= $DB->sql_like($criteria['key'], ':' . $criteria['key'], false);
+                        $sqlparams[$criteria['key']] = $cleanedvalue;
+                        break;
+                    default:
+                        break;
+                }
             }
         }
 
