@@ -59,6 +59,7 @@ class mod_resource_mod_form extends moodleform_mod {
 
         //-------------------------------------------------------
         $mform->addElement('header', 'contentsection', get_string('contentheader', 'resource'));
+        $mform->setExpanded('contentsection');
 
         $filemanager_options = array();
         $filemanager_options['accepted_types'] = '*';
