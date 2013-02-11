@@ -3,6 +3,10 @@ information provided here is intended especially for developers.
 
 === 2.5 ===
 
+* Function get_max_file_sizes now returns an option for (for example) "Course limit (500MB)" or
+  "Site limit (200MB)" when appropriate with the option set to 0. This function no longer returns
+  an option for 0 bytes. Existing code that was replacing the 0 option in the return
+  from this function with a more sensible message, can now use the return from this function directly.
 * Functions responsible for output in course/lib.php are deprecated, the code is moved to
   appropriate renderers: print_section_add_menus()
   See functions' phpdocs in lib/deprecatedlib.php

@@ -6022,7 +6022,10 @@ function get_user_max_upload_file_size($context, $sitebytes=0, $coursebytes=0, $
  * array of possible sizes in an array, translated to the
  * local language.
  *
- * @todo Finish documenting this function
+ * The list of options will go up to the minimum of $sitebytes, $coursebytes or $modulebytes.
+ *
+ * If $coursebytes or $sitebytes is not 0, an option will be included for "Course/Site upload limit (X)"
+ * with the value set to 0. This option will be the first in the list.
  *
  * @global object
  * @uses SORT_NUMERIC
@@ -6041,7 +6044,7 @@ function get_max_upload_sizes($sitebytes = 0, $coursebytes = 0, $modulebytes = 0
     }
 
     $filesize = array();
-    $filesize[intval($maxsize)] = display_size($maxsize);
+    $filesize[(string)intval($maxsize)] = display_size($maxsize);
 
     $sizelist = array(10240, 51200, 102400, 512000, 1048576, 2097152,
                       5242880, 10485760, 20971520, 52428800, 104857600);
@@ -6063,12 +6066,31 @@ function get_max_upload_sizes($sitebytes = 0, $coursebytes = 0, $modulebytes = 0
     }
 
     foreach ($sizelist as $sizebytes) {
-       if ($sizebytes < $maxsize) {
-           $filesize[intval($sizebytes)] = display_size($sizebytes);
+       if ($sizebytes < $maxsize && $sizebytes > 0) {
+           $filesize[(string)intval($sizebytes)] = display_size($sizebytes);
        }
     }
 
     krsort($filesize, SORT_NUMERIC);
+    $limitlevel = '';
+    $displaysize = '';
+    if ($modulebytes &&
+        (($modulebytes < $coursebytes || $coursebytes == 0) &&
+         ($modulebytes < $sitebytes || $sitebytes == 0))) {
+        $limitlevel = get_string('activity', 'core');
+        $displaysize = display_size($modulebytes);
+    } else if ($coursebytes && ($coursebytes < $sitebytes || $sitebytes == 0)) {
+        $limitlevel = get_string('course', 'core');
+        $displaysize = display_size($coursebytes);
+    } else if ($sitebytes) {
+        $limitlevel = get_string('site', 'core');
+        $displaysize = display_size($sitebytes);
+    }
+
+    if ($limitlevel) {
+        $params = (object) array('contextname'=>$limitlevel, 'displaysize'=>$displaysize);
+        $filesize  = array('0'=>get_string('uploadlimitwithsize', 'core', $params)) + $filesize;
+    }
 
     return $filesize;
 }

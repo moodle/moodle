@@ -91,14 +91,6 @@ class assign_submission_file extends assign_submission_plugin {
                                         $COURSE->maxbytes,
                                         get_config('assignsubmission_file', 'maxbytes'));
 
-        // Remove the option for 0 bytes.
-        unset($choices[0]);
-
-        if ($COURSE->maxbytes == 0) {
-            $choices = array(0=>get_string('siteuploadlimit', 'assignsubmission_file')) + $choices;
-        } else {
-            $choices = array(0=>get_string('courseuploadlimit') . ' (' . display_size($COURSE->maxbytes) . ')') + $choices;
-        }
         $settings[] = array('type' => 'select',
                             'name' => 'maxsubmissionsizebytes',
                             'description' => get_string('maximumsubmissionsize', 'assignsubmission_file'),
