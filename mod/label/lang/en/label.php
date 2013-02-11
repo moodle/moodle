@@ -24,6 +24,13 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['configdndmedia'] = 'Offer to create a label when media files are dragged & dropped onto a course';
+$string['configdndresizeheight'] = 'When a label is created from a dragged & dropped image, resize it if it is higher than this many pixels (0 for no resize)';
+$string['configdndresizewidth'] = 'When a label is created from a dragged & dropped image, resize it if it is wider than this many pixels (0 for no resize)';
+$string['dndmedia'] = 'Media drag and drop';
+$string['dndresizeheight'] = 'Resize drag and drop height';
+$string['dndresizewidth'] = 'Resize drag and drop width';
+$string['dnduploadlabel'] = 'Add image to course page';
 $string['label:addinstance'] = 'Add a new label';
 $string['labeltext'] = 'Label text';
 $string['modulename'] = 'Label';

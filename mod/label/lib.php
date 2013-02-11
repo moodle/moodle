@@ -202,3 +202,135 @@ function label_supports($feature) {
     }
 }
 
+/**
+ * Register the ability to handle drag and drop file uploads
+ * @return array containing details of the files / types the mod can handle
+ */
+function label_dndupload_register() {
+    if (get_config('label', 'dndmedia')) {
+        $mediaextensions = file_get_typegroup('extension', 'web_image');
+        $strdnd = get_string('dnduploadlabel', 'mod_label');
+        $files = array();
+        foreach ($mediaextensions as $extn) {
+            $extn = trim($extn, '.');
+            $files[] = array('extension' => $extn, 'message' => $strdnd);
+        }
+        return array('files' => $files);
+    } else {
+        return array();
+    }
+}
+
+/**
+ * Handle a file that has been uploaded
+ * @param object $uploadinfo details of the file / content that has been uploaded
+ * @return int instance id of the newly created mod
+ */
+function label_dndupload_handle($uploadinfo) {
+    global $USER;
+
+    // Gather the required info.
+    $data = new stdClass();
+    $data->course = $uploadinfo->course->id;
+    $data->name = $uploadinfo->displayname;
+    $data->intro = '';
+    $data->introformat = FORMAT_HTML;
+    $data->coursemodule = $uploadinfo->coursemodule;
+
+    // Extract the first (and only) file from the file area and add it to the label as an img tag.
+    if (!empty($uploadinfo->draftitemid)) {
+        $fs = get_file_storage();
+        $draftcontext = context_user::instance($USER->id);
+        $context = context_module::instance($uploadinfo->coursemodule);
+        $files = $fs->get_area_files($draftcontext->id, 'user', 'draft', $uploadinfo->draftitemid, '', false);
+        if ($file = reset($files)) {
+            if (file_mimetype_in_typegroup($file->get_mimetype(), 'web_image')) {
+                // It is an image - resize it, if too big, then insert the img tag.
+                $config = get_config('label');
+                $data->intro = label_generate_resized_image($file, $config->dndresizewidth, $config->dndresizeheight);
+            } else {
+                // We aren't supposed to be supporting non-image types here, but fallback to adding a link, just in case.
+                $url = moodle_url::make_draftfile_url($file->get_itemid(), $file->get_filepath(), $file->get_filename());
+                $data->intro = html_writer::link($url, $file->get_filename());
+            }
+            $data->intro = file_save_draft_area_files($uploadinfo->draftitemid, $context->id, 'mod_label', 'intro', 0,
+                                                      null, $data->intro);
+        }
+    }
+
+    return label_add_instance($data, null);
+}
+
+/**
+ * Resize the image, if required, then generate an img tag and, if required, a link to the full-size image
+ * @param stored_file $file the image file to process
+ * @param int $maxwidth the maximum width allowed for the image
+ * @param int $maxheight the maximum height allowed for the image
+ * @return string HTML fragment to add to the label
+ */
+function label_generate_resized_image(stored_file $file, $maxwidth, $maxheight) {
+    global $CFG;
+
+    $fullurl = moodle_url::make_draftfile_url($file->get_itemid(), $file->get_filepath(), $file->get_filename());
+    $link = null;
+    $attrib = array('alt' => $file->get_filename(), 'src' => $fullurl);
+
+    if ($imginfo = $file->get_imageinfo()) {
+        // Work out the new width / height, bounded by maxwidth / maxheight
+        $width = $imginfo['width'];
+        $height = $imginfo['height'];
+        if (!empty($maxwidth) && $width > $maxwidth) {
+            $height *= (float)$maxwidth / $width;
+            $width = $maxwidth;
+        }
+        if (!empty($maxheight) && $height > $maxheight) {
+            $width *= (float)$maxheight / $height;
+            $height = $maxheight;
+        }
+
+        $attrib['width'] = $width;
+        $attrib['height'] = $height;
+
+        // If the size has changed and the image is of a suitable mime type, generate a smaller version
+        if ($width != $imginfo['width']) {
+            $mimetype = $file->get_mimetype();
+            if ($mimetype === 'image/gif' or $mimetype === 'image/jpeg' or $mimetype === 'image/png') {
+                require_once($CFG->libdir.'/gdlib.php');
+                $tmproot = make_temp_directory('mod_label');
+                $tmpfilepath = $tmproot.'/'.$file->get_contenthash();
+                $file->copy_content_to($tmpfilepath);
+                $data = generate_image_thumbnail($tmpfilepath, $width, $height);
+                unlink($tmpfilepath);
+
+                if (!empty($data)) {
+                    $fs = get_file_storage();
+                    $record = array(
+                        'contextid' => $file->get_contextid(),
+                        'component' => $file->get_component(),
+                        'filearea'  => $file->get_filearea(),
+                        'itemid'    => $file->get_itemid(),
+                        'filepath'  => '/',
+                        'filename'  => 's_'.$file->get_filename(),
+                    );
+                    $smallfile = $fs->create_file_from_string($record, $data);
+
+                    // Replace the image 'src' with the resized file and link to the original
+                    $attrib['src'] = moodle_url::make_draftfile_url($smallfile->get_itemid(), $smallfile->get_filepath(),
+                                                                    $smallfile->get_filename());
+                    $link = $fullurl;
+                }
+            }
+        }
+
+    } else {
+        // Assume this is an image type that get_imageinfo cannot handle (e.g. SVG)
+        $attrib['width'] = $maxwidth;
+    }
+
+    $img = html_writer::empty_tag('img', $attrib);
+    if ($link) {
+        return html_writer::link($link, $img);
+    } else {
+        return $img;
+    }
+}
