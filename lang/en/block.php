@@ -63,6 +63,7 @@ $string['subpages'] = 'Select pages';
 $string['restrictpagetypes'] = 'Display on page types';
 $string['thisspecificpage'] = 'This specific page';
 $string['undockall'] = 'Undock all';
+$string['undockblock'] = 'Undock {$a} block';
 $string['undockitem'] = 'Undock this item';
 $string['visible'] = 'Visible';
 $string['weight'] = 'Weight';

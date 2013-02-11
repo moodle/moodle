@@ -906,7 +906,7 @@ M.core_dock.genericblock.prototype = {
         }
 
         // Must set the image src seperatly of we get an error with XML strict headers
-        var movetoimg = Y.Node.create('<img alt="'+M.str.block.undockitem+'" title="'+M.str.block.undockitem+'" />');
+        var movetoimg = Y.Node.create('<img alt="'+M.str.block.undockitem+'" title="'+M.util.get_string('undockblock', 'block', blocktitle.innerHTML)+'" />');
         var icon = 't/dock_to_block';
         if (right_to_left()) {
             icon = 't/dock_to_block_rtl';
