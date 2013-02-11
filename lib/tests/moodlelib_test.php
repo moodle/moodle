@@ -2292,14 +2292,6 @@ class moodlelib_testcase extends advanced_testcase {
         $this->assertEquals('Course upload limit (50KB)', $result['0']);
         $this->assertEquals(3, count($result));
 
-        // Test no limits.
-        $sitebytes = 0;
-        $coursebytes = 0;
-        $modulebytes = 0;
-        $result = get_max_upload_sizes($sitebytes, $coursebytes, $modulebytes);
-
-        $this->assertEquals(6, count($result));
-
         // Test custom bytes in range.
         $sitebytes = 102400;
         $coursebytes = 51200;
