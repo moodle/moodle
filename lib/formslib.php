@@ -1387,23 +1387,46 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
      * Use this method to add show more/less status element required for passing
      * over the advanced elements visibility status on the form submission.
      *
-     * @param string $headerName header element name
+     * @param string $headerName header element name.
      * @param boolean $showmore default false sets the advanced elements to be hidden.
      */
     function addAdvancedStatusElement($headerName, $showmore=false){
-        // Add extra hidden element to store advanced items state for each section
+        // Add extra hidden element to store advanced items state for each section.
         if ($this->getElementType('mform_showmore_' . $headerName) === false) {
-            // see if we the form has been submitted already
+            // See if we the form has been submitted already.
             $formshowmore = optional_param('mform_showmore_' . $headerName, -1, PARAM_INT);
             if (!$showmore && $formshowmore != -1) {
-                // override showmore state with the form variable
+                // Override showmore state with the form variable.
                 $showmore = $formshowmore;
             }
-            // create the form element for storing advanced items state
+            // Create the form element for storing advanced items state.
             $this->addElement('hidden', 'mform_showmore_' . $headerName);
             $this->setType('mform_showmore_' . $headerName, PARAM_INT);
             $this->setConstant('mform_showmore_' . $headerName, (int)$showmore);
         }
+    }
+
+    /**
+     * This function has been deprecated. Show advanced has been replaced by
+     * "Show more.../Show less..." in the shortforms javascript module.
+     *
+     * @deprecated since Moodle 2.5
+     * @param bool $showadvancedNow if true will show advanced elements.
+      */
+    function setShowAdvanced($showadvancedNow = null){
+        debugging('Call to deprecated function setShowAdvanced. See "Show more.../Show less..." in shortforms yui module.');
+    }
+
+    /**
+     * This function has been deprecated. Show advanced has been replaced by
+     * "Show more.../Show less..." in the shortforms javascript module.
+     *
+     * @deprecated since Moodle 2.5
+     * @return bool (Always false)
+      */
+    function getShowAdvanced(){
+        debugging('Call to deprecated function setShowAdvanced. See "Show more.../Show less..." in shortforms yui module.');
+        return false;
     }
 
     /**
@@ -2367,6 +2390,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
     function setCollapsibleElements($elements) {
         $this->_collapsibleElements = $elements;
     }
+
     /**
      * What to do when starting the form
      *
@@ -2398,7 +2422,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
         if (count($this->_collapsibleElements)) {
             $PAGE->requires->yui_module('moodle-form-shortforms', 'M.form.shortforms', array(array('formid' => $formid)));
         }
-        if (count($this->_advancedElements)){
+        if (!empty($this->_advancedElements)){
             $PAGE->requires->strings_for_js(array('showmore', 'showless'), 'form');
             $PAGE->requires->yui_module('moodle-form-showadvanced', 'M.form.showadvanced', array(array('formid' => $formid)));
         }
@@ -2450,6 +2474,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
         }
         parent::startGroup($group, $required, $error);
     }
+
     /**
      * Renders element
      *
@@ -2547,7 +2572,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
             $this->_fieldsetsOpen--;
         }
 
-        // Define collapsible classes for fieldsets
+        // Define collapsible classes for fieldsets.
         $fieldsetclasses = array('clearfix');
         if (isset($this->_collapsibleElements[$name])) {
             $fieldsetclasses[] = 'collapsible';
