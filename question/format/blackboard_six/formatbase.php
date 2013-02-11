@@ -123,15 +123,16 @@ class qformat_blackboard_six_base extends qformat_based_on_xml {
         $data = array();
         // Step one, find all file refs then add to array.
         preg_match_all('|<img[^>]+src="([^"]*)"|i', $text, $out); // Find all src refs.
-
+        $filepaths = array();
         foreach ($out[1] as $path) {
             $fullpath = $this->filebase . '/' . $path;
 
-            if (is_readable($fullpath)) {
+            if (is_readable($fullpath) && !in_array($path, $filepaths)) {
                 $dirpath = dirname($path);
                 $filename = basename($path);
                 $newfilename = $this->store_file_for_text_field($data, $this->filebase, $dirpath, $filename);
                 $text = preg_replace("|$path|", "@@PLUGINFILE@@/" . $newfilename, $text);
+                $filepaths[] = $path;
             }
 
         }
