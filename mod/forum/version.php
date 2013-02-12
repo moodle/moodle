@@ -25,7 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$module->version   = 2013020500;       // The current module version (Date: YYYYMMDDXX)
+$module->version   = 2013021200;       // The current module version (Date: YYYYMMDDXX)
 $module->requires  = 2012112900;       // Requires this Moodle version
 $module->component = 'mod_forum';      // Full name of the plugin (used for diagnostics)
 $module->cron      = 60;

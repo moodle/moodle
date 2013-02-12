@@ -72,6 +72,17 @@ function xmldb_forum_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2013020500, 'forum');
     }
 
+    // Forcefully assign mod/forum:allowforcesubscribe to frontpage role, as we missed that when
+    // capability was introduced.
+    if ($oldversion < 2013021200) {
+        // If capability mod/forum:allowforcesubscribe is defined then set it for frontpage role.
+        if (get_capability_info('mod/forum:allowforcesubscribe')) {
+            assign_legacy_capabilities('mod/forum:allowforcesubscribe', array('frontpage' => CAP_ALLOW));
+        }
+        // Forum savepoint reached.
+        upgrade_mod_savepoint(true, 2013021200, 'forum');
+    }
+
     return true;
 }
 
