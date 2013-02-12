@@ -43,6 +43,9 @@ $configstr  = get_string('manageportfolios', 'portfolio');
 
 $return = true; // direct back to the main page
 
+// Purge all caches related to portfolio administration.
+cache::make('core', 'plugininfo_portfolio')->purge();
+
 /**
  * Helper function that generates a moodle_url object
  * relevant to the portfolio

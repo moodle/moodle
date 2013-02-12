@@ -30,6 +30,9 @@
     $strprotect = get_string('blockprotect', 'admin');
     $strunprotect = get_string('blockunprotect', 'admin');
 
+    // Purge all caches related to blocks administration.
+    cache::make('core', 'plugininfo_block')->purge();
+
 /// If data submitted, then process and store.
 
     if (!empty($hide) && confirm_sesskey()) {

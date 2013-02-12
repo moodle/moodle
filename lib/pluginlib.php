@@ -2479,8 +2479,7 @@ abstract class plugininfo_base {
     protected function get_version_from_config_plugins($plugin, $disablecache=false) {
         global $DB;
 
-        $cache = cache::make_from_params(cache_store::MODE_REQUEST, 'core_plugin', 'plugininfo_base',
-            array(), array('simplekeys' => true, 'simpledata' => true));
+        $cache = cache::make('core', 'plugininfo_base');
 
         $pluginversions = $cache->get('versions_db');
 
@@ -2641,8 +2640,7 @@ class plugininfo_block extends plugininfo_base {
     protected static function get_blocks_info($disablecache=false) {
         global $DB;
 
-        $cache = cache::make_from_params(cache_store::MODE_REQUEST, 'core_plugin', 'plugininfo_block',
-            array(), array('simplekeys' => true, 'simpledata' => true));
+        $cache = cache::make('core', 'plugininfo_block');
 
         $blocktypes = $cache->get('blocktypes');
 
@@ -2786,8 +2784,7 @@ class plugininfo_filter extends plugininfo_base {
     protected static function get_global_states($disablecache=false) {
         global $DB;
 
-        $cache = cache::make_from_params(cache_store::MODE_REQUEST, 'core_plugin', 'plugininfo_filter',
-            array(), array('simplekeys' => true, 'simpledata' => true));
+        $cache = cache::make('core', 'plugininfo_filter');
 
         $globalstates = $cache->get('globalstates');
 
@@ -2958,8 +2955,7 @@ class plugininfo_mod extends plugininfo_base {
     protected static function get_modules_info($disablecache=false) {
         global $DB;
 
-        $cache = cache::make_from_params(cache_store::MODE_REQUEST, 'core_plugin', 'plugininfo_mod',
-            array(), array('simplekeys' => true, 'simpledata' => true));
+        $cache = cache::make('core', 'plugininfo_mod');
 
         $modulesinfo = $cache->get('modulesinfo');
 
@@ -3220,8 +3216,7 @@ class plugininfo_repository extends plugininfo_base {
     protected static function get_enabled_repositories($disablecache=false) {
         global $DB;
 
-        $cache = cache::make_from_params(cache_store::MODE_REQUEST, 'core_plugin', 'plugininfo_repository',
-            array(), array('simplekeys' => true, 'simpledata' => true));
+        $cache = cache::make('core', 'plugininfo_repository');
 
         $enabled = $cache->get('enabled');
 
@@ -3259,8 +3254,7 @@ class plugininfo_portfolio extends plugininfo_base {
     protected static function get_enabled_portfolios($disablecache=false) {
         global $DB;
 
-        $cache = cache::make_from_params(cache_store::MODE_REQUEST, 'core_plugin', 'plugininfo_portfolio',
-            array(), array('simplekeys' => true, 'simpledata' => true));
+        $cache = cache::make('core', 'plugininfo_portfolio');
 
         $enabled = $cache->get('enabled');
 

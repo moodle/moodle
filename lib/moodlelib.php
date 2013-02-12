@@ -9143,6 +9143,12 @@ function moodle_needs_upgrading() {
     // and new plugins can be detected.
     cache::make('core', 'plugintypes')->purge();
     cache::make('core', 'pluginlist')->purge();
+    cache::make('core', 'plugininfo_base')->purge();
+    cache::make('core', 'plugininfo_mod')->purge();
+    cache::make('core', 'plugininfo_block')->purge();
+    cache::make('core', 'plugininfo_filter')->purge();
+    cache::make('core', 'plugininfo_repository')->purge();
+    cache::make('core', 'plugininfo_portfolio')->purge();
 
     // Check the main version first.
     $version = null;

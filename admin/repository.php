@@ -61,6 +61,9 @@ if (!empty($action)) {
     require_sesskey();
 }
 
+// Purge all caches related to repositories administration.
+cache::make('core', 'plugininfo_repository')->purge();
+
 /**
  * Helper function that generates a moodle_url object
  * relevant to the repository
