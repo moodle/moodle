@@ -2170,15 +2170,28 @@ abstract class plugininfo_base {
     /**
      * Load the data from version.php.
      *
+     * @param bool $disablecache do not attempt to obtain data from the cache
      * @return stdClass the object called $plugin defined in version.php
      */
-    protected function load_version_php() {
+    protected function load_version_php($disablecache=false) {
+
+        $cache = cache::make('core', 'plugininfo_base');
+
+        $versionsphp = $cache->get('versions_php');
+
+        if (!$disablecache and $versionsphp !== false and isset($versionsphp[$this->component])) {
+            return $versionsphp[$this->component];
+        }
+
         $versionfile = $this->full_path('version.php');
 
         $plugin = new stdClass();
         if (is_readable($versionfile)) {
             include($versionfile);
         }
+        $versionsphp[$this->component] = $plugin;
+        $cache->set('versions_php', $versionsphp);
+
         return $plugin;
     }
 
@@ -2722,13 +2735,6 @@ class plugininfo_filter extends plugininfo_base {
         // do nothing, the name is set in self::get_plugins()
     }
 
-    /**
-     * @see load_version_php()
-     */
-    protected function load_version_php() {
-        return parent::load_version_php();
-    }
-
     public function is_enabled() {
 
         $globalstates = self::get_global_states();
@@ -2876,9 +2882,20 @@ class plugininfo_mod extends plugininfo_base {
 
     /**
      * Load the data from version.php.
+     *
+     * @param bool $disablecache do not attempt to obtain data from the cache
      * @return object the data object defined in version.php.
      */
-    protected function load_version_php() {
+    protected function load_version_php($disablecache=false) {
+
+        $cache = cache::make('core', 'plugininfo_base');
+
+        $versionsphp = $cache->get('versions_php');
+
+        if (!$disablecache and $versionsphp !== false and isset($versionsphp[$this->component])) {
+            return $versionsphp[$this->component];
+        }
+
         $versionfile = $this->full_path('version.php');
 
         $module = new stdClass();
@@ -2889,6 +2906,9 @@ class plugininfo_mod extends plugininfo_base {
         if (!isset($module->version) and isset($plugin->version)) {
             $module = $plugin;
         }
+        $versionsphp[$this->component] = $module;
+        $cache->set('versions_php', $versionsphp);
+
         return $module;
     }
 

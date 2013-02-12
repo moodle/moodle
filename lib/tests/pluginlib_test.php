@@ -338,7 +338,7 @@ class testable_plugininfo_mod extends plugininfo_mod {
         $this->versiondisk = 2012030500;
     }
 
-    protected function load_version_php() {
+    protected function load_version_php($disablecache=false) {
         return (object)array(
             'version' => 2012030500,
             'requires' => 2012010100,
