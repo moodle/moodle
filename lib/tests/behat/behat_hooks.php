@@ -69,6 +69,7 @@ class behat_hooks extends behat_base {
         define('BEHAT_RUNNING', 1);
         define('CLI_SCRIPT', 1);
 
+        // With BEHAT_RUNNING we will be using $CFG->behat_* instead of $CFG->dataroot, $CFG->prefix and $CFG->wwwroot.
         require_once(__DIR__ . '/../../../config.php');
 
         // Now that we are MOODLE_INTERNAL.
@@ -88,6 +89,11 @@ class behat_hooks extends behat_base {
             throw new Exception($CFG->behat_wwwroot . ' is not available, ensure you started your PHP built-in server. More info in ' . behat_command::DOCS_URL . '#Running_tests');
         }
 
+        // Prevents using outdated data, upgrade script would start and tests would fail.
+        if (!behat_util::is_test_data_updated()) {
+            $commandpath = 'php admin/tool/behat/cli/util.php';
+            throw new Exception('Your behat test site is outdated, please run ' . $commandpath . ' from your moodle dirroot to drop and install the behat test site again.');
+        }
         // Avoid parallel tests execution, it continues when the previous lock is released.
         test_lock::acquire('behat');
     }
