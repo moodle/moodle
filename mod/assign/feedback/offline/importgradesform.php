@@ -109,6 +109,8 @@ class assignfeedback_offline_import_grades_form extends moodleform implements re
                 } else {
                     $grade = '';
                 }
+            } else {
+                $grade = unformat_float($grade);
             }
 
             if ($usergrade && $usergrade->grade == $grade) {
@@ -123,10 +125,9 @@ class assignfeedback_offline_import_grades_form extends moodleform implements re
             } else if ($assignment->grading_disabled($user->id)) {
                 // Skip grade is locked.
                 $skip = true;
-            } else if (!is_numeric($gradedesc) && ($assignment->get_instance()->grade) > -1) {
-                $skip = true;
             } else if (($assignment->get_instance()->grade > -1) &&
-                      (($gradedesc < 0) || ($gradedesc > $assignment->get_instance()->grade))) {
+                      (($grade < 0) || ($grade > $assignment->get_instance()->grade))) {
+                // Out of range.
                 $skip = true;
             }
 
