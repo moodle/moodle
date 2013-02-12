@@ -1194,3 +1194,68 @@ html[dir=rtl] .configphp {direction:ltr;text-align:left;}
 
 table.flexible .r0, table.generaltable .r0 {background-color: #F0F0F0;}
 table.flexible .r1, table.generaltable .r1 {background-color: #FAFAFA;}
+
+/* Form element: listing */
+.formlistingradio {padding-bottom: 25px; padding-right: 10px;}
+.formlistinginputradio {float: left;}
+.formlistingmain {min-height: 225px;}
+.formlistingradiocontent {}
+.formlisting {
+    position: relative;
+    margin: 15px 0;
+    padding: 1px 19px 14px;
+    background-color: white;
+    border: 1px solid #DDD;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+}
+
+.formlistingmore {
+    position: absolute;
+    cursor: pointer;
+    bottom: -1px;
+    right: -1px;
+    padding: 3px 7px;
+    font-size: 12px;
+    font-weight: bold;
+    background-color: whiteSmoke;
+    border: 1px solid #DDD;
+    color: #9DA0A4;
+    -webkit-border-radius: 4px 0 4px 0;
+    -moz-border-radius: 4px 0 4px 0;
+    border-radius: 4px 0 4px 0;
+}
+
+.formlistingall {
+    margin: 15px 0;
+    padding: 0px 0px 0px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+}
+
+.formlistingrow {
+    cursor: pointer;
+    border-bottom: 1px solid;
+    border-color: #E1E1E8;
+    border-left: 1px solid #E1E1E8;
+    border-right: 1px solid #E1E1E8;
+    background-color: #F7F7F9;
+    -webkit-border-radius: 0px 0px 4px 4px;
+    -moz-border-radius: 0px 0px 4px 4px;
+    padding: 6px;
+    top: 50%;
+    left: 50%;
+    min-height: 34px;
+    float:left;
+    width: 150px;
+}
+
+body.jsenabled .formlistingradio {
+    display: none;
+}
+
+body.jsenabled .formlisting {
+    display: block;
+}

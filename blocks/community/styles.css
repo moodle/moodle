@@ -2,30 +2,23 @@
 
 /* HUB SELECTOR */
 #page-blocks-community-communitycourse .hubscreenshot {float: left; }
-#page-blocks-community-communitycourse .hubdescription {
-    color: #003333;
-    font-size: 95%;
-    display:block;
-}
-#page-blocks-community-communitycourse .hubdescriptiontext {margin-left:160px;display:block;}
-#page-blocks-community-communitycourse .hubadditionaldesc {
-    color: #666666;
-    font-size: 90%;
-    display:block;
-}
+#page-blocks-community-communitycourse .hubtitlelink {color: #999; }
+#page-blocks-community-communitycourse .hubsmalllogo {padding-left: 3px; padding-right: 7px; float: left; }
+#page-blocks-community-communitycourse .hubtext {display: block; width: 68%; padding-left: 165px;}
+#page-blocks-community-communitycourse .hubimgandtext {display:table;}
+#page-blocks-community-communitycourse .hubimage {float: left; display: block; width: 100px;}
+#page-blocks-community-communitycourse .hubdescriptiontext {}
+#page-blocks-community-communitycourse .hubstats {padding-top: 10px}
+#page-blocks-community-communitycourse .hubstats .iconhelp {float: left; padding-right: 3px;}
+#page-blocks-community-communitycourse .hubadditionaldesc {color: #666666; font-size: 90%; display:block;}
 #page-blocks-community-communitycourse .hubscreenshot {margin-right: 10px;}
-#page-blocks-community-communitycourse .hubnottrusted {margin-left: 6px;}
-#page-blocks-community-communitycourse .hubtrusted {display:inline;margin-left: 6px;}
+#page-blocks-community-communitycourse .hubnottrusted {}
+#page-blocks-community-communitycourse .hubtrusted {display:inline;}
 #page-blocks-community-communitycourse .hubnottrusted {}
 #page-blocks-community-communitycourse .trustedtr {background-color: #ffe1c3;}
 #page-blocks-community-communitycourse .prioritisetr {background-color: #ffd4ff;}
 #page-blocks-community-communitycourse .blockdescription {font-size: 80%; color: #555555;}
-#page-blocks-community-communitycourse .trusted {
-    font-size: 90%;
-    color: #006633;
-    font-weight: normal;
-    font-style: italic;
-}
+#page-blocks-community-communitycourse .trusted {font-size: 90%; color: #006633; font-weight: normal; font-style: italic;}
 
 /* COURSES RESULT */
 #page-blocks-community-communitycourse .additionaldesc {font-size: 80%; color: #8B8989;}
