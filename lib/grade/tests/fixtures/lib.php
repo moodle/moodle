@@ -35,7 +35,7 @@ require_once($CFG->libdir . '/gradelib.php');
  * category1 => array(category2 => array(grade_item1, grade_item2), category3 => array(grade_item3))
  * 3 users for 3 grade_items
  */
-class grade_base_testcase extends advanced_testcase {
+abstract class grade_base_testcase extends advanced_testcase {
 
     protected $course;
     protected $activities = array();
