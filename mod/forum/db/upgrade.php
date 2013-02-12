@@ -44,19 +44,33 @@
 function xmldb_forum_upgrade($oldversion) {
     global $CFG, $DB, $OUTPUT;
 
-    $dbman = $DB->get_manager(); // loads ddl manager and xmldb classes
+    $dbman = $DB->get_manager(); // Loads ddl manager and xmldb classes.
 
+    // Moodle v2.2.0 release upgrade line.
+    // Put any upgrade step following this.
 
-    // Moodle v2.2.0 release upgrade line
-    // Put any upgrade step following this
+    // Moodle v2.3.0 release upgrade line.
+    // Put any upgrade step following this.
 
-    // Moodle v2.3.0 release upgrade line
-    // Put any upgrade step following this
+    // Moodle v2.4.0 release upgrade line.
+    // Put any upgrade step following this.
 
+    // Moodle v2.5.0 release upgrade line.
+    // Put any upgrade step following this.
+    if ($oldversion < 2013020500) {
 
-    // Moodle v2.4.0 release upgrade line
-    // Put any upgrade step following this
+        // Define field displaywordcount to be added to forum.
+        $table = new xmldb_table('forum');
+        $field = new xmldb_field('displaywordcount', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'completionposts');
 
+        // Conditionally launch add field displaywordcount.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Forum savepoint reached.
+        upgrade_mod_savepoint(true, 2013020500, 'forum');
+    }
 
     return true;
 }

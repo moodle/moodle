@@ -19,6 +19,7 @@
  *         div.left
  *         div.options
  *             div.commands
+ *             div.post-word-count
  *             div.forum-post-rating
  *             div.link
  *             div.footer
@@ -40,6 +41,8 @@
 .forumpost .options .forum-post-rating {float:left;}
 .forumpost .content .posting {overflow:auto;max-width:100%;}
 .forumpost .content .attachedimages img {max-width:100%;}
+.forumpost .post-word-count { font-size: .85em; font-style: italic; }
+.forumpost .shortenedpost .post-word-count { display: inline; padding: 0 .3em; }
 
 .dir-rtl .forumpost .row .topic,
 .dir-rtl .forumpost .row .content-mask,
