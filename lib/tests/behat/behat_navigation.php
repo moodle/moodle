@@ -40,8 +40,9 @@ class behat_navigation extends behat_base {
 
     /**
      * Expands the selected node of the navigation tree that matches the text.
-     *
      * @Given /^I expand "(?P<nodetext_string>(?:[^"]|\\")*)" node$/
+     *
+     * @throws ElementNotFoundException Thrown by behat_base::find
      * @param string $nodetext
      */
     public function i_expand_node($nodetext) {
@@ -53,7 +54,7 @@ class behat_navigation extends behat_base {
 /descendant::p[contains(concat(' ', normalize-space(@class), ' '), ' branch')]
 /descendant::span[contains(concat(' ', normalize-space(.), ' '), '" . $nodetext . "')]";
 
-        $node = $this->getSession()->getPage()->find('xpath', $xpath);
+        $node = $this->find('xpath', $xpath);
         $node->click();
     }
 

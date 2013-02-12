@@ -25,6 +25,7 @@ Feature: Add activities to courses
       | Introduction | Test database description |
       | Required entries | 9 |
       | Comments | Yes |
+    And I turn editing mode off
     Then I should not see "Adding a new"
     And I follow "Test name"
     And I follow "Edit settings"

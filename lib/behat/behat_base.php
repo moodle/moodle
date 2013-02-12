@@ -28,6 +28,9 @@
 
 // NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
 
+use Behat\Mink\Exception\ExpectationException as ExpectationException,
+    Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
+
 /**
  * Steps definitions base class.
  *
@@ -77,6 +80,89 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
     }
 
     /**
+     * Adapter to Behat\Mink\Element\Element::find() using the spin() method.
+     *
+     * @link http://mink.behat.org/#traverse-the-page-selectors
+     * @param Exception $exception Otherwise we throw expcetion with generic info
+     * @param string $selector The selector type (css, xpath, named...)
+     * @param mixed $locator It depends on the $selector, can be the xpath, a name, a css locator...
+     * @return NodeElement
+     */
+    protected function find($selector, $locator, $exception = false) {
+
+        // Generic info.
+        if (!$exception) {
+
+            // With named selectors we can be more specific.
+            if ($selector == 'named') {
+                $exceptiontype = $locator[0];
+                $exceptionlocator = $locator[1];
+            } else {
+                $exceptiontype = $selector;
+                $exceptionlocator = $locator;
+            }
+
+            $exception = new ElementNotFoundException($this->getSession(), $exceptiontype, null, $exceptionlocator);
+        }
+
+        // Waits for the node to appear if it exists, otherwise will timeout and throw the provided exception.
+        return $this->spin(
+            function($context, $args) {
+                return $context->getSession()->getPage()->find($args[0], $args[1]);
+            },
+            array($selector, $locator),
+            self::TIMEOUT,
+            $exception
+       );
+    }
+
+    /**
+     * Finds DOM nodes in the page using named selectors.
+     *
+     * The point of using this method instead of Mink ones is the spin
+     * method of behat_base::find() that looks for the element until it
+     * is available or it timeouts, this avoids the false failures received
+     * when selenium tries to execute commands on elements that are not
+     * ready to be used.
+     *
+     * All steps that requires elements to be available before interact with
+     * them should use one of the find* methods.
+     *
+     * The methods calls requires a {'find_' . $elementtype}($locator)
+     * format, like find_link($locator), find_select($locator),
+     * find_button($locator)...
+     *
+     * @link http://mink.behat.org/#named-selectors
+     * @throws coding_exception
+     * @param string $method The name of the called method
+     * @param mixed $arguments
+     * @return NodeElement
+     */
+    public function __call($name, $arguments) {
+
+        if (substr($name, 0, 5) !== 'find_') {
+            throw new coding_exception('The "' . $name . '" method does not exist');
+        }
+
+        // Only the named selector identifier.
+        $cleanname = substr($name, 5);
+
+        // All named selectors shares the interface.
+        if (count($arguments) !== 1) {
+            throw new coding_exception('The "' . $cleanname . '" named selector needs the locator as it\'s single argument');
+        }
+
+        // Redirecting execution to the find method with the specified selector.
+        // It will detect if it's pointing to an unexisting named selector.
+        return $this->find('named',
+            array(
+                $cleanname,
+                $this->getSession()->getSelectorsHandler()->xpathLiteral($arguments[0])
+            )
+        );
+    }
+
+    /**
      * Executes the passed closure until returns true or time outs.
      *
      * In most cases the document.readyState === 'complete' will be enough, but sometimes JS
@@ -91,15 +177,20 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
      * - Must return something != false if finishes as expected, this will be the (mixed) value
      * returned by spin()
      *
-     * Requires the exception to provide more accurate feedback to tests writers.
+     * The arguments of the closure are mixed, use $args depending on your needs.
      *
-     * @throws Exception If it timeouts without receiving something != false from the closure
-     * @param Closure $lambda The function to execute.
-     * @param Exception $exception The exception to throw in case it time outs.
-     * @param array $args Arguments to pass to the closure
+     * You can provide an exception to give more accurate feedback to tests writers, otherwise the
+     * closure exception will be used, but you must provide an exception if the closure does not throws
+     * an exception.
+     *
+     * @throws Exception            If it timeouts without receiving something != false from the closure
+     * @param  Closure   $lambda    The function to execute.
+     * @param  mixed     $args      Arguments to pass to the closure
+     * @param  int       $timeout   Timeout
+     * @param  Exception $exception The exception to throw in case it time outs.
      * @return mixed The value returned by the closure
      */
-    protected function spin($lambda, $exception, $args, $timeout = false) {
+    protected function spin($lambda, $args = false, $timeout = false, $exception = false) {
 
         // Using default timeout which is pretty high.
         if (!$timeout) {
@@ -112,16 +203,28 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
             try {
 
                 // We don't check with !== because most of the time closures will return
-                // direct Behat methods returns and we are not sure it will be always (bool)false.
+                // direct Behat methods returns and we are not sure it will be always (bool)false
+                // if it just runs the behat method without returning anything $return == null.
                 if ($return = $lambda($this, $args)) {
                     return $return;
                 }
             } catch(Exception $e) {
+
+                // We would use the first closure exception if no exception has been provided.
+                if (!$exception) {
+                    $exception = $e;
+                }
+
                 // We wait until no exception is thrown or timeout expires.
                 continue;
             }
 
             sleep(1);
+        }
+
+        // Using coding_exception as is a development issue if no exception has been provided.
+        if (!$exception) {
+            $exception = new coding_exception('spin method requires an exception if the closure doesn\'t throw an exception itself');
         }
 
         // Throwing exception to the user.

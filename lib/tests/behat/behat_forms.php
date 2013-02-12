@@ -48,19 +48,22 @@ class behat_forms extends behat_base {
     /**
      * Presses button with specified id|name|title|alt|value.
      *
-     * @see Behat\MinkExtension\Context\MinkContext
      * @When /^I press "(?P<button_string>(?:[^"]|\\")*)"$/
+     * @throws ElementNotFoundException Thrown by behat_base::find
      */
     public function press_button($button) {
         $button = $this->fixStepArgument($button);
-        $this->getSession()->getPage()->pressButton($button);
+
+        // Ensures the button is present.
+        $buttonnode = $this->find_button($button);
+        $buttonnode->press();
     }
 
     /**
      * Fills a moodle form with field/value data.
      *
-     * @throws ElementNotFoundException
      * @Given /^I fill the moodle form with:$/
+     * @throws ElementNotFoundException Thrown by behat_base::find
      * @param TableNode $data
      */
     public function i_fill_the_moodle_form_with(TableNode $data) {
@@ -75,21 +78,8 @@ class behat_forms extends behat_base {
             // Removing \\ that escapes " of the steps arguments.
             $locator = $this->fixStepArgument($locator);
 
-            // Finds the element in the page waiting until it appears (or timeouts)
-            // otherwise spin() throws exception.
-            $exception = new ElementNotFoundException(
-                $this->getSession(), 'form field', 'id|name|label|value', $locator
-            );
-
-            // $context is $this and will be passed to the function by spin().
-            $args['locator'] = $locator;
-
-            // Closure to ensure field($locator) exists.
-            $fieldnode = $this->spin(
-                function($context, $args) {
-                    return $context->getSession()->getPage()->findField($args['locator']);
-                }, $exception, $args
-            );
+            // Getting the NodeElement.
+            $fieldnode = $this->find_field($locator);
 
             // Gets the field type from a parent node.
             $field = $this->get_field($fieldnode, $locator);
@@ -103,65 +93,66 @@ class behat_forms extends behat_base {
     /**
      * Fills in form field with specified id|name|label|value.
      *
-     * @see Behat\MinkExtension\Context\MinkContext
      * @When /^I fill in "(?P<field_string>(?:[^"]|\\")*)" with "(?P<value_string>(?:[^"]|\\")*)"$/
+     * @throws ElementNotFoundException Thrown by behat_base::find
      */
     public function fill_field($field, $value) {
         $field = $this->fixStepArgument($field);
         $value = $this->fixStepArgument($value);
-        $this->getSession()->getPage()->fillField($field, $value);
+
+        $fieldnode = $this->find_field($field);
+        $fieldnode->setValue($value);
     }
 
     /**
      * Selects option in select field with specified id|name|label|value.
      *
-     * @see Behat\MinkExtension\Context\MinkContext
-     * @throws ElementNotFoundException
      * @When /^I select "(?P<option_string>(?:[^"]|\\")*)" from "(?P<select_string>(?:[^"]|\\")*)"$/
+     * @throws ElementNotFoundException Thrown by behat_base::find
      */
     public function select_option($option, $select) {
         $select = $this->fixStepArgument($select);
         $option = $this->fixStepArgument($option);
 
-        // We add the click event to deal with autosubmit drop down menus.
-        $selectnode = $this->getSession()->getPage()->findField($select);
-        if ($selectnode == null) {
-            throw new ElementNotFoundException(
-                $this->getSession(), 'form field', 'id|name|label|value', $select
-            );
-        }
+        $selectnode = $this->find_field($select);
         $selectnode->selectOption($option);
+
+        // Adding a click as Selenium requires it to fire some JS events.
         $selectnode->click();
     }
 
     /**
      * Checks checkbox with specified id|name|label|value.
      *
-     * @see Behat\MinkExtension\Context\MinkContext
      * @When /^I check "(?P<option_string>(?:[^"]|\\")*)"$/
+     * @throws ElementNotFoundException Thrown by behat_base::find
      */
     public function check_option($option) {
         $option = $this->fixStepArgument($option);
-        $this->getSession()->getPage()->checkField($option);
+
+        $checkboxnode = $this->find_field($option);
+        $checkboxnode->check();
     }
 
     /**
      * Unchecks checkbox with specified id|name|label|value.
      *
-     * @see Behat\MinkExtension\Context\MinkContext
      * @When /^I uncheck "(?P<option_string>(?:[^"]|\\")*)"$/
+     * @throws ElementNotFoundException Thrown by behat_base::find
      */
     public function uncheck_option($option) {
         $option = $this->fixStepArgument($option);
-        $this->getSession()->getPage()->uncheckField($option);
+
+        $checkboxnode = $this->find_field($option);
+        $checkboxnode->uncheck();
     }
 
     /**
      * Checks that the form element field have the specified value.
      *
-     * @throws ElementNotFoundException
-     * @throws ExpectationException
      * @Then /^the "(?P<field_string>(?:[^"]|\\")*)" field should match "(?P<value_string>(?:[^"]|\\")*)" value$/
+     * @throws ExpectationException
+     * @throws ElementNotFoundException Thrown by behat_base::find
      * @param mixed $locator
      * @param mixed $value
      */
@@ -170,12 +161,7 @@ class behat_forms extends behat_base {
         $locator = $this->fixStepArgument($locator);
         $value = $this->fixStepArgument($value);
 
-        $fieldnode = $this->getSession()->getPage()->findField($locator);
-        if (null === $fieldnode) {
-            throw new ElementNotFoundException(
-                $this->getSession(), 'form field', 'id|name|label|value', $locator
-            );
-        }
+        $fieldnode = $this->find_field($locator);
 
         // Gets the field instance.
         $field = $this->get_field($fieldnode, $locator);
@@ -192,8 +178,8 @@ class behat_forms extends behat_base {
     /**
      * Checks, that checkbox with specified in|name|label|value is checked.
      *
-     * @see Behat\MinkExtension\Context\MinkContext
      * @Then /^the "(?P<checkbox_string>(?:[^"]|\\")*)" checkbox should be checked$/
+     * @see Behat\MinkExtension\Context\MinkContext
      */
     public function assert_checkbox_checked($checkbox) {
         $checkbox = $this->fixStepArgument($checkbox);
@@ -203,8 +189,8 @@ class behat_forms extends behat_base {
     /**
      * Checks, that checkbox with specified in|name|label|value is unchecked.
      *
-     * @see Behat\MinkExtension\Context\MinkContext
      * @Then /^the "(?P<checkbox_string>(?:[^"]|\\")*)" checkbox should not be checked$/
+     * @see Behat\MinkExtension\Context\MinkContext
      */
     public function assert_checkbox_not_checked($checkbox) {
         $checkbox = $this->fixStepArgument($checkbox);
@@ -214,9 +200,9 @@ class behat_forms extends behat_base {
     /**
      * Checks, that given select box contains the specified option.
      *
-     * @throws ExpectationException
-     * @throws ElementNotFoundException
      * @Then /^the "(?P<select_string>(?:[^"]|\\")*)" select box should contain "(?P<option_string>(?:[^"]|\\")*)"$/
+     * @throws ExpectationException
+     * @throws ElementNotFoundException Thrown by behat_base::find
      * @param string $select The select element name
      * @param string $option The option text/value
      */
@@ -225,12 +211,7 @@ class behat_forms extends behat_base {
         $select = $this->fixStepArgument($select);
         $option = $this->fixStepArgument($option);
 
-        $selectnode = $this->getSession()->getPage()->findField($select);
-        if ($selectnode == null) {
-            throw new ElementNotFoundException(
-                $this->getSession(), 'form field', 'id|name|label|value', $select
-            );
-        }
+        $selectnode = $this->find_field($select);
 
         $regex = '/' . preg_quote($option, '/') . '/ui';
         if (!preg_match($regex, $selectnode->getText())) {
@@ -245,9 +226,9 @@ class behat_forms extends behat_base {
     /**
      * Checks, that given select box does not contain the specified option.
      *
-     * @throws ExpectationException
-     * @throws ElementNotFoundException
      * @Then /^the "(?P<select_string>(?:[^"]|\\")*)" select box should not contain "(?P<option_string>(?:[^"]|\\")*)"$/
+     * @throws ExpectationException
+     * @throws ElementNotFoundException Thrown by behat_base::find
      * @param string $select The select element name
      * @param string $option The option text/value
      */
@@ -256,12 +237,7 @@ class behat_forms extends behat_base {
         $select = $this->fixStepArgument($select);
         $option = $this->fixStepArgument($option);
 
-        $selectnode = $this->getSession()->getPage()->findField($select);
-        if ($selectnode == null) {
-            throw new ElementNotFoundException(
-                $this->getSession(), 'form field', 'id|name|label|value', $select
-            );
-        }
+        $selectnode = $this->find_field($select);
 
         $regex = '/' . preg_quote($option, '/') . '/ui';
         if (preg_match($regex, $selectnode->getText())) {
