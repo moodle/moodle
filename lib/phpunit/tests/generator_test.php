@@ -109,4 +109,86 @@ class core_phpunit_generator_testcase extends advanced_testcase {
         $page = $generator->create_block('online_users');
         $this->assertNotEmpty($page);
     }
+
+    public function test_enrol_user() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $selfplugin = enrol_get_plugin('self');
+        $this->assertNotEmpty($selfplugin);
+
+        $manualplugin = enrol_get_plugin('manual');
+        $this->assertNotEmpty($manualplugin);
+
+        // Prepare some data.
+
+        $studentrole = $DB->get_record('role', array('shortname'=>'student'));
+        $this->assertNotEmpty($studentrole);
+        $teacherrole = $DB->get_record('role', array('shortname'=>'teacher'));
+        $this->assertNotEmpty($teacherrole);
+
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+        $course3 = $this->getDataGenerator()->create_course();
+
+        $context1 = context_course::instance($course1->id);
+        $context2 = context_course::instance($course2->id);
+        $context3 = context_course::instance($course3->id);
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+
+        $this->assertEquals(3, $DB->count_records('enrol', array('enrol'=>'self')));
+        $instance1 = $DB->get_record('enrol', array('courseid'=>$course1->id, 'enrol'=>'self'), '*', MUST_EXIST);
+        $instance2 = $DB->get_record('enrol', array('courseid'=>$course2->id, 'enrol'=>'self'), '*', MUST_EXIST);
+        $instance3 = $DB->get_record('enrol', array('courseid'=>$course3->id, 'enrol'=>'self'), '*', MUST_EXIST);
+
+        $this->assertEquals($studentrole->id, $instance1->roleid);
+        $this->assertEquals($studentrole->id, $instance2->roleid);
+        $this->assertEquals($studentrole->id, $instance3->roleid);
+
+        $this->assertEquals(3, $DB->count_records('enrol', array('enrol'=>'manual')));
+        $maninstance1 = $DB->get_record('enrol', array('courseid'=>$course1->id, 'enrol'=>'manual'), '*', MUST_EXIST);
+        $maninstance2 = $DB->get_record('enrol', array('courseid'=>$course2->id, 'enrol'=>'manual'), '*', MUST_EXIST);
+        $maninstance3 = $DB->get_record('enrol', array('courseid'=>$course3->id, 'enrol'=>'manual'), '*', MUST_EXIST);
+        $maninstance3->roleid = $teacherrole->id;
+        $DB->update_record('enrol', $maninstance3, array('id'=>$maninstance3->id));
+
+        $this->assertEquals($studentrole->id, $maninstance1->roleid);
+        $this->assertEquals($studentrole->id, $maninstance2->roleid);
+        $this->assertEquals($teacherrole->id, $maninstance3->roleid);
+
+        $result = $this->getDataGenerator()->enrol_user($user1->id, $course1->id);
+        $this->assertTrue($result);
+        $this->assertTrue($DB->record_exists('user_enrolments', array('enrolid'=>$maninstance1->id, 'userid'=>$user1->id)));
+        $this->assertTrue($DB->record_exists('role_assignments', array('contextid'=>$context1->id, 'userid'=>$user1->id, 'roleid'=>$studentrole->id)));
+
+        $result = $this->getDataGenerator()->enrol_user($user1->id, $course2->id, $teacherrole->id, 'manual');
+        $this->assertTrue($result);
+        $this->assertTrue($DB->record_exists('user_enrolments', array('enrolid'=>$maninstance2->id, 'userid'=>$user1->id)));
+        $this->assertTrue($DB->record_exists('role_assignments', array('contextid'=>$context2->id, 'userid'=>$user1->id, 'roleid'=>$teacherrole->id)));
+
+        $result = $this->getDataGenerator()->enrol_user($user1->id, $course3->id, 0, 'manual');
+        $this->assertTrue($result);
+        $this->assertTrue($DB->record_exists('user_enrolments', array('enrolid'=>$maninstance3->id, 'userid'=>$user1->id)));
+        $this->assertFalse($DB->record_exists('role_assignments', array('contextid'=>$context3->id, 'userid'=>$user1->id)));
+
+
+        $result = $this->getDataGenerator()->enrol_user($user2->id, $course1->id, null, 'self');
+        $this->assertTrue($result);
+        $this->assertTrue($DB->record_exists('user_enrolments', array('enrolid'=>$instance1->id, 'userid'=>$user2->id)));
+        $this->assertTrue($DB->record_exists('role_assignments', array('contextid'=>$context1->id, 'userid'=>$user2->id, 'roleid'=>$studentrole->id)));
+
+
+        $selfplugin->add_instance($course2, array('status'=>ENROL_INSTANCE_ENABLED, 'roleid'=>$teacherrole->id));
+        $result = $this->getDataGenerator()->enrol_user($user2->id, $course2->id, null, 'self');
+        $this->assertFalse($result);
+
+        $DB->delete_records('enrol', array('enrol'=>'self', 'courseid'=>$course3->id));
+        $result = $this->getDataGenerator()->enrol_user($user2->id, $course3->id, null, 'self');
+        $this->assertFalse($result);
+
+    }
 }
