@@ -53,7 +53,16 @@ function xmldb_forum_upgrade($oldversion) {
     // Moodle v2.3.0 release upgrade line
     // Put any upgrade step following this
 
-
+    // Forcefully assign mod/forum:allowforcesubscribe to frontpage role, as we missed that when
+    // capability was introduced.
+    if ($oldversion < 2012061702) {
+        // If capability mod/forum:allowforcesubscribe is defined then set it for frontpage role.
+        if (get_capability_info('mod/forum:allowforcesubscribe')) {
+            assign_legacy_capabilities('mod/forum:allowforcesubscribe', array('frontpage' => CAP_ALLOW));
+        }
+        // Forum savepoint reached.
+        upgrade_mod_savepoint(true, 2012061702, 'forum');
+    }
     return true;
 }
 
