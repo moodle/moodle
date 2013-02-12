@@ -272,9 +272,10 @@ class course_enrolment_manager {
      * @param bool $searchanywhere
      * @param int $page Defaults to 0
      * @param int $perpage Defaults to 25
+     * @param int $addedenrollment Defaults to 0
      * @return array Array(totalusers => int, users => array)
      */
-    public function get_potential_users($enrolid, $search='', $searchanywhere=false, $page=0, $perpage=25) {
+    public function get_potential_users($enrolid, $search='', $searchanywhere=false, $page=0, $perpage=25, $addedenrollment=0) {
         global $DB, $CFG;
 
         // Add some additional sensible conditions
@@ -312,7 +313,7 @@ class course_enrolment_manager {
         $order = ' ORDER BY u.lastname ASC, u.firstname ASC';
         $params['enrolid'] = $enrolid;
         $totalusers = $DB->count_records_sql($countfields . $sql, $params);
-        $availableusers = $DB->get_records_sql($fields . $sql . $order, $params, $page*$perpage, $perpage);
+        $availableusers = $DB->get_records_sql($fields . $sql . $order, $params, ($page*$perpage) - $addedenrollment, $perpage);
         return array('totalusers'=>$totalusers, 'users'=>$availableusers);
     }
 
