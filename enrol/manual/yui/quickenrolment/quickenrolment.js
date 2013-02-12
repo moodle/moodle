@@ -23,7 +23,8 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
         DEFAULTDURATION : 'defaultDuration',
         ASSIGNABLEROLES : 'assignableRoles',
         DISABLEGRADEHISTORY : 'disableGradeHistory',
-        RECOVERGRADESDEFAULT : 'recoverGradesDefault'
+        RECOVERGRADESDEFAULT : 'recoverGradesDefault',
+        ENROLCOUNT : 'enrolCount'
     };
     /** CSS classes for nodes in structure **/
     var CSS = {
@@ -309,6 +310,8 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
             params['action'] = 'searchusers';
             params['search'] = this.get(UEP.SEARCH).get('value');
             params['page'] = this.get(UEP.PAGE);
+            params['enrolcount'] = this.get(UEP.ENROLCOUNT);
+
             if (this.get(UEP.MULTIPLE)) {
                 alert('oh no there are multiple');
             } else {
@@ -420,6 +423,8 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
                                 args.userNode.addClass(CSS.ENROLLED);
                                 args.userNode.one('.'+CSS.ENROL).remove();
                                 this.set(UEP.REQUIREREFRESH, true);
+                                var countenrol = this.get(UEP.ENROLCOUNT)+1;
+                                this.set(UEP.ENROLCOUNT, countenrol);
                             }
                         } catch (e) {
                             new M.core.exception(e);
@@ -532,6 +537,10 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
             },
             recoverGradesDefault : {
                 value : ''
+            },
+            enrolCount : {
+                value : 0,
+                validator : Y.Lang.isNumber
             }
         }
     });
