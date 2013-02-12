@@ -360,8 +360,17 @@ class plugin_manager {
      * @return bool
      */
     public static function is_deleted_standard_plugin($type, $name) {
-        static $plugins = array(
-            // do not add 1.9-2.2 plugin removals here
+
+        // Example of the array structure:
+        // $plugins = array(
+        //     'block' => array('admin', 'admin_tree'),
+        //     'mod' => array('assignment'),
+        // );
+        // Do not include plugins that were removed during upgrades to versions that are
+        // not supported as source versions for upgrade any more. For example, at MOODLE_23_STABLE
+        // branch, listed should be no plugins that were removed at 1.9.x - 2.1.x versions as
+        // Moodle 2.3 supports upgrades from 2.2.x only.
+        $plugins = array(
             'qformat' => array('blackboard'),
         );
 
@@ -378,7 +387,7 @@ class plugin_manager {
      * @return false|array array of standard plugins or false if the type is unknown
      */
     public static function standard_plugins_list($type) {
-        static $standard_plugins = array(
+        $standard_plugins = array(
 
             'assignment' => array(
                 'offline', 'online', 'upload', 'uploadsingle'
@@ -2461,30 +2470,35 @@ abstract class plugininfo_base {
     }
 
     /**
-     * Provides access to plugin versions from {config_plugins}
+     * Provides access to plugin versions from the {config_plugins} table
      *
      * @param string $plugin plugin name
-     * @param double $disablecache optional, defaults to false
-     * @return int|false the stored value or false if not found
+     * @param bool $disablecache do not attempt to obtain data from the cache
+     * @return int|bool the stored value or false if not found
      */
     protected function get_version_from_config_plugins($plugin, $disablecache=false) {
         global $DB;
-        static $pluginversions = null;
 
-        if (is_null($pluginversions) or $disablecache) {
+        $cache = cache::make_from_params(cache_store::MODE_REQUEST, 'core_plugin', 'plugininfo_base',
+            array(), array('simplekeys' => true, 'simpledata' => true));
+
+        $pluginversions = $cache->get('versions_db');
+
+        if ($pluginversions === false or $disablecache) {
             try {
                 $pluginversions = $DB->get_records_menu('config_plugins', array('name' => 'version'), 'plugin', 'plugin,value');
             } catch (dml_exception $e) {
                 // before install
                 $pluginversions = array();
             }
+            $cache->set('versions_db', $pluginversions);
         }
 
-        if (!array_key_exists($plugin, $pluginversions)) {
+        if (isset($pluginversions[$plugin])) {
+            return $pluginversions[$plugin];
+        } else {
             return false;
         }
-
-        return $pluginversions[$plugin];
     }
 }
 
@@ -2621,23 +2635,28 @@ class plugininfo_block extends plugininfo_base {
     /**
      * Provides access to the records in {block} table
      *
-     * @param bool $disablecache do not use internal static cache
+     * @param bool $disablecache do not attempt to obtain data from the cache
      * @return array array of stdClasses
      */
     protected static function get_blocks_info($disablecache=false) {
         global $DB;
-        static $blocksinfocache = null;
 
-        if (is_null($blocksinfocache) or $disablecache) {
+        $cache = cache::make_from_params(cache_store::MODE_REQUEST, 'core_plugin', 'plugininfo_block',
+            array(), array('simplekeys' => true, 'simpledata' => true));
+
+        $blocktypes = $cache->get('blocktypes');
+
+        if ($blocktypes === false or $disablecache) {
             try {
-                $blocksinfocache = $DB->get_records('block', null, 'name', 'name,id,version,visible');
+                $blocktypes = $DB->get_records('block', null, 'name', 'name,id,version,visible');
             } catch (dml_exception $e) {
                 // before install
-                $blocksinfocache = array();
+                $blocktypes = array();
             }
+            $cache->set('blocktypes', $blocktypes);
         }
 
-        return $blocksinfocache;
+        return $blocktypes;
     }
 }
 
@@ -2761,20 +2780,26 @@ class plugininfo_filter extends plugininfo_base {
      *
      * The legacy filter name is available as ->legacyname property.
      *
-     * @param bool $disablecache
+     * @param bool $disablecache do not attempt to obtain data from the cache
      * @return array
      */
     protected static function get_global_states($disablecache=false) {
         global $DB;
-        static $globalstatescache = null;
 
-        if ($disablecache or is_null($globalstatescache)) {
-            $globalstatescache = array();
+        $cache = cache::make_from_params(cache_store::MODE_REQUEST, 'core_plugin', 'plugininfo_filter',
+            array(), array('simplekeys' => true, 'simpledata' => true));
+
+        $globalstates = $cache->get('globalstates');
+
+        if ($globalstates === false or $disablecache) {
 
             if (!$DB->get_manager()->table_exists('filter_active')) {
                 // Not installed yet.
-                return $globalstatescache;
+                $cache->set('globalstates', array());
+                return array();
             }
+
+            $globalstates = array();
 
             foreach (filter_get_global_states() as $name => $info) {
                 if (strpos($name, '/') !== false) {
@@ -2782,14 +2807,16 @@ class plugininfo_filter extends plugininfo_base {
                     continue;
                 }
 
-                $filterinfo                 = new stdClass();
-                $filterinfo->active         = $info->active;
-                $filterinfo->sortorder      = $info->sortorder;
-                $globalstatescache[$name]   = $filterinfo;
+                $filterinfo = new stdClass();
+                $filterinfo->active = $info->active;
+                $filterinfo->sortorder = $info->sortorder;
+                $globalstates[$name] = $filterinfo;
             }
+
+            $cache->set('globalstates', $globalstates);
         }
 
-        return $globalstatescache;
+        return $globalstates;
     }
 }
 
@@ -2925,23 +2952,28 @@ class plugininfo_mod extends plugininfo_base {
     /**
      * Provides access to the records in {modules} table
      *
-     * @param bool $disablecache do not use internal static cache
+     * @param bool $disablecache do not attempt to obtain data from the cache
      * @return array array of stdClasses
      */
     protected static function get_modules_info($disablecache=false) {
         global $DB;
-        static $modulesinfocache = null;
 
-        if (is_null($modulesinfocache) or $disablecache) {
+        $cache = cache::make_from_params(cache_store::MODE_REQUEST, 'core_plugin', 'plugininfo_mod',
+            array(), array('simplekeys' => true, 'simpledata' => true));
+
+        $modulesinfo = $cache->get('modulesinfo');
+
+        if ($modulesinfo === false or $disablecache) {
             try {
-                $modulesinfocache = $DB->get_records('modules', null, 'name', 'name,id,version,visible');
+                $modulesinfo = $DB->get_records('modules', null, 'name', 'name,id,version,visible');
             } catch (dml_exception $e) {
                 // before install
-                $modulesinfocache = array();
+                $modulesinfo = array();
             }
+            $cache->set('modulesinfo', $modulesinfo);
         }
 
-        return $modulesinfocache;
+        return $modulesinfo;
     }
 }
 
@@ -3000,17 +3032,13 @@ class plugininfo_auth extends plugininfo_base {
 
     public function is_enabled() {
         global $CFG;
-        /** @var null|array list of enabled authentication plugins */
-        static $enabled = null;
 
         if (in_array($this->name, array('nologin', 'manual'))) {
             // these two are always enabled and can't be disabled
             return null;
         }
 
-        if (is_null($enabled)) {
-            $enabled = array_flip(explode(',', $CFG->auth));
-        }
+        $enabled = array_flip(explode(',', $CFG->auth));
 
         return isset($enabled[$this->name]);
     }
@@ -3052,17 +3080,13 @@ class plugininfo_enrol extends plugininfo_base {
 
     public function is_enabled() {
         global $CFG;
-        /** @var null|array list of enabled enrolment plugins */
-        static $enabled = null;
 
         // We do not actually need whole enrolment classes here so we do not call
         // {@link enrol_get_plugins()}. Note that this may produce slightly different
         // results, for example if the enrolment plugin does not contain lib.php
         // but it is listed in $CFG->enrol_plugins_enabled
 
-        if (is_null($enabled)) {
-            $enabled = array_flip(explode(',', $CFG->enrol_plugins_enabled));
-        }
+        $enabled = array_flip(explode(',', $CFG->enrol_plugins_enabled));
 
         return isset($enabled[$this->name]);
     }
@@ -3190,18 +3214,23 @@ class plugininfo_repository extends plugininfo_base {
     /**
      * Provides access to the records in {repository} table
      *
-     * @param bool $disablecache do not use internal static cache
+     * @param bool $disablecache do not attempt to obtain data from the cache
      * @return array array of stdClasses
      */
     protected static function get_enabled_repositories($disablecache=false) {
         global $DB;
-        static $repositories = null;
 
-        if (is_null($repositories) or $disablecache) {
-            $repositories = $DB->get_records('repository', null, 'type', 'type,visible,sortorder');
+        $cache = cache::make_from_params(cache_store::MODE_REQUEST, 'core_plugin', 'plugininfo_repository',
+            array(), array('simplekeys' => true, 'simpledata' => true));
+
+        $enabled = $cache->get('enabled');
+
+        if ($enabled === false or $disablecache) {
+            $enabled = $DB->get_records('repository', null, 'type', 'type,visible,sortorder');
+            $cache->set('enabled', $enabled);
         }
 
-        return $repositories;
+        return $enabled;
     }
 }
 
@@ -3219,30 +3248,39 @@ class plugininfo_portfolio extends plugininfo_base {
     }
 
     /**
-     * Provides access to the records in {portfolio_instance} table
+     * Returns list of enabled portfolio plugins
      *
-     * @param bool $disablecache do not use internal static cache
-     * @return array array of stdClasses
+     * Portfolio plugin is enabled if there is at least one record in the {portfolio_instance}
+     * table for it.
+     *
+     * @param bool $disablecache do not attempt to obtain data from the cache
+     * @return array array of stdClasses with properties plugin and visible indexed by plugin
      */
     protected static function get_enabled_portfolios($disablecache=false) {
         global $DB;
-        static $portfolios = null;
 
-        if (is_null($portfolios) or $disablecache) {
-            $portfolios = array();
-            $instances  = $DB->get_recordset('portfolio_instance', null, 'plugin');
+        $cache = cache::make_from_params(cache_store::MODE_REQUEST, 'core_plugin', 'plugininfo_portfolio',
+            array(), array('simplekeys' => true, 'simpledata' => true));
+
+        $enabled = $cache->get('enabled');
+
+        if ($enabled === false or $disablecache) {
+            $enabled = array();
+            $instances = $DB->get_recordset('portfolio_instance', null, '', 'plugin,visible');
             foreach ($instances as $instance) {
-                if (isset($portfolios[$instance->plugin])) {
+                if (isset($enabled[$instance->plugin])) {
                     if ($instance->visible) {
-                        $portfolios[$instance->plugin]->visible = $instance->visible;
+                        $enabled[$instance->plugin]->visible = $instance->visible;
                     }
                 } else {
-                    $portfolios[$instance->plugin] = $instance;
+                    $enabled[$instance->plugin] = $instance;
                 }
             }
+            $instances->close();
+            $cache->set('enabled', $enabled);
         }
 
-        return $portfolios;
+        return $enabled;
     }
 }
 
