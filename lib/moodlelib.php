@@ -116,7 +116,11 @@ define('PARAM_BOOL',     'bool');
 define('PARAM_CAPABILITY',   'capability');
 
 /**
- * PARAM_CLEANHTML - cleans submitted HTML code. use only for text in HTML format. This cleaning may fix xhtml strictness too.
+ * PARAM_CLEANHTML - cleans submitted HTML code. Note that you almost never want
+ * to use this. The normal mode of operation is to use PARAM_RAW when recieving
+ * the input (required/optional_param or formslib) and then sanitse the HTML
+ * using format_text on output. This is for the rare cases when you want to
+ * sanitise the HTML on input. This cleaning may also fix xhtml strictness.
  */
 define('PARAM_CLEANHTML', 'cleanhtml');
 
