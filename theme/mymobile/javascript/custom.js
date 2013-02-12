@@ -243,19 +243,6 @@ $(document).ready(function() {
         $('.path-mod-hotpot button').attr("data-role", "none");
     });
 
-    //collapsed topic only stuff
-    $('div#page-course-view-topcollPAGE').live('pagebeforecreate',function(event, ui){
-        $('#page-course-view-topcollPAGE ul.section').attr("data-role", "none");
-        $('.section li img').removeClass("ui-li-icon");
-        $.getScript('../course/format/topcoll/module.js');
-        $('#page-course-view-topcollPAGE tr.cps a').attr("data-role", "button").attr("data-icon", "arrow-r");
-        $('#page-course-view-topcollPAGE #thetopics').attr("data-role", "controlgroup");
-        $('#page-course-view-topcollPAGE td.cps_centre').each(function(index) {
-            var cpsc = $(this).text().replace('<br>','').replace(')','');
-            $(this).prev('td').find('a').append('<span class="ui-li-count ui-btn-up-a ui-btn-corner-all">' + cpsc + '</span>');
-        });
-    });
-
     ///// functions below does stuff after creating page for some cleaning...
     $('div').live('pageinit',function(event, ui){
         $('.path-calendar div.ui-radio label:first-child, .path-mod-lesson div.ui-radio label:first-child, #page-mod-wiki-createPAGE div.ui-radio label:first-child').addClass("afirst");
