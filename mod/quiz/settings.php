@@ -53,17 +53,17 @@ $quizsettings->add(new admin_setting_heading('quizintro', '', get_string('config
 // Time limit.
 $quizsettings->add(new admin_setting_configtext_with_advanced('quiz/timelimit',
         get_string('timelimitsec', 'quiz'), get_string('configtimelimitsec', 'quiz'),
-        array('value' => '0', 'fix' => false), PARAM_INT));
+        array('value' => '0', 'adv' => false), PARAM_INT));
 
 // What to do with overdue attempts.
 $quizsettings->add(new mod_quiz_admin_setting_overduehandling('quiz/overduehandling',
         get_string('overduehandling', 'quiz'), get_string('overduehandling_desc', 'quiz'),
-        array('value' => 'autoabandon', 'fix' => false), null));
+        array('value' => 'autoabandon', 'adv' => false), null));
 
 // Grace period time.
 $quizsettings->add(new admin_setting_configtext_with_advanced('quiz/graceperiod',
         get_string('graceperiod', 'quiz'), get_string('graceperiod_desc', 'quiz'),
-        array('value' => '86400', 'fix' => false), PARAM_INT));
+        array('value' => '86400', 'adv' => false), PARAM_INT));
 
 // Minimum grace period used behind the scenes.
 $quizsettings->add(new admin_setting_configtext('quiz/graceperiodmin',
@@ -77,12 +77,12 @@ for ($i = 1; $i <= QUIZ_MAX_ATTEMPT_OPTION; $i++) {
 }
 $quizsettings->add(new admin_setting_configselect_with_advanced('quiz/attempts',
         get_string('attemptsallowed', 'quiz'), get_string('configattemptsallowed', 'quiz'),
-        array('value' => 0, 'fix' => false), $options));
+        array('value' => 0, 'adv' => false), $options));
 
 // Grading method.
 $quizsettings->add(new mod_quiz_admin_setting_grademethod('quiz/grademethod',
         get_string('grademethod', 'quiz'), get_string('configgrademethod', 'quiz'),
-        array('value' => QUIZ_GRADEHIGHEST, 'fix' => false), null));
+        array('value' => QUIZ_GRADEHIGHEST, 'adv' => false), null));
 
 // Maximum grade.
 $quizsettings->add(new admin_setting_configtext('quiz/maximumgrade',
@@ -102,7 +102,7 @@ for ($i = 2; $i <= QUIZ_MAX_QPP_OPTION; ++$i) {
 }
 $quizsettings->add(new admin_setting_configselect_with_advanced('quiz/questionsperpage',
         get_string('newpageevery', 'quiz'), get_string('confignewpageevery', 'quiz'),
-        array('value' => 1, 'fix' => false), $perpage));
+        array('value' => 1, 'adv' => false), $perpage));
 
 // Navigation method.
 $quizsettings->add(new admin_setting_configselect_with_advanced('quiz/navmethod',
@@ -153,7 +153,7 @@ for ($i = 0; $i <= QUIZ_MAX_DECIMAL_OPTION; $i++) {
 }
 $quizsettings->add(new admin_setting_configselect_with_advanced('quiz/decimalpoints',
         get_string('decimalplaces', 'quiz'), get_string('configdecimalplaces', 'quiz'),
-        array('value' => 2, 'fix' => false), $options));
+        array('value' => 2, 'adv' => false), $options));
 
 // Decimal places for question grades.
 $options = array(-1 => get_string('sameasoverall', 'quiz'));
@@ -163,7 +163,7 @@ for ($i = 0; $i <= QUIZ_MAX_Q_DECIMAL_OPTION; $i++) {
 $quizsettings->add(new admin_setting_configselect_with_advanced('quiz/questiondecimalpoints',
         get_string('decimalplacesquestion', 'quiz'),
         get_string('configdecimalplacesquestion', 'quiz'),
-        array('value' => -1, 'fix' => true), $options));
+        array('value' => -1, 'adv' => true), $options));
 
 // Show blocks during quiz attempts.
 $quizsettings->add(new admin_setting_configcheckbox_with_advanced('quiz/showblocks',
@@ -173,20 +173,20 @@ $quizsettings->add(new admin_setting_configcheckbox_with_advanced('quiz/showbloc
 // Password.
 $quizsettings->add(new admin_setting_configtext_with_advanced('quiz/password',
         get_string('requirepassword', 'quiz'), get_string('configrequirepassword', 'quiz'),
-        array('value' => '', 'fix' => true), PARAM_TEXT));
+        array('value' => '', 'adv' => true), PARAM_TEXT));
 
 // IP restrictions.
 $quizsettings->add(new admin_setting_configtext_with_advanced('quiz/subnet',
         get_string('requiresubnet', 'quiz'), get_string('configrequiresubnet', 'quiz'),
-        array('value' => '', 'fix' => true), PARAM_TEXT));
+        array('value' => '', 'adv' => true), PARAM_TEXT));
 
 // Enforced delay between attempts.
 $quizsettings->add(new admin_setting_configtext_with_advanced('quiz/delay1',
         get_string('delay1st2nd', 'quiz'), get_string('configdelay1st2nd', 'quiz'),
-        array('value' => 0, 'fix' => true), PARAM_INTEGER));
+        array('value' => 0, 'adv' => true), PARAM_INT));
 $quizsettings->add(new admin_setting_configtext_with_advanced('quiz/delay2',
         get_string('delaylater', 'quiz'), get_string('configdelaylater', 'quiz'),
-        array('value' => 0, 'fix' => true), PARAM_INTEGER));
+        array('value' => 0, 'adv' => true), PARAM_INT));
 
 // Browser security.
 $quizsettings->add(new mod_quiz_admin_setting_browsersecurity('quiz/browsersecurity',
