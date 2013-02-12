@@ -25,14 +25,12 @@ Feature: Add activities to courses
       | Introduction | Test database description |
       | Required entries | 9 |
       | Comments | Yes |
-      | ID number | ASD123 |
     Then I should not see "Adding a new"
     And I follow "Test name"
     And I follow "Edit settings"
     And the "Name" field should match "Test name" value
     And the "Required entries" field should match "9" value
     And the "Comments" field should match "Yes" value
-    And the "ID number" field should match "ASD123" value
 
   @javascript
   Scenario: Add an activity without the required fields
