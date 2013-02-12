@@ -43,9 +43,12 @@ $parts = explode('/', $path);
 $version = array_shift($parts);
 
 if ($version == 'moodle' && count($parts) >= 3) {
-    //TODO: this is a ugly hack because we should not load any libs here!
-    define('MOODLE_INTERNAL', true);
-    require_once($CFG->libdir.'/moodlelib.php');
+    if (!defined('ABORT_AFTER_CONFIG_CANCEL')) {
+        define('ABORT_AFTER_CONFIG_CANCEL', true);
+        define('NO_UPGRADE_CHECK', true);
+        define('NO_MOODLE_COOKIES', true);
+        require($CFG->libdir.'/setup.php');
+    }
     $frankenstyle = array_shift($parts);
     $module = array_shift($parts);
     $image = array_pop($parts);
