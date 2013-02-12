@@ -717,7 +717,7 @@ class progressive_parser_test extends advanced_testcase {
         $this->assertEquals(count($allnotifs), count($snotifs) + count($enotifs) + count($chunks));
         // Check integrity of the notifications.
         $errcount = $this->helper_check_notifications_order_integrity($allnotifs);
-        $this->assertEquals(0, $errcount); // This fails at the moment.
+        $this->assertEquals(0, $errcount);
     }
 
     /**
