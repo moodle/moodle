@@ -1464,7 +1464,7 @@ function message_history_link($userid1, $userid2, $return=false, $keywords='', $
  * @param int|array $courseids Course ID or array of course IDs.
  * @param string $searchtext the text to search for.
  * @param string $sort the column name to order by.
- * @param string $exceptions comma separated list of user IDs to exclude
+ * @param string|array $exceptions comma separated list or array of user IDs to exclude.
  * @return array An array of {@link $USER} records.
  */
 function message_search_users($courseids, $searchtext, $sort='', $exceptions='') {
@@ -1481,12 +1481,7 @@ function message_search_users($courseids, $searchtext, $sort='', $exceptions='')
     }
 
     $fullname = $DB->sql_fullname();
-
-    if (!empty($exceptions)) {
-        $except = ' AND u.id NOT IN ('. $exceptions .') ';
-    } else {
-        $except = '';
-    }
+    $ufields = user_picture::fields('u');
 
     if (!empty($sort)) {
         $order = ' ORDER BY '. $sort;
@@ -1494,22 +1489,38 @@ function message_search_users($courseids, $searchtext, $sort='', $exceptions='')
         $order = '';
     }
 
-    $ufields = user_picture::fields('u');
+    $params = array(
+        'userid' => $USER->id,
+        'query' => "%$searchtext%"
+    );
+
+    if (empty($exceptions)) {
+        $exceptions = array();
+    } else if (!empty($exceptions) && is_string($exceptions)) {
+        $exceptions = explode(',', $exceptions);
+    }
+
+    // Ignore self and guest account.
+    $exceptions[] = $USER->id;
+    $exceptions[] = $CFG->siteguest;
+
+    // Exclude exceptions from the search result.
+    list($except, $params_except) = $DB->get_in_or_equal($exceptions, SQL_PARAMS_NAMED, 'param', false);
+    $except = ' AND u.id ' . $except;
+    $params = array_merge($params_except, $params);
 
     if (in_array(SITEID, $courseids)) {
         // Search on site level.
-        $params = array($USER->id, "%$searchtext%");
         return $DB->get_records_sql("SELECT $ufields, mc.id as contactlistid, mc.blocked
                                        FROM {user} u
                                        LEFT JOIN {message_contacts} mc
-                                            ON mc.contactid = u.id AND mc.userid = ?
+                                            ON mc.contactid = u.id AND mc.userid = :userid
                                       WHERE u.deleted = '0' AND u.confirmed = '1'
-                                            AND (".$DB->sql_like($fullname, '?', false).")
+                                            AND (".$DB->sql_like($fullname, ':query', false).")
                                             $except
                                      $order", $params);
     } else {
         // Search in courses.
-        $params = array($USER->id, "%$searchtext%");
 
         // Getting the context IDs or each course.
         $contextids = array();
@@ -1517,7 +1528,7 @@ function message_search_users($courseids, $searchtext, $sort='', $exceptions='')
             $context = context_course::instance($courseid);
             $contextids = array_merge($contextids, $context->get_parent_context_ids(true));
         }
-        list($contextwhere, $contextparams) = $DB->get_in_or_equal(array_unique($contextids));
+        list($contextwhere, $contextparams) = $DB->get_in_or_equal(array_unique($contextids), SQL_PARAMS_NAMED, 'context');
         $params = array_merge($params, $contextparams);
 
         // Everyone who has a role assignment in this course or higher.
@@ -1526,9 +1537,9 @@ function message_search_users($courseids, $searchtext, $sort='', $exceptions='')
                                          FROM {user} u
                                          JOIN {role_assignments} ra ON ra.userid = u.id
                                          LEFT JOIN {message_contacts} mc
-                                              ON mc.contactid = u.id AND mc.userid = ?
+                                              ON mc.contactid = u.id AND mc.userid = :userid
                                         WHERE u.deleted = '0' AND u.confirmed = '1'
-                                              AND (".$DB->sql_like($fullname, '?', false).")
+                                              AND (".$DB->sql_like($fullname, ':query', false).")
                                               AND ra.contextid $contextwhere
                                               $except
                                        $order", $params);
