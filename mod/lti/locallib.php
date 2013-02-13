@@ -164,7 +164,7 @@ function lti_view($instance) {
         $returnurlparams['unsigned'] = '1';
     }
     
-    //Add the return URL. We send the launch container along to help us avoid frames-within-frames when the user returns
+    // Add the return URL. We send the launch container along to help us avoid frames-within-frames when the user returns
     $url = new moodle_url('/mod/lti/return.php', $returnurlparams);
     $returnurl = $url->out(false);
 
