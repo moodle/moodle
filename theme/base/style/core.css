@@ -234,7 +234,7 @@ a.skip:active {position: static;display: block;}
 .mform fieldset.hidden {border-width:0;}
 .mform fieldset.group {margin-bottom: 0}
 .mform fieldset.error {border: 1px solid #A00;}
-.mform fieldset.collapsible legend a.fheader {padding: 0 5px 0 15px; background: url([[pix:t/expanded]]) 2px center no-repeat;}
+.mform fieldset.collapsible legend a.fheader {padding: 0 5px 0 20px; background: url([[pix:t/expanded]]) 2px center no-repeat;}
 .mform fieldset.collapsed legend a.fheader {background: url([[pix:t/collapsed]]) 2px center no-repeat;}
 .mform fieldset.collapsed.jsprocessed {border-width: 1px 0 0 0; padding: 0;}
 .mform fieldset.collapsed.jsprocessed div.fcontainer {display: none;}
