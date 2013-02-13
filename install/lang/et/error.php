@@ -43,6 +43,6 @@ $string['downloadedfilecheckfailed'] = 'Alla laetud faili kontroll ebaõnnestus.
 $string['invalidmd5'] = 'Vigane md5';
 $string['missingrequiredfield'] = 'Mõned nõutud väljad on puudu';
 $string['remotedownloaderror'] = 'Komponendi alla tõmbamine serverisse ebaõnnestus, palun kontrolli proksi seadeid, PHP cURL laiendus on tungivalt soovitatav.<br /><br />Sa pead tõmbama <a href="{$a->url}">{$a->url}</a> faili käsitsi, kopeerima selle "{$a->dest}" oma serveris ja pakkima lahti sinna.';
-$string['wrongdestpath'] = 'Vale sihtrada.';
+$string['wrongdestpath'] = 'Vale sihtrada';
 $string['wrongsourcebase'] = 'Vale allika URL\'i baas.';
-$string['wrongzipfilename'] = 'Vale ZIP failinimi.';
+$string['wrongzipfilename'] = 'Vale ZIP failinimi';
