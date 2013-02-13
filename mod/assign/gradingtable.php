@@ -414,7 +414,7 @@ class assign_grading_table extends table_sql implements renderable {
                 if ($grade == -1 || $grade === null) {
                     return '';
                 }
-                return format_float($grade);
+                return format_float($grade, 2);
             } else {
                 // This is a custom scale.
                 $scale = $this->assignment->display_grade($grade, false);
@@ -659,6 +659,10 @@ class assign_grading_table extends table_sql implements renderable {
         $o = '-';
 
         if ($row->timemarked && $row->grade !== null && $row->grade >= 0) {
+            $o = userdate($row->timemarked);
+        }
+        if ($row->timemarked && $this->is_downloading()) {
+            // Force it for downloads as it affects import.
             $o = userdate($row->timemarked);
         }
 
