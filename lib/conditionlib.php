@@ -613,7 +613,6 @@ abstract class condition_info_base {
             'email' => get_user_field_name('email'),
             'city' => get_user_field_name('city'),
             'country' => get_user_field_name('country'),
-            'interests' => get_user_field_name('interests'),
             'url' => get_user_field_name('url'),
             'icq' => get_user_field_name('icq'),
             'skype' => get_user_field_name('skype'),
@@ -1252,7 +1251,7 @@ abstract class condition_info_base {
      * @param int $fieldid the user profile field id
      * @return string the user value, or false if user does not have a user field value yet
      */
-    private function get_cached_user_profile_field($userid, $fieldid) {
+    protected function get_cached_user_profile_field($userid, $fieldid) {
         global $USER, $DB, $CFG;
 
         if ($userid === 0) {
