@@ -88,7 +88,6 @@ class assignfeedback_offline_import_grades_form extends moodleform implements re
         while ($record = $gradeimporter->next()) {
             $user = $record->user;
             $grade = $record->grade;
-            $gradedesc = $grade;
             $modified = $record->modified;
             $userdesc = fullname($user);
             if ($assignment->is_blind_marking()) {
@@ -134,7 +133,7 @@ class assignfeedback_offline_import_grades_form extends moodleform implements re
             if (!$skip) {
                 $update = true;
                 $updates[] = get_string('gradeupdate', 'assignfeedback_offline',
-                                            array('grade'=>$gradedesc, 'student'=>$userdesc));
+                                            array('grade'=>format_float($grade, 2), 'student'=>$userdesc));
             }
 
             if ($ignoremodified || !$stalemodificationdate) {
