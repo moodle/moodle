@@ -119,6 +119,9 @@ class behat_hooks extends behat_base {
         behat_util::reset_database();
         behat_util::reset_dataroot();
 
+        purge_all_caches();
+        accesslib_clear_all_caches(true);
+
         // Assing valid data to admin user (some generator-related code needs a valid user).
         $user = $DB->get_record('user', array('username' => 'admin'));
         session_set_user($user);
