@@ -549,7 +549,7 @@ M.course_dndupload = {
         var extension = '';
         var dotpos = file.name.lastIndexOf('.');
         if (dotpos != -1) {
-            extension = file.name.substr(dotpos+1, file.name.length);
+            extension = file.name.substr(dotpos+1, file.name.length).toLowerCase();
         }
 
         for (var i=0; i<filehandlers.length; i++) {
