@@ -171,6 +171,7 @@ class phpunit_util extends testing_util {
         if (class_exists('repository')) {
             repository::reset_caches();
         }
+        filter_manager::reset_caches();
         //TODO MDL-25290: add more resets here and probably refactor them to new core function
 
         // Reset course and module caches.
