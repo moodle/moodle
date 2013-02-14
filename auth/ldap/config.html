@@ -106,6 +106,10 @@ if (!isset($config->ntlmsso_remoteuserformat)) {
 
 $yesno = array(get_string('no'), get_string('yes'));
 
+$fastpathoptions = array(AUTH_NTLM_FASTPATH_YESFORM => get_string('auth_ntlmsso_ie_fastpath_yesform', 'auth_ldap'),
+                         AUTH_NTLM_FASTPATH_YESATTEMPT => get_string('auth_ntlmsso_ie_fastpath_yesattempt', 'auth_ldap'),
+                         AUTH_NTLM_FASTPATH_ATTEMPT => get_string('auth_ntlmsso_ie_fastpath_attempt', 'auth_ldap'));
+
 $disabled = '';
 if (!ldap_paged_results_supported($config->ldap_version)) {
     $disabled = ' disabled="disabled"';
@@ -562,7 +566,7 @@ if (!ldap_paged_results_supported($config->ldap_version)) {
         <label for="menuntlmsso_ie_fastpath"><?php print_string('auth_ntlmsso_ie_fastpath_key', 'auth_ldap') ?></label>
     </td>
     <td>
-        <?php echo html_writer::select($yesno, 'ntlmsso_ie_fastpath', $config->ntlmsso_ie_fastpath, false); ?>
+        <?php echo html_writer::select($fastpathoptions, 'ntlmsso_ie_fastpath', $config->ntlmsso_ie_fastpath, false); ?>
     </td>
     <td>
     <?php print_string('auth_ntlmsso_ie_fastpath', 'auth_ldap') ?>
