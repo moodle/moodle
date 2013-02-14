@@ -51,34 +51,32 @@ function xmldb_label_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
-//===== 1.9.0 upgrade line ======//
+    //===== 1.9.0 upgrade line ======//
 
     if ($oldversion < 2009042200) {
-
-    /// Rename field content on table label to intro
+        // Rename field content on table label to intro.
         $table = new xmldb_table('label');
         $field = new xmldb_field('content', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, 'name');
 
-    /// Launch rename field content
+        // Launch rename field content.
         $dbman->rename_field($table, $field, 'intro');
 
-    /// label savepoint reached
+        // Label savepoint reached.
         upgrade_mod_savepoint(true, 2009042200, 'label');
     }
 
     if ($oldversion < 2009042201) {
-
-    /// Define field introformat to be added to label
+        // Define field introformat to be added to label.
         $table = new xmldb_table('label');
         $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, null, null, '0', 'intro');
 
-    /// Launch add field introformat
+        // Launch add field introformat.
         $dbman->add_field($table, $field);
 
-        // all existing lables in 1.9 are in HTML format
+        // All existing labels in 1.9 are in HTML format.
         $DB->set_field('label', 'introformat', FORMAT_HTML, array());
 
-    /// label savepoint reached
+        // Label savepoint reached.
         upgrade_mod_savepoint(true, 2009042201, 'label');
     }
 
@@ -87,6 +85,27 @@ function xmldb_label_upgrade($oldversion) {
 
     // Moodle v2.2.0 release upgrade line
     // Put any upgrade step following this
+
+    if ($oldversion < 2011112901) {
+        // Alter the label table.
+        $table = new xmldb_table('label');
+        // Columns to change.
+        $arrfields = array();
+        $arrfields['name'] = new xmldb_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, '', 'course');
+        $arrfields['intro'] = new xmldb_field('intro', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, '', 'name');
+
+        // Loop through columns and update the fields.
+        foreach ($arrfields as $fieldname => $field) {
+            // Check the field exists.
+            if ($dbman->field_exists($table, $fieldname)) {
+                $DB->execute("UPDATE {label} SET {$fieldname} = ? WHERE {$fieldname} IS NULL", array($DB->sql_empty()));
+                $dbman->change_field_precision($table, $field);
+            }
+        }
+
+        // Label savepoint reached.
+        upgrade_mod_savepoint(true, 2011112901, 'label');
+    }
 
     return true;
 }
