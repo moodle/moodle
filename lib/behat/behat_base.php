@@ -148,6 +148,21 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
     }
 
     /**
+     * Escapes the double quote character.
+     *
+     * Double quote is the argument delimiter, it can be escaped
+     * with a backslash, but we auto-remove this backslashes
+     * before the step execution, this method is useful when using
+     * arguments as arguments for other steps.
+     *
+     * @param string $string
+     * @return string
+     */
+    public function escape($string) {
+        return str_replace('"', '\"', $string);
+    }
+
+    /**
      * Executes the passed closure until returns true or time outs.
      *
      * In most cases the document.readyState === 'complete' will be enough, but sometimes JS

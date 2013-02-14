@@ -149,13 +149,14 @@ class behat_forms extends behat_base {
 
         $fieldnode = $this->find_field($locator);
 
-        // Gets the field instance.
+        // Get the field.
         $field = $this->get_field($fieldnode, $locator);
+        $fieldvalue = $field->get_value();
 
         // Checks if the provided value matches the current field value.
-        if ($value != $field->get_value()) {
+        if ($value != $fieldvalue) {
             throw new ExpectationException(
-                'The \'' . $locator . '\' value is \'' . $field->get_value() . '\'' ,
+                'The \'' . $locator . '\' value is \'' . $fieldvalue . '\', \'' . $value . '\' expected' ,
                 $this->getSession()
             );
         }
@@ -227,7 +228,13 @@ class behat_forms extends behat_base {
     }
 
     /**
-     * Gets an instance of the form element field.
+     * Gets an instance of the form field.
+     *
+     * Not all the fields are part of a moodle form, in this
+     * cases it fallsback to the generic form field. Also note
+     * that this generic field type is using a generic setValue()
+     * method from the Behat API, which is not always good to set
+     * the value of form elements.
      *
      * @param NodeElement $fieldnode The current node
      * @param string $locator Just to send an exception that makes sense for the user
@@ -236,8 +243,16 @@ class behat_forms extends behat_base {
     protected function get_field(NodeElement $fieldnode, $locator) {
         global $CFG;
 
-        // Get the field type.
-        $type = $this->get_node_type($fieldnode, $locator);
+        // Get the field type if is part of a moodleform.
+        if ($this->is_moodleform_field($fieldnode)) {
+            $type = $this->get_node_type($fieldnode, $locator);
+        }
+
+        // If is not a moodleforms field use the base field type.
+        if (empty($type)) {
+            $type = 'field';
+        }
+
         $classname = 'behat_form_' . $type;
 
         // Fallsback on the default form field if nothing specific exists.
@@ -253,15 +268,33 @@ class behat_forms extends behat_base {
     }
 
     /**
+     * Detects when the field is a moodleform field type.
+     *
+     * Note that there are fields inside moodleforms that are not
+     * moodleform element; this method can not detect this, this will
+     * be managed by get_node_type, after failing to find the form
+     * element element type.
+     *
+     * @param NodeElement $fieldnode
+     * @return bool
+     */
+    protected function is_moodleform_field(NodeElement $fieldnode) {
+
+        // We already waited when getting the NodeElement and we don't want an exception if it's not part of a moodleform.
+        $parentformfound = $fieldnode->find('xpath', "/ancestor::form[contains(concat(' ', normalize-space(@class), ' '), ' mform ')]/fieldset");
+
+        return ($parentformfound != false);
+    }
+
+    /**
      * Recursive method to find the field type.
      *
      * Depending on the field the felement class node is a level or in another. We
      * look recursively for a parent node with a 'felement' class to find the field type.
      *
-     * @throws ExpectationException
-     * @param NodeElement $fieldnode The current node
-     * @param string $locator Just to send an exception that makes sense for the user
-     * @return mixed String or NodeElement depending if we have reached the felement node
+     * @param NodeElement $fieldnode The current node.
+     * @param string $locator Just to send an exception that makes sense for the user.
+     * @return mixed A NodeElement if we continue looking for the element type and String or false when we are done.
      */
     protected function get_node_type(NodeElement $fieldnode, $locator) {
 
@@ -273,9 +306,9 @@ class behat_forms extends behat_base {
                 return substr($class, 10);
             }
 
-            // Stop propagation through the DOM, something went wrong!.
+            // Stop propagation through the DOM, if it does not have a felement is not part of a moodle form.
             if (strstr($class, 'fcontainer') != false) {
-                throw new ExpectationException('No field type for ' . $locator . ' found, ensure the field exists', $this->getSession());
+                return false;
             }
         }
 
