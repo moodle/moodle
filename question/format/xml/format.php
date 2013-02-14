@@ -170,16 +170,23 @@ class qformat_xml extends qformat_default {
         }
         $fs = get_file_storage();
         $itemid = file_get_unused_draft_itemid();
+        $filenames = array();
         foreach ($xml as $file) {
+            $filename = $file['@']['name'];
+            if (in_array($filename, $filenames)) {
+                debugging('Duplicate file in XML: ' . $filename, DEBUG_DEVELOPER);
+                continue;
+            }
             $filerecord = array(
                 'contextid' => context_user::instance($USER->id)->id,
                 'component' => 'user',
                 'filearea'  => 'draft',
                 'itemid'    => $itemid,
                 'filepath'  => '/',
-                'filename'  => $file['@']['name'],
+                'filename'  => $filename,
             );
             $fs->create_file_from_string($filerecord, base64_decode($file['#']));
+            $filenames[] = $filename;
         }
         return $itemid;
     }
