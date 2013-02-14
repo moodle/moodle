@@ -181,6 +181,89 @@ class file_storage {
     }
 
     /**
+     * Return an available file name.
+     *
+     * This will return the next available file name in the area, adding/incrementing a suffix
+     * of the file, ie: file.txt > file (1).txt > file (2).txt > etc...
+     *
+     * If the file name passed is available without modification, it is returned as is.
+     *
+     * @param int $contextid context ID.
+     * @param string $component component.
+     * @param string $filearea file area.
+     * @param int $itemid area item ID.
+     * @param string $filepath the file path.
+     * @param string $filename the file name.
+     * @return string available file name.
+     * @throws coding_exception if the file name is invalid.
+     * @since 2.5
+     */
+    public function get_unused_filename($contextid, $component, $filearea, $itemid, $filepath, $filename) {
+        global $DB;
+
+        // Do not accept '.' or an empty file name (zero is acceptable).
+        if ($filename == '.' || (empty($filename) && !is_numeric($filename))) {
+            throw new coding_exception('Invalid file name passed', $filename);
+        }
+
+        // The file does not exist, we return the same file name.
+        if (!$this->file_exists($contextid, $component, $filearea, $itemid, $filepath, $filename)) {
+            return $filename;
+        }
+
+        // Trying to locate a file name using the used pattern. We remove the used pattern from the file name first.
+        $pathinfo = pathinfo($filename);
+        $basename = $pathinfo['filename'];
+        $matches = array();
+        if (preg_match('~^(.+) \(([0-9]+)\)$~', $basename, $matches)) {
+            $basename = $matches[1];
+        }
+
+        $filenamelike = $DB->sql_like_escape($basename) . ' (%)';
+        if (isset($pathinfo['extension'])) {
+            $filenamelike .= '.' . $DB->sql_like_escape($pathinfo['extension']);
+        }
+
+        $filenamelikesql = $DB->sql_like('f.filename', ':filenamelike');
+        $filenamelen = $DB->sql_length('f.filename');
+        $sql = "SELECT filename
+                FROM {files} f
+                WHERE
+                    f.contextid = :contextid AND
+                    f.component = :component AND
+                    f.filearea = :filearea AND
+                    f.itemid = :itemid AND
+                    f.filepath = :filepath AND
+                    $filenamelikesql
+                ORDER BY
+                    $filenamelen DESC,
+                    f.filename DESC";
+        $params = array('contextid' => $contextid, 'component' => $component, 'filearea' => $filearea, 'itemid' => $itemid,
+                'filepath' => $filepath, 'filenamelike' => $filenamelike);
+        $results = $DB->get_fieldset_sql($sql, $params, IGNORE_MULTIPLE);
+
+        // Loop over the results to make sure we are working on a valid file name. Because 'file (1).txt' and 'file (copy).txt'
+        // would both be returned, but only the one only containing digits should be used.
+        $number = 1;
+        foreach ($results as $result) {
+            $resultbasename = pathinfo($result, PATHINFO_FILENAME);
+            $matches = array();
+            if (preg_match('~^(.+) \(([0-9]+)\)$~', $resultbasename, $matches)) {
+                $number = $matches[2] + 1;
+                break;
+            }
+        }
+
+        // Constructing the new filename.
+        $newfilename = $basename . ' (' . $number . ')';
+        if (isset($pathinfo['extension'])) {
+            $newfilename .= '.' . $pathinfo['extension'];
+        }
+
+        return $newfilename;
+    }
+
+    /**
      * Generates a preview image for the stored file
      *
      * @param stored_file $file the file we want to preview

@@ -636,23 +636,19 @@ abstract class repository {
     }
 
     /**
-     * Check if file already exists in draft area
+     * Check if file already exists in draft area.
      *
      * @static
-     * @param int $itemid
-     * @param string $filepath
-     * @param string $filename
+     * @param int $itemid of the draft area.
+     * @param string $filepath path to the file.
+     * @param string $filename file name.
      * @return bool
      */
     public static function draftfile_exists($itemid, $filepath, $filename) {
         global $USER;
         $fs = get_file_storage();
         $usercontext = context_user::instance($USER->id);
-        if ($fs->get_file($usercontext->id, 'user', 'draft', $itemid, $filepath, $filename)) {
-            return true;
-        } else {
-            return false;
-        }
+        return $fs->file_exists($usercontext->id, 'user', 'draft', $itemid, $filepath, $filename);
     }
 
     /**
@@ -769,31 +765,34 @@ abstract class repository {
     }
 
     /**
-     * Get unused filename by appending suffix
+     * Get an unused filename from the current draft area.
+     *
+     * Will check if the file ends with ([0-9]) and increase the number.
      *
      * @static
-     * @param int $itemid
-     * @param string $filepath
-     * @param string $filename
-     * @return string
+     * @param int $itemid draft item ID.
+     * @param string $filepath path to the file.
+     * @param string $filename name of the file.
+     * @return string an unused file name.
      */
     public static function get_unused_filename($itemid, $filepath, $filename) {
         global $USER;
+        $contextid = context_user::instance($USER->id)->id;
         $fs = get_file_storage();
-        while (repository::draftfile_exists($itemid, $filepath, $filename)) {
-            $filename = repository::append_suffix($filename);
-        }
-        return $filename;
+        return $fs->get_unused_filename($contextid, 'user', 'draft', $itemid, $filepath, $filename);
     }
 
     /**
-     * Append a suffix to filename
+     * Append a suffix to filename.
      *
      * @static
      * @param string $filename
      * @return string
+     * @deprecated since 2.5
      */
     public static function append_suffix($filename) {
+        debugging('The function repository::append_suffix() has been deprecated. Use repository::get_unused_filename() instead.',
+            DEBUG_DEVELOPER);
         $pathinfo = pathinfo($filename);
         if (empty($pathinfo['extension'])) {
             return $filename . RENAME_SUFFIX;
