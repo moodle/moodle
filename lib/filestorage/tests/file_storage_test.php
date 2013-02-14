@@ -1352,4 +1352,67 @@ class filestoragelib_testcase extends advanced_testcase {
             $aliasrecord->filearea, $aliasrecord->itemid, '/B/', 'symlink.txt');
         $this->assertTrue($symlink2->is_external_file());
     }
+
+    public function test_get_unused_filename() {
+        global $USER;
+        $this->resetAfterTest(true);
+
+        $fs = get_file_storage();
+        $this->setAdminUser();
+        $contextid = context_user::instance($USER->id)->id;
+        $component = 'user';
+        $filearea = 'private';
+        $itemid = 0;
+        $filepath = '/';
+
+        // Create some private files.
+        $file = new stdClass;
+        $file->contextid = $contextid;
+        $file->component = 'user';
+        $file->filearea  = 'private';
+        $file->itemid    = 0;
+        $file->filepath  = '/';
+        $file->source    = 'test';
+        $filenames = array('foo.txt', 'foo (1).txt', 'foo (20).txt', 'foo (999)', 'bar.jpg', 'What (a cool file).jpg',
+                'Hurray! (1).php', 'Hurray! (2).php', 'Hurray! (9a).php', 'Hurray! (abc).php');
+        foreach ($filenames as $key => $filename) {
+            $file->filename = $filename;
+            $userfile = $fs->create_file_from_string($file, "file $key $filename content");
+            $this->assertInstanceOf('stored_file', $userfile);
+        }
+
+        // Asserting new generated names.
+        $newfilename = $fs->get_unused_filename($contextid, $component, $filearea, $itemid, $filepath, 'unused.txt');
+        $this->assertEquals('unused.txt', $newfilename);
+        $newfilename = $fs->get_unused_filename($contextid, $component, $filearea, $itemid, $filepath, 'foo.txt');
+        $this->assertEquals('foo (21).txt', $newfilename);
+        $newfilename = $fs->get_unused_filename($contextid, $component, $filearea, $itemid, $filepath, 'foo (1).txt');
+        $this->assertEquals('foo (21).txt', $newfilename);
+        $newfilename = $fs->get_unused_filename($contextid, $component, $filearea, $itemid, $filepath, 'foo (2).txt');
+        $this->assertEquals('foo (2).txt', $newfilename);
+        $newfilename = $fs->get_unused_filename($contextid, $component, $filearea, $itemid, $filepath, 'foo (20).txt');
+        $this->assertEquals('foo (21).txt', $newfilename);
+        $newfilename = $fs->get_unused_filename($contextid, $component, $filearea, $itemid, $filepath, 'foo');
+        $this->assertEquals('foo', $newfilename);
+        $newfilename = $fs->get_unused_filename($contextid, $component, $filearea, $itemid, $filepath, 'foo (123)');
+        $this->assertEquals('foo (123)', $newfilename);
+        $newfilename = $fs->get_unused_filename($contextid, $component, $filearea, $itemid, $filepath, 'foo (999)');
+        $this->assertEquals('foo (1000)', $newfilename);
+        $newfilename = $fs->get_unused_filename($contextid, $component, $filearea, $itemid, $filepath, 'bar.png');
+        $this->assertEquals('bar.png', $newfilename);
+        $newfilename = $fs->get_unused_filename($contextid, $component, $filearea, $itemid, $filepath, 'bar (12).png');
+        $this->assertEquals('bar (12).png', $newfilename);
+        $newfilename = $fs->get_unused_filename($contextid, $component, $filearea, $itemid, $filepath, 'bar.jpg');
+        $this->assertEquals('bar (1).jpg', $newfilename);
+        $newfilename = $fs->get_unused_filename($contextid, $component, $filearea, $itemid, $filepath, 'bar (1).jpg');
+        $this->assertEquals('bar (1).jpg', $newfilename);
+        $newfilename = $fs->get_unused_filename($contextid, $component, $filearea, $itemid, $filepath, 'What (a cool file).jpg');
+        $this->assertEquals('What (a cool file) (1).jpg', $newfilename);
+        $newfilename = $fs->get_unused_filename($contextid, $component, $filearea, $itemid, $filepath, 'Hurray! (1).php');
+        $this->assertEquals('Hurray! (3).php', $newfilename);
+
+        $this->setExpectedException('coding_exception');
+        $fs->get_unused_filename($contextid, $component, $filearea, $itemid, $filepath, '');
+    }
+
 }
