@@ -457,7 +457,7 @@ class core_user_external extends external_api {
      * @since Moodle 2.4
      */
     public static function get_users_by_field_returns() {
-        return new external_multiple_structure(core_user_external::user_description());
+        return new external_multiple_structure(self::user_description());
     }
 
 
@@ -485,9 +485,11 @@ class core_user_external extends external_api {
                         )
                     ), 'the key/value pairs to be considered in user search. Values can not be empty.
                         Specify different keys only once (fullname => \'user1\', auth => \'manual\', ...) -
-                        key occurences are ignored, only the last occurence is considered.
+                        key occurences are forbidden.
                         The search is executed with AND operator on the criterias. Invalid criterias (keys) are ignored,
-                        the search is still executed on the valid criterias.'
+                        the search is still executed on the valid criterias.
+                        You can search without criteria, but the function is not designed for it.
+                        It could very slow or timeout. The function is designed to search some specific users.'
                 )
             )
         );
@@ -509,13 +511,23 @@ class core_user_external extends external_api {
                 array('criteria' => $criteria));
 
         // Validate the criteria and retrieve the users.
-        $firstcriteria = true;
         $users = array();
         $warnings = array();
-        $sql = '';
         $sqlparams = array();
+        $usedkeys = array();
+
+        // Do not retrieve deleted users.
+        $sql = ' deleted = 0';
 
         foreach ($params['criteria'] as $criteriaindex => $criteria) {
+
+            // Check that the criteria has never been used.
+            if (array_key_exists($criteria['key'], $usedkeys)) {
+                throw new moodle_exception('keyalreadyset', '', '', null, 'The key ' . $criteria['key'] . ' can only be sent once');
+            } else {
+                $usedkeys[$criteria['key']] = true;
+            }
+
             $invalidcriteria = false;
             // Clean the parameters.
             $paramtype = PARAM_RAW;
@@ -557,12 +569,7 @@ class core_user_external extends external_api {
             if (!$invalidcriteria) {
                 $cleanedvalue = clean_param($criteria['value'], $paramtype);
 
-                // If first criteria do not add AND to the query.
-                if ($firstcriteria) {
-                    $firstcriteria = false;
-                } else {
-                    $sql .= ' AND ';
-                }
+                $sql .= ' AND ';
 
                 // Create the SQL.
                 switch ($criteria['key']) {
@@ -621,7 +628,7 @@ class core_user_external extends external_api {
     public static function get_users_returns() {
         return new external_single_structure(
             array('users' => new external_multiple_structure(
-                                core_user_external::user_description()
+                                self::user_description()
                              ),
                   'warnings' => new external_warnings('always set to \'key\'', 'faulty key name')
             )
@@ -712,7 +719,7 @@ class core_user_external extends external_api {
 			        'shortname' => new external_value(PARAM_RAW, 'Shortname of the course')
 		        )
 	        ), 'Courses where the user is enrolled - limited by which courses the user is able to see', VALUE_OPTIONAL));
-        return new external_multiple_structure(core_user_external::user_description($additionalfields));
+        return new external_multiple_structure(self::user_description($additionalfields));
     }
 
     /**
@@ -832,7 +839,7 @@ class core_user_external extends external_api {
 	                    ), 'Courses where the user is enrolled - limited by which courses the user is able to see', VALUE_OPTIONAL)
                     );
 
-        return new external_multiple_structure(core_user_external::user_description($additionalfields));
+        return new external_multiple_structure(self::user_description($additionalfields));
     }
 
     /**

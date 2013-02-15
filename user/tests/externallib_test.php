@@ -175,6 +175,22 @@ class core_user_external_testcase extends externallib_advanced_testcase {
         $warning = array_pop($warnings);
         $this->assertEquals($warning['item'], 'invalidkey');
         $this->assertEquals($warning['warningcode'], 'invalidfieldparameter');
+
+        // Test sending twice the same search field.
+        try {
+            $searchparams = array(
+            array('key' => 'firstname', 'value' => 'Canard'),
+            array('key' => 'email', 'value' => $user1->email),
+            array('key' => 'firstname', 'value' => $user1->firstname));
+
+            // Call the external function.
+            $result = core_user_external::get_users($searchparams);
+            $this->fail('Expecting \'keyalreadyset\' moodle_exception to be thrown.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('keyalreadyset', $e->errorcode);
+        } catch (Exception $e) {
+            $this->fail('Expecting \'keyalreadyset\' moodle_exception to be thrown.');
+        }
     }
 
     /**
