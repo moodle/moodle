@@ -1577,5 +1577,14 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2013021100.01);
     }
 
+    if ($oldversion < 2013021500.00) {
+        // ISO country change: Netherlands Antilles is split into BQ, CW & SX
+        // http://www.iso.org/iso/iso_3166-1_newsletter_vi-8_split_of_the_dutch_antilles_final-en.pdf
+        $sql = "UPDATE {user} SET country = '' WHERE country = ?";
+        $DB->execute($sql, array('AN'));
+
+        upgrade_main_savepoint(true, 2013021500.00);
+    }
+
     return true;
 }
