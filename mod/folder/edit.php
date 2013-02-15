@@ -52,7 +52,7 @@ $options = array('subdirs'=>1, 'maxbytes'=>$CFG->maxbytes, 'maxfiles'=>-1, 'acce
 file_prepare_standard_filemanager($data, 'files', $options, $context, 'mod_folder', 'content', 0);
 
 $mform = new mod_folder_edit_form(null, array('data'=>$data, 'options'=>$options));
-if (!empty($folder->display) && $folder->display == FOLDER_DISPLAY_INLINE) {
+if ($folder->display == FOLDER_DISPLAY_INLINE) {
     $redirecturl = course_get_url($cm->course, $cm->sectionnum);
 } else {
     $redirecturl = new moodle_url('/mod/folder/view.php', array('id' => $cm->id));

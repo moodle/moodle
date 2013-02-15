@@ -45,11 +45,9 @@ $string['page-mod-folder-view'] = 'Folder module main page';
 $string['pluginadministration'] = 'Folder administration';
 $string['pluginname'] = 'Folder';
 $string['display'] = 'Display folder contents';
-$string['display_help'] = 'If you choose to display the folder contents on a course page, there '.
-    'will be no link to a separate page and the title will not be displayed. The '.
-    'description will be displayed only if "Display description on course page" '.
-    'is checked.<br />'.
-    'Also note that participants view actions can not be logged in this case.';
+$string['display_help'] = 'If you choose to display the folder contents on a course page, there  will be no link to a separate page and the title will not be displayed. 
+The description will be displayed only if "Display description on course page" is checked.<br />
+Also note that participants view actions can not be logged in this case.';
 $string['displaypage'] = 'On a separate page';
 $string['displayinline'] = 'Inline on a course page';
 $string['noautocompletioninline'] = 'Automatic completion on viewing of activity can not be selected together with "Display inline" option';

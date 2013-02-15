@@ -433,14 +433,14 @@ function folder_get_coursemodule_info($cm) {
     $cminfo->name = $folder->name;
     if ($folder->display == FOLDER_DISPLAY_INLINE) {
         // prepare folder object to store in customdata
-        $fdata = new stdClass;
+        $fdata = new stdClass();
         if ($cm->showdescription && strlen(trim($folder->intro))) {
             $fdata->intro = $folder->intro;
             if ($folder->introformat != FORMAT_MOODLE) {
                 $fdata->introformat = $folder->introformat;
             }
         }
-        $cminfo->customdata = json_encode($fdata);
+        $cminfo->customdata = $fdata;
     } else {
         if ($cm->showdescription) {
             // Convert intro to html. Do not filter cached version, filters run at display time.
@@ -459,7 +459,8 @@ function folder_get_coursemodule_info($cm) {
  * @param cm_info $cm
  */
 function folder_cm_info_dynamic(cm_info $cm) {
-    if (strlen($cm->get_custom_data())) {
+    if ($cm->get_custom_data()) {
+        // the field 'customdata' is not empty IF AND ONLY IF we display contens inline
         $cm->set_no_view_link();
     }
 }
@@ -472,10 +473,12 @@ function folder_cm_info_dynamic(cm_info $cm) {
  */
 function folder_cm_info_view(cm_info $cm) {
     global $PAGE;
-    if ($cm->uservisible && strlen($cm->get_custom_data()) &&
+    if ($cm->uservisible && $cm->get_custom_data() &&
             has_capability('mod/folder:view', $cm->context)) {
-        // restore folder object from customdata
-        $folder = json_decode($cm->get_custom_data());
+        // Restore folder object from customdata.
+        // Note the field 'customdata' is not empty IF AND ONLY IF we display contens inline.
+        // Otherwise the content is default.
+        $folder = $cm->get_custom_data();
         $folder->id = (int)$cm->instance;
         $folder->course = (int)$cm->course;
         $folder->display = FOLDER_DISPLAY_INLINE;
