@@ -864,7 +864,7 @@ sup {vertical-align: super;}
     background: none;
     border: none;
     /* Override the z-index set incorrectly by the YUI dialogue */
-    z-index: 600!important;
+    z-index: 600;
 }
 
 
