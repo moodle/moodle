@@ -3,7 +3,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 class mod_data_renderer extends plugin_renderer_base {
-    
+
     public function import_setting_mappings($datamodule, data_preset_importer $importer) {
 
         $strblank = get_string('blank', 'data');
@@ -24,7 +24,7 @@ class mod_data_renderer extends plugin_renderer_base {
         $html .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'action', 'value'=>'finishimport'));
         $html .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'sesskey', 'value'=>sesskey()));
         $html .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'d', 'value'=>$datamodule->id));
-        
+
         if ($importer instanceof data_preset_existing_importer) {
             $html .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'fullname', 'value'=>$importer->get_userid().'/'.$importer->get_directory()));
         } else {
@@ -60,7 +60,7 @@ class mod_data_renderer extends plugin_renderer_base {
                 } else {
                     $row[1] .= html_writer::tag('option', get_string('mapnewfield', 'data'), array('value'=>'-1', 'selected'=>'selected'));
                 }
-                
+
                 $row[1] .= html_writer::end_tag('select');
                 $table->data[] = $row;
             }
@@ -82,5 +82,5 @@ class mod_data_renderer extends plugin_renderer_base {
 
         return $html;
     }
-    
+
 }
