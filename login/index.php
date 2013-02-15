@@ -202,7 +202,10 @@ if ($frm and isset($frm->username)) {                             // Login WITH 
             // no wantsurl stored or external - go to homepage
             $urltogo = $CFG->wwwroot.'/';
             unset($SESSION->wantsurl);
+        }
 
+        // If the url to go to is the same as the site page, check for default homepage.
+        if ($urltogo == ($CFG->wwwroot . '/')) {
             $home_page = get_home_page();
             // Go to my-moodle page instead of site homepage if defaulthomepage set to homepage_my
             if ($home_page == HOMEPAGE_MY && !is_siteadmin() && !isguestuser()) {
