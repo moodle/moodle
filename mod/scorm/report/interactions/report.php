@@ -35,6 +35,7 @@ class scorm_interactions_report extends scorm_default_report {
      */
     function display($scorm, $cm, $course, $download) {
         global $CFG, $DB, $OUTPUT, $PAGE;
+
         $contextmodule = get_context_instance(CONTEXT_MODULE, $cm->id);
         $action = optional_param('action', '', PARAM_ALPHA);
         $attemptids = optional_param_array('attemptid', array(), PARAM_RAW);
@@ -159,7 +160,7 @@ class scorm_interactions_report extends scorm_default_report {
             $select = 'SELECT DISTINCT '.$DB->sql_concat('u.id', '\'#\'', 'COALESCE(st.attempt, 0)').' AS uniqueid, ';
             $select .= 'st.scormid AS scormid, st.attempt AS attempt, ' .
                     'u.id AS userid, u.idnumber, u.firstname, u.lastname, u.picture, u.imagealt, u.email'.
-                    get_extra_user_fields_sql($coursecontext, 'u', '', array('idnumber')) . ' ';
+                    get_extra_user_fields_sql($coursecontext, 'u', '', array('email', 'idnumber')) . ' ';
 
             // This part is the same for all cases - join users and scorm_scoes_track tables
             $from = 'FROM {user} u ';
