@@ -55,6 +55,13 @@ class cache_helper {
     protected static $instance;
 
     /**
+     * The site identifier used by the cache.
+     * Set the first time get_site_identifier is called.
+     * @var string
+     */
+    protected static $siteidentifier = null;
+
+    /**
      * Returns true if the cache API can be initialised before Moodle has finished initialising itself.
      *
      * This check is essential when trying to cache the likes of configuration information. It checks to make sure that the cache
@@ -234,7 +241,6 @@ class cache_helper {
         $factory = cache_factory::instance();
         foreach ($instance->get_definitions() as $name => $definitionarr) {
             $definition = cache_definition::load($name, $definitionarr);
-            $definition->set_cache_identifier($instance->get_site_identifier());
             if ($definition->invalidates_on_event($event)) {
                 // OK at this point we know that the definition has information to invalidate on the event.
                 // There are two routes, either its an application cache in which case we can invalidate it now.
@@ -305,7 +311,6 @@ class cache_helper {
         $factory = cache_factory::instance();
         foreach ($instance->get_definitions() as $name => $definitionarr) {
             $definition = cache_definition::load($name, $definitionarr);
-            $definition->set_cache_identifier($instance->get_site_identifier());
             if ($definition->invalidates_on_event($event)) {
                 // Create the cache.
                 $cache = $factory->create_cache($definition);
@@ -514,5 +519,29 @@ class cache_helper {
         $config->update_site_identifier($siteidentifier);
         $factory->updating_finished();
         cache_factory::reset();
+    }
+
+    /**
+     * Returns the site identifier.
+     *
+     * @return string
+     */
+    public static function get_site_identifier() {
+        if (is_null(self::$siteidentifier)) {
+            $factory = cache_factory::instance();
+            $config = $factory->create_config_instance();
+            self::$siteidentifier = $config->get_site_identifier();
+        }
+        return self::$siteidentifier;
+    }
+
+    /**
+     * Returns the site version.
+     *
+     * @return string
+     */
+    public static function get_site_version() {
+        global $CFG;
+        return (string)$CFG->version;
     }
 }

@@ -204,7 +204,6 @@ class cache_factory {
         // Get the class. Note this is a late static binding so we need to use get_called_class.
         $definition = cache_definition::load_adhoc($mode, $component, $area, $options);
         $config = $this->create_config_instance();
-        $definition->set_cache_identifier($config->get_site_identifier());
         $definition->set_identifiers($identifiers);
         $cache = $this->create_cache($definition, $identifiers);
         if ($definition->should_be_persistent()) {
@@ -392,7 +391,6 @@ class cache_factory {
                 } else {
                     $definition = cache_definition::load($id, $definition, $aggregate);
                 }
-                $definition->set_cache_identifier($instance->get_site_identifier());
             }
             $this->definitions[$id] = $definition;
         }
