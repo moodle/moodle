@@ -275,12 +275,6 @@ class cache_definition {
     protected $definitionhash = null;
 
     /**
-     * An identifier to make cache keys predictably unique.
-     * @var string
-     */
-    protected $cacheidentifier = '0';
-
-    /**
      * Creates a cache definition given a definition from the cache configuration or from a caches.php file.
      *
      * @param string $id
@@ -681,15 +675,6 @@ class cache_definition {
     }
 
     /**
-     * Sets an identifier for the cache.
-     * This can be used
-     * @param string $identifier
-     */
-    public function set_cache_identifier($identifier) {
-        $this->cacheidentifier = (string)$identifier;
-    }
-
-    /**
      * Returns the requirements of this definition as a binary flag.
      * @return int
      */
@@ -739,7 +724,7 @@ class cache_definition {
     public function generate_single_key_prefix() {
         if ($this->keyprefixsingle === null) {
             $this->keyprefixsingle = $this->mode.'/'.$this->component.'/'.$this->area;
-            $this->keyprefixsingle .= '/'.$this->cacheidentifier;
+            $this->keyprefixsingle .= '/'.$this->get_cache_identifier();
             $identifiers = $this->get_identifiers();
             if ($identifiers) {
                 foreach ($identifiers as $key => $value) {
@@ -762,7 +747,7 @@ class cache_definition {
                 'mode' => $this->mode,
                 'component' => $this->component,
                 'area' => $this->area,
-                'siteidentifier' => $this->cacheidentifier
+                'siteidentifier' => $this->get_cache_identifier()
             );
             if (!empty($this->identifiers)) {
                 $identifiers = array();
@@ -801,5 +786,14 @@ class cache_definition {
      */
     public function get_invalidation_events() {
         return $this->invalidationevents;
+    }
+
+    /**
+     * Returns a cache identification string.
+     *
+     * @return string A string to be used as part of keys.
+     */
+    protected function get_cache_identifier() {
+        return cache_helper::get_site_identifier();
     }
 }
