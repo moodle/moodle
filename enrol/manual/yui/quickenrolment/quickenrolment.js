@@ -22,7 +22,9 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
         DEFAULTDURATION : 'defaultDuration',
         ASSIGNABLEROLES : 'assignableRoles',
         DISABLEGRADEHISTORY : 'disableGradeHistory',
-        RECOVERGRADESDEFAULT : 'recoverGradesDefault'
+        RECOVERGRADESDEFAULT : 'recoverGradesDefault',
+        ENROLCOUNT : 'enrolCount',
+        PERPAGE : 'perPage'
     };
     /** CSS classes for nodes in structure **/
     var CSS = {
@@ -304,6 +306,9 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
             params['action'] = 'searchusers';
             params['search'] = this.get(UEP.SEARCH).get('value');
             params['page'] = this.get(UEP.PAGE);
+            params['enrolcount'] = this.get(UEP.ENROLCOUNT);
+            params['perpage'] = this.get(UEP.PERPAGE);
+
             if (this.get(UEP.MULTIPLE)) {
                 alert('oh no there are multiple');
             } else {
@@ -371,7 +376,7 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
                 var content = create('<div class="'+CSS.SEARCHRESULTS+'"></div>')
                     .append(create('<div class="'+CSS.TOTALUSERS+'">'+usersstr+'</div>'))
                     .append(users);
-                if (result.response.totalusers > (this.get(UEP.PAGE)+1)*25) {
+                if (result.response.totalusers > (this.get(UEP.PAGE)+1)*this.get(UEP.PERPAGE)) {
                     var fetchmore = create('<div class="'+CSS.MORERESULTS+'"><a href="#">'+M.str.enrol.ajaxnext25+'</a></div>');
                     fetchmore.on('click', this.search, this, true);
                     content.append(fetchmore)
@@ -379,7 +384,7 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
                 this.setContent(content);
                 Y.delegate("click", this.enrolUser, users, '.'+CSS.USER+' .'+CSS.ENROL, this, args);
             } else {
-                if (result.response.totalusers <= (this.get(UEP.PAGE)+1)*25) {
+                if (result.response.totalusers <= (this.get(UEP.PAGE)+1)*this.get(UEP.PERPAGE)) {
                     this.get(UEP.BASE).one('.'+CSS.MORERESULTS).remove();
                 }
             }
@@ -415,6 +420,8 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
                                 args.userNode.addClass(CSS.ENROLLED);
                                 args.userNode.one('.'+CSS.ENROL).remove();
                                 this.set(UEP.REQUIREREFRESH, true);
+                                var countenrol = this.get(UEP.ENROLCOUNT)+1;
+                                this.set(UEP.ENROLCOUNT, countenrol);
                             }
                         } catch (e) {
                             new M.core.exception(e);
@@ -527,6 +534,14 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
             },
             recoverGradesDefault : {
                 value : ''
+            },
+            enrolCount : {
+                value : 0,
+                validator : Y.Lang.isNumber
+            },
+            perPage : {
+                value: 25,
+                Validator: Y.Lang.isNumber
             }
         }
     });
