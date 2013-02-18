@@ -10665,24 +10665,33 @@ function get_performance_info() {
 
     if ($stats = cache_helper::get_stats()) {
         $html = '<span class="cachesused">';
-        $html .= '<span class="cache-stats-heading">Caches interaction by definition then store</span>';
+        $html .= '<span class="cache-stats-heading">Caches used (hits/misses/sets)</span>';
         $text = 'Caches used (hits/misses/sets): ';
         $hits = 0;
         $misses = 0;
         $sets = 0;
         foreach ($stats as $definition => $stores) {
-            $html .= '<span class="cache-definition-stats">'.$definition.'</span>';
+            $html .= '<span class="cache-definition-stats">';
+            $html .= '<span class="cache-definition-stats-heading">'.$definition.'</span>';
             $text .= "$definition {";
             foreach ($stores as $store => $data) {
                 $hits += $data['hits'];
                 $misses += $data['misses'];
                 $sets += $data['sets'];
+                if ($data['hits'] == 0 and $data['misses'] > 0) {
+                    $cachestoreclass = 'nohits';
+                } else if ($data['hits'] < $data['misses']) {
+                    $cachestoreclass = 'lowhits';
+                } else {
+                    $cachestoreclass = 'hihits';
+                }
                 $text .= "$store($data[hits]/$data[misses]/$data[sets]) ";
-                $html .= "<span class='cache-store-stats'>$store: $data[hits] / $data[misses] / $data[sets]</span>";
+                $html .= "<span class=\"cache-store-stats $cachestoreclass\">$store: $data[hits] / $data[misses] / $data[sets]</span>";
             }
+            $html .= '</span>';
             $text .= '} ';
         }
-        $html .= "<span class='cache-total-stats'>Total Hits / Misses / Sets : $hits / $misses / $sets</span>";
+        $html .= "<span class='cache-total-stats'>Total: $hits / $misses / $sets</span>";
         $html .= '</span> ';
         $info['cachesused'] = "$hits / $misses / $sets";
         $info['html'] .= $html;
