@@ -226,4 +226,68 @@ class courselib_testcase extends advanced_testcase {
         $this->assertGreaterThanOrEqual($category2->sortorder, $category3->sortorder);
         $this->assertGreaterThanOrEqual($category1->sortorder, $category3->sortorder);
     }
+
+    public function test_move_module_in_course() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+        // Setup fixture
+        $course = $this->getDataGenerator()->create_course(array('numsections'=>5), array('createsections' => true));
+        $forum = $this->getDataGenerator()->create_module('forum', array('course'=>$course->id));
+
+        $cms = get_fast_modinfo($course)->get_cms();
+        $cm = reset($cms);
+
+        $newsection = get_fast_modinfo($course)->get_section_info(3);
+        $oldsectionid = $cm->section;
+
+        // Perform the move
+        $result = moveto_module($cm, $newsection);
+        $this->assertTrue($result);
+
+        // get_fast_modinfo(reset) is usually called the code calling moveto_module so call it here
+        $reset = 'reset';
+        get_fast_modinfo($reset);
+        $cms = get_fast_modinfo($course)->get_cms();
+        $cm = reset($cms);
+
+        // Check that the old section's sequence no longer contains this ID
+        $oldsection = $DB->get_record('course_sections', array('id' => $oldsectionid));
+        $oldsequences = explode(',', $newsection->sequence);
+        $this->assertFalse(in_array($cm->id, $oldsequences));
+
+        // Check that the new section's sequence now contains this ID
+        $newsection = $DB->get_record('course_sections', array('id' => $newsection->id));
+        $newsequences = explode(',', $newsection->sequence);
+        $this->assertTrue(in_array($cm->id, $newsequences));
+
+        // Check that the section number has been changed in the cm
+        $this->assertEquals($newsection->id, $cm->section);
+
+
+        // Perform a second move as some issues were only seen on the second move
+        $newsection = get_fast_modinfo($course)->get_section_info(2);
+        $oldsectionid = $cm->section;
+        $result = moveto_module($cm, $newsection);
+        $this->assertTrue($result);
+
+        // get_fast_modinfo(reset) is usually called the code calling moveto_module so call it here
+        $reset = 'reset';
+        get_fast_modinfo($reset);
+        $cms = get_fast_modinfo($course)->get_cms();
+        $cm = reset($cms);
+
+        // Check that the old section's sequence no longer contains this ID
+        $oldsection = $DB->get_record('course_sections', array('id' => $oldsectionid));
+        $oldsequences = explode(',', $newsection->sequence);
+        $this->assertFalse(in_array($cm->id, $oldsequences));
+
+        // Check that the new section's sequence now contains this ID
+        $newsection = $DB->get_record('course_sections', array('id' => $newsection->id));
+        $newsequences = explode(',', $newsection->sequence);
+        $this->assertTrue(in_array($cm->id, $newsequences));
+
+        // Check that the section number has been changed in the cm
+        $this->assertEquals($newsection->id, $cm->section);
+    }
 }

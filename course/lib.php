@@ -2848,6 +2848,7 @@ function add_mod_to_section($mod, $beforemod=NULL) {
         }
 
         $DB->set_field("course_sections", "sequence", $newsequence, array("id"=>$section->id));
+        $DB->set_field("course_modules", "section", $section->id, array("id" => $mod->id));
         return $section->id;     // Return course_sections ID that was used.
 
     } else {  // Insert a new record
@@ -2857,7 +2858,9 @@ function add_mod_to_section($mod, $beforemod=NULL) {
         $section->summary  = "";
         $section->summaryformat = FORMAT_HTML;
         $section->sequence = $mod->coursemodule;
-        return $DB->insert_record("course_sections", $section);
+        $section->id = $DB->insert_record("course_sections", $section);
+        $DB->set_field("course_modules", "section", $section->id, array("id" => $mod->id));
+        return $section->id;
     }
 }
 
