@@ -43,6 +43,34 @@ class behat_command {
     const DOCS_URL = 'http://docs.moodle.org/dev/Acceptance_testing';
 
     /**
+     * @var Allowed types when using text selectors arguments.
+     */
+    public static $allowedtextselectors = array(
+        'css_element' => 'css_element',
+        'xpath_element' => 'xpath_element'
+    );
+
+    /**
+     * @var Allowed types when using selector arguments.
+     */
+    public static $allowedselectors = array(
+        'link' => 'link',
+        'button' => 'button',
+        'link_or_button' => 'link_or_button',
+        'select' => 'select',
+        'checkbox' => 'checkbox',
+        'radio' => 'radio',
+        'file' => 'file',
+        'optgroup' => 'optgroup',
+        'option' => 'option',
+        'table' => 'table',
+        'field' => 'field',
+        'fieldset' => 'fieldset',
+        'css_element' => 'css_element',
+        'xpath_element' => 'xpath_element'
+    );
+
+    /**
      * Ensures the behat dir exists in moodledata
      * @return string Full path
      */

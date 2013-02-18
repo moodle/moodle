@@ -86,6 +86,8 @@ class tool_behat_renderer extends plugin_renderer_base {
             $stepsdefinitions = get_string('nostepsdefinitions', 'tool_behat');
         } else {
 
+            $stepsdefinitions = implode('', $stepsdefinitions);
+
             // Replace text selector type arguments with a user-friendly select.
             $stepsdefinitions = preg_replace_callback('/(TEXT_SELECTOR_STRING)/',
                 function ($matches) {
