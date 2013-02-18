@@ -33,7 +33,7 @@ $numcourses = optional_param('numcourses', 20, PARAM_INT);
 
 if (empty($CFG->enablestats)) {
     if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
-        redirect("$CFG->wwwroot/$CFG->admin/settings.php?section=stats", get_string('mustenablestats', 'admin'), 3);
+        redirect("$CFG->wwwroot/$CFG->admin/search.php?query=enablestats", get_string('mustenablestats', 'admin'), 3);
     } else {
         print_error('statsdisable');
     }
