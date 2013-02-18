@@ -35,6 +35,10 @@ if (empty($CFG->usecomments)) {
 
 list($context, $course, $cm) = get_context_info_array($contextid);
 
+if ( $contextid == SYSCONTEXTID ) {
+    $course = $SITE;
+}
+
 $PAGE->set_url('/comment/comment_ajax.php');
 
 // Allow anonymous user to view comments providing forcelogin now enabled
