@@ -339,8 +339,8 @@ if (!isset($category)) {
     $table->head = array(
         get_string('categories'),
         get_string('courses'),
-        get_string('movecategoryto'),
         get_string('edit'),
+        get_string('movecategoryto'),
     );
     $table->colclasses = array(
         'leftalign name',
