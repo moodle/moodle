@@ -1533,5 +1533,23 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012120301.09);
     }
 
+    if ($oldversion < 2012120301.10) {
+        // Fixing possible wrong MIME types for SMART Notebook files.
+        $extensions = array('%.gallery', '%.galleryitem', '%.gallerycollection', '%.nbk', '%.notebook', '%.xbk');
+        $select = $DB->sql_like('filename', '?', false);
+        foreach ($extensions as $extension) {
+            $DB->set_field_select(
+                'files',
+                'mimetype',
+                'application/x-smarttech-notebook',
+                $select,
+                array($extension)
+            );
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2012120301.10);
+    }
+
     return true;
 }
