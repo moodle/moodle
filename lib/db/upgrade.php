@@ -1599,7 +1599,7 @@ function xmldb_main_upgrade($oldversion) {
                 array($extension)
             );
         }
-        upgrade_main_savepoint(true, 2013021801.00);                                                                                                                                                                                                                          =
+        upgrade_main_savepoint(true, 2013021801.00);
     }
 
     return true;
