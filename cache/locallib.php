@@ -119,6 +119,7 @@ class cache_config_writer extends cache_config {
      */
     protected function generate_configuration_array() {
         $configuration = array();
+        $configuration['siteidentifier'] = $this->siteidentifier;;
         $configuration['stores'] = $this->configstores;
         $configuration['modemappings'] = $this->configmodemappings;
         $configuration['definitions'] = $this->configdefinitions;
@@ -524,6 +525,15 @@ class cache_config_writer extends cache_config {
         $this->config_save();
     }
 
+    /**
+     * Update the site identifier stored by the cache API.
+     *
+     * @param string $siteidentifier
+     */
+    public function update_site_identifier($siteidentifier) {
+        $this->siteidentifier = md5((string)$siteidentifier);
+        $this->config_save();
+    }
 }
 
 /**

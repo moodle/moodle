@@ -723,7 +723,8 @@ class cache_definition {
      */
     public function generate_single_key_prefix() {
         if ($this->keyprefixsingle === null) {
-            $this->keyprefixsingle = $this->mode.'/'.$this->mode;
+            $this->keyprefixsingle = $this->mode.'/'.$this->component.'/'.$this->area;
+            $this->keyprefixsingle .= '/'.$this->get_cache_identifier();
             $identifiers = $this->get_identifiers();
             if ($identifiers) {
                 foreach ($identifiers as $key => $value) {
@@ -746,6 +747,7 @@ class cache_definition {
                 'mode' => $this->mode,
                 'component' => $this->component,
                 'area' => $this->area,
+                'siteidentifier' => $this->get_cache_identifier()
             );
             if (!empty($this->identifiers)) {
                 $identifiers = array();
@@ -784,5 +786,14 @@ class cache_definition {
      */
     public function get_invalidation_events() {
         return $this->invalidationevents;
+    }
+
+    /**
+     * Returns a cache identification string.
+     *
+     * @return string A string to be used as part of keys.
+     */
+    protected function get_cache_identifier() {
+        return cache_helper::get_site_identifier();
     }
 }

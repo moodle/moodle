@@ -1327,6 +1327,9 @@ function set_config($name, $value, $plugin=NULL) {
                 $DB->insert_record('config', $config, false);
             }
         }
+        if ($name === 'siteidentifier') {
+            cache_helper::update_site_identifier($value);
+        }
         cache_helper::invalidate_by_definition('core', 'config', array(), 'core');
     } else { // plugin scope
         if ($id = $DB->get_field('config_plugins', 'id', array('name'=>$name, 'plugin'=>$plugin))) {
@@ -1360,12 +1363,16 @@ function set_config($name, $value, $plugin=NULL) {
  * If called with 2 parameters it will return a string single
  * value or false if the value is not found.
  *
+ * @static $siteidentifier The site identifier is not cached. We use this static cache so
+ *     that we need only fetch it once per request.
  * @param string $plugin full component name
  * @param string $name default NULL
  * @return mixed hash-like object or single value, return false no config found
  */
 function get_config($plugin, $name = NULL) {
     global $CFG, $DB;
+
+    static $siteidentifier = null;
 
     if ($plugin === 'moodle' || $plugin === 'core' || empty($plugin)) {
         $forced =& $CFG->config_php_settings;
@@ -1380,8 +1387,28 @@ function get_config($plugin, $name = NULL) {
         $iscore = false;
     }
 
-    if (!empty($name) && array_key_exists($name, $forced)) {
-        return (string)$forced[$name];
+    if ($siteidentifier === null) {
+        try {
+            // This may fail during installation.
+            // If you have a look at {@link initialise_cfg()} you will see that this is how we detect the need to
+            // install the database.
+            $siteidentifier = $DB->get_field('config', 'value', array('name' => 'siteidentifier'));
+        } catch (dml_exception $ex) {
+            // It's failed. We'll use this oppertunity to disable cache stores so that we don't inadvertingly start using
+            // old caches. People should delete there moodledata dirs when reinstalling the database... but they don't.
+            cache_factory::disable_stores();
+            // Set siteidentifier to false. We don't want to trip this continually.
+            $siteidentifier = false;
+            throw $ex;
+        }
+    }
+
+    if (!empty($name)) {
+        if (array_key_exists($name, $forced)) {
+            return (string)$forced[$name];
+        } else if ($name === 'siteidentifier' && $plugin == 'core') {
+            return $siteidentifier;
+        }
     }
 
     $cache = cache::make('core', 'config');
@@ -1403,6 +1430,10 @@ function get_config($plugin, $name = NULL) {
             return $result[$name];
         }
         return false;
+    }
+
+    if ($plugin === 'core') {
+        $result['siteidentifier'] = $siteidentifier;
     }
 
     foreach ($forced as $key => $value) {
