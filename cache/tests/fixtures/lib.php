@@ -102,6 +102,16 @@ class cache_config_phpunittest extends cache_config_writer {
             'sort' => (int)$sort
         );
     }
+
+    /**
+     * Overrides the default site identifier used by the Cache API so that we can be sure of what it is.
+     *
+     * @return string
+     */
+    public function get_site_identifier() {
+        global $CFG;
+        return $CFG->wwwroot.'phpunit';
+    }
 }
 
 /**

@@ -1524,5 +1524,14 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012120300.04);
     }
 
+    if ($oldversion < 2012120301.09) {
+        // Add the site identifier to the cache config's file.
+        $siteidentifier = $DB->get_field('config', 'value', array('name' => 'siteidentifier'));
+        cache_helper::update_site_identifier($siteidentifier);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2012120301.09);
+    }
+
     return true;
 }

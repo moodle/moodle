@@ -1446,8 +1446,9 @@ function install_core($version, $verbose) {
 
         print_upgrade_part_end(null, true, $verbose);
 
-        // Reset the cache, this returns it to a normal operation state.
-        cache_factory::reset();
+        // Purge all caches. They're disabled but this ensures that we don't have any persistent data just in case something
+        // during installation didn't use APIs.
+        cache_helper::purge_all();
     } catch (exception $ex) {
         upgrade_handle_exception($ex);
     }
@@ -1534,8 +1535,8 @@ function upgrade_noncore($verbose) {
 
     // upgrade all plugins types
     try {
-        // Disable the use of cache stores here. We will reset the factory after we've performed the installation.
-        // This ensures that we don't permanently cache anything during installation.
+        // Disable the use of cache stores here.
+        // We don't reset this, the site can live without proper caching for life of this request.
         cache_factory::disable_stores();
 
         $plugintypes = get_plugin_types();
@@ -1544,8 +1545,6 @@ function upgrade_noncore($verbose) {
         }
         // Update cache definitions. Involves scanning each plugin for any changes.
         cache_helper::update_definitions();
-        // Reset the cache system to a normal state.
-        cache_factory::reset();
     } catch (Exception $ex) {
         upgrade_handle_exception($ex);
     }

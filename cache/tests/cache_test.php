@@ -553,6 +553,8 @@ class cache_phpunit_tests extends advanced_testcase {
             'mode' => cache_store::MODE_APPLICATION,
             'component' => 'phpunit',
             'area' => 'eventinvalidationtest',
+            'simplekeys' => true,
+            'simpledata' => true,
             'invalidationevents' => array(
                 'crazyevent'
             )
@@ -567,13 +569,16 @@ class cache_phpunit_tests extends advanced_testcase {
 
         // OK data added, data invalidated, and invalidation time has been set.
         // Now we need to manually add back the data and adjust the invalidation time.
-        $timefile = $CFG->dataroot.'/cache/cachestore_file/default_application/phpunit_eventinvalidationtest/a65/a65b1dc524cf6e03c1795197c84d5231eb229b86.cache';
+        $hash = md5(cache_store::MODE_APPLICATION.'/phpunit/eventinvalidationtest/'.$CFG->wwwroot.'phpunit');
+        $timefile = $CFG->dataroot."/cache/cachestore_file/default_application/phpunit_eventinvalidationtest/las/lastinvalidation-$hash.cache";
+        // Make sure the file is correct.
+        $this->assertTrue(file_exists($timefile));
         $timecont = serialize(cache::now() - 60); // Back 60sec in the past to force it to re-invalidate.
         make_writable_directory(dirname($timefile));
         file_put_contents($timefile, $timecont);
         $this->assertTrue(file_exists($timefile));
 
-        $datafile = $CFG->dataroot.'/cache/cachestore_file/default_application/phpunit_eventinvalidationtest/626/626e9c7a45febd98f064c2b383de8d9d4ebbde7b.cache';
+        $datafile = $CFG->dataroot."/cache/cachestore_file/default_application/phpunit_eventinvalidationtest/tes/testkey1-$hash.cache";
         $datacont = serialize("test data 1");
         make_writable_directory(dirname($datafile));
         file_put_contents($datafile, $datacont);
@@ -586,6 +591,8 @@ class cache_phpunit_tests extends advanced_testcase {
             'mode' => cache_store::MODE_APPLICATION,
             'component' => 'phpunit',
             'area' => 'eventinvalidationtest',
+            'simplekeys' => true,
+            'simpledata' => true,
         ));
         $cache = cache::make('phpunit', 'eventinvalidationtest');
         $this->assertEquals('test data 1', $cache->get('testkey1'));
@@ -597,6 +604,8 @@ class cache_phpunit_tests extends advanced_testcase {
             'mode' => cache_store::MODE_APPLICATION,
             'component' => 'phpunit',
             'area' => 'eventinvalidationtest',
+            'simplekeys' => true,
+            'simpledata' => true,
             'invalidationevents' => array(
                 'crazyevent'
             )
