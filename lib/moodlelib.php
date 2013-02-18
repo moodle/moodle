@@ -1394,8 +1394,8 @@ function get_config($plugin, $name = NULL) {
             // install the database.
             $siteidentifier = $DB->get_field('config', 'value', array('name' => 'siteidentifier'));
         } catch (dml_exception $ex) {
-            // It's failed. We'll use this oppertunity to disable cache stores so that we don't inadvertingly start using
-            // old caches. People should delete there moodledata dirs when reinstalling the database... but they don't.
+            // It's failed. We'll use this opportunity to disable cache stores so that we don't inadvertingly start using
+            // old caches. People should delete their moodledata dirs when reinstalling the database... but they don't.
             cache_factory::disable_stores();
             // Set siteidentifier to false. We don't want to trip this continually.
             $siteidentifier = false;

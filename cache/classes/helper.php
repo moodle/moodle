@@ -496,7 +496,7 @@ class cache_helper {
      */
     public static function update_definitions($coreonly = false) {
         global $CFG;
-        // Include locallib
+        // Include locallib.
         require_once($CFG->dirroot.'/cache/locallib.php');
         // First update definitions
         cache_config_writer::update_definitions($coreonly);
@@ -511,7 +511,7 @@ class cache_helper {
      */
     public static function update_site_identifier($siteidentifier) {
         global $CFG;
-        // Include locallib
+        // Include locallib.
         require_once($CFG->dirroot.'/cache/locallib.php');
         $factory = cache_factory::instance();
         $factory->updating_started();
