@@ -1062,7 +1062,7 @@ class global_navigation extends navigation_node {
         $this->rootnodes['site'] = $this->add_course($SITE);
         $this->rootnodes['myprofile'] = $this->add(get_string('myprofile'), null, self::TYPE_USER, null, 'myprofile');
         $this->rootnodes['currentcourse'] = $this->add(get_string('currentcourse'), null, self::TYPE_ROOTNODE, null, 'currentcourse');
-        $this->rootnodes['mycourses'] = $this->add(get_string('mycourses'), new moodle_url('/my'), self::TYPE_ROOTNODE, null, 'mycourses');
+        $this->rootnodes['mycourses'] = $this->add(get_string('mycourses'), new moodle_url('/my/'), self::TYPE_ROOTNODE, null, 'mycourses');
         $this->rootnodes['courses'] = $this->add(get_string('courses'), new moodle_url('/course/index.php'), self::TYPE_ROOTNODE, null, 'courses');
         $this->rootnodes['users'] = $this->add(get_string('users'), null, self::TYPE_ROOTNODE, null, 'users');
 
@@ -1087,6 +1087,10 @@ class global_navigation extends navigation_node {
             }
         } else {
             $this->rootnodes['courses']->isexpandable = true;
+        }
+
+        if ($this->rootnodes['mycourses']->isactive) {
+            $this->load_courses_enrolled();
         }
 
         $canviewcourseprofile = true;
@@ -2625,6 +2629,47 @@ class global_navigation extends navigation_node {
         }
         return parent::find($key, $type);
     }
+
+    /**
+     * They've expanded the 'my courses' branch.
+     */
+    protected function load_courses_enrolled() {
+        global $CFG, $DB;
+        $sortorder = 'visible DESC';
+        // Append the chosen sortorder.
+        $sortorder = $sortorder . ',' . $CFG->navsortmycoursessort . ' ASC';
+        $courses = enrol_get_my_courses(null, $sortorder);
+        if ($this->show_my_categories(true)) {
+            // OK Actually we are loading categories. We only want to load categories that have a parent of 0.
+            // In order to make sure we load everything required we must first find the categories that are not
+            // base categories and work out the bottom category in thier path.
+            $categoryids = array();
+            foreach ($courses as $course) {
+                $categoryids[] = $course->category;
+            }
+            $categoryids = array_unique($categoryids);
+            list($sql, $params) = $DB->get_in_or_equal($categoryids);
+            $categories = $DB->get_recordset_select('course_categories', 'id '.$sql.' AND parent <> 0', $params, 'sortorder, id', 'id, path');
+            foreach ($categories as $category) {
+                $bits = explode('/', trim($category->path,'/'));
+                $categoryids[] = array_shift($bits);
+            }
+            $categoryids = array_unique($categoryids);
+            $categories->close();
+
+            // Now we load the base categories.
+            list($sql, $params) = $DB->get_in_or_equal($categoryids);
+            $categories = $DB->get_recordset_select('course_categories', 'id '.$sql.' AND parent = 0', $params, 'sortorder, id');
+            foreach ($categories as $category) {
+                $this->add_category($category, $this->rootnodes['mycourses']);
+            }
+            $categories->close();
+        } else {
+            foreach ($courses as $course) {
+                $this->add_course($course, false, self::COURSE_MY);
+            }
+        }
+    }
 }
 
 /**
@@ -2749,44 +2794,6 @@ class global_navigation_for_ajax extends global_navigation {
 
         $this->find_expandable($this->expandable);
         return $this->expandable;
-    }
-
-    /**
-     * They've expanded the 'my courses' branch.
-     */
-    protected function load_courses_enrolled() {
-        global $DB;
-        $courses = enrol_get_my_courses();
-        if ($this->show_my_categories(true)) {
-            // OK Actually we are loading categories. We only want to load categories that have a parent of 0.
-            // In order to make sure we load everything required we must first find the categories that are not
-            // base categories and work out the bottom category in thier path.
-            $categoryids = array();
-            foreach ($courses as $course) {
-                $categoryids[] = $course->category;
-            }
-            $categoryids = array_unique($categoryids);
-            list($sql, $params) = $DB->get_in_or_equal($categoryids);
-            $categories = $DB->get_recordset_select('course_categories', 'id '.$sql.' AND parent <> 0', $params, 'sortorder, id', 'id, path');
-            foreach ($categories as $category) {
-                $bits = explode('/', trim($category->path,'/'));
-                $categoryids[] = array_shift($bits);
-            }
-            $categoryids = array_unique($categoryids);
-            $categories->close();
-
-            // Now we load the base categories.
-            list($sql, $params) = $DB->get_in_or_equal($categoryids);
-            $categories = $DB->get_recordset_select('course_categories', 'id '.$sql.' AND parent = 0', $params, 'sortorder, id');
-            foreach ($categories as $category) {
-                $this->add_category($category, $this->rootnodes['mycourses'], self::TYPE_MY_CATEGORY);
-            }
-            $categories->close();
-        } else {
-            foreach ($courses as $course) {
-                $this->add_course($course, false, self::COURSE_MY);
-            }
-        }
     }
 
     /**
