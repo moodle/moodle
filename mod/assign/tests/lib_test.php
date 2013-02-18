@@ -181,7 +181,6 @@ class mod_assign_lib_testcase extends advanced_testcase {
 
         $submission = $assign->get_user_submission($this->students[0]->id, true);
 
-
         $this->expectOutputRegex('/Draft/');
         assign_user_complete($this->course, $this->students[0], $assign->get_course_module(), $assign->get_instance());
 

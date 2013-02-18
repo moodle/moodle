@@ -657,7 +657,7 @@ class assign {
     protected function update_plugin_instance(assign_plugin $plugin, stdClass $formdata) {
         if ($plugin->is_visible()) {
             $enabledname = $plugin->get_subtype() . '_' . $plugin->get_type() . '_enabled';
-            if ($formdata->$enabledname) {
+            if (!empty($formdata->$enabledname)) {
                 $plugin->enable();
                 if (!$plugin->save_settings($formdata)) {
                     print_error($plugin->get_error());
@@ -843,17 +843,18 @@ class assign {
      * @param assign_plugin $plugin The plugin to add the settings from
      * @param MoodleQuickForm $mform The form to add the configuration settings to.
      *                               This form is modified directly (not returned).
+     * @param array $pluginsenabled A list of form elements to be added to a group.
+     *                              The new element is added to this array by this function.
      * @return void
      */
-    protected function add_plugin_settings(assign_plugin $plugin, MoodleQuickForm $mform) {
+    protected function add_plugin_settings(assign_plugin $plugin, MoodleQuickForm $mform, & $pluginsenabled) {
         global $CFG;
         if ($plugin->is_visible()) {
-            $mform->addElement('selectyesno',
-                               $plugin->get_subtype() . '_' . $plugin->get_type() . '_enabled',
-                               $plugin->get_name());
-            $mform->addHelpButton($plugin->get_subtype() . '_' . $plugin->get_type() . '_enabled',
-                                  'enabled',
-                                  $plugin->get_subtype() . '_' . $plugin->get_type());
+
+            $name = $plugin->get_subtype() . '_' . $plugin->get_type() . '_enabled';
+            $label = $plugin->get_name();
+            $label .= ' ' . $this->get_renderer()->help_icon('enabled', $plugin->get_subtype() . '_' . $plugin->get_type());
+            $pluginsenabled[] = $mform->createElement('checkbox', $name, '', $label);
 
             $default = get_config($plugin->get_subtype() . '_' . $plugin->get_type(), 'default');
             if ($plugin->get_config('enabled') !== false) {
@@ -874,16 +875,23 @@ class assign {
      * @return void
      */
     public function add_all_plugin_settings(MoodleQuickForm $mform) {
-        $mform->addElement('header', 'general', get_string('submissionsettings', 'assign'));
+        $mform->addElement('header', 'submissiontypes', get_string('submissionsettings', 'assign'));
 
+        $submissionpluginsenabled = array();
+        $group = $mform->addGroup(array(), 'submissionplugins', get_string('submissiontypes', 'assign'), array(' '), false);
         foreach ($this->submissionplugins as $plugin) {
-            $this->add_plugin_settings($plugin, $mform);
+            $this->add_plugin_settings($plugin, $mform, $submissionpluginsenabled);
+        }
+        $group->setElements($submissionpluginsenabled);
 
-        }
-        $mform->addElement('header', 'general', get_string('feedbacksettings', 'assign'));
+        $mform->addElement('header', 'feedbacktypes', get_string('feedbacksettings', 'assign'));
+        $feedbackpluginsenabled = array();
+        $group = $mform->addGroup(array(), 'feedbackplugins', get_string('feedbacktypes', 'assign'), array(' '), false);
         foreach ($this->feedbackplugins as $plugin) {
-            $this->add_plugin_settings($plugin, $mform);
+            $this->add_plugin_settings($plugin, $mform, $feedbackpluginsenabled);
         }
+        $group->setElements($feedbackpluginsenabled);
+        $mform->setExpanded('submissiontypes');
     }
 
     /**
@@ -3111,7 +3119,6 @@ class assign {
                         $grader = $DB->get_record('user', array('id'=>$grade->grader));
                     }
                 }
-
 
                 $feedbackstatus = new assign_feedback_status($gradefordisplay,
                                                       $gradeddate,

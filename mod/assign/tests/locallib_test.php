@@ -674,7 +674,7 @@ class mod_assign_locallib_testcase extends advanced_testcase {
         $data->grade = '50.0';
         $assign->testable_apply_grade_to_user($data, $this->students[0]->id);
 
-        // Now we should see the feedback
+        // Now we should see the feedback.
         $this->setUser($this->students[0]);
         $output = $assign->view_student_summary($this->students[0], true);
         $this->assertNotEquals(false, strpos($output, 'Feedback'), 'Show feedback if there is a grade');
@@ -695,7 +695,7 @@ class mod_assign_locallib_testcase extends advanced_testcase {
         $output = $assign->view_student_summary($this->students[0], true);
         $this->assertEquals(false, strpos($output, 'Feedback'), 'Do not show feedback if the grade is hidden in the gradebook');
 
-        // Do the same but add feedback
+        // Do the same but add feedback.
         $assign = $this->create_instance(array('assignfeedback_comments_enabled' => 1));
 
         $this->setUser($this->teachers[0]);
@@ -706,7 +706,7 @@ class mod_assign_locallib_testcase extends advanced_testcase {
         $plugin = $assign->get_feedback_plugin_by_type('comments');
         $plugin->save($grade, $data);
 
-        // Should have feedback but no grade
+        // Should have feedback but no grade.
         $this->setUser($this->students[0]);
         $output = $assign->view_student_summary($this->students[0], true);
         $this->assertNotEquals(false, strpos($output, 'Tomato sauce'), 'Show feedback even if there is no grade');
