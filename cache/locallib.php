@@ -119,7 +119,7 @@ class cache_config_writer extends cache_config {
      */
     protected function generate_configuration_array() {
         $configuration = array();
-        $configuration['siteidentifier'] = $this->siteidentifier;;
+        $configuration['siteidentifier'] = $this->siteidentifier;
         $configuration['stores'] = $this->configstores;
         $configuration['modemappings'] = $this->configmodemappings;
         $configuration['definitions'] = $this->configdefinitions;
