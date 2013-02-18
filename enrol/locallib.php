@@ -318,11 +318,12 @@ class course_enrolment_manager {
      * @param array $params query parameters.
      * @param int $page which page number of the results to show.
      * @param int $perpage number of users per page.
+     * @param int $addedenrollment number of users added to enrollment.
      * @return array with two elememts:
      *      int total number of users matching the search.
      *      array of user objects returned by the query.
      */
-    protected function execute_search_queries($search, $fields, $countfields, $sql, array $params, $page, $perpage) {
+    protected function execute_search_queries($search, $fields, $countfields, $sql, array $params, $page, $perpage, $addedenrollment=0) {
         global $DB, $CFG;
 
         list($sort, $sortparams) = users_order_by_sql('u', $search, $this->get_context());
@@ -330,7 +331,7 @@ class course_enrolment_manager {
 
         $totalusers = $DB->count_records_sql($countfields . $sql, $params);
         $availableusers = $DB->get_records_sql($fields . $sql . $order,
-                array_merge($params, $sortparams), $page*$perpage, $perpage);
+                array_merge($params, $sortparams), ($page*$perpage) - $addedenrollment, $perpage);
 
         return array('totalusers' => $totalusers, 'users' => $availableusers);
     }
@@ -344,9 +345,10 @@ class course_enrolment_manager {
      * @param bool $searchanywhere
      * @param int $page Defaults to 0
      * @param int $perpage Defaults to 25
+     * @param int $addedenrollment Defaults to 0
      * @return array Array(totalusers => int, users => array)
      */
-    public function get_potential_users($enrolid, $search='', $searchanywhere=false, $page=0, $perpage=25) {
+    public function get_potential_users($enrolid, $search='', $searchanywhere=false, $page=0, $perpage=25, $addedenrollment=0) {
         global $DB;
 
         list($ufields, $params, $wherecondition) = $this->get_basic_search_conditions($search, $searchanywhere);
@@ -359,7 +361,7 @@ class course_enrolment_manager {
                       AND ue.id IS NULL";
         $params['enrolid'] = $enrolid;
 
-        return $this->execute_search_queries($search, $fields, $countfields, $sql, $params, $page, $perpage);
+        return $this->execute_search_queries($search, $fields, $countfields, $sql, $params, $page, $perpage, $addedenrollment);
     }
 
     /**
