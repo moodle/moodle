@@ -149,3 +149,80 @@ class cache_exception extends moodle_exception {
         parent::__construct($errorcode, $module, $link, $a, $debuginfo);
     }
 }
+
+/**
+ * An array of cacheable objects.
+ *
+ * This class allows a developer to create an array of cacheable objects and store that.
+ * The cache API doesn't check items within an array to see whether they are cacheable. Such a check would be very costly to both
+ * arrays using cacheable object and those that don't.
+ * Instead the developer must explicitly use a cacheable_object_array instance.
+ *
+ * The following is one example of how this class can be used.
+ * <code>
+ * $data = array();
+ * $data[] = new cacheable_object('one');
+ * $data[] = new cacheable_object('two');
+ * $data[] = new cacheable_object('three');
+ * $cache->set(new cacheable_object_array($data));
+ * </code>
+ * Another example would be
+ * <code>
+ * $data = new cacheable_object_array();
+ * $data[] = new cacheable_object('one');
+ * $data[] = new cacheable_object('two');
+ * $data[] = new cacheable_object('three');
+ * $cache->set($data);
+ * </code>
+ *
+ * @copyright  2012 Sam Hemelryk
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class cacheable_object_array extends ArrayObject implements cacheable_object {
+
+    /**
+     * Constructs a new array object instance.
+     * @param array $items
+     */
+    final public function __construct(array $items = array()) {
+        parent::__construct($items, ArrayObject::STD_PROP_LIST);
+    }
+
+    /**
+     * Returns the data to cache for this object.
+     *
+     * @return array An array of cache_cached_object instances.
+     * @throws coding_exception
+     */
+    final public function prepare_to_cache() {
+        $result = array();
+        foreach ($this as $key => $value) {
+            if ($value instanceof cacheable_object) {
+                $value = new cache_cached_object($value);
+            } else {
+                throw new coding_exception('Only cacheable_object instances can be added to a cacheable_array');
+            }
+            $result[$key] = $value;
+        }
+        return $result;
+    }
+
+    /**
+     * Returns the cacheable_object_array that was originally sent to the cache.
+     *
+     * @param array $data
+     * @return cacheable_object_array
+     * @throws coding_exception
+     */
+    final static public function wake_from_cache($data) {
+        if (!is_array($data)) {
+            throw new coding_exception('Invalid data type when reviving cacheable_array data');
+        }
+        $result = array();
+        foreach ($data as $key => $value) {
+            $result[$key] = $value->restore_object();
+        }
+        $class = __CLASS__;
+        return new $class($result);
+    }
+}

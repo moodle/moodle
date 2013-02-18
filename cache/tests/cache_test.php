@@ -231,6 +231,23 @@ class cache_phpunit_tests extends advanced_testcase {
         $this->assertEquals('red_ptc_wfc', $result->property1);
         $this->assertEquals('blue_ptc_wfc', $result->property2);
 
+        // Test array of objects
+        $specobject = new cache_phpunit_dummy_object('red', 'blue');
+        $data = new cacheable_object_array(array(
+            clone($specobject),
+            clone($specobject),
+            clone($specobject))
+        );
+        $this->assertTrue($cache->set($key, $data));
+        $result = $cache->get($key);
+        $this->assertInstanceOf('cacheable_object_array', $result);
+        $this->assertCount(3, $data);
+        foreach ($result as $item) {
+            $this->assertInstanceOf('cache_phpunit_dummy_object', $item);
+            $this->assertEquals('red_ptc_wfc', $item->property1);
+            $this->assertEquals('blue_ptc_wfc', $item->property2);
+        }
+
         // Test set many.
         $cache->set_many(array('key1' => 'data1', 'key2' => 'data2'));
         $this->assertEquals('data1', $cache->get('key1'));
