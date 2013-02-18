@@ -52,7 +52,6 @@ class testable_behat_config_manager extends behat_config_manager {
     /**
      * Allow access to protected method
      * @see parent::get_config_file_contents()
-     * @param string $prefix
      * @param array $features
      * @param array $stepsdefinitions
      * @return string

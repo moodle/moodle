@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -41,7 +40,14 @@ use Behat\Mink\Session as Session,
  */
 class behat_form_field {
 
+    /**
+     * @var Session Behat session.
+     */
     protected $session;
+
+    /**
+     * @var NodeElement The field DOM node to interact with.
+     */
     protected $fieldnode;
 
     /**

@@ -60,8 +60,8 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
      * @return string
      */
     protected function locate_path($path) {
-        $startUrl = rtrim($this->getMinkParameter('base_url'), '/') . '/';
-        return 0 !== strpos($path, 'http') ? $startUrl . ltrim($path, '/') : $path;
+        $starturl = rtrim($this->getMinkParameter('base_url'), '/') . '/';
+        return 0 !== strpos($path, 'http') ? $starturl . ltrim($path, '/') : $path;
     }
 
     /**
@@ -98,7 +98,7 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
             array($selector, $locator),
             self::TIMEOUT,
             $exception
-       );
+        );
     }
 
     /**
@@ -119,7 +119,7 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
      *
      * @link http://mink.behat.org/#named-selectors
      * @throws coding_exception
-     * @param string $method The name of the called method
+     * @param string $name The name of the called method
      * @param mixed $arguments
      * @return NodeElement
      */
@@ -193,7 +193,7 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
                 if ($return = $lambda($this, $args)) {
                     return $return;
                 }
-            } catch(Exception $e) {
+            } catch (Exception $e) {
 
                 // We would use the first closure exception if no exception has been provided.
                 if (!$exception) {

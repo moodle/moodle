@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -51,6 +50,9 @@ use Behat\Behat\Exception\PendingException as PendingException;
  */
 class behat_data_generators extends behat_base {
 
+    /**
+     * @var testing_data_generator
+     */
     protected $datagenerator;
 
     /**
@@ -215,7 +217,7 @@ class behat_data_generators extends behat_base {
     /**
      * Gets the user id from it's username.
      * @throws Exception
-     * @param string $idnumber
+     * @param string $username
      * @return int
      */
     protected function get_user_id($username) {
@@ -230,7 +232,7 @@ class behat_data_generators extends behat_base {
     /**
      * Gets the role id from it's shortname.
      * @throws Exception
-     * @param string $idnumber
+     * @param string $roleshortname
      * @return int
      */
     protected function get_role_id($roleshortname) {

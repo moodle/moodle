@@ -50,6 +50,7 @@ class behat_forms extends behat_base {
      *
      * @When /^I press "(?P<button_string>(?:[^"]|\\")*)"$/
      * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param string $button
      */
     public function press_button($button) {
 
@@ -90,6 +91,8 @@ class behat_forms extends behat_base {
      *
      * @When /^I fill in "(?P<field_string>(?:[^"]|\\")*)" with "(?P<value_string>(?:[^"]|\\")*)"$/
      * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param string $field
+     * @param string $value
      */
     public function fill_field($field, $value) {
 
@@ -102,6 +105,8 @@ class behat_forms extends behat_base {
      *
      * @When /^I select "(?P<option_string>(?:[^"]|\\")*)" from "(?P<select_string>(?:[^"]|\\")*)"$/
      * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param string $option
+     * @param string $select
      */
     public function select_option($option, $select) {
 
@@ -117,6 +122,7 @@ class behat_forms extends behat_base {
      *
      * @When /^I check "(?P<option_string>(?:[^"]|\\")*)"$/
      * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param string $option
      */
     public function check_option($option) {
 
@@ -129,6 +135,7 @@ class behat_forms extends behat_base {
      *
      * @When /^I uncheck "(?P<option_string>(?:[^"]|\\")*)"$/
      * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param string $option
      */
     public function uncheck_option($option) {
 
@@ -142,8 +149,8 @@ class behat_forms extends behat_base {
      * @Then /^the "(?P<field_string>(?:[^"]|\\")*)" field should match "(?P<value_string>(?:[^"]|\\")*)" value$/
      * @throws ExpectationException
      * @throws ElementNotFoundException Thrown by behat_base::find
-     * @param mixed $locator
-     * @param mixed $value
+     * @param string $locator
+     * @param string $value
      */
     public function the_field_should_match_value($locator, $value) {
 
@@ -166,6 +173,7 @@ class behat_forms extends behat_base {
      *
      * @Then /^the "(?P<checkbox_string>(?:[^"]|\\")*)" checkbox should be checked$/
      * @see Behat\MinkExtension\Context\MinkContext
+     * @param string $checkbox
      */
     public function assert_checkbox_checked($checkbox) {
         $this->assertSession()->checkboxChecked($checkbox);
@@ -176,6 +184,7 @@ class behat_forms extends behat_base {
      *
      * @Then /^the "(?P<checkbox_string>(?:[^"]|\\")*)" checkbox should not be checked$/
      * @see Behat\MinkExtension\Context\MinkContext
+     * @param string $checkbox
      */
     public function assert_checkbox_not_checked($checkbox) {
         $this->assertSession()->checkboxNotChecked($checkbox);
