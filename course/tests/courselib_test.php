@@ -297,22 +297,71 @@ class courselib_testcase extends advanced_testcase {
     }
 
     public function test_move_module_in_course() {
+        global $DB;
+
         $this->resetAfterTest(true);
         // Setup fixture
-        $course = $this->getDataGenerator()->create_course(array('numsections'=>5));
+        $course = $this->getDataGenerator()->create_course(array('numsections'=>5), array('createsections' => true));
         $forum = $this->getDataGenerator()->create_module('forum', array('course'=>$course->id));
 
         $cms = get_fast_modinfo($course)->get_cms();
         $cm = reset($cms);
 
-        course_create_sections_if_missing($course, 3);
-        $section3 = get_fast_modinfo($course)->get_section_info(3);
+        $newsection = get_fast_modinfo($course)->get_section_info(3);
+        $oldsectionid = $cm->section;
 
-        moveto_module($cm, $section3);
+        // Perform the move
+        moveto_module($cm, $newsection);
 
+        // reset of get_fast_modinfo is usually called the code calling moveto_module so call it here
+        get_fast_modinfo(0, 0, true);
+        $cms = get_fast_modinfo($course)->get_cms();
+        $cm = reset($cms);
+
+        // Check that the cached modinfo contains the correct section info
         $modinfo = get_fast_modinfo($course);
         $this->assertTrue(empty($modinfo->sections[0]));
         $this->assertFalse(empty($modinfo->sections[3]));
+
+        // Check that the old section's sequence no longer contains this ID
+        $oldsection = $DB->get_record('course_sections', array('id' => $oldsectionid));
+        $oldsequences = explode(',', $newsection->sequence);
+        $this->assertFalse(in_array($cm->id, $oldsequences));
+
+        // Check that the new section's sequence now contains this ID
+        $newsection = $DB->get_record('course_sections', array('id' => $newsection->id));
+        $newsequences = explode(',', $newsection->sequence);
+        $this->assertTrue(in_array($cm->id, $newsequences));
+
+        // Check that the section number has been changed in the cm
+        $this->assertEquals($newsection->id, $cm->section);
+
+
+        // Perform a second move as some issues were only seen on the second move
+        $newsection = get_fast_modinfo($course)->get_section_info(2);
+        $oldsectionid = $cm->section;
+        $result = moveto_module($cm, $newsection);
+        $this->assertTrue($result);
+
+        // reset of get_fast_modinfo is usually called the code calling moveto_module so call it here
+        get_fast_modinfo(0, 0, true);
+        $cms = get_fast_modinfo($course)->get_cms();
+        $cm = reset($cms);
+
+        // Check that the cached modinfo contains the correct section info
+        $modinfo = get_fast_modinfo($course);
+        $this->assertTrue(empty($modinfo->sections[0]));
+        $this->assertFalse(empty($modinfo->sections[2]));
+
+        // Check that the old section's sequence no longer contains this ID
+        $oldsection = $DB->get_record('course_sections', array('id' => $oldsectionid));
+        $oldsequences = explode(',', $newsection->sequence);
+        $this->assertFalse(in_array($cm->id, $oldsequences));
+
+        // Check that the new section's sequence now contains this ID
+        $newsection = $DB->get_record('course_sections', array('id' => $newsection->id));
+        $newsequences = explode(',', $newsection->sequence);
+        $this->assertTrue(in_array($cm->id, $newsequences));
     }
 
     public function test_module_visibility() {

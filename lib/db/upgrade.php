@@ -1602,5 +1602,54 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2013021801.00);
     }
 
+    if ($oldversion < 2013021801.01) {
+        // Retrieve the list of course_sections as a recordset to save memory
+        $coursesections = $DB->get_recordset('course_sections', null, 'course, id', 'id, course, sequence');
+        foreach ($coursesections as $coursesection) {
+            // Retrieve all of the actual modules in this course and section combination to reduce DB calls
+            $actualsectionmodules = $DB->get_records('course_modules',
+                    array('course' => $coursesection->course, 'section' => $coursesection->id), '', 'id, section');
+
+            // Break out the current sequence so that we can compare it
+            $currentsequence = explode(',', $coursesection->sequence);
+            $newsequence = array();
+
+            // Check each of the modules in the current sequence
+            foreach ($currentsequence as $module) {
+                if (isset($actualsectionmodules[$module])) {
+                    $newsequence[] = $module;
+                    // We unset the actualsectionmodules so that we don't get duplicates and that we can add orphaned
+                    // modules later
+                    unset($actualsectionmodules[$module]);
+                }
+            }
+
+            // Append any modules which have somehow been orphaned
+            foreach ($actualsectionmodules as $module) {
+                $newsequence[] = $module->id;
+            }
+
+            // Piece it all back together
+            $sequence = implode(',', $newsequence);
+
+            // Only update if there have been changes
+            if ($sequence !== $coursesection->sequence) {
+                $coursesection->sequence = $sequence;
+                $DB->update_record('course_sections', $coursesection);
+
+                // And clear the sectioncache and modinfo cache - they'll be regenerated on next use
+                $course = new stdClass();
+                $course->id = $coursesection->course;
+                $course->sectioncache = null;
+                $course->modinfo = null;
+                $DB->update_record('course', $course);
+            }
+        }
+        $coursesections->close();
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2013021801.01);
+    }
+
     return true;
 }
