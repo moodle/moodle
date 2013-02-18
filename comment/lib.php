@@ -526,6 +526,7 @@ class comment {
             $c->content     = $u->ccontent;
             $c->format      = $u->cformat;
             $c->timecreated = $u->ctimecreated;
+            $c->strftimeformat = get_string('strftimerecent', 'langconfig');
             $url = new moodle_url('/user/view.php', array('id'=>$u->id, 'course'=>$this->courseid));
             $c->profileurl = $url->out(false);
             $c->fullname = fullname($u);
@@ -793,7 +794,7 @@ class comment {
         $replacements[] = $cmt->avatar;
         $replacements[] = html_writer::link($cmt->profileurl, $cmt->fullname);
         $replacements[] = $cmt->content;
-        $replacements[] = userdate($cmt->timecreated, get_string('strftimerecent', 'langconfig'));
+        $replacements[] = userdate($cmt->timecreated, $cmt->strftimeformat);
 
         // use html template to format a single comment.
         return str_replace($patterns, $replacements, $this->template);
