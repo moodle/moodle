@@ -68,7 +68,7 @@ switch ($action) {
         $search = optional_param('search', '', PARAM_RAW);
         $page = optional_param('page', 0, PARAM_INT);
         $addedenrollment = optional_param('enrolcount', 0, PARAM_INT);
-        $perpage = 25;  //  This value is hard-coded to 25 in quickenrolment.js
+        $perpage = optional_param('perpage', 25, PARAM_INT);  //  This value is hard-coded to 25 in quickenrolment.js
         $outcome->response = $manager->get_potential_users($enrolid, $search, $searchanywhere, $page, $perpage, $addedenrollment);
         $extrafields = get_extra_user_fields($context);
         foreach ($outcome->response['users'] as &$user) {
