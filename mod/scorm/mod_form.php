@@ -85,13 +85,9 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform->addHelpButton('packagefile', 'package', 'scorm');
         $mform->disabledIf('packagefile', 'scormtype', 'noteq', SCORM_TYPE_LOCAL);
 
-        //-------------------------------------------------------------------------------
-        // Time restrictions
-        $mform->addElement('header', 'timerestricthdr', get_string('timerestrict', 'scorm'));
-
         $mform->addElement('date_time_selector', 'timeopen', get_string("scormopen", "scorm"), array('optional' => true));
         $mform->addElement('date_time_selector', 'timeclose', get_string("scormclose", "scorm"), array('optional' => true));
-        //-------------------------------------------------------------------------------
+
         // display Settings
         $mform->addElement('header', 'displaysettings', get_string('displaysettings', 'scorm'));
         // Framed / Popup Window
