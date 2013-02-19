@@ -84,6 +84,7 @@ error_reporting(E_ALL | E_STRICT);
 ini_set('display_errors', '1');
 ini_set('log_errors', '1');
 
+// Getting $CFG data.
 require_once(__DIR__ . '/../../../../config.php');
 
 // CFG->behat_prefix must be set and with value different than CFG->prefix and phpunit_prefix.
@@ -140,6 +141,10 @@ foreach ($vars as $var) {
 
 $CFG->noemailever = true;
 $CFG->passwordsaltmain = 'moodle';
+
+// Unset cache and temp directories to reset them again with the new $CFG->dataroot.
+unset($CFG->cachedir);
+unset($CFG->tempdir);
 
 // Continues setup.
 define('ABORT_AFTER_CONFIG_CANCEL', true);
