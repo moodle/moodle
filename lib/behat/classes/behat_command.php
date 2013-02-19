@@ -101,9 +101,9 @@ class behat_command {
      * the behat help command to ensure it works as expected
      *
      * @param  bool $checkphp Extra check for the PHP version
-     * @return void
+     * @return int Error code or 0 if all ok
      */
-    public static function check_behat_setup($checkphp = false) {
+    public static function behat_setup_problem($checkphp = false) {
         global $CFG;
 
         // We don't check the PHP version if $CFG->behat_switchcompletely has been enabled.
@@ -123,20 +123,27 @@ class behat_command {
                 $docslink = html_writer::tag('a', $docslink, array('href' => $docslink, 'target' => '_blank'));
             }
             $msg .= '. ' . get_string('moreinfoin', 'tool_behat', $docslink);
-            notice($msg);
+
+            self::output_msg($msg);
+            return BEHAT_EXITCODE_COMPOSER;
         }
 
         // Behat test command.
         list($output, $code) = self::run(' --help');
 
         if ($code != 0) {
-            notice(get_string('wrongbehatsetup', 'tool_behat'));
+            // Returning composer error code to avoid conflicts with behat and moodle error codes.
+            self::output_msg(get_string('wrongbehatsetup', 'tool_behat'));
+            return BEHAT_EXITCODE_COMPOSER;
         }
 
-        // Checking behat dataroot existence otherwise notice about admin/tool/behat/cli/util.php.
+        // Checking behat dataroot existence otherwise echo about admin/tool/behat/cli/util.php.
         if (empty($CFG->behat_dataroot) || !is_dir($CFG->behat_dataroot) || !is_writable($CFG->behat_dataroot)) {
-            notice(get_string('runclitool', 'tool_behat', 'php admin/tool/behat/cli/util.php'));
+            self::output_msg(get_string('runclitool', 'tool_behat', 'php admin/tool/behat/cli/util.php'));
+            return BEHAT_EXITCODE_CONFIG;
         }
+
+        return 0;
     }
 
     /**
@@ -148,6 +155,24 @@ class behat_command {
             return false;
         }
         return true;
+    }
+
+    /**
+     * Outputs a message.
+     *
+     * Used in CLI + web UI methods. Stops the
+     * execution in web.
+     *
+     * @param string $msg
+     * @return void
+     */
+    protected static function output_msg($msg) {
+
+        if (!CLI_SCRIPT) {
+            notice($msg);
+        } else {
+            echo $msg;
+        }
     }
 
 }

@@ -50,7 +50,7 @@ class tool_behat {
 
         // We don't require the test environment to be enabled to list the steps definitions
         // so test writers can more easily set up the environment.
-        behat_command::check_behat_setup();
+        behat_command::behat_setup_problem();
 
         // The loaded steps depends on the component specified.
         behat_config_manager::update_config_file($component, false);
