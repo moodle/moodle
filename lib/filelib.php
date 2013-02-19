@@ -2935,14 +2935,22 @@ class curl {
     }
 
     /**
-     * Set curl options
+     * Set curl options.
      *
-     * @param array $options If array is null, this function will
-     * reset the options to default value.
+     * Do not use the curl constants to define the options, pass a string
+     * corresponding to that constant. Ie. to set CURLOPT_MAXREDIRS, pass
+     * array('CURLOPT_MAXREDIRS' => 10) or array('maxredirs' => 10) to this method.
+     *
+     * @param array $options If array is null, this function will reset the options to default value.
+     * @return void
+     * @throws coding_exception If an option uses constant value instead of option name.
      */
     public function setopt($options = array()) {
         if (is_array($options)) {
-            foreach($options as $name => $val){
+            foreach ($options as $name => $val){
+                if (!is_string($name)) {
+                    throw new coding_exception('Curl options should be defined using strings, not constant values.');
+                }
                 if (stripos($name, 'CURLOPT_') === false) {
                     $name = strtoupper('CURLOPT_'.$name);
                 }
@@ -3067,11 +3075,9 @@ class curl {
             var_dump($this->header);
         }
 
-        // set options
+        // Set options.
         foreach($this->options as $name => $val) {
-            if (is_string($name)) {
-                $name = constant(strtoupper($name));
-            }
+            $name = constant(strtoupper($name));
             curl_setopt($curl, $name, $val);
         }
         return $curl;

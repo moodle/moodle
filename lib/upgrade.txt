@@ -18,6 +18,10 @@ information provided here is intended especially for developers.
   only partially deletes data, so wherever it was called extra code was needed to
   perform the whole deletion process. The function course_delete_module now takes care
   of the whole process.
+* curl::setopt() does not accept constant values any more. As it never worked properly,
+  we decided to make the type check stricter. Now, the keys of the array pass must be a string
+  corresponding to the curl constant name.
+
 
 YUI changes:
 * M.util.help_icon has been deprecated. Code should be updated to use moodle-core-popuphelp
