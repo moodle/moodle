@@ -346,8 +346,8 @@ class mod_quiz_mod_form extends moodleform_mod {
         $repeatarray = array();
         $repeatedoptions = array();
         $repeatarray[] = $mform->createElement('editor', 'feedbacktext',
-                get_string('feedback', 'quiz'), null, array('maxfiles' => EDITOR_UNLIMITED_FILES,
-                        'noclean' => true, 'context' => $this->context));
+                get_string('feedback', 'quiz'), array('rows' => 3), array('maxfiles' => EDITOR_UNLIMITED_FILES,
+                        'noclean' => true, 'context' => $this->context, 'collapsed' => 1));
         $repeatarray[] = $mform->createElement('text', 'feedbackboundaries',
                 get_string('gradeboundary', 'quiz'), array('size' => 10));
         $repeatedoptions['feedbacktext']['type'] = PARAM_RAW;
@@ -367,9 +367,9 @@ class mod_quiz_mod_form extends moodleform_mod {
 
         // Put some extra elements in before the button.
         $mform->insertElementBefore($mform->createElement('editor',
-                "feedbacktext[$nextel]", get_string('feedback', 'quiz'), null,
+                "feedbacktext[$nextel]", get_string('feedback', 'quiz'), array('rows' => 3),
                 array('maxfiles' => EDITOR_UNLIMITED_FILES, 'noclean' => true,
-                      'context' => $this->context)),
+                      'context' => $this->context, 'collapsed' => 1)),
                 'boundary_add_fields');
         $mform->insertElementBefore($mform->createElement('static',
                 'gradeboundarystatic2', get_string('gradeboundary', 'quiz'), '0%'),
