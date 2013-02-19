@@ -1745,7 +1745,13 @@ class css_rule {
         $css = $this->out();
         $errors = array();
         foreach ($this->styles as $style) {
-            if ($style->has_error()) {
+            if (is_array($style)) {
+                foreach ($style as $s) {
+                    if ($style instanceof css_style && $style->has_error()) {
+                        $errors[] = "  * ".$style->get_last_error();
+                    }
+                }
+            } else if ($style instanceof css_style && $style->has_error()) {
                 $errors[] = "  * ".$style->get_last_error();
             }
         }
