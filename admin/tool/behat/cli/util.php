@@ -43,6 +43,7 @@ list($options, $unrecognized) = cli_get_params(
         'drop'    => false,
         'enable'  => false,
         'disable' => false,
+        'diag'    => false
     ),
     array(
         'h' => 'help'
@@ -59,6 +60,7 @@ Options:
 --drop     Drops the database tables and the dataroot contents
 --enable   Enables test environment and updates tests list
 --disable  Disables test environment
+--diag     Get behat test environment status code
 
 -h, --help     Print out this help
 
@@ -183,6 +185,9 @@ if ($options['install']) {
 } else if ($options['disable']) {
     behat_util::stop_test_mode();
     mtrace("Acceptance tests environment disabled");
+} else if ($options['diag']) {
+    $code = behat_util::get_behat_status();
+    exit($code);
 } else {
     echo $help;
 }
