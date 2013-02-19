@@ -367,7 +367,8 @@ $CFG->admin = 'admin';
 //
 //     $CFG->themedir = '/location/of/extra/themes';
 //
-// It is possible to specify different cache and temp directories, use local fast filesystem.
+// It is possible to specify different cache and temp directories, use local fast filesystem
+// for normal web servers. Server clusters MUST use shared filesystem for cachedir!
 // The directories must not be accessible via web.
 //
 //     $CFG->tempdir = '/var/www/moodle/temp';
