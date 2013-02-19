@@ -2531,7 +2531,7 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
     $actions = array();
 
     // AJAX edit title
-    if ($mod->modname !== 'label' && $hasmanageactivities &&
+    if ($mod->has_view() && $hasmanageactivities &&
                 (($mod->course == $COURSE->id && course_ajax_enabled($COURSE)) ||
                  ($mod->course == SITEID && course_ajax_enabled($SITE)))) {
         // we will not display link if we are on some other-course page (where we should not see this module anyway)

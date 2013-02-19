@@ -223,28 +223,28 @@ function report_log_print_mnet_selector_form($hostid, $course, $selecteduser=0, 
     $activities = array();
     $selectedactivity = "";
 
-/// Casting $course->modinfo to string prevents one notice when the field is null
-    if ($modinfo = unserialize((string)$course->modinfo)) {
+    $modinfo = get_fast_modinfo($course);
+    if (!empty($modinfo->cms)) {
         $section = 0;
-        foreach ($modinfo as $mod) {
-            if ($mod->mod == "label") {
+        foreach ($modinfo->cms as $cm) {
+            if (!$cm->uservisible || !$cm->has_view()) {
                 continue;
             }
-            if ($mod->section > 0 and $section <> $mod->section) {
-                $activities["section/$mod->section"] = '--- '.get_section_name($course, $mod->section).' ---';
+            if ($cm->sectionnum > 0 and $section <> $cm->sectionnum) {
+                $activities["section/$cm->sectionnum"] = '--- '.get_section_name($course, $cm->sectionnum).' ---';
             }
-            $section = $mod->section;
-            $mod->name = strip_tags(format_string($mod->name, true));
-            if (textlib::strlen($mod->name) > 55) {
-                $mod->name = textlib::substr($mod->name, 0, 50)."...";
+            $section = $cm->sectionnum;
+            $modname = strip_tags($cm->get_formatted_name());
+            if (textlib::strlen($modname) > 55) {
+                $modname = textlib::substr($modname, 0, 50)."...";
             }
-            if (!$mod->visible) {
-                $mod->name = "(".$mod->name.")";
+            if (!$cm->visible) {
+                $modname = "(".$modname.")";
             }
-            $activities["$mod->cm"] = $mod->name;
+            $activities["$cm->id"] = $modname;
 
-            if ($mod->cm == $modid) {
-                $selectedactivity = "$mod->cm";
+            if ($cm->id == $modid) {
+                $selectedactivity = "$cm->id";
             }
         }
     }
@@ -475,28 +475,28 @@ function report_log_print_selector_form($course, $selecteduser=0, $selecteddate=
     $activities = array();
     $selectedactivity = "";
 
-/// Casting $course->modinfo to string prevents one notice when the field is null
-    if ($modinfo = unserialize((string)$course->modinfo)) {
+    $modinfo = get_fast_modinfo($course);
+    if (!empty($modinfo->cms)) {
         $section = 0;
-        foreach ($modinfo as $mod) {
-            if ($mod->mod == "label") {
+        foreach ($modinfo->cms as $cm) {
+            if (!$cm->uservisible || !$cm->has_view()) {
                 continue;
             }
-            if ($mod->section > 0 and $section <> $mod->section) {
-                $activities["section/$mod->section"] = '--- '.get_section_name($course, $mod->section).' ---';
+            if ($cm->sectionnum > 0 and $section <> $cm->sectionnum) {
+                $activities["section/$cm->sectionnum"] = '--- '.get_section_name($course, $cm->sectionnum).' ---';
             }
-            $section = $mod->section;
-            $mod->name = strip_tags(format_string($mod->name, true));
-            if (textlib::strlen($mod->name) > 55) {
-                $mod->name = textlib::substr($mod->name, 0, 50)."...";
+            $section = $cm->sectionnum;
+            $modname = strip_tags($cm->get_formatted_name());
+            if (textlib::strlen($modname) > 55) {
+                $modname = textlib::substr($modname, 0, 50)."...";
             }
-            if (!$mod->visible) {
-                $mod->name = "(".$mod->name.")";
+            if (!$cm->visible) {
+                $modname = "(".$modname.")";
             }
-            $activities["$mod->cm"] = $mod->name;
+            $activities["$cm->id"] = $modname;
 
-            if ($mod->cm == $modid) {
-                $selectedactivity = "$mod->cm";
+            if ($cm->id == $modid) {
+                $selectedactivity = "$cm->id";
             }
         }
     }

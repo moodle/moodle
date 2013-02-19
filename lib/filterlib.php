@@ -91,6 +91,25 @@ class filter_manager {
     }
 
     /**
+     * Resets the caches, usually to be called between unit tests
+     */
+    public static function reset_caches() {
+        if (self::$singletoninstance) {
+            self::$singletoninstance->unload_all_filters();
+        }
+        self::$singletoninstance = null;
+    }
+
+    /**
+     * Unloads all filters and other cached information
+     */
+    protected function unload_all_filters() {
+        $this->textfilters = array();
+        $this->stringfilters = array();
+        $this->stringfilternames = array();
+    }
+
+    /**
      * Load all the filters required by this context.
      *
      * @param object $context
@@ -285,6 +304,16 @@ class performance_measuring_filter_manager extends filter_manager {
     protected $filterscreated = 0;
     protected $textsfiltered = 0;
     protected $stringsfiltered = 0;
+
+    /**
+     * Unloads all filters and other cached information
+     */
+    protected function unload_all_filters() {
+        parent::unload_all_filters();
+        $this->filterscreated = 0;
+        $this->textsfiltered = 0;
+        $this->stringsfiltered = 0;
+    }
 
     /**
      * @param string $filtername

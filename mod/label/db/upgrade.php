@@ -62,6 +62,22 @@ function xmldb_label_upgrade($oldversion) {
     // Moodle v2.4.0 release upgrade line
     // Put any upgrade step following this
 
+    if ($oldversion < 2013021400) {
+        // find all courses that contain labels and reset their cache
+        $modid = $DB->get_field_sql("SELECT id FROM {modules} WHERE name=?",
+                array('label'));
+        if ($modid) {
+            $courses = $DB->get_fieldset_sql('SELECT DISTINCT course '.
+                'FROM {course_modules} WHERE module=?', array($modid));
+            foreach ($courses as $courseid) {
+                $DB->execute('UPDATE {course} set modinfo = ?, sectioncache = ? '.
+                        'WHERE id = ?', array(null, null, $courseid));
+            }
+        }
+
+        // label savepoint reached
+        upgrade_mod_savepoint(true, 2013021400, 'label');
+    }
 
     return true;
 }
