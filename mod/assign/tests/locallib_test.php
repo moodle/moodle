@@ -38,17 +38,41 @@ require_once($CFG->dirroot . '/mod/assign/upgradelib.php');
  */
 class mod_assign_locallib_testcase extends advanced_testcase {
 
+    /** @const Default number of students to create */
+    const DEFAULT_STUDENT_COUNT = 3;
+    /** @const Default number of teachers to create */
+    const DEFAULT_TEACHER_COUNT = 2;
+    /** @const Default number of editing teachers to create */
+    const DEFAULT_EDITING_TEACHER_COUNT = 2;
+    /** @const Optional extra number of students to create */
+    const EXTRA_STUDENT_COUNT = 40;
+    /** @const Optional extra number of teachers to create */
+    const EXTRA_TEACHER_COUNT = 5;
+    /** @const Optional extra number of editing teachers to create */
+    const EXTRA_EDITING_TEACHER_COUNT = 5;
+    /** @const Number of groups to create */
+    const GROUP_COUNT = 6;
+
     /** @var stdClass $course New course created to hold the assignments */
     protected $course = null;
 
-    /** @var array $teachers List of 5 default teachers in the course*/
+    /** @var array $teachers List of DEFAULT_TEACHER_COUNT teachers in the course*/
     protected $teachers = null;
 
-    /** @var array $editingteachers List of 5 default editing teachers in the course*/
+    /** @var array $editingteachers List of DEFAULT_EDITING_TEACHER_COUNT editing teachers in the course */
     protected $editingteachers = null;
 
-    /** @var array $students List of 100 default students in the course*/
+    /** @var array $students List of DEFAULT_STUDENT_COUNT students in the course*/
     protected $students = null;
+
+    /** @var array $extrateachers List of EXTRA_TEACHER_COUNT teachers in the course*/
+    protected $extrateachers = null;
+
+    /** @var array $extraeditingteachers List of EXTRA_EDITING_TEACHER_COUNT editing teachers in the course*/
+    protected $extraeditingteachers = null;
+
+    /** @var array $extrastudents List of EXTRA_STUDENT_COUNT students in the course*/
+    protected $extrastudents = null;
 
     /** @var array $groups List of 10 groups in the course */
     protected $groups = null;
@@ -57,28 +81,28 @@ class mod_assign_locallib_testcase extends advanced_testcase {
      * Setup function - we will create a course and add an assign instance to it.
      */
     protected function setUp() {
-        global $DB, $CFG;
+        global $DB;
 
         $this->resetAfterTest(true);
 
         $this->course = $this->getDataGenerator()->create_course();
         $this->teachers = array();
-        for ($i = 0; $i < 5; $i++) {
+        for ($i = 0; $i < self::DEFAULT_TEACHER_COUNT; $i++) {
             array_push($this->teachers, $this->getDataGenerator()->create_user());
         }
 
         $this->editingteachers = array();
-        for ($i = 0; $i < 5; $i++) {
+        for ($i = 0; $i < self::DEFAULT_EDITING_TEACHER_COUNT; $i++) {
             array_push($this->editingteachers, $this->getDataGenerator()->create_user());
         }
 
         $this->students = array();
-        for ($i = 0; $i < 100; $i++) {
+        for ($i = 0; $i < self::DEFAULT_STUDENT_COUNT; $i++) {
             array_push($this->students, $this->getDataGenerator()->create_user());
         }
 
         $this->groups = array();
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < self::GROUP_COUNT; $i++) {
             array_push($this->groups, $this->getDataGenerator()->create_group(array('courseid'=>$this->course->id)));
         }
 
@@ -87,7 +111,7 @@ class mod_assign_locallib_testcase extends advanced_testcase {
             $this->getDataGenerator()->enrol_user($teacher->id,
                                                   $this->course->id,
                                                   $teacherrole->id);
-            groups_add_member($this->groups[$i % 10], $teacher);
+            groups_add_member($this->groups[$i % self::GROUP_COUNT], $teacher);
         }
 
         $editingteacherrole = $DB->get_record('role', array('shortname'=>'editingteacher'));
@@ -95,7 +119,7 @@ class mod_assign_locallib_testcase extends advanced_testcase {
             $this->getDataGenerator()->enrol_user($editingteacher->id,
                                                   $this->course->id,
                                                   $editingteacherrole->id);
-            groups_add_member($this->groups[$i % 10], $editingteacher);
+            groups_add_member($this->groups[$i % self::GROUP_COUNT], $editingteacher);
         }
 
         $studentrole = $DB->get_record('role', array('shortname'=>'student'));
@@ -103,10 +127,56 @@ class mod_assign_locallib_testcase extends advanced_testcase {
             $this->getDataGenerator()->enrol_user($student->id,
                                                   $this->course->id,
                                                   $studentrole->id);
-            if ($i < 80) {
-                groups_add_member($this->groups[$i % 10], $student);
+            groups_add_member($this->groups[$i % self::GROUP_COUNT], $student);
+        }
+    }
+
+    /*
+     * For tests that make sense to use alot of data, create extra students/teachers.
+     */
+    private function createExtraUsers() {
+        global $DB;
+        $this->extrateachers = array();
+        for ($i = 0; $i < self::EXTRA_TEACHER_COUNT; $i++) {
+            array_push($this->extrateachers, $this->getDataGenerator()->create_user());
+        }
+
+        $this->extraeditingteachers = array();
+        for ($i = 0; $i < self::EXTRA_EDITING_TEACHER_COUNT; $i++) {
+            array_push($this->extraeditingteachers, $this->getDataGenerator()->create_user());
+        }
+
+        $this->extrastudents = array();
+        for ($i = 0; $i < self::EXTRA_STUDENT_COUNT; $i++) {
+            array_push($this->extrastudents, $this->getDataGenerator()->create_user());
+        }
+
+        $teacherrole = $DB->get_record('role', array('shortname'=>'teacher'));
+        foreach ($this->extrateachers as $i => $teacher) {
+            $this->getDataGenerator()->enrol_user($teacher->id,
+                                                  $this->course->id,
+                                                  $teacherrole->id);
+            groups_add_member($this->groups[$i % self::GROUP_COUNT], $teacher);
+        }
+
+        $editingteacherrole = $DB->get_record('role', array('shortname'=>'editingteacher'));
+        foreach ($this->extraeditingteachers as $i => $editingteacher) {
+            $this->getDataGenerator()->enrol_user($editingteacher->id,
+                                                  $this->course->id,
+                                                  $editingteacherrole->id);
+            groups_add_member($this->groups[$i % self::GROUP_COUNT], $editingteacher);
+        }
+
+        $studentrole = $DB->get_record('role', array('shortname'=>'student'));
+        foreach ($this->extrastudents as $i => $student) {
+            $this->getDataGenerator()->enrol_user($student->id,
+                                                  $this->course->id,
+                                                  $studentrole->id);
+            if ($i < (self::EXTRA_STUDENT_COUNT / 2)) {
+                groups_add_member($this->groups[$i % self::GROUP_COUNT], $student);
             }
         }
+
     }
 
     private function create_instance($params=array()) {
@@ -368,26 +438,29 @@ class mod_assign_locallib_testcase extends advanced_testcase {
     }
 
     public function test_list_participants() {
+        $this->createExtraUsers();
         $this->setUser($this->editingteachers[0]);
         $assign = $this->create_instance(array('grade'=>100));
 
-        $this->assertEquals(100, count($assign->list_participants(null, true)));
+        $this->assertEquals(self::DEFAULT_STUDENT_COUNT + self::EXTRA_STUDENT_COUNT, count($assign->list_participants(null, true)));
     }
 
     public function test_count_teams() {
+        $this->createExtraUsers();
         $this->setUser($this->editingteachers[0]);
         $assign = $this->create_instance(array('teamsubmission'=>1));
 
-        $this->assertEquals(11, $assign->count_teams());
+        $this->assertEquals(self::GROUP_COUNT + 1, $assign->count_teams());
     }
 
     public function test_count_submissions() {
+        $this->createExtraUsers();
         $this->setUser($this->editingteachers[0]);
         $assign = $this->create_instance(array('assignsubmission_onlinetext_enabled'=>1));
 
         // Simulate a submission.
-        $this->setUser($this->students[0]);
-        $submission = $assign->get_user_submission($this->students[0]->id, true);
+        $this->setUser($this->extrastudents[0]);
+        $submission = $assign->get_user_submission($this->extrastudents[0]->id, true);
         // Leave this one as DRAFT.
         $data = new stdClass();
         $data->onlinetext_editor = array('itemid'=>file_get_unused_draft_itemid(),
@@ -400,13 +473,13 @@ class mod_assign_locallib_testcase extends advanced_testcase {
         $this->setUser($this->teachers[0]);
         $data = new stdClass();
         $data->grade = '50.0';
-        $assign->testable_apply_grade_to_user($data, $this->students[0]->id);
+        $assign->testable_apply_grade_to_user($data, $this->extrastudents[0]->id);
 
         // Simulate a submission.
-        $this->setUser($this->students[1]);
-        $submission = $assign->get_user_submission($this->students[1]->id, true);
+        $this->setUser($this->extrastudents[1]);
+        $submission = $assign->get_user_submission($this->extrastudents[1]->id, true);
         $submission->status = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
-        $assign->testable_update_submission($submission, $this->students[1]->id, true, false);
+        $assign->testable_update_submission($submission, $this->extrastudents[1]->id, true, false);
         $data = new stdClass();
         $data->onlinetext_editor = array('itemid'=>file_get_unused_draft_itemid(),
                                          'text'=>'Submission text',
@@ -415,10 +488,10 @@ class mod_assign_locallib_testcase extends advanced_testcase {
         $plugin->save($submission, $data);
 
         // Simulate a submission.
-        $this->setUser($this->students[2]);
-        $submission = $assign->get_user_submission($this->students[2]->id, true);
+        $this->setUser($this->extrastudents[2]);
+        $submission = $assign->get_user_submission($this->extrastudents[2]->id, true);
         $submission->status = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
-        $assign->testable_update_submission($submission, $this->students[2]->id, true, false);
+        $assign->testable_update_submission($submission, $this->extrastudents[2]->id, true, false);
         $data = new stdClass();
         $data->onlinetext_editor = array('itemid'=>file_get_unused_draft_itemid(),
                                          'text'=>'Submission text',
@@ -427,10 +500,10 @@ class mod_assign_locallib_testcase extends advanced_testcase {
         $plugin->save($submission, $data);
 
         // Simulate a submission.
-        $this->setUser($this->students[3]);
-        $submission = $assign->get_user_submission($this->students[3]->id, true);
+        $this->setUser($this->extrastudents[3]);
+        $submission = $assign->get_user_submission($this->extrastudents[3]->id, true);
         $submission->status = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
-        $assign->testable_update_submission($submission, $this->students[3]->id, true, false);
+        $assign->testable_update_submission($submission, $this->extrastudents[3]->id, true, false);
         $data = new stdClass();
         $data->onlinetext_editor = array('itemid'=>file_get_unused_draft_itemid(),
                                          'text'=>'Submission text',
@@ -442,7 +515,7 @@ class mod_assign_locallib_testcase extends advanced_testcase {
         $this->setUser($this->teachers[0]);
         $data = new stdClass();
         $data->grade = '50.0';
-        $assign->testable_apply_grade_to_user($data, $this->students[3]->id);
+        $assign->testable_apply_grade_to_user($data, $this->extrastudents[3]->id);
 
         $this->assertEquals(2, $assign->count_grades());
         $this->assertEquals(4, $assign->count_submissions());
@@ -452,11 +525,12 @@ class mod_assign_locallib_testcase extends advanced_testcase {
     }
 
     public function test_get_grading_userid_list() {
+        $this->createExtraUsers();
         $this->setUser($this->editingteachers[0]);
         $assign = $this->create_instance();
 
         $users = $assign->testable_get_grading_userid_list();
-        $this->assertEquals(100, count($users));
+        $this->assertEquals(self::DEFAULT_STUDENT_COUNT + self::EXTRA_STUDENT_COUNT, count($users));
     }
 
     public function test_cron() {
@@ -472,7 +546,7 @@ class mod_assign_locallib_testcase extends advanced_testcase {
         $this->setUser($this->teachers[0]);
         $data = new stdClass();
         $data->grade = '50.0';
-        $assign->testable_apply_grade_to_user($data, $this->students[3]->id);
+        $assign->testable_apply_grade_to_user($data, $this->students[0]->id);
 
         // Now run cron and see that one message was sent.
         $this->preventResetByRollback();
@@ -521,13 +595,14 @@ class mod_assign_locallib_testcase extends advanced_testcase {
 
 
     public function test_update_submission() {
+        $this->createExtraUsers();
         $this->setUser($this->editingteachers[0]);
         $assign = $this->create_instance();
 
-        $this->setUser($this->students[0]);
+        $this->setUser($this->extrastudents[0]);
         $now = time();
-        $submission = $assign->get_user_submission($this->students[0]->id, true);
-        $assign->testable_update_submission($submission, $this->students[0]->id, true, false);
+        $submission = $assign->get_user_submission($this->extrastudents[0]->id, true);
+        $assign->testable_update_submission($submission, $this->extrastudents[0]->id, true, false);
 
         $this->setUser($this->teachers[0]);
         // Verify the gradebook update.
@@ -535,19 +610,19 @@ class mod_assign_locallib_testcase extends advanced_testcase {
                                         'mod',
                                         'assign',
                                         $assign->get_instance()->id,
-                                        $this->students[0]->id);
+                                        $this->extrastudents[0]->id);
 
-        $this->assertEquals($this->students[0]->id,
-                            $gradinginfo->items[0]->grades[$this->students[0]->id]->usermodified);
+        $this->assertEquals($this->extrastudents[0]->id,
+                            $gradinginfo->items[0]->grades[$this->extrastudents[0]->id]->usermodified);
 
         // Now verify group assignments.
         $this->setUser($this->editingteachers[0]);
         $assign = $this->create_instance(array('teamsubmission'=>1));
 
-        $this->setUser($this->students[0]);
+        $this->setUser($this->extrastudents[0]);
         $now = time();
-        $submission = $assign->get_group_submission($this->students[0]->id, 0, true);
-        $assign->testable_update_submission($submission, $this->students[0]->id, true, true);
+        $submission = $assign->get_group_submission($this->extrastudents[0]->id, 0, true);
+        $assign->testable_update_submission($submission, $this->extrastudents[0]->id, true, true);
 
         // Check that at least 2 members of the submission group had their submission updated.
 
@@ -556,37 +631,37 @@ class mod_assign_locallib_testcase extends advanced_testcase {
                                         'mod',
                                         'assign',
                                         $assign->get_instance()->id,
-                                        $this->students[0]->id);
+                                        $this->extrastudents[0]->id);
 
-        $this->assertEquals($this->students[0]->id,
-                            $gradinginfo->items[0]->grades[$this->students[0]->id]->usermodified);
+        $this->assertEquals($this->extrastudents[0]->id,
+                            $gradinginfo->items[0]->grades[$this->extrastudents[0]->id]->usermodified);
 
         $gradinginfo = grade_get_grades($this->course->id,
                                         'mod',
                                         'assign',
                                         $assign->get_instance()->id,
-                                        $this->students[10]->id);
+                                        $this->extrastudents[self::GROUP_COUNT]->id);
 
-        $this->assertEquals($this->students[10]->id,
-                            $gradinginfo->items[0]->grades[$this->students[10]->id]->usermodified);
+        $this->assertEquals($this->extrastudents[self::GROUP_COUNT]->id,
+                            $gradinginfo->items[0]->grades[$this->extrastudents[self::GROUP_COUNT]->id]->usermodified);
 
         // Now verify blind marking.
         $this->setUser($this->editingteachers[0]);
         $assign = $this->create_instance(array('blindmarking'=>1));
 
-        $this->setUser($this->students[0]);
+        $this->setUser($this->extrastudents[0]);
         $now = time();
-        $submission = $assign->get_user_submission($this->students[0]->id, true);
-        $assign->testable_update_submission($submission, $this->students[0]->id, true, false);
+        $submission = $assign->get_user_submission($this->extrastudents[0]->id, true);
+        $assign->testable_update_submission($submission, $this->extrastudents[0]->id, true, false);
 
         $this->setUser($this->editingteachers[0]);
         $gradinginfo = grade_get_grades($this->course->id,
                                         'mod',
                                         'assign',
                                         $assign->get_instance()->id,
-                                        $this->students[0]->id);
+                                        $this->extrastudents[0]->id);
 
-        $this->assertEquals(null, $gradinginfo->items[0]->grades[$this->students[0]->id]->datesubmitted);
+        $this->assertEquals(null, $gradinginfo->items[0]->grades[$this->extrastudents[0]->id]->datesubmitted);
     }
 
     public function test_submissions_open() {
@@ -628,10 +703,15 @@ class mod_assign_locallib_testcase extends advanced_testcase {
     }
 
     public function test_get_graders() {
+        $this->createExtraUsers();
         $this->setUser($this->editingteachers[0]);
         $assign = $this->create_instance();
 
-        $this->assertCount(10, $assign->testable_get_graders($this->students[0]->id));
+        $this->assertCount(self::DEFAULT_TEACHER_COUNT +
+                           self::DEFAULT_EDITING_TEACHER_COUNT +
+                           self::EXTRA_TEACHER_COUNT +
+                           self::EXTRA_EDITING_TEACHER_COUNT,
+                           $assign->testable_get_graders($this->students[0]->id));
 
         $assign = $this->create_instance();
         // Force create an assignment with SEPARATEGROUPS.
@@ -645,7 +725,7 @@ class mod_assign_locallib_testcase extends advanced_testcase {
         $assign = new testable_assign($context, $cm, $this->course);
 
         $this->setUser($this->students[1]);
-        $this->assertCount(2, $assign->testable_get_graders($this->students[0]->id));
+        $this->assertCount(4, $assign->testable_get_graders($this->students[0]->id));
     }
 
     public function test_get_uniqueid_for_user() {
