@@ -83,17 +83,20 @@ if ($groupings = $DB->get_records('groupings', array('courseid'=>$course->id), '
         }
         $line[2] = $DB->count_records('course_modules', array('course'=>$course->id, 'groupingid'=>$grouping->id));
 
-        $buttons  = "<a title=\"$stredit\" href=\"grouping.php?id=$grouping->id\"><img".
-                    " src=\"" . $OUTPUT->pix_url('t/edit') . "\" class=\"iconsmall\" alt=\"$stredit\" /></a> ";
+        $url = new moodle_url('/group/grouping.php', array('id' => $grouping->id));
+        $buttons  = html_writer::link($url, $OUTPUT->pix_icon('t/edit', $stredit, 'core',
+                array('class' => 'iconsmall')), array('title' => $stredit));
         if (empty($grouping->idnumber) || $canchangeidnumber) {
-            // It's only possible to delete groups without an idnumber unless the user has the changeidnumber capability
-            $buttons .= "<a title=\"$strdelete\" href=\"grouping.php?id=$grouping->id&amp;delete=1\"><img".
-                        " src=\"" . $OUTPUT->pix_url('t/delete') . "\" class=\"iconsmall\" alt=\"$strdelete\" /></a> ";
+            // It's only possible to delete groups without an idnumber unless the user has the changeidnumber capability.
+            $url = new moodle_url('/group/grouping.php', array('id' => $grouping->id, 'delete' => 1));
+            $buttons .= html_writer::link($url, $OUTPUT->pix_icon('t/delete', $strdelete, 'core',
+                    array('class' => 'iconsmall')), array('title' => $strdelete));
         } else {
             $buttons .= $OUTPUT->spacer();
         }
-        $buttons .= "<a title=\"$strmanagegrping\" href=\"assign.php?id=$grouping->id\"><img".
-                    " src=\"" . $OUTPUT->pix_url('i/group') . "\" class=\"icon\" alt=\"$strmanagegrping\" /></a> ";
+        $url = new moodle_url('/group/assign.php', array('id' => $grouping->id));
+        $buttons .= html_writer::link($url, $OUTPUT->pix_icon('t/groups', $strmanagegrping, 'core',
+                array('class' => 'iconsmall')), array('title' => $strmanagegrping));
 
         $line[3] = $buttons;
         $data[] = $line;
