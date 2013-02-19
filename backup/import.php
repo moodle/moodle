@@ -11,6 +11,8 @@ require_once($CFG->dirroot . '/backup/util/ui/import_extensions.php');
 $courseid = required_param('id', PARAM_INT);
 // The id of the course we are importing FROM (will only be set if past first stage
 $importcourseid = optional_param('importid', false, PARAM_INT);
+// We just want to check if a search has been run. True if anything is there.
+$coursesearch = optional_param('search', false, PARAM_BOOL);
 // The target method for the restore (adding or deleting)
 $restoretarget = optional_param('target', backup::TARGET_CURRENT_ADDING, PARAM_INT);
 
@@ -36,7 +38,7 @@ $PAGE->set_pagelayout('incourse');
 $renderer = $PAGE->get_renderer('core','backup');
 
 // Check if we already have a import course id
-if ($importcourseid === false) {
+if ($importcourseid === false || $coursesearch) {
     // Obviously not... show the selector so one can be chosen
     $url = new moodle_url('/backup/import.php', array('id'=>$courseid));
     $search = new import_course_search(array('url'=>$url));
