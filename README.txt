@@ -8,7 +8,7 @@ a few minutes:
 1) Move the Moodle files into your web directory.
 
 2) Create a single database for Moodle to store all
-   it's tables in (or choose an existing database).
+   its tables in (or choose an existing database).
 
 3) Visit your Moodle site with a browser, you should
    be taken to the install.php script, which will lead
