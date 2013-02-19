@@ -30,6 +30,7 @@ global $CFG;
 
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 require_once($CFG->dirroot . '/group/externallib.php');
+require_once($CFG->dirroot . '/group/lib.php');
 
 class core_group_external_testcase extends externallib_advanced_testcase {
 
@@ -206,5 +207,82 @@ class core_group_external_testcase extends externallib_advanced_testcase {
         $this->unassignUserCapability('moodle/course:managegroups', $context->id, $roleid);
         $this->setExpectedException('required_capability_exception');
         $froups = core_group_external::delete_groups(array($group3->id));
+    }
+
+    /**
+     * Test get_groupings
+     */
+    public function test_get_groupings() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $course = self::getDataGenerator()->create_course();
+
+        $groupingdata = array();
+        $groupingdata['courseid'] = $course->id;
+        $groupingdata['name'] = 'Grouping Test';
+        $groupingdata['description'] = 'Grouping Test description';
+        $groupingdata['descriptionformat'] = FORMAT_MOODLE;
+
+        $grouping = self::getDataGenerator()->create_grouping($groupingdata);
+
+        // Set the required capabilities by the external function.
+        $context = context_course::instance($course->id);
+        $roleid = $this->assignUserCapability('moodle/course:managegroups', $context->id);
+        $this->assignUserCapability('moodle/course:view', $context->id, $roleid);
+
+        // Call the external function without specifying the optional parameter.
+        $groupings = core_group_external::get_groupings(array($grouping->id));
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $groupings = external_api::clean_returnvalue(core_group_external::get_groupings_returns(), $groupings);
+
+        $this->assertEquals(1, count($groupings));
+
+        $group1data = array();
+        $group1data['courseid'] = $course->id;
+        $group1data['name'] = 'Group Test 1';
+        $group1data['description'] = 'Group Test 1 description';
+        $group1data['descriptionformat'] = FORMAT_MOODLE;
+        $group2data = array();
+        $group2data['courseid'] = $course->id;
+        $group2data['name'] = 'Group Test 2';
+        $group2data['description'] = 'Group Test 2 description';
+        $group2data['descriptionformat'] = FORMAT_MOODLE;
+
+        $group1 = self::getDataGenerator()->create_group($group1data);
+        $group2 = self::getDataGenerator()->create_group($group2data);
+
+        groups_assign_grouping($grouping->id, $group1->id);
+        groups_assign_grouping($grouping->id, $group2->id);
+
+        // Call the external function specifying that groups are returned.
+        $groupings = core_group_external::get_groupings(array($grouping->id), true);
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $groupings = external_api::clean_returnvalue(core_group_external::get_groupings_returns(), $groupings);
+        $this->assertEquals(1, count($groupings));
+        $this->assertEquals(2, count($groupings[0]['groups']));
+        foreach ($groupings[0]['groups'] as $group) {
+            $dbgroup = $DB->get_record('groups', array('id' => $group['id']), '*', MUST_EXIST);
+            $dbgroupinggroups = $DB->get_record('groupings_groups',
+                                                array('groupingid' => $groupings[0]['id'],
+                                                      'groupid' => $group['id']),
+                                                '*', MUST_EXIST);
+            switch ($dbgroup->name) {
+                case $group1->name:
+                    $groupdescription = $group1->description;
+                    $groupcourseid = $group1->courseid;
+                    break;
+                case $group2->name:
+                    $groupdescription = $group2->description;
+                    $groupcourseid = $group2->courseid;
+                    break;
+                default:
+                    throw new moodle_exception('unknowgroupname');
+                    break;
+            }
+            $this->assertEquals($dbgroup->description, $groupdescription);
+            $this->assertEquals($dbgroup->courseid, $groupcourseid);
+        }
     }
 }

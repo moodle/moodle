@@ -760,6 +760,7 @@ class core_group_external extends external_api {
             array(
                 'groupingids' => new external_multiple_structure(new external_value(PARAM_INT, 'grouping ID')
                         , 'List of grouping id. A grouping id is an integer.'),
+                'returngroups' => new external_value(PARAM_BOOL, 'return associated groups', VALUE_DEFAULT, 0)
             )
         );
     }
@@ -768,15 +769,18 @@ class core_group_external extends external_api {
      * Get groupings definition specified by ids
      *
      * @param array $groupingids arrays of grouping ids
+     * @param boolean $returngroups return the associated groups if true. The default is false.
      * @return array of grouping objects (id, courseid, name)
      * @since Moodle 2.3
      */
-    public static function get_groupings($groupingids) {
-        global $CFG;
+    public static function get_groupings($groupingids, $returngroups = false) {
+        global $CFG, $DB;
         require_once("$CFG->dirroot/group/lib.php");
         require_once("$CFG->libdir/filelib.php");
 
-        $params = self::validate_parameters(self::get_groupings_parameters(), array('groupingids'=>$groupingids));
+        $params = self::validate_parameters(self::get_groupings_parameters(),
+                                            array('groupingids' => $groupingids,
+                                                  'returngroups' => $returngroups));
 
         $groupings = array();
         foreach ($params['groupingids'] as $groupingid) {
@@ -799,7 +803,30 @@ class core_group_external extends external_api {
                 external_format_text($grouping->description, $grouping->descriptionformat,
                         $context->id, 'grouping', 'description', $grouping->id);
 
-            $groupings[] = (array)$grouping;
+            $groupingarray = (array)$grouping;
+
+            if ($params['returngroups']) {
+                $grouprecords = $DB->get_records_sql("SELECT * FROM {groups} g INNER JOIN {groupings_groups} gg ".
+                                               "ON g.id = gg.groupid WHERE gg.groupingid = ? ".
+                                               "ORDER BY groupid", array($groupingid));
+                if ($grouprecords) {
+                    $groups = array();
+                    foreach ($grouprecords as $grouprecord) {
+                        list($grouprecord->description, $grouprecord->descriptionformat) =
+                        external_format_text($grouprecord->description, $grouprecord->descriptionformat,
+                        $context->id, 'group', 'description', $grouprecord->groupid);
+                        $groups[] = array('id' => $grouprecord->groupid,
+                                          'name' => $grouprecord->name,
+                                          'description' => $grouprecord->description,
+                                          'descriptionformat' => $grouprecord->descriptionformat,
+                                          'enrolmentkey' => $grouprecord->enrolmentkey,
+                                          'courseid' => $grouprecord->courseid
+                                          );
+                    }
+                    $groupingarray['groups'] = $groups;
+                }
+            }
+            $groupings[] = $groupingarray;
         }
 
         return $groupings;
@@ -819,7 +846,19 @@ class core_group_external extends external_api {
                     'courseid' => new external_value(PARAM_INT, 'id of course'),
                     'name' => new external_value(PARAM_TEXT, 'multilang compatible name, course unique'),
                     'description' => new external_value(PARAM_RAW, 'grouping description text'),
-                    'descriptionformat' => new external_format_value('description')
+                    'descriptionformat' => new external_format_value('description'),
+                    'groups' => new external_multiple_structure(
+                        new external_single_structure(
+                            array(
+                                'id' => new external_value(PARAM_INT, 'group record id'),
+                                'courseid' => new external_value(PARAM_INT, 'id of course'),
+                                'name' => new external_value(PARAM_TEXT, 'multilang compatible name, course unique'),
+                                'description' => new external_value(PARAM_RAW, 'group description text'),
+                                'descriptionformat' => new external_format_value('description'),
+                                'enrolmentkey' => new external_value(PARAM_RAW, 'group enrol secret phrase')
+                            )
+                        ),
+                    'optional groups', VALUE_OPTIONAL)
                 )
             )
         );
