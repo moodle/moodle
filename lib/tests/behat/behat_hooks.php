@@ -76,6 +76,7 @@ class behat_hooks extends behat_base {
         require_once(__DIR__ . '/../../behat/classes/behat_command.php');
         require_once(__DIR__ . '/../../behat/classes/util.php');
         require_once(__DIR__ . '/../../testing/classes/test_lock.php');
+        require_once(__DIR__ . '/../../testing/classes/nasty_strings.php');
 
         // Avoids vendor/bin/behat to be executed directly without test environment enabled
         // to prevent undesired db & dataroot modifications, this is also checked
@@ -118,6 +119,12 @@ class behat_hooks extends behat_base {
 
         behat_util::reset_database();
         behat_util::reset_dataroot();
+
+        purge_all_caches();
+        accesslib_clear_all_caches(true);
+
+        // Reset the nasty strings list used during the last test.
+        nasty_strings::reset_used_strings();
 
         // Assing valid data to admin user (some generator-related code needs a valid user).
         $user = $DB->get_record('user', array('username' => 'admin'));

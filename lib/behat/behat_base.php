@@ -52,21 +52,6 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
     const TIMEOUT = 6;
 
     /**
-     * Returns fixed step argument (with \\" replaced back to ").
-     *
-     * \\ is the chars combination to add when you
-     * want to escape the " character that is used as var
-     * delimiter.
-     *
-     * @see Behat\MinkExtension\Context\MinkContext
-     * @param string $argument
-     * @return string
-     */
-    protected function fixStepArgument($argument) {
-        return str_replace('\\"', '"', $argument);
-    }
-
-    /**
      * Locates url, based on provided path.
      * Override to provide custom routing mechanism.
      *

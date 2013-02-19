@@ -83,9 +83,6 @@ class behat_course extends behat_base {
      */
     public function i_add_to_section($activity, $section) {
 
-        $activity = $this->fixStepArgument($activity);
-        $section = $this->fixStepArgument($section);
-
         // Clicks add activity or resource section link.
         $sectionxpath = "//*[@id='section-" . $section . "']/*/*/*/div[@class='section-modchooser']/span/a";
         $sectionnode = $this->find('xpath', $sectionxpath);
