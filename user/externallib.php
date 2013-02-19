@@ -712,13 +712,13 @@ class core_user_external extends external_api {
     public static function get_users_by_id_returns() {
         $additionalfields = array (
             'enrolledcourses' => new external_multiple_structure(
-	        new external_single_structure(
-		        array(
-			        'id'  => new external_value(PARAM_INT, 'Id of the course'),
-			        'fullname'  => new external_value(PARAM_RAW, 'Fullname of the course'),
-			        'shortname' => new external_value(PARAM_RAW, 'Shortname of the course')
-		        )
-	        ), 'Courses where the user is enrolled - limited by which courses the user is able to see', VALUE_OPTIONAL));
+            new external_single_structure(
+                array(
+                    'id'  => new external_value(PARAM_INT, 'Id of the course'),
+                    'fullname'  => new external_value(PARAM_RAW, 'Fullname of the course'),
+                    'shortname' => new external_value(PARAM_RAW, 'Shortname of the course')
+                )
+            ), 'Courses where the user is enrolled - limited by which courses the user is able to see', VALUE_OPTIONAL));
         return new external_multiple_structure(self::user_description($additionalfields));
     }
 
@@ -830,13 +830,13 @@ class core_user_external extends external_api {
                             )
                         ), 'user roles', VALUE_OPTIONAL),
                     'enrolledcourses' => new external_multiple_structure(
-	                    new external_single_structure(
-		                    array(
-			                    'id'  => new external_value(PARAM_INT, 'Id of the course'),
-			                    'fullname'  => new external_value(PARAM_RAW, 'Fullname of the course'),
-			                    'shortname' => new external_value(PARAM_RAW, 'Shortname of the course')
-		                    )
-	                    ), 'Courses where the user is enrolled - limited by which courses the user is able to see', VALUE_OPTIONAL)
+                        new external_single_structure(
+                            array(
+                                'id'  => new external_value(PARAM_INT, 'Id of the course'),
+                                'fullname'  => new external_value(PARAM_RAW, 'Fullname of the course'),
+                                'shortname' => new external_value(PARAM_RAW, 'Shortname of the course')
+                            )
+                        ), 'Courses where the user is enrolled - limited by which courses the user is able to see', VALUE_OPTIONAL)
                     );
 
         return new external_multiple_structure(self::user_description($additionalfields));
