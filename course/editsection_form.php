@@ -51,6 +51,7 @@ class editsection_form extends moodleform {
 
         $mform  = $this->_form;
         $course = $this->_customdata['course'];
+        $context = context_course::instance($course->id);
 
         if (!empty($CFG->enableavailability)) {
             $mform->addElement('header', '', get_string('availabilityconditions', 'condition'));
@@ -62,7 +63,6 @@ class editsection_form extends moodleform {
                 $options[0] = get_string('none');
                 if ($groupings = $DB->get_records('groupings', array('courseid' => $course->id))) {
                     foreach ($groupings as $grouping) {
-                        $context = context_course::instance($course->id);
                         $options[$grouping->id] = format_string(
                                 $grouping->name, true, array('context' => $context));
                     }
@@ -119,7 +119,7 @@ class editsection_form extends moodleform {
 
             // Conditions based on user fields
             $operators = condition_info::get_condition_user_field_operators();
-            $useroptions = condition_info::get_condition_user_fields();
+            $useroptions = condition_info::get_condition_user_fields(array('context' => $context));
             asort($useroptions);
 
             $useroptions = array(0 => $strcondnone) + $useroptions;
