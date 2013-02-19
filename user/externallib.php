@@ -51,7 +51,7 @@ class core_user_external extends external_api {
                 'users' => new external_multiple_structure(
                     new external_single_structure(
                         array(
-                            'username'    => new external_value(PARAM_USERNAME, 'Username policy is defined in Moodle security config. Must be lowercase.'),
+                            'username'    => new external_value(PARAM_USERNAME, 'Username policy is defined in Moodle security config.'),
                             'password'    => new external_value(PARAM_RAW, 'Plain text password consisting of any characters'),
                             'firstname'   => new external_value(PARAM_NOTAGS, 'The first name(s) of the user'),
                             'lastname'    => new external_value(PARAM_NOTAGS, 'The family name of the user'),
@@ -276,7 +276,7 @@ class core_user_external extends external_api {
                     new external_single_structure(
                         array(
                             'id'    => new external_value(PARAM_INT, 'ID of the user'),
-                            'username'    => new external_value(PARAM_USERNAME, 'Username policy is defined in Moodle security config. Must be lowercase.', VALUE_OPTIONAL, '',NULL_NOT_ALLOWED),
+                            'username'    => new external_value(PARAM_USERNAME, 'Username policy is defined in Moodle security config.', VALUE_OPTIONAL, '',NULL_NOT_ALLOWED),
                             'password'    => new external_value(PARAM_RAW, 'Plain text password consisting of any characters', VALUE_OPTIONAL, '',NULL_NOT_ALLOWED),
                             'firstname'   => new external_value(PARAM_NOTAGS, 'The first name(s) of the user', VALUE_OPTIONAL, '',NULL_NOT_ALLOWED),
                             'lastname'    => new external_value(PARAM_NOTAGS, 'The family name of the user', VALUE_OPTIONAL),
@@ -412,7 +412,7 @@ class core_user_external extends external_api {
                 $paramtype = PARAM_RAW;
                 break;
             case 'username':
-                $paramtype = PARAM_USERNAME;
+                $paramtype = PARAM_RAW;
                 break;
             case 'email':
                 $paramtype = PARAM_EMAIL;
@@ -438,7 +438,6 @@ class core_user_external extends external_api {
         // Finally retrieve each users information
         $returnedusers = array();
         foreach ($users as $user) {
-
             $userdetails = user_get_user_details_courses($user);
 
             // Return the user only if the searched field is returned
@@ -458,59 +457,180 @@ class core_user_external extends external_api {
      * @since Moodle 2.4
      */
     public static function get_users_by_field_returns() {
-        return new external_multiple_structure(
-            new external_single_structure(
-                array(
-                    'id'    => new external_value(PARAM_INT, 'ID of the user'),
-                    'username'    => new external_value(PARAM_USERNAME, 'Username policy is defined in Moodle security config', VALUE_OPTIONAL),
-                    'firstname'   => new external_value(PARAM_NOTAGS, 'The first name(s) of the user', VALUE_OPTIONAL),
-                    'lastname'    => new external_value(PARAM_NOTAGS, 'The family name of the user', VALUE_OPTIONAL),
-                    'fullname'    => new external_value(PARAM_NOTAGS, 'The fullname of the user'),
-                    'email'       => new external_value(PARAM_EMAIL, 'An email address', VALUE_OPTIONAL),
-                    'address'     => new external_value(PARAM_TEXT, 'Postal address', VALUE_OPTIONAL),
-                    'phone1'      => new external_value(PARAM_NOTAGS, 'Phone 1', VALUE_OPTIONAL),
-                    'phone2'      => new external_value(PARAM_NOTAGS, 'Phone 2', VALUE_OPTIONAL),
-                    'icq'         => new external_value(PARAM_NOTAGS, 'icq number', VALUE_OPTIONAL),
-                    'skype'       => new external_value(PARAM_NOTAGS, 'skype id', VALUE_OPTIONAL),
-                    'yahoo'       => new external_value(PARAM_NOTAGS, 'yahoo id', VALUE_OPTIONAL),
-                    'aim'         => new external_value(PARAM_NOTAGS, 'aim id', VALUE_OPTIONAL),
-                    'msn'         => new external_value(PARAM_NOTAGS, 'msn number', VALUE_OPTIONAL),
-                    'department'  => new external_value(PARAM_TEXT, 'department', VALUE_OPTIONAL),
-                    'institution' => new external_value(PARAM_TEXT, 'institution', VALUE_OPTIONAL),
-                    'idnumber'    => new external_value(PARAM_RAW, 'An arbitrary ID code number perhaps from the institution', VALUE_OPTIONAL),
-                    'interests'   => new external_value(PARAM_TEXT, 'user interests (separated by commas)', VALUE_OPTIONAL),
-                    'firstaccess' => new external_value(PARAM_INT, 'first access to the site (0 if never)', VALUE_OPTIONAL),
-                    'lastaccess'  => new external_value(PARAM_INT, 'last access to the site (0 if never)', VALUE_OPTIONAL),
-                    'auth'        => new external_value(PARAM_PLUGIN, 'Auth plugins include manual, ldap, imap, etc', VALUE_OPTIONAL),
-                    'confirmed'   => new external_value(PARAM_INT, 'Active user: 1 if confirmed, 0 otherwise', VALUE_OPTIONAL),
-                    'lang'        => new external_value(PARAM_SAFEDIR, 'Language code such as "en", must exist on server', VALUE_OPTIONAL),
-                    'theme'       => new external_value(PARAM_PLUGIN, 'Theme name such as "standard", must exist on server', VALUE_OPTIONAL),
-                    'timezone'    => new external_value(PARAM_TIMEZONE, 'Timezone code such as Australia/Perth, or 99 for default', VALUE_OPTIONAL),
-                    'mailformat'  => new external_value(PARAM_INT, 'Mail format code is 0 for plain text, 1 for HTML etc', VALUE_OPTIONAL),
-                    'description' => new external_value(PARAM_RAW, 'User profile description', VALUE_OPTIONAL),
-                    'descriptionformat' => new external_format_value('description', VALUE_OPTIONAL),
-                    'city'        => new external_value(PARAM_NOTAGS, 'Home city of the user', VALUE_OPTIONAL),
-                    'url'         => new external_value(PARAM_URL, 'URL of the user', VALUE_OPTIONAL),
-                    'country'     => new external_value(PARAM_ALPHA, 'Home country code of the user, such as AU or CZ', VALUE_OPTIONAL),
-                    'profileimageurlsmall' => new external_value(PARAM_URL, 'User image profile URL - small version'),
-                    'profileimageurl' => new external_value(PARAM_URL, 'User image profile URL - big version'),
-                    'customfields' => new external_multiple_structure(
-                        new external_single_structure(
-                            array(
-                                'type'  => new external_value(PARAM_ALPHANUMEXT, 'The type of the custom field - text field, checkbox...'),
-                                'value' => new external_value(PARAM_RAW, 'The value of the custom field'),
-                                'name' => new external_value(PARAM_RAW, 'The name of the custom field'),
-                                'shortname' => new external_value(PARAM_RAW, 'The shortname of the custom field - to be able to build the field class in the code'),
-                            )
-                        ), 'User custom fields (also known as user profil fields)', VALUE_OPTIONAL),
-                    'preferences' => new external_multiple_structure(
-                        new external_single_structure(
-                            array(
-                                'name'  => new external_value(PARAM_ALPHANUMEXT, 'The name of the preferences'),
-                                'value' => new external_value(PARAM_RAW, 'The value of the custom field'),
-                            )
-                    ), 'User preferences', VALUE_OPTIONAL)
+        return new external_multiple_structure(self::user_description());
+    }
+
+
+    /**
+     * Returns description of get_users() parameters.
+     *
+     * @return external_function_parameters
+     * @since Moodle 2.5
+     */
+    public static function get_users_parameters() {
+        return new external_function_parameters(
+            array(
+                'criteria' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'key' => new external_value(PARAM_ALPHA, 'the user column to search, expected keys (value format) are:
+                                "id" (int) matching user id,
+                                "lastname" (string) user last name (Note: you can use % for searching but it may be considerably slower!),
+                                "firstname" (string) user first name (Note: you can use % for searching but it may be considerably slower!),
+                                "idnumber" (string) matching user idnumber,
+                                "username" (string) matching user username,
+                                "email" (string) user email (Note: you can use % for searching but it may be considerably slower!),
+                                "auth" (string) matching user auth plugin'),
+                            'value' => new external_value(PARAM_RAW, 'the value to search')
+                        )
+                    ), 'the key/value pairs to be considered in user search. Values can not be empty.
+                        Specify different keys only once (fullname => \'user1\', auth => \'manual\', ...) -
+                        key occurences are forbidden.
+                        The search is executed with AND operator on the criterias. Invalid criterias (keys) are ignored,
+                        the search is still executed on the valid criterias.
+                        You can search without criteria, but the function is not designed for it.
+                        It could very slow or timeout. The function is designed to search some specific users.'
                 )
+            )
+        );
+    }
+
+    /**
+     * Retrieve matching user.
+     *
+     * @param array $criteria the allowed array keys are id/lastname/firstname/idnumber/username/email/auth.
+     * @return array An array of arrays containing user profiles.
+     * @since Moodle 2.5
+     */
+    public static function get_users($criteria = array()) {
+        global $CFG, $USER, $DB;
+
+        require_once($CFG->dirroot . "/user/lib.php");
+
+        $params = self::validate_parameters(self::get_users_parameters(),
+                array('criteria' => $criteria));
+
+        // Validate the criteria and retrieve the users.
+        $users = array();
+        $warnings = array();
+        $sqlparams = array();
+        $usedkeys = array();
+
+        // Do not retrieve deleted users.
+        $sql = ' deleted = 0';
+
+        foreach ($params['criteria'] as $criteriaindex => $criteria) {
+
+            // Check that the criteria has never been used.
+            if (array_key_exists($criteria['key'], $usedkeys)) {
+                throw new moodle_exception('keyalreadyset', '', '', null, 'The key ' . $criteria['key'] . ' can only be sent once');
+            } else {
+                $usedkeys[$criteria['key']] = true;
+            }
+
+            $invalidcriteria = false;
+            // Clean the parameters.
+            $paramtype = PARAM_RAW;
+            switch ($criteria['key']) {
+                case 'id':
+                    $paramtype = PARAM_INT;
+                    break;
+                case 'idnumber':
+                    $paramtype = PARAM_RAW;
+                    break;
+                case 'username':
+                    $paramtype = PARAM_RAW;
+                    break;
+                case 'email':
+                    // We use PARAM_RAW to allow searches with %.
+                    $paramtype = PARAM_RAW;
+                    break;
+                case 'auth':
+                    $paramtype = PARAM_AUTH;
+                    break;
+                case 'lastname':
+                case 'firstname':
+                    $paramtype = PARAM_TEXT;
+                    break;
+                default:
+                    // Send back a warning that this search key is not supported in this version.
+                    // This warning will make the function extandable without breaking clients.
+                    $warnings[] = array(
+                        'item' => $criteria['key'],
+                        'warningcode' => 'invalidfieldparameter',
+                        'message' => 'The search key \'' . $criteria['key'] . '\' is not supported, look at the web service documentation'
+                    );
+                    // Do not add this invalid criteria to the created SQL request.
+                    $invalidcriteria = true;
+                    unset($params['criteria'][$criteriaindex]);
+                    break;
+            }
+
+            if (!$invalidcriteria) {
+                $cleanedvalue = clean_param($criteria['value'], $paramtype);
+
+                $sql .= ' AND ';
+
+                // Create the SQL.
+                switch ($criteria['key']) {
+                    case 'id':
+                    case 'idnumber':
+                    case 'username':
+                    case 'auth':
+                        $sql .= $criteria['key'] . ' = :' . $criteria['key'];
+                        $sqlparams[$criteria['key']] = $cleanedvalue;
+                        break;
+                    case 'email':
+                    case 'lastname':
+                    case 'firstname':
+                        $sql .= $DB->sql_like($criteria['key'], ':' . $criteria['key'], false);
+                        $sqlparams[$criteria['key']] = $cleanedvalue;
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        $users = $DB->get_records_select('user', $sql, $sqlparams, 'id ASC');
+
+        // Finally retrieve each users information.
+        $returnedusers = array();
+        foreach ($users as $user) {
+            $userdetails = user_get_user_details_courses($user);
+
+            // Return the user only if all the searched fields are returned.
+            // Otherwise it means that the $USER was not allowed to search the returned user.
+            if (!empty($userdetails)) {
+                $validuser = true;
+
+                foreach($params['criteria'] as $criteria) {
+                    if (empty($userdetails[$criteria['key']])) {
+                        $validuser = false;
+                    }
+                }
+
+                if ($validuser) {
+                    $returnedusers[] = $userdetails;
+                }
+            }
+        }
+
+        return array('users' => $returnedusers, 'warnings' => $warnings);
+    }
+
+    /**
+     * Returns description of get_users result value.
+     *
+     * @return external_description
+     * @since Moodle 2.5
+     */
+    public static function get_users_returns() {
+        return new external_single_structure(
+            array('users' => new external_multiple_structure(
+                                self::user_description()
+                             ),
+                  'warnings' => new external_warnings('always set to \'key\'', 'faulty key name')
             )
         );
     }
@@ -590,70 +710,18 @@ class core_user_external extends external_api {
      * @since Moodle 2.2
      */
     public static function get_users_by_id_returns() {
-        return new external_multiple_structure(
-            new external_single_structure(
-                array(
-                    'id'    => new external_value(PARAM_INT, 'ID of the user'),
-                    'username'    => new external_value(PARAM_RAW, 'Username policy is defined in Moodle security config', VALUE_OPTIONAL),
-                    'firstname'   => new external_value(PARAM_NOTAGS, 'The first name(s) of the user', VALUE_OPTIONAL),
-                    'lastname'    => new external_value(PARAM_NOTAGS, 'The family name of the user', VALUE_OPTIONAL),
-                    'fullname'    => new external_value(PARAM_NOTAGS, 'The fullname of the user'),
-                    'email'       => new external_value(PARAM_TEXT, 'An email address - allow email as root@localhost', VALUE_OPTIONAL),
-                    'address'     => new external_value(PARAM_TEXT, 'Postal address', VALUE_OPTIONAL),
-                    'phone1'      => new external_value(PARAM_NOTAGS, 'Phone 1', VALUE_OPTIONAL),
-                    'phone2'      => new external_value(PARAM_NOTAGS, 'Phone 2', VALUE_OPTIONAL),
-                    'icq'         => new external_value(PARAM_NOTAGS, 'icq number', VALUE_OPTIONAL),
-                    'skype'       => new external_value(PARAM_NOTAGS, 'skype id', VALUE_OPTIONAL),
-                    'yahoo'       => new external_value(PARAM_NOTAGS, 'yahoo id', VALUE_OPTIONAL),
-                    'aim'         => new external_value(PARAM_NOTAGS, 'aim id', VALUE_OPTIONAL),
-                    'msn'         => new external_value(PARAM_NOTAGS, 'msn number', VALUE_OPTIONAL),
-                    'department'  => new external_value(PARAM_TEXT, 'department', VALUE_OPTIONAL),
-                    'institution' => new external_value(PARAM_TEXT, 'institution', VALUE_OPTIONAL),
-                    'interests'   => new external_value(PARAM_TEXT, 'user interests (separated by commas)', VALUE_OPTIONAL),
-                    'firstaccess' => new external_value(PARAM_INT, 'first access to the site (0 if never)', VALUE_OPTIONAL),
-                    'lastaccess'  => new external_value(PARAM_INT, 'last access to the site (0 if never)', VALUE_OPTIONAL),
-                    'auth'        => new external_value(PARAM_PLUGIN, 'Auth plugins include manual, ldap, imap, etc', VALUE_OPTIONAL),
-                    'confirmed'   => new external_value(PARAM_INT, 'Active user: 1 if confirmed, 0 otherwise', VALUE_OPTIONAL),
-                    'idnumber'    => new external_value(PARAM_RAW, 'An arbitrary ID code number perhaps from the institution', VALUE_OPTIONAL),
-                    'lang'        => new external_value(PARAM_SAFEDIR, 'Language code such as "en", must exist on server', VALUE_OPTIONAL),
-                    'theme'       => new external_value(PARAM_PLUGIN, 'Theme name such as "standard", must exist on server', VALUE_OPTIONAL),
-                    'timezone'    => new external_value(PARAM_TIMEZONE, 'Timezone code such as Australia/Perth, or 99 for default', VALUE_OPTIONAL),
-                    'mailformat'  => new external_value(PARAM_INT, 'Mail format code is 0 for plain text, 1 for HTML etc', VALUE_OPTIONAL),
-                    'description' => new external_value(PARAM_RAW, 'User profile description', VALUE_OPTIONAL),
-                    'descriptionformat' => new external_format_value('description', VALUE_OPTIONAL),
-                    'city'        => new external_value(PARAM_NOTAGS, 'Home city of the user', VALUE_OPTIONAL),
-                    'url'         => new external_value(PARAM_URL, 'URL of the user', VALUE_OPTIONAL),
-                    'country'     => new external_value(PARAM_ALPHA, 'Home country code of the user, such as AU or CZ', VALUE_OPTIONAL),
-                    'profileimageurlsmall' => new external_value(PARAM_URL, 'User image profile URL - small version'),
-                    'profileimageurl' => new external_value(PARAM_URL, 'User image profile URL - big version'),
-                    'customfields' => new external_multiple_structure(
-                        new external_single_structure(
-                            array(
-                                'type'  => new external_value(PARAM_ALPHANUMEXT, 'The type of the custom field - text field, checkbox...'),
-                                'value' => new external_value(PARAM_RAW, 'The value of the custom field'),
-                                'name' => new external_value(PARAM_RAW, 'The name of the custom field'),
-                                'shortname' => new external_value(PARAM_RAW, 'The shortname of the custom field - to be able to build the field class in the code'),
-                            )
-                    ), 'User custom fields (also known as user profil fields)', VALUE_OPTIONAL),
-                    'preferences' => new external_multiple_structure(
-                        new external_single_structure(
-                            array(
-                                'name'  => new external_value(PARAM_ALPHANUMEXT, 'The name of the preferences'),
-                                'value' => new external_value(PARAM_RAW, 'The value of the custom field'),
-                            )
-                    ), 'User preferences', VALUE_OPTIONAL),
-                    'enrolledcourses' => new external_multiple_structure(
-                        new external_single_structure(
-                            array(
-                                'id'  => new external_value(PARAM_INT, 'Id of the course'),
-                                'fullname'  => new external_value(PARAM_RAW, 'Fullname of the course'),
-                                'shortname' => new external_value(PARAM_RAW, 'Shortname of the course')
-                            )
-                    ), 'Courses where the user is enrolled - limited by which courses the user is able to see', VALUE_OPTIONAL)
-                )
-            )
-        );
+        $additionalfields = array (
+            'enrolledcourses' => new external_multiple_structure(
+	        new external_single_structure(
+		        array(
+			        'id'  => new external_value(PARAM_INT, 'Id of the course'),
+			        'fullname'  => new external_value(PARAM_RAW, 'Fullname of the course'),
+			        'shortname' => new external_value(PARAM_RAW, 'Shortname of the course')
+		        )
+	        ), 'Courses where the user is enrolled - limited by which courses the user is able to see', VALUE_OPTIONAL));
+        return new external_multiple_structure(self::user_description($additionalfields));
     }
+
     /**
      * Returns description of method parameters
      *
@@ -742,45 +810,7 @@ class core_user_external extends external_api {
      * @since Moodle 2.2
      */
     public static function get_course_user_profiles_returns() {
-        return new external_multiple_structure(
-            new external_single_structure(
-                array(
-                    'id'    => new external_value(PARAM_INT, 'ID of the user'),
-                    'username'    => new external_value(PARAM_RAW, 'Username policy is defined in Moodle security config', VALUE_OPTIONAL),
-                    'firstname'   => new external_value(PARAM_NOTAGS, 'The first name(s) of the user', VALUE_OPTIONAL),
-                    'lastname'    => new external_value(PARAM_NOTAGS, 'The family name of the user', VALUE_OPTIONAL),
-                    'fullname'    => new external_value(PARAM_NOTAGS, 'The fullname of the user'),
-                    'email'       => new external_value(PARAM_TEXT, 'An email address - allow email as root@localhost', VALUE_OPTIONAL),
-                    'address'     => new external_value(PARAM_TEXT, 'Postal address', VALUE_OPTIONAL),
-                    'phone1'      => new external_value(PARAM_NOTAGS, 'Phone 1', VALUE_OPTIONAL),
-                    'phone2'      => new external_value(PARAM_NOTAGS, 'Phone 2', VALUE_OPTIONAL),
-                    'icq'         => new external_value(PARAM_NOTAGS, 'icq number', VALUE_OPTIONAL),
-                    'skype'       => new external_value(PARAM_NOTAGS, 'skype id', VALUE_OPTIONAL),
-                    'yahoo'       => new external_value(PARAM_NOTAGS, 'yahoo id', VALUE_OPTIONAL),
-                    'aim'         => new external_value(PARAM_NOTAGS, 'aim id', VALUE_OPTIONAL),
-                    'msn'         => new external_value(PARAM_NOTAGS, 'msn number', VALUE_OPTIONAL),
-                    'department'  => new external_value(PARAM_TEXT, 'department', VALUE_OPTIONAL),
-                    'institution' => new external_value(PARAM_TEXT, 'institution', VALUE_OPTIONAL),
-                    'idnumber'    => new external_value(PARAM_RAW, 'An arbitrary ID code number perhaps from the institution', VALUE_OPTIONAL),
-                    'interests'   => new external_value(PARAM_TEXT, 'user interests (separated by commas)', VALUE_OPTIONAL),
-                    'firstaccess' => new external_value(PARAM_INT, 'first access to the site (0 if never)', VALUE_OPTIONAL),
-                    'lastaccess'  => new external_value(PARAM_INT, 'last access to the site (0 if never)', VALUE_OPTIONAL),
-                    'description' => new external_value(PARAM_RAW, 'User profile description', VALUE_OPTIONAL),
-                    'descriptionformat' => new external_format_value('description', VALUE_OPTIONAL),
-                    'city'        => new external_value(PARAM_NOTAGS, 'Home city of the user', VALUE_OPTIONAL),
-                    'url'         => new external_value(PARAM_URL, 'URL of the user', VALUE_OPTIONAL),
-                    'country'     => new external_value(PARAM_ALPHA, 'Home country code of the user, such as AU or CZ', VALUE_OPTIONAL),
-                    'profileimageurlsmall' => new external_value(PARAM_URL, 'User image profile URL - small version'),
-                    'profileimageurl' => new external_value(PARAM_URL, 'User image profile URL - big version'),
-                    'customfields' => new external_multiple_structure(
-                        new external_single_structure(
-                            array(
-                                'type'  => new external_value(PARAM_ALPHANUMEXT, 'The type of the custom field - text field, checkbox...'),
-                                'value' => new external_value(PARAM_RAW, 'The value of the custom field'),
-                                'name' => new external_value(PARAM_RAW, 'The name of the custom field'),
-                                'shortname' => new external_value(PARAM_RAW, 'The shortname of the custom field - to be able to build the field class in the code'),
-                            )
-                        ), 'User custom fields (also known as user profil fields)', VALUE_OPTIONAL),
+        $additionalfields = array(
                     'groups' => new external_multiple_structure(
                         new external_single_structure(
                             array(
@@ -799,25 +829,83 @@ class core_user_external extends external_api {
                                 'sortorder'    => new external_value(PARAM_INT, 'role sortorder')
                             )
                         ), 'user roles', VALUE_OPTIONAL),
+                    'enrolledcourses' => new external_multiple_structure(
+	                    new external_single_structure(
+		                    array(
+			                    'id'  => new external_value(PARAM_INT, 'Id of the course'),
+			                    'fullname'  => new external_value(PARAM_RAW, 'Fullname of the course'),
+			                    'shortname' => new external_value(PARAM_RAW, 'Shortname of the course')
+		                    )
+	                    ), 'Courses where the user is enrolled - limited by which courses the user is able to see', VALUE_OPTIONAL)
+                    );
+
+        return new external_multiple_structure(self::user_description($additionalfields));
+    }
+
+    /**
+     * Create user return value description.
+     *
+     * @param array $additionalfields some additional field
+     * @return single_structure_description
+     */
+    public static function user_description($additionalfields = array()) {
+        $userfields = array(
+                    'id'    => new external_value(PARAM_INT, 'ID of the user'),
+                    'username'    => new external_value(PARAM_RAW, 'The username', VALUE_OPTIONAL),
+                    'firstname'   => new external_value(PARAM_NOTAGS, 'The first name(s) of the user', VALUE_OPTIONAL),
+                    'lastname'    => new external_value(PARAM_NOTAGS, 'The family name of the user', VALUE_OPTIONAL),
+                    'fullname'    => new external_value(PARAM_NOTAGS, 'The fullname of the user'),
+                    'email'       => new external_value(PARAM_TEXT, 'An email address - allow email as root@localhost', VALUE_OPTIONAL),
+                    'address'     => new external_value(PARAM_TEXT, 'Postal address', VALUE_OPTIONAL),
+                    'phone1'      => new external_value(PARAM_NOTAGS, 'Phone 1', VALUE_OPTIONAL),
+                    'phone2'      => new external_value(PARAM_NOTAGS, 'Phone 2', VALUE_OPTIONAL),
+                    'icq'         => new external_value(PARAM_NOTAGS, 'icq number', VALUE_OPTIONAL),
+                    'skype'       => new external_value(PARAM_NOTAGS, 'skype id', VALUE_OPTIONAL),
+                    'yahoo'       => new external_value(PARAM_NOTAGS, 'yahoo id', VALUE_OPTIONAL),
+                    'aim'         => new external_value(PARAM_NOTAGS, 'aim id', VALUE_OPTIONAL),
+                    'msn'         => new external_value(PARAM_NOTAGS, 'msn number', VALUE_OPTIONAL),
+                    'department'  => new external_value(PARAM_TEXT, 'department', VALUE_OPTIONAL),
+                    'institution' => new external_value(PARAM_TEXT, 'institution', VALUE_OPTIONAL),
+                    'idnumber'    => new external_value(PARAM_RAW, 'An arbitrary ID code number perhaps from the institution', VALUE_OPTIONAL),
+                    'interests'   => new external_value(PARAM_TEXT, 'user interests (separated by commas)', VALUE_OPTIONAL),
+                    'firstaccess' => new external_value(PARAM_INT, 'first access to the site (0 if never)', VALUE_OPTIONAL),
+                    'lastaccess'  => new external_value(PARAM_INT, 'last access to the site (0 if never)', VALUE_OPTIONAL),
+                    'auth'        => new external_value(PARAM_PLUGIN, 'Auth plugins include manual, ldap, imap, etc', VALUE_OPTIONAL),
+                    'confirmed'   => new external_value(PARAM_INT, 'Active user: 1 if confirmed, 0 otherwise', VALUE_OPTIONAL),
+                    'lang'        => new external_value(PARAM_SAFEDIR, 'Language code such as "en", must exist on server', VALUE_OPTIONAL),
+                    'theme'       => new external_value(PARAM_PLUGIN, 'Theme name such as "standard", must exist on server', VALUE_OPTIONAL),
+                    'timezone'    => new external_value(PARAM_TIMEZONE, 'Timezone code such as Australia/Perth, or 99 for default', VALUE_OPTIONAL),
+                    'mailformat'  => new external_value(PARAM_INT, 'Mail format code is 0 for plain text, 1 for HTML etc', VALUE_OPTIONAL),
+                    'description' => new external_value(PARAM_RAW, 'User profile description', VALUE_OPTIONAL),
+                    'descriptionformat' => new external_format_value('description', VALUE_OPTIONAL),
+                    'city'        => new external_value(PARAM_NOTAGS, 'Home city of the user', VALUE_OPTIONAL),
+                    'url'         => new external_value(PARAM_URL, 'URL of the user', VALUE_OPTIONAL),
+                    'country'     => new external_value(PARAM_ALPHA, 'Home country code of the user, such as AU or CZ', VALUE_OPTIONAL),
+                    'profileimageurlsmall' => new external_value(PARAM_URL, 'User image profile URL - small version'),
+                    'profileimageurl' => new external_value(PARAM_URL, 'User image profile URL - big version'),
+                    'customfields' => new external_multiple_structure(
+                        new external_single_structure(
+                            array(
+                                'type'  => new external_value(PARAM_ALPHANUMEXT, 'The type of the custom field - text field, checkbox...'),
+                                'value' => new external_value(PARAM_RAW, 'The value of the custom field'),
+                                'name' => new external_value(PARAM_RAW, 'The name of the custom field'),
+                                'shortname' => new external_value(PARAM_RAW, 'The shortname of the custom field - to be able to build the field class in the code'),
+                            )
+                        ), 'User custom fields (also known as user profile fields)', VALUE_OPTIONAL),
                     'preferences' => new external_multiple_structure(
                         new external_single_structure(
                             array(
                                 'name'  => new external_value(PARAM_ALPHANUMEXT, 'The name of the preferences'),
                                 'value' => new external_value(PARAM_RAW, 'The value of the custom field'),
                             )
-                    ), 'User preferences', VALUE_OPTIONAL),
-                    'enrolledcourses' => new external_multiple_structure(
-                        new external_single_structure(
-                            array(
-                                'id'  => new external_value(PARAM_INT, 'Id of the course'),
-                                'fullname' => new external_value(PARAM_RAW, 'Fullname of the course'),
-                                'shortname' => new external_value(PARAM_RAW, 'Shortname of the course')
-                            )
-                    ), 'Courses where the user is enrolled - limited by which courses the user is able to see', VALUE_OPTIONAL)
-                )
-            )
-        );
+                    ), 'Users preferences', VALUE_OPTIONAL)
+                );
+        if (!empty($additionalfields)) {
+            $userfields = array_merge($userfields, $additionalfields);
+        }
+        return new external_single_structure($userfields);
     }
+
 }
 
  /**
