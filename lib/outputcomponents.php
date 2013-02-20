@@ -1733,6 +1733,97 @@ class html_writer {
 
         return $label;
     }
+
+    /**
+     * Combines a class parameter with other attributes. Aids in code reduction
+     * because the class parameter is very frequently used.
+     *
+     * If the class attribute is specified both in the attributes and in the
+     * class parameter, the two values are combined with a space between.
+     *
+     * @param string $class Optional CSS class (or classes as space-separated list)
+     * @param array $attributes Optional other attributes as array
+     * @return array Attributes (or null if still none)
+     */
+    private static function add_class($class = '', array $attributes = null) {
+        if ($class !== '') {
+            $classattribute = array('class' => $class);
+            if ($attributes) {
+                if (array_key_exists('class', $attributes)) {
+                    $attributes['class'] = trim($attributes['class'] . ' ' . $class);
+                } else {
+                    $attributes = $classattribute + $attributes;
+                }
+            } else {
+                $attributes = $classattribute;
+            }
+        }
+        return $attributes;
+    }
+
+    /**
+     * Creates a <div> tag. (Shortcut function.)
+     *
+     * @param string $content HTML content of tag
+     * @param string $class Optional CSS class (or classes as space-separated list)
+     * @param array $attributes Optional other attributes as array
+     * @return string HTML code for div
+     */
+    public static function div($content, $class = '', array $attributes = null) {
+        return self::tag('div', $content, self::add_class($class, $attributes));
+    }
+
+    /**
+     * Starts a <div> tag. (Shortcut function.)
+     *
+     * @param string $class Optional CSS class (or classes as space-separated list)
+     * @param array $attributes Optional other attributes as array
+     * @return string HTML code for open div tag
+     */
+    public static function start_div($class = '', array $attributes = null) {
+        return self::start_tag('div', self::add_class($class, $attributes));
+    }
+
+    /**
+     * Ends a <div> tag. (Shortcut function.)
+     *
+     * @return string HTML code for close div tag
+     */
+    public static function end_div() {
+        return self::end_tag('div');
+    }
+
+    /**
+     * Creates a <span> tag. (Shortcut function.)
+     *
+     * @param string $content HTML content of tag
+     * @param string $class Optional CSS class (or classes as space-separated list)
+     * @param array $attributes Optional other attributes as array
+     * @return string HTML code for span
+     */
+    public static function span($content, $class = '', array $attributes = null) {
+        return self::tag('span', $content, self::add_class($class, $attributes));
+    }
+
+    /**
+     * Starts a <span> tag. (Shortcut function.)
+     *
+     * @param string $class Optional CSS class (or classes as space-separated list)
+     * @param array $attributes Optional other attributes as array
+     * @return string HTML code for open span tag
+     */
+    public static function start_span($class = '', array $attributes = null) {
+        return self::start_tag('span', self::add_class($class, $attributes));
+    }
+
+    /**
+     * Ends a <span> tag. (Shortcut function.)
+     *
+     * @return string HTML code for close span tag
+     */
+    public static function end_span() {
+        return self::end_tag('span');
+    }
 }
 
 /**
