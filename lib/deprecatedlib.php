@@ -3499,3 +3499,47 @@ function make_categories_list(&$list, &$parents, $requiredcapability = '',
         }
     }
 }
+
+/**
+ * Delete category, but move contents to another category.
+ *
+ * This function is deprecated. Please use
+ * coursecat::get($category->id)->delete_move($newparentid, $showfeedback);
+ *
+ * @see coursecat::delete_move()
+ * @deprecated since 2.5
+ *
+ * @param object $category
+ * @param int $newparentid category id
+ * @return bool status
+ */
+function category_delete_move($category, $newparentid, $showfeedback=true) {
+    global $CFG;
+    require_once($CFG->libdir.'/coursecatlib.php');
+
+    debugging('Function category_delete_move() is deprecated. Please use coursecat::delete_move() instead.');
+
+    return coursecat::get($category->id)->delete_move($newparentid, $showfeedback);
+}
+
+/**
+ * Recursively delete category including all subcategories and courses.
+ *
+ * This function is deprecated. Please use
+ * coursecat::get($category->id)->delete_full($showfeedback);
+ *
+ * @see coursecat::delete_full()
+ * @deprecated since 2.5
+ *
+ * @param stdClass $category
+ * @param boolean $showfeedback display some notices
+ * @return array return deleted courses
+ */
+function category_delete_full($category, $showfeedback=true) {
+    global $CFG, $DB;
+    require_once($CFG->libdir.'/coursecatlib.php');
+
+    debugging('Function category_delete_full() is deprecated. Please use coursecat::delete_full() instead.');
+
+    return coursecat::get($category->id)->delete_full($showfeedback);
+}

@@ -2637,112 +2637,6 @@ function course_allowed_module($course, $modname) {
 }
 
 /**
- * Recursively delete category including all subcategories and courses.
- * @param stdClass $category
- * @param boolean $showfeedback display some notices
- * @return array return deleted courses
- */
-function category_delete_full($category, $showfeedback=true) {
-    global $CFG, $DB;
-    require_once($CFG->libdir.'/gradelib.php');
-    require_once($CFG->libdir.'/questionlib.php');
-    require_once($CFG->dirroot.'/cohort/lib.php');
-
-    if ($children = $DB->get_records('course_categories', array('parent'=>$category->id), 'sortorder ASC')) {
-        foreach ($children as $childcat) {
-            category_delete_full($childcat, $showfeedback);
-        }
-    }
-
-    $deletedcourses = array();
-    if ($courses = $DB->get_records('course', array('category'=>$category->id), 'sortorder ASC')) {
-        foreach ($courses as $course) {
-            if (!delete_course($course, false)) {
-                throw new moodle_exception('cannotdeletecategorycourse','','',$course->shortname);
-            }
-            $deletedcourses[] = $course;
-        }
-    }
-
-    // move or delete cohorts in this context
-    cohort_delete_category($category);
-
-    // now delete anything that may depend on course category context
-    grade_course_category_delete($category->id, 0, $showfeedback);
-    if (!question_delete_course_category($category, 0, $showfeedback)) {
-        throw new moodle_exception('cannotdeletecategoryquestions','','',$category->name);
-    }
-
-    // finally delete the category and it's context
-    $DB->delete_records('course_categories', array('id'=>$category->id));
-    delete_context(CONTEXT_COURSECAT, $category->id);
-    add_to_log(SITEID, "category", "delete", "index.php", "$category->name (ID $category->id)");
-
-    events_trigger('course_category_deleted', $category);
-
-    return $deletedcourses;
-}
-
-/**
- * Delete category, but move contents to another category.
- * @param object $ccategory
- * @param int $newparentid category id
- * @return bool status
- */
-function category_delete_move($category, $newparentid, $showfeedback=true) {
-    global $CFG, $DB, $OUTPUT;
-    require_once($CFG->libdir.'/gradelib.php');
-    require_once($CFG->libdir.'/questionlib.php');
-    require_once($CFG->dirroot.'/cohort/lib.php');
-
-    if (!$newparentcat = $DB->get_record('course_categories', array('id'=>$newparentid))) {
-        return false;
-    }
-
-    if ($children = $DB->get_records('course_categories', array('parent'=>$category->id), 'sortorder ASC')) {
-        foreach ($children as $childcat) {
-            move_category($childcat, $newparentcat);
-        }
-    }
-
-    if ($courses = $DB->get_records('course', array('category'=>$category->id), 'sortorder ASC', 'id')) {
-        if (!move_courses(array_keys($courses), $newparentid)) {
-            if ($showfeedback) {
-                echo $OUTPUT->notification("Error moving courses");
-            }
-            return false;
-        }
-        if ($showfeedback) {
-            echo $OUTPUT->notification(get_string('coursesmovedout', '', format_string($category->name)), 'notifysuccess');
-        }
-    }
-
-    // move or delete cohorts in this context
-    cohort_delete_category($category);
-
-    // now delete anything that may depend on course category context
-    grade_course_category_delete($category->id, $newparentid, $showfeedback);
-    if (!question_delete_course_category($category, $newparentcat, $showfeedback)) {
-        if ($showfeedback) {
-            echo $OUTPUT->notification(get_string('errordeletingquestionsfromcategory', 'question', $category), 'notifysuccess');
-        }
-        return false;
-    }
-
-    // finally delete the category and it's context
-    $DB->delete_records('course_categories', array('id'=>$category->id));
-    delete_context(CONTEXT_COURSECAT, $category->id);
-    add_to_log(SITEID, "category", "delete", "index.php", "$category->name (ID $category->id)");
-
-    events_trigger('course_category_deleted', $category);
-
-    if ($showfeedback) {
-        echo $OUTPUT->notification(get_string('coursecategorydeleted', '', format_string($category->name)), 'notifysuccess');
-    }
-    return true;
-}
-
-/**
  * Efficiently moves many courses around while maintaining
  * sortorder in order.
  *
@@ -2842,6 +2736,9 @@ function course_category_show($category) {
 /**
  * Efficiently moves a category - NOTE that this can have
  * a huge impact access-control-wise...
+ *
+ * @param stdClass|coursecat $category
+ * @param stdClass|coursecat $newparentcat
  */
 function move_category($category, $newparentcat) {
     global $CFG, $DB;
