@@ -2826,9 +2826,11 @@ class global_navigation_for_ajax extends global_navigation {
               ORDER BY cc.depth ASC, cc.sortorder ASC, cc.id ASC";
         $params = array('categoryid1' => $categoryid, 'categoryid2' => $categoryid);
         $categories = $DB->get_recordset_sql($sql, $params, 0, $limit);
+        $categorylist = array();
         $subcategories = array();
         $basecategory = null;
         foreach ($categories as $category) {
+            $categorylist[] = $category->id;
             context_helper::preload_from_record($category);
             if ($category->id == $categoryid) {
                 $this->add_category($category, $this, $nodetype);
@@ -2849,7 +2851,10 @@ class global_navigation_for_ajax extends global_navigation {
         if ($nodetype === self::TYPE_MY_CATEGORY) {
             $courses = enrol_get_my_courses();
             foreach ($courses as $course) {
-                $this->add_course($course, true, self::COURSE_MY);
+                // Add course if it's in category.
+                if (in_array($course->category, $categorylist)) {
+                    $this->add_course($course, true, self::COURSE_MY);
+                }
             }
         } else {
             $courses = $DB->get_recordset('course', array('category' => $categoryid), 'sortorder', '*' , 0, $limit);
