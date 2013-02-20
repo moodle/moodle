@@ -86,6 +86,8 @@ var NODETYPE = {
     SYSTEM : 1,
     /** @type int Course category = 10 */
     CATEGORY : 10,
+    /** @type int MYCATEGORY = 11 */
+    MYCATEGORY : 11,
     /** @type int Course = 20 */
     COURSE : 20,
     /** @type int Course section = 30 */
@@ -454,7 +456,8 @@ BRANCH.prototype = {
                         this.addChild(object.children[i]);
                     }
                 }
-                if ((this.get('type') == NODETYPE.CATEGORY || this.get('type') == NODETYPE.ROOTNODE) && coursecount >= M.block_navigation.courselimit) {
+                if ((this.get('type') == NODETYPE.CATEGORY || this.get('type') == NODETYPE.ROOTNODE || this.get('type') == NODETYPE.MYCATEGORY)
+                    && coursecount >= M.block_navigation.courselimit) {
                     this.addViewAllCoursesChild(this);
                 }
                 this.get('tree').toggleExpansion({target:this.node});
@@ -486,7 +489,8 @@ BRANCH.prototype = {
                     branch.addChild(children[i]);
                 }
             }
-            if (branch.get('type') == NODETYPE.CATEGORY && count >= M.block_navigation.courselimit) {
+            if ((branch.get('type') == NODETYPE.CATEGORY || branch.get('type') == NODETYPE.MYCATEGORY)
+                && count >= M.block_navigation.courselimit) {
                 this.addViewAllCoursesChild(branch);
             }
         }
