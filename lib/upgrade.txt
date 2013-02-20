@@ -36,7 +36,8 @@ information provided here is intended especially for developers.
   format_string() with the passed options.
 * Functions responsible for managing and accessing course categories are moved to class coursecat
   in lib/coursecatlib.php. The following global functions are deprecated: make_categories_list(),
-  category_delete_move(), category_delete_full()
+  category_delete_move(), category_delete_full(), move_category(), course_category_hide(),
+  course_category_show()
 
 YUI changes:
 * M.util.help_icon has been deprecated. Code should be updated to use moodle-core-popuphelp

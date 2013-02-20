@@ -1765,6 +1765,7 @@ class core_course_external extends external_api {
     public static function update_categories($categories) {
         global $CFG, $DB;
         require_once($CFG->dirroot . "/course/lib.php");
+        require_once($CFG->libdir . "/coursecatlib.php");
 
         // Validate parameters.
         $params = self::validate_parameters(self::update_categories_parameters(), array('categories' => $categories));
@@ -1800,19 +1801,19 @@ class core_course_external extends external_api {
                 $category->theme = $cat['theme'];
             }
             if (!empty($cat['parent']) && ($category->parent != $cat['parent'])) {
-                // First check if parent exists.
-                if (!$parent_cat = $DB->get_record('course_categories', array('id' => $cat['parent']))) {
-                    throw new moodle_exception('unknowcategory');
+                $coursecat = coursecat::get($category->id);
+                if ($coursecat->can_move($cat['parent'])) {
+                    self::validate_context(get_category_or_system_context((int)$cat['parent']));
+                    $coursecat->move($cat['parent']);
+                    $coursecat = coursecat::get($category->id);
+                    $category->parent = (int)$cat['parent'];
+                    // prevent automaticaly calculated fields from accidental update in DB
+                    unset($category->path);
+                    unset($category->depth);
+                    unset($category->sortorder);
+                } else {
+                    throw new moodle_exception('nopermissions', '', '', '');
                 }
-                // Then check if we have capability.
-                self::validate_context(get_category_or_system_context((int)$cat['parent']));
-                require_capability('moodle/category:manage', get_category_or_system_context((int)$cat['parent']));
-                // Finally move the category.
-                move_category($category, $parent_cat);
-                $category->parent = $cat['parent'];
-                // Get updated path by move_category().
-                $category->path = $DB->get_field('course_categories', 'path',
-                        array('id' => $category->id));
             }
             $DB->update_record('course_categories', $category);
         }

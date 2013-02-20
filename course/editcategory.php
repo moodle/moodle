@@ -27,8 +27,9 @@
  */
 
 require_once('../config.php');
-require_once('lib.php');
-require_once('editcategory_form.php');
+require_once($CFG->dirroot.'/course/lib.php');
+require_once($CFG->dirroot.'/course/editcategory_form.php');
+require_once($CFG->libdir.'/coursecatlib.php');
 
 require_login();
 
@@ -109,8 +110,7 @@ if ($mform->is_cancelled()) {
         if ($newcategory->parent != $category->parent) {
             // check category manage capability if parent changed
             require_capability('moodle/category:manage', get_category_or_system_context((int)$newcategory->parent));
-            $parent_cat = $DB->get_record('course_categories', array('id' => $newcategory->parent));
-            move_category($newcategory, $parent_cat);
+            coursecat::get($newcategory->id)->move($newcategory->parent);
         }
     } else {
         // Create a new category.

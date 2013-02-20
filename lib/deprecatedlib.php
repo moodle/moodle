@@ -3543,3 +3543,76 @@ function category_delete_full($category, $showfeedback=true) {
 
     return coursecat::get($category->id)->delete_full($showfeedback);
 }
+
+/**
+ * Efficiently moves a category - NOTE that this can have
+ * a huge impact access-control-wise...
+ *
+ * This function is deprecated. Please use
+ * $coursecat = coursecat::get($category->id);
+ * if ($coursecat->can_change_parent($newparentcat->id)) {
+ *     $coursecat->change_parent($newparentcat->id);
+ * }
+ *
+ * Alternatively you can use
+ * $coursecat->update(array('parent' => $newparentcat->id));
+ *
+ * Function update() also updates field course_categories.timemodified
+ *
+ * @see coursecat::change_parent()
+ * @see coursecat::update()
+ * @deprecated since 2.5
+ *
+ * @param stdClass|coursecat $category
+ * @param stdClass|coursecat $newparentcat
+ */
+function move_category($category, $newparentcat) {
+    global $CFG;
+    require_once($CFG->libdir.'/coursecatlib.php');
+
+    debugging('Function move_category() is deprecated. Please use coursecat::change_parent() instead.');
+
+    return coursecat::get($category->id)->change_parent($newparentcat->id);
+}
+
+/**
+ * Hide course category and child course and subcategories
+ *
+ * This function is deprecated. Please use
+ * coursecat::get($category->id)->hide();
+ *
+ * @see coursecat::hide()
+ * @deprecated since 2.5
+ *
+ * @param stdClass $category
+ * @return void
+ */
+function course_category_hide($category) {
+    global $CFG;
+    require_once($CFG->libdir.'/coursecatlib.php');
+
+    debugging('Function course_category_hide() is deprecated. Please use coursecat::hide() instead.');
+
+    coursecat::get($category->id)->hide();
+}
+
+/**
+ * Show course category and child course and subcategories
+ *
+ * This function is deprecated. Please use
+ * coursecat::get($category->id)->show();
+ *
+ * @see coursecat::show()
+ * @deprecated since 2.5
+ *
+ * @param stdClass $category
+ * @return void
+ */
+function course_category_show($category) {
+    global $CFG;
+    require_once($CFG->libdir.'/coursecatlib.php');
+
+    debugging('Function course_category_show() is deprecated. Please use coursecat::show() instead.');
+
+    coursecat::get($category->id)->show();
+}

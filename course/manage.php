@@ -141,31 +141,25 @@ if (!empty($deletecat) and confirm_sesskey()) {
 
 if (!empty($movecat) and ($movetocat >= 0) and confirm_sesskey()) {
     // Move a category to a new parent if required.
-    if ($cattomove = $DB->get_record('course_categories', array('id' => $movecat))) {
-        require_capability('moodle/category:manage', get_category_or_system_context($cattomove->parent));
-        if ($cattomove->parent != $movetocat) {
-            $newparent = $DB->get_record('course_categories', array('id' => $movetocat));
-            require_capability('moodle/category:manage', get_category_or_system_context($movetocat));
-            move_category($cattomove, $newparent);
+    $cattomove = coursecat::get($movecat);
+    if ($cattomove->parent != $movetocat) {
+        if ($cattomove->can_change_parent($movetocat)) {
+            $cattomove->change_parent($movetocat);
+        } else {
+            print_error('cannotmovecategory');
         }
     }
 }
 
 // Hide or show a category.
 if ($hidecat and confirm_sesskey()) {
-    if ($tempcat = $DB->get_record('course_categories', array('id' => $hidecat))) {
-        require_capability('moodle/category:manage', get_category_or_system_context($tempcat->parent));
-        if ($tempcat->visible == 1) {
-            course_category_hide($tempcat);
-        }
-    }
+    $coursecat = coursecat::get($hidecat);
+    require_capability('moodle/category:manage', get_category_or_system_context($coursecat->parent));
+    $coursecat->hide();
 } else if ($showcat and confirm_sesskey()) {
-    if ($tempcat = $DB->get_record('course_categories', array('id' => $showcat))) {
-        require_capability('moodle/category:manage', get_category_or_system_context($tempcat->parent));
-        if ($tempcat->visible == 0) {
-            course_category_show($tempcat);
-        }
-    }
+    $coursecat = coursecat::get($showcat);
+    require_capability('moodle/category:manage', get_category_or_system_context($coursecat->parent));
+    $coursecat->show();
 }
 
 if ((!empty($moveupcat) or !empty($movedowncat)) and confirm_sesskey()) {
