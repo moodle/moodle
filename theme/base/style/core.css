@@ -205,16 +205,16 @@ a.skip:active {position: static;display: block;}
 #page-footer .validators ul {margin:0px;padding:0px;list-style-type:none;}
 #page-footer .validators ul li {display:inline;margin-right:10px;margin-left:10px;}
 
-.performanceinfo .cachesused {margin-top:1em;}
-.performanceinfo .cachesused .cache-stats-heading {font-weight: bold;}
-.performanceinfo .cachesused .cache-definition-stats {margin:0.3em; padding:0px;border:1px solid #999;float:left;min-height:4em;}
-.performanceinfo .cachesused .cache-definition-stats span {padding-left:0.5em;padding-right:0.5em}
-.performanceinfo .cachesused .cache-definition-stats .cache-definition-stats-heading {background-color:#eee;}
-.performanceinfo .cachesused .cache-store-stats {text-indent: 1em;}
-.performanceinfo .cachesused .cache-store-stats.nohits {background-color:#ffd3d9;}
-.performanceinfo .cachesused .cache-store-stats.lowhits {background-color:#f3f2aa;}
-.performanceinfo .cachesused .cache-store-stats.hihits {background-color:#e7f1c3;}
-.performanceinfo .cachesused .cache-total-stats {clear:both;font-weight:bold;margin-top:0.3em;}
+#page-footer .performanceinfo .cachesused {margin-top:1em;}
+#page-footer .performanceinfo .cachesused .cache-stats-heading {font-weight:bold;display:block;}
+#page-footer .performanceinfo .cachesused .cache-definition-stats {margin:0.3em;padding:0px;border:1px solid #999;display:inline-block;vertical-align:top;min-height:4em;color:#000;background-color:#eee;}
+#page-footer .performanceinfo .cachesused .cache-definition-stats span {padding-left:0.5em;padding-right:0.5em;display:block;}
+#page-footer .performanceinfo .cachesused .cache-definition-stats .cache-definition-stats-heading {background-color:#eee;}
+#page-footer .performanceinfo .cachesused .cache-store-stats {text-indent: 1em;}
+#page-footer .performanceinfo .cachesused .cache-store-stats.nohits {background-color:#ffd3d9;}
+#page-footer .performanceinfo .cachesused .cache-store-stats.lowhits {background-color:#f3f2aa;}
+#page-footer .performanceinfo .cachesused .cache-store-stats.hihits {background-color:#e7f1c3;}
+#page-footer .performanceinfo .cachesused .cache-total-stats {display:block;font-weight:bold;margin-top:0.3em;}
 
 #course-footer {clear:both;}
 
