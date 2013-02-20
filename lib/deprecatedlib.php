@@ -3786,3 +3786,94 @@ function get_child_categories($parentid) {
     }
     return $rv;
 }
+
+/**
+ * Returns a sorted list of categories.
+ *
+ * When asking for $parent='none' it will return all the categories, regardless
+ * of depth. Wheen asking for a specific parent, the default is to return
+ * a "shallow" resultset. Pass false to $shallow and it will return all
+ * the child categories as well.
+ *
+ * @deprecated since 2.5
+ *
+ * This function is deprecated. Use appropriate functions from class coursecat.
+ * Examples:
+ *
+ * coursecat::get($categoryid)->get_children()
+ * - returns all children of the specified category as instances of class
+ * coursecat, which means on each of them method get_children() can be called again
+ *
+ * coursecat::get($categoryid)->get_children(array('recursive' => true))
+ * - returns all children of the specified category and all subcategories
+ *
+ * coursecat::get(0)->get_children(array('recursive' => true))
+ * - returns all categories defined in the system
+ *
+ * Sort fields can be specified, see phpdocs to {@link coursecat::get_children()}
+ *
+ * Also see functions {@link coursecat::get_children_count()}, {@link coursecat::count_all()},
+ * {@link coursecat::get_default()}
+ *
+ * The code of this deprecated function is left as it is because coursecat::get_children()
+ * returns categories as instances of coursecat and not stdClass
+ *
+ * @param string $parent The parent category if any
+ * @param string $sort the sortorder
+ * @param bool   $shallow - set to false to get the children too
+ * @return array of categories
+ */
+function get_categories($parent='none', $sort=NULL, $shallow=true) {
+    global $DB;
+
+    debugging('Function get_categories() is deprecated. Please use coursecat::get_children(). See phpdocs for more details',
+            DEBUG_DEVELOPER);
+
+    if ($sort === NULL) {
+        $sort = 'ORDER BY cc.sortorder ASC';
+    } elseif ($sort ==='') {
+        // leave it as empty
+    } else {
+        $sort = "ORDER BY $sort";
+    }
+
+    list($ccselect, $ccjoin) = context_instance_preload_sql('cc.id', CONTEXT_COURSECAT, 'ctx');
+
+    if ($parent === 'none') {
+        $sql = "SELECT cc.* $ccselect
+                  FROM {course_categories} cc
+               $ccjoin
+                $sort";
+        $params = array();
+
+    } elseif ($shallow) {
+        $sql = "SELECT cc.* $ccselect
+                  FROM {course_categories} cc
+               $ccjoin
+                 WHERE cc.parent=?
+                $sort";
+        $params = array($parent);
+
+    } else {
+        $sql = "SELECT cc.* $ccselect
+                  FROM {course_categories} cc
+               $ccjoin
+                  JOIN {course_categories} ccp
+                       ON ((cc.parent = ccp.id) OR (cc.path LIKE ".$DB->sql_concat('ccp.path',"'/%'")."))
+                 WHERE ccp.id=?
+                $sort";
+        $params = array($parent);
+    }
+    $categories = array();
+
+    $rs = $DB->get_recordset_sql($sql, $params);
+    foreach($rs as $cat) {
+        context_instance_preload($cat);
+        $catcontext = context_coursecat::instance($cat->id);
+        if ($cat->visible || has_capability('moodle/category:viewhiddencategories', $catcontext)) {
+            $categories[$cat->id] = $cat;
+        }
+    }
+    $rs->close();
+    return $categories;
+}
