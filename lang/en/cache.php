@@ -36,6 +36,7 @@ $string['cacheadmin'] = 'Cache administration';
 $string['cacheconfig'] = 'Configuration';
 $string['cachedef_calendar_subscriptions'] = 'Calendar subscriptions';
 $string['cachedef_config'] = 'Config settings';
+$string['cachedef_coursecat'] = 'Course categories'; 
 $string['cachedef_databasemeta'] = 'Database meta information';
 $string['cachedef_eventinvalidation'] = 'Event invalidation';
 $string['cachedef_groupdata'] = 'Course group information';

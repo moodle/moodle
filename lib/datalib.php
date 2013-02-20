@@ -1254,6 +1254,9 @@ function fix_course_sortorder() {
             $i++;
         }
     }
+
+    $coursecatcache = cache::make('core', 'coursecat');
+    $coursecatcache->purge();
 }
 
 /**

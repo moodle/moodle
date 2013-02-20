@@ -198,4 +198,10 @@ $definitions = array(
         'persistentmaxsize' => 1,
     ),
 
+    // Used to store data for course categories
+    'coursecat' => array(
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true,
+        'simpledata' => false,
+    ),
 );
