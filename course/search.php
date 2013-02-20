@@ -24,6 +24,7 @@
 
 require_once("../config.php");
 require_once($CFG->dirroot.'/course/lib.php');
+require_once($CFG->libdir.'/coursecatlib.php');
 
 $search    = optional_param('search', '', PARAM_RAW);  // search words
 $page      = optional_param('page', 0, PARAM_INT);     // which page to show
@@ -38,14 +39,8 @@ $modulelist= optional_param('modulelist', '', PARAM_PLUGIN);
 // List of minimum capabilities which user need to have for editing/moving course
 $capabilities = array('moodle/course:create', 'moodle/category:manage');
 
-// List of category id's in which current user has course:create and category:manage capability.
-$usercatlist = array();
-
-// List of parent category id's
-$catparentlist = array();
-
-// Populate usercatlist with list of category id's with required capabilities.
-make_categories_list($usercatlist, $catparentlist, $capabilities);
+// Populate usercatlist with list of category id's with course:create and category:manage capabilities.
+$usercatlist = coursecat::make_categories_list($capabilities);
 
 $search = trim(strip_tags($search)); // trim & clean raw searched string
 if ($search) {
@@ -109,9 +104,7 @@ if (has_capability('moodle/course:visibility', context_system::instance())) {
     }
 }
 
-$displaylist = array();
-$parentlist = array();
-make_categories_list($displaylist, $parentlist);
+$displaylist = coursecat::make_categories_list();
 
 $strcourses = new lang_string("courses");
 $strsearch = new lang_string("search");

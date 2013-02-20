@@ -108,12 +108,7 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configtext('enrol_database/newcoursecategory', get_string('newcoursecategory', 'enrol_database'), '', ''));
 
     if (!during_initial_install()) {
-        require_once($CFG->dirroot.'/course/lib.php');
-        $options = array();
-        $parentlist = array();
-        make_categories_list($options, $parentlist);
-        $settings->add(new admin_setting_configselect('enrol_database/defaultcategory', get_string('defaultcategory', 'enrol_database'), get_string('defaultcategory_desc', 'enrol_database'), 1, $options));
-        unset($parentlist);
+        $settings->add(new admin_setting_configselect('enrol_database/defaultcategory', get_string('defaultcategory', 'enrol_database'), get_string('defaultcategory_desc', 'enrol_database'), 1, make_categories_options()));
     }
 
     $settings->add(new admin_setting_configtext('enrol_database/templatecourse', get_string('templatecourse', 'enrol_database'), get_string('templatecourse_desc', 'enrol_database'), ''));

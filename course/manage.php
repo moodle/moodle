@@ -323,9 +323,6 @@ if (can_edit_in_category()) {
     $PAGE->set_button(print_course_search('', true, 'navbar'));
 }
 
-$parentlist = array();
-$displaylist = array();
-make_categories_list($displaylist, $parentlist);
 $displaylist[0] = get_string('top');
 
 // Start output.
@@ -350,7 +347,7 @@ if (!isset($category)) {
     );
     $table->data = array();
 
-    print_category_edit($table, null, $displaylist, $parentlist);
+    print_category_edit($table, null);
 
     echo html_writer::table($table);
 } else {
@@ -552,9 +549,7 @@ if (!$courses) {
     }
 
     if ($abletomovecourses) {
-        $movetocategories = array();
-        $notused = array();
-        make_categories_list($movetocategories, $notused, 'moodle/category:manage');
+        $movetocategories = coursecat::make_categories_list('moodle/category:manage');
         $movetocategories[$id] = get_string('moveselectedcoursesto');
 
         $cell = new html_table_cell();
@@ -615,13 +610,11 @@ echo $OUTPUT->footer();
  *
  * @param html_table $table The table to add data to.
  * @param stdClass $category The category to render
- * @param array $displaylist The categories this can be moved to.
- * @param array $parentslist An array of categories.
  * @param int $depth The depth of the category.
  * @param bool $up True if this category can be moved up.
  * @param bool $down True if this category can be moved down.
  */
-function print_category_edit(html_table $table, $category, $displaylist, $parentslist, $depth=-1, $up=false, $down=false) {
+function print_category_edit(html_table $table, $category, $depth=-1, $up=false, $down=false) {
     global $OUTPUT;
 
     static $str = null;
@@ -712,14 +705,8 @@ function print_category_edit(html_table $table, $category, $displaylist, $parent
 
         $actions = '';
         if (has_capability('moodle/category:manage', $category->context)) {
-            $tempdisplaylist = $displaylist;
-            unset($tempdisplaylist[$category->id]);
-            foreach ($parentslist as $key => $parents) {
-                if (in_array($category->id, $parents)) {
-                    unset($tempdisplaylist[$key]);
-                }
-            }
             $popupurl = new moodle_url("manage.php?movecat=$category->id&sesskey=".sesskey());
+            $tempdisplaylist = array(0 => get_string('top')) + coursecat::make_categories_list('moodle/category:manage', $category->id);
             $select = new single_select($popupurl, 'movetocat', $tempdisplaylist, $category->parent, null, "moveform$category->id");
             $select->set_label(get_string('frontpagecategorynames'), array('class' => 'accesshide'));
             $actions = $OUTPUT->render($select);
@@ -757,7 +744,7 @@ function print_category_edit(html_table $table, $category, $displaylist, $parent
             $down = $last ? false : true;
             $first = false;
 
-            print_category_edit($table, $cat, $displaylist, $parentslist, $depth+1, $up, $down);
+            print_category_edit($table, $cat, $depth+1, $up, $down);
         }
     }
 }

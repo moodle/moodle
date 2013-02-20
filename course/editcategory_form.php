@@ -4,6 +4,7 @@ if (!defined('MOODLE_INTERNAL')) {
 }
 
 require_once ($CFG->dirroot.'/course/moodleform_mod.php');
+require_once ($CFG->libdir.'/coursecatlib.php');
 class editcategory_form extends moodleform {
 
     // form definition
@@ -18,17 +19,16 @@ class editcategory_form extends moodleform {
         if (has_capability('moodle/category:manage', get_system_context()) || $category->parent == 0) {
             $options[0] = get_string('top');
         }
-        $parents = array();
         if ($category->id) {
             // Editing an existing category.
-            make_categories_list($options, $parents, 'moodle/category:manage', $category->id);
+            $options += coursecat::make_categories_list('moodle/category:manage', $category->id);
             if (empty($options[$category->parent])) {
                 $options[$category->parent] = $DB->get_field('course_categories', 'name', array('id'=>$category->parent));
             }
             $strsubmit = get_string('savechanges');
         } else {
             // Making a new category
-            make_categories_list($options, $parents, 'moodle/category:manage');
+            $options += coursecat::make_categories_list('moodle/category:manage');
             $strsubmit = get_string('createcategory');
         }
 

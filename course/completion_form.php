@@ -97,9 +97,8 @@ class course_completion_form extends moodleform {
             }
 
             // Get category list
-            $list = array();
-            $parents = array();
-            make_categories_list($list, $parents);
+            require_once($CFG->libdir. '/coursecatlib.php');
+            $list = coursecat::make_categories_list();
 
             // Get course list for select box
             $selectbox = array();

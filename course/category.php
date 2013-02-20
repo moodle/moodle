@@ -26,6 +26,7 @@
 require_once("../config.php");
 require_once($CFG->dirroot.'/course/lib.php');
 require_once($CFG->libdir.'/textlib.class.php');
+require_once($CFG->libdir. '/coursecatlib.php');
 
 $id = required_param('id', PARAM_INT); // Category id
 $page = optional_param('page', 0, PARAM_INT); // which page to show
@@ -69,9 +70,7 @@ $PAGE->set_button(print_course_search('', true, 'navbar'));
 echo $OUTPUT->header();
 
 /// Print the category selector
-$displaylist = array();
-$notused = array();
-make_categories_list($displaylist, $notused);
+$displaylist = coursecat::make_categories_list();
 
 echo '<div class="categorypicker">';
 $select = new single_select(new moodle_url('/course/category.php'), 'id', $displaylist, $category->id, null, 'switchcategory');

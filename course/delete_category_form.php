@@ -6,6 +6,7 @@ if (!defined('MOODLE_INTERNAL')) {
 
 require_once($CFG->libdir.'/formslib.php');
 require_once($CFG->libdir.'/questionlib.php');
+require_once($CFG->libdir. '/coursecatlib.php');
 
 class delete_category_form extends moodleform {
 
@@ -62,10 +63,8 @@ class delete_category_form extends moodleform {
         if ($containscategories || $containsquestions) {
             $testcaps[] = 'moodle/category:manage';
         }
-        $displaylist = array();
-        $notused = array();
         if (!empty($testcaps)) {
-            make_categories_list($displaylist, $notused, $testcaps, $category->id);
+            $displaylist = coursecat::make_categories_list($testcaps, $category->id);
         }
 
     /// Now build the options.

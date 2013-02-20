@@ -1250,99 +1250,6 @@ function get_child_categories($parentid) {
 }
 
 /**
- * This function recursively travels the categories, building up a nice list
- * for display. It also makes an array that list all the parents for each
- * category.
- *
- * For example, if you have a tree of categories like:
- *   Miscellaneous (id = 1)
- *      Subcategory (id = 2)
- *         Sub-subcategory (id = 4)
- *   Other category (id = 3)
- * Then after calling this function you will have
- * $list = array(1 => 'Miscellaneous', 2 => 'Miscellaneous / Subcategory',
- *      4 => 'Miscellaneous / Subcategory / Sub-subcategory',
- *      3 => 'Other category');
- * $parents = array(2 => array(1), 4 => array(1, 2));
- *
- * If you specify $requiredcapability, then only categories where the current
- * user has that capability will be added to $list, although all categories
- * will still be added to $parents, and if you only have $requiredcapability
- * in a child category, not the parent, then the child catgegory will still be
- * included.
- *
- * If you specify the option $excluded, then that category, and all its children,
- * are omitted from the tree. This is useful when you are doing something like
- * moving categories, where you do not want to allow people to move a category
- * to be the child of itself.
- *
- * @param array $list For output, accumulates an array categoryid => full category path name
- * @param array $parents For output, accumulates an array categoryid => list of parent category ids.
- * @param string/array $requiredcapability if given, only categories where the current
- *      user has this capability will be added to $list. Can also be an array of capabilities,
- *      in which case they are all required.
- * @param integer $excludeid Omit this category and its children from the lists built.
- * @param object $category Build the tree starting at this category - otherwise starts at the top level.
- * @param string $path For internal use, as part of recursive calls.
- */
-function make_categories_list(&$list, &$parents, $requiredcapability = '',
-        $excludeid = 0, $category = NULL, $path = "") {
-
-    // initialize the arrays if needed
-    if (!is_array($list)) {
-        $list = array();
-    }
-    if (!is_array($parents)) {
-        $parents = array();
-    }
-
-    if (empty($category)) {
-        // Start at the top level.
-        $category = new stdClass;
-        $category->id = 0;
-    } else {
-        // This is the excluded category, don't include it.
-        if ($excludeid > 0 && $excludeid == $category->id) {
-            return;
-        }
-
-        $context = context_coursecat::instance($category->id);
-        $categoryname = format_string($category->name, true, array('context' => $context));
-
-        // Update $path.
-        if ($path) {
-            $path = $path.' / '.$categoryname;
-        } else {
-            $path = $categoryname;
-        }
-
-        // Add this category to $list, if the permissions check out.
-        if (empty($requiredcapability)) {
-            $list[$category->id] = $path;
-
-        } else {
-            $requiredcapability = (array)$requiredcapability;
-            if (has_all_capabilities($requiredcapability, $context)) {
-                $list[$category->id] = $path;
-            }
-        }
-    }
-
-    // Add all the children recursively, while updating the parents array.
-    if ($categories = get_child_categories($category->id)) {
-        foreach ($categories as $cat) {
-            if (!empty($category->id)) {
-                if (isset($parents[$category->id])) {
-                    $parents[$cat->id]   = $parents[$category->id];
-                }
-                $parents[$cat->id][] = $category->id;
-            }
-            make_categories_list($list, $parents, $requiredcapability, $excludeid, $cat, $path);
-        }
-    }
-}
-
-/**
  * This function generates a structured array of courses and categories.
  *
  * The depth of categories is limited by $CFG->maxcategorydepth however there
@@ -1423,10 +1330,6 @@ function print_whole_category_list($category=NULL, $displaylist=NULL, $parentsli
         return;
     }
 
-    if (!$displaylist) {
-        make_categories_list($displaylist, $parentslist);
-    }
-
     if (!$categorycourses) {
         if ($category) {
             $categorycourses = get_category_courses_array($category->id);
@@ -1497,18 +1400,19 @@ function get_category_courses_array_recursively(array &$flattened, $category) {
 }
 
 /**
- * This function will return $options array for html_writer::select(), with whitespace to denote nesting.
+ * Returns full course categories trees to be used in html_writer::select()
+ *
+ * Calls {@link coursecat::make_categories_list()} to build the tree and
+ * adds whitespace to denote nesting
+ *
+ * @return array array mapping coursecat id to the display name
  */
 function make_categories_options() {
-    make_categories_list($cats,$parents);
+    global $CFG;
+    require_once($CFG->libdir. '/coursecatlib.php');
+    $cats = coursecat::make_categories_list();
     foreach ($cats as $key => $value) {
-        if (array_key_exists($key,$parents)) {
-            if ($indent = count($parents[$key])) {
-                for ($i = 0; $i < $indent; $i++) {
-                    $cats[$key] = '&nbsp;'.$cats[$key];
-                }
-            }
-        }
+        $cats[$key] = str_repeat('&nbsp;', coursecat::get($key)->depth - 1). $value;
     }
     return $cats;
 }
