@@ -422,7 +422,7 @@ class cache_phpunit_tests extends advanced_testcase {
             'mode' => cache_store::MODE_APPLICATION,
             'component' => 'phpunit',
             'area' => 'ttltest',
-            'ttl' => -10
+            'ttl' => -86400 // Set to a day in the past to be extra sure.
         ));
         $cache = cache::make('phpunit', 'ttltest');
         $this->assertInstanceOf('cache_application', $cache);
