@@ -78,9 +78,9 @@
 #page-admin-course-index.dir-rtl .editcourse td[align="right"] {text-align: left;}
 
 #page-admin-report-security-index .timewarninghidden {display:none;}
-#page-admin-report-security-index .statuswarning {background-color: #f0e000;}
-#page-admin-report-security-index .statusserious {background-color: #f07000;}
-#page-admin-report-security-index .statuscritical {background-color: #f00000;}
+#page-admin-report-security-index .statuswarning, #page-admin-report-performance-index .statuswarning {background-color: #f0e000;}
+#page-admin-report-security-index .statusserious, #page-admin-report-performance-index .statusserious {background-color: #f07000;}
+#page-admin-report-security-index .statuscritical, #page-admin-report-performance-index .statuscritical {background-color: #f00000;}
 #page-admin-report-capability-index .rolecaps th {text-align: left;}
 #page-admin-report-capability-index #settingsform #capabilitysearch {width: 30em;}
 
