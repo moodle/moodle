@@ -70,9 +70,9 @@ class filter_activitynames extends moodle_text_filter {
                             $href_tag_begin = html_writer::start_tag('a',
                                     array('class' => 'autolink', 'title' => $title,
                                         'href' => $cm->get_url()));
-                            self::$activitylist[] = new filterobject($currentname, $href_tag_begin, '</a>', false, true);
+                            self::$activitylist[$cm->id] = new filterobject($currentname, $href_tag_begin, '</a>', false, true);
                             if ($currentname != $entitisedname) { /// If name has some entity (&amp; &quot; &lt; &gt;) add that filter too. MDL-17545
-                                self::$activitylist[] = new filterobject($entitisedname, $href_tag_begin, '</a>', false, true);
+                                self::$activitylist[$cm->id.'-e'] = new filterobject($entitisedname, $href_tag_begin, '</a>', false, true);
                             }
                         }
                     }
@@ -80,8 +80,19 @@ class filter_activitynames extends moodle_text_filter {
             }
         }
 
+        $filterslist = array();
         if (self::$activitylist) {
-            return $text = filter_phrases ($text, self::$activitylist);
+            $cmid = $this->context->instanceid;
+            if ($this->context->contextlevel == CONTEXT_MODULE && isset(self::$activitylist[$cmid])) {
+                // remove filterobjects for the current module
+                $filterslist = array_diff_key(self::$activitylist, array($cmid => 1, $cmid.'-e' => 1));
+            } else {
+                $filterslist = self::$activitylist;
+            }
+        }
+
+        if ($filterslist) {
+            return $text = filter_phrases($text, $filterslist);
         } else {
             return $text;
         }
