@@ -153,7 +153,8 @@ class quizaccess_openclosedate_testcase extends basic_testcase {
 
         $rule = new quizaccess_openclosedate($quizobj, 9999);
         $this->assertEquals($rule->description(),
-            array(get_string('quiznotavailable', 'quizaccess_openclosedate', userdate(10000))));
+            array(get_string('quiznotavailable', 'quizaccess_openclosedate', userdate(10000)),
+                    get_string('quizcloseson', 'quiz', userdate(20000))));
         $this->assertEquals($rule->prevent_access(),
             get_string('notavailable', 'quizaccess_openclosedate'));
         $this->assertFalse($rule->prevent_new_attempt(0, $attempt));
