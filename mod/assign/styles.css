@@ -150,3 +150,13 @@ td.submissioneditable {
 .hidefull {
     display: none;
 }
+
+.quickgradingform form .commentscontainer input,
+.quickgradingform form .commentscontainer textarea {
+    display: none;
+}
+
+.jsenabled .quickgradingform form .commentscontainer input,
+.jsenabled .quickgradingform form .commentscontainer textarea {
+    display: inline;
+}
