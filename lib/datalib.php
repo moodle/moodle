@@ -1027,48 +1027,6 @@ function get_all_subcategories($catid) {
 }
 
 /**
- * Return specified category, default if given does not exist
- *
- * @global object
- * @uses MAX_COURSES_IN_CATEGORY
- * @uses CONTEXT_COURSECAT
- * @uses SYSCONTEXTID
- * @param int $catid course category id
- * @return object caregory
- */
-function get_course_category($catid=0) {
-    global $DB;
-
-    $category = false;
-
-    if (!empty($catid)) {
-        $category = $DB->get_record('course_categories', array('id'=>$catid));
-    }
-
-    if (!$category) {
-        // the first category is considered default for now
-        if ($category = $DB->get_records('course_categories', null, 'sortorder', '*', 0, 1)) {
-            $category = reset($category);
-
-        } else {
-            $cat = new stdClass();
-            $cat->name         = get_string('miscellaneous');
-            $cat->depth        = 1;
-            $cat->sortorder    = MAX_COURSES_IN_CATEGORY;
-            $cat->timemodified = time();
-            $catid = $DB->insert_record('course_categories', $cat);
-            // make sure category context exists
-            context_coursecat::instance($catid);
-            mark_context_dirty('/'.SYSCONTEXTID);
-            fix_course_sortorder(); // Required to build course_categories.depth and .path.
-            $category = $DB->get_record('course_categories', array('id'=>$catid));
-        }
-    }
-
-    return $category;
-}
-
-/**
  * Fixes course category and course sortorder, also verifies category and course parents and paths.
  * (circular references are not fixed)
  *

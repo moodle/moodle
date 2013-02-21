@@ -3266,6 +3266,31 @@ class course_request {
     }
 
     /**
+     * Returns the category where this course request should be created
+     *
+     * Note that we don't check here that user has a capability to view
+     * hidden categories if he has capabilities 'moodle/site:approvecourse' and
+     * 'moodle/course:changecategory'
+     *
+     * @return coursecat
+     */
+    public function get_category() {
+        global $CFG;
+        require_once($CFG->libdir.'/coursecatlib.php');
+        // If the category is not set, if the current user does not have the rights to change the category, or if the
+        // category does not exist, we set the default category to the course to be approved.
+        // The system level is used because the capability moodle/site:approvecourse is based on a system level.
+        if (empty($this->properties->category) || !has_capability('moodle/course:changecategory', context_system::instance()) ||
+                (!$category = coursecat::get($this->properties->category, IGNORE_MISSING, true))) {
+            $category = coursecat::get($CFG->defaultrequestcategory, IGNORE_MISSING, true);
+        }
+        if (!$category) {
+            $category = coursecat::get_default();
+        }
+        return $category;
+    }
+
+    /**
      * This function approves the request turning it into a course
      *
      * This function converts the course request into a course, at the same time
@@ -3287,18 +3312,9 @@ class course_request {
         unset($data->reason);
         unset($data->requester);
 
-        // If the category is not set, if the current user does not have the rights to change the category, or if the
-        // category does not exist, we set the default category to the course to be approved.
-        // The system level is used because the capability moodle/site:approvecourse is based on a system level.
-        if (empty($data->category) || !has_capability('moodle/course:changecategory', context_system::instance()) ||
-                (!$category = get_course_category($data->category))) {
-            $category = get_course_category($CFG->defaultrequestcategory);
-        }
-
         // Set category
+        $category = $this->get_category();
         $data->category = $category->id;
-        $data->sortorder = $category->sortorder; // place as the first in category
-
         // Set misc settings
         $data->requested = 1;
 
