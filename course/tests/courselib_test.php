@@ -785,54 +785,6 @@ class courselib_testcase extends advanced_testcase {
         $this->assertEquals('FROG101 Introduction to pond life', get_course_display_name_for_list($course));
     }
 
-    public function test_create_course_category() {
-        global $CFG, $DB;
-        $this->resetAfterTest(true);
-
-        // Create the category
-        $data = new stdClass();
-        $data->name = 'aaa';
-        $data->description = 'aaa';
-        $data->idnumber = '';
-
-        $category1 = create_course_category($data);
-
-        // Initially confirm that base data was inserted correctly
-        $this->assertEquals($data->name, $category1->name);
-        $this->assertEquals($data->description, $category1->description);
-        $this->assertEquals($data->idnumber, $category1->idnumber);
-
-        // sortorder should be blank initially
-        $this->assertEmpty($category1->sortorder);
-
-        // Calling fix_course_sortorder() should provide a new sortorder
-        fix_course_sortorder();
-        $category1 = $DB->get_record('course_categories', array('id' => $category1->id));
-
-        $this->assertGreaterThanOrEqual(1, $category1->sortorder);
-
-        // Create two more categories and test the sortorder worked correctly
-        $data->name = 'ccc';
-        $category2 = create_course_category($data);
-        $this->assertEmpty($category2->sortorder);
-
-        $data->name = 'bbb';
-        $category3 = create_course_category($data);
-        $this->assertEmpty($category3->sortorder);
-
-        // Calling fix_course_sortorder() should provide a new sortorder to give category1,
-        // category2, category3. New course categories are ordered by id not name
-        fix_course_sortorder();
-
-        $category1 = $DB->get_record('course_categories', array('id' => $category1->id));
-        $category2 = $DB->get_record('course_categories', array('id' => $category2->id));
-        $category3 = $DB->get_record('course_categories', array('id' => $category3->id));
-
-        $this->assertGreaterThanOrEqual($category1->sortorder, $category2->sortorder);
-        $this->assertGreaterThanOrEqual($category2->sortorder, $category3->sortorder);
-        $this->assertGreaterThanOrEqual($category1->sortorder, $category3->sortorder);
-    }
-
     public function test_move_module_in_course() {
         global $DB;
 
