@@ -93,40 +93,15 @@ if ($mform->is_cancelled()) {
         redirect($CFG->wwwroot .'/course/manage.php');
     }
 } else if ($data = $mform->get_data()) {
-    $newcategory = new stdClass();
-    $newcategory->name = $data->name;
-    $newcategory->idnumber = $data->idnumber;
-    $newcategory->description_editor = $data->description_editor;
-    $newcategory->parent = $data->parent; // if $data->parent = 0, the new category will be a top-level category
-
-    if (isset($data->theme) && !empty($CFG->allowcategorythemes)) {
-        $newcategory->theme = $data->theme;
-    }
-
-    $logaction = 'update';
     if ($id) {
-        // Update an existing category.
-        $newcategory->id = $category->id;
-        if ($newcategory->parent != $category->parent) {
-            // check category manage capability if parent changed
-            require_capability('moodle/category:manage', get_category_or_system_context((int)$newcategory->parent));
-            coursecat::get($newcategory->id)->move($newcategory->parent);
+        $newcategory = coursecat::get($id);
+        if ($data->parent != $category->parent && !$newcategory->can_change_parent($data->parent)) {
+            print_error('cannotmovecategory');
         }
+        $newcategory->update($data, $editoroptions);
     } else {
-        // Create a new category.
-        $newcategory->description = $data->description_editor['text'];
-
-        // Don't overwrite the $newcategory object as it'll be processed by file_postupdate_standard_editor in a moment
-        $category = create_course_category($newcategory);
-        $newcategory->id = $category->id;
-        $categorycontext = $category->context;
-        $logaction = 'add';
+        $newcategory = coursecat::create($data, $editoroptions);
     }
-
-    $newcategory = file_postupdate_standard_editor($newcategory, 'description', $editoroptions, $categorycontext, 'coursecat', 'description', 0);
-    $DB->update_record('course_categories', $newcategory);
-    add_to_log(SITEID, "category", $logaction, "editcategory.php?id=$newcategory->id", $newcategory->id);
-    fix_course_sortorder();
 
     redirect('manage.php?id='.$newcategory->id);
 }

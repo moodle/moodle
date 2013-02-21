@@ -2878,32 +2878,6 @@ function create_course($data, $editoroptions = NULL) {
 }
 
 /**
- * Create a new course category and marks the context as dirty
- *
- * This function does not set the sortorder for the new category and
- * @see{fix_course_sortorder} should be called after creating a new course
- * category
- *
- * Please note that this function does not verify access control.
- *
- * @param object $category All of the data required for an entry in the course_categories table
- * @return object new course category
- */
-function create_course_category($category) {
-    global $DB;
-
-    $category->timemodified = time();
-    $category->id = $DB->insert_record('course_categories', $category);
-    $category = $DB->get_record('course_categories', array('id' => $category->id));
-
-    // We should mark the context as dirty
-    $category->context = context_coursecat::instance($category->id);
-    $category->context->mark_dirty();
-
-    return $category;
-}
-
-/**
  * Update a course.
  *
  * Please note this functions does not verify any access control,
