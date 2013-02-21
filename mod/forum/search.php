@@ -141,12 +141,12 @@ $searchterms = explode(' ', $searchterms);
 $searchform = forum_search_form($course, $search);
 
 $PAGE->navbar->add($strsearch, new moodle_url('/mod/forum/search.php', array('id'=>$course->id)));
-$PAGE->navbar->add(s($search, true));
+$PAGE->navbar->add($strsearchresults);
 if (!$posts = forum_search_posts($searchterms, $course->id, $page*$perpage, $perpage, $totalcount)) {
     $PAGE->set_title($strsearchresults);
     $PAGE->set_heading($course->fullname);
     echo $OUTPUT->header();
-    echo $OUTPUT->heading(get_string("nopostscontaining", "forum", $search));
+    echo $OUTPUT->heading(get_string("noposts", "forum"));
 
     if (!$individualparams) {
         $words = $search;

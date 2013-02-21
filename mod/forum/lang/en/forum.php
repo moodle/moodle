@@ -281,7 +281,6 @@ $string['nopostforum'] = 'Sorry, you are not allowed to post to this forum';
 $string['noposts'] = 'No posts';
 $string['nopostsmadebyuser'] = '{$a} has made no posts';
 $string['nopostsmadebyyou'] = 'You haven\'t made any posts';
-$string['nopostscontaining'] = 'No posts containing \'{$a}\' were found';
 $string['noquestions'] = 'There are no questions yet in this forum';
 $string['nosubscribers'] = 'There are no subscribers yet for this forum';
 $string['notexists'] = 'Discussion no longer exists';
