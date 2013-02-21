@@ -3704,3 +3704,40 @@ function create_course_category($category) {
 
     return $category;
 }
+
+/**
+ * Returns an array of category ids of all the subcategories for a given
+ * category.
+ *
+ * This function is deprecated.
+ *
+ * To get visible children categories of the given category use:
+ * coursecat::get($categoryid)->get_children();
+ * This function will return the array or coursecat objects, on each of them
+ * you can call get_children() again
+ *
+ * @see coursecat::get()
+ * @see coursecat::get_children()
+ *
+ * @deprecated since 2.5
+ *
+ * @global object
+ * @param int $catid - The id of the category whose subcategories we want to find.
+ * @return array of category ids.
+ */
+function get_all_subcategories($catid) {
+    global $DB;
+
+    debugging('Function get_all_subcategories() is deprecated. Please use appropriate methods() of coursecat class. See phpdocs for more details',
+            DEBUG_DEVELOPER);
+
+    $subcats = array();
+
+    if ($categories = $DB->get_records('course_categories', array('parent' => $catid))) {
+        foreach ($categories as $cat) {
+            array_push($subcats, $cat->id);
+            $subcats = array_merge($subcats, get_all_subcategories($cat->id));
+        }
+    }
+    return $subcats;
+}

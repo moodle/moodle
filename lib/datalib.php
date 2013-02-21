@@ -1003,29 +1003,6 @@ function get_categories($parent='none', $sort=NULL, $shallow=true) {
     return $categories;
 }
 
-
-/**
- * Returns an array of category ids of all the subcategories for a given
- * category.
- *
- * @global object
- * @param int $catid - The id of the category whose subcategories we want to find.
- * @return array of category ids.
- */
-function get_all_subcategories($catid) {
-    global $DB;
-
-    $subcats = array();
-
-    if ($categories = $DB->get_records('course_categories', array('parent'=>$catid))) {
-        foreach ($categories as $cat) {
-            array_push($subcats, $cat->id);
-            $subcats = array_merge($subcats, get_all_subcategories($cat->id));
-        }
-    }
-    return $subcats;
-}
-
 /**
  * Fixes course category and course sortorder, also verifies category and course parents and paths.
  * (circular references are not fixed)
