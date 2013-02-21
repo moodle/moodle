@@ -154,7 +154,10 @@ class assign {
 
         $params = $PAGE->url->params();
 
-        return $params['action'];
+        if (!empty($params['action'])) {
+            return $params['action'];
+        }
+        return '';
     }
 
     /**
@@ -178,7 +181,10 @@ class assign {
     public function get_return_params() {
         global $PAGE;
 
-        return $PAGE->url->params();
+        $params = $PAGE->url->params();
+        unset($params['id']);
+        unset($params['action']);
+        return $params;
     }
 
     /**
