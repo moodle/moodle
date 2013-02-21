@@ -71,9 +71,10 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
      * @param string $selector The selector type (css, xpath, named...)
      * @param mixed $locator It depends on the $selector, can be the xpath, a name, a css locator...
      * @param Exception $exception Otherwise we throw exception with generic info
+     * @param NodeElement $node Spins around certain DOM node instead of the whole page
      * @return NodeElement
      */
-    protected function find($selector, $locator, $exception = false) {
+    protected function find($selector, $locator, $exception = false, $node = false) {
 
         // Generic info.
         if (!$exception) {
@@ -90,12 +91,43 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
             $exception = new ElementNotFoundException($this->getSession(), $exceptiontype, null, $exceptionlocator);
         }
 
+        $params = array('selector' => $selector, 'locator' => $locator);
+        // Pushing $node if required.
+        if ($node) {
+            $params['node'] = $node;
+        }
+
         // Waits for the node to appear if it exists, otherwise will timeout and throw the provided exception.
         return $this->spin(
             function($context, $args) {
-                return $context->getSession()->getPage()->find($args[0], $args[1]);
+
+                // If no DOM node provided look in all the page.
+                if (empty($args['node'])) {
+                    return $context->getSession()->getPage()->find($args['selector'], $args['locator']);
+                }
+
+                // For nodes contained in other nodes we can not use the basic named selectors
+                // as they include unions and they would look for matches in the DOM root.
+                $elementxpath = $context->getSession()->getSelectorsHandler()->selectorToXpath($args['selector'], $args['locator']);
+
+                // Split the xpath in unions and prefix them with the container xpath.
+                $unions = explode('|', $elementxpath);
+                foreach ($unions as $key => $union) {
+                    $union = trim($union);
+
+                    // We are in the container node.
+                    if (strpos($union, '.') === 0) {
+                        $union = substr($union, 1);
+                    }
+                    $unions[$key] = $args['node']->getXpath() . $union;
+                }
+
+                // We can not use usual Element::find() as it prefixes with DOM root.
+                // Returning first match.
+                $items = $context->getSession()->getDriver()->find(implode('|', $unions));
+                return count($items) ? reset($items) : null;
             },
-            array($selector, $locator),
+            $params,
             self::TIMEOUT,
             $exception
         );
@@ -219,6 +251,8 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
     /**
      * Gets a NodeElement based on the locator and selector type received as argument from steps definitions.
      *
+     * Use behat_base::get_text_selector_node() for text-based selectors.
+     *
      * @throws ElementNotFoundException Thrown by behat_base::find
      * @param string $selectortype
      * @param string $element
@@ -231,6 +265,48 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
 
         // Returns the NodeElement.
         return $this->find($selector, $locator);
+    }
+
+    /**
+     * Gets a NodeElement based on the locator and selector type received as argument from steps definitions.
+     *
+     * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param string $selectortype
+     * @param string $element
+     * @return NodeElement
+     */
+    protected function get_text_selector_node($selectortype, $element) {
+
+        // Getting Mink selector and locator.
+        list($selector, $locator) = $this->transform_text_selector($selectortype, $element);
+
+        // Returns the NodeElement.
+        return $this->find($selector, $locator);
+    }
+
+    /**
+     * Gets the requested element inside the specified container.
+     *
+     * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param mixed $selectortype The element selector type.
+     * @param mixed $element The element locator.
+     * @param mixed $containerselectortype The container selector type.
+     * @param mixed $containerelement The container locator.
+     * @return NodeElement
+     */
+    protected function get_node_in_container($selectortype, $element, $containerselectortype, $containerelement) {
+
+        // Gets the container, it will always be text based.
+        $containernode = $this->get_text_selector_node($containerselectortype, $containerelement);
+
+        list($selector, $locator) = $this->transform_selector($selectortype, $element);
+
+        // Specific exception giving info about where can't we find the element.
+        $locatorexceptionmsg = $element . '" in the "' . $containerelement. '" "' . $containerselectortype. '"';
+        $exception = new ElementNotFoundException($this->getSession(), $selectortype, null, $locatorexceptionmsg);
+
+        // Looks for the requested node inside the container node.
+        return $this->find($selector, $locator, $exception, $containernode);
     }
 
     /**
@@ -266,6 +342,26 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
         }
 
         return array($selector, $locator);
+    }
+
+    /**
+     * Transforms from step definition's argument style to Mink format.
+     *
+     * Delegates all the process to behat_base::transform_selector() checking
+     * the provided $selectortype.
+     *
+     * @throws ExpectationException
+     * @param string $selectortype It can be css, xpath or any of the named selectors.
+     * @param string $element The locator (or string) we are looking for.
+     * @return array Contains the selector and the locator expected by Mink.
+     */
+    protected function transform_text_selector($selectortype, $element) {
+
+        if ($selectortype != 'css_element' && $selectortype != 'xpath_element') {
+            throw new ExpectationException('The "' . $selectortype . '" selector can not be used to select text nodes', $this->getSession());
+        }
+
+        return $this->transform_selector($selectortype, $element);
     }
 
 }
