@@ -1220,36 +1220,6 @@ function get_category_or_system_context($categoryid) {
 }
 
 /**
- * Gets the child categories of a given courses category. Uses a static cache
- * to make repeat calls efficient.
- *
- * @param int $parentid the id of a course category.
- * @return array all the child course categories.
- */
-function get_child_categories($parentid) {
-    static $allcategories = null;
-
-    // only fill in this variable the first time
-    if (null == $allcategories) {
-        $allcategories = array();
-
-        $categories = get_categories();
-        foreach ($categories as $category) {
-            if (empty($allcategories[$category->parent])) {
-                $allcategories[$category->parent] = array();
-            }
-            $allcategories[$category->parent][] = $category;
-        }
-    }
-
-    if (empty($allcategories[$parentid])) {
-        return array();
-    } else {
-        return $allcategories[$parentid];
-    }
-}
-
-/**
  * This function generates a structured array of courses and categories.
  *
  * The depth of categories is limited by $CFG->maxcategorydepth however there
@@ -1265,14 +1235,14 @@ function get_child_categories($parentid) {
  */
 function get_course_category_tree($id = 0, $depth = 0) {
     global $DB, $CFG;
-    $viewhiddencats = has_capability('moodle/category:viewhiddencategories', context_system::instance());
-    $categories = get_child_categories($id);
+    require_once($CFG->libdir. '/coursecatlib.php');
+    if (!$coursecat = coursecat::get($id, IGNORE_MISSING)) {
+        return array();
+    }
+    $categories = array();
     $categoryids = array();
-    foreach ($categories as $key => &$category) {
-        if (!$category->visible && !$viewhiddencats) {
-            unset($categories[$key]);
-            continue;
-        }
+    foreach ($coursecat->get_children() as $child) {
+        $categories[] = $category = $child->get_db_record();
         $categoryids[$category->id] = $category;
         if (empty($CFG->maxcategorydepth) || $depth <= $CFG->maxcategorydepth) {
             list($category->categories, $subcategories) = get_course_category_tree($category->id, $depth+1);
@@ -1324,33 +1294,31 @@ function get_course_category_tree($id = 0, $depth = 0) {
  */
 function print_whole_category_list($category=NULL, $displaylist=NULL, $parentslist=NULL, $depth=-1, $showcourses = true, $categorycourses=NULL) {
     global $CFG;
+    require_once($CFG->libdir. '/coursecatlib.php');
 
     // maxcategorydepth == 0 meant no limit
     if (!empty($CFG->maxcategorydepth) && $depth >= $CFG->maxcategorydepth) {
         return;
     }
 
-    if (!$categorycourses) {
-        if ($category) {
-            $categorycourses = get_category_courses_array($category->id);
-        } else {
-            $categorycourses = get_category_courses_array();
-        }
-    }
-
+    // make sure category is visible to the current user
     if ($category) {
-        if ($category->visible or has_capability('moodle/category:viewhiddencategories', context_system::instance())) {
-            print_category_info($category, $depth, $showcourses, $categorycourses[$category->id]);
-        } else {
-            return;  // Don't bother printing children of invisible categories
+        if (!$coursecat = coursecat::get($category->id, IGNORE_MISSING)) {
+            return;
         }
-
     } else {
-        $category = new stdClass();
-        $category->id = "0";
+        $coursecat = coursecat::get(0);
     }
 
-    if ($categories = get_child_categories($category->id)) {   // Print all the children recursively
+    if (!$categorycourses) {
+        $categorycourses = get_category_courses_array($coursecat->id);
+    }
+
+    if ($coursecat->id) {
+        print_category_info($category, $depth, $showcourses, $categorycourses[$category->id]);
+    }
+
+    if ($categories = $coursecat->get_children()) {   // Print all the children recursively
         $countcats = count($categories);
         $count = 0;
         $first = true;
@@ -1576,9 +1544,10 @@ function can_edit_in_category($categoryid = 0) {
  */
 function print_courses($category) {
     global $CFG, $OUTPUT;
+    require_once($CFG->libdir. '/coursecatlib.php');
 
     if (!is_object($category) && $category==0) {
-        $categories = get_child_categories(0);  // Parent = 0   ie top-level categories only
+        $categories = coursecat::get(0)->get_children();  // Parent = 0   ie top-level categories only
         if (is_array($categories) && count($categories) == 1) {
             $category   = array_shift($categories);
             $courses    = get_courses_wmanagers($category->id,

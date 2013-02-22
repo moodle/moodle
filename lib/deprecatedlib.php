@@ -3741,3 +3741,48 @@ function get_all_subcategories($catid) {
     }
     return $subcats;
 }
+
+/**
+ * Gets the child categories of a given courses category
+ *
+ * This function is deprecated. Please use functions in class coursecat:
+ * - coursecat::get($parentid)->has_children()
+ * tells if the category has children (visible or not to the current user)
+ *
+ * - coursecat::get($parentid)->get_children()
+ * returns an array of coursecat objects, each of them represents a children category visible
+ * to the current user (i.e. visible=1 or user has capability to view hidden categories)
+ *
+ * - coursecat::get($parentid)->get_children_count()
+ * returns number of children categories visible to the current user
+ *
+ * - coursecat::count_all()
+ * returns total count of all categories in the system (both visible and not)
+ *
+ * - coursecat::get_default()
+ * returns the first category (usually to be used if count_all() == 1)
+ *
+ * @deprecated since 2.5
+ *
+ * @param int $parentid the id of a course category.
+ * @return array all the child course categories.
+ */
+function get_child_categories($parentid) {
+    global $DB;
+    debugging('Function get_child_categories() is deprecated. Use coursecat::get_children() or see phpdocs for more details.',
+            DEBUG_DEVELOPER);
+
+    $rv = array();
+    $sql = context_helper::get_preload_record_columns_sql('ctx');
+    $records = $DB->get_records_sql("SELECT c.*, $sql FROM {course_categories} c ".
+            "JOIN {context} ctx on ctx.instanceid = c.id AND ctx.contextlevel = ? WHERE c.parent = ? ORDER BY c.sortorder",
+            array(CONTEXT_COURSECAT, $parentid));
+    foreach ($records as $category) {
+        context_helper::preload_from_record($category);
+        if (!$category->visible && !has_capability('moodle/category:viewhiddencategories', context_coursecat::instance($category->id))) {
+            continue;
+        }
+        $rv[] = $category;
+    }
+    return $rv;
+}
