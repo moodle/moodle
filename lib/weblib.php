@@ -2792,7 +2792,7 @@ function debugging($message = '', $level = DEBUG_NORMAL, $backtrace = null) {
             if (CLI_SCRIPT) {
                 echo "++ $message ++\n$from";
             } else {
-                echo '<div class="notifytiny">' . $message . $from . '</div>';
+                echo '<div class="notifytiny debuggingmessage">' . $message . $from . '</div>';
             }
 
         } else {
