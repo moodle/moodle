@@ -1,17 +1,19 @@
 Description of XHProf 0.9.2 library/viewer import into Moodle
 
-Removed:
+Removed (commit #1):
+ * .arcconfig - Definitions for arcanist/phabricator removed completely
+ * composer.json - Composer's definition removed completely
  * examples - examples dir removed completely
  * extension - extension dir removed completely
  * package.xml - PECL package definition removed completely
  * xhprof_html/docs - documentation dir removed completely
 
-Added:
+Added (commit #2 - always taken from current moodle.git master):
  * index.html - prevent directory browsing on misconfigured servers
  * xhprof_moodle.php - containing all the stuff needed to run the xhprof profiler within Moodle
  * readme_moodle.txt - this file ;-)
 
-Our changes:  Look for "moodle" in code
+Our changes:  Look for "moodle" in code (commit #3 - always mimic from current moodle.git master):
  * xhprof_html/index.php  ----|
  * xhprof_html/callgraph.php -|=> Changed to use own DB iXHProfRuns implementation (moodle_xhprofrun)
  * xhprof_html/typeahead.php -|

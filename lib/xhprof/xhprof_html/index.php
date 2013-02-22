@@ -31,12 +31,12 @@
 //             Changhao Jiang
 //
 
-// start moodle modification: moodleize this script
+// Start moodle modification: moodleize this script.
 require_once(dirname(dirname(dirname(dirname(__FILE__)))).'/config.php');
 require_once($CFG->libdir . '/xhprof/xhprof_moodle.php');
 require_login();
 require_capability('moodle/site:config', context_system::instance());
-// end moodle modification
+// End moodle modification.
 
 // by default assume that xhprof_html & xhprof_lib directories
 // are at the same level.
@@ -87,10 +87,10 @@ $vbbar = ' class="vbbar"';
 $vrbar = ' class="vrbar"';
 $vgbar = ' class="vgbar"';
 
-// start moodle modification: use own XHProfRuns implementation
-//$xhprof_runs_impl = new XHProfRuns_Default()
+// Start moodle modification: use own XHProfRuns implementation.
+// $xhprof_runs_impl = new XHProfRuns_Default();
 $xhprof_runs_impl = new moodle_xhprofrun();
-// end moodle modification
+// End moodle modification.
 
 displayXHProfReport($xhprof_runs_impl, $params, $source, $run, $wts,
                     $symbol, $sort, $run1, $run2);
