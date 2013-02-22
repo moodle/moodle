@@ -132,6 +132,9 @@ class behat_hooks extends behat_base {
         // Assing valid data to admin user (some generator-related code needs a valid user).
         $user = $DB->get_record('user', array('username' => 'admin'));
         session_set_user($user);
+
+        // Start always in the the homepage.
+        $this->getSession()->visit($this->locate_path('/'));
     }
 
     /**
@@ -176,6 +179,58 @@ class behat_hooks extends behat_base {
         } catch (NoSuchWindow $e) {
             // If we were interacting with a popup window it will not exists after closing it.
         }
+    }
+
+    /**
+     * Internal step definition to find exceptions, debugging() messages and PHP debug messages.
+     *
+     * Part of behat_hooks class as is part of the testing framework, is auto-executed
+     * after each step so no features will splicitly use it.
+     *
+     * @Given /^I look for exceptions$/
+     * @see Moodle\BehatExtension\Tester\MoodleStepTester
+     */
+    public function i_look_for_exceptions() {
+
+        // No need for checking if there is no UI.
+        if (!$this->getSession()->getPage()) {
+            return;
+        }
+
+        // Exceptions.
+        if ($errormsg = $this->getSession()->getPage()->find('css', '.errorbox p.errormessage')) {
+
+            // Getting the debugging info and the backtrace.
+            $errorinfoboxes = $this->getSession()->getPage()->findAll('css', 'div.notifytiny');
+            $errorinfo = $this->get_debug_text($errorinfoboxes[0]->getHtml()) . "\n" .
+                $this->get_debug_text($errorinfoboxes[1]->getHtml());
+
+            $msg = "Moodle exception: " . $errormsg->getText() . "\n" . $errorinfo;
+            throw new \Exception(html_entity_decode($msg));
+        }
+
+        // Debugging messages.
+        if ($debuggingmessages = $this->getSession()->getPage()->findAll('css', '.debuggingmessage')) {
+            $msgs = array();
+            foreach ($debuggingmessages as $debuggingmessage) {
+                $msgs[] = $this->get_debug_text($debuggingmessage->getHtml());
+            }
+            $msg = "debugging() message/s found:\n" . implode("\n", $msgs);
+            throw new \Exception(html_entity_decode($msg));
+        }
+    }
+
+    /**
+     * Converts HTML tags to line breaks to display the info in CLI
+     *
+     * @param string $html
+     * @return string
+     */
+    protected function get_debug_text($html) {
+
+        // Replacing HTML tags for new lines and keeping only the text.
+        $notags = preg_replace('/<+\s*\/*\s*([A-Z][A-Z0-9]*)\b[^>]*\/*\s*>*/i', "\n", $html);
+        return preg_replace("/(\n)+/s", "\n", $notags);
     }
 
 }
