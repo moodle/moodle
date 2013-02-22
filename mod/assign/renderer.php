@@ -136,10 +136,17 @@ class mod_assign_renderer extends plugin_renderer_base {
         } else {
             $o .= $this->output->user_picture($summary->user);
             $o .= $this->output->spacer(array('width'=>30));
-            $o .= $this->output->action_link(new moodle_url('/user/view.php',
-                                                            array('id' => $summary->user->id,
-                                                                  'course'=>$summary->courseid)),
-                                                                  fullname($summary->user, $summary->viewfullnames));
+            $urlparams = array('id' => $summary->user->id, 'course'=>$summary->courseid);
+            $url = new moodle_url('/user/view.php', $urlparams);
+            $fullname = fullname($summary->user, $summary->viewfullnames);
+            $extrainfo = array();
+            foreach ($summary->extrauserfields as $extrafield) {
+                $extrainfo[] = $summary->user->$extrafield;
+            }
+            if (count($extrainfo)) {
+                $fullname .= ' (' . implode(', ', $extrainfo) . ')';
+            }
+            $o .= $this->output->action_link($url, $fullname);
         }
         $o .= $this->output->box_end();
         $o .= $this->output->container_end();
