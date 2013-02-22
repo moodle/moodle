@@ -91,10 +91,10 @@ if (!isset($CFG->wwwroot) or $CFG->wwwroot === 'http://example.com/moodle') {
 }
 
 // Ignore $CFG->behat_wwwroot and use the same wwwroot.
-if (isset($CFG->behat_switchcompletely)) {
+if (!empty($CFG->behat_switchcompletely)) {
     $CFG->behat_wwwroot = $CFG->wwwroot;
 
-} else if (!isset($CFG->behat_wwwroot)) {
+} else if (empty($CFG->behat_wwwroot)) {
     // Default URL for acceptance testing, only accessible from localhost.
     $CFG->behat_wwwroot = 'http://localhost:8000';
 }
@@ -107,7 +107,7 @@ if (isset($CFG->behat_switchcompletely)) {
 // Test environment is enabled if:
 // * User has previously enabled through admin/tool/behat/cli/util.php --enable.
 // Both are required to switch to test mode
-if (isset($CFG->behat_dataroot) && isset($CFG->behat_prefix) && file_exists($CFG->behat_dataroot)) {
+if (!empty($CFG->behat_dataroot) && !empty($CFG->behat_prefix) && file_exists($CFG->behat_dataroot)) {
 
     $CFG->behat_dataroot = realpath($CFG->behat_dataroot);
 
