@@ -2375,7 +2375,8 @@ class assign {
                                                    $this->get_course()->id,
                                                    $viewfullnames,
                                                    $this->is_blind_marking(),
-                                                   $this->get_uniqueid_for_user($user->id));
+                                                   $this->get_uniqueid_for_user($user->id),
+                                                   get_extra_user_fields($this->get_context()));
             $o .= $this->get_renderer()->render($usersummary);
         }
         $submission = $this->get_user_submission($userid, false);
