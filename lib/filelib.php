@@ -3057,6 +3057,12 @@ class curl {
         }
         curl_setopt($curl, CURLOPT_HTTPHEADER, $this->header);
 
+        // Bypass proxy (for this request only) if required.
+        if (!empty($this->options['CURLOPT_URL']) &&
+                is_proxybypass($this->options['CURLOPT_URL'])) {
+            unset($this->options['CURLOPT_PROXY']);
+        }
+
         if ($this->debug){
             echo '<h1>Options</h1>';
             var_dump($this->options);
