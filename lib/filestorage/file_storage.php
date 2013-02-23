@@ -1635,6 +1635,11 @@ class file_storage {
     public function deleted_file_cleanup($contenthash) {
         global $DB;
 
+        if ($contenthash === 'da39a3ee5e6b4b0d3255bfef95601890afd80709') {
+            // No need to delete empty content file with sha1('') content hash.
+            return;
+        }
+
         //Note: this section is critical - in theory file could be reused at the same
         //      time, if this happens we can still recover the file from trash
         if ($DB->record_exists('files', array('contenthash'=>$contenthash))) {

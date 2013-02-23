@@ -275,26 +275,32 @@ class stored_file {
     public function delete() {
         global $DB;
 
-        $transaction = $DB->start_delegated_transaction();
+        if ($this->is_directory()) {
+            // Directories can not be referenced, just delete the record.
+            $DB->delete_records('files', array('id'=>$this->file_record->id));
 
-        // If there are other files referring to this file, convert them to copies.
-        if ($files = $this->fs->get_references_by_storedfile($this)) {
-            foreach ($files as $file) {
-                $this->fs->import_external_file($file);
+        } else {
+            $transaction = $DB->start_delegated_transaction();
+
+            // If there are other files referring to this file, convert them to copies.
+            if ($files = $this->fs->get_references_by_storedfile($this)) {
+                foreach ($files as $file) {
+                    $this->fs->import_external_file($file);
+                }
             }
+
+            // If this file is a reference (alias) to another file, unlink it first.
+            if ($this->is_external_file()) {
+                $this->delete_reference();
+            }
+
+            // Now delete the file record.
+            $DB->delete_records('files', array('id'=>$this->file_record->id));
+
+            $transaction->allow_commit();
         }
 
-        // If this file is a reference (alias) to another file, unlink it first.
-        if ($this->is_external_file()) {
-            $this->delete_reference();
-        }
-
-        // Now delete the file record.
-        $DB->delete_records('files', array('id'=>$this->file_record->id));
-
-        $transaction->allow_commit();
-
-        // moves pool file to trash if content not needed any more
+        // Move pool file to trash if content not needed any more.
         $this->fs->deleted_file_cleanup($this->file_record->contenthash);
         return true; // BC only
     }
