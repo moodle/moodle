@@ -98,6 +98,23 @@ class plugin_defective_exception extends moodle_exception {
 }
 
 /**
+ * @package    core
+ * @subpackage upgrade
+ * @copyright  2009 Petr Skoda {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class plugin_misplaced_exception extends moodle_exception {
+    function __construct($component, $expected, $current) {
+        global $CFG;
+        $a = new stdClass();
+        $a->component = $component;
+        $a->expected  = $expected;
+        $a->current   = $current;
+        parent::__construct('detectedmisplacedplugin', 'core_plugin', "$CFG->wwwroot/$CFG->admin/index.php", $a);
+    }
+}
+
+/**
  * Sets maximum expected time needed for upgrade task.
  * Please always make sure that upgrade will not run longer!
  *
@@ -381,12 +398,19 @@ function upgrade_plugins($type, $startcallback, $endcallback, $verbose) {
         }
 
         $plugin = new stdClass();
+        $module = new stdClass(); // Prevent some notices when plugin placed in wrong directory.
         require($fullplug.'/version.php');  // defines $plugin with version etc
+
+        if (!isset($plugin->version) and isset($module->version)) {
+            $plugin = $module;
+        }
 
         // if plugin tells us it's full name we may check the location
         if (isset($plugin->component)) {
             if ($plugin->component !== $component) {
-                throw new plugin_defective_exception($component, 'Plugin installed in wrong folder.');
+                $current = str_replace($CFG->dirroot, '$CFG->dirroot', $fullplug);
+                $expected = str_replace($CFG->dirroot, '$CFG->dirroot', get_component_directory($plugin->component));
+                throw new plugin_misplaced_exception($component, $expected, $current);
             }
         }
 
@@ -532,12 +556,19 @@ function upgrade_plugins_modules($startcallback, $endcallback, $verbose) {
         }
 
         $module = new stdClass();
+        $plugin = new stdClass(); // Prevent some notices when plugin placed in wrong directory.
         require($fullmod .'/version.php');  // defines $module with version etc
+
+        if (!isset($module->version) and isset($plugin->version)) {
+            $module = $plugin;
+        }
 
         // if plugin tells us it's full name we may check the location
         if (isset($module->component)) {
             if ($module->component !== $component) {
-                throw new plugin_defective_exception($component, 'Plugin installed in wrong folder.');
+                $current = str_replace($CFG->dirroot, '$CFG->dirroot', $fullmod);
+                $expected = str_replace($CFG->dirroot, '$CFG->dirroot', get_component_directory($module->component));
+                throw new plugin_misplaced_exception($component, $expected, $current);
             }
         }
 
@@ -703,15 +734,21 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
             throw new plugin_defective_exception('block/'.$blockname, 'Missing version.php file.');
         }
         $plugin = new stdClass();
+        $module = new stdClass(); // Prevent some notices when module placed in wrong directory.
         $plugin->version = NULL;
         $plugin->cron    = 0;
         include($fullblock.'/version.php');
+        if (!isset($plugin->version) and isset($module->version)) {
+            $plugin = $module;
+        }
         $block = $plugin;
 
         // if plugin tells us it's full name we may check the location
         if (isset($block->component)) {
             if ($block->component !== $component) {
-                throw new plugin_defective_exception($component, 'Plugin installed in wrong folder.');
+                $current = str_replace($CFG->dirroot, '$CFG->dirroot', $fullblock);
+                $expected = str_replace($CFG->dirroot, '$CFG->dirroot', get_component_directory($block->component));
+                throw new plugin_misplaced_exception($component, $expected, $current);
             }
         }
 

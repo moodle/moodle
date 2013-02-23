@@ -2857,8 +2857,12 @@ class plugininfo_mod extends plugininfo_base {
         $versionfile = $this->full_path('version.php');
 
         $module = new stdClass();
+        $plugin = new stdClass();
         if (is_readable($versionfile)) {
             include($versionfile);
+        }
+        if (!isset($module->version) and isset($plugin->version)) {
+            $module = $plugin;
         }
         return $module;
     }
