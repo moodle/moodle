@@ -73,6 +73,9 @@ li.modtype_label {
 .settingsul li.Turn.editing.on {
     display: none !important;
 }
+.settingsul .ui-li-divider a.ui-link {
+    color: inherit;
+}
 /*media plugin style overrides */
 span.mediaplugin {
     clear: both;
@@ -224,6 +227,9 @@ div.categorylist div.category {
 #page-course-indexPAGE .category .name {
     float: none;
 }
+#page-site-indexPAGE .ui-controlgroup-vertical .ui-btn.ui-corner-bottom {
+    border-bottom-width: 1px;
+}
 /* course stuff */
 /*coursebox summary has an empy &nbsp; in it, which chops things up. need a fix...  hidesummary does this and is added via js... not anymore...*/
 .section div.summary {
@@ -302,28 +308,9 @@ li a.dimmed span {
     padding-left: 10px;
 }
 */
-.sitetopic li.activity.ui-li-static div.activityinstance,
-.course-content li.activity.ui-li-static div.activityinstance,
-.sitetopic li.activity.ui-btn .ui-btn-text a,
-.course-content li.activity.ui-btn .ui-btn-text a,
-.sitetopic .section .activity .availabilityinfo,
-.sitetopic .section .activity .contentafterlink,
-.course-content .section .activity .availabilityinfo,
-.course-content .section .activity .contentafterlink {
-    padding-left: 45px;
+.course-content li.activity.ui-btn .ui-btn-text a {
+    padding-left: 35px;
     padding-right: 60px;
-    margin-left: 0;
-    margin-right: 0;
-    position: relative;
-}
-.sitetopic .section li.activity p.ui-li-desc a.autolink,
-.course-content .section li.activity p.ui-li-desc a.autolink {
-    padding: 0;
-    margin: 0;
-}
-.path-site li.activity.label > div,
-.path-course-view li.activity.label > div {
-    position: static;
 }
 .topics #section-0 div.left.side {
     display: none;
@@ -336,9 +323,17 @@ li a.dimmed span {
 .topics li.activity span.accesshide, .weeks li.activity span.accesshide, .ui-navbar span.accesshide {
     display: none;
 }
-.sitetopic .section .activity img.activityicon,
+.topics li.activity span.autocompletion, .weeks li.activity span.autocompletion {
+    display: block;
+    right: 70px;
+    top: -5px;
+}
+.ui-listview .autocompletion .ui-li-icon {
+    max-width: inherit;
+    max-height: inherit;
+}
 .course-content .section .activity img.activityicon {
-    margin-top: -.5em;
+    margin-top: -.2em;
 }
 li.activity.ui-li-static span, li.activity div.availabilityinfo {
     white-space: normal;
@@ -360,20 +355,21 @@ form.togglecompletion div {
 form.togglecompletion input {
     visibility: hidden;
 }
-
-.path-course-view li.activity span.autocompletion {
-    position: static;
-}
-.path-course-view li.activity span.autocompletion img,
-.path-course-view li.activity form.togglecompletion [type="image"] {
+.togglecompletion input[type="image"] {
     display: block !important;
     position: absolute !important;
     top: 21%;
-    right: 4em !important;
+    right: 34px !important;
     left:auto !important;
     visibility: visible;
     width: 26px;
     height: 23px;
+}
+li.activity.ui-li-static span, li.activity div.availabilityinfo{
+    margin-left: 1.3em;
+}
+.section li .contentafterlink .ui-li-desc {
+    margin: .5em 1em;
 }
 .topics .content, .weeks .content {
     padding-left: 0px !important;
@@ -428,16 +424,8 @@ li.activity.label {
     padding: .6em !important;
     cursor:default;
 }
-li.activity.label form.togglecompletion { position: relative; }
-.sitetopic .section .activity .activityinstance,
-.course-content .section .activity .activityinstance,
-.sitetopic .section .activity .activityinstance div,
-.course-content .section .activity .activityinstance div { display: block; }
 li.label .no-overflow ul, li.label .no-overflow ul li {
     list-style-position: inside;
-}
-span.instancename {
-    font-size: 110%;
 }
 .path-course-view .section .content {
     padding:0;
@@ -448,6 +436,37 @@ span.instancename {
 }
 .label div.no-overflow {
     overflow:inherit !important;
+}
+/*course setions as pages for 2.3+ */
+.course-content ul.topics .section-summary {
+    -moz-border-radius:                 .6em /*{global-radii-blocks}*/;
+    -webkit-border-radius:              .6em /*{global-radii-blocks}*/;
+    border-radius:                      .6em /*{global-radii-blocks}*/;
+}
+.course-content .section-summary {
+    border-color: rgba(0,0,0,.25);
+}
+.course-content ul.topics .section-summary .summarytext{
+    margin: 0 0;
+    padding: .5em;
+}
+.course-content ul.topics li.section-summary .left {
+    background: transparent;
+    border: 0px;
+}
+.course-content .single-section .section-navigation .mdl-left, .course-content .single-section .section-navigation .mdl-right {
+    float: none;
+    margin-left: 0px;
+    margin-right: 0px;
+}
+.course-content .single-section .section-navigation .mdl-right .rarrow {
+    font-size: 80%;
+}
+.section-navigation.header.headingblock .mdl-left a .larrow, .section-navigation.mdl-bottom .mdl-left a .larrow, .section-navigation.header.headingblock .mdl-right a .rarrow, .section-navigation.mdl-bottom .mdl-right a .rarrow {
+    display: none;
+}
+.single-section .left.side {
+    display: none;
 }
 /*forms */
 .buttons .singlebutton, .buttons .singlebutton form, .buttons .singlebutton div, .mform .fitem fieldset.fgroup label, .mform .fradio label, .mform .fcheckbox label, .mform fieldset.fdate_selector label  {
@@ -549,6 +568,9 @@ margin:0;
 .forumheaderlist th {
     text-align: left;
 }
+.forumheaderlist, .forumheaderlist thead, .forumheaderlist tbody {
+    display: block;
+}
 .forumheaderlist thead .ui-btn-inner, .topic .ui-btn {
     text-align: left !important;
 }
@@ -569,6 +591,7 @@ margin:0;
 }
 .forumheaderlist td, .forumheaderlist tr {
     padding: 0px !important;
+    display: block;
 }
 table.forumheaderlist2 td.topic a {
     padding: 10px;
@@ -1368,49 +1391,7 @@ a.comment-link, .block_comments a.showcommentsnonjs, .block_comments .comment-ar
 .block_comments .comment-ctrl {
     display: block;
 }
-/*collapsed topic format*/
-#thetopics {
-    table-layout: inherit !important;
-    width: 100%;
-    display: block !important;
-}
-#page-course-view-topcollPAGE .section td.content, col.content {
-    text-align: left;
-    width: 100% !important;
-    overflow: hidden;
-}
-#page-course-view-topcollPAGE .section td.content {
-    padding: .5em;
-}
-#page-course-view-topcollPAGE td.left.side, #page-course-view-topcollPAGE td.right.side {
-    display: none;
-}
-#page-course-view-topcollPAGE tr.cps td a {
-    background: none !important;
-    color: inherit !important;
-    padding: 7px 0 7px 0px !important;
-}
-tr.cps td span {
-    font-style: inherit !important;
-    font-size: 1.12em !important;
-}
-#page-course-view-topcollPAGE .section.separator, td.cps_centre {
-    display: none;
-}
-tr.cps {
-    background-color: inherit !important;
-    color: inherit !important;
-}
-.opencps .ui-btn-inner .ui-icon-arrow-r {
-    background-position: -216px 50%;
-}
-tr.cps td span.ui-li-count {
-    font-size: .6em !important;
-    right: 12px;
-}
-#page-course-view-topcollPAGE .cps .ui-btn-inner {
-    white-space: normal;
-}
+
 /*filemanager fixes and other button fixes and adds */
 #page-mod-quiz-reportPAGE #commands input[type="submit"], #newmessagelinks a, .que input.submit {
     display: block !important;
@@ -1477,11 +1458,15 @@ overflow:auto !important;
     opacity: 0.8;
 }
 /*current highlight */
-.weeks .current .headingwrap, .topics .current div.headingwrap, .current .ui-bar-b, .current .left.side, .tabtree ul.tabrow0 li.selected a, .ui-btn-active, #page-course-view-topcollPAGE .current {
+.weeks .current .headingwrap,
+.topics .current div.headingwrap,
+.current .ui-bar-b,
+.current .left.side,
+.tabtree ul.tabrow0 li.selected a {
     border: 1px solid #F7C942;
     background: #fadb4e;
     color: #333;
-    text-shadow: 0 1px 0    #fff;
+    text-shadow: 0 1px 0 #fff;
     background-image: -webkit-gradient(linear, left top, left bottom, from(#fceda7), to(#fadb4e)); /* Saf4+, Chrome */
     background-image: -webkit-linear-gradient(top, #fceda7, #fadb4e); /* Chrome 10+, Saf5.1+ */
     background-image:    -moz-linear-gradient(top, #fceda7, #fadb4e); /* FF3.6 */
@@ -1489,7 +1474,9 @@ overflow:auto !important;
     background-image:      -o-linear-gradient(top, #fceda7, #fadb4e); /* Opera 11.10+ */
     background-image:         linear-gradient(top, #fceda7, #fadb4e);
 }
-.ui-btn-active a.ui-link-inherit {  color: #333; }
+.ui-btn-active a.ui-link-inherit {
+    color: #333;
+}
 /*changes to nav bar at top and header */
 /*necessary to set the navbar the same as the buttons because floats are not perfect ... */
 .ui-header .ui-navbar {
@@ -1547,6 +1534,12 @@ overflow:auto !important;
 }
 .ui-header .ui-fullsize .ui-btn-inner, .ui-footer .ui-fullsize .ui-btn-inner {
     font-size: 12.5px;
+}
+.ui-header .ui-navbar li .ui-btn.ui-btn-active, .ui-header .ui-navbar li .ui-btn.ui-btn-hover {
+    text-shadow: none;
+}
+#navselectform .ui-btn {
+    margin-right: .4em;
 }
 /*split page stuff for tablets */
 div.tablets, #sliderdiv, .has-myblocks .jsetsbar {
@@ -1672,6 +1665,41 @@ div.tablets, #sliderdiv, .has-myblocks .jsetsbar {
     height: 100%;
     max-width: 100px;
     max-height: 100px;
+}
+/*filepicker */
+.yui3-widget.yui3-panel.yui3-widget-positioned.yui3-widget-stacked.yui3-widget-modal.yui3-dd-draggable.yui3-panel-focused {
+    top: 0px !important;
+    left: 0px !important;
+    width: 100% !important;
+}
+#filesskin .file-picker.fp-generallayout {
+    width: 100%;
+}
+.file-picker .fp-content,.file-picker .fp-repo-items {
+    width: 100%;
+}
+.file-picker .fp-repo-area {
+    width: 80px;
+}
+.file-picker .fp-repo-items {
+    display: inline-block;
+    margin-left: 81px;
+}
+/*2.4 updates*/
+.categorylist .category .indentation {
+    margin-left: 0px;
+}
+.sitetopic .section .activity .activityinstance, .course-content .section .activity .activityinstance, .sitetopic .section .activity .activityinstance div, .course-content .section .activity .activityinstance div {
+    display: block;
+}
+.path-course-view li.activity span.autocompletion img, .path-course-view li.activity form.togglecompletion input {
+    top: .85em;
+}
+.path-course-view li.activity form.togglecompletion input {
+    top: .55em;
+}
+#mymess, #uptotop {
+    margin: 0 0 !important;
 }
 /** Custom CSS **/
 [[setting:customcss]]
