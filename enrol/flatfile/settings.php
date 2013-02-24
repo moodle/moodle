@@ -25,6 +25,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once(__DIR__.'/adminlib.php');
+
 if ($ADMIN->fulltree) {
 
     //--- general settings -----------------------------------------------------------------------------------
@@ -61,8 +63,8 @@ if ($ADMIN->fulltree) {
 
         $roles = role_fix_names(get_all_roles());
 
-        foreach ($roles as $id => $role) {
-            $settings->add(new admin_setting_configtext('enrol_flatfile/map_'.$id, $role->localname, '', $role->shortname));
+        foreach ($roles as $role) {
+            $settings->add(new enrol_flatfile_role_setting($role));
         }
         unset($roles);
     }
