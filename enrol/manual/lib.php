@@ -68,7 +68,9 @@ class enrol_manual_plugin extends enrol_plugin {
 
         $context = context_course::instance($instance->courseid, MUST_EXIST);
 
-        if (!has_capability('enrol/manual:manage', $context) or !has_capability('enrol/manual:enrol', $context) or !has_capability('enrol/manual:unenrol', $context)) {
+        if (!has_capability('enrol/manual:enrol', $context) and !has_capability('enrol/manual:unenrol', $context)) {
+            // Note: manage capability not used here because it is used for editing
+            // of existing enrolments which is not possible here.
             return NULL;
         }
 
@@ -111,7 +113,7 @@ class enrol_manual_plugin extends enrol_plugin {
 
         $icons = array();
 
-        if (has_capability('enrol/manual:manage', $context)) {
+        if (has_capability('enrol/manual:enrol', $context) or has_capability('enrol/manual:unenrol', $context)) {
             $managelink = new moodle_url("/enrol/manual/manage.php", array('enrolid'=>$instance->id));
             $icons[] = $OUTPUT->action_icon($managelink, new pix_icon('t/enrolusers', get_string('enrolusers', 'enrol_manual'), 'core', array('class'=>'iconsmall')));
         }
