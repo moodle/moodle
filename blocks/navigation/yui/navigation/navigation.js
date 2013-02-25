@@ -121,6 +121,10 @@ TREE.prototype = {
      */
     id : null,
     /**
+     * An array of initialised branches.
+     */
+    branches : [],
+    /**
      * Initialise the tree object when its first created.
      */
     initializer : function(config) {
@@ -134,9 +138,8 @@ TREE.prototype = {
         }
 
         // Delegate event to toggle expansion
-        var self = this;
-        Y.delegate('click', function(e){self.toggleExpansion(e);}, node.one('.block_tree'), '.tree_item.branch');
-        Y.delegate('actionkey', function(e){self.toggleExpansion(e);}, node.one('.block_tree'), '.tree_item.branch');
+        Y.delegate('click', this.toggleExpansion, node.one('.block_tree'), '.tree_item.branch', this);
+        Y.delegate('actionkey', this.toggleExpansion, node.one('.block_tree'), '.tree_item.branch', this);
 
         // Gather the expandable branches ready for initialisation.
         var expansions = [];
@@ -147,7 +150,7 @@ TREE.prototype = {
         }
         // Establish each expandable branch as a tree branch.
         for (var i in expansions) {
-            new BRANCH({
+            var branch = new BRANCH({
                 tree:this,
                 branchobj:expansions[i],
                 overrides : {
@@ -157,12 +160,26 @@ TREE.prototype = {
                 }
             }).wire();
             M.block_navigation.expandablebranchcount++;
+            this.branches[branch.get('id')] = branch;
+        }
+        if (M.block_navigation.expandablebranchcount > 0) {
+            // Delegate some events to handle AJAX loading.
+            Y.delegate('click', this.fire_branch_action, node.one('.block_tree'), '.tree_item.branch[data-expandable]', this);
+            Y.delegate('actionkey', this.fire_branch_action, node.one('.block_tree'), '.tree_item.branch[data-expandable]', this);
         }
 
         // Call the generic blocks init method to add all the generic stuff
         if (this.get('candock')) {
             this.initialise_block(Y, node);
         }
+    },
+    /**
+     * Fire actions for a branch when an event occurs.
+     */
+    fire_branch_action : function(event) {
+        var id = event.currentTarget.getAttribute('id');
+        var branch = this.branches[id];
+        branch.ajaxLoad(event);
     },
     /**
      * This is a callback function responsible for expanding and collapsing the
@@ -272,11 +289,6 @@ BRANCH.prototype = {
      */
     node : null,
     /**
-     * A reference to the ajax load event handlers when created.
-     */
-    event_ajaxload : null,
-    event_ajaxload_actionkey : null,
-    /**
      * Initialises the branch when it is first created.
      */
     initializer : function(config) {
@@ -378,8 +390,8 @@ BRANCH.prototype = {
             return false;
         }
         if (this.get('expandable')) {
-            this.event_ajaxload = this.node.on('ajaxload|click', this.ajaxLoad, this);
-            this.event_ajaxload_actionkey = this.node.on('actionkey', this.ajaxLoad, this);
+            this.node.setAttribute('data-expandable', '1');
+            this.node.setAttribute('data-loaded', '0');
         }
         return this;
     },
@@ -407,15 +419,21 @@ BRANCH.prototype = {
             e.stopPropagation();
         }
         if (e.type = 'actionkey' && e.action == 'enter' && e.target.test('A')) {
-            this.event_ajaxload_actionkey.detach();
-            this.event_ajaxload.detach();
-            return true; // no ajaxLoad for enter
-        }
-
-        if (this.node.hasClass('loadingbranch')) {
+            // No ajaxLoad for enter.
+            this.node.setAttribute('data-expandable', '0');
+            this.node.setAttribute('data-loaded', '1');
             return true;
         }
 
+        if (this.node.hasClass('loadingbranch')) {
+            // Already loading. Just skip.
+            return true;
+        }
+
+        if (this.node.getAttribute('data-loaded') === '1') {
+            // We've already loaded this stuff.
+            return true;
+        }
         this.node.addClass('loadingbranch');
 
         var params = {
@@ -442,8 +460,7 @@ BRANCH.prototype = {
      */
     ajaxProcessResponse : function(tid, outcome) {
         this.node.removeClass('loadingbranch');
-        this.event_ajaxload.detach();
-        this.event_ajaxload_actionkey.detach();
+        this.node.setAttribute('data-loaded', '1');
         try {
             var object = Y.JSON.parse(outcome.responseText);
             if (object.children && object.children.length > 0) {
@@ -460,7 +477,6 @@ BRANCH.prototype = {
                     && coursecount >= M.block_navigation.courselimit) {
                     this.addViewAllCoursesChild(this);
                 }
-                this.get('tree').toggleExpansion({target:this.node});
                 return true;
             }
         } catch (ex) {
@@ -478,6 +494,7 @@ BRANCH.prototype = {
         // Make the new branch into an object
         var branch = new BRANCH({tree:this.get('tree'), branchobj:branchobj});
         if (branch.draw(this.getChildrenUL())) {
+            this.get('tree').branches[branch.get('id')] = branch;
             branch.wire();
             var count = 0, i, children = branch.get('children');
             for (i in children) {
