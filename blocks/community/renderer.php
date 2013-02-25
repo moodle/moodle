@@ -272,7 +272,7 @@ class block_community_renderer extends plugin_renderer_base {
                         'downloadcourseid' => $course->id, 'huburl' => $huburl,
                         'coursefullname' => $course->fullname, 'backupsize' => $course->backupsize);
                     $downloadurl = new moodle_url("/blocks/community/communitycourse.php", $params);
-                    $downloadbuttonhtml = html_writer::tag('a', get_string('download', 'block_community'),
+                    $downloadbuttonhtml = html_writer::tag('a', get_string('install', 'block_community'),
                                     array('href' => $downloadurl, 'class' => 'centeredbutton, hubcoursedownload'));
                 }
 
