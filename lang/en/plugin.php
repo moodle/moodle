@@ -29,6 +29,7 @@ $string['actions'] = 'Actions';
 $string['availability'] = 'Availability';
 $string['checkforupdates'] = 'Check for available updates';
 $string['checkforupdateslast'] = 'Last check done on {$a}';
+$string['detectedmisplacedplugin'] = 'Plugin "{$a->component}" is installed in incorrect location "{$a->current}", expected location is "{$a->expected}"';
 $string['displayname'] = 'Plugin name';
 $string['err_response_curl'] = 'Unable to fetch available updates data - unexpected cURL error.';
 $string['err_response_format_version'] = 'Unexpected version of the response format. Please try to re-check for available updates.';
