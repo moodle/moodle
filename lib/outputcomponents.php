@@ -1189,6 +1189,7 @@ class html_writer {
         $output = '';
 
         if ($label !== '' and !is_null($label)) {
+            $label = " ".$label;
             if (empty($attributes['id'])) {
                 $attributes['id'] = self::random_id('checkbox_');
             }
