@@ -102,9 +102,9 @@ function formal_white_set_framemargin($css, $framemargin) {
     $tag = '[[setting:framemargin]]';
     $css = str_replace($tag, $framemargin.'px', $css);
 
-    // Set .headermenu right
-    $calculated = $framemargin + 17; // 17px is the width of the frame
-    $tag = '[[calculated:headermenuright]]';
+    // Set .headermenu margin
+    $calculated = $framemargin + 22; // 17px is the width of the frame; 5px to avoid to have all stuck
+    $tag = '[[calculated:headermenumargin]]';
     $css = str_replace($tag, $calculated.'px', $css);
 
     return $css;
