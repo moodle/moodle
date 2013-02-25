@@ -181,13 +181,14 @@ class conditionlib_testcase extends advanced_testcase {
     }
 
     private function make_course() {
-        global $DB;
-        $categoryid = $DB->insert_record('course_categories', (object)array('name'=>'conditionlibtest'));
-        $courseid = $DB->insert_record('course', (object)array(
-            'fullname'=>'Condition test','shortname'=>'CT1',
-            'category'=>$categoryid,'enablecompletion'=>1));
-        context_course::instance($courseid);
-        return $courseid;
+        $category = $this->getDataGenerator()->create_category(array('name' => 'conditionlibtest'));
+        $course = $this->getDataGenerator()->create_course(
+                array('fullname' => 'Condition test',
+                    'shortname' => 'CT1',
+                    'category' => $category->id,
+                    'enablecompletion' => 1));
+        context_course::instance($course->id);
+        return $course->id;
     }
 
     private function make_course_module($courseid,$params=array()) {
@@ -253,7 +254,7 @@ class conditionlib_testcase extends advanced_testcase {
             'completion'=>COMPLETION_TRACKING_MANUAL));
         $cmid2=$this->make_course_module($courseid,array(
             'showavailability'=>0,'availablefrom'=>0,'availableuntil'=>0));
-        $this->make_section($courseid,array($cmid1,$cmid2));
+        $this->make_section($courseid, array($cmid1, $cmid2), 1);
 
         // Add a fake grade item
         $gradeitemid=$DB->insert_record('grade_items',(object)array(
@@ -351,7 +352,7 @@ class conditionlib_testcase extends advanced_testcase {
         $courseid=$this->make_course();
         $cmid=$this->make_course_module($courseid,array(
             'showavailability'=>0,'availablefrom'=>0,'availableuntil'=>0));
-        $this->make_section($courseid,array($cmid));
+        $this->make_section($courseid, array($cmid), 1);
 
         // Check it has no conditions
         $test1=new condition_info((object)array('id'=>$cmid),
@@ -394,7 +395,7 @@ class conditionlib_testcase extends advanced_testcase {
         // Make course and module
         $courseid = $this->make_course();
         $cmid = $this->make_course_module($courseid);
-        $sectionid = $this->make_section($courseid, array($cmid));
+        $sectionid = $this->make_section($courseid, array($cmid), 1);
 
         // Check it has no conditions
         $test1 = new condition_info_section((object)array('id'=>$sectionid),
@@ -468,7 +469,7 @@ class conditionlib_testcase extends advanced_testcase {
         // Completion
         $oldid=$cmid;
         $cmid=$this->make_course_module($courseid);
-        $this->make_section($courseid,array($oldid,$cmid));
+        $this->make_section($courseid, array($oldid, $cmid), 1);
         $oldcm=$DB->get_record('course_modules',array('id'=>$oldid));
         $oldcm->completion=COMPLETION_TRACKING_MANUAL;
         $DB->update_record('course_modules',$oldcm);
