@@ -843,4 +843,104 @@ class core_course_external_testcase extends externallib_advanced_testcase {
         $updatedcoursewarnings = core_course_external::update_courses($courses);
         $this->assertEquals(1, count($updatedcoursewarnings['warnings']));
     }
+
+    /**
+     * Test delete course_module.
+     */
+    public function test_delete_modules() {
+        global $DB;
+
+        // Ensure we reset the data after this test.
+        $this->resetAfterTest(true);
+
+        // Create a user.
+        $user = self::getDataGenerator()->create_user();
+
+        // Set the tests to run as the user.
+        self::setUser($user);
+
+        // Create a course to add the modules.
+        $course = self::getDataGenerator()->create_course();
+
+        // Create two test modules.
+        $record = new stdClass();
+        $record->course = $course->id;
+        $module1 = self::getDataGenerator()->create_module('forum', $record);
+        $module2 = self::getDataGenerator()->create_module('assignment', $record);
+
+        // Check the forum was correctly created.
+        $this->assertEquals(1, $DB->count_records('forum', array('id' => $module1->id)));
+
+        // Check the assignment was correctly created.
+        $this->assertEquals(1, $DB->count_records('assignment', array('id' => $module2->id)));
+
+        // Check data exists in the course modules table.
+        $this->assertEquals(2, $DB->count_records_select('course_modules', 'id = :module1 OR id = :module2',
+                array('module1' => $module1->cmid, 'module2' => $module2->cmid)));
+
+        // Enrol the user in the course.
+        $enrol = enrol_get_plugin('manual');
+        $enrolinstances = enrol_get_instances($course->id, true);
+        foreach ($enrolinstances as $courseenrolinstance) {
+            if ($courseenrolinstance->enrol == "manual") {
+                $instance = $courseenrolinstance;
+                break;
+            }
+        }
+        $enrol->enrol_user($instance, $user->id);
+
+        // Assign capabilities to delete module 1.
+        $modcontext = context_module::instance($module1->cmid);
+        $this->assignUserCapability('moodle/course:manageactivities', $modcontext->id);
+
+        // Assign capabilities to delete module 2.
+        $modcontext = context_module::instance($module2->cmid);
+        $newrole = create_role('Role 2', 'role2', 'Role 2 description');
+        $this->assignUserCapability('moodle/course:manageactivities', $modcontext->id, $newrole);
+
+        // Deleting these module instances.
+        core_course_external::delete_modules(array($module1->cmid, $module2->cmid));
+
+        // Check the forum was deleted.
+        $this->assertEquals(0, $DB->count_records('forum', array('id' => $module1->id)));
+
+        // Check the assignment was deleted.
+        $this->assertEquals(0, $DB->count_records('assignment', array('id' => $module2->id)));
+
+        // Check we retrieve no data in the course modules table.
+        $this->assertEquals(0, $DB->count_records_select('course_modules', 'id = :module1 OR id = :module2',
+                array('module1' => $module1->cmid, 'module2' => $module2->cmid)));
+
+        // Call with non-existent course module id and ensure exception thrown.
+        try {
+            core_course_external::delete_modules(array('1337'));
+            $this->fail('Exception expected due to missing course module.');
+        } catch (dml_missing_record_exception $e) {
+            $this->assertEquals('invalidrecord', $e->errorcode);
+        }
+
+        // Create two modules.
+        $module1 = self::getDataGenerator()->create_module('forum', $record);
+        $module2 = self::getDataGenerator()->create_module('assignment', $record);
+
+        // Since these modules were recreated the user will not have capabilities
+        // to delete them, ensure exception is thrown if they try.
+        try {
+            core_course_external::delete_modules(array($module1->cmid, $module2->cmid));
+            $this->fail('Exception expected due to missing capability.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('nopermissions', $e->errorcode);
+        }
+
+        // Unenrol user from the course.
+        $enrol->unenrol_user($instance, $user->id);
+
+        // Try and delete modules from the course the user was unenrolled in, make sure exception thrown.
+        try {
+            core_course_external::delete_modules(array($module1->cmid, $module2->cmid));
+            $this->fail('Exception expected due to being unenrolled from the course.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('requireloginerror', $e->errorcode);
+        }
+    }
 }

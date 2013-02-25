@@ -1921,6 +1921,70 @@ class core_course_external extends external_api {
         return null;
     }
 
+    /**
+     * Describes the parameters for delete_modules.
+     *
+     * @return external_external_function_parameters
+     * @since Moodle 2.5
+     */
+    public static function delete_modules_parameters() {
+        return new external_function_parameters (
+            array(
+                'cmids' => new external_multiple_structure(new external_value(PARAM_INT, 'course module ID',
+                        VALUE_REQUIRED, '', NULL_NOT_ALLOWED), 'Array of course module IDs'),
+            )
+        );
+    }
+
+    /**
+     * Deletes a list of provided module instances.
+     *
+     * @param array $cmids the course module ids
+     * @since Moodle 2.5
+     */
+    public static function delete_modules($cmids) {
+        global $CFG, $DB;
+
+        // Require course file containing the course delete module function.
+        require_once($CFG->dirroot . "/course/lib.php");
+
+        // Clean the parameters.
+        $params = self::validate_parameters(self::delete_modules_parameters(), array('cmids' => $cmids));
+
+        // Keep track of the course ids we have performed a capability check on to avoid repeating.
+        $arrcourseschecked = array();
+
+        foreach ($params['cmids'] as $cmid) {
+            // Get the course module.
+            $cm = $DB->get_record('course_modules', array('id' => $cmid), '*', MUST_EXIST);
+
+            // Check if we have not yet confirmed they have permission in this course.
+            if (!in_array($cm->course, $arrcourseschecked)) {
+                // Ensure the current user has required permission in this course.
+                $context = context_course::instance($cm->course);
+                self::validate_context($context);
+                // Add to the array.
+                $arrcourseschecked[] = $cm->course;
+            }
+
+            // Ensure they can delete this module.
+            $modcontext = context_module::instance($cm->id);
+            require_capability('moodle/course:manageactivities', $modcontext);
+
+            // Delete the module.
+            course_delete_module($cm->id);
+        }
+    }
+
+    /**
+     * Describes the delete_modules return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 2.5
+     */
+    public static function delete_modules_returns() {
+        return null;
+    }
 }
 
 /**

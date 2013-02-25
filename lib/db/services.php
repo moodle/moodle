@@ -514,6 +514,15 @@ $functions = array(
         'capabilities'=> 'moodle/course:delete',
     ),
 
+    'core_course_delete_modules' => array(
+        'classname' => 'core_course_external',
+        'methodname' => 'delete_modules',
+        'classpath' => 'course/externallib.php',
+        'description' => 'Deletes all specified module instances',
+        'type' => 'write',
+        'capabilities' => 'moodle/course:manageactivities'
+    ),
+
     'core_course_duplicate_course' => array(
         'classname'   => 'core_course_external',
         'methodname'  => 'duplicate_course',
