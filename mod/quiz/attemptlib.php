@@ -263,7 +263,7 @@ class quiz {
     public function get_access_manager($timenow) {
         if (is_null($this->accessmanager)) {
             $this->accessmanager = new quiz_access_manager($this, $timenow,
-                    has_capability('mod/quiz:ignoretimelimits', $this->context, null, false));
+                    has_capability('mod/quiz:ignoretimelimits', $this->context, null, true));
         }
         return $this->accessmanager;
     }
