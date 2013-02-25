@@ -292,7 +292,7 @@ class assignment_uploadsingle extends assignment_base {
 
         $mform->addElement('select', 'resubmit', get_string('allowresubmit', 'assignment'), $ynoptions);
         $mform->addHelpButton('resubmit', 'allowresubmit', 'assignment');
-        $mform->setDefault('resubmit', 0);
+        $mform->setDefault('resubmit', 1);
 
         $mform->addElement('select', 'emailteachers', get_string('emailteachers', 'assignment'), $ynoptions);
         $mform->addHelpButton('emailteachers', 'emailteachers', 'assignment');

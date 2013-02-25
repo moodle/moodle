@@ -106,7 +106,7 @@ class assignment_online extends assignment_base {
                 $mform->display();
             } else {
                 echo $OUTPUT->box_start('generalbox boxwidthwide boxaligncenter', 'online');
-                if ($submission && has_capability('mod/assignment:exportownsubmission', $this->context)) {
+                if ($submission) {
                     echo plagiarism_get_links(array('userid' => $USER->id,
                         'content' => trim(format_text($submission->data1, $submission->data2, array('context' => $context))),
                         'cmid' => $this->cm->id,
@@ -114,7 +114,7 @@ class assignment_online extends assignment_base {
                         'assignment' => $this->assignment));
                     $text = file_rewrite_pluginfile_urls($submission->data1, 'pluginfile.php', $this->context->id, 'mod_assignment', $this->filearea, $submission->id);
                     echo format_text($text, $submission->data2, array('overflowdiv'=>true));
-                    if ($CFG->enableportfolios) {
+                    if ($CFG->enableportfolios && has_capability('mod/assignment:exportownsubmission', $this->context)) {
                         require_once($CFG->libdir . '/portfoliolib.php');
                         $button = new portfolio_add_button();
                         $button->set_callback_options('assignment_portfolio_caller', array('id' => $this->cm->id), 'mod_assignment');
@@ -299,7 +299,7 @@ class assignment_online extends assignment_base {
 
         $mform->addElement('select', 'resubmit', get_string('allowresubmit', 'assignment'), $ynoptions);
         $mform->addHelpButton('resubmit', 'allowresubmit', 'assignment');
-        $mform->setDefault('resubmit', 0);
+        $mform->setDefault('resubmit', 1);
 
         $mform->addElement('select', 'emailteachers', get_string('emailteachers', 'assignment'), $ynoptions);
         $mform->addHelpButton('emailteachers', 'emailteachers', 'assignment');
