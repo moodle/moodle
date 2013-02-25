@@ -42,7 +42,7 @@ class theme_mymobile_renderer extends plugin_renderer_base {
      */
     public function settings_tree(settings_navigation $navigation) {
         $content = $this->navigation_node($navigation, array('class' => 'settings'));
-        if (has_capability('moodle/site:config', context_system::instance())) {
+        if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
             // TODO: Work out whether something is missing from here.
         }
         return $content;
@@ -143,7 +143,11 @@ class theme_mymobile_core_renderer extends core_renderer {
         if ($classes == 'helpheading') {
             // Keeps wrap from help headings in dialog.
             $content = parent::heading($text, $level, $classes, $id);
-        } else {
+        }
+        else if ($classes == 'accesshide' || $classes == 'section-title') {
+        	$content = parent::heading($text, $level, $classes, $id);
+        }
+         else {
             $content  = html_writer::start_tag('div', array('class' => 'headingwrap ui-bar-'.$this->theme_swatch() .' ui-footer'));
             $content .= parent::heading($text, $level, $classes.' ui-title', $id);
             $content .= html_writer::end_tag('div');
@@ -301,19 +305,27 @@ class theme_mymobile_core_renderer extends core_renderer {
      *
      * @return string
      */
-    public function login_info($withlinks = null) {
+   public function login_info($withlinks = null) {
         global $USER, $CFG, $DB, $SESSION;
 
         if (during_initial_install()) {
             return '';
         }
 
-        $course = $this->page->course;
+        if (is_null($withlinks)) {
+            $withlinks = empty($this->page->layout_options['nologinlinks']);
+        }
 
+        $loginpage = ((string)$this->page->url === get_login_url());
+        $course = $this->page->course;
         if (session_is_loggedinas()) {
             $realuser = session_get_realuser();
             $fullname = fullname($realuser, true);
-            $realuserinfo = " [<a href=\"$CFG->wwwroot/course/loginas.php?id=$course->id&amp;sesskey=".sesskey()."\">$fullname</a>] ";
+            if ($withlinks) {
+                $realuserinfo = " [<a href=\"$CFG->wwwroot/course/loginas.php?id=$course->id&amp;sesskey=".sesskey()."\">$fullname</a>] ";
+            } else {
+                $realuserinfo = " [$fullname] ";
+            }
         } else {
             $realuserinfo = '';
         }
@@ -325,32 +337,47 @@ class theme_mymobile_core_renderer extends core_renderer {
             return '';
         } else if (isloggedin()) {
             $context = context_course::instance($course->id);
-            $fullname = fullname($USER, true);
 
+            $fullname = fullname($USER, true);
             // Since Moodle 2.0 this link always goes to the public profile page (not the course profile page)
-            // TODO: Test what happens when someone is using this via mnet [for this as well as login_info_footer]
-            // TODO: Test what happens when you use the loginas feature [for this as well as login_info_footer]
-            $username = "";
+            if ($withlinks) {
+                $username = "<a href=\"$CFG->wwwroot/user/profile.php?id=$USER->id\">$fullname</a>";
+            } else {
+                $username = $fullname;
+            }
             if (is_mnet_remote_user($USER) and $idprovider = $DB->get_record('mnet_host', array('id'=>$USER->mnethostid))) {
-                $username .= " from <a href=\"{$idprovider->wwwroot}\">{$idprovider->name}</a>";
+                if ($withlinks) {
+                    $username .= " from <a href=\"{$idprovider->wwwroot}\">{$idprovider->name}</a>";
+                } else {
+                    $username .= " from {$idprovider->name}";
+                }
             }
             if (isguestuser()) {
-                $loggedinas = $realuserinfo.get_string('loggedinasguest')." (<a href=\"$loginurl\">".get_string('login').'</a>)';
+                $loggedinas = $realuserinfo.get_string('loggedinasguest');
+                if (!$loginpage && $withlinks) {
+                    $loggedinas .= " (<a href=\"$loginurl\">".get_string('login').'</a>)';
+                }
             } else if (is_role_switched($course->id)) { // Has switched roles
                 $rolename = '';
                 if ($role = $DB->get_record('role', array('id'=>$USER->access['rsw'][$context->path]))) {
                     $rolename = ': '.format_string($role->name);
                 }
+                $loggedinas = get_string('loggedinas', 'moodle', $username).$rolename;
+                if ($withlinks) {
+                    $loggedinas .= " (<a href=\"$CFG->wwwroot/course/view.php?id=$course->id&amp;switchrole=0&amp;sesskey=".sesskey()."\">".get_string('switchrolereturn').'</a>)';
+                }
             } else {
-                $loggedinas = $realuserinfo.$username.'     <a id="mypower" data-inline="true" data-role="button" data-icon="mypower" data-ajax="false" class="ui-btn-right mypower" href="'.$CFG->wwwroot.'/login/logout.php?sesskey='.sesskey().'\">'.get_string('logout').'</a>';
+              $loggedinas = $realuserinfo.$username.'     <a id="mypower" data-inline="true" data-role="button" data-icon="mypower" data-ajax="false" class="ui-btn-right mypower" href="'.$CFG->wwwroot.'/login/logout.php?sesskey='.sesskey().'\">'.get_string('logout').'</a>';
             }
         } else {
-            $loggedinas = '<a data-role="button" data-icon="alert" class="ui-btn-right nolog" href="'.$loginurl.'" data-ajax="false">'.get_string('login').'</a>';
+            $loggedinas = "";
+            if (!$loginpage && $withlinks) {
+               $loggedinas = '<a data-role="button" data-icon="alert" class="ui-btn-right nolog" href="'.$loginurl.'" data-ajax="false">'.get_string('login').'</a>';
+            }
         }
 
-        // TODO: Enable $CFG->displayloginfailures and test as admin what happens after you succesfully
-        //       log in after a failed log in attempt.  [for this as well as login_info_footer]
-        //       This is probably totally unneeded
+        $loggedinas = '<div class="logininfo">'.$loggedinas.'</div>';
+
         if (isset($SESSION->justloggedin)) {
             unset($SESSION->justloggedin);
             if (!empty($CFG->displayloginfailures)) {
@@ -363,7 +390,8 @@ class theme_mymobile_core_renderer extends core_renderer {
                             $loggedinas .= get_string('failedloginattemptsall', '', $count);
                         }
                         if (file_exists("$CFG->dirroot/report/log/index.php") and has_capability('report/log:view', context_system::instance())) {
-                            $loggedinas .= ' (<a href="'.$CFG->wwwroot.'/course/report/log/index.php?chooselog=1&amp;id=1&amp;modid=site_errors">'.get_string('logs').'</a>)';
+                            $loggedinas .= ' (<a href="'.$CFG->wwwroot.'/report/log/index.php'.
+                                                 '?chooselog=1&amp;id=1&amp;modid=site_errors">'.get_string('logs').'</a>)';
                         }
                         $loggedinas .= '</div>';
                     }
@@ -403,7 +431,7 @@ class theme_mymobile_core_renderer extends core_renderer {
             // $course->id is not defined during installation
             return '';
         } else if (isloggedin()) {
-            $context = context_course::instance($course->id);
+            $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
             $fullname = fullname($USER, true);
             // Since Moodle 2.0 this link always goes to the public profile page (not the course profile page)
@@ -445,7 +473,7 @@ class theme_mymobile_core_renderer extends core_renderer {
                         } else {
                             $loggedinas .= get_string('failedloginattemptsall', '', $count);
                         }
-                        if (has_capability('report/log:view', context_system::instance())) {
+                        if (has_capability('report/log:view', get_context_instance(CONTEXT_SYSTEM))) {
                             $loggedinas .= ' (<a href="'.$CFG->wwwroot.'/course/report/log/index.php?chooselog=1&amp;id=1&amp;modid=site_errors">'.get_string('logs').'</a>)';
                         }
                         $loggedinas .= '</div>';
@@ -747,11 +775,6 @@ class theme_mymobile_core_renderer extends core_renderer {
             $select->attributes['title'] = $select->tooltip;
         }
 
-        $select->attributes['class'] = 'autosubmit';
-        if ($select->class) {
-            $select->attributes['class'] .= ' ' . $select->class;
-        }
-
         if ($select->label) {
             $output .= html_writer::label($select->label, $select->attributes['id']);
         }
@@ -770,10 +793,7 @@ class theme_mymobile_core_renderer extends core_renderer {
         $output .= html_writer::tag('noscript', html_writer::tag('div', $go), array('style' => 'inline'));
 
         $nothing = empty($select->nothing) ? false : key($select->nothing);
-        $this->page->requires->yui_module('moodle-core-formautosubmit',
-            'M.core.init_formautosubmit',
-            array(array('selectid' => $select->attributes['id'], 'nothing' => $nothing))
-        );
+        $this->page->requires->js_init_call('M.util.init_select_autosubmit', array($select->formid, $select->attributes['id'], $nothing));
 
         // then div wrapper for xhtml strictness
         $output = html_writer::tag('div', $output);
