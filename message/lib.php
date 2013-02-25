@@ -29,7 +29,7 @@ define ('MESSAGE_SHORTLENGTH', 300);
 define ('MESSAGE_DISCUSSION_WIDTH',600);
 define ('MESSAGE_DISCUSSION_HEIGHT',500);
 
-define ('MESSAGE_SHORTVIEW_LIMIT', 8);//the maximum number of messages to show on the short message history
+define ('MESSAGE_SHORTVIEW_LIMIT', 3);//the maximum number of messages to show on the short message history
 
 define('MESSAGE_HISTORY_SHORT',0);
 define('MESSAGE_HISTORY_ALL',1);
@@ -1035,7 +1035,7 @@ function message_print_search_results($frm, $showicontext=false, $currentuser=nu
 
     // Search for person.
     if ($personsearch) {
-        if (optional_param('mycourses', 0, PARAM_BOOL)) {
+         if (!has_capability('moodle/site:viewparticipants', get_context_instance(CONTEXT_SYSTEM)) || optional_param('mycourses', 0, PARAM_BOOL)) {
             $users = array();
             $mycourses = enrol_get_my_courses();
             foreach ($mycourses as $mycourse) {
