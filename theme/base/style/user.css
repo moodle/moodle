@@ -3,7 +3,13 @@
 .userprofile .fullprofilelink {text-align:center; margin:10px;}
 .userprofile .profilepicture {float:left; margin-right:20px;}
 .userprofile .description {margin-bottom:20px;}
+.userprofile .descriptionbox { float: left; }
 .userprofile .label {font-weight:normal;text-align:left;}
+.userprofile dl {margin-top: 10px; margin-left: 0px}
+.userprofile dl dt, .userprofile dl dd {padding-top: 3px;padding-bottom: 3px;float: left; }
+.userprofile dl dt {padding-left: 0;font-weight: bold;display: inline-block;width: 180px;clear: both;}
+.userprofile dl dd {display: inline-block; margin: 0px;}
+
 
 .user-box {margin:8px;width:115px;height:160px;text-align:center;float:left;clear: none;}
 
@@ -31,7 +37,6 @@
 .userinfobox .list td {padding: 3px;}
 .userinfobox .username {padding-bottom: 20px;font-weight: bold;}
 .userinfobox td.label {text-align:right;white-space: nowrap;vertical-align: top;font-weight:bold;}
-
 .groupinfobox {border:1px solid;}
 .groupinfobox .left {padding: 10px;width: 100px;vertical-align: top;}
 
