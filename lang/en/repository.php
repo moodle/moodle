@@ -152,6 +152,7 @@ $string['manage'] = 'Manage repositories';
 $string['manageurl'] = 'Manage';
 $string['manageuserrepository'] = 'Manage individual repository';
 $string['moving'] = 'Moving';
+$string['newfolder'] = 'New folder';
 $string['newfoldername'] = 'New folder name:';
 $string['noenter'] = 'Nothing entered';
 $string['nofilesattached'] = 'No files attached';
