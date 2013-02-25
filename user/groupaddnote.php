@@ -66,9 +66,7 @@ if (!empty($users) && !empty($content) && confirm_sesskey()) {
         }
         $note->id = 0;
         $note->userid = $v;
-        if (note_save($note)) {
-            add_to_log($note->courseid, 'notes', 'add', 'index.php?course='.$note->courseid.'&amp;user='.$note->userid . '#note-' . $note->id , 'add note');
-        }
+        note_save($note);
     }
 
     redirect("$CFG->wwwroot/user/index.php?id=$id");

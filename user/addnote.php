@@ -63,9 +63,7 @@ if (!empty($users) && confirm_sesskey()) {
         $note->content = $contents[$k];
         $note->publishstate = $states[$k];
         $note->userid = $v;
-        if (note_save($note)) {
-            add_to_log($note->courseid, 'notes', 'add', 'index.php?course='.$note->courseid.'&amp;user='.$note->userid . '#note-' . $note->id , 'add note');
-        }
+        note_save($note);
     }
     redirect("$CFG->wwwroot/user/index.php?id=$id");
 }
