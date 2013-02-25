@@ -461,7 +461,7 @@ class comment {
                 // print posting textarea
                 $html .= html_writer::start_tag('div', array('class' => 'comment-area'));
                 $html .= html_writer::start_tag('div', array('class' => 'db'));
-                $html .= html_writer::tag('textarea', '', array('name' => 'content', 'rows' => 2, 'cols' => 20, 'id' => 'dlg-content-'.$this->cid));
+                $html .= html_writer::tag('textarea', '', array('name' => 'content', 'rows' => 5, 'cols' => 50, 'id' => 'dlg-content-'.$this->cid));
                 $html .= html_writer::end_tag('div'); // .db
 
                 $html .= html_writer::start_tag('div', array('class' => 'fd', 'id' => 'comment-action-'.$this->cid));
