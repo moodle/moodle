@@ -189,10 +189,12 @@ class mod_assign_locallib_testcase extends advanced_testcase {
     }
 
     public function test_return_links() {
+        global $PAGE;
         $this->setUser($this->editingteachers[0]);
         $returnaction = 'RETURNACTION';
-        $returnparams = array('param'=>1);
+        $returnparams = array('param'=>'1');
         $assign = $this->create_instance();
+        $PAGE->set_url(new moodle_url('/mod/assign/view.php', array('id' => $assign->get_course_module()->id)));
         $assign->register_return_link($returnaction, $returnparams);
         $this->assertEquals($returnaction, $assign->get_return_action());
         $this->assertEquals($returnparams, $assign->get_return_params());
@@ -739,10 +741,11 @@ class mod_assign_locallib_testcase extends advanced_testcase {
     }
 
     public function test_show_student_summary() {
-        global $CFG;
+        global $CFG, $PAGE;
 
         $this->setUser($this->editingteachers[0]);
         $assign = $this->create_instance();
+        $PAGE->set_url(new moodle_url('/mod/assign/view.php', array('id' => $assign->get_course_module()->id)));
 
         // No feedback should be available because this student has not been graded.
         $this->setUser($this->students[0]);

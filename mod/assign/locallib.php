@@ -136,8 +136,12 @@ class assign {
      * @return void
      */
     public function register_return_link($action, $params) {
-        $this->returnaction = $action;
-        $this->returnparams = $params;
+        global $PAGE;
+        $params['action'] = $action;
+        $currenturl = $PAGE->url;
+
+        $currenturl->params($params);
+        $PAGE->set_url($currenturl);
     }
 
     /**
@@ -146,7 +150,14 @@ class assign {
      * @return string action
      */
     public function get_return_action() {
-        return $this->returnaction;
+        global $PAGE;
+
+        $params = $PAGE->url->params();
+
+        if (!empty($params['action'])) {
+            return $params['action'];
+        }
+        return '';
     }
 
     /**
@@ -168,7 +179,12 @@ class assign {
      * @return array params
      */
     public function get_return_params() {
-        return $this->returnparams;
+        global $PAGE;
+
+        $params = $PAGE->url->params();
+        unset($params['id']);
+        unset($params['action']);
+        return $params;
     }
 
     /**
@@ -330,79 +346,102 @@ class assign {
         $mform = null;
         $notices = array();
 
+        $nextpageparams = array('id'=>$this->get_course_module()->id);
+
         // Handle form submissions first.
         if ($action == 'savesubmission') {
             $action = 'editsubmission';
             if ($this->process_save_submission($mform, $notices)) {
-                $action = 'view';
+                $action = 'redirect';
+                $nextpageparams['action'] = 'view';
             }
         } else if ($action == 'lock') {
             $this->process_lock();
-            $action = 'grading';
+            $action = 'redirect';
+            $nextpageparams['action'] = 'grading';
         } else if ($action == 'reverttodraft') {
             $this->process_revert_to_draft();
-            $action = 'grading';
+            $action = 'redirect';
+            $nextpageparams['action'] = 'grading';
         } else if ($action == 'unlock') {
             $this->process_unlock();
-            $action = 'grading';
+            $action = 'redirect';
+            $nextpageparams['action'] = 'grading';
         } else if ($action == 'confirmsubmit') {
             $action = 'submit';
             if ($this->process_submit_for_grading($mform)) {
-                $action = 'view';
+                $action = 'redirect';
+                $nextpageparams['action'] = 'view';
             }
         } else if ($action == 'gradingbatchoperation') {
             $action = $this->process_grading_batch_operation($mform);
+            if ($action == 'grading') {
+                $action = 'redirect';
+                $nextpageparams['action'] = 'grading';
+            }
         } else if ($action == 'submitgrade') {
             if (optional_param('saveandshownext', null, PARAM_RAW)) {
                 // Save and show next.
                 $action = 'grade';
                 if ($this->process_save_grade($mform)) {
-                    $action = 'nextgrade';
+                    $action = 'redirect';
+                    $nextpageparams['action'] = 'grade';
+                    $nextpageparams['rownum'] = optional_param('rownum', 0, PARAM_INT) + 1;
+                    $nextpageparams['useridlistid'] = optional_param('useridlistid', time(), PARAM_INT);
                 }
             } else if (optional_param('nosaveandprevious', null, PARAM_RAW)) {
-                $action = 'previousgrade';
+                $action = 'redirect';
+                $nextpageparams['action'] = 'grade';
+                $nextpageparams['rownum'] = optional_param('rownum', 0, PARAM_INT) - 1;
+                $nextpageparams['useridlistid'] = optional_param('useridlistid', time(), PARAM_INT);
             } else if (optional_param('nosaveandnext', null, PARAM_RAW)) {
-                // Show next button.
-                $action = 'nextgrade';
+                $action = 'redirect';
+                $nextpageparams['action'] = 'grade';
+                $nextpageparams['rownum'] = optional_param('rownum', 0, PARAM_INT) + 1;
+                $nextpageparams['useridlistid'] = optional_param('useridlistid', time(), PARAM_INT);
             } else if (optional_param('savegrade', null, PARAM_RAW)) {
                 // Save changes button.
                 $action = 'grade';
                 if ($this->process_save_grade($mform)) {
-                    $action = 'grading';
+                    $action = 'redirect';
+                    $nextpageparams['action'] = 'grading';
                 }
             } else {
                 // Cancel button.
-                $action = 'grading';
+                $action = 'redirect';
+                $nextpageparams['action'] = 'grading';
             }
         } else if ($action == 'quickgrade') {
             $message = $this->process_save_quick_grades();
             $action = 'quickgradingresult';
         } else if ($action == 'saveoptions') {
             $this->process_save_grading_options();
-            $action = 'grading';
+            $action = 'redirect';
+            $nextpageparams['action'] = 'grading';
         } else if ($action == 'saveextension') {
             $action = 'grantextension';
             if ($this->process_save_extension($mform)) {
-                $action = 'grading';
+                $action = 'redirect';
+                $nextpageparams['action'] = 'grading';
             }
         } else if ($action == 'revealidentitiesconfirm') {
             $this->process_reveal_identities();
-            $action = 'grading';
+            $action = 'redirect';
+            $nextpageparams['action'] = 'grading';
         }
 
-        $returnparams = array('rownum'=>optional_param('rownum', 0, PARAM_INT));
+        $returnparams = array('rownum'=>optional_param('rownum', 0, PARAM_INT),
+                              'useridlistid'=>optional_param('useridlistid', 0, PARAM_INT));
         $this->register_return_link($action, $returnparams);
 
         // Now show the right view page.
-        if ($action == 'previousgrade') {
-            $mform = null;
-            $o .= $this->view_single_grade_page($mform, -1);
+        if ($action == 'redirect') {
+            $nextpageurl = new moodle_url('/mod/assign/view.php', $nextpageparams);
+            redirect($nextpageurl);
+            return;
         } else if ($action == 'quickgradingresult') {
             $mform = null;
             $o .= $this->view_quickgrading_result($message);
-        } else if ($action == 'nextgrade') {
-            $mform = null;
-            $o .= $this->view_single_grade_page($mform, 1);
         } else if ($action == 'grade') {
             $o .= $this->view_single_grade_page($mform);
         } else if ($action == 'viewpluginassignfeedback') {
@@ -2332,10 +2371,9 @@ class assign {
      * Print the grading page for a single user submission.
      *
      * @param moodleform $mform
-     * @param int $offset
      * @return string
      */
-    protected function view_single_grade_page($mform, $offset=0) {
+    protected function view_single_grade_page($mform) {
         global $DB, $CFG;
 
         $o = '';
@@ -2353,20 +2391,22 @@ class assign {
                                     get_string('grading', 'assign'));
         $o .= $this->get_renderer()->render($header);
 
-        $rownum = required_param('rownum', PARAM_INT) + $offset;
-        $useridlist = optional_param('useridlist', '', PARAM_TEXT);
-        if ($useridlist) {
-            $useridlist = explode(',', $useridlist);
-        } else {
+        $rownum = required_param('rownum', PARAM_INT);
+        $useridlistid = optional_param('useridlistid', time(), PARAM_INT);
+        $cache = cache::make_from_params(cache_store::MODE_SESSION, 'mod_assign', 'useridlist');
+        if (!$useridlist = $cache->get($this->get_course_module()->id . '_' . $useridlistid)) {
             $useridlist = $this->get_grading_userid_list();
+            $cache->set($this->get_course_module()->id . '_' . $useridlistid, $useridlist);
         }
+
+        if ($rownum < 0 || $rownum > count($useridlist)) {
+            throw new coding_exception('Row is out of bounds for the current grading table: ' . $rownum);
+        }
+
         $last = false;
         $userid = $useridlist[$rownum];
         if ($rownum == count($useridlist) - 1) {
             $last = true;
-        }
-        if (!$userid) {
-            throw new coding_exception('Row is out of bounds for the current grading table: ' . $rownum);
         }
         $user = $DB->get_record('user', array('id' => $userid));
         if ($user) {
@@ -2458,7 +2498,7 @@ class assign {
 
         // Now show the grading form.
         if (!$mform) {
-            $pagination = array( 'rownum'=>$rownum, 'useridlist'=>$useridlist, 'last'=>$last);
+            $pagination = array( 'rownum'=>$rownum, 'useridlistid'=>$useridlistid, 'last'=>$last);
             $formparams = array($this, $data, $pagination);
             $mform = new mod_assign_grade_form(null,
                                                $formparams,
@@ -2521,6 +2561,7 @@ class assign {
         $returnparams = optional_param('returnparams', '', PARAM_TEXT);
 
         $params = array();
+        $returnparams = str_replace('&amp;', '&', $returnparams);
         parse_str($returnparams, $params);
         $newparams = array('id' => $this->get_course_module()->id, 'action' => $returnaction);
         $params = array_merge($newparams, $params);
@@ -4375,7 +4416,13 @@ class assign {
 
         $rownum = $params['rownum'];
         $last = $params['last'];
-        $useridlist = $params['useridlist'];
+        $useridlistid = $params['useridlistid'];
+        $cache = cache::make_from_params(cache_store::MODE_SESSION, 'mod_assign', 'useridlist');
+        if (!$useridlist = $cache->get($this->get_course_module()->id . '_' . $useridlistid)) {
+            $useridlist = $this->get_grading_userid_list();
+            $cache->set($this->get_course_module()->id . '_' . $useridlistid, $useridlist);
+        }
+
         $userid = $useridlist[$rownum];
         $grade = $this->get_user_grade($userid, false);
 
@@ -4482,8 +4529,8 @@ class assign {
         $mform->addElement('hidden', 'rownum', $rownum);
         $mform->setType('rownum', PARAM_INT);
         $mform->setConstant('rownum', $rownum);
-        $mform->addElement('hidden', 'useridlist', implode(',', $useridlist));
-        $mform->setType('useridlist', PARAM_TEXT);
+        $mform->addElement('hidden', 'useridlistid', $useridlistid);
+        $mform->setType('useridlistid', PARAM_INT);
         $mform->addElement('hidden', 'ajax', optional_param('ajax', 0, PARAM_INT));
         $mform->setType('ajax', PARAM_INT);
 
@@ -4851,11 +4898,11 @@ class assign {
         require_sesskey();
 
         $rownum = required_param('rownum', PARAM_INT);
-        $useridlist = optional_param('useridlist', '', PARAM_TEXT);
-        if ($useridlist) {
-            $useridlist = explode(',', $useridlist);
-        } else {
+        $useridlistid = optional_param('useridlistid', time(), PARAM_INT);
+        $cache = cache::make_from_params(cache_store::MODE_SESSION, 'mod_assign', 'useridlist');
+        if (!$useridlist = $cache->get($this->get_course_module()->id . '_' . $useridlistid)) {
             $useridlist = $this->get_grading_userid_list();
+            $cache->set($this->get_course_module()->id . '_' . $useridlistid, $useridlist);
         }
         $last = false;
         $userid = $useridlist[$rownum];
@@ -4865,7 +4912,7 @@ class assign {
 
         $data = new stdClass();
 
-        $gradeformparams = array('rownum'=>$rownum, 'useridlist'=>$useridlist, 'last'=>false);
+        $gradeformparams = array('rownum'=>$rownum, 'useridlistid'=>$useridlistid, 'last'=>false);
         $mform = new mod_assign_grade_form(null,
                                            array($this, $data, $gradeformparams),
                                            'post',
