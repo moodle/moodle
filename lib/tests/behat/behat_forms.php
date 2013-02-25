@@ -68,6 +68,9 @@ class behat_forms extends behat_base {
      */
     public function i_fill_the_moodle_form_with(TableNode $data) {
 
+        // Expand all fields in case we have.
+        $this->expand_all_fields();
+
         $datahash = $data->getRowsHash();
 
         // The action depends on the field type.
@@ -84,6 +87,66 @@ class behat_forms extends behat_base {
             // Delegates to the field class.
             $field->set_value($value);
         }
+    }
+
+    /**
+     * Expands all moodleform's fields, including collapsed fieldsets and advanced fields if they are present.
+     * @Given /^I expand all fieldsets$/
+     */
+    public function i_expand_all_fieldsets() {
+        $this->expand_all_fields();
+    }
+
+    /**
+     * Expands all moodle form fieldsets if they exists.
+     *
+     * Externalized from i_expand_all_fields to call it from
+     * other form-related steps without having to use steps-group calls.
+     *
+     * @throws ElementNotFoundException Thrown by behat_base::find_all
+     * @return void
+     */
+    protected function expand_all_fields() {
+
+        // behat_base::find() throws an exception if there are no elements, we should not fail a test because of this.
+        try {
+
+            // Expand fieldsets.
+            $fieldsets = $this->find_all('css', 'fieldset.collapsed.jsprocessed a.fheader');
+
+            // We are supposed to have fieldsets here, otherwise exception.
+
+            // Funny thing about this, with find_all() we specify a pattern and each element matching the pattern is added to the array
+            // with of xpaths with a [0], [1]... sufix, but when we click on an element it does not matches the specified xpath
+            // anymore (is not collapsed) so [1] becomes [0], that's why we always click on the first XPath match, will be always the next one.
+            $iterations = count($fieldsets);
+            for ($i = 0; $i < $iterations; $i++) {
+                $fieldsets[0]->click();
+            }
+
+        } catch (ElementNotFoundException $e) {
+            // We continue if there are not expanded fields.
+        }
+
+        // Different try & catch as we can have expanded fieldsets with advanced fields on them.
+        try {
+
+            // Show all fields.
+            $showmorestr = get_string('showmore', 'form');
+            $showmores = $this->find_all('xpath', "//a[contains(concat(' ', normalize-space(.), ' '), '" . $showmorestr . "')][contains(concat(' ', normalize-space(@class), ' '), ' morelesstoggler')]");
+
+            // We are supposed to have 'show more's here, otherwise exception.
+
+            // Same funny case, after clicking on the element the [1] showmore link becomes the [0].
+            $iterations = count($showmores);
+            for ($i = 0; $i < $iterations; $i++) {
+                $showmores[0]->click();
+            }
+
+        } catch (ElementNotFoundException $e) {
+            // We continue with the test.
+        }
+
     }
 
     /**

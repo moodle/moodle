@@ -65,7 +65,7 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
     }
 
     /**
-     * Adapter to Behat\Mink\Element\Element::find() using the spin() method.
+     * Returns the first matching element.
      *
      * @link http://mink.behat.org/#traverse-the-page-selectors
      * @param string $selector The selector type (css, xpath, named...)
@@ -75,6 +75,25 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
      * @return NodeElement
      */
     protected function find($selector, $locator, $exception = false, $node = false) {
+
+        // Returns the first match.
+        $items = $this->find_all($selector, $locator, $exception, $node);
+        return count($items) ? reset($items) : null;
+    }
+
+    /**
+     * Returns all matching elements.
+     *
+     * Adapter to Behat\Mink\Element\Element::findAll() using the spin() method.
+     *
+     * @link http://mink.behat.org/#traverse-the-page-selectors
+     * @param string $selector The selector type (css, xpath, named...)
+     * @param mixed $locator It depends on the $selector, can be the xpath, a name, a css locator...
+     * @param Exception $exception Otherwise we throw expcetion with generic info
+     * @param NodeElement $node Spins around certain DOM node instead of the whole page
+     * @return array NodeElements list
+     */
+    protected function find_all($selector, $locator, $exception = false, $node = false) {
 
         // Generic info.
         if (!$exception) {
@@ -103,7 +122,7 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
 
                 // If no DOM node provided look in all the page.
                 if (empty($args['node'])) {
-                    return $context->getSession()->getPage()->find($args['selector'], $args['locator']);
+                    return $context->getSession()->getPage()->findAll($args['selector'], $args['locator']);
                 }
 
                 // For nodes contained in other nodes we can not use the basic named selectors
@@ -123,9 +142,7 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
                 }
 
                 // We can not use usual Element::find() as it prefixes with DOM root.
-                // Returning first match.
-                $items = $context->getSession()->getDriver()->find(implode('|', $unions));
-                return count($items) ? reset($items) : null;
+                return $context->getSession()->getDriver()->find(implode('|', $unions));
             },
             $params,
             self::TIMEOUT,
