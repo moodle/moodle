@@ -113,17 +113,21 @@ class assign_user_summary implements renderable {
     public $courseid;
     /** @var bool $viewfullnames */
     public $viewfullnames = false;
+    /** @var array $extrauserfields */
+    public $extrauserfields;
 
     /**
      * Constructor
      * @param stdClass $user
      * @param int $courseid
      * @param bool $viewfullnames
+     * @param array $extrauserfield
      */
-    public function __construct(stdClass $user, $courseid, $viewfullnames) {
+    public function __construct(stdClass $user, $courseid, $viewfullnames, $extrauserfields) {
         $this->user = $user;
         $this->courseid = $courseid;
         $this->viewfullnames = $viewfullnames;
+        $this->extrauserfields = $extrauserfields;
     }
 }
 
