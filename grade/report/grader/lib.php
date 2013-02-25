@@ -394,7 +394,7 @@ class grade_report_grader extends grade_report {
         list($enrolledsql, $enrolledparams) = get_enrolled_sql($this->context);
 
         //fields we need from the user table
-        $userfields = user_picture::fields('u', get_extra_user_fields($this->context));
+        $userfields = user_picture::fields('u');
 
         $sortjoin = $sort = $params = null;
 
@@ -624,7 +624,7 @@ class grade_report_grader extends grade_report {
         $strfeedback  = $this->get_lang_string("feedback");
         $strgrade     = $this->get_lang_string('grade');
 
-        $extrafields = get_extra_user_fields($this->context);
+        $extrafields = array();
 
         $arrows = $this->get_sort_arrows($extrafields);
 
