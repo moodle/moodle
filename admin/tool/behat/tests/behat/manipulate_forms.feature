@@ -18,3 +18,17 @@ Feature: Forms manipulation
     And I uncheck "Unmask"
     And the "Unmask" checkbox should not be checked
     And I press "Update profile"
+
+  @javascript
+  Scenario: Expand all fieldsets and advanced elements
+    Given the following "courses" exists:
+      | fullname | shortname | category |
+      | Course 1 | C1 | 0 |
+    And I log in as "admin"
+    And I follow "Course 1"
+    And I follow "Edit settings"
+    When I expand all fieldsets
+    Then I should see "Group mode"
+    And I should see "Your word for 'Course creator'"
+    And I should not see "Show more..."
+    And I should see "Show less..."
