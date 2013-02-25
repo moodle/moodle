@@ -639,8 +639,8 @@ abstract class moodleform_mod extends moodleform {
                 array(COMPLETION_TRACKING_NONE=>get_string('completion_none', 'completion'),
                 COMPLETION_TRACKING_MANUAL=>get_string('completion_manual', 'completion')));
             $mform->setDefault('completion', $this->_features->defaultcompletion
-                ? COMPLETION_TRACKING_MANUAL
-                : COMPLETION_TRACKING_NONE);
+                ? COMPLETION_TRACKING_NONE
+                : COMPLETION_TRACKING_MANUAL);
             $mform->addHelpButton('completion', 'completion', 'completion');
 
             // Automatic completion once you view it
@@ -757,7 +757,7 @@ abstract class moodleform_mod extends moodleform {
             //if supports grades and grades arent being handled via ratings
             if (!$this->_features->rating) {
                 $mform->addElement('modgrade', 'grade', get_string('grade'));
-                $mform->setDefault('grade', 100);
+                $mform->setDefault('grade', 0);
             }
 
             if ($this->_features->advancedgrading
