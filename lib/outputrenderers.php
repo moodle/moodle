@@ -533,7 +533,7 @@ class core_renderer extends renderer_base {
             $realuser = session_get_realuser();
             $fullname = fullname($realuser, true);
             if ($withlinks) {
-                $realuserinfo = " [<a href=\"$CFG->wwwroot/course/loginas.php?id=$course->id&amp;sesskey=".sesskey()."\">$fullname</a>] ";
+                $realuserinfo = " [<a href=\"$CFG->wwwroot/course/loginas.php?id=$course->id&amp;return=1&amp;sesskey=".sesskey()."\">$fullname</a>] ";
             } else {
                 $realuserinfo = " [$fullname] ";
             }
