@@ -1413,7 +1413,7 @@ function get_config($plugin, $name = NULL) {
 
     $cache = cache::make('core', 'config');
     $result = $cache->get($plugin);
-    if (!$result) {
+    if ($result === false) {
         // the user is after a recordset
         $result = new stdClass;
         if (!$iscore) {
