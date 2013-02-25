@@ -6,20 +6,36 @@ require_once('lib.php');
 
 $id = optional_param('id', SITEID, PARAM_INT);   // course id
 
-/// Reset user back to their real self if needed, for security reasons you need to log out and log in again
-if (session_is_loggedinas()) {
-    require_sesskey();
-    require_logout();
-
-    if ($id and $id != SITEID) {
-        $SESSION->wantsurl = "$CFG->wwwroot/course/view.php?id=".$id;
-    } else {
-        $SESSION->wantsurl = "$CFG->wwwroot/";
-    }
-
-    redirect(get_login_url());
-}
-
++//KK copied from 1.9.12
++/// Reset user back to their real self if needed
++    $return = optional_param('return', 0, PARAM_BOOL);   // return to the page we came from
++
++    if (!empty($USER->realuser)) {
++        if (!confirm_sesskey()) {
++            print_error('confirmsesskeybad');
++        }
++
++        $USER = get_complete_user_data('id', $USER->realuser);
++        load_all_capabilities();   // load all this user's normal capabilities
++
++        if (isset($SESSION->oldcurrentgroup)) {      // Restore previous "current group" cache.
++            $SESSION->currentgroup = $SESSION->oldcurrentgroup;
++            unset($SESSION->oldcurrentgroup);
++        }
++        if (isset($SESSION->oldtimeaccess)) {        // Restore previous timeaccess settings
++            $USER->timeaccess = $SESSION->oldtimeaccess;
++            unset($SESSION->oldtimeaccess);
++        }
++        if (isset($SESSION->grade_last_report)) {    // Restore grade defaults if any
++            $USER->grade_last_report = $SESSION->grade_last_report;
++            unset($SESSION->grade_last_report);
++        }
++        if ($return and isset($_SERVER["HTTP_REFERER"])) { // That's all we wanted to do, so let's go back
++            redirect($_SERVER["HTTP_REFERER"]);
++        } else {
++            redirect($CFG->wwwroot);
++        }
+     }
 ///-------------------------------------
 /// We are trying to log in as this user in the first place
 
