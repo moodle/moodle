@@ -1833,8 +1833,8 @@ class file_storage {
         $referencehash = sha1($reference);
 
         $sql = "SELECT repositoryid, id FROM {files_reference}
-                 WHERE referencehash = ? and reference = ?";
-        $rs = $DB->get_recordset_sql($sql, array($referencehash, $reference));
+                 WHERE referencehash = ?";
+        $rs = $DB->get_recordset_sql($sql, array($referencehash));
 
         $now = time();
         foreach ($rs as $record) {
