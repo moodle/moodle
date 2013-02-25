@@ -6,7 +6,7 @@
 /** General display rules **/
 .block_settings .block_tree {margin:5px;padding-left:0px;overflow:visible;}
 .block_settings .block_tree li {margin:0;list-style: none;}
-.block_settings .block_tree li ul {padding-left:18px;margin:0;}
+.block_settings .block_tree li ul {padding-left:8px;margin:0;}
 
 .block_settings .block_tree li.item_with_icon > p {position:relative;}
 .block_settings .block_tree li.item_with_icon > p img {vertical-align:middle;position:absolute;left:0;top:-1px; width: 16px; height: 16px;}

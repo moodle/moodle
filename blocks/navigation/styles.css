@@ -11,7 +11,7 @@
 .block_navigation .block_tree li.item_with_icon.contains_branch > .tree_item {padding-left:37px;}
 
 .block_navigation .block_tree li ul {padding-left:0;margin:0;}
-.block_navigation .block_tree li.depth_2 ul {padding-left:16px;margin:0;}
+.block_navigation .block_tree li.depth_2 ul {padding-left:6px;margin:0;}
 .block_navigation .block_tree .type_activity > p.tree_item.branch.hasicon.active_tree_node,
 .block_navigation .block_tree .tree_item {padding-left: 21px;margin:3px 0px;text-align:left;}
 
