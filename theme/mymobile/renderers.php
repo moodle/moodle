@@ -143,11 +143,9 @@ class theme_mymobile_core_renderer extends core_renderer {
         if ($classes == 'helpheading') {
             // Keeps wrap from help headings in dialog.
             $content = parent::heading($text, $level, $classes, $id);
-        }
-        else if ($classes == 'accesshide' || $classes == 'section-title') {
-        	$content = parent::heading($text, $level, $classes, $id);
-        }
-         else {
+        } else if ($classes == 'accesshide' || $classes == 'section-title') {
+            $content = parent::heading($text, $level, $classes, $id);
+        } else {
             $content  = html_writer::start_tag('div', array('class' => 'headingwrap ui-bar-'.$this->theme_swatch() .' ui-footer'));
             $content .= parent::heading($text, $level, $classes.' ui-title', $id);
             $content .= html_writer::end_tag('div');
@@ -305,7 +303,7 @@ class theme_mymobile_core_renderer extends core_renderer {
      *
      * @return string
      */
-   public function login_info($withlinks = null) {
+    public function login_info($withlinks = null) {
         global $USER, $CFG, $DB, $SESSION;
 
         if (during_initial_install()) {
@@ -367,7 +365,7 @@ class theme_mymobile_core_renderer extends core_renderer {
                     $loggedinas .= " (<a href=\"$CFG->wwwroot/course/view.php?id=$course->id&amp;switchrole=0&amp;sesskey=".sesskey()."\">".get_string('switchrolereturn').'</a>)';
                 }
             } else {
-              $loggedinas = $realuserinfo.$username.'     <a id="mypower" data-inline="true" data-role="button" data-icon="mypower" data-ajax="false" class="ui-btn-right mypower" href="'.$CFG->wwwroot.'/login/logout.php?sesskey='.sesskey().'\">'.get_string('logout').'</a>';
+                $loggedinas = $realuserinfo.$username.'     <a id="mypower" data-inline="true" data-role="button" data-icon="mypower" data-ajax="false" class="ui-btn-right mypower" href="'.$CFG->wwwroot.'/login/logout.php?sesskey='.sesskey().'\">'.get_string('logout').'</a>';
             }
         } else {
             $loggedinas = "";
