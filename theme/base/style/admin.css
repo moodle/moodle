@@ -175,6 +175,7 @@
 #adminsettings .form-item .patherror {margin-left: 0.5em;}
 #adminsettings #admin-emoticons table td input {width: 8em;}
 #adminsettings #admin-emoticons table td.c0 input {width: 4em;}
+#adminsettings .form-overridden {background-color: yellow;}
 
 #adminthemeselector .selectedtheme td.c0 {border:1px solid;border-right-width:0;}
 #adminthemeselector .selectedtheme td.c1 {border:1px solid;border-left-width:0;}
