@@ -219,7 +219,7 @@ class admin_uploaduser_form2 extends moodleform {
 
         $choices = array(0 => get_string('emaildisplayno'), 1 => get_string('emaildisplayyes'), 2 => get_string('emaildisplaycourse'));
         $mform->addElement('select', 'maildisplay', get_string('emaildisplay'), $choices);
-        $mform->setDefault('maildisplay', 2);
+        $mform->setDefault('maildisplay', 0);
 
         $choices = array(0 => get_string('textformat'), 1 => get_string('htmlformat'));
         $mform->addElement('select', 'mailformat', get_string('emailformat'), $choices);
@@ -228,12 +228,12 @@ class admin_uploaduser_form2 extends moodleform {
 
         $choices = array(0 => get_string('emaildigestoff'), 1 => get_string('emaildigestcomplete'), 2 => get_string('emaildigestsubjects'));
         $mform->addElement('select', 'maildigest', get_string('emaildigest'), $choices);
-        $mform->setDefault('maildigest', 0);
+        $mform->setDefault('maildigest', 2);
         $mform->setAdvanced('maildigest');
 
         $choices = array(1 => get_string('autosubscribeyes'), 0 => get_string('autosubscribeno'));
         $mform->addElement('select', 'autosubscribe', get_string('autosubscribe'), $choices);
-        $mform->setDefault('autosubscribe', 1);
+        $mform->setDefault('autosubscribe', 0);
 
         $editors = editors_get_enabled();
         if (count($editors) > 1) {
