@@ -307,7 +307,7 @@ class assignment_online extends assignment_base {
 
         $mform->addElement('select', 'var1', get_string('commentinline', 'assignment'), $ynoptions);
         $mform->addHelpButton('var1', 'commentinline', 'assignment');
-        $mform->setDefault('var1', 0);
+        $mform->setDefault('var1', 1);
 
         $coursecontext = context_course::instance($COURSE->id);
         plagiarism_get_form_elements_module($mform, $coursecontext, 'mod_assignment');
