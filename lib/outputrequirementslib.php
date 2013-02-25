@@ -155,12 +155,15 @@ class page_requirements_manager {
         $sep = empty($CFG->yuislasharguments) ? '?' : '/';
 
         $this->yui3loader = new stdClass();
+        $this->YUI_config = new stdClass();
 
         // Set up some loader options.
         if (debugging('', DEBUG_DEVELOPER)) {
             $this->yui3loader->filter = 'RAW'; // For more detailed logging info use 'DEBUG' here.
+            $this->YUI_config->debug = true;
         } else {
             $this->yui3loader->filter = null;
+            $this->YUI_config->debug = false;
         }
         if (!empty($CFG->useexternalyui) and strpos($CFG->httpswwwroot, 'https:') !== 0) {
             $this->yui3loader->base = 'http://yui.yahooapis.com/' . $CFG->yui3version . '/build/';
@@ -182,7 +185,6 @@ class page_requirements_manager {
         }
 
         // Set up JS YUI loader helper object.
-        $this->YUI_config = new stdClass();
         $this->YUI_config->base         = $this->yui3loader->base;
         $this->YUI_config->comboBase    = $this->yui3loader->comboBase;
         $this->YUI_config->combine      = $this->yui3loader->combine;
