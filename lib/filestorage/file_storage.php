@@ -1635,7 +1635,7 @@ class file_storage {
     public function deleted_file_cleanup($contenthash) {
         global $DB;
 
-        if ($contenthash === 'da39a3ee5e6b4b0d3255bfef95601890afd80709') {
+        if ($contenthash === sha1('')) {
             // No need to delete empty content file with sha1('') content hash.
             return;
         }
