@@ -71,7 +71,8 @@ class assign_submission_comments extends assign_submission_plugin {
         $comment = new comment($options);
         $comment->set_view_permission(true);
 
-        return $comment->output(true);
+        $o = $this->assignment->get_renderer()->container($comment->output(true), 'commentscontainer');
+        return $o;
     }
 
     /**
