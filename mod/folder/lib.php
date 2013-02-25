@@ -26,6 +26,11 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+/** Display folder contents on a separate page */
+define('FOLDER_DISPLAY_PAGE', 0);
+/** Display folder contents inline in a course */
+define('FOLDER_DISPLAY_INLINE', 1);
+
 /**
  * List of features supported in Folder module
  * @param string $feature FEATURE_xx constant for requested feature
@@ -405,4 +410,87 @@ function folder_dndupload_handle($uploadinfo) {
 
     $DB->delete_records('folder', array('id' => $data->id));
     return false;
+}
+
+/**
+ * Given a coursemodule object, this function returns the extra
+ * information needed to print this activity in various places.
+ *
+ * If folder needs to be displayed inline we store additional information
+ * in customdata, so functions {@link folder_cm_info_dynamic()} and
+ * {@link folder_cm_info_view()} do not need to do DB queries
+ *
+ * @param cm_info $cm
+ * @return cached_cm_info info
+ */
+function folder_get_coursemodule_info($cm) {
+    global $DB;
+    if (!($folder = $DB->get_record('folder', array('id' => $cm->instance),
+            'id, name, display, intro, introformat'))) {
+        return NULL;
+    }
+    $cminfo = new cached_cm_info();
+    $cminfo->name = $folder->name;
+    if ($folder->display == FOLDER_DISPLAY_INLINE) {
+        // prepare folder object to store in customdata
+        $fdata = new stdClass();
+        if ($cm->showdescription && strlen(trim($folder->intro))) {
+            $fdata->intro = $folder->intro;
+            if ($folder->introformat != FORMAT_MOODLE) {
+                $fdata->introformat = $folder->introformat;
+            }
+        }
+        $cminfo->customdata = $fdata;
+    } else {
+        if ($cm->showdescription) {
+            // Convert intro to html. Do not filter cached version, filters run at display time.
+            $cminfo->content = format_module_intro('folder', $folder, $cm->id, false);
+        }
+    }
+    return $cminfo;
+}
+
+/**
+ * Sets dynamic information about a course module
+ *
+ * This function is called from cm_info when displaying the module
+ * mod_folder can be displayed inline on course page and therefore have no course link
+ *
+ * @param cm_info $cm
+ */
+function folder_cm_info_dynamic(cm_info $cm) {
+    if ($cm->get_custom_data()) {
+        // the field 'customdata' is not empty IF AND ONLY IF we display contens inline
+        $cm->set_no_view_link();
+    }
+}
+
+/**
+ * Overwrites the content in the course-module object with the folder files list
+ * if folder.display == FOLDER_DISPLAY_INLINE
+ *
+ * @param cm_info $cm
+ */
+function folder_cm_info_view(cm_info $cm) {
+    global $PAGE;
+    if ($cm->uservisible && $cm->get_custom_data() &&
+            has_capability('mod/folder:view', $cm->context)) {
+        // Restore folder object from customdata.
+        // Note the field 'customdata' is not empty IF AND ONLY IF we display contens inline.
+        // Otherwise the content is default.
+        $folder = $cm->get_custom_data();
+        $folder->id = (int)$cm->instance;
+        $folder->course = (int)$cm->course;
+        $folder->display = FOLDER_DISPLAY_INLINE;
+        $folder->name = $cm->name;
+        if (empty($folder->intro)) {
+            $folder->intro = '';
+        }
+        if (empty($folder->introformat)) {
+            $folder->introformat = FORMAT_MOODLE;
+        }
+        // display folder
+        $renderer = $PAGE->get_renderer('mod_folder');
+        $cm->set_content($renderer->display_folder($folder));
+    }
 }
