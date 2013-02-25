@@ -2287,12 +2287,14 @@ class assign {
         }
         $user = $DB->get_record('user', array('id' => $userid));
         if ($user) {
-            $o .= $this->get_renderer()->render(new assign_user_summary($user,
-                                                                $this->get_course()->id,
-                                                                has_capability('moodle/site:viewfullnames',
-                                                                $this->get_course_context()),
-                                                                $this->is_blind_marking(),
-                                                                $this->get_uniqueid_for_user($user->id)));
+            $viewfullnames = has_capability('moodle/site:viewfullnames', $this->get_course_context());
+            $usersummary = new assign_user_summary($user,
+                                                   $this->get_course()->id,
+                                                   $viewfullnames,
+                                                   $this->is_blind_marking(),
+                                                   $this->get_uniqueid_for_user($user->id),
+                                                   get_extra_user_fields($this->get_context()));
+            $o .= $this->get_renderer()->render($usersummary);
         }
         $submission = $this->get_user_submission($userid, false);
         $submissiongroup = null;
