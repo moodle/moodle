@@ -1115,9 +1115,9 @@ class flexible_table {
                     if (($CFG->fullnamedisplay == 'firstname lastname') or
                         ($CFG->fullnamedisplay == 'firstname') or
                         ($CFG->fullnamedisplay == 'language' and $fullnamelanguage == 'firstname lastname' )) {
-                        $this->headers[$index] = $firstnamesortlink . ' / ' . $lastnamesortlink;
+                        $this->headers[$index] = $firstnamesortlink . ' /<br /> ' . $lastnamesortlink;
                     } else {
-                        $this->headers[$index] = $lastnamesortlink . ' / ' . $firstnamesortlink;
+                        $this->headers[$index] = $lastnamesortlink . ' /<br /> ' . $firstnamesortlink;
                     }
                 }
                 break;
