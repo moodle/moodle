@@ -112,6 +112,7 @@ class mod_forum_mod_form extends moodleform_mod {
             $choices[50] = '50';
             $mform->addElement('select', 'rssarticles', get_string('rssarticles'), $choices);
             $mform->addHelpButton('rssarticles', 'rssarticles', 'forum');
+            $mform->disabledIf('rssarticles', 'rsstype', 'eq', '0');
         }
 
 //-------------------------------------------------------------------------------
