@@ -484,4 +484,55 @@ class courselib_testcase extends advanced_testcase {
         }
     }
 
+    public function test_course_page_type_list() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        // Create a category.
+        $category = new stdClass();
+        $category->name = 'Test Category';
+
+        $testcategory = $this->getDataGenerator()->create_category($category);
+
+        // Create a course.
+        $course = new stdClass();
+        $course->fullname = 'Apu loves Unit Təsts';
+        $course->shortname = 'Spread the lŭve';
+        $course->idnumber = '123';
+        $course->summary = 'Awesome!';
+        $course->summaryformat = FORMAT_PLAIN;
+        $course->format = 'topics';
+        $course->newsitems = 0;
+        $course->numsections = 5;
+        $course->category = $testcategory->id;
+
+        $testcourse = $this->getDataGenerator()->create_course($course);
+
+        // Create contexts.
+        $coursecontext = context_course::instance($testcourse->id);
+        $parentcontext = $coursecontext->get_parent_context(); // Not actually used.
+        $pagetype = 'page-course-x'; // Not used either.
+        $pagetypelist = course_page_type_list($pagetype, $parentcontext, $coursecontext);
+
+        // Page type lists for normal courses.
+        $testpagetypelist1 = array();
+        $testpagetypelist1['*'] = 'Any page';
+        $testpagetypelist1['course-*'] = 'Any course page';
+        $testpagetypelist1['course-view-*'] = 'Any type of course main page';
+
+        $this->assertEquals($testpagetypelist1, $pagetypelist);
+
+        // Get the context for the front page course.
+        $sitecoursecontext = context_course::instance(SITEID);
+        $pagetypelist = course_page_type_list($pagetype, $parentcontext, $sitecoursecontext);
+
+        // Page type list for the front page course.
+        $testpagetypelist2 = array('*' => 'Any page');
+        $this->assertEquals($testpagetypelist2, $pagetypelist);
+
+        // Make sure that providing no current context to the function doesn't result in an error.
+        // Calls made from generate_page_type_patterns() may provide null values.
+        $pagetypelist = course_page_type_list($pagetype, null, null);
+        $this->assertEquals($pagetypelist, $testpagetypelist1);
+    }
 }
