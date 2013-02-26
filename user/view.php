@@ -106,6 +106,7 @@ if ($currentuser) {
     // somebody else
     $PAGE->set_title("$strpersonalprofile: ");
     $PAGE->set_heading("$strpersonalprofile: ");
+    $PAGE->set_pagelayout('standard');
 
     // check course level capabilities
     if (!has_capability('moodle/user:viewdetails', $coursecontext) && // normal enrolled user or mnager
