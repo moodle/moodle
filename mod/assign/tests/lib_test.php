@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->dirroot . '/mod/assign/lib.php');
 require_once($CFG->dirroot . '/mod/assign/locallib.php');
+require_once($CFG->dirroot . '/mod/assign/tests/base_test.php');
 
 /**
  * Unit tests for (some of) mod/assign/lib.php.
@@ -36,96 +37,10 @@ require_once($CFG->dirroot . '/mod/assign/locallib.php');
  * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_assign_lib_testcase extends advanced_testcase {
-
-    /** @var stdClass $course New course created to hold the assignments */
-    protected $course = null;
-
-    /** @var array $teachers List of 5 default teachers in the course*/
-    protected $teachers = null;
-
-    /** @var array $editingteachers List of 5 default editing teachers in the course*/
-    protected $editingteachers = null;
-
-    /** @var array $students List of 100 default students in the course*/
-    protected $students = null;
-
-    /** @var array $groups List of 10 groups in the course */
-    protected $groups = null;
-
-    /**
-     * Setup function - we will create a course and users.
-     */
-    protected function setUp() {
-        global $DB, $CFG;
-
-        $this->resetAfterTest(true);
-
-        $this->course = $this->getDataGenerator()->create_course();
-        $this->teachers = array();
-        for ($i = 0; $i < 5; $i++) {
-            array_push($this->teachers, $this->getDataGenerator()->create_user());
-        }
-
-        $this->editingteachers = array();
-        for ($i = 0; $i < 5; $i++) {
-            array_push($this->editingteachers, $this->getDataGenerator()->create_user());
-        }
-
-        $this->students = array();
-        for ($i = 0; $i < 100; $i++) {
-            array_push($this->students, $this->getDataGenerator()->create_user());
-        }
-
-        $this->groups = array();
-        for ($i = 0; $i < 10; $i++) {
-            array_push($this->groups, $this->getDataGenerator()->create_group(array('courseid'=>$this->course->id)));
-        }
-
-        $teacherrole = $DB->get_record('role', array('shortname'=>'teacher'));
-        foreach ($this->teachers as $i => $teacher) {
-            $this->getDataGenerator()->enrol_user($teacher->id,
-                                                  $this->course->id,
-                                                  $teacherrole->id);
-            groups_add_member($this->groups[$i % 10], $teacher);
-        }
-
-        $editingteacherrole = $DB->get_record('role', array('shortname'=>'editingteacher'));
-        foreach ($this->editingteachers as $i => $editingteacher) {
-            $this->getDataGenerator()->enrol_user($editingteacher->id,
-                                                  $this->course->id,
-                                                  $editingteacherrole->id);
-            groups_add_member($this->groups[$i % 10], $editingteacher);
-        }
-
-        $studentrole = $DB->get_record('role', array('shortname'=>'student'));
-        foreach ($this->students as $i => $student) {
-            $this->getDataGenerator()->enrol_user($student->id,
-                                                  $this->course->id,
-                                                  $studentrole->id);
-            if ($i < 80) {
-                groups_add_member($this->groups[$i % 10], $student);
-            }
-        }
-    }
-
-    /**
-     * Create an assignment in the current course.
-     *
-     * @param array $params - A list of params used to configure the assignment
-     * @return assign class
-     */
-    private function create_instance($params=array()) {
-        $this->setUser($this->editingteachers[0]);
-        $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
-        $params['course'] = $this->course->id;
-        $instance = $generator->create_instance($params);
-        $cm = get_coursemodule_from_instance('assign', $instance->id);
-        $context = context_module::instance($cm->id);
-        return new assign($context, $cm, $this->course);
-    }
+class mod_assign_lib_testcase extends mod_assign_base_testcase {
 
     public function test_assign_print_overview() {
+        $this->setUser($this->editingteachers[0]);
         $this->create_instance();
         $this->create_instance(array('duedate'=>time()));
 
@@ -146,6 +61,7 @@ class mod_assign_lib_testcase extends advanced_testcase {
     }
 
     public function test_print_recent_activity() {
+        $this->setUser($this->editingteachers[0]);
         $assign = $this->create_instance();
 
         $submission = $assign->get_user_submission($this->students[0]->id, true);
@@ -155,6 +71,7 @@ class mod_assign_lib_testcase extends advanced_testcase {
     }
 
     public function test_assign_get_recent_mod_activity() {
+        $this->setUser($this->editingteachers[0]);
         $assign = $this->create_instance();
 
         $submission = $assign->get_user_submission($this->students[0]->id, true);
@@ -178,6 +95,8 @@ class mod_assign_lib_testcase extends advanced_testcase {
 
     public function test_assign_user_complete() {
         global $PAGE;
+
+        $this->setUser($this->editingteachers[0]);
         $assign = $this->create_instance(array('submissiondrafts' => 1));
         $PAGE->set_url(new moodle_url('/mod/assign/view.php', array('id'=>$assign->get_course_module()->id)));
 
@@ -188,6 +107,7 @@ class mod_assign_lib_testcase extends advanced_testcase {
     }
 
     public function test_assign_user_outline() {
+        $this->setUser($this->editingteachers[0]);
         $assign = $this->create_instance();
 
         $this->setUser($this->teachers[0]);
