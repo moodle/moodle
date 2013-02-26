@@ -2004,6 +2004,7 @@ class file_storage {
         // find out all stale draft areas (older than 4 days) and purge them
         // those are identified by time stamp of the /. root dir
         mtrace('Deleting old draft files... ', '');
+        cron_trace_time_and_memory();
         $old = time() - 60*60*24*4;
         $sql = "SELECT *
                   FROM {files}
@@ -2019,6 +2020,7 @@ class file_storage {
         // remove orphaned preview files (that is files in the core preview filearea without
         // the existing original file)
         mtrace('Deleting orphaned preview files... ', '');
+        cron_trace_time_and_memory();
         $sql = "SELECT p.*
                   FROM {files} p
              LEFT JOIN {files} o ON (p.filename = o.contenthash)
@@ -2041,6 +2043,7 @@ class file_storage {
             require_once($CFG->libdir.'/filelib.php');
             // Delete files that are associated with a context that no longer exists.
             mtrace('Cleaning up files from deleted contexts... ', '');
+            cron_trace_time_and_memory();
             $sql = "SELECT DISTINCT f.contextid
                     FROM {files} f
                     LEFT OUTER JOIN {context} c ON f.contextid = c.id
@@ -2056,6 +2059,7 @@ class file_storage {
             mtrace('done.');
 
             mtrace('Deleting trash files... ', '');
+            cron_trace_time_and_memory();
             fulldelete($this->trashdir);
             set_config('fileslastcleanup', time());
             mtrace('done.');

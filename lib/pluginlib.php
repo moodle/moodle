@@ -809,6 +809,7 @@ class available_update_checker {
         $start = mktime(1, 0, 0, date('n', $now), date('j', $now), date('Y', $now)); // 01:00 AM today local time
         if ($now > $start + $offset) {
             $this->cron_mtrace('Regular daily check for available updates ... ', '');
+            cron_trace_time_and_memory();
             $this->cron_execute();
             return;
         }

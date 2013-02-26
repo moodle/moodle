@@ -3110,6 +3110,7 @@ function calendar_cron() {
     require_once($CFG->libdir.'/bennu/bennu.inc.php');
 
     mtrace('Updating calendar subscriptions:');
+    cron_trace_time_and_memory();
 
     $time = time();
     $subscriptions = $DB->get_records_sql('SELECT * FROM {event_subscriptions} WHERE pollinterval > 0 AND lastupdated + pollinterval < ?', array($time));
