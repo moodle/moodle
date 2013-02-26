@@ -56,7 +56,7 @@ class qtype_multichoice_edit_form extends question_edit_form {
         $mform->addElement('select', 'answernumbering',
                 get_string('answernumbering', 'qtype_multichoice'),
                 qtype_multichoice::get_numbering_styles());
-        $mform->setDefault('answernumbering', 'abc');
+        $mform->setDefault('answernumbering', 'none');
 
         $this->add_per_answer_fields($mform, get_string('choiceno', 'qtype_multichoice', '{no}'),
                 question_bank::fraction_options_full(), max(5, QUESTION_NUMANS_START));
