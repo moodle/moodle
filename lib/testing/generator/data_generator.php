@@ -176,8 +176,12 @@ EOD;
             }
         }
 
-        if (!isset($record['password'])) {
-            $record['password'] = 'lala';
+        if (isset($record['password'])) {
+            $record['password'] = hash_internal_user_password($record['password']);
+        } else {
+            // The auth plugin may not fully support this,
+            // but it is still better/faster than hashing random stuff.
+            $record['password'] = AUTH_PASSWORD_NOT_CACHED;
         }
 
         if (!isset($record['email'])) {
@@ -203,9 +207,6 @@ EOD;
         $record['timecreated'] = time();
         $record['timemodified'] = $record['timecreated'];
         $record['lastip'] = '0.0.0.0';
-
-        // Use fast hash during testing.
-        $record['password'] = hash_internal_user_password($record['password'], true);
 
         if ($record['deleted']) {
             $delname = $record['email'].'.'.time();
