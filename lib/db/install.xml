@@ -1983,8 +1983,8 @@
         <KEY NAME="loggeduser" TYPE="foreign" FIELDS="loggeduser" REFTABLE="user" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="action" UNIQUE="false" FIELDS="action" COMMENT="insert/update/delete" NEXT="timemodified"/>
-        <INDEX NAME="timemodified" UNIQUE="false" FIELDS="timemodified" PREVIOUS="action"/>
+        <INDEX NAME="action" UNIQUE="false" FIELDS="action" COMMENT="insert/update/delete"/>
+        <INDEX NAME="timemodified" UNIQUE="false" FIELDS="timemodified"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="grade_import_newitem" COMMENT="temporary table for storing new grade_item names from grade import">
