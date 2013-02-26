@@ -1,8 +1,35 @@
 Version history:
 
+3.2.13
+------
+- Updated to automatically load the latest controls and audio plugins
+
+3.2.12
+------
+- new flowplayer.js version 3.2.11,
+   fixes removing the player in fullscreen mode leaves Android locked in landscape orientation (#511)
+- #586 add a bitrate label with a new namespace attribute fp:bitratelabel.
+- #583 fixes for handling the fullscreenOnly property better
+- #494 with relative filenames with a root path strip the baseurl of paths first.
+
+3.2.11
+------
+- new flowplayer.js, now requires Flash 10.1 as the minimum flash version
+- #526 allow click through event for flash installation message when using div containers.
+- #508 disabling the stagevideo screen mask, canvas is visible without it, this was causing issues with the display list.
+- #443 adding accessibility option to the playbuttonoverlay.
+
+
+3.2.10
+------
+- Fixed #514, scrubbing was broken
+- new flowplayer.js version 3.2.9, fixes #510
+
 3.2.9
 -----
 - Fixed #490, controlbar background, buffer bar and progress bar colors were all reset to white
+- #503 Update viewport when stage is added to obtain the coordnates correctly. Update viewport when in and out of fullscreen.
+- #508 stage video mask was being added to the top layer and hiding all children.
 
 3.2.8
 -----
@@ -69,6 +96,7 @@ this.loadPlugin("content","../flowplayer.content.swf", { html: "test"  }, functi
 - #461 when we have a clip base url set, we need the complete clip url sent to play2 for http streams.
 - #470 check for a playlist when replacing the playlist with an rss feed.
 - #494 regression issued caused by #412, enable base url correctly.
+- #30 regression caused by character replacements, removing for now and let end user deal with them.
 
 3.2.7
 -----

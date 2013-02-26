@@ -1,5 +1,18 @@
 Version history:
 
+3.2.10
+------
+- #575 send the start event after begin
+- #569 if the playlist has been reset but the audio has been already buffered, set the duration and start event.
+- #582 fixes for metadata events dispatching in playlists and when replaying same audio item, cleanup duration updating once download has completed,
+fixes for clearing the previous cover image display.
+- #611 close the channel and sound on stream not found errors.
+
+3.2.9
+-----
+- #501 fixes to dispatch start state correctly.
+- #501 use the sound channel to listen for a complete event to finish correctly.
+
 3.2.8
 -----
 Fixes:
