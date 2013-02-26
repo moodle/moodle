@@ -89,7 +89,7 @@ class assign_upgrade_manager {
         $data->allowsubmissionsfromdate = $oldassignment->timeavailable;
         $data->grade = $oldassignment->grade;
         if ($oldassignment->resubmit == 1) {$data->submissiondrafts = 0;
-        } else { $data->submissiondrafts; }  
+        } else { $data->submissiondrafts = 1; }  
         $data->requiresubmissionstatement = 0;
         $data->cutoffdate = 0;
         // New way to specify no late submissions.
