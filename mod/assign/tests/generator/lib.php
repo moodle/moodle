@@ -46,12 +46,6 @@ class mod_assign_generator extends testing_module_generator {
             throw new coding_exception('module generator requires $record->course');
         }
 
-        if (isset($options['idnumber'])) {
-            $record->cmidnumber = $options['idnumber'];
-        } else {
-            $record->cmidnumber = '';
-        }
-
         $defaultsettings = array(
             'name'                              => get_string('pluginname', 'assign').' '.$i,
             'intro'                             => 'Test assign ' . $i,
@@ -63,18 +57,13 @@ class mod_assign_generator extends testing_module_generator {
             'sendlatenotifications'             => 0,
             'duedate'                           => 0,
             'allowsubmissionsfromdate'          => 0,
-            'assignsubmission_onlinetext_enabled' => 0,
-            'assignsubmission_file_enabled'     => 0,
-            'assignsubmission_comments_enabled' => 0,
-            'assignfeedback_comments_enabled'   => 0,
-            'assignfeedback_file_enabled'       => 0,
-            'assignfeedback_offline_enabled'    => 0,
             'grade'                             => 100,
             'cutoffdate'                        => 0,
             'teamsubmission'                    => 0,
             'requireallteammemberssubmit'       => 0,
             'teamsubmissiongroupingid'          => 0,
             'blindmarking'                      => 0,
+            'cmidnumber'                        => ''
         );
 
         foreach ($defaultsettings as $name => $value) {
