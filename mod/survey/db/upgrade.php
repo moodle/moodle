@@ -85,7 +85,7 @@ function xmldb_survey_upgrade($oldversion) {
                     if ($fieldname == 'time') {
                         $DB->execute("UPDATE " . $CFG->prefix . $tablename . " SET {$fieldname} = 0 WHERE {$fieldname} IS NULL", array($DB->sql_empty()));
                     } else {
-                        $DB->execute("UPDATE " . $CFG->prefix . $tablename . " SET {$fieldname} = ? WHERE {$fieldname} IS NULL", array($DB->sql_empty())); 
+                        $DB->execute("UPDATE " . $CFG->prefix . $tablename . " SET {$fieldname} = ? WHERE {$fieldname} IS NULL", array($DB->sql_empty()));
                     }
                     $dbman->change_field_precision($table, $field);
                 }
