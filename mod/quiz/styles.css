@@ -211,7 +211,6 @@ body.jsenabled .questionflagcheckbox {
 
 #page-mod-quiz-edit div.question div.content .questiontext,
 #categoryquestions .questiontext {
-    -o-text-overflow: ellipsis;
     text-overflow: ellipsis;
     position: relative;
     zoom: 1;
@@ -563,9 +562,6 @@ table#categoryquestions {
     margin-bottom: 0.2em;
     border-left: thin solid #777;
     line-height: 1.3em;
-    -webkit-border-radius: 0.6em;
-    -webkit-border-radius-bottomleft: 0;
-    -webkit-border-radius-topleft: 0;
     border-radius: 0.6em;
     border-radius-bottomleft: 0;
     border-radius-topleft: 0;
@@ -574,8 +570,6 @@ table#categoryquestions {
     background-color: #d6d6d6;
 }
 #page-mod-quiz-edit div.quizpage .pagecontent .pagestatus {
-    -webkit-border-radius-bottomright: 0.3em;
-    -webkit-border-radius-topright: 0.3em;
     border-radius-bottomright: 0.3em;
     border-radius-topright: 0.3em;
     margin: 0.3em;
@@ -644,9 +638,6 @@ table#categoryquestions {
     width: 87%;
     float: left;
     position: relative;
-    -webkit-border-radius: 0.3em;
-    -webkit-border-radius-bottomleft: 0;
-    -webkit-border-radius-topleft: 0;
     border-radius: 0.3em;
     border-radius-bottomleft: 0;
     border-radius-topleft: 0;
@@ -757,9 +748,6 @@ table#categoryquestions {
     width: 87%;
     float: left;
     position: relative;
-    -webkit-border-radius: 0.6em;
-    -webkit-border-radius-bottomleft: 0;
-    -webkit-border-radius-topleft: 0;
     border-radius: 0.6em;
     border-radius-bottomleft: 0;
     border-radius-topleft: 0;
@@ -775,9 +763,6 @@ table#categoryquestions {
     max-width: 30%;
     position: absolute;
     right: 60px;
-    -webkit-border-radius: 0.2em;
-    -webkit-border-radius-bottomleft: 0;
-    -webkit-border-radius-topleft: 0;
     border-radius: 0.2em;
     border-radius-bottomleft: 0;
     border-radius-topleft: 0;
@@ -798,9 +783,6 @@ table#categoryquestions {
     max-width: 30%;
     position: absolute;
     right: 50px;
-    -webkit-border-radius: 0.2em;
-    -webkit-border-radius-bottomleft: 0;
-    -webkit-border-radius-topleft: 0;
     border-radius: 0.2em;
     border-radius-bottomleft: 0;
     border-radius-topleft: 0;
@@ -889,7 +871,6 @@ table#categoryquestions {
     max-width: 15em;
     overflow: hidden;
     text-overflow: ellipsis;
-    -o-text-overflow: ellipsis;
     white-space: nowrap;
     float: left;
     position: relative;
