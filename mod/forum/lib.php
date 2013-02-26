@@ -5426,7 +5426,7 @@ function forum_user_can_see_post($forum, $discussion, $post, $user=NULL, $cm=NUL
         $firstpost = forum_get_firstpost_from_discussion($discussion->id);
         $userfirstpost = forum_get_user_posted_time($discussion->id, $user->id);
 
-        return (($userfirstpost !== false && (time() - $userfirstpost >= $CFG->maxeditingtime)) ||
+        return ($userfirstpost !== false  ||
                 $firstpost->id == $post->id || $post->userid == $user->id || $firstpost->userid == $user->id ||
                 has_capability('mod/forum:viewqandawithoutposting', $modcontext, $user->id));
     }
