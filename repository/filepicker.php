@@ -95,6 +95,10 @@ if ($repository = $DB->get_record_sql($sql, array($repo_id))) {
 }
 
 // Make sure maxbytes passed is within site filesize limits.
+$coursemaxbytes = 0;
+if (!empty($course)) {
+   $coursemaxbytes = $course->maxbytes;
+}
 $maxbytes = get_max_upload_file_size($CFG->maxbytes, $coursemaxbytes, $maxbytes);
 
 $params = array('ctx_id' => $contextid, 'itemid' => $itemid, 'env' => $env, 'course'=>$courseid, 'maxbytes'=>$maxbytes, 'maxfiles'=>$maxfiles, 'subdirs'=>$subdirs, 'sesskey'=>sesskey());
