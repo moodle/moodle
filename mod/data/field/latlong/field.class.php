@@ -78,7 +78,9 @@ class data_field_latlong extends data_field_base {
 
         $options = array();
         foreach ($latlongsrs as $latlong) {
-            $options[$latlong->la . ',' . $latlong->lo] = $latlong->la . ',' . $latlong->lo;
+            $latitude = format_float($latlong->la, 4);
+            $longitude = format_float($latlong->lo, 4);
+            $options[$latlong->la . ',' . $latlong->lo] = $latitude . ' ' . $longitude;
         }
         $latlongsrs->close();
 
@@ -120,15 +122,16 @@ class data_field_latlong extends data_field_base {
             if (strlen($long) < 1) {
                 return false;
             }
+            // We use format_float to display in the regional format.
             if($lat < 0) {
-                $compasslat = sprintf('%01.4f', -$lat) . '°S';
+                $compasslat = format_float(-$lat, 4) . '°S';
             } else {
-                $compasslat = sprintf('%01.4f', $lat) . '°N';
+                $compasslat = format_float($lat, 4) . '°N';
             }
             if($long < 0) {
-                $compasslong = sprintf('%01.4f', -$long) . '°W';
+                $compasslong = format_float(-$long, 4) . '°W';
             } else {
-                $compasslong = sprintf('%01.4f', $long) . '°E';
+                $compasslong = format_float($long, 4) . '°E';
             }
 
             // Now let's create the jump-to-services link
@@ -149,7 +152,7 @@ class data_field_latlong extends data_field_base {
             if(sizeof($servicesshown)==1 && $servicesshown[0]) {
                 $str = " <a href='"
                           . str_replace(array_keys($urlreplacements), array_values($urlreplacements), $this->linkoutservices[$servicesshown[0]])
-                          ."' title='$servicesshown[0]'>$compasslat, $compasslong</a>";
+                          ."' title='$servicesshown[0]'>$compasslat $compasslong</a>";
             } elseif (sizeof($servicesshown)>1) {
                 $str = '<form id="latlongfieldbrowse">';
                 $str .= "$compasslat, $compasslong\n";
@@ -180,6 +183,9 @@ class data_field_latlong extends data_field_base {
         $content = new stdClass();
         $content->fieldid = $this->field->id;
         $content->recordid = $recordid;
+        // When updating these values (which might be region formatted) we should format
+        // the float to allow for a consistent float format in the database.
+        $value = unformat_float($value);
         $value = trim($value);
         if (strlen($value) > 0) {
             $value = floatval($value);
@@ -213,6 +219,7 @@ class data_field_latlong extends data_field_base {
     }
 
     function export_text_value($record) {
+        // The content here is from the database and does not require location formating.
         return sprintf('%01.4f', $record->content) . ' ' . sprintf('%01.4f', $record->content1);
     }
 
