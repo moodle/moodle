@@ -111,8 +111,12 @@ class core_course_external_testcase extends externallib_advanced_testcase {
         $category2 = $DB->get_record('course_categories', array('id' => $category2->id));
         $category3 = $DB->get_record('course_categories', array('id' => $category3->id));
 
-        $this->assertGreaterThanOrEqual($category1->sortorder, $category3->sortorder);
-        $this->assertGreaterThanOrEqual($category2->sortorder, $category3->sortorder);
+        // sortorder sequence (and sortorder) must be:
+        // category 1
+        //   category 3
+        // category 2
+        $this->assertGreaterThan($category1->sortorder, $category3->sortorder);
+        $this->assertGreaterThan($category3->sortorder, $category2->sortorder);
 
         // Call without required capability
         $this->unassignUserCapability('moodle/category:manage', $contextid, $roleid);
