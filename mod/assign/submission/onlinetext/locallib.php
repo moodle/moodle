@@ -233,7 +233,7 @@ class assign_submission_onlinetext extends assign_submission_plugin {
                                                              'onlinetext',
                                                              'assignsubmission_onlinetext');
 
-            $shorttext = shorten_text($text, 1000);
+            $shorttext = shorten_text($text, 3000);
             $plagiarismlinks = '';
             if (!empty($CFG->enableplagiarism)) {
                 require_once($CFG->libdir . '/plagiarismlib.php');
