@@ -161,6 +161,6 @@ YUI.add('moodle-course-modchooser', function(Y) {
     }
 },
 '@VERSION@', {
-    requires:['base', 'overlay', 'moodle-core-chooserdialogue', 'transition', 'moodle-course-coursebase']
+    requires:['base', 'overlay', 'moodle-core-chooserdialogue', 'moodle-course-coursebase']
 }
 );
