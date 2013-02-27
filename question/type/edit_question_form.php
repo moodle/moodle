@@ -325,14 +325,9 @@ abstract class question_edit_form extends question_wizard_form {
                 $repeatedoptions, $answersoption);
 
         if (isset($this->question->options)) {
-            $countanswers = count($this->question->options->$answersoption);
+            $repeatsatstart = count($this->question->options->$answersoption);
         } else {
-            $countanswers = 0;
-        }
-        if ($this->question->formoptions->repeatelements) {
-            $repeatsatstart = max($minoptions, $countanswers + $addoptions);
-        } else {
-            $repeatsatstart = $countanswers;
+            $repeatsatstart = $minoptions;
         }
 
         $this->repeat_elements($repeated, $repeatsatstart, $repeatedoptions,

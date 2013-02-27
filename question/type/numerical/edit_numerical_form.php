@@ -37,6 +37,10 @@ require_once($CFG->dirroot . '/question/type/numerical/questiontype.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_numerical_edit_form extends question_edit_form {
+    /** @var int we always show at least this many sets of unit fields. */
+    const UNITS_MIN_REPEATS = 1;
+    const UNITS_TO_ADD = 2;
+
     protected $ap = null;
 
     protected function definition_inner($mform) {
@@ -146,18 +150,13 @@ class qtype_numerical_edit_form extends question_edit_form {
         $mform->disabledIf('addunits', 'unitrole', 'eq', qtype_numerical::UNITNONE);
 
         if (isset($this->question->options->units)) {
-            $countunits = count($this->question->options->units);
+            $repeatsatstart = max(count($this->question->options->units), self::UNITS_MIN_REPEATS);
         } else {
-            $countunits = 0;
-        }
-        if ($this->question->formoptions->repeatelements) {
-            $repeatsatstart = $countunits + 1;
-        } else {
-            $repeatsatstart = $countunits;
+            $repeatsatstart = self::UNITS_MIN_REPEATS;
         }
 
         $this->repeat_elements($unitfields, $repeatsatstart, $repeatedoptions, 'nounits',
-                'addunits', 2, get_string('addmoreunitblanks', 'qtype_numerical', '{no}'), true);
+                'addunits', self::UNITS_TO_ADD, get_string('addmoreunitblanks', 'qtype_numerical', '{no}'), true);
 
         // The following strange-looking if statement is to do with when the
         // form is used to move questions between categories. See MDL-15159.
