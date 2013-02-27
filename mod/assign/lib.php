@@ -337,6 +337,9 @@ function assign_print_overview($courses, &$htmlarray) {
     // We do all possible database work here *outside* of the loop to ensure this scales.
     list($sqlassignmentids, $assignmentidparams) = $DB->get_in_or_equal($assignmentids);
 
+    $mysubmissions = null;
+    $unmarkedsubmissions = null;
+
     foreach ($assignments as $assignment) {
         // Do not show assignments that are not open.
         if (!in_array($assignment->id, $assignmentids)) {
