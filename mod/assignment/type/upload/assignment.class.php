@@ -1205,7 +1205,13 @@ class assignment_upload extends assignment_base {
      * @return bool                 Indicates if the submission was found to be complete
      */
     public function is_submitted_with_required_data($submission) {
-        return ($submission->timemodified AND $submission->data2);
+        if ($this->drafts_tracked()) {
+            $submitted = $submission->timemodified > 0 &&
+                         $submission->data2 == ASSIGNMENT_STATUS_SUBMITTED;
+        } else {
+            $submitted = $submission->numfiles > 0;
+        }
+        return $submitted;
     }
 }
 
