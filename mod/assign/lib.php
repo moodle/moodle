@@ -329,6 +329,8 @@ function assign_print_overview($courses, &$htmlarray) {
     // NOTE: we do all possible database work here *outside* of the loop to ensure this scales
     //
     list($sqlassignmentids, $assignmentidparams) = $DB->get_in_or_equal($assignmentids);
+    $mysubmissions = null;
+    $unmarkedsubmissions = null;
 
     foreach ($assignments as $assignment) {
         // Do not show assignments that are not open
@@ -395,7 +397,8 @@ function assign_print_overview($courses, &$htmlarray) {
                 $link = new moodle_url('/mod/assign/view.php', array('id'=>$assignment->coursemodule, 'action'=>'grading'));
                 $str .= '<div class="details"><a href="'.$link.'">'.get_string('submissionsnotgraded', 'assign', $submissions).'</a></div>';
             }
-        } if (has_capability('mod/assign:submit', $context)) {
+        }
+        if (has_capability('mod/assign:submit', $context)) {
             if (!isset($mysubmissions)) {
                 // get all user submissions, indexed by assignment id
                 $mysubmissions = $DB->get_records_sql("SELECT a.id AS assignment, a.nosubmissions AS nosubmissions, g.timemodified
