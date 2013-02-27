@@ -438,10 +438,14 @@ class enrol_manual_plugin extends enrol_plugin {
     public function get_bulk_operations(course_enrolment_manager $manager) {
         global $CFG;
         require_once($CFG->dirroot.'/enrol/manual/locallib.php');
-        $bulkoperations = array(
-            'editselectedusers' => new enrol_manual_editselectedusers_operation($manager, $this),
-            'deleteselectedusers' => new enrol_manual_deleteselectedusers_operation($manager, $this)
-        );
+        $context = $manager->get_context();
+        $bulkoperations = array();
+        if (has_capability("enrol/manual:manage", $context)) {
+            $bulkoperations['editselectedusers'] = new enrol_manual_editselectedusers_operation($manager, $this);
+        }
+        if (has_capability("enrol/manual:unenrol", $context)) {
+            $bulkoperations['deleteselectedusers'] = new enrol_manual_deleteselectedusers_operation($manager, $this);
+        }
         return $bulkoperations;
     }
 
