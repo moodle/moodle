@@ -430,7 +430,6 @@ abstract class question_edit_form extends question_wizard_form {
         }
         $mform->addElement('select', 'penalty',
                 get_string('penaltyforeachincorrecttry', 'question'), $penaltyoptions);
-        $mform->addRule('penalty', null, 'required', null, 'client');
         $mform->addHelpButton('penalty', 'penaltyforeachincorrecttry', 'question');
         $mform->setDefault('penalty', 0.3333333);
 
