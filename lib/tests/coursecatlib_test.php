@@ -207,8 +207,8 @@ class coursecatlib_testcase extends advanced_testcase {
 
         // check function get_children()
         $this->assertEquals(array($category2->id, $category3->id), array_keys($category1->get_children()));
-        // check function get_all_parents()
-        $this->assertEquals(array($category1->id, $category2->id), array_keys($category4->get_all_parents()));
+        // check function get_parents()
+        $this->assertEquals(array($category1->id, $category2->id), $category4->get_parents());
 
         // can not move category to itself or to it's children
         $this->assertFalse($category1->can_change_parent($category2->id));
@@ -223,7 +223,7 @@ class coursecatlib_testcase extends advanced_testcase {
         }
 
         $category4->change_parent(0);
-        $this->assertEquals(array(), array_keys($category4->get_all_parents()));
+        $this->assertEquals(array(), $category4->get_parents());
         $this->assertEquals(array($category2->id, $category3->id), array_keys($category1->get_children()));
         $this->assertEquals(array(), array_keys($category2->get_children()));
     }
