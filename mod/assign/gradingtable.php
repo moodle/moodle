@@ -604,13 +604,7 @@ class assign_grading_table extends table_sql implements renderable {
         }
         $grade = $this->display_grade($row->grade, $this->quickgrading && !$gradingdisabled, $row->userid, $row->timemarked);
 
-         // shorten text only in grading table not in feedback or userview, this was in submission/onlinetext/localllib and if there is a table don't show text 
-        if (!strstr($summary, "table")) {
-            $shorttext = shorten_text($summary, 40);
-            return $link . $separator . $shorttext;
-        } else {
-            return $link . $seperator;
-        }
+        return $link . $seperator . $grade;
 
     }
 
@@ -843,8 +837,13 @@ class assign_grading_table extends table_sql implements renderable {
                                 $icon);
             $separator = $this->output->spacer(array(), true);
         }
-
-        return $link . $separator . $summary;
+         // shorten text only in grading table not in feedback or userview, this was in submission/onlinetext/localllib and if there is a table don't show text
+        if (!strstr($summary, "table")) {
+            $shorttext = shorten_text($summary, 40);
+            return $link . $separator . $shorttext;
+        } else {
+            return $link . $seperator;
+        }
     }
 
 
