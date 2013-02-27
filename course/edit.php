@@ -131,6 +131,11 @@ if ($editform->is_cancelled()) {
             }
         }
     } else {
+        //KK hack for exbar
+        if ($data->format == 'exbar') {
+            $data->coursedisplay = 0;
+        }
+
         // Save any changes to the files used in the editor
         update_course($data, $editoroptions);
     }
