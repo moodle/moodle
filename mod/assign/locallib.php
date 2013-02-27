@@ -2622,10 +2622,6 @@ class assign {
         $filter = get_user_preferences('assign_filter', '');
         $controller = $gradingmanager->get_active_controller();
         $showquickgrading = empty($controller);
-        if (optional_param('action', '', PARAM_ALPHA) == 'saveoptions') {
-            $quickgrading = optional_param('quickgrading', false, PARAM_BOOL);
-            set_user_preference('assign_quickgrading', $quickgrading);
-        }
         $quickgrading = get_user_preferences('assign_quickgrading', false);
 
         // Print options for changing the filter and changing the number of results per page.
@@ -4161,17 +4157,26 @@ class assign {
         // Need submit permission to submit an assignment.
         require_capability('mod/assign:grade', $this->context);
 
+        // Is advanced grading enabled?
+        $gradingmanager = get_grading_manager($this->get_context(), 'mod_assign', 'submissions');
+        $controller = $gradingmanager->get_active_controller();
+        $showquickgrading = empty($controller);
+
         $gradingoptionsparams = array('cm'=>$this->get_course_module()->id,
                                       'contextid'=>$this->context->id,
                                       'userid'=>$USER->id,
                                       'submissionsenabled'=>$this->is_any_submission_plugin_enabled(),
-                                      'showquickgrading'=>false);
+                                      'showquickgrading'=>$showquickgrading,
+                                      'quickgrading'=>false);
 
         $mform = new mod_assign_grading_options_form(null, $gradingoptionsparams);
         if ($formdata = $mform->get_data()) {
             set_user_preference('assign_perpage', $formdata->perpage);
             if (isset($formdata->filter)) {
                 set_user_preference('assign_filter', $formdata->filter);
+            }
+            if ($showquickgrading) {
+                set_user_preference('assign_quickgrading', isset($formdata->quickgrading));
             }
         }
     }
