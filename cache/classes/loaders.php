@@ -1435,6 +1435,7 @@ class cache_session extends cache {
             $cache = cache::make('core', 'eventinvalidation');
             $events = $cache->get_many($definition->get_invalidation_events());
             $todelete = array();
+            $purgeall = false;
             // Iterate the returned data for the events.
             foreach ($events as $event => $keys) {
                 if ($keys === false) {
@@ -1446,11 +1447,18 @@ class cache_session extends cache {
                     // If the timestamp of the event is more than or equal to the last invalidation (happened between the last
                     // invalidation and now)then we need to invaliate the key.
                     if ($timestamp >= $lastinvalidation) {
-                        $todelete[] = $key;
+                        if ($key === 'purged') {
+                            $purgeall = true;
+                            break;
+                        } else {
+                            $todelete[] = $key;
+                        }
                     }
                 }
             }
-            if (!empty($todelete)) {
+            if ($purgeall) {
+                $this->purge();
+            } else if (!empty($todelete)) {
                 $todelete = array_unique($todelete);
                 $this->delete_many($todelete);
             }
