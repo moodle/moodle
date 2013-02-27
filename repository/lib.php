@@ -1494,7 +1494,7 @@ abstract class repository {
         //want to display only visible instances, but for every type types. The repository::get_instances()
         //third parameter displays only visible type.
         $params = array();
-        $params['context'] = array($context, get_system_context());
+        $params['context'] = array($context);
         $params['currentcontext'] = $context;
         $params['onlyvisible'] = !$admin;
         $params['type']        = $typename;

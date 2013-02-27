@@ -150,6 +150,13 @@ if (!empty($edit) || !empty($new)) {
         if ($instance->readonly) {
             throw new repository_exception('readonlyinstance', 'repository');
         }
+        // System instances settings should not be accessible here.
+        $repocontext = context::instance_by_id($instance->instance->contextid);
+        if ($repocontext->contextlevel == CONTEXT_SYSTEM) {
+            throw new repository_exception('nopermissiontoaccess', 'repository');
+        }
+        // Check if we can read the content of the repository, if not exception is thrown.
+        $instance->check_capability();
         $instancetype = repository::get_type_by_id($instance->options['typeid']);
         $classname = 'repository_' . $instancetype->get_typename();
         $configs  = $instance->get_instance_option_names();
