@@ -68,7 +68,7 @@ class enrol_manual_plugin extends enrol_plugin {
 
         $context = context_course::instance($instance->courseid, MUST_EXIST);
 
-        if (!has_capability('enrol/manual:enrol', $context) and !has_capability('enrol/manual:unenrol', $context)) {
+        if (!has_capability('enrol/manual:enrol', $context)) {
             // Note: manage capability not used here because it is used for editing
             // of existing enrolments which is not possible here.
             return NULL;
