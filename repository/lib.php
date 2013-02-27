@@ -1498,12 +1498,12 @@ abstract class repository {
         $pluginstr = get_string('plugin', 'repository');
         $settingsstr = get_string('settings');
         $deletestr = get_string('delete');
-        //retrieve list of instances. In administration context we want to display all
-        //instances of a type, even if this type is not visible. In course/user context we
-        //want to display only visible instances, but for every type types. The repository::get_instances()
-        //third parameter displays only visible type.
+        // Retrieve list of instances. In administration context we want to display all
+        // instances of a type, even if this type is not visible. In course/user context we
+        // want to display only visible instances, but for every type types. The repository::get_instances()
+        // third parameter displays only visible type.
         $params = array();
-        $params['context'] = array($context, get_system_context());
+        $params['context'] = array($context);
         $params['currentcontext'] = $context;
         $params['onlyvisible'] = !$admin;
         $params['type']        = $typename;
@@ -1803,6 +1803,41 @@ abstract class repository {
         }
 
         return false;
+    }
+
+    /**
+     * Can the instance be edited by the current user?
+     *
+     * The property $readonly must not be used within this method because
+     * it only controls if the options from self::get_instance_option_names()
+     * can be edited.
+     *
+     * @return bool true if the user can edit the instance.
+     * @since 2.5
+     */
+    public final function can_be_edited_by_user() {
+        global $USER;
+
+        // We need to be able to explore the repository.
+        try {
+            $this->check_capability();
+        } catch (repository_exception $e) {
+            return false;
+        }
+
+        $repocontext = context::instance_by_id($this->instance->contextid);
+        if ($repocontext->contextlevel == CONTEXT_USER && $repocontext->instanceid != $USER->id) {
+            // If the context of this instance is a user context, we need to be this user.
+            return false;
+        } else if ($repocontext->contextlevel == CONTEXT_MODULE && !has_capability('moodle/course:update', $repocontext)) {
+            // We need to have permissions on the course to edit the instance.
+            return false;
+        } else if ($repocontext->contextlevel == CONTEXT_SYSTEM && !has_capability('moodle/site:config', $repocontext)) {
+            // Do not meet the requirements for the context system.
+            return false;
+        }
+
+        return true;
     }
 
     /**

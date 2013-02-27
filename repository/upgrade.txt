@@ -13,6 +13,9 @@ http://docs.moodle.org/dev/Repository_API
 
 * get_typename() returns the type of repository: dropbox, googledocs, etc...
 
+* can_be_edited_by_user() encapsulates all the tests to make sure that the current user
+  has the rights to edit the instance of this repository.
+
 === 2.4 ===
 
 * copy_to_area() can receive a new parameter called $areamaxbytes which controls the maximum

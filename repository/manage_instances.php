@@ -146,9 +146,12 @@ $return = true;
 if (!empty($edit) || !empty($new)) {
     if (!empty($edit)) {
         $instance = repository::get_instance($edit);
+
         //if you try to edit an instance set as readonly, display an error message
         if ($instance->readonly) {
             throw new repository_exception('readonlyinstance', 'repository');
+        } else if (!$instance->can_be_edited_by_user()) {
+            throw new repository_exception('nopermissiontoaccess', 'repository');
         }
         $instancetype = repository::get_type_by_id($instance->options['typeid']);
         $classname = 'repository_' . $instancetype->get_typename();
