@@ -4483,7 +4483,7 @@ function hash_internal_user_password($password, $fasthash = false) {
 
     $generatedhash = password_hash($password, PASSWORD_DEFAULT, $options);
 
-    if ($generatedhash === false) {
+    if ($generatedhash === false || $generatedhash === null) {
         throw new moodle_exception('Failed to generate password hash.');
     }
 
