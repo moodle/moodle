@@ -268,7 +268,6 @@ input[type="radio"] {
     margin-left: 110px;
     border: 1px solid #ddd;
     padding: 10px;
-    width: 80%;
 }
 
 .path-user .description {
@@ -276,39 +275,18 @@ input[type="radio"] {
     border-bottom: 1px solid #eee;
 }
 
-.userprofile dl {
+.userprofile .list {
     margin-top: 10px;
 }
 
-.userprofile dl dt, .userprofile dl dd {
+.userprofile .list td {
     padding-top: 3px;
     padding-bottom: 3px;
-    float: left;
 }
 
-.dir-rtl .userprofile dl dt, .dir-rtl  .userprofile dl dd {
-    float: right;
-}
-
-.userprofile dl dt {
+.userprofile .list .c0 {
     padding-left: 0;
     font-weight: bold;
-    display: inline-block;
-    padding-right: 2%;
-    min-width: 100px;
-    width: 15%;
-    clear: both;
-}
-
-.dir-rtl .userprofile dl dt {
-    padding-left: 2%;
-    padding-right: 0;
-}
-
-.userprofile dl dd {
-    display: inline-block;
-    margin: 0px;
-    width: 75%;
 }
 
 #page-user-view .buttons {
