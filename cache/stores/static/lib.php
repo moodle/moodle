@@ -331,8 +331,9 @@ class cachestore_static extends static_data_store implements cache_is_key_aware 
      * @return bool Returns true if the operation was a success, false otherwise.
      */
     public function delete($key) {
+        $result = isset($this->store[$key]);
         unset($this->store[$key]);
-        return true;
+        return $result;
     }
 
     /**
@@ -344,8 +345,10 @@ class cachestore_static extends static_data_store implements cache_is_key_aware 
     public function delete_many(array $keys) {
         $count = 0;
         foreach ($keys as $key) {
+            if (isset($this->store[$key])) {
+                $count++;
+            }
             unset($this->store[$key]);
-            $count++;
         }
         return $count;
     }

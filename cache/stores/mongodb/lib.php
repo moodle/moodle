@@ -274,11 +274,7 @@ class cachestore_mongodb extends cache_store implements cache_is_configurable {
         $cursor = $this->collection->find($query);
         $results = array();
         foreach ($cursor as $result) {
-            if (array_key_exists('key', $result)) {
-                $id = $result[$key];
-            } else {
-                $id = (string)$result['key'];
-            }
+            $id = (string)$result['key'];
             $results[$id] = unserialize($result['data']);
         }
         foreach ($keys as $key) {
@@ -307,11 +303,22 @@ class cachestore_mongodb extends cache_store implements cache_is_configurable {
         $record['data'] = serialize($data);
         $options = array(
             'upsert' => true,
-            'safe' => $this->usesafe
+            'safe' => $this->usesafe,
+            'w' => $this->usesafe ? 1 : 0
         );
         $this->delete($key);
         $result = $this->collection->insert($record, $options);
-        return $result;
+        if ($result === true) {
+            // Safe mode is off.
+            return true;
+        } else if (is_array($result)) {
+            if (empty($result['ok']) || isset($result['err'])) {
+                return false;
+            }
+            return true;
+        }
+        // Who knows?
+        return false;
     }
 
     /**
@@ -326,11 +333,11 @@ class cachestore_mongodb extends cache_store implements cache_is_configurable {
         $count = 0;
         foreach ($keyvaluearray as $pair) {
             $result = $this->set($pair['key'], $pair['value']);
-            if ($result === true || (is_array($result)) && !empty($result['ok'])) {
+            if ($result === true) {
                  $count++;
             }
         }
-        return;
+        return $count;
     }
 
     /**
@@ -349,13 +356,25 @@ class cachestore_mongodb extends cache_store implements cache_is_configurable {
         }
         $options = array(
             'justOne' => false,
-            'safe' => $this->usesafe
+            'safe' => $this->usesafe,
+            'w' => $this->usesafe ? 1 : 0
         );
         $result = $this->collection->remove($criteria, $options);
-        if ($result === false || (is_array($result) && !array_key_exists('ok', $result)) || $result === 0) {
-            return false;
+
+        if ($result === true) {
+            // Safe mode.
+            return true;
+        } else if (is_array($result)) {
+            if (empty($result['ok']) || isset($result['err'])) {
+                return false;
+            } else if (empty($result['n'])) {
+                // Nothing was removed.
+                return false;
+            }
+            return true;
         }
-        return !empty($result['ok']);
+        // Who knows?
+        return false;
     }
 
     /**
@@ -496,7 +515,6 @@ class cachestore_mongodb extends cache_store implements cache_is_configurable {
         if (empty($config->testserver)) {
             return false;
         }
-
         $configuration = array();
         $configuration['server'] = $config->testserver;
         if (!empty($config->testreplicaset)) {
@@ -511,9 +529,7 @@ class cachestore_mongodb extends cache_store implements cache_is_configurable {
         if (!empty($config->testdatabase)) {
             $configuration['database'] = $config->testdatabase;
         }
-        if (!empty($config->testusesafe)) {
-            $configuration['usesafe'] = $config->testusesafe;
-        }
+        $configuration['usesafe'] = 1;
         if (!empty($config->testextendedmode)) {
             $configuration['extendedmode'] = (bool)$config->testextendedmode;
         }
