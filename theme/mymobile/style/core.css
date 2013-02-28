@@ -1368,49 +1368,7 @@ a.comment-link, .block_comments a.showcommentsnonjs, .block_comments .comment-ar
 .block_comments .comment-ctrl {
     display: block;
 }
-/*collapsed topic format*/
-#thetopics {
-    table-layout: inherit !important;
-    width: 100%;
-    display: block !important;
-}
-#page-course-view-topcollPAGE .section td.content, col.content {
-    text-align: left;
-    width: 100% !important;
-    overflow: hidden;
-}
-#page-course-view-topcollPAGE .section td.content {
-    padding: .5em;
-}
-#page-course-view-topcollPAGE td.left.side, #page-course-view-topcollPAGE td.right.side {
-    display: none;
-}
-#page-course-view-topcollPAGE tr.cps td a {
-    background: none !important;
-    color: inherit !important;
-    padding: 7px 0 7px 0px !important;
-}
-tr.cps td span {
-    font-style: inherit !important;
-    font-size: 1.12em !important;
-}
-#page-course-view-topcollPAGE .section.separator, td.cps_centre {
-    display: none;
-}
-tr.cps {
-    background-color: inherit !important;
-    color: inherit !important;
-}
-.opencps .ui-btn-inner .ui-icon-arrow-r {
-    background-position: -216px 50%;
-}
-tr.cps td span.ui-li-count {
-    font-size: .6em !important;
-    right: 12px;
-}
-#page-course-view-topcollPAGE .cps .ui-btn-inner {
-    white-space: normal;
-}
+
 /*filemanager fixes and other button fixes and adds */
 #page-mod-quiz-reportPAGE #commands input[type="submit"], #newmessagelinks a, .que input.submit {
     display: block !important;
@@ -1477,7 +1435,7 @@ overflow:auto !important;
     opacity: 0.8;
 }
 /*current highlight */
-.weeks .current .headingwrap, .topics .current div.headingwrap, .current .ui-bar-b, .current .left.side, .tabtree ul.tabrow0 li.selected a, .ui-btn-active, #page-course-view-topcollPAGE .current {
+.weeks .current .headingwrap, .topics .current div.headingwrap, .current .ui-bar-b, .current .left.side, .tabtree ul.tabrow0 li.selected a, .ui-btn-active {
     border: 1px solid #F7C942;
     background: #fadb4e;
     color: #333;
