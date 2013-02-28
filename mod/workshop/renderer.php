@@ -797,9 +797,11 @@ class mod_workshop_renderer extends plugin_renderer_base {
 
             $filepath   = $file->get_filepath();
             $filename   = $file->get_filename();
-            $fileurl    = file_encode_url($CFG->wwwroot . '/pluginfile.php',
-                                '/' . $ctx->id . '/mod_workshop/submission_attachment/' . $submissionid . $filepath . $filename, true);
-            $embedurl   = new moodle_url($fileurl, array('preview' => 'bigthumb'));
+            $fileurl    = moodle_url::make_pluginfile_url($ctx->id, 'mod_workshop', 'submission_attachment',
+                            $submissionid, $filepath, $filename, true);
+            $embedurl   = moodle_url::make_pluginfile_url($ctx->id, 'mod_workshop', 'submission_attachment',
+                            $submissionid, $filepath, $filename, false);
+            $embedurl   = new moodle_url($embedurl, array('preview' => 'bigthumb'));
             $type       = $file->get_mimetype();
             $image      = $this->output->pix_icon(file_file_icon($file), get_mimetype_description($file), 'moodle', array('class' => 'icon'));
 
