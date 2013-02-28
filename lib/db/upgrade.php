@@ -1011,7 +1011,7 @@ function xmldb_main_upgrade($oldversion) {
     }
 
     if ($oldversion < 2012062504.08) {
-        // Retrieve the list of course_sections as a recordset to save memory
+        // Retrieve the list of course_sections as a recordset to save memory.
         $coursesections = $DB->get_recordset('course_sections', null, 'course, id', 'id, course, sequence');
         foreach ($coursesections as $coursesection) {
             // Retrieve all of the actual modules in this course and section combination to reduce DB calls
@@ -1057,6 +1057,57 @@ function xmldb_main_upgrade($oldversion) {
 
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2012062504.08);
+    }
+    if ($oldversion < 2012062504.10) {
+        // Retrieve the list of course_sections as a recordset to save memory.
+        $sequenceconcat = $DB->sql_concat("','", 's.sequence', "','");
+        $moduleconcat = $DB->sql_concat("'%,'", 'm.id', "',%'");
+        $sql = 'SELECT
+                    s.id,
+                    s.course,
+                    s.sequence
+                FROM
+                    {course_modules} m
+                JOIN {course_sections} s
+                ON
+                    m.section != s.id
+                WHERE ' . $sequenceconcat . ' LIKE ' . $moduleconcat;
+        $coursesections = $DB->get_recordset_sql($sql);
+
+        foreach ($coursesections as $coursesection) {
+            // Retrieve all of the actual modules in this course and section combination to reduce DB calls
+            $actualsectionmodules = $DB->get_records('course_modules',
+                    array('course' => $coursesection->course, 'section' => $coursesection->id), '', 'id, section');
+
+            // Break out the current sequence so that we can compare it
+            $currentsequence = explode(',', $coursesection->sequence);
+            $orphanlist = array();
+
+            // Check each of the modules in the current sequence
+            foreach ($currentsequence as $module) {
+                if (!empty($module) && !isset($actualsectionmodules[$module])) {
+                    $orphanlist[] = $module;
+                }
+            }
+
+            if (!empty($orphanlist)) {
+                list($sql, $params) = $DB->get_in_or_equal($orphanlist, SQL_PARAMS_NAMED);
+                $sql = "id $sql";
+
+                $DB->set_field_select('course_modules', 'section', $coursesection->id, $sql, $params);
+
+                // And clear the sectioncache and modinfo cache - they'll be regenerated on next use
+                $course = new stdClass();
+                $course->id = $coursesection->course;
+                $course->sectioncache = null;
+                $course->modinfo = null;
+                $DB->update_record('course', $course);
+            }
+        }
+        $coursesections->close();
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2012062504.10);
     }
 
     return true;
