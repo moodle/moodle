@@ -226,3 +226,14 @@ The first method is designed to be used when you have a single known definition 
 The second method is a lot more intensive for the system. There are defined invalidation events that definitions can "subscribe" to (through the definitions invalidationevents option).
 When you invalidate by event the cache API finds all of the definitions that subscribe to the event, it then loads the stores for each of those definitions and purges the keys from each store.
 This is obviously a recursive, and therefore, intense process.
+
+### Unit tests
+Both the cache API and the cache stores have unit tests.
+Please be aware that several of the cache stores require configuration in order to be able operate in the unit tests.
+Tests for stores requiring configuration that havn't been configured will be skipped.
+All configuration is done in your sites config.php through definitions.
+The following snippet illustates how to configure the three core cache stores that require configuration.
+
+    define('TEST_CACHESTORE_MEMCACHE_TESTSERVERS', '127.0.0.1:11211');
+    define('TEST_CACHESTORE_MEMCACHED_TESTSERVERS', '127.0.0.1:11211');
+    define('TEST_CACHESTORE_MONGODB_TESTSERVER', 'mongodb://localhost:27017');

@@ -15,7 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * MongoDB unit tests
+ * MongoDB unit tests.
+ *
+ * If you wish to use these unit tests all you need to do is add the following definition to
+ * your config.php file.
+ *
+ * define('TEST_CACHESTORE_MONGODB_TESTSERVER', 'mongodb://localhost:27017');
  *
  * @package    cachestore_mongodb
  * @copyright  2013 Sam Hemelryk
