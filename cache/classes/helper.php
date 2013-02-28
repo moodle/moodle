@@ -312,15 +312,18 @@ class cache_helper {
         foreach ($instance->get_definitions() as $name => $definitionarr) {
             $definition = cache_definition::load($name, $definitionarr);
             if ($definition->invalidates_on_event($event)) {
-                // Create the cache.
-                $cache = $factory->create_cache($definition);
-                // Initialise, in case of a store.
-                if ($cache instanceof cache_store) {
-                    $cache->initialise($definition);
+                // Check if this definition would result in a persistent loader being in use.
+                if ($definition->should_be_persistent()) {
+                    // There may be a persistent cache loader. Lets purge that first so that any persistent data is removed.
+                    $cache = $factory->create_cache_from_definition($definition->get_component(), $definition->get_area());
+                    $cache->purge();
                 }
-                // Purge the cache.
-                $cache->purge();
-
+                // Get all of the store instances that are in use for this store.
+                $stores = $factory->get_store_instances_in_use($definition);
+                foreach ($stores as $store) {
+                    // Purge each store individually.
+                    $store->purge();
+                }
                 // We need to flag the event in the "Event invalidation" cache if it hasn't already happened.
                 if ($invalidationeventset === false) {
                     // Get the event invalidation cache.
