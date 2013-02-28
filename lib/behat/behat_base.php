@@ -143,6 +143,9 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
                     // We are in the container node.
                     if (strpos($union, '.') === 0) {
                         $union = substr($union, 1);
+                    } else if (strpos($union, '/') !== 0) {
+                        // Adding the path separator in case it is not there.
+                        $union = '/' . $union;
                     }
                     $unions[$key] = $args['node']->getXpath() . $union;
                 }
