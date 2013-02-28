@@ -239,7 +239,7 @@ class coursecatlib_testcase extends advanced_testcase {
         $this->assertEquals($testdescription, $category1->description);
         $category1 = coursecat::get($category1->id);
         $this->assertEquals($testdescription, $category1->description);
-        coursecat::purge_cache();
+        cache_helper::purge_by_event('changesincoursecat');
         $category1 = coursecat::get($category1->id);
         $this->assertEquals($testdescription, $category1->description);
 
@@ -318,5 +318,45 @@ class coursecatlib_testcase extends advanced_testcase {
         $this->assertEquals(1, $DB->get_field_sql('SELECT count(*) FROM {course} WHERE id <> ?', array(SITEID)));
         $this->assertEquals(array('id' => $course4->id, 'category' => $category1->id),
                 (array)$DB->get_record_sql('SELECT id, category from {course} where id <> ?', array(SITEID)));
+    }
+
+    public function test_get_children() {
+        $category1 = coursecat::create(array('name' => 'Cat1'));
+        $category2 = coursecat::create(array('name' => 'Cat2', 'parent' => $category1->id));
+        $category3 = coursecat::create(array('name' => 'Cat3', 'parent' => $category1->id, 'visible' => 0));
+        $category4 = coursecat::create(array('name' => 'Cat4', 'idnumber' => '12', 'parent' => $category1->id));
+        $category5 = coursecat::create(array('name' => 'Cat5', 'idnumber' => '11', 'parent' => $category1->id, 'visible' => 0));
+        $category6 = coursecat::create(array('name' => 'Cat6', 'idnumber' => '10', 'parent' => $category1->id));
+        $category7 = coursecat::create(array('name' => 'Cat0', 'parent' => $category1->id));
+
+        $children = $category1->get_children();
+        // user does not have the capability to view hidden categories, so the list should be
+        // 2,4,6,7
+        $this->assertEquals(array($category2->id, $category4->id, $category6->id, $category7->id), array_keys($children));
+        $this->assertEquals(4, $category1->get_children_count());
+
+        $children = $category1->get_children(array('offset' => 2));
+        $this->assertEquals(array($category6->id, $category7->id), array_keys($children));
+        $this->assertEquals(4, $category1->get_children_count());
+
+        $children = $category1->get_children(array('limit' => 2));
+        $this->assertEquals(array($category2->id, $category4->id), array_keys($children));
+
+        $children = $category1->get_children(array('offset' => 1, 'limit' => 2));
+        $this->assertEquals(array($category4->id, $category6->id), array_keys($children));
+
+        $children = $category1->get_children(array('sort' => array('name' => 1)));
+        // must be 7,2,4,6
+        $this->assertEquals(array($category7->id, $category2->id, $category4->id, $category6->id), array_keys($children));
+
+        $children = $category1->get_children(array('sort' => array('idnumber' => 1, 'name' => -1)));
+        // must be 2,7,6,4
+        $this->assertEquals(array($category2->id, $category7->id, $category6->id, $category4->id), array_keys($children));
+
+        // check that everything is all right after purging the caches
+        cache_helper::purge_by_event('changesincoursecat');
+        $children = $category1->get_children();
+        $this->assertEquals(array($category2->id, $category4->id, $category6->id, $category7->id), array_keys($children));
+        $this->assertEquals(4, $category1->get_children_count());
     }
 }

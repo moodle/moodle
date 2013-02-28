@@ -188,6 +188,7 @@ if ($coursecat->id && $canmanage && $resort && confirm_sesskey()) {
         }
         // This should not be needed but we do it just to be safe.
         fix_course_sortorder();
+        cache_helper::purge_by_event('changesincourse');
     }
 }
 
@@ -233,6 +234,7 @@ if ((!empty($hide) or !empty($show)) && confirm_sesskey()) {
     // Set the visibility of the course. we set the old flag when user manually changes visibility of course.
     $params = array('id' => $course->id, 'visible' => $visible, 'visibleold' => $visible, 'timemodified' => time());
     $DB->update_record('course', $params);
+    cache_helper::purge_by_event('changesincourse');
     add_to_log($course->id, "course", ($visible ? 'show' : 'hide'), "edit.php?id=$course->id", $course->id);
 }
 
@@ -260,6 +262,7 @@ if ((!empty($moveup) or !empty($movedown)) && confirm_sesskey()) {
         }
         $DB->set_field('course', 'sortorder', $swapcourse->sortorder, array('id' => $movecourse->id));
         $DB->set_field('course', 'sortorder', $movecourse->sortorder, array('id' => $swapcourse->id));
+        cache_helper::purge_by_event('changesincourse');
         add_to_log($movecourse->id, "course", "move", "edit.php?id=$movecourse->id", $movecourse->id);
     }
 }

@@ -951,9 +951,14 @@ function fix_course_sortorder() {
 
     //WARNING: this is PHP5 only code!
 
+    // if there are any changes made to courses or categories we will trigger
+    // the cache events to purge all cached courses/categories data
+    $cacheevents = array();
+
     if ($unsorted = $DB->get_records('course_categories', array('sortorder'=>0))) {
         //move all categories that are not sorted yet to the end
         $DB->set_field('course_categories', 'sortorder', MAX_COURSES_IN_CATEGORY*MAX_COURSE_CATEGORIES, array('sortorder'=>0));
+        $cacheevents['changesincoursecat'] = true;
     }
 
     $allcats = $DB->get_records('course_categories', null, 'sortorder, id', 'id, sortorder, parent, depth, path');
@@ -993,7 +998,9 @@ function fix_course_sortorder() {
     // now walk recursively the tree and fix any problems found
     $sortorder = 0;
     $fixcontexts = array();
-    _fix_course_cats($topcats, $sortorder, 0, 0, '', $fixcontexts);
+    if (_fix_course_cats($topcats, $sortorder, 0, 0, '', $fixcontexts)) {
+        $cacheevents['changesincoursecat'] = true;
+    }
 
     // detect if there are "multiple" frontpage courses and fix them if needed
     $frontcourses = $DB->get_records('course', array('category'=>0), 'id');
@@ -1009,6 +1016,7 @@ function fix_course_sortorder() {
             $DB->set_field('course', 'category', $defaultcat->id, array('id'=>$course->id));
             $context = context_course::instance($course->id);
             $fixcontexts[$context->id] = $context;
+            $cacheevents['changesincourse'] = true;
         }
         unset($frontcourses);
     } else {
@@ -1022,6 +1030,8 @@ function fix_course_sortorder() {
         }
         context_helper::build_all_paths(false);
         unset($fixcontexts);
+        $cacheevents['changesincourse'] = true;
+        $cacheevents['changesincoursecat'] = true;
     }
 
     // release memory
@@ -1032,6 +1042,7 @@ function fix_course_sortorder() {
     // fix frontpage course sortorder
     if ($frontcourse->sortorder != 1) {
         $DB->set_field('course', 'sortorder', 1, array('id'=>$frontcourse->id));
+        $cacheevents['changesincourse'] = true;
     }
 
     // now fix the course counts in category records if needed
@@ -1056,6 +1067,7 @@ function fix_course_sortorder() {
             $str = implode(', ', $categories);
             debugging("The number of courses (category id: $str) has reached MAX_COURSES_IN_CATEGORY (" . MAX_COURSES_IN_CATEGORY . "), it will cause a sorting performance issue, please increase the value of MAX_COURSES_IN_CATEGORY in lib/datalib.php file. See tracker issue: MDL-25669", DEBUG_DEVELOPER);
         }
+        $cacheevents['changesincoursecat'] = true;
     }
 
     // now make sure that sortorders in course table are withing the category sortorder ranges
@@ -1072,6 +1084,7 @@ function fix_course_sortorder() {
                      WHERE category = ?";
             $DB->execute($sql, array($cat->sortorder, $cat->id));
         }
+        $cacheevents['changesincoursecat'] = true;
     }
     unset($fixcategories);
 
@@ -1105,6 +1118,7 @@ function fix_course_sortorder() {
             // it needs full resorting
             $fixcategories[$cat->id] = $cat;
         }
+        $cacheevents['changesincourse'] = true;
     }
     unset($gapcategories);
 
@@ -1116,13 +1130,16 @@ function fix_course_sortorder() {
             if ($course->sortorder != $cat->sortorder + $i) {
                 $course->sortorder = $cat->sortorder + $i;
                 $DB->update_record_raw('course', $course, true);
+                $cacheevents['changesincourse'] = true;
             }
             $i++;
         }
     }
 
-    $coursecatcache = cache::make('core', 'coursecat');
-    $coursecatcache->purge();
+    // advise all caches that need to be rebuilt
+    foreach (array_keys($cacheevents) as $event) {
+        cache_helper::purge_by_event($event);
+    }
 }
 
 /**
@@ -1139,12 +1156,13 @@ function fix_course_sortorder() {
  * @param int $depth
  * @param string $path
  * @param array $fixcontexts
- * @return void
+ * @return bool if changes were made
  */
 function _fix_course_cats($children, &$sortorder, $parent, $depth, $path, &$fixcontexts) {
     global $DB;
 
     $depth++;
+    $changesmade = false;
 
     foreach ($children as $cat) {
         $sortorder = $sortorder + MAX_COURSES_IN_CATEGORY;
@@ -1165,11 +1183,15 @@ function _fix_course_cats($children, &$sortorder, $parent, $depth, $path, &$fixc
         }
         if ($update) {
             $DB->update_record('course_categories', $cat, true);
+            $changesmade = true;
         }
         if (isset($cat->children)) {
-            _fix_course_cats($cat->children, $sortorder, $cat->id, $cat->depth, $cat->path, $fixcontexts);
+            if (_fix_course_cats($cat->children, $sortorder, $cat->id, $cat->depth, $cat->path, $fixcontexts)) {
+                $changesmade = true;
+            }
         }
     }
+    return $changesmade;
 }
 
 /**

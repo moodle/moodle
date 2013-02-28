@@ -2649,6 +2649,7 @@ function move_courses($courseids, $categoryid) {
         }
     }
     fix_course_sortorder();
+    cache_helper::purge_by_event('changesincourse');
 
     return true;
 }
@@ -2828,6 +2829,8 @@ function create_course($data, $editoroptions = NULL) {
     course_create_sections_if_missing($course, 0);
 
     fix_course_sortorder();
+    // purge appropriate caches in case fix_course_sortorder() did not change anything
+    cache_helper::purge_by_event('changesincourse');
 
     // new context created - better mark it as dirty
     mark_context_dirty($context->path);
@@ -2908,6 +2911,8 @@ function update_course($data, $editoroptions = NULL) {
     }
 
     fix_course_sortorder();
+    // purge appropriate caches in case fix_course_sortorder() did not change anything
+    cache_helper::purge_by_event('changesincourse');
 
     // Test for and remove blocks which aren't appropriate anymore
     blocks_remove_inappropriate($course);
