@@ -61,7 +61,7 @@
 
 /** Overide for RTL layout **/
 .dir-rtl .userprofile .profilepicture {float:right; margin-left:20px;margin-right:0px;}
-.dir-rtl .descriptionbox {margin-right: 110px;margin-left: 0px;float: right;}
+.dir-rtl .descriptionbox {margin-left: 0px;float: right;}
 .dir-rtl .userlist table#participants td,
 .dir-rtl .userlist table#participants th {text-align: right;}
 .dir-rtl .userlist table#participants {margin: 0 auto;}
