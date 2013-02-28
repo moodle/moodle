@@ -1394,12 +1394,20 @@ function stats_fix_zeros($stats,$timeafter,$timestr,$line2=true,$line3=false) {
 
     // Extract the ending time of the statistics.
     $actualtimes = array();
+    $actualtimeshour = null;
     foreach ($stats as $statid => $s) {
         // Normalise the month date to the 1st if for any reason it's set to later. But we ignore
-        // anything above or equal to 29 because sometimes we get the end of the month.
-        if ($timestr == 'monthly' && date('d', $s->timeend) > 1 && date('d', $s->timeend) < 29) {
-            $s->timeend = mktime(date('H', $s->timeend), date('i', $s->timeend), date('s', $s->timeend),
-                date('m', $s->timeend), 1, date('Y', $s->timeend));
+        // anything above or equal to 29 because sometimes we get the end of the month. Also, we will
+        // set the hours of the result to all of them, that way we prevent DST differences.
+        if ($timestr == 'monthly') {
+            $day = date('d', $s->timeend);
+            if (date('d', $s->timeend) > 1 && date('d', $s->timeend) < 29) {
+                $day = 1;
+            }
+            if (is_null($actualtimeshour)) {
+                $actualtimeshour = date('H', $s->timeend);
+            }
+            $s->timeend = mktime($actualtimeshour, 0, 0, date('m', $s->timeend), $day, date('Y', $s->timeend));
         }
         $stats[$statid] = $s;
         $actualtimes[] = $s->timeend;
@@ -1428,8 +1436,7 @@ function stats_fix_zeros($stats,$timeafter,$timestr,$line2=true,$line3=false) {
                     $dayofnextmonth = $daysinmonth;
                 }
             }
-            $timeafter = mktime(date('H', $timeafter), date('i', $timeafter), date('s', $timeafter), $month+1,
-                $dayofnextmonth, $year);
+            $timeafter = mktime($actualtimeshour, 0, 0, $month+1, $dayofnextmonth, $year);
         } else {
             // This will put us in a never ending loop.
             return $stats;
