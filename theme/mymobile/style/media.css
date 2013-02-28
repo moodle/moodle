@@ -44,10 +44,6 @@
     .path-mod-forum .indent {
     margin-left: 0px;
     }
-    .course-content ul.ctopics li.section .content, .course-content ul.ctopics li.tcsection .content {
-    margin: 0 0px;
-    padding: 0;
-}
 }
 @media all and (max-width: 650px){
     .forumpost div.commands a {

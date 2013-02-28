@@ -1,0 +1,62 @@
+.dir-rtl .ui-collapsible-heading a {text-align: right}
+
+.dir-rtl .ui-li, .ui-li.ui-field-contain {text-align: right;}
+
+.dir-rtl .ui-li-thumb, .dir-rtl .ui-listview .ui-li-icon, .dir-rtl .ui-li-content {
+    float: right;
+    margin-left: 27px;
+}
+.dir-rtl .ui-li, .dir-rtl .ui-li.ui-field-contain {
+    text-align: right;
+}
+.dir-rtl .ui-listview .ui-li-icon {right:27px; left:auto;}
+
+.dir-rtl .mod-indent-1 { margin-right: 0px;}
+
+.dir-rtl .ui-icon-arrow-r {
+    background-position: -108px 0%;
+}
+
+.dir-rtl .ui-field-contain div.ui-slider-switch {
+    width: 10.5em;
+}
+
+.dir-rtl .coursebox h3 a .ui-btn-inner, .dir-rtl .category a .ui-btn-inner {
+    padding-right: .8em;
+    padding-left: 8px;
+}
+
+.dir-rtl .mform .fitem .felement {
+    margin-right: auto;
+    margin-left: 16%;
+    text-align: right;
+}
+
+.dir-rtl .has-myblocks .content-secondary {
+    text-align: right;
+}
+
+.dir-rtl .forumheaderlist thead .ui-btn-inner, .dir-rtl .topic .ui-btn {
+    text-align: right !important;
+    padding-right: 7px;
+}
+
+.dir-rtl .ui-checkbox .ui-btn, .dir-rtl .ui-radio .ui-btn {
+    text-align: right;
+}
+
+.dir-rtl .mform .fitemtitle { text-align: right !important; }
+
+.path-mod-quiz.dir-rtl .que .control {
+    width: 75%;
+}
+
+.dir-rtl .categorybox .ui-btn-inner,
+.dir-rtl .coursebox .ui-btn-inner {
+    text-align: right;
+ }
+
+.dir-rtl .categorybox .ui-btn-text,
+.dir-rtl .coursebox .ui-btn-text {
+    padding-right: 25px;
+}

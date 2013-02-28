@@ -30,11 +30,11 @@ if ($ADMIN->fulltree) {
     // TODO: Really the yes/no settings below should be changed to checkboxes
     //       given checkboxes are yes/no. Also saves us having to use language
     //       strings for them.
-    $yesstr = get_string('yes', 'theme_mymobile');
-    $nostr = get_string('no', 'theme_mymobile');
+    $yesstr = get_string('yes','theme_mymobile');
+    $nostr = get_string('no','theme_mymobile');
 
     $name = 'theme_mymobile/colourswatch';
-    $title = get_string('colourswatch', 'theme_mymobile');
+    $title = get_string('colourswatch','theme_mymobile');
     $description = get_string('colourswatch_desc', 'theme_mymobile');
     $default = 'light';
     $choices = array(
@@ -45,7 +45,7 @@ if ($ADMIN->fulltree) {
     $settings->add($setting);
 
     $name = 'theme_mymobile/showmobileintro';
-    $title = get_string('showmobileintro', 'theme_mymobile');
+    $title = get_string('showmobileintro','theme_mymobile');
     $description = get_string('showmobileintro_desc', 'theme_mymobile');
     $setting = new admin_setting_confightmleditor($name, $title, $description, '');
     $settings->add($setting);
@@ -67,23 +67,15 @@ if ($ADMIN->fulltree) {
     $settings->add($setting);
 
     $name = 'theme_mymobile/usetableview';
-    $title = get_string('usetableview', 'theme_mymobile');
+    $title = get_string('usetableview','theme_mymobile');
     $description = get_string('usetableview_desc', 'theme_mymobile');
     $default = 'tabshow';
     $choices = array('tabshow' => $yesstr, 'tabnoshow' => $nostr);
     $setting = new admin_setting_configselect($name, $title, $description, $default, $choices);
     $settings->add($setting);
 
-    $name = 'theme_mymobile/useajax';
-    $title = get_string('useajax', 'theme_mymobile');
-    $description = get_string('useajax_desc', 'theme_mymobile');
-    $default = 'ajaxyes';
-    $choices = array('ajaxyes' => $yesstr, 'ajaxno' => $nostr);
-    $setting = new admin_setting_configselect($name, $title, $description, $default, $choices);
-    $settings->add($setting);
-
     $name = 'theme_mymobile/customcss';
-    $title = get_string('customcss', 'theme_mymobile');
+    $title = get_string('customcss','theme_mymobile');
     $description = get_string('customcssdesc', 'theme_mymobile');
     $default = '';
     $setting = new admin_setting_configtextarea($name, $title, $description, $default);

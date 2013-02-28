@@ -71,16 +71,10 @@ if (!empty($PAGE->theme->settings->usetableview)) {
     $showusetableview = 'tabshow';
 }
 
-if (!empty($PAGE->theme->settings->useajax)) {
-    $useajax = $PAGE->theme->settings->useajax;
-} else {
-    $useajax = 'ajaxyes';
-}
-
-
-// Course format
-if ($mylayoutype == 'course') {
-    // Jump to current topic only in course pages.
+// TODO: Fix this hardcoding there are other course formats that peopleuse.
+//       Probably changing to an appropriate regex will do.
+if ($mypagetype == 'course-view-topics' || $mypagetype == 'course-view-weeks') {
+    // jump to current topic only in course pages
     $jumptocurrent = 'true';
 } else {
     $jumptocurrent = 'false';
@@ -95,10 +89,19 @@ $hasnavbar = (empty($PAGE->layout_options['nonavbar']) && $PAGE->has_navbar());
 $hasfooter = (empty($PAGE->layout_options['nofooter']));
 $hasmyblocks = $PAGE->blocks->region_has_content('myblocks', $OUTPUT);
 
+$courseheader = $coursecontentheader = $coursecontentfooter = $coursefooter = '';
+if (empty($PAGE->layout_options['nocourseheaderfooter'])) {
+    $courseheader = $OUTPUT->course_header();
+    $coursecontentheader = $OUTPUT->course_content_header();
+    if (empty($PAGE->layout_options['nocoursefooter'])) {
+        $coursecontentfooter = $OUTPUT->course_content_footer();
+        $coursefooter = $OUTPUT->course_footer();
+    }
+}
+
 $bodyclasses = array();
 $bodyclasses[] = (string)$hasithumb;
 $bodyclasses[] = (string)$showsitetopic;
-$bodyclasses[] = (string)$useajax;
 // add ithumb class to decide whether to show or hide images and site topic
 
 // TODO: Better illustrate preceedence
@@ -121,7 +124,7 @@ echo $OUTPUT->doctype() ?>
     <link rel="apple-touch-icon-precomposed" href="<?php echo $OUTPUT->pix_url('m2m', 'theme')?>" />
 
     <meta name="description" content="<?php echo strip_tags(format_text($SITE->summary, FORMAT_HTML)) ?>" />
-    <meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1" />
 
     <?php echo $OUTPUT->standard_head_html() ?>
 </head>
@@ -129,13 +132,16 @@ echo $OUTPUT->doctype() ?>
     <?php echo $OUTPUT->standard_top_of_body_html() ?>
     <div id="<?php p($PAGE->bodyid) ?>PAGE" data-role="page" class="generalpage <?php echo 'ajaxedclass '; p($PAGE->bodyclasses.' '.join(' ', $bodyclasses));  ?> <?php if ($hasmyblocks && $usercol) { echo 'has-myblocks'; } ?> " data-title="<?php p($SITE->shortname) ?>">
         <!-- start header -->
-        <div data-role="header" <?php echo($datatheme);?> class="mymobileheader">
+        <div data-role="header" <?php echo($datatheme);?> class="mymobileheader" data-position="fixed">
             <h1><?php echo $PAGE->heading ?></h1>
             <?php if (isloggedin() && $mypagetype != 'site-index') { ?>
             <a class="ui-btn-right" data-icon="home" href="<?php p($CFG->wwwroot) ?>" data-iconpos="notext" data-ajax="false"><?php p(get_string('home')); ?></a>
             <?php } else if (!isloggedin()) {
                 echo $OUTPUT->login_info();
             } ?>
+            <?php if (!empty($courseheader)) { ?>
+            <div data-role="course-header"><?php echo $courseheader; ?></div>
+            <?php } ?>
             <!-- start navbar -->
             <div data-role="navbar">
                 <ul>
@@ -180,7 +186,9 @@ echo $OUTPUT->doctype() ?>
                     <?php if ($hasshowmobileintro && $mypagetype == 'site-index') { ?>
                         <?php echo $PAGE->theme->settings->showmobileintro; ?>
                     <?php } ?>
+                    <?php echo $coursecontentheader; ?>
                     <?php echo $OUTPUT->main_content(); ?>
+                    <?php echo $coursecontentfooter; ?>
                 <?php } ?>
                 </div>
             </div>
@@ -217,7 +225,7 @@ echo $OUTPUT->doctype() ?>
 
                 <div data-role="fieldcontain" id="sliderdiv">
                     <label for="slider"><?php p(get_string('mtoggle','theme_mymobile')); ?>:</label>
-                    <select name="slider" class="slider" data-role="slider">
+                    <select name="slider" class="slider" data-role="slider" id="slider">
                         <option value="on">On</option>
                         <option value="off">Off</option>
                     </select>
@@ -244,6 +252,10 @@ echo $OUTPUT->doctype() ?>
         <!-- end main content -->
 
         <!-- start footer -->
+        <?php if (!empty($coursefooter)) { ?>
+        <div data-role="course-footer"><?php echo $coursefooter; ?></div>
+        <?php } ?>
+
         <div data-role="footer" class="mobilefooter" <?php echo $datatheme;?>>
             <div data-role="navbar" class="jnav" >
                 <ul>
