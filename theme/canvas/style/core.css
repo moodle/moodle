@@ -268,6 +268,7 @@ input[type="radio"] {
     margin-left: 110px;
     border: 1px solid #ddd;
     padding: 10px;
+    width: 80%;
 }
 
 .path-user .description {
@@ -285,17 +286,29 @@ input[type="radio"] {
     float: left;
 }
 
+.dir-rtl .userprofile dl dt, .dir-rtl  .userprofile dl dd {
+    float: right;
+}
+
 .userprofile dl dt {
     padding-left: 0;
     font-weight: bold;
     display: inline-block;
-    width: 180px;
+    padding-right: 2%;
+    min-width: 100px;
+    width: 15%;
     clear: both;
+}
+
+.dir-rtl .userprofile dl dt {
+    padding-left: 2%;
+    padding-right: 0;
 }
 
 .userprofile dl dd {
     display: inline-block;
     margin: 0px;
+    width: 75%;
 }
 
 #page-user-view .buttons {

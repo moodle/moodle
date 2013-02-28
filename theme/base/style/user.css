@@ -3,13 +3,12 @@
 .userprofile .fullprofilelink {text-align:center; margin:10px;}
 .userprofile .profilepicture {float:left; margin-right:20px;}
 .userprofile .description {margin-bottom:20px;}
-.userprofile .descriptionbox { float: left; }
+.userprofile .descriptionbox { float: left;width: 80%; }
 .userprofile .label {font-weight:normal;text-align:left;}
 .userprofile dl {margin-top: 10px; margin-left: 0px}
 .userprofile dl dt, .userprofile dl dd {padding-top: 3px;padding-bottom: 3px;float: left; }
-.userprofile dl dt {padding-left: 0;font-weight: bold;display: inline-block;width: 180px;clear: both;}
-.userprofile dl dd {display: inline-block; margin: 0px;}
-
+.userprofile dl dt {padding-right: 2%;min-width: 100px;width: 15%;font-weight: bold;display: inline-block;clear: both;}
+.userprofile dl dd {display: inline-block; margin: 0px;width: 75%; }
 
 .user-box {margin:8px;width:115px;height:160px;text-align:center;float:left;clear: none;}
 
@@ -62,9 +61,11 @@
 
 /** Overide for RTL layout **/
 .dir-rtl .userprofile .profilepicture {float:right; margin-left:20px;margin-right:0px;}
-.dir-rtl .descriptionbox {margin-right: 110px;margin-left: 0px; }
+.dir-rtl .descriptionbox {margin-right: 110px;margin-left: 0px;float: right;}
 .dir-rtl .userlist table#participants td,
 .dir-rtl .userlist table#participants th {text-align: right;}
 .dir-rtl .userlist table#participants {margin: 0 auto;}
+.dir-rtl .userprofile dl dt, .dir-rtl  .userprofile dl dd {float: right;}
+.dir-rtl .userprofile dl dt {padding-left: 2%;padding-right: 0;}
 
 #page-my-index.dir-rtl .block h3.main { text-align: right;}
