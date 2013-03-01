@@ -57,7 +57,6 @@ require_login($course, false, $cm);
 $PAGE->set_context($context);
 
 echo $OUTPUT->header(); // send headers
-@header('Content-type: text/html; charset=utf-8');
 
 // If uploaded file is larger than post_max_size (php.ini) setting, $_POST content will be empty.
 if (empty($_POST) && !empty($action)) {
