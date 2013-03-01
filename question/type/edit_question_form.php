@@ -654,6 +654,12 @@ abstract class question_edit_form extends question_wizard_form {
                 && empty($fromform['usecurrentcat']) && !$this->question->formoptions->canmove) {
             $errors['currentgrp'] = get_string('nopermissionmove', 'question');
         }
+
+        // Default mark.
+        if ($fromform['defaultmark'] < 0) {
+            $errors['defaultmark'] = get_string('defaultmarkmustbepositive', 'question');
+        }
+
         return $errors;
     }
 
