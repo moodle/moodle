@@ -526,6 +526,22 @@ function get_exception_info($ex) {
         $debuginfo .= PHP_EOL.'$a contents: '.print_r($a, true);
     }
 
+    // Remove some absolute paths from message and debugging info.
+    $searches = array();
+    $replaces = array();
+    $cfgnames = array('tempdir', 'cachedir', 'themedir',
+        'langmenucachefile', 'langcacheroot', 'dataroot', 'dirroot');
+    foreach ($cfgnames as $cfgname) {
+        if (property_exists($CFG, $cfgname)) {
+            $searches[] = $CFG->$cfgname;
+            $replaces[] = "[$cfgname]";
+        }
+    }
+    if (!empty($searches)) {
+        $message   = str_replace($searches, $replaces, $message);
+        $debuginfo = str_replace($searches, $replaces, $debuginfo);
+    }
+
     // Be careful, no guarantee weblib.php is loaded.
     if (function_exists('clean_text')) {
         $message = clean_text($message);
