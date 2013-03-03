@@ -57,7 +57,13 @@ if (isguestuser($user)) {
 }
 
 if (!empty($CFG->forceloginforprofiles)) {
-    require_login(); // we can not log in to course due to the parent hack below
+    require_login(); // We can not log in to course due to the parent hack below.
+
+    // Guests do not have permissions to view anyone's profile if forceloginforprofiles is set.
+    if (isguestuser()) {
+        $SESSION->wantsurl = $PAGE->url->out(false);
+        redirect(get_login_url());
+    }
 }
 
 $PAGE->set_context($coursecontext);
