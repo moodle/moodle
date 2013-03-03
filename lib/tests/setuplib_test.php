@@ -71,4 +71,28 @@ class core_setuplib_testcase extends basic_testcase {
         $this->assertEquals($CFG->wwwroot . '/lib/tests/setuplib_test.php',
                 get_docs_url('%%WWWROOT%%/lib/tests/setuplib_test.php'));
     }
+
+    /**
+     * Test if get_exception_info() removes file system paths
+     */
+    public function test_exception_info_removes_serverpaths() {
+        global $CFG;
+
+        // This doesn't test them all possible ones, but these are set for unit tests.
+        $cfgnames = array('dataroot', 'dirroot', 'tempdir', 'cachedir');
+
+        $fixture  = '';
+        $expected = '';
+        foreach ($cfgnames as $cfgname) {
+            if (!empty($CFG->$cfgname)) {
+                $fixture  .= $CFG->$cfgname.' ';
+                $expected .= "[$cfgname] ";
+            }
+        }
+        $exception     = new moodle_exception('generalexceptionmessage', 'error', '', $fixture, $fixture);
+        $exceptioninfo = get_exception_info($exception);
+
+        $this->assertContains($expected, $exceptioninfo->message, 'Exception message does not contain system paths');
+        $this->assertContains($expected, $exceptioninfo->debuginfo, 'Exception debug info does not contain system paths');
+    }
 }
