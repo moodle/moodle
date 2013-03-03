@@ -96,7 +96,7 @@ class filter_emoticon extends moodle_text_filter {
      */
     protected function load_global_config() {
         if (is_null(self::$globalconfig)) {
-            self::$globalconfig = get_config('filter_emoticon');
+            self::$globalconfig = get_config(get_class($this));
         }
     }
 
