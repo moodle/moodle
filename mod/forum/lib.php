@@ -212,6 +212,14 @@ function forum_update_instance($forum, $mform) {
 
     $DB->update_record('forum', $forum);
 
+    $modcontext = context_module::instance($forum->coursemodule);
+    if (($forum->forcesubscribe == FORUM_INITIALSUBSCRIBE) && ($oldforum->forcesubscribe <> $forum->forcesubscribe)) {
+        $users = forum_get_potential_subscribers($modcontext, 0, 'u.id, u.email', '');
+        foreach ($users as $user) {
+            forum_subscribe($user->id, $forum->id);
+        }
+    }
+
     forum_grade_item_update($forum);
 
     return true;
