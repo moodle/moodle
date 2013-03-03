@@ -627,8 +627,82 @@ class cache_phpunit_tests extends advanced_testcase {
                 'crazyevent'
             )
         ));
+        $instance->phpunit_add_definition('phpunit/eventpurgetestpersistent', array(
+            'mode' => cache_store::MODE_APPLICATION,
+            'component' => 'phpunit',
+            'area' => 'eventpurgetestpersistent',
+            'persistent' => true,
+            'invalidationevents' => array(
+                'crazyevent'
+            )
+        ));
         $cache = cache::make('phpunit', 'eventpurgetest');
 
+        $this->assertTrue($cache->set('testkey1', 'test data 1'));
+        $this->assertEquals('test data 1', $cache->get('testkey1'));
+        $this->assertTrue($cache->set('testkey2', 'test data 2'));
+        $this->assertEquals('test data 2', $cache->get('testkey2'));
+
+        // Purge the event.
+        cache_helper::purge_by_event('crazyevent');
+
+        // Check things have been removed.
+        $this->assertFalse($cache->get('testkey1'));
+        $this->assertFalse($cache->get('testkey2'));
+
+        // Now test the persistent cache.
+        $cache = cache::make('phpunit', 'eventpurgetestpersistent');
+        $this->assertTrue($cache->set('testkey1', 'test data 1'));
+        $this->assertEquals('test data 1', $cache->get('testkey1'));
+        $this->assertTrue($cache->set('testkey2', 'test data 2'));
+        $this->assertEquals('test data 2', $cache->get('testkey2'));
+
+        // Purge the event.
+        cache_helper::purge_by_event('crazyevent');
+
+        // Check things have been removed.
+        $this->assertFalse($cache->get('testkey1'));
+        $this->assertFalse($cache->get('testkey2'));
+    }
+
+    /**
+     * Tests session cache event purge
+     */
+    public function test_session_event_purge() {
+        $instance = cache_config_phpunittest::instance();
+        $instance->phpunit_add_definition('phpunit/eventpurgetest', array(
+            'mode' => cache_store::MODE_SESSION,
+            'component' => 'phpunit',
+            'area' => 'eventpurgetest',
+            'invalidationevents' => array(
+                'crazyevent'
+            )
+        ));
+        $instance->phpunit_add_definition('phpunit/eventpurgetestpersistent', array(
+            'mode' => cache_store::MODE_SESSION,
+            'component' => 'phpunit',
+            'area' => 'eventpurgetestpersistent',
+            'persistent' => true,
+            'invalidationevents' => array(
+                'crazyevent'
+            )
+        ));
+        $cache = cache::make('phpunit', 'eventpurgetest');
+
+        $this->assertTrue($cache->set('testkey1', 'test data 1'));
+        $this->assertEquals('test data 1', $cache->get('testkey1'));
+        $this->assertTrue($cache->set('testkey2', 'test data 2'));
+        $this->assertEquals('test data 2', $cache->get('testkey2'));
+
+        // Purge the event.
+        cache_helper::purge_by_event('crazyevent');
+
+        // Check things have been removed.
+        $this->assertFalse($cache->get('testkey1'));
+        $this->assertFalse($cache->get('testkey2'));
+
+        // Now test the persistent cache.
+        $cache = cache::make('phpunit', 'eventpurgetestpersistent');
         $this->assertTrue($cache->set('testkey1', 'test data 1'));
         $this->assertEquals('test data 1', $cache->get('testkey1'));
         $this->assertTrue($cache->set('testkey2', 'test data 2'));
