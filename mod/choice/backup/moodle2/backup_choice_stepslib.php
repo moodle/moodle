@@ -63,12 +63,7 @@ class backup_choice_activity_structure_step extends backup_activity_structure_st
         // Define sources
         $choice->set_source_table('choice', array('id' => backup::VAR_ACTIVITYID));
 
-        $option->set_source_sql('
-            SELECT *
-            FROM {choice_options}
-            WHERE choiceid = ?
-            ORDER BY id',
-            array(backup::VAR_PARENTID));
+        $option->set_source_table('choice_options', array('choiceid' => backup::VAR_PARENTID), 'id ASC');
 
         // All the rest of elements only happen if we are including user info
         if ($userinfo) {

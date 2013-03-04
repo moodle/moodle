@@ -48,7 +48,7 @@ abstract class backup_structure_dbops extends backup_dbops {
             return new backup_array_iterator($element->get_source_array());
 
         } else if ($element->get_source_table() !== null) { // It's one table, return recordset iterator
-            return $DB->get_recordset($element->get_source_table(), self::convert_params_to_values($params, $processor));
+            return $DB->get_recordset($element->get_source_table(), self::convert_params_to_values($params, $processor), $element->get_source_table_sortby());
 
         } else if ($element->get_source_sql() !== null) { // It's one sql, return recordset iterator
             return $DB->get_recordset_sql($element->get_source_sql(), self::convert_params_to_values($params, $processor));

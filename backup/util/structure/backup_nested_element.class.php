@@ -31,6 +31,7 @@ class backup_nested_element extends base_nested_element implements processable {
 
     protected $var_array; // To be used in case we pass one in-memory structure
     protected $table;     // Table (without prefix) to fetch records from
+    protected $tablesortby; // The field to sort by when using the table methods
     protected $sql;       // Raw SQL to fetch records from
     protected $params;    // Unprocessed params as specified in the set_source() call
     protected $procparams;// Processed (path resolved) params array
@@ -51,6 +52,7 @@ class backup_nested_element extends base_nested_element implements processable {
         parent::__construct($name, $attributes, $final_elements);
         $this->var_array = null;
         $this->table     = null;
+        $this->tablesortby = null;
         $this->sql       = null;
         $this->params    = null;
         $this->procparams= null;
@@ -191,13 +193,16 @@ class backup_nested_element extends base_nested_element implements processable {
         $this->var_array = $arr;
     }
 
-    public function set_source_table($table, $params) {
+    public function set_source_table($table, $params, $sortby = null) {
         if (!is_array($params)) { // Check we are passing array
             throw new base_element_struct_exception('setsourcerequiresarrayofparams');
         }
         // TODO: Only elements having final elements can set source
         $this->table = $table;
         $this->procparams = $this->convert_table_params($params);
+        if ($sortby) {
+            $this->tablesortby = $sortby;
+        }
     }
 
     public function set_source_sql($sql, $params) {
@@ -257,6 +262,10 @@ class backup_nested_element extends base_nested_element implements processable {
 
     public function get_source_table() {
         return $this->table;
+    }
+
+    public function get_source_table_sortby() {
+        return $this->tablesortby;
     }
 
     public function get_source_sql() {
