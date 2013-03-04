@@ -1670,5 +1670,21 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2013022600.00);
     }
 
+    // Add index to field "timemodified" for grade_grades_history table.
+    if ($oldversion < 2013030400.00) {
+        $table = new xmldb_table('grade_grades_history');
+        $field = new xmldb_field('timemodified');
+
+        if ($dbman->field_exists($table, $field)) {
+            $index = new xmldb_index('timemodified', XMLDB_INDEX_NOTUNIQUE, array('timemodified'));
+            if (!$dbman->index_exists($table, $index)) {
+                $dbman->add_index($table, $index);
+            }
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2013030400.00);
+    }
+
     return true;
 }
