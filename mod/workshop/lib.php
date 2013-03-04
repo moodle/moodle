@@ -1249,7 +1249,11 @@ function workshop_pluginfile($course, $cm, $context, $filearea, array $args, $fo
         // make sure the user is allowed to see the file
         if (empty($submission->example)) {
             if ($USER->id != $submission->authorid) {
-                if (!$DB->record_exists('workshop_assessments', array('submissionid' => $submission->id, 'reviewerid' => $USER->id))) {
+                if ($submission->published == 1 and $workshop->phase == 50
+                        and has_capability('mod/workshop:viewpublishedsubmissions', $context)) {
+                    // Published submission, we can go (workshop does not take the group mode
+                    // into account in this case yet).
+                } else if (!$DB->record_exists('workshop_assessments', array('submissionid' => $submission->id, 'reviewerid' => $USER->id))) {
                     if (!has_capability('mod/workshop:viewallsubmissions', $context)) {
                         send_file_not_found();
                     } else {
