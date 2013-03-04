@@ -202,10 +202,10 @@ class repository_webdav extends repository {
         $mform->addElement('select', 'webdav_auth', get_string('authentication', 'admin'), $choices);
         $mform->addRule('webdav_auth', get_string('required'), 'required', null, 'client');
 
-
         $mform->addElement('text', 'webdav_port', get_string('webdav_port', 'repository_webdav'), array('size' => '40'));
         $mform->addElement('text', 'webdav_user', get_string('webdav_user', 'repository_webdav'), array('size' => '40'));
-        $mform->addElement('text', 'webdav_password', get_string('webdav_password', 'repository_webdav'), array('size' => '40'));
+        $mform->addElement('password', 'webdav_password', get_string('webdav_password', 'repository_webdav'),
+            array('size' => '40'));
     }
     public function supported_returntypes() {
         return (FILE_INTERNAL | FILE_EXTERNAL);
