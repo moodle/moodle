@@ -337,49 +337,8 @@ function assign_print_overview($courses, &$htmlarray) {
     // We do all possible database work here *outside* of the loop to ensure this scales.
     list($sqlassignmentids, $assignmentidparams) = $DB->get_in_or_equal($assignmentids);
 
-    // Build up and array of unmarked submissions indexed by assignment id/ userid
-    // for use where the user has grading rights on assignment.
-    $dbparams = array_merge(array(ASSIGN_SUBMISSION_STATUS_SUBMITTED), $assignmentidparams);
-    $rs = $DB->get_recordset_sql('SELECT
-                                      s.assignment as assignment,
-                                      s.userid as userid,
-                                      s.id as id,
-                                      s.status as status,
-                                      g.timemodified as timegraded
-                                  FROM {assign_submission} s
-                                  LEFT JOIN {assign_grades} g ON
-                                      s.userid = g.userid AND
-                                      s.assignment = g.assignment
-                                  WHERE
-                                      ( g.timemodified is NULL OR
-                                      s.timemodified > g.timemodified ) AND
-                                      s.timemodified IS NOT NULL AND
-                                      s.status = ? AND
-                                      s.assignment ' . $sqlassignmentids, $dbparams);
-
-    $unmarkedsubmissions = array();
-    foreach ($rs as $rd) {
-        $unmarkedsubmissions[$rd->assignment][$rd->userid] = $rd->id;
-    }
-    $rs->close();
-
-    // Get all user submissions, indexed by assignment id.
-    $dbparams = array_merge(array($USER->id, $USER->id), $assignmentidparams);
-    $mysubmissions = $DB->get_records_sql('SELECT
-                                               a.id AS assignment,
-                                               a.nosubmissions AS nosubmissions,
-                                               g.timemodified AS timemarked,
-                                               g.grader AS grader,
-                                               g.grade AS grade,
-                                               s.status AS status
-                                           FROM {assign} a
-                                           LEFT JOIN {assign_grades} g ON
-                                               g.assignment = a.id AND
-                                               g.userid = ?
-                                           LEFT JOIN {assign_submission} s ON
-                                               s.assignment = a.id AND
-                                               s.userid = ?
-                                           WHERE a.id ' . $sqlassignmentids, $dbparams);
+    $mysubmissions = null;
+    $unmarkedsubmissions = null;
 
     foreach ($assignments as $assignment) {
         // Do not show assignments that are not open.
@@ -415,6 +374,34 @@ function assign_print_overview($courses, &$htmlarray) {
         }
         $context = context_module::instance($assignment->coursemodule);
         if (has_capability('mod/assign:grade', $context)) {
+            if (!isset($unmarkedsubmissions)) {
+                // Build up and array of unmarked submissions indexed by assignment id/ userid
+                // for use where the user has grading rights on assignment.
+                $dbparams = array_merge(array(ASSIGN_SUBMISSION_STATUS_SUBMITTED), $assignmentidparams);
+                $rs = $DB->get_recordset_sql('SELECT
+                                                  s.assignment as assignment,
+                                                  s.userid as userid,
+                                                  s.id as id,
+                                                  s.status as status,
+                                                  g.timemodified as timegraded
+                                              FROM {assign_submission} s
+                                              LEFT JOIN {assign_grades} g ON
+                                                  s.userid = g.userid AND
+                                                  s.assignment = g.assignment
+                                              WHERE
+                                                  ( g.timemodified is NULL OR
+                                                  s.timemodified > g.timemodified ) AND
+                                                  s.timemodified IS NOT NULL AND
+                                                  s.status = ? AND
+                                                  s.assignment ' . $sqlassignmentids, $dbparams);
+
+                $unmarkedsubmissions = array();
+                foreach ($rs as $rd) {
+                    $unmarkedsubmissions[$rd->assignment][$rd->userid] = $rd->id;
+                }
+                $rs->close();
+            }
+
             // Count how many people can submit.
             $submissions = 0;
             if ($students = get_enrolled_users($context, 'mod/assign:view', 0, 'u.id')) {
@@ -435,6 +422,26 @@ function assign_print_overview($courses, &$htmlarray) {
             }
         }
         if (has_capability('mod/assign:submit', $context)) {
+            if (!isset($mysubmissions)) {
+                // Get all user submissions, indexed by assignment id.
+                $dbparams = array_merge(array($USER->id, $USER->id), $assignmentidparams);
+                $mysubmissions = $DB->get_records_sql('SELECT
+                                                           a.id AS assignment,
+                                                           a.nosubmissions AS nosubmissions,
+                                                           g.timemodified AS timemarked,
+                                                           g.grader AS grader,
+                                                           g.grade AS grade,
+                                                           s.status AS status
+                                                       FROM {assign} a
+                                                       LEFT JOIN {assign_grades} g ON
+                                                           g.assignment = a.id AND
+                                                           g.userid = ?
+                                                       LEFT JOIN {assign_submission} s ON
+                                                           s.assignment = a.id AND
+                                                           s.userid = ?
+                                                       WHERE a.id ' . $sqlassignmentids, $dbparams);
+            }
+
             $str .= '<div class="details">';
             $str .= get_string('mysubmission', 'assign');
             $submission = $mysubmissions[$assignment->id];
