@@ -1686,5 +1686,12 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2013030400.00);
     }
 
+    if ($oldversion < 2013030400.02) {
+        // Cleanup qformat blackboard settings.
+        unset_all_config_for_plugin('qformat_blackboard');
+
+        upgrade_main_savepoint(true, 2013030400.02);
+    }
+
     return true;
 }
