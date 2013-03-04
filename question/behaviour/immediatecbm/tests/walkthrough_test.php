@@ -109,7 +109,7 @@ class qbehaviour_immediatecbm_walkthrough_test extends qbehaviour_walkthrough_te
                 $this->get_contains_correct_expectation());
 
         // Process a manual comment.
-        $this->manual_grade('Not good enough!', 0.5);
+        $this->manual_grade('Not good enough!', 0.5, FORMAT_HTML);
 
         // Verify.
         $this->check_current_state(question_state::$mangrpartial);
@@ -176,7 +176,7 @@ class qbehaviour_immediatecbm_walkthrough_test extends qbehaviour_walkthrough_te
                 $this->get_contains_mc_radio_expectation(2, false, false));
 
         // Process a manual comment.
-        $this->manual_grade('Not good enough!', 0.5);
+        $this->manual_grade('Not good enough!', 0.5, FORMAT_HTML);
 
         // Verify.
         $this->check_current_state(question_state::$mangrpartial);
