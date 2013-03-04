@@ -58,6 +58,9 @@ class workshop_assessment_form extends moodleform {
         $this->workshop = $this->_customdata['workshop'];   // instance of the workshop api class
         $this->options  = $this->_customdata['options'];    // array with addiotional options
 
+        // Disable shortforms
+        $mform->setDisableShortforms();
+
         // add the strategy-specific fields
         $this->definition_inner($mform);
 
