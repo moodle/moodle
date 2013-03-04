@@ -303,10 +303,19 @@
     }
 
     /// Define a table showing a list of users in the current role selection
+    $tablecolumns = array();
+    $tableheaders = array();
+    if ($bulkoperations && $mode === MODE_BRIEF) {
+        $tablecolumns[] = 'select';
+        $tableheaders[] = get_string('select');
+    }
+    $tablecolumns[] = 'userpic';
+    $tablecolumns[] = 'fullname';
 
-    $tablecolumns = array('userpic', 'fullname');
     $extrafields = get_extra_user_fields($context);
-    $tableheaders = array(get_string('userpic'), get_string('fullnameuser'));
+    $tableheaders[] = get_string('userpic');
+    $tableheaders[] = get_string('fullnameuser');
+
     if ($mode === MODE_BRIEF) {
         foreach ($extrafields as $field) {
             $tablecolumns[] = $field;
@@ -326,7 +335,7 @@
         $tableheaders[] = get_string('lastaccess');
     }
 
-    if ($bulkoperations) {
+    if ($bulkoperations && $mode === MODE_USERDETAILS) {
         $tablecolumns[] = 'select';
         $tableheaders[] = get_string('select');
     }
@@ -728,7 +737,12 @@
                     $profilelink = '<strong>'.fullname($user).'</strong>';
                 }
 
-                $data = array ($OUTPUT->user_picture($user, array('size' => 35, 'courseid'=>$course->id)), $profilelink);
+                $data = array();
+                if ($bulkoperations) {
+                    $data[] = '<input type="checkbox" class="usercheckbox" name="user'.$user->id.'" />';
+                }
+                $data[] = $OUTPUT->user_picture($user, array('size' => 35, 'courseid'=>$course->id));
+                $data[] = $profilelink;
 
                 if ($mode === MODE_BRIEF) {
                     foreach ($extrafields as $field) {
@@ -766,9 +780,6 @@
                     }
                 }
 
-                if ($bulkoperations) {
-                    $data[] = '<input type="checkbox" class="usercheckbox" name="user'.$user->id.'" />';
-                }
                 $table->add_data($data);
             }
         }
