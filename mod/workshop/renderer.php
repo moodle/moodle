@@ -797,8 +797,11 @@ class mod_workshop_renderer extends plugin_renderer_base {
 
             $filepath   = $file->get_filepath();
             $filename   = $file->get_filename();
-            $fileurl    = file_encode_url($CFG->wwwroot . '/pluginfile.php',
-                                '/' . $ctx->id . '/mod_workshop/submission_attachment/' . $submissionid . $filepath . $filename, true);
+            $fileurl    = moodle_url::make_pluginfile_url($ctx->id, 'mod_workshop', 'submission_attachment',
+                            $submissionid, $filepath, $filename, true);
+            $embedurl   = moodle_url::make_pluginfile_url($ctx->id, 'mod_workshop', 'submission_attachment',
+                            $submissionid, $filepath, $filename, false);
+            $embedurl   = new moodle_url($embedurl, array('preview' => 'bigthumb'));
             $type       = $file->get_mimetype();
             $image      = $this->output->pix_icon(file_file_icon($file), get_mimetype_description($file), 'moodle', array('class' => 'icon'));
 
@@ -807,7 +810,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
 
             if ($format == 'html') {
                 if (file_mimetype_in_typegroup($type, 'web_image')) {
-                    $preview     = html_writer::empty_tag('img', array('src' => $fileurl, 'alt' => '', 'class' => 'preview'));
+                    $preview     = html_writer::empty_tag('img', array('src' => $embedurl, 'alt' => '', 'class' => 'preview'));
                     $preview     = html_writer::tag('a', $preview, array('href' => $fileurl));
                     $outputimgs .= $this->output->container($preview);
 

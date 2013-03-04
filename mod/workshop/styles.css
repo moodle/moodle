@@ -137,6 +137,13 @@
     margin-right: 5px;
 }
 
+.path-mod-workshop .submission-full .attachments .images div {
+    display: inline-block;
+    margin: 5px;
+    padding: 5px;
+    border: 1px solid #ddd;
+}
+
 /**
  * Example submission - summary display
  */

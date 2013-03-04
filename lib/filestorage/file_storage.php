@@ -334,6 +334,9 @@ class file_storage {
         } else if ($mode === 'thumb') {
             $data = generate_image_thumbnail($tmpfilepath, 90, 90);
 
+        } else if ($mode === 'bigthumb') {
+            $data = generate_image_thumbnail($tmpfilepath, 250, 250);
+
         } else {
             throw new file_exception('storedfileproblem', 'Invalid preview mode requested');
         }
