@@ -139,7 +139,7 @@ class moodle_simplepie_file extends SimplePie_File
             }
         }
 
-        $this->headers = $curl->get($url);
+        $this->headers = curl::strip_double_headers($curl->get($url));
 
         if ($curl->error) {
             $this->error = 'cURL Error: '.$curl->error;
