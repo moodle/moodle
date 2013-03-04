@@ -138,13 +138,16 @@ if (isguestuser() or !confirm_sesskey()) {
     print_error('error');
 }
 
-// Now change state
+// Set up completion object and check it is enabled.
 $completion = new completion_info($course);
 if (!$completion->is_enabled()) {
     throw new moodle_exception('completionnotenabled', 'completion');
-} elseif (!$completion->is_tracked_user($USER->id)) {
-    throw new moodle_exception('nottracked', 'completion');
 }
+
+// NOTE: All users are allowed to toggle their completion state, including
+// users for whom completion information is not directly tracked. (I.e. even
+// if you are a teacher, or admin who is not enrolled, you can still toggle
+// your own completion state. You just don't appear on the reports.)
 
 // Check completion state is manual
 if($cm->completion != COMPLETION_TRACKING_MANUAL) {
