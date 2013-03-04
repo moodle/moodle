@@ -1,6 +1,13 @@
 This files describes API changes in /backup/*,
 information provided here is intended especially for developers.
 
+=== 2.5 ===
+
+* New optional param $sortby in backup set_source_table() allows to
+    specify the ORDER BY clause to be used. Previously it was required
+    to use the set_source_sql() more complex alternative in places
+    requiring ordering.
+
 === 2.4 ===
 
 * Since 2.3.1+ the backup file name schema has changed. The ID of the course will always be part of
