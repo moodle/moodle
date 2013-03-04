@@ -270,4 +270,101 @@ class filelib_testcase extends advanced_testcase {
         $this->assertEquals($contenthash, $fileref->get_contenthash());
         $this->assertEquals($filecontent, $fileref->get_content());
     }
+
+    /**
+     * Tests the strip_double_headers function in the curl class.
+     */
+    public function test_curl_strip_double_headers() {
+        // Example from issue tracker.
+        $mdl30648example = <<<EOF
+HTTP/1.0 407 Proxy Authentication Required
+Server: squid/2.7.STABLE9
+Date: Thu, 08 Dec 2011 14:44:33 GMT
+Content-Type: text/html
+Content-Length: 1275
+X-Squid-Error: ERR_CACHE_ACCESS_DENIED 0
+Proxy-Authenticate: Basic realm="Squid proxy-caching web server"
+X-Cache: MISS from homer.lancs.ac.uk
+X-Cache-Lookup: NONE from homer.lancs.ac.uk:3128
+Via: 1.0 homer.lancs.ac.uk:3128 (squid/2.7.STABLE9)
+Connection: close
+
+HTTP/1.0 200 OK
+Server: Apache
+X-Lb-Nocache: true
+Cache-Control: private, max-age=15
+ETag: "4d69af5d8ba873ea9192c489e151bd7b"
+Content-Type: text/html
+Date: Thu, 08 Dec 2011 14:44:53 GMT
+Set-Cookie: BBC-UID=c4de2e109c8df6a51de627cee11b214bd4fb6054a030222488317afb31b343360MoodleBot/1.0; expires=Mon, 07-Dec-15 14:44:53 GMT; path=/; domain=bbc.co.uk
+X-Cache-Action: MISS
+X-Cache-Age: 0
+Vary: Cookie,X-Country,X-Ip-is-uk-combined,X-Ip-is-advertise-combined,X-Ip_is_uk_combined,X-Ip_is_advertise_combined, X-GeoIP
+X-Cache: MISS from ww
+
+<html>...
+EOF;
+        $mdl30648expected = <<<EOF
+HTTP/1.0 200 OK
+Server: Apache
+X-Lb-Nocache: true
+Cache-Control: private, max-age=15
+ETag: "4d69af5d8ba873ea9192c489e151bd7b"
+Content-Type: text/html
+Date: Thu, 08 Dec 2011 14:44:53 GMT
+Set-Cookie: BBC-UID=c4de2e109c8df6a51de627cee11b214bd4fb6054a030222488317afb31b343360MoodleBot/1.0; expires=Mon, 07-Dec-15 14:44:53 GMT; path=/; domain=bbc.co.uk
+X-Cache-Action: MISS
+X-Cache-Age: 0
+Vary: Cookie,X-Country,X-Ip-is-uk-combined,X-Ip-is-advertise-combined,X-Ip_is_uk_combined,X-Ip_is_advertise_combined, X-GeoIP
+X-Cache: MISS from ww
+
+<html>...
+EOF;
+        // For HTTP, replace the \n with \r\n.
+        $mdl30648example = preg_replace("~(?!<\r)\n~", "\r\n", $mdl30648example);
+        $mdl30648expected = preg_replace("~(?!<\r)\n~", "\r\n", $mdl30648expected);
+
+        // Test stripping works OK.
+        $this->assertEquals($mdl30648expected, curl::strip_double_headers($mdl30648example));
+        // Test it does nothing to the 'plain' data.
+        $this->assertEquals($mdl30648expected, curl::strip_double_headers($mdl30648expected));
+
+        // Example from OU proxy.
+        $httpsexample = <<<EOF
+HTTP/1.0 200 Connection established
+
+HTTP/1.1 200 OK
+Date: Fri, 22 Feb 2013 17:14:23 GMT
+Server: Apache/2
+X-Powered-By: PHP/5.3.3-7+squeeze14
+Content-Type: text/xml
+Connection: close
+Content-Encoding: gzip
+Transfer-Encoding: chunked
+
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<rss version="2.0">...
+EOF;
+        $httpsexpected = <<<EOF
+HTTP/1.1 200 OK
+Date: Fri, 22 Feb 2013 17:14:23 GMT
+Server: Apache/2
+X-Powered-By: PHP/5.3.3-7+squeeze14
+Content-Type: text/xml
+Connection: close
+Content-Encoding: gzip
+Transfer-Encoding: chunked
+
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<rss version="2.0">...
+EOF;
+        // For HTTP, replace the \n with \r\n.
+        $httpsexample = preg_replace("~(?!<\r)\n~", "\r\n", $httpsexample);
+        $httpsexpected = preg_replace("~(?!<\r)\n~", "\r\n", $httpsexpected);
+
+        // Test stripping works OK.
+        $this->assertEquals($httpsexpected, curl::strip_double_headers($httpsexample));
+        // Test it does nothing to the 'plain' data.
+        $this->assertEquals($httpsexpected, curl::strip_double_headers($httpsexpected));
+    }
 }
