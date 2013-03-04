@@ -175,15 +175,24 @@ YUI.add('moodle-core_filepicker', function(Y) {
         /** return the name of the file (different attributes in FileManager and FilePicker) */
         var file_get_filename = function(node) {
             return node.title ? node.title : node.fullname;
-        }
+        };
         /** return display name of the file (different attributes in FileManager and FilePicker) */
         var file_get_displayname = function(node) {
-            return node.shorttitle ? node.shorttitle : file_get_filename(node);
-        }
+            var displayname = node.shorttitle ? node.shorttitle : file_get_filename(node);
+            return Y.Escape.html(displayname);
+        };
         /** return file description (different attributes in FileManager and FilePicker) */
         var file_get_description = function(node) {
-            return node.description ? node.description : (node.thumbnail_title ? node.thumbnail_title : file_get_filename(node));
-        }
+            var description = '';
+            if (node.description) {
+                description = node.description;
+            } else if (node.thumbnail_title) {
+                description = node.thumbnail_title;
+            } else {
+                description = file_get_filename(node);
+            }
+            return Y.Escape.html(description);
+        };
         /** help funciton for tree view */
         var build_tree = function(node, level) {
             // prepare file name with icon
@@ -401,7 +410,7 @@ YUI.add('moodle-core_filepicker', function(Y) {
                 imgdiv.setStyleAdv('width', width).setStyleAdv('height', height);
                 var img = Y.Node.create('<img/>').setAttrs({
                         title: file_get_description(node),
-                        alt: node.thumbnail_alt ? node.thumbnail_alt : file_get_filename(node)}).
+                        alt: Y.Escape.html(node.thumbnail_alt ? node.thumbnail_alt : file_get_filename(node))}).
                     setStyle('maxWidth', ''+width+'px').
                     setStyle('maxHeight', ''+height+'px');
                 img.setImgSrc(src, node.realthumbnail, lazyloading);
@@ -736,7 +745,7 @@ M.core_filepicker.init = function(Y, options) {
             this.fpnode.one('.fp-content').setContent(M.core_filepicker.templates.error);
             this.fpnode.one('.fp-content .fp-error').
                 addClass(errorcode).
-                setContent(errortext);
+                setContent(Y.Escape.html(errortext));
         },
         /** displays message in a popup */
         print_msg: function(msg, type) {
@@ -766,7 +775,7 @@ M.core_filepicker.init = function(Y, options) {
 
             this.msg_dlg.set('headerContent', header);
             this.msg_dlg_node.removeClass('fp-msg-info').removeClass('fp-msg-error').addClass('fp-msg-'+type)
-            this.msg_dlg_node.one('.fp-msg-text').setContent(msg);
+            this.msg_dlg_node.one('.fp-msg-text').setContent(Y.Escape.html(msg));
             this.msg_dlg.show();
         },
         view_files: function(appenditems) {
@@ -1104,7 +1113,7 @@ M.core_filepicker.init = function(Y, options) {
                 if (selectnode.one('.fp-'+attrs[i])) {
                     var value = (args[attrs[i]+'_f']) ? args[attrs[i]+'_f'] : (args[attrs[i]] ? args[attrs[i]] : '');
                     selectnode.one('.fp-'+attrs[i]).addClassIf('fp-unknown', ''+value == '')
-                        .one('.fp-value').setContent(value);
+                        .one('.fp-value').setContent(Y.Escape.html(value));
                 }
             }
         },
@@ -1350,7 +1359,7 @@ M.core_filepicker.init = function(Y, options) {
                             this.hide_header();
                             this.list({'repo_id':repository_id});
                         }, this /*handler running scope*/, repository.id/*second argument of handler*/);
-                    node.one('.fp-repo-name').setContent(repository.name);
+                    node.one('.fp-repo-name').setContent(Y.Escape.html(repository.name));
                     node.one('.fp-repo-icon').set('src', repository.icon);
                     if (i==0) {
                         node.addClass('first');
@@ -1605,7 +1614,7 @@ M.core_filepicker.init = function(Y, options) {
                 var option = Y.Node.create('<option/>').
                     set('selected', (this.options.defaultlicense==licenses[i].shortname)).
                     set('value', licenses[i].shortname).
-                    setContent(licenses[i].fullname);
+                    setContent(Y.Escape.html(licenses[i].fullname));
                 node.appendChild(option)
             }
         },
@@ -1867,7 +1876,7 @@ M.core_filepicker.init = function(Y, options) {
                     } else {
                         el.addClass('odd');
                     }
-                    el.all('.fp-path-folder-name').setContent(p[i].name);
+                    el.all('.fp-path-folder-name').setContent(Y.Escape.html(p[i].name));
                     el.on('click',
                             function(e, path) {
                                 e.preventDefault();
