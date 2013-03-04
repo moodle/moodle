@@ -90,19 +90,17 @@ ini_set('log_errors', '1');
 require_once(__DIR__ . '/../../../../config.php');
 
 // CFG->behat_prefix must be set and with value different than CFG->prefix and phpunit_prefix.
-if (!isset($CFG->behat_prefix) ||
-   (isset($CFG->behat_prefix) &&
-       ($CFG->behat_prefix == $CFG->prefix ||
-       $CFG->behat_prefix == $CFG->phpunit_prefix))) {
+if (empty($CFG->behat_prefix) ||
+       ($CFG->behat_prefix == $CFG->prefix) ||
+       (!empty($CFG->phpunit_prefix) && $CFG->behat_prefix == $CFG->phpunit_prefix)) {
     behat_error(BEHAT_EXITCODE_CONFIG,
         'Define $CFG->behat_prefix in config.php with a value different than $CFG->prefix and $CFG->phpunit_prefix');
 }
 
 // CFG->behat_dataroot must be set and with value different than CFG->dataroot and phpunit_dataroot.
-if (!isset($CFG->behat_dataroot) ||
-   (isset($CFG->behat_dataroot) &&
-       ($CFG->behat_dataroot == $CFG->dataroot ||
-       $CFG->behat_dataroot == $CFG->phpunit_dataroot))) {
+if (empty($CFG->behat_dataroot) ||
+       ($CFG->behat_dataroot == $CFG->dataroot) ||
+       (!empty($CFG->phpunit_dataroot) && $CFG->behat_dataroot == $CFG->phpunit_dataroot)) {
     behat_error(BEHAT_EXITCODE_CONFIG,
         'Define $CFG->behat_dataroot in config.php with a value different than $CFG->dataroot and $CFG->phpunit_dataroot');
 }
