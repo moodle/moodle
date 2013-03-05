@@ -277,8 +277,11 @@ $remove = optional_param('remove', false, PARAM_INT);
 if ($remove && confirm_sesskey()) {
     // Remove a question from the quiz.
     // We require the user to have the 'use' capability on the question,
-    // so that then can add it back if they remove the wrong one by mistake.
-    quiz_require_question_use($remove);
+    // so that then can add it back if they remove the wrong one by mistake,
+    // but, if the question is missing, it can always be removed.
+    if ($DB->record_exists('question', array('id' => $remove))) {
+        quiz_require_question_use($remove);
+    }
     quiz_remove_question($quiz, $remove);
     quiz_delete_previews($quiz);
     quiz_update_sumgrades($quiz);
