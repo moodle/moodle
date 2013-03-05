@@ -29,7 +29,7 @@ use Behat\Mink\Session as Session,
     Behat\Mink\Element\NodeElement as NodeElement;
 
 /**
- * Representation of a moodle field.
+ * Representation of a form field.
  *
  * Basically an interface with Mink session.
  *

@@ -47,9 +47,16 @@ class behat_navigation extends behat_base {
     public function i_expand_node($nodetext) {
 
         $xpath = "//ul[contains(concat(' ', normalize-space(@class), ' '), ' block_tree ')]
+/child::li
+/child::p[contains(concat(' ', normalize-space(@class), ' '), ' branch')]
+/child::span[contains(concat(' ', normalize-space(.), ' '), '" . $nodetext . "')]
+|
+//ul[contains(concat(' ', normalize-space(@class), ' '), ' block_tree ')]
+/descendant::li[not(contains(concat(' ', normalize-space(@class), ' '), ' collapsed'))]
 /descendant::li
-/descendant::p[contains(concat(' ', normalize-space(@class), ' '), ' branch')]
-/descendant::span[contains(concat(' ', normalize-space(.), ' '), '" . $nodetext . "')]";
+/child::p[contains(concat(' ', normalize-space(@class), ' '), ' branch')]
+/child::span[contains(concat(' ', normalize-space(.), ' '), '" . $nodetext . "')]
+";
 
         $node = $this->find('xpath', $xpath);
         $node->click();
