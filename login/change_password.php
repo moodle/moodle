@@ -112,7 +112,7 @@ if ($mform->is_cancelled()) {
     }
 
     // Reset login lockout - we want to prevent any accidental confusion here.
-    login_unlock_account($user);
+    login_unlock_account($USER);
 
     // register success changing password
     unset_user_preference('auth_forcepasswordchange', $USER);
