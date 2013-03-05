@@ -38,4 +38,7 @@ $string['stepsdefinitionstype'] = 'Type';
 $string['theninfo'] = 'Then. Checkings to ensure the outcomes are the expected ones';
 $string['viewsteps'] = 'Filter';
 $string['wheninfo'] = 'When. Actions that provokes an event';
-$string['wrongbehatsetup'] = 'Something is wrong with the setup, ensure you ran the composer installer and vendor/bin/behat file has execution permissions';
+$string['wrongbehatsetup'] = 'Something is wrong with behat setup, ensure:<ul>
+<li>You ran "curl http://getcomposer.org/installer | php"</li>
+<li>You ran "php composer.phar install --dev"</li>
+<li>vendor/bin/behat file has execution permissions</li></ul>';

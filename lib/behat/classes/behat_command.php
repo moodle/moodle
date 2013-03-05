@@ -140,17 +140,22 @@ class behat_command {
             behat_error(BEHAT_EXITCODE_REQUIREMENT, 'PHP 5.4 is required. See config-dist.php for possible alternatives');
         }
 
+        $clibehaterrorstr = "Behat dependencies not installed. Ensure you ran the composer installer. " . self::DOCS_URL . "#Installation\n";
+
         // Moodle setting.
         if (!self::are_behat_dependencies_installed()) {
 
-            $msg = get_string('wrongbehatsetup', 'tool_behat');
 
             // With HTML.
-            $docslink = self::DOCS_URL . '#Installation';
             if (!CLI_SCRIPT) {
+
+                $msg = get_string('wrongbehatsetup', 'tool_behat');
+                $docslink = self::DOCS_URL . '#Installation';
                 $docslink = html_writer::tag('a', $docslink, array('href' => $docslink, 'target' => '_blank'));
+                $msg .= get_string('moreinfoin', 'tool_behat', $docslink);
+            } else {
+                $msg = $clibehaterrorstr;
             }
-            $msg .= '. ' . get_string('moreinfoin', 'tool_behat', $docslink);
 
             self::output_msg($msg);
             return BEHAT_EXITCODE_COMPOSER;
@@ -161,7 +166,12 @@ class behat_command {
 
         if ($code != 0) {
             // Returning composer error code to avoid conflicts with behat and moodle error codes.
-            self::output_msg(get_string('wrongbehatsetup', 'tool_behat'));
+            if (!CLI_SCRIPT) {
+                $msg = get_string('wrongbehatsetup', 'tool_behat');
+            } else {
+                $msg = $clibehaterrorstr;
+            }
+            self::output_msg($msg);
             return BEHAT_EXITCODE_COMPOSER;
         }
 

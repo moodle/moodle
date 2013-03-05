@@ -177,7 +177,7 @@ class behat_util extends testing_util {
 
         // Checks the behat set up and the PHP version.
         if ($errorcode = behat_command::behat_setup_problem(true)) {
-            exit($code);
+            exit($errorcode);
         }
 
         // Check that test environment is correctly set up.
@@ -211,7 +211,7 @@ class behat_util extends testing_util {
 
         // Checks the behat set up and the PHP version, returning an error code if something went wrong.
         if ($errorcode = behat_command::behat_setup_problem(true)) {
-            return $code;
+            return $errorcode;
         }
 
         // Check that test environment is correctly set up, stops execution.
