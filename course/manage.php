@@ -120,7 +120,7 @@ if (!empty($deletecat) and confirm_sesskey()) {
                 echo $OUTPUT->notification(get_string('coursedeleted', '', $course->shortname), 'notifysuccess');
             }
             $cattodeletename = format_string($cattodelete->name, true, array('context' => $context));
-            echo $OUTPUT->notification(get_string('coursecategorydeleted', '', $catetodeletename), 'notifysuccess');
+            echo $OUTPUT->notification(get_string('coursecategorydeleted', '', $cattodeletename), 'notifysuccess');
 
         } else {
             category_delete_move($cattodelete, $data->newparent, true);
