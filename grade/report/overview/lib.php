@@ -71,8 +71,6 @@ class grade_report_overview extends grade_report {
         global $CFG, $COURSE, $DB;
         parent::__construct($COURSE->id, $gpr, $context);
 
-        $this->showtotalsifcontainhidden = grade_get_setting($this->courseid, 'report_overview_showtotalsifcontainhidden', $CFG->grade_report_overview_showtotalsifcontainhidden);
-
         // Get the user (for full name).
         $this->user = $DB->get_record('user', array('id' => $userid));
 
@@ -81,12 +79,17 @@ class grade_report_overview extends grade_report {
 
         $this->showrank = array();
         $this->showrank['any'] = false;
+
+        $this->showtotalsifcontainhidden = array();
+
         if ($this->courses) {
             foreach ($this->courses as $course) {
                 $this->showrank[$course->id] = grade_get_setting($course->id, 'report_overview_showrank', !empty($CFG->grade_report_overview_showrank));
                 if ($this->showrank[$course->id]) {
                     $this->showrank['any'] = true;
                 }
+
+                $this->showtotalsifcontainhidden[$course->id] = grade_get_setting($course->id, 'report_overview_showtotalsifcontainhidden', $CFG->grade_report_overview_showtotalsifcontainhidden);
             }
         }
 
