@@ -373,7 +373,12 @@ if ($canmanage) {
 
     // Print button for creating new categories.
     $url = new moodle_url('/course/editcategory.php', array('parent' => $id));
-    echo $OUTPUT->single_button($url, get_string('addsubcategory'), 'get');
+    if ($id) {
+        $title = get_string('addsubcategory');
+    } else {
+        $title = get_string('addnewcategory');
+    }
+    echo $OUTPUT->single_button($url, $title, 'get');
     echo $OUTPUT->container_end();
 }
 
