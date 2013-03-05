@@ -20,10 +20,13 @@ class editsection_form extends moodleform {
 
         $mform  = $this->_form;
         $course = $this->_customdata['course'];
-        $mform->addElement('checkbox', 'usedefaultname', get_string('sectionusedefaultname'));
-        $mform->setDefault('usedefaultname', true);
 
-        $mform->addElement('text', 'name', get_string('sectionname'), array('size'=>'30'));
+        $elementgroup = array();
+        $elementgroup[] = $mform->createElement('text', 'name', '', array('size' => '30'));
+        $elementgroup[] = $mform->createElement('checkbox', 'usedefaultname', '', get_string('sectionusedefaultname'));
+        $mform->addGroup($elementgroup, 'name_group', get_string('sectionname'), ' ', false);
+
+        $mform->setDefault('usedefaultname', true);
         $mform->setType('name', PARAM_TEXT);
         $mform->disabledIf('name','usedefaultname','checked');
 
