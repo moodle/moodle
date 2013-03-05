@@ -139,8 +139,10 @@ class mod_choice_mod_form extends moodleform_mod {
             return false;
         }
         // Set up completion section even if checkbox is not ticked
-        if (empty($data->completionsection)) {
-            $data->completionsection=0;
+        if (!empty($data->completionunlocked)) {
+            if (empty($data->completionsubmit)) {
+                $data->completionsubmit = 0;
+            }
         }
         return $data;
     }

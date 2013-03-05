@@ -195,10 +195,12 @@ class mod_glossary_mod_form extends moodleform_mod {
         if (!$data) {
             return false;
         }
-        // Turn off completion settings if the checkboxes aren't ticked
-        $autocompletion = !empty($data->completion) && $data->completion==COMPLETION_TRACKING_AUTOMATIC;
-        if (empty($data->completionentriesenabled) || !$autocompletion) {
-            $data->completionentries = 0;
+        if (!empty($data->completionunlocked)) {
+            // Turn off completion settings if the checkboxes aren't ticked
+            $autocompletion = !empty($data->completion) && $data->completion==COMPLETION_TRACKING_AUTOMATIC;
+            if (empty($data->completionentriesenabled) || !$autocompletion) {
+                $data->completionentries = 0;
+            }
         }
         return $data;
     }

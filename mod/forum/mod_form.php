@@ -237,15 +237,17 @@ class mod_forum_mod_form extends moodleform_mod {
             return false;
         }
         // Turn off completion settings if the checkboxes aren't ticked
-        $autocompletion = !empty($data->completion) && $data->completion==COMPLETION_TRACKING_AUTOMATIC;
-        if (empty($data->completiondiscussionsenabled) || !$autocompletion) {
-            $data->completiondiscussions = 0;
-        }
-        if (empty($data->completionrepliesenabled) || !$autocompletion) {
-            $data->completionreplies = 0;
-        }
-        if (empty($data->completionpostsenabled) || !$autocompletion) {
-            $data->completionposts = 0;
+        if (!empty($data->completionunlocked)) {
+            $autocompletion = !empty($data->completion) && $data->completion==COMPLETION_TRACKING_AUTOMATIC;
+            if (empty($data->completiondiscussionsenabled) || !$autocompletion) {
+                $data->completiondiscussions = 0;
+            }
+            if (empty($data->completionrepliesenabled) || !$autocompletion) {
+                $data->completionreplies = 0;
+            }
+            if (empty($data->completionpostsenabled) || !$autocompletion) {
+                $data->completionposts = 0;
+            }
         }
         return $data;
     }
