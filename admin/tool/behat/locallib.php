@@ -44,7 +44,7 @@ class tool_behat {
      * @param string $type
      * @param string $component
      * @param string $filter
-     * @return string
+     * @return array System steps or empty array if case there are no steps
      */
     public static function stepsdefinitions($type, $component, $filter) {
 
@@ -70,15 +70,7 @@ class tool_behat {
         $options = ' --config="'.behat_config_manager::get_steps_list_config_filepath(). '" '.$filteroption;
         list($steps, $code) = behat_command::run($options);
 
-        if ($steps) {
-            $stepshtml = implode('', $steps);
-        }
-
-        if (empty($stepshtml)) {
-            $stepshtml = get_string('nostepsdefinitions', 'tool_behat');
-        }
-
-        return $stepshtml;
+        return $steps;
     }
 
 }

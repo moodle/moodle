@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -113,8 +112,8 @@ class behat_hooks extends behat_base {
                php_sapi_name() != 'cli' ||
                !behat_util::is_test_mode_enabled() ||
                !behat_util::is_test_site() ||
-               !isset($CFG->originaldataroot))  {
-           throw new coding_exception('Behat only can modify the test database and the test dataroot!');
+               !isset($CFG->originaldataroot)) {
+            throw new coding_exception('Behat only can modify the test database and the test dataroot!');
         }
 
         behat_util::reset_database();

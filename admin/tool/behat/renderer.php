@@ -37,9 +37,9 @@ require_once($CFG->libdir . '/behat/classes/behat_command.php');
 class tool_behat_renderer extends plugin_renderer_base {
 
     /**
-     * Renders the list of available steps according to the submitted filters
+     * Renders the list of available steps according to the submitted filters.
      *
-     * @param string     $stepsdefinitions HTML from behat with the available steps
+     * @param mixed $stepsdefinitions Available steps array.
      * @param moodleform $form
      * @return string HTML code
      */
@@ -81,6 +81,30 @@ class tool_behat_renderer extends plugin_renderer_base {
         $form->display();
         $html .= ob_get_contents();
         ob_end_clean();
+
+        if (empty($stepsdefinitions)) {
+            $stepsdefinitions = get_string('nostepsdefinitions', 'tool_behat');
+        } else {
+
+            $stepsdefinitions = implode('', $stepsdefinitions);
+
+            // Replace text selector type arguments with a user-friendly select.
+            $stepsdefinitions = preg_replace_callback('/(TEXT_SELECTOR_STRING)/',
+                function ($matches) {
+                    return html_writer::select(behat_command::$allowedtextselectors, uniqid());
+                },
+                $stepsdefinitions
+            );
+
+            // Replace selector type arguments with a user-friendly select.
+            $stepsdefinitions = preg_replace_callback('/(SELECTOR_STRING)/',
+                function ($matches) {
+                    return html_writer::select(behat_command::$allowedselectors, uniqid());
+                },
+                $stepsdefinitions
+            );
+
+        }
 
         // Steps definitions.
         $html .= html_writer::tag('div', $stepsdefinitions, array('class' => 'steps-definitions'));

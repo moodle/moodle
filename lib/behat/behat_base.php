@@ -59,18 +59,18 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
      * @param string $path
      * @return string
      */
-    protected function locatePath($path) {
-        $startUrl = rtrim($this->getMinkParameter('base_url'), '/') . '/';
-        return 0 !== strpos($path, 'http') ? $startUrl . ltrim($path, '/') : $path;
+    protected function locate_path($path) {
+        $starturl = rtrim($this->getMinkParameter('base_url'), '/') . '/';
+        return 0 !== strpos($path, 'http') ? $starturl . ltrim($path, '/') : $path;
     }
 
     /**
      * Adapter to Behat\Mink\Element\Element::find() using the spin() method.
      *
      * @link http://mink.behat.org/#traverse-the-page-selectors
-     * @param Exception $exception Otherwise we throw expcetion with generic info
      * @param string $selector The selector type (css, xpath, named...)
      * @param mixed $locator It depends on the $selector, can be the xpath, a name, a css locator...
+     * @param Exception $exception Otherwise we throw exception with generic info
      * @return NodeElement
      */
     protected function find($selector, $locator, $exception = false) {
@@ -98,7 +98,7 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
             array($selector, $locator),
             self::TIMEOUT,
             $exception
-       );
+        );
     }
 
     /**
@@ -119,7 +119,7 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
      *
      * @link http://mink.behat.org/#named-selectors
      * @throws coding_exception
-     * @param string $method The name of the called method
+     * @param string $name The name of the called method
      * @param mixed $arguments
      * @return NodeElement
      */
@@ -193,7 +193,7 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
                 if ($return = $lambda($this, $args)) {
                     return $return;
                 }
-            } catch(Exception $e) {
+            } catch (Exception $e) {
 
                 // We would use the first closure exception if no exception has been provided.
                 if (!$exception) {
@@ -214,6 +214,58 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
 
         // Throwing exception to the user.
         throw $exception;
+    }
+
+    /**
+     * Gets a NodeElement based on the locator and selector type received as argument from steps definitions.
+     *
+     * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param string $selectortype
+     * @param string $element
+     * @return NodeElement
+     */
+    protected function get_selected_node($selectortype, $element) {
+
+        // Getting Mink selector and locator.
+        list($selector, $locator) = $this->transform_selector($selectortype, $element);
+
+        // Returns the NodeElement.
+        return $this->find($selector, $locator);
+    }
+
+    /**
+     * Transforms from step definition's argument style to Mink format.
+     *
+     * Mink has 3 different selectors css, xpath and named, where named
+     * selectors includes link, button, field... to simplify and group multiple
+     * steps in one we use the same interface, considering all link, buttons...
+     * at the same level as css selectors and xpath; this method makes the
+     * conversion from the arguments received by the steps to the selectors and locators
+     * required to interact with Mink.
+     *
+     * @throws ExpectationException
+     * @param string $selectortype It can be css, xpath or any of the named selectors.
+     * @param string $element The locator (or string) we are looking for.
+     * @return array Contains the selector and the locator expected by Mink.
+     */
+    protected function transform_selector($selectortype, $element) {
+
+        // Here we don't know if a $allowedtextselector is used.
+        if (!isset(behat_command::$allowedselectors[$selectortype])) {
+            throw new ExpectationException('The "' . $selectortype . '" selector type does not exist', $this->getSession());
+        }
+
+        // CSS and XPath selectors locator is one single argument.
+        if ($selectortype == 'css_element' || $selectortype == 'xpath_element') {
+            $selector = str_replace('_element', '', $selectortype);
+            $locator = $element;
+        } else {
+            // Named selectors uses arrays as locators including the type of named selector.
+            $locator = array($selectortype, $this->getSession()->getSelectorsHandler()->xpathLiteral($element));
+            $selector = 'named';
+        }
+
+        return array($selector, $locator);
     }
 
 }

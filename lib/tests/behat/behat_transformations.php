@@ -77,7 +77,7 @@ class behat_transformations extends behat_base {
      * adding them in a different method for Behat API restrictions.
      *
      * @Transform /^table:(.*)/
-     * @param TableNode $table
+     * @param TableNode $tablenode
      * @return TableNode The transformed table
      */
     public function tablenode_transformations(TableNode $tablenode) {
