@@ -202,14 +202,13 @@ class mod_feedback_mod_form extends moodleform_mod {
             $data->page_after_submitformat = $data->page_after_submit_editor['format'];
             $data->page_after_submit = $data->page_after_submit_editor['text'];
 
-            // Turn off completion settings if the checkboxes aren't ticked
-            $autocompletion = !empty($data->completion) AND
-                                    $data->completion==COMPLETION_TRACKING_AUTOMATIC;
-            if (empty($data->completion) || !$autocompletion) {
-                $data->completionsubmit=0;
-            }
-            if (empty($data->completionsubmit)) {
-                $data->completionsubmit=0;
+            if (!empty($data->completionunlocked)) {
+                // Turn off completion settings if the checkboxes aren't ticked
+                $autocompletion = !empty($data->completion) &&
+                    $data->completion == COMPLETION_TRACKING_AUTOMATIC;
+                if (!$autocompletion || empty($data->completionsubmit)) {
+                    $data->completionsubmit=0;
+                }
             }
         }
 
