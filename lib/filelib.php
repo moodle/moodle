@@ -1277,7 +1277,8 @@ function download_file_content($url, $headers=null, $postdata=null, $fullrespons
         //reinstate affected curl options
         curl_setopt_array ($ch, array(
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_NOBODY         => false)
+            CURLOPT_NOBODY         => false,
+            CURLOPT_HTTPGET        => true)
         );
     }
 
