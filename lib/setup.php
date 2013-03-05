@@ -111,7 +111,7 @@ if (!empty($CFG->behat_dataroot) && !empty($CFG->behat_prefix) && file_exists($C
 
     $CFG->behat_dataroot = realpath($CFG->behat_dataroot);
 
-    $switchcompletely = isset($CFG->behat_switchcompletely) && php_sapi_name() !== 'cli';
+    $switchcompletely = !empty($CFG->behat_switchcompletely) && php_sapi_name() !== 'cli';
     $builtinserver = php_sapi_name() === 'cli-server';
     $behatrunning = defined('BEHAT_RUNNING');
     $testenvironmentrequested = $switchcompletely || $builtinserver || $behatrunning;
