@@ -3976,14 +3976,14 @@ class settings_navigation extends navigation_node {
             $reportfunction($reporttab, $user, $course);
         }
         $anyreport = has_capability('moodle/user:viewuseractivitiesreport', $usercontext);
-        if ($anyreport || ($course->showreports && $iscurrentuser && $forceforcontext)) {
+        if ($anyreport || ($course->showreports && $currentuser && $forceforcontext)) {
             // Add grade hardcoded grade report if necessary.
             $gradeaccess = false;
             if (has_capability('moodle/grade:viewall', $coursecontext)) {
                 // Can view all course grades.
                 $gradeaccess = true;
             } else if ($course->showgrades) {
-                if ($iscurrentuser && has_capability('moodle/grade:view', $coursecontext)) {
+                if ($currentuser && has_capability('moodle/grade:view', $coursecontext)) {
                     // Can view own grades.
                     $gradeaccess = true;
                 } else if (has_capability('moodle/grade:viewall', $usercontext)) {
