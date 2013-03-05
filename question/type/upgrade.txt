@@ -1,5 +1,14 @@
 This files describes API changes for question type plugins.
 
+=== 2.3.5 / 2.4.2 / 2.5 ===
+
+* The special value question_attempt::PARAM_CLEANHTML_FILES that could be used
+  in the get_expected_data method was renamed to question_attempt::PARAM_RAW_FILES
+  in order to fix a bug. We failed to think this throught, and so did not realised
+  that this might break some question types. If this affected your question type,
+  please accept our apologies. Details in MDL-37847.
+
+
 === 2.3 ===
 
 * Support for backwards-compatible string names dropped. MDL-30120. (See under 2.2 below.)
