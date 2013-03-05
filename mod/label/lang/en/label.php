@@ -31,6 +31,7 @@ $string['dndmedia'] = 'Media drag and drop';
 $string['dndresizeheight'] = 'Resize drag and drop height';
 $string['dndresizewidth'] = 'Resize drag and drop width';
 $string['dnduploadlabel'] = 'Add image to course page';
+$string['dnduploadlabeltext'] = 'Add text to course page';
 $string['label:addinstance'] = 'Add a new label';
 $string['labeltext'] = 'Label text';
 $string['modulename'] = 'Label';

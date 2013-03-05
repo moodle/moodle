@@ -207,18 +207,24 @@ function label_supports($feature) {
  * @return array containing details of the files / types the mod can handle
  */
 function label_dndupload_register() {
+    $strdnd = get_string('dnduploadlabel', 'mod_label');
     if (get_config('label', 'dndmedia')) {
         $mediaextensions = file_get_typegroup('extension', 'web_image');
-        $strdnd = get_string('dnduploadlabel', 'mod_label');
         $files = array();
         foreach ($mediaextensions as $extn) {
             $extn = trim($extn, '.');
             $files[] = array('extension' => $extn, 'message' => $strdnd);
         }
-        return array('files' => $files);
+        $ret = array('files' => $files);
     } else {
-        return array();
+        $ret = array();
     }
+
+    $strdndtext = get_string('dnduploadlabeltext', 'mod_label');
+    return array_merge($ret, array('types' => array(
+        array('identifier' => 'text/html', 'message' => $strdndtext),
+        array('identifier' => 'text', 'message' => $strdndtext)
+    )));
 }
 
 /**
@@ -256,6 +262,8 @@ function label_dndupload_handle($uploadinfo) {
             $data->intro = file_save_draft_area_files($uploadinfo->draftitemid, $context->id, 'mod_label', 'intro', 0,
                                                       null, $data->intro);
         }
+    } else if (!empty($uploadinfo->content)) {
+        $data->intro = $uploadinfo->content;
     }
 
     return label_add_instance($data, null);
