@@ -287,5 +287,6 @@
 #core-cache-store-summaries .default-store td {color:#333;font-style: italic;}
 #core-cache-rescan-definitions,
 #core-cache-mode-mappings .edit-link {margin-top:0.5em;text-align:center;}
+#core-cache-store-summaries .store-requires-attention {background-color:#ffd3d9;}
 
 .tinymcesubplugins img.icon { padding-top: 0; padding-bottom: 0; }
