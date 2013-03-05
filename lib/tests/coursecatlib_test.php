@@ -359,4 +359,63 @@ class coursecatlib_testcase extends advanced_testcase {
         $this->assertEquals(array($category2->id, $category4->id, $category6->id, $category7->id), array_keys($children));
         $this->assertEquals(4, $category1->get_children_count());
     }
+
+    public function test_get_search_courses() {
+        $cat1 = coursecat::create(array('name' => 'Cat1'));
+        $cat2 = coursecat::create(array('name' => 'Cat2', 'parent' => $cat1->id));
+        $c1 = $this->getDataGenerator()->create_course(array('category' => $cat1->id, 'fullname' => 'Test 3', 'summary' => ' ', 'idnumber' => 'ID3'));
+        $c2 = $this->getDataGenerator()->create_course(array('category' => $cat1->id, 'fullname' => 'Test 1', 'summary' => ' ', 'visible' => 0));
+        $c3 = $this->getDataGenerator()->create_course(array('category' => $cat1->id, 'fullname' => 'Математика', 'summary' => ' Test '));
+        $c4 = $this->getDataGenerator()->create_course(array('category' => $cat1->id, 'fullname' => 'Test 4', 'summary' => ' ', 'idnumber' => 'ID4'));
+
+        $c5 = $this->getDataGenerator()->create_course(array('category' => $cat2->id, 'fullname' => 'Test 5', 'summary' => ' '));
+        $c6 = $this->getDataGenerator()->create_course(array('category' => $cat2->id, 'fullname' => 'Дискретная Математика', 'summary' => ' '));
+        $c7 = $this->getDataGenerator()->create_course(array('category' => $cat2->id, 'fullname' => 'Test 7', 'summary' => ' ', 'visible' => 0));
+        $c8 = $this->getDataGenerator()->create_course(array('category' => $cat2->id, 'fullname' => 'Test 8', 'summary' => ' '));
+
+        // get courses in category 1 (returned visible only because user is not enrolled)        global $DB;
+        $res = $cat1->get_courses(array('sortorder' => 1));
+        $this->assertEquals(array($c4->id, $c3->id, $c1->id), array_keys($res)); // courses are added in reverse order
+        $this->assertEquals(3, $cat1->get_courses_count());
+
+        // get courses in category 1 recursively (returned visible only because user is not enrolled)
+        $res = $cat1->get_courses(array('recursive' => 1));
+        $this->assertEquals(array($c4->id, $c3->id, $c1->id, $c8->id, $c6->id, $c5->id), array_keys($res));
+        $this->assertEquals(6, $cat1->get_courses_count(array('recursive' => 1)));
+
+        // get courses sorted by fullname
+        $res = $cat1->get_courses(array('sort' => array('fullname' => 1)));
+        $this->assertEquals(array($c1->id, $c4->id, $c3->id), array_keys($res));
+        $this->assertEquals(3, $cat1->get_courses_count(array('sort' => array('fullname' => 1))));
+
+        // get courses sorted by fullname recursively
+        $res = $cat1->get_courses(array('recursive' => 1, 'sort' => array('fullname' => 1)));
+        $this->assertEquals(array($c1->id, $c4->id, $c5->id, $c8->id, $c6->id, $c3->id), array_keys($res));
+        $this->assertEquals(6, $cat1->get_courses_count(array('recursive' => 1, 'sort' => array('fullname' => 1))));
+
+        // get courses sorted by fullname recursively, use offset and limit
+        $res = $cat1->get_courses(array('recursive' => 1, 'offset' => 1, 'limit' => 2, 'sort' => array('fullname' => -1)));
+        $this->assertEquals(array($c6->id, $c8->id), array_keys($res));
+        // offset and limit do not affect get_courses_count()
+        $this->assertEquals(6, $cat1->get_courses_count(array('recursive' => 1, 'offset' => 1, 'limit' => 2, 'sort' => array('fullname' => 1))));
+
+        // calling get_courses_count without prior call to get_courses()
+        $this->assertEquals(3, $cat2->get_courses_count(array('recursive' => 1, 'sort' => array('idnumber' => 1))));
+
+        // search courses
+
+        // search by text
+        $res = coursecat::search_courses(array('search' => 'test'));
+        $this->assertEquals(array($c4->id, $c3->id, $c1->id, $c8->id, $c5->id), array_keys($res));
+        $this->assertEquals(5, coursecat::search_courses_count(array('search' => 'test')));
+
+        $res = coursecat::search_courses(array('search' => 'Математика'));
+        $this->assertEquals(array($c3->id, $c6->id), array_keys($res));
+        $this->assertEquals(2, coursecat::search_courses_count(array('search' => 'Математика'), array()));
+
+        $options = array('sort' => array('fullname' => 1), 'offset' => 1, 'limit' => 2);
+        $res = coursecat::search_courses(array('search' => 'test'), $options);
+        $this->assertEquals(array($c4->id, $c5->id), array_keys($res));
+        $this->assertEquals(5, coursecat::search_courses_count(array('search' => 'test'), $options));
+    }
 }

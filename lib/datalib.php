@@ -837,7 +837,7 @@ function get_courses_wmanagers($categoryid=0, $sort="c.sortorder ASC", $fields=a
  * @param int $totalcount Passed in by reference.
  * @return object {@link $COURSE} records
  */
-function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $recordsperpage=50, &$totalcount) {
+function get_courses_search($searchterms, $sort, $page, $recordsperpage, &$totalcount) {
     global $CFG, $DB;
 
     if ($DB->sql_regex_supported()) {
@@ -906,7 +906,8 @@ function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $record
     $limitto   = $limitfrom + $recordsperpage;
 
     list($ccselect, $ccjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
-    $sql = "SELECT c.* $ccselect
+    $fields = array_diff(array_keys($DB->get_columns('course')), array('modinfo', 'sectioncache'));
+    $sql = "SELECT c.".join(',c.',$fields)." $ccselect
               FROM {course} c
            $ccjoin
              WHERE $searchcond AND c.id <> ".SITEID."
@@ -914,17 +915,21 @@ function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $record
 
     $rs = $DB->get_recordset_sql($sql, $params);
     foreach($rs as $course) {
-        context_instance_preload($course);
-        $coursecontext = context_course::instance($course->id);
-        if ($course->visible || has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
-            // Don't exit this loop till the end
-            // we need to count all the visible courses
-            // to update $totalcount
-            if ($c >= $limitfrom && $c < $limitto) {
-                $courses[$course->id] = $course;
+        if (!$course->visible) {
+            // preload contexts only for hidden courses or courses we need to return
+            context_instance_preload($course);
+            $coursecontext = context_course::instance($course->id);
+            if (!has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
+                continue;
             }
-            $c++;
         }
+        // Don't exit this loop till the end
+        // we need to count all the visible courses
+        // to update $totalcount
+        if ($c >= $limitfrom && $c < $limitto) {
+            $courses[$course->id] = $course;
+        }
+        $c++;
     }
     $rs->close();
 
