@@ -358,7 +358,12 @@ abstract class grade_report {
         // If we're dealing with multiple courses we need to know when we've moved on to a new course.
         static $previous_courseid = null;
 
-        if( $this->showtotalsifcontainhidden==GRADE_REPORT_SHOW_REAL_TOTAL_IF_CONTAINS_HIDDEN ) {
+        if (!is_array($this->showtotalsifcontainhidden)) {
+            debugging('showtotalsifcontainhidden should be an array', DEBUG_DEVELOPER);
+            $this->showtotalsifcontainhidden = array($courseid => $this->showtotalsifcontainhidden);
+        }
+
+        if ($this->showtotalsifcontainhidden[$courseid] == GRADE_REPORT_SHOW_REAL_TOTAL_IF_CONTAINS_HIDDEN) {
             return $finalgrade;
         }
 
@@ -396,7 +401,7 @@ abstract class grade_report {
 
         //if the item definitely depends on a hidden item
         if (array_key_exists($course_item->id, $hiding_affected['altered'])) {
-            if( !$this->showtotalsifcontainhidden ) {
+            if( !$this->showtotalsifcontainhidden[$courseid] ) {
                 //hide the grade
                 $finalgrade = null;
             }
@@ -406,7 +411,7 @@ abstract class grade_report {
             }
         } else if (!empty($hiding_affected['unknown'][$course_item->id])) {
             //not sure whether or not this item depends on a hidden item
-            if( !$this->showtotalsifcontainhidden ) {
+            if( !$this->showtotalsifcontainhidden[$courseid] ) {
                 //hide the grade
                 $finalgrade = null;
             }
