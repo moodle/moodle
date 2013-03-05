@@ -114,6 +114,21 @@ class behat_general extends behat_base {
     }
 
     /**
+     * Click on the element of the specified type which is located inside the second element.
+     *
+     * @When /^I click on "(?P<element_string>(?:[^"]|\\")*)" "(?P<selector_string>[^"]*)" in the "(?P<element_container_string>(?:[^"]|\\")*)" "(?P<text_selector_string>[^"]*)"$/
+     * @param string $element Element we look for
+     * @param string $selectortype The type of what we look for
+     * @param string $nodeelement Element we look in
+     * @param string $nodeselectortype The type of selector where we look in
+     */
+    public function i_click_on_in_the($element, $selectortype, $nodeelement, $nodeselectortype) {
+
+        $node = $this->get_node_in_container($selectortype, $element, $nodeselectortype, $nodeelement);
+        $node->click();
+    }
+
+    /**
      * Checks, that page contains specified text.
      *
      * @see Behat\MinkExtension\Context\MinkContext
@@ -146,12 +161,7 @@ class behat_general extends behat_base {
     public function assert_element_contains_text($text, $element, $selectortype) {
 
         // Transforming from steps definitions selector/locator format to Mink format.
-        list($selector, $locator) = $this->transform_selector($selectortype, $element);
-
-        if ($selector != 'css' && $selector != 'xpath') {
-            throw new ExpectationException('The "' . $selectortype . '" selector can not be used to select text nodes', $this->getSession());
-        }
-
+        list($selector, $locator) = $this->transform_text_selector($selectortype, $element);
         $this->assertSession()->elementTextContains($selector, $locator, $text);
     }
 
@@ -166,12 +176,7 @@ class behat_general extends behat_base {
     public function assert_element_not_contains_text($text, $element, $selectortype) {
 
         // Transforming from steps definitions selector/locator format to mink format.
-        list($selector, $locator) = $this->transform_selector($selectortype, $element);
-
-        if ($selector != 'css' && $selector != 'xpath') {
-            throw new ExpectationException('The "' . $selectortype . '" selector can not be used to select text nodes', $this->getSession());
-        }
-
+        list($selector, $locator) = $this->transform_text_selector($selectortype, $element);
         $this->assertSession()->elementTextNotContains($selector, $locator, $text);
     }
 

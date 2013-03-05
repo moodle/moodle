@@ -27,3 +27,23 @@ Feature: Page contents assertions
     And I follow "Groups"
     And the "#groupeditform #showcreateorphangroupform" "css_element" should be enabled
     And the "#groupeditform #showeditgroupsettingsform" "css_element" should be disabled
+
+  @javascript
+  Scenario: Locators inside specific DOM nodes using CSS selectors
+    Given the following "courses" exists:
+      | fullname | shortname | category |
+      | Course 1 | C1 | 0 |
+    And I log in as "admin"
+    And I follow "Course 1"
+    When I click on "Move this to the dock" "button" in the ".block_settings" "css_element"
+    Then I should not see "Question bank"
+    And I click on "//div[@id='dock']/descendant::*[contains(., 'Administration')]/h2" "xpath_element"
+
+  @javascript
+  Scenario: Locators inside specific DOM nodes using XPath
+    Given the following "courses" exists:
+      | fullname | shortname | category |
+      | Course 1 | C1 | 0 |
+    And I log in as "admin"
+    When I click on "Move this to the dock" "button" in the "//*[contains(concat(' ', normalize-space(@class), ' '), ' block_settings ')]" "xpath_element"
+    Then I should not see "Turn editing on"
