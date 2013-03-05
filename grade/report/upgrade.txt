@@ -1,0 +1,7 @@
+This files describes API changes in /grade/report/*,
+information provided here is intended especially for developers.
+
+
+=== 2.3.5, 2.4.2 ===
+* class_grade_report::showtotalsifcontainhidden has been switched from a single integer value to an array.
+The array keys are course IDs while the array values are the value of the course setting "report_overview_showtotalsifcontainhidden".

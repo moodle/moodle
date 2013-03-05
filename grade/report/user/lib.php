@@ -165,7 +165,7 @@ class grade_report_user extends grade_report {
         $this->showrank        = grade_get_setting($this->courseid, 'report_user_showrank', $CFG->grade_report_user_showrank);
         $this->showpercentage  = grade_get_setting($this->courseid, 'report_user_showpercentage', $CFG->grade_report_user_showpercentage);
         $this->showhiddenitems = grade_get_setting($this->courseid, 'report_user_showhiddenitems', $CFG->grade_report_user_showhiddenitems);
-        $this->showtotalsifcontainhidden = grade_get_setting($this->courseid, 'report_user_showtotalsifcontainhidden', $CFG->grade_report_user_showtotalsifcontainhidden);
+        $this->showtotalsifcontainhidden = array($this->courseid => grade_get_setting($this->courseid, 'report_user_showtotalsifcontainhidden', $CFG->grade_report_user_showtotalsifcontainhidden));
 
         $this->showgrade       = grade_get_setting($this->courseid, 'report_user_showgrade',       !empty($CFG->grade_report_user_showgrade));
         $this->showrange       = grade_get_setting($this->courseid, 'report_user_showrange',       !empty($CFG->grade_report_user_showrange));
