@@ -154,7 +154,7 @@ class behat_forms extends behat_base {
         $fieldvalue = $field->get_value();
 
         // Checks if the provided value matches the current field value.
-        if ($value != $fieldvalue) {
+        if (trim($value) != trim($fieldvalue)) {
             throw new ExpectationException(
                 'The \'' . $locator . '\' value is \'' . $fieldvalue . '\', \'' . $value . '\' expected' ,
                 $this->getSession()
