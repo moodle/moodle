@@ -468,6 +468,9 @@ $CFG->admin = 'admin';
 // Prevent theme caching
 // $CFG->themerev = -1; // NOT FOR PRODUCTION SERVERS!
 //
+// Prevent JS caching
+// $CFG->jsrev = -1; // NOT FOR PRODUCTION SERVERS!
+//
 // Prevent core_string_manager on-disk cache
 // $CFG->langstringcache = false; // NOT FOR PRODUCTION SERVERS!
 //

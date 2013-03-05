@@ -1,0 +1,15 @@
+{
+  "moodle-core-tooltip": {
+    "requires": [
+        "base",
+        "node",
+        "io-base",
+        "moodle-core-notification",
+        "json-parse",
+        "widget-position",
+        "widget-position-align",
+        "event-outside",
+        "cache"
+    ]
+  }
+}
