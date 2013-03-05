@@ -176,7 +176,9 @@ class behat_util extends testing_util {
         }
 
         // Checks the behat set up and the PHP version.
-        behat_command::check_behat_setup(true);
+        if ($errorcode = behat_command::behat_setup_problem(true)) {
+            exit($code);
+        }
 
         // Check that test environment is correctly set up.
         self::test_environment_problem();
@@ -194,6 +196,26 @@ class behat_util extends testing_util {
         if (!file_put_contents($filepath, $contents)) {
             behat_error(BEHAT_EXITCODE_PERMISSIONS, 'File ' . $filepath . ' can not be created');
         }
+    }
+
+    /**
+     * Returns the status of the behat test environment
+     *
+     * @return int Error code
+     */
+    public static function get_behat_status() {
+
+        if (!defined('BEHAT_UTIL')) {
+            throw new coding_exception('This method can be only used by Behat CLI tool');
+        }
+
+        // Checks the behat set up and the PHP version, returning an error code if something went wrong.
+        if ($errorcode = behat_command::behat_setup_problem(true)) {
+            return $code;
+        }
+
+        // Check that test environment is correctly set up, stops execution.
+        self::test_environment_problem();
     }
 
     /**
