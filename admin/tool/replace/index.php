@@ -49,6 +49,7 @@ if ($DB->get_dbfamily() !== 'mysql' and $DB->get_dbfamily() !== 'postgres') {
 
 if (!data_submitted() or !$search or !$replace or !confirm_sesskey() or !$sure) {   /// Print a form
     echo $OUTPUT->notification(get_string('notsupported', 'tool_replace'));
+    echo $OUTPUT->notification(get_string('excludedtables', 'tool_replace'));
 
     echo $OUTPUT->box_start();
     echo '<div class="mdl-align">';
