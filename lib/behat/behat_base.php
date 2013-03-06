@@ -102,6 +102,12 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
             if ($selector == 'named') {
                 $exceptiontype = $locator[0];
                 $exceptionlocator = $locator[1];
+
+                // If we are in a @javascript session all contents would be displayed as HTML characters.
+                if (get_class($this->getSession()->getDriver()) === 'Behat\Mink\Driver\Selenium2Driver') {
+                    $locator[1] = html_entity_decode($locator[1], ENT_NOQUOTES);
+                }
+
             } else {
                 $exceptiontype = $selector;
                 $exceptionlocator = $locator;
