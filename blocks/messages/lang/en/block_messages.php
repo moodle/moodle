@@ -24,5 +24,5 @@
  */
 
 $string['messages:addinstance'] = 'Add a new messages block';
-$string['messages:myaddinstance'] = 'Add a new messages block to the My Moodle page';
+$string['messages:myaddinstance'] = 'Add a new messages block to My home';
 $string['pluginname'] = 'Messages';

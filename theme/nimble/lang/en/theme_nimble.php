@@ -65,11 +65,11 @@ $string['footerline'] = 'Footerline';
 $string['footerlinedesc'] = 'Add some text (copyright info, etc.) to the footer.';
 
 $string['backgroundcolor'] = 'Header background';
-$string['backgroundcolordesc'] = 'Change the background color of the header.';
+$string['backgroundcolordesc'] = 'Change the background colour of the header.';
 
-$string['linkcolor'] = 'Link color';
-$string['linkcolordesc'] = 'Set the color of links in the theme, use html hex code.';
+$string['linkcolor'] = 'Link colour';
+$string['linkcolordesc'] = 'Set the colour of links in the theme. Use html hex code.';
 
-$string['linkhover'] = 'Menu hover color';
-$string['linkhoverdesc'] = 'Set the color of the menu on hover in the theme, use html hex code.';
+$string['linkhover'] = 'Menu hover colour';
+$string['linkhoverdesc'] = 'Set the colour of the menu on hover in the theme. Use html hex code.';
 

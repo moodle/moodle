@@ -23,7 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['addentry'] = 'Add your own favorite quotes!';
+$string['addentry'] = 'Add a new entry';
 $string['askaddentry'] = 'When users can add entries to the glossary, show a link with this text';
 $string['askinvisible'] = 'When users cannot edit or view the glossary, show this text (without link)';
 $string['askviewglossary'] = 'When users can view the glossary but not add entries, show a link with this text';
@@ -43,5 +43,5 @@ $string['select_glossary'] = 'Take entries from this glossary';
 $string['showconcept'] = 'Show concept (heading) for each entry';
 $string['title'] = 'Title';
 $string['type'] = 'How a new entry is chosen';
-$string['viewglossary'] = 'More quotes...';
+$string['viewglossary'] = 'View all entries';
 $string['whichfooter'] = 'You can display links to actions of the glossary this block is associated with. The block will only display links to actions which are enabled for that glossary.';
