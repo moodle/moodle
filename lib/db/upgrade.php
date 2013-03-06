@@ -1011,6 +1011,8 @@ function xmldb_main_upgrade($oldversion) {
     }
 
     if ($oldversion < 2012062504.08) {
+        // This upgrade step is fixing broken sequence data in the course_sections table (MDL-37939).
+        // It may take a long time to run on large sites.
         // Retrieve the list of course_sections as a recordset to save memory.
         $coursesections = $DB->get_recordset('course_sections', null, 'course, id', 'id, course, sequence');
         foreach ($coursesections as $coursesection) {
@@ -1058,8 +1060,19 @@ function xmldb_main_upgrade($oldversion) {
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2012062504.08);
     }
-    if ($oldversion < 2012062504.10) {
+
+    // This is checking to see if the site has been running a specific version with a bug in it
+    // because this upgrade step is slow and is only needed if the site has been running with the previous patch installed.
+    if ($oldversion == 2012062504.08) {
         // Retrieve the list of course_sections as a recordset to save memory.
+        // This is to fix a regression caused by MDL-37939.
+        // In this case the upgrade step is fixing records where:
+        // The data in course_sections.sequence contains the correct module id
+        // The section field for on the course modules table may have been updated to point to the incorrect id.
+
+        // This query is looking for sections where the sequence is not in sync with the course_modules table.
+        // The syntax for the like query is looking for a value in a comma separated list.
+        // It adds a comma to either site of the list and then searches for LIKE '%,id,%'.
         $sequenceconcat = $DB->sql_concat("','", 's.sequence', "','");
         $moduleconcat = $DB->sql_concat("'%,'", 'm.id', "',%'");
         $sql = 'SELECT
@@ -1070,6 +1083,7 @@ function xmldb_main_upgrade($oldversion) {
                     {course_modules} m
                 JOIN {course_sections} s
                 ON
+                    m.course = s.course AND
                     m.section != s.id
                 WHERE ' . $sequenceconcat . ' LIKE ' . $moduleconcat;
         $coursesections = $DB->get_recordset_sql($sql);
