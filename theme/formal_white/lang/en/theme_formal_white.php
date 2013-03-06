@@ -88,6 +88,6 @@ $string['noframe'] = 'Formal white 1.9 look';
 $string['noframedesc'] = 'Select this option to require your moodle page to look like moodle 1.*, alias, without the surrounding frame.';
 $string['pluginname'] = 'Formal white';
 $string['rblockcolumnbgc'] = 'Right column background colour';
-$string['rblockcolumnbgcdesc'] = 'This sets the right column background colour for the theme. If you leave this empty the left column background color will be used.';
+$string['rblockcolumnbgcdesc'] = 'This sets the right column background colour for the theme. If you leave this empty the left column background colour will be used.';
 $string['region-side-post'] = 'Right';
 $string['region-side-pre'] = 'Left';
