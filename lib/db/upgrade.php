@@ -1075,16 +1075,18 @@ function xmldb_main_upgrade($oldversion) {
         // It adds a comma to either site of the list and then searches for LIKE '%,id,%'.
         $sequenceconcat = $DB->sql_concat("','", 's.sequence', "','");
         $moduleconcat = $DB->sql_concat("'%,'", 'cm.id', "',%'");
-        $sql = 'SELECT 
-                    DISTINCT(s.id),
-                    s.course,
-                    s.sequence
-                FROM
+        $sql = 'SELECT s2.id, s2.course, s2.sequence
+                FROM mdl_course_sections s2
+                JOIN(
+                    SELECT DISTINCT s.id
+                    FROM
                     {course_modules} cm
-                JOIN {course_sections} s
-                ON
-                    cm.course = s.course
-                WHERE cm.section != s.id AND ' . $sequenceconcat . ' LIKE ' . $moduleconcat;
+                    JOIN {course_sections} s
+                    ON
+                        cm.course = s.course
+                    WHERE cm.section != s.id AND ' . $sequenceconcat . ' LIKE ' . $moduleconcat . '
+                ) d
+                ON s2.id = d.id';
         $coursesections = $DB->get_recordset_sql($sql);
 
         foreach ($coursesections as $coursesection) {
