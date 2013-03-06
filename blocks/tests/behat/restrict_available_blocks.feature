@@ -4,7 +4,8 @@ Feature: Allowed blocks controls
   As an admin
   I need to restrict some blocks to be used in courses
 
-  Background:
+  @javascript
+  Scenario: Blocks can be added with the default permissions
     Given the following "users" exists:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@asd.com |
@@ -14,10 +15,7 @@ Feature: Allowed blocks controls
     And the following "course enrolments" exists:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
-
-  @javascript
-  Scenario: Blocks can be added with the default permissions
-    Given I log in as "teacher1"
+    And I log in as "teacher1"
     And I follow "Course $NASTYSTRING1"
     And I turn editing mode on
     When I add the "Course completion status" block
@@ -27,7 +25,16 @@ Feature: Allowed blocks controls
 
   @javascript
   Scenario: Blocks can not be added when the admin restricts the permissions
-    Given I log in as "admin"
+    Given the following "users" exists:
+      | username | firstname | lastname | email |
+      | teacher1 | Teacher | 1 | teacher1@asd.com |
+    And the following "courses" exists:
+      | fullname | shortname | category |
+      | Course $NASTYSTRING1 | C1 | 0 |
+    And the following "course enrolments" exists:
+      | user | course | role |
+      | teacher1 | C1 | editingteacher |
+    And I log in as "admin"
     And I set the following system permissions of "Teacher" role:
       | block/activity_modules:addinstance | Prohibit |
     And I am on homepage
