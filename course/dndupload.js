@@ -798,6 +798,13 @@ M.course_dndupload = {
             return;
         }
 
+        if (type.handlers.length == 1 && type.handlers[0].noname) {
+            // Only one handler and it doesn't need a name (i.e. a label).
+            this.upload_item('', type.type, contents, section, sectionnumber, type.handlers[0].module);
+            this.check_upload_queue();
+            return;
+        }
+
         if (this.uploaddialog) {
             var details = new Object();
             details.isfile = false;
@@ -814,21 +821,22 @@ M.course_dndupload = {
         var uploadid = Math.round(Math.random()*100000)+'-'+timestamp;
         var nameid = 'dndupload_handler_name'+uploadid;
         var content = '';
-        content += '<label for="'+nameid+'">'+type.namemessage+'</label>';
-        content += ' <input type="text" id="'+nameid+'" value="" />';
         if (type.handlers.length > 1) {
             content += '<div id="dndupload_handlers'+uploadid+'">';
             var sel = type.handlers[0].module;
             for (var i=0; i<type.handlers.length; i++) {
-                var id = 'dndupload_handler'+uploadid;
+                var id = 'dndupload_handler'+uploadid+type.handlers[i].module;
                 var checked = (type.handlers[i].module == sel) ? 'checked="checked" ' : '';
-                content += '<input type="radio" name="handler" value="'+type.handlers[i].module+'" id="'+id+'" '+checked+'/>';
+                content += '<input type="radio" name="handler" value="'+i+'" id="'+id+'" '+checked+'/>';
                 content += ' <label for="'+id+'">';
                 content += type.handlers[i].message;
                 content += '</label><br/>';
             }
             content += '</div>';
         }
+        var disabled = (type.handlers[0].noname) ? ' disabled = "disabled" ' : '';
+        content += '<label for="'+nameid+'">'+type.namemessage+'</label>';
+        content += ' <input type="text" id="'+nameid+'" value="" '+disabled+' />';
 
         var Y = this.Y;
         var self = this;
@@ -846,16 +854,16 @@ M.course_dndupload = {
                     e.preventDefault();
                     var name = Y.one('#dndupload_handler_name'+uploadid).get('value');
                     name = name.replace(/^\s\s*/, '').replace(/\s\s*$/, ''); // Trim
-                    if (name == '') {
-                        return;
-                    }
                     var module = false;
+                    var noname = false;
                     if (type.handlers.length > 1) {
                         // Find out which module was selected
                         var div = Y.one('#dndupload_handlers'+uploadid);
                         div.all('input').each(function(input) {
                             if (input.get('checked')) {
-                                module = input.get('value');
+                                var idx = input.get('value');
+                                module = type.handlers[idx].module;
+                                noname = type.handlers[idx].noname;
                             }
                         });
                         if (!module) {
@@ -863,6 +871,10 @@ M.course_dndupload = {
                         }
                     } else {
                         module = type.handlers[0].module;
+                        noname = type.handlers[0].noname;
+                    }
+                    if (name == '' && !noname) {
+                        return;
                     }
                     panel.hide();
                     // Do the upload
@@ -887,6 +899,17 @@ M.course_dndupload = {
         });
         // Focus on the 'name' box
         Y.one('#'+nameid).focus();
+        for (i=0; i<type.handlers.length; i++) {
+            if (type.handlers[i].noname) {
+                Y.one('#dndupload_handler'+uploadid+type.handlers[i].module).on('click', function (e) {
+                    Y.one('#'+nameid).set('disabled', 'disabled');
+                });
+            } else {
+                Y.one('#dndupload_handler'+uploadid+type.handlers[i].module).on('click', function (e) {
+                    Y.one('#'+nameid).removeAttribute('disabled');
+                });
+            }
+        }
     },
 
     /**

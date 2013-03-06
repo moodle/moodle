@@ -222,8 +222,8 @@ function label_dndupload_register() {
 
     $strdndtext = get_string('dnduploadlabeltext', 'mod_label');
     return array_merge($ret, array('types' => array(
-        array('identifier' => 'text/html', 'message' => $strdndtext),
-        array('identifier' => 'text', 'message' => $strdndtext)
+        array('identifier' => 'text/html', 'message' => $strdndtext, 'noname' => true),
+        array('identifier' => 'text', 'message' => $strdndtext, 'noname' => true)
     )));
 }
 
