@@ -12,23 +12,23 @@ $string['background'] = 'background';
 $string['backgrounddesc'] = 'Change the background image by entering the URL to a new image. (i.e., http://www.somesite/mybackground.jpg).';
 
 $string['linkcolor'] = 'link';
-$string['linkcolordesc'] = 'Set the color of links in the theme, use html hex code.';
+$string['linkcolordesc'] = 'Set the colour of links in the theme. Use html hex code.';
 
 $string['linkhover'] = 'linkhover';
-$string['linkhoverdesc'] = 'Set the color of links (on hover) in the theme, use html hex code.';
+$string['linkhoverdesc'] = 'Set the colour of links (on hover) in the theme. Use html hex code.';
 
-$string['maincolor'] = 'maincolor';
-$string['maincolordesc'] = 'Set the color hex code of the header, dock bar and other areas. Looks best as a dark or saturated color.';
+$string['maincolor'] = 'Main colour';
+$string['maincolordesc'] = 'Set the colour hex code of the header, dock bar and other areas. Looks best as a dark or saturated colour.';
 
-$string['maincoloraccent'] = 'maincoloraccent';
-$string['maincoloraccentdesc'] = 'Dark accent color for the dock bar and header borders. Should be slightly darker than the main color.';
+$string['maincoloraccent'] = 'Main colour accent';
+$string['maincoloraccentdesc'] = 'Dark accent colour for the dock bar and header borders. Should be slightly darker than the main colour.';
 
-$string['headingcolor'] = 'headingcolor';
-$string['headingcolordesc'] = 'This is the heading color for large headings (site news, my courses) and other headings.';
+$string['headingcolor'] = 'Heading colour';
+$string['headingcolordesc'] = 'This is the heading colour for large headings (site news, my courses) and other headings.';
 
-$string['blockcolor'] = 'blockcolor';
-$string['blockcolordesc'] = 'This is for the block header font color.';
+$string['blockcolor'] = 'Block colour';
+$string['blockcolordesc'] = 'This is for the block header font colour.';
 
 
 $string['forumback'] = 'forumback';
-$string['forumbackdesc'] = 'Set the background color of forum post subject.';
+$string['forumbackdesc'] = 'Set the background colour of forum post subject.';

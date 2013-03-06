@@ -30,12 +30,12 @@ $string['choosereadme'] = '<div class="clearfix"><div class="theme_screenshot"><
 
 // Config
 
-$string['linkcolor'] = 'Link color';
-$string['linkcolordesc'] = 'This sets the link color for the theme.';
+$string['linkcolor'] = 'Link colour';
+$string['linkcolordesc'] = 'This sets the link colour for the theme.';
 $string['configtitle'] = 'Overlay settings';
 $string['customcss'] = 'Custom CSS';
 $string['customcssdesc'] = 'Any CSS you enter here will be added to every page allowing your to easily customise this theme.';
-$string['headercolor'] = 'Headercolor';
-$string['headercolordesc'] = 'Header background color.';
+$string['headercolor'] = 'Header colour';
+$string['headercolordesc'] = 'Header background colour.';
 $string['footertext'] = 'Footertext';
 $string['footertextdesc'] = 'Set a footnote or footer text.';
