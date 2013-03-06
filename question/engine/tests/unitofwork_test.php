@@ -174,7 +174,7 @@ class question_engine_unit_of_work_test extends data_loading_method_test_base {
 
     public function test_process_action() {
 
-        $this->quba->manual_grade($this->slot, 'Acutally, that is not quite right', 0.5, FORMAT_HTML);
+        $this->quba->manual_grade($this->slot, 'Actually, that is not quite right', 0.5, FORMAT_HTML);
 
         // Here, however, were we are adding a step to an existing qa, we do need to track that.
         $this->assertEquals(0, count($this->observer->get_attempts_added()));

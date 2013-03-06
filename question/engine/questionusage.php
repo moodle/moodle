@@ -646,6 +646,7 @@ class question_usage_by_activity {
      * @param string $comment the comment being added to the question attempt.
      * @param number $mark the mark that is being assigned. Can be null to just
      * add a comment.
+     * @param int $commentformat one of the FORMAT_... constants. The format of $comment.
      */
     public function manual_grade($slot, $comment, $mark, $commentformat = null) {
         $qa = $this->get_question_attempt($slot);
