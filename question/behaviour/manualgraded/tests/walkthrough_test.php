@@ -132,7 +132,7 @@ class qbehaviour_manualgraded_walkthrough_test extends qbehaviour_walkthrough_te
                 $this->quba->get_response_summary($this->slot));
 
         // Process a manual comment.
-        $this->manual_grade('Not good enough!', 1);
+        $this->manual_grade('Not good enough!', 1, FORMAT_HTML);
 
         // Verify.
         $this->check_current_state(question_state::$mangrpartial);
