@@ -92,7 +92,7 @@ class qbehaviour_deferredfeedback_walkthrough_test extends qbehaviour_walkthroug
                 $this->quba->get_response_summary($this->slot));
 
         // Process a manual comment.
-        $this->manual_grade('Not good enough!', 1);
+        $this->manual_grade('Not good enough!', 1, FORMAT_HTML);
 
         $this->check_current_state(question_state::$mangrpartial);
         $this->check_current_mark(1);
