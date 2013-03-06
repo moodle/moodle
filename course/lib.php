@@ -1767,18 +1767,6 @@ function print_my_moodle() {
     }
 }
 
-
-function print_course_search($value="", $return=false, $format="plain") {
-    global $PAGE;
-    debugging('Function print_course_search() is deprecated, please use course renderer', DEBUG_DEVELOPER);
-    $renderer = $PAGE->get_renderer('core', 'course');
-    if ($return) {
-        return $renderer->course_search_form($value, $format);
-    } else {
-        echo $renderer->course_search_form($value, $format);
-    }
-}
-
 function print_remote_course($course, $width="100%") {
     global $CFG, $USER;
 

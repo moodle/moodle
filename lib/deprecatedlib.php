@@ -3922,3 +3922,28 @@ function get_categories($parent='none', $sort=NULL, $shallow=true) {
     $rs->close();
     return $categories;
 }
+
+/**
+* Displays a course search form
+*
+* This function is deprecated, please use course renderer:
+* $renderer = $PAGE->get_renderer('core', 'course');
+* echo $renderer->course_search_form($value, $format);
+*
+* @deprecated since 2.5
+*
+* @param string $value default value to populate the search field
+* @param bool $return if true returns the value, if false - outputs
+* @param string $format display format - 'plain' (default), 'short' or 'navbar'
+* @return null|string
+*/
+function print_course_search($value="", $return=false, $format="plain") {
+    global $PAGE;
+    debugging('Function print_course_search() is deprecated, please use course renderer', DEBUG_DEVELOPER);
+    $renderer = $PAGE->get_renderer('core', 'course');
+    if ($return) {
+        return $renderer->course_search_form($value, $format);
+    } else {
+        echo $renderer->course_search_form($value, $format);
+    }
+}
