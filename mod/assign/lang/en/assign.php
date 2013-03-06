@@ -88,7 +88,7 @@ $string['couldnotfindassignmenttoupgrade'] = 'Could not find old assignment inst
 $string['currentgrade'] = 'Current grade in gradebook';
 $string['cutoffdate'] = 'Cut-off date';
 $string['cutoffdate_help'] = 'If set, the assignment will not accept submissions after this date without an extension.';
-$string['cutoffdatevalidation'] = 'Cut-off date must be after the due date.';
+$string['cutoffdatevalidation'] = 'The cut-off date cannot be earlier than the due date.';
 $string['cutoffdatefromdatevalidation'] = 'Cut-off date must be after the allow submissions from date.';
 $string['defaultplugins'] = 'Default assignment settings';
 $string['defaultplugins_help'] = 'These settings define the defaults for all new assignments.';
@@ -183,7 +183,7 @@ $string['messageprovider:assign_notification'] = 'Assignment notifications';
 $string['modulename'] = 'Assignment';
 $string['modulename_help'] = 'The assignment activity module enables a teacher to communicate tasks, collect work and provide grades and feedback.
 
-Students can submit any digital content (files), such as word-processed documents, spreadsheets, images, or audio and video clips. Alternatively, or in addition, the assignment may require students to type text directly into the text editor. An assignment can also be used to remind students of \'real-world\' assignments they need to complete offline, such as art work, and thus not require any digital content.
+Students can submit any digital content (files), such as word-processed documents, spreadsheets, images, or audio and video clips. Alternatively, or in addition, the assignment may require students to type text directly into the text editor. An assignment can also be used to remind students of \'real-world\' assignments they need to complete offline, such as art work, and thus not require any digital content. Students can submit work individually or as a member of a group.
 
 When reviewing assignments, teachers can leave feedback comments and upload files, such as marked-up student submissions, documents with comments or spoken audio feedback. Assignments can be graded using a numerical or custom scale or an advanced grading method such as a rubric. Final grades are recorded in the gradebook.';
 $string['modulename_link'] = 'mod/assignment/view';
