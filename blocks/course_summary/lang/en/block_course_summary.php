@@ -24,4 +24,4 @@
  */
 
 $string['coursesummary'] = 'Course summary';
-$string['pluginname'] = 'Course/Site description';
+$string['pluginname'] = 'Course/site summary';

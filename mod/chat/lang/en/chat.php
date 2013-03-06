@@ -25,7 +25,7 @@
 
 $string['ajax'] = 'Version using Ajax';
 $string['autoscroll'] = 'Auto scroll';
-$string['beep'] = 'beep';
+$string['beep'] = 'Beep';
 $string['cantlogin'] = 'Could not log in to chat room!!';
 $string['configmethod'] = 'The ajax chat method provide an ajax based chat interface, it contacts server regularly for update. The normal chat method involves the clients regularly contacting the server for updates. It requires no configuration and works everywhere, but it can create a large load on the server with many chatters.  Using a server daemon requires shell access to Unix, but it results in a fast scalable chat environment.';
 $string['confignormalupdatemode'] = 'Chatroom updates are normally served efficiently using the <em>Keep-Alive</em> feature of HTTP 1.1, but this is still quite heavy on the server. A more advanced method is to use the <em>Stream</em> strategy to feed updates to the users. Using <em>Stream</em> scales much better (similar to the chatd method) but may not be supported by your server.';
@@ -52,7 +52,7 @@ $string['chat:deletelog'] = 'Delete chat logs';
 $string['chat:exportparticipatedsession'] = 'Export chat session which you took part in';
 $string['chat:exportsession'] = 'Export any chat session';
 $string['chat:chat'] = 'Access a chat room';
-$string['chatintro'] = 'Introduction text';
+$string['chatintro'] = 'Description';
 $string['chatname'] = 'Name of this chat room';
 $string['chat:readlog'] = 'Read chat logs';
 $string['chatreport'] = 'Chat sessions';
@@ -124,7 +124,7 @@ $string['serverip'] = 'Server ip';
 $string['servermax'] = 'Max users';
 $string['serverport'] = 'Server port';
 $string['sessions'] = 'Chat sessions';
-$string['sessionstart'] = 'Chat session will be start in: {$a}';
+$string['sessionstart'] = 'The next chat session will start in {$a}';
 $string['strftimemessage'] = '%H:%M';
 $string['studentseereports'] = 'Everyone can view past sessions';
 $string['studentseereports_help'] = 'If set to No, only users have mod/chat:readlog capability are able to see the chat logs';
