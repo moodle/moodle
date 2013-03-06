@@ -166,7 +166,7 @@ $string['forum:editanypost'] = 'Edit any post';
 $string['forum:exportdiscussion'] = 'Export whole discussion';
 $string['forum:exportownpost'] = 'Export own post';
 $string['forum:exportpost'] = 'Export post';
-$string['forumintro'] = 'Forum introduction';
+$string['forumintro'] = 'Description';
 $string['forum:managesubscriptions'] = 'Manage subscriptions';
 $string['forum:movediscussions'] = 'Move discussions';
 $string['forum:postwithoutthrottling'] = 'Exempt from post threshold';
@@ -185,7 +185,7 @@ $string['forumtrackednot'] = 'Unread posts are not being tracked';
 $string['forumtype'] = 'Forum type';
 $string['forumtype_help'] = 'There are 5 forum types:
 
-* A single simple discussion - A single discussion topic which everyone can reply to
+* A single simple discussion - A single discussion topic which everyone can reply to (cannot be used with separate groups)
 * Each person posts one discussion - Each student can post exactly one new discussion topic, which everyone can then reply to
 * Q and A forum - Students must first post their perspectives before viewing other students\' posts
 * Standard forum displayed in a blog-like format - An open forum where anyone can start a new discussion at any time, and in which discussion topics are displayed on one page with "Discuss this topic" links
