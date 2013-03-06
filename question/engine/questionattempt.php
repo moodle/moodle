@@ -1114,14 +1114,19 @@ class question_attempt {
 
     /**
      * Perform a manual grading action on this attempt.
-     * @param $comment the comment being added.
-     * @param $mark the new mark. (Optional, if not given, then only a comment is added.)
+     * @param string $comment the comment being added.
+     * @param float $mark the new mark. If null, then only a comment is added.
+     * @param int $commentformat the FORMAT_... for $comment. Must be given.
      * @param int $timestamp the time to record for the action. (If not given, use now.)
      * @param int $userid the user to attribute the aciton to. (If not given, use the current user.)
-     * @return unknown_type
      */
-    public function manual_grade($comment, $mark, $timestamp = null, $userid = null) {
+    public function manual_grade($comment, $mark, $commentformat = null, $timestamp = null, $userid = null) {
         $submitteddata = array('-comment' => $comment);
+        if (is_null($commentformat)) {
+            debugging('You should pass $commentformat to manual_grade.', DEBUG_DEVELOPER);
+            $commentformat = FORMAT_HTML;
+        }
+        $submitteddata['-commentformat'] = $commentformat;
         if (!is_null($mark)) {
             $submitteddata['-mark'] = $mark;
             $submitteddata['-maxmark'] = $this->maxmark;

@@ -157,7 +157,7 @@ class qbehaviour_interactive_walkthrough_test extends qbehaviour_walkthrough_tes
                 $this->get_no_hint_visible_expectation());
 
         // Process a manual comment.
-        $this->manual_grade('Not good enough!', 0.5);
+        $this->manual_grade('Not good enough!', 0.5, FORMAT_HTML);
 
         // Verify.
         $this->check_current_state(question_state::$mangrpartial);
