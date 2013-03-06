@@ -100,10 +100,11 @@ function note_save(&$note) {
         // insert new note
         $note->created = $note->lastmodified;
         $id = $DB->insert_record('post', $note);
-        $note = $DB->get_record('post', array('id'=>$id));
+        $note = note_load($id);
     } else {
         // update old note
         $DB->update_record('post', $note);
+        $note = note_load($note->id);
     }
     unset($note->module);
     return true;
