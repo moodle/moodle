@@ -758,8 +758,6 @@ class theme_mymobile_core_renderer extends core_renderer {
 
         if ($select->helpicon instanceof help_icon) {
             $output .= $this->render($select->helpicon);
-        } else if ($select->helpicon instanceof old_help_icon) {
-            $output .= $this->render($select->helpicon);
         }
 
         $output .= html_writer::select($select->options, $select->name, $select->selected, $select->nothing, $select->attributes);

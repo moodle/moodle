@@ -1883,33 +1883,9 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
  * Print a help button.
  *
  * @deprecated since Moodle 2.0
- *
- * @param string $page  The keyword that defines a help page
- * @param string $title The title of links, rollover tips, alt tags etc
- *           'Help with' (or the language equivalent) will be prefixed and '...' will be stripped.
- * @param string $module Which module is the page defined in
- * @param mixed $image Use a help image for the link?  (true/false/"both")
- * @param boolean $linktext If true, display the title next to the help icon.
- * @param string $text If defined then this text is used in the page, and
- *           the $page variable is ignored. DEPRECATED!
- * @param boolean $return If true then the output is returned as a string, if false it is printed to the current page.
- * @param string $imagetext The full text for the helpbutton icon. If empty use default help.gif
- * @return string|void Depending on value of $return
  */
 function helpbutton($page, $title, $module='moodle', $image=true, $linktext=false, $text='', $return=false, $imagetext='') {
-    debugging('helpbutton() has been deprecated. Please change your code to use $OUTPUT->help_icon().');
-
-    global $OUTPUT;
-
-    $output = $OUTPUT->old_help_icon($page, $title, $module, $linktext);
-
-    // hide image with CSS if needed
-
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
-    }
+    throw new coding_exception('helpbutton() can not be used any more, please see $OUTPUT->help_icon().');
 }
 
 /**
@@ -1962,10 +1938,6 @@ function editorshortcutshelpbutton() {
 
     global $CFG;
     //TODO: detect current editor and print correct info
-/*    $imagetext = '<img src="' . $CFG->httpswwwroot . '/lib/editor/htmlarea/images/kbhelp.gif" alt="'.
-        get_string('editorshortcutkeys').'" class="iconkbhelp" />';
-
-    return helpbutton('editorshortcuts', get_string('editorshortcutkeys'), 'moodle', true, false, '', true, $imagetext);*/
     return '';
 }
 
@@ -2032,23 +2004,9 @@ function print_arrow($direction='up', $strsort=null, $return=false) {
  * Also contains an icon by default. Shown to teachers and admin only.
  *
  * @deprecated since Moodle 2.0
- *
- * @global object
- * @param string $path The page link after doc root and language, no leading slash.
- * @param string $text The text to be displayed for the link
- * @param string $iconpath The path to the icon to be displayed
- * @return string Either the link or an empty string
  */
 function doc_link($path='', $text='', $iconpath='ignored') {
-    global $CFG, $OUTPUT;
-
-    debugging('doc_link() has been deprecated. Please change your code to use $OUTPUT->doc_link().');
-
-    if (empty($CFG->docroot)) {
-        return '';
-    }
-
-    return $OUTPUT->doc_link($path, $text);
+    throw new coding_exception('doc_link() can not be used any more, please see $OUTPUT->doc_link().');
 }
 
 /**
@@ -2347,67 +2305,10 @@ function print_date_selector($day, $month, $year, $currenttime=0, $return=false)
  * Implements a complete little form with a dropdown menu.
  *
  * @deprecated since Moodle 2.0
- *
- * When JavaScript is on selecting an option from the dropdown automatically
- * submits the form (while avoiding the usual acessibility problems with this appoach).
- * With JavaScript off, a 'Go' button is printed.
- *
- * @global object
- * @global object
- * @param string $baseurl The target URL up to the point of the variable that changes
- * @param array $options A list of value-label pairs for the popup list
- * @param string $formid id for the control. Must be unique on the page. Used in the HTML.
- * @param string $selected The option that is initially selected
- * @param string $nothing The label for the "no choice" option
- * @param string $help The name of a help page if help is required
- * @param string $helptext The name of the label for the help button
- * @param boolean $return Indicates whether the function should return the HTML
- *         as a string or echo it directly to the page being rendered
- * @param string $targetwindow The name of the target page to open the linked page in.
- * @param string $selectlabel Text to place in a [label] element - preferred for accessibility.
- * @param array $optionsextra an array with the same keys as $options. The values are added within the corresponding <option ...> tag.
- * @param string $submitvalue Optional label for the 'Go' button. Defaults to get_string('go').
- * @param boolean $disabled If true, the menu will be displayed disabled.
- * @param boolean $showbutton If true, the button will always be shown even if JavaScript is available
- * @return string|void If $return=true returns string, else echo's and returns void
  */
 function popup_form($baseurl, $options, $formid, $selected='', $nothing='choose', $help='', $helptext='', $return=false,
     $targetwindow='self', $selectlabel='', $optionsextra=NULL, $submitvalue='', $disabled=false, $showbutton=false) {
-    global $OUTPUT, $CFG;
-
-    debugging('popup_form() has been deprecated. Please change your code to use $OUTPUT->single_select() or $OUTPUT->url_select().');
-
-    if (empty($options)) {
-        return '';
-    }
-
-    $urls = array();
-
-    foreach ($options as $value=>$label) {
-        $url = $baseurl.$value;
-        $url = str_replace($CFG->wwwroot, '', $url);
-        $url = str_replace('&amp;', '&', $url);
-        $urls[$url] = $label;
-        if ($selected == $value) {
-            $active = $url;
-        }
-    }
-
-    $nothing = $nothing ? array(''=>$nothing) : null;
-
-    $select = new url_select($urls, $active, $nothing, $formid);
-    $select->disabled = $disabled;
-
-    $select->set_label($selectlabel);
-    $select->set_old_help_icon($help, $helptext);
-
-    $output = $OUTPUT->render($select);
-
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
-    }
+        throw new coding_exception('popup_form() can not be used any more, please see $OUTPUT->single_select or $OUTPUT->url_select().');
 }
 
 /**
