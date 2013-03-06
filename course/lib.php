@@ -1769,46 +1769,14 @@ function print_my_moodle() {
 
 
 function print_course_search($value="", $return=false, $format="plain") {
-    global $CFG;
-    static $count = 0;
-
-    $count++;
-
-    $id = 'coursesearch';
-
-    if ($count > 1) {
-        $id .= $count;
-    }
-
-    $strsearchcourses= get_string("searchcourses");
-
-    if ($format == 'plain') {
-        $output  = '<form id="'.$id.'" action="'.$CFG->wwwroot.'/course/search.php" method="get">';
-        $output .= '<fieldset class="coursesearchbox invisiblefieldset">';
-        $output .= '<label for="coursesearchbox">'.$strsearchcourses.': </label>';
-        $output .= '<input type="text" id="coursesearchbox" size="30" name="search" value="'.s($value).'" />';
-        $output .= '<input type="submit" value="'.get_string('go').'" />';
-        $output .= '</fieldset></form>';
-    } else if ($format == 'short') {
-        $output  = '<form id="'.$id.'" action="'.$CFG->wwwroot.'/course/search.php" method="get">';
-        $output .= '<fieldset class="coursesearchbox invisiblefieldset">';
-        $output .= '<label for="shortsearchbox">'.$strsearchcourses.': </label>';
-        $output .= '<input type="text" id="shortsearchbox" size="12" name="search" value="'.s($value).'" />';
-        $output .= '<input type="submit" value="'.get_string('go').'" />';
-        $output .= '</fieldset></form>';
-    } else if ($format == 'navbar') {
-        $output  = '<form id="coursesearchnavbar" action="'.$CFG->wwwroot.'/course/search.php" method="get">';
-        $output .= '<fieldset class="coursesearchbox invisiblefieldset">';
-        $output .= '<label for="navsearchbox">'.$strsearchcourses.': </label>';
-        $output .= '<input type="text" id="navsearchbox" size="20" name="search" value="'.s($value).'" />';
-        $output .= '<input type="submit" value="'.get_string('go').'" />';
-        $output .= '</fieldset></form>';
-    }
-
+    global $PAGE;
+    debugging('Function print_course_search() is deprecated, please use course renderer', DEBUG_DEVELOPER);
+    $renderer = $PAGE->get_renderer('core', 'course');
     if ($return) {
-        return $output;
+        return $renderer->course_search_form($value, $format);
+    } else {
+        echo $renderer->course_search_form($value, $format);
     }
-    echo $output;
 }
 
 function print_remote_course($course, $width="100%") {

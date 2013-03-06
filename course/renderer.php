@@ -558,6 +558,51 @@ class core_course_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Renders html to display a course search form
+     *
+     * @param string $value default value to populate the search field
+     * @param string $format display format - 'plain' (default), 'short' or 'navbar'
+     * @return string
+     */
+    function course_search_form($value = '', $format = 'plain') {
+        static $count = 0;
+        $formid = 'coursesearch';
+        if ((++$count) > 1) {
+            $formid .= $count;
+        }
+
+        switch ($format) {
+            case 'navbar' :
+                $formid = 'coursesearchnavbar';
+                $inputid = 'navsearchbox';
+                $inputsize = 20;
+                break;
+            case 'short' :
+                $inputid = 'shortsearchbox';
+                $inputsize = 12;
+                break;
+            default :
+                $inputid = 'coursesearchbox';
+                $inputsize = 30;
+        }
+
+        $strsearchcourses= get_string("searchcourses");
+        $searchurl = new moodle_url('/course/search.php');
+
+        $output = html_writer::start_tag('form', array('id' => $formid, 'action' => $searchurl, 'method' => 'get'));
+        $output .= html_writer::start_tag('fieldset', array('class' => 'coursesearchbox invisiblefieldset'));
+        $output .= html_writer::tag('lavel', $strsearchcourses.': ', array('for' => $inputid));
+        $output .= html_writer::empty_tag('input', array('type' => 'text', 'id' => $inputid,
+            'size' => $inputsize, 'name' => 'search', 'value' => s($value)));
+        $output .= html_writer::empty_tag('input', array('type' => 'submit',
+            'value' => get_string('go')));
+        $output .= html_writer::end_tag('fieldset');
+        $output .= html_writer::end_tag('form');
+
+        return $output;
+    }
+
+    /**
      * Renders html for completion box on course page
      *
      * If completion is disabled, returns empty string

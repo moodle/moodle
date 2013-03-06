@@ -63,10 +63,11 @@ if ($perpage) {
 
 // Begin output
 $PAGE->set_pagelayout('coursecategory');
+$courserenderer = $PAGE->get_renderer('core', 'course');
 $site = get_site();
 $PAGE->set_title("$site->shortname: $category->name");
 $PAGE->set_heading($site->fullname);
-$PAGE->set_button(print_course_search('', true, 'navbar'));
+$PAGE->set_button($courserenderer->course_search_form('', 'navbar'));
 echo $OUTPUT->header();
 
 /// Print the category selector

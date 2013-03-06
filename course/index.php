@@ -33,6 +33,7 @@ $systemcontext = context_system::instance();
 $PAGE->set_url('/course/index.php');
 $PAGE->set_context($systemcontext);
 $PAGE->set_pagelayout('admin');
+$courserenderer = $PAGE->get_renderer('core', 'course');
 
 if ($CFG->forcelogin) {
     require_login();
@@ -59,7 +60,7 @@ if ($countcategories > 1 || ($countcategories == 1 && $DB->count_records('course
     echo $OUTPUT->box_start('categorybox');
     print_whole_category_list();
     echo $OUTPUT->box_end();
-    print_course_search();
+    echo $courserenderer->course_search_form();
 } else {
     $strfulllistofcourses = get_string('fulllistofcourses');
 

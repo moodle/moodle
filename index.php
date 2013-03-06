@@ -95,6 +95,7 @@
     $editing = $PAGE->user_is_editing();
     $PAGE->set_title($SITE->fullname);
     $PAGE->set_heading($SITE->fullname);
+    $courserenderer = $PAGE->get_renderer('core', 'course');
     echo $OUTPUT->header();
 
 /// Print Section or custom info
@@ -235,7 +236,7 @@
                     echo html_writer::tag('span', '', array('class'=>'skip-block-to', 'id'=>'skipavailablecourses'));
                 } else {
                     echo html_writer::tag('div', get_string('therearecourses', '', $ncourses), array('class' => 'notifyproblem'));
-                    print_course_search('', false, 'short');
+                    echo $courserenderer->course_search_form('', 'short');
                 }
             break;
 
@@ -249,7 +250,7 @@
                 echo $OUTPUT->box_start('generalbox categorybox');
                 print_whole_category_list(NULL, NULL, NULL, -1, false);
                 echo $OUTPUT->box_end();
-                print_course_search('', false, 'short');
+                echo $courserenderer->course_search_form('', 'short');
 
                 //end frontpage category names div container
                 echo html_writer::end_tag('div');
@@ -278,7 +279,7 @@
                 } else {
                     echo $renderer->course_category_tree(get_course_category_tree());
                 }
-                print_course_search('', false, 'short');
+                echo $courserenderer->course_search_form('', 'short');
 
                 //end frontpage category combo div container
                 echo html_writer::end_tag('div');
