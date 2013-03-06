@@ -71,7 +71,7 @@ class behat_util extends testing_util {
         $options['adminuser'] = 'admin';
         $options['adminpass'] = 'admin';
         $options['fullname'] = 'Acceptance test site';
-        $options['shortame'] = 'Acceptance test site';
+        $options['shortname'] = 'Acceptance test site';
 
         install_cli_database($options, false);
 
