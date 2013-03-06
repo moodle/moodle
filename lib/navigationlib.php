@@ -2587,7 +2587,7 @@ class global_navigation extends navigation_node {
         // Append the chosen sortorder.
         $sortorder = $sortorder . ',' . $CFG->navsortmycoursessort . ' ASC';
         $courses = enrol_get_my_courses(null, $sortorder);
-        if ($this->show_my_categories(true)) {
+        if (count($courses) && $this->show_my_categories()) {
             // OK Actually we are loading categories. We only want to load categories that have a parent of 0.
             // In order to make sure we load everything required we must first find the categories that are not
             // base categories and work out the bottom category in thier path.
