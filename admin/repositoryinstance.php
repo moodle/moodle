@@ -41,6 +41,9 @@ $return = true;
 if (!empty($edit) || !empty($new)) {
     if (!empty($edit)) {
         $instance = repository::get_instance($edit);
+        if ($instance->instance->contextid != $context->id) {
+            throw new repository_exception('nopermissiontoaccess', 'repository');
+        }
         $instancetype = repository::get_type_by_id($instance->options['typeid']);
         $classname = 'repository_' . $instancetype->get_typename();
         $configs  = $instance->get_instance_option_names();
@@ -103,10 +106,12 @@ if (!empty($edit) || !empty($new)) {
     $return = true;
 } else if (!empty($delete)) {
     $instance = repository::get_instance($delete);
-    //if you try to delete an instance set as readonly, display an error message
     if ($instance->readonly) {
-            throw new repository_exception('readonlyinstance', 'repository');
-     }
+        // If you try to delete an instance set as readonly, display an error message.
+        throw new repository_exception('readonlyinstance', 'repository');
+    } else if ($instance->instance->contextid != $context->id) {
+        throw new repository_exception('nopermissiontoaccess', 'repository');
+    }
     if ($sure) {
         if (!confirm_sesskey()) {
             print_error('confirmsesskeybad', '', $baseurl);
