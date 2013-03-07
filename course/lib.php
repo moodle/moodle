@@ -857,7 +857,7 @@ function print_overview($courses, array $remote_courses=array()) {
     foreach ($courses as $course) {
         $fullname = format_string($course->fullname, true, array('context' => get_context_instance(CONTEXT_COURSE, $course->id)));
         echo $OUTPUT->box_start('coursebox');
-        $attributes = array('title' => str_replace('&amp;', '&', $fullname));
+        $attributes = array('title' => s($fullname));
         if (empty($course->visible)) {
             $attributes['class'] = 'dimmed';
         }
@@ -876,7 +876,7 @@ function print_overview($courses, array $remote_courses=array()) {
     }
     foreach ($remote_courses as $course) {
         echo $OUTPUT->box_start('coursebox');
-        $attributes = array('title' => str_replace('&amp;', '&', $course->fullname));
+        $attributes = array('title' => s($course->fullname));
         echo $OUTPUT->heading(html_writer::link(
             new moodle_url('/auth/mnet/jump.php', array('hostid' => $course->hostid, 'wantsurl' => '/course/view.php?id='.$course->remoteid)),
             format_string($course->shortname),
