@@ -2367,7 +2367,7 @@ class global_navigation extends navigation_node {
         $coursenode = $parent->add($coursename, $url, self::TYPE_COURSE, $shortname, $course->id);
         $coursenode->nodetype = self::NODETYPE_BRANCH;
         $coursenode->hidden = (!$course->visible);
-        $coursenode->title(str_replace('&amp;', '&', $fullname));
+        $coursenode->title($fullname);
         if (!$forcegeneric) {
             $this->addedcourses[$course->id] = $coursenode;
         }
