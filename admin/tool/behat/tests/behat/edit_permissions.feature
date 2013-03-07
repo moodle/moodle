@@ -52,7 +52,7 @@ Feature: Edit capabilities
     And I turn editing mode on
     And I add a "Forum" to section "1" and I fill the form with:
       | Forum name | I'm the name |
-      | Forum introduction | I'm the introduction |
+      | Description | I'm the introduction |
     And I follow "I'm the name"
     And I follow "Permissions"
     And I override the system permissions of "Student" role with:
