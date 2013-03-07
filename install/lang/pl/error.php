@@ -30,7 +30,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['cannotcreatelangdir'] = 'Nie można utworzyć katalogu językowego';
+$string['cannotcreatelangdir'] = 'Nie można utworzyć katalogu lang/';
 $string['cannotcreatetempdir'] = 'Nie można utworzyć katalogu tymczasowego';
 $string['cannotdownloadcomponents'] = 'Nie można pobrać składowych (komponentów)';
 $string['cannotdownloadzipfile'] = 'Nie można pobrać pliku ZIP';
