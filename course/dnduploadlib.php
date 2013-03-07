@@ -151,7 +151,8 @@ class dndupload_handler {
             }
             if (isset($resp['types'])) {
                 foreach ($resp['types'] as $type) {
-                    $this->add_type_handler($type['identifier'], $modname, $type['message']);
+                    $noname = !empty($type['noname']);
+                    $this->add_type_handler($type['identifier'], $modname, $type['message'], $noname);
                 }
             }
         }
@@ -195,8 +196,10 @@ class dndupload_handler {
      * @param string $module The name of the module to handle this type
      * @param string $message The message to show the user if more than one handler is registered
      *                        for a type and the user needs to make a choice between them
+     * @param bool $noname If true, the 'name' dialog should be disabled in the pop-up.
+     * @throws coding_exception
      */
-    public function add_type_handler($type, $module, $message) {
+    public function add_type_handler($type, $module, $message, $noname) {
         if (!$this->is_known_type($type)) {
             throw new coding_exception("Trying to add handler for unknown type $type");
         }
@@ -205,6 +208,7 @@ class dndupload_handler {
         $add->type = $type;
         $add->module = $module;
         $add->message = $message;
+        $add->noname = $noname ? 1 : 0;
 
         $this->types[$type]->handlers[] = $add;
     }
