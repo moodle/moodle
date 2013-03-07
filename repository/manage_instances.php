@@ -158,8 +158,6 @@ if (!empty($edit) || !empty($new)) {
         if ($instance->readonly) {
             throw new repository_exception('readonlyinstance', 'repository');
         }
-        // Check if we can read the content of the repository, if not exception is thrown.
-        repository::check_capability($context->id, $instance);
         $instancetype = repository::get_type_by_id($instance->options['typeid']);
         $classname = 'repository_' . $instancetype->get_typename();
         $configs  = $instance->get_instance_option_names();
@@ -216,8 +214,6 @@ if (!empty($edit) || !empty($new)) {
     if ($instance->readonly) {
         throw new repository_exception('readonlyinstance', 'repository');
     }
-    // Check if we can read the content of the repository, if not exception is thrown.
-    repository::check_capability($context->id, $instance);
     if ($sure) {
         if (!confirm_sesskey()) {
             print_error('confirmsesskeybad', '', $baseurl);
