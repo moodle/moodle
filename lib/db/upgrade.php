@@ -1064,7 +1064,7 @@ function xmldb_main_upgrade($oldversion) {
     // This is checking to see if the site has been running a specific version with a bug in it
     // because this upgrade step is slow and is only needed if the site has been running with the previous patch installed.
     // Note the conditions order in not the natual one for intervals, but that way the CI servers will be happy. Ugly swap.
-    if ($oldversion < 2012062504.11 && $oldversion >= 2012062504.08) {
+    if ($oldversion < 2012062504.13 && $oldversion >= 2012062504.08) {
         // Retrieve the list of course_sections as a recordset to save memory.
         // This is to fix a regression caused by MDL-37939.
         // In this case the upgrade step is fixing records where:
@@ -1077,7 +1077,7 @@ function xmldb_main_upgrade($oldversion) {
         $sequenceconcat = $DB->sql_concat("','", 's.sequence', "','");
         $moduleconcat = $DB->sql_concat("'%,'", 'cm.id', "',%'");
         $sql = 'SELECT s2.id, s2.course, s2.sequence
-                FROM mdl_course_sections s2
+                FROM {course_sections} s2
                 JOIN(
                     SELECT DISTINCT s.id
                     FROM
@@ -1123,7 +1123,7 @@ function xmldb_main_upgrade($oldversion) {
         $coursesections->close();
 
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2012062504.11);
+        upgrade_main_savepoint(true, 2012062504.13);
     }
 
     return true;
