@@ -104,12 +104,11 @@ class block_course_overview_renderer extends plugin_renderer_base {
                 $html .= html_writer::end_tag('div');
             }
 
-            $context = context_course::instance($course->id);
-            $fullname = format_string($course->fullname, true, array('context' => $context));
-            $attributes = array('title' => str_replace('&amp;', '&', $fullname));
+            $attributes = array('title' => s($course->fullname));
             if ($course->id > 0) {
                 $courseurl = new moodle_url('/course/view.php', array('id' => $course->id));
-                $link = html_writer::link($courseurl, $fullname, $attributes);
+                $coursefullname = format_string($course->fullname, true, $course->id);
+                $link = html_writer::link($courseurl, $coursefullname, $attributes);
                 $html .= $this->output->heading($link, 2, 'title');
             } else {
                 $html .= $this->output->heading(html_writer::link(
