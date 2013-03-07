@@ -26,7 +26,7 @@
 $string['configdisplayoptions'] = 'Select all options that should be available, existing settings are not modified. Hold CTRL key to select multiple fields.';
 $string['content'] = 'Page content';
 $string['contentheader'] = 'Content';
-$string['createpage'] = 'Create a new page';
+$string['createpage'] = 'Create a new page resource';
 $string['displayoptions'] = 'Available display options';
 $string['displayselect'] = 'Display';
 $string['displayselectexplain'] = 'Select display type.';

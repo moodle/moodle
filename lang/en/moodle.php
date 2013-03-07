@@ -1097,7 +1097,7 @@ $string['mymoodledashboard'] = 'My Moodle dashboard';
 $string['myprofile'] = 'My profile';
 $string['name'] = 'Name';
 $string['nameforlink'] = 'What do you want to call this link?';
-$string['nameforpage'] = 'What do you want to call this text?';
+$string['nameforpage'] = 'Name';
 $string['navigation'] = 'Navigation';
 $string['needed'] = 'Needed';
 $string['never'] = 'Never';
@@ -1806,6 +1806,8 @@ $string['welcometocoursetext'] = 'Welcome to {$a->coursename}!
 If you have not done so already, you should edit your profile page so that we can learn more about you:
 
   {$a->profileurl}';
+$string['whatforlink'] = 'What do you want to do with the link?';
+$string['whatforpage'] = 'What do you want to do with the text?';
 $string['whattocallzip'] = 'What do you want to call the zip file?';
 $string['whattodo'] = 'What to do';
 $string['windowclosing'] = 'This window should close automatically. If not, please close it now.';

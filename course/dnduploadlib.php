@@ -67,7 +67,7 @@ function dndupload_add_to_course($course, $modnames) {
             array('upload', 'moodle'),
             array('cancel', 'moodle')
         ),
-        'requires' => array('node', 'event', 'panel', 'json', 'anim')
+        'requires' => array('node', 'event', 'json', 'anim')
     );
     $vars = array(
         array('courseid' => $course->id,
@@ -113,11 +113,11 @@ class dndupload_handler {
         // Note: 'Files' type is hard-coded into the Javascript as this needs to be ...
         // ... treated a little differently.
         $this->add_type('url', array('url', 'text/uri-list', 'text/x-moz-url'), get_string('addlinkhere', 'moodle'),
-                        get_string('nameforlink', 'moodle'), 10);
+                        get_string('nameforlink', 'moodle'), get_string('whatforlink', 'moodle'), 10);
         $this->add_type('text/html', array('text/html'), get_string('addpagehere', 'moodle'),
-                        get_string('nameforpage', 'moodle'), 20);
+                        get_string('nameforpage', 'moodle'), get_string('whatforpage', 'moodle'), 20);
         $this->add_type('text', array('text', 'text/plain'), get_string('addpagehere', 'moodle'),
-                        get_string('nameforpage', 'moodle'), 30);
+                        get_string('nameforpage', 'moodle'), get_string('whatforpage', 'moodle'), 30);
 
         // Loop through all modules to find handlers.
         $mods = get_plugin_list_with_function('mod', 'dndupload_register');
@@ -145,8 +145,11 @@ class dndupload_handler {
                     } else {
                         $priority = 100;
                     }
+                    if (!isset($type['handlermessage'])) {
+                        $type['handlermessage'] = '';
+                    }
                     $this->add_type($type['identifier'], $type['datatransfertypes'],
-                                    $type['addmessage'], $type['namemessage'], $priority);
+                                    $type['addmessage'], $type['namemessage'], $type['handlermessage'], $priority);
                 }
             }
             if (isset($resp['types'])) {
@@ -169,10 +172,11 @@ class dndupload_handler {
      *                           dragged onto the page
      * @param string $namemessage The message to pop up when asking for the name to give the
      *                            course module instance when it is created
+     * @param string $handlermessage The message to pop up when asking which module should handle this type
      * @param int $priority Controls the order in which types are checked by the browser (mainly
      *                      needed to check for 'text' last as that is usually given as fallback)
      */
-    public function add_type($identifier, $datatransfertypes, $addmessage, $namemessage, $priority=100) {
+    public function add_type($identifier, $datatransfertypes, $addmessage, $namemessage, $handlermessage, $priority=100) {
         if ($this->is_known_type($identifier)) {
             throw new coding_exception("Type $identifier is already registered");
         }
@@ -182,6 +186,7 @@ class dndupload_handler {
         $add->datatransfertypes = $datatransfertypes;
         $add->addmessage = $addmessage;
         $add->namemessage = $namemessage;
+        $add->handlermessage = $handlermessage;
         $add->priority = $priority;
         $add->handlers = array();
 
