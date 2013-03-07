@@ -22,7 +22,7 @@ Feature: Add activities to courses
     When I turn editing mode on
     And I add a "Database" to section "3" and I fill the form with:
       | Name | Test name |
-      | Introduction | Test database description |
+      | Description | Test database description |
       | Required entries | 9 |
       | Comments | Yes |
     And I turn editing mode off
