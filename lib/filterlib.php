@@ -530,7 +530,7 @@ function filter_get_all_installed() {
  * @param int $move 1 means up, 0 means the same, -1 means down
  */
 function filter_set_global_state($filtername, $state, $move = 0) {
-    global $DB;
+    global $DB, $USER;
 
     // Check requested state is valid.
     if (!in_array($state, array(TEXTFILTER_ON, TEXTFILTER_OFF, TEXTFILTER_DISABLED))) {
@@ -566,22 +566,38 @@ function filter_set_global_state($filtername, $state, $move = 0) {
             $on[$f->filter] = $f;
         }
     }
+    // log change
+    $log = new stdClass();
+    $log->userid       = during_initial_install() ? 0 :$USER->id; // 0 as user id during install
+    $log->timemodified = time();
+    $log->name         = 'filter_active';
 
     // Update the state or add new record.
     if (isset($on[$filtername])) {
         $filter = $on[$filtername];
         if ($filter->active != $state) {
+            $log->oldvalue  = $filter->active;
+            $log->value     = $state;
+            $log->plugin    = $filtername;
+            $DB->insert_record('config_log', $log);
+
             $filter->active = $state;
             $DB->update_record('filter_active', $filter);
             if ($filter->active == TEXTFILTER_DISABLED) {
                 unset($on[$filtername]);
                 $off = array($filter->filter => $filter) + $off;
             }
+
         }
 
     } else if (isset($off[$filtername])) {
         $filter = $off[$filtername];
         if ($filter->active != $state) {
+            $log->oldvalue  = $filter->active;
+            $log->value     = $state;
+            $log->plugin    = $filtername;
+            $DB->insert_record('config_log', $log);
+
             $filter->active = $state;
             $DB->update_record('filter_active', $filter);
             if ($filter->active != TEXTFILTER_DISABLED) {
@@ -591,6 +607,11 @@ function filter_set_global_state($filtername, $state, $move = 0) {
         }
 
     } else {
+        $log->oldvalue  = '';
+        $log->value     = $state;
+        $log->plugin    = $filtername;
+        $DB->insert_record('config_log', $log);
+
         $filter = new stdClass();
         $filter->filter    = $filtername;
         $filter->contextid = $syscontext->id;
