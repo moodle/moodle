@@ -279,10 +279,6 @@
 
         $table->id = "users";
         foreach ($users as $user) {
-            if (isguestuser($user)) {
-                continue; // do not display guest here
-            }
-
             $buttons = array();
             $lastcolumn = '';
 

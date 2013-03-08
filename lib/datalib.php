@@ -375,12 +375,12 @@ function get_users($get=true, $search='', $confirmed=false, array $exceptions=nu
 function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperpage=0,
                            $search='', $firstinitial='', $lastinitial='', $extraselect='',
                            array $extraparams=null, $extracontext = null) {
-    global $DB;
+    global $DB, $CFG;
 
     $fullname  = $DB->sql_fullname();
 
-    $select = "deleted <> 1";
-    $params = array();
+    $select = "deleted <> 1 AND id <> :guestid";
+    $params = array('guestid' => $CFG->siteguest);
 
     if (!empty($search)) {
         $search = trim($search);
