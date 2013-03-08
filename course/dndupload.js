@@ -503,7 +503,10 @@ M.course_dndupload = {
         this.hide_preview_element();
         var preview = section.one('li.dndupload-preview').removeClass('dndupload-hidden');
         section.addClass('dndupload-over');
-        preview.one('span').setContent(type.addmessage);
+
+        // Horrible work-around to allow the 'Add X here' text to be a drop target in Firefox.
+        var node = preview.one('span')._node;
+        node.firstChild.nodeValue = type.addmessage;
     },
 
     /**
