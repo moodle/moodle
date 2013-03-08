@@ -43,6 +43,7 @@ $string['deletecheck'] = 'Delete {$a} block?';
 $string['deleteblock'] = 'Delete {$a} block';
 $string['deleteblockcheck'] = 'Are you sure that you want to delete this block titled {$a}?';
 $string['deleteblockwarning'] = '<p>You are about to delete a block that appears elsewhere.</p><p>Original block location: {$a->location}<br />Display on page types: {$a->pagetype}</p><p>Are you sure you want to continue?</p>';
+$string['dockblock'] = 'Dock {$a} block';
 $string['hideblock'] = 'Hide {$a} block';
 $string['hidedockpanel'] = 'Hide the dock panel';
 $string['hidepanel'] = 'Hide panel';
