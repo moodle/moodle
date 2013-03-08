@@ -280,7 +280,7 @@
 /// RSS and CSS and JS meta
     $meta = '';
     if (!empty($CFG->enablerssfeeds) && !empty($CFG->data_enablerssfeeds) && $data->rssarticles > 0) {
-        $rsstitle = $courseshortname . ': %fullname%';
+        $rsstitle = $courseshortname . ': ' . format_string($data->name);
         rss_add_http_header($context, 'mod_data', $data, $rsstitle);
     }
     if ($data->csstemplate) {
