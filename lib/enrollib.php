@@ -1244,9 +1244,10 @@ abstract class enrol_plugin {
      * @param int $timestart 0 means unknown
      * @param int $timeend 0 means forever
      * @param int $status default to ENROL_USER_ACTIVE for new enrolments, no change by default in updates
+     * @param bool $recovergrades restore grade history
      * @return void
      */
-    public function enrol_user(stdClass $instance, $userid, $roleid = NULL, $timestart = 0, $timeend = 0, $status = NULL) {
+    public function enrol_user(stdClass $instance, $userid, $roleid = null, $timestart = 0, $timeend = 0, $status = null, $recovergrades = null) {
         global $DB, $USER, $CFG; // CFG necessary!!!
 
         if ($instance->courseid == SITEID) {
@@ -1260,6 +1261,9 @@ abstract class enrol_plugin {
             throw new coding_exception('invalid enrol instance!');
         }
         $context = context_course::instance($instance->courseid, MUST_EXIST);
+        if (!isset($recovergrades)) {
+            $recovergrades = $CFG->recovergradesdefault;
+        }
 
         $inserted = false;
         $updated  = false;
@@ -1312,6 +1316,12 @@ abstract class enrol_plugin {
             } else {
                 role_assign($roleid, $userid, $context->id);
             }
+        }
+
+        // Recover old grades if present.
+        if ($recovergrades) {
+            require_once("$CFG->libdir/gradelib.php");
+            grade_recover_history_grades($userid, $courseid);
         }
 
         // reset current user enrolment caching

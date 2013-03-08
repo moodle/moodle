@@ -52,7 +52,7 @@ class enrol_guest_plugin extends enrol_plugin {
         }
     }
 
-    public function enrol_user(stdClass $instance, $userid, $roleid = NULL, $timestart = 0, $timeend = 0, $status = NULL) {
+    public function enrol_user(stdClass $instance, $userid, $roleid = null, $timestart = 0, $timeend = 0, $status = null, $recovergrades = null) {
         // no real enrolments here!
         return;
     }

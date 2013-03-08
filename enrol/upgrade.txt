@@ -6,6 +6,7 @@ information provided here is intended especially for developers.
 
 * plugins may use general enrol/editenrolment.php page to let users edit
   enrolments manually
+* new support for grade recovery in enrol_plugin::enrol_user() method
 
 === 2.4 ===
 
