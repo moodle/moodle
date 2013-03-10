@@ -1125,7 +1125,9 @@ div.questionbankwindow.block div.header {
     background: #eee !important;
 }
 
-div.questionbankwindow.block div.header a {
+#page-mod-quiz-edit .questionbankwindow.block div.header div.title h2,
+#page-mod-quiz-edit .questionbankwindow a#showbankcmd,
+#page-mod-quiz-edit .questionbankwindow a#hidebankcmd {
     color: #333333 !important;
     font-size: 11px;
 }

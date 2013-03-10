@@ -95,6 +95,9 @@
 #page-question-preview #techinfo {
     margin: 1em 0;
 }
+#page-mod-quiz-edit #categoryquestions .header {
+    background: none;
+}
 
 /** Overide for RTL layout **/
 .dir-rtl #qtypechoicecontainer #chooseqtype .instruction,
