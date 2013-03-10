@@ -1,15 +1,13 @@
 /** Admin **/
 
-#page-admin-course-category .rolelink {text-align:right;padding:10px;}
+#page-admin-course-manage .rolelink {text-align:right;padding:10px;}
 
 #page-admin-lang .generalbox,
-#page-admin-course-index .singlebutton,
-#page-admin-course-index .addcategory,
-#page-admin-course-category .addcategory,
+#page-admin-course-manage .singlebutton,
+#page-admin-course-manage .addcategory,
 #page-admin-stickyblocks .generalbox,
 #page-admin-maintenance .buttons,
-#page-admin-course-index .buttons,
-#page-admin-course-category .buttons,
+#page-admin-course-manage .buttons,
 #page-admin-index .copyright,
 #page-admin-index .copyrightnotice,
 #page-admin-index .adminerror,

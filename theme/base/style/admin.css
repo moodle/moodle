@@ -67,15 +67,14 @@
 
 .path-admin .incompatibleblockstable td.c0 {font-weight: bold;}
 
-#page-admin-course-category .addcategory {padding: 10px;}
-#page-admin-course-index .buttons,
-#page-admin-course-category .buttons {margin-bottom: 15px;}
-#page-admin-course-index .editcourse {margin:20px auto;}
-#page-admin-course-index .editcourse th,
-#page-admin-course-index .editcourse td {padding-left:10px;padding-right:10px;}
-#page-admin-course-index .editcourse .count {text-align:right;}
-#page-admin-course-index.dir-rtl .editcourse td[align="left"] {text-align: right;}
-#page-admin-course-index.dir-rtl .editcourse td[align="right"] {text-align: left;}
+#page-admin-course-manage .addcategory {padding: 10px;}
+#page-admin-course-manage .buttons {margin-bottom: 15px;}
+#page-admin-course-manage .editcourse {margin:20px auto;}
+#page-admin-course-manage .editcourse th,
+#page-admin-course-manage .editcourse td {padding-left:10px;padding-right:10px;}
+#page-admin-course-manage .editcourse .count {text-align:right;}
+#page-admin-course-manage.dir-rtl .editcourse td[align="left"] {text-align: right;}
+#page-admin-course-manage.dir-rtl .editcourse td[align="right"] {text-align: left;}
 
 #page-admin-report-security-index .timewarninghidden {display:none;}
 #page-admin-report-security-index .statuswarning {background-color: #f0e000;}
@@ -112,8 +111,7 @@
 #page-admin-qtypes #qtypes img { padding-right: .45em; vertical-align: text-bottom; }
 
 .path-admin-roles .buttons .singlebutton,
-#page-admin-course-index .buttons .singlebutton,
-#page-admin-course-category .buttons .singlebutton {display: inline;padding: 5px;}
+#page-admin-course-manage {display: inline;padding: 5px;}
 
 .path-admin-roles .capabilitysearchui {text-align: left;margin-left: auto;margin-right: auto;}
 #page-admin-roles-define .topfields {margin: 1em 0 2em;}
