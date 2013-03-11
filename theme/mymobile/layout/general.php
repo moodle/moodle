@@ -132,7 +132,7 @@ echo $OUTPUT->doctype() ?>
     <?php echo $OUTPUT->standard_top_of_body_html() ?>
     <div id="<?php p($PAGE->bodyid) ?>PAGE" data-role="page" class="generalpage <?php echo 'ajaxedclass '; p($PAGE->bodyclasses.' '.join(' ', $bodyclasses));  ?> <?php if ($hasmyblocks && $usercol) { echo 'has-myblocks'; } ?> " data-title="<?php p($SITE->shortname) ?>">
         <!-- start header -->
-        <div data-role="header" <?php echo($datatheme);?> class="mymobileheader" data-position="fixed">
+        <div id="page-header" data-role="header" <?php echo($datatheme);?> class="mymobileheader" data-position="fixed">
             <h1><?php echo $PAGE->heading ?></h1>
             <?php if (isloggedin() && $mypagetype != 'site-index') { ?>
             <a class="ui-btn-right" data-icon="home" href="<?php p($CFG->wwwroot) ?>" data-iconpos="notext" data-ajax="false"><?php p(get_string('home')); ?></a>
@@ -161,7 +161,6 @@ echo $OUTPUT->doctype() ?>
             </div>
             <!-- end navbar -->
         </div>
-        <div id="page-header"><!-- empty page-header needed by moodle yui --></div>
         <!-- end header -->
 
         <!-- main content -->
@@ -256,39 +255,40 @@ echo $OUTPUT->doctype() ?>
         <div data-role="course-footer"><?php echo $coursefooter; ?></div>
         <?php } ?>
 
-        <div data-role="footer" class="mobilefooter" <?php echo $datatheme;?>>
-            <div data-role="navbar" class="jnav" >
-                <ul>
-                    <li><a id="mycal" class="callink" href="<?php p($CFG->wwwroot) ?>/calendar/view.php" data-icon="info" data-iconpos="top" ><?php p(get_string('calendar', 'calendar')); ?></a></li>
-                    <?php if (!empty($CFG->messaging)) { ?>
-                    <li><a id="mymess" href="<?php p($CFG->wwwroot) ?>/message/index.php" data-iconpos="top" data-icon="mymessage" ><?php p(get_string('messages', 'message')); ?></a></li>
-                    <?php } ?>
-                    <?php if ($mypagetype != 'site-index') { ?>
-                    <li><a href="#" data-inline="true" data-role="button" data-iconpos="top" data-icon="arrow-u" id="uptotop"><?php p(get_string('up')); ?></a></li>
-                    <?php } ?>
-                </ul>
+        <div id="page-footer">
+            <div data-role="footer" class="mobilefooter" <?php echo $datatheme;?>>
+                <div data-role="navbar" class="jnav" >
+                    <ul>
+                        <li><a id="mycal" class="callink" href="<?php p($CFG->wwwroot) ?>/calendar/view.php" data-icon="info" data-iconpos="top" ><?php p(get_string('calendar', 'calendar')); ?></a></li>
+                        <?php if (!empty($CFG->messaging)) { ?>
+                        <li><a id="mymess" href="<?php p($CFG->wwwroot) ?>/message/index.php" data-iconpos="top" data-icon="mymessage" ><?php p(get_string('messages', 'message')); ?></a></li>
+                        <?php } ?>
+                        <?php if ($mypagetype != 'site-index') { ?>
+                        <li><a href="#" data-inline="true" data-role="button" data-iconpos="top" data-icon="arrow-u" id="uptotop"><?php p(get_string('up')); ?></a></li>
+                        <?php } ?>
+                    </ul>
+                </div>
+            </div>
+
+            <div id="underfooter">
+                <?php
+                echo $OUTPUT->login_info_footer();
+                echo '<div class="noajax">';
+                echo $OUTPUT->standard_footer_html();
+                echo '</div>';
+                ?>
             </div>
         </div>
         <!-- end footer -->
 
-        <div id="underfooter">
-            <?php
-            echo $OUTPUT->login_info_footer();
-            echo '<div class="noajax">';
-            echo $OUTPUT->standard_footer_html();
-            echo '</div>';
-            ?>
-        </div>
+        <!-- empty divs with info for the JS to use -->
+        <div id="<?php echo sesskey(); ?>" class="mobilesession"></div>
+        <div id="<?php p($CFG->wwwroot); ?>" class="mobilesiteurl"></div>
+        <div id="<?php echo $dtheme;?>" class="datatheme"></div>
+        <div id="<?php echo $dthemeb;?>" class="datathemeb"></div>
+        <!-- end js divs -->
+
+        <?php echo $OUTPUT->standard_end_of_body_html() ?>
     </div><!-- ends page -->
-
-    <!-- empty divs with info for the JS to use -->
-    <div id="<?php echo sesskey(); ?>" class="mobilesession"></div>
-    <div id="<?php p($CFG->wwwroot); ?>" class="mobilesiteurl"></div>
-    <div id="<?php echo $dtheme;?>" class="datatheme"></div>
-    <div id="<?php echo $dthemeb;?>" class="datathemeb"></div>
-    <div id="page-footer"><!-- empty page footer needed by moodle yui for embeds --></div>
-    <!-- end js divs -->
-
-    <?php echo $OUTPUT->standard_end_of_body_html() ?>
 </body>
 </html>
