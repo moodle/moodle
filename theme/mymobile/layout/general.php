@@ -23,9 +23,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-// get blocks?
+// Get blocks?
 $toblock = optional_param('mymobile_blocks', false, PARAM_BOOL);
-// get settings?
+// Get settings?
 $toset = optional_param('mymobile_settings', false, PARAM_BOOL);
 
 $mypagetype = $PAGE->pagetype;
@@ -50,7 +50,7 @@ if ($showswatch == 'light') {
     $databodytheme = '';
 }
 
-//custom settings
+// Custom settings.
 $hasshowmobileintro = (!empty($PAGE->theme->settings->showmobileintro));
 
 if (!empty($PAGE->theme->settings->showfullsizeimages)) {
@@ -74,13 +74,13 @@ if (!empty($PAGE->theme->settings->usetableview)) {
 // TODO: Fix this hardcoding there are other course formats that peopleuse.
 //       Probably changing to an appropriate regex will do.
 if ($mypagetype == 'course-view-topics' || $mypagetype == 'course-view-weeks') {
-    // jump to current topic only in course pages
+    // Jump to current topic only in course pages.
     $jumptocurrent = 'true';
 } else {
     $jumptocurrent = 'false';
 }
 
-// below sets a URL variable to use in some links
+// Below sets a URL variable to use in some links.
 $urlblocks = new moodle_url($PAGE->url, array('mymobile_blocks' => 'true'));
 $urlsettings = new moodle_url($PAGE->url, array('mymobile_settings' => 'true'));
 
@@ -102,12 +102,12 @@ if (empty($PAGE->layout_options['nocourseheaderfooter'])) {
 $bodyclasses = array();
 $bodyclasses[] = (string)$hasithumb;
 $bodyclasses[] = (string)$showsitetopic;
-// add ithumb class to decide whether to show or hide images and site topic
+// Add ithumb class to decide whether to show or hide images and site topic.
 
-// TODO: Better illustrate preceedence
+// TODO: Better illustrate preceedence.
 $gowide = ($mydevice == 'default' && $showusetableview == 'tabshow' || $mydevice == 'tablet' && $showusetableview == 'tabshow');
 if ($gowide) {
-    // initialize column position choices.
+    // Initialize column position choices.
     mymobile_initialise_colpos($PAGE);
 }
 $usercol = (mymobile_get_colpos() == 'on');
@@ -132,7 +132,7 @@ echo $OUTPUT->doctype() ?>
     <?php echo $OUTPUT->standard_top_of_body_html() ?>
     <div id="<?php p($PAGE->bodyid) ?>PAGE" data-role="page" class="generalpage <?php echo 'ajaxedclass '; p($PAGE->bodyclasses.' '.join(' ', $bodyclasses));  ?> <?php if ($hasmyblocks && $usercol) { echo 'has-myblocks'; } ?> " data-title="<?php p($SITE->shortname) ?>">
         <!-- start header -->
-        <div data-role="header" <?php echo($datatheme);?> class="mymobileheader" data-position="fixed">
+        <div id="page-header" data-role="header" <?php echo($datatheme);?> class="mymobileheader" data-position="fixed">
             <h1><?php echo $PAGE->heading ?></h1>
             <?php if (isloggedin() && $mypagetype != 'site-index') { ?>
             <a class="ui-btn-right" data-icon="home" href="<?php p($CFG->wwwroot) ?>" data-iconpos="notext" data-ajax="false"><?php p(get_string('home')); ?></a>
@@ -161,15 +161,14 @@ echo $OUTPUT->doctype() ?>
             </div>
             <!-- end navbar -->
         </div>
-        <div id="page-header"><!-- empty page-header needed by moodle yui --></div>
         <!-- end header -->
 
         <!-- main content -->
         <div data-role="content" class="mymobilecontent" <?php echo $databodytheme; ?>>
-          <?php if($toset) {  //if we get the true, that means load/show settings only ?>
+          <?php if($toset) {  // If we get the true, that means load/show settings only. ?>
             <h2 class="jsets"><?php p(get_string('settings')); ?></h2>
             <?php
-            //load lang menu if available
+            // Load lang menu if available.
             echo $OUTPUT->lang_menu();
             ?>
             <ul data-role="listview" data-theme="<?php echo $dthemeb;?>" data-dividertheme="<?php echo $dtheme;?>" data-inset="true" class="settingsul">
@@ -181,7 +180,7 @@ echo $OUTPUT->doctype() ?>
             <div class="content-primary">
                 <div class="region-content <?php if ($toblock) { echo 'mobile_blocksonly'; } ?>" id="themains">
                 <?php
-                //only show main content if we are not showing anything else
+                // Only show main content if we are not showing anything else.
                 if (!$toblock && !$toset) { ?>
                     <?php if ($hasshowmobileintro && $mypagetype == 'site-index') { ?>
                         <?php echo $PAGE->theme->settings->showmobileintro; ?>
@@ -194,7 +193,7 @@ echo $OUTPUT->doctype() ?>
             </div>
 
             <?php if ($gowide && $hasmyblocks && !$toset) {
-            //if we get the true, that means load/show blocks only for tablet views only ?>
+            // If we get the true, that means load/show blocks only for tablet views only. ?>
             <div class="content-secondary">
                 <div class="tablets">
                     <h1><?php echo $PAGE->heading ?></h1>
@@ -224,7 +223,7 @@ echo $OUTPUT->doctype() ?>
                 </div>
 
                 <div data-role="fieldcontain" id="sliderdiv">
-                    <label for="slider"><?php p(get_string('mtoggle','theme_mymobile')); ?>:</label>
+                    <label for="slider"><?php p(get_string('mtoggle', 'theme_mymobile')); ?>:</label>
                     <select name="slider" class="slider" data-role="slider" id="slider">
                         <option value="on">On</option>
                         <option value="off">Off</option>
@@ -239,7 +238,7 @@ echo $OUTPUT->doctype() ?>
 
             <?php
             if ($toblock && !$gowide) {
-                //regular block load for phones + handhelds
+                // Regular block load for phones + handhelds.
                 if ($hasmyblocks) {
                     ?><div class="headingwrap ui-bar-<?php echo $dtheme;?> ui-footer jsetsbar">
                         <h2 class="jsets ui-title"><?php p(get_string('blocks')); ?></h2>
@@ -256,39 +255,39 @@ echo $OUTPUT->doctype() ?>
         <div data-role="course-footer"><?php echo $coursefooter; ?></div>
         <?php } ?>
 
-        <div data-role="footer" class="mobilefooter" <?php echo $datatheme;?>>
-            <div data-role="navbar" class="jnav" >
-                <ul>
-                    <li><a id="mycal" class="callink" href="<?php p($CFG->wwwroot) ?>/calendar/view.php" data-icon="info" data-iconpos="top" ><?php p(get_string('calendar', 'calendar')); ?></a></li>
-                    <?php if (!empty($CFG->messaging)) { ?>
-                    <li><a id="mymess" href="<?php p($CFG->wwwroot) ?>/message/index.php" data-iconpos="top" data-icon="mymessage" ><?php p(get_string('messages', 'message')); ?></a></li>
-                    <?php } ?>
-                    <?php if ($mypagetype != 'site-index') { ?>
-                    <li><a href="#" data-inline="true" data-role="button" data-iconpos="top" data-icon="arrow-u" id="uptotop"><?php p(get_string('up')); ?></a></li>
-                    <?php } ?>
-                </ul>
+        <div id="page-footer">
+            <div data-role="footer" class="mobilefooter" <?php echo $datatheme;?>>
+                <div data-role="navbar" class="jnav" >
+                    <ul>
+                        <li><a id="mycal" class="callink" href="<?php p($CFG->wwwroot) ?>/calendar/view.php" data-icon="info" data-iconpos="top" ><?php p(get_string('calendar', 'calendar')); ?></a></li>
+                        <?php if (!empty($CFG->messaging)) { ?>
+                        <li><a id="mymess" href="<?php p($CFG->wwwroot) ?>/message/index.php" data-iconpos="top" data-icon="mymessage" ><?php p(get_string('messages', 'message')); ?></a></li>
+                        <?php } ?>
+                        <?php if ($mypagetype != 'site-index') { ?>
+                        <li><a href="#" data-inline="true" data-role="button" data-iconpos="top" data-icon="arrow-u" id="uptotop"><?php p(get_string('up')); ?></a></li>
+                        <?php } ?>
+                    </ul>
+                </div>
+            </div>
+
+            <div id="underfooter">
+                <?php
+                echo $OUTPUT->login_info_footer();
+                echo '<div class="noajax">';
+                echo $OUTPUT->standard_footer_html();
+                echo '</div>';
+                ?>
             </div>
         </div>
         <!-- end footer -->
+        <!-- empty divs with info for the JS to use -->
+        <div id="<?php echo sesskey(); ?>" class="mobilesession"></div>
+        <div id="<?php p($CFG->wwwroot); ?>" class="mobilesiteurl"></div>
+        <div id="<?php echo $dtheme;?>" class="datatheme"></div>
+        <div id="<?php echo $dthemeb;?>" class="datathemeb"></div>
+        <!-- end js divs -->
 
-        <div id="underfooter">
-            <?php
-            echo $OUTPUT->login_info_footer();
-            echo '<div class="noajax">';
-            echo $OUTPUT->standard_footer_html();
-            echo '</div>';
-            ?>
-        </div>
+        <?php echo $OUTPUT->standard_end_of_body_html() ?>
     </div><!-- ends page -->
-
-    <!-- empty divs with info for the JS to use -->
-    <div id="<?php echo sesskey(); ?>" class="mobilesession"></div>
-    <div id="<?php p($CFG->wwwroot); ?>" class="mobilesiteurl"></div>
-    <div id="<?php echo $dtheme;?>" class="datatheme"></div>
-    <div id="<?php echo $dthemeb;?>" class="datathemeb"></div>
-    <div id="page-footer"><!-- empty page footer needed by moodle yui for embeds --></div>
-    <!-- end js divs -->
-
-    <?php echo $OUTPUT->standard_end_of_body_html() ?>
 </body>
 </html>
