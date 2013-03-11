@@ -8,6 +8,9 @@ DOM changes:
 * new setting $THEME->yuicssmodules = array('cssreset', 'cssfonts', 'cssgrids', 'cssbase'); which
   allows themes to use different CSS reset normalisers such as cssnormalize YUI module
 
+Renderer changes:
+* Mymobile theme changed to support more verbose move-block-here descriptions.
+
 === 2.4 ===
 
 required changes:
