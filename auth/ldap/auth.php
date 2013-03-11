@@ -1736,10 +1736,6 @@ class auth_plugin_ldap extends auth_plugin_base {
             return;
         }
 
-        if (!ldap_paged_results_supported($this->config->ldap_version)) {
-            echo $OUTPUT->notification(get_string('pagedresultsnotsupp', 'auth_ldap'));
-        }
-
         include($CFG->dirroot.'/auth/ldap/config.html');
     }
 
