@@ -158,13 +158,6 @@ class page_requirements_manager {
         $this->YUI_config = new stdClass();
 
         // Set up some loader options.
-        if (debugging('', DEBUG_DEVELOPER)) {
-            $this->yui3loader->filter = 'RAW'; // For more detailed logging info use 'DEBUG' here.
-            $this->YUI_config->debug = true;
-        } else {
-            $this->yui3loader->filter = null;
-            $this->YUI_config->debug = false;
-        }
         if (!empty($CFG->useexternalyui) and strpos($CFG->httpswwwroot, 'https:') !== 0) {
             $this->yui3loader->base = 'http://yui.yahooapis.com/' . $CFG->yui3version . '/build/';
             $this->yui3loader->comboBase = 'http://yui.yahooapis.com/combo?';
@@ -188,7 +181,6 @@ class page_requirements_manager {
         $this->YUI_config->base         = $this->yui3loader->base;
         $this->YUI_config->comboBase    = $this->yui3loader->comboBase;
         $this->YUI_config->combine      = $this->yui3loader->combine;
-        $this->YUI_config->filter       = (string)$this->yui3loader->filter;
         $this->YUI_config->insertBefore = 'firstthemesheet';
         $this->YUI_config->modules      = array();
         $this->YUI_config->groups       = array(
@@ -213,7 +205,6 @@ class page_requirements_manager {
                 'base' => $CFG->httpswwwroot . '/lib/yui/gallery/',
                 'comboBase' => $CFG->httpswwwroot . '/theme/yui_combo.php'.$sep,
                 'combine' => $this->yui3loader->combine,
-                'filter' => $this->YUI_config->filter,
                 'ext' => false,
                 'root' => 'gallery/',
                 'patterns' => array(
@@ -238,6 +229,23 @@ class page_requirements_manager {
                 )
             )
         );
+
+        // Set some more loader options applying to groups too.
+        if (debugging('', DEBUG_DEVELOPER)) {
+            // When debugging is enabled, we want to load the non-minified (RAW) versions of YUI library modules rather
+            // than the DEBUG versions as these generally generate too much logging for our purposes.
+            // However we do want the DEBUG versions of our Moodle-specific modules.
+            // To debug a YUI-specific issue, change the yui3loader->filter value to DEBUG.
+            $this->YUI_config->filter = 'RAW';
+            $this->YUI_config->groups['moodle']['filter'] = 'DEBUG';
+
+            // We use the yui3loader->filter setting when writing the YUI3 seed scripts into the header.
+            $this->yui3loader->filter = $this->YUI_config->filter;
+            $this->YUI_config->debug = true;
+        } else {
+            $this->yui3loader->filter = null;
+            $this->YUI_config->debug = false;
+        }
 
         // Every page should include definition of following modules.
         $this->js_module($this->find_module('core_filepicker'));
