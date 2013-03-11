@@ -208,8 +208,8 @@ if ($version > $CFG->version) {  // upgrade
 
     if (empty($confirmupgrade)) {
         $a = new stdClass();
-        $a->oldversion = "$CFG->release ($CFG->version)";
-        $a->newversion = "$release ($version)";
+        $a->oldversion = "$CFG->release (".sprintf('%.2f', $CFG->version).")";
+        $a->newversion = "$release (".sprintf('%.2f', $version).")";
         $strdatabasechecking = get_string('databasechecking', '', $a);
 
         $PAGE->set_title($stradministration);
