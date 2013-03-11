@@ -287,10 +287,10 @@ if ($action === 'delete') {
                     $numofattempts++;
                     $avescore += $try["grade"];
                     $avetime += $timetotake;
-                    if ($try["grade"] > $highscore || $highscore == NULL) {
+                    if ($try["grade"] > $highscore || $highscore === NULL) {
                         $highscore = $try["grade"];
                     }
-                    if ($try["grade"] < $lowscore || $lowscore == NULL) {
+                    if ($try["grade"] < $lowscore || $lowscore === NULL) {
                         $lowscore = $try["grade"];
                     }
                     if ($timetotake > $hightime || $hightime == NULL) {
@@ -349,10 +349,10 @@ if ($action === 'delete') {
     } else {
         $lowtime = format_time($lowtime);
     }
-    if ($highscore == NULL) {
+    if ($highscore === NULL) {
         $highscore = get_string("notcompleted", "lesson");
     }
-    if ($lowscore == NULL) {
+    if ($lowscore === NULL) {
         $lowscore = get_string("notcompleted", "lesson");
     }
 
@@ -365,7 +365,14 @@ if ($action === 'delete') {
     $stattable->align = array('center', 'center', 'center', 'center', 'center', 'center');
     $stattable->wrap = array('nowrap', 'nowrap', 'nowrap', 'nowrap', 'nowrap', 'nowrap');
     $stattable->attributes['class'] = 'standardtable generaltable';
-    $stattable->data[] = array($avescore.'%', $avetime, $highscore.'%', $lowscore.'%', $hightime, $lowtime);
+
+    if (is_numeric($highscore)) {
+        $highscore .= '%';
+    }
+    if (is_numeric($lowscore)) {
+        $lowscore .= '%';
+    }
+    $stattable->data[] = array($avescore.'%', $avetime, $highscore, $lowscore, $hightime, $lowtime);
 
     echo html_writer::table($stattable);
 } else if ($action === 'reportdetail') {
