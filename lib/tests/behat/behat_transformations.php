@@ -56,7 +56,7 @@ class behat_transformations extends behat_base {
      * @return string The string with the arguments fixed.
      */
     public function arg_replace_slashes($string) {
-        return $this->replace_slashes($string);
+        return str_replace('\"', '"', $string);
     }
 
     /**
@@ -73,8 +73,8 @@ class behat_transformations extends behat_base {
     /**
      * Transformations for TableNode arguments.
      *
-     * All the transformations have to be applied to tables,
-     * adding them in a different method for Behat API restrictions.
+     * Transformations applicable to TableNode arguments should also
+     * be applied, adding them in a different method for Behat API restrictions.
      *
      * @Transform /^table:(.*)/
      * @param TableNode $tablenode
@@ -87,9 +87,6 @@ class behat_transformations extends behat_base {
         foreach ($rows as $rowkey => $row) {
             foreach ($row as $colkey => $value) {
 
-                // TableNodes values doesn't need to be escaped, but maybe somebody does it.
-                $rows[$rowkey][$colkey] = $this->replace_slashes($value);
-
                 // Transforms vars into nasty strings.
                 if (preg_match('/\$NASTYSTRING(\d)/', $rows[$rowkey][$colkey])) {
                     $rows[$rowkey][$colkey] = $this->replace_nasty_strings($rows[$rowkey][$colkey]);
@@ -100,18 +97,6 @@ class behat_transformations extends behat_base {
         // Return the transformed TableNode.
         $tablenode->setRows($rows);
         return $tablenode;
-    }
-
-    /**
-     * Removes the escaped double quotes.
-     *
-     * Method reused by TableNode transformation.
-     *
-     * @param string $string
-     * @return string
-     */
-    public function replace_slashes($string) {
-        return str_replace('\"', '"', $string);
     }
 
     /**

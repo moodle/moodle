@@ -43,7 +43,7 @@ Feature: Transform steps arguments
     And I follow "Edit profile"
     Then I should not see "NASTYSTRING"
     And the "First name" field should match "va\"lue1" value
-    And the "Description" field should match "va\"lue2" value
+    And the "Description" field should match "va\\"lue2" value
     And the "City/town" field should match "va\"lue3" value
 
   @javascript
