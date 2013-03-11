@@ -133,6 +133,7 @@ class mod_lesson_mod_form extends moodleform_mod {
         $mform->setType('password', PARAM_RAW);
         $mform->setAdvanced('password');
         $mform->disabledIf('password', 'usepassword', 'eq', 0);
+        $mform->disabledIf('passwordunmask', 'usepassword', 'eq', 0);
 
         $this->standard_grading_coursemodule_elements();
 
