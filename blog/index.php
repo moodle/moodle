@@ -57,6 +57,8 @@ if (!empty($groupid) && empty($courseid)) {
 }
 
 $sitecontext = context_system::instance();
+// Blogs are always in system context.
+$PAGE->set_context($sitecontext);
 
 // check basic permissions
 if ($CFG->bloglevel == BLOG_GLOBAL_LEVEL) {
@@ -199,15 +201,6 @@ if (!empty($userid)) {
 
 $courseid = (empty($courseid)) ? SITEID : $courseid;
 
-if (empty($entryid) && empty($modid) && empty($groupid)) {
-    $PAGE->set_context(context_user::instance($USER->id));
-} else if (!empty($modid)) {
-    $PAGE->set_context(context_module::instance($modid));
-} else if (!empty($courseid)) {
-    $PAGE->set_context(context_course::instance($courseid));
-} else {
-    $PAGE->set_context(context_system::instance());
-}
 
 $blogheaders = blog_get_headers();
 

@@ -141,7 +141,7 @@ class blog_edit_form extends moodleform {
 
         // validate course association
         if (!empty($data['courseassoc'])) {
-            $coursecontext = context::instance_by_id($data['courseassoc'], IGNORE_MISSING);
+            $coursecontext = context::instance_by_id($data['courseassoc']);
 
             $canassociatecourse = has_capability('moodle/blog:associatecourse', $coursecontext);
             if ($coursecontext->contextlevel == CONTEXT_COURSE && $canassociatecourse) {
@@ -156,7 +156,7 @@ class blog_edit_form extends moodleform {
         // validate mod association
         if (!empty($data['modassoc'])) {
             $modcontextid = $data['modassoc'];
-            $modcontext = context::instance_by_id($modcontextid, IGNORE_MISSING);
+            $modcontext = context::instance_by_id($modcontextid);
 
             $canassociatemodule = has_capability('moodle/blog:associatemodule', $modcontext);
             if ($canassociatemodule) {

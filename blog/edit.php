@@ -45,7 +45,6 @@ $returnurl = new moodle_url('/blog/index.php');
 
 if (!empty($courseid) && empty($modid)) {
     $returnurl->param('courseid', $courseid);
-    $PAGE->set_context(context_course::instance($courseid));
 }
 
 // If a modid is given, guess courseid
@@ -53,13 +52,12 @@ if (!empty($modid)) {
     $returnurl->param('modid', $modid);
     $courseid = $DB->get_field('course_modules', 'course', array('id' => $modid));
     $returnurl->param('courseid', $courseid);
-    $PAGE->set_context(context_module::instance($modid));
 }
 
-// If courseid is empty use the system context
-if (empty($courseid)) {
-    $PAGE->set_context(context_system::instance());
-}
+// Blogs are always in system context.
+$sitecontext = context_system::instance();
+$PAGE->set_context($sitecontext);
+
 
 $blogheaders = blog_get_headers();
 
@@ -77,7 +75,6 @@ if (isguestuser()) {
     print_error('noguestentry', 'blog');
 }
 
-$sitecontext = context_system::instance();
 if (!has_capability('moodle/blog:create', $sitecontext) && !has_capability('moodle/blog:manageentries', $sitecontext)) {
     print_error('cannoteditentryorblog');
 }
