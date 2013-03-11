@@ -65,7 +65,7 @@ class moodle1_qtype_multichoice_handler extends moodle1_qtype_handler {
                 'answernumbering'                => 'abc',
             ));
         }
-        $this->write_multichoice($data['multichoice'], $data['oldquestiontextformat']);
+        $this->write_multichoice($data['multichoice'], $data['oldquestiontextformat'], $data['id']);
     }
 
     /**
@@ -73,8 +73,9 @@ class moodle1_qtype_multichoice_handler extends moodle1_qtype_handler {
      *
      * @param array $multichoices the grouped structure
      * @param int $oldquestiontextformat - {@see moodle1_question_bank_handler::process_question()}
+     * @param int $questionid question id
      */
-    protected function write_multichoice(array $multichoices, $oldquestiontextformat) {
+    protected function write_multichoice(array $multichoices, $oldquestiontextformat, $questionid) {
         global $CFG;
 
         // the grouped array is supposed to have just one element - let us use foreach anyway
@@ -100,6 +101,13 @@ class moodle1_qtype_multichoice_handler extends moodle1_qtype_handler {
                 $multichoice['partiallycorrectfeedbackformat']  = $oldquestiontextformat;
                 $multichoice['incorrectfeedbackformat']         = $oldquestiontextformat;
             }
+
+            $multichoice['correctfeedback'] = $this->migrate_files(
+                    $multichoice['correctfeedback'], 'question', 'correctfeedback', $questionid);
+            $multichoice['partiallycorrectfeedback'] = $this->migrate_files(
+                    $multichoice['partiallycorrectfeedback'], 'question', 'partiallycorrectfeedback', $questionid);
+            $multichoice['incorrectfeedback'] = $this->migrate_files(
+                    $multichoice['incorrectfeedback'], 'question', 'incorrectfeedback', $questionid);
 
             $this->write_xml('multichoice', $multichoice, array('/multichoice/id'));
         }
