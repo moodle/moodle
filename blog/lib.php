@@ -601,7 +601,7 @@ function blog_get_options_for_module($module, $user=null) {
     }
     if (array_key_exists($key, $moduleoptions)) {
         // Serve from the cache so we don't have to regenerate
-        return $moduleoptions[$module->id];
+        return $moduleoptions[$key];
     }
 
     $canparticipate = (is_enrolled($modcontext) or is_viewing($modcontext));
