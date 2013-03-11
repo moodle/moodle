@@ -55,7 +55,6 @@ echo $OUTPUT->doctype() ?>
     <div data-role="page" id="chatpage" data-fullscreen="true" data-title="<?php p($SITE->shortname) ?>">
         <?php echo $OUTPUT->main_content(); ?>
         <input type="button" value="back" data-role="none" id="chatback" onClick="history.back()">
-    </div>
     <?php } else { ?>
     <div id="content2" data-role="page" data-title="<?php p($SITE->shortname) ?>" data-theme="<?php echo $datatheme;?>">
         <div data-role="header" data-theme="<?php echo $datatheme;?>">
@@ -67,9 +66,9 @@ echo $OUTPUT->doctype() ?>
         <div data-role="content" class="mymobilecontent" data-theme="<?php echo $databodytheme;?>">
             <?php echo $OUTPUT->main_content(); ?>
         </div>
-    </div>
     <?php } ?>
-    <!-- START OF FOOTER -->
-    <?php echo $OUTPUT->standard_end_of_body_html() ?>
+        <!-- START OF FOOTER -->
+        <?php echo $OUTPUT->standard_end_of_body_html() ?>
+    </div>
 </body>
 </html>
