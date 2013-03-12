@@ -532,7 +532,7 @@ class plugin_manager {
 
             'report' => array(
                 'backups', 'completion', 'configlog', 'courseoverview',
-                'log', 'loglive', 'outline', 'participation', 'progress', 'questioninstances', 'security', 'stats'
+                'log', 'loglive', 'outline', 'participation', 'progress', 'questioninstances', 'security', 'stats', 'performance'
             ),
 
             'repository' => array(
