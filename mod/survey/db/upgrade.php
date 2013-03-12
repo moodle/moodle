@@ -68,12 +68,12 @@ function xmldb_survey_upgrade($oldversion) {
         $arrtables['survey_questions'] = new xmldb_table('survey_questions');
         // Columns to change.
         $arrfields = array();
-        $arrfields['survey']['intro'] = new xmldb_field('intro', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, '', 'name');
-        $arrfields['survey']['questions'] = new xmldb_field('questions', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, '', 'introformat');
+        $arrfields['survey']['intro'] = new xmldb_field('intro', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, 'name');
+        $arrfields['survey']['questions'] = new xmldb_field('questions', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'introformat');
         $arrfields['survey_answers']['time'] = new xmldb_field('time', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'question');
-        $arrfields['survey_answers']['answer1'] = new xmldb_field('answer1', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, '', 'time');
-        $arrfields['survey_answers']['answer2'] = new xmldb_field('answer2', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, '', 'answer1');
-        $arrfields['survey_questions']['intro'] = new xmldb_field('intro', XMLDB_TYPE_CHAR, '50', null, XMLDB_NOTNULL, null, '', 'multi');
+        $arrfields['survey_answers']['answer1'] = new xmldb_field('answer1', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, 'time');
+        $arrfields['survey_answers']['answer2'] = new xmldb_field('answer2', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, 'answer1');
+        $arrfields['survey_questions']['intro'] = new xmldb_field('intro', XMLDB_TYPE_CHAR, '50', null, XMLDB_NOTNULL, null, null, 'multi');
 
         // Loop through the tables.
         foreach ($arrtables as $tablename => $table) {

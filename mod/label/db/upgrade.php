@@ -91,8 +91,8 @@ function xmldb_label_upgrade($oldversion) {
         $table = new xmldb_table('label');
         // Columns to change.
         $arrfields = array();
-        $arrfields['name'] = new xmldb_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, '', 'course');
-        $arrfields['intro'] = new xmldb_field('intro', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, '', 'name');
+        $arrfields['name'] = new xmldb_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'course');
+        $arrfields['intro'] = new xmldb_field('intro', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, 'name');
 
         // Loop through columns and update the fields.
         foreach ($arrfields as $fieldname => $field) {
