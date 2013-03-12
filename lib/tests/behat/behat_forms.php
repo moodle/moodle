@@ -184,7 +184,7 @@ class behat_forms extends behat_base {
      *
      * @When /^I select "(?P<radio_button_string>(?:[^"]|\\")*)" radio button$/
      * @throws ElementNotFoundException Thrown by behat_base::find
-     * @param string $radio
+     * @param string $radio The radio button id, name or label value
      */
     public function select_radio($radio) {
 
