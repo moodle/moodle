@@ -285,7 +285,7 @@ function lti_build_request($instance, $typeconfig, $course) {
     if ($customstr) {
         $custom = lti_split_custom_parameters($customstr);
     }
-    if (!isset($typeconfig['allowinstructorcustom']) || $typeconfig['allowinstructorcustom'] == LTI_SETTING_NEVER) {
+    if (isset($typeconfig['allowinstructorcustom']) && $typeconfig['allowinstructorcustom'] == LTI_SETTING_NEVER) {
         $requestparams = array_merge($custom, $requestparams);
     } else {
         if ($instructorcustomstr) {
