@@ -357,7 +357,7 @@ function get_users($get=true, $search='', $confirmed=false, array $exceptions=nu
 
 
 /**
- * @todo Finish documenting this function
+ * Return filtered (if provided) list of users in site, except guest and deleted users.
  *
  * @param string $sort An SQL field to sort by
  * @param string $dir The sort direction ASC|DESC
@@ -368,19 +368,19 @@ function get_users($get=true, $search='', $confirmed=false, array $exceptions=nu
  * @param string $lastinitial Users whose last name starts with $lastinitial
  * @param string $extraselect An additional SQL select statement to append to the query
  * @param array $extraparams Additional parameters to use for the above $extraselect
- * @param object $extracontext If specified, will include user 'extra fields'
+ * @param stdClass $extracontext If specified, will include user 'extra fields'
  *   as appropriate for current user and given context
  * @return array Array of {@link $USER} records
  */
 function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperpage=0,
                            $search='', $firstinitial='', $lastinitial='', $extraselect='',
                            array $extraparams=null, $extracontext = null) {
-    global $DB;
+    global $DB, $CFG;
 
     $fullname  = $DB->sql_fullname();
 
-    $select = "deleted <> 1";
-    $params = array();
+    $select = "deleted <> 1 AND id <> :guestid";
+    $params = array('guestid' => $CFG->siteguest);
 
     if (!empty($search)) {
         $search = trim($search);
