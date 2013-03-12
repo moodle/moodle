@@ -2,8 +2,8 @@
 .editcourse td,
 .generaltable th,
 .generaltable td,
-#page-admin-course-category .generalbox th,
-#page-admin-course-category .generalbox td,
+#page-admin-course-manage .generalbox th,
+#page-admin-course-manage .generalbox td,
 #attempts th,
 #attempts td,
 .environmenttable th,
@@ -14,7 +14,7 @@
     border-collapse: collapse;
 }
 
-#page-admin-course-category .generalbox th,
+#page-admin-course-manage .generalbox th,
 .editcourse .header,
 .results .header,
 #attempts .header,

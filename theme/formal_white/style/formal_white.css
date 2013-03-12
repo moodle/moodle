@@ -121,8 +121,8 @@ h2.main, h3.main, h4.main {margin:1em;padding:0;text-align:center;}
 .editcourse td,
 .generaltable th,
 .generaltable td,
-#page-admin-course-category .generalbox th,
-#page-admin-course-category .generalbox td,
+#page-admin-course-manage .generalbox th,
+#page-admin-course-manage .generalbox td,
 #attempts th,
 #attempts td,
 .plugincompattable th,
@@ -160,7 +160,7 @@ tr.rolecap {border-top:1px dashed #F30;}
 tr.rolecapheading + tr.rolecap {border-top:none;}
 
 /* course categories */
-#page-admin-course-index .editcourse td div.singleselect {text-align:left;}
+#page-admin-course-manage .editcourse td div.singleselect {text-align:left;}
 
 /* course */
 /* ul.topics .section span.commands {float:right;} /* distanza dei comandi dagli elementi del corso */

@@ -522,14 +522,14 @@ input[type=text],textarea,select,input[type=password]{
 }
 .editcourse th,
 .generaltable th,
-#page-admin-course-category .generalbox th,
+#page-admin-course-manage .generalbox th,
 #attempts th,
 .plugincompattable th,
 .environmenttable th,.forumheaderlist th {
     padding:5px;
 }
 .editcourse td,.generaltable td,
-#page-admin-course-category .generalbox td,
+#page-admin-course-manage .generalbox td,
 #attempts td,
 .plugincompattable td,
 .environmenttable td,
