@@ -180,6 +180,22 @@ class behat_forms extends behat_base {
     }
 
     /**
+     * Selects the specified id|name|label from the specified radio button.
+     *
+     * @When /^I select "(?P<radio_button_string>(?:[^"]|\\")*)" radio button$/
+     * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param string $radio
+     */
+    public function select_radio($radio) {
+
+        $radionode = $this->find_radio($radio);
+        $radionode->check();
+
+        // Adding a click as Selenium requires it to fire some JS events.
+        $radionode->click();
+    }
+
+    /**
      * Checks checkbox with specified id|name|label|value.
      *
      * @When /^I check "(?P<option_string>(?:[^"]|\\")*)"$/
