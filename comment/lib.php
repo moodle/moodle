@@ -530,6 +530,7 @@ class comment {
             $url = new moodle_url('/user/view.php', array('id'=>$u->id, 'course'=>$this->courseid));
             $c->profileurl = $url->out(false);
             $c->fullname = fullname($u);
+            $c->time = userdate($c->timecreated, $c->strftimeformat);
             $c->content = format_text($c->content, $c->format, $formatoptions);
             $c->avatar = $OUTPUT->user_picture($u, array('size'=>18));
 
@@ -808,7 +809,7 @@ class comment {
         $replacements[] = $cmt->avatar;
         $replacements[] = html_writer::link($cmt->profileurl, $cmt->fullname);
         $replacements[] = $cmt->content;
-        $replacements[] = userdate($cmt->timecreated, $cmt->strftimeformat);
+        $replacements[] = $cmt->time;
 
         // use html template to format a single comment.
         return str_replace($patterns, $replacements, $this->template);
