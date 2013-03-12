@@ -48,7 +48,7 @@ class behat_form_field {
     /**
      * @var NodeElement The field DOM node to interact with.
      */
-    protected $fieldnode;
+    protected $field;
 
     /**
      * General constructor with the node and the session to interact with.

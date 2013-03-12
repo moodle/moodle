@@ -124,6 +124,10 @@ class behat_config_manager {
         $stepsdefinitions = array();
         foreach ($components as $componentname => $componentpath) {
             $componentpath = self::clean_path($componentpath);
+
+            if (!file_exists($componentpath . self::get_behat_tests_path())) {
+                continue;
+            }
             $diriterator = new DirectoryIterator($componentpath . self::get_behat_tests_path());
             $regite = new RegexIterator($diriterator, '|behat_.*\.php$|');
 
