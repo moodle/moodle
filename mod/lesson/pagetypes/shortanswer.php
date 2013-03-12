@@ -289,6 +289,8 @@ class lesson_page_type_shortanswer extends lesson_page {
                     } else {
                         $answerdata->score = get_string("didnotreceivecredit", "lesson");
                     }
+                    // We have found the correct answer, do not process any more answers.
+                    break;
                 } else {
                     $answerdata->response = get_string("thatsthewronganswer", "lesson");
                     if ($this->lesson->custom) {
