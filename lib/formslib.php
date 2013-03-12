@@ -1036,11 +1036,6 @@ abstract class moodleform {
                 }else {
                     $realelementname = $elementname."[$i]";
                 }
-                // This logic to calculate the element id is the same as in
-                // HTML_QuickForm_element::_generateId(). There was no way to
-                // avoid this duplication.
-                $realelementid = 'id_' . str_replace(array('qf_', '[', ']'), array('', '_', ''), $realelementname);
-                $realelementid = clean_param($realelementid, PARAM_ALPHANUMEXT);
                 foreach ($elementoptions as  $option => $params){
 
                     switch ($option){
@@ -1075,8 +1070,8 @@ abstract class moodleform {
                             }
                             break;
 
-                        case 'expanded' :
-                            $mform->setExpanded($realelementid, $params);
+                        case 'expanded':
+                            $mform->setExpanded($realelementname, $params);
                             break;
 
                         case 'advanced' :
@@ -1374,23 +1369,33 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
      * Use this method to indicate that the fieldset should be shown as expanded.
      * The method is applicable to header elements only.
      *
-     * @param string $headerid header element id
+     * @param string $headername header element name
      * @param boolean $expanded default true sets the element to expanded. False makes the element collapsed.
+     * @return void
      */
-    function setExpanded($headerid, $expanded=true){
-        if ($this->getElementType('mform_isexpanded_' . $headerid)===false) {
-            // see if we the form has been submitted already
+    function setExpanded($headername, $expanded=true){
+        $element = $this->getElement($headername);
+        if ($element->getType() != 'header') {
+            debugging('Cannot use setExpanded on non-header elements', DEBUG_DEVELOPER);
+            return;
+        }
+        if (!$headerid = $element->getAttribute('id')) {
+            $element->_generateId();
+            $headerid = $element->getAttribute('id');
+        }
+        if ($this->getElementType('mform_isexpanded_' . $headerid) === false) {
+            // See if we the form has been submitted already.
             $formexpanded = optional_param('mform_isexpanded_' . $headerid, -1, PARAM_INT);
             if (!$expanded && $formexpanded != -1) {
-                // override expanded state with the form variable
+                // Override expanded state with the form variable.
                 $expanded = $formexpanded;
             }
-            // create the form element for storing expanded state
+            // Create the form element for storing expanded state.
             $this->addElement('hidden', 'mform_isexpanded_' . $headerid);
             $this->setType('mform_isexpanded_' . $headerid, PARAM_INT);
-            $this->setConstant('mform_isexpanded_' . $headerid, (int)$expanded);
+            $this->setConstant('mform_isexpanded_' . $headerid, (int) $expanded);
         }
-        $this->_collapsibleElements[$headerid] = !$expanded;
+        $this->_collapsibleElements[$headername] = !$expanded;
     }
 
     /**
@@ -1550,10 +1555,10 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
                             // Check if we had any required elements or
                             // we are at the top header that should be expanded by default.
                             if ($anyRequiredOrError || $headercounter === 1) {
-                                $this->setExpanded($lastHeader->getAttribute('id'));
-                            } else if (!isset($this->_collapsibleElements[$lastHeader->getAttribute('id')])) {
+                                $this->setExpanded($lastHeader->getName());
+                            } else if (!isset($this->_collapsibleElements[$lastHeader->getName()])) {
                                 // Define element as collapsed by default.
-                                $this->setExpanded($lastHeader->getAttribute('id'), false);
+                                $this->setExpanded($lastHeader->getName(), false);
                             }
                         }
                         $headercounter++;
@@ -1570,14 +1575,14 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
                     // we are at the top header that should be expanded by default.
                     if ($anyRequiredOrError || $headercounter === 1) {
                         $this->setExpanded($lastHeader->getName());
-                    } elseif (!isset($this->_collapsibleElements[$lastHeader->getAttribute('id')])) {
+                    } elseif (!isset($this->_collapsibleElements[$lastHeader->getName()])) {
                         // Define element as collapsed by default.
                         $this->setExpanded($lastHeader->getName(), false);
                     }
                 }
             }
             // Pass the array to renderer object.
-            $renderer->setCollapsibleElements($this->_collapsibleElements, $this->getAttribute('id'));
+            $renderer->setCollapsibleElements($this->_collapsibleElements);
         }
         parent::accept($renderer);
     }
@@ -2588,9 +2593,9 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
 
         // Define collapsible classes for fieldsets.
         $fieldsetclasses = array('clearfix');
-        if (isset($this->_collapsibleElements[$header->getAttribute('id')])) {
+        if (isset($this->_collapsibleElements[$header->getName()])) {
             $fieldsetclasses[] = 'collapsible';
-            if ($this->_collapsibleElements[$header->getAttribute('id')]) {
+            if ($this->_collapsibleElements[$header->getName()]) {
                 $fieldsetclasses[] = 'collapsed';
             }
         }
