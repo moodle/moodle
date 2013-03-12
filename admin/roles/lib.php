@@ -1089,8 +1089,6 @@ class override_permissions_table_advanced extends capability_table_with_risks {
  * Base class to avoid duplicating code.
  */
 abstract class role_assign_user_selector_base extends user_selector_base {
-    const MAX_USERS_PER_PAGE = 100;
-
     protected $roleid;
     protected $context;
 
@@ -1159,7 +1157,7 @@ class potential_assignees_below_course extends role_assign_user_selector_base {
         // Check to see if there are too many to show sensibly.
         if (!$this->is_validating()) {
             $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
-            if ($potentialmemberscount > role_assign_user_selector_base::MAX_USERS_PER_PAGE) {
+            if ($potentialmemberscount > $this->maxusersperpage) {
                 return $this->too_many_results($search, $potentialmemberscount);
             }
         }
@@ -1187,9 +1185,6 @@ class potential_assignees_below_course extends role_assign_user_selector_base {
  * @copyright 2012 Petr Skoda {@link http://skodak.org}
  */
 class role_check_users_selector extends user_selector_base {
-    const MAX_ENROLLED_PER_PAGE = 100;
-    const MAX_POTENTIAL_PER_PAGE = 100;
-
     /** @var bool limit listing of users to enrolled only */
     var $onlyenrolled;
 
@@ -1270,7 +1265,7 @@ class role_check_users_selector extends user_selector_base {
 
         if ($sql1) {
             $enrolleduserscount = $DB->count_records_sql($countfields . $sql1, $params);
-            if (!$this->is_validating() and $enrolleduserscount > $this::MAX_ENROLLED_PER_PAGE) {
+            if (!$this->is_validating() and $enrolleduserscount > $this->maxusersperpage) {
                 $result[$groupname1] = array();
                 $toomany = $this->too_many_results($search, $enrolleduserscount);
                 $result[implode(' - ', array_keys($toomany))] = array();
@@ -1287,7 +1282,7 @@ class role_check_users_selector extends user_selector_base {
         }
         if ($sql2) {
             $otheruserscount = $DB->count_records_sql($countfields . $sql2, $params);
-            if (!$this->is_validating() and $otheruserscount > $this::MAX_POTENTIAL_PER_PAGE) {
+            if (!$this->is_validating() and $otheruserscount > $this->maxusersperpage) {
                 $result[$groupname2] = array();
                 $toomany = $this->too_many_results($search, $otheruserscount);
                 $result[implode(' - ', array_keys($toomany))] = array();
@@ -1340,7 +1335,7 @@ class potential_assignees_course_and_above extends role_assign_user_selector_bas
 
         if (!$this->is_validating()) {
             $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
-            if ($potentialmemberscount > role_assign_user_selector_base::MAX_USERS_PER_PAGE) {
+            if ($potentialmemberscount > $this->maxusersperpage) {
                 return $this->too_many_results($search, $potentialmemberscount);
             }
         }
@@ -1765,7 +1760,7 @@ class admins_potential_selector extends user_selector_base {
         // Check to see if there are too many to show sensibly.
         if (!$this->is_validating()) {
             $potentialcount = $DB->count_records_sql($countfields . $sql, $params);
-            if ($potentialcount > 100) {
+            if ($potentialcount > $this->maxusersperpage) {
                 return $this->too_many_results($search, $potentialcount);
             }
         }
