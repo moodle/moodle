@@ -151,8 +151,7 @@ M.core_user.init_user_selector = function (Y, name, hash, extrafields, lastsearc
                 method: 'POST',
                 data: 'selectorid='+hash+'&sesskey='+M.cfg.sesskey+'&search='+value + '&userselector_searchanywhere=' + this.get_option('searchanywhere'),
                 on: {
-                    success:this.handle_response,
-                    failure:this.handle_failure
+                    complete: this.handle_response
                 },
                 context:this
             });
@@ -175,26 +174,15 @@ M.core_user.init_user_selector = function (Y, name, hash, extrafields, lastsearc
                 }
                 this.listbox.setStyle('background','');
                 var data = Y.JSON.parse(response.responseText);
+                if (data.error) {
+                    this.searchfield.addClass('error');
+                    return new M.core.ajaxException(data);
+                }
                 this.output_options(data);
             } catch (e) {
-                this.handle_failure(requestid);
-            }
-        },
-        /**
-         * Handles what happens when the ajax request fails.
-         */
-        handle_failure : function(requestid) {
-            delete this.iotransactions[requestid];
-            if (!Y.Object.isEmpty(this.iotransactions)) {
-                // More searches pending. Wait until they are all done.
-                return;
-            }
-            this.listbox.setStyle('background','');
-            this.searchfield.addClass('error');
-
-            // If we are in developer debug mode, output a link to help debug the failure.
-            if (M.cfg.developerdebug) {
-                this.searchfield.insert(Y.Node.create('<a href="'+M.cfg.wwwroot +'/user/selector/search.php?selectorid='+hash+'&sesskey='+M.cfg.sesskey+'&search='+this.get_search_text()+'&debug=1">Ajax call failed. Click here to try the search call directly.</a>'));
+                this.listbox.setStyle('background','');
+                this.searchfield.addClass('error');
+                return new M.core.exception(e);
             }
         },
         /**
