@@ -280,21 +280,37 @@ echo $OUTPUT->footer();
 
 function compare_activities_by_time_desc($a, $b) {
     // make sure the activities actually have a timestamp property
-    if ((!array_key_exists('timestamp', $a)) or (!array_key_exists('timestamp', $b))) {
-      return 0;
-    }
-    if ($a->timestamp == $b->timestamp)
+    if ((!array_key_exists('timestamp', $a)) && (!array_key_exists('timestamp', $b))) {
         return 0;
+    }
+    // We treat instances without timestamp as if they have a timestamp of 0.
+    if ((!array_key_exists('timestamp', $a)) && (array_key_exists('timestamp', $b))) {
+        return 1;
+    }
+    if ((array_key_exists('timestamp', $a)) && (!array_key_exists('timestamp', $b))) {
+        return -1;
+    }
+    if ($a->timestamp == $b->timestamp) {
+        return 0;
+    }
     return ($a->timestamp > $b->timestamp) ? -1 : 1;
 }
 
 function compare_activities_by_time_asc($a, $b) {
     // make sure the activities actually have a timestamp property
-    if ((!array_key_exists('timestamp', $a)) or (!array_key_exists('timestamp', $b))) {
+    if ((!array_key_exists('timestamp', $a)) && (!array_key_exists('timestamp', $b))) {
       return 0;
     }
-    if ($a->timestamp == $b->timestamp)
+    // We treat instances without timestamp as if they have a timestamp of 0.
+    if ((!array_key_exists('timestamp', $a)) && (array_key_exists('timestamp', $b))) {
+        return -1;
+    }
+    if ((array_key_exists('timestamp', $a)) && (!array_key_exists('timestamp', $b))) {
+        return 1;
+    }
+    if ($a->timestamp == $b->timestamp) {
         return 0;
+    }
     return ($a->timestamp < $b->timestamp) ? -1 : 1;
 }
 
