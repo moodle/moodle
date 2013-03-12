@@ -43,7 +43,7 @@ class assignfeedback_file_upload_zip_form extends moodleform {
         $mform = $this->_form;
         $params = $this->_customdata;
 
-        $mform->addElement('header', '', get_string('uploadzip', 'assignfeedback_file'));
+        $mform->addElement('header', 'uploadzip', get_string('uploadzip', 'assignfeedback_file'));
 
         $fileoptions = array('subdirs'=>0,
                                 'maxbytes'=>$COURSE->maxbytes,

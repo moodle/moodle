@@ -53,7 +53,7 @@ class editsection_form extends moodleform {
         $course = $this->_customdata['course'];
 
         if (!empty($CFG->enableavailability)) {
-            $mform->addElement('header', '', get_string('availabilityconditions', 'condition'));
+            $mform->addElement('header', 'availabilityconditions', get_string('availabilityconditions', 'condition'));
             // String used by conditions more than once
             $strcondnone = get_string('none', 'condition');
             // Grouping conditions - only if grouping is enabled at site level

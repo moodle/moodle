@@ -43,7 +43,7 @@ class assignfeedback_offline_upload_grades_form extends moodleform {
         $mform = $this->_form;
         $params = $this->_customdata;
 
-        $mform->addElement('header', '', get_string('uploadgrades', 'assignfeedback_offline'));
+        $mform->addElement('header', 'uploadgrades', get_string('uploadgrades', 'assignfeedback_offline'));
 
         $fileoptions = array('subdirs'=>0,
                                 'maxbytes'=>$COURSE->maxbytes,

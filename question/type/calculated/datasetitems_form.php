@@ -272,7 +272,7 @@ class question_dataset_dependent_items_form extends question_wizard_form {
         $k = optional_param('selectshow', 1, PARAM_INT);
         for ($i = $this->noofitems; $i >= 1; $i--) {
             if ($k > 0) {
-                $mform->addElement('header', '', "<b>" .
+                $mform->addElement('header', 'setnoheader', "<b>" .
                         get_string('setno', 'qtype_calculated', $i)."</b>&nbsp;&nbsp;");
             }
             foreach ($this->datasetdefs as $defkey => $datasetdef) {

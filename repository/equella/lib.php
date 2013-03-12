@@ -291,7 +291,7 @@ class repository_equella extends repository {
         );
         $mform->addElement('select', 'equella_select_restriction', get_string('selectrestriction', 'repository_equella'), $choices);
 
-        $mform->addElement('header', '',
+        $mform->addElement('header', 'groupheader',
             get_string('group', 'repository_equella', get_string('groupdefault', 'repository_equella')));
         $mform->addElement('text', 'equella_shareid', get_string('sharedid', 'repository_equella'));
         $mform->setType('equella_shareid', PARAM_RAW);
@@ -302,7 +302,8 @@ class repository_equella extends repository {
         $mform->addRule('equella_sharedsecret', $strrequired, 'required', null, 'client');
 
         foreach (self::get_all_editing_roles() as $role) {
-            $mform->addElement('header', '', get_string('group', 'repository_equella', format_string($role->name)));
+            $mform->addElement('header', 'groupheader_'.$role->shortname, get_string('group', 'repository_equella',
+                format_string($role->name)));
             $mform->addElement('text', "equella_{$role->shortname}_shareid", get_string('sharedid', 'repository_equella'));
             $mform->setType("equella_{$role->shortname}_shareid", PARAM_RAW);
             $mform->addElement('text', "equella_{$role->shortname}_sharedsecret",

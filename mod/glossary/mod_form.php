@@ -103,7 +103,7 @@ class mod_glossary_mod_form extends moodleform_mod {
 
         if ($CFG->enablerssfeeds && isset($CFG->glossary_enablerssfeeds) && $CFG->glossary_enablerssfeeds) {
 //-------------------------------------------------------------------------------
-            $mform->addElement('header', '', get_string('rss'));
+            $mform->addElement('header', 'rssheader', get_string('rss'));
             $choices = array();
             $choices[0] = get_string('none');
             $choices[1] = get_string('withauthor', 'glossary');

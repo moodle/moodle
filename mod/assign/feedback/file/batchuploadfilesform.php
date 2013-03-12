@@ -44,7 +44,8 @@ class assignfeedback_file_batch_upload_files_form extends moodleform {
         $mform = $this->_form;
         $params = $this->_customdata;
 
-        $mform->addElement('header', '', get_string('batchuploadfilesforusers', 'assignfeedback_file', count($params['users'])));
+        $mform->addElement('header', 'batchuploadfilesforusers', get_string('batchuploadfilesforusers', 'assignfeedback_file',
+            count($params['users'])));
         $mform->addElement('static', 'userslist', get_string('selectedusers', 'assignfeedback_file'), $params['usershtml']);
 
         $data = new stdClass();

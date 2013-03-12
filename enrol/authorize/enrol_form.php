@@ -127,7 +127,7 @@ class enrol_authorize_form extends moodleform
             }
 
             if ($plugin->get_config('an_avs')) {
-                $mform->addElement('header', '', '&nbsp;&nbsp;' . get_string('address'), '');
+                $mform->addElement('header', 'addressheader', '&nbsp;&nbsp;' . get_string('address'), '');
 
                 $mform->addElement('text', 'ccaddress', get_string('address'), 'size="30"');
                 $mform->setType('ccaddress', PARAM_ALPHANUM);

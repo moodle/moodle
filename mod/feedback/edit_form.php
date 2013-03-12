@@ -83,7 +83,7 @@ class feedback_edit_use_template_form extends moodleform {
 
         $elementgroup = array();
         //headline
-        $mform->addElement('header', '', get_string('using_templates', 'feedback'));
+        $mform->addElement('header', 'using_templates', get_string('using_templates', 'feedback'));
         // hidden elements
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
@@ -164,7 +164,7 @@ class feedback_edit_create_template_form extends moodleform {
         $mform->setType('savetemplate', PARAM_INT);
 
         //headline
-        $mform->addElement('header', '', get_string('creating_templates', 'feedback'));
+        $mform->addElement('header', 'creating_templates', get_string('creating_templates', 'feedback'));
 
         // visible elements
         $elementgroup = array();

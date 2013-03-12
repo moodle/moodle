@@ -88,7 +88,7 @@ class mod_forum_mod_form extends moodleform_mod {
 
         if ($CFG->enablerssfeeds && isset($CFG->forum_enablerssfeeds) && $CFG->forum_enablerssfeeds) {
 //-------------------------------------------------------------------------------
-            $mform->addElement('header', '', get_string('rss'));
+            $mform->addElement('header', 'rssheader', get_string('rss'));
             $choices = array();
             $choices[0] = get_string('none');
             $choices[1] = get_string('discussions', 'forum');
@@ -116,7 +116,7 @@ class mod_forum_mod_form extends moodleform_mod {
         }
 
 //-------------------------------------------------------------------------------
-        $mform->addElement('header', '', get_string('blockafter', 'forum'));
+        $mform->addElement('header', 'blockafterheader', get_string('blockafter', 'forum'));
         $options = array();
         $options[0] = get_string('blockperioddisabled','forum');
         $options[60*60*24]   = '1 '.get_string('day');

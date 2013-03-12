@@ -196,7 +196,7 @@ class course_edit_form extends moodleform {
         enrol_course_edit_form($mform, $course, $context);
 
 //--------------------------------------------------------------------------------
-        $mform->addElement('header','', get_string('groups', 'group'));
+        $mform->addElement('header','groups', get_string('groups', 'group'));
 
         $choices = array();
         $choices[NOGROUPS] = get_string('groupsnone', 'group');
@@ -219,7 +219,7 @@ class course_edit_form extends moodleform {
         $mform->addElement('select', 'defaultgroupingid', get_string('defaultgrouping', 'group'), $options);
 
 //--------------------------------------------------------------------------------
-        $mform->addElement('header','', get_string('availability'));
+        $mform->addElement('header','availability', get_string('availability'));
 
         $choices = array();
         $choices['0'] = get_string('courseavailablenot');
@@ -237,7 +237,7 @@ class course_edit_form extends moodleform {
         }
 
 //--------------------------------------------------------------------------------
-        $mform->addElement('header','', get_string('language'));
+        $mform->addElement('header','language', get_string('language'));
 
         $languages=array();
         $languages[''] = get_string('forceno');
@@ -247,7 +247,7 @@ class course_edit_form extends moodleform {
 
 //--------------------------------------------------------------------------------
         if (completion_info::is_enabled_for_site()) {
-            $mform->addElement('header','', get_string('progress','completion'));
+            $mform->addElement('header','progress', get_string('progress','completion'));
             $mform->addElement('select', 'enablecompletion', get_string('completion','completion'),
                 array(0=>get_string('completiondisabled','completion'), 1=>get_string('completionenabled','completion')));
             $mform->setDefault('enablecompletion', $courseconfig->enablecompletion);
@@ -314,7 +314,7 @@ class course_edit_form extends moodleform {
         $formatvalue = $mform->getElementValue('format');
         if (is_array($formatvalue) && !empty($formatvalue)) {
             $courseformat = course_get_format((object)array('format' => $formatvalue[0]));
-            $newel = $mform->createElement('header', '', get_string('courseformatoptions', 'moodle',
+            $newel = $mform->createElement('header', 'courseformatoptions', get_string('courseformatoptions', 'moodle',
                     $courseformat->get_format_name()));
             $mform->insertElementBefore($newel, 'addcourseformatoptionshere');
 

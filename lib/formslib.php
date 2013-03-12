@@ -1374,6 +1374,9 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
      * @return void
      */
     function setExpanded($headername, $expanded=true){
+        if (empty($headername)) {
+            return;
+        }
         $element = $this->getElement($headername);
         if ($element->getType() != 'header') {
             debugging('Cannot use setExpanded on non-header elements', DEBUG_DEVELOPER);

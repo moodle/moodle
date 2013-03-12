@@ -34,8 +34,9 @@ class login_change_password_form extends moodleform {
         global $USER, $CFG;
 
         $mform = $this->_form;
+        $mform->setDisableShortforms(true);
 
-        $mform->addElement('header', '', get_string('changepassword'), '');
+        $mform->addElement('header', 'changepassword', get_string('changepassword'), '');
 
         // visible elements
         $mform->addElement('static', 'username', get_string('username'), $USER->username);

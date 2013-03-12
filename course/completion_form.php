@@ -51,7 +51,7 @@ class course_completion_form extends moodleform {
 
         // Check if there is existing criteria completions
         if ($completion->is_course_locked()) {
-            $mform->addElement('header', '', get_string('completionsettingslocked', 'completion'));
+            $mform->addElement('header', 'completionsettingslocked', get_string('completionsettingslocked', 'completion'));
             $mform->addElement('static', '', '', get_string('err_settingslocked', 'completion'));
             $mform->addElement('submit', 'settingsunlock', get_string('unlockcompletiondelete', 'completion'));
         }
