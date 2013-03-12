@@ -264,6 +264,9 @@ function label_dndupload_handle($uploadinfo) {
         }
     } else if (!empty($uploadinfo->content)) {
         $data->intro = $uploadinfo->content;
+        if ($uploadinfo->type != 'text/html') {
+            $data->introformat = FORMAT_PLAIN;
+        }
     }
 
     return label_add_instance($data, null);
