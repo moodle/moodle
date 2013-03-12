@@ -299,6 +299,11 @@ h2.main,h3.main,h4.main,h5.main,h6.main{
     font-style:italic;
     padding:10px 30px;
 }
+.generalbox{
+    display:block;
+    margin-top:2px;
+    width:98%;
+}
 .generalbox ul{
     padding:0 0 0 20px;
 }
@@ -639,61 +644,57 @@ input[type=text],textarea,select,input[type=password]{
     font-weight:700;
     padding-top:12px;
 }
+table.quizreviewsummary {
+    margin:10px 0 10px 30px;
+    width:90%;
+}
 #page-mod-quiz-attempt .submitbtns,
 #page-mod-quiz-review .submitbtns,
 #page-mod-quiz-summary .submitbtns{
     padding:10px;
 }
-
 #page-mod-quiz-edit .questionbankwindow div.header {
     font-size:1em;
     margin:0;
     padding:0;
 }
-
-#page-mod-quiz-edit #region-main .questionbankwindow h2{
+#page-mod-quiz-edit #region-main .questionbankwindow h2 {
     background:none;
     font-size:1em;
     font-weight:700;
     margin:0;
     padding:10px 0 10px 10px;
 }
-
-#page-mod-quiz-edit .questionbankwindow div.header a{
+#page-mod-quiz-edit .questionbankwindow div.header a {
     font-weight:400;
 }
-
-#page-mod-quiz-edit div.quizpage .pagecontent .pagestatus
-{
+#page-mod-quiz-edit div.quizpage .pagecontent .pagestatus {
     font-weight:700;
 }
-
-#page-mod-quiz-edit div.quizpage span.pagetitle{
+#page-mod-quiz-edit div.quizpage span.pagetitle {
     font-weight:700;
     margin-top:10px;
 }
-#page-mod-quiz-edit .editq div.question div.qnum{
+#page-mod-quiz-edit .editq div.question div.qnum {
     font-size:1.2em;
     font-weight:700;
     padding-top:3px;
 }
-table.quizreviewsummary{
-    margin:10px 0 10px 30px;
-    width:90%;
+#page-mod-quiz-edit .questionbank div.categoryquestionscontainer,
+#page-mod-quiz-edit .questionbank .categorysortopotionscontainer,
+#page-mod-quiz-edit .questionbank .categorypagingbarcontainer,
+#page-mod-quiz-edit .questionbank .categoryselectallcontainer {
+    padding: 0;
+    margin: 0 0.3em;
 }
-#categoryquestions tr th{
-    border-bottom:0 none;
+#page-mod-quiz-edit form#displayoptions fieldset.invisiblefieldset div {
+    margin: 0.3em;
 }
-.questioncategories{
-    margin-bottom:10px;
+#page-mod-quiz-edit div.container div.generalbox {
+    width: 100%;
 }
-.questionbank input[type=submit]{
-    margin:5px;
-}
-.generalbox{
-    display:block;
-    margin-top:2px;
-    width:98%;
+#page-mod-quiz-edit #categoryquestions .header {
+    background: 0 none;
 }
 #page-admin-plugins #plugins-control-panel{
     display:block;

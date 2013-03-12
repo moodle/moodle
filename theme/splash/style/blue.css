@@ -59,11 +59,9 @@ body.splash-blue {
 .splash-blue .coursebox{
     border-bottom: 1px dashed #cbd3d6;
 }
-.splash-blue #categoryquestions tr th{
-    background:#3d6276;
-}
 .splash-blue .path-mod-quiz .qnbutton {
-    background:#3d6276; color:#fff;
+    background:#3d6276;
+    color:#fff;
 }
 .splash-blue .path-mod-quiz .qnbutton.open {
     background:#3d6276;
