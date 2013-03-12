@@ -40,6 +40,9 @@ class core_course_renderer extends plugin_renderer_base {
     const COURSECAT_SHOW_COURSES_EXPANDED = 20;
     const COURSECAT_SHOW_COURSES_EXPANDED_WITH_CAT = 30;
 
+    const COURSECAT_TYPE_CATEGORY = 0;
+    const COURSECAT_TYPE_COURSE = 1;
+
     /**
      * A cache of strings
      * @var stdClass
@@ -1133,7 +1136,13 @@ class core_course_renderer extends plugin_renderer_base {
             $classes .= ' collapsed';
             $nametag = 'div';
         }
-        $content .= html_writer::start_tag('div', array('class' => $classes)); // .coursebox
+
+        // .coursebox
+        $content .= html_writer::start_tag('div', array(
+            'class' => $classes,
+            'data-courseid' => $course->id,
+            'data-type' => self::COURSECAT_TYPE_COURSE,
+        ));
 
         $content .= html_writer::start_tag('div', array('class' => 'info'));
 
@@ -1151,6 +1160,8 @@ class core_course_renderer extends plugin_renderer_base {
                 $image = html_writer::empty_tag('img', array('src' => $this->output->pix_url('i/info'),
                     'alt' => $this->strings->summary));
                 $content .= html_writer::link($url, $image, array('title' => $this->strings->summary));
+                // Make sure JS file to expand course content is included.
+                $this->coursecat_include_js();
             }
         }
         $content .= html_writer::end_tag('div'); // .moreinfo
@@ -1419,6 +1430,20 @@ class core_course_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Make sure that javascript file for AJAX expanding of courses and categories content is included
+     */
+    protected function coursecat_include_js() {
+        global $CFG;
+        static $jsloaded = false;
+        if (!$jsloaded && $CFG->enableajax) {
+            // We must only load this module once.
+            $this->page->requires->yui_module('moodle-course-categoryexpander',
+                    'Y.Moodle.course.categoryexpander.init');
+            $jsloaded = true;
+        }
+    }
+
+    /**
      * Returns HTML to display the subcategories and courses in the given category
      *
      * This method is re-used by AJAX to expand content of not loaded category
@@ -1490,6 +1515,8 @@ class core_course_renderer extends plugin_renderer_base {
                 $classes[] = 'with_children';
                 $classes[] = 'collapsed';
             }
+            // Make sure JS file to expand category content is included.
+            $this->coursecat_include_js();
         } else {
             // load category content
             $categorycontent = $this->coursecat_category_content($chelper, $coursecat, $depth);
@@ -1498,9 +1525,13 @@ class core_course_renderer extends plugin_renderer_base {
                 $classes[] = 'with_children';
             }
         }
-        $content = html_writer::start_tag('div', array('class' => join(' ', $classes),
+        $content = html_writer::start_tag('div', array(
+            'class' => join(' ', $classes),
             'data-categoryid' => $coursecat->id,
-            'data-depth' => $depth));
+            'data-depth' => $depth,
+            'data-showcourses' => $chelper->get_show_courses(),
+            'data-type' => self::COURSECAT_TYPE_CATEGORY,
+        ));
 
         // category name
         $categoryname = $coursecat->get_formatted_name();
@@ -1538,28 +1569,28 @@ class core_course_renderer extends plugin_renderer_base {
             return '';
         }
 
-        // Generate an id and the required JS call to make this a nice widget
-        $id = html_writer::random_id('course_category_tree');
-        $this->page->requires->js_init_call('M.util.init_toggle_class_on_click',
-                array($id, '.category.with_children.loaded > .info .name', 'collapsed', '.category.with_children.loaded'));
-
         // Start content generation
         $content = '';
         $attributes = $chelper->get_and_erase_attributes('course_category_tree clearfix');
-        $content .= html_writer::start_tag('div',
-                array('id' => $id, 'data-showcourses' => $chelper->get_show_courses()) + $attributes);
+        $content .= html_writer::start_tag('div', $attributes);
+
+        if ($coursecat->get_children_count()) {
+            $classes = array(
+                'collapseexpand',
+                'collapse-all',
+            );
+            if ($chelper->get_subcat_depth() == 1) {
+                $classes[] = 'disabled';
+            }
+            // Only show the collapse/expand if there are children to expand.
+            $content .= html_writer::start_tag('div', array('class' => 'collapsible-actions'));
+            $content .= html_writer::link('#', get_string('collapseall'),
+                    array('class' => implode(' ', $classes)));
+            $content .= html_writer::end_tag('div');
+            $this->page->requires->strings_for_js(array('collapseall', 'expandall'), 'moodle');
+        }
 
         $content .= html_writer::tag('div', $categorycontent, array('class' => 'content'));
-
-        if ($coursecat->get_children_count() && $chelper->get_subcat_depth() != 1) {
-            // We don't need to display "Expand all"/"Collapse all" buttons if there are no
-            // subcategories or there is only one level of subcategories loaded
-            // TODO if subcategories are loaded by AJAX this might still be needed!
-            $content .= html_writer::start_tag('div', array('class' => 'controls'));
-            $content .= html_writer::tag('div', get_string('collapseall'), array('class' => 'addtoall expandall'));
-            $content .= html_writer::tag('div', get_string('expandall'), array('class' => 'removefromall collapseall'));
-            $content .= html_writer::end_tag('div');
-        }
 
         $content .= html_writer::end_tag('div'); // .course_category_tree
 
@@ -1683,6 +1714,58 @@ class core_course_renderer extends plugin_renderer_base {
         $output .= $this->container_end();
 
         return $output;
+    }
+
+    /**
+     * Serves requests to /course/category.ajax.php
+     *
+     * In this renderer implementation it may expand the category content or
+     * course content.
+     *
+     * @return string
+     * @throws coding_exception
+     */
+    public function coursecat_ajax() {
+        global $DB, $CFG;
+        require_once($CFG->libdir. '/coursecatlib.php');
+
+        $type = required_param('type', PARAM_INT);
+
+        if ($type === self::COURSECAT_TYPE_CATEGORY) {
+            // This is a request for a category list of some kind.
+            $categoryid = required_param('categoryid', PARAM_INT);
+            $showcourses = required_param('showcourses', PARAM_INT);
+            $depth = required_param('depth', PARAM_INT);
+
+            $category = coursecat::get($categoryid);
+
+            $chelper = new coursecat_helper();
+            $baseurl = new moodle_url('/course/index.php', array('categoryid' => $categoryid));
+            $coursedisplayoptions = array(
+                'limit' => $CFG->coursesperpage,
+                'viewmoreurl' => new moodle_url($baseurl, array('browse' => 'courses', 'page' => 1))
+            );
+            $catdisplayoptions = array(
+                'limit' => $CFG->coursesperpage,
+                'viewmoreurl' => new moodle_url($baseurl, array('browse' => 'categories', 'page' => 1))
+            );
+            $chelper->set_show_courses($showcourses)->
+                    set_courses_display_options($coursedisplayoptions)->
+                    set_categories_display_options($catdisplayoptions);
+
+            return $this->coursecat_category_content($chelper, $category, $depth);
+        } else if ($type === self::COURSECAT_TYPE_COURSE) {
+            // This is a request for the course information.
+            $courseid = required_param('courseid', PARAM_INT);
+
+            $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+
+            $chelper = new coursecat_helper();
+            $chelper->set_show_courses(self::COURSECAT_SHOW_COURSES_EXPANDED);
+            return $this->coursecat_coursebox_content($chelper, $course);
+        } else {
+            throw new coding_exception('Invalid request type');
+        }
     }
 
     /**

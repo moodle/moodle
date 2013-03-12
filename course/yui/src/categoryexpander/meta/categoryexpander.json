@@ -1,0 +1,7 @@
+{
+  "moodle-course-categoryexpander": {
+    "requires": [
+        "node"
+    ]
+  }
+}
