@@ -66,21 +66,15 @@ if ($ADMIN->fulltree) {
 
     $types = lti_filter_get_types(get_site()->id);
 
-    $configuredtools = array_filter($types, function($value) {
-        return $value->state == LTI_TOOL_STATE_CONFIGURED;
-    });
+    $configuredtools = lti_filter_tool_types($types, LTI_TOOL_STATE_CONFIGURED);
 
     $configuredtoolshtml = lti_get_tool_table($configuredtools, 'lti_configured');
 
-    $pendingtools = array_filter($types, function($value) {
-        return $value->state == LTI_TOOL_STATE_PENDING;
-    });
+    $pendingtools = lti_filter_tool_types($types, LTI_TOOL_STATE_PENDING);
 
     $pendingtoolshtml = lti_get_tool_table($pendingtools, 'lti_pending');
 
-    $rejectedtools = array_filter($types, function($value) {
-        return $value->state == LTI_TOOL_STATE_REJECTED;
-    });
+    $rejectedtools = lti_filter_tool_types($types, LTI_TOOL_STATE_REJECTED);
 
     $rejectedtoolshtml = lti_get_tool_table($rejectedtools, 'lti_rejected');
 
