@@ -502,26 +502,6 @@ span.editinstructions {
     font-size: @fontSizeSmall;
 }
 
-.course_category_tree .controls {
-    visibility: hidden;
-}
-.course_category_tree .controls div {
-    display:inline;
-    cursor:pointer;
-}
-.jsenabled .course_category_tree .controls {
-    visibility: visible;
-}
-.course_category_tree .controls {
-    margin-bottom:5px;
-    text-align:right;
-    float:right;
-}
-.course_category_tree .controls div {
-    padding-right:2em;
-    font-size:75%;
-}
-
 .course_category_tree .category>.info .name {
     background-image:url([[pix:moodle|t/collapsed_empty]]);
     background-repeat: no-repeat;
@@ -535,6 +515,7 @@ span.editinstructions {
 }
 .course_category_tree .category.with_children>.info .name {
     background-image:url([[pix:moodle|t/expanded]]);
+    cursor: pointer;
 }
 .course_category_tree .category.with_children.collapsed>.info .name {
     background-image:url([[pix:moodle|t/collapsed]]);
@@ -552,6 +533,7 @@ span.editinstructions {
     padding:0;
     margin:3px 0;
     margin-bottom:3px;
+    clear: both;
 }
 .course_category_tree.frontpage-category-names .category >.info {
     background:none;

@@ -1,0 +1,10 @@
+{
+  "name": "moodle-course-categoryexpander",
+  "builds": {
+    "moodle-course-categoryexpander": {
+      "jsfiles": [
+        "categoryexpander.js"
+      ]
+    }
+  }
+}

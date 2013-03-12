@@ -8,16 +8,6 @@
     margin: 15px 0 25px;
 }
 
-.course_category_tree .controls {
-    color: #888;
-    font-size: 0.9em;
-    margin-top: 10px;
-}
-
-.course_category_tree .controls div {
-    margin: 0 5px 0 0;
-}
-
 #page-course-index-category .generalbox.info {
     margin: 25px auto 30px;
     width: 75%;
