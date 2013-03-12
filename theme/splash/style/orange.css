@@ -50,16 +50,14 @@ body.splash-orange {
     color:#cb8f47;
 }
 .splash-orange .tabtree .tabrow0 .here a:hover{
-    background:#fff;color: #5f564c;
+    background:#fff;
+    color: #5f564c;
 }
 .splash-orange .tabtree .here ul .here a.nolink:hover{
     color:#cb8f47;
 }
 .splash-orange .coursebox{
     border-bottom:1px dashed #f0e7de;
-}
-.splash-orange #categoryquestions tr th{
-    background:#cb8f47;
 }
 .splash-orange .path-mod-quiz .qnbutton{
     background:#cb8f47;

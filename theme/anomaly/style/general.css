@@ -306,7 +306,6 @@ h1.headermain {
     margin-right: auto;
     width: 100%;
 }
-#categoryquestions th,
 .user th,
 .user th.header,
 .group th.header,
@@ -318,14 +317,12 @@ h1.headermain {
     border-bottom-color: #111;
 }
 .user th a:link,
-#categoryquestions th a:link,
 .group  th a:link,
 .admin table tr th a:link {
     color: #FFF;
     text-decoration: none;
 }
 .user th a:visited,
-#categoryquestions th a:visited,
 .group th a:visited,
 .admin table tr th a:visited {
     color: #FFF;
