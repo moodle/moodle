@@ -119,6 +119,7 @@ class grader_report_preferences_form extends moodleform {
 
         foreach ($preferences as $group => $prefs) {
             $mform->addElement('header', $group, get_string($group, 'grades'));
+            $mform->setExpanded($group);
 
             foreach ($prefs as $pref => $type) {
                 // Detect and process dynamically numbered preferences
