@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->libdir . '/statslib.php');
+require_once($CFG->libdir . '/cronlib.php');
 
 /**
  * Test functions that affect daily stats
