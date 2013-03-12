@@ -452,7 +452,8 @@ function profile_display_fields($userid) {
                     $newfield = 'profile_field_'.$field->datatype;
                     $formfield = new $newfield($field->id, $userid);
                     if ($formfield->is_visible() and !$formfield->is_empty()) {
-                        print_row(format_string($formfield->field->name.':'), $formfield->display_data());
+                        echo html_writer::tag('dt', format_string($formfield->field->name));
+                        echo html_writer::tag('dd', $formfield->display_data());
                     }
                 }
             }
