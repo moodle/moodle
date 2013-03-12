@@ -3,6 +3,8 @@ information provided here is intended especially for developers.
 
 === 2.5 ===
 
+* The cron output has been changed to include time and memory usage (see cron_trace_time_and_memory()),
+  so any custom utility relying on the old output may require modification.
 * Function get_max_file_sizes now returns an option for (for example) "Course limit (500MB)" or
   "Site limit (200MB)" when appropriate with the option set to 0. This function no longer returns
   an option for 0 bytes. Existing code that was replacing the 0 option in the return
