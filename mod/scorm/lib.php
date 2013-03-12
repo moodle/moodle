@@ -391,7 +391,10 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
                                          array($scorm->id), 'id', 'id,identifier,title')) {
         if (count($orgs) <= 1) {
             unset($orgs);
-            $orgs[]->identifier = '';
+            $orgs = array();
+            $org = new stdClass();
+            $org->identifier = '';
+            $orgs[] = $org;
         }
         $report .= '<div class="mod-scorm">'."\n";
         foreach ($orgs as $org) {
