@@ -58,7 +58,8 @@ class behat_repository_upload extends behat_files {
         $this->open_add_file_window($filepickernode, get_string('pluginname', 'repository_upload'));
 
         // Attaching specified file to the node.
-        $fileabsolutepath = $CFG->dirroot . '/' . $filepath;
+        $filepath = str_replace('/', DIRECTORY_SEPARATOR, $filepath);
+        $fileabsolutepath = $CFG->dirroot . DIRECTORY_SEPARATOR . $filepath;
         $inputfilenode = $this->find_file('repo_upload_file');
         $inputfilenode->attachFile($fileabsolutepath);
 
