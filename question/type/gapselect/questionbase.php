@@ -18,8 +18,7 @@
  * Definition class for embedded element in question text question. Parent of
  * gap-select, drag and drop and possibly others.
  *
- * @package    qtype
- * @subpackage gapselect
+ * @package    qtype_gapselect
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 
 /**
  * Represents embedded element in question text question. Parent of drag and drop and select from
- * drop down list and ?others?
+ * drop down list and others.
  *
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

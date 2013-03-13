@@ -40,3 +40,5 @@ $string['pluginnameadding'] = 'Adding a select missing words question';
 $string['pluginnameediting'] = 'Editing a select missing words question';
 $string['pluginnamesummary'] = 'Missing words in some text are filled in using dropdown menus.';
 $string['shuffle'] = 'Shuffle';
+$string['tagsnotallowed'] = '{$a->tag} is not allowed. (Only {$a->allowed} are permitted.)';
+$string['tagsnotallowedatall'] = '{$a->tag} is not allowed. (No HTML is allowed here.)';
