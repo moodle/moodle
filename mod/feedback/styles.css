@@ -96,3 +96,7 @@ ul#feedback_draglist {
 	padding: 0;
 	margin: 0;
 }
+
+div#feedback_dragarea {
+    width:95%;
+}

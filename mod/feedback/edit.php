@@ -159,14 +159,16 @@ $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_title(format_string($feedback->name));
 
 //Adding the javascript module for the items dragdrop.
-if ($do_show == 'edit' and $CFG->enableajax) {
-    $PAGE->requires->strings_for_js(array(
-           'pluginname',
-           'move_item',
-           'position',
-        ), 'feedback');
-    $PAGE->requires->yui_module('moodle-mod_feedback-dragdrop', 'M.mod_feedback.init_dragdrop',
-            array(array('cmid' => $cm->id)));
+if (count($feedbackitems) > 1) {
+    if ($do_show == 'edit' and $CFG->enableajax) {
+        $PAGE->requires->strings_for_js(array(
+               'pluginname',
+               'move_item',
+               'position',
+            ), 'feedback');
+        $PAGE->requires->yui_module('moodle-mod_feedback-dragdrop', 'M.mod_feedback.init_dragdrop',
+                array(array('cmid' => $cm->id)));
+    }
 }
 
 echo $OUTPUT->header();
@@ -333,14 +335,16 @@ if ($do_show == 'edit') {
                 echo '</span>';
             }
             //Print the move-button
-            echo '<span class="feedback_item_command_move">';
-            $moveurl = new moodle_url($url, array('moveitem'=>$feedbackitem->id));
-            $buttonlink = $moveurl->out();
-            $strbutton = get_string('move_item', 'feedback');
-            echo '<a class="editing_move" title="'.$strbutton.'" href="'.$buttonlink.'">
-                    <img alt="'.$strbutton.'" src="'.$OUTPUT->pix_url('t/move') . '" />
-                  </a>';
-            echo '</span>';
+            if (count($feedbackitems) > 1) {
+                echo '<span class="feedback_item_command_move">';
+                $moveurl = new moodle_url($url, array('moveitem'=>$feedbackitem->id));
+                $buttonlink = $moveurl->out();
+                $strbutton = get_string('move_item', 'feedback');
+                echo '<a class="editing_move" title="'.$strbutton.'" href="'.$buttonlink.'">
+                        <img alt="'.$strbutton.'" src="'.$OUTPUT->pix_url('t/move') . '" />
+                      </a>';
+                echo '</span>';
+            }
             //Print the button to edit the item
             if ($feedbackitem->typ != 'pagebreak') {
                 echo '<span class="feedback_item_command_edit">';
