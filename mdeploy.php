@@ -264,8 +264,17 @@ class input_manager extends singleton_pattern {
                 if (strpos($raw, '~') !== false) {
                     throw new invalid_option_exception('Using the tilde (~) character in paths is not supported');
                 }
+                $colonpos = strpos($raw, ':');
+                if ($colonpos !== false) {
+                    if ($colonpos !== 1 or strrpos($raw, ':') !== 1) {
+                        throw new invalid_option_exception('Using the colon (:) character in paths is supported for Windows drive labels only.');
+                    }
+                    if (preg_match('/^[a-zA-Z]:/', $raw) !== 1) {
+                        throw new invalid_option_exception('Using the colon (:) character in paths is supported for Windows drive labels only.');
+                    }
+                }
                 $raw = str_replace('\\', '/', $raw);
-                $raw = preg_replace('~[[:cntrl:]]|[&<>"`\|\':]~u', '', $raw);
+                $raw = preg_replace('~[[:cntrl:]]|[&<>"`\|\']~u', '', $raw);
                 $raw = preg_replace('~\.\.+~', '', $raw);
                 $raw = preg_replace('~//+~', '/', $raw);
                 $raw = preg_replace('~/(\./)+~', '/', $raw);
