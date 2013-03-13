@@ -1565,6 +1565,8 @@ class assign {
         // more efficient to load this here
         require_once($CFG->libdir.'/filelib.php');
 
+        require_capability('mod/assign:grade', $this->context);
+
         // load all submissions
         $submissions = $this->get_all_submissions('','');
 
