@@ -418,8 +418,10 @@ class workshop {
             return array();
         }
 
-        list($sort, $sortparams) = users_order_by_sql('u');
-        $sql .= " ORDER BY $sort";
+        list($sort, $sortparams) = users_order_by_sql('tmp');
+        $sql = "SELECT *
+                  FROM ($sql) tmp
+              ORDER BY $sort";
 
         return $DB->get_records_sql($sql, array_merge($params, $sortparams), $limitfrom, $limitnum);
     }
@@ -467,8 +469,10 @@ class workshop {
             return array();
         }
 
-        list($sort, $sortparams) = users_order_by_sql('u');
-        $sql .= " ORDER BY $sort";
+        list($sort, $sortparams) = users_order_by_sql('tmp');
+        $sql = "SELECT *
+                  FROM ($sql) tmp
+              ORDER BY $sort";
 
         return $DB->get_records_sql($sql, array_merge($params, $sortparams), $limitfrom, $limitnum);
     }
@@ -518,8 +522,10 @@ class workshop {
             return array();
         }
 
-        list($sort, $sortparams) = users_order_by_sql();
-        $sql .= " ORDER BY $sort";
+        list($sort, $sortparams) = users_order_by_sql('tmp');
+        $sql = "SELECT *
+                  FROM ($sql) tmp
+              ORDER BY $sort";
 
         return $DB->get_records_sql($sql, array_merge($params, $sortparams), $limitfrom, $limitnum);
     }
