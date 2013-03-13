@@ -193,20 +193,6 @@ YUI.add('moodle-mod_feedback-dragdrop', function(Y) {
         },
 
         /**
-         * Handles the drag:dropmiss event.
-         *
-         * @param e the event
-         * @return void
-         */
-        drag_dropmiss_handler : function(e) {
-            var msg = {
-                name : 'dropmiss',
-                message : 'dropmiss'
-            };
-            return new M.core.exception(msg);
-        },
-
-        /**
          * Save the new item order.
          *
          * @param cmid the coursemodule id
