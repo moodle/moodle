@@ -2243,6 +2243,8 @@ class assign {
         // More efficient to load this here.
         require_once($CFG->libdir.'/filelib.php');
 
+        require_capability('mod/assign:grade', $this->context);
+
         // Load all users with submit.
         $students = get_enrolled_users($this->context, "mod/assign:submit");
 
