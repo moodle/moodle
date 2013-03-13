@@ -52,6 +52,9 @@ class mod_assign_grading_batch_operations_form extends moodleform {
         if ($instance['duedate']) {
             $options['grantextension'] = get_string('grantextension', 'assign');
         }
+        if ($instance['attemptreopenmethod'] == ASSIGN_ATTEMPT_REOPEN_METHOD_MANUAL) {
+            $options['addattempt'] = get_string('addattempt', 'assign');
+        }
 
         foreach ($instance['feedbackplugins'] as $plugin) {
             if ($plugin->is_visible() && $plugin->is_enabled()) {

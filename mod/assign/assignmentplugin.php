@@ -627,4 +627,5 @@ abstract class assign_plugin {
         return true;
     }
 
+
 }

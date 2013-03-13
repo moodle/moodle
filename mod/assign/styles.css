@@ -17,6 +17,8 @@ div.gradingsummary {
 div.submissionstatus .generaltable,
 div.submissionlinks .generaltable,
 div.feedback .generaltable,
+div.submissionsummarytable .generaltable,
+div.attempthistory table,
 div.gradingsummary .generaltable {
     width: 100%;
 }
@@ -29,7 +31,6 @@ div.gradingsummary .generaltable {
 .submissionsummarytable {
     margin-top: 1em;
 }
-
 
 div.submissionsummarytable table tbody tr td.c0 {
     width: 30%;
@@ -71,6 +72,12 @@ td.submissionlocked,
 div.submissionlocked {
     color: black;
     background-color: #efefcf;
+}
+
+td.submissionreopened,
+div.submissionreopened {
+    color: black;
+    background-color: #efefef;
 }
 
 td.submissiongraded,
@@ -159,4 +166,85 @@ td.submissioneditable {
 .jsenabled .quickgradingform form .commentscontainer input,
 .jsenabled .quickgradingform form .commentscontainer textarea {
     display: inline;
+}
+
+#page-mod-assign-view .previousfeedbackwarning {
+    font-size: 140%;
+    font-weight: bold;
+    text-align: center;
+    color: #500;
+}
+
+#page-mod-assign-view .submissionhistory {
+    background-color: #b0b0b0;
+}
+
+#page-mod-assign-view .submissionhistory .cell.historytitle {
+    background-color: #808080;
+}
+
+#page-mod-assign-view .submissionhistory .cell {
+    background-color: #d0d0d0;
+}
+
+#page-mod-assign-view .submissionhistory .singlebutton {
+    display: inline-block;
+    float: right;
+}
+
+#page-mod-assign-view.dir-rtl .submissionhistory .singlebutton {
+    float: left;
+}
+
+#page-mod-assign-view .submissionsummarytable .singlebutton {
+    display: inline-block;
+}
+
+.jsenabled .mod-assign-history-link {
+    display: block;
+    cursor: pointer;
+    margin-bottom: 7px;
+}
+
+.jsenabled .mod-assign-history-link h4 {
+    display: inline;
+}
+
+#page-mod-assign-view.jsenabled .attempthistory h4 {
+    margin-bottom: 7px;
+    text-align: left;
+}
+
+#page-mod-assign-view.jsenabled.dir_rtl .attempthistory h4 {
+    text-align: right;
+}
+
+.dir-rtl.jsenabled .mod-assign-history-link h4 {
+    text-align: right;
+}
+
+.jsenabled .mod-assign-history-link-open {
+    padding: 0 5px 0 20px; background: url([[pix:t/expanded]]) 2px center no-repeat;
+}
+
+.jsenabled .mod-assign-history-link-closed {
+    padding: 0 5px 0 20px; background: url([[pix:t/collapsed]]) 2px center no-repeat;
+}
+
+.dir-rtl.jsenabled .mod-assign-history-link-closed {
+    padding: 0 20px 0 5px; background: url([[pix:t/collapsed_rtl]]) 2px center no-repeat;
+}
+
+#page-mod-assign-view .submithelp {
+    padding: 1em;
+}
+
+#page-mod-assign-view .feedbacktitle {
+    font-weight: bold;
+}
+
+#page-mod-assign-view .submitconfirm,
+#page-mod-assign-view .submissionlinks,
+#page-mod-assign-view .submissionaction {
+    text-align: center;
 }

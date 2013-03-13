@@ -150,20 +150,33 @@ function assign_update_instance(stdClass $data, $form) {
  */
 function assign_supports($feature) {
     switch($feature) {
-        case FEATURE_GROUPS:                  return true;
-        case FEATURE_GROUPINGS:               return true;
-        case FEATURE_GROUPMEMBERSONLY:        return true;
-        case FEATURE_MOD_INTRO:               return true;
-        case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
-        case FEATURE_COMPLETION_HAS_RULES:    return true;
-        case FEATURE_GRADE_HAS_GRADE:         return true;
-        case FEATURE_GRADE_OUTCOMES:          return true;
-        case FEATURE_BACKUP_MOODLE2:          return true;
-        case FEATURE_SHOW_DESCRIPTION:        return true;
-        case FEATURE_ADVANCED_GRADING:        return true;
-        case FEATURE_PLAGIARISM:              return true;
+        case FEATURE_GROUPS:
+            return true;
+        case FEATURE_GROUPINGS:
+            return true;
+        case FEATURE_GROUPMEMBERSONLY:
+            return true;
+        case FEATURE_MOD_INTRO:
+            return true;
+        case FEATURE_COMPLETION_TRACKS_VIEWS:
+            return true;
+        case FEATURE_COMPLETION_HAS_RULES:
+            return true;
+        case FEATURE_GRADE_HAS_GRADE:
+            return true;
+        case FEATURE_GRADE_OUTCOMES:
+            return true;
+        case FEATURE_BACKUP_MOODLE2:
+            return true;
+        case FEATURE_SHOW_DESCRIPTION:
+            return true;
+        case FEATURE_ADVANCED_GRADING:
+            return true;
+        case FEATURE_PLAGIARISM:
+            return true;
 
-        default: return null;
+        default:
+            return null;
     }
 }
 

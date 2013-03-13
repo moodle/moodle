@@ -96,7 +96,7 @@ class mod_assign_external extends external_api {
             $placeholders = array();
             list($inorequalsql, $placeholders) = $DB->get_in_or_equal($requestedassignmentids, SQL_PARAMS_NAMED);
             $sql = "SELECT ag.id,ag.assignment,ag.userid,ag.timecreated,ag.timemodified,".
-                   "ag.grader,ag.grade,ag.locked,ag.mailed ".
+                   "ag.grader,ag.grade ".
                    "FROM {assign_grades} ag ".
                    "WHERE ag.assignment ".$inorequalsql.
                    " AND ag.timemodified  >= :since".
@@ -113,8 +113,6 @@ class mod_assign_external extends external_api {
                 $grade['timemodified'] = $rd->timemodified;
                 $grade['grader'] = $rd->grader;
                 $grade['grade'] = (string)$rd->grade;
-                $grade['locked'] = $rd->locked;
-                $grade['mailed'] = $rd->mailed;
 
                 if (is_null($currentassignmentid) || ($rd->assignment != $currentassignmentid )) {
                     if (!is_null($assignment)) {
@@ -165,9 +163,7 @@ class mod_assign_external extends external_api {
                             'timecreated'   => new external_value(PARAM_INT, 'grade creation time'),
                             'timemodified'  => new external_value(PARAM_INT, 'grade last modified time'),
                             'grader'        => new external_value(PARAM_INT, 'grader'),
-                            'grade'         => new external_value(PARAM_TEXT, 'grade'),
-                            'locked'        => new external_value(PARAM_BOOL, 'locked'),
-                            'mailed'        => new external_value(PARAM_BOOL, 'mailed')
+                            'grade'         => new external_value(PARAM_TEXT, 'grade')
                         )
                     )
                 )

@@ -94,7 +94,6 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $assign->testable_process_reveal_identities();
 
         // Test sesskey is required.
-        $nosesskey = true;
         $this->setUser($this->editingteachers[0]);
         $this->setExpectedException('moodle_exception');
         $assign->testable_process_reveal_identities();
@@ -165,7 +164,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $this->setUser($this->teachers[0]);
         $data = new stdClass();
         $data->grade = '50.0';
-        $assign->testable_apply_grade_to_user($data, $this->students[0]->id);
+        $assign->testable_apply_grade_to_user($data, $this->students[0]->id, 0);
 
         // Now see if the data is in the gradebook.
         $gradinginfo = grade_get_grades($this->course->id,
@@ -192,7 +191,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $this->setUser($this->teachers[0]);
         $data = new stdClass();
         $data->grade = '50.0';
-        $assign->testable_apply_grade_to_user($data, $this->students[0]->id);
+        $assign->testable_apply_grade_to_user($data, $this->students[0]->id, 0);
 
         // Simulate a submission.
         $this->setUser($this->students[0]);
@@ -220,7 +219,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $this->setUser($this->teachers[0]);
         $data = new stdClass();
         $data->grade = '50.0';
-        $assign->testable_apply_grade_to_user($data, $this->students[0]->id);
+        $assign->testable_apply_grade_to_user($data, $this->students[0]->id, 0);
 
         // Simulate a submission.
         $this->setUser($this->students[0]);
@@ -286,11 +285,6 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $instance->duedate = $now;
         $instance->instance = $instance->id;
         $instance->assignsubmission_onlinetext_enabled = 1;
-        $instance->assignsubmission_file_enabled = 0;
-        $instance->assignsubmission_comments_enabled = 0;
-        $instance->assignfeedback_comments_enabled = 0;
-        $instance->assignfeedback_file_enabled = 0;
-        $instance->assignfeedback_offline_enabled = 0;
 
         $assign->update_instance($instance);
 
@@ -299,7 +293,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
     }
 
     public function test_list_participants() {
-        $this->createExtraUsers();
+        $this->create_extra_users();
         $this->setUser($this->editingteachers[0]);
         $assign = $this->create_instance(array('grade'=>100));
 
@@ -307,7 +301,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
     }
 
     public function test_count_teams() {
-        $this->createExtraUsers();
+        $this->create_extra_users();
         $this->setUser($this->editingteachers[0]);
         $assign = $this->create_instance(array('teamsubmission'=>1));
 
@@ -315,7 +309,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
     }
 
     public function test_count_submissions() {
-        $this->createExtraUsers();
+        $this->create_extra_users();
         $this->setUser($this->editingteachers[0]);
         $assign = $this->create_instance(array('assignsubmission_onlinetext_enabled'=>1));
 
@@ -334,7 +328,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $this->setUser($this->teachers[0]);
         $data = new stdClass();
         $data->grade = '50.0';
-        $assign->testable_apply_grade_to_user($data, $this->extrastudents[0]->id);
+        $assign->testable_apply_grade_to_user($data, $this->extrastudents[0]->id, 0);
 
         // Simulate a submission.
         $this->setUser($this->extrastudents[1]);
@@ -376,7 +370,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $this->setUser($this->teachers[0]);
         $data = new stdClass();
         $data->grade = '50.0';
-        $assign->testable_apply_grade_to_user($data, $this->extrastudents[3]->id);
+        $assign->testable_apply_grade_to_user($data, $this->extrastudents[3]->id, 0);
 
         $this->assertEquals(2, $assign->count_grades());
         $this->assertEquals(4, $assign->count_submissions());
@@ -386,7 +380,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
     }
 
     public function test_get_grading_userid_list() {
-        $this->createExtraUsers();
+        $this->create_extra_users();
         $this->setUser($this->editingteachers[0]);
         $assign = $this->create_instance();
 
@@ -407,7 +401,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $this->setUser($this->teachers[0]);
         $data = new stdClass();
         $data->grade = '50.0';
-        $assign->testable_apply_grade_to_user($data, $this->students[0]->id);
+        $assign->testable_apply_grade_to_user($data, $this->students[0]->id, 0);
 
         // Now run cron and see that one message was sent.
         $this->preventResetByRollback();
@@ -430,7 +424,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $this->setUser($this->teachers[0]);
         $data = new stdClass();
         $data->grade = '50.0';
-        $assign->testable_apply_grade_to_user($data, $this->students[0]->id);
+        $assign->testable_apply_grade_to_user($data, $this->students[0]->id, 0);
 
         $this->assertEquals(true, $assign->testable_is_graded($this->students[0]->id));
         $this->assertEquals(false, $assign->testable_is_graded($this->students[1]->id));
@@ -456,7 +450,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
 
 
     public function test_update_submission() {
-        $this->createExtraUsers();
+        $this->create_extra_users();
         $this->setUser($this->editingteachers[0]);
         $assign = $this->create_instance();
 
@@ -564,7 +558,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
     }
 
     public function test_get_graders() {
-        $this->createExtraUsers();
+        $this->create_extra_users();
         $this->setUser($this->editingteachers[0]);
         $assign = $this->create_instance();
 
@@ -614,7 +608,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $this->setUser($this->teachers[0]);
         $data = new stdClass();
         $data->grade = '50.0';
-        $assign->testable_apply_grade_to_user($data, $this->students[0]->id);
+        $assign->testable_apply_grade_to_user($data, $this->students[0]->id, 0);
 
         // Now we should see the feedback.
         $this->setUser($this->students[0]);
@@ -656,6 +650,98 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $this->assertEquals(false, strpos($output, 'Graded on'), 'Do not show graded date when there is no grade.');
     }
 
+    public function test_attempt_reopen_method_manual() {
+        global $PAGE;
+
+        $this->setUser($this->editingteachers[0]);
+        $assign = $this->create_instance(array('attemptreopenmethod'=>ASSIGN_ATTEMPT_REOPEN_METHOD_MANUAL,
+                                               'maxattempts'=>3,
+                                               'submissiondrafts'=>1,
+                                               'assignsubmission_onlinetext_enabled'=>1));
+        $PAGE->set_url(new moodle_url('/mod/assign/view.php', array('id' => $assign->get_course_module()->id)));
+
+        // Student should be able to see an add submission button.
+        $this->setUser($this->students[0]);
+        $output = $assign->view_student_summary($this->students[0], true);
+        $this->assertNotEquals(false, strpos($output, get_string('addsubmission', 'assign')));
+
+        // Add a submission.
+        $now = time();
+        $submission = $assign->get_user_submission($this->students[0]->id, true);
+        $data = new stdClass();
+        $data->onlinetext_editor = array('itemid'=>file_get_unused_draft_itemid(),
+                                         'text'=>'Submission text',
+                                         'format'=>FORMAT_MOODLE);
+        $plugin = $assign->get_submission_plugin_by_type('onlinetext');
+        $plugin->save($submission, $data);
+
+        // And now submit it for marking.
+        $submission->status = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
+        $assign->testable_update_submission($submission, $this->students[0]->id, true, false);
+
+        // Verify the student cannot make changes to the submission.
+        $output = $assign->view_student_summary($this->students[0], true);
+        $this->assertEquals(false, strpos($output, get_string('addsubmission', 'assign')));
+
+        // Mark the submission.
+        $this->setUser($this->teachers[0]);
+        $data = new stdClass();
+        $data->grade = '50.0';
+        $assign->testable_apply_grade_to_user($data, $this->students[0]->id, 0);
+
+        // Check the student can see the grade.
+        $this->setUser($this->students[0]);
+        $output = $assign->view_student_summary($this->students[0], true);
+        $this->assertNotEquals(false, strpos($output, '50.0'));
+
+        // Allow the student another attempt.
+        $this->teachers[0]->ignoresesskey = true;
+        $this->setUser($this->teachers[0]);
+        $result = $assign->testable_process_add_attempt($this->students[0]->id);
+        $this->assertEquals(true, $result);
+
+        // Check that the previous attempt is now in the submission history table.
+        $this->setUser($this->students[0]);
+        $output = $assign->view_student_summary($this->students[0], true);
+        // Need a better check.
+        $this->assertNotEquals(false, strpos($output, 'Submission text'), 'Contains: Submission text');
+
+        // Check that the student now has a button for Add a new attempt".
+        $this->assertNotEquals(false, strpos($output, get_string('addnewattempt', 'assign')));
+        // Check that the student now does not have a button for Submit.
+        $this->assertEquals(false, strpos($output, get_string('submitassignment', 'assign')));
+
+        // Check that the student now has a submission history.
+        $this->assertNotEquals(false, strpos($output, get_string('attempthistory', 'assign')));
+
+        $this->setUser($this->teachers[0]);
+        // Check that the grading table loads correctly and contains this user.
+        // This is also testing that we do not get duplicate rows in the grading table.
+        $gradingtable = new assign_grading_table($assign, 100, '', 0, true);
+        $output = $assign->get_renderer()->render($gradingtable);
+        $this->assertEquals(true, strpos($output, $this->students[0]->lastname));
+
+        // Should be 1 not 2.
+        $this->assertEquals(1, $assign->count_submissions());
+        $this->assertEquals(1, $assign->count_submissions_with_status('reopened'));
+        $this->assertEquals(0, $assign->count_submissions_need_grading());
+        $this->assertEquals(1, $assign->count_grades());
+
+        // Change max attempts to unlimited.
+        $formdata = clone($assign->get_instance());
+        $formdata->maxattempts = ASSIGN_UNLIMITED_ATTEMPTS;
+        $formdata->instance = $formdata->id;
+        $assign->update_instance($formdata);
+
+        // Check we can repopen still.
+        $result = $assign->testable_process_add_attempt($this->students[0]->id);
+        $this->assertEquals(true, $result);
+
+        $grades = $assign->get_user_grades_for_gradebook($this->students[0]->id);
+        $this->assertEquals(50, (int)$grades[$this->students[0]->id]->rawgrade);
+
+
+    }
 
 }
 

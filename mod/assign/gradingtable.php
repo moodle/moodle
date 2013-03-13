@@ -116,6 +116,9 @@ class assign_grading_table extends table_sql implements renderable {
         $params = array();
         $params['assignmentid1'] = (int)$this->assignment->get_instance()->id;
         $params['assignmentid2'] = (int)$this->assignment->get_instance()->id;
+        $params['assignmentid3'] = (int)$this->assignment->get_instance()->id;
+        $params['assignmentid4'] = (int)$this->assignment->get_instance()->id;
+        $params['assignmentid5'] = (int)$this->assignment->get_instance()->id;
 
         $extrauserfields = get_extra_user_fields($this->assignment->get_context());
 
@@ -125,15 +128,33 @@ class assign_grading_table extends table_sql implements renderable {
         $fields .= 's.id as submissionid, ';
         $fields .= 's.timecreated as firstsubmission, ';
         $fields .= 's.timemodified as timesubmitted, ';
+        $fields .= 's.attemptnumber as attemptnumber, ';
         $fields .= 'g.id as gradeid, ';
         $fields .= 'g.grade as grade, ';
         $fields .= 'g.timemodified as timemarked, ';
         $fields .= 'g.timecreated as firstmarked, ';
-        $fields .= 'g.mailed as mailed, ';
-        $fields .= 'g.locked as locked, ';
-        $fields .= 'g.extensionduedate as extensionduedate';
-        $from = '{user} u LEFT JOIN {assign_submission} s ON u.id = s.userid AND s.assignment = :assignmentid1' .
-                        ' LEFT JOIN {assign_grades} g ON u.id = g.userid AND g.assignment = :assignmentid2';
+        $fields .= 'uf.mailed as mailed, ';
+        $fields .= 'uf.locked as locked, ';
+        $fields .= 'uf.extensionduedate as extensionduedate';
+
+        $submissionmaxattempt = 'SELECT mxs.userid, MAX(mxs.attemptnumber) AS maxattempt
+                                 FROM {assign_submission} mxs
+                                 WHERE mxs.assignment = :assignmentid4 GROUP BY mxs.userid';
+        $grademaxattempt = 'SELECT mxg.userid, MAX(mxg.attemptnumber) AS maxattempt
+                            FROM {assign_grades} mxg
+                            WHERE mxg.assignment = :assignmentid5 GROUP BY mxg.userid';
+        $from = '{user} u
+                         LEFT JOIN ( ' . $submissionmaxattempt . ' ) smx ON u.id = smx.userid
+                         LEFT JOIN ( ' . $grademaxattempt . ' ) gmx ON u.id = gmx.userid
+                         LEFT JOIN {assign_submission} s ON
+                            u.id = s.userid AND
+                            s.assignment = :assignmentid1 AND
+                            s.attemptnumber = smx.maxattempt
+                         LEFT JOIN {assign_grades} g ON
+                            u.id = g.userid AND
+                            g.assignment = :assignmentid2 AND
+                            g.attemptnumber = gmx.maxattempt
+                         LEFT JOIN {assign_user_flags} uf ON u.id = uf.userid AND uf.assignment = :assignmentid3';
 
         $userparams = array();
         $userindex = 0;
@@ -159,6 +180,7 @@ class assign_grading_table extends table_sql implements renderable {
                 $params['userid'] = $userfilter;
             }
         }
+
         $this->set_sql($fields, $from, $where, $params);
 
         if ($downloadfilename) {
@@ -826,6 +848,23 @@ class assign_grading_table extends table_sql implements renderable {
                                'page'=>$this->currpage);
             $url = new moodle_url('/mod/assign/view.php', $urlparams);
             $description = get_string('reverttodraftshort', 'assign');
+            $actions[$url->out(false)] = $description;
+        }
+
+        $ismanual = $this->assignment->get_instance()->attemptreopenmethod == ASSIGN_ATTEMPT_REOPEN_METHOD_MANUAL;
+        $hassubmission = !empty($row->status);
+        $notreopened = $hassubmission && $row->status != ASSIGN_SUBMISSION_STATUS_REOPENED;
+        $isunlimited = $this->assignment->get_instance()->maxattempts == ASSIGN_UNLIMITED_ATTEMPTS;
+        $hasattempts = $isunlimited || $row->attemptnumber < $this->assignment->get_instance()->maxattempts - 1;
+
+        if ($ismanual && $hassubmission && $notreopened && $hasattempts) {
+            $urlparams = array('id' => $this->assignment->get_course_module()->id,
+                               'userid'=>$row->id,
+                               'action'=>'addattempt',
+                               'sesskey'=>sesskey(),
+                               'page'=>$this->currpage);
+            $url = new moodle_url('/mod/assign/view.php', $urlparams);
+            $description = get_string('addattempt', 'assign');
             $actions[$url->out(false)] = $description;
         }
 

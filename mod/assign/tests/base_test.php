@@ -134,7 +134,7 @@ class mod_assign_base_testcase extends advanced_testcase {
     /*
      * For tests that make sense to use alot of data, create extra students/teachers.
      */
-    protected function createExtraUsers() {
+    protected function create_extra_users() {
         global $DB;
         $this->extrateachers = array();
         for ($i = 0; $i < self::EXTRA_TEACHER_COUNT; $i++) {
@@ -217,8 +217,8 @@ class testable_assign extends assign {
         return parent::delete_grades();
     }
 
-    public function testable_apply_grade_to_user($formdata, $userid) {
-        return parent::apply_grade_to_user($formdata, $userid);
+    public function testable_apply_grade_to_user($formdata, $userid, $attemptnumber) {
+        return parent::apply_grade_to_user($formdata, $userid, $attemptnumber);
     }
 
     public function testable_get_grading_userid_list() {
@@ -231,6 +231,10 @@ class testable_assign extends assign {
 
     public function testable_update_submission(stdClass $submission, $userid, $updatetime, $teamsubmission) {
         return parent::update_submission($submission, $userid, $updatetime, $teamsubmission);
+    }
+
+    public function testable_process_add_attempt($userid = 0) {
+        return parent::process_add_attempt($userid);
     }
 
     public function testable_submissions_open($userid = 0) {
