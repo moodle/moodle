@@ -17,9 +17,9 @@
 /**
  * Unit tests for the drag-and-drop onto image question type.
  *
- * @package    qtype_ddimageortext
- * @copyright  2010 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   qtype_ddimageortext
+ * @copyright 2010 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -33,9 +33,9 @@ require_once($CFG->dirroot . '/question/type/ddimageortext/tests/helper.php');
 /**
  * Unit tests for the drag-and-drop onto image question type.
  *
- * @copyright  2010 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @group      qtype_ddimageortext
+ * @copyright 2010 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @group qtype_ddimageortext
  */
 class qtype_ddimageortext_walkthrough_test extends qbehaviour_walkthrough_test_base {
 
