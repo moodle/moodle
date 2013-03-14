@@ -17,10 +17,10 @@
 /**
  * Unit tests for the drag-and-drop markers question definition class.
  *
- * @package    qtype_ddmarker
- * @copyright  2012 The Open University
- * @author     Jamie Pratt <me@jamiep.org>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   qtype_ddmarker
+ * @copyright 2012 The Open University
+ * @author    Jamie Pratt <me@jamiep.org>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -34,9 +34,9 @@ require_once($CFG->dirroot . '/question/type/ddmarker/tests/helper.php');
 /**
  * Unit tests for the drag-and-drop markers question definition class.
  *
- * @copyright  2012 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @group      qtype_ddmarker
+ * @copyright 2012 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @group qtype_ddmarker
  */
 class qtype_ddmarker_question_test extends basic_testcase {
 
@@ -129,8 +129,8 @@ class qtype_ddmarker_question_test extends basic_testcase {
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
 
-        //second returned param in array is the max of correct choices or the actual number of
-        //items dragged.
+        // The second returned param in array is the max of correct choices or
+        // the actual number of items dragged.
         $response1 = array('c1' => '50,50', 'c2' => '100,100', 'c3' => '100,100;200,200');
         $this->assertEquals(array(1, 4), $dd->get_num_parts_right($response1));
         $response2 = array('c1' => '50,50;150,50;50,150',
