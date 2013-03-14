@@ -656,7 +656,7 @@ abstract class question_edit_form extends question_wizard_form {
         }
 
         // Default mark.
-        if ($fromform['defaultmark'] < 0) {
+        if (array_key_exists('defaultmark', $fromform) && $fromform['defaultmark'] < 0) {
             $errors['defaultmark'] = get_string('defaultmarkmustbepositive', 'question');
         }
 
