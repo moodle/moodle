@@ -59,6 +59,36 @@ class behat_course extends behat_base {
     }
 
     /**
+     * Creates a new course with the provided table data matching course settings names with the desired values.
+     *
+     * @Given /^I create a course with:$/
+     * @param TableNode $table The course data
+     */
+    public function i_create_a_course_with(TableNode $table) {
+        return array(
+            new Given('I go to the courses management page'),
+            new Given('I press "Add a new course"'),
+            new Given('I fill the moodle form with:', $table),
+            new Given('I press "Save changes"')
+        );
+    }
+
+    /**
+     * Goes to the system courses/categories management page.
+     *
+     * @Given /^I go to the courses management page$/
+     */
+    public function i_go_to_the_courses_management_page() {
+
+        return array(
+            new Given('I am on homepage'),
+            new Given('I expand "Site administration" node'),
+            new Given('I expand "Courses" node'),
+            new Given('I follow "Add/edit courses"'),
+        );
+    }
+
+    /**
      * Adds the selected activity/resource filling the form data with the specified field/value pairs.
      *
      * @When /^I add a "(?P<activity_or_resource_name_string>(?:[^"]|\\")*)" to section "(?P<section_number>\d+)" and I fill the form with:$/
