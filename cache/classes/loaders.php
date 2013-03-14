@@ -1411,6 +1411,17 @@ class cache_application extends cache implements cache_loader_with_locking {
  */
 class cache_session extends cache {
     /**
+     * The user the session has been established for.
+     * @var int
+     */
+    protected static $loadeduserid = null;
+
+    /**
+     * The userid this cache is currently using.
+     * @var int
+     */
+    protected $currentuserid = null;
+    /**
      * Override the cache::construct method.
      *
      * This function gets overriden so that we can process any invalidation events if need be.
@@ -1426,6 +1437,8 @@ class cache_session extends cache {
      * @return void
      */
     public function __construct(cache_definition $definition, cache_store $store, $loader = null) {
+        // First up copy the loadeduserid to the current user id.
+        $this->currentuserid = self::$loadeduserid;
         parent::__construct($definition, $store, $loader);
         if ($definition->has_invalidation_events()) {
             $lastinvalidation = $this->get('lastsessioninvalidation');
@@ -1472,6 +1485,47 @@ class cache_session extends cache {
             }
             // Set the time of the last invalidation.
             $this->set('lastsessioninvalidation', cache::now());
+        }
+    }
+
+    /**
+     * Parses the key turning it into a string (or array is required) suitable to be passed to the cache store.
+     *
+     * This function is called for every operation that uses keys. For this reason we use this function to also check
+     * that the current user is the same as the user who last used this cache.
+     *
+     * @param string|int $key As passed to get|set|delete etc.
+     * @return string|array String unless the store supports multi-identifiers in which case an array if returned.
+     */
+    protected function parse_key($key) {
+        $this->check_tracked_user();
+        return parent::parse_key($key);
+    }
+
+    /**
+     * Check that this cache instance is tracking the current user.
+     */
+    protected function check_tracked_user() {
+        if (isset($_SESSION['USER']->id)) {
+            // Get the id of the current user.
+            $new = $_SESSION['USER']->id;
+        } else {
+            // No user set up yet.
+            $new = 0;
+        }
+        if ($new !== self::$loadeduserid) {
+            // The current user doesn't match the tracker userid for this request.
+            if (!is_null(self::$loadeduserid)) {
+                // Purge the data we have for the old user.
+                // This way we don't bloat the session.
+                $this->purge();
+            }
+            self::$loadeduserid = $new;
+            $this->currentuserid = $new;
+        } else if ($new !== $this->currentuserid) {
+            // The current user matches the loaded user but not the user last used by this cache.
+            $this->purge();
+            $this->currentuserid = $new;
         }
     }
 }

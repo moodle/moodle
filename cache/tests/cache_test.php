@@ -866,4 +866,63 @@ class cache_phpunit_tests extends advanced_testcase {
         $this->assertTrue($cache->set('test', 'test'));
         $this->assertEquals('test', $cache->get('test'));
     }
+
+    /**
+     * Test switching users with session caches.
+     */
+    public function test_session_cache_switch_user() {
+        $this->resetAfterTest(true);
+        $cache = cache::make_from_params(cache_store::MODE_SESSION, 'phpunit', 'sessioncache');
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+
+        // Log in as the first user.
+        $this->setUser($user1);
+        $sesskey1 = sesskey();
+
+        // Set a basic value in the cache.
+        $cache->set('var', 1);
+        $this->assertTrue($cache->has('var'));
+        $this->assertEquals(1, $cache->get('var'));
+
+        // Change to the second user.
+        $this->setUser($user2);
+        $sesskey2 = sesskey();
+
+        // Make sure the cache doesn't give us the data for the last user.
+        $this->assertNotEquals($sesskey1, $sesskey2);
+        $this->assertFalse($cache->has('var'));
+        $this->assertEquals(false, $cache->get('var'));
+    }
+
+    /**
+     * Test multiple session caches when switching user.
+     */
+    public function test_session_cache_switch_user_multiple() {
+        $this->resetAfterTest(true);
+        $cache1 = cache::make_from_params(cache_store::MODE_SESSION, 'phpunit', 'sessioncache1');
+        $cache2 = cache::make_from_params(cache_store::MODE_SESSION, 'phpunit', 'sessioncache2');
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+
+        // Log in as the first user.
+        $this->setUser($user1);
+        $sesskey1 = sesskey();
+
+        // Set a basic value in the caches.
+        $cache1->set('var', 1);
+        $cache2->set('var', 2);
+        $this->assertEquals(1, $cache1->get('var'));
+        $this->assertEquals(2, $cache2->get('var'));
+
+        // Change to the second user.
+        $this->setUser($user2);
+        $sesskey2 = sesskey();
+
+        // Make sure the cache doesn't give us the data for the last user.
+        // Also make sure that switching the user has lead to both caches being purged.
+        $this->assertNotEquals($sesskey1, $sesskey2);
+        $this->assertEquals(false, $cache1->get('var'));
+        $this->assertEquals(false, $cache2->get('var'));
+    }
 }
