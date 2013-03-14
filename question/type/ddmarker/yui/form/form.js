@@ -9,7 +9,7 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
     Y.extend(DDMARKER_FORM, M.qtype_ddmarker.dd_base_class, {
         fp : null,
 
-        initializer : function(params) {
+        initializer : function() {
             this.fp = this.file_pickers();
             Y.one(this.get('topnode')).append(
                     '<div class="ddarea">'+
@@ -26,7 +26,7 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
             Y.after(this.load_bg_image, M.form_filepicker, 'callback', this);
             this.load_bg_image();
         },
-        
+
         load_bg_image : function() {
             var bgimageurl = this.fp.file('bgimage').href;
             if (bgimageurl !== null) {
@@ -35,7 +35,8 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
                 var drop = new Y.DD.Drop({
                     node: this.doc.bg_img()
                 });
-                //Listen for a drop:hit on the background image
+
+                // Listen for a drop:hit on the background image.
                 drop.on('drop:hit', function(e) {
                     e.drag.get('node').setData('gooddrop', true);
                 });
@@ -46,7 +47,7 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
         },
 
         constrain_image_size : function (e) {
-            var maxsize = this.get('maxsizes')['bgimage'];
+            var maxsize = this.get('maxsizes').bgimage;
             var reduceby = Math.max(e.target.get('width') / maxsize.width,
                                     e.target.get('height') / maxsize.height);
             if (reduceby > 1) {
@@ -56,10 +57,9 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
             e.target.detach('load', this.constrain_image_size);
         },
 
-
         update_drop_zones : function () {
-            
-            //set up drop zones
+
+            // Set up drop zones.
             if (this.graphics !== null) {
                 this.graphics.destroy();
             }
@@ -88,7 +88,7 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
             return coords.replace(new RegExp("\\s*", 'g'), '');
         },
         get_marker_text : function (markerno) {
-            if (+markerno !== 0){
+            if (+markerno !== 0) {
                 var label = this.form.get_form_value('drags', [markerno-1, 'label']);
                 return label.replace(new RegExp("^\\s*(.*)\\s*$"), "$1");
             } else {
@@ -104,12 +104,13 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
                 }
             }
             var selectedvalues = [];
-            for (var i=0; i < this.form.get_form_value('nodropzone', []); i++) {
-                var selector = Y.one('#id_drops_'+i+'_choice');
+            var selector;
+            for (i = 0; i < this.form.get_form_value('nodropzone', []); i++) {
+                selector = Y.one('#id_drops_'+i+'_choice');
                 selectedvalues[i] = +selector.get('value');
             }
-            for (var i=0; i < this.form.get_form_value('nodropzone', []); i++) {
-                var selector = Y.one('#id_drops_'+i+'_choice');
+            for (i = 0; i < this.form.get_form_value('nodropzone', []); i++) {
+                selector = Y.one('#id_drops_'+i+'_choice');
                 selector.all('option').remove(true);
                 for (var value in dragitemsoptions) {
                     value = +value;
@@ -117,7 +118,7 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
                                     + dragitemsoptions[value] +
                                     '</option>';
                     selector.append(option);
-                    var optionnode = selector.one('option[value="' + value + '"]')
+                    var optionnode = selector.one('option[value="' + value + '"]');
                     if (value === selectedvalues[i]) {
                         optionnode.set('selected', true);
                     } else {
@@ -144,16 +145,15 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
             //events triggered by changes to form data
 
             //x and y coordinates
-            Y.all('fieldset#draggableitemheader input').on('change', function (e){
+            Y.all('fieldset#draggableitemheader input').on('change', function () {
                 this.set_options_for_drag_item_selectors();
             }, this);
 
             //change in selected item
-            Y.all('fieldset#dropzoneheader select').on('change', function (e){
+            Y.all('fieldset#dropzoneheader select').on('change', function () {
                 this.set_options_for_drag_item_selectors();
             }, this);
         },
-
 
         /**
          * Low level operations on form.
@@ -207,7 +207,7 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
                 draftitemidstoname = {};
                 nametoparentnode = {};
                 var filepickers = Y.all('form.mform input.filepickerhidden');
-                filepickers.each(function(filepicker, k, items) {
+                filepickers.each(function(filepicker) {
                     draftitemidstoname[filepicker.get('value')] = filepicker.get('name');
                     nametoparentnode[filepicker.get('name')] = filepicker.get('parentNode');
                 }, this);
@@ -225,14 +225,14 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
                 name : function (draftitemid) {
                     return draftitemidstoname[draftitemid];
                 }
-            }
+            };
             return toreturn;
         }
     }, {NAME : DDMARKERFORMNAME, ATTRS : {maxsizes:{value:null}}});
     M.qtype_ddmarker = M.qtype_ddmarker || {};
     M.qtype_ddmarker.init_form = function(config) {
         return new DDMARKER_FORM(config);
-    }
+    };
 }, '@VERSION@', {
     requires:['moodle-qtype_ddmarker-dd', 'form_filepicker', 'graphics', 'escape']
 });

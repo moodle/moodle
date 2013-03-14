@@ -118,7 +118,7 @@ class qtype_ddmarker extends qtype_ddtoimage_base {
             $DB->insert_record('qtype_ddmarker_drops', $drop);
         }
 
-        //an array of drag no -> drag id
+        // An array of drag no -> drag id.
         $olddragids = $DB->get_records_menu('qtype_ddmarker_drags',
                                     array('questionid' => $formdata->id),
                                     '', 'no, id');

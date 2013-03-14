@@ -2,7 +2,7 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
     var DDMARKERDDNAME = 'ddmarker_dd';
     var DDMARKER_DD = function() {
         DDMARKER_DD.superclass.constructor.apply(this, arguments);
-    }
+    };
     /**
      * This is the base class for the question rendering and question editing form code.
      */
@@ -37,10 +37,11 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
                             Y.later(1000, this, this.poll_for_image_load, pollarguments, true);
             }
         },
+
         /**
          * Object to encapsulate operations on dd area.
          */
-        doc_structure : function (mainobj) {
+        doc_structure : function () {
             var topnode = Y.one(this.get('topnode'));
             var dragitemsarea = topnode.one('div.dragitems');
             var dropbgarea = topnode.one('div.droparea');
@@ -78,8 +79,8 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
                     var classes = node.getAttribute('class');
                     if (classes !== '') {
                         var classesarr = classes.split(' ');
-                        for (index in classesarr) {
-                            var patt1 = new RegExp('^'+prefix+'([0-9])+$');
+                        for (var index = 0; index < classesarr.length; index++) {
+                            var patt1 = new RegExp('^' + prefix + '([0-9])+$');
                             if (patt1.test(classesarr[index])) {
                                 var patt2 = new RegExp('([0-9])+$');
                                 var match = patt2.exec(classesarr[index]);
@@ -98,8 +99,7 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
                 marker_texts : function () {
                     return topnode.one('div.markertexts');
                 }
-
-            }
+            };
         },
 
         colours : ['#FFFFFF', '#B0C4DE', '#DCDCDC', '#D8BFD8',
@@ -122,11 +122,11 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
         },
         shapes : [],
         draw_drop_zone : function (dropzoneno, markertext, shape, coords, colour, link) {
+            var existingmarkertext;
             if (link) {
-                var existingmarkertext
-                                = this.doc.marker_texts().one('span.markertext'+dropzoneno+' a');
+                existingmarkertext = this.doc.marker_texts().one('span.markertext'+dropzoneno+' a');
             } else {
-                var existingmarkertext = this.doc.marker_texts().one('span.markertext'+dropzoneno);
+                existingmarkertext = this.doc.marker_texts().one('span.markertext'+dropzoneno);
             }
 
             if (existingmarkertext) {
@@ -247,20 +247,19 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
                 });
                 var maxxy = [0,0];
                 var minxy = [this.doc.bg_img().get('width'), this.doc.bg_img().get('height')];
-                for (var i in xy) {
+                for (i = 0; i < xy.length; i++) {
                     //calculate min and max points to find center to show marker on
                     minxy[0] = Math.min(xy[i][0], minxy[0]);
                     minxy[1] = Math.min(xy[i][1], minxy[1]);
                     maxxy[0] = Math.max(xy[i][0], maxxy[0]);
                     maxxy[1] = Math.max(xy[i][1], maxxy[1]);
-                    if (i == 0) {
+                    if (i === 0) {
                         polygon.moveTo(xy[i][0], xy[i][1]);
                     } else {
                         polygon.lineTo(xy[i][0], xy[i][1]);
                     }
                 }
                 if (+xy[0][0] !== +xy[xy.length-1][0] || +xy[0][1] !== +xy[xy.length-1][1]) {
-                    var windowxy = this.convert_to_window_xy(xy[0]);
                     polygon.lineTo(xy[0][0], xy[0][1]); //close polygon if not already closed
                 }
                 polygon.end();
@@ -293,7 +292,7 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
      * This is the code for question rendering.
      */
     Y.extend(DDMARKER_QUESTION, M.qtype_ddmarker.dd_base_class, {
-        initializer : function(params) {
+        initializer : function() {
             this.doc = this.doc_structure(this);
             this.poll_for_image_load(null, false, 0, this.after_image_load);
             this.doc.bg_img().after('load', this.poll_for_image_load, this,
@@ -344,12 +343,13 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
         },
         save_all_xy_for_choice: function (choiceno, dropped) {
             var coords = [];
+            var bgimgxy;
             for (var i=0; i <= this.doc.drag_items_for_choice(choiceno).size(); i++) {
                 var dragitem = this.doc.drag_item_for_choice(choiceno, i);
                 if (dragitem) {
                     dragitem.removeClass('item'+i);
                     if (!dragitem.hasClass('beingdragged')) {
-                        var bgimgxy = this.convert_to_bg_img_xy(dragitem.getXY());
+                        bgimgxy = this.convert_to_bg_img_xy(dragitem.getXY());
                         if (this.xy_in_bgimg(bgimgxy)) {
                             dragitem.removeClass('item'+i);
                             dragitem.addClass('item'+coords.length);
@@ -359,7 +359,7 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
                 }
             }
             if (dropped !== null){
-                var bgimgxy = this.convert_to_bg_img_xy(dropped.getXY());
+                bgimgxy = this.convert_to_bg_img_xy(dropped.getXY());
                 dropped.addClass('item'+coords.length);
                 if (this.xy_in_bgimg(bgimgxy)) {
                     coords[coords.length] = bgimgxy;
@@ -502,8 +502,6 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
             dragitem.setXY(xy);
             this.save_all_xy_for_choice(choiceno, null);
         }
-
-
     }, {NAME : DDMARKERQUESTIONNAME, ATTRS : {dropzones:{value:[]}}});
 
     Y.Event.define('dragchange', {
@@ -540,7 +538,7 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
     });
     M.qtype_ddmarker.init_question = function(config) {
         return new DDMARKER_QUESTION(config);
-    }
+    };
 }, '@VERSION@', {
       requires:['node', 'event-resize', 'dd', 'dd-drop', 'dd-constrain', 'graphics']
 });

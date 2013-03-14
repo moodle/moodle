@@ -28,7 +28,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- *
  * @var string label to use for drag items when converting image target questions to ddmarker question type
  */
 define('QTYPE_DDMARKER_LABEL_FOR_MARKER_FOR_IMAGE_TARGET_QS', 'X');
@@ -41,8 +40,6 @@ function qtype_ddmarker_pluginfile($course, $cm, $context, $filearea, $args, $fo
     require_once($CFG->libdir . '/questionlib.php');
     question_pluginfile($course, $context, 'qtype_ddmarker', $filearea, $args, $forcedownload, $options);
 }
-
-
 
 function qtype_ddmarker_course_context_id($catcontextid) {
     $context = get_context_instance_by_id($catcontextid);
@@ -118,7 +115,7 @@ function qtype_ddmarker_convert_image_target_question($question, $imgfilename, $
     $DB->update_record('question', $newrec);
 
     $fs = get_file_storage();
-    //we need to look in the course legacy files area for file
+    // We need to look in the course legacy files area for file.
     $bgimagefile = $fs->get_file(qtype_ddmarker_course_context_id($question->contextid),
                                     'course',
                                     'legacy',

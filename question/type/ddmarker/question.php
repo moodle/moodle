@@ -138,10 +138,10 @@ class qtype_ddmarker_question extends qtype_ddtoimage_question_base {
     protected function array_intersect_fixed($array1, $array2) {
         $result = array();
         foreach ($array1 as $val) {
-          if (($key = array_search($val, $array2, TRUE))!==false) {
-             $result[] = $val;
-             unset($array2[$key]);
-          }
+            if (($key = array_search($val, $array2, true)) !== false) {
+                 $result[] = $val;
+                 unset($array2[$key]);
+            }
         }
         return $result;
     }
@@ -153,11 +153,13 @@ class qtype_ddmarker_question extends qtype_ddtoimage_question_base {
         }
         return get_string('pleasedragatleastonemarker', 'qtype_ddmarker');
     }
+
     public function get_num_parts_right(array $response) {
         $chosenhits = $this->choose_hits($response);
         $divisor = max(count($this->rightchoices), $this->total_number_of_items_dragged($response));
         return array(count($chosenhits), $divisor);
     }
+
     /**
      * Choose hits to maximize grade where drop targets may have more than one hit and drop targets
      * can overlap.
@@ -220,8 +222,8 @@ class qtype_ddmarker_question extends qtype_ddtoimage_question_base {
                 }
             }
         }
-        //reverse sort in order of number of hits per place
-        //(if two or more hits per place then we want to make sure hits do not hit elsewhere)
+        // Reverse sort in order of number of hits per place (if two or more
+        // hits per place then we want to make sure hits do not hit elsewhere).
         $sortcomparison = function ($a1, $a2){
             return (count($a1) - count($a2));
         };
@@ -291,7 +293,7 @@ class qtype_ddmarker_question extends qtype_ddtoimage_question_base {
         foreach ($response as $choicekey => $coords) {
             $choice = (int)substr($choicekey, 1);
             if ($coords != '') {
-            $coordparts = explode(';', $coords);
+                $coordparts = explode(';', $coords);
                 foreach ($coordparts as $itemno => $coord) {
                     if (!in_array("$choice $itemno", $hits)) {
                         $wrong[] = $this->get_selected_choice(1, $choice)->text;

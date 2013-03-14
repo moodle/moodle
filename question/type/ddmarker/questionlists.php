@@ -52,8 +52,8 @@ abstract class qtype_ddmarker_list_item implements renderable {
 
     public function add_child($child) {
         $this->children[] = $child;
-        //array_unique relies on __toString() returning a unique string to determine if objects in array
-        //are the same or not
+        // Class array_unique relies on __toString() returning a unique string
+        // to determine if objects in array are the same or not.
         $this->children = array_unique($this->children);
     }
 
@@ -250,7 +250,8 @@ class qtype_ddmarker_category_list extends qtype_ddmarker_list {
     public function __construct($stringidentifier, $link, $contextids, $contextlist) {
         global $DB;
         $this->contextlist = $contextlist;
-        //probably most efficient way to reconstruct question category tree is to load all q cats in relevant contexts
+        // Probably most efficient way to reconstruct question category tree is
+        // to load all q cats in relevant contexts.
         list($sql, $params) = $DB->get_in_or_equal($contextids);
         $this->records = $DB->get_records_select('question_categories', "contextid ".$sql, $params);
         $this->make_list_item_instances_from_records($stringidentifier, $link);

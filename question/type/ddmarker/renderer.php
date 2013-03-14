@@ -115,7 +115,7 @@ class qtype_ddmarker_renderer extends qtype_ddtoimage_renderer_base {
             $wrongparts = $question->get_drop_zones_without_hit($response);
             if (count($wrongparts) !== 0) {
                 $wrongpartsstringspans = array();
-                foreach($wrongparts as $wrongpart) {
+                foreach ($wrongparts as $wrongpart) {
                     $wrongpartsstringspans[] = html_writer::nonempty_tag('span',
                                     $wrongpart->markertext, array('class' => 'wrongpart'));
                 }
@@ -137,18 +137,18 @@ class qtype_ddmarker_renderer extends qtype_ddtoimage_renderer_base {
         if ($infinite) {
             $classes[] = 'infinite';
         }
-        list(,$html) = $this->hidden_field_for_qt_var($qa, $varname, null, $classes);
+        list(, $html) = $this->hidden_field_for_qt_var($qa, $varname, null, $classes);
         return $html;
     }
 
-    protected function hint(question_attempt $qa, question_hint $hint)  {
+    protected function hint(question_attempt $qa, question_hint $hint) {
         $output = '';
         $question = $qa->get_question();
         $response = $qa->get_last_qt_data();
         if ($hint->statewhichincorrect) {
             $wrongdrags = $question->get_wrong_drags($response);
             $wrongparts = array();
-            foreach($wrongdrags as $wrongdrag) {
+            foreach ($wrongdrags as $wrongdrag) {
                 $wrongparts[] = html_writer::nonempty_tag('span',
                                                 $wrongdrag, array('class' => 'wrongpart'));
             }

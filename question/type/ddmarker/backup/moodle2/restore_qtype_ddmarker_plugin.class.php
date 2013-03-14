@@ -15,18 +15,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    qtype
- * @subpackage ddmarker
- * @copyright  2012 The Open University
- * @author     Jamie Pratt <me@jamiep.org>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   qtype_ddmarker
+ * @copyright 2012 The Open University
+ * @author    Jamie Pratt <me@jamiep.org>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
  * restore plugin class that provides the necessary information
- * needed to restore one ddmarker qtype plugin
+ * needed to restore one ddmarker qtype plugin.
  *
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -38,13 +37,13 @@ class restore_qtype_ddmarker_plugin extends restore_qtype_plugin {
     }
 
     /**
-     * Returns the paths to be handled by the plugin at question level
+     * Returns the paths to be handled by the plugin at question level.
      */
     protected function define_question_plugin_structure() {
 
         $paths = array();
 
-        // Add own qtype stuff
+        // Add own qtype stuff.
         $elename = 'dds';
         $elepath = $this->get_pathfor('/'.self::qtype_name());
         $paths[] = new restore_path_element($elename, $elepath);
@@ -57,7 +56,7 @@ class restore_qtype_ddmarker_plugin extends restore_qtype_plugin {
         $elepath = $this->get_pathfor('/drops/drop');
         $paths[] = new restore_path_element($elename, $elepath);
 
-        return $paths; // And we return the interesting paths
+        return $paths; // And we return the interesting paths.
     }
 
     /**
@@ -71,25 +70,25 @@ class restore_qtype_ddmarker_plugin extends restore_qtype_plugin {
         $data = (object)$data;
         $oldid = $data->id;
 
-        // Detect if the question is created or mapped
+        // Detect if the question is created or mapped.
         $oldquestionid   = $this->get_old_parentid('question');
         $newquestionid   = $this->get_new_parentid('question');
         $questioncreated = $this->get_mappingid('question_created', $oldquestionid) ? true : false;
 
-        // If the question has been created by restore,
-        // we need to create its qtype_ddmarker too
+        // If the question has been created by restore
+        // we need to create its qtype_ddmarker too.
         if ($questioncreated) {
-            // Adjust some columns
+            // Adjust some columns.
             $data->questionid = $newquestionid;
-            // Insert record
+            // Insert record.
             $newitemid = $DB->insert_record($prefix, $data);
-            // Create mapping (needed for decoding links)
+            // Create mapping (needed for decoding links).
             $this->set_mapping($prefix, $oldid, $newitemid);
         }
     }
 
     /**
-     * Process the qtype/drags/drag element
+     * Process the qtype/drags/drag element.
      */
     public function process_drag($data) {
         global $DB;
@@ -99,23 +98,23 @@ class restore_qtype_ddmarker_plugin extends restore_qtype_plugin {
         $data = (object)$data;
         $oldid = $data->id;
 
-        // Detect if the question is created or mapped
+        // Detect if the question is created or mapped.
         $oldquestionid   = $this->get_old_parentid('question');
         $newquestionid   = $this->get_new_parentid('question');
         $questioncreated = $this->get_mappingid('question_created', $oldquestionid) ? true : false;
 
         if ($questioncreated) {
             $data->questionid = $newquestionid;
-            // Insert record
+            // Insert record.
             $newitemid = $DB->insert_record("{$prefix}_drags", $data);
-            // Create mapping (there are files and states based on this)
+            // Create mapping (there are files and states based on this).
             $this->set_mapping("{$prefix}_drags", $oldid, $newitemid);
 
         }
     }
 
     /**
-     * Process the qtype/drags/drag element
+     * Process the qtype/drags/drag element.
      */
     public function process_drop($data) {
         global $DB;
@@ -125,19 +124,20 @@ class restore_qtype_ddmarker_plugin extends restore_qtype_plugin {
         $data = (object)$data;
         $oldid = $data->id;
 
-        // Detect if the question is created or mapped
+        // Detect if the question is created or mapped.
         $oldquestionid   = $this->get_old_parentid('question');
         $newquestionid   = $this->get_new_parentid('question');
         $questioncreated = $this->get_mappingid('question_created', $oldquestionid) ? true : false;
 
         if ($questioncreated) {
             $data->questionid = $newquestionid;
-            // Insert record
+            // Insert record.
             $newitemid = $DB->insert_record("{$prefix}_drops", $data);
-            // Create mapping (there are files and states based on this)
+            // Create mapping (there are files and states based on this).
             $this->set_mapping("{$prefix}_drops", $oldid, $newitemid);
         }
     }
+
     /**
      * Return the contents of this qtype to be processed by the links decoder
      */

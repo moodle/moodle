@@ -14,31 +14,31 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Defines the editing form for the drag-and-drop images onto images question type.
+ *
+ * @package   qtype_ddmarker
+ * @copyright 2012 The Open University
+ * @author    Jamie Pratt <me@jamiep.org>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->dirroot.'/question/type/ddimageortext/edit_ddtoimage_form_base.php');
 require_once($CFG->dirroot.'/question/type/ddmarker/shapes.php');
 
 define('QTYPE_DDMARKER_ALLOWED_TAGS_IN_MARKER', '<br><i><em><b><strong><sup><sub><u>');
 
-/**
- * Defines the editing form for the drag-and-drop images onto images question type.
- *
- * @package    qtype
- * @subpackage ddmarker
- * @copyright  2012 The Open University
- * @author     Jamie Pratt <me@jamiep.org>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Drag-and-drop images onto images  editing form definition.
  *
- * @copyright  2009 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2009 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
-
 
     public function qtype() {
         return 'ddmarker';
@@ -155,7 +155,7 @@ class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
         $question = $this->data_preprocessing_combined_feedback($question, true);
         $question = $this->data_preprocessing_hints($question, true, true);
 
-        $dragids = array(); // drag no -> dragid
+        $dragids = array(); // Drag no -> dragid.
         if (!empty($question->options)) {
             $question->shuffleanswers = $question->options->shuffleanswers;
             $question->showmisplaced = $question->options->showmisplaced;
@@ -176,7 +176,7 @@ class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
                 $question->drops[$drop->no -1] = $droparray;
             }
         }
-        //initialise file picker for bgimage
+        // Initialise file picker for bgimage.
         $draftitemid = file_get_submitted_draft_itemid('bgimage');
 
         file_prepare_draft_area($draftitemid, $this->context->id, 'qtype_ddmarker',
@@ -221,7 +221,7 @@ class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
             $choicepresent = ($choice !== '0');
 
             if ($choicepresent) {
-                //test coords here
+                // Test coords here.
                 if ($bgimagesize !== null) {
                     $shape = $data['drops'][$i]['shape'];
                     $coordsstring = $data['drops'][$i]['coords'];
@@ -248,7 +248,7 @@ class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
             if ($label != strip_tags($label, QTYPE_DDMARKER_ALLOWED_TAGS_IN_MARKER)) {
                 $errors["drags[{$dragindex}]"]
                     = get_string('formerror_onlysometagsallowed', 'qtype_ddmarker',
-                                  QTYPE_DDMARKER_ALLOWED_TAGS_IN_MARKER);
+                                  s(QTYPE_DDMARKER_ALLOWED_TAGS_IN_MARKER));
             }
         }
         return $errors;
@@ -264,7 +264,7 @@ class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
                 if ($file->is_directory()) {
                     continue;
                 }
-                //just return the data for the first good file, there should only be one.
+                // Just return the data for the first good file, there should only be one.
                 $imageinfo = $file->get_imageinfo();
                 $width    = $imageinfo['width'];
                 $height   = $imageinfo['height'];
