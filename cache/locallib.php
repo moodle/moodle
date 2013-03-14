@@ -529,12 +529,10 @@ class cache_config_writer extends cache_config {
      * Update the site identifier stored by the cache API.
      *
      * @param string $siteidentifier
-     * @return string The new site identifier.
      */
     public function update_site_identifier($siteidentifier) {
         $this->siteidentifier = md5((string)$siteidentifier);
         $this->config_save();
-        return $this->siteidentifier;
     }
 }
 
