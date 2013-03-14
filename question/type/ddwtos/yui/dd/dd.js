@@ -26,14 +26,14 @@ YUI.add('moodle-qtype_ddwtos-dd', function(Y) {
     var DDWTOSDDNAME = 'ddwtos_dd';
     var DDWTOS_DD = function() {
         DDWTOS_DD.superclass.constructor.apply(this, arguments);
-    }
+    };
     /**
      * This is the class for ddwtos question rendering.
      * A DDWTOS_DD class is created for each question.
      */
     Y.extend(DDWTOS_DD, Y.Base, {
         selectors : null,
-        initializer : function(params) {
+        initializer : function() {
             this.selectors = this.css_selectors(this.get('topnode'));
             this.set_padding_sizes_all();
             this.clone_drag_items();
@@ -45,7 +45,7 @@ YUI.add('moodle-qtype_ddwtos-dd', function(Y) {
          * put all our selectors in the same place so we can quickly find and change them later
          * if the structure of the document changes.
          */
-        css_selectors : function(topnode){
+        css_selectors : function(topnode) {
             return {
                 top_node : function() {
                     return topnode;
@@ -92,7 +92,7 @@ YUI.add('moodle-qtype_ddwtos-dd', function(Y) {
                 drops_group : function(groupno) {
                     return topnode+' span.drop.group'+groupno;
                 }
-            }
+            };
         },
         set_padding_sizes_all : function () {
             for (var groupno = 1; groupno <= 8; groupno++) {
@@ -160,12 +160,12 @@ YUI.add('moodle-qtype_ddwtos-dd', function(Y) {
             var classes = node.getAttribute('class');
             if (classes !== '') {
                 var classesarr = classes.split(' ');
-                for (index in classesarr) {
+                for (var index = 0; index < classesarr.length; index++) {
                     var patt1 = new RegExp('^'+prefix+'([0-9])+$');
                     if (patt1.test(classesarr[index])) {
                         var patt2 = new RegExp('([0-9])+$');
                         var match = patt2.exec(classesarr[index]);
-                        return +match[0];
+                        return + match[0];
                     }
                 }
             }
@@ -202,9 +202,7 @@ YUI.add('moodle-qtype_ddwtos-dd', function(Y) {
             }
         },
         make_draggable : function (drag) {
-            var choice = this.get_choice(drag);
-            var group = this.get_group(drag);
-            var dd = new Y.DD.Drag({
+            new Y.DD.Drag({
                 node: drag,
                 groups: [this.get_group(drag)],
                 dragMode: 'point'
@@ -261,13 +259,13 @@ YUI.add('moodle-qtype_ddwtos-dd', function(Y) {
             this.place_drag_in_drop(null, drop);
         },
         position_drag_items : function () {
-            Y.all(this.selectors.drags()).each(this.position_drag_item, this)
+            Y.all(this.selectors.drags()).each(this.position_drag_item, this);
         },
         position_drag_item : function (drag) {
             if (!drag.hasClass('yui3-dd-dragging')) {
                 if (!this.placed[this.get_no(drag)]) {
                     var groupno = this.get_group(drag);
-                    var choiceno = this.get_choice(drag)
+                    var choiceno = this.get_choice(drag);
                     var home = Y.one(this.selectors.drag_home(groupno, choiceno));
                     drag.setXY(home.getXY());
                     drag.addClass('unplaced');
@@ -370,7 +368,7 @@ YUI.add('moodle-qtype_ddwtos-dd', function(Y) {
     M.qtype_ddwtos = M.qtype_ddwtos || {};
     M.qtype_ddwtos.init_question = function(config) {
         return new DDWTOS_DD(config);
-    }
+    };
 }, '@VERSION@', {
       requires:['node', 'dd', 'dd-drop', 'dd-constrain']
 });

@@ -136,7 +136,7 @@ class qtype_ddwtos_renderer extends qtype_elements_embedded_in_question_text_ren
     protected function drag_boxes($qa, $group, $choices, question_display_options $options) {
         $boxes = '';
         foreach ($choices as $key => $choice) {
-            //Bug 8632 -  long text entry causes bug in drag and drop field in IE
+            // Bug 8632: long text entry causes bug in drag and drop field in IE.
             $content = str_replace('-', '&#x2011;', $choice->text);
             $content = str_replace(' ', '&#160;', $content);
 
