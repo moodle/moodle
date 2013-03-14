@@ -237,7 +237,8 @@ echo '</div>';
 
 // Print all the little details in a list
 
-echo html_writer::start_tag('dl', array('class'=>'list'));
+echo '<table class="list" summary="">';
+
 // Show email if any of the following conditions match.
 // 1. User is viewing his own profile.
 // 2. Has allowed everyone to see email
@@ -248,8 +249,7 @@ if ($currentuser
    or ($user->maildisplay == 2 && is_enrolled($coursecontext, $USER))
    or has_capability('moodle/course:viewhiddenuserfields', $coursecontext)
    or has_capability('moodle/site:viewuseridentity', $coursecontext)) {
-    echo html_writer::tag('dt', get_string('email'));
-    echo html_writer::tag('dd', obfuscate_mailto($user->email, ''));
+    print_row(get_string("email").":", obfuscate_mailto($user->email, ''));
 }
 
 // Show last time this user accessed this course
@@ -259,14 +259,12 @@ if (!isset($hiddenfields['lastaccess'])) {
     } else {
         $datestring = get_string("never");
     }
-    echo html_writer::tag('dt', get_string('lastaccess'));
-    echo html_writer::tag('dd', $datestring);
+    print_row(get_string("lastaccess").":", $datestring);
 }
 
 // Show roles in this course
 if ($rolestring = get_user_roles_in_course($id, $course->id)) {
-    echo html_writer::tag('dt', get_string('roles'));
-    echo html_writer::tag('dd', $rolestring);
+    print_row(get_string('roles').':', $rolestring);
 }
 
 // Show groups this user is in
@@ -288,8 +286,7 @@ if (!isset($hiddenfields['groups'])) {
             }
         }
         if ($groupstr !== '') {
-            echo html_writer::tag('dt', get_string('group'));
-            echo html_writer::tag('dd', rtrim($groupstr, ', '));
+            print_row(get_string("group").":", rtrim($groupstr, ', '));
         }
     }
 }
@@ -325,19 +322,18 @@ if (!isset($hiddenfields['mycourses'])) {
                 break;
             }
         }
-        echo html_writer::tag('dt', get_string('courseprofiles'));
-        echo html_writer::tag('dd', rtrim($courselisting,', '));
+        print_row(get_string('courseprofiles').':', rtrim($courselisting,', '));
     }
 }
 
 if (!isset($hiddenfields['suspended'])) {
     if ($user->suspended) {
-        echo html_writer::tag('dt', "&nbsp;");
-        echo html_writer::tag('dd', get_string('suspended', 'auth'));
+        print_row('', get_string('suspended', 'auth'));
     }
 }
-echo html_writer::end_tag('dl');
-echo "</div></div>"; // Closing desriptionbox and userprofilebox.
+
+echo "</table></div></div>";
+
 // Print messaging link if allowed
 if (isloggedin() && has_capability('moodle/site:sendmessage', $usercontext)
     && !empty($CFG->messaging) && !isguestuser() && !isguestuser($user) && ($USER->id != $user->id)) {
@@ -365,3 +361,11 @@ if ($currentuser || has_capability('moodle/user:viewdetails', $usercontext) || h
 echo '</div>';  // userprofile class
 
 echo $OUTPUT->footer();
+
+/// Functions ///////
+
+function print_row($left, $right) {
+    echo "\n<tr><th class=\"label c0\">$left</th><td class=\"info c1\">$right</td></tr>\n";
+}
+
+
