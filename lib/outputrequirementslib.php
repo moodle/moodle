@@ -963,27 +963,31 @@ class page_requirements_manager {
      * Major benefit of this compared to standard js/csss loader is much improved
      * caching, better browser cache utilisation, much fewer http requests.
      *
+     * @param moodle_page $page
      * @return string
      */
-    protected function get_yui3lib_headcode() {
+    protected function get_yui3lib_headcode($page) {
         global $CFG;
 
         $code = '';
 
         if ($this->yui3loader->combine) {
-            $code .= '<link rel="stylesheet" type="text/css" href="'.$this->yui3loader->comboBase
-                     .$CFG->yui3version.'/build/cssreset/reset-min.css&amp;'
-                     .$CFG->yui3version.'/build/cssfonts/fonts-min.css&amp;'
-                     .$CFG->yui3version.'/build/cssgrids/grids-min.css&amp;'
-                     .$CFG->yui3version.'/build/cssbase/base-min.css" />';
+            if (!empty($page->theme->yuicssmodules)) {
+                $modules = array();
+                foreach ($page->theme->yuicssmodules as $module) {
+                    $modules[] = "$CFG->yui3version/build/$module/$module-min.css";
+                }
+                $code .= '<link rel="stylesheet" type="text/css" href="'.$this->yui3loader->comboBase.implode('&amp;', $modules).'" />';
+            }
             $code .= '<script type="text/javascript" src="'.$this->yui3loader->comboBase
                      .$CFG->yui3version.'/build/simpleyui/simpleyui-min.js&amp;'
                      .$CFG->yui3version.'/build/loader/loader-min.js"></script>';
         } else {
-            $code .= '<link rel="stylesheet" type="text/css" href="'.$this->yui3loader->base.'cssreset/reset-min.css" />';
-            $code .= '<link rel="stylesheet" type="text/css" href="'.$this->yui3loader->base.'cssfonts/fonts-min.css" />';
-            $code .= '<link rel="stylesheet" type="text/css" href="'.$this->yui3loader->base.'cssgrids/grids-min.css" />';
-            $code .= '<link rel="stylesheet" type="text/css" href="'.$this->yui3loader->base.'cssbase/base-min.css" />';
+            if (!empty($page->theme->yuicssmodules)) {
+                foreach ($page->theme->yuicssmodules as $module) {
+                    $code .= '<link rel="stylesheet" type="text/css" href="'.$this->yui3loader->base.$module.'/'.$module.'-min.css" />';
+                }
+            }
             $code .= '<script type="text/javascript" src="'.$this->yui3loader->base.'simpleyui/simpleyui-min.js"></script>';
             $code .= '<script type="text/javascript" src="'.$this->yui3loader->base.'loader/loader-min.js"></script>';
         }
@@ -1060,7 +1064,7 @@ class page_requirements_manager {
         $this->init_requirements_data($page, $renderer);
 
         // YUI3 JS and CSS is always loaded first - it is cached in browser.
-        $output = $this->get_yui3lib_headcode();
+        $output = $this->get_yui3lib_headcode($page);
 
         // Now theme CSS + custom CSS in this specific order.
         $output .= $this->get_css_code();
