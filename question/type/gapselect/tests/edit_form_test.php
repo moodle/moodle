@@ -17,9 +17,9 @@
 /**
  * Unit tests for the select missing words question definition class.
  *
- * @package    qtype_gapselect
- * @copyright  2012 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   qtype_gapselect
+ * @copyright 2012 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -34,8 +34,9 @@ require_once($CFG->dirroot . '/question/type/gapselect/edit_form_base.php');
 /**
  * Subclass of qtype_gapselect_edit_form_base that is easier to used in unit tests.
  *
- * @copyright  2012 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2012 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @group qtype_gapselect
  */
 class qtype_gapselect_edit_form_base_testable extends qtype_gapselect_edit_form_base {
     public function __construct() {

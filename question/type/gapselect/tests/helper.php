@@ -17,10 +17,9 @@
 /**
  * Contains the helper class for the select missing words question type tests.
  *
- * @package    qtype
- * @subpackage gapselect
- * @copyright  2011 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   qtype_gapselect
+ * @copyright 2011 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -30,8 +29,8 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Test helper class for the select missing words question type.
  *
- * @copyright  2011 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2011 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_gapselect_test_helper {
     /**

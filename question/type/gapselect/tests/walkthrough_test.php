@@ -18,10 +18,9 @@
  * This file contains tests that walks a question through the interactive
  * behaviour.
  *
- * @package    qtype
- * @subpackage gapselect
- * @copyright  2012 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   qtype_gapselect
+ * @copyright 2012 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -35,9 +34,9 @@ require_once($CFG->dirroot . '/question/type/gapselect/tests/helper.php');
 /**
  * Unit tests for the gap-select question type.
  *
- * @copyright  2012 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @group      qtype_gapselect
+ * @copyright 2012 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @group qtype_gapselect
  */
 class qtype_gapselect_walkthrough_test extends qbehaviour_walkthrough_test_base {
     public function test_interactive_behaviour() {
