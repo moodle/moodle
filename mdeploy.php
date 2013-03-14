@@ -18,14 +18,40 @@
 /**
  * Moodle deployment utility
  *
- * This script looks after deploying available updates to the local Moodle site.
+ * This script looks after deploying new add-ons and available updates for them
+ * to the local Moodle site. It can operate via both HTTP and CLI mode.
+ * Moodle itself calls this utility via the HTTP mode when the admin is about to
+ * install or update an add-on. You can use the CLI mode in your custom deployment
+ * shell scripts.
  *
  * CLI usage example:
+ *
+ *  $ sudo -u apache php mdeploy.php --install \
+ *                                   --package=https://moodle.org/plugins/download.php/...zip \
+ *                                   --typeroot=/var/www/moodle/htdocs/blocks
+ *                                   --name=loancalc
+ *                                   --md5=...
+ *                                   --dataroot=/var/www/moodle/data
+ *
  *  $ sudo -u apache php mdeploy.php --upgrade \
  *                                   --package=https://moodle.org/plugins/download.php/...zip \
- *                                   --dataroot=/home/mudrd8mz/moodledata/moodle24
+ *                                   --typeroot=/var/www/moodle/htdocs/blocks
+ *                                   --name=loancalc
+ *                                   --md5=...
+ *                                   --dataroot=/var/www/moodle/data
+ *
+ * When called via HTTP, additional parameters returnurl, passfile and password must be
+ * provided. Optional proxy configuration can be passed using parameters proxy, proxytype
+ * and proxyuserpwd.
+ *
+ * Changes
+ *
+ * 1.1 - Added support to install a new plugin from the Moodle Plugins directory.
+ * 1.0 - Initial version used in Moodle 2.4 to deploy available updates.
  *
  * @package     core
+ * @subpackage  mdeploy
+ * @version     1.1
  * @copyright   2012 David Mudrak <david@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -1329,7 +1355,7 @@ class worker extends singleton_pattern {
      * @param string $ziplocation full path to the ZIP file
      * @param string $plugintyperoot full path to the plugin's type location
      * @param string $expectedlocation expected full path to the plugin after it is extracted
-     * @param string $backuplocation location of the previous version of the plugin
+     * @param string|bool $backuplocation location of the previous version of the plugin or false for no backup
      */
     protected function unzip_plugin($ziplocation, $plugintyperoot, $expectedlocation, $backuplocation) {
 
