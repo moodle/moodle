@@ -2,7 +2,7 @@ YUI.add('moodle-qtype_ddimageortext-dd', function(Y) {
     var DDIMAGEORTEXTDDNAME = 'ddimageortext_dd';
     var DDIMAGEORTEXT_DD = function() {
         DDIMAGEORTEXT_DD.superclass.constructor.apply(this, arguments);
-    }
+    };
     /**
      * This is the base class for the question rendering and question editing form code.
      */
@@ -120,8 +120,8 @@ YUI.add('moodle-qtype_ddimageortext-dd', function(Y) {
                     var classes = node.getAttribute('class');
                     if (classes !== '') {
                         var classesarr = classes.split(' ');
-                        for (index in classesarr) {
-                            var patt1 = new RegExp('^'+prefix+'([0-9])+$');
+                        for (var index = 0; index < classesarr.length; index++) {
+                            var patt1 = new RegExp('^' + prefix + '([0-9])+$');
                             if (patt1.test(classesarr[index])) {
                                 var patt2 = new RegExp('([0-9])+$');
                                 var match = patt2.exec(classesarr[index]);
@@ -149,7 +149,7 @@ YUI.add('moodle-qtype_ddimageortext-dd', function(Y) {
                     return drag;
                 },
                 draggable_for_question : function (drag, group, choice) {
-                    var dd = new Y.DD.Drag({
+                    new Y.DD.Drag({
                         node: drag,
                         dragMode: 'point',
                         groups: [group]
@@ -168,7 +168,6 @@ YUI.add('moodle-qtype_ddimageortext-dd', function(Y) {
                         var dragnode = e.target.get('node');
                         var draginstanceno = dragnode.getData('draginstanceno');
                         var gooddrop = dragnode.getData('gooddrop');
-                        var endxy;
 
                         if (!gooddrop) {
                             mainobj.reset_drag_xy(draginstanceno);
@@ -183,7 +182,7 @@ YUI.add('moodle-qtype_ddimageortext-dd', function(Y) {
 
                 }
 
-            }
+            };
         },
 
         update_padding_sizes_all : function () {
@@ -233,7 +232,7 @@ YUI.add('moodle-qtype_ddimageortext-dd', function(Y) {
      * This is the code for question rendering.
      */
     Y.extend(DDIMAGEORTEXT_QUESTION, M.qtype_ddimageortext.dd_base_class, {
-        initializer : function(params) {
+        initializer : function() {
             this.doc = this.doc_structure(this);
             this.poll_for_image_load(null, false, 0, this.create_all_drag_and_drops);
             this.doc.bg_img().after('load', this.poll_for_image_load, this,
@@ -250,7 +249,7 @@ YUI.add('moodle-qtype_ddimageortext-dd', function(Y) {
                 var dragitemno =
                     +this.doc.get_classname_numeric_suffix(dragitemhome, 'dragitemhomes');
                 var choice = +this.doc.get_classname_numeric_suffix(dragitemhome, 'choice');
-                var group = +this.doc.get_classname_numeric_suffix(dragitemhome, 'group')
+                var group = +this.doc.get_classname_numeric_suffix(dragitemhome, 'group');
                 var groupsize = this.doc.drop_zone_group(group).size();
                 var dragnode = this.doc.clone_new_drag_item(i, dragitemno);
                 i++;
@@ -275,8 +274,7 @@ YUI.add('moodle-qtype_ddimageortext-dd', function(Y) {
                 this.doc.drop_zones().each(
                     function(v){
                         v.on('dragchange', this.drop_zone_key_press, this);
-                    }
-                , this);
+                    }, this);
             }
         },
         drop_zone_key_press : function (e) {
@@ -304,7 +302,7 @@ YUI.add('moodle-qtype_ddimageortext-dd', function(Y) {
             var next;
             var current = this.current_drag_in_drop(drop);
             if ('' === current) {
-                if (direction == 1) {
+                if (direction === 1) {
                     next = 1;
                 } else {
                     next = 1;
@@ -381,22 +379,20 @@ YUI.add('moodle-qtype_ddimageortext-dd', function(Y) {
         },
         get_choices_for_drop : function(choice, drop) {
             var group = drop.getData('group');
-            var dragitem = null;
-            var dragitems = this.doc.top_node()
-                                .all('div.dragitemgroup'+group+' .choice'+choice+'.drag');
-            return dragitems;
+            return this.doc.top_node().all(
+                    'div.dragitemgroup' + group + ' .choice' + choice + '.drag');
         },
         get_unplaced_choice_for_drop : function(choice, drop) {
             var dragitems = this.get_choices_for_drop(choice, drop);
             var dragitem = null;
-            if (dragitems.some(function (d) {
+            dragitems.some(function (d) {
                 if (!d.hasClass('placed') && !d.hasClass('yui3-dd-dragging')) {
                     dragitem = d;
                     return true;
                 } else {
                     return false;
                 }
-            }));
+            });
             return dragitem;
         },
         init_drops : function () {
@@ -407,7 +403,14 @@ YUI.add('moodle-qtype_ddimageortext-dd', function(Y) {
                 dropareas.append(groupnode);
                 groupnodes[groupno] = groupnode;
             }
-            for (var dropno in this.get('drops')){
+            var drop_hit_handler = function(e) {
+                var drag = e.drag.get('node');
+                var drop = e.drop.get('node');
+                if (+drop.getData('group') === drag.getData('group')){
+                    this.place_drag_in_drop(drag, drop);
+                }
+            };
+            for (var dropno in this.get('drops')) {
                 var drop = this.get('drops')[dropno];
                 var nodeclass = 'dropzone group'+drop.group+' place'+dropno;
                 var title = drop.text.replace('"', '\"');
@@ -421,14 +424,8 @@ YUI.add('moodle-qtype_ddimageortext-dd', function(Y) {
                 dropnode.setData('group', drop.group);
                 var dropdd = new Y.DD.Drop({
                       node: dropnode, groups : [drop.group]});
-                dropdd.on('drop:hit', function(e) {
-                    var drag = e.drag.get('node');
-                    var drop = e.drop.get('node');
-                    if (+drop.getData('group') === drag.getData('group')){
-                        this.place_drag_in_drop(drag, drop);
-                    }
-                }, this);
-            };
+                dropdd.on('drop:hit', drop_hit_handler, this);
+            }
         }
     }, {NAME : DDIMAGEORTEXTQUESTIONNAME, ATTRS : {}});
 
@@ -462,7 +459,7 @@ YUI.add('moodle-qtype_ddimageortext-dd', function(Y) {
     });
     M.qtype_ddimageortext.init_question = function(config) {
         return new DDIMAGEORTEXT_QUESTION(config);
-    }
+    };
 }, '@VERSION@', {
       requires:['node', 'dd', 'dd-drop', 'dd-constrain']
 });

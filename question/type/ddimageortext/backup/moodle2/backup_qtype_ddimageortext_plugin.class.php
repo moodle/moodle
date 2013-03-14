@@ -15,19 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    moodlecore
- * @subpackage backup-moodle2
- * @copyright  2011 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   qtype_ddimageortext
+ * @copyright 2011 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
 
 
 /**
- * Provides the information to backup ddimageortext questions
+ * Provides the information to backup ddimageortext questions.
  *
- * @copyright  2011 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2011 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class backup_qtype_ddimageortext_plugin extends backup_qtype_plugin {
 
@@ -36,7 +35,7 @@ class backup_qtype_ddimageortext_plugin extends backup_qtype_plugin {
     }
 
     /**
-     * Returns the qtype information to attach to question element
+     * Returns the qtype information to attach to question element.
      */
     protected function define_question_plugin_structure() {
         $qtype = self::qtype_name();

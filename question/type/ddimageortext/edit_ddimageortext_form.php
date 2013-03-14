@@ -14,24 +14,25 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once($CFG->dirroot.'/question/type/ddimageortext/edit_ddtoimage_form_base.php');
 
 /**
  * Defines the editing form for the drag-and-drop images onto images question type.
  *
- * @package    qtype
- * @subpackage ddimageortext
- * @copyright  2009 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   qtype_ddimageortext
+ * @copyright 2009 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot . '/question/type/ddimageortext/edit_ddtoimage_form_base.php');
+
+
 /**
  * Drag-and-drop images onto images  editing form definition.
  *
- * @copyright  2009 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2009 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_ddimageortext_edit_form extends qtype_ddtoimage_edit_form_base {
 
@@ -44,7 +45,7 @@ class qtype_ddimageortext_edit_form extends qtype_ddtoimage_edit_form_base {
         $question = $this->data_preprocessing_combined_feedback($question, true);
         $question = $this->data_preprocessing_hints($question, true, true);
 
-        $dragids = array(); // drag no -> dragid
+        $dragids = array(); // Drag no -> dragid.
         if (!empty($question->options)) {
             $question->shuffleanswers = $question->options->shuffleanswers;
             $question->drags = array();
@@ -65,7 +66,7 @@ class qtype_ddimageortext_edit_form extends qtype_ddtoimage_edit_form_base {
                 $question->drops[$drop->no -1]['ytop'] = $drop->ytop;
             }
         }
-        //initialise file picker for bgimage
+        // Initialise file picker for bgimage.
         $draftitemid = file_get_submitted_draft_itemid('bgimage');
 
         file_prepare_draft_area($draftitemid, $this->context->id, 'qtype_ddimageortext',
@@ -73,12 +74,12 @@ class qtype_ddimageortext_edit_form extends qtype_ddtoimage_edit_form_base {
                                 self::file_picker_options());
         $question->bgimage = $draftitemid;
 
-        //initialise file picker for dragimages
+        // Initialise file picker for dragimages.
         list(, $imagerepeats) = $this->get_drag_item_repeats();
         $draftitemids = optional_param_array('dragitem', array(), PARAM_INT);
         for ($imageindex = 0; $imageindex < $imagerepeats; $imageindex++) {
             $draftitemid = isset($draftitemids[$imageindex]) ? $draftitemids[$imageindex] :0;
-            //numbers not allowed in filearea name
+            // Numbers not allowed in filearea name.
             $itemid = isset($dragids[$imageindex]) ? $dragids[$imageindex] : null;
             file_prepare_draft_area($draftitemid, $this->context->id, 'qtype_ddimageortext',
                                 'dragimage', $itemid, self::file_picker_options());
@@ -124,7 +125,7 @@ class qtype_ddimageortext_edit_form extends qtype_ddtoimage_edit_form_base {
                                         array($params));
     }
 
-    //drag items
+    // Drag items.
 
     protected function definition_draggable_items($mform, $itemrepeatsatstart) {
 
@@ -176,7 +177,7 @@ class qtype_ddimageortext_edit_form extends qtype_ddtoimage_edit_form_base {
         return $repeatedoptions;
     }
 
-    //drop zones
+    // Drop zones.
 
     protected function drop_zone($mform, $imagerepeats) {
         $dropzoneitem = array();
@@ -223,7 +224,7 @@ class qtype_ddimageortext_edit_form extends qtype_ddtoimage_edit_form_base {
         return $repeatedoptions;
     }
 
-        public function validation($data, $files) {
+    public function validation($data, $files) {
         $errors = parent::validation($data, $files);
         if (!self::file_uploaded($data['bgimage'])) {
             $errors["bgimage"] = get_string('formerror_nobgimage', 'qtype_'.$this->qtype());
@@ -289,5 +290,4 @@ class qtype_ddimageortext_edit_form extends qtype_ddtoimage_edit_form_base {
         }
         return $errors;
     }
-
 }

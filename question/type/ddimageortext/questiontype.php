@@ -89,7 +89,7 @@ class qtype_ddimageortext extends qtype_ddtoimage_base {
             $DB->insert_record('qtype_ddimageortext_drops', $drop);
         }
 
-        //an array of drag no -> drag id
+        // An array of drag no -> drag id.
         $olddragids = $DB->get_records_menu('qtype_ddimageortext_drags',
                                     array('questionid' => $formdata->id),
                                     '', 'no, id');
@@ -121,7 +121,7 @@ class qtype_ddimageortext extends qtype_ddtoimage_base {
                                         'qtype_ddimageortext', 'dragimage', $drag->id,
                                         array('subdirs' => 0, 'maxbytes' => 0, 'maxfiles' => 1));
                 } else {
-                    //delete any existing files for draggable text item type
+                    // Delete any existing files for draggable text item type.
                     $fs = get_file_storage();
                     $fs->delete_area_files($formdata->context->id, 'qtype_ddimageortext',
                                                                 'dragimage', $drag->id);
