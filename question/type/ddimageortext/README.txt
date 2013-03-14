@@ -9,10 +9,9 @@ to be installed in order to work.
 
 This question type was written by Jamie Pratt (http://jamiep.org/).
 
-This question type is compatible with Moodle 2.1+ (MOODLE_21_STABLE branch) or
-2.2+ (master branch).
+This question type is compatible with Moodle 2.3+.
 
-To install using git for a 2.2+ Moodle installation, type this command in the
+To install using git for a 2.3+ Moodle installation, type this command in the
 root of your Moodle install:
 
 git clone git://github.com/moodleou/moodle-qtype_ddimageortext.git question/type/ddimageortext
