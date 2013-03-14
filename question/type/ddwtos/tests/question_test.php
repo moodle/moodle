@@ -17,10 +17,9 @@
 /**
  * Unit tests for the drag-and-drop words into sentences question definition class.
  *
- * @package    qtype
- * @subpackage ddwtos
- * @copyright  2012 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   qtype_ddwtos
+ * @copyright 2012 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -34,9 +33,9 @@ require_once($CFG->dirroot . '/question/type/ddwtos/tests/helper.php');
 /**
  * Unit tests for the matching question definition class.
  *
- * @copyright  2012 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @group      qtype_ddwtos
+ * @copyright 2012 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @group qtype_ddwtos
  */
 class qtype_ddwtos_question_test extends basic_testcase {
 
