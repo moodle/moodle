@@ -699,23 +699,6 @@ function blog_get_headers($courseid=null, $groupid=null, $userid=null, $tagid=nu
 
     $blogurl = new moodle_url('/blog/index.php');
 
-    // If the title is not yet set, it's likely that the context isn't set either, so skip this part
-    $pagetitle = $PAGE->title;
-    if (!empty($pagetitle)) {
-        $contexturl = blog_get_context_url();
-
-        // Look at the context URL, it may have additional params that are not in the current URL
-        if (!$blogurl->compare($contexturl)) {
-            $blogurl = $contexturl;
-            if (empty($courseid)) {
-                $courseid = $blogurl->param('courseid');
-            }
-            if (empty($modid)) {
-                $modid = $blogurl->param('modid');
-            }
-        }
-    }
-
     $headers['stradd'] = get_string('addnewentry', 'blog');
     $headers['strview'] = null;
 
