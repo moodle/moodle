@@ -1,0 +1,10 @@
+{
+  "name": "moodle-core-notification",
+  "builds": {
+    "moodle-core-notification": {
+      "jsfiles": [
+        "notification.js"
+      ]
+    }
+  }
+}
