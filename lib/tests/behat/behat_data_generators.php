@@ -194,6 +194,7 @@ class behat_data_generators extends behat_base {
      * @return void
      */
     protected function adapt_enrol_user($data) {
+        global $SITE;
 
         if (empty($data['roleid'])) {
             throw new Exception('\'course enrolments\' requires the field \'role\' to be specified');
@@ -211,7 +212,17 @@ class behat_data_generators extends behat_base {
             $data['enrol'] = 'manual';
         }
 
-        $this->datagenerator->enrol_user($data['userid'], $data['courseid'], $data['roleid'], $data['enrol']);
+        // If the provided course shortname is the site shortname we consider it a system role assign.
+        if ($data['courseid'] == $SITE->id) {
+            // Frontpage course assign.
+            $context = context_course::instance($data['courseid']);
+            role_assign($data['roleid'], $data['userid'], $context->id);
+
+        } else {
+            // Course assign.
+            $this->datagenerator->enrol_user($data['userid'], $data['courseid'], $data['roleid'], $data['enrol']);
+        }
+
     }
 
     /**
