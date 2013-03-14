@@ -106,6 +106,13 @@ class testable_worker extends worker {
     public function remove_directory($path, $keeppathroot = false) {
         return parent::remove_directory($path, $keeppathroot);
     }
+
+    /**
+     * Provides access to the protected method.
+     */
+    public function create_directory_precheck($path) {
+        return parent::create_directory_precheck($path);
+    }
 }
 
 
@@ -283,5 +290,14 @@ class mdeploytest extends PHPUnit_Framework_TestCase {
         $this->assertFalse(file_exists($root.'/c/a.txt'));
         $this->assertTrue($worker->remove_directory($root.'/c'));
         $this->assertFalse(is_dir($root.'/c'));
+    }
+
+    public function test_create_directory_precheck() {
+        $worker = testable_worker::instance();
+
+        $root = sys_get_temp_dir().'/'.uniqid('mdeploytest', true);
+        $this->assertFalse(file_exists($root));
+        $this->assertTrue($worker->create_directory_precheck($root));
+        $this->assertFalse(file_exists($root)); // The precheck is supposed to remove it again.
     }
 }
