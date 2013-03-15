@@ -28,7 +28,9 @@
 require_once(__DIR__ . '/../../../lib/behat/behat_base.php');
 
 use Behat\Behat\Context\Step\Given as Given,
-    Behat\Gherkin\Node\TableNode as TableNode;
+    Behat\Gherkin\Node\TableNode as TableNode,
+    Behat\Mink\Exception\ExpectationException as ExpectationException,
+    Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
 
 /**
  * Course-related steps definitions.
@@ -94,4 +96,92 @@ class behat_course extends behat_base {
         $activitynode->doubleClick();
     }
 
+    /**
+     * Turns course section highlighting on.
+     *
+     * @Given /^I turn section "(?P<section_number>\d+)" highlighting on$/
+     * @param int $sectionnumber The section number
+     */
+    public function i_turn_section_highlighting_on($sectionnumber) {
+
+        // Ensures the section exists.
+        $xpath = $this->section_exists($sectionnumber);
+
+        return array(
+            new Given('I click on "' . get_string('markthistopic') . '" "link" in the "' . $xpath . '" "xpath_element"'),
+            new Given('I wait "2" seconds')
+        );
+    }
+
+    /**
+     * Turns course section highlighting off.
+     *
+     * @Given /^I turn section "(?P<section_number>\d+)" highlighting off$/
+     * @param int $sectionnumber The section number
+     */
+    public function i_turn_section_highlighting_off($sectionnumber) {
+
+        // Ensures the section exists.
+        $xpath = $this->section_exists($sectionnumber);
+
+        return array(
+            new Given('I click on "' . get_string('markedthistopic') . '" "link" in the "' . $xpath . '" "xpath_element"'),
+            new Given('I wait "2" seconds')
+        );
+    }
+
+    /**
+     * Checks if the specified course section hightlighting is turned on.
+     *
+     * @throws ElementNotFoundException
+     * @throws ExpectationException
+     * @Then /^section "(?P<section_number>\d+)" should be highlighted$/
+     * @param int $sectionnumber The section number
+     */
+    public function section_should_be_highlighted($sectionnumber) {
+
+        // Ensures the section exists.
+        $xpath = $this->section_exists($sectionnumber);
+
+        // The important checking, we can not check the img.
+        $xpath = $xpath . "/descendant::img[@alt='" . get_string('markedthistopic') . "'][contains(@src, 'marked')]";
+        $exception = new ExpectationException('The "' . $sectionnumber . '" section is not highlighted', $this->getSession());
+        $this->find('xpath', $xpath, $exception);
+    }
+
+    /**
+     * Checks if the specified course section highlighting is turned off.
+     *
+     * @Then /^section "(?P<section_number>\d+)" should not be highlighted$/
+     * @param int $sectionnumber The section number
+     */
+    public function section_should_not_be_highlighted($sectionnumber) {
+
+        // We only catch ExpectationException, ElementNotFoundException should be thrown if the specified section does not exist.
+        try {
+            $this->section_should_be_highlighted($sectionnumber);
+        } catch (ExpectationException $e) {
+            // ExpectedException means that it is not highlighted.
+            return;
+        }
+
+        throw new ExpectationException('The "' . $sectionnumber . '" section is highlighted', $this->getSession());
+    }
+
+    /**
+     * Checks if the course section exists.
+     *
+     * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param int $sectionnumber
+     * @return string The xpath of the existing section.
+     */
+    protected function section_exists($sectionnumber) {
+
+        // Just to give more info in case it does not exist.
+        $xpath = "//li[@id='section-" . $sectionnumber . "']";
+        $exception = new ElementNotFoundException($this->getSession(), "Section $sectionnumber ");
+        $this->find('xpath', $xpath, $exception);
+
+        return $xpath;
+    }
 }
