@@ -649,8 +649,11 @@ abstract class repository {
     public final function check_capability() {
         global $USER;
 
+        // The context we are on.
+        $currentcontext = $this->context;
+
         // Ensure that the user can view the repository in the current context.
-        $can = has_capability('repository/'.$this->get_typename().':view', $this->context);
+        $can = has_capability('repository/'.$this->get_typename().':view', $currentcontext);
 
         // Context in which the repository has been created.
         $repocontext = context::instance_by_id($this->instance->contextid);
@@ -662,14 +665,29 @@ abstract class repository {
             }
         }
 
-        // Ensure that the user can view the repository in the context of the repository.
-        // We need to perform the check when already disallowed.
+        // We are going to ensure that the current context was legit, and reliable to check
+        // the capability against. (No need to do that if we already cannot).
         if ($can) {
-            if ($repocontext->contextlevel == CONTEXT_USER && $repocontext->instanceid != $USER->id) {
-                // Prevent URL hijack to access someone else's repository.
-                $can = false;
+            if ($repocontext->contextlevel == CONTEXT_USER) {
+                // The repository is a user instance, ensure we're the right user to access it!
+                if ($repocontext->instanceid != $USER->id) {
+                    $can = false;
+                }
+            } else if ($repocontext->contextlevel == CONTEXT_COURSE) {
+                // The repository is a course one. Let's check that we are on the right course.
+                if (in_array($currentcontext->contextlevel, array(CONTEXT_COURSE, CONTEXT_MODULE, CONTEXT_BLOCK))) {
+                    $coursecontext = $currentcontext->get_course_context();
+                    if ($coursecontext->instanceid != $repocontext->instanceid) {
+                        $can = false;
+                    }
+                } else {
+                    // We are on a parent context, therefore it's legit to check the permissions
+                    // in the current context.
+                }
             } else {
-                $can = has_capability('repository/'.$this->get_typename().':view', $repocontext);
+                // Nothing to check here, system instances can have different permissions on different
+                // levels. We do not want to prevent URL hack here, because it does not make sense to
+                // prevent a user to access a repository in a context if it's accessible in another one.
             }
         }
 
