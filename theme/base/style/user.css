@@ -2,10 +2,10 @@
 .userprofile .fullprofilelink {text-align:center; margin:10px;}
 .userprofile .profilepicture {float:left; margin-right:20px;}
 .userprofile .description {margin-bottom:20px;}
-.userprofile dl {margin-top:10px;  margin-left:0px;  width:100%;}
+.userprofile dl {margin-top:10px;  margin-left:0;  width:100%;}
 .userprofile dl dt, .userprofile dl dd {padding-top:3px;  padding-bottom:3px;}
-.userprofile dl dt {margin:0px;  font-weight:bold;  display:block; float:left; width:110px; margin-right:10px;}
-.userprofile dl dd {display:block; margin:0px; margin-left:120px;}
+.userprofile dl dt {margin:0; font-weight:bold; display:block; float:left; width:110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.userprofile dl dd {margin:0; margin-left:120px;}
 
 .user-box {margin:8px;width:115px;height:160px;text-align:center;float:left;clear: none;}
 
