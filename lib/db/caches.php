@@ -111,5 +111,12 @@ $definitions = array(
         'simplekeys' => true,
         'simpledata' => true,
         'persistent' => true,
-    )
+    ),
+
+    // YUI Module cache.
+    // This stores the YUI module metadata for Shifted YUI modules in Moodle.
+    'yuimodules' => array(
+        'mode' => cache_store::MODE_APPLICATION,
+        'persistent' => true,
+    ),
 );
