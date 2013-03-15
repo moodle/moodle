@@ -185,6 +185,9 @@ class restore_qtype_match_plugin extends restore_qtype_plugin {
                   WHERE bi.backupid = ?
                     AND bi.itemname = 'question_created'", array($this->get_restoreid()));
         foreach ($rs as $rec) {
+            if (!$rec->subquestions) {
+                continue;
+            }
             $subquestionsarr = explode(',', $rec->subquestions);
             foreach ($subquestionsarr as $key => $subquestion) {
                 $subquestionsarr[$key] = $this->get_mappingid(
