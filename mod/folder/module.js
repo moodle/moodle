@@ -35,6 +35,9 @@ M.mod_folder.init_tree = function(Y, id, expand_all) {
 
         if (expand_all) {
             tree.expandAll();
+        } else {
+            // Else just expand the top node.
+            tree.getNodeByIndex(1).expand();            
         }
 
         tree.render();

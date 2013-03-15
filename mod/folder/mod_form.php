@@ -55,7 +55,10 @@ class mod_folder_mod_form extends moodleform_mod {
         $mform->addHelpButton('display', 'display', 'mod_folder');
         $mform->setExpanded('content');
 
-
+        // Adding option to show sub-folders expanded or collapsed by default.
+        $mform->addElement('advcheckbox', 'show_expanded', get_string('show_expanded', 'folder'));
+        $mform->addHelpButton('show_expanded', 'show_expanded', 'mod_folder');
+        $mform->setDefault('show_expanded', $config->show_expanded);
         //-------------------------------------------------------
         $this->standard_coursemodule_elements();
 
