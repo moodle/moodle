@@ -96,7 +96,7 @@ if ($context->contextlevel == CONTEXT_COURSE) {
 }
 
 /// Security: we cannot perform any action if the type is not visible or if the context has been disabled
-if (!empty($new)){
+if (!empty($new) && empty($edit)){
     $type = repository::get_type_by_typename($new);
 } else if (!empty($edit)){
     $instance = repository::get_instance($edit);
