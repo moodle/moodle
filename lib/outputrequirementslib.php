@@ -155,7 +155,7 @@ class page_requirements_manager {
         $sep = empty($CFG->yuislasharguments) ? '?' : '/';
 
         $this->yui3loader = new stdClass();
-        $this->YUI_config = new stdClass();
+        $this->YUI_config = new YUI_config();
 
         // Set up some loader options.
         if (!empty($CFG->useexternalyui) and strpos($CFG->httpswwwroot, 'https:') !== 0) {
@@ -181,54 +181,34 @@ class page_requirements_manager {
         $this->YUI_config->base         = $this->yui3loader->base;
         $this->YUI_config->comboBase    = $this->yui3loader->comboBase;
         $this->YUI_config->combine      = $this->yui3loader->combine;
-        $this->YUI_config->insertBefore = 'firstthemesheet';
-        $this->YUI_config->modules      = array();
-        $this->YUI_config->groups       = array(
-            // Loader for our YUI modules stored in /yui/ subdirectories of our plugins and subsystems.
-            'moodle' => array(
-                'name' => 'moodle',
-                'base' => $CFG->httpswwwroot . '/theme/yui_combo.php'.$sep.'moodle/'.$jsrev.'/',
-                'comboBase' => $CFG->httpswwwroot . '/theme/yui_combo.php'.$sep,
-                'combine' => $this->yui3loader->combine,
-                'ext' => false,
-                'root' => 'moodle/'.$jsrev.'/', // Add the rev to the root path so that we can control caching.
-                'patterns' => array(
-                    'moodle-' => array(
-                        'group' => 'moodle',
-                        'configFn' => '@MOODLECONFIGFN@'
-                    )
-                )
-            ),
-            // Gallery modules are not supported much, sorry.
-            'local' => array(
-                'name' => 'gallery',
-                'base' => $CFG->httpswwwroot . '/lib/yui/gallery/',
-                'comboBase' => $CFG->httpswwwroot . '/theme/yui_combo.php'.$sep,
-                'combine' => $this->yui3loader->combine,
-                'ext' => false,
-                'root' => 'gallery/',
-                'patterns' => array(
-                    'gallery-' => array(
-                        'group' => 'gallery',
-                        'configFn' => '@GALLERYCONFIGFN@',
-                    )
-                )
-            ),
+        $this->YUI_config->add_group('yui2', array(
             // Loader configuration for our 2in3, for now ignores $CFG->useexternalyui.
-            'yui2' => array(
-                'base' => $CFG->httpswwwroot . '/lib/yuilib/2in3/' . $CFG->yui2version . '/build/',
-                'comboBase' => $CFG->httpswwwroot . '/theme/yui_combo.php'.$sep,
-                'combine' => $this->yui3loader->combine,
-                'ext' => false,
-                'root' => '2in3/' . $CFG->yui2version .'/build/',
-                'patterns' => array(
-                    'yui2-' => array(
-                        'group' => 'yui2',
-                        'configFn' => '@2IN3CONFIGFN@'
-                    )
+            'base' => $CFG->httpswwwroot . '/lib/yuilib/2in3/' . $CFG->yui2version . '/build/',
+            'comboBase' => $CFG->httpswwwroot . '/theme/yui_combo.php'.$sep,
+            'combine' => $this->yui3loader->combine,
+            'ext' => false,
+            'root' => '2in3/' . $CFG->yui2version .'/build/',
+            'patterns' => array(
+                'yui2-' => array(
+                    'group' => 'yui2',
+                    'configFn' => '@2IN3CONFIGFN@'
                 )
             )
-        );
+        ));
+        $this->YUI_config->add_group('moodle', array(
+            'name' => 'moodle',
+            'base' => $CFG->httpswwwroot . '/theme/yui_combo.php'.$sep.'moodle/'.$jsrev.'/',
+            'combine' => $this->yui3loader->combine,
+            'comboBase' => $CFG->httpswwwroot . '/theme/yui_combo.php'.$sep,
+            'ext' => false,
+            'root' => 'moodle/'.$jsrev.'/', // Add the rev to the root path so that we can control caching.
+            'patterns' => array(
+                'moodle-' => array(
+                    'group' => 'moodle',
+                    'configFn' => '@MOODLECONFIGFN@'
+                )
+            )
+        ));
 
         // Set some more loader options applying to groups too.
         if (debugging('', DEBUG_DEVELOPER)) {
@@ -535,7 +515,7 @@ class page_requirements_manager {
         if ($this->headdone) {
             $this->extramodules[$module['name']] = $module;
         } else {
-            $this->YUI_config->modules[$module['name']] = $module;
+            $this->YUI_config->add_module_config($module['name'], $module);
         }
         if (debugging('', DEBUG_DEVELOPER)) {
             if (!array_key_exists($module['name'], $this->debug_moduleloadstacktraces)) {
@@ -1206,6 +1186,100 @@ var yui2in3ConfigFn = function(me) {if(/-skin|reset|fonts|grids|base/.test(me.na
      */
     public function is_top_of_body_done() {
         return $this->topofbodydone;
+    }
+}
+
+/**
+ * This class represents the YUI configuration.
+ *
+ * @copyright 2013 Anderw Nicols
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.5
+ * @package core
+ * @category output
+ */
+class YUI_config {
+    // These settings must be public so that whent he object is converted to json they are exposed.
+    public $debug = false;
+    public $base;
+    public $comboBase;
+    public $combine;
+    public $filter = null;
+    public $insertBefore = 'firstthemesheet';
+    public $groups = array();
+    public $modules = array();
+
+    private $configurable = array(
+        'debug',
+        'base',
+        'comboBase',
+        'combine',
+        'filter',
+    );
+
+    function __set($name, $value) {
+        if (!in_array($name, $this->configurable)) {
+            throw new coding_exception('tryingtoconfigureunconfigurable');
+        }
+        $this->$name = $value;
+    }
+
+    /**
+     * Create a new group within the YUI_config system.
+     *
+     * @param String $name The name of the group. This must be unique and
+     * not previously used.
+     * @param Array $config The configuration for this group.
+     * @return void
+     */
+    public function add_group($name, $config) {
+        if (isset($this->groups[$name])) {
+            throw new coding_exception('groupalreadyexists');
+        }
+        $this->groups[$name] = $config;
+    }
+
+    /**
+     * Update an existing group configuration
+     *
+     * Note, any existing configuration for that group will be wiped out.
+     * This includes module configuration.
+     *
+     * @param String $name The name of the group. This must be unique and
+     * not previously used.
+     * @param Array $config The configuration for this group.
+     * @return void
+     */
+    public function update_group($name, $config) {
+        if (!isset($this->groups[$name])) {
+            throw new coding_exception('groupdoesnotexist');
+        }
+        $this->groups[$name] = $config;
+    }
+
+    /**
+     * Add configuration for a specific module.
+     *
+     * @param String $name The name of the module to add configuration for.
+     * @param Array $config The configuration for the specified module.
+     * @param String $group The name of the group to add configuration for.
+     * If not specified, then this module is added to the global
+     * configuration.
+     * @return void
+     */
+    public function add_module_config($name, $config, $group = null) {
+        if ($group) {
+            if (!isset($this->groups[$name])) {
+                throw new coding_exception('groupdoesnotexist');
+            }
+            if (!isset($this->groups[$group]['modules'])) {
+                $this->groups[$group]['modules'] = array();
+            }
+            $modules = &$this->groups[$group]['modules'];
+        } else {
+            $modules = &$this->modules;
+        }
+        $modules[$name] = $config;
     }
 }
 
