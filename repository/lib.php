@@ -645,7 +645,7 @@ abstract class repository {
         $currentcontext = $this->context;
 
         // Ensure that the user can view the repository in the current context.
-        $can = has_capability('repository/'.$this->type.':view', $this->currentcontext);
+        $can = has_capability('repository/'.$this->type.':view', $currentcontext);
 
         // Context in which the repository has been created.
         $repocontext = context::instance_by_id($this->instance->contextid);
