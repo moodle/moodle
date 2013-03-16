@@ -1,0 +1,10 @@
+{
+  "name": "moodle-core-blocks",
+  "builds": {
+    "moodle-core-blocks": {
+      "jsfiles": [
+        "blocks.js"
+      ]
+    }
+  }
+}
