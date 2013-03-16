@@ -97,6 +97,17 @@ class plugin_manager {
     }
 
     /**
+     * Returns the result of {@link get_plugin_types()} ordered for humans
+     *
+     * @see self::reorder_plugin_types()
+     * @param bool $fullpaths false means relative paths from dirroot
+     * @return array (string)name => (string)location
+     */
+    public function get_plugin_types($fullpaths = true) {
+        return $this->reorder_plugin_types(get_plugin_types($fullpaths));
+    }
+
+    /**
      * Returns a tree of known plugins and information about them
      *
      * @param bool $disablecache force reload, cache can be used otherwise
@@ -119,8 +130,7 @@ class plugin_manager {
                 }
             }
             $this->pluginsinfo = array();
-            $plugintypes = get_plugin_types();
-            $plugintypes = $this->reorder_plugin_types($plugintypes);
+            $plugintypes = $this->get_plugin_types();
             foreach ($plugintypes as $plugintype => $plugintyperootdir) {
                 if (in_array($plugintype, array('base', 'general'))) {
                     throw new coding_exception('Illegal usage of reserved word for plugin type');
