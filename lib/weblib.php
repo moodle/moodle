@@ -3463,3 +3463,72 @@ function print_password_policy() {
     }
     return $message;
 }
+
+/**
+ * Get the value of a help string fully prepared for display in the current language.
+ *
+ * @param string $identifier The identifier of the string to search for.
+ * @param string $component The module the string is associated with.
+ * @param boolean $ajax Whether this help is called from an AJAX script.
+ *                This is used to influence text formatting and determines
+ *                which format to output the doclink in.
+ * @return Object An object containing:
+ * - heading: Any heading that there may be for this help string.
+ * - text: The wiki-formatted help string.
+ * - doclink: An object containing a link, the linktext, and any additional
+ *            CSS classes to apply to that link. Only present if $ajax = false.
+ * - completedoclink: A text representation of the doclink. Only present if $ajax = true.
+ */
+function get_formatted_help_string($identifier, $component, $ajax = false) {
+    global $CFG, $OUTPUT;
+    $sm = get_string_manager();
+
+    if (!$sm->string_exists($identifier, $component) ||
+        !$sm->string_exists($identifier . '_help', $component)) {
+        // Strings in the on-disk cache may be dirty - try to rebuild it and check again.
+        $sm->load_component_strings($component, current_language(), true);
+    }
+
+    $data = new stdClass();
+
+    if ($sm->string_exists($identifier, $component)) {
+        $data->heading = format_string(get_string($identifier, $component));
+    } else {
+        // Gracefully fall back to an empty string.
+        $data->heading = '';
+    }
+
+    if ($sm->string_exists($identifier . '_help', $component)) {
+        $options = new stdClass();
+        $options->trusted = false;
+        $options->noclean = false;
+        $options->smiley = false;
+        $options->filter = false;
+        $options->para = true;
+        $options->newlines = false;
+        $options->overflowdiv = !$ajax;
+
+        // Should be simple wiki only MDL-21695.
+        $data->text =  format_text(get_string($identifier.'_help', $component), FORMAT_MARKDOWN, $options);
+
+        $helplink = $identifier . '_link';
+        if ($sm->string_exists($helplink, $component)) {  // Link to further info in Moodle docs
+            $link = get_string($helplink, $component);
+            $linktext = get_string('morehelp');
+
+            $data->doclink = new stdClass();
+            $url = new moodle_url(get_docs_url($link));
+            if ($ajax) {
+                $data->doclink->link = $url->out();
+                $data->doclink->linktext = $linktext;
+                $data->doclink->class = ($CFG->doctonewwindow) ? 'helplinkpopup' : '';
+            } else {
+                $data->completedoclink = html_writer::tag('div', $OUTPUT->doc_link($link, $linktext), array('class' => 'helpdoclink'));
+            }
+        }
+    } else {
+        $data->text = html_writer::tag('p',
+                html_writer::tag('strong', 'TODO') . ": missing help string [{$identifier}_help, {$component}]");
+    }
+    return $data;
+}
