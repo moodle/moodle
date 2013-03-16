@@ -54,7 +54,7 @@ class qformat_blackboard_six_pool_test extends question_testcase {
         $importer = new qformat_blackboard_six();
         $questions = $importer->readquestions($xml);
 
-        $q = $questions[4];
+        $q = $questions[5];
 
         $expectedq = new stdClass();
         $expectedq->qtype = 'match';
@@ -89,7 +89,7 @@ class qformat_blackboard_six_pool_test extends question_testcase {
 
         $importer = new qformat_blackboard_six();
         $questions = $importer->readquestions($xml);
-        $q = $questions[1];
+        $q = $questions[2];
 
         $expectedq = new stdClass();
         $expectedq->qtype = 'multichoice';
@@ -148,7 +148,7 @@ class qformat_blackboard_six_pool_test extends question_testcase {
 
         $importer = new qformat_blackboard_six();
         $questions = $importer->readquestions($xml);
-        $q = $questions[2];
+        $q = $questions[3];
 
         $expectedq = new stdClass();
         $expectedq->qtype = 'multichoice';
@@ -221,7 +221,7 @@ class qformat_blackboard_six_pool_test extends question_testcase {
 
         $importer = new qformat_blackboard_six();
         $questions = $importer->readquestions($xml);
-        $q = $questions[0];
+        $q = $questions[1];
 
         $expectedq = new stdClass();
         $expectedq->qtype = 'truefalse';
@@ -250,7 +250,7 @@ class qformat_blackboard_six_pool_test extends question_testcase {
 
         $importer = new qformat_blackboard_six();
         $questions = $importer->readquestions($xml);
-        $q = $questions[3];
+        $q = $questions[4];
 
         $expectedq = new stdClass();
         $expectedq->qtype = 'shortanswer';
@@ -284,7 +284,7 @@ class qformat_blackboard_six_pool_test extends question_testcase {
 
         $importer = new qformat_blackboard_six();
         $questions = $importer->readquestions($xml);
-        $q = $questions[5];
+        $q = $questions[6];
 
         $expectedq = new stdClass();
         $expectedq->qtype = 'essay';
@@ -302,6 +302,21 @@ class qformat_blackboard_six_pool_test extends question_testcase {
                 'text' => 'Blackboard answer for essay questions will be imported as informations for graders.',
                 'format' => FORMAT_HTML,
             );
+
+        $this->assert(new question_check_specified_fields_expectation($expectedq), $q);
+    }
+
+    public function test_import_category() {
+
+        $xml = $this->make_test_xml();
+
+        $importer = new qformat_blackboard_six();
+        $questions = $importer->readquestions($xml);
+        $q = $questions[0];
+
+        $expectedq = new stdClass();
+        $expectedq->qtype = 'category';
+        $expectedq->category = 'exam 3 2008-9';
 
         $this->assert(new question_check_specified_fields_expectation($expectedq), $q);
     }

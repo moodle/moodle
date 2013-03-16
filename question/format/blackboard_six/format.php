@@ -185,6 +185,14 @@ class qformat_blackboard_six extends qformat_blackboard_six_base {
             $questions = array_merge($questions, $importer->readquestions($fileobj->text));
         }
 
+        // Give any unnamed categories generated names.
+        $unnamedcount = 0;
+        foreach ($questions as $question) {
+            if ($question->qtype == 'category' && $question->category == '') {
+                $question->category = get_string('importedcategory', 'qformat_blackboard_six', ++$unnamedcount);
+            }
+        }
+
         return $questions;
     }
 }
