@@ -1,0 +1,10 @@
+{
+  "name": "moodle-block_navigation-navigation",
+  "builds": {
+    "moodle-block_navigation-navigation": {
+      "jsfiles": [
+        "navigation.js"
+      ]
+    }
+  }
+}

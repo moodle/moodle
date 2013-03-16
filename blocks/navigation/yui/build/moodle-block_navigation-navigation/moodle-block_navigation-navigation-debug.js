@@ -1,4 +1,4 @@
-YUI.add('moodle-block_navigation-navigation', function(Y){
+YUI.add('moodle-block_navigation-navigation', function (Y, NAME) {
 
 /**
  * A 'actionkey' Event to help with Y.delegate().
@@ -28,10 +28,11 @@ Y.Event.define("actionkey", {
     },
 
     _keyHandler: function (e, notifier, args) {
+        var actObj;
         if (!args.actions) {
-            var actObj = {collapse:true, expand:true, toggle:true, enter:true};
+            actObj = {collapse:true, expand:true, toggle:true, enter:true};
         } else {
-            var actObj = args.actions;
+            actObj = args.actions;
         }
         if (this._keys[e.keyCode] && actObj[this._keys[e.keyCode]]) {
             e.action = this._keys[e.keyCode];
@@ -41,7 +42,7 @@ Y.Event.define("actionkey", {
 
     on: function (node, sub, notifier) {
         // subscribe to _event and ask keyHandler to handle with given args[0] (the desired actions).
-        if (sub.args == null) {
+        if (sub.args === null) {
             //no actions given
             sub._detacher = node.on(this._event, this._keyHandler,this, notifier, {actions:false});
         } else {
@@ -49,14 +50,14 @@ Y.Event.define("actionkey", {
         }
     },
 
-    detach: function (node, sub, notifier) {
+    detach: function (node, sub) {
         //detach our _detacher handle of the subscription made in on()
         sub._detacher.detach();
     },
 
     delegate: function (node, sub, notifier, filter) {
         // subscribe to _event and ask keyHandler to handle with given args[0] (the desired actions).
-        if (sub.args == null) {
+        if (sub.args === null) {
             //no actions given
             sub._delegateDetacher = node.delegate(this._event, this._keyHandler,filter, this, notifier, {actions:false});
         } else {
@@ -64,14 +65,14 @@ Y.Event.define("actionkey", {
         }
     },
 
-    detachDelegate: function (node, sub, notifier) {
+    detachDelegate: function (node, sub) {
         sub._delegateDetacher.detach();
     }
 });
 
 var EXPANSIONLIMIT_EVERYTHING = 0,
-    EXPANSIONLIMIT_COURSE     = 20,
-    EXPANSIONLIMIT_SECTION    = 30,
+    //EXPANSIONLIMIT_COURSE     = 20,
+    //EXPANSIONLIMIT_SECTION    = 30,
     EXPANSIONLIMIT_ACTIVITY   = 40;
 
 /**
@@ -104,7 +105,7 @@ var NODETYPE = {
     USER : 80,
     /** @type int Container = 90 */
     CONTAINER : 90
-}
+};
 
 /**
  * Navigation tree class.
@@ -112,9 +113,9 @@ var NODETYPE = {
  * This class establishes the tree initially, creating expandable branches as
  * required, and delegating the expand/collapse event.
  */
-var TREE = function(config) {
+var TREE = function() {
     TREE.superclass.constructor.apply(this, arguments);
-}
+};
 TREE.prototype = {
     /**
      * The tree's ID, normally its block instance id.
@@ -189,7 +190,7 @@ TREE.prototype = {
         // First check if they managed to click on the li iteslf, then find the closest
         // LI ancestor and use that
 
-        if (e.target.test('a') && (e.keyCode == 0 || e.keyCode == 13)) {
+        if (e.target.test('a') && (e.keyCode === 0 || e.keyCode === 13)) {
             // A link has been clicked (or keypress is 'enter') don't fire any more events just do the default.
             e.stopPropagation();
             return;
@@ -198,7 +199,7 @@ TREE.prototype = {
         // Makes sure we can get to the LI containing the branch.
         var target = e.target;
         if (!target.test('li')) {
-            target = target.ancestor('li')
+            target = target.ancestor('li');
         }
         if (!target) {
             return;
@@ -206,7 +207,7 @@ TREE.prototype = {
 
         // Toggle expand/collapse providing its not a root level branch.
         if (!target.hasClass('depth_1')) {
-            if (e.type == 'actionkey') {
+            if (e.type === 'actionkey') {
                 switch (e.action) {
                     case 'expand' :
                         target.removeClass('collapsed');
@@ -247,7 +248,7 @@ TREE.prototype = {
             }
         }
     }
-}
+};
 // The tree extends the YUI base foundation.
 Y.extend(TREE, Y.Base, TREE.prototype, {
     NAME : 'navigation-tree',
@@ -266,7 +267,7 @@ Y.extend(TREE, Y.Base, TREE.prototype, {
         expansionlimit : {
             value : 0,
             setter : function(val) {
-                return parseInt(val);
+                return parseInt(val, 10);
             }
         }
     }
@@ -280,9 +281,9 @@ if (M.core_dock && M.core_dock.genericblock) {
  * This class is used to manage a tree branch, in particular its ability to load
  * its contents by AJAX.
  */
-var BRANCH = function(config) {
+BRANCH = function() {
     BRANCH.superclass.constructor.apply(this, arguments);
-}
+};
 BRANCH.prototype = {
     /**
      * The node for this branch (p)
@@ -292,17 +293,19 @@ BRANCH.prototype = {
      * Initialises the branch when it is first created.
      */
     initializer : function(config) {
+        var i,
+            children;
         if (config.branchobj !== null) {
             // Construct from the provided xml
-            for (var i in config.branchobj) {
+            for (i in config.branchobj) {
                 this.set(i, config.branchobj[i]);
             }
-            var children = this.get('children');
+            children = this.get('children');
             this.set('haschildren', (children.length > 0));
         }
         if (config.overrides !== null) {
             // Construct from the provided xml
-            for (var i in config.overrides) {
+            for (i in config.overrides) {
                 this.set(i, config.overrides[i]);
             }
         }
@@ -311,7 +314,7 @@ BRANCH.prototype = {
         // Now check whether the branch is not expandable because of the expansionlimit
         var expansionlimit = this.get('tree').get('expansionlimit');
         var type = this.get('type');
-        if (expansionlimit != EXPANSIONLIMIT_EVERYTHING &&  type >= expansionlimit && type <= EXPANSIONLIMIT_ACTIVITY) {
+        if (expansionlimit !== EXPANSIONLIMIT_EVERYTHING &&  type >= expansionlimit && type <= EXPANSIONLIMIT_ACTIVITY) {
             this.set('expandable', false);
             this.set('haschildren', false);
         }
@@ -413,12 +416,12 @@ BRANCH.prototype = {
      * request made here.
      */
     ajaxLoad : function(e) {
-        if (e.type == 'actionkey' && e.action != 'enter') {
+        if (e.type === 'actionkey' && e.action !== 'enter') {
             e.halt();
         } else {
             e.stopPropagation();
         }
-        if (e.type = 'actionkey' && e.action == 'enter' && e.target.test('A')) {
+        if (e.type === 'actionkey' && e.action === 'enter' && e.target.test('A')) {
             // No ajaxLoad for enter.
             this.node.setAttribute('data-expandable', '0');
             this.node.setAttribute('data-loaded', '1');
@@ -466,7 +469,7 @@ BRANCH.prototype = {
             if (object.children && object.children.length > 0) {
                 var coursecount = 0;
                 for (var i in object.children) {
-                    if (typeof(object.children[i])=='object') {
+                    if (typeof(object.children[i])==='object') {
                         if (object.children[i].type == NODETYPE.COURSE) {
                             coursecount++;
                         }
@@ -502,7 +505,7 @@ BRANCH.prototype = {
                 if (children[i].type == NODETYPE.COURSE) {
                     count++;
                 }
-                if (typeof(children[i])=='object') {
+                if (typeof(children[i]) === 'object') {
                     branch.addChild(children[i]);
                 }
             }
@@ -536,7 +539,7 @@ BRANCH.prototype = {
             icon : {'pix':"i/navigationitem",'component':'moodle'}
         });
     }
-}
+};
 Y.extend(BRANCH, Y.Base, BRANCH.prototype, {
     NAME : 'navigation-branch',
     ATTRS : {
@@ -558,7 +561,7 @@ Y.extend(BRANCH, Y.Base, BRANCH.prototype, {
             value : '',
             validator : Y.Lang.isString,
             getter : function(val) {
-                if (val == '') {
+                if (val === '') {
                     val = 'expandable_branch_'+M.block_navigation.expandablebranchcount;
                     M.block_navigation.expandablebranchcount++;
                 }
@@ -621,4 +624,16 @@ M.block_navigation = M.block_navigation || {
     }
 };
 
-}, '@VERSION@', {requires:['base', 'core_dock', 'io-base', 'node', 'dom', 'event-custom', 'event-delegate', 'json-parse']});
+
+}, '@VERSION@', {
+    "requires": [
+        "base",
+        "core_dock",
+        "io-base",
+        "node",
+        "dom",
+        "event-custom",
+        "event-delegate",
+        "json-parse"
+    ]
+});
