@@ -1,0 +1,13 @@
+#page-admin-tool-installaddon-index #installfromrepobox {
+    text-align: center;
+    padding-top: 2em;
+    padding-bottom: 2em;
+}
+
+#page-admin-tool-installaddon-index #installfromrepobox .singlebutton {
+    display: inline-block;
+}
+
+#page-admin-tool-installaddon-index #installfromrepobox .singlebutton input[type=submit] {
+    padding: 1em;
+}
