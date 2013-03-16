@@ -181,6 +181,8 @@ class page_requirements_manager {
         $this->YUI_config->base         = $this->yui3loader->base;
         $this->YUI_config->comboBase    = $this->yui3loader->comboBase;
         $this->YUI_config->combine      = $this->yui3loader->combine;
+
+        $configname = $this->YUI_config->set_config_function("if(/-skin|reset|fonts|grids|base/.test(me.name)){me.type='css';me.path=me.path.replace(/\.js/,'.css');me.path=me.path.replace(/\/yui2-skin/,'/assets/skins/sam/yui2-skin');}");
         $this->YUI_config->add_group('yui2', array(
             // Loader configuration for our 2in3, for now ignores $CFG->useexternalyui.
             'base' => $CFG->httpswwwroot . '/lib/yuilib/2in3/' . $CFG->yui2version . '/build/',
@@ -191,10 +193,11 @@ class page_requirements_manager {
             'patterns' => array(
                 'yui2-' => array(
                     'group' => 'yui2',
-                    'configFn' => '@2IN3CONFIGFN@'
+                    'configFn' => $configname,
                 )
             )
         ));
+        $configname = $this->YUI_config->set_config_function("var p = me.path, b = me.name.replace(/^moodle-/,'').split('-', 3), n = b.pop();if (/(skin|core)/.test(n)) {n = b.pop();me.type = 'css';};me.path = b.join('-')+'/'+n+'/'+n+'-min.'+me.type;");
         $this->YUI_config->add_group('moodle', array(
             'name' => 'moodle',
             'base' => $CFG->httpswwwroot . '/theme/yui_combo.php'.$sep.'moodle/'.$jsrev.'/',
@@ -205,7 +208,7 @@ class page_requirements_manager {
             'patterns' => array(
                 'moodle-' => array(
                     'group' => 'moodle',
-                    'configFn' => '@MOODLECONFIGFN@'
+                    'configFn' => $configname,
                 )
             )
         ));
@@ -1055,17 +1058,13 @@ class page_requirements_manager {
         // Set up global YUI3 loader object - this should contain all code needed by plugins.
         // Note: in JavaScript just use "YUI().use('overlay', function(Y) { .... });",
         //       this needs to be done before including any other script.
-        $js = "var M = {}; M.yui = {};
-var moodleConfigFn = function(me) {var p = me.path, b = me.name.replace(/^moodle-/,'').split('-', 3), n = b.pop();if (/(skin|core)/.test(n)) {n = b.pop();me.type = 'css';};me.path = b.join('-')+'/'+n+'/'+n+'-min.'+me.type;};
-var galleryConfigFn = function(me) {var p = me.path,v=M.yui.galleryversion,f;if(/-(skin|core)/.test(me.name)) {me.type = 'css';p = p.replace(/-(skin|core)/, '').replace(/\.js/, '.css').split('/'), f = p.pop().replace(/(\-(min|debug))/, '');if (/-skin/.test(me.name)) {p.splice(p.length,0,v,'assets','skins','sam', f);} else {p.splice(p.length,0,v,'assets', f);};} else {p = p.split('/'), f = p.pop();p.splice(p.length,0,v, f);};me.path = p.join('/');};
-var yui2in3ConfigFn = function(me) {if(/-skin|reset|fonts|grids|base/.test(me.name)){me.type='css';me.path=me.path.replace(/\.js/,'.css');me.path=me.path.replace(/\/yui2-skin/,'/assets/skins/sam/yui2-skin');}};\n";
+        $js = "var M = {}; M.yui = {};\n";
+        $js .= $this->YUI_config->get_config_functions();
         $js .= js_writer::set_variable('YUI_config', $this->YUI_config, false) . "\n";
         $js .= "M.yui.loader = {modules: {}};\n"; // Backwards compatibility only, not used any more.
         $js .= js_writer::set_variable('M.cfg', $this->M_cfg, false);
-        $js = str_replace('"@GALLERYCONFIGFN@"', 'galleryConfigFn', $js);
-        $js = str_replace('"@MOODLECONFIGFN@"', 'moodleConfigFn', $js);
-        $js = str_replace('"@2IN3CONFIGFN@"', 'yui2in3ConfigFn', $js);
 
+        $js = $this->YUI_config->update_header_js($js);
         $output .= html_writer::script($js);
 
         // Link our main JS file, all core stuff should be there.
@@ -1202,7 +1201,12 @@ var yui2in3ConfigFn = function(me) {if(/-skin|reset|fonts|grids|base/.test(me.na
  * @category output
  */
 class YUI_config {
-    // These settings must be public so that whent he object is converted to json they are exposed.
+    /**
+     * These settings must be public so that when the object is converted to json they are exposed.
+     * They are described and documented in the YUI API at:
+     * - http://yuilibrary.com/yui/docs/api/classes/config.html
+     * - http://yuilibrary.com/yui/docs/api/classes/Loader.html
+     */
     public $debug = false;
     public $base;
     public $comboBase;
@@ -1211,6 +1215,11 @@ class YUI_config {
     public $insertBefore = 'firstthemesheet';
     public $groups = array();
     public $modules = array();
+
+    /**
+     * @var array List of functions used by the YUI Loader group pattern recognition.
+     */
+    protected $jsconfigfunctions = array();
 
     /**
      * Create a new group within the YUI_config system.
@@ -1243,6 +1252,57 @@ class YUI_config {
             throw new coding_exception('The Moodle YUI module does not exist. You must define the moodle module config using YUI_config->add_module_config first.');
         }
         $this->groups[$name] = $config;
+    }
+
+    /**
+     * Set the value of a configuration function used by the YUI Loader's pattern testing.
+     *
+     * Only the body of the function should be passed, and not the whole function wrapper.
+     *
+     * The JS function your write will be passed a single argument 'name' containing the
+     * name of the module being loaded.
+     *
+     * @param $function String the body of the JavaScript function. This should be used i
+     * @return String the name of the function to use in the group pattern configuration.
+     */
+    public function set_config_function($function) {
+        $configname = 'yui' . (count($this->jsconfigfunctions) + 1) . 'ConfigFn';
+        if (isset($this->jsconfigfunctions[$configname])) {
+            throw new coding_exception("A YUI config function with this name already exists. Config function names must be unique.");
+        }
+        $this->jsconfigfunctions[$configname] = $function;
+        return '@' . $configname . '@';
+    }
+
+    /**
+     * Retrieve the list of JavaScript functions for YUI_config groups.
+     *
+     * @return String The complete set of config functions
+     */
+    public function get_config_functions() {
+        $configfunctions = '';
+        foreach ($this->jsconfigfunctions as $functionname => $function) {
+            $configfunctions .= "var {$functionname} = function(me) {";
+            $configfunctions .= $function;
+            $configfunctions .= "};\n";
+        }
+        return $configfunctions;
+    }
+
+    /**
+     * Update the header JavaScript with any required modification for the YUI Loader.
+     *
+     * @param $js String The JavaScript to manipulate.
+     * @return String the modified JS string.
+     */
+    public function update_header_js($js) {
+        // Update the names of the the configFn variables.
+        // The PHP json_encode function cannot handle literal names so we have to wrap
+        // them in @ and then replace them with literals of the same function name.
+        foreach ($this->jsconfigfunctions as $functionname => $function) {
+            $js = str_replace('"@' . $functionname . '@"', $functionname, $js);
+        }
+        return $js;
     }
 
     /**
