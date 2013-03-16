@@ -154,7 +154,13 @@
             //$params     = array();
             $i = 0;
 
-            $concat = $DB->sql_concat('ge.concept', "' '", 'ge.definition',"' '", "COALESCE(al.alias, '')");
+            if (empty($fullsearch)) {
+                // With fullsearch disabled, look only within concepts and aliases.
+                $concat = $DB->sql_concat('ge.concept', "' '", "COALESCE(al.alias, '')");
+            } else {
+                // With fullsearch enabled, look also within definitions.
+                $concat = $DB->sql_concat('ge.concept', "' '", 'ge.definition', "' '", "COALESCE(al.alias, '')");
+            }
 
             $searchterms = explode(" ",$hook);
 
@@ -273,4 +279,3 @@
 
     $query = "$sqlwrapheader $sqlselect $sqlfrom $sqlwhere $sqlwrapfooter $sqlorderby";
     $allentries = $DB->get_records_sql($query, $params, $limitfrom, $limitnum);
-
