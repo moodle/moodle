@@ -83,6 +83,11 @@ foreach ($parts as $part) {
     //debug($bits);
     $version = array_shift($bits);
     if ($version === 'moodle') {
+        if (count($bits) <= 3) {
+            // This is an invalid module load attempt.
+            $content .= "\n// Incorrect moodle module inclusion. Not enough component information in {$part}.\n";
+            continue;
+        }
         if (!defined('ABORT_AFTER_CONFIG_CANCEL')) {
             define('ABORT_AFTER_CONFIG_CANCEL', true);
             define('NO_UPGRADE_CHECK', true);

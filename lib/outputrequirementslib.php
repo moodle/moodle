@@ -197,7 +197,7 @@ class page_requirements_manager {
                 )
             )
         ));
-        $configname = $this->YUI_config->set_config_function("var p = me.path, b = me.name.replace(/^moodle-/,'').split('-', 3), n = b.pop();if (/(skin|core)/.test(n)) {n = b.pop();me.type = 'css';};me.path = b.join('-')+'/'+n+'/'+n+'-min.'+me.type;");
+        $configname = $this->YUI_config->set_config_function("var p = me.path, b = me.name.replace(/^moodle-/,'').split('-', 3), n = b.pop();if (!b.length) {Y.log('Attempt to load invalid module name: ' + me.name, 'error'); return;} if (/(skin|core)/.test(n)) {n = b.pop();me.type = 'css';};me.path = b.join('-')+'/'+n+'/'+n+'-min.'+me.type;");
         $this->YUI_config->add_group('moodle', array(
             'name' => 'moodle',
             'base' => $CFG->httpswwwroot . '/theme/yui_combo.php'.$sep.'moodle/'.$jsrev.'/',
