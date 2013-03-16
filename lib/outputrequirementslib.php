@@ -1049,11 +1049,7 @@ class page_requirements_manager {
         // create circular references in memory which prevents garbage collection.
         $this->init_requirements_data($page, $renderer);
 
-        // YUI3 JS and CSS is always loaded first - it is cached in browser.
-        $output = $this->get_yui3lib_headcode($page);
-
-        // Now theme CSS + custom CSS in this specific order.
-        $output .= $this->get_css_code();
+        $output = '';
 
         // Set up global YUI3 loader object - this should contain all code needed by plugins.
         // Note: in JavaScript just use "YUI().use('overlay', function(Y) { .... });",
@@ -1066,6 +1062,13 @@ class page_requirements_manager {
 
         $js = $this->YUI_config->update_header_js($js);
         $output .= html_writer::script($js);
+
+        // YUI3 JS and CSS need to be loaded in the header but after the YUI_config has been created.
+        // They should be cached well by the browser.
+        $output .= $this->get_yui3lib_headcode($page);
+
+        // Now theme CSS + custom CSS in this specific order.
+        $output .= $this->get_css_code();
 
         // Link our main JS file, all core stuff should be there.
         $output .= html_writer::script('', $this->js_fix_url('/lib/javascript-static.js'));
