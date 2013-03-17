@@ -77,6 +77,8 @@ class lesson_page_type_multichoice extends lesson_page {
         foreach ($answers as $key=>$answer) {
             if ($answer->answer === '') {
                 unset($answers[$key]);
+            } else {
+                $answers[$key] = parent::rewrite_answers_urls($answer);
             }
         }
         return $answers;
@@ -246,6 +248,7 @@ class lesson_page_type_multichoice extends lesson_page {
             if (!$answer = $DB->get_record("lesson_answers", array("id" => $result->answerid))) {
                 print_error("Continue: answer record not found");
             }
+            $answer = parent::rewrite_answers_urls($answer);
             if ($this->lesson->jumpto_is_correct($this->properties->id, $answer->jumpto)) {
                 $result->correctanswer = true;
             }

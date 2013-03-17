@@ -790,8 +790,19 @@ abstract class lesson_add_page_form_base extends moodleform {
         if ($label === null) {
             $label = get_string('answer', 'lesson');
         }
-        $this->_form->addElement('editor', 'answer_editor['.$count.']', $label, array('rows'=>'4', 'columns'=>'80'), array('noclean'=>true));
-        $this->_form->setDefault('answer_editor['.$count.']', array('text'=>'', 'format'=>FORMAT_MOODLE));
+
+        if ($this->qtype != 'multichoice' && $this->qtype != 'matching') {
+            $this->_form->addElement('editor', 'answer_editor['.$count.']', $label,
+                    array('rows' => '4', 'columns' => '80'), array('noclean' => true));
+            $this->_form->setDefault('answer_editor['.$count.']', array('text' => '', 'format' => FORMAT_MOODLE));
+        } else {
+            $this->_form->addElement('editor', 'answer_editor['.$count.']', $label,
+                    array('rows' => '4', 'columns' => '80'),
+                    array('noclean' => true, 'maxfiles' => EDITOR_UNLIMITED_FILES, 'maxbytes' => $this->_customdata['maxbytes']));
+            $this->_form->setType('answer_editor['.$count.']', PARAM_RAW);
+            $this->_form->setDefault('answer_editor['.$count.']', array('text' => '', 'format' => FORMAT_HTML));
+        }
+
         if ($required) {
             $this->_form->addRule('answer_editor['.$count.']', get_string('required'), 'required', null, 'client');
         }
@@ -808,8 +819,12 @@ abstract class lesson_add_page_form_base extends moodleform {
         if ($label === null) {
             $label = get_string('response', 'lesson');
         }
-        $this->_form->addElement('editor', 'response_editor['.$count.']', $label, array('rows'=>'4', 'columns'=>'80'), array('noclean'=>true));
-        $this->_form->setDefault('response_editor['.$count.']', array('text'=>'', 'format'=>FORMAT_MOODLE));
+        $this->_form->addElement('editor', 'response_editor['.$count.']', $label,
+                 array('rows' => '4', 'columns' => '80'),
+                 array('noclean' => true, 'maxfiles' => EDITOR_UNLIMITED_FILES, 'maxbytes' => $this->_customdata['maxbytes']));
+        $this->_form->setType('response_editor['.$count.']', PARAM_RAW);
+        $this->_form->setDefault('response_editor['.$count.']', array('text' => '', 'format' => FORMAT_HTML));
+
         if ($required) {
             $this->_form->addRule('response_editor['.$count.']', get_string('required'), 'required', null, 'client');
         }
@@ -1861,6 +1876,8 @@ abstract class lesson_page extends lesson_base {
         $context = context_module::instance($cm->id);
         $fs = get_file_storage();
         $fs->delete_area_files($context->id, 'mod_lesson', 'page_contents', $this->properties->id);
+        $fs->delete_area_files($context->id, 'mod_lesson', 'page_answers', $this->properties->id);
+        $fs->delete_area_files($context->id, 'mod_lesson', 'page_responses', $this->properties->id);
 
         // repair the hole in the linkage
         if (!$this->properties->prevpageid && !$this->properties->nextpageid) {
@@ -1958,7 +1975,7 @@ abstract class lesson_page extends lesson_base {
      * @return stdClass Returns the result of the attempt
      */
     final public function record_attempt($context) {
-        global $DB, $USER, $OUTPUT;
+        global $DB, $USER, $OUTPUT, $PAGE;
 
         /**
          * This should be overridden by each page type to actually check the response
@@ -2064,6 +2081,9 @@ abstract class lesson_page extends lesson_base {
                     $options->noclean = true;
                     $options->para = true;
                     $options->overflowdiv = true;
+                    $result->response = file_rewrite_pluginfile_urls($result->response, 'pluginfile.php', $context->id,
+                            'mod_lesson', 'page_responses', $result->answerid);
+
                     $result->feedback = $OUTPUT->box(format_text($this->get_contents(), $this->properties->contentsformat, $options), 'generalbox boxaligncenter');
                     $result->feedback .= '<div class="correctanswer generalbox"><em>'.get_string("youranswer", "lesson").'</em> : '.$result->studentanswer; // already in clean html
                     $result->feedback .= $OUTPUT->box($result->response, $class); // already conerted to HTML
@@ -2147,6 +2167,51 @@ abstract class lesson_page extends lesson_base {
     }
 
     /**
+     * save editor answers files and update answer record
+     *
+     * @param object $context
+     * @param int $maxbytes
+     * @param object $answer
+     * @param object $answereditor
+     * @param object $responseeditor
+     */
+    public function save_answers_files($context, $maxbytes, &$answer, $answereditor = '', $responseeditor = '') {
+        global $DB;
+        if (isset($answereditor['itemid'])) {
+            $answer->answer = file_save_draft_area_files($answereditor['itemid'],
+                    $context->id, 'mod_lesson', 'page_answers', $answer->id,
+                    array('noclean' => true, 'maxfiles' => EDITOR_UNLIMITED_FILES, 'maxbytes' => $maxbytes),
+                    $answer->answer, null);
+            $DB->set_field('lesson_answers', 'answer', $answer->answer, array('id' => $answer->id));
+        }
+        if (isset($responseeditor['itemid'])) {
+            $answer->response = file_save_draft_area_files($responseeditor['itemid'],
+                    $context->id, 'mod_lesson', 'page_responses', $answer->id,
+                    array('noclean' => true, 'maxfiles' => EDITOR_UNLIMITED_FILES, 'maxbytes' => $maxbytes),
+                    $answer->response, null);
+            $DB->set_field('lesson_answers', 'response', $answer->response, array('id' => $answer->id));
+        }
+    }
+
+    /**
+     * Rewrite urls in answer and response of a question answer
+     *
+     * @param object $answer
+     * @return object answer with rewritten urls
+     */
+    public static function rewrite_answers_urls($answer) {
+        global $PAGE;
+
+        $context = context_module::instance($PAGE->cm->id);
+        $answer->answer = file_rewrite_pluginfile_urls($answer->answer, 'pluginfile.php', $context->id,
+                'mod_lesson', 'page_answers', $answer->id);
+        $answer->response = file_rewrite_pluginfile_urls($answer->response, 'pluginfile.php', $context->id,
+                'mod_lesson', 'page_responses', $answer->id);
+
+        return $answer;
+    }
+
+    /**
      * Updates a lesson page and its answers within the database
      *
      * @param object $properties
@@ -2200,6 +2265,10 @@ abstract class lesson_page extends lesson_base {
                 } else {
                     $DB->update_record("lesson_answers", $this->answers[$i]->properties());
                 }
+
+                // Save files in answers and responses.
+                $this->save_answers_files($context, $maxbytes, $this->answers[$i],
+                        $properties->answer_editor[$i], $properties->response_editor[$i]);
 
             } else if (isset($this->answers[$i]->id)) {
                 $DB->delete_records('lesson_answers', array('id'=>$this->answers[$i]->id));
@@ -2260,12 +2329,15 @@ abstract class lesson_page extends lesson_base {
      * @return array
      */
     public function create_answers($properties) {
-        global $DB;
+        global $DB, $PAGE;
         // now add the answers
         $newanswer = new stdClass;
         $newanswer->lessonid = $this->lesson->id;
         $newanswer->pageid = $this->properties->id;
         $newanswer->timecreated = $this->properties->timecreated;
+
+        $cm = get_coursemodule_from_instance('lesson', $this->lesson->id, $this->lesson->course);
+        $context = context_module::instance($cm->id);
 
         $answers = array();
 
@@ -2289,6 +2361,13 @@ abstract class lesson_page extends lesson_base {
                     $answer->score = $properties->score[$i];
                 }
                 $answer->id = $DB->insert_record("lesson_answers", $answer);
+                if (isset($properties->response_editor[$i])) {
+                    $this->save_answers_files($context, $PAGE->course->maxbytes, $answer,
+                            $properties->answer_editor[$i], $properties->response_editor[$i]);
+                } else {
+                    $this->save_answers_files($context, $PAGE->course->maxbytes, $answer,
+                            $properties->answer_editor[$i]);
+                }
                 $answers[$answer->id] = new lesson_page_answer($answer);
             } else {
                 break;

@@ -865,6 +865,13 @@ function lesson_pluginfile($course, $cm, $context, $filearea, $args, $forcedownl
         }
         $fullpath = "/$context->id/mod_lesson/$filearea/$pageid/".implode('/', $args);
 
+    } else if ($filearea === 'page_answers' || $filearea === 'page_responses') {
+        $itemid = (int)array_shift($args);
+        if (!$pageanswers = $DB->get_record('lesson_answers', array('id' => $itemid))) {
+            return false;
+        }
+        $fullpath = "/$context->id/mod_lesson/$filearea/$itemid/".implode('/', $args);
+
     } else if ($filearea === 'mediafile') {
         if (count($args) > 1) {
             // Remove the itemid when it appears to be part of the arguments. If there is only one argument
@@ -897,6 +904,8 @@ function lesson_get_file_areas() {
     $areas = array();
     $areas['page_contents'] = get_string('pagecontents', 'mod_lesson');
     $areas['mediafile'] = get_string('mediafile', 'mod_lesson');
+    $areas['page_answers'] = get_string('pageanswers', 'mod_lesson');
+    $areas['page_responses'] = get_string('pageresponses', 'mod_lesson');
     return $areas;
 }
 
