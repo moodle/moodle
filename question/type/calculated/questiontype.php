@@ -587,7 +587,7 @@ class qtype_calculated extends question_type {
      */
     public function save_question($question, $form) {
         global $DB;
-        if ($this->wizardpagesnumber() == 1) {
+        if ($this->wizardpagesnumber() == 1 || $question->qtype == 'calculatedsimple') {
                 $question = parent::save_question($question, $form);
             return $question;
         }
