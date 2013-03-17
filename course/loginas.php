@@ -4,13 +4,22 @@
 require_once('../config.php');
 require_once('lib.php');
 
-$id = optional_param('id', SITEID, PARAM_INT);   // course id
+$id       = optional_param('id', SITEID, PARAM_INT);   // course id
+$redirect = optional_param('redirect', 0, PARAM_BOOL);
+
+$url = new moodle_url('/course/loginas.php', array('id'=>$id));
+$PAGE->set_url($url);
 
 /// Reset user back to their real self if needed, for security reasons you need to log out and log in again
 if (session_is_loggedinas()) {
     require_sesskey();
     require_logout();
 
+    // We can not set wanted URL here because the session is closed.
+    redirect(new moodle_url($url, array('redirect'=>1)));
+}
+
+if ($redirect) {
     if ($id and $id != SITEID) {
         $SESSION->wantsurl = "$CFG->wwwroot/course/view.php?id=".$id;
     } else {
@@ -24,12 +33,6 @@ if (session_is_loggedinas()) {
 /// We are trying to log in as this user in the first place
 
 $userid = required_param('user', PARAM_INT);         // login as this user
-
-$url = new moodle_url('/course/loginas.php', array('user'=>$userid, 'sesskey'=>sesskey()));
-if ($id !== SITEID) {
-    $url->param('id', $id);
-}
-$PAGE->set_url($url);
 
 require_sesskey();
 $course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
