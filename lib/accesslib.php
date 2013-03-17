@@ -4368,23 +4368,27 @@ function role_get_description(stdClass $role) {
 
 /**
  * Get all the localised role names for a context.
- * @param context $context the context
+ *
+ * @param context $context the context, null means system context
  * @param array of role objects with a ->localname field containing the context-specific role name.
+ * @param int $rolenamedisplay
+ * @param bool $returnmenu true means id=>localname, false means id=>rolerecord
+ * @return array Array of context-specific role names, or role objects with a ->localname field added.
  */
-function role_get_names(context $context) {
-    return role_fix_names(get_all_roles(), $context);
+function role_get_names(context $context = null, $rolenamedisplay = ROLENAME_ALIAS, $returnmenu = null) {
+    return role_fix_names(get_all_roles($context), $context, $rolenamedisplay, $returnmenu);
 }
 
 /**
  * Prepare list of roles for display, apply aliases and format text
  *
  * @param array $roleoptions array roleid => roleobject (with optional coursealias), strings are accepted for backwards compatibility only
- * @param context|bool $context a context
+ * @param context $context the context, null means system context
  * @param int $rolenamedisplay
  * @param bool $returnmenu null means keep the same format as $roleoptions, true means id=>localname, false means id=>rolerecord
  * @return array Array of context-specific role names, or role objects with a ->localname field added.
  */
-function role_fix_names($roleoptions, $context = null, $rolenamedisplay = ROLENAME_ALIAS, $returnmenu = null) {
+function role_fix_names($roleoptions, context $context = null, $rolenamedisplay = ROLENAME_ALIAS, $returnmenu = null) {
     global $DB;
 
     if (empty($roleoptions)) {
