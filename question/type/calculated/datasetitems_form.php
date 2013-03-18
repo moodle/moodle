@@ -218,8 +218,8 @@ class question_dataset_dependent_items_form extends question_wizard_form {
         for ($i=10; $i<=100; $i+=10) {
              $showoptions["$i"]="$i";
         }
-        $mform->addElement('header', 'additemhdr', get_string('add', 'moodle'));
-        $mform->closeHeaderBefore('additemhdr');
+        $mform->addElement('header', 'addhdr', get_string('add', 'moodle'));
+        $mform->closeHeaderBefore('addhdr');
 
         if ($this->qtypeobj->supports_dataset_item_generation()) {
             $radiogrp = array();
@@ -244,7 +244,7 @@ class question_dataset_dependent_items_form extends question_wizard_form {
         $mform->addGroup($addgrp, 'addgrp', get_string('additem', 'qtype_calculated'), ' ', false);
         $mform->addElement('static', "divideradd", '', '');
         if ($this->noofitems > 0) {
-            $mform->addElement('header', 'additemhdr', get_string('delete', 'moodle'));
+            $mform->addElement('header', 'deleteitemhdr', get_string('delete', 'moodle'));
             $deletegrp = array();
             $deletegrp[] = $mform->createElement('submit', 'deletebutton',
                     get_string('delete', 'moodle'));
@@ -272,7 +272,7 @@ class question_dataset_dependent_items_form extends question_wizard_form {
         $k = optional_param('selectshow', 1, PARAM_INT);
         for ($i = $this->noofitems; $i >= 1; $i--) {
             if ($k > 0) {
-                $mform->addElement('header', 'setnoheader', "<b>" .
+                $mform->addElement('header', 'setnoheader' . $i, "<b>" .
                         get_string('setno', 'qtype_calculated', $i)."</b>&nbsp;&nbsp;");
             }
             foreach ($this->datasetdefs as $defkey => $datasetdef) {
