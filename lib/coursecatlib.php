@@ -1341,8 +1341,10 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
     }
 
     /**
-     * This function recursively travels the categories, building up a nice list
+     * This function returns a nice list representing category tree
      * for display or to use in a form <select> element
+     *
+     * List is cached for 10 minutes
      *
      * For example, if you have a tree of categories like:
      *   Miscellaneous (id = 1)
@@ -1375,46 +1377,89 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
      * @return array of strings
      */
     public static function make_categories_list($requiredcapability = '', $excludeid = 0, $separator = ' / ') {
-        return self::get(0)->get_children_names($requiredcapability, $excludeid, $separator);
-    }
+        global $DB;
+        $coursecatcache = cache::make('core', 'coursecat');
 
-    /**
-     * Helper function for {@link coursecat::make_categories_list()}
-     *
-     * @param string/array $requiredcapability if given, only categories where the current
-     *      user has this capability will be included in return value. Can also be
-     *      an array of capabilities, in which case they are all required.
-     * @param integer $excludeid Omit this category and its children from the lists built.
-     * @param string $separator string to use as a separator between parent and child category. Default ' / '
-     * @param string $pathprefix For internal use, as part of recursive calls
-     * @return array of strings
-     */
-    protected function get_children_names($requiredcapability = '', $excludeid = 0, $separator = ' / ', $pathprefix = '') {
-        $list = array();
-        if ($excludeid && $this->id == $excludeid) {
-            return $list;
+        // Check if we cached the complete list of user-accessible category names ($baselist) or list of ids with requried cap ($thislist).
+        $basecachekey = 'catlist';
+        $baselist = $coursecatcache->get($basecachekey);
+        if ($baselist !== false) {
+            $baselist = false;
         }
-
-        if ($this->id) {
-            // Update $path.
-            if ($pathprefix) {
-                $pathprefix .= $separator;
+        $thislist = false;
+        if (!empty($requiredcapability)) {
+            $requiredcapability = (array)$requiredcapability;
+            $thiscachekey = 'catlist:'. serialize($requiredcapability);
+            if ($baselist !== false && ($thislist = $coursecatcache->get($thiscachekey)) !== false) {
+                $thislist = preg_split('|,|', $thislist, -1, PREG_SPLIT_NO_EMPTY);
             }
-            $pathprefix .= $this->get_formatted_name();
+        } else if ($baselist !== false) {
+            $thislist = array_keys($baselist);
+        }
 
-            // Add this category to $list, if the permissions check out.
-            if (empty($requiredcapability) ||
-                    has_all_capabilities((array)$requiredcapability, context_coursecat::instance($this->id))) {
-                $list[$this->id] = $pathprefix;
+        if ($baselist === false) {
+            // We don't have $baselist cached, retrieve it. Retrieve $thislist again in any case.
+            $ctxselect = context_helper::get_preload_record_columns_sql('ctx');
+            $sql = "SELECT cc.id, cc.sortorder, cc.name, cc.visible, cc.parent, cc.path, $ctxselect
+                    FROM {course_categories} cc
+                    JOIN {context} ctx ON cc.id = ctx.instanceid AND ctx.contextlevel = :contextcoursecat
+                    ORDER BY cc.sortorder";
+            $rs = $DB->get_recordset_sql($sql, array('contextcoursecat' => CONTEXT_COURSECAT));
+            $baselist = array();
+            $thislist = array();
+            foreach ($rs as $record) {
+                // If the category's parent is not visible to the user, it is not visible as well.
+                if (!$record->parent || isset($baselist[$record->parent])) {
+                    $context = context_coursecat::instance($record->id);
+                    if (!$record->visible && !has_capability('moodle/category:viewhiddencategories', $context)) {
+                        // No cap to view category, added to neither $baselist nor $thislist
+                        continue;
+                    }
+                    $baselist[$record->id] = array(
+                        'name' => format_string($record->name, true, array('context' => $context)),
+                        'path' => $record->path
+                    );
+                    if (!empty($requiredcapability) && !has_all_capabilities($requiredcapability, $context)) {
+                        // No required capability, added to $baselist but not to $thislist.
+                        continue;
+                    }
+                    $thislist[] = $record->id;
+                }
+            }
+            $rs->close();
+            $coursecatcache->set($basecachekey, $baselist);
+            if (!empty($requiredcapability)) {
+                $coursecatcache->set($thiscachekey, join(',', $thislist));
+            }
+        } else if ($thislist === false) {
+            // We have $baselist cached but not $thislist. Simplier query is used to retrieve.
+            $ctxselect = context_helper::get_preload_record_columns_sql('ctx');
+            $sql = "SELECT ctx.instanceid id, $ctxselect
+                    FROM {context} ctx WHERE ctx.contextlevel = :contextcoursecat";
+            $contexts = $DB->get_records_sql($sql, array('contextcoursecat' => CONTEXT_COURSECAT));
+            $thislist = array();
+            foreach (array_keys($baselist) as $id) {
+                context_helper::preload_from_record($contexts[$id]);
+                if (has_all_capabilities($requiredcapability, context_coursecat::instance($id))) {
+                    $thislist[] = $id;
+                }
+            }
+            $coursecatcache->set($thiscachekey, join(',', $thislist));
+        }
+
+        // Now build the array of strings to return, mind $separator and $excludeid.
+        $names = array();
+        foreach ($thislist as $id) {
+            $path = preg_split('|/|', $baselist[$id]['path'], -1, PREG_SPLIT_NO_EMPTY);
+            if (!$excludeid || !in_array($excludeid, $path)) {
+                $namechunks = array();
+                foreach ($path as $parentid) {
+                    $namechunks[] = $baselist[$parentid]['name'];
+                }
+                $names[$id] = join($separator, $namechunks);
             }
         }
-
-        // Add all the children recursively, while updating the parents array.
-        foreach ($this->get_children() as $cat) {
-            $list += $cat->get_children_names($requiredcapability, $excludeid, $separator, $pathprefix);
-        }
-
-        return $list;
+        return $names;
     }
 
     // ====== implementing method from interface cacheable_object ======
