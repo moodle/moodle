@@ -62,7 +62,18 @@ $siteregistrationform = new site_registration_form('',
 $fromform = $siteregistrationform->get_data();
 
 if (!empty($fromform) and confirm_sesskey()) {
-    //save the settings
+
+    // Set to -1 all optional data marked as "don't send" by the admin.
+    // The function get_site_info() will not calculate the optional data if config is set to -1.
+    $inputnames = array('courses', 'users', 'roleassignments', 'posts', 'questions', 'resources',
+        'modulenumberaverage', 'participantnumberaverage');
+    foreach ($inputnames as $inputname) {
+        if (empty($fromform->{$inputname})) {
+            $fromform->{$inputname} = -1;
+        }
+    }
+
+    // Save the settings.
     $cleanhuburl = clean_param($huburl, PARAM_ALPHANUMEXT);
     set_config('site_name_' . $cleanhuburl, $fromform->name, 'hub');
     set_config('site_description_' . $cleanhuburl, $fromform->description, 'hub');
@@ -78,16 +89,6 @@ if (!empty($fromform) and confirm_sesskey()) {
     set_config('site_geolocation_' . $cleanhuburl, $fromform->geolocation, 'hub');
     set_config('site_contactable_' . $cleanhuburl, $fromform->contactable, 'hub');
     set_config('site_emailalert_' . $cleanhuburl, $fromform->emailalert, 'hub');
-
-    // Set to -1 all optional data marked as "don't send" by the admin.
-    // The function get_site_info() will not calculate the optional data if config is set to -1.
-    $inputnames = array('courses', 'users', 'roleassignments', 'posts', 'questions', 'resources',
-        'modulenumberaverage', 'participantnumberaverage');
-    foreach ($inputnames as $inputname) {
-        if (empty($fromform->{$inputname})) {
-            $fromform->{$inputname} = -1;
-        }
-    }
     set_config('site_coursesnumber_' . $cleanhuburl, $fromform->courses, 'hub');
     set_config('site_usersnumber_' . $cleanhuburl, $fromform->users, 'hub');
     set_config('site_roleassignmentsnumber_' . $cleanhuburl, $fromform->roleassignments, 'hub');
