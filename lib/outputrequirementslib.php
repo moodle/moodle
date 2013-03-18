@@ -231,7 +231,7 @@ class page_requirements_manager {
         }
 
         // Add the moodle group's module data.
-        $this->YUI_config->set_moodle_metadata();
+        $this->YUI_config->add_moodle_metadata();
 
         // Every page should include definition of following modules.
         $this->js_module($this->find_module('core_filepicker'));
@@ -1333,16 +1333,16 @@ class YUI_config {
     }
 
     /**
-     * Set the moodle YUI module metadata for the moodle group in YUI_config.
+     * Add the moodle YUI module metadata for the moodle group to the YUI_config instance.
      *
      * If js caching is disabled, metadata will not be served causing YUI to calculate
      * module dependencies as each module is loaded.
      *
      * If metadata does not exist it will be created and stored in a MUC entry.
      *
-     * @return Array of module metadata
+     * @return void
      */
-    public function set_moodle_metadata() {
+    public function add_moodle_metadata() {
         global $CFG;
         if (!isset($this->groups['moodle'])) {
             throw new coding_exception('The Moodle YUI module does not exist. You must define the moodle module config using YUI_config->add_module_config first.');
@@ -1367,8 +1367,6 @@ class YUI_config {
         // Merge with any metadata added specific to this page which was added manually.
         $this->groups['moodle']['modules'] = array_merge($this->groups['moodle']['modules'],
                 $metadata);
-
-        return $this->groups['moodle']['modules'];
     }
 
     /**
