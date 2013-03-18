@@ -1194,7 +1194,7 @@ class page_requirements_manager {
 /**
  * This class represents the YUI configuration.
  *
- * @copyright 2013 Anderw Nicols
+ * @copyright 2013 Andrew Nicols
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.5
  * @package core
@@ -1379,13 +1379,26 @@ class YUI_config {
      */
     private function get_moodle_metadata() {
         $moodlemodules = array();
-        // Core isn't a plugin type - handle it seperately.
+        // Core isn't a plugin type or subsystem - handle it seperately.
         if ($module = $this->get_moodle_path_metadata(get_component_directory('core'))) {
             $moodlemodules = array_merge($moodlemodules, $module);
         }
 
-        $subsystems = get_plugin_types();
-        foreach ($subsystems as $plugintype => $pathroot) {
+        // Handle other core subsystems.
+        $subsystems = get_core_subsystems();
+        foreach ($subsystems as $subsystem => $path) {
+            if (is_null($path)) {
+                continue;
+            }
+            $path = get_component_directory($subsystem);
+            if ($module = $this->get_moodle_path_metadata($path)) {
+                $moodlemodules = array_merge($moodlemodules, $module);
+            }
+        }
+
+        // And finally the plugins.
+        $plugintypes = get_plugin_types();
+        foreach ($plugintypes as $plugintype => $pathroot) {
             $pluginlist = get_plugin_list($plugintype);
             foreach ($pluginlist as $plugin => $path) {
                 if ($module = $this->get_moodle_path_metadata($path)) {
@@ -1414,6 +1427,9 @@ class YUI_config {
                     continue;
                 }
                 $metafile = realpath($baseyui . '/' . $item . '/meta/' . $item . '.json');
+                if (!is_readable($metafile)) {
+                    continue;
+                }
                 $metadata = file_get_contents($metafile);
                 $modules = array_merge($modules, (array) json_decode($metadata));
             }
