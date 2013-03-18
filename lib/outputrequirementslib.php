@@ -1439,6 +1439,4 @@ function js_reset_all_caches() {
 
     set_config('jsrev', $next);
     fulldelete("$CFG->cachedir/js");
-    $cache = cache::make('core', 'yuimodules');
-    $cache->delete('metadata');
 }
