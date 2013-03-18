@@ -1203,7 +1203,9 @@ class page_requirements_manager {
 class YUI_config {
     /**
      * These settings must be public so that when the object is converted to json they are exposed.
-     * They are described and documented in the YUI API at:
+     * Note: Some of these are camelCase because YUI uses camelCase variable names.
+     *
+     * The settings are described and documented in the YUI API at:
      * - http://yuilibrary.com/yui/docs/api/classes/config.html
      * - http://yuilibrary.com/yui/docs/api/classes/Loader.html
      */
