@@ -128,6 +128,7 @@ function add_moduleinfo($moduleinfo, $course, $mform = null) {
     // Make sure visibility is set correctly (in particular in calendar).
     // Note: allow them to set it even without moodle/course:activityvisibility.
     set_coursemodule_visible($moduleinfo->coursemodule, $moduleinfo->visible);
+    $DB->set_field('course_modules', 'visibleold', 1, array('id' => $moduleinfo->coursemodule));
 
     if (isset($moduleinfo->cmidnumber)) { // Label.
         // Set cm idnumber - uniqueness is already verified by form validation.
