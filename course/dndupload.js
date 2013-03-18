@@ -505,7 +505,7 @@ M.course_dndupload = {
         section.addClass('dndupload-over');
 
         // Horrible work-around to allow the 'Add X here' text to be a drop target in Firefox.
-        var node = preview.one('span')._node;
+        var node = preview.one('span').getDOMNode();
         node.firstChild.nodeValue = type.addmessage;
     },
 

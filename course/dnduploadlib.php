@@ -112,11 +112,11 @@ class dndupload_handler {
         // Add some default types to handle.
         // Note: 'Files' type is hard-coded into the Javascript as this needs to be ...
         // ... treated a little differently.
-        $this->add_type('url', array('url', 'text/uri-list', 'text/x-moz-url'), get_string('addlinkhere', 'moodle'),
+        $this->add_type_internal('url', array('url', 'text/uri-list', 'text/x-moz-url'), get_string('addlinkhere', 'moodle'),
                         get_string('nameforlink', 'moodle'), get_string('whatforlink', 'moodle'), 10);
-        $this->add_type('text/html', array('text/html'), get_string('addpagehere', 'moodle'),
+        $this->add_type_internal('text/html', array('text/html'), get_string('addpagehere', 'moodle'),
                         get_string('nameforpage', 'moodle'), get_string('whatforpage', 'moodle'), 20);
-        $this->add_type('text', array('text', 'text/plain'), get_string('addpagehere', 'moodle'),
+        $this->add_type_internal('text', array('text', 'text/plain'), get_string('addpagehere', 'moodle'),
                         get_string('nameforpage', 'moodle'), get_string('whatforpage', 'moodle'), 30);
 
         // Loop through all modules to find handlers.
@@ -148,7 +148,7 @@ class dndupload_handler {
                     if (!isset($type['handlermessage'])) {
                         $type['handlermessage'] = '';
                     }
-                    $this->add_type($type['identifier'], $type['datatransfertypes'],
+                    $this->add_type_internal($type['identifier'], $type['datatransfertypes'],
                                     $type['addmessage'], $type['namemessage'], $type['handlermessage'], $priority);
                 }
             }
@@ -159,6 +159,21 @@ class dndupload_handler {
                 }
             }
         }
+    }
+
+    /**
+     * No external code should be directly adding new types - they should be added via a 'addtypes' array, returned
+     * by MODNAME_dndupload_register.
+     *
+     * @deprecated deprecated since Moodle 2.5
+     * @param string $identifier
+     * @param array $datatransfertypes
+     * @param string $addmessage
+     * @param string $namemessage
+     * @param int $priority
+     */
+    public function add_type($identifier, $datatransfertypes, $addmessage, $namemessage, $priority=100) {
+        $this->add_type_internal($identifier, $datatransfertypes, $addmessage, $namemessage, '', $priority);
     }
 
     /**
@@ -176,7 +191,7 @@ class dndupload_handler {
      * @param int $priority Controls the order in which types are checked by the browser (mainly
      *                      needed to check for 'text' last as that is usually given as fallback)
      */
-    public function add_type($identifier, $datatransfertypes, $addmessage, $namemessage, $handlermessage, $priority=100) {
+    protected function add_type_internal($identifier, $datatransfertypes, $addmessage, $namemessage, $handlermessage, $priority=100) {
         if ($this->is_known_type($identifier)) {
             throw new coding_exception("Type $identifier is already registered");
         }
