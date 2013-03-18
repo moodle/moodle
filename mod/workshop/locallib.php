@@ -400,7 +400,9 @@ class workshop {
             return array();
         }
 
-        $sql .= " ORDER BY lastname ASC, firstname ASC, id ASC";
+        $sql = "SELECT *
+                  FROM ($sql) tmp
+              ORDER BY tmp.lastname ASC, tmp.firstname ASC, tmp.id ASC";
 
         return $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
     }
@@ -448,7 +450,9 @@ class workshop {
             return array();
         }
 
-        $sql .= " ORDER BY lastname ASC, firstname ASC, id ASC";
+        $sql = "SELECT *
+                  FROM ($sql) tmp
+              ORDER BY tmp.lastname ASC, tmp.firstname ASC, tmp.id ASC";
 
         return $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
     }
@@ -498,7 +502,9 @@ class workshop {
             return array();
         }
 
-        $sql .= " ORDER BY lastname ASC, firstname ASC, id ASC";
+        $sql = "SELECT *
+                  FROM ($sql) tmp
+              ORDER BY tmp.lastname ASC, tmp.firstname ASC, tmp.id ASC";
 
         return $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
     }
