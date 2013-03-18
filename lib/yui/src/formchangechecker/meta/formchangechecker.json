@@ -1,0 +1,8 @@
+{
+  "moodle-core-formchangechecker": {
+    "requires": [
+      "base",
+      "event-focus"
+    ]
+  }
+}
