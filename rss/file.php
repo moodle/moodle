@@ -122,20 +122,17 @@ if ($token==="$inttoken") {
     }
 }
 
+// Check the context actually exists
+list($context, $course, $cm) = get_context_info_array($contextid);
+
+$PAGE->set_context($context);
+
 $user = get_complete_user_data('id', $userid);
 
 // let enrol plugins deal with new enrolments if necessary
 enrol_check_plugins($user);
 
 session_set_user($user); //for login and capability checks
-
-// Check the context actually exists
-list($context, $course, $cm) = get_context_info_array($contextid);
-
-if (!$context) {
-    rss_error();
-}
-$PAGE->set_context($context);
 
 try {
     $autologinguest = true;
@@ -165,7 +162,11 @@ if (file_exists($componentdir)) {
     if (function_exists($functionname)) {
         // $pathname will be null if there was a problem (eg user doesn't have the necessary capabilities)
         // NOTE:the component providing the feed must do its own capability checks and security
-        $pathname = $functionname($context, $args);
+        try {
+            $pathname = $functionname($context, $args);
+        } catch (Exception $e) {
+            rss_error('rsserror');
+        }
     }
 }
 
