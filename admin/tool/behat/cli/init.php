@@ -71,7 +71,7 @@ if ($code == 0) {
         }
     }
 
-    passthru("php composer.phar install --dev", $code);
+    passthru("php composer.phar update --dev", $code);
     if ($code != 0) {
         exit($code);
     }
