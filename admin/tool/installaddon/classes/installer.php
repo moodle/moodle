@@ -34,6 +34,9 @@ defined('MOODLE_INTERNAL') || die();
  */
 class tool_installaddon_installer {
 
+    /** @var tool_installaddon_installfromzip */
+    protected $installfromzipform = null;
+
     /**
      * Factory method returning an instance of this class.
      *
@@ -80,10 +83,16 @@ class tool_installaddon_installer {
         global $CFG;
         require_once(dirname(__FILE__).'/installfromzip_form.php');
 
+        if (!is_null($this->installfromzipform)) {
+            return $this->installfromzipform;
+        }
+
         $action = new moodle_url('/admin/tool/installaddon/index.php');
         $customdata = array('installer' => $this);
 
-        return new tool_installaddon_installfromzip($action, $customdata);
+        $this->installfromzipform = new tool_installaddon_installfromzip($action, $customdata);
+
+        return $this->installfromzipform;
     }
 
     /**
@@ -103,6 +112,33 @@ class tool_installaddon_installer {
         }
 
         return $menu;
+    }
+
+    /**
+     * Is it possible to create a new plugin directory for the given plugin type?
+     *
+     * @throws coding_exception for invalid plugin types or non-existing plugin type locations
+     * @param string $plugintype
+     * @return boolean
+     */
+    public function is_plugintype_writable($plugintype) {
+
+        $plugintypepath = null;
+        foreach (get_plugin_types() as $type => $fullpath) {
+            if ($type === $plugintype) {
+                $plugintypepath = $fullpath;
+                break;
+            }
+        }
+        if (is_null($plugintypepath)) {
+            throw new coding_exception('Unknown plugin type!');
+        }
+
+        if (!is_dir($plugintypepath)) {
+            throw new coding_exception('Plugin type location does not exist!');
+        }
+
+        return is_writable($plugintypepath);
     }
 
     //// End of external API ///////////////////////////////////////////////////

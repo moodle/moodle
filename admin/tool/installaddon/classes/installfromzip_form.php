@@ -44,9 +44,14 @@ class tool_installaddon_installfromzip extends moodleform {
         $installer = $this->_customdata['installer'];
 
         $options = $installer->get_plugin_types_menu();
-        $mform->addElement('select', 'plugintype', get_string('installfromziptype', 'tool_installaddon'), $options);
+        $mform->addElement('select', 'plugintype', get_string('installfromziptype', 'tool_installaddon'), $options,
+            array('id' => 'tool_installaddon_installfromzip_plugintype'));
         $mform->addHelpButton('plugintype', 'installfromziptype', 'tool_installaddon');
         $mform->addRule('plugintype', null, 'required', null, 'client');
+
+        $mform->addElement('static', 'permcheck', '',
+            html_writer::span(get_string('permcheck', 'tool_installaddon'), '',
+                array('id' => 'tool_installaddon_installfromzip_permcheck')));
 
         $mform->addElement('filepicker', 'zipfile', get_string('installfromzipfile', 'tool_installaddon'),
             null, array('accepted_types' => '.zip'));
@@ -69,7 +74,14 @@ class tool_installaddon_installfromzip extends moodleform {
      */
     public function validation($data, $files) {
 
+        $installer = $this->_customdata['installer'];
         $errors = parent::validation($data, $files);
+
+        if (!$installer->is_plugintype_writable($data['plugintype'])) {
+            $paths = get_plugin_types(true);
+            $path = $paths[$data['plugintype']];
+            $errors['plugintype'] = get_string('permcheckresultno', 'tool_installaddon', array('path' => $path));
+        }
 
         return $errors;
     }
