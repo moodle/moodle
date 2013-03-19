@@ -1508,21 +1508,21 @@ function print_category_info($category, $depth = 0, $showcourses = false, array 
 /**
  * Print the buttons relating to course requests.
  *
- * @param object $systemcontext the system context.
+ * @param object $context current page context.
  */
-function print_course_request_buttons($systemcontext) {
+function print_course_request_buttons($context) {
     global $CFG, $DB, $OUTPUT;
     if (empty($CFG->enablecourserequests)) {
         return;
     }
-    if (!has_capability('moodle/course:create', $systemcontext) && has_capability('moodle/course:request', $systemcontext)) {
+    if (!has_capability('moodle/course:create', $context) && has_capability('moodle/course:request', $context)) {
     /// Print a button to request a new course
-        echo $OUTPUT->single_button('request.php', get_string('requestcourse'), 'get');
+        echo $OUTPUT->single_button(new moodle_url('/course/request.php'), get_string('requestcourse'), 'get');
     }
     /// Print a button to manage pending requests
-    if (has_capability('moodle/site:approvecourse', $systemcontext)) {
+    if ($context->contextlevel == CONTEXT_SYSTEM && has_capability('moodle/site:approvecourse', $context)) {
         $disabled = !$DB->record_exists('course_request', array());
-        echo $OUTPUT->single_button('pending.php', get_string('coursespending'), 'get', array('disabled'=>$disabled));
+        echo $OUTPUT->single_button(new moodle_url('/course/pending.php'), get_string('coursespending'), 'get', array('disabled' => $disabled));
     }
 }
 
