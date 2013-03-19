@@ -139,7 +139,7 @@ class tinymce_texteditor extends texteditor {
                     'apply_source_formatting' => true,
                     'remove_script_host' => false,
                     'entity_encoding' => "raw",
-                    'plugins' => "{$xmedia}advimage,safari,table,style,layer,advhr,advlink,emotions,inlinepopups,searchreplace,paste,directionality,fullscreen,moodlenolink,{$xemoticon}{$xdragmath}nonbreaking,contextmenu,insertdatetime,save,iespell,preview,print,noneditable,visualchars,xhtmlxtras,template,pagebreak,spellchecker",
+                    'plugins' => "{$xmedia}advimage,lists,table,style,layer,advhr,advlink,emotions,inlinepopups,searchreplace,paste,directionality,fullscreen,moodlenolink,{$xemoticon}{$xdragmath}nonbreaking,contextmenu,insertdatetime,save,iespell,preview,print,noneditable,visualchars,xhtmlxtras,template,pagebreak,spellchecker",
                     'theme_advanced_font_sizes' => "1,2,3,4,5,6,7",
                     'theme_advanced_layout_manager' => "SimpleLayout",
                     'theme_advanced_toolbar_align' => "left",
