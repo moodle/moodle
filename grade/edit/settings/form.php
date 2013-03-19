@@ -67,6 +67,7 @@ class course_settings_form extends moodleform {
 
         // Grade item settings
         $mform->addElement('header', 'grade_item_settings', get_string('gradeitemsettings', 'grades'));
+        $mform->setExpanded('grade_item_settings');
         if ($can_view_admin_links) {
             $link = '<a href="' . $CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section=gradeitemsettings">' . $strchangedefaults . '</a>';
             $mform->addElement('static', 'gradeitemsettingslink', null, $link);
@@ -110,6 +111,7 @@ class course_settings_form extends moodleform {
                     $functionname = 'grade_'.$type.'_'.$plugin.'_settings_definition';
                     if (function_exists($functionname)) {
                         $mform->addElement('header', 'grade_'.$type.$plugin, get_string('pluginname', 'grade'.$type.'_'.$plugin, NULL));
+                        $mform->setExpanded('grade_'.$type.$plugin);
                         if ($can_view_admin_links) {
                             $link = '<a href="' . $CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section=gradereport' . $plugin . '">' . $strchangedefaults . '</a>';
                             $mform->addElement('static', 'gradeitemsettingslink', null, $link);
