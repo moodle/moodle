@@ -31,6 +31,9 @@ information provided here is intended especially for developers.
 * The signature of the add() method of classes implementing the parentable_part_of_admin_tree
   interface (such as admin_category) has been extended. The new parameter allows the caller
   to prepend the new node before an existing sibling in the admin tree.
+* condition_info:get_condition_user_fields($formatoptions) now accepts the optional
+  param $formatoptions, that will determine if the field names are processed by
+  format_string() with the passed options.
 
 YUI changes:
 * M.util.help_icon has been deprecated. Code should be updated to use moodle-core-popuphelp
