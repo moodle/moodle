@@ -69,7 +69,7 @@ class quiz_overview_report extends quiz_attempts_report {
         $courseshortname = format_string($course->shortname, true,
                 array('context' => context_course::instance($course->id)));
         $table = new quiz_overview_table($quiz, $this->context, $this->qmsubselect,
-                $options, $groupstudents, $students, $questions, $this->get_base_url());
+                $options, $groupstudents, $students, $questions, $options->get_url());
         $filename = quiz_report_download_filename(get_string('overviewfilename', 'quiz_overview'),
                 $courseshortname, $quiz->name);
         $table->is_downloading($options->download, $filename,
