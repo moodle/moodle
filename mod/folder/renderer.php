@@ -83,7 +83,7 @@ class mod_folder_renderer extends plugin_renderer_base {
             $show_expanded = false;
         }
         $this->page->requires->js_init_call('M.mod_folder.init_tree', array($id, $show_expanded));
-        return $content;        
+        return $content;
     }
 
     /**
