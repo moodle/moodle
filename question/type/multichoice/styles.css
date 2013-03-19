@@ -16,3 +16,39 @@
 .que.multichoice .feedback .rightanswer * {
     display: inline;
 }
+
+/* Editing form. */
+body#page-question-type-multichoice div[id^=fitem_id_][id*=answer_] {
+    background: #EEE;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    border: 1px solid #BBB;
+    border-bottom: 0;
+}
+
+body#page-question-type-multichoice div[id^=fitem_id_][id*=answer_] .fitemtitle {
+    font-weight: bold;
+}
+
+body#page-question-type-multichoice div[id^=fitem_id_][id*=fraction_] {
+    background: #EEE;
+    margin-bottom: 0;
+    margin-top: 0;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    border: 1px solid #BBB;
+    border-top: 0;
+    border-bottom: 0;
+}
+
+body#page-question-type-multichoice div[id^=fitem_id_][id*=feedback_] {
+    background: #EEE;
+    margin-bottom: 2em;
+    margin-top: 0;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    border: 1px solid #BBB;
+    border-top: 0;
+}

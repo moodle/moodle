@@ -36,10 +36,13 @@ class qtype_match_edit_form extends question_edit_form {
 
     protected function get_per_answer_fields($mform, $label, $gradeoptions,
             &$repeatedoptions, &$answersoption) {
+        $mform->addElement('static', 'answersinstruct',
+                get_string('availablechoices', 'qtype_match'),
+                get_string('filloutthreeqsandtwoas', 'qtype_match'));
+
         $repeated = array();
-        $repeated[] = $mform->createElement('header', 'answerhdr', $label);
         $repeated[] = $mform->createElement('editor', 'subquestions',
-                get_string('question'), array('rows'=>3), $this->editoroptions);
+                $label, array('rows'=>3), $this->editoroptions);
         $repeated[] = $mform->createElement('text', 'subanswers',
                 get_string('answer', 'question'), array('size'=>50));
         $repeatedoptions['subquestions']['type'] = PARAM_RAW;
@@ -58,11 +61,6 @@ class qtype_match_edit_form extends question_edit_form {
                 get_string('shuffle', 'qtype_match'), null, null, array(0, 1));
         $mform->addHelpButton('shuffleanswers', 'shuffle', 'qtype_match');
         $mform->setDefault('shuffleanswers', 1);
-
-        $mform->addElement('static', 'answersinstruct',
-                get_string('availablechoices', 'qtype_match'),
-                get_string('filloutthreeqsandtwoas', 'qtype_match'));
-        $mform->closeHeaderBefore('answersinstruct');
 
         $this->add_per_answer_fields($mform, get_string('questionno', 'question', '{no}'), 0);
 

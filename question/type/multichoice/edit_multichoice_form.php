@@ -70,9 +70,8 @@ class qtype_multichoice_edit_form extends question_edit_form {
     protected function get_per_answer_fields($mform, $label, $gradeoptions,
             &$repeatedoptions, &$answersoption) {
         $repeated = array();
-        $repeated[] = $mform->createElement('header', 'answerhdr', $label);
         $repeated[] = $mform->createElement('editor', 'answer',
-                get_string('answer', 'question'), array('rows' => 1), $this->editoroptions);
+                $label, array('rows' => 1), $this->editoroptions);
         $repeated[] = $mform->createElement('select', 'fraction',
                 get_string('grade'), $gradeoptions);
         $repeated[] = $mform->createElement('editor', 'feedback',

@@ -58,11 +58,13 @@ class qtype_numerical_edit_form extends question_edit_form {
                 $repeatedoptions, $answersoption);
 
         $tolerance = $mform->createElement('text', 'tolerance',
-                get_string('acceptederror', 'qtype_numerical'));
+                get_string('answererror', 'qtype_numerical'), array('size' => 15));
         $repeatedoptions['tolerance']['type'] = PARAM_FLOAT;
         $repeatedoptions['tolerance']['default'] = 0;
-        array_splice($repeated, 3, 0, array($tolerance));
-        $repeated[1]->setSize(10);
+        $elements = $repeated[0]->getElements();
+        $elements[0]->setSize(15);
+        array_splice($elements, 1, 0, array($tolerance));
+        $repeated[0]->setElements($elements);
 
         return $repeated;
     }
