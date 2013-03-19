@@ -239,7 +239,7 @@ M.course_dndupload = {
      * Look through the event data, checking it against the registered data types
      * (in order of priority) and return details of the first matching data type
      * @param e the event details
-     * @return mixed false if not found or an object {
+     * @return object|false - false if not found or an object {
      *           realtype: the type as given by the browser
      *           addmessage: the message to show to the user during dragging
      *           namemessage: the message for requesting a name for the resource from the user
@@ -284,6 +284,7 @@ M.course_dndupload = {
                         realtype: dttypes[j],
                         addmessage: types[i].addmessage,
                         namemessage: types[i].namemessage,
+                        handlermessage: types[i].handlermessage,
                         type: types[i].identifier,
                         handlers: types[i].handlers
                     };
@@ -417,7 +418,7 @@ M.course_dndupload = {
         var modsel = section.one(this.modslistselector);
         if (!modsel) {
             // Create the above 'ul' if it doesn't exist
-            var modsel = document.createElement('ul');
+            modsel = document.createElement('ul');
             modsel.className = 'section img-text';
             var contentel = section.get('children').pop();
             var brel = contentel.get('children').pop();
@@ -489,6 +490,7 @@ M.course_dndupload = {
      */
     hide_preview_element: function() {
         this.Y.all('li.dndupload-preview').addClass('dndupload-hidden');
+        this.Y.all('.dndupload-over').removeClass('dndupload-over');
     },
 
     /**
@@ -500,7 +502,11 @@ M.course_dndupload = {
     show_preview_element: function(section, type) {
         this.hide_preview_element();
         var preview = section.one('li.dndupload-preview').removeClass('dndupload-hidden');
-        preview.one('span').setContent(type.addmessage);
+        section.addClass('dndupload-over');
+
+        // Horrible work-around to allow the 'Add X here' text to be a drop target in Firefox.
+        var node = preview.one('span').getDOMNode();
+        node.firstChild.nodeValue = type.addmessage;
     },
 
     /**
@@ -616,44 +622,16 @@ M.course_dndupload = {
 
         var Y = this.Y;
         var self = this;
-        var panel = new Y.Panel({
+        var panel = new M.core.dialogue({
             bodyContent: content,
-            width: 350,
-            zIndex: 5,
-            centered: true,
+            width: '350px',
             modal: true,
             visible: true,
             render: true,
-            buttons: [{
-                value: M.util.get_string('upload', 'moodle'),
-                action: function(e) {
-                    e.preventDefault();
-                    // Find out which module was selected
-                    var module = false;
-                    var div = Y.one('#dndupload_handlers'+uploadid);
-                    div.all('input').each(function(input) {
-                        if (input.get('checked')) {
-                            module = input.get('value');
-                        }
-                    });
-                    if (!module) {
-                        return;
-                    }
-                    panel.hide();
-                    // Remember this selection for next time
-                    self.lastselected[extension] = module;
-                    // Do the upload
-                    self.upload_file(file, section, sectionnumber, module);
-                },
-                section: Y.WidgetStdMod.FOOTER
-            },{
-                value: M.util.get_string('cancel', 'moodle'),
-                action: function(e) {
-                    e.preventDefault();
-                    panel.hide();
-                },
-                section: Y.WidgetStdMod.FOOTER
-            }]
+            align: {
+                node: null,
+                points: [Y.WidgetPositionAlign.CC, Y.WidgetPositionAlign.CC]
+            }
         });
         // When the panel is hidden - destroy it and then check for other pending uploads
         panel.after("visibleChange", function(e) {
@@ -661,6 +639,39 @@ M.course_dndupload = {
                 panel.destroy(true);
                 self.check_upload_queue();
             }
+        });
+
+        // Add the submit/cancel buttons to the bottom of the dialog.
+        panel.addButton({
+            label: M.util.get_string('upload', 'moodle'),
+            action: function(e) {
+                e.preventDefault();
+                // Find out which module was selected
+                var module = false;
+                var div = Y.one('#dndupload_handlers'+uploadid);
+                div.all('input').each(function(input) {
+                    if (input.get('checked')) {
+                        module = input.get('value');
+                    }
+                });
+                if (!module) {
+                    return;
+                }
+                panel.hide();
+                // Remember this selection for next time
+                self.lastselected[extension] = module;
+                // Do the upload
+                self.upload_file(file, section, sectionnumber, module);
+            },
+            section: Y.WidgetStdMod.FOOTER
+        });
+        panel.addButton({
+            label: M.util.get_string('cancel', 'moodle'),
+            action: function(e) {
+                e.preventDefault();
+                panel.hide();
+            },
+            section: Y.WidgetStdMod.FOOTER
         });
     },
 
@@ -822,6 +833,7 @@ M.course_dndupload = {
         var nameid = 'dndupload_handler_name'+uploadid;
         var content = '';
         if (type.handlers.length > 1) {
+            content += '<p>'+type.handlermessage+'</p>';
             content += '<div id="dndupload_handlers'+uploadid+'">';
             var sel = type.handlers[0].module;
             for (var i=0; i<type.handlers.length; i++) {
@@ -840,56 +852,18 @@ M.course_dndupload = {
 
         var Y = this.Y;
         var self = this;
-        var panel = new Y.Panel({
+        var panel = new M.core.dialogue({
             bodyContent: content,
-            width: 350,
-            zIndex: 5,
-            centered: true,
+            width: '350px',
             modal: true,
             visible: true,
             render: true,
-            buttons: [{
-                value: M.util.get_string('upload', 'moodle'),
-                action: function(e) {
-                    e.preventDefault();
-                    var name = Y.one('#dndupload_handler_name'+uploadid).get('value');
-                    name = name.replace(/^\s\s*/, '').replace(/\s\s*$/, ''); // Trim
-                    var module = false;
-                    var noname = false;
-                    if (type.handlers.length > 1) {
-                        // Find out which module was selected
-                        var div = Y.one('#dndupload_handlers'+uploadid);
-                        div.all('input').each(function(input) {
-                            if (input.get('checked')) {
-                                var idx = input.get('value');
-                                module = type.handlers[idx].module;
-                                noname = type.handlers[idx].noname;
-                            }
-                        });
-                        if (!module) {
-                            return;
-                        }
-                    } else {
-                        module = type.handlers[0].module;
-                        noname = type.handlers[0].noname;
-                    }
-                    if (name == '' && !noname) {
-                        return;
-                    }
-                    panel.hide();
-                    // Do the upload
-                    self.upload_item(name, type.type, contents, section, sectionnumber, module);
-                },
-                section: Y.WidgetStdMod.FOOTER
-            },{
-                value: M.util.get_string('cancel', 'moodle'),
-                action: function(e) {
-                    e.preventDefault();
-                    panel.hide();
-                },
-                section: Y.WidgetStdMod.FOOTER
-            }]
+            align: {
+                node: null,
+                points: [Y.WidgetPositionAlign.CC, Y.WidgetPositionAlign.CC]
+            }
         });
+
         // When the panel is hidden - destroy it and then check for other pending uploads
         panel.after("visibleChange", function(e) {
             if (!panel.get('visible')) {
@@ -897,19 +871,86 @@ M.course_dndupload = {
                 self.check_upload_queue();
             }
         });
-        // Focus on the 'name' box
-        Y.one('#'+nameid).focus();
+
+        var namefield = Y.one('#'+nameid);
+        var submit = function(e) {
+            e.preventDefault();
+            var name = Y.Lang.trim(namefield.get('value'));
+            var module = false;
+            var noname = false;
+            if (type.handlers.length > 1) {
+                // Find out which module was selected
+                var div = Y.one('#dndupload_handlers'+uploadid);
+                div.all('input').each(function(input) {
+                    if (input.get('checked')) {
+                        var idx = input.get('value');
+                        module = type.handlers[idx].module;
+                        noname = type.handlers[idx].noname;
+                    }
+                });
+                if (!module) {
+                    return;
+                }
+            } else {
+                module = type.handlers[0].module;
+                noname = type.handlers[0].noname;
+            }
+            if (name == '' && !noname) {
+                return;
+            }
+            if (noname) {
+                name = '';
+            }
+            panel.hide();
+            // Do the upload
+            self.upload_item(name, type.type, contents, section, sectionnumber, module);
+        };
+
+        // Add the submit/cancel buttons to the bottom of the dialog.
+        panel.addButton({
+            label: M.util.get_string('upload', 'moodle'),
+            action: submit,
+            section: Y.WidgetStdMod.FOOTER,
+            name: 'submit'
+        });
+        panel.addButton({
+            label: M.util.get_string('cancel', 'moodle'),
+            action: function(e) {
+                e.preventDefault();
+                panel.hide();
+            },
+            section: Y.WidgetStdMod.FOOTER
+        });
+        var submitbutton = panel.getButton('submit').button;
+        namefield.on('key', submit, 'enter'); // Submit the form if 'enter' pressed
+        namefield.after('keyup', function() {
+            if (Y.Lang.trim(namefield.get('value')) == '') {
+                submitbutton.disable();
+            } else {
+                submitbutton.enable();
+            }
+        });
+
+        // Enable / disable the 'name' box, depending on the handler selected.
         for (i=0; i<type.handlers.length; i++) {
             if (type.handlers[i].noname) {
                 Y.one('#dndupload_handler'+uploadid+type.handlers[i].module).on('click', function (e) {
-                    Y.one('#'+nameid).set('disabled', 'disabled');
+                    namefield.set('disabled', 'disabled');
+                    submitbutton.enable();
                 });
             } else {
                 Y.one('#dndupload_handler'+uploadid+type.handlers[i].module).on('click', function (e) {
-                    Y.one('#'+nameid).removeAttribute('disabled');
+                    namefield.removeAttribute('disabled');
+                    namefield.focus();
+                    if (Y.Lang.trim(namefield.get('value')) == '') {
+                        submitbutton.disable();
+                    }
                 });
             }
         }
+
+        // Focus on the 'name' box
+        Y.one('#'+nameid).focus();
     },
 
     /**
