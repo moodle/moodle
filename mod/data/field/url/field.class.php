@@ -109,11 +109,17 @@ class data_field_url extends data_field_base {
             }
             if ($this->field->param1) {
                 // param1 defines whether we want to autolink the url.
-                if (!empty($text)) {
-                    $str = '<a href="'.$url.'">'.$text.'</a>';
-                } else {
-                    $str = '<a href="'.$url.'">'.$url.'</a>';
+                $attributes = array();
+                if ($this->field->param3) {
+                    // param3 defines whether this URL should open in a new window.
+                    $attributes['target'] = '_blank';
                 }
+
+                if (empty($text)) {
+                    $text = $url;
+                }
+
+                $str = html_writer::link($url, $text, $attributes);
             } else {
                 $str = $url;
             }
