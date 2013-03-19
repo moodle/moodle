@@ -29,13 +29,20 @@ require_once($CFG->dirroot . '/question/format/blackboard_six/formatbase.php');
 require_once($CFG->dirroot . '/question/format/blackboard_six/formatqti.php');
 require_once($CFG->dirroot . '/question/format/blackboard_six/formatpool.php');
 
+class qformat_blackboard_six_file {
+    /** @var int type of file being imported, one of the constants FILETYPE_QTI or FILETYPE_POOL. */
+    public $filetype;
+    /** @var string the xml text */
+    public $text;
+    /** @var string path to path to root of image tree in unzipped archive. */
+    public $filebase = '';
+}
+
 class qformat_blackboard_six extends qformat_blackboard_six_base {
     /** @var int Blackboard assessment qti files were always imported by the blackboard_six plugin. */
     const FILETYPE_QTI = 1;
     /** @var int Blackboard question pool files were previously handled by the blackboard plugin. */
     const FILETYPE_POOL = 2;
-    /** @var int type of file being imported, one of the constants FILETYPE_QTI or FILETYPE_POOL. */
-    public $filetype;
 
     public function get_filecontent($path) {
         $fullpath = $this->tempdir . '/' . $path;
@@ -43,14 +50,6 @@ class qformat_blackboard_six extends qformat_blackboard_six_base {
             return file_get_contents($fullpath);
         }
         return false;
-    }
-
-    /**
-     * Set the file type being imported
-     * @param int $type the imported file's type
-     */
-    public function set_filetype($type) {
-        $this->filetype = $type;
     }
 
     /**
@@ -69,23 +68,26 @@ class qformat_blackboard_six extends qformat_blackboard_six_base {
                 $this->error(get_string('filenotreadable', 'error'));
                 return false;
             }
+
+            $fileobj = new qformat_blackboard_six_file();
+
             // As we are not importing a .zip file,
             // there is no imsmanifest, and it is not possible
             // to parse it to find the file type.
             // So we need to guess the file type by looking at the content.
             // For now we will do that searching for a required tag.
             // This is certainly not bullet-proof but works for all usual files.
-            $text = file_get_contents($filename);
+            $fileobj->text = file_get_contents($filename);
             if (strpos($text, '<questestinterop>')) {
-                $this->set_filetype(self::FILETYPE_QTI);
+                $fileobj->filetype = self::FILETYPE_QTI;
             }
             if (strpos($text, '<POOL>')) {
-                $this->set_filetype(self::FILETYPE_POOL);
+                $fileobj->filetype = self::FILETYPE_POOL;
             }
             // In all other cases we are not able to handle this question file.
 
             // Readquestions is now expecting an array of strings.
-            return array($text);
+            return array($fileobj);
         }
         // We are importing a zip file.
         // Create name for temporary directory.
@@ -110,26 +112,30 @@ class qformat_blackboard_six extends qformat_blackboard_six_base {
 
                 // We starts from the root element.
                 $query = '//resources/resource';
-                $this->filebase = $this->tempdir;
                 $q_file = array();
 
                 $examfiles = $xpath->query($query);
                 foreach ($examfiles as $examfile) {
+                    $fileobj = new qformat_blackboard_six_file();
+
                     if ($examfile->getAttribute('type') == 'assessment/x-bb-qti-test'
                             || $examfile->getAttribute('type') == 'assessment/x-bb-qti-pool') {
 
                         if ($content = $this->get_filecontent($examfile->getAttribute('bb:file'))) {
-                            $this->set_filetype(self::FILETYPE_QTI);
-                            $q_file[] = $content;
+                            $fileobj->filetype = self::FILETYPE_QTI;
+                            $fileobj->filebase = $this->tempdir;
+                            $fileobj->text = $content;
+                            $q_file[] = $fileobj;
                         }
                     }
                     if ($examfile->getAttribute('type') == 'assessment/x-bb-pool') {
                         if ($examfile->getAttribute('baseurl')) {
-                            $this->filebase = $this->tempdir. '/' . $examfile->getAttribute('baseurl');
+                            $fileobj->filebase = $this->tempdir. '/' . $examfile->getAttribute('baseurl');
                         }
                         if ($content = $this->get_filecontent($examfile->getAttribute('file'))) {
-                            $this->set_filetype(self::FILETYPE_POOL);
-                            $q_file[] = $content;
+                            $fileobj->filetype = self::FILETYPE_POOL;
+                            $fileobj->text = $content;
+                            $q_file[] = $fileobj;
                         }
                     }
                 }
@@ -152,32 +158,33 @@ class qformat_blackboard_six extends qformat_blackboard_six_base {
     }
 
     /**
-     * Parse the array of strings into an array of questions.
-     * Each string is the content of a .dat questions file.
+     * Parse the array of objects into an array of questions.
+     * Each object is the content of a .dat questions file.
      * This *could* burn memory - but it won't happen that much
      * so fingers crossed!
-     * @param array of strings from the input file.
-     * @param stdClass $context
+     * @param array $lines array of qformat_blackboard_six_file objects for each input file.
      * @return array (of objects) question objects.
      */
     public function readquestions($lines) {
 
         // Set up array to hold all our questions.
         $questions = array();
-        if ($this->filetype == self::FILETYPE_QTI) {
-            $importer = new qformat_blackboard_six_qti();
-        } else if ($this->filetype == self::FILETYPE_POOL) {
-            $importer = new qformat_blackboard_six_pool();
-        } else {
-            // In all other cases we are not able to import the file.
-            return false;
-        }
-        $importer->set_filebase($this->filebase);
 
-        // Each element of $lines is a string containing a complete xml document.
-        foreach ($lines as $text) {
-                $questions = array_merge($questions, $importer->readquestions($text));
+        // Each element of $lines is a qformat_blackboard_six_file object.
+        foreach ($lines as $fileobj) {
+            if ($fileobj->filetype == self::FILETYPE_QTI) {
+                $importer = new qformat_blackboard_six_qti();
+            } else if ($fileobj->filetype == self::FILETYPE_POOL) {
+                $importer = new qformat_blackboard_six_pool();
+            } else {
+                // In all other cases we are not able to import the file.
+                debugging('fileobj type not recognised', DEBUG_DEVELOPER);
+                continue;
+            }
+            $importer->set_filebase($fileobj->filebase);
+            $questions = array_merge($questions, $importer->readquestions($fileobj->text));
         }
+
         return $questions;
     }
 }
