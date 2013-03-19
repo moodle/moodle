@@ -15,12 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Post-install code for the quiz module.
- *
- * @package    mod
- * @subpackage quiz
- * @copyright  2009 Petr Skoda
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Post-install script for the quiz responses report.
+ * @package   quiz_responses
+ * @copyright 2013 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -28,24 +26,14 @@ defined('MOODLE_INTERNAL') || die();
 
 
 /**
- * Code run after the quiz module database tables have been created.
+ * Post-install script
  */
-function xmldb_quiz_install() {
+function xmldb_quiz_responses_install() {
     global $DB;
-
-    $record = new stdClass();
-    $record->name         = 'overview';
-    $record->displayorder = '10000';
-    $DB->insert_record('quiz_reports', $record);
 
     $record = new stdClass();
     $record->name         = 'responses';
     $record->displayorder = '9000';
-    $DB->insert_record('quiz_reports', $record);
 
-    $record = new stdClass();
-    $record->name         = 'grading';
-    $record->displayorder = '6000';
-    $record->capability   = 'mod/quiz:grade';
     $DB->insert_record('quiz_reports', $record);
 }
