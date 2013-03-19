@@ -120,6 +120,18 @@ class qtype_shortanswer_question_test extends advanced_testcase {
         }
     }
 
+    public function test_compare_0_with_wildcard() {
+        // Test the classic PHP problem case with '0'.
+        $this->assertTrue((bool)qtype_shortanswer_question::compare_string_with_wildcard(
+                '0', '0', false));
+        $this->assertTrue((bool)qtype_shortanswer_question::compare_string_with_wildcard(
+                '0', '0*', false));
+        $this->assertTrue((bool)qtype_shortanswer_question::compare_string_with_wildcard(
+                '0', '*0', false));
+        $this->assertTrue((bool)qtype_shortanswer_question::compare_string_with_wildcard(
+                '0', '*0*', false));
+    }
+
     public function test_is_complete_response() {
         $question = test_question_maker::make_question('shortanswer');
 
