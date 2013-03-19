@@ -111,7 +111,7 @@ class behat_forms extends behat_base {
         try {
 
             // Expand fieldsets.
-            $fieldsets = $this->find_all('css', 'fieldset.collapsed.jsprocessed a.fheader');
+            $fieldsets = $this->find_all('css', 'fieldset.collapsed a.fheader');
 
             // We are supposed to have fieldsets here, otherwise exception.
 
