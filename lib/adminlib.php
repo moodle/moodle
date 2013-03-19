@@ -802,11 +802,16 @@ interface parentable_part_of_admin_tree extends part_of_admin_tree {
  * $this->name. If it doesn't, add should be called on child objects that are
  * also parentable_part_of_admin_tree's.
  *
+ * $something should be appended as the last child in the $destinationname. If the
+ * $beforesibling is specified, $something should be prepended to it. If the given
+ * sibling is not found, $something should be appended to the end of $destinationname
+ * and a developer debugging message should be displayed.
+ *
  * @param string $destinationname The internal name of the new parent for $something.
  * @param part_of_admin_tree $something The object to be added.
  * @return bool True on success, false on failure.
  */
-    public function add($destinationname, $something);
+    public function add($destinationname, $something, $beforesibling = null);
 
 }
 
@@ -944,11 +949,18 @@ class admin_category implements parentable_part_of_admin_tree {
     /**
      * Adds a part_of_admin_tree to a child or grandchild (or great-grandchild, and so forth) of this object.
      *
+     * By default the new part of the tree is appended as the last child of the parent. You
+     * can specify a sibling node that the new part should be prepended to. If the given
+     * sibling is not found, the part is appended to the end (as it would be by default) and
+     * a developer debugging message is displayed.
+     *
+     * @throws coding_exception if the $beforesibling is empty string or is not string at all.
      * @param string $destinationame The internal name of the immediate parent that we want for $something.
      * @param mixed $something A part_of_admin_tree or setting instance to be added.
+     * @param string $beforesibling The name of the parent's child the $something should be prepended to.
      * @return bool True if successfully added, false if $something can not be added.
      */
-    public function add($parentname, $something) {
+    public function add($parentname, $something, $beforesibling = null) {
         $parent = $this->locate($parentname);
         if (is_null($parent)) {
             debugging('parent does not exist!');
@@ -965,7 +977,32 @@ class admin_category implements parentable_part_of_admin_tree {
                 // It is intentional to check for the debug level before performing the check.
                 debugging('Duplicate admin page name: ' . $something->name, DEBUG_DEVELOPER);
             }
-            $parent->children[] = $something;
+            if (is_null($beforesibling)) {
+                // Append $something as the parent's last child.
+                $parent->children[] = $something;
+            } else {
+                if (!is_string($beforesibling) or trim($beforesibling) === '') {
+                    throw new coding_exception('Unexpected value of the beforesibling parameter');
+                }
+                // Try to find the position of the sibling.
+                $siblingposition = null;
+                foreach ($parent->children as $childposition => $child) {
+                    if ($child->name === $beforesibling) {
+                        $siblingposition = $childposition;
+                        break;
+                    }
+                }
+                if (is_null($siblingposition)) {
+                    debugging('Sibling '.$beforesibling.' not found', DEBUG_DEVELOPER);
+                    $parent->children[] = $something;
+                } else {
+                    $parent->children = array_merge(
+                        array_slice($parent->children, 0, $siblingposition),
+                        array($something),
+                        array_slice($parent->children, $siblingposition)
+                    );
+                }
+            }
             if (is_array($this->category_cache) and ($something instanceof admin_category)) {
                 if (isset($this->category_cache[$something->name])) {
                     debugging('Duplicate admin category name: '.$something->name);

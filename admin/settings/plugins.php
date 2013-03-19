@@ -196,9 +196,9 @@ if ($hassiteconfig) {
         50, PARAM_INT, 3));
 
     $ADMIN->add('portfoliosettings', $temp);
-    $ADMIN->add('portfoliosettings', new admin_externalpage('portfolionew', new lang_string('addnewportfolio', 'portfolio'), $url, 'moodle/site:config', true), '', $url);
-    $ADMIN->add('portfoliosettings', new admin_externalpage('portfoliodelete', new lang_string('deleteportfolio', 'portfolio'), $url, 'moodle/site:config', true), '', $url);
-    $ADMIN->add('portfoliosettings', new admin_externalpage('portfoliocontroller', new lang_string('manageportfolios', 'portfolio'), $url, 'moodle/site:config', true), '', $url);
+    $ADMIN->add('portfoliosettings', new admin_externalpage('portfolionew', new lang_string('addnewportfolio', 'portfolio'), $url, 'moodle/site:config', true));
+    $ADMIN->add('portfoliosettings', new admin_externalpage('portfoliodelete', new lang_string('deleteportfolio', 'portfolio'), $url, 'moodle/site:config', true));
+    $ADMIN->add('portfoliosettings', new admin_externalpage('portfoliocontroller', new lang_string('manageportfolios', 'portfolio'), $url, 'moodle/site:config', true));
 
     foreach (portfolio_instances(false, false) as $portfolio) {
         require_once($CFG->dirroot . '/portfolio/' . $portfolio->get('plugin') . '/lib.php');
@@ -234,20 +234,15 @@ if ($hassiteconfig) {
     $temp->add(new admin_setting_configcheckbox('legacyfilesinnewcourses', new lang_string('legacyfilesinnewcourses', 'admin'), new lang_string('legacyfilesinnewcourses_help', 'admin'), 0));
     $ADMIN->add('repositorysettings', $temp);
     $ADMIN->add('repositorysettings', new admin_externalpage('repositorynew',
-        new lang_string('addplugin', 'repository'), $url, 'moodle/site:config', true),
-        '', $url);
+        new lang_string('addplugin', 'repository'), $url, 'moodle/site:config', true));
     $ADMIN->add('repositorysettings', new admin_externalpage('repositorydelete',
-        new lang_string('deleterepository', 'repository'), $url, 'moodle/site:config', true),
-        '', $url);
+        new lang_string('deleterepository', 'repository'), $url, 'moodle/site:config', true));
     $ADMIN->add('repositorysettings', new admin_externalpage('repositorycontroller',
-        new lang_string('manage', 'repository'), $url, 'moodle/site:config', true),
-        '', $url);
+        new lang_string('manage', 'repository'), $url, 'moodle/site:config', true));
     $ADMIN->add('repositorysettings', new admin_externalpage('repositoryinstancenew',
-        new lang_string('createrepository', 'repository'), $url, 'moodle/site:config', true),
-        '', $url);
+        new lang_string('createrepository', 'repository'), $url, 'moodle/site:config', true));
     $ADMIN->add('repositorysettings', new admin_externalpage('repositoryinstanceedit',
-        new lang_string('editrepositoryinstance', 'repository'), $url, 'moodle/site:config', true),
-        '', $url);
+        new lang_string('editrepositoryinstance', 'repository'), $url, 'moodle/site:config', true));
     foreach ($allplugins['repository'] as $repositorytype) {
         $repositorytype->load_settings($ADMIN, 'repositorysettings', $hassiteconfig);
     }
