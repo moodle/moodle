@@ -204,6 +204,27 @@
     <licenseversion></licenseversion>
   </library>
   <library>
+    <location>jquery</location>
+    <name>jQuery</name>
+    <license>MIT</license>
+    <version>1.9.1</version>
+    <licenseversion></licenseversion>
+  </library>
+  <library>
+    <location>jquery</location>
+    <name>jQuery Migrate</name>
+    <license>MIT</license>
+    <version>1.1.1</version>
+    <licenseversion></licenseversion>
+  </library>
+  <library>
+    <location>jquery</location>
+    <name>jQuery UI</name>
+    <license>MIT</license>
+    <version>1.10.2</version>
+    <licenseversion></licenseversion>
+  </library>
+  <library>
     <location>zend</location>
     <name>Zend Framework</name>
     <license>new BSD</license>

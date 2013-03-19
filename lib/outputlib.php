@@ -482,6 +482,20 @@ class theme_config {
     }
 
     /**
+     * Let the theme initialise the page object (usually $PAGE).
+     *
+     * This may be used for example to request jQuery in add-ons.
+     *
+     * @param moodle_page $page
+     */
+    public function init_page(moodle_page $page) {
+        $themeinitfunction = 'theme_'.$this->name.'_page_init';
+        if (function_exists($themeinitfunction)) {
+            $themeinitfunction($page);
+        }
+    }
+
+    /**
      * Checks if arrows $THEME->rarrow, $THEME->larrow have been set (theme/-/config.php).
      * If not it applies sensible defaults.
      *
