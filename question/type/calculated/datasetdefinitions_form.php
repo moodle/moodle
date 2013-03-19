@@ -71,7 +71,10 @@ class question_dataset_dependent_definitions_form extends question_wizard_form {
 
     protected function definition() {
         global $SESSION;
+
         $mform = $this->_form;
+        $mform->setDisableShortforms();
+
         $possibledatasets = $this->qtypeobj->find_dataset_names($this->question->questiontext);
         $mandatorydatasets = array();
         if (isset($this->question->options->answers)) {
