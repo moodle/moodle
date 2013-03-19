@@ -233,11 +233,15 @@ function edit_module_post_actions($moduleinfo, $course, $eventname) {
             if (property_exists($moduleinfo, $elname) and $moduleinfo->$elname) {
                 // So we have a request for new outcome grade item?
                 if ($items) {
+                    $outcomeexists = false;
                     foreach($items as $item) {
                         if ($item->outcomeid == $outcome->id) {
-                            // Outcome aready exists.
-                            continue 2;
+                            $outcomeexists = true;
+                            break;
                         }
+                    }
+                    if ($outcomeexists) {
+                        continue;
                     }
                 }
 
