@@ -26,6 +26,8 @@ information provided here is intended especially for developers.
 * Function get_users_listing now return list of users except guest and deleted users. Previously
   deleted users were excluded by get_users_listing. As guest user is not expected while browsing users,
   and not included in get_user function, it will not be returned by get_users_listing.
+* The add_* functions in course/dnduploadlib.php have been deprecated. Plugins should be using the
+  MODNAME_dndupload_register callback instead.
 
 YUI changes:
 * M.util.help_icon has been deprecated. Code should be updated to use moodle-core-popuphelp

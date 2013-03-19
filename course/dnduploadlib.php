@@ -112,11 +112,11 @@ class dndupload_handler {
         // Add some default types to handle.
         // Note: 'Files' type is hard-coded into the Javascript as this needs to be ...
         // ... treated a little differently.
-        $this->add_type_internal('url', array('url', 'text/uri-list', 'text/x-moz-url'), get_string('addlinkhere', 'moodle'),
+        $this->register_type('url', array('url', 'text/uri-list', 'text/x-moz-url'), get_string('addlinkhere', 'moodle'),
                         get_string('nameforlink', 'moodle'), get_string('whatforlink', 'moodle'), 10);
-        $this->add_type_internal('text/html', array('text/html'), get_string('addpagehere', 'moodle'),
+        $this->register_type('text/html', array('text/html'), get_string('addpagehere', 'moodle'),
                         get_string('nameforpage', 'moodle'), get_string('whatforpage', 'moodle'), 20);
-        $this->add_type_internal('text', array('text', 'text/plain'), get_string('addpagehere', 'moodle'),
+        $this->register_type('text', array('text', 'text/plain'), get_string('addpagehere', 'moodle'),
                         get_string('nameforpage', 'moodle'), get_string('whatforpage', 'moodle'), 30);
 
         // Loop through all modules to find handlers.
@@ -135,7 +135,7 @@ class dndupload_handler {
             }
             if (isset($resp['files'])) {
                 foreach ($resp['files'] as $file) {
-                    $this->add_file_handler($file['extension'], $modname, $file['message']);
+                    $this->register_file_handler($file['extension'], $modname, $file['message']);
                 }
             }
             if (isset($resp['addtypes'])) {
@@ -148,14 +148,14 @@ class dndupload_handler {
                     if (!isset($type['handlermessage'])) {
                         $type['handlermessage'] = '';
                     }
-                    $this->add_type_internal($type['identifier'], $type['datatransfertypes'],
+                    $this->register_type($type['identifier'], $type['datatransfertypes'],
                                     $type['addmessage'], $type['namemessage'], $type['handlermessage'], $priority);
                 }
             }
             if (isset($resp['types'])) {
                 foreach ($resp['types'] as $type) {
                     $noname = !empty($type['noname']);
-                    $this->add_type_handler($type['identifier'], $modname, $type['message'], $noname);
+                    $this->register_type_handler($type['identifier'], $modname, $type['message'], $noname);
                 }
             }
         }
@@ -173,7 +173,8 @@ class dndupload_handler {
      * @param int $priority
      */
     public function add_type($identifier, $datatransfertypes, $addmessage, $namemessage, $priority=100) {
-        $this->add_type_internal($identifier, $datatransfertypes, $addmessage, $namemessage, '', $priority);
+        debugging('add_type() is deprecated. Plugins should be using the MODNAME_dndupload_register callback.');
+        $this->register_type($identifier, $datatransfertypes, $addmessage, $namemessage, '', $priority);
     }
 
     /**
@@ -191,7 +192,7 @@ class dndupload_handler {
      * @param int $priority Controls the order in which types are checked by the browser (mainly
      *                      needed to check for 'text' last as that is usually given as fallback)
      */
-    protected function add_type_internal($identifier, $datatransfertypes, $addmessage, $namemessage, $handlermessage, $priority=100) {
+    protected function register_type($identifier, $datatransfertypes, $addmessage, $namemessage, $handlermessage, $priority=100) {
         if ($this->is_known_type($identifier)) {
             throw new coding_exception("Type $identifier is already registered");
         }
@@ -209,9 +210,10 @@ class dndupload_handler {
     }
 
     /**
-     * Used to declare that a particular module will handle a particular type
-     * of dropped data
+     * No external code should be directly adding new type handlers - they should be added via a 'addtypes' array, returned
+     * by MODNAME_dndupload_register.
      *
+     * @deprecated deprecated since Moodle 2.5
      * @param string $type The name of the type (as declared in add_type)
      * @param string $module The name of the module to handle this type
      * @param string $message The message to show the user if more than one handler is registered
@@ -220,6 +222,22 @@ class dndupload_handler {
      * @throws coding_exception
      */
     public function add_type_handler($type, $module, $message, $noname) {
+        debugging('add_type_handler() is deprecated. Plugins should be using the MODNAME_dndupload_register callback.');
+        $this->register_type_handler($type, $module, $message, $noname);
+    }
+
+    /**
+     * Used to declare that a particular module will handle a particular type
+     * of dropped data
+     *
+     * @param string $type The name of the type (as declared in register_type)
+     * @param string $module The name of the module to handle this type
+     * @param string $message The message to show the user if more than one handler is registered
+     *                        for a type and the user needs to make a choice between them
+     * @param bool $noname If true, the 'name' dialog should be disabled in the pop-up.
+     * @throws coding_exception
+     */
+    protected function register_type_handler($type, $module, $message, $noname) {
         if (!$this->is_known_type($type)) {
             throw new coding_exception("Trying to add handler for unknown type $type");
         }
@@ -234,6 +252,21 @@ class dndupload_handler {
     }
 
     /**
+     * No external code should be directly adding new file handlers - they should be added via a 'files' array, returned
+     * by MODNAME_dndupload_register.
+     *
+     * @deprecated deprecated since Moodle 2.5
+     * @param string $extension The file extension to handle ('*' for all types)
+     * @param string $module The name of the module to handle this type
+     * @param string $message The message to show the user if more than one handler is registered
+     *                        for a type and the user needs to make a choice between them
+     */
+    public function add_file_handler($extension, $module, $message) {
+        debugging('add_file_handler() is deprecated. Plugins should be using the MODNAME_dndupload_register callback.');
+        $this->register_file_handler($extension, $module, $message);
+    }
+
+    /**
      * Used to declare that a particular module will handle a particular type
      * of dropped file
      *
@@ -242,7 +275,7 @@ class dndupload_handler {
      * @param string $message The message to show the user if more than one handler is registered
      *                        for a type and the user needs to make a choice between them
      */
-    public function add_file_handler($extension, $module, $message) {
+    protected function register_file_handler($extension, $module, $message) {
         $extension = strtolower($extension);
 
         $add = new stdClass;
