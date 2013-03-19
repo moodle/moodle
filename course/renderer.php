@@ -1053,6 +1053,54 @@ class core_course_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Displays a custom list of courses with paging bar if necessary
+     *
+     * If $paginationurl is specified but $totalcount is not, the link 'View more'
+     * appears under the list.
+     *
+     * If both $paginationurl and $totalcount are specified, and $totalcount is
+     * bigger than count($courses), a paging bar is displayed above and under the
+     * courses list.
+     *
+     * @param array $courses array of course records (or instances of course_in_list) to show on this page
+     * @param bool $showcategoryname whether to add category name to the course description
+     * @param string $additionalclasses additional CSS classes to add to the div.courses
+     * @param moodle_url $paginationurl url to view more or url to form links to the other pages in paging bar
+     * @param int $totalcount total number of courses on all pages, if omitted $paginationurl will be displayed as 'View more' link
+     * @param int $page current page number (defaults to 0 referring to the first page)
+     * @param int $perpage number of records per page (defaults to $CFG->coursesperpage)
+     * @return string
+     */
+    public function courses_list($courses, $showcategoryname = false, $additionalclasses = null, $paginationurl = null, $totalcount = null, $page = 0, $perpage = null) {
+        global $CFG;
+        // create instance of coursecat_helper to pass display options to function rendering courses list
+        $chelper = new coursecat_helper();
+        if ($showcategoryname) {
+            $chelper->set_show_courses(self::COURSECAT_SHOW_COURSES_EXPANDED_WITH_CAT);
+        } else {
+            $chelper->set_show_courses(self::COURSECAT_SHOW_COURSES_EXPANDED);
+        }
+        if ($totalcount !== null && $paginationurl !== null) {
+            // add options to display pagination
+            if ($perpage === null) {
+                $perpage = $CFG->coursesperpage;
+            }
+            $chelper->set_courses_display_options(array(
+                'limit' => $perpage,
+                'offset' => ((int)$page) * $perpage,
+                'paginationurl' => $paginationurl,
+            ));
+        } else if ($paginationurl !== null) {
+            // add options to display 'View more' link
+            $chelper->set_courses_display_options(array('viewmoreurl' => $paginationurl));
+            $totalcount = count($courses) + 1; // has to be bigger than count($courses) otherwise link will not be displayed
+        }
+        $chelper->set_attributes(array('class' => $additionalclasses));
+        $content = $this->coursecat_courses($chelper, $courses, $totalcount);
+        return $content;
+    }
+
+    /**
      * Displays one course in the list of courses.
      *
      * This is an internal function, to display an information about just one course
