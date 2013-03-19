@@ -419,7 +419,7 @@ class theme_mymobile_core_renderer extends core_renderer {
             } else if (is_role_switched($course->id)) { // Has switched roles
                 $rolename = '';
                 if ($role = $DB->get_record('role', array('id'=>$USER->access['rsw'][$context->path]))) {
-                    $rolename = ': '.format_string($role->name);
+                    $rolename = ': '.role_get_name($role, $context);
                 }
                 $loggedinas = get_string('loggedinas', 'moodle', $username).$rolename." (<a href=\"$CFG->wwwroot/course/view.php?id=$course->id&amp;switchrole=0&amp;sesskey=".sesskey()."\">".get_string('switchrolereturn').'</a>)';
             } else {
