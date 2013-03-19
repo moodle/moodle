@@ -243,6 +243,8 @@ class site_registration_form extends moodleform {
         $questionsnumber = get_config('hub', 'site_questionsnumber_' . $cleanhuburl);
         $resourcesnumber = get_config('hub', 'site_resourcesnumber_' . $cleanhuburl);
         $mediancoursesize = get_config('hub', 'site_mediancoursesize_' . $cleanhuburl);
+        $participantnumberaveragecfg = get_config('hub', 'site_participantnumberaverage_' . $cleanhuburl);
+        $modulenumberaveragecfg = get_config('hub', 'site_modulenumberaverage_' . $cleanhuburl);
 
         //hidden parameters
         $mform->addElement('hidden', 'huburl', $huburl);
@@ -374,36 +376,36 @@ class site_registration_form extends moodleform {
         if (HUB_MOODLEORGHUBURL != $huburl) {
             $mform->addElement('checkbox', 'courses', get_string('sendfollowinginfo', 'hub'),
                     " " . get_string('coursesnumber', 'hub', $coursecount));
-            $mform->setDefault('courses', true);
+            $mform->setDefault('courses', $coursesnumber != -1);
             $mform->addHelpButton('courses', 'sendfollowinginfo', 'hub');
 
             $mform->addElement('checkbox', 'users', '',
                     " " . get_string('usersnumber', 'hub', $usercount));
-            $mform->setDefault('users', true);
+            $mform->setDefault('users', $usersnumber != -1);
 
             $mform->addElement('checkbox', 'roleassignments', '',
                     " " . get_string('roleassignmentsnumber', 'hub', $roleassigncount));
-            $mform->setDefault('roleassignments', true);
+            $mform->setDefault('roleassignments', $roleassignmentsnumber != -1);
 
             $mform->addElement('checkbox', 'posts', '',
                     " " . get_string('postsnumber', 'hub', $postcount));
-            $mform->setDefault('posts', true);
+            $mform->setDefault('posts', $postsnumber != -1);
 
             $mform->addElement('checkbox', 'questions', '',
                     " " . get_string('questionsnumber', 'hub', $questioncount));
-            $mform->setDefault('questions', true);
+            $mform->setDefault('questions', $questionsnumber != -1);
 
             $mform->addElement('checkbox', 'resources', '',
                     " " . get_string('resourcesnumber', 'hub', $resourcecount));
-            $mform->setDefault('resources', true);
+            $mform->setDefault('resources', $resourcesnumber != -1);
 
             $mform->addElement('checkbox', 'participantnumberaverage', '',
                     " " . get_string('participantnumberaverage', 'hub', $participantnumberaverage));
-            $mform->setDefault('participantnumberaverage', true);
+            $mform->setDefault('participantnumberaverage', $participantnumberaveragecfg != -1);
 
             $mform->addElement('checkbox', 'modulenumberaverage', '',
                     " " . get_string('modulenumberaverage', 'hub', $modulenumberaverage));
-            $mform->setDefault('modulenumberaverage', true);
+            $mform->setDefault('modulenumberaverage', $modulenumberaveragecfg != -1);
         } else {
             $mform->addElement('static', 'courseslabel', get_string('sendfollowinginfo', 'hub'),
                     " " . get_string('coursesnumber', 'hub', $coursecount));
