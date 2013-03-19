@@ -1653,6 +1653,73 @@ class core_course_renderer extends plugin_renderer_base {
 
         return $output;
     }
+
+    /**
+     * Renders html to display search result page
+     *
+     * @param array $searchcriteria may contain elements: search, blocklist, modulelist, tagid
+     * @return string
+     */
+    public function search_courses($searchcriteria) {
+        global $CFG;
+        $content = '';
+        if (!empty($searchcriteria)) {
+            // print search results
+
+            $displayoptions = array('sort' => array('displayname' => 1));
+            // take the current page and number of results per page from query
+            $perpage = optional_param('perpage', 0, PARAM_RAW);
+            if ($perpage !== 'all') {
+                $displayoptions['limit'] = ((int)$perpage <= 0) ? $CFG->coursesperpage : (int)$perpage;
+                $page = optional_param('page', 0, PARAM_INT);
+                $displayoptions['offset'] = $displayoptions['limit'] * $page;
+            }
+            // options 'paginationurl' and 'paginationallowall' are only used in method coursecat_courses()
+            $displayoptions['paginationurl'] = new moodle_url('/course/search.php', $searchcriteria);
+            $displayoptions['paginationallowall'] = true; // allow adding link 'View all'
+
+            $class = 'course-search-result';
+            foreach ($searchcriteria as $key => $value) {
+                if (!empty($value)) {
+                    $class .= ' course-search-result-'. $key;
+                }
+            }
+            $chelper = new coursecat_helper();
+            $chelper->set_show_courses(self::COURSECAT_SHOW_COURSES_EXPANDED_WITH_CAT)->
+                    set_courses_display_options($displayoptions)->
+                    set_search_criteria($searchcriteria)->
+                    set_attributes(array('class' => $class));
+
+            $courses = coursecat::search_courses($searchcriteria, $chelper->get_courses_display_options());
+            $totalcount = coursecat::search_courses_count($searchcriteria);
+            $courseslist = $this->coursecat_courses($chelper, $courses, $totalcount);
+
+            if (!$totalcount) {
+                if (!empty($searchcriteria['search'])) {
+                    $content .= $this->heading(get_string('nocoursesfound', '', $searchcriteria['search']));
+                } else {
+                    $content .= $this->heading(get_string('novalidcourses'));
+                }
+            } else {
+                $content .= $this->heading(get_string('searchresults'). ": $totalcount");
+                $content .= $courseslist;
+            }
+
+            if (!empty($searchcriteria['search'])) {
+                // print search form only if there was a search by search string, otherwise it is confusing
+                $content .= $this->box_start('generalbox mdl-align');
+                $content .= $this->course_search_form($searchcriteria['search']);
+                $content .= $this->box_end();
+            }
+        } else {
+            // just print search form
+            $content .= $this->box_start('generalbox mdl-align');
+            $content .= $this->course_search_form();
+            $content .= html_writer::tag('div', get_string("searchhelp"), array('class' => 'searchhelp'));
+            $content .= $this->box_end();
+        }
+        return $content;
+    }
 }
 
 /**
