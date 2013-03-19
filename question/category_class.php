@@ -99,20 +99,26 @@ class question_category_list_item extends list_item {
 
         $editqestions = get_string('editquestions', 'question');
 
-        /// Each section adds html to be displayed as part of this list item
-        $questionbankurl = new moodle_url("/question/edit.php", ($this->parentlist->pageurl->params() + array('cat'=>"$category->id,$category->contextid")));
-        $catediturl = $this->parentlist->pageurl->out(true, array('edit' => $this->id));
-        $item = "<b><a title=\"{$str->edit}\" href=\"$catediturl\">" .
-                format_string($category->name, true, array('context' => $this->parentlist->context)) .
-                "</a></b> <a title=\"$editqestions\" href=\"$questionbankurl\">".'('.$category->questioncount.')</a>';
-
-        $item .= '&nbsp;' . format_text($category->info, $category->infoformat,
+        // Each section adds html to be displayed as part of this list item.
+        $questionbankurl = new moodle_url('/question/edit.php', $this->parentlist->pageurl->params());
+        $questionbankurl->param('cat', $category->id . ',' . $category->contextid);
+        $catediturl = new moodle_url($this->parentlist->pageurl, array('edit' => $this->id));
+        $item = '';
+        $item .= html_writer::tag('b', html_writer::link($catediturl,
+                format_string($category->name, true, array('context' => $this->parentlist->context)),
+                array('title' => $str->edit))) . ' ';
+        $item .= html_writer::link($questionbankurl, '(' . $category->questioncount . ')',
+                array('title' => $editqestions)) . ' ';
+        $item .= format_text($category->info, $category->infoformat,
                 array('context' => $this->parentlist->context, 'noclean' => true));
 
         // don't allow delete if this is the last category in this context.
         if (count($this->parentlist->records) != 1) {
-            $item .=  '<a title="' . $str->delete . '" href="'.$this->parentlist->pageurl->out(true, array('delete'=>$this->id, 'sesskey'=>sesskey())).'">
-                    <img src="' . $OUTPUT->pix_url('t/delete') . '" class="iconsmall" alt="' .$str->delete. '" /></a>';
+            $deleteurl = new moodle_url($this->parentlist->pageurl, array('delete' => $this->id, 'sesskey' => sesskey()));
+            $item .= html_writer::link($deleteurl,
+                    html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('t/delete'),
+                            'class' => 'iconsmall', 'alt' => $str->delete)),
+                    array('title' => $str->delete));
         }
 
         return $item;
