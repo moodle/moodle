@@ -107,45 +107,16 @@ class core_course_renderer extends plugin_renderer_base {
     /**
      * Renders course info box.
      *
-     * @param stdClass $course
+     * @param stdClass|course_in_list $course
      * @return string
      */
     public function course_info_box(stdClass $course) {
-        global $CFG;
-
-        $context = context_course::instance($course->id);
-
         $content = '';
         $content .= $this->output->box_start('generalbox info');
-
-        $summary = file_rewrite_pluginfile_urls($course->summary, 'pluginfile.php', $context->id, 'course', 'summary', null);
-        $content .= format_text($summary, $course->summaryformat, array('overflowdiv'=>true), $course->id);
-        if (!empty($CFG->coursecontact)) {
-            $coursecontactroles = explode(',', $CFG->coursecontact);
-            foreach ($coursecontactroles as $roleid) {
-                if ($users = get_role_users($roleid, $context, true, '', null, false)) {
-                    foreach ($users as $teacher) {
-                        $role = new stdClass();
-                        $role->id = $teacher->roleid;
-                        $role->name = $teacher->rolename;
-                        $role->shortname = $teacher->roleshortname;
-                        $role->coursealias = $teacher->rolecoursealias;
-                        $fullname = fullname($teacher, has_capability('moodle/site:viewfullnames', $context));
-                        $namesarray[] = role_get_name($role, $context).': <a href="'.$CFG->wwwroot.'/user/view.php?id='.
-                            $teacher->id.'&amp;course='.SITEID.'">'.$fullname.'</a>';
-                    }
-                }
-            }
-
-            if (!empty($namesarray)) {
-                $content .= "<ul class=\"teachers\">\n<li>";
-                $content .= implode('</li><li>', $namesarray);
-                $content .= "</li></ul>";
-            }
-        }
-
+        $chelper = new coursecat_helper();
+        $chelper->set_show_courses(self::COURSECAT_SHOW_COURSES_EXPANDED);
+        $content .= $this->coursecat_coursebox($chelper, $course);
         $content .= $this->output->box_end();
-
         return $content;
     }
 

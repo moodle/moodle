@@ -42,7 +42,6 @@
     $PAGE->navbar->add(get_string('summary'));
 
     echo $OUTPUT->header();
-    echo $OUTPUT->heading('<a href="view.php?id='.$course->id.'">'.format_string($course->fullname) . '</a><br />(' . format_string($course->shortname, true, array('context' => $context)) . ')');
 
     // print enrol info
     if ($texts = enrol_get_course_description_texts($course)) {
