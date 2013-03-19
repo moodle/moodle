@@ -38,6 +38,9 @@ require_once("HTML/QuickForm/submit.php");
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class MoodleQuickForm_submit extends HTML_QuickForm_submit {
+    /** @var string Need to store id of form for submission control in JS*/
+    var $_formid = '';
+
     /**
      * constructor
      *
@@ -60,6 +63,7 @@ class MoodleQuickForm_submit extends HTML_QuickForm_submit {
     {
         switch ($event) {
             case 'createElement':
+                $this->_formid = $caller->getAttribute('id');
                 parent::onQuickFormEvent($event, $arg, $caller);
                 if ($caller->isNoSubmitButton($arg[0])){
                     //need this to bypass client validation
@@ -98,4 +102,20 @@ class MoodleQuickForm_submit extends HTML_QuickForm_submit {
         $this->_flagFrozen = true;
     }
 
+    /**
+     * Returns HTML for this form element.
+     *
+     * @return string
+     */
+    function toHtml(){
+        global $PAGE;
+        $options = array(
+            'submitid' => $this->getAttribute('id'),
+            'formid' => $this->_formid,
+        );
+        $str = parent::toHtml();
+        $module = array('name'=>'form_submit', 'fullpath'=>'/lib/form/submit.js');
+        $PAGE->requires->js_init_call('M.form_submit.init', array($options), true, $module);
+        return $str;
+    }
 }

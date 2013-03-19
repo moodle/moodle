@@ -1955,6 +1955,7 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
 //<![CDATA[
 
 var skipClientValidation = false;
+var containsErrors = false;
 
 function qf_errorHandler(element, _qfMsg) {
   div = element.parentNode;
@@ -2063,6 +2064,7 @@ function validate_' . $this->_formName . '(frm) {
   var frm = document.getElementById(\''. $this->_attributes['id'] .'\')
   var first_focus = false;
 ' . $validateJS . ';
+  containsErrors = !ret;
   return ret;
 }
 //]]>
