@@ -39,8 +39,8 @@ are supported. There may be some extra files with special meaning in /local/.
 Sample /local/ directory listing:
 /local/nicehack/         - first customisation plugin
 /local/otherhack/        - other customisation plugin
-/local/upgrade_pre20.php - one time upgrade and migration script which is
-                           executed before main 2.0 upgrade starts
+/local/preupgrade.php    - executed before each core upgrade, use $version and $CFG->version
+                           if you need to tweak specific local hacks
 /local/defaults.php      - custom admin setting defaults
 
 
