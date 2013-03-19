@@ -55,7 +55,7 @@ function add_moduleinfo($moduleinfo, $course, $mform = null) {
         print_error('moduledisable', '', '', $moduleinfo->modulename);
     }
 
-    // first add course_module record because we need the context
+    // First add course_module record because we need the context.
     $newcm = new stdClass();
     $newcm->course           = $course->id;
     $newcm->module           = $moduleinfo->module;
@@ -292,7 +292,7 @@ function edit_module_post_actions($moduleinfo, $course, $eventname) {
     rebuild_course_cache($course->id);
     grade_regrade_final_grades($course->id);
     require_once($CFG->libdir.'/plagiarismlib.php');
-    plagiarism_save_form_elements($moduleinfo); //save plagiarism settings
+    plagiarism_save_form_elements($moduleinfo);
 
     return $moduleinfo;
 }
@@ -318,8 +318,8 @@ function set_moduleinfo_defaults($moduleinfo) {
         $moduleinfo->instance     = $cm->instance;
         $moduleinfo->coursemodule = $cm->id;
     }
-
-    $moduleinfo->modulename = clean_param($moduleinfo->modulename, PARAM_PLUGIN);  // For safety
+    // For safety.
+    $moduleinfo->modulename = clean_param($moduleinfo->modulename, PARAM_PLUGIN);
 
     if (!isset($moduleinfo->groupingid)) {
         $moduleinfo->groupingid = 0;
@@ -453,49 +453,49 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
         $cm->showdescription = 0;
     }
 
-        $DB->update_record('course_modules', $cm);
+    $DB->update_record('course_modules', $cm);
 
-        $modcontext = context_module::instance($moduleinfo->coursemodule);
+    $modcontext = context_module::instance($moduleinfo->coursemodule);
 
-        // update embedded links and save files.
-        if (plugin_supports('mod', $moduleinfo->modulename, FEATURE_MOD_INTRO, true)) {
-            $moduleinfo->intro = file_save_draft_area_files($moduleinfo->introeditor['itemid'], $modcontext->id,
-                                                          'mod_'.$moduleinfo->modulename, 'intro', 0,
-                                                          array('subdirs'=>true), $moduleinfo->introeditor['text']);
-            $moduleinfo->introformat = $moduleinfo->introeditor['format'];
-            unset($moduleinfo->introeditor);
-        }
-        $updateinstancefunction = $moduleinfo->modulename."_update_instance";
-        if (!$updateinstancefunction($moduleinfo, $mform)) {
-            print_error('cannotupdatemod', '', course_get_url($course, $cw->section), $moduleinfo->modulename);
-        }
+    // Update embedded links and save files.
+    if (plugin_supports('mod', $moduleinfo->modulename, FEATURE_MOD_INTRO, true)) {
+        $moduleinfo->intro = file_save_draft_area_files($moduleinfo->introeditor['itemid'], $modcontext->id,
+                                                      'mod_'.$moduleinfo->modulename, 'intro', 0,
+                                                      array('subdirs'=>true), $moduleinfo->introeditor['text']);
+        $moduleinfo->introformat = $moduleinfo->introeditor['format'];
+        unset($moduleinfo->introeditor);
+    }
+    $updateinstancefunction = $moduleinfo->modulename."_update_instance";
+    if (!$updateinstancefunction($moduleinfo, $mform)) {
+        print_error('cannotupdatemod', '', course_get_url($course, $cw->section), $moduleinfo->modulename);
+    }
 
-        // Make sure visibility is set correctly (in particular in calendar).
-        if (has_capability('moodle/course:activityvisibility', $modcontext)) {
-            set_coursemodule_visible($moduleinfo->coursemodule, $moduleinfo->visible);
-        }
+    // Make sure visibility is set correctly (in particular in calendar).
+    if (has_capability('moodle/course:activityvisibility', $modcontext)) {
+        set_coursemodule_visible($moduleinfo->coursemodule, $moduleinfo->visible);
+    }
 
-        if (isset($moduleinfo->cmidnumber)) { // Label.
-            // Set cm idnumber - uniqueness is already verified by form validation.
-            set_coursemodule_idnumber($moduleinfo->coursemodule, $moduleinfo->cmidnumber);
-        }
+    if (isset($moduleinfo->cmidnumber)) { // Label.
+        // Set cm idnumber - uniqueness is already verified by form validation.
+        set_coursemodule_idnumber($moduleinfo->coursemodule, $moduleinfo->cmidnumber);
+    }
 
-        // Now that module is fully updated, also update completion data if required. 
-        // (this will wipe all user completion data and recalculate it)
-        if ($completion->is_enabled() && !empty($moduleinfo->completionunlocked)) {
-            $completion->reset_all_state($cm);
-        }
+    // Now that module is fully updated, also update completion data if required.
+    // (this will wipe all user completion data and recalculate it)
+    if ($completion->is_enabled() && !empty($moduleinfo->completionunlocked)) {
+        $completion->reset_all_state($cm);
+    }
 
-        add_to_log($course->id, "course", "update mod",
-                   "../mod/$moduleinfo->modulename/view.php?id=$moduleinfo->coursemodule",
-                   "$moduleinfo->modulename $moduleinfo->instance");
-        add_to_log($course->id, $moduleinfo->modulename, "update",
-                   "view.php?id=$moduleinfo->coursemodule",
-                   "$moduleinfo->instance", $moduleinfo->coursemodule);
+    add_to_log($course->id, "course", "update mod",
+               "../mod/$moduleinfo->modulename/view.php?id=$moduleinfo->coursemodule",
+               "$moduleinfo->modulename $moduleinfo->instance");
+    add_to_log($course->id, $moduleinfo->modulename, "update",
+               "view.php?id=$moduleinfo->coursemodule",
+               "$moduleinfo->instance", $moduleinfo->coursemodule);
 
-        $moduleinfo = edit_module_post_actions($moduleinfo, $course, 'mod_updated');
+    $moduleinfo = edit_module_post_actions($moduleinfo, $course, 'mod_updated');
 
-        return array($cm, $moduleinfo);
+    return array($cm, $moduleinfo);
 }
 
 /**
