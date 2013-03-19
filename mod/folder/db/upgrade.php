@@ -58,7 +58,6 @@ function xmldb_folder_upgrade($oldversion) {
     // Moodle v2.3.0 release upgrade line
     // Put any upgrade step following this
 
-
     // Moodle v2.4.0 release upgrade line
     // Put any upgrade step following this
 
@@ -75,6 +74,21 @@ function xmldb_folder_upgrade($oldversion) {
 
         // folder savepoint reached
         upgrade_mod_savepoint(true, 2013012100, 'folder');
+    }
+
+    if ($oldversion < 2013031500) {
+
+        // Define field show_expanded to be added to folder
+        $table = new xmldb_table('folder');
+        $field = new xmldb_field('show_expanded', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '1', 'revision');
+
+        // Conditionally launch add field show_expanded
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // folder savepoint reached
+        upgrade_mod_savepoint(true, 2013031500, 'folder');
     }
 
     return true;
