@@ -43,6 +43,7 @@ $string['cachedef_htmlpurifier'] = 'HTML Purifier - cleaned content';
 $string['cachedef_locking'] = 'Locking';
 $string['cachedef_questiondata'] = 'Question definitions';
 $string['cachedef_string'] = 'Language string cache';
+$string['cachedef_yuimodules'] = 'YUI Module definitions';
 $string['cachelock_file_default'] = 'Default file locking';
 $string['cachestores'] = 'Cache stores';
 $string['component'] = 'Component';
