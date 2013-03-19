@@ -31,6 +31,7 @@ $page      = optional_param('page', 0, PARAM_INT);     // which page to show
 $perpage   = optional_param('perpage', '', PARAM_RAW); // how many per page, may be integer or 'all'
 $blocklist = optional_param('blocklist', 0, PARAM_INT);
 $modulelist= optional_param('modulelist', '', PARAM_PLUGIN);
+$tagid     = optional_param('tagid', '', PARAM_INT);   // searches for courses tagged with this tag id
 
 // List of minimum capabilities which user need to have for editing/moving course
 $capabilities = array('moodle/course:create', 'moodle/category:manage');
@@ -43,7 +44,7 @@ $search = trim(strip_tags($search)); // trim & clean raw searched string
 $site = get_site();
 
 $searchcriteria = array();
-foreach (array('search', 'blocklist', 'modulelist') as $param) {
+foreach (array('search', 'blocklist', 'modulelist', 'tagid') as $param) {
     if (!empty($$param)) {
         $searchcriteria[$param] = $$param;
     }

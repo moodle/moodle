@@ -1720,6 +1720,36 @@ class core_course_renderer extends plugin_renderer_base {
         }
         return $content;
     }
+
+    /**
+     * Renders html to print list of courses tagged with particular tag
+     *
+     * @param int $tagid id of the tag
+     * @return string empty string if no courses are marked with this tag or rendered list of courses
+     */
+    public function tagged_courses($tagid) {
+        global $CFG;
+        $displayoptions = array('limit' => $CFG->coursesperpage);
+        $displayoptions['viewmoreurl'] = new moodle_url('/course/search.php',
+                array('tagid' => $tagid, 'page' => 1, 'perpage' => $CFG->coursesperpage));
+        $displayoptions['viewmoretext'] = new lang_string('findmorecourses');
+        $chelper = new coursecat_helper();
+        $searchcriteria = array('tagid' => $tagid);
+        $chelper->set_show_courses(self::COURSECAT_SHOW_COURSES_EXPANDED_WITH_CAT)->
+                set_search_criteria(array('tagid' => $tagid))->
+                set_courses_display_options($displayoptions)->
+                set_attributes(array('class' => 'course-search-result course-search-result-tagid'));
+                // (we set the same css class as in search results by tagid)
+        $courses = coursecat::search_courses($searchcriteria, $chelper->get_courses_display_options());
+        $totalcount = coursecat::search_courses_count($searchcriteria);
+        $content = $this->coursecat_courses($chelper, $courses, $totalcount);
+        if ($totalcount) {
+            require_once $CFG->dirroot.'/tag/lib.php';
+            $heading = get_string('courses') . ' ' . get_string('taggedwith', 'tag', tag_get_name($tagid)) .': '. $totalcount;
+            return $this->heading($heading, 3). $content;
+        }
+        return '';
+    }
 }
 
 /**
