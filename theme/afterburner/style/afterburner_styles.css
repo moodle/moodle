@@ -161,13 +161,6 @@ Navbar & Breadcrumb
     color: #787878;
 }
 
-.jsenabled .course_category_tree .controls {
-    visibility: visible;
-    float: right;
-}
-.category_label {
-    padding-left: 20px;
-}
 /*
 Collapse All - Expand All
 -------------------------*/
@@ -229,27 +222,22 @@ textarea {
     cursor: default;
 }
 /*
-Coursebox Info & Summary
-------------------------*/
-.coursebox h3,
-.coursebox .info,
-.coursebox .summary {
-    text-align: left;
+Courses and categories lists
+----------------------------*/
+.courses .coursebox .summary {
     width: 100%;
-    height: auto;
-}
-.coursebox .info {
     float: left;
 }
-.coursebox .summary {
-    float: right;
+.coursebox .name,
+.coursebox .summary,
+.coursebox .coursecat,
+.coursebox .teachers,
+.course_category_tree .paging {
+    margin: 5px;
 }
-.coursebox .summary p {
-    margin: 5px 0 0;
-}
-.coursebox .info h3.name {
-    padding: 0;
-    margin: 5px 0 0;
+.course_category_tree .category > .info .name {
+    padding-left: 20px;
+    margin: 5px;
 }
 /*
 Course Section Topic & Weekly

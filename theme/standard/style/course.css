@@ -6,13 +6,6 @@
 .course-content ul.weeks li.section .right {padding:4px 0;}
 
 /** Course **/
-.coursebox {border:1px solid #DDD;border-color:#DDDDDD;}
-.coursebox .info {margin:5px;font-size:1em;}
-.coursebox .info .name {margin:3px 0;}
-.coursebox .info .teachers {margin:0 1em;font-size:0.9em;}
-.coursebox .cost {font-size:0.9em;padding-top: 20px;}
-.coursebox .summary {margin:5px;font-size:0.9em;}
-
 #page-course-recent h2.main {font-size:1.1em;}
 #page-course-recent .user {font-size:0.75em;}
 #page-course-recent .grade {font-style: italic;font-size:0.9em;}
@@ -55,8 +48,6 @@
 .weeks .content,
 .topics .content {padding: 5px;}
 
-.categoryboxcontent {border-color:#DDDDDD;}
-
 #page-report-outline-user .section {border-color:#AAAAAA;}
 
 #page-admin-report .plugin,
@@ -65,9 +56,6 @@
 
 .path-course-view .unread {background: #9EBEFF;}
 .path-course-view .completionprogress {font-size:0.80em; margin-right: 1.5em; }
-
-#page-course-category .courseboxes,
-#page-course-index .courseboxes {padding:20px;}
 
 #page-report #content {padding-top:15px;padding-bottom:15px;}
 
@@ -84,24 +72,41 @@
 .addcoursebutton {text-align:center;}
 .categorypicker {text-align:center;margin-bottom:10px;}
 .path-report-outline .loginfo {text-align:center;margin: 1em;}
-.categorylist {width: 90%;margin:0 auto;text-align: left;}
 
-/* Course and category combo list on front page */
+/* Courses and categories lists */
+
+.coursebox {border:1px solid #DDD;border-color:#DDDDDD;}
+#page-enrol-index .generalbox.info,
+#page-course-info .generalbox.info {border:none;}
+.coursebox .name {padding: 5px;margin:0;}
+.coursebox .teachers {padding:3px 0 3px 21px;margin:0;font-size:0.9em;}
+.coursebox .coursecat,
+.coursebox .summary,
+.coursebox.remotecoursebox .remotecourseinfo {padding:3px 5px;font-size:0.9em;}
+.dir-rtl .coursebox .teachers {padding:3px 21px 3px 0;}
+
 .course_category_tree .controls {margin-bottom:5px;text-align:right;float:right;}
 .course_category_tree .controls div {padding-right:2em;font-size:75%;}
-.course_category_tree .category {background-color:#FFF;background-image:url([[pix:theme|hgradient]]);background-repeat: repeat-x;border:1px solid #ddd;margin-bottom:10px;}
-.course_category_tree .category .subcategories {background-color:inherit;padding-left:16px;border:1px solid #FFF;}
-.course_category_tree .category.with_children .category_label {background-position:3px 3px;}
-.course_category_tree .category_link .category_link {font-size:95%;}
-.course_category_tree .category_label {padding-left:13px;}
-.course_category_tree .category_link {display:block;margin:5px;font-size:120%;font-weight:bold;}
-.course_category_tree .category .courses {background-color:inherit;}
-.course_category_tree .category .courses .course_link {margin:5px;margin-right:100px;}
-.course_category_tree .category .course {border:1px solid #f9f9f9;border-bottom-color: #eee;border-right-width:0;}
-.course_category_tree .category .course:last-child {border-bottom-color:#f6f6f6;}
-.course_category_tree .category .course.even {background-color:#f6f6f6;border-color:#eee;border-top-color: #f9f9f9;}
-.course_category_tree .category .course_info {right:3px;top:3px;}
-.course_category_tree .category .course:hover {background-color:#eee;}
+
+.course_category_tree .category >.info {background-image:url([[pix:theme|hgradient]]);background-repeat: repeat-x;background-color:#e1e1df;border:1px solid #ddd;margin:3px 0;}
+.course_category_tree.frontpage-category-names .category >.info {background:none;border:none;margin:0;}
+.course_category_tree .category >.info .name {padding:5px 21px;margin:0;background-position: 3px center;}
+.dir-rtl .course_category_tree .category >.info .name {background-position: right 3px center 0;}
+
+.courses .coursebox.collapsed {border:1px solid #eeeeee;padding:3px 0;}
+.courses .coursebox.even {background-color:#f6f6f6;}
+.courses .coursebox:hover,
+.course_category_tree .courses > .paging:hover {background-color:#eeeeee;}
+
+.course_category_tree .subcategories > .paging,
+.course_category_tree .courses > .paging {margin:0;padding:5px;}
+
+.course_category_tree .courses > .paging.paging-morelink,
+.course_category_tree .subcategories > .paging.paging-morelink {text-align:left;}
+
+.course_category_tree .paging.paging-morelink a {font-size:90%}
+.dir-rtl .course_category_tree .paging.paging-morelink {text-align:right;}
+
 
 /* Publication */
 #page-course-publish-metadata .metadatatext {width: 400px;}

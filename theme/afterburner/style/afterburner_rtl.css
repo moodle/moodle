@@ -9,11 +9,13 @@
 .dir-rtl .block .header .title h2 {
     margin-right: 10px;
 }
-.dir-rtl .coursebox h3,
-.dir-rtl .coursebox .info,
-.dir-rtl .coursebox .summary {
-    text-align: right;
+
+.dir-rtl .course_category_tree .category > .header .name {
+    padding-left:0;
+    padding-right:20px;
 }
+.dir-rtl .coursebox .summary {float:right;}
+
 .dir-rtl a.logo {
     float: right;
 }
