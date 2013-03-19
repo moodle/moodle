@@ -599,12 +599,17 @@ abstract class condition_info_base {
     }
 
     /**
-     * The user fields we can compare
+     * Returns list of user fields that can be compared.
      *
-     * @global moodle_database $DB
+     * If you specify $formatoptions, then format_string will be called on the
+     * custom field names. This is necessary for multilang support to work so
+     * you should include this parameter unless you are going to format the
+     * text later.
+     *
+     * @param array $formatoptions Passed to format_string if provided
      * @return array Associative array from user field constants to display name
      */
-    public static function get_condition_user_fields() {
+    public static function get_condition_user_fields($formatoptions = null) {
         global $DB;
 
         $userfields = array(
@@ -630,7 +635,11 @@ abstract class condition_info_base {
         // Go through the custom profile fields now
         if ($user_info_fields = $DB->get_records('user_info_field')) {
             foreach ($user_info_fields as $field) {
-                $userfields[$field->id] = $field->name;
+                if ($formatoptions) {
+                    $userfields[$field->id] = format_string($field->name, true, $formatoptions);
+                } else {
+                    $userfields[$field->id] = $field->name;
+                }
             }
         }
 
