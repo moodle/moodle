@@ -117,7 +117,7 @@ class qtype_shortanswer_question extends question_graded_by_strategy
      * @return string the normalised string.
      */
     protected static function safe_normalize($string) {
-        if (!$string) {
+        if ($string === '') {
             return '';
         }
 
@@ -126,7 +126,7 @@ class qtype_shortanswer_question extends question_graded_by_strategy
         }
 
         $normalised = normalizer_normalize($string, Normalizer::FORM_C);
-        if (!$normalised) {
+        if (is_null($normalised)) {
             // An error occurred in normalizer_normalize, but we have no idea what.
             debugging('Failed to normalise string: ' . $string, DEBUG_DEVELOPER);
             return $string; // Return the original string, since it is the best we have.
