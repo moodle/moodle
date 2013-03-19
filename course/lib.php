@@ -3892,3 +3892,83 @@ function get_sorted_course_formats($enabledonly = false) {
 function course_get_url($courseorid, $section = null, $options = array()) {
     return course_get_format($courseorid)->get_view_url($section, $options);
 }
+
+/**
+ * Create a module.
+ *
+ * It includes:
+ *      - capability checks and other checks
+ *      - create the module from the module info
+ *
+ * @param object $module
+ * @return object the created module info
+ */
+function create_module($moduleinfo) {
+    global $DB, $CFG;
+
+    require_once($CFG->dirroot . '/course/modlib.php');
+
+    // Check manadatory attributs.
+    $mandatoryfields = array('modulename', 'course', 'section', 'visible');
+    if (plugin_supports('mod', $moduleinfo->modulename, FEATURE_MOD_INTRO, true)) {
+        $mandatoryfields[] = 'introeditor';
+    }
+    foreach($mandatoryfields as $mandatoryfield) {
+        if (!isset($moduleinfo->{$mandatoryfield})) {
+            throw new moodle_exception('createmodulemissingattribut', '', '', $mandatoryfield);
+        }
+    }
+
+    // Some additional checks (capability / existing instances).
+    $course = $DB->get_record('course', array('id'=>$moduleinfo->course), '*', MUST_EXIST);
+    list($module, $context, $cw) = can_add_moduleinfo($course, $moduleinfo->modulename, $moduleinfo->section);
+
+    // Load module library.
+    include_modulelib($module->name);
+
+    // Add the module.
+    $moduleinfo->module = $module->id;
+    $moduleinfo = add_moduleinfo($moduleinfo, $course, null);
+
+    return $moduleinfo;
+}
+
+/**
+ * Update a module.
+ *
+ * It includes:
+ *      - capability and other checks
+ *      - update the module
+ *
+ * @param object $module
+ * @return object the updated module info
+ */
+function update_module($moduleinfo) {
+    global $DB, $CFG;
+
+    require_once($CFG->dirroot . '/course/modlib.php');
+
+    // Check the course module exists.
+    $cm = get_coursemodule_from_id('', $moduleinfo->coursemodule, 0, false, MUST_EXIST);
+
+    // Check the course exists.
+    $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
+
+    // Some checks (capaibility / existing instances).
+    list($cm, $context, $module, $data, $cw) = can_update_moduleinfo($cm);
+
+    // Load module library.
+    include_modulelib($module->name);
+
+    // Retrieve few information needed by update_moduleinfo.
+    $moduleinfo->modulename = $cm->modname;
+    if (!isset($moduleinfo->scale)) {
+        $moduleinfo->scale = 0;
+    }
+    $moduleinfo->type = 'mod';
+
+    // Update the module.
+    list($cm, $moduleinfo) = update_moduleinfo($cm, $moduleinfo, $course, null);
+
+    return $moduleinfo;
+}

@@ -30,6 +30,543 @@ require_once($CFG->dirroot.'/course/lib.php');
 
 class courselib_testcase extends advanced_testcase {
 
+    /**
+     * Set forum specific test values for calling create_module().
+     *
+     * @param object $moduleinfo - the moduleinfo to add some specific values - passed in reference.
+     */
+    private function forum_create_set_values(&$moduleinfo) {
+        // Completion specific to forum - optional.
+        $moduleinfo->completionposts = 3;
+        $moduleinfo->completiondiscussions = 1;
+        $moduleinfo->completionreplies = 2;
+
+        // Specific values to the Forum module.
+        $moduleinfo->forcesubscribe = FORUM_INITIALSUBSCRIBE;
+        $moduleinfo->type = 'single';
+        $moduleinfo->trackingtype = FORUM_TRACKING_ON;
+        $moduleinfo->maxbytes = 10240;
+        $moduleinfo->maxattachments = 2;
+
+        // Post threshold for blocking - specific to forum.
+        $moduleinfo->blockperiod = 60*60*24;
+        $moduleinfo->blockafter = 10;
+        $moduleinfo->warnafter = 5;
+    }
+
+    /**
+     * Execute test asserts on the saved DB data by create_module($forum).
+     *
+     * @param object $moduleinfo - the specific forum values that were used to create a forum.
+     * @param object $dbmodinstance - the DB values of the created forum.
+     */
+    private function forum_create_run_asserts($moduleinfo, $dbmodinstance) {
+        // Compare values specific to forums.
+        $this->assertEquals($moduleinfo->forcesubscribe, $dbmodinstance->forcesubscribe);
+        $this->assertEquals($moduleinfo->type, $dbmodinstance->type);
+        $this->assertEquals($moduleinfo->assessed, $dbmodinstance->assessed);
+        $this->assertEquals($moduleinfo->completionposts, $dbmodinstance->completionposts);
+        $this->assertEquals($moduleinfo->completiondiscussions, $dbmodinstance->completiondiscussions);
+        $this->assertEquals($moduleinfo->completionreplies, $dbmodinstance->completionreplies);
+        $this->assertEquals($moduleinfo->scale, $dbmodinstance->scale);
+        $this->assertEquals($moduleinfo->assesstimestart, $dbmodinstance->assesstimestart);
+        $this->assertEquals($moduleinfo->assesstimefinish, $dbmodinstance->assesstimefinish);
+        $this->assertEquals($moduleinfo->rsstype, $dbmodinstance->rsstype);
+        $this->assertEquals($moduleinfo->rssarticles, $dbmodinstance->rssarticles);
+        $this->assertEquals($moduleinfo->trackingtype, $dbmodinstance->trackingtype);
+        $this->assertEquals($moduleinfo->maxbytes, $dbmodinstance->maxbytes);
+        $this->assertEquals($moduleinfo->maxattachments, $dbmodinstance->maxattachments);
+        $this->assertEquals($moduleinfo->blockperiod, $dbmodinstance->blockperiod);
+        $this->assertEquals($moduleinfo->blockafter, $dbmodinstance->blockafter);
+        $this->assertEquals($moduleinfo->warnafter, $dbmodinstance->warnafter);
+    }
+
+    /**
+     * Set assign module specific test values for calling create_module().
+     *
+     * @param object $moduleinfo - the moduleinfo to add some specific values - passed in reference.
+     */
+    private function assign_create_set_values(&$moduleinfo) {
+        // Specific values to the Assign module.
+        $moduleinfo->alwaysshowdescription = true;
+        $moduleinfo->submissiondrafts = true;
+        $moduleinfo->requiresubmissionstatement = true;
+        $moduleinfo->sendnotifications = true;
+        $moduleinfo->sendlatenotifications = true;
+        $moduleinfo->duedate = time() + (7 * 24 * 3600);
+        $moduleinfo->cutoffdate = time() + (7 * 24 * 3600);
+        $moduleinfo->allowsubmissionsfromdate = time();
+        $moduleinfo->teamsubmission = true;
+        $moduleinfo->requireallteammemberssubmit = true;
+        $moduleinfo->teamsubmissiongroupingid = true;
+        $moduleinfo->blindmarking = true;
+        $moduleinfo->assignsubmission_onlinetext_enabled = true;
+        $moduleinfo->assignsubmission_file_enabled = true;
+        $moduleinfo->assignsubmission_file_maxfiles = 1;
+        $moduleinfo->assignsubmission_file_maxsizebytes = 1000000;
+        $moduleinfo->assignsubmission_comments_enabled = true;
+        $moduleinfo->assignfeedback_comments_enabled = true;
+        $moduleinfo->assignfeedback_offline_enabled = true;
+        $moduleinfo->assignfeedback_file_enabled = true;
+
+        // Advanced grading.
+        $gradingmethods = grading_manager::available_methods();
+        $moduleinfo->advancedgradingmethod_submissions = current(array_keys($gradingmethods));
+    }
+
+    /**
+     * Execute test asserts on the saved DB data by create_module($assign).
+     *
+     * @param object $moduleinfo - the specific assign module values that were used to create an assign module.
+     * @param object $dbmodinstance - the DB values of the created assign module.
+     */
+    private function assign_create_run_asserts($moduleinfo, $dbmodinstance) {
+        global $DB;
+
+        $this->assertEquals($moduleinfo->alwaysshowdescription, $dbmodinstance->alwaysshowdescription);
+        $this->assertEquals($moduleinfo->submissiondrafts, $dbmodinstance->submissiondrafts);
+        $this->assertEquals($moduleinfo->requiresubmissionstatement, $dbmodinstance->requiresubmissionstatement);
+        $this->assertEquals($moduleinfo->sendnotifications, $dbmodinstance->sendnotifications);
+        $this->assertEquals($moduleinfo->duedate, $dbmodinstance->duedate);
+        $this->assertEquals($moduleinfo->cutoffdate, $dbmodinstance->cutoffdate);
+        $this->assertEquals($moduleinfo->allowsubmissionsfromdate, $dbmodinstance->allowsubmissionsfromdate);
+        $this->assertEquals($moduleinfo->teamsubmission, $dbmodinstance->teamsubmission);
+        $this->assertEquals($moduleinfo->requireallteammemberssubmit, $dbmodinstance->requireallteammemberssubmit);
+        $this->assertEquals($moduleinfo->teamsubmissiongroupingid, $dbmodinstance->teamsubmissiongroupingid);
+        $this->assertEquals($moduleinfo->blindmarking, $dbmodinstance->blindmarking);
+        // The goal not being to fully test assign_add_instance() we'll stop here for the assign tests - to avoid too many DB queries.
+
+        // Advanced grading.
+        $contextmodule = context_module::instance($dbmodinstance->id);
+        $advancedgradingmethod = $DB->get_record('grading_areas',
+            array('contextid' => $contextmodule->id,
+                'activemethod' => $moduleinfo->advancedgradingmethod_submissions));
+        $this->assertEquals($moduleinfo->advancedgradingmethod_submissions, $advancedgradingmethod);
+    }
+
+    /**
+     * Run some asserts test for a specific module for the function create_module().
+     *
+     * The function has been created (and is called) for $this->test_create_module().
+     * Note that the call to MODULE_create_set_values and MODULE_create_run_asserts are done after the common set values/run asserts.
+     * So if you want, you can overwrite the default values/asserts in the respective functions.
+     * @param string $modulename Name of the module ('forum', 'assign', 'book'...).
+     */
+    private function create_specific_module_test($modulename) {
+        global $DB, $CFG;
+
+        $this->resetAfterTest(true);
+
+        $this->setAdminUser();
+
+        // Warnings: you'll need to change this line if ever you come to test a module not following Moodle standard.
+        require_once($CFG->dirroot.'/mod/'. $modulename .'/lib.php');
+
+        // Enable avaibility.
+        // If not enabled all conditional fields will be ignored.
+        set_config('enableavailability', 1);
+
+        // Enable course completion.
+        // If not enabled all completion settings will be ignored.
+        set_config('enablecompletion', COMPLETION_ENABLED);
+
+        // Enable forum RSS feeds.
+        set_config('enablerssfeeds', 1);
+        set_config('forum_enablerssfeeds', 1);
+
+        $course = $this->getDataGenerator()->create_course(array('numsections'=>1, 'enablecompletion' => COMPLETION_ENABLED),
+           array('createsections'=>true));
+
+        $grouping = $this->getDataGenerator()->create_grouping(array('courseid' => $course->id));
+
+        // Create assign module instance for test.
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
+        $params['course'] = $course->id;
+        $instance = $generator->create_instance($params);
+        $assigncm = get_coursemodule_from_instance('assign', $instance->id);
+
+        // Module test values.
+        $moduleinfo = new stdClass();
+
+        // Always mandatory generic values to any module.
+        $moduleinfo->modulename = $modulename;
+        $moduleinfo->section = 1; // This is the section number in the course. Not the section id in the database.
+        $moduleinfo->course = $course->id;
+        $moduleinfo->groupingid = $grouping->id;
+        $moduleinfo->groupmembersonly = 0;
+        $moduleinfo->visible = true;
+
+        // Sometimes optional generic values for some modules.
+        $moduleinfo->name = 'My test module';
+        $moduleinfo->showdescription = 1; // standard boolean
+        require_once($CFG->libdir . '/gradelib.php');
+        $gradecats = grade_get_categories_menu($moduleinfo->course, false);
+        $gradecatid = current(array_keys($gradecats)); // Retrieve the first key of $gradecats
+        $moduleinfo->gradecat = $gradecatid;
+        $moduleinfo->groupmode = VISIBLEGROUPS;
+        $moduleinfo->cmidnumber = 'idnumber_XXX';
+
+        // Completion common to all module.
+        $moduleinfo->completion = COMPLETION_TRACKING_AUTOMATIC;
+        $moduleinfo->completionview = COMPLETION_VIEW_REQUIRED;
+        $moduleinfo->completiongradeitemnumber = 1;
+        $moduleinfo->completionexpected = time() + (7 * 24 * 3600);
+
+        // Conditional activity.
+        $moduleinfo->availablefrom = time();
+        $moduleinfo->availableuntil = time() + (7 * 24 * 3600);
+        $moduleinfo->showavailability = CONDITION_STUDENTVIEW_SHOW;
+        $coursegradeitem = grade_item::fetch_course_item($moduleinfo->course); //the activity will become available only when the user reach some grade into the course itself.
+        $moduleinfo->conditiongradegroup = array(array('conditiongradeitemid' => $coursegradeitem->id, 'conditiongrademin' => 10, 'conditiongrademax' => 80));
+        $moduleinfo->conditionfieldgroup = array(array('conditionfield' => 'email', 'conditionfieldoperator' => OP_CONTAINS, 'conditionfieldvalue' => '@'));
+        $moduleinfo->conditioncompletiongroup = array(array('conditionsourcecmid' => $assigncm->id, 'conditionrequiredcompletion' => COMPLETION_COMPLETE)); // "conditionsourcecmid == 0" => none
+
+        // Grading and Advanced grading.
+        require_once($CFG->dirroot . '/rating/lib.php');
+        $moduleinfo->assessed = RATING_AGGREGATE_AVERAGE;
+        $moduleinfo->scale = 10; // Note: it could be minus (for specific course scale). It is a signed number.
+        $moduleinfo->assesstimestart = time();
+        $moduleinfo->assesstimefinish = time() + (7 * 24 * 3600);
+
+        // RSS.
+        $moduleinfo->rsstype = 2;
+        $moduleinfo->rssarticles = 10;
+
+        // Optional intro editor (depends of module).
+        $draftid_editor = 0;
+        file_prepare_draft_area($draftid_editor, null, null, null, null);
+        $moduleinfo->introeditor = array('text' => 'This is a module', 'format' => FORMAT_HTML, 'itemid' => $draftid_editor);
+
+        // Following is the advanced grading method area called 'submissions' for the 'assign' module.
+        if (plugin_supports('mod', $modulename, FEATURE_GRADE_HAS_GRADE, false) && !plugin_supports('mod', $modulename, FEATURE_RATE, false)) {
+            $moduleinfo->grade = 100;
+        }
+
+        // Plagiarism form values.
+        // No plagiarism plugin installed by default. Use this space to make your own test.
+
+        // Values specific to the module.
+        $modulesetvalues = $modulename.'_create_set_values';
+        $this->$modulesetvalues($moduleinfo);
+
+        // Create the module.
+        $result = create_module($moduleinfo);
+
+        // Retrieve the module info.
+        $dbmodinstance = $DB->get_record($moduleinfo->modulename, array('id' => $result->instance));
+        $dbcm = get_coursemodule_from_instance($moduleinfo->modulename, $result->instance);
+        // We passed the course section number to create_courses but $dbcm contain the section id.
+        // We need to retrieve the db course section number.
+        $section = $DB->get_record('course_sections', array('course' => $dbcm->course, 'id' => $dbcm->section));
+        // Retrieve the grade item.
+        $gradeitem = $DB->get_record('grade_items', array('courseid' => $moduleinfo->course,
+            'iteminstance' => $dbmodinstance->id, 'itemmodule' => $moduleinfo->modulename));
+
+        // Compare the values common to all module instances.
+        $this->assertEquals($moduleinfo->modulename, $dbcm->modname);
+        $this->assertEquals($moduleinfo->section, $section->section);
+        $this->assertEquals($moduleinfo->course, $dbcm->course);
+        $this->assertEquals($moduleinfo->groupingid, $dbcm->groupingid);
+        $this->assertEquals($moduleinfo->groupmembersonly, $dbcm->groupmembersonly);
+        $this->assertEquals($moduleinfo->visible, $dbcm->visible);
+        $this->assertEquals($moduleinfo->completion, $dbcm->completion);
+        $this->assertEquals($moduleinfo->completionview, $dbcm->completionview);
+        $this->assertEquals($moduleinfo->completiongradeitemnumber, $dbcm->completiongradeitemnumber);
+        $this->assertEquals($moduleinfo->completionexpected, $dbcm->completionexpected);
+        $this->assertEquals($moduleinfo->availablefrom, $dbcm->availablefrom);
+        $this->assertEquals($moduleinfo->availableuntil, $dbcm->availableuntil);
+        $this->assertEquals($moduleinfo->showavailability, $dbcm->showavailability);
+        $this->assertEquals($moduleinfo->showdescription, $dbcm->showdescription);
+        $this->assertEquals($moduleinfo->groupmode, $dbcm->groupmode);
+        $this->assertEquals($moduleinfo->cmidnumber, $dbcm->idnumber);
+        $this->assertEquals($moduleinfo->gradecat, $gradeitem->categoryid);
+
+        // Optional grade testing.
+        if (plugin_supports('mod', $modulename, FEATURE_GRADE_HAS_GRADE, false) && !plugin_supports('mod', $modulename, FEATURE_RATE, false)) {
+            $this->assertEquals($moduleinfo->grade, $dbmodinstance->grade);
+        }
+
+        // Some optional (but quite common) to some module.
+        $this->assertEquals($moduleinfo->name, $dbmodinstance->name);
+        $this->assertEquals($moduleinfo->intro, $dbmodinstance->intro);
+        $this->assertEquals($moduleinfo->introformat, $dbmodinstance->introformat);
+
+        // Common values when conditional activity is enabled.
+        foreach ($moduleinfo->conditionfieldgroup as $fieldgroup) {
+            $isfieldgroupsaved = $DB->count_records('course_modules_avail_fields', array('coursemoduleid' => $dbcm->id,
+                'userfield' => $fieldgroup['conditionfield'], 'operator' => $fieldgroup['conditionfieldoperator'],
+                'value' => $fieldgroup['conditionfieldvalue']));
+            $this->assertEquals(1, $isfieldgroupsaved);
+        }
+        foreach ($moduleinfo->conditiongradegroup as $gradegroup) {
+            $isgradegroupsaved = $DB->count_records('course_modules_availability', array('coursemoduleid' => $dbcm->id,
+                'grademin' => $gradegroup['conditiongrademin'], 'grademax' => $gradegroup['conditiongrademax'],
+                'gradeitemid' => $gradegroup['conditiongradeitemid']));
+            $this->assertEquals(1, $isgradegroupsaved);
+        }
+        foreach ($moduleinfo->conditioncompletiongroup as $completiongroup) {
+            $iscompletiongroupsaved = $DB->count_records('course_modules_availability', array('coursemoduleid' => $dbcm->id,
+                'sourcecmid' => $completiongroup['conditionsourcecmid'], 'requiredcompletion' => $completiongroup['conditionrequiredcompletion']));
+            $this->assertEquals(1, $iscompletiongroupsaved);
+        }
+
+        // Test specific to the module.
+        $modulerunasserts = $modulename.'_create_run_asserts';
+        $this->$modulerunasserts($moduleinfo, $dbmodinstance);
+    }
+
+    /**
+     * Test create_module() for multiple modules defined in the $modules array (first declaration of the function).
+     */
+    public function test_create_module() {
+        // Add the module name you want to test here.
+        // Create the match MODULENAME_create_set_values() and MODULENAME_create_run_asserts().
+        $modules = array('forum', 'assign');
+        // Run all tests.
+        foreach ($modules as $modulename) {
+            $this->create_specific_module_test($modulename);
+        }
+    }
+
+    /**
+     * Test update_module() for multiple modules defined in the $modules array (first declaration of the function).
+     */
+    public function test_update_module() {
+        // Add the module name you want to test here.
+        // Create the match MODULENAME_update_set_values() and MODULENAME_update_run_asserts().
+        $modules = array('forum');
+        // Run all tests.
+        foreach ($modules as $modulename) {
+            $this->update_specific_module_test($modulename);
+        }
+    }
+
+    /**
+     * Set forum specific test values for calling update_module().
+     *
+     * @param object $moduleinfo - the moduleinfo to add some specific values - passed in reference.
+     */
+    private function forum_update_set_values(&$moduleinfo) {
+        // Completion specific to forum - optional.
+        $moduleinfo->completionposts = 3;
+        $moduleinfo->completiondiscussions = 1;
+        $moduleinfo->completionreplies = 2;
+
+        // Specific values to the Forum module.
+        $moduleinfo->forcesubscribe = FORUM_INITIALSUBSCRIBE;
+        $moduleinfo->type = 'single';
+        $moduleinfo->trackingtype = FORUM_TRACKING_ON;
+        $moduleinfo->maxbytes = 10240;
+        $moduleinfo->maxattachments = 2;
+
+        // Post threshold for blocking - specific to forum.
+        $moduleinfo->blockperiod = 60*60*24;
+        $moduleinfo->blockafter = 10;
+        $moduleinfo->warnafter = 5;
+    }
+
+    /**
+     * Execute test asserts on the saved DB data by update_module($forum).
+     *
+     * @param object $moduleinfo - the specific forum values that were used to update a forum.
+     * @param object $dbmodinstance - the DB values of the updated forum.
+     */
+    private function forum_update_run_asserts($moduleinfo, $dbmodinstance) {
+        // Compare values specific to forums.
+        $this->assertEquals($moduleinfo->forcesubscribe, $dbmodinstance->forcesubscribe);
+        $this->assertEquals($moduleinfo->type, $dbmodinstance->type);
+        $this->assertEquals($moduleinfo->assessed, $dbmodinstance->assessed);
+        $this->assertEquals($moduleinfo->completionposts, $dbmodinstance->completionposts);
+        $this->assertEquals($moduleinfo->completiondiscussions, $dbmodinstance->completiondiscussions);
+        $this->assertEquals($moduleinfo->completionreplies, $dbmodinstance->completionreplies);
+        $this->assertEquals($moduleinfo->scale, $dbmodinstance->scale);
+        $this->assertEquals($moduleinfo->assesstimestart, $dbmodinstance->assesstimestart);
+        $this->assertEquals($moduleinfo->assesstimefinish, $dbmodinstance->assesstimefinish);
+        $this->assertEquals($moduleinfo->rsstype, $dbmodinstance->rsstype);
+        $this->assertEquals($moduleinfo->rssarticles, $dbmodinstance->rssarticles);
+        $this->assertEquals($moduleinfo->trackingtype, $dbmodinstance->trackingtype);
+        $this->assertEquals($moduleinfo->maxbytes, $dbmodinstance->maxbytes);
+        $this->assertEquals($moduleinfo->maxattachments, $dbmodinstance->maxattachments);
+        $this->assertEquals($moduleinfo->blockperiod, $dbmodinstance->blockperiod);
+        $this->assertEquals($moduleinfo->blockafter, $dbmodinstance->blockafter);
+        $this->assertEquals($moduleinfo->warnafter, $dbmodinstance->warnafter);
+    }
+
+
+
+    /**
+     * Test a specific type of module.
+     *
+     * @param string $modulename - the module name to test
+     */
+    private function update_specific_module_test($modulename) {
+        global $DB, $CFG;
+
+        $this->resetAfterTest(true);
+
+        $this->setAdminUser();
+
+        // Warnings: you'll need to change this line if ever you come to test a module not following Moodle standard.
+        require_once($CFG->dirroot.'/mod/'. $modulename .'/lib.php');
+
+        // Enable avaibility.
+        // If not enabled all conditional fields will be ignored.
+        set_config('enableavailability', 1);
+
+        // Enable course completion.
+        // If not enabled all completion settings will be ignored.
+        set_config('enablecompletion', COMPLETION_ENABLED);
+
+        // Enable forum RSS feeds.
+        set_config('enablerssfeeds', 1);
+        set_config('forum_enablerssfeeds', 1);
+
+        $course = $this->getDataGenerator()->create_course(array('numsections'=>1, 'enablecompletion' => COMPLETION_ENABLED),
+           array('createsections'=>true));
+
+        $grouping = $this->getDataGenerator()->create_grouping(array('courseid' => $course->id));
+
+        // Create assign module instance for testing gradeitem.
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
+        $params['course'] = $course->id;
+        $instance = $generator->create_instance($params);
+        $assigncm = get_coursemodule_from_instance('assign', $instance->id);
+
+        // Create the test forum to update.
+        $initvalues = new stdClass();
+        $initvalues->introformat = FORMAT_HTML;
+        $initvalues->course = $course->id;
+        $forum = self::getDataGenerator()->create_module('forum', $initvalues);
+
+        // Retrieve course module.
+        $cm = get_coursemodule_from_instance('forum', $forum->id);
+
+        // Module test values.
+        $moduleinfo = new stdClass();
+
+        // Always mandatory generic values to any module.
+        $moduleinfo->coursemodule = $cm->id;
+        $moduleinfo->modulename = $modulename;
+        $moduleinfo->course = $course->id;
+        $moduleinfo->groupingid = $grouping->id;
+        $moduleinfo->groupmembersonly = 0;
+        $moduleinfo->visible = true;
+
+        // Sometimes optional generic values for some modules.
+        $moduleinfo->name = 'My test module';
+        $moduleinfo->showdescription = 1; // standard boolean
+        require_once($CFG->libdir . '/gradelib.php');
+        $gradecats = grade_get_categories_menu($moduleinfo->course, false);
+        $gradecatid = current(array_keys($gradecats)); // Retrieve the first key of $gradecats
+        $moduleinfo->gradecat = $gradecatid;
+        $moduleinfo->groupmode = VISIBLEGROUPS;
+        $moduleinfo->cmidnumber = 'idnumber_XXX';
+
+        // Completion common to all module.
+        $moduleinfo->completion = COMPLETION_TRACKING_AUTOMATIC;
+        $moduleinfo->completionview = COMPLETION_VIEW_REQUIRED;
+        $moduleinfo->completiongradeitemnumber = 1;
+        $moduleinfo->completionexpected = time() + (7 * 24 * 3600);
+
+        // Conditional activity.
+        $moduleinfo->availablefrom = time();
+        $moduleinfo->availableuntil = time() + (7 * 24 * 3600);
+        $moduleinfo->showavailability = CONDITION_STUDENTVIEW_SHOW;
+        $coursegradeitem = grade_item::fetch_course_item($moduleinfo->course); //the activity will become available only when the user reach some grade into the course itself.
+        $moduleinfo->conditiongradegroup = array(array('conditiongradeitemid' => $coursegradeitem->id, 'conditiongrademin' => 10, 'conditiongrademax' => 80));
+        $moduleinfo->conditionfieldgroup = array(array('conditionfield' => 'email', 'conditionfieldoperator' => OP_CONTAINS, 'conditionfieldvalue' => '@'));
+        $moduleinfo->conditioncompletiongroup = array(array('conditionsourcecmid' => $assigncm->id, 'conditionrequiredcompletion' => COMPLETION_COMPLETE)); // "conditionsourcecmid == 0" => none
+
+        // Grading and Advanced grading.
+        require_once($CFG->dirroot . '/rating/lib.php');
+        $moduleinfo->assessed = RATING_AGGREGATE_AVERAGE;
+        $moduleinfo->scale = 10; // Note: it could be minus (for specific course scale). It is a signed number.
+        $moduleinfo->assesstimestart = time();
+        $moduleinfo->assesstimefinish = time() + (7 * 24 * 3600);
+
+        // RSS.
+        $moduleinfo->rsstype = 2;
+        $moduleinfo->rssarticles = 10;
+
+        // Optional intro editor (depends of module).
+        $draftid_editor = 0;
+        file_prepare_draft_area($draftid_editor, null, null, null, null);
+        $moduleinfo->introeditor = array('text' => 'This is a module', 'format' => FORMAT_HTML, 'itemid' => $draftid_editor);
+
+        // Following is the advanced grading method area called 'submissions' for the 'assign' module.
+        if (plugin_supports('mod', $modulename, FEATURE_GRADE_HAS_GRADE, false) && !plugin_supports('mod', $modulename, FEATURE_RATE, false)) {
+            $moduleinfo->grade = 100;
+        }
+        // Plagiarism form values.
+        // No plagiarism plugin installed by default. Use this space to make your own test.
+
+        // Values specific to the module.
+        $modulesetvalues = $modulename.'_update_set_values';
+        $this->$modulesetvalues($moduleinfo);
+
+        // Create the module.
+        $result = update_module($moduleinfo);
+
+        // Retrieve the module info.
+        $dbmodinstance = $DB->get_record($moduleinfo->modulename, array('id' => $result->instance));
+        $dbcm = get_coursemodule_from_instance($moduleinfo->modulename, $result->instance);
+        // Retrieve the grade item.
+        $gradeitem = $DB->get_record('grade_items', array('courseid' => $moduleinfo->course,
+            'iteminstance' => $dbmodinstance->id, 'itemmodule' => $moduleinfo->modulename));
+
+        // Compare the values common to all module instances.
+        $this->assertEquals($moduleinfo->modulename, $dbcm->modname);
+        $this->assertEquals($moduleinfo->course, $dbcm->course);
+        $this->assertEquals($moduleinfo->groupingid, $dbcm->groupingid);
+        $this->assertEquals($moduleinfo->groupmembersonly, $dbcm->groupmembersonly);
+        $this->assertEquals($moduleinfo->visible, $dbcm->visible);
+        $this->assertEquals($moduleinfo->completion, $dbcm->completion);
+        $this->assertEquals($moduleinfo->completionview, $dbcm->completionview);
+        $this->assertEquals($moduleinfo->completiongradeitemnumber, $dbcm->completiongradeitemnumber);
+        $this->assertEquals($moduleinfo->completionexpected, $dbcm->completionexpected);
+        $this->assertEquals($moduleinfo->availablefrom, $dbcm->availablefrom);
+        $this->assertEquals($moduleinfo->availableuntil, $dbcm->availableuntil);
+        $this->assertEquals($moduleinfo->showavailability, $dbcm->showavailability);
+        $this->assertEquals($moduleinfo->showdescription, $dbcm->showdescription);
+        $this->assertEquals($moduleinfo->groupmode, $dbcm->groupmode);
+        $this->assertEquals($moduleinfo->cmidnumber, $dbcm->idnumber);
+        $this->assertEquals($moduleinfo->gradecat, $gradeitem->categoryid);
+
+        // Optional grade testing.
+        if (plugin_supports('mod', $modulename, FEATURE_GRADE_HAS_GRADE, false) && !plugin_supports('mod', $modulename, FEATURE_RATE, false)) {
+            $this->assertEquals($moduleinfo->grade, $dbmodinstance->grade);
+        }
+
+        // Some optional (but quite common) to some module.
+        $this->assertEquals($moduleinfo->name, $dbmodinstance->name);
+        $this->assertEquals($moduleinfo->intro, $dbmodinstance->intro);
+        $this->assertEquals($moduleinfo->introformat, $dbmodinstance->introformat);
+
+        // Common values when conditional activity is enabled.
+        foreach ($moduleinfo->conditionfieldgroup as $fieldgroup) {
+            $isfieldgroupsaved = $DB->count_records('course_modules_avail_fields', array('coursemoduleid' => $dbcm->id,
+                'userfield' => $fieldgroup['conditionfield'], 'operator' => $fieldgroup['conditionfieldoperator'],
+                'value' => $fieldgroup['conditionfieldvalue']));
+            $this->assertEquals(1, $isfieldgroupsaved);
+        }
+        foreach ($moduleinfo->conditiongradegroup as $gradegroup) {
+            $isgradegroupsaved = $DB->count_records('course_modules_availability', array('coursemoduleid' => $dbcm->id,
+                'grademin' => $gradegroup['conditiongrademin'], 'grademax' => $gradegroup['conditiongrademax'],
+                'gradeitemid' => $gradegroup['conditiongradeitemid']));
+            $this->assertEquals(1, $isgradegroupsaved);
+        }
+        foreach ($moduleinfo->conditioncompletiongroup as $completiongroup) {
+            $iscompletiongroupsaved = $DB->count_records('course_modules_availability', array('coursemoduleid' => $dbcm->id,
+                'sourcecmid' => $completiongroup['conditionsourcecmid'], 'requiredcompletion' => $completiongroup['conditionrequiredcompletion']));
+            $this->assertEquals(1, $iscompletiongroupsaved);
+        }
+
+        // Test specific to the module.
+        $modulerunasserts = $modulename.'_update_run_asserts';
+        $this->$modulerunasserts($moduleinfo, $dbmodinstance);
+   }
+
+
     public function test_create_course() {
         global $DB;
         $this->resetAfterTest(true);
