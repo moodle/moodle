@@ -77,6 +77,8 @@ abstract class user_selector_base {
                     array('none', 'moodle')
                 ));
 
+    /** @var int this is used to define maximum number of users visible in list */
+    public $maxusersperpage = 100;
 
     // Public API ==============================================================
 
@@ -120,6 +122,10 @@ abstract class user_selector_base {
         $this->preserveselected = $this->initialise_option('userselector_preserveselected', $this->preserveselected);
         $this->autoselectunique = $this->initialise_option('userselector_autoselectunique', $this->autoselectunique);
         $this->searchanywhere = $this->initialise_option('userselector_searchanywhere', $this->searchanywhere);
+
+        if (!empty($CFG->maxusersperpage)) {
+            $this->maxusersperpage = $CFG->maxusersperpage;
+        }
     }
 
     /**
@@ -751,8 +757,6 @@ class group_members_selector extends groups_user_selector_base {
  * Used on the add group members page.
  */
 class group_non_members_selector extends groups_user_selector_base {
-    const MAX_USERS_PER_PAGE = 100;
-
     /**
      * An array of user ids populated by find_users() used in print_user_summaries()
      */
@@ -860,7 +864,7 @@ class group_non_members_selector extends groups_user_selector_base {
 
         if (!$this->is_validating()) {
             $potentialmemberscount = $DB->count_records_sql("SELECT COUNT(DISTINCT u.id) $sql", $params);
-            if ($potentialmemberscount > group_non_members_selector::MAX_USERS_PER_PAGE) {
+            if ($potentialmemberscount > $this->maxusersperpage) {
                 return $this->too_many_results($search, $potentialmemberscount);
             }
         }
