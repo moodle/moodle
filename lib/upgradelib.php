@@ -1518,15 +1518,13 @@ function upgrade_core($version, $verbose) {
 
         print_upgrade_part_start('moodle', false, $verbose);
 
-        // one time special local migration pre 2.0 upgrade script
-        if ($CFG->version < 2007101600) {
-            $pre20upgradefile = "$CFG->dirroot/local/upgrade_pre20.php";
-            if (file_exists($pre20upgradefile)) {
-                set_time_limit(0);
-                require($pre20upgradefile);
-                // reset upgrade timeout to default
-                upgrade_set_timeout();
-            }
+        // Pre-upgrade scripts for local hack workarounds.
+        $preupgradefile = "$CFG->dirroot/local/preupgrade.php";
+        if (file_exists($preupgradefile)) {
+            set_time_limit(0);
+            require($preupgradefile);
+            // Reset upgrade timeout to default.
+            upgrade_set_timeout();
         }
 
         $result = xmldb_main_upgrade($CFG->version);
