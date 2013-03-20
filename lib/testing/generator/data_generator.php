@@ -41,16 +41,6 @@ class testing_data_generator {
     protected $groupcount = 0;
     protected $groupingcount = 0;
 
-    /**
-     * @var int keep track of how many forum discussions have been created.
-     */
-    protected $forumdiscussioncount = 0;
-
-    /**
-     * @var int keep track of how many forum posts have been created.
-     */
-    protected $forumpostcount = 0;
-
     /** @var array list of plugin generators */
     protected $generators = array();
 
@@ -92,8 +82,6 @@ EOD;
         $this->categorycount = 0;
         $this->coursecount = 0;
         $this->scalecount = 0;
-        $this->forumdiscussioncount = 0;
-        $this->forumpostcount = 0;
 
         foreach ($this->generators as $generator) {
             $generator->reset();
@@ -668,136 +656,6 @@ EOD;
         $plugin->enrol_user($instance, $userid, $roleid);
 
         return true;
-    }
-
-    /**
-     * Function to create a dummy discussion.
-     *
-     * @param array|stdClass $record
-     * @return stdClass the discussion object
-     */
-    public function create_forum_discussion($record = null) {
-        global $DB;
-
-        // Increment the forum discussion count.
-        $this->forumdiscussioncount++;
-
-        $record = (array) $record;
-
-        if (!isset($record['course'])) {
-            throw new coding_exception('course must be present in phpunit_util::create_forum_discussion() $record');
-        }
-
-        if (!isset($record['forum'])) {
-            throw new coding_exception('forum must be present in phpunit_util::create_forum_discussion() $record');
-        }
-
-        if (!isset($record['userid'])) {
-            throw new coding_exception('userid must be present in phpunit_util::create_forum_discussion() $record');
-        }
-
-        if (!isset($record['name'])) {
-            $record['name'] = "Discussion " . $this->forumdiscussioncount;
-        }
-
-        if (!isset($record['subject'])) {
-            $record['subject'] = "Subject for discussion " . $this->forumdiscussioncount;
-        }
-
-        if (!isset($record['message'])) {
-            $record['message'] = html_writer::tag('p', 'Message for discussion ' . $this->forumdiscussioncount);
-        }
-
-        if (!isset($record['messageformat'])) {
-            $record['messageformat'] = editors_get_preferred_format();
-        }
-
-        if (!isset($record['messagetrust'])) {
-            $record['messagetrust'] = "";
-        }
-
-        if (!isset($record['assessed'])) {
-            $record['assessed'] = '1';
-        }
-
-        if (!isset($record['groupid'])) {
-            $record['groupid'] = "-1";
-        }
-
-        if (!isset($record['timestart'])) {
-            $record['timestart'] = "0";
-        }
-
-        if (!isset($record['timeend'])) {
-            $record['timeend'] = "0";
-        }
-
-        if (!isset($record['mailnow'])) {
-            $record['mailnow'] = "0";
-        }
-
-        $record = (object) $record;
-
-        // Add the discussion.
-        $record->id = forum_add_discussion($record, null, null, $record->userid);
-
-        return $record;
-    }
-
-    /**
-     * Function to create a dummy post.
-     *
-     * @param array|stdClass $record
-     * @return stdClass the post object
-     */
-    public function create_forum_post($record = null) {
-        global $DB;
-
-        // Increment the forum post count.
-        $this->forumpostcount++;
-
-        // Variable to store time.
-        $time = time() + $this->forumpostcount;
-
-        $record = (array) $record;
-
-        if (!isset($record['discussion'])) {
-            throw new coding_exception('discussion must be present in phpunit_util::create_forum_post() $record');
-        }
-
-        if (!isset($record['userid'])) {
-            throw new coding_exception('userid must be present in phpunit_util::create_forum_post() $record');
-        }
-
-        if (!isset($record['parent'])) {
-            $record['parent'] = 0;
-        }
-
-        if (!isset($record['subject'])) {
-            $record['subject'] = 'Forum post subject ' . $this->forumpostcount;
-        }
-
-        if (!isset($record['message'])) {
-            $record['message'] = html_writer::tag('p', 'Forum message post ' . $this->forumpostcount);
-        }
-
-        if (!isset($record['created'])) {
-            $record['created'] = $time;
-        }
-
-        if (!isset($record['modified'])) {
-            $record['modified'] = $time;
-        }
-
-        $record = (object) $record;
-
-        // Add the post.
-        $record->id = $DB->insert_record('forum_posts', $record);
-
-        // Update the last post.
-        forum_discussion_update_last_post($record->discussion);
-
-        return $record;
     }
 }
 

@@ -70,4 +70,80 @@ class mod_forum_generator_testcase extends advanced_testcase {
         $this->assertEquals(0, $gitem->grademin);
         $this->assertEquals(GRADE_TYPE_VALUE, $gitem->gradetype);
     }
+
+    /**
+     * Test create_discussion.
+     */
+    public function test_create_discussion() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        // User that will create the forum.
+        $user = self::getDataGenerator()->create_user();
+
+        // Create course to add the forum to.
+        $course = self::getDataGenerator()->create_course();
+
+        // The forum.
+        $record = new stdClass();
+        $record->course = $course->id;
+        $forum = self::getDataGenerator()->create_module('forum', $record);
+
+        // Add a few discussions.
+        $record = array();
+        $record['course'] = $course->id;
+        $record['forum'] = $forum->id;
+        $record['userid'] = $user->id;
+        self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+        self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+        self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+
+        // Check the discussions were correctly created.
+        $this->assertEquals(3, $DB->count_records_select('forum_discussions', 'forum = :forum',
+            array('forum' => $forum->id)));
+    }
+
+    /**
+     * Test create_post.
+     */
+    public function test_create_post() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        // Create a bunch of users
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+        $user4 = self::getDataGenerator()->create_user();
+
+        // Create course to add the forum.
+        $course = self::getDataGenerator()->create_course();
+
+        // The forum.
+        $record = new stdClass();
+        $record->course = $course->id;
+        $forum = self::getDataGenerator()->create_module('forum', $record);
+
+        // Add a discussion.
+        $record->forum = $forum->id;
+        $record->userid = $user1->id;
+        $discussion = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+
+        // Add a bunch of replies, changing the userid.
+        $record = new stdClass();
+        $record->discussion = $discussion->id;
+        $record->userid = $user2->id;
+        self::getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
+        $record->userid = $user3->id;
+        self::getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
+        $record->userid = $user4->id;
+        self::getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
+
+        // Check the posts were correctly created, remember, when creating a discussion a post
+        // is generated as well, so we should have 4 posts, not 3.
+        $this->assertEquals(4, $DB->count_records_select('forum_posts', 'discussion = :discussion',
+            array('discussion' => $discussion->id)));
+    }
 }
