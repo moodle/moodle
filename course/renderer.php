@@ -1750,6 +1750,195 @@ class core_course_renderer extends plugin_renderer_base {
         }
         return '';
     }
+
+    /**
+     * Returns HTML to display one remote course
+     *
+     * @param stdClass $course remote course information, contains properties:
+           id, remoteid, shortname, fullname, hostid, summary, summaryformat, cat_name, hostname
+     * @return string
+     */
+    protected function frontpage_remote_course(stdClass $course) {
+        $url = new moodle_url('/auth/mnet/jump.php', array(
+            'hostid' => $course->hostid,
+            'wantsurl' => '/course/view.php?id='. $course->remoteid
+        ));
+
+        $output = '';
+        $output .= html_writer::start_tag('div', array('class' => 'coursebox remotecoursebox clearfix'));
+        $output .= html_writer::start_tag('div', array('class' => 'info'));
+        $output .= html_writer::start_tag('h3', array('class' => 'name'));
+        $output .= html_writer::link($url, format_string($course->fullname), array('title' => get_string('entercourse')));
+        $output .= html_writer::end_tag('h3'); // .name
+        $output .= html_writer::tag('div', '', array('class' => 'moreinfo'));
+        $output .= html_writer::end_tag('div'); // .info
+        $output .= html_writer::start_tag('div', array('class' => 'content'));
+        $output .= html_writer::start_tag('div', array('class' => 'summary'));
+        $options = new stdClass();
+        $options->noclean = true;
+        $options->para = false;
+        $options->overflowdiv = true;
+        $output .= format_text($course->summary, $course->summaryformat, $options);
+        $output .= html_writer::end_tag('div'); // .summary
+        $addinfo = format_string($course->hostname) . ' : '
+            . format_string($course->cat_name) . ' : '
+            . format_string($course->shortname);
+        $output .= html_writer::tag('div', $addinfo, array('class' => 'remotecourseinfo'));
+        $output .= html_writer::end_tag('div'); // .content
+        $output .= html_writer::end_tag('div'); // .coursebox
+        return $output;
+    }
+
+    /**
+     * Returns HTML to display one remote host
+     *
+     * @param array $host host information, contains properties: name, url, count
+     * @return string
+     */
+    protected function frontpage_remote_host($host) {
+        $output = '';
+        $output .= html_writer::start_tag('div', array('class' => 'coursebox remotehost clearfix'));
+        $output .= html_writer::start_tag('div', array('class' => 'info'));
+        $output .= html_writer::start_tag('h3', array('class' => 'name'));
+        $output .= html_writer::link($host['url'], s($host['name']), array('title' => s($host['name'])));
+        $output .= html_writer::end_tag('h3'); // .name
+        $output .= html_writer::tag('div', '', array('class' => 'moreinfo'));
+        $output .= html_writer::end_tag('div'); // .info
+        $output .= html_writer::start_tag('div', array('class' => 'content'));
+        $output .= html_writer::start_tag('div', array('class' => 'summary'));
+        $output .= $host['count'] . ' ' . get_string('courses');
+        $output .= html_writer::end_tag('div'); // .content
+        $output .= html_writer::end_tag('div'); // .coursebox
+        return $output;
+    }
+
+    /**
+     * Returns HTML to print list of courses user is enrolled to for the frontpage
+     *
+     * Also lists remote courses or remote hosts if MNET authorisation is used
+     *
+     * @return string
+     */
+    public function frontpage_my_courses() {
+        global $USER, $CFG, $DB;
+
+        if (!isloggedin() or isguestuser()) {
+            return '';
+        }
+
+        $output = '';
+        if (!empty($CFG->navsortmycoursessort)) {
+            // sort courses the same as in navigation menu
+            $sortorder = 'visible DESC,'. $CFG->navsortmycoursessort.' ASC';
+        } else {
+            $sortorder = 'visible DESC,sortorder ASC';
+        }
+        $courses  = enrol_get_my_courses('summary, summaryformat', $sortorder);
+        $rhosts   = array();
+        $rcourses = array();
+        if (!empty($CFG->mnet_dispatcher_mode) && $CFG->mnet_dispatcher_mode==='strict') {
+            $rcourses = get_my_remotecourses($USER->id);
+            $rhosts   = get_my_remotehosts();
+        }
+
+        if (!empty($courses) || !empty($rcourses) || !empty($rhosts)) {
+
+            $chelper = new coursecat_helper();
+            $chelper->set_show_courses(self::COURSECAT_SHOW_COURSES_EXPANDED)->
+                    set_courses_display_options(array(
+                        'viewmoreurl' => new moodle_url('/course/index.php'),
+                        'viewmoretext' => new lang_string('fulllistofcourses')
+                    ))->
+                    set_attributes(array('class' => 'frontpage-course-list-enrolled'));
+            $totalcount = $DB->count_records('course') - 1;
+            $output .= $this->coursecat_courses($chelper, $courses, $totalcount);
+
+            // MNET
+            if (!empty($rcourses)) {
+                // at the IDP, we know of all the remote courses
+                $output .= html_writer::start_tag('div', array('class' => 'courses'));
+                foreach ($rcourses as $course) {
+                    $output .= $this->frontpage_remote_course($course);
+                }
+                $output .= html_writer::end_tag('div'); // .courses
+            } elseif (!empty($rhosts)) {
+                // non-IDP, we know of all the remote servers, but not courses
+                $output .= html_writer::start_tag('div', array('class' => 'courses'));
+                foreach ($rhosts as $host) {
+                    $output .= $this->frontpage_remote_host($host);
+                }
+                $output .= html_writer::end_tag('div'); // .courses
+            }
+        }
+        return $output;
+    }
+
+    /**
+     * Returns HTML to print list of available courses for the frontpage
+     *
+     * @return string
+     */
+    public function frontpage_available_courses() {
+        global $CFG;
+        require_once($CFG->libdir. '/coursecatlib.php');
+
+        $chelper = new coursecat_helper();
+        $chelper->set_show_courses(self::COURSECAT_SHOW_COURSES_EXPANDED)->
+                set_courses_display_options(array(
+                    'recursive' => true,
+                    'limit' => FRONTPAGECOURSELIMIT,
+                    'viewmoreurl' => new moodle_url('/course/index.php'),
+                    'viewmoretext' => new lang_string('fulllistofcourses')));
+
+        $chelper->set_attributes(array('class' => 'frontpage-course-list-all'));
+        $courses = coursecat::get(0)->get_courses($chelper->get_courses_display_options());
+        $totalcount = coursecat::get(0)->get_courses_count($chelper->get_courses_display_options());
+        return $this->coursecat_courses($chelper, $courses, $totalcount);
+    }
+
+    /**
+     * Returns HTML to print tree with course categories and courses for the frontpage
+     *
+     * @return string
+     */
+    public function frontpage_combo_list() {
+        global $CFG;
+        require_once($CFG->libdir. '/coursecatlib.php');
+        $chelper = new coursecat_helper();
+        $chelper->set_subcat_depth($CFG->maxcategorydepth)->
+            set_categories_display_options(array(
+                'limit' => $CFG->coursesperpage,
+                'viewmoreurl' => new moodle_url('/course/category.php',
+                        array('browse' => 'categories', 'page' => 1))
+            ))->
+            set_courses_display_options(array(
+                'limit' => $CFG->coursesperpage,
+                'viewmoreurl' => new moodle_url('/course/category.php',
+                        array('browse' => 'courses', 'page' => 1))
+            ))->
+            set_attributes(array('class' => 'frontpage-category-combo'));
+        return $this->coursecat_tree($chelper, coursecat::get(0));
+    }
+
+    /**
+     * Returns HTML to print tree of course categories (with number of courses) for the frontpage
+     *
+     * @return string
+     */
+    public function frontpage_categories_list() {
+        global $CFG;
+        require_once($CFG->libdir. '/coursecatlib.php');
+        $chelper = new coursecat_helper();
+        $chelper->set_subcat_depth($CFG->maxcategorydepth)->
+                set_show_courses(self::COURSECAT_SHOW_COURSES_COUNT)->
+                set_categories_display_options(array(
+                    'limit' => $CFG->coursesperpage,
+                    'viewmoreurl' => new moodle_url('/course/category.php',
+                            array('browse' => 'categories', 'page' => 1))
+                ))->
+                set_attributes(array('class' => 'frontpage-category-names'));
+        return $this->coursecat_tree($chelper, coursecat::get(0));
+    }
 }
 
 /**
