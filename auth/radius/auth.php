@@ -105,7 +105,7 @@ class auth_plugin_radius extends auth_plugin_base {
         }
 
         $result = $rauth->send();
-        if (PEAR::isError($result)) {
+        if ($rauth->isError($result)) {
             printf("Radius send failed: %s<br/>\n", $result->getMessage());
             exit;
         } else if ($result === true) {
