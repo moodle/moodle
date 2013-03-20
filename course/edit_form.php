@@ -276,9 +276,6 @@ class course_edit_form extends moodleform {
             foreach ($roles as $role) {
                 $mform->addElement('text', 'role_'.$role->id, get_string('yourwordforx', '', $role->localname));
                 $mform->setType('role_'.$role->id, PARAM_TEXT);
-                if (!in_array($role->id, $assignableroles)) {
-                    $mform->setAdvanced('role_'.$role->id);
-                }
             }
         }
 
