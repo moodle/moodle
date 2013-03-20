@@ -857,7 +857,9 @@ function print_overview($courses, array $remote_courses=array()) {
     foreach ($courses as $course) {
         $fullname = format_string($course->fullname, true, array('context' => get_context_instance(CONTEXT_COURSE, $course->id)));
         echo $OUTPUT->box_start('coursebox');
-        $attributes = array('title' => s($fullname));
+        // decode &amp;'s. format_string above will have encoded them and html_writer will encode again when it processed the title
+        // attribute leading to double encoding.
+        $attributes = array('title' => str_replace('&amp;', '&', $fullname));
         if (empty($course->visible)) {
             $attributes['class'] = 'dimmed';
         }
