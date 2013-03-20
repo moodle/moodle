@@ -652,7 +652,14 @@ abstract class repository {
 
         // Prevent access to private repositories when logged in as.
         if (session_is_loggedinas()) {
-            $can = false;
+            $allowed = array('coursefiles', 'equella', 'filesystem', 'flickr_public', 'local', 'merlot', 'recent',
+                's3', 'upload', 'url', 'user', 'webdav', 'wikimedia', 'youtube');
+            // Are only accessible the repositories which do not contain private data (any data
+            // that is not part of Moodle, "Private files" is not considered "Pivate"). And if they
+            // do not contain private data, then it should not be a user instance, which is private by definition.
+            if (!in_array($this->type, $allowed) || $repocontext->contextlevel == CONTEXT_USER) {
+                $can = false;
+            }
         }
 
         // We are going to ensure that the current context was legit, and reliable to check
