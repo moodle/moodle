@@ -548,7 +548,7 @@ class cache_helper {
             // If the site identifier is still null then config isn't aware of it yet.
             // We'll see if the CFG is loaded, and if not we will just use unknown.
             // It's very important here that we don't use get_config. We don't want an endless cache loop!
-            if (isset($CFG->siteidentifier)) {
+            if (!empty($CFG->siteidentifier)) {
                 self::$siteidentifier = self::update_site_identifier($CFG->siteidentifier);
             } else {
                 // It's not being recorded in MUC's config and the config data hasn't been loaded yet.
