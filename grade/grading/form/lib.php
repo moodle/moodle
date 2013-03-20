@@ -642,6 +642,22 @@ abstract class gradingform_controller {
         }
         return $this->graderange;
     }
+
+    /**
+     * Overridden by sub classes that wish to make definition details available to web services.
+     * When not overridden, only definition data common to all grading methods is made available.
+     * When overriding, the return value should be an array containing one or more key/value pairs.
+     * These key/value pairs should match the definition returned by the get_definition() function.
+     * For examples, look at:
+     *    $gradingform_rubric_controller->get_external_definition_details()
+     *    $gradingform_guide_controller->get_external_definition_details()
+     * @return array An array of one or more key/value pairs containing the external_multiple_structure/s
+     * corresponding to the definition returned by $controller->get_definition()
+     * @since Moodle 2.5
+     */
+    public static function get_external_definition_details() {
+        return null;
+    }
 }
 
 /**

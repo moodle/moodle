@@ -709,6 +709,16 @@ $functions = array(
         'capabilities'=> 'moodle/notes:manage',
     ),
 
+    // === grade related functions ===
+
+    'core_grade_get_definitions' => array(
+        'classname'   => 'core_grade_external',
+        'methodname'  => 'get_definitions',
+        'classpath'   => 'grade/externallib.php',
+        'description' => 'Get grading definitions',
+        'type'        => 'read'
+    ),
+
     // === webservice related functions ===
 
     'moodle_webservice_get_siteinfo' => array(

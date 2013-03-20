@@ -643,6 +643,40 @@ class gradingform_guide_controller extends gradingform_controller {
         }
         return $returnvalue;
     }
+
+    /**
+     * @return array An array containing 2 key/value pairs which hold the external_multiple_structure
+     * for the 'guide_criteria' and the 'guide_comment'.
+     * @see gradingform_controller::get_external_definition_details()
+     * @since Moodle 2.5
+     */
+    public static function get_external_definition_details() {
+        $guide_criteria = new external_multiple_structure(
+                              new external_single_structure(
+                                  array(
+                                      'id'   => new external_value(PARAM_INT, 'criterion id'),
+                                      'sortorder' => new external_value(PARAM_INT, 'sortorder'),
+                                      'description' => new external_value(PARAM_RAW, 'description', VALUE_OPTIONAL),
+                                      'descriptionformat' => new external_format_value('description', VALUE_OPTIONAL),
+                                      'shortname' => new external_value(PARAM_TEXT, 'description'),
+                                      'descriptionmarkers' => new external_value(PARAM_RAW, 'markers description', VALUE_OPTIONAL),
+                                      'descriptionmarkersformat' => new external_format_value('descriptionmarkers', VALUE_OPTIONAL),
+                                      'maxscore' => new external_value(PARAM_FLOAT, 'maximum score')
+                                      )
+                                  )
+        );
+        $guide_comment = new external_multiple_structure(
+                              new external_single_structure(
+                                  array(
+                                      'id'   => new external_value(PARAM_INT, 'criterion id'),
+                                      'sortorder' => new external_value(PARAM_INT, 'sortorder'),
+                                      'description' => new external_value(PARAM_RAW, 'description', VALUE_OPTIONAL),
+                                      'descriptionformat' => new external_format_value('description', VALUE_OPTIONAL)
+                                   )
+                              ), 'comments', VALUE_OPTIONAL
+        );
+        return array('guide_criteria' => $guide_criteria, 'guide_comment' => $guide_comment);
+    }
 }
 
 /**
