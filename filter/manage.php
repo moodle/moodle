@@ -36,6 +36,9 @@ require_login($course, false, $cm);
 require_capability('moodle/filter:manage', $context);
 $PAGE->set_context($context);
 
+// Purge all caches related to filter administration.
+cache::make('core', 'plugininfo_filter')->purge();
+
 $args = array('contextid'=>$contextid);
 $baseurl = new moodle_url('/filter/manage.php', $args);
 if (!empty($forfilter)) {

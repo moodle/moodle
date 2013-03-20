@@ -29,6 +29,9 @@
     $stractivitymodule = get_string("activitymodule");
     $strshowmodulecourse = get_string('showmodulecourse');
 
+    // Purge all caches related to activity modules administration.
+    cache::make('core', 'plugininfo_mod')->purge();
+
 /// If data submitted, then process and store.
 
     if (!empty($hide) and confirm_sesskey()) {

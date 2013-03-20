@@ -44,6 +44,9 @@
     $returnurl = "$CFG->wwwroot/$CFG->admin/filters.php";
     admin_externalpage_setup('managefilters');
 
+    // Purge all caches related to filter administration.
+    cache::make('core', 'plugininfo_filter')->purge();
+
     $filters = filter_get_global_states();
 
     // In case any new filters have been installed, but not put in the table yet.

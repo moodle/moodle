@@ -8183,10 +8183,18 @@ function get_core_subsystems() {
 function get_plugin_types($fullpaths=true) {
     global $CFG;
 
-    static $info     = null;
-    static $fullinfo = null;
+    $cache = cache::make('core', 'plugintypes');
 
-    if (!$info) {
+    if ($fullpaths) {
+        $cached = $cache->get(1);
+    } else {
+        $cached = $cache->get(0);
+    }
+
+    if ($cached !== false) {
+        return $cached;
+
+    } else {
         $info = array('qtype'         => 'question/type',
                       'mod'           => 'mod',
                       'auth'          => 'auth',
@@ -8235,9 +8243,12 @@ function get_plugin_types($fullpaths=true) {
         foreach ($info as $type => $dir) {
             $fullinfo[$type] = $CFG->dirroot.'/'.$dir;
         }
-    }
 
-    return ($fullpaths ? $fullinfo : $info);
+        $cache->set(0, $info);
+        $cache->set(1, $fullinfo);
+
+        return ($fullpaths ? $fullinfo : $info);
+    }
 }
 
 /**
@@ -8247,6 +8258,12 @@ function get_plugin_types($fullpaths=true) {
  */
 function get_plugin_list($plugintype) {
     global $CFG;
+
+    $cache = cache::make('core', 'pluginlist');
+    $cached = $cache->get($plugintype);
+    if ($cached !== false) {
+        return $cached;
+    }
 
     $ignored = array('CVS', '_vti_cnf', 'simpletest', 'db', 'yui', 'tests');
     if ($plugintype == 'auth') {
@@ -8281,10 +8298,12 @@ function get_plugin_list($plugintype) {
     } else {
         $types = get_plugin_types(true);
         if (!array_key_exists($plugintype, $types)) {
+            $cache->set($plugintype, array());
             return array();
         }
         $fulldir = $types[$plugintype];
         if (!file_exists($fulldir)) {
+            $cache->set($plugintype, array());
             return array();
         }
         $fulldirs[] = $fulldir;
@@ -8317,6 +8336,7 @@ function get_plugin_list($plugintype) {
 
     //TODO: implement better sorting once we migrated all plugin names to 'pluginname', ksort does not work for unicode, that is why we have to sort by the dir name, not the strings!
     ksort($result);
+    $cache->set($plugintype, $result);
     return $result;
 }
 
@@ -9119,7 +9139,18 @@ function moodle_needs_upgrading() {
         return true;
     }
 
-    // main versio nfirst
+    // We have to purge plugin related caches now to be sure we have fresh data
+    // and new plugins can be detected.
+    cache::make('core', 'plugintypes')->purge();
+    cache::make('core', 'pluginlist')->purge();
+    cache::make('core', 'plugininfo_base')->purge();
+    cache::make('core', 'plugininfo_mod')->purge();
+    cache::make('core', 'plugininfo_block')->purge();
+    cache::make('core', 'plugininfo_filter')->purge();
+    cache::make('core', 'plugininfo_repository')->purge();
+    cache::make('core', 'plugininfo_portfolio')->purge();
+
+    // Check the main version first.
     $version = null;
     include($CFG->dirroot.'/version.php');  // defines $version and upgrades
     if ($version > $CFG->version) {
