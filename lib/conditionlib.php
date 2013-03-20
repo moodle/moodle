@@ -187,6 +187,10 @@ class condition_info extends condition_info_base {
         }
         return array_key_exists($cm->id, $CONDITIONLIB_PRIVATE->usedincondition[$course->id]);
     }
+
+    protected function get_context() {
+        return context_module::instance($this->item->id);
+    }
 }
 
 
@@ -285,7 +289,7 @@ class condition_info_section extends condition_info_base {
             if (!$userid) {
                 $userid = $USER->id;
             }
-            $context = context_course::instance($this->item->course);
+            $context = $this->get_context();
 
             if ($userid != $USER->id) {
                 // We are requesting for a non-current user so check it individually
@@ -352,6 +356,10 @@ class condition_info_section extends condition_info_base {
     public static function update_section_from_form($section, $fromform, $wipefirst=true) {
         $ci = new condition_info_section($section, CONDITION_MISSING_EVERYTHING);
         parent::update_from_form($ci, $fromform, $wipefirst);
+    }
+
+    protected function get_context() {
+        return context_course::instance($this->item->course);
     }
 }
 
@@ -811,10 +819,11 @@ abstract class condition_info_base {
 
         // User field conditions
         if (count($this->item->conditionsfield) > 0) {
+            $context = $this->get_context();
             // Need the array of operators
             foreach ($this->item->conditionsfield as $field => $details) {
                 $a = new stdclass;
-                $a->field = $details->fieldname;
+                $a->field = format_string($details->fieldname, true, array('context' => $context));
                 $a->value = $details->value;
                 $information .= get_string('requires_user_field_'.$details->operator, 'condition', $a) . ' ';
             }
@@ -1014,13 +1023,14 @@ abstract class condition_info_base {
 
         // Check if user field condition
         if (count($this->item->conditionsfield) > 0) {
+            $context = $this->get_context();
             foreach ($this->item->conditionsfield as $field => $details) {
                 $uservalue = $this->get_cached_user_profile_field($userid, $field);
                 if (!$this->is_field_condition_met($details->operator, $uservalue, $details->value)) {
                     // Set available to false
                     $available = false;
                     $a = new stdClass();
-                    $a->field = $details->fieldname;
+                    $a->field = format_string($details->fieldname, true, array('context' => $context));
                     $a->value = $details->value;
                     $information .= get_string('requires_user_field_'.$details->operator, 'condition', $a) . ' ';
                 }
@@ -1406,6 +1416,13 @@ abstract class condition_info_base {
             }
         }
     }
+
+    /**
+     * Obtains context for any necessary checks.
+     *
+     * @return context Suitable context for the item
+     */
+    protected abstract function get_context();
 }
 
 condition_info::init_global_cache();
