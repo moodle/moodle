@@ -1,6 +1,12 @@
 MOODLE-SPECIFIC PEAR MODIFICATIONS
 ==================================
 
+Auth/RADIUS
+===========
+
+1/ Changed static call to correct alternative (MDL-38373):
+    - From: PEAR::loadExtension('radius'); (in global scope)
+    - To: $this->loadExtension('radius'); (in constructor)
 
 Spreadsheet/Excel
 =================
