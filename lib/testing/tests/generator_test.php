@@ -35,6 +35,24 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class core_test_generator_testcase extends advanced_testcase {
+    public function test_get_plugin_generator_good_case() {
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $this->assertInstanceOf('core_question_generator', $generator);
+    }
+
+    public function test_get_plugin_generator_sloppy_name() {
+        $generator = $this->getDataGenerator()->get_plugin_generator('quiz');
+        $this->assertDebuggingCalled('Please specify the component you want a generator for as ' .
+                    'mod_quiz, not quiz.', DEBUG_DEVELOPER);
+        $this->assertInstanceOf('mod_quiz_generator', $generator);
+    }
+
+    public function test_get_plugin_generator_no_component_dir() {
+        $this->setExpectedException('coding_exception', 'Component core_completion does not support ' .
+                    'generators yet. Missing tests/generator/lib.php.');
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_completion');
+    }
+
     public function test_create() {
         global $DB;
 

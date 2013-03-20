@@ -101,29 +101,40 @@ EOD;
     }
 
     /**
-     * Return generator for given plugin
-     * @param string $component
-     * @return mixed plugin data generator
+     * Return generator for given plugin or component.
+     * @param string $component the component name, e.g. 'mod_forum' or 'core_question'.
+     * @return component_generator_base or rather an instance of the appropriate subclass.
      */
     public function get_plugin_generator($component) {
         list($type, $plugin) = normalize_component($component);
-
-        if ($type !== 'mod' and $type !== 'block') {
-            throw new coding_exception("Plugin type $type does not support generators yet");
+        $cleancomponent = $type . '_' . $plugin;
+        if ($cleancomponent != $component) {
+            debugging("Please specify the component you want a generator for as " .
+                    "{$cleancomponent}, not {$component}.", DEBUG_DEVELOPER);
+            $component = $cleancomponent;
         }
 
-        $dir = get_plugin_directory($type, $plugin);
-
-        if (!isset($this->generators[$type.'_'.$plugin])) {
-            $lib = "$dir/tests/generator/lib.php";
-            if (!include_once($lib)) {
-                throw new coding_exception("Plugin $component does not support data generator, missing tests/generator/lib");
-            }
-            $classname = $type.'_'.$plugin.'_generator';
-            $this->generators[$type.'_'.$plugin] = new $classname($this);
+        if (isset($this->generators[$component])) {
+            return $this->generators[$component];
         }
 
-        return $this->generators[$type.'_'.$plugin];
+        $dir = get_component_directory($component);
+        $lib = $dir . '/tests/generator/lib.php';
+        if (!$dir || !is_readable($lib)) {
+            throw new coding_exception("Component {$component} does not support " .
+                    "generators yet. Missing tests/generator/lib.php.");
+        }
+
+        include_once($lib);
+        $classname = $component . '_generator';
+
+        if (!class_exists($classname)) {
+            throw new coding_exception("Component {$component} does not support " .
+                    "data generators yet. Class {$classname} not found.");
+        }
+
+        $this->generators[$component] = new $classname($this);
+        return $this->generators[$component];
     }
 
     /**
@@ -633,6 +644,26 @@ EOD;
         }
 
         return $DB->get_record('scale', array('id'=>$id), '*', MUST_EXIST);
+    }
+
+    /**
+     * Helper method which combines $defaults with the values specified in $record.
+     * If $record is an object, it is converted to an array.
+     * Then, for each key that is in $defaults, but not in $record, the value
+     * from $defaults is copied.
+     * @param array $defaults the default value for each field with
+     * @param array|stdClass $record
+     * @return array updated $record.
+     */
+    public function combine_defaults_and_record(array $defaults, $record) {
+        $record = (array) $record;
+
+        foreach ($defaults as $key => $defaults) {
+            if (!array_key_exists($key, $record)) {
+                $record[$key] = $defaults;
+            }
+        }
+        return $record;
     }
 
     /**
