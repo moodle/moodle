@@ -30,6 +30,7 @@ require_once('recent_form.php');
 $id = required_param('id', PARAM_INT);
 
 $PAGE->set_url('/course/recent.php', array('id'=>$id));
+$PAGE->set_pagelayout('report');
 
 if (!$course = $DB->get_record('course', array('id'=>$id))) {
     print_error("That's an invalid course id");
