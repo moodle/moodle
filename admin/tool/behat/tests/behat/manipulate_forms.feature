@@ -26,9 +26,11 @@ Feature: Forms manipulation
       | Course 1 | C1 | 0 |
     And I log in as "admin"
     And I follow "Course 1"
-    And I follow "Edit settings"
+    And I turn editing mode on
+    And I add a "forum" to section "1"
     When I expand all fieldsets
-    Then I should see "Group mode"
-    And I should see "Your word for 'Course creator'"
+    Then I should see "Display word count"
+    And I should see "Group mode"
+    And I should see "Grouping"
     And I should not see "Show more..."
     And I should see "Show less..."
