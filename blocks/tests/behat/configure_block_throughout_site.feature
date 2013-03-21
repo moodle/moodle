@@ -1,0 +1,35 @@
+@blocks @admin
+Feature: Add and configure blocks throughout the site
+  In order to maintain some patterns across all the site
+  As a moodle manager
+  I need to set and configure blocks throughout the site
+
+  @javascript
+  Scenario: Add and configure a block throughtout the site
+    Given the following "courses" exists:
+      | fullname | shortname | category |
+      | Course 1 | C1 | 0 |
+    And the following "users" exists:
+      | username | firstname | lastname | email |
+      | manager1 | Manager | 1 | manager1@asd.com |
+    And the following "system role assigns" exists:
+      | user | course | role |
+      | manager1 | Acceptance test site | manager |
+    And I log in as "manager1"
+    And I follow "Turn editing on"
+    And I add the "Comments" block
+    And I follow "Configure Comments block"
+    And I fill the moodle form with:
+      | Page contexts | Display throughout the entire site |
+    And I press "Save changes"
+    When I follow "Course 1"
+    Then I should see "Comments"
+    And I should see "Save comment"
+    And I am on homepage
+    And I follow "Configure Comments block"
+    And I fill the moodle form with:
+      | Default weight | -10 (first) |
+    And I press "Save changes"
+    And I follow "Course 1"
+    # The first block matching the pattern should be top-left block
+    And I should see "Comments" in the "//*[@id='region-pre']/descendant::div[contains(concat(' ', @class, ' '), ' block ')]" "xpath_element"
