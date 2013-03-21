@@ -269,6 +269,67 @@ class behat_course extends behat_base {
     }
 
     /**
+     * Checks that the specified activity is visible. You need to be in the course page. It can be used being logged as a student and as a teacher on editing mode.
+     *
+     * @Then /^"(?P<activity_or_resource_string>(?:[^"]|\\")*)" activity should be visible$/
+     * @param string $activityname
+     */
+    public function activity_should_be_visible($activityname) {
+
+        // The activity must exists and be visible.
+        $activitynode = $this->get_activity_node($activityname);
+
+        if ($this->is_course_editor()) {
+
+            // The activity should not be dimmed.
+            try {
+                $this->find('css', 'a.dimmed', false, $activitynode);
+                throw new ExpectationException('"' . $activityname . '" is hidden', $this->getSession());
+            } catch (ElementNotFoundException $e) {
+                // All ok.
+            }
+
+            // The 'Hide' button should be available.
+            $nohideexception = new ExpectationException('"' . $activityname . '" don\'t have a "' . get_string('hide') . '" icon', $this->getSession());
+            $this->find('named', array('link', get_string('hide')), $nohideexception, $activitynode);
+        }
+    }
+
+    /**
+     * Checks that the specified activity is hidden. You need to be in the course page. It can be used being logged as a student and as a teacher on editing mode.
+     *
+     * @Then /^"(?P<activity_or_resource_string>(?:[^"]|\\")*)" activity should be hidden$/
+     * @param string $activityname
+     */
+    public function activity_should_be_hidden($activityname) {
+
+        if ($this->is_course_editor()) {
+
+            // The activity should exists.
+            $activitynode = $this->get_activity_node($activityname);
+
+            // Should be hidden.
+            $exception = new ExpectationException('"' . $activityname . '" is not dimmed', $this->getSession());
+            $this->find('css', 'a.dimmed', $exception, $activitynode);
+
+            // Also 'Show' icon.
+            $noshowexception = new ExpectationException('"' . $activityname . '" don\'t have a "' . get_string('show') . '" icon', $this->getSession());
+            $this->find('named', array('link', get_string('show')), $noshowexception, $activitynode);
+
+        } else {
+
+            // It should not exists at all.
+            try {
+                $this->find_link($activityname);
+                throw new ExpectationException('The "' . $activityname . '" should not appear');
+            } catch (ElementNotFoundException $e) {
+                // This is good, the activity should not be there.
+            }
+        }
+
+    }
+
+    /**
      * Checks if the course section exists.
      *
      * @throws ElementNotFoundException Thrown by behat_base::find
@@ -374,6 +435,21 @@ class behat_course extends behat_base {
         }
 
         return $activities;
+    }
+
+    /**
+     * Returns the DOM node of the activity from <li>.
+     *
+     * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param string $activityname The activity name
+     * @return NodeElement
+     */
+    protected function get_activity_node($activityname) {
+
+        $activityname = str_replace("'", "\'", $activityname);
+        $xpath = "//li[contains(concat(' ', @class, ' '), ' activity ')][contains(., '" .$activityname. "')]";
+
+        return $this->find('xpath', $xpath);
     }
 
     /**
