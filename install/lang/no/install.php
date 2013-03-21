@@ -78,11 +78,11 @@ $string['phpversionhelp'] = '<p>Moodle trenger en PHP versjon minst 4.3.0 eller 
 <Du kjører nå versjon {$a}</p>
 <p>Du må oppgradere PHP eller flytte til en server med en nyere versjon av PHP!<br /> (I forhold til 5.0.x kan du også nedgradere til versjon 4.4.x)</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
-$string['welcomep20'] = 'Du ser denne siden fordi du nå med hell har installert og kjørt pakken <strong>{$a->packname} {$a->packversion}</strong> på datamaskinen din. Gratulerer!';
+$string['welcomep20'] = 'Du ser denne siden fordi du nå har fullført installeringen og kjøringen av pakken <strong>{$a->packname} {$a->packversion}</strong> på datamaskinen din. Gratulerer!';
 $string['welcomep30'] = 'Denne versjonen av <strong>{$a->installername}</strong> inneholder programmer for å lage et miljø som <strong>Moodle</strong> jobber i, nemlig:';
 $string['welcomep40'] = 'Denne pakken inkluderer også  <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>.';
 $string['welcomep50'] = 'Bruken av alle applikasjoner i denne pakken er administrert av egne lisenser. Hele <strong>{$a->installername}</strong>-pakken er <a href="http://www.opensource.org/docs/definition_plain.html">
 åpen kildekode</a> og er distribuert under  <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a>-lisensen.';
-$string['welcomep60'] = 'De følgende sidene vil vise deg gjennom noen enkle steg for å konfigurere og sette opp <strong>Moodle</strong> på datamaskinen din. Du kan akseptere standard innstillinger, eller, hvis du vil, justere dem etter egne behov.';
+$string['welcomep60'] = 'De følgende sidene vil vise deg gjennom noen enkle steg for å konfigurere og sette opp <strong>Moodle</strong> på datamaskinen din. Du kan godta standardinnstillingene, eller justere dem etter egne behov hvis du vil.';
 $string['welcomep70'] = 'Klikk på "Neste" knappen under for å fortsette med <strong>Moodle</strong>-installasjonen';
 $string['wwwroot'] = 'Web addresse';
