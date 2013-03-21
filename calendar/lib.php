@@ -3057,6 +3057,29 @@ function calendar_update_subscription_events($subscriptionid) {
 }
 
 /**
+ * Update a calendar subscription. Also updates the associated cache.
+ *
+ * @param stdClass|array $subscription Subscription record.
+ * @throws coding_exception If something goes wrong
+ * @since Moodle 2.5
+ */
+function calendar_update_subscription($subscription) {
+    global $DB;
+
+    if (is_array($subscription)) {
+        $subscription = (object)$subscription;
+    }
+    if (empty($subscription->id) || !$DB->record_exists('event_subscriptions', array('id' => $subscription->id))) {
+        throw new coding_exception('Cannot update a subscription without a valid id');
+    }
+
+    $DB->update_record('event_subscriptions', $subscription);
+    // Update cache.
+    $cache = cache::make('core', 'calendar_subscriptions');
+    $cache->set($subscription->id, $subscription);
+}
+
+/**
  * Checks to see if the user can edit a given subscription feed.
  *
  * @param mixed $subscriptionorid Subscription object or id
