@@ -142,6 +142,9 @@ foreach ($vars as $var) {
 $CFG->noemailever = true;
 $CFG->passwordsaltmain = 'moodle';
 
+$CFG->themerev = 1;
+$CFG->jsrev = 1;
+
 // Unset cache and temp directories to reset them again with the new $CFG->dataroot.
 unset($CFG->cachedir);
 unset($CFG->tempdir);
