@@ -104,6 +104,7 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
 
     /**
      * Magic setter method, we do not want anybody to modify properties from the outside
+     *
      * @param string $name
      * @param mixed $value
      */
@@ -113,6 +114,7 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
 
     /**
      * Magic method getter, redirects to read only values. Queries from DB the fields that were not cached
+     *
      * @param string $name
      * @return mixed
      */
@@ -136,6 +138,7 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
 
     /**
      * Full support for isset on our magic read only properties.
+     *
      * @param string $name
      * @return bool
      */
@@ -147,17 +150,20 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
     }
 
     /**
-     * ALl properties are read only, sorry.
+     * All properties are read only, sorry.
+     *
      * @param string $name
      */
     public function __unset($name) {
         debugging('Can not unset coursecat instance properties!', DEBUG_DEVELOPER);
     }
 
-    // ====== implementing method from interface IteratorAggregate ======
-
     /**
      * Create an iterator because magic vars can't be seen by 'foreach'.
+     *
+     * implementing method from interface IteratorAggregate
+     *
+     * @return ArrayIterator
      */
     public function getIterator() {
         $ret = array();
@@ -169,17 +175,16 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
         return new ArrayIterator($ret);
     }
 
-    // ====== general coursecat methods ======
-
     /**
      * Constructor
      *
      * Constructor is protected, use coursecat::get($id) to retrieve category
      *
-     * @param stdClass $record
+     * @param stdClass $record record from DB (may not contain all fields)
+     * @param bool $fromcache whether it is being restored from cache
      */
     protected function __construct(stdClass $record, $fromcache = false) {
-        context_instance_preload($record);
+        context_helper::preload_from_record($record);
         foreach ($record as $key => $val) {
             if (array_key_exists($key, self::$coursecatfields)) {
                 $this->$key = $val;
@@ -310,11 +315,11 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
 
         // validate and set idnumber
         if (!empty($data->idnumber)) {
-            if ($existing = $DB->get_record('course_categories', array('idnumber' => $data->idnumber))) {
-                throw new moodle_exception('categoryidnumbertaken');
-            }
             if (textlib::strlen($data->idnumber) > 100) {
                 throw new moodle_exception('idnumbertoolong');
+            }
+            if ($DB->record_exists('course_categories', array('idnumber' => $data->idnumber))) {
+                throw new moodle_exception('categoryidnumbertaken');
             }
         }
         if (isset($data->idnumber)) {
@@ -364,7 +369,10 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
             $newcategory = file_postupdate_standard_editor($newcategory, 'description', $editoroptions, $categorycontext, 'coursecat', 'description', 0);
 
             // update only fields description and descriptionformat
-            $updatedata = array_intersect_key((array)$newcategory, array('id' => 1, 'description' => 1, 'descriptionformat' => 1));
+            $updatedata = new stdClass();
+            $updatedata->id = $newcategory->id;
+            $updatedata->description = $newcategory->description;
+            $updatedata->descriptionformat = $newcategory->descriptionformat;
             $DB->update_record('course_categories', $updatedata);
         }
 
@@ -427,7 +435,7 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
             if (textlib::strlen($data->idnumber) > 100) {
                 throw new moodle_exception('idnumbertoolong');
             }
-            if ($existing = $DB->get_record('course_categories', array('idnumber' => $data->idnumber))) {
+            if ($DB->record_exists('course_categories', array('idnumber' => $data->idnumber))) {
                 throw new moodle_exception('categoryidnumbertaken');
             }
             $newcategory->idnumber = $data->idnumber;
@@ -1137,7 +1145,7 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
         }
         $this->parent = $newparentcat->id;
 
-        context_moved($context, $newparent);
+        $context->update_moved($newparent);
 
         // now make it last in new category
         $DB->set_field('course_categories', 'sortorder', MAX_COURSES_IN_CATEGORY*MAX_COURSE_CATEGORIES, array('id' => $this->id));
@@ -1462,10 +1470,10 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
         return $names;
     }
 
-    // ====== implementing method from interface cacheable_object ======
-
     /**
      * Prepares the object for caching. Works like the __sleep method.
+     *
+     * implementing method from interface cacheable_object
      *
      * @return array ready to be cached
      */
@@ -1487,6 +1495,8 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
 
     /**
      * Takes the data provided by prepare_to_cache and reinitialises an instance of the associated from it.
+     *
+     * implementing method from interface cacheable_object
      *
      * @param array $a
      * @return coursecat
