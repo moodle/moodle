@@ -102,6 +102,10 @@ class behat_data_generators extends behat_base {
             'datagenerator' => 'grouping_group',
             'required' => array('grouping', 'group'),
             'switchids' => array('grouping' => 'groupingid', 'group' => 'groupid')
+        ),
+        'cohorts' => array(
+            'datagenerator' => 'cohort',
+            'required' => array('idnumber')
         )
     );
 
