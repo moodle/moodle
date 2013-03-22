@@ -80,7 +80,6 @@ if ($hassiteconfig
     $temp->add(new admin_setting_configselect('moodlecourse/enablecompletion', new lang_string('completion','completion'), '',
         0, array(0 => new lang_string('completiondisabled','completion'), 1 => new lang_string('completionenabled','completion'))));
 
-    $temp->add(new admin_setting_configcheckbox('moodlecourse/completionstartonenrol', new lang_string('completionstartonenrol','completion'), new lang_string('completionstartonenrolhelp', 'completion'), 0));
     $ADMIN->add('courses', $temp);
 
 /// "courserequests" settingpage
