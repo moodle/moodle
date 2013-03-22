@@ -115,13 +115,15 @@ class tool_installaddon_installer {
     }
 
     /**
-     * Is it possible to create a new plugin directory for the given plugin type?
+     * Returns the full path of the root of the given plugin type
      *
-     * @throws coding_exception for invalid plugin types or non-existing plugin type locations
+     * Null is returned if the plugin type is not known. False is returned if the plugin type
+     * root is expected but not found. Otherwise, string is returned.
+     *
      * @param string $plugintype
-     * @return boolean
+     * @return string|bool|null
      */
-    public function is_plugintype_writable($plugintype) {
+    public function get_plugintype_root($plugintype) {
 
         $plugintypepath = null;
         foreach (get_plugin_types() as $type => $fullpath) {
@@ -131,10 +133,32 @@ class tool_installaddon_installer {
             }
         }
         if (is_null($plugintypepath)) {
-            throw new coding_exception('Unknown plugin type!');
+            return null;
         }
 
         if (!is_dir($plugintypepath)) {
+            return false;
+        }
+
+        return $plugintypepath;
+    }
+
+    /**
+     * Is it possible to create a new plugin directory for the given plugin type?
+     *
+     * @throws coding_exception for invalid plugin types or non-existing plugin type locations
+     * @param string $plugintype
+     * @return boolean
+     */
+    public function is_plugintype_writable($plugintype) {
+
+        $plugintypepath = $this->get_plugintype_root($plugintype);
+
+        if (is_null($plugintypepath)) {
+            throw new coding_exception('Unknown plugin type!');
+        }
+
+        if ($plugintypepath === false) {
             throw new coding_exception('Plugin type location does not exist!');
         }
 

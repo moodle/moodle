@@ -78,8 +78,7 @@ class tool_installaddon_installfromzip extends moodleform {
         $errors = parent::validation($data, $files);
 
         if (!$installer->is_plugintype_writable($data['plugintype'])) {
-            $paths = get_plugin_types(true);
-            $path = $paths[$data['plugintype']];
+            $path = $installer->get_plugintype_root($data['plugintype']);
             $errors['plugintype'] = get_string('permcheckresultno', 'tool_installaddon', array('path' => $path));
         }
 

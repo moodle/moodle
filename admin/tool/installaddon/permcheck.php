@@ -53,19 +53,14 @@ if (is_null($plugintype)) {
     die();
 }
 
-$plugintypepath = null;
-foreach (get_plugin_types() as $type => $fullpath) {
-    if ($type === $plugintype) {
-        $plugintypepath = $fullpath;
-        break;
-    }
-}
-if (is_null($plugintypepath)) {
+$installer = tool_installaddon_installer::instance();
+
+$plugintypepath = $installer->get_plugintype_root($plugintype);
+
+if (empty($plugintypepath)) {
     header('HTTP/1.1 400 Bad Request');
     die();
 }
-
-$installer = tool_installaddon_installer::instance();
 
 $response = array('path' => $plugintypepath);
 
