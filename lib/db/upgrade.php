@@ -1768,5 +1768,16 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012120305.01);
     }
 
+    if ($oldversion < 2012120305.08) {
+        // Convert name field in event table to text type as RFC-2445 doesn't have any limitation on it.
+        $table = new xmldb_table('event');
+        $field = new xmldb_field('name', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null, 'id');
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->change_field_type($table, $field);
+        }
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2012120305.08);
+    }
+
     return true;
 }
