@@ -199,11 +199,11 @@ body.jsenabled .questionflagcheckbox {
 }
 
 /** mod quiz mod **/
-#page-mod-quiz-mod #reviewoptionshdr .fitem {
+#page-mod-quiz-mod #id_reviewoptionshdr .fitem {
     width: 23%;
     margin-left: 10px;
 }
-#page-mod-quiz-mod #reviewoptionshdr fieldset.fgroup {
+#page-mod-quiz-mod #id_reviewoptionshdr fieldset.fgroup {
     width: 100%;
     text-align: left;
     margin-left: 0;
@@ -242,13 +242,13 @@ div.editq div.question div.content .singlequestion a .questiontext {
     width: 20%;
 }
 
-#page-mod-quiz-mod #reviewoptionshdr .fitem {
+#page-mod-quiz-mod #id_reviewoptionshdr .fitem {
     float: left;
     width: 23%;
     clear: none;
 }
 
-#page-mod-quiz-mod #reviewoptionshdr .fitemtitle {
+#page-mod-quiz-mod #id_reviewoptionshdr .fitemtitle {
     width: 100%;
     font-weight: bold;
     text-align: left;
@@ -256,27 +256,27 @@ div.editq div.question div.content .singlequestion a .questiontext {
     margin-left: 0;
 }
 
-#page-mod-quiz-mod #reviewoptionshdr fieldset.fgroup {
+#page-mod-quiz-mod #id_reviewoptionshdr fieldset.fgroup {
     clear: left;
     margin: 0 0 1em;
 }
-#page-mod-quiz-mod #reviewoptionshdr fieldset.fgroup > span {
+#page-mod-quiz-mod #id_reviewoptionshdr fieldset.fgroup > span {
     float: left;
     clear: left;
     line-height: 1.7;
 }
-#page-mod-quiz-mod #reviewoptionshdr fieldset.fgroup span label {
+#page-mod-quiz-mod #id_reviewoptionshdr fieldset.fgroup span label {
     margin-left: 0.4em;
 }
 
-#page-mod-quiz-mod.dir-rtl #reviewoptionshdr .fitem {
+#page-mod-quiz-mod.dir-rtl #id_reviewoptionshdr .fitem {
     float: right;
 }
-#page-mod-quiz-mod.dir-rtl #reviewoptionshdr fieldset.fgroup span {
+#page-mod-quiz-mod.dir-rtl #id_reviewoptionshdr fieldset.fgroup span {
     float: right;
     clear: right;
 }
-#page-mod-quiz-mod.dir-rtl #reviewoptionshdr .fitemtitle {
+#page-mod-quiz-mod.dir-rtl #id_reviewoptionshdr .fitemtitle {
     text-align: right;
 }
 
@@ -1203,14 +1203,14 @@ bank window's title is prominent enough*/
 }
 
 /* RTL Mode */
-#page-mod-quiz-mod.dir-rtl #reviewoptionshdr .fitem {
+#page-mod-quiz-mod.dir-rtl #id_reviewoptionshdr .fitem {
     width: 23%;
     float: right;
 }
-#page-mod-quiz-mod.dir-rtl #reviewoptionshdr .fitemtitle {
+#page-mod-quiz-mod.dir-rtl #id_reviewoptionshdr .fitemtitle {
     text-align: right;
 }
-#page-mod-quiz-mod.dir-rtl #reviewoptionshdr fieldset.fgroup span {
+#page-mod-quiz-mod.dir-rtl #id_reviewoptionshdr fieldset.fgroup span {
     clear: right;
     float: right;
 }
