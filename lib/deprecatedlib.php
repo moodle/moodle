@@ -31,6 +31,51 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * Hack to find out the GD version by parsing phpinfo output
+ *
+ * @return int GD version (1, 2, or 0)
+ */
+function check_gd_version() {
+    // TODO: delete function in Moodle 2.7
+    debugging('check_gd_version() is deprecated, GD extension is always available now');
+
+    $gdversion = 0;
+
+    if (function_exists('gd_info')){
+        $gd_info = gd_info();
+        if (substr_count($gd_info['GD Version'], '2.')) {
+            $gdversion = 2;
+        } else if (substr_count($gd_info['GD Version'], '1.')) {
+            $gdversion = 1;
+        }
+
+    } else {
+        ob_start();
+        phpinfo(INFO_MODULES);
+        $phpinfo = ob_get_contents();
+        ob_end_clean();
+
+        $phpinfo = explode("\n", $phpinfo);
+
+
+        foreach ($phpinfo as $text) {
+            $parts = explode('</td>', $text);
+            foreach ($parts as $key => $val) {
+                $parts[$key] = trim(strip_tags($val));
+            }
+            if ($parts[0] == 'GD Version') {
+                if (substr_count($parts[1], '2.0')) {
+                    $parts[1] = '2.0';
+                }
+                $gdversion = intval($parts[1]);
+            }
+        }
+    }
+
+    return $gdversion;   // 1, 2 or 0
+}
+
+/**
  * Not used any more, the account lockout handling is now
  * part of authenticate_user_login().
  * @deprecated

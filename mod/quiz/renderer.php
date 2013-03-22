@@ -1166,11 +1166,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
     public function graph(moodle_url $url, $title) {
         global $CFG;
 
-        if (empty($CFG->gdversion)) {
-            $graph = get_string('gdneed');
-        } else {
-            $graph = html_writer::empty_tag('img', array('src' => $url, 'alt' => $title));
-        }
+        $graph = html_writer::empty_tag('img', array('src' => $url, 'alt' => $title));
 
         return $this->heading($title) . html_writer::tag('div', $graph, array('class' => 'graph'));
     }

@@ -1756,5 +1756,12 @@ function xmldb_main_upgrade($oldversion) {
         // No savepoint needed for this change.
     }
 
+    if ($oldversion < 2013032200.01) {
+        // GD is now always available
+        unset_config('gdversion');
+
+        upgrade_main_savepoint(true, 2013032200.01);
+    }
+
     return true;
 }

@@ -45,12 +45,8 @@ require_once(dirname(__FILE__).'/lib.php');
 function report_log_print_graph($course, $userid, $type, $date=0) {
     global $CFG;
 
-    if (empty($CFG->gdversion)) {
-        echo "(".get_string("gdneed").")";
-    } else {
-        echo '<img src="'.$CFG->wwwroot.'/report/log/graph.php?id='.$course->id.
-             '&amp;user='.$userid.'&amp;type='.$type.'&amp;date='.$date.'" alt="" />';
-    }
+    echo '<img src="'.$CFG->wwwroot.'/report/log/graph.php?id='.$course->id.
+         '&amp;user='.$userid.'&amp;type='.$type.'&amp;date='.$date.'" alt="" />';
 }
 /**
  * This function is used to generate and display Mnet selector form

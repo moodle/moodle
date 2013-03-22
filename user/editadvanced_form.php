@@ -140,7 +140,7 @@ class user_editadvanced_form extends moodleform {
         }
 
         // print picture
-        if (!empty($CFG->gdversion) and empty($USER->newadminuser)) {
+        if (empty($USER->newadminuser)) {
             if ($user) {
                 $context = context_user::instance($user->id, MUST_EXIST);
                 $fs = get_file_storage();
