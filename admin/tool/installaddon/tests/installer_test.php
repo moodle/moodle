@@ -47,9 +47,9 @@ class tool_installaddon_installer_test extends advanced_testcase {
         $site = json_decode(base64_decode($site), true);
         $this->assertEquals('array', gettype($site));
         $this->assertEquals(3, count($site));
-        $this->assertSame($installer->get_site_fullname(), $site['fullname']);
-        $this->assertSame($installer->get_site_url(), $site['url']);
-        $this->assertSame($installer->get_site_major_version(), $site['major_version']);
+        $this->assertSame('Nasty site', $site['fullname']);
+        $this->assertSame('file:///etc/passwd', $site['url']);
+        $this->assertSame("2.5'; DROP TABLE mdl_user; --", $site['majorversion']);
     }
 
     public function test_extract_installfromzip_file() {
@@ -86,7 +86,7 @@ class tool_installaddon_installer_test extends advanced_testcase {
 class testable_tool_installaddon_installer extends tool_installaddon_installer {
 
     public function get_site_fullname() {
-        return '<h1 onmouseover="alert(\'Hello Moodle.org!\');">Nasty site</h1>';
+        return strip_tags('<h1 onmouseover="alert(\'Hello Moodle.org!\');">Nasty site</h1>');
     }
 
     public function get_site_url() {

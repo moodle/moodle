@@ -68,7 +68,7 @@ class tool_installaddon_installer {
         $site = array(
             'fullname' => $this->get_site_fullname(),
             'url' => $this->get_site_url(),
-            'major_version' => $this->get_site_major_version(),
+            'majorversion' => $this->get_site_major_version(),
         );
 
         $site = $this->encode_site_information($site);
@@ -228,7 +228,7 @@ class tool_installaddon_installer {
     protected function get_site_fullname() {
         global $SITE;
 
-        return $SITE->fullname;
+        return strip_tags($SITE->fullname);
     }
 
     /**
