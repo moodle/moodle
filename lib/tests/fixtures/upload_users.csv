@@ -1,2 +1,3 @@
-username,password,email,firstname,lastname
-teacher1,moodle,teacher1@teacher1.com,Teacher,1
+username,password,firstname,lastname,email,course1,group1
+jonest,verysecret,Tom,Jones,jonest@someplace.edu,math102,Section 1
+reznor,somesecret,Trent,Reznor,reznor@someplace.edu,math102,Section 3
