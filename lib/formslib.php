@@ -278,6 +278,7 @@ abstract class moodleform {
             $submission = array();
             $files = array();
         }
+        $this->detectMissingSetType();
 
         $this->_form->updateSubmission($submission, $files);
     }
@@ -914,6 +915,9 @@ abstract class moodleform {
             $this->_definition_finalized = true;
             $this->definition_after_data();
         }
+
+        $this->detectMissingSetType();
+
         $this->_form->display();
     }
 
@@ -1237,6 +1241,38 @@ abstract class moodleform {
             'fullpath' => '/lib/form/form.js',
             'requires' => array('base', 'node')
         );
+    }
+
+    /**
+     * Detects elements with missing setType() declerations.
+     *
+     * Finds elements in the form which should a PARAM_ type set and throws a
+     * developer debug warning for any elements without it. This is to reduce the
+     * risk of potential security issues by developers mistakenly forgetting to set
+     * the type.
+     *
+     * @return void
+     */
+    private function detectMissingSetType() {
+        if (!debugging('', DEBUG_DEVELOPER)) {
+            // Only for devs.
+            return;
+        }
+
+        $mform = $this->_form;
+        foreach ($mform->_elements as $element) {
+            switch ($element->getType()) {
+                case 'hidden':
+                case 'text':
+                case 'url':
+                    $key = $element->getName();
+                    if (!array_key_exists($key, $mform->_types)) {
+                        debugging("Did you remember to call setType() for '$key'? ".
+                            'Defaulting to PARAM_RAW cleaning.', DEBUG_DEVELOPER);
+                    }
+                    break;
+            }
+        }
     }
 }
 
