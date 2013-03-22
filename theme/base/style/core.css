@@ -245,6 +245,8 @@ a.skip:active {position: static;display: block;}
 .jsenabled .mform fieldset.collapsed {border-width: 1px 0 0 1px; padding: 0; border-color: transparent;}
 .jsenabled .mform fieldset.collapsed div.fcontainer {display: none;}
 .mform .fitem {width:100%;overflow:hidden;margin-top:5px;margin-bottom:1px;clear:right;}
+.jsenabled .mform .containsadvancedelements .advanced {display: none;}
+.mform .containsadvancedelements .advanced.show {display: block;}
 .mform .fitem .fitemtitle {width:15%;text-align:right;float:left;}
 .mform .fitem .fitemtitle div {display: inline;}
 .mform .fitem .felement {border-width: 0;width:80%;margin-left:16%;}
