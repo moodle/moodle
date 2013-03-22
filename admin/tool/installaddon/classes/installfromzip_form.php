@@ -43,6 +43,9 @@ class tool_installaddon_installfromzip extends moodleform {
         $mform = $this->_form;
         $installer = $this->_customdata['installer'];
 
+        $mform->addElement('header', 'general', get_string('installfromzip', 'tool_installaddon'));
+        $mform->addHelpButton('general', 'installfromzip', 'tool_installaddon');
+
         $options = $installer->get_plugin_types_menu();
         $mform->addElement('select', 'plugintype', get_string('installfromziptype', 'tool_installaddon'), $options,
             array('id' => 'tool_installaddon_installfromzip_plugintype'));
@@ -57,6 +60,11 @@ class tool_installaddon_installfromzip extends moodleform {
             null, array('accepted_types' => '.zip'));
         $mform->addHelpButton('zipfile', 'installfromzipfile', 'tool_installaddon');
         $mform->addRule('zipfile', null, 'required', null, 'client');
+
+        $mform->addElement('text', 'rootdir', get_string('installfromziprootdir', 'tool_installaddon'));
+        $mform->addHelpButton('rootdir', 'installfromziprootdir', 'tool_installaddon');
+        $mform->setType('rootdir', PARAM_PLUGIN);
+        $mform->setAdvanced('rootdir');
 
         $mform->addElement('checkbox', 'acknowledgement', get_string('acknowledgement', 'tool_installaddon'),
             ' '.get_string('acknowledgementtext', 'tool_installaddon'));
