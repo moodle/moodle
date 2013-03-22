@@ -43,7 +43,7 @@ class tool_installaddon_installer {
      * @return tool_installaddon_installer
      */
     public static function instance() {
-        return new self();
+        return new static();
     }
 
     /**
@@ -111,6 +111,37 @@ class tool_installaddon_installer {
         $form->save_file('zipfile', $targetdir.'/'.$filename);
 
         return $filename;
+    }
+
+    /**
+     * Extracts the saved file previously saved by {self::save_installfromzip_file()}
+     *
+     * The list of files found in the ZIP is returned via $zipcontentfiles parameter
+     * by reference. The format of that list is array of (string)filerelpath => (bool|string)
+     * where the array value is either true or a string describing the problematic file.
+     *
+     * @see zip_packer::extract_to_pathname()
+     * @param string $zipfilepath full path to the saved ZIP file
+     * @param string $targetdir full path to the directory to extract the ZIP file to
+     * @param string $rootdir explicitly rename the root directory of the ZIP into this non-empty value
+     * @param array list of extracted files as returned by {@link zip_packer::extract_to_pathname()}
+     */
+    public function extract_installfromzip_file($zipfilepath, $targetdir, $rootdir = '') {
+        global $CFG;
+        require_once($CFG->libdir.'/filelib.php');
+
+        $fp = get_file_packer('application/zip');
+        $files = $fp->extract_to_pathname($zipfilepath, $targetdir);
+
+        if ($files) {
+            if (!empty($rootdir)) {
+                $files = $this->rename_extracted_rootdir($targetdir, $rootdir, $files);
+            }
+            return $files;
+
+        } else {
+            return array();
+        }
     }
 
     /**
@@ -186,6 +217,12 @@ class tool_installaddon_installer {
     //// End of external API ///////////////////////////////////////////////////
 
     /**
+     * @see self::instance()
+     */
+    protected function __construct() {
+    }
+
+    /**
      * @return string this site full name
      */
     protected function get_site_fullname() {
@@ -234,5 +271,57 @@ class tool_installaddon_installer {
      */
     protected function should_send_site_info() {
         return true;
+    }
+
+    /**
+     * Renames the root directory of the extracted ZIP package.
+     *
+     * This method does not validate the presence of the single root directory
+     * (the validator does it later). It just searches for the first directory
+     * under the given location and renames it.
+     *
+     * The method will not rename the root if the requested location already
+     * exists.
+     *
+     * @param string $dirname the location of the extracted ZIP package
+     * @param string $rootdir the requested name of the root directory
+     * @param array $files list of extracted files
+     * @return array eventually amended list of extracted files
+     */
+    protected function rename_extracted_rootdir($dirname, $rootdir, array $files) {
+
+        if (!is_dir($dirname)) {
+            debugging('Unable to rename rootdir of non-existing content', DEBUG_DEVELOPER);
+            return $files;
+        }
+
+        if (file_exists($dirname.'/'.$rootdir)) {
+            debugging('Unable to rename rootdir to already existing folder', DEBUG_DEVELOPER);
+            return $files;
+        }
+
+        $found = null; // The name of the first subdirectory under the $dirname.
+        foreach (scandir($dirname) as $item) {
+            if (substr($item, 0, 1) === '.') {
+                continue;
+            }
+            if (is_dir($dirname.'/'.$item)) {
+                $found = $item;
+                break;
+            }
+        }
+
+        if (!is_null($found)) {
+            if (rename($dirname.'/'.$found, $dirname.'/'.$rootdir)) {
+                $newfiles = array();
+                foreach ($files as $filepath => $status) {
+                    $newpath = preg_replace('~^'.preg_quote($found.'/').'~', preg_quote($rootdir.'/'), $filepath);
+                    $newfiles[$newpath] = $status;
+                }
+                return $newfiles;
+            }
+        }
+
+        return $files;
     }
 }

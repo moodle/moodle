@@ -39,7 +39,7 @@ require_once($CFG->dirroot.'/'.$CFG->admin.'/tool/installaddon/classes/installer
 class tool_installaddon_installer_test extends advanced_testcase {
 
     public function test_get_addons_repository_url() {
-        $installer = new testable_tool_installaddon_installer();
+        $installer = testable_tool_installaddon_installer::instance();
         $url = $installer->get_addons_repository_url();
         $query = parse_url($url, PHP_URL_QUERY);
         $this->assertEquals(1, preg_match('~^site=(.+)$~', $query, $matches));
@@ -50,6 +50,29 @@ class tool_installaddon_installer_test extends advanced_testcase {
         $this->assertSame($installer->get_site_fullname(), $site['fullname']);
         $this->assertSame($installer->get_site_url(), $site['url']);
         $this->assertSame($installer->get_site_major_version(), $site['major_version']);
+    }
+
+    public function test_extract_installfromzip_file() {
+        $jobid = md5(rand().uniqid('test_', true));
+        $sourcedir = make_temp_directory('tool_installaddon/'.$jobid.'/source');
+        $contentsdir = make_temp_directory('tool_installaddon/'.$jobid.'/contents');
+        copy(dirname(__FILE__).'/fixtures/zips/invalidroot.zip', $sourcedir.'/testinvalidroot.zip');
+
+        $installer = tool_installaddon_installer::instance();
+        $files = $installer->extract_installfromzip_file($sourcedir.'/testinvalidroot.zip', $contentsdir, 'fixed_root');
+        $this->assertEquals('array', gettype($files));
+        $this->assertEquals(4, count($files));
+        $this->assertSame(true, $files['fixed_root/']);
+        $this->assertSame(true, $files['fixed_root/lang/']);
+        $this->assertSame(true, $files['fixed_root/lang/en/']);
+        $this->assertSame(true, $files['fixed_root/lang/en/fixed_root.php']);
+        foreach ($files as $file => $status) {
+            if (substr($file, -1) === '/') {
+                $this->assertTrue(is_dir($contentsdir.'/'.$file));
+            } else {
+                $this->assertTrue(is_file($contentsdir.'/'.$file));
+            }
+        }
     }
 }
 
