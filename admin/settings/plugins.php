@@ -210,9 +210,7 @@ if ($hassiteconfig) {
                 $portfolio->get('name'),
                 $url . '?action=edit&pf=' . $portfolio->get('id'),
                 'moodle/site:config'
-            ),
-            $portfolio->get('name'),
-            $url . '?action=edit&pf=' . $portfolio->get('id')
+            )
         );
     }
 
