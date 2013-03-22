@@ -41,7 +41,18 @@ if ($form->is_cancelled()) {
     redirect($PAGE->url);
 
 } else if ($data = $form->get_data()) {
-    // todo $installer->process_installfromzip_form($data);
+    // Save the ZIP file into a temporary location.
+    $jobid = md5(rand().uniqid('', true));
+    $sourcedir = make_temp_directory('tool_installaddon/'.$jobid.'/source');
+    $zipfilename = $installer->save_installfromzip_file($form, $sourcedir);
+    // Redirect to the validation page.
+    $nexturl = new moodle_url('/admin/tool/installaddon/validate.php', array(
+        'sesskey' => sesskey(),
+        'jobid' => $jobid,
+        'zip' => $zipfilename,
+        'type' => $data->plugintype,
+        'rootdir' => $data->rootdir));
+    redirect($nexturl);
 }
 
 $output = $PAGE->get_renderer('tool_installaddon');

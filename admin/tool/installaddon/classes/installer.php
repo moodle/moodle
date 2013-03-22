@@ -96,6 +96,24 @@ class tool_installaddon_installer {
     }
 
     /**
+     * Saves the ZIP file from the {@link tool_installaddon_installfromzip} form
+     *
+     * The file is saved into the given temporary location for inspection and eventual
+     * deployment. The form is expected to be submitted and validated.
+     *
+     * @param tool_installaddon_installfromzip $form
+     * @param string $targetdir full path to the directory where the ZIP should be stored to
+     * @return string filename of the saved file relative to the given target
+     */
+    public function save_installfromzip_file(tool_installaddon_installfromzip $form, $targetdir) {
+
+        $filename = clean_param($form->get_new_filename('zipfile'), PARAM_FILE);
+        $form->save_file('zipfile', $targetdir.'/'.$filename);
+
+        return $filename;
+    }
+
+    /**
      * Returns localised list of available plugin types
      *
      * @return array (string)plugintype => (string)plugin name
