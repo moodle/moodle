@@ -9,7 +9,7 @@ class HTMLPurifier_AttrDef_CSS_FontFamily extends HTMLPurifier_AttrDef
     protected $mask = null;
 
     public function __construct() {
-        $this->mask = '- ';
+        $this->mask = '_- ';
         for ($c = 'a'; $c <= 'z'; $c++) $this->mask .= $c;
         for ($c = 'A'; $c <= 'Z'; $c++) $this->mask .= $c;
         for ($c = '0'; $c <= '9'; $c++) $this->mask .= $c; // cast-y, but should be fine
@@ -165,7 +165,7 @@ class HTMLPurifier_AttrDef_CSS_FontFamily extends HTMLPurifier_AttrDef
             // extensive research, we may feel comfortable with dropping
             // it down to edgy.
 
-            // Edgy: alphanumeric, spaces, dashes and Unicode.  Use of
+            // Edgy: alphanumeric, spaces, dashes, underscores and Unicode.  Use of
             // str(c)spn assumes that the string was already well formed
             // Unicode (which of course it is).
             if (strspn($font, $this->mask) !== strlen($font)) {

@@ -11,7 +11,7 @@ class HTMLPurifier_HTMLModule_Name extends HTMLPurifier_HTMLModule
             $element = $this->addBlankElement($name);
             $element->attr['name'] = 'CDATA';
             if (!$config->get('HTML.Attr.Name.UseCDATA')) {
-                $element->attr_transform_post['NameSync'] = new HTMLPurifier_AttrTransform_NameSync();
+                $element->attr_transform_post[] = new HTMLPurifier_AttrTransform_NameSync();
             }
         }
     }
