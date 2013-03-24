@@ -135,6 +135,23 @@ abstract class database_driver_testcase extends PHPUnit_Framework_TestCase {
     }
 
     /**
+     * Runs the bare test sequence.
+     * @return void
+     */
+    public function runBare() {
+        try {
+            parent::runBare();
+
+        } catch (Exception $e) {
+            if ($this->tdb->is_transaction_started()) {
+                $this->tdb->force_transaction_rollback();
+            }
+            $this->tearDown();
+            throw $e;
+        }
+    }
+
+    /**
      * Return debugging messages from the current test.
      * @return array with instances having 'message', 'level' and 'stacktrace' property.
      */
