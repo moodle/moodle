@@ -51,7 +51,7 @@ function dndupload_add_to_course($course, $modnames) {
     // Add the javascript to the page.
     $jsmodule = array(
         'name' => 'coursedndupload',
-        'fullpath' => new moodle_url('/course/dndupload.js'),
+        'fullpath' => '/course/dndupload.js',
         'strings' => array(
             array('addfilehere', 'moodle'),
             array('dndworkingfiletextlink', 'moodle'),
