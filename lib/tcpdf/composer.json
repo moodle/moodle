@@ -1,10 +1,10 @@
 {
-	"name": "tcpdf/tcpdf",
-	"version": "5.9.181",
+	"name": "tecnick.com/tcpdf",
+	"version": "5.9.209",
 	"homepage": "http://www.tcpdf.org/",
 	"type": "library",
-	"description": "TCPDF is a PHP class for generating PDF files on-the-fly without requiring external extensions.",
-	"keywords": ["pdf"],
+	"description": "TCPDF is a PHP class for generating PDF documents.",
+	"keywords": ["pdf","tcpdf","PDFD32000-2008","qrcode","datamatrix","pdf417","barcodes"],
 	"license": "LGPLv3",
 	"authors": [
 	{
@@ -14,7 +14,7 @@
 	}
 	],
 	"require": {
-		"php": ">5.2"
+		"php": ">=5.3.0"
 	},
 	"autoload": {
 		"classmap": [
@@ -32,7 +32,7 @@
 		"tcpdf.php",
 		"tcpdf_filters.php",
 		"tcpdf_parser.php",
-		"unicode_data.php"
+		"unicode_data.php"		
 		]
 	}
 }
