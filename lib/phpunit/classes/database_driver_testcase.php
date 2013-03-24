@@ -133,4 +133,21 @@ abstract class database_driver_testcase extends PHPUnit_Framework_TestCase {
         phpunit_util::reset_all_data();
         parent::tearDownAfterClass();
     }
+
+    /**
+     * Runs the bare test sequence.
+     * @return void
+     */
+    public function runBare() {
+        try {
+            parent::runBare();
+
+        } catch (Exception $e) {
+            if ($this->tdb->is_transaction_started()) {
+                $this->tdb->force_transaction_rollback();
+            }
+            $this->tearDown();
+            throw $e;
+        }
+    }
 }
