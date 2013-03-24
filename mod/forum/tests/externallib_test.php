@@ -199,44 +199,44 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $record->course = $course1->id;
         $record->userid = $user1->id;
         $record->forum = $forum1->id;
-        $discussion1 = self::getDataGenerator()->create_forum_discussion($record);
+        $discussion1 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
 
         $record = new stdClass();
         $record->course = $course2->id;
         $record->userid = $user2->id;
         $record->forum = $forum2->id;
-        $discussion2 = self::getDataGenerator()->create_forum_discussion($record);
+        $discussion2 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
 
         $record = new stdClass();
         $record->course = $course2->id;
         $record->userid = $user2->id;
         $record->forum = $forum3->id;
-        $discussion3 = self::getDataGenerator()->create_forum_discussion($record);
+        $discussion3 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
 
         // Add three replies to the discussion 1 from different users.
         $record = new stdClass();
         $record->discussion = $discussion1->id;
         $record->parent = $discussion1->firstpost;
         $record->userid = $user2->id;
-        $discussion1reply1 = self::getDataGenerator()->create_forum_post($record);
+        $discussion1reply1 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
 
         $record->parent = $discussion1reply1->id;
         $record->userid = $user3->id;
-        $discussion1reply2 = self::getDataGenerator()->create_forum_post($record);
+        $discussion1reply2 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
 
         $record->userid = $user4->id;
-        $discussion1reply3 = self::getDataGenerator()->create_forum_post($record);
+        $discussion1reply3 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
 
         // Add two replies to discussion 2 from different users.
         $record = new stdClass();
         $record->discussion = $discussion2->id;
         $record->parent = $discussion2->firstpost;
         $record->userid = $user1->id;
-        $discussion2reply1 = self::getDataGenerator()->create_forum_post($record);
+        $discussion2reply1 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
 
         $record->parent = $discussion2reply1->id;
         $record->userid = $user3->id;
-        $discussion2reply2 = self::getDataGenerator()->create_forum_post($record);
+        $discussion2reply2 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
 
         // Check the forums were correctly created.
         $this->assertEquals(3, $DB->count_records_select('forum', 'id = :forum1 OR id = :forum2 OR id = :forum3',
