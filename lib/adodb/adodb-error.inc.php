@@ -1,6 +1,6 @@
 <?php
 /** 
- * @version V5.17 17 May 2012  (c) 2000-2012 John Lim (jlim#natsoft.com). All rights reserved.
+ * @version V5.18 3 Sep 2012  (c) 2000-2012 John Lim (jlim#natsoft.com). All rights reserved.
  * Released under both BSD license and Lesser GPL library license. 
  * Whenever there is any discrepancy between the two licenses, 
  * the BSD license will take precedence. 
@@ -41,6 +41,9 @@ if (!defined("DB_ERROR_SYNTAX")) {
 	define("DB_ERROR_EXTENSION_NOT_FOUND",-25);
 	define("DB_ERROR_NOSUCHDB",           -25);
 	define("DB_ERROR_ACCESS_VIOLATION",   -26);
+	define("DB_ERROR_DEADLOCK",           -27);
+	define("DB_ERROR_STATEMENT_TIMEOUT",  -28);
+	define("DB_ERROR_SERIALIZATION_FAILURE", -29);
 }
 
 function adodb_errormsg($value)
@@ -91,16 +94,19 @@ function adodb_error($provider,$dbType,$errno)
 function adodb_error_pg($errormsg)
 {
 	if (is_numeric($errormsg)) return (integer) $errormsg;
+	// Postgres has no lock-wait timeout.  The best we could do would be to set a statement timeout.
     static $error_regexps = array(
             '/(Table does not exist\.|Relation [\"\'].*[\"\'] does not exist|sequence does not exist|class ".+" not found)$/i' => DB_ERROR_NOSUCHTABLE,
-            '/Relation [\"\'].*[\"\'] already exists|Cannot insert a duplicate key into (a )?unique index.*/i'      => DB_ERROR_ALREADY_EXISTS,
-            '/divide by zero$/i'                     => DB_ERROR_DIVZERO,
+            '/Relation [\"\'].*[\"\'] already exists|Cannot insert a duplicate key into (a )?unique index.*|duplicate key.*violates unique constraint/i'     => DB_ERROR_ALREADY_EXISTS,
+            '/database ".+" does not exist$/i'       => DB_ERROR_NOSUCHDB,
+            '/(divide|division) by zero$/i'          => DB_ERROR_DIVZERO,
             '/pg_atoi: error in .*: can\'t parse /i' => DB_ERROR_INVALID_NUMBER,
             '/ttribute [\"\'].*[\"\'] not found|Relation [\"\'].*[\"\'] does not have attribute [\"\'].*[\"\']/i' => DB_ERROR_NOSUCHFIELD,
-            '/parser: parse error at or near \"/i'   => DB_ERROR_SYNTAX,
+            '/(parser: parse|syntax) error at or near \"/i'   => DB_ERROR_SYNTAX,
             '/referential integrity violation/i'     => DB_ERROR_CONSTRAINT,
-			'/Relation [\"\'].*[\"\'] already exists|Cannot insert a duplicate key into (a )?unique index.*|duplicate key.*violates unique constraint/i'     
-			 	 => DB_ERROR_ALREADY_EXISTS
+            '/deadlock detected$/i'                  => DB_ERROR_DEADLOCK,
+            '/canceling statement due to statement timeout$/i' => DB_ERROR_STATEMENT_TIMEOUT,
+            '/could not serialize access due to/i'   => DB_ERROR_SERIALIZATION_FAILURE
         );
 	reset($error_regexps);
     while (list($regexp,$code) = each($error_regexps)) {

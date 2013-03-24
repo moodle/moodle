@@ -1,6 +1,6 @@
 <?php
 /*
-V5.17 17 May 2012  (c) 2000-2012 John Lim (jlim#natsoft.com). All rights reserved.
+V5.18 3 Sep 2012  (c) 2000-2012 John Lim (jlim#natsoft.com). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -28,7 +28,7 @@ if (! defined("_ADODB_MYSQLI_LAYER")) {
 
 class ADODB_mysqli extends ADOConnection {
 	var $databaseType = 'mysqli';
-	var $dataProvider = 'native';
+	var $dataProvider = 'mysql';
 	var $hasInsertID = true;
 	var $hasAffectedRows = true;	
 	var $metaTablesSQL = "SELECT TABLE_NAME, CASE WHEN TABLE_TYPE = 'VIEW' THEN 'V' ELSE 'T' END FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA=SCHEMA()";	
@@ -843,7 +843,7 @@ class ADODB_mysqli extends ADOConnection {
 
     if ($this->charSet !== $charset_name) {
       $if = @$this->_connectionID->set_charset($charset_name);
-      if ($if == "0" & $this->GetCharSet() == $charset_name) {
+      if ($if === true & $this->GetCharSet() == $charset_name) {
         return true;
       } else return false;
     } else return true;

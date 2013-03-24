@@ -1,6 +1,6 @@
 <?php
 /*
-V5.17 17 May 2012  (c) 2000-2012 John Lim (jlim#natsoft.com). All rights reserved.
+V5.18 3 Sep 2012  (c) 2000-2012 John Lim (jlim#natsoft.com). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -49,9 +49,9 @@ class ADODB_sqlite3 extends ADOConnection {
 	
 	function ServerInfo()
 	{
-		$arr['version'] = sqlite_libversion(); //**tochange
-		$arr['description'] = 'SQLite '; //**tochange
-		$arr['encoding'] = sqlite_libencoding();//**tochange
+		$arr['version'] = $this->_connectionID->version(); //**tochange
+		$arr['description'] = 'SQLite 3'; //**tochange
+		//$arr['encoding'] = sqlite_libencoding();//**tochange
 		return $arr;
 	}
 	
@@ -128,25 +128,25 @@ class ADODB_sqlite3 extends ADOConnection {
 	function _insertid()
 	{
 		//return sqlite_last_insert_rowid($this->_connectionID)->; //**change
-		$temp = $this->_connectionID;
-		return $temp->lastInsertRowID();
+		return $this->_connectionID->lastInsertRowID();
 	}
 	
 	function _affectedrows()
 	{
-       return sqlite3_changes($this->_connectionID); //**tochange
+		return $this->_connectionID->changes();
+       //return sqlite3_changes($this->_connectionID); //**tochange
     }
 	
 	function ErrorMsg() 
  	{
 		if ($this->_logsql) return $this->_errorMsg;
 		
-		return ($this->_errorNo) ? sqlite_error_string($this->_errorNo) : ''; //**tochange?
+		return ($this->_errorNo) ? $this->ErrorNo() : ''; //**tochange?
 	}
  
 	function ErrorNo() 
 	{
-		return $this->_errorNo; //**tochange??
+		return $this->_connectionID->lastErrorCode(); //**tochange??
 	}
 	
 	function SQLDate($fmt, $col=false)
@@ -169,12 +169,12 @@ class ADODB_sqlite3 extends ADOConnection {
 	// returns true or false
 	function _connect($argHostname, $argUsername, $argPassword, $argDatabasename) //**tochange: all the function need to be changed, just hacks for the moment
 	{
-		$this->_connectionID = new SQLite3('/path/mydb'); // hack
-		if (empty($argHostname) && $argDatabasename) $argHostname = $argDatabasename; // hack
+		if (empty($argHostname) && $argDatabasename) $argHostname = $argDatabasename; 
+		$this->_connectionID = new SQLite3($argDatabasename); 
 		$this->_createFunctions();
 		
 		return true; // hack
-		
+		/*
 		if (!function_exists('sqlite_open')) return null;
 		if (empty($argHostname) && $argDatabasename) $argHostname = $argDatabasename;
 		
@@ -182,6 +182,7 @@ class ADODB_sqlite3 extends ADOConnection {
 		if ($this->_connectionID === false) return false;
 		$this->_createFunctions();
 		return true;
+		*/
 	}
 	
 	// returns true or false

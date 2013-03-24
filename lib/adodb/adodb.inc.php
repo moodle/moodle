@@ -14,7 +14,7 @@
 /**
 	\mainpage
 	
-	 @version V5.17 17 May 2012   (c) 2000-2012 John Lim (jlim#natsoft.com). All rights reserved.
+	 @version V5.18 3 Sep 2012   (c) 2000-2012 John Lim (jlim#natsoft.com). All rights reserved.
 
 	Released under both BSD license and Lesser GPL library license. You can choose which license
 	you prefer.
@@ -177,7 +177,7 @@
 		/**
 		 * ADODB version as a string.
 		 */
-		$ADODB_vers = 'V5.17 17 May 2012  (c) 2000-2012 John Lim (jlim#natsoft.com). All rights reserved. Released BSD & LGPL.';
+		$ADODB_vers = 'V5.18 3 Sep 2012  (c) 2000-2012 John Lim (jlim#natsoft.com). All rights reserved. Released BSD & LGPL.';
 	
 		/**
 		 * Determines whether recordset->RecordCount() is used. 
@@ -315,10 +315,12 @@
 		// create temp directories
 		function createdir($hash, $debug)
 		{
+		global $ADODB_CACHE_PERMS;
+		
 			$dir = $this->getdirname($hash);
 			if ($this->notSafeMode && !file_exists($dir)) {
 				$oldu = umask(0);
-				if (!@mkdir($dir,0771)) if(!is_dir($dir) && $debug) ADOConnection::outp("Cannot create $dir");
+				if (!@mkdir($dir, empty($ADODB_CACHE_PERMS) ? 0771 : $ADODB_CACHE_PERMS)) if(!is_dir($dir) && $debug) ADOConnection::outp("Cannot create $dir");
 				umask($oldu);
 			}
 		
@@ -2848,6 +2850,7 @@ http://www.stanford.edu/dept/itss/docs/oracle/10g/server.101/b10759/statements_1
 		function FieldCount(){ return 0;}
 		function Init() {}
 		function getIterator() {return new ADODB_Iterator_empty($this);}
+		function GetAssoc() {return array();}
 	}
 	
 	//==============================================================================================	
@@ -3158,7 +3161,7 @@ http://www.stanford.edu/dept/itss/docs/oracle/10g/server.101/b10759/statements_1
 			$false = false;
 			return $false;
 		}
-		$numIndex = isset($this->fields[0]);
+		$numIndex = isset($this->fields[0]) && isset($this->fields[1]);
 		$results = array();
 		
 		if (!$first2cols && ($cols > 2 || $force_array)) {
@@ -3510,7 +3513,8 @@ http://www.stanford.edu/dept/itss/docs/oracle/10g/server.101/b10759/statements_1
 				$record[$k] = $this->fields[$v];
 			} else if (isset($this->fields[$k])) {
 				$record[$k] = $this->fields[$k];
-			}
+			} else
+				$record[$k] = $this->fields[$v];
 		}
 		return $record;
 	}
