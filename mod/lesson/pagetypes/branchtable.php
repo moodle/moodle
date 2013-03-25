@@ -153,7 +153,7 @@ class lesson_page_type_branchtable extends lesson_page {
         global $USER, $DB, $PAGE, $CFG;
 
         require_sesskey();
-        $newpageid = optional_param('jumpto', NULL, PARAM_INT);
+        $newpageid = optional_param('jumpto', null, PARAM_INT);
         // going to insert into lesson_branch
         if ($newpageid == LESSON_RANDOMBRANCH) {
             $branchflag = 1;
