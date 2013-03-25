@@ -25,11 +25,6 @@ class mod_glossary_mod_form extends moodleform_mod {
 
         $this->add_intro_editor(true);
 
-        $mform->addElement('text', 'entbypage', get_string('entbypage', 'glossary'));
-        $mform->setDefault('entbypage', 10);
-        $mform->addRule('entbypage', null, 'required', null, 'client');
-        $mform->addRule('entbypage', null, 'numeric', null, 'client');
-
         if (has_capability('mod/glossary:manageentries', context_system::instance())) {
             $mform->addElement('checkbox', 'globalglossary', get_string('isglobal', 'glossary'));
             $mform->addHelpButton('globalglossary', 'isglobal', 'glossary');
@@ -44,6 +39,17 @@ class mod_glossary_mod_form extends moodleform_mod {
         $mform->addHelpButton('mainglossary', 'glossarytype', 'glossary');
         $mform->setDefault('mainglossary', 0);
 
+        // ----------------------------------------------------------------------
+        $mform->addElement('header', 'entrieshdr', get_string('entries', 'glossary'));
+
+        $mform->addElement('selectyesno', 'defaultapproval', get_string('defaultapproval', 'glossary'));
+        $mform->setDefault('defaultapproval', $CFG->glossary_defaultapproval);
+        $mform->addHelpButton('defaultapproval', 'defaultapproval', 'glossary');
+
+        $mform->addElement('selectyesno', 'editalways', get_string('editalways', 'glossary'));
+        $mform->setDefault('editalways', 0);
+        $mform->addHelpButton('editalways', 'editalways', 'glossary');
+
         $mform->addElement('selectyesno', 'allowduplicatedentries', get_string('allowduplicatedentries', 'glossary'));
         $mform->setDefault('allowduplicatedentries', $CFG->glossary_dupentries);
         $mform->addHelpButton('allowduplicatedentries', 'allowduplicatedentries', 'glossary');
@@ -52,28 +58,19 @@ class mod_glossary_mod_form extends moodleform_mod {
         $mform->setDefault('allowcomments', $CFG->glossary_allowcomments);
         $mform->addHelpButton('allowcomments', 'allowcomments', 'glossary');
 
-        $mform->addElement('selectyesno', 'allowprintview', get_string('allowprintview', 'glossary'));
-        $mform->setDefault('allowprintview', 1);
-        $mform->addHelpButton('allowprintview', 'allowprintview', 'glossary');
-
         $mform->addElement('selectyesno', 'usedynalink', get_string('usedynalink', 'glossary'));
         $mform->setDefault('usedynalink', $CFG->glossary_linkbydefault);
         $mform->addHelpButton('usedynalink', 'usedynalink', 'glossary');
 
-        $mform->addElement('selectyesno', 'defaultapproval', get_string('defaultapproval', 'glossary'));
-        $mform->setDefault('defaultapproval', $CFG->glossary_defaultapproval);
-        $mform->addHelpButton('defaultapproval', 'defaultapproval', 'glossary');
+        // ----------------------------------------------------------------------
+        $mform->addElement('header', 'appearancehdr', get_string('appearance'));
 
-        //get and update available formats
+        // Get and update available formats.
         $recformats = glossary_get_available_formats();
-
         $formats = array();
-
-        //Take names
         foreach ($recformats as $format) {
            $formats[$format->name] = get_string('displayformat'.$format->name, 'glossary');
         }
-        //Sort it
         asort($formats);
         $mform->addElement('select', 'displayformat', get_string('displayformat', 'glossary'), $formats);
         $mform->setDefault('displayformat', 'dictionary');
@@ -85,9 +82,9 @@ class mod_glossary_mod_form extends moodleform_mod {
         $mform->setDefault('approvaldisplayformat', 'default');
         $mform->addHelpButton('approvaldisplayformat', 'approvaldisplayformat', 'glossary');
 
-        $mform->addElement('selectyesno', 'showspecial', get_string('showspecial', 'glossary'));
-        $mform->setDefault('showspecial', 1);
-        $mform->addHelpButton('showspecial', 'showspecial', 'glossary');
+        $mform->addElement('text', 'entbypage', get_string('entbypage', 'glossary'));
+        $mform->setDefault('entbypage', $this->get_default_entbypage());
+        $mform->addRule('entbypage', null, 'numeric', null, 'client');
 
         $mform->addElement('selectyesno', 'showalphabet', get_string('showalphabet', 'glossary'));
         $mform->setDefault('showalphabet', 1);
@@ -97,9 +94,13 @@ class mod_glossary_mod_form extends moodleform_mod {
         $mform->setDefault('showall', 1);
         $mform->addHelpButton('showall', 'showall', 'glossary');
 
-        $mform->addElement('selectyesno', 'editalways', get_string('editalways', 'glossary'));
-        $mform->setDefault('editalways', 0);
-        $mform->addHelpButton('editalways', 'editalways', 'glossary');
+        $mform->addElement('selectyesno', 'showspecial', get_string('showspecial', 'glossary'));
+        $mform->setDefault('showspecial', 1);
+        $mform->addHelpButton('showspecial', 'showspecial', 'glossary');
+
+        $mform->addElement('selectyesno', 'allowprintview', get_string('allowprintview', 'glossary'));
+        $mform->setDefault('allowprintview', 1);
+        $mform->addHelpButton('allowprintview', 'allowprintview', 'glossary');
 
         if ($CFG->enablerssfeeds && isset($CFG->glossary_enablerssfeeds) && $CFG->glossary_enablerssfeeds) {
 //-------------------------------------------------------------------------------
@@ -163,6 +164,13 @@ class mod_glossary_mod_form extends moodleform_mod {
     function data_preprocessing(&$default_values){
         parent::data_preprocessing($default_values);
 
+        // Fallsback on the default setting if 'Entries shown per page' has been left blank.
+        // This prevents the field from being required and expand its section which should not
+        // be the case if there is a default value defined.
+        if (empty($default_values['entbypage']) || $default_values['entbypage'] < 0) {
+            $default_values['entbypage'] = $this->get_default_entbypage();
+        }
+
         // Set up the completion checkboxes which aren't part of standard data.
         // We also make the default value (if you turn on the checkbox) for those
         // numbers to be 1, this will not apply unless checkbox is ticked.
@@ -201,6 +209,16 @@ class mod_glossary_mod_form extends moodleform_mod {
             $data->completionentries = 0;
         }
         return $data;
+    }
+
+    /**
+     * Returns the default value for 'Entries shown per page'.
+     *
+     * @return int default for number of entries per page.
+     */
+    protected function get_default_entbypage() {
+        global $CFG;
+        return !empty($CFG->glossary_entbypage) ? $CFG->glossary_entbypage : 10;
     }
 
 }
