@@ -155,6 +155,15 @@ class workshop {
     /** @var int format of the conclusion text */
     public $conclusionformat;
 
+    /** @var int the mode of the overall feedback */
+    public $overallfeedbackmode;
+
+    /** @var int maximum number of overall feedback attachments */
+    public $overallfeedbackfiles;
+
+    /** @var int maximum size of one file attached to the overall feedback */
+    public $overallfeedbackmaxbytes;
+
     /**
      * @var workshop_strategy grading strategy instance
      * Do not use directly, get the instance using {@link workshop::grading_strategy_instance()}
@@ -1236,7 +1245,7 @@ class workshop {
         $assessment->reviewerid             = $reviewerid;
         $assessment->timecreated            = $now;         // do not set timemodified here
         $assessment->weight                 = $weight;
-        $assessment->generalcommentformat   = editors_get_preferred_format();
+        $assessment->feedbackauthorformat   = editors_get_preferred_format();
         $assessment->feedbackreviewerformat = editors_get_preferred_format();
 
         return $DB->insert_record('workshop_assessments', $assessment, true, $bulk);

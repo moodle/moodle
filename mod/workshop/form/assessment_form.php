@@ -68,6 +68,28 @@ class workshop_assessment_form extends moodleform {
         $mform->addElement('hidden', 'strategy', $this->workshop->strategy);
         $mform->setType('strategy', PARAM_PLUGIN);
 
+        if (!empty($this->workshop->overallfeedbackmode)) {
+            $mform->addElement('header', 'overallfeedbacksection', get_string('overallfeedback', 'mod_workshop'));
+            if (!$mform->isFrozen()) {
+                $mform->addElement('editor', 'feedbackauthor_editor', get_string('feedbackauthor', 'mod_workshop'), null,
+                    $this->options['feedbackauthoreditoropts']);
+                if ($this->workshop->overallfeedbackmode == 2) {
+                    $mform->addRule('feedbackauthor_editor', null, 'required', null, 'client');
+                }
+                if (!empty($this->workshop->overallfeedbackfiles)) {
+                    $mform->addElement('filemanager', 'feedbackauthorattachment_filemanager',
+                        get_string('feedbackauthorattachment', 'mod_workshop'), null,
+                        $this->options['feedbackauthorattachmentopts']);
+                }
+
+            } else {
+                $mform->addElement('static', 'feedbackauthor', get_string('feedbackauthor', 'mod_workshop'));
+                if (!empty($this->workshop->overallfeedbackfiles)) {
+                    $mform->addElement('static', 'feedbackauthorattachment', get_string('feedbackauthorattachment', 'mod_workshop'));
+                }
+            }
+        }
+
         if (!empty($this->options['editableweight']) and !$mform->isFrozen()) {
             $mform->addElement('header', 'assessmentsettings', get_string('assessmentweight', 'workshop'));
             $mform->addElement('select', 'weight',
