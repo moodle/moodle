@@ -239,6 +239,9 @@ a.skip:active {position: static;display: block;}
 .mform fieldset.hidden {border-width:0;}
 .mform fieldset.group {margin-bottom: 0}
 .mform fieldset.error {border: 1px solid #A00;}
+.mform .collapsible-actions {display: none;}
+.jsenabled .mform .collapsible-actions {text-align: right; display: block;}
+.dir-rtl .mform .collapsible-actions {text-align: left;}
 .mform fieldset legend {padding: 0 0.35em;}
 .mform fieldset.collapsible legend a.fheader {padding-left: 18px; background: url([[pix:t/expanded]]) left center no-repeat;}
 .mform fieldset.collapsed legend a.fheader {background-image: url([[pix:t/collapsed]]);}
