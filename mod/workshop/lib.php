@@ -1313,6 +1313,55 @@ function workshop_pluginfile($course, $cm, $context, $filearea, array $args, $fo
         // finally send the file
         // these files are uploaded by students - forcing download for security reasons
         send_stored_file($file, 0, 0, true, $options);
+
+    } else if ($filearea === 'overallfeedback_content' or $filearea === 'overallfeedback_attachment') {
+        $itemid = (int)array_shift($args);
+        if (!$workshop = $DB->get_record('workshop', array('id' => $cm->instance))) {
+            return false;
+        }
+        if (!$assessment = $DB->get_record('workshop_assessments', array('id' => $itemid))) {
+            return false;
+        }
+        if (!$submission = $DB->get_record('workshop_submissions', array('id' => $assessment->submissionid, 'workshopid' => $workshop->id))) {
+            return false;
+        }
+
+        if ($USER->id == $assessment->reviewerid) {
+            // Reviewers can always see their own files.
+        } else if ($USER->id == $submission->authorid and $workshop->phase == 50) {
+            // Authors can see the feedback once the workshop is closed.
+        } else if (!empty($submission->example) and $assessment->weight == 1) {
+            // Reference assessments of example submissions can be displayed.
+        } else if (!has_capability('mod/workshop:viewallassessments', $context)) {
+            send_file_not_found();
+        } else {
+            $gmode = groups_get_activity_groupmode($cm, $course);
+            if ($gmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context)) {
+                // Check there is at least one common group with both the $USER
+                // and the submission author.
+                $sql = "SELECT 'x'
+                          FROM {workshop_submissions} s
+                          JOIN {user} a ON (a.id = s.authorid)
+                          JOIN {groups_members} agm ON (a.id = agm.userid)
+                          JOIN {user} u ON (u.id = ?)
+                          JOIN {groups_members} ugm ON (u.id = ugm.userid)
+                         WHERE s.example = 0 AND s.workshopid = ? AND s.id = ? AND agm.groupid = ugm.groupid";
+                $params = array($USER->id, $workshop->id, $submission->id);
+                if (!$DB->record_exists_sql($sql, $params)) {
+                    send_file_not_found();
+                }
+            }
+        }
+
+        $fs = get_file_storage();
+        $relativepath = implode('/', $args);
+        $fullpath = "/$context->id/mod_workshop/$filearea/$itemid/$relativepath";
+        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+            return false;
+        }
+        // finally send the file
+        // these files are uploaded by students - forcing download for security reasons
+        send_stored_file($file, 0, 0, true, $options);
     }
 
     return false;
