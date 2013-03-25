@@ -53,6 +53,10 @@ class qformat_blackboard_six_qti extends qformat_blackboard_six_base {
         }
 
         $questions = array();
+
+        // Treat the assessment title as a category title.
+        $this->process_category($xml, $questions);
+
         // First step : we are only interested in the <item> tags.
         $rawquestions = $this->getpath($xml,
                 array('questestinterop', '#', 'assessment', 0, '#', 'section', 0, '#', 'item'),
@@ -869,6 +873,21 @@ class qformat_blackboard_six_qti extends qformat_blackboard_six_base {
         } else {
             $questions[] = $question;
         }
+    }
+
+    /**
+     * Add a category question entry based on the assessment title
+     * @param array $xml the xml tree
+     * @param array $questions the questions already parsed
+     */
+    public function process_category($xml, &$questions) {
+        $title = $this->getpath($xml, array('questestinterop', '#', 'assessment', 0, '@', 'title'), '', true);
+
+        $dummyquestion = new stdClass();
+        $dummyquestion->qtype = 'category';
+        $dummyquestion->category = $this->cleaninput($this->clean_question_name($title));
+
+        $questions[] = $dummyquestion;
     }
 
     /**
