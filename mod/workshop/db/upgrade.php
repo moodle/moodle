@@ -112,6 +112,30 @@ function xmldb_workshop_upgrade($oldversion) {
     // Moodle v2.4.0 release upgrade line
     // Put any upgrade step following this
 
+    /**
+     * Add overall feedback related fields into the workshop table.
+     */
+    if ($oldversion < 2013032500) {
+        $table = new xmldb_table('workshop');
+
+        $field = new xmldb_field('overallfeedbackmode', XMLDB_TYPE_INTEGER, '3', null, null, null, '1', 'conclusionformat');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('overallfeedbackfiles', XMLDB_TYPE_INTEGER, '3', null, null, null, '0', 'overallfeedbackmode');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('overallfeedbackmaxbytes', XMLDB_TYPE_INTEGER, '10', null, null, null, '100000', 'overallfeedbackfiles');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        upgrade_mod_savepoint(true, 2013032500, 'workshop');
+    }
+
 
     return true;
 }
