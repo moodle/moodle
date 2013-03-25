@@ -1184,6 +1184,8 @@ function workshop_get_file_areas($course, $cm, $context) {
     $areas['submission_content']       = get_string('areasubmissioncontent', 'workshop');
     $areas['submission_attachment']    = get_string('areasubmissionattachment', 'workshop');
     $areas['conclusion']               = get_string('areaconclusion', 'workshop');
+    $areas['overallfeedback_content']  = get_string('areaoverallfeedbackcontent', 'workshop');
+    $areas['overallfeedback_attachment'] = get_string('areaoverallfeedbackattachment', 'workshop');
 
     return $areas;
 }
@@ -1386,6 +1388,7 @@ function workshop_pluginfile($course, $cm, $context, $filearea, array $args, $fo
  */
 function workshop_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename) {
     global $CFG, $DB, $USER;
+
     /** @var array internal cache for author names */
     static $submissionauthors = array();
 
@@ -1474,6 +1477,60 @@ function workshop_get_file_info($browser, $areas, $course, $cm, $context, $filea
         $urlbase = $CFG->wwwroot . '/pluginfile.php';
         // do not allow manual modification of any files!
         return new file_info_stored($browser, $context, $storedfile, $urlbase, $topvisiblename, true, true, false, false);
+    }
+
+    if ($filearea === 'overallfeedback_content' or $filearea === 'overallfeedback_attachment') {
+
+        if (!has_capability('mod/workshop:viewallassessments', $context)) {
+            return null;
+        }
+
+        if (is_null($itemid)) {
+            // No itemid (assessmentid) passed, display the list of all assessments.
+            require_once($CFG->dirroot . '/mod/workshop/fileinfolib.php');
+            return new workshop_file_info_overallfeedback_container($browser, $course, $cm, $context, $areas, $filearea);
+        }
+
+        // Make sure the user can see the particular assessment in separate groups mode.
+        $gmode = groups_get_activity_groupmode($cm, $course);
+        if ($gmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context)) {
+            // Check there is at least one common group with both the $USER
+            // and the submission author.
+            $sql = "SELECT 'x'
+                      FROM {workshop_submissions} s
+                      JOIN {user} a ON (a.id = s.authorid)
+                      JOIN {groups_members} agm ON (a.id = agm.userid)
+                      JOIN {user} u ON (u.id = ?)
+                      JOIN {groups_members} ugm ON (u.id = ugm.userid)
+                     WHERE s.example = 0 AND s.workshopid = ? AND s.id = ? AND agm.groupid = ugm.groupid";
+            $params = array($USER->id, $cm->instance, $itemid);
+            if (!$DB->record_exists_sql($sql, $params)) {
+                return null;
+            }
+        }
+
+        // We are inside a particular assessment container.
+        $filepath = is_null($filepath) ? '/' : $filepath;
+        $filename = is_null($filename) ? '.' : $filename;
+
+        if (!$storedfile = $fs->get_file($context->id, 'mod_workshop', $filearea, $itemid, $filepath, $filename)) {
+            if ($filepath === '/' and $filename === '.') {
+                $storedfile = new virtual_root_file($context->id, 'mod_workshop', $filearea, $itemid);
+            } else {
+                // Not found
+                return null;
+            }
+        }
+
+        // Check to see if the user can manage files or is the owner.
+        if (!has_capability('moodle/course:managefiles', $context) and $storedfile->get_userid() != $USER->id) {
+            return null;
+        }
+
+        $urlbase = $CFG->wwwroot . '/pluginfile.php';
+
+        // Do not allow manual modification of any files.
+        return new file_info_stored($browser, $context, $storedfile, $urlbase, $itemid, true, true, false, false);
     }
 
     if ($filearea == 'instructauthors' or $filearea == 'instructreviewers' or $filearea == 'conclusion') {
