@@ -328,7 +328,7 @@ function xmldb_main_install() {
     set_config('jsrev', time());
 
     // No admin setting for this any more, GD is now required, remove in Moodle 2.6.
-    gdversion('gdversion', 2);
+    set_config('gdversion', 2);
 
     // Install licenses
     require_once($CFG->libdir . '/licenselib.php');
