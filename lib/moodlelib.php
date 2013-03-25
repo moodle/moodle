@@ -2817,6 +2817,11 @@ function get_login_url() {
 function require_login($courseorid = NULL, $autologinguest = true, $cm = NULL, $setwantsurltome = true, $preventredirect = false) {
     global $CFG, $SESSION, $USER, $PAGE, $SITE, $DB, $OUTPUT;
 
+    // Must not redirect when byteserving already started.
+    if (!empty($_SERVER['HTTP_RANGE'])) {
+        $preventredirect = true;
+    }
+
     // setup global $COURSE, themes, language and locale
     if (!empty($courseorid)) {
         if (is_object($courseorid)) {

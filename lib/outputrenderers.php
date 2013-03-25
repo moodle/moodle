@@ -2317,12 +2317,16 @@ EOD;
             }
             error_reporting($CFG->debug);
 
-            // Header not yet printed
-            if (isset($_SERVER['SERVER_PROTOCOL'])) {
-                // server protocol should be always present, because this render
-                // can not be used from command line or when outputting custom XML
-                @header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
+            // Output not yet started.
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            if (empty($_SERVER['HTTP_RANGE'])) {
+                @header($protocol . ' 404 Not Found');
+            } else {
+                // Must stop byteserving attempts somehow,
+                // this is weird but Chrome PDF viewer can be stopped only with 407!
+                @header($protocol . ' 407 Proxy Authentication Required');
             }
+
             $this->page->set_context(null); // ugly hack - make sure page context is set to something, we do not want bogus warnings here
             $this->page->set_url('/'); // no url
             //$this->page->set_pagelayout('base'); //TODO: MDL-20676 blocks on error pages are weird, unfortunately it somehow detect the pagelayout from URL :-(
