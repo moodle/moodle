@@ -146,6 +146,16 @@ class page_requirements_manager {
     protected $debug_moduleloadstacktraces = array();
 
     /**
+     * @var array list of requested jQuery plugins
+     */
+    protected $jqueryplugins = array();
+
+    /**
+     * @var array list of jQuery plugin overrides
+     */
+    protected $jquerypluginoverrides = array();
+
+    /**
      * Page requirements constructor.
      */
     public function __construct() {
@@ -314,6 +324,255 @@ class page_requirements_manager {
         $url = $this->js_fix_url($url);
         $where = $inhead ? 'head' : 'footer';
         $this->jsincludes[$where][$url->out()] = $url;
+    }
+
+    /**
+     * Request inclusion of jQuery library in the page.
+     *
+     * NOTE: this should not be used in official Moodle distribution!
+     *
+     * We are going to bundle jQuery 1.9.x until we drop support
+     * all support for IE 6-8. Use $PAGE->requires->jquery_plugin('migrate')
+     * for code written for earlier jQuery versions.
+     *
+     * {@see http://docs.moodle.org/dev/jQuery}
+     */
+    public function jquery() {
+        $this->jquery_plugin('jquery');
+    }
+
+    /**
+     * Request inclusion of jQuery plugin.
+     *
+     * NOTE: this should not be used in official Moodle distribution!
+     *
+     * jQuery plugins are located in plugin/jquery/* subdirectory,
+     * plugin/jquery/plugins.php lists all available plugins.
+     *
+     * Included core plugins:
+     *   - jQuery UI
+     *   - jQuery Migrate (useful for code written for previous UI version)
+     *
+     * Add-ons may include extra jQuery plugins in jquery/ directory,
+     * plugins.php file defines the mapping between plugin names and
+     * necessary page includes.
+     *
+     * Examples:
+     * <code>
+     *   // file: mod/xxx/view.php
+     *   $PAGE->requires->jquery();
+     *   $PAGE->requires->jquery_plugin('ui');
+     *   $PAGE->requires->jquery_plugin('ui-css');
+     * </code>
+     *
+     * <code>
+     *   // file: theme/yyy/lib.php
+     *   function theme_yyy_page_init(moodle_page $page) {
+     *       $page->requires->jquery();
+     *       $page->requires->jquery_plugin('ui');
+     *       $page->requires->jquery_plugin('ui-css');
+     *   }
+     * </code>
+     *
+     * <code>
+     *   // file: blocks/zzz/block_zzz.php
+     *   public function get_required_javascript() {
+     *       parent::get_required_javascript();
+     *       $this->page->requires->jquery();
+     *       $page->requires->jquery_plugin('ui');
+     *       $page->requires->jquery_plugin('ui-css');
+     *   }
+     * </code>
+     *
+     * {@see http://docs.moodle.org/dev/jQuery}
+     *
+     * @param string $plugin name of the jQuery plugin as defined in jquery/plugins.php
+     * @param string $component name of the component
+     * @return bool success
+     */
+    public function jquery_plugin($plugin, $component = 'core') {
+        global $CFG;
+
+        if ($this->headdone) {
+            debugging('Can not add jQuery plugins after starting page output!');
+            return false;
+        }
+
+        if ($component !== 'core' and in_array($plugin, array('jquery', 'ui', 'ui-css', 'migrate'))) {
+            debugging("jQuery plugin '$plugin' is included in Moodle core, other components can not use the same name.", DEBUG_DEVELOPER);
+            $component = 'core';
+        } else if ($component !== 'core' and strpos($component, '_') === false) {
+            // Let's normalise the legacy activity names, Frankenstyle rulez!
+            $component = 'mod_' . $component;
+        }
+
+        if (empty($this->jqueryplugins) and ($component !== 'core' or $plugin !== 'jquery')) {
+            // Make sure the jQuery itself is always loaded first,
+            // the order of all other plugins depends on order of $PAGE_>requires->.
+            $this->jquery_plugin('jquery', 'core');
+        }
+
+        if (isset($this->jqueryplugins[$plugin])) {
+            // No problem, we already have something, first Moodle plugin to register the jQuery plugin wins.
+            return true;
+        }
+
+        $componentdir = get_component_directory($component);
+        if (!file_exists($componentdir) or !file_exists("$componentdir/jquery/plugins.php")) {
+            debugging("Can not load jQuery plugin '$plugin', missing plugins.php in component '$component'.", DEBUG_DEVELOPER);
+            return false;
+        }
+
+        $plugins = array();
+        require("$componentdir/jquery/plugins.php");
+
+        if (!isset($plugins[$plugin])) {
+            debugging("jQuery plugin '$plugin' can not be found in component '$component'.", DEBUG_DEVELOPER);
+            return false;
+        }
+
+        $this->jqueryplugins[$plugin] = new stdClass();
+        $this->jqueryplugins[$plugin]->plugin    = $plugin;
+        $this->jqueryplugins[$plugin]->component = $component;
+        $this->jqueryplugins[$plugin]->urls      = array();
+
+        foreach ($plugins[$plugin]['files'] as $file) {
+            if (debugging('', DEBUG_DEVELOPER)) {
+                if (!file_exists("$componentdir/jquery/$file")) {
+                    debugging("Invalid file '$file' specified in jQuery plugin '$plugin' in component '$component'");
+                    continue;
+                }
+                $file = str_replace('.min.css', '.css', $file);
+                $file = str_replace('.min.js', '.js', $file);
+            }
+            if (!file_exists("$componentdir/jquery/$file")) {
+                debugging("Invalid file '$file' specified in jQuery plugin '$plugin' in component '$component'");
+                continue;
+            }
+            if (!empty($CFG->slasharguments)) {
+                $url = new moodle_url("$CFG->httpswwwroot/theme/jquery.php");
+                $url->set_slashargument("/$component/$file");
+
+            } else {
+                // This is not really good, we need slasharguments for relative links, this means no caching...
+                $path = realpath("$componentdir/jquery/$file");
+                if (strpos($path, $CFG->dirroot) === 0) {
+                    $url = $CFG->httpswwwroot.preg_replace('/^'.preg_quote($CFG->dirroot, '/').'/', '', $path);
+                    $url = new moodle_url($url);
+                } else {
+                    // Bad luck, fix your server!
+                    debugging("Moodle jQuery integration requires 'slasharguments' setting to be enabled.");
+                    continue;
+                }
+            }
+            $this->jqueryplugins[$plugin]->urls[] = $url;
+        }
+
+        return true;
+    }
+
+    /**
+     * Request replacement of one jQuery plugin by another.
+     *
+     * This is useful when themes want to replace the jQuery UI theme,
+     * the problem is that theme can not prevent others from including the core ui-css plugin.
+     *
+     * Example:
+     *  1/ generate new jQuery UI theme and place it into theme/yourtheme/jquery/
+     *  2/ write theme/yourtheme/jquery/plugins.php
+     *  3/ init jQuery from theme
+     *
+     * <code>
+     *   // file theme/yourtheme/lib.php
+     *   function theme_yourtheme_page_init($page) {
+     *       $page->requires->jquery_plugin('yourtheme-ui-css', 'theme_yourtheme');
+     *       $page->requires->jquery_override_plugin('ui-css', 'yourtheme-ui-css');
+     *   }
+     * </code>
+     *
+     * This code prevents loading of standard 'ui-css' which my be requested by other plugins,
+     * the 'yourtheme-ui-css' gets loaded only if some other code requires jquery.
+     *
+     * {@see http://docs.moodle.org/dev/jQuery}
+     *
+     * @param string $oldplugin original plugin
+     * @param string $newplugin the replacement
+     */
+    public function jquery_override_plugin($oldplugin, $newplugin) {
+        if ($this->headdone) {
+            debugging('Can not override jQuery plugins after starting page output!');
+            return;
+        }
+        $this->jquerypluginoverrides[$oldplugin] = $newplugin;
+    }
+
+    /**
+     * Return jQuery related markup for page start.
+     * @return string
+     */
+    protected function get_jquery_headcode() {
+        if (empty($this->jqueryplugins['jquery'])) {
+            // If nobody requested jQuery then do not bother to load anything.
+            // This may be useful for themes that want to override 'ui-css' only if requested by something else.
+            return '';
+        }
+
+        $included = array();
+        $urls = array();
+
+        foreach ($this->jqueryplugins as $name => $unused) {
+            if (isset($included[$name])) {
+                continue;
+            }
+            if (array_key_exists($name, $this->jquerypluginoverrides)) {
+                // The following loop tries to resolve the replacements,
+                // use max 100 iterations to prevent infinite loop resulting
+                // in blank page.
+                $cyclic = true;
+                $oldname = $name;
+                for ($i=0; $i<100; $i++) {
+                    $name = $this->jquerypluginoverrides[$name];
+                    if (!array_key_exists($name, $this->jquerypluginoverrides)) {
+                        $cyclic = false;
+                        break;
+                    }
+                }
+                if ($cyclic) {
+                    // We can not do much with cyclic references here, let's use the old plugin.
+                    $name = $oldname;
+                    debugging("Cyclic overrides detected for jQuery plugin '$name'");
+
+                } else if (empty($name)) {
+                    // Developer requested removal of the plugin.
+                    continue;
+
+                } else if (!isset($this->jqueryplugins[$name])) {
+                    debugging("Unknown jQuery override plugin '$name' detected");
+                    $name = $oldname;
+
+                } else if (isset($included[$name])) {
+                    // The plugin was already included, easy.
+                    continue;
+                }
+            }
+
+            $plugin = $this->jqueryplugins[$name];
+            $urls = array_merge($urls, $plugin->urls);
+            $included[$name] = true;
+        }
+
+        $output = '';
+        $attributes = array('rel' => 'stylesheet', 'type' => 'text/css');
+        foreach ($urls as $url) {
+            if (preg_match('/\.js$/', $url)) {
+                $output .= html_writer::script('', $url);
+            } else if (preg_match('/\.css$/', $url)) {
+                $attributes['href'] = $url;
+                $output .= html_writer::empty_tag('link', $attributes) . "\n";
+            }
+        }
+
+        return $output;
     }
 
     /**
@@ -1066,6 +1325,9 @@ class page_requirements_manager {
         // YUI3 JS and CSS need to be loaded in the header but after the YUI_config has been created.
         // They should be cached well by the browser.
         $output .= $this->get_yui3lib_headcode($page);
+
+        // Add hacked jQuery support, it is not intended for standard Moodle distribution!
+        $output .= $this->get_jquery_headcode();
 
         // Now theme CSS + custom CSS in this specific order.
         $output .= $this->get_css_code();
