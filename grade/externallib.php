@@ -114,21 +114,23 @@ class core_grade_external extends external_api {
                     $isviewable = true;
                     if ($def->status != gradingform_controller::DEFINITION_STATUS_READY) {
                         $warnings[] = array(
-                        'item' => 'module',
-                        'itemid' => $cmid,
-                        'message' => 'Capability moodle/grade:managegradingforms required to view draft definitions',
-                        'warningcode' => '1');
+                            'item' => 'module',
+                            'itemid' => $cmid,
+                            'message' => 'Capability moodle/grade:managegradingforms required to view draft definitions',
+                            'warningcode' => '1'
+                        );
                         $isviewable = false;
                     }
                     if (!empty($def->options)) {
                         $options = json_decode($def->options);
-                        if (isset ($options->alwaysshowdefinition)
-                            && $options->alwaysshowdefinition == 0) {
+                        if (isset($options->alwaysshowdefinition) &&
+                                $options->alwaysshowdefinition == 0) {
                             $warnings[] = array(
-                            'item' => 'module',
-                            'itemid' => $cmid,
-                            'message' => 'Capability moodle/grade:managegradingforms required to preview definition',
-                            'warningcode' => '1');
+                                'item' => 'module',
+                                'itemid' => $cmid,
+                                'message' => 'Capability moodle/grade:managegradingforms required to preview definition',
+                                'warningcode' => '1'
+                            );
                             $isviewable = false;
                         }
                     }
@@ -150,9 +152,15 @@ class core_grade_external extends external_api {
                 $definition['usermodified'] = $def->usermodified;
                 $definition['timecopied'] = $def->timecopied;
                 // Format the description text field.
-                list($definition['description'], $definition['descriptionformat']) =
-                external_format_text($definition['description'], $definition['descriptionformat'],
-                        $context->id, $componentname, 'description', $def->id);
+                $formattedtext = external_format_text($definition['description'],
+                                                      $definition['descriptionformat'],
+                                                      $context->id,
+                                                      $componentname,
+                                                      'description',
+                                                      $def->id);
+                $definition['description'] = $formattedtext[0];
+                $definition['descriptionformat'] = $formattedtext[1];
+
                 $details = $controller->get_external_definition_details();
                 $items = array();
                 foreach ($details as $key => $value) {
@@ -190,13 +198,18 @@ class core_grade_external extends external_api {
         }
         foreach ($formatkeys as $formatkey) {
             $descriptionkey = substr($formatkey, 0, -6);
-            list($items[$descriptionkey], $items[$formatkey]) =
-            external_format_text($items[$descriptionkey], $items[$formatkey],
-                        $contextid, $componentname, 'description', $itemid);
+            $formattedtext = external_format_text($items[$descriptionkey],
+                                                  $items[$formatkey],
+                                                  $contextid,
+                                                  $componentname,
+                                                  'description',
+                                                  $itemid);
+            $items[$descriptionkey] = $formattedtext[0];
+            $items[$formatkey] = $formattedtext[1];
         }
-        foreach ($items as &$value) {
+        foreach ($items as $key => $value) {
             if (is_array($value)) {
-                $value = self::format_text($value, $contextid, $componentname, $itemid);
+                $items[$key] = self::format_text($value, $contextid, $componentname, $itemid);
             }
         }
         return $items;
