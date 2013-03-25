@@ -224,7 +224,7 @@ if ($usernew = $userform->get_data()) {
     }
 
     //update user picture
-    if (!empty($CFG->gdversion) and empty($CFG->disableuserimages)) {
+    if (empty($CFG->disableuserimages)) {
         useredit_update_picture($usernew, $userform, $filemanageroptions);
     }
 

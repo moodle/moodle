@@ -259,7 +259,7 @@ function useredit_shared_definition(&$mform, $editoroptions = null, $filemanager
     $mform->setType('description_editor', PARAM_CLEANHTML);
     $mform->addHelpButton('description_editor', 'userdescription');
 
-    if (!empty($CFG->gdversion) and empty($USER->newadminuser)) {
+    if (empty($USER->newadminuser)) {
         $mform->addElement('header', 'moodle_picture', get_string('pictureofuser'));
 
         if (!empty($CFG->enablegravatar)) {

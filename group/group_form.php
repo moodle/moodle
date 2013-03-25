@@ -67,13 +67,11 @@ class group_form extends moodleform {
         $mform->addHelpButton('enrolmentkey', 'enrolmentkey', 'group');
         $mform->setType('enrolmentkey', PARAM_RAW);
 
-        if (!empty($CFG->gdversion)) {
-            $options = array(get_string('no'), get_string('yes'));
-            $mform->addElement('select', 'hidepicture', get_string('hidepicture'), $options);
+        $options = array(get_string('no'), get_string('yes'));
+        $mform->addElement('select', 'hidepicture', get_string('hidepicture'), $options);
 
-            $mform->addElement('filepicker', 'imagefile', get_string('newpicture', 'group'));
-            $mform->addHelpButton('imagefile', 'newpicture', 'group');
-        }
+        $mform->addElement('filepicker', 'imagefile', get_string('newpicture', 'group'));
+        $mform->addHelpButton('imagefile', 'newpicture', 'group');
 
         $mform->addElement('hidden','id');
         $mform->setType('id', PARAM_INT);

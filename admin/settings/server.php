@@ -7,9 +7,7 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
 
 // "systempaths" settingpage
 $temp = new admin_settingpage('systempaths', new lang_string('systempaths','admin'));
-$temp->add(new admin_setting_configselect('gdversion', new lang_string('gdversion','admin'), new lang_string('configgdversion', 'admin'), check_gd_version(), array('0' => new lang_string('gdnot'),
-                                                                                                                                                          '1' => new lang_string('gd1'),
-                                                                                                                                                          '2' => new lang_string('gd2'))));
+
 $temp->add(new admin_setting_configexecutable('pathtodu', new lang_string('pathtodu', 'admin'), new lang_string('configpathtodu', 'admin'), ''));
 $temp->add(new admin_setting_configexecutable('aspellpath', new lang_string('aspellpath', 'admin'), new lang_string('edhelpaspellpath'), ''));
 $temp->add(new admin_setting_configexecutable('pathtodot', new lang_string('pathtodot', 'admin'), new lang_string('pathtodot_help', 'admin'), ''));

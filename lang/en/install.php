@@ -226,18 +226,6 @@ $string['fileuploadshelp'] = '<p>File uploading seems to be disabled on your ser
 <p>To enable file uploading you (or your system administrator) will need to 
    edit the main php.ini file on your system and change the setting for 
    <b>file_uploads</b> to \'1\'.</p>';
-$string['gdversion'] = 'GD version';
-$string['gdversionerror'] = 'The GD library should be present to process and create images';
-$string['gdversionhelp'] = '<p>Your server does not seem to have GD installed.</p>
-
-<p>GD is a library that is required by PHP to allow Moodle to process images 
-   (such as the user profile icons) and to create new images (such as 
-   the log graphs).  Moodle will still work without GD - these features 
-   will just not be available to you.</p>
-
-<p>To add GD to PHP under Unix, compile PHP using the --with-gd parameter.</p>
-
-<p>Under Windows you can usually edit php.ini and uncomment the line referencing php_gd2.dll.</p>';
 $string['globalsquotes'] = 'Insecure handling of globals';
 $string['globalsquoteserror'] = 'Fix your PHP settings: disable register_globals and/or enable magic_quotes_gpc';
 $string['globalsquoteshelp'] = '<p>Combination of disabled magic quotes GPC and enabled register globals both at the same time is not recommended.</p>

@@ -48,7 +48,7 @@ defined('MOODLE_INTERNAL') || die();
 function imagecopybicubic($dst_img, $src_img, $dst_x, $dst_y, $src_x, $src_y, $dst_w, $dst_h, $src_w, $src_h) {
     global $CFG;
 
-    if (function_exists('imagecopyresampled') and $CFG->gdversion >= 2) {
+    if (function_exists('imagecopyresampled')) {
        return imagecopyresampled($dst_img, $src_img, $dst_x, $dst_y, $src_x, $src_y,
                                  $dst_w, $dst_h, $src_w, $src_h);
     }
@@ -99,10 +99,6 @@ function imagecopybicubic($dst_img, $src_img, $dst_x, $dst_y, $src_x, $src_y, $d
  */
 function process_new_icon($context, $component, $filearea, $itemid, $originalfile) {
     global $CFG;
-
-    if (empty($CFG->gdversion)) {
-        return false;
-    }
 
     if (!is_file($originalfile)) {
         return false;
@@ -169,7 +165,7 @@ function process_new_icon($context, $component, $filearea, $itemid, $originalfil
         return false;
     }
 
-    if (function_exists('imagecreatetruecolor') and $CFG->gdversion >= 2) {
+    if (function_exists('imagecreatetruecolor')) {
         $im1 = imagecreatetruecolor(100, 100);
         $im2 = imagecreatetruecolor(35, 35);
         $im3 = imagecreatetruecolor(512, 512);
@@ -274,7 +270,7 @@ function process_new_icon($context, $component, $filearea, $itemid, $originalfil
 function generate_image_thumbnail($filepath, $width, $height) {
     global $CFG;
 
-    if (empty($CFG->gdversion) or empty($filepath) or empty($width) or empty($height)) {
+    if (empty($filepath) or empty($width) or empty($height)) {
         return false;
     }
 
@@ -306,7 +302,7 @@ function generate_image_thumbnail($filepath, $width, $height) {
         return false;
     }
 
-    if (function_exists('imagecreatetruecolor') and $CFG->gdversion >= 2) {
+    if (function_exists('imagecreatetruecolor')) {
         $thumbnail = imagecreatetruecolor($width, $height);
         if ($imagefnc === 'imagepng') {
             imagealphablending($thumbnail, false);

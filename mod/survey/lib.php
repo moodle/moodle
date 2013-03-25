@@ -665,13 +665,8 @@ function survey_question_rowclass($qnum) {
 function survey_print_graph($url) {
     global $CFG, $SURVEY_GHEIGHT, $SURVEY_GWIDTH;
 
-    if (empty($CFG->gdversion)) {
-        echo "(".get_string("gdneed").")";
-
-    } else {
-        echo "<img class='resultgraph' height=\"$SURVEY_GHEIGHT\" width=\"$SURVEY_GWIDTH\"".
-             " src=\"$CFG->wwwroot/mod/survey/graph.php?$url\" alt=\"".get_string("surveygraph", "survey")."\" />";
-    }
+    echo "<img class='resultgraph' height=\"$SURVEY_GHEIGHT\" width=\"$SURVEY_GWIDTH\"".
+         " src=\"$CFG->wwwroot/mod/survey/graph.php?$url\" alt=\"".get_string("surveygraph", "survey")."\" />";
 }
 
 /**
