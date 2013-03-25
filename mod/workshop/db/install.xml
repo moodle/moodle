@@ -88,6 +88,7 @@
         <FIELD NAME="gradinggradeoverby" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The id of the user who has overridden the grade for submission."/>
         <FIELD NAME="feedbackauthor" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The comment/feedback from the reviewer for the author."/>
         <FIELD NAME="feedbackauthorformat" TYPE="int" LENGTH="3" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="feedbackauthorattachment" TYPE="int" LENGTH="3" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Are there some files attached to the feedbackauthor field? Sets to 1 by file_postupdate_standard_filemanager()."/>
         <FIELD NAME="feedbackreviewer" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The comment/feedback from the teacher for the reviewer. For example the reason why the grade for assessment was overridden"/>
         <FIELD NAME="feedbackreviewerformat" TYPE="int" LENGTH="3" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>

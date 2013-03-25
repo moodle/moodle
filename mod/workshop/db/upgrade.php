@@ -136,6 +136,19 @@ function xmldb_workshop_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2013032500, 'workshop');
     }
 
+    /**
+     * Add feedbackauthorattachment field into the workshop_assessments table.
+     */
+    if ($oldversion < 2013032501) {
+        $table = new xmldb_table('workshop_assessments');
+        $field = new xmldb_field('feedbackauthorattachment', XMLDB_TYPE_INTEGER, '3', null, null, null, '0', 'feedbackauthorformat');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        upgrade_mod_savepoint(true, 2013032501, 'workshop');
+    }
+
 
     return true;
 }
