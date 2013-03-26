@@ -212,6 +212,8 @@ if (PHPUNIT_UTIL) {
 
 // is database and dataroot ready for testing?
 list($errorcode, $message) = phpunit_util::testing_ready_problem();
+// print some version info
+phpunit_util::bootstrap_moodle_info();
 if ($errorcode) {
     phpunit_bootstrap_error($errorcode, $message);
 }
