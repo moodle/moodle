@@ -703,18 +703,17 @@ function UpdateLog(s) {
 
 //add an individual log entry
 function AppendToLog(s, rc) {
-    var sStyle;
+    var sStyle = '';
     if (rc != 0) {
-        sStyle = 'class="error';
+        sStyle = 'class="error"';
     } else if (logRow % 2 != 0) {
         sStyle = 'class="even"';
     } else {
         sStyle = 'class="odd"';
     }
-    sStyle += '"';
     var now = new Date();
     now.setTime( now.getTime() );
-    s = '<div ' + sStyle + ' id="<?php echo $scorm->version;?>">' + now.toGMTString() + ': ' + s + '<\/div>';
+    s = '<div ' + sStyle + ' id="<?php echo $scorm->version; ?>">' + now.toGMTString() + ': ' + s + '<\/div>';
     UpdateLog(s);
     // switch colours for a new section of work
     if (s.match(/Commit|Loaded|Initialize|Terminate|Finish|Moodle SCORM|Moodle Logging/)) {
