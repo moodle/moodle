@@ -1779,5 +1779,12 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2013032600.03);
     }
 
+    if ($oldversion < 2013032600.04) {
+        // MDL-31983 broke the quiz version number. Fix it.
+        $DB->set_field('modules', 'version', '2013021500',
+                array('name' => 'quiz', 'version' => '2013310100'));
+        upgrade_main_savepoint(true, 2013032600.04);
+    }
+
     return true;
 }
