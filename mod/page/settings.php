@@ -42,19 +42,14 @@ if ($ADMIN->fulltree) {
     //--- modedit defaults -----------------------------------------------------------------------------------
     $settings->add(new admin_setting_heading('pagemodeditdefaults', get_string('modeditdefaults', 'admin'), get_string('condifmodeditdefaults', 'admin')));
 
-    $settings->add(new admin_setting_configcheckbox_with_advanced('page/printheading',
-        get_string('printheading', 'page'), get_string('printheadingexplain', 'page'),
-        array('value'=>1, 'adv'=>false)));
-    $settings->add(new admin_setting_configcheckbox_with_advanced('page/printintro',
-        get_string('printintro', 'page'), get_string('printintroexplain', 'page'),
-        array('value'=>0, 'adv'=>false)));
-    $settings->add(new admin_setting_configselect_with_advanced('page/display',
-        get_string('displayselect', 'page'), get_string('displayselectexplain', 'page'),
-        array('value'=>RESOURCELIB_DISPLAY_OPEN, 'adv'=>true), $displayoptions));
-    $settings->add(new admin_setting_configtext_with_advanced('page/popupwidth',
-        get_string('popupwidth', 'page'), get_string('popupwidthexplain', 'page'),
-        array('value'=>620, 'adv'=>true), PARAM_INT, 7));
-    $settings->add(new admin_setting_configtext_with_advanced('page/popupheight',
-        get_string('popupheight', 'page'), get_string('popupheightexplain', 'page'),
-        array('value'=>450, 'adv'=>true), PARAM_INT, 7));
+    $settings->add(new admin_setting_configcheckbox('page/printheading',
+        get_string('printheading', 'page'), get_string('printheadingexplain', 'page'), 1));
+    $settings->add(new admin_setting_configcheckbox('page/printintro',
+        get_string('printintro', 'page'), get_string('printintroexplain', 'page'), 0));
+    $settings->add(new admin_setting_configselect('page/display',
+        get_string('displayselect', 'page'), get_string('displayselectexplain', 'page'), RESOURCELIB_DISPLAY_OPEN, $displayoptions));
+    $settings->add(new admin_setting_configtext('page/popupwidth',
+        get_string('popupwidth', 'page'), get_string('popupwidthexplain', 'page'), 620, PARAM_INT, 7));
+    $settings->add(new admin_setting_configtext('page/popupheight',
+        get_string('popupheight', 'page'), get_string('popupheightexplain', 'page'), 450, PARAM_INT, 7));
 }
