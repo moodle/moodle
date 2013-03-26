@@ -248,3 +248,9 @@ td.submissioneditable {
 #page-mod-assign-view .submissionaction {
     text-align: center;
 }
+
+
+#page-mod-assign-view .submissionsummarytable .c0,
+#page-mod-assign-view .mod-assign-history-panel .c0 {
+    width: 150px;
+}
