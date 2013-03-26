@@ -741,15 +741,16 @@ function LogAPICall(func, nam, val, rc) {
 
 
 // Add in a JS controlled link for toggling the Debug logging
-var logButton = document.createElement('a');
-logButton.id = 'mod-scorm-log-toggle';
-logButton.name = 'logToggle';
-logButton.href = 'javascript:toggleLog();';
-if (getLoggingActive() == "A") {
-    logButton.innerHTML = '<?php echo addslashes_js(get_string('scormloggingon', 'scorm')); ?>';
-} else {
-    logButton.innerHTML = '<?php echo addslashes_js(get_string('scormloggingoff', 'scorm')); ?>';
+if (!document.getElementById('mod-scorm-log-toggle')) {
+    var logButton = document.createElement('a');
+    logButton.id = 'mod-scorm-log-toggle';
+    logButton.name = 'logToggle';
+    logButton.href = 'javascript:toggleLog();';
+    if (getLoggingActive() == "A") {
+        logButton.innerHTML = '<?php echo addslashes_js(get_string('scormloggingon', 'scorm')); ?>';
+    } else {
+        logButton.innerHTML = '<?php echo addslashes_js(get_string('scormloggingoff', 'scorm')); ?>';
+    }
+    var content = safeGetElement(document, 'scormpage');
+    content.insertBefore(logButton, content.firstChild);
 }
-var content = safeGetElement(document, 'scormpage');
-content.insertBefore(logButton, content.firstChild);
-
