@@ -6,9 +6,9 @@ Feature: Restore Moodle 2 course backups
 
   Background:
     Given the following "courses" exists:
-      | fullname | shortname | category |
-      | Course 1 | C1 | 0 |
-      | Course 2 | C2 | 0 |
+      | fullname | shortname | category | format |
+      | Course 1 | C1 | 0 | topics |
+      | Course 2 | C2 | 0 | topics |
     And I log in as "admin"
     And I follow "Course 1"
     And I turn editing mode on
@@ -65,3 +65,36 @@ Feature: Restore Moodle 2 course backups
     And I should not see "Test forum post backup name"
     And I should see "Community finder"
     And I should see "Test forum name"
+
+  @javascript
+  Scenario: Restore a backup into a new course changing the course format afterwards
+    Given I backup "Course 1" course using this options:
+      | Filename | test_backup.mbz |
+    When I restore "test_backup.mbz" backup into a new course using this options:
+    Then I should see "Topic 1"
+    And I should see "Test forum name"
+    And I follow "Edit settings"
+    And the "id_format" field should match "Topics format" value
+    And I fill the moodle form with:
+      | id_startdate_day | 1 |
+      | id_startdate_month | January |
+      | id_startdate_year | 2020 |
+      | id_format | Weekly format |
+    And I press "Save changes"
+    And I should see "1 January - 7 January"
+    And I should see "Test forum name"
+    And I follow "Edit settings"
+    And the "id_format" field should match "Weekly format" value
+    And I fill the moodle form with:
+      | id_format | Social format |
+    And I press "Save changes"
+    And I should see "An open forum for chatting about anything you want to"
+    And I follow "Edit settings"
+    And the "id_format" field should match "Social format" value
+    And I fill the moodle form with:
+      | id_format | SCORM format |
+    And I press "Save changes"
+    And I should see "Adding a new SCORM package"
+    And I follow "Edit settings"
+    And the "id_format" field should match "SCORM format" value
+    And I press "Cancel"
