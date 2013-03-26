@@ -204,7 +204,12 @@ class formslib_test_form extends moodleform {
         $repeatels = array(
             $this->_form->createElement('text', 'text', 'Type something')
         );
-        $this->repeat_elements($repeatels, 2, array(), 'numtexts', 'addtexts');
+        // TODO: The repeat_elements() is far from perfect. Everything should be
+        // repeated auto-magically by default with options only defining exceptions.
+        // Surely this is caused because we are storing some element information OUT
+        // from the element (type...) at form level. Anyway, the method should do its
+        // work better, no matter of that.
+        $this->repeat_elements($repeatels, 2, array('text' => array('type' => PARAM_RAW)), 'numtexts', 'addtexts');
 
         $this->_form->addElement('radio', 'radio', 'Label', 'Choice label', 'choice_value');
 
