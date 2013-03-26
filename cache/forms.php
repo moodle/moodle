@@ -49,7 +49,9 @@ class cachestore_addinstance_form extends moodleform {
         $locks = $this->_customdata['locks'];
 
         $form->addElement('hidden', 'plugin', $plugin);
+        $form->setType('plugin', PARAM_PLUGIN);
         $form->addElement('hidden', 'editing', !empty($this->_customdata['store']));
+        $form->setType('editing', PARAM_BOOL);
 
         if (!$store) {
             $form->addElement('text', 'name', get_string('storename', 'cache'));
@@ -59,6 +61,7 @@ class cachestore_addinstance_form extends moodleform {
         } else {
             $form->addElement('hidden', 'name', $store);
             $form->addElement('static', 'name-value', get_string('storename', 'cache'), $store);
+            $form->setType('name', PARAM_TEXT);
         }
 
         if (is_array($locks)) {

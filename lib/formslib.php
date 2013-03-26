@@ -1261,6 +1261,15 @@ abstract class moodleform {
                 case 'text':
                 case 'url':
                     $key = $element->getName();
+                    // For repeated elements we need to look for
+                    // the "main" type, not for the one present
+                    // on each repetition. All the stuff in formslib
+                    // (repeat_elements(), updateSubmission()... seems
+                    // to work that way.
+                    $pos = strpos($key, '[');
+                    if ($pos !== false) {
+                        $key = substr($key, 0, $pos);
+                    }
                     if (!array_key_exists($key, $mform->_types)) {
                         debugging("Did you remember to call setType() for '$key'? ".
                             'Defaulting to PARAM_RAW cleaning.', DEBUG_DEVELOPER);
