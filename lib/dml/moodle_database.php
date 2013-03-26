@@ -2019,6 +2019,7 @@ abstract class moodle_database {
      * @return string An empty string.
      */
     function sql_empty() {
+        debugging("sql_empty() is deprecated, please use empty string '' as sql parameter value instead", DEBUG_DEVELOPER);
         return '';
     }
 

@@ -1605,17 +1605,6 @@ class oci_native_moodle_database extends moodle_database {
         }
     }
 
-    /**
-     * This used to return empty string replacement character.
-     *
-     * @deprecated use bound parameter with empty string instead
-     *
-     * @return string An empty string.
-     */
-    public function sql_empty() {
-        return '';
-    }
-
     public function sql_order_by_text($fieldname, $numchars=32) {
         return 'dbms_lob.substr(' . $fieldname . ', ' . $numchars . ',1)';
     }

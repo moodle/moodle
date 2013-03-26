@@ -3927,6 +3927,7 @@ class dml_testcase extends database_driver_testcase {
         $tablename = $table->getName();
 
         $this->assertSame('', $DB->sql_empty()); // Since 2.5 the hack is applied automatically to all bound params.
+        $this->assertDebuggingCalled();
 
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null);
