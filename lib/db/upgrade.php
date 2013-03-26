@@ -1126,7 +1126,7 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012062504.13);
     }
 
-    if ($oldversion < 2012120303.02) {
+    if ($oldversion < 2012062506.02) {
         // Fixing possible wrong MIME type for MIME HTML (MHTML) files.
         $extensions = array('%.mht', '%.mhtml');
         $select = $DB->sql_like('filename', '?', false);
@@ -1139,7 +1139,7 @@ function xmldb_main_upgrade($oldversion) {
                 array($extension)
             );
         }
-        upgrade_main_savepoint(true, 2012120303.02);
+        upgrade_main_savepoint(true, 2012062506.02);
     }
 
     return true;
