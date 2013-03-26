@@ -37,7 +37,6 @@
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/locallib.php');
-require_once($CFG->libdir.'/filelib.php');
 
 $asid       = required_param('asid', PARAM_INT);  // assessment id
 $assessment = $DB->get_record('workshop_assessments', array('id' => $asid), '*', MUST_EXIST);
@@ -136,23 +135,8 @@ if (is_null($assessment->grade) and !$assessmenteditable) {
         $pending = array();
     }
     // load the assessment form and process the submitted data eventually
-    $feedbackauthoreditoropts = array(
-        'maxbytes' => $workshop->overallfeedbackmaxbytes,
-        'maxfiles' => $workshop->overallfeedbackfiles,
-        'changeformat' => 1,
-        'context' => $workshop->context,
-    );
-    $feedbackauthorattachmentopts = array(
-        'maxbytes' => $workshop->overallfeedbackmaxbytes,
-        'maxfiles' => $workshop->overallfeedbackfiles,
-        'return_types' => FILE_INTERNAL,
-    );
-    $mform = $strategy->get_assessment_form($PAGE->url, 'assessment', $assessment, $assessmenteditable, array(
-        'editableweight' => $cansetassessmentweight,
-        'pending' => !empty($pending),
-        'feedbackauthoreditoropts' => $feedbackauthoreditoropts,
-        'feedbackauthorattachmentopts' => $feedbackauthorattachmentopts,
-    ));
+    $mform = $strategy->get_assessment_form($PAGE->url, 'assessment', $assessment, $assessmenteditable,
+                                        array('editableweight' => $cansetassessmentweight, 'pending' => !empty($pending)));
 
     // Set data managed by the workshop core, subplugins set their own data themselves.
     $currentdata = (object)array(
@@ -160,42 +144,14 @@ if (is_null($assessment->grade) and !$assessmenteditable) {
         'feedbackauthor' => $assessment->feedbackauthor,
         'feedbackauthorformat' => $assessment->feedbackauthorformat,
     );
-    if (!empty($workshop->overallfeedbackmode)) {
-        if ($assessmenteditable) {
-            $currentdata = file_prepare_standard_editor($currentdata, 'feedbackauthor', $feedbackauthoreditoropts,
-                $workshop->context, 'mod_workshop', 'overallfeedback_content', $assessment->id);
-            if (!empty($workshop->overallfeedbackfiles)) {
-                $currentdata = file_prepare_standard_filemanager($currentdata, 'feedbackauthorattachment',
-                    $feedbackauthorattachmentopts, $workshop->context, 'mod_workshop', 'overallfeedback_attachment',
-                    $assessment->id);
-            }
-
-        } else {
-            $currentdata->feedbackauthor = file_rewrite_pluginfile_urls($currentdata->feedbackauthor, 'pluginfile.php',
-                $workshop->context->id, 'mod_workshop', 'overallfeedback_content', $assessment->id);
-            $currentdata->feedbackauthor = format_text($currentdata->feedbackauthor, $currentdata->feedbackauthorformat,
-                array('overflowdiv' => true, 'context' => $workshop->context));
-            $currentdata->feedbackauthorattachment = '-';
-            if (!empty($assessment->feedbackauthorattachment)) {
-                $fs = get_file_storage();
-                $files = $fs->get_area_files($workshop->context->id, 'mod_workshop', 'overallfeedback_attachment', $assessment->id);
-                $list = '';
-                foreach ($files as $file) {
-                    if ($file->is_directory()) {
-                        continue;
-                    }
-                    $filepath = $file->get_filepath();
-                    $filename = $file->get_filename();
-                    $fileurl = moodle_url::make_pluginfile_url($workshop->context->id, 'mod_workshop', 'overallfeedback_attachment',
-                        $assessment->id, $filepath, $filename, true);
-                    $link = html_writer::link($fileurl, s($filename));
-                    $list .= html_writer::tag('li', $link);
-                }
-                $list = html_writer::tag('ul', $list, array('class' => 'overallfeedback_attachments'));
-                $currentdata->feedbackauthorattachment = $list;
-            }
+    if ($assessmenteditable and $workshop->overallfeedbackmode) {
+        $currentdata = file_prepare_standard_editor($currentdata, 'feedbackauthor', $workshop->overall_feedback_content_options(),
+            $workshop->context, 'mod_workshop', 'overallfeedback_content', $assessment->id);
+        if ($workshop->overallfeedbackfiles) {
+            $currentdata = file_prepare_standard_filemanager($currentdata, 'feedbackauthorattachment',
+                $workshop->overall_feedback_attachment_options(), $workshop->context, 'mod_workshop', 'overallfeedback_attachment',
+                $assessment->id);
         }
-
     }
     $mform->set_data($currentdata);
 
@@ -215,14 +171,14 @@ if (is_null($assessment->grade) and !$assessmenteditable) {
         $coredata = (object)array('id' => $assessment->id);
         if (isset($data->feedbackauthor_editor)) {
             $coredata->feedbackauthor_editor = $data->feedbackauthor_editor;
-            $coredata = file_postupdate_standard_editor($coredata, 'feedbackauthor', $feedbackauthoreditoropts,
+            $coredata = file_postupdate_standard_editor($coredata, 'feedbackauthor', $workshop->overall_feedback_content_options(),
                 $workshop->context, 'mod_workshop', 'overallfeedback_content', $assessment->id);
             unset($coredata->feedbackauthor_editor);
         }
         if (isset($data->feedbackauthorattachment_filemanager)) {
             $coredata->feedbackauthorattachment_filemanager = $data->feedbackauthorattachment_filemanager;
             $coredata = file_postupdate_standard_filemanager($coredata, 'feedbackauthorattachment',
-                $feedbackauthorattachmentopts, $workshop->context, 'mod_workshop', 'overallfeedback_attachment',
+                $workshop->overall_feedback_attachment_options(), $workshop->context, 'mod_workshop', 'overallfeedback_attachment',
                 $assessment->id);
             unset($coredata->feedbackauthorattachment_filemanager);
             if (empty($coredata->feedbackauthorattachment)) {
