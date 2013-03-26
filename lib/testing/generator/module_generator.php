@@ -34,25 +34,12 @@
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class testing_module_generator {
-
-    /**
-     * @var testing_data_generator
-     */
-    protected $datagenerator;
+abstract class testing_module_generator extends component_generator_base {
 
     /**
      * @var number of created instances
      */
     protected $instancecount = 0;
-
-    /**
-     * Dumb constructor to throw the deprecated notification
-     * @param testing_data_generator $datagenerator
-     */
-    public function __construct(testing_data_generator $datagenerator) {
-        $this->datagenerator = $datagenerator;
-    }
 
     /**
      * To be called from data reset code only,
