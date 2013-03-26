@@ -35,6 +35,8 @@ information provided here is intended especially for developers.
   param $formatoptions, that will determine if the field names are processed by
   format_string() with the passed options.
 * remove all references to $CFG->gdversion, GD PHP extension is now required
+* Formslib will now throw a developer warning if a PARAM_ type hasn't been set for elements which
+  need it. Please set PARAM_RAW explicitly if you do not want any cleaning.
 
 YUI changes:
 * M.util.help_icon has been deprecated. Code should be updated to use moodle-core-popuphelp

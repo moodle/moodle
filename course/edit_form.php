@@ -190,7 +190,9 @@ class course_edit_form extends moodleform {
         }
 
 //--------------------------------------------------------------------------------
+        // Just a placeholder..
         $mform->addElement('hidden', 'addcourseformatoptionshere');
+        $mform->setType('addcourseformatoptionshere', PARAM_BOOL);
 
 //--------------------------------------------------------------------------------
         enrol_course_edit_form($mform, $course, $context);
