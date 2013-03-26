@@ -111,6 +111,8 @@ class question_dataset_dependent_items_form extends question_wizard_form {
                 $labelsharedwildcard = get_string("sharedwildcard", "qtype_calculated");
 
         $mform =& $this->_form;
+        $mform->setDisableShortforms();
+
         $strquestionlabel = $this->qtypeobj->comment_header($this->question);
         if ($this->maxnumber != -1 ) {
             $this->noofitems = $this->maxnumber;
