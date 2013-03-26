@@ -592,10 +592,10 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
             $all[$defcoursecat->id] = array();
             $count++;
         }
+        $all['countall'] = $count;
         foreach ($all as $key => $children) {
             $coursecattreecache->set($key, $children);
         }
-        $coursecattreecache->set('countall', $count);
         if (array_key_exists($id, $all)) {
             return $all[$id];
         }
