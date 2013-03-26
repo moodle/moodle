@@ -82,8 +82,11 @@ class MoodleQuickForm_passwordunmask extends MoodleQuickForm_password {
         } else {
             $unmask = get_string('unmaskpassword', 'form');
             //Pass id of the element, so that unmask checkbox can be attached.
+            $attributes = array('formid' => $this->getAttribute('id'),
+                'checkboxlabel' => $unmask,
+                'checkboxname' => $this->getAttribute('name'));
             $PAGE->requires->yui_module('moodle-form-passwordunmask', 'M.form.passwordunmask',
-                    array(array('formid' => $this->getAttribute('id'), 'checkboxname' => $unmask)));
+                    array($attributes));
             return $this->_getTabs() . '<input' . $this->_getAttrString($this->_attributes) . ' />';
         }
     }
