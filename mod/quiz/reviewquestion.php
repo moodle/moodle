@@ -35,7 +35,7 @@ $seq = optional_param('step', null, PARAM_INT);
 $baseurl = new moodle_url('/mod/quiz/reviewquestion.php',
         array('attempt' => $attemptid, 'slot' => $slot));
 $currenturl = new moodle_url($baseurl);
-if ($seq !== 0) {
+if (!is_null($seq)) {
     $currenturl->param('step', $seq);
 }
 $PAGE->set_url($currenturl);
