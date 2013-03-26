@@ -1763,5 +1763,21 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2013032200.01);
     }
 
+    if ($oldversion < 2013032600.03) {
+        // Fixing possible wrong MIME type for MIME HTML (MHTML) files.
+        $extensions = array('%.mht', '%.mhtml');
+        $select = $DB->sql_like('filename', '?', false);
+        foreach ($extensions as $extension) {
+            $DB->set_field_select(
+                'files',
+                'mimetype',
+                'message/rfc822',
+                $select,
+                array($extension)
+            );
+        }
+        upgrade_main_savepoint(true, 2013032600.03);
+    }
+
     return true;
 }

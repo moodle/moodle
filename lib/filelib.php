@@ -1513,6 +1513,8 @@ function &get_mimetypes_array() {
         'mp4'  => array ('type'=>'video/mp4', 'icon'=>'mpeg', 'groups'=>array('video','web_video'), 'string'=>'video'),
         'm4v'  => array ('type'=>'video/mp4', 'icon'=>'mpeg', 'groups'=>array('video','web_video'), 'string'=>'video'),
         'm4a'  => array ('type'=>'audio/mp4', 'icon'=>'mp3', 'groups'=>array('audio'), 'string'=>'audio'),
+        'mht'  => array ('type'=>'message/rfc822', 'icon'=>'archive'),
+        'mhtml'=> array ('type'=>'message/rfc822', 'icon'=>'archive'),
         'mpeg' => array ('type'=>'video/mpeg', 'icon'=>'mpeg', 'groups'=>array('video','web_video'), 'string'=>'video'),
         'mpe'  => array ('type'=>'video/mpeg', 'icon'=>'mpeg', 'groups'=>array('video','web_video'), 'string'=>'video'),
         'mpg'  => array ('type'=>'video/mpeg', 'icon'=>'mpeg', 'groups'=>array('video','web_video'), 'string'=>'video'),
