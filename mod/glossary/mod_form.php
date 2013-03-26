@@ -29,6 +29,7 @@ class mod_glossary_mod_form extends moodleform_mod {
         $mform->setDefault('entbypage', 10);
         $mform->addRule('entbypage', null, 'required', null, 'client');
         $mform->addRule('entbypage', null, 'numeric', null, 'client');
+        $mform->setType('entbypage', PARAM_INT);
 
         if (has_capability('mod/glossary:manageentries', context_system::instance())) {
             $mform->addElement('checkbox', 'globalglossary', get_string('isglobal', 'glossary'));
