@@ -1250,7 +1250,7 @@ function portfolio_rewrite_pluginfile_url_callback($contextid, $component, $file
         $filename = array_pop($bits);
         $filepath = implode('/', $bits);
     }
-    if (!$file = $fs->get_file($contextid, $component, $filearea, $itemid, $filepath, $filename)) {
+    if (!$file = $fs->get_file($contextid, $component, $filearea, $itemid, $filepath, urldecode($filename))) {
         debugging("Couldn't find a file from the embedded path info context $contextid component $component filearea $filearea itemid $itemid filepath $filepath name $filename");
         return $matches;
     }
