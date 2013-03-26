@@ -83,6 +83,61 @@ class behat_backup extends behat_base {
     }
 
     /**
+     * Imports the specified origin course into the other course using the provided options.
+     *
+     * Keeping it separatelly from backup & restore, it the number of
+     * steps and duplicate code becomes bigger a common method should
+     * be generalized.
+     *
+     * @Given /^I import "(?P<from_course_fullname_string>(?:[^"]|\\")*)" course into "(?P<to_course_fullname_string>(?:[^"]|\\")*)" course using this options:$/
+     * @param string $fromcourse
+     * @param string $tocourse
+     * @param TableNode $options
+     */
+    public function i_import_course_into_course($fromcourse, $tocourse, $options = false) {
+
+        // We can not use other steps here as we don't know where the provided data
+        // table elements are used, and we need to catch exceptions contantly.
+
+        // Go to homepage.
+        $this->getSession()->visit($this->locate_path('/'));
+
+        // Click the course link.
+        $this->find_link($tocourse)->click();
+
+        // Click the backup link.
+        $this->find_link('Import')->click();
+
+        // Select the course.
+        $exception = new ExpectationException('"' . $fromcourse . '" course not found in the list of courses to import from', $this->getSession());
+
+        $fromcourse = str_replace("'", "\'", $fromcourse);
+        $xpath = "//div[contains(concat(' ', @class, ' '), ' ics-results ')]
+/descendant::tr[contains(., '" . $fromcourse . "')]
+/descendant::input[@type='radio']";
+        $radionode = $this->find('xpath', $xpath, $exception);
+        $radionode->check();
+        $radionode->click();
+
+        $this->find_button('Continue')->press();
+
+        // Initial settings.
+        $this->fill_backup_restore_form($options);
+        $this->find_button('Next')->press();
+
+        // Schema settings.
+        $this->fill_backup_restore_form($options);
+        $this->find_button('Next')->press();
+
+        // Run it.
+        $this->find_button('Perform import')->press();
+        $this->wait();
+
+        // Continue and redirect to 'to' course.
+        $this->find_button('Continue')->press();
+    }
+
+    /**
      * Restores the backup into the specified course and the provided options. You should be in the 'Restore' page where the backup is.
      *
      * @Given /^I restore "(?P<backup_filename_string>(?:[^"]|\\")*)" backup into "(?P<existing_course_fullname_string>(?:[^"]|\\")*)" course using this options:$/
@@ -221,6 +276,9 @@ class behat_backup extends behat_base {
      * @return void
      */
     protected function process_restore($options) {
+
+        // We can not use other steps here as we don't know where the provided data
+        // table elements are used, and we need to catch exceptions contantly.
 
         // Settings.
         $this->fill_backup_restore_form($options);
