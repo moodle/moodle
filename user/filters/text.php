@@ -116,7 +116,7 @@ class user_filter_text extends user_filter_type {
                 break;
             case 5: // empty
                 $res = "$field = :$name";
-                $params[$name] = $DB->sql_empty();
+                $params[$name] = '';
                 break;
             default:
                 return '';

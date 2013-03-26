@@ -43,6 +43,10 @@ information provided here is intended especially for developers.
   course_category_show(), get_course_category(), create_course_category(), get_all_subcategories(),
   get_child_categories(), get_categories()
 
+Database (DML) layer:
+* $DB->sql_empty() is deprecated, you have to use sql parameters with empty values instead,
+  please note hardcoding of empty strings in SQL queries breaks execution in Oracle database.
+
 YUI changes:
 * M.util.help_icon has been deprecated. Code should be updated to use moodle-core-popuphelp
   instead. To do so, remove any existing JS calls to M.util.help_icon from your PHP and ensure

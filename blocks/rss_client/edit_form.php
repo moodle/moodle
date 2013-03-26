@@ -54,7 +54,7 @@ class block_rss_client_edit_form extends block_edit_form {
                 FROM {block_rss_client}
                 WHERE userid = ? OR shared = 1
                 ORDER BY CASE WHEN preferredtitle = ? THEN ' . $DB->sql_compare_text('title', 64) . ' ELSE preferredtitle END ',
-                array($DB->sql_empty(), $USER->id, $DB->sql_empty()));
+                array('', $USER->id, ''));
         if ($rssfeeds) {
             $select = $mform->addElement('select', 'config_rssid', get_string('choosefeedlabel', 'block_rss_client'), $rssfeeds);
             $select->setMultiple(true);

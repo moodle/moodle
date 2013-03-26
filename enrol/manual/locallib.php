@@ -411,7 +411,7 @@ function enrol_manual_migrate_plugin_enrolments($enrol) {
         }
 
         // First delete potential role duplicates.
-        $params = array('id'=>$e->id, 'component'=>'enrol_'.$enrol, 'empty'=>$DB->sql_empty());
+        $params = array('id'=>$e->id, 'component'=>'enrol_'.$enrol, 'empty'=>'');
         $sql = "SELECT ra.id
                   FROM {role_assignments} ra
                   JOIN {role_assignments} mra ON (mra.contextid = ra.contextid AND mra.userid = ra.userid AND mra.roleid = ra.roleid AND mra.component = :empty AND mra.itemid = 0)
@@ -425,7 +425,7 @@ function enrol_manual_migrate_plugin_enrolments($enrol) {
         $sql = "UPDATE {role_assignments}
                    SET itemid = 0, component = :empty
                  WHERE itemid = :id AND component = :component";
-        $params = array('empty'=>$DB->sql_empty(), 'id'=>$e->id, 'component'=>'enrol_'.$enrol);
+        $params = array('empty'=>'', 'id'=>$e->id, 'component'=>'enrol_'.$enrol);
         $DB->execute($sql, $params);
 
         // Delete potential enrol duplicates.

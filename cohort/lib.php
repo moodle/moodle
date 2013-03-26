@@ -40,7 +40,6 @@ function cohort_add_cohort($cohort) {
         $cohort->idnumber = NULL;
     }
     if (!isset($cohort->description)) {
-        // sql_empty() does not belong here, this crazy Oracle hack is implemented in insert_record()!
         $cohort->description = '';
     }
     if (!isset($cohort->descriptionformat)) {
