@@ -42,7 +42,7 @@ class qtype_match_edit_form extends question_edit_form {
         $repeated[] = $mform->createElement('editor', 'subquestions',
                 get_string('question'), array('rows'=>3), $this->editoroptions);
         $repeated[] = $mform->createElement('text', 'subanswers',
-                get_string('answer', 'question'), array('size'=>50));
+                get_string('answer', 'question'), array('size' => 50, 'maxlength' => 255));
         $repeatedoptions['subquestions']['type'] = PARAM_RAW;
         $repeatedoptions['subanswers']['type'] = PARAM_TEXT;
         $answersoption = 'subquestions';
