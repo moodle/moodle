@@ -649,7 +649,8 @@ class core_course_renderer extends plugin_renderer_base {
                 $output .= html_writer::empty_tag('input', array(
                     'type' => 'image',
                     'src' => $this->output->pix_url('i/completion-'.$completionicon),
-                    'alt' => $imgalt, 'title' => $imgtitle));
+                    'alt' => $imgalt, 'title' => $imgtitle,
+                    'aria-live' => 'polite'));
                 $output .= html_writer::end_tag('div');
                 $output .= html_writer::end_tag('form');
             } else {
