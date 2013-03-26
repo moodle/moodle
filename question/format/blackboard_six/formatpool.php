@@ -58,6 +58,8 @@ class qformat_blackboard_six_pool extends qformat_blackboard_six_base {
 
         $questions = array();
 
+        $this->process_category($xml, $questions);
+
         $this->process_tf($xml, $questions);
         $this->process_mc($xml, $questions);
         $this->process_ma($xml, $questions);
@@ -107,6 +109,21 @@ class qformat_blackboard_six_pool extends qformat_blackboard_six_base {
         // TODO : read the mark from the POOL TITLE QUESTIONLIST section.
         $question->defaultmark = 1;
         return $question;
+    }
+
+    /**
+     * Add a category question entry based on the pool file title
+     * @param array $xml the xml tree
+     * @param array $questions the questions already parsed
+     */
+    public function process_category($xml, &$questions) {
+        $title = $this->getpath($xml, array('POOL', '#', 'TITLE', 0, '@', 'value'), '', true);
+
+        $dummyquestion = new stdClass();
+        $dummyquestion->qtype = 'category';
+        $dummyquestion->category = $this->cleaninput($this->clean_question_name($title));
+
+        $questions[] = $dummyquestion;
     }
 
     /**
