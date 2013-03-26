@@ -3646,6 +3646,7 @@ function update_module($moduleinfo) {
 
     return $moduleinfo;
 }
+
 /**
  * Compare two objects to find out their correct order based on timestamp (to be used by usort).
  * Sorts by descending order of time.
