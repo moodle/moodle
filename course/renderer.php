@@ -121,109 +121,34 @@ class core_course_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Renderers a structured array of courses and categories into a nice
-     * XHTML tree structure.
+     * Renderers a structured array of courses and categories into a nice XHTML tree structure.
      *
-     * This method was designed initially to display the front page course/category
-     * combo view. The structure can be retrieved by get_course_category_tree()
+     * @deprecated since 2.5
      *
-     * @param array $structure
+     * Please see http://docs.moodle.org/dev/Courses_lists_upgrade_to_2.5
+     *
+     * @param array $ignored argument ignored
      * @return string
      */
-    public function course_category_tree(array $structure) {
-        $this->strings->summary = get_string('summary');
-
-        // Generate an id and the required JS call to make this a nice widget
-        $id = html_writer::random_id('course_category_tree');
-        $this->page->requires->js_init_call('M.util.init_toggle_class_on_click', array($id, '.category.with_children .category_label', 'collapsed', '.category.with_children'));
-
-        // Start content generation
-        $content = html_writer::start_tag('div', array('class'=>'course_category_tree', 'id'=>$id));
-        foreach ($structure as $category) {
-            $content .= $this->course_category_tree_category($category);
-        }
-        $content .= html_writer::start_tag('div', array('class'=>'controls'));
-        $content .= html_writer::tag('div', get_string('collapseall'), array('class'=>'addtoall expandall'));
-        $content .= html_writer::tag('div', get_string('expandall'), array('class'=>'removefromall collapseall'));
-        $content .= html_writer::end_tag('div');
-        $content .= html_writer::end_tag('div');
-
-        // Return the course category tree HTML
-        return $content;
+    public final function course_category_tree(array $ignored) {
+        debugging('Function core_course_renderer::course_category_tree() is deprecated, please use frontpage_combo_list()', DEBUG_DEVELOPER);
+        return $this->frontpage_combo_list();
     }
 
     /**
      * Renderers a category for use with course_category_tree
      *
+     * @deprecated since 2.5
+     *
+     * Please see http://docs.moodle.org/dev/Courses_lists_upgrade_to_2.5
+     *
      * @param array $category
      * @param int $depth
      * @return string
      */
-    protected function course_category_tree_category(stdClass $category, $depth=1) {
-        $content = '';
-        $hassubcategories = (isset($category->categories) && count($category->categories)>0);
-        $hascourses = (isset($category->courses) && count($category->courses)>0);
-        $classes = array('category');
-        if ($category->parent != 0) {
-            $classes[] = 'subcategory';
-        }
-        if (empty($category->visible)) {
-            $classes[] = 'dimmed_category';
-        }
-        if ($hassubcategories || $hascourses) {
-            $classes[] = 'with_children';
-            if ($depth > 1) {
-                $classes[] = 'collapsed';
-            }
-        }
-        $categoryname = format_string($category->name, true, array('context' => context_coursecat::instance($category->id)));
-
-        $content .= html_writer::start_tag('div', array('class'=>join(' ', $classes)));
-        $content .= html_writer::start_tag('div', array('class'=>'category_label'));
-        $content .= html_writer::link(new moodle_url('/course/category.php', array('id'=>$category->id)), $categoryname, array('class'=>'category_link'));
-        $content .= html_writer::end_tag('div');
-        if ($hassubcategories) {
-            $content .= html_writer::start_tag('div', array('class'=>'subcategories'));
-            foreach ($category->categories as $subcategory) {
-                $content .= $this->course_category_tree_category($subcategory, $depth+1);
-            }
-            $content .= html_writer::end_tag('div');
-        }
-        if ($hascourses) {
-            $content .= html_writer::start_tag('div', array('class'=>'courses'));
-            $coursecount = 0;
-            $strinfo = new lang_string('info');
-            foreach ($category->courses as $course) {
-                $classes = array('course');
-                $linkclass = 'course_link';
-                if (!$course->visible) {
-                    $linkclass .= ' dimmed';
-                }
-                $coursecount ++;
-                $classes[] = ($coursecount%2)?'odd':'even';
-                $content .= html_writer::start_tag('div', array('class'=>join(' ', $classes)));
-                $content .= html_writer::link(new moodle_url('/course/view.php', array('id'=>$course->id)), format_string($course->fullname), array('class'=>$linkclass));
-                $content .= html_writer::start_tag('div', array('class'=>'course_info clearfix'));
-
-                // print enrol info
-                if ($icons = enrol_get_course_info_icons($course)) {
-                    foreach ($icons as $pix_icon) {
-                        $content .= $this->render($pix_icon);
-                    }
-                }
-
-                if ($course->summary) {
-                    $url = new moodle_url('/course/info.php', array('id' => $course->id));
-                    $image = html_writer::empty_tag('img', array('src'=>$this->output->pix_url('i/info'), 'alt'=>$this->strings->summary));
-                    $content .= $this->action_link($url, $image, new popup_action('click', $url, 'courseinfo'), array('title' => $this->strings->summary));
-                }
-                $content .= html_writer::end_tag('div');
-                $content .= html_writer::end_tag('div');
-            }
-            $content .= html_writer::end_tag('div');
-        }
-        $content .= html_writer::end_tag('div');
-        return $content;
+    protected final function course_category_tree_category(stdClass $category, $depth=1) {
+        debugging('Function core_course_renderer::course_category_tree_category() is deprecated', DEBUG_DEVELOPER);
+        return '';
     }
 
     /**

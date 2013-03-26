@@ -3,6 +3,14 @@ information provided here is intended especially for theme designer.
 
 === 2.5 ===
 
+required changes:
+* Functions core_course_renderer::course_category_tree() and course_category_tree_category()
+  are deprecated
+* Significant changes in rendering of courses and categories listings, lots of CSS classes changed,
+  several functions such as print_courses(), print_whole_category_list(), print_category_info()
+  are moved to course renderer.
+  See http://docs.moodle.org/dev/Courses_lists_upgrade_to_2.5
+
 DOM changes:
 * changed the h1 title in the help popup to a h2.
 * new setting $THEME->yuicssmodules = array('cssreset', 'cssfonts', 'cssgrids', 'cssbase'); which
