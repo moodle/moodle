@@ -64,3 +64,10 @@ function mymobile_set_customcss($css, $customcss) {
     $css = str_replace($tag, $customcss, $css);
     return $css;
 }
+
+function theme_mymobile_page_init(moodle_page $page) {
+    $page->requires->jquery();
+    $page->requires->jquery_plugin('migrate');
+    $page->requires->jquery_plugin('mymobile', 'theme_mymobile');
+    $page->requires->jquery_plugin('mobile', 'theme_mymobile');
+}
