@@ -243,7 +243,7 @@ echo '</div>';
 
 // Print all the little details in a list
 
-echo '<table class="list" summary="">';
+echo '<table class="list">';
 
 if (! isset($hiddenfields['country']) && $user->country) {
     print_row(get_string('country') . ':', get_string($user->country, 'countries'));
