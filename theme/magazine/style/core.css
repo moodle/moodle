@@ -967,7 +967,7 @@ div.category.subcategory.with_children {
 }
 
 .dir-rtl.jsenabled .course_category_tree .category.with_children.collapsed .category_label {
-    backkground-position: right center !important;
+    background-position: right center !important;
 }
 
 .dir-rtl .course_category_tree .category_label,
