@@ -3646,3 +3646,54 @@ function update_module($moduleinfo) {
 
     return $moduleinfo;
 }
+/**
+ * Compare two objects to find out their correct order based on timestamp (to be used by usort).
+ * Sorts by descending order of time.
+ *
+ * @param stdClass $a First object
+ * @param stdClass $b Second object
+ * @return int 0,1,-1 representing the order
+ */
+function compare_activities_by_time_desc($a, $b) {
+    // Make sure the activities actually have a timestamp property.
+    if ((!property_exists($a, 'timestamp')) && (!property_exists($b, 'timestamp'))) {
+        return 0;
+    }
+    // We treat instances without timestamp as if they have a timestamp of 0.
+    if ((!property_exists($a, 'timestamp')) && (property_exists($b,'timestamp'))) {
+        return 1;
+    }
+    if ((property_exists($a, 'timestamp')) && (!property_exists($b, 'timestamp'))) {
+        return -1;
+    }
+    if ($a->timestamp == $b->timestamp) {
+        return 0;
+    }
+    return ($a->timestamp > $b->timestamp) ? -1 : 1;
+}
+
+/**
+ * Compare two objects to find out their correct order based on timestamp (to be used by usort).
+ * Sorts by ascending order of time.
+ *
+ * @param stdClass $a First object
+ * @param stdClass $b Second object
+ * @return int 0,1,-1 representing the order
+ */
+function compare_activities_by_time_asc($a, $b) {
+    // Make sure the activities actually have a timestamp property.
+    if ((!property_exists($a, 'timestamp')) && (!property_exists($b, 'timestamp'))) {
+      return 0;
+    }
+    // We treat instances without timestamp as if they have a timestamp of 0.
+    if ((!property_exists($a, 'timestamp')) && (property_exists($b, 'timestamp'))) {
+        return -1;
+    }
+    if ((property_exists($a, 'timestamp')) && (!property_exists($b, 'timestamp'))) {
+        return 1;
+    }
+    if ($a->timestamp == $b->timestamp) {
+        return 0;
+    }
+    return ($a->timestamp < $b->timestamp) ? -1 : 1;
+}

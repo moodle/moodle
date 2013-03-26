@@ -1024,4 +1024,92 @@ class courselib_testcase extends advanced_testcase {
         $pagetypelist = course_page_type_list($pagetype, null, null);
         $this->assertEquals($pagetypelist, $testpagetypelist1);
     }
+
+    public function test_compare_activities_by_time_desc() {
+
+        // Let's create some test data.
+        $activitiesivities = array();
+        $x = new stdClass();
+        $x->timestamp = null;
+        $activities[] = $x;
+
+        $x = new stdClass();
+        $x->timestamp = 1;
+        $activities[] = $x;
+
+        $x = new stdClass();
+        $x->timestamp = 3;
+        $activities[] = $x;
+
+        $x = new stdClass();
+        $x->timestamp = 0;
+        $activities[] = $x;
+
+        $x = new stdClass();
+        $x->timestamp = 5;
+        $activities[] = $x;
+
+        $x = new stdClass();
+        $activities[] = $x;
+
+        $x = new stdClass();
+        $x->timestamp = 5;
+        $activities[] = $x;
+
+        // Do the sorting.
+        usort($activities, 'compare_activities_by_time_desc');
+
+        // Let's check the result.
+        $last = 10;
+        foreach($activities as $activity) {
+            if (empty($activity->timestamp)) {
+                $activity->timestamp = 0;
+            }
+            $this->assertLessThanOrEqual($last, $activity->timestamp);
+        }
+    }
+
+    public function test_compare_activities_by_time_asc() {
+
+        // Let's create some test data.
+        $activities = array();
+        $x = new stdClass();
+        $x->timestamp = null;
+        $activities[] = $x;
+
+        $x = new stdClass();
+        $x->timestamp = 1;
+        $activities[] = $x;
+
+        $x = new stdClass();
+        $x->timestamp = 3;
+        $activities[] = $x;
+
+        $x = new stdClass();
+        $x->timestamp = 0;
+        $activities[] = $x;
+
+        $x = new stdClass();
+        $x->timestamp = 5;
+        $activities[] = $x;
+
+        $x = new stdClass();
+        $activities[] = $x;
+
+        $x = new stdClass();
+        $x->timestamp = 5;
+        $activities[] = $x;
+
+        // Do the sorting.
+        usort($activities, 'compare_activities_by_time_asc');
+
+        // Let's check the result.
+        $last = 0;
+        foreach($activities as $activity) {
+            if (empty($activity->timestamp)) {
+                $activity->timestamp = 0;
+            }
+            $this->assertGreaterThanOrEqual($last, $activity->timestamp);
+        }
+    }
 }
