@@ -1242,7 +1242,7 @@ function get_course_category_tree($id = 0, $depth = 0) {
     $categories = array();
     $categoryids = array();
     foreach ($coursecat->get_children() as $child) {
-        $categories[] = $category = $child->get_db_record();
+        $categories[] = $category = (object)convert_to_array($child);
         $categoryids[$category->id] = $category;
         if (empty($CFG->maxcategorydepth) || $depth <= $CFG->maxcategorydepth) {
             list($category->categories, $subcategories) = get_course_category_tree($category->id, $depth+1);
