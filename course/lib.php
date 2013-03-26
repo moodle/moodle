@@ -1674,7 +1674,8 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                                 'type' => 'hidden', 'name' => 'completionstate',
                                 'value' => $newstate));
                         echo html_writer::empty_tag('input', array(
-                                'type' => 'image', 'src' => $imgsrc, 'alt' => $imgalt, 'title' => $imgtitle));
+                                'type' => 'image', 'src' => $imgsrc, 'alt' => $imgalt, 'title' => $imgtitle,
+                                'aria-live' => 'polite'));
                         echo html_writer::end_tag('div');
                         echo html_writer::end_tag('form');
                     } else {
