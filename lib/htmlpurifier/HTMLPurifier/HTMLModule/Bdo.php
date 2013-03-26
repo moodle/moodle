@@ -21,7 +21,7 @@ class HTMLPurifier_HTMLModule_Bdo extends HTMLPurifier_HTMLModule
                 // inclusions wrong for bdo: bdo allows Lang
             )
         );
-        $bdo->attr_transform_post['required-dir'] = new HTMLPurifier_AttrTransform_BdoDir();
+        $bdo->attr_transform_post[] = new HTMLPurifier_AttrTransform_BdoDir();
 
         $this->attr_collections['I18N']['dir'] = 'Enum#ltr,rtl';
     }

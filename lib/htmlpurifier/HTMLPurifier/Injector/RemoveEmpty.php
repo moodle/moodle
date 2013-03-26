@@ -5,6 +5,9 @@ class HTMLPurifier_Injector_RemoveEmpty extends HTMLPurifier_Injector
 
     private $context, $config, $attrValidator, $removeNbsp, $removeNbspExceptions;
 
+    // TODO: make me configurable
+    private $_exclude = array('colgroup' => 1, 'th' => 1, 'td' => 1, 'iframe' => 1);
+
     public function prepare($config, $context) {
         parent::prepare($config, $context);
         $this->config = $config;
@@ -30,7 +33,7 @@ class HTMLPurifier_Injector_RemoveEmpty extends HTMLPurifier_Injector
             break;
         }
         if (!$next || ($next instanceof HTMLPurifier_Token_End && $next->name == $token->name)) {
-            if ($token->name == 'colgroup') return;
+            if (isset($this->_exclude[$token->name])) return;
             $this->attrValidator->validateToken($token, $this->config, $this->context);
             $token->armor['ValidateAttributes'] = true;
             if (isset($token->attr['id']) || isset($token->attr['name'])) return;

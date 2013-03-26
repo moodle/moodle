@@ -228,6 +228,9 @@ class HTMLPurifier_HTMLModuleManager
         if ($config->get('HTML.SafeEmbed')) {
             $modules[] = 'SafeEmbed';
         }
+        if ($config->get('HTML.SafeScripting') !== array()) {
+            $modules[] = 'SafeScripting';
+        }
         if ($config->get('HTML.Nofollow')) {
             $modules[] = 'Nofollow';
         }

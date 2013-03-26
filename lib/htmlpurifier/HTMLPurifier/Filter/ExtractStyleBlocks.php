@@ -33,6 +33,7 @@ class HTMLPurifier_Filter_ExtractStyleBlocks extends HTMLPurifier_Filter
 
     public function __construct() {
         $this->_tidy = new csstidy();
+        $this->_tidy->set_cfg('lowercase_s', false);
         $this->_id_attrdef = new HTMLPurifier_AttrDef_HTML_ID(true);
         $this->_class_attrdef = new HTMLPurifier_AttrDef_CSS_Ident();
         $this->_enum_attrdef = new HTMLPurifier_AttrDef_Enum(array('first-child', 'link', 'visited', 'active', 'hover', 'focus'));

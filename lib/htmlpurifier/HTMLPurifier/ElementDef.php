@@ -30,13 +30,25 @@ class HTMLPurifier_ElementDef
      */
     public $attr = array();
 
+    // XXX: Design note: currently, it's not possible to override
+    // previously defined AttrTransforms without messing around with
+    // the final generated config. This is by design; a previous version
+    // used an associated list of attr_transform, but it was extremely
+    // easy to accidentally override other attribute transforms by
+    // forgetting to specify an index (and just using 0.)  While we
+    // could check this by checking the index number and complaining,
+    // there is a second problem which is that it is not at all easy to
+    // tell when something is getting overridden. Combine this with a
+    // codebase where this isn't really being used, and it's perfect for
+    // nuking.
+
     /**
-     * Indexed list of tag's HTMLPurifier_AttrTransform to be done before validation
+     * List of tags HTMLPurifier_AttrTransform to be done before validation
      */
     public $attr_transform_pre = array();
 
     /**
-     * Indexed list of tag's HTMLPurifier_AttrTransform to be done after validation
+     * List of tags HTMLPurifier_AttrTransform to be done after validation
      */
     public $attr_transform_post = array();
 
@@ -144,9 +156,9 @@ class HTMLPurifier_ElementDef
             }
             $this->attr[$k] = $v;
         }
-        $this->_mergeAssocArray($this->attr_transform_pre, $def->attr_transform_pre);
-        $this->_mergeAssocArray($this->attr_transform_post, $def->attr_transform_post);
         $this->_mergeAssocArray($this->excludes, $def->excludes);
+        $this->attr_transform_pre = array_merge($this->attr_transform_pre, $def->attr_transform_pre);
+        $this->attr_transform_post = array_merge($this->attr_transform_post, $def->attr_transform_post);
 
         if(!empty($def->content_model)) {
             $this->content_model =
