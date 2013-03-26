@@ -85,9 +85,9 @@ class cohort_edit_form extends moodleform {
     }
 
     protected function get_category_options($currentcontextid) {
-        $displaylist = array();
-        $parentlist = array();
-        make_categories_list($displaylist, $parentlist, 'moodle/cohort:manage');
+        global $CFG;
+        require_once($CFG->libdir. '/coursecatlib.php');
+        $displaylist = coursecat::make_categories_list('moodle/cohort:manage');
         $options = array();
         $syscontext = context_system::instance();
         if (has_capability('moodle/cohort:manage', $syscontext)) {

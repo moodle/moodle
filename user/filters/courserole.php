@@ -32,11 +32,8 @@ class user_filter_courserole extends user_filter_type {
      */
     function get_course_categories() {
         global $CFG;
-        require_once($CFG->dirroot.'/course/lib.php');
-        $displaylist = array();
-        $parentlist = array();
-        make_categories_list($displaylist, $parentlist);
-        return array(0=> get_string('anycategory', 'filters')) + $displaylist;
+        require_once($CFG->libdir.'/coursecatlib.php');
+        return array(0=> get_string('anycategory', 'filters')) + coursecat::make_categories_list();
     }
 
     /**

@@ -1650,7 +1650,7 @@ class core_course_external extends external_api {
      */
     public static function create_categories($categories) {
         global $CFG, $DB;
-        require_once($CFG->dirroot . "/course/lib.php");
+        require_once($CFG->libdir . "/coursecatlib.php");
 
         $params = self::validate_parameters(self::create_categories_parameters(),
                         array('categories' => $categories));
@@ -1670,38 +1670,10 @@ class core_course_external extends external_api {
             self::validate_context($context);
             require_capability('moodle/category:manage', $context);
 
-            // Check name.
-            if (textlib::strlen($category['name'])>255) {
-                throw new moodle_exception('categorytoolong');
-            }
+            // this will validate format and throw an exception if there are errors
+            external_validate_format($category['descriptionformat']);
 
-            $newcategory = new stdClass();
-            $newcategory->name = $category['name'];
-            $newcategory->parent = $category['parent'];
-            // Format the description.
-            if (!empty($category['description'])) {
-                $newcategory->description = $category['description'];
-            }
-            $newcategory->descriptionformat = external_validate_format($category['descriptionformat']);
-            if (isset($category['theme']) and !empty($CFG->allowcategorythemes)) {
-                $newcategory->theme = $category['theme'];
-            }
-            // Check id number.
-            if (!empty($category['idnumber'])) { // Same as in course/editcategory_form.php .
-                if (textlib::strlen($category['idnumber'])>100) {
-                    throw new moodle_exception('idnumbertoolong');
-                }
-                if ($existing = $DB->get_record('course_categories', array('idnumber' => $category['idnumber']))) {
-                    if ($existing->id) {
-                        throw new moodle_exception('idnumbertaken');
-                    }
-                }
-                $newcategory->idnumber = $category['idnumber'];
-            }
-
-            $newcategory = create_course_category($newcategory);
-            // Populate special fields.
-            fix_course_sortorder();
+            $newcategory = coursecat::create($category);
 
             $createdcategories[] = array('id' => $newcategory->id, 'name' => $newcategory->name);
         }
@@ -1764,7 +1736,7 @@ class core_course_external extends external_api {
      */
     public static function update_categories($categories) {
         global $CFG, $DB;
-        require_once($CFG->dirroot . "/course/lib.php");
+        require_once($CFG->libdir . "/coursecatlib.php");
 
         // Validate parameters.
         $params = self::validate_parameters(self::update_categories_parameters(), array('categories' => $categories));
@@ -1772,49 +1744,16 @@ class core_course_external extends external_api {
         $transaction = $DB->start_delegated_transaction();
 
         foreach ($params['categories'] as $cat) {
-            if (!$category = $DB->get_record('course_categories', array('id' => $cat['id']))) {
-                throw new moodle_exception('unknowcategory');
-            }
+            $category = coursecat::get($cat['id']);
 
             $categorycontext = context_coursecat::instance($cat['id']);
             self::validate_context($categorycontext);
             require_capability('moodle/category:manage', $categorycontext);
 
-            if (!empty($cat['name'])) {
-                if (textlib::strlen($cat['name'])>255) {
-                     throw new moodle_exception('categorytoolong');
-                }
-                $category->name = $cat['name'];
-            }
-            if (!empty($cat['idnumber'])) {
-                if (textlib::strlen($cat['idnumber'])>100) {
-                    throw new moodle_exception('idnumbertoolong');
-                }
-                $category->idnumber = $cat['idnumber'];
-            }
-            if (!empty($cat['description'])) {
-                $category->description = $cat['description'];
-                $category->descriptionformat = external_validate_format($cat['descriptionformat']);
-            }
-            if (!empty($cat['theme'])) {
-                $category->theme = $cat['theme'];
-            }
-            if (!empty($cat['parent']) && ($category->parent != $cat['parent'])) {
-                // First check if parent exists.
-                if (!$parent_cat = $DB->get_record('course_categories', array('id' => $cat['parent']))) {
-                    throw new moodle_exception('unknowcategory');
-                }
-                // Then check if we have capability.
-                self::validate_context(get_category_or_system_context((int)$cat['parent']));
-                require_capability('moodle/category:manage', get_category_or_system_context((int)$cat['parent']));
-                // Finally move the category.
-                move_category($category, $parent_cat);
-                $category->parent = $cat['parent'];
-                // Get updated path by move_category().
-                $category->path = $DB->get_field('course_categories', 'path',
-                        array('id' => $category->id));
-            }
-            $DB->update_record('course_categories', $category);
+            // this will throw an exception if descriptionformat is not valid
+            external_validate_format($cat['descriptionformat']);
+
+            $category->update($cat);
         }
 
         $transaction->allow_commit();
@@ -1864,6 +1803,7 @@ class core_course_external extends external_api {
     public static function delete_categories($categories) {
         global $CFG, $DB;
         require_once($CFG->dirroot . "/course/lib.php");
+        require_once($CFG->libdir . "/coursecatlib.php");
 
         // Validate parameters.
         $params = self::validate_parameters(self::delete_categories_parameters(), array('categories' => $categories));
@@ -1871,9 +1811,7 @@ class core_course_external extends external_api {
         $transaction = $DB->start_delegated_transaction();
 
         foreach ($params['categories'] as $category) {
-            if (!$deletecat = $DB->get_record('course_categories', array('id' => $category['id']))) {
-                throw new moodle_exception('unknowcategory');
-            }
+            $deletecat = coursecat::get($category['id'], MUST_EXIST);
             $context = context_coursecat::instance($deletecat->id);
             require_capability('moodle/category:manage', $context);
             self::validate_context($context);
@@ -1881,29 +1819,32 @@ class core_course_external extends external_api {
 
             if ($category['recursive']) {
                 // If recursive was specified, then we recursively delete the category's contents.
-                category_delete_full($deletecat, false);
+                if ($deletecat->can_delete_full()) {
+                    $deletecat->delete_full(false);
+                } else {
+                    throw new moodle_exception('youcannotdeletecategory', '', '', $deletecat->get_formatted_name());
+                }
             } else {
                 // In this situation, we don't delete the category's contents, we either move it to newparent or parent.
                 // If the parent is the root, moving is not supported (because a course must always be inside a category).
                 // We must move to an existing category.
                 if (!empty($category['newparent'])) {
-                    if (!$DB->record_exists('course_categories', array('id' => $category['newparent']))) {
-                        throw new moodle_exception('unknowcategory');
-                    }
-                    $newparent = $category['newparent'];
+                    $newparentcat = coursecat::get($category['newparent']);
                 } else {
-                    $newparent = $deletecat->parent;
+                    $newparentcat = coursecat::get($deletecat->parent);
                 }
 
                 // This operation is not allowed. We must move contents to an existing category.
-                if ($newparent == 0) {
+                if (!$newparentcat->id) {
                     throw new moodle_exception('movecatcontentstoroot');
                 }
 
-                $parentcontext = get_category_or_system_context($newparent);
-                require_capability('moodle/category:manage', $parentcontext);
-                self::validate_context($parentcontext);
-                category_delete_move($deletecat, $newparent, false);
+                self::validate_context(context_coursecat::instance($newparentcat->id));
+                if ($deletecat->can_move_content_to($newparentcat->id)) {
+                    $deletecat->delete_move($newparentcat->id, false);
+                } else {
+                    throw new moodle_exception('youcannotdeletecategory', '', '', $deletecat->get_formatted_name());
+                }
             }
         }
 

@@ -837,7 +837,7 @@ function get_courses_wmanagers($categoryid=0, $sort="c.sortorder ASC", $fields=a
  * @param int $totalcount Passed in by reference.
  * @return object {@link $COURSE} records
  */
-function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $recordsperpage=50, &$totalcount) {
+function get_courses_search($searchterms, $sort, $page, $recordsperpage, &$totalcount) {
     global $CFG, $DB;
 
     if ($DB->sql_regex_supported()) {
@@ -906,7 +906,8 @@ function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $record
     $limitto   = $limitfrom + $recordsperpage;
 
     list($ccselect, $ccjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
-    $sql = "SELECT c.* $ccselect
+    $fields = array_diff(array_keys($DB->get_columns('course')), array('modinfo', 'sectioncache'));
+    $sql = "SELECT c.".join(',c.',$fields)." $ccselect
               FROM {course} c
            $ccjoin
              WHERE $searchcond AND c.id <> ".SITEID."
@@ -914,17 +915,21 @@ function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $record
 
     $rs = $DB->get_recordset_sql($sql, $params);
     foreach($rs as $course) {
-        context_instance_preload($course);
-        $coursecontext = context_course::instance($course->id);
-        if ($course->visible || has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
-            // Don't exit this loop till the end
-            // we need to count all the visible courses
-            // to update $totalcount
-            if ($c >= $limitfrom && $c < $limitto) {
-                $courses[$course->id] = $course;
+        if (!$course->visible) {
+            // preload contexts only for hidden courses or courses we need to return
+            context_instance_preload($course);
+            $coursecontext = context_course::instance($course->id);
+            if (!has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
+                continue;
             }
-            $c++;
         }
+        // Don't exit this loop till the end
+        // we need to count all the visible courses
+        // to update $totalcount
+        if ($c >= $limitfrom && $c < $limitto) {
+            $courses[$course->id] = $course;
+        }
+        $c++;
     }
     $rs->close();
 
@@ -932,140 +937,6 @@ function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $record
     // array, and an updated $totalcount
     $totalcount = $c;
     return $courses;
-}
-
-
-/**
- * Returns a sorted list of categories. Each category object has a context
- * property that is a context object.
- *
- * When asking for $parent='none' it will return all the categories, regardless
- * of depth. Wheen asking for a specific parent, the default is to return
- * a "shallow" resultset. Pass false to $shallow and it will return all
- * the child categories as well.
- *
- * @global object
- * @uses CONTEXT_COURSECAT
- * @param string $parent The parent category if any
- * @param string $sort the sortorder
- * @param bool   $shallow - set to false to get the children too
- * @return array of categories
- */
-function get_categories($parent='none', $sort=NULL, $shallow=true) {
-    global $DB;
-
-    if ($sort === NULL) {
-        $sort = 'ORDER BY cc.sortorder ASC';
-    } elseif ($sort ==='') {
-        // leave it as empty
-    } else {
-        $sort = "ORDER BY $sort";
-    }
-
-    list($ccselect, $ccjoin) = context_instance_preload_sql('cc.id', CONTEXT_COURSECAT, 'ctx');
-
-    if ($parent === 'none') {
-        $sql = "SELECT cc.* $ccselect
-                  FROM {course_categories} cc
-               $ccjoin
-                $sort";
-        $params = array();
-
-    } elseif ($shallow) {
-        $sql = "SELECT cc.* $ccselect
-                  FROM {course_categories} cc
-               $ccjoin
-                 WHERE cc.parent=?
-                $sort";
-        $params = array($parent);
-
-    } else {
-        $sql = "SELECT cc.* $ccselect
-                  FROM {course_categories} cc
-               $ccjoin
-                  JOIN {course_categories} ccp
-                       ON ((cc.parent = ccp.id) OR (cc.path LIKE ".$DB->sql_concat('ccp.path',"'/%'")."))
-                 WHERE ccp.id=?
-                $sort";
-        $params = array($parent);
-    }
-    $categories = array();
-
-    $rs = $DB->get_recordset_sql($sql, $params);
-    foreach($rs as $cat) {
-        context_instance_preload($cat);
-        $catcontext = context_coursecat::instance($cat->id);
-        if ($cat->visible || has_capability('moodle/category:viewhiddencategories', $catcontext)) {
-            $categories[$cat->id] = $cat;
-        }
-    }
-    $rs->close();
-    return $categories;
-}
-
-
-/**
- * Returns an array of category ids of all the subcategories for a given
- * category.
- *
- * @global object
- * @param int $catid - The id of the category whose subcategories we want to find.
- * @return array of category ids.
- */
-function get_all_subcategories($catid) {
-    global $DB;
-
-    $subcats = array();
-
-    if ($categories = $DB->get_records('course_categories', array('parent'=>$catid))) {
-        foreach ($categories as $cat) {
-            array_push($subcats, $cat->id);
-            $subcats = array_merge($subcats, get_all_subcategories($cat->id));
-        }
-    }
-    return $subcats;
-}
-
-/**
- * Return specified category, default if given does not exist
- *
- * @global object
- * @uses MAX_COURSES_IN_CATEGORY
- * @uses CONTEXT_COURSECAT
- * @uses SYSCONTEXTID
- * @param int $catid course category id
- * @return object caregory
- */
-function get_course_category($catid=0) {
-    global $DB;
-
-    $category = false;
-
-    if (!empty($catid)) {
-        $category = $DB->get_record('course_categories', array('id'=>$catid));
-    }
-
-    if (!$category) {
-        // the first category is considered default for now
-        if ($category = $DB->get_records('course_categories', null, 'sortorder', '*', 0, 1)) {
-            $category = reset($category);
-
-        } else {
-            $cat = new stdClass();
-            $cat->name         = get_string('miscellaneous');
-            $cat->depth        = 1;
-            $cat->sortorder    = MAX_COURSES_IN_CATEGORY;
-            $cat->timemodified = time();
-            $catid = $DB->insert_record('course_categories', $cat);
-            // make sure category context exists
-            context_coursecat::instance($catid);
-            mark_context_dirty('/'.SYSCONTEXTID);
-            fix_course_sortorder(); // Required to build course_categories.depth and .path.
-            $category = $DB->get_record('course_categories', array('id'=>$catid));
-        }
-    }
-
-    return $category;
 }
 
 /**
@@ -1085,9 +956,14 @@ function fix_course_sortorder() {
 
     //WARNING: this is PHP5 only code!
 
+    // if there are any changes made to courses or categories we will trigger
+    // the cache events to purge all cached courses/categories data
+    $cacheevents = array();
+
     if ($unsorted = $DB->get_records('course_categories', array('sortorder'=>0))) {
         //move all categories that are not sorted yet to the end
         $DB->set_field('course_categories', 'sortorder', MAX_COURSES_IN_CATEGORY*MAX_COURSE_CATEGORIES, array('sortorder'=>0));
+        $cacheevents['changesincoursecat'] = true;
     }
 
     $allcats = $DB->get_records('course_categories', null, 'sortorder, id', 'id, sortorder, parent, depth, path');
@@ -1127,7 +1003,9 @@ function fix_course_sortorder() {
     // now walk recursively the tree and fix any problems found
     $sortorder = 0;
     $fixcontexts = array();
-    _fix_course_cats($topcats, $sortorder, 0, 0, '', $fixcontexts);
+    if (_fix_course_cats($topcats, $sortorder, 0, 0, '', $fixcontexts)) {
+        $cacheevents['changesincoursecat'] = true;
+    }
 
     // detect if there are "multiple" frontpage courses and fix them if needed
     $frontcourses = $DB->get_records('course', array('category'=>0), 'id');
@@ -1143,6 +1021,7 @@ function fix_course_sortorder() {
             $DB->set_field('course', 'category', $defaultcat->id, array('id'=>$course->id));
             $context = context_course::instance($course->id);
             $fixcontexts[$context->id] = $context;
+            $cacheevents['changesincourse'] = true;
         }
         unset($frontcourses);
     } else {
@@ -1156,6 +1035,8 @@ function fix_course_sortorder() {
         }
         context_helper::build_all_paths(false);
         unset($fixcontexts);
+        $cacheevents['changesincourse'] = true;
+        $cacheevents['changesincoursecat'] = true;
     }
 
     // release memory
@@ -1166,6 +1047,7 @@ function fix_course_sortorder() {
     // fix frontpage course sortorder
     if ($frontcourse->sortorder != 1) {
         $DB->set_field('course', 'sortorder', 1, array('id'=>$frontcourse->id));
+        $cacheevents['changesincourse'] = true;
     }
 
     // now fix the course counts in category records if needed
@@ -1190,6 +1072,7 @@ function fix_course_sortorder() {
             $str = implode(', ', $categories);
             debugging("The number of courses (category id: $str) has reached MAX_COURSES_IN_CATEGORY (" . MAX_COURSES_IN_CATEGORY . "), it will cause a sorting performance issue, please increase the value of MAX_COURSES_IN_CATEGORY in lib/datalib.php file. See tracker issue: MDL-25669", DEBUG_DEVELOPER);
         }
+        $cacheevents['changesincoursecat'] = true;
     }
 
     // now make sure that sortorders in course table are withing the category sortorder ranges
@@ -1206,6 +1089,7 @@ function fix_course_sortorder() {
                      WHERE category = ?";
             $DB->execute($sql, array($cat->sortorder, $cat->id));
         }
+        $cacheevents['changesincoursecat'] = true;
     }
     unset($fixcategories);
 
@@ -1239,6 +1123,7 @@ function fix_course_sortorder() {
             // it needs full resorting
             $fixcategories[$cat->id] = $cat;
         }
+        $cacheevents['changesincourse'] = true;
     }
     unset($gapcategories);
 
@@ -1250,9 +1135,15 @@ function fix_course_sortorder() {
             if ($course->sortorder != $cat->sortorder + $i) {
                 $course->sortorder = $cat->sortorder + $i;
                 $DB->update_record_raw('course', $course, true);
+                $cacheevents['changesincourse'] = true;
             }
             $i++;
         }
+    }
+
+    // advise all caches that need to be rebuilt
+    foreach (array_keys($cacheevents) as $event) {
+        cache_helper::purge_by_event($event);
     }
 }
 
@@ -1270,12 +1161,13 @@ function fix_course_sortorder() {
  * @param int $depth
  * @param string $path
  * @param array $fixcontexts
- * @return void
+ * @return bool if changes were made
  */
 function _fix_course_cats($children, &$sortorder, $parent, $depth, $path, &$fixcontexts) {
     global $DB;
 
     $depth++;
+    $changesmade = false;
 
     foreach ($children as $cat) {
         $sortorder = $sortorder + MAX_COURSES_IN_CATEGORY;
@@ -1296,11 +1188,15 @@ function _fix_course_cats($children, &$sortorder, $parent, $depth, $path, &$fixc
         }
         if ($update) {
             $DB->update_record('course_categories', $cat, true);
+            $changesmade = true;
         }
         if (isset($cat->children)) {
-            _fix_course_cats($cat->children, $sortorder, $cat->id, $cat->depth, $cat->path, $fixcontexts);
+            if (_fix_course_cats($cat->children, $sortorder, $cat->id, $cat->depth, $cat->path, $fixcontexts)) {
+                $changesmade = true;
+            }
         }
     }
+    return $changesmade;
 }
 
 /**

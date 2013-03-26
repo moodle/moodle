@@ -253,20 +253,12 @@ class moodle_block_manager_test_saving_loading_testcase extends advanced_testcas
     }
 
     public function test_block_not_included_in_different_context() {
-        global $DB;
         $this->purge_blocks();
 
         // Set up fixture.
         $syscontext = context_system::instance();
-        $cat = new stdClass();
-        $cat->name         = 'testcategory';
-        $cat->parent       = 0;
-        $cat->depth        = 1;
-        $cat->sortorder    = 100;
-        $cat->timemodified = time();
-        $catid = $DB->insert_record('course_categories', $cat);
-        $DB->set_field('course_categories', 'path', '/' . $catid, array('id' => $catid));
-        $fakecontext = context_coursecat::instance($catid);
+        $cat = $this->getDataGenerator()->create_category(array('name' => 'testcategory'));
+        $fakecontext = context_coursecat::instance($cat->id);
         $regionname = 'a-region';
         $blockname = $this->get_a_known_block_type();
 

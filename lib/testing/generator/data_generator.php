@@ -220,11 +220,11 @@ EOD;
      * Create a test course category
      * @param array|stdClass $record
      * @param array $options
-     * @return stdClass course category record
+     * @return coursecat course category record
      */
     public function create_category($record=null, array $options=null) {
         global $DB, $CFG;
-        require_once("$CFG->dirroot/course/lib.php");
+        require_once("$CFG->libdir/coursecatlib.php");
 
         $this->categorycount++;
         $i = $this->categorycount;
@@ -235,43 +235,15 @@ EOD;
             $record['name'] = 'Course category '.$i;
         }
 
-        if (!isset($record['idnumber'])) {
-            $record['idnumber'] = '';
-        }
-
         if (!isset($record['description'])) {
             $record['description'] = "Test course category $i\n$this->loremipsum";
         }
 
-        if (!isset($record['descriptionformat'])) {
-            $record['descriptionformat'] = FORMAT_MOODLE;
+        if (!isset($record['idnumber'])) {
+            $record['idnumber'] = '';
         }
 
-        if (!isset($record['parent'])) {
-            $record['parent'] = 0;
-        }
-
-        if (empty($record['parent'])) {
-            $parent = new stdClass();
-            $parent->path = '';
-            $parent->depth = 0;
-        } else {
-            $parent = $DB->get_record('course_categories', array('id'=>$record['parent']), '*', MUST_EXIST);
-        }
-        $record['depth'] = $parent->depth+1;
-
-        $record['sortorder'] = 0;
-        $record['timemodified'] = time();
-        $record['timecreated'] = $record['timemodified'];
-
-        $catid = $DB->insert_record('course_categories', $record);
-        $path = $parent->path . '/' . $catid;
-        $DB->set_field('course_categories', 'path', $path, array('id'=>$catid));
-        context_coursecat::instance($catid);
-
-        fix_course_sortorder();
-
-        return $DB->get_record('course_categories', array('id'=>$catid), '*', MUST_EXIST);
+        return coursecat::create($record);
     }
 
     /**

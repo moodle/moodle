@@ -404,8 +404,8 @@ function question_delete_course($course, $feedback=true) {
  * 1/ All question categories and their questions are deleted for this course category.
  * 2/ All questions are moved to new category
  *
- * @param object $category course category object
- * @param object $newcategory empty means everything deleted, otherwise id of
+ * @param object|coursecat $category course category object
+ * @param object|coursecat $newcategory empty means everything deleted, otherwise id of
  *      category where content moved
  * @param boolean $feedback to specify if the process must output a summary of its work
  * @return boolean
