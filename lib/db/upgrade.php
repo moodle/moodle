@@ -1990,5 +1990,68 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2013040300.01);
     }
 
+    if ($oldversion < 2013041600.00) {
+        // Copy constants from /course/lib.php instead of including the whole library:
+        $c = array( 'FRONTPAGENEWS'                 => 0,
+                    'FRONTPAGECOURSELIST'           => 1,
+                    'FRONTPAGECATEGORYNAMES'        => 2,
+                    'FRONTPAGETOPICONLY'            => 3,
+                    'FRONTPAGECATEGORYCOMBO'        => 4,
+                    'FRONTPAGEENROLLEDCOURSELIST'   => 5,
+                    'FRONTPAGEALLCOURSELIST'        => 6,
+                    'FRONTPAGECOURSESEARCH'         => 7);
+        // Update frontpage settings $CFG->frontpage and $CFG->frontpageloggedin. In 2.4 there was too much of hidden logic about them.
+        // This script tries to make sure that with the new (more user-friendly) frontpage settings the frontpage looks as similar as possible to what it was before upgrade.
+        $ncourses = $DB->count_records('course');
+        foreach (array('frontpage', 'frontpageloggedin') as $configkey) {
+            if ($frontpage = explode(',', $CFG->{$configkey})) {
+                $newfrontpage = array();
+                foreach ($frontpage as $v) {
+                    switch ($v) {
+                        case $c['FRONTPAGENEWS']:
+                            // Not related to course listings, leave as it is.
+                            $newfrontpage[] = $c['FRONTPAGENEWS'];
+                            break;
+                        case $c['FRONTPAGECOURSELIST']:
+                            if ($configkey === 'frontpageloggedin' && empty($CFG->disablemycourses)) {
+                                // In 2.4 unless prohibited in config, the "list of courses" was considered "list of enrolled courses" plus course search box.
+                                $newfrontpage[] = $c['FRONTPAGEENROLLEDCOURSELIST'];
+                            } else if ($ncourses <= 200) {
+                                // Still list of courses was only displayed in there were less than 200 courses in system. Otherwise - search box only.
+                                $newfrontpage[] = $c['FRONTPAGEALLCOURSELIST'];
+                                break; // skip adding search box
+                            }
+                            if (!in_array($c['FRONTPAGECOURSESEARCH'], $newfrontpage)) {
+                                $newfrontpage[] = $c['FRONTPAGECOURSESEARCH'];
+                            }
+                            break;
+                        case $c['FRONTPAGECATEGORYNAMES']:
+                            // In 2.4 search box was displayed automatically after categories list. In 2.5 it is displayed as a separate setting.
+                            $newfrontpage[] = $c['FRONTPAGECATEGORYNAMES'];
+                            if (!in_array($c['FRONTPAGECOURSESEARCH'], $newfrontpage)) {
+                                $newfrontpage[] = $c['FRONTPAGECOURSESEARCH'];
+                            }
+                            break;
+                        case $c['FRONTPAGECATEGORYCOMBO']:
+                            $maxcourses = empty($CFG->numcoursesincombo) ? 500 : $CFG->numcoursesincombo;
+                            // In 2.4 combo list was not displayed if there are more than $CFG->numcoursesincombo courses in the system.
+                            if ($ncourses < $maxcourses) {
+                                $newfrontpage[] = $c['FRONTPAGECATEGORYCOMBO'];
+                            }
+                            if (!in_array($c['FRONTPAGECOURSESEARCH'], $newfrontpage)) {
+                                $newfrontpage[] = $c['FRONTPAGECOURSESEARCH'];
+                            }
+                            break;
+                    }
+                }
+                set_config($configkey, join(',', $newfrontpage));
+            }
+        }
+        // $CFG->numcoursesincombo no longer affects whether the combo list is displayed. Setting is deprecated.
+        unset_config('numcoursesincombo');
+
+        upgrade_main_savepoint(true, 2013041600.00);
+    }
+
     return true;
 }

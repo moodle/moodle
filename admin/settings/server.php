@@ -175,8 +175,6 @@ $ADMIN->add('server', new admin_externalpage('phpinfo', new lang_string('phpinfo
 // "performance" settingpage
 $temp = new admin_settingpage('performance', new lang_string('performance', 'admin'));
 
-$temp->add(new admin_setting_configtext('numcoursesincombo', new lang_string('numcoursesincombo', 'admin'), new lang_string('numcoursesincombo_help', 'admin'), 500));
-
 $temp->add(new admin_setting_configselect('extramemorylimit', new lang_string('extramemorylimit', 'admin'),
                                           new lang_string('configextramemorylimit', 'admin'), '512M',
                                           // if this option is set to 0, default 128M will be used

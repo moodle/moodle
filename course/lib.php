@@ -44,11 +44,14 @@ define('COURSE_MAX_SUMMARIES_PER_PAGE', 10);
 define('COURSE_MAX_COURSES_PER_DROPDOWN',1000); //  max courses in log dropdown before switching to optional
 define('COURSE_MAX_USERS_PER_DROPDOWN',1000);   //  max users in log dropdown before switching to optional
 define('FRONTPAGENEWS',           '0');
-define('FRONTPAGECOURSELIST',     '1');
+define('FRONTPAGECOURSELIST',     '1');         // Not used. TODO MDL-38832 remove
 define('FRONTPAGECATEGORYNAMES',  '2');
-define('FRONTPAGETOPICONLY',      '3');
+define('FRONTPAGETOPICONLY',      '3');         // Not used. TODO MDL-38832 remove
 define('FRONTPAGECATEGORYCOMBO',  '4');
-define('FRONTPAGECOURSELIMIT',    200);         // maximum number of courses displayed on the frontpage
+define('FRONTPAGEENROLLEDCOURSELIST', '5');
+define('FRONTPAGEALLCOURSELIST',  '6');
+define('FRONTPAGECOURSESEARCH',   '7');
+define('FRONTPAGECOURSELIMIT',    200);         // Important! Replaced with $CFG->frontpagecourselimit - maximum number of courses displayed on the frontpage. TODO MDL-38832 remove
 define('EXCELROWS', 65535);
 define('FIRSTUSEDEXCELROW', 3);
 

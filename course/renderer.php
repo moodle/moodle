@@ -1789,13 +1789,24 @@ class core_course_renderer extends plugin_renderer_base {
         if (!empty($courses) || !empty($rcourses) || !empty($rhosts)) {
 
             $chelper = new coursecat_helper();
-            $chelper->set_show_courses(self::COURSECAT_SHOW_COURSES_EXPANDED)->
-                    set_courses_display_options(array(
+            if (count($courses) > $CFG->frontpagecourselimit) {
+                // There are more enrolled courses than we can display, display link to 'My courses'.
+                $totalcount = count($courses);
+                $courses = array_slice($courses, 0, $CFG->frontpagecourselimit, true);
+                $chelper->set_courses_display_options(array(
+                        'viewmoreurl' => new moodle_url('/my/'),
+                        'viewmoretext' => new lang_string('mycourses')
+                    ));
+            } else {
+                // All enrolled courses are displayed, display link to 'All courses' if there are more courses in system.
+                $chelper->set_courses_display_options(array(
                         'viewmoreurl' => new moodle_url('/course/index.php'),
                         'viewmoretext' => new lang_string('fulllistofcourses')
-                    ))->
+                    ));
+                $totalcount = $DB->count_records('course') - 1;
+            }
+            $chelper->set_show_courses(self::COURSECAT_SHOW_COURSES_EXPANDED)->
                     set_attributes(array('class' => 'frontpage-course-list-enrolled'));
-            $totalcount = $DB->count_records('course') - 1;
             $output .= $this->coursecat_courses($chelper, $courses, $totalcount);
 
             // MNET
@@ -1831,13 +1842,21 @@ class core_course_renderer extends plugin_renderer_base {
         $chelper->set_show_courses(self::COURSECAT_SHOW_COURSES_EXPANDED)->
                 set_courses_display_options(array(
                     'recursive' => true,
-                    'limit' => FRONTPAGECOURSELIMIT,
+                    'limit' => $CFG->frontpagecourselimit,
                     'viewmoreurl' => new moodle_url('/course/index.php'),
                     'viewmoretext' => new lang_string('fulllistofcourses')));
 
         $chelper->set_attributes(array('class' => 'frontpage-course-list-all'));
         $courses = coursecat::get(0)->get_courses($chelper->get_courses_display_options());
         $totalcount = coursecat::get(0)->get_courses_count($chelper->get_courses_display_options());
+        if (!$totalcount && has_capability('moodle/course:create', context_system::instance())) {
+            // Print link to create a new course, for the 1st available category.
+            $output = $this->container_start('buttons');
+            $url = new moodle_url('/course/edit.php', array('category' => $CFG->defaultrequestcategory, 'returnto' => 'topcat'));
+            $output .= $this->single_button($url, get_string('addnewcourse'), 'get');
+            $output .= $this->container_end('buttons');
+            return $output;
+        }
         return $this->coursecat_courses($chelper, $courses, $totalcount);
     }
 

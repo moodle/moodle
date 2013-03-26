@@ -3339,7 +3339,7 @@ class admin_setting_courselist_frontpage extends admin_setting {
         $name        = 'frontpage'.($loggedin ? 'loggedin' : '');
         $visiblename = get_string('frontpage'.($loggedin ? 'loggedin' : ''),'admin');
         $description = get_string('configfrontpage'.($loggedin ? 'loggedin' : ''),'admin');
-        $defaults    = array(FRONTPAGECOURSELIST);
+        $defaults    = array(FRONTPAGEALLCOURSELIST);
         parent::__construct($name, $visiblename, $description, $defaults);
     }
 
@@ -3349,17 +3349,18 @@ class admin_setting_courselist_frontpage extends admin_setting {
      * @return bool always returns true
      */
     public function load_choices() {
-        global $DB;
         if (is_array($this->choices)) {
             return true;
         }
         $this->choices = array(FRONTPAGENEWS          => get_string('frontpagenews'),
-            FRONTPAGECOURSELIST    => get_string('frontpagecourselist'),
+            FRONTPAGEALLCOURSELIST => get_string('frontpagecourselist'),
+            FRONTPAGEENROLLEDCOURSELIST => get_string('frontpageenrolledcourselist'),
             FRONTPAGECATEGORYNAMES => get_string('frontpagecategorynames'),
             FRONTPAGECATEGORYCOMBO => get_string('frontpagecategorycombo'),
+            FRONTPAGECOURSESEARCH  => get_string('frontpagecoursesearch'),
             'none'                 => get_string('none'));
-        if ($this->name == 'frontpage' and $DB->count_records('course') > FRONTPAGECOURSELIMIT) {
-            unset($this->choices[FRONTPAGECOURSELIST]);
+        if ($this->name === 'frontpage') {
+            unset($this->choices[FRONTPAGEENROLLEDCOURSELIST]);
         }
         return true;
     }

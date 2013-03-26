@@ -205,17 +205,9 @@
                 }
             break;
 
-            case FRONTPAGECOURSELIST:
-                $ncourses = $DB->count_records('course');
-                if (isloggedin() and !$hassiteconfig and !isguestuser() and empty($CFG->disablemycourses)) {
-                    $mycourseshtml = $courserenderer->frontpage_my_courses();
-                    if (empty($mycourseshtml)) {
-                        if ($DB->count_records("course_categories") > 1) {
-                            $mycourseshtml = $courserenderer->frontpage_categories_list();
-                        } else {
-                            $mycourseshtml = $courserenderer->frontpage_available_courses();
-                        }
-                    }
+            case FRONTPAGEENROLLEDCOURSELIST:
+                $mycourseshtml = $courserenderer->frontpage_my_courses();
+                if (!empty($mycourseshtml)) {
                     echo html_writer::tag('a', get_string('skipa', 'access', textlib::strtolower(get_string('mycourses'))), array('href'=>'#skipmycourses', 'class'=>'skip-block'));
 
                     //wrap frontpage course list in div container
@@ -223,29 +215,30 @@
 
                     echo $OUTPUT->heading(get_string('mycourses'), 2, 'headingblock header');
                     echo $mycourseshtml;
-                    echo $OUTPUT->box($courserenderer->course_search_form('', 'short'), 'mdl-align');
 
                     //end frontpage course list div container
                     echo html_writer::end_tag('div');
 
                     echo html_writer::tag('span', '', array('class'=>'skip-block-to', 'id'=>'skipmycourses'));
-                } else if ((!$hassiteconfig and !isguestuser()) or ($ncourses <= FRONTPAGECOURSELIMIT)) {
-                    // admin should not see list of courses when there are too many of them
+                    break;
+                }
+                // No "break" here. If there are no enrolled courses - continue to 'Available courses'.
+
+            case FRONTPAGEALLCOURSELIST:
+                $availablecourseshtml = $courserenderer->frontpage_available_courses();
+                if (!empty($availablecourseshtml)) {
                     echo html_writer::tag('a', get_string('skipa', 'access', textlib::strtolower(get_string('availablecourses'))), array('href'=>'#skipavailablecourses', 'class'=>'skip-block'));
 
                     //wrap frontpage course list in div container
                     echo html_writer::start_tag('div', array('id'=>'frontpage-course-list'));
 
                     echo $OUTPUT->heading(get_string('availablecourses'), 2, 'headingblock header');
-                    echo $courserenderer->frontpage_available_courses();
+                    echo $availablecourseshtml;
 
                     //end frontpage course list div container
                     echo html_writer::end_tag('div');
 
                     echo html_writer::tag('span', '', array('class'=>'skip-block-to', 'id'=>'skipavailablecourses'));
-                } else {
-                    echo html_writer::tag('div', get_string('therearecourses', '', $ncourses), array('class' => 'notifyproblem'));
-                    echo $OUTPUT->box($courserenderer->course_search_form('', 'short'), 'mdl-align');
                 }
             break;
 
@@ -257,7 +250,6 @@
 
                 echo $OUTPUT->heading(get_string('categories'), 2, 'headingblock header');
                 echo $courserenderer->frontpage_categories_list();
-                echo $OUTPUT->box($courserenderer->course_search_form('', 'short'), 'mdl-align');
 
                 //end frontpage category names div container
                 echo html_writer::end_tag('div');
@@ -272,20 +264,7 @@
                 echo html_writer::start_tag('div', array('id'=>'frontpage-category-combo'));
 
                 echo $OUTPUT->heading(get_string('courses'), 2, 'headingblock header');
-                // if there are too many courses, building course category tree could be slow,
-                // users should go to course index page to see the whole list.
-                $coursecount = $DB->count_records('course');
-                if (empty($CFG->numcoursesincombo)) {
-                    // if $CFG->numcoursesincombo hasn't been set, use default value 500
-                    $CFG->numcoursesincombo = 500;
-                }
-                if ($coursecount > $CFG->numcoursesincombo) {
-                    $link = new moodle_url('/course/');
-                    echo $OUTPUT->notification(get_string('maxnumcoursesincombo', 'moodle', array('link'=>$link->out(), 'maxnumofcourses'=>$CFG->numcoursesincombo, 'numberofcourses'=>$coursecount)));
-                } else {
-                    echo $courserenderer->frontpage_combo_list();
-                }
-                echo $OUTPUT->box($courserenderer->course_search_form('', 'short'), 'mdl-align');
+                echo $courserenderer->frontpage_combo_list();
 
                 //end frontpage category combo div container
                 echo html_writer::end_tag('div');
@@ -293,7 +272,8 @@
                 echo html_writer::tag('span', '', array('class'=>'skip-block-to', 'id'=>'skipcourses'));
             break;
 
-            case FRONTPAGETOPICONLY:    // Do nothing!!  :-)
+            case FRONTPAGECOURSESEARCH:
+                echo $OUTPUT->box($courserenderer->course_search_form('', 'short'), 'mdl-align');
             break;
 
         }
