@@ -392,6 +392,14 @@ function xmldb_quiz_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2012061704, 'quiz');
     }
 
+    if ($oldversion < 2012061705) {
+        // Quiz manual grading UI should be controlled by mod/quiz:grade, not :viewreports.
+        $DB->set_field('quiz_reports', 'capability', 'mod/quiz:grade', array('name' => 'grading'));
+
+        // Mod quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2012061705, 'quiz');
+    }
+
     return true;
 }
 
