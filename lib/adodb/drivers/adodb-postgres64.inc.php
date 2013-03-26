@@ -1,6 +1,6 @@
 <?php
 /*
- V5.17 17 May 2012  (c) 2000-2012 John Lim (jlim#natsoft.com). All rights reserved.
+ V5.18 3 Sep 2012  (c) 2000-2012 John Lim (jlim#natsoft.com). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -240,7 +240,7 @@ select viewname,'V' from pg_views where viewname like $mask";
 		if (is_bool($s)) return $s ? 'true' : 'false';
 		 
 		if (!$magic_quotes) {
-			if (ADODB_PHPVER >= 0x5200) {
+			if (ADODB_PHPVER >= 0x5200 && $this->_connectionID) {
 				return  "'".pg_escape_string($this->_connectionID,$s)."'";
 			} 
 			if (ADODB_PHPVER >= 0x4200) {
@@ -484,7 +484,7 @@ select viewname,'V' from pg_views where viewname like $mask";
 		if ($this->fetchMode !== false) $savem = $this->SetFetchMode(false);
 		
 		if ($schema) $rs = $this->Execute(sprintf($this->metaColumnsSQL1,$table,$table,$schema));
-		else $rs = $this->Execute(sprintf($this->metaColumnsSQL,$table,$table));
+		else $rs = $this->Execute(sprintf($this->metaColumnsSQL,$table,$table,$table));
 		if (isset($savem)) $this->SetFetchMode($savem);
 		$ADODB_FETCH_MODE = $save;
 		
