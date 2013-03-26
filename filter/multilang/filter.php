@@ -38,6 +38,11 @@ defined('MOODLE_INTERNAL') || die();
 //
 // Following new syntax is not compatible with old one:
 //   <span lang="XX" class="multilang">one lang</span><span lang="YY" class="multilang">another language</span>
+//
+// Improvements made by Vanyo Georgiev <info@vanyog.com> 29-Oct-2012
+// Improvements make possible to use 
+//   <div class="multiland" lang="XX">one language</div><div class="multiland" lang="YY">another language</div>
+// if needed and format the text in div blocks.
 
 class filter_multilang extends moodle_text_filter {
     function filter($text, array $options = array()) {
@@ -54,7 +59,7 @@ class filter_multilang extends moodle_text_filter {
 
         if (empty($CFG->filter_multilang_force_old) and !empty($CFG->filter_multilang_converted)) {
             // new syntax
-            $search = '/(<span(\s+lang="[a-zA-Z0-9_-]+"|\s+class="multilang"){2}\s*>.*?<\/span>)(\s*<span(\s+lang="[a-zA-Z0-9_-]+"|\s+class="multilang"){2}\s*>.*?<\/span>)+/is';
+            $search = '/(?:<(div|span)(?:\s+lang="[a-zA-Z0-9_-]+"|\s+class="multilang"){2}\s*(?:xml:lang="[a-zA-Z0-9_-]+")?>.*?<\/\1>)(?:\s*<\1(?:\s+lang="[a-zA-Z0-9_-]+"|\s+class="multilang"){2}\s*(?:xml:lang="[a-zA-Z0-9_-]+")?>.*?<\/\1>)+/is';
         } else {
             // old syntax
             $search = '/(<(?:lang|span) lang="[a-zA-Z0-9_-]*".*?>.*?<\/(?:lang|span)>)(\s*<(?:lang|span) lang="[a-zA-Z0-9_-]*".*?>.*?<\/(?:lang|span)>)+/is';
@@ -85,7 +90,7 @@ function filter_multilang_impl($langblock) {
         $parentlang = $parentcache[$mylang];
     }
 
-    $searchtosplit = '/<(?:lang|span)[^>]+lang="([a-zA-Z0-9_-]+)"[^>]*>(.*?)<\/(?:lang|span)>/is';
+    $searchtosplit = '/<(lang|div|span)[^>]+lang="([a-zA-Z0-9_-]+)"[^>]*>(.*?)<\/\1>/is';
 
     if (!preg_match_all($searchtosplit, $langblock[0], $rawlanglist)) {
         //skip malformed blocks
@@ -93,9 +98,9 @@ function filter_multilang_impl($langblock) {
     }
 
     $langlist = array();
-    foreach ($rawlanglist[1] as $index=>$lang) {
+    foreach ($rawlanglist[2] as $index=>$lang) {
         $lang = str_replace('-','_',strtolower($lang)); // normalize languages
-        $langlist[$lang] = $rawlanglist[2][$index];
+        $langlist[$lang] = $rawlanglist[3][$index];
     }
 
     if (array_key_exists($mylang, $langlist)) {
