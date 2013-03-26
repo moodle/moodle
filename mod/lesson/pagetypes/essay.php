@@ -184,9 +184,9 @@ class lesson_page_type_essay extends lesson_page {
         $formattextdefoptions->context = $answerpage->context;
 
         foreach ($answers as $answer) {
-            if ($useranswer != NULL) {
+            if ($useranswer != null) {
                 $essayinfo = unserialize($useranswer->useranswer);
-                if ($essayinfo->response == NULL) {
+                if ($essayinfo->response == null) {
                     $answerdata->response = get_string("nocommentyet", "lesson");
                 } else {
                     $answerdata->response = s($essayinfo->response);

@@ -401,7 +401,7 @@ function lesson_update_grades($lesson, $userid=0, $nullifnone=true) {
     } else if ($userid and $nullifnone) {
         $grade = new stdClass();
         $grade->userid   = $userid;
-        $grade->rawgrade = NULL;
+        $grade->rawgrade = null;
         lesson_grade_item_update($lesson, $grade);
 
     } else {
@@ -449,7 +449,7 @@ function lesson_upgrade_grades() {
  * @param array|object $grades optional array/object of grade(s); 'reset' means reset grades in gradebook
  * @return int 0 if ok, error code otherwise
  */
-function lesson_grade_item_update($lesson, $grades=NULL) {
+function lesson_grade_item_update($lesson, $grades=null) {
     global $CFG;
     if (!function_exists('grade_update')) { //workaround for buggy PHP versions
         require_once($CFG->libdir.'/gradelib.php');
@@ -474,7 +474,7 @@ function lesson_grade_item_update($lesson, $grades=NULL) {
 
     if ($grades  === 'reset') {
         $params['reset'] = true;
-        $grades = NULL;
+        $grades = null;
     } else if (!empty($grades)) {
         // Need to calculate raw grade (Note: $grades has many forms)
         if (is_object($grades)) {

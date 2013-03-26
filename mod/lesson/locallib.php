@@ -774,12 +774,12 @@ abstract class lesson_add_page_form_base extends moodleform {
      * Convenience function: Adds an answer editor
      *
      * @param int $count The count of the element to add
-     * @param string $label, NULL means default
+     * @param string $label, null means default
      * @param bool $required
      * @return void
      */
-    protected final function add_answer($count, $label = NULL, $required = false) {
-        if ($label === NULL) {
+    protected final function add_answer($count, $label = null, $required = false) {
+        if ($label === null) {
             $label = get_string('answer', 'lesson');
         }
         $this->_form->addElement('editor', 'answer_editor['.$count.']', $label, array('rows'=>'4', 'columns'=>'80'), array('noclean'=>true));
@@ -792,12 +792,12 @@ abstract class lesson_add_page_form_base extends moodleform {
      * Convenience function: Adds an response editor
      *
      * @param int $count The count of the element to add
-     * @param string $label, NULL means default
+     * @param string $label, null means default
      * @param bool $required
      * @return void
      */
-    protected final function add_response($count, $label = NULL, $required = false) {
-        if ($label === NULL) {
+    protected final function add_response($count, $label = null, $required = false) {
+        if ($label === null) {
             $label = get_string('response', 'lesson');
         }
         $this->_form->addElement('editor', 'response_editor['.$count.']', $label, array('rows'=>'4', 'columns'=>'80'), array('noclean'=>true));
@@ -963,7 +963,7 @@ class lesson extends lesson_base {
             }
         }
 
-        grade_update('mod/lesson', $this->properties->course, 'mod', 'lesson', $this->properties->id, 0, NULL, array('deleted'=>1));
+        grade_update('mod/lesson', $this->properties->course, 'mod', 'lesson', $this->properties->id, 0, null, array('deleted'=>1));
         return true;
     }
 

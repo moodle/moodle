@@ -30,7 +30,7 @@ require_once($CFG->dirroot.'/mod/lesson/view_form.php');
 require_once($CFG->libdir . '/completionlib.php');
 
 $id      = required_param('id', PARAM_INT);             // Course Module ID
-$pageid  = optional_param('pageid', NULL, PARAM_INT);   // Lesson Page ID
+$pageid  = optional_param('pageid', null, PARAM_INT);   // Lesson Page ID
 $edit    = optional_param('edit', -1, PARAM_BOOL);
 $userpassword = optional_param('userpassword','',PARAM_RAW);
 $backtocourse = optional_param('backtocourse', false, PARAM_RAW);
