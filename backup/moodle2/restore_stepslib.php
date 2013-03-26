@@ -1453,7 +1453,6 @@ class restore_course_structure_step extends restore_structure_step {
 
         // Add course related files, without itemid to match
         $this->add_related_files('course', 'summary', null);
-        $this->add_related_files('course', 'legacy', null);
 
         // Deal with legacy allowed modules.
         if ($this->legacyrestrictmodules) {
@@ -1480,6 +1479,29 @@ class restore_course_structure_step extends restore_structure_step {
     }
 }
 
+/**
+ * Execution step that will migrate legacy files if present.
+ */
+class restore_course_legacy_files_step extends restore_execution_step {
+    public function define_execution() {
+        global $DB;
+
+        // Do a check for legacy files and skip if there are none.
+        $sql = 'SELECT count(*)
+                  FROM {backup_files_temp}
+                 WHERE backupid = ?
+                   AND contextid = ?
+                   AND component = ?
+                   AND filearea  = ?';
+        $params = array($this->get_restoreid(), $this->task->get_old_contextid(), 'course', 'legacy');
+
+        if ($DB->count_records_sql($sql, $params)) {
+            $DB->set_field('course', 'legacyfiles', 2, array('id' => $this->get_courseid()));
+            restore_dbops::send_files_to_pool($this->get_basepath(), $this->get_restoreid(), 'course',
+                'legacy', $this->task->get_old_contextid(), $this->task->get_userid());
+        }
+    }
+}
 
 /*
  * Structure step that will read the roles.xml file (at course/activity/block levels)
