@@ -7,6 +7,7 @@ DOM changes:
 * changed the h1 title in the help popup to a h2.
 * new setting $THEME->yuicssmodules = array('cssreset', 'cssfonts', 'cssgrids', 'cssbase'); which
   allows themes to use different CSS reset normalisers such as cssnormalize YUI module
+* Re-wrote the user profile views to definition lists.
 
 === 2.4 ===
 
