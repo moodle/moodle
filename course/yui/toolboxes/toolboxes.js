@@ -508,7 +508,8 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                 .setAttrs({
                     'name'  : 'title',
                     'value' : titletext,
-                    'autocomplete' : 'off'
+                    'autocomplete' : 'off',
+                    'aria-describedby' : 'id_editinstructions'
                 })
                 .addClass('titleeditor');
             var editform = Y.Node.create('<form />')
@@ -518,6 +519,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
 
             var editinstructions = Y.Node.create('<span />')
                 .addClass('editinstructions')
+                .setAttrs({'id' : 'id_editinstructions'})
                 .set('innerHTML', M.util.get_string('edittitleinstructions', 'moodle'));
 
             // Clear the existing content and put the editor in
