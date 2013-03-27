@@ -2498,17 +2498,10 @@ class block_move_target {
     public $url;
 
     /**
-     * @var string label
-     */
-    public $text;
-
-    /**
      * Constructor
-     * @param string $text
      * @param moodle_url $url
      */
-    public function __construct($text, moodle_url $url) {
-        $this->text = $text;
+    public function __construct(moodle_url $url) {
         $this->url  = $url;
     }
 }

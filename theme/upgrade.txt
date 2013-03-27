@@ -9,6 +9,9 @@ DOM changes:
   allows themes to use different CSS reset normalisers such as cssnormalize YUI module
 * Re-wrote the user profile views to definition lists.
 
+Renderer changes:
+* Mymobile theme changed to support more verbose move-block-here descriptions.
+
 === 2.4 ===
 
 required changes:

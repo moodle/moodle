@@ -945,8 +945,6 @@ class block_manager {
             if ($first) {
                 $lastweight = $first->instance->weight - 2;
             }
-
-            $strmoveblockhere = get_string('moveblockhere', 'block');
         }
 
         foreach ($instances as $instance) {
@@ -957,7 +955,7 @@ class block_manager {
 
             if ($this->movingblock && $lastweight != $instance->instance->weight &&
                     $content->blockinstanceid != $this->movingblock && $lastblock != $this->movingblock) {
-                $results[] = new block_move_target($strmoveblockhere, $this->get_move_target_url($region, ($lastweight + $instance->instance->weight)/2));
+                $results[] = new block_move_target($this->get_move_target_url($region, ($lastweight + $instance->instance->weight)/2));
             }
 
             if ($content->blockinstanceid == $this->movingblock) {
@@ -972,7 +970,7 @@ class block_manager {
         }
 
         if ($this->movingblock && $lastblock != $this->movingblock) {
-            $results[] = new block_move_target($strmoveblockhere, $this->get_move_target_url($region, $lastweight + 1));
+            $results[] = new block_move_target($this->get_move_target_url($region, $lastweight + 1));
         }
         return $results;
     }
