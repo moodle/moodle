@@ -69,6 +69,7 @@ class mod_scorm_mod_form extends moodleform_mod {
         // Reference
         if (count($scormtypes) > 1) {
             $mform->addElement('select', 'scormtype', get_string('scormtype', 'scorm'), $scormtypes);
+            $mform->setType('scormtype', PARAM_ALPHA);
             $mform->addHelpButton('scormtype', 'scormtype', 'scorm');
             $mform->addElement('text', 'packageurl', get_string('packageurl', 'scorm'), array('size'=>60));
             $mform->setType('packageurl', PARAM_RAW);
@@ -76,11 +77,10 @@ class mod_scorm_mod_form extends moodleform_mod {
             $mform->disabledIf('packageurl', 'scormtype', 'eq', SCORM_TYPE_LOCAL);
         } else {
             $mform->addElement('hidden', 'scormtype', SCORM_TYPE_LOCAL);
+            $mform->setType('scormtype', PARAM_ALPHA);
         }
 
         // New local package upload
-        $maxbytes = get_max_upload_file_size($CFG->maxbytes, $COURSE->maxbytes);
-        $mform->setMaxFileSize($maxbytes);
         $mform->addElement('filepicker', 'packagefile', get_string('package', 'scorm'));
         $mform->addHelpButton('packagefile', 'package', 'scorm');
         $mform->disabledIf('packagefile', 'scormtype', 'noteq', SCORM_TYPE_LOCAL);
@@ -243,12 +243,14 @@ class mod_scorm_mod_form extends moodleform_mod {
         if (count($scormtypes) > 1) {
             // Update packages timing
             $mform->addElement('select', 'updatefreq', get_string('updatefreq', 'scorm'), scorm_get_updatefreq_array());
+            $mform->setType('updatefreq', PARAM_INT);
             $mform->setDefault('updatefreq', $cfg_scorm->updatefreq);
             $mform->setAdvanced('updatefreq', $cfg_scorm->updatefreq_adv);
             $mform->addHelpButton('updatefreq', 'updatefreq', 'scorm');
             $mform->disabledIf('updatefreq', 'scormtype', 'eq', SCORM_TYPE_LOCAL);
         } else {
             $mform->addElement('hidden', 'updatefreq', 0);
+            $mform->setType('updatefreq', PARAM_INT);
         }
         //-------------------------------------------------------------------------------
         // Hidden Settings
