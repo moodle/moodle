@@ -1,0 +1,10 @@
+{
+  "name": "moodle-core-formautosubmit",
+  "builds": {
+    "moodle-core-formautosubmit": {
+      "jsfiles": [
+        "formautosubmit.js"
+      ]
+    }
+  }
+}
