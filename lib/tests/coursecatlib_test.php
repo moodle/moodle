@@ -405,17 +405,25 @@ class coursecatlib_testcase extends advanced_testcase {
         // search courses
 
         // search by text
+        $res = coursecat::search_courses(array('search' => 'Test'));
+        $this->assertEquals(array($c4->id, $c3->id, $c1->id, $c8->id, $c5->id), array_keys($res));
+        $this->assertEquals(5, coursecat::search_courses_count(array('search' => 'Test')));
+
+        // search by text with specified offset and limit
+        $options = array('sort' => array('fullname' => 1), 'offset' => 1, 'limit' => 2);
+        $res = coursecat::search_courses(array('search' => 'Test'), $options);
+        $this->assertEquals(array($c4->id, $c5->id), array_keys($res));
+        $this->assertEquals(5, coursecat::search_courses_count(array('search' => 'Test'), $options));
+
+        // IMPORTANT: the tests below may fail on some databases
+        // case-insensitive search
         $res = coursecat::search_courses(array('search' => 'test'));
         $this->assertEquals(array($c4->id, $c3->id, $c1->id, $c8->id, $c5->id), array_keys($res));
         $this->assertEquals(5, coursecat::search_courses_count(array('search' => 'test')));
 
+        // non-latin language search
         $res = coursecat::search_courses(array('search' => 'Математика'));
         $this->assertEquals(array($c3->id, $c6->id), array_keys($res));
         $this->assertEquals(2, coursecat::search_courses_count(array('search' => 'Математика'), array()));
-
-        $options = array('sort' => array('fullname' => 1), 'offset' => 1, 'limit' => 2);
-        $res = coursecat::search_courses(array('search' => 'test'), $options);
-        $this->assertEquals(array($c4->id, $c5->id), array_keys($res));
-        $this->assertEquals(5, coursecat::search_courses_count(array('search' => 'test'), $options));
     }
 }
