@@ -40,7 +40,7 @@ M.core_backup.select_all_init = function(str) {
                 '</div>';
     };
 
-    var firstsection = Y.one('fieldset#coursesettings .fcontainer.clearfix .grouped_settings.section_level');
+    var firstsection = Y.one('fieldset#id_coursesettings .fcontainer.clearfix .grouped_settings.section_level');
     if (!firstsection) {
         // This is not a relevant page.
         return;
