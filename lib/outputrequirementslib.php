@@ -1356,7 +1356,7 @@ class YUI_config {
         }
 
         $cache = cache::make('core', 'yuimodules');
-        if ($CFG->jsrev == -1) {
+        if (!isset($CFG->jsrev) || $CFG->jsrev == -1) {
             $metadata = array();
             $cache->delete('metadata');
         } else {
