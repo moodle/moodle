@@ -43,6 +43,121 @@ class datalib_testcase extends advanced_testcase {
         $this->assertEquals($this->normalise_sql($expected), $this->normalise_sql($actual));
     }
 
+    /**
+     * Do a test of the user search SQL with database users.
+     */
+    public function test_users_search_sql() {
+        global $DB;
+
+        // Set up test users.
+        $this->resetAfterTest(true);
+        $user1 = array(
+            'username' => 'usernametest1',
+            'idnumber' => 'idnumbertest1',
+            'firstname' => 'First Name User Test 1',
+            'lastname' => 'Last Name User Test 1',
+            'email' => 'usertest1@email.com',
+            'address' => '2 Test Street Perth 6000 WA',
+            'phone1' => '01010101010',
+            'phone2' => '02020203',
+            'icq' => 'testuser1',
+            'skype' => 'testuser1',
+            'yahoo' => 'testuser1',
+            'aim' => 'testuser1',
+            'msn' => 'testuser1',
+            'department' => 'Department of user 1',
+            'institution' => 'Institution of user 1',
+            'description' => 'This is a description for user 1',
+            'descriptionformat' => FORMAT_MOODLE,
+            'city' => 'Perth',
+            'url' => 'http://moodle.org',
+            'country' => 'au'
+            );
+        $user1 = self::getDataGenerator()->create_user($user1);
+        $user2 = array(
+            'username' => 'usernametest2',
+            'idnumber' => 'idnumbertest2',
+            'firstname' => 'First Name User Test 2',
+            'lastname' => 'Last Name User Test 2',
+            'email' => 'usertest2@email.com',
+            'address' => '222 Test Street Perth 6000 WA',
+            'phone1' => '01010101010',
+            'phone2' => '02020203',
+            'icq' => 'testuser1',
+            'skype' => 'testuser1',
+            'yahoo' => 'testuser1',
+            'aim' => 'testuser1',
+            'msn' => 'testuser1',
+            'department' => 'Department of user 2',
+            'institution' => 'Institution of user 2',
+            'description' => 'This is a description for user 2',
+            'descriptionformat' => FORMAT_MOODLE,
+            'city' => 'Perth',
+            'url' => 'http://moodle.org',
+            'country' => 'au'
+            );
+        $user2 = self::getDataGenerator()->create_user($user2);
+
+        // Search by name (anywhere in text).
+        list($sql, $params) = users_search_sql('User Test 2', '');
+        $results = $DB->get_records_sql("SELECT id FROM {user} WHERE $sql ORDER BY username", $params);
+        $this->assertFalse(array_key_exists($user1->id, $results));
+        $this->assertTrue(array_key_exists($user2->id, $results));
+
+        // Search by (most of) full name.
+        list($sql, $params) = users_search_sql('First Name User Test 2 Last Name User', '');
+        $results = $DB->get_records_sql("SELECT id FROM {user} WHERE $sql ORDER BY username", $params);
+        $this->assertFalse(array_key_exists($user1->id, $results));
+        $this->assertTrue(array_key_exists($user2->id, $results));
+
+        // Search by name (start of text) valid or not.
+        list($sql, $params) = users_search_sql('User Test 2', '', false);
+        $results = $DB->get_records_sql("SELECT id FROM {user} WHERE $sql ORDER BY username", $params);
+        $this->assertEquals(0, count($results));
+        list($sql, $params) = users_search_sql('First Name User Test 2', '', false);
+        $results = $DB->get_records_sql("SELECT id FROM {user} WHERE $sql ORDER BY username", $params);
+        $this->assertFalse(array_key_exists($user1->id, $results));
+        $this->assertTrue(array_key_exists($user2->id, $results));
+
+        // Search by extra fields included or not (address).
+        list($sql, $params) = users_search_sql('Test Street', '', true);
+        $results = $DB->get_records_sql("SELECT id FROM {user} WHERE $sql ORDER BY username", $params);
+        $this->assertEquals(0, count($results));
+        list($sql, $params) = users_search_sql('Test Street', '', true, array('address'));
+        $results = $DB->get_records_sql("SELECT id FROM {user} WHERE $sql ORDER BY username", $params);
+        $this->assertEquals(2, count($results));
+
+        // Exclude user.
+        list($sql, $params) = users_search_sql('User Test', '', true, array(), array($user1->id));
+        $results = $DB->get_records_sql("SELECT id FROM {user} WHERE $sql ORDER BY username", $params);
+        $this->assertFalse(array_key_exists($user1->id, $results));
+        $this->assertTrue(array_key_exists($user2->id, $results));
+
+        // Include only user.
+        list($sql, $params) = users_search_sql('User Test', '', true, array(), array(), array($user1->id));
+        $results = $DB->get_records_sql("SELECT id FROM {user} WHERE $sql ORDER BY username", $params);
+        $this->assertTrue(array_key_exists($user1->id, $results));
+        $this->assertFalse(array_key_exists($user2->id, $results));
+
+        // Join with another table and use different prefix.
+        set_user_preference('amphibian', 'frog', $user1);
+        set_user_preference('amphibian', 'salamander', $user2);
+        list($sql, $params) = users_search_sql('User Test 1', 'qq');
+        $results = $DB->get_records_sql("
+                SELECT
+                    up.id, up.value
+                FROM
+                    {user} qq
+                    JOIN {user_preferences} up ON up.userid = qq.id
+                WHERE
+                    up.name = :prefname
+                    AND $sql", array_merge(array('prefname' => 'amphibian'), $params));
+        $this->assertEquals(1, count($results));
+        foreach ($results as $record) {
+            $this->assertEquals('frog', $record->value);
+        }
+    }
+
     public function test_users_order_by_sql_simple() {
         list($sort, $params) = users_order_by_sql();
         $this->assert_same_sql('lastname, firstname, id', $sort);
