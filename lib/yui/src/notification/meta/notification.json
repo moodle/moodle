@@ -1,0 +1,11 @@
+{
+  "moodle-core-notification": {
+    "requires": [
+        "base",
+        "node",
+        "panel",
+        "event-key",
+        "dd-plugin"
+    ]
+  }
+}
