@@ -155,7 +155,7 @@ function useredit_shared_definition(&$mform, $editoroptions = null, $filemanager
     } else {
         $mform->addElement('text', 'email', get_string('email'), 'maxlength="100" size="30"');
         $mform->addRule('email', $strrequired, 'required', null, 'client');
-        $mform->setType('email', PARAM_NOTAGS);
+        $mform->setType('email', PARAM_EMAIL);
     }
 
     $choices = array();
