@@ -232,7 +232,7 @@ a.skip:active {position: static;display: block;}
  */
 .mform fieldset {border:1px solid;}
 .mform fieldset fieldset {border-width:0;}
-.mform fieldset legend {font-weight:bold;margin-left:0.5em;}
+.mform fieldset legend {font-weight:bold;margin-left:0.5em;padding: 0 0.35em;}
 .mform fieldset div {margin:10px;margin-top:0;}
 .mform fieldset div div {margin:0;}
 .mform fieldset .advancedbutton {text-align:right;}
@@ -242,7 +242,6 @@ a.skip:active {position: static;display: block;}
 .mform .collapsible-actions {display: none;}
 .jsenabled .mform .collapsible-actions {text-align: right; display: block;}
 .dir-rtl .mform .collapsible-actions {text-align: left;}
-.mform fieldset legend {padding: 0 0.35em;}
 .mform fieldset.collapsible legend a.fheader {padding-left: 18px; background: url([[pix:t/expanded]]) left center no-repeat;}
 .mform fieldset.collapsed legend a.fheader {background-image: url([[pix:t/collapsed]]);}
 .jsenabled .mform fieldset.collapsed {border-width: 1px 0 0 1px; padding: 0; border-color: transparent;}
@@ -251,6 +250,7 @@ a.skip:active {position: static;display: block;}
 .jsenabled .mform .containsadvancedelements .advanced {display: none;}
 .mform .containsadvancedelements .advanced.show {display: block;}
 .mform .fitem .fitemtitle {width:15%;text-align:right;float:left;}
+.dir-rtl .mform .fitem .fitemtitle {text-align:left;}
 .mform .fitem .fitemtitle div {display: inline;}
 .mform .fitem .felement {border-width: 0;width:80%;margin-left:16%;}
 .mform .fitem fieldset.felement {margin-left:15%;padding-left:1%;margin-bottom:0}
@@ -258,6 +258,7 @@ a.skip:active {position: static;display: block;}
 .mform .required {color:#A00;}
 .mform .required .fgroup span label {color:#000;}
 .mform .fdescription.required {color:#A00;text-align:right;}
+.dir-rtl .mform .fdescription.required {text-align:left;}
 .mform .fpassword .unmask {display:inline;margin-left:0.5em;}
 .mform .ftextarea #id_alltext {width: 100%;}
 .mform ul.file-list {padding:0;margin:0;list-style:none;}
