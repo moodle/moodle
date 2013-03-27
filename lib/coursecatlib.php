@@ -123,7 +123,7 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
         if (array_key_exists($name, self::$coursecatfields)) {
             if ($this->$name === false) {
                 // property was not retrieved from DB, retrieve all not retrieved fields
-                $notretrievedfields = array_diff(self::$coursecatfields, array_filter(self::$coursecatfields));
+                $notretrievedfields = array_diff_key(self::$coursecatfields, array_filter(self::$coursecatfields));
                 $record = $DB->get_record('course_categories', array('id' => $this->id),
                         join(',', array_keys($notretrievedfields)), MUST_EXIST);
                 foreach ($record as $key => $value) {
