@@ -396,7 +396,7 @@ class assign_upgrade_manager {
             return false;
         }
 
-        $newcm->section = course_add_cm_to_section($newcm->course, $newcm->id, $section->section);
+        $newcm->section = course_add_cm_to_section($newcm->course, $newcm->id, $section->section, $cm->id);
 
         // Make sure visibility is set correctly (in particular in calendar).
         // Note: Allow them to set it even without moodle/course:activityvisibility.
