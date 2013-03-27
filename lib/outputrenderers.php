@@ -1248,7 +1248,7 @@ class core_renderer extends renderer_base {
      * @return string the HTML to be output.
      */
     public function block_move_target($target, $zones, $previous) {
-         if ($previous == null) {
+        if ($previous == null) {
             $position = get_string('moveblockbefore', 'block', $zones[0]);
         } else {
             $position = get_string('moveblockafter', 'block', $previous);

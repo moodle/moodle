@@ -703,7 +703,7 @@ class theme_mymobile_core_renderer extends core_renderer {
         foreach ($blocks as $block) {
             $zones[] = $block->title;
         }
-        
+
         $output = '';
         foreach ($blockcontents as $bc) {
             if ($bc instanceof block_contents) {
