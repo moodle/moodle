@@ -737,7 +737,7 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
             $fields[] = 'c.summary';
             $fields[] = 'c.summaryformat';
         } else {
-            $fields[] = $DB->sql_length('c.summary'). ' hassummary';
+            $fields[] = $DB->sql_substr('c.summary', 1, 1). ' hassummary';
         }
         $sql = "SELECT ". join(',', $fields). ", $ctxselect
                 FROM {course} c
@@ -749,6 +749,9 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
         if ($checkvisibility) {
             // Loop through all records and make sure we only return the courses accessible by user.
             foreach ($list as $course) {
+                if (isset($list[$course->id]->hassummary)) {
+                    $list[$course->id]->hassummary = strlen($list[$course->id]->hassummary) > 0;
+                }
                 if (empty($course->visible)) {
                     // load context only if we need to check capability
                     context_helper::preload_from_record($course);
