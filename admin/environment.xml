@@ -227,7 +227,7 @@
     <PHP_EXTENSIONS>
       <PHP_EXTENSION name="iconv" level="required">
         <FEEDBACK>
-          <ON_CHECK message="iconvrequired" />
+          <ON_ERROR message="iconvrequired" />
         </FEEDBACK>
       </PHP_EXTENSION>
       <PHP_EXTENSION name="mbstring" level="optional">
@@ -237,7 +237,7 @@
       </PHP_EXTENSION>
       <PHP_EXTENSION name="curl" level="required">
         <FEEDBACK>
-          <ON_CHECK message="curlrequired" />
+          <ON_ERROR message="curlrequired" />
         </FEEDBACK>
       </PHP_EXTENSION>
       <PHP_EXTENSION name="openssl" level="optional">
@@ -277,12 +277,12 @@
       </PHP_EXTENSION>
       <PHP_EXTENSION name="simplexml" level="required">
         <FEEDBACK>
-          <ON_CHECK message="simplexmlrequired" />
+          <ON_ERROR message="simplexmlrequired" />
         </FEEDBACK>
       </PHP_EXTENSION>
       <PHP_EXTENSION name="spl" level="required">
         <FEEDBACK>
-          <ON_CHECK message="splrequired" />
+          <ON_ERROR message="splrequired" />
         </FEEDBACK>
       </PHP_EXTENSION>
       <PHP_EXTENSION name="pcre" level="required">
@@ -344,7 +344,7 @@
     <PHP_EXTENSIONS>
       <PHP_EXTENSION name="iconv" level="required">
         <FEEDBACK>
-          <ON_CHECK message="iconvrequired" />
+          <ON_ERROR message="iconvrequired" />
         </FEEDBACK>
       </PHP_EXTENSION>
       <PHP_EXTENSION name="mbstring" level="optional">
@@ -354,7 +354,7 @@
       </PHP_EXTENSION>
       <PHP_EXTENSION name="curl" level="required">
         <FEEDBACK>
-          <ON_CHECK message="curlrequired" />
+          <ON_ERROR message="curlrequired" />
         </FEEDBACK>
       </PHP_EXTENSION>
       <PHP_EXTENSION name="openssl" level="optional">
@@ -394,12 +394,12 @@
       </PHP_EXTENSION>
       <PHP_EXTENSION name="simplexml" level="required">
         <FEEDBACK>
-          <ON_CHECK message="simplexmlrequired" />
+          <ON_ERROR message="simplexmlrequired" />
         </FEEDBACK>
       </PHP_EXTENSION>
       <PHP_EXTENSION name="spl" level="required">
         <FEEDBACK>
-          <ON_CHECK message="splrequired" />
+          <ON_ERROR message="splrequired" />
         </FEEDBACK>
       </PHP_EXTENSION>
       <PHP_EXTENSION name="pcre" level="required">
@@ -454,7 +454,7 @@
     <PHP_EXTENSIONS>
       <PHP_EXTENSION name="iconv" level="required">
         <FEEDBACK>
-          <ON_CHECK message="iconvrequired" />
+          <ON_ERROR message="iconvrequired" />
         </FEEDBACK>
       </PHP_EXTENSION>
       <PHP_EXTENSION name="mbstring" level="optional">
@@ -464,7 +464,7 @@
       </PHP_EXTENSION>
       <PHP_EXTENSION name="curl" level="required">
         <FEEDBACK>
-          <ON_CHECK message="curlrequired" />
+          <ON_ERROR message="curlrequired" />
         </FEEDBACK>
       </PHP_EXTENSION>
       <PHP_EXTENSION name="openssl" level="optional">
@@ -504,12 +504,12 @@
       </PHP_EXTENSION>
       <PHP_EXTENSION name="simplexml" level="required">
         <FEEDBACK>
-          <ON_CHECK message="simplexmlrequired" />
+          <ON_ERROR message="simplexmlrequired" />
         </FEEDBACK>
       </PHP_EXTENSION>
       <PHP_EXTENSION name="spl" level="required">
         <FEEDBACK>
-          <ON_CHECK message="splrequired" />
+          <ON_ERROR message="splrequired" />
         </FEEDBACK>
       </PHP_EXTENSION>
       <PHP_EXTENSION name="pcre" level="required">
@@ -569,7 +569,7 @@
     <PHP_EXTENSIONS>
       <PHP_EXTENSION name="iconv" level="required">
         <FEEDBACK>
-          <ON_CHECK message="iconvrequired" />
+          <ON_ERROR message="iconvrequired" />
         </FEEDBACK>
       </PHP_EXTENSION>
       <PHP_EXTENSION name="mbstring" level="optional">
@@ -579,7 +579,7 @@
       </PHP_EXTENSION>
       <PHP_EXTENSION name="curl" level="required">
         <FEEDBACK>
-          <ON_CHECK message="curlrequired" />
+          <ON_ERROR message="curlrequired" />
         </FEEDBACK>
       </PHP_EXTENSION>
       <PHP_EXTENSION name="openssl" level="optional">
@@ -619,12 +619,12 @@
       </PHP_EXTENSION>
       <PHP_EXTENSION name="simplexml" level="required">
         <FEEDBACK>
-          <ON_CHECK message="simplexmlrequired" />
+          <ON_ERROR message="simplexmlrequired" />
         </FEEDBACK>
       </PHP_EXTENSION>
       <PHP_EXTENSION name="spl" level="required">
         <FEEDBACK>
-          <ON_CHECK message="splrequired" />
+          <ON_ERROR message="splrequired" />
         </FEEDBACK>
       </PHP_EXTENSION>
       <PHP_EXTENSION name="pcre" level="required">
@@ -685,7 +685,7 @@
     <PHP_EXTENSIONS>
       <PHP_EXTENSION name="iconv" level="required">
         <FEEDBACK>
-          <ON_CHECK message="iconvrequired" />
+          <ON_ERROR message="iconvrequired" />
         </FEEDBACK>
       </PHP_EXTENSION>
       <PHP_EXTENSION name="mbstring" level="optional">
@@ -695,7 +695,7 @@
       </PHP_EXTENSION>
       <PHP_EXTENSION name="curl" level="required">
         <FEEDBACK>
-          <ON_CHECK message="curlrequired" />
+          <ON_ERROR message="curlrequired" />
         </FEEDBACK>
       </PHP_EXTENSION>
       <PHP_EXTENSION name="openssl" level="optional">
@@ -735,12 +735,12 @@
       </PHP_EXTENSION>
       <PHP_EXTENSION name="simplexml" level="required">
         <FEEDBACK>
-          <ON_CHECK message="simplexmlrequired" />
+          <ON_ERROR message="simplexmlrequired" />
         </FEEDBACK>
       </PHP_EXTENSION>
       <PHP_EXTENSION name="spl" level="required">
         <FEEDBACK>
-          <ON_CHECK message="splrequired" />
+          <ON_ERROR message="splrequired" />
         </FEEDBACK>
       </PHP_EXTENSION>
       <PHP_EXTENSION name="pcre" level="required">
@@ -801,7 +801,7 @@
     <PHP_EXTENSIONS>
       <PHP_EXTENSION name="iconv" level="required">
         <FEEDBACK>
-          <ON_CHECK message="iconvrequired" />
+          <ON_ERROR message="iconvrequired" />
         </FEEDBACK>
       </PHP_EXTENSION>
       <PHP_EXTENSION name="mbstring" level="optional">
@@ -811,7 +811,7 @@
       </PHP_EXTENSION>
       <PHP_EXTENSION name="curl" level="required">
         <FEEDBACK>
-          <ON_CHECK message="curlrequired" />
+          <ON_ERROR message="curlrequired" />
         </FEEDBACK>
       </PHP_EXTENSION>
       <PHP_EXTENSION name="openssl" level="optional">
@@ -851,12 +851,12 @@
       </PHP_EXTENSION>
       <PHP_EXTENSION name="simplexml" level="required">
         <FEEDBACK>
-          <ON_CHECK message="simplexmlrequired" />
+          <ON_ERROR message="simplexmlrequired" />
         </FEEDBACK>
       </PHP_EXTENSION>
       <PHP_EXTENSION name="spl" level="required">
         <FEEDBACK>
-          <ON_CHECK message="splrequired" />
+          <ON_ERROR message="splrequired" />
         </FEEDBACK>
       </PHP_EXTENSION>
       <PHP_EXTENSION name="pcre" level="required">
