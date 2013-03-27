@@ -1,0 +1,9 @@
+{
+  "moodle-editor_tinymce-collapse": {
+    "requires": [
+        "base",
+        "node",
+        "dom"
+    ]
+  }
+}

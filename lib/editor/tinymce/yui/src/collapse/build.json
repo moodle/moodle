@@ -1,0 +1,10 @@
+{
+  "name": "moodle-editor_tinymce-collapse",
+  "builds": {
+    "moodle-editor_tinymce-collapse": {
+      "jsfiles": [
+        "collapse.js"
+      ]
+    }
+  }
+}
