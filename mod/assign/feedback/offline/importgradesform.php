@@ -164,14 +164,23 @@ class assignfeedback_offline_import_grades_form extends moodleform implements re
         }
 
         $mform->addElement('hidden', 'id', $assignment->get_course_module()->id);
+        $mform->setType('id', PARAM_INT);
         $mform->addElement('hidden', 'action', 'viewpluginpage');
+        $mform->setType('action', PARAM_ALPHA);
         $mform->addElement('hidden', 'confirm', 'true');
+        $mform->setType('confirm', PARAM_BOOL);
         $mform->addElement('hidden', 'plugin', 'offline');
+        $mform->setType('plugin', PARAM_PLUGIN);
         $mform->addElement('hidden', 'pluginsubtype', 'assignfeedback');
+        $mform->setType('pluginsubtype', PARAM_PLUGIN);
         $mform->addElement('hidden', 'pluginaction', 'uploadgrades');
+        $mform->setType('pluginaction', PARAM_ALPHA);
         $mform->addElement('hidden', 'importid', $gradeimporter->importid);
+        $mform->setType('importid', PARAM_INT);
         $mform->addElement('hidden', 'ignoremodified', $ignoremodified);
+        $mform->setType('ignoremodified', PARAM_BOOL);
         $mform->addElement('hidden', 'draftid', $draftid);
+        $form->setType('draftid', PARAM_INT);
         if ($update) {
             $this->add_action_buttons(true, get_string('confirm'));
         } else {

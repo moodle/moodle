@@ -59,10 +59,15 @@ class assignfeedback_offline_upload_grades_form extends moodleform {
         $mform->addHelpButton('ignoremodified', 'ignoremodified', 'assignfeedback_offline');
 
         $mform->addElement('hidden', 'id', $params['cm']);
+        $mform->setType('id', PARAM_INT);
         $mform->addElement('hidden', 'action', 'viewpluginpage');
+        $mform->setType('action', PARAM_ALPHA);
         $mform->addElement('hidden', 'pluginaction', 'uploadgrades');
+        $mform->setType('pluginaction', PARAM_ALPHA);
         $mform->addElement('hidden', 'plugin', 'offline');
+        $mform->setType('plugin', PARAM_PLUGIN);
         $mform->addElement('hidden', 'pluginsubtype', 'assignfeedback');
+        $mform->setType('pluginsubtype', PARAM_PLUGIN);
         $this->add_action_buttons(true, get_string('uploadgrades', 'assignfeedback_offline'));
 
     }

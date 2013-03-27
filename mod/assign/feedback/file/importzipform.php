@@ -115,11 +115,17 @@ class assignfeedback_file_import_zip_form extends moodleform implements renderab
         }
 
         $mform->addElement('hidden', 'id', $assignment->get_course_module()->id);
+        $mform->setType('id', PARAM_INT);
         $mform->addElement('hidden', 'action', 'viewpluginpage');
+        $mform->setType('action', PARAM_ALPHA);
         $mform->addElement('hidden', 'confirm', 'true');
+        $mform->setType('confirm', PARAM_INT);
         $mform->addElement('hidden', 'plugin', 'file');
+        $mform->setTYpe('plugin', PARAM_PLUGIN);
         $mform->addElement('hidden', 'pluginsubtype', 'assignfeedback');
+        $mform->setTYpe('pluginsubtype', PARAM_PLUGIN);
         $mform->addElement('hidden', 'pluginaction', 'uploadzip');
+        $mform->setType('pluginaction', PARAM_ALPHA);
         if (count($updates)) {
             $this->add_action_buttons(true, get_string('confirm'));
         } else {

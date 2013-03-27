@@ -66,12 +66,19 @@ class assignfeedback_file_batch_upload_files_form extends moodleform {
         $this->set_data($data);
 
         $mform->addElement('hidden', 'id', $params['cm']);
+        $mform->setType('id', PARAM_INT);
         $mform->addElement('hidden', 'operation', 'plugingradingbatchoperation_file_uploadfiles');
+        $mform->setType('operation', PARAM_ALPHAEXT);
         $mform->addElement('hidden', 'action', 'viewpluginpage');
+        $mform->setType('action', PARAM_ALPHA);
         $mform->addElement('hidden', 'pluginaction', 'uploadfiles');
+        $mform->setType('pluginaction', PARAM_ALPHA);
         $mform->addElement('hidden', 'plugin', 'file');
+        $mform->setType('plugin', PARAM_PLUGIN);
         $mform->addElement('hidden', 'pluginsubtype', 'assignfeedback');
+        $mform->setType('pluginsubtype', PARAM_PLUGIN);
         $mform->addElement('hidden', 'selectedusers', implode(',', $params['users']));
+        $mform->setType('selectedusers', PARAM_TEXT);
         $this->add_action_buttons(true, get_string('uploadfiles', 'assignfeedback_file'));
 
     }
