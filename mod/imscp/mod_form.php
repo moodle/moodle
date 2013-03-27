@@ -49,6 +49,7 @@ class mod_imscp_mod_form extends moodleform_mod {
 
         //-------------------------------------------------------
         $mform->addElement('header', 'content', get_string('contentheader', 'imscp'));
+        $mform->setExpanded('content', true);
         $mform->addElement('filepicker', 'package', get_string('packagefile', 'imscp'));
 
         $options = array('-1'=>get_string('all'), '0'=>get_string('no'), '1'=>'1', '2'=>'2', '5'=>'5', '10'=>'10', '20'=>'20');
