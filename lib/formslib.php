@@ -922,6 +922,22 @@ abstract class moodleform {
     }
 
     /**
+     * Renders the html form (same as display, but returns the result).
+     *
+     * Note that you can only output this rendered result once per page, as
+     * it contains IDs which must be unique.
+     *
+     * @return string HTML code for the form
+     */
+    public function render() {
+        ob_start();
+        $this->display();
+        $out = ob_get_contents();
+        ob_end_clean();
+        return $out;
+    }
+
+    /**
      * Form definition. Abstract method - always override!
      */
     protected abstract function definition();
