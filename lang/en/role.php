@@ -113,6 +113,7 @@ $string['course:activityvisibility'] = 'Hide/show activities';
 $string['course:bulkmessaging'] = 'Send a message to many people';
 $string['course:create'] = 'Create courses';
 $string['course:delete'] = 'Delete courses';
+$string['course:viewsuspendedusers'] = 'Can view suspended users.';
 $string['course:changecategory'] = 'Change course category';
 $string['course:changefullname'] = 'Change course full name';
 $string['course:changeidnumber'] = 'Change course ID number';
