@@ -321,3 +321,15 @@ body.has_dock {
 
 .pagelayout-redirect #content p,
 .pagelayout-redirect #content div {color:#FFF;}
+
+/* Moodle forms
+----------------*/
+
+.mform .btn-cancel {
+    color: #F14E16;
+    text-decoration: none;
+}
+.mform .btn-cancel:hover, .mform .btn-cancel:focus {
+    color: #FB961C;
+    text-decoration: none;
+}

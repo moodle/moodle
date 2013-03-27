@@ -185,6 +185,11 @@ body.lang-vi {
     padding:20px;
     text-align:center;
 }
+.mform .btn-cancel,
+.mform .btn-cancel:hover, .mform .btn-cancel:focus {
+    color: #853650;
+    text-decoration: underline;
+}
 /* html editor fixed width
 -------------------------*/
 textarea#id_summary_editor {width:420px;}

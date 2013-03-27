@@ -479,3 +479,15 @@ tab styles for ie6 & ie7
 body#page-course-view-topics.path-course div.moodle-dialogue-base div.yui3-widget{
     z-index: 600!important;
 }
+
+/* Moodle forms
+----------------*/
+
+.mform .btn-cancel {
+    color: #007EBA;
+    text-decoration: none;
+}
+.mform .btn-cancel:hover, .mform .btn-cancel:focus {
+    color: #cc3300;
+    text-decoration: underline;
+}

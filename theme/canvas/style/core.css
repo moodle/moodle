@@ -509,6 +509,15 @@ input[type="radio"] {
     margin:0;
 }
 
+.mform .btn-cancel {
+    color: #0000EE;
+    text-decoration: none;
+}
+.mform .btn-cancel:hover, .mform .btn-cancel:focus {
+    color: #0000EE;
+    text-decoration: none;
+}
+
 /* Comments
 -----------------------*/
 
