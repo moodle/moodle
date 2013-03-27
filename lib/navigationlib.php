@@ -3742,7 +3742,7 @@ class settings_navigation extends navigation_node {
             require_once($file);
         }
 
-        $modulenode = $this->add(get_string('pluginadministration', $this->page->activityname));
+        $modulenode = $this->add(get_string('pluginadministration', $this->page->activityname), null, self::TYPE_SETTING, null, 'modulesettings');
         $modulenode->force_open();
 
         // Settings for the module
@@ -4149,7 +4149,7 @@ class settings_navigation extends navigation_node {
     protected function load_block_settings() {
         global $CFG;
 
-        $blocknode = $this->add($this->context->get_context_name());
+        $blocknode = $this->add($this->context->get_context_name(), null, self::TYPE_SETTING, null, 'blocksettings');
         $blocknode->force_open();
 
         // Assign local roles
