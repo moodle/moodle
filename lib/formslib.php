@@ -2392,10 +2392,16 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
     var $_requiredNoteTemplate =
         "\n\t\t<div class=\"fdescription required\">{requiredNote}</div>";
 
-    /** @var string Collapsible buttons string template */
+    /**
+     * Collapsible buttons string template.
+     *
+     * Note that the <span> will be converted as a link. This is done so that the link is not yet clickable
+     * until the Javascript has been fully loaded.
+     *
+     * @var string
+     */
     var $_collapseButtonsTemplate =
-        "\n\t<div class=\"collapsible-actions\"><button disabled=\"disabled\" class=\"btn-expandall\">{strexpandall}</button>
-        <button disabled=\"disabled\" class=\"btn-collapseall\">{strcollapseall}</button></div>";
+        "\n\t<div class=\"collapsible-actions\"><span class=\"collapseexpand\">{strexpandall}</span></div>";
 
     /**
      * Array whose keys are element names. If the key exists this is a advanced element
@@ -2488,8 +2494,8 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
         if (!empty($this->_collapsibleElements)) {
             if (count($this->_collapsibleElements) > 1) {
                 $this->_collapseButtons = $this->_collapseButtonsTemplate;
-                $this->_collapseButtons = str_replace('{strcollapseall}', get_string('collapseall'), $this->_collapseButtons);
                 $this->_collapseButtons = str_replace('{strexpandall}', get_string('expandall'), $this->_collapseButtons);
+                $PAGE->requires->strings_for_js(array('collapseall', 'expandall'), 'moodle');
             }
             $PAGE->requires->yui_module('moodle-form-shortforms', 'M.form.shortforms', array(array('formid' => $formid)));
         }

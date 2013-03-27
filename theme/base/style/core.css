@@ -242,6 +242,11 @@ a.skip:active {position: static;display: block;}
 .mform .collapsible-actions {display: none;}
 .jsenabled .mform .collapsible-actions {text-align: right; display: block;}
 .dir-rtl .mform .collapsible-actions {text-align: left;}
+.mform .collapseexpand {background: url([[pix:t/collapsed]]) left center no-repeat; padding-left: 18px;}
+.dir-rtl .mform .collapseexpand {background-image: url([[pix:t/collapsed_rtl]]); background-position: right center; padding-left: 0; padding-right: 18px;}
+.mform .collapse-all,
+.dir-rtl .mform .collapse-all {background-image: url([[pix:t/expanded]]);}
+.mform fieldset legend {padding: 0 0.35em;}
 .mform fieldset.collapsible legend a.fheader {padding-left: 18px; background: url([[pix:t/expanded]]) left center no-repeat;}
 .mform fieldset.collapsed legend a.fheader {background-image: url([[pix:t/collapsed]]);}
 .jsenabled .mform fieldset.collapsed {border-width: 1px 0 0 1px; padding: 0; border-color: transparent;}
