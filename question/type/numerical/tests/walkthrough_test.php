@@ -162,7 +162,7 @@ class qtype_numerical_walkthrough_test extends qbehaviour_walkthrough_test_base 
                 $this->get_no_hint_visible_expectation());
 
         // Submit all and finish.
-        $this->process_submission(array('-finish' => '1'));
+        $this->finish();
 
         // Verify.
         $this->check_current_state(question_state::$gradedpartial);
@@ -261,7 +261,7 @@ class qtype_numerical_walkthrough_test extends qbehaviour_walkthrough_test_base 
                 $this->get_no_hint_visible_expectation());
 
         // Submit all and finish.
-        $this->process_submission(array('-finish' => '1'));
+        $this->finish();
 
         // Verify.
         $this->check_current_state(question_state::$gradedright);

@@ -360,7 +360,7 @@ class qtype_match_walkthrough_test extends qbehaviour_walkthrough_test_base {
                 '(1, 2] -> 1 < x ≤ 2; [1, 2] -> 1 ≤ x ≤ 2; [1, 2) -> 1 ≤ x < 2';
 
         $this->process_submission($rightresponse);
-        $this->process_submission(array('-finish' => 1));
+        $this->finish();
 
         $this->assertEquals($rightresponsesummary, $m->summarise_response($rightresponse));
 

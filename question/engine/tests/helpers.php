@@ -50,6 +50,40 @@ class testable_question_attempt extends question_attempt {
 
 
 /**
+ * Test subclass to allow access to some protected data so that the correct
+ * behaviour can be verified.
+ *
+ * @copyright  2012 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class testable_question_engine_unit_of_work extends question_engine_unit_of_work {
+    public function get_modified() {
+        return $this->modified;
+    }
+
+    public function get_attempts_added() {
+        return $this->attemptsadded;
+    }
+
+    public function get_attempts_modified() {
+        return $this->attemptsmodified;
+    }
+
+    public function get_steps_added() {
+        return $this->stepsadded;
+    }
+
+    public function get_steps_modified() {
+        return $this->stepsmodified;
+    }
+
+    public function get_steps_deleted() {
+        return $this->stepsdeleted;
+    }
+}
+
+
+/**
  * Base class for question type test helpers.
  *
  * @copyright  2011 The Open University
@@ -649,12 +683,48 @@ abstract class qbehaviour_walkthrough_test_base extends question_testcase {
         $this->slot = $this->quba->add_question($question, $maxmark);
         $this->quba->start_question($this->slot, $variant);
     }
+
     protected function process_submission($data) {
-        $this->quba->process_action($this->slot, $data);
+        // Backwards compatibility.
+        reset($data);
+        if (count($data) == 1 && key($data) === '-finish') {
+            $this->finish();
+        }
+
+        $prefix = $this->quba->get_field_prefix($this->slot);
+        $fulldata = array(
+            'slots' => $this->slot,
+            $prefix . ':sequencecheck' => $this->get_question_attempt()->get_num_steps(),
+        );
+        foreach ($data as $name => $value) {
+            $fulldata[$prefix . $name] = $value;
+        }
+        $this->quba->process_all_actions(time(), $fulldata);
+    }
+
+    protected function process_autosave($data) {
+        $this->quba->process_autosave($this->slot, $data);
+    }
+
+    protected function finish() {
+        $this->quba->finish_all_questions();
     }
 
     protected function manual_grade($comment, $mark, $commentformat = null) {
         $this->quba->manual_grade($this->slot, $comment, $mark, $commentformat);
+    }
+
+    protected function save_quba(moodle_database $db = null) {
+        question_engine::save_questions_usage_by_activity($this->quba, $db);
+    }
+
+    protected function load_quba(moodle_database $db = null) {
+        $this->quba = question_engine::load_questions_usage_by_activity($this->quba->get_id(), $db);
+    }
+
+    protected function delete_quba() {
+        question_engine::delete_questions_usage_by_activity($this->quba->get_id());
+        $this->quba = null;
     }
 
     protected function check_current_state($state) {
@@ -682,6 +752,36 @@ abstract class qbehaviour_walkthrough_test_base extends question_testcase {
      */
     protected function render() {
         $this->currentoutput = $this->quba->render_question($this->slot, $this->displayoptions);
+    }
+
+    protected function check_output_contains_text_input($name, $value = null, $enabled = true) {
+        $attributes = array(
+            'type' => 'text',
+            'name' => $this->quba->get_field_prefix($this->slot) . $name,
+        );
+        if (!is_null($value)) {
+            $attributes['value'] = $value;
+        }
+        if (!$enabled) {
+            $attributes['readonly'] = 'readonly';
+        }
+        $matcher = $this->get_tag_matcher('input', $attributes);
+        $this->assertTag($matcher, $this->currentoutput,
+                'Looking for an input with attributes ' . html_writer::attributes($attributes) . ' in ' . $this->currentoutput);
+
+        if ($enabled) {
+            $matcher['attributes']['readonly'] = 'readonly';
+            $this->assertNotTag($matcher, $this->currentoutput,
+                    'input with attributes ' . html_writer::attributes($attributes) .
+                    ' should not be read-only in ' . $this->currentoutput);
+        }
+    }
+
+    protected function get_tag_matcher($tag, $attributes) {
+        return array(
+            'tag' => $tag,
+            'attributes' => $attributes,
+        );
     }
 
     /**
