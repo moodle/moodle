@@ -4,8 +4,7 @@ Feature: Add blocks
   As a teacher
   I need to add blocks to pages
 
-  @javascript
-  Scenario: Add a block to a course
+  Background:
     Given the following "users" exists:
       | username | firstname | lastname | email |
       | student1 | Student | 1 | student1@asd.com |
@@ -21,4 +20,9 @@ Feature: Add blocks
     And I follow "Course 1"
     And I turn editing mode on
     When I add the "Blog menu" block
-    Then I should see "View all of my entries"
+    Then I should see "View my entries about this course"
+
+  @javascript
+  Scenario: Add a block to a course with Javascript enabled
+
+  Scenario: Add a block to a course with Javascript disabled
