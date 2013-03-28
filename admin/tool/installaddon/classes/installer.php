@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Provides tool_installaddon_installer class
+ * Provides tool_installaddon_installer related classes
  *
  * @package     tool_installaddon
  * @subpackage  classes
@@ -44,6 +44,16 @@ class tool_installaddon_installer {
      */
     public static function instance() {
         return new static();
+    }
+
+    /**
+     * Returns the URL to the main page of this admin tool
+     *
+     * @param array optional parameters
+     * @return moodle_url
+     */
+    public function index_url(array $params = null) {
+        return new moodle_url('/admin/tool/installaddon/index.php', $params);
     }
 
     /**
@@ -87,7 +97,7 @@ class tool_installaddon_installer {
             return $this->installfromzipform;
         }
 
-        $action = new moodle_url('/admin/tool/installaddon/index.php');
+        $action = $this->index_url();
         $customdata = array('installer' => $this);
 
         $this->installfromzipform = new tool_installaddon_installfromzip($action, $customdata);
@@ -214,6 +224,208 @@ class tool_installaddon_installer {
         return is_writable($plugintypepath);
     }
 
+    /**
+     * Hook method to handle the remote request to install an add-on
+     *
+     * This is used as a callback when the admin picks a plugin version in the
+     * Moodle Plugins directory and is redirected back to their site to install
+     * it.
+     *
+     * This hook is called early from admin/tool/installaddon/index.php page so that
+     * it has opportunity to take over the UI.
+     *
+     * @param tool_installaddon_renderer $output
+     * @param string|null $request
+     * @param bool $confirmed
+     */
+    public function handle_remote_request(tool_installaddon_renderer $output, $request, $confirmed = false) {
+        global $CFG;
+        require_once(dirname(__FILE__).'/pluginfo_client.php');
+
+        if (is_null($request)) {
+            return;
+        }
+
+        $data = $this->decode_remote_request($request);
+
+        if ($data === false) {
+            echo $output->remote_request_invalid_page($this->index_url());
+            exit();
+        }
+
+        list($plugintype, $pluginname) = normalize_component($data->component);
+
+        $plugintypepath = $this->get_plugintype_root($plugintype);
+
+        if (file_exists($plugintypepath.'/'.$pluginname)) {
+            echo $output->remote_request_alreadyinstalled_page($data, $this->index_url());
+            exit();
+        }
+
+        if (!$this->is_plugintype_writable($plugintype)) {
+            $continueurl = $this->index_url(array('installaddonrequest' => $request));
+            echo $output->remote_request_permcheck_page($data, $plugintypepath, $continueurl, $this->index_url());
+            exit();
+        }
+
+        $continueurl = $this->index_url(array(
+            'installaddonrequest' => $request,
+            'confirm' => 1,
+            'sesskey' => sesskey()));
+
+        if (!$confirmed) {
+            echo $output->remote_request_confirm_page($data, $continueurl, $this->index_url());
+            exit();
+        }
+
+        // The admin has confirmed their intention to install the add-on.
+        require_sesskey();
+
+        // Fetch the plugin info. The essential information is the URL to download the ZIP
+        // and the MD5 hash of the ZIP, obtained via HTTPS.
+        $client = tool_installaddon_pluginfo_client::instance();
+
+        try {
+            $pluginfo = $client->get_pluginfo($data->component, $data->version);
+
+        } catch (tool_installaddon_pluginfo_exception $e) {
+            if (debugging()) {
+                throw $e;
+            } else {
+                echo $output->remote_request_pluginfo_exception($data, $e, $this->index_url());
+                exit();
+            }
+        }
+
+        // Fetch the ZIP with the plugin version
+        $jobid = md5(rand().uniqid('', true));
+        $sourcedir = make_temp_directory('tool_installaddon/'.$jobid.'/source');
+        $zipfilename = 'downloaded.zip';
+
+        try {
+            $this->download_file($pluginfo->downloadurl, $sourcedir.'/'.$zipfilename);
+
+        } catch (tool_installaddon_installer_exception $e) {
+            if (debugging()) {
+                throw $e;
+            } else {
+                echo $output->installer_exception($e, $this->index_url());
+                exit();
+            }
+        }
+
+        // Check the MD5 checksum
+        $md5expected = $pluginfo->downloadmd5;
+        $md5actual = md5_file($sourcedir.'/'.$zipfilename);
+        if ($md5expected !== $md5actual) {
+            $e = new tool_installaddon_installer_exception('err_zip_md5', array('expected' => $md5expected, 'actual' => $md5actual));
+            if (debugging()) {
+                throw $e;
+            } else {
+                echo $output->installer_exception($e, $this->index_url());
+                exit();
+            }
+        }
+
+        // Redirect to the validation page.
+        $nexturl = new moodle_url('/admin/tool/installaddon/validate.php', array(
+            'sesskey' => sesskey(),
+            'jobid' => $jobid,
+            'zip' => $zipfilename,
+            'type' => $plugintype));
+        redirect($nexturl);
+    }
+
+    /**
+     * Download the given file into the given destination.
+     *
+     * This is basically a simplified version of {@link download_file_content()} from
+     * Moodle itself, tuned for fetching files from moodle.org servers. Same code is used
+     * in mdeploy.php for fetching available updates.
+     *
+     * @param string $source file url starting with http(s)://
+     * @param string $target store the downloaded content to this file (full path)
+     * @throws tool_installaddon_installer_exception
+     */
+    public function download_file($source, $target) {
+        global $CFG;
+
+        $newlines = array("\r", "\n");
+        $source = str_replace($newlines, '', $source);
+        if (!preg_match('|^https?://|i', $source)) {
+            throw new tool_installaddon_installer_exception('err_download_transport_protocol', $source);
+        }
+        if (!$ch = curl_init($source)) {
+            throw new tool_installaddon_installer_exception('err_curl_init', $source);
+        }
+
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true); // verify the peer's certificate
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2); // check the existence of a common name and also verify that it matches the hostname provided
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // return the transfer as a string
+        curl_setopt($ch, CURLOPT_HEADER, false); // don't include the header in the output
+        curl_setopt($ch, CURLOPT_TIMEOUT, 3600);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 20); // nah, moodle.org is never unavailable! :-p
+        curl_setopt($ch, CURLOPT_URL, $source);
+
+        $cacertfile = $CFG->dataroot.'/moodleorgca.crt';
+        if (is_readable($cacertfile)) {
+            // Do not use CA certs provided by the operating system. Instead,
+            // use this CA cert to verify the ZIP provider.
+            curl_setopt($ch, CURLOPT_CAINFO, $cacertfile);
+        }
+
+        if (!empty($CFG->proxyhost) and !is_proxybypass($source)) {
+            if (!empty($CFG->proxytype)) {
+                if (strtoupper($CFG->proxytype) === 'SOCKS5') {
+                    curl_setopt($ch, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS5);
+                } else {
+                    curl_setopt($ch, CURLOPT_PROXYTYPE, CURLPROXY_HTTP);
+                    curl_setopt($ch, CURLOPT_HTTPPROXYTUNNEL, false);
+                }
+            }
+
+            if (empty($CFG->proxyport)) {
+                curl_setopt($ch, CURLOPT_PROXY, $CFG->proxyhost);
+            } else {
+                curl_setopt($ch, CURLOPT_PROXY, $CFG->proxyhost.':'.$CFG->proxyport);
+            }
+
+            if (!empty($CFG->proxyuser) and !empty($CFG->proxypassword)) {
+                curl_setopt($ch, CURLOPT_PROXYUSERPWD, $CFG->proxyuser.':'.$CFG->proxypassword);
+                curl_setopt($ch, CURLOPT_PROXYAUTH, CURLAUTH_BASIC | CURLAUTH_NTLM);
+            }
+        }
+
+        $targetfile = fopen($target, 'w');
+
+        if (!$targetfile) {
+            throw new tool_installaddon_installer_exception('err_download_write_file', $target);
+        }
+
+        curl_setopt($ch, CURLOPT_FILE, $targetfile);
+
+        $result = curl_exec($ch);
+
+        // try to detect encoding problems
+        if ((curl_errno($ch) == 23 or curl_errno($ch) == 61) and defined('CURLOPT_ENCODING')) {
+            curl_setopt($ch, CURLOPT_ENCODING, 'none');
+            $result = curl_exec($ch);
+        }
+
+        fclose($targetfile);
+
+        $curlerrno = curl_errno($ch);
+        $curlerror = curl_error($ch);
+        $curlinfo = curl_getinfo($ch);
+
+        if ($result === false or $curlerrno) {
+            throw new tool_installaddon_installer_exception('err_curl_exec', array('url' => $source, 'errorno' => $curlerrno, 'error' => $curlerror));
+
+        } else if (is_array($curlinfo) and (empty($curlinfo['http_code']) or $curlinfo['http_code'] != 200)) {
+            throw new tool_installaddon_installer_exception('err_curl_code', array('url' => $source, 'httpcode' => $curlinfo['http_code']));
+        }
+    }
+
     //// End of external API ///////////////////////////////////////////////////
 
     /**
@@ -323,5 +535,71 @@ class tool_installaddon_installer {
         }
 
         return $files;
+    }
+
+    /**
+     * Decode the request from the Moodle Plugins directory
+     *
+     * @param string $request submitted via 'installaddonrequest' HTTP parameter
+     * @return stdClass|bool false on error, object otherwise
+     */
+    protected function decode_remote_request($request) {
+
+        $data = base64_decode($request, true);
+
+        if ($data === false) {
+            return false;
+        }
+
+        $data = json_decode($data);
+
+        if (is_null($data)) {
+            return false;
+        }
+
+        if (!isset($data->name) or !isset($data->component) or !isset($data->version)) {
+            return false;
+        }
+
+        $data->name = s(strip_tags($data->name));
+
+        if ($data->component !== clean_param($data->component, PARAM_COMPONENT)) {
+            return false;
+        }
+
+        list($plugintype, $pluginname) = normalize_component($data->component);
+
+        if ($plugintype === 'core') {
+            return false;
+        }
+
+        if ($data->component !== $plugintype.'_'.$pluginname) {
+            return false;
+        }
+
+        // Keep this regex in sync with the one used by the download.moodle.org/api/x.y/pluginfo.php
+        if (!preg_match('/^[0-9]+$/', $data->version)) {
+            return false;
+        }
+
+        return $data;
+    }
+}
+
+
+/**
+ * General exception thrown by {@link tool_installaddon_installer} class
+ *
+ * @copyright 2013 David Mudrak <david@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class tool_installaddon_installer_exception extends moodle_exception {
+
+    /**
+     * @param string $errorcode exception description identifier
+     * @param mixed $debuginfo debugging data to display
+     */
+    public function __construct($errorcode, $a=null, $debuginfo=null) {
+        parent::__construct($errorcode, 'tool_installaddon', '', $a, print_r($debuginfo, true));
     }
 }

@@ -35,6 +35,14 @@ if (!empty($CFG->disableonclickaddoninstall)) {
 
 $installer = tool_installaddon_installer::instance();
 
+$output = $PAGE->get_renderer('tool_installaddon');
+$output->set_installer_instance($installer);
+
+// Handle the eventual request for installing from remote repository.
+$remoterequest = optional_param('installaddonrequest', null, PARAM_RAW);
+$confirmed = optional_param('confirm', false, PARAM_BOOL);
+$installer->handle_remote_request($output, $remoterequest, $confirmed);
+
 $form = $installer->get_installfromzip_form();
 
 if ($form->is_cancelled()) {
@@ -55,7 +63,5 @@ if ($form->is_cancelled()) {
     redirect($nexturl);
 }
 
-$output = $PAGE->get_renderer('tool_installaddon');
-$output->set_installer_instance($installer);
-
+// Output starts here.
 echo $output->index_page();

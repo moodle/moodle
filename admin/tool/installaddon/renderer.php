@@ -116,7 +116,125 @@ class tool_installaddon_renderer extends plugin_renderer_base {
         $out .= $this->output->footer();
 
         return $out;
+    }
 
+    /**
+     * Inform the user about invalid remote installation request.
+     *
+     * @param moodle_url $continueurl
+     * @return string
+     */
+    public function remote_request_invalid_page(moodle_url $continueurl) {
+
+        $out = $this->output->header();
+        $out .= $this->output->heading(get_string('installfromrepo', 'tool_installaddon'));
+        $out .= $this->output->box(get_string('remoterequestinvalid', 'tool_installaddon'), 'generalbox', 'notice');
+        $out .= $this->output->continue_button($continueurl, 'get');
+        $out .= $this->output->footer();
+
+        return $out;
+    }
+
+    /**
+     * Inform the user that such plugin is already installed
+     *
+     * @param stdClass $data decoded request data
+     * @param moodle_url $continueurl
+     * @return string
+     */
+    public function remote_request_alreadyinstalled_page(stdClass $data, moodle_url $continueurl) {
+
+        $out = $this->output->header();
+        $out .= $this->output->heading(get_string('installfromrepo', 'tool_installaddon'));
+        $out .= $this->output->box(get_string('remoterequestalreadyinstalled', 'tool_installaddon', $data), 'generalbox', 'notice');
+        $out .= $this->output->continue_button($continueurl, 'get');
+        $out .= $this->output->footer();
+
+        return $out;
+    }
+
+    /**
+     * Let the user confirm the remote installation request.
+     *
+     * @param stdClass $data decoded request data
+     * @param moodle_url $continueurl
+     * @param moodle_url $cancelurl
+     * @return string
+     */
+    public function remote_request_confirm_page(stdClass $data, moodle_url $continueurl, moodle_url $cancelurl) {
+
+        $out = $this->output->header();
+        $out .= $this->output->heading(get_string('installfromrepo', 'tool_installaddon'));
+        $out .= $this->output->confirm(get_string('remoterequestconfirm', 'tool_installaddon', $data), $continueurl, $cancelurl);
+        $out .= $this->output->footer();
+
+        return $out;
+    }
+
+    /**
+     * Inform the user that the target plugin type location is not writable.
+     *
+     * @param stdClass $data decoded request data
+     * @param string $plugintypepath full path to the plugin type location
+     * @param moodle_url $continueurl to repeat the write permission check
+     * @param moodle_url $cancelurl to cancel the installation
+     * @return string
+     */
+    public function remote_request_permcheck_page(stdClass $data, $plugintypepath, moodle_url $continueurl, moodle_url $cancelurl) {
+
+        $data->typepath = $plugintypepath;
+
+        $out = $this->output->header();
+        $out .= $this->output->heading(get_string('installfromrepo', 'tool_installaddon'));
+        $out .= $this->output->confirm(get_string('remoterequestpermcheck', 'tool_installaddon', $data), $continueurl, $cancelurl);
+        $out .= $this->output->footer();
+
+        return $out;
+    }
+
+    /**
+     * Inform the user about pluginfo service call exception
+     *
+     * This implementation does not actually use the passed exception. Custom renderers might want to
+     * display additional data obtained via {@link get_exception_info()}. Also note, this method is called
+     * in non-debugging mode only. If debugging is allowed at the site, default exception handler is triggered.
+     *
+     * @param stdClass $data decoded request data
+     * @param tool_installaddon_pluginfo_exception $e thrown exception
+     * @param moodle_url $continueurl
+     * @return string
+     */
+    public function remote_request_pluginfo_exception(stdClass $data, tool_installaddon_pluginfo_exception $e, moodle_url $continueurl) {
+
+        $out = $this->output->header();
+        $out .= $this->output->heading(get_string('installfromrepo', 'tool_installaddon'));
+        $out .= $this->output->box(get_string('remoterequestpluginfoexception', 'tool_installaddon', $data), 'generalbox', 'notice');
+        $out .= $this->output->continue_button($continueurl, 'get');
+        $out .= $this->output->footer();
+
+        return $out;
+    }
+
+    /**
+     * Inform the user about the installer exception
+     *
+     * This implementation does not actually use the passed exception. Custom renderers might want to
+     * display additional data obtained via {@link get_exception_info()}. Also note, this method is called
+     * in non-debugging mode only. If debugging is allowed at the site, default exception handler is triggered.
+     *
+     * @param tool_installaddon_installer_exception $e thrown exception
+     * @param moodle_url $continueurl
+     * @return string
+     */
+    public function installer_exception(tool_installaddon_installer_exception $e, moodle_url $continueurl) {
+
+        $out = $this->output->header();
+        $out .= $this->output->heading(get_string('installfromrepo', 'tool_installaddon'));
+        $out .= $this->output->box(get_string('installexception', 'tool_installaddon'), 'generalbox', 'notice');
+        $out .= $this->output->continue_button($continueurl, 'get');
+        $out .= $this->output->footer();
+
+        return $out;
     }
 
     // End of the external API /////////////////////////////////////////////////

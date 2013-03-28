@@ -74,6 +74,57 @@ class tool_installaddon_installer_test extends advanced_testcase {
             }
         }
     }
+
+    public function test_decode_remote_request() {
+        $installer = testable_tool_installaddon_installer::instance();
+
+        $request = base64_encode(json_encode(array(
+            'name' => '<h1>Stamp collection</h1>"; DELETE FROM mdl_users; --',
+            'component' => 'mod_stampcoll',
+            'version' => 2013032800,
+        )));
+        $request = $installer->testable_decode_remote_request($request);
+        $this->assertTrue(is_object($request));
+        // One, my little hobbit, never trusts the input parameters!
+        $this->assertEquals('Stamp collection&quot;; DELETE FROM mdl_users; --', $request->name);
+        $this->assertEquals('mod_stampcoll', $request->component);
+        $this->assertEquals(2013032800, $request->version);
+
+        $request = base64_encode(json_encode(array(
+            'name' => 'Theme with invalid version number',
+            'component' => 'theme_invalid',
+            'version' => '1.0',
+        )));
+        $this->assertSame(false, $installer->testable_decode_remote_request($request));
+
+        $request = base64_encode(json_encode(array(
+            'name' => 'Invalid activity name',
+            'component' => 'mod_invalid_activity',
+            'version' => 2013032800,
+        )));
+        $this->assertSame(false, $installer->testable_decode_remote_request($request));
+
+        $request = base64_encode(json_encode(array(
+            'name' => 'Moodle 3.0',
+            'component' => 'core',
+            'version' => 2022010100,
+        )));
+        $this->assertSame(false, $installer->testable_decode_remote_request($request));
+
+        $request = base64_encode(json_encode(array(
+            'name' => 'Invalid core subsystem',
+            'component' => 'core_cache',
+            'version' => 2014123400,
+        )));
+        $this->assertSame(false, $installer->testable_decode_remote_request($request));
+
+        $request = base64_encode(json_encode(array(
+            'name' => 'Non-existing plugintype',
+            'component' => 'david_mudrak',
+            'version' => 2012123199,
+        )));
+        $this->assertSame(false, $installer->testable_decode_remote_request($request));
+    }
 }
 
 
@@ -95,6 +146,10 @@ class testable_tool_installaddon_installer extends tool_installaddon_installer {
 
     public function get_site_major_version() {
         return "2.5'; DROP TABLE mdl_user; --";
+    }
+
+    public function testable_decode_remote_request($request) {
+        return parent::decode_remote_request($request);
     }
 
     protected function should_send_site_info() {
