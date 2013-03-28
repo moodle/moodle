@@ -191,14 +191,18 @@ if (empty($pageid)) {
         unset($USER->modattempts[$lesson->id]);  // if no pageid, then student is NOT reviewing
     }
 
-    // if there are any questions have been answered correctly in this attempt
-    $corrrectattempts = $lesson->get_attempts($retries, true);
+    // If there are any questions that have been answered correctly (or not) in this attempt
+    $corrrectattempts = $lesson->get_attempts($retries);
     if (!empty($corrrectattempts)) {
         $attempt = end($corrrectattempts);
         $jumpto = $DB->get_field('lesson_answers', 'jumpto', array('id' => $attempt->answerid));
         // convert the jumpto to a proper page id
-        if ($jumpto == 0) { // unlikely value!
-            $lastpageseen = $attempt->pageid;
+        if ($jumpto == 0) { // unlikely value! except in JR mod
+            // Check if a question has been incorrectly answered AND no more attempts at it are left
+            $nattempts = $DB->count_records("lesson_attempts", array("pageid" => $attempt->pageid, "userid" => $USER->id, "retry" => $attempt->retry));
+            if ($nattempts >= $lesson->maxattempts) {
+                $lastpageseen = $DB->get_field('lesson_pages', 'nextpageid', array('id' => $attempt->pageid));
+            }
         } elseif ($jumpto == LESSON_NEXTPAGE) {
             if (!$lastpageseen = $DB->get_field('lesson_pages', 'nextpageid', array('id' => $attempt->pageid))) {
                 // no nextpage go to end of lesson
