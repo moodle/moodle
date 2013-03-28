@@ -915,15 +915,25 @@ div.coursebox h3.name a {
     padding-left: 5px;
 }
 
-.dir-rtl .coursebox ul.teachers {
+.coursebox .content .courseimage,
+.coursebox .content .coursefile {
+    padding-left: 5px;
+}
+
+.dir-rtl .coursebox ul.teachers,
+.dir-rtl .coursebox .content .courseimage,
+.dir-rtl .coursebox .content .coursefile {
     padding-right: 5px;
 }
 
-.coursebox ul.teachers li {
+.coursebox ul.teachers li,
+.coursebox .coursecat {
     font-size: 10px;
 }
 
-.coursebox ul.teachers li a {
+.coursebox ul.teachers li a,
+.coursebox .coursecat a,
+.coursebox .content .coursefile a {
     font-size: 11px;
 }
 

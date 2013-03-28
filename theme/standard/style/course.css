@@ -82,6 +82,8 @@
 .coursebox .teachers {padding:3px 0 3px 21px;margin:0;font-size:0.9em;}
 .coursebox .coursecat,
 .coursebox .summary,
+.coursebox .courseimage,
+.coursebox .coursefile,
 .coursebox.remotecoursebox .remotecourseinfo {padding:3px 5px;font-size:0.9em;}
 .dir-rtl .coursebox .teachers {padding:3px 21px 3px 0;}
 

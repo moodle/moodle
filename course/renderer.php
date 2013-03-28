@@ -1070,7 +1070,7 @@ class core_course_renderer extends plugin_renderer_base {
         // If we display course in collapsed form but the course has summary or course contacts, display the link to the info page.
         $content .= html_writer::start_tag('div', array('class' => 'moreinfo'));
         if ($chelper->get_show_courses() < self::COURSECAT_SHOW_COURSES_EXPANDED) {
-            if ($course->has_summary() || $course->has_course_contacts()) {
+            if ($course->has_summary() || $course->has_course_contacts() || $course->has_course_overviewfiles()) {
                 $url = new moodle_url('/course/info.php', array('id' => $course->id));
                 $image = html_writer::empty_tag('img', array('src' => $this->output->pix_url('i/info'),
                     'alt' => $this->strings->summary));
@@ -1124,6 +1124,23 @@ class core_course_renderer extends plugin_renderer_base {
             $content .= $chelper->get_course_formatted_summary($course,
                     array('overflowdiv' => true, 'noclean' => true, 'para' => false));
             $content .= html_writer::end_tag('div'); // .summary
+        }
+
+        // display course overview files
+        foreach ($course->get_course_overviewfiles() as $file) {
+            $isimage = $file->is_valid_image();
+            $url = file_encode_url("$CFG->wwwroot/pluginfile.php",
+                    '/'. $file->get_contextid(). '/'. $file->get_component(). '/'.
+                    $file->get_filearea(). $file->get_filepath(). $file->get_filename(), !$isimage);
+            if ($isimage) {
+                $content .= html_writer::tag('div',
+                        html_writer::empty_tag('img', array('src' => $url)),
+                        array('class' => 'courseimage'));
+            } else {
+                $content .= html_writer::tag('div',
+                        html_writer::link($url, $file->get_filename()),
+                        array('class' => 'coursefile'));
+            }
         }
 
         // display course contacts. See course_in_list::get_course_contacts()

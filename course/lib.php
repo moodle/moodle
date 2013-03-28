@@ -2175,6 +2175,53 @@ function save_local_role_names($courseid, $data) {
 }
 
 /**
+ * Returns options to use in course overviewfiles filemanager
+ *
+ * @param null|stdClass|course_in_list|int $course either object that has 'id' property or just the course id;
+ *     may be empty if course does not exist yet (course create form)
+ * @return array|null array of options such as maxfiles, maxbytes, accepted_types, etc.
+ *     or null if overviewfiles are disabled
+ */
+function course_overviewfiles_options($course) {
+    global $CFG;
+    if (empty($CFG->courseoverviewfileslimit)) {
+        return null;
+    }
+    $accepted_types = preg_split('/\s*,\s*/', trim($CFG->courseoverviewfilesext), -1, PREG_SPLIT_NO_EMPTY);
+    if (in_array('*', $accepted_types) || empty($accepted_types)) {
+        $accepted_types = '*';
+    } else {
+        // Since config for $CFG->courseoverviewfilesext is a text box, human factor must be considered.
+        // Make sure extensions are prefixed with dot unless they are valid typegroups
+        foreach ($accepted_types as $i => $type) {
+            if (substr($type, 0, 1) !== '.') {
+                require_once($CFG->libdir. '/filelib.php');
+                if (!count(file_get_typegroup('extension', $type))) {
+                    // It does not start with dot and is not a valid typegroup, this is most likely extension.
+                    $accepted_types[$i] = '.'. $type;
+                    $corrected = true;
+                }
+            }
+        }
+        if (!empty($corrected)) {
+            set_config('courseoverviewfilesext', join(',', $accepted_types));
+        }
+    }
+    $options = array(
+        'maxfiles' => $CFG->courseoverviewfileslimit,
+        'maxbytes' => $CFG->maxbytes,
+        'subdirs' => 0,
+        'accepted_types' => $accepted_types
+    );
+    if (!empty($course->id)) {
+        $options['context'] = context_course::instance($course->id);
+    } else if (is_int($course) && $course > 0) {
+        $options['context'] = context_course::instance($course);
+    }
+    return $options;
+}
+
+/**
  * Create a course and either return a $course object
  *
  * Please note this functions does not verify any access control,
@@ -2231,6 +2278,10 @@ function create_course($data, $editoroptions = NULL) {
         $DB->set_field('course', 'summary', $data->summary, array('id'=>$newcourseid));
         $DB->set_field('course', 'summaryformat', $data->summary_format, array('id'=>$newcourseid));
     }
+    if ($overviewfilesoptions = course_overviewfiles_options($newcourseid)) {
+        // Save the course overviewfiles
+        $data = file_postupdate_standard_filemanager($data, 'overviewfiles', $overviewfilesoptions, $context, 'course', 'overviewfiles', 0);
+    }
 
     // update course format options
     course_get_format($newcourseid)->update_course_format_options($data);
@@ -2284,6 +2335,9 @@ function update_course($data, $editoroptions = NULL) {
 
     if ($editoroptions) {
         $data = file_postupdate_standard_editor($data, 'summary', $editoroptions, $context, 'course', 'summary', 0);
+    }
+    if ($overviewfilesoptions = course_overviewfiles_options($data->id)) {
+        $data = file_postupdate_standard_filemanager($data, 'overviewfiles', $overviewfilesoptions, $context, 'course', 'overviewfiles', 0);
     }
 
     if (!isset($data->category) or empty($data->category)) {

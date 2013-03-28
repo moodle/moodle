@@ -121,6 +121,40 @@ class file_info_context_course extends file_info {
     }
 
     /**
+     * Gets a stored file for the course images filearea directory
+     *
+     * @param int $itemid item ID
+     * @param string $filepath file path
+     * @param string $filename file name
+     * @return file_info|null file_info instance or null if not found or access not allowed
+     */
+    protected function get_area_course_overviewfiles($itemid, $filepath, $filename) {
+        global $CFG;
+
+        if (!has_capability('moodle/course:update', $this->context)) {
+            return null;
+        }
+        if (is_null($itemid)) {
+            return $this;
+        }
+
+        $fs = get_file_storage();
+
+        $filepath = is_null($filepath) ? '/' : $filepath;
+        $filename = is_null($filename) ? '.' : $filename;
+        if (!$storedfile = $fs->get_file($this->context->id, 'course', 'overviewfiles', 0, $filepath, $filename)) {
+            if ($filepath === '/' and $filename === '.') {
+                $storedfile = new virtual_root_file($this->context->id, 'course', 'overviewfiles', 0);
+            } else {
+                // not found
+                return null;
+            }
+        }
+        $urlbase = $CFG->wwwroot.'/pluginfile.php';
+        return new file_info_stored($this->browser, $this->context, $storedfile, $urlbase, get_string('areacourseoverviewfiles', 'repository'), false, true, true, false);
+    }
+
+    /**
      * Gets a stored file for the course section filearea directory
      *
      * @param int $itemid item ID
@@ -365,6 +399,7 @@ class file_info_context_course extends file_info {
     private function get_filtered_children($extensions = '*', $countonly = false, $returnemptyfolders = false) {
         $areas = array(
             array('course', 'summary'),
+            array('course', 'overviewfiles'),
             array('course', 'section'),
             array('backup', 'section'),
             array('backup', 'course'),
