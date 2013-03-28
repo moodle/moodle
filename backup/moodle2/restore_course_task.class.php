@@ -71,6 +71,8 @@ class restore_course_task extends restore_task {
             $this->add_step(new restore_course_structure_step('course_info', 'course.xml'));
         }
 
+        $this->add_step(new restore_course_legacy_files_step('legacy_files'));
+
         // Restore course enrolments (plugins and membership). Conditionally prevented for any IMPORT/HUB operation
         if ($this->plan->get_mode() != backup::MODE_IMPORT && $this->plan->get_mode() != backup::MODE_HUB) {
             $this->add_step(new restore_enrolments_structure_step('course_enrolments', 'enrolments.xml'));
