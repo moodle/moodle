@@ -83,15 +83,35 @@ class behat_course extends behat_base {
      */
     public function i_add_to_section($activity, $section) {
 
-        // Clicks add activity or resource section link.
-        $sectionxpath = "//*[@id='section-" . $section . "']/*/*/*/div[@class='section-modchooser']/span/a";
-        $sectionnode = $this->find('xpath', $sectionxpath);
-        $sectionnode->click();
+        $sectionxpath = "//*[@id='section-" . $section . "']";
 
-        // Clicks the selected activity if it exists.
-        $activityxpath = ".//label[contains(.,'" . $activity . "')]/input";
-        $activitynode = $this->find('xpath', $activityxpath);
-        $activitynode->doubleClick();
+        if ($this->running_javascript()) {
+
+            // Clicks add activity or resource section link.
+            $sectionxpath = $sectionxpath . "/descendant::div[@class='section-modchooser']/span/a";
+            $sectionnode = $this->find('xpath', $sectionxpath);
+            $sectionnode->click();
+
+            // Clicks the selected activity if it exists.
+            $activityxpath = ".//label[contains(.,'" . $activity . "')]/input";
+            $activitynode = $this->find('xpath', $activityxpath);
+            $activitynode->doubleClick();
+
+        } else {
+            // Without Javascript.
+
+            // Selecting the option from the select box which contains the option.
+            $selectxpath = $sectionxpath . "/descendant::div[contains(concat(' ', @class, ' '), ' section_add_menus ')]
+/descendant::select[contains(., '" . $activity . "')]";
+            $selectnode = $this->find('xpath', $selectxpath);
+            $selectnode->selectOption($activity);
+
+            // Go button.
+            $gobuttonxpath = $selectxpath . "/ancestor::form/descendant::input[@type='submit']";
+            $gobutton = $this->find('xpath', $gobuttonxpath);
+            $gobutton->click();
+        }
+
     }
 
 }
