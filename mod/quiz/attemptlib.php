@@ -1359,6 +1359,23 @@ class quiz_attempt {
     }
 
     /**
+     * Process all the autosaved data that was part of the current request.
+     *
+     * @param int $timestamp the timestamp that should be stored as the modifed
+     * time in the database for these actions. If null, will use the current time.
+     */
+    public function process_auto_save($timestamp) {
+        global $DB;
+
+        $transaction = $DB->start_delegated_transaction();
+
+        $this->quba->process_all_autosaves($timestamp);
+        question_engine::save_questions_usage_by_activity($this->quba);
+
+        $transaction->allow_commit();
+    }
+
+    /**
      * Update the flagged state for all question_attempts in this usage, if their
      * flagged state was changed in the request.
      */
