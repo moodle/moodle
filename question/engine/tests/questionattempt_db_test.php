@@ -140,4 +140,116 @@ class question_attempt_db_test extends data_loading_method_test_base {
         $this->assertEquals(1, $step->get_user_id());
         $this->assertEquals(array(), $step->get_all_data());
     }
+
+    public function test_load_with_autosaved_data() {
+        $records = new question_test_recordset(array(
+            array('questionattemptid', 'contextid', 'questionusageid', 'slot',
+                                   'behaviour', 'questionid', 'variant', 'maxmark', 'minfraction', 'flagged',
+                                                                                       'questionsummary', 'rightanswer', 'responsesummary', 'timemodified',
+                                                                                                             'attemptstepid', 'sequencenumber', 'state', 'fraction',
+                                                                                                                                                'timecreated', 'userid', 'name', 'value'),
+            array(1, 123, 1, 1, 'deferredfeedback', -1, 1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 4, -3, 'complete',          null, 1256233715, 1,   'answer',  '1'),
+            array(1, 123, 1, 1, 'deferredfeedback', -1, 1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 1,  0, 'todo',              null, 1256233700, 1,       null, null),
+            array(1, 123, 1, 1, 'deferredfeedback', -1, 1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 2,  1, 'complete',          null, 1256233705, 1,   'answer',  '1'),
+            array(1, 123, 1, 1, 'deferredfeedback', -1, 1, 2.0000000, 0.0000000, 1, '', '', '', 1256233790, 3,  2, 'complete',          null, 1256233710, 1,   'answer',  '0'),
+        ));
+
+        $question = test_question_maker::make_question('truefalse', 'true');
+        $question->id = -1;
+
+        question_bank::start_unit_test();
+        question_bank::load_test_question_data($question);
+        $qa = question_attempt::load_from_records($records, 1, new question_usage_null_observer(), 'deferredfeedback');
+        question_bank::end_unit_test();
+
+        $this->assertEquals($question->questiontext, $qa->get_question()->questiontext);
+
+        $this->assertEquals(4, $qa->get_num_steps());
+        $this->assertTrue($qa->has_autosaved_step());
+
+        $step = $qa->get_step(0);
+        $this->assertEquals(question_state::$todo, $step->get_state());
+        $this->assertNull($step->get_fraction());
+        $this->assertEquals(1256233700, $step->get_timecreated());
+        $this->assertEquals(1, $step->get_user_id());
+        $this->assertEquals(array(), $step->get_all_data());
+
+        $step = $qa->get_step(1);
+        $this->assertEquals(question_state::$complete, $step->get_state());
+        $this->assertNull($step->get_fraction());
+        $this->assertEquals(1256233705, $step->get_timecreated());
+        $this->assertEquals(1, $step->get_user_id());
+        $this->assertEquals(array('answer' => '1'), $step->get_all_data());
+
+        $step = $qa->get_step(2);
+        $this->assertEquals(question_state::$complete, $step->get_state());
+        $this->assertNull($step->get_fraction());
+        $this->assertEquals(1256233710, $step->get_timecreated());
+        $this->assertEquals(1, $step->get_user_id());
+        $this->assertEquals(array('answer' => '0'), $step->get_all_data());
+
+        $step = $qa->get_step(3);
+        $this->assertEquals(question_state::$complete, $step->get_state());
+        $this->assertNull($step->get_fraction());
+        $this->assertEquals(1256233715, $step->get_timecreated());
+        $this->assertEquals(1, $step->get_user_id());
+        $this->assertEquals(array('answer' => '1'), $step->get_all_data());
+    }
+
+    public function test_load_with_unnecessary_autosaved_data() {
+        // The point here is that the somehow (probably due to two things
+        // happening concurrently, we have autosaved data in the database that
+        // has already been superceded by real data, so it should be ignored.
+        // There is also a second lot of redundant data to delete.
+        $records = new question_test_recordset(array(
+            array('questionattemptid', 'contextid', 'questionusageid', 'slot',
+                                   'behaviour', 'questionid', 'variant', 'maxmark', 'minfraction', 'flagged',
+                                                                                       'questionsummary', 'rightanswer', 'responsesummary', 'timemodified',
+                                                                                                             'attemptstepid', 'sequencenumber', 'state', 'fraction',
+                                                                                                                                                'timecreated', 'userid', 'name', 'value'),
+            array(1, 123, 1, 1, 'deferredfeedback', -1, 1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 5, -2, 'complete',          null, 1256233715, 1,   'answer',  '0'),
+            array(1, 123, 1, 1, 'deferredfeedback', -1, 1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 4, -1, 'complete',          null, 1256233715, 1,   'answer',  '0'),
+            array(1, 123, 1, 1, 'deferredfeedback', -1, 1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 1,  0, 'todo',              null, 1256233700, 1,       null, null),
+            array(1, 123, 1, 1, 'deferredfeedback', -1, 1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 2,  1, 'complete',          null, 1256233705, 1,   'answer',  '1'),
+            array(1, 123, 1, 1, 'deferredfeedback', -1, 1, 2.0000000, 0.0000000, 1, '', '', '', 1256233790, 3,  2, 'complete',          null, 1256233710, 1,   'answer',  '0'),
+        ));
+
+        $question = test_question_maker::make_question('truefalse', 'true');
+        $question->id = -1;
+
+        question_bank::start_unit_test();
+        question_bank::load_test_question_data($question);
+        $observer = new testable_question_engine_unit_of_work(
+                question_engine::make_questions_usage_by_activity('unit_test', context_system::instance()));
+        $qa = question_attempt::load_from_records($records, 1, $observer, 'deferredfeedback');
+        question_bank::end_unit_test();
+
+        $this->assertEquals($question->questiontext, $qa->get_question()->questiontext);
+
+        $this->assertEquals(3, $qa->get_num_steps());
+        $this->assertFalse($qa->has_autosaved_step());
+
+        $step = $qa->get_step(0);
+        $this->assertEquals(question_state::$todo, $step->get_state());
+        $this->assertNull($step->get_fraction());
+        $this->assertEquals(1256233700, $step->get_timecreated());
+        $this->assertEquals(1, $step->get_user_id());
+        $this->assertEquals(array(), $step->get_all_data());
+
+        $step = $qa->get_step(1);
+        $this->assertEquals(question_state::$complete, $step->get_state());
+        $this->assertNull($step->get_fraction());
+        $this->assertEquals(1256233705, $step->get_timecreated());
+        $this->assertEquals(1, $step->get_user_id());
+        $this->assertEquals(array('answer' => '1'), $step->get_all_data());
+
+        $step = $qa->get_step(2);
+        $this->assertEquals(question_state::$complete, $step->get_state());
+        $this->assertNull($step->get_fraction());
+        $this->assertEquals(1256233710, $step->get_timecreated());
+        $this->assertEquals(1, $step->get_user_id());
+        $this->assertEquals(array('answer' => '0'), $step->get_all_data());
+
+        $this->assertEquals(2, count($observer->get_steps_deleted()));
+    }
 }

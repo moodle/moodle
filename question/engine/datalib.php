@@ -63,7 +63,7 @@ class question_engine_data_mapper {
     /**
      * @param moodle_database $db a database connectoin. Defaults to global $DB.
      */
-    public function __construct($db = null) {
+    public function __construct(moodle_database $db = null) {
         if (is_null($db)) {
             global $DB;
             $this->db = $DB;
@@ -613,12 +613,10 @@ ORDER BY qa.slot
      * @return array of question_attempts.
      */
     public function load_attempts_at_question($questionid, qubaid_condition $qubaids) {
-        global $DB;
-
         $params = $qubaids->from_where_params();
         $params['questionid'] = $questionid;
 
-        $records = $DB->get_recordset_sql("
+        $records = $this->db->get_recordset_sql("
 SELECT
     quba.contextid,
     quba.preferredbehaviour,

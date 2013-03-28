@@ -511,7 +511,49 @@ class question_usage_by_activity {
      * instead of the data from $_POST.
      */
     public function process_all_actions($timestamp = null, $postdata = null) {
-        // note: we must not use "question_attempt::get_submitted_var()" because there is no attempt instance!!!
+        foreach ($this->get_slots_in_request($postdata) as $slot) {
+            if (!$this->validate_sequence_number($slot, $postdata)) {
+                continue;
+            }
+            $submitteddata = $this->extract_responses($slot, $postdata);
+            $this->process_action($slot, $submitteddata, $timestamp);
+        }
+        $this->update_question_flags($postdata);
+    }
+
+    /**
+     * Process all the question autosave data in the current request.
+     *
+     * If there is a parameter slots included in the post data, then only
+     * those question numbers will be processed, otherwise all questions in this
+     * useage will be.
+     *
+     * This function also does {@link update_question_flags()}.
+     *
+     * @param int $timestamp optional, use this timestamp as 'now'.
+     * @param array $postdata optional, only intended for testing. Use this data
+     * instead of the data from $_POST.
+     */
+    public function process_all_autosaves($timestamp = null, $postdata = null) {
+        foreach ($this->get_slots_in_request($postdata) as $slot) {
+            if (!$this->is_autosave_required($slot, $postdata)) {
+                continue;
+            }
+            $submitteddata = $this->extract_responses($slot, $postdata);
+            $this->process_autosave($slot, $submitteddata, $timestamp);
+        }
+        $this->update_question_flags($postdata);
+    }
+
+    /**
+     * Get the list of slot numbers that should be processed as part of processing
+     * the current request.
+     * @param array $postdata optional, only intended for testing. Use this data
+     * instead of the data from $_POST.
+     * @return array of slot numbers.
+     */
+    protected function get_slots_in_request($postdata = null) {
+        // Note: we must not use "question_attempt::get_submitted_var()" because there is no attempt instance!!!
         if (is_null($postdata)) {
             $slots = optional_param('slots', null, PARAM_SEQUENCE);
         } else if (array_key_exists('slots', $postdata)) {
@@ -526,14 +568,7 @@ class question_usage_by_activity {
         } else {
             $slots = explode(',', $slots);
         }
-        foreach ($slots as $slot) {
-            if (!$this->validate_sequence_number($slot, $postdata)) {
-                continue;
-            }
-            $submitteddata = $this->extract_responses($slot, $postdata);
-            $this->process_action($slot, $submitteddata, $timestamp);
-        }
-        $this->update_question_flags($postdata);
+        return $slots;
     }
 
     /**
@@ -558,6 +593,18 @@ class question_usage_by_activity {
         $qa = $this->get_question_attempt($slot);
         $qa->process_action($submitteddata, $timestamp);
         $this->observer->notify_attempt_modified($qa);
+    }
+
+    /**
+     * Process an autosave action on a specific question.
+     * @param int $slot the number used to identify this question within this usage.
+     * @param $submitteddata the submitted data that constitutes the action.
+     */
+    public function process_autosave($slot, $submitteddata, $timestamp = null) {
+        $qa = $this->get_question_attempt($slot);
+        if ($qa->process_autosave($submitteddata, $timestamp)) {
+            $this->observer->notify_attempt_modified($qa);
+        }
     }
 
     /**
