@@ -105,7 +105,7 @@ if ($lastattempt && ($lastattempt->state == quiz_attempt::IN_PROGRESS ||
 
 } else {
     // Get number for the next or unfinished attempt.
-    if ($lastattempt && !$lastattempt->preview && !$quizobj->is_preview_user()) {
+    if ($lastattempt) {
         $attemptnumber = $lastattempt->attempt + 1;
     } else {
         $lastattempt = false;
