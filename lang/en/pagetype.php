@@ -26,6 +26,10 @@
 $string['page-admin-current'] = 'The current site administration page';
 $string['page-admin-x'] = 'Any site administration page';
 $string['page-course-view-x'] = 'Any type of course main page';
+$string['page-course-index'] = 'Top category view page';
+$string['page-course-index-category'] = 'The current category view page';
+$string['page-course-index-x'] = 'Any category view page';
+$string['page-course-search'] = 'Courses search page';
 $string['page-course-x'] = 'Any course page';
 $string['page-course-report-x'] = 'Any course report';
 $string['page-mod-x'] = 'Any activity module page';
