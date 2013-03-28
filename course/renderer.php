@@ -1069,13 +1069,12 @@ class core_course_renderer extends plugin_renderer_base {
 
         // If we display course in collapsed form but the course has summary or course contacts, display the link to the info page.
         $content .= html_writer::start_tag('div', array('class' => 'moreinfo'));
-        if ($course->has_summary() || $course->has_course_contacts()) {
-            if ($chelper->get_show_courses() < self::COURSECAT_SHOW_COURSES_EXPANDED) {
+        if ($chelper->get_show_courses() < self::COURSECAT_SHOW_COURSES_EXPANDED) {
+            if ($course->has_summary() || $course->has_course_contacts()) {
                 $url = new moodle_url('/course/info.php', array('id' => $course->id));
                 $image = html_writer::empty_tag('img', array('src' => $this->output->pix_url('i/info'),
                     'alt' => $this->strings->summary));
-                $content .= $this->action_link($url, $image, new popup_action('click', $url, 'courseinfo'),
-                        array('title' => $this->strings->summary));
+                $content .= html_writer::link($url, $image, array('title' => $this->strings->summary));
             }
         }
         $content .= html_writer::end_tag('div'); // .moreinfo

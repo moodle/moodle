@@ -123,7 +123,7 @@ li.section.hidden span.commands a.editing_show {cursor:default;}
 .coursebox .enrolmenticons img,
 .coursebox .moreinfo img {margin:0 .2em;}
 .coursebox .content {clear:both;}
-.courses .coursebox .summary,
+.coursebox .summary,
 .coursebox .coursecat {float:right;width: 55%;}
 .coursebox .coursecat {text-align:right;clear:right;}
 .coursebox.remotecoursebox .remotecourseinfo {float:left;width: 40%;}
@@ -133,7 +133,7 @@ li.section.hidden span.commands a.editing_show {cursor:default;}
 .dir-rtl .coursebox .teachers {float:right;}
 .dir-rtl .coursebox .enrolmenticons,
 .dir-rtl .coursebox .moreinfo {float:left;}
-.dir-rtl .courses .coursebox .summary,
+.dir-rtl .coursebox .summary,
 .dir-rtl .coursebox .coursecat {float:left;}
 .dir-rtl .coursebox .coursecat {text-align:left;clear:left;}
 
