@@ -1,0 +1,97 @@
+<?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Steps definitions related with administration.
+ *
+ * @package   core
+ * @category  test
+ * @copyright 2013 David Monllaó
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+// NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
+
+require_once(__DIR__ . '/../../../lib/behat/behat_base.php');
+require_once(__DIR__ . '/../../../lib/behat/behat_field_manager.php');
+
+use Behat\Gherkin\Node\TableNode as TableNode,
+    Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
+
+/**
+ * Site administration level steps definitions.
+ *
+ * @package    core
+ * @category   test
+ * @copyright  2013 David Monllaó
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class behat_admin extends behat_base {
+
+    /**
+     * Sets the specified site settings. A table with | Setting label | value | is expected.
+     *
+     * @Given /^I set the following administration settings values:$/
+     * @param TableNode $table
+     */
+    public function i_set_the_following_administration_settings_values(TableNode $table) {
+
+        if (!$data = $table->getRowsHash()) {
+            return;
+        }
+
+        foreach ($data as $label => $value) {
+
+            // We expect admin block to be visible, otherwise go to homepage.
+            if (!$this->getSession()->getPage()->find('css', '.block_settings')) {
+                $this->getSession()->visit($this->locate_path('/'));
+                $this->getSession()->wait(self::TIMEOUT, '(document.readyState === "complete")');
+            }
+
+            // Search by label.
+            $searchbox = $this->find_field('Search in settings');
+            $searchbox->setValue($label);
+            $submitsearch = $this->find('css', 'form.adminsearchform input[type=submit]');
+            $submitsearch->press();
+
+            $this->getSession()->wait(self::TIMEOUT, '(document.readyState === "complete")');
+
+            // Admin settings does not use the same DOM structure than other moodle forms
+            // but we also need to use lib/behat/form_field/* to deal with the different moodle form elements.
+            $exception = new ElementNotFoundException($this->getSession(), '"' . $label . '" administration setting ');
+            $fieldxpath = "//*[self::input | self::textarea | self::select][not(./@type = 'submit' or ./@type = 'image' or ./@type = 'hidden')]
+[@id=//label[contains(normalize-space(string(.)), '" . $label . "')]/@for]";
+            $fieldnode = $this->find('xpath', $fieldxpath, $exception);
+            $formfieldtypenode = $this->find('xpath', $fieldxpath . "/ancestor::div[@class='form-setting']
+/child::div[contains(concat(' ', @class, ' '),  ' form-')]/child::*/parent::div");
+
+            // Getting the class which contains the field type.
+            $classes = explode(' ', $formfieldtypenode->getAttribute('class'));
+            foreach ($classes as $class) {
+                if (substr($class, 0, 5) == 'form-') {
+                    $type = substr($class, 5);
+                }
+            }
+
+            // Instantiating the appropiate field type.
+            $field = behat_field_manager::get_field_instance($type, $fieldnode, $this->getSession());
+            $field->set_value($value);
+
+            $this->find_button('Save changes')->press();
+        }
+    }
+
+}
