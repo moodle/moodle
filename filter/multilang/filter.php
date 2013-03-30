@@ -41,7 +41,7 @@ defined('MOODLE_INTERNAL') || die();
 //
 // Improvements made by Vanyo Georgiev <info@vanyog.com> 29-Oct-2012
 // Improvements make possible to use 
-//   <div class="multiland" lang="XX">one language</div><div class="multiland" lang="YY">another language</div>
+//   <div class="multilang" lang="XX">one language</div><div class="multilang" lang="YY">another language</div>
 // if needed and format the text in div blocks.
 
 class filter_multilang extends moodle_text_filter {
