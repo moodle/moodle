@@ -206,6 +206,8 @@ class question_engine_data_mapper {
     public function load_question_attempt_step($stepid) {
         $records = $this->db->get_recordset_sql("
 SELECT
+    quba.contextid,
+    COALLESCE(q.qtype, 'missingtype') AS qtype,
     qas.id AS attemptstepid,
     qas.questionattemptid,
     qas.sequencenumber,
@@ -216,7 +218,10 @@ SELECT
     qasd.name,
     qasd.value
 
-FROM {question_attempt_steps} qas
+FROM      {question_attempt_steps}     qas
+JOIN      {question_attempts}          qa   ON qa.id              = qas.questionattemptid
+JOIN      {question_usages}            quba ON quba.id            = qa.questionusageid
+LEFT JOIN {question}                   q    ON q.id               = qa.questionid
 LEFT JOIN {question_attempt_step_data} qasd ON qasd.attemptstepid = qas.id
 
 WHERE
@@ -227,7 +232,6 @@ WHERE
             throw new coding_exception('Failed to load question_attempt_step ' . $stepid);
         }
 
-        // TODO: pass a question_type and a contextid to load_from_records to get response files
         $step = question_attempt_step::load_from_records($records, $stepid);
         $records->close();
 

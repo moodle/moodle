@@ -370,11 +370,11 @@ class question_attempt_step {
      * Create a question_attempt_step from records loaded from the database.
      * @param Iterator $records Raw records loaded from the database.
      * @param int $stepid The id of the records to extract.
-     * @param string $qtype The question type of which this is an attempt
-     * @param int $contextid The contextid of this question attempt
+     * @param string $qtype The question type of which this is an attempt.
+     *      If not given, each record must include a qtype field.
      * @return question_attempt_step The newly constructed question_attempt_step.
      */
-    public static function load_from_records($records, $attemptstepid, $qtype = null, $contextid = null) {
+    public static function load_from_records($records, $attemptstepid, $qtype = null) {
         $currentrec = $records->current();
         while ($currentrec->attemptstepid != $attemptstepid) {
             $records->next();
@@ -386,6 +386,7 @@ class question_attempt_step {
         }
 
         $record = $currentrec;
+        $contextid = null;
         $data = array();
         while ($currentrec && $currentrec->attemptstepid == $attemptstepid) {
             if (!is_null($currentrec->name)) {
@@ -410,14 +411,15 @@ class question_attempt_step {
         // Somehow, we need to get that information to this point by modifying
         // all the paths by which this method can be called.
         // Can we only return files when it's possible? Should there be some kind of warning?
-        if ($qtype && $contextid) {
-            foreach (question_bank::get_qtype($qtype)->response_file_areas() as $area) {
-                if (empty($step->data[$area])) {
-                    continue;
-                }
-
-                $step->data[$area] = new question_file_loader($step, $area, $step->get_qt_var($area), $contextid);
+        if (is_null($qtype)) {
+            $qtype = $record->qtype;
+        }
+        foreach (question_bank::get_qtype($qtype)->response_file_areas() as $area) {
+            if (empty($step->data[$area])) {
+                continue;
             }
+
+            $step->data[$area] = new question_file_loader($step, $area, $step->data[$area], $record->contextid);
         }
 
         return $step;
