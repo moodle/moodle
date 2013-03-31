@@ -62,4 +62,7 @@
 #page-grade-grading-pick .template-actions .action .action-text {display:inline;}
 #page-grade-grading-pick .template-actions .action .action-icon {margin:0px 3px;}
 #page-grade-grading-pick .template-preview-confirm {width:50%;margin:1em auto;border:1px solid #EEE; padding: 1em;}
-#page-grade-grading-pick .singlebutton {clear:both;}
+#page-grade-grading-pick .singlebutton,
+.path-grade-report-user h2.main {
+    clear:both;
+}
