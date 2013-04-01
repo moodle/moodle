@@ -176,7 +176,9 @@ class behat_forms extends behat_base {
         $selectnode->selectOption($option);
 
         // Adding a click as Selenium requires it to fire some JS events.
-        $selectnode->click();
+        if ($this->running_javascript()) {
+            $selectnode->click();
+        }
     }
 
     /**
@@ -192,7 +194,9 @@ class behat_forms extends behat_base {
         $radionode->check();
 
         // Adding a click as Selenium requires it to fire some JS events.
-        $radionode->click();
+        if ($this->running_javascript()) {
+            $radionode->click();
+        }
     }
 
     /**

@@ -46,7 +46,16 @@ class behat_blocks extends behat_base {
      * @param string $blockname
      */
     public function i_add_the_block($blockname) {
-        return new Given('I select "' . $blockname . '" from "bui_addblock"');
+        $steps = new Given('I select "' . $blockname . '" from "bui_addblock"');
+
+        // If we are running without javascript we need to submit the form.
+        if (!$this->running_javascript()) {
+            $steps = array(
+                $steps,
+                new Given('I click on "Go" "button" in the "#add_block" "css_element"')
+            );
+        }
+        return $steps;
     }
 
 }
