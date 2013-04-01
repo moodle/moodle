@@ -54,6 +54,15 @@ class behat_general extends behat_base {
     }
 
     /**
+     * Reloads the current page.
+     *
+     * @Given /^I reload the page$/
+     */
+    public function reload() {
+        $this->getSession()->reload();
+    }
+
+    /**
      * Clicks link with specified id|title|alt|text.
      *
      * @When /^I follow "(?P<link_string>(?:[^"]|\\")*)"$/
