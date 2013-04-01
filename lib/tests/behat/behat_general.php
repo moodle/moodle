@@ -27,7 +27,8 @@
 
 require_once(__DIR__ . '/../../behat/behat_base.php');
 
-use Behat\Mink\Exception\ExpectationException as ExpectationException;
+use Behat\Mink\Exception\ExpectationException as ExpectationException,
+    Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
 
 /**
  * Cross component steps definitions.
@@ -222,6 +223,42 @@ class behat_general extends behat_base {
 
         if ($node->hasAttribute('disabled')) {
             throw new ExpectationException('The element "' . $element . '" is not enabled', $this->getSession());
+        }
+    }
+
+    /**
+     * Checks the provided element and selector type exists in the current page. This step is for advanced users, use it if you don't find anything else suitable for what you need.
+     *
+     * @Then /^"(?P<element_string>(?:[^"]|\\")*)" "(?P<selector_string>[^"]*)" should exists$/
+     * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param string $element The locator of the specified selector
+     * @param string $selectortype The selector type
+     */
+    public function should_exists($element, $selectortype) {
+
+        // Getting Mink selector and locator.
+        list($selector, $locator) = $this->transform_selector($selectortype, $element);
+
+        // Will throw an ElementNotFoundException if it does not exist.
+        $this->find($selector, $locator);
+    }
+
+    /**
+     * Checks that the provided element and selector type not exists in the current page. This step is for advanced users, use it if you don't find anything else suitable for what you need.
+     *
+     * @Then /^"(?P<element_string>(?:[^"]|\\")*)" "(?P<selector_string>[^"]*)" should not exists$/
+     * @throws ExpectationException
+     * @param string $element The locator of the specified selector
+     * @param string $selectortype The selector type
+     */
+    public function should_not_exists($element, $selectortype) {
+
+        try {
+            $this->should_exists($element, $selectortype);
+            throw new ExpectationException('The "' . $element . '" "' . $selectortype . '" exists in the current page', $this->getSession());
+        }catch (ElementNotFoundException $e) {
+            // It passes.
+            return;
         }
     }
 
