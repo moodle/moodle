@@ -332,23 +332,25 @@ img.icon {
     padding:0;
     margin:0;
 }
-.categorybox .category {
-    font-size: 100%;
-    font-weight: normal;
-    padding: 0px 0px 0px 10px;
+#region-main .course_category_tree .category > .info h3.name,
+#region-main .course_category_tree .category > .info h4.name {
+    padding-left: 16px;
+}
+.dir-rtl #region-main .course_category_tree .category > .info h3.name,
+.dir-rtl #region-main .course_category_tree .category > .info h4.name {
+    padding-right: 16px;
+    padding-left: 0px;
 }
 li.activity {
     padding-bottom:5px;
 }
-.categorylist {
-    padding-bottom:10px;
+.coursebox .name, #region-main .coursebox h3.name {
+    padding:0;
+    margin:5px 0;
 }
-.course {
-    padding-bottom:25px;
-}
-.course_category_tree .category .courses .course_link {
-    padding:10px 18px;
-    background-position: 0 5px;
+.coursebox .name a {
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 .coursebox .summary{
     padding: 10px 0;

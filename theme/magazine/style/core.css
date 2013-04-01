@@ -875,7 +875,7 @@ table.rolecap td.risk {
     border-left: 1px solid #dadada;
 }
 
-/** Coursebox and category box stuff for front page **/
+/** Course and category listings **/
 
 ul.unlist, ul.unlist li, ul.unlist li div, ul.unlist li div ul, ul.unlist li div ul li {
     list-style-type: none;
@@ -884,14 +884,19 @@ ul.unlist, ul.unlist li, ul.unlist li div, ul.unlist li div ul, ul.unlist li div
 }
 
 div.coursebox {
-    padding-bottom: 7px !important;
-    margin-bottom: 7px !important;
-    border-bottom: 1px solid #eee;
+    margin-bottom: 7px;
+    border-color: #eeeeee;
 }
 
-div.coursebox h3.name {
-    margin-top: 0px;
-    margin-bottom: 0px;
+div.coursebox.collapsed {
+    margin-bottom: 0;
+}
+
+div.coursebox > .info .name a {
+    font-weight: inherit;
+}
+div.coursebox .name {
+    margin: 5px;
 }
 
 div.coursebox h3.name a {
@@ -899,94 +904,52 @@ div.coursebox h3.name a {
     font-weight: 400;
 }
 
-.unlist div.summary {
+.courses .coursebox div.summary {
     font-size: 14px;
     color: #666666;
     font-style: italic;
 }
 
-.unlist ul.teachers {
+.courses .coursebox ul.teachers {
     display: block;
     padding-left: 5px !important;
 }
 
-.dir-rtl .unlist ul.teachers {
+.dir-rtl .courses .coursebox ul.teachers {
     padding-right: 5px;
 }
 
-.unlist ul.teachers li {
+.courses .coursebox ul.teachers li {
     font-size: 10px;
 }
 
-.unlist ul.teachers li a {
+.courses .coursebox ul.teachers li a {
     font-size: 11px;
 }
 
-div.categorybox {
-    border: none !important;
-    margin-top: 0;
-}
-
-td.category.name a {
-    padding-left: 20px;
-    background: url([[pix:theme|jcourse]]) no-repeat 0 50%;
-    font-weight: 400;
-    font-size: 16px;
-}
-
-#course-index td.category.name a {
-    padding-left: 0px;
-    background-image: none;
-}
-
-table.categorylist td {
-    padding: 0;
-}
-
-div.course_category_tree a {
+div.course_category_tree .category > .info a {
     font-size: 16px;
     font-weight: 400;
     text-decoration: none;
 }
 
-div.course_category_tree div.category,div.course_category_tree div.category_label,div.course_category_tree div.courses {
+div.course_category_tree div.category,
+div.course_category_tree div.category > .info,
+div.course_category_tree div.courses {
     margin-bottom: 8px;
 }
 
-div.course_category_tree div.category.with_children div.category_label {
-    background-position: 0 55% !important;
-}
-.dir-rtl div.course_category_tree div.category.with_children div.category_label {
-    background-position: right center !important;
-}
-
-div.course_category_tree div.course.odd {
+div.course_category_tree div.coursebox.odd {
     background: #eee;
 }
 
-div.course_category_tree div.course a {
+div.course_category_tree div.coursebox a {
     font-size: 14px;
 }
 
-div.category.subcategory.with_children {
-    margin-left: 20px;
-}
-
-.dir-rtl div.category.subcategory.with_children {
-    margin-right: 20px;
-}
-
-.dir-rtl .course_category_tree .category .course_info {
-    padding-right: 20px;
-}
-
-.dir-rtl.jsenabled .course_category_tree .category.with_children.collapsed .category_label {
-    background-position: right center !important;
-}
-
-.dir-rtl .course_category_tree .category_label,
-.dir-rtl .course_category_tree .category .course {
-    padding-right: 35px;
+div.course_category_tree .courses > .paging,
+div.course_category_tree .subcategories > .paging {
+    margin:5px;
 }
 
 div.course_category_tree div.controls {
