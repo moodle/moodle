@@ -32,6 +32,7 @@ $logs = array(
     array('module'=>'assign', 'action'=>'lock submission', 'mtable'=>'assign', 'field'=>'name'),
     array('module'=>'assign', 'action'=>'reveal identities', 'mtable'=>'assign', 'field'=>'name'),
     array('module'=>'assign', 'action'=>'revert submission to draft', 'mtable'=>'assign', 'field'=>'name'),
+    array('module'=>'assign', 'action'=>'set marking workflow state', 'mtable'=>'assign', 'field'=>'name'),
     array('module'=>'assign', 'action'=>'submission statement accepted', 'mtable'=>'assign', 'field'=>'name'),
     array('module'=>'assign', 'action'=>'submit', 'mtable'=>'assign', 'field'=>'name'),
     array('module'=>'assign', 'action'=>'submit for grading', 'mtable'=>'assign', 'field'=>'name'),
@@ -46,4 +47,5 @@ $logs = array(
     array('module'=>'assign', 'action'=>'view submission grading table', 'mtable'=>'assign', 'field'=>'name'),
     array('module'=>'assign', 'action'=>'view submit assignment form', 'mtable'=>'assign', 'field'=>'name'),
     array('module'=>'assign', 'action'=>'view feedback', 'mtable'=>'assign', 'field'=>'name'),
+    array('module'=>'assign', 'action'=>'view batch set marking workflow state', 'mtable'=>'assign', 'field'=>'name'),
 );

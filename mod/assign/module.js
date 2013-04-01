@@ -131,6 +131,18 @@ M.mod_assign.init_grading_options = function(Y) {
                 Y.one('form.gradingoptionsform').submit();
             });
         }
+        var markerfilterelement = Y.one('#id_markerfilter');
+        if (markerfilterelement) {
+            markerfilterelement.on('change', function(e) {
+                Y.one('form.gradingoptionsform').submit();
+            });
+        }
+        var workflowfilterelement = Y.one('#id_workflowfilter');
+        if (workflowfilterelement) {
+            workflowfilterelement.on('change', function(e) {
+                Y.one('form.gradingoptionsform').submit();
+            });
+        }
         var quickgradingelement = Y.one('#id_quickgrading');
         if (quickgradingelement) {
             quickgradingelement.on('change', function(e) {

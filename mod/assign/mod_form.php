@@ -179,6 +179,15 @@ class mod_assign_mod_form extends moodleform_mod {
             $mform->freeze('blindmarking');
         }
 
+        $mform->addElement('advcheckbox', 'markingworkflow', get_string('markingworkflow', 'assign'), '', null, array(0, 1));
+        $mform->addHelpButton('markingworkflow', 'markingworkflow', 'assign');
+        $mform->setDefault('markingworkflow', 0);
+
+        $mform->addElement('advcheckbox', 'markingallocation', get_string('markingallocation', 'assign'), '', null, array(0, 1));
+        $mform->addHelpButton('markingallocation', 'markingallocation', 'assign');
+        $mform->setDefault('markingallocation', 0);
+        $mform->disabledIf('markingallocation', 'markingworkflow', 'notchecked');
+
         $this->standard_coursemodule_elements();
         $this->apply_admin_defaults();
 

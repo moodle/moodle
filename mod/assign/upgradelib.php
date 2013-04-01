@@ -90,6 +90,8 @@ class assign_upgrade_manager {
         $data->grade = $oldassignment->grade;
         $data->submissiondrafts = $oldassignment->resubmit;
         $data->requiresubmissionstatement = 0;
+        $data->markingworkflow = 0;
+        $data->markingallocation = 0;
         $data->cutoffdate = 0;
         // New way to specify no late submissions.
         if ($oldassignment->preventlate) {

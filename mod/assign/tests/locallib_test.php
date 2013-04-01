@@ -743,5 +743,109 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
 
     }
 
+    public function test_markingworkflow() {
+        global $PAGE;
+
+        $this->setUser($this->editingteachers[0]);
+        $assign = $this->create_instance(array('markingworkflow'=>1));
+        $PAGE->set_url(new moodle_url('/mod/assign/view.php', array('id' => $assign->get_course_module()->id)));
+
+        // Mark the submission and set to notmarked
+        $this->setUser($this->teachers[0]);
+        $data = new stdClass();
+        $data->grade = '50.0';
+        $data->workflowstate = ASSIGN_MARKING_WORKFLOW_STATE_NOTMARKED;
+        $assign->testable_apply_grade_to_user($data, $this->students[0]->id, 0);
+
+        // Check the student can't see the grade.
+        $this->setUser($this->students[0]);
+        $output = $assign->view_student_summary($this->students[0], true);
+        $this->assertEquals(false, strpos($output, '50.0'));
+
+        // Mark the submission and set to inmarking
+        $this->setUser($this->teachers[0]);
+        $data = new stdClass();
+        $data->grade = '50.0';
+        $data->workflowstate = ASSIGN_MARKING_WORKFLOW_STATE_INMARKING;
+        $assign->testable_apply_grade_to_user($data, $this->students[0]->id, 0);
+
+        // Check the student can't see the grade.
+        $this->setUser($this->students[0]);
+        $output = $assign->view_student_summary($this->students[0], true);
+        $this->assertEquals(false, strpos($output, '50.0'));
+
+        // Mark the submission and set to readyforreview
+        $this->setUser($this->teachers[0]);
+        $data = new stdClass();
+        $data->grade = '50.0';
+        $data->workflowstate = ASSIGN_MARKING_WORKFLOW_STATE_READYFORREVIEW;
+        $assign->testable_apply_grade_to_user($data, $this->students[0]->id, 0);
+
+        // Check the student can't see the grade.
+        $this->setUser($this->students[0]);
+        $output = $assign->view_student_summary($this->students[0], true);
+        $this->assertEquals(false, strpos($output, '50.0'));
+
+        // Mark the submission and set to inreview
+        $this->setUser($this->teachers[0]);
+        $data = new stdClass();
+        $data->grade = '50.0';
+        $data->workflowstate = ASSIGN_MARKING_WORKFLOW_STATE_INREVIEW;
+        $assign->testable_apply_grade_to_user($data, $this->students[0]->id, 0);
+
+        // Check the student can't see the grade.
+        $this->setUser($this->students[0]);
+        $output = $assign->view_student_summary($this->students[0], true);
+        $this->assertEquals(false, strpos($output, '50.0'));
+
+        // Mark the submission and set to readyforrelease
+        $this->setUser($this->teachers[0]);
+        $data = new stdClass();
+        $data->grade = '50.0';
+        $data->workflowstate = ASSIGN_MARKING_WORKFLOW_STATE_READYFORRELEASE;
+        $assign->testable_apply_grade_to_user($data, $this->students[0]->id, 0);
+
+        // Check the student can't see the grade.
+        $this->setUser($this->students[0]);
+        $output = $assign->view_student_summary($this->students[0], true);
+        $this->assertEquals(false, strpos($output, '50.0'));
+
+        // Mark the submission and set to released
+        $this->setUser($this->teachers[0]);
+        $data = new stdClass();
+        $data->grade = '50.0';
+        $data->workflowstate = ASSIGN_MARKING_WORKFLOW_STATE_RELEASED;
+        $assign->testable_apply_grade_to_user($data, $this->students[0]->id, 0);
+
+        // Check the student can see the grade.
+        $this->setUser($this->students[0]);
+        $output = $assign->view_student_summary($this->students[0], true);
+        $this->assertNotEquals(false, strpos($output, '50.0'));
+    }
+
+    public function test_markerallocation() {
+        global $PAGE;
+
+        $this->setUser($this->editingteachers[0]);
+        $assign = $this->create_instance(array('markingworkflow'=>1,'markingallocation'=>1));
+        $PAGE->set_url(new moodle_url('/mod/assign/view.php', array('id' => $assign->get_course_module()->id)));
+
+        // Allocate marker to submission
+        $data = new stdClass();
+        $data->allocatedmarker = $this->teachers[0]->id;
+        $assign->testable_apply_grade_to_user($data, $this->students[0]->id, 0);
+
+        // Check the allocated marker can view the submission
+        $this->setUser($this->teachers[0]);
+        $gradingtable = new assign_grading_table($assign, 100, '', 0, true);
+        $output = $assign->get_renderer()->render($gradingtable);
+        $this->assertEquals(true, strpos($output, $this->students[0]->lastname));
+
+        // Check that other teachers can't view this submission
+        $this->setUser($this->teachers[1]);
+        $gradingtable = new assign_grading_table($assign, 100, '', 0, true);
+        $output = $assign->get_renderer()->render($gradingtable);
+        $this->assertNotEquals(true, strpos($output, $this->students[0]->lastname));
+    }
 }
 
