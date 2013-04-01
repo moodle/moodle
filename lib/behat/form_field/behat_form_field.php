@@ -69,7 +69,14 @@ class behat_form_field {
      * @return void
      */
     public function set_value($value) {
-        $this->field->setValue($value);
+
+        // If we are not dealing with a text-based tag try to find the most appropiate
+        // behat_form_* class to deal with it.
+        if ($instance = $this->guess_type()) {
+            $instance->set_value($value);
+        } else {
+            $this->field->setValue($value);
+        }
     }
 
     /**
@@ -78,7 +85,62 @@ class behat_form_field {
      * @return string
      */
     public function get_value() {
-        return $this->field->getValue();
+
+        // If we are not dealing with a text-based tag try to find the most appropiate
+        // behat_form_* class to deal with it.
+        if ($instance = $this->guess_type()) {
+            return $instance->get_value();
+        } else {
+            return $this->field->getValue();
+        }
+    }
+
+    /**
+     * Guesses the element type we are dealing with in case is not a text-based element.
+     *
+     * This class is the generic field type, behat_field_manager::get_field()
+     * should be able to find the appropiate class for the field type, but
+     * in cases like moodle form group elements we can not find the type of
+     * the field through the DOM so we also need to take care of the
+     * different field types from here. If we need to deal with more complex
+     * moodle form elements we will need to refactor this simple HTML elements
+     * guess method.
+     *
+     * @return mixed False if no need for an special behat_form_*, otherwise the behat_form_*
+     */
+    private function guess_type() {
+        global $CFG;
+
+        // Textareas are considered text based elements.
+        $tagname = $this->field->getTagName();
+        if ($tagname == 'textarea') {
+            return false;
+        }
+
+        if ($tagname == 'input') {
+            $type = $this->field->getAttribute('type');
+            switch ($type) {
+                case 'text':
+                    return false;
+                case 'checkbox':
+                    $classname = 'behat_form_checkbox';
+                    break;
+                case 'radio':
+                    // Behaves the same way.
+                    $classname = 'behat_form_checkbox';
+                    break;
+                default:
+                    return false;
+            }
+        }
+
+        // Select tag.
+        if ($tagname == 'select') {
+            $classname = 'behat_form_select';
+        }
+
+        $classpath = $CFG->dirroot . '/lib/behat/form_field/' . $classname . '.php';
+        return new $classname($this->session, $this->field);
     }
 
 }
