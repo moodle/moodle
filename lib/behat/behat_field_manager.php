@@ -53,7 +53,6 @@ class behat_field_manager {
      * @return behat_form_field
      */
     public static function get_field(NodeElement $fieldnode, $locator, Session $session) {
-        global $CFG;
 
         // Get the field type if is part of a moodleform.
         if (self::is_moodleform_field($fieldnode)) {
@@ -64,6 +63,23 @@ class behat_field_manager {
         if (empty($type)) {
             $type = 'field';
         }
+
+        return self::get_field_instance($type, $fieldnode, $session);
+    }
+
+    /**
+     * Returns the appropiate behat_form_field according to the provided type.
+     *
+     * It defaults to behat_form_field.
+     *
+     * @param string $type The field type (checkbox, date_selector, text...)
+     * @param NodeElement $fieldnode
+     * @param Session $session The behat session
+     * @return behat_form_field
+     */
+    public static function get_field_instance($type, NodeElement $fieldnode, Session $session) {
+
+        global $CFG;
 
         $classname = 'behat_form_' . $type;
 

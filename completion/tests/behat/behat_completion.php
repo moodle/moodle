@@ -1,0 +1,100 @@
+<?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Completion steps definitions.
+ *
+ * @package    core_completion
+ * @category   test
+ * @copyright  2013 David Monllaó
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+// NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
+
+require_once(__DIR__ . '/../../../lib/behat/behat_base.php');
+
+use Behat\Behat\Context\Step\Given as Given,
+    Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
+
+/**
+ * Steps definitions to deal with course and activities completion.
+ *
+ * @package    core_completion
+ * @category   test
+ * @copyright  2013 David Monllaó
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class behat_completion extends behat_base {
+
+    /**
+     * Checks that the specified user has completed the specified activity of the current course.
+     *
+     * @Then /^"(?P<user_fullname_string>(?:[^"]|\\")*)" user has completed "(?P<activity_name_string>(?:[^"]|\\")*)" activity$/
+     * @param string $userfullname
+     * @param string $activityname
+     */
+    public function user_has_completed_activity($userfullname, $activityname) {
+
+        // Will throw an exception if the element can not be hovered.
+        $xpath = "//table[@id='completion-progress']/descendant::img[contains(@title, '" . $userfullname . ", " . $activityname . ": Completed')]";
+
+        return array(
+            new Given('I go to the current course activity completion report'),
+            new Given('I hover "' . $xpath . '" "xpath_element"')
+        );
+    }
+
+    /**
+     * Checks that the specified user has not completed the specified activity of the current course.
+     *
+     * @Then /^"(?P<user_fullname_string>(?:[^"]|\\")*)" user has not completed "(?P<activity_name_string>(?:[^"]|\\")*)" activity$/
+     * @param string $userfullname
+     * @param string $activityname
+     */
+    public function user_has_not_completed_activity($userfullname, $activityname) {
+
+        $xpath = "//table[@id='completion-progress']/descendant::img[contains(@title, '" . $userfullname . ", " . $activityname . ": Not completed')]";
+        return array(
+            new Given('I go to the current course activity completion report'),
+            new Given('I hover "' . $xpath . '" "xpath_element"')
+        );
+
+        return $steps;
+    }
+
+    /**
+     * Goes to the current course activity completion report.
+     *
+     * @Given /^I go to the current course activity completion report$/
+     */
+    public function go_to_the_current_course_activity_completion_report() {
+
+        $steps = array();
+
+        // Expand reports node if we can't see the link.
+        try {
+            $this->find('xpath', "//*[@id='settingsnav']/descendant::li/descendant::li[not(contains(@class,'collapsed'))]/descendant::p[contains(., 'Activity completion')]");
+        } catch (ElementNotFoundException $e) {
+            $steps[] = new Given('I expand "Reports" node');
+        }
+
+        $steps[] = new Given('I follow "Activity completion"');
+
+        return $steps;
+    }
+
+}
