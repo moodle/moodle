@@ -227,7 +227,9 @@ class behat_general extends behat_base {
     }
 
     /**
-     * Checks the provided element and selector type exists in the current page. This step is for advanced users, use it if you don't find anything else suitable for what you need.
+     * Checks the provided element and selector type exists in the current page.
+     *
+     * This step is for advanced users, use it if you don't find anything else suitable for what you need.
      *
      * @Then /^"(?P<element_string>(?:[^"]|\\")*)" "(?P<selector_string>[^"]*)" should exists$/
      * @throws ElementNotFoundException Thrown by behat_base::find
@@ -244,7 +246,9 @@ class behat_general extends behat_base {
     }
 
     /**
-     * Checks that the provided element and selector type not exists in the current page. This step is for advanced users, use it if you don't find anything else suitable for what you need.
+     * Checks that the provided element and selector type not exists in the current page.
+     *
+     * This step is for advanced users, use it if you don't find anything else suitable for what you need.
      *
      * @Then /^"(?P<element_string>(?:[^"]|\\")*)" "(?P<selector_string>[^"]*)" should not exists$/
      * @throws ExpectationException
@@ -256,7 +260,7 @@ class behat_general extends behat_base {
         try {
             $this->should_exists($element, $selectortype);
             throw new ExpectationException('The "' . $element . '" "' . $selectortype . '" exists in the current page', $this->getSession());
-        }catch (ElementNotFoundException $e) {
+        } catch (ElementNotFoundException $e) {
             // It passes.
             return;
         }
