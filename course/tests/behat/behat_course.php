@@ -151,11 +151,38 @@ class behat_course extends behat_base {
     }
 
     /**
-     * Checks if the specified course section hightlighting is turned on.
+     * Shows the specified hidden section. You need to be in the course page and on editing mode.
      *
-     * @throws ElementNotFoundException
-     * @throws ExpectationException
+     * @Given /^I show section "(?P<section_number>\d+)"$/
+     * @param int $sectionnumber
+     */
+    public function i_show_section($sectionnumber) {
+        $showicon = $this->show_section_icon_exists($sectionnumber);
+        $showicon->click();
+
+        // It requires time.
+        $this->getSession()->wait(5000, false);
+    }
+
+    /**
+     * Hides the specified visible section. You need to be in the course page and on editing mode.
+     *
+     * @Given /^I hide section "(?P<section_number>\d+)"$/
+     * @param int $sectionnumber
+     */
+    public function i_hide_section($sectionnumber) {
+        $hideicon = $this->hide_section_icon_exists($sectionnumber);
+        $hideicon->click();
+
+        // It requires time.
+        $this->getSession()->wait(5000, false);
+    }
+
+    /**
+     * Checks if the specified course section hightlighting is turned on. You need to be in the course page on editing mode.
+     *
      * @Then /^section "(?P<section_number>\d+)" should be highlighted$/
+     * @throws ExpectationException
      * @param int $sectionnumber The section number
      */
     public function section_should_be_highlighted($sectionnumber) {
@@ -170,9 +197,10 @@ class behat_course extends behat_base {
     }
 
     /**
-     * Checks if the specified course section highlighting is turned off.
+     * Checks if the specified course section highlighting is turned off. You need to be in the course page on editing mode.
      *
      * @Then /^section "(?P<section_number>\d+)" should not be highlighted$/
+     * @throws ExpectationException
      * @param int $sectionnumber The section number
      */
     public function section_should_not_be_highlighted($sectionnumber) {
@@ -189,11 +217,83 @@ class behat_course extends behat_base {
     }
 
     /**
+     * Checks that the specified section is visible. You need to be in the course page. It can be used being logged as a student and as a teacher on editing mode.
+     *
+     * @Then /^section "(?P<section_number>\d+)" should be hidden$/
+     * @throws ExpectationException
+     * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param int $sectionnumber
+     */
+    public function section_should_be_hidden($sectionnumber) {
+
+        $sectionxpath = $this->section_exists($sectionnumber);
+
+        // Section should be hidden.
+        $exception = new ExpectationException('The section is not hidden', $this->getSession());
+        $this->find('xpath', $sectionxpath . "[contains(concat(' ', @class, ' '), ' hidden ')]", $exception);
+
+        // The checking are different depending on user permissions.
+        if ($this->is_course_editor()) {
+
+            // The section must be hidden.
+            $this->show_section_icon_exists($sectionnumber);
+
+            // If there are activities they should be hidden and the visibility icon should not be available.
+            if ($activities = $this->get_section_activities($sectionxpath)) {
+
+                $dimmedexception = new ExpectationException('There are activities that are not dimmed', $this->getSession());
+                $visibilityexception = new ExpectationException('There are activities which visibility icons are clickable', $this->getSession());
+                foreach ($activities as $activity) {
+
+                    // Dimmed.
+                    $this->find('xpath', "//div[contains(concat(' ', @class, ' '), ' activityinstance ')]
+/a[contains(concat(' ', @class, ' '), ' dimmed ')]", $dimmedexception, $activity);
+
+                    // To check that the visibility is not clickable we check the funcionality rather than the applied style.
+                    $visibilityiconnode = $this->find('css', 'a.editing_show img', false, $activity);
+                    $visibilityiconnode->click();
+
+                    // We ensure that we still see the show icon.
+                    $visibilityiconnode = $this->find('css', 'a.editing_show img', $visibilityexception, $activity);
+                }
+            }
+
+        } else {
+            // There shouldn't be activities.
+            if ($this->get_section_activities($sectionxpath)) {
+                throw new ExpectationException('There are activities in the section and they should be hidden', $this->getSession());
+            }
+        }
+    }
+
+    /**
+     * Checks that the specified section is visible. You need to be in the course page. It can be used being logged as a student and as a teacher on editing mode.
+     *
+     * @Then /^section "(?P<section_number>\d+)" should be visible$/
+     * @throws ExpectationException
+     * @param int $sectionnumber
+     */
+    public function section_should_be_visible($sectionnumber) {
+
+        $sectionxpath = $this->section_exists($sectionnumber);
+
+        // Section should not be hidden.
+        if (!$this->getSession()->getPage()->find('xpath', $sectionxpath . "[not(contains(concat(' ', @class, ' '), ' hidden '))]")) {
+            throw new ExpectationException('The section is hidden', $this->getSession());
+        }
+
+        // Hide section button should be visible.
+        if ($this->is_course_editor()) {
+            $this->hide_section_icon_exists($sectionnumber);
+        }
+    }
+
+    /**
      * Checks if the course section exists.
      *
      * @throws ElementNotFoundException Thrown by behat_base::find
      * @param int $sectionnumber
-     * @return string The xpath of the existing section.
+     * @return string The xpath of the section.
      */
     protected function section_exists($sectionnumber) {
 
@@ -204,4 +304,112 @@ class behat_course extends behat_base {
 
         return $xpath;
     }
+
+    /**
+     * Returns the show section icon or throws an exception.
+     *
+     * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param int $sectionnumber
+     * @return NodeElement
+     */
+    protected function show_section_icon_exists($sectionnumber) {
+
+        // Gets the section xpath and ensure it exists.
+        $xpath = $this->section_exists($sectionnumber);
+
+        // We need to know the course format as the text strings depends on them.
+        $courseformat = $this->get_course_format();
+
+        // Checking the show button alt text and show icon.
+        $xpath = $xpath . "/descendant::a/descendant::img[@alt='". get_string('showfromothers', $courseformat) ."'][contains(@src, 'show')]";
+
+        $exception = new ElementNotFoundException($this->getSession(), 'Show section icon ');
+        return $this->find('xpath', $xpath, $exception);
+    }
+
+    /**
+     * Returns the hide section icon link if it exists or throws exception.
+     *
+     * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param int $sectionnumber
+     * @return NodeElement
+     */
+    protected function hide_section_icon_exists($sectionnumber) {
+
+        // Gets the section xpath and ensure it exists.
+        $xpath = $this->section_exists($sectionnumber);
+
+        // We need to know the course format as the text strings depends on them.
+        $courseformat = $this->get_course_format();
+
+        // Checking the hide button alt text and hide icon.
+        $xpath = $xpath . "/descendant::a/descendant::img[@alt='". get_string('hidefromothers', $courseformat) ."'][contains(@src, 'hide')]";
+
+        $exception = new ElementNotFoundException($this->getSession(), 'Hide section icon ');
+        return $this->find('xpath', $xpath, $exception);
+    }
+
+    /**
+     * Gets the current course format.
+     *
+     * @throws ExpectationException If we are not in the course view page.
+     * @return string The course format in a frankenstyled name.
+     */
+    protected function get_course_format() {
+
+        $exception = new ExpectationException('You are not in a course page', $this->getSession());
+
+        // The moodle body's id attribute contains the course format.
+        $node = $this->getSession()->getPage()->find('css', 'body');
+        if (!$node) {
+            throw $exception;
+        }
+
+        if (!$bodyid = $node->getAttribute('id')) {
+            throw $exception;
+        }
+
+        if (strstr($bodyid, 'page-course-view-') === false) {
+            throw $exception;
+        }
+
+        return 'format_' . str_replace('page-course-view-', '', $bodyid);
+    }
+
+    /**
+     * Gets the section's activites DOM nodes.
+     *
+     * @param string $sectionxpath
+     * @return array NodeElement instances
+     */
+    protected function get_section_activities($sectionxpath) {
+
+        $xpath = $sectionxpath . "/descendant::li[contains(concat(' ', @class, ' '), ' activity ')]";
+
+        // We spin here, as activities usually require a lot of time to load.
+        try {
+            $activities = $this->find_all('xpath', $xpath);
+        } catch (ElementNotFoundException $e) {
+            return false;
+        }
+
+        return $activities;
+    }
+
+    /**
+     * Returns whether the user can edit the course contents or not.
+     *
+     * @return bool
+     */
+    protected function is_course_editor() {
+
+        // We don't need to behat_base::spin() here as all is already loaded.
+        if (!$this->getSession()->getPage()->findButton('Turn editing off') &&
+                !$this->getSession()->getPage()->findButton('Turn editing on')) {
+            return false;
+        }
+
+        return true;
+    }
+
 }
