@@ -413,6 +413,7 @@ if ($mform->is_cancelled()) {
         $newcm->module           = $fromform->module;
         $newcm->instance         = 0; // not known yet, will be updated later (this is similar to restore code)
         $newcm->visible          = $fromform->visible;
+        $newcm->visibleold       = $fromform->visible;
         $newcm->groupmode        = $fromform->groupmode;
         $newcm->groupingid       = $fromform->groupingid;
         $newcm->groupmembersonly = $fromform->groupmembersonly;
@@ -480,7 +481,6 @@ if ($mform->is_cancelled()) {
         // make sure visibility is set correctly (in particular in calendar)
         // note: allow them to set it even without moodle/course:activityvisibility
         set_coursemodule_visible($fromform->coursemodule, $fromform->visible);
-        $DB->set_field('course_modules', 'visibleold', 1, array('id' => $fromform->coursemodule));
 
         if (isset($fromform->cmidnumber)) { //label
             // set cm idnumber - uniqueness is already verified by form validation
