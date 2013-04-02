@@ -147,6 +147,7 @@ class enrol_users_filter_form extends moodleform {
 
         // Text search box.
         $mform->addElement('text', 'search', get_string('search'));
+        $mform->setType('search', PARAM_RAW);
 
         // Filter by enrolment plugin type.
         $mform->addElement('select', 'ifilter', get_string('enrolmentinstances', 'enrol'),
@@ -174,5 +175,6 @@ class enrol_users_filter_form extends moodleform {
 
         // Add hidden fields required by page.
         $mform->addElement('hidden', 'id', $this->_customdata['id']);
+        $mform->setType('id', PARAM_INT);
     }
 }
