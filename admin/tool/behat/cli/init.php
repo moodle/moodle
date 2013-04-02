@@ -65,7 +65,7 @@ if ($code == 0) {
     // Changing to moodle dirroot to run composer related commands at project level.
     chdir(__DIR__ . '/../../../..');
     if (!file_exists(__DIR__ . '/../../../../composer.phar')) {
-        passthru("curl http://getcomposer.org/install | php", $code);
+        passthru("curl http://getcomposer.org/installer | php", $code);
         if ($code != 0) {
             exit($code);
         }
