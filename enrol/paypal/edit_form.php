@@ -39,6 +39,7 @@ class enrol_paypal_edit_form extends moodleform {
         $mform->addElement('header', 'header', get_string('pluginname', 'enrol_paypal'));
 
         $mform->addElement('text', 'name', get_string('custominstancename', 'enrol'));
+        $mform->setType('name', PARAM_TEXT);
 
         $options = array(ENROL_INSTANCE_ENABLED  => get_string('yes'),
                          ENROL_INSTANCE_DISABLED => get_string('no'));
@@ -46,6 +47,7 @@ class enrol_paypal_edit_form extends moodleform {
         $mform->setDefault('status', $plugin->get_config('status'));
 
         $mform->addElement('text', 'cost', get_string('cost', 'enrol_paypal'), array('size'=>4));
+        $mform->setType('cost', PARAM_TEXT);
         $mform->setDefault('cost', $plugin->get_config('cost'));
 
         $paypalcurrencies = $plugin->get_currencies();
@@ -74,7 +76,10 @@ class enrol_paypal_edit_form extends moodleform {
         $mform->addHelpButton('enrolenddate', 'enrolenddate', 'enrol_paypal');
 
         $mform->addElement('hidden', 'id');
+        $mform->setType('id', PARAM_INT);
+
         $mform->addElement('hidden', 'courseid');
+        $mform->setType('courseid', PARAM_INT);
 
         $this->add_action_buttons(true, ($instance->id ? null : get_string('addinstance', 'enrol')));
 
