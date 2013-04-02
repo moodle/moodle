@@ -89,7 +89,7 @@ class tool_behat_renderer extends plugin_renderer_base {
             $stepsdefinitions = implode('', $stepsdefinitions);
 
             // Replace text selector type arguments with a user-friendly select.
-            $stepsdefinitions = preg_replace_callback('/(TEXT_SELECTOR_STRING)/',
+            $stepsdefinitions = preg_replace_callback('/(TEXT_SELECTOR\d?_STRING)/',
                 function ($matches) {
                     return html_writer::select(behat_command::$allowedtextselectors, uniqid());
                 },
@@ -97,7 +97,7 @@ class tool_behat_renderer extends plugin_renderer_base {
             );
 
             // Replace selector type arguments with a user-friendly select.
-            $stepsdefinitions = preg_replace_callback('/(SELECTOR_STRING)/',
+            $stepsdefinitions = preg_replace_callback('/(SELECTOR\d?_STRING)/',
                 function ($matches) {
                     return html_writer::select(behat_command::$allowedselectors, uniqid());
                 },
