@@ -684,13 +684,12 @@ abstract class qbehaviour_walkthrough_test_base extends question_testcase {
         $this->quba->start_question($this->slot, $variant);
     }
 
-    protected function process_submission($data) {
-        // Backwards compatibility.
-        reset($data);
-        if (count($data) == 1 && key($data) === '-finish') {
-            $this->finish();
-        }
-
+    /**
+     * Convert an array of data destined for one question to the equivalent POST data.
+     * @param array $data the data for the quetsion.
+     * @return array the complete post data.
+     */
+    protected function response_data_to_post($data) {
         $prefix = $this->quba->get_field_prefix($this->slot);
         $fulldata = array(
             'slots' => $this->slot,
@@ -699,11 +698,21 @@ abstract class qbehaviour_walkthrough_test_base extends question_testcase {
         foreach ($data as $name => $value) {
             $fulldata[$prefix . $name] = $value;
         }
-        $this->quba->process_all_actions(time(), $fulldata);
+        return $fulldata;
+    }
+
+    protected function process_submission($data) {
+        // Backwards compatibility.
+        reset($data);
+        if (count($data) == 1 && key($data) === '-finish') {
+            $this->finish();
+        }
+
+        $this->quba->process_all_actions(time(), $this->response_data_to_post($data));
     }
 
     protected function process_autosave($data) {
-        $this->quba->process_autosave($this->slot, $data);
+        $this->quba->process_all_autosaves(null, $this->response_data_to_post($data));
     }
 
     protected function finish() {

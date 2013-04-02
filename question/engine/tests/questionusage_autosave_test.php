@@ -559,4 +559,49 @@ class question_usage_autosave_test extends qbehaviour_walkthrough_test_base {
 
         $DB2->dispose();
     }
+
+    public function test_autosave_with_wrong_seq_number_ignored() {
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $cat = $generator->create_question_category();
+        $question = $generator->create_question('shortanswer', null,
+                array('category' => $cat->id));
+
+        // Start attempt at a shortanswer question.
+        $q = question_bank::load_question($question->id);
+        $this->start_attempt_at_question($q, 'deferredfeedback', 1);
+
+        $this->check_current_state(question_state::$todo);
+        $this->check_current_mark(null);
+        $this->check_step_count(1);
+
+        // Process a response and check the expected result.
+        $this->process_submission(array('answer' => 'first response'));
+
+        $this->check_current_state(question_state::$complete);
+        $this->check_current_mark(null);
+        $this->check_step_count(2);
+        $this->save_quba();
+
+        // Now check how that is re-displayed.
+        $this->render();
+        $this->check_output_contains_text_input('answer', 'first response');
+
+        // Process an autosave with a sequence number 1 to small (so from the past).
+        $this->load_quba();
+        $postdata = $this->response_data_to_post(array('answer' => 'obsolete response'));
+        $postdata[$this->quba->get_field_prefix($this->slot) . ':sequencecheck'] = $this->get_question_attempt()->get_num_steps() - 1;
+        $this->quba->process_all_autosaves(null, $postdata);
+        $this->check_current_state(question_state::$complete);
+        $this->check_current_mark(null);
+        $this->check_step_count(2);
+        $this->save_quba();
+
+        // Now check how that is re-displayed.
+        $this->load_quba();
+        $this->render();
+        $this->check_output_contains_text_input('answer', 'first response');
+
+        $this->delete_quba();
+    }
 }
