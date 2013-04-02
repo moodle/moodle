@@ -240,3 +240,4 @@ $string['setting_keep_roles_and_enrolments'] = 'Keep current roles and enrolment
 $string['setting_keep_groups_and_groupings'] = 'Keep current groups and groupings';
 $string['totalcategorysearchresults'] = 'Total categories: {$a}';
 $string['totalcoursesearchresults'] = 'Total courses: {$a}';
+$string['morecoursesearchresults'] = 'More than {$a} courses found, showing first {$a} results';

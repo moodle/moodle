@@ -65,6 +65,11 @@ abstract class restore_search_base implements renderable {
      * @var array
      */
     private $requiredcapabilities = array();
+    /**
+     * Indicates if we have more than maxresults found.
+     * @var boolean
+     */
+    private $has_more_results = false;
 
     /**
      * Constructor
@@ -177,7 +182,7 @@ abstract class restore_search_base implements renderable {
         foreach ($this->requiredcapabilities as $cap) {
             $requiredcaps[] = $cap['capability'];
         }
-        // Iterate while we have records and haven't reached MAXRESULTS
+        // Iterate while we have records and haven't reached $this->maxresults.
         while ($totalcourses > $offs and $this->totalcount < self::$MAXRESULTS) {
             $resultset = $DB->get_records_sql($sql, $params, $offs, $blocksz);
             foreach ($resultset as $result) {
@@ -188,11 +193,14 @@ abstract class restore_search_base implements renderable {
                         continue;
                     }
                 }
-                $this->results[$result->id] = $result;
-                $this->totalcount++;
-                if ($this->totalcount >= self::$MAXRESULTS) {
+                // Check if we are over the limit.
+                if ($this->totalcount+1 > self::$MAXRESULTS) {
+                    $this->has_more_results = true;
                     break;
                 }
+                // If not, then continue.
+                $this->totalcount++;
+                $this->results[$result->id] = $result;
             }
             $offs += $blocksz;
         }
@@ -201,7 +209,10 @@ abstract class restore_search_base implements renderable {
     }
 
     final public function has_more_results() {
-        return $this->get_count() >= self::$MAXRESULTS;
+        if ($this->results === null) {
+            $this->search();
+        }
+        return $this->has_more_results;
     }
 
     /**
