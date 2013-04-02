@@ -200,6 +200,16 @@ if (!empty($CFG->enableoutcomes)) {
         '0'));
 }
 
+// Autosave frequency.
+$options = array(
+      0 => get_string('donotuseautosave', 'quiz'),
+     60 => get_string('oneminute', 'quiz'),
+    120 => get_string('numminutes', 'moodle', 2),
+    300 => get_string('numminutes', 'moodle', 5),
+);
+$quizsettings->add(new admin_setting_configselect('quiz/autosaveperiod',
+        get_string('autosaveperiod', 'quiz'), get_string('autosaveperiod_desc', 'quiz'), 0, $options));
+
 // Now, depending on whether any reports have their own settings page, add
 // the quiz setting page to the appropriate place in the tree.
 if (empty($reportsbyname)) {

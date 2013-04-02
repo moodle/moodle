@@ -82,7 +82,7 @@ class qtype_multianswer_walkthrough_test extends qbehaviour_walkthrough_test_bas
                 $this->get_does_not_contain_validation_error_expectation());
 
         // Now submit all and finish.
-        $this->process_submission(array('-finish' => 1));
+        $this->finish();
 
         // Verify.
         $this->check_current_state(question_state::$gradedpartial);
@@ -109,7 +109,7 @@ class qtype_multianswer_walkthrough_test extends qbehaviour_walkthrough_test_bas
                 $this->get_does_not_contain_validation_error_expectation());
 
         // Now submit all and finish.
-        $this->process_submission(array('-finish' => 1));
+        $this->finish();
 
         // Verify.
         $this->check_current_state(question_state::$gaveup);
@@ -148,7 +148,7 @@ class qtype_multianswer_walkthrough_test extends qbehaviour_walkthrough_test_bas
                 $this->get_does_not_contain_validation_error_expectation());
 
         // Now submit all and finish.
-        $this->process_submission(array('-finish' => 1));
+        $this->finish();
 
         // Verify.
         $this->check_current_state(question_state::$gradedright);
@@ -187,7 +187,7 @@ class qtype_multianswer_walkthrough_test extends qbehaviour_walkthrough_test_bas
                 $this->get_does_not_contain_validation_error_expectation());
 
         // Now submit all and finish.
-        $this->process_submission(array('-finish' => 1));
+        $this->finish();
 
         // Verify.
         $this->check_current_state(question_state::$gradedwrong);

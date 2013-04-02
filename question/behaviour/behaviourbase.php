@@ -436,6 +436,19 @@ abstract class question_behaviour {
     public abstract function process_action(question_attempt_pending_step $pendingstep);
 
     /**
+     * Auto-saved data. By default this does nothing. interesting processing is
+     * done in {@link question_behaviour_with_save}.
+     *
+     * @param question_attempt_pending_step $pendingstep a partially initialised step
+     *      containing all the information about the action that is being peformed. This
+     *      information can be accessed using {@link question_attempt_step::get_behaviour_var()}.
+     * @return bool either {@link question_attempt::KEEP} or {@link question_attempt::DISCARD}
+     */
+    public function process_autosave(question_attempt_pending_step $pendingstep) {
+        return question_attempt::DISCARD;
+    }
+
+    /**
      * Implementation of processing a manual comment/grade action that should
      * be suitable for most subclasses.
      * @param question_attempt_pending_step $pendingstep a partially initialised step
@@ -568,6 +581,29 @@ abstract class question_behaviour_with_save extends question_behaviour {
      */
     protected function is_complete_response(question_attempt_step $pendingstep) {
         return $this->question->is_complete_response($pendingstep->get_qt_data());
+    }
+
+    public function process_autosave(question_attempt_pending_step $pendingstep) {
+        // If already finished. Nothing to do.
+        if ($this->qa->get_state()->is_finished()) {
+            return question_attempt::DISCARD;
+        }
+
+        // If the new data is the same as we already have, then we don't need it.
+        if ($this->is_same_response($pendingstep)) {
+            return question_attempt::DISCARD;
+        }
+
+        // Repeat that test discarding any existing autosaved data.
+        if ($this->qa->has_autosaved_step()) {
+            $this->qa->discard_autosaved_step();
+            if ($this->is_same_response($pendingstep)) {
+                return question_attempt::DISCARD;
+            }
+        }
+
+        // OK, we need to save.
+        return $this->process_save($pendingstep);
     }
 
     /**

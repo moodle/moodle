@@ -1,5 +1,16 @@
 This files describes API changes for question type plugins.
 
+=== 2.5 ===
+
+* There have been some tweaks to the helper class that is used to right
+  walkthrough tests. You should not have to change your code, but you might
+  like to take a look at some of the new helper methods available. In particular,
+  if you had any code that did
+  $this->process_submission(array('-finish' => 1));
+  you should change that to
+  $this->finish();
+
+
 === 2.3.5 / 2.4.2 / 2.5 ===
 
 * The special value question_attempt::PARAM_CLEANHTML_FILES that could be used

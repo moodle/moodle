@@ -87,6 +87,14 @@ if ($accessmanager->is_preflight_check_required($attemptobj->get_attemptid())) {
     redirect($attemptobj->start_attempt_url(null, $page));
 }
 
+// Set up auto-save if required.
+$autosaveperiod = get_config('quiz', 'autosaveperiod');
+if ($autosaveperiod) {
+    $PAGE->requires->yui_module('moodle-mod_quiz-autosave',
+            'M.mod_quiz.autosave.init', array($autosaveperiod));
+}
+
+// Log this page view.
 add_to_log($attemptobj->get_courseid(), 'quiz', 'continue attempt',
         'review.php?attempt=' . $attemptobj->get_attemptid(),
         $attemptobj->get_quizid(), $attemptobj->get_cmid());

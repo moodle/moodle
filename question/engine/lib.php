@@ -71,10 +71,11 @@ abstract class question_engine {
     /**
      * Load a {@link question_usage_by_activity} from the database, based on its id.
      * @param int $qubaid the id of the usage to load.
+     * @param moodle_database $db a database connectoin. Defaults to global $DB.
      * @return question_usage_by_activity loaded from the database.
      */
-    public static function load_questions_usage_by_activity($qubaid) {
-        $dm = new question_engine_data_mapper();
+    public static function load_questions_usage_by_activity($qubaid, moodle_database $db = null) {
+        $dm = new question_engine_data_mapper($db);
         return $dm->load_questions_usage_by_activity($qubaid);
     }
 
@@ -83,9 +84,10 @@ abstract class question_engine {
      * if the usage was newly created by {@link make_questions_usage_by_activity()}
      * or loaded from the database using {@link load_questions_usage_by_activity()}
      * @param question_usage_by_activity the usage to save.
+     * @param moodle_database $db a database connectoin. Defaults to global $DB.
      */
-    public static function save_questions_usage_by_activity(question_usage_by_activity $quba) {
-        $dm = new question_engine_data_mapper();
+    public static function save_questions_usage_by_activity(question_usage_by_activity $quba, moodle_database $db = null) {
+        $dm = new question_engine_data_mapper($db);
         $observer = $quba->get_observer();
         if ($observer instanceof question_engine_unit_of_work) {
             $observer->save($dm);
