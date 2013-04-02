@@ -135,6 +135,11 @@ if ($hassiteconfig
     $temp->add(new admin_setting_configcheckbox_with_lock('backup/backup_general_histories', new lang_string('generalhistories','backup'), new lang_string('configgeneralhistories','backup'), array('value'=>0, 'locked'=>0)));
     $ADMIN->add('backups', $temp);
 
+    // Create a page for general import configuration and defaults.
+    $temp = new admin_settingpage('importgeneralsettings', new lang_string('importgeneralsettings', 'backup'), 'moodle/backup:backupcourse');
+    $temp->add(new admin_setting_configtext('backup/import_general_maxresults', new lang_string('importgeneralmaxresults', 'backup'), new lang_string('importgeneralmaxresults_desc', 'backup'), 10));
+    $ADMIN->add('backups', $temp);
+
     // Create a page for automated backups configuration and defaults.
     $temp = new admin_settingpage('automated', new lang_string('automatedsetup','backup'), 'moodle/backup:backupcourse');
 
