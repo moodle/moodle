@@ -544,7 +544,8 @@ class core_renderer extends renderer_base {
 
             $fullname = fullname($USER, true);
             // Since Moodle 2.0 this link always goes to the public profile page (not the course profile page)
-            $username = "<a href=\"$CFG->wwwroot/user/profile.php?id=$USER->id\">$fullname</a>";
+            $linktitle = get_string('viewprofile');
+            $username = "<a href=\"$CFG->wwwroot/user/profile.php?id=$USER->id\" title=\"$linktitle\">$fullname</a>";
             if (is_mnet_remote_user($USER) and $idprovider = $DB->get_record('mnet_host', array('id'=>$USER->mnethostid))) {
                 $username .= " from <a href=\"{$idprovider->wwwroot}\">{$idprovider->name}</a>";
             }
