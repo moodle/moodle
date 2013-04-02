@@ -132,3 +132,49 @@ class enrol_users_addmember_form extends moodleform {
         $this->set_data(array('action'=>'addmember', 'user'=>$user->id));
     }
 }
+
+
+/**
+ * Form that lets users filter the enrolled user list.
+ */
+class enrol_users_filter_form extends moodleform {
+    function definition() {
+        global $CFG, $DB;
+
+        $manager = $this->_customdata['manager'];
+
+        $mform = $this->_form;
+
+        // Text search box.
+        $mform->addElement('text', 'search', get_string('search'));
+        $mform->setType('search', PARAM_RAW);
+
+        // Filter by enrolment plugin type.
+        $mform->addElement('select', 'ifilter', get_string('enrolmentinstances', 'enrol'),
+                array(0 => get_string('all')) + (array)$manager->get_enrolment_instance_names());
+
+        // Role select dropdown includes all roles, but using course-specific
+        // names if applied. The reason for not restricting to roles that can
+        // be assigned at course level is that upper-level roles display in the
+        // enrolments table so it makes sense to let users filter by them.
+        $allroles = get_all_roles($manager->get_context());
+        $rolenames = array();
+        foreach ($allroles as $id => $role) {
+            $rolenames[$id] = $role->name;
+        }
+        $mform->addElement('select', 'role', get_string('role'),
+                array(0 => get_string('all')) + $rolenames);
+
+        // Submit button does not use add_action_buttons because that adds
+        // another fieldset which causes the CSS style to break in an unfixable
+        // way due to fieldset quirks.
+        $group = array();
+        $group[] = $mform->createElement('submit', 'submitbutton', get_string('filter'));
+        $group[] = $mform->createElement('submit', 'resetbutton', get_string('reset'));
+        $mform->addGroup($group, 'buttons', '', ' ', false);
+
+        // Add hidden fields required by page.
+        $mform->addElement('hidden', 'id', $this->_customdata['id']);
+        $mform->setType('id', PARAM_INT);
+    }
+}

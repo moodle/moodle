@@ -53,6 +53,16 @@ class course_enrolment_manager {
      * @var string
      */
     protected $instancefilter = null;
+    /**
+     * Limits the focus of the manager to users with specified role
+     * @var int
+     */
+    protected $rolefilter = 0;
+    /**
+     * Limits the focus of the manager to users who match search string
+     * @var string
+     */
+    protected $searchfilter = '';
 
     /**
      * The total number of users enrolled in the course
@@ -110,12 +120,17 @@ class course_enrolment_manager {
      * @param moodle_page $moodlepage
      * @param stdClass $course
      * @param string $instancefilter
+     * @param int $rolefilter If non-zero, filters to users with specified role
+     * @param string $searchfilter If non-blank, filters to users with search text
      */
-    public function __construct(moodle_page $moodlepage, $course, $instancefilter = null) {
+    public function __construct(moodle_page $moodlepage, $course, $instancefilter = null,
+            $rolefilter = 0, $searchfilter = '') {
         $this->moodlepage = $moodlepage;
         $this->context = context_course::instance($course->id);
         $this->course = $course;
         $this->instancefilter = $instancefilter;
+        $this->rolefilter = $rolefilter;
+        $this->searchfilter = $searchfilter;
     }
 
     /**
@@ -139,10 +154,13 @@ class course_enrolment_manager {
         global $DB;
         if ($this->totalusers === null) {
             list($instancessql, $params, $filter) = $this->get_instance_sql();
+            list($filtersql, $moreparams) = $this->get_filter_sql();
+            $params += $moreparams;
             $sqltotal = "SELECT COUNT(DISTINCT u.id)
                            FROM {user} u
                            JOIN {user_enrolments} ue ON (ue.userid = u.id  AND ue.enrolid $instancessql)
-                           JOIN {enrol} e ON (e.id = ue.enrolid)";
+                           JOIN {enrol} e ON (e.id = ue.enrolid)
+                          WHERE $filtersql";
             $this->totalusers = (int)$DB->count_records_sql($sqltotal, $params);
         }
         return $this->totalusers;
@@ -183,7 +201,8 @@ class course_enrolment_manager {
      * Gets all of the users enrolled in this course.
      *
      * If a filter was specified this will be the users who were enrolled
-     * in this course by means of that instance.
+     * in this course by means of that instance. If role or search filters were
+     * specified then these will also be applied.
      *
      * @global moodle_database $DB
      * @param string $sort
@@ -200,6 +219,8 @@ class course_enrolment_manager {
         $key = md5("$sort-$direction-$page-$perpage");
         if (!array_key_exists($key, $this->users)) {
             list($instancessql, $params, $filter) = $this->get_instance_sql();
+            list($filtersql, $moreparams) = $this->get_filter_sql();
+            $params += $moreparams;
             $extrafields = get_extra_user_fields($this->get_context());
             $extrafields[] = 'lastaccess';
             $ufields = user_picture::fields('u', $extrafields);
@@ -207,7 +228,8 @@ class course_enrolment_manager {
                       FROM {user} u
                       JOIN {user_enrolments} ue ON (ue.userid = u.id  AND ue.enrolid $instancessql)
                       JOIN {enrol} e ON (e.id = ue.enrolid)
-                 LEFT JOIN {user_lastaccess} ul ON (ul.courseid = e.courseid AND ul.userid = u.id)";
+                 LEFT JOIN {user_lastaccess} ul ON (ul.courseid = e.courseid AND ul.userid = u.id)
+                     WHERE $filtersql";
             if ($sort === 'firstname') {
                 $sql .= " ORDER BY u.firstname $direction, u.lastname $direction";
             } else if ($sort === 'lastname') {
@@ -220,6 +242,37 @@ class course_enrolment_manager {
             $this->users[$key] = $DB->get_records_sql($sql, $params, $page*$perpage, $perpage);
         }
         return $this->users[$key];
+    }
+
+    /**
+     * Obtains WHERE clause to filter results by defined search and role filter
+     * (instance filter is handled separately in JOIN clause, see
+     * get_instance_sql).
+     *
+     * @return array Two-element array with SQL and params for WHERE clause
+     */
+    protected function get_filter_sql() {
+        global $DB;
+
+        // Search condition.
+        $extrafields = get_extra_user_fields($this->get_context());
+        list($sql, $params) = users_search_sql($this->searchfilter, 'u', true, $extrafields);
+
+        // Role condition.
+        if ($this->rolefilter) {
+            // Get context SQL.
+            $contextids = $this->context->get_parent_context_ids();
+            $contextids[] = $this->context->id;
+            list($contextsql, $contextparams) = $DB->get_in_or_equal($contextids, SQL_PARAMS_NAMED);
+            $params += $contextparams;
+
+            // Role check condition.
+            $sql .= " AND (SELECT COUNT(1) FROM {role_assignments} ra WHERE ra.userid = u.id " .
+                    "AND ra.roleid = :roleid AND ra.contextid $contextsql) > 0";
+            $params['roleid'] = $this->rolefilter;
+        }
+
+        return array($sql, $params);
     }
 
     /**
@@ -794,6 +847,12 @@ class course_enrolment_manager {
         );
         if (!empty($this->instancefilter)) {
             $args['ifilter'] = $this->instancefilter;
+        }
+        if (!empty($this->rolefilter)) {
+            $args['role'] = $this->rolefilter;
+        }
+        if ($this->searchfilter !== '') {
+            $args['search'] = $this->searchfilter;
         }
         return $args;
     }
