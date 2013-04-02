@@ -582,7 +582,8 @@ class core_renderer extends renderer_base {
             $fullname = fullname($USER, true);
             // Since Moodle 2.0 this link always goes to the public profile page (not the course profile page)
             if ($withlinks) {
-                $username = "<a href=\"$CFG->wwwroot/user/profile.php?id=$USER->id\">$fullname</a>";
+                $linktitle = get_string('viewprofile');
+                $username = "<a href=\"$CFG->wwwroot/user/profile.php?id=$USER->id\" title=\"$linktitle\">$fullname</a>";
             } else {
                 $username = $fullname;
             }
