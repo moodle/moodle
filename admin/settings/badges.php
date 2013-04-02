@@ -26,7 +26,6 @@
 */
 
 global $SITE;
-require_once($CFG->libdir . '/badgeslib.php');
 
 if (!empty($CFG->enablebadges) && ($hassiteconfig || has_any_capability(array(
             'moodle/badges:viewawarded',
@@ -36,6 +35,8 @@ if (!empty($CFG->enablebadges) && ($hassiteconfig || has_any_capability(array(
             'moodle/badges:configuremessages',
             'moodle/badges:configuredetails',
             'moodle/badges:deletebadge'), $systemcontext))) {
+
+    require_once($CFG->libdir . '/badgeslib.php');
 
     $globalsettings = new admin_settingpage('badgesettings', new lang_string('badgesettings', 'badges'),
             array('moodle/badges:manageglobalsettings'));

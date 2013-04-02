@@ -91,6 +91,7 @@ if ($delete) {
 }
 
 if ($copy) {
+    require_sesskey();
     require_capability('moodle/badges:createbadge', $context);
 
     $cloneid = $badge->make_clone();

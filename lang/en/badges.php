@@ -49,7 +49,7 @@ $string['allowcoursebadges_desc'] = 'Allow badges to be created and awarded in c
 $string['allowexternalbackpack'] = 'Enable connection to external backpacks';
 $string['allowexternalbackpack_desc'] = 'Allow users to set up connections and display badges from their external backpack providers.
 
-Note: It is recommended to leave this option disabled if the web site cannot be accesed from the internet (e.g. because of the firewall).';
+Note: It is recommended to leave this option disabled if the web site cannot be accessed from the internet (e.g. because of the firewall).';
 $string['any'] = 'Any';
 $string['anymethod'] = 'Any of the selected conditions is met';
 $string['anymethodactivity'] = 'Any of the selected activities is complete';

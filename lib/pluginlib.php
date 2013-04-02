@@ -408,7 +408,7 @@ class plugin_manager {
             ),
 
             'block' => array(
-                'activity_modules', 'admin_bookmarks', 'blog_menu',
+                'activity_modules', 'admin_bookmarks', 'badges', 'blog_menu',
                 'blog_recent', 'blog_tags', 'calendar_month',
                 'calendar_upcoming', 'comments', 'community',
                 'completionstatus', 'course_list', 'course_overview',

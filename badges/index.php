@@ -124,6 +124,7 @@ if ($activate && has_capability('moodle/badges:configuredetails', $PAGE->context
             $badge->set_status(BADGE_STATUS_ACTIVE_LOCKED);
             $msg = get_string('activatesuccess', 'badges');
         } else {
+            require_sesskey();
             $badge->set_status(BADGE_STATUS_ACTIVE);
             $msg = get_string('activatesuccess', 'badges');
         }
@@ -136,6 +137,7 @@ if ($activate && has_capability('moodle/badges:configuredetails', $PAGE->context
         $badge->set_status(BADGE_STATUS_INACTIVE_LOCKED);
         $msg = get_string('deactivatesuccess', 'badges');
     } else {
+        require_sesskey();
         $badge->set_status(BADGE_STATUS_INACTIVE);
         $msg = get_string('deactivatesuccess', 'badges');
     }
