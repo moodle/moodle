@@ -4,7 +4,7 @@ Feature: Display extended course names
   As a moodle admin
   I need to display courses short names along with courses full names
 
-  Background: 
+  Background:
     Given the following "courses" exists:
       | fullname | shortname | category |
       | Course fullname | C_shortname | 0 |
