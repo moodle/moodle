@@ -251,6 +251,7 @@ class qtype_multianswer_edit_form extends question_edit_form {
             $mform->setDefault('confirm', 0);
         } else {
             $mform->addElement('hidden', 'confirm', 0);
+            $mform->setType('confirm', PARAM_BOOL);
         }
 
         $this->add_interactive_settings(true, true);
