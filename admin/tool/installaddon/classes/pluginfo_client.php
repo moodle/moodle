@@ -80,21 +80,28 @@ class tool_installaddon_pluginfo_client {
         require_once($CFG->libdir.'/filelib.php');
 
         $curl = new curl(array('proxy' => true));
+
         $response = $curl->get(
             $this->service_request_url(),
             $this->service_request_params($component, $version),
             $this->service_request_options());
+
         $curlerrno = $curl->get_errno();
-        if (!empty($curlerrno)) {
-            throw new tool_installaddon_pluginfo_exception('err_response_curl', 'cURL error '.$curlerrno.': '.$curl->error);
-        }
         $curlinfo = $curl->get_info();
-/*        if ($curlinfo['http_code'] == 404) {
-            throw new tool_installaddon_pluginfo_exception('err_response_http_code_404');
-}*/
-        if ($curlinfo['http_code'] != 200) {
-            throw new tool_installaddon_pluginfo_exception('err_response_http_code', $curlinfo['http_code']);
+
+        if (!empty($curlerrno)) {
+            throw new tool_installaddon_pluginfo_exception('err_curl_exec', array(
+                'url' => $curlinfo['url'], 'errno' => $curlerrno, 'error' => $curl->error));
+
+        } else if ($curlinfo['http_code'] != 200) {
+            throw new tool_installaddon_pluginfo_exception('err_curl_http_code', array(
+                'url' => $curlinfo['url'], 'http_code' => $curlinfo['http_code']));
+
+        } else if (isset($curlinfo['ssl_verify_result']) and $curlinfo['ssl_verify_result'] != 0) {
+            throw new tool_installaddon_pluginfo_exception('err_curl_ssl_verify', array(
+                'url' => $curlinfo['url'], 'ssl_verify_result' => $curlinfo['ssl_verify_result']));
         }
+
         return $response;
     }
 

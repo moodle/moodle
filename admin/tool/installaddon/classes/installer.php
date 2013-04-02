@@ -349,52 +349,7 @@ class tool_installaddon_installer {
      */
     public function download_file($source, $target) {
         global $CFG;
-
-        $newlines = array("\r", "\n");
-        $source = str_replace($newlines, '', $source);
-        if (!preg_match('|^https?://|i', $source)) {
-            throw new tool_installaddon_installer_exception('err_download_transport_protocol', $source);
-        }
-        if (!$ch = curl_init($source)) {
-            throw new tool_installaddon_installer_exception('err_curl_init', $source);
-        }
-
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true); // verify the peer's certificate
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2); // check the existence of a common name and also verify that it matches the hostname provided
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // return the transfer as a string
-        curl_setopt($ch, CURLOPT_HEADER, false); // don't include the header in the output
-        curl_setopt($ch, CURLOPT_TIMEOUT, 3600);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 20); // nah, moodle.org is never unavailable! :-p
-        curl_setopt($ch, CURLOPT_URL, $source);
-
-        $cacertfile = $CFG->dataroot.'/moodleorgca.crt';
-        if (is_readable($cacertfile)) {
-            // Do not use CA certs provided by the operating system. Instead,
-            // use this CA cert to verify the ZIP provider.
-            curl_setopt($ch, CURLOPT_CAINFO, $cacertfile);
-        }
-
-        if (!empty($CFG->proxyhost) and !is_proxybypass($source)) {
-            if (!empty($CFG->proxytype)) {
-                if (strtoupper($CFG->proxytype) === 'SOCKS5') {
-                    curl_setopt($ch, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS5);
-                } else {
-                    curl_setopt($ch, CURLOPT_PROXYTYPE, CURLPROXY_HTTP);
-                    curl_setopt($ch, CURLOPT_HTTPPROXYTUNNEL, false);
-                }
-            }
-
-            if (empty($CFG->proxyport)) {
-                curl_setopt($ch, CURLOPT_PROXY, $CFG->proxyhost);
-            } else {
-                curl_setopt($ch, CURLOPT_PROXY, $CFG->proxyhost.':'.$CFG->proxyport);
-            }
-
-            if (!empty($CFG->proxyuser) and !empty($CFG->proxypassword)) {
-                curl_setopt($ch, CURLOPT_PROXYUSERPWD, $CFG->proxyuser.':'.$CFG->proxypassword);
-                curl_setopt($ch, CURLOPT_PROXYAUTH, CURLAUTH_BASIC | CURLAUTH_NTLM);
-            }
-        }
+        require_once($CFG->libdir.'/filelib.php');
 
         $targetfile = fopen($target, 'w');
 
@@ -402,27 +357,41 @@ class tool_installaddon_installer {
             throw new tool_installaddon_installer_exception('err_download_write_file', $target);
         }
 
-        curl_setopt($ch, CURLOPT_FILE, $targetfile);
+        $options = array(
+            'file' => $targetfile,
+            'timeout' => 300,
+            'followlocation' => true,
+            'maxredirs' => 3,
+            'ssl_verifypeer' => true,
+            'ssl_verifyhost' => 2,
+        );
 
-        $result = curl_exec($ch);
-
-        // try to detect encoding problems
-        if ((curl_errno($ch) == 23 or curl_errno($ch) == 61) and defined('CURLOPT_ENCODING')) {
-            curl_setopt($ch, CURLOPT_ENCODING, 'none');
-            $result = curl_exec($ch);
+        $cacertfile = $CFG->dataroot.'/moodleorgca.crt';
+        if (is_readable($cacertfile)) {
+            // Do not use CA certs provided by the operating system. Instead,
+            // use this CA cert to verify the ZIP provider.
+            $options['cainfo'] = $cacertfile;
         }
+
+        $curl = new curl(array('proxy' => true));
+
+        $result = $curl->download_one($source, null, $options);
+
+        $curlinfo = $curl->get_info();
 
         fclose($targetfile);
 
-        $curlerrno = curl_errno($ch);
-        $curlerror = curl_error($ch);
-        $curlinfo = curl_getinfo($ch);
+        if ($result !== true) {
+            throw new tool_installaddon_installer_exception('err_curl_exec', array(
+                'url' => $source, 'errorno' => $curl->get_errno(), 'error' => $result));
 
-        if ($result === false or $curlerrno) {
-            throw new tool_installaddon_installer_exception('err_curl_exec', array('url' => $source, 'errorno' => $curlerrno, 'error' => $curlerror));
+        } else if (empty($curlinfo['http_code']) or $curlinfo['http_code'] != 200) {
+            throw new tool_installaddon_installer_exception('err_curl_http_code', array(
+                'url' => $source, 'http_code' => $curlinfo['http_code']));
 
-        } else if (is_array($curlinfo) and (empty($curlinfo['http_code']) or $curlinfo['http_code'] != 200)) {
-            throw new tool_installaddon_installer_exception('err_curl_code', array('url' => $source, 'httpcode' => $curlinfo['http_code']));
+        } else if (isset($curlinfo['ssl_verify_result']) and $curlinfo['ssl_verify_result'] != 0) {
+            throw new tool_installaddon_installer_exception('err_curl_ssl_verify', array(
+                'url' => $source, 'ssl_verify_result' => $curlinfo['ssl_verify_result']));
         }
     }
 
