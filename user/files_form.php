@@ -36,6 +36,7 @@ class user_files_form extends moodleform {
 
         $mform->addElement('filemanager', 'files_filemanager', get_string('files'), null, $options);
         $mform->addElement('hidden', 'returnurl', $data->returnurl);
+        $mform->setType('returnurl', PARAM_LOCALURL);
 
         $this->add_action_buttons(true, get_string('savechanges'));
 
