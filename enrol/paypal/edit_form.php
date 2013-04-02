@@ -47,7 +47,7 @@ class enrol_paypal_edit_form extends moodleform {
         $mform->setDefault('status', $plugin->get_config('status'));
 
         $mform->addElement('text', 'cost', get_string('cost', 'enrol_paypal'), array('size'=>4));
-        $mform->setType('cost', PARAM_TEXT);
+        $mform->setType('cost', PARAM_RAW); // Use unformat_float to get real value.
         $mform->setDefault('cost', $plugin->get_config('cost'));
 
         $paypalcurrencies = $plugin->get_currencies();
