@@ -2,7 +2,7 @@
 Feature: Indent items on the course page
   In order to create a structured view of activities
   As a moodle teacher
-  I need to move activities and resources to left and right 
+  I need to move activities and resources to left and right
 
   @javascript
   Scenario: Indent course items with Javascript enabled
