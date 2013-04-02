@@ -50,7 +50,24 @@ $handlers = array(
         'schedule'         => 'cron',
         'internal'         => 0,
     ),
-
+    'course_completed' => array (
+        'handlerfile'      => '/lib/badgeslib.php',
+        'handlerfunction'  => 'badges_award_handle_course_criteria_review',
+        'schedule'         => 'instant',
+        'internal'         => 1,
+    ),
+    'activity_completion_changed' => array (
+        'handlerfile'      => '/lib/badgeslib.php',
+        'handlerfunction'  => 'badges_award_handle_activity_criteria_review',
+        'schedule'         => 'instant',
+        'internal'         => 1,
+    ),
+    'user_updated' => array (
+        'handlerfile'      => '/lib/badgeslib.php',
+        'handlerfunction'  => 'badges_award_handle_profile_criteria_review',
+        'schedule'         => 'instant',
+        'internal'         => 1,
+    ),
 
 /* no more here please, core should not consume any events!!!!!!! */
 );

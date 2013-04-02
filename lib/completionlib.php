@@ -1036,6 +1036,8 @@ class completion_info {
         }
         $transaction->allow_commit();
 
+        events_trigger('activity_completion_changed', $data);
+
         if ($data->userid == $USER->id) {
             $SESSION->completioncache[$cm->course][$cm->id] = $data;
             // reset modinfo for user (no need to call rebuild_course_cache())

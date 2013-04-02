@@ -247,6 +247,20 @@ class registration_manager {
             $resourcecount = $DB->count_records('resource');
         }
         $siteinfo['resources'] = $resourcecount;
+        // Badge statistics.
+        require_once($CFG->libdir . '/badgeslib.php');
+        if (get_config('hub', 'site_badges_' . $cleanhuburl) == -1) {
+            $badges = -1;
+        } else {
+            $badges = $DB->count_records_select('badge', 'status <> ' . BADGE_STATUS_ARCHIVED);
+        }
+        $siteinfo['badges'] = $badges;
+        if (get_config('hub', 'site_issuedbadges_' . $cleanhuburl) == -1) {
+            $issuedbadges = -1;
+        } else {
+            $issuedbadges = $DB->count_records('badge_issued');
+        }
+        $siteinfo['issuedbadges'] = $issuedbadges;
         //TODO
         require_once($CFG->dirroot . "/course/lib.php");
         if (get_config('hub', 'site_participantnumberaverage_' . $cleanhuburl) == -1) {

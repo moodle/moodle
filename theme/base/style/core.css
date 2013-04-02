@@ -1280,3 +1280,61 @@ body.jsenabled .formlistingradio {
 body.jsenabled .formlisting {
     display: block;
 }
+
+/**
+ * Badges styles
+ */
+#page-badges-view .collection { width: 90%; margin: 1em auto; }
+#page-badges-index .collection { width: 85%; margin: 1em auto; }
+
+table.collection th { font-size: inherit !important; border-width: 1px; border-style: solid; border-color: #CCCCCC; vertical-align: middle; padding-left: 5px; padding-right: 5px; vertical-align: top; text-align: center !important; }
+table.collection td { border-width: 1px; border-style: solid; border-color: #CCCCCC; vertical-align: middle; padding-left: 5px; padding-right: 5px; vertical-align: top; }
+table.collection .r1 { background-color: #FFFFFF; }
+table.collection .r0 { background-color: #F6F6F6; }
+table.collection ul { margin: 0.5em 0.5em 0.5em 2em; }
+
+#page-badges-view table.collection .badgeimage,
+#page-badges-index table.collection .status { width: 15%; text-align: center; vertical-align: middle; }
+#page-badges-view table.collection .awards,
+#page-badges-index table.collection .awards { width: 10%; text-align: center; vertical-align: middle; }
+#page-badges-view table.collection .description { width: 25%; text-align: left; }
+
+table.collection .name { text-align: left; vertical-align: middle; }
+#page-badges-view table.collection .criteria { width: 35%; text-align: left; vertical-align: top; }
+#page-badges-index table.collection .criteria { width: 40%; text-align: left; vertical-align: top; }
+#page-badges-index table.collection .actions { width: 11em; text-align: center; vertical-align: middle; }
+
+a.criteria-action { padding: 0px 3px; float: right; }
+table.issuedbadgebox { width: 750px; background-color: white; }
+table.badgeissuedimage { width: 150px; text-align: center; }
+table.badgeissuedinfo { width: 600px; }
+table.badgeissuedinfo .bvalue { text-align: left; vertical-align: middle; }
+table.badgeissuedinfo .bfield { width: 125px; text-align: left; font-style: italic; }
+
+ul.badges { margin: 0; list-style: none; }
+.badges li { position: relative; display: inline-block; padding-bottom: 2em; text-align: center; vertical-align: top; width: 150px; }
+.badges li .badge-name { display: block; padding: 5px; }
+.badges li > img { position: absolute; }
+.badges li .badge-image { width: 90px; height: 90px; left: 10px; top: 0px; z-index: 1; }
+.badges li .badge-actions { position: relative; }
+
+div.badge { position: relative; display: block; }
+div.badge .expireimage { width: 100px; height: 100px; left: 20px; top: 0px; }
+.expireimage { width: 90px; height: 90px; left: 30px; top: 0px; position: absolute; z-index:10; filter: alpha(opacity = 85); -moz-opacity: 0.85; -khtml-opacity: 0.85; opacity: 0.85;}
+
+.backpackform { width: 100px !important; float: left; }
+.badge-profile { vertical-align: top; }
+
+#page-badges-award .recipienttable { background-color: #EEEEEE; border: 1px solid #BBBBBB; width: 100%; vertical-align: top; }
+#page-badges-award .recipienttable tr td { vertical-align: top; }
+#page-badges-award .recipienttable tr td.actions { width: 16%; padding-top: 3em; }
+#page-badges-award .recipienttable tr td.actions .actionbutton { margin: 0.3em 0; padding: 0.5em 0; width: 100%; }
+#page-badges-award .recipienttable tr td.existing,
+#page-badges-award .recipienttable tr td.potential { width: 42%; }
+
+.statustable { margin-bottom: 0px; }
+.statusbox { border-color: #BBBBBB; }
+.statusbox.active { background-color: #D9F991; }
+.statusbox.inactive { background-color: #FFEBA8; }
+.activatebadge { margin: 0px; text-align: left; vertical-align: middle; }
+.addcourse { float: right; }

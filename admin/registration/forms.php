@@ -243,6 +243,8 @@ class site_registration_form extends moodleform {
         $postsnumber = get_config('hub', 'site_postsnumber_' . $cleanhuburl);
         $questionsnumber = get_config('hub', 'site_questionsnumber_' . $cleanhuburl);
         $resourcesnumber = get_config('hub', 'site_resourcesnumber_' . $cleanhuburl);
+        $badges = get_config('hub', 'site_badges_' . $cleanhuburl);
+        $issuedbadges = get_config('hub', 'site_issuedbadges_' . $cleanhuburl);
         $mediancoursesize = get_config('hub', 'site_mediancoursesize_' . $cleanhuburl);
 
         //hidden parameters
@@ -372,6 +374,9 @@ class site_registration_form extends moodleform {
         require_once($CFG->dirroot . "/course/lib.php");
         $participantnumberaverage = number_format(average_number_of_participants(), 2);
         $modulenumberaverage = number_format(average_number_of_courses_modules(), 2);
+        require_once($CFG->libdir . '/badgeslib.php');
+        $badges = $DB->count_records_select('badge', 'status <> ' . BADGE_STATUS_ARCHIVED);
+        $issuedbadges = $DB->count_records('badge_issued');
 
         if (HUB_MOODLEORGHUBURL != $huburl) {
             $mform->addElement('checkbox', 'courses', get_string('sendfollowinginfo', 'hub'),
@@ -398,6 +403,14 @@ class site_registration_form extends moodleform {
             $mform->addElement('checkbox', 'resources', '',
                     " " . get_string('resourcesnumber', 'hub', $resourcecount));
             $mform->setDefault('resources', true);
+
+            $mform->addElement('checkbox', 'badges', '',
+                    " " . get_string('badgesnumber', 'hub', $badges));
+            $mform->setDefault('badges', true);
+
+            $mform->addElement('checkbox', 'issuedbadges', '',
+                    " " . get_string('issuedbadgesnumber', 'hub', $issuedbadges));
+            $mform->setDefault('issuedbadges', true);
 
             $mform->addElement('checkbox', 'participantnumberaverage', '',
                     " " . get_string('participantnumberaverage', 'hub', $participantnumberaverage));
@@ -437,6 +450,16 @@ class site_registration_form extends moodleform {
                     " " . get_string('resourcesnumber', 'hub', $resourcecount));
             $mform->addElement('hidden', 'resources', true);
             $mform->setType('resources', PARAM_FLOAT);
+
+            $mform->addElement('static', 'badgeslabel', '',
+                    " " . get_string('badgesnumber', 'hub', $badges));
+            $mform->addElement('hidden', 'badges', true);
+            $mform->setType('badges', PARAM_INT);
+
+            $mform->addElement('static', 'issuedbadgeslabel', '',
+                    " " . get_string('issuedbadgesnumber', 'hub', $issuedbadges));
+            $mform->addElement('hidden', 'issuedbadges', true);
+            $mform->setType('issuedbadges', PARAM_INT);
 
             $mform->addElement('static', 'participantnumberaveragelabel', '',
                     " " . get_string('participantnumberaverage', 'hub', $participantnumberaverage));

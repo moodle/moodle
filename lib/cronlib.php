@@ -482,6 +482,11 @@ function cron_run() {
         }
     }
 
+    // Run badges review cron.
+    mtrace("Starting badges cron...");
+    require_once($CFG->dirroot . '/badges/cron.php');
+    badge_cron();
+    mtrace('done.');
 
     // cleanup file trash - not very important
     $fs = get_file_storage();

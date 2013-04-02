@@ -84,6 +84,8 @@ if (!empty($fromform) and confirm_sesskey()) {
     set_config('site_postsnumber_' . $cleanhuburl, $fromform->posts, 'hub');
     set_config('site_questionsnumber_' . $cleanhuburl, $fromform->questions, 'hub');
     set_config('site_resourcesnumber_' . $cleanhuburl, $fromform->resources, 'hub');
+    set_config('site_badges_' . $cleanhuburl, $fromform->badges, 'hub');
+    set_config('site_issuedbadges_' . $cleanhuburl, $fromform->issuedbadges, 'hub');
     set_config('site_modulenumberaverage_' . $cleanhuburl, $fromform->modulenumberaverage, 'hub');
     set_config('site_participantnumberaverage_' . $cleanhuburl, $fromform->participantnumberaverage, 'hub');
 }
