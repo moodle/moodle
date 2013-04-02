@@ -2917,16 +2917,23 @@ function set_coursemodule_visible($id, $visible, $prevstateoverrides=false) {
         }
     }
 
+    $cminfo = new stdClass();
+    $cminfo->id = $id;
+    $cminfo->visible = $visible;
+
     if ($prevstateoverrides) {
-        if ($visible == '0') {
-            // Remember the current visible state so we can toggle this back.
-            $DB->set_field('course_modules', 'visibleold', $cm->visible, array('id'=>$id));
+        // If we making whole section visiblility change..
+        if ($visible == 0) {
+            // Retain previous visibility state.
+            $cminfo->visibleold = $cm->visible;
         } else {
-            // Get the previous saved visible states.
-            return $DB->set_field('course_modules', 'visible', $cm->visibleold, array('id'=>$id));
+            // Restore previous visibility state.
+            $cminfo->visible = $cm->visibleold;
         }
+    } else {
+        $cminfo->visibleold = $visible;
     }
-    return $DB->set_field("course_modules", "visible", $visible, array("id"=>$id));
+    return $DB->update_record('course_modules', $cminfo);
 }
 
 /**
