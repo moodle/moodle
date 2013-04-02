@@ -3479,7 +3479,7 @@ class assign {
      * @return array $submissions All submission records for this user (or group).
      */
     protected function get_all_submissions($userid) {
-        global $DB;
+        global $DB, $USER;
 
         // If the userid is not null then use userid.
         if (!$userid) {
@@ -5495,7 +5495,7 @@ class assign {
                 $gradebookgrade = null;
                 if (isset($gradinginfo->items[0])) {
                     $gradingitem = $gradinginfo->items[0];
-                    $gradebookgrade = $gradingitem->grades[$user->id];
+                    $gradebookgrade = $gradingitem->grades[$userid];
                 }
                 if ($gradebookgrade && !$gradebookgrade->is_passed($gradingitem)) {
                     $shouldreopen = true;
