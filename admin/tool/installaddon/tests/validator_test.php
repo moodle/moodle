@@ -42,18 +42,18 @@ class tool_installaddon_validator_test extends basic_testcase {
         $fixtures = dirname(__FILE__).'/fixtures';
 
         // Non-existing directory.
-        $validator = tool_installaddon_validator::instance($fixtures.'/nulldir', array(
+        $validator = testable_tool_installaddon_validator::instance($fixtures.'/nulldir', array(
             'null/' => true,
             'null/lang/' => true,
             'null/lang/en/' => true,
             'null/lang/en/null.php' => true));
-        $this->assertEquals('tool_installaddon_validator', get_class($validator));
+        $this->assertEquals('testable_tool_installaddon_validator', get_class($validator));
         $this->assertFalse($validator->execute());
         $this->assertTrue($this->has_message($validator->get_messages(), $validator::ERROR,
             'filenotexists', array('file' => 'null/')));
 
         // Missing expected file
-        $validator = tool_installaddon_validator::instance($fixtures.'/plugindir', array(
+        $validator = testable_tool_installaddon_validator::instance($fixtures.'/plugindir', array(
             'foobar/' => true,
             'foobar/version.php' => true,
             'foobar/index.php' => true,
@@ -66,7 +66,7 @@ class tool_installaddon_validator_test extends basic_testcase {
             'filenotexists', array('file' => 'foobar/NOTEXISTS.txt')));
 
         // Errors during ZIP extraction
-        $validator = tool_installaddon_validator::instance($fixtures.'/multidir', array(
+        $validator = testable_tool_installaddon_validator::instance($fixtures.'/multidir', array(
             'one/' => true,
             'one/version.php' => 'Can not write target file',
             'two/' => true,
@@ -76,14 +76,14 @@ class tool_installaddon_validator_test extends basic_testcase {
             array('file' => 'one/version.php', 'status' => 'Can not write target file')));
 
         // Insufficient number of extracted files
-        $validator = tool_installaddon_validator::instance($fixtures.'/emptydir', array(
+        $validator = testable_tool_installaddon_validator::instance($fixtures.'/emptydir', array(
             'emptydir/' => true,
             'emptydir/README.txt' => true));
         $this->assertFalse($validator->execute());
         $this->assertTrue($this->has_message($validator->get_messages(), $validator::ERROR, 'filesnumber'));
 
         // No wrapping directory
-        $validator = tool_installaddon_validator::instance($fixtures.'/nowrapdir', array(
+        $validator = testable_tool_installaddon_validator::instance($fixtures.'/nowrapdir', array(
             'version.php' => true,
             'index.php' => true,
             'lang/' => true,
@@ -93,7 +93,7 @@ class tool_installaddon_validator_test extends basic_testcase {
         $this->assertTrue($this->has_message($validator->get_messages(), $validator::ERROR, 'onedir'));
 
         // Multiple directories
-        $validator = tool_installaddon_validator::instance($fixtures.'/multidir', array(
+        $validator = testable_tool_installaddon_validator::instance($fixtures.'/multidir', array(
             'one/' => true,
             'one/version.php' => true,
             'two/' => true,
@@ -102,7 +102,7 @@ class tool_installaddon_validator_test extends basic_testcase {
         $this->assertTrue($this->has_message($validator->get_messages(), $validator::ERROR, 'onedir'));
 
         // Invalid root directory name
-        $validator = tool_installaddon_validator::instance($fixtures.'/github', array(
+        $validator = testable_tool_installaddon_validator::instance($fixtures.'/github', array(
             'moodle-repository_mahara-master/' => true,
             'moodle-repository_mahara-master/lang/' => true,
             'moodle-repository_mahara-master/lang/en/' => true,
@@ -116,7 +116,7 @@ class tool_installaddon_validator_test extends basic_testcase {
     public function test_validate_version_php() {
         $fixtures = dirname(__FILE__).'/fixtures';
 
-        $validator = tool_installaddon_validator::instance($fixtures.'/noversiontheme', array(
+        $validator = testable_tool_installaddon_validator::instance($fixtures.'/noversiontheme', array(
             'noversion/' => true,
             'noversion/lang/' => true,
             'noversion/lang/en/' => true,
@@ -127,7 +127,7 @@ class tool_installaddon_validator_test extends basic_testcase {
         $this->assertTrue($this->has_message($validator->get_messages(), $validator::DEBUG, 'missingversionphp'));
         $this->assertTrue(is_null($validator->get_versionphp_info()));
 
-        $validator = tool_installaddon_validator::instance($fixtures.'/noversionmod', array(
+        $validator = testable_tool_installaddon_validator::instance($fixtures.'/noversionmod', array(
             'noversion/' => true,
             'noversion/lang/' => true,
             'noversion/lang/en/' => true,
@@ -137,7 +137,7 @@ class tool_installaddon_validator_test extends basic_testcase {
         $this->assertFalse($validator->execute());
         $this->assertTrue($this->has_message($validator->get_messages(), $validator::ERROR, 'missingversionphp'));
 
-        $validator = tool_installaddon_validator::instance($fixtures.'/plugindir', array(
+        $validator = testable_tool_installaddon_validator::instance($fixtures.'/plugindir', array(
             'foobar/' => true,
             'foobar/version.php' => true,
             'foobar/index.php' => true,
@@ -148,7 +148,7 @@ class tool_installaddon_validator_test extends basic_testcase {
         $this->assertTrue($this->has_message($validator->get_messages(), $validator::ERROR, 'componentmismatchtype',
             array('expected' => 'block', 'found' => 'local')));
 
-        $validator = tool_installaddon_validator::instance($fixtures.'/plugindir', array(
+        $validator = testable_tool_installaddon_validator::instance($fixtures.'/plugindir', array(
             'foobar/' => true,
             'foobar/version.php' => true,
             'foobar/index.php' => true,
@@ -175,7 +175,7 @@ class tool_installaddon_validator_test extends basic_testcase {
     public function test_validate_language_pack() {
         $fixtures = dirname(__FILE__).'/fixtures';
 
-        $validator = tool_installaddon_validator::instance($fixtures.'/nolang', array(
+        $validator = testable_tool_installaddon_validator::instance($fixtures.'/nolang', array(
             'bah/' => true,
             'bah/index.php' => true,
             'bah/view.php' => true,
@@ -185,7 +185,7 @@ class tool_installaddon_validator_test extends basic_testcase {
         $this->assertFalse($validator->execute());
         $this->assertTrue($this->has_message($validator->get_messages(), $validator::ERROR, 'missinglangenfolder'));
 
-        $validator = tool_installaddon_validator::instance($fixtures.'/nolang', array(
+        $validator = testable_tool_installaddon_validator::instance($fixtures.'/nolang', array(
             'bah/' => true,
             'bah/version.php' => true,
             'bah/lang/' => true,
@@ -195,7 +195,7 @@ class tool_installaddon_validator_test extends basic_testcase {
         $this->assertFalse($validator->execute());
         $this->assertTrue($this->has_message($validator->get_messages(), $validator::ERROR, 'missinglangenfile'));
 
-        $validator = tool_installaddon_validator::instance($fixtures.'/nolang', array(
+        $validator = testable_tool_installaddon_validator::instance($fixtures.'/nolang', array(
             'bah/' => true,
             'bah/version.php' => true,
             'bah/lang/' => true,
@@ -208,7 +208,7 @@ class tool_installaddon_validator_test extends basic_testcase {
         $this->assertTrue($this->has_message($validator->get_messages(), $validator::WARNING, 'multiplelangenfiles'));
         $this->assertTrue(is_null($validator->get_language_file_name()));
 
-        $validator = tool_installaddon_validator::instance($fixtures.'/nolang', array(
+        $validator = testable_tool_installaddon_validator::instance($fixtures.'/nolang', array(
             'bah/' => true,
             'bah/version.php' => true,
             'bah/lang/' => true,
@@ -220,7 +220,7 @@ class tool_installaddon_validator_test extends basic_testcase {
         $this->assertTrue($this->has_message($validator->get_messages(), $validator::ERROR, 'missingexpectedlangenfile', 'block_bah.php'));
         $this->assertEquals('bah', $validator->get_language_file_name());
 
-        $validator = tool_installaddon_validator::instance($fixtures.'/noversiontheme', array(
+        $validator = testable_tool_installaddon_validator::instance($fixtures.'/noversiontheme', array(
             'noversion/' => true,
             'noversion/lang/' => true,
             'noversion/lang/en/' => true,
@@ -231,7 +231,7 @@ class tool_installaddon_validator_test extends basic_testcase {
         $this->assertTrue($this->has_message($validator->get_messages(), $validator::DEBUG, 'foundlangfile', 'theme_noversion'));
         $this->assertEquals('theme_noversion', $validator->get_language_file_name());
 
-        $validator = tool_installaddon_validator::instance($fixtures.'/plugindir', array(
+        $validator = testable_tool_installaddon_validator::instance($fixtures.'/plugindir', array(
             'foobar/' => true,
             'foobar/version.php' => true,
             'foobar/index.php' => true,
@@ -258,7 +258,8 @@ class tool_installaddon_validator_test extends basic_testcase {
         $validator->assert_plugin_type('local');
         $validator->assert_moodle_version('2013031400.00');
         $this->assertFalse($validator->execute());
-        $this->assertTrue($this->has_message($validator->get_messages(), $validator::ERROR, 'targetexists', $fixtures.'/writable/local/greenbar'));
+        $this->assertTrue($this->has_message($validator->get_messages(), $validator::ERROR, 'targetexists',
+            $validator->get_plugintype_location('local').'/greenbar'));
 
         $validator = testable_tool_installaddon_validator::instance($fixtures.'/plugindir', array(
             'foobar/' => true,
@@ -270,7 +271,8 @@ class tool_installaddon_validator_test extends basic_testcase {
         $validator->assert_plugin_type('local');
         $validator->assert_moodle_version('2013031400.00');
         $this->assertTrue($validator->execute());
-        $this->assertTrue($this->has_message($validator->get_messages(), $validator::INFO, 'pathwritable', $fixtures.'/writable/local'));
+        $this->assertTrue($this->has_message($validator->get_messages(), $validator::INFO, 'pathwritable',
+            $validator->get_plugintype_location('local')));
     }
 
     public function test_parse_version_php() {
@@ -317,6 +319,17 @@ class testable_tool_installaddon_validator extends tool_installaddon_validator {
     }
 
     public function get_plugintype_location($plugintype) {
-        return dirname(__FILE__).'/fixtures/writable/'.$plugintype;
+
+        $testableroot = make_temp_directory('testable_tool_installaddon_validator/plugintypes');
+        if (!is_dir($testableroot.'/'.$plugintype)) {
+            make_temp_directory('testable_tool_installaddon_validator/plugintypes/'.$plugintype);
+        }
+
+        if ($plugintype === 'local') {
+            // We need the following for the test_validate_target_location() method
+            make_temp_directory('testable_tool_installaddon_validator/plugintypes/local/greenbar');
+        }
+
+        return $testableroot.'/'.$plugintype;
     }
 }
