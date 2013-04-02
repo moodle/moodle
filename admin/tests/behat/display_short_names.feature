@@ -1,0 +1,22 @@
+@admin
+Feature: Display extended course names
+  In order to display more info about the courses
+  As a moodle admin
+  I need to display courses short names along with courses full names
+
+  Background: 
+    Given the following "courses" exists:
+      | fullname | shortname | category |
+      | Course fullname | C_shortname | 0 |
+    And I log in as "admin"
+
+  Scenario: Courses list without extended course names (default value)
+    Then I should see "Course fullname"
+    And I should not see "C_shortname Course fullname"
+
+  Scenario: Courses list with extended course names
+    Given I click on "Courses" "link" in the "//div[@id='settingsnav']//descendant::li[contains(concat(' ', @class, ' '), ' type_setting ')][not(contains(., 'Site administration'))][contains(., 'Appearance')]" "xpath_element"
+    And I check "Display extended course names"
+    When I press "Save changes"
+    And I am on homepage
+    Then I should see "C_shortname Course fullname"
