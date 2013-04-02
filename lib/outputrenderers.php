@@ -529,7 +529,9 @@ class core_renderer extends renderer_base {
         if (session_is_loggedinas()) {
             $realuser = session_get_realuser();
             $fullname = fullname($realuser, true);
-            $realuserinfo = " [<a href=\"$CFG->wwwroot/course/loginas.php?id=$course->id&amp;sesskey=".sesskey()."\">$fullname</a>] ";
+            $loginastitle = get_string('loginas');
+            $realuserinfo = " [<a href=\"$CFG->wwwroot/course/loginas.php?id=$course->id&amp;sesskey=".sesskey()."\"";
+            $realuserinfo .= "title =\"".$loginastitle."\">$fullname</a>] ";
         } else {
             $realuserinfo = '';
         }
