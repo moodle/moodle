@@ -157,3 +157,6 @@ if ($thisdevice == "default" || $thisdevice == "tablet" || optional_param('mymob
 // Sets a custom render factory to use with the theme, used when working with custom renderers.
 $THEME->rendererfactory = 'theme_overridden_renderer_factory';
 $THEME->csspostprocess = 'mymobile_user_settings';
+
+// Disables CSS Optimiser for MyMobile theme.
+$THEME->supportscssoptimisation = false;
