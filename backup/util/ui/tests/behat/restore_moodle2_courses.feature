@@ -6,9 +6,9 @@ Feature: Restore Moodle 2 course backups
 
   Background:
     Given the following "courses" exists:
-      | fullname | shortname | category | format |
-      | Course 1 | C1 | 0 | topics |
-      | Course 2 | C2 | 0 | topics |
+      | fullname | shortname | category | format | numsections | coursedisplay |
+      | Course 1 | C1 | 0 | topics | 15 | 1 |
+      | Course 2 | C2 | 0 | topics | 5 | 0 |
     And I log in as "admin"
     And I follow "Course 1"
     And I turn editing mode on
@@ -35,6 +35,12 @@ Feature: Restore Moodle 2 course backups
     Then I should see "Course 1 restored in a new course"
     And I should see "Community finder"
     And I should see "Test forum name"
+    And I follow "Edit settings"
+    And I expand all fieldsets
+    And the "id_format" field should match "Topics format" value
+    And the "Number of sections" field should match "15" value
+    And the "Course layout" field should match "Show one section per page" value
+    And I press "Cancel"
 
   @javascript
   Scenario: Restore a backup into the same course
@@ -98,3 +104,27 @@ Feature: Restore Moodle 2 course backups
     And I follow "Edit settings"
     And the "id_format" field should match "SCORM format" value
     And I press "Cancel"
+
+  @javascript
+  Scenario: Restore a backup in an existing course retaining the backup course settings
+    Given I add a "URL" to section "3" and I fill the form with:
+      | Name | Test URL name |
+      | Description | Test URL description |
+      | id_externalurl | http://www.moodle.org |
+    And I hide section "3"
+    And I hide section "7"
+    When I backup "Course 1" course using this options:
+      | Filename | test_backup.mbz |
+    And I restore "test_backup.mbz" backup into "Course 2" course using this options:
+      | Overwrite course configuration | Yes |
+    And I follow "Edit settings"
+    And I expand all fieldsets
+    Then the "id_format" field should match "Topics format" value
+    And the "Number of sections" field should match "15" value
+    And the "Course layout" field should match "Show one section per page" value
+    And I press "Cancel"
+    And section "3" should be hidden
+    And section "7" should be hidden
+    And section "15" should be visible
+    And I should see "Test URL name" in the "#section-3" "css_element"
+    And I should see "Test forum name" in the "#section-1" "css_element"

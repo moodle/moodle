@@ -61,7 +61,7 @@ class behat_course extends behat_base {
     /**
      * Adds the selected activity/resource filling the form data with the specified field/value pairs.
      *
-     * @When /^I add a "(?P<activity_or_resource_string>(?:[^"]|\\")*)" to section "(?P<section_number>\d+)" and I fill the form with:$/
+     * @When /^I add a "(?P<activity_or_resource_name_string>(?:[^"]|\\")*)" to section "(?P<section_number>\d+)" and I fill the form with:$/
      * @param string $activity The activity name
      * @param string $section The section number
      * @param TableNode $data The activity field/value data
@@ -78,7 +78,7 @@ class behat_course extends behat_base {
     /**
      * Opens the activity chooser and opens the activity/resource form page.
      *
-     * @Given /^I add a "(?P<activity_or_resource_string>(?:[^"]|\\")*)" to section "(?P<section_number>\d+)"$/
+     * @Given /^I add a "(?P<activity_or_resource_name_string>(?:[^"]|\\")*)" to section "(?P<section_number>\d+)"$/
      * @throws ElementNotFoundException Thrown by behat_base::find
      * @param string $activity
      * @param string $section
@@ -95,7 +95,10 @@ class behat_course extends behat_base {
             $sectionnode->click();
 
             // Clicks the selected activity if it exists.
-            $activityxpath = ".//label[contains(.,'" . $activity . "')]/input";
+            $activity = ucfirst($activity);
+            $activityxpath = "//div[@id='chooseform']/descendant::label
+/descendant::span[contains(concat(' ', @class, ' '), ' typename ')][contains(.,'" . $activity . "')]
+/parent::label/child::input";
             $activitynode = $this->find('xpath', $activityxpath);
             $activitynode->doubleClick();
 
