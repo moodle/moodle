@@ -97,7 +97,7 @@ class qtype_essay_test_helper extends question_test_helper {
         $q->responseformat = 'monospaced';
         return $q;
     }
-    
+
     public function make_essay_question_responsetemplate() {
         $q = $this->initialise_essay_question();
         $q->responsetemplate = 'Once upon a time';
