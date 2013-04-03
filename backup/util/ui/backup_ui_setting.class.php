@@ -124,6 +124,16 @@ class base_setting_ui {
     public function get_static_value() {
         return $this->setting->get_value();
     }
+
+    /**
+     * Gets the the PARAM_XXXX validation to be applied to the setting
+     *
+     * return string The PARAM_XXXX constant of null if the setting type is not defined
+     */
+    public function get_param_validation() {
+        return $this->setting->get_param_validation();
+    }
+
     /**
      * Sets the label
      * @param string $label
