@@ -530,7 +530,10 @@ class assign {
         $update->requireallteammemberssubmit = $formdata->requireallteammemberssubmit;
         $update->teamsubmissiongroupingid = $formdata->teamsubmissiongroupingid;
         $update->blindmarking = $formdata->blindmarking;
-        $update->attemptreopenmethod = $formdata->attemptreopenmethod;
+        $update->attemptreopenmethod = ASSIGN_ATTEMPT_REOPEN_METHOD_NONE;
+        if (!empty($formdata->attemptreopenmethod)) {
+            $update->attemptreopenmethod = $formdata->attemptreopenmethod;
+        }
         if (!empty($formdata->maxattempts)) {
             $update->maxattempts = $formdata->maxattempts;
         }
@@ -848,7 +851,10 @@ class assign {
         $update->requireallteammemberssubmit = $formdata->requireallteammemberssubmit;
         $update->teamsubmissiongroupingid = $formdata->teamsubmissiongroupingid;
         $update->blindmarking = $formdata->blindmarking;
-        $update->attemptreopenmethod = $formdata->attemptreopenmethod;
+        $update->attemptreopenmethod = ASSIGN_ATTEMPT_REOPEN_METHOD_NONE;
+        if (!empty($formdata->attemptreopenmethod)) {
+            $update->attemptreopenmethod = $formdata->attemptreopenmethod;
+        }
         if (!empty($formdata->maxattempts)) {
             $update->maxattempts = $formdata->maxattempts;
         }
