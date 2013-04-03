@@ -11,6 +11,7 @@ To update to the latest release of twitter bootstrap:
 * remove all files from less/bootstrap,
 * download the new less files and store them in less/bootstrap
 * regenerate files using recess: recess --compile --compress moodle.less > ../style/generated.css **
+* update lib/thirdpartylibs.xml
 
 ** If you want to make changes to the .css generated from these .less files then you
 need to install recess (https://github.com/twitter/recess) to compile the .less files,
@@ -24,12 +25,13 @@ This library is available on:
 
 https://github.com/aFarkas/html5shiv/blob/master/src/html5shiv.js
 
-To update to the latest release of html5shiv download and replace:
-javascript/html5shiv.js
+To update to the latest release of html5shiv:
+* download and replace: javascript/html5shiv.js
+* update lib/thirdpartylibs.xml
 
 bootstrapcollapse.js, bootstrapdropdown.js, bootstrapengine.js
 --------------------------------------------------------------
-This them uses YUI ports of the Twitter bootstrap jQuery based libs. These ported files are available on:
+This theme uses YUI ports of the Twitter bootstrap jQuery based libs. These ported files are available on:
 
 https://github.com/jshirley/yui3-gallery/blob/master/src/gallery-bootstrap-collapse/js/bootstrap-collapse.js
 https://github.com/jshirley/yui3-gallery/blob/master/src/gallery-bootstrap-dropdown/js/bootstrap-dropdown.js

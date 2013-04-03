@@ -5,7 +5,6 @@ YUI.add('gallery-bootstrap', function(Y) {
 var NS = Y.namespace('Bootstrap');
 
 NS.initializer = function(e) {
-    //console.log('initializer!');
     NS.dropdown_delegation();
     NS.expandable_delegation();
 };

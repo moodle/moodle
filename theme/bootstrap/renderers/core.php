@@ -22,9 +22,12 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
 class theme_bootstrap_core_renderer extends core_renderer {
 
+    /*
+     * This renders a notification message.
+     * Uses bootstrap compatible html.
+     */
     public function notification($message, $classes = 'notifyproblem') {
         $message = clean_text($message);
         $type = '';
@@ -44,6 +47,10 @@ class theme_bootstrap_core_renderer extends core_renderer {
         return "<div class=\"$type\">$message</div>";
     }
 
+    /*
+     * This renders the navbar.
+     * Uses bootstrap compatible html.
+     */
     public function navbar() {
         $items = $this->page->navbar->get_items();
         foreach ($items as $item) {
@@ -55,11 +62,12 @@ class theme_bootstrap_core_renderer extends core_renderer {
         $title = '<span class="accesshide">'.get_string('pagepath').'</span>';
         return $title . "<ul class=\"breadcrumb\">$list_items</ul>";
     }
+
     /*
      * Overriding the custom_menu function ensures the custom menu is
      * always shown, even if no menu items are configured in the global
      * theme settings page.
-     * We use the sitename as the first menu item
+     * We use the sitename as the first menu item.
      */
     public function custom_menu($custommenuitems = '') {
         global $CFG;
@@ -71,14 +79,11 @@ class theme_bootstrap_core_renderer extends core_renderer {
         return $this->render_custom_menu($custommenu);
     }
 
-
     /*
-     * This renders the bootstrap top menu
+     * This renders the bootstrap top menu.
      *
-     * This renderer is needed to enable the Bootstrap style navigation
-     *
+     * This renderer is needed to enable the Bootstrap style navigation.
      */
-
     protected function render_custom_menu(custom_menu $menu) {
         // If the menu has no children return an empty string.
         if (!$menu->has_children()) {
@@ -112,9 +117,8 @@ class theme_bootstrap_core_renderer extends core_renderer {
 
     /*
      * This code renders the custom menu items for the
-     * bootstrap dropdown menu
+     * bootstrap dropdown menu.
      */
-
     protected function render_custom_menu_item(custom_menu_item $menunode, $level = 0 ) {
         static $submenucount = 0;
 

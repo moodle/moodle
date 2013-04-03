@@ -51,7 +51,6 @@ headercollapse.js
 Workaround for the collapse button on the Moodle custom menu. Without this
 Submenu items cannot be opened
 
-
 Updating Twitter bootstrap and Libraries
 ========================================
 
@@ -95,7 +94,6 @@ If you do want to update use these file locations:
 javascript/bootstrap-collapse.js
 javascript/bootstrap-dropdown.js
 javascript/bootstrap-engine.js
-
 
 Licenses & Authors
 ==================
