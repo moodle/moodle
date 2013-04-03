@@ -305,6 +305,14 @@ function xmldb_assign_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
+        // Define index attemptnumber (not unique) to be added to assign_submission.
+        $table = new xmldb_table('assign_submission');
+        $index = new xmldb_index('attemptnumber', XMLDB_INDEX_NOTUNIQUE, array('attemptnumber'));
+        // Conditionally launch add index attemptnumber.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
         // Define field attemptnumber to be added to assign_grades.
         $table = new xmldb_table('assign_grades');
         $field = new xmldb_field('attemptnumber', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'grade');
