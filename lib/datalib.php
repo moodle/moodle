@@ -216,7 +216,7 @@ function search_users($courseid, $groupid, $searchtext, $sort='', array $excepti
  *     parameters (using named placeholders).
  */
 function users_search_sql($search, $u = 'u', $searchanywhere = true, array $extrafields = array(),
-        array $exclude = array(), array $includeonly = array()) {
+        array $exclude = null, array $includeonly = null) {
     global $DB, $CFG;
     $params = array();
     $tests = array();
