@@ -1985,7 +1985,7 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2013040201.00);
     }
 
-    if ($oldversion < 2013032200.00) {
+    if ($oldversion < 2013040300.01) {
 
         // Define field completionstartonenrol to be dropped from course.
         $table = new xmldb_table('course');
@@ -1997,7 +1997,7 @@ function xmldb_main_upgrade($oldversion) {
         }
 
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2013032200.00);
+        upgrade_main_savepoint(true, 2013040300.01);
     }
 
     return true;
