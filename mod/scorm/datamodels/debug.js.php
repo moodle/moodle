@@ -703,18 +703,17 @@ function UpdateLog(s) {
 
 //add an individual log entry
 function AppendToLog(s, rc) {
-    var sStyle;
+    var sStyle = '';
     if (rc != 0) {
-        sStyle = 'class="error';
+        sStyle = 'class="error"';
     } else if (logRow % 2 != 0) {
         sStyle = 'class="even"';
     } else {
         sStyle = 'class="odd"';
     }
-    sStyle += '"';
     var now = new Date();
     now.setTime( now.getTime() );
-    s = '<div ' + sStyle + ' id="<?php echo $scorm->version;?>">' + now.toGMTString() + ': ' + s + '<\/div>';
+    s = '<div ' + sStyle + ' id="<?php echo $scorm->version; ?>">' + now.toGMTString() + ': ' + s + '<\/div>';
     UpdateLog(s);
     // switch colours for a new section of work
     if (s.match(/Commit|Loaded|Initialize|Terminate|Finish|Moodle SCORM|Moodle Logging/)) {
@@ -742,15 +741,16 @@ function LogAPICall(func, nam, val, rc) {
 
 
 // Add in a JS controlled link for toggling the Debug logging
-var logButton = document.createElement('a');
-logButton.id = 'mod-scorm-log-toggle';
-logButton.name = 'logToggle';
-logButton.href = 'javascript:toggleLog();';
-if (getLoggingActive() == "A") {
-    logButton.innerHTML = '<?php echo addslashes_js(get_string('scormloggingon', 'scorm')); ?>';
-} else {
-    logButton.innerHTML = '<?php echo addslashes_js(get_string('scormloggingoff', 'scorm')); ?>';
+if (!document.getElementById('mod-scorm-log-toggle')) {
+    var logButton = document.createElement('a');
+    logButton.id = 'mod-scorm-log-toggle';
+    logButton.name = 'logToggle';
+    logButton.href = 'javascript:toggleLog();';
+    if (getLoggingActive() == "A") {
+        logButton.innerHTML = '<?php echo addslashes_js(get_string('scormloggingon', 'scorm')); ?>';
+    } else {
+        logButton.innerHTML = '<?php echo addslashes_js(get_string('scormloggingoff', 'scorm')); ?>';
+    }
+    var content = safeGetElement(document, 'scormpage');
+    content.insertBefore(logButton, content.firstChild);
 }
-var content = safeGetElement(document, 'scormpage');
-content.insertBefore(logButton, content.firstChild);
-
