@@ -52,12 +52,14 @@ class assign_submit_for_grading_page implements renderable {
 }
 
 /**
- * Implements a renderable grading error notification
+ * Implements a renderable message notification
  * @package   mod_assign
  * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class assign_quickgrading_result implements renderable {
+class assign_gradingmessage implements renderable {
+    /** @var string $heading is the heading to display to the user */
+    public $heading = '';
     /** @var string $message is the message to display to the user */
     public $message = '';
     /** @var int $coursemoduleid */
@@ -65,9 +67,11 @@ class assign_quickgrading_result implements renderable {
 
     /**
      * Constructor
+     * @param string $heading This is the heading to display
      * @param string $message This is the message to display
      */
-    public function __construct($message, $coursemoduleid) {
+    public function __construct($heading, $message, $coursemoduleid) {
+        $this->heading = $heading;
         $this->message = $message;
         $this->coursemoduleid = $coursemoduleid;
     }
@@ -363,6 +367,10 @@ class assign_submission_status implements renderable {
     public $blindmarking = false;
     /** @var string gradingcontrollerpreview */
     public $gradingcontrollerpreview = '';
+    /** @var string attemptreopenmethod */
+    public $attemptreopenmethod = 'none';
+    /** @var int maxattempts */
+    public $maxattempts = -1;
 
     /**
      * Constructor
@@ -390,7 +398,9 @@ class assign_submission_status implements renderable {
      * @param bool $canviewfullnames
      * @param int $extensionduedate - Any extension to the due date granted for this user
      * @param context $context - Any extension to the due date granted for this user
-     * @param blindmarking $blindmarking - Should we hide student identities from graders?
+     * @param bool $blindmarking - Should we hide student identities from graders?
+     * @param string $attemptreopenmethod - The method of reopening student attempts.
+     * @param int $maxattempts - How many attempts can a student make?
      */
     public function __construct($allowsubmissionsfromdate,
                                 $alwaysshowdescription,
@@ -416,7 +426,9 @@ class assign_submission_status implements renderable {
                                 $extensionduedate,
                                 $context,
                                 $blindmarking,
-                                $gradingcontrollerpreview) {
+                                $gradingcontrollerpreview,
+                                $attemptreopenmethod,
+                                $maxattempts) {
         $this->allowsubmissionsfromdate = $allowsubmissionsfromdate;
         $this->alwaysshowdescription = $alwaysshowdescription;
         $this->submission = $submission;
@@ -442,8 +454,66 @@ class assign_submission_status implements renderable {
         $this->context = $context;
         $this->blindmarking = $blindmarking;
         $this->gradingcontrollerpreview = $gradingcontrollerpreview;
+        $this->attemptreopenmethod = $attemptreopenmethod;
+        $this->maxattempts = $maxattempts;
     }
+}
 
+/**
+ * Used to output the attempt history for a particular assignment.
+ *
+ * @package mod_assign
+ * @copyright 2012 Davo Smith, Synergy Learning
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class assign_attempt_history implements renderable {
+
+    /** @var array submissions */
+    public $submissions = array();
+    /** @var array grades */
+    public $grades = array();
+    /** @var array submissionplugins */
+    public $submissionplugins = array();
+    /** @var array feedbackplugins */
+    public $feedbackplugins = array();
+    /** @var int coursemoduleid */
+    public $coursemoduleid = 0;
+    /** @var string returnaction */
+    public $returnaction = '';
+    /** @var string returnparams */
+    public $returnparams = array();
+    /** @var bool cangrade */
+    public $cangrade = false;
+
+    /**
+     * Constructor
+     *
+     * @param $submissions
+     * @param $grades
+     * @param $submissionplugins
+     * @param $feedbackplugins
+     * @param $coursemoduleid
+     * @param $returnaction
+     * @param $returnparams
+     * @param $cangrade
+     */
+    public function __construct($submissions,
+                                $grades,
+                                $submissionplugins,
+                                $feedbackplugins,
+                                $coursemoduleid,
+                                $returnaction,
+                                $returnparams,
+                                $cangrade) {
+        $this->submissions = $submissions;
+        $this->grades = $grades;
+        $this->submissionplugins = $submissionplugins;
+        $this->feedbackplugins = $feedbackplugins;
+        $this->coursemoduleid = $coursemoduleid;
+        $this->returnaction = $returnaction;
+        $this->returnparams = $returnparams;
+        $this->cangrade = $cangrade;
+    }
 }
 
 /**

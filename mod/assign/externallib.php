@@ -95,13 +95,23 @@ class mod_assign_external extends external_api {
         if (count ($requestedassignmentids) > 0) {
             $placeholders = array();
             list($inorequalsql, $placeholders) = $DB->get_in_or_equal($requestedassignmentids, SQL_PARAMS_NAMED);
+            list($inorequalsql2, $placeholders2) = $DB->get_in_or_equal($requestedassignmentids, SQL_PARAMS_NAMED);
+
+            $grademaxattempt = 'SELECT mxg.userid, MAX(mxg.attemptnumber) AS maxattempt
+                                FROM {assign_grades} mxg
+                                WHERE mxg.assignment ' . $inorequalsql2 . ' GROUP BY mxg.userid';
+
             $sql = "SELECT ag.id,ag.assignment,ag.userid,ag.timecreated,ag.timemodified,".
-                   "ag.grader,ag.grade,ag.locked,ag.mailed ".
+                   "ag.grader,ag.grade ".
                    "FROM {assign_grades} ag ".
-                   "WHERE ag.assignment ".$inorequalsql.
+                   "JOIN ( " . $grademaxattempt . " ) gmx ON ag.userid = gmx.userid".
+                   " WHERE ag.assignment ".$inorequalsql.
                    " AND ag.timemodified  >= :since".
+                   " AND ag.attemptnumber = gmx.maxattempt" .
                    " ORDER BY ag.assignment, ag.id";
             $placeholders['since'] = $params['since'];
+            // Combine the parameters.
+            $placeholders += $placeholders2;
             $rs = $DB->get_recordset_sql($sql, $placeholders);
             $currentassignmentid = null;
             $assignment = null;
@@ -113,8 +123,6 @@ class mod_assign_external extends external_api {
                 $grade['timemodified'] = $rd->timemodified;
                 $grade['grader'] = $rd->grader;
                 $grade['grade'] = (string)$rd->grade;
-                $grade['locked'] = $rd->locked;
-                $grade['mailed'] = $rd->mailed;
 
                 if (is_null($currentassignmentid) || ($rd->assignment != $currentassignmentid )) {
                     if (!is_null($assignment)) {
@@ -165,9 +173,7 @@ class mod_assign_external extends external_api {
                             'timecreated'   => new external_value(PARAM_INT, 'grade creation time'),
                             'timemodified'  => new external_value(PARAM_INT, 'grade last modified time'),
                             'grader'        => new external_value(PARAM_INT, 'grader'),
-                            'grade'         => new external_value(PARAM_TEXT, 'grade'),
-                            'locked'        => new external_value(PARAM_BOOL, 'locked'),
-                            'mailed'        => new external_value(PARAM_BOOL, 'mailed')
+                            'grade'         => new external_value(PARAM_TEXT, 'grade')
                         )
                     )
                 )
@@ -504,11 +510,18 @@ class mod_assign_external extends external_api {
         foreach ($assigns as $assign) {
             $submissions = array();
             $submissionplugins = $assign->get_submission_plugins();
-            $placeholders = array('assignment' => $assign->get_instance()->id);
+            $placeholders = array('assignid1' => $assign->get_instance()->id,
+                                  'assignid2' => $assign->get_instance()->id);
+
+            $submissionmaxattempt = 'SELECT mxs.userid, MAX(mxs.attemptnumber) AS maxattempt
+                                     FROM {assign_submission} mxs
+                                     WHERE mxs.assignment = :assignid1 GROUP BY mxs.userid';
+
             $sql = "SELECT mas.id, mas.assignment,mas.userid,".
                    "mas.timecreated,mas.timemodified,mas.status,mas.groupid ".
                    "FROM {assign_submission} mas ".
-                   "WHERE mas.assignment = :assignment";
+                   "JOIN ( " . $submissionmaxattempt . " ) smx ON mas.userid = smx.userid ".
+                   "WHERE mas.assignment = :assignid2 AND mas.attemptnumber = smx.maxattempt";
 
             if (!empty($params['status'])) {
                 $placeholders['status'] = $params['status'];

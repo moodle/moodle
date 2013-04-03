@@ -85,16 +85,16 @@ class mod_assign_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Render a grading error notification
-     * @param assign_quickgrading_result $result The result to render
+     * Render a grading message notification
+     * @param assign_gradingmessage $result The result to render
      * @return string
      */
-    public function render_assign_quickgrading_result(assign_quickgrading_result $result) {
+    public function render_assign_gradingmessage(assign_gradingmessage $result) {
         $urlparams = array('id' => $result->coursemoduleid, 'action'=>'grading');
         $url = new moodle_url('/mod/assign/view.php', $urlparams);
 
         $o = '';
-        $o .= $this->output->heading(get_string('quickgradingresult', 'assign'), 4);
+        $o .= $this->output->heading($result->heading, 4);
         $o .= $this->output->notification($result->message);
         $o .= $this->output->continue_button($url);
         return $o;
@@ -179,7 +179,9 @@ class mod_assign_renderer extends plugin_renderer_base {
             $o .= $this->output->continue_button($cancelurl);
         } else {
             // All submission plugins ready - show the confirmation form.
+            $o .= $this->output->box_start('generalbox submitconfirm');
             $o .= $this->moodleform($page->confirmform);
+            $o .= $this->output->box_end();
         }
         $o .= $this->output->container_end();
 
@@ -426,6 +428,32 @@ class mod_assign_renderer extends plugin_renderer_base {
             $t->data[] = $row;
         }
 
+        if ($status->attemptreopenmethod != ASSIGN_ATTEMPT_REOPEN_METHOD_NONE) {
+            $currentattempt = 1;
+            if (!$status->teamsubmissionenabled) {
+                if ($status->submission) {
+                    $currentattempt = $status->submission->attemptnumber + 1;
+                }
+            } else {
+                if ($status->teamsubmission) {
+                    $currentattempt = $status->teamsubmission->attemptnumber + 1;
+                }
+            }
+
+            $row = new html_table_row();
+            $cell1 = new html_table_cell(get_string('attemptnumber', 'assign'));
+            $maxattempts = $status->maxattempts;
+            if ($maxattempts == ASSIGN_UNLIMITED_ATTEMPTS) {
+                $message = get_string('currentattempt', 'assign', $currentattempt);
+            } else {
+                $message = get_string('currentattemptof', 'assign', array('attemptnumber'=>$currentattempt,
+                                                                          'maxattempts'=>$maxattempts));
+            }
+            $cell2 = new html_table_cell($message);
+            $row->cells = array($cell1, $cell2);
+            $t->data[] = $row;
+        }
+
         $row = new html_table_row();
         $cell1 = new html_table_cell(get_string('submissionstatus', 'assign'));
         if (!$status->teamsubmissionenabled) {
@@ -437,7 +465,7 @@ class mod_assign_renderer extends plugin_renderer_base {
                 if (!$status->submissionsenabled) {
                     $cell2 = new html_table_cell(get_string('noonlinesubmissions', 'assign'));
                 } else {
-                    $cell2 = new html_table_cell(get_string('nosubmission', 'assign'));
+                    $cell2 = new html_table_cell(get_string('noattempt', 'assign'));
                 }
             }
             $row->cells = array($cell1, $cell2);
@@ -637,27 +665,204 @@ class mod_assign_renderer extends plugin_renderer_base {
         if ($status->view == assign_submission_status::STUDENT_VIEW) {
             if ($status->canedit) {
                 if (!$submission) {
+                    $o .= $this->output->box_start('generalbox submissionaction');
                     $urlparams = array('id' => $status->coursemoduleid, 'action' => 'editsubmission');
                     $o .= $this->output->single_button(new moodle_url('/mod/assign/view.php', $urlparams),
                                                        get_string('addsubmission', 'assign'), 'get');
+                    $o .= $this->output->box_start('boxaligncenter submithelp');
+                    $o .= get_string('editsubmission_help', 'assign');
+                    $o .= $this->output->box_end();
+                    $o .= $this->output->box_end();
+                } else if ($submission->status == ASSIGN_SUBMISSION_STATUS_REOPENED) {
+                    $o .= $this->output->box_start('generalbox submissionaction');
+                    $urlparams = array('id' => $status->coursemoduleid, 'action' => 'editprevioussubmission');
+                    $o .= $this->output->single_button(new moodle_url('/mod/assign/view.php', $urlparams),
+                                                       get_string('addnewattemptfromprevious', 'assign'), 'get');
+                    $o .= $this->output->box_start('boxaligncenter submithelp');
+                    $o .= get_string('addnewattemptfromprevious_help', 'assign');
+                    $o .= $this->output->box_end();
+                    $o .= $this->output->box_end();
+                    $o .= $this->output->box_start('generalbox submissionaction');
+                    $urlparams = array('id' => $status->coursemoduleid, 'action' => 'editsubmission');
+                    $o .= $this->output->single_button(new moodle_url('/mod/assign/view.php', $urlparams),
+                                                       get_string('addnewattempt', 'assign'), 'get');
+                    $o .= $this->output->box_start('boxaligncenter submithelp');
+                    $o .= get_string('addnewattempt_help', 'assign');
+                    $o .= $this->output->box_end();
+                    $o .= $this->output->box_end();
                 } else {
+                    $o .= $this->output->box_start('generalbox submissionaction');
                     $urlparams = array('id' => $status->coursemoduleid, 'action' => 'editsubmission');
                     $o .= $this->output->single_button(new moodle_url('/mod/assign/view.php', $urlparams),
                                                        get_string('editsubmission', 'assign'), 'get');
+                    $o .= $this->output->box_start('boxaligncenter submithelp');
+                    $o .= get_string('editsubmission_help', 'assign');
+                    $o .= $this->output->box_end();
+                    $o .= $this->output->box_end();
                 }
             }
 
             if ($status->cansubmit) {
                 $urlparams = array('id' => $status->coursemoduleid, 'action'=>'submit');
+                $o .= $this->output->box_start('generalbox submissionaction');
                 $o .= $this->output->single_button(new moodle_url('/mod/assign/view.php', $urlparams),
                                                    get_string('submitassignment', 'assign'), 'get');
                 $o .= $this->output->box_start('boxaligncenter submithelp');
                 $o .= get_string('submitassignment_help', 'assign');
                 $o .= $this->output->box_end();
+                $o .= $this->output->box_end();
             }
         }
 
         $o .= $this->output->container_end();
+        return $o;
+    }
+
+    /**
+     * Output the attempt history for this assignment
+     *
+     * @param assign_attempt_history $history
+     * @return string
+     */
+    public function render_assign_attempt_history(assign_attempt_history $history) {
+        $o = '';
+
+        $submittedstr = get_string('submitted', 'assign');
+        $gradestr = get_string('grade');
+        $gradedonstr = get_string('gradedon', 'assign');
+        $gradedbystr = get_string('gradedby', 'assign');
+
+        // Don't show the last one because it is the current submission.
+        array_pop($history->submissions);
+
+        // Show newest to oldest.
+        $history->submissions = array_reverse($history->submissions);
+
+        if (empty($history->submissions)) {
+            return '';
+        }
+
+        $containerid = 'attempthistory' . uniqid();
+        $o .= $this->heading(get_string('attempthistory', 'assign'), 3);
+        $o .= $this->box_start('attempthistory', $containerid);
+
+        foreach ($history->submissions as $i => $submission) {
+            $grade = null;
+            foreach ($history->grades as $onegrade) {
+                if ($onegrade->attemptnumber == $submission->attemptnumber) {
+                    $grade = $onegrade;
+                    break;
+                }
+            }
+
+            $editbtn = '';
+
+            if ($submission) {
+                $submissionsummary = userdate($submission->timemodified);
+            } else {
+                $submissionsummary = get_string('nosubmission', 'assign');
+            }
+
+            $attemptsummaryparams = array('attemptnumber'=>$submission->attemptnumber+1,
+                                          'submissionsummary'=>$submissionsummary);
+            $o .= $this->heading(get_string('attemptheading', 'assign', $attemptsummaryparams), 4);
+
+            $t = new html_table();
+
+            if ($submission) {
+                $cell1 = new html_table_cell(get_string('submissionstatus', 'assign'));
+                $cell2 = new html_table_cell(get_string('submissionstatus_' . $submission->status, 'assign'));
+                $t->data[] = new html_table_row(array($cell1, $cell2));
+
+                foreach ($history->submissionplugins as $plugin) {
+                    $pluginshowsummary = !$plugin->is_empty($submission) || !$plugin->allow_submissions();
+                    if ($plugin->is_enabled() &&
+                            $plugin->is_visible() &&
+                            $plugin->has_user_summary() &&
+                            $pluginshowsummary) {
+
+                        $cell1 = new html_table_cell($plugin->get_name());
+                        $pluginsubmission = new assign_submission_plugin_submission($plugin,
+                                                                                    $submission,
+                                                                                    assign_submission_plugin_submission::SUMMARY,
+                                                                                    $history->coursemoduleid,
+                                                                                    $history->returnaction,
+                                                                                    $history->returnparams);
+                        $cell2 = new html_table_cell($this->render($pluginsubmission));
+
+                        $t->data[] = new html_table_row(array($cell1, $cell2));
+                    }
+                }
+            }
+
+            if ($grade) {
+                // Heading 'feedback'.
+                $title = get_string('feedback', 'assign', $i);
+                $title .= $this->output->spacer(array('width'=>10));
+                if ($history->cangrade) {
+                    // Edit previous feedback.
+                    $returnparams = http_build_query($history->returnparams);
+                    $urlparams = array('id' => $history->coursemoduleid,
+                                   'userid'=>$grade->userid,
+                                   'attemptnumber'=>$grade->attemptnumber,
+                                   'action'=>'grade',
+                                   'rownum'=>0,
+                                   'returnaction'=>$history->returnaction,
+                                   'returnparams'=>$returnparams);
+                    $url = new moodle_url('/mod/assign/view.php', $urlparams);
+                    $icon = new pix_icon('gradefeedback',
+                                            get_string('editattemptfeedback', 'assign', $grade->attemptnumber+1),
+                                            'mod_assign');
+                    $title .= $this->output->action_icon($url, $icon);
+                }
+                $cell = new html_table_cell($title);
+                $cell->attributes['class'] = 'feedbacktitle';
+                $cell->colspan = 2;
+                $t->data[] = new html_table_row(array($cell));
+
+                // Grade.
+                $cell1 = new html_table_cell($gradestr);
+                $cell2 = $grade->gradefordisplay;
+                $t->data[] = new html_table_row(array($cell1, $cell2));
+
+                // Graded on.
+                $cell1 = new html_table_cell($gradedonstr);
+                $cell2 = new html_table_cell(userdate($grade->timemodified));
+                $t->data[] = new html_table_row(array($cell1, $cell2));
+
+                // Graded by.
+                $cell1 = new html_table_cell($gradedbystr);
+                $cell2 = new html_table_cell($this->output->user_picture($grade->grader) .
+                                             $this->output->spacer(array('width'=>30)) . fullname($grade->grader));
+                $t->data[] = new html_table_row(array($cell1, $cell2));
+
+                // Feedback from plugins.
+                foreach ($history->feedbackplugins as $plugin) {
+                    if ($plugin->is_enabled() &&
+                        $plugin->is_visible() &&
+                        $plugin->has_user_summary() &&
+                        !$plugin->is_empty($grade)) {
+
+                        $cell1 = new html_table_cell($plugin->get_name());
+                        $pluginfeedback = new assign_feedback_plugin_feedback(
+                            $plugin, $grade, assign_feedback_plugin_feedback::SUMMARY, $history->coursemoduleid,
+                            $history->returnaction, $history->returnparams
+                        );
+                        $cell2 = new html_table_cell($this->render($pluginfeedback));
+                        $t->data[] = new html_table_row(array($cell1, $cell2));
+                    }
+
+                }
+
+            }
+
+            $o .= html_writer::table($t);
+        }
+        $o .= $this->box_end();
+        $jsparams = array($containerid);
+
+        $this->page->requires->yui_module('moodle-mod_assign-history', 'Y.one("#' . $containerid . '").history');
+
         return $o;
     }
 
@@ -751,6 +956,7 @@ class mod_assign_renderer extends plugin_renderer_base {
         $this->page->requires->string_for_js('batchoperationconfirmlock', 'assign');
         $this->page->requires->string_for_js('batchoperationconfirmreverttodraft', 'assign');
         $this->page->requires->string_for_js('batchoperationconfirmunlock', 'assign');
+        $this->page->requires->string_for_js('batchoperationconfirmaddattempt', 'assign');
         $this->page->requires->string_for_js('editaction', 'assign');
         foreach ($table->plugingradingbatchoperations as $plugin => $operations) {
             foreach ($operations as $operation => $description) {

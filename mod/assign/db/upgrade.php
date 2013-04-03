@@ -208,6 +208,145 @@ function xmldb_assign_upgrade($oldversion) {
     // Moodle v2.4.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2013030600) {
+        // Define table assign_user_flags to be created.
+        $table = new xmldb_table('assign_user_flags');
+
+        // Adding fields to table assign_user_flags.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('assignment', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('locked', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('mailed', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('extensionduedate', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+
+        // Adding keys to table assign_user_flags.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
+        $table->add_key('assignment', XMLDB_KEY_FOREIGN, array('assignment'), 'assign', array('id'));
+
+        // Adding indexes to table assign_user_flags.
+        $table->add_index('mailed', XMLDB_INDEX_NOTUNIQUE, array('mailed'));
+
+        // Conditionally launch create table for assign_user_flags.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Copy the flags from the old table to the new one.
+        $sql = 'INSERT INTO {assign_user_flags}
+                    (assignment, userid, locked, mailed, extensionduedate)
+                SELECT assignment, userid, locked, mailed, extensionduedate
+                FROM {assign_grades}';
+        $DB->execute($sql);
+
+        // And delete the old columns.
+        // Define index mailed (not unique) to be dropped form assign_grades.
+        $table = new xmldb_table('assign_grades');
+        $index = new xmldb_index('mailed', XMLDB_INDEX_NOTUNIQUE, array('mailed'));
+
+        // Conditionally launch drop index mailed.
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        // Define field locked to be dropped from assign_grades.
+        $table = new xmldb_table('assign_grades');
+        $field = new xmldb_field('locked');
+
+        // Conditionally launch drop field locked.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field mailed to be dropped from assign_grades.
+        $table = new xmldb_table('assign_grades');
+        $field = new xmldb_field('mailed');
+
+        // Conditionally launch drop field mailed.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field extensionduedate to be dropped from assign_grades.
+        $table = new xmldb_table('assign_grades');
+        $field = new xmldb_field('extensionduedate');
+
+        // Conditionally launch drop field extensionduedate.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field attemptreopenmethod to be added to assign.
+        $table = new xmldb_table('assign');
+        $field = new xmldb_field('attemptreopenmethod', XMLDB_TYPE_CHAR, '10', null,
+                                 XMLDB_NOTNULL, null, 'none', 'revealidentities');
+
+        // Conditionally launch add field attemptreopenmethod.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field maxattempts to be added to assign.
+        $table = new xmldb_table('assign');
+        $field = new xmldb_field('maxattempts', XMLDB_TYPE_INTEGER, '6', null, XMLDB_NOTNULL, null, '-1', 'attemptreopenmethod');
+
+        // Conditionally launch add field maxattempts.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field attemptnumber to be added to assign_submission.
+        $table = new xmldb_table('assign_submission');
+        $field = new xmldb_field('attemptnumber', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'groupid');
+
+        // Conditionally launch add field attemptnumber.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field attemptnumber to be added to assign_grades.
+        $table = new xmldb_table('assign_grades');
+        $field = new xmldb_field('attemptnumber', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'grade');
+
+        // Conditionally launch add field attemptnumber.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define index attemptnumber (not unique) to be added to assign_grades.
+        $table = new xmldb_table('assign_grades');
+        $index = new xmldb_index('attemptnumber', XMLDB_INDEX_NOTUNIQUE, array('attemptnumber'));
+
+        // Conditionally launch add index attemptnumber.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Define index uniqueattemptsubmission (unique) to be added to assign_submission.
+        $table = new xmldb_table('assign_submission');
+        $index = new xmldb_index('uniqueattemptsubmission',
+                                 XMLDB_INDEX_UNIQUE,
+                                 array('assignment', 'userid', 'groupid', 'attemptnumber'));
+
+        // Conditionally launch add index uniqueattempt.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Define index uniqueattemptgrade (unique) to be added to assign_grades.
+        $table = new xmldb_table('assign_grades');
+        $index = new xmldb_index('uniqueattemptgrade', XMLDB_INDEX_UNIQUE, array('assignment', 'userid', 'attemptnumber'));
+
+        // Conditionally launch add index uniqueattempt.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Module assign savepoint reached.
+        upgrade_mod_savepoint(true, 2013030600, 'assign');
+    }
+
     return true;
 }
 

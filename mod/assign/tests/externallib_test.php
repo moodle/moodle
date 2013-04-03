@@ -75,7 +75,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $user_enrolment_data['userid'] = $USER->id;
         $DB->insert_record('user_enrolments', $user_enrolment_data);
 
-        // Create a student and give them a grade.
+        // Create a student and give them 2 grades (for 2 attempts).
         $student = self::getDataGenerator()->create_user();
         $grade = new stdClass();
         $grade->assignment = $assign->id;
@@ -83,9 +83,18 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $grade->timecreated = time();
         $grade->timemodified = $grade->timecreated;
         $grade->grader = $USER->id;
+        $grade->grade = 50;
+        $grade->attemptnumber = 0;
+        $DB->insert_record('assign_grades', $grade);
+
+        $grade = new stdClass();
+        $grade->assignment = $assign->id;
+        $grade->userid = $student->id;
+        $grade->timecreated = time();
+        $grade->timemodified = $grade->timecreated;
+        $grade->grader = $USER->id;
         $grade->grade = 75;
-        $grade->locked = false;
-        $grade->mailed = true;
+        $grade->attemptnumber = 1;
         $DB->insert_record('assign_grades', $grade);
 
         $assignmentids[] = $assign->id;
@@ -98,9 +107,11 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(1, count($result['assignments']));
         $assignment = $result['assignments'][0];
         $this->assertEquals($assign->id, $assignment['assignmentid']);
+        // Should only get the last grade for this student.
         $this->assertEquals(1, count($assignment['grades']));
         $grade = $assignment['grades'][0];
         $this->assertEquals($student->id, $grade['userid']);
+        // Should be the last grade (not the first)
         $this->assertEquals(75, $grade['grade']);
     }
 
@@ -218,13 +229,25 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $assign1 = self::getDataGenerator()->create_module('assign', $assigndata);
 
         // Create a student with an online text submission.
+        // First attempt.
         $student = self::getDataGenerator()->create_user();
         $submission = new stdClass();
         $submission->assignment = $assign1->id;
         $submission->userid = $student->id;
         $submission->timecreated = time();
         $submission->timemodified = $submission->timecreated;
+        $submission->status = 'draft';
+        $submission->attemptnumber = 0;
+        $sid = $DB->insert_record('assign_submission', $submission);
+
+        // Second attempt.
+        $submission = new stdClass();
+        $submission->assignment = $assign1->id;
+        $submission->userid = $student->id;
+        $submission->timecreated = time();
+        $submission->timemodified = $submission->timecreated;
         $submission->status = 'submitted';
+        $submission->attemptnumber = 1;
         $sid = $DB->insert_record('assign_submission', $submission);
         $submission->id = $sid;
 

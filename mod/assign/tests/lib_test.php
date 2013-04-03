@@ -137,4 +137,3 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
     }
 
 }
-

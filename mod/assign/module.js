@@ -5,7 +5,7 @@ M.mod_assign.init_tree = function(Y, expand_all, htmlid) {
         var tree = new Y.YUI2.widget.TreeView(htmlid);
 
         tree.subscribe("clickEvent", function(node, event) {
-            // we want normal clicking which redirects to url
+            // We want normal clicking which redirects to url.
             return false;
         });
 
@@ -169,12 +169,12 @@ M.mod_assign.init_plugin_summary = function(Y, subtype, type, submissionid) {
             fullclassname = 'full_' + thissuffix;
             full = Y.one('.' + fullclassname);
             if (full) {
-                full.hide(true);
+                full.hide(false);
             }
             summaryclassname = 'summary_' + thissuffix;
             summary = Y.one('.' + summaryclassname);
             if (summary) {
-                summary.show(true);
+                summary.show(false);
             }
         });
     }
@@ -183,7 +183,7 @@ M.mod_assign.init_plugin_summary = function(Y, subtype, type, submissionid) {
 
     full = Y.one('.full_' + suffix);
     if (full) {
-        full.hide();
+        full.hide(false);
         full.toggleClass('hidefull');
     }
     if (expand) {
@@ -199,12 +199,12 @@ M.mod_assign.init_plugin_summary = function(Y, subtype, type, submissionid) {
             summaryclassname = 'summary_' + thissuffix;
             summary = Y.one('.' + summaryclassname);
             if (summary) {
-                summary.hide(true);
+                summary.hide(false);
             }
             fullclassname = 'full_' + thissuffix;
             full = Y.one('.' + fullclassname);
             if (full) {
-                full.show(true);
+                full.show(false);
             }
         });
     }

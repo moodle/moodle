@@ -131,6 +131,30 @@ class restore_assign_activity_structure_step extends restore_activity_structure_
     }
 
     /**
+     * Process a user_flags restore
+     * @param object $data The data in object form
+     * @return void
+     */
+    protected function process_assign_userflags($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $oldid = $data->id;
+
+        $data->assignment = $this->get_new_parentid('assign');
+
+        $data->userid = $this->get_mappingid('user', $data->userid);
+        if (!empty($data->extensionduedate)) {
+            $data->extensionduedate = $this->apply_date_offset($data->extensionduedate);
+        } else {
+            $data->extensionduedate = 0;
+        }
+        // Flags mailed and locked need no translation on restore.
+
+        $newitemid = $DB->insert_record('assign_user_flags', $data);
+    }
+
+    /**
      * Process a grade restore
      * @param object $data The data in object form
      * @return void
@@ -147,11 +171,20 @@ class restore_assign_activity_structure_step extends restore_activity_structure_
         $data->timecreated = $this->apply_date_offset($data->timecreated);
         $data->userid = $this->get_mappingid('user', $data->userid);
         $data->grader = $this->get_mappingid('user', $data->grader);
+
+        // Handle flags restore to a different table.
+        $flags = new stdClass();
+        $flags->assignment = $this->get_new_parentid('assign');
         if (!empty($data->extensionduedate)) {
-            $data->extensionduedate = $this->apply_date_offset($data->extensionduedate);
-        } else {
-            $data->extensionduedate = 0;
+            $flags->extensionduedate = $this->apply_date_offset($data->extensionduedate);
         }
+        if (!empty($data->mailed)) {
+            $flags->mailed = $data->mailed;
+        }
+        if (!empty($data->locked)) {
+            $flags->locked = $data->locked;
+        }
+        $DB->insert_record('assign_user_flags', $flags);
 
         $newitemid = $DB->insert_record('assign_grades', $data);
 

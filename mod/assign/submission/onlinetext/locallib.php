@@ -470,6 +470,34 @@ class assign_submission_onlinetext extends assign_submission_plugin {
         return array(ASSIGNSUBMISSION_ONLINETEXT_FILEAREA=>$this->get_name());
     }
 
+    /**
+     * Copy the student's submission from a previous submission. Used when a student opts to base their resubmission
+     * on the last submission.
+     * @param stdClass $sourcesubmission
+     * @param stdClass $destsubmission
+     */
+    public function copy_submission(stdClass $sourcesubmission, stdClass $destsubmission) {
+        global $DB;
+
+        // Copy the files across (attached via the text editor).
+        $contextid = $this->assignment->get_context()->id;
+        $fs = get_file_storage();
+        $files = $fs->get_area_files($contextid, 'assignsubmission_onlinetext',
+                                     ASSIGNSUBMISSION_ONLINETEXT_FILEAREA, $sourcesubmission->id, 'id', false);
+        foreach ($files as $file) {
+            $fieldupdates = array('itemid' => $destsubmission->id);
+            $fs->create_file_from_storedfile($fieldupdates, $file);
+        }
+
+        // Copy the assignsubmission_onlinetext record.
+        $onlinetextsubmission = $this->get_onlinetext_submission($sourcesubmission->id);
+        if ($onlinetextsubmission) {
+            unset($onlinetextsubmission->id);
+            $onlinetextsubmission->submission = $destsubmission->id;
+            $DB->insert_record('assignsubmission_onlinetext', $onlinetextsubmission);
+        }
+        return true;
+    }
 }
 
 

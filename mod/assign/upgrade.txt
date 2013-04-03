@@ -1,0 +1,43 @@
+This files describes API changes in the assign code.
+
+
+=== 2.5 ===
+
+* New feature - Attempt History
+
+    This adds settings so that a student can have build up a history of separate submission attempts and grades for the same
+    assignment.
+
+    Extra settings on the assign table are:
+    attemptreopenmethod - The way attempts can be reopened. One of:
+                            ASSIGN_ATTEMPT_REOPEN_METHOD_NONE - Attempts cannot be reopened (default)
+                            ASSIGN_ATTEMPT_REOPEN_METHOD_UNTIL_PASS - Attempts are reopened on grading until the gradebook
+                                                                      indicates this student has passed.
+                            ASSIGN_ATTEMPT_REOPEN_METHOD_MANUAL - Attempts are reopened on manually by the grader.
+    maxattempts - The maximum allowed number of attempts per student for this assign instance.
+
+    Extra settings on the submission and grade records:
+    attemptnumber - Starting from 0 until the latest attempt.
+
+    New table assign_user_flags holds user specific flags that were stored in the assign_grade table.  (contains assignment,
+    userid, extensionduedate, mailed and locked)
+
+    assign changes:
+        "get_user_grade" function has an extra optional parameter to retrieve a specific attempt number.
+        "get_user_submission" function has an extra optional parameter to retrieve a specific attempt number.
+        "get_group_submission" function has an extra optional parameter to retrieve a specific attempt number.
+        new "get_user_flags" function can retrieve the user flags for a specific user (extensionduedate, mailed and locked).
+        new "update_user_flags" function can update the user flags for a specific user (extensionduedate, mailed and locked).
+
+    assign_submission_plugin changes:
+        "precheck_submission" function now takes a submission record so you can determine which submission is being checked.
+        "submit_for_grading" function now takes a submission record so you can determine which submission is being submitted.
+        new function "copy_submission" can be implemented to copy submission data from one submission to a new one.
+
+    New renderable object "assign_attempt_history" for rendering the list of previous submissions.
+    New renderable object "assign_gradingmessage" for rendering a generic grading message.
+
+
+=== Earlier changes ===
+
+* Were not documented in this way. Sorry.
