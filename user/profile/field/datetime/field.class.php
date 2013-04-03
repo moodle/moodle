@@ -41,6 +41,31 @@ class profile_field_datetime extends profile_field_base {
     }
 
     /**
+     * If timestamp is in YYYY-MM-DD or YYYY-MM-DD-HH-MM-SS format, then convert it to timestamp.
+     *
+     * @param string|int $datetime datetime to be converted.
+     * @param stdClass $datarecord The object that will be used to save the record
+     * @return int timestamp
+     * @since Moodle 2.5
+     */
+    function edit_save_data_preprocess($datetime, $datarecord) {
+        // If timestamp then explode it to check if year is within field limit.
+        $isstring = strpos($datetime, '-');
+        if (empty($isstring)) {
+            $datetime = date('Y-m-d-H-i-s', $datetime);
+        }
+
+        $datetime = explode('-', $datetime);
+        // Bound year with start and end year.
+        $datetime[0] = min(max($datetime[0], $this->field->param1), $this->field->param2);
+        if (!empty($this->field->param3) && count($datetime) == 6) {
+            return make_timestamp($datetime[0], $datetime[1], $datetime[2], $datetime[3], $datetime[4], $datetime[5]);
+        } else {
+            return make_timestamp($datetime[0], $datetime[1], $datetime[2]);
+        }
+    }
+
+    /**
      * Display the data for this field
      */
     function display_data() {
