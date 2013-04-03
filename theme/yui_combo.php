@@ -103,18 +103,23 @@ foreach ($parts as $part) {
         $filename = array_pop($bits);
         $modulename = $bits[0];
         $dir = get_component_directory($frankenstyle);
-        if ($mimetype == 'text/css') {
-            $bits[] = 'assets';
-            $bits[] = 'skins';
-            $bits[] = 'sam';
-        }
 
         // For shifted YUI modules, we need the YUI module name in frankenstyle format.
         $frankenstylemodulename = join('-', array($version, $frankenstyle, $modulename));
+        $frankenstylefilename = preg_replace('/' . $modulename . '/', $frankenstylemodulename, $filename);
 
         // By default, try and use the /yui/build directory.
-        $frankenstylefilename = preg_replace('/' . $modulename . '/', $frankenstylemodulename, $filename);
-        $contentfile = $dir . '/yui/build/' . $frankenstylemodulename . '/' . $frankenstylefilename;
+        if ($mimetype == 'text/css') {
+            // CSS assets are in a slightly different place to the JS.
+            $contentfile = $dir . '/yui/build/' . $frankenstylemodulename . '/assets/skins/sam/' . $frankenstylefilename;
+
+            // Add the path to the bits to handle fallback for non-shifted assets.
+            $bits[] = 'assets';
+            $bits[] = 'skins';
+            $bits[] = 'sam';
+        } else {
+            $contentfile = $dir . '/yui/build/' . $frankenstylemodulename . '/' . $frankenstylefilename;
+        }
 
         // If the shifted versions don't exist, fall back to the non-shifted file.
         if (!file_exists($contentfile) or !is_file($contentfile)) {
