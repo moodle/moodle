@@ -147,6 +147,7 @@ class repository_merlot extends repository {
         }
         $strrequired = get_string('required');
         $mform->addElement('text', 'licensekey', get_string('licensekey', 'repository_merlot'), array('value'=>$licensekey,'size' => '40'));
+        $mform->setType('licensekey', PARAM_RAW_TRIMMED);
         $mform->addRule('licensekey', $strrequired, 'required', null, 'client');
     }
 
