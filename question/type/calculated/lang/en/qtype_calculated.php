@@ -26,6 +26,8 @@
 $string['additem'] = 'Add item';
 $string['addmoreanswerblanks'] = 'Add another answer blank.';
 $string['addsets'] = 'Add set(s)';
+$string['answerformula'] = 'Answer  {$a} formula';
+$string['answerdisplay'] = 'Answer display';
 $string['answerhdr'] = 'Answer';
 $string['answerstoleranceparam'] = 'Answers tolerance parameters';
 $string['answerwithtolerance'] = '{$a->answer} (±{$a->tolerance} {$a->tolerancetype})';
@@ -129,6 +131,7 @@ $string['synchronizeno']='Do not synchronize';
 $string['synchronizeyes']='Synchronize';
 $string['synchronizeyesdisplay']='Synchronize and display the shared datasets name as prefix of the question name';
 $string['tolerance'] = 'Tolerance &plusmn;';
+$string['tolerancetype'] = 'Type';
 $string['trueanswerinsidelimits'] = 'Correct answer : {$a->correct} inside limits of true value {$a->true}';
 $string['trueansweroutsidelimits'] = '<span class="error">ERROR Correct answer : {$a->correct} outside limits of true value {$a->true}</span>';
 $string['uniform'] = 'Uniform';
