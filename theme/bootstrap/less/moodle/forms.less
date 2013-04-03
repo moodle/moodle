@@ -1,0 +1,318 @@
+/**
+ * Moodle forms HTML isn't changeable via renderers (yet?) so this
+ * .less file imports styles from the bootstrap @variables file and 
+ * adds them to the existing Moodle form CSS ids and classes.
+ *
+ */
+
+form {
+    margin: 0;
+}
+.mform fieldset .advancedbutton {
+    text-align: right;
+}
+.mform fieldset.group {
+    margin-bottom: 0
+}
+.mform fieldset.error {
+    border: 1px solid @errorText;
+}
+.mform fieldset.collapsible legend a.fheader {
+    padding: 0 5px 0 20px;
+    margin-left: -20px;
+    background: url([[pix:t/expanded]]) 2px center no-repeat;
+}
+.mform fieldset.collapsed legend a.fheader {
+    background: url([[pix:t/collapsed]]) 2px center no-repeat;
+}
+
+.jsenabled .mform .collapsed .fcontainer {
+    display: none;
+}
+.mform .collapsible-actions {
+    display: none;
+    text-align: right;
+}
+.dir-rtl .mform .collapsible-actions {
+    text-align: left;
+}
+.jsenabled .mform .collapsible-actions {
+    display: block;
+}
+.mform .fitem .fitemtitle div {
+    display: inline;
+}
+.loginpanel .error,
+.mform .error {
+    color: @errorText;
+}
+.mform .fdescription.required {
+    margin-left: @horizontalComponentOffset;
+}
+.mform .fpassword .unmask {
+    display: inline-block;
+    margin-left: 0.5em;
+    & > input {
+        margin: 0;
+    }
+    & > label {
+        display: inline-block;
+    }
+}
+.mform .ftextarea #id_alltext {
+    width: 100%;
+}
+.mform ul.file-list {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+.mform label .req,
+.mform label .adv {
+    cursor: help;
+}
+.mform .fcheckbox input {
+    margin-left: 0;
+    margin-top: 5px;
+}
+.mform .fitem fieldset.fgroup label,
+.mform fieldset.fdate_selector label {
+    display: inline;
+    float: none;
+    width: auto;
+}
+.mform .ftags label.accesshide {
+    display: block;
+    position: static;
+}
+.mform .ftags select {
+    margin-bottom: 0.7em;
+    min-width: 22em;
+}
+.mform .helplink img {
+    margin: 0 .45em;
+    padding: 0;
+}
+.mform legend .helplink img {
+    margin: 0 .2em;
+}
+.singleselect label {
+    margin-right: .3em;
+}
+.dir-rtl .singleselect label {
+    margin-left: .3em;
+    margin-right: 0;
+}
+input#id_externalurl {
+    direction: ltr;
+}
+#portfolio-add-button {
+    display: inline;
+}
+
+// copying in Bootstrap styles
+.form-item,
+.mform .fitem {
+    .form-horizontal .control-group;
+    margin-bottom: 10px;
+    // Theres's a mysterious extra 10px inside this item,
+    // so reduce margin by 10px from 20px standard to compensate; 
+}
+.form-item .form-label,
+.mform .fitem div.fitemtitle {
+    .form-horizontal .control-label
+}
+.form-defaultinfo,
+.form-label .form-shortname {
+    .muted;
+}
+.form-label .form-shortname {
+    font-size: @fontSizeMini;
+    display: block;
+}
+.dir-rtl .form-label .form-shortname {
+    text-align: left;
+}
+.form-item .form-setting,
+.form-item .form-description,
+.mform .fitem .felement,
+#page-mod-forum-search .c1 {
+    .form-horizontal .controls
+}
+
+
+.formsettingheading {
+    .form-horizontal .help-block
+}
+// Moodle doesn't differentiate between what Bootstrap calls 
+// .uneditable-inputs and form help text. Styling them both as
+// uneditable looks ugly, styling both as form help is fairly
+// subtle in it's impact. Going for the latter as the best option.
+.form-item .form-description,
+.felement.fstatic {
+    .help-block;
+    padding-top: 5px;
+}
+.form-item .form-description {
+    padding-top: 0;
+}
+
+// Pale grey container for submit buttons.
+table#form td.submit,
+.form-buttons,
+.path-admin .buttons,
+#fitem_id_submitbutton,
+.fp-content-center form + div,
+div.backup-section + form,
+#fgroup_id_buttonar {
+    .form-actions;
+    padding-left: 0;
+}
+.path-admin .buttons,
+.form-buttons {
+    padding-left: @horizontalComponentOffset;
+    // add back the padding it would usually get from being inside a .form-horizontal
+}
+
+.form-item .form-setting .form-checkbox.defaultsnext {
+    // need to specify .defaultsnext and the .form-checkbox class
+    // is somewhat randomly re-used on various actual checkboxes
+    // throughout the admin forms, instead of on the wrapper div
+    margin-top: 5px; // Push down checkboxes to align.
+    display: inline-block; // So above style sticks.
+}
+
+#adminsettings h3.main {
+    // Copied from bootstrap/forms.less tag legend
+    display: block;
+    width: 100%;
+    padding: 0;
+    margin-bottom: @baseLineHeight;
+    font-size: @baseFontSize * 1.5;
+    line-height: @baseLineHeight * 2;
+    color: @grayDark;
+    border: 0;
+    border-bottom: 1px solid #e5e5e5;
+}
+.mform legend a,
+.mform legend a:hover {
+    color: @grayDark;
+    text-decoration: none;
+}
+.dir-rtl .mform .fitem .fitemtitle {
+    float: right;
+}
+
+.dir-rtl .mform .fitem .felement {
+    margin-right: 16%;
+    margin-left: auto;
+    text-align: right;
+}
+// I think this could be avoided (or at least tidied up) ifr
+// we used HTML5 input types like url, phone, email, number etc.
+.dir-rtl .mform .fitem .felement input[name=email],
+.dir-rtl .mform .fitem .felement input[name=email2],
+.dir-rtl .mform .fitem .felement input[name=url],
+.dir-rtl .mform .fitem .felement input[name=idnumber],
+.dir-rtl .mform .fitem .felement input[name=phone1],
+.dir-rtl .mform .fitem .felement input[name=phone2] {
+    text-align: left;
+    direction: ltr;
+}
+.dir-rtl #id_s__pathtodu,
+.dir-rtl #id_s__aspellpath,
+.dir-rtl #id_s__pathtodot,
+.dir-rtl #id_s__supportemail,
+.dir-rtl #id_s__supportpage,
+.dir-rtl #id_s__sessioncookie,
+.dir-rtl #id_s__sessioncookiepath,
+.dir-rtl #id_s__sessioncookiedomain,
+.dir-rtl #id_s__proxyhost,
+.dir-rtl #id_s__proxyuser,
+.dir-rtl #id_s__proxypassword,
+.dir-rtl #id_s__proxybypass,
+.dir-rtl #id_s__jabberhost,
+.dir-rtl #id_s__jabberserver,
+.dir-rtl #id_s__jabberusername,
+.dir-rtl #id_s__jabberpassword,
+.dir-rtl #id_s__additionalhtmlhead,
+.dir-rtl #id_s__additionalhtmltopofbody,
+.dir-rtl #id_s__additionalhtmlfooter,
+.dir-rtl #id_s__docroot,
+.dir-rtl #id_s__filter_tex_latexpreamble,
+.dir-rtl #id_s__filter_tex_latexbackground,
+.dir-rtl #id_s__filter_tex_pathlatex,
+.dir-rtl #id_s__filter_tex_pathdvips,
+.dir-rtl #id_s__filter_tex_pathconvert,
+.dir-rtl #id_s__blockedip,
+.dir-rtl #id_s__pathtoclam,
+.dir-rtl #id_s__quarantinedir,
+.dir-rtl #id_s__sitepolicy,
+.dir-rtl #id_s__sitepolicyguest,
+.dir-rtl #id_s__cronremotepassword,
+.dir-rtl #id_s__allowedip,
+.dir-rtl #id_s__blockedip,
+.dir-rtl #id_s_enrol_meta_nosyncroleids,
+.dir-rtl #id_s_enrol_ldap_host_url,
+.dir-rtl #id_s_enrol_ldap_ldapencoding,
+.dir-rtl #id_s_enrol_ldap_bind_dn,
+.dir-rtl #id_s_enrol_ldap_bind_pw,
+.dir-rtl #admin-emoticons .form-text,
+.dir-rtl #admin-role_mapping input[type=text],
+.dir-rtl #id_s_enrol_paypal_paypalbusiness,
+.dir-rtl #id_s_enrol_flatfile_location,
+#page-admin-setting-enrolsettingsflatfile.dir-rtl input[type=text],
+#page-admin-setting-enrolsettingsdatabase.dir-rtl input[type=text],
+#page-admin-auth-db.dir-rtl input[type=text] {
+    direction: ltr;
+}
+#page-admin-setting-enrolsettingsflatfile.dir-rtl .informationbox {
+    direction: ltr;
+    text-align: left;
+}
+#page-admin-grade-edit-scale-edit.dir-rtl .error input#id_name {
+    margin-right: 170px;
+}
+/* Install Process' text fields Forms, should always be justified to the left */
+#installform #id_wwwroot,
+#installform #id_dirroot,
+#installform #id_dataroot,
+#installform #id_dbhost,
+#installform #id_dbname,
+#installform #id_dbuser,
+#installform #id_dbpass,
+#installform #id_prefix {
+    direction: ltr;
+}
+
+.mdl-right > label {
+    // Workaround for repository pop-up because the : are outside the label,
+    // can/should be fixed in filemanager renderers
+    display: inline-block;
+}
+
+// checkbox labels. Bootstrap puts the associated checkbox inside the label
+// Moodle puts it beside the label, so wee need to make it inline-block
+// to keep it on the same horizontal level
+input[type="radio"] + label,
+input[type="checkbox"] + label {
+    display: inline;
+    padding-left: 0.2em;
+}
+input[type="radio"],
+input[type="checkbox"] {
+    margin-top: -4px; // dodgy hack, must be better way
+}
+.singleselect {
+    display: inline-block;
+    form,
+    select{
+        margin: 0;
+    }
+}
+.form-item .form-label label {
+    margin-bottom: 0;
+}
+.felement.ffilepicker {
+    margin-top: 5px;
+}

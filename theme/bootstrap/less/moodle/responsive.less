@@ -1,0 +1,367 @@
+/* responsive.less */
+
+// Should probably be moved to relevant .less files
+// after 4095 selector issue is solved
+
+@media (min-width: 980px) {
+    .dir-rtl .navbar .nav.pull-right,
+    .dir-rtl .navbar .logininfo {
+        float: left;
+    }
+    .dir-rtl .navbar .nav {
+        float: right;
+        & > li {
+            float: right;
+        }
+    }
+}
+
+// login page
+@media (min-width: 1200px) {
+    .loginbox.twocolumns .loginpanel {
+        margin-left: 0;
+    }
+    .loginbox.twocolumns .loginpanel,
+    .loginbox.twocolumns .signuppanel {
+        width: 48.717948717948715%;
+       *width: 48.664757228587014%;
+   }
+}
+
+@media (min-width: 980px) {
+    .loginbox.twocolumns .loginpanel {
+        margin-left: 0;
+    }
+    .loginbox.twocolumns .loginpanel,
+    .loginbox.twocolumns .signuppanel {
+        width: 48.617948717948715%;
+       *width: 48.664757228587014%;
+   }
+}
+
+@media (min-width: 768px) and (max-width: 979px) {
+    .loginbox.twocolumns .loginpanel {
+          margin-left: 0;
+    }
+    .loginbox.twocolumns .loginpanel,
+    .loginbox.twocolumns .signuppanel {
+        width: 48.61878453038674%;
+        *width: 48.56559304102504%;
+    }
+}
+
+@media (max-width: 767px) {
+     .loginbox.twocolumns .loginpanel,
+     .loginbox.twocolumns .signuppanel {
+         display: block;
+         float: none;
+         width: 100%;
+         margin-left: 0;
+         .box-sizing(border-box);
+     }
+ }
+ // Course
+ @media (min-width: 1200px) {
+    .coursebox .info,
+    .coursebox .summary {
+        width: 48.717948717948715%;
+        *width: 48.664757228587014%;
+    }
+}
+
+@media (min-width: 980px) {
+    .coursebox .info,
+    .coursebox .summary {
+        width: 48.617948717948715%;
+        *width: 48.664757228587014%;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 979px) {
+    .coursebox .info,
+    .coursebox .summary {
+        width: 48.61878453038674%;
+        *width: 48.56559304102504%;
+    }
+}
+
+@media ( max-width : 767px) {
+    .coursebox .info,
+    .coursebox .summary {
+        display: block;
+        float: none;
+        width: 100%;
+        margin-left: 0;
+        .box-sizing(border-box);
+    }
+}
+
+@media (max-width: 480px) {
+    // copied from tabs.less stacked-navs
+    .tabtree > ul {
+        border: none;
+    }
+    .tabtree > ul > li {
+        float: none;
+    }
+    .tabtree > ul > li > a {
+        border: 1px solid #ddd;
+        .border-radius(0);
+    }
+    .tabtree > ul > li.first > a {
+        .border-top-radius(4px);
+    }
+    .tabtree > ul > li.last > a,
+    .tabtree > ul > li.last > a:hover {
+        border: 1px solid #ddd;
+        .border-bottom-radius(4px);
+    }
+    .tabtree > ul > li > a:hover,
+    .tabtree > ul > li > a:focus {
+        border-color: #ddd;
+        z-index: 2;
+    }
+    .file-picker .fp-repo-items,
+    .file-picker .fp-repo-area {
+        position: relative;
+        display: block;
+        width: auto;
+        top: 0;
+        bottom: 0;
+        border: none;
+        margin: 0;
+    }
+    .file-picker .fp-content {
+        width: 100%;
+        height: 100%;
+    }
+    .fp-content-center {
+        display: block;
+        vertical-align: top;
+    }
+    .fp-upload-form td.mdl-right,
+    .fp-upload-form td.mdl-left,
+    .fp-login-form .input,
+    .file-picker .fp-login-form .fp-login-input label,
+    .file-picker td.label {
+        display: block;
+        text-align: left;
+    }
+    .file-picker .fp-login-form table,
+    .file-picker td,
+    .file-picker td.label,
+    .file-picker .fp-upload-form table {
+            margin: 0;
+            padding: 0;
+    }
+    .course-content ul.topics li.section,
+    .course-content ul.topics li.section .content,
+    .course-content ul.weeks li.section .content,
+    .course-content ul.weeks li.section,
+    .course-content ul.section {
+        margin-right: 0;
+        margin-left: 0;
+        padding: 0;
+    }
+    .activityinstance {
+        display: block;
+    }
+    .editing .course-content .section .activity {
+        margin-bottom: 0.2em;
+        padding-bottom: 0.2em;
+        border-bottom: thin solid #eee;
+    }
+    .course-content .section .activity .commands {
+        display: block;
+        text-align: right;
+    }
+    .jsenabled .visibleifjs.addresourcemodchooser {
+        display: none;
+    }
+    .jsenabled .hiddenifjs.addresourcedropdown {
+        display: block;
+        .iconhelp {
+            display: inline-block;
+            padding: 6px;
+            vertical-align: top;
+        }
+        div.urlselect {
+            display: block;
+            form {
+                margin: 0;
+            }
+        }
+    }
+    .que .info {
+        float: none;
+        width: auto;
+    }
+    .que .content {
+        margin: 0;
+    }
+    .path-mod-choice .horizontal  .choices .option {
+        display: block;
+    }
+    .path-mod-forum .forumsearch #search {
+        width: 120px;
+    }
+}
+
+// Stuart's 2,1,3 layout
+@media (min-width : 768px) {
+  .row-fluid .desktop-first-column {
+      margin-left: 0;
+  }
+}
+@media (max-width : 767px) {
+  .row-fluid .desktop-first-column {
+      clear: right;
+  }
+}
+// Forms
+@media (max-width: 767px) {
+  // Remove the horizontal form styles
+    .form-item .form-label,
+    .mform .fitem div.fitemtitle {
+    // copied from .control-label {
+      float: none;
+      width: auto;
+      padding-top: 0;
+      text-align: left;
+    }
+    .form-item .form-label label{
+        display: inline-block;
+        margin-right: .5em;
+    }
+    .form-item .form-setting .form-checkbox {
+        margin-top: 0;
+    }
+    .form-label span.form-shortname {
+        display: inline-block;
+    }
+    .form-item .form-setting,
+    .mform .fitem .felement,
+    .path-backup .mform .fitem .felement,
+    .mform .fdescription.required,
+    .form-item .form-description {
+      margin-left: 0;
+    }
+    table#form td.submit,
+    .form-buttons,
+    #fitem_id_submitbutton,
+    .fp-content-center form + div,
+    #fgroup_id_buttonar,
+    .form-horizontal .form-actions,
+    .fitem_fsubmit .felement.fsubmit {
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+    #helppopupbox {
+        width: auto !important;
+        left: 0 !important;
+    }
+}
+// Shrink calender when short on space in block
+@media (min-width : 768px) and (max-width: 979px) {
+    .block_calendar_month .content,
+    .block .minicalendar td {
+        padding-left: 0;
+        padding-right: 0;
+    }
+}
+
+@media (max-width: 979px) {
+    .nav-collapse {
+         height: 0;
+        .nav > li > a {
+            color: @grayDark;
+        }
+        .nav > li > a:hover,
+        .nav > li > a:focus,
+        .dropdown-menu a:hover,
+        .dropdown-menu a:focus,
+        .dropdown-submenu a:focus,
+        .dropdown-submenu a:hover,
+        .dropdown-submenu a:active,
+        .dropdown-menu > li > a:hover,
+        .dropdown-menu > li > a:focus,
+        {
+            background-image: none;
+            color: @grayDark;
+        }
+    }
+    .nav-collapse.active {
+        height: auto;
+    }
+
+}
+
+@media (max-width: 768px) {
+// Resize, reflow file-picker on small devices
+   #filesskin .yui3-panel,
+   #filesskin .file-picker.fp-generallayout {
+        width: 100%;
+        left: 0;
+    }
+    .userprofile dl.list {
+    // copied from dl-horizontal in bootstrap/repsonsive.less
+        dt {
+          float: none;
+          clear: none;
+          width: auto;
+          text-align: left;
+        }
+        dd {
+          margin-left: 0;
+        }
+    }
+// Hide broken drag'n'drop options on touch devices MDL-38371
+// Not a great workaround, landscape iPads are wider than this,
+// and a resized window on a netbook could be smaller, but best
+// we can do with CSS. There might be a JS-based solution.
+    .section .side,
+    .editing_move {
+        display: none;
+    }
+    .activityinstance > a {
+        display: block;
+    }
+
+  // GRID & CONTAINERS
+  // -----------------
+  // Remove width from containers
+  .container {
+    width: auto;
+  }
+  // Fluid rows
+  .row-fluid {
+    width: 100%;
+  }
+  .row-fluid .span8.pull-right,
+  .row-fluid .span9.pull-right {
+    float: none;
+  }
+  // Undo negative margin on rows and thumbnails
+  .row {
+    margin-left: 0;
+  }
+  // Make all grid-sized elements block level again
+  [class*="span"],
+  .row-fluid [class*="span"] {
+    float: none;
+    display: block;
+    width: 100%;
+    margin-left: 0;
+    .box-sizing(border-box);
+  }
+  .row-fluid .span12 {
+    width: 100%;
+    .box-sizing(border-box);
+  }
+  .row-fluid [class*="offset"]:first-child {
+    margin-left: 0;
+  }
+  div[role=main] {
+      margin-bottom: 2em;
+  }
+}

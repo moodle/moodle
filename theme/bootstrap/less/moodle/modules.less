@@ -1,0 +1,133 @@
+/* modules.less */
+
+// The home for small tweaks to modules that don't require
+// changes drastic enough to pull in the full module css
+// and replace it completely
+// Plus some misc. odds and ends
+
+select {
+    width: auto;
+}
+
+.path-mod-forum .forumheaderlist,
+.path-mod-forum .forumheaderlist td {
+    border: none;
+}
+
+.forumpost {
+    .well;
+    padding: 6px;
+}
+
+.forumpost .row .left {
+    width: auto;
+}
+
+.forumpost .options .commands {
+    margin-left: 0;
+}
+
+.forumpost .subject {
+    font-weight: bold;
+}
+
+// Override hardcoded forum modules styling
+.forumsearch input[type=text] {
+     margin-bottom: 0 !important;
+}
+
+#page-mod-forum-discuss .discussioncontrol.displaymode {
+    text-align: left;
+}
+
+#page-mod-forum-discuss .discussioncontrols .discussioncontrol {
+    float: left;
+}
+
+#page-footer {
+    margin-top: 1em;
+    padding: 1em 0;
+    border-top: 2px solid #eee;
+}
+
+.maincalendar .calendarmonth td,.maincalendar .calendarmonth th {
+    border: 1px dotted #ddd;
+}
+
+.path-grade-report-grader h1 {
+    text-align: inherit;
+}
+
+#page-mod-chat-gui_basic input#message {
+    max-width: 100%;
+}
+
+#page-mod-data-view #singleimage {
+    width: auto;
+}
+
+.path-mod-data form {
+    margin-top: 10px;
+}
+
+.template_heading {
+    margin-top: 10px;
+}
+
+.breadcrumb-button {
+    float: right;
+    margin-top: 3px;
+}
+.dir-rtl .navbar .brand {
+    float: right;
+}
+.navbar .logininfo a {
+    color: @navbarLinkColor;
+}
+.navbar .logininfo a:hover {
+  background-color: @navbarLinkBackgroundHover; // "transparent" is default to differentiate :hover/:focus from .active
+  color: @navbarLinkColorHover;
+}
+
+.navbar-fixed-top,
+.navbar-fixed-bottom {
+        z-index: 4030;
+}
+
+.dir-rtl .breadcrumb-button,
+.dir-rtl .navbar .btn-navbar {
+    float: left;
+}
+
+.ie .row-fluid .desktop-first-column {
+      margin-left: 0;
+}
+.langmenu form {
+    margin: 0;
+}
+.container-fluid {
+    max-width: 1680px;
+    margin: 0 auto;
+}
+// contributed by Paul Hibbitts, see http://msdn.microsoft.com/en-us/library/ie/jj583807(v=vs.85).aspx
+canvas {
+    -ms-touch-action: auto;
+}
+
+div#dock {
+    display: none;
+}
+
+.path-mod-choice .horizontal  .choices {
+    margin: 0;
+    .option {
+        display: inline-block;
+        padding: 10px;
+    }
+}
+
+.path-mod-lesson .firstpageoptions {
+    margin: auto;
+    min-width: 280px;
+    width: 60%;
+}

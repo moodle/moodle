@@ -1,0 +1,65 @@
+/* tabs.less */
+// This is an opinionated file. It intentionally doesn't add code if it's
+// only purpose is to support some of the wackier features of the
+// Moodle tabs API i.e. having the current tab name also be a link,
+// having multiple selected tabs at the same time, or having disabled tabs.
+// There's some code in core that suggests these features are used, but some manual
+// testing suggests they aren't. Some bugs to follow on those issues.
+
+.tabtree {
+    margin: 1em 0;
+}
+.tabtree ul {
+    border-left: 0;
+    border-right: 0;
+    border-bottom: 1px solid #ddd;
+    border-top: 0;
+    padding: 0;
+    margin: 0;
+}
+.tabtree:after,
+.tabtree:before,
+.tabtree ul:before,
+.tabtree ul:after {
+  display: table;
+  content: "";
+}
+.tabtree:after,
+.tabtree ul:after {
+  clear: both;
+}
+.tabtree li {
+  display: block;
+  float: left;
+  margin-bottom: -1px;
+}
+.tabtree a {
+  display: block;
+  padding-right: 12px;
+  padding-left: 12px;
+  margin-right: 2px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  text-decoration: none;
+  line-height: @baseLineHeight;
+  border: 1px solid transparent;
+  .border-radius(4px 4px 0 0);
+  &:hover,
+  &:focus {
+    border-color: @grayLighter @grayLighter #ddd;
+    background-color: @grayLighter;
+    text-decoration: none;
+  }
+}
+.tabtree .here > a,
+.tabtree .here > a:hover,
+.tabtree .here > a:focus {
+  color: @gray;
+  background-color: @bodyBackground;
+  border: 1px solid #ddd;
+  border-bottom-color: transparent;
+  cursor: default;
+}
+.tabtree .here .empty { // empty second level
+    display: none;
+}

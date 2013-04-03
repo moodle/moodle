@@ -1,0 +1,394 @@
+/* Question */
+.questionbank h2 {
+    margin-top: 0;
+}
+.questioncategories h3 {
+    margin-top: 0;
+}
+#chooseqtypebox {
+    margin-top: 1em;
+}
+#chooseqtype h3 {
+    margin: 0 0 0.3em;
+}
+#chooseqtype .instruction {
+    display: none;
+}
+#chooseqtype .fakeqtypes {
+    border-top: 1px solid silver;
+}
+#chooseqtype .qtypeoption {
+    margin-bottom: 0.5em;
+}
+#chooseqtype label {
+    display: block;
+}
+#chooseqtype .qtypename img {
+    padding: 0 0.3em;
+}
+#chooseqtype .qtypesummary {
+    display: block;
+    margin: 0 2em;
+}
+#chooseqtype .submitbuttons {
+    margin: 0.7em 0;
+    text-align: center;
+}
+#qtypechoicecontainer {
+    display: none;
+}
+#qtypechoicecontainer_c.yui-panel-container.shadow .underlay {
+    background: none;
+}
+#qtypechoicecontainer.yui-panel .hd {
+    color: #333;
+    letter-spacing: 1px;
+    text-shadow: 1px 1px 1px #fff;
+    .border-top-radius(10px);
+    border: 1px solid #ccc;
+    border-bottom: 1px solid #bbb;
+    #gradient > .vertical(#fff, #ccc);
+}
+#qtypechoicecontainer {
+    font-size: 12px;
+    color: #333;
+    background: #F2F2F2;
+    .border-radius(10px);
+    border: 1px solid #ccc;
+    border-top: 0 none;
+    .box-shadow(5px 5px 20px 0 #666);
+}
+//#qtypechoicecontainer
+#chooseqtype {
+    width: 35em;
+}
+#chooseqtypehead h3 {
+    margin: 0;
+    font-weight: normal;
+}
+#chooseqtype .qtypes {
+    position: relative;
+    border-bottom: 1px solid #bbb;
+    padding: 0.24em 0;
+}
+#chooseqtype .qtypeoption {
+    margin-bottom: 0;
+    padding: 0.3em 0.3em 0.3em 1.6em;
+}
+#chooseqtype .qtypeoption img {
+    vertical-align: text-bottom;
+    padding-left: 1em;
+    padding-right: 0.5em;
+}
+#chooseqtype .selected {
+    background-color: #fff;
+    .box-shadow(0px 0 10px 0 #ccc);
+}
+#chooseqtype .instruction,
+#chooseqtype .qtypesummary {
+    display: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 60%;
+    margin: 0;
+    padding: 1.5em 1.6em;
+    background-color: #fff;
+}
+#chooseqtype .instruction,
+#chooseqtype .selected .qtypesummary {
+    display: block;
+}
+#categoryquestions {
+    margin: 0;
+}
+#categoryquestions td,
+#categoryquestions th {
+    padding: 0 0.2em;
+}
+#categoryquestions th {
+    text-align: left;
+    font-weight: normal;
+}
+#categoryquestions .checkbox {
+    padding-left: 20px;
+}
+.dir-rtl #categoryquestions th {
+    text-align: right;
+}
+.questionbank .singleselect {
+    margin: 0;
+}
+/* Question editing form */
+#combinedfeedbackhdr div.fhtmleditor {
+    padding: 0;
+}
+#combinedfeedbackhdr div.fcheckbox {
+    margin-bottom: 1em;
+}
+#multitriesheader div.fitem_feditor {
+    margin-top: 1em;
+}
+#multitriesheader div.fitem_fgroup {
+    margin-bottom: 1em;
+}
+#multitriesheader div.fitem_fgroup fieldset.felement label {
+    margin-left: 0.3em;
+    margin-right: 0.3em;
+}
+.que {
+    clear: left;
+    text-align: left;
+    margin: 0 auto 1.8em auto;
+}
+.dir-rtl .que {
+    text-align: right;
+}
+.que .info {
+    float: left;
+    width: 7em;
+    padding: 0.5em;
+    margin-bottom: 1.8em;
+    background-color: @grayLighter;
+    border: 1px solid darken(spin(@grayLighter, -10), 7%);
+    .border-radius(2px);
+}
+.que h2.no {
+    margin: 0;
+    font-size: 0.8em;
+    line-height: 1;
+}
+.que span.qno {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+.que .info > div {
+    font-size: 0.8em;
+    margin-top: 0.7em;
+}
+.que .info .questionflag.editable {
+    cursor: pointer;
+}
+.que .info .editquestion img,
+.que .info .questionflag img,
+.que .info .questionflag input {
+    vertical-align: bottom;
+}
+.que .content {
+    margin: 0 0 0 8.5em;
+}
+.que .formulation,
+.que .outcome,
+.que .comment,
+.que .history {
+    .alert
+}
+.que .formulation {
+    .alert-info;
+    color: @textColor;
+}
+.que .outcome {
+}
+.que .comment {
+    .alert-success;
+}
+.que .history {
+    color: @textColor;
+    background: @grayLighter;
+}
+.que .ablock {
+    margin: 0.7em 0 0.3em 0;
+}
+.que .im-controls {
+    margin-top: 0.5em;
+    text-align: left;
+}
+.dir-rtl .que .im-controls {
+    text-align: right;
+}
+.que .specificfeedback,
+.que .generalfeedback,
+.que .rightanswer,
+.que .im-feedback,
+.que .feedback,
+.que p {
+    margin: 0 0 0.5em;
+}
+.que .qtext {
+    margin-bottom: 1.5em;
+}
+.que .correct {
+    .label;
+    background-color: @successText;
+}
+.que .notanswered,
+.que .incorrect {
+    .label;
+    background-color: @errorText;
+}
+.que .partiallycorrect {
+    background-color: @warningBackground;
+}
+.que .validationerror {
+    color: @errorText;
+}
+.que .grading,
+.que .comment,
+.que .commentlink,
+.que .history {
+    margin-top: 0.5em;
+}
+.que .history h3 {
+    margin: 0 0 0.2em;
+    font-size: 1em;
+}
+.que .history table {
+    width: 100%;
+    margin: 0;
+}
+.que .history .current {
+    font-weight: bold;
+}
+.que .questioncorrectnessicon {
+    vertical-align: text-bottom;
+}
+.que input.questionflagimage {
+    padding-right: 3px;
+}
+.dir-rtl .que input.questionflagimage {
+    padding-left: 3px;
+    padding-right: 0;
+}
+.importerror {
+    margin-top: 10px;
+    border-bottom: 1px solid #555;
+}
+.mform .que.comment .fitemtitle {
+    width: 20%;
+}
+#page-question-preview #techinfo {
+    margin: 1em 0;
+}
+/** Overide for RTL layout **/
+.dir-rtl #chooseqtype .instruction,
+.dir-rtl #chooseqtype .qtypesummary {
+    right: 60%;
+    left: 0%;
+    border-left: 0;
+    border-right: 1px solid grey;
+}
+
+// imported from quiz.css
+#page-mod-quiz-edit .questionbankwindow div.header {
+    color: #444;
+    text-shadow: none;
+    padding: 3px;
+    .border-top-radius(4px);
+    margin: 0 -10px 0 -10px;
+    padding: 2px 10px 2px 10px;
+    background: transparent; /* Old browsers */
+}
+
+#page-mod-quiz-edit .questionbankwindow div.header a:link,
+#page-mod-quiz-edit .questionbankwindow div.header a:visited {
+    color: @linkColor;
+}
+
+#page-mod-quiz-edit .questionbankwindow div.header a:hover {
+    color: @linkColorHover;
+}
+
+#page-mod-quiz-edit .questionbankwindow div.header .title {
+    color: @textColor;
+}
+
+#page-mod-quiz-edit div.container div.generalbox {
+    background-color: transparent;
+    padding: 1.5em;
+}
+
+#page-mod-quiz-edit .categoryinfo {
+    background-color: @bodyBackground;
+    border-bottom: none;
+}
+
+#page-mod-quiz-edit div.questionbank .categoryquestionscontainer,
+#page-mod-quiz-edit div.questionbank .categorysortopotionscontainer,
+#page-mod-quiz-edit div.questionbank .categorypagingbarcontainer,
+#page-mod-quiz-edit div.questionbank .categoryselectallcontainer {
+    padding: 0 0 1.5em 0;
+}
+
+#page-mod-quiz-edit div.questionbank .categorypagingbarcontainer {
+    padding: 1em;
+    background-color: transparent;
+    margin: 0 -1.2em;
+    border-top: none;
+    border-bottom: none;
+}
+
+#page-mod-quiz-edit div.questionbank .categoryquestionscontainer {
+    margin: 0 -1.2em -1em -1.2em;
+}
+#page-mod-quiz-edit div.question div.content div.questioncontrols {
+    background-color: @bodyBackground;
+}
+#page-mod-quiz-edit div.question div.content div.points {
+    margin-top: -0.5em;
+    padding-bottom: 0.5em;
+    border: none;
+    background-color: @bodyBackground;
+}
+
+#page-mod-quiz-edit div.quizpage .pagecontent .pagestatus {
+    background-color: @bodyBackground;
+}
+
+#page-mod-quiz-edit .quizpagedelete,
+#page-mod-quiz-edit .quizpagedelete img {
+    background-color: transparent;
+}
+
+#page-mod-quiz-edit div.quizpage .pagecontent {
+    border: 1px solid #ddd;
+    .border-radius(2px);
+    overflow: hidden;
+}
+
+#page-mod-quiz-edit .modulespecificbuttonscontainer {
+    width: 220px;
+}
+
+.questionbankwindow .module {
+    width: auto;
+}
+
+#page-mod-quiz-edit div.editq div.question div.content {
+    background-color: @bodyBackground;
+    border: 1px solid #ddd;
+    .border-radius(2px);
+    overflow: hidden;
+}
+
+.path-mod-quiz .statedetails {
+    display: block;
+    font-size: 0.9em;
+}
+
+a#hidebankcmd {
+    color: @linkColor;
+}
+
+// override question plugins
+
+// qtype_shortanswer
+
+.que.shortanswer .answer {
+    padding: 0;
+}
+
+.que label {
+    display: inline;
+}
+

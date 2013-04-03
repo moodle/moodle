@@ -1,0 +1,55 @@
+// Old Moodle stuff from base theme.
+@import "moodle/core"; // Massive, needs broken up
+@import "moodle/admin";
+@import "moodle/calendar";
+@import "moodle/course";
+@import "moodle/filemanager";
+@import "moodle/grade";
+@import "moodle/message";
+@import "moodle/question";
+@import "moodle/user";
+
+
+// Upstream Bootstrap
+@import "bootstrap/bootstrap";
+
+// Set image location
+@iconSpritePath:          ~"[[pix:theme|glyphicons-halflings]]";
+@iconWhiteSpritePath:     ~"[[pix:theme|glyphicons-halflings-white]]";
+
+// Roll back nameclashes
+@import "moodle/undo";
+
+// extra padding for fixed nav
+// needs to be between bootstrap/bootstrap and
+// bootstrap/responsive
+body {
+    padding-top: 60px;
+}
+
+// New Moodle stuff that builds on Bootstrap
+@import "moodle/blocks";
+@import "moodle/forms";
+@import "moodle/tabs";
+@import "moodle/modules";
+@import "moodle/backup-restore";
+@import "moodle/tables";
+@import "moodle/buttons";
+
+// anything below this line is considered expendable,
+// so it doesn't matter if it doesn't show up in ie < 9
+// though at current time (2013-03-13) the whole file is
+// picked up in IE8, and IE9 fails at some point during the
+// responsive section, cutting off the last 400 selectors.
+
+// the following responsive imports are copied in
+// from @import "bootstrap/responsive";
+@import "bootstrap/responsive-utilities.less";
+@import "bootstrap/responsive-1200px-min.less";
+@import "bootstrap/responsive-768px-979px.less";
+@import "bootstrap/responsive-767px-max.less";
+@import "bootstrap/responsive-navbar.less";
+@import "moodle/responsive";
+
+@import "moodle/debug";
+@import "moodle/expendable";
