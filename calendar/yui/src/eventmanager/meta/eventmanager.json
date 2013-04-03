@@ -1,0 +1,11 @@
+{
+  "moodle-calendar-eventmanager": {
+    "requires": [
+        "base",
+        "node",
+        "event-mouseenter",
+        "overlay",
+        "moodle-calendar-eventmanager-skin"
+    ]
+  }
+}

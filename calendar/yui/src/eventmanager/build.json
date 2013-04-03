@@ -1,0 +1,10 @@
+{
+  "name": "moodle-calendar-eventmanager",
+  "builds": {
+    "moodle-calendar-eventmanager": {
+      "jsfiles": [
+        "eventmanager.js"
+      ]
+    }
+  }
+}
