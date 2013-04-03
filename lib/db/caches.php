@@ -225,4 +225,9 @@ $definitions = array(
             'changesincoursecat',
         ),
     ),
+    // Used to store data for repositories to avoid repetitive DB queries within one request
+    'repositories' => array(
+        'mode' => cache_store::MODE_REQUEST,
+        'persistent' => true,
+    ),
 );
