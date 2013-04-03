@@ -484,6 +484,7 @@ class repository_flickr_public extends repository {
      */
     public static function instance_config_form($mform) {
         $mform->addElement('text', 'email_address', get_string('emailaddress', 'repository_flickr_public'));
+        $mform->setType('email_address', PARAM_RAW_TRIMMED); // This is for sending to flickr. Not our job to validate it.
         $mform->addElement('checkbox', 'usewatermarks', get_string('watermark', 'repository_flickr_public'));
         $mform->setDefault('usewatermarks', 0);
     }
@@ -508,6 +509,7 @@ class repository_flickr_public extends repository {
         $strrequired = get_string('required');
 
         $mform->addElement('text', 'api_key', get_string('apikey', 'repository_flickr_public'), array('value'=>$api_key,'size' => '40'));
+        $mform->setType('api_key', PARAM_RAW_TRIMMED);
         $mform->addRule('api_key', $strrequired, 'required', null, 'client');
 
         $mform->addElement('static', null, '',  get_string('information','repository_flickr_public'));
