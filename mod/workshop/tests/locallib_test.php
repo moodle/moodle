@@ -355,6 +355,9 @@ class mod_workshop_internal_api_testcase extends advanced_testcase {
             'grade'             => null,
             'gradinggrade'      => null,
             'gradinggradeover'  => null,
+            'feedbackauthor'    => null,
+            'feedbackauthorformat' => 0,
+            'feedbackauthorattachment' => 0,
         );
         // excersise SUT
         $a = $this->workshop->prepare_example_assessment($fakerawrecord);
@@ -381,6 +384,9 @@ class mod_workshop_internal_api_testcase extends advanced_testcase {
             'grade'             => 0.75000,
             'gradinggrade'      => 1.00000,
             'gradinggradeover'  => null,
+            'feedbackauthor'    => null,
+            'feedbackauthorformat' => 0,
+            'feedbackauthorattachment' => 0,
         );
         // excersise SUT
         $a = $this->workshop->prepare_example_reference_assessment($fakerawrecord);
