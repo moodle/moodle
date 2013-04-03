@@ -1547,12 +1547,9 @@ width: 80%; -moz-border-radius: 20px; padding: 15px">
         }
 
         // In the name of protocol correctness, monitoring and performance
-        // profiling, set the appropriate error headers for machine consumption
-        if (isset($_SERVER['SERVER_PROTOCOL'])) {
-            // Avoid it with cron.php. Note that we assume it's HTTP/1.x
-            // The 503 ode here means our Moodle does not work at all, the error happened too early
-            @header($_SERVER['SERVER_PROTOCOL'] . ' 503 Service Unavailable');
-        }
+        // profiling, set the appropriate error headers for machine consumption.
+        $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+        @header($protocol . ' 503 Service Unavailable');
 
         // better disable any caching
         @header('Content-Type: text/html; charset=utf-8');
