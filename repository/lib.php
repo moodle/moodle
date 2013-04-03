@@ -527,33 +527,40 @@ abstract class repository {
     /**
      * Get repository instance using repository id
      *
-     * @param int $repositoryid repository ID
-     * @param stdClass|int $context context instance or context ID
+     * Note that this function does not check permission to access repository contents
+     *
+     * @throws repository_exception
+     *
+     * @param int $repositoryid repository instance ID
+     * @param context|int $context context instance or context ID where this repository will be used
      * @param array $options additional repository options
      * @return repository
      */
     public static function get_repository_by_id($repositoryid, $context, $options = array()) {
         global $CFG, $DB;
+        if (!is_object($context)) {
+            $context = context::instance_by_id($context);
+        }
 
-        $sql = 'SELECT i.name, i.typeid, r.type FROM {repository} r, {repository_instances} i WHERE i.id=? AND i.typeid=r.id';
+        $sql = "SELECT i.id, i.name, i.typeid, i.readonly, r.type AS repositorytype, r.visible
+                  FROM {repository_instances} i
+                  JOIN {repository} r ON r.id = i.typeid
+                 WHERE i.id = ?";
 
         if (!$record = $DB->get_record_sql($sql, array($repositoryid))) {
             throw new repository_exception('invalidrepositoryid', 'repository');
         } else {
-            $type = $record->type;
+            $type = $record->repositorytype;
             if (file_exists($CFG->dirroot . "/repository/$type/lib.php")) {
                 require_once($CFG->dirroot . "/repository/$type/lib.php");
                 $classname = 'repository_' . $type;
-                $contextid = $context;
-                if (is_object($context)) {
-                    $contextid = $context->id;
-                }
                 $options['type'] = $type;
                 $options['typeid'] = $record->typeid;
+                $options['visible'] = $record->visible;
                 if (empty($options['name'])) {
                     $options['name'] = $record->name;
                 }
-                $repository = new $classname($repositoryid, $contextid, $options);
+                $repository = new $classname($repositoryid, $context, $options, $record->readonly);
                 return $repository;
             } else {
                 throw new repository_exception('invalidplugin', 'repository');
@@ -912,7 +919,7 @@ abstract class repository {
         if (isset($args['currentcontext'])) {
             $current_context = $args['currentcontext'];
         } else {
-            $current_context = null;
+            $current_context = get_system_context();
         }
 
         if (!empty($args['context'])) {
@@ -989,11 +996,11 @@ abstract class repository {
             $options['visible'] = $record->visible;
             $options['type']    = $record->repositorytype;
             $options['typeid']  = $record->typeid;
-            $options['sortorder'] = $sortorder++;
             // tell instance what file types will be accepted by file picker
             $classname = 'repository_' . $record->repositorytype;
 
-            $repository = new $classname($record->id, $record->contextid, $options, $record->readonly);
+            $repository = new $classname($record->id, $current_context, $options, $record->readonly);
+            $repository->options['sortorder'] = $sortorder++;
 
             $is_supported = true;
 
@@ -1020,18 +1027,10 @@ abstract class repository {
 
                 if (!$onlyvisible || ($repository->is_visible() && !$repository->disabled)) {
                     // check capability in current context
-                    if (!empty($current_context)) {
-                        $capability = has_capability('repository/'.$record->repositorytype.':view', $current_context);
-                    } else {
-                        $capability = has_capability('repository/'.$record->repositorytype.':view', get_system_context());
-                    }
+                    $capability = has_capability('repository/'.$record->repositorytype.':view', $current_context);
                     if ($record->repositorytype == 'coursefiles') {
                         // coursefiles plugin needs managefiles permission
-                        if (!empty($current_context)) {
-                            $capability = $capability && has_capability('moodle/course:managefiles', $current_context);
-                        } else {
-                            $capability = $capability && has_capability('moodle/course:managefiles', get_system_context());
-                        }
+                        $capability = $capability && has_capability('moodle/course:managefiles', $current_context);
                     }
                     if ($is_supported && $capability) {
                         $repositories[$repository->id] = $repository;
@@ -1043,32 +1042,19 @@ abstract class repository {
     }
 
     /**
-     * Get single repository instance
+     * Get single repository instance for administrative actions
+     *
+     * Do not use this function to access repository contents, because it
+     * does not set the current context
+     *
+     * @see rpository::get_repository_by_id()
      *
      * @static
-     * @param integer $id repository id
-     * @return object repository instance
+     * @param integer $id repository instance id
+     * @return repository
      */
     public static function get_instance($id) {
-        global $DB, $CFG;
-        $sql = "SELECT i.*, r.type AS repositorytype, r.visible
-                  FROM {repository} r
-                  JOIN {repository_instances} i ON i.typeid = r.id
-                 WHERE i.id = ?";
-
-        if (!$instance = $DB->get_record_sql($sql, array($id))) {
-            return false;
-        }
-        require_once($CFG->dirroot . '/repository/'. $instance->repositorytype.'/lib.php');
-        $classname = 'repository_' . $instance->repositorytype;
-        $options['typeid'] = $instance->typeid;
-        $options['type']   = $instance->repositorytype;
-        $options['name']   = $instance->name;
-        $obj = new $classname($instance->id, $instance->contextid, $options, $instance->readonly);
-        if (empty($obj->super_called)) {
-            debugging('parent::__construct must be called by '.$classname.' plugin.');
-        }
-        return $obj;
+        return self::get_repository_by_id($id, context_system::instance());
     }
 
     /**
