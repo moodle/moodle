@@ -62,6 +62,13 @@ class MoodleQuickForm_cancel extends MoodleQuickForm_submit
         }
         MoodleQuickForm_submit::MoodleQuickForm_submit($elementName, $value, $attributes);
         $this->updateAttributes(array('onclick'=>'skipClientValidation = true; return true;'));
+
+        // Add the class btn-cancel.
+        $class = $this->getAttribute('class');
+        if (empty($class)) {
+            $class = '';
+        }
+        $this->updateAttributes(array('class' => $class . ' btn-cancel'));
     }
 
     /**

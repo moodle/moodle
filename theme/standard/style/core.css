@@ -219,6 +219,8 @@ form.popupform label {margin-right: 0.5em;}
 .mform .fitem fieldset.felement {margin-top:0;padding-top:0;margin-bottom:0;padding-bottom:0;}
 .mform .fpassword .unmask input {margin-left:5px;margin-right:3px;}
 #page-admin-register .mform .fsubmit {padding:20px;text-align:center;}
+.mform .btn-cancel {color: #0000ff;}
+.mform .btn-cancel:hover, .mform .btn-cancel:focus {color: #ff0000;}
 
 /**
  * Filters

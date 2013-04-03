@@ -48,6 +48,18 @@ blockquote {
     color:#666;
 }
 
+/* Moodle forms
+----------------*/
+
+.mform .btn-cancel {
+    color: #2d83d5;
+    text-decoration: none;
+}
+.mform .btn-cancel:hover, .mform .btn-cancel:focus {
+    color: #333333;
+    text-decoration: none;
+}
+
 .mform fieldset {
     border-color: #eee;
 }

@@ -310,3 +310,14 @@ body.has_dock {
     background-color: #9EB1BF;
     padding-top: 0;
 }
+
+/* Moodle forms
+----------------*/
+.mform .btn-cancel {
+    color: #336688;
+    text-decoration: none;
+}
+.mform .btn-cancel:hover, .mform .btn-cancel:focus {
+    color: #336688;
+    text-decoration: underline;
+}

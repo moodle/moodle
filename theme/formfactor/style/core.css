@@ -48,6 +48,8 @@ body,h1,h2,h3,h4,h5,h6,p,ul,ol,dl,input,textarea { font-family: "Trebuchet MS", 
 
 .mform fieldset {border-color: #ddd;}
 .mform legend {border: 1px solid #ddd;padding: 2px 7px;background: url([[pix:theme|gradient-sb]]) repeat-x 0 -25%;}
+.mform .btn-cancel { color: #BF3503; text-decoration: none; }
+.mform .btn-cancel:hover, .mform .btn-cancel:focus { color: #3f5c10; text-decoration: none; }
 
 /* Footer
 --------------------------*/

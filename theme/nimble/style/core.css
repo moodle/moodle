@@ -224,3 +224,14 @@ h2.headingblock {
 #page-footer {
 	margin-bottom: 25px;
 }
+
+/* Moodle forms
+----------------*/
+.mform .btn-cancel {
+    color: #2A65B1;
+    text-decoration: none;
+}
+.mform .btn-cancel:hover, .mform .btn-cancel:focus {
+    color: #000000;
+    text-decoration: none;
+}

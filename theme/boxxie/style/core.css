@@ -52,6 +52,15 @@ a:active {
     padding: 0 5px;
 }
 
+.mform .btn-cancel {
+    color: #69804E;
+    text-decoration: none;
+}
+.mform .btn-cancel:hover, .mform .btn-cancel:focus {
+    color: #41512f;
+    text-decoration: none;
+}
+
 .generalbox {
     border-color: #e5e5e5;
     padding: 5px;

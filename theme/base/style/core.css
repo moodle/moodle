@@ -302,6 +302,11 @@ a.skip:active {position: static;display: block;}
 .dir-rtl.jsenabled .mform fieldset.collapsed {border-width: 1px 1px 0 0; }
 .dir-rtl .mform .fitem fieldset.felement {padding-right: 1%;margin-right: 15%;}
 
+.mform .btn-cancel, .mform .btn-cancel:active, .mform .btn-cancel[disabled] { background-color: transparent; background-image: none; box-shadow: none; -moz-box-shadow: none; -webkit-box-shadow: none; -o-box-shadow: none; -ms-box-shadow: none; margin-left: .5em;}
+.mform .btn-cancel { border-color: transparent; border-radius: 0 0 0 0; -moz-border-radius: 0 0 0 0; -webkit-border-radius: 0 0 0 0; -o-border-radius: 0 0 0 0; -ms-border-radius: 0 0 0 0; color: #0088CC; cursor: pointer; }
+.mform .btn-cancel:hover, .mform .btn-cancel:focus { background-color: transparent; color: #005580; text-decoration: underline; }
+.mform .btn-cancel[disabled]:hover, .mform .btn-cancel[disabled]:focus { color: #333333; text-decoration: none; }
+
 input#id_externalurl {direction:ltr;}
 
 /** Browser corrections for mforms **/

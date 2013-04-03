@@ -8,6 +8,7 @@ DOM changes:
 * new setting $THEME->yuicssmodules = array('cssreset', 'cssfonts', 'cssgrids', 'cssbase'); which
   allows themes to use different CSS reset normalisers such as cssnormalize YUI module
 * Re-wrote the user profile views to definition lists.
+* Cancel buttons have the class btn-cancel.
 
 Renderer changes:
 * Mymobile theme changed to support more verbose move-block-here descriptions.
