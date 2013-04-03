@@ -404,6 +404,27 @@ abstract class base_setting {
         $dependency->get_dependent_setting()->register_dependent_dependency($dependency);
     }
 
+    /**
+     * Get the PARAM_XXXX validation to be applied to the setting
+     *
+     * @return string The PARAM_XXXX constant of null if the setting type is not defined
+     */
+    public function get_param_validation() {
+        switch ($this->vtype) {
+            case self::IS_BOOLEAN:
+                return PARAM_BOOL;
+            case self::IS_INTEGER:
+                return PARAM_INT;
+            case self::IS_FILENAME:
+                return PARAM_FILE;
+            case self::IS_PATH:
+                return PARAM_PATH;
+            case self::IS_TEXT:
+                return PARAM_TEXT;
+        }
+        return null;
+    }
+
 // Protected API starts here
 
     protected function validate_value($vtype, $value) {
