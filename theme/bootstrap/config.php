@@ -159,7 +159,11 @@ $THEME->javascripts = array(
     'headercollapse',
 );
 
-if (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE 8') || strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE 7')) {
+$useragent = '';
+if (!empty($_SERVER['HTTP_USER_AGENT'])) {
+    $useragent = $_SERVER['HTTP_USER_AGENT'];
+}
+if (strpos($useragent, 'MSIE 8') || strpos($useragent, 'MSIE 7')) {
     $THEME->javascripts[] = 'html5shiv';
 }
 
