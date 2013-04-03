@@ -84,8 +84,6 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $grade->timemodified = $grade->timecreated;
         $grade->grader = $USER->id;
         $grade->grade = 50;
-        $grade->locked = false;
-        $grade->mailed = true;
         $grade->attemptnumber = 0;
         $DB->insert_record('assign_grades', $grade);
 
@@ -96,8 +94,6 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $grade->timemodified = $grade->timecreated;
         $grade->grader = $USER->id;
         $grade->grade = 75;
-        $grade->locked = false;
-        $grade->mailed = true;
         $grade->attemptnumber = 1;
         $DB->insert_record('assign_grades', $grade);
 
