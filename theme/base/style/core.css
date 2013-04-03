@@ -270,10 +270,18 @@ a.skip:active {position: static;display: block;}
 .mform label .req,
 .mform label .adv {cursor: help;}
 .mform .fcheckbox input {margin-left: 0;}
+.mform .fcheckbox label,
+.mform .fduration label,
 .mform .fitem fieldset.fgroup label,
 .mform .fradio label,
-.mform .fcheckbox label,
-.mform fieldset.fdate_selector label {display:inline;float: none;width: auto;}
+.mform fieldset.fdate_selector label,
+.mform fieldset.fdate_time_selector label {display:inline;float: none; margin-left: .3em; vertical-align: text-bottom;}
+.dir-rtl .mform .fcheckbox label,
+.dir-rtl .mform .fduration label,
+.dir-rtl .mform .fitem fieldset.fgroup label,
+.dir-rtl .mform .fradio label,
+.dir-rtl .mform fieldset.fdate_selector label,
+.dir-rtl .mform fieldset.fdate_time_selector label {margin-right: .3em; margin-left: 0;}
 .mform .ftags label.accesshide {display: block;position: static;}
 .mform .ftags select {margin-bottom: 0.7em;min-width: 22em;}
 .mform .moreless-toggler {background: url([[pix:t/more]]) left center no-repeat; padding-left: 16px;}
