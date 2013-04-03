@@ -1,6 +1,6 @@
 /**
  * Moodle forms HTML isn't changeable via renderers (yet?) so this
- * .less file imports styles from the bootstrap @variables file and 
+ * .less file imports styles from the bootstrap @variables file and
  * adds them to the existing Moodle form CSS ids and classes.
  *
  */
@@ -110,13 +110,13 @@ input#id_externalurl {
     display: inline;
 }
 
-// copying in Bootstrap styles
+// Copying in Bootstrap styles.
 .form-item,
 .mform .fitem {
     .form-horizontal .control-group;
     margin-bottom: 10px;
     // Theres's a mysterious extra 10px inside this item,
-    // so reduce margin by 10px from 20px standard to compensate; 
+    // so reduce margin by 10px from 20px standard to compensate.
 }
 .form-item .form-label,
 .mform .fitem div.fitemtitle {
@@ -144,7 +144,7 @@ input#id_externalurl {
 .formsettingheading {
     .form-horizontal .help-block
 }
-// Moodle doesn't differentiate between what Bootstrap calls 
+// Moodle doesn't differentiate between what Bootstrap calls
 // .uneditable-inputs and form help text. Styling them both as
 // uneditable looks ugly, styling both as form help is fairly
 // subtle in it's impact. Going for the latter as the best option.
@@ -171,19 +171,19 @@ div.backup-section + form,
 .path-admin .buttons,
 .form-buttons {
     padding-left: @horizontalComponentOffset;
-    // add back the padding it would usually get from being inside a .form-horizontal
+    // Add back the padding it would usually get from being inside a .form-horizontal.
 }
 
 .form-item .form-setting .form-checkbox.defaultsnext {
-    // need to specify .defaultsnext and the .form-checkbox class
+    // Need to specify .defaultsnext and the .form-checkbox class
     // is somewhat randomly re-used on various actual checkboxes
-    // throughout the admin forms, instead of on the wrapper div
+    // throughout the admin forms, instead of on the wrapper div.
     margin-top: 5px; // Push down checkboxes to align.
     display: inline-block; // So above style sticks.
 }
 
 #adminsettings h3.main {
-    // Copied from bootstrap/forms.less tag legend
+    // Copied from bootstrap/forms.less tag legend.
     display: block;
     width: 100%;
     padding: 0;
@@ -287,13 +287,13 @@ div.backup-section + form,
 
 .mdl-right > label {
     // Workaround for repository pop-up because the : are outside the label,
-    // can/should be fixed in filemanager renderers
+    // can/should be fixed in filemanager renderers.
     display: inline-block;
 }
 
-// checkbox labels. Bootstrap puts the associated checkbox inside the label
-// Moodle puts it beside the label, so wee need to make it inline-block
-// to keep it on the same horizontal level
+// Checkbox labels. Bootstrap puts the associated checkbox inside the label.
+// Moodle puts it beside the label, so we need to make it inline-block
+// to keep it on the same horizontal level.
 input[type="radio"] + label,
 input[type="checkbox"] + label {
     display: inline;
@@ -301,7 +301,7 @@ input[type="checkbox"] + label {
 }
 input[type="radio"],
 input[type="checkbox"] {
-    margin-top: -4px; // dodgy hack, must be better way
+    margin-top: -4px; // Dodgy hack, must be better way.
 }
 .singleselect {
     display: inline-block;
