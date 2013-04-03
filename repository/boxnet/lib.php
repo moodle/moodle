@@ -227,6 +227,7 @@ class repository_boxnet extends repository {
         $strrequired = get_string('required');
         $mform->addElement('text', 'api_key', get_string('apikey', 'repository_boxnet'), array('value'=>$api_key,'size' => '40'));
         $mform->addRule('api_key', $strrequired, 'required', null, 'client');
+        $mform->setType('api_key', PARAM_RAW_TRIMMED);
         $mform->addElement('static', null, '',  get_string('information','repository_boxnet'));
 
         //retrieve the flickr instances
