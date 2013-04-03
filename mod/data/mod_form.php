@@ -25,18 +25,17 @@ class mod_data_mod_form extends moodleform_mod {
 
         $this->add_intro_editor(true, get_string('intro', 'data'));
 
-        $mform->addElement('date_selector', 'timeavailablefrom', get_string('availablefromdate', 'data'), array('optional'=>true));
+        // ----------------------------------------------------------------------
+        $mform->addElement('header', 'entrieshdr', get_string('entries', 'data'));
 
-        $mform->addElement('date_selector', 'timeavailableto', get_string('availabletodate', 'data'), array('optional'=>true));
+        $mform->addElement('selectyesno', 'approval', get_string('requireapproval', 'data'));
+        $mform->addHelpButton('approval', 'requireapproval', 'data');
 
-        $mform->addElement('date_selector', 'timeviewfrom', get_string('viewfromdate', 'data'), array('optional'=>true));
-
-        $mform->addElement('date_selector', 'timeviewto', get_string('viewtodate', 'data'), array('optional'=>true));
-
+        $mform->addElement('selectyesno', 'comments', get_string('allowcomments', 'data'));
 
         $countoptions = array(0=>get_string('none'))+
-                        (array_combine(range(1, DATA_MAX_ENTRIES),//keys
-                                        range(1, DATA_MAX_ENTRIES)));//values
+                        (array_combine(range(1, DATA_MAX_ENTRIES), // Keys.
+                                        range(1, DATA_MAX_ENTRIES))); // Values.
         $mform->addElement('select', 'requiredentries', get_string('requiredentries', 'data'), $countoptions);
         $mform->addHelpButton('requiredentries', 'requiredentries', 'data');
 
@@ -46,13 +45,20 @@ class mod_data_mod_form extends moodleform_mod {
         $mform->addElement('select', 'maxentries', get_string('maxentries', 'data'), $countoptions);
         $mform->addHelpButton('maxentries', 'maxentries', 'data');
 
-        $ynoptions = array(0 => get_string('no'), 1 => get_string('yes'));
-        $mform->addElement('select', 'comments', get_string('comments', 'data'), $ynoptions);
+        // ----------------------------------------------------------------------
+        $mform->addElement('header', 'availibilityhdr', get_string('availability'));
 
-        $mform->addElement('select', 'approval', get_string('requireapproval', 'data'), $ynoptions);
-        $mform->addHelpButton('approval', 'requireapproval', 'data');
+        $mform->addElement('date_selector', 'timeavailablefrom', get_string('availablefromdate', 'data'), array('optional'=>true));
 
-        if($CFG->enablerssfeeds && $CFG->data_enablerssfeeds){
+        $mform->addElement('date_selector', 'timeavailableto', get_string('availabletodate', 'data'), array('optional'=>true));
+
+        $mform->addElement('date_selector', 'timeviewfrom', get_string('viewfromdate', 'data'), array('optional'=>true));
+
+        $mform->addElement('date_selector', 'timeviewto', get_string('viewtodate', 'data'), array('optional'=>true));
+
+        // ----------------------------------------------------------------------
+        if ($CFG->enablerssfeeds && $CFG->data_enablerssfeeds) {
+            $mform->addElement('header', 'rsshdr', get_string('rss'));
             $mform->addElement('select', 'rssarticles', get_string('numberrssarticles', 'data') , $countoptions);
         }
 
