@@ -28,7 +28,6 @@ Feature: Restrict sections availability through completion conditions
     And I follow "Edit settings"
     And I fill the moodle form with:
       | Completion tracking | Enabled, control via completion and activity settings |
-      | Completion tracking begins on enrolment | 1 |
     And I press "Save changes"
     And I add a "Label" to section "1" and I fill the form with:
       | Label text | Test label |

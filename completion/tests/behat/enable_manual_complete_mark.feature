@@ -28,7 +28,6 @@ Feature: Allow students to manually mark an activity as complete
     And I follow "Edit settings"
     And I fill the moodle form with:
       | Completion tracking | Enabled, control via completion and activity settings |
-      | Completion tracking begins on enrolment | 1 |
     And I press "Save changes"
     When I add a "Forum" to section "1" and I fill the form with:
       | Forum name | Test forum name |
