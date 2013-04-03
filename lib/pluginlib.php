@@ -562,7 +562,7 @@ class plugin_manager {
             ),
 
             'theme' => array(
-                'afterburner', 'anomaly', 'arialist', 'base', 'binarius',
+                'afterburner', 'anomaly', 'arialist', 'base', 'binarius', 'bootstrap',
                 'boxxie', 'brick', 'canvas', 'formal_white', 'formfactor',
                 'fusion', 'leatherbound', 'magazine', 'mymobile', 'nimble',
                 'nonzero', 'overlay', 'serenity', 'sky_high', 'splash',
