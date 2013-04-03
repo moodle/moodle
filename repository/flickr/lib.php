@@ -299,7 +299,9 @@ class repository_flickr extends repository {
 
         $strrequired = get_string('required');
         $mform->addElement('text', 'api_key', get_string('apikey', 'repository_flickr'), array('value'=>$api_key,'size' => '40'));
+        $mform->setType('api_key', PARAM_RAW_TRIMMED);
         $mform->addElement('text', 'secret', get_string('secret', 'repository_flickr'), array('value'=>$secret,'size' => '40'));
+        $mform->setType('secret', PARAM_RAW_TRIMMED);
 
         //retrieve the flickr instances
         $params = array();
