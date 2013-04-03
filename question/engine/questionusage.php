@@ -629,6 +629,26 @@ class question_usage_by_activity {
             return true;
         }
     }
+
+    /**
+     * Check, based on the sequence number, whether this auto-save is still required.
+     * @param int $slot the number used to identify this question within this usage.
+     * @param array $submitteddata the submitted data that constitutes the action.
+     * @return bool true if the check variable is present and correct, otherwise false.
+     */
+    public function is_autosave_required($slot, $postdata = null) {
+        $qa = $this->get_question_attempt($slot);
+        $sequencecheck = $qa->get_submitted_var(
+                $qa->get_control_field_name('sequencecheck'), PARAM_INT, $postdata);
+        if (is_null($sequencecheck)) {
+            return false;
+        } else if ($sequencecheck != $qa->get_num_steps()) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     /**
      * Update the flagged state for all question_attempts in this usage, if their
      * flagged state was changed in the request.
