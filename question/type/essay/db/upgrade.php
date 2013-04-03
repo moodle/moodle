@@ -126,7 +126,7 @@ function xmldb_qtype_essay_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
-        $field = new xmldb_field('responsetemplateformat', XMLDB_TYPE_INTEGER, '2',
+        $field = new xmldb_field('responsetemplateformat', XMLDB_TYPE_INTEGER, '4',
                 null, XMLDB_NOTNULL, null, '0', 'responsetemplate');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
