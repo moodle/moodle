@@ -359,7 +359,6 @@ class core_course_external_testcase extends externallib_advanced_testcase {
         $course2['groupmodeforce'] = 0;
         $course2['defaultgroupingid'] = 0;
         $course2['enablecompletion'] = 1;
-        $course2['completionstartonenrol'] = 1;
         $course2['completionnotify'] = 1;
         $course2['lang'] = 'en';
         $course2['forcetheme'] = 'base';
@@ -416,7 +415,6 @@ class core_course_external_testcase extends externallib_advanced_testcase {
 
                 // We enabled completion at the beginning of the test.
                 $this->assertEquals($courseinfo->enablecompletion, $course2['enablecompletion']);
-                $this->assertEquals($courseinfo->completionstartonenrol, $course2['completionstartonenrol']);
 
             } else if ($createdcourse['shortname'] == $course1['shortname']) {
                 $courseconfig = get_config('moodlecourse');
@@ -544,9 +542,7 @@ class core_course_external_testcase extends externallib_advanced_testcase {
             $this->assertEquals($course['completionnotify'], $dbcourse->completionnotify);
             $this->assertEquals($course['lang'], $dbcourse->lang);
             $this->assertEquals($course['forcetheme'], $dbcourse->theme);
-            $this->assertEquals($course['completionstartonenrol'], $dbcourse->completionstartonenrol);
             $this->assertEquals($course['enablecompletion'], $dbcourse->enablecompletion);
-            $this->assertEquals($course['completionstartonenrol'], $dbcourse->completionstartonenrol);
             if ($dbcourse->format === 'topics') {
                 $this->assertEquals($course['courseformatoptions'], array(
                     array('name' => 'numsections', 'value' => $dbcourse->numsections),
@@ -733,7 +729,6 @@ class core_course_external_testcase extends externallib_advanced_testcase {
 
                 if (completion_info::is_enabled_for_site()) {
                     $this->assertEquals($course2['enabledcompletion'], $courseinfo->enablecompletion);
-                    $this->assertEquals($course2['completionstartonenrol'], $courseinfo->completionstartonenrol);
                 }
             } else if ($course['id'] == $course1['id']) {
                 $this->assertEquals($course1['fullname'], $courseinfo->fullname);

@@ -250,18 +250,10 @@ class course_edit_form extends moodleform {
             $mform->addElement('select', 'enablecompletion', get_string('completion','completion'),
                 array(0=>get_string('completiondisabled','completion'), 1=>get_string('completionenabled','completion')));
             $mform->setDefault('enablecompletion', $courseconfig->enablecompletion);
-
-            $mform->addElement('advcheckbox', 'completionstartonenrol', get_string('completionstartonenrol', 'completion'));
-            $mform->setDefault('completionstartonenrol', $courseconfig->completionstartonenrol);
-            $mform->disabledIf('completionstartonenrol', 'enablecompletion', 'eq', 0);
         } else {
             $mform->addElement('hidden', 'enablecompletion');
             $mform->setType('enablecompletion', PARAM_INT);
             $mform->setDefault('enablecompletion',0);
-
-            $mform->addElement('hidden', 'completionstartonenrol');
-            $mform->setType('completionstartonenrol', PARAM_INT);
-            $mform->setDefault('completionstartonenrol',0);
         }
 
 /// customizable role names in this course

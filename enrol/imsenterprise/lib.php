@@ -398,7 +398,6 @@ function process_group_tag($tagcontents) {
                     $course->groupmode = $courseconfig->groupmode;
                     $course->groupmodeforce = $courseconfig->groupmodeforce;
                     $course->enablecompletion = $courseconfig->enablecompletion;
-                    $course->completionstartonenrol = $courseconfig->completionstartonenrol;
                     // Insert default names for teachers/students, from the current language
 
                     // Handle course categorisation (taken from the group.org.orgunit field if present)
