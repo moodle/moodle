@@ -97,6 +97,17 @@ class plugin_manager {
     }
 
     /**
+     * Returns the result of {@link get_plugin_types()} ordered for humans
+     *
+     * @see self::reorder_plugin_types()
+     * @param bool $fullpaths false means relative paths from dirroot
+     * @return array (string)name => (string)location
+     */
+    public function get_plugin_types($fullpaths = true) {
+        return $this->reorder_plugin_types(get_plugin_types($fullpaths));
+    }
+
+    /**
      * Returns a tree of known plugins and information about them
      *
      * @param bool $disablecache force reload, cache can be used otherwise
@@ -119,8 +130,7 @@ class plugin_manager {
                 }
             }
             $this->pluginsinfo = array();
-            $plugintypes = get_plugin_types();
-            $plugintypes = $this->reorder_plugin_types($plugintypes);
+            $plugintypes = $this->get_plugin_types();
             foreach ($plugintypes as $plugintype => $plugintyperootdir) {
                 if (in_array($plugintype, array('base', 'general'))) {
                     throw new coding_exception('Illegal usage of reserved word for plugin type');
@@ -217,6 +227,35 @@ class plugin_manager {
     public function plugin_name($plugin) {
         list($type, $name) = normalize_component($plugin);
         return $this->pluginsinfo[$type][$name]->displayname;
+    }
+
+    /**
+     * Returns a localized name of a plugin typed in singular form
+     *
+     * Most plugin types define their names in core_plugin lang file. In case of subplugins,
+     * we try to ask the parent plugin for the name. In the worst case, we will return
+     * the value of the passed $type parameter.
+     *
+     * @param string $type the type of the plugin, e.g. mod or workshopform
+     * @return string
+     */
+    public function plugintype_name($type) {
+
+        if (get_string_manager()->string_exists('type_' . $type, 'core_plugin')) {
+            // for most plugin types, their names are defined in core_plugin lang file
+            return get_string('type_' . $type, 'core_plugin');
+
+        } else if ($parent = $this->get_parent_of_subplugin($type)) {
+            // if this is a subplugin, try to ask the parent plugin for the name
+            if (get_string_manager()->string_exists('subplugintype_' . $type, $parent)) {
+                return $this->plugin_name($parent) . ' / ' . get_string('subplugintype_' . $type, $parent);
+            } else {
+                return $this->plugin_name($parent) . ' / ' . $type;
+            }
+
+        } else {
+            return $type;
+        }
     }
 
     /**
@@ -570,9 +609,10 @@ class plugin_manager {
             ),
 
             'tool' => array(
-                'assignmentupgrade', 'behat', 'capability', 'customlang', 'dbtransfer',
-                'generator', 'health', 'innodb', 'langimport', 'multilangupgrade', 'phpunit',
-                'profiling', 'qeupgradehelper', 'replace', 'spamcleaner', 'timezoneimport',
+                'assignmentupgrade', 'behat', 'capability', 'customlang',
+                'dbtransfer', 'generator', 'health', 'innodb', 'installaddon',
+                'langimport', 'multilangupgrade', 'phpunit', 'profiling',
+                'qeupgradehelper', 'replace', 'spamcleaner', 'timezoneimport',
                 'unittest', 'uploaduser', 'unsuproles', 'xmldb'
             ),
 
