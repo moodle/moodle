@@ -383,7 +383,8 @@
     display: inline;
 }
 
-.path-mod-workshop .assessment-full .assessment-form-wrapper {
+.path-mod-workshop .assessment-full .assessment-form-wrapper,
+.path-mod-workshop .assessment-full .overall-feedback-wrapper {
     margin-top: 0.5em;
     padding: 0px 1em;
 }
@@ -396,6 +397,25 @@
 .path-mod-workshop .assessment-summary.notgraded .singlebutton input[type="submit"],
 .path-mod-workshop .example-summary.notgraded .singlebutton input[type="submit"] {
     background-color: #ffd3d9;
+}
+
+/**
+ * Overall feedback
+ */
+.path-mod-workshop .assessment-full .overallfeedback .content,
+.path-mod-workshop .assessment-full .overallfeedback .attachments {
+    padding: 5px 10px;
+}
+
+.path-mod-workshop .assessment-full .overallfeedback .attachments .files img.icon {
+    margin-right: 5px;
+}
+
+.path-mod-workshop .assessment-full .overallfeedback .attachments .images div {
+    display: inline-block;
+    margin: 5px;
+    padding: 5px;
+    border: 1px solid #ddd;
 }
 
 /**

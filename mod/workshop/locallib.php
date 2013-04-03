@@ -155,6 +155,15 @@ class workshop {
     /** @var int format of the conclusion text */
     public $conclusionformat;
 
+    /** @var int the mode of the overall feedback */
+    public $overallfeedbackmode;
+
+    /** @var int maximum number of overall feedback attachments */
+    public $overallfeedbackfiles;
+
+    /** @var int maximum size of one file attached to the overall feedback */
+    public $overallfeedbackmaxbytes;
+
     /**
      * @var workshop_strategy grading strategy instance
      * Do not use directly, get the instance using {@link workshop::grading_strategy_instance()}
@@ -855,7 +864,7 @@ class workshop {
      */
     public function prepare_submission(stdClass $record, $showauthor = false) {
 
-        $submission         = new workshop_submission($record, $showauthor);
+        $submission         = new workshop_submission($this, $record, $showauthor);
         $submission->url    = $this->submission_url($record->id);
 
         return $submission;
@@ -870,7 +879,7 @@ class workshop {
      */
     public function prepare_submission_summary(stdClass $record, $showauthor = false) {
 
-        $summary        = new workshop_submission_summary($record, $showauthor);
+        $summary        = new workshop_submission_summary($this, $record, $showauthor);
         $summary->url   = $this->submission_url($record->id);
 
         return $summary;
@@ -884,7 +893,7 @@ class workshop {
      */
     public function prepare_example_submission(stdClass $record) {
 
-        $example = new workshop_example_submission($record);
+        $example = new workshop_example_submission($this, $record);
 
         return $example;
     }
@@ -899,7 +908,7 @@ class workshop {
      */
     public function prepare_example_summary(stdClass $example) {
 
-        $summary = new workshop_example_submission_summary($example);
+        $summary = new workshop_example_submission_summary($this, $example);
 
         if (is_null($example->grade)) {
             $summary->status = 'notgraded';
@@ -936,7 +945,7 @@ class workshop {
      */
     public function prepare_assessment(stdClass $record, $form, array $options = array()) {
 
-        $assessment             = new workshop_assessment($record, $options);
+        $assessment             = new workshop_assessment($this, $record, $options);
         $assessment->url        = $this->assess_url($record->id);
         $assessment->maxgrade   = $this->real_grade(100);
 
@@ -974,7 +983,7 @@ class workshop {
      */
     public function prepare_example_assessment(stdClass $record, $form = null, array $options = array()) {
 
-        $assessment             = new workshop_example_assessment($record, $options);
+        $assessment             = new workshop_example_assessment($this, $record, $options);
         $assessment->url        = $this->exassess_url($record->id);
         $assessment->maxgrade   = $this->real_grade(100);
 
@@ -1010,7 +1019,7 @@ class workshop {
      */
     public function prepare_example_reference_assessment(stdClass $record, $form = null, array $options = array()) {
 
-        $assessment             = new workshop_example_reference_assessment($record, $options);
+        $assessment             = new workshop_example_reference_assessment($this, $record, $options);
         $assessment->maxgrade   = $this->real_grade(100);
 
         if (!empty($options['showform']) and !($form instanceof workshop_assessment_form)) {
@@ -1236,7 +1245,7 @@ class workshop {
         $assessment->reviewerid             = $reviewerid;
         $assessment->timecreated            = $now;         // do not set timemodified here
         $assessment->weight                 = $weight;
-        $assessment->generalcommentformat   = editors_get_preferred_format();
+        $assessment->feedbackauthorformat   = editors_get_preferred_format();
         $assessment->feedbackreviewerformat = editors_get_preferred_format();
 
         return $DB->insert_record('workshop_assessments', $assessment, true, $bulk);
@@ -2293,6 +2302,35 @@ class workshop {
         return false;
     }
 
+    /**
+     * Return the editor options for the overall feedback for the author.
+     *
+     * @return array
+     */
+    public function overall_feedback_content_options() {
+        return array(
+            'subdirs' => 0,
+            'maxbytes' => $this->overallfeedbackmaxbytes,
+            'maxfiles' => $this->overallfeedbackfiles,
+            'changeformat' => 1,
+            'context' => $this->context,
+        );
+    }
+
+    /**
+     * Return the filemanager options for the overall feedback for the author.
+     *
+     * @return array
+     */
+    public function overall_feedback_attachment_options() {
+        return array(
+            'subdirs' => 1,
+            'maxbytes' => $this->overallfeedbackmaxbytes,
+            'maxfiles' => $this->overallfeedbackfiles,
+            'return_types' => FILE_INTERNAL,
+        );
+    }
+
     ////////////////////////////////////////////////////////////////////////////////
     // Internal methods (implementation details)                                  //
     ////////////////////////////////////////////////////////////////////////////////
@@ -2987,14 +3025,20 @@ abstract class workshop_submission_base {
     /* @var array of columns from workshop_submissions that are assigned as properties */
     protected $fields = array();
 
+    /** @var workshop */
+    protected $workshop;
+
     /**
      * Copies the properties of the given database record into properties of $this instance
      *
+     * @param workshop $workshop
      * @param stdClass $submission full record
      * @param bool $showauthor show the author-related information
      * @param array $options additional properties
      */
-    public function __construct(stdClass $submission, $showauthor = false) {
+    public function __construct(workshop $workshop, stdClass $submission, $showauthor = false) {
+
+        $this->workshop = $workshop;
 
         foreach ($this->fields as $field) {
             if (!property_exists($submission, $field)) {
@@ -3207,15 +3251,20 @@ abstract class workshop_assessment_base {
     /* @var array of columns that are assigned as properties */
     protected $fields = array();
 
+    /** @var workshop */
+    protected $workshop;
+
     /**
      * Copies the properties of the given database record into properties of $this instance
      *
      * The $options keys are: showreviewer, showauthor
+     * @param workshop $workshop
      * @param stdClass $assessment full record
      * @param array $options additional properties
      */
-    public function __construct(stdClass $record, array $options = array()) {
+    public function __construct(workshop $workshop, stdClass $record, array $options = array()) {
 
+        $this->workshop = $workshop;
         $this->validate_raw_record($record);
 
         foreach ($this->fields as $field) {
@@ -3295,9 +3344,94 @@ class workshop_assessment extends workshop_assessment_base implements renderable
     /** @var float */
     public $gradinggradeover;
 
+    /** @var string */
+    public $feedbackauthor;
+
+    /** @var int */
+    public $feedbackauthorformat;
+
+    /** @var int */
+    public $feedbackauthorattachment;
+
     /** @var array */
     protected $fields = array('id', 'submissionid', 'weight', 'timecreated',
-        'timemodified', 'grade', 'gradinggrade', 'gradinggradeover');
+        'timemodified', 'grade', 'gradinggrade', 'gradinggradeover', 'feedbackauthor',
+        'feedbackauthorformat', 'feedbackauthorattachment');
+
+    /**
+     * Format the overall feedback text content
+     *
+     * False is returned if the overall feedback feature is disabled. Null is returned
+     * if the overall feedback content has not been found. Otherwise, string with
+     * formatted feedback text is returned.
+     *
+     * @return string|bool|null
+     */
+    public function get_overall_feedback_content() {
+
+        if ($this->workshop->overallfeedbackmode == 0) {
+            return false;
+        }
+
+        if (trim($this->feedbackauthor) === '') {
+            return null;
+        }
+
+        $content = format_text($this->feedbackauthor, $this->feedbackauthorformat,
+            array('overflowdiv' => true, 'context' => $this->workshop->context));
+        $content = file_rewrite_pluginfile_urls($content, 'pluginfile.php', $this->workshop->context->id,
+            'mod_workshop', 'overallfeedback_content', $this->id);
+
+        return $content;
+    }
+
+    /**
+     * Prepares the list of overall feedback attachments
+     *
+     * Returns false if overall feedback attachments are not allowed. Otherwise returns
+     * list of attachments (may be empty).
+     *
+     * @return bool|array of stdClass
+     */
+    public function get_overall_feedback_attachments() {
+
+        if ($this->workshop->overallfeedbackmode == 0) {
+            return false;
+        }
+
+        if ($this->workshop->overallfeedbackfiles == 0) {
+            return false;
+        }
+
+        if (empty($this->feedbackauthorattachment)) {
+            return array();
+        }
+
+        $attachments = array();
+        $fs = get_file_storage();
+        $files = $fs->get_area_files($this->workshop->context->id, 'mod_workshop', 'overallfeedback_attachment', $this->id);
+        foreach ($files as $file) {
+            if ($file->is_directory()) {
+                continue;
+            }
+            $filepath = $file->get_filepath();
+            $filename = $file->get_filename();
+            $fileurl = moodle_url::make_pluginfile_url($this->workshop->context->id, 'mod_workshop',
+                'overallfeedback_attachment', $this->id, $filepath, $filename, true);
+            $previewurl = new moodle_url(moodle_url::make_pluginfile_url($this->workshop->context->id, 'mod_workshop',
+                'overallfeedback_attachment', $this->id, $filepath, $filename, false), array('preview' => 'bigthumb'));
+            $attachments[] = (object)array(
+                'filepath' => $filepath,
+                'filename' => $filename,
+                'fileurl' => $fileurl,
+                'previewurl' => $previewurl,
+                'mimetype' => $file->get_mimetype(),
+
+            );
+        }
+
+        return $attachments;
+    }
 }
 
 

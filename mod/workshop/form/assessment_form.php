@@ -68,7 +68,21 @@ class workshop_assessment_form extends moodleform {
         $mform->addElement('hidden', 'strategy', $this->workshop->strategy);
         $mform->setType('strategy', PARAM_PLUGIN);
 
-        if (!empty($this->options['editableweight']) and !$mform->isFrozen()) {
+        if ($this->workshop->overallfeedbackmode and $this->is_editable()) {
+            $mform->addElement('header', 'overallfeedbacksection', get_string('overallfeedback', 'mod_workshop'));
+            $mform->addElement('editor', 'feedbackauthor_editor', get_string('feedbackauthor', 'mod_workshop'), null,
+                $this->workshop->overall_feedback_content_options());
+            if ($this->workshop->overallfeedbackmode == 2) {
+                $mform->addRule('feedbackauthor_editor', null, 'required', null, 'client');
+            }
+            if ($this->workshop->overallfeedbackfiles) {
+                $mform->addElement('filemanager', 'feedbackauthorattachment_filemanager',
+                    get_string('feedbackauthorattachment', 'mod_workshop'), null,
+                    $this->workshop->overall_feedback_attachment_options());
+            }
+        }
+
+        if (!empty($this->options['editableweight']) and $this->is_editable()) {
             $mform->addElement('header', 'assessmentsettings', get_string('assessmentweight', 'workshop'));
             $mform->addElement('select', 'weight',
                     get_string('assessmentweight', 'workshop'), workshop::available_assessment_weights_list());
@@ -100,4 +114,12 @@ class workshop_assessment_form extends moodleform {
         // By default, do nothing.
     }
 
+    /**
+     * Is the form frozen (read-only)?
+     *
+     * @return boolean
+     */
+    public function is_editable() {
+        return !$this->_form->isFrozen();
+    }
 }

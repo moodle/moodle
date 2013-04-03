@@ -67,6 +67,23 @@ $strategy = $workshop->grading_strategy_instance();
 
 // load the assessment form and process the submitted data eventually
 $mform = $strategy->get_assessment_form($PAGE->url, 'assessment', $assessment, $assessmenteditable);
+
+// Set data managed by the workshop core, subplugins set their own data themselves.
+$currentdata = (object)array(
+    'feedbackauthor' => $assessment->feedbackauthor,
+    'feedbackauthorformat' => $assessment->feedbackauthorformat,
+);
+if ($assessmenteditable and $workshop->overallfeedbackmode) {
+    $currentdata = file_prepare_standard_editor($currentdata, 'feedbackauthor', $workshop->overall_feedback_content_options(),
+        $workshop->context, 'mod_workshop', 'overallfeedback_content', $assessment->id);
+    if ($workshop->overallfeedbackfiles) {
+        $currentdata = file_prepare_standard_filemanager($currentdata, 'feedbackauthorattachment',
+            $workshop->overall_feedback_attachment_options(), $workshop->context, 'mod_workshop', 'overallfeedback_attachment',
+            $assessment->id);
+    }
+}
+$mform->set_data($currentdata);
+
 if ($mform->is_cancelled()) {
     redirect($workshop->view_url());
 } elseif ($assessmenteditable and ($data = $mform->get_data())) {
@@ -83,11 +100,34 @@ if ($mform->is_cancelled()) {
             $workshop->log('update example assessment', $workshop->exassess_url($assessment->id), $assessment->submissionid);
         }
     }
+
+    // Let the grading strategy subplugin save its data.
     $rawgrade = $strategy->save_assessment($assessment, $data);
-    if ($canmanage) {
-        // remember the last one who edited the reference assessment
-        $DB->set_field('workshop_assessments', 'reviewerid', $USER->id, array('id' => $assessment->id));
+
+    // Store the data managed by the workshop core.
+    $coredata = (object)array('id' => $assessment->id);
+    if (isset($data->feedbackauthor_editor)) {
+        $coredata->feedbackauthor_editor = $data->feedbackauthor_editor;
+        $coredata = file_postupdate_standard_editor($coredata, 'feedbackauthor', $workshop->overall_feedback_content_options(),
+            $workshop->context, 'mod_workshop', 'overallfeedback_content', $assessment->id);
+        unset($coredata->feedbackauthor_editor);
     }
+    if (isset($data->feedbackauthorattachment_filemanager)) {
+        $coredata->feedbackauthorattachment_filemanager = $data->feedbackauthorattachment_filemanager;
+        $coredata = file_postupdate_standard_filemanager($coredata, 'feedbackauthorattachment',
+            $workshop->overall_feedback_attachment_options(), $workshop->context, 'mod_workshop', 'overallfeedback_attachment',
+            $assessment->id);
+        unset($coredata->feedbackauthorattachment_filemanager);
+        if (empty($coredata->feedbackauthorattachment)) {
+            $coredata->feedbackauthorattachment = 0;
+        }
+    }
+    if ($canmanage) {
+        // Remember the last one who edited the reference assessment.
+        $coredata->reviewerid = $USER->id;
+    }
+    $DB->update_record('workshop_assessments', $coredata);
+
     if (!is_null($rawgrade) and isset($data->saveandclose)) {
         if ($canmanage) {
             redirect($workshop->view_url());

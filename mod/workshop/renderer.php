@@ -673,6 +673,10 @@ class mod_workshop_renderer extends plugin_renderer_base {
                     get_string('assessmentform', 'workshop'), '', false, true);
             $o .= $this->output->container(self::moodleform($assessment->form), 'assessment-form');
             $o .= print_collapsible_region_end(true);
+
+            if (!$assessment->form->is_editable()) {
+                $o .= $this->overall_feedback($assessment);
+            }
         }
 
         $o .= $this->output->container_end(); // main wrapper
@@ -698,6 +702,67 @@ class mod_workshop_renderer extends plugin_renderer_base {
      */
     protected function render_workshop_example_reference_assessment(workshop_example_reference_assessment $assessment) {
         return $this->render_workshop_assessment($assessment);
+    }
+
+    /**
+     * Renders the overall feedback for the author of the submission
+     *
+     * @param workshop_assessment $assessment
+     * @return string HTML
+     */
+    protected function overall_feedback(workshop_assessment $assessment) {
+
+        $content = $assessment->get_overall_feedback_content();
+
+        if ($content === false) {
+            return '';
+        }
+
+        $o = '';
+
+        if (!is_null($content)) {
+            $o .= $this->output->container($content, 'content');
+        }
+
+        $attachments = $assessment->get_overall_feedback_attachments();
+
+        if (!empty($attachments)) {
+            $o .= $this->output->container_start('attachments');
+            $images = '';
+            $files = '';
+            foreach ($attachments as $attachment) {
+                $icon = $this->output->pix_icon(file_file_icon($attachment), get_mimetype_description($attachment),
+                    'moodle', array('class' => 'icon'));
+                $link = html_writer::link($attachment->fileurl, $icon.' '.substr($attachment->filepath.$attachment->filename, 1));
+                if (file_mimetype_in_typegroup($attachment->mimetype, 'web_image')) {
+                    $preview = html_writer::empty_tag('img', array('src' => $attachment->previewurl, 'alt' => '', 'class' => 'preview'));
+                    $preview = html_writer::tag('a', $preview, array('href' => $attachment->fileurl));
+                    $images .= $this->output->container($preview);
+                } else {
+                    $files .= html_writer::tag('li', $link, array('class' => $attachment->mimetype));
+                }
+            }
+            if ($images) {
+                $images = $this->output->container($images, 'images');
+            }
+
+            if ($files) {
+                $files = html_writer::tag('ul', $files, array('class' => 'files'));
+            }
+
+            $o .= $images.$files;
+            $o .= $this->output->container_end();
+        }
+
+        if ($o === '') {
+            return '';
+        }
+
+        $o = $this->output->box($o, 'overallfeedback');
+        $o = print_collapsible_region($o, 'overall-feedback-wrapper', uniqid('workshop-overall-feedback'),
+            get_string('overallfeedback', 'workshop'), '', false, true);
+
+        return $o;
     }
 
     /**

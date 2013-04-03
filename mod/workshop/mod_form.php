@@ -164,6 +164,30 @@ class mod_workshop_mod_form extends moodleform_mod {
         $mform->addElement('editor', 'instructreviewerseditor', $label, null,
                             workshop::instruction_editors_options($this->context));
 
+        $mform->addElement('select', 'overallfeedbackmode', get_string('overallfeedbackmode', 'mod_workshop'), array(
+            0 => get_string('overallfeedbackmode_0', 'mod_workshop'),
+            1 => get_string('overallfeedbackmode_1', 'mod_workshop'),
+            2 => get_string('overallfeedbackmode_2', 'mod_workshop')));
+        $mform->addHelpButton('overallfeedbackmode', 'overallfeedbackmode', 'mod_workshop');
+        $mform->setDefault('overallfeedbackmode', 1);
+        $mform->setAdvanced('overallfeedbackmode');
+
+        $options = array();
+        for ($i = 7; $i >= 0; $i--) {
+            $options[$i] = $i;
+        }
+        $mform->addElement('select', 'overallfeedbackfiles', get_string('overallfeedbackfiles', 'workshop'), $options);
+        $mform->setDefault('overallfeedbackfiles', 0);
+        $mform->setAdvanced('overallfeedbackfiles');
+        $mform->disabledIf('overallfeedbackfiles', 'overallfeedbackmode', 'eq', 0);
+
+        $options = get_max_upload_sizes($CFG->maxbytes, $this->course->maxbytes);
+        $mform->addElement('select', 'overallfeedbackmaxbytes', get_string('overallfeedbackmaxbytes', 'workshop'), $options);
+        $mform->setAdvanced('overallfeedbackmaxbytes');
+        $mform->setDefault('overallfeedbackmaxbytes', $workshopconfig->maxbytes);
+        $mform->disabledIf('overallfeedbackmaxbytes', 'overallfeedbackmode', 'eq', 0);
+        $mform->disabledIf('overallfeedbackmaxbytes', 'overallfeedbackfiles', 'eq', 0);
+
         $label = get_string('examplesmode', 'workshop');
         $options = workshop::available_example_modes_list();
         $mform->addElement('select', 'examplesmode', $label, $options);

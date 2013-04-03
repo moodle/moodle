@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/workshop/db" VERSION="20121024" COMMENT="XMLDB file for Moodle mod/workshop"
+<XMLDB PATH="mod/workshop/db" VERSION="20130325" COMMENT="XMLDB file for Moodle mod/workshop"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -36,6 +36,9 @@
         <FIELD NAME="phaseswitchassessment" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Automatically switch to the assessment phase after the submissions deadline"/>
         <FIELD NAME="conclusion" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="A text to be displayed at the end of the workshop."/>
         <FIELD NAME="conclusionformat" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="The format of the conclusion field content."/>
+        <FIELD NAME="overallfeedbackmode" TYPE="int" LENGTH="3" NOTNULL="false" DEFAULT="1" SEQUENCE="false" COMMENT="Mode of the overall feedback support."/>
+        <FIELD NAME="overallfeedbackfiles" TYPE="int" LENGTH="3" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Number of allowed attachments to the overall feedback."/>
+        <FIELD NAME="overallfeedbackmaxbytes" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="100000" SEQUENCE="false" COMMENT="Maximum size of one file attached to the overall feedback."/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -85,6 +88,7 @@
         <FIELD NAME="gradinggradeoverby" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The id of the user who has overridden the grade for submission."/>
         <FIELD NAME="feedbackauthor" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The comment/feedback from the reviewer for the author."/>
         <FIELD NAME="feedbackauthorformat" TYPE="int" LENGTH="3" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="feedbackauthorattachment" TYPE="int" LENGTH="3" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Are there some files attached to the feedbackauthor field? Sets to 1 by file_postupdate_standard_filemanager()."/>
         <FIELD NAME="feedbackreviewer" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The comment/feedback from the teacher for the reviewer. For example the reason why the grade for assessment was overridden"/>
         <FIELD NAME="feedbackreviewerformat" TYPE="int" LENGTH="3" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>

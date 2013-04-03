@@ -137,7 +137,24 @@ if (is_null($assessment->grade) and !$assessmenteditable) {
     // load the assessment form and process the submitted data eventually
     $mform = $strategy->get_assessment_form($PAGE->url, 'assessment', $assessment, $assessmenteditable,
                                         array('editableweight' => $cansetassessmentweight, 'pending' => !empty($pending)));
-    $mform->set_data(array('weight' => $assessment->weight)); // other values are set by subplugins
+
+    // Set data managed by the workshop core, subplugins set their own data themselves.
+    $currentdata = (object)array(
+        'weight' => $assessment->weight,
+        'feedbackauthor' => $assessment->feedbackauthor,
+        'feedbackauthorformat' => $assessment->feedbackauthorformat,
+    );
+    if ($assessmenteditable and $workshop->overallfeedbackmode) {
+        $currentdata = file_prepare_standard_editor($currentdata, 'feedbackauthor', $workshop->overall_feedback_content_options(),
+            $workshop->context, 'mod_workshop', 'overallfeedback_content', $assessment->id);
+        if ($workshop->overallfeedbackfiles) {
+            $currentdata = file_prepare_standard_filemanager($currentdata, 'feedbackauthorattachment',
+                $workshop->overall_feedback_attachment_options(), $workshop->context, 'mod_workshop', 'overallfeedback_attachment',
+                $assessment->id);
+        }
+    }
+    $mform->set_data($currentdata);
+
     if ($mform->is_cancelled()) {
         redirect($workshop->view_url());
     } elseif ($assessmenteditable and ($data = $mform->get_data())) {
@@ -146,10 +163,34 @@ if (is_null($assessment->grade) and !$assessmenteditable) {
         } else {
             $workshop->log('update assessment', $workshop->assess_url($assessment->id), $assessment->submissionid);
         }
+
+        // Let the grading strategy subplugin save its data.
         $rawgrade = $strategy->save_assessment($assessment, $data);
-        if (isset($data->weight) and $cansetassessmentweight) {
-            $DB->set_field('workshop_assessments', 'weight', $data->weight, array('id' => $assessment->id));
+
+        // Store the data managed by the workshop core.
+        $coredata = (object)array('id' => $assessment->id);
+        if (isset($data->feedbackauthor_editor)) {
+            $coredata->feedbackauthor_editor = $data->feedbackauthor_editor;
+            $coredata = file_postupdate_standard_editor($coredata, 'feedbackauthor', $workshop->overall_feedback_content_options(),
+                $workshop->context, 'mod_workshop', 'overallfeedback_content', $assessment->id);
+            unset($coredata->feedbackauthor_editor);
         }
+        if (isset($data->feedbackauthorattachment_filemanager)) {
+            $coredata->feedbackauthorattachment_filemanager = $data->feedbackauthorattachment_filemanager;
+            $coredata = file_postupdate_standard_filemanager($coredata, 'feedbackauthorattachment',
+                $workshop->overall_feedback_attachment_options(), $workshop->context, 'mod_workshop', 'overallfeedback_attachment',
+                $assessment->id);
+            unset($coredata->feedbackauthorattachment_filemanager);
+            if (empty($coredata->feedbackauthorattachment)) {
+                $coredata->feedbackauthorattachment = 0;
+            }
+        }
+        if (isset($data->weight) and $cansetassessmentweight) {
+            $coredata->weight = $data->weight;
+        }
+        $DB->update_record('workshop_assessments', $coredata);
+
+        // And finally redirect the user's browser.
         if (!is_null($rawgrade) and isset($data->saveandclose)) {
             redirect($workshop->view_url());
         } else if (!is_null($rawgrade) and isset($data->saveandshownext)) {
