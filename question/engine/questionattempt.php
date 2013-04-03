@@ -1285,7 +1285,7 @@ class question_attempt {
         $autosavedsequencenumber = null;
         while ($record && $record->questionattemptid == $questionattemptid && !is_null($record->attemptstepid)) {
             $sequencenumber = $record->sequencenumber;
-            $nextstep = question_attempt_step::load_from_records($records, $record->attemptstepid);
+            $nextstep = question_attempt_step::load_from_records($records, $record->attemptstepid, $qa->get_question()->get_type_name());
 
             if ($sequencenumber < 0) {
                 if (!$autosavedstep) {
