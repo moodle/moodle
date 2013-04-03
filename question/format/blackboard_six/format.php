@@ -99,7 +99,8 @@ class qformat_blackboard_six extends qformat_blackboard_six_base {
                 fulldelete($this->tempdir);
                 return false;
             }
-            if (unzip_file($this->tempdir . '/bboard.zip', '', false)) {
+            $packer = get_file_packer('application/zip');
+            if ($packer->extract_to_pathname($this->tempdir . '/bboard.zip', $this->tempdir)) {
                 $dom = new DomDocument();
 
                 if (!$dom->load($this->tempdir . '/imsmanifest.xml')) {
