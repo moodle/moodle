@@ -693,7 +693,7 @@ abstract class qbehaviour_walkthrough_test_base extends question_testcase {
         $prefix = $this->quba->get_field_prefix($this->slot);
         $fulldata = array(
             'slots' => $this->slot,
-            $prefix . ':sequencecheck' => $this->get_question_attempt()->get_num_steps(),
+            $prefix . ':sequencecheck' => $this->get_question_attempt()->get_sequence_check_count(),
         );
         foreach ($data as $name => $value) {
             $fulldata[$prefix . $name] = $value;
@@ -784,6 +784,16 @@ abstract class qbehaviour_walkthrough_test_base extends question_testcase {
                     'input with attributes ' . html_writer::attributes($attributes) .
                     ' should not be read-only in ' . $this->currentoutput);
         }
+    }
+
+    protected function check_output_contains_hidden_input($name, $value) {
+        $attributes = array(
+            'type' => 'hidden',
+            'name' => $this->quba->get_field_prefix($this->slot) . $name,
+            'value' => $value,
+        );
+        $this->assertTag($this->get_tag_matcher('input', $attributes), $this->currentoutput,
+                'Looking for a hidden input with attributes ' . html_writer::attributes($attributes) . ' in ' . $this->currentoutput);
     }
 
     protected function get_tag_matcher($tag, $attributes) {

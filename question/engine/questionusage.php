@@ -623,7 +623,7 @@ class question_usage_by_activity {
                 $qa->get_control_field_name('sequencecheck'), PARAM_INT, $postdata);
         if (is_null($sequencecheck)) {
             return false;
-        } else if ($sequencecheck != $qa->get_num_steps()) {
+        } else if ($sequencecheck != $qa->get_sequence_check_count()) {
             throw new question_out_of_sequence_exception($this->id, $slot, $postdata);
         } else {
             return true;
@@ -642,7 +642,7 @@ class question_usage_by_activity {
                 $qa->get_control_field_name('sequencecheck'), PARAM_INT, $postdata);
         if (is_null($sequencecheck)) {
             return false;
-        } else if ($sequencecheck != $qa->get_num_steps()) {
+        } else if ($sequencecheck != $qa->get_sequence_check_count()) {
             return false;
         } else {
             return true;

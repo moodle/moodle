@@ -65,6 +65,7 @@ class question_usage_autosave_test extends qbehaviour_walkthrough_test_base {
         // Now check how that is re-displayed.
         $this->render();
         $this->check_output_contains_text_input('answer', 'first response');
+        $this->check_output_contains_hidden_input(':sequencecheck', 2);
 
         // Process an autosave.
         $this->load_quba();
@@ -78,6 +79,7 @@ class question_usage_autosave_test extends qbehaviour_walkthrough_test_base {
         $this->load_quba();
         $this->render();
         $this->check_output_contains_text_input('answer', 'second response');
+        $this->check_output_contains_hidden_input(':sequencecheck', 2);
 
         $this->delete_quba();
     }
@@ -108,6 +110,7 @@ class question_usage_autosave_test extends qbehaviour_walkthrough_test_base {
         // Now check how that is re-displayed.
         $this->render();
         $this->check_output_contains_text_input('answer', 'first response');
+        $this->check_output_contains_hidden_input(':sequencecheck', 2);
 
         // Process an autosave.
         $this->load_quba();
@@ -121,6 +124,7 @@ class question_usage_autosave_test extends qbehaviour_walkthrough_test_base {
         $this->load_quba();
         $this->render();
         $this->check_output_contains_text_input('answer', 'second response');
+        $this->check_output_contains_hidden_input(':sequencecheck', 2);
 
         // Process a second autosave.
         $this->load_quba();
@@ -134,6 +138,7 @@ class question_usage_autosave_test extends qbehaviour_walkthrough_test_base {
         $this->load_quba();
         $this->render();
         $this->check_output_contains_text_input('answer', 'third response');
+        $this->check_output_contains_hidden_input(':sequencecheck', 2);
 
         $this->delete_quba();
     }
@@ -164,6 +169,7 @@ class question_usage_autosave_test extends qbehaviour_walkthrough_test_base {
         // Now check how that is re-displayed.
         $this->render();
         $this->check_output_contains_text_input('answer', 'first response');
+        $this->check_output_contains_hidden_input(':sequencecheck', 2);
 
         // Process an autosave.
         $this->load_quba();
@@ -177,6 +183,7 @@ class question_usage_autosave_test extends qbehaviour_walkthrough_test_base {
         $this->load_quba();
         $this->render();
         $this->check_output_contains_text_input('answer', 'second response');
+        $this->check_output_contains_hidden_input(':sequencecheck', 2);
 
         $stepid = $this->quba->get_question_attempt($this->slot)->get_last_step()->get_id();
 
@@ -196,6 +203,7 @@ class question_usage_autosave_test extends qbehaviour_walkthrough_test_base {
         $this->load_quba();
         $this->render();
         $this->check_output_contains_text_input('answer', 'second response');
+        $this->check_output_contains_hidden_input(':sequencecheck', 2);
 
         $this->delete_quba();
     }
@@ -226,6 +234,7 @@ class question_usage_autosave_test extends qbehaviour_walkthrough_test_base {
         // Now check how that is re-displayed.
         $this->render();
         $this->check_output_contains_text_input('answer', 'first response');
+        $this->check_output_contains_hidden_input(':sequencecheck', 2);
 
         // Process an autosave.
         $this->load_quba();
@@ -239,6 +248,7 @@ class question_usage_autosave_test extends qbehaviour_walkthrough_test_base {
         $this->load_quba();
         $this->render();
         $this->check_output_contains_text_input('answer', 'second response');
+        $this->check_output_contains_hidden_input(':sequencecheck', 2);
 
         // Process a second autosave saving the original response.
         // This should remove the autosave step.
@@ -253,6 +263,7 @@ class question_usage_autosave_test extends qbehaviour_walkthrough_test_base {
         $this->load_quba();
         $this->render();
         $this->check_output_contains_text_input('answer', 'first response');
+        $this->check_output_contains_hidden_input(':sequencecheck', 2);
 
         $this->delete_quba();
     }
@@ -283,6 +294,7 @@ class question_usage_autosave_test extends qbehaviour_walkthrough_test_base {
         // Now check how that is re-displayed.
         $this->render();
         $this->check_output_contains_text_input('answer', 'first response');
+        $this->check_output_contains_hidden_input(':sequencecheck', 2);
 
         // Process an autosave.
         $this->load_quba();
@@ -296,6 +308,7 @@ class question_usage_autosave_test extends qbehaviour_walkthrough_test_base {
         $this->load_quba();
         $this->render();
         $this->check_output_contains_text_input('answer', 'second response');
+        $this->check_output_contains_hidden_input(':sequencecheck', 2);
 
         // Now save for real a third response.
         $this->process_submission(array('answer' => 'third response'));
@@ -308,6 +321,7 @@ class question_usage_autosave_test extends qbehaviour_walkthrough_test_base {
         // Now check how that is re-displayed.
         $this->render();
         $this->check_output_contains_text_input('answer', 'third response');
+        $this->check_output_contains_hidden_input(':sequencecheck', 3);
     }
 
     public function test_autosave_then_real_save_same() {
@@ -336,6 +350,7 @@ class question_usage_autosave_test extends qbehaviour_walkthrough_test_base {
         // Now check how that is re-displayed.
         $this->render();
         $this->check_output_contains_text_input('answer', 'first response');
+        $this->check_output_contains_hidden_input(':sequencecheck', 2);
 
         // Process an autosave.
         $this->load_quba();
@@ -349,6 +364,7 @@ class question_usage_autosave_test extends qbehaviour_walkthrough_test_base {
         $this->load_quba();
         $this->render();
         $this->check_output_contains_text_input('answer', 'second response');
+        $this->check_output_contains_hidden_input(':sequencecheck', 2);
 
         // Now save for real of the same response.
         $this->process_submission(array('answer' => 'second response'));
@@ -361,6 +377,7 @@ class question_usage_autosave_test extends qbehaviour_walkthrough_test_base {
         // Now check how that is re-displayed.
         $this->render();
         $this->check_output_contains_text_input('answer', 'second response');
+        $this->check_output_contains_hidden_input(':sequencecheck', 3);
     }
 
     public function test_autosave_then_submit() {
@@ -389,6 +406,7 @@ class question_usage_autosave_test extends qbehaviour_walkthrough_test_base {
         // Now check how that is re-displayed.
         $this->render();
         $this->check_output_contains_text_input('answer', 'first response');
+        $this->check_output_contains_hidden_input(':sequencecheck', 2);
 
         // Process an autosave.
         $this->load_quba();
@@ -402,6 +420,7 @@ class question_usage_autosave_test extends qbehaviour_walkthrough_test_base {
         $this->load_quba();
         $this->render();
         $this->check_output_contains_text_input('answer', 'second response');
+        $this->check_output_contains_hidden_input(':sequencecheck', 2);
 
         // Now submit a third response.
         $this->process_submission(array('answer' => 'third response'));
@@ -415,6 +434,7 @@ class question_usage_autosave_test extends qbehaviour_walkthrough_test_base {
         // Now check how that is re-displayed.
         $this->render();
         $this->check_output_contains_text_input('answer', 'third response', false);
+        $this->check_output_contains_hidden_input(':sequencecheck', 4);
     }
 
     public function test_autosave_and_save_concurrently() {
@@ -485,6 +505,7 @@ class question_usage_autosave_test extends qbehaviour_walkthrough_test_base {
         $this->check_step_count(2);
         $this->render();
         $this->check_output_contains_text_input('answer', 'real response');
+        $this->check_output_contains_hidden_input(':sequencecheck', 2);
 
         $DB2->dispose();
     }
@@ -556,6 +577,7 @@ class question_usage_autosave_test extends qbehaviour_walkthrough_test_base {
         $this->check_step_count(2);
         $this->render();
         $this->check_output_contains_text_input('answer', 'autosaved response 1');
+        $this->check_output_contains_hidden_input(':sequencecheck', 1);
 
         $DB2->dispose();
     }
@@ -586,11 +608,12 @@ class question_usage_autosave_test extends qbehaviour_walkthrough_test_base {
         // Now check how that is re-displayed.
         $this->render();
         $this->check_output_contains_text_input('answer', 'first response');
+        $this->check_output_contains_hidden_input(':sequencecheck', 2);
 
-        // Process an autosave with a sequence number 1 to small (so from the past).
+        // Process an autosave with a sequence number 1 too small (so from the past).
         $this->load_quba();
         $postdata = $this->response_data_to_post(array('answer' => 'obsolete response'));
-        $postdata[$this->quba->get_field_prefix($this->slot) . ':sequencecheck'] = $this->get_question_attempt()->get_num_steps() - 1;
+        $postdata[$this->quba->get_field_prefix($this->slot) . ':sequencecheck'] = $this->get_question_attempt()->get_sequence_check_count() - 1;
         $this->quba->process_all_autosaves(null, $postdata);
         $this->check_current_state(question_state::$complete);
         $this->check_current_mark(null);
@@ -601,6 +624,7 @@ class question_usage_autosave_test extends qbehaviour_walkthrough_test_base {
         $this->load_quba();
         $this->render();
         $this->check_output_contains_text_input('answer', 'first response');
+        $this->check_output_contains_hidden_input(':sequencecheck', 2);
 
         $this->delete_quba();
     }

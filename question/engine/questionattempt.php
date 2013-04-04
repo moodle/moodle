@@ -348,6 +348,21 @@ class question_attempt {
     }
 
     /**
+     * Get the number of real steps in this attempt.
+     * This is put as a hidden field in the HTML, so that when we receive some
+     * data to process, then we can check that it came from the question
+     * in the state we are now it.
+     * @return int a number that summarises the current state of this question attempt.
+     */
+    public function get_sequence_check_count() {
+        $numrealsteps = $this->get_num_steps();
+        if ($this->has_autosaved_step()) {
+            $numrealsteps -= 1;
+        }
+        return $numrealsteps;
+    }
+
+    /**
      * Get the number of steps in this attempt.
      * For internal/test code use only.
      * @return int the number of steps we currently have.

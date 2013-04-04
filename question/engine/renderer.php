@@ -325,7 +325,7 @@ class core_question_renderer extends plugin_renderer_base {
         $output .= html_writer::empty_tag('input', array(
                 'type' => 'hidden',
                 'name' => $qa->get_control_field_name('sequencecheck'),
-                'value' => $qa->get_num_steps()));
+                'value' => $qa->get_sequence_check_count()));
         $output .= $qtoutput->formulation_and_controls($qa, $options);
         if ($options->clearwrong) {
             $output .= $qtoutput->clear_wrong($qa);
