@@ -98,7 +98,7 @@ body.jsenabled .questionflagcheckbox {
 }
 
 .path-mod-quiz .qnbutton.flagged .trafficlight {
-    background: url([[pix: quiz|navflagged]]) no-repeat top right;
+    background: url([[pix:quiz|navflagged]]) no-repeat top right;
 }
 
 .path-mod-quiz .qnbutton.notyetanswered,
