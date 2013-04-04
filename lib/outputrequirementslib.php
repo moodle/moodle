@@ -207,7 +207,7 @@ class page_requirements_manager {
                 )
             )
         ));
-        $configname = $this->YUI_config->set_config_function("var p = me.path, b = me.name.replace(/^moodle-/,'').split('-', 3), n = b.pop();if (/(skin|core)/.test(n)) {n = b.pop();me.type = 'css';};me.path = b.join('-')+'/'+n+'/'+n+'-min.'+me.type;");
+        $configname = $this->YUI_config->set_config_function("var p = me.path, b = me.name.replace(/^moodle-/,'').split('-', 3), n = b.pop();if (/(skin|core)/.test(n)) {n = b.pop();me.type = 'css';};me.path = b.join('-')+'/'+n+'/'+n;if(me.type !== 'css'){me.path=me.path+'-min';};me.path=me.path+'.'+me.type;");
         $this->YUI_config->add_group('moodle', array(
             'name' => 'moodle',
             'base' => $CFG->httpswwwroot . '/theme/yui_combo.php'.$sep.'moodle/'.$jsrev.'/',
