@@ -1127,30 +1127,19 @@ $capabilities = array(
         )
     ),
 
+    // TODO: Remove 'moodle/blog:associatecourse' and 'moodle/blog:associatemodule' after a few releases.
     'moodle/blog:associatecourse' => array(
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
-        'archetypes' => array(
-            'student' => CAP_ALLOW,
-            'user' => CAP_ALLOW,
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        )
+        'archetypes' => array()
     ),
 
     'moodle/blog:associatemodule' => array(
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
-            'student' => CAP_ALLOW,
-            'user' => CAP_ALLOW,
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        )
+        'archetypes' => array()
     ),
 
     'moodle/calendar:manageownentries' => array( // works in CONTEXT_SYSTEM only

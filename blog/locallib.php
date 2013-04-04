@@ -679,41 +679,26 @@ class blog_listing {
 
             if (empty($userid) || (!empty($userid) && $userid == $USER->id)) {
 
-                $canaddentries = true;
                 $courseid = optional_param('courseid', null, PARAM_INT);
-                if ($modid = optional_param('modid', null, PARAM_INT)) {
-                    if (!has_capability('moodle/blog:associatemodule', context_module::instance($modid))) {
-                        $canaddentries = false;
-                    }
-                } else if ($courseid) {
-                    if (!has_capability('moodle/blog:associatecourse', context_course::instance($courseid))) {
-                        $canaddentries = false;
-                    }
-                }
+                $modid = optional_param('modid', null, PARAM_INT);
 
-                if ($canaddentries) {
-                    $addurl = new moodle_url("$CFG->wwwroot/blog/edit.php");
-                    $urlparams = array('action' => 'add',
-                                       'userid' => $userid,
-                                       'courseid' => $courseid,
-                                       'groupid' => optional_param('groupid', null, PARAM_INT),
-                                       'modid' => $modid,
-                                       'tagid' => optional_param('tagid', null, PARAM_INT),
-                                       'tag' => optional_param('tag', null, PARAM_INT),
-                                       'search' => optional_param('search', null, PARAM_INT));
+                $addurl = new moodle_url("$CFG->wwwroot/blog/edit.php");
+                $urlparams = array('action' => 'add',
+                                   'userid' => $userid,
+                                   'courseid' => $courseid,
+                                   'groupid' => optional_param('groupid', null, PARAM_INT),
+                                   'modid' => $modid,
+                                   'tagid' => optional_param('tagid', null, PARAM_INT),
+                                   'tag' => optional_param('tag', null, PARAM_INT),
+                                   'search' => optional_param('search', null, PARAM_INT));
 
-                    foreach ($urlparams as $var => $val) {
-                        if (empty($val)) {
-                            unset($urlparams[$var]);
-                        }
-                    }
-                    $addurl->params($urlparams);
+                $urlparams = array_filter($urlparams);
+                $addurl->params($urlparams);
 
-                    $addlink = '<div class="addbloglink">';
-                    $addlink .= '<a href="'.$addurl->out().'">'. $blogheaders['stradd'].'</a>';
-                    $addlink .= '</div>';
-                    echo $addlink;
-                }
+                $addlink = '<div class="addbloglink">';
+                $addlink .= '<a href="'.$addurl->out().'">'. $blogheaders['stradd'].'</a>';
+                $addlink .= '</div>';
+                echo $addlink;
             }
         }
 

@@ -461,10 +461,6 @@ function blog_get_options_for_course(stdClass $course, stdClass $user=null) {
 
     // Check that the user can associate with the course
     $sitecontext = context_system::instance();
-    $coursecontext = context_course::instance($course->id);
-    if (!has_capability('moodle/blog:associatecourse', $coursecontext)) {
-        return $options;
-    }
     // Generate the cache key
     $key = $course->id.':';
     if (!empty($user)) {
@@ -477,36 +473,35 @@ function blog_get_options_for_course(stdClass $course, stdClass $user=null) {
         return $courseoptions[$key];
     }
 
-    $canparticipate = (is_enrolled($coursecontext) or is_viewing($coursecontext));
 
-    if (has_capability('moodle/blog:view', $coursecontext)) {
+    if (has_capability('moodle/blog:view', $sitecontext)) {
         // We can view!
         if ($CFG->bloglevel >= BLOG_SITE_LEVEL) {
             // View entries about this course
             $options['courseview'] = array(
                 'string' => get_string('viewcourseblogs', 'blog'),
-                'link' => new moodle_url('/blog/index.php', array('courseid'=>$course->id))
+                'link' => new moodle_url('/blog/index.php', array('courseid' => $course->id))
             );
         }
         // View MY entries about this course
         $options['courseviewmine'] = array(
             'string' => get_string('viewmyentriesaboutcourse', 'blog'),
-            'link' => new moodle_url('/blog/index.php', array('courseid'=>$course->id, 'userid'=>$USER->id))
+            'link' => new moodle_url('/blog/index.php', array('courseid' => $course->id, 'userid' => $USER->id))
         );
         if (!empty($user) && ($CFG->bloglevel >= BLOG_SITE_LEVEL)) {
             // View the provided users entries about this course
             $options['courseviewuser'] = array(
                 'string' => get_string('viewentriesbyuseraboutcourse', 'blog', fullname($user)),
-                'link' => new moodle_url('/blog/index.php', array('courseid'=>$course->id, 'userid'=>$user->id))
+                'link' => new moodle_url('/blog/index.php', array('courseid' => $course->id, 'userid' => $user->id))
             );
         }
     }
 
-    if (has_capability('moodle/blog:create', $sitecontext) and $canparticipate) {
+    if (has_capability('moodle/blog:create', $sitecontext)) {
         // We can blog about this course
         $options['courseadd'] = array(
             'string' => get_string('blogaboutthiscourse', 'blog'),
-            'link' => new moodle_url('/blog/edit.php', array('action'=>'add', 'courseid'=>$course->id))
+            'link' => new moodle_url('/blog/edit.php', array('action' => 'add', 'courseid' => $course->id))
         );
     }
 
@@ -536,12 +531,7 @@ function blog_get_options_for_module($module, $user=null) {
         return $options;
     }
 
-    // Check the user can associate with the module
-    $modcontext = context_module::instance($module->id);
     $sitecontext = context_system::instance();
-    if (!has_capability('moodle/blog:associatemodule', $modcontext)) {
-        return $options;
-    }
 
     // Generate the cache key
     $key = $module->id.':';
@@ -555,9 +545,8 @@ function blog_get_options_for_module($module, $user=null) {
         return $moduleoptions[$key];
     }
 
-    $canparticipate = (is_enrolled($modcontext) or is_viewing($modcontext));
 
-    if (has_capability('moodle/blog:view', $modcontext)) {
+    if (has_capability('moodle/blog:view', $sitecontext)) {
         // Save correct module name for later usage.
         $modulename = get_string('modulename', $module->modname);
 
@@ -588,7 +577,7 @@ function blog_get_options_for_module($module, $user=null) {
         }
     }
 
-    if (has_capability('moodle/blog:create', $sitecontext) and $canparticipate) {
+    if (has_capability('moodle/blog:create', $sitecontext)) {
         // The user can blog about this module
         $options['moduleadd'] = array(
             'string' => get_string('blogaboutthismodule', 'blog', $modulename),
