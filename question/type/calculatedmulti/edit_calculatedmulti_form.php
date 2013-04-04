@@ -82,9 +82,8 @@ class qtype_calculatedmulti_edit_form extends question_edit_form {
 
         $mform->setType('answer', PARAM_NOTAGS);
 
-        $addrepeated = array();
-        $addrepeated[] = $mform->createElement('hidden', 'tolerance');
-        $addrepeated[] = $mform->createElement('hidden', 'tolerancetype', 1);
+        $repeated[] = $mform->createElement('hidden', 'tolerance');
+        $repeated[] = $mform->createElement('hidden', 'tolerancetype', 1);
         $repeatedoptions['tolerance']['type'] = PARAM_FLOAT;
         $repeatedoptions['tolerance']['default'] = 0.01;
 
