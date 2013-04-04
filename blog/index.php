@@ -124,11 +124,9 @@ if (!empty($courseid)) {
     }
 
     $courseid = $course->id;
-    $coursecontext = context_course::instance($course->id);
-
     require_login($course);
 
-    if (!has_capability('moodle/blog:view', $coursecontext)) {
+    if (!has_capability('moodle/blog:view', $sitecontext)) {
         print_error('cannotviewcourseblog', 'blog');
     }
 } else {
@@ -152,7 +150,7 @@ if (!empty($groupid)) {
     $courseid = $course->id;
     require_login($course);
 
-    if (!has_capability('moodle/blog:view', $coursecontext)) {
+    if (!has_capability('moodle/blog:view', $sitecontext)) {
         print_error(get_string('cannotviewcourseorgroupblog', 'blog'));
     }
 
@@ -210,7 +208,7 @@ if ($CFG->enablerssfeeds) {
     $thingid = null;
     list($thingid, $rsscontext, $filtertype) = blog_rss_get_params($blogheaders['filters']);
     if (empty($rsscontext)) {
-        $rsscontext = get_system_context();
+        $rsscontext = context_system::instance();
     }
     $rsstitle = $blogheaders['heading'];
 

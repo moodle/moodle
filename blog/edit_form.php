@@ -139,9 +139,7 @@ class blog_edit_form extends moodleform {
         if (!empty($data['courseassoc'])) {
             $coursecontext = context::instance_by_id($data['courseassoc']);
 
-            if ($coursecontext->contextlevel == CONTEXT_COURSE) {
-                $errors['courseassoc'] = get_string('studentnotallowed', '', fullname($USER, true));
-            } else {
+            if ($coursecontext->contextlevel != CONTEXT_COURSE) {
                 $errors['courseassoc'] = get_string('error');
             }
         }
@@ -163,8 +161,6 @@ class blog_edit_form extends moodleform {
                 } else {
                     $data['courseassoc'] = $coursecontext->id;
                 }
-
-                $errors['modassoc'] = get_string('studentnotallowed', '', fullname($USER, true));
             } else {
                 $errors['modassoc'] = get_string('error');
             }
