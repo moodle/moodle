@@ -25,15 +25,16 @@ Feature: Add activities to courses
     When I add a "Database" to section "3" and I fill the form with:
       | Name | Test name |
       | Description | Test database description |
-      | Required entries | 9 |
-      | Comments | Yes |
+      | Entries required for completion | 9 |
+      | Allow comments on entries | Yes |
     And I turn editing mode off
     Then I should not see "Adding a new"
     And I follow "Test name"
     And I follow "Edit settings"
+    And I expand all fieldsets
     And the "Name" field should match "Test name" value
-    And the "Required entries" field should match "9" value
-    And the "Comments" field should match "Yes" value
+    And the "Entries required for completion" field should match "9" value
+    And the "Allow comments on entries" field should match "Yes" value
 
   @javascript
   Scenario: Add an activity without the required fields
