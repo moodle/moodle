@@ -33,6 +33,9 @@ require_login();
 $PAGE->set_url('/badges/ajax.php');
 $PAGE->set_context(context_system::instance());
 
+// Unlock session during potentially long curl request.
+session_get_instance()->write_close();
+
 $result = badges_check_backpack_accessibility();
 
 $outcome = new stdClass();
