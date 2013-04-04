@@ -35,8 +35,10 @@ class editcategory_form extends moodleform {
         $mform->addElement('select', 'parent', get_string('parentcategory'), $options);
         $mform->addElement('text', 'name', get_string('categoryname'), array('size'=>'30'));
         $mform->addRule('name', get_string('required'), 'required', null);
+        $mform->setType('name', PARAM_TEXT);
         $mform->addElement('text', 'idnumber', get_string('idnumbercoursecategory'),'maxlength="100"  size="10"');
         $mform->addHelpButton('idnumber', 'idnumbercoursecategory');
+        $mform->setType('idnumber', PARAM_RAW);
         $mform->addElement('editor', 'description_editor', get_string('description'), null, $editoroptions);
         $mform->setType('description_editor', PARAM_RAW);
         if (!empty($CFG->allowcategorythemes)) {
