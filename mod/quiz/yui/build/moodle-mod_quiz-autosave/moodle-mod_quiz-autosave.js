@@ -122,7 +122,7 @@ M.mod_quiz.autosave = {
     init_tinymce: function(repeatcount) {
         if (typeof tinymce === 'undefined') {
             if (repeatcount > 0) {
-                Y.later(this.TINYMCE_DETECTION_DELAY, this, self.init_tinymce,repeatcount - 1);
+                Y.later(this.TINYMCE_DETECTION_DELAY, this, this.init_tinymce, [repeatcount - 1]);
             }
             return;
         }
@@ -144,7 +144,7 @@ M.mod_quiz.autosave = {
     },
 
     value_changed: function(e) {
-        if (e.target.get('name') === 'thispage') {
+        if (e.target.get('name') === 'thispage' || e.target.get('name').match(/_:flagged$/)) {
             return; // Not interesting.
         }
         this.start_save_timer_if_necessary();
@@ -171,7 +171,7 @@ M.mod_quiz.autosave = {
     },
 
     cancel_delay: function() {
-        if (this.delay_timer) {
+        if (this.delay_timer && this.delay_timer !== true) {
             this.delay_timer.cancel();
         }
         this.delay_timer = null;
