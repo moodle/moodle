@@ -17,7 +17,9 @@
 .coursebox .content {font-size:90%;}
 .coursebox .teachers {margin:5px 1em;}
 .coursebox .summary,
-.coursebox .coursecat {margin:5px;}
+.coursebox .coursecat,
+.coursebox .content .courseimage,
+.coursebox .content .coursefile {margin:5px;}
 .coursebox > .content:after,
 .coursebox > .info:after {clear:both;content:".";display:block;height:0;min-width:0;visibility:hidden;}
 

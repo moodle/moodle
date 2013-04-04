@@ -116,7 +116,9 @@ li.section.hidden span.commands a.editing_show {cursor:default;}
 .coursebox .name a {display:block;background-image:url([[pix:moodle|i/course]]);background-repeat: no-repeat;padding-left:21px;background-position: center left;}
 .coursebox.remotehost .name a {background-image:url([[pix:moodle|i/mnethost]]);}
 .coursebox .name,
-.coursebox .teachers {float:left;width: 40%;}
+.coursebox .teachers,
+.coursebox .content .courseimage,
+.coursebox .content .coursefile {float:left;width:40%;clear:left;}
 .coursebox .teachers li {list-style-type:none;padding:0;margin:0;}
 .coursebox .enrolmenticons {padding:3px 0;float:right;}
 .coursebox .moreinfo {padding:3px 0;float:right;}
@@ -127,10 +129,13 @@ li.section.hidden span.commands a.editing_show {cursor:default;}
 .coursebox .coursecat {float:right;width: 55%;}
 .coursebox .coursecat {text-align:right;clear:right;}
 .coursebox.remotecoursebox .remotecourseinfo {float:left;width: 40%;}
+.coursebox .content .courseimage img {max-width:100px;max-height:100px;}
 
 .dir-rtl .coursebox .name a {padding-left:0;padding-right:21px;background-position: center right;}
 .dir-rtl .coursebox .name,
-.dir-rtl .coursebox .teachers {float:right;}
+.dir-rtl .coursebox .teachers,
+.dir-rtl .coursebox .content .courseimage,
+.dir-rtl .coursebox .content .coursefile {float:right;clear:right;}
 .dir-rtl .coursebox .enrolmenticons,
 .dir-rtl .coursebox .moreinfo {float:left;}
 .dir-rtl .coursebox .summary,

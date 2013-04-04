@@ -38,6 +38,7 @@ $string['sectionbackup'] = 'Section backups';
 $string['activitybackup'] = 'Activity backup';
 $string['areacategoryintro'] = 'Category introduction';
 $string['areacourseintro'] = 'Course introduction';
+$string['areacourseoverviewfiles'] = 'Course overview files';
 $string['arearoot'] = 'System';
 $string['areauserdraft'] = 'Drafts';
 $string['areauserbackup'] = 'User backup';

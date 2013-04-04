@@ -2058,6 +2058,53 @@ class course_in_list implements IteratorAggregate {
         return $this->coursecontacts;
     }
 
+    /**
+     * Checks if course has any associated overview files
+     *
+     * @return bool
+     */
+    public function has_course_overviewfiles() {
+        global $CFG;
+        if (empty($CFG->courseoverviewfileslimit)) {
+            return 0;
+        }
+        require_once($CFG->libdir. '/filestorage/file_storage.php');
+        $fs = get_file_storage();
+        $context = context_course::instance($this->id);
+        return $fs->is_area_empty($context->id, 'course', 'overviewfiles');
+    }
+
+    /**
+     * Returns all course overview files
+     *
+     * @return array array of stored_file objects
+     */
+    public function get_course_overviewfiles() {
+        global $CFG;
+        if (empty($CFG->courseoverviewfileslimit)) {
+            return array();
+        }
+        require_once($CFG->libdir. '/filestorage/file_storage.php');
+        $fs = get_file_storage();
+        $context = context_course::instance($this->id);
+        $files = $fs->get_area_files($context->id, 'course', 'overviewfiles', false, 'filename', false);
+        if (count($files)) {
+            $overviewfilesoptions = course_overviewfiles_options($this->id);
+            $acceptedtypes = $overviewfilesoptions['accepted_types'];
+            if ($acceptedtypes !== '*') {
+                // filter only files with allowed extensions
+                require_once($CFG->libdir. '/filelib.php');
+                $files = array_filter($files, function ($file) use ($acceptedtypes) {
+                    return file_extension_in_typegroup($file->get_filename(), $acceptedtypes);} );
+            }
+            if (count($files) > $CFG->courseoverviewfileslimit) {
+                // return no more than $CFG->courseoverviewfileslimit files
+                $files = array_slice($files, 0, $CFG->courseoverviewfileslimit, true);
+            }
+        }
+        return $files;
+    }
+
     // ====== magic methods =======
 
     public function __isset($name) {

@@ -4100,14 +4100,14 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null) {
             send_file_not_found();
         }
 
-        if ($filearea === 'summary') {
+        if ($filearea === 'summary' || $filearea === 'overviewfiles') {
             if ($CFG->forcelogin) {
                 require_login();
             }
 
             $filename = array_pop($args);
             $filepath = $args ? '/'.implode('/', $args).'/' : '/';
-            if (!$file = $fs->get_file($context->id, 'course', 'summary', 0, $filepath, $filename) or $file->is_directory()) {
+            if (!$file = $fs->get_file($context->id, 'course', $filearea, 0, $filepath, $filename) or $file->is_directory()) {
                 send_file_not_found();
             }
 
