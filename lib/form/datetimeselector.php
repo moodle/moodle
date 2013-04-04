@@ -95,6 +95,8 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group{
      */
     function _createElements()
     {
+        global $OUTPUT;
+
         $this->_elements = array();
         for ($i=1; $i<=31; $i++) {
             $days[$i] = $i;
@@ -122,6 +124,8 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group{
             $this->_elements[] = @MoodleQuickForm::createElement('select', 'hour', get_string('hour', 'form'), $hours, $this->getAttributes(), true);
             $this->_elements[] = @MoodleQuickForm::createElement('select', 'minute', get_string('minute', 'form'), $minutes, $this->getAttributes(), true);
         }
+        $this->_elements[] = @MoodleQuickForm::createElement('image', 'calendar', $OUTPUT->pix_url('i/calendar', 'moodle'),
+            array('title' => get_string('calendar', 'calendar'), 'class' => 'visibleifjs'));
         // If optional we add a checkbox which the user can use to turn if on
         if($this->_options['optional']) {
             $this->_elements[] = @MoodleQuickForm::createElement('checkbox', 'enabled', null, get_string('enable'), $this->getAttributes(), true);
