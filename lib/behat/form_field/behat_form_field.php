@@ -126,8 +126,7 @@ class behat_form_field {
                     $classname = 'behat_form_checkbox';
                     break;
                 case 'radio':
-                    // Behaves the same way.
-                    $classname = 'behat_form_checkbox';
+                    $classname = 'behat_form_radio';
                     break;
                 default:
                     return false;
@@ -140,6 +139,7 @@ class behat_form_field {
         }
 
         $classpath = $CFG->dirroot . '/lib/behat/form_field/' . $classname . '.php';
+        require_once($classpath);
         return new $classname($this->session, $this->field);
     }
 
