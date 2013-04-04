@@ -1528,7 +1528,7 @@ class core_course_renderer extends plugin_renderer_base {
             $coursedisplayoptions['paginationurl'] = new moodle_url($baseurl, array('browse' => 'courses', 'perpage' => $perpage));
             $catdisplayoptions['nodisplay'] = true;
             $catdisplayoptions['viewmoreurl'] = new moodle_url($baseurl, array('browse' => 'categories', 'page' => 0));
-            $catdisplayoptions['viewmoretext'] = new lang_string('viewallsubcategores');
+            $catdisplayoptions['viewmoretext'] = new lang_string('viewallsubcategories');
         } else if ($browse === 'categories' || !$coursecat->has_courses()) {
             $coursedisplayoptions['nodisplay'] = true;
             $catdisplayoptions['limit'] = $perpage;
