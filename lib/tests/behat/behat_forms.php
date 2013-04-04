@@ -132,7 +132,7 @@ class behat_forms extends behat_base {
 
             // Show all fields.
             $showmorestr = get_string('showmore', 'form');
-            $showmores = $this->find_all('xpath', "//a[contains(concat(' ', normalize-space(.), ' '), '" . $showmorestr . "')][contains(concat(' ', normalize-space(@class), ' '), ' morelesstoggler')]");
+            $showmores = $this->find_all('xpath', "//a[contains(concat(' ', normalize-space(.), ' '), '" . $showmorestr . "')][contains(concat(' ', normalize-space(@class), ' '), ' moreless-toggler')]");
 
             // We are supposed to have 'show more's here, otherwise exception.
 
