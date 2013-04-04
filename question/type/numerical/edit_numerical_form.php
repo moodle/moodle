@@ -288,27 +288,27 @@ class qtype_numerical_edit_form extends question_edit_form {
             if ($trimmedanswer != '') {
                 $answercount++;
                 if (!$this->is_valid_answer($trimmedanswer, $data)) {
-                    $errors['answer[' . $key . ']'] = $this->valid_answer_message($trimmedanswer);
+                    $errors['answeroptions[' . $key . ']'] = $this->valid_answer_message($trimmedanswer);
                 }
                 if ($data['fraction'][$key] == 1) {
                     $maxgrade = true;
                 }
                 if ($answer !== '*' && !is_numeric($data['tolerance'][$key])) {
-                    $errors['tolerance['.$key.']'] =
+                    $errors['answeroptions['.$key.']'] =
                             get_string('xmustbenumeric', 'qtype_numerical',
                                 get_string('acceptederror', 'qtype_numerical'));
                 }
             } else if ($data['fraction'][$key] != 0 ||
                     !html_is_blank($data['feedback'][$key]['text'])) {
-                $errors['answer[' . $key . ']'] = $this->valid_answer_message($trimmedanswer);
+                $errors['answeroptions[' . $key . ']'] = $this->valid_answer_message($trimmedanswer);
                 $answercount++;
             }
         }
         if ($answercount == 0) {
-            $errors['answer[0]'] = get_string('notenoughanswers', 'qtype_numerical');
+            $errors['answeroptions[0]'] = get_string('notenoughanswers', 'qtype_numerical');
         }
         if ($maxgrade == false) {
-            $errors['fraction[0]'] = get_string('fractionsnomax', 'question');
+            $errors['answeroptions[0]'] = get_string('fractionsnomax', 'question');
         }
 
         return $errors;
