@@ -32,7 +32,7 @@ require_once($CFG->libdir . '/form/select.php');
 require_once($CFG->libdir . '/form/text.php');
 
 
-class formslib_testcase extends basic_testcase {
+class formslib_testcase extends advanced_testcase {
 
     public function test_require_rule() {
         global $CFG;
@@ -190,6 +190,41 @@ class formslib_testcase extends basic_testcase {
         $this->assertTag(array('tag'=>'input', 'id'=>'id_repeatradio_2_2',
             'attributes'=>array('type'=>'radio', 'name'=>'repeatradio[2]', 'value'=>'2')), $html);
     }
+
+    public function test_settype_debugging_text() {
+        $mform = new formslib_settype_debugging_text();
+        $this->assertDebuggingCalled("Did you remember to call setType() for 'texttest'? Defaulting to PARAM_RAW cleaning.");
+
+        // Check form still there though
+        $this->expectOutputRegex('/<input[^>]*name="texttest[^>]*type="text/');
+        $mform->display();
+    }
+
+    public function test_settype_debugging_hidden() {
+        $mform = new formslib_settype_debugging_hidden();
+        $this->assertDebuggingCalled("Did you remember to call setType() for 'hiddentest'? Defaulting to PARAM_RAW cleaning.");
+
+        // Check form still there though
+        $this->expectOutputRegex('/<input[^>]*name="hiddentest[^>]*type="hidden/');
+        $mform->display();
+    }
+
+    public function test_settype_debugging_repeat() {
+        $mform = new formslib_settype_debugging_repeat();
+        $this->assertDebuggingCalled("Did you remember to call setType() for 'repeattest'? Defaulting to PARAM_RAW cleaning.");
+
+        // Check form still there though
+        $this->expectOutputRegex('/<input[^>]*name="repeattest[^>]*type="text/');
+        $mform->display();
+    }
+
+    public function test_settype_debugging_repeat_ok() {
+        $mform = new formslib_settype_debugging_repeat_ok();
+        // No debugging expected here.
+
+        $this->expectOutputRegex('/<input[^>]*name="repeattest[^>]*type="text/');
+        $mform->display();
+    }
 }
 
 
@@ -221,5 +256,49 @@ class formslib_test_form extends moodleform {
             $this->_form->createElement('radio', 'repeatradio', 'Choose {no}', 'Two', 2),
         );
         $this->repeat_elements($repeatels, 3, array(), 'numradios', 'addradios');
+    }
+}
+
+// Used to test debugging is called when text added without setType.
+class formslib_settype_debugging_text extends moodleform {
+    public function definition() {
+        $mform = $this->_form;
+
+        $mform->addElement('text', 'texttest', 'test123', 'testing123');
+    }
+}
+
+// Used to test debugging is called when hidden added without setType.
+class formslib_settype_debugging_hidden extends moodleform {
+    public function definition() {
+        $mform = $this->_form;
+
+        $mform->addElement('hidden', 'hiddentest', '1');
+    }
+}
+
+// Used to test debugging is called when repeated text added without setType.
+class formslib_settype_debugging_repeat extends moodleform {
+    public function definition() {
+        $mform = $this->_form;
+
+        $repeatels = array(
+            $mform->createElement('text', 'repeattest', 'Type something')
+        );
+
+        $this->repeat_elements($repeatels, 1, array(), 'numtexts', 'addtexts');
+    }
+}
+
+// Used to no debugging is called when correctly tset
+class formslib_settype_debugging_repeat_ok extends moodleform {
+    public function definition() {
+        $mform = $this->_form;
+
+        $repeatels = array(
+            $mform->createElement('text', 'repeattest', 'Type something')
+        );
+
+       $this->repeat_elements($repeatels, 2, array('repeattest' => array('type' => PARAM_RAW)), 'numtexts', 'addtexts');
     }
 }
