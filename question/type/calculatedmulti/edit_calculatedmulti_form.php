@@ -84,6 +84,7 @@ class qtype_calculatedmulti_edit_form extends question_edit_form {
         $addrepeated[] = $mform->createElement('hidden', 'tolerancetype', 1);
         $repeatedoptions['tolerance']['type'] = PARAM_FLOAT;
         $repeatedoptions['tolerance']['default'] = 0.01;
+        $repeatedoptions['tolerancetype']['type'] = PARAM_INT;
 
         $addrepeated[] =  $mform->createElement('select', 'correctanswerlength',
                 get_string('correctanswershows', 'qtype_calculated'), range(0, 9));
@@ -107,6 +108,7 @@ class qtype_calculatedmulti_edit_form extends question_edit_form {
         $mform->addElement('hidden', 'initialcategory', 1);
         $mform->addElement('hidden', 'reload', 1);
         $mform->setType('initialcategory', PARAM_INT);
+        $mform->setType('reload', PARAM_BOOL);
 
         $html2 = '';
         $mform->insertElementBefore(
