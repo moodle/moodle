@@ -4,20 +4,12 @@
     border-style: solid;
 }
 
-.coursebox .name {
-    font-size: 1.1em;
-}
-
 .coursebox .teachers {
     margin: 0 0 0 0.75em;
 }
 
-.categorybox {
-    border: none;
-}
-
-.categorybox .categorylist td {
-    padding: 2px;
+.dir-rtl .coursebox .teachers {
+    margin: 0 0.75em 0 0;
 }
 
 .categorypicker {
@@ -34,11 +26,7 @@
     margin: 0 5px 0 0;
 }
 
-#page-course-category .rolelink {
-    text-align: right;
-}
-
-#page-course-category .generalbox {
+#page-course-category .generalbox.info {
     margin: 25px auto 30px;
     width: 75%;
     padding: 10px;

@@ -38,10 +38,15 @@ information provided here is intended especially for developers.
 * Formslib will now throw a developer warning if a PARAM_ type hasn't been set for elements which
   need it. Please set PARAM_RAW explicitly if you do not want any cleaning.
 * Functions responsible for managing and accessing course categories are moved to class coursecat
-  in lib/coursecatlib.php. The following global functions are deprecated: make_categories_list(),
+  in lib/coursecatlib.php, functions responsible for rendering courses and categories lists are
+  moved to course/renderer.php. The following global functions are deprecated: make_categories_list(),
   category_delete_move(), category_delete_full(), move_category(), course_category_hide(),
   course_category_show(), get_course_category(), create_course_category(), get_all_subcategories(),
-  get_child_categories(), get_categories()
+  get_child_categories(), get_categories(), print_my_moodle(), print_remote_course(),
+  print_remote_host(), print_whole_category_list(), print_category_info(), get_course_category_tree(),
+  print_courses(), print_course(), get_category_courses_array(), get_category_courses_array_recursively(),
+  get_courses_wmanagers()
+  See http://docs.moodle.org/dev/Courses_lists_upgrade_to_2.5
 * $core_renderer->block_move_target() changed to support more verbose move-block-here descriptions.
 
 Database (DML) layer:

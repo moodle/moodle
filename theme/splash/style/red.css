@@ -70,6 +70,9 @@ a:hover {
 .tabtree .here ul .here a.nolink:hover {
     color:#853650;
 }
+.coursebox {
+    border-bottom: 1px dashed #cbd3d6;
+}
 .path-mod-quiz .qnbutton {
     background:#853650;
     color:#fff;
