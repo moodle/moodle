@@ -243,7 +243,7 @@ class qtype_calculated_edit_form extends qtype_numerical_edit_form {
         }
         if (empty($mandatorydatasets)) {
             foreach ($answers as $key => $answer) {
-                $errors['answer['.$key.']'] =
+                $errors['answeroptions['.$key.']'] =
                         get_string('atleastonewildcard', 'qtype_calculated');
             }
         }
@@ -254,7 +254,7 @@ class qtype_calculated_edit_form extends qtype_numerical_edit_form {
             if (trim($answer)) {
                 if ($data['correctanswerformat'][$key] == 2 &&
                         $data['correctanswerlength'][$key] == '0') {
-                    $errors['correctanswerlength['.$key.']'] =
+                    $errors['answerdisplay['.$key.']'] =
                             get_string('zerosignificantfiguresnotallowed', 'qtype_calculated');
                 }
             }
