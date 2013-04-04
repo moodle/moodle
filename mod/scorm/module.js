@@ -24,6 +24,7 @@
 mod_scorm_launch_next_sco = null;
 mod_scorm_launch_prev_sco = null;
 mod_scorm_activate_item = null;
+scorm_layout_widget = null;
 
 M.mod_scorm = {};
 
@@ -41,7 +42,6 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, launc
     }
 
     scoes_nav = JSON.parse(scoes_nav);
-    var scorm_layout_widget;
     var scorm_current_node;
     var scorm_buttons = [];
     var scorm_bloody_labelclick = false;
@@ -152,7 +152,7 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, launc
             scorm_resize_frame();
 
             var left = scorm_layout_widget.getUnitByPosition('left');
-            if (left.expanded) {
+            if (left.expand) {
                 scorm_current_node.focus();
             }
             if (scorm_hide_nav == false) {
@@ -608,9 +608,8 @@ M.mod_scorm.connectPrereqCallback = {
                     hnode = scorm_tree_node.getNodeByIndex(hidx);
                     if (hnode) {
                         hnode.highlight();
-                        scorm_layout_widget = Y.YUI2.widget.Layout.getLayoutById('scorm_layout');
                         var left = scorm_layout_widget.getUnitByPosition('left');
-                        if (left.expanded) {
+                        if (left.expand) {
                             hnode.focus();
                         }
                     }
