@@ -161,18 +161,10 @@ if (scorm_external_link($sco->launch)) {
 
 add_to_log($course->id, 'scorm', 'launch', 'view.php?id='.$cm->id, $result, $cm->id);
 
-header('Content-Type: text/html; charset=UTF-8');
-
-if ($sco->scormtype == 'asset') {
-    // HTTP 302 Found => Moved Temporarily.
-    header('Location: ' . $result);
-    // Provide a short feedback in case of slow network connection.
-    echo '<html><body><p>' . get_string('activitypleasewait', 'scorm'). '</p></body></html>';
-    exit;
-}
-
-// We expect a SCO: select which API are we looking for.
+// which API are we looking for
 $LMS_api = (scorm_version_check($scorm->version, SCORM_12) || empty($scorm->version)) ? 'API' : 'API_1484_11';
+
+header('Content-Type: text/html; charset=UTF-8');
 
 ?>
 <html>

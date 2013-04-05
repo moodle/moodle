@@ -737,14 +737,6 @@ function LogAPICall(func, nam, val, rc) {
     }
     s += ' => ' + String(rc);
     AppendToLog(s, rc);
-<?php
-if (scorm_debugging($scorm) && ($sco->scormtype == 'asset')) {
-?>
-    hint = 'Item <?php echo $sco->identifier; ?> has been defined as an Asset: it should never call the SCORM API';
-    AppendToLog(hint, 101);
-<?php
-}
-?>
 }
 
 
