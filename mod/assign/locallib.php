@@ -3300,7 +3300,7 @@ class assign {
             if ($teamsubmission && ($teamsubmission->status != ASSIGN_SUBMISSION_STATUS_DRAFT)) {
                 $showsubmit = false;
             }
-            if ($submission && ($submission->status != ASSIGN_SUBMISSION_STATUS_SUBMITTED)) {
+            if ($submission && ($submission->status != ASSIGN_SUBMISSION_STATUS_DRAFT)) {
                 $showsubmit = false;
             }
             if (!$this->get_instance()->submissiondrafts) {
