@@ -1692,6 +1692,10 @@ class assign {
             }
         }
 
+        if (empty($grade->attemptnumber)) {
+            // Set it to the default.
+            $grade->attemptnumber = 0;
+        }
         $result = $DB->update_record('assign_grades', $grade);
 
         // Only push to gradebook if the update is for the latest attempt.
