@@ -231,6 +231,7 @@ class core_badges_renderer extends plugin_renderer_base {
             if ($badge->status == BADGE_STATUS_INACTIVE || $badge->status == BADGE_STATUS_INACTIVE_LOCKED) {
                 $url = new moodle_url(qualified_me());
                 $url->param('activate', $badge->id);
+                $url->param('sesskey', sesskey());
                 $actions .= $this->output->action_icon($url, new pix_icon('t/show', get_string('activate', 'badges'))) . " ";
             } else {
                 $url = new moodle_url(qualified_me());
