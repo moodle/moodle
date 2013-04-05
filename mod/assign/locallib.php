@@ -2499,6 +2499,18 @@ class assign {
         }
 
         $params = array('assignment'=>$this->get_instance()->id, 'userid'=>$userid);
+        if ($attemptnumber < 0) {
+            // Make sure this grade matches the latest submission attempt.
+            if ($this->get_instance()->teamsubmission) {
+                $submission = $this->get_group_submission($userid, 0, false);
+            } else {
+                $submission = $this->get_user_submission($userid, false);
+            }
+            if ($submission) {
+                $attemptnumber = $submission->attemptnumber;
+            }
+        }
+
         if ($attemptnumber >= 0) {
             $params['attemptnumber'] = $attemptnumber;
         }
@@ -5507,8 +5519,19 @@ class assign {
                     $gradingitem = $gradinginfo->items[0];
                     $gradebookgrade = $gradingitem->grades[$userid];
                 }
-                if ($gradebookgrade && !$gradebookgrade->is_passed($gradingitem)) {
+
+                if ($gradebookgrade) {
+                    // TODO: This code should call grade_grade->is_passed().
                     $shouldreopen = true;
+                    if (is_null($gradebookgrade->grade)) {
+                        $shouldreopen = false;
+                    }
+                    if (empty($gradingitem->gradepass) || $gradingitem->gradepass == $gradingitem->grademin) {
+                        $shouldreopen = false;
+                    }
+                    if ($gradebookgrade->grade >= $gradingitem->gradepass) {
+                        $shouldreopen = false;
+                    }
                 }
             }
             if ($instance->attemptreopenmethod == ASSIGN_ATTEMPT_REOPEN_METHOD_MANUAL &&
