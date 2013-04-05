@@ -1843,7 +1843,6 @@ function xmldb_main_upgrade($oldversion) {
         $table->add_key('fk_badgeid', XMLDB_KEY_FOREIGN, array('badgeid'), 'badge', array('id'));
 
         // Adding indexes to table 'badge_criteria'.
-        $table->add_index('badgeid', XMLDB_INDEX_NOTUNIQUE, array('badgeid'));
         $table->add_index('criteriatype', XMLDB_INDEX_NOTUNIQUE, array('criteriatype'));
         $table->add_index('badgecriteriatype', XMLDB_INDEX_UNIQUE, array('badgeid', 'criteriatype'));
 
@@ -1864,9 +1863,6 @@ function xmldb_main_upgrade($oldversion) {
         // Adding keys to table 'badge_criteria_param'.
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $table->add_key('fk_critid', XMLDB_KEY_FOREIGN, array('critid'), 'badge_criteria', array('id'));
-
-        // Adding indexes to table 'badge_criteria_param'.
-        $table->add_index('critid', XMLDB_INDEX_NOTUNIQUE, array('critid'));
 
         // Conditionally launch create table for 'badge_criteria_param'.
         if (!$dbman->table_exists($table)) {
@@ -1891,9 +1887,6 @@ function xmldb_main_upgrade($oldversion) {
         $table->add_key('fk_badgeid', XMLDB_KEY_FOREIGN, array('badgeid'), 'badge', array('id'));
         $table->add_key('fk_userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
 
-        // Adding indexes to table 'badge_issued'.
-        $table->add_index('badgeid', XMLDB_INDEX_NOTUNIQUE, array('badgeid'));
-        $table->add_index('userid', XMLDB_INDEX_NOTUNIQUE, array('userid'));
         $table->add_index('badgeuser', XMLDB_INDEX_UNIQUE, array('badgeid', 'userid'));
 
         // Conditionally launch create table for 'badge_issued'.
@@ -1935,7 +1928,7 @@ function xmldb_main_upgrade($oldversion) {
 
         // Adding keys to table 'badge_manual_award'.
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $table->add_key('fk_badgeid', XMLDB_KEY_FOREIGN, array('id'), 'badge', array('id'));
+        $table->add_key('fk_badgeid', XMLDB_KEY_FOREIGN, array('badgeid'), 'badge', array('id'));
         $table->add_key('fk_recipientid', XMLDB_KEY_FOREIGN, array('recipientid'), 'user', array('id'));
         $table->add_key('fk_issuerid', XMLDB_KEY_FOREIGN, array('issuerid'), 'user', array('id'));
         $table->add_key('fk_issuerrole', XMLDB_KEY_FOREIGN, array('issuerrole'), 'role', array('id'));
@@ -1961,9 +1954,6 @@ function xmldb_main_upgrade($oldversion) {
         // Adding keys to table 'badge_backpack'.
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $table->add_key('fk_userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
-
-        // Adding indexes to table 'badge_backpack'.
-        $table->add_index('userid', XMLDB_INDEX_NOTUNIQUE, array('userid'));
 
         // Conditionally launch create table for 'badge_backpack'.
         if (!$dbman->table_exists($table)) {
