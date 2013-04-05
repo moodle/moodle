@@ -166,6 +166,7 @@ class repository_recent extends repository {
             $number = DEFAULT_RECENT_FILES_NUM;
         }
         $mform->addElement('text', 'recentfilesnumber', get_string('recentfilesnumber', 'repository_recent'));
+        $mform->setType('recentfilesnumber', PARAM_INT);
         $mform->setDefault('recentfilesnumber', $number);
     }
 
