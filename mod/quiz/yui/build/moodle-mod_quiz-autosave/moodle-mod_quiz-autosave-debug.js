@@ -121,9 +121,11 @@ M.mod_quiz.autosave = {
      * or enough time has passed.
      */
     init_tinymce: function(repeatcount) {
-        if (typeof tinymce === 'undefined') {
+        if (typeof tinyMCE === 'undefined') {
             if (repeatcount > 0) {
                 Y.later(this.TINYMCE_DETECTION_DELAY, this, this.init_tinymce, [repeatcount - 1]);
+            } else {
+                Y.log('Gave up looking for TinyMCE.');
             }
             return;
         }
@@ -147,7 +149,8 @@ M.mod_quiz.autosave = {
     },
 
     value_changed: function(e) {
-        if (e.target.get('name') === 'thispage' || e.target.get('name').match(/_:flagged$/)) {
+        if (e.target.get('name') === 'thispage' || e.target.get('name') === 'scrollpos' ||
+                e.target.get('name').match(/_:flagged$/)) {
             return; // Not interesting.
         }
         Y.log('Detected a value change in element ' + e.target.get('name') + '.');
@@ -193,6 +196,9 @@ M.mod_quiz.autosave = {
         }
 
         Y.log('Doing a save.');
+        if (typeof tinyMCE !== 'undefined') {
+            tinyMCE.triggerSave();
+        }
         this.save_transaction = Y.io(this.AUTOSAVE_HANDLER, {
             method:  'POST',
             form:    {id: this.form},
