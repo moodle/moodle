@@ -166,9 +166,11 @@ class repository_webdav extends repository {
 
         $mform->addElement('text', 'webdav_server', get_string('webdav_server', 'repository_webdav'), array('size' => '40'));
         $mform->addRule('webdav_server', get_string('required'), 'required', null, 'client');
+        $mform->setType('webdav_server', PARAM_HOST);
 
         $mform->addElement('text', 'webdav_path', get_string('webdav_path', 'repository_webdav'), array('size' => '40'));
         $mform->addRule('webdav_path', get_string('required'), 'required', null, 'client');
+        $mform->setType('webdav_path', PARAM_PATH);
 
         $choices = array();
         $choices['none'] = get_string('none');
@@ -178,7 +180,9 @@ class repository_webdav extends repository {
         $mform->addRule('webdav_auth', get_string('required'), 'required', null, 'client');
 
         $mform->addElement('text', 'webdav_port', get_string('webdav_port', 'repository_webdav'), array('size' => '40'));
+        $mform->setType('webdav_port', PARAM_INT);
         $mform->addElement('text', 'webdav_user', get_string('webdav_user', 'repository_webdav'), array('size' => '40'));
+        $mform->setType('webdav_user', PARAM_RAW_TRIMMED); // Not for us to clean.
         $mform->addElement('password', 'webdav_password', get_string('webdav_password', 'repository_webdav'),
             array('size' => '40'));
     }

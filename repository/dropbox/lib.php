@@ -458,10 +458,12 @@ class repository_dropbox extends repository {
         $strrequired = get_string('required');
 
         $mform->addElement('text', 'dropbox_key', get_string('apikey', 'repository_dropbox'), array('value'=>$key,'size' => '40'));
+        $mform->setType('dropbox_key', PARAM_RAW_TRIMMED);
         $mform->addElement('text', 'dropbox_secret', get_string('secret', 'repository_dropbox'), array('value'=>$secret,'size' => '40'));
 
         $mform->addRule('dropbox_key', $strrequired, 'required', null, 'client');
         $mform->addRule('dropbox_secret', $strrequired, 'required', null, 'client');
+        $mform->setType('dropbox_secret', PARAM_RAW_TRIMMED);
         $str_getkey = get_string('instruction', 'repository_dropbox');
         $mform->addElement('static', null, '',  $str_getkey);
 
