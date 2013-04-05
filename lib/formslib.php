@@ -916,8 +916,6 @@ abstract class moodleform {
             $this->definition_after_data();
         }
 
-        $this->detectMissingSetType();
-
         $this->_form->display();
     }
 
