@@ -35,6 +35,7 @@ $string['actions'] = 'Actions';
 $string['activitylink'] = 'Link to an activity';
 $string['activitylink_help'] = 'To provide a link at the end of the lesson to another activity in the course, select the activity from the dropdown list.';
 $string['activitylinkname'] = 'Go to {$a}';
+$string['activityoverview'] = 'You have lessons that are due';
 $string['addabranchtable'] = 'Add a content page';
 $string['addanendofbranch'] = 'Add an end of branch';
 $string['addanewpage'] = 'Add a new page';
