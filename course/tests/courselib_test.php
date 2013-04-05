@@ -582,12 +582,12 @@ class courselib_testcase extends advanced_testcase {
         $course->newsitems = 0;
         $course->numsections = 5;
         $course->category = $defaultcategory;
+        $original = (array) $course;
 
         $created = create_course($course);
         $context = context_course::instance($created->id);
 
         // Compare original and created.
-        $original = (array) $course;
         $this->assertEquals($original, array_intersect_key((array) $created, $original));
 
         // Ensure default section is created.
