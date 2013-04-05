@@ -3039,7 +3039,7 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="fk_badgeid" TYPE="foreign" FIELDS="id" REFTABLE="badge" REFFIELDS="id"/>
+        <KEY NAME="fk_badgeid" TYPE="foreign" FIELDS="badgeid" REFTABLE="badge" REFFIELDS="id"/>
         <KEY NAME="fk_recipientid" TYPE="foreign" FIELDS="recipientid" REFTABLE="user" REFFIELDS="id"/>
         <KEY NAME="fk_issuerid" TYPE="foreign" FIELDS="issuerid" REFTABLE="user" REFFIELDS="id"/>
         <KEY NAME="fk_issuerrole" TYPE="foreign" FIELDS="issuerrole" REFTABLE="role" REFFIELDS="id"/>
