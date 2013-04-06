@@ -75,13 +75,14 @@ class blog_edit_external_form extends moodleform {
 
         require_once($CFG->libdir . '/simplepie/moodle_simplepie.php');
 
-        $rssfile = new moodle_simplepie_file($data['url']);
-        $filetest = new SimplePie_Locator($rssfile);
+        $rss = new moodle_simplepie();
+        $rssfile = $rss->registry->create('File', array($data['url']));
+        $filetest = $rss->registry->create('Locator', array($rssfile));
 
         if (!$filetest->is_feed($rssfile)) {
             $errors['url'] = get_string('feedisinvalid', 'blog');
         } else {
-            $rss = new moodle_simplepie($data['url']);
+            $rss->set_feed_url($data['url']);
             if (!$rss->init()) {
                 $errors['url'] = get_string('emptyrssfeed', 'blog');
             }

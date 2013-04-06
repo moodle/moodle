@@ -147,8 +147,9 @@ function blog_sync_external_entries($externalblog) {
     global $CFG, $DB;
     require_once($CFG->libdir . '/simplepie/moodle_simplepie.php');
 
-    $rssfile = new moodle_simplepie_file($externalblog->url);
-    $filetest = new SimplePie_Locator($rssfile);
+    $rss = new moodle_simplepie();
+    $rssfile = $rss->registry->create('File', array($externalblog->url));
+    $filetest = $rss->registry->create('Locator', array($rssfile));
 
     if (!$filetest->is_feed($rssfile)) {
         $externalblog->failedlastsync = 1;
@@ -159,7 +160,8 @@ function blog_sync_external_entries($externalblog) {
         $DB->update_record('blog_external', $externalblog);
     }
 
-    $rss = new moodle_simplepie($externalblog->url);
+    $rss->set_feed_url($externalblog->url);
+    $rss->init();
 
     if (empty($rss->data)) {
         return null;

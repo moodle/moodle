@@ -66,7 +66,7 @@ class moodlesimplepie_testcase extends basic_testcase {
         $this->assertEquals($feed->get_copyright(), '&amp;#169; 2007 moodle');
         $this->assertEquals($feed->get_image_url(), 'http://moodle.org/pix/i/rsssitelogo.gif');
         $this->assertEquals($feed->get_image_title(), 'moodle');
-        $this->assertEquals($feed->get_image_link(), 'http://moodle.org');
+        $this->assertEquals($feed->get_image_link(), 'http://moodle.org/');
         $this->assertEquals($feed->get_image_width(), '140');
         $this->assertEquals($feed->get_image_height(), '35');
 
@@ -92,6 +92,7 @@ Google will pay students US$100 for every three tasks they successfully complete
 <br />
 You can find out all the details on the <a href="http://code.google.com/p/google-highly-open-participation-moodle/">Moodle/GHOP contest site</a>.</p></p>
 EOD;
+        $description = purify_html($description);
         $this->assertEquals($itemone->get_description(), $description);
 
 
