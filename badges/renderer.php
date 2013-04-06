@@ -60,7 +60,7 @@ class core_badges_renderer extends plugin_renderer_base {
             $download = $status = $push = '';
             if (($userid == $USER->id) && !$profile) {
                 $url = new moodle_url('mybadges.php', array('download' => $badge->id, 'hash' => $badge->uniquehash, 'sesskey' => sesskey()));
-                if ($CFG->badges_allowexternalbackpack && (empty($badge->dateexpire) || $badge->dateexpire > time())) {
+                if (!empty($CFG->badges_allowexternalbackpack) && (empty($badge->dateexpire) || $badge->dateexpire > time())) {
                     $assertion = new moodle_url('/badges/assertion.php', array('b' => $badge->uniquehash));
                     $action = new component_action('click', 'addtobackpack', array('assertion' => $assertion->out(false)));
                     $push = $this->output->action_icon(new moodle_url('#'), new pix_icon('t/backpack', get_string('addtobackpack', 'badges')), $action);
@@ -292,7 +292,7 @@ class core_badges_renderer extends plugin_renderer_base {
                             get_string('download'),
                             'POST'));
                 $expiration = isset($issued['expires']) ? strtotime($issued['expires']) : $today + 1;
-                if ($CFG->badges_allowexternalbackpack && ($expiration > $today)) {
+                if (!empty($CFG->badges_allowexternalbackpack) && ($expiration > $today)) {
                     $assertion = new moodle_url('/badges/assertion.php', array('b' => $ibadge->hash));
                     $attributes = array(
                             'type' => 'button',
@@ -473,7 +473,7 @@ class core_badges_renderer extends plugin_renderer_base {
         // External badges.
         $backpack = $badges->backpack;
         $externalhtml = "";
-        if ($CFG->badges_allowexternalbackpack) {
+        if (!empty($CFG->badges_allowexternalbackpack)) {
             $externalhtml .= html_writer::start_tag('fieldset', array('class' => 'generalbox'));
             $externalhtml .= html_writer::tag('legend', $this->output->heading_with_help(get_string('externalbadges', 'badges'), 'externalbadges', 'badges'));
             if (!is_null($backpack)) {

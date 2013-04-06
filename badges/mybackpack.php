@@ -40,7 +40,7 @@ require_capability('moodle/badges:manageownbadges', $context);
 
 $clear = optional_param('clear', false, PARAM_BOOL);
 
-if (!$CFG->badges_allowexternalbackpack) {
+if (empty($CFG->badges_allowexternalbackpack)) {
     redirect($CFG->wwwroot);
 }
 

@@ -74,11 +74,15 @@ class edit_details_form extends moodleform {
         $mform->addElement('text', 'issuername', get_string('name'), array('size' => '70'));
         $mform->setType('issuername', PARAM_NOTAGS);
         $mform->addRule('issuername', null, 'required');
-        $mform->setDefault('issuername', $CFG->badges_defaultissuername);
+        if (isset($CFG->badges_defaultissuername)) {
+            $mform->setDefault('issuername', $CFG->badges_defaultissuername);
+        }
         $mform->addHelpButton('issuername', 'issuername', 'badges');
 
         $mform->addElement('text', 'issuercontact', get_string('contact', 'badges'), array('size' => '70'));
-        $mform->setDefault('issuercontact', $CFG->badges_defaultissuercontact);
+        if (isset($CFG->badges_defaultissuercontact)) {
+            $mform->setDefault('issuercontact', $CFG->badges_defaultissuercontact);
+        }
         $mform->setType('issuercontact', PARAM_EMAIL);
         $mform->addRule('issuercontact', get_string('invalidemail', 'moodle'), 'email', null, 'client', true);
         $mform->addHelpButton('issuercontact', 'contact', 'badges');
