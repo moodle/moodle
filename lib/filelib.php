@@ -3026,7 +3026,6 @@ class curl {
      */
     private function formatHeader($ch, $header)
     {
-        $this->count++;
         if (strlen($header) > 2) {
             list($key, $value) = explode(" ", rtrim($header, "\r\n"), 2);
             $key = rtrim($key, ':');
