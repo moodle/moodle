@@ -7,6 +7,8 @@ information provided here is intended especially for developers.
     specify the ORDER BY clause to be used. Previously it was required
     to use the set_source_sql() more complex alternative in places
     requiring ordering.
+* The old 1.9 files backuplib.php, lib.php and restorelib.php and the bb directory,
+    (all under /backup) have been deleted and no code should rely on them anymore.
 
 === 2.4 ===
 
