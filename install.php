@@ -58,10 +58,10 @@ if (function_exists('date_default_timezone_set') and function_exists('date_defau
 @ini_set('display_errors', '1');
 
 // Check that PHP is of a sufficient version.
-if (version_compare(phpversion(), '5.3.2') < 0) {
+if (version_compare(phpversion(), '5.3.3') < 0) {
     $phpversion = phpversion();
     // do NOT localise - lang strings would not work here and we CAN not move it after installib
-    echo "Moodle 2.1 or later requires at least PHP 5.3.2 (currently using version $phpversion).<br />";
+    echo "Moodle 2.5 or later requires at least PHP 5.3.3 (currently using version $phpversion).<br />";
     echo "Please upgrade your server software or install older Moodle version.";
     die;
 }
@@ -490,7 +490,7 @@ if ($config->stage == INSTALL_DATABASETYPE) {
 
 
 if ($config->stage == INSTALL_ENVIRONMENT or $config->stage == INSTALL_PATHS) {
-    $version_fail = (version_compare(phpversion(), "5.3.2") < 0);
+    $version_fail = (version_compare(phpversion(), "5.3.3") < 0);
     $curl_fail    = ($lang !== 'en' and !extension_loaded('curl')); // needed for lang pack download
     $zip_fail     = ($lang !== 'en' and !extension_loaded('zip'));  // needed for lang pack download
 
@@ -503,7 +503,7 @@ if ($config->stage == INSTALL_ENVIRONMENT or $config->stage == INSTALL_PATHS) {
 
         echo '<div id="envresult"><dl>';
         if ($version_fail) {
-            $a = (object)array('needed'=>'5.3.2', 'current'=>phpversion());
+            $a = (object)array('needed'=>'5.3.3', 'current'=>phpversion());
             echo '<dt>'.get_string('phpversion', 'install').'</dt><dd>'.get_string('environmentrequireversion', 'admin', $a).'</dd>';
         }
         if ($curl_fail) {

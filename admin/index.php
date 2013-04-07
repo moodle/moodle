@@ -30,10 +30,10 @@ if (!file_exists('../config.php')) {
 }
 
 // Check that PHP is of a sufficient version as soon as possible
-if (version_compare(phpversion(), '5.3.2') < 0) {
+if (version_compare(phpversion(), '5.3.3') < 0) {
     $phpversion = phpversion();
     // do NOT localise - lang strings would not work here and we CAN NOT move it to later place
-    echo "Moodle 2.1 or later requires at least PHP 5.3.2 (currently using version $phpversion).<br />";
+    echo "Moodle 2.5 or later requires at least PHP 5.3.3 (currently using version $phpversion).<br />";
     echo "Please upgrade your server software or install older Moodle version.";
     die();
 }
