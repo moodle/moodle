@@ -202,7 +202,7 @@ id,name,year,tzrule,gmtoff,dstoff,dst_month,dst_startday,dst_weekday,dst_skipwee
 201,Asia/Yerevan,1992,RussiaAsia,180,60,3,-1,6,0,26:00,9,-1,6,0,25:00
 202,Asia/Yerevan,1993,RussiaAsia,180,60,3,-1,0,0,05:00,9,-1,0,0,05:00
 203,Asia/Yerevan,1995,,240,0,0,0,0,0,00:00,0,0,0,0,00:00
-204,Asia/Yerevan,1997,RussiaAsia,240,0,0,0,0,0,00:00,0,0,0,0,00:00
+204,Asia/Yerevan,1997,RussiaAsia,240,60,3,-1,0,0,06:00,10,-1,0,0,06:00
 205,Asia/Yerevan,2012,,240,0,0,0,0,0,00:00,0,0,0,0,00:00
 206,Asia/Baku,1970,RussiaAsia,240,0,0,0,0,0,00:00,0,0,0,0,00:00
 207,Asia/Baku,1981,RussiaAsia,240,60,4,1,-1,0,04:00,10,1,-1,0,03:00
@@ -272,7 +272,7 @@ id,name,year,tzrule,gmtoff,dstoff,dst_month,dst_startday,dst_weekday,dst_skipwee
 271,Asia/Nicosia,1978,Cyprus,120,60,4,1,0,0,02:00,10,2,-1,0,01:00
 272,Asia/Nicosia,1979,Cyprus,120,60,4,1,0,0,02:00,9,-1,0,0,01:00
 273,Asia/Nicosia,1981,Cyprus,120,60,3,-1,0,0,02:00,9,-1,0,0,01:00
-274,Asia/Nicosia,1998,EUAsia,120,60,3,-1,0,0,02:00,9,-1,0,0,01:00
+274,Asia/Nicosia,1998,EUAsia,120,60,3,-1,0,0,1:00,10,-1,0,0,1:00
 275,Asia/Tbilisi,1970,RussiaAsia,240,0,0,0,0,0,00:00,0,0,0,0,00:00
 276,Asia/Tbilisi,1981,RussiaAsia,240,60,4,1,-1,0,04:00,10,1,-1,0,03:00
 277,Asia/Tbilisi,1984,RussiaAsia,240,60,4,1,-1,0,04:00,9,-1,0,0,06:00
@@ -282,8 +282,8 @@ id,name,year,tzrule,gmtoff,dstoff,dst_month,dst_startday,dst_weekday,dst_skipwee
 281,Asia/Tbilisi,1994,E-EurAsia,240,60,3,-1,0,0,04:00,9,-1,0,0,03:00
 282,Asia/Tbilisi,1995,E-EurAsia,240,0,12,31,-1,0,16:00,9,-1,0,0,03:00
 283,Asia/Tbilisi,1996,,240,0,0,0,0,0,00:00,0,0,0,0,00:00
-284,Asia/Tbilisi,1997,E-EurAsia,240,0,0,0,0,0,00:00,0,0,0,0,00:00
-285,Asia/Tbilisi,2004,RussiaAsia,180,0,0,0,0,0,00:00,0,0,0,0,00:00
+284,Asia/Tbilisi,1997,E-EurAsia,240,60,3,-1,0,0,04:00,10,-1,0,0,03:00
+285,Asia/Tbilisi,2004,RussiaAsia,180,60,3,-1,0,0,05:00,10,-1,0,0,05:00
 286,Asia/Tbilisi,2005,,240,0,0,0,0,0,00:00,0,0,0,0,00:00
 287,Asia/Dili,1970,,540,0,0,0,0,0,00:00,0,0,0,0,00:00
 288,Asia/Dili,1976,,480,0,0,0,0,0,00:00,0,0,0,0,00:00
@@ -905,7 +905,7 @@ id,name,year,tzrule,gmtoff,dstoff,dst_month,dst_startday,dst_weekday,dst_skipwee
 904,Europe/Sofia,1982,C-Eur,120,60,3,-1,0,0,04:00,9,-1,0,0,04:00
 905,Europe/Sofia,1991,E-Eur,120,60,3,-1,0,0,02:00,9,-1,0,0,01:00
 906,Europe/Sofia,1996,E-Eur,120,60,3,-1,0,0,02:00,10,-1,0,0,01:00
-907,Europe/Sofia,1997,EU,120,60,3,-1,0,0,02:00,10,-1,0,0,01:00
+907,Europe/Sofia,1997,EU,120,60,3,-1,0,0,1:00,10,-1,0,0,1:00
 908,Europe/Prague,1970,Czech,60,0,4,9,-1,0,03:00,10,1,0,0,03:00
 909,Europe/Prague,1979,EU,60,60,4,1,0,0,1:00,9,-1,0,0,1:00
 910,Europe/Prague,1981,EU,60,60,3,-1,0,0,1:00,9,-1,0,0,1:00
@@ -939,9 +939,9 @@ id,name,year,tzrule,gmtoff,dstoff,dst_month,dst_startday,dst_weekday,dst_skipwee
 938,Europe/Tallinn,1985,Russia,180,60,3,-1,0,0,05:00,9,-1,0,0,05:00
 939,Europe/Tallinn,1989,C-Eur,120,60,3,-1,0,0,04:00,9,-1,0,0,04:00
 940,Europe/Tallinn,1996,C-Eur,120,60,3,-1,0,0,04:00,10,-1,0,0,04:00
-941,Europe/Tallinn,1998,EU,120,60,3,-1,0,0,04:00,10,-1,0,0,04:00
+941,Europe/Tallinn,1998,EU,120,60,3,-1,0,0,1:00,10,-1,0,0,1:00
 942,Europe/Tallinn,1999,,120,0,0,0,0,0,00:00,0,0,0,0,00:00
-943,Europe/Tallinn,2002,EU,120,0,0,0,0,0,00:00,0,0,0,0,00:00
+943,Europe/Tallinn,2002,EU,120,60,3,-1,0,0,1:00,10,-1,0,0,1:00
 944,Europe/Helsinki,1970,Finland,120,60,4,3,-1,0,02:00,10,3,-1,0,01:00
 945,Europe/Helsinki,1981,Finland,120,60,3,-1,0,0,04:00,9,-1,0,0,04:00
 946,Europe/Helsinki,1982,Finland,120,0,3,-1,0,0,04:00,9,-1,0,0,04:00
@@ -994,9 +994,9 @@ id,name,year,tzrule,gmtoff,dstoff,dst_month,dst_startday,dst_weekday,dst_skipwee
 993,Europe/Riga,1985,Russia,180,60,3,-1,0,0,05:00,9,-1,0,0,05:00
 994,Europe/Riga,1989,Latvia,120,60,3,-1,0,0,04:00,9,-1,0,0,04:00
 995,Europe/Riga,1996,Latvia,120,0,3,-1,0,0,04:00,9,-1,0,0,04:00
-996,Europe/Riga,1997,EU,120,0,3,-1,0,0,04:00,9,-1,0,0,04:00
+996,Europe/Riga,1997,EU,120,60,3,-1,0,0,1:00,10,-1,0,0,1:00
 997,Europe/Riga,2000,,120,0,0,0,0,0,00:00,0,0,0,0,00:00
-998,Europe/Riga,2001,EU,120,0,0,0,0,0,00:00,0,0,0,0,00:00
+998,Europe/Riga,2001,EU,120,60,3,-1,0,0,1:00,10,-1,0,0,1:00
 999,Europe/Vaduz,1970,,60,0,0,0,0,0,00:00,0,0,0,0,00:00
 1000,Europe/Vaduz,1981,EU,60,60,3,-1,0,0,1:00,9,-1,0,0,1:00
 1001,Europe/Vaduz,1996,EU,60,60,3,-1,0,0,1:00,10,-1,0,0,1:00
@@ -1006,9 +1006,9 @@ id,name,year,tzrule,gmtoff,dstoff,dst_month,dst_startday,dst_weekday,dst_skipwee
 1005,Europe/Vilnius,1985,Russia,180,60,3,-1,0,0,05:00,9,-1,0,0,05:00
 1006,Europe/Vilnius,1991,C-Eur,120,60,3,-1,0,0,04:00,9,-1,0,0,04:00
 1007,Europe/Vilnius,1996,C-Eur,120,60,3,-1,0,0,04:00,10,-1,0,0,04:00
-1008,Europe/Vilnius,1998,EU,60,60,3,-1,0,0,03:00,10,-1,0,0,03:00
+1008,Europe/Vilnius,1998,EU,60,60,3,-1,0,0,1:00,10,-1,0,0,1:00
 1009,Europe/Vilnius,1999,,120,0,0,0,0,0,00:00,0,0,0,0,00:00
-1010,Europe/Vilnius,2003,EU,120,0,0,0,0,0,00:00,0,0,0,0,00:00
+1010,Europe/Vilnius,2003,EU,120,60,3,-1,0,0,1:00,10,-1,0,0,1:00
 1011,Europe/Luxembourg,1970,Belgium,60,0,5,19,-1,0,03:00,10,7,-1,0,03:00
 1012,Europe/Luxembourg,1977,EU,60,60,4,1,0,0,1:00,9,-1,0,0,1:00
 1013,Europe/Luxembourg,1978,EU,60,60,4,1,0,0,1:00,10,1,-1,0,1:00
@@ -1032,7 +1032,7 @@ id,name,year,tzrule,gmtoff,dstoff,dst_month,dst_startday,dst_weekday,dst_skipwee
 1031,Europe/Chisinau,1991,Russia,120,60,3,-1,0,0,04:00,9,-1,0,0,04:00
 1032,Europe/Chisinau,1992,E-Eur,120,60,3,-1,0,0,02:00,9,-1,0,0,01:00
 1033,Europe/Chisinau,1996,E-Eur,120,60,3,-1,0,0,02:00,10,-1,0,0,01:00
-1034,Europe/Chisinau,1997,EU,120,60,3,-1,0,0,02:00,10,-1,0,0,01:00
+1034,Europe/Chisinau,1997,EU,120,60,3,-1,0,0,1:00,10,-1,0,0,1:00
 1035,Europe/Monaco,1970,France,60,120,4,2,-1,0,03:00,9,16,-1,0,03:00
 1036,Europe/Monaco,1976,France,60,60,3,28,-1,0,02:00,9,26,-1,0,01:00
 1037,Europe/Monaco,1977,EU,60,60,4,1,0,0,1:00,9,-1,0,0,1:00
@@ -1093,7 +1093,7 @@ id,name,year,tzrule,gmtoff,dstoff,dst_month,dst_startday,dst_weekday,dst_skipwee
 1092,Europe/Bucharest,1993,Romania,120,0,3,-1,0,0,02:00,9,-1,0,0,02:00
 1093,Europe/Bucharest,1994,E-Eur,120,60,3,-1,0,0,02:00,9,-1,0,0,01:00
 1094,Europe/Bucharest,1996,E-Eur,120,60,3,-1,0,0,02:00,10,-1,0,0,01:00
-1095,Europe/Bucharest,1997,EU,120,60,3,-1,0,0,02:00,10,-1,0,0,01:00
+1095,Europe/Bucharest,1997,EU,120,60,3,-1,0,0,1:00,10,-1,0,0,1:00
 1096,Europe/Kaliningrad,1970,Russia,180,60,9,1,-1,0,03:00,10,1,-1,0,02:00
 1097,Europe/Kaliningrad,1981,Russia,180,60,4,1,-1,0,03:00,10,1,-1,0,02:00
 1098,Europe/Kaliningrad,1984,Russia,180,60,4,1,-1,0,03:00,9,-1,0,0,05:00
@@ -1325,7 +1325,7 @@ id,name,year,tzrule,gmtoff,dstoff,dst_month,dst_startday,dst_weekday,dst_skipwee
 1324,Europe/Istanbul,1991,Turkey,120,60,3,-1,0,0,03:00,9,-1,0,0,03:00
 1325,Europe/Istanbul,1996,Turkey,120,60,3,-1,0,0,03:00,10,-1,0,0,03:00
 1326,Europe/Istanbul,2006,Turkey,120,0,3,-1,0,0,03:00,10,-1,0,0,03:00
-1327,Europe/Istanbul,2007,EU,120,0,3,-1,0,0,03:00,10,-1,0,0,03:00
+1327,Europe/Istanbul,2007,EU,120,60,3,-1,0,0,1:00,10,-1,0,0,1:00
 1328,Europe/Kiev,1970,Russia,180,60,9,1,-1,0,03:00,10,1,-1,0,02:00
 1329,Europe/Kiev,1981,Russia,180,60,4,1,-1,0,03:00,10,1,-1,0,02:00
 1330,Europe/Kiev,1984,Russia,180,60,4,1,-1,0,03:00,9,-1,0,0,05:00
@@ -1358,7 +1358,7 @@ id,name,year,tzrule,gmtoff,dstoff,dst_month,dst_startday,dst_weekday,dst_skipwee
 1357,Europe/Simferopol,1992,E-Eur,120,60,3,-1,0,0,02:00,9,-1,0,0,01:00
 1358,Europe/Simferopol,1994,E-Eur,180,60,3,-1,0,0,03:00,9,-1,0,0,02:00
 1359,Europe/Simferopol,1996,Russia,180,60,3,-1,0,0,05:00,10,-1,0,0,05:00
-1360,Europe/Simferopol,1997,EU,120,60,3,-1,0,0,04:00,10,-1,0,0,04:00
+1360,Europe/Simferopol,1997,EU,120,60,3,-1,0,0,1:00,10,-1,0,0,1:00
 1361,EST,1970,,-300,0,0,0,0,0,00:00,0,0,0,0,00:00
 1362,MST,1970,,-420,0,0,0,0,0,00:00,0,0,0,0,00:00
 1363,HST,1970,,-600,0,0,0,0,0,00:00,0,0,0,0,00:00
@@ -1558,13 +1558,13 @@ id,name,year,tzrule,gmtoff,dstoff,dst_month,dst_startday,dst_weekday,dst_skipwee
 1557,America/St_Johns,1988,StJohns,-210,120,4,1,0,0,-3:29,10,-1,0,0,-4:29
 1558,America/St_Johns,1989,StJohns,-210,60,4,1,0,0,-3:29,10,-1,0,0,-4:29
 1559,America/St_Johns,2007,StJohns,-210,60,3,8,0,0,-3:29,11,1,0,0,-4:29
-1560,America/St_Johns,2011,Canada,-210,60,3,8,0,0,-3:29,11,1,0,0,-4:29
+1560,America/St_Johns,2011,Canada,-210,60,3,8,0,0,-1:30,11,1,0,0,-2:30
 1561,America/Goose_Bay,1970,StJohns,-240,60,4,-1,0,0,-2:00,10,-1,0,0,-3:00
 1562,America/Goose_Bay,1987,StJohns,-240,60,4,1,0,0,-3:59,10,-1,0,0,-4:59
 1563,America/Goose_Bay,1988,StJohns,-240,120,4,1,0,0,-3:59,10,-1,0,0,-4:59
 1564,America/Goose_Bay,1989,StJohns,-240,60,4,1,0,0,-3:59,10,-1,0,0,-4:59
 1565,America/Goose_Bay,2007,StJohns,-240,60,3,8,0,0,-3:59,11,1,0,0,-4:59
-1566,America/Goose_Bay,2011,Canada,-240,60,3,8,0,0,-3:59,11,1,0,0,-4:59
+1566,America/Goose_Bay,2011,Canada,-240,60,3,8,0,0,-2:00,11,1,0,0,-3:00
 1567,America/Halifax,1970,Halifax,-240,60,4,-1,0,0,-2:00,10,-1,0,0,-3:00
 1568,America/Halifax,1973,Halifax,-240,0,4,-1,0,0,-2:00,10,-1,0,0,-3:00
 1569,America/Halifax,1974,Canada,-240,60,4,-1,0,0,-2:00,10,-1,0,0,-3:00
@@ -1691,7 +1691,7 @@ id,name,year,tzrule,gmtoff,dstoff,dst_month,dst_startday,dst_weekday,dst_skipwee
 1690,America/Matamoros,1989,Mexico,-360,60,4,1,0,0,-4:00,10,-1,0,0,-5:00
 1691,America/Matamoros,2001,Mexico,-360,60,5,1,0,0,-4:00,9,-1,0,0,-5:00
 1692,America/Matamoros,2002,Mexico,-360,60,4,1,0,0,-4:00,10,-1,0,0,-5:00
-1693,America/Matamoros,2010,US,-360,60,4,1,0,0,-4:00,10,-1,0,0,-5:00
+1693,America/Matamoros,2010,US,-360,60,3,8,0,0,-4:00,11,1,0,0,-5:00
 1694,America/Monterrey,1970,,-360,0,0,0,0,0,00:00,0,0,0,0,00:00
 1695,America/Monterrey,1988,US,-360,60,4,1,0,0,-4:00,10,-1,0,0,-5:00
 1696,America/Monterrey,1989,Mexico,-360,60,4,1,0,0,-4:00,10,-1,0,0,-5:00
@@ -1706,7 +1706,7 @@ id,name,year,tzrule,gmtoff,dstoff,dst_month,dst_startday,dst_weekday,dst_skipwee
 1705,America/Ojinaga,1998,Mexico,-420,60,4,1,0,0,-5:00,10,-1,0,0,-6:00
 1706,America/Ojinaga,2001,Mexico,-420,60,5,1,0,0,-5:00,9,-1,0,0,-6:00
 1707,America/Ojinaga,2002,Mexico,-420,60,4,1,0,0,-5:00,10,-1,0,0,-6:00
-1708,America/Ojinaga,2010,US,-420,60,4,1,0,0,-5:00,10,-1,0,0,-6:00
+1708,America/Ojinaga,2010,US,-420,60,3,8,0,0,-5:00,11,1,0,0,-6:00
 1709,America/Chihuahua,1970,,-360,0,0,0,0,0,00:00,0,0,0,0,00:00
 1710,America/Chihuahua,1996,Mexico,-360,60,4,1,0,0,-4:00,10,-1,0,0,-5:00
 1711,America/Chihuahua,1998,Mexico,-420,60,4,1,0,0,-5:00,10,-1,0,0,-6:00
@@ -1730,7 +1730,7 @@ id,name,year,tzrule,gmtoff,dstoff,dst_month,dst_startday,dst_weekday,dst_skipwee
 1729,America/Tijuana,1996,Mexico,-480,60,4,1,0,0,-6:00,10,-1,0,0,-7:00
 1730,America/Tijuana,2001,US,-480,60,4,1,0,0,-6:00,10,-1,0,0,-7:00
 1731,America/Tijuana,2002,Mexico,-480,60,4,1,0,0,-6:00,10,-1,0,0,-7:00
-1732,America/Tijuana,2010,US,-480,60,4,1,0,0,-6:00,10,-1,0,0,-7:00
+1732,America/Tijuana,2010,US,-480,60,3,8,0,0,-6:00,11,1,0,0,-7:00
 1733,America/Santa_Isabel,1970,,-480,0,0,0,0,0,00:00,0,0,0,0,00:00
 1734,America/Santa_Isabel,1976,US,-480,60,4,-1,0,0,-6:00,10,-1,0,0,-7:00
 1735,America/Santa_Isabel,1987,US,-480,60,4,1,0,0,-6:00,10,-1,0,0,-7:00
@@ -2266,7 +2266,7 @@ id,name,year,tzrule,gmtoff,dstoff,dst_month,dst_startday,dst_weekday,dst_skipwee
 2265,America/Asuncion,2005,Para,-240,60,10,15,0,0,-4:00,3,8,0,0,-5:00
 2266,America/Asuncion,2010,Para,-240,60,10,1,0,0,-4:00,4,8,0,0,-5:00
 2267,America/Asuncion,2013,Para,-240,60,10,1,0,0,-4:00,3,24,-1,0,-5:00
-2268,America/Asuncion,2014,Para,-240,0,10,1,0,0,-4:00,3,24,-1,0,-5:00
+2268,America/Asuncion,2014,Para,-240,60,10,1,0,0,-4:00,4,8,0,0,-5:00
 2269,America/Lima,1970,Peru,-300,0,12,31,-1,0,07:00,3,24,0,0,-6:00
 2270,America/Lima,1986,Peru,-300,60,1,1,-1,0,-5:00,4,1,-1,0,-6:00
 2271,America/Lima,1995,Peru,-300,0,1,1,-1,0,-5:00,4,1,-1,0,-6:00
