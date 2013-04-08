@@ -604,7 +604,7 @@ class assign_grading_table extends table_sql implements renderable {
         }
         $grade = $this->display_grade($row->grade, $this->quickgrading && !$gradingdisabled, $row->userid, $row->timemarked);
 
-        return $link . $seperator . $grade;
+        return $link . $separator . $grade;
 
     }
 
@@ -842,7 +842,7 @@ class assign_grading_table extends table_sql implements renderable {
             $shorttext = shorten_text($summary, 40);
             return $link . $separator . $shorttext;
         } else {
-            return $link . $seperator;
+            return $link . $separator;
         }
     }
 
