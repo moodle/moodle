@@ -46,6 +46,13 @@ class behat_navigation extends behat_base {
      */
     public function i_expand_node($nodetext) {
 
+        // This step is useless with Javascript disabled as Moodle auto expands
+        // all of tree's nodes; adding this because of scenarios that shares the
+        // same steps with and without Javascript enabled.
+        if (!$this->running_javascript()) {
+            return false;
+        }
+
         $xpath = "//ul[contains(concat(' ', normalize-space(@class), ' '), ' block_tree ')]
 /child::li
 /child::p[contains(concat(' ', normalize-space(@class), ' '), ' branch')]
