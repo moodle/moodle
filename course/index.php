@@ -44,6 +44,12 @@ $PAGE->set_url('/course/index.php');
 $PAGE->set_context($systemcontext);
 $PAGE->set_pagelayout('admin');
 
+// This needs to match caps checked in can_edit_in_category below.
+$PAGE->set_other_editing_capability(array(
+    'moodle/category:manage',
+    'moodle/course:create'
+));
+
 if (can_edit_in_category()) {
     if ($categoryedit !== -1) {
         $USER->editing = $categoryedit;
