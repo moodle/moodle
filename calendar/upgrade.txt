@@ -8,6 +8,9 @@ required changes in code:
 * calendar_update_subscription_events() now throws a dml_exception instead of moodle_exception for bad subscriptions
 * calendar_get_mini() function now has optional $placement and $courseid paramaters.
 
+optional - no changes needed:
+* calendar_update_subscription() should now be used to update Ical subscriptions.
+
 === 2.4 ===
 
 required changes in code:
