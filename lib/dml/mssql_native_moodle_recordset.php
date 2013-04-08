@@ -51,6 +51,15 @@ class mssql_native_moodle_recordset extends moodle_recordset {
         }
 
         $row = array_change_key_case($row, CASE_LOWER);
+        // Moodle expects everything from DB as strings.
+        foreach ($row as $k=>$v) {
+            if (is_null($v)) {
+                continue;
+            }
+            if (!is_string($v)) {
+                $row[$k] = (string)$v;
+            }
+        }
         return $row;
     }
 
