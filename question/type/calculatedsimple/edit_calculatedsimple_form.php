@@ -292,6 +292,7 @@ class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
         $label = get_string("sharedwildcards", "qtype_calculated");
         $mform->addElement('hidden', 'synchronize', 0);
         $mform->addElement('hidden', 'initialcategory', 1);
+        $mform->setType('synchronize', PARAM_BOOL);
         $mform->setType('initialcategory', PARAM_INT);
         $mform->addElement('hidden', 'reload', 1);
         $mform->setType('reload', PARAM_INT);

@@ -60,6 +60,7 @@ class qtype_truefalse_edit_form extends question_edit_form {
                 get_string('settingsformultipletries', 'question'));
 
         $mform->addElement('hidden', 'penalty', 1);
+        $mform->setType('penalty', PARAM_FLOAT);
 
         $mform->addElement('static', 'penaltymessage',
                 get_string('penaltyforeachincorrecttry', 'question'), 1);
