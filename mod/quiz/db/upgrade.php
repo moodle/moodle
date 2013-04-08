@@ -395,6 +395,13 @@ function xmldb_quiz_upgrade($oldversion) {
     // Moodle v2.4.0 release upgrade line
     // Put any upgrade step following this
 
+    if ($oldversion < 2012112901) {
+        // Quiz manual grading UI should be controlled by mod/quiz:grade, not :viewreports.
+        $DB->set_field('quiz_reports', 'capability', 'mod/quiz:grade', array('name' => 'grading'));
+
+        // Mod quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2012112901, 'quiz');
+    }
 
     return true;
 }

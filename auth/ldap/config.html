@@ -103,6 +103,12 @@ if (!isset($config->ntlmsso_remoteuserformat)) {
 
 $yesno = array(get_string('no'), get_string('yes'));
 
+$disabled = '';
+if (!ldap_paged_results_supported($config->ldap_version)) {
+    $disabled = ' disabled="disabled"';
+    echo $OUTPUT->notification(get_string('pagedresultsnotsupp', 'auth_ldap'));
+}
+
 ?>
 <table cellspacing="0" cellpadding="5" border="0">
 <tr>
@@ -156,7 +162,6 @@ $yesno = array(get_string('no'), get_string('yes'));
         <label for="pagesize"><?php print_string('pagesize_key', 'auth_ldap') ?></label>
     </td>
     <td>
-        <?php $disabled = (!ldap_paged_results_supported($config->ldap_version)) ? ' disabled="disabled"' : '' ; ?>
         <input id="pagesize" name="pagesize" type="text" value="<?php echo $config->pagesize ?>" <?php echo $disabled ?>/>
         <?php
             if (isset($err['pagesize'])) { echo $OUTPUT->error_text($err['pagesize']); }

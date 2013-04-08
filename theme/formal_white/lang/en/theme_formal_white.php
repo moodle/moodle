@@ -65,7 +65,9 @@ $string['ctmo_ineverypage'] = 'in every page'; // ctmo == credits to moodle org
 $string['ctmo_no'] = 'never'; // ctmo == credits to moodle org
 $string['ctmo_onfrontpageonly'] = 'in the front page only'; // ctmo == credits to moodle org
 $string['customcss'] = 'Custom CSS';
-$string['customcssdesc'] = 'Any CSS you enter here will be added to every page allowing your to easily customise this theme.';
+$string['customcssdesc'] = 'Any CSS you enter here will be added to every page allowing your to easily customise this theme. For example, it is possible to change colour of links adding one or more of the following:
+<pre>a:link, a:visited, a:hover, a:active, a:focus {color:blue;}</pre>
+Please adjust colors and CSS rules to fit your needs.';
 $string['customlogourl'] = 'Custom logo';
 $string['customlogourldesc'] = 'Change the logo for this theme by entering the full or relatve URL to an image you wish to use (i.e. http://www.yoursite.tld/mylogo.png or ../path/to/your/logo.png). As a reference the default logo is 200px wide, 50px high and a transparent png will work best.';
 $string['displayheading'] = 'Display page heading';
@@ -88,6 +90,6 @@ $string['noframe'] = 'Formal white 1.9 look';
 $string['noframedesc'] = 'Select this option to require your moodle page to look like moodle 1.*, alias, without the surrounding frame.';
 $string['pluginname'] = 'Formal white';
 $string['rblockcolumnbgc'] = 'Right column background colour';
-$string['rblockcolumnbgcdesc'] = 'This sets the right column background colour for the theme. If you leave this empty the left column background color will be used.';
+$string['rblockcolumnbgcdesc'] = 'This sets the right column background colour for the theme. If you leave this empty the left column background colour will be used.';
 $string['region-side-post'] = 'Right';
 $string['region-side-pre'] = 'Left';

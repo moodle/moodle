@@ -1625,13 +1625,21 @@ function scorm_format_toc_for_treeview($user, $scorm, $scoes, $usertracks, $cmid
                         }
                     } else if ($toclink == TOCFULLURL) {
                         $url = $CFG->wwwroot.'/mod/scorm/player.php?'.$sco->url;
-                        if ($sco->scormtype == 'sco') {
-                            $result->toc .= $sco->statusicon.'&nbsp;<a href="'.$url.'">'.format_string($sco->title).'</a>'.$score."\n";
+                        if (!empty($sco->launch)) {
+                            if ($sco->scormtype == 'sco') {
+                                $result->toc .= $sco->statusicon.'&nbsp;<a href="'.$url.'">'.format_string($sco->title).'</a>'.$score."\n";
+                            } else {
+                                $result->toc .= '&nbsp;<a href="'.$url.'">'.format_string($sco->title).'</a>'.$score."\n";
+                            }
                         } else {
-                            $result->toc .= '&nbsp;<a href="'.$url.'">'.format_string($sco->title).'</a>'.$score."\n";
+                            if ($sco->scormtype == 'sco') {
+                                $result->toc .= $sco->statusicon.'&nbsp;'.format_string($sco->title).$score."\n";
+                            } else {
+                                $result->toc .= '&nbsp;'.format_string($sco->title).$score."\n";
+                            }
                         }
                     } else {
-                        if ($sco->launch) {
+                        if (!empty($sco->launch)) {
                             if ($sco->scormtype == 'sco') {
                                 $result->toc .= '<a title="'.$sco->url.'">'.$sco->statusicon.'&nbsp;'.format_string($sco->title).'&nbsp;'.$score.'</a>';
                             } else {

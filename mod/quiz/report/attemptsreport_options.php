@@ -113,12 +113,16 @@ class mod_quiz_attempts_report_options {
      * @return array URL parameter name => value.
      */
     protected function get_url_params() {
-        return array(
+        $params = array(
             'id'         => $this->cm->id,
             'mode'       => $this->mode,
             'attempts'   => $this->attempts,
             'onlygraded' => $this->onlygraded,
         );
+        if (groups_get_activity_groupmode($this->cm, $this->course)) {
+            $params['group'] = $this->group;
+        }
+        return $params;
     }
 
     /**

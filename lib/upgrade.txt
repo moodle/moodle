@@ -1,6 +1,11 @@
 This files describes API changes in core lbraries and APIs,
 information provided here is intended especially for developers.
 
+=== 2.4.4 ===
+* condition_info:get_condition_user_fields($formatoptions) now accepts the optional
+  param $formatoptions, that will determine if the field names are processed by
+  format_string() with the passed options.
+
 === 2.4 ===
 
 * Pagelib: Numerous deprecated functions were removed as classes page_base, page_course

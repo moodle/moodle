@@ -57,11 +57,9 @@ body.splash-green { background:url([[pix:theme|bggreen]]) top left repeat-x;
 .splash-green .coursebox{
     border-bottom: 1px dashed #dae0dc;
 }
-.splash-green #categoryquestions tr th{
-    background:#446e4c;color:#fff;
-}
 .splash-green .path-mod-quiz .qnbutton{
-    background:#446e4c;color:#fff;
+    background:#446e4c;
+    color:#fff;
 }
 .splash-green .path-mod-quiz .qnbutton.open{
     background:#446e4c;

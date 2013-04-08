@@ -587,7 +587,7 @@ class qtype_calculated extends question_type {
      */
     public function save_question($question, $form) {
         global $DB;
-        if ($this->wizardpagesnumber() == 1) {
+        if ($this->wizardpagesnumber() == 1 || $question->qtype == 'calculatedsimple') {
                 $question = parent::save_question($question, $form);
             return $question;
         }
@@ -1633,9 +1633,12 @@ class qtype_calculated extends question_type {
                                FROM {question} q
                               WHERE q.id = ?";
                     if (!isset ($datasetdefs["$r->type-$r->category-$r->name"])) {
-                        $datasetdefs["$r->type-$r->category-$r->name"]= $r;
+                        $datasetdefs["$r->type-$r->category-$r->name"] = $r;
                     }
                     if ($questionb = $DB->get_records_sql($sql1, array($r->question))) {
+                        if (!isset ($datasetdefs["$r->type-$r->category-$r->name"]->questions[$r->question])) {
+                            $datasetdefs["$r->type-$r->category-$r->name"]->questions[$r->question] = new stdClass();
+                        }
                         $datasetdefs["$r->type-$r->category-$r->name"]->questions[
                                 $r->question]->name = $questionb[$r->question]->name;
                     }

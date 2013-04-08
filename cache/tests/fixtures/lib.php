@@ -46,7 +46,7 @@ class cache_config_phpunittest extends cache_config_writer {
                 case cache_store::MODE_APPLICATION:
                     $properties['overrideclass'] = 'cache_phpunit_application';
                     break;
-                case cache_store::MDOE_SESSION:
+                case cache_store::MODE_SESSION:
                     $properties['overrideclass'] = 'cache_phpunit_session';
                     break;
                 case cache_store::MODE_REQUEST:

@@ -76,6 +76,12 @@ class cache_factory {
     protected $cachesfromparams = array();
 
     /**
+     * An array of stores organised by definitions.
+     * @var array
+     */
+    protected $definitionstores = array();
+
+    /**
      * An array of instantiated stores.
      * @var array
      */
@@ -97,7 +103,7 @@ class cache_factory {
      * An array of lock plugins.
      * @var array
      */
-    protected $lockplugins = null;
+    protected $lockplugins = array();
 
     /**
      * The current state of the cache API.
@@ -149,7 +155,7 @@ class cache_factory {
         $factory->stores = array();
         $factory->configs = array();
         $factory->definitions = array();
-        $factory->lockplugins = null; // MUST be null in order to force its regeneration.
+        $factory->lockplugins = array(); // MUST be null in order to force its regeneration.
         // Reset the state to uninitialised.
         $factory->state = self::STATE_UNINITIALISED;
     }
@@ -272,7 +278,25 @@ class cache_factory {
         // order to address the issues.
         $store = $this->stores[$name]->create_clone($details);
         $store->initialise($definition);
+        $definitionid = $definition->get_id();
+        if (!isset($this->definitionstores[$definitionid])) {
+            $this->definitionstores[$definitionid] = array();
+        }
+        $this->definitionstores[$definitionid][] = $store;
         return $store;
+    }
+
+    /**
+     * Returns an array of cache stores that have been initialised for use in definitions.
+     * @param cache_definition $definition
+     * @return array
+     */
+    public function get_store_instances_in_use(cache_definition $definition) {
+        $id = $definition->get_id();
+        if (!isset($this->definitionstores[$id])) {
+            return array();
+        }
+        return $this->definitionstores[$id];
     }
 
     /**
@@ -382,7 +406,7 @@ class cache_factory {
                         $definition = $instance->get_definition_by_id($id);
                         if (!$definition) {
                             throw new coding_exception('The requested cache definition does not exist.'. $id, $id);
-                        } else {
+                        } else if (!$this->is_disabled()) {
                             debugging('Cache definitions reparsed causing cache reset in order to locate definition.
                                 You should bump the version number to ensure definitions are reprocessed.', DEBUG_DEVELOPER);
                         }
@@ -418,6 +442,7 @@ class cache_factory {
      * @return cache_lock_interface
      */
     public function create_lock_instance(array $config) {
+        global $CFG;
         if (!array_key_exists('name', $config) || !array_key_exists('type', $config)) {
             throw new coding_exception('Invalid cache lock instance provided');
         }
@@ -426,8 +451,16 @@ class cache_factory {
         unset($config['name']);
         unset($config['type']);
 
-        if ($this->lockplugins === null) {
-            $this->lockplugins = get_plugin_list_with_class('cachelock', '', 'lib.php');
+        if (!isset($this->lockplugins[$type])) {
+            $pluginname = substr($type, 10);
+            $file = $CFG->dirroot."/cache/locks/{$pluginname}/lib.php";
+            if (file_exists($file) && is_readable($file)) {
+                require_once($file);
+            }
+            if (!class_exists($type)) {
+                throw new coding_exception('Invalid lock plugin requested.');
+            }
+            $this->lockplugins[$type] = $type;
         }
         if (!array_key_exists($type, $this->lockplugins)) {
             throw new coding_exception('Invalid cache lock type.');

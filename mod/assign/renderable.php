@@ -120,19 +120,30 @@ class assign_user_summary implements renderable {
     public $blindmarking = false;
     /** @var int $uniqueidforuser */
     public $uniqueidforuser;
+    /** @var array $extrauserfields */
+    public $extrauserfields;
 
     /**
      * Constructor
      * @param stdClass $user
      * @param int $courseid
      * @param bool $viewfullnames
+     * @param bool $blindmarking
+     * @param int $uniqueidforuser
+     * @param array $extrauserfields
      */
-    public function __construct(stdClass $user, $courseid, $viewfullnames, $blindmarking, $uniqueidforuser) {
+    public function __construct(stdClass $user,
+                                $courseid,
+                                $viewfullnames,
+                                $blindmarking,
+                                $uniqueidforuser,
+                                $extrauserfields) {
         $this->user = $user;
         $this->courseid = $courseid;
         $this->viewfullnames = $viewfullnames;
         $this->blindmarking = $blindmarking;
         $this->uniqueidforuser = $uniqueidforuser;
+        $this->extrauserfields = $extrauserfields;
     }
 }
 

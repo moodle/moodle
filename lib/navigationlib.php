@@ -672,6 +672,20 @@ class navigation_node implements renderable {
             $this->parent->make_inactive();
         }
     }
+
+    /**
+     * Hides the node and any children it has.
+     *
+     * @since 2.4.2
+     */
+    public function hide() {
+        $this->display = false;
+        if ($this->has_children()) {
+            foreach ($this->children as $child) {
+                $child->hide();
+            }
+        }
+    }
 }
 
 /**
@@ -1062,7 +1076,7 @@ class global_navigation extends navigation_node {
         $this->rootnodes['site'] = $this->add_course($SITE);
         $this->rootnodes['myprofile'] = $this->add(get_string('myprofile'), null, self::TYPE_USER, null, 'myprofile');
         $this->rootnodes['currentcourse'] = $this->add(get_string('currentcourse'), null, self::TYPE_ROOTNODE, null, 'currentcourse');
-        $this->rootnodes['mycourses'] = $this->add(get_string('mycourses'), new moodle_url('/my'), self::TYPE_ROOTNODE, null, 'mycourses');
+        $this->rootnodes['mycourses'] = $this->add(get_string('mycourses'), new moodle_url('/my/'), self::TYPE_ROOTNODE, null, 'mycourses');
         $this->rootnodes['courses'] = $this->add(get_string('courses'), new moodle_url('/course/index.php'), self::TYPE_ROOTNODE, null, 'courses');
         $this->rootnodes['users'] = $this->add(get_string('users'), null, self::TYPE_ROOTNODE, null, 'users');
 
@@ -1087,6 +1101,10 @@ class global_navigation extends navigation_node {
             }
         } else {
             $this->rootnodes['courses']->isexpandable = true;
+        }
+
+        if ($this->rootnodes['mycourses']->isactive) {
+            $this->load_courses_enrolled();
         }
 
         $canviewcourseprofile = true;
@@ -2421,16 +2439,19 @@ class global_navigation extends navigation_node {
             $participants = $coursenode->add(get_string('participants'), new moodle_url('/user/index.php?id='.$course->id), self::TYPE_CONTAINER, get_string('participants'), 'participants');
             $currentgroup = groups_get_course_group($course, true);
             if ($course->id == $SITE->id) {
+                $filtervar = 'courseid';
                 $filterselect = '';
             } else if ($course->id && !$currentgroup) {
+                $filtervar = 'courseid';
                 $filterselect = $course->id;
             } else {
+                $filtervar = 'groupid';
                 $filterselect = $currentgroup;
             }
             $filterselect = clean_param($filterselect, PARAM_INT);
             if (($CFG->bloglevel == BLOG_GLOBAL_LEVEL or ($CFG->bloglevel == BLOG_SITE_LEVEL and (isloggedin() and !isguestuser())))
                and has_capability('moodle/blog:view', context_system::instance())) {
-                $blogsurls = new moodle_url('/blog/index.php', array('courseid' => $filterselect));
+                $blogsurls = new moodle_url('/blog/index.php', array($filtervar => $filterselect));
                 $participants->add(get_string('blogscourse','blog'), $blogsurls->out());
             }
             if (!empty($CFG->enablenotes) && (has_capability('moodle/notes:manage', $this->page->context) || has_capability('moodle/notes:view', $this->page->context))) {
@@ -2561,18 +2582,18 @@ class global_navigation extends navigation_node {
     public function set_expansion_limit($type) {
         global $SITE;
         $nodes = $this->find_all_of_type($type);
-        foreach ($nodes as &$node) {
+        foreach ($nodes as $node) {
             // We need to generate the full site node
             if ($type == self::TYPE_COURSE && $node->key == $SITE->id) {
                 continue;
             }
-            foreach ($node->children as &$child) {
+            foreach ($node->children as $child) {
                 // We still want to show course reports and participants containers
                 // or there will be navigation missing.
                 if ($type == self::TYPE_COURSE && $child->type === self::TYPE_CONTAINER) {
                     continue;
                 }
-                $child->display = false;
+                $child->hide();
             }
         }
         return true;
@@ -2624,6 +2645,51 @@ class global_navigation extends navigation_node {
             return $this->rootnodes[$key];
         }
         return parent::find($key, $type);
+    }
+
+    /**
+     * They've expanded the 'my courses' branch.
+     */
+    protected function load_courses_enrolled() {
+        global $CFG, $DB;
+        $sortorder = 'visible DESC';
+        // Prevent undefined $CFG->navsortmycoursessort errors.
+        if (empty($CFG->navsortmycoursessort)) {
+            $CFG->navsortmycoursessort = 'sortorder';
+        }
+        // Append the chosen sortorder.
+        $sortorder = $sortorder . ',' . $CFG->navsortmycoursessort . ' ASC';
+        $courses = enrol_get_my_courses(null, $sortorder);
+        if (count($courses) && $this->show_my_categories()) {
+            // OK Actually we are loading categories. We only want to load categories that have a parent of 0.
+            // In order to make sure we load everything required we must first find the categories that are not
+            // base categories and work out the bottom category in thier path.
+            $categoryids = array();
+            foreach ($courses as $course) {
+                $categoryids[] = $course->category;
+            }
+            $categoryids = array_unique($categoryids);
+            list($sql, $params) = $DB->get_in_or_equal($categoryids);
+            $categories = $DB->get_recordset_select('course_categories', 'id '.$sql.' AND parent <> 0', $params, 'sortorder, id', 'id, path');
+            foreach ($categories as $category) {
+                $bits = explode('/', trim($category->path,'/'));
+                $categoryids[] = array_shift($bits);
+            }
+            $categoryids = array_unique($categoryids);
+            $categories->close();
+
+            // Now we load the base categories.
+            list($sql, $params) = $DB->get_in_or_equal($categoryids);
+            $categories = $DB->get_recordset_select('course_categories', 'id '.$sql.' AND parent = 0', $params, 'sortorder, id');
+            foreach ($categories as $category) {
+                $this->add_category($category, $this->rootnodes['mycourses']);
+            }
+            $categories->close();
+        } else {
+            foreach ($courses as $course) {
+                $this->add_course($course, false, self::COURSE_MY);
+            }
+        }
     }
 }
 
@@ -2749,44 +2815,6 @@ class global_navigation_for_ajax extends global_navigation {
 
         $this->find_expandable($this->expandable);
         return $this->expandable;
-    }
-
-    /**
-     * They've expanded the 'my courses' branch.
-     */
-    protected function load_courses_enrolled() {
-        global $DB;
-        $courses = enrol_get_my_courses();
-        if ($this->show_my_categories(true)) {
-            // OK Actually we are loading categories. We only want to load categories that have a parent of 0.
-            // In order to make sure we load everything required we must first find the categories that are not
-            // base categories and work out the bottom category in thier path.
-            $categoryids = array();
-            foreach ($courses as $course) {
-                $categoryids[] = $course->category;
-            }
-            $categoryids = array_unique($categoryids);
-            list($sql, $params) = $DB->get_in_or_equal($categoryids);
-            $categories = $DB->get_recordset_select('course_categories', 'id '.$sql.' AND parent <> 0', $params, 'sortorder, id', 'id, path');
-            foreach ($categories as $category) {
-                $bits = explode('/', trim($category->path,'/'));
-                $categoryids[] = array_shift($bits);
-            }
-            $categoryids = array_unique($categoryids);
-            $categories->close();
-
-            // Now we load the base categories.
-            list($sql, $params) = $DB->get_in_or_equal($categoryids);
-            $categories = $DB->get_recordset_select('course_categories', 'id '.$sql.' AND parent = 0', $params, 'sortorder, id');
-            foreach ($categories as $category) {
-                $this->add_category($category, $this->rootnodes['mycourses'], self::TYPE_MY_CATEGORY);
-            }
-            $categories->close();
-        } else {
-            foreach ($courses as $course) {
-                $this->add_course($course, false, self::COURSE_MY);
-            }
-        }
     }
 
     /**

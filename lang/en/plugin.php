@@ -47,9 +47,9 @@ $string['notdownloadable'] = 'Can not download the package';
 $string['notdownloadable_help'] = 'ZIP package with the update can not be downloaded automatically. Please refer to the documentation page for more help.';
 $string['notdownloadable_link'] = 'admin/mdeploy/notdownloadable';
 $string['notwritable'] = 'Plugin files not writable';
-$string['notwritable_help'] = 'You have enabled automatic updates deployment and there is available update for this plugin. However, the plugin files are not writable by the web server so the update can not be installed at the moment.
+$string['notwritable_help'] = 'You have enabled automatic updates deployment and there is an available update for this plugin. However, the plugin files are not writable by the web server so the update cannot be installed automatically.
 
-Make the plugin folder and all its contents writable to be able to install the available update automatically.';
+You need to make the plugin folder and all its contents writable to be able to install the available update automatically.';
 $string['notwritable_link'] = 'admin/mdeploy/notwritable';
 $string['numtotal'] = 'Installed: {$a}';
 $string['numdisabled'] = 'Disabled: {$a}';
@@ -58,8 +58,7 @@ $string['numupdatable'] = 'Updates available: {$a}';
 $string['otherplugin'] = '{$a->component}';
 $string['otherpluginversion'] = '{$a->component} ({$a->version})';
 $string['showall'] = 'Reload and show all plugins';
-$string['pluginchecknotice'] = 'This page displays plugins that may require your attention during the upgrade. Highlighted items include new plugins that are about to be installed, updated plugins that are about to be upgraded and any missing plugins. Contributed plugins are also highlighted.
-It is recommended that you check whether there are more recent versions of contributed plugins available and update their source code before continuing with this Moodle upgrade.';
+$string['pluginchecknotice'] = 'This page displays plugins that may require your attention during the upgrade. Highlighted items include new plugins that are about to be installed, updated plugins that are about to be upgraded and any missing plugins. Add-ons are also highlighted. It is recommended that you check whether there are more recent versions of add-ons available and update their source code before continuing with this Moodle upgrade.';
 $string['plugindisable'] = 'Disable';
 $string['plugindisabled'] = 'Disabled';
 $string['pluginenable'] = 'Enable';
@@ -72,7 +71,7 @@ $string['somehighlighted'] = 'Number of plugins requiring your attention: {$a}';
 $string['somehighlightedinfo'] = 'Display the full list of installed plugins';
 $string['somehighlightedonly'] = 'Display only plugins requiring your attention';
 $string['source'] = 'Source';
-$string['sourceext'] = 'Contributed';
+$string['sourceext'] = 'Add-on';
 $string['sourcestd'] = 'Standard';
 $string['status'] = 'Status';
 $string['status_delete'] = 'To be deleted';

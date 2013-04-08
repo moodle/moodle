@@ -78,6 +78,8 @@ class moodle1_qtype_match_handler extends moodle1_qtype_handler {
                     $match['questiontextformat'] = $data['oldquestiontextformat'];
                 }
 
+                $match['questiontext'] = $this->migrate_files(
+                        $match['questiontext'], 'qtype_match', 'subquestion', $match['id']);
                 $this->write_xml('match', $match, array('/match/id'));
             }
         }

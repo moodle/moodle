@@ -20,10 +20,13 @@ class editsection_form extends moodleform {
 
         $mform  = $this->_form;
         $course = $this->_customdata['course'];
-        $mform->addElement('checkbox', 'usedefaultname', get_string('sectionusedefaultname'));
-        $mform->setDefault('usedefaultname', true);
 
-        $mform->addElement('text', 'name', get_string('sectionname'), array('size'=>'30'));
+        $elementgroup = array();
+        $elementgroup[] = $mform->createElement('text', 'name', '', array('size' => '30'));
+        $elementgroup[] = $mform->createElement('checkbox', 'usedefaultname', '', get_string('sectionusedefaultname'));
+        $mform->addGroup($elementgroup, 'name_group', get_string('sectionname'), ' ', false);
+
+        $mform->setDefault('usedefaultname', true);
         $mform->setType('name', PARAM_TEXT);
         $mform->disabledIf('name','usedefaultname','checked');
 
@@ -51,6 +54,7 @@ class editsection_form extends moodleform {
 
         $mform  = $this->_form;
         $course = $this->_customdata['course'];
+        $context = context_course::instance($course->id);
 
         if (!empty($CFG->enableavailability)) {
             $mform->addElement('header', '', get_string('availabilityconditions', 'condition'));
@@ -62,7 +66,6 @@ class editsection_form extends moodleform {
                 $options[0] = get_string('none');
                 if ($groupings = $DB->get_records('groupings', array('courseid' => $course->id))) {
                     foreach ($groupings as $grouping) {
-                        $context = context_course::instance($course->id);
                         $options[$grouping->id] = format_string(
                                 $grouping->name, true, array('context' => $context));
                     }
@@ -119,7 +122,7 @@ class editsection_form extends moodleform {
 
             // Conditions based on user fields
             $operators = condition_info::get_condition_user_field_operators();
-            $useroptions = condition_info::get_condition_user_fields();
+            $useroptions = condition_info::get_condition_user_fields(array('context' => $context));
             asort($useroptions);
 
             $useroptions = array(0 => $strcondnone) + $useroptions;

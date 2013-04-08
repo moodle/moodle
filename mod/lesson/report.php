@@ -47,13 +47,14 @@ list($sort, $sortparams) = users_order_by_sql('u');
 $params = array_merge($params, $sortparams);
 // TODO: Improve this. Fetching all students always is crazy!
 if (!empty($cm->groupingid)) {
-    $params["groupid"] = $cm->groupingid;
+    $params["groupingid"] = $cm->groupingid;
     $sql = "SELECT DISTINCT $ufields
                 FROM {lesson_attempts} a
                     INNER JOIN {user} u ON u.id = a.userid
                     INNER JOIN {groups_members} gm ON gm.userid = u.id
-                    INNER JOIN {groupings_groups} gg ON gm.groupid = :groupid
-                WHERE a.lessonid = :lessonid
+                    INNER JOIN {groupings_groups} gg ON gm.groupid = gg.groupid
+                WHERE a.lessonid = :lessonid AND
+                      gg.groupingid = :groupingid
                 ORDER BY $sort";
 } else {
     $sql = "SELECT DISTINCT $ufields
@@ -286,10 +287,10 @@ if ($action === 'delete') {
                     $numofattempts++;
                     $avescore += $try["grade"];
                     $avetime += $timetotake;
-                    if ($try["grade"] > $highscore || $highscore == NULL) {
+                    if ($try["grade"] > $highscore || $highscore === NULL) {
                         $highscore = $try["grade"];
                     }
-                    if ($try["grade"] < $lowscore || $lowscore == NULL) {
+                    if ($try["grade"] < $lowscore || $lowscore === NULL) {
                         $lowscore = $try["grade"];
                     }
                     if ($timetotake > $hightime || $hightime == NULL) {
@@ -348,10 +349,10 @@ if ($action === 'delete') {
     } else {
         $lowtime = format_time($lowtime);
     }
-    if ($highscore == NULL) {
+    if ($highscore === NULL) {
         $highscore = get_string("notcompleted", "lesson");
     }
-    if ($lowscore == NULL) {
+    if ($lowscore === NULL) {
         $lowscore = get_string("notcompleted", "lesson");
     }
 
@@ -364,7 +365,14 @@ if ($action === 'delete') {
     $stattable->align = array('center', 'center', 'center', 'center', 'center', 'center');
     $stattable->wrap = array('nowrap', 'nowrap', 'nowrap', 'nowrap', 'nowrap', 'nowrap');
     $stattable->attributes['class'] = 'standardtable generaltable';
-    $stattable->data[] = array($avescore.'%', $avetime, $highscore.'%', $lowscore.'%', $hightime, $lowtime);
+
+    if (is_numeric($highscore)) {
+        $highscore .= '%';
+    }
+    if (is_numeric($lowscore)) {
+        $lowscore .= '%';
+    }
+    $stattable->data[] = array($avescore.'%', $avetime, $highscore, $lowscore, $hightime, $lowtime);
 
     echo html_writer::table($stattable);
 } else if ($action === 'reportdetail') {

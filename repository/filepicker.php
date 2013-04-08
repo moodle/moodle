@@ -142,12 +142,12 @@ case 'search':
             if (isset($item['thumbnail_width'])) {
                 $style .= 'max-width:'.$item['thumbnail_width'].'px;';
             }
-            echo html_writer::empty_tag('img', array('src' => $item['thumbnail'], 'style' => $style));
+            echo html_writer::empty_tag('img', array('src' => $item['thumbnail'], 'alt' => '', 'style' => $style));
             echo '</td><td>';
             if (!empty($item['url'])) {
-                echo html_writer::link($item['url'], $item['title'], array('target'=>'_blank'));
+                echo html_writer::link($item['url'], s($item['title']), array('target'=>'_blank'));
             } else {
-                echo $item['title'];
+                echo s($item['title']);
             }
             echo '</td>';
             echo '<td>';
@@ -204,7 +204,7 @@ case 'sign':
                         'draftpath'=>$draftpath,
                         'savepath'=>$savepath
                         ));
-                    echo '<strong>' . html_writer::link($pathurl, $p['name']) . '</strong>';
+                    echo '<strong>' . html_writer::link($pathurl, s($p['name'])) . '</strong>';
                     echo '<span> / </span>';
                 }
             }
@@ -241,9 +241,9 @@ case 'sign':
                 echo html_writer::empty_tag('img', array('src' => $item['thumbnail'], 'style' => $style));
                 echo '</td><td>';
                 if (!empty($item['url'])) {
-                    echo html_writer::link($item['url'], $item['title'], array('target'=>'_blank'));
+                    echo html_writer::link($item['url'], s($item['title']), array('target'=>'_blank'));
                 } else {
-                    echo $item['title'];
+                    echo s($item['title']);
                 }
                 echo '</td>';
                 echo '<td>';
@@ -393,8 +393,8 @@ case 'plugins':
         $aurl->params(array('savepath'=>$savepath, 'action' => 'list', 'repo_id' => $info->id, 'draftpath'=>$draftpath));
 
         echo '<li>';
-        echo '<img src="'.$info->icon.'" alt="'.$info->name.'" width="16" height="16" /> ';
-        echo html_writer::link($aurl, $info->name);
+        echo html_writer::empty_tag('img', array('src'=>$info->icon, 'alt'=>$info->name, 'class'=>'icon icon-pre'));
+        echo html_writer::link($aurl, s($info->name));
         echo '</li>';
     }
     echo '</ul>';

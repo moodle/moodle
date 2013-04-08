@@ -304,3 +304,9 @@ body.has_dock {
        -moz-box-shadow: 0px 1px 3px #ccc;
             box-shadow: 0px 1px 3px #ccc;
 }
+/* Question Bank Window
+-------------------------*/
+#page-mod-quiz-edit .questionbankwindow.block div.header {
+    background-color: #9EB1BF;
+    padding-top: 0;
+}

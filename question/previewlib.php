@@ -56,17 +56,17 @@ class preview_options_form extends moodleform {
                 array('size' => '5'));
         $mform->setType('maxmark', PARAM_FLOAT);
 
-        $mform->addElement('submit', 'saverestart',
-                get_string('restartwiththeseoptions', 'question'));
-
-        $mform->addElement('header', 'optionsheader', get_string('displayoptions', 'question'));
-
         if ($this->_customdata['maxvariant'] > 1) {
             $variants = range(1, $this->_customdata['maxvariant']);
             $mform->addElement('select', 'variant', get_string('questionvariant', 'question'),
                     array_combine($variants, $variants));
         }
         $mform->setType('variant', PARAM_INT);
+
+        $mform->addElement('submit', 'saverestart',
+                get_string('restartwiththeseoptions', 'question'));
+
+        $mform->addElement('header', 'optionsheader', get_string('displayoptions', 'question'));
 
         $mform->addElement('select', 'correctness', get_string('whethercorrect', 'question'),
                 $hiddenofvisible);

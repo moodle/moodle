@@ -140,8 +140,8 @@ class cachestore_memcached extends cache_store implements cache_is_configurable 
                 $this->connection->setOption($key, $value);
             }
             $this->connection->addServers($this->servers);
-            $this->isready = @$this->connection->set("ping", 'ping', 1);
         }
+        $this->isready = @$this->connection->set("ping", 'ping', 1);
     }
 
     /**

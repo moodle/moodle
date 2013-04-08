@@ -1472,7 +1472,6 @@ class core_course_external extends external_api {
             $newcategory = new stdClass();
             $newcategory->name = $category['name'];
             $newcategory->parent = $category['parent'];
-            $newcategory->sortorder = 999; // Same as in the course/editcategory.php .
             // Format the description.
             if (!empty($category['description'])) {
                 $newcategory->description = $category['description'];

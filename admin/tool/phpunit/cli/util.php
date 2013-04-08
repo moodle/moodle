@@ -47,14 +47,16 @@ list($options, $unrecognized) = cli_get_params(
     )
 );
 
-if (file_exists(__DIR__.'/../../../../vendor/autoload.php')) {
+if (file_exists(__DIR__.'/../../../../vendor/phpunit/phpunit/PHPUnit/Autoload.php')) {
     // Composer packages present.
     require_once(__DIR__.'/../../../../vendor/autoload.php');
-}
+    require_once(__DIR__.'/../../../../vendor/phpunit/phpunit/PHPUnit/Autoload.php');
 
-// Verify PHPUnit libs can be loaded.
-if (!include_once('PHPUnit/Autoload.php')) {
-    phpunit_bootstrap_error(PHPUNIT_EXITCODE_PHPUNITMISSING);
+} else {
+    // Verify PHPUnit PEAR libs can be loaded.
+    if (!include('PHPUnit/Autoload.php')) {
+        phpunit_bootstrap_error(PHPUNIT_EXITCODE_PHPUNITMISSING);
+    }
 }
 
 if ($options['run']) {

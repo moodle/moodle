@@ -39,6 +39,7 @@ h2.main, h3.main, h4.main {margin:1em;padding:0;text-align:center;}
     margin: 0;
     padding: 0;
     width: auto;
+    line-height: 0;
 }
 
 .dir-rtl #headerlogo {
@@ -47,20 +48,28 @@ h2.main, h3.main, h4.main {margin:1em;padding:0;text-align:center;}
 
 /* headermenu */
 .headermenu {
-    float: right;
     font-size: 90%;
     line-height: 1.7em;
-    margin: 0.5em;
-    position: relative;
-    right: 0;
-    text-align: right;
+    position: absolute;
     top: 0;
 }
+
+.dir-ltr .headermenu {
+     float: right;
+     margin: 1.7em [[calculated:headermenumargin]] 0 0;
+     right: 0;
+     text-align: right;
+ }
+
 .dir-rtl .headermenu {
     float: left;
+    margin: 1.7em 0 0 [[calculated:headermenumargin]];
+    left: 0;
+    text-align: left;
 }
+
 .langmenu {
-    margin-right: 0.4em
+    margin-right: 0.1em;
 }
 
 #dock {background-color:[[setting:blockcontentbgc]];border-right:1px dashed #000;}

@@ -57,7 +57,13 @@ if (isguestuser($user)) {
 }
 
 if (!empty($CFG->forceloginforprofiles)) {
-    require_login(); // we can not log in to course due to the parent hack below
+    require_login(); // We can not log in to course due to the parent hack below.
+
+    // Guests do not have permissions to view anyone's profile if forceloginforprofiles is set.
+    if (isguestuser()) {
+        $SESSION->wantsurl = $PAGE->url->out(false);
+        redirect(get_login_url());
+    }
 }
 
 $PAGE->set_context($coursecontext);
@@ -231,7 +237,7 @@ echo '</div>';
 
 // Print all the little details in a list
 
-echo '<table class="list" summary="">';
+echo '<table class="list">';
 
 // Show email if any of the following conditions match.
 // 1. User is viewing his own profile.

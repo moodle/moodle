@@ -564,7 +564,8 @@ abstract class moodleform_mod extends moodleform {
 
             // Conditions based on user fields
             $operators = condition_info::get_condition_user_field_operators();
-            $useroptions = condition_info::get_condition_user_fields();
+            $useroptions = condition_info::get_condition_user_fields(
+                    array('context' => $this->context));
             asort($useroptions);
 
             $useroptions = array(0 => $strnone) + $useroptions;

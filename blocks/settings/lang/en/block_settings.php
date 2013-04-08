@@ -27,4 +27,4 @@
 $string['enabledock'] = 'Allow the user to dock this block';
 $string['pluginname'] = 'Settings';
 $string['settings:addinstance'] = 'Add a new settings block';
-$string['settings:myaddinstance'] = 'Add a new settings block to the My Moodle page';
+$string['settings:myaddinstance'] = 'Add a new settings block to My home';

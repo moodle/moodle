@@ -1277,7 +1277,8 @@ function download_file_content($url, $headers=null, $postdata=null, $fullrespons
         //reinstate affected curl options
         curl_setopt_array ($ch, array(
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_NOBODY         => false)
+            CURLOPT_NOBODY         => false,
+            CURLOPT_HTTPGET        => true)
         );
     }
 
@@ -1492,6 +1493,8 @@ function &get_mimetypes_array() {
         'm'    => array ('type'=>'text/plain', 'icon'=>'sourcecode'),
         'mbz'  => array ('type'=>'application/vnd.moodle.backup', 'icon'=>'moodle'),
         'mdb'  => array ('type'=>'application/x-msaccess', 'icon'=>'base'),
+        'mht'  => array ('type'=>'message/rfc822', 'icon'=>'archive'),
+        'mhtml'=> array ('type'=>'message/rfc822', 'icon'=>'archive'),
         'mov'  => array ('type'=>'video/quicktime', 'icon'=>'quicktime', 'groups'=>array('video','web_video'), 'string'=>'video'),
         'movie'=> array ('type'=>'video/x-sgi-movie', 'icon'=>'quicktime', 'groups'=>array('video'), 'string'=>'video'),
         'm3u'  => array ('type'=>'audio/x-mpegurl', 'icon'=>'mp3', 'groups'=>array('audio'), 'string'=>'audio'),
@@ -3057,6 +3060,12 @@ class curl {
         }
         curl_setopt($curl, CURLOPT_HTTPHEADER, $this->header);
 
+        // Bypass proxy (for this request only) if required.
+        if (!empty($this->options['CURLOPT_URL']) &&
+                is_proxybypass($this->options['CURLOPT_URL'])) {
+            unset($this->options['CURLOPT_PROXY']);
+        }
+
         if ($this->debug){
             echo '<h1>Options</h1>';
             var_dump($this->options);
@@ -3416,6 +3425,45 @@ class curl {
      */
     public function get_errno() {
         return $this->errno;
+    }
+
+    /**
+     * When using a proxy, an additional HTTP response code may appear at
+     * the start of the header. For example, when using https over a proxy
+     * there may be 'HTTP/1.0 200 Connection Established'. Other codes are
+     * also possible and some may come with their own headers.
+     *
+     * If using the return value containing all headers, this function can be
+     * called to remove unwanted doubles.
+     *
+     * Note that it is not possible to distinguish this situation from valid
+     * data unless you know the actual response part (below the headers)
+     * will not be included in this string, or else will not 'look like' HTTP
+     * headers. As a result it is not safe to call this function for general
+     * data.
+     *
+     * @param string $input Input HTTP response
+     * @return string HTTP response with additional headers stripped if any
+     */
+    public static function strip_double_headers($input) {
+        // I have tried to make this regular expression as specific as possible
+        // to avoid any case where it does weird stuff if you happen to put
+        // HTTP/1.1 200 at the start of any line in your RSS file. This should
+        // also make it faster because it can abandon regex processing as soon
+        // as it hits something that doesn't look like an http header. The
+        // header definition is taken from RFC 822, except I didn't support
+        // folding which is never used in practice.
+        $crlf = "\r\n";
+        return preg_replace(
+                // HTTP version and status code (ignore value of code).
+                '~^HTTP/1\..*' . $crlf .
+                // Header name: character between 33 and 126 decimal, except colon.
+                // Colon. Header value: any character except \r and \n. CRLF.
+                '(?:[\x21-\x39\x3b-\x7e]+:[^' . $crlf . ']+' . $crlf . ')*' .
+                // Headers are terminated by another CRLF (blank line).
+                $crlf .
+                // Second HTTP status code, this time must be 200.
+                '(HTTP/1.[01] 200 )~', '$1', $input);
     }
 }
 

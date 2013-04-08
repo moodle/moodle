@@ -206,10 +206,6 @@ class auth_plugin_cas extends auth_plugin_ldap {
             }
         }
 
-        if (!ldap_paged_results_supported($this->config->ldap_version)) {
-            echo $OUTPUT->notification(get_string('pagedresultsnotsupp', 'auth_ldap'));
-        }
-
         include($CFG->dirroot.'/auth/cas/config.html');
     }
 

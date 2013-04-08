@@ -124,7 +124,7 @@ class qbehaviour_adaptivenopenalty_walkthrough_test extends qbehaviour_walkthrou
                 $this->get_contains_correct_expectation());
 
         // Process a manual comment.
-        $this->manual_grade('Not good enough!', 1);
+        $this->manual_grade('Not good enough!', 1, FORMAT_HTML);
 
         // Verify.
         $this->check_current_state(question_state::$mangrpartial);

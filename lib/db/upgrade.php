@@ -1600,5 +1600,92 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012120301.11);
     }
 
+    if ($oldversion < 2012120301.13) {
+        // Delete entries regarding invalid 'interests' option which breaks course.
+        $DB->delete_records('course_sections_avail_fields', array('userfield' => 'interests'));
+        $DB->delete_records('course_modules_avail_fields', array('userfield' => 'interests'));
+        // Clear course cache (will be rebuilt on first visit) in case of changes to these.
+        rebuild_course_cache(0, true);
+
+        upgrade_main_savepoint(true, 2012120301.13);
+    }
+
+    if ($oldversion < 2012120302.01) {
+        // Retrieve the list of course_sections as a recordset to save memory.
+        // This is to fix a regression caused by MDL-37939.
+        // In this case the upgrade step is fixing records where:
+        // The data in course_sections.sequence contains the correct module id
+        // The section field for on the course modules table may have been updated to point to the incorrect id.
+
+        // This query is looking for sections where the sequence is not in sync with the course_modules table.
+        // The syntax for the like query is looking for a value in a comma separated list.
+        // It adds a comma to either site of the list and then searches for LIKE '%,id,%'.
+        $sequenceconcat = $DB->sql_concat("','", 's.sequence', "','");
+        $moduleconcat = $DB->sql_concat("'%,'", 'cm.id', "',%'");
+        $sql = 'SELECT s2.id, s2.course, s2.sequence
+                FROM {course_sections} s2
+                JOIN(
+                    SELECT DISTINCT s.id
+                    FROM
+                    {course_modules} cm
+                    JOIN {course_sections} s
+                    ON
+                        cm.course = s.course
+                    WHERE cm.section != s.id AND ' . $sequenceconcat . ' LIKE ' . $moduleconcat . '
+                ) d
+                ON s2.id = d.id';
+        $coursesections = $DB->get_recordset_sql($sql);
+
+        foreach ($coursesections as $coursesection) {
+            // Retrieve all of the actual modules in this course and section combination to reduce DB calls.
+            $actualsectionmodules = $DB->get_records('course_modules',
+                    array('course' => $coursesection->course, 'section' => $coursesection->id), '', 'id, section');
+
+            // Break out the current sequence so that we can compare it.
+            $currentsequence = explode(',', $coursesection->sequence);
+            $orphanlist = array();
+
+            // Check each of the modules in the current sequence.
+            foreach ($currentsequence as $cmid) {
+                if (!empty($cmid) && !isset($actualsectionmodules[$cmid])) {
+                    $orphanlist[] = $cmid;
+                }
+            }
+
+            if (!empty($orphanlist)) {
+                list($sql, $params) = $DB->get_in_or_equal($orphanlist, SQL_PARAMS_NAMED);
+                $sql = "id $sql";
+
+                $DB->set_field_select('course_modules', 'section', $coursesection->id, $sql, $params);
+
+                // And clear the sectioncache and modinfo cache - they'll be regenerated on next use.
+                $course = new stdClass();
+                $course->id = $coursesection->course;
+                $course->sectioncache = null;
+                $course->modinfo = null;
+                $DB->update_record('course', $course);
+            }
+        }
+        $coursesections->close();
+
+        upgrade_main_savepoint(true, 2012120302.01);
+    }
+
+    if ($oldversion < 2012120303.02) {
+        // Fixing possible wrong MIME type for MIME HTML (MHTML) files.
+        $extensions = array('%.mht', '%.mhtml');
+        $select = $DB->sql_like('filename', '?', false);
+        foreach ($extensions as $extension) {
+            $DB->set_field_select(
+                'files',
+                'mimetype',
+                'message/rfc822',
+                $select,
+                array($extension)
+            );
+        }
+        upgrade_main_savepoint(true, 2012120303.02);
+    }
+
     return true;
 }

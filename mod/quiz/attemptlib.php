@@ -1192,7 +1192,7 @@ class quiz_attempt {
      */
     public function render_question_at_step($slot, $seq, $reviewing, $thispageurl = '') {
         return $this->quba->render_question_at_step($slot, $seq,
-                $this->get_display_options($reviewing),
+                $this->get_display_options_with_edit_link($reviewing, $slot, $thispageurl),
                 $this->get_question_number($slot));
     }
 

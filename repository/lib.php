@@ -487,6 +487,9 @@ abstract class repository {
     public $returntypes;
     /** @var stdClass repository instance database record */
     public $instance;
+    /** @var string Type of repository (webdav, google_docs, dropbox, ...). */
+    public $type;
+
     /**
      * Constructor
      *
@@ -519,6 +522,16 @@ abstract class repository {
         $this->name = $this->get_name();
         $this->returntypes = $this->supported_returntypes();
         $this->super_called = true;
+
+        // Determining the type of repository if not set.
+        if (empty($this->type)) {
+            $matches = array();
+            if (!preg_match("/^repository_(.*)$/", get_class($this), $matches)) {
+                throw new coding_exception('The class name of a repository should be repository_<typeofrepository>, '.
+                        'e.g. repository_dropbox');
+            }
+            $this->type = $matches[1];
+        }
     }
 
     /**
@@ -620,19 +633,59 @@ abstract class repository {
     }
 
     /**
-     * Checks if user has a capability to view the current repository in current context
+     * Checks if user has a capability to view the current repository.
      *
-     * @return bool
+     * @return bool true when the user can, otherwise throws an exception.
+     * @throws repository_exception when the user does not meet the requirements.
      */
     public final function check_capability() {
-        $capability = false;
-        if (preg_match("/^repository_(.*)$/", get_class($this), $matches)) {
-            $type = $matches[1];
-            $capability = has_capability('repository/'.$type.':view', $this->context);
+        global $USER;
+
+        // The context we are on.
+        $currentcontext = $this->context;
+
+        // Ensure that the user can view the repository in the current context.
+        $can = has_capability('repository/'.$this->type.':view', $currentcontext);
+
+        // Context in which the repository has been created.
+        $repocontext = context::instance_by_id($this->instance->contextid);
+
+        // Prevent access to private repositories when logged in as.
+        if (session_is_loggedinas()) {
+            $can = false;
         }
-        if (!$capability) {
-            throw new repository_exception('nopermissiontoaccess', 'repository');
+
+        // We are going to ensure that the current context was legit, and reliable to check
+        // the capability against. (No need to do that if we already cannot).
+        if ($can) {
+            if ($repocontext->contextlevel == CONTEXT_USER) {
+                // The repository is a user instance, ensure we're the right user to access it!
+                if ($repocontext->instanceid != $USER->id) {
+                    $can = false;
+                }
+            } else if ($repocontext->contextlevel == CONTEXT_COURSE) {
+                // The repository is a course one. Let's check that we are on the right course.
+                if (in_array($currentcontext->contextlevel, array(CONTEXT_COURSE, CONTEXT_MODULE, CONTEXT_BLOCK))) {
+                    $coursecontext = $currentcontext->get_course_context();
+                    if ($coursecontext->instanceid != $repocontext->instanceid) {
+                        $can = false;
+                    }
+                } else {
+                    // We are on a parent context, therefore it's legit to check the permissions
+                    // in the current context.
+                }
+            } else {
+                // Nothing to check here, system instances can have different permissions on different
+                // levels. We do not want to prevent URL hack here, because it does not make sense to
+                // prevent a user to access a repository in a context if it's accessible in another one.
+            }
         }
+
+        if ($can) {
+            return true;
+        }
+
+        throw new repository_exception('nopermissiontoaccess', 'repository');
     }
 
     /**
@@ -1459,7 +1512,7 @@ abstract class repository {
         //want to display only visible instances, but for every type types. The repository::get_instances()
         //third parameter displays only visible type.
         $params = array();
-        $params['context'] = array($context, get_system_context());
+        $params['context'] = array($context);
         $params['currentcontext'] = $context;
         $params['onlyvisible'] = !$admin;
         $params['type']        = $typename;
