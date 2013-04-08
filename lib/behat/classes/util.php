@@ -84,6 +84,9 @@ class behat_util extends testing_util {
         $user->country = 'AU';
         $DB->update_record('user', $user);
 
+        // Disable email message processor.
+        $DB->set_field('message_processors', 'enabled', '0', array('name' => 'email'));
+
         // Sets maximum debug level.
         set_config('debug', DEBUG_DEVELOPER);
         set_config('debugdisplay', true);
