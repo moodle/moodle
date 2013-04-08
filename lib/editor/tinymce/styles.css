@@ -1,3 +1,14 @@
-.mform .felement.feditor .toggle_editor_toolbar {background: #EEEEEE;border-color: #BBBBBB;border-radius: 4px 4px 0 0;border-style: solid solid none;border-width: 1px 1px 0;display: inline-block;font-size: 0.7em;padding: 3px 6px;width: 9em;}
+.mform .felement.feditor .toggle_editor_toolbar {
+    background: #EEEEEE;
+    border-color: #BBBBBB;
+    border-radius: 4px 4px 0 0;
+    border-style: solid solid none;
+    border-width: 1px 1px 0;
+    display: inline-block;
+    font-size: 0.7em;
+    padding: 3px 6px;
+}
 .mform .felement.feditor .mceStatusbar,
-.mform .felement.feditor iframe {min-width: 35em;}
+.mform .felement.feditor iframe {
+    min-width: 35em;
+}
