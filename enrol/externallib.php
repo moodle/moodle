@@ -87,7 +87,7 @@ class core_enrol_external extends external_api {
             }
 
             list($enrolledsqlselect, $enrolledparams) = get_enrolled_sql($context);
-            $enrolledsql = "SELECT COUNT(*) FROM ($enrolledsqlselect) AS enrolleduserids";
+            $enrolledsql = "SELECT COUNT('x') FROM ($enrolledsqlselect) enrolleduserids";
             $enrolledusercount = $DB->count_records_sql($enrolledsql, $enrolledparams);
 
             $result[] = array('id'=>$course->id, 'shortname'=>$course->shortname, 'fullname'=>$course->fullname, 'idnumber'=>$course->idnumber,'visible'=>$course->visible, 'enrolledusercount'=>$enrolledusercount);
