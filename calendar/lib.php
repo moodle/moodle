@@ -2801,8 +2801,6 @@ function calendar_add_subscription($sub) {
         $sub->pollinterval = 0;
     }
 
-    $cache = cache::make('core', 'calendar_subscriptions');
-
     if (!empty($sub->name)) {
         if (empty($sub->id)) {
             $id = $DB->insert_record('event_subscriptions', $sub);
@@ -2810,9 +2808,7 @@ function calendar_add_subscription($sub) {
             return $id;
         } else {
             // Why are we doing an update here?
-            $DB->update_record('event_subscriptions', $sub);
-            // update cache.
-            $cache->set($sub->id, $sub);
+            calendar_update_subscription($sub);
             return $sub->id;
         }
     } else {
@@ -2920,11 +2916,7 @@ function calendar_process_subscription_row($subscriptionid, $pollinterval, $acti
                 break;
             }
             $sub->pollinterval = $pollinterval;
-            $DB->update_record('event_subscriptions', $sub);
-
-            // update the cache.
-            $cache = cache::make('core', 'calendar_subscriptions');
-            $cache->set($sub->id, $sub);
+            calendar_update_subscription($sub);
 
             // Update the events.
             return "<p>".get_string('subscriptionupdated', 'calendar', $sub->name)."</p>" . calendar_update_subscription_events($subscriptionid);
@@ -3049,11 +3041,31 @@ function calendar_update_subscription_events($subscriptionid) {
     $ical = calendar_get_icalendar($sub->url);
     $return = calendar_import_icalendar_events($ical, $sub->courseid, $subscriptionid);
     $sub->lastupdated = time();
-    $DB->update_record('event_subscriptions', $sub);
-    // Update the cache.
-    $cache = cache::make('core', 'calendar_subscriptions');
-    $cache->set($subscriptionid, $sub);
+    calendar_update_subscription($sub);
     return $return;
+}
+
+/**
+ * Update a calendar subscription. Also updates the associated cache.
+ *
+ * @param stdClass|array $subscription Subscription record.
+ * @throws coding_exception If something goes wrong
+ * @since Moodle 2.5
+ */
+function calendar_update_subscription($subscription) {
+    global $DB;
+
+    if (is_array($subscription)) {
+        $subscription = (object)$subscription;
+    }
+    if (empty($subscription->id) || !$DB->record_exists('event_subscriptions', array('id' => $subscription->id))) {
+        throw new coding_exception('Cannot update a subscription without a valid id');
+    }
+
+    $DB->update_record('event_subscriptions', $subscription);
+    // Update cache.
+    $cache = cache::make('core', 'calendar_subscriptions');
+    $cache->set($subscription->id, $subscription);
 }
 
 /**
