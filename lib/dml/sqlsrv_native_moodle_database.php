@@ -1241,7 +1241,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
         $arr = func_get_args();
 
         foreach ($arr as $key => $ele) {
-            $arr[$key] = ' CAST('.$ele.' AS VARCHAR(255)) ';
+            $arr[$key] = ' CAST('.$ele.' AS NVARCHAR(255)) ';
         }
         $s = implode(' + ', $arr);
 
