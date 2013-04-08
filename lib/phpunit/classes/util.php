@@ -606,6 +606,14 @@ class phpunit_util {
             if ($COURSE->id != $oldsite->id) {
                 $warnings[] = 'Warning: unexpected change of $COURSE';
             }
+
+            if (ini_get('max_execution_time') != 0) {
+                // TODO un-comment this warning, once we have fixed the test
+                // failures that it causes.
+                // $warnings[] = 'Warning: max_execution_time was changed.';
+                // See MDL-38989 for details.
+                set_time_limit(0);
+            }
         }
 
         // restore original globals
