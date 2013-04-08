@@ -150,6 +150,11 @@ class restore_gradebook_structure_step extends restore_structure_step {
         if ($data->itemtype=='manual') {
             // manual grade items store category id in categoryid
             $data->categoryid = $this->get_mappingid('grade_category', $data->categoryid, NULL);
+            // if mapping failed put in course's grade category
+            if (NULL == $data->categoryid) {
+                $coursecat = grade_category::fetch_course_category($this->get_courseid());
+                $data->categoryid = $coursecat->id;
+            }
         } else if ($data->itemtype=='course') {
             // course grade item stores their category id in iteminstance
             $coursecat = grade_category::fetch_course_category($this->get_courseid());
