@@ -167,3 +167,4 @@ if (strpos($useragent, 'MSIE 8') || strpos($useragent, 'MSIE 7')) {
     $THEME->javascripts[] = 'html5shiv';
 }
 
+$THEME->hidefromselector = true;
