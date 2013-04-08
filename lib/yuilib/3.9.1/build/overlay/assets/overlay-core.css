@@ -1,0 +1,12 @@
+/* YUI 3.9.1 (build 5852) Copyright 2013 Yahoo! Inc. http://yuilibrary.com/license/ */
+.yui3-overlay {
+    position:absolute;
+}
+
+.yui3-overlay-hidden {
+    visibility:hidden
+}
+
+.yui3-widget-tmp-forcesize .yui3-overlay-content {
+    overflow:hidden !important;
+}

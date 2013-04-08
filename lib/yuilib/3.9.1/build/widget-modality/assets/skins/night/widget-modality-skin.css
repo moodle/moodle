@@ -1,0 +1,8 @@
+/* YUI 3.9.1 (build 5852) Copyright 2013 Yahoo! Inc. http://yuilibrary.com/license/ */
+.yui3-skin-night .yui3-widget-mask {
+    background-color: black;
+    zoom: 1;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(opacity=40)";
+    filter: alpha(opacity=40);
+    opacity: 0.4;
+}
