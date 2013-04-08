@@ -128,3 +128,42 @@ function testing_error($errorcode, $text = '') {
     echo($text."\n");
     exit($errorcode);
 }
+
+/**
+ * Updates the composer installer and the dependencies.
+ *
+ * Includes --dev dependencies.
+ *
+ * @return void exit() if something goes wrong
+ */
+function testing_update_composer_dependencies() {
+
+    // To restore the value after finishing.
+    $cwd = getcwd();
+
+    // Dirroot.
+    chdir(__DIR__ . '/../..');
+
+    // Download composer.phar if we can.
+    if (!file_exists(__DIR__ . '/../../composer.phar')) {
+        passthru("curl http://getcomposer.org/installer | php", $code);
+        if ($code != 0) {
+            exit($code);
+        }
+    } else {
+
+        // If it is already there update the installer.
+        passthru("php composer.phar self-update", $code);
+        if ($code != 0) {
+            exit($code);
+        }
+    }
+
+    // Update composer dependencies.
+    passthru("php composer.phar update --dev", $code);
+    if ($code != 0) {
+        exit($code);
+    }
+
+    chdir($cwd);
+}
