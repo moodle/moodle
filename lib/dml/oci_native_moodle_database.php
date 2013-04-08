@@ -1540,43 +1540,57 @@ class oci_native_moodle_database extends moodle_database {
     }
 
     public function sql_concat() {
-        // NOTE: Oracle concat implementation isn't ANSI compliant when using NULLs (the result of
-        // any concatenation with NULL must return NULL) because of his inability to differentiate
-        // NULLs and empty strings. So this function will cause some tests to fail. Hopefully
-        // it's only a side case and it won't affect normal concatenation operations in Moodle.
         $arr = func_get_args();
-        if ($this->oci_package_installed()) {
-            foreach ($arr as $k => $v) {
-                if (strpos($v, "'") === 0) {
-                    continue;
-                }
-                $arr[$k] = "MOODLELIB.UNDO_DIRTY_HACK($v)";
-            }
-        }
-        $s = implode(' || ', $arr);
-        if ($s === '') {
+        if (empty($arr)) {
             return " ' ' ";
         }
-        return " MOODLELIB.DIRTY_HACK($s) ";
+        foreach ($arr as $k => $v) {
+            if ($v === "' '") {
+                $arr[$k] = "'*OCISP*'"; // New mega hack.
+            }
+        }
+        $s = $this->recursive_concat($arr);
+        return " MOODLELIB.UNDO_MEGA_HACK($s) ";
     }
 
-    public function sql_concat_join($separator="' '", $elements=array()) {
-        if ($this->oci_package_installed()) {
-            foreach ($elements as $k => $v) {
-                if (strpos($v, "'") === 0) {
-                    continue;
-                }
-                $elements[$k] = "MOODLELIB.UNDO_DIRTY_HACK($v)";
+    public function sql_concat_join($separator="' '", $elements = array()) {
+        if ($separator === "' '") {
+            $separator = "'*OCISP*'"; // New mega hack.
+        }
+        foreach ($elements as $k => $v) {
+            if ($v === "' '") {
+                $elements[$k] = "'*OCISP*'"; // New mega hack.
             }
         }
         for ($n = count($elements)-1; $n > 0 ; $n--) {
             array_splice($elements, $n, 0, $separator);
         }
-        $s = implode(' || ', $elements);
-        if ($s === '') {
+        if (empty($elements)) {
             return " ' ' ";
         }
-        return " MOODLELIB.DIRTY_HACK($s) ";
+        $s = $this->recursive_concat($elements);
+        return " MOODLELIB.UNDO_MEGA_HACK($s) ";
+    }
+
+    /**
+     * Mega hacky magic to work around crazy Oracle NULL concats.
+     * @param array $args
+     * @return string
+     */
+    protected function recursive_concat(array $args) {
+        $count = count($args);
+        if ($count == 1) {
+            $arg = reset($args);
+            return $arg;
+        }
+        if ($count == 2) {
+            $args[] = "' '";
+            // No return here intentionally.
+        }
+        $first = array_shift($args);
+        $second = array_shift($args);
+        $third = $this->recursive_concat($args);
+        return "MOODLELIB.TRICONCAT($first, $second, $third)";
     }
 
     /**
