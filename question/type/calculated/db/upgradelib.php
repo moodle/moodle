@@ -83,7 +83,7 @@ class qtype_calculated_qe2_attempt_updater extends question_qtype_attempt_update
     protected function parse_response($state) {
         if (strpos($state->answer, '-') < 7) {
             // Broken state, skip it.
-            throw new coding_exception("Brokes state {$state->id} for calcluated
+            throw new coding_exception("Brokes state {$state->id} for calculated
                     question {$state->question}. (It did not specify a dataset.");
         }
         list($datasetbit, $realanswer) = explode('-', $state->answer, 2);
@@ -92,7 +92,7 @@ class qtype_calculated_qe2_attempt_updater extends question_qtype_attempt_update
         if (is_null($this->selecteditem)) {
             $this->load_dataset($selecteditem);
         } else if ($this->selecteditem != $selecteditem) {
-            $this->logger->log_assumption("Different states for calcluated question
+            $this->logger->log_assumption("Different states for calculated question
                     {$state->question} used different dataset items. Ignoring the change
                     in state {$state->id} and coninuting to use item {$this->selecteditem}.");
         }
@@ -248,7 +248,7 @@ class qtype_calculated_qe2_attempt_updater extends question_qtype_attempt_update
      * @return float the computed result.
      */
     protected function calculate_raw($expression) {
-        // This validation trick from http://php.net/manual/en/function.eval.php
+        // This validation trick from http://php.net/manual/en/function.eval.php.
         if (!@eval('return true; $result = ' . $expression . ';')) {
             return '[Invalid expression ' . $expression . ']';
         }

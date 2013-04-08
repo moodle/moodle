@@ -75,8 +75,8 @@ class qtype_numerical extends question_type {
                 array('questionid' => $question->id), 'id ASC');
 
         $this->get_numerical_units($question);
-        // get_numerical_options() need to know if there are units
-        // to set correctly default values
+        // Get_numerical_options() need to know if there are units
+        // to set correctly default values.
         $this->get_numerical_options($question);
 
         // If units are defined we strip off the default unit from the answer, if
@@ -153,7 +153,7 @@ class qtype_numerical extends question_type {
         global $DB;
         $context = $question->context;
 
-        // Get old versions of the objects
+        // Get old versions of the objects.
         $oldanswers = $DB->get_records('question_answers',
                 array('question' => $question->id), 'id ASC');
         $oldoptions = $DB->get_records('question_numerical',
@@ -167,7 +167,7 @@ class qtype_numerical extends question_type {
             $units = $result->units;
         }
 
-        // Insert all the new answers
+        // Insert all the new answers.
         foreach ($question->answer as $key => $answerdata) {
             // Check for, and ingore, completely blank answer from the form.
             if (trim($answerdata) == '' && $question->fraction[$key] == 0 &&
@@ -200,7 +200,7 @@ class qtype_numerical extends question_type {
             $answer->feedbackformat = $question->feedback[$key]['format'];
             $DB->update_record('question_answers', $answer);
 
-            // Set up the options object
+            // Set up the options object.
             if (!$options = array_shift($oldoptions)) {
                 $options = new stdClass();
             }
@@ -323,7 +323,7 @@ class qtype_numerical extends question_type {
         $units = array();
         $unitalreadyinsert = array();
         foreach ($question->multiplier as $i => $multiplier) {
-            // Discard any unit which doesn't specify the unit or the multiplier
+            // Discard any unit which doesn't specify the unit or the multiplier.
             if (!empty($question->multiplier[$i]) && !empty($question->unit[$i]) &&
                     !array_key_exists($question->unit[$i], $unitalreadyinsert)) {
                 $unitalreadyinsert[$question->unit[$i]] = 1;
@@ -655,7 +655,7 @@ class qtype_numerical_answer_processor {
 
         $numberstring = $matches[0];
         if ($this->unitsbefore) {
-            // substr returns false when it means '', so cast back to string.
+            // Substr returns false when it means '', so cast back to string.
             $unit = (string) substr($response, 0, -strlen($numberstring));
         } else {
             $unit = (string) substr($response, strlen($numberstring));
@@ -671,7 +671,7 @@ class qtype_numerical_answer_processor {
             $multiplier = null;
         }
 
-        return array($numberstring + 0, $unit, $multiplier); // + 0 to convert to number.
+        return array($numberstring + 0, $unit, $multiplier); // The + 0 is to convert to number.
     }
 
     /**

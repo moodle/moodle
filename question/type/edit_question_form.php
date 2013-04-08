@@ -542,13 +542,13 @@ abstract class question_edit_form extends question_wizard_form {
                 // Prepare the feedback editor to display files in draft area.
                 $draftitemid = file_get_submitted_draft_itemid('answer['.$key.']');
                 $question->answer[$key]['text'] = file_prepare_draft_area(
-                    $draftitemid,          // draftid
+                    $draftitemid,          // Draftid
                     $this->context->id,    // context
                     'question',            // component
                     'answer',              // filarea
                     !empty($answer->id) ? (int) $answer->id : null, // itemid
                     $this->fileoptions,    // options
-                    $answer->answer        // text
+                    $answer->answer        // text.
                 );
                 $question->answer[$key]['itemid'] = $draftitemid;
                 $question->answer[$key]['format'] = $answer->answerformat;
@@ -573,13 +573,13 @@ abstract class question_edit_form extends question_wizard_form {
             // Prepare the feedback editor to display files in draft area.
             $draftitemid = file_get_submitted_draft_itemid('feedback['.$key.']');
             $question->feedback[$key]['text'] = file_prepare_draft_area(
-                $draftitemid,          // draftid
+                $draftitemid,          // Draftid
                 $this->context->id,    // context
                 'question',            // component
                 'answerfeedback',      // filarea
                 !empty($answer->id) ? (int) $answer->id : null, // itemid
                 $this->fileoptions,    // options
-                $answer->feedback      // text
+                $answer->feedback      // text.
             );
             $question->feedback[$key]['itemid'] = $draftitemid;
             $question->feedback[$key]['format'] = $answer->feedbackformat;
@@ -605,13 +605,13 @@ abstract class question_edit_form extends question_wizard_form {
             $draftid = file_get_submitted_draft_itemid($feedbackname);
             $feedback = array();
             $feedback['text'] = file_prepare_draft_area(
-                $draftid,              // draftid
+                $draftid,              // Draftid
                 $this->context->id,    // context
                 'question',            // component
                 $feedbackname,         // filarea
                 !empty($question->id) ? (int) $question->id : null, // itemid
                 $this->fileoptions,    // options
-                $question->options->$feedbackname // text
+                $question->options->$feedbackname // text.
             );
             $feedbackformat = $feedbackname . 'format';
             $feedback['format'] = $question->options->$feedbackformat;
@@ -645,13 +645,13 @@ abstract class question_edit_form extends question_wizard_form {
             // Prepare feedback editor to display files in draft area.
             $draftitemid = file_get_submitted_draft_itemid('hint['.$key.']');
             $question->hint[$key]['text'] = file_prepare_draft_area(
-                $draftitemid,          // draftid
+                $draftitemid,          // Draftid
                 $this->context->id,    // context
                 'question',            // component
                 'hint',                // filarea
                 !empty($hint->id) ? (int) $hint->id : null, // itemid
                 $this->fileoptions,    // options
-                $hint->hint            // text
+                $hint->hint            // text.
             );
             $question->hint[$key]['itemid'] = $draftitemid;
             $question->hint[$key]['format'] = $hint->hintformat;

@@ -65,7 +65,7 @@ class qtype_shortanswer extends question_type {
 
         $maxfraction = -1;
 
-        // Insert all the new answers
+        // Insert all the new answers.
         foreach ($question->answer as $key => $answerdata) {
             // Check for, and ignore, completely blank answer from the form.
             if (trim($answerdata) == '' && $question->fraction[$key] == 0 &&
@@ -97,7 +97,7 @@ class qtype_shortanswer extends question_type {
 
         $parentresult = parent::save_question_options($question);
         if ($parentresult !== null) {
-            // Parent function returns null if all is OK
+            // Parent function returns null if all is OK.
             return $parentresult;
         }
 

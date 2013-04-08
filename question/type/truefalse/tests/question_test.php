@@ -65,11 +65,11 @@ class qtype_truefalse_question_test extends advanced_testcase {
     public function test_get_correct_response() {
         $question = test_question_maker::make_question('truefalse', 'true');
 
-        // true
+        // True.
         $this->assertSame(array('answer' => 1),
                 $question->get_correct_response());
 
-        // false
+        // False.
         $question->rightanswer = false;
         $this->assertSame(array('answer' => 0),
                 $question->get_correct_response());

@@ -966,7 +966,7 @@ class qtype_truefalse_attempt_upgrader_test extends question_attempt_upgrader_te
         $this->compare_qas($expectedqa, $qa);
     }
 
- public function test_truefalse_adaptive_qsession3() {
+    public function test_truefalse_adaptive_qsession3() {
         $quiz = (object) array(
             'id' => '1',
             'course' => '2',

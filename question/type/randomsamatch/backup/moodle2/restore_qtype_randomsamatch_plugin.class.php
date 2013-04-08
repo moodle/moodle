@@ -46,7 +46,7 @@ class restore_qtype_randomsamatch_plugin extends restore_qtype_plugin {
         $elepath = $this->get_pathfor('/randomsamatch');
         $paths[] = new restore_path_element($elename, $elepath);
 
-        return $paths; // And we return the interesting paths
+        return $paths; // And we return the interesting paths.
     }
 
     /**
@@ -58,19 +58,19 @@ class restore_qtype_randomsamatch_plugin extends restore_qtype_plugin {
         $data = (object)$data;
         $oldid = $data->id;
 
-        // Detect if the question is created or mapped
+        // Detect if the question is created or mapped.
         $oldquestionid   = $this->get_old_parentid('question');
         $newquestionid   = $this->get_new_parentid('question');
         $questioncreated = $this->get_mappingid('question_created', $oldquestionid) ? true : false;
 
         // If the question has been created by restore, we need to create its
-        // question_randomsamatch too
+        // question_randomsamatch too.
         if ($questioncreated) {
-            // Adjust some columns
+            // Adjust some columns.
             $data->question = $newquestionid;
-            // Insert record
+            // Insert record.
             $newitemid = $DB->insert_record('question_randomsamatch', $data);
-            // Create mapping
+            // Create mapping.
             $this->set_mapping('question_randomsamatch', $oldid, $newitemid);
         }
     }

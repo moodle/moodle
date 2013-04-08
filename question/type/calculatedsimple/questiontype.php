@@ -37,19 +37,19 @@ require_once($CFG->dirroot . '/question/type/calculated/questiontype.php');
  */
 class qtype_calculatedsimple extends qtype_calculated {
 
-    // Used by the function custom_generator_tools:
+    // Used by the function custom_generator_tools.
     public $wizard_pages_number = 1;
 
     public function save_question_options($question) {
         global $CFG, $DB;
         $context = $question->context;
-        // Get old answers:
+        // Get old answers.
 
         if (isset($question->answer) && !isset($question->answers)) {
             $question->answers = $question->answer;
         }
 
-        // Get old versions of the objects
+        // Get old versions of the objects.
         if (!$oldanswers = $DB->get_records('question_answers',
                 array('question' => $question->id), 'id ASC')) {
             $oldanswers = array();
@@ -68,7 +68,7 @@ class qtype_calculatedsimple extends qtype_calculated {
         } else {
             $units = &$result->units;
         }
-        // Insert all the new answers
+        // Insert all the new answers.
         if (isset($question->answer) && !isset($question->answers)) {
             $question->answers = $question->answer;
         }
@@ -98,7 +98,7 @@ class qtype_calculatedsimple extends qtype_calculated {
 
             $DB->update_record("question_answers", $answer);
 
-            // Set up the options object
+            // Set up the options object.
             if (!$options = array_shift($oldoptions)) {
                 $options = new stdClass();
             }
@@ -109,24 +109,24 @@ class qtype_calculatedsimple extends qtype_calculated {
             $options->correctanswerlength = trim($question->correctanswerlength[$key]);
             $options->correctanswerformat = trim($question->correctanswerformat[$key]);
 
-            // Save options
+            // Save options.
             if (isset($options->id)) {
-                // reusing existing record
+                // Reusing existing record.
                 $DB->update_record('question_calculated', $options);
             } else {
-                // new options
+                // New options.
                 $DB->insert_record('question_calculated', $options);
             }
         }
 
-        // delete old answer records
+        // Delete old answer records.
         if (!empty($oldanswers)) {
             foreach ($oldanswers as $oa) {
                 $DB->delete_records('question_answers', array('id' => $oa->id));
             }
         }
 
-        // delete old answer records
+        // Delete old answer records.
         if (!empty($oldoptions)) {
             foreach ($oldoptions as $oo) {
                 $DB->delete_records('question_calculated', array('id' => $oo->id));
@@ -136,10 +136,10 @@ class qtype_calculatedsimple extends qtype_calculated {
         if (isset($question->import_process) && $question->import_process) {
             $this->import_datasets($question);
         } else {
-            //save datasets and datatitems from form i.e in question
+            // Save datasets and datatitems from form i.e in question.
             $question->dataset = $question->datasetdef;
 
-            // Save datasets
+            // Save datasets.
             $datasetdefinitions = $this->get_dataset_definitions($question->id, $question->dataset);
             $tmpdatasets = array_flip($question->dataset);
             $defids = array_keys($datasetdefinitions);
@@ -148,7 +148,7 @@ class qtype_calculatedsimple extends qtype_calculated {
                 $datasetdef = &$datasetdefinitions[$defid];
                 if (isset($datasetdef->id)) {
                     if (!isset($tmpdatasets[$defid])) {
-                        // This dataset is not used any more, delete it
+                        // This dataset is not used any more, delete it.
                         $DB->delete_records('question_datasets', array('question' => $question->id,
                                 'datasetdefinition' => $datasetdef->id));
                         $DB->delete_records('question_dataset_definitions',
@@ -156,7 +156,7 @@ class qtype_calculatedsimple extends qtype_calculated {
                         $DB->delete_records('question_dataset_items',
                                 array('definition' => $datasetdef->id));
                     }
-                    // This has already been saved or just got deleted
+                    // This has already been saved or just got deleted.
                     unset($datasetdefinitions[$defid]);
                     continue;
                 }
@@ -169,12 +169,12 @@ class qtype_calculatedsimple extends qtype_calculated {
                 unset($datasetdefinitions[$defid]);
             }
             // Remove local obsolete datasets as well as relations
-            // to datasets in other categories:
+            // to datasets in other categories.
             if (!empty($datasetdefinitions)) {
                 foreach ($datasetdefinitions as $def) {
                     $DB->delete_records('question_datasets', array('question' => $question->id,
                             'datasetdefinition' => $def->id));
-                    if ($def->category == 0) { // Question local dataset
+                    if ($def->category == 0) { // Question local dataset.
                         $DB->delete_records('question_dataset_definitions',
                                 array('id' => $def->id));
                         $DB->delete_records('question_dataset_items',
@@ -183,7 +183,7 @@ class qtype_calculatedsimple extends qtype_calculated {
                 }
             }
             $datasetdefs = $this->get_dataset_definitions($question->id, $question->dataset);
-            // Handle adding and removing of dataset items
+            // Handle adding and removing of dataset items.
             $i = 1;
             ksort($question->definition);
             foreach ($question->definition as $key => $defid) {
@@ -192,7 +192,7 @@ class qtype_calculatedsimple extends qtype_calculated {
                 $addeditem->value = $question->number[$i];
                 $addeditem->itemnumber = ceil($i / count($datasetdefs));
                 if (empty($question->makecopy) && $question->itemid[$i]) {
-                    // Reuse any previously used record
+                    // Reuse any previously used record.
                     $addeditem->id = $question->itemid[$i];
                     $DB->update_record('question_dataset_items', $addeditem);
                 } else {
@@ -206,7 +206,7 @@ class qtype_calculatedsimple extends qtype_calculated {
                 foreach ($datasetdefs as $key => $newdef) {
                     if (isset($newdef->id) && $newdef->itemcount <= $maxnumber) {
                         $newdef->itemcount = $maxnumber;
-                        // Save the new value for options
+                        // Save the new value for options.
                         $DB->update_record('question_dataset_definitions', $newdef);
                     }
                 }
@@ -282,9 +282,9 @@ class qtype_calculatedsimple extends qtype_calculated {
 
     public function dataset_options($form, $name, $mandatory = true, $renameabledatasets = false) {
         // Takes datasets from the parent implementation but
-        // filters options that are currently not accepted by calculated
-        // It also determines a default selection...
-        //$renameabledatasets not implemented anmywhere
+        // filters options that are currently not accepted by calculated.
+        // It also determines a default selection
+        // $renameabledatasets not implemented anywhere.
         list($options, $selected) = $this->dataset_options_from_database(
                 $form, $name, '', 'qtype_calculated');
 
@@ -295,9 +295,9 @@ class qtype_calculatedsimple extends qtype_calculated {
         }
         if (!$selected) {
             if ($mandatory) {
-                $selected =  "1-0-$name"; // Default
+                $selected =  "1-0-$name"; // Default.
             } else {
-                $selected = "0"; // Default
+                $selected = "0"; // Default.
             }
         }
         return array($options, $selected);

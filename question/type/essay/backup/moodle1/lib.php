@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -40,7 +39,7 @@ class moodle1_qtype_essay_handler extends moodle1_qtype_handler {
      * Appends the essay specific information to the question
      */
     public function process_question(array $data, array $raw) {
-        // data added on the upgrade step 2011031000
+        // Data added on the upgrade step 2011031000.
         $this->write_xml('essay', array(
             'id'                     => $this->converter->get_nextid(),
             'responseformat'         => 'editor',

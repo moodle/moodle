@@ -146,7 +146,7 @@ class qtype_calculated_edit_form extends qtype_numerical_edit_form {
                 $mform->createElement('submit', $addfieldsname, $addstring), 'listcategory');
         $mform->registerNoSubmitButton('createoptionbutton');
 
-        // Editing as regular.
+        // Editing as regular question.
         $mform->setType('single', PARAM_INT);
 
         $mform->addElement('hidden', 'shuffleanswers', '1');

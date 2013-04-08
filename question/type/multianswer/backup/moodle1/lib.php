@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -50,12 +49,12 @@ class moodle1_qtype_multianswer_handler extends moodle1_qtype_handler {
      */
     public function process_question(array $data, array $raw) {
 
-        // convert and write the answers first
+        // Convert and write the answers first.
         if (isset($data['answers'])) {
             $this->write_answers($data['answers'], $this->pluginname);
         }
 
-        // convert and write the multianswer extra fields
+        // Convert and write the multianswer extra fields.
         foreach ($data['multianswers'] as $multianswers) {
             foreach ($multianswers as $multianswer) {
                 $this->write_xml('multianswer', $multianswer, array('/multianswer/id'));

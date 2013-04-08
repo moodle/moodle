@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -47,12 +46,12 @@ class moodle1_qtype_calculated_handler extends moodle1_qtype_handler {
      */
     public function process_question(array $data, array $raw) {
 
-        // convert and write the answers first
+        // Convert and write the answers first.
         if (isset($data['answers'])) {
             $this->write_answers($data['answers'], $this->pluginname);
         }
 
-        // convert and write the numerical units and numerical options
+        // Convert and write the numerical units and numerical options.
         if (isset($data['calculated'][0]['numerical_units'])) {
             $numericalunits = $data['calculated'][0]['numerical_units'];
         } else {
@@ -64,7 +63,7 @@ class moodle1_qtype_calculated_handler extends moodle1_qtype_handler {
         $this->write_numerical_units($numericalunits);
         $this->write_numerical_options($numericaloptions);
 
-        // write dataset_definitions
+        // Write dataset_definitions.
         if (isset($data['calculated'][0]['dataset_definitions']['dataset_definition'])) {
             $datasetdefinitions = $data['calculated'][0]['dataset_definitions']['dataset_definition'];
         } else {
@@ -72,7 +71,7 @@ class moodle1_qtype_calculated_handler extends moodle1_qtype_handler {
         }
         $this->write_dataset_definitions($datasetdefinitions);
 
-        // write calculated_records
+        // Write calculated_records.
         $this->xmlwriter->begin_tag('calculated_records');
         foreach ($data['calculated'] as $calculatedrecord) {
             $record = array(
@@ -87,7 +86,7 @@ class moodle1_qtype_calculated_handler extends moodle1_qtype_handler {
         }
         $this->xmlwriter->end_tag('calculated_records');
 
-        // write calculated_options
+        // Write calculated_options.
         $options = array(
             'calculate_option' => array(
                 'id'                             => $this->converter->get_nextid(),

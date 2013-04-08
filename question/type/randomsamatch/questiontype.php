@@ -54,7 +54,7 @@ class qtype_randomsamatch extends question_type {
 
         // This could be included as a flag in the database. It's already
         // supported by the code.
-        // Recurse subcategories: 0 = no recursion, 1 = recursion
+        // Recurse subcategories: 0 = no recursion, 1 = recursion .
         $question->options->subcats = 1;
         return true;
 
@@ -95,14 +95,14 @@ class qtype_randomsamatch extends question_type {
         // quiz. Therfore the following need to be excluded:
         // 1. All questions that are explicitly assigned to the quiz
         // 2. All random questions
-        // 3. All questions that are already chosen by an other random question
+        // 3. All questions that are already chosen by an other random question.
         global $QTYPES, $OUTPUT, $USER;
         if (!isset($cmoptions->questionsinuse)) {
             $cmoptions->questionsinuse = $cmoptions->questions;
         }
 
         if ($question->options->subcats) {
-            // recurse into subcategories
+            // Recurse into subcategories.
             $categorylist = question_categorylist($question->category);
         } else {
             $categorylist = array($question->category);
@@ -117,13 +117,13 @@ class qtype_randomsamatch extends question_type {
             $question->questiontext = "Insufficient selection options are
                 available for this question, therefore it is not available in  this
                 quiz. Please inform your teacher.";
-            // Treat this as a description from this point on
+            // Treat this as a description from this point on.
             $question->qtype = 'description';
             return true;
         }
 
         $saquestions =
-         draw_rand_array($saquestions, $question->options->choose); // from bug 1889
+         draw_rand_array($saquestions, $question->options->choose); // From bug 1889.
 
         foreach ($saquestions as $key => $wrappedquestion) {
             if (!$QTYPES[$wrappedquestion->qtype]
@@ -155,12 +155,12 @@ class qtype_randomsamatch extends question_type {
             $state->options->subquestions[$key] = clone($wrappedquestion);
         }
 
-        // Shuffle the answers (Do this always because this is a random question type)
+        // Shuffle the answers (Do this always because this is a random question type).
         $subquestionids = array_values(array_map(create_function('$val',
          'return $val->id;'), $state->options->subquestions));
         $subquestionids = swapshuffle($subquestionids);
 
-        // Create empty responses
+        // Create empty responses.
         foreach ($subquestionids as $val) {
             $state->responses[$val] = '';
         }
@@ -175,14 +175,14 @@ class qtype_randomsamatch extends question_type {
             $question->questiontext = "Insufficient selection options are
              available for this question, therefore it is not available in  this
              quiz. Please inform your teacher.";
-            // Treat this as a description from this point on
+            // Treat this as a description from this point on.
             $question->qtype = 'description';
         } else {
             $responses = explode(',', $state->responses['']);
             $responses = array_map(create_function('$val',
              'return explode("-", $val);'), $responses);
 
-            // Restore the previous responses
+            // Restore the previous responses.
             $state->responses = array();
             foreach ($responses as $response) {
                 $wqid = $response[0];

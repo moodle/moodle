@@ -42,7 +42,7 @@ class qtype_calculatedmulti extends qtype_calculated {
         global $CFG, $DB;
         $context = $question->context;
 
-        // Calculated options
+        // Calculated options.
         $update = true;
         $options = $DB->get_record('question_calculated_options',
                 array('question' => $question->id));
@@ -61,7 +61,7 @@ class qtype_calculatedmulti extends qtype_calculated {
         $options = $this->save_combined_feedback_helper($options, $question, $context, true);
         $DB->update_record('question_calculated_options', $options);
 
-        // Get old versions of the objects
+        // Get old versions of the objects.
         if (!$oldanswers = $DB->get_records('question_answers',
                 array('question' => $question->id), 'id ASC')) {
             $oldanswers = array();
@@ -71,7 +71,7 @@ class qtype_calculatedmulti extends qtype_calculated {
             $oldoptions = array();
         }
 
-        // Insert all the new answers
+        // Insert all the new answers.
         if (isset($question->answer) && !isset($question->answers)) {
             $question->answers = $question->answer;
         }
@@ -94,12 +94,12 @@ class qtype_calculatedmulti extends qtype_calculated {
             }
 
             if (is_array($answerdata)) {
-                // Doing an import
+                // Doing an import.
                 $answer->answer = $this->import_or_save_files($answerdata,
                         $context, 'question', 'answer', $answer->id);
                 $answer->answerformat = $answerdata['format'];
             } else {
-                // Saving the form
+                // Saving the form.
                 $answer->answer = $answerdata;
                 $answer->answerformat = FORMAT_HTML;
             }
@@ -110,7 +110,7 @@ class qtype_calculatedmulti extends qtype_calculated {
 
             $DB->update_record("question_answers", $answer);
 
-            // Set up the options object
+            // Set up the options object.
             if (!$options = array_shift($oldoptions)) {
                 $options = new stdClass();
             }
@@ -121,17 +121,17 @@ class qtype_calculatedmulti extends qtype_calculated {
             $options->correctanswerlength = trim($question->correctanswerlength[$key]);
             $options->correctanswerformat = trim($question->correctanswerformat[$key]);
 
-            // Save options
+            // Save options.
             if (isset($options->id)) {
-                // reusing existing record
+                // Reusing existing record.
                 $DB->update_record('question_calculated', $options);
             } else {
-                // new options
+                // New options.
                 $DB->insert_record('question_calculated', $options);
             }
         }
 
-        // delete old answer records
+        // Delete old answer records.
         if (!empty($oldanswers)) {
             foreach ($oldanswers as $oa) {
                 $DB->delete_records('question_answers', array('id' => $oa->id));
@@ -220,7 +220,7 @@ class qtype_calculatedmulti extends qtype_calculated {
         $delimiter = ': ';
         foreach ($answers as $key => $answer) {
             $answer->answer = $this->substitute_variables($answer->answer, $data);
-            //evaluate the equations i.e {=5+4)
+            // Evaluate the equations i.e {=5+4).
             $qtext = '';
             $qtextremaining = $answer->answer;
             while (preg_match('~\{=([^[:space:]}]*)}~', $qtextremaining, $regs1)) {

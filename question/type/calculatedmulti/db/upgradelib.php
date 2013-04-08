@@ -272,7 +272,7 @@ class qtype_calculatedmulti_qe2_attempt_updater extends question_qtype_attempt_u
      * @return float the computed result.
      */
     protected function calculate_raw($expression) {
-        // This validation trick from http://php.net/manual/en/function.eval.php
+        // This validation trick from http://php.net/manual/en/function.eval.php.
         if (!@eval('return true; $result = ' . $expression . ';')) {
             return '[Invalid expression ' . $expression . ']';
         }

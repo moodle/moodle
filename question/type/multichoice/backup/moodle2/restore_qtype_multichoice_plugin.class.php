@@ -41,16 +41,16 @@ class restore_qtype_multichoice_plugin extends restore_qtype_plugin {
 
         $paths = array();
 
-        // This qtype uses question_answers, add them
+        // This qtype uses question_answers, add them.
         $this->add_question_question_answers($paths);
 
-        // Add own qtype stuff
+        // Add own qtype stuff.
         $elename = 'multichoice';
-        // we used get_recommended_name() so this works
+        // We used get_recommended_name() so this works.
         $elepath = $this->get_pathfor('/multichoice');
         $paths[] = new restore_path_element($elename, $elepath);
 
-        return $paths; // And we return the interesting paths
+        return $paths; // And we return the interesting paths.
     }
 
     /**
@@ -62,17 +62,17 @@ class restore_qtype_multichoice_plugin extends restore_qtype_plugin {
         $data = (object)$data;
         $oldid = $data->id;
 
-        // Detect if the question is created or mapped
+        // Detect if the question is created or mapped.
         $oldquestionid   = $this->get_old_parentid('question');
         $newquestionid   = $this->get_new_parentid('question');
         $questioncreated = (bool) $this->get_mappingid('question_created', $oldquestionid);
 
         // If the question has been created by restore, we need to create its
-        // question_multichoice too
+        // question_multichoice too.
         if ($questioncreated) {
-            // Adjust some columns
+            // Adjust some columns.
             $data->question = $newquestionid;
-            // Map sequence of question_answer ids
+            // Map sequence of question_answer ids.
             if ($data->answers) {
                 $answersarr = explode(',', $data->answers);
             } else {
@@ -82,9 +82,9 @@ class restore_qtype_multichoice_plugin extends restore_qtype_plugin {
                 $answersarr[$key] = $this->get_mappingid('question_answer', $answer);
             }
             $data->answers = implode(',', $answersarr);
-            // Insert record
+            // Insert record.
             $newitemid = $DB->insert_record('question_multichoice', $data);
-            // Create mapping (needed for decoding links)
+            // Create mapping (needed for decoding links).
             $this->set_mapping('question_multichoice', $oldid, $newitemid);
         }
     }
@@ -124,12 +124,12 @@ class restore_qtype_multichoice_plugin extends restore_qtype_plugin {
         $orderarr = array();
         $responsesarr = array();
         $lists = explode(':', $answer);
-        // if only 1 list, answer is missing the order list, adjust
+        // If only 1 list, answer is missing the order list, adjust.
         if (count($lists) == 1) {
-            $lists[1] = $lists[0]; // here we have the responses
-            $lists[0] = '';        // here we have the order
+            $lists[1] = $lists[0]; // Here we have the responses.
+            $lists[0] = '';        // Here we have the order.
         }
-        // Map order
+        // Map order.
         if (!empty($lists[0])) {
             foreach (explode(',', $lists[0]) as $id) {
                 if ($newid = $this->get_mappingid('question_answer', $id)) {
@@ -137,7 +137,7 @@ class restore_qtype_multichoice_plugin extends restore_qtype_plugin {
                 }
             }
         }
-        // Map responses
+        // Map responses.
         if (!empty($lists[1])) {
             foreach (explode(',', $lists[1]) as $id) {
                 if ($newid = $this->get_mappingid('question_answer', $id)) {
@@ -145,7 +145,7 @@ class restore_qtype_multichoice_plugin extends restore_qtype_plugin {
                 }
             }
         }
-        // Build the final answer, if not order, only responses
+        // Build the final answer, if not order, only responses.
         $result = '';
         if (empty($orderarr)) {
             $result = implode(',', $responsesarr);

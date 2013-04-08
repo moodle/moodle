@@ -36,9 +36,8 @@ function xmldb_qtype_essay_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
-
     // Moodle v2.2.0 release upgrade line
-    // Put any upgrade step following this
+    // Put any upgrade step following this.
 
     if ($oldversion < 2011102701) {
         $sql = "
@@ -47,7 +46,7 @@ function xmldb_qtype_essay_upgrade($oldversion) {
 
                  WHERE q.qtype = 'essay'
                    AND " . $DB->sql_isnotempty('question_answers', 'feedback', false, true);
-        // In Moodle <= 2.0 essay had both question.generalfeedback and question_answers.feedback.
+        // In Moodle <= 2.0 essay had both question.generalfeedback and question_answers.feedback
         // This was silly, and in Moodel >= 2.1 only question.generalfeedback. To avoid
         // dataloss, we concatenate question_answers.feedback onto the end of question.generalfeedback.
         $count = $DB->count_records_sql("
@@ -101,11 +100,10 @@ function xmldb_qtype_essay_upgrade($oldversion) {
     }
 
     // Moodle v2.3.0 release upgrade line
-    // Put any upgrade step following this
-
+    // Put any upgrade step following this.
 
     // Moodle v2.4.0 release upgrade line
-    // Put any upgrade step following this
+    // Put any upgrade step following this.
 
     if ($oldversion < 2013011800) {
         // Then we delete the old question_answers rows for essay questions.

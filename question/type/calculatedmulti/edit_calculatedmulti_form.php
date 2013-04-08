@@ -156,7 +156,6 @@ class qtype_calculatedmulti_edit_form extends question_edit_form {
         $mform->addHelpButton('answeroptions[0]', 'answeroptions', 'qtype_calculatedmulti');
 
         $repeated = array();
-        //   if ($this->editasmultichoice == 1) {
         $nounits = optional_param('nounits', 1, PARAM_INT);
         $mform->addElement('hidden', 'nounits', $nounits);
         $mform->setType('nounits', PARAM_INT);
