@@ -481,6 +481,9 @@ abstract class repository {
     public $returntypes;
     /** @var object repository instance database record */
     public $instance;
+    /** Type of the instance (dropbox, upload, etc...) */
+    public $type;
+
     /**
      * 1. Initialize context and options
      * 2. Accept necessary parameters
@@ -511,6 +514,17 @@ abstract class repository {
         }
         $this->name = $this->get_name();
         $this->returntypes = $this->supported_returntypes();
+
+        // Determining the type of repository if not set.
+        if (empty($this->type)) {
+            $matches = array();
+            if (!preg_match("/^repository_(.*)$/", get_class($this), $matches)) {
+                throw new coding_exception('The class name of a repository should be repository_<typeofrepository>, '.
+                        'e.g. repository_dropbox');
+            }
+            $this->type = $matches[1];
+        }
+
         $this->super_called = true;
     }
 
@@ -587,11 +601,23 @@ abstract class repository {
         $can = has_capability('repository/'.$instance->type.':view', $currentcontext);
 
         // Context in which the repository has been created.
-        $repocontext = get_context_instance_by_id($instance->contextid);
+        if (!isset($instance->contextid)) {
+            // Depending on what is calling the function, we have to get the context from somewhere else.
+            $repocontext = get_context_instance_by_id($instance->instance->contextid);
+        } else {
+            $repocontext = get_context_instance_by_id($instance->contextid);
+        }
 
         // Prevent access to private repositories when logged in as.
         if (session_is_loggedinas()) {
-            $can = false;
+            $allowed = array('coursefiles', 'equella', 'filesystem', 'flickr_public', 'local', 'merlot', 'recent',
+                's3', 'upload', 'url', 'user', 'webdav', 'wikimedia', 'youtube');
+            // Are only accessible the repositories which do not contain private data (any data
+            // that is not part of Moodle, "Private files" is not considered "Pivate"). And if they
+            // do not contain private data, then it should not be a user instance, which is private by definition.
+            if (!in_array($instance->type, $allowed) || $repocontext->contextlevel == CONTEXT_USER) {
+                $can = false;
+            }
         }
 
         // We are going to ensure that the current context was legit, and reliable to check
