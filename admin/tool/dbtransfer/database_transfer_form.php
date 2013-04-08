@@ -52,17 +52,32 @@ class database_transfer_form extends moodleform {
         $drivers = array_reverse($drivers, true);
 
         $mform->addElement('select', 'driver', get_string('dbtype', 'install'), $drivers);
+        $mform->setType('driver', PARAM_RAW);
+
         $mform->addElement('text', 'dbhost', get_string('databasehost', 'install'));
+        $mform->setType('dbhost', PARAM_HOST);
+
         $mform->addElement('text', 'dbname', get_string('databasename', 'install'));
+        $mform->setType('dbname', PARAM_ALPHANUMEXT);
+
         $mform->addElement('text', 'dbuser', get_string('databaseuser', 'install'));
+        $mform->setType('dbuser', PARAM_ALPHANUMEXT);
+
         $mform->addElement('passwordunmask', 'dbpass', get_string('databasepass', 'install'));
+        $mform->setType('dbpass', PARAM_RAW);
+
         $mform->addElement('text', 'prefix', get_string('dbprefix', 'install'));
+        $mform->setType('prefix', PARAM_ALPHANUMEXT);
+
         $mform->addElement('text', 'dbport', get_string('dbport', 'install'));
+        $mform->setType('dbport', PARAM_INT);
+
         if ($CFG->ostype !== 'WINDOWS') {
             $mform->addElement('text', 'dbsocket', get_string('databasesocket', 'install'));
         } else {
             $mform->addElement('hidden', 'dbsocket');
         }
+        $mform->setType('dbsocket', PARAM_RAW);
 
         $mform->addRule('driver', get_string('required'), 'required', null);
         $mform->addRule('dbhost', get_string('required'), 'required', null);
@@ -76,6 +91,7 @@ class database_transfer_form extends moodleform {
         $mform->addElement('header', 'database', get_string('options', 'tool_dbtransfer'));
 
         $mform->addElement('advcheckbox', 'enablemaintenance', get_string('enablemaintenance', 'tool_dbtransfer'));
+        $mform->setType('enablemaintenance', PARAM_BOOL);
         $mform->addHelpButton('enablemaintenance', 'enablemaintenance', 'tool_dbtransfer');
 
         $this->add_action_buttons(false, get_string('transferdata', 'tool_dbtransfer'));
