@@ -6685,28 +6685,18 @@ class core_string_manager implements string_manager {
     }
 
     /**
-     * Returns dependencies of current language, en is not included.
+     * Returns list of all explicit parent languages for the given language.
      *
-     * @param string $lang
-     * @return array all parents, the lang itself is last
+     * English (en) is considered as the top implicit parent of all language packs
+     * and is not included in the returned list. The language itself is appended to the
+     * end of the list. The method is aware of circular dependency risk.
+     *
+     * @see self::populate_parent_languages()
+     * @param string $lang the code of the language
+     * @return array all explicit parent languages with the lang itself appended
      */
     public function get_language_dependencies($lang) {
-        if ($lang === 'en') {
-            return array();
-        }
-        if (!file_exists("$this->otherroot/$lang/langconfig.php")) {
-            return array();
-        }
-        $string = array();
-        include("$this->otherroot/$lang/langconfig.php");
-
-        if (empty($string['parentlanguage'])) {
-            return array($lang);
-        } else {
-            $parentlang = $string['parentlanguage'];
-            unset($string);
-            return array_merge($this->get_language_dependencies($parentlang), array($lang));
-        }
+        return $this->populate_parent_languages($lang);
     }
 
     /**
@@ -7220,6 +7210,46 @@ class core_string_manager implements string_manager {
             return (int)$CFG->langrev;
         } else {
             return -1;
+        }
+    }
+
+    /// End of external API ////////////////////////////////////////////////////
+
+    /**
+     * Helper method that recursively loads all parents of the given language.
+     *
+     * @see self::get_language_dependencies()
+     * @param string $lang language code
+     * @param array $stack list of parent languages already populated in previous recursive calls
+     * @return array list of all parents of the given language with the $lang itself added as the last element
+     */
+    protected function populate_parent_languages($lang, array $stack = array()) {
+
+        // English does not have a parent language.
+        if ($lang === 'en') {
+            return $stack;
+        }
+
+        // Prevent circular dependency (and thence the infinitive recursion loop).
+        if (in_array($lang, $stack)) {
+            return $stack;
+        }
+
+        // Load language configuration and look for the explicit parent language.
+        if (!file_exists("$this->otherroot/$lang/langconfig.php")) {
+            return $stack;
+        }
+        $string = array();
+        include("$this->otherroot/$lang/langconfig.php");
+
+        if (empty($string['parentlanguage']) or $string['parentlanguage'] === 'en') {
+            unset($string);
+            return array_merge(array($lang), $stack);
+
+        } else {
+            $parentlang = $string['parentlanguage'];
+            unset($string);
+            return $this->populate_parent_languages($parentlang, array_merge(array($lang), $stack));
         }
     }
 }
