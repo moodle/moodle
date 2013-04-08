@@ -48,6 +48,7 @@ class gradingform_guide_editguide extends moodleform {
         $form->setType('areaid', PARAM_INT);
 
         $form->addElement('hidden', 'returnurl');
+        $form->setType('returnurl', PARAM_LOCALURL);
 
         // Name.
         $form->addElement('text', 'name', get_string('name', 'gradingform_guide'), array('size'=>52));
