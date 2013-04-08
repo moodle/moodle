@@ -713,7 +713,11 @@ class mssql_native_moodle_database extends moodle_database {
         $this->query_end($result);
 
         if ($limitfrom) { // Skip $limitfrom records
-            mssql_data_seek($result, $limitfrom);
+            if (!@mssql_data_seek($result, $limitfrom)) {
+                // Nothing, most probably seek past the end.
+                mssql_free_result($result);
+                $result = null;
+            }
         }
 
         return $this->create_recordset($result);
