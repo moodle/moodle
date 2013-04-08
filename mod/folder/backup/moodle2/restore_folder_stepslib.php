@@ -48,9 +48,9 @@ class restore_folder_activity_structure_step extends restore_activity_structure_
         $data->course = $this->get_courseid();
         $data->timemodified = $this->apply_date_offset($data->timemodified);
 
-        // If show_expanded is not set, apply site default.
-        if (!isset($data->show_expanded)) {
-            $data->show_expanded = get_config('folder', 'show_expanded');
+        // If showexpanded is not set, apply site default.
+        if (!isset($data->showexpanded)) {
+            $data->showexpanded = get_config('folder', 'showexpanded');
         }
 
         // insert the folder record

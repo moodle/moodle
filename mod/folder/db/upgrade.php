@@ -91,5 +91,24 @@ function xmldb_folder_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2013031500, 'folder');
     }
 
+    // Rename show_expanded to showexpanded (see MDL-38646).
+    if ($oldversion < 2013040700) {
+
+        // Rename site config setting.
+        $showexpanded = get_config('folder', 'show_expanded');
+        set_config('showexpanded', $showexpanded, 'folder');
+        set_config('show_expanded', null, 'folder');
+
+        // Rename table column.
+        $table = new xmldb_table('folder');
+        $field = new xmldb_field('show_expanded', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '1', 'revision');
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->rename_field($table, $field, 'showexpanded');
+        }
+
+        // folder savepoint reached
+        upgrade_mod_savepoint(true, 2013040700, 'folder');
+    }
+
     return true;
 }
