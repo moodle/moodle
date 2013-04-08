@@ -2154,6 +2154,7 @@ function blocks_add_default_course_blocks($course) {
         $blocknames = blocks_parse_default_blocks_list($CFG->{'defaultblocks_' . $course->format});
 
     } else {
+        require_once($CFG->dirroot. '/course/lib.php');
         $blocknames = course_get_format($course)->get_default_blocks();
 
     }
