@@ -139,6 +139,28 @@ class behat_general extends behat_base {
     }
 
     /**
+     * Click on the specified element inside a table row containing the specified text.
+     *
+     * @Given /^I click on "(?P<element_string>(?:[^"]|\\")*)" "(?P<selector_string>(?:[^"]|\\")*)" in the "(?P<row_text_string>(?:[^"]|\\")*)" table row$/
+     * @throws ElementNotFoundException
+     * @param string $element Element we look for
+     * @param string $selectortype The type of what we look for
+     * @param string $tablerowtext The table row text
+     */
+    public function i_click_on_in_the_table_row($element, $selectortype, $tablerowtext) {
+
+        // The table row container.
+        $nocontainerexception = new ElementNotFoundException($this->getSession(), '"' . $tablerowtext . '" row text ');
+        $tablerowtext = str_replace("'", "\'", $tablerowtext);
+        $rownode = $this->find('xpath', "//tr[contains(., '" . $tablerowtext . "')]", $nocontainerexception);
+
+        // Looking for the element DOM node inside the specified row.
+        list($selector, $locator) = $this->transform_selector($selectortype, $element);
+        $elementnode = $this->find($selector, $locator, false, $rownode);
+        $elementnode->click();
+    }
+
+    /**
      * Checks, that page contains specified text.
      *
      * @see Behat\MinkExtension\Context\MinkContext
