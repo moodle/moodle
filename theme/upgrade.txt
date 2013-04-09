@@ -1,6 +1,11 @@
 This files describes API changes in /theme/* themes,
 information provided here is intended especially for theme designer.
 
+=== 2.6 ===
+* re-wrote the table for the course completion status block to use html_table - added some CSS classes to the table in the process.
+  MDL-35608 - Blocks - Updating the Completion Status block to use HTML Writer
+
+
 === 2.5 ===
 
 required changes:
