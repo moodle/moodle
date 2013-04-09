@@ -1280,7 +1280,7 @@ class restore_section_structure_step extends restore_structure_step {
             // Otherwise, when you restore to an existing course, it will mess up
             // existing section availability entries.
             if (!$this->get_mappingid('course_sections_availability', $data->id, false)) {
-                return;
+                continue;
             }
 
             // Update source cmid / grade id to new value.
@@ -1293,7 +1293,12 @@ class restore_section_structure_step extends restore_structure_step {
                 $data->gradeitemid = null;
             }
 
-            $DB->update_record('course_sections_availability', $data);
+            // Delete the record if the condition wasn't found, otherwise update it.
+            if ($data->sourcecmid === null && $data->gradeitemid === null) {
+                $DB->delete_records('course_sections_availability', array('id' => $data->id));
+            } else {
+                $DB->update_record('course_sections_availability', $data);
+            }
         }
     }
 }
