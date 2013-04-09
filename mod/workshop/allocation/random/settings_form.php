@@ -80,6 +80,7 @@ class workshop_random_allocator_form extends moodleform {
             $mform->setDefault('excludesamegroup', 0);
         } else {
             $mform->addElement('hidden', 'excludesamegroup', 0);
+            $mform->setType('excludesamegroup', PARAM_BOOL);
         }
 
         $mform->addElement('checkbox', 'removecurrent', get_string('removecurrentallocations', 'workshopallocation_random'));
