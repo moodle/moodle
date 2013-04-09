@@ -2845,10 +2845,6 @@ function course_page_type_list($pagetype, $parentcontext, $currentcontext) {
             'course-view-*' => get_string('page-course-view-x', 'pagetype')
         );
     }
-    // If the string definition for current page is missing, add generic name so the form does not get broken
-    if (!get_string_manager()->string_exists('page-'. $pagetype, 'pagetype')) {
-        $pagetypes[$pagetype] = $pagetype;
-    }
     return $pagetypes;
 }
 
