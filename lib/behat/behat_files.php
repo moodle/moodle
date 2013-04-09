@@ -54,7 +54,7 @@ class behat_files extends behat_base {
      * not recognized as a named selector, as it is hidden...
      *
      * @throws ExpectationException Thrown by behat_base::find
-     * @param string $filepickerelement
+     * @param string $filepickerelement The filepicker form field label
      * @return NodeElement The hidden element node.
      */
     protected function get_filepicker_node($filepickerelement) {
@@ -96,16 +96,25 @@ class behat_files extends behat_base {
     /**
      * Opens the contextual menu of a folder or a file.
      *
+     * Works both in filepicker elements and when dealing with repository
+     * elements inside modal windows.
+     *
      * @throws ExpectationException Thrown by behat_base::find
      * @param string $name The name of the folder/file
-     * @param string $filepickerelement The filepicker locator, usually the form element label
+     * @param string $filepickerelement The filepicker locator, the whole DOM if false
      * @return void
      */
-    protected function open_element_contextual_menu($name, $filepickerelement) {
+    protected function open_element_contextual_menu($name, $filepickerelement = false) {
 
-        $filepickernode = $this->get_filepicker_node($filepickerelement);
+        // If a filepicker is specified we restrict the search to the filepicker descendants.
+        $containernode = false;
+        $exceptionmsg = '"'.$name.'" element can not be found';
+        if ($filepickerelement) {
+            $containernode = $this->get_filepicker_node($filepickerelement);
+            $exceptionmsg = 'The "'.$filepickerelement.'" filepicker ' . $exceptionmsg;
+        }
 
-        $exception = new ExpectationException('The "'.$filepickerelement.'" filepicker "'.$name.'" element can not be found', $this->getSession());
+        $exception = new ExpectationException($exceptionmsg, $this->getSession());
 
         // Get a filepicker element (folder or file).
         try {
@@ -114,12 +123,12 @@ class behat_files extends behat_base {
             $node = $this->find(
                 'xpath',
                 "//div[@class='fp-content']
-//descendant::div[contains(concat(' ', normalize-space(@class), ' '), ' fp-file ')]
+//descendant::*[self::div | self::a][contains(concat(' ', normalize-space(@class), ' '), ' fp-file ')]
 [contains(concat(' ', normalize-space(@class), ' '), ' fp-folder ')][contains(normalize-space(string(.)), '" . $name . "')]
 //descendant::a[contains(concat(' ', normalize-space(@class), ' '), ' fp-contextmenu ')]
 ",
                 $exception,
-                $filepickernode
+                $containernode
             );
 
         } catch (ExpectationException $e) {
@@ -128,11 +137,11 @@ class behat_files extends behat_base {
             $node = $this->find(
                 'xpath',
                 "//div[@class='fp-content']
-//descendant::div[contains(concat(' ', normalize-space(@class), ' '), ' fp-file ')][contains(normalize-space(string(.)), '" . $name . "')]
+//descendant::*[self::div | self::a][contains(concat(' ', normalize-space(@class), ' '), ' fp-file ')][contains(normalize-space(string(.)), '" . $name . "')]
 //descendant::div[contains(concat(' ', normalize-space(@class), ' '), ' fp-thumbnail ')]
 ",
-                $exception,
-                $filepickernode
+                false,
+                $containernode
             );
         }
 
