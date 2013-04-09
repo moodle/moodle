@@ -74,6 +74,7 @@ $string['cannoteditcommentexpired'] = 'You can\'t edit this. The time has expire
 $string['cannoteditpostorblog'] = 'You cannot post or edit blogs';
 $string['cannoteditsiteform'] = 'You cannot edit the site course using this form';
 $string['cannotedityourprofile'] = 'Sorry, you cannot edit own profile';
+$string['cannotexecduringupgrade'] = 'Cannot be executed during upgrade';
 $string['cannotfindcategory'] = 'Cannot find category record from database by ID - {$a}';
 $string['cannotfindcomponent'] = 'Cannot find component';
 $string['cannotfindcontext'] = 'Could not find context';

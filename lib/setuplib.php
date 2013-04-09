@@ -1182,6 +1182,30 @@ function redirect_if_major_upgrade_required() {
 }
 
 /**
+ * Makes sure that upgrade process is not running
+ *
+ * To be inserted in the core functions that can not be called by pluigns during upgrade.
+ * Core upgrade should not use any API functions at all.
+ * See {@link http://docs.moodle.org/dev/Upgrade_API#Upgrade_code_restrictions}
+ *
+ * @throws moodle_exception if executed from inside of upgrade script and $warningonly is false
+ * @param bool $warningonly if true displays a warning instead of throwing an exception
+ * @return bool true if executed from outside of upgrade process, false if from inside upgrade process and function is used for warning only
+ */
+function upgrade_ensure_not_running($warningonly = false) {
+    global $CFG;
+    if (!empty($CFG->upgraderunning)) {
+        if (!$warningonly) {
+            throw new moodle_exception('cannotexecduringupgrade');
+        } else {
+            debugging(get_string('cannotexecduringupgrade', 'error'), DEBUG_DEVELOPER);
+            return false;
+        }
+    }
+    return true;
+}
+
+/**
  * Function to check if a directory exists and by default create it if not exists.
  *
  * Previously this was accepting paths only from dataroot, but we now allow

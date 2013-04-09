@@ -1460,7 +1460,7 @@ function xmldb_main_upgrade($oldversion) {
 
     if ($oldversion < 2012111200.01) {
         // Force the rebuild of the cache of every courses, some cached information could contain wrong icon references.
-        rebuild_course_cache();
+        $DB->execute('UPDATE {course} set modinfo = ?, sectioncache = ?', array(null, null));
 
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2012111200.01);
@@ -1665,7 +1665,7 @@ function xmldb_main_upgrade($oldversion) {
         $DB->delete_records('course_sections_avail_fields', array('userfield' => 'interests'));
         $DB->delete_records('course_modules_avail_fields', array('userfield' => 'interests'));
         // Clear course cache (will be rebuilt on first visit) in case of changes to these.
-        rebuild_course_cache(0, true);
+        $DB->execute('UPDATE {course} set modinfo = ?, sectioncache = ?', array(null, null));
 
         upgrade_main_savepoint(true, 2013022600.00);
     }
