@@ -3796,7 +3796,7 @@ class dml_testcase extends database_driver_testcase {
         $this->assertEquals('123456', $DB->get_field_sql($sql, $params));
         // float, null and strings
         $params = array(123.45, null, 'test');
-        $this->assertNull($DB->get_field_sql($sql, $params), 'ANSI behaviour: Concatenating NULL must return NULL - But in Oracle :-(. [%s]'); // Concatenate NULL with anything result = NULL
+        $this->assertNull($DB->get_field_sql($sql, $params)); // Concatenate NULL with anything result = NULL
 
         // Testing fieldnames + values and also integer fieldnames
         $table = $this->get_test_table();
