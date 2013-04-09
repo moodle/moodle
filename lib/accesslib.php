@@ -2993,6 +2993,9 @@ function user_can_assign(context $context, $targetroleid) {
 /**
  * Returns all site roles in correct sort order.
  *
+ * Note: this method does not localise role names or descriptions,
+ *       use role_get_names() if you need role names.
+ *
  * @param context $context optional context for course role name aliases
  * @return array of role records with optional coursealias property
  */
@@ -4252,7 +4255,7 @@ function user_has_role_assignment($userid, $roleid, $contextid = 0) {
 }
 
 /**
- * Get role name or alias if exists and format the text.
+ * Get localised role name or alias if exists and format the text.
  *
  * @param stdClass $role role object
  *      - optional 'coursealias' property should be included for performance reasons if course context used
@@ -4366,6 +4369,9 @@ function role_get_description(stdClass $role) {
 /**
  * Get all the localised role names for a context.
  *
+ * In new installs default roles have empty names, this function
+ * add localised role names using current language pack.
+ *
  * @param context $context the context, null means system context
  * @param array of role objects with a ->localname field containing the context-specific role name.
  * @param int $rolenamedisplay
@@ -4377,7 +4383,7 @@ function role_get_names(context $context = null, $rolenamedisplay = ROLENAME_ALI
 }
 
 /**
- * Prepare list of roles for display, apply aliases and format text
+ * Prepare list of roles for display, apply aliases and localise default role names.
  *
  * @param array $roleoptions array roleid => roleobject (with optional coursealias), strings are accepted for backwards compatibility only
  * @param context $context the context, null means system context
