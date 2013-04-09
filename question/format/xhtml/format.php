@@ -126,11 +126,13 @@ class qformat_xhtml extends qformat_default {
             foreach($question->options->subquestions as $subquestion) {
                 // build drop down for answers
                 $quest_text = $this->repchar( $subquestion->questiontext );
-                $dropdown = html_writer::label(get_string('answer', 'qtype_match', $option+1), 'quest_'.$id.'_'.$option, false, array('class' => 'accesshide'));
-                $dropdown .= "<select id=\"quest_{$id}_{$option}\" name=\"quest_{$id}_{$option}\">\n".$selectoptions."</select>\n";
-                $expout .= "  <li>$quest_text</li>\n";
-                $expout .= $dropdown;
-                $option++;
+                if ($quest_text != '') {
+                    $dropdown = html_writer::label(get_string('answer', 'qtype_match', $option+1), 'quest_'.$id.'_'.$option, false, array('class' => 'accesshide'));
+                    $dropdown .= "<select id=\"quest_{$id}_{$option}\" name=\"quest_{$id}_{$option}\">\n".$selectoptions."</select>\n";
+                    $expout .= "  <li>$quest_text</li>\n";
+                    $expout .= $dropdown;
+                    $option++;
+                }
             }
             $expout .= "</ul>\n";
             break;
