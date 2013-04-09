@@ -1360,6 +1360,12 @@ function get_fast_modinfo($courseorid, $userid = 0, $resetonly = false) {
 function rebuild_course_cache($courseid=0, $clearonly=false) {
     global $COURSE, $SITE, $DB, $CFG;
 
+    if (!$clearonly && !empty($CFG->upgraderunning)) {
+        debugging('Function rebuild_course_cache() should not be called from upgrade script unless with argument clearonly.',
+                DEBUG_DEVELOPER);
+        $clearonly = true;
+    }
+
     // Destroy navigation caches
     navigation_cache::destroy_volatile_caches();
 
