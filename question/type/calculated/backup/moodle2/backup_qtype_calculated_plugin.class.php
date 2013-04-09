@@ -38,31 +38,31 @@ class backup_qtype_calculated_plugin extends backup_qtype_plugin {
      */
     protected function define_question_plugin_structure() {
 
-        // Define the virtual plugin element with the condition to fulfill
+        // Define the virtual plugin element with the condition to fulfill.
         // Note: we use $this->pluginname so for extended plugins this will work
-        // automatically: calculatedsimple and calculatedmulti
+        // automatically: calculatedsimple and calculatedmulti.
         $plugin = $this->get_plugin_element(null, '../../qtype', $this->pluginname);
 
-        // Create one standard named plugin element (the visible container)
+        // Create one standard named plugin element (the visible container).
         $pluginwrapper = new backup_nested_element($this->get_recommended_name());
 
-        // connect the visible container ASAP
+        // Connect the visible container ASAP.
         $plugin->add_child($pluginwrapper);
 
         // This qtype uses standard question_answers, add them here
-        // to the tree before any other information that will use them
+        // to the tree before any other information that will use them.
         $this->add_question_question_answers($pluginwrapper);
 
-        // This qtype uses standard numerical units, add them here
+        // This qtype uses standard numerical units, add them here.
         $this->add_question_numerical_units($pluginwrapper);
 
-        // This qtype uses standard numerical options, add them here
+        // This qtype uses standard numerical options, add them here.
         $this->add_question_numerical_options($pluginwrapper);
 
-        // This qtype uses standard datasets, add them here
+        // This qtype uses standard datasets, add them here.
         $this->add_question_datasets($pluginwrapper);
 
-        // Now create the qtype own structures
+        // Now create the qtype own structures.
         $calculatedrecords = new backup_nested_element('calculated_records');
         $calculatedrecord = new backup_nested_element('calculated_record', array('id'), array(
             'answer', 'tolerance', 'tolerancetype', 'correctanswerlength',
@@ -74,20 +74,20 @@ class backup_qtype_calculated_plugin extends backup_qtype_plugin {
             'correctfeedbackformat', 'partiallycorrectfeedback', 'partiallycorrectfeedbackformat',
             'incorrectfeedback', 'incorrectfeedbackformat', 'answernumbering'));
 
-        // Now the own qtype tree
+        // Now the own qtype tree.
         $pluginwrapper->add_child($calculatedrecords);
         $calculatedrecords->add_child($calculatedrecord);
 
         $pluginwrapper->add_child($calculatedoptions);
         $calculatedoptions->add_child($calculatedoption);
 
-        // set source to populate the data
+        // Set source to populate the data.
         $calculatedrecord->set_source_table('question_calculated',
                 array('question' => backup::VAR_PARENTID));
         $calculatedoption->set_source_table('question_calculated_options',
                 array('question' => backup::VAR_PARENTID));
 
-        // don't need to annotate ids nor files
+        // Don't need to annotate ids nor files.
 
         return $plugin;
     }

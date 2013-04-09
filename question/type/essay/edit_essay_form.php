@@ -72,13 +72,13 @@ class qtype_essay_edit_form extends question_edit_form {
         $draftid = file_get_submitted_draft_itemid('graderinfo');
         $question->graderinfo = array();
         $question->graderinfo['text'] = file_prepare_draft_area(
-            $draftid,           // draftid
+            $draftid,           // Draftid
             $this->context->id, // context
             'qtype_essay',      // component
             'graderinfo',       // filarea
             !empty($question->id) ? (int) $question->id : null, // itemid
             $this->fileoptions, // options
-            $question->options->graderinfo // text
+            $question->options->graderinfo // text.
         );
         $question->graderinfo['format'] = $question->options->graderinfoformat;
         $question->graderinfo['itemid'] = $draftid;

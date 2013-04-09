@@ -287,7 +287,7 @@ class qtype_numerical_question extends question_graded_automatically {
             list($value, $unit, $multiplier) = $this->ap->apply_units(
                     $currentanswer, $selectedunit);
             $answer = $this->get_matching_answer($value, $multiplier);
-            $answerid = reset($args); // itemid is answer id.
+            $answerid = reset($args); // Itemid is answer id.
             return $options->feedback && $answer && $answerid == $answer->id;
 
         } else if ($component == 'question' && $filearea == 'hint') {

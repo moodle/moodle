@@ -41,17 +41,17 @@ class restore_qtype_calculated_plugin extends restore_qtype_plugin {
 
         $paths = array();
 
-        // This qtype uses question_answers, add them
+        // This qtype uses question_answers, add them.
         $this->add_question_question_answers($paths);
 
-        // This qtype uses question_numerical_options and question_numerical_units, add them
+        // This qtype uses question_numerical_options and question_numerical_units, add them.
         $this->add_question_numerical_options($paths);
         $this->add_question_numerical_units($paths);
 
-        // This qtype uses question datasets, add them
+        // This qtype uses question datasets, add them.
         $this->add_question_datasets($paths);
 
-        // Add own qtype stuff
+        // Add own qtype stuff.
         $elename = 'calculated_record';
         $elepath = $this->get_pathfor('/calculated_records/calculated_record');
         $paths[] = new restore_path_element($elename, $elepath);
@@ -60,7 +60,7 @@ class restore_qtype_calculated_plugin extends restore_qtype_plugin {
         $elepath = $this->get_pathfor('/calculated_options/calculated_option');
         $paths[] = new restore_path_element($elename, $elepath);
 
-        return $paths; // And we return the interesting paths
+        return $paths; // And we return the interesting paths.
     }
 
     /**
@@ -72,19 +72,19 @@ class restore_qtype_calculated_plugin extends restore_qtype_plugin {
         $data = (object)$data;
         $oldid = $data->id;
 
-        // Detect if the question is created or mapped
+        // Detect if the question is created or mapped.
         $oldquestionid   = $this->get_old_parentid('question');
         $newquestionid   = $this->get_new_parentid('question');
         $questioncreated = $this->get_mappingid('question_created', $oldquestionid) ?
                 true : false;
 
         // If the question has been created by restore, we need to create its
-        // question_calculated too
+        // question_calculated too.
         if ($questioncreated) {
-            // Adjust some columns
+            // Adjust some columns.
             $data->question = $newquestionid;
             $data->answer = $this->get_mappingid('question_answer', $data->answer);
-            // Insert record
+            // Insert record.
             $newitemid = $DB->insert_record('question_calculated', $data);
         }
     }
@@ -98,18 +98,18 @@ class restore_qtype_calculated_plugin extends restore_qtype_plugin {
         $data = (object)$data;
         $oldid = $data->id;
 
-        // Detect if the question is created or mapped
+        // Detect if the question is created or mapped.
         $oldquestionid   = $this->get_old_parentid('question');
         $newquestionid   = $this->get_new_parentid('question');
         $questioncreated = $this->get_mappingid('question_created', $oldquestionid) ?
                 true : false;
 
         // If the question has been created by restore, we need to create its
-        // question_calculated too
+        // question_calculated too.
         if ($questioncreated) {
-            // Adjust some columns
+            // Adjust some columns.
             $data->question = $newquestionid;
-            // Insert record
+            // Insert record.
             $newitemid = $DB->insert_record('question_calculated_options', $data);
         }
     }

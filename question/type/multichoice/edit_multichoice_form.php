@@ -106,7 +106,7 @@ class qtype_multichoice_edit_form extends question_edit_form {
         $maxfraction = -1;
 
         foreach ($answers as $key => $answer) {
-            //check no of choices
+            // Check no of choices.
             $trimmedanswer = trim($answer['text']);
             $fraction = (float) $data['fraction'][$key];
             if ($trimmedanswer === '' && empty($fraction)) {
@@ -118,7 +118,7 @@ class qtype_multichoice_edit_form extends question_edit_form {
 
             $answercount++;
 
-            //check grades
+            // Check grades.
             if ($data['fraction'][$key] > 0) {
                 $totalfraction += $data['fraction'][$key];
             }
@@ -135,7 +135,7 @@ class qtype_multichoice_edit_form extends question_edit_form {
 
         }
 
-        /// Perform sanity checks on fractional grades
+        // Perform sanity checks on fractional grades.
         if ($data['single']) {
             if ($maxfraction != 1) {
                 $errors['fraction[0]'] = get_string('errfractionsnomax', 'qtype_multichoice',

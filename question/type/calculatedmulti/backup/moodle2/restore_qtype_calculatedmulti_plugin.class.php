@@ -57,11 +57,11 @@ class restore_qtype_calculatedmulti_plugin extends restore_qtype_calculated_plug
     public function recode_legacy_state_answer($state) {
         $answer = $state->answer;
         $result = '';
-        // datasetxx-yy:zz format
+        // Datasetxx-yy:zz format.
         if (preg_match('~^dataset([0-9]+)-(.*)$~', $answer, $matches)) {
             $itemid = $matches[1];
             $subanswer  = $matches[2];
-            // Delegate subanswer recode to multichoice qtype, faking one question_states record
+            // Delegate subanswer recode to multichoice qtype, faking one question_states record.
             $substate = new stdClass();
             $substate->answer = $subanswer;
             $newanswer = $this->step->restore_recode_legacy_answer($substate, 'multichoice');

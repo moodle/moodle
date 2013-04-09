@@ -99,7 +99,7 @@ abstract class qtype_multichoice_renderer_base extends qtype_with_combined_feedb
                                 $qa, 'question', 'answer', $ansid)),
                     array('for' => $inputattributes['id']));
 
-            // $options->suppresschoicefeedback is a hack specific to the
+            // Param $options->suppresschoicefeedback is a hack specific to the
             // oumultiresponse question type. It would be good to refactor to
             // avoid refering to it here.
             if ($options->feedback && empty($options->suppresschoicefeedback) &&
@@ -134,9 +134,9 @@ abstract class qtype_multichoice_renderer_base extends qtype_with_combined_feedb
             $result .= html_writer::tag('div', $radio . ' ' . $feedbackimg[$key] . $feedback[$key],
                     array('class' => $classes[$key])) . "\n";
         }
-        $result .= html_writer::end_tag('div'); // answer
+        $result .= html_writer::end_tag('div'); // Answer.
 
-        $result .= html_writer::end_tag('div'); // ablock
+        $result .= html_writer::end_tag('div'); // Ablock.
 
         if ($qa->get_state() == question_state::$invalid) {
             $result .= html_writer::nonempty_tag('div',

@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -45,12 +44,12 @@ class moodle1_qtype_numerical_handler extends moodle1_qtype_handler {
      */
     public function process_question(array $data, array $raw) {
 
-        // convert and write the answers first
+        // Convert and write the answers first.
         if (isset($data['answers'])) {
             $this->write_answers($data['answers'], $this->pluginname);
         }
 
-        // convert and write the numerical units and numerical options
+        // Convert and write the numerical units and numerical options.
         if (isset($data['numerical'][0]['numerical_units'])) {
             $numericalunits = $data['numerical'][0]['numerical_units'];
         } else {
@@ -62,10 +61,10 @@ class moodle1_qtype_numerical_handler extends moodle1_qtype_handler {
         $this->write_numerical_units($numericalunits);
         $this->write_numerical_options($numericaloptions);
 
-        // and finally numerical_records
+        // And finally numerical_records.
         $this->xmlwriter->begin_tag('numerical_records');
         foreach ($data['numerical'] as $numericalrecord) {
-            // we do not use write_xml() here because $numericalrecords contains more than we want
+            // We do not use write_xml() here because $numericalrecords contains more than we want.
             $this->xmlwriter->begin_tag('numerical_record', array('id' => $this->converter->get_nextid()));
             $this->xmlwriter->full_tag('answer', $numericalrecord['answer']);
             $this->xmlwriter->full_tag('tolerance', $numericalrecord['tolerance']);

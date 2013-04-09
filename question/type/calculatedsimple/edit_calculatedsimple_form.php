@@ -74,15 +74,15 @@ class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
         $this->question = $question;
 
         $this->qtypeobj = question_bank::get_qtype($this->question->qtype);
-        // get the dataset definitions for this question
-        // coming here everytime even when using a NoSubmitButton
-        // so this will only set the values to the actual question database content
-        // which is not what we want so this should be removed from here
-        // get priority to paramdatasets
+        // Get the dataset definitions for this question.
+        // Coming here everytime even when using a NoSubmitButton.
+        // This will only set the values to the actual question database content
+        // which is not what we want, so this should be removed from here.
+        // Get priority to paramdatasets.
 
         $this->reload = optional_param('reload', false, PARAM_BOOL);
-        if (!$this->reload) { // use database data as this is first pass
-            // question->id == 0 so no stored datasets
+        if (!$this->reload) { // Use database data as this is first pass
+            // Question->id == 0 so no stored datasets.
             if (!empty($question->id)) {
 
                 $this->datasetdefs = $this->qtypeobj->get_dataset_definitions(
@@ -90,7 +90,7 @@ class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
 
                 if (!empty($this->datasetdefs)) {
                     foreach ($this->datasetdefs as $defid => $datasetdef) {
-                        // first get the items in case their number does not correspond to itemcount
+                        // First get the items in case their number does not correspond to itemcount.
                         if (isset($datasetdef->id)) {
                             $this->datasetdefs[$defid]->items =
                                     $this->qtypeobj->get_database_dataset_items($datasetdef->id);
@@ -100,7 +100,7 @@ class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
                                 $datasetdef->itemcount = 0;
                             }
                         }
-                        // Get maxnumber
+                        // Get maxnumber.
                         if ($this->maxnumber == -1 || $datasetdef->itemcount < $this->maxnumber) {
                             $this->maxnumber = $datasetdef->itemcount;
                         }
@@ -118,34 +118,34 @@ class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
             $newdatasetvalues = false;
             $newdataset = false;
         } else {
-            // handle reload to get values from the form-elements
+            // Handle reload to get values from the form-elements
             // answers, datasetdefs and data_items. In any case the validation
             // step will warn the user of any error in settings the values.
             // Verification for the specific dataset values as the other parameters
-            // unints, feeedback etc are handled elsewhere
-            // handle request buttons :
-            //    'analyzequestion' (Identify the wild cards {x..} present in answers)
-            //    'addbutton' (create new set of datatitems)
-            //    'updatedatasets' is handled automatically on each reload
+            // units, feeedback etc are handled elsewhere.
+            // Handle request buttons :
+            //    'analyzequestion' (Identify the wild cards {x..} present in answers).
+            //    'addbutton' (create new set of datatitems).
+            //    'updatedatasets' is handled automatically on each reload.
             // The analyzequestion is done every time on reload
             // to detect any new wild cards so that the current display reflects
-            // the mandatory (i.e. in answers) datasets
-            //  to implement : don't do any changes if the question is used in a quiz.
+            // the mandatory (i.e. in answers) datasets.
+            // To implement : don't do any changes if the question is used in a quiz.
             // If new datadef, new properties should erase items.
-            // Most of the data
+            // most of the data.
             $datasettoremove = false;
             $newdatasetvalues = false;
             $newdataset = false;
             $dummyform = new stdClass();
             $mandatorydatasets = array();
-            // should not test on adding a new answer
-            // should test if there are already olddatasets or if the 'analyzequestion'
-            // submit button has been clicked
+            // Should not test on adding a new answer.
+            // Should test if there are already olddatasets or if the 'analyzequestion'.
+            // submit button has been clicked.
             if (optional_param_array('datasetdef', false, PARAM_BOOL) ||
                     optional_param('analyzequestion', false, PARAM_BOOL)) {
 
                 if ($dummyform->answer = optional_param_array('answer', '', PARAM_NOTAGS)) {
-                    // there is always at least one answer...
+                    // There is always at least one answer...
                     $fraction = optional_param_array('fraction', '', PARAM_FLOAT);
                     $tolerance = optional_param_array('tolerance', '', PARAM_FLOAT);
                     $tolerancetype = optional_param_array('tolerancetype', '', PARAM_FLOAT);
@@ -153,7 +153,7 @@ class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
                     $correctanswerformat = optional_param_array('correctanswerformat', '', PARAM_INT);
 
                     foreach ($dummyform->answer as $key => $answer) {
-                        if (trim($answer) != '') {  // just look for non-empty
+                        if (trim($answer) != '') {  // Just look for non-empty.
                             $this->answer[$key] = new stdClass();
                             $this->answer[$key]->answer = $answer;
                             $this->answer[$key]->fraction = $fraction[$key];
@@ -167,7 +167,7 @@ class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
                     }
                 }
                 $this->datasetdefs = array();
-                // rebuild datasetdefs from old values
+                // Rebuild datasetdefs from old values.
                 if ($olddef = optional_param_array('datasetdef', '', PARAM_RAW)) {
                     $calcmin = optional_param_array('calcmin', '', PARAM_FLOAT);
                     $calclength = optional_param_array('calclength', '', PARAM_INT);
@@ -184,7 +184,7 @@ class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
                         $this->datasetdefs[$def]->calcmin = $calcmin[$key];
                         $this->datasetdefs[$def]->calcmax = $calcmax[$key];
                         $this->datasetdefs[$def]->calclength = $calclength[$key];
-                        //then compare with new values
+                        // Then compare with new values.
                         if (preg_match('~^(uniform|loguniform):([^:]*):([^:]*):([0-9]*)$~',
                                 $this->datasetdefs[$def]->options, $regs)) {
                             if ($this->datasetdefs[$def]->calcmin != $regs[2]||
@@ -199,7 +199,7 @@ class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
                                 $this->datasetdefs[$def]->calclength;
                     }
                 }
-                // detect new datasets
+                // Detect new datasets.
                 $newdataset = false;
                 foreach ($mandatorydatasets as $datasetname) {
                     if (!isset($this->datasetdefs["1-0-$datasetname"])) {
@@ -214,7 +214,7 @@ class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
                         $this->datasetdefs["1-0-$datasetname"]->name = $datasetname;
                     }
                 }
-                // remove obsolete datasets
+                // Remove obsolete datasets.
                 $datasettoremove = false;
                 foreach ($this->datasetdefs as $defkey => $datasetdef) {
                     if (!isset($datasetdef->name)) {
@@ -223,10 +223,10 @@ class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
                     }
                 }
             }
-        } // handle reload
-        // create items if  $newdataset and noofitems > 0 and !$newdatasetvalues
-        // eliminate any items if $newdatasetvalues
-        // eliminate any items if $datasettoremove, $newdataset, $newdatasetvalues
+        } // Handle reload.
+        // Create items if  $newdataset and noofitems > 0 and !$newdatasetvalues.
+        // Eliminate any items if $newdatasetvalues.
+        // Eliminate any items if $datasettoremove, $newdataset, $newdatasetvalues.
         if ($datasettoremove ||$newdataset ||$newdatasetvalues) {
             foreach ($this->datasetdefs as $defkey => $datasetdef) {
                 $datasetdef->itemcount = 0;
@@ -235,7 +235,7 @@ class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
         }
         $maxnumber = -1;
         if (optional_param('addbutton', false, PARAM_BOOL)) {
-            $maxnumber = optional_param('selectadd', '', PARAM_INT); //FIXME: sloppy coding
+            $maxnumber = optional_param('selectadd', '', PARAM_INT); // FIXME: sloppy coding.
             foreach ($this->datasetdefs as $defid => $datasetdef) {
                 $datasetdef->itemcount = $maxnumber;
                 unset($datasetdef->items);
@@ -250,7 +250,7 @@ class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
             }
             $this->maxnumber = $maxnumber;
         } else {
-            // Handle reload dataset items
+            // Handle reload dataset items.
             if (optional_param_array('definition', '', PARAM_NOTAGS) &&
                     !($datasettoremove ||$newdataset ||$newdatasetvalues)) {
                 $i = 1;
@@ -310,7 +310,7 @@ class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
         $label = "<div class='mdl-align'></div><div class='mdl-align'>" .
                 get_string('wildcardrole', 'qtype_calculatedsimple') . "</div>";
         $mform->addElement('html', "<div class='mdl-align'>&nbsp;</div>");
-        // explaining the role of datasets so other strings can be shortened
+        // Explaining the role of datasets so other strings can be shortened.
         $mform->addElement('html', $label);
 
         $mform->addElement('submit', 'analyzequestion',
@@ -323,13 +323,13 @@ class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
         } else {
             $this->noofitems = 0;
         }
-        if (!empty($this->datasetdefs)) {//So there are some datadefs
-            // we put them on the page
+        if (!empty($this->datasetdefs)) {// So there are some datadefs.
+            // We put them on the page.
             $key = 0;
             $mform->addElement('header', 'additemhdr',
                     get_string('wildcardparam', 'qtype_calculatedsimple'));
             $idx = 1;
-            if (!empty($this->datasetdefs)) {// unnecessary test
+            if (!empty($this->datasetdefs)) {// Unnecessary test.
                 $j = (($this->noofitems) * count($this->datasetdefs))+1;//
                 foreach ($this->datasetdefs as $defkey => $datasetdef) {
                     $mform->addElement('static', "na[$j]",
@@ -344,8 +344,8 @@ class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
                     $j++;
                 }
             }
-            //this should be done before the elements are created and stored as $this->formdata;
-            //fill out all data sets and also the fields for the next item to add.
+            // This should be done before the elements are created and stored as $this->formdata.
+            // Fill out all data sets and also the fields for the next item to add.
             /*Here we do already the values error analysis so that
              * we could force all wild cards values display if there is an error in values.
              * as using a , in a number */
@@ -382,7 +382,7 @@ class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
                                             get_string('notvalidnumber', 'qtype_calculated', $a);
                                     $numbererrors .= $this->numbererrors['number['.$j.']']."<br />";
                                 }
-                            } else if (stristr($number, 'x')) { // hexa will pass the test
+                            } else if (stristr($number, 'x')) { // Hexa will pass the test.
                                 $a = new stdClass();
                                 $a->name = '{'.$datasetdef->name.'}';
                                 $a->value = $datasetdef->items[$itemnumber]->value;
@@ -427,7 +427,7 @@ class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
                 $this->formdata['selectdelete'] = '1';
                 $this->formdata['selectadd'] = '1';
                 $j = $this->noofitems * count($this->datasetdefs)+1;
-                $data = array(); // data for comment_on_datasetitems later
+                $data = array(); // Data for comment_on_datasetitems later.
                 $idx = 1;
                 foreach ($this->datasetdefs as $defid => $datasetdef) {
                     $this->formdata["datasetdef[$idx]"] = $defid;
@@ -488,7 +488,7 @@ class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
                 $mform->registerNoSubmitButton('updatedatasets');
                 $mform->setAdvanced("updatedatasets", true);
 
-                //--------------------------------------------------------------
+                // ...--------------------------------------------------------------.
                 $j = $this->noofitems * count($this->datasetdefs);
                 $k = optional_param('selectshow', 1, PARAM_INT);
 
@@ -538,9 +538,9 @@ class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
             $mform->closeHeaderBefore('warningnowildcards');
         }
 
-        //----------------------------------------------------------------------
-        // Non standard name for button element needed so not using add_action_buttons
-        // hidden elements
+        // ...----------------------------------------------------------------------.
+        // Non standard name for button element needed so not using add_action_buttons.
+        // Hidden elements.
 
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);

@@ -41,7 +41,7 @@ class qtype_truefalse extends question_type {
         $result = new stdClass();
         $context = $question->context;
 
-        // Fetch old answer ids so that we can reuse them
+        // Fetch old answer ids so that we can reuse them.
         $oldanswers = $DB->get_records('question_answers',
                 array('question' => $question->id), 'id ASC');
 
@@ -88,10 +88,10 @@ class qtype_truefalse extends question_type {
             $DB->delete_records('question_answers', array('id' => $oldanswer->id));
         }
 
-        // Save question options in question_truefalse table
+        // Save question options in question_truefalse table.
         if ($options = $DB->get_record('question_truefalse', array('question' => $question->id))) {
             // No need to do anything, since the answer IDs won't have changed
-            // But we'll do it anyway, just for robustness
+            // But we'll do it anyway, just for robustness.
             $options->trueanswer  = $trueid;
             $options->falseanswer = $falseid;
             $DB->update_record('question_truefalse', $options);
@@ -114,13 +114,13 @@ class qtype_truefalse extends question_type {
     public function get_question_options($question) {
         global $DB, $OUTPUT;
         // Get additional information from database
-        // and attach it to the question object
+        // and attach it to the question object.
         if (!$question->options = $DB->get_record('question_truefalse',
                 array('question' => $question->id))) {
             echo $OUTPUT->notification('Error: Missing question options!');
             return false;
         }
-        // Load the answers
+        // Load the answers.
         if (!$question->options->answers = $DB->get_records('question_answers',
                 array('question' =>  $question->id), 'id ASC')) {
             echo $OUTPUT->notification('Error: Missing question answers for truefalse question ' .

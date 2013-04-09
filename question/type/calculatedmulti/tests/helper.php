@@ -46,7 +46,7 @@ class qtype_calculatedmulti_test_helper extends question_test_helper {
      * @return qtype_calculatedmulti_question
      */
     public function make_calculatedmulti_question_sum() {
-        // TODO
+        // TODO.
         question_bank::load_question_definition_classes('calculated');
         $q = new qtype_calculatedmulti_question();
         test_question_maker::initialise_a_question($q);

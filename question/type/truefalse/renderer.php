@@ -59,7 +59,7 @@ class qtype_truefalse_renderer extends qtype_renderer {
             $falseattributes['disabled'] = 'disabled';
         }
 
-        // Work out which radio button to select (if any)
+        // Work out which radio button to select (if any).
         $truechecked = false;
         $falsechecked = false;
         $responsearray = array();
@@ -108,9 +108,9 @@ class qtype_truefalse_renderer extends qtype_renderer {
                 array('class' => 'r0' . $trueclass));
         $result .= html_writer::tag('div', $radiofalse . ' ' . $falsefeedbackimg,
                 array('class' => 'r1' . $falseclass));
-        $result .= html_writer::end_tag('div'); // answer
+        $result .= html_writer::end_tag('div'); // Answer.
 
-        $result .= html_writer::end_tag('div'); // ablock
+        $result .= html_writer::end_tag('div'); // Ablock.
 
         if ($qa->get_state() == question_state::$invalid) {
             $result .= html_writer::nonempty_tag('div',

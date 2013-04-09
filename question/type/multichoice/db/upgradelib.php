@@ -40,7 +40,7 @@ class qtype_multichoice_qe2_attempt_updater extends question_qtype_attempt_updat
     protected $order;
 
     public function is_blank_answer($state) {
-        // blank multichoice answers are not empty strings, they rather end in a colon
+        // Blank multichoice answers are not empty strings, they rather end in a colon.
         return empty($state->answer) || substr($state->answer, -1) == ':';
     }
 

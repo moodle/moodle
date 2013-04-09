@@ -80,13 +80,13 @@ class qtype_truefalse_edit_form extends question_edit_form {
             $question->feedbacktrue = array();
             $question->feedbacktrue['format'] = $trueanswer->feedbackformat;
             $question->feedbacktrue['text'] = file_prepare_draft_area(
-                $draftid,             // draftid
+                $draftid,             // Draftid
                 $this->context->id,   // context
                 'question',           // component
                 'answerfeedback',     // filarea
                 !empty($answerid) ? (int) $answerid : null, // itemid
                 $this->fileoptions,   // options
-                $trueanswer->feedback // text
+                $trueanswer->feedback // text.
             );
             $question->feedbacktrue['itemid'] = $draftid;
         }
@@ -100,13 +100,13 @@ class qtype_truefalse_edit_form extends question_edit_form {
             $question->feedbackfalse = array();
             $question->feedbackfalse['format'] = $falseanswer->feedbackformat;
             $question->feedbackfalse['text'] = file_prepare_draft_area(
-                $draftid,              // draftid
+                $draftid,              // Draftid
                 $this->context->id,    // context
                 'question',            // component
                 'answerfeedback',      // filarea
                 !empty($answerid) ? (int) $answerid : null, // itemid
                 $this->fileoptions,    // options
-                $falseanswer->feedback // text
+                $falseanswer->feedback // text.
             );
             $question->feedbackfalse['itemid'] = $draftid;
         }

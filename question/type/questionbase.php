@@ -610,7 +610,7 @@ abstract class question_graded_automatically extends question_with_responses
             return false;
         }
         $hint = $qa->get_applicable_hint();
-        $hintid = reset($args); // itemid is hint id.
+        $hintid = reset($args); // Itemid is hint id.
         return $hintid == $hint->id;
     }
 

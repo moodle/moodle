@@ -40,15 +40,15 @@ class restore_qtype_multianswer_plugin extends restore_qtype_plugin {
     protected function define_question_plugin_structure() {
         $paths = array();
 
-        // This qtype uses question_answers, add them
+        // This qtype uses question_answers, add them.
         $this->add_question_question_answers($paths);
 
-        // Add own qtype stuff
+        // Add own qtype stuff.
         $elename = 'multianswer';
         $elepath = $this->get_pathfor('/multianswer');
         $paths[] = new restore_path_element($elename, $elepath);
 
-        return $paths; // And we return the interesting paths
+        return $paths; // And we return the interesting paths.
     }
 
     /**
@@ -60,23 +60,23 @@ class restore_qtype_multianswer_plugin extends restore_qtype_plugin {
         $data = (object)$data;
         $oldid = $data->id;
 
-        // Detect if the question is created or mapped
+        // Detect if the question is created or mapped.
         $oldquestionid   = $this->get_old_parentid('question');
         $newquestionid   = $this->get_new_parentid('question');
         $questioncreated = $this->get_mappingid('question_created', $oldquestionid) ? true : false;
 
         // If the question has been created by restore, we need to create its
-        // question_multianswer too
+        // question_multianswer too.
         if ($questioncreated) {
-            // Adjust some columns
+            // Adjust some columns.
             $data->question = $newquestionid;
             // Note: multianswer->sequence is a list of question->id values. We aren't
             // recoding them here (because some questions can be missing yet). Instead
             // we'll perform the recode in the {@link after_execute} method of the plugin
-            // that gets executed once all questions have been created
-            // Insert record
+            // that gets executed once all questions have been created.
+            // Insert record.
             $newitemid = $DB->insert_record('question_multianswer', $data);
-            // Create mapping (need it for after_execute recode of sequence)
+            // Create mapping (need it for after_execute recode of sequence).
             $this->set_mapping('question_multianswer', $oldid, $newitemid);
         }
     }
@@ -93,7 +93,7 @@ class restore_qtype_multianswer_plugin extends restore_qtype_plugin {
     public function after_execute_question() {
         global $DB;
         // Now that all the questions have been restored, let's process
-        // the created question_multianswer sequences (list of question ids)
+        // the created question_multianswer sequences (list of question ids).
         $rs = $DB->get_recordset_sql("
                 SELECT qma.id, qma.sequence
                   FROM {question_multianswer} qma
@@ -152,21 +152,21 @@ class restore_qtype_multianswer_plugin extends restore_qtype_plugin {
         global $DB;
         $answer = $state->answer;
         $resultarr = array();
-        // Get sequence of questions
+        // Get sequence of questions.
         $sequence = $DB->get_field('question_multianswer', 'sequence',
                 array('question' => $state->question));
         $sequencearr = explode(',', $sequence);
-        // Let's process each pair
+        // Let's process each pair.
         foreach (explode(',', $answer) as $pair) {
             $pairarr = explode('-', $pair);
             $sequenceid = $pairarr[0];
             $subanswer = $pairarr[1];
-            // Calculate the questionid based on sequenceid
-            // Note it is already one *new* questionid that doesn't need mapping
+            // Calculate the questionid based on sequenceid.
+            // Note it is already one *new* questionid that doesn't need mapping.
             $questionid = $sequencearr[$sequenceid-1];
-            // Fetch qtype of the question (needed for delegation)
+            // Fetch qtype of the question (needed for delegation).
             $questionqtype = $DB->get_field('question', 'qtype', array('id' => $questionid));
-            // Delegate subanswer recode to proper qtype, faking one question_states record
+            // Delegate subanswer recode to proper qtype, faking one question_states record.
             $substate = new stdClass();
             $substate->question = $questionid;
             $substate->answer = $subanswer;

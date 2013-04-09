@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -44,12 +43,12 @@ class moodle1_qtype_truefalse_handler extends moodle1_qtype_handler {
      */
     public function process_question(array $data, array $raw) {
 
-        // convert and write the answers first
+        // Convert and write the answers first.
         if (isset($data['answers'])) {
             $this->write_answers($data['answers'], $this->pluginname);
         }
 
-        // convert and write the truefalse extra fields
+        // Convert and write the truefalse extra fields.
         foreach ($data['truefalse'] as $truefalse) {
             $truefalse['id'] = $this->converter->get_nextid();
             $this->write_xml('truefalse', $truefalse, array('/truefalse/id'));

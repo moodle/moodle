@@ -49,20 +49,20 @@ class restore_qtype_random_plugin extends restore_qtype_plugin {
 
         $answer = $state->answer;
         $result = '';
-        // randomxx-yy answer format
+        // Randomxx-yy answer format.
         if (preg_match('~^random([0-9]+)-(.*)$~', $answer, $matches)) {
             $questionid = $matches[1];
             $subanswer  = $matches[2];
             $newquestionid = $this->get_mappingid('question', $questionid);
             $questionqtype = $DB->get_field('question', 'qtype', array('id' => $newquestionid));
-            // Delegate subanswer recode to proper qtype, faking one question_states record
+            // Delegate subanswer recode to proper qtype, faking one question_states record.
             $substate = new stdClass();
             $substate->question = $newquestionid;
             $substate->answer = $subanswer;
             $newanswer = $this->step->restore_recode_legacy_answer($substate, $questionqtype);
             $result = 'random' . $newquestionid . '-' . $newanswer;
 
-        // simple question id format
+            // Simple question id format.
         } else {
             $newquestionid = $this->get_mappingid('question', $answer);
             $result = $newquestionid;

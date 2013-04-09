@@ -97,11 +97,11 @@ abstract class qtype_multichoice_base extends question_graded_automatically {
             return $this->check_combined_feedback_file_access($qa, $options, $filearea);
 
         } else if ($component == 'question' && $filearea == 'answer') {
-            $answerid = reset($args); // itemid is answer id.
+            $answerid = reset($args); // Itemid is answer id.
             return  in_array($answerid, $this->order);
 
         } else if ($component == 'question' && $filearea == 'answerfeedback') {
-            $answerid = reset($args); // itemid is answer id.
+            $answerid = reset($args); // Itemid is answer id.
             $response = $this->get_response($qa);
             $isselected = false;
             foreach ($this->order as $value => $ansid) {
@@ -110,7 +110,7 @@ abstract class qtype_multichoice_base extends question_graded_automatically {
                     break;
                 }
             }
-            // $options->suppresschoicefeedback is a hack specific to the
+            // Param $options->suppresschoicefeedback is a hack specific to the
             // oumultiresponse question type. It would be good to refactor to
             // avoid refering to it here.
             return $options->feedback && empty($options->suppresschoicefeedback) &&

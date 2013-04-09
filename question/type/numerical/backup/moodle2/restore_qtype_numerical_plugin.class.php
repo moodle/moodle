@@ -41,19 +41,19 @@ class restore_qtype_numerical_plugin extends restore_qtype_plugin {
 
         $paths = array();
 
-        // This qtype uses question_answers, add them
+        // This qtype uses question_answers, add them.
         $this->add_question_question_answers($paths);
 
-        // This qtype uses question_numerical_options and question_numerical_units, add them
+        // This qtype uses question_numerical_options and question_numerical_units, add them.
         $this->add_question_numerical_options($paths);
         $this->add_question_numerical_units($paths);
 
-        // Add own qtype stuff
+        // Add own qtype stuff.
         $elename = 'numerical';
         $elepath = $this->get_pathfor('/numerical_records/numerical_record');
         $paths[] = new restore_path_element($elename, $elepath);
 
-        return $paths; // And we return the interesting paths
+        return $paths; // And we return the interesting paths.
     }
 
     /**
@@ -65,7 +65,7 @@ class restore_qtype_numerical_plugin extends restore_qtype_plugin {
         $data = (object)$data;
         $oldid = $data->id;
 
-        // Detect if the question is created or mapped
+        // Detect if the question is created or mapped.
         $oldquestionid   = $this->get_old_parentid('question');
         $newquestionid   = $this->get_new_parentid('question');
         $questioncreated = $this->get_mappingid('question_created', $oldquestionid) ? true : false;
@@ -73,10 +73,10 @@ class restore_qtype_numerical_plugin extends restore_qtype_plugin {
         // If the question has been created by restore, we need to create its
         // question_numerical too.
         if ($questioncreated) {
-            // Adjust some columns
+            // Adjust some columns.
             $data->question = $newquestionid;
             $data->answer = $this->get_mappingid('question_answer', $data->answer);
-            // Insert record
+            // Insert record.
             $newitemid = $DB->insert_record('question_numerical', $data);
         }
     }

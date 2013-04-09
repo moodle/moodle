@@ -72,8 +72,8 @@ class qtype_random_edit_form extends question_edit_form {
     }
 
     public function validation($fromform, $files) {
-        //validation of category
-        //is not relevant for this question type
+        // Validation of category is not relevant for this question type.
+
         return array();
     }
 
