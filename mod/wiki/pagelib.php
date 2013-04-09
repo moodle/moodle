@@ -2066,7 +2066,7 @@ class page_wiki_save extends page_wiki_edit {
 
             //deleting old locks
             wiki_delete_locks($this->page->id, $USER->id, $this->section);
-            $url = new moodle_url('view.php', array('pageid' => $this->page->id, 'group' => $this->subwiki->groupid));
+            $url = new moodle_url('/mod/wiki/view.php', array('pageid' => $this->page->id, 'group' => $this->subwiki->groupid));
             redirect($url);
         } else {
             print_error('savingerror', 'wiki');
