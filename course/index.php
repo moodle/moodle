@@ -24,29 +24,36 @@
  */
 
 require_once("../config.php");
-require_once("lib.php");
+require_once($CFG->dirroot. '/course/lib.php');
+require_once($CFG->libdir. '/coursecatlib.php');
 
+$categoryid = optional_param('categoryid', 0, PARAM_INT); // Category id
 $site = get_site();
 
-$systemcontext = context_system::instance();
+if ($categoryid) {
+    $PAGE->set_category_by_id($categoryid);
+    $PAGE->set_url(new moodle_url('/course/index.php', array('categoryid' => $categoryid)));
+    // And the object has been loaded for us no need for another DB call
+    $category = $PAGE->category;
+} else {
+    $categoryid = 0;
+    $PAGE->set_url('/course/index.php');
+    $PAGE->set_context(context_system::instance());
+}
 
-$PAGE->set_url('/course/index.php');
-$PAGE->set_context($systemcontext);
-$PAGE->set_pagelayout('admin');
+$PAGE->set_pagelayout('coursecategory');
 $courserenderer = $PAGE->get_renderer('core', 'course');
 
 if ($CFG->forcelogin) {
     require_login();
 }
 
-$countcategories = $DB->count_records('course_categories');
-if (can_edit_in_category()) {
-    $managebutton = $OUTPUT->single_button(new moodle_url('/course/manage.php'),
-                    get_string('managecourses'), 'get');
-    $PAGE->set_button($managebutton);
+if ($categoryid && !$category->visible && !has_capability('moodle/category:viewhiddencategories', $PAGE->context)) {
+    throw new moodle_exception('unknowncategory');
 }
-$PAGE->set_heading($COURSE->fullname);
-$content = $courserenderer->course_category(0);
+
+$PAGE->set_heading($site->fullname);
+$content = $courserenderer->course_category($categoryid);
 
 echo $OUTPUT->header();
 echo $OUTPUT->skip_link_target();

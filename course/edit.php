@@ -95,10 +95,10 @@ $editform = new course_edit_form(NULL, array('course'=>$course, 'category'=>$cat
 if ($editform->is_cancelled()) {
         switch ($returnto) {
             case 'category':
-                $url = new moodle_url($CFG->wwwroot.'/course/category.php', array('id'=>$categoryid));
+                $url = new moodle_url($CFG->wwwroot.'/course/index.php', array('categoryid' => $categoryid));
                 break;
             case 'catmanage':
-                $url = new moodle_url($CFG->wwwroot.'/course/manage.php', array('id'=>$categoryid));
+                $url = new moodle_url($CFG->wwwroot.'/course/manage.php', array('categoryid' => $categoryid));
                 break;
             case 'topcatmanage':
                 $url = new moodle_url($CFG->wwwroot.'/course/manage.php');

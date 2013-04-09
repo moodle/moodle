@@ -86,9 +86,9 @@ $mform->set_data($category);
 
 if ($mform->is_cancelled()) {
     if ($id) {
-        redirect($CFG->wwwroot . '/course/manage.php?id=' . $id);
+        redirect($CFG->wwwroot . '/course/manage.php?categoryid=' . $id);
     } else if ($parent) {
-        redirect($CFG->wwwroot .'/course/manage.php?id=' . $parent);
+        redirect($CFG->wwwroot .'/course/manage.php?categoryid=' . $parent);
     } else {
         redirect($CFG->wwwroot .'/course/manage.php');
     }
@@ -103,7 +103,7 @@ if ($mform->is_cancelled()) {
         $newcategory = coursecat::create($data, $editoroptions);
     }
 
-    redirect('manage.php?id='.$newcategory->id);
+    redirect('manage.php?categoryid='.$newcategory->id);
 }
 
 // Page "Add new category" (with "Top" as a parent) does not exist in navigation.

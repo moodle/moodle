@@ -37,7 +37,7 @@
 
     $PAGE->navbar->add($stradministration, new moodle_url('/admin/index.php/'));
     $PAGE->navbar->add($strcategories, new moodle_url('/course/index.php'));
-    $PAGE->navbar->add($categoryname, new moodle_url('/course/category.php', array('id'=>$course->category)));
+    $PAGE->navbar->add($categoryname, new moodle_url('/course/index.php', array('categoryid' => $course->category)));
     if (! $delete) {
         $strdeletecheck = get_string("deletecheck", "", $courseshortname);
         $strdeletecoursecheck = get_string("deletecoursecheck");
@@ -49,7 +49,7 @@
 
         $message = "$strdeletecoursecheck<br /><br />" . format_string($course->fullname, true, array('context' => $coursecontext)) .  " (" . $courseshortname . ")";
 
-        echo $OUTPUT->confirm($message, "delete.php?id=$course->id&delete=".md5($course->timemodified), "manage.php?id=$course->category");
+        echo $OUTPUT->confirm($message, "delete.php?id=$course->id&delete=".md5($course->timemodified), "manage.php?categoryid=$course->category");
 
         echo $OUTPUT->footer();
         exit;
@@ -80,7 +80,7 @@
 
     echo $OUTPUT->heading( get_string("deletedcourse", "", $courseshortname) );
 
-    echo $OUTPUT->continue_button("manage.php?id=$course->category");
+    echo $OUTPUT->continue_button("manage.php?categoryid=$course->category");
 
     echo $OUTPUT->footer();
 
