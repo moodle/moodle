@@ -906,7 +906,7 @@ class available_update_checker {
             throw new available_update_checker_exception('err_response_status', $response['status']);
         }
 
-        if (empty($response['apiver']) or $response['apiver'] !== '1.1') {
+        if (empty($response['apiver']) or $response['apiver'] !== '1.2') {
             throw new available_update_checker_exception('err_response_format_version', $response['apiver']);
         }
 
@@ -1047,7 +1047,7 @@ class available_update_checker {
         if (!empty($CFG->config_php_settings['alternativeupdateproviderurl'])) {
             return $CFG->config_php_settings['alternativeupdateproviderurl'];
         } else {
-            return 'https://download.moodle.org/api/1.1/updates.php';
+            return 'https://download.moodle.org/api/1.2/updates.php';
         }
     }
 
