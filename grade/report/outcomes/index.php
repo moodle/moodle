@@ -39,26 +39,43 @@ $context = context_course::instance($course->id);
 
 require_capability('gradereport/outcomes:view', $context);
 
-//first make sure we have proper final grades
+// First make sure we have proper final grades.
 grade_regrade_final_grades($courseid);
 
-// Grab all outcomes used in course
+// Grab all outcomes used in course.
 $report_info = array();
 $outcomes = grade_outcome::fetch_all_available($courseid);
 
-// Get grade_items that use each outcome
+// Will exclude grades of suspended users if required.
+$defaultgradeshowactiveenrol = !empty($CFG->grade_report_showonlyactiveenrol);
+$showonlyactiveenrol = get_user_preferences('grade_report_showonlyactiveenrol', $defaultgradeshowactiveenrol);
+$showonlyactiveenrol = $showonlyactiveenrol || !has_capability('moodle/course:viewsuspendedusers', $context);
+if ($showonlyactiveenrol) {
+    $suspendedusers = get_suspended_userids($context);
+}
+
+// Get grade_items that use each outcome.
 foreach ($outcomes as $outcomeid => $outcome) {
     $report_info[$outcomeid]['items'] = $DB->get_records_select('grade_items', "outcomeid = ? AND courseid = ?", array($outcomeid, $courseid));
     $report_info[$outcomeid]['outcome'] = $outcome;
 
-    // Get average grades for each item
+    // Get average grades for each item.
     if (is_array($report_info[$outcomeid]['items'])) {
         foreach ($report_info[$outcomeid]['items'] as $itemid => $item) {
+            $params = array();
+            $hidesuspendedsql = '';
+            if ($showonlyactiveenrol && !empty($suspendedusers)) {
+                list($notinusers, $params) = $DB->get_in_or_equal($suspendedusers, SQL_PARAMS_QM, null, false);
+                $hidesuspendedsql = ' AND userid ' . $notinusers;
+            }
+            $params = array_merge(array($itemid), $params);
+
             $sql = "SELECT itemid, AVG(finalgrade) AS avg, COUNT(finalgrade) AS count
                       FROM {grade_grades}
-                     WHERE itemid = ?
-                  GROUP BY itemid";
-            $info = $DB->get_records_sql($sql, array($itemid));
+                     WHERE itemid = ?".
+                     $hidesuspendedsql.
+                  "GROUP BY itemid";
+            $info = $DB->get_records_sql($sql, $params);
 
             if (!$info) {
                 unset($report_info[$outcomeid]['items'][$itemid]);
@@ -86,7 +103,7 @@ $html .= '<th class="header c5" scope="col">' . get_string('numberofgrades', 'gr
 $row = 0;
 foreach ($report_info as $outcomeid => $outcomedata) {
     $rowspan = count($outcomedata['items']);
-    // If there are no items for this outcome, rowspan will equal 0, which is not good
+    // If there are no items for this outcome, rowspan will equal 0, which is not good.
     if ($rowspan == 0) {
         $rowspan = 1;
     }
@@ -134,7 +151,7 @@ foreach ($report_info as $outcomeid => $outcomedata) {
         $items_html .= "<td class=\"cell c3\"> - </td><td class=\"cell c4\"> - </td><td class=\"cell c5\"> 0 </td></tr>\n";
     }
 
-    // Calculate outcome average
+    // Calculate outcome average.
     if (is_array($outcomedata['items'])) {
         $count = count($outcomedata['items']);
         if ($count > 0) {

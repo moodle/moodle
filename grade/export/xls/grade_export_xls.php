@@ -48,7 +48,9 @@ class grade_export_xls extends grade_export {
             $myxls->write_string(0, $id, $field->fullname);
         }
         $pos = count($profilefields);
-
+        if (!$this->onlyactive) {
+            $myxls->write_string(0, $pos++, get_string("suspended"));
+        }
         foreach ($this->columns as $grade_item) {
             $myxls->write_string(0, $pos++, $this->format_column_name($grade_item));
 
@@ -74,7 +76,10 @@ class grade_export_xls extends grade_export {
                 $myxls->write_string($i, $id, $fieldvalue);
             }
             $j = count($profilefields);
-
+            if (!$this->onlyactive) {
+                $issuspended = ($user->suspendedenrolment) ? get_string('yes') : '';
+                $myxls->write_string($i, $j++, $issuspended);
+            }
             foreach ($userdata->grades as $itemid => $grade) {
                 if ($export_tracking) {
                     $status = $geub->track($grade);

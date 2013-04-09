@@ -94,6 +94,12 @@ class graded_users_iterator {
     protected $allowusercustomfields = false;
 
     /**
+     * List of suspended users in course. This includes users whose enrolment status is suspended
+     * or enrolment has expired or not started.
+     */
+    protected $suspendedusers = array();
+
+    /**
      * Constructor
      *
      * @param object $course A course object
@@ -208,6 +214,13 @@ class graded_users_iterator {
                     ORDER BY $order";
         $this->users_rs = $DB->get_recordset_sql($users_sql, $params);
 
+        if (!$this->onlyactive) {
+            $context = context_course::instance($this->course->id);
+            $this->suspendedusers = get_suspended_userids($context);
+        } else {
+            $this->suspendedusers = array();
+        }
+
         if (!empty($this->grade_items)) {
             $itemids = array_keys($this->grade_items);
             list($itemidsql, $grades_params) = $DB->get_in_or_equal($itemids, SQL_PARAMS_NAMED, 'items');
@@ -300,6 +313,8 @@ class graded_users_iterator {
             }
         }
 
+        // Set user suspended status.
+        $user->suspendedenrolment = isset($this->suspendedusers[$user->id]);
         $result = new stdClass();
         $result->user      = $user;
         $result->grades    = $grades;
@@ -407,9 +422,14 @@ function grade_get_graded_users_select($report, $course, $userid, $groupid, $inc
     if (is_null($userid)) {
         $userid = $USER->id;
     }
-
+    $coursecontext = context_course::instance($course->id);
+    $defaultgradeshowactiveenrol = !empty($CFG->grade_report_showonlyactiveenrol);
+    $showonlyactiveenrol = get_user_preferences('grade_report_showonlyactiveenrol', $defaultgradeshowactiveenrol);
+    $showonlyactiveenrol = $showonlyactiveenrol || !has_capability('moodle/course:viewsuspendedusers', $coursecontext);
     $menu = array(); // Will be a list of userid => user name
+    $menususpendedusers = array(); // Suspended users go to a separate optgroup.
     $gui = new graded_users_iterator($course, null, $groupid);
+    $gui->require_active_enrolment($showonlyactiveenrol);
     $gui->init();
     $label = get_string('selectauser', 'grades');
     if ($includeall) {
@@ -418,12 +438,21 @@ function grade_get_graded_users_select($report, $course, $userid, $groupid, $inc
     }
     while ($userdata = $gui->next_user()) {
         $user = $userdata->user;
-        $menu[$user->id] = fullname($user);
+        $userfullname = fullname($user);
+        if ($user->suspendedenrolment) {
+            $menususpendedusers[$user->id] = $userfullname;
+        } else {
+            $menu[$user->id] = $userfullname;
+        }
     }
     $gui->close();
 
     if ($includeall) {
-        $menu[0] .= " (" . (count($menu) - 1) . ")";
+        $menu[0] .= " (" . (count($menu) + count($menususpendedusers) - 1) . ")";
+    }
+
+    if (!empty($menususpendedusers)) {
+        $menu[] = array(get_string('suspendedusers') => $menususpendedusers);
     }
     $select = new single_select(new moodle_url('/grade/report/'.$report.'/index.php', array('id'=>$course->id)), 'userid', $menu, $userid);
     $select->label = $label;

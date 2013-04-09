@@ -51,7 +51,8 @@ if ($groupmode == SEPARATEGROUPS and !$currentgroup and !has_capability('moodle/
 
 // process post information
 if ($data = $mform->get_data()) {
-    $export = new grade_export_xls($course, $currentgroup, '', false, false, $data->display, $data->decimals, $data->export_onlyactive, true);
+    $onlyactive = $data->export_onlyactive || !has_capability('moodle/course:viewsuspendedusers', $context);
+    $export = new grade_export_xls($course, $currentgroup, '', false, false, $data->display, $data->decimals, $onlyactive, true);
 
     // print the grades on screen for feedbacks
     $export->process_form($data);

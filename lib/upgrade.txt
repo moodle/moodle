@@ -48,6 +48,9 @@ information provided here is intended especially for developers.
   get_courses_wmanagers()
   See http://docs.moodle.org/dev/Courses_lists_upgrade_to_2.5
 * $core_renderer->block_move_target() changed to support more verbose move-block-here descriptions.
+* Additional (optional) param $onlyactive has been added to get_enrolled_users, count_enrolled_users
+  functions to get information for only active (excluding suspended enrolments) users. Included two
+  helper functions extract_suspended_users, get_suspended_userids to extract suspended user information.
 
 Database (DML) layer:
 * $DB->sql_empty() is deprecated, you have to use sql parameters with empty values instead,
