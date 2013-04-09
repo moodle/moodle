@@ -236,7 +236,7 @@ class block_completionstatus extends block_base {
             // Display link to detailed view.
             $details = new moodle_url('/blocks/completionstatus/details.php', array('course' => $course->id));
             $this->content->footer = html_writer::empty_tag('br');
-            $this->content->footer = html_writer::tag('a', get_string('moredetails', 'completion'), array('href'=>$details->out()));
+            $this->content->footer = html_writer::link($details, get_string('moredetails', 'completion'));
         } else {
             // If user is not enrolled, show error.
             $this->content->text = get_string('nottracked', 'completion');
@@ -245,8 +245,7 @@ class block_completionstatus extends block_base {
         if (has_capability('report/completion:view', $context)) {
             $report = new moodle_url('/report/completion/index.php', array('course' => $course->id));
             $this->content->footer .= html_writer::empty_tag('br');
-            $this->content->footer .= html_writer::tag('a', get_string('viewcoursereport', 'completion'),
-                    array('href'=>$report->out()));
+            $this->content->footer .= html_writer::link($report, get_string('viewcoursereport', 'completion'));
         }
 
         return $this->content;
