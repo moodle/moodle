@@ -70,8 +70,7 @@ function xmldb_label_upgrade($oldversion) {
             $courses = $DB->get_fieldset_sql('SELECT DISTINCT course '.
                 'FROM {course_modules} WHERE module=?', array($modid));
             foreach ($courses as $courseid) {
-                $DB->execute('UPDATE {course} set modinfo = ?, sectioncache = ? '.
-                        'WHERE id = ?', array(null, null, $courseid));
+                rebuild_course_cache($courseid, true);
             }
         }
 
