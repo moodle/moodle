@@ -47,9 +47,9 @@ class moodle1_qtype_essay_handler extends moodle1_qtype_handler {
             'responsefieldlines'     => 15,
             'attachments'            => 0,
             'graderinfo'             => '',
-            'graderinfoformat'       => FORMAT_MOODLE,
+            'graderinfoformat'       => FORMAT_HTML,
             'responsetemplate'       => '',
-            'responsetemplateformat' => FORMAT_MOODLE
+            'responsetemplateformat' => FORMAT_HTML
         ), array('/essay/id'));
     }
 }
