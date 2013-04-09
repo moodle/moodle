@@ -588,13 +588,16 @@ class phpunit_util {
                 $warnings[] = 'Warning: unexpected change of $COURSE';
             }
 
-            if (ini_get('max_execution_time') != 0) {
-                // TODO un-comment this warning, once we have fixed the test
-                // failures that it causes.
-                // $warnings[] = 'Warning: max_execution_time was changed.';
-                // See MDL-38989 for details.
-                set_time_limit(0);
-            }
+        }
+
+        if (ini_get('max_execution_time') != 0) {
+            // This is special warning for all resets because we do not want any
+            // libraries to mess with timeouts unintentionally.
+            // Our PHPUnit integration is not supposed to change it either.
+
+            // TODO: MDL-38912 uncomment and fix all + somehow resolve timeouts in failed tests.
+            //$warnings[] = 'Warning: max_execution_time was changed.';
+            set_time_limit(0);
         }
 
         // restore original globals
