@@ -47,6 +47,7 @@ class gradingform_rubric_editrubric extends moodleform {
         $form->setType('areaid', PARAM_INT);
 
         $form->addElement('hidden', 'returnurl');
+        $form->setType('returnurl', PARAM_LOCALURL);
 
         // name
         $form->addElement('text', 'name', get_string('name', 'gradingform_rubric'), array('size'=>52));
