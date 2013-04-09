@@ -667,12 +667,18 @@ class navigation_node implements renderable {
      * Hides the node and any children it has.
      *
      * @since 2.3.5
+     * @param array $typestohide Optional. An array of node types that should be hidden.
+     *      If null all nodes will be hidden.
+     *      If an array is given then nodes will only be hidden if their type mtatches an element in the array.
+     *          e.g. array(navigation_node::TYPE_COURSE) would hide only course nodes.
      */
-    public function hide() {
-        $this->display = false;
-        if ($this->has_children()) {
-            foreach ($this->children as $child) {
-                $child->hide();
+    public function hide(array $typestohide = null) {
+        if ($typestohide === null || in_array($this->type, $typestohide)) {
+            $this->display = false;
+            if ($this->has_children()) {
+                foreach ($this->children as $child) {
+                    $child->hide($typestohide);
+                }
             }
         }
     }
@@ -2745,18 +2751,24 @@ class global_navigation extends navigation_node {
     public function set_expansion_limit($type) {
         global $SITE;
         $nodes = $this->find_all_of_type($type);
+
+        // We only want to hide specific types of nodes.
+        // Only nodes that represent "structure" in the navigation tree should be hidden.
+        // If we hide all nodes then we risk hiding vital information.
+        $typestohide = array(
+            self::TYPE_CATEGORY,
+            self::TYPE_COURSE,
+            self::TYPE_SECTION,
+            self::TYPE_ACTIVITY
+        );
+
         foreach ($nodes as $node) {
             // We need to generate the full site node
             if ($type == self::TYPE_COURSE && $node->key == $SITE->id) {
                 continue;
             }
             foreach ($node->children as $child) {
-                // We still want to show course reports and participants containers
-                // or there will be navigation missing.
-                if ($type == self::TYPE_COURSE && $child->type === self::TYPE_CONTAINER) {
-                    continue;
-                }
-                $child->hide();
+                $child->hide($typestohide);
             }
         }
         return true;
