@@ -75,7 +75,7 @@ if ($id) {
     // This is sure to be the category context.
     $context = $PAGE->context;
     if (!can_edit_in_category($coursecat->id)) {
-        redirect(new moodle_url('/course/category.php', array('id' => $coursecat->id)));
+        redirect(new moodle_url('/course/index.php', array('categoryid' => $coursecat->id)));
     }
 } else {
     $context = context_system::instance();
@@ -298,7 +298,7 @@ if (can_edit_in_category()) {
     // otherwise the admin block does not appear to this user, and you get an error.
     require_once($CFG->libdir . '/adminlib.php');
     if ($id) {
-        navigation_node::override_active_url(new moodle_url('/course/category.php', array('id' => $id)));
+        navigation_node::override_active_url(new moodle_url('/course/index.php', array('categoryid' => $id)));
     }
     admin_externalpage_setup('coursemgmt', '', $urlparams, $CFG->wwwroot . '/course/manage.php');
     $settingsnode = $PAGE->settingsnav->find_active_node();

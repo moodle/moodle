@@ -37,7 +37,7 @@
 
     $PAGE->navbar->add($stradministration, new moodle_url('/admin/index.php/'));
     $PAGE->navbar->add($strcategories, new moodle_url('/course/index.php'));
-    $PAGE->navbar->add($categoryname, new moodle_url('/course/category.php', array('id'=>$course->category)));
+    $PAGE->navbar->add($categoryname, new moodle_url('/course/index.php', array('categoryid' => $course->category)));
     if (! $delete) {
         $strdeletecheck = get_string("deletecheck", "", $courseshortname);
         $strdeletecoursecheck = get_string("deletecoursecheck");

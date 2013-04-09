@@ -1693,7 +1693,7 @@ class global_navigation extends navigation_node {
                 $excessivecategories = $DB->get_records_sql($sql, $params);
                 foreach ($categories as &$category) {
                     if (array_key_exists($category->key, $excessivecategories) && !$this->can_add_more_courses_to_category($category)) {
-                        $url = new moodle_url('/course/category.php', array('id'=>$category->key));
+                        $url = new moodle_url('/course/index.php', array('categoryid' => $category->key));
                         $category->add(get_string('viewallcourses'), $url, self::TYPE_SETTING);
                     }
                 }
@@ -1713,7 +1713,7 @@ class global_navigation extends navigation_node {
         if (array_key_exists($category->id, $this->addedcategories)) {
             return;
         }
-        $url = new moodle_url('/course/category.php', array('id' => $category->id));
+        $url = new moodle_url('/course/index.php', array('categoryid' => $category->id));
         $context = context_coursecat::instance($category->id);
         $categoryname = format_string($category->name, true, array('context' => $context));
         $categorynode = $parent->add($categoryname, $url, $nodetype, $categoryname, $category->id);

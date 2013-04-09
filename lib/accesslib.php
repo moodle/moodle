@@ -6281,7 +6281,7 @@ class context_coursecat extends context {
      * @return moodle_url
      */
     public function get_url() {
-        return new moodle_url('/course/category.php', array('id'=>$this->_instanceid));
+        return new moodle_url('/course/index.php', array('categoryid' => $this->_instanceid));
     }
 
     /**

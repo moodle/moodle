@@ -527,7 +527,7 @@ BRANCH.prototype = {
                 url = M.cfg.wwwroot + '/course/index.php';
             }
         } else {
-            url = M.cfg.wwwroot+'/course/category.php?id=' + branch.get('key');
+            url = M.cfg.wwwroot+'/course/index.php?categoryid=' + branch.get('key');
         }
         branch.addChild({
             name : M.str.moodle.viewallcourses,
