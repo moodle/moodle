@@ -61,6 +61,7 @@ class steps_definitions_form extends moodleform {
         );
 
         $mform->addElement('text', 'filter', get_string('stepsdefinitionscontains', 'tool_behat'));
+        $mform->setType('filter', PARAM_NOTAGS);
 
         $mform->addElement('submit', 'submit', get_string('viewsteps', 'tool_behat'));
     }
