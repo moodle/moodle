@@ -291,13 +291,13 @@ if (($action == 'edit') || ($action == 'new')) {
     $table->attributes['class'] = 'admintable generaltable';
 
     // Get list of used plug-ins
-    $instances = repository::get_types();
-    if (!empty($instances)) {
+    $repositorytypes = repository::get_types();
+    if (!empty($repositorytypes)) {
         // Array to store plugins being used
         $alreadyplugins = array();
-        $totalinstances = count($instances);
+        $totalrepositorytypes = count($repositorytypes);
         $updowncount = 1;
-        foreach ($instances as $i) {
+        foreach ($repositorytypes as $i) {
             $settings = '';
             $typename = $i->get_typename();
             // Display edit link only if you can config the type or if it has multiple instances (e.g. has instance config)
@@ -320,9 +320,10 @@ if (($action == 'edit') || ($action == 'new')) {
                     $userinstances = array();
 
                     foreach ($instances as $instance) {
-                        if ($instance->context->contextlevel == CONTEXT_COURSE) {
+                        $repocontext = context::instance_by_id($instance->instance->contextid);
+                        if ($repocontext->contextlevel == CONTEXT_COURSE) {
                             $courseinstances[] = $instance;
-                        } else if ($instance->context->contextlevel == CONTEXT_USER) {
+                        } else if ($repocontext->contextlevel == CONTEXT_USER) {
                             $userinstances[] = $instance;
                         }
                     }
@@ -370,7 +371,7 @@ if (($action == 'edit') || ($action == 'new')) {
             else {
                 $updown .= $spacer;
             }
-            if ($updowncount < $totalinstances) {
+            if ($updowncount < $totalrepositorytypes) {
                 $updown .= "<a href=\"$sesskeyurl&amp;action=movedown&amp;repos=".$typename."\">";
                 $updown .= "<img src=\"" . $OUTPUT->pix_url('t/down') . "\" alt=\"down\" /></a>";
             }
