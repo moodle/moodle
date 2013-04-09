@@ -33,6 +33,7 @@ $site = get_site();
 if ($categoryid) {
     $PAGE->set_category_by_id($categoryid);
     $PAGE->set_url(new moodle_url('/course/index.php', array('categoryid' => $categoryid)));
+    $PAGE->set_pagetype('course-index-category');
     // And the object has been loaded for us no need for another DB call
     $category = $PAGE->category;
 } else {

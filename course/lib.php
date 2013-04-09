@@ -2825,22 +2825,31 @@ class course_request {
 /**
  * Return a list of page types
  * @param string $pagetype current page type
- * @param stdClass $parentcontext Block's parent context
- * @param stdClass $currentcontext Current context of block
+ * @param context $parentcontext Block's parent context
+ * @param context $currentcontext Current context of block
+ * @return array array of page types
  */
 function course_page_type_list($pagetype, $parentcontext, $currentcontext) {
-    // $currentcontext could be null, get_context_info_array() will throw an error if this is the case.
-    if (isset($currentcontext)) {
-        // if above course context ,display all course fomats
-        list($currentcontext, $course, $cm) = get_context_info_array($currentcontext->id);
-        if ($course->id == SITEID) {
-            return array('*'=>get_string('page-x', 'pagetype'));
-        }
+    if ($pagetype === 'course-index' || $pagetype === 'course-index-category') {
+        // For courses and categories browsing pages (/course/index.php) add option to show on ANY category page
+        $pagetypes = array('*' => get_string('page-x', 'pagetype'),
+            'course-index-*' => get_string('page-course-index-x', 'pagetype'),
+        );
+    } else if ($currentcontext && (!($coursecontext = $currentcontext->get_course_context(false)) || $coursecontext->instanceid == SITEID)) {
+        // We know for sure that despite pagetype starts with 'course-' this is not a page in course context (i.e. /course/search.php, etc.)
+        $pagetypes = array('*' => get_string('page-x', 'pagetype'));
+    } else {
+        // Otherwise consider it a page inside a course even if $currentcontext is null
+        $pagetypes = array('*' => get_string('page-x', 'pagetype'),
+            'course-*' => get_string('page-course-x', 'pagetype'),
+            'course-view-*' => get_string('page-course-view-x', 'pagetype')
+        );
     }
-    return array('*'=>get_string('page-x', 'pagetype'),
-        'course-*'=>get_string('page-course-x', 'pagetype'),
-        'course-view-*'=>get_string('page-course-view-x', 'pagetype')
-    );
+    // If the string definition for current page is missing, add generic name so the form does not get broken
+    if (!get_string_manager()->string_exists('page-'. $pagetype, 'pagetype')) {
+        $pagetypes[$pagetype] = $pagetype;
+    }
+    return $pagetypes;
 }
 
 /**
