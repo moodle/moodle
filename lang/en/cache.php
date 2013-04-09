@@ -53,6 +53,7 @@ $string['cachedef_plugininfo_repository'] = 'Plugin info - repositories';
 $string['cachedef_pluginlist'] = 'Plugin list';
 $string['cachedef_plugintypes'] = 'Plugin types';
 $string['cachedef_questiondata'] = 'Question definitions';
+$string['cachedef_repositories'] = 'Repositories instances data';
 $string['cachedef_string'] = 'Language string cache';
 $string['cachedef_yuimodules'] = 'YUI Module definitions';
 $string['cachelock_file_default'] = 'Default file locking';
