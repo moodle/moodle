@@ -338,6 +338,8 @@ function upgrade_stale_php_files_present() {
 
     $someexamplesofremovedfiles = array(
         // removed in 2.5dev
+        '/backup/lib.php',
+        '/backup/bb/README.txt',
         '/lib/excel/test.php',
         // removed in 2.4dev
         '/admin/tool/unittest/simpletestlib.php',

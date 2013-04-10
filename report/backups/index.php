@@ -25,7 +25,6 @@
 
 require_once('../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
-require_once($CFG->dirroot.'/backup/lib.php');
 
 // Required for constants in backup_cron_automated_helper
 require_once($CFG->dirroot.'/backup/util/helper/backup_cron_helper.class.php');
