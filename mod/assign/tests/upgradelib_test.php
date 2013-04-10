@@ -40,6 +40,11 @@ require_once($CFG->dirroot . '/mod/assign/tests/base_test.php');
  */
 class mod_assign_upgradelib_testcase extends mod_assign_base_testcase {
 
+    protected function tearDown() {
+        // Reset the timeouts.
+        set_time_limit(0);
+    }
+
     public function test_upgrade_upload_assignment() {
         global $DB;
 

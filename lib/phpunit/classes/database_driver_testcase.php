@@ -130,7 +130,7 @@ abstract class database_driver_testcase extends PHPUnit_Framework_TestCase {
             self::$extradb->dispose();
             self::$extradb = null;
         }
-        phpunit_util::reset_all_data();
+        phpunit_util::reset_all_data(null);
         parent::tearDownAfterClass();
     }
 
