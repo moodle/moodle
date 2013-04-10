@@ -468,7 +468,7 @@ class assign_grading_table extends table_sql implements renderable {
     public function col_team(stdClass $row) {
         $submission = false;
         $group = false;
-        $this->get_group_and_submission($row->id, $group, $submission);
+        $this->get_group_and_submission($row->id, $group, $submission, -1);
         if ($group) {
             return $group->name;
         }
@@ -481,8 +481,9 @@ class assign_grading_table extends table_sql implements renderable {
      * @param int $userid The user id for this submission
      * @param int $groupid The groupid (returned)
      * @param mixed $submission The stdClass submission or false (returned)
+     * @param int $attemptnumber Return a specific attempt number (-1 for latest)
      */
-    public function get_group_and_submission($userid, &$group, &$submission) {
+    protected function get_group_and_submission($userid, &$group, &$submission, $attemptnumber) {
         $group = false;
         if (isset($this->submissiongroups[$userid])) {
             $group = $this->submissiongroups[$userid];
@@ -496,11 +497,13 @@ class assign_grading_table extends table_sql implements renderable {
             $groupid = $group->id;
         }
 
-        if (isset($this->groupsubmissions[$groupid])) {
-            $submission = $this->groupsubmissions[$groupid];
+        // Static cache is keyed by groupid and attemptnumber.
+        // We may need both the latest and previous attempt in the same page.
+        if (isset($this->groupsubmissions[$groupid . ':' . $attemptnumber])) {
+            $submission = $this->groupsubmissions[$groupid . ':' . $attemptnumber];
         } else {
-            $submission = $this->assignment->get_group_submission($userid, $groupid, false);
-            $this->groupsubmissions[$groupid] = $submission;
+            $submission = $this->assignment->get_group_submission($userid, $groupid, false, $attemptnumber);
+            $this->groupsubmissions[$groupid . ':' . $attemptnumber] = $submission;
         }
     }
 
@@ -514,7 +517,7 @@ class assign_grading_table extends table_sql implements renderable {
     public function col_teamstatus(stdClass $row) {
         $submission = false;
         $group = false;
-        $this->get_group_and_submission($row->id, $group, $submission);
+        $this->get_group_and_submission($row->id, $group, $submission, -1);
 
         $status = '';
         if ($submission) {
@@ -965,8 +968,13 @@ class assign_grading_table extends table_sql implements renderable {
                 if ($this->assignment->get_instance()->teamsubmission) {
                     $group = false;
                     $submission = false;
-                    $this->get_group_and_submission($row->id, $group, $submission);
+
+                    $this->get_group_and_submission($row->id, $group, $submission, -1);
                     if ($submission) {
+                        if ($submission->status == ASSIGN_SUBMISSION_STATUS_REOPENED) {
+                            // For a newly reopened submission - we want to show the previous submission in the table.
+                            $this->get_group_and_submission($row->id, $group, $submission, $submission->attemptnumber-1);
+                        }
                         if (isset($field)) {
                             return $plugin->get_editor_text($field, $submission->id);
                         }
@@ -976,15 +984,21 @@ class assign_grading_table extends table_sql implements renderable {
                                                                       array());
                     }
                 } else if ($row->submissionid) {
-                    if (isset($field)) {
-                        return $plugin->get_editor_text($field, $row->submissionid);
+                    if ($row->status == ASSIGN_SUBMISSION_STATUS_REOPENED) {
+                        // For a newly reopened submission - we want to show the previous submission in the table.
+                        $submission = $this->assignment->get_user_submission($row->userid, false, $row->attemptnumber - 1);
+                    } else {
+                        $submission = new stdClass();
+                        $submission->id = $row->submissionid;
+                        $submission->timecreated = $row->firstsubmission;
+                        $submission->timemodified = $row->timesubmitted;
+                        $submission->assignment = $this->assignment->get_instance()->id;
+                        $submission->userid = $row->userid;
                     }
-                    $submission = new stdClass();
-                    $submission->id = $row->submissionid;
-                    $submission->timecreated = $row->firstsubmission;
-                    $submission->timemodified = $row->timesubmitted;
-                    $submission->assignment = $this->assignment->get_instance()->id;
-                    $submission->userid = $row->userid;
+                    // Field is used for only for import/export and refers the the fieldname for the text editor.
+                    if (isset($field)) {
+                        return $plugin->get_editor_text($field, $submission->id);
+                    }
                     return $this->format_plugin_summary_with_link($plugin,
                                                                   $submission,
                                                                   'grading',
