@@ -37,6 +37,9 @@ This files describes API changes in the assign code.
     New renderable object "assign_attempt_history" for rendering the list of previous submissions.
     New renderable object "assign_gradingmessage" for rendering a generic grading message.
 
+    assign_grading_table changes:
+        get_group_and_submission is now protected and should not be called from outside this class.
+
 
 === Earlier changes ===
 
