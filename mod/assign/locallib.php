@@ -2705,6 +2705,9 @@ class assign {
     public function can_view_submission($userid) {
         global $USER;
 
+        if (is_siteadmin()) {
+            return true;
+        }
         if (!is_enrolled($this->get_course_context(), $userid)) {
             return false;
         }
