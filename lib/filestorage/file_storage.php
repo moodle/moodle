@@ -2015,6 +2015,7 @@ class file_storage {
      */
     public function cron() {
         global $CFG, $DB;
+        require_once($CFG->libdir.'/cronlib.php');
 
         // find out all stale draft areas (older than 4 days) and purge them
         // those are identified by time stamp of the /. root dir
