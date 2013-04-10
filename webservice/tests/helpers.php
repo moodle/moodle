@@ -65,14 +65,33 @@ abstract class externallib_advanced_testcase extends advanced_testcase {
     }
 
     /**
-     * Unassign a capability to $USER
+     * Unassign a capability to $USER.
      *
-     * @param string $capability capability name
-     * @param int $contextid
-     * @param int $roleid
+     * @param string $capability capability name.
+     * @param int $contextid set the context id if you used assignUserCapability.
+     * @param int $roleid set the role id if you used assignUserCapability.
+     * @param int $courseid set the course id if you used getDataGenerator->enrol_users.
+     * @param string $enrol set the enrol plugin name if you used getDataGenerator->enrol_users with a different plugin than 'manual'.
      */
-    public static function unassignUserCapability($capability, $contextid, $roleid) {
-        global $USER;
+    public static function unassignUserCapability($capability, $contextid = null, $roleid = null, $courseid = null, $enrol = 'manual') {
+        global $DB;
+
+        if (!empty($courseid)) {
+            // Retrieve the role id.
+            $instances = $DB->get_records('enrol', array('courseid'=>$courseid, 'enrol'=>$enrol));
+            if (count($instances) != 1) {
+                 throw new coding_exception('No found enrol instance for courseid: ' . $courseid . ' and enrol: ' . $enrol);
+            }
+            $instance = reset($instances);
+
+            if (is_null($roleid) and $instance->roleid) {
+                $roleid = $instance->roleid;
+            }
+        } else {
+            if (empty($contextid) or empty($roleid)) {
+                throw new coding_exception('unassignUserCapaibility requires contextid/roleid or courseid');
+            }
+        }
 
         unassign_capability($capability, $roleid, $contextid);
 

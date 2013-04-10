@@ -76,17 +76,10 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
                 array('forum1' => $forum1->id, 'forum2' => $forum2->id)));
 
         // Enrol the user in two courses.
-        // Enrol them in the first course.
+        // DataGenerator->enrol_user automatically sets a role for the user with the permission mod/form:viewdiscussion.
+        $this->getDataGenerator()->enrol_user($user->id, $course1->id, null, 'manual');
+        // Execute real Moodle enrolment as we'll call unenrol() method on the instance later.
         $enrol = enrol_get_plugin('manual');
-        $enrolinstances = enrol_get_instances($course1->id, true);
-        foreach ($enrolinstances as $courseenrolinstance) {
-            if ($courseenrolinstance->enrol == "manual") {
-                $instance1 = $courseenrolinstance;
-                break;
-            }
-        }
-        $enrol->enrol_user($instance1, $user->id);
-        // Now enrol into the second course.
         $enrolinstances = enrol_get_instances($course2->id, true);
         foreach ($enrolinstances as $courseenrolinstance) {
             if ($courseenrolinstance->enrol == "manual") {
@@ -95,11 +88,6 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
             }
         }
         $enrol->enrol_user($instance2, $user->id);
-
-        // Assign capabilities to view forums for forum 1.
-        $cm1 = get_coursemodule_from_id('forum', $forum1->id, 0, false, MUST_EXIST);
-        $context1 = context_module::instance($cm1->id);
-        $roleid1 = $this->assignUserCapability('mod/forum:viewdiscussion', $context1->id);
 
         // Assign capabilities to view forums for forum 2.
         $cm2 = get_coursemodule_from_id('forum', $forum2->id, 0, false, MUST_EXIST);
@@ -140,9 +128,9 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         }
 
         // Call without required capability, ensure exception thrown.
-        $this->unassignUserCapability('mod/forum:viewdiscussion', $context1->id, $roleid1);
+        $this->unassignUserCapability('mod/forum:viewdiscussion', null, null, $course1->id);
         try {
-            mod_forum_external::get_forums_by_courses(array($course1->id));
+            $forums = mod_forum_external::get_forums_by_courses(array($course1->id));
             $this->fail('Exception expected due to missing capability.');
         } catch (moodle_exception $e) {
             $this->assertEquals('nopermissions', $e->errorcode);
@@ -252,16 +240,12 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
 
         // Enrol the user in the first course.
         $enrol = enrol_get_plugin('manual');
-        $enrolinstances = enrol_get_instances($course1->id, true);
-        foreach ($enrolinstances as $courseenrolinstance) {
-            if ($courseenrolinstance->enrol == "manual") {
-                $instance1 = $courseenrolinstance;
-                break;
-            }
-        }
-        $enrol->enrol_user($instance1, $user1->id);
+        // Following line enrol and assign default role id to the user.
+        // So the user automatically gets mod/forum:viewdiscussion on all forums of the course.
+        $this->getDataGenerator()->enrol_user($user1->id, $course1->id);
 
         // Now enrol into the second course.
+        // We don't use the dataGenerator as we need to get the $instance2 to unenrol later.
         $enrolinstances = enrol_get_instances($course2->id, true);
         foreach ($enrolinstances as $courseenrolinstance) {
             if ($courseenrolinstance->enrol == "manual") {
@@ -270,12 +254,6 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
             }
         }
         $enrol->enrol_user($instance2, $user1->id);
-
-        // Assign capabilities to view discussions for forum 1.
-        // Need to keep track of this context and role as we use it later in testing.
-        $cm = get_coursemodule_from_id('forum', $forum1->id, 0, false, MUST_EXIST);
-        $context1 = context_module::instance($cm->id);
-        $roleid1 = $this->assignUserCapability('mod/forum:viewdiscussion', $context1->id);
 
         // Assign capabilities to view discussions for forum 2.
         $cm = get_coursemodule_from_id('forum', $forum2->id, 0, false, MUST_EXIST);
@@ -387,7 +365,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         }
 
         // Call without required view discussion capability.
-        $this->unassignUserCapability('mod/forum:viewdiscussion', $context1->id, $roleid1);
+        $this->unassignUserCapability('mod/forum:viewdiscussion', null, null, $course1->id);
         try {
             mod_forum_external::get_forum_discussions(array($forum1->id));
             $this->fail('Exception expected due to missing capability.');

@@ -50,18 +50,9 @@ class core_enrol_external_testcase extends externallib_advanced_testcase {
         $this->assignUserCapability('moodle/user:viewdetails', $context->id, $roleid);
 
         // Enrol the users in the course.
-        // We use the manual plugin.
-        $enrol = enrol_get_plugin('manual');
-        $enrolinstances = enrol_get_instances($course->id, true);
-        foreach ($enrolinstances as $courseenrolinstance) {
-            if ($courseenrolinstance->enrol == "manual") {
-                $instance = $courseenrolinstance;
-                break;
-            }
-        }
-        $enrol->enrol_user($instance, $user1->id, $roleid);
-        $enrol->enrol_user($instance, $user2->id, $roleid);
-        $enrol->enrol_user($instance, $USER->id, $roleid);
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id, $roleid, 'manual');
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id, $roleid, 'manual');
+        $this->getDataGenerator()->enrol_user($USER->id, $course->id, $roleid, 'manual');
 
         // Call the external function.
         $enrolledusers = core_enrol_external::get_enrolled_users($course->id);
@@ -92,21 +83,13 @@ class core_enrol_external_testcase extends externallib_advanced_testcase {
 
         // Enrol $USER in the courses.
         // We use the manual plugin.
-        $enrol = enrol_get_plugin('manual');
         $roleid = null;
         foreach ($courses as $course) {
             $context = context_course::instance($course->id);
             $roleid = $this->assignUserCapability('moodle/course:viewparticipants',
                     $context->id, $roleid);
 
-            $enrolinstances = enrol_get_instances($course->id, true);
-            foreach ($enrolinstances as $courseenrolinstance) {
-                if ($courseenrolinstance->enrol == "manual") {
-                    $instance = $courseenrolinstance;
-                    break;
-                }
-            }
-            $enrol->enrol_user($instance, $USER->id, $roleid);
+            $this->getDataGenerator()->enrol_user($USER->id, $course->id, $roleid, 'manual');
         }
 
         // Call the external function.

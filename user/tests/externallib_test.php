@@ -242,18 +242,9 @@ class core_user_external_testcase extends externallib_advanced_testcase {
         $roleid = $this->assignUserCapability('moodle/user:viewdetails', $context->id);
 
         // Enrol the users in the course.
-        // We use the manual plugin.
-        $enrol = enrol_get_plugin('manual');
-        $enrolinstances = enrol_get_instances($course->id, true);
-        foreach ($enrolinstances as $courseenrolinstance) {
-            if ($courseenrolinstance->enrol == "manual") {
-                $instance = $courseenrolinstance;
-                break;
-            }
-        }
-        $enrol->enrol_user($instance, $user1->id, $roleid);
-        $enrol->enrol_user($instance, $user2->id, $roleid);
-        $enrol->enrol_user($instance, $USER->id, $roleid);
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id, $roleid, 'manual');
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id, $roleid, 'manual');
+        $this->getDataGenerator()->enrol_user($USER->id, $course->id, $roleid, 'manual');
 
         // call as admin and receive all possible fields.
         $this->setAdminUser();
@@ -395,18 +386,9 @@ class core_user_external_testcase extends externallib_advanced_testcase {
         $roleid = $this->assignUserCapability('moodle/user:viewdetails', $context->id);
 
         // Enrol the users in the course.
-        // We use the manual plugin.
-        $enrol = enrol_get_plugin('manual');
-        $enrolinstances = enrol_get_instances($course->id, true);
-        foreach ($enrolinstances as $courseenrolinstance) {
-            if ($courseenrolinstance->enrol == "manual") {
-                $instance = $courseenrolinstance;
-                break;
-            }
-        }
-        $enrol->enrol_user($instance, $user1->id, $roleid);
-        $enrol->enrol_user($instance, $user2->id, $roleid);
-        $enrol->enrol_user($instance, $USER->id, $roleid);
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id, $roleid, 'manual');
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id, $roleid, 'manual');
+        $this->getDataGenerator()->enrol_user($USER->id, $course->id, $roleid, 'manual');
 
         // Call the external function.
         $enrolledusers = core_user_external::get_course_user_profiles(array(
