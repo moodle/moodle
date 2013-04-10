@@ -165,6 +165,12 @@ class assignment_base {
 
         $this->view_dates();
 
+        if ($this->isopen() && $this->assignment->timedue > 0 && $this->assignment->timedue < time()) {
+            echo $OUTPUT->heading(get_string('closedassignment','assignment'), 3);
+        } else if ($this->assignment->timeavailable > time()) {
+            echo $OUTPUT->heading(get_string('futureaassignment','assignment'), 3);
+        }
+
         $this->view_feedback();
 
         $this->view_footer();
