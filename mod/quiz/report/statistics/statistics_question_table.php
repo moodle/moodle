@@ -74,7 +74,7 @@ class quiz_statistics_question_table extends flexible_table {
 
         if ($responesstats->has_subparts()) {
             $columns[] = 'part';
-            $headers[] = 'Part of question';
+            $headers[] = get_string('partofquestion', 'quiz_statistics');
         }
 
         if ($responesstats->has_response_classes()) {
