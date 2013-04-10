@@ -314,7 +314,7 @@ if (!$csv) {
     print '<table id="completion-progress" class="generaltable flexible boxaligncenter completionreport" style="text-align: left" cellpadding="5" border="1">';
 
     // Print criteria group names
-    print PHP_EOL.'<tr style="vertical-align: top">';
+    print PHP_EOL.'<thead><tr style="vertical-align: top">';
     echo '<th scope="row" class="rowheader" colspan="' . $leftcols . '">' .
             get_string('criteriagroup', 'completion') . '</th>';
 
@@ -511,8 +511,9 @@ if (!$csv) {
     print '<img src="'.$OUTPUT->pix_url('i/course').'" class="icon" alt="'.get_string('course').'" title="'.get_string('coursecomplete', 'completion').'" />';
     print '</th>';
 
-    print '</tr>';
+    print '</tr></thead>';
 
+    echo '<tbody>';
 } else {
     // The CSV headers
     $row = array();
@@ -730,6 +731,8 @@ foreach ($progress as $user) {
 
 if ($csv) {
     $export->download_file();
+} else {
+    echo '</tbody>';
 }
 
 print '</table>';

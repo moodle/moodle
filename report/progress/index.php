@@ -280,7 +280,7 @@ if (!$csv) {
     }
 
     print '<div id="completion-progress-wrapper" class="no-overflow">';
-    print '<table id="completion-progress" class="generaltable flexible boxaligncenter" style="text-align:left"><tr style="vertical-align:top">';
+    print '<table id="completion-progress" class="generaltable flexible boxaligncenter" style="text-align:left"><thead><tr style="vertical-align:top">';
 
     // User heading / sort option
     print '<th scope="col" class="completion-sortchoice">';
@@ -343,7 +343,7 @@ foreach($activities as $activity) {
 if ($csv) {
     print $line;
 } else {
-    print '</tr>';
+    print '</tr></thead><tbody>';
 }
 
 // Row for each user
@@ -415,7 +415,7 @@ foreach($progress as $user) {
 if ($csv) {
     exit;
 }
-print '</table>';
+print '</tbody></table>';
 print '</div>';
 print $pagingbar;
 
