@@ -83,10 +83,13 @@ class phpunit_util extends testing_util {
      * Note: this is relatively slow (cca 2 seconds for pg and 7 for mysql) - please use with care!
      *
      * @static
-     * @param bool $logchanges log changes in global state and database in error log
+     * @param bool $detectchanges
+     *      true  - changes in global state and database are reported as errors
+     *      false - no errors reported
+     *      null  - only critical problems are reported as errors
      * @return void
      */
-    public static function reset_all_data($logchanges = false) {
+    public static function reset_all_data($detectchanges = false) {
         global $DB, $CFG, $USER, $SITE, $COURSE, $PAGE, $OUTPUT, $SESSION;
 
         // Stop any message redirection.
@@ -110,7 +113,7 @@ class phpunit_util extends testing_util {
         $resetdb = self::reset_database();
         $warnings = array();
 
-        if ($logchanges) {
+        if ($detectchanges === true) {
             if ($resetdb) {
                 $warnings[] = 'Warning: unexpected database modification, resetting DB state';
             }
@@ -147,8 +150,9 @@ class phpunit_util extends testing_util {
             // libraries to mess with timeouts unintentionally.
             // Our PHPUnit integration is not supposed to change it either.
 
-            // TODO: MDL-38912 uncomment and fix all + somehow resolve timeouts in failed tests.
-            //$warnings[] = 'Warning: max_execution_time was changed.';
+            if ($detectchanges !== false) {
+                $warnings[] = 'Warning: max_execution_time was changed to '.ini_get('max_execution_time');
+            }
             set_time_limit(0);
         }
 
