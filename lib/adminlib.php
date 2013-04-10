@@ -321,6 +321,10 @@ function uninstall_plugin($type, $name) {
     // remove event handlers and dequeue pending events
     events_uninstall($component);
 
+    // Delete all remaining files in the filepool owned by the component.
+    $fs = get_file_storage();
+    $fs->delete_component_files($component);
+
     // Finally purge all caches.
     purge_all_caches();
 

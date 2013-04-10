@@ -688,6 +688,17 @@ class filestoragelib_testcase extends advanced_testcase {
         $this->assertEquals(0, count($areafiles));
     }
 
+    public function test_delete_component_files() {
+        $user = $this->setup_three_private_files();
+        $fs = get_file_storage();
+
+        $areafiles = $fs->get_area_files($user->ctxid, 'user', 'private');
+        $this->assertEquals(4, count($areafiles));
+        $fs->delete_component_files('user');
+        $areafiles = $fs->get_area_files($user->ctxid, 'user', 'private');
+        $this->assertEquals(0, count($areafiles));
+    }
+
     public function test_create_file_from_url() {
         $this->resetAfterTest(true);
 

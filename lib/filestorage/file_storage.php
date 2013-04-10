@@ -744,6 +744,21 @@ class file_storage {
     }
 
     /**
+     * Delete all files associated with the given component.
+     *
+     * @param string $component the component owning the file
+     */
+    public function delete_component_files($component) {
+        global $DB;
+
+        $filerecords = $DB->get_recordset('files', array('component' => $component));
+        foreach ($filerecords as $filerecord) {
+            $this->get_file_instance($filerecord)->delete();
+        }
+        $filerecords->close();
+    }
+
+    /**
      * Move all the files in a file area from one context to another.
      *
      * @param int $oldcontextid the context the files are being moved from.
