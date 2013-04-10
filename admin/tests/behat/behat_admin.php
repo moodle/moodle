@@ -58,7 +58,7 @@ class behat_admin extends behat_base {
             // We expect admin block to be visible, otherwise go to homepage.
             if (!$this->getSession()->getPage()->find('css', '.block_settings')) {
                 $this->getSession()->visit($this->locate_path('/'));
-                $this->getSession()->wait(self::TIMEOUT, '(document.readyState === "complete")');
+                $this->wait(self::TIMEOUT, '(document.readyState === "complete")');
             }
 
             // Search by label.
@@ -67,7 +67,7 @@ class behat_admin extends behat_base {
             $submitsearch = $this->find('css', 'form.adminsearchform input[type=submit]');
             $submitsearch->press();
 
-            $this->getSession()->wait(self::TIMEOUT, '(document.readyState === "complete")');
+            $this->wait(self::TIMEOUT, '(document.readyState === "complete")');
 
             // Admin settings does not use the same DOM structure than other moodle forms
             // but we also need to use lib/behat/form_field/* to deal with the different moodle form elements.
@@ -94,4 +94,16 @@ class behat_admin extends behat_base {
         }
     }
 
+    /**
+     * Waits with the provided params if we are running a JS session.
+     *
+     * @param int $timeout
+     * @param string $javascript
+     * @return void
+     */
+    protected function wait($timeout, $javascript = false) {
+        if ($this->running_javascript()) {
+            $this->getSession()->wait($timeout, $javascript);
+        }
+    }
 }
