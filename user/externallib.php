@@ -640,6 +640,8 @@ class core_user_external extends external_api {
      *
      * @return external_function_parameters
      * @since Moodle 2.2
+     * @deprecated Moodle 2.5 MDL-38030 - Please do not call this function any more.
+     * @see core_user_external::get_users_by_field_parameters()
      */
     public static function get_users_by_id_parameters() {
         return new external_function_parameters(
@@ -658,6 +660,8 @@ class core_user_external extends external_api {
      * @param array $userids  array of user ids
      * @return array An array of arrays describing users
      * @since Moodle 2.2
+     * @deprecated Moodle 2.5 MDL-38030 - Please do not call this function any more.
+     * @see core_user_external::get_users_by_field()
      */
     public static function get_users_by_id($userids) {
         global $CFG, $USER, $DB;
@@ -708,6 +712,8 @@ class core_user_external extends external_api {
      *
      * @return external_description
      * @since Moodle 2.2
+     * @deprecated Moodle 2.5 MDL-38030 - Please do not call this function any more.
+     * @see core_user_external::get_users_by_field_returns()
      */
     public static function get_users_by_id_returns() {
         $additionalfields = array (

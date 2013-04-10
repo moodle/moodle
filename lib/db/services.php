@@ -304,7 +304,7 @@ $functions = array(
         'classname'   => 'core_user_external',
         'methodname'  => 'get_users_by_id',
         'classpath'   => 'user/externallib.php',
-        'description' => 'Get users by id.',
+        'description' => 'DEPRECATED: this deprecated function will be removed in a future version. This function has been replaced by core_user_get_users_by_field()',
         'type'        => 'read',
         'capabilities'=> 'moodle/user:viewdetails, moodle/user:viewhiddendetails, moodle/course:useremail, moodle/user:update',
     ),
