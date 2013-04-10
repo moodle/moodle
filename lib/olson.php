@@ -33,8 +33,12 @@
  */
 function olson_to_timezones ($filename) {
 
-    $zones = olson_simple_zone_parser($filename);
-    $rules = olson_simple_rule_parser($filename);
+    // Look for zone and rule information up to 10 years in the future.
+    $maxyear = localtime(time(), true);
+    $maxyear = $maxyear['tm_year'] + 1900 + 10;
+
+    $zones = olson_simple_zone_parser($filename, $maxyear);
+    $rules = olson_simple_rule_parser($filename, $maxyear);
 
     $mdl_zones = array();
 
@@ -51,8 +55,6 @@ function olson_to_timezones ($filename) {
      *** before that, anyway.
      ***
      **/
-    $maxyear = localtime(time(), true);
-    $maxyear = $maxyear['tm_year'] + 1900 + 10;
 
     foreach ($zones as $zname => $zbyyear) { // loop over zones
         /**
@@ -213,16 +215,13 @@ if(isset($mdl_tz['dst_time']) && !strpos($mdl_tz['dst_time'], ':') || isset($mdl
  * @return array a multidimensional array, or false on error
  *
  */
-function olson_simple_rule_parser ($filename) {
+function olson_simple_rule_parser($filename, $maxyear) {
 
     $file = fopen($filename, 'r', 0);
 
     if (empty($file)) {
         return false;
     }
-
-    // determine the maximum year for this zone
-    $maxyear = array();
 
     while ($line = fgets($file)) {
         // only pay attention to rules lines
@@ -241,14 +240,6 @@ function olson_simple_rule_parser ($filename) {
              $at,
              $save,
              $letter) = $rule;
-        if (isset($maxyear[$name])) {
-            if ($maxyear[$name] < $from) {
-                $maxyear[$name] = $from;
-            }
-        } else {
-            $maxyear[$name] = $from;
-        }
-
     }
 
     fseek($file, 0);
@@ -278,7 +269,7 @@ function olson_simple_rule_parser ($filename) {
             $to = $from;
         }
         else if($to == 'max') {
-            $to = $maxyear[$name];
+            $to = $maxyear;
         }
 
         for($i = $from; $i <= $to; ++$i) {
@@ -433,7 +424,7 @@ function olson_simple_rule_parser ($filename) {
  * @return array a multidimensional array, or false on error
  *
  */
-function olson_simple_zone_parser ($filename) {
+function olson_simple_zone_parser($filename, $maxyear) {
 
     $file = fopen($filename, 'r', 0);
 
