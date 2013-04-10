@@ -5315,7 +5315,7 @@ class assign {
         }
 
         $flags = $this->get_user_flags($userid, true);
-        $flags->locked = 1;
+        $flags->locked = 0;
         $this->update_user_flags($flags);
 
         $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
