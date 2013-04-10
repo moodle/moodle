@@ -2501,14 +2501,28 @@ abstract class plugininfo_base {
      *
      * Visiting that URL must be safe, that is a manual confirmation is needed
      * for actual uninstallation of the plugin. Null value means that the
-     * plugin either does not support uninstallation, or does not require any
-     * database cleanup or the location of the screen is not available via this
-     * library.
+     * plugin cannot be uninstalled (such as due to dependencies), or it does
+     * not support uninstallation, or the location of the screen is not
+     * available (shortly, the 'Uninstall' link should not be displayed).
+     *
+     * By default, URL to a common uninstalling handler is returned for all
+     * add-ons and null is returned for standard plugins.
      *
      * @return null|moodle_url
      */
     public function get_uninstall_url() {
-        return null;
+
+        if ($this->is_standard()) {
+            return null;
+        }
+
+        $pluginman = plugin_manager::instance();
+        $requiredby = $pluginman->other_plugins_that_require($this->component);
+        if (!empty($requiredby)) {
+            return null;
+        }
+
+        return $this->get_default_uninstall_url();
     }
 
     /**
@@ -2520,6 +2534,22 @@ abstract class plugininfo_base {
         global $CFG;
 
         return substr($this->rootdir, strlen($CFG->dirroot));
+    }
+
+    /**
+     * Returns URL to a script that handles common plugin uninstall procedure.
+     *
+     * This URL is suitable for plugins that do not have their own UI
+     * for uninstalling.
+     *
+     * @return moodle_url
+     */
+    protected function get_default_uninstall_url() {
+        return new moodle_url('/admin/plugins.php', array(
+            'sesskey' => sesskey(),
+            'uninstall' => $this->component,
+            'confirm' => 0,
+        ));
     }
 
     /**
@@ -3233,7 +3263,7 @@ class plugininfo_message extends plugininfo_base {
         if (isset($processors[$this->name])) {
             return new moodle_url('/admin/message.php', array('uninstall' => $processors[$this->name]->id, 'sesskey' => sesskey()));
         } else {
-            return parent::get_uninstall_url();
+            return null;
         }
     }
 }
@@ -3573,6 +3603,6 @@ class plugininfo_format extends plugininfo_base {
             return new moodle_url('/admin/courseformats.php',
                     array('sesskey' => sesskey(), 'action' => 'uninstall', 'format' => $this->name));
         }
-        return parent::get_uninstall_url();
+        return null;
     }
 }
