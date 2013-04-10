@@ -321,6 +321,9 @@ function uninstall_plugin($type, $name) {
     // remove event handlers and dequeue pending events
     events_uninstall($component);
 
+    // Finally purge all caches.
+    purge_all_caches();
+
     echo $OUTPUT->notification(get_string('success'), 'notifysuccess');
 }
 
