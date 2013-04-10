@@ -372,6 +372,101 @@ class core_admin_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Display a page to confirm the plugin uninstallation.
+     *
+     * @param plugin_manager $pluginman
+     * @param plugin_info $pluginfo
+     * @param moodle_url $continueurl URL to continue after confirmation
+     * @return string
+     */
+    public function plugin_uninstall_confirm_page(plugin_manager $pluginman, plugininfo_base $pluginfo, moodle_url $continueurl) {
+        $output = '';
+
+        $pluginname = $pluginman->plugin_name($pluginfo->component);
+
+        $this->page->set_title($pluginname);
+        $this->page->navbar->add(get_string('uninstalling', 'core_plugin', array('name' => $pluginname)));
+
+        $output .= $this->output->header();
+        $output .= $this->output->heading(get_string('uninstalling', 'core_plugin', array('name' => $pluginname)));
+        $output .= $this->output->confirm(get_string('uninstallconfirm', 'core_plugin', array('name' => $pluginname)),
+            $continueurl, $this->page->url);
+        $output .= $this->output->footer();
+
+        return $output;
+    }
+
+    /**
+     * Display a page with results of plugin uninstallation and offer removal of plugin files.
+     *
+     * @param plugin_manager $pluginman
+     * @param plugin_info $pluginfo
+     * @param array $messages list of strings, the log of the process
+     * @param moodle_url $continueurl URL to continue to remove the plugin folder
+     * @return string
+     */
+    public function plugin_uninstall_results_removable_page(plugin_manager $pluginman, plugininfo_base $pluginfo,
+                                                            array $messages = array(), moodle_url $continueurl) {
+        $output = '';
+
+        $pluginname = $pluginman->plugin_name($pluginfo->component);
+
+        $this->page->set_title($pluginname);
+        $this->page->navbar->add(get_string('uninstalling', 'core_plugin', array('name' => $pluginname)));
+
+        $output .= $this->output->header();
+        $output .= $this->output->heading(get_string('uninstalling', 'core_plugin', array('name' => $pluginname)));
+
+        foreach ($messages as $message) {
+            $output .= $this->output->box($message, 'generalbox uninstallresultmessage');
+        }
+
+        $confirm = $this->output->container(get_string('uninstalldeleteconfirm', 'core_plugin',
+            array('name' => $pluginname, 'rootdir' => $pluginfo->rootdir)), 'uninstalldeleteconfirm');
+
+        if ($repotype = $pluginman->plugin_external_source($pluginfo->component)) {
+            $confirm .= $this->output->container(get_string('uninstalldeleteconfirmexternal', 'core_plugin', $repotype),
+                'uninstalldeleteconfirmexternal');
+        }
+
+        $output .= $this->output->confirm($confirm, $continueurl, $this->page->url);
+        $output .= $this->output->footer();
+
+        return $output;
+    }
+
+    /**
+     * Display a page with results of plugin uninstallation and inform about the need to remove plugin files manually.
+     *
+     * @param plugin_manager $pluginman
+     * @param plugin_info $pluginfo
+     * @param array $messages list of strings, the log of the process
+     * @return string
+     */
+    public function plugin_uninstall_results_page(plugin_manager $pluginman, plugininfo_base $pluginfo, array $messages = array()) {
+        $output = '';
+
+        $pluginname = $pluginman->plugin_name($pluginfo->component);
+
+        $this->page->set_title($pluginname);
+        $this->page->navbar->add(get_string('uninstalling', 'core_plugin', array('name' => $pluginname)));
+
+        $output .= $this->output->header();
+        $output .= $this->output->heading(get_string('uninstalling', 'core_plugin', array('name' => $pluginname)));
+
+        foreach ($messages as $message) {
+            $output .= $this->output->box($message, 'generalbox uninstallresultmessage');
+        }
+
+        $output .= $this->output->box(get_string('uninstalldelete', 'core_plugin',
+            array('name' => $pluginname, 'rootdir' => $pluginfo->rootdir)), 'generalbox uninstalldelete');
+        $output .= $this->output->continue_button($this->page->url);
+        $output .= $this->output->footer();
+
+        return $output;
+    }
+
+    /**
      * Display the plugin management page (admin/environment.php).
      * @param array $versions
      * @param string $version

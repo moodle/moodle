@@ -302,6 +302,38 @@ class plugin_manager {
     }
 
     /**
+     * Check to see if the current version of the plugin seems to be a checkout of an external repository.
+     *
+     * @see available_update_deployer::plugin_external_source()
+     * @param string $component frankenstyle component name
+     * @return false|string
+     */
+    public function plugin_external_source($component) {
+
+        $plugininfo = $this->get_plugin_info($component);
+
+        if (is_null($plugininfo)) {
+            return false;
+        }
+
+        $pluginroot = $plugininfo->rootdir;
+
+        if (is_dir($pluginroot.'/.git')) {
+            return 'git';
+        }
+
+        if (is_dir($pluginroot.'/CVS')) {
+            return 'cvs';
+        }
+
+        if (is_dir($pluginroot.'/.svn')) {
+            return 'svn';
+        }
+
+        return false;
+    }
+
+    /**
      * Get a list of any other plugins that require this one.
      * @param string $component frankenstyle component name.
      * @return array of frankensyle component names that require this one.
@@ -372,6 +404,42 @@ class plugin_manager {
     }
 
     /**
+     * Uninstall the given plugin.
+     *
+     * Automatically cleans-up all remaining configuration data, log records, events,
+     * files from the file pool etc.
+     *
+     * In the future, the functionality of {@link uninstall_plugin()} function may be moved
+     * into this method and all the code should be refactored to use it. At the moment, we
+     * mimic this future behaviour by wrapping that function call.
+     *
+     * @param string $component
+     * @param array $messages log of the process is returned via this array
+     * @return bool true on success, false on errors/problems
+     */
+    public function uninstall_plugin($component, array &$messages) {
+
+        $pluginfo = $this->get_plugin_info($component);
+
+        if (is_null($pluginfo)) {
+            return false;
+        }
+
+        // Give the pluginfo class a perform some steps.
+        $result = $pluginfo->uninstall($messages);
+        if (!$result) {
+            return false;
+        }
+
+        // Call the legacy core function to uninstall the plugin.
+        ob_start();
+        uninstall_plugin($pluginfo->type, $pluginfo->name);
+        $messages[] = ob_get_clean();
+
+        return true;
+    }
+
+    /**
      * Checks if there are some plugins with a known available update
      *
      * @return bool true if there is at least one available update
@@ -386,6 +454,36 @@ class plugin_manager {
         }
 
         return false;
+    }
+
+    /**
+     * Check to see if the given plugin folder can be removed by the web server process.
+     *
+     * This is intended to be used for installed add-ons mainly. For standard plugins,
+     * false is always returned for now.
+     *
+     * @param string $component full frankenstyle component
+     * @return bool
+     */
+    public function is_plugin_folder_removable($component) {
+
+        $pluginfo = $this->get_plugin_info($component);
+
+        if (is_null($pluginfo)) {
+            return false;
+        }
+
+        if ($pluginfo->is_standard()) {
+            return false;
+        }
+
+        // To be able to remove the plugin folder, its parent must be writable, too.
+        if (!is_writable(dirname($pluginfo->rootdir))) {
+            return false;
+        }
+
+        // Check that the folder and all its content is writable (thence removable).
+        return $this->is_directory_removable($pluginfo->rootdir);
     }
 
     /**
@@ -669,6 +767,50 @@ class plugin_manager {
             }
         }
         return $fix;
+    }
+
+    /**
+     * Check if the given directory can be removed by the web server process.
+     *
+     * This recursively checks that the given directory and all its contents
+     * it writable.
+     *
+     * @param string $fullpath
+     * @return boolean
+     */
+    protected function is_directory_removable($fullpath) {
+
+        if (!is_writable($fullpath)) {
+            return false;
+        }
+
+        if (is_dir($fullpath)) {
+            $handle = opendir($fullpath);
+        } else {
+            return false;
+        }
+
+        $result = true;
+
+        while ($filename = readdir($handle)) {
+
+            if ($filename === '.' or $filename === '..') {
+                continue;
+            }
+
+            $subfilepath = $fullpath.'/'.$filename;
+
+            if (is_dir($subfilepath)) {
+                $result = $result && $this->is_directory_removable($subfilepath);
+
+            } else {
+                $result = $result && is_writable($subfilepath);
+            }
+        }
+
+        closedir($handle);
+
+        return $result;
     }
 }
 
@@ -1662,6 +1804,7 @@ class available_update_deployer {
     /**
      * Check to see if the current version of the plugin seems to be a checkout of an external repository.
      *
+     * @see plugin_manager::plugin_external_source()
      * @param available_update_info $info
      * @return false|string
      */
@@ -2534,6 +2677,20 @@ abstract class plugininfo_base {
         global $CFG;
 
         return substr($this->rootdir, strlen($CFG->dirroot));
+    }
+
+    /**
+     * Hook method to implement certain steps when uninstalling the plugin.
+     *
+     * This hook is called by {@link plugin_manager::uninstall_plugin()} so
+     * it is basically usable only for those plugin types that use the default
+     * uninstall tool provided by {@link self::get_default_uninstall_url()}.
+     *
+     * @param array $messages list of uninstall log messages
+     * @return bool true on success, false on failure
+     */
+    public function uninstall(array &$messages) {
+        return true;
     }
 
     /**

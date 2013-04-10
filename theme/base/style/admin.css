@@ -152,6 +152,8 @@
 #page-admin-index .updateplugin .updatepluginconfirmexternal,
 #page-admin-plugins .updateplugin .updatepluginconfirmexternal {padding:1em;background-color:#ffd3d9;border:1px solid #EEAAAA}
 
+#page-admin-plugins .uninstalldeleteconfirmexternal {margin:1em auto;padding:1em;background-color:#ffd3d9;border:1px solid #EEAAAA}
+
 #page-admin-user-user_bulk #users .fgroup {white-space: nowrap;}
 #page-admin-report-stats-index .graph {text-align: center;margin-bottom: 1em;}
 #page-admin-report-courseoverview-index .graph {text-align: center;margin-bottom: 1em;}
