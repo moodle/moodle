@@ -1,4 +1,5 @@
 /* course.less */
+/* COURSE CONTENT */
 .section_add_menus {
     text-align: right;
 }
@@ -263,6 +264,69 @@ ul.weeks h3.sectionname {
     width: 80px;
 }
 
+input.titleeditor {
+    width: 330px;
+    vertical-align: text-bottom;
+}
+
+span.editinstructions {
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin-top: -22px;
+    margin-left: 30px;
+    line-height: 16px;
+    font-size: @fontSizeSmall;
+    padding: .1em .4em;
+    background-color: @infoBackground;
+    color: @infoText;
+    text-decoration: none;
+    z-index: 9999;
+    .box-shadow(2px 2px 5px 1px #ccc);
+    border: 1px solid @infoBorder;
+}
+.dir-rtl span.editinstructions {
+    left: auto;
+    right: 32px;
+}
+
+/* Course drag and drop upload styles */
+#dndupload-status {
+    width: 40%;
+    margin: 0 30%;
+    padding: 6px;
+    border: 1px solid @infoBorder;
+    text-align: center;
+    background: @infoBackground;
+    color: @infoText;
+    position: absolute;
+    z-index: 9999;
+    .box-shadow(2px 2px 5px 1px #ccc);
+    .border-bottom-radius(8px);
+    z-index: 0;
+}
+.dndupload-preview {
+    color: #909090;
+    border: 1px dashed #909090;
+    list-style: none;
+    margin-top: .2em;
+    padding: .3em;
+}
+.dndupload-preview img.icon {
+    vertical-align: text-bottom;
+    padding: 0;
+}
+.dndupload-progress-outer {
+    .progress;
+}
+.dndupload-progress-inner {
+    .progress .bar;
+}
+.dndupload-hidden {
+    display: none;
+}
+
+/* COURSES LISTINGS AND COURSE SUMMARY */
 #page-course-enrol .generalbox,
 #page-course-enrol .coursebox {
     margin-top: 20px;
@@ -380,16 +444,6 @@ ul.weeks h3.sectionname {
     margin-left: 24px;
 }
 
-.course ul.section {
-    margin: 5px;
-    padding: 0;
-}
-
-.weeks-format,
-.topics-format {
-    margin-top: 8px;
-    min-width: 763px;
-}
 .categoryboxcontent {
     border-width: 1px;
     border-style: solid;
@@ -501,65 +555,3 @@ table.category_subcategories {
 table.category_subcategories td {
     white-space: nowrap;
 }
-
-span.editinstructions {
-    position: absolute;
-    top: 0;
-    left: 0;
-    margin-top: -22px;
-    margin-left: 30px;
-    line-height: 16px;
-    font-size: @fontSizeSmall;
-    padding: .1em .4em;
-    background-color: @infoBackground;
-    color: @infoText;
-    text-decoration: none;
-    z-index: 9999;
-    .box-shadow(2px 2px 5px 1px #ccc);
-    border: 1px solid @infoBorder;
-}
-.dir-rtl span.editinstructions {
-    left: auto;
-    right: 32px;
-}
-input.titleeditor {
-    width: 330px;
-    vertical-align: text-bottom;
-}
-
-/* Course drag and drop upload styles */
-#dndupload-status {
-    width: 40%;
-    margin: 0 30%;
-    padding: 6px;
-    border: 1px solid @infoBorder;
-    text-align: center;
-    background: @infoBackground;
-    color: @infoText;
-    position: absolute;
-    z-index: 9999;
-    .box-shadow(2px 2px 5px 1px #ccc);
-    .border-bottom-radius(8px);
-    z-index: 0;
-}
-.dndupload-preview {
-    color: #909090;
-    border: 1px dashed #909090;
-    list-style: none;
-    margin-top: .2em;
-    padding: .3em;
-}
-.dndupload-preview img.icon {
-    vertical-align: text-bottom;
-    padding: 0;
-}
-.dndupload-progress-outer {
-    .progress;
-}
-.dndupload-progress-inner {
-    .progress .bar;
-}
-.dndupload-hidden {
-    display: none;
-}
-
