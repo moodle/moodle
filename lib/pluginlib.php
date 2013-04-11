@@ -221,12 +221,18 @@ class plugin_manager {
     /**
      * Returns a localized name of a given plugin
      *
-     * @param string $plugin name of the plugin, eg mod_workshop or auth_ldap
+     * @param string $component name of the plugin, eg mod_workshop or auth_ldap
      * @return string
      */
-    public function plugin_name($plugin) {
-        list($type, $name) = normalize_component($plugin);
-        return $this->pluginsinfo[$type][$name]->displayname;
+    public function plugin_name($component) {
+
+        $pluginfo = $this->get_plugin_info($component);
+
+        if (is_null($pluginfo)) {
+            throw new moodle_exception('err_unknown_plugin', 'core_plugin', '', array('plugin' => $component));
+        }
+
+        return $pluginfo->displayname;
     }
 
     /**
