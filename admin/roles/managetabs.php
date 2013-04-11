@@ -33,7 +33,6 @@ $toprow[] = new tabobject('manage', new moodle_url('/admin/roles/manage.php'), g
 $toprow[] = new tabobject('assign', new moodle_url('/admin/roles/allow.php', array('mode'=>'assign')), get_string('allowassign', 'role'));
 $toprow[] = new tabobject('override', new moodle_url('/admin/roles/allow.php', array('mode'=>'override')), get_string('allowoverride', 'role'));
 $toprow[] = new tabobject('switch', new moodle_url('/admin/roles/allow.php', array('mode'=>'switch')), get_string('allowswitch', 'role'));
-$tabs = array($toprow);
 
-print_tabs($tabs, $currenttab);
+echo $OUTPUT->tabtree($toprow, $currenttab);
 

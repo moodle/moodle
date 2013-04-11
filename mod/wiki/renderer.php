@@ -240,9 +240,7 @@ class mod_wiki_renderer extends plugin_renderer_base {
     }
 
     public function tabs($page, $tabitems, $options) {
-        global $CFG;
         $tabs = array();
-        $baseurl = $CFG->wwwroot . '/mod/wiki/';
         $context = context_module::instance($this->page->cm->id);
 
         $pageid = null;
@@ -281,7 +279,7 @@ class mod_wiki_renderer extends plugin_renderer_base {
             if ($tab == 'admin' && !has_capability('mod/wiki:managewiki', $context)) {
                 continue;
             }
-            $link = $baseurl . $tab . '.php?pageid=' . $pageid;
+            $link = new moodle_url('/mod/wiki/'. $tab. '.php', array('pageid' => $pageid));
             if ($linked == $tab) {
                 $tabs[] = new tabobject($tab, $link, get_string($tab, 'wiki'), '', true);
             } else {
@@ -289,7 +287,7 @@ class mod_wiki_renderer extends plugin_renderer_base {
             }
         }
 
-        return print_tabs(array($tabs), $selected, $inactive, null, true);
+        return $this->tabtree($tabs, $selected, $inactive);
     }
 
     public function prettyview_link($page) {

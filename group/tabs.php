@@ -21,19 +21,18 @@
  * @copyright  2010 Petr Skoda (http://moodle.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-    $row = $tabs = array();
+    $row = array();
     $row[] = new tabobject('groups',
-                           $CFG->wwwroot.'/group/index.php?id='.$courseid,
+                           new moodle_url('/group/index.php', array('id' => $courseid)),
                            get_string('groups'));
 
     $row[] = new tabobject('groupings',
-                           $CFG->wwwroot.'/group/groupings.php?id='.$courseid,
+                           new moodle_url('/group/groupings.php', array('id' => $courseid)),
                            get_string('groupings', 'group'));
 
     $row[] = new tabobject('overview',
-                           $CFG->wwwroot.'/group/overview.php?id='.$courseid,
+                           new moodle_url('/group/overview.php', array('id' => $courseid)),
                            get_string('overview', 'group'));
-    $tabs[] = $row;
     echo '<div class="groupdisplay">';
-    print_tabs($tabs, $currenttab);
+    echo $OUTPUT->tabtree($row, $currenttab);
     echo '</div>';

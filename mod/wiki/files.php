@@ -86,7 +86,7 @@ echo $OUTPUT->header();
 
 $renderer = $PAGE->get_renderer('mod_wiki');
 
-$tabitems = array('view' => 'view', 'edit' => 'edit', 'comments' => 'comments', 'history' => 'history', 'map' => 'map', 'files' => 'files');
+$tabitems = array('view' => 'view', 'edit' => 'edit', 'comments' => 'comments', 'history' => 'history', 'map' => 'map', 'files' => 'files', 'admin' => 'admin');
 
 $options = array('activetab'=>'files');
 echo $renderer->tabs($page, $tabitems, $options);
