@@ -465,9 +465,6 @@ class plugin_manager {
     /**
      * Check to see if the given plugin folder can be removed by the web server process.
      *
-     * This is intended to be used for installed add-ons mainly. For standard plugins,
-     * false is always returned for now.
-     *
      * @param string $component full frankenstyle component
      * @return bool
      */
@@ -476,10 +473,6 @@ class plugin_manager {
         $pluginfo = $this->get_plugin_info($component);
 
         if (is_null($pluginfo)) {
-            return false;
-        }
-
-        if ($pluginfo->is_standard()) {
             return false;
         }
 
