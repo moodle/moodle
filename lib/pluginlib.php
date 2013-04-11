@@ -298,7 +298,7 @@ class plugin_manager {
      * @return plugininfo_base|null the corresponding plugin information.
      */
     public function get_plugin_info($component) {
-        list($type, $name) = normalize_component($component);
+        list($type, $name) = $this->normalize_component($component);
         $plugins = $this->get_plugins();
         if (isset($plugins[$type][$name])) {
             return $plugins[$type][$name];
@@ -742,6 +742,18 @@ class plugin_manager {
         } else {
             return false;
         }
+    }
+
+    /**
+     * Wrapper for the core function {@link normalize_component()}.
+     *
+     * This is here just to make it possible to mock it in unit tests.
+     *
+     * @param string $component
+     * @return array
+     */
+    protected function normalize_component($component) {
+        return normalize_component($component);
     }
 
     /**

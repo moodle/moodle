@@ -17,6 +17,10 @@
 /**
  * Unit tests for the lib/pluginlib.php library
  *
+ * Execute the core_plugin group to run all tests in this file:
+ *
+ *  $ phpunit --group core_plugin
+ *
  * @package   core
  * @category  phpunit
  * @copyright 2012 David Mudrak <david@moodle.com>
@@ -31,8 +35,14 @@ require_once($CFG->libdir.'/pluginlib.php');
 
 /**
  * Tests of the basic API of the plugin manager
+ *
+ * @group core_plugin
  */
 class plugin_manager_test extends advanced_testcase {
+
+    public function setUp() {
+        $this->resetAfterTest();
+    }
 
     public function test_plugin_manager_instance() {
         $pluginman = testable_plugin_manager::instance();
@@ -43,7 +53,96 @@ class plugin_manager_test extends advanced_testcase {
         $pluginman = testable_plugin_manager::instance();
         $plugins = $pluginman->get_plugins();
         $this->assertTrue(isset($plugins['mod']['foo']));
+        $this->assertTrue(isset($plugins['mod']['bar']));
+        $this->assertTrue(isset($plugins['foolish']['frog']));
         $this->assertTrue($plugins['mod']['foo'] instanceof testable_plugininfo_mod);
+        $this->assertTrue($plugins['mod']['bar'] instanceof testable_plugininfo_mod);
+        $this->assertTrue($plugins['foolish']['frog'] instanceof testable_pluginfo_foolish);
+    }
+
+    public function test_get_subplugins() {
+        $pluginman = testable_plugin_manager::instance();
+        $subplugins = $pluginman->get_subplugins();
+        $this->assertTrue(isset($subplugins['mod_foo']['foolish']));
+    }
+
+    public function test_get_parent_of_subplugin() {
+        $pluginman = testable_plugin_manager::instance();
+        $this->assertEquals('mod_foo', $pluginman->get_parent_of_subplugin('foolish'));
+        $this->assertSame(false, $pluginman->get_parent_of_subplugin('mod'));
+        $this->assertSame(false, $pluginman->get_parent_of_subplugin('unknown'));
+    }
+
+    public function test_plugin_name() {
+        $pluginman = testable_plugin_manager::instance();
+        $this->assertEquals('Foo', $pluginman->plugin_name('mod_foo'));
+        $this->assertEquals('Bar', $pluginman->plugin_name('mod_bar'));
+        $this->assertEquals('Frog', $pluginman->plugin_name('foolish_frog'));
+    }
+
+    public function test_get_plugin_info() {
+        $pluginman = testable_plugin_manager::instance();
+        $this->assertTrue($pluginman->get_plugin_info('mod_foo') instanceof testable_plugininfo_mod);
+        $this->assertTrue($pluginman->get_plugin_info('foolish_frog') instanceof testable_pluginfo_foolish);
+    }
+
+    public function test_other_plugins_that_require() {
+        $pluginman = testable_plugin_manager::instance();
+        $this->assertEquals(array('foolish_frog'), $pluginman->other_plugins_that_require('mod_foo'));
+        $this->assertEquals(array(), $pluginman->other_plugins_that_require('foolish_frog'));
+        $this->assertEquals(array('mod_foo'), $pluginman->other_plugins_that_require('mod_bar'));
+        $this->assertEquals(array('mod_foo'), $pluginman->other_plugins_that_require('mod_missing'));
+    }
+
+    public function test_are_dependencies_satisfied() {
+        $pluginman = testable_plugin_manager::instance();
+        $this->assertTrue($pluginman->are_dependencies_satisfied(array()));
+        $this->assertTrue($pluginman->are_dependencies_satisfied(array(
+            'mod_bar' => 2012030500,
+        )));
+        $this->assertTrue($pluginman->are_dependencies_satisfied(array(
+            'mod_bar' => ANY_VERSION,
+        )));
+        $this->assertFalse($pluginman->are_dependencies_satisfied(array(
+            'mod_bar' => 2099010000,
+        )));
+        $this->assertFalse($pluginman->are_dependencies_satisfied(array(
+            'mod_bar' => 2012030500,
+            'mod_missing' => ANY_VERSION,
+        )));
+    }
+
+    public function test_all_plugins_ok() {
+        $pluginman = testable_plugin_manager::instance();
+        $failedplugins = array();
+        $this->assertFalse($pluginman->all_plugins_ok(2013010100, $failedplugins));
+        $this->assertTrue(in_array('mod_foo', $failedplugins)); // Requires mod_missing
+        $this->assertFalse(in_array('mod_bar', $failedplugins));
+        $this->assertFalse(in_array('foolish_frog', $failedplugins));
+
+        $failedplugins = array();
+        $this->assertFalse($pluginman->all_plugins_ok(2012010100, $failedplugins));
+        $this->assertTrue(in_array('mod_foo', $failedplugins)); // Requires mod_missing
+        $this->assertFalse(in_array('mod_bar', $failedplugins));
+        $this->assertTrue(in_array('foolish_frog', $failedplugins)); // Requires Moodle 2013010100
+
+        $failedplugins = array();
+        $this->assertFalse($pluginman->all_plugins_ok(2011010100, $failedplugins));
+        $this->assertTrue(in_array('mod_foo', $failedplugins)); // Requires mod_missing and Moodle 2012010100
+        $this->assertTrue(in_array('mod_bar', $failedplugins)); // Requires Moodle 2012010100
+        $this->assertTrue(in_array('foolish_frog', $failedplugins)); // Requires Moodle 2013010100
+    }
+
+    public function test_some_plugins_updatable() {
+        $pluginman = testable_plugin_manager::instance();
+        $this->assertTrue($pluginman->some_plugins_updatable()); // We have available update for mod_foo.
+    }
+
+    public function test_is_standard() {
+        $pluginman = testable_plugin_manager::instance();
+        $this->assertTrue($pluginman->get_plugin_info('mod_bar')->is_standard());
+        $this->assertFalse($pluginman->get_plugin_info('mod_foo')->is_standard());
+        $this->assertFalse($pluginman->get_plugin_info('foolish_frog')->is_standard());
     }
 
     public function test_get_status() {
@@ -67,6 +166,8 @@ class plugin_manager_test extends advanced_testcase {
 
 /**
  * Tests of the basic API of the available update checker
+ *
+ * @group core_plugin
  */
 class available_update_checker_test extends advanced_testcase {
 
@@ -334,15 +435,31 @@ class testable_plugininfo_mod extends plugininfo_mod {
         $this->displayname = ucfirst($this->name);
     }
 
-    public function load_disk_version() {
-        $this->versiondisk = 2012030500;
+    public function is_standard() {
+        if ($this->component === 'mod_foo') {
+            return false;
+        } else {
+            return true;
+        }
     }
 
-    protected function load_version_php($disablecache=false) {
-        return (object)array(
-            'version' => 2012030500,
-            'requires' => 2012010100,
-            'component' => $this->type.'_'.$this->name);
+    public function load_db_version() {
+        $this->versiondb = 2012022900;
+    }
+}
+
+
+/**
+ * Testable class representing subplugins of testable mod_foo
+ */
+class testable_pluginfo_foolish extends plugininfo_base {
+
+    public function init_display_name() {
+        $this->displayname = ucfirst($this->name);
+    }
+
+    public function is_standard() {
+        return false;
     }
 
     public function load_db_version() {
@@ -378,15 +495,20 @@ class testable_plugin_manager extends plugin_manager {
      * @return array
      */
     public function get_plugins($disablecache=false) {
-        global $CFG;
+
+        $dirroot = dirname(__FILE__).'/fixtures/mockplugins';
 
         $this->pluginsinfo = array(
             'mod' => array(
-                'foo' => plugininfo_default_factory::make('mod', $CFG->dirroot.'/mod', 'foo',
-                    $CFG->dirroot.'/mod/foo', 'testable_plugininfo_mod'),
-                'bar' => plugininfo_default_factory::make('mod', $CFG->dirroot.'/bar', 'bar',
-                    $CFG->dirroot.'/mod/bar', 'testable_plugininfo_mod'),
-            )
+                'foo' => plugininfo_default_factory::make('mod', $dirroot.'/mod', 'foo',
+                    $dirroot.'/mod/foo', 'testable_plugininfo_mod'),
+                'bar' => plugininfo_default_factory::make('mod', $dirroot.'/bar', 'bar',
+                    $dirroot.'/mod/bar', 'testable_plugininfo_mod'),
+            ),
+            'foolish' => array(
+                'frog' => plugininfo_default_factory::make('foolish', $dirroot.'/mod/foo/foolish', 'frog',
+                    $dirroot.'/mod/foo/lish/frog', 'testable_pluginfo_foolish'),
+            ),
         );
 
         $checker = testable_available_update_checker::instance();
@@ -394,6 +516,72 @@ class testable_plugin_manager extends plugin_manager {
         $this->pluginsinfo['mod']['bar']->check_available_updates($checker);
 
         return $this->pluginsinfo;
+    }
+
+    /**
+     * Testable version of {@link plugin_manager::get_subplugins()} that works with
+     * the simulated environment.
+     *
+     * In this case, the mod_foo fake module provides subplugins of type 'foolish'.
+     *
+     * @param bool $disablecache ignored in this class
+     * @return array
+     */
+    public function get_subplugins($disablecache=false) {
+        return array(
+            'mod_foo' => array(
+                'foolish' => (object)array(
+                    'type' => 'foolish',
+                    'typerootdir' => 'mod/foo/lish',
+                ),
+            ),
+        );
+    }
+
+    /**
+     * Adds support for mock plugin types.
+     */
+    protected function normalize_component($component) {
+
+        // List of mock plugin types used in these unit tests.
+        $faketypes = array('foolish');
+
+        foreach ($faketypes as $faketype) {
+            if (strpos($component, $faketype.'_') === 0) {
+                return explode('_', $component, 2);
+            }
+        }
+
+        return parent::normalize_component($component);
+    }
+
+    public function plugintype_name($type) {
+        return ucfirst($type);
+    }
+
+    public function plugintype_name_plural($type) {
+        return ucfirst($type).'s'; // Simple, isn't it? ;-)
+    }
+
+    public function plugin_external_source($component) {
+        if ($component === 'foolish_frog') {
+            return true;
+        }
+        return false;
+    }
+
+    public static function standard_plugins_list($type) {
+        $standard_plugins = array(
+            'mod' => array(
+                'bar',
+            ),
+        );
+
+        if (isset($standard_plugins[$type])) {
+            return $standard_plugins[$type];
+        } else {
+            return false;
+        }
     }
 }
 
@@ -555,6 +743,8 @@ class testable_available_update_deployer extends available_update_deployer {
 
 /**
  * Test cases for {@link available_update_deployer} class
+ *
+ * @group core_plugin
  */
 class available_update_deployer_test extends advanced_testcase {
 
