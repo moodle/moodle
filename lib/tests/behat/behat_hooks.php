@@ -117,6 +117,9 @@ class behat_hooks extends behat_base {
             throw new coding_exception('Behat only can modify the test database and the test dataroot!');
         }
 
+        // Avoid some notices / warnings.
+        $SESSION = new stdClass();
+
         behat_util::reset_database();
         behat_util::reset_dataroot();
 
@@ -129,9 +132,6 @@ class behat_hooks extends behat_base {
         // Assing valid data to admin user (some generator-related code needs a valid user).
         $user = $DB->get_record('user', array('username' => 'admin'));
         session_set_user($user);
-
-        // Avoid some notices / warnings.
-        $SESSION = new stdClass();
     }
 
     /**
