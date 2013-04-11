@@ -127,9 +127,7 @@ class assignment_online extends assignment_base {
                         $button->render();
                     }
                 } else if ($this->isopen()){    //fix for #4206
-                    echo $OUTPUT->heading(get_string('emptysubmission','assignment'), 3);
-                } else if ($this->assignment->timeavailable > time()) {
-                    echo $OUTPUT->heading(get_string('futureaassignment','assignment'), 3);
+                    echo '<div style="text-align:center">'.get_string('emptysubmission', 'assignment').'</div>';
                 }
             }
             echo $OUTPUT->box_end();
