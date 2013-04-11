@@ -53,6 +53,13 @@ information provided here is intended especially for developers.
   helper functions extract_suspended_users, get_suspended_userids to extract suspended user information.
 * The plugin_manager class now provides two new helper methods for getting information
   about known plugins: get_plugins_of_type() and get_subplugins_of_plugin().
+* The get_uninstall_url() method of all subclasses of plugininfo_base class is now expected
+  to always return moodle_url. Subclasses can use the new method is_uninstall_allowed()
+  to control the availability of the 'Uninstall' link at the Plugins overview page (previously
+  they would do it by get_uninstall_url() returning null). By default, URL to a new general plugin
+  uninstall tool is returned. Unless the plugin type needs extra steps that can't be handled by
+  plugininfo_xxx::uninstall() method or xmldb_xxx_uninstall() function, this default URL should
+  satisfy all plugin types.
 
 Database (DML) layer:
 * $DB->sql_empty() is deprecated, you have to use sql parameters with empty values instead,

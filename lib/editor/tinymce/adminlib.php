@@ -35,6 +35,11 @@ require_once("$CFG->libdir/pluginlib.php");
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class plugininfo_tinymce extends plugininfo_base {
+
+    public function is_uninstall_allowed() {
+        return true;
+    }
+
     public function get_uninstall_url() {
         return new moodle_url('/lib/editor/tinymce/subplugins.php', array('delete' => $this->name, 'sesskey' => sesskey()));
     }

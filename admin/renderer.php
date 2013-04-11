@@ -1229,8 +1229,8 @@ class core_admin_renderer extends plugin_renderer_base {
                     $actions[] = html_writer::link($settingsurl, get_string('settings', 'core_plugin'), array('class' => 'settings'));
                 }
 
-                $uninstallurl = $plugin->get_uninstall_url();
-                if (!is_null($uninstallurl)) {
+                if ($pluginman->can_uninstall_plugin($plugin->component)) {
+                    $uninstallurl = $plugin->get_uninstall_url();
                     $actions[] = html_writer::link($uninstallurl, get_string('uninstall', 'core_plugin'), array('class' => 'uninstall'));
                 }
 

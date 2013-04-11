@@ -469,6 +469,70 @@ class plugin_manager {
     }
 
     /**
+     * Is it possible to uninstall the given plugin?
+     *
+     * False is returned if the plugininfo subclass declares the uninstall should
+     * not be allowed via {@link plugininfo_base::is_uninstall_allowed()} or if the
+     * core vetoes it (e.g. becase the plugin or some of its subplugins is required
+     * by some other installed plugin).
+     *
+     * @param string $component full frankenstyle name, e.g. mod_foobar
+     * @return bool
+     */
+    public function can_uninstall_plugin($component) {
+
+        $pluginfo = $this->get_plugin_info($component);
+
+        if (is_null($pluginfo)) {
+            return false;
+        }
+
+        // Backwards compatibility check.
+        if (is_null($pluginfo->get_uninstall_url())) {
+            debugging('plugininfo_base subclasses should use is_uninstall_allowed() instead of returning null in get_uninstall_url()',
+                DEBUG_DEVELOPER);
+            return false;
+        }
+
+        // In case the $component has subplugins, get their list.
+        $mysubplugins = $this->get_subplugins_of_plugin($pluginfo->component);
+
+        // In case the $component is a subplugin, get all subplugins of its parent (i.e. siblings).
+        $myparent = $this->get_parent_of_subplugin($pluginfo->type);
+        if ($myparent === false) {
+            $mysiblings = array();
+        } else {
+            $mysiblings = $this->get_subplugins_of_plugin($myparent);
+        }
+
+        // If the plugin has subplugins, check we can uninstall them first.
+        foreach ($mysubplugins as $subpluginfo) {
+            if (!$this->can_uninstall_plugin($subpluginfo->component)) {
+                return false;
+            }
+        }
+
+        // Check there are no other plugins (but eventual subplugins or siblings) that
+        // require us. Subplugins would be uninstalled together with the parent plugin
+        // without the need to uninstall each of them individually.
+        foreach ($this->other_plugins_that_require($pluginfo->component) as $requiresme) {
+            $ismyparent = ($myparent === $requiresme);
+            $ismysubplugin = in_array($requiresme, array_keys($mysubplugins));
+            $ismysibling = in_array($requiresme, array_keys($mysiblings));
+            if (!$ismyparent and !$ismysubplugin and !$ismysibling) {
+                return false;
+            }
+        }
+
+        // Finally give the plugin plugininfo subclass a chance to prevent uninstallation.
+        if (!$pluginfo->is_uninstall_allowed()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Uninstall the given plugin.
      *
      * Automatically cleans-up all remaining configuration data, log records, events,
@@ -2501,6 +2565,24 @@ abstract class plugininfo_base {
     }
 
     /**
+     * Is this is a subplugin?
+     *
+     * @return boolean
+     */
+    public function is_subplugin() {
+        return ($this->get_parent_plugin() !== false);
+    }
+
+    /**
+     * If I am a subplugin, return the name of my parent plugin.
+     *
+     * @return string|bool false if not a subplugin, name of the parent otherwise
+     */
+    public function get_parent_plugin() {
+        return $this->get_plugin_manager()->get_parent_of_subplugin($this->type);
+    }
+
+    /**
      * Sets {@link $versiondb} property to a numerical value representing the
      * currently installed version of the plugin.
      *
@@ -2710,31 +2792,41 @@ abstract class plugininfo_base {
     }
 
     /**
+     * Should there be a way to uninstall the plugin via the administration UI
+     *
+     * By default, uninstallation is allowed for all non-standard add-ons. Subclasses
+     * may want to override this to allow uninstallation of all plugins (simply by
+     * returning true unconditionally). Subplugins follow their parent plugin's
+     * decision by default.
+     *
+     * Note that even if true is returned, the core may still prohibit the uninstallation,
+     * e.g. in case there are other plugins that depend on this one.
+     *
+     * @return boolean
+     */
+    public function is_uninstall_allowed() {
+
+        if ($this->is_subplugin()) {
+            return $this->get_plugin_manager()->get_plugin_info($this->get_parent_plugin())->is_uninstall_allowed();
+        }
+
+        if ($this->is_standard()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Returns the URL of the screen where this plugin can be uninstalled
      *
      * Visiting that URL must be safe, that is a manual confirmation is needed
-     * for actual uninstallation of the plugin. Null value means that the
-     * plugin cannot be uninstalled (such as due to dependencies), or it does
-     * not support uninstallation, or the location of the screen is not
-     * available (shortly, the 'Uninstall' link should not be displayed).
+     * for actual uninstallation of the plugin. By default, URL to a common
+     * uninstalling tool is returned.
      *
-     * By default, URL to a common uninstalling handler is returned for all
-     * add-ons and null is returned for standard plugins.
-     *
-     * @return null|moodle_url
+     * @return moodle_url
      */
     public function get_uninstall_url() {
-
-        if ($this->is_standard()) {
-            return null;
-        }
-
-        $pluginman = plugin_manager::instance();
-        $requiredby = $pluginman->other_plugins_that_require($this->component);
-        if (!empty($requiredby)) {
-            return null;
-        }
-
         return $this->get_default_uninstall_url();
     }
 
@@ -2771,7 +2863,7 @@ abstract class plugininfo_base {
      *
      * @return moodle_url
      */
-    protected function get_default_uninstall_url() {
+    protected final function get_default_uninstall_url() {
         return new moodle_url('/admin/plugins.php', array(
             'sesskey' => sesskey(),
             'uninstall' => $this->component,
@@ -2808,6 +2900,15 @@ abstract class plugininfo_base {
         } else {
             return false;
         }
+    }
+
+    /**
+     * Provides access to the plugin_manager singleton.
+     *
+     * @return plugin_manmager
+     */
+    protected function get_plugin_manager() {
+        return plugin_manager::instance();
     }
 }
 
@@ -2935,8 +3036,11 @@ class plugininfo_block extends plugininfo_base {
         }
     }
 
-    public function get_uninstall_url() {
+    public function is_uninstall_allowed() {
+        return true;
+    }
 
+    public function get_uninstall_url() {
         $blocksinfo = self::get_blocks_info();
         return new moodle_url('/admin/blocks.php', array('delete' => $blocksinfo[$this->name]->id, 'sesskey' => sesskey()));
     }
@@ -3069,6 +3173,10 @@ class plugininfo_filter extends plugininfo_base {
         if ($settings) {
             $ADMIN->add($parentnodename, $settings);
         }
+    }
+
+    public function is_uninstall_allowed() {
+        return true;
     }
 
     public function get_uninstall_url() {
@@ -3254,13 +3362,22 @@ class plugininfo_mod extends plugininfo_base {
         }
     }
 
-    public function get_uninstall_url() {
+    /**
+     * Allow all activity modules but Forum to be uninstalled.
 
-        if ($this->name !== 'forum') {
-            return new moodle_url('/admin/modules.php', array('delete' => $this->name, 'sesskey' => sesskey()));
+     * This exception for the Forum has been hard-coded in Moodle since ages,
+     * we may want to re-think it one day.
+     */
+    public function is_uninstall_allowed() {
+        if ($this->name === 'forum') {
+            return false;
         } else {
-            return null;
+            return true;
         }
+    }
+
+    public function get_uninstall_url() {
+        return new moodle_url('/admin/modules.php', array('delete' => $this->name, 'sesskey' => sesskey()));
     }
 
     /**
@@ -3296,6 +3413,10 @@ class plugininfo_mod extends plugininfo_base {
  */
 class plugininfo_qbehaviour extends plugininfo_base {
 
+    public function is_uninstall_allowed() {
+        return true;
+    }
+
     public function get_uninstall_url() {
         return new moodle_url('/admin/qbehaviours.php',
                 array('delete' => $this->name, 'sesskey' => sesskey()));
@@ -3307,6 +3428,10 @@ class plugininfo_qbehaviour extends plugininfo_base {
  * Class for question types
  */
 class plugininfo_qtype extends plugininfo_base {
+
+    public function is_uninstall_allowed() {
+        return true;
+    }
 
     public function get_uninstall_url() {
         return new moodle_url('/admin/qtypes.php',
@@ -3432,6 +3557,10 @@ class plugininfo_enrol extends plugininfo_base {
         }
     }
 
+    public function is_uninstall_allowed() {
+        return true;
+    }
+
     public function get_uninstall_url() {
         return new moodle_url('/admin/enrol.php', array('action' => 'uninstall', 'enrol' => $this->name, 'sesskey' => sesskey()));
     }
@@ -3482,16 +3611,21 @@ class plugininfo_message extends plugininfo_base {
         }
     }
 
+    public function is_uninstall_allowed() {
+        $processors = get_message_processors();
+        if (isset($processors[$this->name])) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     /**
      * @see plugintype_interface::get_uninstall_url()
      */
     public function get_uninstall_url() {
         $processors = get_message_processors();
-        if (isset($processors[$this->name])) {
-            return new moodle_url('/admin/message.php', array('uninstall' => $processors[$this->name]->id, 'sesskey' => sesskey()));
-        } else {
-            return null;
-        }
+        return new moodle_url('/admin/message.php', array('uninstall' => $processors[$this->name]->id, 'sesskey' => sesskey()));
     }
 }
 
@@ -3636,6 +3770,10 @@ class plugininfo_mnetservice extends plugininfo_base {
  */
 class plugininfo_tool extends plugininfo_base {
 
+    public function is_uninstall_allowed() {
+        return true;
+    }
+
     public function get_uninstall_url() {
         return new moodle_url('/admin/tools.php', array('delete' => $this->name, 'sesskey' => sesskey()));
     }
@@ -3646,6 +3784,10 @@ class plugininfo_tool extends plugininfo_base {
  * Class for admin tool plugins
  */
 class plugininfo_report extends plugininfo_base {
+
+    public function is_uninstall_allowed() {
+        return true;
+    }
 
     public function get_uninstall_url() {
         return new moodle_url('/admin/reports.php', array('delete' => $this->name, 'sesskey' => sesskey()));
@@ -3770,6 +3912,10 @@ class plugininfo_webservice extends plugininfo_base {
         return false;
     }
 
+    public function is_uninstall_allowed() {
+        return true;
+    }
+
     public function get_uninstall_url() {
         return new moodle_url('/admin/webservice/protocols.php',
                 array('sesskey' => sesskey(), 'action' => 'uninstall', 'webservice' => $this->name));
@@ -3825,11 +3971,16 @@ class plugininfo_format extends plugininfo_base {
         return !get_config($this->component, 'disabled');
     }
 
-    public function get_uninstall_url() {
+    public function is_uninstall_allowed() {
         if ($this->name !== get_config('moodlecourse', 'format') && $this->name !== 'site') {
-            return new moodle_url('/admin/courseformats.php',
-                    array('sesskey' => sesskey(), 'action' => 'uninstall', 'format' => $this->name));
+            return true;
+        } else {
+            return false;
         }
-        return null;
+    }
+
+    public function get_uninstall_url() {
+        return new moodle_url('/admin/courseformats.php',
+                array('sesskey' => sesskey(), 'action' => 'uninstall', 'format' => $this->name));
     }
 }

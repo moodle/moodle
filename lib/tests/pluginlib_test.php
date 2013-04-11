@@ -53,12 +53,21 @@ class plugin_manager_test extends advanced_testcase {
         $pluginman = testable_plugin_manager::instance();
         $mods = $pluginman->get_plugins_of_type('mod');
         $this->assertEquals('array', gettype($mods));
-        $this->assertEquals(2, count($mods));
+        $this->assertEquals(4, count($mods));
         $this->assertTrue($mods['foo'] instanceof testable_plugininfo_mod);
         $this->assertTrue($mods['bar'] instanceof testable_plugininfo_mod);
+        $this->assertTrue($mods['baz'] instanceof testable_plugininfo_mod);
+        $this->assertTrue($mods['qux'] instanceof testable_plugininfo_mod);
         $foolishes = $pluginman->get_plugins_of_type('foolish');
-        $this->assertEquals(1, count($foolishes));
+        $this->assertEquals(2, count($foolishes));
         $this->assertTrue($foolishes['frog'] instanceof testable_pluginfo_foolish);
+        $this->assertTrue($foolishes['hippo'] instanceof testable_pluginfo_foolish);
+        $bazmegs = $pluginman->get_plugins_of_type('bazmeg');
+        $this->assertEquals(1, count($bazmegs));
+        $this->assertTrue($bazmegs['one'] instanceof testable_pluginfo_bazmeg);
+        $quxcats = $pluginman->get_plugins_of_type('quxcat');
+        $this->assertEquals(1, count($quxcats));
+        $this->assertTrue($quxcats['one'] instanceof testable_pluginfo_quxcat);
         $unknown = $pluginman->get_plugins_of_type('muhehe');
         $this->assertSame(array(), $unknown);
     }
@@ -69,10 +78,16 @@ class plugin_manager_test extends advanced_testcase {
         $this->assertEquals('array', gettype($plugins));
         $this->assertTrue(isset($plugins['mod']['foo']));
         $this->assertTrue(isset($plugins['mod']['bar']));
+        $this->assertTrue(isset($plugins['mod']['baz']));
         $this->assertTrue(isset($plugins['foolish']['frog']));
+        $this->assertTrue(isset($plugins['foolish']['hippo']));
         $this->assertTrue($plugins['mod']['foo'] instanceof testable_plugininfo_mod);
         $this->assertTrue($plugins['mod']['bar'] instanceof testable_plugininfo_mod);
+        $this->assertTrue($plugins['mod']['baz'] instanceof testable_plugininfo_mod);
         $this->assertTrue($plugins['foolish']['frog'] instanceof testable_pluginfo_foolish);
+        $this->assertTrue($plugins['foolish']['hippo'] instanceof testable_pluginfo_foolish);
+        $this->assertTrue($plugins['bazmeg']['one'] instanceof testable_pluginfo_bazmeg);
+        $this->assertTrue($plugins['quxcat']['one'] instanceof testable_pluginfo_quxcat);
     }
 
     public function test_get_subplugins_of_plugin() {
@@ -81,21 +96,39 @@ class plugin_manager_test extends advanced_testcase {
         $this->assertSame(array(), $pluginman->get_subplugins_of_plugin('mod_bar'));
         $foosubs = $pluginman->get_subplugins_of_plugin('mod_foo');
         $this->assertEquals('array', gettype($foosubs));
-        $this->assertEquals(1, count($foosubs));
+        $this->assertEquals(2, count($foosubs));
         $this->assertTrue($foosubs['foolish_frog'] instanceof testable_pluginfo_foolish);
+        $this->assertTrue($foosubs['foolish_hippo'] instanceof testable_pluginfo_foolish);
+        $bazsubs = $pluginman->get_subplugins_of_plugin('mod_baz');
+        $this->assertEquals('array', gettype($bazsubs));
+        $this->assertEquals(1, count($bazsubs));
+        $this->assertTrue($bazsubs['bazmeg_one'] instanceof testable_pluginfo_bazmeg);
+        $quxsubs = $pluginman->get_subplugins_of_plugin('mod_qux');
+        $this->assertEquals('array', gettype($quxsubs));
+        $this->assertEquals(1, count($quxsubs));
+        $this->assertTrue($quxsubs['quxcat_one'] instanceof testable_pluginfo_quxcat);
     }
 
     public function test_get_subplugins() {
         $pluginman = testable_plugin_manager::instance();
         $subplugins = $pluginman->get_subplugins();
         $this->assertTrue(isset($subplugins['mod_foo']['foolish']));
+        $this->assertTrue(isset($subplugins['mod_baz']['bazmeg']));
+        $this->assertTrue(isset($subplugins['mod_qux']['quxcat']));
     }
 
     public function test_get_parent_of_subplugin() {
         $pluginman = testable_plugin_manager::instance();
         $this->assertEquals('mod_foo', $pluginman->get_parent_of_subplugin('foolish'));
+        $this->assertEquals('mod_baz', $pluginman->get_parent_of_subplugin('bazmeg'));
+        $this->assertEquals('mod_qux', $pluginman->get_parent_of_subplugin('quxcat'));
         $this->assertSame(false, $pluginman->get_parent_of_subplugin('mod'));
         $this->assertSame(false, $pluginman->get_parent_of_subplugin('unknown'));
+        $plugins = $pluginman->get_plugins();
+        $this->assertFalse($plugins['mod']['foo']->is_subplugin());
+        $this->assertSame(false, $plugins['mod']['foo']->get_parent_plugin());
+        $this->assertTrue($plugins['foolish']['frog']->is_subplugin());
+        $this->assertEquals('mod_foo', $plugins['foolish']['frog']->get_parent_plugin());
     }
 
     public function test_plugin_name() {
@@ -103,6 +136,9 @@ class plugin_manager_test extends advanced_testcase {
         $this->assertEquals('Foo', $pluginman->plugin_name('mod_foo'));
         $this->assertEquals('Bar', $pluginman->plugin_name('mod_bar'));
         $this->assertEquals('Frog', $pluginman->plugin_name('foolish_frog'));
+        $this->assertEquals('Hippo', $pluginman->plugin_name('foolish_hippo'));
+        $this->assertEquals('One', $pluginman->plugin_name('bazmeg_one'));
+        $this->assertEquals('One', $pluginman->plugin_name('quxcat_one'));
     }
 
     public function test_get_plugin_info() {
@@ -114,9 +150,13 @@ class plugin_manager_test extends advanced_testcase {
     public function test_other_plugins_that_require() {
         $pluginman = testable_plugin_manager::instance();
         $this->assertEquals(array('foolish_frog'), $pluginman->other_plugins_that_require('mod_foo'));
-        $this->assertEquals(array(), $pluginman->other_plugins_that_require('foolish_frog'));
+        $this->assertEquals(2, count($pluginman->other_plugins_that_require('foolish_frog')));
+        $this->assertTrue(in_array('foolish_hippo', $pluginman->other_plugins_that_require('foolish_frog')));
+        $this->assertTrue(in_array('mod_foo', $pluginman->other_plugins_that_require('foolish_frog')));
+        $this->assertEquals(array(), $pluginman->other_plugins_that_require('foolish_hippo'));
         $this->assertEquals(array('mod_foo'), $pluginman->other_plugins_that_require('mod_bar'));
         $this->assertEquals(array('mod_foo'), $pluginman->other_plugins_that_require('mod_missing'));
+        $this->assertEquals(array('quxcat_one'), $pluginman->other_plugins_that_require('bazmeg_one'));
     }
 
     public function test_are_dependencies_satisfied() {
@@ -144,18 +184,21 @@ class plugin_manager_test extends advanced_testcase {
         $this->assertTrue(in_array('mod_foo', $failedplugins)); // Requires mod_missing
         $this->assertFalse(in_array('mod_bar', $failedplugins));
         $this->assertFalse(in_array('foolish_frog', $failedplugins));
+        $this->assertFalse(in_array('foolish_hippo', $failedplugins));
 
         $failedplugins = array();
         $this->assertFalse($pluginman->all_plugins_ok(2012010100, $failedplugins));
         $this->assertTrue(in_array('mod_foo', $failedplugins)); // Requires mod_missing
         $this->assertFalse(in_array('mod_bar', $failedplugins));
         $this->assertTrue(in_array('foolish_frog', $failedplugins)); // Requires Moodle 2013010100
+        $this->assertFalse(in_array('foolish_hippo', $failedplugins));
 
         $failedplugins = array();
         $this->assertFalse($pluginman->all_plugins_ok(2011010100, $failedplugins));
         $this->assertTrue(in_array('mod_foo', $failedplugins)); // Requires mod_missing and Moodle 2012010100
         $this->assertTrue(in_array('mod_bar', $failedplugins)); // Requires Moodle 2012010100
         $this->assertTrue(in_array('foolish_frog', $failedplugins)); // Requires Moodle 2013010100
+        $this->assertTrue(in_array('foolish_hippo', $failedplugins)); // Requires Moodle 2012010100
     }
 
     public function test_some_plugins_updatable() {
@@ -173,8 +216,9 @@ class plugin_manager_test extends advanced_testcase {
     public function test_get_status() {
         $pluginman = testable_plugin_manager::instance();
         $plugins = $pluginman->get_plugins();
-        $modfoo = $plugins['mod']['foo'];
-        $this->assertEquals($modfoo->get_status(), plugin_manager::PLUGIN_STATUS_UPGRADE);
+        $this->assertEquals(plugin_manager::PLUGIN_STATUS_UPGRADE, $plugins['mod']['foo']->get_status());
+        $this->assertEquals(plugin_manager::PLUGIN_STATUS_NEW, $plugins['bazmeg']['one']->get_status());
+        $this->assertEquals(plugin_manager::PLUGIN_STATUS_UPTODATE, $plugins['quxcat']['one']->get_status());
     }
 
     public function test_available_update() {
@@ -184,6 +228,27 @@ class plugin_manager_test extends advanced_testcase {
         $this->assertEquals('array', gettype($plugins['mod']['foo']->available_updates()));
         foreach ($plugins['mod']['foo']->available_updates() as $availableupdate) {
             $this->assertInstanceOf('available_update_info', $availableupdate);
+        }
+    }
+
+    public function test_can_uninstall_plugin() {
+        $pluginman = testable_plugin_manager::instance();
+        $this->assertFalse($pluginman->can_uninstall_plugin('mod_missing'));
+        $this->assertTrue($pluginman->can_uninstall_plugin('mod_foo')); // Because mod_foo is required by foolish_frog only
+                                                                        // and foolish_frog is required by mod_foo and foolish_hippo only.
+        $this->assertFalse($pluginman->can_uninstall_plugin('mod_bar')); // Because mod_bar is required by mod_foo.
+        $this->assertFalse($pluginman->can_uninstall_plugin('mod_qux')); // Because even if no plugin (not even subplugins) declare
+                                                                         // dependency on it, but its subplugin can't be uninstalled.
+        $this->assertFalse($pluginman->can_uninstall_plugin('mod_baz')); // Because it's subplugin bazmeg_one is required by quxcat_one.
+        $this->assertFalse($pluginman->can_uninstall_plugin('quxcat_one')); // Because of testable_pluginfo_quxcat::is_uninstall_allowed().
+    }
+
+    public function test_get_uninstall_url() {
+        $pluginman = testable_plugin_manager::instance();
+        foreach ($pluginman->get_plugins() as $plugintype => $plugininfos) {
+            foreach ($plugininfos as $plugininfo) {
+                $this->assertTrue($plugininfo->get_uninstall_url() instanceof moodle_url);
+            }
         }
     }
 }
@@ -452,6 +517,17 @@ class available_update_checker_test extends advanced_testcase {
 
 
 /**
+ * Base class for testable plugininfo classes.
+ */
+class testable_plugininfo_base extends plugininfo_base {
+
+    protected function get_plugin_manager() {
+        return testable_plugin_manager::instance();
+    }
+}
+
+
+/**
  * Modified {@link plugininfo_mod} suitable for testing purposes
  */
 class testable_plugininfo_mod extends plugininfo_mod {
@@ -471,13 +547,21 @@ class testable_plugininfo_mod extends plugininfo_mod {
     public function load_db_version() {
         $this->versiondb = 2012022900;
     }
+
+    public function is_uninstall_allowed() {
+        return true; // Allow uninstall for standard plugins too.
+    }
+
+    protected function get_plugin_manager() {
+        return testable_plugin_manager::instance();
+    }
 }
 
 
 /**
  * Testable class representing subplugins of testable mod_foo
  */
-class testable_pluginfo_foolish extends plugininfo_base {
+class testable_pluginfo_foolish extends testable_plugininfo_base {
 
     public function init_display_name() {
         $this->displayname = ucfirst($this->name);
@@ -489,6 +573,48 @@ class testable_pluginfo_foolish extends plugininfo_base {
 
     public function load_db_version() {
         $this->versiondb = 2012022900;
+    }
+}
+
+
+/**
+ * Testable class representing subplugins of testable mod_baz
+ */
+class testable_pluginfo_bazmeg extends testable_plugininfo_base {
+
+    public function init_display_name() {
+        $this->displayname = ucfirst($this->name);
+    }
+
+    public function is_standard() {
+        return false;
+    }
+
+    public function load_db_version() {
+        $this->versiondb = null;
+    }
+}
+
+
+/**
+ * Testable class representing subplugins of testable mod_qux
+ */
+class testable_pluginfo_quxcat extends testable_plugininfo_base {
+
+    public function init_display_name() {
+        $this->displayname = ucfirst($this->name);
+    }
+
+    public function is_standard() {
+        return false;
+    }
+
+    public function load_db_version() {
+        $this->versiondb = 2013041103;
+    }
+
+    public function is_uninstall_allowed() {
+        return false;
     }
 }
 
@@ -529,16 +655,33 @@ class testable_plugin_manager extends plugin_manager {
                     $dirroot.'/mod/foo', 'testable_plugininfo_mod'),
                 'bar' => plugininfo_default_factory::make('mod', $dirroot.'/bar', 'bar',
                     $dirroot.'/mod/bar', 'testable_plugininfo_mod'),
+                'baz' => plugininfo_default_factory::make('mod', $dirroot.'/baz', 'baz',
+                    $dirroot.'/mod/baz', 'testable_plugininfo_mod'),
+                'qux' => plugininfo_default_factory::make('mod', $dirroot.'/qux', 'qux',
+                    $dirroot.'/mod/qux', 'testable_plugininfo_mod'),
             ),
             'foolish' => array(
-                'frog' => plugininfo_default_factory::make('foolish', $dirroot.'/mod/foo/foolish', 'frog',
+                'frog' => plugininfo_default_factory::make('foolish', $dirroot.'/mod/foo/lish', 'frog',
                     $dirroot.'/mod/foo/lish/frog', 'testable_pluginfo_foolish'),
+                'hippo' => plugininfo_default_factory::make('foolish', $dirroot.'/mod/foo/lish', 'hippo',
+                    $dirroot.'/mod/foo/lish/hippo', 'testable_pluginfo_foolish'),
+            ),
+            'bazmeg' => array(
+                'one' => plugininfo_default_factory::make('bazmeg', $dirroot.'/mod/baz/meg', 'one',
+                    $dirroot.'/mod/baz/meg/one', 'testable_pluginfo_bazmeg'),
+            ),
+            'quxcat' => array(
+                'one' => plugininfo_default_factory::make('quxcat', $dirroot.'/mod/qux/cat', 'one',
+                    $dirroot.'/mod/qux/cat/one', 'testable_pluginfo_quxcat'),
             ),
         );
 
         $checker = testable_available_update_checker::instance();
         $this->pluginsinfo['mod']['foo']->check_available_updates($checker);
         $this->pluginsinfo['mod']['bar']->check_available_updates($checker);
+        $this->pluginsinfo['mod']['baz']->check_available_updates($checker);
+        $this->pluginsinfo['bazmeg']['one']->check_available_updates($checker);
+        $this->pluginsinfo['quxcat']['one']->check_available_updates($checker);
 
         return $this->pluginsinfo;
     }
@@ -547,20 +690,36 @@ class testable_plugin_manager extends plugin_manager {
      * Testable version of {@link plugin_manager::get_subplugins()} that works with
      * the simulated environment.
      *
-     * In this case, the mod_foo fake module provides subplugins of type 'foolish'.
+     * In this case, the mod_foo fake module provides subplugins of type 'foolish',
+     * mod_baz provides subplugins of type 'bazmeg' and mod_qux has 'quxcat'.
      *
      * @param bool $disablecache ignored in this class
      * @return array
      */
     public function get_subplugins($disablecache=false) {
-        return array(
+
+        $this->subpluginsinfo = array(
             'mod_foo' => array(
                 'foolish' => (object)array(
                     'type' => 'foolish',
                     'typerootdir' => 'mod/foo/lish',
                 ),
             ),
+            'mod_baz' => array(
+                'bazmeg' => (object)array(
+                    'type' => 'bazmeg',
+                    'typerootdir' => 'mod/baz/meg',
+                ),
+            ),
+            'mod_qux' => array(
+                'quxcat' => (object)array(
+                    'type' => 'quxcat',
+                    'typerootdir' => 'mod/qux/cat',
+                ),
+            ),
         );
+
+        return $this->subpluginsinfo;
     }
 
     /**
@@ -569,7 +728,7 @@ class testable_plugin_manager extends plugin_manager {
     protected function normalize_component($component) {
 
         // List of mock plugin types used in these unit tests.
-        $faketypes = array('foolish');
+        $faketypes = array('foolish', 'bazmeg', 'quxcat');
 
         foreach ($faketypes as $faketype) {
             if (strpos($component, $faketype.'_') === 0) {
@@ -593,20 +752,6 @@ class testable_plugin_manager extends plugin_manager {
             return true;
         }
         return false;
-    }
-
-    public static function standard_plugins_list($type) {
-        $standard_plugins = array(
-            'mod' => array(
-                'bar',
-            ),
-        );
-
-        if (isset($standard_plugins[$type])) {
-            return $standard_plugins[$type];
-        } else {
-            return false;
-        }
     }
 }
 
