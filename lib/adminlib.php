@@ -6071,8 +6071,7 @@ class admin_setting_manageformats extends admin_setting {
         if (parent::is_related($query)) {
             return true;
         }
-        $allplugins = plugin_manager::instance()->get_plugins();
-        $formats = $allplugins['format'];
+        $formats = plugin_manager::instance()->get_plugins_of_type('format');
         foreach ($formats as $format) {
             if (strpos($format->component, $query) !== false ||
                     strpos(textlib::strtolower($format->displayname), $query) !== false) {
@@ -6095,8 +6094,7 @@ class admin_setting_manageformats extends admin_setting {
         $return = $OUTPUT->heading(new lang_string('courseformats'), 3, 'main');
         $return .= $OUTPUT->box_start('generalbox formatsui');
 
-        $allplugins = plugin_manager::instance()->get_plugins();
-        $formats = $allplugins['format'];
+        $formats = plugin_manager::instance()->get_plugins_of_type('format');
 
         // display strings
         $txt = get_strings(array('settings', 'name', 'enable', 'disable', 'up', 'down', 'default', 'delete'));

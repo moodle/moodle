@@ -51,6 +51,8 @@ information provided here is intended especially for developers.
 * Additional (optional) param $onlyactive has been added to get_enrolled_users, count_enrolled_users
   functions to get information for only active (excluding suspended enrolments) users. Included two
   helper functions extract_suspended_users, get_suspended_userids to extract suspended user information.
+* The plugin_manager class now provides two new helper methods for getting information
+  about known plugins: get_plugins_of_type() and get_subplugins_of_plugin().
 
 Database (DML) layer:
 * $DB->sql_empty() is deprecated, you have to use sql parameters with empty values instead,

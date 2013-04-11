@@ -49,15 +49,40 @@ class plugin_manager_test extends advanced_testcase {
         $this->assertTrue($pluginman instanceof testable_plugin_manager);
     }
 
+    public function test_get_plugins_of_type() {
+        $pluginman = testable_plugin_manager::instance();
+        $mods = $pluginman->get_plugins_of_type('mod');
+        $this->assertEquals('array', gettype($mods));
+        $this->assertEquals(2, count($mods));
+        $this->assertTrue($mods['foo'] instanceof testable_plugininfo_mod);
+        $this->assertTrue($mods['bar'] instanceof testable_plugininfo_mod);
+        $foolishes = $pluginman->get_plugins_of_type('foolish');
+        $this->assertEquals(1, count($foolishes));
+        $this->assertTrue($foolishes['frog'] instanceof testable_pluginfo_foolish);
+        $unknown = $pluginman->get_plugins_of_type('muhehe');
+        $this->assertSame(array(), $unknown);
+    }
+
     public function test_get_plugins() {
         $pluginman = testable_plugin_manager::instance();
         $plugins = $pluginman->get_plugins();
+        $this->assertEquals('array', gettype($plugins));
         $this->assertTrue(isset($plugins['mod']['foo']));
         $this->assertTrue(isset($plugins['mod']['bar']));
         $this->assertTrue(isset($plugins['foolish']['frog']));
         $this->assertTrue($plugins['mod']['foo'] instanceof testable_plugininfo_mod);
         $this->assertTrue($plugins['mod']['bar'] instanceof testable_plugininfo_mod);
         $this->assertTrue($plugins['foolish']['frog'] instanceof testable_pluginfo_foolish);
+    }
+
+    public function test_get_subplugins_of_plugin() {
+        $pluginman = testable_plugin_manager::instance();
+        $this->assertSame(array(), $pluginman->get_subplugins_of_plugin('mod_missing'));
+        $this->assertSame(array(), $pluginman->get_subplugins_of_plugin('mod_bar'));
+        $foosubs = $pluginman->get_subplugins_of_plugin('mod_foo');
+        $this->assertEquals('array', gettype($foosubs));
+        $this->assertEquals(1, count($foosubs));
+        $this->assertTrue($foosubs['foolish_frog'] instanceof testable_pluginfo_foolish);
     }
 
     public function test_get_subplugins() {

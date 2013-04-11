@@ -108,6 +108,27 @@ class plugin_manager {
     }
 
     /**
+     * Returns list of known plugins of the given type
+     *
+     * This method returns the subset of the tree returned by {@link self::get_plugins()}.
+     * If the given type is not known, empty array is returned.
+     *
+     * @param string $type plugin type, e.g. 'mod' or 'workshopallocation'
+     * @param bool $disablecache force reload, cache can be used otherwise
+     * @return array (string)plugin name (e.g. 'workshop') => corresponding subclass of {@link plugininfo_base}
+     */
+    public function get_plugins_of_type($type, $disablecache=false) {
+
+        $plugins = $this->get_plugins($disablecache);
+
+        if (!isset($plugins[$type])) {
+            return array();
+        }
+
+        return $plugins[$type];
+    }
+
+    /**
      * Returns a tree of known plugins and information about them
      *
      * @param bool $disablecache force reload, cache can be used otherwise
@@ -159,6 +180,41 @@ class plugin_manager {
         }
 
         return $this->pluginsinfo;
+    }
+
+    /**
+     * Returns list of all known subplugins of the given plugin
+     *
+     * For plugins that do not provide subplugins (i.e. there is no support for it),
+     * empty array is returned.
+     *
+     * @param string $component full component name, e.g. 'mod_workshop'
+     * @param bool $disablecache force reload, cache can be used otherwise
+     * @return array (string) component name (e.g. 'workshopallocation_random') => subclass of {@link plugininfo_base}
+     */
+    public function get_subplugins_of_plugin($component, $disablecache=false) {
+
+        $pluginfo = $this->get_plugin_info($component, $disablecache);
+
+        if (is_null($pluginfo)) {
+            return array();
+        }
+
+        $subplugins = $this->get_subplugins($disablecache);
+
+        if (!isset($subplugins[$pluginfo->component])) {
+            return array();
+        }
+
+        $list = array();
+
+        foreach ($subplugins[$pluginfo->component] as $subdata) {
+            foreach ($this->get_plugins_of_type($subdata->type) as $subpluginfo) {
+                $list[$subpluginfo->component] = $subpluginfo;
+            }
+        }
+
+        return $list;
     }
 
     /**
@@ -294,12 +350,15 @@ class plugin_manager {
     }
 
     /**
+     * Returns information about the known plugin, or null
+     *
      * @param string $component frankenstyle component name.
+     * @param bool $disablecache force reload, cache can be used otherwise
      * @return plugininfo_base|null the corresponding plugin information.
      */
-    public function get_plugin_info($component) {
+    public function get_plugin_info($component, $disablecache=false) {
         list($type, $name) = $this->normalize_component($component);
-        $plugins = $this->get_plugins();
+        $plugins = $this->get_plugins($disablecache);
         if (isset($plugins[$type][$name])) {
             return $plugins[$type][$name];
         } else {
