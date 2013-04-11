@@ -29,9 +29,10 @@
 
 require_once(__DIR__ . '/../../behat/behat_base.php');
 
-use Behat\Behat\Event\SuiteEvent as SuiteEvent;
-use Behat\Behat\Event\ScenarioEvent as ScenarioEvent;
-use Behat\Behat\Event\StepEvent as StepEvent;
+use Behat\Behat\Event\SuiteEvent as SuiteEvent,
+    Behat\Behat\Event\ScenarioEvent as ScenarioEvent,
+    Behat\Behat\Event\StepEvent as StepEvent,
+    WebDriver\Exception\NoSuchWindow as NoSuchWindow;
 
 /**
  * Hooks to the behat process.
@@ -170,7 +171,11 @@ class behat_hooks extends behat_base {
         }
 
         // Wait until the page is ready.
-        $this->getSession()->wait(self::TIMEOUT, '(document.readyState === "complete")');
+        try {
+            $this->getSession()->wait(self::TIMEOUT, '(document.readyState === "complete")');
+        } catch (NoSuchWindow $e) {
+            // If we were interacting with a popup window it will not exists after closing it.
+        }
     }
 
 }

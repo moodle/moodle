@@ -64,6 +64,25 @@ class behat_general extends behat_base {
     }
 
     /**
+     * Switches to the specified window. Useful when interacting with popup windows.
+     *
+     * @Given /^I switch to "(?P<window_name_string>(?:[^"]|\\")*)" window$/
+     * @param string $windowname
+     */
+    public function switch_to_window($windowname) {
+        $this->getSession()->switchToWindow($windowname);
+    }
+
+    /**
+     * Switches to the main Moodle window. Useful when you finish interacting with popup windows.
+     *
+     * @Given /^I switch to the main window$/
+     */
+    public function switch_to_the_main_window() {
+        $this->getSession()->switchToWindow();
+    }
+
+    /**
      * Clicks link with specified id|title|alt|text.
      *
      * @When /^I follow "(?P<link_string>(?:[^"]|\\")*)"$/
