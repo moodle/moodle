@@ -61,6 +61,12 @@ $context = $PAGE->context;
 // And the object has been loaded for us no need for another DB call
 $category = $PAGE->category;
 
+// This needs to match caps checked in can_edit_in_category below.
+$PAGE->set_other_editing_capability(array(
+    'moodle/category:manage',
+    'moodle/course:create'
+));
+
 $canedit = can_edit_in_category($category->id);
 if ($canedit) {
     if ($categoryedit !== -1) {
