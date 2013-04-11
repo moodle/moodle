@@ -107,9 +107,9 @@ The following points highlight things you should know about stores.
 * The store plugin can inherit the cache_is_lockable interface to handle its own locking.
 * The store plugin can inherit the cache_is_key_aware interface to handle is own has checks.
 * Store plugins inform the cache API about the things they support. Features can be required by a definition.
-** Data guarantee - Data is guaranteed to exist in the cache once it is set there. It is never cleaned up to free space or because it has not been recently used.
-** Multiple identifiers - Rather than a single string key, the parts that make up the key are passed as an array.
-** Native TTL support - When required, the store supports native ttl and doesn't require the cache API to manage ttl of things given to the store.
+  * Data guarantee - Data is guaranteed to exist in the cache once it is set there. It is never cleaned up to free space or because it has not been recently used.
+  * Multiple identifiers - Rather than a single string key, the parts that make up the key are passed as an array.
+  * Native TTL support - When required, the store supports native ttl and doesn't require the cache API to manage ttl of things given to the store.
 * There are two reserved store names, base and dummy. These are both used internally.
 
 ### Definition
