@@ -28,8 +28,7 @@
 require_once(__DIR__ . '/../../../../lib/behat/behat_base.php');
 
 use Behat\Behat\Context\Step\Given as Given,
-    Behat\Gherkin\Node\TableNode as TableNode,
-    Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
+    Behat\Gherkin\Node\TableNode as TableNode;
 
 /**
  * Glossary-related steps definitions.
@@ -55,4 +54,21 @@ class behat_mod_glossary extends behat_base {
         );
     }
 
+    /**
+     * Adds a category with the specified name to the current glossary. You need to be in the glossary page.
+     *
+     * @Given /^I add a glossary entries category named "(?P<category_name_string>(?:[^"]|\\")*)"$/
+     * @param string $categoryname Category name
+     */
+    public function i_add_a_glossary_entries_category_named($categoryname) {
+
+        return array(
+            new Given('I follow "' . get_string('categoryview', 'mod_glossary') . '"'),
+            new Given('I press "' . get_string('editcategories', 'mod_glossary') . '"'),
+            new Given('I press "Add Category"'),
+            new Given('I fill in "name" with "' . $categoryname . '"'),
+            new Given('I press "' . get_string('savechanges') . '"'),
+            new Given('I press "' . get_string('back', 'mod_glossary') . '"')
+        );
+    }
 }
