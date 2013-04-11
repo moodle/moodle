@@ -4515,3 +4515,110 @@ function get_courses_wmanagers($categoryid=0, $sort="c.sortorder ASC", $fields=a
 
     return $courses;
 }
+
+/**
+ * Converts a nested array tree into HTML ul:li [recursive]
+ *
+ * @deprecated since 2.5
+ *
+ * @param array $tree A tree array to convert
+ * @param int $row Used in identifying the iteration level and in ul classes
+ * @return string HTML structure
+ */
+function convert_tree_to_html($tree, $row=0) {
+    debugging('Function convert_tree_to_html() is deprecated since Moodle 2.5. Consider using class tabtree and core_renderer::render_tabtree()', DEBUG_DEVELOPER);
+
+    $str = "\n".'<ul class="tabrow'.$row.'">'."\n";
+
+    $first = true;
+    $count = count($tree);
+
+    foreach ($tree as $tab) {
+        $count--;   // countdown to zero
+
+        $liclass = '';
+
+        if ($first && ($count == 0)) {   // Just one in the row
+            $liclass = 'first last';
+            $first = false;
+        } else if ($first) {
+            $liclass = 'first';
+            $first = false;
+        } else if ($count == 0) {
+            $liclass = 'last';
+        }
+
+        if ((empty($tab->subtree)) && (!empty($tab->selected))) {
+            $liclass .= (empty($liclass)) ? 'onerow' : ' onerow';
+        }
+
+        if ($tab->inactive || $tab->active || $tab->selected) {
+            if ($tab->selected) {
+                $liclass .= (empty($liclass)) ? 'here selected' : ' here selected';
+            } else if ($tab->active) {
+                $liclass .= (empty($liclass)) ? 'here active' : ' here active';
+            }
+        }
+
+        $str .= (!empty($liclass)) ? '<li class="'.$liclass.'">' : '<li>';
+
+        if ($tab->inactive || $tab->active || ($tab->selected && !$tab->linkedwhenselected)) {
+            // The a tag is used for styling
+            $str .= '<a class="nolink"><span>'.$tab->text.'</span></a>';
+        } else {
+            $str .= '<a href="'.$tab->link.'" title="'.$tab->title.'"><span>'.$tab->text.'</span></a>';
+        }
+
+        if (!empty($tab->subtree)) {
+            $str .= convert_tree_to_html($tab->subtree, $row+1);
+        } else if ($tab->selected) {
+            $str .= '<div class="tabrow'.($row+1).' empty">&nbsp;</div>'."\n";
+        }
+
+        $str .= ' </li>'."\n";
+    }
+    $str .= '</ul>'."\n";
+
+    return $str;
+}
+
+/**
+ * Convert nested tabrows to a nested array
+ *
+ * @deprecated since 2.5
+ *
+ * @param array $tabrows A [nested] array of tab row objects
+ * @param string $selected The tabrow to select (by id)
+ * @param array $inactive An array of tabrow id's to make inactive
+ * @param array $activated An array of tabrow id's to make active
+ * @return array The nested array
+ */
+function convert_tabrows_to_tree($tabrows, $selected, $inactive, $activated) {
+
+    debugging('Function convert_tabrows_to_tree() is deprecated since Moodle 2.5. Consider using class tabtree', DEBUG_DEVELOPER);
+/// Work backwards through the rows (bottom to top) collecting the tree as we go.
+
+    $tabrows = array_reverse($tabrows);
+
+    $subtree = array();
+
+    foreach ($tabrows as $row) {
+        $tree = array();
+
+        foreach ($row as $tab) {
+            $tab->inactive = in_array((string)$tab->id, $inactive);
+            $tab->active = in_array((string)$tab->id, $activated);
+            $tab->selected = (string)$tab->id == $selected;
+
+            if ($tab->active || $tab->selected) {
+                if ($subtree) {
+                    $tab->subtree = $subtree;
+                }
+            }
+            $tree[] = $tab;
+        }
+        $subtree = $tree;
+    }
+
+    return $subtree;
+}

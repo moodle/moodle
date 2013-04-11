@@ -2882,6 +2882,107 @@ EOD;
 
         return $content;
     }
+
+    /**
+     * Renders tabs
+     *
+     * This function replaces print_tabs() used before Moodle 2.5 but with slightly different arguments
+     *
+     * @param array $tabs array of tabs, each of them may have it's own ->subtree
+     * @param string|null $selected which tab to mark as selected, all parent tabs will
+     *     automatically be marked as activated
+     * @param array|string|null $inactive list of ids of inactive tabs, regardless of
+     *     their level. Note that you can as weel specify tabobject::$inactive for separate instances
+     * @return string
+     */
+    public function tabtree($tabs, $selected = null, $inactive = null) {
+        return $this->render(new tabtree($tabs, $selected, $inactive));
+    }
+
+    /**
+     * Renders tabtree
+     *
+     * @param tabtree $tabtree
+     * @return string
+     */
+    protected function render_tabtree(tabtree $tabtree) {
+        if (empty($tabtree->subtree)) {
+            return '';
+        }
+        $str = '';
+        $str .= html_writer::start_tag('div', array('class' => 'tabtree'));
+        $str .= $this->render_tabobject($tabtree);
+        $str .= html_writer::end_tag('div').
+                html_writer::tag('div', ' ', array('class' => 'clearer'));
+        return $str;        
+    }
+
+    /**
+     * Renders tabobject (part of tabtree)
+     *
+     * This function is called from {@link core_renderer::render_tabtree()}
+     * and also it calls itself when printing the $tabobject subtree recursively.
+     *
+     * Property $tabobject->level indicates the number of row of tabs.
+     *
+     * @param tabobject $tabobject
+     * @return string HTML fragment
+     */
+    protected function render_tabobject(tabobject $tabobject) {
+        $str = '';
+
+        // Print name of the current tab.
+        if ($tabobject instanceof tabtree) {
+            // No name for tabtree root.
+        } else if ($tabobject->inactive || $tabobject->activated || ($tabobject->selected && !$tabobject->linkedwhenselected)) {
+            // Tab name without a link. The <a> tag is used for styling.
+            $str .= html_writer::tag('a', html_writer::span($tabobject->text), array('class' => 'nolink'));
+        } else {
+            // Tab name with a link.
+            if (!($tabobject->link instanceof moodle_url)) {
+                // backward compartibility when link was passed as quoted string
+                $str .= "<a href=\"$tabobject->link\" title=\"$tabobject->title\"><span>$tabobject->text</span></a>";
+            } else {
+                $str .= html_writer::link($tabobject->link, html_writer::span($tabobject->text), array('title' => $tabobject->title));
+            }
+        }
+
+        if (empty($tabobject->subtree)) {
+            if ($tabobject->selected) {
+                $str .= html_writer::tag('div', '&nbsp;', array('class' => 'tabrow'. ($tabobject->level + 1). ' empty'));
+            }
+            return $str;
+        }
+
+        // Print subtree
+        $str .= html_writer::start_tag('ul', array('class' => 'tabrow'. $tabobject->level));
+        $cnt = 0;
+        foreach ($tabobject->subtree as $tab) {
+            $liclass = '';
+            if (!$cnt) {
+                $liclass .= ' first';
+            }
+            if ($cnt == count($tabobject->subtree) - 1) {
+                $liclass .= ' last';
+            }
+            if ((empty($tab->subtree)) && (!empty($tab->selected))) {
+                $liclass .= ' onerow';
+            }
+
+            if ($tab->selected) {
+                $liclass .= ' here selected';
+            } else if ($tab->activated) {
+                $liclass .= ' here active';
+            }
+
+            // This will recursively call function render_tabobject() for each item in subtree
+            $str .= html_writer::tag('li', $this->render($tab), array('class' => trim($liclass)));
+            $cnt++;
+        }
+        $str .= html_writer::end_tag('ul');
+
+        return $str;
+    }
 }
 
 /**
