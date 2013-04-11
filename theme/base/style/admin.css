@@ -294,8 +294,6 @@
 #page-admin-plugins #plugins-control-panel .pluginname .componentname {font-size:0.8em;color:#999;margin-left:26px;}
 #page-admin-plugins #plugins-control-panel .missingfromdisk .pluginname {background-color:#ffd3d9;}
 #page-admin-plugins #plugins-control-panel .disabled .availability {background-color:#eee;}
-#page-admin-plugins #plugins-control-panel .actions a {padding:0 10px;}
-#page-admin-plugins #plugins-control-panel .actions .separator {border-left:1px dotted #999;}
 #page-admin-plugins #plugins-control-panel .extension .source {background-color:#f3f2aa;}
 #page-admin-plugins #plugins-control-panel .msg td {text-align:center;}
 #page-admin-plugins #plugins-control-panel .requiredby {font-size:0.8em;color:#999;}
@@ -308,7 +306,7 @@
 #page-admin-plugins #plugins-overview-filter .filter-item.active {font-weight:bold;}
 #page-admin-plugins #plugins-overview-filter .separator {border-left:1px dotted #999;}
 #page-admin-plugins #plugins-control-panel .displayname img.icon { padding-top:0; padding-bottom: 0; }
-#page-admin-plugins #plugins-control-panel .actions .uninstall {color:#900;}
+#page-admin-plugins #plugins-control-panel .uninstall a {color:#900;}
 #page-admin-plugins #plugins-control-panel .notes .pluginupdateinfo {padding:5px 10px;margin:10px;background-color:#d2ebff;-moz-border-radius: 10px;-webkit-border-radius: 10px;border-radius: 10px;}
 #page-admin-plugins #plugins-control-panel .notes .pluginupdateinfo.maturity50 {background-color:#ffd3d9;}
 #page-admin-plugins #plugins-control-panel .notes .pluginupdateinfo.maturity100,

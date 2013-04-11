@@ -1160,22 +1160,23 @@ class core_admin_renderer extends plugin_renderer_base {
             get_string('actions', 'core_plugin'),
             get_string('notes','core_plugin'),
         );
+        $table->headspan = array(1, 1, 1, 1, 2, 1);
         $table->colclasses = array(
-            'pluginname', 'source', 'version', 'availability', 'actions', 'notes'
+            'pluginname', 'source', 'version', 'availability', 'settings', 'uninstall', 'notes'
         );
 
         foreach ($plugininfo as $type => $plugins) {
 
             $header = new html_table_cell($pluginman->plugintype_name_plural($type));
             $header->header = true;
-            $header->colspan = count($table->head);
+            $header->colspan = array_sum($table->headspan);
             $header = new html_table_row(array($header));
             $header->attributes['class'] = 'plugintypeheader type-' . $type;
             $table->data[] = $header;
 
             if (empty($plugins)) {
                 $msg = new html_table_cell(get_string('noneinstalled', 'core_plugin'));
-                $msg->colspan = count($table->head);
+                $msg->colspan = array_sum($table->headspan);
                 $row = new html_table_row(array($msg));
                 $row->attributes['class'] .= 'msg msg-noneinstalled';
                 $table->data[] = $row;
@@ -1222,19 +1223,21 @@ class core_admin_renderer extends plugin_renderer_base {
                     $availability = new html_table_cell(get_string('plugindisabled', 'core_plugin'));
                 }
 
-                $actions = array();
-
                 $settingsurl = $plugin->get_settings_url();
                 if (!is_null($settingsurl)) {
-                    $actions[] = html_writer::link($settingsurl, get_string('settings', 'core_plugin'), array('class' => 'settings'));
+                    $settings = html_writer::link($settingsurl, get_string('settings', 'core_plugin'), array('class' => 'settings'));
+                } else {
+                    $settings = '';
                 }
+                $settings = new html_table_cell($settings);
 
                 if ($pluginman->can_uninstall_plugin($plugin->component)) {
                     $uninstallurl = $plugin->get_uninstall_url();
-                    $actions[] = html_writer::link($uninstallurl, get_string('uninstall', 'core_plugin'), array('class' => 'uninstall'));
+                    $uninstall = html_writer::link($uninstallurl, get_string('uninstall', 'core_plugin'));
+                } else {
+                    $uninstall = '';
                 }
-
-                $actions = new html_table_cell(implode(html_writer::tag('span', ' ', array('class' => 'separator')), $actions));
+                $uninstall = new html_table_cell($uninstall);
 
                 $requriedby = $pluginman->other_plugins_that_require($plugin->component);
                 if ($requriedby) {
@@ -1254,7 +1257,7 @@ class core_admin_renderer extends plugin_renderer_base {
                 $notes = new html_table_cell($requiredby.$updateinfo);
 
                 $row->cells = array(
-                    $pluginname, $source, $version, $availability, $actions, $notes
+                    $pluginname, $source, $version, $availability, $settings, $uninstall, $notes
                 );
                 $table->data[] = $row;
             }
