@@ -1451,7 +1451,8 @@ class grade_structure {
 
         $strparams->itemmodule = null;
         if (isset($element['object']->itemmodule)) {
-            $strparams->itemmodule = $element['object']->itemmodule;
+            $activity = $element['object']->itemmodule;
+            $strparams->itemmodule = get_string('pluginname', $activity);
         }
         return $strparams;
     }
