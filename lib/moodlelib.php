@@ -6194,9 +6194,12 @@ function get_max_upload_sizes($sitebytes = 0, $coursebytes = 0, $modulebytes = 0
         return array();
     }
 
-    $filesize = array();
-    $filesize[(string)intval($maxsize)] = display_size($maxsize);
+    if ($sitebytes == 0) {
+        // Will get the minimum of upload_max_filesize or post_max_size.
+        $sitebytes = get_max_upload_file_size();
+    }
 
+    $filesize = array();
     $sizelist = array(10240, 51200, 102400, 512000, 1048576, 2097152,
                       5242880, 10485760, 20971520, 52428800, 104857600);
 
