@@ -85,12 +85,8 @@ class assignment_uploadsingle extends assignment_base {
             }
         }
 
-        if (is_enrolled($this->context, $USER, 'mod/assignment:submit') && (!$filecount || $this->assignment->resubmit || !$submission->timemarked)) {
-            if ($this->isopen()) {
-                $this->view_upload_form();
-            } else if ($this->assignment->timeavailable > time()) {
-                echo $OUTPUT->heading(get_string('futureaassignment','assignment'), 3);
-            }
+        if (is_enrolled($this->context, $USER, 'mod/assignment:submit') && $this->isopen() && (!$filecount || $this->assignment->resubmit || !$submission->timemarked)) {
+            $this->view_upload_form();
         }
 
         $this->view_footer();
