@@ -1992,7 +1992,7 @@ function xmldb_main_upgrade($oldversion) {
 
     if ($oldversion < 2013041200.00) {
         // MDL-29877 Some bad restores created grade items with no category information.
-        $sql = "UPDATE mdl_grade_items
+        $sql = "UPDATE {grade_items}
                    SET categoryid = courseid
                  WHERE itemtype <> 'course' and itemtype <> 'category'
                        AND categoryid IS NULL";
