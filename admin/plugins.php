@@ -18,6 +18,15 @@
 /**
  * UI for general plugins management
  *
+ * Supported HTTP parameters:
+ *
+ *  ?fetchremote=1      - check for available updates
+ *  ?updatesonly=1      - display plugins with available update only
+ *  ?contribonly=1      - display non-standard add-ons only
+ *  ?uninstall=foo_bar  - uninstall the given plugin
+ *  ?delete=foo_bar     - delete the plugin folder (it must not be installed)
+ *  &confirm=1          - confirm the uninstall or delete action
+ *
  * @package    core
  * @subpackage admin
  * @copyright  2011 David Mudrak <david@moodle.com>
@@ -47,16 +56,20 @@ if ($uninstall) {
     require_sesskey();
     $pluginfo = $pluginman->get_plugin_info($uninstall);
 
+    // Make sure we know the plugin.
     if (is_null($pluginfo)) {
         throw new moodle_exception('err_uninstalling_unknown_plugin', 'core_plugin', '', array('plugin' => $uninstall),
             'plugin_manager::get_plugin_info() returned null for the plugin to be uninstalled');
     }
 
-    $requiredby = $pluginman->other_plugins_that_require($pluginfo->component);
-    if (!empty($requiredby)) {
-        throw new moodle_exception('err_uninstalling_required_plugin', 'core_plugin', '',
-            array('plugin' => $pluginfo->component, 'requiredby' => implode(', ', $requiredby)),
-            'plugin_manager::other_plugins_that_require() returned non-empty array');
+    $pluginname = $pluginman->plugin_name($pluginfo->component);
+    $PAGE->set_title($pluginname);
+    $PAGE->navbar->add(get_string('uninstalling', 'core_plugin', array('name' => $pluginname)));
+
+    if (!$pluginman->can_uninstall_plugin($pluginfo->component)) {
+        throw new moodle_exception('err_cannot_uninstall_plugin', 'core_plugin', '',
+            array('plugin' => $pluginfo->component),
+            'plugin_manager::can_uninstall_plugin() returned false');
     }
 
     if (!$confirmed) {
@@ -89,6 +102,10 @@ if ($delete and $confirmed) {
         throw new moodle_exception('err_removing_unknown_plugin', 'core_plugin', '', array('plugin' => $delete),
             'plugin_manager::get_plugin_info() returned null for the plugin to be deleted');
     }
+
+    $pluginname = $pluginman->plugin_name($pluginfo->component);
+    $PAGE->set_title($pluginname);
+    $PAGE->navbar->add(get_string('uninstalling', 'core_plugin', array('name' => $pluginname)));
 
     // Make sure it is not installed.
     if (!is_null($pluginfo->versiondb)) {

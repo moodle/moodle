@@ -384,9 +384,6 @@ class core_admin_renderer extends plugin_renderer_base {
 
         $pluginname = $pluginman->plugin_name($pluginfo->component);
 
-        $this->page->set_title($pluginname);
-        $this->page->navbar->add(get_string('uninstalling', 'core_plugin', array('name' => $pluginname)));
-
         $output .= $this->output->header();
         $output .= $this->output->heading(get_string('uninstalling', 'core_plugin', array('name' => $pluginname)));
         $output .= $this->output->confirm(get_string('uninstallconfirm', 'core_plugin', array('name' => $pluginname)),
@@ -410,9 +407,6 @@ class core_admin_renderer extends plugin_renderer_base {
         $output = '';
 
         $pluginname = $pluginman->plugin_name($pluginfo->component);
-
-        $this->page->set_title($pluginname);
-        $this->page->navbar->add(get_string('uninstalling', 'core_plugin', array('name' => $pluginname)));
 
         $output .= $this->output->header();
         $output .= $this->output->heading(get_string('uninstalling', 'core_plugin', array('name' => $pluginname)));
@@ -447,9 +441,6 @@ class core_admin_renderer extends plugin_renderer_base {
         $output = '';
 
         $pluginname = $pluginman->plugin_name($pluginfo->component);
-
-        $this->page->set_title($pluginname);
-        $this->page->navbar->add(get_string('uninstalling', 'core_plugin', array('name' => $pluginname)));
 
         $output .= $this->output->header();
         $output .= $this->output->heading(get_string('uninstalling', 'core_plugin', array('name' => $pluginname)));
