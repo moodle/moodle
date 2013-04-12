@@ -93,7 +93,8 @@ if ($isadmin) {
     }
 } else {
     // Current user's role.
-    $issuerrole = array_shift(get_user_roles($context, $USER->id));
+    $roles = get_user_roles($context, $USER->id);
+    $issuerrole = array_shift($roles);
     if (!isset($issuerrole->roleid) || !in_array($issuerrole->roleid, $accepted_roles)) {
         echo $OUTPUT->header();
         $rlink = html_writer::link(new moodle_url('recipients.php', array('id' => $badge->id)), get_string('recipients', 'badges'));

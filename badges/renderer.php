@@ -97,7 +97,7 @@ class core_badges_renderer extends plugin_renderer_base {
         $output = '';
         $formattributes = array();
         $formattributes['id'] = 'recipientform';
-        $formattributes['action'] = '';
+        $formattributes['action'] = $this->page->url;
         $formattributes['method'] = 'post';
         $output .= html_writer::start_tag('form', $formattributes);
         $output .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()));
