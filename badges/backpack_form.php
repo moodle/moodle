@@ -86,6 +86,7 @@ class edit_backpack_group_form extends moodleform {
         $mform->addElement('static', 'url', get_string('url'), 'http://backpack.openbadges.org');
 
         $mform->addElement('text', 'email', get_string('email'), array('size' => '50'));
+        $mform->setType('email', PARAM_EMAIL);
         $mform->setDefault('email', $data->email);
         $mform->freeze(array('email'));
 
