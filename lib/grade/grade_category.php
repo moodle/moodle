@@ -1160,7 +1160,7 @@ class grade_category extends grade_object {
             // prevent problems with duplicate sortorders in db
             $sortorder = $item->sortorder;
 
-            while (array_key_exists($categoryid, $cats) 
+            while (array_key_exists($categoryid, $cats)
                 && array_key_exists($sortorder, $cats[$categoryid]->children)) {
 
                 $sortorder++;
