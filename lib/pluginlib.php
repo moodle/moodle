@@ -487,46 +487,34 @@ class plugin_manager {
             return false;
         }
 
-        // Backwards compatibility check.
-        if (is_null($pluginfo->get_uninstall_url())) {
-            debugging('plugininfo_base subclasses should use is_uninstall_allowed() instead of returning null in get_uninstall_url()',
-                DEBUG_DEVELOPER);
+        if (!$this->common_uninstall_check($pluginfo)) {
             return false;
         }
 
-        // In case the $component has subplugins, get their list.
-        $mysubplugins = $this->get_subplugins_of_plugin($pluginfo->component);
-
-        // In case the $component is a subplugin, get all subplugins of its parent (i.e. siblings).
-        $myparent = $this->get_parent_of_subplugin($pluginfo->type);
-        if ($myparent === false) {
-            $mysiblings = array();
-        } else {
-            $mysiblings = $this->get_subplugins_of_plugin($myparent);
-        }
-
-        // If the plugin has subplugins, check we can uninstall them first.
-        foreach ($mysubplugins as $subpluginfo) {
-            if (!$this->can_uninstall_plugin($subpluginfo->component)) {
+        // If it has subplugins, check they can be uninstalled too.
+        $subplugins = $this->get_subplugins_of_plugin($pluginfo->component);
+        foreach ($subplugins as $subpluginfo) {
+            if (!$this->common_uninstall_check($subpluginfo)) {
                 return false;
+            }
+            // Check if there are some other plugins requiring this subplugin
+            // (but the parent and siblings).
+            foreach ($this->other_plugins_that_require($subpluginfo->component) as $requiresme) {
+                $ismyparent = ($pluginfo->component === $requiresme);
+                $ismysibling = in_array($requiresme, array_keys($subplugins));
+                if (!$ismyparent and !$ismysibling) {
+                    return false;
+                }
             }
         }
 
-        // Check there are no other plugins (but eventual subplugins or siblings) that
-        // require us. Subplugins would be uninstalled together with the parent plugin
-        // without the need to uninstall each of them individually.
+        // Check if there are some other plugins requiring this plugin
+        // (but its subplugins).
         foreach ($this->other_plugins_that_require($pluginfo->component) as $requiresme) {
-            $ismyparent = ($myparent === $requiresme);
-            $ismysubplugin = in_array($requiresme, array_keys($mysubplugins));
-            $ismysibling = in_array($requiresme, array_keys($mysiblings));
-            if (!$ismyparent and !$ismysubplugin and !$ismysibling) {
+            $ismysubplugin = in_array($requiresme, array_keys($subplugins));
+            if (!$ismysubplugin) {
                 return false;
             }
-        }
-
-        // Finally give the plugin plugininfo subclass a chance to prevent uninstallation.
-        if (!$pluginfo->is_uninstall_allowed()) {
-            return false;
         }
 
         return true;
@@ -945,6 +933,29 @@ class plugin_manager {
         closedir($handle);
 
         return $result;
+    }
+
+    /**
+     * Helper method that implements common uninstall prerequisities
+     *
+     * @param plugininfo_base $pluginfo
+     * @return bool
+     */
+    protected function common_uninstall_check(plugininfo_base $pluginfo) {
+
+        if (!$pluginfo->is_uninstall_allowed()) {
+            // The plugin's plugininfo class declares it should not be uninstalled.
+            return false;
+        }
+
+        if (is_null($pluginfo->get_uninstall_url())) {
+            // Backwards compatibility.
+            debugging('plugininfo_base subclasses should use is_uninstall_allowed() instead of returning null in get_uninstall_url()',
+                DEBUG_DEVELOPER);
+            return false;
+        }
+
+        return true;
     }
 }
 

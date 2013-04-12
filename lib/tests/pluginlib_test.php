@@ -241,6 +241,7 @@ class plugin_manager_test extends advanced_testcase {
                                                                          // dependency on it, but its subplugin can't be uninstalled.
         $this->assertFalse($pluginman->can_uninstall_plugin('mod_baz')); // Because it's subplugin bazmeg_one is required by quxcat_one.
         $this->assertFalse($pluginman->can_uninstall_plugin('quxcat_one')); // Because of testable_pluginfo_quxcat::is_uninstall_allowed().
+        $this->assertFalse($pluginman->can_uninstall_plugin('foolish_frog')); // Because foolish_hippo requires it.
     }
 
     public function test_get_uninstall_url() {
