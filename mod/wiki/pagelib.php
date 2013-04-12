@@ -1111,7 +1111,7 @@ class page_wiki_diff extends page_wiki {
         global $PAGE, $CFG;
 
         parent::create_navbar();
-        $PAGE->navbar->add(get_string('history', 'wiki'), $CFG->wwwroot . '/mod/wiki/history.php?pageid' . $this->page->id);
+        $PAGE->navbar->add(get_string('history', 'wiki'), $CFG->wwwroot . '/mod/wiki/history.php?pageid=' . $this->page->id);
         $PAGE->navbar->add(get_string('diff', 'wiki'));
     }
 
@@ -2098,7 +2098,7 @@ class page_wiki_viewversion extends page_wiki {
         global $PAGE, $CFG;
 
         parent::create_navbar();
-        $PAGE->navbar->add(get_string('history', 'wiki'), $CFG->wwwroot . '/mod/wiki/history.php?pageid' . $this->page->id);
+        $PAGE->navbar->add(get_string('history', 'wiki'), $CFG->wwwroot . '/mod/wiki/history.php?pageid=' . $this->page->id);
         $PAGE->navbar->add(get_string('versionnum', 'wiki', $this->version->version));
     }
 
