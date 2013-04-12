@@ -78,16 +78,17 @@ if ($uninstall) {
         exit();
 
     } else {
-        $messages = array(); // Collect uninstall process messages here.
-        $pluginman->uninstall_plugin($pluginfo->component, $messages);
+        $progress = new progress_trace_buffer(new text_progress_trace(), false);
+        $pluginman->uninstall_plugin($pluginfo->component, $progress);
+        $progress->finished();
 
         if ($pluginman->is_plugin_folder_removable($pluginfo->component)) {
             $continueurl = new moodle_url($PAGE->url, array('delete' => $pluginfo->component, 'sesskey' => sesskey(), 'confirm' => 1));
-            echo $output->plugin_uninstall_results_removable_page($pluginman, $pluginfo, $messages, $continueurl);
+            echo $output->plugin_uninstall_results_removable_page($pluginman, $pluginfo, $progress, $continueurl);
             exit();
 
         } else {
-            echo $output->plugin_uninstall_results_page($pluginman, $pluginfo, $messages);
+            echo $output->plugin_uninstall_results_page($pluginman, $pluginfo, $progress);
             exit();
         }
     }

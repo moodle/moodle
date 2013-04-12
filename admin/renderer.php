@@ -398,12 +398,12 @@ class core_admin_renderer extends plugin_renderer_base {
      *
      * @param plugin_manager $pluginman
      * @param plugin_info $pluginfo
-     * @param array $messages list of strings, the log of the process
+     * @param progress_trace_buffer $progress
      * @param moodle_url $continueurl URL to continue to remove the plugin folder
      * @return string
      */
     public function plugin_uninstall_results_removable_page(plugin_manager $pluginman, plugininfo_base $pluginfo,
-                                                            array $messages = array(), moodle_url $continueurl) {
+                                                            progress_trace_buffer $progress, moodle_url $continueurl) {
         $output = '';
 
         $pluginname = $pluginman->plugin_name($pluginfo->component);
@@ -411,9 +411,7 @@ class core_admin_renderer extends plugin_renderer_base {
         $output .= $this->output->header();
         $output .= $this->output->heading(get_string('uninstalling', 'core_plugin', array('name' => $pluginname)));
 
-        foreach ($messages as $message) {
-            $output .= $this->output->box($message, 'generalbox uninstallresultmessage');
-        }
+        $output .= $this->output->box($progress->get_buffer(), 'generalbox uninstallresultmessage');
 
         $confirm = $this->output->container(get_string('uninstalldeleteconfirm', 'core_plugin',
             array('name' => $pluginname, 'rootdir' => $pluginfo->rootdir)), 'uninstalldeleteconfirm');
@@ -434,10 +432,10 @@ class core_admin_renderer extends plugin_renderer_base {
      *
      * @param plugin_manager $pluginman
      * @param plugin_info $pluginfo
-     * @param array $messages list of strings, the log of the process
+     * @param progress_trace_buffer $progress
      * @return string
      */
-    public function plugin_uninstall_results_page(plugin_manager $pluginman, plugininfo_base $pluginfo, array $messages = array()) {
+    public function plugin_uninstall_results_page(plugin_manager $pluginman, plugininfo_base $pluginfo, progress_trace_buffer $progress) {
         $output = '';
 
         $pluginname = $pluginman->plugin_name($pluginfo->component);
@@ -445,9 +443,7 @@ class core_admin_renderer extends plugin_renderer_base {
         $output .= $this->output->header();
         $output .= $this->output->heading(get_string('uninstalling', 'core_plugin', array('name' => $pluginname)));
 
-        foreach ($messages as $message) {
-            $output .= $this->output->box($message, 'generalbox uninstallresultmessage');
-        }
+        $output .= $this->output->box($progress->get_buffer(), 'generalbox uninstallresultmessage');
 
         $output .= $this->output->box(get_string('uninstalldelete', 'core_plugin',
             array('name' => $pluginname, 'rootdir' => $pluginfo->rootdir)), 'generalbox uninstalldelete');

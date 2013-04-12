@@ -531,10 +531,10 @@ class plugin_manager {
      * mimic this future behaviour by wrapping that function call.
      *
      * @param string $component
-     * @param array $messages log of the process is returned via this array
+     * @param progress_trace $progress traces the process
      * @return bool true on success, false on errors/problems
      */
-    public function uninstall_plugin($component, array &$messages) {
+    public function uninstall_plugin($component, progress_trace $progress) {
 
         $pluginfo = $this->get_plugin_info($component);
 
@@ -542,8 +542,8 @@ class plugin_manager {
             return false;
         }
 
-        // Give the pluginfo class a perform some steps.
-        $result = $pluginfo->uninstall($messages);
+        // Give the pluginfo class a chance to execute some steps.
+        $result = $pluginfo->uninstall($progress);
         if (!$result) {
             return false;
         }
@@ -551,7 +551,7 @@ class plugin_manager {
         // Call the legacy core function to uninstall the plugin.
         ob_start();
         uninstall_plugin($pluginfo->type, $pluginfo->name);
-        $messages[] = ob_get_clean();
+        $progress->output(ob_get_clean());
 
         return true;
     }
@@ -2859,10 +2859,10 @@ abstract class plugininfo_base {
      * it is basically usable only for those plugin types that use the default
      * uninstall tool provided by {@link self::get_default_uninstall_url()}.
      *
-     * @param array $messages list of uninstall log messages
+     * @param progress_trace $progress traces the process
      * @return bool true on success, false on failure
      */
-    public function uninstall(array &$messages) {
+    public function uninstall(progress_trace $progress) {
         return true;
     }
 
