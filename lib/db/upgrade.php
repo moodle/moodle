@@ -1990,5 +1990,15 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2013040300.01);
     }
 
+    if ($oldversion < 2013040500.01) {
+        // MDL-29877 Some bad restores created grade items with no category information.
+        $sql = "UPDATE mdl_grade_items
+                   SET categoryid = courseid
+                 WHERE itemtype <> 'course' and itemtype <> 'category'
+                       AND categoryid IS NULL";
+        $DB->execute($sql);
+        upgrade_main_savepoint(true, 2013040500.01);
+    }
+
     return true;
 }
