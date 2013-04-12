@@ -295,57 +295,6 @@ function blog_delete_external_entries($externalblog) {
 }
 
 /**
- * Returns a URL based on the context of the current page.
- * This URL points to blog/index.php and includes filter parameters appropriate for the current page.
- *
- * @param stdclass $context
- * @return string
- */
-function blog_get_context_url($context=null) {
-    global $CFG;
-
-    $viewblogentriesurl = new moodle_url('/blog/index.php');
-
-    if (empty($context)) {
-        global $PAGE;
-        $context = $PAGE->context;
-    }
-
-    // Change contextlevel to SYSTEM if viewing the site course
-    if ($context->contextlevel == CONTEXT_COURSE && $context->instanceid == SITEID) {
-        $context = context_system::instance();
-    }
-
-    $filterparam = '';
-    $strlevel = '';
-
-    switch ($context->contextlevel) {
-        case CONTEXT_SYSTEM:
-        case CONTEXT_BLOCK:
-        case CONTEXT_COURSECAT:
-            break;
-        case CONTEXT_COURSE:
-            $filterparam = 'courseid';
-            $strlevel = get_string('course');
-            break;
-        case CONTEXT_MODULE:
-            $filterparam = 'modid';
-            $strlevel = print_context_name($context);
-            break;
-        case CONTEXT_USER:
-            $filterparam = 'userid';
-            $strlevel = get_string('user');
-            break;
-    }
-
-    if (!empty($filterparam)) {
-        $viewblogentriesurl->param($filterparam, $context->instanceid);
-    }
-
-    return $viewblogentriesurl;
-}
-
-/**
  * This function checks that blogs are enabled, and that the user can see blogs at all
  * @return bool
  */

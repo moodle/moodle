@@ -4280,6 +4280,60 @@ function get_category_courses_array_recursively(array &$flattened, $category) {
 }
 
 /**
+ * Returns a URL based on the context of the current page.
+ * This URL points to blog/index.php and includes filter parameters appropriate for the current page.
+ *
+ * @param stdclass $context
+ * @deprecated since Moodle 2.5 MDL-27814 - please do not use this function any more.
+ * @todo Remove this in 2.7
+ * @return string
+ */
+function blog_get_context_url($context=null) {
+    global $CFG;
+
+    debugging('Function  blog_get_context_url() is deprecated, getting params from context is not reliable for blogs.', DEBUG_DEVELOPER);
+    $viewblogentriesurl = new moodle_url('/blog/index.php');
+
+    if (empty($context)) {
+        global $PAGE;
+        $context = $PAGE->context;
+    }
+
+    // Change contextlevel to SYSTEM if viewing the site course
+    if ($context->contextlevel == CONTEXT_COURSE && $context->instanceid == SITEID) {
+        $context = context_system::instance();
+    }
+
+    $filterparam = '';
+    $strlevel = '';
+
+    switch ($context->contextlevel) {
+        case CONTEXT_SYSTEM:
+        case CONTEXT_BLOCK:
+        case CONTEXT_COURSECAT:
+            break;
+        case CONTEXT_COURSE:
+            $filterparam = 'courseid';
+            $strlevel = get_string('course');
+            break;
+        case CONTEXT_MODULE:
+            $filterparam = 'modid';
+            $strlevel = print_context_name($context);
+            break;
+        case CONTEXT_USER:
+            $filterparam = 'userid';
+            $strlevel = get_string('user');
+            break;
+    }
+
+    if (!empty($filterparam)) {
+        $viewblogentriesurl->param($filterparam, $context->instanceid);
+    }
+
+    return $viewblogentriesurl;
+}
+
+/**
  * Retrieve course records with the course managers and other related records
  * that we need for print_course(). This allows print_courses() to do its job
  * in a constant number of DB queries, regardless of the number of courses,
@@ -4515,3 +4569,5 @@ function get_courses_wmanagers($categoryid=0, $sort="c.sortorder ASC", $fields=a
 
     return $courses;
 }
+
+
