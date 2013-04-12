@@ -324,7 +324,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
      * @param array    $mods course modules indexed by id (from get_all_mods)
      * @return string HTML to output.
      */
-    private function section_activity_summary($section, $course, $mods) {
+    protected function section_activity_summary($section, $course, $mods) {
         if (empty($section->sequence)) {
             return '';
         }
