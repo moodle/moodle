@@ -91,7 +91,7 @@ $PAGE->set_heading($title);
 $PAGE->set_pagelayout('mydashboard');
 
 // TODO: Better way of pushing badges to Mozilla backpack?
-if ($CFG->badges_allowexternalbackpack) {
+if (!empty($CFG->badges_allowexternalbackpack)) {
     $PAGE->requires->js(new moodle_url('http://backpack.openbadges.org/issuer.js'), true);
     $PAGE->requires->js('/badges/backpack.js', true);
 }

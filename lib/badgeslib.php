@@ -855,8 +855,9 @@ function badges_get_issued_badge_info($hash) {
         $url = new moodle_url('/badges/badge.php', array('hash' => $hash));
 
         // Recipient's email is hashed: <algorithm>$<hash(email + salt)>.
-        $a['recipient'] = 'sha256$' . hash('sha256', $record->email . $CFG->badges_badgesalt);
-        $a['salt'] = $CFG->badges_badgesalt;
+        $badgesalt = isset($CFG->badgesalt) ? $CFG->badgesalt : '';
+        $a['recipient'] = 'sha256$' . hash('sha256', $record->email . $badgesalt);
+        $a['salt'] = $badgesalt;
 
         if ($record->dateexpire) {
             $a['expires'] = date('Y-m-d', $record->dateexpire);
@@ -891,7 +892,7 @@ function badges_add_course_navigation(navigation_node $coursenode, stdClass $cou
     $coursecontext = context_course::instance($course->id);
     $isfrontpage = (!$coursecontext || $course->id == $SITE->id);
 
-    if ($CFG->enablebadges && $CFG->badges_allowcoursebadges && !$isfrontpage) {
+    if (!empty($CFG->enablebadges) && !empty($CFG->badges_allowcoursebadges) && !$isfrontpage) {
         if (has_capability('moodle/badges:configuredetails', $coursecontext)) {
             $coursenode->add(get_string('coursebadges', 'badges'), null,
                     navigation_node::TYPE_CONTAINER, null, 'coursebadges',
@@ -1228,7 +1229,7 @@ function profile_display_badges($userid, $courseid = 0) {
         }
 
         // Print external badges.
-        if ($courseid == 0 && $CFG->badges_allowexternalbackpack) {
+        if ($courseid == 0 && !empty($CFG->badges_allowexternalbackpack)) {
             $backpack = get_backpack_settings($userid);
             if (isset($backpack->totalbadges) && $backpack->totalbadges !== 0) {
                 $left = get_string('externalbadgesp', 'badges');
