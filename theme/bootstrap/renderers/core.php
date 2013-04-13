@@ -100,7 +100,7 @@ class theme_bootstrap_core_renderer extends core_renderer {
         }
 
         if ($addlangmenu) {
-            $language = $menu->add(get_string('language'), new moodle_url('#'), get_string('language'), 10);
+            $language = $menu->add(get_string('language'), new moodle_url('#'), get_string('language'), 10000);
             foreach ($langs as $langtype => $langname) {
                 $language->add($langname,
                 new moodle_url($this->page->url, array('lang' => $langtype)), $langname);
