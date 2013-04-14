@@ -99,6 +99,9 @@ $table->data  = array();
 
 if ($sort == 'firstname' or $sort == 'lastname') {
     $orderby = "u.$sort $dir";
+} else if ($sort == 'value' or $sort == 'oldvalue') {
+    // cross-db text-compatible sorting.
+    $orderby = $DB->sql_order_by_text("cl.$sort", 255) . ' ' . $dir;
 } else {
     $orderby = "cl.$sort $dir";
 }
