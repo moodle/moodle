@@ -2971,6 +2971,7 @@ class navbar extends navigation_node {
      * @return array
      */
     public function get_items() {
+        global $CFG;
         $items = array();
         // Make sure that navigation is initialised
         if (!$this->has_items()) {
@@ -3007,11 +3008,8 @@ class navbar extends navigation_node {
                     if (!$navigationactivenode->mainnavonly) {
                         $items[] = $navigationactivenode;
                     }
-                    if ($navigationactivenode->type === self::TYPE_COURSE && $navigationactivenode->parent->key === 'currentcourse') {
-                        $categories = $this->get_course_categories();
-                        foreach ($categories as $category) {
-                            $items[] = $category;
-                        }
+                    if (!empty($CFG->navshowcategories) && $navigationactivenode->type === self::TYPE_COURSE && $navigationactivenode->parent->key === 'currentcourse') {
+                        $items = array_merge($items, $this->get_course_categories());
                     }
                     $navigationactivenode = $navigationactivenode->parent;
                 }
@@ -3021,11 +3019,8 @@ class navbar extends navigation_node {
                     if (!$navigationactivenode->mainnavonly) {
                         $items[] = $navigationactivenode;
                     }
-                    if ($navigationactivenode->type === self::TYPE_COURSE && $navigationactivenode->parent->key === 'currentcourse') {
-                        $categories = $this->get_course_categories();
-                        foreach ($categories as $category) {
-                            $items[] = $category;
-                        }
+                    if (!empty($CFG->navshowcategories) && $navigationactivenode->type === self::TYPE_COURSE && $navigationactivenode->parent->key === 'currentcourse') {
+                        $items = array_merge($items, $this->get_course_categories());
                     }
                     $navigationactivenode = $navigationactivenode->parent;
                 }
@@ -3065,12 +3060,8 @@ class navbar extends navigation_node {
         $id = $this->page->course->category;
         while ($id) {
             $category = coursecat::get($id);
-            $categories[] = new navigation_node(array(
-                'text'=>$category->name,
-                'shorttext'=>$category->name,
-                'key'=>$category->idnumber,
-                'action'=>new moodle_url('/course/category.php', array('id'=>$id))
-            ));
+            $url = new moodle_url('/course/category.php', array('id' => $id));
+            $categories[] = navigation_node::create($category->get_formatted_name(), $url, self::TYPE_CATEGORY, null, $id);
             $id = $category->parent;
         }
         $categories[] = $this->page->navigation->get('courses');
