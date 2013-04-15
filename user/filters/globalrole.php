@@ -78,11 +78,12 @@ class user_filter_globalrole extends user_filter_type {
     function get_label($data) {
         global $DB;
 
-        $rolename = $DB->get_field('role', 'name', array('id'=>$data['value']));
+        $role = $DB->get_record('role', array('id'=>$data['value']));
+
 
         $a = new stdClass();
         $a->label = $this->_label;
-        $a->value = '"'.format_string($rolename).'"';
+        $a->value = '"'.role_get_name($role).'"';
 
         return get_string('globalrolelabel', 'filters', $a);
     }
