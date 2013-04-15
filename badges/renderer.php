@@ -601,7 +601,7 @@ class core_badges_renderer extends plugin_renderer_base {
     public function print_badge_tabs($badgeid, $context, $current = 'overview') {
         global $DB;
 
-        $tabs = $row = array();
+        $row = array();
 
         $row[] = new tabobject('overview',
                     new moodle_url('/badges/overview.php', array('id' => $badgeid)),
@@ -637,9 +637,7 @@ class core_badges_renderer extends plugin_renderer_base {
                     );
         }
 
-        $tabs[] = $row;
-
-        print_tabs($tabs, $current);
+        echo $this->tabtree($row, $current);
     }
 
     // Prints badge status box.

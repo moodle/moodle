@@ -2857,3 +2857,155 @@ class custom_menu extends custom_menu_item {
         return ($itema > $itemb) ? +1 : -1;
     }
 }
+
+/**
+ * Stores one tab
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package core
+ */
+class tabobject implements renderable {
+    /** @var string unique id of the tab in this tree, it is used to find selected and/or inactive tabs */
+    var $id;
+    /** @var moodle_url|string link */
+    var $link;
+    /** @var string text on the tab */
+    var $text;
+    /** @var string title under the link, by defaul equals to text */
+    var $title;
+    /** @var bool whether to display a link under the tab name when it's selected */
+    var $linkedwhenselected = false;
+    /** @var bool whether the tab is inactive */
+    var $inactive = false;
+    /** @var bool indicates that this tab's child is selected */
+    var $activated = false;
+    /** @var bool indicates that this tab is selected */
+    var $selected = false;
+    /** @var array stores children tabobjects */
+    var $subtree = array();
+    /** @var int level of tab in the tree, 0 for root (instance of tabtree), 1 for the first row of tabs */
+    var $level = 1;
+
+    /**
+     * Constructor
+     *
+     * @param string $id unique id of the tab in this tree, it is used to find selected and/or inactive tabs
+     * @param string|moodle_url $link
+     * @param string $text text on the tab
+     * @param string $title title under the link, by defaul equals to text
+     * @param bool $linkedwhenselected whether to display a link under the tab name when it's selected
+     */
+    public function __construct($id, $link = null, $text = '', $title = '', $linkedwhenselected = false) {
+        $this->id = $id;
+        $this->link = $link;
+        $this->text = $text;
+        $this->title = $title ? $title : $text;
+        $this->linkedwhenselected = $linkedwhenselected;
+    }
+
+    /**
+     * Travels through tree and finds the tab to mark as selected, all parents are automatically marked as activated
+     *
+     * @param string $selected the id of the selected tab (whatever row it's on),
+     *    if null marks all tabs as unselected
+     * @return bool whether this tab is selected or contains selected tab in its subtree
+     */
+    protected function set_selected($selected) {
+        if ((string)$selected === (string)$this->id) {
+            $this->selected = true;
+            // This tab is selected. No need to travel through subtree.
+            return true;
+        }
+        foreach ($this->subtree as $subitem) {
+            if ($subitem->set_selected($selected)) {
+                // This tab has child that is selected. Mark it as activated. No need to check other children.
+                $this->activated = true;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Travels through tree and finds a tab with specified id
+     *
+     * @param string $id
+     * @return tabtree|null
+     */
+    public function find($id) {
+        if ((string)$this->id === (string)$id) {
+            return $this;
+        }
+        foreach ($this->subtree as $tab) {
+            if ($obj = $tab->find($id)) {
+                return $obj;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Allows to mark each tab's level in the tree before rendering.
+     *
+     * @param int $level
+     */
+    protected function set_level($level) {
+        $this->level = $level;
+        foreach ($this->subtree as $tab) {
+            $tab->set_level($level + 1);
+        }
+    }
+}
+
+/**
+ * Stores tabs list
+ *
+ * Example how to print a single line tabs:
+ * $rows = array(
+ *    new tabobject(...),
+ *    new tabobject(...)
+ * );
+ * echo $OUTPUT->tabtree($rows, $selectedid);
+ *
+ * Multiple row tabs may not look good on some devices but if you want to use them
+ * you can specify ->subtree for the active tabobject.
+ *
+ * @copyright 2013 Marina Glancy
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.5
+ * @package core
+ * @category output
+ */
+class tabtree extends tabobject {
+    /**
+     * Constuctor
+     *
+     * It is highly recommended to call constructor when list of tabs is already
+     * populated, this way you ensure that selected and inactive tabs are located
+     * and attribute level is set correctly.
+     *
+     * @param array $tabs array of tabs, each of them may have it's own ->subtree
+     * @param string|null $selected which tab to mark as selected, all parent tabs will
+     *     automatically be marked as activated
+     * @param array|string|null $inactive list of ids of inactive tabs, regardless of
+     *     their level. Note that you can as weel specify tabobject::$inactive for separate instances
+     */
+    public function __construct($tabs, $selected = null, $inactive = null) {
+        $this->subtree = $tabs;
+        if ($selected !== null) {
+            $this->set_selected($selected);
+        }
+        if ($inactive !== null) {
+            if (is_array($inactive)) {
+                foreach ($inactive as $id) {
+                    if ($tab = $this->find($id)) {
+                        $tab->inactive = true;
+                    }
+                }
+            } else if ($tab = $this->find($inactive)) {
+                $tab->inactive = true;
+            }
+        }
+        $this->set_level(0);
+    }
+}

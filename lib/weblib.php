@@ -2671,184 +2671,54 @@ function print_maintenance_message() {
 }
 
 /**
- * A class for tabs, Some code to print tabs
- *
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package moodlecore
- */
-class tabobject {
-    /**
-     * @var string
-     */
-    var $id;
-    var $link;
-    var $text;
-    /**
-     * @var bool
-     */
-    var $linkedwhenselected;
-
-    /**
-     * A constructor just because I like constructors
-     *
-     * @param string $id
-     * @param string $link
-     * @param string $text
-     * @param string $title
-     * @param bool $linkedwhenselected
-     */
-    function tabobject ($id, $link='', $text='', $title='', $linkedwhenselected=false) {
-        $this->id   = $id;
-        $this->link = $link;
-        $this->text = $text;
-        $this->title = $title ? $title : $text;
-        $this->linkedwhenselected = $linkedwhenselected;
-    }
-}
-
-
-
-/**
  * Returns a string containing a nested list, suitable for formatting into tabs with CSS.
  *
- * @global object
+ * It is not recommended to use this function in Moodle 2.5 but it is left for backward
+ * compartibility.
+ *
+ * Example how to print a single line tabs:
+ * $rows = array(
+ *    new tabobject(...),
+ *    new tabobject(...)
+ * );
+ * echo $OUTPUT->tabtree($rows, $selectedid);
+ *
+ * Multiple row tabs may not look good on some devices but if you want to use them
+ * you can specify ->subtree for the active tabobject.
+ *
  * @param array $tabrows An array of rows where each row is an array of tab objects
  * @param string $selected  The id of the selected tab (whatever row it's on)
  * @param array  $inactive  An array of ids of inactive tabs that are not selectable.
  * @param array  $activated An array of ids of other tabs that are currently activated
  * @param bool $return If true output is returned rather then echo'd
  **/
-function print_tabs($tabrows, $selected=NULL, $inactive=NULL, $activated=NULL, $return=false) {
-    global $CFG;
-
-/// $inactive must be an array
-    if (!is_array($inactive)) {
-        $inactive = array();
-    }
-
-/// $activated must be an array
-    if (!is_array($activated)) {
-        $activated = array();
-    }
-
-/// Convert the tab rows into a tree that's easier to process
-    if (!$tree = convert_tabrows_to_tree($tabrows, $selected, $inactive, $activated)) {
-        return false;
-    }
-
-/// Print out the current tree of tabs (this function is recursive)
-
-    $output = convert_tree_to_html($tree);
-
-    $output = "\n\n".'<div class="tabtree">'.$output.'</div><div class="clearer"> </div>'."\n\n";
-
-/// We're done!
-
-    if ($return) {
-        return $output;
-    }
-    echo $output;
-}
-
-/**
- * Converts a nested array tree into HTML ul:li [recursive]
- *
- * @param array $tree A tree array to convert
- * @param int $row Used in identifying the iteration level and in ul classes
- * @return string HTML structure
- */
-function convert_tree_to_html($tree, $row=0) {
-
-    $str = "\n".'<ul class="tabrow'.$row.'">'."\n";
-
-    $first = true;
-    $count = count($tree);
-
-    foreach ($tree as $tab) {
-        $count--;   // countdown to zero
-
-        $liclass = '';
-
-        if ($first && ($count == 0)) {   // Just one in the row
-            $liclass = 'first last';
-            $first = false;
-        } else if ($first) {
-            $liclass = 'first';
-            $first = false;
-        } else if ($count == 0) {
-            $liclass = 'last';
-        }
-
-        if ((empty($tab->subtree)) && (!empty($tab->selected))) {
-            $liclass .= (empty($liclass)) ? 'onerow' : ' onerow';
-        }
-
-        if ($tab->inactive || $tab->active || $tab->selected) {
-            if ($tab->selected) {
-                $liclass .= (empty($liclass)) ? 'here selected' : ' here selected';
-            } else if ($tab->active) {
-                $liclass .= (empty($liclass)) ? 'here active' : ' here active';
-            }
-        }
-
-        $str .= (!empty($liclass)) ? '<li class="'.$liclass.'">' : '<li>';
-
-        if ($tab->inactive || $tab->active || ($tab->selected && !$tab->linkedwhenselected)) {
-            // The a tag is used for styling
-            $str .= '<a class="nolink"><span>'.$tab->text.'</span></a>';
-        } else {
-            $str .= '<a href="'.$tab->link.'" title="'.$tab->title.'"><span>'.$tab->text.'</span></a>';
-        }
-
-        if (!empty($tab->subtree)) {
-            $str .= convert_tree_to_html($tab->subtree, $row+1);
-        } else if ($tab->selected) {
-            $str .= '<div class="tabrow'.($row+1).' empty">&nbsp;</div>'."\n";
-        }
-
-        $str .= ' </li>'."\n";
-    }
-    $str .= '</ul>'."\n";
-
-    return $str;
-}
-
-/**
- * Convert nested tabrows to a nested array
- *
- * @param array $tabrows A [nested] array of tab row objects
- * @param string $selected The tabrow to select (by id)
- * @param array $inactive An array of tabrow id's to make inactive
- * @param array $activated An array of tabrow id's to make active
- * @return array The nested array
- */
-function convert_tabrows_to_tree($tabrows, $selected, $inactive, $activated) {
-
-/// Work backwards through the rows (bottom to top) collecting the tree as we go.
+function print_tabs($tabrows, $selected = null, $inactive = null, $activated = null, $return = false) {
+    global $OUTPUT;
 
     $tabrows = array_reverse($tabrows);
-
     $subtree = array();
-
     foreach ($tabrows as $row) {
         $tree = array();
 
         foreach ($row as $tab) {
-            $tab->inactive = in_array((string)$tab->id, $inactive);
-            $tab->active = in_array((string)$tab->id, $activated);
+            $tab->inactive = is_array($inactive) && in_array((string)$tab->id, $inactive);
+            $tab->activated = is_array($activated) && in_array((string)$tab->id, $activated);
             $tab->selected = (string)$tab->id == $selected;
 
-            if ($tab->active || $tab->selected) {
-                if ($subtree) {
-                    $tab->subtree = $subtree;
-                }
+            if ($tab->activated || $tab->selected) {
+                $tab->subtree = $subtree;
             }
             $tree[] = $tab;
         }
         $subtree = $tree;
     }
-
-    return $subtree;
+    $output = $OUTPUT->tabtree($subtree);
+    if ($return) {
+        return $output;
+    } else {
+        print $output;
+        return !empty($output);
+    }
 }
 
 /**
