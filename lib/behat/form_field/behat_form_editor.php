@@ -48,12 +48,10 @@ class behat_form_editor extends behat_form_field {
      */
     public function set_value($value) {
 
-        // If tinyMCE var exists means that we are using that editor.
-        if ($this->is_editor_available()) {
+        // Get tinyMCE editor id if it exists.
+        if ($editorid = $this->get_editor_id()) {
 
             // Set the value to the iframe and save it to the textarea.
-            $editorid = $this->field->getAttribute('id');
-
             $this->session->executeScript('
                 tinyMCE.get("'.$editorid.'").setContent("' . $value . '");
                 tinyMCE.get("'.$editorid.'").save();
@@ -66,17 +64,16 @@ class behat_form_editor extends behat_form_field {
     }
 
     /**
-     * Returns the editor value.
+     * Returns the field value.
      *
      * @return string
      */
     public function get_value() {
 
-        // If tinyMCE var exists means that we are using that editor.
-        if ($this->is_editor_available()) {
+        // Get tinyMCE editor id if it exists.
+        if ($editorid = $this->get_editor_id()) {
 
             // Save the current iframe value in case default value has been edited.
-            $editorid = $this->field->getAttribute('id');
             $this->session->executeScript('tinyMCE.get("'.$editorid.'").save();');
         }
 
@@ -84,24 +81,34 @@ class behat_form_editor extends behat_form_field {
     }
 
     /**
-     * Returns if the HTML editor is available.
+     * Returns the tinyMCE editor id or false if it is not available.
      *
      * The editor availability depends on the driver running the tests; Goutte
      * can not execute Javascript, also some Moodle settings disables the HTML
      * editor.
      *
-     * @return bool
+     * @return mixed The id of the editor of false if is not available
      */
-    protected function is_editor_available() {
+    protected function get_editor_id() {
 
         // Non-JS drivers throws exceptions when running JS.
         try {
             $available = $this->session->evaluateScript('return (typeof tinyMCE != "undefined")');
+
+            // Also checking that it exist a tinyMCE editor for the requested field.
+            $editorid = $this->field->getAttribute('id');
+            $available = $this->session->evaluateScript('return (typeof tinyMCE.get("'.$editorid.'") != "undefined")');
+
         } catch (Exception $e) {
-            $available = false;
+            return false;
         }
 
-        return $available;
+        // No available if JS drivers returned false.
+        if ($available == false) {
+            return false;
+        }
+
+        return $editorid;
     }
 }
 
