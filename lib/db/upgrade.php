@@ -2000,5 +2000,47 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2013041200.00);
     }
 
+    if ($oldversion < 2013041500.00) {
+        // Create a new 'badge_external' table first.
+        // Define table 'badge_external' to be created.
+        $table = new xmldb_table('badge_external');
+        
+        // Adding fields to table 'badge_external'.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null);
+        $table->add_field('backpackid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'id');
+        $table->add_field('collectionid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'backpackid');
+        
+        // Adding keys to table 'badge_external'.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('fk_backpackid', XMLDB_KEY_FOREIGN, array('backpackid'), 'badge_backpack', array('id'));
+        
+        // Conditionally launch create table for 'badge_external'.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+        
+        // Perform user data migration.
+        $usercollections = $DB->get_records('badge_backpack');
+        foreach ($usercollections as $usercollection) {
+            $collection = new stdClass();
+            $collection->backpackid = $usercollection->id;
+            $collection->collectionid = $usercollection->backpackgid;
+            $DB->insert_record('badge_external', $collection);
+        }
+        
+        // Finally, drop the column.
+        // Define field backpackgid to be dropped from 'badge_backpack'.
+        $table = new xmldb_table('badge_backpack');
+        $field = new xmldb_field('backpackgid');
+        
+        // Conditionally launch drop field backpackgid.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+        
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2013041500.00);
+    }
+
     return true;
 }

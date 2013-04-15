@@ -1353,8 +1353,9 @@ div.badge { position: relative; display: block; }
 div.badge .expireimage { width: 100px; height: 100px; left: 20px; top: 0px; }
 .expireimage { width: 90px; height: 90px; left: 30px; top: 0px; position: absolute; z-index:10; filter: alpha(opacity = 85); -moz-opacity: 0.85; -khtml-opacity: 0.85; opacity: 0.85;}
 
-.backpackform { width: 100px !important; float: left; }
 .badge-profile { vertical-align: top; }
+.connected { color: #006600; }
+.notconnected { color: #660000; }
 
 #page-badges-award .recipienttable { background-color: #EEEEEE; border: 1px solid #BBBBBB; width: 100%; vertical-align: top; }
 #page-badges-award .recipienttable tr td { vertical-align: top; }

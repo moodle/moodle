@@ -70,7 +70,14 @@ if (!empty($CFG->enablebadges) && ($hassiteconfig || has_any_capability(array(
         new admin_externalpage('managebadges',
             new lang_string('managebadges', 'badges'),
             new moodle_url($CFG->wwwroot . '/badges/index.php', array('type' => BADGE_TYPE_SITE)),
-            array('moodle/badges:viewawarded')
+            array(
+                'moodle/badges:viewawarded',
+                'moodle/badges:createbadge',
+                'moodle/badges:awardbadge',
+                'moodle/badges:configuremessages',
+                'moodle/badges:configuredetails',
+                'moodle/badges:deletebadge'
+            )
         )
     );
 
