@@ -5,8 +5,8 @@ Description of import of various YUI libraries into Moodle:
 * exact version specified in lib/setup.php
 
 2/ YUI3 version 3.9.1:
-* full copy of the "build" directory. Unit test code coverage files are
-  removed but no other changes are made.
+* full copy of the "build" directory. Unit test code coverage files (*-coverage.js)
+  are removed but no other changes are made.
 * exact version specified in lib/setup.php
 
 Code downloaded from:
