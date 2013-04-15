@@ -4596,8 +4596,8 @@ function convert_tree_to_html($tree, $row=0) {
 function convert_tabrows_to_tree($tabrows, $selected, $inactive, $activated) {
 
     debugging('Function convert_tabrows_to_tree() is deprecated since Moodle 2.5. Consider using class tabtree', DEBUG_DEVELOPER);
-/// Work backwards through the rows (bottom to top) collecting the tree as we go.
 
+    // Work backwards through the rows (bottom to top) collecting the tree as we go.
     $tabrows = array_reverse($tabrows);
 
     $subtree = array();

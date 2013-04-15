@@ -2953,7 +2953,7 @@ EOD;
         $str .= $this->render_tabobject($tabtree);
         $str .= html_writer::end_tag('div').
                 html_writer::tag('div', ' ', array('class' => 'clearer'));
-        return $str;        
+        return $str;
     }
 
     /**
