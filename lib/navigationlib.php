@@ -3064,7 +3064,7 @@ class navbar extends navigation_node {
         $id = $this->page->course->category;
         while ($id) {
             $category = coursecat::get($id);
-            $url = new moodle_url('/course/category.php', array('id' => $id));
+            $url = new moodle_url('/course/index.php', array('categoryid' => $id));
             $categories[] = navigation_node::create($category->get_formatted_name(), $url, self::TYPE_CATEGORY, null, $id);
             $id = $category->parent;
         }
