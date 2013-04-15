@@ -27,7 +27,7 @@
 
 global $SITE;
 
-if (!empty($CFG->enablebadges) && ($hassiteconfig || has_any_capability(array(
+if (($hassiteconfig || has_any_capability(array(
             'moodle/badges:viewawarded',
             'moodle/badges:createbadge',
             'moodle/badges:manageglobalsettings',
@@ -39,7 +39,7 @@ if (!empty($CFG->enablebadges) && ($hassiteconfig || has_any_capability(array(
     require_once($CFG->libdir . '/badgeslib.php');
 
     $globalsettings = new admin_settingpage('badgesettings', new lang_string('badgesettings', 'badges'),
-            array('moodle/badges:manageglobalsettings'));
+            array('moodle/badges:manageglobalsettings'), empty($CFG->enablebadges));
 
     $globalsettings->add(new admin_setting_configtext('badges_defaultissuername',
             new lang_string('defaultissuername', 'badges'),
@@ -69,16 +69,16 @@ if (!empty($CFG->enablebadges) && ($hassiteconfig || has_any_capability(array(
     $ADMIN->add('badges',
         new admin_externalpage('managebadges',
             new lang_string('managebadges', 'badges'),
-            new moodle_url($CFG->wwwroot . '/badges/index.php', array('type' => BADGE_TYPE_SITE)),
-            array('moodle/badges:viewawarded')
+            new moodle_url('/badges/index.php', array('type' => BADGE_TYPE_SITE)),
+            array('moodle/badges:viewawarded'), empty($CFG->enablebadges)
         )
     );
 
     $ADMIN->add('badges',
         new admin_externalpage('newbadge',
             new lang_string('newbadge', 'badges'),
-            new moodle_url($CFG->wwwroot . '/badges/newbadge.php', array('type' => BADGE_TYPE_SITE)),
-            array('moodle/badges:createbadge')
+            new moodle_url('/badges/newbadge.php', array('type' => BADGE_TYPE_SITE)),
+            array('moodle/badges:createbadge'), empty($CFG->enablebadges)
         )
     );
 }
