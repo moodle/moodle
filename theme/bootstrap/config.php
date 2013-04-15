@@ -152,11 +152,9 @@ $THEME->layouts = array(
 );
 
 $THEME->javascripts = array(
-    'bootstrapengine',
+);
+$THEME->javascripts_footer = array(
     'moodlebootstrap',
-    'bootstrapcollapse',
-    'bootstrapdropdown',
-    'headercollapse',
 );
 
 $useragent = '';
