@@ -3106,15 +3106,26 @@ class navbar extends navigation_node {
      */
     private function get_course_categories() {
         $categories = array();
-        $id = $this->page->course->category;
-        while ($id) {
-            $category = get_course_category($id);
-            $url = new moodle_url('/course/category.php', array('id' => $id));
-            $name = format_string($category->name, true, context_coursecat::instance($category->id));
-            $categories[] = navigation_node::create($name, $url, self::TYPE_CATEGORY, null, $id);
+        foreach ($this->page->categories as $category) {
+            $url = new moodle_url('/course/category.php', array('id' => $category->id));
+            $name = format_string($category->name, true, array('context' => context_coursecat::instance($category->id)));
+            $categories[] = navigation_node::create($name, $url, self::TYPE_CATEGORY, null, $category->id);
             $id = $category->parent;
         }
-        $categories[] = $this->page->navigation->get('courses');
+        if (is_enrolled(context_course::instance($this->page->course->id))) {
+            $courses = $this->page->navigation->get('mycourses');
+        } else {
+            $courses = $this->page->navigation->get('courses');
+        }
+        if (!$courses) {
+            // Courses node may not be present.
+            $courses = navigation_node::create(
+                get_string('courses'),
+                new moodle_url('/course/index.php'),
+                self::TYPE_CONTAINER
+            );
+        }
+        $categories[] = $courses;
         return $categories;
     }
 
