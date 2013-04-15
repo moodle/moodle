@@ -5,10 +5,10 @@ M.core_message.init_focus = function(Y, eid) {
 };
 
 M.core_message.init_refresh_page = function(Y, delay, url) {
-	var delay_callback = function() {
-		document.location.replace(url);
-	};
-	setTimeout(delay_callback, delay);
+    var delay_callback = function() {
+        document.location.replace(url);
+    };
+    setTimeout(delay_callback, delay);
 };
 
 M.core_message.combinedsearchgotfocus = function(e) {

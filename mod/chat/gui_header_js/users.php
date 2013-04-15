@@ -89,7 +89,6 @@ foreach ($chatusers as $chatuser) {
     $min = $min < 10 ? '0'.$min : $min;
     $sec = $sec < 10 ? '0'.$sec : $sec;
     $idle = $min.':'.$sec;
-    
 
     $row = array();
     $row[0] = $OUTPUT->user_picture($chatuser, array('courseid'=>$courseid, 'popup'=>true));

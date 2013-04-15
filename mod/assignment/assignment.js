@@ -13,8 +13,8 @@ function saveNext(){
 }
 
 function initNext(nextid, usserid) {
-	assignment.nextid = nextid;
-	assignment.userid = userid;
+    assignment.nextid = nextid;
+    assignment.userid = userid;
 }
 
 M.mod_assignment = {};

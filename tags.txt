@@ -1,7 +1,7 @@
 Generating a tags file
 ======================
 
-If you need a tags file so that you can jump around Moodle code 
+If you need a tags file so that you can jump around Moodle code
 easily in your editor (eg vim or emacs), you can generate one:
 
 Exuberant ctags (default on Linux, can be compiled on other platforms):

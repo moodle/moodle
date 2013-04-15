@@ -95,7 +95,7 @@ M.mod_quiz.timer = {
     update: function() {
         var Y = M.mod_quiz.timer.Y;
         var secondsleft = Math.floor((M.mod_quiz.timer.endtime - new Date().getTime())/1000);
-        
+
         // If this is a preview and time expired, display timeleft 0 and don't renew the timer.
         if (M.mod_quiz.timer.preview && secondsleft < 0) {
             Y.one('#quiz-time-left').setContent('0:00:00');
