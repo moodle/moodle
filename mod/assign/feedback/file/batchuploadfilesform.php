@@ -78,7 +78,7 @@ class assignfeedback_file_batch_upload_files_form extends moodleform {
         $mform->addElement('hidden', 'pluginsubtype', 'assignfeedback');
         $mform->setType('pluginsubtype', PARAM_PLUGIN);
         $mform->addElement('hidden', 'selectedusers', implode(',', $params['users']));
-        $mform->setType('selectedusers', PARAM_TEXT);
+        $mform->setType('selectedusers', PARAM_SEQUENCE);
         $this->add_action_buttons(true, get_string('uploadfiles', 'assignfeedback_file'));
 
     }

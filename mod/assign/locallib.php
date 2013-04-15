@@ -1730,7 +1730,7 @@ class assign {
         require_once($CFG->dirroot . '/mod/assign/extensionform.php');
 
         $o = '';
-        $batchusers = optional_param('selectedusers', '', PARAM_TEXT);
+        $batchusers = optional_param('selectedusers', '', PARAM_SEQUENCE);
         $data = new stdClass();
         $data->extensionduedate = null;
         $userid = 0;
@@ -4295,7 +4295,7 @@ class assign {
         // Need submit permission to submit an assignment.
         require_capability('mod/assign:grantextension', $this->context);
 
-        $batchusers = optional_param('selectedusers', '', PARAM_TEXT);
+        $batchusers = optional_param('selectedusers', '', PARAM_SEQUENCE);
         $userid = 0;
         if (!$batchusers) {
             $userid = required_param('userid', PARAM_INT);

@@ -73,7 +73,7 @@ class mod_assign_extension_form extends moodleform {
         $mform->addElement('hidden', 'userid', $userid);
         $mform->setType('userid', PARAM_INT);
         $mform->addElement('hidden', 'selectedusers', $batchusers);
-        $mform->setType('selectedusers', PARAM_TEXT);
+        $mform->setType('selectedusers', PARAM_SEQUENCE);
         $mform->addElement('hidden', 'action', 'saveextension');
         $mform->setType('action', PARAM_ALPHA);
         $this->add_action_buttons(true, get_string('savechanges', 'assign'));
