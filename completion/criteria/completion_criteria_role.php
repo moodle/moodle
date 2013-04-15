@@ -59,7 +59,7 @@ class completion_criteria_role extends completion_criteria {
     */
     public function config_form_display(&$mform, $data = null) {
 
-        $mform->addElement('checkbox', 'criteria_role['.$data->id.']', $data->name);
+        $mform->addElement('checkbox', 'criteria_role['.$data->id.']', $this->get_title($data));
 
         if ($this->id) {
             $mform->setDefault('criteria_role['.$data->id.']', 1);
@@ -122,8 +122,8 @@ class completion_criteria_role extends completion_criteria {
      */
     public function get_title() {
         global $DB;
-        $role = $DB->get_field('role', 'name', array('id' => $this->role));
-        return $role;
+        $role = $DB->get_record('role', array('id' => $this->role));
+        return role_get_name($role, context_course::instance($this->course));
     }
 
     /**
@@ -132,8 +132,7 @@ class completion_criteria_role extends completion_criteria {
      * @return string
      */
     public function get_title_detailed() {
-        global $DB;
-        return $DB->get_field('role', 'name', array('id' => $this->role));
+        return $this->get_title();
     }
 
     /**
