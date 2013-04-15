@@ -79,7 +79,7 @@ fieldset#general {
     padding-left: 5px;
 }
 
-/* Blocks 
+/* Blocks
 -----------------------------*/
 
 .block {
@@ -135,7 +135,7 @@ fieldset#general {
     background: #fff;
 }
 
-/* Forum 
+/* Forum
 --------------------------*/
 
 .forumpost .topic {
@@ -177,18 +177,18 @@ fieldset#general {
 /* Dock
 -----------------------------*/
 
-body.has_dock { 
+body.has_dock {
     margin: 0;
 }
 
-#dock { 
+#dock {
     left: 75px;
     margin-left: -30px;
     border-width: 0;
     background-color: transparent;
 }
 
-#dock .controls { 
+#dock .controls {
     bottom: auto;
     background-color: #fb931c;
     -webkit-border-bottom-left-radius: 6px;
@@ -196,33 +196,33 @@ body.has_dock {
     border-bottom-left-radius: 6px;
 }
 
-#dock .dockeditem_container { 
+#dock .dockeditem_container {
     position: relative;
 }
 
-#dock .dockeditem.firstdockitem { 
+#dock .dockeditem.firstdockitem {
     margin-top: 50px;
     -webkit-border-top-left-radius: 6px;
     -moz-border-radius-topleft: 6px;
     border-top-left-radius: 6px;
 }
 
-#dock .dockeditem { 
+#dock .dockeditem {
     background-color: #fff;
     padding: 2px;
     padding-right: 0px;
 }
 
-#dock .dockedtitle { 
+#dock .dockedtitle {
     border-width: 0;
 }
 
-#dock .dockedtitle h2 { 
+#dock .dockedtitle h2 {
     margin: 0;
     padding: 10px 3px;
 }
 
-#dock .dockedtitle.activeitem { 
+#dock .dockedtitle.activeitem {
     background-color: #fb931c;
     width: 35px;
     -webkit-border-top-left-radius: 6px;
@@ -233,11 +233,11 @@ body.has_dock {
     border-bottom-left-radius: 6px;
 }
 
-#dockeditempanel { 
+#dockeditempanel {
     margin-left: 4px;
 }
 
-#dockeditempanel .dockeditempanel_content { 
+#dockeditempanel .dockeditempanel_content {
     background-color: #fff;
     margin: 0 3px;
     position: relative;
@@ -251,13 +251,13 @@ body.has_dock {
     border-top-left-radius: 0;
 }
 
-#dockeditempanel .dockeditempanel_hd { 
+#dockeditempanel .dockeditempanel_hd {
     border-width: 0;
     background: #fb931c;
     padding: 2px;
 }
 
-#dockeditempanel .dockeditempanel_hd h2 { 
+#dockeditempanel .dockeditempanel_hd h2 {
     font-size: 0.9em;
     color: #fff;
 }
