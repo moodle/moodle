@@ -1,11 +1,6 @@
 This files describes API changes in /theme/* themes,
 information provided here is intended especially for theme designer.
 
-=== 2.6 ===
-* re-wrote the table for the course completion status block to use html_table - added some CSS classes to the table in the process.
-  MDL-35608 - Blocks - Updating the Completion Status block to use HTML Writer
-
-
 === 2.5 ===
 
 required changes:
@@ -19,9 +14,13 @@ required changes:
 DOM changes:
 * changed the h1 title in the help popup to a h2.
 * new setting $THEME->yuicssmodules = array('cssreset', 'cssfonts', 'cssgrids', 'cssbase'); which
-  allows themes to use different CSS reset normalisers such as cssnormalize YUI module
+  allows themes to use different CSS reset normalisers such as cssnormalize YUI module.
 * Re-wrote the user profile views to definition lists.
+* Re-wrote the table for the course completion status block to use html_table - added some CSS classes to
+  the table in the process (see MDL-35608).
 * Cancel buttons have the class btn-cancel.
+* Added a z-index for the div#dateselector-calendar-panel so that the calendar pop-up renders above
+  the filemanager when they overlap, ie. the course settings page (see MDL-39047).
 
 Renderer changes:
 * Mymobile theme changed to support more verbose move-block-here descriptions.
