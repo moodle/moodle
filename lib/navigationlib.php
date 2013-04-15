@@ -3053,7 +3053,9 @@ class navbar extends navigation_node {
                     if (!$navigationactivenode->mainnavonly) {
                         $items[] = $navigationactivenode;
                     }
-                    if (!empty($CFG->navshowcategories) && $navigationactivenode->type === self::TYPE_COURSE && $navigationactivenode->parent->key === 'currentcourse') {
+                    if (!empty($CFG->navshowcategories) &&
+                            $navigationactivenode->type === self::TYPE_COURSE &&
+                            $navigationactivenode->parent->key === 'currentcourse') {
                         $items = array_merge($items, $this->get_course_categories());
                     }
                     $navigationactivenode = $navigationactivenode->parent;
@@ -3064,7 +3066,9 @@ class navbar extends navigation_node {
                     if (!$navigationactivenode->mainnavonly) {
                         $items[] = $navigationactivenode;
                     }
-                    if (!empty($CFG->navshowcategories) && $navigationactivenode->type === self::TYPE_COURSE && $navigationactivenode->parent->key === 'currentcourse') {
+                    if (!empty($CFG->navshowcategories) &&
+                            $navigationactivenode->type === self::TYPE_COURSE &&
+                            $navigationactivenode->parent->key === 'currentcourse') {
                         $items = array_merge($items, $this->get_course_categories());
                     }
                     $navigationactivenode = $navigationactivenode->parent;
