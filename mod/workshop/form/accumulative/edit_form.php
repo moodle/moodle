@@ -56,6 +56,7 @@ class workshop_edit_accumulative_strategy_form extends workshop_edit_strategy_fo
         for ($i = 0; $i < $norepeats; $i++) {
             $mform->addElement('header', 'dimension'.$i, get_string('dimensionnumber', 'workshopform_accumulative', $i+1));
             $mform->addElement('hidden', 'dimensionid__idx_'.$i);
+            $mform->setType('dimensionid__idx_'.$i, PARAM_INT);
             $mform->addElement('editor', 'description__idx_'.$i.'_editor',
                     get_string('dimensiondescription', 'workshopform_accumulative'), '', $descriptionopts);
             // todo replace modgrade with an advanced element (usability issue discussed with Olli)
