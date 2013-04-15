@@ -1369,3 +1369,10 @@ div.badge .expireimage { width: 100px; height: 100px; left: 20px; top: 0px; }
 .statusbox.inactive { background-color: #FFEBA8; }
 .activatebadge { margin: 0px; text-align: left; vertical-align: middle; }
 .addcourse { float: right; }
+
+/**
+ * The date selector popup.
+ */
+ div#dateselector-calendar-panel {
+ 	z-index: 3100; /* Set higher than the z-index of the filemanager - see MDL-39047. */
+ }
