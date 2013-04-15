@@ -141,12 +141,7 @@ class repository_upload extends repository {
             }
         }
 
-        // scan the files, throws exception and deletes if virus found
-        // this is tricky because clamdscan daemon might not be able to access the files
-        $permissions = fileperms($_FILES[$elname]['tmp_name']);
-        @chmod($_FILES[$elname]['tmp_name'], $CFG->filepermissions);
         self::antivir_scan_file($_FILES[$elname]['tmp_name'], $_FILES[$elname]['name'], true);
-        @chmod($_FILES[$elname]['tmp_name'], $permissions);
 
         // {@link repository::build_source_field()}
         $sourcefield = $this->get_file_source_info($_FILES[$elname]['name']);
