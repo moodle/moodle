@@ -23,7 +23,7 @@
  * For full information about creating Moodle themes, see:
  * http://docs.moodle.org/dev/Themes_2.0
  *
- * @package   Moodle Simple theme
+ * @package   theme_simple
  * @copyright 2013 Moodle, moodle.org
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
