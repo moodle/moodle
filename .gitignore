@@ -31,3 +31,5 @@ composer.phar
 composer.lock
 /vendor/
 /behat.yml
+*/yui/build/*/*-coverage.js
+/lib/yuilib/*/build/*/*-coverage.js
