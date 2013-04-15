@@ -990,6 +990,8 @@ class core_renderer extends renderer_base {
     /**
      * Returns lang menu or '', this method also checks forcing of languages in courses.
      *
+     * This function calls {@link core_renderer::render_single_select()} to actually display the language menu.
+     *
      * @return string The lang menu HTML or empty string
      */
     public function lang_menu() {
@@ -1262,6 +1264,9 @@ class core_renderer extends renderer_base {
     /**
      * Renders a special html link with attached action
      *
+     * Theme developers: DO NOT OVERRIDE! Please override function
+     * {@link core_renderer::render_action_link()} instead.
+     *
      * @param string|moodle_url $url
      * @param string $text HTML fragment
      * @param component_action $action
@@ -1327,6 +1332,10 @@ class core_renderer extends renderer_base {
      * This function uses the {@link core_renderer::action_link()} method for the
      * most part. What it does different is prepare the icon as HTML and use it
      * as the link text.
+     *
+     * Theme developers: If you want to change how action links and/or icons are rendered,
+     * consider overriding function {@link core_renderer::render_action_link()} and
+     * {@link core_renderer::render_pix_icon()}.
      *
      * @param string|moodle_url $url A string URL or moodel_url
      * @param pix_icon $pixicon
@@ -1397,6 +1406,9 @@ class core_renderer extends renderer_base {
 
     /**
      * Returns a form with a single button.
+     *
+     * Theme developers: DO NOT OVERRIDE! Please override function
+     * {@link core_renderer::render_single_button()} instead.
      *
      * @param string|moodle_url $url
      * @param string $label button text
@@ -1476,6 +1488,9 @@ class core_renderer extends renderer_base {
 
     /**
      * Returns a form with a single select widget.
+     *
+     * Theme developers: DO NOT OVERRIDE! Please override function
+     * {@link core_renderer::render_single_select()} instead.
      *
      * @param moodle_url $url form action target, includes hidden fields
      * @param string $name name of selection field - the changing parameter in url
@@ -1570,6 +1585,9 @@ class core_renderer extends renderer_base {
 
     /**
      * Returns a form with a url select widget.
+     *
+     * Theme developers: DO NOT OVERRIDE! Please override function
+     * {@link core_renderer::render_url_select()} instead.
      *
      * @param array $urls list of urls - array('/course/view.php?id=1'=>'Frontpage', ....)
      * @param string $selected selected element
@@ -1727,6 +1745,9 @@ class core_renderer extends renderer_base {
 
     /**
      * Return HTML for a pix_icon.
+     *
+     * Theme developers: DO NOT OVERRIDE! Please override function
+     * {@link core_renderer::render_pix_icon()} instead.
      *
      * @param string $pix short pix name
      * @param string $alt mandatory alt attribute
@@ -1904,6 +1925,9 @@ class core_renderer extends renderer_base {
     /**
      * Returns HTML to display a help icon.
      *
+     * Theme developers: DO NOT OVERRIDE! Please override function
+     * {@link core_renderer::render_help_icon()} instead.
+     *
      * @param string $identifier The keyword that defines a help page
      * @param string $component component name
      * @param string|bool $linktext true means use $title as link text, string means link text value
@@ -2027,6 +2051,9 @@ class core_renderer extends renderer_base {
      * $OUTPUT->render($userpic);
      * </pre>
      *
+     * Theme developers: DO NOT OVERRIDE! Please override function
+     * {@link core_renderer::render_user_picture()} instead.
+     *
      * @param stdClass $user Object with at least fields id, picture, imagealt, firstname, lastname
      *     If any of these are missing, the database is queried. Avoid this
      *     if at all possible, particularly for reports. It is very bad for performance.
@@ -2149,6 +2176,9 @@ class core_renderer extends renderer_base {
      * <pre>
      * $OUTPUT->file_picker($options);
      * </pre>
+     *
+     * Theme developers: DO NOT OVERRIDE! Please override function
+     * {@link core_renderer::render_file_picker()} instead.
      *
      * @param array $options associative array with file manager options
      *   options are:
@@ -2422,6 +2452,9 @@ EOD;
 
     /**
      * Returns HTML to display a single paging bar to provide access to other pages  (usually in a search)
+     *
+     * Theme developers: DO NOT OVERRIDE! Please override function
+     * {@link core_renderer::render_paging_bar()} instead.
      *
      * @param int $totalcount The total number of entries available to be paged through
      * @param int $page The page you are currently viewing
@@ -2746,6 +2779,9 @@ EOD;
      *    Settings: Administration > Appearance > Themes > Theme settings
      * and then configuring the custommenu config setting as described.
      *
+     * Theme developers: DO NOT OVERRIDE! Please override function
+     * {@link core_renderer::render_custom_menu()} instead.
+     *
      * @param string $custommenuitems - custom menuitems set by theme instead of global theme settings
      * @return string
      */
@@ -2758,7 +2794,7 @@ EOD;
             return '';
         }
         $custommenu = new custom_menu($custommenuitems, current_language());
-        return $this->render_custom_menu($custommenu);
+        return $this->render($custommenu);
     }
 
     /**
@@ -2888,6 +2924,9 @@ EOD;
      *
      * This function replaces print_tabs() used before Moodle 2.5 but with slightly different arguments
      *
+     * Theme developers: In order to change how tabs are displayed please override functions
+     * {@link core_renderer::render_tabtree()} and/or {@link core_renderer::render_tabobject()}
+     *
      * @param array $tabs array of tabs, each of them may have it's own ->subtree
      * @param string|null $selected which tab to mark as selected, all parent tabs will
      *     automatically be marked as activated
@@ -2895,7 +2934,7 @@ EOD;
      *     their level. Note that you can as weel specify tabobject::$inactive for separate instances
      * @return string
      */
-    public function tabtree($tabs, $selected = null, $inactive = null) {
+    public final function tabtree($tabs, $selected = null, $inactive = null) {
         return $this->render(new tabtree($tabs, $selected, $inactive));
     }
 
