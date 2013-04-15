@@ -77,7 +77,7 @@ Y.extend( DropdownPlugin, Y.Plugin.Base, {
     /**
     @method getTarget
     @description Fetches a Y.NodeList or Y.Node that should be used to modify class names
-    **/ 
+    **/
     getTarget : function() {
         var node     = this._node,
             selector = node.getData( this.config.target ),

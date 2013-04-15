@@ -44,6 +44,6 @@ The YUI port of the Twitter bootstrap libs are now longer maintained. If you nee
 functionality consider switching to the original jQuery version of these file
 
 If you do want to update use these file locations:
-javascript/bootstrap-collapse.js
-javascript/bootstrap-dropdown.js
-javascript/bootstrap-engine.js
+theme/bootstrap/yui/src/bootstrap/js/bootstrap-collapse.js
+theme/bootstrap/yui/src/bootstrap/js/bootstrap-dropdown.js
+theme/bootstrap/yui/src/bootstrap/js/bootstrap-engine.js

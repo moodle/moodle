@@ -272,6 +272,7 @@ Y.BootstrapEngine = BootstrapEngine;
 
 }, '@VERSION@' ,{requires:['node','base-base']});
 ;
+
 YUI.add('gallery-bootstrap-collapse', function(Y) {
 
 /**
@@ -575,7 +576,7 @@ Y.extend( DropdownPlugin, Y.Plugin.Base, {
     /**
     @method getTarget
     @description Fetches a Y.NodeList or Y.Node that should be used to modify class names
-    **/ 
+    **/
     getTarget : function() {
         var node     = this._node,
             selector = node.getData( this.config.target ),
@@ -610,7 +611,8 @@ NS.dropdown_delegation = function() {
 
 
 }, '@VERSION@' ,{requires:['plugin','event','event-outside']});
-;YUI.add('moodle-theme_bootstrap-bootstrap', function (Y, NAME) {
+;
+YUI.add('moodle-theme_bootstrap-bootstrap', function (Y, NAME) {
 
 /**
 The Moodle Bootstrap theme's bootstrap JavaScript
