@@ -10,7 +10,8 @@ information provided here is intended especially for developers.
   an option for 0 bytes. Existing code that was replacing the 0 option in the return
   from this function with a more sensible message, can now use the return from this function directly.
 * Functions responsible for output in course/lib.php are deprecated, the code is moved to
-  appropriate renderers: print_section_add_menus()
+  appropriate renderers: print_section(), print_section_add_menus(), get_print_section_cm_text(),
+  make_editing_buttons()
   See functions' phpdocs in lib/deprecatedlib.php
 * Function get_print_section_cm_text() is deprecated, replaced with methods in cm_info
 * zip_packer may create empty zip archives, there is a new option to ignore
