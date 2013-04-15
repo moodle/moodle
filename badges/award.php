@@ -50,7 +50,7 @@ if ($badge->type == BADGE_TYPE_COURSE) {
 
 require_capability('moodle/badges:awardbadge', $context);
 
-$url = new moodle_url('/badges/award.php', array('id' => $badgeid));
+$url = new moodle_url('/badges/award.php', array('id' => $badgeid, 'role' => $role));
 $PAGE->set_url($url);
 $PAGE->set_context($context);
 
