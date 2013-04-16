@@ -2,6 +2,14 @@ This files describes API changes for course formats
 
 Overview of this plugin type at http://docs.moodle.org/dev/Course_formats
 
+=== 2.5 ===
+
+* Functions responsible for output in course/lib.php are deprecated, the code is moved to
+  appropriate renderers: print_section(), print_section_add_menus(), get_print_section_cm_text(),
+  make_editing_buttons()
+  See functions' phpdocs in lib/deprecatedlib.php
+* Function get_print_section_cm_text() is deprecated, replaced with methods in cm_info
+
 === 2.4 ===
 
 Course format API has been changed significantly. Instead of implementing callbacks course formats
