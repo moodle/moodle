@@ -172,8 +172,7 @@ class tinymce_texteditor extends texteditor {
         );
 
         // Should we override the default toolbar layout unconditionally?
-        $customtoolbar = self::parse_toolbar_setting($config->customtoolbar);
-        if ($customtoolbar) {
+        if (!empty($config->customtoolbar) and $customtoolbar = self::parse_toolbar_setting($config->customtoolbar)) {
             $i = 1;
             foreach ($customtoolbar as $line) {
                 $params['theme_advanced_buttons'.$i] = $line;
