@@ -2105,5 +2105,17 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2013041601.00);
     }
 
+    if ($oldversion < 2013041601.01) {
+        // Changing the default of field descriptionformat on table user to 1.
+        $table = new xmldb_table('user');
+        $field = new xmldb_field('descriptionformat', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '1', 'description');
+
+        // Launch change of default for field descriptionformat.
+        $dbman->change_field_default($table, $field);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2013041601.01);
+    }
+
     return true;
 }

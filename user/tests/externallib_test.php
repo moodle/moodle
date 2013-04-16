@@ -313,8 +313,8 @@ class core_user_external_testcase extends externallib_advanced_testcase {
                 if (!empty($generateduser->description)) {
                     $this->assertEquals($generateduser->description, $returneduser['description']);
                 }
-                if (!empty($generateduser->descriptionformat)) {
-                    $this->assertEquals(FORMAT_HTML, $returneduser['descriptionformat']);
+                if (!empty($generateduser->descriptionformat) and isset($returneduser['descriptionformat'])) {
+                    $this->assertEquals($generateduser->descriptionformat, $returneduser['descriptionformat']);
                 }
                 if (!empty($generateduser->city)) {
                     $this->assertEquals($generateduser->city, $returneduser['city']);
