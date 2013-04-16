@@ -2530,6 +2530,7 @@ class global_navigation extends navigation_node {
 
         $issite = ($course->id == $SITE->id);
         $shortname = format_string($course->shortname, true, array('context' => $coursecontext));
+        $fullname = format_string($course->fullname, true, array('context' => $coursecontext));
 
         if ($issite) {
             $parent = $this;
@@ -2565,7 +2566,9 @@ class global_navigation extends navigation_node {
         $coursenode = $parent->add($shortname, $url, self::TYPE_COURSE, $shortname, $course->id);
         $coursenode->nodetype = self::NODETYPE_BRANCH;
         $coursenode->hidden = (!$course->visible);
-        $coursenode->title(format_string($course->fullname, true, array('context' => get_context_instance(CONTEXT_COURSE, $course->id))));
+        // We need to decode &amp;'s here as they will have been added by format_string above and attributes will be encoded again
+        // later.
+        $coursenode->title(str_replace('&amp;', '&', $fullname));
         if (!$forcegeneric) {
             $this->addedcourses[$course->id] = $coursenode;
         }
