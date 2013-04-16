@@ -125,7 +125,7 @@ if ($activate) {
         } else {
             $awards = $badge->review_all_criteria();
             $returnurl->param('awards', $awards);
-         }
+        }
         redirect($returnurl);
     }
 

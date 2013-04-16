@@ -87,7 +87,13 @@ if ($type == BADGE_TYPE_SITE) {
     );
 }
 
-if (!has_capability('moodle/badges:awardbadge', $PAGE->context)) {
+if (!has_any_capability(array(
+        'moodle/badges:viewawarded',
+        'moodle/badges:createbadge',
+        'moodle/badges:awardbadge',
+        'moodle/badges:configuremessages',
+        'moodle/badges:configuredetails',
+        'moodle/badges:deletebadge'), $PAGE->context)) {
     redirect($CFG->wwwroot);
 }
 

@@ -83,8 +83,7 @@ class edit_details_form extends moodleform {
         if (isset($CFG->badges_defaultissuercontact)) {
             $mform->setDefault('issuercontact', $CFG->badges_defaultissuercontact);
         }
-        $mform->setType('issuercontact', PARAM_EMAIL);
-        $mform->addRule('issuercontact', get_string('invalidemail', 'moodle'), 'email', null, 'client', true);
+        $mform->setType('issuercontact', PARAM_RAW);
         $mform->addHelpButton('issuercontact', 'contact', 'badges');
 
         $mform->addElement('header', 'issuancedetails', get_string('issuancedetails', 'badges'));
@@ -163,6 +162,10 @@ class edit_details_form extends moodleform {
         global $DB;
         $errors = parent::validation($data, $files);
 
+        if (!empty($data['issuercontact']) && !validate_email($data['issuercontact'])) {
+            $errors['issuercontact'] = get_string('invalidemail');
+        }
+
         if ($data['expiry'] == 2 && $data['expireperiod'] <= 0) {
             $errors['expirydategr'] = get_string('error:invalidexpireperiod', 'badges');
         }
@@ -173,11 +176,11 @@ class edit_details_form extends moodleform {
 
         // Check for duplicate badge names.
         if ($data['action'] == 'new') {
-            $duplicate = $DB->record_exists_select('badge', 'name = :name',
-                        array('name' => $data['name']));
+            $duplicate = $DB->record_exists_select('badge', 'name = :name AND status != :deleted',
+                array('name' => $data['name'], 'deleted' => BADGE_STATUS_ARCHIVED));
         } else {
-            $duplicate = $DB->record_exists_select('badge', 'name = :name AND id != :badgeid',
-                    array('name' => $data['name'], 'badgeid' => $data['id']));
+            $duplicate = $DB->record_exists_select('badge', 'name = :name AND id != :badgeid AND status != :deleted',
+                array('name' => $data['name'], 'badgeid' => $data['id'], 'deleted' => BADGE_STATUS_ARCHIVED));
         }
 
         if ($duplicate) {
