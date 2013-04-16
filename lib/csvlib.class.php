@@ -101,8 +101,15 @@ class csv_import_reader {
         $csv_delimiter = csv_import_reader::get_delimiter($delimiter_name);
         // $csv_encode    = csv_import_reader::get_encoded_delimiter($delimiter_name);
 
-        // create a temporary file and store the csv file there.
-        $fp = tmpfile();
+        // Create a temporary file and store the csv file there,
+        // do not try using fgetcsv() because there is nothing
+        // to split rows properly - fgetcsv() itself can not do it.
+        $tempfile = tempnam(make_temp_directory('/cvsimport'), 'tmp');
+        if (!$fp = fopen($tempfile, 'w+b')) {
+            $this->_error = get_string('cannotsavedata', 'error');
+            @unlink($tempfile);
+            return false;
+        }
         fwrite($fp, $content);
         fseek($fp, 0);
         // Create an array to store the imported data for error checking.
@@ -126,6 +133,7 @@ class csv_import_reader {
         if (!isset($columns[0])) {
             $this->_error = get_string('csvemptyfile', 'error');
             fclose($fp);
+            unlink($tempfile);
             return false;
         } else {
             $col_count = count($columns[0]);
@@ -137,6 +145,7 @@ class csv_import_reader {
             if ($result !== true) {
                 $this->_error = $result;
                 fclose($fp);
+                unlink($tempfile);
                 return false;
             }
         }
@@ -147,6 +156,7 @@ class csv_import_reader {
             if (count($rowdata) !== $col_count) {
                 $this->_error = get_string('csvweirdcolumns', 'error');
                 fclose($fp);
+                unlink($tempfile);
                 $this->cleanup();
                 return false;
             }
@@ -160,6 +170,7 @@ class csv_import_reader {
         fwrite($filepointer, $storedata);
 
         fclose($fp);
+        unlink($tempfile);
         fclose($filepointer);
 
         $datacount = count($columns);
