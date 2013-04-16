@@ -1909,7 +1909,7 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
         $editorclass = '';
     }
 
-    $str .= "\n".'<textarea class="form-textarea" id="'. $id .'" name="'. $name .'" rows="'. $rows .'" cols="'. $cols .'">'."\n";
+    $str .= "\n".'<textarea class="form-textarea" id="'. $id .'" name="'. $name .'" rows="'. $rows .'" cols="'. $cols .'" spellcheck="true">'."\n";
     if ($usehtmleditor) {
         $str .= htmlspecialchars($value); // needed for editing of cleaned text!
     } else {

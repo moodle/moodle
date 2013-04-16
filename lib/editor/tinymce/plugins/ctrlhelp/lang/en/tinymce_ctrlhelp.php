@@ -15,13 +15,14 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for Moodle Media plugin.
+ * Strings for CTRL+Right click helper.
  *
- * @package   tinymce_spellchecker
- * @copyright 2012 The Open University
+ * @package   tinymce_ctrlhelp
+ * @copyright 2013 Petr Skoda {@link http://skodak.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Legacy spell checker';
+$string['pluginname'] = 'CTRL+right click helper';
 
-/* This plugin abuses strings from the standard TinyMCE spellchecker plugin, there is no need to duplicate them here. */
+/* All lang strings used from TinyMCE JavaScript code must be named 'pluginname:stringname', no need to create langs/en_dlg.js */
+$string['ctrlhelp:desc'] = 'CTRL + right click for more options';

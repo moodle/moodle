@@ -383,7 +383,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
         if (!is_null($this->getAttribute('onblur')) && !is_null($this->getAttribute('onchange'))) {
             $editorrules = ' onblur="'.htmlspecialchars($this->getAttribute('onblur')).'" onchange="'.htmlspecialchars($this->getAttribute('onchange')).'"';
         }
-        $str .= '<div><textarea id="'.$id.'" name="'.$elname.'[text]" rows="'.$rows.'" cols="'.$cols.'"';
+        $str .= '<div><textarea id="'.$id.'" name="'.$elname.'[text]" rows="'.$rows.'" cols="'.$cols.'" spellcheck="true"';
         $classes = array();
         if (isset($this->_options['collapsed']) && $this->_options['collapsed']) {
             $this->_options['collapsible'] = 1;

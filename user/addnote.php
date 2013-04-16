@@ -109,7 +109,7 @@ foreach ($users as $k => $v) {
     $checkbox .= html_writer::select($state_names, 'states[' . $k . ']', empty($states[$k]) ? NOTES_STATE_PUBLIC : $states[$k], false, array('id' => 'menustates'));
     $table->data[] = array(
         '<input type="hidden" name="userid['.$k.']" value="'.$v.'" />'. fullname($user, true),
-        '<textarea name="contents['. $k . ']" rows="2" cols="40">' . strip_tags(@$contents[$k]) . '</textarea>',
+        '<textarea name="contents['. $k . ']" rows="2" cols="40" spellcheck="true">' . strip_tags(@$contents[$k]) . '</textarea>',
         $checkbox
     );
 }

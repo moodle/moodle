@@ -15,13 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for Moodle Media plugin.
+ * CTRL + right click helper.
  *
- * @package   tinymce_spellchecker
- * @copyright 2012 The Open University
+ * @package   tinymce_ctrlhelp
+ * @copyright 2013 Petr Skoda {@link http://skodak.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Legacy spell checker';
+defined('MOODLE_INTERNAL') || die();
 
-/* This plugin abuses strings from the standard TinyMCE spellchecker plugin, there is no need to duplicate them here. */
+$plugin->version   = 2013041200;
+$plugin->requires  = 2013041100;
+$plugin->component = 'tinymce_ctrlhelp';

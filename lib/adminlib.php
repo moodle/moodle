@@ -1938,7 +1938,7 @@ class admin_setting_configtextarea extends admin_setting_configtext {
         }
 
         return format_admin_setting($this, $this->visiblename,
-        '<div class="form-textarea" ><textarea rows="'. $this->rows .'" cols="'. $this->cols .'" id="'. $this->get_id() .'" name="'. $this->get_full_name() .'">'. s($data) .'</textarea></div>',
+        '<div class="form-textarea" ><textarea rows="'. $this->rows .'" cols="'. $this->cols .'" id="'. $this->get_id() .'" name="'. $this->get_full_name() .'" spellcheck="true">'. s($data) .'</textarea></div>',
         $this->description, true, '', $defaultinfo, $query);
     }
 }
@@ -1984,7 +1984,7 @@ class admin_setting_confightmleditor extends admin_setting_configtext {
         $editor->use_editor($this->get_id(), array('noclean'=>true));
 
         return format_admin_setting($this, $this->visiblename,
-        '<div class="form-textarea"><textarea rows="'. $this->rows .'" cols="'. $this->cols .'" id="'. $this->get_id() .'" name="'. $this->get_full_name() .'">'. s($data) .'</textarea></div>',
+        '<div class="form-textarea"><textarea rows="'. $this->rows .'" cols="'. $this->cols .'" id="'. $this->get_id() .'" name="'. $this->get_full_name() .'" spellcheck="true">'. s($data) .'</textarea></div>',
         $this->description, true, '', $defaultinfo, $query);
     }
 }

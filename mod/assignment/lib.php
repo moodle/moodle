@@ -1521,7 +1521,7 @@ class assignment_base {
                             } else if ($quickgrade) {
                                 $comment = '<div id="com'.$auser->id.'">'
                                          . '<textarea tabindex="'.$tabindex++.'" name="submissioncomment['.$auser->id.']" id="submissioncomment'
-                                         . $auser->id.'" rows="2" cols="20">'.($auser->submissioncomment).'</textarea></div>';
+                                         . $auser->id.'" rows="2" cols="20" spellcheck="true">'.($auser->submissioncomment).'</textarea></div>';
                             } else {
                                 $comment = '<div id="com'.$auser->id.'">'.shorten_text(strip_tags($auser->submissioncomment),15).'</div>';
                             }
@@ -1549,7 +1549,7 @@ class assignment_base {
                             } else if ($quickgrade) {
                                 $comment = '<div id="com'.$auser->id.'">'
                                          . '<textarea tabindex="'.$tabindex++.'" name="submissioncomment['.$auser->id.']" id="submissioncomment'
-                                         . $auser->id.'" rows="2" cols="20">'.($auser->submissioncomment).'</textarea></div>';
+                                         . $auser->id.'" rows="2" cols="20" spellcheck="true">'.($auser->submissioncomment).'</textarea></div>';
                             } else {
                                 $comment = '<div id="com'.$auser->id.'">&nbsp;</div>';
                             }

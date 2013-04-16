@@ -112,7 +112,7 @@ echo get_string('users'). ': ' . implode(', ', $userlist) . '.';
 echo '</p>';
 
 echo '<p>' . get_string('content', 'notes');
-echo '<br /><textarea name="content" rows="5" cols="50">' . strip_tags(@$content) . '</textarea></p>';
+echo '<br /><textarea name="content" rows="5" cols="50" spellcheck="true">' . strip_tags(@$content) . '</textarea></p>';
 
 echo '<p>';
 echo html_writer::label(get_string('publishstate', 'notes'), 'menustate');

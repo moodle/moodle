@@ -60,7 +60,7 @@
 ?>
         <p><?php echo get_string('pleasereport', 'error'); ?>
         <p><form action="<?php echo $CFG->wwwroot ?>/error/index.php" method="post">
-           <textarea rows="3" cols="50" name="text" id="text"></textarea><br />
+           <textarea rows="3" cols="50" name="text" id="text" spellcheck="true"></textarea><br />
            <input type="hidden" name="referer" value="<?php p($httpreferer) ?>">
            <input type="hidden" name="requested" value="<?php p($requesturi) ?>">
            <input type="submit" value="<?php echo get_string('sendmessage', 'error'); ?>">
