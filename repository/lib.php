@@ -1123,7 +1123,7 @@ abstract class repository implements cacheable_object {
      * Do not use this function to access repository contents, because it
      * does not set the current context
      *
-     * @see rpository::get_repository_by_id()
+     * @see repository::get_repository_by_id()
      *
      * @static
      * @param integer $id repository instance id
@@ -1877,7 +1877,7 @@ abstract class repository implements cacheable_object {
 
         if ($type->get_visible()) {
             //if the instance is unique so it's visible, otherwise check if the instance has a enabled context
-            if (empty($instanceoptions) || $type->get_contextvisibility($this->context)) {
+            if (empty($instanceoptions) || $type->get_contextvisibility(context::instance_by_id($this->instance->contextid))) {
                 return true;
             }
         }
