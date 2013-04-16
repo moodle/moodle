@@ -32,7 +32,9 @@ if (!during_initial_install()) { //do not use during installation
         for ($i=1; $i<100; $i++) {
             $options[$i] = $i;
         }
-        $temp->add(new admin_setting_configselect('maxcategorydepth', new lang_string('configsitemaxcategorydepth','admin'), new lang_string('configsitemaxcategorydepthhelp','admin'), 0, $options));
+        $temp->add(new admin_setting_configselect('maxcategorydepth', new lang_string('configsitemaxcategorydepth','admin'), new lang_string('configsitemaxcategorydepthhelp','admin'), 2, $options));
+
+        $temp->add(new admin_setting_configtext('frontpagecourselimit', new lang_string('configfrontpagecourselimit','admin'), new lang_string('configfrontpagecourselimithelp','admin'), 200, PARAM_INT));
 
         $temp->add(new admin_setting_sitesetcheckbox('numsections', new lang_string('sitesection'), new lang_string('sitesectionhelp','admin'), 1));
         $temp->add(new admin_setting_sitesetselect('newsitems', new lang_string('newsitemsnumber'), '', 3,

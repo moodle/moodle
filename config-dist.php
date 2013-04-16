@@ -221,10 +221,6 @@ $CFG->admin = 'admin';
 // RewriteRule (^.*/theme/yui_combo\.php)(/.*) $1?file=$2
 //
 //
-// This setting will prevent the 'My Courses' page being displayed when a student
-// logs in. The site front page will always show the same (logged-out) view.
-//     $CFG->disablemycourses = true;
-//
 // By default all user sessions should be using locking, uncomment
 // the following setting to prevent locking for guests and not-logged-in
 // accounts. This may improve performance significantly.
