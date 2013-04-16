@@ -71,7 +71,6 @@ class data_field_file extends data_field_base {
         $html .= '<input type="hidden" name="field_'.$this->field->id.'_file" value="'.$itemid.'" />';
 
         $options = new stdClass();
-        $options->areamaxbytes  = $this->field->param3;
         $options->maxbytes = $this->field->param3;
         $options->maxfiles  = 1; // Limit to one file for the moment, this may be changed if requested as a feature in the future.
         $options->itemid    = $itemid;
