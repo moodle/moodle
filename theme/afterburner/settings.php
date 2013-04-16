@@ -8,8 +8,8 @@ if ($ADMIN->fulltree) {
     $name = 'theme_afterburner/logo';
     $title = get_string('logo','theme_afterburner');
     $description = get_string('logodesc', 'theme_afterburner');
-    $default = '';
-    $setting = new admin_setting_configtext($name, $title, $description, $default, PARAM_URL);
+    $setting = new admin_setting_configstoredfile($name, $title, $description, 'logo');
+    $setting->set_updatedcallback('theme_reset_all_caches');
     $settings->add($setting);
 
     // Foot note setting
