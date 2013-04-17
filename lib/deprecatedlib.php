@@ -4515,3 +4515,10 @@ function get_courses_wmanagers($categoryid=0, $sort="c.sortorder ASC", $fields=a
 
     return $courses;
 }
+
+/**
+ * @deprecated since Moodle 2.3
+ */
+function move_section($course, $section, $move) {
+    throw new coding_exception('move_section() can not be used any more, please see move_section_to().');
+}
