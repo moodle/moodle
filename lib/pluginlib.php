@@ -812,7 +812,7 @@ class plugin_manager {
                 'afterburner', 'anomaly', 'arialist', 'base', 'binarius', 'bootstrap',
                 'boxxie', 'brick', 'canvas', 'formal_white', 'formfactor',
                 'fusion', 'leatherbound', 'magazine', 'mymobile', 'nimble',
-                'nonzero', 'overlay', 'serenity', 'sky_high', 'splash',
+                'nonzero', 'overlay', 'serenity', 'simple', 'sky_high', 'splash',
                 'standard', 'standardold'
             ),
 
