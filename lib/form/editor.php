@@ -227,28 +227,10 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
     }
 
     /**
-     * Sets help button for editor
-     *
-     * @param mixed $_helpbuttonargs arguments to create help button
-     * @param string $function name of the callback function
-     * @deprecated since Moodle 2.0. Please do not call this function any more.
-     * @todo MDL-34508 this api will be removed.
-     * @see MoodleQuickForm::addHelpButton()
+     * @deprecated since Moodle 2.0
      */
     function setHelpButton($_helpbuttonargs, $function='_helpbutton') {
-        debugging('setHelpButton() is deprecated, please use $mform->addHelpButton() instead');
-        if (!is_array($_helpbuttonargs)) {
-            $_helpbuttonargs = array($_helpbuttonargs);
-        } else {
-            $_helpbuttonargs = $_helpbuttonargs;
-        }
-        //we do this to to return html instead of printing it
-        //without having to specify it in every call to make a button.
-        if ('_helpbutton' == $function){
-            $defaultargs = array('', '', 'moodle', true, false, '', true);
-            $_helpbuttonargs = $_helpbuttonargs + $defaultargs ;
-        }
-        $this->_helpbutton=call_user_func_array($function, $_helpbuttonargs);
+        throw new coding_exception('setHelpButton() can not be used any more, please see MoodleQuickForm::addHelpButton().');
     }
 
     /**
