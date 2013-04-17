@@ -28,7 +28,9 @@
 require_once(__DIR__ . '/../../../lib/behat/behat_base.php');
 
 use Behat\Behat\Context\Step\Given as Given,
-    Behat\Gherkin\Node\TableNode as TableNode;
+    Behat\Gherkin\Node\TableNode as TableNode,
+    Behat\Mink\Exception\ExpectationException as ExpectationException,
+    Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
 
 /**
  * Steps definitions related with the question bank management.
@@ -60,6 +62,28 @@ class behat_question extends behat_base {
             new Given('I fill the moodle form with:', $questiondata),
             new Given('I press "Save changes"')
         );
+    }
+
+    /**
+     * Checks the state of the specified question.
+     *
+     * @Then /^the state of "(?P<question_description_string>(?:[^"]|\\")*)" question is shown as "(?P<state_string>(?:[^"]|\\")*)"$/
+     * @throws ExpectationException
+     * @throws ElementNotFoundException
+     * @param string $questiondescription
+     * @param string $state
+     */
+    public function the_state_of_question_is_shown_as($questiondescription, $state) {
+
+        // Split in two checkings to give more feedback in case of exception.
+        $exception = new ElementNotFoundException($this->getSession(), 'Question "' . $questiondescription . '" ');
+        $questionxpath = "//div[contains(concat(' ', @class, ' '), ' qtext ')][contains(., '" . $questiondescription . "')]";
+        $this->find('xpath', $questionxpath, $exception);
+
+        $exception = new ExpectationException('Question "' . $questiondescription . '" state is not "' . $state . '"', $this->getSession());
+        $xpath = $questionxpath . "/ancestor::div[contains(concat(' ', @class, ' '), ' que ')]
+/descendant::div[@class='state'][contains(., '" . $state . "')]";
+        $this->find('xpath', $xpath, $exception);
     }
 
 }
