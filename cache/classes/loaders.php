@@ -1661,7 +1661,7 @@ class cache_session extends cache {
         $setaftervalidation = false;
         if ($result === false) {
             if ($this->perfdebug) {
-                cache_helper::record_cache_miss($this->storetype, $this->get_definition()->get_id());
+                cache_helper::record_cache_miss('**static session**', $this->get_definition()->get_id());
             }
             if ($this->get_loader() !== false) {
                 // We must pass the original (unparsed) key to the next loader in the chain.
@@ -1673,7 +1673,7 @@ class cache_session extends cache {
             }
             $setaftervalidation = ($result !== false);
         } else if ($this->perfdebug) {
-            cache_helper::record_cache_hit($this->storetype, $this->get_definition()->get_id());
+            cache_helper::record_cache_hit('**static session**', $this->get_definition()->get_id());
         }
         // 5. Validate strictness.
         if ($strictness === MUST_EXIST && $result === false) {
@@ -1715,7 +1715,7 @@ class cache_session extends cache {
     public function set($key, $data) {
         $this->check_tracked_user();
         if ($this->perfdebug) {
-            cache_helper::record_cache_set($this->storetype, $this->get_definition()->get_id());
+            cache_helper::record_cache_set('**static session**', $this->get_definition()->get_id());
         }
         if (is_object($data) && $data instanceof cacheable_object) {
             $data = new cache_cached_object($data);
