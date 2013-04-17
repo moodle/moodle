@@ -340,32 +340,7 @@ class cache_config_writer extends cache_config {
         require_once($CFG->dirroot.'/cache/stores/static/lib.php');
 
         $writer = new self;
-        $writer->configstores = array(
-            'default_application' => array(
-                'name' => 'default_application',
-                'plugin' => 'file',
-                'configuration' => array(),
-                'features' => cachestore_file::get_supported_features(),
-                'modes' => cachestore_file::get_supported_modes(),
-                'default' => true,
-            ),
-            'default_session' => array(
-                'name' => 'default_session',
-                'plugin' => 'session',
-                'configuration' => array(),
-                'features' => cachestore_session::get_supported_features(),
-                'modes' => cachestore_session::get_supported_modes(),
-                'default' => true,
-            ),
-            'default_request' => array(
-                'name' => 'default_request',
-                'plugin' => 'static',
-                'configuration' => array(),
-                'features' => cachestore_static::get_supported_features(),
-                'modes' => cachestore_static::get_supported_modes(),
-                'default' => true,
-            )
-        );
+        $writer->configstores = self::get_default_stores();
         $writer->configdefinitions = self::locate_definitions();
         $writer->configmodemappings = array(
             array(
@@ -402,6 +377,52 @@ class cache_config_writer extends cache_config {
         $factory->set_state(cache_factory::STATE_SAVING);
         $writer->config_save();
         return true;
+    }
+
+    /**
+     * Returns an array of default stores for use.
+     *
+     * @return array
+     */
+    protected static function get_default_stores() {
+        return array(
+            'default_application' => array(
+                'name' => 'default_application',
+                'plugin' => 'file',
+                'configuration' => array(),
+                'features' => cachestore_file::get_supported_features(),
+                'modes' => cachestore_file::get_supported_modes(),
+                'default' => true,
+            ),
+            'default_session' => array(
+                'name' => 'default_session',
+                'plugin' => 'session',
+                'configuration' => array(),
+                'features' => cachestore_session::get_supported_features(),
+                'modes' => cachestore_session::get_supported_modes(),
+                'default' => true,
+            ),
+            'default_request' => array(
+                'name' => 'default_request',
+                'plugin' => 'static',
+                'configuration' => array(),
+                'features' => cachestore_static::get_supported_features(),
+                'modes' => cachestore_static::get_supported_modes(),
+                'default' => true,
+            )
+        );
+    }
+
+    /**
+     * Updates the default stores within the MUC config file.
+     */
+    public static function update_default_config_stores() {
+        $factory = cache_factory::instance();
+        $factory->updating_started();
+        $config = $factory->create_config_instance(true);
+        $config->configstores = array_merge($config->configstores, self::get_default_stores());
+        $config->config_save();
+        $factory->updating_finished();
     }
 
     /**
