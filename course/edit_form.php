@@ -64,21 +64,6 @@ class course_edit_form extends moodleform {
             $mform->setConstant('shortname', $course->shortname);
         }
 
-        $mform->addElement('editor','summary_editor', get_string('coursesummary'), null, $editoroptions);
-        $mform->addHelpButton('summary_editor', 'coursesummary');
-        $mform->setType('summary_editor', PARAM_RAW);
-        $summaryfields = 'summary_editor';
-
-        if ($overviewfilesoptions = course_overviewfiles_options($course)) {
-            $mform->addElement('filemanager', 'overviewfiles_filemanager', get_string('courseoverviewfiles'), null, $overviewfilesoptions);
-            $mform->addHelpButton('overviewfiles_filemanager', 'courseoverviewfiles');
-            $summaryfields .= ',overviewfiles_filemanager';
-        }
-
-        if (!empty($course->id) and !has_capability('moodle/course:changesummary', $coursecontext)) {
-            $mform->hardFreeze($summaryfields);
-        }
-
         // Verify permissions to change course category or keep current.
         if (empty($course->id)) {
             if (has_capability('moodle/course:create', $categorycontext)) {
@@ -108,14 +93,6 @@ class course_edit_form extends moodleform {
             }
         }
 
-        $mform->addElement('text','idnumber', get_string('idnumbercourse'),'maxlength="100"  size="10"');
-        $mform->addHelpButton('idnumber', 'idnumbercourse');
-        $mform->setType('idnumber', PARAM_RAW);
-        if (!empty($course->id) and !has_capability('moodle/course:changeidnumber', $coursecontext)) {
-            $mform->hardFreeze('idnumber');
-            $mform->setConstants('idnumber', $course->idnumber);
-        }
-
         $choices = array();
         $choices['0'] = get_string('hide');
         $choices['1'] = get_string('show');
@@ -135,27 +112,37 @@ class course_edit_form extends moodleform {
         $mform->addHelpButton('startdate', 'startdate');
         $mform->setDefault('startdate', time() + 3600 * 24);
 
-        if (completion_info::is_enabled_for_site()) {
-            $mform->addElement('select', 'enablecompletion', get_string('completion', 'completion'),
-                array(0 => get_string('completiondisabled', 'completion'), 1 => get_string('completionenabled', 'completion')));
-            $mform->setDefault('enablecompletion', $courseconfig->enablecompletion);
-        } else {
-            $mform->addElement('hidden', 'enablecompletion');
-            $mform->setType('enablecompletion', PARAM_INT);
-            $mform->setDefault('enablecompletion',0);
+        $mform->addElement('text','idnumber', get_string('idnumbercourse'),'maxlength="100"  size="10"');
+        $mform->addHelpButton('idnumber', 'idnumbercourse');
+        $mform->setType('idnumber', PARAM_RAW);
+        if (!empty($course->id) and !has_capability('moodle/course:changeidnumber', $coursecontext)) {
+            $mform->hardFreeze('idnumber');
+            $mform->setConstants('idnumber', $course->idnumber);
         }
 
-        // Handle non-existing $course->maxbytes on course creation.
-        $coursemaxbytes = !isset($course->maxbytes) ? null : $course->maxbytes;
+        // Description.
+        $mform->addElement('header', 'descriptionhdr', get_string('description'));
+        $mform->setExpanded('descriptionhdr');
 
-        // Let's prepare the maxbytes popup.
-        $choices = get_max_upload_sizes($CFG->maxbytes, 0, 0, $coursemaxbytes);
-        $mform->addElement('select', 'maxbytes', get_string('maximumupload'), $choices);
-        $mform->addHelpButton('maxbytes', 'maximumupload');
-        $mform->setDefault('maxbytes', $courseconfig->maxbytes);
+        $mform->addElement('editor','summary_editor', get_string('coursesummary'), null, $editoroptions);
+        $mform->addHelpButton('summary_editor', 'coursesummary');
+        $mform->setType('summary_editor', PARAM_RAW);
+        $summaryfields = 'summary_editor';
 
-        // Appearance.
-        $mform->addElement('header', 'appearancehdr', get_string('appearance'));
+        if ($overviewfilesoptions = course_overviewfiles_options($course)) {
+            $mform->addElement('filemanager', 'overviewfiles_filemanager', get_string('courseoverviewfiles'), null, $overviewfilesoptions);
+            $mform->addHelpButton('overviewfiles_filemanager', 'courseoverviewfiles');
+            $summaryfields .= ',overviewfiles_filemanager';
+        }
+
+        if (!empty($course->id) and !has_capability('moodle/course:changesummary', $coursecontext)) {
+            // Remove the description header it does not contain anything any more.
+            $mform->removeElement('descriptionhdr');
+            $mform->hardFreeze($summaryfields);
+        }
+
+        // Course format.
+        $mform->addElement('header', 'courseformathdr', get_string('type_format', 'plugin'));
 
         $courseformats = get_sorted_course_formats(true);
         $formcourseformats = array();
@@ -182,6 +169,9 @@ class course_edit_form extends moodleform {
         // Just a placeholder for the course format options.
         $mform->addElement('hidden', 'addcourseformatoptionshere');
         $mform->setType('addcourseformatoptionshere', PARAM_BOOL);
+
+        // Appearance.
+        $mform->addElement('header', 'appearancehdr', get_string('appearance'));
 
         if (!empty($CFG->allowcoursethemes)) {
             $themeobjects = get_list_of_themes();
@@ -214,6 +204,9 @@ class course_edit_form extends moodleform {
         $mform->addHelpButton('showreports', 'showreports');
         $mform->setDefault('showreports', $courseconfig->showreports);
 
+        // Files and uploads.
+        $mform->addElement('header', 'filehdr', get_string('filesanduploads'));
+
         if (!empty($course->legacyfiles) or !empty($CFG->legacyfilesinnewcourses)) {
             if (empty($course->legacyfiles)) {
                 //0 or missing means no legacy files ever used in this course - new course or nobody turned on legacy files yet
@@ -228,6 +221,27 @@ class course_edit_form extends moodleform {
                 $courseconfig->legacyfiles = 0;
             }
             $mform->setDefault('legacyfiles', $courseconfig->legacyfiles);
+        }
+
+        // Handle non-existing $course->maxbytes on course creation.
+        $coursemaxbytes = !isset($course->maxbytes) ? null : $course->maxbytes;
+
+        // Let's prepare the maxbytes popup.
+        $choices = get_max_upload_sizes($CFG->maxbytes, 0, 0, $coursemaxbytes);
+        $mform->addElement('select', 'maxbytes', get_string('maximumupload'), $choices);
+        $mform->addHelpButton('maxbytes', 'maximumupload');
+        $mform->setDefault('maxbytes', $courseconfig->maxbytes);
+
+        // Completion tracking.
+        if (completion_info::is_enabled_for_site()) {
+            $mform->addElement('header', 'completionhdr', get_string('completion', 'completion'));
+            $mform->addElement('selectyesno', 'enablecompletion', get_string('enablecompletion', 'completion'));
+            $mform->setDefault('enablecompletion', $courseconfig->enablecompletion);
+            $mform->addHelpButton('enablecompletion', 'enablecompletion', 'completion');
+        } else {
+            $mform->addElement('hidden', 'enablecompletion');
+            $mform->setType('enablecompletion', PARAM_INT);
+            $mform->setDefault('enablecompletion', 0);
         }
 
 //--------------------------------------------------------------------------------

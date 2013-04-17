@@ -676,6 +676,7 @@ $string['fileexists'] = 'There is already a file called {$a}';
 $string['filemissing'] = '{$a} is missing';
 $string['filetoolarge'] = 'is too large to upload';
 $string['files'] = 'Files';
+$string['filesanduploads'] = 'Files and uploads';
 $string['filesfolders'] = 'Files/folders';
 $string['fileuploadwithcontent'] = 'File uploads should not include the content parameter';
 $string['filloutallfields'] = 'Please fill out all fields in this form';
