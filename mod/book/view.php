@@ -191,7 +191,7 @@ if (!$book->customtitles) {
     }
 }
 $chaptertext = file_rewrite_pluginfile_urls($chapter->content, 'pluginfile.php', $context->id, 'mod_book', 'chapter', $chapter->id);
-echo format_text($chaptertext, $chapter->contentformat, array('noclean'=>true, 'context'=>$context));
+echo format_text($chaptertext, $chapter->contentformat, array('noclean'=>true, 'overflowdiv'=>true, 'context'=>$context));
 
 echo $OUTPUT->box_end();
 
