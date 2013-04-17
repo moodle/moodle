@@ -589,6 +589,8 @@ class auth_plugin_ldap extends auth_plugin_base {
                 if ($user->firstaccess == 0) {
                     $DB->set_field('user', 'firstaccess', time(), array('id'=>$user->id));
                 }
+                $euser = $DB->get_record('user', array('id' => $user->id));
+                events_trigger('user_updated', $euser);
                 return AUTH_CONFIRM_OK;
             }
         } else {
@@ -761,6 +763,8 @@ class auth_plugin_ldap extends auth_plugin_base {
                         $updateuser->auth = 'nologin';
                         $DB->update_record('user', $updateuser);
                         echo "\t"; print_string('auth_dbsuspenduser', 'auth_db', array('name'=>$user->username, 'id'=>$user->id)); echo "\n";
+                        $euser = $DB->get_record('user', array('id' => $user->id));
+                        events_trigger('user_updated', $euser);
                     }
                 }
             } else {
@@ -786,6 +790,8 @@ class auth_plugin_ldap extends auth_plugin_base {
                     $updateuser->auth = $this->authtype;
                     $DB->update_record('user', $updateuser);
                     echo "\t"; print_string('auth_dbreviveduser', 'auth_db', array('name'=>$user->username, 'id'=>$user->id)); echo "\n";
+                    $euser = $DB->get_record('user', array('id' => $user->id));
+                    events_trigger('user_updated', $euser);
                 }
             } else {
                 print_string('nouserentriestorevive', 'auth_ldap');
@@ -899,6 +905,8 @@ class auth_plugin_ldap extends auth_plugin_base {
 
                 $id = $DB->insert_record('user', $user);
                 echo "\t"; print_string('auth_dbinsertuser', 'auth_db', array('name'=>$user->username, 'id'=>$id)); echo "\n";
+                $euser = $DB->get_record('user', array('id' => $user->id));
+                events_trigger('user_created', $euser);
                 if (!empty($this->config->forcechangepassword)) {
                     set_user_preference('auth_forcepasswordchange', 1, $id);
                 }
@@ -968,6 +976,10 @@ class auth_plugin_ldap extends auth_plugin_base {
                         $DB->set_field('user', $key, $value, array('id'=>$userid));
                     }
                 }
+            }
+            if (!empty($updatekeys)) {
+                $euser = $DB->get_record('user', array('id' => $userid));
+                events_trigger('user_updated', $euser);
             }
         } else {
             return false;
