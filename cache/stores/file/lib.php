@@ -37,7 +37,7 @@
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cachestore_file extends cache_store implements cache_is_key_aware, cache_is_configurable  {
+class cachestore_file extends cache_store implements cache_is_key_aware, cache_is_configurable, cache_is_searchable  {
 
     /**
      * The name of the store.
@@ -190,7 +190,8 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
      */
     public static function get_supported_features(array $configuration = array()) {
         $supported = self::SUPPORTS_DATA_GUARANTEE +
-                     self::SUPPORTS_NATIVE_TTL;
+                     self::SUPPORTS_NATIVE_TTL +
+                     self::IS_SEARCHABLE;
         return $supported;
     }
 
@@ -257,13 +258,15 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
 
     /**
      * Gets a pattern suitable for use with glob to find all keys in the cache.
+     *
+     * @param string $prefix A prefix to use.
      * @return string The pattern.
      */
-    protected function glob_keys_pattern() {
+    protected function glob_keys_pattern($prefix = '') {
         if ($this->singledirectory) {
-            return $this->path . '/*.cache';
+            return $this->path . '/'.$prefix.'*.cache';
         } else {
-            return $this->path . '/*/*.cache';
+            return $this->path . '/*/'.$prefix.'*.cache';
         }
     }
 
@@ -365,7 +368,6 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
     public function delete($key) {
         $filename = $key.'.cache';
         $file = $this->file_path_for_key($key);
-
         if (@unlink($file)) {
             unset($this->keys[$filename]);
             return true;
@@ -686,5 +688,43 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
      */
     public function my_name() {
         return $this->name;
+    }
+
+    /**
+     * Finds all of the keys being used by this cache store instance.
+     *
+     * @return array
+     */
+    public function find_all() {
+        $this->ensure_path_exists();
+        $files = glob($this->glob_keys_pattern(), GLOB_MARK | GLOB_NOSORT);
+        $return = array();
+        if ($files === false) {
+            return $return;
+        }
+        foreach ($files as $file) {
+            $return[] = substr(basename($file), 0, -6);
+        }
+        return $return;
+    }
+
+    /**
+     * Finds all of the keys whose keys start with the given prefix.
+     *
+     * @param string $prefix
+     */
+    public function find_by_prefix($prefix) {
+        $this->ensure_path_exists();
+        $prefix = preg_replace('#(\*|\?|\[)#', '[$1]', $prefix);
+        $files = glob($this->glob_keys_pattern($prefix), GLOB_MARK | GLOB_NOSORT);
+        $return = array();
+        if ($files === false) {
+            return $return;
+        }
+        foreach ($files as $file) {
+            // Trim off ".cache" from the end.
+            $return[] = substr(basename($file), 0, -6);
+        }
+        return $return;
     }
 }

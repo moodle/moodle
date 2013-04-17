@@ -184,6 +184,13 @@ class cache_definition {
     protected $requirelockingwrite = false;
 
     /**
+     * Gets set to true if this definition requires searchable stores.
+     * @since 2.4.4
+     * @var bool
+     */
+    protected $requiresearchable = false;
+
+    /**
      * Sets the maximum number of items that can exist in the cache.
      * Please note this isn't a hard limit, and doesn't need to be enforced by the caches. They can choose to do so optionally.
      * @var int
@@ -307,6 +314,7 @@ class cache_definition {
         $requiremultipleidentifiers = false;
         $requirelockingread = false;
         $requirelockingwrite = false;
+        $requiresearchable = ($mode === cache_store::MODE_SESSION) ? true : false;;
         $maxsize = null;
         $overrideclass = null;
         $overrideclassfile = null;
@@ -341,6 +349,10 @@ class cache_definition {
             $requirelockingwrite = (bool)$definition['requirelockingwrite'];
         }
         $requirelocking = $requirelockingwrite || $requirelockingread;
+
+        if (array_key_exists('requiresearchable', $definition)) {
+            $requiresearchable = (bool)$definition['requiresearchable'];
+        }
 
         if (array_key_exists('maxsize', $definition)) {
             $maxsize = (int)$definition['maxsize'];
@@ -433,6 +445,7 @@ class cache_definition {
         $cachedefinition->requirelocking = $requirelocking;
         $cachedefinition->requirelockingread = $requirelockingread;
         $cachedefinition->requirelockingwrite = $requirelockingwrite;
+        $cachedefinition->requiresearchable = $requiresearchable;
         $cachedefinition->maxsize = $maxsize;
         $cachedefinition->overrideclass = $overrideclass;
         $cachedefinition->overrideclassfile = $overrideclassfile;
@@ -634,6 +647,15 @@ class cache_definition {
     }
 
     /**
+     * Returns true if this definition requires a searchable cache.
+     * @since 2.4.4
+     * @return bool
+     */
+    public function require_searchable() {
+        return $this->requiresearchable;
+    }
+
+    /**
      * Returns true if this definition has an associated data source.
      * @return bool
      */
@@ -686,6 +708,9 @@ class cache_definition {
         if ($this->require_multiple_identifiers()) {
             $requires += cache_store::SUPPORTS_MULTIPLE_IDENTIFIERS;
         }
+        if ($this->require_searchable()) {
+            $requires += cache_store::IS_SEARCHABLE;
+        }
         return $requires;
     }
 
@@ -694,7 +719,7 @@ class cache_definition {
      * @return bool
      */
     public function should_be_persistent() {
-        return $this->persistent;
+        return $this->persistent || $this->mode === cache_store::MODE_SESSION;
     }
 
     /**

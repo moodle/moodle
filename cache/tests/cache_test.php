@@ -126,6 +126,18 @@ class cache_phpunit_tests extends advanced_testcase {
         $cache = cache::make_from_params(cache_store::MODE_APPLICATION, 'phpunit', 'applicationtest');
         $this->assertInstanceOf('cache_application', $cache);
         $this->run_on_cache($cache);
+
+        $instance = cache_config_phpunittest::instance(true);
+        $instance->phpunit_add_definition('phpunit/test_default_application_cache', array(
+            'mode' => cache_store::MODE_APPLICATION,
+            'component' => 'phpunit',
+            'area' => 'test_default_application_cache',
+            'persistent' => true,
+            'persistentmaxsize' => 1
+        ));
+        $cache = cache::make('phpunit', 'test_default_application_cache');
+        $this->assertInstanceOf('cache_application', $cache);
+        $this->run_on_cache($cache);
     }
 
     /**
@@ -238,6 +250,18 @@ class cache_phpunit_tests extends advanced_testcase {
         $this->assertTrue($cache->delete('key1'));
         $this->assertTrue($cache->delete('key2'));
 
+        $cache->set_many(array(
+            'key1' => array(1, 2, 3),
+            'key2' => array(3, 2, 1),
+        ));
+        $this->assertInternalType('array', $cache->get('key1'));
+        $this->assertInternalType('array', $cache->get('key2'));
+        $this->assertCount(3, $cache->get('key1'));
+        $this->assertCount(3, $cache->get('key2'));
+        $this->assertInternalType('array', $cache->get_many(array('key1', 'key2')));
+        $this->assertCount(2, $cache->get_many(array('key1', 'key2')));
+        $this->assertEquals(2, $cache->delete_many(array('key1', 'key2')));
+
         // Test delete many.
         $this->assertTrue($cache->set('key1', 'data1'));
         $this->assertTrue($cache->set('key2', 'data2'));
@@ -316,6 +340,27 @@ class cache_phpunit_tests extends advanced_testcase {
         $this->assertEquals('value', $var2->key);
 
         $this->assertTrue($cache->delete('obj'));
+
+        // Test strictness exceptions.
+        try {
+            $cache->get('exception', MUST_EXIST);
+            $this->fail('Exception expected from cache::get using MUST_EXIST');
+        } catch (Exception $e) {
+            $this->assertTrue(true);
+        }
+        try {
+            $cache->get_many(array('exception1', 'exception2'), MUST_EXUST);
+            $this->fail('Exception expected from cache::get_many using MUST_EXIST');
+        } catch (Exception $e) {
+            $this->assertTrue(true);
+        }
+        $cache->set('test', 'test');
+        try {
+            $cache->get_many(array('test', 'exception'), MUST_EXUST);
+            $this->fail('Exception expected from cache::get_many using MUST_EXIST');
+        } catch (Exception $e) {
+            $this->assertTrue(true);
+        }
     }
 
     /**
@@ -338,13 +383,25 @@ class cache_phpunit_tests extends advanced_testcase {
         $this->assertTrue($cache->purge());
         // It won't be there yet.
         $this->assertFalse($cache->has('Test'));
-
         // It should load it ;).
         $this->assertTrue($cache->has('Test', true));
 
         // Purge it to be sure.
         $this->assertTrue($cache->purge());
         $this->assertEquals('Test has no value really.', $cache->get('Test'));
+
+        // Test multiple values.
+        $this->assertTrue($cache->purge());
+        $this->assertTrue($cache->set('b', 'B'));
+        $result = $cache->get_many(array('a', 'b', 'c'));
+        $this->assertInternalType('array', $result);
+        $this->assertCount(3, $result);
+        $this->assertArrayHasKey('a', $result);
+        $this->assertArrayHasKey('b', $result);
+        $this->assertArrayHasKey('c', $result);
+        $this->assertEquals('a has no value really.', $result['a']);
+        $this->assertEquals('B', $result['b']);
+        $this->assertEquals('c has no value really.', $result['c']);
     }
 
     /**
@@ -416,7 +473,10 @@ class cache_phpunit_tests extends advanced_testcase {
         $this->assertEquals('test data 2', $cache->get('2'));
     }
 
-    public function test_definition_ttl() {
+    /**
+     * Test a negative TTL on an application cache.
+     */
+    public function test_application_ttl_negative() {
         $instance = cache_config_phpunittest::instance(true);
         $instance->phpunit_add_definition('phpunit/ttltest', array(
             'mode' => cache_store::MODE_APPLICATION,
@@ -437,6 +497,127 @@ class cache_phpunit_tests extends advanced_testcase {
         $this->assertFalse($cache->has('Test'));
         // Double check by trying to get it.
         $this->assertFalse($cache->get('Test'));
+
+        // Test with multiple keys.
+        $this->assertEquals(3, $cache->set_many(array('a' => 'A', 'b' => 'B', 'c' => 'C')));
+        $result = $cache->get_many(array('a', 'b', 'c'));
+        $this->assertInternalType('array', $result);
+        $this->assertCount(3, $result);
+        $this->assertArrayHasKey('a', $result);
+        $this->assertArrayHasKey('b', $result);
+        $this->assertArrayHasKey('c', $result);
+        $this->assertFalse($result['a']);
+        $this->assertFalse($result['b']);
+        $this->assertFalse($result['c']);
+
+        // Test with multiple keys including missing ones.
+        $result = $cache->get_many(array('a', 'c', 'e'));
+        $this->assertInternalType('array', $result);
+        $this->assertCount(3, $result);
+        $this->assertArrayHasKey('a', $result);
+        $this->assertArrayHasKey('c', $result);
+        $this->assertArrayHasKey('e', $result);
+        $this->assertFalse($result['a']);
+        $this->assertFalse($result['c']);
+        $this->assertFalse($result['e']);
+    }
+
+    /**
+     * Test a positive TTL on an application cache.
+     */
+    public function test_application_ttl_positive() {
+        $instance = cache_config_phpunittest::instance(true);
+        $instance->phpunit_add_definition('phpunit/ttltest', array(
+            'mode' => cache_store::MODE_APPLICATION,
+            'component' => 'phpunit',
+            'area' => 'ttltest',
+            'ttl' => 86400 // Set to a day in the future to be extra sure.
+        ));
+        $cache = cache::make('phpunit', 'ttltest');
+        $this->assertInstanceOf('cache_application', $cache);
+
+        // Purge it to be sure.
+        $this->assertTrue($cache->purge());
+        // It won't be there yet.
+        $this->assertFalse($cache->has('Test'));
+        // Set it now.
+        $this->assertTrue($cache->set('Test', 'Test'));
+        // Check its there.
+        $this->assertTrue($cache->has('Test'));
+        // Double check by trying to get it.
+        $this->assertEquals('Test', $cache->get('Test'));
+
+        // Test with multiple keys.
+        $this->assertEquals(3, $cache->set_many(array('a' => 'A', 'b' => 'B', 'c' => 'C')));
+        $result = $cache->get_many(array('a', 'b', 'c'));
+        $this->assertInternalType('array', $result);
+        $this->assertCount(3, $result);
+        $this->assertArrayHasKey('a', $result);
+        $this->assertArrayHasKey('b', $result);
+        $this->assertArrayHasKey('c', $result);
+        $this->assertEquals('A', $result['a']);
+        $this->assertEquals('B', $result['b']);
+        $this->assertEquals('C', $result['c']);
+
+        // Test with multiple keys including missing ones.
+        $result = $cache->get_many(array('a', 'c', 'e'));
+        $this->assertInternalType('array', $result);
+        $this->assertCount(3, $result);
+        $this->assertArrayHasKey('a', $result);
+        $this->assertArrayHasKey('c', $result);
+        $this->assertArrayHasKey('e', $result);
+        $this->assertEquals('A', $result['a']);
+        $this->assertEquals('C', $result['c']);
+        $this->assertEquals(false, $result['e']);
+    }
+
+    /**
+     * Test a negative TTL on an session cache.
+     */
+    public function test_session_ttl_positive() {
+        $instance = cache_config_phpunittest::instance(true);
+        $instance->phpunit_add_definition('phpunit/ttltest', array(
+            'mode' => cache_store::MODE_SESSION,
+            'component' => 'phpunit',
+            'area' => 'ttltest',
+            'ttl' => 86400 // Set to a day in the future to be extra sure.
+        ));
+        $cache = cache::make('phpunit', 'ttltest');
+        $this->assertInstanceOf('cache_session', $cache);
+
+        // Purge it to be sure.
+        $this->assertTrue($cache->purge());
+        // It won't be there yet.
+        $this->assertFalse($cache->has('Test'));
+        // Set it now.
+        $this->assertTrue($cache->set('Test', 'Test'));
+        // Check its there.
+        $this->assertTrue($cache->has('Test'));
+        // Double check by trying to get it.
+        $this->assertEquals('Test', $cache->get('Test'));
+
+        // Test with multiple keys.
+        $this->assertEquals(3, $cache->set_many(array('a' => 'A', 'b' => 'B', 'c' => 'C')));
+        $result = $cache->get_many(array('a', 'b', 'c'));
+        $this->assertInternalType('array', $result);
+        $this->assertCount(3, $result);
+        $this->assertArrayHasKey('a', $result);
+        $this->assertArrayHasKey('b', $result);
+        $this->assertArrayHasKey('c', $result);
+        $this->assertEquals('A', $result['a']);
+        $this->assertEquals('B', $result['b']);
+        $this->assertEquals('C', $result['c']);
+
+        // Test with multiple keys including missing ones.
+        $result = $cache->get_many(array('a', 'c', 'e'));
+        $this->assertInternalType('array', $result);
+        $this->assertCount(3, $result);
+        $this->assertArrayHasKey('a', $result);
+        $this->assertArrayHasKey('c', $result);
+        $this->assertArrayHasKey('e', $result);
+        $this->assertEquals('A', $result['a']);
+        $this->assertEquals('C', $result['c']);
+        $this->assertEquals(false, $result['e']);
     }
 
     /**
@@ -504,6 +685,42 @@ class cache_phpunit_tests extends advanced_testcase {
     }
 
     /**
+     * Tests session cache event invalidation
+     */
+    public function test_session_event_invalidation() {
+        $instance = cache_config_phpunittest::instance();
+        $instance->phpunit_add_definition('phpunit/test_session_event_invalidation', array(
+            'mode' => cache_store::MODE_SESSION,
+            'component' => 'phpunit',
+            'area' => 'test_session_event_invalidation',
+            'invalidationevents' => array(
+                'crazyevent'
+            )
+        ));
+        $cache = cache::make('phpunit', 'test_session_event_invalidation');
+        $this->assertInstanceOf('cache_session', $cache);
+
+        $this->assertTrue($cache->set('testkey1', 'test data 1'));
+        $this->assertEquals('test data 1', $cache->get('testkey1'));
+        $this->assertTrue($cache->set('testkey2', 'test data 2'));
+        $this->assertEquals('test data 2', $cache->get('testkey2'));
+
+        // Test invalidating a single entry.
+        cache_helper::invalidate_by_event('crazyevent', array('testkey1'));
+
+        $this->assertFalse($cache->get('testkey1'));
+        $this->assertEquals('test data 2', $cache->get('testkey2'));
+
+        $this->assertTrue($cache->set('testkey1', 'test data 1'));
+
+        // Test invalidating both entries.
+        cache_helper::invalidate_by_event('crazyevent', array('testkey1', 'testkey2'));
+
+        $this->assertFalse($cache->get('testkey1'));
+        $this->assertFalse($cache->get('testkey2'));
+    }
+
+    /**
      * Tests application cache definition invalidation
      */
     public function test_application_definition_invalidation() {
@@ -534,6 +751,45 @@ class cache_phpunit_tests extends advanced_testcase {
         $this->assertTrue($cache->set('testkey1', 'test data 1'));
 
         cache_helper::invalidate_by_definition('phpunit', 'definitioninvalidation', array(), array('testkey1', 'testkey2'));
+
+        $this->assertFalse($cache->get('testkey1'));
+        $this->assertFalse($cache->get('testkey2'));
+    }
+
+    /**
+     * Tests session cache definition invalidation
+     */
+    public function test_session_definition_invalidation() {
+        $instance = cache_config_phpunittest::instance();
+        $instance->phpunit_add_definition('phpunit/test_session_definition_invalidation', array(
+            'mode' => cache_store::MODE_SESSION,
+            'component' => 'phpunit',
+            'area' => 'test_session_definition_invalidation'
+        ));
+        $cache = cache::make('phpunit', 'test_session_definition_invalidation');
+        $this->assertInstanceOf('cache_session', $cache);
+        $this->assertTrue($cache->set('testkey1', 'test data 1'));
+        $this->assertEquals('test data 1', $cache->get('testkey1'));
+        $this->assertTrue($cache->set('testkey2', 'test data 2'));
+        $this->assertEquals('test data 2', $cache->get('testkey2'));
+
+        cache_helper::invalidate_by_definition('phpunit', 'test_session_definition_invalidation', array(), 'testkey1');
+
+        $this->assertFalse($cache->get('testkey1'));
+        $this->assertEquals('test data 2', $cache->get('testkey2'));
+
+        $this->assertTrue($cache->set('testkey1', 'test data 1'));
+
+        cache_helper::invalidate_by_definition('phpunit', 'test_session_definition_invalidation', array(),
+                array('testkey1'));
+
+        $this->assertFalse($cache->get('testkey1'));
+        $this->assertEquals('test data 2', $cache->get('testkey2'));
+
+        $this->assertTrue($cache->set('testkey1', 'test data 1'));
+
+        cache_helper::invalidate_by_definition('phpunit', 'test_session_definition_invalidation', array(),
+                array('testkey1', 'testkey2'));
 
         $this->assertFalse($cache->get('testkey1'));
         $this->assertFalse($cache->get('testkey2'));
@@ -848,6 +1104,34 @@ class cache_phpunit_tests extends advanced_testcase {
         $this->assertFalse($cache->get('test'));
         $this->assertTrue($cache->set('test', 'test'));
         $this->assertEquals('test', $cache->get('test'));
+        $this->assertTrue($cache->delete('test'));
+        $this->assertFalse($cache->get('test'));
+        $this->assertTrue($cache->set('test', 'test'));
+        $this->assertTrue($cache->purge());
+        $this->assertFalse($cache->get('test'));
+
+        // Test the many commands.
+        $this->assertEquals(3, $cache->set_many(array('a' => 'A', 'b' => 'B', 'c' => 'C')));
+        $result = $cache->get_many(array('a', 'b', 'c'));
+        $this->assertInternalType('array', $result);
+        $this->assertCount(3, $result);
+        $this->assertArrayHasKey('a', $result);
+        $this->assertArrayHasKey('b', $result);
+        $this->assertArrayHasKey('c', $result);
+        $this->assertEquals('A', $result['a']);
+        $this->assertEquals('B', $result['b']);
+        $this->assertEquals('C', $result['c']);
+        $this->assertEquals($result, $cache->get_many(array('a', 'b', 'c')));
+        $this->assertEquals(2, $cache->delete_many(array('a', 'c')));
+        $result = $cache->get_many(array('a', 'b', 'c'));
+        $this->assertInternalType('array', $result);
+        $this->assertCount(3, $result);
+        $this->assertArrayHasKey('a', $result);
+        $this->assertArrayHasKey('b', $result);
+        $this->assertArrayHasKey('c', $result);
+        $this->assertFalse($result['a']);
+        $this->assertEquals('B', $result['b']);
+        $this->assertFalse($result['c']);
     }
 
     /**
@@ -879,6 +1163,76 @@ class cache_phpunit_tests extends advanced_testcase {
     }
 
     /**
+     * Test switching users with session caches.
+     */
+    public function test_session_cache_switch_user_application_mapping() {
+        $this->resetAfterTest(true);
+        $instance = cache_config_phpunittest::instance(true);
+        $instance->phpunit_add_file_store('testfilestore');
+        $instance->phpunit_add_definition('phpunit/testappsession', array(
+            'mode' => cache_store::MODE_SESSION,
+            'component' => 'phpunit',
+            'area' => 'testappsession'
+        ));
+        $instance->phpunit_add_definition_mapping('phpunit/testappsession', 'testfilestore', 3);
+        $cache = cache::make('phpunit', 'testappsession');
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+
+        // Log in as the first user.
+        $this->setUser($user1);
+        $sesskey1 = sesskey();
+
+        // Set a basic value in the cache.
+        $cache->set('var', 1);
+        $this->assertTrue($cache->has('var'));
+        $this->assertEquals(1, $cache->get('var'));
+
+        // Change to the second user.
+        $this->setUser($user2);
+        $sesskey2 = sesskey();
+
+        // Make sure the cache doesn't give us the data for the last user.
+        $this->assertNotEquals($sesskey1, $sesskey2);
+        $this->assertFalse($cache->has('var'));
+        $this->assertEquals(false, $cache->get('var'));
+    }
+
+    /**
+     * Test two session caches being used at once to confirm collisions don't occur.
+     */
+    public function test_dual_session_caches() {
+        $instance = cache_config_phpunittest::instance(true);
+        $instance->phpunit_add_definition('phpunit/testsess1', array(
+            'mode' => cache_store::MODE_SESSION,
+            'component' => 'phpunit',
+            'area' => 'testsess1'
+        ));
+        $instance->phpunit_add_definition('phpunit/testsess2', array(
+            'mode' => cache_store::MODE_SESSION,
+            'component' => 'phpunit',
+            'area' => 'testsess2'
+        ));
+        $cache1 = cache::make('phpunit', 'testsess1');
+        $cache2 = cache::make('phpunit', 'testsess2');
+
+        $this->assertFalse($cache1->has('test'));
+        $this->assertFalse($cache2->has('test'));
+
+        $this->assertTrue($cache1->set('test', '1'));
+
+        $this->assertTrue($cache1->has('test'));
+        $this->assertFalse($cache2->has('test'));
+
+        $this->assertTrue($cache2->set('test', '2'));
+
+        $this->assertEquals(1, $cache1->get('test'));
+        $this->assertEquals(2, $cache2->get('test'));
+
+        $this->assertTrue($cache1->delete('test'));
+    }
+
+    /**
      * Test multiple session caches when switching user.
      */
     public function test_session_cache_switch_user_multiple() {
@@ -907,5 +1261,31 @@ class cache_phpunit_tests extends advanced_testcase {
         $this->assertNotEquals($sesskey1, $sesskey2);
         $this->assertEquals(false, $cache1->get('var'));
         $this->assertEquals(false, $cache2->get('var'));
+    }
+
+    /**
+     * Test application locking.
+     */
+    public function test_application_locking() {
+        $instance = cache_config_phpunittest::instance(true);
+        $instance->phpunit_add_definition('phpunit/test_application_locking', array(
+            'mode' => cache_store::MODE_APPLICATION,
+            'component' => 'phpunit',
+            'area' => 'test_application_locking',
+            'persistent' => true,
+            'persistentmaxsize' => 1,
+            'requirelockingread' => true,
+            'requirelockingwrite' => true
+        ));
+        $cache = cache::make('phpunit', 'test_application_locking');
+        $this->assertInstanceOf('cache_application', $cache);
+
+        $this->assertTrue($cache->set('a', 'A'));
+        $this->assertTrue($cache->set('b', 'B'));
+        $this->assertTrue($cache->set('c', 'C'));
+        $this->assertEquals('A', $cache->get('a'));
+        $this->assertEquals(array('b' => 'B', 'c' => 'C'), $cache->get_many(array('b', 'c')));
+        $this->assertTrue($cache->delete('a'));
+        $this->assertFalse($cache->has('a'));
     }
 }
