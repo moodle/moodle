@@ -567,4 +567,62 @@ class cache_helper {
         global $CFG;
         return (string)$CFG->version;
     }
+
+    /**
+     * Runs cron routines for MUC.
+     */
+    public static function cron() {
+        self::clean_old_session_data(true);
+    }
+
+    /**
+     * Cleans old session data from cache stores used for session based definitions.
+     *
+     * @param bool $output If set to true output will be given.
+     */
+    public static function clean_old_session_data($output = false) {
+        global $CFG;
+        if ($output) {
+            mtrace('Cleaning up stale session data from cache stores.');
+        }
+        $factory = cache_factory::instance();
+        $config = $factory->create_config_instance();
+        $definitions = $config->get_definitions();
+        $purgetime = time() - $CFG->sessiontimeout;
+        foreach ($definitions as $definitionarray) {
+            // We are only interested in session caches.
+            if (!($definitionarray['mode'] & cache_store::MODE_SESSION)) {
+                continue;
+            }
+            $definition = $factory->create_definition($definitionarray['component'], $definitionarray['area']);
+            $stores = $config->get_stores_for_definition($definition);
+            // Initialise all of the stores used for that definition.
+            foreach (self::initialise_cachestore_instances($stores, $definition) as $store) {
+                // If the store doesn't support searching we can skip it.
+                if (!($store instanceof cache_is_searchable)) {
+                    debugging('Cache stores used for session definitions should ideally be searchable.', DEBUG_DEVELOPER);
+                    continue;
+                }
+                // Get all of the keys.
+                $keys = $store->find_by_prefix(cache_session::KEY_PREFIX);
+                $todelete = array();
+                foreach ($store->get_many($keys) as $key => $value) {
+                    if (strpos($key, cache_session::KEY_PREFIX) !== 0 || !is_array($value) || !isset($value['lastaccess'])) {
+                        continue;
+                    }
+                    if ((int)$value['lastaccess'] < $purgetime || true) {
+                        $todelete[] = $key;
+                    }
+                }
+                if (count($todelete)) {
+                    $outcome = (int)$store->delete_many($todelete);
+                    if ($output) {
+                        $strdef = s($definition->get_id());
+                        $strstore = s($store->my_name());
+                        mtrace("- Removed {$outcome} old {$strdef} sessions from the '{$strstore}' cache store.");
+                    }
+                }
+            }
+        }
+    }
 }
