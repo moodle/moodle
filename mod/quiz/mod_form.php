@@ -568,6 +568,9 @@ class mod_quiz_mod_form extends moodleform_mod {
             }
         }
 
+        // Any other rule plugins.
+        $errors = quiz_access_manager::validate_settings_form_fields($errors, $data, $files, $this);
+
         return $errors;
     }
 }

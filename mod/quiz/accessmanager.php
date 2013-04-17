@@ -124,6 +124,24 @@ class quiz_access_manager {
     }
 
     /**
+     * Validate the data from any form fields added using {@link add_settings_form_fields()}.
+     * @param array $errors the errors found so far.
+     * @param array $data the submitted form data.
+     * @param array $files information about any uploaded files.
+     * @param mod_quiz_mod_form $quizform the quiz form object.
+     * @return array $errors the updated $errors array.
+     */
+    public static function validate_settings_form_fields(array $errors,
+            array $data, $files, mod_quiz_mod_form $this) {
+
+        foreach (self::get_rule_classes() as $rule) {
+            $errors = $rule::validate_settings_form_fields($errors, $data, $files, $this);
+        }
+
+        return $errors;
+    }
+
+    /**
      * Save any submitted settings when the quiz settings form is submitted.
      *
      * Note that the standard plugins do not use this mechanism, becuase all their

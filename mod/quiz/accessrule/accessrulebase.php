@@ -257,6 +257,20 @@ abstract class quiz_access_rule_base {
     }
 
     /**
+     * Validate the data from any form fields added using {@link add_settings_form_fields()}.
+     * @param array $errors the errors found so far.
+     * @param array $data the submitted form data.
+     * @param array $files information about any uploaded files.
+     * @param mod_quiz_mod_form $quizform the quiz form object.
+     * @return array $errors the updated $errors array.
+     */
+    public static function validate_settings_form_fields(array $errors,
+            array $data, $files, mod_quiz_mod_form $quizform) {
+
+        return $errors;
+    }
+
+    /**
      * @return array key => lang string any choices to add to the quiz Browser
      *      security settings menu.
      */
