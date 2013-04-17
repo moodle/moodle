@@ -984,7 +984,8 @@ abstract class repository implements cacheable_object {
      *           onlyvisible : bool (default true)
      *           type : string return instances of this type only
      *           accepted_types : string|array return instances that contain files of those types (*, web_image, .pdf, ...)
-     *           return_types : int combination of FILE_INTERNAL & FILE_EXTERNAL & FILE_REFERENCE
+     *           return_types : int combination of FILE_INTERNAL & FILE_EXTERNAL & FILE_REFERENCE.
+     *                          0 means every type. The default is FILE_INTERNAL | FILE_EXTERNAL.
      *           userid : int if specified, instances belonging to other users will not be returned
      *
      * @return array repository instances
@@ -1010,7 +1011,7 @@ abstract class repository implements cacheable_object {
             $args['onlyvisible'] = true;
         }
         if (!isset($args['return_types'])) {
-            $args['return_types'] = 3;
+            $args['return_types'] = FILE_INTERNAL | FILE_EXTERNAL;
         }
         if (!isset($args['type'])) {
             $args['type'] = null;
@@ -1096,8 +1097,8 @@ abstract class repository implements cacheable_object {
                 $valid_ext = array_intersect($accepted_ext, $supported_ext);
                 $is_supported = !empty($valid_ext);
             }
-            // check return values
-            if (!($repository->supported_returntypes() & $args['return_types'])) {
+            // Check return values.
+            if (!empty($args['return_types']) && !($repository->supported_returntypes() & $args['return_types'])) {
                 $is_supported = false;
             }
 
@@ -1585,6 +1586,7 @@ abstract class repository implements cacheable_object {
         $params = array();
         $params['context'] = array($context);
         $params['currentcontext'] = $context;
+        $params['return_types'] = 0;
         $params['onlyvisible'] = !$admin;
         $params['type']        = $typename;
         $instances = repository::get_instances($params);
