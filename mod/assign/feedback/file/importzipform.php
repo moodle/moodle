@@ -119,7 +119,7 @@ class assignfeedback_file_import_zip_form extends moodleform implements renderab
         $mform->addElement('hidden', 'action', 'viewpluginpage');
         $mform->setType('action', PARAM_ALPHA);
         $mform->addElement('hidden', 'confirm', 'true');
-        $mform->setType('confirm', PARAM_INT);
+        $mform->setType('confirm', PARAM_BOOL);
         $mform->addElement('hidden', 'plugin', 'file');
         $mform->setTYpe('plugin', PARAM_PLUGIN);
         $mform->addElement('hidden', 'pluginsubtype', 'assignfeedback');

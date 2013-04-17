@@ -180,7 +180,7 @@ class assignfeedback_offline_import_grades_form extends moodleform implements re
         $mform->addElement('hidden', 'ignoremodified', $ignoremodified);
         $mform->setType('ignoremodified', PARAM_BOOL);
         $mform->addElement('hidden', 'draftid', $draftid);
-        $form->setType('draftid', PARAM_INT);
+        $mform->setType('draftid', PARAM_INT);
         if ($update) {
             $this->add_action_buttons(true, get_string('confirm'));
         } else {
