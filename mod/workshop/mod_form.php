@@ -86,11 +86,6 @@ class mod_workshop_mod_form extends moodleform_mod {
         $mform->addElement('checkbox', 'useexamples', $label, $text);
         $mform->addHelpButton('useexamples', 'useexamples', 'workshop');
 
-        $label = get_string('usepeerassessment', 'workshop');
-        $text = get_string('usepeerassessment_desc', 'workshop');
-        $mform->addElement('checkbox', 'usepeerassessment', $label, $text);
-        $mform->addHelpButton('usepeerassessment', 'usepeerassessment', 'workshop');
-
         $label = get_string('useselfassessment', 'workshop');
         $text = get_string('useselfassessment_desc', 'workshop');
         $mform->addElement('checkbox', 'useselfassessment', $label, $text);

@@ -101,7 +101,7 @@ class workshop {
     /** @var bool optional feature: students practise evaluating on example submissions from teacher */
     public $useexamples;
 
-    /** @var bool optional feature: students perform peer assessment of others' work */
+    /** @var bool optional feature: students perform peer assessment of others' work (deprecated, consider always enabled) */
     public $usepeerassessment;
 
     /** @var bool optional feature: students perform self assessment of their own work */
@@ -2284,7 +2284,7 @@ class workshop {
             }
         }
 
-        if ($this->usepeerassessment and has_capability('mod/workshop:peerassess', $this->context, $userid)) {
+        if (has_capability('mod/workshop:peerassess', $this->context, $userid)) {
             if (!empty($gradebook->items[1]->grades)) {
                 $assessmentgrade = reset($gradebook->items[1]->grades);
                 if (!is_null($assessmentgrade->grade)) {
@@ -2661,8 +2661,7 @@ class workshop_user_plan implements renderable {
         $phase = new stdclass();
         $phase->title = get_string('phasesubmission', 'workshop');
         $phase->tasks = array();
-        if (($workshop->usepeerassessment or $workshop->useselfassessment)
-             and has_capability('moodle/course:manageactivities', $workshop->context, $userid)) {
+        if (has_capability('moodle/course:manageactivities', $workshop->context, $userid)) {
             $task = new stdclass();
             $task->title = get_string('taskinstructreviewers', 'workshop');
             $task->link = $workshop->updatemod_url();
@@ -2844,7 +2843,7 @@ class workshop_user_plan implements renderable {
                 }
             }
             unset($a);
-            if ($workshop->usepeerassessment and $numofpeers) {
+            if ($numofpeers) {
                 $task = new stdclass();
                 if ($numofpeerstodo == 0) {
                     $task->completed = true;
