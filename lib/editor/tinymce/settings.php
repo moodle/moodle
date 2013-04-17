@@ -48,8 +48,7 @@ $ADMIN->add('editortinymce', $settings);
 unset($settings);
 
 require_once("$CFG->libdir/pluginlib.php");
-$allplugins = plugin_manager::instance()->get_plugins();
-foreach ($allplugins['tinymce'] as $plugin) {
+foreach (plugin_manager::instance()->get_plugins_of_type('tinymce') as $plugin) {
     $plugin->load_settings($ADMIN, 'editortinymce', $hassiteconfig);
 }
 

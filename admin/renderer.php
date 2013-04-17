@@ -372,6 +372,88 @@ class core_admin_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Display a page to confirm the plugin uninstallation.
+     *
+     * @param plugin_manager $pluginman
+     * @param plugin_info $pluginfo
+     * @param moodle_url $continueurl URL to continue after confirmation
+     * @return string
+     */
+    public function plugin_uninstall_confirm_page(plugin_manager $pluginman, plugininfo_base $pluginfo, moodle_url $continueurl) {
+        $output = '';
+
+        $pluginname = $pluginman->plugin_name($pluginfo->component);
+
+        $output .= $this->output->header();
+        $output .= $this->output->heading(get_string('uninstalling', 'core_plugin', array('name' => $pluginname)));
+        $output .= $this->output->confirm(get_string('uninstallconfirm', 'core_plugin', array('name' => $pluginname)),
+            $continueurl, $this->page->url);
+        $output .= $this->output->footer();
+
+        return $output;
+    }
+
+    /**
+     * Display a page with results of plugin uninstallation and offer removal of plugin files.
+     *
+     * @param plugin_manager $pluginman
+     * @param plugin_info $pluginfo
+     * @param progress_trace_buffer $progress
+     * @param moodle_url $continueurl URL to continue to remove the plugin folder
+     * @return string
+     */
+    public function plugin_uninstall_results_removable_page(plugin_manager $pluginman, plugininfo_base $pluginfo,
+                                                            progress_trace_buffer $progress, moodle_url $continueurl) {
+        $output = '';
+
+        $pluginname = $pluginman->plugin_name($pluginfo->component);
+
+        $output .= $this->output->header();
+        $output .= $this->output->heading(get_string('uninstalling', 'core_plugin', array('name' => $pluginname)));
+
+        $output .= $this->output->box($progress->get_buffer(), 'generalbox uninstallresultmessage');
+
+        $confirm = $this->output->container(get_string('uninstalldeleteconfirm', 'core_plugin',
+            array('name' => $pluginname, 'rootdir' => $pluginfo->rootdir)), 'uninstalldeleteconfirm');
+
+        if ($repotype = $pluginman->plugin_external_source($pluginfo->component)) {
+            $confirm .= $this->output->container(get_string('uninstalldeleteconfirmexternal', 'core_plugin', $repotype),
+                'uninstalldeleteconfirmexternal');
+        }
+
+        $output .= $this->output->confirm($confirm, $continueurl, $this->page->url);
+        $output .= $this->output->footer();
+
+        return $output;
+    }
+
+    /**
+     * Display a page with results of plugin uninstallation and inform about the need to remove plugin files manually.
+     *
+     * @param plugin_manager $pluginman
+     * @param plugin_info $pluginfo
+     * @param progress_trace_buffer $progress
+     * @return string
+     */
+    public function plugin_uninstall_results_page(plugin_manager $pluginman, plugininfo_base $pluginfo, progress_trace_buffer $progress) {
+        $output = '';
+
+        $pluginname = $pluginman->plugin_name($pluginfo->component);
+
+        $output .= $this->output->header();
+        $output .= $this->output->heading(get_string('uninstalling', 'core_plugin', array('name' => $pluginname)));
+
+        $output .= $this->output->box($progress->get_buffer(), 'generalbox uninstallresultmessage');
+
+        $output .= $this->output->box(get_string('uninstalldelete', 'core_plugin',
+            array('name' => $pluginname, 'rootdir' => $pluginfo->rootdir)), 'generalbox uninstalldelete');
+        $output .= $this->output->continue_button($this->page->url);
+        $output .= $this->output->footer();
+
+        return $output;
+    }
+
+    /**
      * Display the plugin management page (admin/environment.php).
      * @param array $versions
      * @param string $version
@@ -1065,22 +1147,23 @@ class core_admin_renderer extends plugin_renderer_base {
             get_string('actions', 'core_plugin'),
             get_string('notes','core_plugin'),
         );
+        $table->headspan = array(1, 1, 1, 1, 2, 1);
         $table->colclasses = array(
-            'pluginname', 'source', 'version', 'availability', 'actions', 'notes'
+            'pluginname', 'source', 'version', 'availability', 'settings', 'uninstall', 'notes'
         );
 
         foreach ($plugininfo as $type => $plugins) {
 
             $header = new html_table_cell($pluginman->plugintype_name_plural($type));
             $header->header = true;
-            $header->colspan = count($table->head);
+            $header->colspan = array_sum($table->headspan);
             $header = new html_table_row(array($header));
             $header->attributes['class'] = 'plugintypeheader type-' . $type;
             $table->data[] = $header;
 
             if (empty($plugins)) {
                 $msg = new html_table_cell(get_string('noneinstalled', 'core_plugin'));
-                $msg->colspan = count($table->head);
+                $msg->colspan = array_sum($table->headspan);
                 $row = new html_table_row(array($msg));
                 $row->attributes['class'] .= 'msg msg-noneinstalled';
                 $table->data[] = $row;
@@ -1127,19 +1210,21 @@ class core_admin_renderer extends plugin_renderer_base {
                     $availability = new html_table_cell(get_string('plugindisabled', 'core_plugin'));
                 }
 
-                $actions = array();
-
                 $settingsurl = $plugin->get_settings_url();
                 if (!is_null($settingsurl)) {
-                    $actions[] = html_writer::link($settingsurl, get_string('settings', 'core_plugin'), array('class' => 'settings'));
+                    $settings = html_writer::link($settingsurl, get_string('settings', 'core_plugin'), array('class' => 'settings'));
+                } else {
+                    $settings = '';
                 }
+                $settings = new html_table_cell($settings);
 
-                $uninstallurl = $plugin->get_uninstall_url();
-                if (!is_null($uninstallurl)) {
-                    $actions[] = html_writer::link($uninstallurl, get_string('uninstall', 'core_plugin'), array('class' => 'uninstall'));
+                if ($pluginman->can_uninstall_plugin($plugin->component)) {
+                    $uninstallurl = $plugin->get_uninstall_url();
+                    $uninstall = html_writer::link($uninstallurl, get_string('uninstall', 'core_plugin'));
+                } else {
+                    $uninstall = '';
                 }
-
-                $actions = new html_table_cell(implode(html_writer::tag('span', ' ', array('class' => 'separator')), $actions));
+                $uninstall = new html_table_cell($uninstall);
 
                 $requriedby = $pluginman->other_plugins_that_require($plugin->component);
                 if ($requriedby) {
@@ -1159,7 +1244,7 @@ class core_admin_renderer extends plugin_renderer_base {
                 $notes = new html_table_cell($requiredby.$updateinfo);
 
                 $row->cells = array(
-                    $pluginname, $source, $version, $availability, $actions, $notes
+                    $pluginname, $source, $version, $availability, $settings, $uninstall, $notes
                 );
                 $table->data[] = $row;
             }
