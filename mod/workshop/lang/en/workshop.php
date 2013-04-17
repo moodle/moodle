@@ -24,7 +24,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['accesscontrol'] = 'Access control';
 $string['aggregategrades'] = 'Re-calculate grades';
 $string['aggregation'] = 'Grades aggregation';
 $string['allocate'] = 'Allocate submissions';
@@ -129,6 +128,7 @@ $string['feedbackauthor'] = 'Feedback for the author';
 $string['feedbackauthorattachment'] = 'Attachment';
 $string['feedbackby'] = 'Feedback by {$a}';
 $string['feedbackreviewer'] = 'Feedback for the reviewer';
+$string['feedbacksettings'] = 'Feedback';
 $string['formataggregatedgrade'] = '{$a->grade}';
 $string['formataggregatedgradeover'] = '<del>{$a->grade}</del><br /><ins>{$a->over}</ins>';
 $string['formatpeergrade'] = '<span class="grade">{$a->grade}</span> <span class="gradinggrade">({$a->gradinggrade})</span>';
@@ -162,8 +162,7 @@ $string['latesubmissions'] = 'Late submissions';
 $string['latesubmissions_desc'] = 'Allow submissions after the deadline';
 $string['latesubmissions_help'] = 'If enabled, an author may submit their work after the submissions deadline or during the assessment phase. Late submissions cannot be edited though.';
 $string['latesubmissionsallowed'] = 'Late submissions are allowed';
-$string['maxbytes'] = 'Maximum file size';
-$string['miscellaneoussettings'] = 'Miscellaneous settings';
+$string['maxbytes'] = 'Maximum submission attachment size';
 $string['modulename'] = 'Workshop';
 $string['modulename_help'] = 'The workshop activity module enables the collection, review and peer assessment of students\' work.
 
@@ -189,7 +188,7 @@ $string['noyoursubmission'] = 'You have not submitted your work yet';
 $string['nullgrade'] = '-';
 $string['overallfeedback'] = 'Overall feedback';
 $string['overallfeedbackfiles'] = 'Maximum number of overall feedback attachments';
-$string['overallfeedbackmaxbytes'] = 'Maximum file size';
+$string['overallfeedbackmaxbytes'] = 'Maximum overall feedback attachment size';
 $string['overallfeedbackmode'] = 'Overall feedback mode';
 $string['overallfeedbackmode_0'] = 'Disabled';
 $string['overallfeedbackmode_1'] = 'Enabled and optional';
@@ -296,7 +295,6 @@ $string['withoutsubmission'] = 'Reviewer without own submission';
 $string['workshop:addinstance'] = 'Add a new workshop';
 $string['workshop:allocate'] = 'Allocate submissions for review';
 $string['workshop:editdimensions'] = 'Edit assessment forms';
-$string['workshopfeatures'] = 'Workshop features';
 $string['workshop:ignoredeadlines'] = 'Ignore time restrictions';
 $string['workshop:manageexamples'] = 'Manage example submissions';
 $string['workshopname'] = 'Workshop name';
