@@ -211,7 +211,6 @@ class core_webservice_external extends external_api {
  * @copyright  2011 Jerome Mouneyrac <jerome@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @deprecated Moodle 2.2 MDL-29106 - please do not use this class any more.
- * @todo MDL-31194 This will be deleted in Moodle 2.5.
  * @see core_webservice_external
  * @since Moodle 2.1
  */
@@ -222,7 +221,6 @@ class moodle_webservice_external extends external_api {
      *
      * @return external_function_parameters
      * @deprecated Moodle 2.2 - please do not use this function any more.
-     * @todo MDL-31194 This will be deleted in Moodle 2.5.
      * @see core_webservice_external::get_site_info_parameters
      * @since Moodle 2.1
      */
@@ -238,7 +236,6 @@ class moodle_webservice_external extends external_api {
      * @param array $serviceshortnames of service shortnames - the functions of these services will be returned
      * @return array
      * @deprecated Moodle 2.2 - please do not use this function any more.
-     * @todo MDL-31194 This will be deleted in Moodle 2.5.
      * @see core_webservice_external::get_site_info
      * @since Moodle 2.1
      */
@@ -251,7 +248,6 @@ class moodle_webservice_external extends external_api {
      *
      * @return external_single_structure
      * @deprecated Moodle 2.2 - please do not use this function any more.
-     * @todo MDL-31194 This will be deleted in Moodle 2.5.
      * @see core_webservice_external::get_site_info_returns
      * @since Moodle 2.1
      */

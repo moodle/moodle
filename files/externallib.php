@@ -340,7 +340,6 @@ class core_files_external extends external_api {
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
  * @deprecated Moodle 2.2 MDL-29106 - Please do not use this class any more.
- * @todo MDL-31194 This will be deleted in Moodle 2.5.
  * @see core_files_external
  */
 class moodle_file_external extends external_api {
@@ -351,7 +350,6 @@ class moodle_file_external extends external_api {
      * @return external_function_parameters
      * @since Moodle 2.0
      * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @todo MDL-31194 This will be deleted in Moodle 2.5.
      * @see core_files_external::get_files_parameters()
      */
     public static function get_files_parameters() {
@@ -370,7 +368,6 @@ class moodle_file_external extends external_api {
      * @return array
      * @since Moodle 2.0
      * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @todo MDL-31194 This will be deleted in Moodle 2.5.
      * @see core_files_external::get_files()
      */
     public static function get_files($contextid, $component, $filearea, $itemid, $filepath, $filename) {
@@ -383,7 +380,6 @@ class moodle_file_external extends external_api {
      * @return external_single_structure
      * @since Moodle 2.0
      * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @todo MDL-31194 This will be deleted in Moodle 2.5.
      * @see core_files_external::get_files_returns()
      */
     public static function get_files_returns() {
@@ -396,7 +392,6 @@ class moodle_file_external extends external_api {
      * @return external_function_parameters
      * @since Moodle 2.0
      * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @todo MDL-31194 This will be deleted in Moodle 2.5.
      * @see core_files_external::upload_parameters()
      */
     public static function upload_parameters() {
@@ -416,7 +411,6 @@ class moodle_file_external extends external_api {
      * @return array
      * @since Moodle 2.0
      * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @todo MDL-31194 This will be deleted in Moodle 2.5.
      * @see core_files_external::upload()
      */
     public static function upload($contextid, $component, $filearea, $itemid, $filepath, $filename, $filecontent) {
@@ -429,7 +423,6 @@ class moodle_file_external extends external_api {
      * @return external_single_structure
      * @since Moodle 2.0
      * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @todo MDL-31194 This will be deleted in Moodle 2.5.
      * @see core_files_external::upload_returns()
      */
     public static function upload_returns() {
