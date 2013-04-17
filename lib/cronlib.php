@@ -435,6 +435,9 @@ function cron_run() {
         mtrace('done.');
     }
 
+    mtrace('Running cache cron routines');
+    cache_helper::cron();
+    mtrace('done.');
 
     // Run automated backups if required - these may take a long time to execute
     require_once($CFG->dirroot.'/backup/util/includes/backup_includes.php');
