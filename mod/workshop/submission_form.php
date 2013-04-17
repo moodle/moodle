@@ -63,7 +63,7 @@ class workshop_submission_form extends moodleform {
         $mform->setType('edit', PARAM_INT);
 
         $mform->addElement('hidden', 'example', 0);
-        $mform->setType('hidden', PARAM_INT);
+        $mform->setType('example', PARAM_INT);
 
         $this->add_action_buttons();
 
