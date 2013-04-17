@@ -18,6 +18,7 @@ A definition:
             'requiremultipleidentifiers' => false,    // Optional
             'requirelockingread' => false,            // Optional
             'requirelockingwrite' => false,           // Optional
+            'requiresearchable' => false,             // Optional
             'maxsize' => null,                        // Optional
             'overrideclass' => null,                  // Optional
             'overrideclassfile' => null,              // Optional
@@ -135,6 +136,7 @@ The following optional settings can also be defined:
 * requiremultipleidentifiers - If set to true then only stores that support multiple identifiers will be used.
 * requirelockingread - If set to true a lock will be acquired for reading. Don't use this setting unless you have a REALLY good reason to.
 * requirelockingwrite - If set to true a lock will be acquired before writing to the cache. Avoid this unless necessary.
+* requiresearchable - If set to true only stores that support key searching will be used for this definition. Its not recommended to use this unless absolutely unavoidable.
 * maxsize - This gives a cache an indication about the maximum items it should store. Cache stores don't have to use this, it is up to them to decide if its required.
 * overrideclass - If provided this class will be used for the loader. It must extend one of the core loader classes (based upon mode).
 * overrideclassfile - Included if required when using the overrideclass param.

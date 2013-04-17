@@ -35,6 +35,7 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class cache_config_phpunittest extends cache_config_writer {
+
     /**
      * Adds a definition to the stack
      * @param string $area

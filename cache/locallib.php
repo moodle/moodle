@@ -346,7 +346,7 @@ class cache_config_writer extends cache_config {
                 'plugin' => 'file',
                 'configuration' => array(),
                 'features' => cachestore_file::get_supported_features(),
-                'modes' => cache_store::MODE_APPLICATION,
+                'modes' => cachestore_file::get_supported_modes(),
                 'default' => true,
             ),
             'default_session' => array(
@@ -354,7 +354,7 @@ class cache_config_writer extends cache_config {
                 'plugin' => 'session',
                 'configuration' => array(),
                 'features' => cachestore_session::get_supported_features(),
-                'modes' => cache_store::MODE_SESSION,
+                'modes' => cachestore_session::get_supported_modes(),
                 'default' => true,
             ),
             'default_request' => array(
@@ -362,7 +362,7 @@ class cache_config_writer extends cache_config {
                 'plugin' => 'static',
                 'configuration' => array(),
                 'features' => cachestore_static::get_supported_features(),
-                'modes' => cache_store::MODE_REQUEST,
+                'modes' => cachestore_static::get_supported_modes(),
                 'default' => true,
             )
         );
@@ -581,6 +581,7 @@ abstract class cache_administration_helper extends cache_helper {
                     'nativettl' => $store->supports_native_ttl(),
                     'nativelocking' => ($store instanceof cache_is_lockable),
                     'keyawareness' => ($store instanceof cache_is_key_aware),
+                    'searchable' => ($store instanceof cache_is_searchable)
                 )
             );
             if (empty($details['default'])) {

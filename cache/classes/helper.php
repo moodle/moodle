@@ -244,10 +244,9 @@ class cache_helper {
             if ($definition->invalidates_on_event($event)) {
                 // OK at this point we know that the definition has information to invalidate on the event.
                 // There are two routes, either its an application cache in which case we can invalidate it now.
-                // or it is a session cache in which case we need to set something to the "Event invalidation" definition.
-                // No need to deal with request caches, we don't want to change data half way through a request.
-                if ($definition->get_mode() === cache_store::MODE_APPLICATION) {
-                    $cache = $factory->create_cache($definition);
+                // or it is a persistent cache that also needs to be invalidated now.
+                if ($definition->get_mode() === cache_store::MODE_APPLICATION || $definition->should_be_persistent()) {
+                    $cache = $factory->create_cache_from_definition($definition->get_component(), $definition->get_area());
                     $cache->delete_many($keys);
                 }
 
