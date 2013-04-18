@@ -366,14 +366,14 @@ class cache_phpunit_tests extends advanced_testcase {
             $this->assertTrue(true);
         }
         try {
-            $cache->get_many(array('exception1', 'exception2'), MUST_EXUST);
+            $cache->get_many(array('exception1', 'exception2'), MUST_EXIST);
             $this->fail('Exception expected from cache::get_many using MUST_EXIST');
         } catch (Exception $e) {
             $this->assertTrue(true);
         }
         $cache->set('test', 'test');
         try {
-            $cache->get_many(array('test', 'exception'), MUST_EXUST);
+            $cache->get_many(array('test', 'exception'), MUST_EXIST);
             $this->fail('Exception expected from cache::get_many using MUST_EXIST');
         } catch (Exception $e) {
             $this->assertTrue(true);
