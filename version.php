@@ -30,10 +30,10 @@
 defined('MOODLE_INTERNAL') || die();
 
 
-$version  = 2011120509.04;              // 20111205      = branching date YYYYMMDD - do not modify!
+$version  = 2011120509.05;              // 20111205      = branching date YYYYMMDD - do not modify!
                                         //         RR    = release increments - 00 in DEV branches
                                         //           .XX = incremental changes
 
-$release  = '2.2.9+ (Build: 20130411)'; // Human-friendly version name
+$release  = '2.2.9+ (Build: 20130418)'; // Human-friendly version name
 
 $maturity = MATURITY_STABLE;            // this version's maturity level
