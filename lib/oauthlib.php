@@ -248,6 +248,8 @@ class oauth_helper {
         $this->sign_secret = $this->consumer_secret.'&'.$secret;
         $params = $this->prepare_oauth_parameters($this->access_token_api, array('oauth_token'=>$token, 'oauth_verifier'=>$verifier), 'POST');
         $this->setup_oauth_http_header($params);
+        // Should never send the callback in this request.
+        unset($params['oauth_callback']);
         $content = $this->http->post($this->access_token_api, $params);
         $keys = $this->parse_result($content);
         $this->set_access_token($keys['oauth_token'], $keys['oauth_token_secret']);
