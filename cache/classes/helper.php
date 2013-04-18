@@ -596,8 +596,10 @@ class cache_helper {
             }
             $definition = $factory->create_definition($definitionarray['component'], $definitionarray['area']);
             $stores = $config->get_stores_for_definition($definition);
+            // Turn them into store instances.
+            $stores = self::initialise_cachestore_instances($stores, $definition);
             // Initialise all of the stores used for that definition.
-            foreach (self::initialise_cachestore_instances($stores, $definition) as $store) {
+            foreach ($stores as $store) {
                 // If the store doesn't support searching we can skip it.
                 if (!($store instanceof cache_is_searchable)) {
                     debugging('Cache stores used for session definitions should ideally be searchable.', DEBUG_DEVELOPER);

@@ -752,7 +752,7 @@ class cache implements cache_loader {
     public function delete($key, $recurse = true) {
         $parsedkey = $this->parse_key($key);
         $this->delete_from_persist_cache($parsedkey);
-        if ($recurse && !empty($this->loader)) {
+        if ($recurse && $this->loader !== false) {
             // Delete from the bottom of the stack first.
             $this->loader->delete($key, $recurse);
         }
@@ -774,7 +774,7 @@ class cache implements cache_loader {
                 $this->delete_from_persist_cache($parsedkey);
             }
         }
-        if ($recurse && !empty($this->loader)) {
+        if ($recurse && $this->loader !== false) {
             // Delete from the bottom of the stack first.
             $this->loader->delete_many($keys, $recurse);
         }
@@ -1572,11 +1572,13 @@ class cache_session extends cache {
             $new = 0;
         }
         if ($new !== self::$loadeduserid) {
-            // The current user doesn't match the tracker userid for this request.
+            // The current user doesn't match the tracked userid for this request.
             if (!is_null(self::$loadeduserid)) {
                 // Purge the data we have for the old user.
                 // This way we don't bloat the session.
                 $this->purge();
+                // Update the session id just in case!
+                $this->sessionid = session_id();
             }
             self::$loadeduserid = $new;
             $this->currentuserid = $new;
@@ -1584,6 +1586,8 @@ class cache_session extends cache {
             // The current user matches the loaded user but not the user last used by this cache.
             $this->purge();
             $this->currentuserid = $new;
+            // Update the session id just in case!
+            $this->sessionid = session_id();
         }
     }
 
@@ -1863,11 +1867,11 @@ class cache_session extends cache {
     public function purge() {
         // 1. Purge the session object.
         $this->session = array();
-        // 2. Purge the store.
-        $this->get_store()->purge();
-        // 3. Optionally pruge any stacked loaders.
+        // 2. Delete the record for this users session from the store.
+        $this->get_store()->delete($this->sessionid);
+        // 3. Optionally purge any stacked loaders in the same way.
         if ($this->get_loader()) {
-            $this->get_loader()->purge();
+            $this->get_loader()->delete($this->sessionid);
         }
         return true;
     }

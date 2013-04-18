@@ -314,7 +314,7 @@ class cache_definition {
         $requiremultipleidentifiers = false;
         $requirelockingread = false;
         $requirelockingwrite = false;
-        $requiresearchable = ($mode === cache_store::MODE_SESSION) ? true : false;;
+        $requiresearchable = ($mode === cache_store::MODE_SESSION) ? true : false;
         $maxsize = null;
         $overrideclass = null;
         $overrideclassfile = null;
