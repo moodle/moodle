@@ -488,7 +488,11 @@ class moodle_url {
                     $arr[] = rawurlencode($key.'['.$index.']')."=".rawurlencode($value);
                 }
             } else {
-                $arr[] = rawurlencode($key)."=".rawurlencode($val);
+                if (isset($val) && $val !== '') {
+                    $arr[] = rawurlencode($key)."=".rawurlencode($val);
+                } else {
+                    $arr[] = rawurlencode($key);
+                }
             }
         }
         if ($escaped) {
