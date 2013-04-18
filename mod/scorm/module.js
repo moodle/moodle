@@ -40,7 +40,7 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, launc
         scorm_disable_toc = true;
     }
 
-    scoes_nav = JSON.parse(scoes_nav);
+    scoes_nav = Y.JSON.parse(scoes_nav);
     var scorm_layout_widget;
     var scorm_current_node;
     var scorm_buttons = [];
@@ -364,7 +364,7 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, launc
                 var datastring = scoes_nav[launch_sco].url + '&function=scorm_seq_flow&request=backward';
                 result = scorm_ajax_request(M.cfg.wwwroot + '/mod/scorm/datamodels/sequencinghandler.php?', datastring);
                 mod_scorm_seq = encodeURIComponent(result);
-                result = JSON.parse (result);
+                result = Y.JSON.parse (result);
                 if (typeof result.nextactivity.id != undefined) {
                         var node = scorm_prev(scorm_tree_node.getHighlightedNode())
                         if (node == null) {
@@ -390,7 +390,7 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, launc
                 var datastring = scoes_nav[launch_sco].url + '&function=scorm_seq_flow&request=forward';
                 result = scorm_ajax_request(M.cfg.wwwroot + '/mod/scorm/datamodels/sequencinghandler.php?', datastring);
                 mod_scorm_seq = encodeURIComponent(result);
-                result = JSON.parse (result);
+                result = Y.JSON.parse (result);
                 if (typeof result.nextactivity.id != undefined) {
                         var node = scorm_next(scorm_tree_node.getHighlightedNode())
                         if (node == null) {
