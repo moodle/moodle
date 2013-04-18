@@ -332,6 +332,8 @@ class qformat_gift extends qformat_default {
                 $question->attachments = 0;
                 $question->graderinfo = array(
                         'text' => '', 'format' => FORMAT_HTML, 'files' => array());
+                $question->responsetemplate = array(
+                        'text' => '', 'format' => FORMAT_HTML);
                 return $question;
 
             case 'multichoice':
