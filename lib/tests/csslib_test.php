@@ -1084,4 +1084,107 @@ CSS;
         $cssout = '.test, .dialogue-hidden{display:none;} .dialogue{display:block;}';
         $this->assertEquals($cssout, $optimiser->process($cssin));
     }
+
+    public function test_css_chunking() {
+        // Test with an even number of styles.
+        $css = 'a{}b{}c{}d{}e{}f{}';
+        $chunks = css_chunk_by_selector_count($css, 'styles.php?type=test', 2, 0);
+        $this->assertInternalType('array', $chunks);
+        $this->assertCount(3, $chunks);
+        $this->assertArrayHasKey(0, $chunks);
+        $this->assertArrayHasKey(1, $chunks);
+        $this->assertArrayHasKey(2, $chunks);
+        $this->assertEquals('a{}b{}', $chunks[0]);
+        $this->assertEquals('c{}d{}', $chunks[1]);
+        $this->assertEquals("@import url(styles.php?type=test&chunk=0);\n@import url(styles.php?type=test&chunk=1);\ne{}f{}", $chunks[2]);
+
+        // Test with an odd number of styles.
+        $css = 'a{}b{}c{}d{}e{}';
+        $chunks = css_chunk_by_selector_count($css, 'styles.php?type=test', 2, 0);
+        $this->assertInternalType('array', $chunks);
+        $this->assertCount(3, $chunks);
+        $this->assertArrayHasKey(0, $chunks);
+        $this->assertArrayHasKey(1, $chunks);
+        $this->assertArrayHasKey(2, $chunks);
+        $this->assertEquals('a{}b{}', $chunks[0]);
+        $this->assertEquals('c{}d{}', $chunks[1]);
+        $this->assertEquals("@import url(styles.php?type=test&chunk=0);\n@import url(styles.php?type=test&chunk=1);\ne{}", $chunks[2]);
+
+        // Test buffering. Set a buffer that will reduce the effective sheet size back to two.
+        $css = 'a{}b{}c{}d{}e{}f{}';
+        $chunks = css_chunk_by_selector_count($css, 'styles.php?type=test', 6, 4);
+        $this->assertInternalType('array', $chunks);
+        $this->assertCount(3, $chunks);
+        $this->assertArrayHasKey(0, $chunks);
+        $this->assertArrayHasKey(1, $chunks);
+        $this->assertArrayHasKey(2, $chunks);
+        $this->assertEquals('a{}b{}', $chunks[0]);
+        $this->assertEquals('c{}d{}', $chunks[1]);
+        $this->assertEquals("@import url(styles.php?type=test&chunk=0);\n@import url(styles.php?type=test&chunk=1);\ne{}f{}", $chunks[2]);
+
+        // Test well placed commas.
+        $css = 'a,b{}c,d{}e,f{}';
+        $chunks = css_chunk_by_selector_count($css, 'styles.php?type=test', 2, 0);
+        $this->assertInternalType('array', $chunks);
+        $this->assertCount(3, $chunks);
+        $this->assertArrayHasKey(0, $chunks);
+        $this->assertArrayHasKey(1, $chunks);
+        $this->assertArrayHasKey(2, $chunks);
+        $this->assertEquals('a,b{}', $chunks[0]);
+        $this->assertEquals('c,d{}', $chunks[1]);
+        $this->assertEquals("@import url(styles.php?type=test&chunk=0);\n@import url(styles.php?type=test&chunk=1);\ne,f{}", $chunks[2]);
+
+        // Test unfortunately placed commas.
+        $css = 'a{}b,c{color:red;}d{}e{}f{}';
+        $chunks = css_chunk_by_selector_count($css, 'styles.php?type=test', 2, 0);
+        $this->assertInternalType('array', $chunks);
+        $this->assertCount(3, $chunks);
+        $this->assertArrayHasKey(0, $chunks);
+        $this->assertArrayHasKey(1, $chunks);
+        $this->assertArrayHasKey(2, $chunks);
+        $this->assertEquals('a{}b{color:red;}', $chunks[0]);
+        $this->assertEquals('c{color:red;}d{}', $chunks[1]);
+        $this->assertEquals("@import url(styles.php?type=test&chunk=0);\n@import url(styles.php?type=test&chunk=1);\ne{}f{}", $chunks[2]);
+
+        // Test unfortunate CSS.
+        $css = 'a,b,c,d,e,f{color:red;}';
+        $chunks = css_chunk_by_selector_count($css, 'styles.php?type=test', 2, 0);
+        $this->assertInternalType('array', $chunks);
+        $this->assertCount(3, $chunks);
+        $this->assertArrayHasKey(0, $chunks);
+        $this->assertArrayHasKey(1, $chunks);
+        $this->assertArrayHasKey(2, $chunks);
+        $this->assertEquals('a,b{color:red;}', $chunks[0]);
+        $this->assertEquals('c,d{color:red;}', $chunks[1]);
+        $this->assertEquals("@import url(styles.php?type=test&chunk=0);\n@import url(styles.php?type=test&chunk=1);\ne,f{color:red;}", $chunks[2]);
+
+        // Test to make sure invalid CSS isn't totally ruined.
+        $css = 'a{},,,e{},';
+        $chunks = css_chunk_by_selector_count($css, 'styles.php?type=test', 2, 0);
+        // Believe it or not we want to care what comes out here as this will be parsed correctly
+        // by a browser.
+        $this->assertInternalType('array', $chunks);
+        $this->assertCount(2, $chunks);
+        $this->assertArrayHasKey(0, $chunks);
+        $this->assertArrayHasKey(1, $chunks);
+        $this->assertEquals('a{},{}', $chunks[0]);
+        $this->assertEquals("@import url(styles.php?type=test&chunk=0);\n,e{}/** Error chunking CSS **/", $chunks[1]);
+
+        // Test utter crap CSS to make sure we don't loop to our deaths.
+        $css = 'a,b,c,d,e,f';
+        $chunks = css_chunk_by_selector_count($css, 'styles.php?type=test', 2, 0);
+        $this->assertInternalType('array', $chunks);
+        $this->assertCount(3, $chunks);
+        $this->assertArrayHasKey(0, $chunks);
+        $this->assertArrayHasKey(1, $chunks);
+        $this->assertArrayHasKey(2, $chunks);
+        $this->assertEquals('a,b/** Error chunking CSS **/', $chunks[0]);
+        $this->assertEquals('c,d/** Error chunking CSS **/', $chunks[1]);
+        $this->assertEquals("@import url(styles.php?type=test&chunk=0);\n@import url(styles.php?type=test&chunk=1);\ne,f", $chunks[2]);
+        // Test another death situation to make sure we're invincible.
+        $css = 'a,,,,,e';
+        $chunks = css_chunk_by_selector_count($css, 'styles.php?type=test', 2, 0);
+        $this->assertInternalType('array', $chunks);
+        // I don't care what the outcome is, I just want to make sure it doesn't die.
+    }
 }
