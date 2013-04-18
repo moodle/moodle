@@ -137,6 +137,27 @@ class web_testcase extends advanced_testcase {
         $this->assertEquals($strurl, $url->out(false));
     }
 
+    /**
+     * Test Moodle URL objects created with a param with empty value.
+     */
+    function test_moodle_url_empty_param_values() {
+        $strurl = 'http://moodle.org/course/view.php?id=0';
+        $url = new moodle_url($strurl, array('id' => 0));
+        $this->assertEquals($strurl, $url->out(false));
+
+        $strurl = 'http://moodle.org/course/view.php?id=';
+        $url = new moodle_url($strurl, array('id' => false));
+        $this->assertEquals($strurl, $url->out(false));
+
+        $strurl = 'http://moodle.org/course/view.php?id=';
+        $url = new moodle_url($strurl, array('id' => null));
+        $this->assertEquals($strurl, $url->out(false));
+
+        $strurl = 'http://moodle.org/course/view.php?id=';
+        $url = new moodle_url($strurl);
+        $this->assertEquals($strurl, $url->out(false));
+    }
+
     function test_moodle_url_round_trip_array_params() {
         $strurl = 'http://example.com/?a%5B1%5D=1&a%5B2%5D=2';
         $url = new moodle_url($strurl);
