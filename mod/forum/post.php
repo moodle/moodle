@@ -864,7 +864,10 @@ if ($forum->type == 'qanda'
     echo $OUTPUT->notification(get_string('qandanotify','forum'));
 }
 
-forum_check_throttling($forum, $cm);
+// If we are not editing a post we need to check the posting threshold.
+if (!$edit) {
+    forum_check_throttling($forum, $cm);
+}
 
 if (!empty($parent)) {
     if (! $discussion = $DB->get_record('forum_discussions', array('id' => $parent->discussion))) {
