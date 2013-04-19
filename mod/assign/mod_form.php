@@ -42,7 +42,7 @@ class mod_assign_mod_form extends moodleform_mod {
      * @return void
      */
     public function definition() {
-        global $CFG, $DB, $PAGE;
+        global $CFG, $DB, $PAGE, $OUTPUT;
         $mform = $this->_form;
 
         $mform->addElement('header', 'general', get_string('general', 'form'));
@@ -83,10 +83,28 @@ class mod_assign_mod_form extends moodleform_mod {
         $mform->addHelpButton('allowsubmissionsfromdate', 'allowsubmissionsfromdate', 'assign');
         $mform->setDefault('allowsubmissionsfromdate', time());
 
-        $name = get_string('duedate', 'assign');
-        $mform->addElement('date_time_selector', 'duedate', $name, array('optional'=>true));
-        $mform->addHelpButton('duedate', 'duedate', 'assign');
-        $mform->setDefault('duedate', time()+7*24*3600);
+        $name = get_string('duedate', 'assign').$OUTPUT->help_icon('duedate', 'assign');
+        $duedateelements[] = $mform->createElement('date_time_selector', 'duedate', $name);
+        $duedateelements[] = $mform->createElement('checkbox', 'duedateenable', null, get_string('enable'));
+        try {
+            $duedate = $assignment->get_instance()->duedate;
+        } catch (Exception $e) {
+            $duedate = 0;
+        }
+        if ($duedate > 0) {
+            $mform->setDefault('duedate', $duedate);
+            $mform->setDefault('duedateenable', 1);
+        } else {
+            $mform->setDefault('duedate', time()+7*24*3600);
+            $mform->setDefault('duedateenable', 0);
+        }
+
+        $dddname = get_string('displayduedate', 'assign').$OUTPUT->help_icon('displayduedate', 'assign');
+        $duedateelements[] = $mform->createElement('checkbox', 'displayduedate', null, $dddname);
+        $mform->setDefault('displayduedate', 0);
+
+        $mform->addGroup($duedateelements, 'duedategrp', $name, null, false);
+        $mform->disabledIf('duedategrp', 'duedateenable');
 
         $name = get_string('cutoffdate', 'assign');
         $mform->addElement('date_time_selector', 'cutoffdate', $name, array('optional'=>true));

@@ -207,6 +207,17 @@ function xmldb_assign_upgrade($oldversion) {
 
     // Moodle v2.4.0 release upgrade line.
     // Put any upgrade step following this.
+    if ($oldversion < 2012112902) {
+        // Define field displayduedate to be added to assign.
+        $table = new xmldb_table('assign');
+        $field = new xmldb_field('displayduedate', XMLDB_TYPE_INTEGER, '2', null, null, null, '0', 'duedate');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Assign savepoint reached.
+        upgrade_mod_savepoint(true, 2012112902, 'assign');
+    }
 
     if ($oldversion < 2013030600) {
         upgrade_set_timeout(60*20);
