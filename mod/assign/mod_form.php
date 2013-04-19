@@ -42,7 +42,7 @@ class mod_assign_mod_form extends moodleform_mod {
      * @return void
      */
     public function definition() {
-        global $CFG, $DB, $PAGE, $OUTPUT;
+        global $CFG, $DB, $PAGE;
         $mform = $this->_form;
 
         $mform->addElement('header', 'general', get_string('general', 'form'));
@@ -83,7 +83,7 @@ class mod_assign_mod_form extends moodleform_mod {
         $mform->addHelpButton('allowsubmissionsfromdate', 'allowsubmissionsfromdate', 'assign');
         $mform->setDefault('allowsubmissionsfromdate', time());
 
-        $name = get_string('duedate', 'assign').$OUTPUT->help_icon('duedate', 'assign');
+        $name = get_string('duedate', 'assign').$assignment->get_renderer()->help_icon('duedate', 'assign');
         $duedateelements[] = $mform->createElement('date_time_selector', 'duedate', $name);
         $duedateelements[] = $mform->createElement('checkbox', 'duedateenable', null, get_string('enable'));
         try {
@@ -97,13 +97,15 @@ class mod_assign_mod_form extends moodleform_mod {
         } else {
             $mform->setDefault('duedate', time()+7*24*3600);
             $mform->setDefault('duedateenable', 0);
+            $mform->setType('duedateenable', PARAM_BOOL);
         }
 
-        $dddname = get_string('displayduedate', 'assign').$OUTPUT->help_icon('displayduedate', 'assign');
+        $dddname = get_string('displayduedate', 'assign').$assignment->get_renderer()->help_icon('displayduedate', 'assign');
         $duedateelements[] = $mform->createElement('checkbox', 'displayduedate', null, $dddname);
         $mform->setDefault('displayduedate', 0);
 
         $mform->addGroup($duedateelements, 'duedategrp', $name, null, false);
+        $mform->setType('displayduedate', PARAM_BOOL);
         $mform->disabledIf('duedategrp', 'duedateenable');
 
         $name = get_string('cutoffdate', 'assign');
