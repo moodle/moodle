@@ -131,7 +131,7 @@ class page_requirements_manager {
     protected $yui3loader;
 
     /**
-     * @var stdClass default YUI loader configuration
+     * @var YUI_config default YUI loader configuration
      */
     protected $YUI_config;
 
@@ -1037,16 +1037,26 @@ class page_requirements_manager {
         // Now theme CSS + custom CSS in this specific order.
         $output .= $this->get_css_code();
 
+        // Set up the M namespace.
+        $js = "var M = {}; M.yui = {};\n";
+
+        // Capture the time now ASAP during page load. This minimises the lag when
+        // we try to relate times on the server to times in the browser.
+        // An example of where this is used is the quiz countdown timer.
+        $js .= "M.pageloadstarttime = new Date();\n";
+
+        // Add a subset of Moodle configuration to the M namespace.
+        $js .= js_writer::set_variable('M.cfg', $this->M_cfg, false);
+
         // Set up global YUI3 loader object - this should contain all code needed by plugins.
         // Note: in JavaScript just use "YUI().use('overlay', function(Y) { .... });",
         //       this needs to be done before including any other script.
-        $js = "var M = {}; M.yui = {};
+        $js .= "
 var moodleConfigFn = function(me) {var p = me.path, b = me.name.replace(/^moodle-/,'').split('-', 3), n = b.pop();if (/(skin|core)/.test(n)) {n = b.pop();me.type = 'css';};me.path = b.join('-')+'/'+n+'/'+n+'.'+me.type;};
 var galleryConfigFn = function(me) {var p = me.path,v=M.yui.galleryversion,f;if(/-(skin|core)/.test(me.name)) {me.type = 'css';p = p.replace(/-(skin|core)/, '').replace(/\.js/, '.css').split('/'), f = p.pop().replace(/(\-(min|debug))/, '');if (/-skin/.test(me.name)) {p.splice(p.length,0,v,'assets','skins','sam', f);} else {p.splice(p.length,0,v,'assets', f);};} else {p = p.split('/'), f = p.pop();p.splice(p.length,0,v, f);};me.path = p.join('/');};
 var yui2in3ConfigFn = function(me) {if(/-skin|reset|fonts|grids|base/.test(me.name)){me.type='css';me.path=me.path.replace(/\.js/,'.css');me.path=me.path.replace(/\/yui2-skin/,'/assets/skins/sam/yui2-skin');}};\n";
         $js .= js_writer::set_variable('YUI_config', $this->YUI_config, false) . "\n";
         $js .= "M.yui.loader = {modules: {}};\n"; // Backwards compatibility only, not used any more.
-        $js .= js_writer::set_variable('M.cfg', $this->M_cfg, false);
         $js = str_replace('"@GALLERYCONFIGFN@"', 'galleryConfigFn', $js);
         $js = str_replace('"@MOODLECONFIGFN@"', 'moodleConfigFn', $js);
         $js = str_replace('"@2IN3CONFIGFN@"', 'yui2in3ConfigFn', $js);
