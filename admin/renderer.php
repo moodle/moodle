@@ -896,7 +896,7 @@ class core_admin_renderer extends plugin_renderer_base {
                         continue;
                     }
 
-                } else if ($isstandard and $statusisboring and $dependenciesok and empty($availableupdates)) {
+                } else if ($statusisboring and $dependenciesok and empty($availableupdates)) {
                     // no change is going to happen to the plugin - display it only
                     // if the user wants to see the full list
                     if (empty($options['full'])) {
