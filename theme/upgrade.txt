@@ -21,6 +21,8 @@ DOM changes:
 * Cancel buttons have the class btn-cancel.
 * Added a z-index for the div#dateselector-calendar-panel so that the calendar pop-up renders above
   the filemanager when they overlap, ie. the course settings page (see MDL-39047).
+* Trivial change of CSS selectors used to display plugin status at the plugins overview
+  screen (#plugins-control-panel).
 
 Renderer changes:
 * Mymobile theme changed to support more verbose move-block-here descriptions.

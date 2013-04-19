@@ -543,13 +543,34 @@ img.iconsmall {
 }
 
 #page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity50 .info.release,
-#plugins-control-panel .missingfromdisk .pluginname,
 .pluginupdateinfo.maturity50,
 #plugins-check .requires-failed,
 #plugins-check .missingfromdisk .displayname,
 #plugins-check .status-missing .status,
 #plugins-check .status-downgrade .status {
     background-color: @errorBackground;
+}
+
+#plugins-control-panel .statusmsg {
+    background-color: @grayLighter;
+    padding: 3px;
+    .border-radius(5px);
+}
+
+#plugins-control-panel .status-missing .pluginname {
+    background-color: @errorBackground;
+}
+
+#plugins-control-panel .status-missing .statusmsg {
+    color: @errorText;
+}
+
+#plugins-control-panel .status-new .pluginname {
+    background-color: @successBackground;
+}
+
+#plugins-control-panel .status-new .statusmsg {
+    color: @successText;
 }
 
 #plugins-control-panel .disabled .availability {
