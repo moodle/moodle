@@ -339,6 +339,30 @@ interface cache_is_key_aware {
 }
 
 /**
+ * Cache store feature: keys are searchable.
+ *
+ * Cache stores can choose to implement this interface.
+ * In order for a store to be usable as a session cache it must implement this interface.
+ *
+ * @since 2.4.4
+ */
+interface cache_is_searchable {
+    /**
+     * Finds all of the keys being used by the cache store.
+     *
+     * @return array.
+     */
+    public function find_all();
+
+    /**
+     * Finds all of the keys whose keys start with the given prefix.
+     *
+     * @param string $prefix
+     */
+    public function find_by_prefix($prefix);
+}
+
+/**
  * Cache store feature: configurable.
  *
  * This feature should be implemented by all cache stores that are configurable when adding an instance.
