@@ -78,11 +78,11 @@ function xmldb_folder_upgrade($oldversion) {
 
     if ($oldversion < 2013031500) {
 
-        // Define field show_expanded to be added to folder
+        // Define field showexpanded to be added to folder
         $table = new xmldb_table('folder');
-        $field = new xmldb_field('show_expanded', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '1', 'revision');
+        $field = new xmldb_field('showexpanded', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '1', 'revision');
 
-        // Conditionally launch add field show_expanded
+        // Conditionally launch add field showexpanded
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
