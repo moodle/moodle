@@ -396,7 +396,8 @@ class assign_feedback_file extends assign_feedback_plugin {
                                                    has_capability('moodle/site:viewfullnames',
                                                    $this->assignment->get_course_context()),
                                                    $this->assignment->is_blind_marking(),
-                                                   $this->assignment->get_uniqueid_for_user($user->id));
+                                                   $this->assignment->get_uniqueid_for_user($user->id),
+                                                   get_extra_user_fields($this->assignment->get_context()));
             $usershtml .= $this->assignment->get_renderer()->render($usersummary);
             $usercount += 1;
         }
