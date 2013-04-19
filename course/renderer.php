@@ -674,8 +674,15 @@ class core_course_renderer extends plugin_renderer_base {
             $altname = get_accesshide(' '.$altname);
         }
 
+        // For items which are hidden but available to current user
+        // ($mod->uservisible), we show those as dimmed only if the user has
+        // viewhiddenactivities, so that teachers see 'items which might not
+        // be available to some students' dimmed but students do not see 'item
+        // which is actually available to current student' dimmed.
         $conditionalhidden = $this->is_cm_conditionally_hidden($mod);
-        $accessiblebutdim = !$mod->visible || $conditionalhidden;
+        $accessiblebutdim = (!$mod->visible || $conditionalhidden) &&
+                (!$mod->uservisible || has_capability('moodle/course:viewhiddenactivities',
+                        context_course::instance($mod->course)));
 
         $linkclasses = '';
         $accesstext = '';
