@@ -781,6 +781,7 @@ class qformat_blackboard_six_qti extends qformat_blackboard_six_base {
         $question->responseformat = 'editor';
         $question->responsefieldlines = 15;
         $question->attachments = 0;
+        $question->responsetemplate =  $this->text_field('');
 
         $questions[]=$question;
     }

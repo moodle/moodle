@@ -150,6 +150,7 @@ class qformat_blackboard_six_pool extends qformat_blackboard_six_base {
             $answer = $this->getpath($thisquestion,
                     array('#', 'ANSWER', 0, '#', 'TEXT', 0, '#'), '', true);
             $question->graderinfo =  $this->cleaned_text_field($answer);
+            $question->responsetemplate =  $this->text_field('');
             $question->feedback = '';
             $question->responseformat = 'editor';
             $question->responsefieldlines = 15;
