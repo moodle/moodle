@@ -53,11 +53,12 @@ class plugin_manager_test extends advanced_testcase {
         $pluginman = testable_plugin_manager::instance();
         $mods = $pluginman->get_plugins_of_type('mod');
         $this->assertEquals('array', gettype($mods));
-        $this->assertEquals(4, count($mods));
+        $this->assertEquals(5, count($mods));
         $this->assertTrue($mods['foo'] instanceof testable_plugininfo_mod);
         $this->assertTrue($mods['bar'] instanceof testable_plugininfo_mod);
         $this->assertTrue($mods['baz'] instanceof testable_plugininfo_mod);
         $this->assertTrue($mods['qux'] instanceof testable_plugininfo_mod);
+        $this->assertTrue($mods['new'] instanceof testable_plugininfo_mod);
         $foolishes = $pluginman->get_plugins_of_type('foolish');
         $this->assertEquals(2, count($foolishes));
         $this->assertTrue($foolishes['frog'] instanceof testable_pluginfo_foolish);
@@ -79,11 +80,13 @@ class plugin_manager_test extends advanced_testcase {
         $this->assertTrue(isset($plugins['mod']['foo']));
         $this->assertTrue(isset($plugins['mod']['bar']));
         $this->assertTrue(isset($plugins['mod']['baz']));
+        $this->assertTrue(isset($plugins['mod']['new']));
         $this->assertTrue(isset($plugins['foolish']['frog']));
         $this->assertTrue(isset($plugins['foolish']['hippo']));
         $this->assertTrue($plugins['mod']['foo'] instanceof testable_plugininfo_mod);
         $this->assertTrue($plugins['mod']['bar'] instanceof testable_plugininfo_mod);
         $this->assertTrue($plugins['mod']['baz'] instanceof testable_plugininfo_mod);
+        $this->assertTrue($plugins['mod']['new'] instanceof testable_plugininfo_mod);
         $this->assertTrue($plugins['foolish']['frog'] instanceof testable_pluginfo_foolish);
         $this->assertTrue($plugins['foolish']['hippo'] instanceof testable_pluginfo_foolish);
         $this->assertTrue($plugins['bazmeg']['one'] instanceof testable_pluginfo_bazmeg);
@@ -217,6 +220,7 @@ class plugin_manager_test extends advanced_testcase {
         $pluginman = testable_plugin_manager::instance();
         $plugins = $pluginman->get_plugins();
         $this->assertEquals(plugin_manager::PLUGIN_STATUS_UPGRADE, $plugins['mod']['foo']->get_status());
+        $this->assertEquals(plugin_manager::PLUGIN_STATUS_NEW, $plugins['mod']['new']->get_status());
         $this->assertEquals(plugin_manager::PLUGIN_STATUS_NEW, $plugins['bazmeg']['one']->get_status());
         $this->assertEquals(plugin_manager::PLUGIN_STATUS_UPTODATE, $plugins['quxcat']['one']->get_status());
     }
@@ -240,6 +244,7 @@ class plugin_manager_test extends advanced_testcase {
         $this->assertFalse($pluginman->can_uninstall_plugin('mod_qux')); // Because even if no plugin (not even subplugins) declare
                                                                          // dependency on it, but its subplugin can't be uninstalled.
         $this->assertFalse($pluginman->can_uninstall_plugin('mod_baz')); // Because it's subplugin bazmeg_one is required by quxcat_one.
+        $this->assertFalse($pluginman->can_uninstall_plugin('mod_new')); // Because it is not installed.
         $this->assertFalse($pluginman->can_uninstall_plugin('quxcat_one')); // Because of testable_pluginfo_quxcat::is_uninstall_allowed().
         $this->assertFalse($pluginman->can_uninstall_plugin('foolish_frog')); // Because foolish_hippo requires it.
     }
@@ -546,7 +551,9 @@ class testable_plugininfo_mod extends plugininfo_mod {
     }
 
     public function load_db_version() {
-        $this->versiondb = 2012022900;
+        if ($this->component !== 'mod_new') {
+            $this->versiondb = 2012022900;
+        }
     }
 
     public function is_uninstall_allowed() {
@@ -660,6 +667,8 @@ class testable_plugin_manager extends plugin_manager {
                     $dirroot.'/mod/baz', 'testable_plugininfo_mod'),
                 'qux' => plugininfo_default_factory::make('mod', $dirroot.'/qux', 'qux',
                     $dirroot.'/mod/qux', 'testable_plugininfo_mod'),
+                'new' => plugininfo_default_factory::make('mod', $dirroot.'/new', 'new',
+                    $dirroot.'/mod/new', 'testable_plugininfo_mod'),
             ),
             'foolish' => array(
                 'frog' => plugininfo_default_factory::make('foolish', $dirroot.'/mod/foo/lish', 'frog',
@@ -681,6 +690,7 @@ class testable_plugin_manager extends plugin_manager {
         $this->pluginsinfo['mod']['foo']->check_available_updates($checker);
         $this->pluginsinfo['mod']['bar']->check_available_updates($checker);
         $this->pluginsinfo['mod']['baz']->check_available_updates($checker);
+        $this->pluginsinfo['mod']['new']->check_available_updates($checker);
         $this->pluginsinfo['bazmeg']['one']->check_available_updates($checker);
         $this->pluginsinfo['quxcat']['one']->check_available_updates($checker);
 
