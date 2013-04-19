@@ -131,7 +131,7 @@ class page_requirements_manager {
     protected $yui3loader;
 
     /**
-     * @var stdClass default YUI loader configuration
+     * @var YUI_config default YUI loader configuration
      */
     protected $YUI_config;
 
@@ -1313,16 +1313,25 @@ class page_requirements_manager {
 
         $output = '';
 
+        // Set up the M namespace.
+        $js = "var M = {}; M.yui = {};\n";
+
+        // Capture the time now ASAP during page load. This minimises the lag when
+        // we try to relate times on the server to times in the browser.
+        // An example of where this is used is the quiz countdown timer.
+        $js .= "M.pageloadstarttime = new Date();\n";
+
+        // Add a subset of Moodle configuration to the M namespace.
+        $js .= js_writer::set_variable('M.cfg', $this->M_cfg, false);
+
         // Set up global YUI3 loader object - this should contain all code needed by plugins.
         // Note: in JavaScript just use "YUI().use('overlay', function(Y) { .... });",
         //       this needs to be done before including any other script.
-        $js = "var M = {}; M.yui = {};\n";
         $js .= $this->YUI_config->get_config_functions();
         $js .= js_writer::set_variable('YUI_config', $this->YUI_config, false) . "\n";
         $js .= "M.yui.loader = {modules: {}};\n"; // Backwards compatibility only, not used any more.
-        $js .= js_writer::set_variable('M.cfg', $this->M_cfg, false);
-
         $js = $this->YUI_config->update_header_js($js);
+
         $output .= html_writer::script($js);
 
         // YUI3 JS and CSS need to be loaded in the header but after the YUI_config has been created.
