@@ -1916,7 +1916,6 @@ class core_course_external extends external_api {
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
  * @deprecated Moodle 2.2 MDL-29106 - Please do not use this class any more.
- * @todo MDL-31194 This will be deleted in Moodle 2.5.
  * @see core_course_external
  */
 class moodle_course_external extends external_api {
@@ -1927,7 +1926,6 @@ class moodle_course_external extends external_api {
      * @return external_function_parameters
      * @since Moodle 2.0
      * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @todo MDL-31194 This will be deleted in Moodle 2.5.
      * @see core_course_external::get_courses_parameters()
      */
     public static function get_courses_parameters() {
@@ -1941,7 +1939,6 @@ class moodle_course_external extends external_api {
      * @return array
      * @since Moodle 2.0
      * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @todo MDL-31194 This will be deleted in Moodle 2.5.
      * @see core_course_external::get_courses()
      */
     public static function get_courses($options) {
@@ -1954,7 +1951,6 @@ class moodle_course_external extends external_api {
      * @return external_description
      * @since Moodle 2.0
      * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @todo MDL-31194 This will be deleted in Moodle 2.5.
      * @see core_course_external::get_courses_returns()
      */
     public static function get_courses_returns() {
@@ -1967,7 +1963,6 @@ class moodle_course_external extends external_api {
      * @return external_function_parameters
      * @since Moodle 2.0
      * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @todo MDL-31194 This will be deleted in Moodle 2.5.
      * @see core_course_external::create_courses_parameters()
      */
     public static function create_courses_parameters() {
@@ -1981,7 +1976,6 @@ class moodle_course_external extends external_api {
      * @return array courses (id and shortname only)
      * @since Moodle 2.0
      * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @todo MDL-31194 This will be deleted in Moodle 2.5.
      * @see core_course_external::create_courses()
      */
     public static function create_courses($courses) {
@@ -1994,7 +1988,6 @@ class moodle_course_external extends external_api {
      * @return external_description
      * @since Moodle 2.0
      * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @todo MDL-31194 This will be deleted in Moodle 2.5.
      * @see core_course_external::create_courses_returns()
      */
     public static function create_courses_returns() {

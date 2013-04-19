@@ -922,7 +922,6 @@ class core_user_external extends external_api {
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
  * @deprecated Moodle 2.2 MDL-29106 - Please do not use this class any more.
- * @todo MDL-31194 This will be deleted in Moodle 2.5.
  * @see core_user_external
  */
 class moodle_user_external extends external_api {
@@ -933,7 +932,6 @@ class moodle_user_external extends external_api {
      * @return external_function_parameters
      * @since Moodle 2.0
      * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @todo MDL-31194 This will be deleted in Moodle 2.5.
      * @see core_user_external::create_users_parameters()
      */
     public static function create_users_parameters() {
@@ -947,7 +945,6 @@ class moodle_user_external extends external_api {
      * @return array An array of arrays
      * @since Moodle 2.0
      * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @todo MDL-31194 This will be deleted in Moodle 2.5.
      * @see core_user_external::create_users()
      */
     public static function create_users($users) {
@@ -960,7 +957,6 @@ class moodle_user_external extends external_api {
      * @return external_description
      * @since Moodle 2.0
      * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @todo MDL-31194 This will be deleted in Moodle 2.5.
      * @see core_user_external::create_users_returns()
      */
     public static function create_users_returns() {
@@ -974,7 +970,6 @@ class moodle_user_external extends external_api {
      * @return external_function_parameters
      * @since Moodle 2.0
      * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @todo MDL-31194 This will be deleted in Moodle 2.5.
      * @see core_user_external::delete_users_parameters()
      */
     public static function delete_users_parameters() {
@@ -988,7 +983,6 @@ class moodle_user_external extends external_api {
      * @return null
      * @since Moodle 2.0
      * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @todo MDL-31194 This will be deleted in Moodle 2.5.
      * @see core_user_external::delete_users()
      */
     public static function delete_users($userids) {
@@ -1001,7 +995,6 @@ class moodle_user_external extends external_api {
      * @return null
      * @since Moodle 2.0
      * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @todo MDL-31194 This will be deleted in Moodle 2.5.
      * @see core_user_external::delete_users_returns()
      */
     public static function delete_users_returns() {
@@ -1015,7 +1008,6 @@ class moodle_user_external extends external_api {
      * @return external_function_parameters
      * @since Moodle 2.0
      * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @todo MDL-31194 This will be deleted in Moodle 2.5.
      * @see core_user_external::update_users_parameters()
      */
     public static function update_users_parameters() {
@@ -1029,7 +1021,6 @@ class moodle_user_external extends external_api {
      * @return null
      * @since Moodle 2.0
      * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @todo MDL-31194 This will be deleted in Moodle 2.5.
      * @see core_user_external::update_users()
      */
     public static function update_users($users) {
@@ -1042,7 +1033,6 @@ class moodle_user_external extends external_api {
      * @return null
      * @since Moodle 2.0
      * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @todo MDL-31194 This will be deleted in Moodle 2.5.
      * @see core_user_external::update_users_returns()
      */
     public static function update_users_returns() {
@@ -1055,7 +1045,6 @@ class moodle_user_external extends external_api {
      * @return external_function_parameters
      * @since Moodle 2.0
      * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @todo MDL-31194 This will be deleted in Moodle 2.5.
      * @see core_user_external::get_users_by_id_parameters()
      */
     public static function get_users_by_id_parameters() {
@@ -1072,7 +1061,6 @@ class moodle_user_external extends external_api {
      * @return array An array of arrays describing users
      * @since Moodle 2.0
      * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @todo MDL-31194 This will be deleted in Moodle 2.5.
      * @see core_user_external::get_users_by_id()
      */
     public static function get_users_by_id($userids) {
@@ -1085,7 +1073,6 @@ class moodle_user_external extends external_api {
      * @return external_description
      * @since Moodle 2.0
      * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @todo MDL-31194 This will be deleted in Moodle 2.5.
      * @see core_user_external::get_users_by_id_returns()
      */
     public static function get_users_by_id_returns() {
@@ -1097,7 +1084,6 @@ class moodle_user_external extends external_api {
      * @return external_function_parameters
      * @since Moodle 2.1
      * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @todo MDL-31194 This will be deleted in Moodle 2.5.
      * @see core_user_external::get_course_user_profiles_parameters()
      */
     public static function get_course_participants_by_id_parameters() {
@@ -1111,7 +1097,6 @@ class moodle_user_external extends external_api {
      * @return array An array of arrays describing course participants
      * @since Moodle 2.1
      * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @todo MDL-31194 This will be deleted in Moodle 2.5.
      * @see core_user_external::get_course_user_profiles()
      */
     public static function get_course_participants_by_id($userlist) {
@@ -1124,7 +1109,6 @@ class moodle_user_external extends external_api {
      * @return external_description
      * @since Moodle 2.1
      * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @todo MDL-31194 This will be deleted in Moodle 2.5.
      * @see core_user_external::get_course_user_profiles_returns()
      */
     public static function get_course_participants_by_id_returns() {
@@ -1137,7 +1121,6 @@ class moodle_user_external extends external_api {
      * @return external_function_parameters
      * @since Moodle 2.1
      * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @todo MDL-31194 This will be deleted in Moodle 2.5.
      * @see core_enrol_external::get_enrolled_users_parameters()
      */
     public static function get_users_by_courseid_parameters() {
@@ -1157,7 +1140,6 @@ class moodle_user_external extends external_api {
      * @return array An array of users
      * @since Moodle 2.1
      * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @todo MDL-31194 This will be deleted in Moodle 2.5.
      * @see core_enrol_external::get_enrolled_users()
      */
     public static function get_users_by_courseid($courseid, $options) {
@@ -1171,7 +1153,6 @@ class moodle_user_external extends external_api {
      * @return external_description
      * @since Moodle 2.1
      * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @todo MDL-31194 This will be deleted in Moodle 2.5.
      * @see core_enrol_external::get_enrolled_users_returns()
      */
     public static function get_users_by_courseid_returns() {

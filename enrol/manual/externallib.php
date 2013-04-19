@@ -165,7 +165,6 @@ class enrol_manual_external extends external_api {
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
  * @deprecated Moodle 2.2 MDL-29106 - Please do not use this class any more.
- * @todo MDL-31194 This will be deleted in Moodle 2.5.
  * @see enrol_manual_external
  */
 class moodle_enrol_manual_external extends external_api {
@@ -176,7 +175,6 @@ class moodle_enrol_manual_external extends external_api {
      * @return external_function_parameters
      * @since Moodle 2.0
      * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @todo MDL-31194 This will be deleted in Moodle 2.5.
      * @see enrol_manual_external::enrol_users_parameters()
      */
     public static function manual_enrol_users_parameters() {
@@ -190,7 +188,6 @@ class moodle_enrol_manual_external extends external_api {
      * @param array $enrolments  An array of user enrolment
      * @since Moodle 2.0
      * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @todo MDL-31194 This will be deleted in Moodle 2.5.
      * @see enrol_manual_external::enrol_users()
      */
     public static function manual_enrol_users($enrolments) {
@@ -203,7 +200,6 @@ class moodle_enrol_manual_external extends external_api {
      * @return nul
      * @since Moodle 2.0
      * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @todo MDL-31194 This will be deleted in Moodle 2.5.
      * @see enrol_manual_external::enrol_users_returns()
      */
     public static function manual_enrol_users_returns() {

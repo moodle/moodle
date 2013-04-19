@@ -453,7 +453,6 @@ class core_notes_external extends external_api {
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.1
  * @deprecated Moodle 2.2 MDL-29106 - Please do not use this class any more.
- * @todo MDL-31194 This will be deleted in Moodle 2.5.
  * @see core_notes_external
  */
 class moodle_notes_external extends external_api {
@@ -464,7 +463,6 @@ class moodle_notes_external extends external_api {
      * @return external_function_parameters
      * @since Moodle 2.1
      * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @todo MDL-31194 This will be deleted in Moodle 2.5.
      * @see core_notes_external::create_notes_parameters()
      */
     public static function create_notes_parameters() {
@@ -480,7 +478,6 @@ class moodle_notes_external extends external_api {
      * @return array (success infos and fail infos)
      * @since Moodle 2.1
      * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @todo MDL-31194 This will be deleted in Moodle 2.5.
      * @see core_notes_external::create_notes()
      */
     public static function create_notes($notes = array()) {
@@ -493,7 +490,6 @@ class moodle_notes_external extends external_api {
      * @return external_description
      * @since Moodle 2.1
      * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @todo MDL-31194 This will be deleted in Moodle 2.5.
      * @see core_notes_external::create_notes_returns()
      */
     public static function create_notes_returns() {
