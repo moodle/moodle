@@ -58,7 +58,7 @@ background: #E2E2E2;filter: progid:DXImageTransform.Microsoft.gradient(startColo
 .dir-rtl .file-picker .fp-list {text-align:right;float:left;}
 .file-picker .fp-list .fp-repo a{display:block;padding:.5em .7em;}
 .file-picker .fp-list .fp-repo.active {background:#F2F2F2;}
-.file-picker .fp-list .fp-repo-icon {padding: 0px 7px 0px 5px;}
+.file-picker .fp-list .fp-repo-icon {padding: 0 7px 0 5px; vertical-align: text-bottom;}
 
 /*
  * Tools, Path & View on fp-navbar (File Picker and File Manager)
