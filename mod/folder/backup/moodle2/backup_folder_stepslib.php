@@ -39,7 +39,7 @@ class backup_folder_activity_structure_step extends backup_activity_structure_st
         // Define each element separated
         $folder = new backup_nested_element('folder', array('id'), array(
             'name', 'intro', 'introformat', 'revision',
-            'timemodified', 'display', 'show_expanded'));
+            'timemodified', 'display', 'showexpanded'));
 
         // Build the tree
         // (nice mono-tree, lol)

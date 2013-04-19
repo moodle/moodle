@@ -79,11 +79,11 @@ class mod_folder_renderer extends plugin_renderer_base {
         $content .= '<div id="'.$id.'" class="filemanager">';
         $content .= $this->htmllize_tree($tree, array('files' => array(), 'subdirs' => array($tree->dir)));
         $content .= '</div>';
-        $show_expanded = true;
-        if (empty($tree->folder->show_expanded)) {
-            $show_expanded = false;
+        $showexpanded = true;
+        if (empty($tree->folder->showexpanded)) {
+            $showexpanded = false;
         }
-        $this->page->requires->js_init_call('M.mod_folder.init_tree', array($id, $show_expanded));
+        $this->page->requires->js_init_call('M.mod_folder.init_tree', array($id, $showexpanded));
         return $content;
     }
 
