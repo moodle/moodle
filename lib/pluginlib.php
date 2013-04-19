@@ -2211,7 +2211,7 @@ class available_update_deployer {
         if (!empty($this->callerurl)) {
             $data['callerurl'] = $this->callerurl->out(false);
         }
-        if (!empty($this->callerurl)) {
+        if (!empty($this->returnurl)) {
             $data['returnurl'] = $this->returnurl->out(false);
         }
 
