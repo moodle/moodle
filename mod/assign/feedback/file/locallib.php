@@ -590,7 +590,7 @@ class assign_feedback_file extends assign_feedback_plugin {
      */
     public function view_page($action) {
         if ($action == 'uploadfiles') {
-            $users = required_param('selectedusers', PARAM_TEXT);
+            $users = required_param('selectedusers', PARAM_SEQUENCE);
             return $this->view_batch_upload_files(explode(',', $users));
         }
         if ($action == 'uploadzip') {

@@ -117,6 +117,7 @@ class mod_assign_mod_form extends moodleform_mod {
         } else {
             $mform->addElement('hidden', 'requiresubmissionstatement', 1);
         }
+        $mform->setType('requiresubmissionstatement', PARAM_BOOL);
 
         $options = array(
             ASSIGN_ATTEMPT_REOPEN_METHOD_NONE => get_string('attemptreopenmethod_none', 'mod_assign'),

@@ -69,9 +69,13 @@ class mod_assign_extension_form extends moodleform {
                            get_string('extensionduedate', 'assign'), array('optional'=>true));
         $mform->setDefault('extensionduedate', $finaldate);
         $mform->addElement('hidden', 'id', $coursemoduleid);
+        $mform->setType('id', PARAM_INT);
         $mform->addElement('hidden', 'userid', $userid);
+        $mform->setType('userid', PARAM_INT);
         $mform->addElement('hidden', 'selectedusers', $batchusers);
+        $mform->setType('selectedusers', PARAM_SEQUENCE);
         $mform->addElement('hidden', 'action', 'saveextension');
+        $mform->setType('action', PARAM_ALPHA);
         $this->add_action_buttons(true, get_string('savechanges', 'assign'));
 
         if ($data) {
