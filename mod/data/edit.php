@@ -252,6 +252,8 @@ echo $OUTPUT->header();
 groups_print_activity_menu($cm, $CFG->wwwroot.'/mod/data/edit.php?d='.$data->id);
 echo $OUTPUT->heading(format_string($data->name));
 
+echo $OUTPUT->box(format_module_intro('data', $data, $cm->id), 'generalbox', 'intro');
+
 /// Print the tabs
 
 $currenttab = 'add';
