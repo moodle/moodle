@@ -2003,9 +2003,10 @@ class available_update_deployer {
      * Prepares a renderable widget to execute installation of an available update.
      *
      * @param available_update_info $info component version to deploy
+     * @param moodle_url $returnurl URL to return after the installation execution
      * @return renderable
      */
-    public function make_execution_widget(available_update_info $info) {
+    public function make_execution_widget(available_update_info $info, moodle_url $returnurl = null) {
         global $CFG;
 
         if (!$this->initialized()) {
@@ -2022,7 +2023,11 @@ class available_update_deployer {
 
         list($passfile, $password) = $this->prepare_authorization();
 
-        $upgradeurl = new moodle_url('/admin');
+        if (is_null($returnurl)) {
+            $returnurl = new moodle_url('/admin');
+        } else {
+            $returnurl = $returnurl;
+        }
 
         $params = array(
             'upgrade' => true,
@@ -2035,7 +2040,7 @@ class available_update_deployer {
             'dirroot' => $CFG->dirroot,
             'passfile' => $passfile,
             'password' => $password,
-            'returnurl' => $upgradeurl->out(true),
+            'returnurl' => $returnurl->out(false),
         );
 
         if (!empty($CFG->proxyhost)) {
