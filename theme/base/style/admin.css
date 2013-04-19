@@ -8,6 +8,7 @@
 
 .path-admin #assignrole {width: 60%;margin-left: auto;margin-right: auto;}
 .path-admin .admintable .leftalign {text-align: left;}
+.dir-rtl.path-admin .admintable .leftalign {text-align: right;}
 .path-admin .admintable .centeralign {text-align: center;}
 
 .path-admin .admintable.environmenttable .name,
