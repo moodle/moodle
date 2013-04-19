@@ -110,6 +110,11 @@ abstract class cache_store implements cache_store_interface {
      */
     const SUPPORTS_NATIVE_TTL = 4;
 
+    /**
+     * The cache is searchable by key.
+     */
+    const IS_SEARCHABLE = 8;
+
     // Constants for the modes of a cache store
 
     /**
@@ -305,6 +310,15 @@ abstract class cache_store implements cache_store_interface {
      */
     public function supports_native_ttl() {
         return $this::get_supported_features() & self::SUPPORTS_NATIVE_TTL;
+    }
+
+    /**
+     * Returns true if the store instance is searchable.
+     *
+     * @return bool
+     */
+    public function is_searchable() {
+        return in_array('cache_is_searchable', class_implements($this));
     }
 
     /**

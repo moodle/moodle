@@ -207,9 +207,7 @@ class cache_factory {
         if (array_key_exists($key, $this->cachesfromparams)) {
             return $this->cachesfromparams[$key];
         }
-        // Get the class. Note this is a late static binding so we need to use get_called_class.
         $definition = cache_definition::load_adhoc($mode, $component, $area, $options);
-        $config = $this->create_config_instance();
         $definition->set_identifiers($identifiers);
         $cache = $this->create_cache($definition, $identifiers);
         if ($definition->should_be_persistent()) {

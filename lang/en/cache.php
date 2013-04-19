@@ -118,6 +118,7 @@ $string['supports_dataguarantee'] = 'data guarantee';
 $string['supports_nativettl'] = 'ttl';
 $string['supports_nativelocking'] = 'locking';
 $string['supports_keyawareness'] = 'key awareness';
+$string['supports_searchable'] = 'searching by key';
 $string['tested'] = 'Tested';
 $string['testperformance'] = 'Test performance';
 $string['unsupportedmode'] = 'Unsupported mode';

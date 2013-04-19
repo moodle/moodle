@@ -197,7 +197,7 @@ class cache_mode_mappings_form extends moodleform {
         );
         foreach ($stores as $storename => $store) {
             foreach ($store['modes'] as $mode => $enabled) {
-                if ($enabled) {
+                if ($enabled && ($mode !== cache_store::MODE_SESSION || $store['supports']['searchable'])) {
                     if (empty($store['default'])) {
                         $options[$mode][$storename] = $store['name'];
                     } else {

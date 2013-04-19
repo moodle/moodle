@@ -1697,5 +1697,13 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012120303.06);
     }
 
+    if ($oldversion < 2012120303.08) {
+        require_once($CFG->dirroot.'/cache/locallib.php');
+        // The features bin needs updating.
+        cache_config_writer::update_default_config_stores();
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2012120303.08);
+    }
+
     return true;
 }
