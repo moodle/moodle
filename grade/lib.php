@@ -2424,7 +2424,7 @@ abstract class grade_helper {
             return self::$managesetting;
         }
         $context = get_context_instance(CONTEXT_COURSE, $courseid);
-        if (has_capability('moodle/course:update', $context)) {
+        if (has_capability('moodle/grade:manage', $context)) {
             self::$managesetting = new grade_plugin_info('coursesettings', new moodle_url('/grade/edit/settings/index.php', array('id'=>$courseid)), get_string('course'));
         } else {
             self::$managesetting = false;
