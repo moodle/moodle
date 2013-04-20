@@ -10,6 +10,7 @@ $name = 'theme_brick/logo';
 $title = get_string('logo','theme_brick');
 $description = get_string('logodesc', 'theme_brick');
 $setting = new admin_setting_configtext($name, $title, $description, '', PARAM_URL);
+$setting->set_updatedcallback('theme_reset_all_caches');
 $settings->add($setting);
 
 // link color setting
@@ -19,6 +20,7 @@ $description = get_string('linkcolordesc', 'theme_brick');
 $default = '#06365b';
 $previewconfig = NULL;
 $setting = new admin_setting_configcolourpicker($name, $title, $description, $default, $previewconfig);
+$setting->set_updatedcallback('theme_reset_all_caches');
 $settings->add($setting);
 
 // link hover color setting
@@ -28,6 +30,7 @@ $description = get_string('linkhoverdesc', 'theme_brick');
 $default = '#5487ad';
 $previewconfig = NULL;
 $setting = new admin_setting_configcolourpicker($name, $title, $description, $default, $previewconfig);
+$setting->set_updatedcallback('theme_reset_all_caches');
 $settings->add($setting);
 
 // main color setting
@@ -37,6 +40,7 @@ $description = get_string('maincolordesc', 'theme_brick');
 $default = '#8e2800';
 $previewconfig = NULL;
 $setting = new admin_setting_configcolourpicker($name, $title, $description, $default, $previewconfig);
+$setting->set_updatedcallback('theme_reset_all_caches');
 $settings->add($setting);
 
 // main color accent setting
@@ -46,6 +50,7 @@ $description = get_string('maincolorlinkdesc', 'theme_brick');
 $default = '#fff0a5';
 $previewconfig = NULL;
 $setting = new admin_setting_configcolourpicker($name, $title, $description, $default, $previewconfig);
+$setting->set_updatedcallback('theme_reset_all_caches');
 $settings->add($setting);
 
 // heading color setting
@@ -55,6 +60,7 @@ $description = get_string('headingcolordesc', 'theme_brick');
 $default = '#5c3500';
 $previewconfig = NULL;
 $setting = new admin_setting_configcolourpicker($name, $title, $description, $default, $previewconfig);
+$setting->set_updatedcallback('theme_reset_all_caches');
 $settings->add($setting);
 
 }

@@ -10,6 +10,7 @@ if ($ADMIN->fulltree) {
     $title = get_string('tagline','theme_nimble');
     $description = get_string('taglinedesc', 'theme_nimble');
     $setting = new admin_setting_configtext($name, $title, $description, '');
+    $setting->set_updatedcallback('theme_reset_all_caches');
     $settings->add($setting);
     
     // footerline setting
@@ -17,6 +18,7 @@ if ($ADMIN->fulltree) {
     $title = get_string('footerline','theme_nimble');
     $description = get_string('footerlinedesc', 'theme_nimble');
     $setting = new admin_setting_configtext($name, $title, $description, '');
+    $setting->set_updatedcallback('theme_reset_all_caches');
     $settings->add($setting);
 
 
@@ -27,6 +29,7 @@ if ($ADMIN->fulltree) {
 	$default = '#454545';
 	$previewconfig = NULL;
 	$setting = new admin_setting_configcolourpicker($name, $title, $description, $default, $previewconfig);
+    $setting->set_updatedcallback('theme_reset_all_caches');
 	$settings->add($setting);
 
 	// link color setting
@@ -36,6 +39,7 @@ if ($ADMIN->fulltree) {
 	$default = '#2a65b1';
 	$previewconfig = NULL;
 	$setting = new admin_setting_configcolourpicker($name, $title, $description, $default, $previewconfig);
+    $setting->set_updatedcallback('theme_reset_all_caches');
 	$settings->add($setting);
 
 	// link hover color setting
@@ -45,6 +49,7 @@ if ($ADMIN->fulltree) {
 	$default = '#222222';
 	$previewconfig = NULL;
 	$setting = new admin_setting_configcolourpicker($name, $title, $description, $default, $previewconfig);
+    $setting->set_updatedcallback('theme_reset_all_caches');
 	$settings->add($setting);
 
 

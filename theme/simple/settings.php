@@ -37,6 +37,7 @@ if ($ADMIN->fulltree) {
     $title = get_string('invert', 'theme_simple');
     $description = get_string('invertdesc', 'theme_simple');
     $setting = new admin_setting_configcheckbox($name, $title, $description, 0);
+    $setting->set_updatedcallback('theme_reset_all_caches');
     $settings->add($setting);
 
     // Logo file setting.
@@ -53,6 +54,7 @@ if ($ADMIN->fulltree) {
     $description = get_string('customcssdesc', 'theme_simple');
     $default = '';
     $setting = new admin_setting_configtextarea($name, $title, $description, $default);
+    $setting->set_updatedcallback('theme_reset_all_caches');
     $settings->add($setting);
 
     // Footnote setting.
@@ -61,5 +63,6 @@ if ($ADMIN->fulltree) {
     $description = get_string('footnotedesc', 'theme_simple');
     $default = '';
     $setting = new admin_setting_confightmleditor($name, $title, $description, $default);
+    $setting->set_updatedcallback('theme_reset_all_caches');
     $settings->add($setting);
 }

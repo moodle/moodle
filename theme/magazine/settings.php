@@ -9,6 +9,7 @@ if ($ADMIN->fulltree) {
 	$title = get_string('background','theme_magazine');
 	$description = get_string('backgrounddesc', 'theme_magazine');
 	$setting = new admin_setting_configtext($name, $title, $description, '', PARAM_URL);
+    $setting->set_updatedcallback('theme_reset_all_caches');
 	$settings->add($setting);
 
 	// logo image setting
@@ -16,6 +17,7 @@ if ($ADMIN->fulltree) {
 	$title = get_string('logo','theme_magazine');
 	$description = get_string('logodesc', 'theme_magazine');
 	$setting = new admin_setting_configtext($name, $title, $description, '', PARAM_URL);
+    $setting->set_updatedcallback('theme_reset_all_caches');
 	$settings->add($setting);
 
 	// link color setting
@@ -25,6 +27,7 @@ if ($ADMIN->fulltree) {
 	$default = '#32529a';
 	$previewconfig = NULL;
 	$setting = new admin_setting_configcolourpicker($name, $title, $description, $default, $previewconfig);
+    $setting->set_updatedcallback('theme_reset_all_caches');
 	$settings->add($setting);
 
 	// link hover color setting
@@ -34,6 +37,7 @@ if ($ADMIN->fulltree) {
 	$default = '#4e2300';
 	$previewconfig = NULL;
 	$setting = new admin_setting_configcolourpicker($name, $title, $description, $default, $previewconfig);
+    $setting->set_updatedcallback('theme_reset_all_caches');
 	$settings->add($setting);
 
 	// main color setting
@@ -43,6 +47,7 @@ if ($ADMIN->fulltree) {
 	$default = '#002f2f';
 	$previewconfig = NULL;
 	$setting = new admin_setting_configcolourpicker($name, $title, $description, $default, $previewconfig);
+    $setting->set_updatedcallback('theme_reset_all_caches');
 	$settings->add($setting);
 
 	// main color accent setting
@@ -52,6 +57,7 @@ if ($ADMIN->fulltree) {
 	$default = '#092323';
 	$previewconfig = NULL;
 	$setting = new admin_setting_configcolourpicker($name, $title, $description, $default, $previewconfig);
+    $setting->set_updatedcallback('theme_reset_all_caches');
 	$settings->add($setting);
 
 	// heading color setting
@@ -61,6 +67,7 @@ if ($ADMIN->fulltree) {
 	$default = '#4e0000';
 	$previewconfig = NULL;
 	$setting = new admin_setting_configcolourpicker($name, $title, $description, $default, $previewconfig);
+    $setting->set_updatedcallback('theme_reset_all_caches');
 	$settings->add($setting);
 
 	// block heading color setting
@@ -70,6 +77,7 @@ if ($ADMIN->fulltree) {
 	$default = '#002f2f';
 	$previewconfig = NULL;
 	$setting = new admin_setting_configcolourpicker($name, $title, $description, $default, $previewconfig);
+    $setting->set_updatedcallback('theme_reset_all_caches');
 	$settings->add($setting);
 
 	// forum subject background color setting
@@ -79,6 +87,7 @@ if ($ADMIN->fulltree) {
 	$default = '#e6e2af';
 	$previewconfig = NULL;
 	$setting = new admin_setting_configcolourpicker($name, $title, $description, $default, $previewconfig);
+    $setting->set_updatedcallback('theme_reset_all_caches');
 	$settings->add($setting);
 
 }
