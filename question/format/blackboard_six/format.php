@@ -78,10 +78,10 @@ class qformat_blackboard_six extends qformat_blackboard_six_base {
             // For now we will do that searching for a required tag.
             // This is certainly not bullet-proof but works for all usual files.
             $fileobj->text = file_get_contents($filename);
-            if (strpos($text, '<questestinterop>')) {
+            if (strpos($fileobj->text, '<questestinterop>')) {
                 $fileobj->filetype = self::FILETYPE_QTI;
             }
-            if (strpos($text, '<POOL>')) {
+            if (strpos($fileobj->text, '<POOL>')) {
                 $fileobj->filetype = self::FILETYPE_POOL;
             }
             // In all other cases we are not able to handle this question file.
