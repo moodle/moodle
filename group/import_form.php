@@ -54,6 +54,7 @@ class groups_import_form extends moodleform {
         $mform->addElement('filepicker', 'userfile', get_string('import'), null, $filepickeroptions);
 
         $mform->addElement('hidden', 'id');
+        $mform->setType('id', PARAM_INT);
 
         $this->add_action_buttons(true, get_string('importgroups', 'core_group'));
 
