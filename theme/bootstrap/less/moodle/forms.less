@@ -11,6 +11,12 @@ form {
 .mform fieldset .advancedbutton {
     text-align: right;
 }
+.jsenabled .mform .containsadvancedelements .advanced {
+	display: none;
+}
+.mform .containsadvancedelements .advanced.show {
+	display: block;
+}
 .mform fieldset.group {
     margin-bottom: 0
 }
@@ -169,9 +175,8 @@ div.backup-section + form,
     padding-left: 0;
 }
 .path-admin .buttons,
-.form-buttons {
+.form-buttons { // Add back the padding it would usually get from being inside a .form-horizontal.
     padding-left: @horizontalComponentOffset;
-    // Add back the padding it would usually get from being inside a .form-horizontal.
 }
 
 .form-item .form-setting .form-checkbox.defaultsnext {
@@ -317,5 +322,7 @@ input[type="checkbox"] {
     margin-top: 5px;
 }
 div#dateselector-calendar-panel {
-    z-index: 3100; /* Set higher than the z-index of the filemanager - see MDL-39047. */
+    z-index: 3100; /* Set higher than the z-index of the filemanager - see MDL-39047.
+    */
 }
+
