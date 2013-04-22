@@ -761,10 +761,6 @@ class qformat_gift extends qformat_default {
             // Check for plugins
             if ($out = $this->try_exporting_using_qtypes($question->qtype, $question)) {
                 $expout .= $out;
-            } else {
-                $expout .= "Question type $question->qtype is not supported\n";
-                echo $OUTPUT->notification(get_string('nohandler', 'qformat_gift',
-                        question_bank::get_qtype_name($question->qtype)));
             }
         }
 
