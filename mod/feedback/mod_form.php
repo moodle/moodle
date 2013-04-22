@@ -48,7 +48,7 @@ class mod_feedback_mod_form extends moodleform_mod {
         $this->add_intro_editor(true, get_string('description', 'feedback'));
 
         //-------------------------------------------------------------------------------
-        $mform->addElement('header', 'timinghdr', get_string('timing', 'form'));
+        $mform->addElement('header', 'timinghdr', get_string('availability'));
 
         $enableopengroup = array();
         $enableopengroup[] =& $mform->createElement('checkbox',
@@ -81,7 +81,7 @@ class mod_feedback_mod_form extends moodleform_mod {
         $mform->disabledIf('enableclosegroup', 'closeenable', 'notchecked');
 
         //-------------------------------------------------------------------------------
-        $mform->addElement('header', 'feedbackhdr', get_string('feedback_options', 'feedback'));
+        $mform->addElement('header', 'feedbackhdr', get_string('questionandsubmission', 'feedback'));
 
         $options=array();
         $options[1]  = get_string('anonymous', 'feedback');
@@ -90,16 +90,6 @@ class mod_feedback_mod_form extends moodleform_mod {
                            'anonymous',
                            get_string('anonymous_edit', 'feedback'),
                            $options);
-
-        $mform->addElement('selectyesno',
-                           'publish_stats',
-                           get_string('show_analysepage_after_submit', 'feedback'));
-
-        $mform->addElement('selectyesno',
-                           'email_notification',
-                           get_string('email_notification', 'feedback'));
-
-        $mform->addHelpButton('email_notification', 'emailnotification', 'feedback');
 
         // check if there is existing responses to this feedback
         if (is_numeric($this->_instance) AND
@@ -130,11 +120,17 @@ class mod_feedback_mod_form extends moodleform_mod {
 
             $mform->addHelpButton('multiple_submit', 'multiplesubmit', 'feedback');
         }
+
+        $mform->addElement('selectyesno', 'email_notification', get_string('email_notification', 'feedback'));
+        $mform->addHelpButton('email_notification', 'emailnotification', 'feedback');
+
         $mform->addElement('selectyesno', 'autonumbering', get_string('autonumbering', 'feedback'));
         $mform->addHelpButton('autonumbering', 'autonumbering', 'feedback');
 
         //-------------------------------------------------------------------------------
         $mform->addElement('header', 'aftersubmithdr', get_string('after_submit', 'feedback'));
+
+        $mform->addElement('selectyesno', 'publish_stats', get_string('show_analysepage_after_submit', 'feedback'));
 
         $mform->addElement('editor',
                            'page_after_submit_editor',
