@@ -152,7 +152,7 @@ if ($fetchremote) {
 $deployer = available_update_deployer::instance();
 if ($deployer->enabled()) {
     $myurl = new moodle_url($PAGE->url, array('updatesonly' => $updatesonly, 'contribonly' => $contribonly));
-    $deployer->initialize($myurl, $myurl);
+    $deployer->initialize($myurl, new moodle_url('/admin'));
 
     $deploydata = $deployer->submitted_data();
     if (!empty($deploydata)) {

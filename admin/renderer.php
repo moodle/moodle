@@ -279,10 +279,10 @@ class core_admin_renderer extends plugin_renderer_base {
             $output .= $this->output->container(get_string('updatepluginconfirmexternal', 'core_plugin', $repotype), 'updatepluginconfirmexternal');
         }
 
-        $widget = $deployer->make_execution_widget($data['updateinfo']);
+        $widget = $deployer->make_execution_widget($data['updateinfo'], $data['returnurl']);
         $output .= $this->output->render($widget);
 
-        $output .= $this->output->single_button($data['returnurl'], get_string('cancel', 'core'), 'get');
+        $output .= $this->output->single_button($data['callerurl'], get_string('cancel', 'core'), 'get');
 
         $output .= $this->container_end();
         $output .= $this->footer();
