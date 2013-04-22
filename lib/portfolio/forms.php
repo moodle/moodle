@@ -321,6 +321,7 @@ class portfolio_instance_select extends moodleform {
         $mform =& $this->_form;
         $mform->addElement('select', 'instance', get_string('selectplugin', 'portfolio'), $options);
         $mform->addElement('hidden', 'id', $this->_customdata['id']);
+        $mform->setType('id', PARAM_INT);
         $this->add_action_buttons(true, get_string('next'));
     }
 }
