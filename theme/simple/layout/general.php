@@ -142,13 +142,13 @@ echo $OUTPUT->doctype() ?>
 <?php if ($layout === 'pre-and-post') { ?>
     <div id="region-bs-main-and-pre" class="span9">
     <div class="row-fluid">
-    <section id="region-bs-main" class="span8 pull-right">
+    <section id="region-main" class="span8 pull-right">
 <?php } else if ($layout === 'side-post-only') { ?>
-    <section id="region-bs-main" class="span9">
+    <section id="region-main" class="span9">
 <?php } else if ($layout === 'side-pre-only') { ?>
-    <section id="region-bs-main" class="span9 pull-right">
+    <section id="region-main" class="span9 pull-right">
 <?php } else if ($layout === 'content-only') { ?>
-    <section id="region-bs-main" class="span12">
+    <section id="region-main" class="span12">
 <?php } ?>
 
 
