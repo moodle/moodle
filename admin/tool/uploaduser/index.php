@@ -900,7 +900,28 @@ if ($formdata = $mform2->is_cancelled()) {
                 }
             }
 
-            if ($manual and $manualcache[$courseid]) {
+            if ($courseid == SITEID) {
+                // Technically frontpage does not have enrolments, but only role assignments,
+                // let's not invent new lang strings here for this rarely used feature.
+
+                if (!empty($user->{'role'.$i})) {
+                    $addrole = $user->{'role'.$i};
+                    if (array_key_exists($addrole, $rolecache)) {
+                        $rid = $rolecache[$addrole]->id;
+                    } else {
+                        $upt->track('enrolments', get_string('unknownrole', 'error', s($addrole)), 'error');
+                        continue;
+                    }
+
+                    role_assign($rid, $user->id, context_course::instance($courseid));
+
+                    $a = new stdClass();
+                    $a->course = $shortname;
+                    $a->role   = $rolecache[$rid]->name;
+                    $upt->track('enrolments', get_string('enrolledincourserole', 'enrol_manual', $a));
+                }
+
+            } else if ($manual and $manualcache[$courseid]) {
 
                 // find role
                 $rid = false;
