@@ -1607,7 +1607,7 @@ class file_storage {
             if (sha1_file($hashfile) === $contenthash) {
                 // Jackpot! We have a sha1 collision.
                 mkdir("$this->filedir/jackpot/", $this->dirpermissions, true);
-                copy($hashfile, "$this->filedir/jackpot/{$contenthash}_1");
+                copy($pathname, "$this->filedir/jackpot/{$contenthash}_1");
                 copy($hashfile, "$this->filedir/jackpot/{$contenthash}_2");
                 throw new file_pool_content_exception($contenthash);
             }
