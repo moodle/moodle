@@ -45,6 +45,7 @@ class mod_quiz_preflight_check_form extends moodleform {
                 continue;
             }
             $mform->addElement('hidden', $name, $value);
+            $mform->setType($name, PARAM_INT);
         }
 
         foreach ($this->_customdata['rules'] as $rule) {
