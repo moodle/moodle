@@ -140,6 +140,7 @@ table.mod_index {width:90%;margin:1em auto;}
 #page-mod-glossary-view .tabtree {margin-bottom: -12px;}
 
 /** Lesson **/
+.path-mod-lesson .contents {overflow-x:auto;}
 .path-mod-lesson .compacttable,
 .path-mod-lesson .standardtable,
 .path-mod-lesson .mform .box.contents {margin:1em auto;width:80%;}
