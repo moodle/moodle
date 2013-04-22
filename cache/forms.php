@@ -139,7 +139,9 @@ class cache_definition_mappings_form extends moodleform {
                 cache_administration_helper::get_definition_store_options($component, $area);
 
         $form->addElement('hidden', 'definition', $definition);
+        $form->setType('definition', PARAM_SAFEPATH);
         $form->addElement('hidden', 'action', 'editdefinitionmapping');
+        $form->setType('action', PARAM_ALPHA);
 
         $requiredoptions = max(3, count($currentstores)+1);
         $requiredoptions = min($requiredoptions, count($storeoptions));
@@ -211,6 +213,7 @@ class cache_mode_mappings_form extends moodleform {
         }
 
         $form->addElement('hidden', 'action', 'editmodemappings');
+        $form->setType('action', PARAM_ALPHA);
         foreach ($options as $mode => $optionset) {
             $form->addElement('select', 'mode_'.$mode, get_string('mode_'.$mode, 'cache'), $optionset);
         }
