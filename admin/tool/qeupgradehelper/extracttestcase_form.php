@@ -51,12 +51,23 @@ class tool_qeupgradehelper_extract_options_form extends moodleform {
 
         $mform->addElement('header', 'h1', 'Either extract a specific question_session');
         $mform->addElement('text', 'attemptid', 'Quiz attempt id', array('size' => '10'));
+        $mform->setType('attemptid', PARAM_INT);
+
         $mform->addElement('text', 'questionid', 'Question id', array('size' => '10'));
+        $mform->setType('questionid', PARAM_INT);
+
         $mform->addElement('header', 'h2', 'Or find and extract an example by type');
         $mform->addElement('select', 'behaviour', 'Behaviour', $behaviour);
+        $mform->setType('behaviour', PARAM_ALPHA);
+
         $mform->addElement('text', 'statehistory', 'State history', array('size' => '10'));
+        $mform->setType('statehistory', PARAM_RAW);
+
         $mform->addElement('select', 'qtype', 'Question type', $qtypes);
+        $mform->setType('qtype', PARAM_PLUGIN);
+
         $mform->addElement('text', 'extratests', 'Extra conditions', array('size' => '50'));
+        $mform->setType('extratests', PARAM_RAW);
         $this->add_action_buttons(false, 'Create test case');
     }
 }

@@ -44,6 +44,7 @@ class tool_assignmentupgrade_batchoperations_form extends moodleform {
         $mform->addElement('header', 'general', get_string('batchoperations', 'tool_assignmentupgrade'));
         // Visible elements.
         $mform->addElement('hidden', 'selectedassignments', '', array('class'=>'selectedassignments'));
+        $mform->setType('selectedassignments', PARAM_SEQUENCE);
 
         $mform->addElement('submit', 'upgradeselected', get_string('upgradeselected', 'tool_assignmentupgrade'));
         $mform->addElement('submit', 'upgradeall', get_string('upgradeall', 'tool_assignmentupgrade'));

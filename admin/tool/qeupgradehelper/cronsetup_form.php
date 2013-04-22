@@ -40,17 +40,21 @@ class tool_qeupgradehelper_cron_setup_form extends moodleform {
 
         $mform->addElement('selectyesno', 'cronenabled',
                 get_string('cronenabled', 'tool_qeupgradehelper'));
+        $mform->setType('cronenabled', PARAM_BOOL);
 
         $mform->addElement('select', 'starthour',
                 get_string('cronstarthour', 'tool_qeupgradehelper'), range(0, 23));
+        $mform->setType('starthour', PARAM_INT);
 
         $mform->addElement('select', 'stophour',
                 get_string('cronstophour', 'tool_qeupgradehelper'),
                 array_combine(range(1, 24), range(1, 24)));
+        $mform->setType('stophour', PARAM_INT);
         $mform->setDefault('stophour', 24);
 
         $mform->addElement('duration', 'procesingtime',
                 get_string('cronprocesingtime', 'tool_qeupgradehelper'));
+        $mform->setType('procesingtime', PARAM_INT);
         $mform->setDefault('procesingtime', 60);
 
         $mform->disabledIf('starthour', 'cronenabled', 'eq', 0);

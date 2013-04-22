@@ -2908,12 +2908,14 @@ final class repository_type_form extends moodleform {
                 $component .= ('_' . $this->plugin);
             }
             $mform->addElement('checkbox', 'enablecourseinstances', get_string('enablecourseinstances', $component));
+            $mform->setType('enablecourseinstances', PARAM_BOOL);
 
             $component = 'repository';
             if ($sm->string_exists('enableuserinstances', 'repository_' . $this->plugin)) {
                 $component .= ('_' . $this->plugin);
             }
             $mform->addElement('checkbox', 'enableuserinstances', get_string('enableuserinstances', $component));
+            $mform->setType('enableuserinstances', PARAM_BOOL);
         }
 
         // set the data if we have some.
