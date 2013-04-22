@@ -49,19 +49,27 @@
 .performanceinfo .cachesused {
     margin-top: 1em;
 }
-.performanceinfo .cachesused .cache-stats-heading {
-    font-weight: bold;
-    text-decoration: underline;
-    font-size: 110%;
-}
-.performanceinfo .cachesused .cache-definition-stats {
-    font-weight: bold;
-    margin-top: 0.3em;
-}
-.performanceinfo .cachesused .cache-store-stats {
-    text-indent: 1em;
-}
+.performanceinfo .cachesused .cache-stats-heading,
 .performanceinfo .cachesused .cache-total-stats {
     font-weight: bold;
+    font-size: 110%;
     margin-top: 0.3em;
+}
+#page-footer .performanceinfo .cachesused .cache-definition-stats {
+    margin: .3em;
+    display: inline-block;
+    vertical-align: top;
+    background-color: @wellBackground;
+}
+.cache-store-stats {
+    padding: 0 1.3em;
+}
+.cache-store-stats.nohits {
+    background-color: @errorBackground;
+}
+.cache-store-stats.lowhits {
+    background-color: @warningBackground;
+}
+.cache-store-stats.hihits {
+    background-color: @successBackground;
 }
