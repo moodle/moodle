@@ -292,7 +292,11 @@
 #page-admin-plugins #plugins-control-panel {margin-left:auto; margin-right:auto;}
 #page-admin-plugins #plugins-control-panel .pluginname .pluginicon {width:16px;}
 #page-admin-plugins #plugins-control-panel .pluginname .componentname {font-size:0.8em;color:#999;margin-left:26px;}
-#page-admin-plugins #plugins-control-panel .missingfromdisk .pluginname {background-color:#ffd3d9;}
+#page-admin-plugins #plugins-control-panel .statusmsg {background-color:#eee;padding:3px;-webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;}
+#page-admin-plugins #plugins-control-panel .status-missing .pluginname {background-color:#ffd3d9;}
+#page-admin-plugins #plugins-control-panel .status-missing .statusmsg {color:#600;}
+#page-admin-plugins #plugins-control-panel .status-new .pluginname {background-color:#e7f1c3;}
+#page-admin-plugins #plugins-control-panel .status-new .statusmsg {color:#060;}
 #page-admin-plugins #plugins-control-panel .disabled .availability {background-color:#eee;}
 #page-admin-plugins #plugins-control-panel .extension .source {background-color:#f3f2aa;}
 #page-admin-plugins #plugins-control-panel .msg td {text-align:center;}

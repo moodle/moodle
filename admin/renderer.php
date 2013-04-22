@@ -1179,9 +1179,12 @@ class core_admin_renderer extends plugin_renderer_base {
                 } else {
                     $icon = $this->output->pix_icon('spacer', '', 'moodle', array('class' => 'icon pluginicon noicon'));
                 }
-                if ($plugin->get_status() === plugin_manager::PLUGIN_STATUS_MISSING) {
-                    $msg = html_writer::tag('span', get_string('status_missing', 'core_plugin'), array('class' => 'notifyproblem'));
-                    $row->attributes['class'] .= ' missingfromdisk';
+                $status = $plugin->get_status();
+                $row->attributes['class'] .= ' status-'.$status;
+                if ($status === plugin_manager::PLUGIN_STATUS_MISSING) {
+                    $msg = html_writer::tag('span', get_string('status_missing', 'core_plugin'), array('class' => 'statusmsg'));
+                } else if ($status === plugin_manager::PLUGIN_STATUS_NEW) {
+                    $msg = html_writer::tag('span', get_string('status_new', 'core_plugin'), array('class' => 'statusmsg'));
                 } else {
                     $msg = '';
                 }

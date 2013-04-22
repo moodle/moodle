@@ -948,6 +948,12 @@ class plugin_manager {
             return false;
         }
 
+        if ($pluginfo->get_status() === plugin_manager::PLUGIN_STATUS_NEW) {
+            // The plugin is not installed. It should be either installed or removed from the disk.
+            // Relying on this temporary state may be tricky.
+            return false;
+        }
+
         if (is_null($pluginfo->get_uninstall_url())) {
             // Backwards compatibility.
             debugging('plugininfo_base subclasses should use is_uninstall_allowed() instead of returning null in get_uninstall_url()',
