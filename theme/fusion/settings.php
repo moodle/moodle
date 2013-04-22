@@ -11,6 +11,7 @@ if ($ADMIN->fulltree) {
     $default = '#2d83d5';
     $previewconfig = NULL;
     $setting = new admin_setting_configcolourpicker($name, $title, $description, $default, $previewconfig);
+    $setting->set_updatedcallback('theme_reset_all_caches');
     $settings->add($setting);
 
     // Tag line setting
@@ -18,6 +19,7 @@ if ($ADMIN->fulltree) {
     $title = get_string('tagline','theme_fusion');
     $description = get_string('taglinedesc', 'theme_fusion');
     $setting = new admin_setting_configtext($name, $title, $description, '');
+    $setting->set_updatedcallback('theme_reset_all_caches');
     $settings->add($setting);
 
     // Foot note setting
@@ -25,6 +27,7 @@ if ($ADMIN->fulltree) {
     $title = get_string('footertext','theme_fusion');
     $description = get_string('footertextdesc', 'theme_fusion');
     $setting = new admin_setting_confightmleditor($name, $title, $description, '');
+    $setting->set_updatedcallback('theme_reset_all_caches');
     $settings->add($setting);
 
     // Custom CSS file
@@ -32,6 +35,7 @@ if ($ADMIN->fulltree) {
     $title = get_string('customcss','theme_fusion');
     $description = get_string('customcssdesc', 'theme_fusion');
     $setting = new admin_setting_configtextarea($name, $title, $description, '');
+    $setting->set_updatedcallback('theme_reset_all_caches');
     $settings->add($setting);
 
 }

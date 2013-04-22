@@ -12,6 +12,7 @@ if ($ADMIN->fulltree) {
     $title = get_string('logo','theme_arialist');
     $description = get_string('logodesc', 'theme_arialist');
     $setting = new admin_setting_configtext($name, $title, $description, '', PARAM_URL);
+    $setting->set_updatedcallback('theme_reset_all_caches');
     $settings->add($setting);
 
     // Tagline setting
@@ -19,6 +20,7 @@ if ($ADMIN->fulltree) {
     $title = get_string('tagline','theme_arialist');
     $description = get_string('taglinedesc', 'theme_arialist');
     $setting = new admin_setting_configtext($name, $title, $description, '');
+    $setting->set_updatedcallback('theme_reset_all_caches');
     $settings->add($setting);
 
     // Link colour setting
@@ -28,6 +30,7 @@ if ($ADMIN->fulltree) {
     $default = '#f25f0f';
     $previewconfig = array('selector'=>'.block .content', 'style'=>'linkcolor');
     $setting = new admin_setting_configcolourpicker($name, $title, $description, $default, $previewconfig);
+    $setting->set_updatedcallback('theme_reset_all_caches');
     $settings->add($setting);
 
     // Block region width
@@ -37,6 +40,7 @@ if ($ADMIN->fulltree) {
     $default = 250;
     $choices = array(180=>'180px', 190=>'190px', 200=>'200px', 210=>'210px', 220=>'220px', 240=>'240px', 250=>'250px');
     $setting = new admin_setting_configselect($name, $title, $description, $default, $choices);
+    $setting->set_updatedcallback('theme_reset_all_caches');
     $settings->add($setting);
 
     // Custom CSS file
@@ -44,5 +48,6 @@ if ($ADMIN->fulltree) {
     $title = get_string('customcss','theme_arialist');
     $description = get_string('customcssdesc', 'theme_arialist');
     $setting = new admin_setting_configtextarea($name, $title, $description, '');
+    $setting->set_updatedcallback('theme_reset_all_caches');
     $settings->add($setting);
 }
