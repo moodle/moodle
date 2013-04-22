@@ -533,6 +533,7 @@ class comment {
             $c->time = userdate($c->timecreated, $c->strftimeformat);
             $c->content = format_text($c->content, $c->format, $formatoptions);
             $c->avatar = $OUTPUT->user_picture($u, array('size'=>18));
+            $c->userid = $u->id;
 
             $candelete = $this->can_delete($c->id);
             if (($USER->id == $u->id) || !empty($candelete)) {
