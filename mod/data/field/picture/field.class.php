@@ -75,7 +75,6 @@ class data_field_picture extends data_field_base {
         $str .= '</noscript>';
 
         $options = new stdClass();
-        $options->areamaxbytes = $this->field->param3;
         $options->maxbytes  = $this->field->param3;
         $options->maxfiles  = 1; // Only one picture permitted.
         $options->itemid    = $itemid;
