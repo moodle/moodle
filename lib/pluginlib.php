@@ -3924,12 +3924,7 @@ class plugininfo_webservice extends plugininfo_base {
     }
 
     public function is_uninstall_allowed() {
-        return true;
-    }
-
-    public function get_uninstall_url() {
-        return new moodle_url('/admin/webservice/protocols.php',
-                array('sesskey' => sesskey(), 'action' => 'uninstall', 'webservice' => $this->name));
+        return false;
     }
 }
 

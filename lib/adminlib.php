@@ -7791,7 +7791,6 @@ class admin_setting_managewebserviceprotocols extends admin_setting {
         $strenable = get_string('enable');
         $strdisable = get_string('disable');
         $strversion = get_string('version');
-        $struninstall = get_string('uninstallplugin', 'admin');
 
         $protocols_available = get_plugin_list('webservice');
         $active_protocols = empty($CFG->webserviceprotocols) ? array() : explode(',', $CFG->webserviceprotocols);
@@ -7807,7 +7806,7 @@ class admin_setting_managewebserviceprotocols extends admin_setting {
         $return .= $OUTPUT->box_start('generalbox webservicesui');
 
         $table = new html_table();
-        $table->head  = array($strprotocol, $strversion, $strenable, $struninstall, $strsettings);
+        $table->head  = array($strprotocol, $strversion, $strenable, $strsettings);
         $table->colclasses = array('leftalign', 'centeralign', 'centeralign', 'centeralign', 'centeralign');
         $table->id = 'webserviceprotocols';
         $table->attributes['class'] = 'admintable generaltable';
@@ -7835,9 +7834,6 @@ class admin_setting_managewebserviceprotocols extends admin_setting {
                 $displayname = "<span class=\"dimmed_text\">$name</span>";
             }
 
-            // delete link
-            $uninstall = "<a href=\"$url&amp;action=uninstall&amp;webservice=$protocol\">$struninstall</a>";
-
             // settings link
             if (file_exists($CFG->dirroot.'/webservice/'.$protocol.'/settings.php')) {
                 $settings = "<a href=\"settings.php?section=webservicesetting$protocol\">$strsettings</a>";
@@ -7846,7 +7842,7 @@ class admin_setting_managewebserviceprotocols extends admin_setting {
             }
 
             // add a row to the table
-            $table->data[] = array($displayname, $version, $hideshow, $uninstall, $settings);
+            $table->data[] = array($displayname, $version, $hideshow, $settings);
         }
         $return .= html_writer::table($table);
         $return .= get_string('configwebserviceplugins', 'webservice');
