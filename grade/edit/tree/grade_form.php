@@ -58,6 +58,7 @@ class edit_grade_form extends moodleform {
         if ($grade_item->gradetype == GRADE_TYPE_VALUE) {
             // numeric grade
             $mform->addElement('text', 'finalgrade', get_string('finalgrade', 'grades'));
+            $mform->setType('finalgrade', PARAM_RAW);
             $mform->addHelpButton('finalgrade', 'finalgrade', 'grades');
             $mform->disabledIf('finalgrade', 'overridden', 'notchecked');
 
