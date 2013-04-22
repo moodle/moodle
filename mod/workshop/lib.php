@@ -77,7 +77,7 @@ function workshop_add_instance(stdclass $workshop) {
     $workshop->timecreated           = time();
     $workshop->timemodified          = $workshop->timecreated;
     $workshop->useexamples           = (int)!empty($workshop->useexamples);
-    $workshop->usepeerassessment     = (int)!empty($workshop->usepeerassessment);
+    $workshop->usepeerassessment     = 1;
     $workshop->useselfassessment     = (int)!empty($workshop->useselfassessment);
     $workshop->latesubmissions       = (int)!empty($workshop->latesubmissions);
     $workshop->phaseswitchassessment = (int)!empty($workshop->phaseswitchassessment);
@@ -138,7 +138,7 @@ function workshop_update_instance(stdclass $workshop) {
     $workshop->timemodified          = time();
     $workshop->id                    = $workshop->instance;
     $workshop->useexamples           = (int)!empty($workshop->useexamples);
-    $workshop->usepeerassessment     = (int)!empty($workshop->usepeerassessment);
+    $workshop->usepeerassessment     = 1;
     $workshop->useselfassessment     = (int)!empty($workshop->useselfassessment);
     $workshop->latesubmissions       = (int)!empty($workshop->latesubmissions);
     $workshop->phaseswitchassessment = (int)!empty($workshop->phaseswitchassessment);
