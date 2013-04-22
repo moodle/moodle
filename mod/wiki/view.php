@@ -285,15 +285,6 @@ if (($edit != - 1) and $PAGE->user_allowed_editing()) {
 
 $wikipage = new page_wiki_view($wiki, $subwiki, $cm);
 
-/*The following piece of code is used in order
- * to perform set_url correctly. It is necessary in order
- * to make page_wiki_view class know that this page
- * has been called via its id.
- */
-if ($id) {
-    $wikipage->set_coursemodule($id);
-}
-
 $wikipage->set_gid($currentgroup);
 $wikipage->set_page($page);
 

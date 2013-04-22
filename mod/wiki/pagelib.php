@@ -86,6 +86,10 @@ abstract class page_wiki {
      * @var object wiki renderer
      */
     protected $wikioutput;
+    /**
+     * @var stdClass course module.
+     */
+    protected $cm;
 
     /**
      * page_wiki constructor
@@ -97,7 +101,8 @@ abstract class page_wiki {
     function __construct($wiki, $subwiki, $cm) {
         global $PAGE, $CFG;
         $this->subwiki = $subwiki;
-        $this->modcontext = context_module::instance($PAGE->cm->id);
+        $this->cm = $cm;
+        $this->modcontext = context_module::instance($this->cm->id);
 
         // initialise wiki renderer
         $this->wikioutput = $PAGE->get_renderer('mod_wiki');
@@ -155,7 +160,7 @@ abstract class page_wiki {
      */
     protected function setup_tabs($options = array()) {
         global $CFG, $PAGE;
-        $groupmode = groups_get_activity_groupmode($PAGE->cm);
+        $groupmode = groups_get_activity_groupmode($this->cm);
 
         if (empty($CFG->usecomments) || !has_capability('mod/wiki:viewcomment', $PAGE->context)){
             unset($this->tabs['comments']);
@@ -166,8 +171,8 @@ abstract class page_wiki {
         }
 
         if ($groupmode and $groupmode == VISIBLEGROUPS) {
-            $currentgroup = groups_get_activity_group($PAGE->cm);
-            $manage = has_capability('mod/wiki:managewiki', $PAGE->cm->context);
+            $currentgroup = groups_get_activity_group($this->cm);
+            $manage = has_capability('mod/wiki:managewiki', $this->modcontext);
             $edit = has_capability('mod/wiki:editpage', $PAGE->context);
             if (!$manage and !($edit and groups_is_member($currentgroup))) {
                 unset($this->tabs['edit']);
@@ -283,10 +288,6 @@ abstract class page_wiki {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class page_wiki_view extends page_wiki {
-    /**
-     * @var int the coursemodule id
-     */
-    private $coursemodule;
 
     function print_header() {
         global $PAGE;
@@ -329,12 +330,12 @@ class page_wiki_view extends page_wiki {
         global $PAGE, $CFG;
         $params = array();
 
-        if (isset($this->coursemodule)) {
-            $params['id'] = $this->coursemodule;
+        if (isset($this->cm->id)) {
+            $params['id'] = $this->cm->id;
         } else if (!empty($this->page) and $this->page != null) {
             $params['pageid'] = $this->page->id;
         } else if (!empty($this->gid)) {
-            $params['wid'] = $PAGE->cm->instance;
+            $params['wid'] = $this->cm->instance;
             $params['group'] = $this->gid;
         } else if (!empty($this->title)) {
             $params['swid'] = $this->subwiki->id;
@@ -342,12 +343,7 @@ class page_wiki_view extends page_wiki {
         } else {
             print_error(get_string('invalidparameters', 'wiki'));
         }
-
         $PAGE->set_url(new moodle_url($CFG->wwwroot . '/mod/wiki/view.php', $params));
-    }
-
-    function set_coursemodule($id) {
-        $this->coursemodule = $id;
     }
 
     protected function create_navbar() {
@@ -1269,7 +1265,7 @@ class page_wiki_history extends page_wiki {
                 $time = userdate($row->timecreated, get_string('strftimetime', 'langconfig'));
                 $versionid = wiki_get_version($row->id);
                 $versionlink = new moodle_url('/mod/wiki/viewversion.php', array('pageid' => $pageid, 'versionid' => $versionid->id));
-                $userlink = new moodle_url('/user/view.php', array('id' => $username->id, 'course' => $PAGE->cm->course));
+                $userlink = new moodle_url('/user/view.php', array('id' => $username->id, 'course' => $this->cm->course));
                 $contents[] = array('', html_writer::link($versionlink->out(false), $row->version), $picture . html_writer::link($userlink->out(false), fullname($username)), $time, $OUTPUT->container($date, 'wiki_histdate'));
 
                 $table = new html_table();
@@ -1297,7 +1293,7 @@ class page_wiki_history extends page_wiki {
                     } else {
                         $viewlink = $version->version;
                     }
-                    $userlink = new moodle_url('/user/view.php', array('id' => $version->userid, 'course' => $PAGE->cm->course));
+                    $userlink = new moodle_url('/user/view.php', array('id' => $version->userid, 'course' => $this->cm->course));
                     $contents[] = array($this->choose_from_radio(array($version->version  => null), 'compare', 'M.mod_wiki.history()', $checked - 1, true) . $this->choose_from_radio(array($version->version  => null), 'comparewith', 'M.mod_wiki.history()', $checked, true), $viewlink, $picture . html_writer::link($userlink->out(false), fullname($user)), $time, $OUTPUT->container($date, 'wiki_histdate'));
                 }
 
@@ -1981,7 +1977,7 @@ class page_wiki_save extends page_wiki_edit {
     function print_content() {
         global $PAGE;
 
-        $context = context_module::instance($PAGE->cm->id);
+        $context = context_module::instance($this->cm->id);
         require_capability('mod/wiki:editpage', $context, NULL, true, 'noeditpermission', 'wiki');
 
         $this->print_save();
@@ -2581,7 +2577,7 @@ class page_wiki_admin extends page_wiki {
                 $time = userdate($row->timecreated, get_string('strftimetime', 'langconfig'));
                 $versionid = wiki_get_version($row->id);
                 $versionlink = new moodle_url('/mod/wiki/viewversion.php', array('pageid' => $pageid, 'versionid' => $versionid->id));
-                $userlink = new moodle_url('/user/view.php', array('id' => $username->id, 'course' => $PAGE->cm->course));
+                $userlink = new moodle_url('/user/view.php', array('id' => $username->id, 'course' => $this->cm->course));
                 $picturelink = $picture . html_writer::link($userlink->out(false), fullname($username));
                 $historydate = $OUTPUT->container($date, 'wiki_histdate');
                 $contents[] = array('', html_writer::link($versionlink->out(false), $row->version), $picturelink, $time, $historydate);
@@ -2618,7 +2614,7 @@ class page_wiki_admin extends page_wiki {
                         $viewlink = $version->version;
                     }
 
-                    $userlink = new moodle_url('/user/view.php', array('id' => $version->userid, 'course' => $PAGE->cm->course));
+                    $userlink = new moodle_url('/user/view.php', array('id' => $version->userid, 'course' => $this->cm->course));
                     $picturelink = $picture . html_writer::link($userlink->out(false), fullname($user));
                     $historydate = $OUTPUT->container($date, 'wiki_histdate');
                     $radiofromelement = $this->choose_from_radio(array($version->version  => null), 'fromversion', 'M.mod_wiki.deleteversion()', $versioncount, true);
