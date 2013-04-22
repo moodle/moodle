@@ -236,7 +236,7 @@ if (empty($reportsbyname) && empty($rulesbyname)) {
     // Add settings pages for the quiz access rule subplugins.
     foreach ($rulesbyname as $strrulename => $rule) {
         $settings = new admin_settingpage('modsettingsquizcat' . $rule,
-                $strrulename, 'moodle/site:config', $module->is_enabled() === false);
+                $strrulename, 'moodle/site:config', !$module->visible);
         if ($ADMIN->fulltree) {
             include($CFG->dirroot . "/mod/quiz/accessrule/$rule/settings.php");
         }
