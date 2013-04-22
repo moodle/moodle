@@ -37,10 +37,20 @@ foreach ($reports as $report => $reportdir) {
     $strreportname = get_string($report . 'report', 'quiz_'.$report);
     $reportsbyname[$strreportname] = $report;
 }
-ksort($reportsbyname);
+collatorlib::ksort($reportsbyname);
+
+// First get a list of quiz reports with there own settings pages. If there none,
+// we use a simpler overall menu structure.
+$rules = get_plugin_list_with_file('quizaccess', 'settings.php', false);
+$rulesbyname = array();
+foreach ($rules as $rule => $ruledir) {
+    $strrulename = get_string('pluginname', 'quizaccess_' . $rule);
+    $rulesbyname[$strrulename] = $rule;
+}
+collatorlib::ksort($rulesbyname);
 
 // Create the quiz settings page.
-if (empty($reportsbyname)) {
+if (empty($reportsbyname) && empty($rulesbyname)) {
     $pagetitle = get_string('modulename', 'quiz');
 } else {
     $pagetitle = get_string('generalsettings', 'admin');
@@ -202,14 +212,14 @@ if (!empty($CFG->enableoutcomes)) {
 
 // Now, depending on whether any reports have their own settings page, add
 // the quiz setting page to the appropriate place in the tree.
-if (empty($reportsbyname)) {
+if (empty($reportsbyname) && empty($rulesbyname)) {
     $ADMIN->add('modsettings', $quizsettings);
 } else {
     $ADMIN->add('modsettings', new admin_category('modsettingsquizcat',
             get_string('modulename', 'quiz'), $module->is_enabled() === false));
     $ADMIN->add('modsettingsquizcat', $quizsettings);
 
-    // Add the report pages for the settings.php files in sub directories of mod/quiz/report.
+    // Add settings pages for the quiz report subplugins.
     foreach ($reportsbyname as $strreportname => $report) {
         $reportname = $report;
 
@@ -218,7 +228,21 @@ if (empty($reportsbyname)) {
         if ($ADMIN->fulltree) {
             include($CFG->dirroot . "/mod/quiz/report/$reportname/settings.php");
         }
-        $ADMIN->add('modsettingsquizcat', $settings);
+        if (!empty($settings)) {
+            $ADMIN->add('modsettingsquizcat', $settings);
+        }
+    }
+
+    // Add settings pages for the quiz access rule subplugins.
+    foreach ($rulesbyname as $strrulename => $rule) {
+        $settings = new admin_settingpage('modsettingsquizcat' . $rule,
+                $strrulename, 'moodle/site:config', $module->is_enabled() === false);
+        if ($ADMIN->fulltree) {
+            include($CFG->dirroot . "/mod/quiz/accessrule/$rule/settings.php");
+        }
+        if (!empty($settings)) {
+            $ADMIN->add('modsettingsquizcat', $settings);
+        }
     }
 }
 
