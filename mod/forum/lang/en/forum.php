@@ -42,6 +42,7 @@ $string['attachment'] = 'Attachment';
 $string['attachment_help'] = 'You can optionally attach one or more files to a forum post. If you attach an image, it will be displayed after the message.';
 $string['attachmentnopost'] = 'You cannot export attachments without a post id';
 $string['attachments'] = 'Attachments';
+$string['attachmentswordcount'] = 'Attachments and word count';
 $string['blockafter'] = 'Post threshold for blocking';
 $string['blockafter_help'] = 'This setting specifies the maximum number of posts which a user can post in the given time period. Users with the capability mod/forum:postwithoutthrottling are exempt from post limits.';
 $string['blockperiod'] = 'Time period for blocking';
@@ -387,6 +388,7 @@ $string['subscribestart'] = 'Send me email copies of posts to this forum';
 $string['subscribestop'] = 'I don\'t want email copies of posts to this forum';
 $string['subscription'] = 'Subscription';
 $string['subscription_help'] = 'If you are subscribed to a forum it means you will receive email copies of forum posts. Usually you can choose whether you wish to be subscribed, though sometimes subscription is forced so that everyone receives email copies of forum posts.';
+$string['subscriptionandtracking'] = 'Subscription and tracking';
 $string['subscriptionmode'] = 'Subscription mode';
 $string['subscriptionmode_help'] = 'When a participant is subscribed to a forum it means they will receive email copies of forum posts.
 
