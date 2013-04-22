@@ -34,6 +34,7 @@ $string['admindirname'] = 'Каталог администратора';
 $string['availablelangs'] = 'Доступные языковые пакеты';
 $string['chooselanguagehead'] = 'Выберите язык';
 $string['chooselanguagesub'] = 'Сейчас необходимо выбрать язык ТОЛЬКО для сообщений во время установки. Язык сайта и пользовательских интерфейсов можно будет указать далее в процессе установки.';
+$string['clialreadyconfigured'] = 'Файл config.php уже существует. Если Вы хотите установить этот сайт, используйте admin/cli/install_database.php.';
 $string['clialreadyinstalled'] = 'Файл config.php уже существует. Если вы хотите обновить сайт, пожалуйста, используйте скрипт admin/cli/upgrade.php.';
 $string['cliinstallheader'] = 'Программа установки Moodle {$a} в режиме командной строки';
 $string['databasehost'] = 'Сервер баз данных';
