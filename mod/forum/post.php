@@ -507,7 +507,14 @@ if (!isset($forum->maxattachments)) {  // TODO - delete this once we add a field
 
 require_once('post_form.php');
 
-$mform_post = new mod_forum_post_form('post.php', array('course'=>$course, 'cm'=>$cm, 'coursecontext'=>$coursecontext, 'modcontext'=>$modcontext, 'forum'=>$forum, 'post'=>$post), 'post', '', array('id' => 'mformforum'));
+$thresholdwarning = forum_check_throttling($forum, $cm);
+$mform_post = new mod_forum_post_form('post.php', array('course' => $course,
+                                                        'cm' => $cm,
+                                                        'coursecontext' => $coursecontext,
+                                                        'modcontext' => $modcontext,
+                                                        'forum' => $forum,
+                                                        'post' => $post,
+                                                        'thresholdwarning' => $thresholdwarning), 'post', '', array('id' => 'mformforum'));
 
 $draftitemid = file_get_submitted_draft_itemid('attachments');
 file_prepare_draft_area($draftitemid, $modcontext->id, 'mod_forum', 'attachment', empty($post->id)?null:$post->id, mod_forum_post_form::attachment_options($forum));
@@ -864,10 +871,15 @@ if ($forum->type == 'qanda'
     echo $OUTPUT->notification(get_string('qandanotify','forum'));
 }
 
-forum_check_throttling($forum, $cm);
+if (!empty($thresholdwarning)) {
+    if (!$thresholdwarning->canpost) {
+        print_error($thresholdwarning->errorcode, $thresholdwarning->module, $thresholdwarning->link,
+            $thresholdwarning->additional);
+    }
+}
 
 if (!empty($parent)) {
-    if (! $discussion = $DB->get_record('forum_discussions', array('id' => $parent->discussion))) {
+    if (!$discussion = $DB->get_record('forum_discussions', array('id' => $parent->discussion))) {
         print_error('notpartofdiscussion', 'forum');
     }
 

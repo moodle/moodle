@@ -1,8 +1,14 @@
 This files describes API changes in /mod/forum/*,
 information provided here is intended especially for developers.
 
+=== 2.5 ===
+
+The function forum_check_throttling has been changed so that a warning object is returned when a user has reached the 'Post threshold for warning' or
+'Post threshold for blocking' setting, rather than echoing this on screen. This allows the warning to be moved inside the post form as it can be added
+as a HTML element, where it is more noticeable. False is returned if there is no need to warn, or restrict the user from posting - see MDL-39182.
 
 === 2.3.5, 2.4.2 ===
+
 * mod/forum:allowforcesubscribe capability will be forcefully assigned to frontpage role, as it was mistakenly missed off
 when the capability was initially created. If you don't want users with frontpage role to get forum (with forcesubscribe) emails,
 then please remove this capability for frontpage role.
