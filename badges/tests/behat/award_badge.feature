@@ -1,4 +1,4 @@
-@award_badges
+@award_badges @_only_local
 Feature: Award badges
   In order to award badges to users for their achievements
   As an admin
