@@ -44,6 +44,18 @@ class qbehaviour_adaptivenopenalty_walkthrough_test extends qbehaviour_walkthrou
         return new question_no_pattern_expectation('/class="gradingdetails"/');
     }
 
+    protected function get_does_not_contain_penalty_info_expectation() {
+        $penaltyinfo = get_string('gradingdetailspenalty', 'qbehaviour_adaptive', 'XXXXX');
+        $penaltypattern = '/'.str_replace('XXXXX', '\\w*', preg_quote($penaltyinfo, '/')).'/';
+        return new question_no_pattern_expectation($penaltypattern);
+    }
+
+    protected function get_does_not_contain_total_penalty_expectation() {
+        $penaltyinfo = get_string('gradingdetailspenaltytotal', 'qbehaviour_adaptive', 'XXXXX');
+        $penaltypattern = '/'.str_replace('XXXXX', '\\w*', preg_quote($penaltyinfo, '/')).'/';
+        return new question_no_pattern_expectation($penaltypattern);
+    }
+
     public function test_multichoice() {
 
         // Create a multiple choice, single response question.
@@ -77,7 +89,9 @@ class qbehaviour_adaptivenopenalty_walkthrough_test extends qbehaviour_walkthrou
                 $this->get_contains_mc_radio_expectation($wrongindex, true, true),
                 $this->get_contains_mc_radio_expectation(($wrongindex + 1) % 3, true, false),
                 $this->get_contains_mc_radio_expectation(($wrongindex + 2) % 3, true, false),
-                $this->get_contains_incorrect_expectation());
+                $this->get_contains_incorrect_expectation(),
+                $this->get_does_not_contain_penalty_info_expectation(),
+                $this->get_does_not_contain_total_penalty_expectation());
         $this->assertRegExp('/B|C/',
                 $this->quba->get_response_summary($this->slot));
 
@@ -106,7 +120,9 @@ class qbehaviour_adaptivenopenalty_walkthrough_test extends qbehaviour_walkthrou
                 $this->get_contains_mc_radio_expectation($rightindex, true, true),
                 $this->get_contains_mc_radio_expectation(($rightindex + 1) % 3, true, false),
                 $this->get_contains_mc_radio_expectation(($rightindex + 2) % 3, true, false),
-                $this->get_contains_correct_expectation());
+                $this->get_contains_correct_expectation(),
+                $this->get_does_not_contain_penalty_info_expectation(),
+                $this->get_does_not_contain_total_penalty_expectation());
         $this->assertEquals('A',
                 $this->quba->get_response_summary($this->slot));
 
@@ -176,7 +192,9 @@ class qbehaviour_adaptivenopenalty_walkthrough_test extends qbehaviour_walkthrou
         $this->check_current_output(
                 $this->get_contains_mark_summary(2),
                 $this->get_contains_submit_button_expectation(true),
-                $this->get_contains_correct_expectation());
+                $this->get_contains_correct_expectation(),
+                $this->get_does_not_contain_penalty_info_expectation(),
+                $this->get_does_not_contain_total_penalty_expectation());
 
         // Save the same correct answer again. Should no do anything.
         $numsteps = $this->get_step_count();
@@ -237,6 +255,8 @@ class qbehaviour_adaptivenopenalty_walkthrough_test extends qbehaviour_walkthrou
                 $this->get_contains_mark_summary(0),
                 $this->get_contains_submit_button_expectation(true),
                 $this->get_contains_incorrect_expectation(),
+                $this->get_does_not_contain_penalty_info_expectation(),
+                $this->get_does_not_contain_total_penalty_expectation(),
                 $this->get_does_not_contain_validation_error_expectation());
 
         // Submit another non-numerical answer.
