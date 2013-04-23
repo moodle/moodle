@@ -1,4 +1,4 @@
-@tool_behat @core_form
+@tool @tool_behat
 Feature: Forms manipulation
   In order to interact with Moodle
   As a user

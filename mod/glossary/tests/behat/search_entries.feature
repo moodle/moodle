@@ -1,4 +1,4 @@
-@mod_glossary @mod
+@mod @mod_glossary
 Feature: Glossary entries can be searched or browsed by alphabet, category, date or author
   In order to find entries in a glossary
   As a moodle user

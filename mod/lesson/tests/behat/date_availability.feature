@@ -1,4 +1,4 @@
-@mod_lesson @mod
+@mod @mod_lesson
 Feature: A teacher can set available from and deadline dates to access a lesson
   In order to schedule lesson activities
   As a moodle teacher

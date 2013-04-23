@@ -1,4 +1,4 @@
-@backup
+@core @core_backup
 Feature: Backup Moodle courses
   In order to save and store course contents
   As a moodle admin

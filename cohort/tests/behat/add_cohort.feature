@@ -1,4 +1,4 @@
-@admin @cohorts
+@core @core_cohort
 Feature: Add cohorts of users
   In order to create site-wide groups
   As a moodle admin

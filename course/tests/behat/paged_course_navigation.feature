@@ -1,4 +1,4 @@
-@core_course
+@core @core_course
 Feature: Course paged mode
   In order to split the course in parts
   As a moodle teacher

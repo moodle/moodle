@@ -1,4 +1,4 @@
-@tool_behat
+@tool @tool_behat
 Feature: Transform steps arguments
   In order to write tests with complex nasty arguments
   As a tests writer

@@ -1,4 +1,4 @@
-@core_completion
+@core @core_completion
 Feature: Allow students to manually mark an activity as complete
   In order to let students decide when an activity is completed
   As a moodle teacher

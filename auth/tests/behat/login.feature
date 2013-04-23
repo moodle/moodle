@@ -1,4 +1,4 @@
-@auth
+@core @core_auth
 Feature: Authentication
   In order to validate my credentials in the system
   As a moodle user

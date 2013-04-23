@@ -1,4 +1,4 @@
-@core_form @filepicker
+@core @core_filepicker
 Feature: Zip folders and unzip compressed files
   In order to download or add contents to file areas easily
   As a moodle user

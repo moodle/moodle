@@ -1,4 +1,4 @@
-@mod_wiki @mod
+@mod @mod_wiki
 Feature: A teacher can set a wiki to be collaborative or individual
   In order to allow both collaborative wikis and individual journals with history register
   As a teacher

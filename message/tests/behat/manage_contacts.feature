@@ -1,4 +1,4 @@
-@core_message
+@core @core_message
 Feature: Manage contacts
   In order to easily access the users I interact more with
   As a moodle user

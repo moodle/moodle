@@ -1,4 +1,4 @@
-@core_course
+@core @core_course
 Feature: Add activities to courses
   In order to provide tools for students learning
   As a teacher

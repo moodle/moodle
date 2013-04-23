@@ -1,4 +1,4 @@
-@mod_forum
+@mod @mod_forum
 Feature: Set a certain number of discussions as a completion condition for a forum
   In order to ensure students are participating on forums
   As a moodle teacher

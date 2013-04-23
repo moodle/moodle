@@ -1,4 +1,4 @@
-@mod_assign
+@mod @mod_assign
 Feature: Group assignment submissions
   In order to allow students to work collaboratively on an assignment
   As a moodle teacher

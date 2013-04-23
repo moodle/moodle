@@ -1,4 +1,4 @@
-@tool_behat
+@tool @tool_behat
 Feature: Edit capabilities
   In order to extend and restrict moodle features
   As an admin or teacher

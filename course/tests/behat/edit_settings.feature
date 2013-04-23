@@ -1,4 +1,4 @@
-@core_course
+@core @core_course
 Feature: Edit course settings
   In order to set the course according to my teaching needs
   As a moodle teacher

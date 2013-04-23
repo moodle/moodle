@@ -1,4 +1,4 @@
-@core_group
+@core @core_group
 Feature: Automatic creation of groups
   In order to quickly create groups
   As a teacher

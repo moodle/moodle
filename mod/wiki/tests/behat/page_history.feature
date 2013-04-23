@@ -1,4 +1,4 @@
-@mod_wiki @mod
+@mod @mod_wiki
 Feature: A history of each wiki page is available
   In order to know how a wiki page evolved over the time and how changed what
   As a moodle user

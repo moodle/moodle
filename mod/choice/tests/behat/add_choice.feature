@@ -1,4 +1,4 @@
-@mod_choice
+@mod @mod_choice
 Feature: Add choice activity
   In order to ask questions as a choice of multiple responses
   As a moodle teacher

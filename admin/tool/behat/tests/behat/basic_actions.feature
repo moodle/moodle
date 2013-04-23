@@ -1,4 +1,4 @@
-@tool_behat
+@tool @tool_behat
 Feature: Page contents assertions
   In order to write good tests
   As a tests writer

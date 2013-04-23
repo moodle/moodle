@@ -1,4 +1,4 @@
-@mod_forum
+@mod @mod_forum
 Feature: Single simple forum discussion type
   In order to restrict the discussion topic to one
   As a moodle teacher

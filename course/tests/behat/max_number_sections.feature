@@ -1,4 +1,4 @@
-@core_course @admin
+@core @core_course
 Feature: The maximum number of weeks/topics in a course can be configured
   In order to set boundaries to courses size
   As a moodle manager

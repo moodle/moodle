@@ -1,4 +1,4 @@
-@core_question
+@core @core_question
 Feature: A teacher can preview questions in the question bank
   In order to ensure the questions are properly created
   As a teacher

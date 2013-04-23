@@ -1,4 +1,4 @@
-@mod_survey
+@mod @mod_survey
 Feature: A teacher can set three types of survey activity
   In order to use verified survey instruments
   As a moodle teacher

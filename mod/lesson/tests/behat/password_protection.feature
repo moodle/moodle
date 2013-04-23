@@ -1,4 +1,4 @@
-@mod_lesson @mod
+@mod @mod_lesson
 Feature: A teacher can password protect a lesson
   In order to avoid undesired accesses to lesson activities
   As a moodle teacher

@@ -1,4 +1,4 @@
-@blocks
+@core @core_block
 Feature: Add blocks
   In order to add more functionality to pages
   As a teacher

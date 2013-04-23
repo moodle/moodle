@@ -1,4 +1,4 @@
-@mod_wiki @mod
+@mod @mod_wiki
 Feature: There is a choice of formats for editing a wiki page
   In order to allow users to use their favorite wiki format
   As a moodle user

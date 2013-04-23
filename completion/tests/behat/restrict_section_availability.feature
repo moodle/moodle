@@ -1,4 +1,4 @@
-@core_completion
+@core @core_completion
 Feature: Restrict sections availability through completion conditions
   In order to control section's contents access through activities completion
   As a moodle teacher

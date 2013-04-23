@@ -1,4 +1,4 @@
-@core_course @admin
+@core @core_course
 Feature: Restrict activities availability
   In order to prevent the use of some activities
   As a moodle admin

@@ -1,4 +1,4 @@
-@core_question
+@core @core_question
 Feature: A teacher can edit questions in the question bank
   In order to refine questions contents
   As a teacher

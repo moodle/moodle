@@ -1,4 +1,4 @@
-@mod_forum
+@mod @mod_forum
 Feature: Add forum activities and discussions
   In order to discuss topics with other users
   As a moodle teacher

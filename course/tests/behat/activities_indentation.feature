@@ -1,4 +1,4 @@
-@core_course @_cross_browser
+@core @core_course @_cross_browser
 Feature: Indent items on the course page
   In order to create a structured view of activities
   As a moodle teacher

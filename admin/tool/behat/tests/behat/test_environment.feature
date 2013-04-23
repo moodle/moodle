@@ -1,4 +1,4 @@
-@tool_behat
+@tool @tool_behat
 Feature: Set up the testing environment
   In order to execute automated acceptance tests
   As a moodle developer

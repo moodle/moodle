@@ -1,4 +1,4 @@
-@enrol_self
+@enrol @enrol_self
 Feature: Users can auto-enrol themself in courses where self enrolment is allowed
   In order to participate in courses
   As a moodle user
