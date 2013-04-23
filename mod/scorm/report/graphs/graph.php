@@ -46,26 +46,16 @@ $currentgroup = groups_get_activity_group($cm, true);
 
 // Group Check
 if (empty($currentgroup)) {
-    // all users who can attempt scoes
-    if (!$students = get_users_by_capability($contextmodule, 'mod/scorm:savetrack', '', '', '', '', '', '', false)) {
-        $nostudents = true;
-        $allowedlist = '';
-    } else {
-        $allowedlist = array_keys($students);
-    }
+    // All users who can attempt scoes.
+    $students = get_users_by_capability($contextmodule, 'mod/scorm:savetrack', 'u.id' , '', '', '', '', '', false);
+    $allowedlist = empty($students) ? array() : array_keys($students);
 } else {
-    // all users who can attempt scoes and who are in the currently selected group
-    if (!$groupstudents = get_users_by_capability($contextmodule, 'mod/scorm:savetrack', '', '', '', '', $currentgroup, '', false)) {
-        $nostudents = true;
-        $groupstudents = array();
-    }
-    $allowedlist = array_keys($groupstudents);
+    // All users who can attempt scoes and who are in the currently selected group.
+    $groupstudents = get_users_by_capability($contextmodule, 'mod/scorm:savetrack', 'u.id', '', '', '', $currentgroup, '', false);
+    $allowedlist = empty($groupstudents) ? array() : array_keys($groupstudents);
 }
 
 $params = array();
-list($usql, $params) = $DB->get_in_or_equal($allowedlist);
-$params[] = $scoid;
-
 $bands = 11;
 $bandwidth = 10;
 
@@ -76,10 +66,11 @@ for ($i = 0; $i < $bands; $i++) {
     $graphdata[$i] = 0;
 }
 
-
-// Do this only if we have students to report
-if(!$nostudents) {
-    // Construct the SQL
+// Do this only if we have students to report.
+if (!empty($allowedlist)) {
+    list($usql, $params) = $DB->get_in_or_equal($allowedlist);
+    $params[] = $scoid;
+    // Construct the SQL.
     $select = 'SELECT DISTINCT '.$DB->sql_concat('st.userid', '\'#\'', 'COALESCE(st.attempt, 0)').' AS uniqueid, ';
     $select .= 'st.userid AS userid, st.scormid AS scormid, st.attempt AS attempt, st.scoid AS scoid ';
     $from = 'FROM {scorm_scoes_track} st ';
@@ -88,7 +79,7 @@ if(!$nostudents) {
 
     foreach ($attempts as $attempt) {
         if ($trackdata = scorm_get_tracks($scoid, $attempt->userid, $attempt->attempt)) {
-            if (isset($trackdata->$scorekey)) {
+            if (isset($trackdata->score_raw)) {
                 $score = $trackdata->score_raw;
                 if (empty($trackdata->score_min)) {
                     $minmark = 0;
