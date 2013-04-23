@@ -36,7 +36,7 @@ require_once($CFG->dirroot.'/lib/csslib.php');
 if ($slashargument = min_get_slash_argument()) {
     $slashargument = ltrim($slashargument, '/');
     if (substr_count($slashargument, '/') < 2) {
-        image_not_found();
+        css_send_css_not_found();
     }
 
     if (strpos($slashargument, '_s/') === 0) {
@@ -47,7 +47,12 @@ if ($slashargument = min_get_slash_argument()) {
         $usesvg = true;
     }
 
-    // image must be last because it may contain "/"
+    $chunk = null;
+    if (preg_match('#/(chunk(\d+)(/|$))#', $slashargument, $matches)) {
+        $chunk = (int)$matches[2];
+        $slashargument = str_replace($matches[1], '', $slashargument);
+    }
+
     list($themename, $rev, $type) = explode('/', $slashargument, 3);
     $themename = min_clean_param($themename, 'SAFEDIR');
     $rev       = min_clean_param($rev, 'INT');
@@ -57,6 +62,7 @@ if ($slashargument = min_get_slash_argument()) {
     $themename = min_optional_param('theme', 'standard', 'SAFEDIR');
     $rev       = min_optional_param('rev', 0, 'INT');
     $type      = min_optional_param('type', 'all', 'SAFEDIR');
+    $chunk     = min_optional_param('chunk', null, 'INT');
     $usesvg    = (bool)min_optional_param('svg', '1', 'INT');
 }
 
@@ -80,12 +86,17 @@ if ($type === 'ie') {
 
 $candidatedir = "$CFG->cachedir/theme/$themename/css";
 $etag = "$themename/$rev/$type";
+$candidatename = $type;
 if (!$usesvg) {
     // Add to the sheet name, one day we'll be able to just drop this.
     $candidatedir .= '/nosvg';
     $etag .= '/nosvg';
 }
-$candidatesheet = "$candidatedir/$type.css";
+if ($chunk !== null) {
+    $etag .= '/chunk'.$chunk;
+    $candidatename .= '.'.$chunk;
+}
+$candidatesheet = "$candidatedir/$candidatename.css";
 $etag = sha1($etag);
 
 if (file_exists($candidatesheet)) {
@@ -122,13 +133,21 @@ if ($type === 'editor') {
     $cssfiles = $theme->editor_css_files();
     css_store_css($theme, $candidatesheet, $cssfiles);
 } else {
+    // IE requests plugins/parents/theme instead of all at once.
+    $chunk = in_array($type, array('plugins', 'parents', 'theme'));
     $basedir = "$CFG->cachedir/theme/$themename/css";
     if (!$usesvg) {
         $basedir .= '/nosvg';
     }
     $css = $theme->css_files();
     $allfiles = array();
+    $relroot = preg_replace('|^http.?://[^/]+|', '', $CFG->wwwroot);
     foreach ($css as $key=>$value) {
+        if (!empty($slashargument)) {
+            $chunkurl = "{$relroot}/theme/styles.php/{$themename}/{$rev}/{$key}";
+        } else {
+            $chunkurl = "{$relroot}/theme/styles.php?theme={$themename}&rev={$rev}&type={$key}";
+        }
         $cssfiles = array();
         foreach($value as $val) {
             if (is_array($val)) {
@@ -140,7 +159,7 @@ if ($type === 'editor') {
             }
         }
         $cssfile = "$basedir/$key.css";
-        css_store_css($theme, $cssfile, $cssfiles);
+        css_store_css($theme, $cssfile, $cssfiles, true, $chunkurl);
         $allfiles = array_merge($allfiles, $cssfiles);
     }
     $cssfile = "$basedir/all.css";
