@@ -493,7 +493,7 @@ class core_course_renderer extends plugin_renderer_base {
 
         $output = html_writer::start_tag('form', array('id' => $formid, 'action' => $searchurl, 'method' => 'get'));
         $output .= html_writer::start_tag('fieldset', array('class' => 'coursesearchbox invisiblefieldset'));
-        $output .= html_writer::tag('lavel', $strsearchcourses.': ', array('for' => $inputid));
+        $output .= html_writer::tag('label', $strsearchcourses.': ', array('for' => $inputid));
         $output .= html_writer::empty_tag('input', array('type' => 'text', 'id' => $inputid,
             'size' => $inputsize, 'name' => 'search', 'value' => s($value)));
         $output .= html_writer::empty_tag('input', array('type' => 'submit',
