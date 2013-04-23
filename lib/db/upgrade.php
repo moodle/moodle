@@ -1990,7 +1990,6 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2013040300.01);
     }
 
-<<<<<<< HEAD
     if ($oldversion < 2013041200.00) {
         // MDL-29877 Some bad restores created grade items with no category information.
         $sql = "UPDATE {grade_items}
