@@ -2363,6 +2363,9 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="unreadmessageid_idx" UNIQUE="false" FIELDS="unreadmessageid" COMMENT="Index on unreadmessage id"/>
+      </INDEXES>
     </TABLE>
     <TABLE NAME="files" COMMENT="description of files, content is stored in sha1 file pool" PREVIOUS="message_working" NEXT="files_reference">
       <FIELDS>

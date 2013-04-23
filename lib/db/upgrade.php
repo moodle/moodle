@@ -1705,5 +1705,19 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012120303.08);
     }
 
+    if ($oldversion < 2012120303.09) {
+        // Adding index to unreadmessageid field of message_working table (MDL-34933)
+        $table = new xmldb_table('message_working');
+        $index = new xmldb_index('unreadmessageid_idx', XMLDB_INDEX_NOTUNIQUE, array('unreadmessageid'));
+
+        // Conditionally launch add index unreadmessageid
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2012120303.09);
+    }
+
     return true;
 }
