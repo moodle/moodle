@@ -48,6 +48,8 @@ class grade_import_form extends moodleform {
             $radio = array();
             $radio[] = $mform->createElement('radio', 'separator', null, get_string('septab', 'grades'), 'tab');
             $radio[] = $mform->createElement('radio', 'separator', null, get_string('sepcomma', 'grades'), 'comma');
+            $radio[] = $mform->createElement('radio', 'separator', null, get_string('sepcolon', 'grades'), 'colon');
+            $radio[] = $mform->createElement('radio', 'separator', null, get_string('sepsemicolon', 'grades'), 'semicolon');
             $mform->addGroup($radio, 'separator', get_string('separator', 'grades'), ' ', false);
             $mform->setDefault('separator', 'comma');
         }
