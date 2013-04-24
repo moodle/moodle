@@ -15,10 +15,7 @@
 
 .block .header .title .commands,
 .block_adminblock .content,
-.block .footer,
-.block .block_tree li>p>a,
-.block .block_tree li>p>span
-{
+.block .footer {
     display: block;
     padding: 3px 15px;
 }
@@ -39,6 +36,9 @@
 
 .block .content {
     padding: 4px 14px;
+}
+.block .content hr {
+    margin: 5px 0;
 }
 
 .block.hidden .content {
@@ -104,34 +104,6 @@
     display: inline;
 }
 
-.jsenabled .block_tree .tree_item.branch {
-    cursor: pointer;
-}
-.jsenabled .block_tree .collapsed ul {
-    display: none;
-}
-.jsenabled .dock_on_load,
-.block_tree_box .requiresjs {
-    display: none;
-}
-.jsenabled .block_tree_box .requiresjs {
-    display: inline;
-}
-
-// Individual block styles
-.block_navigation .content,
-.block_settings .content {
-    padding: 0;
-}
-
-.block_settings li > hr {
-    margin: 4px 0;
-}
-
-.block_settings .leaf img,
-.block_navigation p.tree_item a img.smallicon {
-    display: none;
-}
 .block_calendar_upcoming .footer {
     margin-top: .5em;
 }
@@ -162,161 +134,3 @@
     }
 }
 
-// the rest is block settings and nav stuff, can stil be tidied up a great deal
-
-ul.block_tree ul {
-    margin: 0;
-}
-
-.block_tree .tree_item.branch a:before,
-.block_tree .tree_item.branch span:before {
-    content: "▼ ";
-}
-
-.block_tree .collapsed  .tree_item.branch a:before,
-.block_tree .collapsed  .tree_item.branch span:before,
-.block_tree .collapsed  .tree_item.emptybranch a:before,
-.block_tree .collapsed  .tree_item.emptybranch span:before {
-    content: "► ";
-}
-
-.dir-rtl {
-    .block_tree .tree_item.branch a:before,
-    .block_tree .tree_item.branch span:before {
-        content: " ▼"; // Space on opposite side.
-    }
-    .block_tree .collapsed  .tree_item.branch a:before,
-    .block_tree .collapsed  .tree_item.branch span:before,
-    .block_tree .collapsed  .tree_item.emptybranch a:before,
-    .block_tree .collapsed  .tree_item.emptybranch span:before {
-        content: " ◄";
-    }
-}
-
-.block_navigation .block_tree .tree_item.branch.navigation_node a:before {
-    content: none;
-}
-
-.block_tree .collapsed  .tree_item.emptybranch a:before,
-.block_tree .collapsed  .tree_item.emptybranch span:before {
-    .muted
-}
-
-.block_settings .block_tree .tree_item,
-.block_navigation .block_tree .tree_item {
-    margin: 0;
-}
-
-.block_tree>li>p>a,
-.block_tree>li>p>span,
-.block_tree .nav-header {
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
-}
-
-.block .block_tree li > p > span:hover,
-.block .block_tree li > p > a:hover {
-  text-decoration: none;
-  background-color: @grayLighter;
-}
-
-.block_tree li p.active_tree_node a,
-.block_tree li p.active_tree_node a:hover {
-  color: @white;
-  text-shadow: 0 -1px 0 rgba(0,0,0,.2);
-  background-color: @linkColor;
-}
-
-
-.block_settings .block_tree li ul,
-.block_settings .block_tree li.depth_2 ul,
-.block_navigation .block_tree li ul,
-.block_navigation .block_tree li.depth_2 ul
-{
-    padding-left: 0;
-}
-
-.block_settings ul.block_tree.list li ul li a,
-.block_settings ul.block_tree.list li ul li span,
-.block_navigation ul.block_tree.list li ul li ul li a,
-.block_navigation ul.block_tree.list li ul li ul li span
-{
-    padding-left: 33px;
-}
-
-.block_settings ul.block_tree.list li ul li ul li a,
-.block_settings ul.block_tree.list li ul li ul li span,
-.block_navigation ul.block_tree.list li ul li ul li ul li a,
-.block_navigation ul.block_tree.list li ul li ul li ul li span
-{
-    padding-left: 49.5px;
-}
-
-.block_settings ul.block_tree.list li ul li ul li ul li a,
-.block_settings ul.block_tree.list li ul li ul li ul li span,
-.block_navigation ul.block_tree.list li ul li ul li ul li ul li a,
-.block_navigation ul.block_tree.list li ul li ul li ul li ul li span
-{
-    padding-left: 66px;
-}
-
-.block_settings ul.block_tree.list li ul li ul li ul li ul li a,
-.block_settings ul.block_tree.list li ul li ul li ul li ul li span,
-.block_navigation ul.block_tree.list li ul li ul li ul li ul li ul li a,
-.block_navigation ul.block_tree.list li ul li ul li ul li ul li ul li span
-{
-    padding-left: 83.5px;
-}
-
-.block_navigation ul.block_tree.list li ul li ul li ul li ul li ul li ul li a,
-.block_navigation ul.block_tree.list li ul li ul li ul li ul li ul li ul li span
-{
-    padding-left: 99px;
-}
-.dir-rtl {
-    .block_settings .block_tree li ul,
-    .block_settings .block_tree li.depth_2 ul,
-    .block_navigation .block_tree li ul,
-    .block_navigation .block_tree li.depth_2 ul
-    {
-        padding-right: 0;
-        padding-left: 0;
-    }
-
-    .block_settings ul.block_tree.list li ul li a,
-    .block_settings ul.block_tree.list li ul li span,
-    .block_navigation ul.block_tree.list li ul li ul li a,
-    .block_navigation ul.block_tree.list li ul li ul li span
-    {
-        padding-right: 33px;
-    }
-
-    .block_settings ul.block_tree.list li ul li ul li a,
-    .block_settings ul.block_tree.list li ul li ul li span,
-    .block_navigation ul.block_tree.list li ul li ul li ul li a,
-    .block_navigation ul.block_tree.list li ul li ul li ul li span
-    {
-        padding-right: 49.5px;
-    }
-
-    .block_settings ul.block_tree.list li ul li ul li ul li a,
-    .block_settings ul.block_tree.list li ul li ul li ul li span,
-    .block_navigation ul.block_tree.list li ul li ul li ul li ul li a,
-    .block_navigation ul.block_tree.list li ul li ul li ul li ul li span
-    {
-        padding-right: 66px;
-    }
-
-    .block_settings ul.block_tree.list li ul li ul li ul li ul li a,
-    .block_settings ul.block_tree.list li ul li ul li ul li ul li span,
-    .block_navigation ul.block_tree.list li ul li ul li ul li ul li ul li a,
-    .block_navigation ul.block_tree.list li ul li ul li ul li ul li ul li span
-    {
-        padding-right: 83.5px;
-    }
-
-    .block_navigation ul.block_tree.list li ul li ul li ul li ul li ul li ul li a,
-    .block_navigation ul.block_tree.list li ul li ul li ul li ul li ul li ul li span
-    {
-        padding-right: 99px;
-    }
-}
