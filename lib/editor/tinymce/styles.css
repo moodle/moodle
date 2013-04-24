@@ -8,6 +8,11 @@
     font-size: 0.7em;
     padding: 3px 6px;
 }
+.mform .felement.feditor .toggle_editor_toolbar:hover {
+    text-decoration: underline;
+    color: red;
+    cursor: pointer;
+}
 .mform .felement.feditor .mceStatusbar,
 .mform .felement.feditor iframe {
     min-width: 35em;
