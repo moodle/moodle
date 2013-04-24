@@ -118,6 +118,7 @@ if (has_capability('moodle/course:publish', context_course::instance($id))) {
         $hubcourseid = optional_param('hubcourseid', 0, PARAM_INT);
         $publicationid = optional_param('publicationid', 0, PARAM_INT);
         $timepublished = optional_param('timepublished', 0, PARAM_INT);
+        $publication = new stdClass();
         $publication->courseshortname = $course->shortname;
         $publication->courseid = $course->id;
         $publication->hubname = $hubname;
