@@ -11,30 +11,77 @@ if ($hassiteconfig
     $ADMIN->add('courses', new admin_externalpage('coursemgmt', new lang_string('coursemgmt', 'admin'), $CFG->wwwroot . '/course/manage.php',
             array('moodle/category:manage', 'moodle/course:create')));
 
-/// Course Default Settings Page
-/// NOTE: these settings must be applied after all other settings because they depend on them
-    ///main course settings
+    // Course Default Settings Page.
+    // NOTE: these settings must be applied after all other settings because they depend on them.
+
+
+    // Main course settings.
     $temp = new admin_settingpage('coursesettings', new lang_string('coursesettings'));
     require_once($CFG->dirroot.'/course/lib.php');
+
+    $choices = array();
+    $choices['0'] = new lang_string('hide');
+    $choices['1'] = new lang_string('show');
+    $temp->add(new admin_setting_configselect('moodlecourse/visible', new lang_string('visible'), new lang_string('visible_help'),
+        1, $choices));
+
+
+    // Course format.
+    $temp->add(new admin_setting_heading('courseformathdr', new lang_string('type_format', 'plugin'), ''));
+
     $courseformats = get_sorted_course_formats(true);
     $formcourseformats = array();
     foreach ($courseformats as $courseformat) {
         $formcourseformats[$courseformat] = new lang_string('pluginname', "format_$courseformat");
     }
-    $temp->add(new admin_setting_configselect('moodlecourse/format', new lang_string('format'), new lang_string('coursehelpformat'), 'weeks',$formcourseformats));
+    $temp->add(new admin_setting_configselect('moodlecourse/format', new lang_string('format'), new lang_string('coursehelpformat'),
+        'weeks',$formcourseformats));
 
-    $temp->add(new admin_setting_configtext('moodlecourse/maxsections', new lang_string('maxnumberweeks'), new lang_string('maxnumberweeks_desc'), 52));
+    $temp->add(new admin_setting_configtext('moodlecourse/maxsections', new lang_string('maxnumberweeks'),
+        new lang_string('maxnumberweeks_desc'), 52));
 
-    $temp->add(new admin_settings_num_course_sections('moodlecourse/numsections', new lang_string('numberweeks'), new lang_string('coursehelpnumberweeks'), 10));
+    $temp->add(new admin_settings_num_course_sections('moodlecourse/numsections', new lang_string('numberweeks'),
+        new lang_string('coursehelpnumberweeks'), 10));
 
     $choices = array();
     $choices['0'] = new lang_string('hiddensectionscollapsed');
     $choices['1'] = new lang_string('hiddensectionsinvisible');
-    $temp->add(new admin_setting_configselect('moodlecourse/hiddensections', new lang_string('hiddensections'), new lang_string('coursehelphiddensections'), 0,$choices));
+    $temp->add(new admin_setting_configselect('moodlecourse/hiddensections', new lang_string('hiddensections'),
+        new lang_string('coursehelphiddensections'), 0, $choices));
+
+    $choices = array();
+    $choices[COURSE_DISPLAY_SINGLEPAGE] = new lang_string('coursedisplay_single');
+    $choices[COURSE_DISPLAY_MULTIPAGE] = new lang_string('coursedisplay_multi');
+    $temp->add(new admin_setting_configselect('moodlecourse/coursedisplay', new lang_string('coursedisplay'),
+        new lang_string('coursedisplay_help'), COURSE_DISPLAY_SINGLEPAGE, $choices));
+
+
+    // Appearance.
+    $temp->add(new admin_setting_heading('appearancehdr', new lang_string('appearance'), ''));
+
+    $languages = array();
+    $languages[''] = new lang_string('forceno');
+    $languages += get_string_manager()->get_list_of_translations();
+    $temp->add(new admin_setting_configselect('moodlecourse/lang', new lang_string('forcelanguage'), '', key($languages),
+        $languages));
+
     $options = range(0, 10);
-    $temp->add(new admin_setting_configselect('moodlecourse/newsitems', new lang_string('newsitemsnumber'), new lang_string('coursehelpnewsitemsnumber'), 5,$options));
-    $temp->add(new admin_setting_configselect('moodlecourse/showgrades', new lang_string('showgrades'), new lang_string('coursehelpshowgrades'), 1,array(0 => new lang_string('no'), 1 => new lang_string('yes'))));
-    $temp->add(new admin_setting_configselect('moodlecourse/showreports', new lang_string('showreports'), '', 0,array(0 => new lang_string('no'), 1 => new lang_string('yes'))));
+    $temp->add(new admin_setting_configselect('moodlecourse/newsitems', new lang_string('newsitemsnumber'),
+        new lang_string('coursehelpnewsitemsnumber'), 5, $options));
+    $temp->add(new admin_setting_configselect('moodlecourse/showgrades', new lang_string('showgrades'),
+        new lang_string('coursehelpshowgrades'), 1, array(0 => new lang_string('no'), 1 => new lang_string('yes'))));
+    $temp->add(new admin_setting_configselect('moodlecourse/showreports', new lang_string('showreports'), '', 0,
+        array(0 => new lang_string('no'), 1 => new lang_string('yes'))));
+
+
+    // Files and uploads.
+    $temp->add(new admin_setting_heading('filesanduploadshdr', new lang_string('filesanduploads'), ''));
+
+    if (!empty($CFG->legacyfilesinnewcourses)) {
+        $choices = array('0'=>new lang_string('no'), '2'=>new lang_string('yes'));
+        $temp->add(new admin_setting_configselect('moodlecourse/legacyfiles', new lang_string('courselegacyfiles'),
+            new lang_string('courselegacyfiles_help'), key($choices), $choices));
+    }
 
     $currentmaxbytes = get_config('moodlecourse', 'maxbytes');
     if (isset($CFG->maxbytes)) {
@@ -42,18 +89,17 @@ if ($hassiteconfig
     } else {
         $choices = get_max_upload_sizes(0, 0, 0, $currentmaxbytes);
     }
-    $temp->add(new admin_setting_configselect('moodlecourse/maxbytes', new lang_string('maximumupload'), new lang_string('coursehelpmaximumupload'), key($choices), $choices));
+    $temp->add(new admin_setting_configselect('moodlecourse/maxbytes', new lang_string('maximumupload'),
+        new lang_string('coursehelpmaximumupload'), key($choices), $choices));
 
-    if (!empty($CFG->legacyfilesinnewcourses)) {
-        $choices = array('0'=>new lang_string('no'), '2'=>new lang_string('yes'));
-        $temp->add(new admin_setting_configselect('moodlecourse/legacyfiles', new lang_string('courselegacyfiles'), new lang_string('courselegacyfiles_help'), key($choices), $choices));
-    }
 
-    $choices = array();
-    $choices[COURSE_DISPLAY_SINGLEPAGE] = new lang_string('coursedisplay_single');
-    $choices[COURSE_DISPLAY_MULTIPAGE] = new lang_string('coursedisplay_multi');
-    $temp->add(new admin_setting_configselect('moodlecourse/coursedisplay', new lang_string('coursedisplay'), new lang_string('coursedisplay_help'), COURSE_DISPLAY_SINGLEPAGE, $choices));
+    // Completion tracking.
+    $temp->add(new admin_setting_heading('progress', new lang_string('completion','completion'), ''));
+    $temp->add(new admin_setting_configselect('moodlecourse/enablecompletion', new lang_string('completion', 'completion'),
+        new lang_string('enablecompletion_help', 'completion'), 0, array(0 => new lang_string('no'), 1 => new lang_string('yes'))));
 
+
+    // Groups.
     $temp->add(new admin_setting_heading('groups', new lang_string('groups', 'group'), ''));
     $choices = array();
     $choices[NOGROUPS] = new lang_string('groupsnone', 'group');
@@ -62,27 +108,10 @@ if ($hassiteconfig
     $temp->add(new admin_setting_configselect('moodlecourse/groupmode', new lang_string('groupmode'), '', key($choices),$choices));
     $temp->add(new admin_setting_configselect('moodlecourse/groupmodeforce', new lang_string('force'), new lang_string('coursehelpforce'), 0,array(0 => new lang_string('no'), 1 => new lang_string('yes'))));
 
-
-    $temp->add(new admin_setting_heading('availability', new lang_string('availability'), ''));
-    $choices = array();
-    $choices['0'] = new lang_string('courseavailablenot');
-    $choices['1'] = new lang_string('courseavailable');
-    $temp->add(new admin_setting_configselect('moodlecourse/visible', new lang_string('visible'), '', 1,$choices));
-
-
-    $temp->add(new admin_setting_heading('language', new lang_string('language'), ''));
-    $languages=array();
-    $languages[''] = new lang_string('forceno');
-    $languages += get_string_manager()->get_list_of_translations();
-    $temp->add(new admin_setting_configselect('moodlecourse/lang', new lang_string('forcelanguage'), '',key($languages),$languages));
-
-    $temp->add(new admin_setting_heading('progress', new lang_string('progress','completion'), ''));
-    $temp->add(new admin_setting_configselect('moodlecourse/enablecompletion', new lang_string('completion','completion'), '',
-        0, array(0 => new lang_string('completiondisabled','completion'), 1 => new lang_string('completionenabled','completion'))));
-
     $ADMIN->add('courses', $temp);
 
-/// "courserequests" settingpage
+
+    // "courserequests" settingpage.
     $temp = new admin_settingpage('courserequest', new lang_string('courserequest'));
     $temp->add(new admin_setting_configcheckbox('enablecourserequests', new lang_string('enablecourserequests', 'admin'), new lang_string('configenablecourserequests', 'admin'), 0));
     $temp->add(new admin_settings_coursecat_select('defaultrequestcategory', new lang_string('defaultrequestcategory', 'admin'), new lang_string('configdefaultrequestcategory', 'admin'), 1));
