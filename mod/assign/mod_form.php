@@ -73,9 +73,8 @@ class mod_assign_mod_form extends moodleform_mod {
 
         $config = get_config('assign');
 
-        $assignment->add_all_plugin_settings($mform);
-
         $mform->addElement('header', 'availability', get_string('availability', 'assign'));
+        $mform->setExpanded('availability', true);
 
         $name = get_string('allowsubmissionsfromdate', 'assign');
         $options = array('optional'=>true);
@@ -91,12 +90,14 @@ class mod_assign_mod_form extends moodleform_mod {
         $name = get_string('cutoffdate', 'assign');
         $mform->addElement('date_time_selector', 'cutoffdate', $name, array('optional'=>true));
         $mform->addHelpButton('cutoffdate', 'cutoffdate', 'assign');
-        $mform->setDefault('cutoffdate', time()+7*24*3600);
 
         $name = get_string('alwaysshowdescription', 'assign');
         $mform->addElement('checkbox', 'alwaysshowdescription', $name);
         $mform->addHelpButton('alwaysshowdescription', 'alwaysshowdescription', 'assign');
         $mform->setDefault('alwaysshowdescription', 1);
+        $mform->disabledIf('alwaysshowdescription', 'allowsubmissionsfromdate[enabled]', 'notchecked');
+
+        $assignment->add_all_plugin_settings($mform);
 
         $mform->addElement('header', 'submissionsettings', get_string('submissionsettings', 'assign'));
 
