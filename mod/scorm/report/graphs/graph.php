@@ -52,7 +52,7 @@ if (empty($currentgroup)) {
 } else {
     // All users who can attempt scoes and who are in the currently selected group.
     $groupstudents = get_users_by_capability($contextmodule, 'mod/scorm:savetrack', 'u.id', '', '', '', $currentgroup, '', false);
-    $allowedlist = empty($students) ? array() : array_keys($groupstudents);
+    $allowedlist = empty($groupstudents) ? array() : array_keys($groupstudents);
 }
 
 $params = array();
