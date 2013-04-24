@@ -60,6 +60,12 @@ class block_base {
     var $title         = NULL;
 
     /**
+     * The name of the block to be displayed in the block title area if the title is empty.
+     * @var string arialabel
+     */
+    var $arialabel         = NULL;
+
+    /**
      * The type of content that this block creates. Currently support options - BLOCK_TYPE_LIST, BLOCK_TYPE_TEXT
      * @var int $content_type
      */
@@ -240,8 +246,10 @@ class block_base {
         if (!$this->hide_header()) {
             $bc->title = $this->title;
         }
+
         if (empty($bc->title)) {
             $bc->arialabel = new lang_string('pluginname', get_class($this));
+            $this->arialabel = $bc->arialabel;
         }
 
         if ($this->page->user_is_editing()) {
