@@ -48,7 +48,7 @@ class mod_forum_mod_form extends moodleform_mod {
 
         $this->add_intro_editor(true, get_string('forumintro', 'forum'));
 
-        $forumtypes = forum_get_forumtypes();
+        $forumtypes = forum_get_forum_types();
         collatorlib::asort($forumtypes, collatorlib::SORT_STRING);
         $mform->addElement('select', 'type', get_string('forumtype', 'forum'), $forumtypes);
         $mform->addHelpButton('type', 'forumtype', 'forum');
