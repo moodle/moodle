@@ -7098,7 +7098,7 @@ function forum_check_throttling($forum, $cm = null) {
     }
 
     if (!is_object($forum)) {
-        return false;  // This is broken.
+        return false; // This is broken.
     }
 
     if (!$cm) {
@@ -7151,6 +7151,23 @@ function forum_check_throttling($forum, $cm = null) {
         $warning->link = null;
 
         return $warning;
+    }
+}
+
+/**
+ * Throws an error if the user is no longer allowed to post due to reaching
+ * or exceeding the number of posts specified in 'Post threshold for blocking'
+ * setting.
+ *
+ * @param stdClass $thresholdwarning the warning information returned
+ *        from the function forum_check_throttling.
+ */
+function forum_check_blocking_threshold($thresholdwarning) {
+    if (!empty($thresholdwarning) && !$thresholdwarning->canpost) {
+        print_error($thresholdwarning->errorcode,
+                    $thresholdwarning->module,
+                    $thresholdwarning->link,
+                    $thresholdwarning->additional);
     }
 }
 
