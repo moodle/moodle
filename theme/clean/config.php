@@ -23,17 +23,17 @@
  * For full information about creating Moodle themes, see:
  * http://docs.moodle.org/dev/Themes_2.0
  *
- * @package   theme_simple
+ * @package   theme_clean
  * @copyright 2013 Moodle, moodle.org
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$THEME->name = 'simple';
+$THEME->name = 'clean';
 
 /////////////////////////////////
 // The only thing you need to change in this file when copying it to
 // create a new theme is the name above. You also need to change the name
-// in version.php and lang/en/theme_simple.php as well.
+// in version.php and lang/en/theme_clean.php as well.
 //////////////////////////////////
 //
 $THEME->doctype = 'html5';
@@ -54,7 +54,7 @@ $THEME->plugins_exclude_sheets = array(
 );
 
 $THEME->rendererfactory = 'theme_overridden_renderer_factory';
-$THEME->csspostprocess = 'simple_process_css';
+$THEME->csspostprocess = 'clean_process_css';
 
 $useragent = '';
 if (!empty($_SERVER['HTTP_USER_AGENT'])) {

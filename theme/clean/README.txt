@@ -2,7 +2,7 @@
 /* How to copy and customise this theme.
 ----------------------------------------*/
 
-This document describes how to copy and customise the Simple (bootstrap) theme so that
+This document describes how to copy and customise the Clean (bootstrapbase) theme so that
 you can build on this to create a theme of your own. It assumes you have some
 understanding of how themes work within Moodle 2.5, as well as a basic understanding
 of HTML and CSS.
@@ -10,13 +10,13 @@ of HTML and CSS.
 Getting started
 ---------------
 
-From your Moodle theme directory right click on simple and then copy and paste back
-into your Moodle theme directory. You should now have a folder called Copy of simple.
+From your Moodle theme directory right click on clean and then copy and paste back
+into your Moodle theme directory. You should now have a folder called Copy of clean.
 If you right click this folder you are given the option to Rename it. So rename this
 folder to your chosen theme name, using only lower case letters, and if needed,
-underscores. For the purpose of this tutorial we will call the theme 'simple2'.
+underscores. For the purpose of this tutorial we will call the theme 'cleantheme'.
 
-On opening 'simple2' your you will find several files and sub-directories which have
+On opening 'cleantheme' your you will find several files and sub-directories which have
 files within them.
 
 These are:
@@ -38,7 +38,7 @@ version.php
     if and when you want to add them.
 /lang/en/
     This sub-directory contains your language files, in this case English.
-/lang/en/theme_simple.php
+/lang/en/theme_clean.php
     This file contains all the language strings for your theme.
     (Contains some elements that require renaming as well as the filename itself).
 /layout/
@@ -57,10 +57,10 @@ Renaming elements
 -----------------
 
 The problem when copying a theme is that you need to rename all those instances
-where the old theme name occurs, in this case simple. So using the above list as
+where the old theme name occurs, in this case clean. So using the above list as
 a guide, search through and change all the instances of the theme name
-'simple' to 'simple2'. This includes the filename of the lang/en/theme_simple.php.
-You need to change this to 'theme_simple2.php'.
+'clean' to 'cleantheme'. This includes the filename of the lang/en/theme_clean.php.
+You need to change this to 'theme_cleantheme.php'.
 
 Installing your theme
 ---------------------
@@ -74,12 +74,12 @@ If not then navigate to Administration > Notifications.
 Once your theme is successfully installed you can select it and begin to modify
 it using the custom settings page found by navigating to...
 Administration > Site Administration > Appearance > Themes >>
-and then click on (Simple2) or whatever you renamed the theme to,
+and then click on (Cleantheme) or whatever you renamed your theme to,
 from the list of theme names that appear at this point in the side block.
 
 Customisation using custom theme settings
 -----------------------------------------
 
-The settings page for this theme can be located by navigating to:
+The settings page for the Clean theme can be located by navigating to:
 
-Administration > Site Administration > Appearance > Themes > Simple
+Administration > Site Administration > Appearance > Themes > Clean
