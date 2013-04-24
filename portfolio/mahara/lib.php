@@ -92,7 +92,9 @@ class portfolio_plugin_mahara extends portfolio_plugin_pull_base {
         }
         $mform->addElement('select', 'mnethostid', get_string('mnethost', 'portfolio_mahara'), $hosts);
         $mform->addRule('mnethostid', $strrequired, 'required', null, 'client');
+        $mform->setType('mnethostid', PARAM_INT);
         $mform->addElement('selectyesno', 'enableleap2a', get_string('enableleap2a', 'portfolio_mahara'));
+        $mform->setType('enableleap2a', PARAM_BOOL);
     }
 
     public function instance_sanity_check() {

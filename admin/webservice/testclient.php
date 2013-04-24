@@ -29,9 +29,9 @@ require_once($CFG->libdir.'/adminlib.php');
 require_once("$CFG->libdir/externallib.php");
 require_once($CFG->dirroot . "/" . $CFG->admin . "/webservice/testclient_forms.php");
 
-$function = optional_param('function', '', PARAM_SAFEDIR);
-$protocol = optional_param('protocol', '', PARAM_SAFEDIR);
-$authmethod = optional_param('authmethod', '', PARAM_SAFEDIR);
+$function = optional_param('function', '', PARAM_PLUGIN);
+$protocol = optional_param('protocol', '', PARAM_ALPHA);
+$authmethod = optional_param('authmethod', '', PARAM_ALPHA);
 
 $PAGE->set_url('/' . $CFG->admin . '/webservice/testclient.php');
 $PAGE->navbar->ignore_active(true);

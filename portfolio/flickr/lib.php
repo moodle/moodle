@@ -102,8 +102,10 @@ class portfolio_plugin_flickr extends portfolio_plugin_push_base {
         $strrequired = get_string('required');
         $mform->addElement('text', 'apikey', get_string('apikey', 'portfolio_flickr'), array('size' => 30));
         $mform->addRule('apikey', $strrequired, 'required', null, 'client');
+        $mform->setType('apikey', PARAM_RAW_TRIMMED);
         $mform->addElement('text', 'sharedsecret', get_string('sharedsecret', 'portfolio_flickr'));
         $mform->addRule('sharedsecret', $strrequired, 'required', null, 'client');
+        $mform->setType('sharedsecret', PARAM_RAW_TRIMMED);
         $a = new stdClass();
         $a->applyurl = 'http://www.flickr.com/services/api/keys/apply/';
         $a->keysurl = 'http://www.flickr.com/services/api/keys/';
