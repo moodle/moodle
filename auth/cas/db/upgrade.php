@@ -15,16 +15,29 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
+ * CAS authentication plugin upgrade code
  *
- * @package    auth_ldap
- * @author     Martin Dougiamas
- * @author     Iñaki Arenaza
+ * @package    auth_cas
+ * @copyright  2013 Iñaki Arenaza
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+/**
+ * @param int $oldversion the version we are upgrading from
+ * @return bool result
+ */
+function xmldb_auth_cas_upgrade($oldversion) {
 
-$plugin->version   = 2013052100;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2013050100;        // Requires this Moodle version
-$plugin->component = 'auth_ldap';       // Full name of the plugin (used for diagnostics)
+    // Moodle v2.5.0 release upgrade line
+    // Put any upgrade step following this
+
+    // MDL-39323 New setting in 2.5, make sure it's defined.
+    if ($oldversion < 2013052100) {
+        if (get_config('start_tls', 'auth/cas') === false) {
+            set_config('start_tls', 0, 'auth/cas');
+        }
+        upgrade_plugin_savepoint(true, 2013052100, 'auth', 'cas');
+    }
+
+    return true;
+}
