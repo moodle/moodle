@@ -23,13 +23,13 @@
  * For full information about creating Moodle themes, see:
  * http://docs.moodle.org/dev/Themes_2.0
  *
- * @package    theme_simple
+ * @package    theme_clean
  * @copyright  2013 Moodle, moodle.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die;
 
-$plugin->version   = 2013041000;
+$plugin->version   = 2013042400;
 $plugin->requires  = 2013040500;
-$plugin->component = 'theme_simple';
+$plugin->component = 'theme_clean';

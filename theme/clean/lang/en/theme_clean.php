@@ -15,22 +15,22 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'theme_simple', language 'en'
+ * Strings for component 'theme_clean', language 'en'
  *
- * @package   theme_simple
- * @copyright 2013 Bas Brands, www.basbrands.nl
+ * @package   theme_clean
+ * @copyright 2013 Moodle, moodle.org
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $string['choosereadme'] = '
 <div class="clearfix">
 <div class="well">
-<h2>Simple</h2>
-<p><img class=img-polaroid src="simple/pix/screenshot.jpg" /></p>
+<h2>Clean</h2>
+<p><img class=img-polaroid src="clean/pix/screenshot.jpg" /></p>
 </div>
 <div class="well">
 <h3>About</h3>
-<p>Simple is a modified Moodle bootstrap theme which inherits styles and renderers from its parent theme.</p>
+<p>Clean is a modified Moodle bootstrap theme which inherits styles and renderers from its parent theme.</p>
 <h3>Parents</h3>
 <p>This theme is based upon the Bootstrap theme, which was created for Moodle 2.5, with the help of:<br>
 Stuart Lamour, Mark Aberdour, Paul Hibbitts, Mary Evans.</p>
@@ -42,10 +42,10 @@ Website: <a href="http://www.basbrands.nl">www.basbrands.nl</a>
 <h3>Report a bug:</h3>
 <p><a href="http://tracker.moodle.org">http://tracker.moodle.org</a></p>
 <h3>More information</h3>
-<p><a href="simple/README.txt">How to copy and customise this theme.</a></p>
+<p><a href="clean/README.txt">How to copy and customise this theme.</a></p>
 </div></div>';
 
-$string['configtitle'] = 'Simple';
+$string['configtitle'] = 'Clean';
 
 $string['customcss'] = 'Custom CSS';
 $string['customcssdesc'] = 'Whatever CSS rules you add to this textarea will be reflected in every page, making for easier customization of this theme.';
@@ -61,7 +61,7 @@ $string['logodesc'] = 'Please upload your custom logo here if you want to add it
 If the height of your logo is more than 75px add the following CSS rule to the Custom CSS box below.<br>
 a.logo {height: 100px;} or whatever height in pixels the logo is.';
 
-$string['pluginname'] = 'Simple';
+$string['pluginname'] = 'Clean';
 
 $string['region-side-post'] = 'Right';
 $string['region-side-pre'] = 'Left';
