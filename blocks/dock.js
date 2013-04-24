@@ -836,7 +836,7 @@ M.core_dock.genericblock.prototype = {
         }
 
         // Must set the image src seperatly of we get an error with XML strict headers
-        var moveto = Y.Node.create('<input type="image" class="moveto customcommand requiresjs" title="'+M.str.block.addtodock+'" alt="'+
+        var moveto = Y.Node.create('<input type="image" class="moveto customcommand requiresjs" alt="'+M.str.block.addtodock+'" title="'+
             Y.Escape.html(M.util.get_string('dockblock', 'block', node.one('.header .title h2').getHTML())) +'" />');
         var icon = 't/block_to_dock';
         if (right_to_left()) {
