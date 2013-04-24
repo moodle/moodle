@@ -507,10 +507,11 @@ function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperp
                 array('id', 'username', 'email', 'firstname', 'lastname', 'city', 'country',
                 'lastaccess', 'confirmed', 'mnethostid'));
     }
+    $namefields = get_all_user_name_fields(true);
+    $extrafields = "$extrafields, $namefields";
 
     // warning: will return UNCONFIRMED USERS
-    return $DB->get_records_sql("SELECT id, username, email, firstname, lastname, city, country,
-                                        lastaccess, confirmed, mnethostid, suspended $extrafields
+    return $DB->get_records_sql("SELECT id, username, email, city, country, lastaccess, confirmed, mnethostid, suspended $extrafields
                                    FROM {user}
                                   WHERE $select
                                   $sort", $params, $page, $recordsperpage);
@@ -1781,8 +1782,8 @@ function get_logs($select, array $params=null, $order='l.time DESC', $limitfrom=
            $select";
 
     $totalcount = $DB->count_records_sql($sql, $params);
-
-    $sql = "SELECT l.*, u.firstname, u.lastname, u.picture
+    $allnames = get_all_user_name_fields(true, 'u');
+    $sql = "SELECT l.*, $allnames, u.picture
               FROM {log} l
               LEFT JOIN {user} u ON l.userid = u.id
            $select

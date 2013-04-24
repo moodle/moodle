@@ -3964,7 +3964,8 @@ function get_role_users($roleid, context $context, $parent = false, $fields = ''
     global $DB;
 
     if (empty($fields)) {
-        $fields = 'u.id, u.confirmed, u.username, u.firstname, u.lastname, '.
+        $allnames = get_all_user_name_fields(true, 'u');
+        $fields = 'u.id, u.confirmed, u.username, '. $allnames . ', ' .
                   'u.maildisplay, u.mailformat, u.maildigest, u.email, u.emailstop, u.city, '.
                   'u.country, u.picture, u.idnumber, u.department, u.institution, '.
                   'u.lang, u.timezone, u.lastaccess, u.mnethostid, r.name AS rolename, r.sortorder, '.

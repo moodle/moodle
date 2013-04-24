@@ -793,6 +793,10 @@
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="trustbitmask" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="imagealt" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="alt tag for user uploaded image"/>
+        <FIELD NAME="lastnamephonetic" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Last name phonetic"/>
+        <FIELD NAME="firstnamephonetic" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="First name phonetic"/>
+        <FIELD NAME="middlename" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Middle name"/>
+        <FIELD NAME="alternatename" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Alternate name - Useful for three-name countries."/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -809,6 +813,10 @@
         <INDEX NAME="email" UNIQUE="false" FIELDS="email"/>
         <INDEX NAME="auth" UNIQUE="false" FIELDS="auth"/>
         <INDEX NAME="idnumber" UNIQUE="false" FIELDS="idnumber"/>
+        <INDEX NAME="firstnamephonetic" UNIQUE="false" FIELDS="firstnamephonetic"/>
+        <INDEX NAME="lastnamephonetic" UNIQUE="false" FIELDS="lastnamephonetic"/>
+        <INDEX NAME="middlename" UNIQUE="false" FIELDS="middlename"/>
+        <INDEX NAME="alternatename" UNIQUE="false" FIELDS="alternatename"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="user_preferences" COMMENT="Allows modules to store arbitrary user preferences">

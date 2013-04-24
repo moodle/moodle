@@ -131,7 +131,8 @@ class user_picture implements renderable {
      * @var array List of mandatory fields in user record here. (do not include
      * TEXT columns because it would break SELECT DISTINCT in MSSQL and ORACLE)
      */
-    protected static $fields = array('id', 'picture', 'firstname', 'lastname', 'imagealt', 'email');
+    protected static $fields = array('id', 'picture', 'firstname', 'lastname', 'firstnamephonetic', 'lastnamephonetic',
+            'middlename', 'alternatename', 'imagealt', 'email');
 
     /**
      * @var stdClass A user object with at least fields all columns specified
@@ -224,7 +225,6 @@ class user_picture implements renderable {
         if ($tableprefix) {
             $tableprefix .= '.';
         }
-        $fields = array();
         foreach (self::$fields as $field) {
             if ($field === 'id' and $idalias and $idalias !== 'id') {
                 $fields[$field] = "$tableprefix$field AS $idalias";

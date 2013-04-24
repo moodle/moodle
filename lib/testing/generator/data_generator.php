@@ -159,6 +159,26 @@ EOD;
             $record['lastname'] = 'Lastname'.$i;
         }
 
+        if (!isset($record['firstnamephonetic'])) {
+            $firstnamephonetic = rand(0, 59);
+            $record['firstnamephonetic'] = $this->firstnames[$firstnamephonetic];
+        }
+
+        if (!isset($record['lasttnamephonetic'])) {
+            $lastnamephonetic = rand(0, 59);
+            $record['lastnamephonetic'] = $this->lastnames[$lastnamephonetic];
+        }
+
+        if (!isset($record['middlename'])) {
+            $middlename = rand(0, 59);
+            $record['middlename'] = $this->firstnames[$middlename];
+        }
+
+        if (!isset($record['alternatename'])) {
+            $alternatename = rand(0, 59);
+            $record['alternatename'] = $this->firstnames[$alternatename];
+        }
+
         if (!isset($record['idnumber'])) {
             $record['idnumber'] = '';
         }

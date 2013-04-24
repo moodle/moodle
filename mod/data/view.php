@@ -498,6 +498,7 @@ if ($showactivity) {
         $advparams       = array();
         // This is used for the initial reduction of advanced search results with required entries.
         $entrysql        = '';
+        $namefields = get_all_user_name_fields(true, 'u');
 
     /// Find the field we are sorting on
         if ($sort <= 0 or !$sortfield = data_get_field_from_id($sort, $data)) {
@@ -521,7 +522,7 @@ if ($showactivity) {
                     $ordering = "r.timecreated $order";
             }
 
-            $what = ' DISTINCT r.id, r.approved, r.timecreated, r.timemodified, r.userid, u.firstname, u.lastname';
+            $what = ' DISTINCT r.id, r.approved, r.timecreated, r.timemodified, r.userid, ' . $namefields;
             $count = ' COUNT(DISTINCT c.recordid) ';
             $tables = '{data_content} c,{data_records} r, {user} u ';
             $where =  'WHERE c.recordid = r.id
@@ -554,7 +555,9 @@ if ($showactivity) {
                     $advparams = array_merge($advparams, $val->params);
                 }
             } else if ($search) {
-                $searchselect = " AND (".$DB->sql_like('c.content', ':search1', false)." OR ".$DB->sql_like('u.firstname', ':search2', false)." OR ".$DB->sql_like('u.lastname', ':search3', false)." ) ";
+                $searchselect = " AND (".$DB->sql_like('c.content', ':search1', false)."
+                                  OR ".$DB->sql_like('u.firstname', ':search2', false)."
+                                  OR ".$DB->sql_like('u.lastname', ':search3', false)." ) ";
                 $params['search1'] = "%$search%";
                 $params['search2'] = "%$search%";
                 $params['search3'] = "%$search%";
@@ -567,7 +570,8 @@ if ($showactivity) {
             $sortcontent = $DB->sql_compare_text('c.' . $sortfield->get_sort_field());
             $sortcontentfull = $sortfield->get_sort_sql($sortcontent);
 
-            $what = ' DISTINCT r.id, r.approved, r.timecreated, r.timemodified, r.userid, u.firstname, u.lastname, ' . $sortcontentfull . ' AS sortorder ';
+            $what = ' DISTINCT r.id, r.approved, r.timecreated, r.timemodified, r.userid, ' . $namefields . ',
+                    ' . $sortcontentfull . ' AS sortorder ';
             $count = ' COUNT(DISTINCT c.recordid) ';
             $tables = '{data_content} c, {data_records} r, {user} u ';
             $where =  'WHERE c.recordid = r.id

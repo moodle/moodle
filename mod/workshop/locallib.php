@@ -1761,8 +1761,8 @@ class workshop {
                 $sqlsort[] = $sqlsortfieldname . ' ' . $sqlsortfieldhow;
             }
             $sqlsort = implode(',', $sqlsort);
-            $sql = "SELECT u.id AS userid,u.firstname,u.lastname,u.picture,u.imagealt,u.email,
-                           s.title AS submissiontitle, s.grade AS submissiongrade, ag.gradinggrade
+            $picturefields = user_picture::fields('u', array(), 'userid');
+            $sql = "SELECT $picturefields, s.title AS submissiontitle, s.grade AS submissiongrade, ag.gradinggrade
                       FROM {user} u
                  LEFT JOIN {workshop_submissions} s ON (s.authorid = u.id AND s.workshopid = :workshopid1 AND s.example = 0)
                  LEFT JOIN {workshop_aggregations} ag ON (ag.userid = u.id AND ag.workshopid = :workshopid2)
@@ -1777,15 +1777,17 @@ class workshop {
         $userinfo = array();
 
         // get the user details for all participants to display
+        $additionalnames = get_all_user_name_fields();
         foreach ($participants as $participant) {
             if (!isset($userinfo[$participant->userid])) {
                 $userinfo[$participant->userid]            = new stdclass();
                 $userinfo[$participant->userid]->id        = $participant->userid;
-                $userinfo[$participant->userid]->firstname = $participant->firstname;
-                $userinfo[$participant->userid]->lastname  = $participant->lastname;
                 $userinfo[$participant->userid]->picture   = $participant->picture;
                 $userinfo[$participant->userid]->imagealt  = $participant->imagealt;
                 $userinfo[$participant->userid]->email     = $participant->email;
+                foreach ($additionalnames as $addname) {
+                    $userinfo[$participant->userid]->$addname = $participant->$addname;
+                }
             }
         }
 
@@ -1797,22 +1799,25 @@ class workshop {
             if (!isset($userinfo[$submission->gradeoverby])) {
                 $userinfo[$submission->gradeoverby]            = new stdclass();
                 $userinfo[$submission->gradeoverby]->id        = $submission->gradeoverby;
-                $userinfo[$submission->gradeoverby]->firstname = $submission->overfirstname;
-                $userinfo[$submission->gradeoverby]->lastname  = $submission->overlastname;
                 $userinfo[$submission->gradeoverby]->picture   = $submission->overpicture;
                 $userinfo[$submission->gradeoverby]->imagealt  = $submission->overimagealt;
                 $userinfo[$submission->gradeoverby]->email     = $submission->overemail;
+                foreach ($additionalnames as $addname) {
+                    $temp = 'over' . $addname;
+                    $userinfo[$submission->gradeoverby]->$addname = $submission->$temp;
+                }
             }
         }
 
         // get the user details for all reviewers of the displayed participants
         $reviewers = array();
+
         if ($submissions) {
             list($submissionids, $params) = $DB->get_in_or_equal(array_keys($submissions), SQL_PARAMS_NAMED);
             list($sort, $sortparams) = users_order_by_sql('r');
+            $picturefields = user_picture::fields('r', array(), 'reviewerid');
             $sql = "SELECT a.id AS assessmentid, a.submissionid, a.grade, a.gradinggrade, a.gradinggradeover, a.weight,
-                           r.id AS reviewerid, r.lastname, r.firstname, r.picture, r.imagealt, r.email,
-                           s.id AS submissionid, s.authorid
+                           $picturefields, s.id AS submissionid, s.authorid
                       FROM {workshop_assessments} a
                       JOIN {user} r ON (a.reviewerid = r.id)
                       JOIN {workshop_submissions} s ON (a.submissionid = s.id AND s.example = 0)
@@ -1823,11 +1828,12 @@ class workshop {
                 if (!isset($userinfo[$reviewer->reviewerid])) {
                     $userinfo[$reviewer->reviewerid]            = new stdclass();
                     $userinfo[$reviewer->reviewerid]->id        = $reviewer->reviewerid;
-                    $userinfo[$reviewer->reviewerid]->firstname = $reviewer->firstname;
-                    $userinfo[$reviewer->reviewerid]->lastname  = $reviewer->lastname;
                     $userinfo[$reviewer->reviewerid]->picture   = $reviewer->picture;
                     $userinfo[$reviewer->reviewerid]->imagealt  = $reviewer->imagealt;
                     $userinfo[$reviewer->reviewerid]->email     = $reviewer->email;
+                    foreach ($additionalnames as $addname) {
+                        $userinfo[$reviewer->reviewerid]->$addname = $reviewer->$addname;
+                    }
                 }
             }
         }
@@ -1838,9 +1844,9 @@ class workshop {
             list($participantids, $params) = $DB->get_in_or_equal(array_keys($participants), SQL_PARAMS_NAMED);
             list($sort, $sortparams) = users_order_by_sql('e');
             $params['workshopid'] = $this->id;
+            $picturefields = user_picture::fields('e', array(), 'authorid');
             $sql = "SELECT a.id AS assessmentid, a.submissionid, a.grade, a.gradinggrade, a.gradinggradeover, a.reviewerid, a.weight,
-                           s.id AS submissionid,
-                           e.id AS authorid, e.lastname, e.firstname, e.picture, e.imagealt, e.email
+                           s.id AS submissionid, $picturefields
                       FROM {user} u
                       JOIN {workshop_assessments} a ON (a.reviewerid = u.id)
                       JOIN {workshop_submissions} s ON (a.submissionid = s.id AND s.example = 0)
@@ -1852,11 +1858,12 @@ class workshop {
                 if (!isset($userinfo[$reviewee->authorid])) {
                     $userinfo[$reviewee->authorid]            = new stdclass();
                     $userinfo[$reviewee->authorid]->id        = $reviewee->authorid;
-                    $userinfo[$reviewee->authorid]->firstname = $reviewee->firstname;
-                    $userinfo[$reviewee->authorid]->lastname  = $reviewee->lastname;
                     $userinfo[$reviewee->authorid]->picture   = $reviewee->picture;
                     $userinfo[$reviewee->authorid]->imagealt  = $reviewee->imagealt;
                     $userinfo[$reviewee->authorid]->email     = $reviewee->email;
+                    foreach ($additionalnames as $addname) {
+                        $userinfo[$reviewee->authorid]->$addname = $reviewee->$addname;
+                    }
                 }
             }
         }

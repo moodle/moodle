@@ -1100,24 +1100,23 @@ class flexible_table {
             switch ($column) {
 
                 case 'fullname':
-                if ($this->is_sortable($column)) {
-                    $firstnamesortlink = $this->sort_link(get_string('firstname'),
-                            'firstname', $primary_sort_column === 'firstname', $primary_sort_order);
+                // Check the full name display for sortable fields.
+                $nameformat = $CFG->fullnamedisplay;
+                if ($nameformat == 'language') {
+                    $nameformat = get_string('fullnamedisplay');
+                }
+                $requirednames = order_in_string(array('firstname', 'lastname'), $nameformat);
 
-                    $lastnamesortlink = $this->sort_link(get_string('lastname'),
-                            'lastname', $primary_sort_column === 'lastname', $primary_sort_order);
-
-                    $override = new stdClass();
-                    $override->firstname = 'firstname';
-                    $override->lastname = 'lastname';
-                    $fullnamelanguage = get_string('fullnamedisplay', '', $override);
-
-                    if (($CFG->fullnamedisplay == 'firstname lastname') or
-                        ($CFG->fullnamedisplay == 'firstname') or
-                        ($CFG->fullnamedisplay == 'language' and $fullnamelanguage == 'firstname lastname' )) {
-                        $this->headers[$index] = $firstnamesortlink . ' / ' . $lastnamesortlink;
-                    } else {
-                        $this->headers[$index] = $lastnamesortlink . ' / ' . $firstnamesortlink;
+                if (!empty($requirednames)) {
+                    if ($this->is_sortable($column)) {
+                        // Done this way for the possibility of more than two sortable full name display fields.
+                        $this->headers[$index] = '';
+                        foreach ($requirednames as $name) {
+                            $sortname = $this->sort_link(get_string($name),
+                                    $name, $primary_sort_column === $name, $primary_sort_order);
+                            $this->headers[$index] .= $sortname . ' / ';
+                        }
+                        $this->headers[$index] = substr($this->headers[$index], 0, -3);
                     }
                 }
                 break;

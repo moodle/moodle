@@ -413,8 +413,9 @@ abstract class user_selector_base {
      */
     protected function required_fields_sql($u) {
         // Raw list of fields.
-        $fields = array('id', 'firstname', 'lastname');
-        $fields = array_merge($fields, $this->extrafields);
+        $fields = array('id');
+        // Add additional name fields
+        $fields = array_merge($fields, get_all_user_name_fields(), $this->extrafields);
 
         // Prepend the table alias.
         if ($u) {

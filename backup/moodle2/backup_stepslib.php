@@ -1194,12 +1194,12 @@ class backup_users_structure_step extends backup_structure_step {
 
         // Then, the fields potentially needing anonymization
         $anonfields = array(
-            'username', 'idnumber', 'firstname', 'lastname',
-            'email', 'icq', 'skype',
+            'username', 'idnumber', 'email', 'icq', 'skype',
             'yahoo', 'aim', 'msn', 'phone1',
             'phone2', 'institution', 'department', 'address',
             'city', 'country', 'lastip', 'picture',
             'url', 'description', 'descriptionformat', 'imagealt', 'auth');
+        $anonfields = array_merge($anonfields, get_all_user_name_fields());
 
         // Add anonymized fields to $userfields with custom final element
         foreach ($anonfields as $field) {

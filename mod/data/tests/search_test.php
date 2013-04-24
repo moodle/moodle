@@ -162,6 +162,10 @@ class data_advanced_search_sql_test extends advanced_testcase {
         $this->finalrecord[6]->userid = 6;
         $this->finalrecord[6]->firstname = $user->firstname;
         $this->finalrecord[6]->lastname = $user->lastname;
+        $this->finalrecord[6]->firstnamephonetic = $user->firstnamephonetic;
+        $this->finalrecord[6]->lastnamephonetic = $user->lastnamephonetic;
+        $this->finalrecord[6]->middlename = $user->middlename;
+        $this->finalrecord[6]->alternatename = $user->alternatename;
     }
 
     /**

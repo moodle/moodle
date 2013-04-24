@@ -90,7 +90,8 @@ if ($groupingid) {
 
 list($sort, $sortparams) = users_order_by_sql('u');
 
-$sql = "SELECT g.id AS groupid, gg.groupingid, u.id AS userid, u.firstname, u.lastname, u.idnumber, u.username
+$allnames = get_all_user_name_fields(true, 'u');
+$sql = "SELECT g.id AS groupid, gg.groupingid, u.id AS userid, $allnames, u.idnumber, u.username
           FROM {groups} g
                LEFT JOIN {groupings_groups} gg ON g.id = gg.groupid
                LEFT JOIN {groups_members} gm ON g.id = gm.groupid
@@ -106,6 +107,9 @@ foreach ($rs as $row) {
     $user->lastname  = $row->lastname;
     $user->username  = $row->username;
     $user->idnumber  = $row->idnumber;
+    foreach (get_all_user_name_fields() as $addname) {
+        $user->$addname = $row->$addname;
+    }
     if (!$row->groupingid) {
         $row->groupingid = -1;
     }

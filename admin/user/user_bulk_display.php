@@ -24,8 +24,9 @@ echo $OUTPUT->header();
 
 $countries = get_string_manager()->get_list_of_countries(true);
 
+$namefields = get_all_user_name_fields(true);
 foreach ($users as $key => $id) {
-    $user = $DB->get_record('user', array('id'=>$id), 'id, firstname, lastname, username, email, country, lastaccess, city');
+    $user = $DB->get_record('user', array('id'=>$id), 'id, ' . $namefields . ', username, email, country, lastaccess, city');
     $user->fullname = fullname($user, true);
     $user->country = @$countries[$user->country];
     unset($user->firstname);

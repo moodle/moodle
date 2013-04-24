@@ -129,22 +129,41 @@ function useredit_shared_definition(&$mform, $editoroptions = null, $filemanager
 
     $strrequired = get_string('required');
 
-    $nameordercheck = new stdClass();
-    $nameordercheck->firstname = 'a';
-    $nameordercheck->lastname  = 'b';
-    if (fullname($nameordercheck) == 'b a' ) {  // See MDL-4325
-        $mform->addElement('text', 'lastname',  get_string('lastname'),  'maxlength="100" size="30"');
-        $mform->addElement('text', 'firstname', get_string('firstname'), 'maxlength="100" size="30"');
-    } else {
-        $mform->addElement('text', 'firstname', get_string('firstname'), 'maxlength="100" size="30"');
-        $mform->addElement('text', 'lastname',  get_string('lastname'),  'maxlength="100" size="30"');
+    $nameformat = $CFG->fullnamedisplay;
+    if ($nameformat == 'language') {
+        $nameformat = get_string('fullnamedisplay');
+    }
+
+    $necessarynames = array('firstname', 'lastname');
+    $enablednames = array_diff(get_all_user_name_fields(), $necessarynames);
+    // Get a list of all of the enabled names.
+    $enabledadditionalusernames = array();
+    foreach ($enablednames as $enabledname) {
+        if (strpos($CFG->fullnamedisplay, $enabledname) !== false) {
+            $enabledadditionalusernames[] = $enabledname;
+        }
+    }
+
+    $combinednames = array_merge($necessarynames, $enabledadditionalusernames);
+    $requirednames = order_in_string($combinednames, $nameformat);
+    foreach ($necessarynames as $necessaryname) {
+        if (!in_array($necessaryname, $requirednames)) {
+            $requirednames = order_in_string($combinednames, get_string('fullnamedisplay'));
+        }
+    }
+    foreach ($requirednames as $fullname) {
+        $mform->addElement('text', $fullname,  get_string($fullname),  'maxlength="100" size="30"');
+        $mform->setType($fullname, PARAM_NOTAGS);
     }
 
     $mform->addRule('firstname', $strrequired, 'required', null, 'client');
-    $mform->setType('firstname', PARAM_NOTAGS);
-
     $mform->addRule('lastname', $strrequired, 'required', null, 'client');
-    $mform->setType('lastname', PARAM_NOTAGS);
+
+    $morenames = array_diff($enabledadditionalusernames, $requirednames);
+    foreach ($morenames as $addname) {
+        $mform->addElement('text', $addname,  get_string($addname), 'maxlength="100" size="30"');
+        $mform->setType($addname, PARAM_NOTAGS);
+    }
 
     // Do not show email field if change confirmation is pending
     if (!empty($CFG->emailchangeconfirmation) and !empty($user->preference_newemail)) {
@@ -275,6 +294,18 @@ function useredit_shared_definition(&$mform, $editoroptions = null, $filemanager
 
         $mform->addElement('text', 'imagealt', get_string('imagealt'), 'maxlength="100" size="30"');
         $mform->setType('imagealt', PARAM_TEXT);
+
+    }
+
+    $alladditionalnames = array_diff(get_all_user_name_fields(), $necessarynames);
+    if (count($enabledadditionalusernames) < count($alladditionalnames)) {
+        $mform->addElement('header', 'moodle_additional_names', get_string('additionalnames'));
+        foreach ($alladditionalnames as $allname) {
+            if (!in_array($allname, $enabledadditionalusernames)) {
+                $mform->addElement('text', $allname, get_string($allname), 'maxlength="100" size="30"');
+                $mform->setType($allname, PARAM_NOTAGS);
+            }
+        }
 
     }
 

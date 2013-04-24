@@ -2209,5 +2209,55 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2013070800.00);
     }
 
+    if ($oldversion < 2013070800.01) {
+
+        // Define field lastnamephonetic to be added to user.
+        $table = new xmldb_table('user');
+        $field = new xmldb_field('lastnamephonetic', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'imagealt');
+        $index = new xmldb_index('lastnamephonetic', XMLDB_INDEX_NOTUNIQUE, array('lastnamephonetic'));
+
+        // Conditionally launch add field lastnamephonetic.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+            $dbman->add_index($table, $index);
+        }
+
+        // Define field firstnamephonetic to be added to user.
+        $table = new xmldb_table('user');
+        $field = new xmldb_field('firstnamephonetic', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'lastnamephonetic');
+        $index = new xmldb_index('firstnamephonetic', XMLDB_INDEX_NOTUNIQUE, array('firstnamephonetic'));
+
+        // Conditionally launch add field firstnamephonetic.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+            $dbman->add_index($table, $index);
+        }
+
+        // Define field alternatename to be added to user.
+        $table = new xmldb_table('user');
+        $field = new xmldb_field('middlename', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'firstnamephonetic');
+        $index = new xmldb_index('middlename', XMLDB_INDEX_NOTUNIQUE, array('middlename'));
+
+        // Conditionally launch add field firstnamephonetic.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+            $dbman->add_index($table, $index);
+        }
+
+        // Define field alternatename to be added to user.
+        $table = new xmldb_table('user');
+        $field = new xmldb_field('alternatename', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'middlename');
+        $index = new xmldb_index('alternatename', XMLDB_INDEX_NOTUNIQUE, array('alternatename'));
+
+        // Conditionally launch add field alternatename.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+            $dbman->add_index($table, $index);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2013070800.01);
+    }
+
     return true;
 }
