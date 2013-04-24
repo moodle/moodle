@@ -75,11 +75,14 @@ class mod_forum_post_form extends moodleform {
         $modcontext = $this->_customdata['modcontext'];
         $forum = $this->_customdata['forum'];
         $post = $this->_customdata['post'];
+        $edit = $this->_customdata['edit'];
         $thresholdwarning = $this->_customdata['thresholdwarning'];
 
         $mform->addElement('header', 'general', '');//fill in the data depending on page params later using set_data
 
-        if (!empty($thresholdwarning)) {
+        // If there is a warning message and we are not editing a post we need to handle the warning.
+        if (!empty($thresholdwarning) && !$edit) {
+            // Here we want to display a warning if they can still post but have reached the warning threshold.
             if ($thresholdwarning->canpost) {
                 $message = get_string($thresholdwarning->errorcode, $thresholdwarning->module, $thresholdwarning->additional);
                 $mform->addElement('html', $OUTPUT->notification($message));
