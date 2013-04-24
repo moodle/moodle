@@ -144,9 +144,17 @@ if ($type === 'editor') {
     $relroot = preg_replace('|^http.?://[^/]+|', '', $CFG->wwwroot);
     foreach ($css as $key=>$value) {
         if (!empty($slashargument)) {
-            $chunkurl = "{$relroot}/theme/styles.php/{$themename}/{$rev}/{$key}";
+            if ($usesvg) {
+                $chunkurl = "{$relroot}/theme/styles.php/{$themename}/{$rev}/{$key}";
+            } else {
+                $chunkurl = "{$relroot}/theme/styles.php/_s/{$themename}/{$rev}/{$key}";
+            }
         } else {
-            $chunkurl = "{$relroot}/theme/styles.php?theme={$themename}&rev={$rev}&type={$key}";
+            if ($usesvg) {
+                $chunkurl = "{$relroot}/theme/styles.php?theme={$themename}&rev={$rev}&type={$key}";
+            } else {
+                $chunkurl = "{$relroot}/theme/styles.php?theme={$themename}&rev={$rev}&type={$key}&svg=0";
+            }
         }
         $cssfiles = array();
         foreach($value as $val) {
