@@ -40,8 +40,6 @@ $THEME->editor_sheets = array('editor');
 
 $THEME->plugins_exclude_sheets = array(
     'block' => array(
-        'settings',
-        'navigation',
         'html'
     ),
     'gradereport' => array(
