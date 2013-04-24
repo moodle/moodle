@@ -20,7 +20,7 @@ class mod_data_import_form extends moodleform {
         $mform->setDefault('fielddelimiter', 'comma');
 
         $mform->addElement('text', 'fieldenclosure', get_string('fieldenclosure', 'data'));
-
+        $mform->setType('fieldenclosure', PARAM_CLEANHTML);
         $choices = textlib::get_encodings();
         $mform->addElement('select', 'encoding', get_string('fileencoding', 'mod_data'), $choices);
         $mform->setDefault('encoding', 'UTF-8');
