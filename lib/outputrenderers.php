@@ -469,6 +469,12 @@ class core_renderer extends renderer_base {
     public function standard_footer_html() {
         global $CFG, $SCRIPT;
 
+        if (during_initial_install()) {
+            // Debugging info can not work before install is finished,
+            // in any case we do not want any links during installation!
+            return '';
+        }
+
         // This function is normally called from a layout.php file in {@link core_renderer::header()}
         // but some of the content won't be known until later, so we return a placeholder
         // for now. This will be replaced with the real content in {@link core_renderer::footer()}.
