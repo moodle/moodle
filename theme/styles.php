@@ -134,7 +134,6 @@ if ($type === 'editor') {
     css_store_css($theme, $candidatesheet, $cssfiles);
 } else {
     // IE requests plugins/parents/theme instead of all at once.
-    $chunk = in_array($type, array('plugins', 'parents', 'theme'));
     $basedir = "$CFG->cachedir/theme/$themename/css";
     if (!$usesvg) {
         $basedir .= '/nosvg';
