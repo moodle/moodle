@@ -14,7 +14,7 @@ class data_existing_preset_form extends moodleform {
         $this->_form->addElement('hidden', 'd');
         $this->_form->setType('d', PARAM_INT);
         $this->_form->addElement('hidden', 'action', 'confirmdelete');
-        $this->_form->setType('action', PARAM_TEXT);
+        $this->_form->setType('action', PARAM_ALPHANUM);
         $delete = get_string('delete');
         foreach ($this->_customdata['presets'] as $preset) {
             $this->_form->addElement('radio', 'fullname', null, ' '.$preset->description, $preset->userid.'/'.$preset->shortname);
@@ -31,7 +31,7 @@ class data_import_preset_zip_form extends moodleform {
         $this->_form->addElement('hidden', 'd');
         $this->_form->setType('d', PARAM_INT);
         $this->_form->addElement('hidden', 'action', 'importzip');
-        $this->_form->setType('action', PARAM_TEXT);
+        $this->_form->setType('action', PARAM_ALPHANUM);
         $this->_form->addElement('filepicker', 'importfile', get_string('chooseorupload', 'data'));
         $this->_form->addRule('importfile', null, 'required');
         $this->_form->addElement('submit', 'uploadzip', get_string('import'));
@@ -44,7 +44,7 @@ class data_export_form extends moodleform {
         $this->_form->addElement('hidden', 'd');
         $this->_form->setType('d', PARAM_INT);
         $this->_form->addElement('hidden', 'action', 'export');
-        $this->_form->setType('action', PARAM_TEXT);
+        $this->_form->setType('action', PARAM_ALPHANUM);
         $this->_form->addElement('submit', 'export', get_string('export', 'data'));
     }
 }
@@ -55,7 +55,7 @@ class data_save_preset_form extends moodleform {
         $this->_form->addElement('hidden', 'd');
         $this->_form->setType('d', PARAM_INT);
         $this->_form->addElement('hidden', 'action', 'save2');
-        $this->_form->setType('action', PARAM_TEXT);
+        $this->_form->setType('action', PARAM_ALPHANUM);
         $this->_form->addElement('text', 'name', get_string('name'));
         $this->_form->setType('name', PARAM_FILE);
         $this->_form->addRule('name', null, 'required');
