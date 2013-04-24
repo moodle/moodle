@@ -272,7 +272,7 @@ function wiki_refresh_cachedcontent($page, $newcontent = null) {
 
     $options = array('swid' => $page->subwikiid, 'pageid' => $page->id);
     $parseroutput = wiki_parse_content($version->contentformat, $newcontent, $options);
-    $page->cachedcontent = $parseroutput['toc'] . $parseroutput['parsed_text'];
+    $page->cachedcontent = $parseroutput['parsed_text'];
     $page->timerendered = time();
     $DB->update_record('wiki_pages', $page);
 
