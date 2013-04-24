@@ -139,7 +139,7 @@ class assign_grading_table extends table_sql implements renderable {
         // The filters do not make sense when there are no submissions, so do not apply them.
         if ($this->assignment->is_any_submission_plugin_enabled()) {
             if ($filter == ASSIGN_FILTER_SUBMITTED) {
-                $where .= ' AND s.timecreated > 0 ';
+                $where .= ' AND s.timecreated > 0 OR s.timemodified > 0';
             }
             if ($filter == ASSIGN_FILTER_REQUIRE_GRADING) {
                 $where .= ' AND (s.timemodified IS NOT NULL AND
