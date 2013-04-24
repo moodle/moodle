@@ -65,6 +65,8 @@ information provided here is intended especially for developers.
 Database (DML) layer:
 * $DB->sql_empty() is deprecated, you have to use sql parameters with empty values instead,
   please note hardcoding of empty strings in SQL queries breaks execution in Oracle database.
+* Indexes must not be defined on the same columns as keys, this is now reported as fatal problem.
+  Please note that internally we create indexes instead of foreign keys.
 
 YUI changes:
 * M.util.help_icon has been deprecated. Code should be updated to use moodle-core-popuphelp

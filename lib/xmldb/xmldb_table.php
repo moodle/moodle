@@ -125,6 +125,16 @@ class xmldb_table extends xmldb_object {
             throw new coding_exception('Duplicate key '.$key->getName().' specified in table '.$this->getName());
         }
 
+        // Make sure there are no duplicate keys because the indexes would collide.
+        $newfields = $key->getFields();
+        $allindexes = $this->getIndexes();
+        foreach ($allindexes as $index) {
+            $fields = $index->getFields();
+            if ($fields === $newfields) {
+                throw new coding_exception('Index '.$index->getName().' collides with key'.$key->getName().' specified in table '.$this->getName());
+            }
+        }
+
         // Calculate the previous and next keys
         $prevkey = null;
         $nextkey = null;
@@ -175,6 +185,16 @@ class xmldb_table extends xmldb_object {
         // Detect duplicates first
         if ($this->getIndex($index->getName())) {
             throw new coding_exception('Duplicate index '.$index->getName().' specified in table '.$this->getName());
+        }
+
+        // Make sure there are no duplicate keys because the indexes would collide.
+        $newfields = $index->getFields();
+        $allkeys = $this->getKeys();
+        foreach ($allkeys as $key) {
+            $fields = $key->getFields();
+            if ($fields === $newfields) {
+                throw new coding_exception('Key '.$key->getName().' collides with index'.$index->getName().' specified in table '.$this->getName());
+            }
         }
 
         // Calculate the previous and next indexes

@@ -1229,6 +1229,51 @@ class ddl_testcase extends database_driver_testcase {
         $index->set_attributes(XMLDB_INDEX_NOTUNIQUE, array('course', 'name'));
         $dbman->add_index($table, $index);
         $this->assertTrue($dbman->index_exists($table, $index));
+
+        try {
+            $dbman->add_index($table, $index);
+            $this->fail('Exception expected for duplicate indexes');
+        } catch (Exception $e) {
+            $this->assertInstanceOf('ddl_exception', $e);
+        }
+
+        $index = new xmldb_index('third');
+        $index->set_attributes(XMLDB_INDEX_NOTUNIQUE, array('course'));
+        try {
+            $dbman->add_index($table, $index);
+            $this->fail('Exception expected for duplicate indexes');
+        } catch (Exception $e) {
+            $this->assertInstanceOf('ddl_exception', $e);
+        }
+
+        $table = new xmldb_table('test_table_cust0');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('onenumber', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('name', XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, 'Moodle');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('onenumber', XMLDB_KEY_FOREIGN, array('onenumber'));
+
+        try {
+            $table->add_index('onenumber', XMLDB_INDEX_NOTUNIQUE, array('onenumber'));
+            $this->fail('Coding exception expected');
+        } catch (Exception $e) {
+            $this->assertInstanceOf('coding_exception', $e);
+        }
+
+        $table = new xmldb_table('test_table_cust0');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('onenumber', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('name', XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, 'Moodle');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_index('onenumber', XMLDB_INDEX_NOTUNIQUE, array('onenumber'));
+
+        try {
+            $table->add_key('onenumber', XMLDB_KEY_FOREIGN, array('onenumber'));
+            $this->fail('Coding exception expected');
+        } catch (Exception $e) {
+            $this->assertInstanceOf('coding_exception', $e);
+        }
+
     }
 
     public function testFindIndexName() {
