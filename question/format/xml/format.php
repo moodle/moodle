@@ -1099,6 +1099,7 @@ class qformat_xml extends qformat_default {
     public function writequestion($question) {
         global $CFG, $OUTPUT;
 
+        $invalidquestion = false;
         $fs = get_file_storage();
         $contextid = $question->contextid;
         // Get files used by the questiontext.
@@ -1410,11 +1411,12 @@ class qformat_xml extends qformat_default {
                 break;
 
             default:
-                // try support by optional plugin
+                // Try support by optional plugin.
                 if (!$data = $this->try_exporting_using_qtypes($question->qtype, $question)) {
-                    notify(get_string('unsupportedexport', 'qformat_xml', $question->qtype));
+                    $invalidquestion = true;
+                } else {
+                    $expout .= $data;
                 }
-                $expout .= $data;
         }
 
         // Output any hints.
@@ -1435,8 +1437,11 @@ class qformat_xml extends qformat_default {
 
         // close the question tag
         $expout .= "  </question>\n";
-
-        return $expout;
+        if ($invalidquestion) {
+            return '';
+        } else {
+            return $expout;
+        }
     }
 
     public function write_answers($answers) {
