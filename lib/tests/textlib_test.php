@@ -341,6 +341,19 @@ class core_textlib_testcase extends advanced_testcase {
     }
 
     /**
+     * Tests the static utf8ord method
+     * @return void
+     */
+    public function test_utf8ord() {
+        $this->assertSame(textlib::utf8ord(''), ord(''));
+        $this->assertSame(textlib::utf8ord('f'), ord('f'));
+        $this->assertSame(textlib::utf8ord('α'), 0x03B1);
+        $this->assertSame(textlib::utf8ord('й'), 0x0439);
+        $this->assertSame(textlib::utf8ord('𯨟'), 0x2FA1F);
+        $this->assertSame(textlib::utf8ord('Ž'), 381);
+    }
+
+    /**
      * Tests the static strtotitle method
      * @return void
      */
