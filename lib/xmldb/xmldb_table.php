@@ -125,7 +125,7 @@ class xmldb_table extends xmldb_object {
             throw new coding_exception('Duplicate key '.$key->getName().' specified in table '.$this->getName());
         }
 
-        // Make sure there are no duplicate keys because the indexes would collide.
+        // Make sure there are no indexes with the key column specs because they would collide.
         $newfields = $key->getFields();
         $allindexes = $this->getIndexes();
         foreach ($allindexes as $index) {
@@ -187,7 +187,7 @@ class xmldb_table extends xmldb_object {
             throw new coding_exception('Duplicate index '.$index->getName().' specified in table '.$this->getName());
         }
 
-        // Make sure there are no duplicate keys because the indexes would collide.
+        // Make sure there are no keys with the index column specs because they would collide.
         $newfields = $index->getFields();
         $allkeys = $this->getKeys();
         foreach ($allkeys as $key) {
