@@ -810,9 +810,9 @@ class plugin_manager {
 
             'theme' => array(
                 'afterburner', 'anomaly', 'arialist', 'base', 'binarius', 'bootstrap',
-                'boxxie', 'brick', 'canvas', 'formal_white', 'formfactor',
+                'boxxie', 'brick', 'canvas', 'clean', 'formal_white', 'formfactor',
                 'fusion', 'leatherbound', 'magazine', 'mymobile', 'nimble',
-                'nonzero', 'overlay', 'serenity', 'simple', 'sky_high', 'splash',
+                'nonzero', 'overlay', 'serenity', 'sky_high', 'splash',
                 'standard', 'standardold'
             ),
 
