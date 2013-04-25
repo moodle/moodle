@@ -147,7 +147,7 @@ class behat_hooks extends behat_base {
 
         // Just trying if server responds.
         try {
-            $this->getSession()->executeScript('// empty comment');
+            $this->getSession()->wait(0, false);
         } catch (Exception $e) {
             $moreinfo = 'More info in ' . behat_command::DOCS_URL . '#Running_tests';
             $msg = 'Selenium server is not running, you need to start it to run tests that involves Javascript. ' . $moreinfo;
@@ -172,7 +172,7 @@ class behat_hooks extends behat_base {
 
         // Wait until the page is ready.
         try {
-            $this->getSession()->wait(self::TIMEOUT, '(document.readyState === "complete")');
+            $this->getSession()->wait(self::TIMEOUT * 1000, '(document.readyState === "complete")');
         } catch (NoSuchWindow $e) {
             // If we were interacting with a popup window it will not exists after closing it.
         }
