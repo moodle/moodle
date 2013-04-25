@@ -1,7 +1,8 @@
 /**
- * Required to undo YUI resets that override input size
+ * Required to undo YUI resets that override input size, margin, etc.
  */
 input[type=text],input[type=password],textarea{width:auto;}
+input[type=checkbox],input[type=radio]{margin-right: 7px;}
 
 /* Fix for YUI overriding styles */
 strong{font-style:inherit;}em{font-weight:inherit;}
