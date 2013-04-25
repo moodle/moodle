@@ -3040,13 +3040,15 @@ class restore_create_categories_and_questions extends restore_structure_step {
         $hint = new restore_path_element('question_hint',
                 '/question_categories/question_category/questions/question/question_hints/question_hint');
 
+        $tag = new restore_path_element('tag','/question_categories/question_category/questions/question/tags/tag');
+
         // Apply for 'qtype' plugins optional paths at question level
         $this->add_plugin_structure('qtype', $question);
 
         // Apply for 'local' plugins optional paths at question level
         $this->add_plugin_structure('local', $question);
 
-        return array($category, $question, $hint);
+        return array($category, $question, $hint, $tag);
     }
 
     protected function process_question_category($data) {
@@ -3191,6 +3193,29 @@ class restore_create_categories_and_questions extends restore_structure_step {
         }
         // Create mapping (I'm not sure if this is really needed?)
         $this->set_mapping('question_hint', $oldid, $newitemid);
+    }
+
+    protected function process_tag($data) {
+        global $CFG, $DB;
+
+        $data = (object)$data;
+        $newquestion = $this->get_new_parentid('question');
+
+        if (!empty($CFG->usetags)) { // if enabled in server
+            // TODO: This is highly inneficient. Each time we add one tag
+            // we fetch all the existing because tag_set() deletes them
+            // so everything must be reinserted on each call
+            $tags = array();
+            $existingtags = tag_get_tags('question', $newquestion);
+            // Re-add all the existitng tags
+            foreach ($existingtags as $existingtag) {
+                $tags[] = $existingtag->rawname;
+            }
+            // Add the one being restored
+            $tags[] = $data->rawname;
+            // Send all the tags back to the question
+            tag_set('question', $newquestion, $tags);
+        }
     }
 
     protected function after_execute() {
