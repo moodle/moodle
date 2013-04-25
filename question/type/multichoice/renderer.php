@@ -227,8 +227,8 @@ class qtype_multichoice_single_renderer extends qtype_multichoice_renderer_base 
             if (question_state::graded_state_for_fraction($ans->fraction) ==
                     question_state::$gradedright) {
                 return get_string('correctansweris', 'qtype_multichoice',
-                        $question->format_text($ans->answer, $ans->answerformat,
-                                $qa, 'question', 'answer', $ansid));
+                        $question->make_html_inline($question->format_text($ans->answer, $ans->answerformat,
+                                $qa, 'question', 'answer', $ansid)));
             }
         }
 
@@ -278,8 +278,8 @@ class qtype_multichoice_multi_renderer extends qtype_multichoice_renderer_base {
         $right = array();
         foreach ($question->answers as $ansid => $ans) {
             if ($ans->fraction > 0) {
-                $right[] = $question->format_text($ans->answer, $ans->answerformat,
-                        $qa, 'question', 'answer', $ansid);
+                $right[] = $question->make_html_inline($question->format_text($ans->answer, $ans->answerformat,
+                        $qa, 'question', 'answer', $ansid));
             }
         }
 
