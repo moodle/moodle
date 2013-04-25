@@ -50,7 +50,8 @@ class behat_completion extends behat_base {
     public function user_has_completed_activity($userfullname, $activityname) {
 
         // Will throw an exception if the element can not be hovered.
-        $xpath = "//table[@id='completion-progress']/descendant::img[contains(@title, '" . $userfullname . ", " . $activityname . ": Completed')]";
+        $xpath = "//table[@id='completion-progress']" .
+            "/descendant::img[contains(@title, '" . $userfullname . ", " . $activityname . ": Completed')]";
 
         return array(
             new Given('I go to the current course activity completion report'),
@@ -67,7 +68,8 @@ class behat_completion extends behat_base {
      */
     public function user_has_not_completed_activity($userfullname, $activityname) {
 
-        $xpath = "//table[@id='completion-progress']/descendant::img[contains(@title, '" . $userfullname . ", " . $activityname . ": Not completed')]";
+        $xpath = "//table[@id='completion-progress']" .
+            "/descendant::img[contains(@title, '" . $userfullname . ", " . $activityname . ": Not completed')]";
         return array(
             new Given('I go to the current course activity completion report'),
             new Given('I hover "' . $xpath . '" "xpath_element"')
@@ -87,7 +89,10 @@ class behat_completion extends behat_base {
 
         // Expand reports node if we can't see the link.
         try {
-            $this->find('xpath', "//*[@id='settingsnav']/descendant::li/descendant::li[not(contains(@class,'collapsed'))]/descendant::p[contains(., 'Activity completion')]");
+            $this->find('xpath', "//*[@id='settingsnav']" .
+                "/descendant::li" .
+                "/descendant::li[not(contains(@class,'collapsed'))]" .
+                "/descendant::p[contains(., 'Activity completion')]");
         } catch (ElementNotFoundException $e) {
             $steps[] = new Given('I expand "Reports" node');
         }

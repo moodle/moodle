@@ -92,8 +92,8 @@ class behat_filepicker extends behat_files {
             // In the current folder workspace.
             $folder = $this->find(
                 'xpath',
-                "//div[contains(concat(' ', normalize-space(@class), ' '), ' fp-folder ')]
-//descendant::div[contains(concat(' ', normalize-space(.), ' '), '" . $foldername . "')]",
+                "//div[contains(concat(' ', normalize-space(@class), ' '), ' fp-folder ')]" .
+                    "//descendant::div[contains(concat(' ', normalize-space(.), ' '), '" . $foldername . "')]",
                 $exception,
                 $fieldnode
             );
@@ -102,8 +102,8 @@ class behat_filepicker extends behat_files {
             // And in the pathbar.
             $folder = $this->find(
                 'xpath',
-                "//a[contains(concat(' ', normalize-space(@class), ' '), ' fp-path-folder-name ')]
-[contains(concat(' ', normalize-space(.), ' '), '" . $foldername . "')]",
+                "//a[contains(concat(' ', normalize-space(@class), ' '), ' fp-path-folder-name ')]" .
+                    "[contains(concat(' ', normalize-space(.), ' '), '" . $foldername . "')]",
                 $exception,
                 $fieldnode
             );

@@ -53,17 +53,16 @@ class behat_navigation extends behat_base {
             return false;
         }
 
-        $xpath = "//ul[contains(concat(' ', normalize-space(@class), ' '), ' block_tree ')]
-/child::li
-/child::p[contains(concat(' ', normalize-space(@class), ' '), ' branch')]
-/child::span[contains(concat(' ', normalize-space(.), ' '), '" . $nodetext . "')]
-|
-//ul[contains(concat(' ', normalize-space(@class), ' '), ' block_tree ')]
-/descendant::li[not(contains(concat(' ', normalize-space(@class), ' '), ' collapsed'))]
-/descendant::li
-/child::p[contains(concat(' ', normalize-space(@class), ' '), ' branch')]
-/child::span[contains(concat(' ', normalize-space(.), ' '), '" . $nodetext . "')]
-";
+        $xpath = "//ul[contains(concat(' ', normalize-space(@class), ' '), ' block_tree ')]" .
+            "/child::li" .
+            "/child::p[contains(concat(' ', normalize-space(@class), ' '), ' branch')]" .
+            "/child::span[contains(concat(' ', normalize-space(.), ' '), '" . $nodetext . "')]" .
+            "|" .
+            "//ul[contains(concat(' ', normalize-space(@class), ' '), ' block_tree ')]" .
+            "/descendant::li[not(contains(concat(' ', normalize-space(@class), ' '), ' collapsed'))]" .
+            "/descendant::li" .
+            "/child::p[contains(concat(' ', normalize-space(@class), ' '), ' branch')]" .
+            "/child::span[contains(concat(' ', normalize-space(.), ' '), '" . $nodetext . "')]";
 
         $node = $this->find('xpath', $xpath);
         $node->click();
