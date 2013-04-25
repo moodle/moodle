@@ -729,18 +729,19 @@ function quiz_grade_item_update($quiz, $grades = null) {
             // NOTE: this is an extremely nasty hack! It is not a bug if this confirmation fails badly. --skodak.
             $confirm_regrade = optional_param('confirm_regrade', 0, PARAM_INT);
             if (!$confirm_regrade) {
-                $message = get_string('gradeitemislocked', 'grades');
-                $back_link = $CFG->wwwroot . '/mod/quiz/report.php?q=' . $quiz->id .
-                        '&amp;mode=overview';
-                $regrade_link = qualified_me() . '&amp;confirm_regrade=1';
-                echo $OUTPUT->box_start('generalbox', 'notice');
-                echo '<p>'. $message .'</p>';
-                echo $OUTPUT->container_start('buttons');
-                echo $OUTPUT->single_button($regrade_link, get_string('regradeanyway', 'grades'));
-                echo $OUTPUT->single_button($back_link,  get_string('cancel'));
-                echo $OUTPUT->container_end();
-                echo $OUTPUT->box_end();
-
+                if (!AJAX_SCRIPT) {
+                    $message = get_string('gradeitemislocked', 'grades');
+                    $back_link = $CFG->wwwroot . '/mod/quiz/report.php?q=' . $quiz->id .
+                            '&amp;mode=overview';
+                    $regrade_link = qualified_me() . '&amp;confirm_regrade=1';
+                    echo $OUTPUT->box_start('generalbox', 'notice');
+                    echo '<p>'. $message .'</p>';
+                    echo $OUTPUT->container_start('buttons');
+                    echo $OUTPUT->single_button($regrade_link, get_string('regradeanyway', 'grades'));
+                    echo $OUTPUT->single_button($back_link,  get_string('cancel'));
+                    echo $OUTPUT->container_end();
+                    echo $OUTPUT->box_end();
+                }
                 return GRADE_UPDATE_ITEM_LOCKED;
             }
         }
