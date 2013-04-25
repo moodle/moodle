@@ -19,7 +19,7 @@ Feature: Teachers can edit or delete any forum post
     And I log in as "teacher1"
     And I follow "Course 1"
     And I turn editing mode on
-    And I add a "forum" to section "1" and I fill the form with:
+    And I add a "Forum" to section "1" and I fill the form with:
       | Forum name | Test forum name |
       | Description | Test forum description |
     And I add a new discussion to "Test forum name" forum with:

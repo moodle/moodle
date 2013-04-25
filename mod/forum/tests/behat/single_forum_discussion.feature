@@ -19,7 +19,7 @@ Feature: Single simple forum discussion type
     And I log in as "teacher1"
     And I follow "Course 1"
     And I turn editing mode on
-    And I add a "forum" to section "1" and I fill the form with:
+    And I add a "Forum" to section "1" and I fill the form with:
       | Forum name | Single discussion forum name |
       | Forum type | A single simple discussion |
       | Description | Single discussion forum description |

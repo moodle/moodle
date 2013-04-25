@@ -12,7 +12,7 @@ Feature: Restore Moodle 2 course backups
     And I log in as "admin"
     And I follow "Course 1"
     And I turn editing mode on
-    And I add a "forum" to section "1" and I fill the form with:
+    And I add a "Forum" to section "1" and I fill the form with:
       | Forum name | Test forum name |
       | Description | Test forum description |
     And I add the "Community finder" block

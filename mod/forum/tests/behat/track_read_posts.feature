@@ -20,7 +20,7 @@ Feature: A teacher can set one of 3 possible options for tracking read forum pos
 
   @javascript
   Scenario: Tracking forum posts on
-    Given I add a "forum" to section "1" and I fill the form with:
+    Given I add a "Forum" to section "1" and I fill the form with:
       | Forum name | Test forum name |
       | Forum type | Standard forum for general use |
       | Description | Test forum description |
@@ -41,7 +41,7 @@ Feature: A teacher can set one of 3 possible options for tracking read forum pos
 
   @javascript
   Scenario: Tracking forum posts off
-    Given I add a "forum" to section "1" and I fill the form with:
+    Given I add a "Forum" to section "1" and I fill the form with:
       | Forum name | Test forum name |
       | Forum type | Standard forum for general use |
       | Description | Test forum description |
@@ -59,7 +59,7 @@ Feature: A teacher can set one of 3 possible options for tracking read forum pos
 
   @javascript
   Scenario: Tracking forum posts optional
-    Given I add a "forum" to section "1" and I fill the form with:
+    Given I add a "Forum" to section "1" and I fill the form with:
       | Forum name | Test forum name |
       | Forum type | Standard forum for general use |
       | Description | Test forum description |

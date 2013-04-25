@@ -20,27 +20,27 @@ Feature: Show/hide course sections
     And I log in as "teacher1"
     And I follow "Course 1"
     And I turn editing mode on
-    And I add a "forum" to section "1" and I fill the form with:
+    And I add a "Forum" to section "1" and I fill the form with:
       | Forum name | Test hidden forum 11 name |
       | Description | Test hidden forum 11 description |
       | Visible | Hide |
-    And I add a "forum" to section "1" and I fill the form with:
+    And I add a "Forum" to section "1" and I fill the form with:
       | Forum name | Test hidden forum 12 name |
       | Description | Test hidden forum 12 description |
       | Visible | Show |
-    And I add a "forum" to section "2" and I fill the form with:
+    And I add a "Forum" to section "2" and I fill the form with:
       | Forum name | Test hidden forum 21 name |
       | Description | Test hidden forum 21 description |
       | Visible | Hide |
-    And I add a "forum" to section "2" and I fill the form with:
+    And I add a "Forum" to section "2" and I fill the form with:
       | Forum name | Test hidden forum 22 name |
       | Description | Test hidden forum 22 description |
       | Visible | Show |
-    And I add a "forum" to section "3" and I fill the form with:
+    And I add a "Forum" to section "3" and I fill the form with:
       | Forum name | Test hidden forum 31 name |
       | Description | Test hidden forum 31 description |
       | Visible | Hide |
-    And I add a "forum" to section "3" and I fill the form with:
+    And I add a "Forum" to section "3" and I fill the form with:
       | Forum name | Test hidden forum 32 name |
       | Description | Test hidden forum 32 description |
       | Visible | Show |

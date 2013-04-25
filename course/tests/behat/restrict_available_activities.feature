@@ -20,10 +20,10 @@ Feature: Restrict activities availability
     Given I log in as "teacher1"
     And I follow "Course 1"
     And I turn editing mode on
-    When I add a "glossary" to section "1" and I fill the form with:
+    When I add a "Glossary" to section "1" and I fill the form with:
       | Name | Test glossary name |
       | Description | Test glossary description |
-    And I add a "chat" to section "1" and I fill the form with:
+    And I add a "Chat" to section "1" and I fill the form with:
       | Name of this chat room | Test chat name |
       | Description | Test chat description |
     Then I should see "Test glossary name"
