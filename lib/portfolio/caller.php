@@ -513,11 +513,13 @@ abstract class portfolio_module_caller_base extends portfolio_caller_base {
     /**
      * Navigation passed to print_header.
      * Override this to do something more specific than the module view page
+     * like adding more links to the breadcrumb.
      *
      * @return array
      */
     public function get_navigation() {
-        $extranav = array('name' => $this->cm->name, 'link' => $this->get_return_url());
+        // No extra navigation by default, link to the course module already included.
+        $extranav = array();
         return array($extranav, $this->cm);
     }
 
