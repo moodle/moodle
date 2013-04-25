@@ -160,9 +160,9 @@ echo $OUTPUT->doctype() ?>
 
 <?php if ($layout !== 'content-only') {
           if ($layout === 'pre-and-post') { ?>
-            <aside id="region-pre" class="span4 desktop-first-column">
+            <aside class="span4 desktop-first-column">
     <?php } else if ($layout === 'side-pre-only') { ?>
-            <aside id="region-pre" class="span3 desktop-first-column">
+            <aside class="span3 desktop-first-column">
     <?php } ?>
           <div id="region-pre" class="block-region">
           <div class="region-content">
