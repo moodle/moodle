@@ -33,7 +33,7 @@ $THEME->doctype = 'html5';
 $THEME->yuicssmodules = array();
 $THEME->name = 'bootstrap';
 $THEME->parents = array('');
-$THEME->sheets = array('generated');
+$THEME->sheets = array('moodle');
 $THEME->supportscssoptimisation = false;
 
 $THEME->editor_sheets = array('editor');

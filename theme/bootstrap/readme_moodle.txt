@@ -10,7 +10,8 @@ https://github.com/twitter/bootstrap.git
 To update to the latest release of twitter bootstrap:
 * remove all files from less/bootstrap,
 * download the new less files and store them in less/bootstrap
-* regenerate files using recess: recess --compile --compress moodle.less > ../style/generated.css **
+* regenerate files using recess: recess --compile --compress moodle.less > ../style/moodle.css **
+* regenerate files using recess: recess --compile --compress editor.less > ../style/editor.css **
 * update lib/thirdpartylibs.xml
 
 ** If you want to make changes to the .css generated from these .less files then you
