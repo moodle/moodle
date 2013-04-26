@@ -72,6 +72,7 @@ class web_testcase extends advanced_testcase {
     function test_s() {
         $this->assertEquals(s("This Breaks \" Strict"), "This Breaks &quot; Strict");
         $this->assertEquals(s("This Breaks <a>\" Strict</a>"), "This Breaks &lt;a&gt;&quot; Strict&lt;/a&gt;");
+        $this->assertEquals('An entity: &#x09ff;.', s('An entity: &#x09ff;.'));
     }
 
     function test_format_text_email() {
