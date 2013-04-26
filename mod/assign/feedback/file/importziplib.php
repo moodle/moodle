@@ -194,6 +194,17 @@ class assignfeedback_file_zip_importer {
                                           $USER->id,
                                           '/import/');
 
+        $keys = array_keys($files);
+        if (count($files) == 1 && $files[$keys[0]]->is_directory()) {
+            // An entire folder was zipped, rather than its contents.
+            // We need to return the contents of the folder instead, so the import can continue.
+            $files = $fs->get_directory_files($contextid,
+                                              'assignfeedback_file',
+                                              ASSIGNFEEDBACK_FILE_IMPORT_FILEAREA,
+                                              $USER->id,
+                                              $files[$keys[0]]->get_filepath());
+        }
+
         return $files;
     }
 
@@ -205,7 +216,7 @@ class assignfeedback_file_zip_importer {
      * @return string - The html response
      */
     public function import_zip_files($assignment, $fileplugin) {
-        global $USER, $CFG, $PAGE, $DB;
+        global $CFG, $PAGE, $DB;
 
         @set_time_limit(ASSIGNFEEDBACK_FILE_MAXFILEUNZIPTIME);
         $packer = get_file_packer('application/zip');
@@ -216,11 +227,7 @@ class assignfeedback_file_zip_importer {
         $contextid = $assignment->get_context()->id;
 
         $fs = get_file_storage();
-        $files = $fs->get_directory_files($contextid,
-                                          'assignfeedback_file',
-                                          ASSIGNFEEDBACK_FILE_IMPORT_FILEAREA,
-                                          $USER->id,
-                                          '/import/');
+        $files = $this->get_import_files($contextid);
 
         $currentgroup = groups_get_activity_group($assignment->get_course_module(), true);
         $allusers = $assignment->list_participants($currentgroup, false);
