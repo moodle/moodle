@@ -97,6 +97,10 @@ abstract class base_moodleform extends moodleform {
                 $stage = $mform->addElement('hidden', $name, $value);
                 if (in_array($name, $intparams)) {
                     $mform->setType($name, PARAM_INT);
+                } else {
+                    // Adding setType() to avoid missing setType() warnings.
+                    // MDL-39126: support $mform->setType() for additional backup parameters.
+                    $mform->setType($name, PARAM_RAW);
                 }
             }
         }

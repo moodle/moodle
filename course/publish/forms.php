@@ -59,6 +59,7 @@ class hub_publish_selector_form extends moodleform {
 
             $hubname = $hub->hubname;
             $mform->addElement('hidden', clean_param($hub->huburl, PARAM_ALPHANUMEXT), $hubname);
+            $mform->setType(clean_param($hub->huburl, PARAM_ALPHANUMEXT), PARAM_ALPHANUMEXT);
             if (empty($hubname)) {
                 $hubname = $hub->huburl;
             }
@@ -69,13 +70,16 @@ class hub_publish_selector_form extends moodleform {
         }
 
         $mform->addElement('hidden', 'id', $this->_customdata['id']);
+        $mform->setType('id', PARAM_INT);
 
         if ($share) {
             $buttonlabel = get_string('shareonhub', 'hub');
             $mform->addElement('hidden', 'share', true);
+            $mform->setType('share', PARAM_BOOL);
         } else {
             $buttonlabel = get_string('advertiseonhub', 'hub');
             $mform->addElement('hidden', 'advertise', true);
+            $mform->setType('advertise', PARAM_BOOL);
         }
 
         $this->add_action_buttons(false, $buttonlabel);
@@ -104,7 +108,9 @@ class course_publication_form extends moodleform {
 
         //hidden parameters
         $mform->addElement('hidden', 'huburl', $huburl);
+        $mform->setType('huburl', PARAM_URL);
         $mform->addElement('hidden', 'hubname', $hubname);
+        $mform->setType('hubname', PARAM_TEXT);
 
         //check on the hub if the course has already been published
         $registrationmanager = new registration_manager();
@@ -200,12 +206,13 @@ class course_publication_form extends moodleform {
         $mform->addHelpButton('name', 'name', 'hub');
 
         $mform->addElement('hidden', 'id', $this->_customdata['id']);
+        $mform->setType('id', PARAM_INT);
 
         if ($share) {
             $buttonlabel = get_string('shareon', 'hub', !empty($hubname) ? $hubname : $huburl);
 
             $mform->addElement('hidden', 'share', $share);
-
+            $mform->setType('share', PARAM_BOOL);
             $mform->addElement('text', 'demourl', get_string('demourl', 'hub'),
                     array('class' => 'metadatatext'));
             $mform->setType('demourl', PARAM_URL);
@@ -220,7 +227,9 @@ class course_publication_form extends moodleform {
                 $buttonlabel = get_string('readvertiseon', 'hub', !empty($hubname) ? $hubname : $huburl);
             }
             $mform->addElement('hidden', 'advertise', $advertise);
+            $mform->setType('advertise', PARAM_BOOL);
             $mform->addElement('hidden', 'courseurl', $CFG->wwwroot . "/course/view.php?id=" . $course->id);
+            $mform->setType('courseurl', PARAM_URL);
             $mform->addElement('static', 'courseurlstring', get_string('courseurl', 'hub'));
             $mform->setDefault('courseurlstring', new moodle_url("/course/view.php?id=" . $course->id));
             $mform->addHelpButton('courseurlstring', 'courseurl', 'hub');
@@ -230,7 +239,7 @@ class course_publication_form extends moodleform {
                 array('class' => 'metadatatext'));
         $mform->setDefault('courseshortname', $defaultshortname);
         $mform->addHelpButton('courseshortname', 'courseshortname', 'hub');
-
+        $mform->setType('courseshortname', PARAM_TEXT);
         $mform->addElement('textarea', 'description', get_string('description'), array('rows' => 10,
             'cols' => 57));
         $mform->addRule('description', $strrequired, 'required', null, 'client');
@@ -250,17 +259,19 @@ class course_publication_form extends moodleform {
         $mform->setDefault('publishername', $defaultpublishername);
         $mform->addRule('publishername', $strrequired, 'required', null, 'client');
         $mform->addHelpButton('publishername', 'publishername', 'hub');
+        $mform->setType('publishername', PARAM_NOTAGS);
 
         $mform->addElement('text', 'publisheremail', get_string('publisheremail', 'hub'),
                 array('class' => 'metadatatext'));
         $mform->setDefault('publisheremail', $defaultpublisheremail);
         $mform->addRule('publisheremail', $strrequired, 'required', null, 'client');
         $mform->addHelpButton('publisheremail', 'publisheremail', 'hub');
+        $mform->setType('publisheremail', PARAM_EMAIL);
 
         $mform->addElement('text', 'creatorname', get_string('creatorname', 'hub'),
                 array('class' => 'metadatatext'));
         $mform->addRule('creatorname', $strrequired, 'required', null, 'client');
-        $mform->setType('creatorname', PARAM_TEXT);
+        $mform->setType('creatorname', PARAM_NOTAGS);
         $mform->setDefault('creatorname', $defaultcreatorname);
         $mform->addHelpButton('creatorname', 'creatorname', 'hub');
 
@@ -268,6 +279,7 @@ class course_publication_form extends moodleform {
                 array('class' => 'metadatatext'));
         $mform->setDefault('contributornames', $defaultcontributornames);
         $mform->addHelpButton('contributornames', 'contributornames', 'hub');
+        $mform->setType('contributornames', PARAM_NOTAGS);
 
         $mform->addElement('text', 'coverage', get_string('tags', 'hub'),
                 array('class' => 'metadatatext'));
@@ -357,6 +369,7 @@ class course_publication_form extends moodleform {
             }
 
             $mform->addElement('hidden', 'existingscreenshotnumber', $screenshotsnumber);
+            $mform->setType('existingscreenshotnumber', PARAM_INT);
         }
 
         $mform->addElement('filemanager', 'screenshots', get_string('addscreenshots', 'hub'), null,
