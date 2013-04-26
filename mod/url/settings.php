@@ -58,19 +58,14 @@ if ($ADMIN->fulltree) {
     //--- modedit defaults -----------------------------------------------------------------------------------
     $settings->add(new admin_setting_heading('urlmodeditdefaults', get_string('modeditdefaults', 'admin'), get_string('condifmodeditdefaults', 'admin')));
 
-    $settings->add(new admin_setting_configcheckbox_with_advanced('url/printheading',
-        get_string('printheading', 'url'), get_string('printheadingexplain', 'url'),
-        array('value'=>0, 'adv'=>false)));
-    $settings->add(new admin_setting_configcheckbox_with_advanced('url/printintro',
-        get_string('printintro', 'url'), get_string('printintroexplain', 'url'),
-        array('value'=>1, 'adv'=>false)));
-    $settings->add(new admin_setting_configselect_with_advanced('url/display',
-        get_string('displayselect', 'url'), get_string('displayselectexplain', 'url'),
-        array('value'=>RESOURCELIB_DISPLAY_AUTO, 'adv'=>false), $displayoptions));
-    $settings->add(new admin_setting_configtext_with_advanced('url/popupwidth',
-        get_string('popupwidth', 'url'), get_string('popupwidthexplain', 'url'),
-        array('value'=>620, 'adv'=>true), PARAM_INT, 7));
-    $settings->add(new admin_setting_configtext_with_advanced('url/popupheight',
-        get_string('popupheight', 'url'), get_string('popupheightexplain', 'url'),
-        array('value'=>450, 'adv'=>true), PARAM_INT, 7));
+    $settings->add(new admin_setting_configcheckbox('url/printheading',
+        get_string('printheading', 'url'), get_string('printheadingexplain', 'url'), 0));
+    $settings->add(new admin_setting_configcheckbox('url/printintro',
+        get_string('printintro', 'url'), get_string('printintroexplain', 'url'), 1));
+    $settings->add(new admin_setting_configselect('url/display',
+        get_string('displayselect', 'url'), get_string('displayselectexplain', 'url'), RESOURCELIB_DISPLAY_AUTO, $displayoptions));
+    $settings->add(new admin_setting_configtext('url/popupwidth',
+        get_string('popupwidth', 'url'), get_string('popupwidthexplain', 'url'), 620, PARAM_INT, 7));
+    $settings->add(new admin_setting_configtext('url/popupheight',
+        get_string('popupheight', 'url'), get_string('popupheightexplain', 'url'), 450, PARAM_INT, 7));
 }
