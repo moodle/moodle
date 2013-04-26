@@ -57,10 +57,9 @@ Note that URLs can also be added to any other resource or activity type through 
 $string['modulename_link'] = 'mod/url/view';
 $string['modulenameplural'] = 'URLs';
 $string['neverseen'] = 'Never seen';
-$string['optionsheader'] = 'Options';
 $string['page-mod-url-x'] = 'Any URL module page';
 $string['parameterinfo'] = '&amp;parameter=variable';
-$string['parametersheader'] = 'Parameters';
+$string['parametersheader'] = 'URL variables';
 $string['parametersheader_help'] = 'Some internal Moodle variables may be automatically appended to the URL. Type your name for the parameter into each text box(es) and then select the required matching variable.';
 $string['pluginadministration'] = 'URL module administration';
 $string['pluginname'] = 'URL';

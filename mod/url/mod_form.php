@@ -55,7 +55,7 @@ class mod_url_mod_form extends moodleform_mod {
         $mform->setExpanded('content');
 
         //-------------------------------------------------------
-        $mform->addElement('header', 'optionssection', get_string('optionsheader', 'url'));
+        $mform->addElement('header', 'optionssection', get_string('appearance'));
 
         if ($this->current->instance) {
             $options = resourcelib_get_displayoptions(explode(',', $config->displayoptions), $this->current->display);
