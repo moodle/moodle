@@ -1,7 +1,7 @@
 {
-  "name": "moodle-theme_bootstrap-bootstrap",
+  "name": "moodle-theme_bootstrapbase-bootstrap",
   "builds": {
-    "moodle-theme_bootstrap-bootstrap": {
+    "moodle-theme_bootstrapbase-bootstrap": {
       "prependfiles": [
         "bootstrapengine.js",
         "bootstrapcollapse.js",

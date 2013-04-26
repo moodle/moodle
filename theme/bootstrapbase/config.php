@@ -31,7 +31,7 @@
 
 $THEME->doctype = 'html5';
 $THEME->yuicssmodules = array();
-$THEME->name = 'bootstrap';
+$THEME->name = 'bootstrapbase';
 $THEME->parents = array('');
 $THEME->sheets = array('generated');
 $THEME->supportscssoptimisation = false;

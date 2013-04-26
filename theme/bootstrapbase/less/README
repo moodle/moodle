@@ -1,6 +1,6 @@
 If you want to make changes to the .css generated from these .less files then you
 need to install recess (https://github.com/twitter/recess) to compile the .less files,
-then run these commands in the bootstrap/less/ folder:
+then run these commands in the bootstrapbase/less/ folder:
 
 recess --compile --compress moodle.less > ../style/generated.css
 

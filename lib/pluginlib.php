@@ -809,7 +809,7 @@ class plugin_manager {
             ),
 
             'theme' => array(
-                'afterburner', 'anomaly', 'arialist', 'base', 'binarius', 'bootstrap',
+                'afterburner', 'anomaly', 'arialist', 'base', 'binarius', 'bootstrapbase',
                 'boxxie', 'brick', 'canvas', 'clean', 'formal_white', 'formfactor',
                 'fusion', 'leatherbound', 'magazine', 'mymobile', 'nimble',
                 'nonzero', 'overlay', 'serenity', 'sky_high', 'splash',
