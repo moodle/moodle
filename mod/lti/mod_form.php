@@ -60,7 +60,7 @@ class mod_lti_mod_form extends moodleform_mod {
         if ($type = optional_param('type', false, PARAM_ALPHA)) {
             component_callback("ltisource_$type", 'add_instance_hook');
         }
-        
+
         $this->typeid = 0;
 
         $mform =& $this->_form;
