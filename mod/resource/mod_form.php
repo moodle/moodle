@@ -69,8 +69,15 @@ class mod_resource_mod_form extends moodleform_mod {
 
         $mform->addElement('filemanager', 'files', get_string('selectfiles'), null, $filemanager_options);
 
+        // add legacy files flag only if used
+        if (isset($this->current->legacyfiles) and $this->current->legacyfiles != RESOURCELIB_LEGACYFILES_NO) {
+            $options = array(RESOURCELIB_LEGACYFILES_DONE   => get_string('legacyfilesdone', 'resource'),
+                             RESOURCELIB_LEGACYFILES_ACTIVE => get_string('legacyfilesactive', 'resource'));
+            $mform->addElement('select', 'legacyfiles', get_string('legacyfiles', 'resource'), $options);
+        }
+
         //-------------------------------------------------------
-        $mform->addElement('header', 'optionssection', get_string('optionsheader', 'resource'));
+        $mform->addElement('header', 'optionssection', get_string('appearance'));
 
         if ($this->current->instance) {
             $options = resourcelib_get_displayoptions(explode(',', $config->displayoptions), $this->current->display);
@@ -141,14 +148,6 @@ class mod_resource_mod_form extends moodleform_mod {
         $mform->addElement('select', 'filterfiles', get_string('filterfiles', 'resource'), $options);
         $mform->setDefault('filterfiles', $config->filterfiles);
         $mform->setAdvanced('filterfiles', $config->filterfiles_adv);
-
-        // add legacy files flag only if used
-        if (isset($this->current->legacyfiles) and $this->current->legacyfiles != RESOURCELIB_LEGACYFILES_NO) {
-            $options = array(RESOURCELIB_LEGACYFILES_DONE   => get_string('legacyfilesdone', 'resource'),
-                             RESOURCELIB_LEGACYFILES_ACTIVE => get_string('legacyfilesactive', 'resource'));
-            $mform->addElement('select', 'legacyfiles', get_string('legacyfiles', 'resource'), $options);
-            $mform->setAdvanced('legacyfiles', 1);
-        }
 
         //-------------------------------------------------------
         $this->standard_coursemodule_elements();
