@@ -52,7 +52,7 @@ class qtype_ddimageortext_edit_form extends qtype_ddtoimage_edit_form_base {
             foreach ($question->options->drags as $drag) {
                 $dragindex = $drag->no -1;
                 $question->drags[$dragindex] = array();
-                $question->drags[$dragindex]['draglabel'] = $drag->label;
+                $question->draglabel[$dragindex] = $drag->label;
                 $question->drags[$dragindex]['infinite'] = $drag->infinite;
                 $question->drags[$dragindex]['draggroup'] = $drag->draggroup;
                 $dragids[$dragindex] = $drag->id;
@@ -93,11 +93,11 @@ class qtype_ddimageortext_edit_form extends qtype_ddtoimage_edit_form_base {
                 } else {
                     $fileexists = self::file_uploaded($question->dragitem[$dragindex]);
                 }
-                $labelexists = (trim($question->drags[$dragindex]['draglabel']) != '');
+                $labelexists = (trim($question->draglabel[$dragindex]) != '');
                 if ($labelexists && !$fileexists) {
-                    $question->dragitemtype[$dragindex] = 'word';
+                    $question->drags[$dragindex]['dragitemtype'] = 'word';
                 } else {
-                    $question->dragitemtype[$dragindex] = 'image';
+                    $question->drags[$dragindex]['dragitemtype'] = 'image';
                 }
             }
         }
@@ -118,7 +118,7 @@ class qtype_ddimageortext_edit_form extends qtype_ddtoimage_edit_form_base {
         $maxsizes->dragimage->height = QTYPE_DDIMAGEORTEXT_DRAGIMAGE_MAXHEIGHT;
 
         $params = array('maxsizes' => $maxsizes,
-                        'topnode' => 'fieldset#previewareaheader');
+                        'topnode' => 'fieldset#id_previewareaheader');
 
         $PAGE->requires->yui_module('moodle-qtype_ddimageortext-form',
                                         'M.qtype_ddimageortext.init_form',
@@ -128,38 +128,31 @@ class qtype_ddimageortext_edit_form extends qtype_ddtoimage_edit_form_base {
     // Drag items.
 
     protected function definition_draggable_items($mform, $itemrepeatsatstart) {
-
+        $mform->addElement('header', 'draggableitemheader',
+                                get_string('draggableitems', 'qtype_ddimageortext'));
+        $mform->addElement('advcheckbox', 'shuffleanswers', ' ',
+                                        get_string('shuffleimages', 'qtype_'.$this->qtype()));
+        $mform->setDefault('shuffleanswers', 0);
         $this->repeat_elements($this->draggable_item($mform), $itemrepeatsatstart,
                 $this->draggable_items_repeated_options(),
                 'noitems', 'additems', self::ADD_NUM_ITEMS,
-                get_string('addmoreimages', 'qtype_ddimageortext'));
+                get_string('addmoreimages', 'qtype_ddimageortext'), true);
     }
 
     protected function draggable_item($mform) {
         $draggableimageitem = array();
 
-        $draggableimageitem[] = $mform->createElement('header', 'draggableitemheader',
-                                get_string('draggableitemheader', 'qtype_ddimageortext', '{no}'));
+        $grouparray = array();
         $dragitemtypes = array('image' => get_string('draggableimage', 'qtype_ddimageortext'),
                                 'word' => get_string('draggableword', 'qtype_ddimageortext'));
-        $draggableimageitem[] = $mform->createElement('select', 'dragitemtype',
+        $grouparray[] = $mform->createElement('select', 'dragitemtype',
                                             get_string('draggableitemtype', 'qtype_ddimageortext'),
                                             $dragitemtypes,
                                             array('class' => 'dragitemtype'));
-        $draggableimageitem[] = $mform->createElement('filepicker', 'dragitem', '', null,
-                                    self::file_picker_options());
-
-        $grouparray = array();
-        $grouparray[] = $mform->createElement('text', 'draglabel',
-                                                get_string('label', 'qtype_ddimageortext'),
-                                                array('size'=>30, 'class'=>'tweakcss'));
-        $mform->setType('draglabel', PARAM_NOTAGS);
         $options = array();
         for ($i = 1; $i <= self::MAX_GROUPS; $i += 1) {
             $options[$i] = $i;
         }
-        $grouparray[] = $mform->createElement('static', '', '', ' ' .
-                get_string('group', 'qtype_gapselect').' ');
         $grouparray[] = $mform->createElement('select', 'draggroup',
                                                 get_string('group', 'qtype_gapselect'),
                                                 $options,
@@ -167,7 +160,15 @@ class qtype_ddimageortext_edit_form extends qtype_ddtoimage_edit_form_base {
         $grouparray[] = $mform->createElement('advcheckbox', 'infinite', ' ',
                 get_string('infinite', 'qtype_ddimageortext'));
         $draggableimageitem[] = $mform->createElement('group', 'drags',
-                get_string('label', 'qtype_ddimageortext'), $grouparray);
+                get_string('draggableitemheader', 'qtype_ddimageortext', '{no}'), $grouparray);
+
+        $draggableimageitem[] = $mform->createElement('filepicker', 'dragitem', '', null,
+                                    self::file_picker_options());
+
+        $draggableimageitem[] = $mform->createElement('text', 'draglabel',
+                                                get_string('label', 'qtype_ddimageortext'),
+                                                array('size'=>30, 'class'=>'tweakcss'));
+        $mform->setType('draglabel', PARAM_NOTAGS);
         return $draggableimageitem;
     }
 
@@ -183,30 +184,20 @@ class qtype_ddimageortext_edit_form extends qtype_ddtoimage_edit_form_base {
         $dropzoneitem = array();
 
         $grouparray = array();
-        $grouparray[] = $mform->createElement('static', 'xleftlabel', '',
-                ' '.get_string('xleft', 'qtype_ddimageortext').' ');
         $grouparray[] = $mform->createElement('text', 'xleft',
                                                 get_string('xleft', 'qtype_ddimageortext'),
                                                 array('size'=>5, 'class'=>'tweakcss'));
-        $mform->setType('xleft', PARAM_NOTAGS);
-        $grouparray[] = $mform->createElement('static', 'ytoplabel', '',
-                ' '.get_string('ytop', 'qtype_ddimageortext').' ');
         $grouparray[] = $mform->createElement('text', 'ytop',
                                                 get_string('ytop', 'qtype_ddimageortext'),
                                                 array('size'=>5, 'class'=>'tweakcss'));
-        $mform->setType('ytop', PARAM_NOTAGS);
         $options = array();
 
         $options[0] = '';
         for ($i = 1; $i <= $imagerepeats; $i += 1) {
             $options[$i] = $i;
         }
-        $grouparray[] = $mform->createElement('static', '', '', ' ' .
-                                        get_string('draggableitem', 'qtype_ddimageortext').' ');
         $grouparray[] = $mform->createElement('select', 'choice',
                                     get_string('draggableitem', 'qtype_ddimageortext'), $options);
-        $grouparray[] = $mform->createElement('static', '', '', ' ' .
-                                        get_string('label', 'qtype_ddimageortext').' ');
         $grouparray[] = $mform->createElement('text', 'droplabel',
                                                 get_string('label', 'qtype_ddimageortext'),
                                                 array('size'=>10, 'class'=>'tweakcss'));
@@ -218,8 +209,11 @@ class qtype_ddimageortext_edit_form extends qtype_ddtoimage_edit_form_base {
 
     protected function drop_zones_repeated_options() {
         $repeatedoptions = array();
-        $repeatedoptions['xleft']['type']     = PARAM_INT;
-        $repeatedoptions['ytop']['type']      = PARAM_INT;
+        // The next two are PARAM_RAW becuase we need to distinguish 0 and ''.
+        // We do the necessary validation in the validation method.
+        $repeatedoptions['drops[xleft]']['type']     = PARAM_RAW;
+        $repeatedoptions['drops[ytop]']['type']      = PARAM_RAW;
+        $repeatedoptions['drops[droplabel]']['type'] = PARAM_TEXT;
         $repeatedoptions['choice']['default'] = '0';
         return $repeatedoptions;
     }
@@ -252,7 +246,7 @@ class qtype_ddimageortext_edit_form extends qtype_ddtoimage_edit_form_base {
                     $errors["drops[$i]"] = get_string('formerror_notintxleft', 'qtype_ddimageortext');
                 }
 
-                if ($data['dragitemtype'][$choice - 1] != 'word' &&
+                if ($data['drags'][$choice - 1]['dragitemtype'] != 'word' &&
                                         !self::file_uploaded($data['dragitem'][$choice - 1])) {
                     $errors['dragitem['.($choice - 1).']'] =
                                     get_string('formerror_nofile', 'qtype_ddimageortext', $i);
@@ -275,8 +269,8 @@ class qtype_ddimageortext_edit_form extends qtype_ddtoimage_edit_form_base {
             }
         }
         for ($dragindex=0; $dragindex < $data['noitems']; $dragindex++) {
-            $label = $data['drags'][$dragindex]['draglabel'];
-            if ($data['dragitemtype'][$dragindex] == 'word') {
+            $label = $data['draglabel'][$dragindex];
+            if ($data['drags'][$dragindex]['dragitemtype'] == 'word') {
                 $allowedtags = '<br><sub><sup><b><i><strong><em>';
                 $errormessage = get_string('formerror_disallowedtags', 'qtype_ddimageortext');
             } else {

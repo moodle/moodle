@@ -63,14 +63,13 @@ abstract class qtype_ddtoimage_edit_form_base extends question_edit_form {
 
         $mform->registerNoSubmitButton('refresh');
         $mform->addElement('submit', 'refresh', get_string('refresh', 'qtype_'.$this->qtype()));
-        $mform->closeHeaderBefore('refresh');
+        $mform->addElement('filepicker', 'bgimage', get_string('bgimage', 'qtype_'.$this->qtype()),
+                                                               null, self::file_picker_options());
+        $mform->closeHeaderBefore('dropzoneheader');
 
         list($itemrepeatsatstart, $imagerepeats) = $this->get_drag_item_repeats();
         $this->definition_drop_zones($mform, $imagerepeats);
-        $mform->addElement('advcheckbox', 'shuffleanswers', ' ',
-                                        get_string('shuffleimages', 'qtype_'.$this->qtype()));
-        $mform->setDefault('shuffleanswers', 0);
-        $mform->closeHeaderBefore('shuffleanswers');
+
         // Add the draggable image fields to the form.
         $this->definition_draggable_items($mform, $itemrepeatsatstart);
 
@@ -82,21 +81,17 @@ abstract class qtype_ddtoimage_edit_form_base extends question_edit_form {
         $mform->addElement('header', 'dropzoneheader',
                                             get_string('dropzoneheader', 'qtype_'.$this->qtype()));
 
-        $mform->addElement('filepicker', 'bgimage', get_string('bgimage', 'qtype_'.$this->qtype()),
-                                                               null, self::file_picker_options());
-
         $countdropzones = 0;
         if (isset($this->question->id)) {
             foreach ($this->question->options->drops as $drop) {
                 $countdropzones = max($countdropzones, $drop->no);
             }
         }
-        if ($this->question->formoptions->repeatelements) {
-            $dropzonerepeatsatstart = max(self::START_NUM_ITEMS,
-                                                    $countdropzones + self::ADD_NUM_ITEMS);
-        } else {
-            $dropzonerepeatsatstart = $countdropzones;
+
+        if (!$countdropzones) {
+            $countdropzones = self::START_NUM_ITEMS;
         }
+        $dropzonerepeatsatstart = $countdropzones;
 
         $this->repeat_elements($this->drop_zone($mform, $imagerepeats), $dropzonerepeatsatstart,
                 $this->drop_zones_repeated_options(),
@@ -107,7 +102,7 @@ abstract class qtype_ddtoimage_edit_form_base extends question_edit_form {
 
     abstract protected function drop_zones_repeated_options();
 
-    abstract protected function definition_draggable_items($mform, $itemrepeatsatstart);
+    abstract protected function definition_draggable_items($mform, $itemrepeatsatstart) ;
 
     abstract protected function draggable_item($mform);
 

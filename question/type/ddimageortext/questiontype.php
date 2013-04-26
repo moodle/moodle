@@ -95,7 +95,7 @@ class qtype_ddimageortext extends qtype_ddtoimage_base {
                                     '', 'no, id');
         foreach (array_keys($formdata->drags) as $dragno) {
             $info = file_get_draft_area_info($formdata->dragitem[$dragno]);
-            if ($info['filecount'] > 0 || (trim($formdata->drags[$dragno]['draglabel'])!='')) {
+            if ($info['filecount'] > 0 || (trim($formdata->draglabel[$dragno])!='')) {
                 $draftitemid = $formdata->dragitem[$dragno];
 
                 $drag = new stdClass();
@@ -103,7 +103,7 @@ class qtype_ddimageortext extends qtype_ddtoimage_base {
                 $drag->no = $dragno + 1;
                 $drag->draggroup = $formdata->drags[$dragno]['draggroup'];
                 $drag->infinite = empty($formdata->drags[$dragno]['infinite'])? 0 : 1;
-                $drag->label = $formdata->drags[$dragno]['draglabel'];
+                $drag->label = $formdata->draglabel[$dragno];
 
                 if (isset($olddragids[$dragno +1])) {
                     $drag->id = $olddragids[$dragno +1];
@@ -113,7 +113,7 @@ class qtype_ddimageortext extends qtype_ddtoimage_base {
                     $drag->id = $DB->insert_record('qtype_ddimageortext_drags', $drag);
                 }
 
-                if ($formdata->dragitemtype[$dragno] == 'image') {
+                if ($formdata->drags[$dragno]['dragitemtype'] == 'image') {
                     self::constrain_image_size_in_draft_area($draftitemid,
                                         QTYPE_DDIMAGEORTEXT_DRAGIMAGE_MAXWIDTH,
                                         QTYPE_DDIMAGEORTEXT_DRAGIMAGE_MAXHEIGHT);
@@ -130,6 +130,7 @@ class qtype_ddimageortext extends qtype_ddtoimage_base {
             }
 
         }
+
         if (!empty($olddragids)) {
             list($sql, $params) = $DB->get_in_or_equal(array_values($olddragids));
             $DB->delete_records_select('qtype_ddimageortext_drags', "id $sql", $params);
@@ -243,7 +244,7 @@ class qtype_ddimageortext extends qtype_ddtoimage_base {
             $dragno = $format->getpath($dragxml, array('#', 'no', 0, '#'), 0);
             $dragindex = $dragno -1;
             $question->drags[$dragindex] = array();
-            $question->drags[$dragindex]['draglabel'] =
+            $question->draglabel[$dragindex] =
                         $format->getpath($dragxml, array('#', 'text', 0, '#'), '', true);
             $question->drags[$dragindex]['infinite'] = array_key_exists('infinite', $dragxml['#']);
             $question->drags[$dragindex]['draggroup'] =
@@ -252,9 +253,9 @@ class qtype_ddimageortext extends qtype_ddtoimage_base {
             $question->dragitem[$dragindex] =
                                         $this->import_files_to_draft_file_area($format, $filexml);
             if (count($filexml)) {
-                $question->dragitemtype[$dragindex] = 'image';
+                $question->drags[$dragindex]['dragitemtype'] = 'image';
             } else {
-                $question->dragitemtype[$dragindex] = 'word';
+                $question->drags[$dragindex]['dragitemtype'] = 'word';
             }
         }
 

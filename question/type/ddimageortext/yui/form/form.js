@@ -11,8 +11,8 @@ YUI.add('moodle-qtype_ddimageortext-form', function(Y) {
 
         initializer : function() {
             this.fp = this.file_pickers();
-            Y.one(this.get('topnode')).append('<div class="ddarea"><div class="droparea"></div>'+
-                    '<div class="dragitems"></div>'+
+            var tn = Y.one(this.get('topnode'));
+            tn.one('div.fcontainer').append('<div class="ddarea"><div class="droparea"></div><div class="dragitems"></div>'+
                     '<div class="dropzones"></div></div>');
             this.doc = this.doc_structure(this);
             this.draw_dd_area();
@@ -77,11 +77,11 @@ YUI.add('moodle-qtype_ddimageortext-form', function(Y) {
 
         load_drag_home : function (dragitemno) {
             var url = null;
-            if ('image' === this.form.get_form_value('dragitemtype', [dragitemno])) {
+            if ('image' === this.form.get_form_value('drags', [dragitemno, 'dragitemtype'])) {
                 url = this.fp.file(this.form.to_name_with_index('dragitem', [dragitemno])).href;
             }
             this.doc.add_or_update_drag_item_home(dragitemno, url,
-                    this.form.get_form_value('drags', [dragitemno, 'draglabel']),
+                    this.form.get_form_value('draglabel', [dragitemno]),
                     this.form.get_form_value('drags', [dragitemno, 'draggroup']));
         },
 
@@ -100,9 +100,9 @@ YUI.add('moodle-qtype_ddimageortext-form', function(Y) {
         set_options_for_drag_item_selectors : function () {
             var dragitemsoptions = {0: ''};
             for (var i=0; i < this.form.get_form_value('noitems', []); i++) {
-                var label = this.form.get_form_value('drags', [i, 'draglabel']);
+                var label = this.form.get_form_value('draglabel', [i]);
                 var file = this.fp.file(this.form.to_name_with_index('dragitem', [i]));
-                if ('image' === this.form.get_form_value('dragitemtype', [i])
+                if ('image' === this.form.get_form_value('drags', [i, 'dragitemtype'])
                                                                         && file.name !== null) {
                     dragitemsoptions[i + 1] = (i + 1) + '. ' + label + ' (' + file.name + ')';
                 } else if (label !== '') {
@@ -124,12 +124,9 @@ YUI.add('moodle-qtype_ddimageortext-form', function(Y) {
                         optionnode.set('selected', true);
                     } else {
                         if (value !== 0) { // no item option is always selectable
-                            var cbselector = 'fieldset#draggableitemheader_'+(value-1)
-                                                                        +' input[type="checkbox"]';
-                            var cbel = Y.one(cbselector);
-                            var infinite = cbel.get('checked');
-                            if (!infinite) {
-                                Y.all('fieldset#dropzoneheader select').some(function (selector) {
+                            var cbel = Y.one('#id_drags_'+(value-1)+'_infinite');
+                            if (cbel && !cbel.get('checked')) {
+                                Y.all('fieldset#id_dropzoneheader select').some(function (selector) {
                                     if (+selector.get('value') === value) {
                                         optionnode.set('disabled', true);
                                         return true; // stop looping
@@ -144,14 +141,14 @@ YUI.add('moodle-qtype_ddimageortext-form', function(Y) {
         },
 
         stop_selector_events : function () {
-            Y.all('fieldset#dropzoneheader select').detachAll();
+            Y.all('fieldset#id_dropzoneheader select').detachAll();
         },
 
         setup_form_events : function () {
             //events triggered by changes to form data
 
             //x and y coordinates
-            Y.all('fieldset#dropzoneheader input').on('blur', function (e) {
+            Y.all('fieldset#id_dropzoneheader input').on('blur', function (e) {
                 var name = e.target.getAttribute('name');
                 var draginstanceno = this.form.from_name_with_index(name).indexes[0];
                 var fromform = [this.form.get_form_value('drops', [draginstanceno, 'xleft']),
@@ -162,7 +159,7 @@ YUI.add('moodle-qtype_ddimageortext-form', function(Y) {
             }, this);
 
             //change in selected item
-            Y.all('fieldset#dropzoneheader select').on('change', function (e) {
+            Y.all('fieldset#id_dropzoneheader select').on('change', function (e) {
                 var name = e.target.getAttribute('name');
                 var draginstanceno = this.form.from_name_with_index(name).indexes[0];
                 var old = this.doc.drag_item(draginstanceno);
@@ -174,12 +171,12 @@ YUI.add('moodle-qtype_ddimageortext-form', function(Y) {
 
             for (var i=0; i < this.form.get_form_value('noitems', []); i++) {
                 //change to group selector
-                Y.all('fieldset#draggableitemheader_'+i+' select.draggroup').on(
+                Y.all('#fgroup_id_drags_'+i+' select.draggroup').on(
                         'change', function () {
                     this.doc.drag_items().remove(true);
                     this.draw_dd_area();
                 }, this);
-                Y.all('fieldset#draggableitemheader_' + i + ' select.dragitemtype').on(
+                Y.all('#fgroup_id_drags_'+i+' select.dragitemtype').on(
                         'change', function () {
                     this.doc.drag_items().remove(true);
                     this.draw_dd_area();
@@ -202,7 +199,7 @@ YUI.add('moodle-qtype_ddimageortext-form', function(Y) {
 
         update_visibility_of_file_pickers : function() {
             for (var i=0; i < this.form.get_form_value('noitems', []); i++) {
-                if ('image' === this.form.get_form_value('dragitemtype', [i])) {
+                if ('image' === this.form.get_form_value('drags', [i, 'dragitemtype'])) {
                     Y.one('input#id_dragitem_'+i).get('parentNode').get('parentNode')
                                 .setStyle('display', 'block');
                 } else {
