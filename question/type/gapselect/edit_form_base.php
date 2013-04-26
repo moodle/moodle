@@ -144,7 +144,7 @@ class qtype_gapselect_edit_form_base extends question_edit_form {
         $mform->setType('answer', PARAM_RAW);
         $this->repeat_elements($textboxgroup, $repeatsatstart, $repeatedoptions,
                 'noanswers', 'addanswers', QUESTION_NUMANS_ADD,
-                get_string('addmorechoiceblanks', 'qtype_gapselect'));
+                get_string('addmorechoiceblanks', 'qtype_gapselect'), true);
     }
 
     protected function choice_group($mform) {
@@ -155,8 +155,6 @@ class qtype_gapselect_edit_form_base extends question_edit_form {
         $grouparray = array();
         $grouparray[] = $mform->createElement('text', 'answer',
                 get_string('answer', 'qtype_gapselect'), array('size'=>30, 'class'=>'tweakcss'));
-        $grouparray[] = $mform->createElement('static', '', '', ' ' .
-                get_string('group', 'qtype_gapselect').' ');
         $grouparray[] = $mform->createElement('select', 'choicegroup',
                 get_string('group', 'qtype_gapselect'), $options);
         return $grouparray;
