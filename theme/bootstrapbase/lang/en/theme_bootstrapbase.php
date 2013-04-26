@@ -21,12 +21,12 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Bootstrap';
+$string['pluginname'] = 'Bootstrap Base';
 $string['region-side-post'] = 'Right';
 $string['region-side-pre'] = 'Left';
 
 $string['choosereadme'] = '
-<div class="clearfix"><div class="theme_screenshot"><h2>Bootstrap</h2>
+<div class="clearfix"><div class="theme_screenshot"><h2>Bootstrap Base</h2>
 <img class=img-polaroid src="bootstrap/pix/screenshot.jpg" />
 <h3>Theme Credits</h3>
 <p>

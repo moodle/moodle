@@ -15,7 +15,7 @@ To update to the latest release of twitter bootstrap:
 
 ** If you want to make changes to the .css generated from these .less files then you
 need to install recess (https://github.com/twitter/recess) to compile the .less files,
-then run these commands in the bootstrap/less/ folder:
+then run these commands in the bootstrapbase/less/ folder:
 
 
 html5shiv.js
@@ -44,6 +44,6 @@ The YUI port of the Twitter bootstrap libs are now longer maintained. If you nee
 functionality consider switching to the original jQuery version of these file
 
 If you do want to update use these file locations:
-theme/bootstrap/yui/src/bootstrap/js/bootstrap-collapse.js
-theme/bootstrap/yui/src/bootstrap/js/bootstrap-dropdown.js
-theme/bootstrap/yui/src/bootstrap/js/bootstrap-engine.js
+theme/bootstrapbase/yui/src/bootstrap/js/bootstrap-collapse.js
+theme/bootstrapbase/yui/src/bootstrap/js/bootstrap-dropdown.js
+theme/bootstrapbase/yui/src/bootstrap/js/bootstrap-engine.js

@@ -2,13 +2,13 @@
 The Moodle Bootstrap theme's bootstrap JavaScript
 
 @namespace Moodle
-@module theme_bootstrap-bootstrap
+@module theme_bootstrapbase-bootstrap
 **/
 
 /**
 The Moodle Bootstrap theme's bootstrap JavaScript
 
-@class Moodle.theme_bootstrap.bootstrap
+@class Moodle.theme_bootstrapbase.bootstrap
 @uses node
 @uses selector-css3
 @constructor
@@ -22,7 +22,7 @@ var CSS = {
         TOGGLECOLLAPSE: '*[data-disabledtoggle="collapse"]',
         NAV_COLLAPSE: '.nav-collapse'
     },
-    NS = Y.namespace('Moodle.theme_bootstrap.bootstrap');
+    NS = Y.namespace('Moodle.theme_bootstrapbase.bootstrap');
 
 /**
  * Initialise the Moodle Bootstrap theme JavaScript
