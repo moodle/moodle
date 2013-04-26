@@ -97,7 +97,7 @@ function s($var, $obsolete = false) {
         return '0';
     }
 
-    return preg_replace("/&amp;#(\d+|x[0-7a-fA-F]+);/i", "&#$1;", htmlspecialchars($var, ENT_QUOTES, 'UTF-8', true));
+    return preg_replace("/&amp;#(\d+|x[0-9a-f]+);/i", "&#$1;", htmlspecialchars($var, ENT_QUOTES, 'UTF-8', true));
 }
 
 /**
