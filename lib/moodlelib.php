@@ -6225,7 +6225,6 @@ function get_max_upload_sizes($sitebytes = 0, $coursebytes = 0, $modulebytes = 0
        }
     }
 
-    krsort($filesize, SORT_NUMERIC);
     $limitlevel = '';
     $displaysize = '';
     if ($modulebytes &&
@@ -6233,14 +6232,20 @@ function get_max_upload_sizes($sitebytes = 0, $coursebytes = 0, $modulebytes = 0
          ($modulebytes < $sitebytes || $sitebytes == 0))) {
         $limitlevel = get_string('activity', 'core');
         $displaysize = display_size($modulebytes);
+        $filesize[$modulebytes] = $displaysize; // Make sure the limit is also included in the list.
+
     } else if ($coursebytes && ($coursebytes < $sitebytes || $sitebytes == 0)) {
         $limitlevel = get_string('course', 'core');
         $displaysize = display_size($coursebytes);
+        $filesize[$coursebytes] = $displaysize; // Make sure the limit is also included in the list.
+
     } else if ($sitebytes) {
         $limitlevel = get_string('site', 'core');
         $displaysize = display_size($sitebytes);
+        $filesize[$sitebytes] = $displaysize; // Make sure the limit is also included in the list.
     }
 
+    krsort($filesize, SORT_NUMERIC);
     if ($limitlevel) {
         $params = (object) array('contextname'=>$limitlevel, 'displaysize'=>$displaysize);
         $filesize  = array('0'=>get_string('uploadlimitwithsize', 'core', $params)) + $filesize;
