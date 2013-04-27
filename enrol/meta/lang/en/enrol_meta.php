@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,10 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'enrol_meta', language 'en', branch 'MOODLE_20_STABLE'
+ * Strings for component 'enrol_meta', language 'en'.
  *
- * @package    enrol
- * @subpackage meta
+ * @package    enrol_meta
  * @copyright  2010 onwards Petr Skoda  {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

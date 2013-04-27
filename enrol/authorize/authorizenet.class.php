@@ -19,8 +19,7 @@
  *
  * This plugin allows you to set up paid courses, using authorize.net.
  *
- * @package    enrol
- * @subpackage authorize
+ * @package    enrol_authorize
  * @copyright  2010 Eugene Venter
  * @author     Eugene Venter
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

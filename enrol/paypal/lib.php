@@ -19,8 +19,7 @@
  *
  * This plugin allows you to set up paid courses.
  *
- * @package    enrol
- * @subpackage paypal
+ * @package    enrol_paypal
  * @copyright  2010 Eugene Venter
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

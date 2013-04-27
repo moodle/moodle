@@ -17,8 +17,7 @@
 /**
  * imsenterprise enrolment plugin installation.
  *
- * @package    enrol
- * @subpackage imsenterprise
+ * @package    enrol_imsenterprise
  * @copyright  2011 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

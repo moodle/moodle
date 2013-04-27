@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,8 +17,7 @@
 /**
  * Paypal enrolments plugin settings and presets.
  *
- * @package    enrol
- * @subpackage paypal
+ * @package    enrol_paypal
  * @copyright  2010 Eugene Venter
  * @author     Eugene Venter - based on code by Petr Skoda and others
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

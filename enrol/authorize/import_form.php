@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -19,8 +18,7 @@
  * Adds new instance of enrol_authorize to specified course
  * or edits current instance.
  *
- * @package    enrol
- * @subpackage authorize
+ * @package    enrol_authorize
  * @copyright  2010 Eugene Venter
  * @author     Eugene Venter
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

@@ -15,10 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file keeps track of upgrades to the guest enrolment plugin
+ * This file keeps track of upgrades to the guest enrolment plugin.
  *
- * @package    enrol
- * @subpackage guest
+ * @package    enrol_guest
  * @copyright  2011 Petr Skoda {@link http://skodak.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

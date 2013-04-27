@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,8 +17,7 @@
 /**
  * IMS Enterprise enrol plugin implementation.
  *
- * @package    enrol
- * @subpackage imsenterprise
+ * @package    enrol_imsenterprise
  * @copyright  2010 Eugene Venter
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

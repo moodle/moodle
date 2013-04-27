@@ -17,8 +17,7 @@
 /**
  * Local stuff for meta course enrolment plugin.
  *
- * @package    enrol
- * @subpackage meta
+ * @package    enrol_meta
  * @copyright  2010 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
