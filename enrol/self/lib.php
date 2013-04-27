@@ -161,7 +161,7 @@ class enrol_self_plugin extends enrol_plugin {
         if (has_capability('enrol/self:config', $context)) {
             $editlink = new moodle_url("/enrol/self/edit.php", array('courseid'=>$instance->courseid, 'id'=>$instance->id));
             $icons[] = $OUTPUT->action_icon($editlink, new pix_icon('t/edit', get_string('edit'), 'core',
-                array('class' => 'smallicon')));
+                array('class' => 'iconsmall')));
         }
 
         return $icons;
