@@ -33,3 +33,6 @@ defined('MOODLE_INTERNAL') || die;
 $plugin->version   = 2013042400;
 $plugin->requires  = 2013040500;
 $plugin->component = 'theme_clean';
+$plugin->dependencies = array(
+    'theme_bootstrapbase'  => 2013032800,
+);
