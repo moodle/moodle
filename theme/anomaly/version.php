@@ -17,8 +17,7 @@
 /**
  * Theme version info
  *
- * @package    theme
- * @subpackage anomaly
+ * @package    theme_anomaly
  * @copyright  2010 Patrick Malley (http://newschoollearning.com/)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

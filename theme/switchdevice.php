@@ -19,6 +19,9 @@
  * 
  * This script doesn't require login as not logged in users should still
  * be able to switch the device theme they are using.
+ *
+ * @package   core
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require('../config.php');

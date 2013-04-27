@@ -17,8 +17,7 @@
 /**
  * Theme version info
  *
- * @package    theme
- * @subpackage standard
+ * @package    theme_standard
  * @copyright  2011 Petr Skoda  {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

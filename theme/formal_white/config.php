@@ -1,7 +1,4 @@
 <?php
-
-defined('MOODLE_INTERNAL') || die();
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -26,11 +23,12 @@ defined('MOODLE_INTERNAL') || die();
  * For full information about creating Moodle themes, see:
  *  http://docs.moodle.org/dev/Themes_2.0
  *
- * @package   moodlecore
+ * @package   theme_formal_white
  * @copyright Mediatouch 2000 (http://mediatouch.it/)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
 
 $THEME->name = 'formal_white';
 ////////////////////////////////////////////////////

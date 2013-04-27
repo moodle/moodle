@@ -17,8 +17,7 @@
 /**
  * Theme version info
  *
- * @package    theme
- * @subpackage overlay
+ * @package    theme_overlay
  * @copyright  2008 NodeThirtyThree (http://nodethirtythree.com/)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

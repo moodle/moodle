@@ -17,8 +17,7 @@
 /**
  * Label module version info
  *
- * @package    theme
- * @subpackage formal_white
+ * @package    theme_formal_white
  * @copyright  Mediatouch 2000 (http://mediatouch.it/)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
