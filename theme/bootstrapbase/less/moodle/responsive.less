@@ -62,27 +62,33 @@
  }
 
 @media (max-width: 480px) {
-    // copied from tabs.less stacked-navs
-    .tabtree > ul {
-        border: none;
-    }
-    .tabtree > ul > li {
+    // make tabs act like nav-stacked
+    // (mostly) copied from bootstrap/navs.less
+    .nav-tabs > li {
         float: none;
     }
-    .tabtree > ul > li > a {
+    .nav-tabs > li > a {
+        margin-right: 0; // no need for the gap between nav items
+    }
+    .nav-tabs {
+        border-bottom: 0;
+    }
+    .nav-tabs > li > a {
         border: 1px solid #ddd;
         .border-radius(0);
     }
-    .tabtree > ul > li.first > a {
+    .nav-tabs > .active > a,
+    .nav-tabs > .active > a:hover {
+        border: 1px solid #ddd;
+    }
+    .nav-tabs > li:first-child > a {
         .border-top-radius(4px);
     }
-    .tabtree > ul > li.last > a,
-    .tabtree > ul > li.last > a:hover {
-        border: 1px solid #ddd;
+    .nav-tabs > li:last-child > a {
         .border-bottom-radius(4px);
     }
-    .tabtree > ul > li > a:hover,
-    .tabtree > ul > li > a:focus {
+    .nav-tabs > li > a:hover,
+    .nav-tabs > li > a:focus {
         border-color: #ddd;
         z-index: 2;
     }

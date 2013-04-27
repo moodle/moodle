@@ -161,4 +161,43 @@ class theme_bootstrapbase_core_renderer extends core_renderer {
         }
         return $content;
     }
+
+    /**
+     * Renders tabtree
+     *
+     * @param tabtree $tabtree
+     * @return string
+     */
+    protected function render_tabtree(tabtree $tabtree) {
+        if (empty($tabtree->subtree)) {
+            return '';
+        }
+        $firstrow = $secondrow = '';
+        foreach ($tabtree->subtree as $tab) {
+            $firstrow .= $this->render($tab);
+            if (($tab->selected || $tab->activated) && !empty($tab->subtree) && $tab->subtree !== array()) {
+                $secondrow = $this->tabtree($tab->subtree);
+            }
+        }
+        return html_writer::tag('ul', $firstrow, array('class' => 'nav nav-tabs')) . $secondrow;
+    }
+
+    /**
+     * Renders tabobject (part of tabtree)
+     *
+     * This function is called from {@link core_renderer::render_tabtree()}
+     * and also it calls itself when printing the $tabobject subtree recursively.
+     *
+     * @param tabobject $tabobject
+     * @return string HTML fragment
+     */
+    protected function render_tabobject(tabobject $tab) {
+        if ($tab->selected or $tab->activated) {
+            return html_writer::tag('li', html_writer::tag('a', $tab->text), array('class' => 'active'));
+        } else if ($tab->inactive) {
+            return html_writer::tag('li', html_writer::tag('a', $tab->text), array('class' => 'disabled'));
+        } else {
+            return html_writer::tag('li', html_writer::tag('a', $tab->text, array('href' => $tab->link)));
+        }
+    }
 }
