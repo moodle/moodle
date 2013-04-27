@@ -2427,6 +2427,20 @@ class moodlelib_testcase extends advanced_testcase {
         $result = get_max_upload_sizes($sitebytes, $coursebytes, $modulebytes, $custombytes);
 
         $this->assertEquals(3, count($result));
+
+        // Test site limit only.
+        $sitebytes = 51200;
+        $result = get_max_upload_sizes($sitebytes);
+
+        $this->assertEquals('Site upload limit (50KB)', $result['0']);
+        $this->assertEquals('50KB', $result['51200']);
+        $this->assertEquals('10KB', $result['10240']);
+        $this->assertCount(3, $result);
+
+        // Test no limit.
+        $result = get_max_upload_sizes();
+        $this->assertArrayHasKey('0', $result);
+        $this->assertArrayHasKey(get_max_upload_file_size(), $result);
     }
 
     /**
