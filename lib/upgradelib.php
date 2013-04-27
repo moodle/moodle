@@ -1458,6 +1458,14 @@ function upgrade_language_pack($lang = null) {
 function install_core($version, $verbose) {
     global $CFG, $DB;
 
+    // We can not call purge_all_caches() yet, make sure the temp and cache dirs exist and are empty.
+    make_cache_directory('', true);
+    remove_dir($CFG->cachedir.'', true);
+    make_temp_directory('', true);
+    remove_dir($CFG->tempdir.'', true);
+    make_writable_directory($CFG->dataroot.'/muc', true);
+    remove_dir($CFG->dataroot.'/muc', true);
+
     try {
         // Disable the use of cache stores here. We will reset the factory after we've performed the installation.
         // This ensures that we don't permanently cache anything during installation.
@@ -1591,12 +1599,16 @@ function upgrade_noncore($verbose) {
 
 /**
  * Checks if the main tables have been installed yet or not.
+ *
+ * Note: we can not use caches here because they might be stale,
+ *       use with care!
+ *
  * @return bool
  */
 function core_tables_exist() {
     global $DB;
 
-    if (!$tables = $DB->get_tables() ) {    // No tables yet at all.
+    if (!$tables = $DB->get_tables(false) ) {    // No tables yet at all.
         return false;
 
     } else {                                 // Check for missing main tables
