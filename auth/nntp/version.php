@@ -17,8 +17,7 @@
 /**
  * Version information
  *
- * @package    auth
- * @subpackage nntp
+ * @package    auth_nntp
  * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

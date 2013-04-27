@@ -17,8 +17,7 @@
 /**
  * Version details
  *
- * @package    auth
- * @subpackage ldap
+ * @package    auth_ldap
  * @author     Martin Dougiamas
  * @author     Iñaki Arenaza
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

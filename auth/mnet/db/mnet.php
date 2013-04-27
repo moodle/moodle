@@ -14,13 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * This file contains the mnet services for the mnet authentication plugin
  *
  * @since 2.0
- * @package moodlecore
- * @subpackage auth
+ * @package auth_mnet
  * @copyright 2010 Penny Leach
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

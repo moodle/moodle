@@ -17,8 +17,7 @@
 /**
  * Version details
  *
- * @package    auth
- * @subpackage cas
+ * @package    auth_cas
  * @author     Martin Dougiamas
  * @author     Jerome GUTIERREZ
  * @author     Iñaki Arenaza
