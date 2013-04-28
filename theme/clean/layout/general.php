@@ -87,7 +87,7 @@ echo $OUTPUT->doctype() ?>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
-<body id="<?php p($PAGE->bodyid) ?>" class="<?php p($PAGE->bodyclasses.' '.join($bodyclasses)) ?>">
+<body id="<?php p($PAGE->bodyid) ?>" class="<?php p($PAGE->bodyclasses.' '.join(' ', $bodyclasses)) ?>">
 
 <?php echo $OUTPUT->standard_top_of_body_html() ?>
 

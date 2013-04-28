@@ -703,6 +703,7 @@ try {
     if (empty($CFG->version)) {
         $SITE = new stdClass();
         $SITE->id = 1;
+        $SITE->shortname = null;
     } else {
         throw $e;
     }
