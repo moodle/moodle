@@ -1571,6 +1571,72 @@ class oci_native_moodle_database extends moodle_database {
     }
 
     /**
+     * Constructs 'IN()' or '=' sql fragment
+     *
+     * Method overriding {@link moodle_database::get_in_or_equal} to be able to get
+     * more than 1000 elements working, to avoid ORA-01795. We use a pivoting technique
+     * to be able to transform the params into virtual rows, so the original IN()
+     * expression gets transformed into a subquery. Once more, be noted that we shouldn't
+     * be using ever get_in_or_equal() with such number of parameters (proper subquery and/or
+     * chunking should be used instead).
+     *
+     * @param mixed $items A single value or array of values for the expression.
+     * @param int $type Parameter bounding type : SQL_PARAMS_QM or SQL_PARAMS_NAMED.
+     * @param string $prefix Named parameter placeholder prefix (a unique counter value is appended to each parameter name).
+     * @param bool $equal True means we want to equate to the constructed expression, false means we don't want to equate to it.
+     * @param mixed $onemptyitems This defines the behavior when the array of items provided is empty. Defaults to false,
+     *              meaning throw exceptions. Other values will become part of the returned SQL fragment.
+     * @throws coding_exception | dml_exception
+     * @return array A list containing the constructed sql fragment and an array of parameters.
+     */
+    public function get_in_or_equal($items, $type=SQL_PARAMS_QM, $prefix='param', $equal=true, $onemptyitems=false) {
+        list($sql, $params) = parent::get_in_or_equal($items, $type, $prefix,  $equal, $onemptyitems);
+
+        // Less than 1000 elements, nothing to do.
+        if (count($params) < 1000) {
+            return array($sql, $params); // Return unmodified.
+        }
+
+        // Extract the interesting parts of the sql to rewrite.
+        if (preg_match('!(^.*IN \()([^\)]*)(.*)$!', $sql, $matches) === false) {
+            return array($sql, $params); // Return unmodified.
+        }
+
+        $instart = $matches[1];
+        $insql = $matches[2];
+        $inend = $matches[3];
+        $newsql = '';
+
+        // Some basic verification about the matching going ok.
+        $insqlarr = explode(',', $insql);
+        if (count($insqlarr) !== count($params)) {
+            return array($sql, $params); // Return unmodified.
+        }
+
+        // Arrived here, we need to chunk and pivot the params, building a new sql (params remain the same).
+        $addunionclause = false;
+        while ($chunk = array_splice($insqlarr, 0, 125)) { // Each chunk will handle up to 125 (+125 +1) elements (DECODE max is 255).
+            $chunksize = count($chunk);
+            if ($addunionclause) {
+                $newsql .= "\n    UNION ALL";
+            }
+            $newsql .= "\n        SELECT DECODE(pivot";
+            $counter = 1;
+            foreach ($chunk as $element) {
+                $newsql .= ",\n            {$counter}, " . trim($element);
+                $counter++;
+            }
+            $newsql .= ")";
+            $newsql .= "\n        FROM dual";
+            $newsql .= "\n        CROSS JOIN (SELECT LEVEL AS pivot FROM dual CONNECT BY LEVEL <= {$chunksize})";
+            $addunionclause = true;
+        }
+
+        // Rebuild the complete IN() clause and return it.
+        return array($instart . $newsql . $inend, $params);
+    }
+
+    /**
      * Returns the SQL for returning searching one string for the location of another.
      */
     public function sql_position($needle, $haystack) {
