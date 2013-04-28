@@ -151,13 +151,6 @@ class tool_installaddon_pluginfo_client {
             'CURLOPT_SSL_VERIFYPEER' => true,
         );
 
-        $cacertfile = $CFG->dataroot.'/moodleorgca.crt';
-        if (is_readable($cacertfile)) {
-            // Do not use CA certs provided by the operating system. Instead,
-            // use this CA cert to verify the updates provider.
-            $options['CURLOPT_CAINFO'] = $cacertfile;
-        }
-
         return $options;
     }
 

@@ -1,0 +1,20 @@
+CA Certificates for cURL library
+================================
+
+The file cacert.pem can be downloaded from http://curl.haxx.se/docs/caextract.html
+or created directly from http://mxr.mozilla.org/mozilla/source/security/nss/lib/ckfw/builtins/certdata.txt
+using mk-ca-bundle conversion tool.
+
+The file is licensed under the same licenses as the Mozilla source file:
+MPL 1.1, GPL v2.0 or LGPL 2.1
+
+This file is by default used in all Windows installations that do not have
+any "curl.cainfo =" specified in php.ini
+
+It is also possible to force using of arbitrary CA bundle by putting it
+into $CFG->dataroot/moodleorgca.crt, this may be useful especially on
+non-windows servers with outdated system certificates.
+
+More information at http://docs.moodle.org/en/SSL_certificate_for_moodle.org
+
+Petr Skoda (skodak)

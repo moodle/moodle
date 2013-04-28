@@ -1429,13 +1429,6 @@ class available_update_checker {
             'CURLOPT_SSL_VERIFYPEER' => true,
         );
 
-        $cacertfile = $CFG->dataroot.'/moodleorgca.crt';
-        if (is_readable($cacertfile)) {
-            // Do not use CA certs provided by the operating system. Instead,
-            // use this CA cert to verify the updates provider.
-            $options['CURLOPT_CAINFO'] = $cacertfile;
-        }
-
         return $options;
     }
 
@@ -2317,13 +2310,6 @@ class available_update_deployer {
             'CURLOPT_SSL_VERIFYHOST' => 2,      // this is the default in {@link curl} class but just in case
             'CURLOPT_SSL_VERIFYPEER' => true,
         );
-
-        $cacertfile = $CFG->dataroot.'/moodleorgca.crt';
-        if (is_readable($cacertfile)) {
-            // Do not use CA certs provided by the operating system. Instead,
-            // use this CA cert to verify the updates provider.
-            $curloptions['CURLOPT_CAINFO'] = $cacertfile;
-        }
 
         $curl = new curl(array('proxy' => true));
         $result = $curl->head($downloadurl, $curloptions);

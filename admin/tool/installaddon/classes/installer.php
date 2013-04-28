@@ -366,13 +366,6 @@ class tool_installaddon_installer {
             'ssl_verifyhost' => 2,
         );
 
-        $cacertfile = $CFG->dataroot.'/moodleorgca.crt';
-        if (is_readable($cacertfile)) {
-            // Do not use CA certs provided by the operating system. Instead,
-            // use this CA cert to verify the ZIP provider.
-            $options['cainfo'] = $cacertfile;
-        }
-
         $curl = new curl(array('proxy' => true));
 
         $result = $curl->download_one($source, null, $options);

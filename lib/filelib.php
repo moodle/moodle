@@ -1209,6 +1209,10 @@ function download_file_content($url, $headers=null, $postdata=null, $fullrespons
     curl_setopt($ch, CURLOPT_HEADER, false);
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $connecttimeout);
 
+    if ($cacert = curl::get_cacert()) {
+        curl_setopt($ch, CURLOPT_CAINFO, $cacert);
+    }
+
     if (!ini_get('open_basedir') and !ini_get('safe_mode')) {
         // TODO: add version test for '7.10.5'
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
@@ -2930,6 +2934,39 @@ class curl {
         $this->options['CURLOPT_SSL_VERIFYPEER']    = 0;
         $this->options['CURLOPT_SSL_VERIFYHOST']    = 2;
         $this->options['CURLOPT_CONNECTTIMEOUT']    = 30;
+
+        if ($cacert = self::get_cacert()) {
+            $this->options['CURLOPT_CAINFO'] = $cacert;
+        }
+    }
+
+    /**
+     * Get the location of ca certificates.
+     * @return string absolute file path or empty if default used
+     */
+    public static function get_cacert() {
+        global $CFG;
+
+        // Bundle in dataroot always wins.
+        if (is_readable("$CFG->dataroot/moodleorgca.crt")) {
+            return realpath("$CFG->dataroot/moodleorgca.crt");
+        }
+
+        // Next comes the default from php.ini
+        $cacert = ini_get('curl.cainfo');
+        if (!empty($cacert) and is_readable($cacert)) {
+            return realpath($cacert);
+        }
+
+        // Windows PHP does not have any certs, we need to use something.
+        if ($CFG->ostype === 'WINDOWS') {
+            if (is_readable("$CFG->libdir/cacert.pem")) {
+                return realpath("$CFG->libdir/cacert.pem");
+            }
+        }
+
+        // Use default, this should work fine on all properly configured *nix systems.
+        return null;
     }
 
     /**
