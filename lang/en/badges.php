@@ -34,7 +34,6 @@ $string['addcriteriatext'] = 'To start adding criteria, please select one of the
 $string['addcourse'] = 'Add courses';
 $string['addcourse_help'] = 'Select all courses that should be added to this badge requirement. Hold CTRL key to select multiple items.';
 $string['addtobackpack'] = 'Add to backpack';
-$string['adminaward'] = 'As a site administrator, you can select a role to award this badge.';
 $string['adminonly'] = 'This page is restricted to Site Administrators only';
 $string['after'] = 'after the date of issue.';
 $string['aggregationmethod'] = 'Aggregation method';
@@ -312,6 +311,7 @@ $string['reviewconfirm'] = '<p>This action will perform a check if any of the us
 <p>Would you like to proceed?</p>';
 $string['save'] = 'Save';
 $string['searchname'] = 'Search by name';
+$string['selectaward'] = 'Please select the role you would like to use to award this badge: ';
 $string['selectgroup_end'] = 'Only public collections are shown, <a href="http://backpack.openbadges.org">visit your backpack</a> to create more public collections.';
 $string['selectgroup_start'] = 'Select collections from your backpack to display on this site:';
 $string['selecting'] = 'With selected badges...';
