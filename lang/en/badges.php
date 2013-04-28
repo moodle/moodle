@@ -86,7 +86,9 @@ $string['backpackconnection_help'] = 'This page allows you to set up connection 
 Currently, only <a href="http://backpack.openbadges.org">Mozilla OpenBadges Backpack</a> is supported. You need to sign up for a backpack service before trying to set up backpack connection on this page.';
 $string['backpackdetails'] = 'Backpack settings';
 $string['backpackemail'] = 'Email address';
-$string['backpackemail_help'] = 'Email address associated with your backpack';
+$string['backpackemail_help'] = 'Email address associated with your backpack.
+
+If backpack connection is established, this email address is used instead of your internal email address to push badges to your backpack.';
 $string['backpackimport'] = 'Badge import settings';
 $string['backpackimport_help'] = 'After backpack connection is successfully established, badges from your backpack can be displayed on your "My Badges" page and your profile page.
 
@@ -100,7 +102,7 @@ To add a new image, browse and select an image (in JPG or PNG format) then click
 $string['badgeprivacysetting'] = 'Badge privacy settings';
 $string['badgeprivacysetting_help'] = 'Badges you earn can be displayed on your account profile page. This setting allows you to automatically set visibility of the newly earned badges.
 
-You can still control individual badge privacy settings on your <a href="mybadges.php">My badges</a> page.';
+You can still control individual badge privacy settings on your "My badges" page.';
 $string['badgeprivacysetting_str'] = 'Automatically show badges I earn on my profile page';
 $string['badgesalt'] = 'Salt for hashing the recepient\'s email address';
 $string['badgesalt_desc'] = 'Using a hash allows backpack services to confirm the badge earner without having to expose their email address. This setting should only use numbers and letters.';
