@@ -3,6 +3,9 @@ information provided here is intended especially for developers.
 
 === 2.5 ===
 
+* The database drivers (moodle_database and subclasses) aren't using anymore the ::columns property
+  for caching database metadata. MUC (databasemeta) is used instead. Any custom DB driver should
+  apply for that change.
 * The cron output has been changed to include time and memory usage (see cron_trace_time_and_memory()),
   so any custom utility relying on the old output may require modification.
 * Function get_max_file_sizes now returns an option for (for example) "Course limit (500MB)" or
