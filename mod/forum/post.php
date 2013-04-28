@@ -514,7 +514,8 @@ $mform_post = new mod_forum_post_form('post.php', array('course' => $course,
                                                         'modcontext' => $modcontext,
                                                         'forum' => $forum,
                                                         'post' => $post,
-                                                        'thresholdwarning' => $thresholdwarning), 'post', '', array('id' => 'mformforum'));
+                                                        'thresholdwarning' => $thresholdwarning,
+                                                        'edit' => $edit), 'post', '', array('id' => 'mformforum'));
 
 $draftitemid = file_get_submitted_draft_itemid('attachments');
 file_prepare_draft_area($draftitemid, $modcontext->id, 'mod_forum', 'attachment', empty($post->id)?null:$post->id, mod_forum_post_form::attachment_options($forum));
@@ -871,7 +872,9 @@ if ($forum->type == 'qanda'
     echo $OUTPUT->notification(get_string('qandanotify','forum'));
 }
 
-if (!empty($thresholdwarning)) {
+// If there is a warning message and we are not editing a post we need to handle the warning.
+if (!empty($thresholdwarning) && !$edit) {
+    // Here we want to throw an exception if they are no longer allowed to post.
     if (!$thresholdwarning->canpost) {
         print_error($thresholdwarning->errorcode, $thresholdwarning->module, $thresholdwarning->link,
             $thresholdwarning->additional);
