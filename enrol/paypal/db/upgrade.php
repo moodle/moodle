@@ -17,8 +17,7 @@
 /**
  * This file keeps track of upgrades to the paypal enrolment plugin
  *
- * @package    enrol
- * @subpackage paypal
+ * @package    enrol_paypal
  * @copyright  2010 Eugene Venter
  * @author     Eugene Venter
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

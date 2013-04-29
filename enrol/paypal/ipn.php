@@ -22,8 +22,7 @@
  * If PayPal verifies this then it sets up the enrolment for that
  * user.
  *
- * @package    enrol
- * @subpackage paypal
+ * @package    enrol_paypal
  * @copyright 2010 Eugene Venter
  * @author     Eugene Venter - based on code by others
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

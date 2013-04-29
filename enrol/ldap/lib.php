@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -20,8 +19,7 @@
  *
  * This plugin synchronises enrolment and roles with a LDAP server.
  *
- * @package    enrol
- * @subpackage ldap
+ * @package    enrol_ldap
  * @author     Iñaki Arenaza - based on code by Martin Dougiamas, Martin Langhoff and others
  * @copyright  1999 onwards Martin Dougiamas {@link http://moodle.com}
  * @copyright  2010 Iñaki Arenaza <iarenaza@eps.mondragon.edu>

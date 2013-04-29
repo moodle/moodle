@@ -20,8 +20,7 @@
  * This plugin lets the user specify an IMS Enterprise file to be processed.
  * The IMS Enterprise file is mainly parsed on a regular cron,
  * but can also be imported via the UI (Admin Settings).
- * @package    enrol
- * @subpackage imsenterprise
+ * @package    enrol_imsenterprise
  * @copyright  2010 Eugene Venter
  * @author     Eugene Venter - based on code by Dan Stowell
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

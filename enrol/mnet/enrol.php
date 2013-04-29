@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -26,8 +25,7 @@
  * be a common name of a plugin library containing functions/methods callable
  * via MNet framework.
  *
- * @package    enrol
- * @subpackage mnet
+ * @package    enrol_mnet
  * @copyright  2010 David Mudrak <david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

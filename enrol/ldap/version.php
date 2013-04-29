@@ -17,8 +17,7 @@
 /**
  * LDAP enrolment plugin version specification.
  *
- * @package    enrol
- * @subpackage ldap
+ * @package    enrol_ldap
  * @author     Iñaki Arenaza
  * @copyright  2010 Iñaki Arenaza <iarenaza@eps.mondragon.edu>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

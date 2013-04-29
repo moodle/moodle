@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'enrol_cohort', language 'en'
+ * Strings for component 'enrol_cohort', language 'en'.
  *
  * @package    enrol_cohort
  * @copyright  2010 Petr Skoda  {@link http://skodak.org}

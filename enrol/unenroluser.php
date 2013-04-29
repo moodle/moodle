@@ -20,8 +20,7 @@
  * Please note when unenrolling a user all of their grades are removed as well,
  * most ppl actually expect enrolments to be suspended only...
  *
- * @package    core
- * @subpackage enrol
+ * @package    core_enrol
  * @copyright  2011 Petr skoda
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
