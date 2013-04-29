@@ -455,6 +455,12 @@ if (!PHPUNIT_TEST or PHPUNIT_UTIL) {
     set_error_handler('default_error_handler', E_ALL | E_STRICT);
 }
 
+// Acceptance tests needs special output to capture the errors.
+if (!empty($CFG->originaldataroot) && !defined('BEHAT_RUNNING')) {
+    require_once(__DIR__ . '/behat/lib.php');
+    set_error_handler('behat_error_handler', E_ALL | E_STRICT);
+}
+
 // If there are any errors in the standard libraries we want to know!
 error_reporting(E_ALL | E_STRICT);
 

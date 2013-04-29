@@ -192,11 +192,6 @@ class behat_hooks extends behat_base {
      */
     public function i_look_for_exceptions() {
 
-        // No need for checking if there is no UI.
-        if (!$this->getSession()->getPage()) {
-            return;
-        }
-
         // Exceptions.
         if ($errormsg = $this->getSession()->getPage()->find('css', '.errorbox p.errormessage')) {
 
@@ -216,6 +211,17 @@ class behat_hooks extends behat_base {
                 $msgs[] = $this->get_debug_text($debuggingmessage->getHtml());
             }
             $msg = "debugging() message/s found:\n" . implode("\n", $msgs);
+            throw new \Exception(html_entity_decode($msg));
+        }
+
+        // PHP debug messages.
+        if ($phpmessages = $this->getSession()->getPage()->findAll('css', '.phpdebugmessage')) {
+
+            $msgs = array();
+            foreach ($phpmessages as $phpmessage) {
+                $msgs[] = $this->get_debug_text($phpmessage->getHtml());
+            }
+            $msg = "PHP debug message/s found:\n" . implode("\n", $msgs);
             throw new \Exception(html_entity_decode($msg));
         }
     }
