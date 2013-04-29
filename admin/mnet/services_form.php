@@ -39,6 +39,7 @@ class mnet_services_form extends moodleform {
         $myservices = mnet_get_service_info($mnet_peer);
 
         $mform->addElement('hidden', 'hostid', $mnet_peer->id);
+        $mform->setType('hostid', PARAM_INT);
 
         $count = 0;
         foreach ($myservices as $name => $versions) {
@@ -55,6 +56,8 @@ class mnet_services_form extends moodleform {
             $mform->addElement('html', '<h3>' .  get_string($name.'_name', $langmodule , $mnet_peer->name) . '</h3>' . get_string($name.'_description', $langmodule, $mnet_peer->name));
 
             $mform->addElement('hidden', 'exists[' . $version['serviceid'] . ']', 1);
+            // Temporary fix until MDL-38885 gets integrated.
+            $mform->setType('exists', PARAM_BOOL);
 
             $pubstr = get_string('publish','mnet');
             if (!empty($version['hostsubscribes'])) {

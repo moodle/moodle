@@ -50,6 +50,8 @@ class mnet_profile_form extends moodleform {
         }
 
         $mform->addElement('hidden', 'hostid', $this->_customdata['hostid']);
+        $mform->setType('hostid', PARAM_INT);
+
         $fields = mnet_profile_field_options();
 
         // Fields to import ----------------------------------------------------
