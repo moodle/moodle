@@ -136,11 +136,7 @@ switch ($action) {
         }
         $plugin = $plugins[$instance->enrol];
         if ($plugin->allow_enrol($instance) && has_capability('enrol/'.$plugin->get_name().':enrol', $context)) {
-            $plugin->enrol_user($instance, $user->id, $roleid, $timestart, $timeend);
-            if ($recovergrades) {
-                require_once($CFG->libdir.'/gradelib.php');
-                grade_recover_history_grades($user->id, $instance->courseid);
-            }
+            $plugin->enrol_user($instance, $user->id, $roleid, $timestart, $timeend, null, $recovergrades);
         } else {
             throw new enrol_ajax_exception('enrolnotpermitted');
         }
