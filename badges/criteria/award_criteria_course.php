@@ -77,12 +77,17 @@ class award_criteria_course extends award_criteria {
         $param = reset($this->params);
 
         $course = $DB->get_record('course', array('id' => $param['course']));
-        $str = '"' . $course->fullname . '"';
-        if (isset($param['bydate'])) {
-            $str .= get_string('criteria_descr_bydate', 'badges', userdate($param['bydate'], get_string('strftimedate', 'core_langconfig')));
-        }
-        if (isset($param['grade'])) {
-            $str .= get_string('criteria_descr_grade', 'badges', $param['grade']);
+        if (!$course) {
+            $str = $OUTPUT->error_text(get_string('error:nosuchcourse', 'badges'));
+        } else {
+            $options = array('context' => context_course::instance($course->id));
+            $str = html_writer::tag('b', '"' . format_string($course->fullname, true, $options) . '"');
+            if (isset($param['bydate'])) {
+                $str .= get_string('criteria_descr_bydate', 'badges', userdate($param['bydate'], get_string('strftimedate', 'core_langconfig')));
+            }
+            if (isset($param['grade'])) {
+                $str .= get_string('criteria_descr_grade', 'badges', $param['grade']);
+            }
         }
         return $str;
     }
@@ -92,9 +97,16 @@ class award_criteria_course extends award_criteria {
      *
      */
     public function get_options(&$mform) {
-        global $PAGE, $DB;
-        $param = array_shift($this->params);
-        $course = $DB->get_record('course', array('id' => $PAGE->course->id));
+        global $DB;
+        $param = array();
+
+        if ($this->id !== 0) {
+            $param = reset($this->params);
+        } else {
+            $param['course'] = $mform->getElementValue('course');
+            $mform->removeElement('course');
+        }
+        $course = $DB->get_record('course', array('id' => $param['course']));
 
         if (!($course->enablecompletion == COMPLETION_ENABLED)) {
             $none = true;

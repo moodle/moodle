@@ -75,7 +75,7 @@ if ($edit) {
     $criteria = award_criteria::build($cparams);
 }
 
-$mform = new edit_criteria_form($FULLME, array('criteria' => $criteria, 'addcourse' => $addcourse));
+$mform = new edit_criteria_form($FULLME, array('criteria' => $criteria, 'addcourse' => $addcourse, 'course' => $badge->courseid));
 
 if (!empty($addcourse)) {
     if ($data = $mform->get_data()) {

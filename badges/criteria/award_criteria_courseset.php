@@ -74,7 +74,7 @@ class award_criteria_courseset extends award_criteria {
     }
 
     public function get_courses(&$mform) {
-        global $DB, $CFG, $PAGE;
+        global $DB, $CFG;
         require_once($CFG->dirroot . '/course/lib.php');
         $buttonarray = array();
 
@@ -100,7 +100,7 @@ class award_criteria_courseset extends award_criteria {
             $mform->addHelpButton('courses', 'addcourse', 'badges');
 
             $buttonarray[] =& $mform->createElement('submit', 'submitcourse', get_string('addcourse', 'badges'));
-            $buttonarray[] =& $mform->createElement('submit', 'back', get_string('cancel'));
+            $buttonarray[] =& $mform->createElement('submit', 'cancel', get_string('cancel'));
             $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
 
             $mform->addElement('hidden', 'addcourse', 'addcourse');
@@ -111,7 +111,7 @@ class award_criteria_courseset extends award_criteria {
             $mform->setType('agg', PARAM_INT);
         } else {
             $mform->addElement('static', 'nocourses', '', get_string('error:nocourses', 'badges'));
-            $buttonarray[] =& $mform->createElement('submit', 'back', get_string('continue'));
+            $buttonarray[] =& $mform->createElement('submit', 'cancel', get_string('continue'));
             $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
         }
     }
