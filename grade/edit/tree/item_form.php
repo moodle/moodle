@@ -42,11 +42,14 @@ class edit_item_form extends moodleform {
         $mform->addElement('header', 'general', get_string('gradeitem', 'grades'));
 
         $mform->addElement('text', 'itemname', get_string('itemname', 'grades'));
+        $mform->setType('itemname', PARAM_TEXT);
         $mform->addElement('text', 'iteminfo', get_string('iteminfo', 'grades'));
         $mform->addHelpButton('iteminfo', 'iteminfo', 'grades');
+        $mform->setType('iteminfo', PARAM_TEXT);
 
         $mform->addElement('text', 'idnumber', get_string('idnumbermod'));
         $mform->addHelpButton('idnumber', 'idnumbermod');
+        $mform->setType('idnumber', PARAM_RAW);
 
         $options = array(GRADE_TYPE_NONE=>get_string('typenone', 'grades'),
                          GRADE_TYPE_VALUE=>get_string('typevalue', 'grades'),
@@ -85,27 +88,32 @@ class edit_item_form extends moodleform {
         $mform->addElement('text', 'grademax', get_string('grademax', 'grades'));
         $mform->addHelpButton('grademax', 'grademax', 'grades');
         $mform->disabledIf('grademax', 'gradetype', 'noteq', GRADE_TYPE_VALUE);
+        $mform->setType('grademax', PARAM_RAW);
 
         $mform->addElement('text', 'grademin', get_string('grademin', 'grades'));
         $mform->addHelpButton('grademin', 'grademin', 'grades');
         $mform->disabledIf('grademin', 'gradetype', 'noteq', GRADE_TYPE_VALUE);
+        $mform->setType('grademin', PARAM_RAW);
 
         $mform->addElement('text', 'gradepass', get_string('gradepass', 'grades'));
         $mform->addHelpButton('gradepass', 'gradepass', 'grades');
         $mform->disabledIf('gradepass', 'gradetype', 'eq', GRADE_TYPE_NONE);
         $mform->disabledIf('gradepass', 'gradetype', 'eq', GRADE_TYPE_TEXT);
+        $mform->setType('gradepass', PARAM_RAW);
 
         $mform->addElement('text', 'multfactor', get_string('multfactor', 'grades'));
         $mform->addHelpButton('multfactor', 'multfactor', 'grades');
         $mform->setAdvanced('multfactor');
         $mform->disabledIf('multfactor', 'gradetype', 'eq', GRADE_TYPE_NONE);
         $mform->disabledIf('multfactor', 'gradetype', 'eq', GRADE_TYPE_TEXT);
+        $mform->setType('multfactor', PARAM_RAW);
 
         $mform->addElement('text', 'plusfactor', get_string('plusfactor', 'grades'));
         $mform->addHelpButton('plusfactor', 'plusfactor', 'grades');
         $mform->setAdvanced('plusfactor');
         $mform->disabledIf('plusfactor', 'gradetype', 'eq', GRADE_TYPE_NONE);
         $mform->disabledIf('plusfactor', 'gradetype', 'eq', GRADE_TYPE_TEXT);
+        $mform->setType('plusfactor', PARAM_RAW);
 
         /// grade display prefs
         $default_gradedisplaytype = grade_get_setting($COURSE->id, 'displaytype', $CFG->grade_displaytype);
