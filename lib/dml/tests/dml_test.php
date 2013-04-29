@@ -4199,6 +4199,27 @@ class dml_testcase extends database_driver_testcase {
         $DB->insert_record($tablename, array('course' => 7, 'content' => 'xx', 'name'=>'1abc'));
         $this->assertEquals(count($DB->get_records_sql($sql, array(1))), 1);
         $this->assertEquals(count($DB->get_records_sql($sql, array("1"))), 1);
+
+        // Test get_in_or_equal() with a big number of elements. Note that ideally
+        // we should be detecting and warning about any use over, say, 200 elements
+        // and recommend to change code to use subqueries and/or chunks instead.
+        $currentcount = $DB->count_records($tablename);
+        $numelements = 10000; // Verify that we can handle 10000 elements (crazy!)
+        $values = range(1, $numelements);
+
+        list($insql, $inparams) = $DB->get_in_or_equal($values, SQL_PARAMS_QM); // With QM params.
+        $sql = "SELECT *
+                  FROM {{$tablename}}
+                 WHERE id $insql";
+        $results = $DB->get_records_sql($sql, $inparams);
+        $this->assertEquals($currentcount, count($results));
+
+        list($insql, $inparams) = $DB->get_in_or_equal($values, SQL_PARAMS_NAMED); // With NAMED params.
+        $sql = "SELECT *
+                  FROM {{$tablename}}
+                 WHERE id $insql";
+        $results = $DB->get_records_sql($sql, $inparams);
+        $this->assertEquals($currentcount, count($results));
     }
 
     function test_onelevel_commit() {
