@@ -197,9 +197,17 @@ class sqlite3_pdo_moodle_database extends pdo_moodle_database {
      * @return array array of database_column_info objects indexed with column names
      */
     public function get_columns($table, $usecache=true) {
-        if ($usecache and isset($this->columns[$table])) {
-            return $this->columns[$table];
+
+        if ($usecache) {
+            $properties = array('dbfamily' => $this->get_dbfamily(), 'settings' => $this->get_settings_hash());
+            $cache = cache::make('core', 'databasemeta', $properties);
+            if ($data = $cache->get($table)) {
+                return $data;
+            }
         }
+
+        $structure = array();
+
         // get table's CREATE TABLE command (we'll need it for autoincrement fields)
         $sql = 'SELECT sql FROM sqlite_master WHERE type="table" AND tbl_name="'.$this->prefix.$table.'"';
         if ($this->debug) {
@@ -211,7 +219,6 @@ class sqlite3_pdo_moodle_database extends pdo_moodle_database {
         }
         $createsql = $createsql['sql'];
 
-        $columns = array();
         $sql = 'PRAGMA table_info("'. $this->prefix.$table.'")';
         if ($this->debug) {
             $this->debug_query($sql);
@@ -287,11 +294,14 @@ class sqlite3_pdo_moodle_database extends pdo_moodle_database {
                 // trim extra quotes from text default values
                 $columninfo['default_value'] = substr($columninfo['default_value'], 1, -1);
             }
-            $columns[$columninfo['name']] = new database_column_info($columninfo);
+            $structure[$columninfo['name']] = new database_column_info($columninfo);
         }
 
-        $this->columns[$table] = $columns;
-        return $columns;
+        if ($usecache) {
+            $result = $cache->set($table, $structure);
+        }
+
+        return $structure;
     }
 
     /**
