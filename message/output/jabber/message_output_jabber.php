@@ -73,6 +73,9 @@ class message_output_jabber extends message_output {
 
         $conn = new XMPPHP_XMPP($CFG->jabberhost,$CFG->jabberport,$CFG->jabberusername,$CFG->jabberpassword,'moodle',$CFG->jabberserver);
 
+        // No need to track the presence during the sending message process.
+        $conn->track_presence = false;
+
         try {
             //$conn->useEncryption(false);
             $conn->connect();
