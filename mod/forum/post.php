@@ -680,7 +680,11 @@ if ($fromform = $mform_post->get_data()) {
 
 
     } else if ($fromform->discussion) { // Adding a new post to an existing discussion
+        // Before we add this we must check that the user will not exceed the blocking threshold.
+        forum_check_throttling($forum, $cm, false);
+
         unset($fromform->groupid);
+
         $message = '';
         $addpost = $fromform;
         $addpost->forum=$forum->id;
@@ -728,7 +732,10 @@ if ($fromform = $mform_post->get_data()) {
         }
         exit;
 
-    } else {                     // Adding a new discussion
+    } else { // Adding a new discussion.
+        // Before we add this we must check that the user will not exceed the blocking threshold.
+        forum_check_throttling($forum, $cm, false);
+
         if (!forum_user_can_post_discussion($forum, $fromform->groupid, -1, $cm, $modcontext)) {
             print_error('cannotcreatediscussion', 'forum');
         }
