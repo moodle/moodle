@@ -572,28 +572,54 @@ class core_course_external_testcase extends externallib_advanced_testcase {
         $this->resetAfterTest(true);
 
         $course  = self::getDataGenerator()->create_course();
-        $forum = $this->getDataGenerator()->create_module('forum', array('course'=>$course->id));
+        $forumdescription = 'This is the forum description';
+        $forum = $this->getDataGenerator()->create_module('forum',
+            array('course'=>$course->id, 'intro' => $forumdescription),
+            array('showdescription' => true));
         $forumcm = get_coursemodule_from_id('forum', $forum->cmid);
-        $forumcontext = context_module::instance($forum->cmid);
         $data = $this->getDataGenerator()->create_module('data', array('assessed'=>1, 'scale'=>100, 'course'=>$course->id));
-        $datacontext = context_module::instance($data->cmid);
         $datacm = get_coursemodule_from_instance('page', $data->id);
         $page = $this->getDataGenerator()->create_module('page', array('course'=>$course->id));
-        $pagecontext = context_module::instance($page->cmid);
         $pagecm = get_coursemodule_from_instance('page', $page->id);
+        $labeldescription = 'This is a very long label to test if more than 50 characters are returned.
+                So bla bla bla bla <b>bold bold bold</b> bla bla bla bla.';
+        $label = $this->getDataGenerator()->create_module('label', array('course' => $course->id,
+            'intro' => $labeldescription));
+        $labelcm = get_coursemodule_from_instance('label', $label->id);
 
         // Set the required capabilities by the external function.
         $context = context_course::instance($course->id);
         $roleid = $this->assignUserCapability('moodle/course:view', $context->id);
         $this->assignUserCapability('moodle/course:update', $context->id, $roleid);
 
-        $courses = core_course_external::get_course_contents($course->id, array());
+        $sections = core_course_external::get_course_contents($course->id, array());
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $courses = external_api::clean_returnvalue(core_course_external::get_course_contents_returns(), $courses);
+        $sections = external_api::clean_returnvalue(core_course_external::get_course_contents_returns(), $sections);
 
-        // Check that the course has the 3 created modules
-        $this->assertEquals(3, count($courses[0]['modules']));
+        // Check that forum and label descriptions are correctly returned.
+        $firstsection = array_pop($sections);
+        $modinfo = get_fast_modinfo($course);
+        $testexecuted = 0;
+        foreach($firstsection['modules'] as $module) {
+            if ($module['id'] == $forumcm->id and $module['modname'] == 'forum') {
+                $cm = $modinfo->cms[$forumcm->id];
+                $formattedtext = format_text($cm->get_content(), FORMAT_HTML,
+                    array('noclean' => true, 'para' => false, 'filter' => false));
+                $this->assertEquals($formattedtext, $module['description']);
+                $testexecuted = $testexecuted + 1;
+            } else if ($module['id'] == $labelcm->id and $module['modname'] == 'label') {
+                $cm = $modinfo->cms[$labelcm->id];
+                $formattedtext = format_text($cm->get_content(), FORMAT_HTML,
+                    array('noclean' => true, 'para' => false, 'filter' => false));
+                $this->assertEquals($formattedtext, $module['description']);
+                $testexecuted = $testexecuted + 1;
+            }
+        }
+        $this->assertEquals(2, $testexecuted);
+
+        // Check that the only return section has the 4 created modules
+        $this->assertEquals(4, count($firstsection['modules']));
     }
 
     /**
