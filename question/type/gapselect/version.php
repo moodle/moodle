@@ -24,9 +24,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version  = 2013031400;
-$plugin->requires = 2012062500;
+$plugin->version  = 2013042900;
+$plugin->requires = 2013040500;
 $plugin->cron      = 0;
 $plugin->component = 'qtype_gapselect';
 $plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = '1.2 for Moodle 2.3+';
+$plugin->release   = '1.3 for Moodle 2.5+';
