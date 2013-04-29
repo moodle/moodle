@@ -39,6 +39,10 @@ if (empty($CFG->enablebadges)) {
     print_error('badgesdisabled', 'badges');
 }
 
+if (empty($CFG->badges_allowcoursebadges) && $courseid != 0) {
+    print_error('coursebadgesdisabled', 'badges');
+}
+
 if (!in_array($sortby, array('name', 'dateissued'))) {
     $sortby = 'name';
 }
