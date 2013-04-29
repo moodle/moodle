@@ -1054,9 +1054,7 @@ class worker extends singleton_pattern {
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 20); // nah, moodle.org is never unavailable! :-p
         curl_setopt($ch, CURLOPT_URL, $source);
 
-        $dataroot = $this->input->get_option('dataroot');
-        $cacertfile = $dataroot.'/moodleorgca.crt';
-        if (is_readable($cacertfile)) {
+        if ($cacertfile = $this->get_cacert()) {
             // Do not use CA certs provided by the operating system. Instead,
             // use this CA cert to verify the ZIP provider.
             $this->log('Using custom CA certificate '.$cacertfile);
@@ -1114,6 +1112,35 @@ class worker extends singleton_pattern {
         }
 
         return true;
+    }
+
+    /**
+     * Get the location of ca certificates.
+     * @return string absolute file path or empty if default used
+     */
+    protected function get_cacert() {
+        $dataroot = $this->input->get_option('dataroot');
+
+        // Bundle in dataroot always wins.
+        if (is_readable($dataroot.'/moodleorgca.crt')) {
+            return realpath($dataroot.'/moodleorgca.crt');
+        }
+
+        // Next comes the default from php.ini
+        $cacert = ini_get('curl.cainfo');
+        if (!empty($cacert) and is_readable($cacert)) {
+            return realpath($cacert);
+        }
+
+        // Windows PHP does not have any certs, we need to use something.
+        if (stristr(PHP_OS, 'win') && !stristr(PHP_OS, 'darwin')) {
+            if (is_readable(__DIR__.'/lib/cacert.pem')) {
+                return realpath(__DIR__.'/lib/cacert.pem');
+            }
+        }
+
+        // Use default, this should work fine on all properly configured *nix systems.
+        return null;
     }
 
     /**
