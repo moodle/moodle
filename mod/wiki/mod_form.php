@@ -46,27 +46,29 @@ class mod_wiki_mod_form extends moodleform_mod {
         $required = get_string('required');
 
         //-------------------------------------------------------------------------------
-        // Adding the "general" fieldset, where all the common settings are showed
+        // Adding the "general" fieldset, where all the common settings are shown.
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
-        // Adding the standard "name" field
+        // Adding the standard "name" field.
         $mform->addElement('text', 'name', get_string('wikiname', 'wiki'), array('size' => '64'));
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', $required, 'required', null, 'client');
-        // Adding the optional "intro" and "introformat" pair of fields
+        // Adding the optional "intro" and "introformat" pair of fields.
         $this->add_intro_editor(true, get_string('wikiintro', 'wiki'));
 
-        //-------------------------------------------------------------------------------
-        // Adding the rest of wiki settings, spreeading all them into this fieldset
-        // or adding more fieldsets ('header' elements) if needed for better logic
-
-        $mform->addElement('header', 'wikifieldset', get_string('wikisettings', 'wiki'));
+        $wikimodeoptions = array ('collaborative' => get_string('wikimodecollaborative', 'wiki'), 'individual' => get_string('wikimodeindividual', 'wiki'));
+        // Don't allow changes to the wiki type once it is set.
+        $wikitype_attr = array();
+        if (!empty($this->_instance)) {
+            $wikitype_attr['disabled'] = 'disabled';
+        }
+        $mform->addElement('select', 'wikimode', get_string('wikimode', 'wiki'), $wikimodeoptions, $wikitype_attr);
+        $mform->addHelpButton('wikimode', 'wikimode', 'wiki');
 
         $attr = array('size' => '20');
         if (!empty($this->_instance)) {
             $attr['disabled'] = 'disabled';
         }
-
         $mform->addElement('text', 'firstpagetitle', get_string('firstpagetitle', 'wiki'), $attr);
         $mform->addHelpButton('firstpagetitle', 'firstpagetitle', 'wiki');
         $mform->setType('firstpagetitle', PARAM_TEXT);
@@ -74,14 +76,8 @@ class mod_wiki_mod_form extends moodleform_mod {
             $mform->addRule('firstpagetitle', $required, 'required', null, 'client');
         }
 
-        $wikimodeoptions = array ('collaborative' => get_string('wikimodecollaborative', 'wiki'), 'individual' => get_string('wikimodeindividual', 'wiki'));
-        // don't allow to change wiki type once is set
-        $wikitype_attr = array();
-        if (!empty($this->_instance)) {
-            $wikitype_attr['disabled'] = 'disabled';
-        }
-        $mform->addElement('select', 'wikimode', get_string('wikimode', 'wiki'), $wikimodeoptions, $wikitype_attr);
-        $mform->addHelpButton('wikimode', 'wikimode', 'wiki');
+        // Format.
+        $mform->addElement('header', 'wikifieldset', get_string('format'));
 
         $formats = wiki_get_formats();
         $editoroptions = array();
@@ -95,10 +91,10 @@ class mod_wiki_mod_form extends moodleform_mod {
         $mform->addHelpButton('forceformat', 'forceformat', 'wiki');
 
         //-------------------------------------------------------------------------------
-        // add standard elements, common to all modules
+        // Add standard elements, common to all modules.
         $this->standard_coursemodule_elements();
         //-------------------------------------------------------------------------------
-        // add standard buttons, common to all modules
+        // Add standard buttons, common to all modules.
         $this->add_action_buttons();
 
     }
