@@ -28,3 +28,6 @@ $plugin->version = 2012112900;              // The current module version (Date:
 $plugin->requires = 2012112900;             // Requires this Moodle version
 $plugin->component = 'theme_mymobile';
 $plugin->maturity = MATURITY_STABLE;
+$plugin->dependencies = array(
+    'theme_canvas'  => 2012112900,
+);
