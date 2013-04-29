@@ -56,29 +56,22 @@ if ($ADMIN->fulltree) {
     //--- modedit defaults -----------------------------------------------------------------------------------
     $settings->add(new admin_setting_heading('resourcemodeditdefaults', get_string('modeditdefaults', 'admin'), get_string('condifmodeditdefaults', 'admin')));
 
-    $settings->add(new admin_setting_configcheckbox_with_advanced('resource/printheading',
-        get_string('printheading', 'resource'), get_string('printheadingexplain', 'resource'),
-        array('value'=>0, 'adv'=>false)));
-    $settings->add(new admin_setting_configcheckbox_with_advanced('resource/printintro',
-        get_string('printintro', 'resource'), get_string('printintroexplain', 'resource'),
-        array('value'=>1, 'adv'=>false)));
-    $settings->add(new admin_setting_configselect_with_advanced('resource/display',
-        get_string('displayselect', 'resource'), get_string('displayselectexplain', 'resource'),
-        array('value'=>RESOURCELIB_DISPLAY_AUTO, 'adv'=>false), $displayoptions));
-    $settings->add(new admin_setting_configcheckbox_with_advanced('resource/showsize',
-            get_string('showsize', 'resource'), get_string('showsize_desc', 'resource'),
-            array('value'=>0, 'adv'=>false)));
-    $settings->add(new admin_setting_configcheckbox_with_advanced('resource/showtype',
-            get_string('showtype', 'resource'), get_string('showtype_desc', 'resource'),
-            array('value'=>0, 'adv'=>false)));
-    $settings->add(new admin_setting_configtext_with_advanced('resource/popupwidth',
-        get_string('popupwidth', 'resource'), get_string('popupwidthexplain', 'resource'),
-        array('value'=>620, 'adv'=>true), PARAM_INT, 7));
-    $settings->add(new admin_setting_configtext_with_advanced('resource/popupheight',
-        get_string('popupheight', 'resource'), get_string('popupheightexplain', 'resource'),
-        array('value'=>450, 'adv'=>true), PARAM_INT, 7));
+    $settings->add(new admin_setting_configcheckbox('resource/printheading',
+        get_string('printheading', 'resource'), get_string('printheadingexplain', 'resource'), 0));
+    $settings->add(new admin_setting_configcheckbox('resource/printintro',
+        get_string('printintro', 'resource'), get_string('printintroexplain', 'resource'), 1));
+    $settings->add(new admin_setting_configselect('resource/display',
+        get_string('displayselect', 'resource'), get_string('displayselectexplain', 'resource'), RESOURCELIB_DISPLAY_AUTO,
+        $displayoptions));
+    $settings->add(new admin_setting_configcheckbox('resource/showsize',
+        get_string('showsize', 'resource'), get_string('showsize_desc', 'resource'), 0));
+    $settings->add(new admin_setting_configcheckbox('resource/showtype',
+        get_string('showtype', 'resource'), get_string('showtype_desc', 'resource'), 0));
+    $settings->add(new admin_setting_configtext('resource/popupwidth',
+        get_string('popupwidth', 'resource'), get_string('popupwidthexplain', 'resource'), 620, PARAM_INT, 7));
+    $settings->add(new admin_setting_configtext('resource/popupheight',
+        get_string('popupheight', 'resource'), get_string('popupheightexplain', 'resource'), 450, PARAM_INT, 7));
     $options = array('0' => get_string('none'), '1' => get_string('allfiles'), '2' => get_string('htmlfilesonly'));
-    $settings->add(new admin_setting_configselect_with_advanced('resource/filterfiles',
-        get_string('filterfiles', 'resource'), get_string('filterfilesexplain', 'resource'),
-        array('value'=>0, 'adv'=>true), $options));
+    $settings->add(new admin_setting_configselect('resource/filterfiles',
+        get_string('filterfiles', 'resource'), get_string('filterfilesexplain', 'resource'), 0, $options));
 }
