@@ -12,6 +12,7 @@
 #page-mod-scorm-player #scormpage {position: relative;width: 100%;height: 100%;}
 #page-mod-scorm-player #scormpage #toctree {position:relative;width:100%;overflow-x: auto;overflow-y: auto;}
 #page-mod-scorm-player #tocbox {position: relative;left: 0px;width: 100%;height: 100%;font-size: 0.8em;}
+#page-mod-scorm-player #toctree { overflow: visible; }
 #page-mod-scorm-player #tochead {position: relative;text-align: center;top: 3px;height: 30px;}
 #page-mod-scorm-player #scormpage .scoframe {frameborder: 0;}
 
@@ -39,3 +40,4 @@
 .path-mod-scorm.jsenabled .scorm-center { display:block;}
 .path-mod-scorm.jsenabled .toc { display:block;}
 .path-mod-scorm.jsenabled #scormpage #tocbox { display:block;}
+
