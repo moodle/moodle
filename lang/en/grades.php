@@ -173,6 +173,7 @@ $string['enableoutcomes_help'] = 'Support for Outcomes (also known as Competenci
 $string['encoding'] = 'Encoding';
 $string['errorcalculationnoequal'] = 'Formula must start with equal sign (=1+2)';
 $string['errorcalculationunknown'] = 'Invalid formula';
+$string['errorcalculationbroken'] = 'Probably circular reference or broken calculation formula';
 $string['errorgradevaluenonnumeric'] = 'Received non-numeric for low or high grade for';
 $string['errornocalculationallowed'] = 'Calculations are not allowed for this item';
 $string['errornocategorisedid'] = 'Could not get an uncategorised id!';
