@@ -91,8 +91,8 @@ class qformat_blackboard_six extends qformat_blackboard_six_base {
         }
         // We are importing a zip file.
         // Create name for temporary directory.
-        $unique_code = time();
-        $this->tempdir = make_temp_directory('bbquiz_import/' . $unique_code);
+        $uniquecode = time();
+        $this->tempdir = make_temp_directory('bbquiz_import/' . $uniquecode);
         if (is_readable($filename)) {
             if (!copy($filename, $this->tempdir . '/bboard.zip')) {
                 $this->error(get_string('cannotcopybackup', 'question'));
@@ -113,7 +113,7 @@ class qformat_blackboard_six extends qformat_blackboard_six_base {
 
                 // We starts from the root element.
                 $query = '//resources/resource';
-                $q_file = array();
+                $qfile = array();
 
                 $examfiles = $xpath->query($query);
                 foreach ($examfiles as $examfile) {
@@ -126,7 +126,7 @@ class qformat_blackboard_six extends qformat_blackboard_six_base {
                             $fileobj->filetype = self::FILETYPE_QTI;
                             $fileobj->filebase = $this->tempdir;
                             $fileobj->text = $content;
-                            $q_file[] = $fileobj;
+                            $qfile[] = $fileobj;
                         }
                     }
                     if ($examfile->getAttribute('type') == 'assessment/x-bb-pool') {
@@ -136,13 +136,13 @@ class qformat_blackboard_six extends qformat_blackboard_six_base {
                         if ($content = $this->get_filecontent($examfile->getAttribute('file'))) {
                             $fileobj->filetype = self::FILETYPE_POOL;
                             $fileobj->text = $content;
-                            $q_file[] = $fileobj;
+                            $qfile[] = $fileobj;
                         }
                     }
                 }
 
-                if ($q_file) {
-                    return $q_file;
+                if ($qfile) {
+                    return $qfile;
                 } else {
                     $this->error(get_string('cannotfindquestionfile', 'question'));
                     fulldelete($this->tempdir);

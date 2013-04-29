@@ -17,8 +17,7 @@
 /**
  * Unit tests for the Moodle GIFT format.
  *
- * @package    qformat
- * @subpackage gift
+ * @package    qformat_gift
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

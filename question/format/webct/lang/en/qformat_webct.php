@@ -17,8 +17,7 @@
 /**
  * Strings for component 'qformat_webct', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package    qformat
- * @subpackage webct
+ * @package    qformat_webct
  * @copyright  2010 Helen Foster
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
