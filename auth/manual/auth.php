@@ -18,8 +18,7 @@
  * Authentication Plugin: Manual Authentication
  * Just does a simple check against the moodle database.
  *
- * @package    auth
- * @subpackage manual
+ * @package    auth_manual
  * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

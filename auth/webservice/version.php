@@ -17,8 +17,7 @@
 /**
  * Version information
  *
- * @package    auth
- * @subpackage webservice
+ * @package    auth_webservice
  * @copyright  2011 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

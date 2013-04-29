@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -38,8 +37,7 @@
  * We have optimized it as best as we could for PostgreSQL and MySQL, with 27K students
  * we have seen this take 10 minutes.
  *
- * @package    auth
- * @subpackage CAS
+ * @package    auth_cas
  * @copyright  2007 Jerome Gutierrez - based on code by Martin Langhoff
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
