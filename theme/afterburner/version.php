@@ -17,8 +17,7 @@
 /**
  * Theme version info
  *
- * @package    theme
- * @subpackage afterburner
+ * @package    theme_afterburner
  * @copyright  2011 Mary Evans
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

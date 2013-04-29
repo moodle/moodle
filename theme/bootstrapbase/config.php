@@ -23,7 +23,7 @@
  * For full information about creating Moodle themes, see:
  * http://docs.moodle.org/dev/Themes_2.0
  *
- * @package   Moodle Bootstrap theme
+ * @package   theme_bootstrapbase
  * @copyright 2013 Bas Brands. www.sonsbeekmedia.nl
  * @authors   Bas Brands, David Scotson
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

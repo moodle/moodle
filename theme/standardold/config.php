@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,20 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
- * Configuration for Moodle's standard theme.
+ * Configuration for Moodle's legacy standard theme.
  *
- * DO NOT COPY THIS INTO NEW THEMES! Instead use some other theme as a base
- * for your experiments.
+ * Use standard theme or new bootstrapbase instead!!!
  *
- * Options related to theme customisations can be found at
- * http://phpdocs.moodle.org/HEAD/moodlecore/theme_config.html
- *
- * For an overview of how Moodle themes work, Please see
- * http://docs.moodle.org/en/Developement:How_Moodle_outputs_HTML
- *
- * @package   moodlecore
+ * @package   theme_standardold
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

@@ -17,8 +17,7 @@
 /**
  * Theme version info
  *
- * @package    theme
- * @subpackage boxxie
+ * @package    theme_boxxie
  * @copyright  2010 Patrick Malley
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

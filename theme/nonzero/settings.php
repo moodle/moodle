@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -23,7 +22,7 @@
  *    - Region post width
  *    - Some custom CSS
  *
- * @package  moodlecore
+ * @package  theme_nonzero
  * @copyright 2010 Dietmar Wagner
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

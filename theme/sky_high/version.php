@@ -17,8 +17,7 @@
 /**
  * Theme version info
  *
- * @package    theme
- * @subpackage sky_high
+ * @package    theme_sky_high
  * @copyright  2010 John Stabinger (http://newschoollearning.com/)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
