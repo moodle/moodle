@@ -66,8 +66,6 @@ abstract class moodle_database {
     protected $database_manager;
     /** @var moodle_temptables temptables manager to provide cross-db support for temp tables. */
     protected $temptables;
-    /** @var array Cache of column info. */
-    protected $columns = array(); // I wish we had a shared memory cache for this :-(
     /** @var array Cache of table info. */
     protected $tables  = null;
 
@@ -356,7 +354,6 @@ abstract class moodle_database {
             $this->database_manager->dispose();
             $this->database_manager = null;
         }
-        $this->columns = array();
         $this->tables  = null;
     }
 
@@ -945,7 +942,6 @@ abstract class moodle_database {
      * @return void
      */
     public function reset_caches() {
-        $this->columns = array();
         $this->tables  = null;
         // Purge MUC as well
         $identifiers = array('dbfamily' => $this->get_dbfamily(), 'settings' => $this->get_settings_hash());
