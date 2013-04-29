@@ -70,8 +70,27 @@ class web_testcase extends advanced_testcase {
     }
 
     function test_s() {
-        $this->assertEquals(s("This Breaks \" Strict"), "This Breaks &quot; Strict");
-        $this->assertEquals(s("This Breaks <a>\" Strict</a>"), "This Breaks &lt;a&gt;&quot; Strict&lt;/a&gt;");
+        // Special cases.
+        $this->assertSame('0', s(0));
+        $this->assertSame('0', s('0'));
+        $this->assertSame('0', s(false));
+        $this->assertSame('', s(null));
+
+        // Normal cases.
+        $this->assertEquals('This Breaks &quot; Strict', s('This Breaks " Strict'));
+        $this->assertEquals('This Breaks &lt;a&gt;&quot; Strict&lt;/a&gt;', s('This Breaks <a>" Strict</a>'));
+
+        // Unicode characters.
+        $this->assertEquals('Café', s('Café'));
+        $this->assertEquals('一, 二, 三', s('一, 二, 三'));
+
+        // Don't escape already-escaped numeric entities. (Note, this behaviour
+        // may not be desirable. Perhaps we should remove these tests and that
+        // functionality, but we can only do that if we understand why it was added.)
+        $this->assertEquals('An entity: &#x09ff;.', s('An entity: &#x09ff;.'));
+        $this->assertEquals('An entity: &#1073;.', s('An entity: &#1073;.'));
+        $this->assertEquals('An entity: &amp;amp;.', s('An entity: &amp;.'));
+        $this->assertEquals('Not an entity: &amp;amp;#x09ff;.', s('Not an entity: &amp;#x09ff;.'));
     }
 
     function test_format_text_email() {
