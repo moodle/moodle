@@ -650,7 +650,7 @@ function SCORMapi1_2() {
             }
             if (cmi.core.lesson_mode == 'normal') {
                 if (cmi.core.credit == 'credit') {
-                    if (cmi.student_data.mastery_score != '' && cmi.core.score.raw != '') {
+                    if (cmi.student_data.mastery_score !== '' && cmi.core.score.raw !== '') {
                         if (parseFloat(cmi.core.score.raw) >= parseFloat(cmi.student_data.mastery_score)) {
                             cmi.core.lesson_status = 'passed';
                         } else {
