@@ -50,6 +50,9 @@ list($options, $unrecognized) = cli_get_params(
     )
 );
 
+if ($options['install'] or $options['drop']) {
+    define('CACHE_DISABLE_ALL', true);
+}
 
 // Checking util.php CLI script usage.
 $help = "
