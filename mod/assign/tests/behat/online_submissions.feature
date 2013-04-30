@@ -1,4 +1,4 @@
-@mod_assign
+@mod @mod_assign
 Feature: In an assignment, students can add and edit text online
   In order to complete my submissions online
   As a student

@@ -1,4 +1,4 @@
-@backup
+@core @core_backup
 Feature: Import course's contents into another course
   In order to move and copy contents between courses
   As a moodle teacher

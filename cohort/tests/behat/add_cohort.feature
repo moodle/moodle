@@ -1,4 +1,4 @@
-@admin @cohorts
+@core @core_cohort
 Feature: Add cohorts of users
   In order to create site-wide groups
   As a moodle admin
@@ -44,7 +44,7 @@ Feature: Add cohorts of users
     And the "Current users" select box should not contain "Forth User (forth@user.com)"
 
   @javascript
-  Scenario: Add users to a cohort uploading a users file
+  Scenario: Add users to a cohort using a bulk user action
     When I follow "Bulk user actions"
     And I select "Third User" from "Available"
     And I press "Add to selection"

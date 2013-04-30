@@ -1,4 +1,4 @@
-@core_comment
+@block @block_comments
 Feature: Delete comment block messages
   In order to refine comment block's contents
   As a moodle teacher

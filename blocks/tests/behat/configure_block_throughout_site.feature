@@ -1,4 +1,4 @@
-@blocks @admin
+@core @core_block
 Feature: Add and configure blocks throughout the site
   In order to maintain some patterns across all the site
   As a moodle manager

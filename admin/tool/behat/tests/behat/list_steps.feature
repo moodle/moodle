@@ -1,4 +1,4 @@
-@tool_behat
+@tool @tool_behat
 Feature: List the system steps definitions
   In order to create new tests
   As a tests writer

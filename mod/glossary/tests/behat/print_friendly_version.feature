@@ -1,4 +1,4 @@
-@mod_glossary @mod
+@mod @mod_glossary
 Feature: A teacher can choose whether to provide a printer-friendly glossary entries list
   In order to print glossaries easily
   As a moodle user

@@ -1,4 +1,4 @@
-@core_comment
+@block @block_comments
 Feature: Add a comment to the comments block
   In order to comment on a conversation or a topic
   As a moodle user

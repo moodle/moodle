@@ -1,4 +1,4 @@
-@tool_behat
+@tool @tool_behat
 Feature: Set up contextual data for tests
   In order to write tests quickly
   As a moodle developer

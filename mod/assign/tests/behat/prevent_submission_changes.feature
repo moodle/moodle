@@ -1,4 +1,4 @@
-@mod_assign @mod
+@mod @mod_assign
 Feature: Prevent or allow assignment submission changes
   In order to control when a student can change his/her submission
   As a moodle teacher

@@ -1,4 +1,4 @@
-@badges
+@core @core_badges @_only_local
 Feature: Add badges to the system
   In order to give badges to users for their achievements
   As an admin

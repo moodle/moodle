@@ -1,4 +1,4 @@
-@filepicker @_only_local
+@core @core_filepicker @_only_local
 Feature: Delete files and folders from the file manager
   In order to clean the file manager contents
   As a moodle user

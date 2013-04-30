@@ -1,4 +1,4 @@
-@core_group
+@core @core_group
 Feature: Uniqueness of Group ID number
   In order to create unique groups and groupings
   As a moodle teacher

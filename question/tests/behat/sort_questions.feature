@@ -1,4 +1,4 @@
-@core_question
+@core @core_question
 Feature: A teacher can sort questions in the question bank
   In order to order the question bank's questions
   As a teacher

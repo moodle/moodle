@@ -1,4 +1,4 @@
-@repository_recent @_only_local
+@repository @repository_recent @_only_local
 Feature: Recent files repository lists the recently used files
   In order to save time when selecting files
   As a moodle user

@@ -1,4 +1,4 @@
-@core_form @filepicker
+@core @core_filepicker
 Feature: Create folders in the file manager
   In order to create a directory structure in a file area
   As a moodle user

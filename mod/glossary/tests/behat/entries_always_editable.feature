@@ -1,4 +1,4 @@
-@mod_glossary @mod
+@mod @mod_glossary
 Feature: A teacher can set whether glossary entries are always editable or not
   In order to ensure students think before adding new entries
   As a moodle teacher

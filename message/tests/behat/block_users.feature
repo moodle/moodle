@@ -1,4 +1,4 @@
-@core_message
+@core @core_message
 Feature: Block users from contacting me
   In order to block other users
   As a moodle user

@@ -1,4 +1,4 @@
-@mod_forum
+@mod @mod_forum
 Feature: Students can choose from 4 discussion display options and their choice is remembered
   In order to read forum posts in a suitable view
   As a moodle user

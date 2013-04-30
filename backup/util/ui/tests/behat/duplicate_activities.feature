@@ -1,4 +1,4 @@
-@backup
+@core @core_backup
 Feature: Duplicate activities
   In order to set up my course contents quickly
   As a moodle teacher

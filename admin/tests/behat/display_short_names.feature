@@ -1,4 +1,4 @@
-@admin
+@core @core_admin
 Feature: Display extended course names
   In order to display more info about the courses
   As a moodle admin

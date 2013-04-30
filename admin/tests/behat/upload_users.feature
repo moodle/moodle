@@ -1,4 +1,4 @@
-@admin @_only_local
+@core @core_admin @_only_local
 Feature: Upload users
   In order to add users to the system
   As a moodle admin

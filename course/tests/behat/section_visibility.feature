@@ -1,4 +1,4 @@
-@core_course @_cross_browser
+@core @core_course @_cross_browser
 Feature: Show/hide course sections
   In order to delay sections availability
   As a moodle teacher

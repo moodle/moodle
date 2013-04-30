@@ -1,4 +1,4 @@
-@core_course @_cross_browser
+@core @core_course @_cross_browser
 Feature: Topic's course sections highlighting
   In order to highlight parts of the course to students
   As a teacher

@@ -1,4 +1,4 @@
-@admin @cohorts
+@core @core_cohort @_only_local
 Feature: Upload users to a cohort
   In order to quickly fill site-wide groups with users
   As a moodle admin

@@ -1,4 +1,4 @@
-@mod_wiki @mod
+@mod @mod_wiki
 Feature: Edited wiki pages may be previewed before saving
 
   Background:

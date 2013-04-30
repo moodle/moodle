@@ -1,4 +1,4 @@
-@repository_upload @core_form @repository @_only_local
+@repository @repository_upload @_only_local
 Feature: Upload files
   In order to add contents
   As a moodle user

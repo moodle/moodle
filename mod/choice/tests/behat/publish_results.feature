@@ -1,4 +1,4 @@
-@mod_choice
+@mod @mod_choice
 Feature: A teacher can choose one of 4 options for publishing choice results
   In order to display choice activities outcomes
   As a moodle teacher
