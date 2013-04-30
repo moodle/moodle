@@ -911,50 +911,19 @@ class qformat_xml extends qformat_default {
             return false;
         }
         unset($lines); // No need to keep this in memory.
+        return $this->import_questions($xml['quiz']['#']['question']);
+    }
 
-        // Set up array to hold all our questions
+    /**
+     * @param array $xml the xmlized xml
+     * @return stdClass[] question objects to pass to question type save_question_options
+     */
+    public function import_questions($xml) {
         $questions = array();
 
         // Iterate through questions
-        foreach ($xml['quiz']['#']['question'] as $question) {
-            $questiontype = $question['@']['type'];
-
-            if ($questiontype == 'multichoice') {
-                $qo = $this->import_multichoice($question);
-            } else if ($questiontype == 'truefalse') {
-                $qo = $this->import_truefalse($question);
-            } else if ($questiontype == 'shortanswer') {
-                $qo = $this->import_shortanswer($question);
-            } else if ($questiontype == 'numerical') {
-                $qo = $this->import_numerical($question);
-            } else if ($questiontype == 'description') {
-                $qo = $this->import_description($question);
-            } else if ($questiontype == 'matching' || $questiontype == 'match') {
-                $qo = $this->import_match($question);
-            } else if ($questiontype == 'cloze' || $questiontype == 'multianswer') {
-                $qo = $this->import_multianswer($question);
-            } else if ($questiontype == 'essay') {
-                $qo = $this->import_essay($question);
-            } else if ($questiontype == 'calculated') {
-                $qo = $this->import_calculated($question);
-            } else if ($questiontype == 'calculatedsimple') {
-                $qo = $this->import_calculated($question);
-                $qo->qtype = 'calculatedsimple';
-            } else if ($questiontype == 'calculatedmulti') {
-                $qo = $this->import_calculated($question);
-                $qo->qtype = 'calculatedmulti';
-            } else if ($questiontype == 'category') {
-                $qo = $this->import_category($question);
-
-            } else {
-                // Not a type we handle ourselves. See if the question type wants
-                // to handle it.
-                if (!$qo = $this->try_importing_using_qtypes(
-                        $question, null, null, $questiontype)) {
-                    $this->error(get_string('xmltypeunsupported', 'qformat_xml', $questiontype));
-                    $qo = null;
-                }
-            }
+        foreach ($xml as $questionxml) {
+            $qo = $this->import_question($questionxml);
 
             // Stick the result in the $questions array
             if ($qo) {
@@ -962,6 +931,53 @@ class qformat_xml extends qformat_default {
             }
         }
         return $questions;
+    }
+
+    /**
+     * @param array $questionxml xml describing the question
+     * @return null|stdClass an object with data to be fed to question type save_question_options
+     */
+    protected function import_question($questionxml) {
+        $questiontype = $questionxml['@']['type'];
+
+        if ($questiontype == 'multichoice') {
+            return $this->import_multichoice($questionxml);
+        } else if ($questiontype == 'truefalse') {
+            return $this->import_truefalse($questionxml);
+        } else if ($questiontype == 'shortanswer') {
+            return $this->import_shortanswer($questionxml);
+        } else if ($questiontype == 'numerical') {
+            return $this->import_numerical($questionxml);
+        } else if ($questiontype == 'description') {
+            return $this->import_description($questionxml);
+        } else if ($questiontype == 'matching' || $questiontype == 'match') {
+            return $this->import_match($questionxml);
+        } else if ($questiontype == 'cloze' || $questiontype == 'multianswer') {
+            return $this->import_multianswer($questionxml);
+        } else if ($questiontype == 'essay') {
+            return $this->import_essay($questionxml);
+        } else if ($questiontype == 'calculated') {
+            return $this->import_calculated($questionxml);
+        } else if ($questiontype == 'calculatedsimple') {
+            $qo = $this->import_calculated($questionxml);
+            $qo->qtype = 'calculatedsimple';
+            return $qo;
+        } else if ($questiontype == 'calculatedmulti') {
+            $qo = $this->import_calculated($questionxml);
+            $qo->qtype = 'calculatedmulti';
+            return $qo;
+        } else if ($questiontype == 'category') {
+            return $this->import_category($questionxml);
+
+        } else {
+            // Not a type we handle ourselves. See if the question type wants
+            // to handle it.
+            if (!$qo = $this->try_importing_using_qtypes($questionxml, null, null, $questiontype)) {
+                $this->error(get_string('xmltypeunsupported', 'qformat_xml', $questiontype));
+                return null;
+            }
+            return $qo;
+        }
     }
 
     // EXPORT FUNCTIONS START HERE
