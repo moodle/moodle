@@ -236,18 +236,14 @@ class core_course_renderer extends plugin_renderer_base {
         $formcontent .= html_writer::start_tag('div', array('class' => 'alloptions'));
 
          // Activities
-        $activities = array_filter($modules, function($mod) {
-            return ($mod->archetype !== MOD_ARCHETYPE_RESOURCE && $mod->archetype !== MOD_ARCHETYPE_SYSTEM);
-        });
+        $activities = array_filter($modules, create_function('$mod', 'return ($mod->archetype !== MOD_ARCHETYPE_RESOURCE && $mod->archetype !== MOD_ARCHETYPE_SYSTEM);'));
         if (count($activities)) {
             $formcontent .= $this->course_modchooser_title('activities');
             $formcontent .= $this->course_modchooser_module_types($activities);
         }
 
         // Resources
-        $resources = array_filter($modules, function($mod) {
-            return ($mod->archetype === MOD_ARCHETYPE_RESOURCE);
-        });
+        $resources = array_filter($modules, create_function('$mod', 'return ($mod->archetype === MOD_ARCHETYPE_RESOURCE);'));
         if (count($resources)) {
             $formcontent .= $this->course_modchooser_title('resources');
             $formcontent .= $this->course_modchooser_module_types($resources);
