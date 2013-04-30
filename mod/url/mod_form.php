@@ -55,7 +55,7 @@ class mod_url_mod_form extends moodleform_mod {
         $mform->setExpanded('content');
 
         //-------------------------------------------------------
-        $mform->addElement('header', 'optionssection', get_string('optionsheader', 'url'));
+        $mform->addElement('header', 'optionssection', get_string('appearance'));
 
         if ($this->current->instance) {
             $options = resourcelib_get_displayoptions(explode(',', $config->displayoptions), $this->current->display);
@@ -70,7 +70,6 @@ class mod_url_mod_form extends moodleform_mod {
         } else {
             $mform->addElement('select', 'display', get_string('displayselect', 'url'), $options);
             $mform->setDefault('display', $config->display);
-            $mform->setAdvanced('display', $config->display_adv);
             $mform->addHelpButton('display', 'displayselect', 'url');
         }
 
@@ -81,7 +80,6 @@ class mod_url_mod_form extends moodleform_mod {
             }
             $mform->setType('popupwidth', PARAM_INT);
             $mform->setDefault('popupwidth', $config->popupwidth);
-            $mform->setAdvanced('popupwidth', $config->popupwidth_adv);
 
             $mform->addElement('text', 'popupheight', get_string('popupheight', 'url'), array('size'=>3));
             if (count($options) > 1) {
@@ -89,7 +87,6 @@ class mod_url_mod_form extends moodleform_mod {
             }
             $mform->setType('popupheight', PARAM_INT);
             $mform->setDefault('popupheight', $config->popupheight);
-            $mform->setAdvanced('popupheight', $config->popupheight_adv);
         }
 
         if (array_key_exists(RESOURCELIB_DISPLAY_AUTO, $options) or
@@ -100,14 +97,12 @@ class mod_url_mod_form extends moodleform_mod {
             $mform->disabledIf('printheading', 'display', 'eq', RESOURCELIB_DISPLAY_OPEN);
             $mform->disabledIf('printheading', 'display', 'eq', RESOURCELIB_DISPLAY_NEW);
             $mform->setDefault('printheading', $config->printheading);
-            $mform->setAdvanced('printheading', $config->printheading_adv);
 
             $mform->addElement('checkbox', 'printintro', get_string('printintro', 'url'));
             $mform->disabledIf('printintro', 'display', 'eq', RESOURCELIB_DISPLAY_POPUP);
             $mform->disabledIf('printintro', 'display', 'eq', RESOURCELIB_DISPLAY_OPEN);
             $mform->disabledIf('printintro', 'display', 'eq', RESOURCELIB_DISPLAY_NEW);
             $mform->setDefault('printintro', $config->printintro);
-            $mform->setAdvanced('printintro', $config->printintro_adv);
         }
 
         //-------------------------------------------------------
