@@ -44,6 +44,7 @@ class mod_feedback_mod_form extends moodleform_mod {
         $mform->addElement('text', 'name', get_string('name', 'feedback'), array('size'=>'64'));
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required', null, 'client');
+        $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
 
         $this->add_intro_editor(true, get_string('description', 'feedback'));
 
