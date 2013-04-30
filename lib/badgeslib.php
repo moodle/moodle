@@ -836,14 +836,17 @@ function badges_get_issued_badge_info($hash) {
                 bi.dateissued,
                 bi.dateexpire,
                 u.email,
-                b.*
+                b.*,
+                bb.email as backpackemail
             FROM
-                {badge} b,
-                {badge_issued} bi,
-                {user} u
-            WHERE b.id = bi.badgeid
-                AND u.id = bi.userid
-                AND ' . $DB->sql_compare_text('bi.uniquehash', 40) . ' = ' . $DB->sql_compare_text(':hash', 40),
+                {badge} b
+                JOIN {badge_issued} bi
+                    ON b.id = bi.badgeid
+                JOIN {user} u
+                    ON u.id = bi.userid
+                LEFT JOIN {badge_backpack} bb
+                    ON bb.userid = bi.userid
+            WHERE ' . $DB->sql_compare_text('bi.uniquehash', 40) . ' = ' . $DB->sql_compare_text(':hash', 40),
             array('hash' => $hash), IGNORE_MISSING);
 
     if ($record) {
@@ -854,11 +857,11 @@ function badges_get_issued_badge_info($hash) {
         }
 
         $url = new moodle_url('/badges/badge.php', array('hash' => $hash));
+        $email = empty($record->backpackemail) ? $record->email : $record->backpackemail;
 
         // Recipient's email is hashed: <algorithm>$<hash(email + salt)>.
-        $badgesalt = isset($CFG->badgesalt) ? $CFG->badgesalt : '';
-        $a['recipient'] = 'sha256$' . hash('sha256', $record->email . $badgesalt);
-        $a['salt'] = $badgesalt;
+        $a['recipient'] = 'sha256$' . hash('sha256', $email . $CFG->badges_badgesalt);
+        $a['salt'] = $CFG->badges_badgesalt;
 
         if ($record->dateexpire) {
             $a['expires'] = date('Y-m-d', $record->dateexpire);
