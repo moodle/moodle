@@ -177,34 +177,34 @@ foreach ($instances as $instance) {
         $updown = '';
         if ($updowncount > 1) {
             $aurl = new moodle_url($url, array('action'=>'up', 'instance'=>$instance->id));
-            $updown[] = html_writer::link($aurl, html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('t/up'), 'alt'=>$strup, 'class'=>'smallicon')));
+            $updown[] = $OUTPUT->action_icon($aurl, new pix_icon('t/up', $strup, 'core', array('class' => 'iconsmall')));
         } else {
-            $updown[] = html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('spacer'), 'alt'=>'', 'class'=>'smallicon'));
+            $updown[] = html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('spacer'), 'alt'=>'', 'class'=>'iconsmall'));
         }
         if ($updowncount < $icount) {
             $aurl = new moodle_url($url, array('action'=>'down', 'instance'=>$instance->id));
-            $updown[] = html_writer::link($aurl, html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('t/down'), 'alt'=>$strdown, 'class'=>'smallicon')));
+            $updown[] = $OUTPUT->action_icon($aurl, new pix_icon('t/down', $strdown, 'core', array('class' => 'iconsmall')));
         } else {
-            $updown[] = html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('spacer'), 'alt'=>'', 'class'=>'smallicon'));
+            $updown[] = html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('spacer'), 'alt'=>'', 'class'=>'iconsmall'));
         }
         ++$updowncount;
 
         // edit links
         if ($plugin->instance_deleteable($instance)) {
             $aurl = new moodle_url($url, array('action'=>'delete', 'instance'=>$instance->id));
-            $edit[] = html_writer::link($aurl, html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('t/delete'), 'alt'=>$strdelete, 'class'=>'smallicon')));
+            $edit[] = $OUTPUT->action_icon($aurl, new pix_icon('t/delete', $strdelete, 'core', array('class' => 'iconsmall')));
         }
 
         if (enrol_is_enabled($instance->enrol)) {
             if ($instance->status == ENROL_INSTANCE_ENABLED) {
                 $aurl = new moodle_url($url, array('action'=>'disable', 'instance'=>$instance->id));
-                $edit[] = html_writer::link($aurl, html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('t/hide'), 'alt'=>$strdisable, 'class'=>'smallicon')));
+                $edit[] = $OUTPUT->action_icon($aurl, new pix_icon('t/hide', $strdisable, 'core', array('class' => 'iconsmall')));
             } else if ($instance->status == ENROL_INSTANCE_DISABLED) {
                 $aurl = new moodle_url($url, array('action'=>'enable', 'instance'=>$instance->id));
-                $edit[] = html_writer::link($aurl, html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('t/show'), 'alt'=>$strenable, 'class'=>'smallicon')));
+                $edit[] = $OUTPUT->action_icon($aurl, new pix_icon('t/show', $strenable, 'core', array('class' => 'iconsmall')));
             } else {
                 // plugin specific state - do not mess with it!
-                $edit[] = html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('t/show'), 'alt'=>'', 'class'=>'smallicon'));
+                $edit[] = html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('t/show'), 'alt'=>'', 'class'=>'iconsmall'));
             }
 
         }
