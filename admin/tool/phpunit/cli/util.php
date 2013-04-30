@@ -60,6 +60,10 @@ if (file_exists(__DIR__.'/../../../../vendor/phpunit/phpunit/PHPUnit/Autoload.ph
     }
 }
 
+if ($options['install'] or $options['drop']) {
+    define('CACHE_DISABLE_ALL', true);
+}
+
 if ($options['run']) {
     unset($options);
     unset($unrecognized);
