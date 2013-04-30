@@ -510,7 +510,8 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                     'name'  : 'title',
                     'value' : titletext,
                     'autocomplete' : 'off',
-                    'aria-describedby' : 'id_editinstructions'
+                    'aria-describedby' : 'id_editinstructions',
+                    'maxLength' : '255'
                 })
                 .addClass('titleeditor');
             var editform = Y.Node.create('<form />')
