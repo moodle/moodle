@@ -53,6 +53,7 @@ class core_cache_renderer extends plugin_renderer_base {
             get_string('mappings', 'cache'),
             get_string('modes', 'cache'),
             get_string('supports', 'cache'),
+            get_string('lockingmeans', 'cache'),
             get_string('actions', 'cache'),
         );
         $table->colclasses = array(
@@ -62,6 +63,7 @@ class core_cache_renderer extends plugin_renderer_base {
             'mappings',
             'modes',
             'supports',
+            'locking',
             'actions'
         );
         $table->data = array();
@@ -108,6 +110,11 @@ class core_cache_renderer extends plugin_renderer_base {
                 $readycell->attributes['class'] = 'store-requires-attention';
             }
 
+            $lock = $store['lock']['name'];
+            if (!empty($store['lock']['default'])) {
+                $lock = get_string($store['lock']['name'], 'cache');
+            }
+
             $row = new html_table_row(array(
                 $storename,
                 get_string('pluginname', 'cachestore_'.$store['plugin']),
@@ -115,6 +122,7 @@ class core_cache_renderer extends plugin_renderer_base {
                 $store['mappings'],
                 join(', ', $modes),
                 join(', ', $supports),
+                $lock,
                 $info.join(', ', $htmlactions)
             ));
             $row->attributes['class'] = 'store-'.$name;
@@ -314,35 +322,50 @@ class core_cache_renderer extends plugin_renderer_base {
         $table = new html_table();
         $table->colclasses = array(
             'name',
+            'type',
             'default',
             'uses',
-            // Useful later: 'actions'.
+            'actions'
         );
         $table->rowclasses = array(
             'lock_name',
+            'lock_type',
             'lock_default',
             'lock_uses',
-            // Useful later: 'lock_actions',.
+            'lock_actions',
         );
         $table->head = array(
             get_string('lockname', 'cache'),
+            get_string('locktype', 'cache'),
             get_string('lockdefault', 'cache'),
             get_string('lockuses', 'cache'),
-            // Useful later: get_string('actions', 'cache').
+            get_string('actions', 'cache')
         );
         $table->data = array();
         $tick = $this->output->pix_icon('i/valid', '');
         foreach ($locks as $lock) {
+            $actions = array();
+            if ($lock['uses'] === 0 && !$lock['default']) {
+                $url = new moodle_url('/cache/admin.php', array('lock' => $lock['name'], 'action' => 'deletelock', 'sesskey' => sesskey()));
+                $actions[] = html_writer::link($url, get_string('delete', 'cache'));
+            }
             $table->data[] = new html_table_row(array(
                 new html_table_cell($lock['name']),
+                new html_table_cell($lock['type']),
                 new html_table_cell($lock['default'] ? $tick : ''),
                 new html_table_cell($lock['uses']),
+                new html_table_cell(join(' ', $actions))
             ));
         }
+
+        $url = new moodle_url('/cache/admin.php', array('action' => 'newlockinstance', 'sesskey' => sesskey()));
+        $select = new single_select($url, 'lock', cache_administration_helper::get_addable_lock_options());
+        $select->label = get_string('addnewlockinstance', 'cache');
 
         $html = html_writer::start_tag('div', array('id' => 'core-cache-lock-summary'));
         $html .= $this->output->heading(get_string('locksummary', 'cache'), 3);
         $html .= html_writer::table($table);
+        $html .= html_writer::tag('div', $this->output->render($select), array('class' => 'new-instance'));
         $html .= html_writer::end_tag('div');
         return $html;
     }

@@ -84,6 +84,7 @@ if (!empty($action) && confirm_sesskey()) {
             } else if ($data = $mform->get_data()) {
                 $config = cache_administration_helper::get_store_configuration_from_data($data);
                 $writer = cache_config_writer::instance();
+
                 unset($config['lock']);
                 foreach ($writer->get_locks() as $lock => $lockconfig) {
                     if ($lock == $data->lock) {
@@ -179,6 +180,55 @@ if (!empty($action) && confirm_sesskey()) {
             $store = required_param('store', PARAM_TEXT);
             cache_helper::purge_store($store);
             redirect($PAGE->url, get_string('purgestoresuccess', 'cache'), 5);
+            break;
+
+        case 'newlockinstance':
+            // Adds a new lock instance.
+            $lock = required_param('lock', PARAM_ALPHANUMEXT);
+            $mform = cache_administration_helper::get_add_lock_form($lock);
+            if ($mform->is_cancelled()) {
+                redirect($PAGE->url);
+            } else if ($data = $mform->get_data()) {
+                $factory = cache_factory::instance();
+                $config = $factory->create_config_instance(true);
+                $name = $data->name;
+                $data = cache_administration_helper::get_lock_configuration_from_data($lock, $data);
+                $config->add_lock_instance($name, $lock, $data);
+                redirect($PAGE->url, get_string('addlocksuccess', 'cache', $name), 5);
+            }
+            break;
+        case 'deletelock':
+            // Deletes a lock instance.
+            $lock = required_param('lock', PARAM_ALPHANUMEXT);
+            $confirm = optional_param('confirm', false, PARAM_BOOL);
+            if (!array_key_exists($lock, $locks)) {
+                $notifysuccess = false;
+                $notification = get_string('invalidlock');
+            } else if ($locks[$lock]['uses'] > 0) {
+                $notifysuccess = false;
+                $notification = get_string('deletelockhasuses', 'cache');
+            }
+            if ($notifysuccess) {
+                if (!$confirm) {
+                    $title = get_string('confirmlockdeletion', 'cache');
+                    $params = array('lock' => $lock, 'confirm' => 1, 'action' => $action, 'sesskey' => sesskey());
+                    $url = new moodle_url($PAGE->url, $params);
+                    $button = new single_button($url, get_string('deletelock', 'cache'));
+
+                    $PAGE->set_title($title);
+                    $PAGE->set_heading($SITE->fullname);
+                    echo $OUTPUT->header();
+                    echo $OUTPUT->heading($title);
+                    $confirmation = get_string('deletelockconfirmation', 'cache', $lock);
+                    echo $OUTPUT->confirm($confirmation, $button, $PAGE->url);
+                    echo $OUTPUT->footer();
+                    exit;
+                } else {
+                    $writer = cache_config_writer::instance();
+                    $writer->delete_lock_instance($lock);
+                    redirect($PAGE->url, get_string('deletelocksuccess', 'cache'), 5);
+                }
+            }
             break;
     }
 }
