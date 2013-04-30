@@ -592,6 +592,35 @@ class textlib {
     }
 
     /**
+     * Returns the code of the given UTF-8 character
+     *
+     * @param  string $utf8char one UTF-8 character
+     * @return int    the code of the given character
+     */
+    public static function utf8ord($utf8char) {
+        if ($utf8char == '') {
+            return 0;
+        }
+        $ord0 = ord($utf8char{0});
+        if ($ord0 >= 0 && $ord0 <= 127) {
+            return $ord0;
+        }
+        $ord1 = ord($utf8char{1});
+        if ($ord0 >= 192 && $ord0 <= 223) {
+            return ($ord0 - 192) * 64 + ($ord1 - 128);
+        }
+        $ord2 = ord($utf8char{2});
+        if ($ord0 >= 224 && $ord0 <= 239) {
+            return ($ord0 - 224) * 4096 + ($ord1 - 128) * 64 + ($ord2 - 128);
+        }
+        $ord3 = ord($utf8char{3});
+        if ($ord0 >= 240 && $ord0 <= 247) {
+            return ($ord0 - 240) * 262144 + ($ord1 - 128 )* 4096 + ($ord2 - 128) * 64 + ($ord3 - 128);
+        }
+        return false;
+    }
+
+    /**
      * Makes first letter of each word capital - words must be separated by spaces.
      * Use with care, this function does not work properly in many locales!!!
      *
