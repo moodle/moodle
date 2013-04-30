@@ -182,7 +182,7 @@ if (has_capability('mod/feedback:edititems', $context)) {
     if ($feedback->timeclose) {
         echo $OUTPUT->box_start('feedback_info');
         echo '<span class="feedback_info">';
-        echo get_string('timeclose', 'feedback').': ';
+        echo get_string('feedbackclose', 'feedback').': ';
         echo '</span>';
         echo '<span class="feedback_info_value">';
         echo userdate($feedback->timeclose);
