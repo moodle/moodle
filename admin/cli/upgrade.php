@@ -30,6 +30,7 @@
  */
 
 define('CLI_SCRIPT', true);
+define('CACHE_DISABLE_ALL', true);
 
 require(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once($CFG->libdir.'/adminlib.php');       // various admin-only functions

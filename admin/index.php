@@ -47,6 +47,13 @@ if (!function_exists('iconv')) {
 
 define('NO_OUTPUT_BUFFERING', true);
 
+if (empty($_GET['cache']) and empty($_POST['cache'])) {
+    // Prevent caching at all cost when visiting this page directly,
+    // we redirect to self once we known no upgrades are necessary.
+    // Note: $_GET and $_POST are used here intentionally because our param cleaning is not loaded yet.
+    define('CACHE_DISABLE_ALL', true);
+}
+
 require('../config.php');
 require_once($CFG->libdir.'/adminlib.php');    // various admin-only functions
 require_once($CFG->libdir.'/upgradelib.php');  // general upgrade/install related functions
@@ -60,20 +67,27 @@ $showallplugins = optional_param('showallplugins', 0, PARAM_BOOL);
 $agreelicense   = optional_param('agreelicense', 0, PARAM_BOOL);
 $fetchupdates   = optional_param('fetchupdates', 0, PARAM_BOOL);
 $newaddonreq    = optional_param('installaddonrequest', null, PARAM_RAW);
+$cache          = optional_param('cache', 0, PARAM_BOOL);
 
-// Check some PHP server settings
-
-if (is_null($newaddonreq)) {
-    $PAGE->set_url('/admin/index.php');
-} else {
+// Set up PAGE.
+$url = new moodle_url('/admin/index.php');
+if (!is_null($newaddonreq)) {
     // We need to set the eventual add-on installation request in the $PAGE's URL
     // so that it is stored in $SESSION->wantsurl and the admin is redirected
     // correctly once they are logged-in.
-    $PAGE->set_url('/admin/index.php', array('installaddonrequest' => $newaddonreq));
+    $url->param('installaddonrequest', $newaddonreq);
 }
+if ($cache) {
+    $url->param('cache', $cache);
+}
+$PAGE->set_url($url);
+unset($url);
+
 $PAGE->set_pagelayout('admin'); // Set a default pagelayout
 
 $documentationlink = '<a href="http://docs.moodle.org/en/Installation">Installation docs</a>';
+
+// Check some PHP server settings
 
 if (ini_get_bool('session.auto_start')) {
     print_error('phpvaroff', 'debug', '', (object)array('name'=>'session.auto_start', 'link'=>$documentationlink));
@@ -197,6 +211,14 @@ $PAGE->set_context(context_system::instance());
 
 if (empty($CFG->version)) {
     print_error('missingconfigversion', 'debug');
+}
+
+// Detect config cache inconsistency, this happens when you switch branches on dev servers.
+if ($cache) {
+    if ($CFG->version != $DB->get_field('config', 'value', array('name'=>'version'))) {
+        purge_all_caches();
+        redirect(new moodle_url('/admin/index.php'), 'Config cache inconsistency detected, resetting caches...');
+    }
 }
 
 if ($version > $CFG->version) {  // upgrade
@@ -412,6 +434,12 @@ if (during_initial_install()) {
     upgrade_finished('upgradesettings.php');
 }
 
+// Now we can be sure everything was upgraded and caches work fine,
+// redirect if necessary to make sure caching is enabled.
+if (!$cache) {
+    redirect(new moodle_url($PAGE->url, array('cache' => 1)));
+}
+
 // Check for valid admin user - no guest autologin
 require_login(0, false);
 $context = context_system::instance();
@@ -498,7 +526,7 @@ admin_externalpage_setup('adminnotifications');
 if ($fetchupdates) {
     require_sesskey();
     $updateschecker->fetch();
-    redirect($PAGE->url);
+    redirect(new moodle_url('/admin/index.php'));
 }
 
 $output = $PAGE->get_renderer('core', 'admin');

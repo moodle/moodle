@@ -29,6 +29,7 @@
  */
 
 define('CLI_SCRIPT', true);
+define('CACHE_DISABLE_ALL', true);
 
 // extra execution prevention - we can not just require config.php here
 if (isset($_SERVER['REMOTE_ADDR'])) {

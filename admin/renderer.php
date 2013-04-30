@@ -681,7 +681,8 @@ class core_admin_renderer extends plugin_renderer_base {
         }
 
         $updateinfo .= $this->container_start('checkforupdates');
-        $updateinfo .= $this->single_button(new moodle_url($this->page->url, array('fetchupdates' => 1)), get_string('checkforupdates', 'core_plugin'));
+        $fetchurl = new moodle_url('/admin/index.php', array('fetchupdates' => 1, 'sesskey' => sesskey(), 'cache' => 1));
+        $updateinfo .= $this->single_button($fetchurl, get_string('checkforupdates', 'core_plugin'));
         if ($fetch) {
             $updateinfo .= $this->container(get_string('checkforupdateslast', 'core_plugin',
                 userdate($fetch, get_string('strftimedatetime', 'core_langconfig'))));
