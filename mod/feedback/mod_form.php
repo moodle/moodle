@@ -62,7 +62,6 @@ class mod_feedback_mod_form extends moodleform_mod {
                          ' ',
                          false);
 
-        $mform->addHelpButton('enableopengroup', 'timeopen', 'feedback');
         $mform->disabledIf('enableopengroup', 'openenable', 'notchecked');
 
         $enableclosegroup = array();
@@ -77,7 +76,6 @@ class mod_feedback_mod_form extends moodleform_mod {
                          ' ',
                          false);
 
-        $mform->addHelpButton('enableclosegroup', 'timeclose', 'feedback');
         $mform->disabledIf('enableclosegroup', 'closeenable', 'notchecked');
 
         //-------------------------------------------------------------------------------
@@ -105,7 +103,7 @@ class mod_feedback_mod_form extends moodleform_mod {
             $multiple_submit_value = $feedback->multiple_submit ? get_string('yes') : get_string('no');
             $mform->addElement('text',
                                'multiple_submit_static',
-                               get_string('multiple_submit', 'feedback'),
+                               get_string('multiplesubmit', 'feedback'),
                                array('size'=>'4',
                                     'disabled'=>'disabled',
                                     'value'=>$multiple_submit_value));
@@ -116,13 +114,13 @@ class mod_feedback_mod_form extends moodleform_mod {
         } else {
             $mform->addElement('selectyesno',
                                'multiple_submit',
-                               get_string('multiple_submit', 'feedback'));
+                               get_string('multiplesubmit', 'feedback'));
 
             $mform->addHelpButton('multiple_submit', 'multiplesubmit', 'feedback');
         }
 
         $mform->addElement('selectyesno', 'email_notification', get_string('email_notification', 'feedback'));
-        $mform->addHelpButton('email_notification', 'emailnotification', 'feedback');
+        $mform->addHelpButton('email_notification', 'email_notification', 'feedback');
 
         $mform->addElement('selectyesno', 'autonumbering', get_string('autonumbering', 'feedback'));
         $mform->addHelpButton('autonumbering', 'autonumbering', 'feedback');
@@ -142,7 +140,7 @@ class mod_feedback_mod_form extends moodleform_mod {
 
         $mform->addElement('text',
                            'site_after_submit',
-                           get_string('url_for_continue_button', 'feedback'),
+                           get_string('url_for_continue', 'feedback'),
                            array('size'=>'64', 'maxlength'=>'255'));
 
         $mform->setType('site_after_submit', PARAM_TEXT);
