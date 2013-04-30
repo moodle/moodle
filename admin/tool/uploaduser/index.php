@@ -497,6 +497,7 @@ if ($formdata = $mform2->is_cancelled()) {
 
             $upt->track('username', html_writer::link(new moodle_url('/user/profile.php', array('id'=>$existinguser->id)), s($existinguser->username)), 'normal', false);
             $upt->track('suspended', $stryesnooptions[$existinguser->suspended] , 'normal', false);
+            $upt->track('auth', $existinguser->auth, 'normal', false);
 
             if (is_siteadmin($user->id)) {
                 $upt->track('status', $strusernotupdatedadmin, 'error');
@@ -509,8 +510,6 @@ if ($formdata = $mform2->is_cancelled()) {
 
             //load existing profile data
             profile_load_data($existinguser);
-
-            $upt->track('auth', $existinguser->auth, 'normal', false);
 
             $doupdate = false;
             $dologout = false;
