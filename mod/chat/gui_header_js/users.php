@@ -9,6 +9,7 @@ $chat_sid   = required_param('chat_sid', PARAM_ALPHANUM);
 $beep       = optional_param('beep', 0, PARAM_INT);  // beep target
 
 $PAGE->set_url('/mod/chat/gui_header_js/users.php', array('chat_sid'=>$chat_sid));
+$PAGE->set_popup_notification_allowed(false);
 
 if (!$chatuser = $DB->get_record('chat_users', array('sid'=>$chat_sid))) {
     print_error('notlogged', 'chat');
