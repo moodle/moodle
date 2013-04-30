@@ -53,6 +53,7 @@ class mod_wiki_mod_form extends moodleform_mod {
         $mform->addElement('text', 'name', get_string('wikiname', 'wiki'), array('size' => '64'));
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', $required, 'required', null, 'client');
+        $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         // Adding the optional "intro" and "introformat" pair of fields
         $this->add_intro_editor(true, get_string('wikiintro', 'wiki'));
 
