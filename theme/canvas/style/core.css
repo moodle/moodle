@@ -76,11 +76,6 @@ body {
     padding-left: 0;
 }
 
-input[type="checkbox"],
-input[type="radio"] {
-    margin-right: 7px;
-}
-
 /* Calendar
 -------------------------*/
 
