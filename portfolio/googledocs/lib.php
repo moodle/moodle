@@ -44,8 +44,9 @@ class portfolio_plugin_googledocs extends portfolio_plugin_push_base {
     }
 
     public function expected_time($callertime) {
-        // We trust what the portfolio says.
-        return $callertime;
+        // We're forcing this to be run 'interactively' because the plugin
+        // does not support running in cron.
+        return PORTFOLIO_TIME_LOW;
     }
 
     public function send_package() {
