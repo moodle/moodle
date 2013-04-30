@@ -35,7 +35,7 @@ class mod_wiki_create_form extends moodleform {
         $defaultformat = $this->_customdata['defaultformat'];
         $forceformat = $this->_customdata['forceformat'];
 
-        $mform->addElement('header', 'general', get_string('createpage', 'wiki'));
+        $mform->addElement('header', 'general', get_string('newpagehdr', 'wiki'));
 
         $textoptions = array();
         if (!empty($this->_customdata['disable_pagetitle'])) {

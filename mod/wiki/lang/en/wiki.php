@@ -131,6 +131,7 @@ $string['navigationfrom_help'] = 'The wiki pages linking to this page';
 $string['navigationto'] = 'This page goes to';
 $string['navigationto_help'] = 'Links to other pages';
 $string['newpage'] = 'New';
+$string['newpagehdr'] = 'New page';
 $string['newpagetitle'] = 'New page title';
 $string['noattachments'] = '<strong>No files attached</strong>';
 $string['nocontent'] = 'There is no content for this page';
