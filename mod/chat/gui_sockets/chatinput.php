@@ -8,6 +8,7 @@ require('../lib.php');
 $chat_sid = required_param('chat_sid', PARAM_ALPHANUM);
 
 $PAGE->set_url('/mod/chat/gui_sockets/chatinput.php', array('chat_sid'=>$chat_sid));
+$PAGE->set_popup_notification_allowed(false);
 
 if (!$chatuser = $DB->get_record('chat_users', array('sid'=>$chat_sid))) {
     print_error('notlogged', 'chat');

@@ -24,6 +24,7 @@ if (!$cm = get_coursemodule_from_instance('chat', $chat->id, $course->id)) {
 }
 
 $PAGE->set_url('/mod/chat/gui_header_js/chatinput.php', array('chat_sid'=>$chat_sid, 'chat_id'=>$chatid));
+$PAGE->set_popup_notification_allowed(false);
 
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
