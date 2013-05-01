@@ -907,10 +907,7 @@ function clean_param($param, $type) {
         case PARAM_PLUGIN:
         case PARAM_AREA:
             // we do not want any guessing here, either the name is correct or not
-            if (!preg_match('/^[a-z][a-z0-9_]*[a-z0-9]$/', $param)) {
-                return '';
-            }
-            if (strpos($param, '__') !== false) {
+            if (!is_valid_plugin_name($param)) {
                 return '';
             }
             return $param;
@@ -8093,6 +8090,15 @@ function get_plugin_types($fullpaths=true) {
 }
 
 /**
+ * This method validates a plug name. It is much faster than calling clean_param.
+ * @param string $name a string that might be a plugin name.
+ * @return bool if this string is a valid plugin name.
+ */
+function is_valid_plugin_name($name) {
+    return (bool) preg_match('/^[a-z](?:[a-z0-9_](?!__))*[a-z0-9]$/', $name);
+}
+
+/**
  * Simplified version of get_list_of_plugins()
  * @param string $plugintype type of plugin
  * @return array name=>fulllocation pairs of plugins of given type
@@ -8156,9 +8162,8 @@ function get_plugin_list($plugintype) {
             if (in_array($pluginname, $ignored)) {
                 continue;
             }
-            $pluginname = clean_param($pluginname, PARAM_PLUGIN);
-            if (empty($pluginname)) {
-                // better ignore plugins with problematic names here
+            if (!is_valid_plugin_name($pluginname)) {
+                // Better ignore plugins with problematic names here.
                 continue;
             }
             $result[$pluginname] = $fulldir.'/'.$pluginname;
