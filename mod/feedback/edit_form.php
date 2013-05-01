@@ -34,7 +34,7 @@ class feedback_edit_add_question_form extends moodleform {
         $mform = $this->_form;
 
         //headline
-        $mform->addElement('header', 'general', get_string('add_items', 'feedback'));
+        $mform->addElement('header', 'general', get_string('content'));
         // visible elements
         $feedback_names_options = feedback_load_feedback_items_options();
 

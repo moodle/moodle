@@ -108,9 +108,10 @@ class mod_feedback_mod_form extends moodleform_mod {
                                array('size'=>'4',
                                     'disabled'=>'disabled',
                                     'value'=>$multiple_submit_value));
+            $mform->setType('multiple_submit_static', PARAM_RAW);
 
             $mform->addElement('hidden', 'multiple_submit', '');
-            $mform->setType('', PARAM_INT);
+            $mform->setType('multiple_submit', PARAM_INT);
             $mform->addHelpButton('multiple_submit_static', 'multiplesubmit', 'feedback');
         } else {
             $mform->addElement('selectyesno',

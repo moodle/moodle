@@ -51,10 +51,11 @@ abstract class feedback_item_form extends moodleform {
                                 array('size'=>FEEDBACK_ITEM_LABEL_TEXTBOX_SIZE, 'maxlength'=>255));
         } else {
             $mform->addElement('hidden', 'dependitem', 0);
-            $mform->setType('dependitem', PARAM_INT);
             $mform->addElement('hidden', 'dependvalue', '');
-            $mform->setType('dependitem', PARAM_ALPHA);
         }
+
+        $mform->setType('dependitem', PARAM_INT);
+        $mform->setType('dependvalue', PARAM_RAW);
 
         $position_select = $mform->addElement('select',
                                             'position',

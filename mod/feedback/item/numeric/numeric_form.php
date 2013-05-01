@@ -44,11 +44,13 @@ class feedback_numeric_form extends feedback_item_form {
                             'rangefrom',
                             get_string('numeric_range_from', 'feedback'),
                             array('size'=>10, 'maxlength'=>10));
+        $mform->setType('rangefrom', PARAM_INT);
 
         $mform->addElement('text',
                             'rangeto',
                             get_string('numeric_range_to', 'feedback'),
                             array('size'=>10, 'maxlength'=>10));
+        $mform->setType('rangeto', PARAM_INT);
 
         parent::definition();
         $this->set_data($item);
