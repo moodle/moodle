@@ -1279,7 +1279,7 @@ function badges_check_backpack_accessibility() {
         'FRESH_CONNECT' => true,
         'RETURNTRANSFER' => true,
         'HEADER' => 0,
-        'CONNECTTIMEOUT_MS' => 2000,
+        'CONNECTTIMEOUT' => 2,
     );
     $location = 'http://backpack.openbadges.org/baker';
     $out = $curl->get($location, array('assertion' => $fakeassertion->out(false)), $options);

@@ -64,7 +64,7 @@ class OpenBadgesBackpackHandler {
             'RETURNTRANSFER' => true,
             'FORBID_REUSE' => true,
             'HEADER' => 0,
-            'CONNECTTIMEOUT_MS' => 3000,
+            'CONNECTTIMEOUT' => 3,
         );
 
         if ($action == 'user') {
