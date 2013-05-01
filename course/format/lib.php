@@ -72,6 +72,8 @@ abstract class format_base {
     protected $formatoptions = array();
     /** @var array cached instances */
     private static $instances = array();
+    /** @var array plugin name => class name. */
+    private static $classesforformat = array('site' => 'site');
 
     /**
      * Creates a new instance of class
@@ -94,24 +96,28 @@ abstract class format_base {
      * @return string
      */
     protected static final function get_format_or_default($format) {
-        if ($format === 'site') {
-            return $format;
+        if (array_key_exists($format, self::$classesforformat)) {
+            return self::$classesforformat[$format];
         }
+
         $plugins = get_sorted_course_formats();
-        if (in_array($format, $plugins)) {
-            return $format;
+        foreach ($plugins as $plugin) {
+            self::$classesforformat[$plugin] = $plugin;
         }
+
+        if (array_key_exists($format, self::$classesforformat)) {
+            return self::$classesforformat[$format];
+        }
+
         // Else return default format
         $defaultformat = get_config('moodlecourse', 'format');
         if (!in_array($defaultformat, $plugins)) {
             // when default format is not set correctly, use the first available format
             $defaultformat = reset($plugins);
         }
-        static $warningprinted = array();
-        if (empty($warningprinted[$format])) {
-            debugging('Format plugin format_'.$format.' is not found. Using default format_'.$defaultformat, DEBUG_DEVELOPER);
-            $warningprinted[$format] = true;
-        }
+        debugging('Format plugin format_'.$format.' is not found. Using default format_'.$defaultformat, DEBUG_DEVELOPER);
+
+        self::$classesforformat[$format] = $defaultformat;
         return $defaultformat;
     }
 
