@@ -840,34 +840,7 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
             }
             return;
         }
-        // sorting by multiple fields
-        uasort($records, function ($a, $b) use ($sortfields) {
-            foreach ($sortfields as $field => $mult) {
-                // nulls first
-                if (is_null($a->$field) && !is_null($b->$field)) {
-                    return -$mult;
-                }
-                if (is_null($b->$field) && !is_null($a->$field)) {
-                    return $mult;
-                }
-
-                if (is_string($a->$field) || is_string($b->$field)) {
-                    // string fields
-                    if ($cmp = strcoll($a->$field, $b->$field)) {
-                        return $mult * $cmp;
-                    }
-                } else {
-                    // int fields
-                    if ($a->$field > $b->$field) {
-                        return $mult;
-                    }
-                    if ($a->$field < $b->$field) {
-                        return -$mult;
-                    }
-                }
-            }
-            return 0;
-        });
+        $records = coursecat_sortable_records::sort($records, $sortfields);
     }
 
     /**
@@ -1038,7 +1011,7 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
         if (!empty($search['search'])) {
             // search courses that have specified words in their names/summaries
             $searchterms = preg_split('|\s+|', trim($search['search']), 0, PREG_SPLIT_NO_EMPTY);
-            $searchterms = array_filter($searchterms, function ($v) { return strlen($v) > 1; } );
+            $searchterms = array_filter($searchterms, create_function('$v', 'return strlen($v) > 1;'));
             $courselist = get_courses_search($searchterms, 'c.sortorder ASC', 0, 9999999, $totalcount);
             self::sort_records($courselist, $sortfields);
             $coursecatcache->set($cachekey, array_keys($courselist));
@@ -2095,8 +2068,11 @@ class course_in_list implements IteratorAggregate {
             if ($acceptedtypes !== '*') {
                 // filter only files with allowed extensions
                 require_once($CFG->libdir. '/filelib.php');
-                $files = array_filter($files, function ($file) use ($acceptedtypes) {
-                    return file_extension_in_typegroup($file->get_filename(), $acceptedtypes);} );
+                foreach ($files as $key => $file) {
+                    if (!file_extension_in_typegroup($file->get_filename(), $acceptedtypes)) {
+                        unset($files[$key]);
+                    }
+                }
             }
             if (count($files) > $CFG->courseoverviewfileslimit) {
                 // return no more than $CFG->courseoverviewfileslimit files
@@ -2168,5 +2144,78 @@ class course_in_list implements IteratorAggregate {
             $ret[$property] = $value;
         }
         return new ArrayIterator($ret);
+    }
+}
+
+/**
+ * An array of records that is sortable by many fields.
+ *
+ * For more info on the ArrayObject class have a look at php.net.
+ *
+ * @package    core
+ * @subpackage course
+ * @copyright  2013 Sam Hemelryk
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class coursecat_sortable_records extends ArrayObject {
+
+    /**
+     * An array of sortable fields.
+     * Gets set temporarily when sort is called.
+     * @var array
+     */
+    protected $sortfields = array();
+
+    /**
+     * Sorts this array using the given fields.
+     *
+     * @param array $records
+     * @param array $fields
+     * @return array
+     */
+    public static function sort(array $records, array $fields) {
+        $records = new coursecat_sortable_records($records);
+        $records->sortfields = $fields;
+        $records->uasort(array($records, 'sort_by_many_fields'));
+        return $records->getArrayCopy();
+    }
+
+    /**
+     * Sorts the two records based upon many fields.
+     *
+     * This method should not be called itself, please call $sort instead.
+     * It has been marked as access private as such.
+     *
+     * @access private
+     * @param stdClass $a
+     * @param stdClass $b
+     * @return int
+     */
+    public function sort_by_many_fields($a, $b) {
+        foreach ($this->sortfields as $field => $mult) {
+            // nulls first
+            if (is_null($a->$field) && !is_null($b->$field)) {
+                return -$mult;
+            }
+            if (is_null($b->$field) && !is_null($a->$field)) {
+                return $mult;
+            }
+
+            if (is_string($a->$field) || is_string($b->$field)) {
+                // string fields
+                if ($cmp = strcoll($a->$field, $b->$field)) {
+                    return $mult * $cmp;
+                }
+            } else {
+                // int fields
+                if ($a->$field > $b->$field) {
+                    return $mult;
+                }
+                if ($a->$field < $b->$field) {
+                    return -$mult;
+                }
+            }
+        }
+        return 0;
     }
 }
