@@ -936,7 +936,7 @@ abstract class cache_administration_helper extends cache_helper {
         $url = new moodle_url('/cache/admin.php', array('action' => 'editstore', 'plugin' => $plugin, 'store' => $store));
         $editform = new $class($url, array('plugin' => $plugin, 'store' => $store, 'locks' => $locks));
         if (isset($stores[$store]['lock'])) {
-            $editform->set_data(array('lock' => $lock));
+            $editform->set_data(array('lock' => $stores[$store]['lock']));
         }
         // See if the cachestore is going to want to load data for the form.
         // If it has a customised add instance form then it is going to want to.
