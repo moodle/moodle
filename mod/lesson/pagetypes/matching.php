@@ -477,6 +477,8 @@ class lesson_add_page_form_matching extends lesson_add_page_form_base {
             $label = get_string('matchesanswer','lesson');
             $count = $i;
             $this->_form->addElement('text', 'response_editor['.$count.']', $label, array('size'=>'50'));
+            // Temporary fix until MDL-38885 gets integrated.
+            $this->_form->setType('response_editor', PARAM_TEXT);
             $this->_form->setDefault('response_editor['.$count.']', '');
             if ($required) {
                 $this->_form->addRule('response_editor['.$count.']', get_string('required'), 'required', null, 'client');
@@ -525,7 +527,8 @@ class lesson_display_answer_form_matching extends moodleform {
                 if ($hasattempt) {
                     $responseid = 'response_'.$answer->id;
                     $mform->addElement('hidden', 'response['.$answer->id.']', htmlspecialchars(trim($answers[$useranswers[$i]]->response)));
-                    $mform->setType('response['.$answer->id.']', PARAM_TEXT);
+                    // Temporary fixed until MDL-38885 gets integrated
+                    $mform->setType('response', PARAM_TEXT);
                 }
                 $mform->addElement('select', $responseid, format_text($answer->answer,$answer->answerformat,$options), $responseoptions, $disabled);
                 $mform->setType($responseid, PARAM_TEXT);

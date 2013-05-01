@@ -722,6 +722,7 @@ abstract class lesson_add_page_form_base extends moodleform {
 
         if ($this->_customdata['edit'] === true) {
             $mform->addElement('hidden', 'edit', 1);
+            $mform->setType('edit', PARAM_BOOL);
             $this->add_action_buttons(get_string('cancel'), get_string('savepage', 'lesson'));
         } else if ($this->qtype === 'questiontype') {
             $this->add_action_buttons(get_string('cancel'), get_string('addaquestionpage', 'lesson'));
@@ -761,10 +762,14 @@ abstract class lesson_add_page_form_base extends moodleform {
         if ($label === null) {
             $label = get_string("score", "lesson");
         }
+        $elname = $name;
         if (is_int($name)) {
             $name = "score[$name]";
+            $elname = 'score';
         }
         $this->_form->addElement('text', $name, $label, array('size'=>5));
+        // Temporary fix until MDL-38885 gets integrated.
+        $this->_form->setType($elname, PARAM_INT);
         if ($value !== null) {
             $this->_form->setDefault($name, $value);
         }
