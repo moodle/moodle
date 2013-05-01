@@ -52,6 +52,12 @@ class cachestore_memcache extends cache_store implements cache_is_configurable {
     protected $connection;
 
     /**
+     * Key prefix for this memcache.
+     * @var string
+     */
+    protected $prefix;
+
+    /**
      * An array of servers to use in the connection args.
      * @var array
      */
@@ -82,6 +88,12 @@ class cachestore_memcache extends cache_store implements cache_is_configurable {
     protected $definition;
 
     /**
+     * Default prefix for key names.
+     * @var string
+     */
+    const DEFAULT_PREFIX = 'mdl_';
+
+    /**
      * Constructs the store instance.
      *
      * Noting that this function is not an initialisation. It is used to prepare the store for use.
@@ -110,6 +122,11 @@ class cachestore_memcache extends cache_store implements cache_is_configurable {
                 $server[2] = 100;
             }
             $this->servers[] = $server;
+        }
+        if (empty($configuration['prefix'])) {
+            $this->prefix = self::DEFAULT_PREFIX;
+        } else {
+            $this->prefix = $configuration['prefix'];
         }
 
         $this->connection = new Memcache;
@@ -212,7 +229,7 @@ class cachestore_memcache extends cache_store implements cache_is_configurable {
         if (strlen($key) > 245) {
             $key = '_sha1_'.sha1($key);
         }
-        $key = 'mdl_'.$key;
+        $key = $this->prefix . $key;
         return $key;
     }
 
@@ -338,6 +355,7 @@ class cachestore_memcache extends cache_store implements cache_is_configurable {
         }
         return array(
             'servers' => $servers,
+            'prefix' => $data->prefix,
         );
     }
 
@@ -356,6 +374,12 @@ class cachestore_memcache extends cache_store implements cache_is_configurable {
             }
             $data['servers'] = join("\n", $servers);
         }
+        if (!empty($config['prefix'])) {
+            $data['prefix'] = $config['prefix'];
+        } else {
+            $data['prefix'] = self::DEFAULT_PREFIX;
+        }
+
         $editform->set_data($data);
     }
 
