@@ -102,6 +102,19 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
     protected $definition;
 
     /**
+     * A reference to the global $CFG object.
+     *
+     * You may be asking yourself why on earth this is here, but there is a good reason.
+     * By holding onto a reference of the $CFG object we can be absolutely sure that it won't be destroyed before
+     * we are done with it.
+     * This makes it possible to use a cache within a destructor method for the purposes of
+     * delayed writes. Like how the session mechanisms work.
+     *
+     * @var stdClass
+     */
+    private $cfg = null;
+
+    /**
      * Constructs the store instance.
      *
      * Noting that this function is not an initialisation. It is used to prepare the store for use.
@@ -111,6 +124,13 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
      * @param array $configuration
      */
     public function __construct($name, array $configuration = array()) {
+        global $CFG;
+
+        if (isset($CFG)) {
+            // Hold onto a reference of the global $CFG object.
+            $this->cfg = $CFG;
+        }
+
         $this->name = $name;
         if (array_key_exists('path', $configuration) && $configuration['path'] !== '') {
             $this->custompath = true;
@@ -605,12 +625,26 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
      * @throws coding_exception
      */
     protected function ensure_path_exists() {
+        global $CFG;
         if (!is_writable($this->path)) {
             if ($this->custompath && !$this->autocreate) {
                 throw new coding_exception('File store path does not exist. It must exist and be writable by the web server.');
             }
+            $createdcfg = false;
+            if (!isset($CFG)) {
+                // This can only happen during destruction of objects.
+                // A cache is being used within a destructor, php is ending a request and $CFG has
+                // already being cleaned up.
+                // Rebuild $CFG with directory permissions just to complete this write.
+                $CFG = $this->cfg;
+                $createdcfg = true;
+            }
             if (!make_writable_directory($this->path, false)) {
                 throw new coding_exception('File store path does not exist and can not be created.');
+            }
+            if ($createdcfg) {
+                // We re-created it so we'll clean it up.
+                unset($CFG);
             }
         }
         return true;
