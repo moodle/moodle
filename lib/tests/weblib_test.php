@@ -154,6 +154,10 @@ class web_testcase extends advanced_testcase {
         $this->assertEquals($strurl, $url->out(false));
 
         $strurl = 'http://moodle.org/course/view.php?id';
+        $url = new moodle_url($strurl, array('id' => ''));
+        $this->assertEquals($strurl, $url->out(false));
+
+        $strurl = 'http://moodle.org/course/view.php?id';
         $url = new moodle_url($strurl);
         $this->assertEquals($strurl, $url->out(false));
     }
