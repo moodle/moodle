@@ -123,7 +123,7 @@ class accesslib_testcase extends advanced_testcase {
      * @return void
      */
     public function test_is_siteadmin() {
-        global $DB;
+        global $DB, $CFG;
 
         $this->resetAfterTest();
 
@@ -145,6 +145,20 @@ class accesslib_testcase extends advanced_testcase {
                 $this->assertFalse(is_siteadmin(null));
             }
         }
+
+        // Change the site admin list and check that it still works with
+        // multiple admins. We do this with userids only (not real user
+        // accounts) because it makes the test simpler.
+        $before = $CFG->siteadmins;
+        set_config('siteadmins', '666,667,668');
+        $this->assertTrue(is_siteadmin(666));
+        $this->assertTrue(is_siteadmin(667));
+        $this->assertTrue(is_siteadmin(668));
+        $this->assertFalse(is_siteadmin(669));
+        set_config('siteadmins', '13');
+        $this->assertTrue(is_siteadmin(13));
+        $this->assertFalse(is_siteadmin(666));
+        set_config('siteadmins', $before);
     }
 
     /**
