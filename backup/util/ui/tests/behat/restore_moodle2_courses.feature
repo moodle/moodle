@@ -80,6 +80,7 @@ Feature: Restore Moodle 2 course backups
     Then I should see "Topic 1"
     And I should see "Test forum name"
     And I follow "Edit settings"
+    And I expand all fieldsets
     And the "id_format" field should match "Topics format" value
     And I fill the moodle form with:
       | id_startdate_day | 1 |
@@ -90,18 +91,21 @@ Feature: Restore Moodle 2 course backups
     And I should see "1 January - 7 January"
     And I should see "Test forum name"
     And I follow "Edit settings"
+    And I expand all fieldsets
     And the "id_format" field should match "Weekly format" value
     And I fill the moodle form with:
       | id_format | Social format |
     And I press "Save changes"
     And I should see "An open forum for chatting about anything you want to"
     And I follow "Edit settings"
+    And I expand all fieldsets
     And the "id_format" field should match "Social format" value
     And I fill the moodle form with:
       | id_format | SCORM format |
     And I press "Save changes"
     And I should see "Adding a new SCORM package"
     And I follow "Edit settings"
+    And I expand all fieldsets
     And the "id_format" field should match "SCORM format" value
     And I press "Cancel"
 
