@@ -572,8 +572,21 @@ function is_siteadmin($user_or_id = null) {
         $userid = $user_or_id;
     }
 
+    // Because this script is called many times (150+ for course page) with
+    // the same parameters, it is worth doing minor optimisations. This static
+    // cache stores the value for a single userid, saving about 2ms from course
+    // page load time without using significant memory. As the static cache
+    // also includes the value it depends on, this cannot break unit tests.
+    static $knownid, $knownresult, $knownsiteadmins;
+    if ($knownid === $userid && $knownsiteadmins === $CFG->siteadmins) {
+        return $knownresult;
+    }
+    $knownid = $userid;
+    $knownsiteadmins = $CFG->siteadmins;
+
     $siteadmins = explode(',', $CFG->siteadmins);
-    return in_array($userid, $siteadmins);
+    $knownresult = in_array($userid, $siteadmins);
+    return $knownresult;
 }
 
 /**
