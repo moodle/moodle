@@ -27,6 +27,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 
-$plugin->version   = 2012112900;
-$plugin->requires  = 2012112900;
+$plugin->version   = 2013050100;
+$plugin->requires  = 2013050100;
 $plugin->component = 'quizaccess_password';

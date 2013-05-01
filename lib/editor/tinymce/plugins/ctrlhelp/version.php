@@ -24,6 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2013041200;
-$plugin->requires  = 2013041100;
+$plugin->version   = 2013050100;
+$plugin->requires  = 2013050100;
 $plugin->component = 'tinymce_ctrlhelp';
