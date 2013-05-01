@@ -129,7 +129,7 @@ class mod_workshop_mod_form extends moodleform_mod {
         $mform->addElement('select', 'nattachments', $label, $options);
         $mform->setDefault('nattachments', 1);
 
-        $options = get_max_upload_sizes($CFG->maxbytes, $this->course->maxbytes);
+        $options = get_max_upload_sizes($CFG->maxbytes, $this->course->maxbytes, 0, $workshopconfig->maxbytes);
         $mform->addElement('select', 'maxbytes', get_string('maxbytes', 'workshop'), $options);
         $mform->setDefault('maxbytes', $workshopconfig->maxbytes);
 

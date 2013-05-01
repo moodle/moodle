@@ -47,7 +47,8 @@ if ($ADMIN->fulltree) {
                         get_string('configgradedecimals', 'workshop'), 0, $options));
 
     if (isset($CFG->maxbytes)) {
-        $options = get_max_upload_sizes($CFG->maxbytes);
+        $config = get_config('workshop');
+        $options = get_max_upload_sizes($CFG->maxbytes, 0, 0, $config->maxbytes);
         $settings->add(new admin_setting_configselect('workshop/maxbytes', get_string('maxbytes', 'workshop'),
                             get_string('configmaxbytes', 'workshop'), 0, $options));
     }

@@ -46,7 +46,7 @@ if ($ADMIN->fulltree) {
 
     if (isset($CFG->maxbytes)) {
         $settings->add(new admin_setting_configselect('forum_maxbytes', get_string('maxattachmentsize', 'forum'),
-                           get_string('configmaxbytes', 'forum'), 512000, get_max_upload_sizes($CFG->maxbytes)));
+                           get_string('configmaxbytes', 'forum'), 512000, get_max_upload_sizes($CFG->maxbytes, 0, 0, $CFG->forum_maxbytes)));
     }
 
     // Default number of attachments allowed per post in all forums
