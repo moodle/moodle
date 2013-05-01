@@ -224,6 +224,17 @@ class behat_hooks extends behat_base {
             $msg = "PHP debug message/s found:\n" . implode("\n", $msgs);
             throw new \Exception(html_entity_decode($msg));
         }
+
+        // Any other backtrace.
+        $backtracespattern = '/(line [0-9]* of [^:]*: call to [\->&;:a-zA-Z_\x7f-\xff][\->&;:a-zA-Z0-9_\x7f-\xff]*)/';
+        if (preg_match_all($backtracespattern, $this->getSession()->getPage()->getContent(), $backtraces)) {
+            $msgs = array();
+            foreach ($backtraces[0] as $backtrace) {
+                $msgs[] = $backtrace . '()';
+            }
+            $msg = "Other backtraces found:\n" . implode("\n", $msgs);
+            throw new \Exception(htmlentities($msg));
+        }
     }
 
     /**
