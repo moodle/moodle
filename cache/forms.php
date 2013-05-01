@@ -67,10 +67,10 @@ class cachestore_addinstance_form extends moodleform {
         if (is_array($locks)) {
             $form->addElement('select', 'lock', get_string('lockmethod', 'cache'), $locks);
             $form->addHelpButton('lock', 'lockmethod', 'cache');
-            $form->setType('lock', PARAM_PLUGIN);
+            $form->setType('lock', PARAM_ALPHANUMEXT);
         } else {
             $form->addElement('hidden', 'lock', '');
-            $form->setType('lock', PARAM_PLUGIN);
+            $form->setType('lock', PARAM_ALPHANUMEXT);
             $form->addElement('static', 'lock-value', get_string('lockmethod', 'cache'),
                     '<em>'.get_string('nativelocking', 'cache').'</em>');
         }
@@ -220,5 +220,77 @@ class cache_mode_mappings_form extends moodleform {
         }
 
         $this->add_action_buttons();
+    }
+}
+
+/**
+ * Form to add a cache lock instance.
+ *
+ * All cache lock plugins that wish to have custom configuration should override
+ * this form, and more explicitly the plugin_definition and plugin_validation methods.
+ *
+ * @package    core
+ * @category   cache
+ * @copyright  2013 Sam Hemelryk
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class cache_lock_form extends moodleform {
+
+    /**
+     * Defines this form.
+     */
+    final public function definition() {
+        $plugin = $this->_customdata['lock'];
+
+        $this->_form->addElement('hidden', 'action', 'newlockinstance');
+        $this->_form->setType('action', PARAM_ALPHANUMEXT);
+        $this->_form->addElement('hidden', 'lock', $plugin);
+        $this->_form->setType('lock', PARAM_COMPONENT);
+        $this->_form->addElement('text', 'name', get_string('lockname', 'cache'));
+        $this->_form->setType('name', PARAM_ALPHANUMEXT);
+        $this->_form->addRule('name', get_string('required'), 'required');
+        $this->_form->addElement('static', 'namedesc', '', get_string('locknamedesc', 'cache'));
+
+        $this->plugin_definition();
+
+        $this->add_action_buttons();
+    }
+
+    /**
+     * Validates this form.
+     *
+     * @param array $data
+     * @param array $files
+     * @return array
+     */
+    final public function validation($data, $files) {
+        $errors = parent::validation($data, $files);
+        if (!isset($errors['name'])) {
+            $config = cache_config::instance();
+            if (in_array($data['name'], array_keys($config->get_locks()))) {
+                $errors['name'] = get_string('locknamenotunique', 'cache');
+            }
+        }
+        $errors = $this->plugin_validation($data, $files, $errors);
+        return $errors;
+    }
+
+    /**
+     * Plugin specific definition.
+     */
+    public function plugin_definition() {
+        // No custom validation going on here.
+    }
+
+    /**
+     * Plugin specific validation.
+     *
+     * @param array $data
+     * @param array $files
+     * @param array $errors
+     * @return array
+     */
+    public function plugin_validation($data, $files, array $errors) {
+        return $errors;
     }
 }

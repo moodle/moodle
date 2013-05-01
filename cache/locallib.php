@@ -188,6 +188,68 @@ class cache_config_writer extends cache_config {
     }
 
     /**
+     * Adds a new lock instance to the config file.
+     *
+     * @param string $name The name the user gave the instance. PARAM_ALHPANUMEXT
+     * @param string $plugin The plugin we are creating an instance of.
+     * @param string $configuration Configuration data from the config instance.
+     * @throws cache_exception
+     */
+    public function add_lock_instance($name, $plugin, $configuration = array()) {
+        if (array_key_exists($name, $this->configlocks)) {
+            throw new cache_exception('Duplicate name specificed for cache lock instance. You must provide a unique name.');
+        }
+        $class = 'cachelock_'.$plugin;
+        if (!class_exists($class)) {
+            $plugins = get_plugin_list_with_file('cachelock', 'lib.php');
+            if (!array_key_exists($plugin, $plugins)) {
+                throw new cache_exception('Invalid lock name specified. The plugin does not exist or is not valid.');
+            }
+            $file = $plugins[$plugin];
+            if (file_exists($file)) {
+                require_once($file);
+            }
+            if (!class_exists($class)) {
+                throw new cache_exception('Invalid lock plugin specified. The plugin does not contain the required class.');
+            }
+        }
+        $reflection = new ReflectionClass($class);
+        if (!$reflection->implementsInterface('cache_lock_interface')) {
+            throw new cache_exception('Invalid lock plugin specified. The plugin does not implement the required interface.');
+        }
+        $this->configlocks[$name] = array_merge($configuration, array(
+            'name' => $name,
+            'type' => 'cachelock_'.$plugin,
+            'default' => false
+        ));
+        $this->config_save();
+    }
+
+    /**
+     * Deletes a lock instance given its name.
+     *
+     * @param string $name The name of the plugin, PARAM_ALPHANUMEXT.
+     * @return bool
+     * @throws cache_exception
+     */
+    public function delete_lock_instance($name) {
+        if (!array_key_exists($name, $this->configlocks)) {
+            throw new cache_exception('The requested store does not exist.');
+        }
+        if ($this->configlocks[$name]['default']) {
+            throw new cache_exception('You can not delete the default lock.');
+        }
+        foreach ($this->configstores as $store) {
+            if (isset($store['lock']) && $store['lock'] === $name) {
+                throw new cache_exception('You cannot delete a cache lock that is being used by a store.');
+            }
+        }
+        unset($this->configlocks[$name]);
+        $this->config_save();
+        return true;
+    }
+
+    /**
      * Sets the mode mappings.
      *
      * These determine the default caches for the different modes.
@@ -578,9 +640,11 @@ abstract class cache_administration_helper extends cache_helper {
         $default = array();
         $instance = cache_config::instance();
         $stores = $instance->get_all_stores();
+        $locks = $instance->get_locks();
         foreach ($stores as $name => $details) {
             $class = $details['class'];
             $store = new $class($details['name'], $details['configuration']);
+            $lock = (isset($details['lock'])) ? $locks[$details['lock']] : $instance->get_default_lock();
             $record = array(
                 'name' => $name,
                 'plugin' => $details['plugin'],
@@ -588,6 +652,7 @@ abstract class cache_administration_helper extends cache_helper {
                 'isready' => $store->is_ready(),
                 'requirementsmet' => $store->are_requirements_met(),
                 'mappings' => 0,
+                'lock' => $lock,
                 'modes' => array(
                     cache_store::MODE_APPLICATION =>
                         ($store->get_supported_modes($return) & cache_store::MODE_APPLICATION) == cache_store::MODE_APPLICATION,
@@ -870,6 +935,9 @@ abstract class cache_administration_helper extends cache_helper {
 
         $url = new moodle_url('/cache/admin.php', array('action' => 'editstore', 'plugin' => $plugin, 'store' => $store));
         $editform = new $class($url, array('plugin' => $plugin, 'store' => $store, 'locks' => $locks));
+        if (isset($stores[$store]['lock'])) {
+            $editform->set_data(array('lock' => $lock));
+        }
         // See if the cachestore is going to want to load data for the form.
         // If it has a customised add instance form then it is going to want to.
         $storeclass = 'cachestore_'.$plugin;
@@ -1030,10 +1098,86 @@ abstract class cache_administration_helper extends cache_helper {
             $lockdata = array(
                 'name' => $name,
                 'default' => $default,
-                'uses' => $uses
+                'uses' => $uses,
+                'type' => get_string('pluginname', $lock['type'])
             );
-            $locks[] = $lockdata;
+            $locks[$lock['name']] = $lockdata;
         }
         return $locks;
+    }
+
+    /**
+     * Returns an array of lock plugins for which we can add an instance.
+     *
+     * Suitable for use within an mform select element.
+     *
+     * @return array
+     */
+    public static function get_addable_lock_options() {
+        $plugins = get_plugin_list_with_class('cachelock', '', 'lib.php');
+        $options = array();
+        $len = strlen('cachelock_');
+        foreach ($plugins as $plugin => $class) {
+            $method = "$class::can_add_instance";
+            if (is_callable($method) && !call_user_func($method)) {
+                // Can't add an instance of this plugin.
+                continue;
+            }
+            $options[substr($plugin, $len)] = get_string('pluginname', $plugin);
+        }
+        return $options;
+    }
+
+    /**
+     * Gets the form to use when adding a lock instance.
+     *
+     * @param string $plugin
+     * @param array $lockplugin
+     * @return cache_lock_form
+     * @throws coding_exception
+     */
+    public static function get_add_lock_form($plugin, array $lockplugin = null) {
+        global $CFG; // Needed for includes.
+        $plugins = get_plugin_list('cachelock');
+        if (!array_key_exists($plugin, $plugins)) {
+            throw new coding_exception('Invalid cache lock plugin requested when trying to create a form.');
+        }
+        $plugindir = $plugins[$plugin];
+        $class = 'cache_lock_form';
+        if (file_exists($plugindir.'/addinstanceform.php') && in_array('cache_is_configurable', class_implements($class))) {
+            require_once($plugindir.'/addinstanceform.php');
+            if (class_exists('cachelock_'.$plugin.'_addinstance_form')) {
+                $class = 'cachelock_'.$plugin.'_addinstance_form';
+                if (!array_key_exists('cache_lock_form', class_parents($class))) {
+                    throw new coding_exception('Cache lock plugin add instance forms must extend cache_lock_form');
+                }
+            }
+        }
+        return new $class(null, array('lock' => $plugin));
+    }
+
+    /**
+     * Gets configuration data from a new lock instance form.
+     *
+     * @param string $plugin
+     * @param stdClass $data
+     * @return array
+     * @throws coding_exception
+     */
+    public static function get_lock_configuration_from_data($plugin, $data) {
+        global $CFG;
+        $file = $CFG->dirroot.'/cache/locks/'.$plugin.'/lib.php';
+        if (!file_exists($file)) {
+            throw new coding_exception('Invalid cache plugin provided. '.$file);
+        }
+        require_once($file);
+        $class = 'cachelock_'.$plugin;
+        if (!class_exists($class)) {
+            throw new coding_exception('Invalid cache plugin provided.');
+        }
+        if (array_key_exists('cache_is_configurable', class_implements($class))) {
+            return $class::config_get_configuration_array($data);
+        }
+        return array();
     }
 }

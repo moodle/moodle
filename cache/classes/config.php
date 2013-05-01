@@ -541,6 +541,16 @@ class cache_config {
                 return $this->configlocks[$lock];
             }
         }
+        return $this->get_default_lock();
+    }
+
+    /**
+     * Gets the default lock instance.
+     *
+     * @return array
+     * @throws cache_exception
+     */
+    public function get_default_lock() {
         foreach ($this->configlocks as $lockconf) {
             if (!empty($lockconf['default'])) {
                 return $lockconf;
