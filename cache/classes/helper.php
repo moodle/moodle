@@ -192,8 +192,7 @@ class cache_helper {
             if (in_array($pluginname, $ignored)) {
                 continue;
             }
-            $pluginname = clean_param($pluginname, PARAM_PLUGIN);
-            if (empty($pluginname)) {
+            if (!is_valid_plugin_name($pluginname)) {
                 // Better ignore plugins with problematic names here.
                 continue;
             }
