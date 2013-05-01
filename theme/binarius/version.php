@@ -28,5 +28,5 @@ $plugin->version   = 2012112900; // The current module version (Date: YYYYMMDDXX
 $plugin->requires  = 2012112900; // Requires this Moodle version
 $plugin->component = 'theme_binarius'; // Full name of the plugin (used for diagnostics)
 $plugin->dependencies = array(
-    'theme_base'  => 2013022500,
+    'theme_canvas'  => 2012112900,
 );
