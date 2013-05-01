@@ -6645,10 +6645,6 @@ class core_string_manager implements string_manager {
      * @return boot true if exists
      */
     public function string_exists($identifier, $component) {
-       $identifier = clean_param($identifier, PARAM_STRINGID);
-        if (empty($identifier)) {
-            return false;
-        }
         $lang = current_language();
         $string = $this->load_component_strings($component, $lang);
         return isset($string[$identifier]);
@@ -7130,10 +7126,6 @@ class install_string_manager implements string_manager {
      * @return boot true if exists
      */
     public function string_exists($identifier, $component) {
-        $identifier = clean_param($identifier, PARAM_STRINGID);
-        if (empty($identifier)) {
-            return false;
-        }
         // simple old style hack ;)
         $str = get_string($identifier, $component);
         return (strpos($str, '[[') === false);
@@ -7391,8 +7383,7 @@ function get_string($identifier, $component = '', $a = NULL, $lazyload = false) 
         return new lang_string($identifier, $component, $a);
     }
 
-    $identifier = clean_param($identifier, PARAM_STRINGID);
-    if (empty($identifier)) {
+    if (debugging('', DEBUG_DEVELOPER) && clean_param($identifier, PARAM_STRINGID) === '') {
         throw new coding_exception('Invalid string identifier. The identifier cannot be empty. Please fix your get_string() call.');
     }
 
@@ -11236,7 +11227,7 @@ class lang_string {
         // Check if we need to process the string
         if ($this->string === null) {
             // Check the quality of the identifier.
-            if (clean_param($this->identifier, PARAM_STRINGID) == '') {
+            if (debugging('', DEBUG_DEVELOPER) && clean_param($this->identifier, PARAM_STRINGID) === '') {
                 throw new coding_exception('Invalid string identifier. Most probably some illegal character is part of the string identifier. Please check your string definition');
             }
 
