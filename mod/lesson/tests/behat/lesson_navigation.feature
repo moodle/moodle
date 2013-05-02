@@ -55,7 +55,6 @@ Feature: In a lesson activity, students can navigate through a series of pages i
       | id_jumpto_1 | Second page name |
       | id_score_1 | 0 |
     And I press "Save page"
-    And I follow "Continue"
     And I log out
     And I log in as "student1"
     And I follow "Course 1"
