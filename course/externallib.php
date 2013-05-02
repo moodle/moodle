@@ -108,6 +108,7 @@ class core_course_external extends external_api {
             $sections = $modinfo->get_section_info_all();
 
             //for each sections (first displayed to last displayed)
+            $modinfosections = $modinfo->get_sections();
             foreach ($sections as $key => $section) {
 
                 if (!$section->uservisible) {
@@ -125,64 +126,66 @@ class core_course_external extends external_api {
                 $sectioncontents = array();
 
                 //for each module of the section
-                foreach ($modinfo->sections[$section->section] as $cmid) {
-                    $cm = $modinfo->cms[$cmid];
+                if (!empty($modinfosections[$section->section])) {
+                    foreach ($modinfosections[$section->section] as $cmid) {
+                        $cm = $modinfo->cms[$cmid];
 
-                    // stop here if the module is not visible to the user
-                    if (!$cm->uservisible) {
-                        continue;
-                    }
-
-                    $module = array();
-
-                    //common info (for people being able to see the module or availability dates)
-                    $module['id'] = $cm->id;
-                    $module['name'] = format_string($cm->name, true);
-                    $module['modname'] = $cm->modname;
-                    $module['modplural'] = $cm->modplural;
-                    $module['modicon'] = $cm->get_icon_url()->out(false);
-                    $module['indent'] = $cm->indent;
-
-                    $modcontext = context_module::instance($cm->id);
-
-                    if (!empty($cm->showdescription) or $cm->modname == 'label') {
-                        // We want to use the external format. However from reading get_formatted_content(), get_content() format is always FORMAT_HTML.
-                        list($module['description'], $descriptionformat) = external_format_text($cm->get_content(),
-                            FORMAT_HTML, $modcontext->id, $cm->modname, 'intro', $cm->id);
-                    }
-
-                    //url of the module
-                    $url = $cm->get_url();
-                    if ($url) { //labels don't have url
-                        $module['url'] = $cm->get_url()->out();
-                    }
-
-                    $canviewhidden = has_capability('moodle/course:viewhiddenactivities',
-                                        context_module::instance($cm->id));
-                    //user that can view hidden module should know about the visibility
-                    $module['visible'] = $cm->visible;
-
-                    //availability date (also send to user who can see hidden module when the showavailabilyt is ON)
-                    if ($canupdatecourse or ($CFG->enableavailability && $canviewhidden && $cm->showavailability)) {
-                        $module['availablefrom'] = $cm->availablefrom;
-                        $module['availableuntil'] = $cm->availableuntil;
-                    }
-
-                    $baseurl = 'webservice/pluginfile.php';
-
-                    //call $modulename_export_contents
-                    //(each module callback take care about checking the capabilities)
-                    require_once($CFG->dirroot . '/mod/' . $cm->modname . '/lib.php');
-                    $getcontentfunction = $cm->modname.'_export_contents';
-                    if (function_exists($getcontentfunction)) {
-                        if ($contents = $getcontentfunction($cm, $baseurl)) {
-                            $module['contents'] = $contents;
+                        // stop here if the module is not visible to the user
+                        if (!$cm->uservisible) {
+                            continue;
                         }
+
+                        $module = array();
+
+                        //common info (for people being able to see the module or availability dates)
+                        $module['id'] = $cm->id;
+                        $module['name'] = format_string($cm->name, true);
+                        $module['modname'] = $cm->modname;
+                        $module['modplural'] = $cm->modplural;
+                        $module['modicon'] = $cm->get_icon_url()->out(false);
+                        $module['indent'] = $cm->indent;
+
+                        $modcontext = context_module::instance($cm->id);
+
+                        if (!empty($cm->showdescription) or $cm->modname == 'label') {
+                            // We want to use the external format. However from reading get_formatted_content(), get_content() format is always FORMAT_HTML.
+                            list($module['description'], $descriptionformat) = external_format_text($cm->get_content(),
+                                FORMAT_HTML, $modcontext->id, $cm->modname, 'intro', $cm->id);
+                        }
+
+                        //url of the module
+                        $url = $cm->get_url();
+                        if ($url) { //labels don't have url
+                            $module['url'] = $cm->get_url()->out(false);
+                        }
+
+                        $canviewhidden = has_capability('moodle/course:viewhiddenactivities',
+                                            context_module::instance($cm->id));
+                        //user that can view hidden module should know about the visibility
+                        $module['visible'] = $cm->visible;
+
+                        //availability date (also send to user who can see hidden module when the showavailabilyt is ON)
+                        if ($canupdatecourse or ($CFG->enableavailability && $canviewhidden && $cm->showavailability)) {
+                            $module['availablefrom'] = $cm->availablefrom;
+                            $module['availableuntil'] = $cm->availableuntil;
+                        }
+
+                        $baseurl = 'webservice/pluginfile.php';
+
+                        //call $modulename_export_contents
+                        //(each module callback take care about checking the capabilities)
+                        require_once($CFG->dirroot . '/mod/' . $cm->modname . '/lib.php');
+                        $getcontentfunction = $cm->modname.'_export_contents';
+                        if (function_exists($getcontentfunction)) {
+                            if ($contents = $getcontentfunction($cm, $baseurl)) {
+                                $module['contents'] = $contents;
+                            }
+                        }
+
+                        //assign result to $sectioncontents
+                        $sectioncontents[] = $module;
+
                     }
-
-                    //assign result to $sectioncontents
-                    $sectioncontents[] = $module;
-
                 }
                 $sectionvalues['modules'] = $sectioncontents;
 
