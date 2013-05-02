@@ -30,15 +30,15 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['clianswerno'] = 'n';
-$string['cliansweryes'] = 's';
-$string['cliincorrectvalueerror'] = 'Erro, o valor «{$a->value}» é incorrecto para «{$a->option}»';
-$string['cliincorrectvalueretry'] = 'Valor incorrecto. Ténteo outra vez.';
-$string['clitypevalue'] = 'valor do tipo';
-$string['clitypevaluedefault'] = 'valor do tipo, prema Intro para empregar o valor predeterminado ({$a})';
-$string['cliunknowoption'] = 'Opcións non recoñecidas:
+$string['clianswerno'] = 'не';
+$string['cliansweryes'] = 'ҳа';
+$string['cliincorrectvalueerror'] = 'Хато, нишондиҳандаи нодурусти "{$a->value}" барои "{$a->option}"';
+$string['cliincorrectvalueretry'] = 'Нишондиҳандаи нодуруст, илтимос, аз нав кӯшиш карда бинед';
+$string['clitypevalue'] = 'Нишондиҳандаро ворид намоед';
+$string['clitypevaluedefault'] = 'Нишондиҳандаро ворид намоед, Enter-ро барои истифодаи нишондиҳанда аз рӯи хомӯшӣ ({$a}) зер кунед';
+$string['cliunknowoption'] = 'Параметрҳои шинохтанашуда:
   {$a}
-Use a opción --help.';
-$string['cliyesnoprompt'] = 'escriba s (si) ou n (non)';
-$string['environmentrequireinstall'] = 'debe ser instalado e activado';
-$string['environmentrequireversion'] = 'requírese a versión {$a->needed} e está a executar a {$a->current}';
+Илтимос, аз параметри --help истифода баред';
+$string['cliyesnoprompt'] = 'Ҳарфҳои y (яъне Ҳа) ё n (яъне Не)';
+$string['environmentrequireinstall'] = 'Ҷойгир карда ба кор андохтан лозим аст';
+$string['environmentrequireversion'] = 'Версияи {$a->needed} лозим аст, Шумо версияи {$a->current} -ро истифода бурда истодаед';

@@ -45,8 +45,8 @@ $string['datarootpermission'] = 'Ovlašćenja nad direktorijumom podataka';
 $string['dbprefix'] = 'Prefiks tabele';
 $string['dirroot'] = 'Moodle direktorijum';
 $string['environmenthead'] = 'Proveravanje Vašeg okruženja...';
-$string['environmentsub2'] = 'Svaka verzija Moodlea ima minimum zahteva po pitanju odgovarajuće PHP verѕije i nekoliko obaveznih PHP ekstenzija.
-Puna provera okruženja se vrši pre svake instalacije ili ažuriranja postojeće verzije. Ukoliko ne znate kako da instalirate novu verziju ili omogućite PHP ektenzije kontaktirajte Vašeg server administratora.';
+$string['environmentsub2'] = 'Svako izdanje Moodlea ima minimum zahteva po pitanju odgovarajuće PHP verzije i nekoliko obaveznih PHP ekstenzija.
+Kompletna provera okruženja se vrši pre svake instalacije i nadogradnje postojeće verzije. Ukoliko ne znate kako da instalirate novu verziju ili omogućite PHP ekstenzije kontaktirajte svog administratora servera.';
 $string['errorsinenvironment'] = 'Provera okruženja nije prošla!';
 $string['installation'] = 'Instalacija';
 $string['langdownloaderror'] = 'Nažalost, jezik "{$a}" se ne može preuzeti. Proces instalacije biće nastavljen na engleskom jeziku.';

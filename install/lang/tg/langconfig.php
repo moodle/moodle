@@ -30,4 +30,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['thislanguage'] = 'тоҷикӣ';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Тоҷикӣ';
