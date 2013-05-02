@@ -78,7 +78,11 @@ if ($backpack) {
     if ($form->is_cancelled()) {
         redirect(new moodle_url('/badges/mybadges.php'));
     } else if ($data = $form->get_data()) {
-        $groups = array_filter($data->group);
+        if (empty($data->group)) {
+            redirect(new moodle_url('/badges/mybadges.php'));
+        } else {
+            $groups = array_filter($data->group);
+        }
 
         // Remove all unselected collections if there are any.
         $sqlparams = array('backpack' => $backpack->id);
