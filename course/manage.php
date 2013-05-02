@@ -314,8 +314,6 @@ if (can_edit_in_category()) {
     $PAGE->set_button($courserenderer->course_search_form('', 'navbar'));
 }
 
-$displaylist[0] = get_string('top');
-
 // Start output.
 echo $OUTPUT->header();
 
@@ -345,6 +343,7 @@ if (!empty($searchcriteria)) {
     echo html_writer::table($table);
 } else {
     // Print the category selector.
+    $displaylist = coursecat::make_categories_list();
     $select = new single_select(new moodle_url('/course/manage.php'), 'categoryid', $displaylist, $coursecat->id, null, 'switchcategory');
     $select->set_label(get_string('categories').':');
 
