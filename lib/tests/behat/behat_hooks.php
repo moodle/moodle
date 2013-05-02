@@ -170,9 +170,22 @@ class behat_hooks extends behat_base {
             return;
         }
 
-        // Wait until the page is ready.
-        try {
-            $this->getSession()->wait(self::TIMEOUT * 1000, '(document.readyState === "complete")');
+       // Wait until the page is ready.
+       // We are already checking that we use a JS browser, this could
+       // change in case we use another JS driver.
+       try {
+
+            // Safari and Internet Explorer requires time between steps,
+            // otherwise Selenium tries to click in the previous page's DOM.
+            if ($this->getSession()->getDriver()->getBrowserName() == 'safari' ||
+                    $this->getSession()->getDriver()->getBrowserName() == 'internet explorer') {
+                $this->getSession()->wait(self::TIMEOUT * 1000, false);
+
+            } else {
+                // With other browsers we just wait for the DOM ready.
+                $this->getSession()->wait(self::TIMEOUT * 1000, '(document.readyState === "complete")');
+            }
+
         } catch (NoSuchWindow $e) {
             // If we were interacting with a popup window it will not exists after closing it.
         }

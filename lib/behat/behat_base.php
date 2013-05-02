@@ -411,7 +411,7 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
      * @return boolean
      */
     protected function running_javascript() {
-        return get_class($this->getSession()->getDriver()) === 'Moodle\BehatExtension\Driver\MoodleSelenium2Driver';
+        return get_class($this->getSession()->getDriver()) !== 'Behat\Mink\Driver\GoutteDriver';
     }
 
 }

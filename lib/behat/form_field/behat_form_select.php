@@ -45,6 +45,26 @@ class behat_form_select extends behat_form_field {
      */
     public function set_value($value) {
         $this->field->selectOption($value);
+
+        // Adding a click as Selenium requires it to fire some JS events.
+        if ($this->running_javascript()) {
+
+            // Single select needs an extra click in the option.
+            if (!$this->field->hasAttribute('multiple')) {
+                // Using the driver direcly because Element methods are messy when dealing
+                // with elements inside containers.
+                $optionxpath = $this->field->getXpath() .
+                    "/descendant::option[(./@value = '" . $value . "' or contains(normalize-space(string(.)), '" . $value . "'))]";
+                $optionnodes = $this->session->getDriver()->find($optionxpath);
+                if ($optionnodes) {
+                    current($optionnodes)->click();
+                }
+
+            } else {
+                // Multiple ones needs the click in the select.
+                $this->field->click();
+            }
+        }
     }
 
     /**
