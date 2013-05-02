@@ -98,7 +98,7 @@
 .courses .coursebox.collapsed {border:1px solid #eeeeee;padding:3px 0;}
 .courses .coursebox.even {background-color:#f6f6f6;}
 .courses .coursebox:hover,
-.course_category_tree .courses > .paging:hover {background-color:#eeeeee;}
+.course_category_tree .courses > .paging.paging-morelink:hover {background-color:#eeeeee;}
 
 .course_category_tree .subcategories > .paging,
 .course_category_tree .courses > .paging {margin:0;padding:5px;}

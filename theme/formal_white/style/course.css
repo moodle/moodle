@@ -100,7 +100,7 @@
 .dir-rtl .course_category_tree .category > .info .name {padding-left:0;padding-right:16px;}
 .courses .coursebox.even {background-color:#f6f6f6;border-color:#eee;}
 .courses .coursebox:hover,
-.course_category_tree .courses > .paging:hover {background-color:#eee;}
+.course_category_tree .courses > .paging.paging-morelink:hover {background-color:#eee;}
 .course_category_tree .courses > .paging,
 .course_category_tree .subcategories > .paging {padding:5px;}
 
