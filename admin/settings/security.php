@@ -23,7 +23,11 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
         new lang_string('configprofileroles', 'admin'),
         array('student', 'teacher', 'editingteacher')));
 
-    $max_upload_choices = get_max_upload_sizes(0, 0, 0, $CFG->maxbytes);
+    $maxbytes = 0;
+    if (!empty($CFG->maxbytes)) {
+        $maxbytes = $CFG->maxbytes;
+    }
+    $max_upload_choices = get_max_upload_sizes(0, 0, 0, $maxbytes);
     // maxbytes set to 0 will allow the maximum server limit for uploads
     $temp->add(new admin_setting_configselect('maxbytes', new lang_string('maxbytes', 'admin'), new lang_string('configmaxbytes', 'admin'), 0, $max_upload_choices));
     // 100MB
