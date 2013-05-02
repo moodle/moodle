@@ -56,8 +56,17 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group{
     var $_options = array('startyear' => 1970, 'stopyear' => 2020, 'defaulttime' => 0,
                     'timezone' => 99, 'step' => 5, 'optional' => false);
 
-    /** @var array These complement separators, they are appended to the resultant HTML */
-    var $_wrap = array('', '');
+    /**
+     * @var array These complement separators, they are appended to the resultant HTML.
+     */
+    protected $_wrap = array('', '');
+
+    /**
+     * @var null|bool Keeps track of whether the date selector was initialised using createElement
+     *                or addElement. If true, createElement was used signifying the element has been
+     *                added to a group - see MDL-39187.
+     */
+    protected $_usedcreateelement = true;
 
     /**
      * Class constructor
@@ -196,6 +205,10 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group{
                 }
                 return parent::onQuickFormEvent($event, $arg, $caller);
                 break;
+            case 'addElement':
+                $this->_usedcreateelement = false;
+                return parent::onQuickFormEvent($event, $arg, $caller);
+                break;
             default:
                 return parent::onQuickFormEvent($event, $arg, $caller);
         }
@@ -212,7 +225,16 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group{
         $renderer = new HTML_QuickForm_Renderer_Default();
         $renderer->setElementTemplate('{element}');
         parent::accept($renderer);
-        return $this->_wrap[0] . $renderer->toHtml() . $this->_wrap[1];
+
+        $html = $this->_wrap[0];
+        if ($this->_usedcreateelement) {
+            $html .= html_writer::tag('span', $renderer->toHtml(), array('class' => 'fdate_time_selector'));
+        } else {
+            $html .= $renderer->toHtml();
+        }
+        $html .= $this->_wrap[1];
+
+        return $html;
     }
 
     /**
