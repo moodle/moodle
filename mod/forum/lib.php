@@ -5622,15 +5622,17 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=-1, $di
         echo '</form>';
         echo "</div>\n";
 
-    } else if (isguestuser() or !isloggedin() or $forum->type == 'news') {
+    } else if (isguestuser() or !isloggedin() or $forum->type == 'news' or
+        $forum->type == 'qanda' and !has_capability('mod/forum:addquestion', $context) or
+        $forum->type != 'qanda' and !has_capability('mod/forum:startdiscussion', $context)) {
         // no button and no info
 
-    } else if ($groupmode and has_capability('mod/forum:startdiscussion', $context)) {
+    } else if ($groupmode and !has_capability('moodle/site:accessallgroups', $context)) {
         // inform users why they can not post new discussion
-        if ($currentgroup) {
-            echo $OUTPUT->notification(get_string('cannotadddiscussion', 'forum'));
-        } else {
+        if (!$currentgroup) {
             echo $OUTPUT->notification(get_string('cannotadddiscussionall', 'forum'));
+        } else if (!groups_is_member($currentgroup)) {
+            echo $OUTPUT->notification(get_string('cannotadddiscussion', 'forum'));
         }
     }
 
