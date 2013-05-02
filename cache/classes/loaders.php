@@ -912,7 +912,8 @@ class cache implements cache_loader {
      * @return bool
      */
     protected function is_in_persist_cache($key) {
-        if (is_array($key)) {
+        // This method of checking if an array was supplied is faster than is_array.
+        if ($key === (array)$key) {
             $key = $key['key'];
         }
         // This could be written as a single line, however it has been split because the ttl check is faster than the instanceof
@@ -933,10 +934,15 @@ class cache implements cache_loader {
      * @return mixed|false The data from the persist cache or false if it wasn't there.
      */
     protected function get_from_persist_cache($key) {
-        if (is_array($key)) {
+        // This method of checking if an array was supplied is faster than is_array.
+        if ($key === (array)$key) {
             $key = $key['key'];
         }
-        if (!$this->persist || !array_key_exists($key, $this->persistcache)) {
+        // This isset check is faster than array_key_exists but will return false
+        // for null values, meaning null values will come from backing store not
+        // the persist cache. We think this okay because null usage should be
+        // very rare (see comment in MDL-39472).
+        if (!$this->persist || !isset($this->persistcache[$key])) {
             $result = false;
         } else {
             $data = $this->persistcache[$key];
@@ -976,7 +982,8 @@ class cache implements cache_loader {
      * @return bool
      */
     protected function set_in_persist_cache($key, $data) {
-        if (is_array($key)) {
+        // This method of checking if an array was supplied is faster than is_array.
+        if ($key === (array)$key) {
             $key = $key['key'];
         }
         $this->persistcache[$key] = $data;
