@@ -283,7 +283,7 @@ div.block.hidden div.header {
     background-position: 0% 100%;
 }
 
-.generalbox h2, #page-course-info h2.main, h3.sectionname, h2.main a, h3.main a, div.loginpanel h2, div.signuppanel h2, div.hd h3.main {
+.generalbox h2, h3.sectionname, h2.main a, h3.main a, div.loginpanel h2, div.signuppanel h2, div.hd h3.main {
     font-size: 22px;
     background: none;
 }
@@ -297,21 +297,21 @@ div.block.hidden div.header {
     border-color: #eee;
 }
 
-.coursebox .info {
+.coursebox .content .teachers,
+.coursebox .content .courseimage,
+.coursebox .content .coursefile,
+.coursebox.remotecoursebox .remotecourseinfo {
     width: 35%;
 }
 
-.coursebox .info .name {
-    margin-bottom: 0;
-}
-
-.coursebox .info .teachers {
+.coursebox .content .teachers {
     font-size: 0.9em;
     color: #888;
 }
 
-.coursebox .summary {
-    width: 63%;
+.coursebox .content .summary,
+.coursebox .content .coursecat {
+    width: 61%;
 }
 
 .course-content .section.main {

@@ -119,17 +119,29 @@ h2.tagline {
     overflow: hidden;
     padding-bottom: 10px;
 }
-.coursebox .info {
+.coursebox.collapsed {
+    border-bottom: none;
+    margin: 0;
+    padding-bottom: 0;
+}
+.coursebox .content .teachers,
+.coursebox .content .courseimage,
+.coursebox .content .coursefile,
+.coursebox.remotecoursebox .remotecourseinfo {
     width: 35%;
-    float: left;
 }
-.coursebox .summary {
+.coursebox .content .summary,
+.coursebox .content .coursecat {
     width: 60%;
-    float: right;
 }
+.course_category_tree .paging.paging-morelink a {font-size:90%}
 
 .course-content ul.section {
     margin: 0;
+}
+#page-course-info .generalbox.info,
+#page-enrol-index .generalbox.info {
+    border:none;
 }
 
 .course-content .headingblock.outline {

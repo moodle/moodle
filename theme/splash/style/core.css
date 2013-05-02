@@ -337,28 +337,16 @@ img.icon {
     padding:0;
     margin:0;
 }
-#region-main .course_category_tree .category > .info h3.name,
-#region-main .course_category_tree .category > .info h4.name {
-    padding-left: 16px;
-}
-.dir-rtl #region-main .course_category_tree .category > .info h3.name,
-.dir-rtl #region-main .course_category_tree .category > .info h4.name {
-    padding-right: 16px;
-    padding-left: 0px;
-}
 li.activity {
     padding-bottom:5px;
 }
-.coursebox .name, #region-main .coursebox h3.name {
-    padding:0;
-    margin:5px 0;
+.coursebox > .info > .name, #region-main .coursebox > .info > h3.name {
+    margin: 5px;
+    padding: 0;
 }
-.coursebox .name a {
-    padding-top: 5px;
-    padding-bottom: 5px;
-}
-.coursebox .summary{
-    padding: 0 0 10px 0;
+#region-main .course_category_tree .category > .info h3.name,
+#region-main .course_category_tree .category > .info h4.name {
+    padding: 2px 18px;
 }
 .que .info{
     width: 10em;

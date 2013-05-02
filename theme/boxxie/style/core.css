@@ -272,27 +272,25 @@ h2.headingblock {
     border-bottom: 1px solid #eee;
 }
 
-.coursebox .info {
+.coursebox .content .teachers,
+.coursebox .content .courseimage,
+.coursebox .content .coursefile,
+.coursebox.remotecoursebox .remotecourseinfo {
     width: 35%;
 }
 
-.coursebox .summary {
-    width: 63%;
+.coursebox .content .summary,
+.coursebox .content .coursecat {
+    width: 61%;
 }
 
-.coursebox h3.name {
-    margin: 0;
+.coursebox > .info > h3.name {
     font-size: 1.2em;
     line-height: 1.4;
 }
 
-.coursebox .info .teachers {
-    margin-left: 0.6em;
+.coursebox .content .teachers {
     font-size: 0.95em;
-}
-
-.categorybox {
-    border: none;
 }
 
 h2.headingblock {
@@ -300,7 +298,7 @@ h2.headingblock {
     font-size: 1.5em;
 }
 
-#page-course-category .categorypicker {
+#page-course-index-category .categorypicker {
     text-align: center;
     margin: 10px 0 20px;
 }

@@ -98,7 +98,8 @@ li.section.hidden span.commands a.editing_show {cursor:default;}
 .topics-format {margin-top: 8px;min-width: 763px;}
 
 #page-course-pending .singlebutton,
-#page-course-category .singlebutton,
+#page-course-index .singlebutton,
+#page-course-index-category .singlebutton,
 #page-course-editsection .singlebutton {text-align:center;}
 
 #coursesearch {margin-top: 1em;text-align:center;}
@@ -113,26 +114,34 @@ li.section.hidden span.commands a.editing_show {cursor:default;}
 .coursebox {width: 100%;margin-bottom:15px;}
 .coursebox.collapsed {margin-bottom:0}
 .coursebox.collapsed > .content {display:none;}
-.coursebox .name a {display:block;background-image:url([[pix:moodle|i/course]]);background-repeat: no-repeat;padding-left:21px;background-position: center left;}
+.coursebox > .info > .name a {display:block;background-image:url([[pix:moodle|i/course]]);background-repeat: no-repeat;padding-left:21px;background-position: left top;}
 .coursebox.remotehost .name a {background-image:url([[pix:moodle|i/mnethost]]);}
-.coursebox .name,
-.coursebox .teachers,
+.coursebox > .info > .name,
+.coursebox .content .teachers,
 .coursebox .content .courseimage,
 .coursebox .content .coursefile {float:left;width:40%;clear:left;}
-.coursebox .teachers li {list-style-type:none;padding:0;margin:0;}
+.coursebox .content .teachers li {list-style-type:none;padding:0;margin:0;}
 .coursebox .enrolmenticons {padding:3px 0;float:right;}
 .coursebox .moreinfo {padding:3px 0;float:right;}
 .coursebox .enrolmenticons img,
 .coursebox .moreinfo img {margin:0 .2em;}
-.coursebox .content {clear:both;}
-.coursebox .summary,
-.coursebox .coursecat {float:right;width: 55%;}
-.coursebox .coursecat {text-align:right;clear:right;}
+.coursebox .content {clear:both;overflow: hidden;}
+.coursebox .content .summary,
+.coursebox .content .coursecat {float:right;width: 55%;}
+.coursebox .content .coursecat {text-align:right;clear:right;}
 .coursebox.remotecoursebox .remotecourseinfo {float:left;width: 40%;}
 .coursebox .content .courseimage img {max-width:100px;max-height:100px;}
 
-.dir-rtl .coursebox .name a {padding-left:0;padding-right:21px;background-position: center right;}
-.dir-rtl .coursebox .name,
+.coursebox >.info >.name {margin: 5px;padding:0;}
+.coursebox .content .teachers,
+.coursebox .content .coursecat,
+.coursebox .content .summary,
+.coursebox .content .courseimage,
+.coursebox .content .coursefile,
+.coursebox.remotecoursebox .remotecourseinfo {margin:3px 5px;padding:0;}
+
+.dir-rtl .coursebox > .info > .name a {padding-left:0;padding-right:21px;background-position: top right;}
+.dir-rtl .coursebox > .info > .name,
 .dir-rtl .coursebox .teachers,
 .dir-rtl .coursebox .content .courseimage,
 .dir-rtl .coursebox .content .coursefile {float:right;clear:right;}
@@ -155,11 +164,22 @@ li.section.hidden span.commands a.editing_show {cursor:default;}
 .dir-rtl .course_category_tree .category.with_children.collapsed>.info .name {background-image:url([[pix:moodle|t/collapsed_rtl]]);}
 .course_category_tree .category.collapsed>.content {display:none;}
 
-.course_category_tree .category > .info .name {padding-left:13px;}
-.course_category_tree .category > .content {padding-left:16px;}
+.course_category_tree .category > .info .name {padding:2px 18px;margin:3px;}
+.course_category_tree .category > .content {padding-left:16px;overflow: hidden;}
 
-.dir-rtl .course_category_tree .category > .info .name {padding-left:0;padding-right:13px;}
 .dir-rtl .course_category_tree .category > .content {padding-left:0;padding-right:16px;}
+
+.course_category_tree .subcategories > .paging,
+.courses > .paging {margin:0;padding:5px;text-align:center;}
+
+.courses > .paging.paging-morelink,
+.course_category_tree .subcategories > .paging.paging-morelink {text-align:left;}
+
+.dir-rtl .courses > .paging.paging-morelink,
+.dir-rtl .course_category_tree .subcategories > .paging.paging-morelink {text-align:right;}
+
+#page-course-info .generalbox.info,
+#page-enrol-index .generalbox.info {border:none;}
 
 .path-course .clearfloat {float:none; clear:both;height:0px;}
 

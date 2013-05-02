@@ -269,21 +269,24 @@ h2.headingblock {
     border-color: #eee;
 }
 
-.coursebox .info {
+.coursebox > .info > .name {font-size: 1.1em;}
+.course_category_tree .category > .info .name { font-size: 1.2em;}
+
+.coursebox .content .teachers,
+.coursebox .content .courseimage,
+.coursebox .content .coursefile,
+.coursebox.remotecoursebox .remotecourseinfo {
     width: 35%;
 }
 
-.coursebox .info .name {
-    margin-bottom: 0;
-}
-
-.coursebox .info .teachers {
+.coursebox .content .teachers {
     font-size: 0.9em;
     color: #888;
 }
 
-.coursebox .summary {
-    width: 63%;
+.coursebox .content .summary,
+.coursebox .content .coursecat {
+    width: 61%;
 }
 
 .course-content .section.main {
