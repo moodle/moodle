@@ -556,6 +556,37 @@ EOD;
     }
 
     /**
+     * Create an instance of a repository.
+     *
+     * @param string type of repository to create an instance for.
+     * @param array|stdClass $record data to use to up set the instance.
+     * @param array $options options
+     * @return stdClass repository instance record
+     * @since 2.6
+     */
+    public function create_repository($type, $record=null, array $options = null) {
+        global $CFG;
+        $generator = $this->get_plugin_generator('repository_'.$type);
+        return $generator->create_instance($record, $options);
+    }
+
+    /**
+     * Create an instance of a repository.
+     *
+     * @param string type of repository to create an instance for.
+     * @param array|stdClass $record data to use to up set the instance.
+     * @param array $options options
+     * @return repository_type object
+     * @since 2.6
+     */
+    public function create_repository_type($type, $record=null, array $options = null) {
+        global $CFG;
+        $generator = $this->get_plugin_generator('repository_'.$type);
+        return $generator->create_type($record, $options);
+    }
+
+
+    /**
      * Create a test scale
      * @param array|stdClass $record
      * @param array $options
