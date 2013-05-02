@@ -94,6 +94,7 @@ class portfolio_plugin_boxnet extends portfolio_plugin_push_base {
         $folders = $this->get_folder_list();
         $mform->addElement('checkbox', 'plugin_sharefile', get_string('sharefile', 'portfolio_boxnet'));
         $mform->addElement('text', 'plugin_newfolder', get_string('newfolder', 'portfolio_boxnet'));
+        $mform->setType('plugin_newfolder', PARAM_RAW);
         $mform->addElement('checkbox', 'plugin_sharefolder', get_string('sharefolder', 'portfolio_boxnet'));
         $folders[0] = '----';
         ksort($folders);

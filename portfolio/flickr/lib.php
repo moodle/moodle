@@ -160,8 +160,11 @@ class portfolio_plugin_flickr extends portfolio_plugin_push_base {
 
     public function export_config_form(&$mform) {
         $mform->addElement('text', 'plugin_title', get_string('title', 'portfolio_flickr'));
+        $mform->setType('plugin_title', PARAM_TEXT);
         $mform->addElement('textarea', 'plugin_description', get_string('description'));
+        $mform->setType('plugin_description', PARAM_CLEANHTML);
         $mform->addElement('text', 'plugin_tags', get_string('tags'));
+        $mform->setType('plugin_tags', PARAM_TAGLIST);
         $mform->addElement('checkbox', 'plugin_is_public', get_string('ispublic', 'portfolio_flickr'));
         $mform->addElement('checkbox', 'plugin_is_family', get_string('isfamily', 'portfolio_flickr'));
         $mform->addElement('checkbox', 'plugin_is_friend', get_string('isfriend', 'portfolio_flickr'));
