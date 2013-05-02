@@ -30,24 +30,15 @@ class user_filter_date extends user_filter_type {
     function setupForm(&$mform) {
         $objs = array();
 
-        $objs[] =& $mform->createElement('checkbox', $this->_name.'_sck', null, get_string('isafter', 'filters'));
-        $objs[] =& $mform->createElement('date_selector', $this->_name.'_sdt', null);
+        $objs[] =& $mform->createElement('date_selector', $this->_name.'_sdt', null, array('optional' => true));
         $objs[] =& $mform->createElement('static', $this->_name.'_break', null, '<br/>');
-        $objs[] =& $mform->createElement('checkbox', $this->_name.'_eck', null, get_string('isbefore', 'filters'));
-        $objs[] =& $mform->createElement('date_selector', $this->_name.'_edt', null);
+        $objs[] =& $mform->createElement('date_selector', $this->_name.'_edt', null, array('optional' => true));
 
         $grp =& $mform->addElement('group', $this->_name.'_grp', $this->_label, $objs, '', false);
 
         if ($this->_advanced) {
             $mform->setAdvanced($this->_name.'_grp');
         }
-
-        $mform->disabledIf($this->_name.'_sdt[day]', $this->_name.'_sck', 'notchecked');
-        $mform->disabledIf($this->_name.'_sdt[month]', $this->_name.'_sck', 'notchecked');
-        $mform->disabledIf($this->_name.'_sdt[year]', $this->_name.'_sck', 'notchecked');
-        $mform->disabledIf($this->_name.'_edt[day]', $this->_name.'_eck', 'notchecked');
-        $mform->disabledIf($this->_name.'_edt[month]', $this->_name.'_eck', 'notchecked');
-        $mform->disabledIf($this->_name.'_edt[year]', $this->_name.'_eck', 'notchecked');
     }
 
     /**
@@ -56,26 +47,16 @@ class user_filter_date extends user_filter_type {
      * @return mixed array filter data or false when filter not set
      */
     function check_data($formdata) {
-        $sck = $this->_name.'_sck';
         $sdt = $this->_name.'_sdt';
-        $eck = $this->_name.'_eck';
         $edt = $this->_name.'_edt';
 
-        if (!array_key_exists($sck, $formdata) and !array_key_exists($eck, $formdata)) {
+        if (!$formdata->$sdt and !$formdata->$edt) {
             return false;
         }
 
         $data = array();
-        if (array_key_exists($sck, $formdata)) {
-            $data['after'] = $formdata->$sdt;
-        } else {
-            $data['after'] = 0;
-        }
-        if (array_key_exists($eck, $formdata)) {
-            $data['before'] = $formdata->$edt;
-        } else {
-            $data['before'] = 0;
-        }
+        $data['after'] = $formdata->$sdt;
+        $data['before'] = $formdata->$edt;
 
         return $data;
     }

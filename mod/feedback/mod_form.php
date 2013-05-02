@@ -51,33 +51,11 @@ class mod_feedback_mod_form extends moodleform_mod {
         //-------------------------------------------------------------------------------
         $mform->addElement('header', 'timinghdr', get_string('availability'));
 
-        $enableopengroup = array();
-        $enableopengroup[] =& $mform->createElement('checkbox',
-                                    'openenable',
-                                    get_string('feedbackopen', 'feedback'));
+        $mform->addElement('date_time_selector', 'timeopen', get_string('feedbackopen', 'feedback'),
+            array('optional' => true));
 
-        $enableopengroup[] =& $mform->createElement('date_time_selector', 'timeopen', '');
-        $mform->addGroup($enableopengroup,
-                         'enableopengroup',
-                         get_string('feedbackopen', 'feedback'),
-                         ' ',
-                         false);
-
-        $mform->disabledIf('enableopengroup', 'openenable', 'notchecked');
-
-        $enableclosegroup = array();
-        $enableclosegroup[] =& $mform->createElement('checkbox',
-                                        'closeenable',
-                                        get_string('feedbackclose', 'feedback'));
-
-        $enableclosegroup[] =& $mform->createElement('date_time_selector', 'timeclose', '');
-        $mform->addGroup($enableclosegroup,
-                         'enableclosegroup',
-                         get_string('feedbackclose', 'feedback'),
-                         ' ',
-                         false);
-
-        $mform->disabledIf('enableclosegroup', 'closeenable', 'notchecked');
+        $mform->addElement('date_time_selector', 'timeclose', get_string('feedbackclose', 'feedback'),
+            array('optional' => true));
 
         //-------------------------------------------------------------------------------
         $mform->addElement('header', 'feedbackhdr', get_string('questionandsubmission', 'feedback'));
@@ -155,16 +133,6 @@ class mod_feedback_mod_form extends moodleform_mod {
     }
 
     public function data_preprocessing(&$default_values) {
-        if (empty($default_values['timeopen'])) {
-            $default_values['openenable'] = 0;
-        } else {
-            $default_values['openenable'] = 1;
-        }
-        if (empty($default_values['timeclose'])) {
-            $default_values['closeenable'] = 0;
-        } else {
-            $default_values['closeenable'] = 1;
-        }
 
         $editoroptions = feedback_get_editor_options();
 
