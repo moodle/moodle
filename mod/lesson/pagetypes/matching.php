@@ -161,7 +161,15 @@ class lesson_page_type_matching extends lesson_page {
         }
 
         $response = $data->response;
-        if (!is_array($response)) {
+        $empty = 0;
+        foreach ($response as $resp) {
+            if ($resp != '') {
+                break;
+            } else {
+                $empty ++;
+            }
+        }
+        if ($empty == count($response)) {
             $result->noanswer = true;
             return $result;
         }
@@ -177,13 +185,13 @@ class lesson_page_type_matching extends lesson_page {
             }
             unset($answers[$key]);
         }
-        // get he users exact responses for record keeping
+        // get the user's exact responses for record keeping
         $hits = 0;
         $userresponse = array();
         foreach ($response as $id => $value) {
             $userresponse[] = $value;
-            // Make sure the user's answer is exist in question's answer
-            if (array_key_exists($id, $answers)) {
+            // Make sure the user's answer exists in question's answer
+            if (array_key_exists($id, $answers) && $value) {
                 $answer = $answers[$id];
                 $result->studentanswer .= '<br />'.format_text($answer->answer, $answer->answerformat, $formattextdefoptions).' = '.$answers[$value]->response;
                 if ($id == $value) {
