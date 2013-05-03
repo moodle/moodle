@@ -209,6 +209,72 @@ function xmldb_assign_upgrade($oldversion) {
     // Put any upgrade step following this.
 
     if ($oldversion < 2013030600) {
+        upgrade_set_timeout(60*20);
+
+        // Some assignments (upgraded from 2.2 assignment) have duplicate entries in the assign_submission
+        // and assign_grades tables for a single user. This needs to be cleaned up before we can add the unique indexes
+        // below.
+
+        // Only do this cleanup if the attempt number field has not been added to the table yet.
+        $table = new xmldb_table('assign_submission');
+        $field = new xmldb_field('attemptnumber', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'groupid');
+        if (!$dbman->field_exists($table, $field)) {
+            // OK safe to cleanup duplicates here.
+
+            $sql = 'SELECT assignment, userid, groupid from {assign_submission} GROUP BY assignment, userid, groupid HAVING (count(id) > 1)';
+            $badrecords = $DB->get_recordset_sql($sql);
+
+            foreach ($badrecords as $badrecord) {
+                $params = array('userid'=>$badrecord->userid,
+                                'groupid'=>$badrecord->groupid,
+                                'assignment'=>$badrecord->assignment);
+                $duplicates = $DB->get_records('assign_submission', $params, 'timemodified DESC', 'id, timemodified');
+                if ($duplicates) {
+                    // Take the first (last updated) entry out of the list so it doesn't get deleted.
+                    $valid = array_shift($duplicates);
+                    $deleteids = array();
+                    foreach ($duplicates as $duplicate) {
+                        $deleteids[] = $duplicate->id;
+                    }
+
+                    list($sqlids, $sqlidparams) = $DB->get_in_or_equal($deleteids);
+                    $DB->delete_records_select('assign_submission', 'id ' . $sqlids, $sqlidparams);
+                }
+            }
+
+            $badrecords->close();
+        }
+
+        // Same cleanup required for assign_grades
+        // Only do this cleanup if the attempt number field has not been added to the table yet.
+        $table = new xmldb_table('assign_grades');
+        $field = new xmldb_field('attemptnumber', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'grade');
+        if (!$dbman->field_exists($table, $field)) {
+            // OK safe to cleanup duplicates here.
+
+            $sql = 'SELECT assignment, userid from {assign_grades} GROUP BY assignment, userid HAVING (count(id) > 1)';
+            $badrecords = $DB->get_recordset_sql($sql);
+
+            foreach ($badrecords as $badrecord) {
+                $params = array('userid'=>$badrecord->userid,
+                                'assignment'=>$badrecord->assignment);
+                $duplicates = $DB->get_records('assign_grades', $params, 'timemodified DESC', 'id, timemodified');
+                if ($duplicates) {
+                    // Take the first (last updated) entry out of the list so it doesn't get deleted.
+                    $valid = array_shift($duplicates);
+                    $deleteids = array();
+                    foreach ($duplicates as $duplicate) {
+                        $deleteids[] = $duplicate->id;
+                    }
+
+                    list($sqlids, $sqlidparams) = $DB->get_in_or_equal($deleteids);
+                    $DB->delete_records_select('assign_grades', 'id ' . $sqlids, $sqlidparams);
+                }
+            }
+
+            $badrecords->close();
+        }
+
         // Define table assign_user_flags to be created.
         $table = new xmldb_table('assign_user_flags');
 
@@ -231,14 +297,14 @@ function xmldb_assign_upgrade($oldversion) {
         // Conditionally launch create table for assign_user_flags.
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
-        }
 
-        // Copy the flags from the old table to the new one.
-        $sql = 'INSERT INTO {assign_user_flags}
-                    (assignment, userid, locked, mailed, extensionduedate)
-                SELECT assignment, userid, locked, mailed, extensionduedate
-                FROM {assign_grades}';
-        $DB->execute($sql);
+            // Copy the flags from the old table to the new one.
+            $sql = 'INSERT INTO {assign_user_flags}
+                        (assignment, userid, locked, mailed, extensionduedate)
+                    SELECT assignment, userid, locked, mailed, extensionduedate
+                    FROM {assign_grades}';
+            $DB->execute($sql);
+        }
 
         // And delete the old columns.
         // Define index mailed (not unique) to be dropped form assign_grades.
