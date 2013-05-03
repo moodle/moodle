@@ -1128,7 +1128,7 @@ function session_set_user($user) {
     }
     sesskey(); // init session key
 
-    if (PHPUNIT_TEST || defined('BEHAT_RUNNING')) {
+    if (PHPUNIT_TEST || defined('BEHAT_TEST')) {
         // phpunit tests use reversed reference
         global $USER;
         $USER = $_SESSION['USER'];
