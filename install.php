@@ -151,7 +151,7 @@ if (!empty($_POST)) {
     $config->dataroot = empty($distro->dataroot) ? null  : $distro->dataroot; // initialised later after including libs or by distro
 }
 
-// Fake some settings so that we can use selected functions from moodlelib.php and weblib.php
+// Fake some settings so that we can use selected functions from moodlelib.php, weblib.php and filelib.php.
 $CFG = new stdClass();
 $CFG->lang                 = $config->lang;
 $CFG->dirroot              = dirname(__FILE__);
@@ -168,6 +168,7 @@ $CFG->langlocalroot        = $CFG->dataroot.'/lang';
 $CFG->directorypermissions = isset($distro->directorypermissions) ? $distro->directorypermissions : 00777; // let distros set dir permissions
 $CFG->running_installer    = true;
 $CFG->early_install_lang   = true;
+$CFG->ostype               = (stristr(PHP_OS, 'win') && !stristr(PHP_OS, 'darwin')) ? 'WINDOWS' : 'UNIX';
 
 // Require all needed libs
 require_once($CFG->libdir.'/setuplib.php');
