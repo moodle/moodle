@@ -164,14 +164,9 @@ class repositorylib_testcase extends advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
 
-        $plugintype = new repository_type('flickr_public');
-        $plugintype->create(true);
-        $params = array(
-            'name' => 'Flickr Public'
-        );
-
         // Instance on a site level.
-        $repoid = repository::static_function('flickr_public', 'create', 'flickr_public', 0, $syscontext, $params);
+        $this->getDataGenerator()->create_repository_type('flickr_public');
+        $repoid = $this->getDataGenerator()->create_repository('flickr_public')->id;
         $systemrepo = repository::get_repository_by_id($repoid, $syscontext);
 
         role_assign($roleid, $user->id, $syscontext->id);
@@ -196,7 +191,8 @@ class repositorylib_testcase extends advanced_testcase {
         // Instance on a course level.
         $this->getDataGenerator()->enrol_user($user->id, $course->id, $roleid);
 
-        $repoid = repository::static_function('flickr_public', 'create', 'flickr_public', 0, $coursecontext, $params);
+        $params = array('contextid' => $coursecontext->id);
+        $repoid = $this->getDataGenerator()->create_repository('flickr_public', $params)->id;
         $courserepo = repository::get_repository_by_id($repoid, $coursecontext);
 
         assign_capability('moodle/course:update', CAP_ALLOW, $roleid, $coursecontext, true);
@@ -224,13 +220,15 @@ class repositorylib_testcase extends advanced_testcase {
         accesslib_clear_all_caches_for_unit_testing();
 
         // Editing someone else's instance.
-        $repoid = repository::static_function('flickr_public', 'create', 'flickr_public', 0, $otherusercontext, $params);
+        $record = array('contextid' => $otherusercontext->id);
+        $repoid = $this->getDataGenerator()->create_repository('flickr_public', $record)->id;
         $userrepo = repository::get_repository_by_id($repoid, $syscontext);
         $this->assertFalse($userrepo->can_be_edited_by_user());
 
         // Editing my own instance.
         $usercontext = context_user::instance($user->id);
-        $repoid = repository::static_function('flickr_public', 'create', 'flickr_public', 0, $usercontext, $params);
+        $record = array('contextid' => $usercontext->id);
+        $repoid = $this->getDataGenerator()->create_repository('flickr_public', $record)->id;
         $userrepo = repository::get_repository_by_id($repoid, $syscontext);
         $this->assertTrue($userrepo->can_be_edited_by_user());
 
@@ -268,7 +266,6 @@ class repositorylib_testcase extends advanced_testcase {
 
         // New role prohibiting Flickr Public access.
         $roleid = create_role('No Flickr Public', 'noflickrpublic', 'No Flickr Public', '');
-        set_role_contextlevels($roleid, array(CONTEXT_SYSTEM, CONTEXT_COURSE));
         assign_capability('repository/flickr_public:view', CAP_PROHIBIT, $roleid, $syscontext, true);
 
         // Disallow system access to Flickr Public to user 2.
@@ -276,16 +273,11 @@ class repositorylib_testcase extends advanced_testcase {
         accesslib_clear_all_caches_for_unit_testing();
 
         // Enable repositories.
-        $plugintype = new repository_type('flickr_public');
-        $plugintype->create(true);
-        $plugintype = new repository_type('dropbox');
-        $plugintype->create(true);
-        $params = array(
-            'name' => 'Flickr Public'
-        );
+        $this->getDataGenerator()->create_repository_type('flickr_public');
+        $this->getDataGenerator()->create_repository_type('dropbox');
 
         // Instance on a site level.
-        $repoid = repository::static_function('flickr_public', 'create', 'flickr_public', 0, $syscontext, $params);
+        $repoid = $this->getDataGenerator()->create_repository('flickr_public')->id;
         $systemrepo = repository::get_repository_by_id($repoid, $syscontext);
 
         // Check that everyone with right capability can view a site-wide repository.
@@ -303,7 +295,9 @@ class repositorylib_testcase extends advanced_testcase {
         $this->assertTrue($caughtexception);
 
         // Instance on a course level.
-        $courserepoid = repository::static_function('flickr_public', 'create', 'flickr_public', 0, $course1context, $params);
+        $record = new stdClass();
+        $record->contextid = $course1context->id;
+        $courserepoid = $this->getDataGenerator()->create_repository('flickr_public', $record)->id;
 
         // Within the course, I can view the repository.
         $courserepo = repository::get_repository_by_id($courserepoid, $course1context);
@@ -389,8 +383,12 @@ class repositorylib_testcase extends advanced_testcase {
         $this->assertTrue($caughtexception);
 
         // Instance on a user level.
-        $user1repoid = repository::static_function('flickr_public', 'create', 'flickr_public', 0, $user1context, $params);
-        $user2repoid = repository::static_function('flickr_public', 'create', 'flickr_public', 0, $user2context, $params);
+        // Instance on a course level.
+        $record = new stdClass();
+        $record->contextid = $user1context->id;
+        $user1repoid = $this->getDataGenerator()->create_repository('flickr_public', $record)->id;
+        $record->contextid = $user2context->id;
+        $user2repoid = $this->getDataGenerator()->create_repository('flickr_public', $record)->id;
 
         // Check that a user can see its own repository.
         $userrepo = repository::get_repository_by_id($user1repoid, $syscontext);
@@ -430,10 +428,8 @@ class repositorylib_testcase extends advanced_testcase {
         $params->name = 'Dropbox';
         $params->dropbox_key = 'key';
         $params->dropbox_secret = 'secret';
-        $privaterepoid = repository::static_function('dropbox', 'create', 'dropbox', 0, $syscontext, $params);
-        $params = new stdClass();
-        $params->name = 'Upload';
-        $notprivaterepoid = repository::static_function('upload', 'create', 'upload', 0, $syscontext, $params);
+        $privaterepoid = $this->getDataGenerator()->create_repository('dropbox')->id;
+        $notprivaterepoid = $this->getDataGenerator()->create_repository('upload')->id;
 
         $privaterepo = repository::get_repository_by_id($privaterepoid, $syscontext);
         $notprivaterepo = repository::get_repository_by_id($notprivaterepoid, $syscontext);
