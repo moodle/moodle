@@ -240,6 +240,7 @@ $string['filternotinstalled'] = 'Filter {$a} is not currently installed';
 $string['forumblockingtoomanyposts'] = 'You have exceeded the posting threshold set for this forum';
 $string['generalexceptionmessage'] = 'Exception - {$a}';
 $string['gradepubdisable'] = 'Grade publishing disabled';
+$string['gradecantregrade'] = 'An error occurred during grade calculation: {$a}';
 $string['groupalready'] = 'User already belongs to group {$a}';
 $string['groupexistforcourse'] = 'Group "{$a}" already exists for this course';
 $string['groupexistforcoursewithidnumber'] = '{$a->problemgroup}: Group "{$a->name}" with an idnumber of "{$a->idnumber}" already exists for this course';
