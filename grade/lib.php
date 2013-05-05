@@ -134,7 +134,10 @@ class graded_users_iterator {
 
         $this->close();
 
-        grade_regrade_final_grades($this->course->id);
+        $regraderesult = grade_regrade_final_grades($this->course->id);
+        if (is_array($regraderesult)) {
+            throw new moodle_exception('gradecantregrade', 'error', '', implode(',', $regraderesult));
+        }
         $course_item = grade_item::fetch_course_item($this->course->id);
         if ($course_item->needsupdate) {
             // can not calculate all final grades - sorry
