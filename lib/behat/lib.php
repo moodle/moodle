@@ -70,3 +70,60 @@ function behat_error($errorcode, $text = '') {
     testing_error($errorcode, $text);
 }
 
+/**
+ * PHP errors handler to use when running behat tests.
+ *
+ * Adds specific CSS classes to identify
+ * the messages.
+ *
+ * @param int $errno
+ * @param string $errstr
+ * @param string $errfile
+ * @param int $errline
+ * @param array $errcontext
+ * @return bool
+ */
+function behat_error_handler($errno, $errstr, $errfile, $errline, $errcontext) {
+    global $OUTPUT;
+
+    // Only after something has been writen.
+    if (!$OUTPUT->has_started()) {
+        return false;
+    }
+
+    // If is preceded by an @ we don't show it.
+    if (!error_reporting()) {
+        return true;
+    }
+
+    // Using the default one in case there is a fatal catchable error.
+    default_error_handler($errno, $errstr, $errfile, $errline, $errcontext);
+
+    switch ($errno) {
+        case E_USER_ERROR:
+            $errnostr = 'Fatal error';
+            break;
+        case E_WARNING:
+        case E_USER_WARNING:
+            $errnostr = 'Warning';
+            break;
+        case E_NOTICE:
+        case E_USER_NOTICE:
+        case E_STRICT:
+            $errnostr = 'Notice';
+            break;
+        case E_RECOVERABLE_ERROR:
+            $errnostr = 'Catchable';
+            break;
+        default:
+            $errnostr = 'Unknown error type';
+    }
+
+    // Wrapping the output.
+    echo '<div class="phpdebugmessage">' . PHP_EOL;
+    echo "$errnostr: $errstr in $errfile on line $errline" . PHP_EOL;
+    echo '</div>';
+
+    // Also use the internal error handler so we keep the usual behaviour.
+    return false;
+}
