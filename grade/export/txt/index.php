@@ -34,6 +34,7 @@ require_capability('moodle/grade:export', $context);
 require_capability('gradeexport/txt:view', $context);
 
 print_grade_page_head($COURSE->id, 'export', 'txt', get_string('exportto', 'grades') . ' ' . get_string('pluginname', 'gradeexport_txt'));
+export_verify_grades($COURSE->id);
 
 if (!empty($CFG->gradepublishing)) {
     $CFG->gradepublishing = has_capability('gradeexport/txt:publish', $context);
