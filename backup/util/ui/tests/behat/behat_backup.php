@@ -112,9 +112,9 @@ class behat_backup extends behat_base {
         $exception = new ExpectationException('"' . $fromcourse . '" course not found in the list of courses to import from', $this->getSession());
 
         $fromcourse = str_replace("'", "\'", $fromcourse);
-        $xpath = "//div[contains(concat(' ', @class, ' '), ' ics-results ')]
-/descendant::tr[contains(., '" . $fromcourse . "')]
-/descendant::input[@type='radio']";
+        $xpath = "//div[contains(concat(' ', @class, ' '), ' ics-results ')]" .
+            "/descendant::tr[contains(., '" . $fromcourse . "')]" .
+            "/descendant::input[@type='radio']";
         $radionode = $this->find('xpath', $xpath, $exception);
         $radionode->check();
         $radionode->click();
@@ -152,10 +152,10 @@ class behat_backup extends behat_base {
 
         // Selecting the specified course (we can not call behat_forms::select_radio here as is in another behat subcontext).
         $existingcourse = str_replace("'", "\'", $existingcourse);
-        $radionode = $this->find('xpath', "//div[contains(@class, 'bcs-existing-course')]
-/descendant::div[@class='restore-course-search']
-/descendant::tr[contains(., '" . $existingcourse . "')]
-/descendant::input[@type='radio']");
+        $radionode = $this->find('xpath', "//div[contains(@class, 'bcs-existing-course')]" .
+            "/descendant::div[@class='restore-course-search']" .
+            "/descendant::tr[contains(., '" . $existingcourse . "')]" .
+            "/descendant::input[@type='radio']");
         $radionode->check();
         $radionode->click();
 
@@ -181,9 +181,9 @@ class behat_backup extends behat_base {
         $this->select_backup($backupfilename);
 
         // The first category in the list.
-        $radionode = $this->find('xpath', "//div[contains(@class, 'bcs-new-course')]
-/descendant::div[@class='restore-course-search']
-/descendant::input[@type='radio']");
+        $radionode = $this->find('xpath', "//div[contains(@class, 'bcs-new-course')]" .
+            "/descendant::div[@class='restore-course-search']" .
+            "/descendant::input[@type='radio']");
         $radionode->check();
         $radionode->click();
 
@@ -209,13 +209,14 @@ class behat_backup extends behat_base {
         $this->select_backup($backupfilename);
 
         // Merge without deleting radio option.
-        $radionode = $this->find('xpath', "//div[contains(@class, 'bcs-current-course')]
-/descendant::input[@type='radio'][@name='target'][@value='1']");
+        $radionode = $this->find('xpath', "//div[contains(@class, 'bcs-current-course')]" .
+            "/descendant::input[@type='radio'][@name='target'][@value='1']");
         $radionode->check();
         $radionode->click();
 
         // Pressing the continue button of the restore merging section.
-        $continuenode = $this->find('xpath', "//div[contains(@class, 'bcs-current-course')]/descendant::input[@type='submit'][@value='Continue']");
+        $continuenode = $this->find('xpath', "//div[contains(@class, 'bcs-current-course')]" .
+            "/descendant::input[@type='submit'][@value='Continue']");
         $continuenode->click();
         $this->wait();
 
@@ -236,13 +237,14 @@ class behat_backup extends behat_base {
         $this->select_backup($backupfilename);
 
         // Delete contents radio option.
-        $radionode = $this->find('xpath', "//div[contains(@class, 'bcs-current-course')]
-/descendant::input[@type='radio'][@name='target'][@value='0']");
+        $radionode = $this->find('xpath', "//div[contains(@class, 'bcs-current-course')]" .
+            "/descendant::input[@type='radio'][@name='target'][@value='0']");
         $radionode->check();
         $radionode->click();
 
         // Pressing the continue button of the restore merging section.
-        $continuenode = $this->find('xpath', "//div[contains(@class, 'bcs-current-course')]/descendant::input[@type='submit'][@value='Continue']");
+        $continuenode = $this->find('xpath', "//div[contains(@class, 'bcs-current-course')]" .
+            "/descendant::input[@type='submit'][@value='Continue']");
         $continuenode->click();
         $this->wait();
 

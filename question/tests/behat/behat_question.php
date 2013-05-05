@@ -51,8 +51,8 @@ class behat_question extends behat_base {
      */
     public function i_add_a_question_filling_the_form_with($questiontypename, TableNode $questiondata) {
 
-        $questiontypexpath = "//span[@class='qtypename'][.='" . $questiontypename . "']
-/ancestor::div[@class='qtypeoption']/descendant::input";
+        $questiontypexpath = "//span[@class='qtypename'][.='" . $questiontypename . "']" .
+            "/ancestor::div[@class='qtypeoption']/descendant::input";
 
         return array(
             new Given('I follow "' . get_string('questionbank', 'question') . '"'),
@@ -81,8 +81,8 @@ class behat_question extends behat_base {
         $this->find('xpath', $questionxpath, $exception);
 
         $exception = new ExpectationException('Question "' . $questiondescription . '" state is not "' . $state . '"', $this->getSession());
-        $xpath = $questionxpath . "/ancestor::div[contains(concat(' ', @class, ' '), ' que ')]
-/descendant::div[@class='state'][contains(., '" . $state . "')]";
+        $xpath = $questionxpath . "/ancestor::div[contains(concat(' ', @class, ' '), ' que ')]" .
+            "/descendant::div[@class='state'][contains(., '" . $state . "')]";
         $this->find('xpath', $xpath, $exception);
     }
 

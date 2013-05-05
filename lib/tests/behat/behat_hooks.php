@@ -150,7 +150,7 @@ class behat_hooks extends behat_base {
 
         // Just trying if server responds.
         try {
-            $this->getSession()->executeScript('// empty comment');
+            $this->getSession()->wait(0, false);
         } catch (Exception $e) {
             $moreinfo = 'More info in ' . behat_command::DOCS_URL . '#Running_tests';
             $msg = 'Selenium server is not running, you need to start it to run tests that involves Javascript. ' . $moreinfo;
@@ -173,9 +173,22 @@ class behat_hooks extends behat_base {
             return;
         }
 
-        // Wait until the page is ready.
-        try {
-            $this->getSession()->wait(self::TIMEOUT, '(document.readyState === "complete")');
+       // Wait until the page is ready.
+       // We are already checking that we use a JS browser, this could
+       // change in case we use another JS driver.
+       try {
+
+            // Safari and Internet Explorer requires time between steps,
+            // otherwise Selenium tries to click in the previous page's DOM.
+            if ($this->getSession()->getDriver()->getBrowserName() == 'safari' ||
+                    $this->getSession()->getDriver()->getBrowserName() == 'internet explorer') {
+                $this->getSession()->wait(self::TIMEOUT * 1000, false);
+
+            } else {
+                // With other browsers we just wait for the DOM ready.
+                $this->getSession()->wait(self::TIMEOUT * 1000, '(document.readyState === "complete")');
+            }
+
         } catch (NoSuchWindow $e) {
             // If we were interacting with a popup window it will not exists after closing it.
         }

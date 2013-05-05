@@ -24,7 +24,7 @@ Feature: A teacher can choose whether to publish choice activity results anonymo
 
   @javascript
   Scenario: Publish anonymous results
-    Given I add a "choice" to section "1" and I fill the form with:
+    Given I add a "Choice" to section "1" and I fill the form with:
       | Choice name | Choice 1 |
       | Description | Choice Description |
       | option[0] | Option 1 |
@@ -45,7 +45,7 @@ Feature: A teacher can choose whether to publish choice activity results anonymo
 
   @javascript
   Scenario: Publish full results
-    Given I add a "choice" to section "1" and I fill the form with:
+    Given I add a "Choice" to section "1" and I fill the form with:
       | Choice name | Choice 1 |
       | Description | Choice Description |
       | option[0] | Option 1 |

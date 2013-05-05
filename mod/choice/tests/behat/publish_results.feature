@@ -22,7 +22,7 @@ Feature: A teacher can choose one of 4 options for publishing choice results
 
   @javascript
   Scenario: Do not publish results to students
-    Given I add a "choice" to section "1" and I fill the form with:
+    Given I add a "Choice" to section "1" and I fill the form with:
       | Choice name | Choice 1 |
       | Description | Choice Description |
       | Publish results | Do not publish results to students |
@@ -38,7 +38,7 @@ Feature: A teacher can choose one of 4 options for publishing choice results
 
   @javascript
   Scenario: Show results to students after they answer
-    Given I add a "choice" to section "1" and I fill the form with:
+    Given I add a "Choice" to section "1" and I fill the form with:
       | Choice name | Choice 1 |
       | Description | Choice Description |
       | option[0] | Option 1 |
@@ -58,7 +58,7 @@ Feature: A teacher can choose one of 4 options for publishing choice results
 
   @javascript
   Scenario: Show results to students only after the choice is closed
-    Given I add a "choice" to section "1" and I fill the form with:
+    Given I add a "Choice" to section "1" and I fill the form with:
       | Choice name | Choice 1 |
       | Description | Choice Description |
       | Publish results | Show results to students only after the choice is closed |
@@ -90,7 +90,7 @@ Feature: A teacher can choose one of 4 options for publishing choice results
 
   @javascript
   Scenario: Always show results to students
-    Given I add a "choice" to section "1" and I fill the form with:
+    Given I add a "Choice" to section "1" and I fill the form with:
       | Choice name | Choice 1 |
       | Description | Choice Description |
       | option[0] | Option 1 |

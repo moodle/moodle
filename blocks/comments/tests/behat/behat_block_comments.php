@@ -91,8 +91,8 @@ class behat_block_comments extends behat_base {
 
         $exception = new ElementNotFoundException($this->getSession(), '"' . $comment . '" comment ');
 
-        $commentxpath = "//div[contains(concat(' ', @class, ' '), ' block_comments ')]
-/descendant::div[@class='comment-message'][contains(., '" . $comment . "')]";
+        $commentxpath = "//div[contains(concat(' ', @class, ' '), ' block_comments ')]" .
+            "/descendant::div[@class='comment-message'][contains(., '" . $comment . "')]";
         $commentnode = $this->find('xpath', $commentxpath, $exception);
 
         // Click on delete icon.

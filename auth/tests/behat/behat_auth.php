@@ -52,8 +52,8 @@ class behat_auth extends behat_base {
             new Given('I follow "Login"'),
             new Given('I fill in "Username" with "'.$username.'"'),
             new Given('I fill in "Password" with "'.$username.'"'),
-            new When('I press "Login"'),
-            new Given('I should see "You are logged in as"'));
+            new Given('I press "Login"')
+        );
     }
 
     /**

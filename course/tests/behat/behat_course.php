@@ -126,9 +126,9 @@ class behat_course extends behat_base {
 
             // Clicks the selected activity if it exists.
             $activity = ucfirst($activity);
-            $activityxpath = "//div[@id='chooseform']/descendant::label
-/descendant::span[contains(concat(' ', @class, ' '), ' typename ')][contains(.,'" . $activity . "')]
-/parent::label/child::input";
+            $activityxpath = "//div[@id='chooseform']/descendant::label" .
+                "/descendant::span[contains(concat(' ', @class, ' '), ' typename ')][contains(.,'" . $activity . "')]" .
+                "/parent::label/child::input";
             $activitynode = $this->find('xpath', $activityxpath);
             $activitynode->doubleClick();
 
@@ -136,8 +136,8 @@ class behat_course extends behat_base {
             // Without Javascript.
 
             // Selecting the option from the select box which contains the option.
-            $selectxpath = $sectionxpath . "/descendant::div[contains(concat(' ', @class, ' '), ' section_add_menus ')]
-/descendant::select[contains(., '" . $activity . "')]";
+            $selectxpath = $sectionxpath . "/descendant::div[contains(concat(' ', @class, ' '), ' section_add_menus ')]" .
+                "/descendant::select[contains(., '" . $activity . "')]";
             $selectnode = $this->find('xpath', $selectxpath);
             $selectnode->selectOption($activity);
 
@@ -279,8 +279,8 @@ class behat_course extends behat_base {
                 foreach ($activities as $activity) {
 
                     // Dimmed.
-                    $this->find('xpath', "//div[contains(concat(' ', @class, ' '), ' activityinstance ')]
-/a[contains(concat(' ', @class, ' '), ' dimmed ')]", $dimmedexception, $activity);
+                    $this->find('xpath', "//div[contains(concat(' ', @class, ' '), ' activityinstance ')]" .
+                        "/a[contains(concat(' ', @class, ' '), ' dimmed ')]", $dimmedexception, $activity);
 
                     // To check that the visibility is not clickable we check the funcionality rather than the applied style.
                     $visibilityiconnode = $this->find('css', 'a.editing_show img', false, $activity);

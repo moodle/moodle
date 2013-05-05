@@ -132,7 +132,8 @@ class behat_forms extends behat_base {
 
             // Show all fields.
             $showmorestr = get_string('showmore', 'form');
-            $showmores = $this->find_all('xpath', "//a[contains(concat(' ', normalize-space(.), ' '), '" . $showmorestr . "')][contains(concat(' ', normalize-space(@class), ' '), ' moreless-toggler')]");
+            $showmores = $this->find_all('xpath', "//a[contains(concat(' ', normalize-space(.), ' '), '" . $showmorestr . "')]" .
+                "[contains(concat(' ', normalize-space(@class), ' '), ' moreless-toggler')]");
 
             // We are supposed to have 'show more's here, otherwise exception.
 
@@ -177,7 +178,16 @@ class behat_forms extends behat_base {
 
         // Adding a click as Selenium requires it to fire some JS events.
         if ($this->running_javascript()) {
-            $selectnode->click();
+
+            if (!$selectnode->hasAttribute('multiple')) {
+                // Single select needs an extra click in the option.
+                $xpath = ".//option[(./@value = '" . $option . "' or contains(normalize-space(string(.)), '" . $option . "'))]";
+                $optionnode = $this->find('xpath', $xpath, false, $selectnode);
+                $optionnode->click();
+            } else {
+                // Multiple ones needs the click in the select.
+                $selectnode->click();
+            }
         }
     }
 

@@ -112,7 +112,7 @@ class behat_form_field {
         global $CFG;
 
         // Textareas are considered text based elements.
-        $tagname = $this->field->getTagName();
+        $tagname = strtolower($this->field->getTagName());
         if ($tagname == 'textarea') {
             return false;
         }
@@ -131,16 +131,27 @@ class behat_form_field {
                 default:
                     return false;
             }
-        }
 
-        // Select tag.
-        if ($tagname == 'select') {
+        } else if ($tagname == 'select') {
+            // Select tag.
             $classname = 'behat_form_select';
+
+        } else {
+            return false;
         }
 
         $classpath = $CFG->dirroot . '/lib/behat/form_field/' . $classname . '.php';
         require_once($classpath);
         return new $classname($this->session, $this->field);
+    }
+
+    /**
+     * Returns whether the scenario is running in a browser that can run Javascript or not.
+     *
+     * @return bool
+     */
+    protected function running_javascript() {
+        return get_class($this->session->getDriver()) !== 'Behat\Mink\Driver\GoutteDriver';
     }
 
 }
