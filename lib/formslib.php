@@ -2315,12 +2315,21 @@ function validate_' . $this->_formName . '(frm) {
      * is checked. If $condition is something else (like "eq" for equals) then it is checked to see if the value
      * of the $dependentOn element is $condition (such as equal) to $value.
      *
+     * When working with multiple selects, the dependentOn has to be the real name of the select, meaning that
+     * it will most likely end up with '[]'. Also, the value should be an array of required values, or a string
+     * containing the values separated by pipes: array('red', 'blue') or 'red|blue'.
+     *
      * @param string $elementName the name of the element which will be disabled
      * @param string $dependentOn the name of the element whose state will be checked for condition
      * @param string $condition the condition to check
      * @param mixed $value used in conjunction with condition.
      */
-    function disabledIf($elementName, $dependentOn, $condition = 'notchecked', $value='1'){
+    function disabledIf($elementName, $dependentOn, $condition = 'notchecked', $value='1') {
+        // Multiple selects allow for a multiple selection, we transform the array to string here as
+        // an array cannot be used as a key in an associative array.
+        if (is_array($value)) {
+            $value = implode('|', $value);
+        }
         if (!array_key_exists($dependentOn, $this->_dependencies)) {
             $this->_dependencies[$dependentOn] = array();
         }
