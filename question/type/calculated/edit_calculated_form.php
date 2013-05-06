@@ -78,6 +78,7 @@ class qtype_calculated_edit_form extends qtype_numerical_edit_form {
         $tolerance = $answeroptions[1];
 
         // Update Answer options group to contain only answer and grade fields.
+        $answeroptions[0]->setSize(55);
         $answeroptions = array($answeroptions[0], $answeroptions[2]);
         $repeated[0]->setElements($answeroptions);
 
