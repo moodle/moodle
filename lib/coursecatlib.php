@@ -37,6 +37,8 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
     /** @var coursecat stores pseudo category with id=0. Use coursecat::get(0) to retrieve */
     protected static $coursecat0;
 
+    const CACHE_COURSE_CONTACTS_TTL = 3600; // do not fetch course contacts more often than once per hour
+
     /** @var array list of all fields and their short name and default value for caching */
     protected static $coursecatfields = array(
         'id' => array('id', 0),
@@ -668,9 +670,29 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
             return;
         }
         $managerroles = explode(',', $CFG->coursecontact);
+        $cache = cache::make('core', 'coursecontacts');
+        $cacheddata = $cache->get_many(array_merge(array('basic'), array_keys($courses)));
+        // check if cache was set for the current course contacts and it is not yet expired
+        if (empty($cacheddata['basic']) || $cacheddata['basic']['roles'] !== $CFG->coursecontact ||
+                $cacheddata['basic']['lastreset'] < time() - self::CACHE_COURSE_CONTACTS_TTL) {
+            // reset cache
+            $cache->purge();
+            $cache->set('basic', array('roles' => $CFG->coursecontact, 'lastreset' => time()));
+            $cacheddata = $cache->get_many(array_merge(array('basic'), array_keys($courses)));
+        }
+        $courseids = array();
+        foreach (array_keys($courses) as $id) {
+            if ($cacheddata[$id] !== false) {
+                $courses[$id]->managers = $cacheddata[$id];
+            } else {
+                $courseids[] = $id;
+            }
+        }
 
-        // List of ids of courses for which we need to retrieve contacts
-        $courseids = array_keys($courses);
+        // $courseids now stores list of ids of courses for which we still need to retrieve contacts
+        if (empty($courseids)) {
+            return;
+        }
 
         // first build the array of all context ids of the courses and their categories
         $allcontexts = array();
@@ -724,6 +746,13 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
                 }
             }
         }
+
+        // set the cache
+        $values = array();
+        foreach ($courseids as $id) {
+            $values[$id] = $courses[$id]->managers;
+        }
+        $cache->set_many($values);
     }
 
     /**
