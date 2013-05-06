@@ -23,7 +23,6 @@
  */
 
 $string['add_item'] = 'Add question to activity';
-$string['add_items'] = 'Add question to activity';
 $string['add_pagebreak'] = 'Add a page break';
 $string['adjustment'] = 'Adjustment';
 $string['after_submit'] = 'After submission';
