@@ -38,14 +38,18 @@ class qtype_ordering_renderer extends qtype_renderer {
 
         $question = $qa->get_question();
 
-        $data = $DB->get_record("question_ordering", array("question" => $question->id));
-        if (empty($data->studentsee)) {
-            $data->studentsee = 100;
+        if (! $ordering = $DB->get_record('question_ordering', array('question' => $question->id))) {
+            return '';
+        }
+        if (empty($ordering->studentsee)) {
+            $ordering->studentsee = 100;
         } else {
-            $data->studentsee += 2;
+            $ordering->studentsee += 2;
         }
 
-        $answers = $DB->get_records("question_answers", array("question" => $question->id), '', '*', 0, $data->studentsee);
+        if (! $answers = $DB->get_records('question_answers', array('question' => $question->id), '', '*', 0, $ordering->studentsee)) {
+            return ''; // shouldn't happen !!
+        }
         shuffle($answers);
 
         $result = '';
@@ -155,13 +159,15 @@ class qtype_ordering_renderer extends qtype_renderer {
 
         $question = $qa->get_question();
 
-        $data = $DB->get_records("question_attempt_steps", array("questionattemptid" => $question->contextid), "id DESC");
-        $data = current($data);
+        if (! $step = $DB->get_records('question_attempt_steps', array('questionattemptid' => $question->contextid), 'id DESC')) {
+            return ''; // shouldn't happen !!
+        }
+        $step = current($step); // first one
 
-        if ($data->fraction >= 1) {
+        if ($step->fraction >= 1) {
             $feedback = get_string('correctfeedback', 'qtype_ordering');
-        } else if ($data->fraction > 0) {
-            $feedback = get_string('partiallycorrectfeedback', 'qtype_ordering') . " ".round($data->fraction, 2);
+        } else if ($step->fraction > 0) {
+            $feedback = get_string('partiallycorrectfeedback', 'qtype_ordering').' '.round($step->fraction, 2);
         } else {
             $feedback = get_string('incorrectfeedback', 'qtype_ordering');
         }
