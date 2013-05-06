@@ -74,6 +74,7 @@ class qtype_calculated_edit_form extends qtype_numerical_edit_form {
 
         // 1 is the answer. 3 is tolerance.
         $repeated[1]->setLabel(get_string('correctanswerformula', 'qtype_calculated') . '=');
+        $repeated[1]->setSize(55);
         $repeated[3]->setLabel(get_string('tolerance', 'qtype_calculated') . '=');
         $repeatedoptions['tolerance']['default'] = 0.01;
 
