@@ -122,21 +122,20 @@ h2.headingblock {
     border-color: #eee;
 }
 
-.coursebox .info {
+.coursebox .content .teachers,
+.coursebox .content .courseimage,
+.coursebox .content .coursefile,
+.coursebox.remotecoursebox .remotecourseinfo {
     width: 35%;
 }
-
-.coursebox .info .name {
-    margin-bottom: 0;
+.coursebox .content .summary,
+.coursebox .content .coursecat {
+    width: 60%;
 }
 
-.coursebox .info .teachers {
+.coursebox .content .teachers {
     font-size: 0.9em;
     color: #888;
-}
-
-.coursebox .summary {
-    width: 63%;
 }
 
 .course-content .section.main {

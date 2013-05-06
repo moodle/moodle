@@ -12,7 +12,7 @@ html a:hover,body a:hover {
 
 /** remove text decoration from some links **/
 
-div.yui3-widget-bd a, .tabtree li a, .block div.content a, .unlist a, .categorybox a, .course_category_tree a, .section a {
+div.yui3-widget-bd a, .tabtree li a, .block div.content a, .unlist a, .course_category_tree a, .section a {
     text-decoration: none;
 }
 
@@ -710,7 +710,7 @@ html>
     background: url([[pix:theme|hr_grid]]) repeat-x 0% 89%
     }
 
-.generalbox h2, #page-course-info h2.main, h3.sectionname, h2.main a, h3.main a, div.loginpanel h2, div.signuppanel h2, div.hd h3.main {
+.generalbox h2, h3.sectionname, h2.main a, h3.main a, div.loginpanel h2, div.signuppanel h2, div.hd h3.main {
     font-size: 22px;
     background: none;
 }
@@ -901,14 +901,11 @@ div.coursebox.collapsed {
     margin-bottom: 0;
 }
 
-div.coursebox > .info .name a {
+div.coursebox > .info > .name a {
     font-weight: inherit;
 }
-div.coursebox .name {
-    margin: 5px;
-}
 
-div.coursebox h3.name a {
+div.coursebox > .info > h3.name a {
     font-size: 16px;
     font-weight: 400;
 }
@@ -919,29 +916,13 @@ div.coursebox h3.name a {
     font-style: italic;
 }
 
-.coursebox ul.teachers {
-    display: block;
-    padding-left: 5px;
-}
-
-.coursebox .content .courseimage,
-.coursebox .content .coursefile {
-    padding-left: 5px;
-}
-
-.dir-rtl .coursebox ul.teachers,
-.dir-rtl .coursebox .content .courseimage,
-.dir-rtl .coursebox .content .coursefile {
-    padding-right: 5px;
-}
-
-.coursebox ul.teachers li,
-.coursebox .coursecat {
+.coursebox .content ul.teachers li,
+.coursebox .content .coursecat {
     font-size: 10px;
 }
 
-.coursebox ul.teachers li a,
-.coursebox .coursecat a,
+.coursebox .content ul.teachers li a,
+.coursebox .content .coursecat a,
 .coursebox .content .coursefile a {
     font-size: 11px;
 }
@@ -952,23 +933,12 @@ div.course_category_tree .category > .info a {
     text-decoration: none;
 }
 
-div.course_category_tree div.category,
-div.course_category_tree div.category > .info,
-div.course_category_tree div.courses {
-    margin-bottom: 8px;
-}
-
 div.course_category_tree div.coursebox.odd {
     background: #eee;
 }
 
-div.course_category_tree div.coursebox a {
+div.course_category_tree div.coursebox > .info > .name > a {
     font-size: 14px;
-}
-
-div.course_category_tree .courses > .paging,
-div.course_category_tree .subcategories > .paging {
-    margin:5px;
 }
 
 div.course_category_tree div.controls {
@@ -1134,7 +1104,7 @@ div.generalbox, div.section {
 
 /** take borders away from some generalboxes here **/
 
-div.generalbox.sitetopic, div.generalbox.authsui,#page-course-info div.generalbox, #page-admin-roles-assign div.generalbox, table.roleassigntable, table.roleassigntable td, #page-blocks-private-edit div.generalbox {
+div.generalbox.sitetopic, div.generalbox.authsui,#page-admin-roles-assign div.generalbox, table.roleassigntable, table.roleassigntable td, #page-blocks-private-edit div.generalbox {
     border: none;
 }
 
@@ -1187,13 +1157,4 @@ div.course-content div.availabilityinfo {
 
 div.singlebutton.forumaddnew {
     text-align: center;
-}
-
-#page-course-info h2.main {
-    line-height: 5px;
-    margin-bottom: 5px;
-}
-
-#page-course-info div.generalbox ul, #page-course-info div.generalbox li {
-    list-style-type: none;
 }

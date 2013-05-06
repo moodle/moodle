@@ -332,6 +332,7 @@ span.editinstructions {
 /* COURSES LISTINGS AND COURSE SUMMARY */
 #page-course-pending .singlebutton,
 #page-course-index .singlebutton,
+#page-course-index-category .singlebutton,
 #page-course-editsection .singlebutton {
     text-align: center;
 }
@@ -368,32 +369,34 @@ span.editinstructions {
     padding: 5px;
 }
 
-.coursebox .name a {
+.coursebox > .info > .name a {
     display:block;
     background-image:url([[pix:moodle|i/course]]);
     background-repeat: no-repeat;
     padding-left:21px;
-    background-position: center left;
+    background-position: top left;
 }
-.coursebox.remotehost .name a {
+.coursebox.remotehost > .info > .name a {
     background-image:url([[pix:moodle|i/mnethost]]);
 }
-.coursebox .name,
-.coursebox .teachers,
+.coursebox > .info > .name,
+.coursebox .content .teachers,
 .coursebox .content .courseimage,
 .coursebox .content .coursefile {
     float:left;
     width:40%;
     clear:left;
 }
-.coursebox h3.name {
-    margin:0;
+.coursebox > .info > h3.name {
+    margin: 5px;
+    font-size: 1.1em;
+    line-height: 1.1em;
 }
-.coursebox .name {
-    padding: 5px;
-    margin:0;
+.coursebox > .info > .name {
+    margin: 5px;
+    padding: 0;
 }
-.coursebox .teachers li {
+.coursebox .content .teachers li {
     list-style-type:none;
     padding:0;
     margin:0;
@@ -413,12 +416,12 @@ span.editinstructions {
 .coursebox .content {
     clear:both;
 }
-.coursebox .summary,
-.coursebox .coursecat {
+.coursebox .content .summary,
+.coursebox .content .coursecat {
     float:right;
     width: 55%;
 }
-.coursebox .coursecat {
+.coursebox .content .coursecat {
     text-align:right;
     clear:right;
 }
@@ -430,24 +433,22 @@ span.editinstructions {
     max-width:100px;
     max-height:100px;
 }
-.coursebox .coursecat,
-.coursebox .summary,
-.coursebox .courseimage,
-.coursebox .coursefile,
-.coursebox .teachers,
+.coursebox .content .coursecat,
+.coursebox .content .summary,
+.coursebox .content .courseimage,
+.coursebox .content .coursefile,
+.coursebox .content .teachers,
 .coursebox.remotecoursebox .remotecourseinfo {
-    padding:3px 5px;
-}
-.coursebox .teachers {
-    margin:0;
+    margin:3px 5px;
+    padding:0;
 }
 
-.dir-rtl .coursebox .name a {
+.dir-rtl .coursebox > .info > .name a {
     padding-left:0;
     padding-right:21px;
-    background-position: center right;
+    background-position: top right;
 }
-.dir-rtl .coursebox .name,
+.dir-rtl .coursebox > .info > .name,
 .dir-rtl .coursebox .teachers,
 .dir-rtl .coursebox .content .courseimage,
 .dir-rtl .coursebox .content .coursefile {
@@ -482,7 +483,7 @@ span.editinstructions {
     background-color:#f6f6f6;
 }
 .courses .coursebox:hover,
-.course_category_tree .courses > .paging:hover {
+.course_category_tree .courses > .paging.paging-morelink:hover {
     background-color:#eeeeee;
 }
 
@@ -513,7 +514,11 @@ span.editinstructions {
 .course_category_tree .category>.info .name {
     background-image:url([[pix:moodle|t/collapsed_empty]]);
     background-repeat: no-repeat;
+    padding:2px 18px;
+    margin:3px;
     background-position:center left;
+    font-size: 1.2em;
+    line-height: 1.2em;
 }
 .dir-rtl .course_category_tree .category>.info .name {
     background-image:url([[pix:moodle|t/collapsed_empty_rtl]]);
@@ -544,22 +549,10 @@ span.editinstructions {
     border:none;
     margin:0;
 }
-.course_category_tree .category >.info .name {
-    padding:5px 21px;
-    margin:0;
-    background-position: 3px center;
-}
-.dir-rtl .course_category_tree .category >.info .name {
-    background-position: right 3px center 0;
-}
 .course_category_tree .category > .content {
     padding-left:16px;
 }
 
-.dir-rtl .course_category_tree .category > .info .name {
-    padding-left:0;
-    padding-right:13px;
-}
 .dir-rtl .course_category_tree .category > .content {
     padding-left:0;
     padding-right:16px;
@@ -580,23 +573,19 @@ span.editinstructions {
 .course_category_tree .paging.paging-morelink a {
     font-size:90%;
 }
+.dir-rtl .courses > .paging.paging-morelink,
 .dir-rtl .course_category_tree .paging.paging-morelink {
     text-align:right;
 }
 
-#page-enrol-index .generalbox.info,
-#page-course-info .generalbox.info {
-    border:none;
-}
-
-#page-course-category .generalbox.info {
+#page-course-index-category .generalbox.info {
     margin-bottom: 15px;
     border: 1px dotted #ddd;
     .border-radius(4px);
     padding: 5px;
 }
 
-#page-course-category .categorypicker {
+#page-course-index-category .categorypicker {
     text-align: center;
     margin: 10px 0 20px;
 }

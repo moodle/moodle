@@ -4,14 +4,6 @@
     border-style: solid;
 }
 
-.coursebox .teachers {
-    margin: 0 0 0 0.75em;
-}
-
-.dir-rtl .coursebox .teachers {
-    margin: 0 0.75em 0 0;
-}
-
 .categorypicker {
     margin: 15px 0 25px;
 }
@@ -26,7 +18,7 @@
     margin: 0 5px 0 0;
 }
 
-#page-course-category .generalbox.info {
+#page-course-index-category .generalbox.info {
     margin: 25px auto 30px;
     width: 75%;
     padding: 10px;

@@ -40,7 +40,9 @@ a.dimmed_text:visited,
 .usersuspended a:link,
 .usersuspended a:visited,
 .dimmed_category,
-.dimmed_category a {
+.dimmed_category a,
+.dimmed_category a:link,
+.dimmed_category a:visited {
     color: #AAA;
 }
 .activity.label .dimmed_text {
