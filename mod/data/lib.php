@@ -2158,18 +2158,20 @@ function data_get_extra_capabilities() {
  * @param int $dataid      The dataid of the database module.
  * @return array $idarray  An array of record ids
  */
-function data_get_all_recordids($dataid) {
+function data_get_all_recordids($dataid, $selectdata = '') {
     global $CFG;
-    $initsql = "SELECT c.recordid
-                  FROM {$CFG->prefix}data_fields f,
-                       {$CFG->prefix}data_content c
-                 WHERE f.dataid = {$dataid}
-                   AND f.id = c.fieldid
-              GROUP BY c.recordid";
+
+    $initsql = "SELECT r.id
+                  FROM {$CFG->prefix}data_records r
+                 WHERE r.dataid = {$dataid}";
+    if ($selectdata != '') {
+        $initsql .= $selectdata;
+    }
+    $initsql .= ' GROUP BY r.id';
     $initrecord = get_recordset_sql($initsql);
     $idarray = array();
     foreach ($initrecord as $data) {
-        $idarray[] = $data['recordid'];
+        $idarray[] = $data['id'];
     }
     $initrecord->close();
     return $idarray;
@@ -2313,7 +2315,7 @@ function data_get_advanced_search_sql($sort, $data, $recordids, $selectdata, $so
     } else {
         $insql = " = -1";
     }
-    $nestfromsql .= ' AND c.recordid ' . $insql . $groupsql;
+    $nestfromsql .= ' AND c.recordid ' . $insql . $selectdata . $groupsql;
     $nestfromsql = "$nestfromsql $selectdata";
     return "$nestselectsql $nestfromsql $sortorder";
 }
