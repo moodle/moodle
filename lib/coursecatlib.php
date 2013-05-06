@@ -668,13 +668,13 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
             return;
         }
         $managerroles = explode(',', $CFG->coursecontact);
-        /*
-        // TODO MDL-38596, this commented code is similar to get_courses_wmanagers()
-        // It bulk-preloads course contacts for all courses BUT it does not check enrolments
+
+        // List of ids of courses for which we need to retrieve contacts
+        $courseids = array_keys($courses);
 
         // first build the array of all context ids of the courses and their categories
         $allcontexts = array();
-        foreach (array_keys($courses) as $id) {
+        foreach ($courseids as $id) {
             $context = context_course::instance($id);
             $courses[$id]->managers = array();
             foreach (preg_split('|/|', $context->path, 0, PREG_SPLIT_NO_EMPTY) as $ctxid) {
@@ -685,6 +685,7 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
             }
         }
 
+        // fetch list of all users with course contact roles in any of the courses contexts or parent contexts
         list($sql1, $params1) = $DB->get_in_or_equal(array_keys($allcontexts), SQL_PARAMS_NAMED, 'ctxid');
         list($sql2, $params2) = $DB->get_in_or_equal($managerroles, SQL_PARAMS_NAMED, 'rid');
         list($sort, $sortparams) = users_order_by_sql('u');
@@ -698,21 +699,86 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
                 WHERE  ra.contextid ". $sql1." AND ra.roleid ". $sql2."
              ORDER BY r.sortorder, $sort";
         $rs = $DB->get_recordset_sql($sql, $params1 + $params2 + $sortparams);
+        $checkenrolments = array();
         foreach($rs as $ra) {
             foreach ($allcontexts[$ra->contextid] as $id) {
                 $courses[$id]->managers[$ra->raid] = $ra;
+                if (!isset($checkenrolments[$id])) {
+                    $checkenrolments[$id] = array();
+                }
+                $checkenrolments[$id][] = $ra->id;
             }
         }
         $rs->close();
-        */
-        list($sort, $sortparams) = users_order_by_sql('u');
-        foreach (array_keys($courses) as $id) {
-            $context = context_course::instance($id);
-            $courses[$id]->managers = get_role_users($managerroles, $context, true,
-                'ra.id AS raid, u.id, u.username, u.firstname, u.lastname, rn.name AS rolecoursealias,
-                 r.name AS rolename, r.sortorder, r.id AS roleid, r.shortname AS roleshortname',
-                'r.sortorder ASC, ' . $sort, false, '', '', '', '', $sortparams);
+
+        // remove from course contacts users who are not enrolled in the course
+        $enrolleduserids = self::ensure_users_enrolled($checkenrolments);
+        foreach ($checkenrolments as $id => $userids) {
+            if (empty($enrolleduserids[$id])) {
+                $courses[$id]->managers = array();
+            } else if ($notenrolled = array_diff($userids, $enrolleduserids[$id])) {
+                foreach ($courses[$id]->managers as $raid => $ra) {
+                    if (in_array($ra->id, $notenrolled)) {
+                        unset($courses[$id]->managers[$raid]);
+                    }
+                }
+            }
         }
+    }
+
+    /**
+     * Verify user enrollments for multiple course-user combinations
+     *
+     * @param array $courseusers array where keys are course ids and values are array
+     *     of users in this course whose enrolment we wish to verify
+     * @return array same structure as input array but values list only users from input
+     *     who are enrolled in the course
+     */
+    protected static function ensure_users_enrolled($courseusers) {
+        global $DB;
+        // If the input array is too big, split it into chunks
+        $maxcoursesinquery = 20;
+        if (count($courseusers) > $maxcoursesinquery) {
+            $rv = array();
+            for ($offset = 0; $offset < count($courseusers); $offset += $maxcoursesinquery) {
+                $chunk = array_slice($courseusers, $offset, $maxcoursesinquery, true);
+                $rv = $rv + self::ensure_users_enrolled($chunk);
+            }
+            return $rv;
+        }
+
+        // create a query verifying valid user enrolments for the number of courses
+        $sql = "SELECT DISTINCT e.courseid, ue.userid
+          FROM {user_enrolments} ue
+          JOIN {enrol} e ON e.id = ue.enrolid
+          WHERE ue.status = :active
+            AND e.status = :enabled
+            AND ue.timestart < :now1 AND (ue.timeend = 0 OR ue.timeend > :now2)";
+        $now = round(time(), -2); // rounding helps caching in DB
+        $params = array('enabled' => ENROL_INSTANCE_ENABLED,
+            'active' => ENROL_USER_ACTIVE,
+            'now1' => $now, 'now2' => $now);
+        $cnt = 0;
+        $subsqls = array();
+        $enrolled = array();
+        foreach ($courseusers as $id => $userids) {
+            $enrolled[$id] = array();
+            if (count($userids)) {
+                list($sql2, $params2) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED, 'userid'.$cnt.'_');
+                $subsqls[] = "(e.courseid = :courseid$cnt AND ue.userid ".$sql2.")";
+                $params = $params + array('courseid'.$cnt => $id) + $params2;
+                $cnt++;
+            }
+        }
+        if (count($subsqls)) {
+            $sql .= "AND (". join(' OR ', $subsqls).")";
+            $rs = $DB->get_recordset_sql($sql, $params);
+            foreach ($rs as $record) {
+                $enrolled[$record->courseid][] = $record->userid;
+            }
+            $rs->close();
+        }
+        return $enrolled;
     }
 
     /**
