@@ -467,6 +467,7 @@ class courselib_testcase extends advanced_testcase {
         $moduleinfo->completionview = COMPLETION_VIEW_REQUIRED;
         $moduleinfo->completiongradeitemnumber = 1;
         $moduleinfo->completionexpected = time() + (7 * 24 * 3600);
+        $moduleinfo->completionunlocked = 1;
 
         // Conditional activity.
         $moduleinfo->availablefrom = time();
