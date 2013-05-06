@@ -96,6 +96,20 @@ function behat_error_handler($errno, $errstr, $errfile, $errline, $errcontext) {
         return true;
     }
 
+    // This error handler receives E_ALL | E_STRICT, running the behat test site the debug level is
+    // set to DEVELOPER and will always include E_NOTICE,E_USER_NOTICE... as part of E_ALL, if the current
+    // error_reporting() value does not include one of those levels is because it has been forced through
+    // the moodle code (see fix_utf8() for example) in that cases we respect the forced error level value.
+    $respect = array(E_NOTICE, E_USER_NOTICE, E_STRICT, E_WARNING, E_USER_WARNING);
+    foreach ($respect as $respectable) {
+
+        // If the current value does not include this kind of errors and the reported error is
+        // at that level don't print anything.
+        if ($errno == $respectable && !(error_reporting() & $respectable)) {
+            return true;
+        }
+    }
+
     // Using the default one in case there is a fatal catchable error.
     default_error_handler($errno, $errstr, $errfile, $errline, $errcontext);
 
