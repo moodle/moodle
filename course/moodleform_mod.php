@@ -303,8 +303,11 @@ abstract class moodleform_mod extends moodleform {
         }
 
         // Completion: Don't let them choose automatic completion without turning
-        // on some conditions
-        if (array_key_exists('completion', $data) && $data['completion']==COMPLETION_TRACKING_AUTOMATIC) {
+        // on some conditions. Ignore this check when completion settings are
+        // locked, as the options are then disabled.
+        if (array_key_exists('completion', $data) &&
+                $data['completion'] == COMPLETION_TRACKING_AUTOMATIC &&
+                !empty($data['completionunlocked'])) {
             if (empty($data['completionview']) && empty($data['completionusegrade']) &&
                 !$this->completion_rule_enabled($data)) {
                 $errors['completion'] = get_string('badautocompletion', 'completion');

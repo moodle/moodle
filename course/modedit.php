@@ -335,7 +335,7 @@ if ($mform->is_cancelled()) {
         $cm->groupmembersonly = $fromform->groupmembersonly;
 
         $completion = new completion_info($course);
-        if ($completion->is_enabled()) {
+        if ($completion->is_enabled() && !empty($fromform->completionunlocked)) {
             // Update completion settings
             $cm->completion                = $fromform->completion;
             $cm->completiongradeitemnumber = $fromform->completiongradeitemnumber;
