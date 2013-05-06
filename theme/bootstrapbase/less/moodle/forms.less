@@ -28,10 +28,18 @@ form {
     margin-left: -20px;
     background: url([[pix:t/expanded]]) 2px center no-repeat;
 }
-.mform fieldset.collapsed legend a.fheader {
-    background: url([[pix:t/collapsed]]) 2px center no-repeat;
+.dir-rtl .mform fieldset.collapsible legend a.fheader {
+    padding: 0 20px 0 5px;
+    margin-right: -20px;
+    margin-left: 0;
+    background-position: right center;
 }
-
+.mform fieldset.collapsed legend a.fheader {
+    background-image: url([[pix:t/collapsed]]);
+}
+.dir-rtl .mform fieldset.collapsed legend a.fheader {
+    background-image: url([[pix:t/collapsed_rtl]]);
+}
 .jsenabled .mform .collapsed .fcontainer {
     display: none;
 }
@@ -45,6 +53,20 @@ form {
 .jsenabled .mform .collapsible-actions {
     display: block;
 }
+.mform .collapsible-actions .collapseexpand {
+    padding-left: 20px;
+    background: url([[pix:t/collapsed]]) 2px center no-repeat;
+}
+.dir-rtl .mform .collapsible-actions .collapseexpand {
+    padding-right: 20px;
+    padding-left: 0;
+    background: url([[pix:t/collapsed_rtl]]) right center no-repeat;
+}
+.mform .collapsible-actions .collapse-all,
+.dir-rtl .mform .collapsible-actions .collapse-all {
+    background-image: url([[pix:t/expanded]]);
+}
+
 .mform .fitem .fitemtitle div {
     display: inline;
 }
