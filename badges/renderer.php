@@ -506,7 +506,7 @@ class core_badges_renderer extends plugin_renderer_base {
         $paging = new paging_bar($badges->totalcount, $badges->page, $badges->perpage, $this->page->url, 'page');
         $htmlpagingbar = $this->render($paging);
         $table = new html_table();
-        $table->attributes['class'] = 'collection boxaligncenter boxwidthwide';
+        $table->attributes['class'] = 'collection';
 
         $sortbyname = $this->helper_sortable_heading(get_string('name'),
                 'name', $badges->sort, $badges->dir);
@@ -740,7 +740,7 @@ class core_badges_renderer extends plugin_renderer_base {
         $paging = new paging_bar($recipients->totalcount, $recipients->page, $recipients->perpage, $this->page->url, 'page');
         $htmlpagingbar = $this->render($paging);
         $table = new html_table();
-        $table->attributes['class'] = 'generaltable generalbox boxaligncenter boxwidthwide';
+        $table->attributes['class'] = 'generaltable boxaligncenter boxwidthwide';
 
         $sortbyfirstname = $this->helper_sortable_heading(get_string('firstname'),
                 'firstname', $recipients->sort, $recipients->dir);
