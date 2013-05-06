@@ -797,6 +797,21 @@ class moodlelib_testcase extends advanced_testcase {
         $this->assertSame(clean_param('user_', PARAM_COMPONENT), '');
     }
 
+    function test_is_valid_plugin_name() {
+        $this->assertTrue(is_valid_plugin_name('forum'));
+        $this->assertTrue(is_valid_plugin_name('forum2'));
+        $this->assertTrue(is_valid_plugin_name('online_users'));
+        $this->assertTrue(is_valid_plugin_name('blond_online_users'));
+        $this->assertFalse(is_valid_plugin_name('online__users'));
+        $this->assertFalse(is_valid_plugin_name('forum '));
+        $this->assertFalse(is_valid_plugin_name('forum.old'));
+        $this->assertFalse(is_valid_plugin_name('xx-yy'));
+        $this->assertFalse(is_valid_plugin_name('2xx'));
+        $this->assertFalse(is_valid_plugin_name('Xx'));
+        $this->assertFalse(is_valid_plugin_name('_xx'));
+        $this->assertFalse(is_valid_plugin_name('xx_'));
+    }
+
     function test_clean_param_plugin() {
         // please note the cleaning of plugin names is very strict, no guessing here
         $this->assertSame(clean_param('forum', PARAM_PLUGIN), 'forum');
