@@ -101,7 +101,7 @@ if (!empty($action) && confirm_sesskey()) {
 
             if (!array_key_exists($store, $stores)) {
                 $notifysuccess = false;
-                $notification = get_string('invalidstore');
+                $notification = get_string('invalidstore', 'cache');
             } else if ($stores[$store]['mappings'] > 0) {
                 $notifysuccess = false;
                 $notification = get_string('deletestorehasmappings', 'cache');
@@ -203,7 +203,7 @@ if (!empty($action) && confirm_sesskey()) {
             $confirm = optional_param('confirm', false, PARAM_BOOL);
             if (!array_key_exists($lock, $locks)) {
                 $notifysuccess = false;
-                $notification = get_string('invalidlock');
+                $notification = get_string('invalidlock', 'cache');
             } else if ($locks[$lock]['uses'] > 0) {
                 $notifysuccess = false;
                 $notification = get_string('deletelockhasuses', 'cache');
