@@ -61,12 +61,68 @@ class course_completion_form extends moodleform {
         $aggregation_methods = $completion->get_aggregation_methods();
 
         // Overall criteria aggregation.
-        $mform->addElement('header', 'overallcriteria', get_string('overallcriteriaaggregation', 'completion'));
-        $mform->addElement('select', 'overall_aggregation', get_string('aggregationmethod', 'completion'), $aggregation_methods);
+        $mform->addElement('header', 'overallcriteria', get_string('general', 'core_form'));
+        // Map aggregation methods to context-sensitive human readable dropdown menu.
+        $overallaggregationmenu = array();
+        foreach ($aggregation_methods as $methodcode => $methodname) {
+            if ($methodcode === COMPLETION_AGGREGATION_ALL) {
+                $overallaggregationmenu[COMPLETION_AGGREGATION_ALL] = get_string('overallaggregation_all', 'core_completion');
+            } else if ($methodcode === COMPLETION_AGGREGATION_ANY) {
+                $overallaggregationmenu[COMPLETION_AGGREGATION_ANY] = get_string('overallaggregation_any', 'core_completion');
+            } else {
+                $overallaggregationmenu[$methodcode] = $methodname;
+            }
+        }
+        $mform->addElement('select', 'overall_aggregation', get_string('overallaggregation', 'core_completion'), $overallaggregationmenu);
         $mform->setDefault('overall_aggregation', $completion->get_aggregation_method());
 
+        // Activity completion criteria
+        $label = get_string('coursecompletioncondition', 'core_completion', get_string('activitiescompleted', 'core_completion'));
+        $mform->addElement('header', 'activitiescompleted', $label);
+        // Get the list of currently specified conditions and expand the section if some are found.
+        $current = $completion->get_criteria(COMPLETION_CRITERIA_TYPE_ACTIVITY);
+        if (!empty($current)) {
+            $mform->setExpanded('activitiescompleted');
+        }
+
+        $activities = $completion->get_activities();
+        if (!empty($activities)) {
+
+            foreach ($activities as $activity) {
+                $params_a = array('moduleinstance' => $activity->id);
+                $criteria = new completion_criteria_activity(array_merge($params, $params_a));
+                $criteria->config_form_display($mform, $activity);
+            }
+            $mform->addElement('static', 'criteria_role_note', '', get_string('activitiescompletednote', 'core_completion'));
+
+            if (count($activities) > 1) {
+                // Map aggregation methods to context-sensitive human readable dropdown menu.
+                $activityaggregationmenu = array();
+                foreach ($aggregation_methods as $methodcode => $methodname) {
+                    if ($methodcode === COMPLETION_AGGREGATION_ALL) {
+                        $activityaggregationmenu[COMPLETION_AGGREGATION_ALL] = get_string('activityaggregation_all', 'core_completion');
+                    } else if ($methodcode === COMPLETION_AGGREGATION_ANY) {
+                        $activityaggregationmenu[COMPLETION_AGGREGATION_ANY] = get_string('activityaggregation_any', 'core_completion');
+                    } else {
+                        $activityaggregationmenu[$methodcode] = $methodname;
+                    }
+                }
+                $mform->addElement('select', 'activity_aggregation', get_string('activityaggregation', 'core_completion'), $activityaggregationmenu);
+                $mform->setDefault('activity_aggregation', $completion->get_aggregation_method(COMPLETION_CRITERIA_TYPE_ACTIVITY));
+            }
+
+        } else {
+            $mform->addElement('static', 'noactivities', '', get_string('err_noactivities', 'completion'));
+        }
+
         // Course prerequisite completion criteria.
-        $mform->addElement('header', 'courseprerequisites', get_string('completiondependencies', 'completion'));
+        $label = get_string('coursecompletioncondition', 'core_completion', get_string('dependenciescompleted', 'core_completion'));
+        $mform->addElement('header', 'courseprerequisites', $label);
+        // Get the list of currently specified conditions and expand the section if some are found.
+        $current = $completion->get_criteria(COMPLETION_CRITERIA_TYPE_COURSE);
+        if (!empty($current)) {
+            $mform->setExpanded('courseprerequisites');
+        }
 
         // Get applicable courses (prerequisites).
         $courses = $DB->get_records_sql("
@@ -78,11 +134,6 @@ class course_completion_form extends moodleform {
                        AND c.id <> {$course->id}");
 
         if (!empty($courses)) {
-            if (count($courses) > 1) {
-                $mform->addElement('select', 'course_aggregation', get_string('aggregationmethod', 'completion'), $aggregation_methods);
-                $mform->setDefault('course_aggregation', $completion->get_aggregation_method(COMPLETION_CRITERIA_TYPE_COURSE));
-            }
-
             // Get category list.
             require_once($CFG->libdir. '/coursecatlib.php');
             $list = coursecat::make_categories_list();
@@ -110,66 +161,67 @@ class course_completion_form extends moodleform {
             // Explain list.
             $mform->addElement('static', 'criteria_courses_explaination', '', get_string('coursesavailableexplaination', 'completion'));
 
+            if (count($courses) > 1) {
+                // Map aggregation methods to context-sensitive human readable dropdown menu.
+                $courseaggregationmenu = array();
+                foreach ($aggregation_methods as $methodcode => $methodname) {
+                    if ($methodcode === COMPLETION_AGGREGATION_ALL) {
+                        $courseaggregationmenu[COMPLETION_AGGREGATION_ALL] = get_string('courseaggregation_all', 'core_completion');
+                    } else if ($methodcode === COMPLETION_AGGREGATION_ANY) {
+                        $courseaggregationmenu[COMPLETION_AGGREGATION_ANY] = get_string('courseaggregation_any', 'core_completion');
+                    } else {
+                        $courseaggregationmenu[$methodcode] = $methodname;
+                    }
+                }
+                $mform->addElement('select', 'course_aggregation', get_string('courseaggregation', 'core_completion'), $courseaggregationmenu);
+                $mform->setDefault('course_aggregation', $completion->get_aggregation_method(COMPLETION_CRITERIA_TYPE_COURSE));
+            }
+
         } else {
             $mform->addElement('static', 'nocourses', '', get_string('err_nocourses', 'completion'));
         }
 
-        // Manual self completion
-        $mform->addElement('header', 'manualselfcompletion', get_string('manualselfcompletion', 'completion'));
-        $criteria = new completion_criteria_self($params);
-        $criteria->config_form_display($mform);
-
-        // Role completion criteria
-        $mform->addElement('header', 'roles', get_string('manualcompletionby', 'completion'));
-
-        $roles = get_roles_with_capability('moodle/course:markcomplete', CAP_ALLOW, context_course::instance($course->id, IGNORE_MISSING));
-
-        if (!empty($roles)) {
-            $mform->addElement('select', 'role_aggregation', get_string('aggregationmethod', 'completion'), $aggregation_methods);
-            $mform->setDefault('role_aggregation', $completion->get_aggregation_method(COMPLETION_CRITERIA_TYPE_ROLE));
-
-            foreach ($roles as $role) {
-                $params_a = array('role' => $role->id);
-                $criteria = new completion_criteria_role(array_merge($params, $params_a));
-                $criteria->config_form_display($mform, $role);
-            }
-        } else {
-            $mform->addElement('static', 'noroles', '', get_string('err_noroles', 'completion'));
-        }
-
-        // Activity completion criteria
-        $mform->addElement('header', 'activitiescompleted', get_string('activitiescompleted', 'completion'));
-
-        $activities = $completion->get_activities();
-        if (!empty($activities)) {
-            if (count($activities) > 1) {
-                $mform->addElement('select', 'activity_aggregation', get_string('aggregationmethod', 'completion'), $aggregation_methods);
-                $mform->setDefault('activity_aggregation', $completion->get_aggregation_method(COMPLETION_CRITERIA_TYPE_ACTIVITY));
-            }
-
-            foreach ($activities as $activity) {
-                $params_a = array('moduleinstance' => $activity->id);
-                $criteria = new completion_criteria_activity(array_merge($params, $params_a));
-                $criteria->config_form_display($mform, $activity);
-            }
-        } else {
-            $mform->addElement('static', 'noactivities', '', get_string('err_noactivities', 'completion'));
-        }
-
         // Completion on date
-        $mform->addElement('header', 'date', get_string('date'));
+        $label = get_string('coursecompletioncondition', 'core_completion', get_string('completionondate', 'core_completion'));
+        $mform->addElement('header', 'date', $label);
+        // Expand the condition section if it is currently enabled.
+        $current = $completion->get_criteria(COMPLETION_CRITERIA_TYPE_DATE);
+        if (!empty($current)) {
+            $mform->setExpanded('date');
+        }
         $criteria = new completion_criteria_date($params);
         $criteria->config_form_display($mform);
 
         // Completion after enrolment duration
-        $mform->addElement('header', 'duration', get_string('durationafterenrolment', 'completion'));
+        $label = get_string('coursecompletioncondition', 'core_completion', get_string('enrolmentduration', 'core_completion'));
+        $mform->addElement('header', 'duration', $label);
+        // Expand the condition section if it is currently enabled.
+        $current = $completion->get_criteria(COMPLETION_CRITERIA_TYPE_DURATION);
+        if (!empty($current)) {
+            $mform->setExpanded('duration');
+        }
         $criteria = new completion_criteria_duration($params);
         $criteria->config_form_display($mform);
 
-        // Completion on course grade
-        $mform->addElement('header', 'grade', get_string('coursegrade', 'completion'));
+        // Completion on unenrolment
+        $label = get_string('coursecompletioncondition', 'core_completion', get_string('unenrolment', 'core_completion'));
+        $mform->addElement('header', 'unenrolment', $label);
+        // Expand the condition section if it is currently enabled.
+        $current = $completion->get_criteria(COMPLETION_CRITERIA_TYPE_UNENROL);
+        if (!empty($current)) {
+            $mform->setExpanded('unenrolment');
+        }
+        $criteria = new completion_criteria_unenrol($params);
+        $criteria->config_form_display($mform);
 
-        // Grade enable and passing grade
+        // Completion on course grade
+        $label = get_string('coursecompletioncondition', 'core_completion', get_string('coursegrade', 'core_completion'));
+        $mform->addElement('header', 'grade', $label);
+        // Expand the condition section if it is currently enabled.
+        $current = $completion->get_criteria(COMPLETION_CRITERIA_TYPE_GRADE);
+        if (!empty($current)) {
+            $mform->setExpanded('grade');
+        }
         $course_grade = $DB->get_field('grade_items', 'gradepass', array('courseid' => $course->id, 'itemtype' => 'course'));
         if (!$course_grade) {
             $course_grade = '0.00000';
@@ -177,10 +229,52 @@ class course_completion_form extends moodleform {
         $criteria = new completion_criteria_grade($params);
         $criteria->config_form_display($mform, $course_grade);
 
-        // Completion on unenrolment
-        $mform->addElement('header', 'unenrolment', get_string('unenrolment', 'completion'));
-        $criteria = new completion_criteria_unenrol($params);
+        // Manual self completion
+        $label = get_string('coursecompletioncondition', 'core_completion', get_string('manualselfcompletion', 'core_completion'));
+        $mform->addElement('header', 'manualselfcompletion', $label);
+        // Expand the condition section if it is currently enabled.
+        $current = $completion->get_criteria(COMPLETION_CRITERIA_TYPE_SELF);
+        if (!empty($current)) {
+            $mform->setExpanded('manualselfcompletion');
+        }
+        $criteria = new completion_criteria_self($params);
         $criteria->config_form_display($mform);
+        $mform->addElement('static', 'criteria_self_note', '', get_string('manualselfcompletionnote', 'core_completion'));
+
+        // Role completion criteria
+        $label = get_string('coursecompletioncondition', 'core_completion', get_string('manualcompletionby', 'core_completion'));
+        $mform->addElement('header', 'roles', $label);
+        // Expand the condition section if it is currently enabled.
+        $current = $completion->get_criteria(COMPLETION_CRITERIA_TYPE_ROLE);
+        if (!empty($current)) {
+            $mform->setExpanded('roles');
+        }
+        $roles = get_roles_with_capability('moodle/course:markcomplete', CAP_ALLOW, context_course::instance($course->id, IGNORE_MISSING));
+
+        if (!empty($roles)) {
+            foreach ($roles as $role) {
+                $params_a = array('role' => $role->id);
+                $criteria = new completion_criteria_role(array_merge($params, $params_a));
+                $criteria->config_form_display($mform, $role);
+            }
+            $mform->addElement('static', 'criteria_role_note', '', get_string('manualcompletionbynote', 'core_completion'));
+            // Map aggregation methods to context-sensitive human readable dropdown menu.
+            $roleaggregationmenu = array();
+            foreach ($aggregation_methods as $methodcode => $methodname) {
+                if ($methodcode === COMPLETION_AGGREGATION_ALL) {
+                    $roleaggregationmenu[COMPLETION_AGGREGATION_ALL] = get_string('roleaggregation_all', 'core_completion');
+                } else if ($methodcode === COMPLETION_AGGREGATION_ANY) {
+                    $roleaggregationmenu[COMPLETION_AGGREGATION_ANY] = get_string('roleaggregation_any', 'core_completion');
+                } else {
+                    $roleaggregationmenu[$methodcode] = $methodname;
+                }
+            }
+            $mform->addElement('select', 'role_aggregation', get_string('roleaggregation', 'core_completion'), $roleaggregationmenu);
+            $mform->setDefault('role_aggregation', $completion->get_aggregation_method(COMPLETION_CRITERIA_TYPE_ROLE));
+
+        } else {
+            $mform->addElement('static', 'noroles', '', get_string('err_noroles', 'completion'));
+        }
 
         // Add common action buttons.
         $this->add_action_buttons();

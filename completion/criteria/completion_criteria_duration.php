@@ -61,12 +61,32 @@ class completion_criteria_duration extends completion_criteria {
 
         $mform->addElement('checkbox', 'criteria_duration', get_string('enable'));
 
-        $thresholdmenu=array();
-        for ($i=1; $i<=30; $i++) {
-            $seconds = $i * 86400;
-            $thresholdmenu[$seconds] = get_string('numdays', '', $i);
+        // Populate the duration length drop down.
+        $thresholdmenu = array(
+            // We have strings for 1 - 6 days in the core.
+            86400 => get_string('secondstotime86400', 'core'),
+            172800 => get_string('secondstotime172800', 'core'),
+            259200 => get_string('secondstotime259200', 'core'),
+            345600 => get_string('secondstotime345600', 'core'),
+            432000 => get_string('secondstotime432000', 'core'),
+            518400 => get_string('secondstotime518400', 'core'),
+            518400 => get_string('secondstotime518400', 'core'),
+        );
+        // Append strings for 7 - 30 days (step by 1 day).
+        for ($i = 7; $i <= 30; $i++) {
+            $seconds = $i * DAYSECS;
+            $thresholdmenu[$seconds] = get_string('numdays', 'core', $i);
         }
-        $mform->addElement('select', 'criteria_duration_days', get_string('daysafterenrolment', 'completion'), $thresholdmenu);
+        // Append strings for 40 - 180 days (step by 10 days).
+        for ($i = 40; $i <= 180; $i = $i + 10) {
+            $seconds = $i * DAYSECS;
+            $thresholdmenu[$seconds] = get_string('numdays', 'core', $i);
+        }
+        // Append string for 1 year.
+        $thresholdmenu[365 * DAYSECS] = get_string('numdays', 'core', 365);
+
+        $mform->addElement('select', 'criteria_duration_days', get_string('enrolmentdurationlength', 'core_completion'), $thresholdmenu);
+        $mform->disabledIf('criteria_duration_days', 'criteria_duration');
 
         if ($this->id) {
             $mform->setDefault('criteria_duration', 1);
