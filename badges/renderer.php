@@ -637,12 +637,15 @@ class core_badges_renderer extends plugin_renderer_base {
         echo $this->tabtree($row, $current);
     }
 
-    // Prints badge status box.
+    /**
+     * Prints badge status box.
+     * @return Either the status box html as a string or null
+     */
     public function print_badge_status_box(badge $badge) {
-        $table = new html_table();
-        $table->attributes['class'] = 'boxaligncenter statustable';
-
         if (has_capability('moodle/badges:configurecriteria', $badge->get_context())) {
+            $table = new html_table();
+            $table->attributes['class'] = 'boxaligncenter statustable';
+
             if (!$badge->has_criteria()) {
                 $criteriaurl = new moodle_url('/badges/criteria.php', array('id' => $badge->id));
                 $status = get_string('nocriteria', 'badges');
@@ -669,12 +672,13 @@ class core_badges_renderer extends plugin_renderer_base {
                 }
                 $row = array($status . $this->output->help_icon('status', 'badges'), $action);
             }
+            $table->data[] = $row;
+
+            $style = $badge->is_active() ? 'generalbox statusbox active' : 'generalbox statusbox inactive';
+            return $this->output->box(html_writer::table($table), $style);
         }
 
-        $table->data[] = $row;
-
-        $style = $badge->is_active() ? 'generalbox statusbox active' : 'generalbox statusbox inactive';
-        return $this->output->box(html_writer::table($table), $style);
+        return null;
     }
 
     // Prints badge criteria.
