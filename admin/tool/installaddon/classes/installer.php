@@ -388,6 +388,52 @@ class tool_installaddon_installer {
         }
     }
 
+    /**
+     * Moves the given source into a new location recursively
+     *
+     * This is cross-device safe implementation to be used instead of the native rename() function.
+     * See https://bugs.php.net/bug.php?id=54097 for more details.
+     *
+     * @param string $source full path to the existing directory
+     * @param string $target full path to the new location of the directory
+     */
+    public function move_directory($source, $target) {
+
+        if (file_exists($target)) {
+            throw new tool_installaddon_installer_exception('err_folder_already_exists', array('path' => $target));
+        }
+
+        if (is_dir($source)) {
+            $handle = opendir($source);
+        } else {
+            throw new tool_installaddon_installer_exception('err_no_such_folder', array('path' => $source));
+        }
+
+        make_writable_directory($target);
+
+        while ($filename = readdir($handle)) {
+            $sourcepath = $source.'/'.$filename;
+            $targetpath = $target.'/'.$filename;
+
+            if ($filename === '.' or $filename === '..') {
+                continue;
+            }
+
+            if (is_dir($sourcepath)) {
+                $this->move_directory($sourcepath, $targetpath);
+
+            } else {
+                rename($sourcepath, $targetpath);
+            }
+        }
+
+        closedir($handle);
+
+        rmdir($source);
+
+        clearstatcache();
+    }
+
     //// End of external API ///////////////////////////////////////////////////
 
     /**

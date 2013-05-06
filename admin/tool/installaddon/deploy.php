@@ -71,6 +71,6 @@ if (file_exists($plugintypepath.'/'.$pluginname)) {
         get_string('invaliddata', 'core_error'));
 }
 
-rename($zipcontentpath.'/'.$pluginname, $plugintypepath.'/'.$pluginname);
+$installer->move_directory($zipcontentpath.'/'.$pluginname, $plugintypepath.'/'.$pluginname);
 fulldelete($CFG->tempdir.'/tool_installaddon/'.$jobid);
 redirect(new moodle_url('/admin'));
