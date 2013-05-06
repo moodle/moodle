@@ -100,7 +100,7 @@ if (!empty($action) && confirm_sesskey()) {
 
             if (!array_key_exists($store, $stores)) {
                 $notifysuccess = false;
-                $notification = get_string('invalidstore');
+                $notification = get_string('invalidstore', 'cache');
             } else if ($stores[$store]['mappings'] > 0) {
                 $notifysuccess = false;
                 $notification = get_string('deletestorehasmappings', 'cache');
