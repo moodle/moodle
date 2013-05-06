@@ -438,7 +438,7 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
     }
 
     $completion = new completion_info($course);
-    if ($completion->is_enabled()) {
+    if ($completion->is_enabled() && !empty($moduleinfo->completionunlocked)) {
         // Update completion settings.
         $cm->completion                = $moduleinfo->completion;
         $cm->completiongradeitemnumber = $moduleinfo->completiongradeitemnumber;
