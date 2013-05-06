@@ -137,6 +137,17 @@ class cachestore_static extends static_data_store implements cache_is_key_aware 
     }
 
     /**
+     * Returns false as this store does not support multiple identifiers.
+     * (This optional function is a performance optimisation; it must be
+     * consistent with the value from get_supported_features.)
+     *
+     * @return bool False
+     */
+    public function supports_multiple_identifiers() {
+        return false;
+    }
+
+    /**
      * Returns the supported modes as a combined int.
      *
      * @param array $configuration
