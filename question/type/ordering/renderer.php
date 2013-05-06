@@ -19,13 +19,11 @@
  *
  * @package    qtype
  * @subpackage ordering
- * @copyright  2009 The Open University
+ * @copyright  2013 Gordon Bateson (gordonbateson@gmail.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
 defined('MOODLE_INTERNAL') || die();
-
 
 /**
  * Generates the output for true-false questions.
@@ -34,315 +32,132 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_ordering_renderer extends qtype_renderer {
-    public function formulation_and_controls(question_attempt $qa,
-            question_display_options $options) {
+
+    public function formulation_and_controls(question_attempt $qa, question_display_options $options) {
         global $DB, $CFG;
-        
+
         $question = $qa->get_question();
-        //$stemorder = $question->get_stem_order();
-        //$response = $qa->get_last_qt_data();
-        
-        //print_r ($response);
-        
-        //echo "!7!";
 
-        //$response = $qa->get_last_qt_var('answer', '');
-        
-        //print_r ($_REQUEST);
-        /*
-        
-
-        $inputname = $qa->get_qt_field_name('answer');
-        $trueattributes = array(
-            'type' => 'radio',
-            'name' => $inputname,
-            'value' => 1,
-            'id' => $inputname . 'true',
-        );
-        $falseattributes = array(
-            'type' => 'radio',
-            'name' => $inputname,
-            'value' => 0,
-            'id' => $inputname . 'false',
-        );
-
-        if ($options->readonly) {
-            $trueattributes['disabled'] = 'disabled';
-            $falseattributes['disabled'] = 'disabled';
-        }
-        */
-        
-        //print_r ($question);
-        //echo "@@@@";
-        //print_r ($options);
-
-/*
-        // Work out which radio button to select (if any)
-        $truechecked = false;
-        $falsechecked = false;
-        $responsearray = array();
-        if ($response) {
-            $trueattributes['checked'] = 'checked';
-            $truechecked = true;
-            $responsearray = array('answer' => 1);
-        } else if ($response !== '') {
-            $falseattributes['checked'] = 'checked';
-            $falsechecked = true;
-            $responsearray = array('answer' => 1);
-        }
-
-        // Work out visual feedback for answer correctness.
-        $trueclass = '';
-        $falseclass = '';
-        $truefeedbackimg = '';
-        $falsefeedbackimg = '';
-        if ($options->correctness) {
-            if ($truechecked) {
-                $trueclass = ' ' . $this->feedback_class((int) $question->rightanswer);
-                $truefeedbackimg = $this->feedback_image((int) $question->rightanswer);
-            } else if ($falsechecked) {
-                $falseclass = ' ' . $this->feedback_class((int) (!$question->rightanswer));
-                $falsefeedbackimg = $this->feedback_image((int) (!$question->rightanswer));
-            }
-        }
-
-        $radiotrue = html_writer::empty_tag('input', $trueattributes) .
-                html_writer::tag('label', get_string('true', 'qtype_ordering'),
-                array('for' => $trueattributes['id']));
-        $radiofalse = html_writer::empty_tag('input', $falseattributes) .
-                html_writer::tag('label', get_string('false', 'qtype_ordering'),
-                array('for' => $falseattributes['id']));
-
-        $result = '';
-        $result .= html_writer::tag('div', $question->format_questiontext($qa),
-                array('class' => 'qtext'));
-
-        $result .= html_writer::start_tag('div', array('class' => 'ablock'));
-        $result .= html_writer::tag('div', get_string('selectone', 'qtype_ordering'),
-                array('class' => 'prompt'));
-
-        $result .= html_writer::start_tag('div', array('class' => 'answer'));
-        $result .= html_writer::tag('div', $radiotrue . ' ' . $truefeedbackimg,
-                array('class' => 'r0' . $trueclass));
-        $result .= html_writer::tag('div', $radiofalse . ' ' . $falsefeedbackimg,
-                array('class' => 'r1' . $falseclass));
-        $result .= html_writer::end_tag('div'); // answer
-
-        $result .= html_writer::end_tag('div'); // ablock
-
-        if ($qa->get_state() == question_state::$invalid) {
-            $result .= html_writer::nonempty_tag('div',
-                    $question->get_validation_error($responsearray),
-                    array('class' => 'validationerror'));
-        }
-        */
-        //print_r ($this);
         $data = $DB->get_record("question_ordering", array("question" => $question->id));
-        if ($data->studentsee == 0) $data->studentsee = 100; else $data->studentsee += 2;
-        
-        //if ($CFG->dbtype == "mysql") $rand = 'RAND()'; else $rand = 'RANDOM()';
-        
-        //$answers = $DB->get_records_sql("SELECT * FROM {question_answers} WHERE question = ? ORDER BY ".$rand." LIMIT ?", array($question->id, $data->studentsee));
-        
-        //$answers = $DB->get_records_sql("SELECT * FROM {question_answers} WHERE question = ? ORDER BY id LIMIT ?", array($question->id, $data->studentsee));
+        if (empty($data->studentsee)) {
+            $data->studentsee = 100;
+        } else {
+            $data->studentsee += 2;
+        }
+
         $answers = $DB->get_records("question_answers", array("question" => $question->id), '', '*', 0, $data->studentsee);
         shuffle($answers);
-        
+
         $result = '';
         $result .= html_writer::tag('script', '', array('type'=>'text/javascript', 'src'=>$CFG->wwwroot.'/question/type/ordering/jquery.js'));
         $result .= html_writer::tag('script', '', array('type'=>'text/javascript', 'src'=>$CFG->wwwroot.'/question/type/ordering/jquery-ui.js'));
-        $result .= html_writer::tag('style', 'ul.sortable li {
-	position: relative;
-}
 
-ul.boxy {
-	list-style-type: none;
-	padding: 4px 4px 0 4px;
-	margin: 0px;
-	font-size: 13px;
-	font-family: Arial, sans-serif;
-	border: 1px solid #ccc;
-	width: 360px;
-	float: left;
-	margin-left: 5px;
-}
-ul.boxy li {
-cursor: move;
-margin-bottom: 1px;
-padding: 8px 2px;
-border: 1px solid #CCC;
-background-color: #EEE;
-min-height: 20px;
-border-image: initial;
-list-style-type: none;
-}
-');
+        $style = "\n";
+        $style .= "ul.sortable li {\n";
+        $style .= "    position: relative;\n";
+        $style .= "}\n";
+        $style .= "ul.boxy {\n";
+        $style .= "    border: 1px solid #ccc;\n";
+        $style .= "    float: left;\n";
+        $style .= "    font-family: Arial, sans-serif;\n";
+        $style .= "    font-size: 13px;\n";
+        $style .= "    list-style-type: none;\n";
+        $style .= "    margin: 0px;\n";
+        $style .= "    margin-left: 5px;\n";
+        $style .= "    padding: 4px 4px 0 4px;\n";
+        $style .= "    width: 360px;\n";
+        $style .= "}\n";
+        $style .= "ul.boxy li {\n";
+        $style .= "    background-color: #eeeeee;\n";
+        $style .= "    border: 1px solid #cccccc;\n";
+        $style .= "    border-image: initial;\n";
+        $style .= "    cursor: move;\n";
+        $style .= "    list-style-type: none;\n";
+        $style .= "    margin-bottom: 1px;\n";
+        $style .= "    min-height: 20px;\n";
+        $style .= "    padding: 8px 2px;\n";
+        $style .= "}\n";
+        $result .= html_writer::tag('style', $style, array('type' => 'text/css'));
 
-        $result .= html_writer::tag('script', '
-	$(function() {
-		$( "#sortable" ).sortable({
-      update: function(event, ui) {
-				var ItemsOrder = $(this).sortable(\'toArray\').toString();
-				$(\'#q'.$question->id.'\').attr("value", ItemsOrder);
-			}
-		});
-		$( "#sortable" ).disableSelection();
-	});
-	$(document).ready(function() {
-		var ItemsOrder = $("#sortable").sortable(\'toArray\').toString();
-		$(\'#q'.$question->id.'\').attr("value", ItemsOrder);
-	});
-');
-        
-        $result .= html_writer::tag('div', stripslashes($question->format_questiontext($qa)),
-                array('class' => 'qtext'));
+        $script = "\n";
+        $script .= "$(function() {\n";
+        $script .= "    $('#sortable').sortable({\n";
+        $script .= "        update: function(event, ui) {\n";
+        $script .= "            var ItemsOrder = $(this).sortable('toArray').toString();\n";
+        $script .= "            $('#q".$question->id."').attr('value', ItemsOrder);\n";
+        $script .= "        }\n";
+        $script .= "    });\n";
+        $script .= "    $('#sortable').disableSelection();\n";
+        $script .= "});\n";
+        $script .= "$(document).ready(function() {\n";
+        $script .= "    var ItemsOrder = $('#sortable').sortable('toArray').toString();\n";
+        $script .= "    $('#q".$question->id."').attr('value', ItemsOrder);\n";
+        $script .= "});\n";
+        $result .= html_writer::tag('script', $script, array('type' => 'text/javascript'));
+
+        $result .= html_writer::tag('div', stripslashes($question->format_questiontext($qa)), array('class' => 'qtext'));
         $result .= html_writer::start_tag('div', array('class' => 'ablock'));
         $result .= html_writer::start_tag('div', array('class' => 'answer'));
         $result .= html_writer::start_tag('ul', array('class' => 'boxy', 'id' => 'sortable'));
-        
-        while (list($key,$value)=each($answers)) {
-            list($fr) = explode(".", $value->fraction);
-            $result .= html_writer::tag('li', stripslashes($value->answer),
-                array('class' => 'ui-state-default', 'id' => 'ordering_item_'.$value->id.'_'.$fr));
+
+        foreach ($answers as $answer) {
+            // $answer->fraction holds the correct order - as a decimal ?!
+            $id = 'ordering_item_'.$answer->id.'_'.intval($answer->fraction);
+            $params = array('class' => 'ui-state-default', 'id' => $id);
+            $result .= html_writer::tag('li', stripslashes($answer->answer), $params);
         }
-        
+
         $result .= html_writer::end_tag('ul');
         $result .= html_writer::end_tag('div'); // answer
         $result .= html_writer::end_tag('div'); // ablock
-        
+
         $result .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'q'.$question->id, 'id' => 'q'.$question->id));
         $result .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'answer', 'value' => '712'));
-                
+
         $result .= html_writer::tag('div', '', array('style' => 'clear:both;'));
-        
-        $result .= html_writer::tag('script', '
 
-function touchHandler(event)
-{
-    var touches = event.changedTouches,
-        first = touches[0],
-        type = "";
-        
-    
-    switch(event.type)
-    {
-        case "touchstart":
-            type = "mousedown";
-            break;
-            
-        case "touchmove":
-            type="mousemove";        
-            event.preventDefault();
-            break;        
-            
-        case "touchend":
-            type="mouseup";
-            break;
-            
-        default:
-            return;
-    }
-    
-    var simulatedEvent = document.createEvent("MouseEvent");
-    
-    //initMouseEvent(type, canBubble, cancelable, view, clickCount, screenX, screenY, clientX, clientY, 
-    //               ctrlKey, altKey, shiftKey, metaKey, button, relatedTarget);
-    
-    simulatedEvent.initMouseEvent(type, true, true, window, 1, first.screenX, first.screenY, first.clientX, first.clientY,
-                                  false, false, false, false, 0/*left*/, null);
-                                                                            
-    first.target.dispatchEvent(simulatedEvent);
- 
-    event.preventDefault();
-}
- 
-function init() {
-    for(i=0;i<document.getElementById("sortable").childNodes.length;i++) {
-      document.getElementById(\'sortable\').childNodes.item(i).addEventListener("touchstart", touchHandler, false);
-      document.getElementById(\'sortable\').childNodes.item(i).addEventListener("touchmove", touchHandler, false);
-      document.getElementById(\'sortable\').childNodes.item(i).addEventListener("touchend", touchHandler, false);
-      document.getElementById(\'sortable\').childNodes.item(i).addEventListener("touchcancel", touchHandler, false);
-    }
+        $script = "\n";
+        $script .= "function orderingTouchHandler(event) {\n";
+        $script .= "    var touch = event.changedTouches[0];\n";
+        $script .= "    switch (event.type) {\n";
+        $script .= "        case 'touchstart': var type = 'mousedown'; break;\n";
+        $script .= "        case 'touchmove': var type = 'mousemove'; event.preventDefault(); break;\n";
+        $script .= "        case 'touchend': var type = 'mouseup'; break;\n";
+        $script .= "        default: return;\n";
+        $script .= "    }\n";
+        $script .= "    var simulatedEvent = document.createEvent('MouseEvent');\n";
+        $script .= "    //initMouseEvent(type, canBubble, cancelable, view, clickCount, screenX, screenY, clientX, clientY, ctrlKey, altKey, shiftKey, metaKey, button, relatedTarget);\n";
+        $script .= "    simulatedEvent.initMouseEvent(type, true, true, window, 1, touch.screenX, touch.screenY, touch.clientX, touch.clientY, false, false, false, false, 0/*left*/, null);\n";
+        $script .= "    touch.target.dispatchEvent(simulatedEvent);\n";
+        $script .= "    event.preventDefault();\n";
+        $script .= "}\n";
+        $script .= "function orderingInit() {\n";
+        $script .= "    var obj = document.getElementById('sortable');\n";
+        $script .= "    if (obj) {\n";
+        $script .= "        for (var i=0; i<obj.childNodes.length; i++) {\n";
+        $script .= "            obj.childNodes.item(i).addEventListener('touchstart', orderingTouchHandler, false);\n";
+        $script .= "            obj.childNodes.item(i).addEventListener('touchmove', orderingTouchHandler, false);\n";
+        $script .= "            obj.childNodes.item(i).addEventListener('touchend', orderingTouchHandler, false);\n";
+        $script .= "            obj.childNodes.item(i).addEventListener('touchcancel', orderingTouchHandler, false);\n";
+        $script .= "        }\n";
+        $script .= "    } else {\n";
+        $script .= "        setTimeout(orderingInit, 500);\n"; // try again in 1/2 a second
+        $script .= "    }\n";
+        $script .= "}\n";
+        $script .= "orderingInit();\n";
+        $result .= html_writer::tag('script', $script, array('type' => 'text/javascript'));
 
-    
-    var myInterval = window.setInterval(function (a,b) {
-function touchHandler(event)
-{
-    var touches = event.changedTouches,
-        first = touches[0],
-        type = "";
-        
-    
-    switch(event.type)
-    {
-        case "touchstart":
-            type = "mousedown";
-            break;
-            
-        case "touchmove":
-            type="mousemove";        
-            event.preventDefault();
-            break;        
-            
-        case "touchend":
-            type="mouseup";
-            break;
-            
-        default:
-            return;
-    }
-    
-    var simulatedEvent = document.createEvent("MouseEvent");
-    
-    //initMouseEvent(type, canBubble, cancelable, view, clickCount, screenX, screenY, clientX, clientY, 
-    //               ctrlKey, altKey, shiftKey, metaKey, button, relatedTarget);
-    
-    simulatedEvent.initMouseEvent(type, true, true, window, 1, first.screenX, first.screenY, first.clientX, first.clientY,
-                                  false, false, false, false, 0, null);
-                                                                            
-    first.target.dispatchEvent(simulatedEvent);
- 
-    event.preventDefault();
-}
-
-      for(i=0;i<document.getElementById("sortable").childNodes.length;i++) {
-        document.getElementById(\'sortable\').childNodes.item(i).addEventListener("touchstart", touchHandler, false);
-        document.getElementById(\'sortable\').childNodes.item(i).addEventListener("touchmove", touchHandler, false);
-        document.getElementById(\'sortable\').childNodes.item(i).addEventListener("touchend", touchHandler, false);
-        document.getElementById(\'sortable\').childNodes.item(i).addEventListener("touchcancel", touchHandler, false);
-      }
-    },500);
-    
-}
-
-init();
-
-');
-        
         return $result;
     }
-/*
-    public function specific_feedback(question_attempt $qa) {
-        $question = $qa->get_question();
-        $response = $qa->get_last_qt_var('answer', '');
 
-        if ($response) {
-            return $question->format_text($question->truefeedback, $question->truefeedbackformat,
-                    $qa, 'question', 'answerfeedback', $question->trueanswerid);
-        } else if ($response !== '') {
-            return $question->format_text($question->falsefeedback, $question->falsefeedbackformat,
-                    $qa, 'question', 'answerfeedback', $question->falseanswerid);
-        }
-    }
-*/
     public function correct_response(question_attempt $qa) {
         global $DB;
-        
+
         $question = $qa->get_question();
-        
+
         $data = $DB->get_records("question_attempt_steps", array("questionattemptid" => $question->contextid), "id DESC");
         $data = current($data);
-        
+
         if ($data->fraction >= 1) {
             $feedback = get_string('correctfeedback', 'qtype_ordering');
         } else if ($data->fraction > 0) {
@@ -350,7 +165,7 @@ init();
         } else {
             $feedback = get_string('incorrectfeedback', 'qtype_ordering');
         }
-        
+
         return  $feedback;
     }
 }

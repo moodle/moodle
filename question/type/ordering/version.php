@@ -25,5 +25,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version  = 2010090501;
-//$plugin->requires = 2011060313;
+$plugin->component = 'qtype_ordering';
+$plugin->maturity = MATURITY_STABLE;
+$plugin->version  = 2010090502;
