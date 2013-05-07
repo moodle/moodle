@@ -907,4 +907,13 @@ class cache_definition {
         }
         return join('/', $identifiers);
     }
+
+    /**
+     * Returns true if this definition requires identifiers.
+     *
+     * @param bool
+     */
+    public function has_required_identifiers() {
+        return (count($this->requireidentifiers) > 0);
+    }
 }

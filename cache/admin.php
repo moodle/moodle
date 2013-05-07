@@ -210,7 +210,15 @@ if (!empty($action) && confirm_sesskey()) {
         case 'purgedefinition': // Purge a specific definition.
             $definition = required_param('definition', PARAM_SAFEPATH);
             list($component, $area) = explode('/', $definition, 2);
-            cache_helper::purge_by_definition($component, $area);
+            $factory = cache_factory::instance();
+            $definition = $factory->create_definition($component, $area);
+            if ($definition->has_required_identifiers()) {
+                // We will have to purge the stores used by this definition.
+                cache_helper::purge_stores_used_by_definition($component, $area);
+            } else {
+                // Alrighty we can purge just the data belonging to this definition.
+                cache_helper::purge_by_definition($component, $area);
+            }
             redirect($PAGE->url, get_string('purgedefinitionsuccess', 'cache'), 5);
             break;
 
