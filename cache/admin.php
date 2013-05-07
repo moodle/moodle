@@ -296,7 +296,7 @@ if ($mform instanceof moodleform) {
 } else {
     echo $renderer->store_plugin_summaries($plugins);
     echo $renderer->store_instance_summariers($stores, $plugins);
-    echo $renderer->definition_summaries($definitions, cache_administration_helper::get_definition_actions($context));
+    echo $renderer->definition_summaries($definitions, $context);
     echo $renderer->lock_summaries($locks);
 
     $applicationstore = join(', ', $defaultmodestores[cache_store::MODE_APPLICATION]);

@@ -866,25 +866,27 @@ abstract class cache_administration_helper extends cache_helper {
      * @param context $context
      * @return array
      */
-    public static function get_definition_actions(context $context) {
+    public static function get_definition_actions(context $context, array $definition) {
         if (has_capability('moodle/site:config', $context)) {
-            return array(
-                // Edit mappings.
-                array(
-                    'text' => get_string('editmappings', 'cache'),
-                    'url' => new moodle_url('/cache/admin.php', array('action' => 'editdefinitionmapping', 'sesskey' => sesskey()))
-                ),
-                // Edit sharing.
-                array(
+            $actions = array();
+            // Edit mappings.
+            $actions[] = array(
+                'text' => get_string('editmappings', 'cache'),
+                'url' => new moodle_url('/cache/admin.php', array('action' => 'editdefinitionmapping', 'sesskey' => sesskey()))
+            );
+            // Edit sharing.
+            if (count($definition['sharingoptions']) > 1) {
+                $actions[] = array(
                     'text' => get_string('editsharing', 'cache'),
                     'url' => new moodle_url('/cache/admin.php', array('action' => 'editdefinitionsharing', 'sesskey' => sesskey()))
-                ),
-                // Purge.
-                array(
-                    'text' => get_string('purge', 'cache'),
-                    'url' => new moodle_url('/cache/admin.php', array('action' => 'purgedefinition', 'sesskey' => sesskey()))
-                )
+                );
+            }
+            // Purge.
+            $actions[] = array(
+                'text' => get_string('purge', 'cache'),
+                'url' => new moodle_url('/cache/admin.php', array('action' => 'purgedefinition', 'sesskey' => sesskey()))
             );
+            return $actions;
         }
         return array();
     }
