@@ -1052,9 +1052,6 @@ class html_writer {
      * @return string HTML fragment
      */
     public static function attribute($name, $value) {
-        if (is_array($value)) {
-            debugging("Passed an array for the HTML attribute $name", DEBUG_DEVELOPER);
-        }
         if ($value instanceof moodle_url) {
             return ' ' . $name . '="' . $value->out() . '"';
         }
