@@ -55,12 +55,12 @@ function behat_error($errorcode, $text = '') {
             $text = 'Behat permissions problem: ' . $text . ', check the permissions';
             break;
         case BEHAT_EXITCODE_REINSTALL:
-            $path = testing_cli_argument_path('/admin/tool/behat/cli/util.php');
-            $text = "Reinstall Behat: ".$text.", use:\n php ".$path." --drop \n php ".$path." --install";
+            $path = testing_cli_argument_path('/admin/tool/behat/cli/init.php');
+            $text = "Reinstall Behat: ".$text.", use:\n php ".$path;
             break;
         case BEHAT_EXITCODE_INSTALL:
-            $path = testing_cli_argument_path('/admin/tool/behat/cli/util.php');
-            $text = "Install Behat before enabling it, use:\n php ".$path." --install";
+            $path = testing_cli_argument_path('/admin/tool/behat/cli/init.php');
+            $text = "Install Behat before enabling it, use:\n php ".$path;
             break;
         default:
             $text = 'Unknown error ' . $errorcode . ' ' . $text;
