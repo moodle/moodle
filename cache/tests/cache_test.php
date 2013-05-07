@@ -1327,4 +1327,51 @@ class cache_phpunit_tests extends advanced_testcase {
         $this->assertInstanceOf('cache_application', $cache);
         $this->assertFalse($cache->get('test'));
     }
+
+    /**
+     * Test purge routines.
+     */
+    public function test_purge_routines() {
+        $instance = cache_config_phpunittest::instance(true);
+        $instance->phpunit_add_definition('phpunit/purge1', array(
+            'mode' => cache_store::MODE_APPLICATION,
+            'component' => 'phpunit',
+            'area' => 'purge1'
+        ));
+        $instance->phpunit_add_definition('phpunit/purge2', array(
+            'mode' => cache_store::MODE_APPLICATION,
+            'component' => 'phpunit',
+            'area' => 'purge2',
+            'requireidentifiers' => array(
+                'id'
+            )
+        ));
+
+        $factory = cache_factory::instance();
+        $definition = $factory->create_definition('phpunit', 'purge1');
+        $this->assertFalse($definition->has_required_identifiers());
+        $cache = $factory->create_cache($definition);
+        $this->assertInstanceOf('cache_application', $cache);
+        $this->assertTrue($cache->set('test', 'test'));
+        $this->assertTrue($cache->has('test'));
+        cache_helper::purge_by_definition('phpunit', 'purge1');
+        $this->assertFalse($cache->has('test'));
+
+        $factory = cache_factory::instance();
+        $definition = $factory->create_definition('phpunit', 'purge2');
+        $this->assertTrue($definition->has_required_identifiers());
+        $cache = $factory->create_cache($definition);
+        $this->assertInstanceOf('cache_application', $cache);
+        $this->assertTrue($cache->set('test', 'test'));
+        $this->assertTrue($cache->has('test'));
+        cache_helper::purge_stores_used_by_definition('phpunit', 'purge2');
+        $this->assertFalse($cache->has('test'));
+
+        try {
+            cache_helper::purge_by_definition('phpunit', 'purge2');
+            $this->fail('Should not be able to purge a definition required identifiers without providing them.');
+        } catch (coding_exception $ex) {
+            $this->assertContains('Identifier required for cache has not been provided', $ex->getMessage());
+        }
+    }
 }
