@@ -23,6 +23,7 @@ Feature: A teacher can set available from and deadline dates to access a lesson
   @javascript
   Scenario: Forbidding lesson accesses until a specified date
     Given I add a "Lesson" to section "1"
+    And I expand all fieldsets
     And I click on "id_available_enabled" "checkbox"
     And I fill the moodle form with:
       | Name | Test lesson |
@@ -49,6 +50,7 @@ Feature: A teacher can set available from and deadline dates to access a lesson
   @javascript
   Scenario: Forbidding lesson accesses until a specified date
     Given I add a "Lesson" to section "1"
+    And I expand all fieldsets
     And I click on "id_deadline_enabled" "checkbox"
     And I fill the moodle form with:
       | Name | Test lesson |

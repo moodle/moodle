@@ -114,6 +114,7 @@ $string['continuetonextpage'] = 'Continue to next page.';
 $string['correctanswerjump'] = 'Correct answer jump';
 $string['correctanswerscore'] = 'Correct answer score';
 $string['correctresponse'] = 'Correct response';
+$string['createaquestionpage'] = 'Create a question page';
 $string['credit'] = 'Credit';
 $string['customscoring'] = 'Custom scoring';
 $string['customscoring_help'] = 'If enabled, then each answer may be given a numerical point value (positive or negative).';
