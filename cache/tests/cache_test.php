@@ -1305,4 +1305,26 @@ class cache_phpunit_tests extends advanced_testcase {
         $this->assertTrue($cache->delete('a'));
         $this->assertFalse($cache->has('a'));
     }
+
+    /**
+     * Test the static cache_helper method purge_stores_used_by_definition.
+     */
+    public function test_purge_stores_used_by_definition() {
+        $instance = cache_config_phpunittest::instance(true);
+        $instance->phpunit_add_definition('phpunit/test_purge_stores_used_by_definition', array(
+            'mode' => cache_store::MODE_APPLICATION,
+            'component' => 'phpunit',
+            'area' => 'test_purge_stores_used_by_definition'
+        ));
+        $cache = cache::make('phpunit', 'test_purge_stores_used_by_definition');
+        $this->assertInstanceOf('cache_application', $cache);
+        $this->assertTrue($cache->set('test', 'test'));
+        unset($cache);
+
+        cache_helper::purge_stores_used_by_definition('phpunit', 'test_purge_stores_used_by_definition');
+
+        $cache = cache::make('phpunit', 'test_purge_stores_used_by_definition');
+        $this->assertInstanceOf('cache_application', $cache);
+        $this->assertFalse($cache->get('test'));
+    }
 }

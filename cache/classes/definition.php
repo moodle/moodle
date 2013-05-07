@@ -102,6 +102,9 @@ defined('MOODLE_INTERNAL') || die();
  *          [array] An array of events that should cause this cache to invalidate some or all of the items within it.
  *     + sharingoptions
  *          [int] The sharing options that are appropriate for this definition. Should be the sum of the possible options.
+ *     + defaultsharing
+ *          [int] The default sharing option to use. It's highly recommended that you don't set this unless there is a very
+ *          specific reason not to use the system default.
  *
  * For examples take a look at lib/db/caches.php
  *

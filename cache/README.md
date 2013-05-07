@@ -32,6 +32,7 @@ A definition:
                 'contextmarkeddirty'
             ),
             'sharingoptions' => null                  // Optional
+            'defaultsharing' => null                  // Optional
         )
     );
 
@@ -149,6 +150,7 @@ The following optional settings can also be defined:
 * mappingsonly - This definition can only be used if there is a store mapping for it. More on this later.
 * invalidationevents - An array of events that should trigger this cache to invalidate.
 * sharingoptions - The sum of the possible sharing options that are applicable to the definition. An advanced setting.
+* defaultsharing - The default sharing option to use. It's highly recommended that you don't set this unless there is a very specific reason not to use the system default.
 
 It's important to note that internally the definition is also aware of the component. This is picked up when the definition is read, based upon the location of the caches.php file.
 
