@@ -354,8 +354,11 @@ class assign {
         $o = '';
         $mform = null;
         $notices = array();
+        $nextpageparams = array();
 
-        $nextpageparams = array('id'=>$this->get_course_module()->id);
+        if (!empty($this->get_course_module()->id)) {
+            $nextpageparams['id'] = $this->get_course_module()->id;
+        }
 
         // Handle form submissions first.
         if ($action == 'savesubmission') {
