@@ -188,6 +188,14 @@
     .alert-info;
     color: @textColor;
 }
+.formulation input[type="text"],
+.formulation select {
+    width: auto;
+}
+
+.path-mod-quiz input[size] {
+    width: auto;
+}
 .que .outcome {
 }
 .que .comment {
@@ -218,21 +226,59 @@
 .que .qtext {
     margin-bottom: 1.5em;
 }
-.que .correct {
+.que .correctness {
     .label;
-    background-color: @successText;
-}
-.que .notanswered,
-.que .incorrect {
-    .label;
-    background-color: @errorText;
-}
-.que .partiallycorrect {
-    background-color: @warningBackground;
+    &.correct {
+        background-color: @successText;
+    }
+    &.partiallycorrect {
+        background-color: @orange;
+    }
+    &.notanswered,
+    &.incorrect {
+        background-color: @errorText;
+    }
 }
 .que .validationerror {
     color: @errorText;
 }
+// copied from .formFieldState in mixin.less
+// and made more specific
+.answerState(@textColor, @backgroundColor) {
+    @borderColor: @textColor;
+    color: @textColor;
+    background-color: @backgroundColor;
+    border-color: @borderColor;
+    .box-shadow(inset 0 1px 1px rgba(0,0,0,.075)); // Redeclare so transitions work
+    &:focus {
+      border-color: darken(@borderColor, 10%);
+      @shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 6px lighten(@borderColor, 20%);
+      .box-shadow(@shadow);
+    }
+}
+
+.formulation .correct {
+    background-color: @successBackground;
+}
+.formulation .partiallycorrect {
+    background-color: @warningBackground;
+}
+.formulation .incorrect {
+    background-color: @errorBackground;
+}
+.formulation select.correct,
+.formulation input.correct {
+  .answerState(@successText, @successBackground);
+}
+.formulation select.partiallycorrect,
+.formulation input.partiallycorrect {
+  .answerState(@warningText, @warningBackground);
+}
+.formulation select.incorrect,
+.formulation input.incorrect {
+  .answerState(@errorText, @errorBackground);
+}
+
 .que .grading,
 .que .comment,
 .que .commentlink,
@@ -339,6 +385,9 @@
     padding-bottom: 0.5em;
     border: none;
     background-color: @bodyBackground;
+}
+#page-mod-quiz-edit div.question div.content div.points label {
+    display: inline-block;
 }
 
 #page-mod-quiz-edit div.quizpage .pagecontent .pagestatus {
