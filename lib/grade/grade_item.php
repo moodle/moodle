@@ -1503,6 +1503,11 @@ class grade_item extends grade_object {
         $oldgrade->feedback       = $grade->feedback;
         $oldgrade->feedbackformat = $grade->feedbackformat;
 
+        // MDL-31713 rawgramemin and max must be up to date so conditional access %'s works properly.
+        $grade->rawgrademin = $this->grademin;
+        $grade->rawgrademax = $this->grademax;
+        $grade->rawscaleid  = $this->scaleid;
+
         // changed grade?
         if ($finalgrade !== false) {
             if ($this->is_overridable_item()) {
