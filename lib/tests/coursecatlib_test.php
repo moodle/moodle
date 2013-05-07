@@ -426,4 +426,110 @@ class coursecatlib_testcase extends advanced_testcase {
         $this->assertEquals(array($c3->id, $c6->id), array_keys($res));
         $this->assertEquals(2, coursecat::search_courses_count(array('search' => 'Математика'), array()));
     }
+
+    public function test_course_contacts() {
+        global $DB, $CFG;
+        $teacherrole = $DB->get_record('role', array('shortname'=>'editingteacher'));
+        $managerrole = $DB->get_record('role', array('shortname'=>'manager'));
+        $studentrole = $DB->get_record('role', array('shortname'=>'student'));
+        $oldcoursecontact = $CFG->coursecontact;
+
+        $CFG->coursecontact = $managerrole->id. ','. $teacherrole->id;
+
+        /**
+         * User is listed in course contacts for the course if he has one of the
+         * "course contact" roles ($CFG->coursecontact) AND is enrolled in the course.
+         * If the user has several roles only the highest is displayed.
+         */
+
+        // Test case:
+        //
+        // == Cat1 (user2 has teacher role)
+        //   == Cat2
+        //     -- course21 (user2 is enrolled as manager) | [Expected] Manager: F2 L2
+        //     -- course22 (user2 is enrolled as student) | [Expected] Teacher: F2 L2
+        //     == Cat4 (user2 has manager role)
+        //       -- course41 (user4 is enrolled as teacher, user5 is enrolled as manager) | [Expected] Manager: F5 L5, Teacher: F4 L4
+        //       -- course42 (user2 is enrolled as teacher) | [Expected] Manager: F2 L2
+        //   == Cat3 (user3 has manager role)
+        //     -- course31 (user3 is enrolled as student) | [Expected] Manager: F3 L3
+        //     -- course32                                | [Expected]
+        //   -- course11 (user1 is enrolled as teacher)   | [Expected] Teacher: F1 L1
+        //   -- course12 (user1 has teacher role)         | [Expected]
+        //                also user4 is enrolled as teacher but enrolment is not active
+        $category = $course = $enrol = $user = array();
+        $category[1] = coursecat::create(array('name' => 'Cat1'))->id;
+        $category[2] = coursecat::create(array('name' => 'Cat2', 'parent' => $category[1]))->id;
+        $category[3] = coursecat::create(array('name' => 'Cat3', 'parent' => $category[1]))->id;
+        $category[4] = coursecat::create(array('name' => 'Cat4', 'parent' => $category[2]))->id;
+        foreach (array(1,2,3,4) as $catid) {
+            foreach (array(1,2) as $courseid) {
+                $course[$catid][$courseid] = $this->getDataGenerator()->create_course(array('idnumber' => 'id'.$catid.$courseid,
+                    'category' => $category[$catid]))->id;
+                $enrol[$catid][$courseid] = $DB->get_record('enrol', array('courseid'=>$course[$catid][$courseid], 'enrol'=>'manual'), '*', MUST_EXIST);
+            }
+        }
+        foreach (array(1,2,3,4,5) as $userid) {
+            $user[$userid] = $this->getDataGenerator()->create_user(array('firstname' => 'F'.$userid, 'lastname' => 'L'.$userid))->id;
+        }
+
+        $manual = enrol_get_plugin('manual');
+
+        // Cat1 (user2 has teacher role)
+        role_assign($teacherrole->id, $user[2], context_coursecat::instance($category[1]));
+        // course21 (user2 is enrolled as manager)
+        $manual->enrol_user($enrol[2][1], $user[2], $managerrole->id);
+        // course22 (user2 is enrolled as student)
+        $manual->enrol_user($enrol[2][2], $user[2], $studentrole->id);
+        // Cat4 (user2 has manager role)
+        role_assign($managerrole->id, $user[2], context_coursecat::instance($category[4]));
+        // course41 (user4 is enrolled as teacher, user5 is enrolled as manager)
+        $manual->enrol_user($enrol[4][1], $user[4], $teacherrole->id);
+        $manual->enrol_user($enrol[4][1], $user[5], $managerrole->id);
+        // course42 (user2 is enrolled as teacher)
+        $manual->enrol_user($enrol[4][2], $user[2], $teacherrole->id);
+        // Cat3 (user3 has manager role)
+        role_assign($managerrole->id, $user[3], context_coursecat::instance($category[3]));
+        // course31 (user3 is enrolled as student)
+        $manual->enrol_user($enrol[3][1], $user[3], $studentrole->id);
+        // course11 (user1 is enrolled as teacher)
+        $manual->enrol_user($enrol[1][1], $user[1], $teacherrole->id);
+        // -- course12 (user1 has teacher role)
+        //                also user4 is enrolled as teacher but enrolment is not active
+        role_assign($teacherrole->id, $user[1], context_course::instance($course[1][2]));
+        $manual->enrol_user($enrol[1][2], $user[4], $teacherrole->id, 0, 0, ENROL_USER_SUSPENDED);
+
+        $allcourses = coursecat::get(0)->get_courses(array('recursive' => true, 'coursecontacts' => true, 'sort' => array('idnumber' => 1)));
+        // Simplify the list of contacts for each course (similar as renderer would do)
+        $contacts = array();
+        foreach (array(1,2,3,4) as $catid) {
+            foreach (array(1,2) as $courseid) {
+                $tmp = array();
+                foreach ($allcourses[$course[$catid][$courseid]]->get_course_contacts() as $contact) {
+                    $tmp[] = $contact['rolename']. ': '. $contact['username'];
+                }
+                $contacts[$catid][$courseid] = join(', ', $tmp);
+            }
+        }
+
+        // Assert:
+        //     -- course21 (user2 is enrolled as manager) | Manager: F2 L2
+        $this->assertEquals('Manager: F2 L2', $contacts[2][1]);
+        //     -- course22 (user2 is enrolled as student) | Teacher: F2 L2
+        $this->assertEquals('Teacher: F2 L2', $contacts[2][2]);
+        //       -- course41 (user4 is enrolled as teacher, user5 is enrolled as manager) | Manager: F5 L5, Teacher: F4 L4
+        $this->assertEquals('Manager: F5 L5, Teacher: F4 L4', $contacts[4][1]);
+        //       -- course42 (user2 is enrolled as teacher) | [Expected] Manager: F2 L2
+        $this->assertEquals('Manager: F2 L2', $contacts[4][2]);
+        //     -- course31 (user3 is enrolled as student) | Manager: F3 L3
+        $this->assertEquals('Manager: F3 L3', $contacts[3][1]);
+        //     -- course32                                |
+        $this->assertEquals('', $contacts[3][2]);
+        //   -- course11 (user1 is enrolled as teacher)   | Teacher: F1 L1
+        $this->assertEquals('Teacher: F1 L1', $contacts[1][1]);
+        //   -- course12 (user1 has teacher role)         |
+        $this->assertEquals('', $contacts[1][2]);
+
+        $CFG->coursecontact = $oldcoursecontact;
+    }
 }

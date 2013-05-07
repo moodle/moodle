@@ -224,6 +224,12 @@ $definitions = array(
             'changesincoursecat',
         ),
     ),
+    // Cache course contacts for the courses
+    'coursecontacts' => array(
+        'mode' => cache_store::MODE_APPLICATION,
+        'persistent' => true,
+        'simplekeys' => true,
+    ),
     // Used to store data for repositories to avoid repetitive DB queries within one request
     'repositories' => array(
         'mode' => cache_store::MODE_REQUEST,
