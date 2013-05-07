@@ -711,6 +711,7 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
         list($sql1, $params1) = $DB->get_in_or_equal(array_keys($allcontexts), SQL_PARAMS_NAMED, 'ctxid');
         list($sql2, $params2) = $DB->get_in_or_equal($managerroles, SQL_PARAMS_NAMED, 'rid');
         list($sort, $sortparams) = users_order_by_sql('u');
+        $notdeleted = array('notdeleted'=>0);
         $sql = "SELECT ra.contextid, ra.id AS raid,
                        r.id AS roleid, r.name AS rolename, r.shortname AS roleshortname,
                        rn.name AS rolecoursealias, u.id, u.username, u.firstname, u.lastname
@@ -718,9 +719,9 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
                   JOIN {user} u ON ra.userid = u.id
                   JOIN {role} r ON ra.roleid = r.id
              LEFT JOIN {role_names} rn ON (rn.contextid = ra.contextid AND rn.roleid = r.id)
-                WHERE  ra.contextid ". $sql1." AND ra.roleid ". $sql2."
+                WHERE  ra.contextid ". $sql1." AND ra.roleid ". $sql2." AND u.deleted = :notdeleted
              ORDER BY r.sortorder, $sort";
-        $rs = $DB->get_recordset_sql($sql, $params1 + $params2 + $sortparams);
+        $rs = $DB->get_recordset_sql($sql, $params1 + $params2 + $notdeleted + $sortparams);
         $checkenrolments = array();
         foreach($rs as $ra) {
             foreach ($allcontexts[$ra->contextid] as $id) {
