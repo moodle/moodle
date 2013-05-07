@@ -693,6 +693,7 @@ function external_format_text($text, $textformat, $contextid, $component, $filea
     $settings = external_settings::get_instance();
 
     if ($settings->get_fileurl()) {
+        require_once($CFG->libdir . "/filelib.php");
         $text = file_rewrite_pluginfile_urls($text, $settings->get_file(), $contextid, $component, $filearea, $itemid);
     }
 
