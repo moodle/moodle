@@ -1152,7 +1152,7 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
         $params = array('siteid' => SITEID);
         if ($recursive) {
             if ($this->id) {
-                $context = get_category_or_system_context($this->id);
+                $context = context_coursecat::instance($this->id);
                 $where .= ' AND ctx.path like :path';
                 $params['path'] = $context->path. '/%';
             }
@@ -1488,7 +1488,11 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
             // can not move to itself or it's own child
             return false;
         }
-        return has_capability('moodle/category:manage', get_category_or_system_context($newparentcat->id));
+        if ($newparentcat->id) {
+            return has_capability('moodle/category:manage', context_coursecat::instance($newparentcat->id));
+        } else {
+            return has_capability('moodle/category:manage', context_system::instance());
+        }
     }
 
     /**
