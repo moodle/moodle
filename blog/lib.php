@@ -82,7 +82,7 @@ function blog_user_can_view_user_entry($targetuserid, $blogentry=null) {
         return false;  // can not view draft of others
     }
 
-    // coming for 0 entry, make sure user is logged in, if not a public blog
+    // If blog entry is not public, make sure user is logged in.
     if ($blogentry && $blogentry->publishstate != 'public' && !isloggedin()) {
         return false;
     }
@@ -1001,6 +1001,8 @@ function blog_get_associated_count($courseid, $cmid=null) {
  * may have switch to turn on/off comments option, this callback will
  * affect UI display, not like pluginname_comment_validate only throw
  * exceptions.
+ * blog_comment_validate will be called before viewing/adding/deleting
+ * comment, so don't repeat checks.
  * Capability check has been done in comment->check_permissions(), we
  * don't need to do it again here.
  *
@@ -1017,7 +1019,17 @@ function blog_get_associated_count($courseid, $cmid=null) {
  * @return array
  */
 function blog_comment_permissions($comment_param) {
-    return array('post'=>true, 'view'=>true);
+    global $DB;
+
+    // If blog is public and current usre is guest, then don't let him post comments.
+    $blogentry = $DB->get_record('post', array('id' => $comment_param->itemid), 'publishstate', MUST_EXIST);
+
+    if ($blogentry->publishstate != 'public') {
+        if (!isloggedin() || isguestuser()) {
+            return array('post' => false, 'view' => true);
+        }
+    }
+    return array('post' => true, 'view' => true);
 }
 
 /**
@@ -1036,15 +1048,20 @@ function blog_comment_permissions($comment_param) {
  * @return boolean
  */
 function blog_comment_validate($comment_param) {
-    global $DB;
-    // validate comment itemid
-    if (!$entry = $DB->get_record('post', array('id'=>$comment_param->itemid))) {
-        throw new comment_exception('invalidcommentitemid');
+    global $CFG, $DB, $USER;
+
+    // Check if blogs are enabled user can comment.
+    if (empty($CFG->enableblogs) || empty($CFG->blogusecomments)) {
+        throw new comment_exception('nopermissiontocomment');
     }
+
     // validate comment area
     if ($comment_param->commentarea != 'format_blog') {
         throw new comment_exception('invalidcommentarea');
     }
+
+    $blogentry = $DB->get_record('post', array('id' => $comment_param->itemid), '*', MUST_EXIST);
+
     // validation for comment deletion
     if (!empty($comment_param->commentid)) {
         if ($record = $DB->get_record('comments', array('id'=>$comment_param->commentid))) {
@@ -1061,7 +1078,11 @@ function blog_comment_validate($comment_param) {
             throw new comment_exception('invalidcommentid');
         }
     }
-    return true;
+
+    // Validate if user has blog view permission.
+    $sitecontext = context_system::instance();
+    return has_capability('moodle/blog:view', $sitecontext) &&
+            blog_user_can_view_user_entry($blogentry->userid, $blogentry);
 }
 
 /**
