@@ -183,13 +183,7 @@ if (!empty($userid)) {
             print_error('donothaveblog', 'blog');
         }
     } else {
-        $personalcontext = get_context_instance(CONTEXT_USER, $userid);
-
-        if (!has_capability('moodle/blog:view', $sitecontext) && !has_capability('moodle/user:readuserblogs', $personalcontext)) {
-            print_error('cannotviewuserblog', 'blog');
-        }
-
-        if (!blog_user_can_view_user_entry($userid)) {
+        if (!has_capability('moodle/blog:view', $sitecontext) || !blog_user_can_view_user_entry($userid)) {
             print_error('cannotviewcourseblog', 'blog');
         }
     }
