@@ -461,11 +461,9 @@
     height: 12px;
     cursor: pointer;
 }
-.dir-rtl .file-picker .ygtvtp {
+.dir-rtl .file-picker .ygtvtp,
+.dir-rtl .filemanager .ygtvtp {
     background: url('[[pix:moodle|y/tp_rtl]]') 0 10px no-repeat;
-    width: 13px;
-    height: 12px;
-    cursor: pointer;
 }
 // first or middle sibling, expandable, hover
 .file-picker .ygtvtph,
@@ -475,11 +473,9 @@
     height: 22px;
     cursor: pointer;
 }
-.dir-rtl .file-picker .ygtvtph {
+.dir-rtl .file-picker .ygtvtph,
+.dir-rtl .filemanager .ygtvtph {
     background: url('[[pix:moodle|y/tp_rtl]]') 0 10px no-repeat;
-    width: 13px;
-    height: 22px;
-    cursor: pointer;
 }
 // last sibling, no children
 .file-picker .ygtvln,
@@ -488,10 +484,9 @@
     width: 17px;
     height: 22px;
 }
-.dir-rtl .file-picker .ygtvln {
+.dir-rtl .file-picker .ygtvln,
+.dir-rtl .filemanager .ygtvln {
     background: url('[[pix:moodle|y/ln_rtl]]') 0 0 no-repeat;
-    width: 17px;
-    height: 22px;
 }
 // Last sibling, collapsable
 .file-picker .ygtvlm,
@@ -517,11 +512,9 @@
     height: 12px;
     cursor: pointer;
 }
-.dir-rtl .file-picker .ygtvlp {
+.dir-rtl .file-picker .ygtvlp,
+.dir-rtl .filemanager .ygtvlp {
     background: url('[[pix:moodle|y/lp_rtl]]') 0 10px no-repeat;
-    width: 13px;
-    height: 12px;
-    cursor: pointer;
 }
 // Last sibling, expandable, hover
 .file-picker .ygtvlph,
@@ -531,11 +524,9 @@
     height: 12px;
     cursor: pointer;
 }
-.dir-rtl .file-picker .ygtvlph {
+.dir-rtl .file-picker .ygtvlph,
+.dir-rtl .filemanager .ygtvlph {
     background: url('[[pix:moodle|y/lp_rtl]]') 0 10px no-repeat;
-    width: 13px;
-    height: 12px;
-    cursor: pointer;
 }
 // Loading icon
 .file-picker .ygtvloading,
@@ -589,6 +580,8 @@ a.ygtvspacer:hover {
 }
 .dir-rtl .fp-icon {
     float: right;
+    margin-left: 10px;
+    margin-right: 0;
 }
 .fp-icon img {
     max-height: 24px;
@@ -600,6 +593,7 @@ a.ygtvspacer:hover {
 }
 .dir-rtl .fp-filename {
     padding-left: 10px;
+    padding-right: 0;
 }
 // Repositories Login on fp-content (File Picker only)
 
