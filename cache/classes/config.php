@@ -231,20 +231,28 @@ class cache_config {
                 // Invalid cache mode used for the definition.
                 continue;
             }
-            // Default the sharing option as it was added for 2.5.
-            // This can be removed sometime after 2.5 is the minimum version someone can upgrade from.
-            if (!isset($conf['sharingoptions'])) {
-                $conf['sharingoptions'] = cache_definition::SHARING_DEFAULTOPTIONS;
-            }
-            // Default the selected sharing option as it was added for 2.5.
-            // This can be removed sometime after 2.5 is the minimum version someone can upgrade from.
-            if (!isset($conf['selectedsharingoption'])) {
+            if ($conf['mode'] === cache_store::MODE_SESSION || $conf['mode'] === cache_store::MODE_REQUEST) {
+                // We force this for session and request caches.
+                // They are only allowed to use the default as we don't want people changing them.
+                $conf['sharingoptions'] = cache_definition::SHARING_DEFAULT;
                 $conf['selectedsharingoption'] = cache_definition::SHARING_DEFAULT;
-            }
-            // Default the user input sharing key as it was added for 2.5.
-            // This can be removed sometime after 2.5 is the minimum version someone can upgrade from.
-            if (!isset($conf['userinputsharingkey'])) {
                 $conf['userinputsharingkey'] = '';
+            } else {
+                // Default the sharing option as it was added for 2.5.
+                // This can be removed sometime after 2.5 is the minimum version someone can upgrade from.
+                if (!isset($conf['sharingoptions'])) {
+                    $conf['sharingoptions'] = cache_definition::SHARING_DEFAULTOPTIONS;
+                }
+                // Default the selected sharing option as it was added for 2.5.
+                // This can be removed sometime after 2.5 is the minimum version someone can upgrade from.
+                if (!isset($conf['selectedsharingoption'])) {
+                    $conf['selectedsharingoption'] = cache_definition::SHARING_DEFAULT;
+                }
+                // Default the user input sharing key as it was added for 2.5.
+                // This can be removed sometime after 2.5 is the minimum version someone can upgrade from.
+                if (!isset($conf['userinputsharingkey'])) {
+                    $conf['userinputsharingkey'] = '';
+                }
             }
             $this->configdefinitions[$id] = $conf;
         }
