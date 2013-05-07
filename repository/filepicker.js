@@ -662,18 +662,16 @@ M.core_filepicker.init = function(Y, options) {
                     'repository_id': this.active_repo.id,
                     'callback': function(id, o, args) {
                         scope.hide();
-                        // editor needs to update url
-                        // filemanager do nothing
                         if (scope.options.editor_target && scope.options.env == 'editor') {
+                            // editor needs to update url
                             scope.options.editor_target.value = data.existingfile.url;
                             scope.options.editor_target.onchange();
-                        } else if (scope.options.env === 'filepicker') {
-                            var fileinfo = {'client_id':scope.options.client_id,
-                                    'url':data.existingfile.url,
-                                    'file':data.existingfile.filename};
-                            var formcallback_scope = scope.options.magicscope ? scope.options.magicscope : scope;
-                            scope.options.formcallback.apply(formcallback_scope, [fileinfo]);
                         }
+                        var fileinfo = {'client_id':scope.options.client_id,
+                                'url':data.existingfile.url,
+                                'file':data.existingfile.filename};
+                        var formcallback_scope = scope.options.magicscope ? scope.options.magicscope : scope;
+                        scope.options.formcallback.apply(formcallback_scope, [fileinfo]);
                     }
                 }, true);
             }
