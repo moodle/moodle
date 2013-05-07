@@ -31,6 +31,8 @@ A definition:
             'invalidationevents' => array(            // Optional
                 'contextmarkeddirty'
             ),
+            'sharingoptions' => null                  // Optional
+            'defaultsharing' => null                  // Optional
         )
     );
 
@@ -147,11 +149,13 @@ The following optional settings can also be defined:
 * ttl - Can be used to set a ttl value for data being set for this cache.
 * mappingsonly - This definition can only be used if there is a store mapping for it. More on this later.
 * invalidationevents - An array of events that should trigger this cache to invalidate.
+* sharingoptions - The sum of the possible sharing options that are applicable to the definition. An advanced setting.
+* defaultsharing - The default sharing option to use. It's highly recommended that you don't set this unless there is a very specific reason not to use the system default.
 
 It's important to note that internally the definition is also aware of the component. This is picked up when the definition is read, based upon the location of the caches.php file.
 
-The persist option.
-As noted the persist option causes the loader generated for this definition to be stored when first created. Subsequent requests for this definition will be given the original loader instance.
+The persistent option.
+As noted the persistent option causes the loader generated for this definition to be stored when first created. Subsequent requests for this definition will be given the original loader instance.
 Data passed to or retrieved from the loader and its chained loaders gets cached by the instance.
 This option should be used when you know you will require the loader several times and perhaps in different areas of code.
 Because it caches key=>value data it avoids the need to re-fetch things from stores after the first request. Its good for performance, bad for memory.
@@ -161,6 +165,10 @@ The mappingsonly option.
 The administrator of a site can create mappings between stores and definitions. Allowing them to designate stores for specific definitions (caches).
 Setting this option to true means that the definition can only be used if a mapping has been made for it.
 Normally if no mappings exist then the default store for the definition mode is used.
+
+Sharing options.
+This controls the options available to the user when configuring the sharing of a definitions cached data.
+By default all sharing options are available to select. This particular option allows the developer to limit the options available to the admin configuring the cache.
 
 ### Data source
 Data sources allow cache _misses_ (requests for a key that doesn't exist) to be handled and loaded internally.

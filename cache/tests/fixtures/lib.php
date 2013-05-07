@@ -59,6 +59,14 @@ class cache_config_phpunittest extends cache_config_writer {
     }
 
     /**
+     * Removes a definition.
+     * @param string $name
+     */
+    public function phpunit_remove_definition($name) {
+        unset($this->configdefinitions[$name]);
+    }
+
+    /**
      * Removes the configured stores so that there are none available.
      */
     public function phpunit_remove_stores() {

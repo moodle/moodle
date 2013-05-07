@@ -30,6 +30,15 @@ require_once($CFG->dirroot.'/lib/adminlib.php');
 require_once($CFG->dirroot.'/cache/locallib.php');
 require_once($CFG->dirroot.'/cache/forms.php');
 
+// The first time the user visits this page we are going to reparse the definitions.
+// Just ensures that everything is up to date.
+// We flag is session so that this only happens once as people are likely to hit
+// this page several times if making changes.
+if (empty($SESSION->cacheadminreparsedefinitions)) {
+    cache_helper::update_definitions();
+    $SESSION->cacheadminreparsedefinitions = true;
+}
+
 $action = optional_param('action', null, PARAM_ALPHA);
 
 admin_externalpage_setup('cacheconfig');
@@ -131,6 +140,9 @@ if (!empty($action) && confirm_sesskey()) {
             break;
         case 'editdefinitionmapping' : // Edit definition mappings.
             $definition = required_param('definition', PARAM_SAFEPATH);
+            if (!array_key_exists($definition, $definitions)) {
+                throw new cache_exception('Invalid cache definition requested');
+            }
             $title = get_string('editdefinitionmappings', 'cache', $definition);
             $mform = new cache_definition_mappings_form($PAGE->url, array('definition' => $definition));
             if ($mform->is_cancelled()) {
@@ -144,6 +156,33 @@ if (!empty($action) && confirm_sesskey()) {
                     }
                 }
                 $writer->set_definition_mappings($definition, $mappings);
+                redirect($PAGE->url);
+            }
+            break;
+        case 'editdefinitionsharing' :
+            $definition = required_param('definition', PARAM_SAFEPATH);
+            if (!array_key_exists($definition, $definitions)) {
+                throw new cache_exception('Invalid cache definition requested');
+            }
+            $title = get_string('editdefinitionsharing', 'cache', $definition);
+            $sharingoptions = $definitions[$definition]['sharingoptions'];
+            $customdata = array('definition' => $definition, 'sharingoptions' => $sharingoptions);
+            $mform = new cache_definition_sharing_form($PAGE->url, $customdata);
+            $mform->set_data(array(
+                'sharing' => $definitions[$definition]['selectedsharingoption'],
+                'userinputsharingkey' => $definitions[$definition]['userinputsharingkey']
+            ));
+            if ($mform->is_cancelled()) {
+                redirect($PAGE->url);
+            } else if ($data = $mform->get_data()) {
+                $component = $definitions[$definition]['component'];
+                $area = $definitions[$definition]['area'];
+                // Purge the stores removing stale data before we alter the sharing option.
+                cache_helper::purge_stores_used_by_definition($component, $area);
+                $writer = cache_config_writer::instance();
+                $sharing = array_sum(array_keys($data->sharing));
+                $userinputsharingkey = $data->userinputsharingkey;
+                $writer->set_definition_sharing($definition, $sharing, $userinputsharingkey);
                 redirect($PAGE->url);
             }
             break;

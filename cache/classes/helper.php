@@ -275,6 +275,11 @@ class cache_helper {
     /**
      * Purges the cache for a specific definition.
      *
+     * If you need to purge a definition that requires identifiers or an aggregate and you don't
+     * know the details of those please use cache_helper::purge_stores_used_by_definition instead.
+     * It is a more aggressive purge and will purge all data within the store, not just the data
+     * belonging to the given definition.
+     *
      * @todo MDL-36660: Change the signature: $aggregate must be added.
      *
      * @param string $component
@@ -452,6 +457,27 @@ class cache_helper {
         }
 
         return true;
+    }
+
+    /**
+     * Purges all of the stores used by a definition.
+     *
+     * Unlike cache_helper::purge_by_definition this purges all of the data from the stores not
+     * just the data relating to the definition.
+     * This function is useful when you must purge a definition that requires setup but you don't
+     * want to set it up.
+     *
+     * @param string $component
+     * @param string $area
+     */
+    public static function purge_stores_used_by_definition($component, $area) {
+        $factory = cache_factory::instance();
+        $config = $factory->create_config_instance();
+        $definition = $factory->create_definition($component, $area);
+        $stores = $config->get_stores_for_definition($definition);
+        foreach ($stores as $store) {
+            self::purge_store($store['name']);
+        }
     }
 
     /**
