@@ -871,7 +871,7 @@ class admin_category implements parentable_part_of_admin_tree {
      *                  defaults to false
      */
     public function locate($name, $findpath=false) {
-        if (is_array($this->category_cache) and !isset($this->category_cache[$this->name])) {
+        if (!isset($this->category_cache[$this->name])) {
             // somebody much have purged the cache
             $this->category_cache[$this->name] = $this;
         }
@@ -885,7 +885,7 @@ class admin_category implements parentable_part_of_admin_tree {
         }
 
         // quick category lookup
-        if (!$findpath and is_array($this->category_cache) and isset($this->category_cache[$name])) {
+        if (!$findpath and isset($this->category_cache[$name])) {
             return $this->category_cache[$name];
         }
 
@@ -938,11 +938,9 @@ class admin_category implements parentable_part_of_admin_tree {
         foreach($this->children as $precedence => $child) {
             if ($child->name == $name) {
                 // clear cache and delete self
-                if (is_array($this->category_cache)) {
-                    while($this->category_cache) {
-                        // delete the cache, but keep the original array address
-                        array_pop($this->category_cache);
-                    }
+                while($this->category_cache) {
+                    // delete the cache, but keep the original array address
+                    array_pop($this->category_cache);
                 }
                 unset($this->children[$precedence]);
                 return true;
@@ -1010,7 +1008,7 @@ class admin_category implements parentable_part_of_admin_tree {
                     );
                 }
             }
-            if (is_array($this->category_cache) and ($something instanceof admin_category)) {
+            if ($something instanceof admin_category) {
                 if (isset($this->category_cache[$something->name])) {
                     debugging('Duplicate admin category name: '.$something->name);
                 } else {
