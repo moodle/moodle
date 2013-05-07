@@ -2107,6 +2107,16 @@ class admin_setting_configfile extends admin_setting_configtext {
         '<div class="form-file defaultsnext"><input type="text" size="'.$this->size.'" id="'.$this->get_id().'" name="'.$this->get_full_name().'" value="'.s($data).'" />'.$executable.'</div>',
         $this->description, true, '', $default, $query);
     }
+    /**
+     * checks if execpatch has been disabled in config.php
+     */
+    public function write_setting($data) {
+        global $CFG;
+        if (!empty($CFG->preventexecpath)) {
+            return '';
+        }
+        return parent::write_setting($data);
+    }
 }
 
 
@@ -2125,6 +2135,7 @@ class admin_setting_configexecutable extends admin_setting_configfile {
      * @return string XHTML field
      */
     public function output_html($data, $query='') {
+        global $CFG;
         $default = $this->get_defaultsetting();
 
         if ($data) {
@@ -2135,6 +2146,9 @@ class admin_setting_configexecutable extends admin_setting_configfile {
             }
         } else {
             $executable = '';
+        }
+        if (!empty($CFG->preventexecpath)) {
+            $this->visiblename .= '<div class="form-overridden">'.get_string('execpathnotallowed', 'admin').'</div>';
         }
 
         return format_admin_setting($this, $this->visiblename,

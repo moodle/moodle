@@ -456,6 +456,12 @@ $CFG->admin = 'admin';
 // To ensure they are never used even when available:
 //      $CFG->svgicons = false;
 //
+// Some administration options allow setting the path to executable files. This can
+// potentially cause a security risk. Set this option to true to disable editing
+// those config settings via the web. They will need to be set explicitly in the
+// config.php file
+//      $CFG->preventexecpath = true;
+//
 //=========================================================================
 // 7. SETTINGS FOR DEVELOPMENT SERVERS - not intended for production use!!!
 //=========================================================================
