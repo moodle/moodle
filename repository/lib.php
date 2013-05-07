@@ -2698,8 +2698,9 @@ final class repository_instance_form extends moodleform {
 
         $sql = "SELECT count('x')
                   FROM {repository_instances} i, {repository} r
-                 WHERE r.type=:plugin AND r.id=i.typeid AND i.name=:name";
-        if ($DB->count_records_sql($sql, array('name' => $data['name'], 'plugin' => $data['plugin'])) > 1) {
+                 WHERE r.type=:plugin AND r.id=i.typeid AND i.name=:name AND i.contextid=:contextid";
+        $params = array('name' => $data['name'], 'plugin' => $this->plugin, 'contextid' => $this->contextid);
+        if ($DB->count_records_sql($sql, $params) > 0) {
             $errors['name'] = get_string('erroruniquename', 'repository');
         }
 
