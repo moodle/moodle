@@ -74,7 +74,7 @@ class award_criteria_courseset extends award_criteria {
     }
 
     public function get_courses(&$mform) {
-        global $DB, $CFG, $PAGE;
+        global $DB, $CFG;
         require_once($CFG->dirroot . '/course/lib.php');
         $buttonarray = array();
 
