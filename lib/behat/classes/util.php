@@ -250,27 +250,12 @@ class behat_util extends testing_util {
      * To check is the current script is running in the test
      * environment
      *
-     * @see tool_behat::is_using_test_environment()
      * @return bool
      */
     public static function is_test_mode_enabled() {
 
         $testenvfile = self::get_test_file_path();
         if (file_exists($testenvfile)) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Returns true if Moodle is currently running with the test database and dataroot
-     * @return bool
-     */
-    public static function is_using_test_environment() {
-        global $CFG;
-
-        if (!empty($CFG->originaldataroot)) {
             return true;
         }
 

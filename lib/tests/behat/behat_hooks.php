@@ -65,11 +65,14 @@ class behat_hooks extends behat_base {
     public static function before_suite($event) {
         global $CFG;
 
-        // To work with behat_dataroot and behat_prefix instead of the regular environment.
-        define('BEHAT_RUNNING', 1);
+        // Defined only when the behat CLI command is running, the moodle init setup process will
+        // read this value and switch to $CFG->behat_dataroot and $CFG->behat_prefix instead of
+        // the normal site.
+        define('BEHAT_TEST', 1);
+
         define('CLI_SCRIPT', 1);
 
-        // With BEHAT_RUNNING we will be using $CFG->behat_* instead of $CFG->dataroot, $CFG->prefix and $CFG->wwwroot.
+        // With BEHAT_TEST we will be using $CFG->behat_* instead of $CFG->dataroot, $CFG->prefix and $CFG->wwwroot.
         require_once(__DIR__ . '/../../../config.php');
 
         // Now that we are MOODLE_INTERNAL.
@@ -109,11 +112,11 @@ class behat_hooks extends behat_base {
         global $DB, $SESSION, $CFG;
 
         // As many checks as we can.
-        if (!defined('BEHAT_RUNNING') ||
+        if (!defined('BEHAT_TEST') ||
+               !defined('BEHAT_SITE_RUNNING') ||
                php_sapi_name() != 'cli' ||
                !behat_util::is_test_mode_enabled() ||
-               !behat_util::is_test_site() ||
-               !isset($CFG->originaldataroot)) {
+               !behat_util::is_test_site()) {
             throw new coding_exception('Behat only can modify the test database and the test dataroot!');
         }
 
