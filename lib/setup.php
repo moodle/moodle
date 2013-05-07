@@ -107,7 +107,8 @@ if (!empty($CFG->behat_switchcompletely)) {
 // Test environment is enabled if:
 // * User has previously enabled through admin/tool/behat/cli/util.php --enable.
 // Both are required to switch to test mode
-if (!empty($CFG->behat_dataroot) && !empty($CFG->behat_prefix) && file_exists($CFG->behat_dataroot)) {
+if (!defined('BEHAT_SITE_RUNNING') && !empty($CFG->behat_dataroot) &&
+        !empty($CFG->behat_prefix) && file_exists($CFG->behat_dataroot)) {
 
     $CFG->behat_dataroot = realpath($CFG->behat_dataroot);
 
