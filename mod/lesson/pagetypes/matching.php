@@ -161,14 +161,6 @@ class lesson_page_type_matching extends lesson_page {
         }
 
         $response = $data->response;
-
-        foreach ($response as $resp) {
-            if ($resp == '') {
-                $result->noanswer = true;
-                return $result;
-            }
-        }
-
         $answers = $this->get_answers();
 
         $correct = array_shift($answers);
@@ -184,6 +176,10 @@ class lesson_page_type_matching extends lesson_page {
         $hits = 0;
         $userresponse = array();
         foreach ($response as $id => $value) {
+            if ($value == '') {
+                $result->noanswer = true;
+                return $result;
+            }
             $userresponse[] = $value;
             // Make sure the user's answer exists in question's answer
             if (array_key_exists($id, $answers)) {
