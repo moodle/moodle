@@ -87,7 +87,7 @@ class theme_bootstrapbase_core_renderer extends core_renderer {
         global $CFG;
 
         // TODO: eliminate this duplicated logic, it belongs in core, not
-        // here. See MDL-38979.
+        // here. See MDL-39565.
         $addlangmenu = true;
         $langs = get_string_manager()->get_list_of_translations();
         if (count($langs) < 2
