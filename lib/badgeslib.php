@@ -1308,3 +1308,33 @@ function badges_user_has_backpack($userid) {
     global $DB;
     return $DB->record_exists('badge_backpack', array('userid' => $userid));
 }
+
+/**
+ * Handles what happens to the course badges when a course is deleted.
+ *
+ * @param int $courseid course ID.
+ * @return void.
+ */
+function badges_handle_course_deletion($courseid) {
+    global $CFG, $DB;
+    include_once $CFG->libdir . '/filelib.php';
+
+    $systemcontext = context_system::instance();
+    $coursecontext = context_course::instance($courseid);
+    $fs = get_file_storage();
+
+    // Move badges images to the system context.
+    $fs->move_area_files_to_new_context($coursecontext->id, $systemcontext->id, 'badges', 'badgeimage');
+
+    // Get all course badges.
+    $badges = $DB->get_records('badge', array('type' => BADGE_TYPE_COURSE, 'courseid' => $courseid));
+    foreach ($badges as $badge) {
+        // Archive badges in this course.
+        $toupdate = new stdClass();
+        $toupdate->id = $badge->id;
+        $toupdate->type = BADGE_TYPE_SITE;
+        $toupdate->courseid = null;
+        $toupdate->status = BADGE_STATUS_ARCHIVED;
+        $DB->update_record('badge', $toupdate);
+    }
+}
