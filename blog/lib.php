@@ -1048,7 +1048,7 @@ function blog_comment_validate($comment_param) {
     global $CFG, $DB, $USER;
 
     // Check if blogs are enabled user can comment.
-    if (empty($CFG->enableblogs) || empty($CFG->blogusecomments)) {
+    if (empty($CFG->bloglevel) || empty($CFG->blogusecomments)) {
         throw new comment_exception('nopermissiontocomment');
     }
 
