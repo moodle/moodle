@@ -86,6 +86,8 @@ class theme_bootstrapbase_core_renderer extends core_renderer {
     protected function render_custom_menu(custom_menu $menu) {
         global $CFG;
 
+        // TODO: eliminate this duplicated logic, it belongs in core, not
+        // here. See MDL-38979.
         $addlangmenu = true;
         $langs = get_string_manager()->get_list_of_translations();
         if (count($langs) < 2
