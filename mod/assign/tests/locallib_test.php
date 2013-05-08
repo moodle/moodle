@@ -1309,5 +1309,47 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $sink->close();
     }
 
+    public function test_disable_submit_after_cutoff_date() {
+        global $PAGE;
+
+        $this->setUser($this->editingteachers[0]);
+        $now = time();
+        $tomorrow = $now + 24*60*60;
+        $lastweek = $now - 7*24*60*60;
+        $yesterday = $now - 24*60*60;
+
+        $assign = $this->create_instance(array('duedate'=>$yesterday,
+                                               'cutoffdate'=>$tomorrow,
+                                               'assignsubmission_onlinetext_enabled'=>1));
+        $PAGE->set_url(new moodle_url('/mod/assign/view.php', array('id' => $assign->get_course_module()->id)));
+
+        // Student should be able to see an add submission button.
+        $this->setUser($this->students[0]);
+        $output = $assign->view_student_summary($this->students[0], true);
+        $this->assertNotEquals(false, strpos($output, get_string('addsubmission', 'assign')));
+
+        // Add a submission but don't submit now.
+        $submission = $assign->get_user_submission($this->students[0]->id, true);
+        $data = new stdClass();
+        $data->onlinetext_editor = array('itemid'=>file_get_unused_draft_itemid(),
+                                         'text'=>'Submission text',
+                                         'format'=>FORMAT_MOODLE);
+        $plugin = $assign->get_submission_plugin_by_type('onlinetext');
+        $plugin->save($submission, $data);
+
+        // Create another instance with cut-off and due-date already passed.
+        $this->setUser($this->editingteachers[0]);
+        $now = time();
+        $assign = $this->create_instance(array('duedate'=>$lastweek,
+                                               'cutoffdate'=>$yesterday,
+                                               'assignsubmission_onlinetext_enabled'=>1));
+
+        $this->setUser($this->students[0]);
+        $output = $assign->view_student_summary($this->students[0], true);
+        $this->assertNotContains($output, get_string('editsubmission', 'assign'),
+                                 'Should not be able to edit after cutoff date.');
+        $this->assertNotContains($output, get_string('submitassignment', 'assign'),
+                                 'Should not be able to submit after cutoff date.');
+    }
 }
 
