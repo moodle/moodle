@@ -211,10 +211,9 @@ class core_cache_renderer extends plugin_renderer_base {
      * Displays definition summaries
      *
      * @param array $definitions
-     * @param array $actions
      * @return string HTML
      */
-    public function definition_summaries(array $definitions, array $actions) {
+    public function definition_summaries(array $definitions, context $context) {
         $table = new html_table();
         $table->head = array(
             get_string('definition', 'cache'),
@@ -238,6 +237,7 @@ class core_cache_renderer extends plugin_renderer_base {
 
         $none = new lang_string('none', 'cache');
         foreach ($definitions as $id => $definition) {
+            $actions = cache_administration_helper::get_definition_actions($context, $definition);
             $htmlactions = array();
             foreach ($actions as $action) {
                 $action['url']->param('definition', $id);
