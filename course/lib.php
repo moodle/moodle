@@ -2349,7 +2349,7 @@ function update_course($data, $editoroptions = NULL) {
         // prevent nulls and 0 in category field
         unset($data->category);
     }
-    $movecat = (isset($data->category) and $oldcourse->category != $data->category);
+    $changesincoursecat = $movecat = (isset($data->category) and $oldcourse->category != $data->category);
 
     if (!isset($data->visible)) {
         // data not from form, add missing visibility info
@@ -2359,6 +2359,7 @@ function update_course($data, $editoroptions = NULL) {
     if ($data->visible != $oldcourse->visible) {
         // reset the visibleold flag when manually hiding/unhiding course
         $data->visibleold = $data->visible;
+        $changesinccoursecat = true;
     } else {
         if ($movecat) {
             $newcategory = $DB->get_record('course_categories', array('id'=>$data->category));
@@ -2387,6 +2388,9 @@ function update_course($data, $editoroptions = NULL) {
     fix_course_sortorder();
     // purge appropriate caches in case fix_course_sortorder() did not change anything
     cache_helper::purge_by_event('changesincourse');
+    if ($changesinccoursecat) {
+        cache_helper::purge_by_event('changesincoursecat');
+    }
 
     // Test for and remove blocks which aren't appropriate anymore
     blocks_remove_inappropriate($course);
