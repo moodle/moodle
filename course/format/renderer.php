@@ -720,8 +720,8 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
                 // 0-section is displayed a little different then the others
                 if ($thissection->summary or !empty($modinfo->sections[0]) or $PAGE->user_is_editing()) {
                     echo $this->section_header($thissection, $course, false, 0);
-                    echo $this->courserenderer->course_section_cm_list($course, $thissection);
-                    echo $this->courserenderer->course_section_add_cm_control($course, 0);
+                    echo $this->courserenderer->course_section_cm_list($course, $thissection, 0);
+                    echo $this->courserenderer->course_section_add_cm_control($course, 0, 0);
                     echo $this->section_footer();
                 }
                 continue;
@@ -751,8 +751,8 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
             } else {
                 echo $this->section_header($thissection, $course, false, 0);
                 if ($thissection->uservisible) {
-                    echo $this->courserenderer->course_section_cm_list($course, $thissection);
-                    echo $this->courserenderer->course_section_add_cm_control($course, $section);
+                    echo $this->courserenderer->course_section_cm_list($course, $thissection, 0);
+                    echo $this->courserenderer->course_section_add_cm_control($course, $section, 0);
                 }
                 echo $this->section_footer();
             }
@@ -766,7 +766,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
                     continue;
                 }
                 echo $this->stealth_section_header($section);
-                echo $this->courserenderer->course_section_cm_list($course, $thissection);
+                echo $this->courserenderer->course_section_cm_list($course, $thissection, 0);
                 echo $this->stealth_section_footer();
             }
 
