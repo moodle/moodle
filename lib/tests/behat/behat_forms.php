@@ -179,6 +179,13 @@ class behat_forms extends behat_base {
         // Adding a click as Selenium requires it to fire some JS events.
         if ($this->running_javascript()) {
 
+            // In some browsers the selectOption actions can perform a page reload
+            // so we need to ensure the element is still available to continue interacting
+            // with it. We don't wait here.
+            if (!$this->getSession()->getDriver()->find($selectnode->getXpath())) {
+                return;
+            }
+
             if (!$selectnode->hasAttribute('multiple')) {
                 // Single select needs an extra click in the option.
                 $xpath = ".//option[(./@value = '" . $option . "' or contains(normalize-space(string(.)), '" . $option . "'))]";
