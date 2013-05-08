@@ -197,7 +197,13 @@ class theme_bootstrapbase_core_renderer extends core_renderer {
         } else if ($tab->inactive) {
             return html_writer::tag('li', html_writer::tag('a', $tab->text), array('class' => 'disabled'));
         } else {
-            return html_writer::tag('li', html_writer::tag('a', $tab->text, array('href' => $tab->link)));
+            if (!($tab->link instanceof moodle_url)) {
+                // backward compartibility when link was passed as quoted string
+                $link = "<a href=\"$tab->link\" title=\"$tab->title\">$tab->text</a>";
+            } else {
+                $link = html_writer::link($tab->link, $tab->text, array('title' => $tab->title));
+            }
+            return html_writer::tag('li', $link);
         }
     }
 }
