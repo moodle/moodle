@@ -5,14 +5,14 @@ Feature: Topic's course sections highlighting
   I need to highlight one specific section
 
   @javascript
-  Scenario: Highlight a topic's course section
+  Scenario Outline: Highlight a topic's course section with course paged mode and without it
     Given the following "users" exists:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@asd.com |
       | student1 | Student | 1 | student1@asd.com |
     And the following "courses" exists:
-      | fullname | shortname | format |
-      | Course 1 | C1 | topics |
+      | fullname | shortname | format | coursedisplay |
+      | Course 1 | C1 | topics | <coursedisplay> |
     And the following "course enrolments" exists:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
@@ -41,3 +41,8 @@ Feature: Topic's course sections highlighting
     And I follow "Course 1"
     And section "1" should not be highlighted
     And section "2" should not be highlighted
+
+    Examples:
+      | coursedisplay |
+      | 0            |
+      | 1            |
