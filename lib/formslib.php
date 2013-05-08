@@ -1270,25 +1270,42 @@ abstract class moodleform {
 
         $mform = $this->_form;
         foreach ($mform->_elements as $element) {
-            switch ($element->getType()) {
-                case 'hidden':
-                case 'text':
-                case 'url':
-                    $key = $element->getName();
-                    // For repeated elements we need to look for
-                    // the "main" type, not for the one present
-                    // on each repetition. All the stuff in formslib
-                    // (repeat_elements(), updateSubmission()... seems
-                    // to work that way.
-                    $pos = strpos($key, '[');
-                    if ($pos !== false) {
-                        $key = substr($key, 0, $pos);
-                    }
-                    if (!array_key_exists($key, $mform->_types)) {
-                        debugging("Did you remember to call setType() for '$key'? ".
-                            'Defaulting to PARAM_RAW cleaning.', DEBUG_DEVELOPER);
-                    }
-                    break;
+            $group = false;
+            $elements = array($element);
+
+            if ($element->getType() == 'group') {
+                $group = $element;
+                $elements = $element->getElements();
+            }
+
+            foreach ($elements as $index => $element) {
+                switch ($element->getType()) {
+                    case 'hidden':
+                    case 'text':
+                    case 'url':
+                        if ($group) {
+                            $name = $group->getElementName($index);
+                        } else {
+                            $name = $element->getName();
+                        }
+                        $key = $name;
+                        $found = array_key_exists($key, $mform->_types);
+                        // For repeated elements we need to look for
+                        // the "main" type, not for the one present
+                        // on each repetition. All the stuff in formslib
+                        // (repeat_elements(), updateSubmission()... seems
+                        // to work that way.
+                        while (!$found && strrpos($key, '[') !== false) {
+                            $pos = strrpos($key, '[');
+                            $key = substr($key, 0, $pos);
+                            $found = array_key_exists($key, $mform->_types);
+                        }
+                        if (!$found) {
+                            debugging("Did you remember to call setType() for '$name'? ".
+                                'Defaulting to PARAM_RAW cleaning.', DEBUG_DEVELOPER);
+                        }
+                        break;
+                }
             }
         }
     }
