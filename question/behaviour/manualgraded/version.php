@@ -26,7 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'qbehaviour_manualgraded';
-$plugin->version   = 2013050200;
+$plugin->version   = 2013050800;
 
 $plugin->requires  = 2013050100;
 

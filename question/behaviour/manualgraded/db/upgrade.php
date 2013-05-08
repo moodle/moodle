@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die();
  * Manual graded question behaviour upgrade code.
  */
 function xmldb_qbehaviour_manualgraded_upgrade($oldversion) {
-    global $DB;
+    global $CFG, $DB;
 
     $dbman = $DB->get_manager();
 
@@ -57,6 +57,33 @@ function xmldb_qbehaviour_manualgraded_upgrade($oldversion) {
 
         // Manual graded question behaviour savepoint reached.
         upgrade_plugin_savepoint(true, 2013050200, 'qbehaviour', 'manualgraded');
+    }
+
+    if ($oldversion < 2013050800) {
+        // Also, fix any other admin settings that currently select manualgraded behaviour.
+
+        // Work out a sensible default alternative to manualgraded.
+        require_once($CFG->libdir . '/questionlib.php');
+        $behaviours = question_engine::get_behaviour_options();
+        if (array_key_exists('deferredfeedback', $behaviours)) {
+             $defaultbehaviour = 'deferredfeedback';
+        } else {
+            reset($behaviours);
+            $defaultbehaviour = key($behaviours);
+        }
+
+        // Fix the question preview default.
+        if (get_config('question_preview', 'behaviour') == 'manualgraded') {
+            set_config('behaviour', $defaultbehaviour, 'question_preview');
+        }
+
+        // Fix the quiz settings default.
+        if (get_config('quiz', 'preferredbehaviour') == 'manualgraded') {
+            set_config('preferredbehaviour', $defaultbehaviour, 'quiz');
+        }
+
+        // Manual graded question behaviour savepoint reached.
+        upgrade_plugin_savepoint(true, 2013050800, 'qbehaviour', 'manualgraded');
     }
 
     return true;
