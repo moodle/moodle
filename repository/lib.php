@@ -2410,9 +2410,10 @@ abstract class repository {
         $user_context = get_context_instance(CONTEXT_USER, $USER->id);
         if ($file = $fs->get_file($user_context->id, 'user', 'draft', $itemid, $filepath, $filename)) {
             if ($tempfile = $fs->get_file($user_context->id, 'user', 'draft', $itemid, $newfilepath, $newfilename)) {
+                // Remember original file source field.
+                $source = @unserialize($file->get_source());
                 if ($tempfile->is_external_file()) {
                     // New file is a reference. Check that existing file does not have any other files referencing to it
-                    $source = @unserialize($file->get_source());
                     if (isset($source->original) && $fs->search_references_count($source->original)) {
                         return (object)array('error' => get_string('errordoublereference', 'repository'));
                     }
@@ -2421,6 +2422,14 @@ abstract class repository {
                 $file->delete();
                 // create new file
                 $newfile = $fs->create_file_from_storedfile(array('filepath'=>$filepath, 'filename'=>$filename), $tempfile);
+                // Preserve original file location (stored in source field) for handling references
+                if (isset($source->original)) {
+                    if (!($newfilesource = @unserialize($newfile->get_source()))) {
+                        $newfilesource = new stdClass();
+                    }
+                    $newfilesource->original = $source->original;
+                    $newfile->set_source(serialize($newfilesource));
+                }
                 // remove temp file
                 $tempfile->delete();
                 return true;
