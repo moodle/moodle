@@ -2575,6 +2575,102 @@ abstract class repository implements cacheable_object {
     }
 
     /**
+     * Updates a file in draft filearea.
+     *
+     * This function can only update fields filepath, filename, author, license.
+     * If anything (except filepath) is updated, timemodified is set to current time.
+     * If filename or filepath is updated the file unconnects from it's origin
+     * and therefore all references to it will be converted to copies when
+     * filearea is saved.
+     *
+     * @param int $draftid
+     * @param string $filepath path to the directory containing the file, or full path in case of directory
+     * @param string $filename name of the file, or '.' in case of directory
+     * @param array $updatedata array of fields to change (only filename, filepath, license and/or author can be updated)
+     * @throws moodle_exception if for any reason file can not be updated (file does not exist, target already exists, etc.)
+     */
+    public static function update_draftfile($draftid, $filepath, $filename, $updatedata) {
+        global $USER;
+        $fs = get_file_storage();
+        $usercontext = context_user::instance($USER->id);
+        // make sure filename and filepath are present in $updatedata
+        $updatedata = $updatedata + array('filepath' => $filepath, 'filename' => $filename);
+        $filemodified = false;
+        if (!$file = $fs->get_file($usercontext->id, 'user', 'draft', $draftid, $filepath, $filename)) {
+            if ($filename === '.') {
+                throw new moodle_exception('foldernotfound', 'repository');
+            } else {
+                throw new moodle_exception('filenotfound', 'error');
+            }
+        }
+        if (!$file->is_directory()) {
+            // This is a file
+            if ($updatedata['filepath'] !== $filepath || $updatedata['filename'] !== $filename) {
+                // Rename/move file: check that target file name does not exist.
+                if ($fs->file_exists($usercontext->id, 'user', 'draft', $draftid, $updatedata['filepath'], $updatedata['filename'])) {
+                    throw new moodle_exception('fileexists', 'repository');
+                }
+                if (($filesource = @unserialize($file->get_source())) && isset($filesource->original)) {
+                    unset($filesource->original);
+                    $file->set_source(serialize($filesource));
+                }
+                $file->rename($updatedata['filepath'], $updatedata['filename']);
+                // timemodified is updated only when file is renamed and not updated when file is moved.
+                $filemodified = $filemodified || ($updatedata['filename'] !== $filename);
+            }
+            if (array_key_exists('license', $updatedata) && $updatedata['license'] !== $file->get_license()) {
+                // Update license and timemodified.
+                $file->set_license($updatedata['license']);
+                $filemodified = true;
+            }
+            if (array_key_exists('author', $updatedata) && $updatedata['author'] !== $file->get_author()) {
+                // Update author and timemodified.
+                $file->set_author($updatedata['author']);
+                $filemodified = true;
+            }
+            // Update timemodified:
+            if ($filemodified) {
+                $file->set_timemodified(time());
+            }
+        } else {
+            // This is a directory - only filepath can be updated for a directory (it was moved).
+            if ($updatedata['filepath'] === $filepath) {
+                // nothing to update
+                return;
+            }
+            if ($fs->file_exists($usercontext->id, 'user', 'draft', $draftid, $updatedata['filepath'], '.')) {
+                // bad luck, we can not rename if something already exists there
+                throw new moodle_exception('folderexists', 'repository');
+            }
+            $xfilepath = preg_quote($filepath, '|');
+            if (preg_match("|^$xfilepath|", $updatedata['filepath'])) {
+                // we can not move folder to it's own subfolder
+                throw new moodle_exception('folderrecurse', 'repository');
+            }
+
+            // If directory changed the name, update timemodified.
+            $filemodified = (basename(rtrim($file->get_filepath(), '/')) !== basename(rtrim($updatedata['filepath'], '/')));
+
+            // Now update directory and all children.
+            $files = $fs->get_area_files($usercontext->id, 'user', 'draft', $draftid);
+            foreach ($files as $f) {
+                if (preg_match("|^$xfilepath|", $f->get_filepath())) {
+                    $path = preg_replace("|^$xfilepath|", $updatedata['filepath'], $f->get_filepath());
+                    if (($filesource = @unserialize($f->get_source())) && isset($filesource->original)) {
+                        // unset original so the references are not shown any more
+                        unset($filesource->original);
+                        $f->set_source(serialize($filesource));
+                    }
+                    $f->rename($path, $f->get_filename());
+                    if ($filemodified && $f->get_filepath() === $updatedata['filepath'] && $f->get_filename() === $filename) {
+                        $f->set_timemodified(time());
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * Delete a temp file from draft area
      *
      * @param int $draftitemid
