@@ -889,9 +889,14 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
                 $oldfile->set_timemodified($newfile->get_timemodified());
             }
 
+            if ($newfile->is_external_file() && !$allowreferences) {
+                continue;
+            }
             // Replaced file content
-            if ($oldfile->get_contenthash() != $newfile->get_contenthash() || $oldfile->get_filesize() != $newfile->get_filesize()) {
-                $oldfile->replace_content_with($newfile);
+            else if ($oldfile->get_contenthash() != $newfile->get_contenthash() ||
+                    $oldfile->get_filesize() != $newfile->get_filesize() ||
+                    $oldfile->get_referencefileid() != $newfile->get_referencefileid()) {
+                $oldfile->replace_file_with($newfile);
                 // push changes to all local files that are referencing this file
                 $fs->update_references_to_storedfile($oldfile);
             }

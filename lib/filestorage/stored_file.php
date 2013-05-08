@@ -211,6 +211,36 @@ class stored_file {
     }
 
     /**
+     * Replaces the fields that might have changed when file was overriden in filepicker:
+     * reference, contenthash, filesize
+     *
+     * Note that field source must be updated separately
+     *
+     * @param stored_file $newfile
+     * @throws coding_exception
+     */
+    public function replace_file_with(stored_file $newfile) {
+        if ($newfile->get_referencefileid() &&
+                $this->fs->get_references_count_by_storedfile($this)) {
+            // The new file is a reference.
+            // The current file has other local files referencing to it.
+            // Double reference is not allowed.
+            throw new moodle_exception('errordoublereference', 'repository');
+        }
+
+        $filerecord = new stdClass;
+        $contenthash = $newfile->get_contenthash();
+        if ($this->fs->content_exists($contenthash)) {
+            $filerecord->contenthash = $contenthash;
+        } else {
+            throw new file_exception('storedfileproblem', 'Invalid contenthash, content must be already in filepool', $contenthash);
+        }
+        $filerecord->filesize = $newfile->get_filesize();
+        $filerecord->referencefileid = $newfile->get_referencefileid();
+        $this->update($filerecord);
+    }
+
+    /**
      * Unlink the stored file from the referenced file
      *
      * This methods destroys the link to the record in files_reference table. This effectively

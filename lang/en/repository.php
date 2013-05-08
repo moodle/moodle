@@ -101,6 +101,7 @@ $string['enter'] = 'Enter';
 $string['entername'] = 'Please enter folder name';
 $string['enternewname'] = 'Please enter the new file name';
 $string['error'] = 'An unknown error occurred!';
+$string['errordoublereference'] = 'Unable to overwrite file with a shortcut/alias because shortcuts to this file already exist.';
 $string['errornotyourfile'] = 'You cannot pick file which is not added by your';
 $string['erroruniquename'] = 'Repository instance name should be unique';
 $string['errorpostmaxsize'] = 'The uploaded file may exceed the post_max_size directive in php.ini.';
