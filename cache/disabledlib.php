@@ -253,7 +253,7 @@ class cache_factory_disabled extends cache_factory {
      * Creates a cache config instance with the ability to write if required.
      *
      * @param bool $writer Unused.
-     * @return cache_config|cache_config_writer
+     * @return cache_config_disabled|cache_config_writer
      */
     public function create_config_instance($writer = false) {
         // We are always going to use the cache_config_disabled class for all regular request.
@@ -267,10 +267,13 @@ class cache_factory_disabled extends cache_factory {
         }
         if (!array_key_exists($class, $this->configs)) {
             self::set_state(self::STATE_INITIALISING);
-            if (!$writer) {
+            if ($class === 'cache_config_disabled') {
                 $configuration = $class::create_default_configuration();
             } else {
                 $configuration = false;
+                if (!cache_config::config_file_exists()) {
+                    cache_config_writer::create_default_configuration(true);
+                }
             }
             $this->configs[$class] = new $class;
             $this->configs[$class]->load($configuration);
@@ -373,9 +376,10 @@ class cache_config_disabled extends cache_config_writer {
     /**
      * Creates the default configuration and saves it.
      *
+     * @param bool $forcesave Ignored because we are disabled!
      * @return array
      */
-    public static function create_default_configuration() {
+    public static function create_default_configuration($forcesave = false) {
         global $CFG;
 
         // HACK ALERT.

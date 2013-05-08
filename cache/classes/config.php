@@ -396,10 +396,18 @@ class cache_config {
      * @param string $storename
      * @return array Associative array of definitions, id=>definition
      */
-    public static function get_definitions_by_store($storename) {
+    public function get_definitions_by_store($storename) {
         $definitions = array();
 
-        $config = cache_config::instance();
+        // This function was accidentally made static at some stage in the past.
+        // It was converted to an instance method but to be backwards compatible
+        // we must step around this in code.
+        if (!isset($this)) {
+            $config = cache_config::instance();
+        } else {
+            $config = $this;
+        }
+
         $stores = $config->get_all_stores();
         if (!array_key_exists($storename, $stores)) {
             // The store does not exist.

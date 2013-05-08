@@ -388,10 +388,11 @@ class cache_config_writer extends cache_config {
      * This function calls config_save, however it is safe to continue using it afterwards as this function should only ever
      * be called when there is no configuration file already.
      *
+     * @param bool $forcesave If set to true then we will forcefully save the default configuration file.
      * @return true|array Returns true if the default configuration was successfully created.
      *     Returns a configuration array if it could not be saved. This is a bad situation. Check your error logs.
      */
-    public static function create_default_configuration() {
+    public static function create_default_configuration($forcesave = false) {
         global $CFG;
 
         // HACK ALERT.
@@ -433,7 +434,7 @@ class cache_config_writer extends cache_config {
         $factory = cache_factory::instance();
         // We expect the cache to be initialising presently. If its not then something has gone wrong and likely
         // we are now in a loop.
-        if ($factory->get_state() !== cache_factory::STATE_INITIALISING) {
+        if (!$forcesave && $factory->get_state() !== cache_factory::STATE_INITIALISING) {
             return $writer->generate_configuration_array();
         }
         $factory->set_state(cache_factory::STATE_SAVING);
