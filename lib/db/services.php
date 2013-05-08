@@ -35,6 +35,71 @@
 
 $functions = array(
 
+    // Cohort related functions.
+
+    'core_cohort_create_cohorts' => array(
+        'classname'   => 'core_cohort_external',
+        'methodname'  => 'create_cohorts',
+        'classpath'   => 'cohort/externallib.php',
+        'description' => 'Creates new cohorts.',
+        'type'        => 'write',
+        'capabilities'=> 'moodle/cohort:manage',
+    ),
+
+    'core_cohort_delete_cohorts' => array(
+        'classname'   => 'core_cohort_external',
+        'methodname'  => 'delete_cohorts',
+        'classpath'   => 'cohort/externallib.php',
+        'description' => 'Deletes all specified cohorts.',
+        'type'        => 'delete',
+        'capabilities'=> 'moodle/cohort:manage',
+    ),
+
+    'core_cohort_get_cohorts' => array(
+        'classname'   => 'core_cohort_external',
+        'methodname'  => 'get_cohorts',
+        'classpath'   => 'cohort/externallib.php',
+        'description' => 'Returns cohort details.',
+        'type'        => 'read',
+        'capabilities'=> 'moodle/cohort:view',
+    ),
+
+    'core_cohort_update_cohorts' => array(
+        'classname'   => 'core_cohort_external',
+        'methodname'  => 'update_cohorts',
+        'classpath'   => 'cohort/externallib.php',
+        'description' => 'Updates existing cohorts.',
+        'type'        => 'write',
+        'capabilities'=> 'moodle/cohort:manage',
+    ),
+
+    'core_cohort_add_cohort_members' => array(
+        'classname'   => 'core_cohort_external',
+        'methodname'  => 'add_cohort_members',
+        'classpath'   => 'cohort/externallib.php',
+        'description' => 'Adds cohort members.',
+        'type'        => 'write',
+        'capabilities'=> 'moodle/cohort:assign',
+    ),
+
+    'core_cohort_delete_cohort_members' => array(
+        'classname'   => 'core_cohort_external',
+        'methodname'  => 'delete_cohort_members',
+        'classpath'   => 'cohort/externallib.php',
+        'description' => 'Deletes cohort members.',
+        'type'        => 'delete',
+        'capabilities'=> 'moodle/cohort:assign',
+    ),
+
+    'core_cohort_get_cohort_members' => array(
+        'classname'   => 'core_cohort_external',
+        'methodname'  => 'get_cohort_members',
+        'classpath'   => 'cohort/externallib.php',
+        'description' => 'Returns cohort members.',
+        'type'        => 'read',
+        'capabilities'=> 'moodle/cohort:view',
+    ),
+
     // === group related functions ===
 
     'moodle_group_create_groups' => array(
