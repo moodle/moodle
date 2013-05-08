@@ -215,26 +215,6 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform->setDefault('lastattemptlock', $cfg_scorm->lastattemptlock);
         $mform->setAdvanced('lastattemptlock', $cfg_scorm->lastattemptlock_adv);
 
-        // Activation period
-/*        $mform->addElement('static', '', '' ,'<hr />');
-        $mform->addElement('static', 'activation', get_string('activation','scorm'));
-        $datestartgrp = array();
-        $datestartgrp[] = &$mform->createElement('date_time_selector', 'startdate');
-        $datestartgrp[] = &$mform->createElement('checkbox', 'startdisabled', null, get_string('disable'));
-        $mform->addGroup($datestartgrp, 'startdategrp', get_string('from'), ' ', false);
-        $mform->setDefault('startdate', 0);
-        $mform->setDefault('startdisabled', 1);
-        $mform->disabledIf('startdategrp', 'startdisabled', 'checked');
-
-        $dateendgrp = array();
-        $dateendgrp[] = &$mform->createElement('date_time_selector', 'enddate');
-        $dateendgrp[] = &$mform->createElement('checkbox', 'enddisabled', null, get_string('disable'));
-        $mform->addGroup($dateendgrp, 'dateendgrp', get_string('to'), ' ', false);
-        $mform->setDefault('enddate', 0);
-        $mform->setDefault('enddisabled', 1);
-        $mform->disabledIf('dateendgrp', 'enddisabled', 'checked');
-*/
-
         // Autocontinue
         $mform->addElement('selectyesno', 'auto', get_string('autocontinue', 'scorm'));
         $mform->addHelpButton('auto', 'autocontinue', 'scorm');

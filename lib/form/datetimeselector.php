@@ -201,7 +201,17 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group{
                 break;
             case 'createElement':
                 if($arg[2]['optional']) {
-                    $caller->disabledIf($arg[0], $arg[0].'[enabled]');
+                    // When using the function addElement, rather than createElement, we still
+                    // enter this case, making this check necessary.
+                    if ($this->_usedcreateelement) {
+                        $caller->disabledIf($arg[0] . '[day]', $arg[0] . '[enabled]');
+                        $caller->disabledIf($arg[0] . '[month]', $arg[0] . '[enabled]');
+                        $caller->disabledIf($arg[0] . '[year]', $arg[0] . '[enabled]');
+                        $caller->disabledIf($arg[0] . '[hour]', $arg[0] . '[enabled]');
+                        $caller->disabledIf($arg[0] . '[minute]', $arg[0] . '[enabled]');
+                    } else {
+                        $caller->disabledIf($arg[0], $arg[0] . '[enabled]');
+                    }
                 }
                 return parent::onQuickFormEvent($event, $arg, $caller);
                 break;
