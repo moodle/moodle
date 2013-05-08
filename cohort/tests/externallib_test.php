@@ -50,33 +50,42 @@ class core_cohort_external_testcase extends externallib_advanced_testcase {
             );
 
         $cohort2 = array(
-            'categorytype' => array('type' => 'id', 'value' => '1'),
+            'categorytype' => array('type' => 'system', 'value' => ''),
             'name' => 'cohort test 2',
             'idnumber' => 'cohorttest2',
             'description' => 'This is a description for cohorttest2'
             );
+
+        $cohort3 = array(
+            'categorytype' => array('type' => 'id', 'value' => '1'),
+            'name' => 'cohort test 3',
+            'idnumber' => 'cohorttest3',
+            'description' => 'This is a description for cohorttest3'
+            );
         $roleid = $this->assignUserCapability('moodle/cohort:manage', $contextid);
 
         // Call the external function.
-        $createdcohorts = core_cohort_external::create_cohorts(array($cohort1));
+        $createdcohorts = core_cohort_external::create_cohorts(array($cohort1, $cohort2));
 
         // Check we retrieve the good total number of created cohorts + no error on capability.
-        $this->assertEquals(1, count($createdcohorts));
+        $this->assertEquals(2, count($createdcohorts));
 
         foreach ($createdcohorts as $createdcohort) {
-            $dbcohort = $DB->get_record('cohort', array('id' => $createdcohort['id']));
-            $conid = $DB->get_field('context', 'id', array('instanceid' => $cohort1['categorytype']['value'],
-                    'contextlevel' => CONTEXT_COURSECAT));
-            $this->assertEquals($dbcohort->contextid, $conid);
-            $this->assertEquals($dbcohort->name, $cohort1['name']);
-            $this->assertEquals($dbcohort->idnumber, $cohort1['idnumber']);
-            $this->assertEquals($dbcohort->description, $cohort1['description']);
+            if ($createdcohort['idnumber'] == $cohort1['idnumber']) {
+                $dbcohort = $DB->get_record('cohort', array('id' => $createdcohort['id']));
+                $conid = $DB->get_field('context', 'id', array('instanceid' => $cohort1['categorytype']['value'],
+                        'contextlevel' => CONTEXT_COURSECAT));
+                $this->assertEquals($dbcohort->contextid, $conid);
+                $this->assertEquals($dbcohort->name, $cohort1['name']);
+                $this->assertEquals($dbcohort->idnumber, $cohort1['idnumber']);
+                $this->assertEquals($dbcohort->description, $cohort1['description']);
+            }
         }
 
         // Call without required capability.
         $this->unassignUserCapability('moodle/cohort:manage', $contextid, $roleid);
         $this->setExpectedException('required_capability_exception');
-        $createdcohorts = core_cohort_external::create_cohorts(array($cohort2));
+        $createdcohorts = core_cohort_external::create_cohorts(array($cohort3));
     }
 
     /**
@@ -148,6 +157,16 @@ class core_cohort_external_testcase extends externallib_advanced_testcase {
                 $this->assertEquals($cohort1->description, $enrolledcohort['description']);
             }
         }
+
+        // Check that a user with cohort:manage can see the cohort.
+        $this->unassignUserCapability('moodle/cohort:view', $context->id, $roleid);
+        $roleid = $this->assignUserCapability('moodle/cohort:manage', $context->id, $roleid);
+        // Call the external function.
+        $returnedcohorts = core_cohort_external::get_cohorts(array(
+            $cohort1->id, $cohort2->id));
+
+        // Check we retrieve the good total number of enrolled cohorts + no error on capability.
+        $this->assertEquals(2, count($returnedcohorts));
     }
 
     /**
@@ -186,6 +205,88 @@ class core_cohort_external_testcase extends externallib_advanced_testcase {
         $this->unassignUserCapability('moodle/cohort:manage', $context->id, $roleid);
         $this->setExpectedException('required_capability_exception');
         core_cohort_external::update_cohorts(array($cohort1));
+    }
+
+    /**
+     * Test update_cohorts without permission on the dest category.
+     */
+    public function test_update_cohorts_missing_dest() {
+        global $USER, $CFG, $DB;
+
+        $this->resetAfterTest(true);
+
+        $category1 = self::getDataGenerator()->create_category(array(
+            'name' => 'Test category 1'
+        ));
+        $category2 = self::getDataGenerator()->create_category(array(
+            'name' => 'Test category 2'
+        ));
+        $context1 = context_coursecat::instance($category1->id);
+        $context2 = context_coursecat::instance($category2->id);
+
+        $cohort = array(
+            'contextid' => $context1->id,
+            'name' => 'cohortnametest1',
+            'idnumber' => 'idnumbertest1',
+            'description' => 'This is a description for cohort 1'
+            );
+        $cohort1 = self::getDataGenerator()->create_cohort($cohort);
+
+        $roleid = $this->assignUserCapability('moodle/cohort:manage', $context1->id);
+
+        $cohortupdate = array(
+            'id' => $cohort1->id,
+            'categorytype' => array('type' => 'id', 'value' => $category2->id),
+            'name' => 'cohort update',
+            'idnumber' => 'idnumber update',
+            'description' => 'This is a description update'
+            );
+
+        // Call the external function.
+        // Should fail because we don't have permission on the dest category
+        $this->setExpectedException('required_capability_exception');
+        core_cohort_external::update_cohorts(array($cohortupdate));
+    }
+
+    /**
+     * Test update_cohorts without permission on the src category.
+     */
+    public function test_update_cohorts_missing_src() {
+        global $USER, $CFG, $DB;
+
+        $this->resetAfterTest(true);
+
+        $category1 = self::getDataGenerator()->create_category(array(
+            'name' => 'Test category 1'
+        ));
+        $category2 = self::getDataGenerator()->create_category(array(
+            'name' => 'Test category 2'
+        ));
+        $context1 = context_coursecat::instance($category1->id);
+        $context2 = context_coursecat::instance($category2->id);
+
+        $cohort = array(
+            'contextid' => $context1->id,
+            'name' => 'cohortnametest1',
+            'idnumber' => 'idnumbertest1',
+            'description' => 'This is a description for cohort 1'
+            );
+        $cohort1 = self::getDataGenerator()->create_cohort($cohort);
+
+        $roleid = $this->assignUserCapability('moodle/cohort:manage', $context2->id);
+
+        $cohortupdate = array(
+            'id' => $cohort1->id,
+            'categorytype' => array('type' => 'id', 'value' => $category2->id),
+            'name' => 'cohort update',
+            'idnumber' => 'idnumber update',
+            'description' => 'This is a description update'
+            );
+
+        // Call the external function.
+        // Should fail because we don't have permission on the src category
+        $this->setExpectedException('required_capability_exception');
+        core_cohort_external::update_cohorts(array($cohortupdate));
     }
 
     /**

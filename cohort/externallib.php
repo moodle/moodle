@@ -31,7 +31,7 @@ class core_cohort_external extends external_api {
      * Returns description of method parameters
      *
      * @return external_function_parameters
-     * @since Moodle 2.4
+     * @since Moodle 2.5
      */
     public static function create_cohorts_parameters() {
         return new external_function_parameters(
@@ -42,7 +42,8 @@ class core_cohort_external extends external_api {
                             'categorytype' => new external_single_structure(
                                 array(
                                     'type' => new external_value(PARAM_TEXT, 'the name of the field: id (numeric value
-                                        of course category id) or idnumber (alphanumeric value of idnumber course category)'),
+                                        of course category id) or idnumber (alphanumeric value of idnumber course category)
+                                        or system (value ignored)'),
                                     'value' => new external_value(PARAM_RAW, 'the value of the categorytype')
                                 )
                             ),
@@ -62,7 +63,7 @@ class core_cohort_external extends external_api {
      *
      * @param array $cohorts An array of cohorts to create.
      * @return array An array of arrays
-     * @since Moodle 2.4
+     * @since Moodle 2.5
      */
     public static function create_cohorts($cohorts) {
         global $CFG, $DB;
@@ -72,6 +73,7 @@ class core_cohort_external extends external_api {
 
         $transaction = $DB->start_delegated_transaction();
 
+        $syscontext = context_system::instance();
         $cohortids = array();
 
         foreach ($params['cohorts'] as $cohort) {
@@ -79,9 +81,14 @@ class core_cohort_external extends external_api {
 
             // Category type (context id).
             $categorytype = $cohort->categorytype;
-            if ($catid = $DB->get_field('course_categories', 'id', array($categorytype['type'] => $categorytype['value']))) {
-                $cohort->contextid = $DB->get_field('context', 'id', array('instanceid' => $catid,
-                    'contextlevel' => CONTEXT_COURSECAT));
+            if (!in_array($categorytype['type'], array('idnumber', 'id', 'system'))) {
+                throw new invalid_parameter_exception('category type must be id, idnumber or system:' . $categorytype['type']);
+            }
+            if ($categorytype['type'] === 'system') {
+                $cohort->contextid = $syscontext->id;
+            } else if ($catid = $DB->get_field('course_categories', 'id', array($categorytype['type'] => $categorytype['value']))) {
+                $catcontext = context_coursecat::instance($catid);
+                $cohort->contextid = $catcontext->id;
             } else {
                 throw new invalid_parameter_exception('category not exists: category '
                     .$categorytype['type'].' = '.$categorytype['value']);
@@ -104,7 +111,7 @@ class core_cohort_external extends external_api {
             list($cohort->description, $cohort->descriptionformat) =
                 external_format_text($cohort->description, $cohort->descriptionformat,
                         $context->id, 'cohort', 'description', $cohort->id);
-            $cohortids[] = (array)$cohort;;
+            $cohortids[] = (array)$cohort;
         }
         $transaction->allow_commit();
 
@@ -115,7 +122,7 @@ class core_cohort_external extends external_api {
      * Returns description of method result value
      *
      * @return external_description
-     * @since Moodle 2.4
+     * @since Moodle 2.5
      */
     public static function create_cohorts_returns() {
         return new external_multiple_structure(
@@ -135,7 +142,7 @@ class core_cohort_external extends external_api {
      * Returns description of method parameters
      *
      * @return external_function_parameters
-     * @since Moodle 2.4
+     * @since Moodle 2.5
      */
     public static function delete_cohorts_parameters() {
         return new external_function_parameters(
@@ -150,7 +157,7 @@ class core_cohort_external extends external_api {
      *
      * @param array $cohortids
      * @return null
-     * @since Moodle 2.4
+     * @since Moodle 2.5
      */
     public static function delete_cohorts($cohortids) {
         global $CFG, $DB;
@@ -183,7 +190,7 @@ class core_cohort_external extends external_api {
      * Returns description of method result value
      *
      * @return null
-     * @since Moodle 2.4
+     * @since Moodle 2.5
      */
     public static function delete_cohorts_returns() {
         return null;
@@ -193,7 +200,7 @@ class core_cohort_external extends external_api {
      * Returns description of method parameters
      *
      * @return external_function_parameters
-     * @since Moodle 2.4
+     * @since Moodle 2.5
      */
     public static function get_cohorts_parameters() {
         return new external_function_parameters(
@@ -209,7 +216,7 @@ class core_cohort_external extends external_api {
      *
      * @param array $cohortids array of cohort ids
      * @return array of cohort objects (id, courseid, name)
-     * @since Moodle 2.4
+     * @since Moodle 2.5
      */
     public static function get_cohorts($cohortids) {
         global $DB;
@@ -227,7 +234,9 @@ class core_cohort_external extends external_api {
                 throw new invalid_parameter_exception('Invalid context');
             }
             self::validate_context($context);
-            require_capability('moodle/cohort:view', $context);
+            if (!has_any_capability(array('moodle/cohort:manage', 'moodle/cohort:view'), $context)) {
+                throw new required_capability_exception($context, 'moodle/cohort:view', 'nopermissions', '');
+            }
 
             list($cohort->description, $cohort->descriptionformat) =
                 external_format_text($cohort->description, $cohort->descriptionformat,
@@ -243,7 +252,7 @@ class core_cohort_external extends external_api {
      * Returns description of method result value
      *
      * @return external_description
-     * @since Moodle 2.4
+     * @since Moodle 2.5
      */
     public static function get_cohorts_returns() {
         return new external_multiple_structure(
@@ -263,7 +272,7 @@ class core_cohort_external extends external_api {
      * Returns description of method parameters
      *
      * @return external_function_parameters
-     * @since Moodle 2.4
+     * @since Moodle 2.5
      */
     public static function update_cohorts_parameters() {
         return new external_function_parameters(
@@ -275,7 +284,8 @@ class core_cohort_external extends external_api {
                             'categorytype' => new external_single_structure(
                                 array(
                                     'type' => new external_value(PARAM_TEXT, 'the name of the field: id (numeric value
-                                        of course category id) or idnumber (alphanumeric value of idnumber course category)'),
+                                        of course category id) or idnumber (alphanumeric value of idnumber course category)
+                                        or system (value ignored)'),
                                     'value' => new external_value(PARAM_RAW, 'the value of the categorytype')
                                 )
                             ),
@@ -295,7 +305,7 @@ class core_cohort_external extends external_api {
      *
      * @param array $cohorts
      * @return null
-     * @since Moodle 2.4
+     * @since Moodle 2.5
      */
     public static function update_cohorts($cohorts) {
         global $CFG, $DB;
@@ -304,6 +314,7 @@ class core_cohort_external extends external_api {
         $params = self::validate_parameters(self::update_cohorts_parameters(), array('cohorts' => $cohorts));
 
         $transaction = $DB->start_delegated_transaction();
+        $syscontext = context_system::instance();
 
         foreach ($params['cohorts'] as $cohort) {
             $cohort = (object) $cohort;
@@ -312,21 +323,33 @@ class core_cohort_external extends external_api {
                 throw new invalid_parameter_exception('Invalid cohort name');
             }
 
+            $oldcohort = $DB->get_record('cohort', array('id' => $cohort->id), '*', MUST_EXIST);
+            $oldcontext = context::instance_by_id($oldcohort->contextid, MUST_EXIST);
+            require_capability('moodle/cohort:manage', $oldcontext);
+
             // Category type (context id).
             $categorytype = $cohort->categorytype;
-            if ($catid = $DB->get_field('course_categories', 'id', array($categorytype['type'] => $categorytype['value']))) {
+            if (!in_array($categorytype['type'], array('idnumber', 'id', 'system'))) {
+                throw new invalid_parameter_exception('category type must be id, idnumber or system:' . $categorytype['type']);
+            }
+            if ($categorytype['type'] === 'system') {
+                $cohort->contextid = $syscontext->id;
+            } else if ($catid = $DB->get_field('course_categories', 'id', array($categorytype['type'] => $categorytype['value']))) {
                 $cohort->contextid = $DB->get_field('context', 'id', array('instanceid' => $catid,
                     'contextlevel' => CONTEXT_COURSECAT));
             } else {
                 throw new invalid_parameter_exception('category not exists: category='.$categorytype['value']);
             }
 
-            $context = context::instance_by_id($cohort->contextid, MUST_EXIST);
-            if ($context->contextlevel != CONTEXT_COURSECAT and $context->contextlevel != CONTEXT_SYSTEM) {
-                throw new invalid_parameter_exception('Invalid context');
+            if ($cohort->contextid != $oldcohort->contextid) {
+                $context = context::instance_by_id($cohort->contextid, MUST_EXIST);
+                if ($context->contextlevel != CONTEXT_COURSECAT and $context->contextlevel != CONTEXT_SYSTEM) {
+                    throw new invalid_parameter_exception('Invalid context');
+                }
+
+                self::validate_context($context);
+                require_capability('moodle/cohort:manage', $context);
             }
-            self::validate_context($context);
-            require_capability('moodle/cohort:manage', $context);
 
             if (!empty($cohort->description)) {
                 $cohort->descriptionformat = external_validate_format($cohort->descriptionformat);
@@ -344,7 +367,7 @@ class core_cohort_external extends external_api {
      * Returns description of method result value
      *
      * @return null
-     * @since Moodle 2.4
+     * @since Moodle 2.5
      */
     public static function update_cohorts_returns() {
         return null;
@@ -354,7 +377,7 @@ class core_cohort_external extends external_api {
      * Returns description of method parameters
      *
      * @return external_function_parameters
-     * @since Moodle 2.4
+     * @since Moodle 2.5
      */
     public static function add_cohort_members_parameters() {
         return new external_function_parameters (
@@ -387,7 +410,7 @@ class core_cohort_external extends external_api {
      * Add cohort members
      *
      * @param array $members of arrays with keys userid, cohortid
-     * @since Moodle 2.4
+     * @since Moodle 2.5
      */
     public static function add_cohort_members($members) {
         global $CFG, $DB;
@@ -457,7 +480,9 @@ class core_cohort_external extends external_api {
             } catch (Exception $e) {
                 throw new moodle_exception('Error', 'cohort', '', $e->getMessage());
             }
-            require_capability('moodle/cohort:assign', $context);
+            if (!has_any_capability(array('moodle/cohort:manage', 'moodle/cohort:assign'), $context)) {
+                throw new required_capability_exception($context, 'moodle/cohort:assign', 'nopermissions', '');
+            }
             cohort_add_member($cohortid, $userid);
         }
         $transaction->allow_commit();
@@ -471,7 +496,7 @@ class core_cohort_external extends external_api {
      * Returns description of method result value
      *
      * @return null
-     * @since Moodle 2.4
+     * @since Moodle 2.5
      */
     public static function add_cohort_members_returns() {
         return new external_single_structure(
@@ -485,7 +510,7 @@ class core_cohort_external extends external_api {
      * Returns description of method parameters
      *
      * @return external_function_parameters
-     * @since Moodle 2.4
+     * @since Moodle 2.5
      */
     public static function delete_cohort_members_parameters() {
         return new external_function_parameters(
@@ -506,7 +531,7 @@ class core_cohort_external extends external_api {
      * Delete cohort members
      *
      * @param array $members of arrays with keys userid, cohortid
-     * @since Moodle 2.4
+     * @since Moodle 2.5
      */
     public static function delete_cohort_members($members) {
         global $CFG, $DB;
@@ -531,7 +556,9 @@ class core_cohort_external extends external_api {
                 throw new invalid_parameter_exception('Invalid context');
             }
             self::validate_context($context);
-            require_capability('moodle/cohort:assign', $context);
+            if (!has_any_capability(array('moodle/cohort:manage', 'moodle/cohort:assign'), $context)) {
+                throw new required_capability_exception($context, 'moodle/cohort:assign', 'nopermissions', '');
+            }
 
             cohort_remove_member($cohort->id, $user->id);
         }
@@ -542,7 +569,7 @@ class core_cohort_external extends external_api {
      * Returns description of method result value
      *
      * @return null
-     * @since Moodle 2.4
+     * @since Moodle 2.5
      */
     public static function delete_cohort_members_returns() {
         return null;
@@ -552,7 +579,7 @@ class core_cohort_external extends external_api {
      * Returns description of method parameters
      *
      * @return external_function_parameters
-     * @since Moodle 2.4
+     * @since Moodle 2.5
      */
     public static function get_cohort_members_parameters() {
         return new external_function_parameters(
@@ -567,7 +594,7 @@ class core_cohort_external extends external_api {
      *
      * @param array $cohortids array of cohort ids
      * @return array with cohort id keys containing arrays of user ids
-     * @since Moodle 2.4
+     * @since Moodle 2.5
      */
     public static function get_cohort_members($cohortids) {
         global $DB;
@@ -584,7 +611,9 @@ class core_cohort_external extends external_api {
                 throw new invalid_parameter_exception('Invalid context');
             }
             self::validate_context($context);
-            require_capability('moodle/cohort:view', $context);
+            if (!has_any_capability(array('moodle/cohort:manage', 'moodle/cohort:view'), $context)) {
+                throw new required_capability_exception($context, 'moodle/cohort:view', 'nopermissions', '');
+            }
 
             $cohortmembers = $DB->get_records_sql("SELECT u.id FROM {user} u, {cohort_members} cm
                 WHERE u.id = cm.userid AND cm.cohortid = ?
@@ -598,7 +627,7 @@ class core_cohort_external extends external_api {
      * Returns description of method result value
      *
      * @return external_description
-     * @since Moodle 2.4
+     * @since Moodle 2.5
      */
     public static function get_cohort_members_returns() {
         return new external_multiple_structure(
