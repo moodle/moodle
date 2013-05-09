@@ -64,7 +64,7 @@ function xmldb_qbehaviour_manualgraded_upgrade($oldversion) {
 
         // Work out a sensible default alternative to manualgraded.
         require_once($CFG->libdir . '/questionlib.php');
-        $behaviours = question_engine::get_behaviour_options();
+        $behaviours = question_engine::get_behaviour_options('');
         if (array_key_exists('deferredfeedback', $behaviours)) {
              $defaultbehaviour = 'deferredfeedback';
         } else {
