@@ -80,12 +80,14 @@ class completion_criteria_grade extends completion_criteria {
      */
     public function update_config(&$data) {
 
-        $formatedgrade = unformat_float($data->criteria_grade_value);
-        // TODO validation
-        if (!empty($formatedgrade) && is_numeric($formatedgrade)) {
-            $this->course = $data->id;
-            $this->gradepass = $formatedgrade;
-            $this->insert();
+        if (!empty($data->criteria_grade)) {
+            $formatedgrade = unformat_float($data->criteria_grade_value);
+            // TODO validation
+            if (!empty($formatedgrade) && is_numeric($formatedgrade)) {
+                $this->course = $data->id;
+                $this->gradepass = $formatedgrade;
+                $this->insert();
+            }
         }
     }
 
