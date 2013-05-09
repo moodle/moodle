@@ -66,8 +66,11 @@ class qformat_xhtml extends qformat_default {
         // add header
         $expout .= "<h3>$question->name</h3>\n";
 
-        // Format and add the question text
-        $expout .= '<p class="questiontext">' . format_text($question->questiontext,
+        // Format and add the question text.
+        $text = question_rewrite_question_urls($question->questiontext, 'pluginfile.php',
+                $question->contextid, 'question', $filearea,
+                '', $question->id);
+        $expout .= '<p class="questiontext">' . format_text($text,
                 $question->questiontextformat) . "</p>\n";
 
         // selection depends on question type

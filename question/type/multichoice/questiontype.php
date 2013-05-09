@@ -203,9 +203,9 @@ class qtype_multichoice extends question_type {
             $responses = array();
 
             foreach ($questiondata->options->answers as $aid => $answer) {
-                $responses[$aid] = new question_possible_response(html_to_text(format_text(
+                $responses[$aid] = new question_possible_response(to_plain_text(
                         $answer->answer, $answer->answerformat, array('noclean' => true)),
-                        0, false), $answer->fraction);
+                        $answer->fraction);
             }
 
             $responses[null] = question_possible_response::no_response();
@@ -215,9 +215,9 @@ class qtype_multichoice extends question_type {
 
             foreach ($questiondata->options->answers as $aid => $answer) {
                 $parts[$aid] = array($aid =>
-                        new question_possible_response(html_to_text(format_text(
+                        new question_possible_response(to_plain_text(
                         $answer->answer, $answer->answerformat, array('noclean' => true)),
-                        0, false), $answer->fraction));
+                        $answer->fraction));
             }
 
             return $parts;
