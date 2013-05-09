@@ -486,7 +486,7 @@ function upgrade_plugins($type, $startcallback, $endcallback, $verbose) {
                 message_update_processors($plug);
             }
             upgrade_plugin_mnet_functions($component);
-
+            cache_helper::purge_all(true);
             purge_all_caches();
             $endcallback($component, true, $verbose);
 
@@ -519,7 +519,7 @@ function upgrade_plugins($type, $startcallback, $endcallback, $verbose) {
                 message_update_processors($plug);
             }
             upgrade_plugin_mnet_functions($component);
-
+            cache_helper::purge_all(true);
             purge_all_caches();
             $endcallback($component, false, $verbose);
 
