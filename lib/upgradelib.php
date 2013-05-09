@@ -1548,6 +1548,7 @@ function upgrade_core($version, $verbose) {
 
         // Purge caches again, just to be sure we arn't holding onto old stuff now.
         purge_all_caches();
+        cache_helper::purge_all(true);
 
         // Clean up contexts - more and more stuff depends on existence of paths and contexts
         context_helper::cleanup_instances();
