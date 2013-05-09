@@ -4142,7 +4142,7 @@ class admin_setting_question_behaviour extends admin_setting_configselect {
     public function load_choices() {
         global $CFG;
         require_once($CFG->dirroot . '/question/engine/lib.php');
-        $this->choices = question_engine::get_behaviour_options();
+        $this->choices = question_engine::get_behaviour_options('');
         return true;
     }
 }
