@@ -1467,10 +1467,6 @@ function install_core($version, $verbose) {
     remove_dir($CFG->dataroot.'/muc', true);
 
     try {
-        // Disable the use of cache stores here. We will reset the factory after we've performed the installation.
-        // This ensures that we don't permanently cache anything during installation.
-        cache_factory::disable_stores();
-
         set_time_limit(600);
         print_upgrade_part_start('moodle', true, $verbose); // does not store upgrade running flag
 
