@@ -2359,7 +2359,7 @@ function update_course($data, $editoroptions = NULL) {
     if ($data->visible != $oldcourse->visible) {
         // reset the visibleold flag when manually hiding/unhiding course
         $data->visibleold = $data->visible;
-        $changesinccoursecat = true;
+        $changesincoursecat = true;
     } else {
         if ($movecat) {
             $newcategory = $DB->get_record('course_categories', array('id'=>$data->category));
@@ -2388,7 +2388,7 @@ function update_course($data, $editoroptions = NULL) {
     fix_course_sortorder();
     // purge appropriate caches in case fix_course_sortorder() did not change anything
     cache_helper::purge_by_event('changesincourse');
-    if ($changesinccoursecat) {
+    if ($changesincoursecat) {
         cache_helper::purge_by_event('changesincoursecat');
     }
 
