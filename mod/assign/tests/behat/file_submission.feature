@@ -1,7 +1,7 @@
 @mod @mod_assign @_only_local
 Feature: In an assignment, students can upload files for assessment
   In order to complete my assignments providing files
-  As a moodle student
+  As a student
   I need to upload files from my file system to be assessed
 
   @javascript

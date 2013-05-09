@@ -1,7 +1,7 @@
 @core @core_blog
 Feature: Comment on a blog entry
   In order to respond to a blog post
-  As a moodle user
+  As a user
   I need to be able to comment on a blog entry
 
   Background:

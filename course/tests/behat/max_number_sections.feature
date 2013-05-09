@@ -1,7 +1,7 @@
 @core @core_course
 Feature: The maximum number of weeks/topics in a course can be configured
   In order to set boundaries to courses size
-  As a moodle manager
+  As a manager
   I need to limit the number of weeks/topics a course can have
 
   Background:

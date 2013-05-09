@@ -1,7 +1,7 @@
 @core @core_course @_cross_browser
 Feature: Toggle activities groups mode from the course page
   In order to split activities in groups
-  As a moodle teacher
+  As a teacher
   I need to change quickly the group mode of an activity
 
   @javascript

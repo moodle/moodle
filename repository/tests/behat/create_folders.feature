@@ -1,7 +1,7 @@
 @core @core_filepicker
 Feature: Create folders in the file manager
   In order to create a directory structure in a file area
-  As a moodle user
+  As a user
   I need to create folders and subfolders in a file area
 
   @javascript

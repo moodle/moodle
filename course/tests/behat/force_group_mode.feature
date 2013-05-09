@@ -1,7 +1,7 @@
 @core @core_course @_cross_browser
 Feature: Force group mode in a course
   In order to use the same group mode all over the course
-  As a moodle teacher
+  As a teacher
   I need to force the group mode of all course's activities
 
   Background:

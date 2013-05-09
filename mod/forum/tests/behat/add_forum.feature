@@ -1,7 +1,7 @@
 @mod @mod_forum
 Feature: Add forum activities and discussions
   In order to discuss topics with other users
-  As a moodle teacher
+  As a teacher
   I need to add forum activities to moodle courses
 
   @javascript

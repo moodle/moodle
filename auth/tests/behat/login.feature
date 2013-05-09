@@ -1,7 +1,7 @@
 @core @core_auth
 Feature: Authentication
   In order to validate my credentials in the system
-  As a moodle user
+  As a user
   I need to log into the system
 
   Scenario: Login with the predefined admin user

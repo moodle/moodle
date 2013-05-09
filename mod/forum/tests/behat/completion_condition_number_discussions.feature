@@ -1,7 +1,7 @@
 @mod @mod_forum
 Feature: Set a certain number of discussions as a completion condition for a forum
   In order to ensure students are participating on forums
-  As a moodle teacher
+  As a teacher
   I need to set a minimum number of discussions to mark the forum activity as completed
 
   @javascript

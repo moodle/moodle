@@ -1,7 +1,7 @@
 @core @core_cohort @_only_local
 Feature: Upload users to a cohort
   In order to quickly fill site-wide groups with users
-  As a moodle admin
+  As an admin
   I need to upload a file with users data containing cohort assigns
 
   @javascript

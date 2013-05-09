@@ -1,7 +1,7 @@
 @mod @mod_glossary
 Feature: A teacher can choose whether to provide a printer-friendly glossary entries list
   In order to print glossaries easily
-  As a moodle user
+  As a user
   I need to provide users a different view to print the glossary contents
 
   Background:

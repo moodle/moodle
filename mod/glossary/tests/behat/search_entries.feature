@@ -1,7 +1,7 @@
 @mod @mod_glossary
 Feature: Glossary entries can be searched or browsed by alphabet, category, date or author
   In order to find entries in a glossary
-  As a moodle user
+  As a user
   I need to search the entries list by keyword, alphabet, category, date and author
 
   Background:

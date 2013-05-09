@@ -1,7 +1,7 @@
 @editor @editor_tinymce
 Feature: Add or remove items from the TinyMCE editor toolbar
   In order to customize the TinyMCE editor appearance
-  As a moodle admin
+  As an admin
   I need to add and remove items from the toolbar
 
   Background:

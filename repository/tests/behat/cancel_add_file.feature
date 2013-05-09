@@ -1,7 +1,7 @@
 @core @core_filepicker @_only_local
 Feature: A selected file can be cancelled
   In order to refine the file manager contents
-  As a moodle user
+  As a user
   I need to cancel a selected file
 
   @javascript

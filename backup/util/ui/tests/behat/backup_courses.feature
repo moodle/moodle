@@ -1,7 +1,7 @@
 @core @core_backup
 Feature: Backup Moodle courses
   In order to save and store course contents
-  As a moodle admin
+  As an admin
   I need to create backups of courses
 
   Background:

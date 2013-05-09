@@ -1,7 +1,7 @@
 @tool @tool_behat
 Feature: Edit capabilities
   In order to extend and restrict moodle features
-  As an admin or teacher
+  As an admin or a teacher
   I need to allow/deny the existing capabilities at different levels
 
   Background:

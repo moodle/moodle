@@ -1,7 +1,7 @@
 @mod @mod_wiki
 Feature: There is a choice of formats for editing a wiki page
   In order to allow users to use their favorite wiki format
-  As a moodle user
+  As a user
   I need to choose which wiki format do I want to use
 
   Background:

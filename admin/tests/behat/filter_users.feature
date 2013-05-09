@@ -1,7 +1,7 @@
 @core @core_admin
 Feature: An administrator can filter user accounts by role, cohort and other profile fields
   In order to find the user accounts I am looking for
-  As a moodle admin
+  As an admin
   I need to filter the users account list using different filter
 
   Background:

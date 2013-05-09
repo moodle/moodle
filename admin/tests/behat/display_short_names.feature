@@ -1,7 +1,7 @@
 @core @core_admin
 Feature: Display extended course names
   In order to display more info about the courses
-  As a moodle admin
+  As an admin
   I need to display courses short names along with courses full names
 
   Background:

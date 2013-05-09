@@ -1,7 +1,7 @@
 @mod @mod_assign
 Feature: Prevent or allow assignment submission changes
   In order to control when a student can change his/her submission
-  As a moodle teacher
+  As a teacher
   I need to prevent or allow student submission at any time
 
   @javascript

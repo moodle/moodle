@@ -1,7 +1,7 @@
 @core @core_course
 Feature: Course paged mode
   In order to split the course in parts
-  As a moodle teacher
+  As a teacher
   I need to display the course in a paged mode and navigate through the different sections
 
   @javascript @_cross_browser

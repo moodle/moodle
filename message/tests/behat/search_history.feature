@@ -1,7 +1,7 @@
 @core @core_message
 Feature: Users can search their message history
   In order to read old messages
-  As a moodle user
+  As a user
   I need to search in my messages history
 
   Background:

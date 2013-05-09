@@ -1,7 +1,7 @@
 @mod @mod_choice
 Feature: A teacher can choose whether to publish choice activity results anonymously or showing names
   In order to keep students privacy or to give more info to students
-  As a moodle teacher
+  As a teacher
   I need to select whether I want other students to know who selected what option
 
   Background:

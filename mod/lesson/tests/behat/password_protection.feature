@@ -1,7 +1,7 @@
 @mod @mod_lesson
 Feature: A teacher can password protect a lesson
   In order to avoid undesired accesses to lesson activities
-  As a moodle teacher
+  As a teacher
   I need to set a password to access the lesson
 
   @javascript

@@ -1,7 +1,7 @@
 @mod @mod_forum
 Feature: Students can choose from 4 discussion display options and their choice is remembered
   In order to read forum posts in a suitable view
-  As a moodle user
+  As a user
   I need to select which display method I want to use
 
   Background:

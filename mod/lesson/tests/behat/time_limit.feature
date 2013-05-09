@@ -1,7 +1,7 @@
 @mod @mod_lesson
 Feature: A teacher can set a time limit for a lesson
   In order to restrict the time students have to complete a lesson
-  As a moodle teacher
+  As a teacher
   I need to set a time limit
 
   @javascript
