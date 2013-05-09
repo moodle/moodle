@@ -414,12 +414,17 @@ class cache_helper {
      * Think twice before calling this method. It will purge **ALL** caches regardless of whether they have been used recently or
      * anything. This will involve full setup of the cache + the purge operation. On a site using caching heavily this WILL be
      * painful.
+     *
+     * @param bool $usewriter If set to true the cache_config_writer class is used. This class is special as it avoids
+     *      it is still usable when caches have been disabled.
+     *      Please use this option only if you really must. It's purpose is to allow the cache to be purged when it would be
+     *      otherwise impossible.
      */
-    public static function purge_all() {
-        $config = cache_config::instance();
-
+    public static function purge_all($usewriter = false) {
+        $factory = cache_factory::instance();
+        $config = $factory->create_config_instance($usewriter);
         foreach ($config->get_all_stores() as $store) {
-            self::purge_store($store['name']);
+            self::purge_store($store['name'], $config);
         }
     }
 
@@ -427,10 +432,13 @@ class cache_helper {
      * Purges a store given its name.
      *
      * @param string $storename
+     * @param cache_config $config
      * @return bool
      */
-    public static function purge_store($storename) {
-        $config = cache_config::instance();
+    public static function purge_store($storename, cache_config $config = null) {
+        if ($config === null) {
+            $config = cache_config::instance();
+        }
 
         $stores = $config->get_all_stores();
         if (!array_key_exists($storename, $stores)) {
@@ -450,10 +458,10 @@ class cache_helper {
 
         foreach ($config->get_definitions_by_store($storename) as $id => $definition) {
             $definition = cache_definition::load($id, $definition);
-            $instance = new $class($store['name'], $store['configuration']);
-            $instance->initialise($definition);
-            $instance->purge();
-            unset($instance);
+            $definitioninstance = clone($instance);
+            $definitioninstance->initialise($definition);
+            $definitioninstance->purge();
+            unset($definitioninstance);
         }
 
         return true;

@@ -222,6 +222,13 @@ if ($cache) {
 }
 
 if ($version > $CFG->version) {  // upgrade
+    // We purge all of MUC's caches here.
+    // Caches are disabled for upgrade by CACHE_DISABLE_ALL so we must set the first arg to true.
+    // This ensures a real config object is loaded and the stores will be purged.
+    // This is the only way we can purge custom caches such as memcache or APC.
+    // Note: all other calls to caches will still used the disabled API.
+    cache_helper::purge_all(true);
+    // We then purge the regular caches.
     purge_all_caches();
 
     $PAGE->set_pagelayout('maintenance');
