@@ -1325,7 +1325,7 @@ abstract class condition_info_base {
         $iscurrentuser = $USER->id == $userid;
 
         if (isguestuser($userid) || ($iscurrentuser && !isloggedin())) {
-            // Must be logged in and can't be the guest. (this should never happen anyway)
+            // Must be logged in and can't be the guest. (e.g. front page)
             return false;
         }
 

@@ -776,6 +776,15 @@ class conditionlib_testcase extends advanced_testcase {
             // without error.
             $ci->get_cached_user_profile_field($USER->id, $fieldid);
         }
+
+        // Change to not logged in user.
+        $this->setUser(null);
+
+        foreach ($fields as $fieldid => $name) {
+            // Should get false always when not logged in.
+            $this->assertEquals(false, $ci->get_cached_user_profile_field($USER->id, $fieldid));
+        }
+
     }
 }
 
