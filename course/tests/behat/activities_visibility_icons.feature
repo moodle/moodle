@@ -24,11 +24,11 @@ Feature: Toggle activities visibility from the course page
       | Forum name | Test forum name |
       | Description | Test forum description |
       | Visible | Show |
-    When I click on "Hide" "link" in the "li.activity.forum" "css_element"
+    When I click on "Hide" "link" in the "Test forum name" activity
     Then "Test forum name" activity should be hidden
-    And I click on "Show" "link" in the "li.activity.forum" "css_element"
+    And I click on "Show" "link" in the "Test forum name" activity
     And "Test forum name" activity should be visible
-    And I click on "Hide" "link" in the "li.activity.forum" "css_element"
+    And I click on "Hide" "link" in the "Test forum name" activity
     And "Test forum name" activity should be hidden
     And I reload the page
     And "Test forum name" activity should be hidden

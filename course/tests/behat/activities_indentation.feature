@@ -23,19 +23,15 @@ Feature: Indent items on the course page
     And I add a "Glossary" to section "1" and I fill the form with:
       | Name | Test glossary name |
       | Description | Test glossary description |
-    When I click on "Move right" "link" in the "#section-1 li.glossary" "css_element"
-    And I wait "2" seconds
+    When I indent right "Test glossary name" activity
     Then "#section-1 li.glossary div.mod-indent-1" "css_element" should exists
-    And I click on "Move right" "link" in the "#section-1 li.glossary" "css_element"
-    And I wait "2" seconds
+    And I indent right "Test glossary name" activity
     And "//*[@id='section-1']/descendant::li[contains(concat(' ', @class, ' '), ' glossary ')]/descendant::a[@title='Move left']" "xpath_element" should exists
     And "#section-1 li.glossary div.mod-indent-2" "css_element" should exists
     And I reload the page
     And "#section-1 li.glossary div.mod-indent-2" "css_element" should exists
-    And I click on "Move left" "link" in the "#section-1 li.glossary" "css_element"
-    And I wait "2" seconds
-    And I click on "Move left" "link" in the "#section-1 li.glossary" "css_element"
-    And I wait "2" seconds
+    And I indent left "Test glossary name" activity
+    And I indent left "Test glossary name" activity
     And "#section-1 li.glossary div.mod-indent-2" "css_element" should not exists
     And "#section-1 li.glossary div.mod-indent-1" "css_element" should not exists
     And "//*[@id='section-1']/descendant::li[contains(concat(' ', @class, ' '), ' glossary ')]/descendant::a[@title='Move left']" "xpath_element" should not exists

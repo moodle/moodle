@@ -208,48 +208,55 @@ class behat_hooks extends behat_base {
      */
     public function i_look_for_exceptions() {
 
-        // Exceptions.
-        if ($errormsg = $this->getSession()->getPage()->find('css', '.errorbox p.errormessage')) {
+        // Wrap in try in case we were interacting with a closed window.
+        try {
 
-            // Getting the debugging info and the backtrace.
-            $errorinfoboxes = $this->getSession()->getPage()->findAll('css', 'div.notifytiny');
-            $errorinfo = $this->get_debug_text($errorinfoboxes[0]->getHtml()) . "\n" .
-                $this->get_debug_text($errorinfoboxes[1]->getHtml());
+            // Exceptions.
+            if ($errormsg = $this->getSession()->getPage()->find('css', '.errorbox p.errormessage')) {
 
-            $msg = "Moodle exception: " . $errormsg->getText() . "\n" . $errorinfo;
-            throw new \Exception(html_entity_decode($msg));
-        }
+                // Getting the debugging info and the backtrace.
+                $errorinfoboxes = $this->getSession()->getPage()->findAll('css', 'div.notifytiny');
+                $errorinfo = $this->get_debug_text($errorinfoboxes[0]->getHtml()) . "\n" .
+                    $this->get_debug_text($errorinfoboxes[1]->getHtml());
 
-        // Debugging messages.
-        if ($debuggingmessages = $this->getSession()->getPage()->findAll('css', '.debuggingmessage')) {
-            $msgs = array();
-            foreach ($debuggingmessages as $debuggingmessage) {
-                $msgs[] = $this->get_debug_text($debuggingmessage->getHtml());
+                $msg = "Moodle exception: " . $errormsg->getText() . "\n" . $errorinfo;
+                throw new \Exception(html_entity_decode($msg));
             }
-            $msg = "debugging() message/s found:\n" . implode("\n", $msgs);
-            throw new \Exception(html_entity_decode($msg));
-        }
 
-        // PHP debug messages.
-        if ($phpmessages = $this->getSession()->getPage()->findAll('css', '.phpdebugmessage')) {
-
-            $msgs = array();
-            foreach ($phpmessages as $phpmessage) {
-                $msgs[] = $this->get_debug_text($phpmessage->getHtml());
+            // Debugging messages.
+            if ($debuggingmessages = $this->getSession()->getPage()->findAll('css', '.debuggingmessage')) {
+                $msgs = array();
+                foreach ($debuggingmessages as $debuggingmessage) {
+                    $msgs[] = $this->get_debug_text($debuggingmessage->getHtml());
+                }
+                $msg = "debugging() message/s found:\n" . implode("\n", $msgs);
+                throw new \Exception(html_entity_decode($msg));
             }
-            $msg = "PHP debug message/s found:\n" . implode("\n", $msgs);
-            throw new \Exception(html_entity_decode($msg));
-        }
 
-        // Any other backtrace.
-        $backtracespattern = '/(line [0-9]* of [^:]*: call to [\->&;:a-zA-Z_\x7f-\xff][\->&;:a-zA-Z0-9_\x7f-\xff]*)/';
-        if (preg_match_all($backtracespattern, $this->getSession()->getPage()->getContent(), $backtraces)) {
-            $msgs = array();
-            foreach ($backtraces[0] as $backtrace) {
-                $msgs[] = $backtrace . '()';
+            // PHP debug messages.
+            if ($phpmessages = $this->getSession()->getPage()->findAll('css', '.phpdebugmessage')) {
+
+                $msgs = array();
+                foreach ($phpmessages as $phpmessage) {
+                    $msgs[] = $this->get_debug_text($phpmessage->getHtml());
+                }
+                $msg = "PHP debug message/s found:\n" . implode("\n", $msgs);
+                throw new \Exception(html_entity_decode($msg));
             }
-            $msg = "Other backtraces found:\n" . implode("\n", $msgs);
-            throw new \Exception(htmlentities($msg));
+
+            // Any other backtrace.
+            $backtracespattern = '/(line [0-9]* of [^:]*: call to [\->&;:a-zA-Z_\x7f-\xff][\->&;:a-zA-Z0-9_\x7f-\xff]*)/';
+            if (preg_match_all($backtracespattern, $this->getSession()->getPage()->getContent(), $backtraces)) {
+                $msgs = array();
+                foreach ($backtraces[0] as $backtrace) {
+                    $msgs[] = $backtrace . '()';
+                }
+                $msg = "Other backtraces found:\n" . implode("\n", $msgs);
+                throw new \Exception(htmlentities($msg));
+            }
+
+        } catch (NoSuchWindow $e) {
+            // If we were interacting with a popup window it will not exists after closing it.
         }
     }
 
