@@ -330,6 +330,10 @@ a.ygtvspacer:hover {color: transparent;text-decoration: none;}
 .filemanager .fp-treeview .fp-folder.fp-hascontextmenu .fp-contextmenu,
 .filemanager .fp-tableview .fp-folder.fp-hascontextmenu .fp-contextmenu {display: inline;position: absolute;left: 14px;margin-right: -20px;top: 6px;}
 
+.dir-rtl .filemanager .fp-iconview .fp-folder.fp-hascontextmenu .fp-contextmenu {left:7px;right:inherit;}
+.dir-rtl .filemanager .fp-treeview .fp-folder.fp-hascontextmenu .fp-contextmenu,
+.dir-rtl .filemanager .fp-tableview .fp-folder.fp-hascontextmenu .fp-contextmenu {left:inherit;right: 16px;margin-right: 0;}
+
 /*
  * Drag and drop support (filemanager and filepicker form elements)
  */
