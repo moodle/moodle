@@ -936,8 +936,8 @@ class qformat_default {
         global $DB;
         $formatoptions = new stdClass();
         $formatoptions->noclean = true;
-        return html_to_text(format_text($question->questiontext,
-                $question->questiontextformat, $formatoptions), 0, false);
+        return to_plain_text($question->questiontext,
+                $question->questiontextformat, $formatoptions);
     }
 }
 
