@@ -39,7 +39,10 @@
 .block_navigation .block_tree .tree_item a:link,
 .block_navigation .block_tree .tree_item a:visited,
 .block_navigation .block_tree .tree_item a:active {color:#000;}
-
 .block_navigation .block_tree .tree_item {padding-left:19px}
+
+/* block_adminblock */
+.block_adminblock .content .singleselect {width: 100%;}
+.block_adminblock .content .singleselect {margin:0}
 
 .block.list_block .unlist > li > .column {margin-top:3px; margin-bottom:3px;}
