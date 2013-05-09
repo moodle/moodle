@@ -209,9 +209,20 @@ class formslib_testcase extends advanced_testcase {
         $mform->display();
     }
 
+    public function test_settype_debugging_url() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $mform = new formslib_settype_debugging_url();
+        $this->assertDebuggingCalled("Did you remember to call setType() for 'urltest'? Defaulting to PARAM_RAW cleaning.");
+
+        // Check form still there though
+        $this->expectOutputRegex('/<input[^>]*name="urltest"[^>]*type="text/');
+        $mform->display();
+    }
+
     public function test_settype_debugging_repeat() {
         $mform = new formslib_settype_debugging_repeat();
-        $this->assertDebuggingCalled("Did you remember to call setType() for 'repeattest'? Defaulting to PARAM_RAW cleaning.");
+        $this->assertDebuggingCalled("Did you remember to call setType() for 'repeattest[0]'? Defaulting to PARAM_RAW cleaning.");
 
         // Check form still there though
         $this->expectOutputRegex('/<input[^>]*name="repeattest[^>]*type="text/');
@@ -223,6 +234,38 @@ class formslib_testcase extends advanced_testcase {
         // No debugging expected here.
 
         $this->expectOutputRegex('/<input[^>]*name="repeattest[^>]*type="text/');
+        $mform->display();
+    }
+
+    public function test_settype_debugging_group() {
+        $mform = new formslib_settype_debugging_group();
+        $this->assertDebuggingCalled("Did you remember to call setType() for 'groupel1'? Defaulting to PARAM_RAW cleaning.");
+        $this->expectOutputRegex('/<input[^>]*name="groupel1"[^>]*type="text/');
+        $this->expectOutputRegex('/<input[^>]*name="groupel2"[^>]*type="text/');
+        $mform->display();
+    }
+
+    public function test_settype_debugging_namedgroup() {
+        $mform = new formslib_settype_debugging_namedgroup();
+        $this->assertDebuggingCalled("Did you remember to call setType() for 'namedgroup[groupel1]'? Defaulting to PARAM_RAW cleaning.");
+        $this->expectOutputRegex('/<input[^>]*name="namedgroup\[groupel1\]"[^>]*type="text/');
+        $this->expectOutputRegex('/<input[^>]*name="namedgroup\[groupel2\]"[^>]*type="text/');
+        $mform->display();
+    }
+
+    public function test_settype_debugging_funky_name() {
+        $mform = new formslib_settype_debugging_funky_name();
+        $this->assertDebuggingCalled("Did you remember to call setType() for 'blah[foo][bar][1]'? Defaulting to PARAM_RAW cleaning.");
+        $this->expectOutputRegex('/<input[^>]*name="blah\[foo\]\[bar\]\[0\]"[^>]*type="text/');
+        $this->expectOutputRegex('/<input[^>]*name="blah\[foo\]\[bar\]\[1\]"[^>]*type="text/');
+        $mform->display();
+    }
+
+    public function test_settype_debugging_type_inheritance() {
+        $mform = new formslib_settype_debugging_type_inheritance();
+        $this->expectOutputRegex('/<input[^>]*name="blah\[foo\]\[bar\]\[0\]"[^>]*type="text/');
+        $this->expectOutputRegex('/<input[^>]*name="blah\[bar\]\[foo\]\[1\]"[^>]*type="text/');
+        $this->expectOutputRegex('/<input[^>]*name="blah\[any\]\[other\]\[2\]"[^>]*type="text/');
         $mform->display();
     }
 }
@@ -277,6 +320,15 @@ class formslib_settype_debugging_hidden extends moodleform {
     }
 }
 
+// Used to test debugging is called when hidden added without setType.
+class formslib_settype_debugging_url extends moodleform {
+    public function definition() {
+        $mform = $this->_form;
+
+        $mform->addElement('url', 'urltest', 'urltest');
+    }
+}
+
 // Used to test debugging is called when repeated text added without setType.
 class formslib_settype_debugging_repeat extends moodleform {
     public function definition() {
@@ -300,5 +352,54 @@ class formslib_settype_debugging_repeat_ok extends moodleform {
         );
 
        $this->repeat_elements($repeatels, 2, array('repeattest' => array('type' => PARAM_RAW)), 'numtexts', 'addtexts');
+    }
+}
+
+// Used to test if debugging is called when a group contains elements without type.
+class formslib_settype_debugging_group extends moodleform {
+    public function definition() {
+        $mform = $this->_form;
+        $group = array(
+            $mform->createElement('text', 'groupel1', 'groupel1'),
+            $mform->createElement('text', 'groupel2', 'groupel2')
+        );
+        $mform->addGroup($group);
+        $mform->setType('groupel2', PARAM_INT);
+    }
+}
+
+// Used to test if debugging is called when a named group contains elements without type.
+class formslib_settype_debugging_namedgroup extends moodleform {
+    public function definition() {
+        $mform = $this->_form;
+        $group = array(
+            $mform->createElement('text', 'groupel1', 'groupel1'),
+            $mform->createElement('text', 'groupel2', 'groupel2')
+        );
+        $mform->addGroup($group, 'namedgroup');
+        $mform->setType('namedgroup[groupel2]', PARAM_INT);
+    }
+}
+
+// Used to test if debugging is called when has a funky name.
+class formslib_settype_debugging_funky_name extends moodleform {
+    public function definition() {
+        $mform = $this->_form;
+        $mform->addElement('text', 'blah[foo][bar][0]', 'test', 'test');
+        $mform->addElement('text', 'blah[foo][bar][1]', 'test', 'test');
+        $mform->setType('blah[foo][bar][0]', PARAM_INT);
+    }
+}
+
+// Used to test if debugging is not called with type inheritance.
+class formslib_settype_debugging_type_inheritance extends moodleform {
+    public function definition() {
+        $mform = $this->_form;
+        $mform->addElement('text', 'blah[foo][bar][0]', 'test1', 'test');
+        $mform->addElement('text', 'blah[bar][foo][1]', 'test2', 'test');
+        $mform->addElement('text', 'blah[any][other][2]', 'test3', 'test');
+        $mform->setType('blah[foo][bar]', PARAM_INT);
+        $mform->setType('blah[bar]', PARAM_FLOAT);
+        $mform->setType('blah', PARAM_TEXT);
     }
 }
