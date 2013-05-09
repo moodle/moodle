@@ -6,14 +6,17 @@ At present, recess is the official tool for developers to compile LESS in to CSS
 other tools give different results in the generated CSS.
 
 Once recess has been installed you can compile and compress the LESS in to CSS using
-the following command:
-recess --compile --compress moodle.less > ../style/moodle.css
+the following commands from the "theme/bootstrapbase/less" directory:
 
-You can add --watch to make sure it updates every time you make a change.
+For the main Moodle styles:
+
+recess --compile --compress moodle.less > ../style/moodle.css
 
 And for the subset of styles of interest to the TinyMCE editor:
 
 recess --compile --compress editor.less >  ../style/editor.css
+
+You can add --watch to make sure it updates every time you make a change.
 
 If the compilation is failing and you're not getting any useful error message, try using lessc instead i.e.:
 
