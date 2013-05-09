@@ -9493,9 +9493,10 @@ function format_float($float, $decimalpoints=1, $localized=true, $stripzeros=fal
  * Do NOT try to do any math operations before this conversion on any user submitted floats!
  *
  * @param string $locale_float locale aware float representation
- * @return float
+ * @param bool $strict If true, then check the input and return false if it is not a valid number.
+ * @return mixed float|bool - false or the parsed float.
  */
-function unformat_float($locale_float) {
+function unformat_float($locale_float, $strict = false) {
     $locale_float = trim($locale_float);
 
     if ($locale_float == '') {
@@ -9503,8 +9504,13 @@ function unformat_float($locale_float) {
     }
 
     $locale_float = str_replace(' ', '', $locale_float); // no spaces - those might be used as thousand separators
+    $locale_float = str_replace(get_string('decsep', 'langconfig'), '.', $locale_float);
 
-    return (float)str_replace(get_string('decsep', 'langconfig'), '.', $locale_float);
+    if ($strict && !is_numeric($locale_float)) {
+        return false;
+    }
+
+    return (float)$locale_float;
 }
 
 /**

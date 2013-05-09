@@ -351,16 +351,21 @@ if ($formdata = $mform2->get_data()) {
                             $newgrade->finalgrade = $value;
                         } else {
                             if ($value === '' or $value == '-') {
-                                $value = null; // no grade
-
-                            } else if (!is_numeric($value)) {
-                            // non numeric grade value supplied, possibly mapped wrong column
-                                echo "<br/>t0 is $t0";
-                                echo "<br/>grade is $value";
-                                $status = false;
-                                import_cleanup($importcode);
-                                echo $OUTPUT->notification(get_string('badgrade', 'grades'));
-                                break 3;
+                                $value = null; // No grade.
+                            } else {
+                                // If the value has a local decimal or can correctly be unformatted, do it.
+                                $validvalue = unformat_float($value, true);
+                                if ($validvalue !== false) {
+                                    $value = $validvalue;
+                                } else {
+                                    // Non numeric grade value supplied, possibly mapped wrong column.
+                                    echo "<br/>t0 is $t0";
+                                    echo "<br/>grade is $value";
+                                    $status = false;
+                                    import_cleanup($importcode);
+                                    echo $OUTPUT->notification(get_string('badgrade', 'grades'));
+                                    break 3;
+                                }
                             }
                             $newgrade->finalgrade = $value;
                         }
