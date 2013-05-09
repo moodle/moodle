@@ -18,9 +18,9 @@
  * Renderers to align Moodle's HTML with that expected by Bootstrap
  *
  * @package    theme_bootstrapbase
- * @copyright  2012
+ * @copyright  2013
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('renderers/core.php');
+require_once('renderers/core_renderer.php');
 
