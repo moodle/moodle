@@ -1524,7 +1524,7 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012120300.04);
     }
 
-    if ($oldversion < 2012120300.07) {
+    if ($oldversion < 2012123000.00) {
         // Purge removed module filters and all their settings.
 
         $tables = array('filter_active', 'filter_config');
@@ -1561,7 +1561,7 @@ function xmldb_main_upgrade($oldversion) {
         unset($filter);
 
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2012120300.07);
+        upgrade_main_savepoint(true, 2012123000.00);
     }
 
     if ($oldversion < 2013021100.01) {
