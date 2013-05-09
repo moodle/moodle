@@ -292,6 +292,14 @@ class quiz_overview_report extends quiz_attempts_report {
     }
 
     /**
+     * Unlock the session and allow the regrading process to run in the background.
+     */
+    protected function unlock_session() {
+        session_get_instance()->write_close();
+        ignore_user_abort(true);
+    }
+
+    /**
      * Regrade a particular quiz attempt. Either for real ($dryrun = false), or
      * as a pretend regrade to see which fractions would change. The outcome is
      * stored in the quiz_overview_regrades table.
@@ -306,7 +314,8 @@ class quiz_overview_report extends quiz_attempts_report {
      */
     protected function regrade_attempt($attempt, $dryrun = false, $slots = null) {
         global $DB;
-        set_time_limit(30);
+        // Need more time for a quiz with many questions.
+        set_time_limit(300);
 
         $transaction = $DB->start_delegated_transaction();
 
@@ -359,6 +368,7 @@ class quiz_overview_report extends quiz_attempts_report {
     protected function regrade_attempts($quiz, $dryrun = false,
             $groupstudents = array(), $attemptids = array()) {
         global $DB;
+        $this->unlock_session();
 
         $where = "quiz = ? AND preview = 0";
         $params = array($quiz->id);
@@ -400,6 +410,7 @@ class quiz_overview_report extends quiz_attempts_report {
      */
     protected function regrade_attempts_needing_it($quiz, $groupstudents) {
         global $DB;
+        $this->unlock_session();
 
         $where = "quiza.quiz = ? AND quiza.preview = 0 AND qqr.regraded = 0";
         $params = array($quiz->id);
