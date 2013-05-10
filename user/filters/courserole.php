@@ -46,6 +46,7 @@ class user_filter_courserole extends user_filter_type {
         $objs[] =& $mform->createElement('select', $this->_name .'_ct', null, $this->get_course_categories());
         $objs[] =& $mform->createElement('text', $this->_name, null);
         $grp =& $mform->addElement('group', $this->_name.'_grp', $this->_label, $objs, '', false);
+        $mform->setType($this->_name, PARAM_ALPHANUMEXT);
         if ($this->_advanced) {
             $mform->setAdvanced($this->_name.'_grp');
         }

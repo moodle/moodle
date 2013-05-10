@@ -62,6 +62,7 @@ class user_filter_profilefield extends user_filter_type {
         $objs[] =& $mform->createElement('select', $this->_name.'_op', null, $this->get_operators());
         $objs[] =& $mform->createElement('text', $this->_name, null);
         $grp =& $mform->addElement('group', $this->_name.'_grp', $this->_label, $objs, '', false);
+        $mform->setType($this->_name, PARAM_RAW);
         if ($this->_advanced) {
             $mform->setAdvanced($this->_name.'_grp');
         }
