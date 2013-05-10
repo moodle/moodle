@@ -14,6 +14,9 @@
             float: right;
         }
     }
+}
+
+@media (min-width: 980px) and (max-width: 1199px) {
     // Wider form labels.
     .form-item .form-label,
     .mform .fitem div.fitemtitle,
@@ -47,6 +50,27 @@
         width: 48.717948717948715%;
        *width: 48.664757228587014%;
    }
+    // Wider form labels.
+    .form-item .form-label,
+    .mform .fitem div.fitemtitle,
+    .userprofile dl.list dt,
+    .form-horizontal .control-label {
+        width: @horizontalComponentOffset1200 - 20px;
+    }
+    .form-item .form-setting,
+    .form-item .form-description,
+    .mform .fitem .felement,
+    #page-mod-forum-search .c1,
+    .mform .fdescription.required,
+    .userprofile dl.list dd,
+    .form-horizontal .controls {
+        margin-left: @horizontalComponentOffset1200;
+    }
+    .path-admin .buttons,
+    .form-buttons {
+        padding-left: @horizontalComponentOffset1200;
+    }
+
 }
 
 @media (min-width: 980px) {
@@ -259,26 +283,6 @@
     .block .minicalendar td {
         padding-left: 0;
         padding-right: 0;
-    }
-    // Wider form labels.
-    .form-item .form-label,
-    .mform .fitem div.fitemtitle,
-    .userprofile dl.list dt,
-    .form-horizontal .control-label {
-        width: @horizontalComponentOffset768 - 20px;
-    }
-    .form-item .form-setting,
-    .form-item .form-description,
-    .mform .fitem .felement,
-    #page-mod-forum-search .c1,
-    .mform .fdescription.required,
-    .userprofile dl.list dd,
-    .form-horizontal .controls {
-        margin-left: @horizontalComponentOffset768;
-    }
-    .path-admin .buttons,
-    .form-buttons {
-        padding-left: @horizontalComponentOffset768;
     }
 }
 
