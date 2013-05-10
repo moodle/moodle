@@ -161,16 +161,17 @@ class lesson_page_type_matching extends lesson_page {
         }
 
         $response = $data->response;
-        $answers = $this->get_answers();
+        $getanswers = $this->get_answers();
 
-        $correct = array_shift($answers);
-        $wrong   = array_shift($answers);
+        $correct = array_shift($getanswers);
+        $wrong   = array_shift($getanswers);
 
-        foreach ($answers as $key=>$answer) {
+        $answers = array();
+        foreach ($getanswers as $key=>$answer) {
             if ($answer->answer !== '' or $answer->response !== '') {
                 $answers[$answer->id] = $answer;
             }
-            unset($answers[$key]);
+            unset($getanswers[$key]);
         }
         // get the user's exact responses for record keeping
         $hits = 0;
