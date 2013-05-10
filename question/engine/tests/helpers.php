@@ -786,6 +786,34 @@ abstract class qbehaviour_walkthrough_test_base extends question_testcase {
         }
     }
 
+    protected function check_output_contains_text_input_with_class($name, $class = null) {
+        $attributes = array(
+            'type' => 'text',
+            'name' => $this->quba->get_field_prefix($this->slot) . $name,
+        );
+        if (!is_null($class)) {
+            $attributes['class'] = 'regexp:/\b' . $class . '\b/';
+        }
+
+        $matcher = $this->get_tag_matcher('input', $attributes);
+        $this->assertTag($matcher, $this->currentoutput,
+                'Looking for an input with attributes ' . html_writer::attributes($attributes) . ' in ' . $this->currentoutput);
+    }
+
+    protected function check_output_does_not_contain_text_input_with_class($name, $class = null) {
+        $attributes = array(
+            'type' => 'text',
+            'name' => $this->quba->get_field_prefix($this->slot) . $name,
+        );
+        if (!is_null($class)) {
+            $attributes['class'] = 'regexp:/\b' . $class . '\b/';
+        }
+
+        $matcher = $this->get_tag_matcher('input', $attributes);
+        $this->assertNotTag($matcher, $this->currentoutput,
+                'Unexpected input with attributes ' . html_writer::attributes($attributes) . ' found in ' . $this->currentoutput);
+    }
+
     protected function check_output_contains_hidden_input($name, $value) {
         $attributes = array(
             'type' => 'hidden',

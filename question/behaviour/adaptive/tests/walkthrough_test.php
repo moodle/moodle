@@ -238,13 +238,17 @@ class qbehaviour_adaptive_walkthrough_test extends qbehaviour_walkthrough_test_b
 
     public function test_adaptive_shortanswer_partially_right() {
 
-        // Create a short answer question
+        // Create a short answer question.
         $sa = test_question_maker::make_question('shortanswer');
         $this->start_attempt_at_question($sa, 'adaptive');
 
         // Check the initial state.
         $this->check_current_state(question_state::$todo);
         $this->check_current_mark(null);
+        $this->render();
+        $this->check_output_does_not_contain_text_input_with_class('answer', 'correct');
+        $this->check_output_does_not_contain_text_input_with_class('answer', 'partiallycorrect');
+        $this->check_output_does_not_contain_text_input_with_class('answer', 'incorrect');
         $this->check_current_output(
                 $this->get_contains_marked_out_of_summary(),
                 $this->get_contains_submit_button_expectation(true),
@@ -256,6 +260,8 @@ class qbehaviour_adaptive_walkthrough_test extends qbehaviour_walkthrough_test_b
         // Verify.
         $this->check_current_state(question_state::$todo);
         $this->check_current_mark(0.8);
+        $this->render();
+        $this->check_output_contains_text_input_with_class('answer', 'partiallycorrect');
         $this->check_current_output(
                 $this->get_contains_mark_summary(0.8),
                 $this->get_contains_submit_button_expectation(true),
@@ -270,6 +276,8 @@ class qbehaviour_adaptive_walkthrough_test extends qbehaviour_walkthrough_test_b
         // Verify.
         $this->check_current_state(question_state::$todo);
         $this->check_current_mark(0.8);
+        $this->render();
+        $this->check_output_contains_text_input_with_class('answer', 'incorrect');
         $this->check_current_output(
                 $this->get_contains_mark_summary(0.8),
                 $this->get_contains_submit_button_expectation(true),
@@ -284,6 +292,8 @@ class qbehaviour_adaptive_walkthrough_test extends qbehaviour_walkthrough_test_b
         // Verify.
         $this->check_current_state(question_state::$complete);
         $this->check_current_mark(0.8);
+        $this->render();
+        $this->check_output_contains_text_input_with_class('answer', 'correct');
         $this->check_current_output(
                 $this->get_contains_mark_summary(0.8),
                 $this->get_contains_submit_button_expectation(true),
@@ -307,7 +317,7 @@ class qbehaviour_adaptive_walkthrough_test extends qbehaviour_walkthrough_test_b
 
     public function test_adaptive_shortanswer_wrong_right_wrong() {
 
-        // Create a short answer question
+        // Create a short answer question.
         $sa = test_question_maker::make_question('shortanswer');
         $this->start_attempt_at_question($sa, 'adaptive', 6);
 
@@ -390,7 +400,7 @@ class qbehaviour_adaptive_walkthrough_test extends qbehaviour_walkthrough_test_b
 
     public function test_adaptive_shortanswer_invalid_after_complete() {
 
-        // Create a short answer question
+        // Create a short answer question.
         $sa = test_question_maker::make_question('shortanswer');
         $this->start_attempt_at_question($sa, 'adaptive');
 
@@ -472,9 +482,9 @@ class qbehaviour_adaptive_walkthrough_test extends qbehaviour_walkthrough_test_b
 
     public function test_adaptive_shortanswer_zero_penalty() {
 
-        // Create a short answer question
+        // Create a short answer question.
         $sa = test_question_maker::make_question('shortanswer');
-        // Disable penalties for this question
+        // Disable penalties for this question.
         $sa->penalty = 0;
         $this->start_attempt_at_question($sa, 'adaptive');
 
@@ -588,7 +598,7 @@ class qbehaviour_adaptive_walkthrough_test extends qbehaviour_walkthrough_test_b
 
     public function test_adaptive_numerical() {
 
-        // Create a numerical question
+        // Create a numerical question.
         $sa = test_question_maker::make_question('numerical', 'pi');
         $this->start_attempt_at_question($sa, 'adaptive');
 
@@ -643,7 +653,7 @@ class qbehaviour_adaptive_walkthrough_test extends qbehaviour_walkthrough_test_b
 
     public function test_adaptive_numerical_invalid() {
 
-        // Create a numerical question
+        // Create a numerical question.
         $numq = test_question_maker::make_question('numerical', 'pi');
         $numq->penalty = 0.1;
         $this->start_attempt_at_question($numq, 'adaptive');
@@ -743,5 +753,103 @@ class qbehaviour_adaptive_walkthrough_test extends qbehaviour_walkthrough_test_b
                 $this->get_contains_incorrect_expectation(),
                 $this->get_does_not_contain_validation_error_expectation(),
                 $this->get_does_not_contain_disregarded_info_expectation());
+    }
+
+    public function test_adaptive_multianswer() {
+
+        // Create a multianswer question.
+        $q = test_question_maker::make_question('multianswer', 'twosubq');
+        // To simplify testing, multichoice subquestion's answers are not shuffled.
+        $q->subquestions[2]->shuffleanswers = 0;
+        $choices = array('' => '', '0' => 'Bow-wow', '1' => 'Wiggly worm', '2' => 'Pussy-cat');
+
+        $this->start_attempt_at_question($q, 'adaptive', 12);
+
+        // Check the initial state.
+        $this->check_current_state(question_state::$todo);
+        $this->check_current_mark(null);
+        $this->assertEquals('adaptive',
+                $this->quba->get_question_attempt($this->slot)->get_behaviour_name());
+        $this->render();
+        $this->check_output_contains_text_input('sub1_answer', '', true);
+        $this->check_output_does_not_contain_text_input_with_class('sub1_answer', 'correct');
+        $this->check_output_does_not_contain_text_input_with_class('sub1_answer', 'partiallycorrect');
+        $this->check_output_does_not_contain_text_input_with_class('sub1_answer', 'incorrect');
+        $this->check_current_output(
+                $this->get_contains_marked_out_of_summary(),
+                $this->get_contains_select_expectation('sub2_answer', $choices, null, true),
+                $this->get_contains_submit_button_expectation(true),
+                $this->get_does_not_contain_validation_error_expectation(),
+                $this->get_does_not_contain_feedback_expectation());
+
+        // Submit an invalid response.
+        $this->process_submission(array('sub1_answer' => '', 'sub2_answer' => 1, '-submit' => 1));
+
+        // Verify.
+        $this->check_current_state(question_state::$invalid);
+        $this->check_current_mark(null);
+        $this->check_output_contains_text_input('sub1_answer', '', true);
+        $this->check_current_output(
+                $this->get_contains_select_expectation('sub2_answer', $choices, 1, true),
+                $this->get_contains_submit_button_expectation(true),
+                $this->get_does_not_contain_penalty_info_expectation(),
+                $this->get_does_not_contain_total_penalty_expectation(),
+                $this->get_contains_disregarded_info_expectation());
+
+        // Check that extract responses will return the reset data.
+        $prefix = $this->quba->get_field_prefix($this->slot);
+        $this->assertEquals(array('sub2_answer' => 1),
+                $this->quba->extract_responses($this->slot, array($prefix . 'sub2_answer' => 1)));
+
+        // Submit an incorrect response.
+        $this->process_submission(array('sub1_answer' => 'Dog',
+                'sub2_answer' => 1, '-submit' => 1));
+
+        // Verify.
+        $this->check_current_state(question_state::$todo);
+        $this->check_current_mark(0);
+        $this->render();
+        $this->check_output_contains_text_input('sub1_answer', 'Dog', true);
+        $this->check_output_contains_text_input_with_class('sub1_answer', 'incorrect');
+        $this->check_current_output(
+                $this->get_contains_mark_summary(0),
+                $this->get_contains_select_expectation('sub2_answer', $choices, 1, true),
+                $this->get_contains_submit_button_expectation(true),
+                $this->get_contains_incorrect_expectation(),
+                $this->get_contains_penalty_info_expectation(4.00),
+                $this->get_does_not_contain_validation_error_expectation());
+
+        // Submit the right answer.
+        $this->process_submission(array('sub1_answer' => 'Owl', 'sub2_answer' => 2, '-submit' => 1));
+
+        // Verify.
+        $this->check_current_state(question_state::$complete);
+        $this->check_current_mark(8.00);
+        $this->render();
+        $this->check_output_contains_text_input('sub1_answer', 'Owl', true);
+        $this->check_output_contains_text_input_with_class('sub1_answer', 'correct');
+        $this->check_current_output(
+                $this->get_contains_select_expectation('sub2_answer', $choices, '2', true),
+                $this->get_contains_mark_summary(8.00),
+                $this->get_contains_submit_button_expectation(true),
+                $this->get_contains_correct_expectation(),
+                $this->get_does_not_contain_penalty_info_expectation(),
+                $this->get_does_not_contain_total_penalty_expectation(),
+                $this->get_does_not_contain_validation_error_expectation());
+
+        // Finish the attempt.
+        $this->quba->finish_all_questions();
+
+        // Verify.
+        $this->check_current_state(question_state::$gradedright);
+        $this->check_current_mark(8.00);
+        $this->render();
+        $this->check_output_contains_text_input('sub1_answer', 'Owl', false);
+        $this->check_output_contains_text_input_with_class('sub1_answer', 'correct');
+        $this->check_current_output(
+                $this->get_contains_mark_summary(8.00),
+                $this->get_contains_submit_button_expectation(false),
+                $this->get_contains_correct_expectation(),
+                $this->get_does_not_contain_validation_error_expectation());
     }
 }
