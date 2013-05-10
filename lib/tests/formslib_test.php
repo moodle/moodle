@@ -356,16 +356,16 @@ class formslib_testcase extends advanced_testcase {
                 'thdgroupel1' => 11,
                 'thdgroupel2' => 11
             ),
+            'repeatable' => 2,
             'repeatedel' => array(
                 0 => 11,
                 1 => 11
             ),
-            'repeatable' => 2,
+            'repeatableinherit' => 2,
             'repeatedelinherit' => array(
                 0 => 11,
                 1 => 11
             ),
-            'repeatableinherit' => 2,
             'squaretest' => array(
                 0 => 11
             ),
@@ -383,13 +383,13 @@ class formslib_testcase extends advanced_testcase {
 
         $mform = new formslib_clean_value();
         $mform->get_form()->updateSubmission($valuessubmitted, null);
-        foreach ($expectedtypes as $elementname => $type) {
-            $expected = $mform->get_form()->getCleanType($elementname, $valuessubmitted[$elementname]);
-            $this->assertEquals($expected, $type, "Failed validating clean type of '$elementname'");
+        foreach ($expectedtypes as $elementname => $expected) {
+            $actual = $mform->get_form()->getCleanType($elementname, $valuessubmitted[$elementname]);
+            $this->assertSame($expected, $actual, "Failed validating clean type of '$elementname'");
         }
 
         $data = $mform->get_data();
-        $this->assertEquals($data, (object) $expectedvalues);
+        $this->assertSame($expectedvalues, (array) $data);
     }
 }
 

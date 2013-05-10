@@ -1711,10 +1711,11 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
      * Now if you call this method passing 'foo', along with the submitted values of 'foo':
      * array(0 => '1.23', 1 => '10'), you will get an array telling you that the key 0 is a
      * FLOAT and 1 is an INT. If you had passed 'foo[1]', along with its value '10', you would
-     * get the default value returned.
+     * get the default clean type returned (param $default).
      *
      * @param string $elementname name of the element.
      * @param mixed $value value that should be cleaned.
+     * @param int $default default constant value to be returned (PARAM_...)
      * @return string|array constant value or array of constant values (PARAM_...)
      */
     public function getCleanType($elementname, $value, $default = PARAM_RAW) {
@@ -1759,7 +1760,7 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
         } else if (!is_array($type) && is_array($value)) {
             $value = clean_param_array($value, $type, true);
         } else {
-            throw new coding_exception('Unexpected type or value received in MoodleQuickForm::cleanValue()');
+            throw new coding_exception('Unexpected type or value received in MoodleQuickForm::getCleanedValue()');
         }
         return $value;
     }
