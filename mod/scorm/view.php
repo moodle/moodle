@@ -83,11 +83,26 @@ if (!empty($scorm->popup)) {
             $launch = true;
         }
     }
+
+    // Redirect back to the section with one section per page ?
+    if (! $coursedisplay = $DB->get_record('course_format_options', array('courseid'=>$scorm->course, 'name'=>'coursedisplay'))) {
+        print_error('courseformatnotfound', 'error', null, 'coursedisplay');
+    }
+
+    if ($coursedisplay->value == COURSE_DISPLAY_MULTIPAGE) {
+        // $cm->section references course_sections(id) NOT course_sections(section).
+        // Better to use this since this takes priority in course view.php.
+        $sectionid = $cm->section;
+    } else {
+        $sectionid = '';
+    }
+
     $PAGE->requires->data_for_js('scormplayerdata', Array('launch' => $launch,
                                                            'currentorg' => $orgidentifier,
                                                            'sco' => $scoid,
                                                            'scorm' => $scorm->id,
                                                            'courseid' => $scorm->course,
+                                                           'sectionid' => $sectionid,
                                                            'cwidth' => $scorm->width,
                                                            'cheight' => $scorm->height,
                                                            'popupoptions' => $scorm->options), true);
