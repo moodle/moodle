@@ -1,7 +1,7 @@
 @core @core_backup
 Feature: Import course's contents into another course
   In order to move and copy contents between courses
-  As a moodle teacher
+  As a teacher
   I need to import a course contents into another course selecting what I want to import
 
   @javascript

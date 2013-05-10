@@ -1,7 +1,7 @@
 @core @core_filepicker
 Feature: Zip folders and unzip compressed files
   In order to download or add contents to file areas easily
-  As a moodle user
+  As a user
   I need to zip and unzip folders and files
 
   @javascript

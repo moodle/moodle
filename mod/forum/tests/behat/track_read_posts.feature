@@ -1,7 +1,7 @@
 @mod @mod_forum
 Feature: A teacher can set one of 3 possible options for tracking read forum posts
   In order to ease the forum posts follow up
-  As a moodle user
+  As a user
   I need to distinct the unread posts from the read ones
 
   Background:

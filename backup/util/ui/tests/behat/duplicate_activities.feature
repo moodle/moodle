@@ -1,7 +1,7 @@
 @core @core_backup
 Feature: Duplicate activities
   In order to set up my course contents quickly
-  As a moodle teacher
+  As a teacher
   I need to duplicate activities inside the same course
 
   @javascript

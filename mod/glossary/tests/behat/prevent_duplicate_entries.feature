@@ -1,7 +1,7 @@
 @mod @mod_glossary
 Feature: A teacher can choose whether to allow duplicate entries in a glossary
   In order to avoid confusion
-  As a moodle teacher
+  As a teacher
   I need to avoid having duplicate concept definitions
 
   @javascript

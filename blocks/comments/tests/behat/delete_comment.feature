@@ -1,7 +1,7 @@
 @block @block_comments
 Feature: Delete comment block messages
   In order to refine comment block's contents
-  As a moodle teacher
+  As a teacher
   In need to delete comments from courses
 
   @javascript

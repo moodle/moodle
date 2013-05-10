@@ -1,7 +1,7 @@
 @core @core_completion
 Feature: Allow students to manually mark an activity as complete
   In order to let students decide when an activity is completed
-  As a moodle teacher
+  As a teacher
   I need to allow students to mark activities as completed
 
   @javascript

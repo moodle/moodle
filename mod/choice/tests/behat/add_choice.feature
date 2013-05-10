@@ -1,7 +1,7 @@
 @mod @mod_choice
 Feature: Add choice activity
   In order to ask questions as a choice of multiple responses
-  As a moodle teacher
+  As a teacher
   I need to add choice activities to courses
 
   @javascript

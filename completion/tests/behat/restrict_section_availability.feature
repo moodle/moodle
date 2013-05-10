@@ -1,7 +1,7 @@
 @core @core_completion
 Feature: Restrict sections availability through completion conditions
   In order to control section's contents access through activities completion
-  As a moodle teacher
+  As a teacher
   I need to restrict sections availability using different conditions
 
   @javascript

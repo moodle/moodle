@@ -1,7 +1,7 @@
 @core @core_backup
 Feature: Restore Moodle 2 course backups
   In order to continue using my stored course contents
-  As a moodle teacher and as a moodle admin
+  As a teacher and an admin
   I need to restore them inside other Moodle courses or in new courses
 
   Background:

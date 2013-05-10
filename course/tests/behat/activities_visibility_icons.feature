@@ -1,7 +1,7 @@
 @core @core_course @_cross_browser
 Feature: Toggle activities visibility from the course page
   In order to delay activities availability
-  As a moodle teacher
+  As a teacher
   I need to quickly change the visibility of an activity
 
   @javascript

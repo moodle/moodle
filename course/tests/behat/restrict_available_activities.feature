@@ -1,7 +1,7 @@
 @core @core_course
 Feature: Restrict activities availability
   In order to prevent the use of some activities
-  As a moodle admin
+  As an admin
   I need to control which activities can be used in courses
 
   Background:

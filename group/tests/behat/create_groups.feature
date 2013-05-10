@@ -1,7 +1,7 @@
 @core @core_group
 Feature: Organize students into groups
   In order to organize course activities in groups
-  As a moodle teacher
+  As a teacher
   I need to group students
 
   @javascript

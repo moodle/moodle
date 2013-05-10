@@ -1,7 +1,7 @@
 @tool @tool_behat
 Feature: Set up contextual data for tests
   In order to write tests quickly
-  As a moodle developer
+  As a developer
   I need to fill the database with fixtures
 
   Scenario: Add a bunch of users

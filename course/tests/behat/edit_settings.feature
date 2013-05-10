@@ -1,7 +1,7 @@
 @core @core_course
 Feature: Edit course settings
   In order to set the course according to my teaching needs
-  As a moodle teacher
+  As a teacher
   I need to edit the course settings
 
   @javascript

@@ -1,7 +1,7 @@
 @core @core_cohort
 Feature: Add cohorts of users
   In order to create site-wide groups
-  As a moodle admin
+  As an admin
   I need to create cohorts and add users on them
 
   Background:

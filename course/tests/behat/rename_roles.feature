@@ -1,7 +1,7 @@
 @core @core_course
 Feature: Rename roles within a course
   In order to set course roles names according to their responsabilities
-  As a moodle teacher
+  As a teacher
   I need to edit the course role names
 
   @javascript

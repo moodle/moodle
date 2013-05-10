@@ -1,7 +1,7 @@
 @mod @mod_forum
 Feature: Teachers can edit or delete any forum post
   In order to refine the forum contents
-  As a moodle teacher
+  As a teacher
   I need to edit or delete any user's forum posts
 
   Background:

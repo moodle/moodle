@@ -1,7 +1,7 @@
 @block @block_comments
 Feature: Add a comment to the comments block
   In order to comment on a conversation or a topic
-  As a moodle user
+  As a user
   In need to add comments to courses
 
   Background:

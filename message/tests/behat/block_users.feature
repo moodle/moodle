@@ -1,7 +1,7 @@
 @core @core_message
 Feature: Block users from contacting me
   In order to block other users
-  As a moodle user
+  As a user
   I need to prevent specific users to sending me messages
 
   @javascript

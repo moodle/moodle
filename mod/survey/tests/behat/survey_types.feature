@@ -1,7 +1,7 @@
 @mod @mod_survey
 Feature: A teacher can set three types of survey activity
   In order to use verified survey instruments
-  As a moodle teacher
+  As a teacher
   I need to set survey activities and select which survey type suits my needs
 
   Scenario: Switching between the three survey types

@@ -1,5 +1,8 @@
 @mod @mod_wiki
 Feature: Edited wiki pages may be previewed before saving
+  In order to avoid silly mistakes
+  As a user
+  I need to preview pages before saving changes
 
   Background:
     Given the following "users" exists:

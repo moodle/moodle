@@ -1,7 +1,7 @@
 @mod @mod_forum
 Feature: Students can edit or delete their forum posts within a set time limit
   In order to refine forum posts
-  As a moodle user
+  As a user
   I need to edit or delete my forum posts within a certain period of time after posting
 
   Background:

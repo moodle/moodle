@@ -1,7 +1,7 @@
 @repository @repository_upload @_only_local
 Feature: Upload files
   In order to add contents
-  As a moodle user
+  As a user
   I need to upload files
 
   @javascript
