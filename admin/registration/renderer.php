@@ -38,7 +38,7 @@ class core_register_renderer extends plugin_renderer_base {
     public function moodleorg_registration_message() {
         $moodleorgurl = html_writer::link('http://moodle.org', 'Moodle.org');
         $moodleorgstatsurl = html_writer::link('http://moodle.org/stats', get_string('statsmoodleorg', 'admin'));
-        $moochurl = html_writer::link(HUB_MOODLEORGHUBURL, 'MOOCH');
+        $moochurl = html_writer::link(HUB_MOODLEORGHUBURL, get_string('moodleorghubname', 'admin'));
         $moodleorgregmsg = get_string('registermoodleorg', 'admin', $moodleorgurl);
         $items = array(get_string('registermoodleorgli1', 'admin'),
             get_string('registermoodleorgli2', 'admin', $moodleorgstatsurl),

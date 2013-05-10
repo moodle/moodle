@@ -713,6 +713,7 @@ $string['messaging'] = 'Enable messaging system';
 $string['messagingallowemailoverride'] = 'Notification email override';
 $string['messaginghidereadnotifications'] = 'Hide read notifications';
 $string['messagingdeletereadnotificationsdelay'] = 'Delete read notifications';
+$string['moodleorghubname'] = 'Moodle.net';
 $string['minpassworddigits'] = 'Digits';
 $string['minpasswordlength'] = 'Password length';
 $string['minpasswordlower'] = 'Lowercase letters';
