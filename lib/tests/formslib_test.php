@@ -190,6 +190,129 @@ class formslib_testcase extends basic_testcase {
         $this->assertTag(array('tag'=>'input', 'id'=>'id_repeatradio_2_2',
             'attributes'=>array('type'=>'radio', 'name'=>'repeatradio[2]', 'value'=>'2')), $html);
     }
+
+    public function test_type_cleaning() {
+        $expectedtypes = array(
+            'simpleel' => PARAM_INT,
+            'groupel1' => PARAM_INT,
+            'groupel2' => PARAM_FLOAT,
+            'groupel3' => PARAM_INT,
+            'namedgroup' => array(
+                'sndgroupel1' => PARAM_INT,
+                'sndgroupel2' => PARAM_FLOAT,
+                'sndgroupel3' => PARAM_INT
+            ),
+            'namedgroupinherit' => array(
+                'thdgroupel1' => PARAM_INT,
+                'thdgroupel2' => PARAM_INT
+            ),
+            'repeatedel' => array(
+                0 => PARAM_INT,
+                1 => PARAM_INT
+            ),
+            'repeatedelinherit' => array(
+                0 => PARAM_INT,
+                1 => PARAM_INT
+            ),
+            'squaretest' => array(
+                0 => PARAM_INT
+            ),
+            'nested' => array(
+                0 => array(
+                    'bob' => array(
+                        123 => PARAM_INT,
+                        'foo' => PARAM_FLOAT
+                    ),
+                    'xyz' => PARAM_RAW
+                ),
+                1 => PARAM_INT
+            )
+        );
+        $valuessubmitted = array(
+            'simpleel' => '11.01',
+            'groupel1' => '11.01',
+            'groupel2' => '11.01',
+            'groupel3' => '11.01',
+            'namedgroup' => array(
+                'sndgroupel1' => '11.01',
+                'sndgroupel2' => '11.01',
+                'sndgroupel3' => '11.01'
+            ),
+            'namedgroupinherit' => array(
+                'thdgroupel1' => '11.01',
+                'thdgroupel2' => '11.01'
+            ),
+            'repeatedel' => array(
+                0 => '11.01',
+                1 => '11.01'
+            ),
+            'repeatedelinherit' => array(
+                0 => '11.01',
+                1 => '11.01'
+            ),
+            'squaretest' => array(
+                0 => '11.01'
+            ),
+            'nested' => array(
+                0 => array(
+                    'bob' => array(
+                        123 => '11.01',
+                        'foo' => '11.01'
+                    ),
+                    'xyz' => '11.01'
+                ),
+                1 => '11.01'
+            )
+        );
+        $expectedvalues = array(
+            'simpleel' => 11,
+            'groupel1' => 11,
+            'groupel2' => 11.01,
+            'groupel3' => 11,
+            'namedgroup' => array(
+                'sndgroupel1' => 11,
+                'sndgroupel2' => 11.01,
+                'sndgroupel3' => 11
+            ),
+            'namedgroupinherit' => array(
+                'thdgroupel1' => 11,
+                'thdgroupel2' => 11
+            ),
+            'repeatable' => 2,
+            'repeatedel' => array(
+                0 => 11,
+                1 => 11
+            ),
+            'repeatableinherit' => 2,
+            'repeatedelinherit' => array(
+                0 => 11,
+                1 => 11
+            ),
+            'squaretest' => array(
+                0 => 11
+            ),
+            'nested' => array(
+                0 => array(
+                    'bob' => array(
+                        123 => 11,
+                        'foo' => 11.01
+                    ),
+                    'xyz' => '11.01'
+                ),
+                1 => 11
+            )
+        );
+
+        $mform = new formslib_clean_value();
+        $mform->get_form()->updateSubmission($valuessubmitted, null);
+        foreach ($expectedtypes as $elementname => $expected) {
+            $actual = $mform->get_form()->getCleanType($elementname, $valuessubmitted[$elementname]);
+            $this->assertSame($expected, $actual, "Failed validating clean type of '$elementname'");
+        }
+
+        $data = $mform->get_data();
+        $this->assertSame($expectedvalues, (array) $data);
+    }
 }
 
 
@@ -216,5 +339,73 @@ class formslib_test_form extends moodleform {
             $this->_form->createElement('radio', 'repeatradio', 'Choose {no}', 'Two', 2),
         );
         $this->repeat_elements($repeatels, 3, array(), 'numradios', 'addradios');
+    }
+}
+
+class formslib_clean_value extends moodleform {
+    public function get_form() {
+        return $this->_form;
+    }
+    public function definition() {
+        $mform = $this->_form;
+
+        // Add a simple int.
+        $mform->addElement('text', 'simpleel', 'simpleel');
+        $mform->setType('simpleel', PARAM_INT);
+
+        // Add a non-named group.
+        $group = array(
+            $mform->createElement('text', 'groupel1', 'groupel1'),
+            $mform->createElement('text', 'groupel2', 'groupel2'),
+            $mform->createElement('text', 'groupel3', 'groupel3')
+        );
+        $mform->setType('groupel1', PARAM_INT);
+        $mform->setType('groupel2', PARAM_FLOAT);
+        $mform->setType('groupel3', PARAM_INT);
+        $mform->addGroup($group);
+
+        // Add a named group.
+        $group = array(
+            $mform->createElement('text', 'sndgroupel1', 'sndgroupel1'),
+            $mform->createElement('text', 'sndgroupel2', 'sndgroupel2'),
+            $mform->createElement('text', 'sndgroupel3', 'sndgroupel3')
+        );
+        $mform->addGroup($group, 'namedgroup');
+        $mform->setType('namedgroup[sndgroupel1]', PARAM_INT);
+        $mform->setType('namedgroup[sndgroupel2]', PARAM_FLOAT);
+        $mform->setType('namedgroup[sndgroupel3]', PARAM_INT);
+
+        // Add a named group, with inheritance.
+        $group = array(
+            $mform->createElement('text', 'thdgroupel1', 'thdgroupel1'),
+            $mform->createElement('text', 'thdgroupel2', 'thdgroupel2')
+        );
+        $mform->addGroup($group, 'namedgroupinherit');
+        $mform->setType('namedgroupinherit', PARAM_INT);
+
+        // Add a repetition.
+        $repeat = $mform->createElement('text', 'repeatedel', 'repeatedel');
+        $this->repeat_elements(array($repeat), 2, array('repeatedel' => array('type' => PARAM_INT)), 'repeatable', 'add', 0);
+
+        // Add a repetition, with inheritance.
+        $repeat = $mform->createElement('text', 'repeatedelinherit', 'repeatedelinherit');
+        $this->repeat_elements(array($repeat), 2, array(), 'repeatableinherit', 'add', 0);
+        $mform->setType('repeatedelinherit', PARAM_INT);
+
+        // Add an arbitrary named element.
+        $mform->addElement('text', 'squaretest[0]', 'squaretest[0]');
+        $mform->setType('squaretest[0]', PARAM_INT);
+
+        // Add an arbitrary nested array named element.
+        $mform->addElement('text', 'nested[0][bob][123]', 'nested[0][bob][123]');
+        $mform->setType('nested[0][bob][123]', PARAM_INT);
+
+        // Add inheritance test cases.
+        $mform->setType('nested', PARAM_INT);
+        $mform->setType('nested[0]', PARAM_RAW);
+        $mform->setType('nested[0][bob]', PARAM_FLOAT);
+        $mform->addElement('text', 'nested[1]', 'nested[1]');
+        $mform->addElement('text', 'nested[0][xyz]', 'nested[0][xyz]');
+        $mform->addElement('text', 'nested[0][bob][foo]', 'nested[0][bob][foo]');
     }
 }
