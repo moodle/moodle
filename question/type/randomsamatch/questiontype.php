@@ -17,8 +17,7 @@
 /**
  * Question type class for the randomsamatch question type.
  *
- * @package    qtype
- * @subpackage randomsamatch
+ * @package    qtype_randomsamatch
  * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -26,6 +25,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot . '/question/type/questionbase.php');
+require_once($CFG->dirroot . '/question/type/numerical/question.php');
 
 /**
  * The randomsamatch question type class.
@@ -37,11 +38,13 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_randomsamatch extends question_type {
+    /**
+     * Cache of available shortanswer question ids from a particular category.
+     * @var array two-dimensional array. The first key is a category id, the
+     * second key is wether subcategories should be included.
+     */
+    private $availablesaquestionsbycategory = array();
     const MAX_SUBQUESTIONS = 10;
-
-    public function requires_qtypes() {
-        return array('shortanswer', 'match');
-    }
 
     public function is_usable_by_random() {
         return false;
@@ -49,22 +52,16 @@ class qtype_randomsamatch extends question_type {
 
     public function get_question_options($question) {
         global $DB;
-        $question->options = $DB->get_record('question_randomsamatch',
-                array('question' => $question->id), '*', MUST_EXIST);
+        parent::get_question_options($question);
+        $question->options = $DB->get_record('qtype_randomsamatch_options',
+                array('questionid' => $question->id));
 
-        // This could be included as a flag in the database. It's already
-        // supported by the code.
-        // Recurse subcategories: 0 = no recursion, 1 = recursion .
-        $question->options->subcats = 1;
         return true;
 
     }
 
     public function save_question_options($question) {
         global $DB;
-        $options = new stdClass();
-        $options->question = $question->id;
-        $options->choose = $question->choose;
 
         if (2 > $question->choose) {
             $result = new stdClass();
@@ -72,174 +69,93 @@ class qtype_randomsamatch extends question_type {
             return $result;
         }
 
-        if ($existing = $DB->get_record('question_randomsamatch',
-                array('question' => $options->question))) {
-            $options->id = $existing->id;
-            $DB->update_record('question_randomsamatch', $options);
-        } else {
-            $DB->insert_record('question_randomsamatch', $options);
+        $context = $question->context;
+
+        // Save the question options.
+        $options = $DB->get_record('qtype_randomsamatch_options', array('questionid' => $question->id));
+        if (!$options) {
+            $options = new stdClass();
+            $options->questionid = $question->id;
+            $options->correctfeedback = '';
+            $options->partiallycorrectfeedback = '';
+            $options->incorrectfeedback = '';
+            $options->id = $DB->insert_record('qtype_randomsamatch_options', $options);
         }
+
+        $options->choose = $question->choose;
+        $options->subcats = $question->subcats;
+        $options = $this->save_combined_feedback_helper($options, $question, $context, true);
+        $DB->update_record('qtype_randomsamatch_options', $options);
+
+        $this->save_hints($question, true);
+
         return true;
+    }
+
+    protected function make_hint($hint) {
+        return question_hint_with_parts::load_from_record($hint);
     }
 
     public function delete_question($questionid, $contextid) {
         global $DB;
-        $DB->delete_records('question_randomsamatch', array('question' => $questionid));
+        $DB->delete_records('qtype_randomsamatch_options', array('questionid' => $questionid));
 
         parent::delete_question($questionid, $contextid);
     }
 
-    public function create_session_and_responses(&$question, &$state, $cmoptions, $attempt) {
-        // Choose a random shortanswer question from the category:
-        // We need to make sure that no question is used more than once in the
-        // quiz. Therfore the following need to be excluded:
-        // 1. All questions that are explicitly assigned to the quiz
-        // 2. All random questions
-        // 3. All questions that are already chosen by an other random question.
-        global $QTYPES, $OUTPUT, $USER;
-        if (!isset($cmoptions->questionsinuse)) {
-            $cmoptions->questionsinuse = $cmoptions->questions;
-        }
+    public function move_files($questionid, $oldcontextid, $newcontextid) {
+        parent::move_files($questionid, $oldcontextid, $newcontextid);
 
-        if ($question->options->subcats) {
-            // Recurse into subcategories.
-            $categorylist = question_categorylist($question->category);
-        } else {
-            $categorylist = array($question->category);
-        }
-
-        $saquestions = $this->get_sa_candidates($categorylist, $cmoptions->questionsinuse);
-
-        $count  = count($saquestions);
-        $wanted = $question->options->choose;
-
-        if ($count < $wanted) {
-            $question->questiontext = "Insufficient selection options are
-                available for this question, therefore it is not available in  this
-                quiz. Please inform your teacher.";
-            // Treat this as a description from this point on.
-            $question->qtype = 'description';
-            return true;
-        }
-
-        $saquestions =
-         draw_rand_array($saquestions, $question->options->choose); // From bug 1889.
-
-        foreach ($saquestions as $key => $wrappedquestion) {
-            if (!$QTYPES[$wrappedquestion->qtype]
-             ->get_question_options($wrappedquestion)) {
-                return false;
-            }
-
-            // Now we overwrite the $question->options->answers field to only
-            // *one* (the first) correct answer. This loop can be deleted to
-            // take all answers into account (i.e. put them all into the
-            // drop-down menu.
-            $foundcorrect = false;
-            foreach ($wrappedquestion->options->answers as $answer) {
-                if ($foundcorrect || $answer->fraction != 1.0) {
-                    unset($wrappedquestion->options->answers[$answer->id]);
-                } else if (!$foundcorrect) {
-                    $foundcorrect = true;
-                }
-            }
-
-            if (!$QTYPES[$wrappedquestion->qtype]
-             ->create_session_and_responses($wrappedquestion, $state, $cmoptions,
-             $attempt)) {
-                return false;
-            }
-            $wrappedquestion->name_prefix = $question->name_prefix;
-            $wrappedquestion->maxgrade    = $question->maxgrade;
-            $cmoptions->questionsinuse .= ",$wrappedquestion->id";
-            $state->options->subquestions[$key] = clone($wrappedquestion);
-        }
-
-        // Shuffle the answers (Do this always because this is a random question type).
-        $subquestionids = array_values(array_map(create_function('$val',
-         'return $val->id;'), $state->options->subquestions));
-        $subquestionids = swapshuffle($subquestionids);
-
-        // Create empty responses.
-        foreach ($subquestionids as $val) {
-            $state->responses[$val] = '';
-        }
-        return true;
+        $this->move_files_in_combined_feedback($questionid, $oldcontextid, $newcontextid);
+        $this->move_files_in_hints($questionid, $oldcontextid, $newcontextid);
     }
 
-    function restore_session_and_responses(&$question, &$state) {
-        global $DB;
-        global $QTYPES, $OUTPUT;
-        static $wrappedquestions = array();
-        if (empty($state->responses[''])) {
-            $question->questiontext = "Insufficient selection options are
-             available for this question, therefore it is not available in  this
-             quiz. Please inform your teacher.";
-            // Treat this as a description from this point on.
-            $question->qtype = 'description';
-        } else {
-            $responses = explode(',', $state->responses['']);
-            $responses = array_map(create_function('$val',
-             'return explode("-", $val);'), $responses);
+    protected function delete_files($questionid, $contextid) {
+        parent::delete_files($questionid, $contextid);
 
-            // Restore the previous responses.
-            $state->responses = array();
-            foreach ($responses as $response) {
-                $wqid = $response[0];
-                $state->responses[$wqid] = $response[1];
-                if (!isset($wrappedquestions[$wqid])) {
-                    if (!$wrappedquestions[$wqid] = $DB->get_record('question', array('id' => $wqid))) {
-                        echo $OUTPUT->notification("Couldn't get question (id=$wqid)!");
-                        return false;
-                    }
-                    if (!$QTYPES[$wrappedquestions[$wqid]->qtype]
-                     ->get_question_options($wrappedquestions[$wqid])) {
-                        echo $OUTPUT->notification("Couldn't get question options (id=$response[0])!");
-                        return false;
-                    }
-
-                    // Now we overwrite the $question->options->answers field to only
-                    // *one* (the first) correct answer. This loop can be deleted to
-                    // take all answers into account (i.e. put them all into the
-                    // drop-down menu.
-                    $foundcorrect = false;
-                    foreach ($wrappedquestions[$wqid]->options->answers as $answer) {
-                        if ($foundcorrect || $answer->fraction != 1.0) {
-                            unset($wrappedquestions[$wqid]->options->answers[$answer->id]);
-                        } else if (!$foundcorrect) {
-                            $foundcorrect = true;
-                        }
-                    }
-                }
-                $wrappedquestion = clone($wrappedquestions[$wqid]);
-
-                if (!$QTYPES[$wrappedquestion->qtype]
-                 ->restore_session_and_responses($wrappedquestion, $state)) {
-                    echo $OUTPUT->notification("Couldn't restore session of question (id=$response[0])!");
-                    return false;
-                }
-                $wrappedquestion->name_prefix = $question->name_prefix;
-                $wrappedquestion->maxgrade    = $question->maxgrade;
-
-                $state->options->subquestions[$wrappedquestion->id] =
-                 clone($wrappedquestion);
-            }
-        }
-        return true;
+        $this->delete_files_in_combined_feedback($questionid, $contextid);
+        $this->delete_files_in_hints($questionid, $contextid);
     }
 
-    public function get_sa_candidates($categorylist, $questionsinuse = 0) {
-        global $DB;
-        list ($usql, $params) = $DB->get_in_or_equal($categorylist);
-        list ($ques_usql, $ques_params) = $DB->get_in_or_equal(explode(',', $questionsinuse),
-                SQL_PARAMS_QM, null, false);
-        $params = array_merge($params, $ques_params);
-        return $DB->get_records_select('question',
-         "qtype = 'shortanswer' " .
-         "AND category $usql " .
-         "AND parent = '0' " .
-         "AND hidden = '0'" .
-         "AND id $ques_usql", $params);
+    protected function initialise_question_instance(question_definition $question, $questiondata) {
+        parent::initialise_question_instance($question, $questiondata);
+        $availablesaquestions = $this->get_available_saquestions_from_category(
+                $question->category, $questiondata->options->subcats);
+        $question->shufflestems = false;
+        $question->stems = array();
+        $question->choices = array();
+        $question->right = array();
+        $this->initialise_combined_feedback($question, $questiondata);
+        $question->questionsloader = new qtype_randomsamatch_question_loader(
+                $availablesaquestions, $questiondata->options->choose);
+    }
+
+    public function can_analyse_responses() {
+        return false;
+    }
+
+    /**
+     * Get all the usable shortanswer questions from a particular question category.
+     *
+     * @param integer $categoryid the id of a question category.
+     * @param bool $subcategories whether to include questions from subcategories.
+     * @return array of question records.
+     */
+    public function get_available_saquestions_from_category($categoryid, $subcategories) {
+        if (isset($this->availablesaquestionsbycategory[$categoryid][$subcategories])) {
+            return $this->availablesaquestionsbycategory[$categoryid][$subcategories];
+        }
+
+        if ($subcategories) {
+            $categoryids = question_categorylist($categoryid);
+        } else {
+            $categoryids = array($categoryid);
+        }
+
+        $questionids = question_bank::get_finder()->get_questions_from_categories(
+                $categoryids, "qtype = 'shortanswer'");
+        $this->availablesaquestionsbycategory[$categoryid][$subcategories] = $questionids;
+        return $questionids;
     }
 
     /**
@@ -250,5 +166,69 @@ class qtype_randomsamatch extends question_type {
      */
     public function get_random_guess_score($question) {
         return 1/$question->options->choose;
+    }
+
+    /**
+     * Defines the table which extends the question table. This allows the base questiontype
+     * to automatically save, backup and restore the extra fields.
+     *
+     * @return an array with the table name (first) and then the column names (apart from id and questionid)
+     */
+    public function extra_question_fields() {
+        return array('qtype_randomsamatch_options',
+                     'choose',        // Number of shortanswer questions to choose.
+                     'subcats',       // Questions can be choosen from subcategories.
+                     );
+    }
+
+    /**
+     * Imports the question from Moodle XML format.
+     *
+     * @param array $xml structure containing the XML data
+     * @param object $fromform question object to fill: ignored by this function (assumed to be null)
+     * @param qformat_xml $format format class exporting the question
+     * @param object $extra extra information (not required for importing this question in this format)
+     * @return object question object
+     */
+    public function import_from_xml($xml, $fromform, qformat_xml $format, $extra=null) {
+        // Return if data type is not our own one.
+        if (!isset($xml['@']['type']) || $xml['@']['type'] != $this->name()) {
+            return false;
+        }
+
+        // Import the common question headers and set the corresponding field.
+        $fromform = $format->import_headers($xml);
+        $fromform->qtype = $this->name();
+        $format->import_combined_feedback($fromform, $xml, true);
+        $format->import_hints($fromform, $xml, true);
+
+        $extras = $this->extra_question_fields();
+        array_shift($extras);
+        foreach ($extras as $extra) {
+            $fromform->$extra = $format->getpath($xml, array('#', $extra, 0, '#'), '', true);
+        }
+
+        return $fromform;
+    }
+
+    /**
+     * Exports the question to Moodle XML format.
+     *
+     * @param object $question question to be exported into XML format
+     * @param qformat_xml $format format class exporting the question
+     * @param object $extra extra information (not required for exporting this question in this format)
+     * @return string containing the question data in XML format
+     */
+    public function export_to_xml($question, qformat_xml $format, $extra=null) {
+        $expout = '';
+        $expout .= $format->write_combined_feedback($question->options,
+                                                    $question->id,
+                                                    $question->contextid);
+        $extraquestionfields = $this->extra_question_fields();
+        array_shift($extraquestionfields);
+        foreach ($extraquestionfields as $extra) {
+            $expout .= "    <$extra>" . $question->options->$extra . "</$extra>\n";
+        }
+        return $expout;
     }
 }
