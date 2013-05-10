@@ -269,6 +269,22 @@ class formslib_testcase extends advanced_testcase {
         $mform->display();
     }
 
+    public function test_settype_debugging_type_group_in_repeat() {
+        $mform = new formslib_settype_debugging_type_group_in_repeat();
+        $this->assertDebuggingCalled("Did you remember to call setType() for 'test2[0]'? Defaulting to PARAM_RAW cleaning.");
+        $this->expectOutputRegex('/<input[^>]*name="test1\[0\]"[^>]*type="text/');
+        $this->expectOutputRegex('/<input[^>]*name="test2\[0\]"[^>]*type="text/');
+        $mform->display();
+    }
+
+    public function test_settype_debugging_type_namedgroup_in_repeat() {
+        $mform = new formslib_settype_debugging_type_namedgroup_in_repeat();
+        $this->assertDebuggingCalled("Did you remember to call setType() for 'namedgroup[0][test2]'? Defaulting to PARAM_RAW cleaning.");
+        $this->expectOutputRegex('/<input[^>]*name="namedgroup\[0\]\[test1\]"[^>]*type="text/');
+        $this->expectOutputRegex('/<input[^>]*name="namedgroup\[0\]\[test2\]"[^>]*type="text/');
+        $mform->display();
+    }
+
     public function test_type_cleaning() {
         $expectedtypes = array(
             'simpleel' => PARAM_INT,
@@ -304,6 +320,24 @@ class formslib_testcase extends advanced_testcase {
                     'xyz' => PARAM_RAW
                 ),
                 1 => PARAM_INT
+            ),
+            'repeatgroupel1' => array(
+                0 => PARAM_INT,
+                1 => PARAM_INT
+            ),
+            'repeatgroupel2' => array(
+                0 => PARAM_INT,
+                1 => PARAM_INT
+            ),
+            'repeatnamedgroup' => array(
+                0 => array(
+                    'repeatnamedgroupel1' => PARAM_INT,
+                    'repeatnamedgroupel2' => PARAM_INT
+                ),
+                1 => array(
+                    'repeatnamedgroupel1' => PARAM_INT,
+                    'repeatnamedgroupel2' => PARAM_INT
+                )
             )
         );
         $valuessubmitted = array(
@@ -340,6 +374,24 @@ class formslib_testcase extends advanced_testcase {
                     'xyz' => '11.01'
                 ),
                 1 => '11.01'
+            ),
+            'repeatgroupel1' => array(
+                0 => '11.01',
+                1 => '11.01'
+            ),
+            'repeatgroupel2' => array(
+                0 => '11.01',
+                1 => '11.01'
+            ),
+            'repeatnamedgroup' => array(
+                0 => array(
+                    'repeatnamedgroupel1' => '11.01',
+                    'repeatnamedgroupel2' => '11.01'
+                ),
+                1 => array(
+                    'repeatnamedgroupel1' => '11.01',
+                    'repeatnamedgroupel2' => '11.01'
+                )
             )
         );
         $expectedvalues = array(
@@ -378,6 +430,26 @@ class formslib_testcase extends advanced_testcase {
                     'xyz' => '11.01'
                 ),
                 1 => 11
+            ),
+            'repeatablegroup' => 2,
+            'repeatgroupel1' => array(
+                0 => 11,
+                1 => 11
+            ),
+            'repeatgroupel2' => array(
+                0 => 11,
+                1 => 11
+            ),
+            'repeatablenamedgroup' => 2,
+            'repeatnamedgroup' => array(
+                0 => array(
+                    'repeatnamedgroupel1' => 11,
+                    'repeatnamedgroupel2' => 11
+                ),
+                1 => array(
+                    'repeatnamedgroupel1' => 11,
+                    'repeatnamedgroupel2' => 11
+                )
             )
         );
 
@@ -527,6 +599,33 @@ class formslib_settype_debugging_type_inheritance extends moodleform {
     }
 }
 
+// Used to test the debugging when using groups in repeated elements.
+class formslib_settype_debugging_type_group_in_repeat extends moodleform {
+    public function definition() {
+        $mform = $this->_form;
+        $groupelements = array(
+            $mform->createElement('text', 'test1', 'test1', 'test'),
+            $mform->createElement('text', 'test2', 'test2', 'test')
+        );
+        $group = $mform->createElement('group', null, 'group1', $groupelements, null, false);
+        $this->repeat_elements(array($group), 1, array('test1' => array('type' => PARAM_INT)), 'hidden', 'button');
+    }
+}
+
+// Used to test the debugging when using named groups in repeated elements.
+class formslib_settype_debugging_type_namedgroup_in_repeat extends moodleform {
+    public function definition() {
+        $mform = $this->_form;
+        $groupelements = array(
+            $mform->createElement('text', 'test1', 'test1', 'test'),
+            $mform->createElement('text', 'test2', 'test2', 'test')
+        );
+        $group = $mform->createElement('group', 'namedgroup', 'group1', $groupelements, null, true);
+        $this->repeat_elements(array($group), 1, array('namedgroup[test1]' => array('type' => PARAM_INT)), 'hidden', 'button');
+    }
+}
+
+// Used to check value cleaning.
 class formslib_clean_value extends moodleform {
     public function get_form() {
         return $this->_form;
@@ -592,5 +691,23 @@ class formslib_clean_value extends moodleform {
         $mform->addElement('text', 'nested[1]', 'nested[1]');
         $mform->addElement('text', 'nested[0][xyz]', 'nested[0][xyz]');
         $mform->addElement('text', 'nested[0][bob][foo]', 'nested[0][bob][foo]');
+
+        // Add group in repeated element (with extra inheritance).
+        $groupelements = array(
+            $mform->createElement('text', 'repeatgroupel1', 'repeatgroupel1'),
+            $mform->createElement('text', 'repeatgroupel2', 'repeatgroupel2')
+        );
+        $group = $mform->createElement('group', 'repeatgroup', 'repeatgroup', $groupelements, null, false);
+        $this->repeat_elements(array($group), 2, array('repeatgroupel1' => array('type' => PARAM_INT),
+            'repeatgroupel2' => array('type' => PARAM_INT)), 'repeatablegroup', 'add', 0);
+
+        // Add named group in repeated element.
+        $groupelements = array(
+            $mform->createElement('text', 'repeatnamedgroupel1', 'repeatnamedgroupel1'),
+            $mform->createElement('text', 'repeatnamedgroupel2', 'repeatnamedgroupel2')
+        );
+        $group = $mform->createElement('group', 'repeatnamedgroup', 'repeatnamedgroup', $groupelements, null, true);
+        $this->repeat_elements(array($group), 2, array('repeatnamedgroup[repeatnamedgroupel1]' => array('type' => PARAM_INT),
+            'repeatnamedgroup[repeatnamedgroupel2]' => array('type' => PARAM_INT)), 'repeatablenamedgroup', 'add', 0);
     }
 }
