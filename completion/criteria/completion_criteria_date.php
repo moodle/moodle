@@ -59,7 +59,8 @@ class completion_criteria_date extends completion_criteria {
      */
     public function config_form_display(&$mform, $data = null) {
         $mform->addElement('checkbox', 'criteria_date', get_string('enable'));
-        $mform->addElement('date_selector', 'criteria_date_value', get_string('afterspecifieddate', 'completion'));
+        $mform->addElement('date_selector', 'criteria_date_value', get_string('completionondatevalue', 'core_completion'));
+        $mform->disabledIf('criteria_date_value', 'criteria_date');
 
         // If instance of criteria exists
         if ($this->id) {

@@ -63,9 +63,9 @@ class completion_criteria_grade extends completion_criteria {
     public function config_form_display(&$mform, $data = null) {
         $mform->addElement('checkbox', 'criteria_grade', get_string('enable'));
         $mform->addElement('text', 'criteria_grade_value', get_string('graderequired', 'completion'));
+        $mform->disabledIf('criteria_grade_value', 'criteria_grade');
         $mform->setType('criteria_grade_value', PARAM_RAW); // Uses unformat_float.
         $mform->setDefault('criteria_grade_value', format_float($data));
-        $mform->addElement('static', 'criteria_grade_value_note', '', get_string('criteriagradenote', 'completion'));
 
         if ($this->id) {
             $mform->setDefault('criteria_grade', 1);
@@ -80,12 +80,14 @@ class completion_criteria_grade extends completion_criteria {
      */
     public function update_config(&$data) {
 
-        $formatedgrade = unformat_float($data->criteria_grade_value);
-        // TODO validation
-        if (!empty($formatedgrade) && is_numeric($formatedgrade)) {
-            $this->course = $data->id;
-            $this->gradepass = $formatedgrade;
-            $this->insert();
+        if (!empty($data->criteria_grade)) {
+            $formatedgrade = unformat_float($data->criteria_grade_value);
+            // TODO validation
+            if (!empty($formatedgrade) && is_numeric($formatedgrade)) {
+                $this->course = $data->id;
+                $this->gradepass = $formatedgrade;
+                $this->insert();
+            }
         }
     }
 
