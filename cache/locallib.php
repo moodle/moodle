@@ -330,15 +330,9 @@ class cache_config_writer extends cache_config {
      *     Returns a configuration array if it could not be saved. This is a bad situation. Check your error logs.
      */
     public static function create_default_configuration() {
-        global $CFG;
-
         // HACK ALERT.
         // We probably need to come up with a better way to create the default stores, or at least ensure 100% that the
         // default store plugins are protected from deletion.
-        require_once($CFG->dirroot.'/cache/stores/file/lib.php');
-        require_once($CFG->dirroot.'/cache/stores/session/lib.php');
-        require_once($CFG->dirroot.'/cache/stores/static/lib.php');
-
         $writer = new self;
         $writer->configstores = self::get_default_stores();
         $writer->configdefinitions = self::locate_definitions();
@@ -385,6 +379,12 @@ class cache_config_writer extends cache_config {
      * @return array
      */
     protected static function get_default_stores() {
+        global $CFG;
+
+        require_once($CFG->dirroot.'/cache/stores/file/lib.php');
+        require_once($CFG->dirroot.'/cache/stores/session/lib.php');
+        require_once($CFG->dirroot.'/cache/stores/static/lib.php');
+
         return array(
             'default_application' => array(
                 'name' => 'default_application',
