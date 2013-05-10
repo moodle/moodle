@@ -70,10 +70,19 @@ class qbehaviour_adaptive extends question_behaviour_with_save {
     }
 
     public function adjust_display_options(question_display_options $options) {
+        // Save some bits so we can put them back later.
+        $save = clone($options);
+
+        // Do the default thing.
         parent::adjust_display_options($options);
+
+        // Then, if they have just Checked an answer, show them the applicable bits of feedback.
         if (!$this->qa->get_state()->is_finished() &&
                 $this->qa->get_last_behaviour_var('_try')) {
-            $options->feedback = true;
+            $options->feedback        = $save->feedback;
+            $options->correctness     = $save->correctness;
+            $options->numpartscorrect = $save->numpartscorrect;
+
         }
     }
 
