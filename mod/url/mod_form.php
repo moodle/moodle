@@ -127,6 +127,7 @@ class mod_url_mod_form extends moodleform_mod {
                 $mform->createElement('selectgroups', $variable, '', $options),
             );
             $mform->addGroup($group, $pargroup, get_string('parameterinfo', 'url'), ' ', false);
+            $mform->setType($parameter, PARAM_RAW);
         }
 
         //-------------------------------------------------------
