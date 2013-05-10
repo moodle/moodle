@@ -58,9 +58,7 @@ class qtype_match_renderer extends qtype_with_combined_feedback_renderer {
             $result .= html_writer::start_tag('tr', array('class' => 'r' . $parity));
             $fieldname = 'sub' . $key;
 
-            $result .= html_writer::tag('td', $question->format_text(
-                    $question->stems[$stemid], $question->stemformat[$stemid],
-                    $qa, 'qtype_match', 'subquestion', $stemid),
+            $result .= html_writer::tag('td', $this->format_stem_text($qa, $stemid),
                     array('class' => 'text'));
 
             $classes = 'control';
@@ -109,6 +107,20 @@ class qtype_match_renderer extends qtype_with_combined_feedback_renderer {
         return $this->combined_feedback($qa);
     }
 
+    /**
+     * Format each question stem. Overwritten by randomsamatch renderer.
+     *
+     * @param question_attempt $qa
+     * @param integer $stemid stem index
+     * @return string
+     */
+    public function format_stem_text($qa, $stemid) {
+        $question = $qa->get_question();
+        return $question->format_text(
+                    $question->stems[$stemid], $question->stemformat[$stemid],
+                    $qa, 'qtype_match', 'subquestion', $stemid);
+    }
+
     protected function format_choices($question) {
         $choices = array();
         foreach ($question->get_choice_order() as $key => $choiceid) {
@@ -125,9 +137,7 @@ class qtype_match_renderer extends qtype_with_combined_feedback_renderer {
         $choices = $this->format_choices($question);
         $right = array();
         foreach ($stemorder as $key => $stemid) {
-            $right[] = $question->format_text($question->stems[$stemid],
-                    $question->stemformat[$stemid], $qa,
-                    'qtype_match', 'subquestion', $stemid) . ' – ' .
+            $right[] = $this->format_stem_text($qa, $stemid) . ' – ' .
                     $choices[$question->get_right_choice_for($stemid)];
         }
 
