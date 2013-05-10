@@ -34,140 +34,116 @@ if (class_exists('question_type')) {
 }
 
 /**
- * The multiple choice question type.
+ * The ordering question type.
  *
  * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_ordering extends question_type {
-    /*
-    public function get_question_options($question) {
-        global $DB, $OUTPUT;
-        $question->options = $DB->get_record('question_ordering',
-                array('question' => $question->id), '*', MUST_EXIST);
-        parent::get_question_options($question);
+
+    public function is_not_blank($value) {
+        $value = trim($value);
+        return ($value || $value==='0');
     }
-    */
 
     public function save_question_options($question) {
-        global $DB, $OUTPUT;
+        global $DB;
 
-        foreach ($question->answer as $answerkey => $answervalue) {
-            $question->fraction[] = $answerkey + 1;
-        }
+        $result = new stdClass();
 
-        $result = new stdClass;
-        if (!$oldanswers = $DB->get_records('question_answers', array('question'=>$question->id), 'id ASC')) {
-            $oldanswers = array();
-        }
+        // remove empty answers
+        $question->answer = array_filter($question->answer, array($this, 'is_not_blank'));
+        $question->answer = array_values($question->answer); // make keys sequential
 
-        // following hack to check at least two answers exist
-        $answercount = 0;
-        foreach ($question->answer as $key=>$dataanswer) {
-            if ($dataanswer != "") {
-                $answercount++;
-            }
-        }
-        $answercount += count($oldanswers);
-        if ($answercount < 2) { // check there are at lest 2 answers for multiple choice
-            $result->notice = get_string("ordering_notenoughanswers", "qtype_ordering", "2");
+        // count how many answers we have
+        $countanswers = count($question->answer);
+
+        // check at least two answers exist
+        if ($countanswers < 2) {
+            $result->notice = get_string('ordering_notenoughanswers', 'qtype_ordering', '2');
             return $result;
+        }
+
+        $question->feedback = range(1, $countanswers);
+
+        if ($answerids = $DB->get_records('question_answers', array('question' => $question->id), 'id ASC', 'id,question')) {
+            $answerids = array_keys($answerids);
+        } else {
+            $answerids = array();
         }
 
         // Insert all the new answers
 
-        $totalfraction = 0;
-        $maxfraction = -1;
+        foreach ($question->answer as $i => $text) {
+            $answer = (object)array(
+                'question' => $question->id,
+                'fraction' => ($i + 1), // start at 1
+                'answer'   => $text,
+                'answerformat' => FORMAT_MOODLE, // =0
+                'feedback' => '',
+                'feedbackformat' => FORMAT_MOODLE, // =0
+            );
 
-        $answers = array();
-
-        foreach ($question->answer as $key => $dataanswer) {
-            if ($dataanswer != "") {
-                if ($answer = array_shift($oldanswers)) {  // Existing answer, so reuse it
-                    $answer->answer     = $dataanswer;
-                    $answer->fraction   = $question->fraction[$key];
-                    if (!$DB->update_record("question_answers", $answer)) {
-                        $result->error = "Could not update quiz answer! (id=$answer->id)";
-                        return $result;
-                    }
-                } else {
-                    unset($answer);
-                    $answer->answer   = $dataanswer;
-                    $answer->question = $question->id;
-                    $answer->fraction = number_format($question->fraction[$key], 7);
-                    $answer->feedback = "";
-                    //echo '<pre>';
-                    //print_r ($answer);
-                    if (!$answer->id = $DB->insert_record("question_answers", $answer)) {
-                        $result->error = "Could not insert quiz answer! ";
-                        return $result;
-                    }
+            if ($answer->id = array_shift($answerids)) {
+                if (! $DB->update_record('question_answers', $answer)) {
+                    $result->error = 'Could not update quiz answer! (id='.$answer->id.')';
+                    return $result;
                 }
-                $answers[] = $answer->id;
-
-                if ($question->fraction[$key] > 0) {                 // Sanity checks
-                    $totalfraction += $question->fraction[$key];
-                }
-                if ($question->fraction[$key] > $maxfraction) {
-                    $maxfraction = $question->fraction[$key];
+            } else {
+                if (! $answer->id = $DB->insert_record('question_answers', $answer)) {
+                    $result->error = 'Could not insert quiz answer! ';
+                    return $result;
                 }
             }
         }
 
-        $update = true;
-        $options = $DB->get_record("question_ordering", array("question" => $question->id));
-        if (!$options) {
-            $update = false;
-            $options = new stdClass;
-            $options->question = $question->id;
+        // create $options for this ordering question
+        $options = (object)array(
+            'question' => $question->id,
+            'logical' => $question->logical,
+            'studentsee' => $question->studentsee,
+            'correctfeedback' => $question->correctfeedback,
+            'incorrectfeedback' => $question->incorrectfeedback,
+            'partiallycorrectfeedback' => $question->partiallycorrectfeedback
+        );
 
-        }
-        $options->logical = $question->logical;
-        $options->studentsee = $question->studentsee;
-        $options->correctfeedback = $question->correctfeedback;
-        $options->partiallycorrectfeedback = $question->partiallycorrectfeedback;
-        $options->incorrectfeedback = $question->incorrectfeedback;
-
-        if ($update) {
-            if (!$DB->update_record("question_ordering", $options)) {
-                $result->error = "Could not update quiz ordering options! (id=$options->id)";
+        // add/update $options for this ordering question
+        if ($options->id = $DB->get_field('question_ordering', 'id', array('question' => $question->id))) {
+            if (! $DB->update_record('question_ordering', $options)) {
+                $result->error = 'Could not update quiz ordering options! (id='.$options->id.')';
                 return $result;
             }
         } else {
-            if (!$DB->insert_record("question_ordering", $options)) {
-                $result->error = "Could not insert quiz ordering options!";
+            if (! $options->id = $DB->insert_record('question_ordering', $options)) {
+                $result->error = 'Could not insert question ordering options!';
                 return $result;
             }
         }
 
-        // delete old answer records
-        if (!empty($oldanswers)) {
-            foreach($oldanswers as $oa) {
-                $DB->delete_records('question_answers', array('id' => $oa->id));
-            }
+        // delete old answer records, if any
+        if (count($answerids)) {
+            $DB->delete_records_list('question_answers', 'id', $answerids);
         }
 
-        /// Perform sanity checks on fractional grades
         return true;
     }
 
     public function get_question_options($question) {
         global $DB, $OUTPUT;
-        // Get additional information from database
-        // and attach it to the question object
-        if (!$question->options = $DB->get_record('question_ordering',
-                array('question' => $question->id))) {
+
+        // load the options
+        if (! $question->options = $DB->get_record('question_ordering', array('question' => $question->id))) {
             echo $OUTPUT->notification('Error: Missing question options!');
             return false;
         }
-        // Load the answers
-        if (!$question->options->answers = $DB->get_records('question_answers',
-                array('question' =>  $question->id), 'id ASC')) {
-            echo $OUTPUT->notification('Error: Missing question answers for truefalse question ' .
-                    $question->id . '!');
+
+        // Load the answers - "fraction" is used to signify the order of the answers
+        if (! $question->options->answers = $DB->get_records('question_answers', array('question' => $question->id), 'fraction ASC')) {
+            echo $OUTPUT->notification('Error: Missing question answers for ordering question ' . $question->id . '!');
             return false;
         }
 
+        //parent::get_question_options($question);
         return true;
     }
 /*
@@ -195,10 +171,8 @@ class qtype_ordering extends question_type {
     public function delete_question($questionid, $contextid) {
         global $DB;
         $DB->delete_records('question_ordering', array('question' => $questionid));
-
         parent::delete_question($questionid, $contextid);
     }
-
 }
 
 // NEW LINES START

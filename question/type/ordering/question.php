@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Multiple choice question definition classes.
+ * Ordering question definition classes.
  *
  * @package    qtype
  * @subpackage ordering
@@ -26,16 +26,11 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Base class for multiple choice questions. The parts that are common to
- * single select and multiple select.
+ * Represents an ordering question.
  *
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class qtype_ordering_base extends question_graded_automatically {
-
-}
-
 class qtype_ordering_question extends question_graded_automatically {
     public $rightanswer;
     public $truefeedback;
@@ -52,138 +47,105 @@ class qtype_ordering_question extends question_graded_automatically {
     }
 
     public function summarise_response(array $response) {
-
     }
 
     public function classify_response(array $response) {
         print_r ($response);
-        echo "!2!";
+        echo 'STOP in question/type/ordering/question.php classify_response()';
         die();
 
-        if (!array_key_exists('answer', $response)) {
-            return array($this->id => question_classified_response::no_response());
-        }
-        list($fraction) = $this->grade_response($response);
-        if ($response['answer']) {
-            return array($this->id => new question_classified_response(1,
-                    get_string('true', 'qtype_ordering'), $fraction));
+        if (array_key_exists('answer', $response)) {
+            $responseclassid = ($response['answer'] ? 1 : 0);
+            list($fraction) = $this->grade_response($response);
+            return array($this->id => new question_classified_response($responseclassid, get_string('true', 'qtype_ordering'), $fraction));
         } else {
-            return array($this->id => new question_classified_response(0,
-                    get_string('false', 'qtype_ordering'), $fraction));
+            return array($this->id => question_classified_response::no_response());
         }
     }
 
     public function is_complete_response(array $response) {
-        global $DB;
+        global $CFG, $DB;
 
-        $answer = $_POST["q".$this->id];
-        $orderdata = explode(",", $answer);
-        $responses = array();
-        $erroranswer = array();
+        $responses = explode(',', $_POST['q'.$this->id]);
+        $responses = array_filter($responses); // remove blanks
+        $responses = array_unique($responses); // remove duplicates
 
-        foreach ($orderdata as $orderdata_) {
-            if (!empty($orderdata_))
-                list($a1,$a2,$responses[]) = explode("_", $orderdata_);
-        }
-
-        //print_r($responses);
-
-        $raw_grade = 0;
-
-        $questionordering = $DB->get_record ("question_ordering", array("question" => $this->id));
-        $questionanswers  = $DB->get_records ("question_answers", array("question" => $this->id), "id");
-
-        $fractioncount = 1;
-
-        foreach ($questionanswers as $questionanswersfractiontemp) {
-            $questionanswers[$questionanswersfractiontemp->id]->fraction = $fractioncount;
-            ++$fractioncount;
-        }
-
-        foreach ($questionanswers as $questionanswers_) {
-            $questionanswersfraction[$questionanswers_->fraction] = $questionanswers_->id;
-        }
-
-        $erroranswer['main'] = 0;
-
-        if (is_array($responses)) {
-            if ($questionordering->logical == 0) {
-                $nefr = 1;
-                if ($questionordering->studentsee != 0) {
-                    foreach ($questionanswersfraction as $frkey => $frvalue) {
-                        if (in_array($frvalue, $responses)) {
-                            $questionanswersfractionnew [$nefr] = $frvalue;
-                            $nefr ++;
-                        }
-                    }
-
-                    $questionanswersfraction = $questionanswersfractionnew;
-                }
-
-                for ($i = 0; $i <= count($responses) - 1; $i++) {
-                    if ($responses[$i] != $questionanswersfraction[$i + 1]) {
-                        $erroranswer['main'] ++;
-                    }
-                }
-
-            } else if ($questionordering->logical == 1) {
-
-                $erroranswer['main'] = 0;
-                for ($i = 0; $i <= count($responses) - 1; $i++) {
-                    if ($i != count($responses) -1) {
-                        if ($questionanswers[$responses[$i]]->fraction > $questionanswers[$responses[$i + 1]]->fraction) {
-                            $erroranswer['main'] ++;
-                        }
-                    }
-                }
-            } else if ($questionordering->logical == 2) {
-
-                $fruits = $responses;
-
-                sort($fruits);
-                reset($fruits);
-
-                if ($responses[0] != $fruits[0]) {
-                    $erroranswer['main'] ++;
-                }
-
-                for ($i = 0; $i <= count($responses) - 1; $i++) {
-                    if ($i != count($responses) -1) {
-                        if ($questionanswers[$responses[$i]]->fraction < $questionanswers[$responses[$i + 1]]->fraction) {
-                            $raznica = $questionanswers[$responses[$i + 1]]->fraction - $questionanswers[$responses[$i]]->fraction - 1;
-                            if ($raznica >= 1) {
-                                $alreadycount = "false";
-                                for ($d = 1; $d <= $raznica; $d++) {
-                                    if ($alreadycount == "false") {
-                                        if (in_array($questionanswersfraction[$questionanswers[$responses[$i]]->fraction + $d] ,$responses)) {
-                                            $alreadycount = "true";
-                                            $erroranswer['main'] ++;
-                                        }
-                                    }
-                                }
-                            }
-                        } else {
-                            $erroranswer['main'] ++;
-                        }
-                    }
-                }
+        foreach ($responses as $i => $response) {
+            if (substr($response, 0, 14)=='ordering_item_') {
+                $responses[$i] = substr($response, 14);
+            } else {
+                unset($responses[$i]); // remove invalid response
             }
+        }
 
+        if (! $options = $DB->get_record ('question_ordering', array('question' => $this->id))) {
+            $options = (object)array('logical' => 0); // shouldn't happen !!
+        }
+        if (! $answers = $DB->get_records ('question_answers', array('question' => $this->id), 'fraction')) {
+            $answers = array(); // shouldn't happen !!
+        }
 
-            if ($questionordering->logical == 0 || $questionordering->logical == 2)
-                $allcount = count($responses);
-            else
-                $allcount = count($responses) - 1;
-
-            $grade = ($allcount - $erroranswer['main']) / $allcount;
+        if ($options->logical==0) {
+            $total = count($answers); // require all answers
         } else {
-            $state->raw_grade = 0;
-            $state->grade = 0;
+            $total = $options->studentsee + 2; // a subset of answers
+        }
+
+        $validresponses = array();
+        foreach ($answers as $answerid => $answer) {
+
+            $response = md5($CFG->passwordsaltmain.$answer->answer);
+            $sortorder = intval($answer->fraction);
+
+            if (in_array($response, $responses)) {
+                $answers[$answerid]->sortorder = $sortorder;
+                $answers[$answerid]->response = $response;
+                $validresponses[] = $response;
+            } else {
+                unset($answers[$answerid]); // this answer is not used
+            }
+        }
+
+        // convert $answers to sequentially numbered array
+        $answers = array_values($answers);
+
+        // sort $answers by sortorder (not really necessary)
+        usort($answers, array($this, 'usort_sortorder'));
+
+        // remove invalid responses
+        foreach ($responses as $i => $response) {
+            if (! in_array($response, $validresponses)) {
+                unset($responses[$i]);
+            }
+        }
+        unset($validresponses);
+
+        $correct = 0;
+        foreach ($answers as $i => $answer) {
+            if (isset($responses[$i]) && $answer->response==$responses[$i]) {
+                $correct++;
+            }
+            $i++;
+        }
+
+        if ($total==0) {
+            $grade = 0;
+        } else {
+            $grade = round($correct / $total, 5);
         }
 
         $_SESSION['SESSION']->quiz_answer['q'.$this->id] = $grade;
-
         return true;
+    }
+
+    public function usort_sortorder($a, $b) {
+        if ($a->sortorder < $b->sortorder) {
+            return -1;
+        }
+        if ($a->sortorder > $b->sortorder) {
+            return 1;
+        }
+        return 0; // equal values
     }
 
     public function is_gradable_response(array $response) {

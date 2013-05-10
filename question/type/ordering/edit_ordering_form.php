@@ -34,6 +34,11 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_ordering_edit_form extends question_edit_form {
+
+    public function qtype() {
+        return 'ordering';
+    }
+
     /**
      * Add question-type specific form fields.
      *
@@ -43,28 +48,35 @@ class qtype_ordering_edit_form extends question_edit_form {
         $NUMANS_START = 10;
         $NUMANS_ADD   = 5;
 
-        $menu = array(get_string('ordering_exactorder', 'qtype_ordering'), get_string('ordering_relativeorder', 'qtype_ordering'), get_string('ordering_contiguous', 'qtype_ordering'));
-        $mform->addElement('select', 'logical', get_string('ordering_logicalpossibilities', 'qtype_ordering'), $menu);
+        $options = array(
+            0 => get_string('ordering_exactorder',    'qtype_ordering'), // = all ?
+            1 => get_string('ordering_relativeorder', 'qtype_ordering'), // = random subset
+            2 => get_string('ordering_contiguous',    'qtype_ordering')  // = contiguous subset
+        );
+        $mform->addElement('select', 'logical', get_string('ordering_logicalpossibilities', 'qtype_ordering'), $options);
         $mform->setDefault('logical', 0);
 
-        $menu1[] = "All";
+        $options = array(0 => 'All');
         for ($i=3; $i <= 20; $i++) {
-            $menu1[] = $i;
+            $options[] = $i;
         }
-        $mform->addElement('select', 'studentsee', get_string('ordering_itemsforstudent', 'qtype_ordering'), $menu1);
+        $mform->addElement('select', 'studentsee', get_string('ordering_itemsforstudent', 'qtype_ordering'), $options);
         $mform->setDefault('studentsee', 0);
 
         $repeated = array();
         $repeated[] =& $mform->createElement('header', 'choicehdr', get_string('ordering_choiceno', 'qtype_ordering', '{no}'));
         $repeated[] =& $mform->createElement('textarea', 'answer', get_string('ordering_answer', 'qtype_ordering'), 'rows="3" cols="50"');
 
-        if (isset($this->question->options)){
-            $countanswers = count($this->question->options->answers);
-        } else {
+        if (empty($this->question->options)){
             $countanswers = 0;
+        } else {
+            $countanswers = count($this->question->options->answers);
         }
-        $repeatsatstart = ($NUMANS_START > ($countanswers + $NUMANS_ADD))?
-                            $NUMANS_START : ($countanswers + $NUMANS_ADD);
+        if ($NUMANS_START > ($countanswers + $NUMANS_ADD)) {
+            $repeatsatstart = $NUMANS_START;
+        } else {
+            $repeatsatstart = ($countanswers + $NUMANS_ADD);
+        }
         $repeatedoptions = array();
         $repeatedoptions['fraction']['default'] = 0;
         $mform->setType('answer', PARAM_NOTAGS);
@@ -109,27 +121,16 @@ class qtype_ordering_edit_form extends question_edit_form {
 
         }
 
-        //echo "data_preprocessing";
-        //print_r ($question);
-        //die();
-
         return $question;
-
-        //return true;
     }
 
     public function validation($data, $files) {
         $errors = array();
-        $answers = $data['answer'];
+
         $answercount = 0;
-
-        $totalfraction = 0;
-        $maxfraction = -1;
-
-        foreach ($answers as $key => $answer){
-            //check no of choices
-            $trimmedanswer = trim($answer);
-            if (!empty($trimmedanswer)){
+        foreach ($data['answer'] as $answer){
+            $answer = trim($answer);
+            if ($answer || $answer==='0'){
                 $answercount++;
             }
         }
@@ -143,9 +144,5 @@ class qtype_ordering_edit_form extends question_edit_form {
         }
 
         return $errors;
-    }
-
-    public function qtype() {
-        return 'ordering';
     }
 }
