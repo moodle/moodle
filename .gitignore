@@ -30,3 +30,5 @@ phpunit.xml
 composer.phar
 composer.lock
 /vendor/
+/theme/
+/auth/
