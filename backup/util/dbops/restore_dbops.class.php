@@ -823,6 +823,9 @@ abstract class restore_dbops {
     public static function send_files_to_pool($basepath, $restoreid, $component, $filearea, $oldcontextid, $dfltuserid, $itemname = null, $olditemid = null, $forcenewcontextid = null, $skipparentitemidctxmatch = false) {
         global $DB, $CFG;
 
+        $backupinfo = backup_general_helper::get_backup_information(basename($basepath));
+        $includesfiles = $backupinfo->include_files;
+
         $results = array();
 
         if ($forcenewcontextid) {
@@ -900,43 +903,68 @@ abstract class restore_dbops {
                 continue;
             }
 
+            // The file record to restore.
+            $file_record = array(
+                'contextid'   => $newcontextid,
+                'component'   => $component,
+                'filearea'    => $filearea,
+                'itemid'      => $rec->newitemid,
+                'filepath'    => $file->filepath,
+                'filename'    => $file->filename,
+                'timecreated' => $file->timecreated,
+                'timemodified'=> $file->timemodified,
+                'userid'      => $mappeduserid,
+                'author'      => $file->author,
+                'license'     => $file->license,
+                'sortorder'   => $file->sortorder
+            );
+
             if (empty($file->repositoryid)) {
                 // this is a regular file, it must be present in the backup pool
                 $backuppath = $basepath . backup_file_manager::get_backup_content_file_location($file->contenthash);
 
-                // The file is not found in the backup.
-                if (!file_exists($backuppath)) {
-                    $result = new stdClass();
-                    $result->code = 'file_missing_in_backup';
-                    $result->message = sprintf('missing file %s%s in backup', $file->filepath, $file->filename);
-                    $result->level = backup::LOG_WARNING;
-                    $results[] = $result;
-                    continue;
-                }
-
-                // create the file in the filepool if it does not exist yet
-                if (!$fs->file_exists($newcontextid, $component, $filearea, $rec->newitemid, $file->filepath, $file->filename)) {
-
-                    // If no license found, use default.
-                    if ($file->license == null){
-                        $file->license = $CFG->sitedefaultlicense;
+                // Some file types do not include the files as they should already be
+                // present. We still need to create entries into the files table.
+                if ($includesfiles) {
+                    // The file is not found in the backup.
+                    if (!file_exists($backuppath)) {
+                        $result = new stdClass();
+                        $result->code = 'file_missing_in_backup';
+                        $result->message = sprintf('missing file %s%s in backup', $file->filepath, $file->filename);
+                        $result->level = backup::LOG_WARNING;
+                        $results[] = $result;
+                        continue;
                     }
 
-                    $file_record = array(
-                        'contextid'   => $newcontextid,
-                        'component'   => $component,
-                        'filearea'    => $filearea,
-                        'itemid'      => $rec->newitemid,
-                        'filepath'    => $file->filepath,
-                        'filename'    => $file->filename,
-                        'timecreated' => $file->timecreated,
-                        'timemodified'=> $file->timemodified,
-                        'userid'      => $mappeduserid,
-                        'author'      => $file->author,
-                        'license'     => $file->license,
-                        'sortorder'   => $file->sortorder
-                    );
-                    $fs->create_file_from_pathname($file_record, $backuppath);
+                    // create the file in the filepool if it does not exist yet
+                    if (!$fs->file_exists($newcontextid, $component, $filearea, $rec->newitemid, $file->filepath, $file->filename)) {
+
+                        // If no license found, use default.
+                        if ($file->license == null){
+                            $file->license = $CFG->sitedefaultlicense;
+                        }
+
+                        $fs->create_file_from_pathname($file_record, $backuppath);
+                    }
+                } else {
+                    // This backup does not include the files - they should be available in moodle filestorage already.
+
+                    // Even if a file has been deleted since the backup was made, the file metadata will remain in the
+                    // files table, and the file will not be moved to the trashdir.
+                    // Files are not cleared from the files table by cron until several days after deletion.
+                    if ($foundfiles = $DB->get_records('files', array('contenthash' => $file->contenthash))) {
+                        // Only grab one of the foundfiles - the file content should be the same for all entries.
+                        $foundfile = reset($foundfiles);
+                        $fs->create_file_from_storedfile($file_record, $foundfile->id);
+                    } else {
+                        // A matching existing file record was not found in the database.
+                        $result = new stdClass();
+                        $result->code = 'file_missing_in_backup';
+                        $result->message = sprintf('missing file %s%s in backup', $file->filepath, $file->filename);
+                        $result->level = backup::LOG_WARNING;
+                        $results[] = $result;
+                        continue;
+                    }
                 }
 
                 // store the the new contextid and the new itemid in case we need to remap
@@ -954,20 +982,7 @@ abstract class restore_dbops {
                     // oldfile holds the raw information stored in MBZ (including reference-related info)
                     $info->oldfile = $file;
                     // newfile holds the info for the new file_record with the context, user and itemid mapped
-                    $info->newfile = (object)array(
-                        'contextid'   => $newcontextid,
-                        'component'   => $component,
-                        'filearea'    => $filearea,
-                        'itemid'      => $rec->newitemid,
-                        'filepath'    => $file->filepath,
-                        'filename'    => $file->filename,
-                        'timecreated' => $file->timecreated,
-                        'timemodified'=> $file->timemodified,
-                        'userid'      => $mappeduserid,
-                        'author'      => $file->author,
-                        'license'     => $file->license,
-                        'sortorder'   => $file->sortorder
-                    );
+                    $info->newfile = (object) $file_record;
 
                     restore_dbops::set_backup_ids_record($restoreid, 'file_aliases_queue', $file->id, 0, null, $info);
                 }

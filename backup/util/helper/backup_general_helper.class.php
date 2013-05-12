@@ -155,6 +155,12 @@ abstract class backup_general_helper extends backup_helper {
         } else {
             $info->include_file_references_to_external_content = 0;
         }
+        // include_files is a new setting in 2.6.
+        if (isset($infoarr['include_files'])) {
+            $info->include_files = $infoarr['include_files'];
+        } else {
+            $info->include_files = 1;
+        }
         $info->type   =  $infoarr['details']['detail'][0]['type'];
         $info->format =  $infoarr['details']['detail'][0]['format'];
         $info->mode   =  $infoarr['details']['detail'][0]['mode'];

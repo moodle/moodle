@@ -410,6 +410,19 @@ abstract class backup_controller_dbops extends backup_dbops {
     }
 
     /**
+     * Given the backupid, determine whether this backup should include
+     * files from the moodle file storage system.
+     *
+     * @param string $backupid The ID of the backup.
+     * @return int Indicates whether files should be included in backups.
+     */
+    public static function backup_includes_files($backupid) {
+        // Load controller
+        $bc = self::load_controller($backupid);
+        return $bc->get_include_files();
+    }
+
+    /**
      * Given the backupid, detect if the backup contains references to external contents
      *
      * @copyright 2012 Dongsheng Cai {@link http://dongsheng.org}
