@@ -30,7 +30,7 @@ $string['availabilityconditions'] = 'Restrict access';
 $string['availablefrom'] = 'Allow access from';
 $string['availablefrom_help'] = 'Access from/to dates determine when students can access the activity via a link on the course page.
 
-The difference between access from/to dates and availability settings for the activity is that outside the set dates the latter allows students to view the activity description, whereas access from/to dates prevent access completely.';
+The difference between access from/to dates and availability settings for the activity is that outside the set dates, access from/to prevents access completely, while availability allows students to view the activity description.';
 $string['availableuntil'] = 'Allow access until';
 $string['badavailabledates'] = 'Invalid dates. If you set both dates, the \'Allow access from\' date should be before the \'until\' date.';
 $string['badgradelimits'] = 'If you set both an upper and lower grade limit, the upper limit must be higher than the lower limit.';
@@ -89,9 +89,9 @@ $string['requires_user_field_isempty'] = 'Not available unless your <strong>{$a-
 $string['requires_user_field_isequalto'] = 'Not available unless your <strong>{$a->field}</strong> is equal to <strong>{$a->value}</strong>.';
 $string['requires_user_field_isnotempty'] = 'Not available if your <strong>{$a->field}</strong> is empty.';
 $string['requires_user_field_startswith'] = 'Not available unless your <strong>{$a->field}</strong> starts withs <strong>{$a->value}</strong>.';
-$string['showavailability'] = 'Before activity can be accessed';
+$string['showavailability'] = 'While access is prevented';
 $string['showavailabilitysection'] = 'Before section can be accessed';
-$string['showavailability_hide'] = 'Hide activity entirely';
+$string['showavailability_hide'] = 'Hide activity entirely in the course and gradebook';
 $string['showavailability_show'] = 'Show activity greyed-out, with restriction information';
 $string['showavailabilitysection_hide'] = 'Hide section entirely';
 $string['showavailabilitysection_show'] = 'Show section greyed-out, with restriction information';
