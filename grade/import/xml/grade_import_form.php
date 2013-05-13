@@ -41,6 +41,7 @@ class grade_import_form extends moodleform {
         $mform->disabledIf('userfile', 'url', 'noteq', '');
 
         $mform->addElement('text', 'url', get_string('fileurl', 'gradeimport_xml'), 'size="80"');
+        $mform->setType('url', PARAM_URL);
         $mform->disabledIf('url', 'userfile', 'noteq', '');
 
         if (!empty($CFG->gradepublishing)) {
