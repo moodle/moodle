@@ -22,7 +22,7 @@ Feature: Upload users to a cohort
     And I follow "Course 2"
     And I add "Cohort sync" enrolment method with:
       | Cohort | Cohort 2 |
-    And I expand "Course administration" node
+    And I collapse "Course administration" node
     And I expand "Site administration" node
     And I expand "Users" node
     And I expand "Accounts" node

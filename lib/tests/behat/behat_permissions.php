@@ -52,7 +52,7 @@ class behat_permissions extends behat_base {
 
         return array(
             new Given('I am on homepage'),
-            new Given('I expand "Front page settings" node'),
+            new Given('I collapse "Front page settings" node'),
             new Given('I expand "Site administration" node'),
             new Given('I expand "Users" node'),
             new Given('I expand "Permissions" node'),
