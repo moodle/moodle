@@ -56,6 +56,10 @@ if (empty($CFG->enablebadges)) {
     print_error('badgesdisabled', 'badges');
 }
 
+if (empty($CFG->badges_allowcoursebadges) && ($type == BADGE_TYPE_COURSE)) {
+    print_error('coursebadgesdisabled', 'badges');
+}
+
 $err = '';
 $urlparams = array('sort' => $sortby, 'dir' => $sorthow, 'page' => $page);
 

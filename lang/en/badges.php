@@ -133,6 +133,7 @@ $string['connected'] = 'Connected';
 $string['contact'] = 'Contact';
 $string['contact_help'] = 'An email address associated with the badge issuer.';
 $string['copyof'] = 'Copy of {$a}';
+$string['coursebadgesdisabled'] = 'Course badges are not enabled on this site.';
 $string['coursecompletion'] = 'Learners must complete this course. ';
 $string['coursebadges'] = 'Badges';
 $string['create'] = 'New badge';

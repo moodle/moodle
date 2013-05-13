@@ -10,19 +10,23 @@ function addtobackpack(event, args) {
  */
 function check_site_access() {
     var add = Y.one('#check_connection');
-    var callback = {
-        success: function(o) {
-            var data = Y.JSON.parse(o.responseText);
-            if (data.code == 'http-unreachable') {
-                add.setHTML(data.response);
-                add.removeClass('hide');
-            }
-        },
-        failure: function(o) { }
-    };
 
-    YUI().use('yui2-connection', function (Y) {
-        Y.YUI2.util.Connect.asyncRequest('GET', 'ajax.php', callback, null);
+    var callback = {
+            method: "GET",
+            on: {
+                success: function(id, o, args) {
+                            var data = Y.JSON.parse(o.responseText);
+                            if (data.code == 'http-unreachable') {
+                                add.setHTML(data.response);
+                                add.removeClass('hide');
+                            }
+                        },
+                failure: function(o) { }
+            }
+        };
+
+    Y.use('io-base', function(Y) {
+        Y.io('ajax.php', callback);
     });
 
     return false;
