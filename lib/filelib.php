@@ -802,11 +802,29 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
         // we change time modified for all new and changed files, we keep time created as is
 
         $newhashes = array();
+        $filecount = 0;
         foreach ($draftfiles as $file) {
+            if (!$options['subdirs'] && ($file->get_filepath() !== '/' or $file->is_directory())) {
+                continue;
+            }
+            if (!$allowreferences && $file->is_external_file()) {
+                continue;
+            }
+            if (!$file->is_directory()) {
+                if ($options['maxbytes'] and $options['maxbytes'] < $file->get_filesize()) {
+                    // oversized file - should not get here at all
+                    continue;
+                }
+                if ($options['maxfiles'] != -1 and $options['maxfiles'] <= $filecount) {
+                    // more files - should not get here at all
+                    continue;
+                }
+                $filecount++;
+            }
             $newhash = $fs->get_pathname_hash($contextid, $component, $filearea, $itemid, $file->get_filepath(), $file->get_filename());
             $newhashes[$newhash] = $file;
         }
-        $filecount = 0;
+
         // Loop through oldfiles and decide which we need to delete and which to update.
         // After this cycle the array $newhashes will only contain the files that need to be added.
         foreach ($oldfiles as $oldfile) {
@@ -873,9 +891,6 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
                 $oldfile->set_timemodified($newfile->get_timemodified());
             }
 
-            if ($newfile->is_external_file() && !$allowreferences) {
-                continue;
-            }
             // Replaced file content
             if (!$oldfile->is_directory() &&
                     ($oldfile->get_contenthash() != $newfile->get_contenthash() ||
@@ -888,9 +903,6 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
 
             // unchanged file or directory - we keep it as is
             unset($newhashes[$oldhash]);
-            if (!$oldfile->is_directory()) {
-                $filecount++;
-            }
         }
 
         // Add fresh file or the file which has changed status
@@ -901,27 +913,8 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
                 // Field files.source for draftarea files contains serialised object with source and original information.
                 $file_record['source'] = $source->source;
             }
-            if (!$options['subdirs']) {
-                if ($file->get_filepath() !== '/' or $file->is_directory()) {
-                    continue;
-                }
-            }
-            if ($options['maxbytes'] and $options['maxbytes'] < $file->get_filesize()) {
-                // oversized file - should not get here at all
-                continue;
-            }
-            if ($options['maxfiles'] != -1 and $options['maxfiles'] <= $filecount) {
-                // more files - should not get here at all
-                break;
-            }
-            if (!$file->is_directory()) {
-                $filecount++;
-            }
 
             if ($file->is_external_file()) {
-                if (!$allowreferences) {
-                    continue;
-                }
                 $repoid = $file->get_repository_id();
                 if (!empty($repoid)) {
                     $file_record['repositoryid'] = $repoid;
