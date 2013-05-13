@@ -21,6 +21,8 @@ class editsection_form extends moodleform {
         $mform  = $this->_form;
         $course = $this->_customdata['course'];
 
+        $mform->addElement('header', 'generalhdr', get_string('general'));
+
         $elementgroup = array();
         $elementgroup[] = $mform->createElement('text', 'name', '', array('size' => '30'));
         $elementgroup[] = $mform->createElement('checkbox', 'usedefaultname', '', get_string('sectionusedefaultname'));
@@ -58,6 +60,7 @@ class editsection_form extends moodleform {
 
         if (!empty($CFG->enableavailability)) {
             $mform->addElement('header', 'availabilityconditions', get_string('availabilityconditions', 'condition'));
+            $mform->setExpanded('availabilityconditions', false);
             // String used by conditions more than once
             $strcondnone = get_string('none', 'condition');
             // Grouping conditions - only if grouping is enabled at site level
