@@ -30,7 +30,7 @@ $string['availabilityconditions'] = 'Restrict access';
 $string['availablefrom'] = 'Allow access from';
 $string['availablefrom_help'] = 'Access from/to dates determine when students can access the activity via a link on the course page.
 
-The difference between access from/to dates and availability settings for the activity is that outside the set dates the latter allows students to view the activity description, whereas access from/to dates prevent access completely.';
+The difference between access from/to dates and availability settings for the activity is that outside the set dates, access from/to prevents access completely, while availability allows students to view the activity description.';
 $string['availableuntil'] = 'Allow access until';
 $string['badavailabledates'] = 'Invalid dates. If you set both dates, the \'Allow access from\' date should be before the \'until\' date.';
 $string['badgradelimits'] = 'If you set both an upper and lower grade limit, the upper limit must be higher than the lower limit.';
