@@ -805,6 +805,10 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
         // there were no files before - one file means root dir only ;-)
         foreach ($draftfiles as $file) {
             $file_record = array('contextid'=>$contextid, 'component'=>$component, 'filearea'=>$filearea, 'itemid'=>$itemid);
+            if ($source = @unserialize($file->get_source())) {
+                // Field files.source for draftarea files contains serialised object with source and original information.
+                $file_record['source'] = $source->source;
+            }
             if (!$options['subdirs']) {
                 if ($file->get_filepath() !== '/' or $file->is_directory()) {
                     continue;
@@ -832,7 +836,6 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
                     $file_record['reference'] = $file->get_reference();
                 }
             }
-            file_restore_source_field_from_draft_file($file);
 
             $fs->create_file_from_storedfile($file_record, $file);
         }
@@ -844,7 +847,6 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
         $newhashes = array();
         foreach ($draftfiles as $file) {
             $newhash = $fs->get_pathname_hash($contextid, $component, $filearea, $itemid, $file->get_filepath(), $file->get_filename());
-            file_restore_source_field_from_draft_file($file);
             $newhashes[$newhash] = $file;
         }
         $filecount = 0;
@@ -857,6 +859,25 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
             }
 
             $newfile = $newhashes[$oldhash];
+            // Now we know that we have $oldfile and $newfile for the same path.
+            // Let's check if we can update this file or we need to delete and create.
+            if ($newfile->is_directory()) {
+                // Directories are always ok to just update.
+            } else if (($source = @unserialize($newfile->get_source())) && isset($source->original)) {
+                // File has the 'original' - we need to update the file (it may even have not been changed at all).
+                $original = file_storage::unpack_reference($source->original);
+                if ($original['filename'] !== $oldfile->get_filename() || $original['filepath'] !== $oldfile->get_filepath()) {
+                    // Very odd, original points to another file. Delete and create file.
+                    $oldfile->delete();
+                    continue;
+                }
+            } else {
+                // The same file name but absence of 'original' means that file was deteled and uploaded again.
+                // By deleting and creating new file we properly manage all existing references.
+                $oldfile->delete();
+                continue;
+            }
+
             // status changed, we delete old file, and create a new one
             if ($oldfile->get_status() != $newfile->get_status()) {
                 // file was changed, use updated with new timemodified data
@@ -875,8 +896,12 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
             }
 
             // Updated file source
-            if ($oldfile->get_source() != $newfile->get_source()) {
-                $oldfile->set_source($newfile->get_source());
+            $newsource = $newfile->get_source();
+            if ($source = @unserialize($newfile->get_source())) {
+                $newsource = $source->source;
+            }
+            if ($oldfile->get_source() !== $newsource) {
+                $oldfile->set_source($newsource);
             }
 
             // Updated sort order
@@ -893,9 +918,10 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
                 continue;
             }
             // Replaced file content
-            else if ($oldfile->get_contenthash() != $newfile->get_contenthash() ||
+            if (!$oldfile->is_directory() &&
+                    ($oldfile->get_contenthash() != $newfile->get_contenthash() ||
                     $oldfile->get_filesize() != $newfile->get_filesize() ||
-                    $oldfile->get_referencefileid() != $newfile->get_referencefileid()) {
+                    $oldfile->get_referencefileid() != $newfile->get_referencefileid())) {
                 $oldfile->replace_file_with($newfile);
                 // push changes to all local files that are referencing this file
                 $fs->update_references_to_storedfile($oldfile);
@@ -912,6 +938,10 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
         // the size and subdirectory tests are extra safety only, the UI should prevent it
         foreach ($newhashes as $file) {
             $file_record = array('contextid'=>$contextid, 'component'=>$component, 'filearea'=>$filearea, 'itemid'=>$itemid, 'timemodified'=>time());
+            if ($source = @unserialize($file->get_source())) {
+                // Field files.source for draftarea files contains serialised object with source and original information.
+                $file_record['source'] = $source->source;
+            }
             if (!$options['subdirs']) {
                 if ($file->get_filepath() !== '/' or $file->is_directory()) {
                     continue;
