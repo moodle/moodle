@@ -796,51 +796,8 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
     $draftfiles = $fs->get_area_files($usercontext->id, 'user', 'draft', $draftitemid, 'id');
     $oldfiles   = $fs->get_area_files($contextid, $component, $filearea, $itemid, 'id');
 
-    if (count($draftfiles) < 2) {
-        // means there are no files - one file means root dir only ;-)
-        $fs->delete_area_files($contextid, $component, $filearea, $itemid);
-
-    } else if (count($oldfiles) < 2) {
-        $filecount = 0;
-        // there were no files before - one file means root dir only ;-)
-        foreach ($draftfiles as $file) {
-            $file_record = array('contextid'=>$contextid, 'component'=>$component, 'filearea'=>$filearea, 'itemid'=>$itemid);
-            if ($source = @unserialize($file->get_source())) {
-                // Field files.source for draftarea files contains serialised object with source and original information.
-                $file_record['source'] = $source->source;
-            }
-            if (!$options['subdirs']) {
-                if ($file->get_filepath() !== '/' or $file->is_directory()) {
-                    continue;
-                }
-            }
-            if ($options['maxbytes'] and $options['maxbytes'] < $file->get_filesize()) {
-                // oversized file - should not get here at all
-                continue;
-            }
-            if ($options['maxfiles'] != -1 and $options['maxfiles'] <= $filecount) {
-                // more files - should not get here at all
-                break;
-            }
-            if (!$file->is_directory()) {
-                $filecount++;
-            }
-
-            if ($file->is_external_file()) {
-                if (!$allowreferences) {
-                    continue;
-                }
-                $repoid = $file->get_repository_id();
-                if (!empty($repoid)) {
-                    $file_record['repositoryid'] = $repoid;
-                    $file_record['reference'] = $file->get_reference();
-                }
-            }
-
-            $fs->create_file_from_storedfile($file_record, $file);
-        }
-
-    } else {
+    // One file in filearea means it is empty (it has only top-level directory '.').
+    if (count($draftfiles) > 1 || count($oldfiles) > 1) {
         // we have to merge old and new files - we want to keep file ids for files that were not changed
         // we change time modified for all new and changed files, we keep time created as is
 
@@ -850,6 +807,8 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
             $newhashes[$newhash] = $file;
         }
         $filecount = 0;
+        // Loop through oldfiles and decide which we need to delete and which to update.
+        // After this cycle the array $newhashes will only contain the files that need to be added.
         foreach ($oldfiles as $oldfile) {
             $oldhash = $oldfile->get_pathnamehash();
             if (!isset($newhashes[$oldhash])) {
