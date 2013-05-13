@@ -2690,6 +2690,7 @@ final class repository_instance_form extends moodleform {
         $instance = (isset($this->_customdata['instance'])
                 && is_subclass_of($this->_customdata['instance'], 'repository'))
             ? $this->_customdata['instance'] : null;
+
         if (!$instance) {
             $errors = repository::static_function($plugin, 'instance_form_validation', $this, $data, $errors);
         } else {
@@ -2700,6 +2701,10 @@ final class repository_instance_form extends moodleform {
                   FROM {repository_instances} i, {repository} r
                  WHERE r.type=:plugin AND r.id=i.typeid AND i.name=:name AND i.contextid=:contextid";
         $params = array('name' => $data['name'], 'plugin' => $this->plugin, 'contextid' => $this->contextid);
+        if ($instance) {
+            $sql .= ' AND i.id != :instanceid';
+            $params['instanceid'] = $instance->id;
+        }
         if ($DB->count_records_sql($sql, $params) > 0) {
             $errors['name'] = get_string('erroruniquename', 'repository');
         }
