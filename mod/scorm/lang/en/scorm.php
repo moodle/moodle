@@ -37,7 +37,6 @@ $string['allowapidebug'] = 'Activate API debug and tracing (set the capture mask
 $string['allowtypeexternal'] = 'Enable external package type';
 $string['allowtypeexternalaicc'] = 'Enable direct AICC URL';
 $string['allowtypeexternalaicc_desc'] = 'If enabled this allows a direct url to a simple AICC package';
-$string['allowtypeimsrepository'] = 'Enable IMS package type';
 $string['allowtypelocalsync'] = 'Enable downloaded package type';
 $string['allowtypeaicchacp'] = 'Enable external AICC HACP';
 $string['allowtypeaicchacp_desc'] = 'If enabled this allows AICC HACP external communication without requiring user login for post requests from the external AICC package';
@@ -293,7 +292,6 @@ $string['scormtype_help'] = 'This setting determines how the package is included
 * Uploaded package - Enables a SCORM package to be chosen via the file picker
 * External SCORM manifest - Enables an imsmanifest.xml URL to be specified. Note: If the URL has a different domain name than your site, then "Downloaded package" is a better option, since otherwise grades are not saved.
 * Downloaded package - Enables a package URL to be specified. The package will be unzipped and saved locally, and updated when the external SCORM package is updated.
-* Local IMS content repository - Enables a package to be selected from within an IMS repository
 * External AICC URL - this URL is the launch URL for a single AICC Activity.  A psuedo package will be constructed around this.';
 $string['scorm:viewreport'] = 'View reports';
 $string['scorm:viewscores'] = 'View scores';
@@ -327,7 +325,6 @@ $string['trackingloose'] = 'WARNING: The tracking data of this package will be l
 $string['type'] = 'Type';
 $string['typeaiccurl'] = 'External AICC URL';
 $string['typeexternal'] = 'External SCORM manifest';
-$string['typeimsrepository'] = 'Local IMS content repository';
 $string['typelocal'] = 'Uploaded package';
 $string['typelocalsync'] = 'Downloaded package';
 $string['unziperror'] = 'An error occurs during package unzip';

@@ -26,8 +26,6 @@ define('SCORM_TYPE_LOCAL', 'local');
 define('SCORM_TYPE_LOCALSYNC', 'localsync');
 /** SCORM_TYPE_EXTERNAL = external */
 define('SCORM_TYPE_EXTERNAL', 'external');
-/** SCORM_TYPE_IMSREPOSITORY = imsrepository */
-define('SCORM_TYPE_IMSREPOSITORY', 'imsrepository');
 /** SCORM_TYPE_AICCURL = external AICC url */
 define('SCORM_TYPE_AICCURL', 'aiccurl');
 
@@ -84,7 +82,6 @@ function scorm_status_options($with_strings = false) {
  * @uses SCORM_TYPE_LOCAL
  * @uses SCORM_TYPE_LOCALSYNC
  * @uses SCORM_TYPE_EXTERNAL
- * @uses SCORM_TYPE_IMSREPOSITORY
  * @param object $scorm Form data
  * @param object $mform
  * @return int new instance id
@@ -138,8 +135,6 @@ function scorm_add_instance($scorm, $mform=null) {
         $record->reference = $scorm->packageurl;
     } else if ($record->scormtype === SCORM_TYPE_EXTERNAL) {
         $record->reference = $scorm->packageurl;
-    } else if ($record->scormtype === SCORM_TYPE_IMSREPOSITORY) {
-        $record->reference = $scorm->packageurl;
     } else if ($record->scormtype === SCORM_TYPE_AICCURL) {
         $record->reference = $scorm->packageurl;
     } else {
@@ -172,7 +167,6 @@ function scorm_add_instance($scorm, $mform=null) {
  * @uses SCORM_TYPE_LOCAL
  * @uses SCORM_TYPE_LOCALSYNC
  * @uses SCORM_TYPE_EXTERNAL
- * @uses SCORM_TYPE_IMSREPOSITORY
  * @param object $scorm Form data
  * @param object $mform
  * @return bool
@@ -210,11 +204,7 @@ function scorm_update_instance($scorm, $mform=null) {
 
     } else if ($scorm->scormtype === SCORM_TYPE_LOCALSYNC) {
         $scorm->reference = $scorm->packageurl;
-
     } else if ($scorm->scormtype === SCORM_TYPE_EXTERNAL) {
-        $scorm->reference = $scorm->packageurl;
-
-    } else if ($scorm->scormtype === SCORM_TYPE_IMSREPOSITORY) {
         $scorm->reference = $scorm->packageurl;
     } else if ($scorm->scormtype === SCORM_TYPE_AICCURL) {
         $scorm->reference = $scorm->packageurl;
