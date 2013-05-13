@@ -25,7 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'Interactions Report';
+$string['pluginname'] = 'Interactions report';
 $string['questionx'] = 'Question {$a}';
 $string['responsex'] = 'Response {$a}';
 $string['rightanswerx'] = 'Right answer {$a}';
