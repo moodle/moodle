@@ -264,6 +264,71 @@ class file_storage {
     }
 
     /**
+     * Return an available directory name.
+     *
+     * This will return the next available directory name in the area, adding/incrementing a suffix
+     * of the last portion of path, ie: /path/ > /path (1)/ > /path (2)/ > etc...
+     *
+     * If the file path passed is available without modification, it is returned as is.
+     *
+     * @param int $contextid context ID.
+     * @param string $component component.
+     * @param string $filearea file area.
+     * @param int $itemid area item ID.
+     * @param string $suggestedpath the suggested file path.
+     * @return string available file path
+     * @since 2.5
+     */
+    public function get_unused_dirname($contextid, $component, $filearea, $itemid, $suggestedpath) {
+        global $DB;
+
+        // Ensure suggestedpath has trailing '/'
+        $suggestedpath = rtrim($suggestedpath, '/'). '/';
+
+        // The directory does not exist, we return the same file path.
+        if (!$this->file_exists($contextid, $component, $filearea, $itemid, $suggestedpath, '.')) {
+            return $suggestedpath;
+        }
+
+        // Trying to locate a file path using the used pattern. We remove the used pattern from the path first.
+        if (preg_match('~^(/.+) \(([0-9]+)\)/$~', $suggestedpath, $matches)) {
+            $suggestedpath = $matches[1]. '/';
+        }
+
+        $filepathlike = $DB->sql_like_escape(rtrim($suggestedpath, '/')) . ' (%)/';
+
+        $filepathlikesql = $DB->sql_like('f.filepath', ':filepathlike');
+        $filepathlen = $DB->sql_length('f.filepath');
+        $sql = "SELECT filepath
+                FROM {files} f
+                WHERE
+                    f.contextid = :contextid AND
+                    f.component = :component AND
+                    f.filearea = :filearea AND
+                    f.itemid = :itemid AND
+                    f.filename = :filename AND
+                    $filepathlikesql
+                ORDER BY
+                    $filepathlen DESC,
+                    f.filepath DESC";
+        $params = array('contextid' => $contextid, 'component' => $component, 'filearea' => $filearea, 'itemid' => $itemid,
+                'filename' => '.', 'filepathlike' => $filepathlike);
+        $results = $DB->get_fieldset_sql($sql, $params, IGNORE_MULTIPLE);
+
+        // Loop over the results to make sure we are working on a valid file path. Because '/path (1)/' and '/path (copy)/'
+        // would both be returned, but only the one only containing digits should be used.
+        $number = 1;
+        foreach ($results as $result) {
+            if (preg_match('~ \(([0-9]+)\)/$~', $result, $matches)) {
+                $number = (int)($matches[1]) + 1;
+                break;
+            }
+        }
+
+        return rtrim($suggestedpath, '/'). ' (' . $number . ')/';
+    }
+
+    /**
      * Generates a preview image for the stored file
      *
      * @param stored_file $file the file we want to preview

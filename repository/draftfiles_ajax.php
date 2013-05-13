@@ -218,15 +218,7 @@ switch ($action) {
         $file = $fs->get_file($user_context->id, 'user', 'draft', $draftid, $filepath, $filename);
 
         // Find unused name for directory to extract the archive.
-        $temppath = $filepath. pathinfo($filename, PATHINFO_FILENAME). '/';
-        if ($fs->file_exists($user_context->id, 'user', 'draft', $draftid, $temppath, '.')) {
-            for ($i=0; $i<1000; $i++) {
-                if (!$fs->file_exists($user_context->id, 'user', 'draft', $draftid, rtrim($temppath, '/'). " ($i)/", '.')) {
-                    $temppath = rtrim($temppath, '/'). " ($i)/";
-                    break;
-                }
-            }
-        }
+        $temppath = $fs->get_unused_dirname($user_context->id, 'user', 'draft', $draftid, $filepath. pathinfo($filename, PATHINFO_FILENAME). '/');
         // Extract archive and move all files from $temppath to $filepath
         if ($file->extract_to_storage($zipper, $user_context->id, 'user', 'draft', $draftid, $temppath, $USER->id) !== false) {
             $extractedfiles = $fs->get_directory_files($user_context->id, 'user', 'draft', $draftid, $temppath, true);
