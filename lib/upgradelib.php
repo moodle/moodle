@@ -1299,6 +1299,12 @@ function upgrade_finished($continueurl=null) {
 
     if (!empty($CFG->upgraderunning)) {
         unset_config('upgraderunning');
+        // We have to forcefully purge the caches using the writer here.
+        // This has to be done after we unset the config var. If someone hits the site while this is set they will
+        // cause the config values to propogate to the caches.
+        // Caches are purged after the last step in an upgrade but there is several code routines that exceute between
+        // then and now that leaving a window for things to fall out of sync.
+        cache_helper::purge_all(true);
         upgrade_setup_debug(false);
         ignore_user_abort(false);
         if ($continueurl) {
