@@ -477,8 +477,7 @@ class lesson_add_page_form_matching extends lesson_add_page_form_base {
             $label = get_string('matchesanswer','lesson');
             $count = $i;
             $this->_form->addElement('text', 'response_editor['.$count.']', $label, array('size'=>'50'));
-            // Temporary fix until MDL-38885 gets integrated.
-            $this->_form->setType('response_editor', PARAM_TEXT);
+            $this->_form->setType('response_editor['.$count.']', PARAM_TEXT);
             $this->_form->setDefault('response_editor['.$count.']', '');
             if ($required) {
                 $this->_form->addRule('response_editor['.$count.']', get_string('required'), 'required', null, 'client');
