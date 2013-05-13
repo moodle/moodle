@@ -217,14 +217,47 @@ switch ($action) {
 
         $file = $fs->get_file($user_context->id, 'user', 'draft', $draftid, $filepath, $filename);
 
-        if ($newfile = $file->extract_to_storage($zipper, $user_context->id, 'user', 'draft', $draftid, $filepath, $USER->id)) {
+        // Find unused name for directory to extract the archive.
+        $temppath = $filepath. pathinfo($filename, PATHINFO_FILENAME). '/';
+        if ($fs->file_exists($user_context->id, 'user', 'draft', $draftid, $temppath, '.')) {
+            for ($i=0; $i<1000; $i++) {
+                if (!$fs->file_exists($user_context->id, 'user', 'draft', $draftid, rtrim($temppath, '/'). " ($i)/", '.')) {
+                    $temppath = rtrim($temppath, '/'). " ($i)/";
+                    break;
+                }
+            }
+        }
+        // Extract archive and move all files from $temppath to $filepath
+        if ($file->extract_to_storage($zipper, $user_context->id, 'user', 'draft', $draftid, $temppath, $USER->id) !== false) {
+            $extractedfiles = $fs->get_directory_files($user_context->id, 'user', 'draft', $draftid, $temppath, true);
+            $xtemppath = preg_quote($temppath, '|');
+            foreach ($extractedfiles as $file) {
+                $realpath = preg_replace('|^'.$xtemppath.'|', $filepath, $file->get_filepath());
+                if (!$file->is_directory()) {
+                    // Set the source to the extracted file to indicate that it came from archive.
+                    $file->set_source(serialize((object)array('source' => $filepath)));
+                }
+                if (!$fs->file_exists($user_context->id, 'user', 'draft', $draftid, $realpath, $file->get_filename())) {
+                    // File or directory did not exist, just move it.
+                    $file->rename($realpath, $file->get_filename());
+                } else if (!$file->is_directory()) {
+                    // File already existed, overwrite it (nothing to do with existing directories).
+                    repository::overwrite_existing_draftfile($draftid, $realpath, $file->get_filename(), $file->get_filepath(), $file->get_filename());
+                }
+            }
             $return = new stdClass();
             $return->filepath = $filepath;
-            echo json_encode($return);
         } else {
-            echo json_encode(false);
+            $return = false;
         }
-        die;
+        // Remove remaining temporary directories.
+        foreach ($fs->get_directory_files($user_context->id, 'user', 'draft', $draftid, $temppath, true, true, 'filepath desc, filename desc') as $file) {
+            $file->delete();
+        }
+        if ($file = $fs->get_file($user_context->id, 'user', 'draft', $draftid, $temppath, '.')) {
+            $file->delete();
+        }
+        die(json_encode($return));
 
     case 'getoriginal':
         $filename    = required_param('filename', PARAM_FILE);
