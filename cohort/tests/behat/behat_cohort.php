@@ -65,7 +65,7 @@ class behat_cohort extends behat_base {
             $steps = array_merge(
                 array(
                     new Given('I am on homepage'),
-                    new Given('I expand "Front page settings" node'),
+                    new Given('I collapse "Front page settings" node'),
                     new Given('I expand "Site administration" node'),
                     new Given('I expand "Users" node'),
                     new Given('I expand "Accounts" node'),

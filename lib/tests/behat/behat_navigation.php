@@ -27,6 +27,9 @@
 
 require_once(__DIR__ . '/../../behat/behat_base.php');
 
+use Behat\Behat\Context\Step\Given as Given,
+    Behat\Mink\Exception\ExpectationException as ExpectationException;
+
 /**
  * Steps definitions to navigate through the navigation tree nodes.
  *
@@ -41,7 +44,7 @@ class behat_navigation extends behat_base {
      * Expands the selected node of the navigation tree that matches the text.
      * @Given /^I expand "(?P<nodetext_string>(?:[^"]|\\")*)" node$/
      *
-     * @throws ElementNotFoundException Thrown by behat_base::find
+     * @throws ExpectationException
      * @param string $nodetext
      */
     public function i_expand_node($nodetext) {
@@ -54,18 +57,47 @@ class behat_navigation extends behat_base {
         }
 
         $xpath = "//ul[contains(concat(' ', normalize-space(@class), ' '), ' block_tree ')]" .
-            "/child::li" .
+            "/child::li[contains(concat(' ', normalize-space(@class), ' '), ' collapsed ')]" .
             "/child::p[contains(concat(' ', normalize-space(@class), ' '), ' branch')]" .
             "/child::span[contains(concat(' ', normalize-space(.), ' '), '" . $nodetext . "')]" .
             "|" .
             "//ul[contains(concat(' ', normalize-space(@class), ' '), ' block_tree ')]" .
             "/descendant::li[not(contains(concat(' ', normalize-space(@class), ' '), ' collapsed'))]" .
-            "/descendant::li" .
+            "/descendant::li[contains(concat(' ', normalize-space(@class), ' '), ' collapsed')]" .
             "/child::p[contains(concat(' ', normalize-space(@class), ' '), ' branch')]" .
             "/child::span[contains(concat(' ', normalize-space(.), ' '), '" . $nodetext . "')]";
 
-        $node = $this->find('xpath', $xpath);
+        $exception = new ExpectationException('The "' . $nodetext . '" node can not be expanded', $this->getSession());
+        $node = $this->find('xpath', $xpath, $exception);
         $node->click();
     }
 
+    /**
+     * Collapses the selected node of the navigation tree that matches the text.
+     *
+     * @Given /^I collapse "(?P<nodetext_string>(?:[^"]|\\")*)" node$/
+     * @throws ExpectationException
+     * @param string $nodetext
+     */
+    public function i_collapse_node($nodetext) {
+
+        // No collapsible nodes with non-JS browsers.
+        if (!$this->running_javascript()) {
+            return false;
+        }
+
+        $xpath = "//ul[contains(concat(' ', normalize-space(@class), ' '), ' block_tree ')]" .
+            "/child::li[not(contains(concat(' ', normalize-space(@class), ' '), ' collapsed '))]" .
+            "/child::p[contains(concat(' ', normalize-space(@class), ' '), ' branch')]" .
+            "/child::span[contains(concat(' ', normalize-space(.), ' '), '" . $nodetext . "')]" .
+            "|" .
+            "//ul[contains(concat(' ', normalize-space(@class), ' '), ' block_tree ')]" .
+            "/descendant::li[not(contains(concat(' ', normalize-space(@class), ' '), ' collapsed'))]" .
+            "/child::p[contains(concat(' ', normalize-space(@class), ' '), ' branch')]" .
+            "/child::span[contains(concat(' ', normalize-space(.), ' '), '" . $nodetext . "')]";
+
+        $exception = new ExpectationException('The "' . $nodetext . '" node can not be collapsed', $this->getSession());
+        $node = $this->find('xpath', $xpath, $exception);
+        $node->click();
+    }
 }
