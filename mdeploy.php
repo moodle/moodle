@@ -757,7 +757,7 @@ class worker extends singleton_pattern {
                 $this->log('Package downloaded into '.$target);
             } else {
                 $this->log('cURL error ' . $this->curlerrno . ' ' . $this->curlerror);
-                $this->log('Unable to download the file');
+                $this->log('Unable to download the file from ' . $source . ' into ' . $target);
                 throw new download_file_exception('Unable to download the package');
             }
 
@@ -1053,12 +1053,16 @@ class worker extends singleton_pattern {
         curl_setopt($ch, CURLOPT_TIMEOUT, 3600);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 20); // nah, moodle.org is never unavailable! :-p
         curl_setopt($ch, CURLOPT_URL, $source);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true); // Allow redirection, we trust in ssl.
+        curl_setopt($ch, CURLOPT_MAXREDIRS, 5);
 
         if ($cacertfile = $this->get_cacert()) {
             // Do not use CA certs provided by the operating system. Instead,
             // use this CA cert to verify the ZIP provider.
             $this->log('Using custom CA certificate '.$cacertfile);
             curl_setopt($ch, CURLOPT_CAINFO, $cacertfile);
+        } else {
+            $this->log('Using operating system CA certificates.');
         }
 
         $proxy = $this->input->get_option('proxy', false);
@@ -1105,9 +1109,12 @@ class worker extends singleton_pattern {
         $this->curlinfo = curl_getinfo($ch);
 
         if (!$result or $this->curlerrno) {
+            $this->log('Curl Error.');
             return false;
 
-        } else if (is_array($this->curlinfo) and (empty($this->curlinfo['http_code']) or $this->curlinfo['http_code'] != 200)) {
+        } else if (is_array($this->curlinfo) && (empty($this->curlinfo['http_code']) or ($this->curlinfo['http_code'] != 200))) {
+            $this->log('Curl remote error.');
+            $this->log(print_r($this->curlinfo,true));
             return false;
         }
 
