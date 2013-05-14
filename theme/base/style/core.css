@@ -277,7 +277,7 @@ a.skip:active {position: static;display: block;}
 .mform .fitem fieldset.fgroup label,
 .mform .fradio label,
 .mform fieldset.fdate_selector label,
-.mform fieldset.fdate_time_selector label {display:inline;float: none; margin-left: .3em; vertical-align: text-bottom;}
+.mform fieldset.fdate_time_selector label {display:inline; float:none; margin-left:.3em; vertical-align:baseline;}
 .dir-rtl .mform .fcheckbox label,
 .dir-rtl .mform .fduration label,
 .dir-rtl .mform .fitem fieldset.fgroup label,
