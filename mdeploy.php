@@ -1054,6 +1054,7 @@ class worker extends singleton_pattern {
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 20); // nah, moodle.org is never unavailable! :-p
         curl_setopt($ch, CURLOPT_URL, $source);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true); // Allow redirection, we trust in ssl.
+        curl_setopt($ch, CURLOPT_MAXREDIRS, 5);
 
         if ($cacertfile = $this->get_cacert()) {
             // Do not use CA certs provided by the operating system. Instead,
@@ -1061,7 +1062,7 @@ class worker extends singleton_pattern {
             $this->log('Using custom CA certificate '.$cacertfile);
             curl_setopt($ch, CURLOPT_CAINFO, $cacertfile);
         } else {
-            $this->log('Warning: '.$cacertfile.' not found');
+            $this->log('Using operating system CA certificates.');
         }
 
         $proxy = $this->input->get_option('proxy', false);
