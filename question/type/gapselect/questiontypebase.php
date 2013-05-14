@@ -17,8 +17,7 @@
 /**
  * Question type class for the embedded element in question text question types.
  *
- * @package    qtype
- * @subpackage gapselect
+ * @package    qtype_gapselect
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

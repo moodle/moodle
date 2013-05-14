@@ -17,8 +17,7 @@
 /**
  * Serve question type files
  *
- * @package    qtype
- * @subpackage gapselect
+ * @package    qtype_gapselect
  * @copyright  2012 The Open University
  * @author     Jamie Pratt <me@jamiep.org>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
