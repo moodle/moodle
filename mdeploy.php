@@ -1053,6 +1053,7 @@ class worker extends singleton_pattern {
         curl_setopt($ch, CURLOPT_TIMEOUT, 3600);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 20); // nah, moodle.org is never unavailable! :-p
         curl_setopt($ch, CURLOPT_URL, $source);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true); // Allow redirection, we trust in ssl.
 
         if ($cacertfile = $this->get_cacert()) {
             // Do not use CA certs provided by the operating system. Instead,
@@ -1110,7 +1111,7 @@ class worker extends singleton_pattern {
             $this->log('Curl Error.');
             return false;
 
-        } else if (is_array($this->curlinfo) && (empty($this->curlinfo['http_code']) or (($this->curlinfo['http_code'] != 200) && $this->curlinfo['http_code'] != 302))) {
+        } else if (is_array($this->curlinfo) && (empty($this->curlinfo['http_code']) or ($this->curlinfo['http_code'] != 200))) {
             $this->log('Curl remote error.');
             $this->log(print_r($this->curlinfo,true));
             return false;
