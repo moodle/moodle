@@ -1112,7 +1112,7 @@ class worker extends singleton_pattern {
             $this->log('Curl Error.');
             return false;
 
-        } else if (is_array($this->curlinfo) && (empty($this->curlinfo['http_code']) or ($this->curlinfo['http_code'] != 200))) {
+        } else if (is_array($this->curlinfo) and (empty($this->curlinfo['http_code']) or ($this->curlinfo['http_code'] != 200))) {
             $this->log('Curl remote error.');
             $this->log(print_r($this->curlinfo,true));
             return false;
