@@ -32,7 +32,9 @@ require_once(__DIR__ . '/../../behat/behat_base.php');
 use Behat\Behat\Event\SuiteEvent as SuiteEvent,
     Behat\Behat\Event\ScenarioEvent as ScenarioEvent,
     Behat\Behat\Event\StepEvent as StepEvent,
-    WebDriver\Exception\NoSuchWindow as NoSuchWindow;
+    WebDriver\Exception\NoSuchWindow as NoSuchWindow,
+    WebDriver\Exception\UnexpectedAlertOpen as UnexpectedAlertOpen,
+    WebDriver\Exception\NoAlertOpenError as NoAlertOpenError;
 
 /**
  * Hooks to the behat process.
@@ -138,6 +140,16 @@ class behat_hooks extends behat_base {
 
         // Start always in the the homepage.
         $this->getSession()->visit($this->locate_path('/'));
+
+        // Closing JS dialogs if present. Otherwise they would block this scenario execution.
+        if ($this->running_javascript()) {
+            try {
+                $this->getSession()->getDriver()->getWebDriverSession()->accept_alert();
+            } catch (NoAlertOpenError $e) {
+                // All ok, there should not be JS dialogs in theory.
+            }
+        }
+
     }
 
     /**
@@ -257,6 +269,13 @@ class behat_hooks extends behat_base {
 
         } catch (NoSuchWindow $e) {
             // If we were interacting with a popup window it will not exists after closing it.
+        } catch (UnexpectedAlertOpen $e) {
+            // We fail the scenario if we find an opened JS alert/confirm, in most of the cases it
+            // will be there because we are leaving an edited form without submitting/cancelling
+            // it, but moodle is using JS confirms and we can not just cancel the JS dialog
+            // as in some cases (delete activity with JS enabled for example) the test writer should
+            // use extra steps to deal with moodle's behaviour.
+            throw new Exception('Modal window present. Ensure there are no edited forms pending to submit/cancel.');
         }
     }
 
