@@ -37,6 +37,10 @@ if (empty($CFG->enablebadges)) {
     print_error('badgesdisabled', 'badges');
 }
 
+if (empty($CFG->badges_allowcoursebadges) && ($type == BADGE_TYPE_COURSE)) {
+    print_error('coursebadgesdisabled', 'badges');
+}
+
 $title = get_string('create', 'badges');
 
 if (($type == BADGE_TYPE_COURSE) && ($course = $DB->get_record('course', array('id' => $courseid)))) {

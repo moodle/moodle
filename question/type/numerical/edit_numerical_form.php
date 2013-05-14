@@ -145,10 +145,11 @@ class qtype_numerical_edit_form extends question_edit_form {
         $unitfields = array($mform->createElement('group', 'units',
                  get_string('unitx', 'qtype_numerical'), $this->unit_group($mform), null, false));
 
-        $repeatedoptions['unit']['disabledif'] =
-                 array('unitrole', 'eq', qtype_numerical::UNITNONE);
-        $repeatedoptions['multiplier']['disabledif'] =
-                 array('unitrole', 'eq', qtype_numerical::UNITNONE);
+        $repeatedoptions['unit']['disabledif'] = array('unitrole', 'eq', qtype_numerical::UNITNONE);
+        $repeatedoptions['unit']['type'] = PARAM_NOTAGS;
+        $repeatedoptions['multiplier']['disabledif'] = array('unitrole', 'eq', qtype_numerical::UNITNONE);
+        $repeatedoptions['multiplier']['type'] = PARAM_NUMBER;
+
         $mform->disabledIf('addunits', 'unitrole', 'eq', qtype_numerical::UNITNONE);
 
         if (isset($this->question->options->units)) {
@@ -184,12 +185,11 @@ class qtype_numerical_edit_form extends question_edit_form {
      */
     protected function unit_group($mform) {
         $grouparray = array();
-        $grouparray[] = $mform->createElement('text', 'unit', get_string('unit', 'quiz'),
-                array('type'=>PARAM_NOTAGS, 'size'=>10));
+        $grouparray[] = $mform->createElement('text', 'unit', get_string('unit', 'quiz'), array('size'=>10));
         $grouparray[] = $mform->createElement('static', '', '', ' ' .
                 get_string('multiplier', 'quiz').' ');
         $grouparray[] = $mform->createElement('text', 'multiplier',
-                get_string('multiplier', 'quiz'), array('type'=>PARAM_NUMBER, 'size'=>10));
+                get_string('multiplier', 'quiz'), array('size'=>10));
 
         return $grouparray;
     }

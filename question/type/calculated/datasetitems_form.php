@@ -183,6 +183,7 @@ class question_dataset_dependent_items_form extends question_wizard_form {
                         $answer->answer);
                 $mform->addElement('text', 'tolerance['.$key.']',
                         get_string('tolerance', 'qtype_calculated'));
+                $mform->setType('tolerance['.$key.']', PARAM_RAW);
                 $mform->setAdvanced('tolerance['.$key.']', true);
                 $mform->addElement('select', 'tolerancetype['.$key.']',
                         get_string('tolerancetype', 'qtype_numerical'),
