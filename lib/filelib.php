@@ -726,6 +726,9 @@ function file_get_submitted_draft_itemid($elname) {
 /**
  * Restore the original source field from draft files
  *
+ * Do not use this function because it makes field files.source inconsistent
+ * for draft area files. This function will be deprecated in 2.6
+ *
  * @param stored_file $storedfile This only works with draft files
  * @return stored_file
  */
@@ -873,6 +876,8 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
             }
 
             // Updated file source
+            // Field files.source for draftarea files contains serialised object with source and original information.
+            // We only store the source part of it for non-draft file area.
             $newsource = $newfile->get_source();
             if ($source = @unserialize($newfile->get_source())) {
                 $newsource = $source->source;
@@ -911,6 +916,7 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
             $file_record = array('contextid'=>$contextid, 'component'=>$component, 'filearea'=>$filearea, 'itemid'=>$itemid, 'timemodified'=>time());
             if ($source = @unserialize($file->get_source())) {
                 // Field files.source for draftarea files contains serialised object with source and original information.
+                // We only store the source part of it for non-draft file area.
                 $file_record['source'] = $source->source;
             }
 
