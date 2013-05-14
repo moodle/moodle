@@ -214,7 +214,10 @@ class stored_file {
      * Replaces the fields that might have changed when file was overriden in filepicker:
      * reference, contenthash, filesize
      *
-     * Note that field source must be updated separately
+     * Note that field 'source' must be updated separately because
+     * it has different format for draft and non-draft areas and
+     * this function will usually be used to replace non-draft area
+     * file with draft area file.
      *
      * @param stored_file $newfile
      * @throws coding_exception
