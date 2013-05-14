@@ -36,6 +36,9 @@ $string['cliincorrectvalueerror'] = 'లోపం దొర్లింది, "
 $string['cliincorrectvalueretry'] = 'తప్పు విలువ, మళ్ళీ ప్రయత్నించండి';
 $string['clitypevalue'] = 'విలువను టైపించండి';
 $string['clitypevaluedefault'] = 'విలువను టైపించండి, డిఫాల్టు విలువ ({$a}) ను ఇచ్చేందుకు ఎంటరును నొక్కండి';
+$string['cliunknowoption'] = 'Unrecognised ఎంపికలు:
+  {$a}
+దయచేసి --help ఎంపికను ఉపయోగించండి.';
 $string['cliyesnoprompt'] = 'y (అంటే ఔనని) గానీ, n (అంటే వద్దని) గానీ నొక్కండి';
 $string['environmentrequireinstall'] = 'స్థాపించి, చేతనం చెయ్యడం తప్పనిసరి';
 $string['environmentrequireversion'] = '{$a->needed} వెర్షను తప్పనిసరి. మీరేమో {$a->current} వెర్షను వాడుతున్నారు';
