@@ -587,6 +587,13 @@ $CFG->admin = 'admin';
 // Example:
 //   $CFG->behat_switchcompletely = true;
 //
+// You can force the browser session (not user's sessions) to restart after N seconds. This could
+// be useful if you are using a cloud-based service with time restrictions in the browser side.
+// Setting this value the browser session that Behat is using will be restarted. Set the time in
+// seconds. Is not recommended to use this setting if you don't explicitly need it.
+// Example:
+//   $CFG->behat_restart_browser_after = 7200;     // Restarts the browser session after 2 hours
+//
 
 //=========================================================================
 // ALL DONE!  To continue installation, visit your main page with a browser
