@@ -39,8 +39,6 @@ $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
 require_login($course, false, $cm);
 require_capability('mod/folder:managefiles', $context);
 
-add_to_log($course->id, 'folder', 'edit', 'edit.php?id='.$cm->id, $folder->id, $cm->id);
-
 $PAGE->set_url('/mod/folder/edit.php', array('id' => $cm->id));
 $PAGE->set_title($course->shortname.': '.$folder->name);
 $PAGE->set_heading($course->fullname);
@@ -59,6 +57,9 @@ if ($mform->is_cancelled()) {
 } else if ($formdata = $mform->get_data()) {
     $formdata = file_postupdate_standard_filemanager($formdata, 'files', $options, $context, 'mod_folder', 'content', 0);
     $DB->set_field('folder', 'revision', $folder->revision+1, array('id'=>$folder->id));
+
+    add_to_log($course->id, 'folder', 'edit', 'edit.php?id='.$cm->id, $folder->id, $cm->id);
+
     redirect(new moodle_url('/mod/folder/view.php', array('id'=>$cm->id)));
 }
 
