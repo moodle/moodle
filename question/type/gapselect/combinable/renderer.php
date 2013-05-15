@@ -15,39 +15,40 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Select from drop down list question renderer class.
+ * Combined question embedded sub question renderer class.
  *
  * @package    qtype_gapselect
- * @copyright  2011 The Open University
+ * @copyright  2013 The Open University
+ * @author     Jamie Pratt <me@jamiep.org>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/question/type/gapselect/rendererbase.php');
 
+class qtype_gapselect_embedded_renderer extends qtype_renderer
+    implements qtype_combined_subquestion_renderer_interface {
 
-/**
- * Generates the output for select missing words questions.
- *
- * @copyright  2011 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class qtype_gapselect_renderer extends qtype_elements_embedded_in_question_text_renderer {
-    protected function embedded_element(question_attempt $qa, $place,
-            question_display_options $options) {
-        $question = $qa->get_question();
+    protected function box_id(question_attempt $qa, $place) {
+        return str_replace(':', '_', $qa->get_qt_field_name($place));
+    }
+
+    public function subquestion(question_attempt $qa,
+                                question_display_options $options,
+                                qtype_combined_combinable_base $subq,
+                                $placeno) {
+        $question = $subq->question;
+        $place = $placeno + 1;
         $group = $question->places[$place];
 
-        $fieldname = $question->field($place);
+        $fieldname = $subq->step_data_name($question->field($place));
 
-        $value = $qa->get_last_qt_var($question->field($place));
+        $value = $qa->get_last_qt_var($fieldname);
 
         $attributes = array(
-            'id' => $this->box_id($qa, 'p' . $place),
+            'id' => str_replace(':', '_', $qa->get_qt_field_name($fieldname)),
         );
-        $groupclass = 'group' . $group;
 
         if ($options->readonly) {
             $attributes['disabled'] = 'disabled';
@@ -63,16 +64,14 @@ class qtype_gapselect_renderer extends qtype_elements_embedded_in_question_text_
         if ($options->correctness) {
             $response = $qa->get_last_qt_data();
             if (array_key_exists($fieldname, $response)) {
-                $fraction = (int) ($response[$fieldname] ==
-                        $question->get_right_choice_for($place));
+                $fraction = (int) ($response[$fieldname] == $question->get_right_choice_for($place));
                 $attributes['class'] = $this->feedback_class($fraction);
                 $feedbackimage = $this->feedback_image($fraction);
             }
         }
 
         $selecthtml = html_writer::select($selectoptions, $qa->get_qt_field_name($fieldname),
-                $value, get_string('choosedots'), $attributes) . ' ' . $feedbackimage;
-        return html_writer::tag('span', $selecthtml, array('class' => 'control '.$groupclass));
+                                          $value, get_string('choosedots'), $attributes) . ' ' . $feedbackimage;
+        return html_writer::tag('span', $selecthtml, array('class' => 'control'));
     }
-
 }
