@@ -547,7 +547,7 @@ abstract class condition_info_base {
                     }
                 } else {
                     $field = $condition->userfield;
-                    $fieldname = $condition->userfield;
+                    $fieldname = get_user_field_name($condition->userfield);
                 }
                 $details = new stdClass;
                 $details->fieldname = $fieldname;
@@ -824,7 +824,7 @@ abstract class condition_info_base {
             foreach ($this->item->conditionsfield as $field => $details) {
                 $a = new stdclass;
                 $a->field = format_string($details->fieldname, true, array('context' => $context));
-                $a->value = $details->value;
+                $a->value = s($details->value);
                 $information .= get_string('requires_user_field_'.$details->operator, 'condition', $a) . ' ';
             }
         }
@@ -1031,7 +1031,7 @@ abstract class condition_info_base {
                     $available = false;
                     $a = new stdClass();
                     $a->field = format_string($details->fieldname, true, array('context' => $context));
-                    $a->value = $details->value;
+                    $a->value = s($details->value);
                     $information .= get_string('requires_user_field_'.$details->operator, 'condition', $a) . ' ';
                 }
             }
