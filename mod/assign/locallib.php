@@ -2662,7 +2662,7 @@ class assign {
             // Give each submission plugin a chance to process the submission
             $plugins = $this->get_submission_plugins();
             foreach ($plugins as $plugin) {
-                $plugin->submit_for_grading();
+                $plugin->submit_for_grading($submission);
             }
 
             $submission->status = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
