@@ -4062,6 +4062,9 @@ function delete_user(stdClass $user) {
     // unauthorise the user for all services
     $DB->delete_records('external_services_users', array('userid'=>$user->id));
 
+    // Remove users private keys.
+    $DB->delete_records('user_private_key', array('userid' => $user->id));
+
     // force logout - may fail if file based sessions used, sorry
     session_kill_user($user->id);
 
