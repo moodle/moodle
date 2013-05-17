@@ -1719,5 +1719,26 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012120303.09);
     }
 
+    if ($oldversion < 2012120304.01) {
+        // Fix incorrect cc-nc url. Unfortunately the license 'plugins' do
+        // not give a mechanism to do this.
+
+        $sql = "UPDATE {license}
+                   SET source = :url, version = :newversion
+                 WHERE shortname = :shortname AND version = :oldversion";
+
+        $params = array(
+            'url' => 'http://creativecommons.org/licenses/by-nc/3.0/',
+            'shortname' => 'cc-nc',
+            'newversion' => '2013051500',
+            'oldversion' => '2010033100'
+        );
+
+        $DB->execute($sql, $params);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2012120304.01);
+    }
+
     return true;
 }
