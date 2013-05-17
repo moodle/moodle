@@ -163,6 +163,7 @@ class qtype_gapselect_edit_form_base extends question_edit_form {
     protected function repeated_options() {
         $repeatedoptions = array();
         $repeatedoptions['choicegroup']['default'] = '1';
+        $repeatedoptions['choices[answer]']['type'] = PARAM_TEXT;
         return $repeatedoptions;
     }
 
