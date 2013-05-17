@@ -267,4 +267,30 @@ class datalib_testcase extends advanced_testcase {
         get_admins(); // This should make just one query.
         $this->assertEquals($odlread+1, $DB->perf_get_reads());
     }
+
+    public function test_get_course() {
+        global $DB, $PAGE, $SITE;
+
+        $this->resetAfterTest(true);
+
+        // First test course will be current course ($COURSE).
+        $course1obj = $this->getDataGenerator()->create_course(array('shortname' => 'FROGS'));
+        $PAGE->set_course($course1obj);
+
+        // Second test course is not current course.
+        $course2obj = $this->getDataGenerator()->create_course(array('shortname' => 'ZOMBIES'));
+
+        // Check it does not make any queries when requesting the $COURSE/$SITE
+        $before = $DB->perf_get_queries();
+        $result = get_course($course1obj->id);
+        $this->assertEquals($before, $DB->perf_get_queries());
+        $this->assertEquals('FROGS', $result->shortname);
+        $result = get_course($SITE->id);
+        $this->assertEquals($before, $DB->perf_get_queries());
+
+        // Check it makes 1 query to request other courses.
+        $result = get_course($course2obj->id);
+        $this->assertEquals('ZOMBIES', $result->shortname);
+        $this->assertEquals($before + 1, $DB->perf_get_queries());
+    }
 }

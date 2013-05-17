@@ -1,6 +1,11 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 2.5.1 ===
+
+* New get_course() function for use when obtaining the course record from database. Will
+  reuse existing $COURSE or $SITE globals if possible to improve performance.
+
 === 2.5 ===
 
 * The database drivers (moodle_database and subclasses) aren't using anymore the ::columns property
