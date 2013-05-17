@@ -69,9 +69,11 @@ abstract class assign_submission_plugin extends assign_plugin {
 
     /**
      * Carry out any extra processing required when the work is submitted for grading
+     *
+     * @param stdClass $submission - assign_submission data
      * @return void
      */
-    public function submit_for_grading() {
+    public function submit_for_grading(stdClass $submission) {
     }
 
 }
