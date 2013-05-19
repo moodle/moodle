@@ -380,14 +380,15 @@ abstract class question_bank {
 
         // The the positive grades in descending order.
         foreach ($rawfractions as $fraction) {
-            $percentage = (100 * $fraction) . '%';
+            $percentage = format_float(100 * $fraction, 5, true, true) . '%';
             self::$fractionoptions["$fraction"] = $percentage;
             self::$fractionoptionsfull["$fraction"] = $percentage;
         }
 
         // The the negative grades in descending order.
         foreach (array_reverse($rawfractions) as $fraction) {
-            self::$fractionoptionsfull['' . (-$fraction)] = (-100 * $fraction) . '%';
+            self::$fractionoptionsfull['' . (-$fraction)] =
+                    format_float(-100 * $fraction, 5, true, true) . '%';
         }
 
         self::$fractionoptionsfull['-1.0'] = '-100%';
