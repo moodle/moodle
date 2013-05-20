@@ -4,10 +4,10 @@ Feature: Course activity controls works as expected
   As a teacher
   I need to edit, hide, show and indent activities inside course sections
 
-  # This two scenario outlines contains exactly the same steps, the
-  # only difference is whether JS is enabled or not; we can not use
-  # Background sections when using Scenario Outlines because of Behat
-  # framework restrictions.
+  # The difference between these two scenario outlines is that one is with
+  # JS enabled and the other one with JS disabled, also with JS disabled we
+  # add the delete activity checking; we can not use Background sections
+  # when using Scenario Outlines because of Behat framework restrictions.
 
   # We are testing:
   # * Javascript on and off
@@ -61,9 +61,6 @@ Feature: Course activity controls works as expected
     And "#section-2" "css_element" <should_see_other_sections> exists
     And I click on "Hide" "link" in the "Test forum name 1" activity
     And "#section-2" "css_element" <should_see_other_sections> exists
-    And I delete "Test forum name 1" activity
-    And "#section-2" "css_element" <should_see_other_sections> exists
-    And I should not see "Test forum name 1" in the ".region-content" "css_element"
     And I duplicate "Test forum name 2" activity editing the new copy with:
       | Forum name | Edited test forum name 2 |
     And "#section-2" "css_element" <should_see_other_sections> exists

@@ -83,7 +83,7 @@ class behat_general extends behat_base {
     }
 
     /**
-     * Accepts the currently displayed alert dialog.
+     * Accepts the currently displayed alert dialog. This step does not work in all the browsers, consider it experimental.
      * @Given /^I accept the currently displayed dialog$/
      */
     public function accept_currently_displayed_alert_dialog() {
@@ -188,7 +188,7 @@ class behat_general extends behat_base {
     }
 
     /**
-     * Drags and drops the specified element to the specified container. This step is experimental.
+     * Drags and drops the specified element to the specified container. This step does not work in all the browsers, consider it experimental.
      *
      * The steps definitions calling this step as part of them should
      * manage the wait times by themselves as the times and when the
