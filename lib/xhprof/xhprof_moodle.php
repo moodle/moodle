@@ -305,6 +305,10 @@ function profiling_print_run($run, $prevrunid = null) {
         $url = 'index.php?runid=' . $run->runid . '&amp;runid2=' . $prevrunid . '&amp;listurl=' . urlencode($run->url);
         $output.=$OUTPUT->heading('<a href="' . $url . '" title="">' . $strviewdiff . '</a>', 3, 'main profilinglink');
     }
+    // Add link to export this run.
+    $strexport = get_string('exportthis', 'tool_profiling');
+    $url = 'export.php?runid=' . $run->runid . '&amp;listurl=' . urlencode($run->url);
+    $output.=$OUTPUT->heading('<a href="' . $url . '" title="">' . $strexport . '</a>', 3, 'main profilinglink');
 
     return $output;
 }
