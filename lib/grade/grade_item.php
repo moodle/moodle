@@ -437,7 +437,7 @@ class grade_item extends grade_object {
         }
 
         if ($this->itemtype == 'mod' and !$this->is_outcome_item()) {
-            if ($this->itemnumber === 0) {
+            if ($this->itemnumber == 0) {
                 // for activity modules, itemnumber 0 is synced with the course_modules
                 if (!$cm = get_coursemodule_from_instance($this->itemmodule, $this->iteminstance, $this->courseid)) {
                     return false;
