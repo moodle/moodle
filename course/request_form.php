@@ -71,9 +71,9 @@ class course_request_form extends moodleform {
 
         if (!empty($CFG->requestcategoryselection)) {
             $displaylist = coursecat::make_categories_list();
-            $mform->addElement('select', 'category', get_string('category'), $displaylist);
+            $mform->addElement('select', 'category', get_string('coursecategory'), $displaylist);
             $mform->setDefault('category', $CFG->defaultrequestcategory);
-            $mform->addHelpButton('category', 'category');
+            $mform->addHelpButton('category', 'coursecategory');
         }
 
         $mform->addElement('editor', 'summary_editor', get_string('summary'), null, course_request::summary_editor_options());
