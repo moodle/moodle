@@ -1633,10 +1633,17 @@ abstract class webservice_base_server extends webservice_server {
         if (!$allowed) {
             throw new webservice_access_exception(
                     'Access to the function '.$this->functionname.'() is not allowed.
-                     Please check if a service containing the function is enabled.
-                     In the service settings: if the service is restricted check that
-                     the user is listed. Still in the service settings check for
-                     IP restriction or if the service requires a capability.');
+                     There could be multiple reasons for this:
+                     1. The service linked to the user token does not contain the function.
+                     2. The service is user-restricted and the user is not listed.
+                     3. The service is IP-restricted and the user IP is not listed.
+                     4. The service is time-restricted and the time has expired.
+                     5. The token is time-restricted and the time has expired.
+                     6. The service requires a specific capability which the user does not have.
+                     7. The function is called with username/password (no user token is sent)
+                     and none of the services has the function to allow the user.
+                     These settings can be found in Administration > Site administration
+                     > Plugins > Web services > External services and Manage tokens.');
         }
 
         // we have all we need now
