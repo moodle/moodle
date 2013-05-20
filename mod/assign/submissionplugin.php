@@ -84,4 +84,32 @@ abstract class assign_submission_plugin extends assign_plugin {
     public function copy_submission( stdClass $oldsubmission, stdClass $submission) {
         return true;
     }
+
+    /*
+     * Carry out any extra processing required when the work is locked.
+     *
+     * @param stdClass $submission - assign_submission data
+     * @return void
+     */
+    public function lock(stdClass $submission) {
+    }
+
+    /**
+     * Carry out any extra processing required when the work is unlocked.
+     *
+     * @param stdClass $submission - assign_submission data
+     * @return void
+     */
+    public function unlock(stdClass $submission) {
+    }
+
+    /**
+     * Carry out any extra processing required when the work reverted to draft.
+     *
+     * @param stdClass $submission - assign_submission data
+     * @return void
+     */
+    public function revert_to_draft(stdClass $submission) {
+    }
+
 }
