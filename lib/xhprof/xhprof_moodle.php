@@ -369,9 +369,11 @@ function profiling_print_rundiff($run1, $run2) {
  * like deletion/export/import...
  */
 function profiling_list_controls($listurl) {
-    global $CFG, $OUTPUT;
+    global $CFG;
 
-    $output = '';
+    $output = '<p class="centerpara buttons">';
+    $output .= '&nbsp;<a href="import.php">[' . get_string('import', 'tool_profiling') . ']</a>';
+    $output .= '</p>';
 
     return $output;
 }
@@ -476,6 +478,19 @@ function profiling_export_runs(array $runids, $file) {
     // Process finished ok, clean and return
     fulldelete($tmpdir);
     return $status;
+}
+
+/**
+ * Import a .mpr (moodle profile runs) file into moodle.
+ *
+ * See {@link profiling_export_runs()} for more details about the
+ * implementation of .mpr files.
+ *
+ * @param string $file filesystem fullpath to target .mpr file.
+ * @return boolean the mpr file has been succesfully imported (true) or no (false).
+ */
+function profiling_import_runs($file) {
+    return true;
 }
 
 /**
