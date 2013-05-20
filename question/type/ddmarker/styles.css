@@ -3,7 +3,7 @@
     display: block;
 }
 
-.que.ddmarker div.droparea img, form.mform fieldset#previewareaheader div.droparea img  {
+.que.ddmarker div.droparea img, form.mform fieldset#id_previewareaheader div.droparea img  {
     border: 1px solid #000000;
 }
 
@@ -25,22 +25,22 @@
 .que.ddmarker .dragitems.readonly .dragitem {
     cursor: auto;
 }
-.que.ddmarker div.ddarea, form.mform fieldset#previewareaheader div.ddarea {
+.que.ddmarker div.ddarea, form.mform fieldset#id_previewareaheader div.ddarea {
     text-align : center;
 }
-.que.ddmarker .dropbackground, form.mform fieldset#previewareaheader .dropbackground {
+.que.ddmarker .dropbackground, form.mform fieldset#id_previewareaheader .dropbackground {
     margin:0 auto;
 }
 
 .que.ddmarker div.dragitems div.draghome, .que.ddmarker div.dragitems div.dragitem,
-form.mform fieldset#previewareaheader div.draghome, form.mform fieldset#previewareaheader div.drag {
+form.mform fieldset#id_previewareaheader div.draghome, form.mform fieldset#id_previewareaheader div.drag {
     font:13px/1.231 arial,helvetica,clean,sans-serif;
     *font-size:small; /* for IE */
     *font:x-small; /* for IE in quirks mode */
 }
 .que.ddmarker div.dragitems span.markertext,
 .que.ddmarker div.markertexts span.markertext,
-form.mform fieldset#previewareaheader div.markertexts span.markertext {
+form.mform fieldset#id_previewareaheader div.markertexts span.markertext {
     margin: 5px;
     z-index: 3;
     background-color: white;

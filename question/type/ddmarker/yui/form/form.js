@@ -11,7 +11,8 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
 
         initializer : function() {
             this.fp = this.file_pickers();
-            Y.one(this.get('topnode')).append(
+            var tn = Y.one(this.get('topnode'));
+            tn.one('div.fcontainer').append(
                     '<div class="ddarea">'+
                         '<div class="markertexts"></div>'+
                         '<div class="droparea"></div>'+
@@ -138,19 +139,19 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
         },
 
         stop_selector_events : function () {
-            Y.all('fieldset#dropzoneheader select').detachAll();
+            Y.all('fieldset#id_dropzoneheader select').detachAll();
         },
 
         setup_form_events : function () {
             //events triggered by changes to form data
 
             //x and y coordinates
-            Y.all('fieldset#draggableitemheader input').on('change', function () {
+            Y.all('fieldset#id_draggableitemheader input').on('change', function () {
                 this.set_options_for_drag_item_selectors();
             }, this);
 
             //change in selected item
-            Y.all('fieldset#dropzoneheader select').on('change', function () {
+            Y.all('fieldset#id_dropzoneheader select').on('change', function () {
                 this.set_options_for_drag_item_selectors();
             }, this);
         },
