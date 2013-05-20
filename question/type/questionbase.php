@@ -17,6 +17,24 @@
 /**
  * This file defines the class {@link question_definition} and its subclasses.
  *
+ * The type hierarchy is quite complex. Here is a summary:
+ * - question_definition
+ *   - question_information_item
+ *   - question_with_responses implements question_manually_gradable
+ *     - question_graded_automatically implements question_automatically_gradable
+ *       - question_graded_automatically_with_countback implements question_automatically_gradable_with_countback
+ *       - question_graded_by_strategy
+ *
+ * Other classes:
+ * - question_classified_response
+ * - question_answer
+ * - question_hint
+ *   - question_hint_with_parts
+ * - question_first_matching_answer_grading_strategy implements question_grading_strategy
+ *
+ * Other interfaces:
+ * - question_response_answer_comparer
+ *
  * @package    moodlecore
  * @subpackage questiontypes
  * @copyright  2009 The Open University
