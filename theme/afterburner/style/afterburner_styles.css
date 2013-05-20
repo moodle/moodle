@@ -224,21 +224,22 @@ textarea {
 /*
 Courses and categories lists
 ----------------------------*/
-.coursebox .content .summary {
+.coursebox .content .summary,
+.coursebox .content .coursecat {
     width: 100%;
     float: left;
 }
-.coursebox .content .coursecat {
-    width: 47%;
+.coursebox > .info > .name {
+    width: auto;
 }
-.coursebox > .info > .name,
 .coursebox .content .teachers,
 .coursebox .content .courseimage,
 .coursebox .content .coursefile {
-    width: 47%;
+    width: 100%;
 }
 #page-course-index-category .generalbox.info {
-    padding: 5px;
+    margin: 1em 0;
+    padding: 0 5px;
 }
 /*
 Course Section Topic & Weekly
