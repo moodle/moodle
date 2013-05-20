@@ -433,7 +433,7 @@ class behat_course extends behat_base {
     }
 
     /**
-     * Moves the specified activity to the first slot of a section. Editing mode should be on.
+     * Moves the specified activity to the first slot of a section. This step is experimental when using it in Javascript tests. Editing mode should be on.
      *
      * @Given /^I move "(?P<activity_name_string>(?:[^"]|\\")*)" activity to section "(?P<section_number>\d+)"$/
      * @param string $activityname The activity name
@@ -528,7 +528,7 @@ class behat_course extends behat_base {
     }
 
     /**
-     * Deletes the activity or resource specified by it's name. You should be in the course page with editing mode on.
+     * Deletes the activity or resource specified by it's name. This step is experimental when using it in Javascript tests. You should be in the course page with editing mode on.
      *
      * @Given /^I delete "(?P<activity_name_string>(?:[^"]|\\")*)" activity$/
      * @param string $activityname

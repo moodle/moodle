@@ -27,25 +27,6 @@ Feature: Activities can be moved between sections
       | Forum name | Test forum name |
       | Description | Test forum description |
 
-  @javascript @_cross_browser
-  Scenario: Move activities in a single page course with Javascript enabled
-    When I move "Test forum name" activity to section "2"
-    And I reload the page
-    Then I should see "Test forum name" in the "#section-2" "css_element"
-    And I should not see "Test forum name" in the "#section-1" "css_element"
-
-  @javascript @_cross_browser
-  Scenario: Move activities in the course home with Javascript enabled using paged mode
-    Given I follow "Edit settings"
-    And I fill the moodle form with:
-      | Course layout | Show one section per page |
-    And I press "Save changes"
-    When I move "Test forum name" activity to section "2"
-    # This reload step is added because of drap&drop & yui dd problem
-    And I reload the page
-    Then I should see "Test forum name" in the "#section-2" "css_element"
-    And I should not see "Test forum name" in the "#section-1" "css_element"
-
   Scenario: Move activities in a single page course with Javascript disabled
     When I move "Test forum name" activity to section "2"
     Then I should see "Test forum name" in the "#section-2" "css_element"
