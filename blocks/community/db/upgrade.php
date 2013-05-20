@@ -54,5 +54,9 @@ function xmldb_block_community_upgrade($oldversion) {
     // Put any upgrade step following this
 
 
+    // Moodle v2.5.0 release upgrade line.
+    // Put any upgrade step following this.
+
+
     return true;
 }
