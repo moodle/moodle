@@ -8,10 +8,11 @@
 .course-content ul.weeks li.section .left {padding:5px 0;}
 .course-content ul.weeks li.section .right {padding:5px 0;}
 
-/** Course **/
-.coursebox {border:1px solid #DDD;border-color:#DDDDDD;}
+/** coursebox **/
+.coursebox {border:none}
 .coursebox > .info {margin:0;font-size:100%;}
 .coursebox .content {font-size:90%;}
+.coursebox .enrolmenticons img, .coursebox .moreinfo img {margin: 0.3em 0.2em -0.2em 0;}
 
 #page-course-recent h2.main {font-size:110%;}
 #page-course-recent .user {font-size:75%;}
@@ -80,14 +81,17 @@
 .categorypicker {text-align:center;margin-bottom:10px;}
 .path-report-outline .loginfo {text-align:center;margin:1em;}
 
-/* Course and category listings */
+/* Course */
+/*.courses .coursebox.even {background-color:white; border-color:white;}*/
+.courses .coursebox.odd {background-color:[[setting:rblockcolumnbgc]];border-color:[[setting:rblockcolumnbgc]];}
+.courses .coursebox:hover,
+.course_category_tree .courses > .paging:hover {background-color:#eee;}
+
+/* Category listings */
 .course_category_tree .controls {margin-bottom:5px;text-align:right;float:right;}
 .course_category_tree .controls div {padding-right:2em;font-size:75%;}
 .course_category_tree .category > .info {background-color:#e3dfd4;background-image:url([[pix:theme|hgradient]]);background-repeat:repeat-x;border:1px solid #ddd;}
 .course_category_tree.frontpage-category-names .category > .info {background:none;border:none;}
-.courses .coursebox.even {background-color:#f6f6f6;border-color:#eee;}
-.courses .coursebox:hover,
-.course_category_tree .courses > .paging.paging-morelink:hover {background-color:#eee;}
 .courses > .paging,
 .course_category_tree .subcategories > .paging {padding:5px;}
 
