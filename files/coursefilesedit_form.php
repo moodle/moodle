@@ -24,6 +24,7 @@ class coursefiles_edit_form extends moodleform {
         $options = array('subdirs'=>1, 'maxfiles'=>-1, 'accepted_types'=>'*');
         $mform->addElement('filemanager', 'files_filemanager', '', null, $options);
         $mform->addElement('hidden', 'contextid', $this->_customdata['contextid']);
+        $mform->setType('contextid', PARAM_INT);
         $this->set_data($this->_customdata['data']);
         $this->add_action_buttons(true);
     }
