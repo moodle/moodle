@@ -212,7 +212,7 @@ class stored_file {
 
     /**
      * Replaces the fields that might have changed when file was overriden in filepicker:
-     * reference, contenthash, filesize
+     * reference, contenthash, filesize, userid
      *
      * Note that field 'source' must be updated separately because
      * it has different format for draft and non-draft areas and
@@ -240,6 +240,7 @@ class stored_file {
         }
         $filerecord->filesize = $newfile->get_filesize();
         $filerecord->referencefileid = $newfile->get_referencefileid();
+        $filerecord->userid = $newfile->get_userid();
         $this->update($filerecord);
     }
 
