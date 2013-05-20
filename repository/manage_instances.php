@@ -142,7 +142,6 @@ $title = $pagename;
 /// Display page header
 $PAGE->set_title($title);
 $PAGE->set_heading($fullname);
-echo $OUTPUT->header();
 
 if ($context->contextlevel == CONTEXT_USER) {
     if ( !$course = $DB->get_record('course', array('id'=>$usercourseid))) {
@@ -196,13 +195,13 @@ if (!empty($edit) || !empty($new)) {
         }
         if ($success) {
             $savedstr = get_string('configsaved', 'repository');
-            echo $OUTPUT->heading($savedstr);
             redirect($baseurl);
         } else {
             print_error('instancenotsaved', 'repository', $baseurl);
         }
         exit;
     } else {     // Display the form
+        echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string('configplugin', 'repository_'.$plugin));
         $OUTPUT->box_start();
         $mform->display();
@@ -224,18 +223,19 @@ if (!empty($edit) || !empty($new)) {
         }
         if ($instance->delete()) {
             $deletedstr = get_string('instancedeleted', 'repository');
-            echo $OUTPUT->heading($deletedstr);
             redirect($baseurl, $deletedstr, 3);
         } else {
             print_error('instancenotdeleted', 'repository', $baseurl);
         }
         exit;
     }
+    echo $OUTPUT->header();
     $formcontinue = new single_button(new moodle_url($baseurl, array('delete' => $delete, 'sure' => 'yes')), get_string('yes'));
     $formcancel = new single_button($baseurl, get_string('no'));
     echo $OUTPUT->confirm(get_string('confirmdelete', 'repository', $instance->name), $formcontinue, $formcancel);
     $return = false;
 } else {
+    echo $OUTPUT->header();
     repository::display_instances_list($context);
     $return = false;
 }
