@@ -60,5 +60,9 @@ function xmldb_block_completionstatus_upgrade($oldversion, $block) {
         // Savepoint reached.
         upgrade_block_savepoint(true, 2012112901, 'completionstatus');
     }
+    // Moodle v2.5.0 release upgrade line.
+    // Put any upgrade step following this.
+
+
     return true;
 }

@@ -55,8 +55,6 @@ function xmldb_forum_upgrade($oldversion) {
     // Moodle v2.4.0 release upgrade line.
     // Put any upgrade step following this.
 
-    // Moodle v2.5.0 release upgrade line.
-    // Put any upgrade step following this.
     if ($oldversion < 2013020500) {
 
         // Define field displaywordcount to be added to forum.
@@ -82,6 +80,11 @@ function xmldb_forum_upgrade($oldversion) {
         // Forum savepoint reached.
         upgrade_mod_savepoint(true, 2013021200, 'forum');
     }
+
+
+    // Moodle v2.5.0 release upgrade line.
+    // Put any upgrade step following this.
+
 
     return true;
 }
