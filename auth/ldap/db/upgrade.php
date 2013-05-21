@@ -36,7 +36,7 @@ function xmldb_auth_ldap_upgrade($oldversion) {
         if (get_config('start_tls', 'auth/ldap') === false) {
             set_config('start_tls', 0, 'auth/ldap');
         }
-        upgrade_plugin_savepoint(true, 2013051200, 'auth', 'ldap');
+        upgrade_plugin_savepoint(true, 2013052100, 'auth', 'ldap');
     }
 
     return true;
