@@ -4724,9 +4724,6 @@ function delete_course($courseorid, $showfeedback = true) {
         return false;
     }
 
-    // Handle course badges.
-    badges_handle_course_deletion($courseid);
-
     // make the course completely empty
     remove_course_contents($courseid, $showfeedback);
 
@@ -4768,6 +4765,7 @@ function delete_course($courseorid, $showfeedback = true) {
  */
 function remove_course_contents($courseid, $showfeedback = true, array $options = null) {
     global $CFG, $DB, $OUTPUT;
+    require_once($CFG->libdir.'/badgeslib.php');
     require_once($CFG->libdir.'/completionlib.php');
     require_once($CFG->libdir.'/questionlib.php');
     require_once($CFG->libdir.'/gradelib.php');
@@ -4775,6 +4773,9 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
     require_once($CFG->dirroot.'/tag/coursetagslib.php');
     require_once($CFG->dirroot.'/comment/lib.php');
     require_once($CFG->dirroot.'/rating/lib.php');
+
+    // Handle course badges.
+    badges_handle_course_deletion($courseid);
 
     // NOTE: these concatenated strings are suboptimal, but it is just extra info...
     $strdeleted = get_string('deleted').' - ';
