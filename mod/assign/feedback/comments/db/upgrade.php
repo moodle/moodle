@@ -35,6 +35,10 @@ function xmldb_assignfeedback_comments_upgrade($oldversion) {
     // Moodle v2.4.0 release upgrade line.
     // Put any upgrade step following this.
 
+    // Moodle v2.5.0 release upgrade line.
+    // Put any upgrade step following this.
+
+
     return true;
 }
 

@@ -53,9 +53,6 @@ function xmldb_block_section_links_upgrade($oldversion, $block) {
     // Moodle v2.4.0 release upgrade line
     // Put any upgrade step following this
 
-    // Moodle v2.5.0 release upgrade line
-    // Put any upgrade step following this
-
     if ($oldversion < 2013012200.00) {
 
         // The section links block used to use its own crazy plugin name.
@@ -77,6 +74,11 @@ function xmldb_block_section_links_upgrade($oldversion, $block) {
         // Main savepoint reached.
         upgrade_block_savepoint(true, 2013012200.00, 'section_links');
     }
+
+
+    // Moodle v2.5.0 release upgrade line
+    // Put any upgrade step following this
+
 
     return true;
 }
