@@ -51,14 +51,14 @@ abstract class qtype_ddtoimage_edit_form_base extends question_edit_form {
 
     /**
      * definition_inner adds all specific fields to the form.
-     * @param object $mform (the form being built).
+     * @param MoodleQuickForm $mform (the form being built).
      */
     protected function definition_inner($mform) {
 
         $mform->addElement('header', 'previewareaheader',
                             get_string('previewareaheader', 'qtype_'.$this->qtype()));
-        $mform->addElement('static', 'previewarea',
-                            get_string('previewarea', 'qtype_'.$this->qtype()),
+        $mform->setExpanded('previewareaheader');
+        $mform->addElement('static', 'previewarea', '',
                             get_string('previewareamessage', 'qtype_'.$this->qtype()));
 
         $mform->registerNoSubmitButton('refresh');
@@ -102,7 +102,7 @@ abstract class qtype_ddtoimage_edit_form_base extends question_edit_form {
 
     abstract protected function drop_zones_repeated_options();
 
-    abstract protected function definition_draggable_items($mform, $itemrepeatsatstart) ;
+    abstract protected function definition_draggable_items($mform, $itemrepeatsatstart);
 
     abstract protected function draggable_item($mform);
 
@@ -115,11 +115,12 @@ abstract class qtype_ddtoimage_edit_form_base extends question_edit_form {
                 $countimages = max($countimages, $drag->no);
             }
         }
-        if ($this->question->formoptions->repeatelements) {
-            $itemrepeatsatstart = max(self::START_NUM_ITEMS, $countimages + self::ADD_NUM_ITEMS);
-        } else {
-            $itemrepeatsatstart = $countimages;
+
+        if (!$countimages) {
+            $countimages = self::START_NUM_ITEMS;
         }
+        $itemrepeatsatstart = $countimages;
+
         $imagerepeats = optional_param('noitems', $itemrepeatsatstart, PARAM_INT);
         $addfields = optional_param('additems', '', PARAM_TEXT);
         if (!empty($addfields)) {
