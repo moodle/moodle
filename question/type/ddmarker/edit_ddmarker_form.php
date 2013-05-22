@@ -95,11 +95,9 @@ class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
 
     protected function draggable_items_repeated_options() {
         $repeatedoptions = array();
-        $repeatedoptions['drags[label]']['type']      = PARAM_TEXT;
+        $repeatedoptions['drags[label]']['type'] = PARAM_TEXT;
         return $repeatedoptions;
     }
-
-
 
     protected function drop_zone($mform, $imagerepeats) {
         $dropzoneitem = array();

@@ -74,7 +74,6 @@ $string['pluginname_link'] = 'question/type/ddmarker';
 $string['pluginnameadding'] = 'Adding drag and drop markers';
 $string['pluginnameediting'] = 'Editing drag and drop markers';
 $string['pluginnamesummary'] = 'Markers are dragged and dropped onto a background image.';
-$string['previewarea'] = 'Preview area -';
 $string['previewareaheader'] = 'Preview';
 $string['previewareamessage'] = 'Select a background image file, enter text labels for markers and define the drop zones on the background image to which they must be dragged.';
 $string['refresh'] = 'Refresh preview';
