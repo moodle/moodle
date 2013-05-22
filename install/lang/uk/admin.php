@@ -30,5 +30,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'తెలుగు ';
+$string['environmentrequireinstall'] = 'повинен бути встановлений і включений';
+$string['environmentrequireversion'] = 'потрібна версія {$a->needed} (дійсна версія {$a->current)}';
