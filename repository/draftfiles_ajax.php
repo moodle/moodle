@@ -125,90 +125,33 @@ switch ($action) {
         // Allows to Rename file, move it to another directory, change it's license and author information in one request
         $filename    = required_param('filename', PARAM_FILE);
         $filepath    = required_param('filepath', PARAM_PATH);
-
-        $fs = get_file_storage();
-        if (!($file = $fs->get_file($user_context->id, 'user', 'draft', $draftid, $filepath, $filename))) {
-            die(json_encode((object)array('error' => get_string('filenotfound', 'error'))));
-        }
-
         $updatedata = array();
-        $updatedata['filename'] = $newfilename = optional_param('newfilename', $file->get_filename(), PARAM_FILE);
-        $updatedata['filepath'] = $newfilepath = optional_param('newfilepath', $file->get_filepath(), PARAM_PATH);
-        $updatedata['license'] = optional_param('newlicense', $file->get_license(), PARAM_TEXT);
-        $updatedata['author'] = optional_param('newauthor', $file->get_author(), PARAM_TEXT);
-        foreach ($updatedata as $key => $value) {
-            if (''.$value === ''.$file->{'get_'.$key}()) {
-                unset($updatedata[$key]);
-            }
+        $updatedata['filename'] = optional_param('newfilename', $filename, PARAM_FILE);
+        $updatedata['filepath'] = $newfilepath = optional_param('newfilepath', $filepath, PARAM_PATH);
+        if (($v = optional_param('newlicense', false, PARAM_TEXT)) !== false) {
+            $updatedata['license'] = $v;
         }
-
-        if (!empty($updatedata)) {
-            if (array_key_exists('filename', $updatedata) || array_key_exists('filepath', $updatedata)) {
-                // check that target file name does not exist
-                if ($fs->file_exists($user_context->id, 'user', 'draft', $draftid, $newfilepath, $newfilename)) {
-                    die(json_encode((object)array('error' => get_string('fileexists', 'repository'))));
-                }
-                $file->rename($newfilepath, $newfilename);
-            }
-            if (array_key_exists('license', $updatedata)) {
-                $file->set_license($updatedata['license']);
-            }
-            if (array_key_exists('author', $updatedata)) {
-                $file->set_author($updatedata['author']);
-            }
-            $changes = array_diff(array_keys($updatedata), array('filepath'));
-            if (!empty($changes)) {
-                // any change except for the moving to another folder alters 'Date modified' of the file
-                $file->set_timemodified(time());
-            }
+        if (($v = optional_param('newauthor', false, PARAM_TEXT)) !== false) {
+            $updatedata['author'] = $v;
         }
-
+        try {
+            repository::update_draftfile($draftid, $filepath, $filename, $updatedata);
+        } catch (moodle_exception $e) {
+            die(json_encode((object)array('error' => $e->getMessage())));
+        }
         die(json_encode((object)array('filepath' => $newfilepath)));
 
     case 'updatedir':
         $filepath = required_param('filepath', PARAM_PATH);
-        $fs = get_file_storage();
-        if (!$dir = $fs->get_file($user_context->id, 'user', 'draft', $draftid, $filepath, '.')) {
-            die(json_encode((object)array('error' => get_string('foldernotfound', 'repository'))));
-        }
-        $parts = explode('/', trim($dir->get_filepath(), '/'));
-        $dirname = end($parts);
         $newdirname = required_param('newdirname', PARAM_FILE);
         $parent = required_param('newfilepath', PARAM_PATH);
         $newfilepath = clean_param($parent . '/' . $newdirname . '/', PARAM_PATH);
-        if ($newfilepath == $filepath) {
-            // no action required
-            die(json_encode((object)array('filepath' => $parent)));
+        try {
+            repository::update_draftfile($draftid, $filepath, '.', array('filepath' => $newfilepath));
+        } catch (moodle_exception $e) {
+            die(json_encode((object)array('error' => $e->getMessage())));
         }
-        if ($fs->get_directory_files($user_context->id, 'user', 'draft', $draftid, $newfilepath, true)) {
-            //bad luck, we can not rename if something already exists there
-            die(json_encode((object)array('error' => get_string('folderexists', 'repository'))));
-        }
-        $xfilepath = preg_quote($filepath, '|');
-        if (preg_match("|^$xfilepath|", $parent)) {
-            // we can not move folder to it's own subfolder
-            die(json_encode((object)array('error' => get_string('folderrecurse', 'repository'))));
-        }
-
-        //we must update directory and all children too
-        $files = $fs->get_area_files($user_context->id, 'user', 'draft', $draftid);
-        foreach ($files as $file) {
-            if (!preg_match("|^$xfilepath|", $file->get_filepath())) {
-                continue;
-            }
-            // move one by one
-            $path = preg_replace("|^$xfilepath|", $newfilepath, $file->get_filepath());
-            if ($dirname !== $newdirname && $file->get_filepath() === $filepath && $file->get_filename() === '.') {
-                // this is the main directory we move/rename AND it has actually been renamed
-                $file->set_timemodified(time());
-            }
-            $file->rename($path, $file->get_filename());
-        }
-
-        $return = new stdClass();
-        $return->filepath = $parent;
-        echo json_encode($return);
-        die;
+        die(json_encode((object)array('filepath' => $parent)));
 
     case 'zip':
         $filepath = required_param('filepath', PARAM_PATH);
@@ -274,14 +217,39 @@ switch ($action) {
 
         $file = $fs->get_file($user_context->id, 'user', 'draft', $draftid, $filepath, $filename);
 
-        if ($newfile = $file->extract_to_storage($zipper, $user_context->id, 'user', 'draft', $draftid, $filepath, $USER->id)) {
+        // Find unused name for directory to extract the archive.
+        $temppath = $fs->get_unused_dirname($user_context->id, 'user', 'draft', $draftid, $filepath. pathinfo($filename, PATHINFO_FILENAME). '/');
+        // Extract archive and move all files from $temppath to $filepath
+        if ($file->extract_to_storage($zipper, $user_context->id, 'user', 'draft', $draftid, $temppath, $USER->id) !== false) {
+            $extractedfiles = $fs->get_directory_files($user_context->id, 'user', 'draft', $draftid, $temppath, true);
+            $xtemppath = preg_quote($temppath, '|');
+            foreach ($extractedfiles as $file) {
+                $realpath = preg_replace('|^'.$xtemppath.'|', $filepath, $file->get_filepath());
+                if (!$file->is_directory()) {
+                    // Set the source to the extracted file to indicate that it came from archive.
+                    $file->set_source(serialize((object)array('source' => $filepath)));
+                }
+                if (!$fs->file_exists($user_context->id, 'user', 'draft', $draftid, $realpath, $file->get_filename())) {
+                    // File or directory did not exist, just move it.
+                    $file->rename($realpath, $file->get_filename());
+                } else if (!$file->is_directory()) {
+                    // File already existed, overwrite it (nothing to do with existing directories).
+                    repository::overwrite_existing_draftfile($draftid, $realpath, $file->get_filename(), $file->get_filepath(), $file->get_filename());
+                }
+            }
             $return = new stdClass();
             $return->filepath = $filepath;
-            echo json_encode($return);
         } else {
-            echo json_encode(false);
+            $return = false;
         }
-        die;
+        // Remove remaining temporary directories.
+        foreach ($fs->get_directory_files($user_context->id, 'user', 'draft', $draftid, $temppath, true, true, 'filepath desc, filename desc') as $file) {
+            $file->delete();
+        }
+        if ($file = $fs->get_file($user_context->id, 'user', 'draft', $draftid, $temppath, '.')) {
+            $file->delete();
+        }
+        die(json_encode($return));
 
     case 'getoriginal':
         $filename    = required_param('filename', PARAM_FILE);
