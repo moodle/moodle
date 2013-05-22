@@ -396,9 +396,9 @@ class qtype_ddimageortext_walkthrough_test extends qbehaviour_walkthrough_test_b
             $this->get_contains_hidden_expectation(
                 $this->quba->get_field_prefix($this->slot) . 'p2', 2),
             $this->get_contains_hidden_expectation(
-                $this->quba->get_field_prefix($this->slot) . 'p3', ''),
+                $this->quba->get_field_prefix($this->slot) . 'p3', 0),
             $this->get_contains_hidden_expectation(
-                $this->quba->get_field_prefix($this->slot) . 'p4', ''),
+                $this->quba->get_field_prefix($this->slot) . 'p4', 0),
             $this->get_does_not_contain_correctness_expectation(),
             $this->get_does_not_contain_feedback_expectation());
 
@@ -506,9 +506,9 @@ class qtype_ddimageortext_walkthrough_test extends qbehaviour_walkthrough_test_b
             $this->get_contains_hidden_expectation(
                 $this->quba->get_field_prefix($this->slot) . 'p2', 2),
             $this->get_contains_hidden_expectation(
-                $this->quba->get_field_prefix($this->slot) . 'p3', ''),
+                $this->quba->get_field_prefix($this->slot) . 'p3', 0),
             $this->get_contains_hidden_expectation(
-                $this->quba->get_field_prefix($this->slot) . 'p4', ''),
+                $this->quba->get_field_prefix($this->slot) . 'p4', 0),
             $this->get_contains_submit_button_expectation(true),
             $this->get_does_not_contain_try_again_button_expectation(),
             $this->get_does_not_contain_correctness_expectation(),
@@ -560,9 +560,9 @@ class qtype_ddimageortext_walkthrough_test extends qbehaviour_walkthrough_test_b
             $this->get_contains_hidden_expectation(
                 $this->quba->get_field_prefix($this->slot) . 'p1', 1),
             $this->get_contains_hidden_expectation(
-                $this->quba->get_field_prefix($this->slot) . 'p2', ''),
+                $this->quba->get_field_prefix($this->slot) . 'p2', 0),
             $this->get_contains_hidden_expectation(
-                $this->quba->get_field_prefix($this->slot) . 'p3', ''),
+                $this->quba->get_field_prefix($this->slot) . 'p3', 0),
             $this->get_contains_hidden_expectation(
                 $this->quba->get_field_prefix($this->slot) . 'p4', 2),
             $this->get_contains_submit_button_expectation(true),
@@ -786,13 +786,13 @@ class qtype_ddimageortext_walkthrough_test extends qbehaviour_walkthrough_test_b
             $this->get_contains_drag_image_home_expectation(1, 1, 2),
             $this->get_contains_drag_image_home_expectation(2, 2, 2),
             $this->get_contains_hidden_expectation(
-                $this->quba->get_field_prefix($this->slot) . 'p1', ''),
+                $this->quba->get_field_prefix($this->slot) . 'p1', 0),
             $this->get_contains_hidden_expectation(
-                $this->quba->get_field_prefix($this->slot) . 'p2', ''),
+                $this->quba->get_field_prefix($this->slot) . 'p2', 0),
             $this->get_contains_hidden_expectation(
-                $this->quba->get_field_prefix($this->slot) . 'p3', ''),
+                $this->quba->get_field_prefix($this->slot) . 'p3', 0),
             $this->get_contains_hidden_expectation(
-                $this->quba->get_field_prefix($this->slot) . 'p4', ''),
+                $this->quba->get_field_prefix($this->slot) . 'p4', 0),
             $this->get_contains_submit_button_expectation(true),
             $this->get_does_not_contain_feedback_expectation(),
             $this->get_tries_remaining_expectation(2),
