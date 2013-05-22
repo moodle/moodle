@@ -133,7 +133,7 @@ foreach ($cms as $cm) {
         $icon = '<img src="'.$OUTPUT->pix_url('icon', $cm->modname).'" class="activityicon" alt="'.get_string('modulename', $cm->modname).'" /> ';
     }
 
-    if (isset($cm->intro) && isset($cm->introformat)) {
+    if (isset($resource->intro) && isset($resource->introformat)) {
         $intro = format_module_intro('resource', $resource, $cm->id);
     } else {
         $intro = '';
