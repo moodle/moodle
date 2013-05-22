@@ -4,7 +4,7 @@
 
 .block {border:[[static:lb_blockborderwidth]] solid #C6BDA8;margin-bottom:[[setting:blockpadding]];}
 .block .header h2 {margin:0;padding-left:0.3em;}
-.block .header .title {background-image:url([[pix:theme|gradient_h]]);background-repeat:repeat-x;clear:both;line-height:2em;background-color:#E3DFD4;}
+.block .header .title {background-image:url([[pix:theme|trend/__setting_trendcolor__/gradient_h]]);background-color:[[setting:blockheaderbackground]];background-repeat:repeat-x;clear:both;line-height:2em;}
 .block .header .title .commands {padding-left:0.3em;text-align:right;}
 .block .content {background-color:[[setting:blockcontentbgc]];}
 .block img.icon {padding-right:5px}

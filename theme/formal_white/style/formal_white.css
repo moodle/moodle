@@ -6,7 +6,7 @@ html, body {
     font-family:Arial, Verdana, Helvetica, sans-serif;
     margin:0;
     padding:0;
-    background-color:#EFEFEF;
+    background-color:[[setting:pagebackground]];
     font-size:[[setting:fontsizereference]];
 }
 
@@ -74,12 +74,12 @@ h2.main, h3.main, h4.main {margin:1em;padding:0;text-align:center;}
 
 #dock {background-color:[[setting:blockcontentbgc]];border-right:1px dashed #000;}
 #dock .dockeditem_container {margin-top: 10px;}
-#dock #dockeditempanel .dockeditempanel_hd {background-image:url([[pix:theme|gradient_h]]);background-repeat:repeat-x;text-align:left;height:1.8em;background-color:#E3DFD4;}
+#dock #dockeditempanel .dockeditempanel_hd {background-image:url([[pix:theme|trend/__setting_trendcolor__/gradient_h]]);background-color:[[setting:blockheaderbackground]];background-repeat:repeat-x;text-align:left;height:1.8em;}
 #dock #dockeditempanel .dockeditempanel_hd h2 {display:block;padding-left:0.3em;margin-top:0;text-align:left;}
 #dock #dockeditempanel .dockeditempanel_hd .commands {position:absolute;right:0.3em;top:0.25em;}
 
 /* navbar */
-.navbar {width:auto;background-image:url([[pix:theme|bg_bread]]);background-repeat:repeat-x;line-height:29px;} /* 30 pixel is the height if bg_bread */
+.navbar {width:auto;background-image:url([[pix:theme|trend/__setting_trendcolor__/bg_bread]]);background-repeat:repeat-x;line-height:29px;} /* 30 pixel is the height if bg_bread */
 .navbar li span {color:#E3DFD4;}
 .navbar li a:link, .navbar li a:visited {color:white;}
 
@@ -143,7 +143,7 @@ h2.main, h3.main, h4.main {margin:1em;padding:0;text-align:center;}
 th.header,
 .formtable tbody th,
 .generalbox th,
-.generaltable th.header {background-image:url([[pix:theme|gradient_h]]);background-repeat:repeat-x;border-top:1px solid #C6BDA8;background-color:#E3DFD4;}
+.generaltable th.header {background-image:url([[pix:theme|trend/__setting_trendcolor__/gradient_h]]);background-color:[[setting:blockheaderbackground]];background-repeat:repeat-x;border-top:1px solid #C6BDA8;}
 #modules, #compatibleblockstable {margin-left:auto; margin-right:auto;}
 table.flexible .r0, table.generaltable .r0 {background-color: #F0F0F0;}
 table.flexible .r1, table.generaltable .r1 {background-color: #FAFAFA;}
@@ -154,7 +154,7 @@ table.groupmanagementtable,
 table.groupmanagementtable tr,
 table.groupmanagementtable td {border-width:0px;}
 table.groupmanagementtable td#buttonscell {vertical-align:middle;text-align:center;}
-table#defineroletable tr.rolecapheading {background-image:url([[pix:theme|gradient_h]]);background-repeat:repeat-x;background-color:#E3DFD4;}
+table#defineroletable tr.rolecapheading {background-image:url([[pix:theme|trend/__setting_trendcolor__/gradient_h]]);background-color:[[setting:blockheaderbackground]];background-repeat:repeat-x;}
 /*table#defineroletable tr.rolecap {border-top:1px dashed #F30;}*/
 tr.rolecap {border-top:1px dashed #F30;}
 tr.rolecapheading + tr.rolecap {border-top:none;}
@@ -187,7 +187,7 @@ table td.cell p {margin:0;}
 .noframefooter {background-color:#FFF;clear: both;float: left;width:100%;}
 #page-footer-content {text-align:center;border:7px double #E3DFD4;margin:0;padding:0.5em;}
 #page-footer .logininfo {padding:0.3em 0 0.7em 0;}
-#page-footer .moodledocs {text-align:center;background-color:#EFEFEF;padding:0.7em 0 0.8em 0;}
+#page-footer .moodledocs {text-align:center;padding:0.7em 0 0.8em 0;}
 
 /* pre, code, tt */
 pre, code, tt {
@@ -224,7 +224,7 @@ pre, code, tt {
 }
 
 /* MDL-29403 */
-.capdefault {background-image:url([[pix:theme|gradient_h]]);background-repeat:repeat-x;background-color:#E3DFD4;}
+.capdefault {background-image:url([[pix:theme|trend/__setting_trendcolor__/gradient_h]]);background-color:[[setting:blockheaderbackground]];background-repeat:repeat-x;}
 table#defineroletable th {border-top:none;}
 
 form.loginform .rememberusername {

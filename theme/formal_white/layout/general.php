@@ -253,7 +253,7 @@ if ($hasfooter) {
                 ?>
             </div>
         </div> <!-- </page-footer> -->
-    </div> <!-- </page"> -->
+    </div> <!-- </page> -->
 
     <div class="clearfix"></div>
 
