@@ -25,9 +25,8 @@ Feature: A selected file can be cancelled
     And I click on "#fitem_id_files .fp-btn-add a" "css_element"
     And I click on "Recent files" "link" in the ".fp-repo-area" "css_element"
     And I click on "//a[contains(concat(' ', @class, ' '), ' fp-file ')][contains(., 'empty.txt')]" "xpath_element"
-    And I wait "2" seconds
-    And I click on ".fp-select .fp-select-cancel" "css_element"
-    And I click on ".file-picker button.yui3-button-close" "css_element"
+    And I click on ".yui3-panel-focused .fp-select .fp-select-cancel" "css_element"
+    And I click on ".yui3-panel-focused .file-picker button.yui3-button-close" "css_element"
     And I press "Save and display"
     Then I should see "upload_users.csv"
     And I should not see "empty.txt"

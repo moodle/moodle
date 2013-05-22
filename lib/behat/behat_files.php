@@ -88,7 +88,7 @@ class behat_files extends behat_base {
 
         // Finds the button inside the DOM, is a modal window, so should be unique.
         $classname = 'fp-file-' . $action;
-        $button = $this->find('css', 'button.' . $classname, $exception);
+        $button = $this->find('css', '.yui3-panel-focused button.' . $classname, $exception);
 
         $button->click();
     }
