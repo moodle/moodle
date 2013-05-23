@@ -227,6 +227,8 @@ switch ($action) {
                 }
             }
         }
+        $donotremovedirs = array();
+        $doremovedirs = array($temppath);
         // Extract archive and move all files from $temppath to $filepath
         if ($file->extract_to_storage($zipper, $user_context->id, 'user', 'draft', $draftid, $temppath, $USER->id) !== false) {
             $extractedfiles = $fs->get_directory_files($user_context->id, 'user', 'draft', $draftid, $temppath, true);
@@ -241,8 +243,12 @@ switch ($action) {
                     // File or directory did not exist, just move it.
                     $file->rename($realpath, $file->get_filename());
                 } else if (!$file->is_directory()) {
-                    // File already existed, overwrite it (nothing to do with existing directories).
+                    // File already existed, overwrite it
                     repository::overwrite_existing_draftfile($draftid, $realpath, $file->get_filename(), $file->get_filepath(), $file->get_filename());
+                } else {
+                    // Directory already existed, remove temporary dir but make sure we don't remove the existing dir
+                    $doremovedirs[] = $file->get_filepath();
+                    $donotremovedirs[] = $realpath;
                 }
             }
             $return = new stdClass();
@@ -251,11 +257,10 @@ switch ($action) {
             $return = false;
         }
         // Remove remaining temporary directories.
-        foreach ($fs->get_directory_files($user_context->id, 'user', 'draft', $draftid, $temppath, true, true, 'filepath desc, filename desc') as $file) {
-            $file->delete();
-        }
-        if ($file = $fs->get_file($user_context->id, 'user', 'draft', $draftid, $temppath, '.')) {
-            $file->delete();
+        foreach (array_diff($doremovedirs, $donotremovedirs) as $filepath) {
+            if ($file = $fs->get_file($user_context->id, 'user', 'draft', $draftid, $filepath, '.')) {
+                $file->delete();
+            }
         }
         die(json_encode($return));
 
