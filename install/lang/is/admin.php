@@ -39,5 +39,6 @@ $string['clitypevaluedefault'] = 'Sláðu inn gildi, sláðu á Enter hnappinn �
 $string['cliunknowoption'] = 'Óþekktir valkostir:
   {$a}
 Vinsamlegast notaðu --help valkostinn.';
+$string['cliyesnoprompt'] = 'skráðu y (þýðir já) eða n (þýðir nei)';
 $string['environmentrequireinstall'] = 'verður að vera uppsett og virkjað';
 $string['environmentrequireversion'] = 'krafist er útgáfu {$a->needed} en þú notast við útgáfu {$a->current}';

@@ -31,6 +31,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['chooselanguagesub'] = 'Wähle eine Sprache, die du während der Installation verwenden möchtest. Nach der Installation kannst du die Sprache für die Oberfläche und die Nutzer/innen festlegen.';
+$string['environmentsub2'] = 'Jede Moodle-Version hat Mindestvoraussetzungen für der PHP-Version und für verbindliche PHP-Extensions. Vor einer Installation oder einer Aktualisierung wird eine vollständige Prüfung durchgeführt. Bitte frage den Server-Administrator, wenn du mit der Installation einer neuen Version oder mit der Aktivierung von PHP-Extensions nicht weiterkommst.';
 $string['memorylimithelp'] = '<p>Die PHP-Einstellung memory_limit für deinen Server ist zur Zeit auf {$a} eingestellt. </p>
 <p>Dies wird vermutlich zu Problemen führen, wenn du Moodle mit vielen Aktivitäten oder vielen Nutzer/innen verwendst. </p>
 <p>Wir empfehlen die Einstellung zu erhöhen. Empfohlen werden 40M oder mehr. Dies kannst du auf verschiedene Arten machen:</p>
