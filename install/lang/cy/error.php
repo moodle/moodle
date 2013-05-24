@@ -42,6 +42,7 @@ $string['componentisuptodate'] = 'Mae\'r gydran wedi\'i diweddaru';
 $string['downloadedfilecheckfailed'] = 'Heb lwyddo i wirio\'r ffeil a lwythwyd i lawr';
 $string['invalidmd5'] = 'md5 annilys';
 $string['missingrequiredfield'] = 'Mae maes gofynnol ar goll';
+$string['remotedownloaderror'] = 'Wedi methu llwytho cydran ar eich gweinydd, gwiriwch osodiadau\'r dirprwy, argymhellir yr estyniad PHP cURL yn gryf.<br /><br />Mae\'n rhaid i chi lwytho\'r ffeil <a href="{$a->url}">{$a->url}</a> eich hun, ei chopïo i "{$a->dest}" ar eich gweinydd, a\'i dad-zipio yno.';
 $string['wrongdestpath'] = 'Llwybr cyrchfan anghywir.';
 $string['wrongsourcebase'] = 'Bôn URL ffynhonnell anghywir.';
 $string['wrongzipfilename'] = 'Enw ffeil ZIP anghywir.';
