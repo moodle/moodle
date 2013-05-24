@@ -30,5 +30,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'తెలుగు ';
+$string['language'] = 'སྐད་ཡིག།';
+$string['next'] = 'ཤུལ་མམ';
+$string['previous'] = 'ཧེ་མམ';
+$string['reload'] = 'ཡང་བསྐྱར་མངོན་གསལ་འབད';

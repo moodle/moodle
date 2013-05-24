@@ -49,15 +49,15 @@ $string['environmentsub2'] = 'Ciascuna release di Moodle prevede come requisito 
 $string['errorsinenvironment'] = 'Ci sono problemi nel vostro ambiente';
 $string['installation'] = 'Installazione';
 $string['langdownloaderror'] = 'Purtroppo non è stato possibile scaricare la lingua "{$a}". L\'installazione proseguirà in lingua Inglese.';
-$string['memorylimithelp'] = '<p>Il limite della memoria assegnata al PHP attualmente è {$a}.</p>
+$string['memorylimithelp'] = '<p>Il limite di memoria assegnata al PHP attualmente è {$a}.</p>
 
-<p>Questo limite potrà causare problemi nel funzionamento di Moodle, specialmente se usate molti moduli di attività con molti utenti.</p>
+<p>Tale limite potrà causare problemi nel funzionamento di Moodle, specialmente se usi molti moduli di attività con molti utenti.</p>
 
 <p>Ti raccomandiamo di impostare il PHP con un limite più alto se possibile, ad esempio 40M.
 Ci sono diversi modi che puoi provare:
 <ol>
 <li>Se possibile, ricompila il PHP con l\'opzione <i>--enable-memory-limit</i>.
-Questo permetterà  a Moodle di impostare il limite di memoria da solo.</li>
+Questo consentirà a Moodle di impostare in autonomia il limite di memoria.</li>
 <li>Se hai accesso al file php.ini, è possibile modificare la variabile <b>memory_limit</b> a un valore più alto, ad esempio 40M. Se non hai accesso, potete chiedere al vostro amministratore di sistema di farlo.</li>
 <li>Su alcuni server con il PHP è possibile creare un file .htaccess nella cartella di Moodle contenente questa linea:
 <blockquote>php_value memory_limit 40M</blockquote>

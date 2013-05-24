@@ -41,6 +41,7 @@ $string['databasehost'] = '데이터베이스 호스트';
 $string['databasename'] = '데이터베이스 명칭';
 $string['databasetypehead'] = '데이터베이스 드라이버 선택';
 $string['dataroot'] = '데이타 경로';
+$string['datarootpermission'] = '데이터 디렉토리 권한';
 $string['dbprefix'] = '테이블 접두어';
 $string['dirroot'] = '무들 디렉토리';
 $string['environmenthead'] = '구동환경을 점검합니다...';
