@@ -436,6 +436,7 @@ function enrol_meta_sync($courseid = NULL, $verbose = false) {
               FROM {user_enrolments} pue
               JOIN {enrol} pe ON (pe.id = pue.enrolid AND pe.enrol <> 'meta' AND pe.enrol $enabled)
               JOIN {enrol} e ON (e.customint1 = pe.courseid AND e.enrol = 'meta' $onecourse)
+              JOIN {user} u ON (u.id = pue.userid AND u.deleted = 0)
          LEFT JOIN {user_enrolments} ue ON (ue.enrolid = e.id AND ue.userid = pue.userid)
              WHERE ue.id IS NULL";
 
