@@ -213,6 +213,7 @@ function enrol_category_sync_course($course) {
     $sql = "SELECT ra.userid, ra.estart
               FROM (SELECT xra.userid, MIN(xra.timemodified) AS estart
                       FROM {role_assignments} xra
+                      JOIN {user} xu ON (xu.id = xra.userid AND xu.deleted = 0)
                      WHERE xra.roleid $roleids AND xra.contextid $contextids
                   GROUP BY xra.userid
                    ) ra
