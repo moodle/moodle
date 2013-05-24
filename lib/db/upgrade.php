@@ -1760,9 +1760,9 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
                                 JOIN {{$modname}} ON {course_modules}.instance = {{$modname}}.id
                                 WHERE {{$modname}}.id = pageid
                             ),
-                            pagetypepattern = 'blog-index',
+                            pagetypepattern = 'mod-$modname-view',
                             subpagepattern = NULL
-                          WHERE pagetypepattern = 'blog-view'");
+                          WHERE pagetypepattern = 'mod-$modname-view'");
         }
 
     /// Main savepoint reached
