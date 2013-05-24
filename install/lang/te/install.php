@@ -30,5 +30,12 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'తెలుగు ';
+$string['availablelangs'] = 'అందుబాటులో ఉన్న భాషల జాబితా';
+$string['chooselanguagehead'] = 'భాషను ఎంచుకోండి';
+$string['databasehost'] = 'డేటాబేసు హోస్టు';
+$string['databasename'] = 'డేటాబేసు పేరు';
+$string['dataroot'] = 'డేటా డైరెక్టరీ';
+$string['dbprefix'] = 'టేబుళ్ళ ఆదిపదం (ప్రిఫిక్స్)';
+$string['dirroot'] = 'Moodle డైరెక్టరీ';
+$string['environmenthead'] = 'మీ ఎన్విరాన్మెంటును పరిశీలిస్తున్నాం ...';
+$string['wwwroot'] = 'వెబ్ చిరునామా';

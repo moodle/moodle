@@ -30,5 +30,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'తెలుగు ';
+$string['cliincorrectvalueretry'] = 'E cala, tovolea tale';
+$string['clitypevalue'] = 'Tabaka na lewena';
+$string['cliyesnoprompt'] = 'tabaka \'y\'';
