@@ -197,8 +197,10 @@ if (strlen($result) > 0) {
             $cost = (float) $plugin_instance->cost;
         }
 
+        // Use the same rounding of floats as on the enrol form.
+        $cost = format_float($cost, 2, false);
+
         if ($data->payment_gross < $cost) {
-            $cost = format_float($cost, 2);
             message_paypal_error_to_admin("Amount paid is not enough ($data->payment_gross < $cost))", $data);
             die;
 
