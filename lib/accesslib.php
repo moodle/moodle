@@ -3910,7 +3910,7 @@ function get_role_users($roleid, context $context, $parent = false, $fields = ''
     }
 
     if ($whereorsortparams) {
-        $params = array_merge($params, $whereparams);
+        $params = array_merge($params, $whereorsortparams);
     }
 
     if (!$sort) {
