@@ -68,6 +68,12 @@ function xsendfile($filepath) {
         }
     }
 
+    // Remove Etag because is is not strictly defined for byteserving,
+    // is it tag of this range or whole file?
+    if (!empty($_SERVER['HTTP_RANGE'])) {
+        header_remove('Etag');
+    }
+
     if ($CFG->xsendfile === 'X-LIGHTTPD-send-file') {
         // http://redmine.lighttpd.net/projects/lighttpd/wiki/X-LIGHTTPD-send-file says 1.4 it does not support byteserving
         header('Accept-Ranges: none');
