@@ -1227,6 +1227,7 @@ class accesslib_testcase extends advanced_testcase {
         $this->resetAfterTest();
 
         $systemcontext = context_system::instance();
+        $studentrole = $DB->get_record('role', array('shortname'=>'student'), '*', MUST_EXIST);
         $teacherrole = $DB->get_record('role', array('shortname'=>'editingteacher'), '*', MUST_EXIST);
         $course = $this->getDataGenerator()->create_course();
         $coursecontext = context_course::instance($course->id);
@@ -1236,25 +1237,51 @@ class accesslib_testcase extends advanced_testcase {
         $otherrename = (object)array('roleid'=>$otherid, 'name'=>'Ostatní', 'contextid'=>$coursecontext->id);
         $DB->insert_record('role_names', $otherrename);
 
-        $user1 = $this->getDataGenerator()->create_user();
+        $user1 = $this->getDataGenerator()->create_user(array('firstname'=>'John', 'lastname'=>'Smith'));
         role_assign($teacherrole->id, $user1->id, $coursecontext->id);
-        $user2 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user(array('firstname'=>'Jan', 'lastname'=>'Kovar'));
         role_assign($teacherrole->id, $user2->id, $systemcontext->id);
+        $user3 = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($user3->id, $course->id, $teacherrole->id);
+        $user4 = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($user4->id, $course->id, $studentrole->id);
+
+        $group = $this->getDataGenerator()->create_group(array('courseid'=>$course->id));
+        groups_add_member($group, $user3);
 
         $users = get_role_users($teacherrole->id, $coursecontext);
-        $this->assertCount(1, $users);
-        $user = reset($users);
-        $userid = key($users);
-        $this->assertEquals($userid, $user->id);
-        $this->assertEquals($teacherrole->id, $user->roleid);
-        $this->assertEquals($teacherrole->name, $user->rolename);
-        $this->assertEquals($teacherrole->shortname, $user->roleshortname);
-        $this->assertEquals($teacherrename->name, $user->rolecoursealias);
+        $this->assertCount(2, $users);
+        $this->assertArrayHasKey($user1->id, $users);
+        $this->assertEquals($users[$user1->id]->id, $user1->id);
+        $this->assertEquals($users[$user1->id]->roleid, $teacherrole->id);
+        $this->assertEquals($users[$user1->id]->rolename, $teacherrole->name);
+        $this->assertEquals($users[$user1->id]->roleshortname, $teacherrole->shortname);
+        $this->assertEquals($users[$user1->id]->rolecoursealias, $teacherrename->name);
+        $this->assertArrayHasKey($user3->id, $users);
+        $this->assertEquals($users[$user3->id]->id, $user3->id);
+        $this->assertEquals($users[$user3->id]->roleid, $teacherrole->id);
+        $this->assertEquals($users[$user3->id]->rolename, $teacherrole->name);
+        $this->assertEquals($users[$user3->id]->roleshortname, $teacherrole->shortname);
+        $this->assertEquals($users[$user3->id]->rolecoursealias, $teacherrename->name);
 
         $users = get_role_users($teacherrole->id, $coursecontext, true);
-        $this->assertCount(2, $users);
+        $this->assertCount(3, $users);
 
-        $users = get_role_users($teacherrole->id, $coursecontext, false, 'u.id, u.email, u.idnumber', 'u.idnumber', null, 1, 0, 10, 'u.deleted = 0');
+        $users = get_role_users($teacherrole->id, $coursecontext, true, '', null, null, '', 2, 1);
+        $this->assertCount(1, $users);
+
+        $users = get_role_users($teacherrole->id, $coursecontext, false, 'u.id, u.email, u.idnumber', 'u.idnumber');
+        $this->assertCount(2, $users);
+        $this->assertArrayHasKey($user1->id, $users);
+        $this->assertArrayHasKey($user3->id, $users);
+
+        $users = get_role_users($teacherrole->id, $coursecontext, false, 'u.id, u.email, u.idnumber', 'u.idnumber', null, $group->id);
+        $this->assertCount(1, $users);
+        $this->assertArrayHasKey($user3->id, $users);
+
+        $users = get_role_users($teacherrole->id, $coursecontext, true, 'u.id, u.email, u.idnumber, u.firstname', 'u.idnumber', null, '', '', '', 'u.firstname = :xfirstname', array('xfirstname'=>'John'));
+        $this->assertCount(1, $users);
+        $this->assertArrayHasKey($user1->id, $users);
     }
 
     /**
