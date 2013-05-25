@@ -93,15 +93,13 @@ class enrol_paypal_edit_form extends moodleform {
 
         list($instance, $plugin, $context) = $this->_customdata;
 
-        if ($data['status'] == ENROL_INSTANCE_ENABLED) {
-            if (!empty($data['enrolenddate']) and $data['enrolenddate'] < $data['enrolstartdate']) {
-                $errors['enrolenddate'] = get_string('enrolenddaterror', 'enrol_paypal');
-            }
+        if (!empty($data['enrolenddate']) and $data['enrolenddate'] < $data['enrolstartdate']) {
+            $errors['enrolenddate'] = get_string('enrolenddaterror', 'enrol_paypal');
+        }
 
-            if (!is_numeric($data['cost'])) {
-                $errors['cost'] = get_string('costerror', 'enrol_paypal');
+        if (!is_numeric($data['cost'])) {
+            $errors['cost'] = get_string('costerror', 'enrol_paypal');
 
-            }
         }
 
         return $errors;
