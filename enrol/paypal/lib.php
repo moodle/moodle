@@ -190,6 +190,11 @@ class enrol_paypal_plugin extends enrol_plugin {
             echo '<p>'.get_string('nocost', 'enrol_paypal').'</p>';
         } else {
 
+            // Calculate localised and "." cost, make sure we send PayPal the same value,
+            // please note PayPal expects amount with 2 decimal places and "." separator.
+            $localisedcost = format_float($cost, 2, true);
+            $cost = format_float($cost, 2, false);
+
             if (isguestuser()) { // force login only for guest user, not real users with guest role
                 if (empty($CFG->loginhttps)) {
                     $wwwroot = $CFG->wwwroot;
@@ -199,7 +204,7 @@ class enrol_paypal_plugin extends enrol_plugin {
                     $wwwroot = str_replace("http://", "https://", $CFG->wwwroot);
                 }
                 echo '<div class="mdl-align"><p>'.get_string('paymentrequired').'</p>';
-                echo '<p><b>'.get_string('cost').": $instance->currency $cost".'</b></p>';
+                echo '<p><b>'.get_string('cost').": $instance->currency $localisedcost".'</b></p>';
                 echo '<p><a href="'.$wwwroot.'/login/">'.get_string('loginsite').'</a></p>';
                 echo '</div>';
             } else {
