@@ -11,6 +11,11 @@
 #
 /config.php
 /lib/editor/tinymce/extra/tools/temp/
+/mod/assign/
+/mod/questionnaire/
+/mod/lightboxgallery/
+/question/type/ddmatch/
+/question/type/order/
 *~
 *.swp
 /tags
