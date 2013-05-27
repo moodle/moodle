@@ -214,23 +214,41 @@ class behat_general extends behat_base {
     /**
      * Checks, that page contains specified text.
      *
-     * @see Behat\MinkExtension\Context\MinkContext
      * @Then /^I should see "(?P<text_string>(?:[^"]|\\")*)"$/
+     * @throws ExpectationException
      * @param string $text
      */
     public function assert_page_contains_text($text) {
-        $this->assertSession()->pageTextContains($text);
+
+        $xpathliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($text);
+        $xpath = "/descendant::*[contains(., " . $xpathliteral. ")]";
+
+        // Wait until it finds the text, otherwise custom exception.
+        try {
+            $this->find('xpath', $xpath);
+        } catch (ElementNotFoundException $e) {
+            throw new ExpectationException('"' . $text . '" text was not found in the page', $this->getSession());
+        }
     }
 
     /**
      * Checks, that page doesn't contain specified text.
      *
-     * @see Behat\MinkExtension\Context\MinkContext
      * @Then /^I should not see "(?P<text_string>(?:[^"]|\\")*)"$/
+     * @throws ExpectationException
      * @param string $text
      */
     public function assert_page_not_contains_text($text) {
-        $this->assertSession()->pageTextNotContains($text);
+
+        $xpathliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($text);
+        $xpath = "/descendant::*[not(contains(., " . $xpathliteral. "))]";
+
+        // Wait until it finds the text, otherwise custom exception.
+        try {
+            $this->find('xpath', $xpath);
+        } catch (ElementNotFoundException $e) {
+            throw new ExpectationException('"' . $text . '" text was found in the page', $this->getSession());
+        }
     }
 
     /**
