@@ -186,7 +186,7 @@ if (!empty($edit) || !empty($new)) {
             $settings = array();
             $settings['name'] = $fromform->name;
             foreach($configs as $config) {
-                $settings[$config] = $fromform->$config;
+                $settings[$config] = isset($fromform->$config) ? $fromform->$config : null;
             }
             $success = $instance->set_option($settings);
         } else {
