@@ -81,12 +81,20 @@ select {
 .dir-rtl .navbar .brand {
     float: right;
 }
+
 .navbar .logininfo a {
     color: @navbarLinkColor;
 }
 .navbar .logininfo a:hover {
-  background-color: @navbarLinkBackgroundHover; // "transparent" is default to differentiate :hover/:focus from .active
-  color: @navbarLinkColorHover;
+    background-color: @navbarLinkBackgroundHover; // "transparent" is default to differentiate :hover/:focus from .active
+    color: @navbarLinkColorHover;
+}
+.navbar-inverse .logininfo a {
+    color: @navbarInverseLinkColor;
+}
+.navbar-inverse .logininfo a:hover {
+    background-color: @navbarInverseLinkBackgroundHover; // "transparent" is default to differentiate :hover/:focus from .active
+    color: @navbarInverseLinkColorHover;
 }
 
 .navbar-fixed-top,
