@@ -39,10 +39,11 @@ Feature: A teacher can set a time limit for a lesson
     And I wait "3" seconds
     And I should see "Time remaining"
     And I press "Single button"
-    And I should see " 0:00:"
+    And I should see "0:00:"
     And I should see "Warning: You have 1 minute or less to finish the lesson."
     And I wait "60" seconds
     And I press "Single button"
-    And I should see "Attention: You ran out of time for this lesson. Your last answer may not have counted if it was answered after the time was up."
+    And I should see "You ran out of time for this lesson."
+    And I should see "Your last answer may not have counted if it was answered after the time was up."
     And I should see "Congratulations - end of lesson reached"
     And I should not see "Single lesson page contents"
