@@ -1663,12 +1663,25 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
     if ($oldversion < 2009050613) {
     /// fill in contextid and subpage, and update pagetypepattern from pagetype and pageid
 
+    upgrade_set_timeout(60*20);
+
     /// site-index
         $frontpagecontext = get_context_instance(CONTEXT_COURSE, SITEID);
         $DB->execute("UPDATE {block_instances} SET contextid = " . $frontpagecontext->id . ",
                                                    pagetypepattern = 'site-index',
                                                    subpagepattern = NULL
                       WHERE pagetypepattern = 'site-index'");
+
+    /// delete all blocks from incorrectly deleted courses
+        $rs = $DB->get_recordset_sql(
+            "SELECT bi.id
+               FROM {block_instances} bi
+          LEFT JOIN {course} c ON (c.id = bi.pageid)
+               WHERE bi.pagetypepattern = 'course-view' AND c.id IS NULL");
+        foreach ($rs as $bi) {
+            $DB->delete_records('block_instances', array('id'=>$bi->id));
+        }
+        $rs->close();
 
     /// course-view
         $DB->execute("UPDATE {block_instances} SET
@@ -1727,6 +1740,17 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
             if (!$dbman->table_exists($modname)) {
                 continue;
             }
+        /// delete all blocks that belonged to incorrectly deleted activities
+            $rs = $DB->get_recordset_sql(
+                "SELECT bi.id
+                   FROM {block_instances} bi
+              LEFT JOIN {{$modname}} m ON (m.id = bi.pageid)
+                  WHERE bi.pagetypepattern = 'mod-$modname-view' AND m.id IS NULL");
+            foreach ($rs as $bi) {
+                $DB->delete_records('block_instances', array('id'=>$bi->id));
+            }
+            $rs->close();
+
             $DB->execute("UPDATE {block_instances} SET
                             contextid = (
                                 SELECT {context}.id
@@ -1736,9 +1760,9 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
                                 JOIN {{$modname}} ON {course_modules}.instance = {{$modname}}.id
                                 WHERE {{$modname}}.id = pageid
                             ),
-                            pagetypepattern = 'blog-index',
+                            pagetypepattern = 'mod-$modname-view',
                             subpagepattern = NULL
-                          WHERE pagetypepattern = 'blog-view'");
+                          WHERE pagetypepattern = 'mod-$modname-view'");
         }
 
     /// Main savepoint reached
