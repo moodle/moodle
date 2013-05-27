@@ -574,6 +574,32 @@ $CFG->admin = 'admin';
 //                   'verbose' => false
 //               )
 //           )
+//       ),
+//       'Mac-Firefox' => array(
+//           'extensions' => array(
+//               'Behat\MinkExtension\Extension' => array(
+//                   'selenium2' => array(
+//                       'browser' => 'firefox',
+//                       'capabilities' => array(
+//                           'platform' => 'OS X 10.6',
+//                           'version' => 20
+//                       )
+//                   )
+//               )
+//           )
+//       ),
+//       'Mac-Safari' => array(
+//           'extensions' => array(
+//               'Behat\MinkExtension\Extension' => array(
+//                   'selenium2' => array(
+//                       'browser' => 'safari',
+//                       'capabilities' => array(
+//                           'platform' => 'OS X 10.8',
+//                           'version' => 6
+//                       )
+//                   )
+//               )
+//           )
 //       )
 //   );
 //
