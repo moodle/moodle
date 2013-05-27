@@ -85,9 +85,9 @@ class filter_activitynames extends moodle_text_filter {
             $cmid = $this->context->instanceid;
             if ($this->context->contextlevel == CONTEXT_MODULE && isset(self::$activitylist[$cmid])) {
                 // remove filterobjects for the current module
-                $filterslist = array_diff_key(self::$activitylist, array($cmid => 1, $cmid.'-e' => 1));
+                $filterslist = array_values(array_diff_key(self::$activitylist, array($cmid => 1, $cmid.'-e' => 1)));
             } else {
-                $filterslist = self::$activitylist;
+                $filterslist = array_values(self::$activitylist);
             }
         }
 
