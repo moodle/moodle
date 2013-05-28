@@ -180,7 +180,7 @@ class lesson_page_type_matching extends lesson_page {
                 return $result;
             }
             $value = htmlspecialchars_decode($value);
-            $userresponse[] = htmlspecialchars_decode($value);
+            $userresponse[] = $value;
             // Make sure the user's answer exists in question's answer
             if (array_key_exists($id, $answers)) {
                 $answer = $answers[$id];
