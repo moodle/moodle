@@ -509,13 +509,19 @@ function process_person_tag($tagcontents){
 
 
     // Now if the recstatus is 3, we should delete the user if-and-only-if the setting for delete users is turned on
-    // In the "users" table we can do this by setting deleted=1
     if($recstatus==3){
 
         if($imsdeleteusers){ // If we're allowed to delete user records
-            // Make sure their "deleted" field is set to one
-            $DB->set_field('user', 'deleted', 1, array('username'=>$person->username));
-            $this->log_line("Marked user record for user '$person->username' (ID number $person->idnumber) as deleted.");
+            // Do not dare to hack the user.deleted field directly in database!!!
+            if ($user = $DB->get_record('user', array('username'=>$person->username, 'mnethostid'=>$CFG->mnet_localhost_id, 'deleted'=>0))) {
+                if (delete_user($user)) {
+                    $this->log_line("Deleted user '$person->username' (ID number $person->idnumber).");
+                } else {
+                    $this->log_line("Error deleting '$person->username' (ID number $person->idnumber).");
+                }
+            } else {
+                $this->log_line("Can not delete user '$person->username' (ID number $person->idnumber) - user does not exist.");
+            }
         }else{
             $this->log_line("Ignoring deletion request for user '$person->username' (ID number $person->idnumber).");
         }
@@ -534,8 +540,10 @@ function process_person_tag($tagcontents){
             } else {
 
             // If they don't exist and they have a defined username, and $createnewusers == true, we create them.
-            $person->lang = 'manual'; //TODO: this needs more work due tu multiauth changes
-            $person->auth = $CFG->auth;
+            $person->lang = $CFG->lang;
+            $auth = explode(',', $CFG->auth); //TODO: this needs more work due tu multiauth changes, use first auth for now
+            $auth = reset($auth);
+            $person->auth = $auth;
             $person->confirmed = 1;
             $person->timemodified = time();
             $person->mnethostid = $CFG->mnet_localhost_id;
@@ -563,8 +571,8 @@ function process_person_tag($tagcontents){
         } elseif ($createnewusers) {
             $this->log_line("User record already exists for user '$person->username' (ID number $person->idnumber).");
 
-            // Make sure their "deleted" field is set to zero.
-            $DB->set_field('user', 'deleted', 0, array('idnumber'=>$person->idnumber));
+            // It is totally wrong to mess with deleted users flag directly in database!!!
+            // There is no official way to undelete user, sorry..
         }else{
             $this->log_line("No user record found for '$person->username' (ID number $person->idnumber).");
         }
