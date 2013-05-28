@@ -3992,6 +3992,10 @@ class assign {
             return true;
         }
         if ($data = $mform->get_data()) {
+            if (!$this->submissions_open()) {
+                $notices[] = get_string('duedatereached', 'assign');
+                return false;
+            }
             if ($this->get_instance()->teamsubmission) {
                 $submission = $this->get_group_submission($USER->id, 0, true);
             } else {
