@@ -533,7 +533,10 @@ class theme_config {
                 $this->rarrow = '&#x25B6;';
                 $this->larrow = '&#x25C0;';
             }
-            elseif (false !== strpos($uagent, 'Konqueror')) {
+            elseif ((false !== strpos($uagent, 'Konqueror')) 
+                || (false !== strpos($uagent, 'Android')))  {
+                // The fonts on Android don't include the characters required for this to work as expected.
+                // So we use the same ones Konqueror uses.
                 $this->rarrow = '&rarr;';
                 $this->larrow = '&larr;';
             }
