@@ -180,7 +180,7 @@ class lesson_page_type_matching extends lesson_page {
                 return $result;
             }
             $value = htmlspecialchars_decode($value);
-            $userresponse[] = htmlspecialchars_decode($value);
+            $userresponse[] = $value;
             // Make sure the user's answer exists in question's answer
             if (array_key_exists($id, $answers)) {
                 $answer = $answers[$id];
@@ -524,7 +524,7 @@ class lesson_display_answer_form_matching extends moodleform {
                 $responseid = 'response['.$answer->id.']';
                 if ($hasattempt) {
                     $responseid = 'response_'.$answer->id;
-                    $mform->addE lement('hidden', 'response['.$answer->id.']', htmlspecialchars($useranswers[$i]));
+                    $mform->addElement('hidden', 'response['.$answer->id.']', htmlspecialchars($useranswers[$i]));
                     $mform->setType('response['.$answer->id.']', PARAM_TEXT);
                 }
                 $mform->addElement('select', $responseid, format_text($answer->answer,$answer->answerformat,$options), $responseoptions, $disabled);
