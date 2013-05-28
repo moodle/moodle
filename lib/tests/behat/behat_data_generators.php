@@ -26,7 +26,6 @@
 // NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
 
 require_once(__DIR__ . '/../../behat/behat_base.php');
-require_once(__DIR__ . '/../../testing/generator/lib.php');
 
 use Behat\Gherkin\Node\TableNode as TableNode;
 use Behat\Behat\Exception\PendingException as PendingException;
@@ -126,6 +125,9 @@ class behat_data_generators extends behat_base {
      * @param TableNode $data
      */
     public function the_following_exists($elementname, TableNode $data) {
+
+        // Now that we need them require the data generators.
+        require_once(__DIR__ . '/../../testing/generator/lib.php');
 
         if (empty(self::$elements[$elementname])) {
             throw new PendingException($elementname . ' data generator is not implemented');
