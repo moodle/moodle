@@ -94,10 +94,7 @@ if ($ADMIN->fulltree) {
         $settings->add(new admin_setting_heading('enrol_ldap_autocreation_settings', get_string('autocreation_settings', 'enrol_ldap'), ''));
         $options = $yesno;
         $settings->add(new admin_setting_configselect('enrol_ldap/autocreate', get_string('autocreate_key', 'enrol_ldap'), get_string('autocreate', 'enrol_ldap'), 0, $options));
-        if (!during_initial_install()) {
-            $options = make_categories_options();
-            $settings->add(new admin_setting_configselect('enrol_ldap/category', get_string('category_key', 'enrol_ldap'), get_string('category', 'enrol_ldap'), key($options), $options));
-        }
+        $settings->add(new enrol_ldap_admin_setting_category('enrol_ldap/category', get_string('category_key', 'enrol_ldap'), get_string('category', 'enrol_ldap')));
         $settings->add(new admin_setting_configtext_trim_lower('enrol_ldap/template', get_string('template_key', 'enrol_ldap'), get_string('template', 'enrol_ldap'), ''));
 
         //--- course update settings ---
