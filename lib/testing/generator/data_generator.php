@@ -563,10 +563,9 @@ EOD;
      * @param array|stdClass $record data to use to up set the instance.
      * @param array $options options
      * @return stdClass repository instance record
-     * @since 2.6
+     * @since 2.5.1
      */
     public function create_repository($type, $record=null, array $options = null) {
-        global $CFG;
         $generator = $this->get_plugin_generator('repository_'.$type);
         return $generator->create_instance($record, $options);
     }
@@ -578,10 +577,9 @@ EOD;
      * @param array|stdClass $record data to use to up set the instance.
      * @param array $options options
      * @return repository_type object
-     * @since 2.6
+     * @since 2.5.1
      */
     public function create_repository_type($type, $record=null, array $options = null) {
-        global $CFG;
         $generator = $this->get_plugin_generator('repository_'.$type);
         return $generator->create_type($record, $options);
     }
