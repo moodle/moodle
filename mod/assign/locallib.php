@@ -4958,6 +4958,7 @@ class assign {
                 $gradingelement->freeze();
             } else {
                 $mform->addElement('hidden', 'advancedgradinginstanceid', $gradinginstance->get_id());
+                $mform->setType('advancedgradinginstanceid', PARAM_INT);
             }
         } else {
             // Use simple direct grading.
