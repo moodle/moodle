@@ -520,7 +520,8 @@ class gradingform_rubric_controller extends gradingform_controller {
         if (has_capability('moodle/grade:managegradingforms', $page->context)) {
             $rubric .= $output->display_rubric_mapping_explained($this->get_min_max_score());
             $rubric .= $output->display_rubric($criteria, $options, self::DISPLAY_PREVIEW, 'rubric');
-        } else {
+        // ensure we don't display unless show rubric option enabled
+        } else if ( !empty($options['alwaysshowdefinition']) )  {
             $rubric .= $output->display_rubric($criteria, $options, self::DISPLAY_PREVIEW_GRADED, 'rubric');
         }
 
