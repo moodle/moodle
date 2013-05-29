@@ -31,4 +31,4 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['environmentrequireinstall'] = 'повинен бути встановлений і включений';
-$string['environmentrequireversion'] = 'потрібна версія {$a->needed} (дійсна версія {$a->current)}';
+$string['environmentrequireversion'] = 'рекомендується версія {$a->needed}, використовується версія {$a->current}';
