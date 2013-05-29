@@ -369,9 +369,7 @@ class core_course_renderer extends plugin_renderer_base {
         $activities = array(MOD_CLASS_ACTIVITY => array(), MOD_CLASS_RESOURCE => array());
 
         foreach ($modules as $module) {
-            if (!array_key_exists($module->archetype, $activities)) {
-                // System modules cannot be added by user, do not add to dropdown
-            } else if (isset($module->types)) {
+            if (isset($module->types)) {
                 // This module has a subtype
                 // NOTE: this is legacy stuff, module subtypes are very strongly discouraged!!
                 $subtypes = array();
@@ -381,17 +379,28 @@ class core_course_renderer extends plugin_renderer_base {
                 }
 
                 // Sort module subtypes into the list
+                $activityclass = MOD_CLASS_ACTIVITY;
+                if ($module->archetype == MOD_CLASS_RESOURCE) {
+                    $activityclass = MOD_CLASS_RESOURCE;
+                }
                 if (!empty($module->title)) {
                     // This grouping has a name
-                    $activities[$module->archetype][] = array($module->title => $subtypes);
+                    $activities[$activityclass][] = array($module->title => $subtypes);
                 } else {
                     // This grouping does not have a name
-                    $activities[$module->archetype] = array_merge($activities[$module->archetype], $subtypes);
+                    $activities[$activityclass] = array_merge($activities[$activityclass], $subtypes);
                 }
             } else {
                 // This module has no subtypes
+                $activityclass = MOD_CLASS_ACTIVITY;
+                if ($module->archetype == MOD_ARCHETYPE_RESOURCE) {
+                    $activityclass = MOD_CLASS_RESOURCE;
+                } else if ($module->archetype === MOD_ARCHETYPE_SYSTEM) {
+                    // System modules cannot be added by user, do not add to dropdown
+                    continue;
+                }
                 $link = $module->link->out(true, $urlparams);
-                $activities[$module->archetype][$link] = $module->title;
+                $activities[$activityclass][$link] = $module->title;
             }
         }
 
