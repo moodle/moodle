@@ -90,6 +90,7 @@
 
     $PAGE->set_pagetype('site-index');
     $PAGE->set_other_editing_capability('moodle/course:manageactivities');
+    $PAGE->set_other_editing_capability('moodle/course:activityvisibility');
     $PAGE->set_docs_path('');
     $PAGE->set_pagelayout('frontpage');
     $editing = $PAGE->user_is_editing();
