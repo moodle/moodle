@@ -902,9 +902,9 @@ class core_course_external extends external_api {
                                             "users" (int) Include users (default to 0 that is equal to no),
                                             "role_assignments" (int) Include role assignments  (default to 0 that is equal to no),
                                             "comments" (int) Include user comments  (default to 0 that is equal to no),
-                                            "completion_information" (int) Include user course completion information  (default to 0 that is equal to no),
+                                            "userscompletion" (int) Include user course completion information  (default to 0 that is equal to no),
                                             "logs" (int) Include course logs  (default to 0 that is equal to no),
-                                            "histories" (int) Include histories  (default to 0 that is equal to no)'
+                                            "grade_histories" (int) Include histories  (default to 0 that is equal to no)'
                                             ),
                                 'value' => new external_value(PARAM_RAW, 'the value for the option 1 (yes) or 0 (no)'
                             )
@@ -966,9 +966,9 @@ class core_course_external extends external_api {
             'users' => 0,
             'role_assignments' => 0,
             'comments' => 0,
-            'completion_information' => 0,
+            'userscompletion' => 0,
             'logs' => 0,
-            'histories' => 0
+            'grade_histories' => 0
         );
 
         $backupsettings = array();
