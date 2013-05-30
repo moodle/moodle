@@ -440,13 +440,15 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
             }
         },
         /**
-         * Return coords of all drag items except any that are currently being dragged
-         * based on contents of hidden inputs and whether drags are 'infinite'
+         * Determine what drag items need to be shown and
+         * return coords of all drag items except any that are currently being dragged
+         * based on contents of hidden inputs and whether drags are 'infinite' or how many drags should be shown.
          */
         get_coords : function (input) {
             var choiceno = this.get_choiceno_for_node(input);
             var fv = input.get('value');
             var infinite = input.hasClass('infinite');
+            var noofdrags = this.get_noofdrags_for_node(input);
             var dragging = (null !== this.doc.drag_item_being_dragged(choiceno));
             var coords = [];
             if (fv !== '') {
@@ -455,7 +457,8 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
                     coords[coords.length] = this.convert_to_window_xy(coordsstrings[i].split(','));
                 }
             }
-            if (infinite || (!dragging && fv === '')) {
+            var displayeddrags = coords.length + (dragging ? 1 : 0);
+            if (infinite || (displayeddrags < noofdrags)) {
                 coords[coords.length] = this.drag_home_xy(choiceno);
             }
             return coords;
@@ -469,6 +472,9 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
         },
         get_itemno_for_node : function(node) {
             return +this.doc.get_classname_numeric_suffix(node, 'item');
+        },
+        get_noofdrags_for_node : function(node) {
+            return +this.doc.get_classname_numeric_suffix(node, 'noofdrags');
         },
 
         //----------- keyboard accessibility stuff below line ---------------------

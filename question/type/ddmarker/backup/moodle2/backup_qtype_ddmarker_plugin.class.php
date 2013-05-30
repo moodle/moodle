@@ -57,7 +57,7 @@ class backup_qtype_ddmarker_plugin extends backup_qtype_plugin {
         $drags = new backup_nested_element('drags');
 
         $drag = new backup_nested_element('drag', array('id'),
-                                                array('no', 'infinite', 'label'));
+                                                array('no', 'infinite', 'label', 'noofdrags'));
         $drops = new backup_nested_element('drops');
 
         $drop = new backup_nested_element('drop', array('id'),

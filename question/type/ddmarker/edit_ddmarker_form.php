@@ -86,8 +86,12 @@ class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
                                                 array('size'=>30, 'class'=>'tweakcss'));
         $mform->setType('text', PARAM_RAW_TRIMMED);
 
-        $grouparray[] = $mform->createElement('checkbox', 'infinite', ' ',
-                                                        get_string('infinite', 'qtype_ddmarker'));
+        $noofdragoptions = array(0 => get_string('infinite', 'qtype_ddmarker'));
+        foreach (range(1, 6) as $option) {
+            $noofdragoptions[$option] = $option;
+        }
+        $grouparray[] = $mform->createElement('select', 'noofdrags', get_string('noofdrags', 'qtype_ddmarker'), $noofdragoptions);
+
         $draggableimageitem[] = $mform->createElement('group', 'drags',
                                             get_string('marker_n', 'qtype_ddmarker'), $grouparray);
         return $draggableimageitem;
@@ -165,7 +169,11 @@ class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
                 $dragindex = $drag->no -1;
                 $question->drags[$dragindex] = array();
                 $question->drags[$dragindex]['label'] = $drag->label;
-                $question->drags[$dragindex]['infinite'] = $drag->infinite;
+                if ($drag->infinite == 1) {
+                    $question->drags[$dragindex]['noofdrags'] = 0;
+                } else {
+                    $question->drags[$dragindex]['noofdrags'] = $drag->noofdrags;
+                }
                 $dragids[$dragindex] = $drag->id;
             }
             $question->drops = array();

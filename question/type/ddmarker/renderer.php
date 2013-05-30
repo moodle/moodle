@@ -67,6 +67,8 @@ class qtype_ddmarker_renderer extends qtype_ddtoimage_renderer_base {
                              "choice{$choiceno}");
             if ($drag->infinite) {
                 $classes[] = 'infinite';
+            } else {
+                $classes[] = 'dragno'.$drag->noofdrags;
             }
             $targeticonhtml =
                 $OUTPUT->pix_icon('crosshairs', '', $componentname, array('class'=> 'target'));
@@ -75,7 +77,7 @@ class qtype_ddmarker_renderer extends qtype_ddtoimage_renderer_base {
             $markertext = html_writer::tag('span', $drag->text, $markertextattrs);
             $draghomesattrs = array('class'=>join(' ', $classes));
             $draghomes .= html_writer::tag('span', $targeticonhtml.$markertext, $draghomesattrs);
-            $hiddenfields .= $this->hidden_field_choice($qa, $choiceno, $drag->infinite);
+            $hiddenfields .= $this->hidden_field_choice($qa, $choiceno, $drag->infinite, $drag->noofdrags);
         }
 
         $dragitemsclass = 'dragitems';
@@ -131,9 +133,9 @@ class qtype_ddmarker_renderer extends qtype_ddtoimage_renderer_base {
         $output .= html_writer::tag('div', $hiddenfields, array('class'=>'ddform'));
         return $output;
     }
-    protected function hidden_field_choice(question_attempt $qa, $choiceno, $infinite, $value = null) {
+    protected function hidden_field_choice(question_attempt $qa, $choiceno, $infinite, $noofdrags, $value = null) {
         $varname = 'c'.$choiceno;
-        $classes = array('choices', 'choice'.$choiceno);
+        $classes = array('choices', 'choice'.$choiceno, 'noofdrags'.$noofdrags);
         if ($infinite) {
             $classes[] = 'infinite';
         }

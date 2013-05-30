@@ -403,11 +403,13 @@ class qtype_ddmarker_drag_item {
     public $text;
     public $no;
     public $infinite;
+    public $noofdrags;
 
-    public function __construct($label, $no, $infinite) {
+    public function __construct($label, $no, $infinite, $noofdrags) {
         $this->text = $label;
         $this->infinite = $infinite;
         $this->no = $no;
+        $this->noofdrags = $noofdrags;
     }
     public function choice_group() {
         return 1;
