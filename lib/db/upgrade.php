@@ -2139,6 +2139,9 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2013042300.00);
     }
 
+    // Moodle v2.5.0 release upgrade line.
+    // Put any upgrade step following this.
+
     if ($oldversion < 2013051400.01) {
         // Fix incorrect cc-nc url. Unfortunately the license 'plugins' do
         // not give a mechanism to do this.
@@ -2159,10 +2162,6 @@ function xmldb_main_upgrade($oldversion) {
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2013051400.01);
     }
-
-    // Moodle v2.5.0 release upgrade line.
-    // Put any upgrade step following this.
-
 
     return true;
 }
