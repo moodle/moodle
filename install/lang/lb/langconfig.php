@@ -30,5 +30,4 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['environmentrequireinstall'] = 'повинен бути встановлений і включений';
-$string['environmentrequireversion'] = 'рекомендується версія {$a->needed}, використовується версія {$a->current}';
+$string['thislanguage'] = 'Lëtzebuergesch';
