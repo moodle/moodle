@@ -338,7 +338,7 @@ class qtype_multichoice_multi_question extends qtype_multichoice_base {
     public function is_same_response(array $prevresponse, array $newresponse) {
         foreach ($this->order as $key => $notused) {
             $fieldname = $this->field($key);
-            if (!question_utils::arrays_same_at_key($prevresponse, $newresponse, $fieldname)) {
+            if (!question_utils::arrays_same_at_key_integer($prevresponse, $newresponse, $fieldname)) {
                 return false;
             }
         }
