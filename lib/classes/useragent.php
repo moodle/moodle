@@ -368,6 +368,15 @@ class core_useragent {
     }
 
     /**
+     * Checks the user agent is Firefox (of any version).
+     *
+     * @return bool true if firefox
+     */
+    public static function is_firefox() {
+        return self::check_firefox_version();
+    }
+
+    /**
      * Checks the user agent is Firefox based and that the version is equal to or greater than that specified.
      *
      * @param string|int $version A version to check for, returns true if its equal to or greater than that specified.
@@ -391,6 +400,15 @@ class core_useragent {
             }
         }
         return false;
+    }
+
+    /**
+     * Checks the user agent is Gecko based (of any version).
+     *
+     * @return bool true if Gecko based.
+     */
+    public static function is_gecko() {
+        return self::check_gecko_version();
     }
 
     /**
@@ -448,6 +466,15 @@ class core_useragent {
     }
 
     /**
+     * Checks the user agent is IE (of any version).
+     *
+     * @return bool true if internet exporeer
+     */
+    public static function is_ie() {
+        return self::check_ie_version();
+    }
+
+    /**
      * Checks the user agent is IE and that the version is equal to or greater than that specified.
      *
      * @param string|int $version A version to check for, returns true if its equal to or greater than that specified.
@@ -485,6 +512,15 @@ class core_useragent {
     }
 
     /**
+     * Checks the user agent is Opera (of any version).
+     *
+     * @return bool true if opera
+     */
+    public static function is_opera() {
+        return self::check_opera_version();
+    }
+
+    /**
      * Checks the user agent is Opera and that the version is equal to or greater than that specified.
      *
      * @param string|int $version A version to check for, returns true if its equal to or greater than that specified.
@@ -518,6 +554,15 @@ class core_useragent {
     }
 
     /**
+     * Checks the user agent is webkit based
+     *
+     * @return bool true if webkit
+     */
+    public static function is_webkit() {
+        return self::check_webkit_version();
+    }
+
+    /**
      * Checks the user agent is Webkit based and that the version is equal to or greater than that specified.
      *
      * @param string|int $version A version to check for, returns true if its equal to or greater than that specified.
@@ -541,6 +586,15 @@ class core_useragent {
             }
         }
         return false;
+    }
+
+    /**
+     * Checks the user agent is Safari
+     *
+     * @return bool true if safari
+     */
+    public static function is_safari() {
+        return self::check_safari_version();
     }
 
     /**
@@ -595,6 +649,15 @@ class core_useragent {
     }
 
     /**
+     * Checks the user agent is Chrome
+     *
+     * @return bool true if chrome
+     */
+    public static function is_chrome() {
+        return self::check_chrome_version();
+    }
+
+    /**
      * Checks the user agent is Chrome based and that the version is equal to or greater than that specified.
      *
      * @param string|int $version A version to check for, returns true if its equal to or greater than that specified.
@@ -621,6 +684,15 @@ class core_useragent {
     }
 
     /**
+     * Checks the user agent is webkit android based.
+     *
+     * @return bool true if webkit based and on Android
+     */
+    public static function is_webkit_android() {
+        return self::check_webkit_android_version();
+    }
+
+    /**
      * Checks the user agent is Webkit based and on Android and that the version is equal to or greater than that specified.
      *
      * @param string|int $version A version to check for, returns true if its equal to or greater than that specified.
@@ -644,6 +716,15 @@ class core_useragent {
             }
         }
         return false;
+    }
+
+    /**
+     * Checks the user agent is Safari on iOS
+     *
+     * @return bool true if Safari on iOS
+     */
+    public static function is_safari_ios() {
+        return self::check_safari_ios_version();
     }
 
     /**
@@ -694,7 +775,7 @@ class core_useragent {
      */
     public static function get_browser_version_classes() {
         $classes = array();
-        if (self::check_ie_version('0')) {
+        if (self::is_ie()) {
             $classes[] = 'ie';
             for ($i = 12; $i >= 6; $i--) {
                 if (self::check_ie_version($i)) {
@@ -702,19 +783,19 @@ class core_useragent {
                     break;
                 }
             }
-        } else if (self::check_firefox_version() || self::check_gecko_version() || self::check_camino_version()) {
+        } else if (self::is_firefox() || self::is_gecko() || self::check_camino_version()) {
             $classes[] = 'gecko';
             if (preg_match('/rv\:([1-2])\.([0-9])/', self::get_user_agent_string(), $matches)) {
                 $classes[] = "gecko{$matches[1]}{$matches[2]}";
             }
-        } else if (self::check_webkit_version()) {
+        } else if (self::is_webkit()) {
             $classes[] = 'safari';
-            if (self::check_safari_ios_version()) {
+            if (self::is_safari_ios()) {
                 $classes[] = 'ios';
-            } else if (self::check_webkit_android_version()) {
+            } else if (self::is_webkit_android()) {
                 $classes[] = 'android';
             }
-        } else if (self::check_opera_version()) {
+        } else if (self::is_opera()) {
             $classes[] = 'opera';
         }
         return $classes;
@@ -732,13 +813,13 @@ class core_useragent {
             if ($instance->useragent === false) {
                 // Can't be sure, just say no.
                 $instance->supportssvg = false;
-            } else if (self::check_ie_version() and !self::check_ie_version('9')) {
+            } else if (self::is_ie() and !self::check_ie_version('9')) {
                 // IE < 9 doesn't support SVG. Say no.
                 $instance->supportssvg = false;
             } else if (preg_match('#Android +[0-2]\.#', $instance->useragent)) {
                 // Android < 3 doesn't support SVG. Say no.
                 $instance->supportssvg = false;
-            } else if (self::check_opera_version()) {
+            } else if (self::is_opera()) {
                 // Opera 12 still does not support SVG well enough. Say no.
                 $instance->supportssvg = false;
             } else {
