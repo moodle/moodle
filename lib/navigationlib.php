@@ -891,6 +891,7 @@ class navigation_node_collection implements IteratorAggregate {
             foreach ($this->collection as $colkey => $node) {
                 if ($node->key === $key && $node->type == $type) {
                     unset($this->collection[$colkey]);
+                    $this->collection = array_values($this->collection);
                     break;
                 }
             }
