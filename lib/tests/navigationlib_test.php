@@ -258,9 +258,19 @@ class navigation_node_testcase extends basic_testcase {
         $this->assertFalse($this->node->get('remove1'));
         $this->assertFalse(in_array('remove1', $this->node->get_children_key_list(), true));
 
+        // Make sure that we can insert element after removal
+        $insertelement = navigation_node::create('extra element 4', null, navigation_node::TYPE_CUSTOM, null, 'element4');
+        $this->node->add_node($insertelement, 'remove2');
+        $this->assertNotEmpty($this->node->get('element4'));
+
         // Remove more elements
         $this->assertTrue($this->node->get('remove2')->remove());
         $this->assertFalse($this->node->get('remove2'));
+
+        // Make sure that we can add element after removal
+        $this->node->add('extra element 5', null, navigation_node::TYPE_CUSTOM, null, 'element5');
+        $this->assertNotEmpty($this->node->get('element5'));
+
         $this->assertTrue($remove2->get('remove3')->remove());
 
         $this->assertFalse($this->node->get('remove1'));
