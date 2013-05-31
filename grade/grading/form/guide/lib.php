@@ -501,10 +501,16 @@ class gradingform_guide_controller extends gradingform_controller {
             throw new coding_exception('It is the caller\'s responsibility to make sure that the form is actually defined');
         }
 
-        $output = $this->get_renderer($page);
+        // Check if current user is able to see preview
+        $options = $this->get_options();
+        if (empty($options['alwaysshowdefinition']) && !has_capability('moodle/grade:managegradingforms', $page->context))  {
+            return '';
+        }
+
         $criteria = $this->definition->guide_criteria;
         $comments = $this->definition->guide_comment;
-        $options = $this->get_options();
+        $output = $this->get_renderer($page);
+
         $guide = '';
         $guide .= $output->box($this->get_formatted_description(), 'gradingform_guide-description');
         if (has_capability('moodle/grade:managegradingforms', $page->context)) {
