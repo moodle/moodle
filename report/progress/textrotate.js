@@ -48,7 +48,16 @@ function textrotate_make_svg(el)
   el.parentNode.removeChild(el);
 }
 
+function browser_supports_svg() {
+    return document.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1");
+}
+
 function textrotate_init() {
+    if (!browser_supports_svg()) {
+        // Feature detect, else bail.
+        return;
+    }
+
 YUI().use('yui2-dom', function(Y) {
   var elements= Y.YUI2.util.Dom.getElementsByClassName('completion-activityname', 'span');
   for(var i=0;i<elements.length;i++)
