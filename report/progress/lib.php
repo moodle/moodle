@@ -44,7 +44,7 @@ function report_progress_extend_navigation_course($navigation, $course, $context
     }
 
     $completion = new completion_info($course);
-    $showonnavigation = ($showonnavigation && $completion->is_enabled() && count($completion->get_activities())>0);
+    $showonnavigation = ($showonnavigation && $completion->is_enabled() && $completion->has_activities());
     if ($showonnavigation) {
         $url = new moodle_url('/report/progress/index.php', array('course'=>$course->id));
         $navigation->add(get_string('pluginname','report_progress'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/report', ''));
