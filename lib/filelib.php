@@ -1955,7 +1955,7 @@ function readfile_accel($file, $mimetype, $accelerate) {
     header('Last-Modified: '. gmdate('D, d M Y H:i:s', $lastmodified) .' GMT');
 
     if (is_object($file)) {
-        header('ETag: ' . $file->get_contenthash());
+        header('Etag: "' . $file->get_contenthash() . '"');
         if (isset($_SERVER['HTTP_IF_NONE_MATCH']) and $_SERVER['HTTP_IF_NONE_MATCH'] === $file->get_contenthash()) {
             header('HTTP/1.1 304 Not Modified');
             return;
