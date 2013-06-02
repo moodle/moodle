@@ -138,8 +138,8 @@ class theme_bootstrapbase_core_renderer extends core_renderer {
             } else {
                 $url = '#cm_submenu_'.$submenucount;
             }
-            $content .= html_writer::start_tag('a', array('href'=>$url, 'class'=>'dropdown-toggle', 'data-toggle'=>'dropdown'));
-            $content .= $menunode->get_title();
+            $content .= html_writer::start_tag('a', array('href'=>$url, 'class'=>'dropdown-toggle', 'data-toggle'=>'dropdown', 'title'=>$menunode->get_title()));
+            $content .= $menunode->get_text();
             if ($level == 1) {
                 $content .= '<b class="caret"></b>';
             }
