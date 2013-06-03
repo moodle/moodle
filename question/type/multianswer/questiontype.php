@@ -262,9 +262,9 @@ define('ANSWER_ALTERNATIVE_REGEX_FEEDBACK', 5);
 // NUMBER_FORMATED_ALTERNATIVE_ANSWER_REGEX is used
 // for identifying numerical answers in ANSWER_ALTERNATIVE_REGEX_ANSWER.
 define('NUMBER_REGEX',
-        '-?(([0-9]+[.,]?[0-9]*|[.,][0-9]+)([eE][-+]?[0-9]+)?)');
+        '-?(([0-9]+[., ]?[., 0-9]*|[., ][0-9]+)([eE][-+]?[0-9]+)?)');
 define('NUMERICAL_ALTERNATIVE_REGEX',
-        '^(' . NUMBER_REGEX . ')(:' . NUMBER_REGEX . ')?$');
+        '^(' . NUMBER_REGEX . ')([ ]*:' . NUMBER_REGEX . ')?$');
 
 // Parenthesis positions for NUMERICAL_FORMATED_ALTERNATIVE_ANSWER_REGEX.
 define('NUMERICAL_CORRECT_ANSWER', 1);
