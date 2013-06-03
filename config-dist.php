@@ -554,6 +554,11 @@ $CFG->admin = 'admin';
 //=========================================================================
 // 11. BEHAT SUPPORT
 //=========================================================================
+// Behat needs a separate data directory and unique database prefix:
+//
+// $CFG->behat_prefix = 'bht_';
+// $CFG->behat_dataroot = '/home/example/bht_moodledata';
+//
 // Behat uses http://localhost:8000 as default URL to run
 // the acceptance tests, you can override this value.
 // Example:
