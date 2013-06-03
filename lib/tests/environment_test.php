@@ -39,7 +39,7 @@ class environment_testcase extends advanced_testcase {
 
         $this->assertNotEmpty($envstatus);
         foreach ($environment_results as $environment_result) {
-            $this->assertTrue($environment_result->getStatus(), "Problem detected in environment ($environment_result->part:$environment_result->part), fix all warnings and errors!");
+            $this->assertTrue($environment_result->getStatus(), "Problem detected in environment ($environment_result->part:$environment_result->info), fix all warnings and errors!");
         }
     }
 }
