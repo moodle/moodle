@@ -504,15 +504,19 @@ class gradingform_rubric_controller extends gradingform_controller {
             throw new coding_exception('It is the caller\'s responsibility to make sure that the form is actually defined');
         }
 
-        $output = $this->get_renderer($page);
         $criteria = $this->definition->rubric_criteria;
         $options = $this->get_options();
         $rubric = '';
         if (has_capability('moodle/grade:managegradingforms', $page->context)) {
             $showdescription = true;
         } else {
+            if (empty($options['alwaysshowdefinition']))  {
+                // ensure we don't display unless show rubric option enabled
+                return '';
+            }
             $showdescription = $options['showdescriptionstudent'];
         }
+        $output = $this->get_renderer($page);
         if ($showdescription) {
             $rubric .= $output->box($this->get_formatted_description(), 'gradingform_rubric-description');
         }
