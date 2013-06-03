@@ -130,6 +130,16 @@ class course_edit_form extends moodleform {
         if (!isset($max) || !is_numeric($max)) {
             $max = 52;
         }
+        /*
+         * Increase the number of sections combo box values if the user has increased the number of sections
+         * using the icon on the course page beyond course 'maxsections' or course 'maxsections' has been
+         * reduced below the number of sections already set for the course on the site administration course
+         * defaults page.  This is so that the number of sections is not reduced leaving unintended orphaned
+         * activities / resources.
+         */
+        if (isset($course->numsections) && $course->numsections > $max) {
+            $max = $course->numsections;
+        }
         for ($i = 0; $i <= $max; $i++) {
             $sectionmenu[$i] = "$i";
         }
