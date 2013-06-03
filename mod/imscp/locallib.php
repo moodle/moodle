@@ -61,10 +61,9 @@ function imscp_print_content($imscp, $cm, $course) {
 function imscp_htmllize_item($item, $imscp, $cm) {
     global $CFG;
 
-    if (strpos($item['href'], 'http://') === 0) {
+    if (preg_match('|^https?://|', $item['href'])) {
         $url = $item['href'];
-    }
-    else {
+    } else {
         $context = context_module::instance($cm->id);
         $urlbase = "$CFG->wwwroot/pluginfile.php";
         $path = '/'.$context->id.'/mod_imscp/content/'.$imscp->revision.'/'.$item['href'];
