@@ -60,6 +60,8 @@ class navigation_node_testcase extends basic_testcase {
 
         $this->node = new navigation_node('Test Node');
         $this->node->type = navigation_node::TYPE_SYSTEM;
+        // We add the first child without key. This way we make sure all keys search by comparision is performed using ===
+        $this->node->add('first child without key', null, navigation_node::TYPE_CUSTOM);
         $demo1 = $this->node->add('demo1', $this->inactiveurl, navigation_node::TYPE_COURSE, null, 'demo1', new pix_icon('i/course', ''));
         $demo2 = $this->node->add('demo2', $this->inactiveurl, navigation_node::TYPE_COURSE, null, 'demo2', new pix_icon('i/course', ''));
         $demo3 = $this->node->add('demo3', $this->inactiveurl, navigation_node::TYPE_CATEGORY, null, 'demo3',new pix_icon('i/course', ''));
@@ -251,8 +253,24 @@ class navigation_node_testcase extends basic_testcase {
         $this->assertInstanceOf('navigation_node', $this->node->get('remove2'));
         $this->assertInstanceOf('navigation_node', $remove2->get('remove3'));
 
+        // Remove element and make sure this is no longer a child.
         $this->assertTrue($remove1->remove());
+        $this->assertFalse($this->node->get('remove1'));
+        $this->assertFalse(in_array('remove1', $this->node->get_children_key_list(), true));
+
+        // Make sure that we can insert element after removal
+        $insertelement = navigation_node::create('extra element 4', null, navigation_node::TYPE_CUSTOM, null, 'element4');
+        $this->node->add_node($insertelement, 'remove2');
+        $this->assertNotEmpty($this->node->get('element4'));
+
+        // Remove more elements
         $this->assertTrue($this->node->get('remove2')->remove());
+        $this->assertFalse($this->node->get('remove2'));
+
+        // Make sure that we can add element after removal
+        $this->node->add('extra element 5', null, navigation_node::TYPE_CUSTOM, null, 'element5');
+        $this->assertNotEmpty($this->node->get('element5'));
+
         $this->assertTrue($remove2->get('remove3')->remove());
 
         $this->assertFalse($this->node->get('remove1'));
