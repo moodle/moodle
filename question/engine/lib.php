@@ -757,16 +757,16 @@ abstract class question_utils {
     public static function arrays_same_at_key_integer(
             array $array1, array $array2, $key) {
         if (array_key_exists($key, $array1)) {
-            $value1 = $array1[$key];
+            $value1 = (int) $array1[$key];
         } else {
             $value1 = 0;
         }
         if (array_key_exists($key, $array2)) {
-            $value2 = $array2[$key];
+            $value2 = (int) $array2[$key];
         } else {
             $value2 = 0;
         }
-        return ((integer) $value1) === ((integer) $value2);
+        return $value1 === $value2;
     }
 
     private static $units     = array('', 'i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii', 'viii', 'ix');
