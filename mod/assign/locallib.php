@@ -2509,7 +2509,8 @@ class assign {
                                                                   array('cm'=>$this->get_course_module()->id,
                                                                         'submissiondrafts'=>$this->get_instance()->submissiondrafts,
                                                                         'duedate'=>$this->get_instance()->duedate,
-                                                                        'feedbackplugins'=>$this->get_feedback_plugins()),
+                                                                        'feedbackplugins'=>$this->get_feedback_plugins(),
+                                                                        'context'=>$this->get_context()),
                                                                   'post', '',
                                                                   array('class'=>'gradingbatchoperationsform'));
 
@@ -2762,7 +2763,8 @@ class assign {
                                                               array('cm'=>$this->get_course_module()->id,
                                                                     'submissiondrafts'=>$this->get_instance()->submissiondrafts,
                                                                     'duedate'=>$this->get_instance()->duedate,
-                                                                    'feedbackplugins'=>$this->get_feedback_plugins()),
+                                                                    'feedbackplugins'=>$this->get_feedback_plugins(),
+                                                                    'context'=>$this->get_context()),
                                                               'post',
                                                               '',
                                                               array('class'=>'gradingbatchoperationsform'));

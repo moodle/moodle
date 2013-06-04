@@ -52,7 +52,7 @@ class mod_assign_grading_batch_operations_form extends moodleform {
         if ($instance['submissiondrafts']) {
             $options['reverttodraft'] = get_string('reverttodraft', 'assign');
         }
-        if ($instance['duedate']) {
+        if ($instance['duedate'] && has_capability('mod/assign:grantextension', $instance['context'])) {
             $options['grantextension'] = get_string('grantextension', 'assign');
         }
 
