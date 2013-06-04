@@ -671,7 +671,15 @@ class core_course_external_testcase extends externallib_advanced_testcase {
      * Test update_courses
      */
     public function test_update_courses() {
-        global $DB, $CFG, $USER;
+        global $DB, $CFG, $USER, $COURSE;
+
+        // Get current $COURSE to be able to restore it later (defaults to $SITE). We need this
+        // trick because we are both updating and getting (for testing) course information
+        // in the same request and core_course_external::update_courses()
+        // is overwriting $COURSE all over the time with OLD values, so later
+        // use of get_course() fetches those OLD values instead of the updated ones.
+        // See MDL-39723 for more info.
+        $origcourse = clone($COURSE);
 
         $this->resetAfterTest(true);
 
@@ -724,6 +732,7 @@ class core_course_external_testcase extends externallib_advanced_testcase {
         $courses = array($course1, $course2);
 
         $updatedcoursewarnings = core_course_external::update_courses($courses);
+        $COURSE = $origcourse; // Restore $COURSE. Instead of using the OLD one set by the previous line.
 
         // Check that right number of courses were created.
         $this->assertEquals(0, count($updatedcoursewarnings['warnings']));
