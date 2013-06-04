@@ -3906,10 +3906,11 @@ class settings_navigation extends navigation_node {
                 }
             } else {
                 $canviewusercourse = has_capability('moodle/user:viewdetails', $coursecontext);
-                $canaccessallgroups = has_capability('moodle/site:accessallgroups', $coursecontext);
-                if ((!$canviewusercourse && !$canviewuser) || !can_access_course($course, $user->id)) {
+                $userisenrolled = is_enrolled($coursecontext, $user->id);
+                if ((!$canviewusercourse && !$canviewuser) || !$userisenrolled) {
                     return false;
                 }
+                $canaccessallgroups = has_capability('moodle/site:accessallgroups', $coursecontext);
                 if (!$canaccessallgroups && groups_get_course_groupmode($course) == SEPARATEGROUPS) {
                     // If groups are in use, make sure we can see that group
                     return false;
