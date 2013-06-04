@@ -123,6 +123,11 @@
     $PAGE->set_pagelayout('course');
     $PAGE->set_pagetype('course-view-' . $course->format);
     $PAGE->set_other_editing_capability('moodle/course:manageactivities');
+    $PAGE->set_other_editing_capability('moodle/course:activityvisibility');
+    if (course_format_uses_sections($course->format)) {
+        $PAGE->set_other_editing_capability('moodle/course:sectionvisibility');
+        $PAGE->set_other_editing_capability('moodle/course:movesections');
+    }
 
     // Preload course format renderer before output starts.
     // This is a little hacky but necessary since

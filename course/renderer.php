@@ -72,11 +72,11 @@ class core_course_renderer extends plugin_renderer_base {
                 $this->page->course->id == SITEID ||
                 !$this->page->user_is_editing() ||
                 !($context = context_course::instance($this->page->course->id)) ||
-                !has_capability('moodle/course:update', $context) ||
+                !has_capability('moodle/course:manageactivities', $context) ||
                 !course_ajax_enabled($this->page->course) ||
                 !($coursenode = $this->page->settingsnav->find('courseadmin', navigation_node::TYPE_COURSE)) ||
-                !$coursenode->get('editsettings')) {
-            // too late or we are on site page or we could not find the course settings node
+                !($turneditingnode = $coursenode->get('turneditingonoff'))) {
+            // too late or we are on site page or we could not find the adjacent nodes in course settings menu
             // or we are not allowed to edit
             return;
         }
@@ -97,8 +97,13 @@ class core_course_renderer extends plugin_renderer_base {
             $modchoosertogglestring = get_string('modchooserenable', 'moodle');
             $modchoosertoggleurl->param('modchooser', 'on');
         }
-        $modchoosertoggle = navigation_node::create($modchoosertogglestring, $modchoosertoggleurl, navigation_node::TYPE_SETTING);
-        $coursenode->add_node($modchoosertoggle, 'editsettings');
+        $modchoosertoggle = navigation_node::create($modchoosertogglestring, $modchoosertoggleurl, navigation_node::TYPE_SETTING, null, 'modchoosertoggle');
+
+        // Insert the modchoosertoggle after the settings node 'turneditingonoff' (navigation_node only has function to insert before, so we insert before and then swap).
+        $coursenode->add_node($modchoosertoggle, 'turneditingonoff');
+        $turneditingnode->remove();
+        $coursenode->add_node($turneditingnode, 'modchoosertoggle');
+
         $modchoosertoggle->add_class('modchoosertoggle');
         $modchoosertoggle->add_class('visibleifjs');
         user_preference_allow_ajax_update('usemodchooser', PARAM_BOOL);
