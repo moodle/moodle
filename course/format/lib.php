@@ -235,7 +235,7 @@ abstract class format_base {
             return null;
         }
         if ($this->course === false) {
-            $this->course = $DB->get_record('course', array('id' => $this->courseid));
+            $this->course = get_course($this->courseid);
             $options = $this->get_format_options();
             foreach ($options as $optionname => $optionvalue) {
                 if (!isset($this->course->$optionname)) {

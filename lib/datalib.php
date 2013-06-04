@@ -557,6 +557,30 @@ function get_site() {
 }
 
 /**
+ * Gets a course object from database. If the course id corresponds to an
+ * already-loaded $COURSE or $SITE object, then the loaded object will be used,
+ * saving a database query.
+ *
+ * If it reuses an existing object, by default the object will be cloned. This
+ * means you can modify the object safely without affecting other code.
+ *
+ * @param int $courseid Course id
+ * @param bool $clone If true (default), makes a clone of the record
+ * @return stdClass A course object
+ * @throws dml_exception If not found in database
+ */
+function get_course($courseid, $clone = true) {
+    global $DB, $COURSE, $SITE;
+    if (!empty($COURSE->id) && $COURSE->id == $courseid) {
+        return $clone ? clone($COURSE) : $COURSE;
+    } else if (!empty($SITE->id) && $SITE->id == $courseid) {
+        return $clone ? clone($SITE) : $SITE;
+    } else {
+        return $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+    }
+}
+
+/**
  * Returns list of courses, for whole site, or category
  *
  * Returns list of courses, for whole site, or category
