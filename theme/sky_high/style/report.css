@@ -1,5 +1,8 @@
 /** Report layout **/
 
+.pagelayout-report #page {
+    max-width: 1664px;
+}
 #report-wrapper {
     background: #fff;
     margin: 20px 2% 0;
