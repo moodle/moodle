@@ -52,7 +52,7 @@ class block_badges extends block_base {
         return array(
                 'admin' => false,
                 'site-index' => true,
-                'course-view' => false,
+                'course-view' => true,
                 'mod' => false,
                 'my' => true
         );
@@ -88,8 +88,16 @@ class block_badges extends block_base {
 
         if (empty($CFG->enablebadges)) {
             $this->content->text .= get_string('badgesdisabled', 'badges');
-        } else if ($badges = badges_get_user_badges($USER->id, null, 0, $this->config->numberofbadges)) {
-            $output = $PAGE->get_renderer('core', 'badges');
+            return $this->content;
+        }
+
+        $courseid = $this->page->course->id;
+        if ($courseid == SITEID) {
+            $courseid = null;
+        }
+
+        if ($badges = badges_get_user_badges($USER->id, $courseid, 0, $this->config->numberofbadges)) {
+            $output = $this->page->get_renderer('core', 'badges');
             $this->content->text = $output->print_badges_list($badges, $USER->id, true);
         } else {
             $this->content->text .= get_string('nothingtodisplay', 'block_badges');
