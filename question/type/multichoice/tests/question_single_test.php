@@ -15,14 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Unit tests for the multiple choice question definition classes.
+ * Unit tests for the multiple choice, single response question definition classes.
  *
- * @package    qtype
- * @subpackage multichoice
- * @copyright  2009 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   qtype_multichoice
+ * @copyright 2009 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -31,10 +29,10 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
 
 
 /**
- * Unit tests for the multiple choice, multiple response question definition class.
+ * Unit tests for the multiple choice, single response question definition class.
  *
- * @copyright  2009 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2009 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_multichoice_single_question_test extends advanced_testcase {
 
@@ -57,6 +55,31 @@ class qtype_multichoice_single_question_test extends advanced_testcase {
         $this->assertFalse($question->is_gradable_response(array()));
         $this->assertTrue($question->is_gradable_response(array('answer' => '0')));
         $this->assertTrue($question->is_gradable_response(array('answer' => '2')));
+    }
+
+    public function test_is_same_response() {
+        $question = test_question_maker::make_a_multichoice_single_question();
+        $question->start_attempt(new question_attempt_step(), 1);
+
+        $this->assertTrue($question->is_same_response(
+                array(),
+                array()));
+
+        $this->assertFalse($question->is_same_response(
+                array(),
+                array('answer' => '0')));
+
+        $this->assertTrue($question->is_same_response(
+                array('answer' => '0'),
+                array('answer' => '0')));
+
+        $this->assertFalse($question->is_same_response(
+                array('answer' => '0'),
+                array('answer' => '1')));
+
+        $this->assertTrue($question->is_same_response(
+                array('answer' => '2'),
+                array('answer' => '2')));
     }
 
     public function test_grading() {
@@ -149,108 +172,5 @@ class qtype_multichoice_single_question_test extends advanced_testcase {
                     <p> XXX <img src='http://example.com/pic.png' alt='Graph' /> </p> "));
         $this->assertEquals('Frog', $mc->make_html_inline('<p>Frog</p><p></p>'));
         $this->assertEquals('Frog<br />†', $mc->make_html_inline('<p>Frog</p><p>†</p>'));
-    }
-}
-
-
-/**
- * Unit tests for the multiple choice, single response question definition class.
- *
- * @copyright  2009 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class qtype_multichoice_multi_question_test extends advanced_testcase {
-
-    public function test_get_expected_data() {
-        $question = test_question_maker::make_a_multichoice_multi_question();
-        $question->start_attempt(new question_attempt_step(), 1);
-
-        $this->assertEquals(array('choice0' => PARAM_BOOL, 'choice1' => PARAM_BOOL,
-                'choice2' => PARAM_BOOL, 'choice3' => PARAM_BOOL), $question->get_expected_data());
-    }
-
-    public function test_is_complete_response() {
-        $question = test_question_maker::make_a_multichoice_multi_question();
-        $question->start_attempt(new question_attempt_step(), 1);
-
-        $this->assertFalse($question->is_complete_response(array()));
-        $this->assertFalse($question->is_complete_response(
-                array('choice0' => '0', 'choice1' => '0', 'choice2' => '0', 'choice3' => '0')));
-        $this->assertTrue($question->is_complete_response(array('choice1' => '1')));
-        $this->assertTrue($question->is_complete_response(
-                array('choice0' => '1', 'choice1' => '1', 'choice2' => '1', 'choice3' => '1')));
-    }
-
-    public function test_is_gradable_response() {
-        $question = test_question_maker::make_a_multichoice_multi_question();
-        $question->start_attempt(new question_attempt_step(), 1);
-
-        $this->assertFalse($question->is_gradable_response(array()));
-        $this->assertFalse($question->is_gradable_response(
-                array('choice0' => '0', 'choice1' => '0', 'choice2' => '0', 'choice3' => '0')));
-        $this->assertTrue($question->is_gradable_response(array('choice1' => '1')));
-        $this->assertTrue($question->is_gradable_response(
-                array('choice0' => '1', 'choice1' => '1', 'choice2' => '1', 'choice3' => '1')));
-    }
-
-    public function test_grading() {
-        $question = test_question_maker::make_a_multichoice_multi_question();
-        $question->shuffleanswers = false;
-        $question->start_attempt(new question_attempt_step(), 1);
-
-        $this->assertEquals(array(1, question_state::$gradedright),
-                $question->grade_response(array('choice0' => '1', 'choice2' => '1')));
-        $this->assertEquals(array(0.5, question_state::$gradedpartial),
-                $question->grade_response(array('choice0' => '1')));
-        $this->assertEquals(array(0, question_state::$gradedwrong),
-                $question->grade_response(
-                        array('choice0' => '1', 'choice1' => '1', 'choice2' => '1')));
-        $this->assertEquals(array(0, question_state::$gradedwrong),
-                $question->grade_response(array('choice1' => '1')));
-    }
-
-    public function test_get_correct_response() {
-        $question = test_question_maker::make_a_multichoice_multi_question();
-        $question->shuffleanswers = false;
-        $question->start_attempt(new question_attempt_step(), 1);
-
-        $this->assertEquals(array('choice0' => '1', 'choice2' => '1'),
-                $question->get_correct_response());
-    }
-
-    public function test_get_question_summary() {
-        $mc = test_question_maker::make_a_multichoice_single_question();
-        $mc->start_attempt(new question_attempt_step(), 1);
-
-        $qsummary = $mc->get_question_summary();
-
-        $this->assertRegExp('/' . preg_quote($mc->questiontext, '/') . '/', $qsummary);
-        foreach ($mc->answers as $answer) {
-            $this->assertRegExp('/' . preg_quote($answer->answer, '/') . '/', $qsummary);
-        }
-    }
-
-    public function test_summarise_response() {
-        $mc = test_question_maker::make_a_multichoice_multi_question();
-        $mc->shuffleanswers = false;
-        $mc->start_attempt(new question_attempt_step(), 1);
-
-        $summary = $mc->summarise_response(array('choice1' => 1, 'choice2' => 1),
-                test_question_maker::get_a_qa($mc));
-
-        $this->assertEquals('B; C', $summary);
-    }
-
-    public function test_classify_response() {
-        $mc = test_question_maker::make_a_multichoice_multi_question();
-        $mc->shuffleanswers = false;
-        $mc->start_attempt(new question_attempt_step(), 1);
-
-        $this->assertEquals(array(
-                    13 => new question_classified_response(13, 'A', 0.5),
-                    14 => new question_classified_response(14, 'B', -1.0),
-                ), $mc->classify_response(array('choice0' => 1, 'choice1' => 1)));
-
-        $this->assertEquals(array(), $mc->classify_response(array()));
     }
 }
