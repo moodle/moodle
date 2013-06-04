@@ -2190,5 +2190,19 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2013061700.00);
     }
 
+    if ($oldversion < 2013062700.01) {
+
+        // Remove orphan repository instances.
+        $sql = 'SELECT contextid FROM {repository_instances} ri
+                WHERE NOT EXISTS (
+                    SELECT id FROM {context} c
+                        WHERE c.id = ri.contextid)';
+        $ids = $DB->get_fieldset_sql($sql);
+        $DB->delete_records_list('repository_instances', 'contextid', $ids);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2013062700.01);
+    }
+
     return true;
 }
