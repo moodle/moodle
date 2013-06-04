@@ -12,13 +12,16 @@
     text-align: center;
 }
 
+.btn-lineup {
+    margin: 0 0 10px 5px;
+}
 input[name="searchwikicontent"] + input[type="submit"],
 select + input[type="submit"],
 input[type="text"] + input[type="button"],
 input[type="password"] + input[type="submit"],
 input[type="text"] + button,
 input[type="text"] + input[type="submit"] {
-    margin: 0 0 10px 5px;
+    .btn-lineup
 }
 p.arrow_button {
     margin-top: 5em;
@@ -44,9 +47,17 @@ button,
 input.form-submit,
 input[type="button"],
 input[type="submit"],
-input[type="reset"],
+input[type="reset"]
 {
     .btn
+}
+button,
+input.form-submit,
+input[type="button"],
+input[type="submit"],
+input[type="reset"]
+{
+    .btn-lineup
 }
 button.yui3-button.closebutton,
 button.yui3-button.closebutton:hover {
