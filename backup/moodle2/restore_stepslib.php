@@ -1617,6 +1617,29 @@ class restore_ras_and_caps_structure_step extends restore_structure_step {
 }
 
 /**
+ * If no instances yet add default enrol methods the same way as when creating new course in UI.
+ */
+class restore_default_enrolments_step extends restore_execution_step {
+    public function define_execution() {
+        global $DB;
+
+        $course = $DB->get_record('course', array('id'=>$this->get_courseid()), '*', MUST_EXIST);
+
+        if ($DB->record_exists('enrol', array('courseid'=>$this->get_courseid(), 'enrol'=>'manual'))) {
+            // Something already added instances, do not add default instances.
+            $plugins = enrol_get_plugins(true);
+            foreach ($plugins as $plugin) {
+                $plugin->restore_sync_course($course);
+            }
+
+        } else {
+            // Looks like a newly created course.
+            enrol_course_updated(true, $course, null);
+        }
+    }
+}
+
+/**
  * This structure steps restores the enrol plugins and their underlying
  * enrolments, performing all the mappings and/or movements required
  */
