@@ -111,6 +111,7 @@ $string['groupnameexists'] = 'The group name \'{$a}\' already exists in this cou
 $string['groupnotamember'] = 'Sorry, you are not a member of that group';
 $string['groups'] = 'Groups';
 $string['groupscount'] = 'Groups ({$a})';
+$string['groupsettingsheader'] = 'Groups';
 $string['groupsgroupings'] = 'Groups &amp; groupings';
 $string['groupsinselectedgrouping'] = 'Groups in:';
 $string['groupsnone'] = 'No groups';
