@@ -124,11 +124,11 @@
 
     $PAGE->set_pagelayout('course');
     $PAGE->set_pagetype('course-view-' . $course->format);
+    $PAGE->set_other_editing_capability('moodle/course:update');
     $PAGE->set_other_editing_capability('moodle/course:manageactivities');
     $PAGE->set_other_editing_capability('moodle/course:activityvisibility');
     if (course_format_uses_sections($course->format)) {
         $PAGE->set_other_editing_capability('moodle/course:sectionvisibility');
-        $PAGE->set_other_editing_capability('moodle/course:movesections');
     }
 
     if ($reset_user_allowed_editing) {
