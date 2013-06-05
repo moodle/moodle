@@ -1380,3 +1380,5 @@ div.badge .expireimage { width: 100px; height: 100px; left: 20px; top: 0px; }
  div#dateselector-calendar-panel {
      z-index: 3100; /* Set higher than the z-index of the filemanager - see MDL-39047. */
  }
+
+.path-mod-lesson .centerpadded { padding: 5px; text-align: center; }
