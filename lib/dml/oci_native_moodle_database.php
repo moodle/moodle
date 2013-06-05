@@ -51,8 +51,6 @@ class oci_native_moodle_database extends moodle_database {
     private $last_error_reporting;
     /** @var To store unique_session_id. Needed for temp tables unique naming.*/
     private $unique_session_id;
-    /** @var To cache locks support along the connection life.*/
-    private $oci_package_installed = null;
 
     /**
      * Detects if all needed PHP stuff installed.
@@ -127,9 +125,6 @@ class oci_native_moodle_database extends moodle_database {
      * @return string null means everything ok, string means problem found.
      */
     public function diagnose() {
-        if (!$this->oci_package_installed()) {
-            return 'Oracle PL/SQL Moodle support packages are not installed! Database administrator has to execute /lib/dml/oci_native_moodle_package.sql script.';
-        }
         return null;
     }
 
@@ -201,6 +196,19 @@ class oci_native_moodle_database extends moodle_database {
                 $dberr = $e['message'];
             }
             throw new dml_connection_exception($dberr);
+        }
+
+        // Make sure moodle package is installed - now required.
+        if (!$this->oci_package_installed()) {
+            try {
+                $this->attempt_oci_package_install();
+            } catch (Exception $e) {
+                // Ignore problems, only the result counts,
+                // admins have to fix it manually if necessary.
+            }
+            if (!$this->oci_package_installed()) {
+                throw new dml_exception('dbdriverproblem', 'Oracle PL/SQL Moodle support package MOODLELIB is not installed! Database administrator has to execute /lib/dml/oci_native_moodle_package.sql script.');
+            }
         }
 
         // get unique session id, to be used later for temp tables stuff
@@ -1476,21 +1484,11 @@ class oci_native_moodle_database extends moodle_database {
     }
 
     public function sql_bitor($int1, $int2) {
-        // Use the MOODLELIB package if available
-        if ($this->oci_package_installed()) {
-            return 'MOODLELIB.BITOR(' . $int1 . ', ' . $int2 . ')';
-        }
-        // fallback to PHP bool operations, can break if using placeholders
-        return '((' . $int1 . ') + (' . $int2 . ') - ' . $this->sql_bitand($int1, $int2) . ')';
+        return 'MOODLELIB.BITOR(' . $int1 . ', ' . $int2 . ')';
     }
 
     public function sql_bitxor($int1, $int2) {
-        // Use the MOODLELIB package if available
-        if ($this->oci_package_installed()) {
-            return 'MOODLELIB.BITXOR(' . $int1 . ', ' . $int2 . ')';
-        }
-        // fallback to PHP bool operations, can break if using placeholders
-        return '(' . $this->sql_bitor($int1, $int2) . ' - ' . $this->sql_bitand($int1, $int2) . ')';
+        return 'MOODLELIB.BITXOR(' . $int1 . ', ' . $int2 . ')';
     }
 
     /**
@@ -1703,9 +1701,6 @@ class oci_native_moodle_database extends moodle_database {
      * @return bool
      */
     protected function oci_package_installed() {
-        if (isset($this->oci_package_installed)) { // Use cached value if available.
-            return $this->oci_package_installed;
-        }
         $sql = "SELECT 1
                 FROM user_objects
                 WHERE object_type = 'PACKAGE BODY'
@@ -1718,8 +1713,22 @@ class oci_native_moodle_database extends moodle_database {
         $records = null;
         oci_fetch_all($stmt, $records, 0, -1, OCI_FETCHSTATEMENT_BY_ROW);
         oci_free_statement($stmt);
-        $this->oci_package_installed = isset($records[0]) && reset($records[0]) ? true : false;
-        return $this->oci_package_installed;
+        return isset($records[0]) && reset($records[0]) ? true : false;
+    }
+
+    /**
+     * Try to add required moodle package into oracle server.
+     */
+    protected function attempt_oci_package_install() {
+        $sqls = file_get_contents(__DIR__.'/oci_native_moodle_package.sql');
+        $sqls = preg_split('/^\/$/sm', $sqls);
+        foreach ($sqls as $sql) {
+            $sql = trim($sql);
+            if ($sql === '' or $sql === 'SHOW ERRORS') {
+                continue;
+            }
+            $this->change_database_structure($sql);
+        }
     }
 
     /**
@@ -1729,9 +1738,6 @@ class oci_native_moodle_database extends moodle_database {
      * @return void
      */
     public function get_session_lock($rowid, $timeout) {
-        if (!$this->oci_package_installed()) {
-            return;
-        }
         parent::get_session_lock($rowid, $timeout);
 
         $fullname = $this->dbname.'-'.$this->prefix.'-session-'.$rowid;
@@ -1749,9 +1755,6 @@ class oci_native_moodle_database extends moodle_database {
     }
 
     public function release_session_lock($rowid) {
-        if (!$this->oci_package_installed()) {
-            return;
-        }
         if (!$this->used_for_db_sessions) {
             return;
         }
