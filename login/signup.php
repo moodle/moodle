@@ -26,6 +26,12 @@
 
 require('../config.php');
 
+// Try to prevent searching for sites that allow sign-up.
+if (!isset($CFG->additionalhtmlhead)) {
+    $CFG->additionalhtmlhead = '';
+}
+$CFG->additionalhtmlhead .= '<meta name="robots" content="noindex" />';
+
 if (empty($CFG->registerauth)) {
     print_error('notlocalisederrormessage', 'error', '', 'Sorry, you may not use this page.');
 }
