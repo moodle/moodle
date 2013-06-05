@@ -122,6 +122,7 @@
 
     $PAGE->set_pagelayout('course');
     $PAGE->set_pagetype('course-view-' . $course->format);
+    $PAGE->set_other_editing_capability('moodle/course:update');
     $PAGE->set_other_editing_capability('moodle/course:manageactivities');
     $PAGE->set_other_editing_capability('moodle/course:activityvisibility');
     if (course_format_uses_sections($course->format)) {
@@ -194,20 +195,17 @@
             }
         }
 
-        if (has_capability('moodle/course:update', $context)) {
-            if (!empty($section)) {
-                if (!empty($move) and has_capability('moodle/course:movesections', $context) and confirm_sesskey()) {
-                    $destsection = $section + $move;
-                    if (move_section_to($course, $section, $destsection)) {
-                        if ($course->id == SITEID) {
-                            redirect($CFG->wwwroot . '/?redirect=0');
-                        } else {
-                            redirect(course_get_url($course));
-                        }
-                    } else {
-                        echo $OUTPUT->notification('An error occurred while moving a section');
-                    }
+        if (!empty($section) && !empty($move) &&
+                has_capability('moodle/course:movesections', $context) && confirm_sesskey()) {
+            $destsection = $section + $move;
+            if (move_section_to($course, $section, $destsection)) {
+                if ($course->id == SITEID) {
+                    redirect($CFG->wwwroot . '/?redirect=0');
+                } else {
+                    redirect(course_get_url($course));
                 }
+            } else {
+                echo $OUTPUT->notification('An error occurred while moving a section');
             }
         }
     } else {
