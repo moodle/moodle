@@ -23,6 +23,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['answerselectelementempty'] = '{$a->html}<br />This answer will appear empty as the dropdown menu does not show HTML components.';
+$string['answerselectelementshownas'] = '{$a->html}<br />This answer will be rendered in the dropdown menu as : {$a->strip}';
 $string['confirmquestionsaveasedited'] = 'I confirm that I want the question to be saved as edited';
 $string['confirmsave'] = 'Confirm then save {$a}';
 $string['correctanswer'] = 'Correct answer';

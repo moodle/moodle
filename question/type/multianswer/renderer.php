@@ -388,7 +388,7 @@ class qtype_multianswer_multichoice_vertical_renderer extends qtype_multianswer_
                         question_state::$gradedright) {
                     $feedback[] = get_string('correctansweris', 'qtype_multichoice',
                             $subq->format_text($ans->answer, $ans->answerformat,
-                                    $qa, 'question', 'answer', $ansid));
+                                    $qa, 'question', 'answer', $ans->id));
                     break;
                 }
             }

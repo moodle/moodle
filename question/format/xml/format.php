@@ -449,12 +449,12 @@ class qformat_xml extends qformat_default {
      */
     public function import_multianswer($question) {
         global $USER;
-        question_bank::get_qtype('multianswer');
+        $qtypemultianswer = question_bank::get_qtype('multianswer');
 
         $questiontext = $this->import_text_with_files($question,
                 array('#', 'questiontext', 0));
         $qo = qtype_multianswer_extract_question($questiontext);
-
+        $qo = $qtypemultianswer->set_subquestions_elements_itemid($qo, '@@PLUGINFILE@@');
         // 'header' parts particular to multianswer
         $qo->qtype = 'multianswer';
         $qo->course = $this->course;
