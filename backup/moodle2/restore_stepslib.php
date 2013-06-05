@@ -477,6 +477,8 @@ class restore_rebuild_course_cache extends restore_execution_step {
 
         // Rebuild cache now that all sections are in place
         rebuild_course_cache($this->get_courseid());
+        cache_helper::purge_by_event('changesincourse');
+        cache_helper::purge_by_event('changesincoursecat');
     }
 }
 
