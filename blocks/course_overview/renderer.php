@@ -103,6 +103,9 @@ class block_course_overview_renderer extends plugin_renderer_base {
 
             // No need to pass title through s() here as it will be done automatically by html_writer.
             $attributes = array('title' => $course->fullname);
+            if (empty($course->visible)) {
+                $attributes['class'] = 'dimmed';
+            }
             if ($course->id > 0) {
                 $courseurl = new moodle_url('/course/view.php', array('id' => $course->id));
                 $coursefullname = format_string($course->fullname, true, $course->id);
