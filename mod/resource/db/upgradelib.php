@@ -253,6 +253,41 @@ function resource_20_prepare_migration() {
         return false;
     }
 
+    // Find bogus course_modules records pointing to the same resource and unhack them.
+    // Grrr, some people thought it is ok to link things like this...
+    $sql = "SELECT cm.instance, COUNT(cm.id) AS dupes
+              FROM {course_modules} cm
+              JOIN {resource} r ON (r.id = cm.instance)
+             WHERE cm.module = :module
+          GROUP BY cm.instance
+            HAVING COUNT(cm.id) > 1";
+    $rs = $DB->get_recordset_sql($sql, array('module'=>$module));
+    foreach ($rs as $c) {
+        $cms = $DB->get_records('course_modules', array('instance'=>$c->instance), 'id ASC');
+        $resource = $DB->get_record('resource', array('id'=>$c->instance));
+        unset($resource->id);
+        array_shift($cms);
+        foreach ($cms as $cm) {
+            $rid = $DB->insert_record('resource', $resource);
+            $DB->set_field('course_modules', 'instance', $rid, array('id'=>$cm->id));
+            notify("Fixed bogus hardlinked resource record $c->instance ($resource->name) in course $resource->course");
+        }
+        unset($cms);
+    }
+    $rs->close();
+
+    // Make sure the course id is consistent.
+    $sql = "SELECT r.id, cm.course AS course, r.name
+              FROM {resource} r
+              JOIN {course_modules} cm ON (r.id = cm.instance AND cm.module = :module)
+             WHERE cm.course <> r.course";
+    $rs = $DB->get_recordset_sql($sql, array('module'=>$module));
+    foreach ($rs as $r) {
+        $DB->set_field('resource', 'course', $r->course, array('id'=>$r->id));
+        notify("Fixed bogus course field in resource $r->id ($r->name)");
+    }
+    $rs->close();
+
     // copy old data, the intro text format was FORMAT_MOODLE==0
     $sql = "INSERT INTO {resource_old} (oldid, course, name, type, reference, intro, introformat, alltext, popup, options, timemodified, cmid)
             SELECT r.id, r.course, r.name, r.type, r.reference, r.summary, 0, r.alltext, r.popup, r.options, r.timemodified, cm.id
@@ -260,6 +295,19 @@ function resource_20_prepare_migration() {
          LEFT JOIN {course_modules} cm ON (r.id = cm.instance AND cm.module = :module)";
 
     $DB->execute($sql, array('module'=>$module));
+
+    // Remove bogus records without matching cm from resource table to prevent upgrade problems.
+    $sql = "SELECT r.id, r.course, r.name
+              FROM {resource} r
+         LEFT JOIN {course_modules} cm ON (r.id = cm.instance AND cm.module = :module)
+             WHERE cm.id IS NULL";
+    $rs = $DB->get_recordset_sql($sql, array('module'=>$module));
+    foreach($rs as $resource) {
+        $DB->delete_records('resource', array('id'=>$resource->id));
+        notify("Deleted bogus resource record $resource->id ($resource->name) from course $resource->course");
+    }
+    $rs->close();
+    $DB->set_field_select('resource_old', 'migrated', 1, "cmid IS NULL");
 
     return true;
 }
