@@ -473,25 +473,8 @@ class question_type {
         $oldhints = $DB->get_records('question_hints',
                 array('questionid' => $formdata->id), 'id ASC');
 
-        if (!empty($formdata->hint)) {
-            $numhints = max(array_keys($formdata->hint)) + 1;
-        } else {
-            $numhints = 0;
-        }
 
-        if ($withparts) {
-            if (!empty($formdata->hintclearwrong)) {
-                $numclears = max(array_keys($formdata->hintclearwrong)) + 1;
-            } else {
-                $numclears = 0;
-            }
-            if (!empty($formdata->hintshownumcorrect)) {
-                $numshows = max(array_keys($formdata->hintshownumcorrect)) + 1;
-            } else {
-                $numshows = 0;
-            }
-            $numhints = max($numhints, $numclears, $numshows);
-        }
+        $numhints = $this->count_hints_on_form($formdata, $withparts);
 
         for ($i = 0; $i < $numhints; $i += 1) {
             if (html_is_blank($formdata->hint[$i]['text'])) {
@@ -503,8 +486,7 @@ class question_type {
                 $shownumcorrect = !empty($formdata->hintshownumcorrect[$i]);
             }
 
-            if (empty($formdata->hint[$i]['text']) && empty($clearwrong) &&
-                    empty($shownumcorrect)) {
+            if ($this->is_hint_empty_in_form_data($formdata, $i, $withparts)) {
                 continue;
             }
 
@@ -524,6 +506,7 @@ class question_type {
                 $hint->clearwrong = $clearwrong;
                 $hint->shownumcorrect = $shownumcorrect;
             }
+            $hint->options = $this->save_hint_options($formdata, $i, $withparts);
             $DB->update_record('question_hints', $hint);
         }
 
@@ -533,6 +516,65 @@ class question_type {
             $fs->delete_area_files($context->id, 'question', 'hint', $oldhint->id);
             $DB->delete_records('question_hints', array('id' => $oldhint->id));
         }
+    }
+
+    /**
+     * Count number of hints on the form.
+     * Overload if you use custom hint controls.
+     * @param object $formdata the data from the form.
+     * @param bool $withparts whether to take into account clearwrong and shownumcorrect options.
+     * @return int count of hints on the form.
+     */
+    protected function count_hints_on_form($formdata, $withparts) {
+        if (!empty($formdata->hint)) {
+            $numhints = max(array_keys($formdata->hint)) + 1;
+        } else {
+            $numhints = 0;
+        }
+
+        if ($withparts) {
+            if (!empty($formdata->hintclearwrong)) {
+                $numclears = max(array_keys($formdata->hintclearwrong)) + 1;
+            } else {
+                $numclears = 0;
+            }
+            if (!empty($formdata->hintshownumcorrect)) {
+                $numshows = max(array_keys($formdata->hintshownumcorrect)) + 1;
+            } else {
+                $numshows = 0;
+            }
+            $numhints = max($numhints, $numclears, $numshows);
+        }
+        return $numhints;
+    }
+
+    /**
+     * Determine if the hint with specified number is not empty and should be saved.
+     * Overload if you use custom hint controls.
+     * @param object $formdata the data from the form.
+     * @param int $number number of hint under question.
+     * @param bool $withparts whether to take into account clearwrong and shownumcorrect options.
+     * @return bool is this particular hint data empty.
+     */
+    protected function is_hint_empty_in_form_data($formdata, $number, $withparts) {
+        if ($withparts) {
+            return empty($formdata->hint[$number]['text']) && empty($formdata->hintclearwrong[$number]) &&
+                    empty($formdata->hintshownumcorrect[$number]);
+        } else {
+            return  empty($formdata->hint[$number]['text']);
+        }
+    }
+
+    /**
+     * Save additional question type data into the hint optional field.
+     * Overload if you use custom hint information.
+     * @param object $formdata the data from the form.
+     * @param int $number number of hint to get options from.
+     * @param bool $withparts whether question have parts.
+     * @return string value to save into the options field of question_hints table.
+     */
+    protected function save_hint_options($formdata, $number, $withparts) {
+        return null;    // By default, options field is unused.
     }
 
     /**
