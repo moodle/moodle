@@ -835,7 +835,7 @@ class portfolio_exporter {
             if ($f->get_filename() == $skipfile) {
                 continue;
             }
-            $returnfiles[$f->get_filepath() . '/' . $f->get_filename()] = $f;
+            $returnfiles[$f->get_filepath() . $f->get_filename()] = $f;
         }
         return $returnfiles;
     }
