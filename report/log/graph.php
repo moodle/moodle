@@ -130,6 +130,7 @@ if ($type === "usercourse.png") {
 
    $graph = new graph(750, 400);
 
+   $a = new stdClass();
    $a->coursename = format_string($course->shortname, true, array('context' => $coursecontext));
    $a->username = fullname($user, true);
    $graph->parameter['title'] = get_string("hitsoncourse", "", $a);
@@ -191,6 +192,7 @@ if ($type === "usercourse.png") {
 
    $graph = new graph(750, 400);
 
+   $a = new stdClass();
    $a->coursename = format_string($course->shortname, true, array('context' => $coursecontext));
    $a->username = fullname($user, true);
    $graph->parameter['title'] = get_string("hitsoncoursetoday", "", $a);
