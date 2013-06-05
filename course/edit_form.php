@@ -196,7 +196,7 @@ class course_edit_form extends moodleform {
         enrol_course_edit_form($mform, $course, $context);
 
 //--------------------------------------------------------------------------------
-        $mform->addElement('header','', get_string('groups', 'group'));
+        $mform->addElement('header', '', get_string('groupsettingsheader', 'group'));
 
         $choices = array();
         $choices[NOGROUPS] = get_string('groupsnone', 'group');
