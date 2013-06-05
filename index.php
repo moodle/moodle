@@ -40,6 +40,9 @@
     }
     $PAGE->set_url('/', $urlparams);
     $PAGE->set_course($SITE);
+    $PAGE->set_other_editing_capability('moodle/course:update');
+    $PAGE->set_other_editing_capability('moodle/course:manageactivities');
+    $PAGE->set_other_editing_capability('moodle/course:activityvisibility');
 
     // Prevent caching of this page to stop confusion when changing page after making AJAX changes
     $PAGE->set_cacheable(false);
@@ -89,8 +92,6 @@
     }
 
     $PAGE->set_pagetype('site-index');
-    $PAGE->set_other_editing_capability('moodle/course:manageactivities');
-    $PAGE->set_other_editing_capability('moodle/course:activityvisibility');
     $PAGE->set_docs_path('');
     $PAGE->set_pagelayout('frontpage');
     $editing = $PAGE->user_is_editing();
@@ -137,7 +138,7 @@
 
             echo format_text($summarytext, $section->summaryformat, $summaryformatoptions);
 
-            if ($editing) {
+            if ($editing && has_capability('moodle/course:update', $context)) {
                 $streditsummary = get_string('editsummary');
                 echo "<a title=\"$streditsummary\" ".
                      " href=\"course/editsection.php?id=$section->id\"><img src=\"" . $OUTPUT->pix_url('t/edit') . "\" ".
