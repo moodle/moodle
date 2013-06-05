@@ -174,7 +174,7 @@ class auth_plugin_cas extends auth_plugin_ldap {
      *
      */
     function connectCAS() {
-        global $PHPCAS_CLIENT;
+        global $CFG, $PHPCAS_CLIENT;
 
         if (!is_object($PHPCAS_CLIENT)) {
             // Make sure phpCAS doesn't try to start a new PHP session when connecting to the CAS server.
@@ -182,6 +182,27 @@ class auth_plugin_cas extends auth_plugin_ldap {
                 phpCAS::proxy($this->config->casversion, $this->config->hostname, (int) $this->config->port, $this->config->baseuri, false);
             } else {
                 phpCAS::client($this->config->casversion, $this->config->hostname, (int) $this->config->port, $this->config->baseuri, false);
+            }
+        }
+
+        // If Moodle is configured to use a proxy, phpCAS needs some curl options set.
+        if (!empty($CFG->proxyhost) && !is_proxybypass($this->config->hostname)) {
+            phpCAS::setExtraCurlOption(CURLOPT_PROXY, $CFG->proxyhost);
+            if (!empty($CFG->proxyport)) {
+                phpCAS::setExtraCurlOption(CURLOPT_PROXYPORT, $CFG->proxyport);
+            }
+            if (!empty($CFG->proxytype)) {
+                // Only set CURLOPT_PROXYTYPE if it's something other than the curl-default http
+                if ($CFG->proxytype == 'SOCKS5') {
+                    phpCAS::setExtraCurlOption(CURLOPT_PROXYTYPE, CURLPROXY_SOCKS5);
+                }
+            }
+            if (!empty($CFG->proxyuser) and !empty($CFG->proxypassword)) {
+                phpCAS::setExtraCurlOption(CURLOPT_PROXYUSERPWD, $CFG->proxyuser.':'.$CFG->proxypassword);
+                if (defined('CURLOPT_PROXYAUTH')) {
+                    // any proxy authentication if PHP 5.1
+                    phpCAS::setExtraCurlOption(CURLOPT_PROXYAUTH, CURLAUTH_BASIC | CURLAUTH_NTLM);
+                }
             }
         }
 
