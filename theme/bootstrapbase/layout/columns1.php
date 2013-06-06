@@ -60,20 +60,16 @@ echo $OUTPUT->doctype() ?>
         </div>
     </header>
 
-    <div id="page-content" class="row-fluid">
-        <div id="region-bs-main-and-pre" class="span9">
-            <div class="row-fluid">
-                <section id="region-main" class="span8 pull-right">
-                    <?php
-                    echo $OUTPUT->course_content_header();
-                    echo $OUTPUT->main_content();
-                    echo $OUTPUT->course_content_footer();
-                    ?>
-                </section>
-                <?php echo $OUTPUT->blocks('side-pre', 'span4 desktop-first-column'); ?>
-            </div>
+    <div id="page-content">
+        <div id="region-bs-main-and-pre">
+            <section id="region-main">
+                <?php
+                echo $OUTPUT->course_content_header();
+                echo $OUTPUT->main_content();
+                echo $OUTPUT->course_content_footer();
+                ?>
+            </section>
         </div>
-        <?php echo $OUTPUT->blocks('side-post', 'span3'); ?>
     </div>
 
     <footer id="page-footer">

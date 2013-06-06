@@ -37,10 +37,8 @@ echo $OUTPUT->doctype() ?>
                 <span class="icon-bar"></span>
             </a>
             <div class="nav-collapse collapse">
-                <?php echo $OUTPUT->custom_menu(); ?>
                 <ul class="nav pull-right">
                     <li><?php echo $OUTPUT->page_heading_menu(); ?></li>
-                    <li class="navbar-text"><?php echo $OUTPUT->login_info() ?></li>
                 </ul>
             </div>
         </div>
@@ -50,37 +48,20 @@ echo $OUTPUT->doctype() ?>
 <div id="page" class="container-fluid">
 
     <header id="page-header" class="clearfix">
-        <div id="page-navbar">
-            <nav class="breadcrumb-button"><?php echo $OUTPUT->page_heading_button(); ?></nav>
-            <?php echo $OUTPUT->navbar(); ?>
-        </div>
         <?php echo $OUTPUT->page_heading(); ?>
-        <div id="course-header">
-            <?php echo $OUTPUT->course_header(); ?>
-        </div>
     </header>
 
     <div id="page-content" class="row-fluid">
         <div id="region-bs-main-and-pre" class="span9">
             <div class="row-fluid">
                 <section id="region-main" class="span8 pull-right">
-                    <?php
-                    echo $OUTPUT->course_content_header();
-                    echo $OUTPUT->main_content();
-                    echo $OUTPUT->course_content_footer();
-                    ?>
+                    <?php echo $OUTPUT->main_content(); ?>
                 </section>
                 <?php echo $OUTPUT->blocks('side-pre', 'span4 desktop-first-column'); ?>
             </div>
         </div>
         <?php echo $OUTPUT->blocks('side-post', 'span3'); ?>
     </div>
-
-    <footer id="page-footer">
-        <div id="course-footer"><?php echo $OUTPUT->course_footer(); ?></div>
-        <p class="helplink"><?php echo $OUTPUT->page_doc_link(); ?></p>
-        <?php echo $OUTPUT->standard_footer_html(); ?>
-    </footer>
 
     <?php echo $OUTPUT->standard_end_of_body_html() ?>
 
