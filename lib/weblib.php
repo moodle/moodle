@@ -909,20 +909,37 @@ function close_window($delay = 0, $reloadopener = false) {
  * @return string The link to user documentation for this current page
  */
 function page_doc_link($text='') {
-    global $CFG, $PAGE, $OUTPUT;
-
-    if (empty($CFG->docroot) || during_initial_install()) {
-        return '';
-    }
-    if (!has_capability('moodle/site:doclinks', $PAGE->context)) {
-        return '';
-    }
-
-    $path = $PAGE->docspath;
+    global $OUTPUT, $PAGE;
+    $path = page_get_doc_link_path($PAGE);
     if (!$path) {
         return '';
     }
     return $OUTPUT->doc_link($path, $text);
+}
+
+/**
+ * Returns the path to use when constructing a link to the docs.
+ *
+ * @since 2.5.1 2.6
+ * @global stdClass $CFG
+ * @param moodle_page $page
+ * @return string
+ */
+function page_get_doc_link_path(moodle_page $page) {
+    global $CFG;
+
+    if (empty($CFG->docroot) || during_initial_install()) {
+        return '';
+    }
+    if (!has_capability('moodle/site:doclinks', $page->context)) {
+        return '';
+    }
+
+    $path = $page->docspath;
+    if (!$path) {
+        return '';
+    }
+    return $path;
 }
 
 

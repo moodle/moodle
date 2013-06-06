@@ -51,7 +51,7 @@ defined('MOODLE_INTERNAL') || die();
  *      the forum or quiz table) that this page belongs to. Will be null
  *      if this page is not within a module.
  * @property-read array $alternativeversions Mime type => object with ->url and ->title.
- * @property-read blocks_manager $blocks The blocks manager object for this page.
+ * @property-read block_manager $blocks The blocks manager object for this page.
  * @property-read array $blockmanipulations
  * @property-read string $bodyclasses A string to use within the class attribute on the body tag.
  * @property-read string $bodyid A string to use as the id of the body tag.

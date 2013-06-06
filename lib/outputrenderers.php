@@ -921,7 +921,7 @@ class core_renderer extends renderer_base {
         $functioncalled = true;
         $courseformat = course_get_format($this->page->course);
         if (($obj = $courseformat->course_content_header()) !== null) {
-            return $courseformat->get_renderer($this->page)->render($obj);
+            return html_writer::div($courseformat->get_renderer($this->page)->render($obj), 'course-content-header');
         }
         return '';
     }
@@ -948,7 +948,7 @@ class core_renderer extends renderer_base {
         require_once($CFG->dirroot.'/course/lib.php');
         $courseformat = course_get_format($this->page->course);
         if (($obj = $courseformat->course_content_footer()) !== null) {
-            return $courseformat->get_renderer($this->page)->render($obj);
+            return html_writer::div($courseformat->get_renderer($this->page)->render($obj), 'course-content-footer');
         }
         return '';
     }
@@ -2676,10 +2676,13 @@ EOD;
      */
     public function navbar() {
         $items = $this->page->navbar->get_items();
+        $itemcount = count($items);
+        if ($itemcount === 0) {
+            return '';
+        }
 
         $htmlblocks = array();
         // Iterate the navarray and display each node
-        $itemcount = count($items);
         $separator = get_separator();
         for ($i=0;$i < $itemcount;$i++) {
             $item = $items[$i];
@@ -2828,7 +2831,7 @@ EOD;
         $jscode = "(function(){{$jscode}})";
         $this->page->requires->yui_module('node-menunav', $jscode);
         // Build the root nodes as required by YUI
-        $content = html_writer::start_tag('div', array('id'=>'custom_menu_'.$menucount, 'class'=>'yui3-menu yui3-menu-horizontal javascript-disabled'));
+        $content = html_writer::start_tag('div', array('id'=>'custom_menu_'.$menucount, 'class'=>'yui3-menu yui3-menu-horizontal javascript-disabled custom-menu'));
         $content .= html_writer::start_tag('div', array('class'=>'yui3-menu-content'));
         $content .= html_writer::start_tag('ul');
         // Render each child
