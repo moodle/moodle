@@ -3099,6 +3099,75 @@ EOD;
         }
         return ' id="'. $this->body_id().'" class="'.$this->body_css_classes($additionalclasses).'"';
     }
+
+    /**
+     * Gets HTML for the page heading.
+     *
+     * @since 2.5.1 2.6
+     * @param string $tag The tag to encase the heading in. h1 by default.
+     * @return string HTML.
+     */
+    public function page_heading($tag = 'h1') {
+        return html_writer::tag($tag, $this->page->heading);
+    }
+
+    /**
+     * Gets the HTML for the page heading button.
+     *
+     * @since 2.5.1 2.6
+     * @return string HTML.
+     */
+    public function page_heading_button() {
+        return $this->page->button;
+    }
+
+    /**
+     * Returns the Moodle docs link to use for this page.
+     *
+     * @since 2.5.1 2.6
+     * @param string $text
+     * @return string
+     */
+    public function page_doc_link($text = null) {
+        if ($text === null) {
+            $text = get_string('moodledocslink');
+        }
+        $path = page_get_doc_link_path($this->page);
+        if (!$path) {
+            return '';
+        }
+        return $this->doc_link($path, $text);
+    }
+
+    /**
+     * Returns the page heading menu.
+     *
+     * @since 2.5.1 2.6
+     * @return string HTML.
+     */
+    public function page_heading_menu() {
+        return $this->page->headingmenu;
+    }
+
+    /**
+     * Returns the title to use on the page.
+     *
+     * @since 2.5.1 2.6
+     * @return string
+     */
+    public function page_title() {
+        return $this->page->title;
+    }
+
+    /**
+     * Returns the URL for the favicon.
+     *
+     * @since 2.5.1 2.6
+     * @return string The favicon URL
+     */
+    public function favicon() {
+        return $this->pix_url('favicon', 'theme');
+    }
 }
 
 /**
