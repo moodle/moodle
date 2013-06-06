@@ -3029,6 +3029,25 @@ EOD;
 
         return $str;
     }
+
+    /**
+     * Get the HTML for blocks in the given region.
+     *
+     * @since 2.5.1 2.6
+     * @param string $region The region to get HTML for.
+     * @return string HTML.
+     */
+    public function blocks($region, $classes = array(), $tag = 'aside') {
+        $classes = (array)$classes;
+        $classes[] = 'block-region';
+        $attributes = array(
+            'id' => 'block-region-'.preg_replace('#[^a-zA-Z0-9_\-]+#', '-', $region),
+            'class' => join(' ', $classes),
+            'data-blockregion' => $region,
+            'data-droptarget' => '1'
+        );
+        return html_writer::tag($tag, $this->blocks_for_region($region), $attributes);
+    }
 }
 
 /**
