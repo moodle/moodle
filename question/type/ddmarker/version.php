@@ -26,7 +26,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2013052000;
+$plugin->version   = 2013053000;
 $plugin->requires  = 2013051400;
 $plugin->cron      = 0;
 $plugin->component = 'qtype_ddmarker';

@@ -127,7 +127,13 @@ class qtype_ddmarker extends qtype_ddtoimage_base {
                 $drag = new stdClass();
                 $drag->questionid = $formdata->id;
                 $drag->no = $dragno + 1;
-                $drag->infinite = empty($formdata->drags[$dragno]['infinite'])? 0 : 1;
+                if ($formdata->drags[$dragno]['noofdrags'] == 0) {
+                    $drag->infinite = 1;
+                    $drag->noofdrags = 1;
+                } else {
+                    $drag->infinite = 0;
+                    $drag->noofdrags = $formdata->drags[$dragno]['noofdrags'];
+                }
                 $drag->label = $formdata->drags[$dragno]['label'];
 
                 if (isset($olddragids[$dragno +1])) {
@@ -229,7 +235,7 @@ class qtype_ddmarker extends qtype_ddtoimage_base {
         return question_hint_ddmarker::load_from_record($hint);
     }
     protected function make_choice($dragdata) {
-        return new qtype_ddmarker_drag_item($dragdata->label, $dragdata->no, $dragdata->infinite);
+        return new qtype_ddmarker_drag_item($dragdata->label, $dragdata->no, $dragdata->infinite, $dragdata->noofdrags);
     }
 
     protected function make_place($dropdata) {
@@ -296,6 +302,7 @@ class qtype_ddmarker extends qtype_ddtoimage_base {
             if ($drag->infinite) {
                 $output .= "      <infinite/>\n";
             }
+            $output .= "      <noofdrags>{$drag->no}</noofdrags>\n";
             $output .= "    </drag>\n";
         }
         foreach ($question->options->drops as $drop) {
@@ -334,8 +341,12 @@ class qtype_ddmarker extends qtype_ddtoimage_base {
             $question->drags[$dragindex] = array();
             $question->drags[$dragindex]['label'] =
                         $format->getpath($dragxml, array('#', 'text', 0, '#'), '', true);
-            $question->drags[$dragindex]['infinite'] = array_key_exists('infinite', $dragxml['#']);
-
+            if (array_key_exists('infinite', $dragxml['#'])) {
+                $question->drags[$dragindex]['noofdrags'] = 0; // Means infinite in the form.
+            } else {
+                // Defaults to 1 if 'noofdrags' not set.
+                $question->drags[$dragindex]['noofdrags'] = $format->getpath($dragxml, array('#', 'noofdrags', 0, '#'), 1);
+            }
         }
 
         $drops = $data['#']['drop'];

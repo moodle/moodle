@@ -98,12 +98,13 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
         },
         set_options_for_drag_item_selectors : function () {
             var dragitemsoptions = {0: ''};
-            for (var i=0; i < this.form.get_form_value('noitems', []); i++) {
+            for (var i=1; i <= this.form.get_form_value('noitems', []); i++) {
                 var label = this.get_marker_text(i);
                 if (label !== "") {
                     dragitemsoptions[i] = Y.Escape.html(label);
                 }
             }
+            // Get all the currently selected drags for each drop.
             var selectedvalues = [];
             var selector;
             for (i = 0; i < this.form.get_form_value('nodropzone', []); i++) {
@@ -112,7 +113,9 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
             }
             for (i = 0; i < this.form.get_form_value('nodropzone', []); i++) {
                 selector = Y.one('#id_drops_'+i+'_choice');
+                // Remove all options for drag choice.
                 selector.all('option').remove(true);
+                // And recreate the options.
                 for (var value in dragitemsoptions) {
                     value = +value;
                     var option = '<option value="'+ value +'">'
@@ -120,15 +123,25 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
                                     '</option>';
                     selector.append(option);
                     var optionnode = selector.one('option[value="' + value + '"]');
+                    // Is this the currently selected value?
                     if (value === selectedvalues[i]) {
                         optionnode.set('selected', true);
                     } else {
-                        if (value !== 0) { // no item option is always selectable
-                            var infinite = this.form.get_form_value('drags', [value-1, 'infinite']);
-                            if (!infinite) {
+                        // It is not the currently selected value, is it selectable?
+                        if (value !== 0) { // The 'no item' option is always selectable.
+                            // Variables to hold form values about this drag item.
+                            var noofdrags = this.form.get_form_value('drags', [value-1, 'noofdrags']);
+                            if (noofdrags != 0) { // 'noofdrags == 0' means infinite.
+                                // Go through all selected values in drop downs.
                                 for (var k in selectedvalues) {
+                                    // Count down 'noofdrags' and if reach zero then set disabled option for this drag item.
                                     if (+selectedvalues[k] === value) {
-                                        optionnode.set('disabled', true);
+                                        if (noofdrags == 1) {
+                                            optionnode.set('disabled', true);
+                                            break;
+                                        } else {
+                                            noofdrags--;
+                                        }
                                     }
                                 }
                             }
@@ -145,12 +158,17 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
         setup_form_events : function () {
             //events triggered by changes to form data
 
-            //x and y coordinates
+            // Changes to labels.
             Y.all('fieldset#id_draggableitemheader input').on('change', function () {
                 this.set_options_for_drag_item_selectors();
             }, this);
 
-            //change in selected item
+            // Changes to selected drag item.
+            Y.all('fieldset#id_draggableitemheader select').on('change', function () {
+                this.set_options_for_drag_item_selectors();
+            }, this);
+
+            // Change in selected item.
             Y.all('fieldset#id_dropzoneheader select').on('change', function () {
                 this.set_options_for_drag_item_selectors();
             }, this);
