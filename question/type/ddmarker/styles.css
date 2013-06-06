@@ -102,3 +102,42 @@ form.mform fieldset#id_previewareaheader div.markertexts span.markertext {
     position: absolute;
     background: url([[pix:qtype_ddmarker|grid]]) repeat scroll 0 0;
 }
+/* Editing form. Style repeated elements*/
+/*Top*/
+body#page-question-type-ddmarker div[id^=fitem_id_][id*=hint_] {
+    background: #EEE;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    border: 1px solid #BBB;
+    border-bottom: 0;
+}
+body#page-question-type-ddmarker div[id^=fitem_id_][id*=hint_] .fitemtitle {
+    font-weight: bold;
+}
+/* Middle */
+body#page-question-type-ddmarker div[id^=fitem_id_][id*=hintoptions_],
+body#page-question-type-ddmarker div[id^=fitem_id_][id*=hintshownumcorrect_] {
+    background: #EEE;
+    margin-bottom: 0;
+    margin-top: 0;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    border: 1px solid #BBB;
+    border-top: 0;
+    border-bottom: 0;
+}
+/* Bottom */
+body#page-question-type-ddmarker div[id^=fitem_id_][id*=hintclearwrong_] {
+    background: #EEE;
+    margin-bottom: 2em;
+    margin-top: 0;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    border: 1px solid #BBB;
+    border-top: 0;
+}
+body#page-question-type-ddmarker #fitem_id_penalty {
+    margin-bottom: 2em;
+}

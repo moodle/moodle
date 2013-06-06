@@ -136,8 +136,7 @@ class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
         $mform = $this->_form;
 
         $repeated = array();
-        $repeated[] = $mform->createElement('header', 'hinthdr', get_string('hintn', 'question'));
-        $repeated[] = $mform->createElement('editor', 'hint', get_string('hinttext', 'question'),
+        $repeated[] = $mform->createElement('editor', 'hint', get_string('hintn', 'question'),
                 array('rows' => 5), $this->editoroptions);
         $repeatedoptions['hint']['type'] = PARAM_RAW;
 
