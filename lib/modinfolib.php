@@ -257,7 +257,7 @@ class course_modinfo extends stdClass {
 
         // Load sectioncache field into memory as PHP object and check it's valid
         $sectioncache = unserialize($course->sectioncache);
-        if (!is_array($sectioncache) || empty($sectioncache)) {
+        if (!is_array($sectioncache)) {
             // hmm, something is wrong - let's fix it
             rebuild_course_cache($course->id);
             $course->sectioncache = $DB->get_field('course', 'sectioncache', array('id'=>$course->id));
