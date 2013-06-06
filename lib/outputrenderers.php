@@ -3048,6 +3048,57 @@ EOD;
         );
         return html_writer::tag($tag, $this->blocks_for_region($region), $attributes);
     }
+
+    /**
+     * Returns the CSS classes to apply to the body tag.
+     *
+     * @since 2.5.1 2.6
+     * @param array $additionalclasses Any additional classes to apply.
+     * @return string
+     */
+    public function body_css_classes(array $additionalclasses = array()) {
+        // Add a class for each block region on the page.
+        // We use the block manager here because the theme object makes get_string calls.
+        foreach ($this->page->blocks->get_regions() as $region) {
+            $additionalclasses[] = 'has-region-'.$region;
+            if ($this->page->blocks->region_has_content($region, $this)) {
+                $additionalclasses[] = 'used-region-'.$region;
+            } else {
+                $additionalclasses[] = 'empty-region-'.$region;
+            }
+        }
+        foreach ($this->page->layout_options as $option => $value) {
+            if ($value) {
+                $additionalclasses[] = 'layout-option-'.$option;
+            }
+        }
+        $css = $this->page->bodyclasses .' '. join(' ', $additionalclasses);
+        return $css;
+    }
+
+    /**
+     * The ID attribute to apply to the body tag.
+     *
+     * @since 2.5.1 2.6
+     * @return string
+     */
+    public function body_id() {
+        return $this->page->bodyid;
+    }
+
+    /**
+     * Returns HTML attributes to use within the body tag. This includes an ID and classes.
+     *
+     * @since 2.5.1 2.6
+     * @param string|array $additionalclasses Any additional classes to give the body tag,
+     * @return string
+     */
+    public function body_attributes($additionalclasses = array()) {
+        if (!is_array($additionalclasses)) {
+            $additionalclasses = explode(' ', $additionalclasses);
+        }
+        return ' id="'. $this->body_id().'" class="'.$this->body_css_classes($additionalclasses).'"';
+    }
 }
 
 /**
