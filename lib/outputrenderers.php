@@ -1228,6 +1228,7 @@ class core_renderer extends renderer_base {
      * @return string the HTML to be output.
      */
     public function blocks_for_region($region) {
+        $region = $this->page->apply_theme_region_manipulations($region);
         $blockcontents = $this->page->blocks->get_content_for_region($region, $this);
         $blocks = $this->page->blocks->get_blocks_for_region($region);
         $lastblock = null;
