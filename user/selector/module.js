@@ -275,6 +275,7 @@ M.core_user.init_user_selector = function (Y, name, hash, extrafields, lastsearc
                     option.set('selected', true);
                 }
             } else {
+                optgroup.set('label', groupname);
                 optgroup.append(Y.Node.create('<option disabled="disabled">\u00A0</option>'));
             }
             this.listbox.append(optgroup);
