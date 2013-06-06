@@ -639,6 +639,22 @@ class moodle_page {
     }
 
     /**
+     * Returns an array of minipulations or false if there are none to make.
+     *
+     * @since 2.5.1 2.6
+     * @return bool|array
+     */
+    protected function magic_get_blockmanipulations() {
+        if (!right_to_left()) {
+            return false;
+        }
+        if (is_null($this->_theme)) {
+            $this->initialise_theme_and_output();
+        }
+        return $this->_theme->blockrtlmanipulations;
+    }
+
+    /**
      * Please do not call this method directly, use the ->devicetypeinuse syntax. {@link moodle_page::__get()}.
      * @return string The device type being used.
      */
@@ -1825,5 +1841,19 @@ class moodle_page {
      */
     public function set_popup_notification_allowed($allowed) {
         $this->_popup_notification_allowed = $allowed;
+    }
+
+    /**
+     * Returns the block region having made any required theme manipulations.
+     *
+     * @since 2.5.1 2.6
+     * @param string $region
+     * @return string
+     */
+    public function apply_theme_region_manipulations($region) {
+        if ($this->blockmanipulations && isset($this->blockmanipulations[$region])) {
+            return $this->blockmanipulations[$region];
+        }
+        return $region;
     }
 }
