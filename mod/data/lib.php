@@ -1877,9 +1877,8 @@ function data_get_available_presets($context) {
     $presets = array();
 
     // First load the ratings sub plugins that exist within the modules preset dir
-    if ($dirs = get_list_of_plugins('mod/data/preset')) {
-        foreach ($dirs as $dir) {
-            $fulldir = $CFG->dirroot.'/mod/data/preset/'.$dir;
+    if ($dirs = get_plugin_list('datapreset')) {
+        foreach ($dirs as $dir=>$fulldir) {
             if (is_directory_a_preset($fulldir)) {
                 $preset = new stdClass();
                 $preset->path = $fulldir;
