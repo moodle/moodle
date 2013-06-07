@@ -603,34 +603,10 @@ class problem_000017 extends problem_base {
             $categories = $DB->get_records('question_categories', array(), 'id');
 
             // Look for missing parents.
-            $missingparent = array();
-            foreach ($categories as $category) {
-                if ($category->parent != 0 && !array_key_exists($category->parent, $categories)) {
-                    $missingparent[$category->id] = $category;
-                }
-            }
+            $missingparent = health_category_find_missing_parents($categories);
 
             // Look for loops.
-            $loops = array();
-            while (!empty($categories)) {
-                $current = array_pop($categories);
-                $thisloop = array($current->id => $current);
-                while (true) {
-                    if (isset($thisloop[$current->parent])) {
-                        // Loop detected
-                        $loops[$current->id] = $thisloop;
-                        break;
-                    } else if (!isset($categories[$current->parent])) {
-                        // Got to the top level, or a category we already know is OK.
-                        break;
-                    } else {
-                        // Continue following the path.
-                        $current = $categories[$current->parent];
-                        $thisloop[$current->id] = $current;
-                        unset($categories[$current->id]);
-                    }
-                }
-            }
+            $loops = health_category_find_loops($categories);
 
             $answer = array($missingparent, $loops);
         }
@@ -651,28 +627,18 @@ class problem_000017 extends problem_base {
                 ' structures by the question_categories.parent field. Sometimes ' .
                 ' this tree structure gets messed up.</p>';
 
-        if (!empty($missingparent)) {
-            $description .= '<p>The following categories are missing their parents:</p><ul>';
-            foreach ($missingparent as $cat) {
-                $description .= "<li>Category $cat->id: " . s($cat->name) . "</li>\n";
-            }
-            $description .= "</ul>\n";
-        }
-
-        if (!empty($loops)) {
-            $description .= '<p>The following categories form a loop of parents:</p><ul>';
-            foreach ($loops as $loop) {
-                $description .= "<li><ul>\n";
-                foreach ($loop as $cat) {
-                    $description .= "<li>Category $cat->id: " . s($cat->name) . " has parent $cat->parent</li>\n";
-                }
-                $description .= "</ul></li>\n";
-            }
-            $description .= "</ul>\n";
-        }
+        $description .= health_category_list_missing_parents($missingparent);
+        $description .= health_category_list_loops($loops);
 
         return $description;
     }
+
+    /**
+     * Outputs resolutions to problems outlined in MDL-34684 with items having themselves as parent
+     *
+     * @link https://tracker.moodle.org/browse/MDL-34684
+     * @return string Formatted html to be output to the browser with instructions and sql statements to run
+     */
     function solution() {
         global $CFG;
         list($missingparent, $loops) = $this->find_problems();
@@ -689,6 +655,110 @@ class problem_000017 extends problem_base {
         if (!empty($loops)) {
             $solution .= "<pre>UPDATE " . $CFG->prefix . "question_categories\n" .
                     "        SET parent = 0\n" .
+                    "        WHERE id IN (" . implode(',', array_keys($loops)) . ");</pre>\n";
+        }
+
+        return $solution;
+    }
+}
+
+/**
+ * Check course categories tree structure for problems.
+ */
+class problem_000018 extends problem_base {
+    /**
+     * Generate title for this problem.
+     *
+     * @return string Title of problem.
+     */
+    function title() {
+        return 'Course categories tree structure';
+    }
+
+    /**
+     * Search for problems in the course categories.
+     *
+     * @uses $DB
+     * @return array List of categories that contain missing parents or loops.
+     */
+    function find_problems() {
+        global $DB;
+        static $answer = null;
+
+        if (is_null($answer)) {
+            $categories = $DB->get_records('course_categories', array(), 'id');
+
+            // Look for missing parents.
+            $missingparent = health_category_find_missing_parents($categories);
+
+            // Look for loops.
+            $loops = health_category_find_loops($categories);
+
+            $answer = array($missingparent, $loops);
+        }
+
+        return $answer;
+    }
+
+    /**
+     * Check if the problem exists.
+     *
+     * @return boolean True if either missing parents or loops found
+     */
+    function exists() {
+        list($missingparent, $loops) = $this->find_problems();
+        return !empty($missingparent) || !empty($loops);
+    }
+
+    /**
+     * Set problem severity.
+     *
+     * @return constant Problem severity.
+     */
+    function severity() {
+        return SEVERITY_ANNOYANCE;
+    }
+
+    /**
+     * Generate problem description.
+     *
+     * @return string HTML containing details of the problem.
+     */
+    function description() {
+        list($missingparent, $loops) = $this->find_problems();
+
+        $description = '<p>The course categories should be arranged into tree ' .
+                ' structures by the course_categories.parent field. Sometimes ' .
+                ' this tree structure gets messed up.</p>';
+
+        $description .= health_category_list_missing_parents($missingparent);
+        $description .= health_category_list_loops($loops);
+
+        return $description;
+    }
+
+    /**
+     * Generate solution text.
+     *
+     * @uses $CFG
+     * @return string HTML containing the suggested solution.
+     */
+    function solution() {
+        global $CFG;
+        list($missingparent, $loops) = $this->find_problems();
+
+        $solution = '<p>Consider executing the following SQL queries. These fix ' .
+                'the problem by moving some categories to the top level.</p>';
+
+        if (!empty($missingparent)) {
+            $solution .= "<pre>UPDATE " . $CFG->prefix . "course_categories\n" .
+                    "        SET parent = 0, depth = 1, path = CONCAT('/', id)\n" .
+                    "        WHERE id IN (" . implode(',', array_keys($missingparent)) . ");</pre>\n";
+        }
+
+        if (!empty($loops)) {
+            $solution .= "<pre>UPDATE " . $CFG->prefix . "course_categories\n" .
+                    "        SET parent = 0, depth = 1, path = CONCAT('/', id)\n" .
                     "        WHERE id IN (" . implode(',', array_keys($loops)) . ");</pre>\n";
         }
 
