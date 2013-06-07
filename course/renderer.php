@@ -1878,15 +1878,26 @@ class core_course_renderer extends plugin_renderer_base {
         $chelper->set_attributes(array('class' => 'frontpage-course-list-all'));
         $courses = coursecat::get(0)->get_courses($chelper->get_courses_display_options());
         $totalcount = coursecat::get(0)->get_courses_count($chelper->get_courses_display_options());
-        if (!$totalcount && has_capability('moodle/course:create', context_system::instance())) {
+        if (!$totalcount && !$this->page->user_is_editing() && has_capability('moodle/course:create', context_system::instance())) {
             // Print link to create a new course, for the 1st available category.
-            $output = $this->container_start('buttons');
-            $url = new moodle_url('/course/edit.php', array('category' => $CFG->defaultrequestcategory, 'returnto' => 'topcat'));
-            $output .= $this->single_button($url, get_string('addnewcourse'), 'get');
-            $output .= $this->container_end('buttons');
-            return $output;
+            return $this->add_new_course_button();
         }
         return $this->coursecat_courses($chelper, $courses, $totalcount);
+    }
+
+    /**
+     * Returns HTML to the "add new course" button for the page
+     *
+     * @return string
+     */
+    public function add_new_course_button() {
+        global $CFG;
+        // Print link to create a new course, for the 1st available category.
+        $output = $this->container_start('buttons');
+        $url = new moodle_url('/course/edit.php', array('category' => $CFG->defaultrequestcategory, 'returnto' => 'topcat'));
+        $output .= $this->single_button($url, get_string('addnewcourse'), 'get');
+        $output .= $this->container_end('buttons');
+        return $output;
     }
 
     /**
