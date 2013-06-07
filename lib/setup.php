@@ -289,6 +289,8 @@ umask(0000);
 $CFG->yui2version = '2.9.0';
 $CFG->yui3version = '3.9.1';
 
+// core_component can be used in any scripts, it does not need anything else.
+require_once($CFG->libdir .'/classes/component.php');
 
 // special support for highly optimised scripts that do not need libraries and DB connection
 if (defined('ABORT_AFTER_CONFIG')) {
@@ -503,6 +505,13 @@ ini_set('include_path', $CFG->libdir.'/pear' . PATH_SEPARATOR . ini_get('include
 //point zend include path to moodles lib/zend so that includes and requires will search there for files before anywhere else
 //please note zend library is supposed to be used only from web service protocol classes, it may be removed in future
 ini_set('include_path', $CFG->libdir.'/zend' . PATH_SEPARATOR . ini_get('include_path'));
+
+// Register our classloader, in theory somebody might want to replace it to load other hacked core classes.
+if (defined('COMPONENT_CLASSLOADER')) {
+    spl_autoload_register(COMPONENT_CLASSLOADER);
+} else {
+    spl_autoload_register('core_component::classloader');
+}
 
 // Load up standard libraries
 require_once($CFG->libdir .'/textlib.class.php');   // Functions to handle multibyte strings

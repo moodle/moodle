@@ -575,13 +575,22 @@ class tool_installaddon_installer {
             return false;
         }
 
-        list($plugintype, $pluginname) = normalize_component($data->component);
+        list($plugintype, $pluginname) = core_component::normalize_component($data->component);
 
         if ($plugintype === 'core') {
             return false;
         }
 
         if ($data->component !== $plugintype.'_'.$pluginname) {
+            return false;
+        }
+
+        if (!core_component::is_valid_plugin_name($plugintype, $pluginname)) {
+            return false;
+        }
+
+        $plugintypes = core_component::get_plugin_types();
+        if (!isset($plugintypes[$plugintype])) {
             return false;
         }
 

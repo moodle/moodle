@@ -120,29 +120,6 @@ $definitions = array(
         'mode' => cache_store::MODE_APPLICATION,
     ),
 
-    // Cache for the list of known plugin and subplugin types - {@see get_plugin_types()}.
-    // Contains two arrays of (string)pluginname => (string)location. The first array with
-    // the key 0 contains locations relative to $CFG->dirroot. The second array with the
-    // key 1 contains absolute paths.
-    'plugintypes' => array(
-        'mode' => cache_store::MODE_APPLICATION,
-        'simplekeys' => true, // 0 or 1 depending on the requested location type.
-        'simpledata' => true, // Array of strings.
-        'persistent' => true, // Likely there will be a couple of calls to this.
-        'persistmaxsize' => 2, // Both arrays should stay loaded in memory.
-    ),
-
-    // Cache for the list of installed plugins - {@see get_plugin_list()}.
-    // The key consists of the plugin type string (e.g. mod, block, enrol etc).
-    // The value is an associative array of plugin name => plugin location.
-    'pluginlist' => array(
-        'mode' => cache_store::MODE_APPLICATION,
-        'simplekeys' => true,
-        'simpledata' => true,
-        'persistent' => true,
-        'persistentmaxsize' => 2,
-    ),
-
     // Cache used by the {@link plugininfo_base} class.
     'plugininfo_base' => array(
         'mode' => cache_store::MODE_APPLICATION,

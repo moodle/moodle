@@ -1662,19 +1662,18 @@ class YUI_config {
         }
 
         // Handle other core subsystems.
-        $subsystems = get_core_subsystems();
+        $subsystems = core_component::get_core_subsystems();
         foreach ($subsystems as $subsystem => $path) {
             if (is_null($path)) {
                 continue;
             }
-            $path = get_component_directory($subsystem);
             if ($module = $this->get_moodle_path_metadata($path)) {
                 $moodlemodules = array_merge($moodlemodules, $module);
             }
         }
 
         // And finally the plugins.
-        $plugintypes = get_plugin_types();
+        $plugintypes = core_component::get_plugin_types();
         foreach ($plugintypes as $plugintype => $pathroot) {
             $pluginlist = get_plugin_list($plugintype);
             foreach ($pluginlist as $plugin => $path) {

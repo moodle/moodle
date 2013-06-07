@@ -31,6 +31,176 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * List all core subsystems and their location
+ *
+ * This is a whitelist of components that are part of the core and their
+ * language strings are defined in /lang/en/<<subsystem>>.php. If a given
+ * plugin is not listed here and it does not have proper plugintype prefix,
+ * then it is considered as course activity module.
+ *
+ * The location is optionally dirroot relative path. NULL means there is no special
+ * directory for this subsystem. If the location is set, the subsystem's
+ * renderer.php is expected to be there.
+ *
+ * @deprecated since 2.6, use core_component::get_core_subsystems()
+ *
+ * @param bool $fullpaths false means relative paths from dirroot, use true for performance reasons
+ * @return array of (string)name => (string|null)location
+ */
+function get_core_subsystems($fullpaths = false) {
+    global $CFG;
+
+    // NOTE: do not add any other debugging here, keep forever.
+
+    $subsystems = core_component::get_core_subsystems();
+
+    if ($fullpaths) {
+        return $subsystems;
+    }
+
+    debugging('Short paths are deprecated when using get_core_subsystems(), please fix the code to use fullpaths instead.', DEBUG_DEVELOPER);
+
+    $dlength = strlen($CFG->dirroot);
+
+    foreach ($subsystems as $k => $v) {
+        if ($v === null) {
+            continue;
+        }
+        $subsystems[$k] = substr($v, $dlength+1);
+    }
+
+    return $subsystems;
+}
+
+/**
+ * Lists all plugin types.
+ *
+ * @deprecated since 2.6, use core_component::get_plugin_types()
+ *
+ * @param bool $fullpaths false means relative paths from dirroot
+ * @return array Array of strings - name=>location
+ */
+function get_plugin_types($fullpaths = true) {
+    global $CFG;
+
+    // NOTE: do not add any other debugging here, keep forever.
+
+    $types = core_component::get_plugin_types();
+
+    if ($fullpaths) {
+        return $types;
+    }
+
+    debugging('Short paths are deprecated when using get_plugin_types(), please fix the code to use fullpaths instead.', DEBUG_DEVELOPER);
+
+    $dlength = strlen($CFG->dirroot);
+
+    foreach ($types as $k => $v) {
+        if ($k === 'theme') {
+            $types[$k] = 'theme';
+            continue;
+        }
+        $types[$k] = substr($v, $dlength+1);
+    }
+
+    return $types;
+}
+
+/**
+ * Use when listing real plugins of one type.
+ *
+ * @deprecated since 2.6, use core_component::get_plugin_list()
+ *
+ * @param string $plugintype type of plugin
+ * @return array name=>fulllocation pairs of plugins of given type
+ */
+function get_plugin_list($plugintype) {
+
+    // NOTE: do not add any other debugging here, keep forever.
+
+    if ($plugintype === '') {
+        $plugintype = 'mod';
+    }
+
+    return core_component::get_plugin_list($plugintype);
+}
+
+/**
+ * Get a list of all the plugins of a given type that define a certain class
+ * in a certain file. The plugin component names and class names are returned.
+ *
+ * @deprecated since 2.6, use core_component::get_plugin_list_with_class()
+ *
+ * @param string $plugintype the type of plugin, e.g. 'mod' or 'report'.
+ * @param string $class the part of the name of the class after the
+ *      frankenstyle prefix. e.g 'thing' if you are looking for classes with
+ *      names like report_courselist_thing. If you are looking for classes with
+ *      the same name as the plugin name (e.g. qtype_multichoice) then pass ''.
+ * @param string $file the name of file within the plugin that defines the class.
+ * @return array with frankenstyle plugin names as keys (e.g. 'report_courselist', 'mod_forum')
+ *      and the class names as values (e.g. 'report_courselist_thing', 'qtype_multichoice').
+ */
+function get_plugin_list_with_class($plugintype, $class, $file) {
+
+    // NOTE: do not add any other debugging here, keep forever.
+
+    return core_component::get_plugin_list_with_class($plugintype, $class, $file);
+}
+
+/**
+ * Returns the exact absolute path to plugin directory.
+ *
+ * @deprecated since 2.6, use core_component::get_plugin_directory()
+ *
+ * @param string $plugintype type of plugin
+ * @param string $name name of the plugin
+ * @return string full path to plugin directory; NULL if not found
+ */
+function get_plugin_directory($plugintype, $name) {
+
+    // NOTE: do not add any other debugging here, keep forever.
+
+    if ($plugintype === '') {
+        $plugintype = 'mod';
+    }
+
+    return core_component::get_plugin_directory($plugintype, $name);
+}
+
+/**
+ * Normalize the component name using the "frankenstyle" names.
+ *
+ * @deprecated since 2.6, use core_component::normalize_component()
+ *
+ * @param string $component
+ * @return array as (string)$type => (string)$plugin
+ */
+function normalize_component($component) {
+
+    // NOTE: do not add any other debugging here, keep forever.
+
+    return core_component::normalize_component($component);
+}
+
+/**
+ * Return exact absolute path to a plugin directory.
+ *
+ * @deprecated since 2.6, use core_component::normalize_component()
+ *
+ * @param string $component name such as 'moodle', 'mod_forum'
+ * @return string full path to component directory; NULL if not found
+ */
+function get_component_directory($component) {
+
+    // NOTE: do not add any other debugging here, keep forever.
+
+    return core_component::get_component_directory($component);
+}
+
+
+// === Deprecated before 2.6.0 ===
+
+/**
  * Hack to find out the GD version by parsing phpinfo output
  *
  * @return int GD version (1, 2, or 0)

@@ -1697,12 +1697,12 @@ function matching_page_type_patterns($pagetype) {
  * @return array an array of all the page type patterns that might match this page type.
  */
 function generate_page_type_patterns($pagetype, $parentcontext = null, $currentcontext = null) {
-    global $CFG;
+    global $CFG; // Required for includes bellow.
 
     $bits = explode('-', $pagetype);
 
-    $core = get_core_subsystems();
-    $plugins = get_plugin_types();
+    $core = core_component::get_core_subsystems();
+    $plugins = core_component::get_plugin_types();
 
     //progressively strip pieces off the page type looking for a match
     $componentarray = null;
@@ -1712,7 +1712,7 @@ function generate_page_type_patterns($pagetype, $parentcontext = null, $currentc
 
         // Check to see if the component is a core component
         if (array_key_exists($possiblecomponent, $core) && !empty($core[$possiblecomponent])) {
-            $libfile = $CFG->dirroot.'/'.$core[$possiblecomponent].'/lib.php';
+            $libfile = $core[$possiblecomponent].'/lib.php';
             if (file_exists($libfile)) {
                 require_once($libfile);
                 $function = $possiblecomponent.'_page_type_list';
@@ -1730,7 +1730,7 @@ function generate_page_type_patterns($pagetype, $parentcontext = null, $currentc
             //We've found a plugin type. Look for a plugin name by getting the next section of page type
             if (count($bits) > $i) {
                 $pluginname = $bits[$i];
-                $directory = get_plugin_directory($possiblecomponent, $pluginname);
+                $directory = core_component::get_plugin_directory($possiblecomponent, $pluginname);
                 if (!empty($directory)){
                     $libfile = $directory.'/lib.php';
                     if (file_exists($libfile)) {
@@ -1750,16 +1750,14 @@ function generate_page_type_patterns($pagetype, $parentcontext = null, $currentc
 
             //we'll only get to here if we still don't have any patterns
             //the plugin type may have a callback
-            $directory = get_plugin_directory($possiblecomponent, null);
-            if (!empty($directory)){
-                $libfile = $directory.'/lib.php';
-                if (file_exists($libfile)) {
-                    require_once($libfile);
-                    $function = $possiblecomponent.'_page_type_list';
-                    if (function_exists($function)) {
-                        if ($patterns = $function($pagetype, $parentcontext, $currentcontext)) {
-                            break;
-                        }
+            $directory = $plugins[$possiblecomponent];
+            $libfile = $directory.'/lib.php';
+            if (file_exists($libfile)) {
+                require_once($libfile);
+                $function = $possiblecomponent.'_page_type_list';
+                if (function_exists($function)) {
+                    if ($patterns = $function($pagetype, $parentcontext, $currentcontext)) {
+                        break;
                     }
                 }
             }

@@ -183,13 +183,15 @@ abstract class renderer_factory_base implements renderer_factory {
             }
 
         } else if (!empty($subtype)) {
-            $coresubsystems = get_core_subsystems();
-            if (!isset($coresubsystems[$subtype])) {
+            $coresubsystems = core_component::get_core_subsystems();
+            if (!array_key_exists($subtype, $coresubsystems)) { // There may be nulls.
                 throw new coding_exception('Invalid core subtype "' . $subtype . '" in renderer request');
             }
-            $rendererfile = $CFG->dirroot . '/' . $coresubsystems[$subtype] . '/renderer.php';
-            if (file_exists($rendererfile)) {
-                include_once($rendererfile);
+            if ($coresubsystems[$subtype]) {
+                $rendererfile = $coresubsystems[$subtype] . '/renderer.php';
+                if (file_exists($rendererfile)) {
+                    include_once($rendererfile);
+                }
             }
         }
 

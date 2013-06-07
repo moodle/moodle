@@ -1319,41 +1319,6 @@ class moodlelib_testcase extends advanced_testcase {
         $USER = $olduser;
     }
 
-    public function test_normalize_component() {
-
-        // moodle core
-        $this->assertEquals(normalize_component('moodle'), array('core', null));
-        $this->assertEquals(normalize_component('core'), array('core', null));
-
-        // moodle core subsystems
-        $this->assertEquals(normalize_component('admin'), array('core', 'admin'));
-        $this->assertEquals(normalize_component('core_admin'), array('core', 'admin'));
-
-        // activity modules and their subplugins
-        $this->assertEquals(normalize_component('workshop'), array('mod', 'workshop'));
-        $this->assertEquals(normalize_component('mod_workshop'), array('mod', 'workshop'));
-        $this->assertEquals(normalize_component('workshopform_accumulative'), array('workshopform', 'accumulative'));
-        $this->assertEquals(normalize_component('quiz'), array('mod', 'quiz'));
-        $this->assertEquals(normalize_component('quiz_grading'), array('quiz', 'grading'));
-        $this->assertEquals(normalize_component('data'), array('mod', 'data'));
-        $this->assertEquals(normalize_component('datafield_checkbox'), array('datafield', 'checkbox'));
-
-        // other plugin types
-        $this->assertEquals(normalize_component('auth_mnet'), array('auth', 'mnet'));
-        $this->assertEquals(normalize_component('enrol_self'), array('enrol', 'self'));
-        $this->assertEquals(normalize_component('block_html'), array('block', 'html'));
-        $this->assertEquals(normalize_component('block_mnet_hosts'), array('block', 'mnet_hosts'));
-        $this->assertEquals(normalize_component('local_amos'), array('local', 'amos'));
-
-        // unknown components are supposed to be activity modules
-        $this->assertEquals(normalize_component('whothefuckwouldcomewithsuchastupidnameofcomponent'),
-            array('mod', 'whothefuckwouldcomewithsuchastupidnameofcomponent'));
-        $this->assertEquals(normalize_component('whothefuck_wouldcomewithsuchastupidnameofcomponent'),
-            array('mod', 'whothefuck_wouldcomewithsuchastupidnameofcomponent'));
-        $this->assertEquals(normalize_component('whothefuck_would_come_withsuchastupidnameofcomponent'),
-            array('mod', 'whothefuck_would_come_withsuchastupidnameofcomponent'));
-    }
-
     protected function get_fake_preference_test_userid() {
         global $DB;
 
