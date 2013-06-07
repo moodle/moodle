@@ -252,8 +252,8 @@ class mod_assign_renderer extends plugin_renderer_base {
                                        $summary->participantcount);
         }
 
-        // Drafts.
-        if ($summary->submissiondraftsenabled) {
+        // Drafts count and dont show drafts count when using offline assignment.
+        if ($summary->submissiondraftsenabled && $summary->submissionsenabled) {
             $this->add_table_row_tuple($t, get_string('numberofdraftsubmissions', 'assign'),
                                        $summary->submissiondraftscount);
         }
