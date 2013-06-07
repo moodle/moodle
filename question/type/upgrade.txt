@@ -9,7 +9,26 @@ This files describes API changes for question type plugins.
   $this->process_submission(array('-finish' => 1));
   you should change that to
   $this->finish();
+  
+For MDL-37417 Question editing form improvements several improvements were made. Including:
+* MDL -32750 Introduced collapsible editor. Editors now collapsed by default in editor options. 
+  Helper method get_non_collabsible_editor_options()
+* To use screen real estate better related elements were grouped using form grouping where 
+  possible. Particularly answers/choices. 
+* Changed access hide style for elements in group so their labels are visible and related 
+  static elements could be removed.
+* Add blanks for more repeated elements were made part of the relevant section by adding 
+  true as the final parameter of the call to repeat_elements();
+* More repeated elements should only be added when requested
 
+* Style is used to visually group field elements. Including choices/answer and multiple tries/hints
+* The new collapsible sections has changed the ids of the headers by adding ‘id_’. This caused 
+  javascript errors. Adjusted references to in javascript and css.
+* setType() is now required for repeated form elements. 
+* The plugin version was changed. These changes are not backward compatible. They require moodle 2.5
+
+A reference example of these changes is 
+https://github.com/moodleou/moodle-qtype_pmatch/commit/9d8e1beb9f780246416a0f3a7622f700b8fa90c8
 
 === 2.3.5 / 2.4.2 / 2.5 ===
 
