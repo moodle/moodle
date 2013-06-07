@@ -38,7 +38,7 @@ admin_externalpage_setup('tooluploaduserpictures');
 
 require_login();
 
-require_capability('moodle/site:uploadusers', context_system::instance());
+require_capability('tool/uploaduser:uploaduserpictures', context_system::instance());
 
 $site = get_site();
 
