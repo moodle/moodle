@@ -3,7 +3,9 @@
   "builds": {
     "moodle-core-blocks": {
       "jsfiles": [
-        "blocks.js"
+        "blocks.js",
+        "manager.js",
+        "blockregion.js"
       ]
     }
   }
