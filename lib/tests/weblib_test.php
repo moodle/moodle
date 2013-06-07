@@ -106,6 +106,22 @@ class web_testcase extends advanced_testcase {
             format_text_email('&#x7fd2;&#x7FD2;',FORMAT_HTML));
     }
 
+    function test_obfuscate_email() {
+        $email = 'some.user@example.com';
+        $obfuscated = obfuscate_email($email);
+        $this->assertNotSame($email, $obfuscated);
+        $back = textlib::entities_to_utf8(urldecode($email), true);
+        $this->assertSame($email, $back);
+    }
+
+    function test_obfuscate_text() {
+        $text = 'Žluťoučký koníček 32131';
+        $obfuscated = obfuscate_text($text);
+        $this->assertNotSame($text, $obfuscated);
+        $back = textlib::entities_to_utf8($obfuscated, true);
+        $this->assertSame($text, $back);
+    }
+
     function test_highlight() {
         $this->assertEquals(highlight('good', 'This is good'), 'This is <span class="highlight">good</span>');
         $this->assertEquals(highlight('SpaN', 'span'), '<span class="highlight">span</span>');
