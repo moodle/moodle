@@ -1,0 +1,18 @@
+/* reports.less */
+
+// The home for small tweaks to reports that don't require
+// changes drastic enough to pull in the full module css
+// and replace it completely.
+
+#page-report-participation-index .participationselectform div label { // Using 'div' here to override the report styles.css
+    display: inline;
+    margin: 0 5px; // No top and bottom margin with a 5px left and right for LTR and RTL.
+}
+
+#page-report-participation-index.dir-ltr .participationselectform div label[for=menuinstanceid] {
+    margin-left: 0px; // No left margin for LTR.
+}
+
+#page-report-participation-index.dir-rtl .participationselectform div label[for=menuinstanceid] {
+    margin-right: 0px; // No right margin for RTL.
+}
