@@ -25,8 +25,6 @@
 
 require(dirname(__FILE__) . '/../../../config.php');
 require_once($CFG->libdir.'/filelib.php');
-require_once(dirname(__FILE__).'/classes/installer.php');
-require_once(dirname(__FILE__).'/classes/validator.php');
 
 require_login();
 require_capability('moodle/site:config', context_system::instance());

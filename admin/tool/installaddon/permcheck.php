@@ -28,7 +28,6 @@ define('AJAX_SCRIPT', true);
 
 require(dirname(__FILE__) . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
-require_once(dirname(__FILE__).'/classes/installer.php');
 
 require_login();
 

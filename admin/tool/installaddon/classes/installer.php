@@ -34,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class tool_installaddon_installer {
 
-    /** @var tool_installaddon_installfromzip */
+    /** @var tool_installaddon_installfromzip_form */
     protected $installfromzipform = null;
 
     /**
@@ -87,12 +87,9 @@ class tool_installaddon_installer {
     }
 
     /**
-     * @return tool_installaddon_installfromzip
+     * @return tool_installaddon_installfromzip_form
      */
     public function get_installfromzip_form() {
-        global $CFG;
-        require_once(dirname(__FILE__).'/installfromzip_form.php');
-
         if (!is_null($this->installfromzipform)) {
             return $this->installfromzipform;
         }
@@ -100,22 +97,22 @@ class tool_installaddon_installer {
         $action = $this->index_url();
         $customdata = array('installer' => $this);
 
-        $this->installfromzipform = new tool_installaddon_installfromzip($action, $customdata);
+        $this->installfromzipform = new tool_installaddon_installfromzip_form($action, $customdata);
 
         return $this->installfromzipform;
     }
 
     /**
-     * Saves the ZIP file from the {@link tool_installaddon_installfromzip} form
+     * Saves the ZIP file from the {@link tool_installaddon_installfromzip_form} form
      *
      * The file is saved into the given temporary location for inspection and eventual
      * deployment. The form is expected to be submitted and validated.
      *
-     * @param tool_installaddon_installfromzip $form
+     * @param tool_installaddon_installfromzip_form $form
      * @param string $targetdir full path to the directory where the ZIP should be stored to
      * @return string filename of the saved file relative to the given target
      */
-    public function save_installfromzip_file(tool_installaddon_installfromzip $form, $targetdir) {
+    public function save_installfromzip_file(tool_installaddon_installfromzip_form $form, $targetdir) {
 
         $filename = clean_param($form->get_new_filename('zipfile'), PARAM_FILE);
         $form->save_file('zipfile', $targetdir.'/'.$filename);

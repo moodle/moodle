@@ -33,7 +33,7 @@ require_once($CFG->libdir.'/formslib.php');
  * @copyright 2013 David Mudrak <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_installaddon_installfromzip extends moodleform {
+class tool_installaddon_installfromzip_form extends moodleform {
 
     /**
      * Defines the form elements

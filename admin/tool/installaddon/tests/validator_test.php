@@ -26,9 +26,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-global $CFG;
-require_once($CFG->dirroot.'/'.$CFG->admin.'/tool/installaddon/classes/validator.php');
-
 
 /**
  * Unit tests for the {@link tool_installaddon_installer} class

@@ -26,8 +26,6 @@
 require(dirname(__FILE__) . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/filelib.php');
-require_once(dirname(__FILE__).'/classes/installer.php');
-require_once(dirname(__FILE__).'/classes/validator.php');
 
 navigation_node::override_active_url(new moodle_url('/admin/tool/installaddon/index.php'));
 admin_externalpage_setup('tool_installaddon_validate');
