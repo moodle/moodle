@@ -113,7 +113,7 @@ if ($rev > -1) {
             header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
             header('Cache-Control: public, max-age='.$lifetime);
             header('Content-Type: '.$mimetype);
-            header('Etag: '.$etag);
+            header('Etag: "'.$etag.'"');
             die;
         }
         send_cached_image($cacheimage, $etag);
@@ -205,7 +205,7 @@ function send_cached_image($imagepath, $etag) {
 
     $mimetype = get_contenttype_from_ext($pathinfo['extension']);
 
-    header('Etag: '.$etag);
+    header('Etag: "'.$etag.'"');
     header('Content-Disposition: inline; filename="'.$imagename.'"');
     header('Last-Modified: '. gmdate('D, d M Y H:i:s', filemtime($imagepath)) .' GMT');
     header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
