@@ -3041,12 +3041,13 @@ EOD;
      * @return string HTML.
      */
     public function blocks($region, $classes = array(), $tag = 'aside') {
+        $displayregion = $this->page->apply_theme_region_manipulations($region);
         $classes = (array)$classes;
         $classes[] = 'block-region';
         $attributes = array(
-            'id' => 'block-region-'.preg_replace('#[^a-zA-Z0-9_\-]+#', '-', $region),
+            'id' => 'block-region-'.preg_replace('#[^a-zA-Z0-9_\-]+#', '-', $displayregion),
             'class' => join(' ', $classes),
-            'data-blockregion' => $region,
+            'data-blockregion' => $displayregion,
             'data-droptarget' => '1'
         );
         return html_writer::tag($tag, $this->blocks_for_region($region), $attributes);
