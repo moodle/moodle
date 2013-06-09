@@ -255,6 +255,7 @@ class repository_type implements cacheable_object {
             }
             //run plugin_init function
             if (!repository::static_function($this->_typename, 'plugin_init')) {
+                $this->update_visibility(false);
                 if (!$silent) {
                     throw new repository_exception('cannotinitplugin', 'repository');
                 }
