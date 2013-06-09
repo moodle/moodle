@@ -504,18 +504,22 @@ class mod_scorm_mod_form extends moodleform_mod {
             return false;
         }
 
+        // Convert completionstatusrequired to a proper integer, if any.
+        $total = 0;
+        if (isset($data->completionstatusrequired) && is_array($data->completionstatusrequired)) {
+            foreach (array_keys($data->completionstatusrequired) as $state) {
+                $total |= $state;
+            }
+            $data->completionstatusrequired = $total;
+        }
+
         if (!empty($data->completionunlocked)) {
-            // Turn off completion settings if the checkboxes aren't ticked
+            // Turn off completion settings if the checkboxes aren't ticked.
             $autocompletion = isset($data->completion) && $data->completion == COMPLETION_TRACKING_AUTOMATIC;
 
-            if (isset($data->completionstatusrequired) &&
-                    is_array($data->completionstatusrequired) && $autocompletion) {
-                $total = 0;
-                foreach (array_keys($data->completionstatusrequired) as $state) {
-                    $total |= $state;
-                }
-
-                $data->completionstatusrequired = $total;
+            if (isset($data->completionstatusrequired) && $autocompletion) {
+                // Do nothing: completionstatusrequired has been already converted
+                //             into a correct integer representation.
             } else {
                 $data->completionstatusrequired = null;
             }
