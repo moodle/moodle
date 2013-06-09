@@ -4082,7 +4082,7 @@ class settings_navigation extends navigation_node {
             $reportfunction($reporttab, $user, $course);
         }
         $anyreport = has_capability('moodle/user:viewuseractivitiesreport', $usercontext);
-        if ($anyreport || ($course->showreports && $currentuser && $forceforcontext)) {
+        if ($anyreport || ($course->showreports && $currentuser)) {
             // Add grade hardcoded grade report if necessary.
             $gradeaccess = false;
             if (has_capability('moodle/grade:viewall', $coursecontext)) {
@@ -4107,7 +4107,6 @@ class settings_navigation extends navigation_node {
         }
         // Check the number of nodes in the report node... if there are none remove the node
         $reporttab->trim_if_empty();
-
 
         // Login as ...
         if (!$user->deleted and !$currentuser && !session_is_loggedinas() && has_capability('moodle/user:loginas', $coursecontext) && !is_siteadmin($user->id)) {
