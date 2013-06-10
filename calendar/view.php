@@ -88,8 +88,7 @@ $pagetitle = '';
 
 $strcalendar = get_string('calendar', 'calendar');
 
-// MDL-18375, Multi-Calendar Support
-if (!$CALENDARSYSTEM->checkdate($mon, $day, $yr)) {
+if (!checkdate($mon, $day, $yr)) {
     $day = intval($now['mday']);
     $mon = intval($now['mon']);
     $yr = intval($now['year']);

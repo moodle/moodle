@@ -6,12 +6,18 @@ require_once($CFG->libdir.'/formslib.php');
 require_once($CFG->libdir.'/completionlib.php');
 require_once($CFG->libdir. '/coursecatlib.php');
 
+/**
+ * The form for handling editing a course.
+ */
 class course_edit_form extends moodleform {
     protected $course;
     protected $context;
 
+    /**
+     * Form definition.
+     */
     function definition() {
-        global $USER, $CFG, $DB, $PAGE;
+        global $CFG, $PAGE;
 
         $mform    = $this->_form;
         $PAGE->requires->yui_module('moodle-course-formatchooser', 'M.course.init_formatchooser',
@@ -38,8 +44,7 @@ class course_edit_form extends moodleform {
         $this->course  = $course;
         $this->context = $context;
 
-/// form definition with new course defaults
-//--------------------------------------------------------------------------------
+        // Form definition with new course defaults.
         $mform->addElement('header','general', get_string('general', 'form'));
 
         $mform->addElement('hidden', 'returnto', null);
@@ -247,10 +252,8 @@ class course_edit_form extends moodleform {
             $mform->setDefault('enablecompletion', 0);
         }
 
-//--------------------------------------------------------------------------------
         enrol_course_edit_form($mform, $course, $context);
 
-//--------------------------------------------------------------------------------
         $mform->addElement('header','groups', get_string('groupsettingsheader', 'group'));
 
         $choices = array();
@@ -270,17 +273,15 @@ class course_edit_form extends moodleform {
         $options[0] = get_string('none');
         $mform->addElement('select', 'defaultgroupingid', get_string('defaultgrouping', 'group'), $options);
 
-//--------------------------------------------------------------------------------
-        // MDL-18375, Multi-Calendar Support
+        // Multi-Calendar Support - see MDL-18375
         $mform->addElement('header','', get_string('calendar', 'calendar'));
 
-        $calendarsystems = array();
-        $calendarsystems[''] = get_string('forceno');
-        $calendarsystems += get_list_of_calendars();
-        $mform->addElement('select', 'calendarsystem', get_string('forcecalendarsystem', 'calendarsystem'), $calendarsystems);
+        $calendartypes = array();
+        $calendartypes[''] = get_string('forceno');
+        $calendartypes += calendar_type_plugin_factory::get_list_of_calendar_types();
+        $mform->addElement('select', 'calendartype', get_string('forcecalendartype', 'calendar'), $calendartypes);
 
-/// customizable role names in this course
-//--------------------------------------------------------------------------------
+        // Customizable role names in this course.
         $mform->addElement('header','rolerenaming', get_string('rolerenaming'));
         $mform->addHelpButton('rolerenaming', 'rolerenaming');
 
@@ -293,17 +294,18 @@ class course_edit_form extends moodleform {
             }
         }
 
-//--------------------------------------------------------------------------------
         $this->add_action_buttons();
-//--------------------------------------------------------------------------------
+
         $mform->addElement('hidden', 'id', null);
         $mform->setType('id', PARAM_INT);
 
-/// finally set the current form data
-//--------------------------------------------------------------------------------
+        // Finally set the current form data
         $this->set_data($course);
     }
 
+    /**
+     * Fill in the current page data for this course.
+     */
     function definition_after_data() {
         global $DB;
 
@@ -334,7 +336,13 @@ class course_edit_form extends moodleform {
         }
     }
 
-/// perform some extra moodle validation
+    /**
+     * Validation.
+     *
+     * @param array $data
+     * @param array $files
+     * @return array the errors that were found
+     */
     function validation($data, $files) {
         global $DB, $CFG;
 

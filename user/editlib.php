@@ -262,9 +262,8 @@ function useredit_shared_definition(&$mform, $editoroptions = null, $filemanager
     $mform->addElement('select', 'lang', get_string('preferredlanguage'), get_string_manager()->get_list_of_translations());
     $mform->setDefault('lang', $CFG->lang);
 
-    // MDL-18375, Multi-Calendar Support
-    $mform->addElement('select', 'calendarsystem', get_string('preferredcalendar', 'calendarsystem'), get_list_of_calendars());
-    $mform->setDefault('calendarsystem', $CFG->calendarsystem);
+    // Multi-Calendar Support - see MDL-18375.
+    $mform->addElement('select', 'calendartype', get_string('preferredcalendar', 'calendar'), calendar_type_plugin_factory::get_list_of_calendar_types());
 
     if (!empty($CFG->allowuserthemes)) {
         $choices = array();

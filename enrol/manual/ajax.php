@@ -113,10 +113,8 @@ switch ($action) {
                 break;
             case 3:
             default:
-                // MDL-18375, Multi-Calendar Support
-                $calendarsystem_gregorian = calendarsystem_plugin_factory::factory('gregorian');
                 $today = time();
-                $today = $calendarsystem_gregorian->make_timestamp(date('Y', $today), date('m', $today), date('d', $today), 0, 0, 0);
+                $today = make_timestamp(date('Y', $today), date('m', $today), date('d', $today), 0, 0, 0);
                 $timestart = $today;
                 break;
         }

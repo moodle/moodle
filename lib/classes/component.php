@@ -341,6 +341,7 @@ $cache = '.var_export($cache, true).';
             'qtype'         => $CFG->dirroot.'/question/type',
             'mod'           => $CFG->dirroot.'/mod',
             'auth'          => $CFG->dirroot.'/auth',
+            'calendartype'  => $CFG->dirroot.'/calendar/type',
             'enrol'         => $CFG->dirroot.'/enrol',
             'message'       => $CFG->dirroot.'/message/output',
             'block'         => $CFG->dirroot.'/blocks',
