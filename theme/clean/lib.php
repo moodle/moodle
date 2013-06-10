@@ -78,3 +78,36 @@ function clean_set_customcss($css, $customcss) {
 
     return $css;
 }
+
+/**
+ * Returns an object containing HTML for the areas affected by settings.
+ *
+ * @param renderer_base $output Pass in $OUTPUT.
+ * @param moodle_page $page Pass in $PAGE.
+ * @return stdClass An object with the following properties:
+ *      - navbarclass A CSS class to use on the navbar. By default ''.
+ *      - heading HTML to use for the heading. A logo if one is selected or the default heading.
+ *      - footnote HTML to use as a footnote. By default ''.
+ */
+function theme_clean_get_html_for_settings(renderer_base $output, moodle_page $page) {
+    global $CFG;
+    $return = new stdClass;
+
+    $return->navbarclass = '';
+    if (!empty($page->theme->settings->invert)) {
+        $return->navbarclass .= ' navbar-inverse';
+    }
+
+    if (!empty($page->theme->settings->logo)) {
+        $return->heading = html_writer::link($CFG->wwwroot, '', array('title' => get_string('home'), 'class' => 'logo'));
+    } else {
+        $return->heading = $output->page_heading();
+    }
+
+    $return->footnote = '';
+    if (!empty($page->theme->settings->footnote)) {
+        $return->footnote = '<div class="footnote text-center">'.$page->theme->settings->footnote.'</div>';
+    }
+
+    return $return;
+}

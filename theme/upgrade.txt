@@ -1,6 +1,33 @@
 This files describes API changes in /theme/* themes,
 information provided here is intended especially for theme designer.
 
+=== 2.5.1 ===
+
+Notes:
+* Block drag and drop functionality has been improved so that it works regardless of what block regions you use
+  or how many block regions you have. In order to benefit from this improvement you must convert your calls from
+  $OUTPUT->blocks_for_region() to $OUTPUT->blocks.
+
+Optional changes:
+* Theme config can nominate block regions to swap if the user is using a rtl languages such as Hebrew.
+  $THEME->blockrtlmanipulations should be an associative array, the key is the original block region, and the
+  value should be where the blocks in that region should be displayed.
+* New $OUTPUT methods to replace code that was previously using $PAGE. Converting to these methods is optional
+  but highly recommended. Refer to the bootstrapbase layouts for examples.
+  - $OUTPUT->body_attributes() returns a string you can use for the body id and classes.
+  - $OUTPUT->blocks() returns HTML to display a block region and all of its blocks. This adds data attributes
+    that ensure drag and drop of blocks will work no matter what block regions or how many you have.
+  - $OUTPUT->page_heading() returns the page heading. Replaces $PAGE->heading.
+  - $OUTPUT->page_heading_button() returns the button to display with the heading. Replaces $page->button.
+  - $OUTPUT->page_doc_link() returns the link to moodle docs for the page. Replaces page_doc_link().
+  - $OUTPUT->page_heading_menu() returns the heading menu for the page. Replaces $PAGE->headingmenu.
+  - $OUTPUT->page_title() Returns the title to use for the head section.
+  - $OUTPUT->favicon() returns the URL to the favicon.
+
+Renderer changes:
+* core_renderer::navbar now returns an empty string if there are no navigation items to display.
+* core_renderer::custom_menu now adds a class "custom_menu" to the div that contains the HTML for the custom menu.
+
 === 2.5 ===
 
 required changes:

@@ -921,7 +921,7 @@ class core_renderer extends renderer_base {
         $functioncalled = true;
         $courseformat = course_get_format($this->page->course);
         if (($obj = $courseformat->course_content_header()) !== null) {
-            return $courseformat->get_renderer($this->page)->render($obj);
+            return html_writer::div($courseformat->get_renderer($this->page)->render($obj), 'course-content-header');
         }
         return '';
     }
@@ -948,7 +948,7 @@ class core_renderer extends renderer_base {
         require_once($CFG->dirroot.'/course/lib.php');
         $courseformat = course_get_format($this->page->course);
         if (($obj = $courseformat->course_content_footer()) !== null) {
-            return $courseformat->get_renderer($this->page)->render($obj);
+            return html_writer::div($courseformat->get_renderer($this->page)->render($obj), 'course-content-footer');
         }
         return '';
     }
@@ -1228,6 +1228,7 @@ class core_renderer extends renderer_base {
      * @return string the HTML to be output.
      */
     public function blocks_for_region($region) {
+        $region = $this->page->apply_theme_region_manipulations($region);
         $blockcontents = $this->page->blocks->get_content_for_region($region, $this);
         $blocks = $this->page->blocks->get_blocks_for_region($region);
         $lastblock = null;
@@ -2675,10 +2676,13 @@ EOD;
      */
     public function navbar() {
         $items = $this->page->navbar->get_items();
+        $itemcount = count($items);
+        if ($itemcount === 0) {
+            return '';
+        }
 
         $htmlblocks = array();
         // Iterate the navarray and display each node
-        $itemcount = count($items);
         $separator = get_separator();
         for ($i=0;$i < $itemcount;$i++) {
             $item = $items[$i];
@@ -2827,7 +2831,7 @@ EOD;
         $jscode = "(function(){{$jscode}})";
         $this->page->requires->yui_module('node-menunav', $jscode);
         // Build the root nodes as required by YUI
-        $content = html_writer::start_tag('div', array('id'=>'custom_menu_'.$menucount, 'class'=>'yui3-menu yui3-menu-horizontal javascript-disabled'));
+        $content = html_writer::start_tag('div', array('id'=>'custom_menu_'.$menucount, 'class'=>'yui3-menu yui3-menu-horizontal javascript-disabled custom-menu'));
         $content .= html_writer::start_tag('div', array('class'=>'yui3-menu-content'));
         $content .= html_writer::start_tag('ul');
         // Render each child
@@ -3027,6 +3031,146 @@ EOD;
         $str .= html_writer::end_tag('ul');
 
         return $str;
+    }
+
+    /**
+     * Get the HTML for blocks in the given region.
+     *
+     * @since 2.5.1 2.6
+     * @param string $region The region to get HTML for.
+     * @return string HTML.
+     */
+    public function blocks($region, $classes = array(), $tag = 'aside') {
+        $displayregion = $this->page->apply_theme_region_manipulations($region);
+        $classes = (array)$classes;
+        $classes[] = 'block-region';
+        $attributes = array(
+            'id' => 'block-region-'.preg_replace('#[^a-zA-Z0-9_\-]+#', '-', $displayregion),
+            'class' => join(' ', $classes),
+            'data-blockregion' => $displayregion,
+            'data-droptarget' => '1'
+        );
+        return html_writer::tag($tag, $this->blocks_for_region($region), $attributes);
+    }
+
+    /**
+     * Returns the CSS classes to apply to the body tag.
+     *
+     * @since 2.5.1 2.6
+     * @param array $additionalclasses Any additional classes to apply.
+     * @return string
+     */
+    public function body_css_classes(array $additionalclasses = array()) {
+        // Add a class for each block region on the page.
+        // We use the block manager here because the theme object makes get_string calls.
+        foreach ($this->page->blocks->get_regions() as $region) {
+            $additionalclasses[] = 'has-region-'.$region;
+            if ($this->page->blocks->region_has_content($region, $this)) {
+                $additionalclasses[] = 'used-region-'.$region;
+            } else {
+                $additionalclasses[] = 'empty-region-'.$region;
+            }
+        }
+        foreach ($this->page->layout_options as $option => $value) {
+            if ($value) {
+                $additionalclasses[] = 'layout-option-'.$option;
+            }
+        }
+        $css = $this->page->bodyclasses .' '. join(' ', $additionalclasses);
+        return $css;
+    }
+
+    /**
+     * The ID attribute to apply to the body tag.
+     *
+     * @since 2.5.1 2.6
+     * @return string
+     */
+    public function body_id() {
+        return $this->page->bodyid;
+    }
+
+    /**
+     * Returns HTML attributes to use within the body tag. This includes an ID and classes.
+     *
+     * @since 2.5.1 2.6
+     * @param string|array $additionalclasses Any additional classes to give the body tag,
+     * @return string
+     */
+    public function body_attributes($additionalclasses = array()) {
+        if (!is_array($additionalclasses)) {
+            $additionalclasses = explode(' ', $additionalclasses);
+        }
+        return ' id="'. $this->body_id().'" class="'.$this->body_css_classes($additionalclasses).'"';
+    }
+
+    /**
+     * Gets HTML for the page heading.
+     *
+     * @since 2.5.1 2.6
+     * @param string $tag The tag to encase the heading in. h1 by default.
+     * @return string HTML.
+     */
+    public function page_heading($tag = 'h1') {
+        return html_writer::tag($tag, $this->page->heading);
+    }
+
+    /**
+     * Gets the HTML for the page heading button.
+     *
+     * @since 2.5.1 2.6
+     * @return string HTML.
+     */
+    public function page_heading_button() {
+        return $this->page->button;
+    }
+
+    /**
+     * Returns the Moodle docs link to use for this page.
+     *
+     * @since 2.5.1 2.6
+     * @param string $text
+     * @return string
+     */
+    public function page_doc_link($text = null) {
+        if ($text === null) {
+            $text = get_string('moodledocslink');
+        }
+        $path = page_get_doc_link_path($this->page);
+        if (!$path) {
+            return '';
+        }
+        return $this->doc_link($path, $text);
+    }
+
+    /**
+     * Returns the page heading menu.
+     *
+     * @since 2.5.1 2.6
+     * @return string HTML.
+     */
+    public function page_heading_menu() {
+        return $this->page->headingmenu;
+    }
+
+    /**
+     * Returns the title to use on the page.
+     *
+     * @since 2.5.1 2.6
+     * @return string
+     */
+    public function page_title() {
+        return $this->page->title;
+    }
+
+    /**
+     * Returns the URL for the favicon.
+     *
+     * @since 2.5.1 2.6
+     * @return string The favicon URL
+     */
+    public function favicon() {
+        return $this->pix_url('favicon', 'theme');
     }
 }
 
