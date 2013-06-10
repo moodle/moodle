@@ -340,7 +340,7 @@ class enrol_manual_plugin extends enrol_plugin {
             $rs->close();
             unset($instances);
 
-        } else if ($action == ENROL_EXT_REMOVED_SUSPENDNOROLES) {
+        } else if ($action == ENROL_EXT_REMOVED_SUSPENDNOROLES or $action == ENROL_EXT_REMOVED_SUSPEND) {
             $instances = array();
             $sql = "SELECT ue.*, e.courseid, c.id AS contextid
                       FROM {user_enrolments} ue
@@ -355,10 +355,15 @@ class enrol_manual_plugin extends enrol_plugin {
                     $instances[$ue->enrolid] = $DB->get_record('enrol', array('id'=>$ue->enrolid));
                 }
                 $instance = $instances[$ue->enrolid];
-                // Always remove all manually assigned roles here, this may break enrol_self roles but we do not want hardcoded hacks here.
-                role_unassign_all(array('userid'=>$ue->userid, 'contextid'=>$ue->contextid, 'component'=>'', 'itemid'=>0), true);
-                $this->update_user_enrol($instance, $ue->userid, ENROL_USER_SUSPENDED);
-                $trace->output("suspending expired user $ue->userid in course $instance->courseid", 1);
+                if ($action == ENROL_EXT_REMOVED_SUSPENDNOROLES) {
+                    // Remove all manually assigned roles here, this may break enrol_self roles but we do not want hardcoded hacks here.
+                    role_unassign_all(array('userid'=>$ue->userid, 'contextid'=>$ue->contextid, 'component'=>'', 'itemid'=>0), true);
+                    $this->update_user_enrol($instance, $ue->userid, ENROL_USER_SUSPENDED);
+                    $trace->output("suspending expired user $ue->userid in course $instance->courseid, roles unassigned", 1);
+                } else {
+                    $this->update_user_enrol($instance, $ue->userid, ENROL_USER_SUSPENDED);
+                    $trace->output("suspending expired user $ue->userid in course $instance->courseid, roles kept", 1);
+                }
             }
             $rs->close();
             unset($instances);
