@@ -44,7 +44,7 @@ Feature: A teacher can set available from and deadline dates to access a lesson
     And I log in as "student1"
     And I follow "Course 1"
     When I follow "Test lesson"
-    Then I should see "This lesson will be open on Wednesday, 1 January 2020, 8:00 AM."
+    Then I should see "This lesson will be open on Wednesday, 1 January 2020, 8:00"
     And I should not see "First page contents"
 
   @javascript
@@ -71,5 +71,5 @@ Feature: A teacher can set available from and deadline dates to access a lesson
     And I log in as "student1"
     And I follow "Course 1"
     When I follow "Test lesson"
-    Then I should see "This lesson closed on Saturday, 1 January 2000, 8:00 AM."
+    Then I should see "This lesson closed on Saturday, 1 January 2000, 8:00"
     And I should not see "First page contents"
