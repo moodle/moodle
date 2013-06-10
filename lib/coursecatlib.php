@@ -833,7 +833,7 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
             $fields[] = 'c.summary';
             $fields[] = 'c.summaryformat';
         } else {
-            $fields[] = $DB->sql_substr('c.summary', 1, 1). ' hassummary';
+            $fields[] = $DB->sql_substr('c.summary', 1, 1). ' as hassummary';
         }
         $sql = "SELECT ". join(',', $fields). ", $ctxselect
                 FROM {course} c
