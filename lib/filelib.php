@@ -1956,11 +1956,7 @@ function readfile_accel($file, $mimetype, $accelerate) {
     header('Last-Modified: '. gmdate('D, d M Y H:i:s', $lastmodified) .' GMT');
 
     if (is_object($file)) {
-        if (empty($_SERVER['HTTP_RANGE'])) {
-            // Use Etag only when not byteserving,
-            // is it tag of this range or whole file?
-            header('Etag: ' . $file->get_contenthash());
-        }
+        header('Etag: "' . $file->get_contenthash() . '"');
         if (isset($_SERVER['HTTP_IF_NONE_MATCH']) and $_SERVER['HTTP_IF_NONE_MATCH'] === $file->get_contenthash()) {
             header('HTTP/1.1 304 Not Modified');
             return;
@@ -2609,10 +2605,6 @@ function fulldelete($location) {
 function byteserving_send_file($handle, $mimetype, $ranges, $filesize) {
     // better turn off any kind of compression and buffering
     @ini_set('zlib.output_compression', 'Off');
-
-    // Remove Etag because is is not strictly defined for byteserving,
-    // is it tag of this range or whole file?
-    header_remove('Etag');
 
     $chunksize = 1*(1024*1024); // 1MB chunks - must be less than 2MB!
     if ($handle === false) {
