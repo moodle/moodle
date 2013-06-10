@@ -51,7 +51,8 @@ defined('MOODLE_INTERNAL') || die();
  *      the forum or quiz table) that this page belongs to. Will be null
  *      if this page is not within a module.
  * @property-read array $alternativeversions Mime type => object with ->url and ->title.
- * @property-read blocks_manager $blocks The blocks manager object for this page.
+ * @property-read block_manager $blocks The blocks manager object for this page.
+ * @property-read array $blockmanipulations
  * @property-read string $bodyclasses A string to use within the class attribute on the body tag.
  * @property-read string $bodyid A string to use as the id of the body tag.
  * @property-read string $button The HTML to go where the Turn editing on button normally goes.
@@ -635,6 +636,22 @@ class moodle_page {
             $this->initialise_theme_and_output();
         }
         return $this->_theme;
+    }
+
+    /**
+     * Returns an array of minipulations or false if there are none to make.
+     *
+     * @since 2.5.1 2.6
+     * @return bool|array
+     */
+    protected function magic_get_blockmanipulations() {
+        if (!right_to_left()) {
+            return false;
+        }
+        if (is_null($this->_theme)) {
+            $this->initialise_theme_and_output();
+        }
+        return $this->_theme->blockrtlmanipulations;
     }
 
     /**
@@ -1824,5 +1841,19 @@ class moodle_page {
      */
     public function set_popup_notification_allowed($allowed) {
         $this->_popup_notification_allowed = $allowed;
+    }
+
+    /**
+     * Returns the block region having made any required theme manipulations.
+     *
+     * @since 2.5.1 2.6
+     * @param string $region
+     * @return string
+     */
+    public function apply_theme_region_manipulations($region) {
+        if ($this->blockmanipulations && isset($this->blockmanipulations[$region])) {
+            return $this->blockmanipulations[$region];
+        }
+        return $region;
     }
 }
