@@ -6760,7 +6760,11 @@ function forum_tp_count_forum_unread_posts($cm, $course) {
         $modinfo->groups = groups_get_user_groups($course->id, $USER->id);
     }
 
-    $mygroups = $modinfo->groups[$cm->groupingid];
+    if (array_key_exists($cm->groupingid, $modinfo->groups)) {
+        $mygroups = $modinfo->groups[$cm->groupingid];
+    } else {
+        $mygroups = false; // Will be set below
+    }
 
     // add all groups posts
     if (empty($mygroups)) {
