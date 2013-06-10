@@ -152,6 +152,8 @@ class question_engine_data_mapper {
         foreach ($step->get_all_data() as $name => $value) {
             if ($value instanceof question_file_saver) {
                 $value->save_files($stepid, $context);
+            }
+            if ($value instanceof question_response_files) {
                 $value = (string) $value;
             }
 
