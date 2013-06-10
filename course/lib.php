@@ -105,6 +105,9 @@ function make_log_url($module, $url) {
         case 'role':
             $url = '/'.$url;
             break;
+        case 'grade':
+            $url = "/grade/$url";
+            break;
         default:
             $url = "/mod/$module/$url";
             break;
