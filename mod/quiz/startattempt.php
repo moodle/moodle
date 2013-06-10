@@ -93,7 +93,7 @@ if ($lastattempt && ($lastattempt->state == quiz_attempt::IN_PROGRESS ||
 
     // And, if the attempt is now no longer in progress, redirect to the appropriate place.
     if ($lastattempt->state == quiz_attempt::OVERDUE) {
-         redirect($quizobj->summary_url($lastattempt->id));
+        redirect($quizobj->summary_url($lastattempt->id));
     } else if ($lastattempt->state != quiz_attempt::IN_PROGRESS) {
         redirect($quizobj->review_url($lastattempt->id));
     }
@@ -104,6 +104,10 @@ if ($lastattempt && ($lastattempt->state == quiz_attempt::IN_PROGRESS ||
     }
 
 } else {
+    while ($lastattempt && $lastattempt->preview) {
+        $lastattempt = array_pop($attempts);
+    }
+
     // Get number for the next or unfinished attempt.
     if ($lastattempt) {
         $attemptnumber = $lastattempt->attempt + 1;
