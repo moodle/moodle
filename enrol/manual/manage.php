@@ -92,8 +92,11 @@ if ($extendperiod) {
 
 // Build the list of options for the starting from dropdown.
 $timeformat = get_string('strftimedatefullshort');
+
+// MDL-18375, Multi-Calendar Support
+$calendarsystem_gregorian = calendarsystem_plugin_factory::factory('gregorian');
 $today = time();
-$today = make_timestamp(date('Y', $today), date('m', $today), date('d', $today), 0, 0, 0);
+$today = $calendarsystem_gregorian->make_timestamp(date('Y', $today), date('m', $today), date('d', $today), 0, 0, 0);
 
 // Enrolment start.
 $basemenu = array();

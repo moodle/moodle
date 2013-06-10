@@ -43,6 +43,9 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group
 {
     /**
      * Control the fieldnames for form elements
+     *
+     * MDL-18375, Multi-Calendar Support
+     *
      * startyear => int start of range of years that can be selected
      * stopyear => int last year that can be selected
      * timezone => int|float|string (optional) timezone modifier used for edge case only.
@@ -52,8 +55,8 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group
      * optional => if true, show a checkbox beside the date to turn it on (or off)
      * @var array
      */
-    protected $_options = array('startyear' => 1970, 'stopyear' => 2020,
-            'timezone' => 99, 'optional' => false);
+    protected $_options = array('startyear' => null, 'stopyear' => null,
+            'timezone' => null, 'optional' => null);
 
     /**
      * @var array These complement separators, they are appended to the resultant HTML.
@@ -77,6 +80,12 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group
      */
     function MoodleQuickForm_date_selector($elementName = null, $elementLabel = null, $options = array(), $attributes = null)
     {
+        // MDL-18375, Multi-Calendar Support
+        global $CALENDARSYSTEM;
+
+        $this->_options = array('startyear'=> $CALENDARSYSTEM->get_min_year(), 'stopyear'=>$CALENDARSYSTEM->get_max_year(),
+                                'timezone'=>99, 'optional'=>false);
+
         $this->HTML_QuickForm_element($elementName, $elementLabel, $attributes);
         $this->_persistantFreeze = true;
         $this->_appendName = true;
@@ -93,7 +102,8 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group
                 }
             }
         }
-        form_init_date_js();
+        // MDL-18375, Multi-Calendar Support
+        // form_init_date_js();
     }
 
     /**
@@ -103,15 +113,13 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group
      */
     function _createElements()
     {
-        global $OUTPUT;
+        global $OUTPUT, $CALENDARSYSTEM;
 
         $this->_elements = array();
         for ($i=1; $i<=31; $i++) {
             $days[$i] = $i;
         }
-        for ($i=1; $i<=12; $i++) {
-            $months[$i] = userdate(gmmktime(12,0,0,$i,15,2000), "%B");
-        }
+        $months = $CALENDARSYSTEM->get_month_names();
         for ($i=$this->_options['startyear']; $i<=$this->_options['stopyear']; $i++) {
             $years[$i] = $i;
         }

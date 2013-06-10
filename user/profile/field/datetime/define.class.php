@@ -16,8 +16,12 @@ class profile_define_datetime extends profile_define_base {
      * @param object $form the user form
      */
     function define_form_specific($form) {
+        // MDL-18375, Multi-Calendar Support
+        global $CALENDARSYSTEM;
+
         // Create variables to store start and end
-        $currentyear = date('Y');
+        $userdate = $CALENDARSYSTEM->usergetdate(time());
+        $currentyear = $userdate['year'];
         $startyear = $currentyear - 100;
         $endyear = $currentyear + 20;
 

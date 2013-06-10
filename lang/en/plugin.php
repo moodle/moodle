@@ -91,6 +91,7 @@ $string['type_cachelock'] = 'Cache lock handler';
 $string['type_cachelock_plural'] = 'Cache lock handlers';
 $string['type_cachestore'] = 'Cache store';
 $string['type_cachestore_plural'] = 'Cache stores';
+$string['type_calendarsystem_plural'] = 'Calendar systems';
 $string['type_coursereport'] = 'Course report';
 $string['type_coursereport_plural'] = 'Course reports';
 $string['type_editor'] = 'Editor';

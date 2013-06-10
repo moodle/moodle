@@ -42,6 +42,9 @@ require_once($CFG->libdir . '/formslib.php');
 class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group{
     /**
      * Options for the element
+     *
+     * MDL-18375, Multi-Calendar Support
+     *
      * startyear => int start of range of years that can be selected
      * stopyear => int last year that can be selected
      * defaulttime => default time value if the field is currently not set
@@ -53,8 +56,8 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group{
      * optional => if true, show a checkbox beside the date to turn it on (or off)
      * @var array
      */
-    var $_options = array('startyear' => 1970, 'stopyear' => 2020, 'defaulttime' => 0,
-                    'timezone' => 99, 'step' => 5, 'optional' => false);
+    var $_options = array('startyear' => null, 'stopyear' => null, 'defaulttime' => null,
+                    'timezone' => null, 'step' => null, 'optional' => null);
 
     /**
      * @var array These complement separators, they are appended to the resultant HTML.
@@ -78,6 +81,12 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group{
      */
     function MoodleQuickForm_date_time_selector($elementName = null, $elementLabel = null, $options = array(), $attributes = null)
     {
+        // MDL-18375, Multi-Calendar Support
+        global $CALENDARSYSTEM;
+
+        $this->_options = array('startyear'=> $CALENDARSYSTEM->get_min_year(), 'stopyear'=>$CALENDARSYSTEM->get_max_year(),
+                                'defaulttime' => 0, 'timezone'=>99, 'step'=>5, 'optional'=>false);
+
         $this->HTML_QuickForm_element($elementName, $elementLabel, $attributes);
         $this->_persistantFreeze = true;
         $this->_appendName = true;
@@ -94,7 +103,8 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group{
                 }
             }
         }
-        form_init_date_js();
+        // MDL-18375, Multi-Calendar Support
+        // form_init_date_js();
     }
 
     /**
@@ -104,15 +114,13 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group{
      */
     function _createElements()
     {
-        global $OUTPUT;
+        global $OUTPUT, $CALENDARSYSTEM;
 
         $this->_elements = array();
         for ($i=1; $i<=31; $i++) {
             $days[$i] = $i;
         }
-        for ($i=1; $i<=12; $i++) {
-            $months[$i] = userdate(gmmktime(12,0,0,$i,15,2000), "%B");
-        }
+        $months = $CALENDARSYSTEM->get_month_names();
         for ($i=$this->_options['startyear']; $i<=$this->_options['stopyear']; $i++) {
             $years[$i] = $i;
         }

@@ -81,8 +81,10 @@ $stryesnooptions = array(0=>$strno, 1=>$stryes);
 $returnurl = new moodle_url('/admin/tool/uploaduser/index.php');
 $bulknurl  = new moodle_url('/admin/user/user_bulk.php');
 
+// MDL-18375, Multi-Calendar Support
+$calendarsystem_gregorian = calendarsystem_plugin_factory::factory('gregorian');
 $today = time();
-$today = make_timestamp(date('Y', $today), date('m', $today), date('d', $today), 0, 0, 0);
+$today = $calendarsystem_gregorian->make_timestamp(date('Y', $today), date('m', $today), date('d', $today), 0, 0, 0);
 
 // array of all valid fields for validation
 $STD_FIELDS = array('id', 'firstname', 'lastname', 'username', 'email',

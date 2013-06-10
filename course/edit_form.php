@@ -271,6 +271,13 @@ class course_edit_form extends moodleform {
         $mform->addElement('select', 'defaultgroupingid', get_string('defaultgrouping', 'group'), $options);
 
 //--------------------------------------------------------------------------------
+        // MDL-18375, Multi-Calendar Support
+        $mform->addElement('header','', get_string('calendar', 'calendar'));
+
+        $calendarsystems = array();
+        $calendarsystems[''] = get_string('forceno');
+        $calendarsystems += get_list_of_calendars();
+        $mform->addElement('select', 'calendarsystem', get_string('forcecalendarsystem', 'calendarsystem'), $calendarsystems);
 
 /// customizable role names in this course
 //--------------------------------------------------------------------------------

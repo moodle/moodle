@@ -230,8 +230,10 @@ class enrol_manual_plugin extends enrol_plugin {
         if ($startdate > 0) {
             $startdateoptions[2] = get_string('coursestart') . ' (' . userdate($startdate, $timeformat) . ')';
         }
+        // MDL-18375, Multi-Calendar Support
+        $calendarsystem_gregorian = calendarsystem_plugin_factory::factory('gregorian');
         $today = time();
-        $today = make_timestamp(date('Y', $today), date('m', $today), date('d', $today), 0, 0, 0);
+        $today = $calendarsystem_gregorian->make_timestamp(date('Y', $today), date('m', $today), date('d', $today), 0, 0, 0);
         $startdateoptions[3] = get_string('today') . ' (' . userdate($today, $timeformat) . ')' ;
         $defaultduration = $instance->enrolperiod > 0 ? $instance->enrolperiod / 86400 : '';
 

@@ -133,9 +133,10 @@ if ($eventid !== 0) {
             unset($formoptions->eventtypes->groups);
         }
     }
-    if($cal_y && $cal_m && $cal_d && checkdate($cal_m, $cal_d, $cal_y)) {
+    // MDL-18375, Multi-Calendar Support
+    if($cal_y && $cal_m && $cal_d && $CALENDARSYSTEM->checkdate($cal_m, $cal_d, $cal_y)) {
         $event->timestart = make_timestamp($cal_y, $cal_m, $cal_d, 0, 0, 0);
-    } else if($cal_y && $cal_m && checkdate($cal_m, 1, $cal_y)) {
+    } else if($cal_y && $cal_m && $CALENDARSYSTEM->checkdate($cal_m, 1, $cal_y)) {
         $now = usergetdate(time());
         if($cal_y == $now['year'] && $cal_m == $now['mon']) {
             $event->timestart = make_timestamp($cal_y, $cal_m, $now['mday'], 0, 0, 0);

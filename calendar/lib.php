@@ -187,6 +187,8 @@ function calendar_get_starting_weekday() {
  */
 function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_year = false, $placement = false, $courseid = false ) {
     global $CFG, $USER, $OUTPUT;
+    // MDL-18375, Multi-Calendar Support
+    global $CALENDARSYSTEM;
 
     $display = new stdClass;
     $display->minwday = get_user_preferences('calendar_startwday', calendar_get_starting_weekday());
@@ -202,7 +204,7 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
             $display->thismonth = true;
         } else {
             // Navigated to other month, let's do a nice trick and save us a lot of work...
-            if(!checkdate($cal_month, 1, $cal_year)) {
+            if(!$CALENDARSYSTEM->checkdate($cal_month, 1, $cal_year)) {
                 $date = array('mday' => 1, 'mon' => $thisdate['mon'], 'year' => $thisdate['year']);
                 $display->thismonth = true;
             } else {
@@ -221,12 +223,12 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
 
     if (get_user_timezone_offset() < 99) {
         // We 'll keep these values as GMT here, and offset them when the time comes to query the db
-        $display->tstart = gmmktime(0, 0, 0, $m, 1, $y); // This is GMT
-        $display->tend = gmmktime(23, 59, 59, $m, $display->maxdays, $y); // GMT
+        $display->tstart = $CALENDARSYSTEM->gmmktime(0, 0, 0, $m, 1, $y); // This is GMT
+        $display->tend = $CALENDARSYSTEM->gmmktime(23, 59, 59, $m, $display->maxdays, $y); // GMT
     } else {
         // no timezone info specified
-        $display->tstart = mktime(0, 0, 0, $m, 1, $y);
-        $display->tend = mktime(23, 59, 59, $m, $display->maxdays, $y);
+        $display->tstart = $CALENDARSYSTEM->mktime(0, 0, 0, $m, 1, $y);
+        $display->tend = $CALENDARSYSTEM->mktime(23, 59, 59, $m, $display->maxdays, $y);
     }
 
     $startwday = dayofweek(1, $m, $y);
@@ -824,6 +826,8 @@ function calendar_get_events_by_id($eventids) {
  */
 function calendar_top_controls($type, $data) {
     global $CFG, $PAGE;
+    // MDL-18375, Multi-Calendar Support
+    global $CALENDARSYSTEM;
     $content = '';
     if(!isset($data['d'])) {
         $data['d'] = 1;
@@ -836,11 +840,11 @@ function calendar_top_controls($type, $data) {
         $courseid = '&amp;course='.$data['id'];
     }
 
-    if(!checkdate($data['m'], $data['d'], $data['y'])) {
+    if(!$CALENDARSYSTEM->checkdate($data['m'], $data['d'], $data['y'])) {
         $time = time();
     }
     else {
-        $time = make_timestamp($data['y'], $data['m'], $data['d']);
+        $time = $CALENDARSYSTEM->make_timestamp($data['y'], $data['m'], $data['d']);
     }
     $date = usergetdate($time);
 
@@ -1210,7 +1214,9 @@ function calendar_wday_name($englishname) {
  * @return int
  */
 function calendar_days_in_month($month, $year) {
-   return intval(date('t', mktime(0, 0, 0, $month, 1, $year)));
+    // MDL-18375, Multi-Calendar Support
+    global $CALENDARSYSTEM;
+    return $CALENDARSYSTEM->calendar_days_in_month($month, $year);
 }
 
 /**
@@ -1733,10 +1739,11 @@ function calendar_format_event_time($event, $now, $linkparams = null, $usecommon
  * @param string|array $selected options for select elements
  */
 function calendar_print_month_selector($name, $selected) {
-    $months = array();
-    for ($i=1; $i<=12; $i++) {
-        $months[$i] = userdate(gmmktime(12, 0, 0, $i, 15, 2000), '%B');
-    }
+    // MDL-18375, Multi-Calendar Support
+    global $CALENDARSYSTEM;
+
+    $months = $CALENDARSYSTEM->get_month_names();
+
     echo html_writer::label(get_string('months'), 'menu'. $name, false, array('class' => 'accesshide'));
     echo html_writer::select($months, $name, $selected, false);
 }

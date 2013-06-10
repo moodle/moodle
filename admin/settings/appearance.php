@@ -45,6 +45,8 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
                                               array('0'        => new lang_string('default', 'calendar'),
                                                     '%I:%M %p' => new lang_string('timeformat_12', 'calendar'),
                                                     '%H:%M'    => new lang_string('timeformat_24', 'calendar'))));
+    // MDL-18375, Multi-Calendar Support
+    $temp->add(new admin_setting_configselect('calendarsystem', new lang_string('configcalendarsystem', 'calendarsystem'), new lang_string('helpcalendarsystem', 'calendarsystem'), 'gregorian', get_list_of_calendars()));
     $temp->add(new admin_setting_configselect('calendar_startwday', new lang_string('configstartwday', 'admin'), new lang_string('helpstartofweek', 'admin'), 0,
     array(
             0 => new lang_string('sunday', 'calendar'),

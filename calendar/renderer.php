@@ -380,6 +380,8 @@ class core_calendar_renderer extends plugin_renderer_base {
      */
     public function show_month_detailed(calendar_information $calendar, moodle_url $returnurl  = null) {
         global $CFG;
+        // MDL-18375, Multi-Calendar Support
+        global $CALENDARSYSTEM;
 
         if (empty($returnurl)) {
             $returnurl = $this->page->url;
@@ -396,13 +398,13 @@ class core_calendar_renderer extends plugin_renderer_base {
         $startwday = 0;
         if (get_user_timezone_offset() < 99) {
             // We 'll keep these values as GMT here, and offset them when the time comes to query the db
-            $display->tstart = gmmktime(0, 0, 0, $calendar->month, 1, $calendar->year); // This is GMT
-            $display->tend = gmmktime(23, 59, 59, $calendar->month, $display->maxdays, $calendar->year); // GMT
+            $display->tstart = $CALENDARSYSTEM->gmmktime(0, 0, 0, $calendar->month, 1, $calendar->year); // This is GMT
+            $display->tend = $CALENDARSYSTEM->gmmktime(23, 59, 59, $calendar->month, $display->maxdays, $calendar->year); // GMT
             $startwday = gmdate('w', $display->tstart); // $display->tstart is already GMT, so don't use date(): messes with server's TZ
         } else {
             // no timezone info specified
-            $display->tstart = mktime(0, 0, 0, $calendar->month, 1, $calendar->year);
-            $display->tend = mktime(23, 59, 59, $calendar->month, $display->maxdays, $calendar->year);
+            $display->tstart = $CALENDARSYSTEM->mktime(0, 0, 0, $calendar->month, 1, $calendar->year);
+            $display->tend = $CALENDARSYSTEM->mktime(23, 59, 59, $calendar->month, $display->maxdays, $calendar->year);
             $startwday = date('w', $display->tstart); // $display->tstart not necessarily GMT, so use date()
         }
 

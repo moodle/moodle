@@ -454,6 +454,13 @@ if ($hassiteconfig) {
     }
 }
 
+// calendarsystem plugins
+if ($hassiteconfig) {
+    $ADMIN->add('modules', new admin_category('calendarsystems', new lang_string('calendarsystems', 'calendarsystem')));
+    $ADMIN->add('calendarsystems', new admin_externalpage('managecalendarsystems', new lang_string('calendarsystemsmanage', 'calendarsystem'), $CFG->wwwroot .'/calendarsystem/admin.php'));
+    $ADMIN->add('calendarsystems', new admin_externalpage('updatecalendarsystems', new lang_string('checkforupdates', 'calendarsystem'), $CFG->wwwroot .'/calendarsystem/index.php'));
+}
+
 /// Add all local plugins - must be always last!
 if ($hassiteconfig) {
     $ADMIN->add('modules', new admin_category('localplugins', new lang_string('localplugins')));
