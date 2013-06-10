@@ -24,10 +24,10 @@ class note_edit_form extends moodleform {
         $this->add_action_buttons();
 
         $mform->addElement('hidden', 'courseid');
-        $mform->setType('course', PARAM_INT);
+        $mform->setType('courseid', PARAM_INT);
 
         $mform->addElement('hidden', 'userid');
-        $mform->setType('user', PARAM_INT);
+        $mform->setType('userid', PARAM_INT);
 
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
