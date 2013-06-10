@@ -2594,19 +2594,20 @@ function redirect($url, $message='', $delay=-1) {
 function obfuscate_text($plaintext) {
 
     $i=0;
-    $length = strlen($plaintext);
+    $length = textlib::strlen($plaintext);
     $obfuscated='';
     $prev_obfuscated = false;
     while ($i < $length) {
-        $c = ord($plaintext{$i});
-        $numerical = ($c >= ord('0')) && ($c <= ord('9'));
+        $char = textlib::substr($plaintext, $i, 1);
+        $ord = textlib::utf8ord($char);
+        $numerical = ($ord >= ord('0')) && ($ord <= ord('9'));
         if ($prev_obfuscated and $numerical ) {
-            $obfuscated.='&#'.ord($plaintext{$i}).';';
+            $obfuscated.='&#'.$ord.';';
         } else if (rand(0,2)) {
-            $obfuscated.='&#'.ord($plaintext{$i}).';';
+            $obfuscated.='&#'.$ord.';';
             $prev_obfuscated = true;
         } else {
-            $obfuscated.=$plaintext{$i};
+            $obfuscated.=$char;
             $prev_obfuscated = false;
         }
       $i++;
