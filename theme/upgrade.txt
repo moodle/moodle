@@ -1,7 +1,7 @@
 This files describes API changes in /theme/* themes,
 information provided here is intended especially for theme designer.
 
-=== 2.6 ===
+=== 2.5.1 ===
 
 Notes:
 * Block drag and drop functionality has been improved so that it works regardless of what block regions you use
