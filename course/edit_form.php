@@ -81,7 +81,7 @@ class course_edit_form extends moodleform {
                 $displaylist = coursecat::make_categories_list('moodle/course:create');
                 if (!isset($displaylist[$course->category])) {
                     //always keep current
-                    $displaylist[$course->category] = coursecat::get($course->category)->get_formatted_name();
+                    $displaylist[$course->category] = coursecat::get($course->category, MUST_EXIST, true)->get_formatted_name();
                 }
                 $mform->addElement('select', 'category', get_string('coursecategory'), $displaylist);
                 $mform->addHelpButton('category', 'coursecategory');
