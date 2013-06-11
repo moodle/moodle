@@ -1195,6 +1195,12 @@ function format_text($text, $format = FORMAT_MOODLE, $options = NULL, $courseid_
         // The only potential problem is that somebody might try to format
         // the text before storing into database which would be itself big bug.
         $text = str_replace("\"$CFG->httpswwwroot/draftfile.php", "\"$CFG->httpswwwroot/brokenfile.php#", $text);
+
+        if (debugging('', DEBUG_DEVELOPER)) {
+            if (strpos($text, '@@PLUGINFILE@@/') !== false) {
+                debugging('Before calling format_text(), the content must be processed with file_rewrite_pluginfile_urls()', DEBUG_DEVELOPER);
+            }
+        }
     }
 
     // Warn people that we have removed this old mechanism, just in case they
