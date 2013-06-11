@@ -42,7 +42,7 @@ class mod_assign_batch_set_allocatedmarker_form extends moodleform {
         $mform = $this->_form;
         $params = $this->_customdata;
 
-        $mform->addElement('header', '', get_string('batchsetallocatedmarker', 'assign', count($params['users'])));
+        $mform->addElement('header', 'general', get_string('batchsetallocatedmarker', 'assign', count($params['users'])));
         $mform->addElement('static', 'userslist', get_string('selectedusers', 'assign'), $params['usershtml']);
 
         $options = $params['markers'];
