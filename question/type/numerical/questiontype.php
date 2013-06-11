@@ -206,8 +206,7 @@ class qtype_numerical extends question_type {
             }
             $options->question = $question->id;
             $options->answer   = $answer->id;
-            // When the answer is * the tolerance can be absent i.e. in multianswer.
-            if (!isset($question->tolerance[$key]) || trim($question->tolerance[$key]) == '') {
+            if (trim($question->tolerance[$key]) == '') {
                 $options->tolerance = '';
             } else {
                 $options->tolerance = $this->apply_unit($question->tolerance[$key],

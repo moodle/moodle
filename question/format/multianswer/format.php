@@ -61,8 +61,7 @@ class qformat_multianswer extends qformat_default {
         $question->length = 1;
         $question->penalty = 0.3333333;
 
-        if (!empty($question) && isset($question->options) && isset($question->options->questions) &&
-            count($question->options->questions) != 0 ) {
+        if (!empty($question)) {
             $question->name = $this->create_default_question_name($question->questiontext, get_string('questionname', 'question'));
             $questions[] = $question;
         }

@@ -189,10 +189,8 @@ class qtype_multianswer_edit_form extends question_edit_form {
                     $mform->addElement('static', 'sub_'.$sub.'_layout',
                             get_string('layout', 'qtype_multianswer'));
                 }
-                $nbanswer = 0;
-                $choices = array();
+
                 foreach ($this->questiondisplay->options->questions[$sub]->answer as $key => $ans) {
-                    $nbanswer++;
                     $mform->addElement('static', 'sub_'.$sub.'_answer['.$key.']',
                             get_string('answer', 'question'));
 
@@ -207,15 +205,6 @@ class qtype_multianswer_edit_form extends question_edit_form {
 
                     $mform->addElement('static', 'sub_'.$sub.'_feedback['.$key.']',
                             get_string('feedback', 'question'));
-                    if ($this->questiondisplay->options->questions[$sub]->qtype == 'multichoice' &&
-                        $this->questiondisplay->options->questions[$sub]->layout == 0) {
-                        $choices[] = $ans['text'];
-                    }
-                }
-                if ($nbanswer > 0 && $this->questiondisplay->options->questions[$sub]->qtype == 'multichoice' &&
-                    $this->questiondisplay->options->questions[$sub]->layout == 0) {
-                    $mform->addElement('select', 'sub_'.$sub.'_layoutselectinline',
-                        get_string('layoutselectinline', 'qtype_multianswer'), $choices);
                 }
             }
 
@@ -375,7 +364,6 @@ class qtype_multianswer_edit_form extends question_edit_form {
                                             get_string('layoutundefined', 'qtype_multianswer');
                             }
                         }
-                        $choices = array();
                         foreach ($subquestion->answer as $key => $answer) {
                             if ($subquestion->qtype == 'numerical' && $key == 0) {
                                 $default_values[$prefix.'tolerance['.$key.']'] =
@@ -400,19 +388,9 @@ class qtype_multianswer_edit_form extends question_edit_form {
                                     $maxfraction = $subquestion->fraction[$key];
                                 }
                             }
-                            if ($subquestion->qtype == 'multichoice' && $subquestion->layout == '0') {
-                                $a = new stdClass();
-                                $a->strip = strip_tags($trimmedanswer);
-                                $a->html = htmlspecialchars($trimmedanswer);
-                                $default_values[$prefix.'answer['.$key.']'] = get_string('answerselectelementshownas',
-                                        'qtype_multianswer', $a);
-                                $choices[$answercount] = $trimmedanswer;
-                            } else {
-                                $default_values[$prefix.'answer['.$key.']'] = htmlspecialchars($answer);
-                            }
-                        }
-                        if ($subquestion->qtype == 'multichoice' && $subquestion->layout == '0') {
-                            $default_values[$prefix.'_layoutselectinline'] = $choices;
+
+                            $default_values[$prefix.'answer['.$key.']'] =
+                                    htmlspecialchars($answer);
                         }
                         if ($answercount == 0) {
                             if ($subquestion->qtype == 'multichoice') {

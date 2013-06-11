@@ -168,45 +168,8 @@ class qtype_multianswer extends question_type {
         $this->save_hints($question, true);
     }
 
-    /**
-     * Set the itemid if the element contains a valid file identify by (draftfile.php).
-     * param array() $question from qtype_multianswer_extract_question().
-     * param string  $searchcriteria i.e $searchcriteria ,@@PLUGINFILE@@.
-     * return $question.
-     */
-    public function set_subquestions_elements_itemid($question, $searchcriteria = '') {
-        if (isset($question->options) && isset($question->options->questions) &&
-            $question->options->questions != '' && isset($question->questiontext['itemid'])
-            && $question->questiontext['itemid'] != '' && $searchcriteria != '') {
-            $questiontextitemid = $question->questiontext['itemid'];
-            foreach ($question->options->questions as $wrapped) {
-                if (preg_match('/'.$searchcriteria.'/', $wrapped->questiontext['text'])) {
-                    $wrapped->questiontext['itemid'] = $questiontextitemid;
-                } else {
-                    $wrapped->questiontext['itemid'] = '';
-                }
-                foreach ($wrapped->answer as $key => $answer) {
-                    if (is_array($answer)) {
-                        if (preg_match('/'.$searchcriteria.'/', $answer['text'])) {
-                            $wrapped->answer[$key]['itemid'] = $questiontextitemid;
-                        } else {
-                            $wrapped->answer[$key]['itemid'] = '';
-                        }
-                    }
-                    if (preg_match('/'.$searchcriteria.'/', $wrapped->feedback[$key]['text'])) {
-                        $wrapped->feedback[$key]['itemid'] = $questiontextitemid;
-                    } else {
-                        $wrapped->feedback[$key]['itemid'] = '';
-                    }
-                }
-            }
-        }
-        return $question;
-    }
-
     public function save_question($authorizedquestion, $form) {
         $question = qtype_multianswer_extract_question($form->questiontext);
-        $question = $this->set_subquestions_elements_itemid($question, 'draftfile.php');
         if (isset($authorizedquestion->id)) {
             $question->id = $authorizedquestion->id;
         }
@@ -333,15 +296,9 @@ define('ANSWER_REGEX_ALTERNATIVES', 9);
 
 function qtype_multianswer_extract_question($text) {
     // Variable $text is an array [text][format][itemid].
-    // If the main question contains a file then its [itemid]
-    // will not be empty.
-    // The other subquestions question , answers feedback and
-    // multiple choice vertical and horizontal answers should be declared
-    // array and should have [itemid] set to [text][itemid].
     $question = new stdClass();
     $question->qtype = 'multianswer';
     $question->questiontext = $text;
-    $question->questiontext['text'] = str_replace(array('<pre>', '</pre>'), array('', ''), $question->questiontext['text']);
     $question->generalfeedback['text'] = '';
     $question->generalfeedback['format'] = FORMAT_HTML;
     $question->generalfeedback['itemid'] = '';
@@ -357,9 +314,6 @@ function qtype_multianswer_extract_question($text) {
         $wrapped->generalfeedback['text'] = '';
         $wrapped->generalfeedback['format'] = FORMAT_HTML;
         $wrapped->generalfeedback['itemid'] = '';
-        $wrapped->questiontext['text'] = $answerregs[0];
-        $wrapped->questiontext['format'] = $question->questiontext['format'];
-        $wrapped->questiontext['itemid'] = $question->questiontext['itemid'];
         if (isset($answerregs[ANSWER_REGEX_NORM])&& $answerregs[ANSWER_REGEX_NORM]!== '') {
             $wrapped->defaultmark = $answerregs[ANSWER_REGEX_NORM];
         } else {
@@ -434,6 +388,9 @@ function qtype_multianswer_extract_question($text) {
         $wrapped->answer   = array();
         $wrapped->fraction = array();
         $wrapped->feedback = array();
+        $wrapped->questiontext['text'] = $answerregs[0];
+        $wrapped->questiontext['format'] = FORMAT_HTML;
+        $wrapped->questiontext['itemid'] = '';
         $answerindex = 0;
 
         $remainingalts = $answerregs[ANSWER_REGEX_ALTERNATIVES];
@@ -451,7 +408,7 @@ function qtype_multianswer_extract_question($text) {
                 $feedback = str_replace('\}', '}', $feedback);
                 $wrapped->feedback["$answerindex"]['text'] = str_replace('\#', '#', $feedback);
                 $wrapped->feedback["$answerindex"]['format'] = FORMAT_HTML;
-                $wrapped->feedback["$answerindex"]['itemid'] = $question->questiontext['itemid'];
+                $wrapped->feedback["$answerindex"]['itemid'] = '';
             } else {
                 $wrapped->feedback["$answerindex"]['text'] = '';
                 $wrapped->feedback["$answerindex"]['format'] = FORMAT_HTML;
@@ -479,11 +436,6 @@ function qtype_multianswer_extract_question($text) {
                             'text' => $wrapped->answer["$answerindex"],
                             'format' => FORMAT_HTML,
                             'itemid' => '');
-                    if ($wrapped->answer["$answerindex"]['text'] != '' &&
-                            ($wrapped->layout == qtype_multichoice_base::LAYOUT_HORIZONTAL ||
-                            $wrapped->layout == qtype_multichoice_base::LAYOUT_VERTICAL )) {
-                        $wrapped->answer["$answerindex"]['itemid'] = $question->questiontext['itemid'];
-                    }
                 }
             }
             $tmp = explode($altregs[0], $remainingalts, 2);
