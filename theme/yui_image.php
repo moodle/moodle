@@ -103,7 +103,7 @@ if (strpos($path, '/-1/') === false and (!empty($_SERVER['HTTP_IF_NONE_MATCH']) 
     header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
     header('Cache-Control: public, max-age='.$lifetime);
     header('Content-Type: '.$mimetype);
-    header('Etag: '.$etag);
+    header('Etag: "'.$etag.'"');
     die;
 }
 
@@ -124,7 +124,7 @@ function yui_image_cached($imagepath, $imagename, $mimetype, $etag) {
     header('Accept-Ranges: none');
     header('Content-Type: '.$mimetype);
     header('Content-Length: '.filesize($imagepath));
-    header('Etag: '.$etag);
+    header('Etag: "'.$etag.'"');
 
     if (xsendfile($imagepath)) {
         die;
