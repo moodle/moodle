@@ -72,6 +72,7 @@ if ($mform->is_cancelled()) {
         // store the files
         $data = file_postupdate_standard_editor($data, 'content', $options, $context, 'mod_book', 'chapter', $data->id);
         $DB->update_record('book_chapters', $data);
+        $DB->set_field('book', 'revision', $book->revision+1, array('id'=>$book->id));
 
         add_to_log($course->id, 'course', 'update mod', '../mod/book/view.php?id='.$cm->id, 'book '.$book->id);
         add_to_log($course->id, 'book', 'update chapter', 'view.php?id='.$cm->id.'&chapterid='.$data->id, $data->id, $cm->id);
