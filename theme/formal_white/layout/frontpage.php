@@ -30,14 +30,11 @@ if ($hascustommenu) {
 
 /************************************************************************************************/
 if (!empty($PAGE->theme->settings->frontpagelogourl)) {
-    $logourl = $PAGE->theme->settings->frontpagelogourl;
+    $logourl = $PAGE->theme->setting_file_url('frontpagelogourl', 'frontpagelogourl');
 } else if (!empty($PAGE->theme->settings->customlogourl)) {
-    $logourl = $PAGE->theme->settings->customlogourl;
+    $logourl = $PAGE->theme->setting_file_url('customlogourl', 'customlogourl');
 } else {
     $logourl = $OUTPUT->pix_url('logo', 'theme');
-}
-if (strtolower(substr($logourl, 0, 4)) != 'http') {
-    $logourl = $CFG->wwwroot.'/'.$logourl;
 }
 
 $hasframe = !isset($PAGE->theme->settings->noframe) || !$PAGE->theme->settings->noframe;
