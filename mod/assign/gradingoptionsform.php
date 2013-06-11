@@ -54,7 +54,12 @@ class mod_assign_grading_options_form extends moodleform {
         if ($instance['submissionsenabled']) {
             $mform->addElement('select', 'filter', get_string('filter', 'assign'), $options, $dirtyclass);
         }
-
+        if (!empty($instance['markingallocationopt'])) {
+            $mform->addElement('select', 'markerfilter', get_string('markerfilter', 'assign'), $instance['markingallocationopt'], $dirtyclass);
+        }
+        if (!empty($instance['markingworkflowopt'])) {
+            $mform->addElement('select', 'workflowfilter', get_string('workflowfilter', 'assign'), $instance['markingworkflowopt'], $dirtyclass);
+        }
         // Quickgrading.
         if ($instance['showquickgrading']) {
             $mform->addElement('checkbox', 'quickgrading', get_string('quickgrading', 'assign'), '', $dirtyclass);

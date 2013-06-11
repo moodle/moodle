@@ -64,6 +64,12 @@ class mod_assign_grading_batch_operations_form extends moodleform {
                 }
             }
         }
+        if ($instance['markingworkflow']) {
+            $options['setmarkingworkflowstate'] = get_string('setmarkingworkflowstate', 'assign');
+        }
+        if ($instance['markingallocation']) {
+            $options['setmarkingallocation'] = get_string('setmarkingallocation', 'assign');
+        }
 
         $mform->addElement('hidden', 'action', 'gradingbatchoperation');
         $mform->setType('action', PARAM_ALPHA);

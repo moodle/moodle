@@ -44,6 +44,14 @@ define('ASSIGN_ATTEMPT_REOPEN_METHOD_UNTILPASS', 'untilpass');
 // Special value means allow unlimited attempts.
 define('ASSIGN_UNLIMITED_ATTEMPTS', -1);
 
+// Marking workflow states.
+define('ASSIGN_MARKING_WORKFLOW_STATE_NOTMARKED', 'notmarked');
+define('ASSIGN_MARKING_WORKFLOW_STATE_INMARKING', 'inmarking');
+define('ASSIGN_MARKING_WORKFLOW_STATE_READYFORREVIEW', 'readyforreview');
+define('ASSIGN_MARKING_WORKFLOW_STATE_INREVIEW', 'inreview');
+define('ASSIGN_MARKING_WORKFLOW_STATE_READYFORRELEASE', 'readyforrelease');
+define('ASSIGN_MARKING_WORKFLOW_STATE_RELEASED', 'released');
+
 require_once($CFG->libdir . '/accesslib.php');
 require_once($CFG->libdir . '/formslib.php');
 require_once($CFG->dirroot . '/repository/lib.php');
@@ -110,6 +118,9 @@ class assign {
 
     /** @var string modulenameplural prevents excessive calls to get_string */
     private static $modulenameplural = null;
+
+    /** @var array of marking workflow states for the current user */
+    private $markingworkflowstates = null;
 
     /**
      * Constructor for the base assign class.
@@ -389,6 +400,14 @@ class assign {
             $this->process_unlock();
             $action = 'redirect';
             $nextpageparams['action'] = 'grading';
+        } else if ($action == 'setbatchmarkingworkflowstate') {
+            $this->process_set_batch_marking_workflow_state();
+            $action = 'redirect';
+            $nextpageparams['action'] = 'grading';
+        } else if ($action == 'setbatchmarkingallocation') {
+            $this->process_set_batch_marking_allocation();
+            $action = 'redirect';
+            $nextpageparams['action'] = 'grading';
         } else if ($action == 'confirmsubmit') {
             $action = 'submit';
             if ($this->process_submit_for_grading($mform)) {
@@ -490,6 +509,10 @@ class assign {
              $o .= $this->view_plugin_page();
         } else if ($action == 'viewcourseindex') {
              $o .= $this->view_course_index();
+        } else if ($action == 'viewbatchsetmarkingworkflowstate') {
+             $o .= $this->view_batch_set_workflow_state($mform);
+        } else if ($action == 'viewbatchmarkingallocation') {
+            $o .= $this->view_batch_markingallocation($mform);
         } else {
             $o .= $this->view_submission_page();
         }
@@ -540,6 +563,8 @@ class assign {
         if (!empty($formdata->maxattempts)) {
             $update->maxattempts = $formdata->maxattempts;
         }
+        $update->markingworkflow = $formdata->markingworkflow;
+        $update->markingallocation = $formdata->markingallocation;
 
         $returnid = $DB->insert_record('assign', $update);
         $this->instance = $DB->get_record('assign', array('id'=>$returnid), '*', MUST_EXIST);
@@ -863,6 +888,8 @@ class assign {
         if (!empty($formdata->maxattempts)) {
             $update->maxattempts = $formdata->maxattempts;
         }
+        $update->markingworkflow = $formdata->markingworkflow;
+        $update->markingallocation = $formdata->markingallocation;
 
         $result = $DB->update_record('assign', $update);
         $this->instance = $DB->get_record('assign', array('id'=>$update->id), '*', MUST_EXIST);
@@ -1677,6 +1704,13 @@ class assign {
 
         $grade->timemodified = time();
 
+        if (!empty($grade->workflowstate)) {
+            $validstates = $this->get_marking_workflow_states_for_current_user();
+            if (!array_key_exists($grade->workflowstate, $validstates)) {
+                return false;
+            }
+        }
+
         if ($grade->grade && $grade->grade != -1) {
             if ($this->get_instance()->grade > 0) {
                 if (!is_numeric($grade->grade)) {
@@ -2477,6 +2511,8 @@ class assign {
             $flags->userid = $userid;
             $flags->locked = 0;
             $flags->extensionduedate = 0;
+            $flags->workflowstate = '';
+            $flags->allocatedmarker = 0;
 
             // The mailed flag can be one of 3 values: 0 is unsent, 1 is sent and 2 is do not send yet.
             // This is because students only want to be notified about certain types of update (grades and feedback).
@@ -2696,6 +2732,12 @@ class assign {
             if ($grade->grade !== null && $grade->grade >= 0) {
                 $data->grade = format_float($grade->grade, 2);
             }
+            if (!empty($flags->workflowstate)) {
+                $data->workflowstate = $flags->workflowstate;
+            }
+            if (!empty($flags->allocatedmarker)) {
+                $data->allocatedmarker = $flags->allocatedmarker;
+            }
         } else {
             $data = new stdClass();
             $data->grade = '';
@@ -2853,9 +2895,32 @@ class assign {
 
         $perpage = get_user_preferences('assign_perpage', 10);
         $filter = get_user_preferences('assign_filter', '');
+        $markerfilter = get_user_preferences('assign_markerfilter', '');
+        $workflowfilter = get_user_preferences('assign_workflowfilter', '');
         $controller = $gradingmanager->get_active_controller();
         $showquickgrading = empty($controller);
         $quickgrading = get_user_preferences('assign_quickgrading', false);
+
+        $markingallocation = $this->get_instance()->markingallocation &&
+            has_capability('mod/assign:manageallocations', $this->context);
+        // Get markers to use in drop lists.
+        $markingallocationoptions = array();
+        if ($markingallocation) {
+            $markers = get_users_by_capability($this->context, 'mod/assign:grade');
+            $markingallocationoptions[''] = get_string('filternone', 'assign');
+            foreach ($markers as $marker) {
+                $markingallocationoptions[$marker->id] = fullname($marker);
+            }
+        }
+
+        $markingworkflow = $this->get_instance()->markingworkflow;
+        // Get marking states to show in form.
+        $markingworkflowoptions = array();
+        if ($markingworkflow) {
+            $markingworkflowoptions[''] = get_string('filternone', 'assign');
+            $markingworkflowoptions[ASSIGN_MARKING_WORKFLOW_STATE_NOTMARKED] = get_string('markingworkflowstatenotmarked', 'assign');
+            $markingworkflowoptions = array_merge($markingworkflowoptions, $this->get_marking_workflow_states_for_current_user());
+        }
 
         // Print options for changing the filter and changing the number of results per page.
         $gradingoptionsformparams = array('cm'=>$cmid,
@@ -2863,7 +2928,9 @@ class assign {
                                           'userid'=>$USER->id,
                                           'submissionsenabled'=>$this->is_any_submission_plugin_enabled(),
                                           'showquickgrading'=>$showquickgrading,
-                                          'quickgrading'=>$quickgrading);
+                                          'quickgrading'=>$quickgrading,
+                                          'markingworkflowopt'=>$markingworkflowoptions,
+                                          'markingallocationopt'=>$markingallocationoptions);
 
         $classoptions = array('class'=>'gradingoptionsform');
         $gradingoptionsform = new mod_assign_grading_options_form(null,
@@ -2877,7 +2944,9 @@ class assign {
                                  'duedate'=>$this->get_instance()->duedate,
                                  'attemptreopenmethod'=>$this->get_instance()->attemptreopenmethod,
                                  'feedbackplugins'=>$this->get_feedback_plugins(),
-                                 'context'=>$this->get_context());
+                                 'context'=>$this->get_context(),
+                                 'markingworkflow'=>$markingworkflow,
+                                 'markingallocation'=>$markingallocation);
         $classoptions = array('class'=>'gradingbatchoperationsform');
 
         $gradingbatchoperationsform = new mod_assign_grading_batch_operations_form(null,
@@ -2889,6 +2958,8 @@ class assign {
         $gradingoptionsdata = new stdClass();
         $gradingoptionsdata->perpage = $perpage;
         $gradingoptionsdata->filter = $filter;
+        $gradingoptionsdata->markerfilter = $markerfilter;
+        $gradingoptionsdata->workflowfilter = $workflowfilter;
         $gradingoptionsform->set_data($gradingoptionsdata);
 
         $actionformtext = $this->get_renderer()->render($gradingactions);
@@ -3149,12 +3220,17 @@ class assign {
         require_once($CFG->dirroot . '/mod/assign/gradingbatchoperationsform.php');
         require_sesskey();
 
+        $markingallocation = $this->get_instance()->markingallocation &&
+            has_capability('mod/assign:manageallocations', $this->context);
+
         $batchformparams = array('cm'=>$this->get_course_module()->id,
                                  'submissiondrafts'=>$this->get_instance()->submissiondrafts,
                                  'duedate'=>$this->get_instance()->duedate,
                                  'attemptreopenmethod'=>$this->get_instance()->attemptreopenmethod,
                                  'feedbackplugins'=>$this->get_feedback_plugins(),
-                                 'context'=>$this->get_context());
+                                 'context'=>$this->get_context(),
+                                 'markingworkflow'=>$this->get_instance()->markingworkflow,
+                                 'markingallocation'=>$markingallocation);
         $formclasses = array('class'=>'gradingbatchoperationsform');
         $mform = new mod_assign_grading_batch_operations_form(null,
                                                               $batchformparams,
@@ -3173,6 +3249,10 @@ class assign {
                 // Reset the form so the grant extension page will create the extension form.
                 $mform = null;
                 return 'grantextension';
+            } else if ($data->operation == 'setmarkingworkflowstate') {
+                return 'viewbatchsetmarkingworkflowstate';
+            } else if ($data->operation == 'setmarkingallocation') {
+                return 'viewbatchmarkingallocation';
             } else if (strpos($data->operation, $prefix) === 0) {
                 $tail = substr($data->operation, strlen($prefix));
                 list($plugintype, $action) = explode('_', $tail, 2);
@@ -3203,6 +3283,120 @@ class assign {
         }
 
         return 'grading';
+    }
+
+    /**
+     * Shows a form that allows the workflow state for selected submissions to be changed.
+     *
+     * @param moodleform $mform Set to a grading batch operations form
+     * @return string - the page to view after processing these actions
+     */
+    private function view_batch_set_workflow_state($mform) {
+        global $CFG, $DB;
+
+        require_once($CFG->dirroot . '/mod/assign/batchsetmarkingworkflowstateform.php');
+
+        $o = '';
+
+        $submitteddata = $mform->get_data();
+        $users = $submitteddata->selectedusers;
+        $userlist = explode(',', $users);
+
+        $formparams = array('cm'=>$this->get_course_module()->id,
+                            'users'=>$userlist,
+                            'context'=>$this->get_context());
+
+        $usershtml = '';
+
+        $usercount = 0;
+        $extrauserfields = get_extra_user_fields($this->get_context());
+        foreach ($userlist as $userid) {
+            if ($usercount >= 5) {
+                $usershtml .= get_string('moreusers', 'assign', count($userlist) - 5);
+                break;
+            }
+            $user = $DB->get_record('user', array('id'=>$userid), '*', MUST_EXIST);
+
+            $usershtml .= $this->get_renderer()->render(new assign_user_summary($user,
+                                                                $this->get_course()->id,
+                                                                has_capability('moodle/site:viewfullnames',
+                                                                $this->get_course_context()),
+                                                                $this->is_blind_marking(),
+                                                                $this->get_uniqueid_for_user($user->id),
+                                                                $extrauserfields));
+            $usercount += 1;
+        }
+
+        $formparams['usershtml'] = $usershtml;
+        $formparams['markingworkflowstates'] = $this->get_marking_workflow_states_for_current_user();
+
+        $mform = new mod_assign_batch_set_marking_workflow_state_form(null, $formparams);
+        $o .= $this->get_renderer()->header();
+        $o .= $this->get_renderer()->render(new assign_form('setworkflowstate', $mform));
+        $o .= $this->view_footer();
+
+        $this->add_to_log('view batch set marking workflow state', get_string('viewbatchsetmarkingworkflowstate', 'assign'));
+        return $o;
+    }
+
+    /**
+     * Shows a form that allows the allocated marker for selected submissions to be changed.
+     *
+     * @param moodleform $mform Set to a grading batch operations form
+     * @return string - the page to view after processing these actions
+     */
+    private function view_batch_markingallocation($mform) {
+        global $CFG, $DB;
+
+        require_once($CFG->dirroot . '/mod/assign/batchsetallocatedmarkerform.php');
+
+        $o = '';
+
+        $submitteddata = $mform->get_data();
+        $users = $submitteddata->selectedusers;
+        $userlist = explode(',', $users);
+
+        $formparams = array('cm'=>$this->get_course_module()->id,
+            'users'=>$userlist,
+            'context'=>$this->get_context());
+
+        $usershtml = '';
+
+        $usercount = 0;
+        $extrauserfields = get_extra_user_fields($this->get_context());
+        foreach ($userlist as $userid) {
+            if ($usercount >= 5) {
+                $usershtml .= get_string('moreusers', 'assign', count($userlist) - 5);
+                break;
+            }
+            $user = $DB->get_record('user', array('id'=>$userid), '*', MUST_EXIST);
+
+            $usershtml .= $this->get_renderer()->render(new assign_user_summary($user,
+                $this->get_course()->id,
+                has_capability('moodle/site:viewfullnames',
+                    $this->get_course_context()),
+                $this->is_blind_marking(),
+                $this->get_uniqueid_for_user($user->id),
+                $extrauserfields));
+            $usercount += 1;
+        }
+
+        $formparams['usershtml'] = $usershtml;
+        $markers = get_users_by_capability($this->get_context(), 'mod/assign:grade');
+        $markerlist = array();
+        foreach ($markers as $marker) {
+            $markerlist[$marker->id] = fullname($marker);
+        }
+
+        $formparams['markers'] = $markerlist;
+
+        $mform = new mod_assign_batch_set_allocatedmarker_form(null, $formparams);
+        $o .= $this->get_renderer()->header();
+        $o .= $this->get_renderer()->render(new assign_form('setworkflowstate', $mform));
+        $o .= $this->view_footer();
+
+        $this->add_to_log('view batch set marker allocation', get_string('viewbatchmarkingallocation', 'assign'));
+        return $o;
     }
 
     /**
@@ -3296,7 +3490,7 @@ class assign {
                         ($this->is_any_submission_plugin_enabled()) &&
                         $showlinks;
 
-            $gradelocked = ($flags && $flags->locked) || $this->grading_disabled($user->id);
+            $gradelocked = ($flags && $flags->locked) || $this->grading_disabled($user->id, false);
 
             // Grading criteria preview.
             $gradingmanager = get_grading_manager($this->context, 'mod_assign', 'submissions');
@@ -3381,9 +3575,16 @@ class assign {
                 }
             }
 
+            $gradereleased = true;
+            if ($this->get_instance()->markingworkflow &&
+                (empty($grade) || $flags->workflowstate != ASSIGN_MARKING_WORKFLOW_STATE_RELEASED)) {
+                $gradereleased = false;
+                $emptyplugins = true; // Don't show feedback plugins until released either.
+            }
+
             $cangrade = has_capability('mod/assign:grade', $this->get_context());
             // If there is feedback or a visible grade, show the summary.
-            if ((!empty($gradebookgrade->grade) && ($cangrade || !$gradebookgrade->hidden)) ||
+            if ((!empty($gradebookgrade->grade) && ($cangrade || !$gradebookgrade->hidden) && $gradereleased) ||
                     !$emptyplugins) {
 
                 $gradefordisplay = null;
@@ -3654,6 +3855,14 @@ class assign {
         if ($this->is_blind_marking()) {
             return false;
         }
+        // If marking workflow is enabled and grade is not released then don't send to gradebook yet.
+        if ($this->get_instance()->markingworkflow && !empty($grade)) {
+            $flags = $this->get_user_flags($grade->userid, false);
+            if (empty($flags->workflowstate) || $flags->workflowstate != ASSIGN_MARKING_WORKFLOW_STATE_RELEASED) {
+                return false;
+            }
+        }
+
         if ($submission != null) {
             if ($submission->userid == 0) {
                 // This is a group submission update.
@@ -3846,7 +4055,7 @@ class assign {
             }
         }
 
-        if ($this->grading_disabled($userid)) {
+        if ($this->grading_disabled($userid, false)) {
             return false;
         }
 
@@ -4367,6 +4576,8 @@ class assign {
             $record->userid = $userid;
             if ($modified >= 0) {
                 $record->grade = unformat_float(optional_param('quickgrade_' . $record->userid, -1, PARAM_TEXT));
+                $record->workflowstate = optional_param('quickgrade_' . $record->userid.'_workflowstate', '', PARAM_TEXT);
+                $record->allocatedmarker = optional_param('quickgrade_' . $record->userid.'_allocatedmarker', '', PARAM_INT);
             } else {
                 // This user was not in the grading table.
                 continue;
@@ -4389,13 +4600,14 @@ class assign {
                             FROM {assign_grades} mxg
                             WHERE mxg.assignment = :assignid1 GROUP BY mxg.userid';
 
-        $sql = 'SELECT u.id as userid, g.grade as grade, g.timemodified as lastmodified
+        $sql = 'SELECT u.id as userid, g.grade as grade, g.timemodified as lastmodified, uf.workflowstate, uf.allocatedmarker
                     FROM {user} u
                 LEFT JOIN ( ' . $grademaxattempt . ' ) gmx ON u.id = gmx.userid
                 LEFT JOIN {assign_grades} g ON
                     u.id = g.userid AND
                     g.assignment = :assignid2 AND
                     g.attemptnumber = gmx.maxattempt
+                LEFT JOIN {assign_user_flags} uf ON uf.assignment = g.assignment AND uf.userid = g.userid
                 WHERE u.id ' . $userids;
         $currentgrades = $DB->get_recordset_sql($sql, $params);
 
@@ -4435,13 +4647,16 @@ class assign {
             if (($current->grade < 0 || $current->grade === null) &&
                 ($modified->grade < 0 || $modified->grade === null)) {
                 // Different ways to indicate no grade.
-                continue;
+                $modified->grade = $current->grade; // Keep existing grade.
             }
             // Treat 0 and null as different values.
             if ($current->grade !== null) {
                 $current->grade = floatval($current->grade);
             }
-            if ($current->grade !== $modified->grade) {
+            if ($current->grade !== $modified->grade ||
+                 ($this->get_instance()->markingallocation && $current->allocatedmarker != $modified->allocatedmarker ) ||
+                 ($this->get_instance()->markingworkflow && $current->workflowstate !== $modified->workflowstate )) {
+
                 // Grade changed.
                 if ($this->grading_disabled($modified->userid)) {
                     continue;
@@ -4463,6 +4678,7 @@ class assign {
         // Ok - ready to process the updates.
         foreach ($modifiedusers as $userid => $modified) {
             $grade = $this->get_user_grade($userid, true);
+            $flags = $this->get_user_flags($userid, true);
             $grade->grade= grade_floatval(unformat_float($modified->grade));
             $grade->grader= $USER->id;
 
@@ -4479,6 +4695,13 @@ class assign {
             }
 
             $this->update_grade($grade);
+            if ($flags->workflowstate != $modified->workflowstate ||
+                $flags->allocatedmarker != $modified->allocatedmarker) {
+
+                $flags->workflowstate = $modified->workflowstate;
+                $flags->allocatedmarker = $modified->allocatedmarker;
+                $this->update_user_flags($flags);
+            }
             $this->notify_grade_modified($grade);
 
             // Save outcomes.
@@ -4575,18 +4798,46 @@ class assign {
         $controller = $gradingmanager->get_active_controller();
         $showquickgrading = empty($controller);
 
+        $markingallocation = $this->get_instance()->markingallocation &&
+            has_capability('mod/assign:manageallocations', $this->context);
+        // Get markers to use in drop lists.
+        $markingallocationoptions = array();
+        if ($markingallocation) {
+            $markingallocationoptions[''] = get_string('filternone', 'assign');
+            $markers = get_users_by_capability($this->context, 'mod/assign:grade');
+            foreach ($markers as $marker) {
+                $markingallocationoptions[$marker->id] = fullname($marker);
+            }
+        }
+
+        // Get marking states to show in form.
+        $markingworkflowoptions = array();
+        if ($this->get_instance()->markingworkflow) {
+            $markingworkflowoptions[''] = get_string('filternone', 'assign');
+            $markingworkflowoptions[ASSIGN_MARKING_WORKFLOW_STATE_NOTMARKED] = get_string('markingworkflowstatenotmarked', 'assign');
+            $markingworkflowoptions = array_merge($markingworkflowoptions, $this->get_marking_workflow_states_for_current_user());
+        }
+
         $gradingoptionsparams = array('cm'=>$this->get_course_module()->id,
                                       'contextid'=>$this->context->id,
                                       'userid'=>$USER->id,
                                       'submissionsenabled'=>$this->is_any_submission_plugin_enabled(),
                                       'showquickgrading'=>$showquickgrading,
-                                      'quickgrading'=>false);
+                                      'quickgrading'=>false,
+                                      'markingworkflowopt' => $markingworkflowoptions,
+                                      'markingallocationopt' => $markingallocationoptions);
 
         $mform = new mod_assign_grading_options_form(null, $gradingoptionsparams);
         if ($formdata = $mform->get_data()) {
             set_user_preference('assign_perpage', $formdata->perpage);
             if (isset($formdata->filter)) {
                 set_user_preference('assign_filter', $formdata->filter);
+            }
+            if (isset($formdata->markerfilter)) {
+                set_user_preference('assign_markerfilter', $formdata->markerfilter);
+            }
+            if (isset($formdata->workflowfilter)) {
+                set_user_preference('assign_workflowfilter', $formdata->workflowfilter);
             }
             if ($showquickgrading) {
                 set_user_preference('assign_quickgrading', isset($formdata->quickgrading));
@@ -4843,11 +5094,18 @@ class assign {
      * Determine if this users grade is locked or overridden.
      *
      * @param int $userid - The student userid
+     * @param bool $checkworkflow - whether to include a check for the workflow state.
      * @return bool $gradingdisabled
      */
-    public function grading_disabled($userid) {
+    public function grading_disabled($userid, $checkworkflow=true) {
         global $CFG;
-
+        if ($checkworkflow && $this->get_instance()->markingworkflow) {
+            $grade = $this->get_user_grade($userid, false);
+            $validstates = $this->get_marking_workflow_states_for_current_user();
+            if (!empty($grade) && !empty($grade->workflowstate) && !array_key_exists($grade->workflowstate, $validstates)) {
+                return true;
+            }
+        }
         $gradinginfo = grade_get_grades($this->get_course()->id,
                                         'mod',
                                         'assign',
@@ -5035,6 +5293,27 @@ class assign {
             }
             $gradestring = $usergrade;
         }
+
+        if ($this->get_instance()->markingworkflow) {
+            $options = array('' => get_string('markingworkflowstatenotmarked', 'assign')) + $this->get_marking_workflow_states_for_current_user();
+            $mform->addElement('select', 'workflowstate', get_string('markingworkflowstate', 'assign'), $options);
+            $mform->addHelpButton('workflowstate', 'markingworkflowstate', 'assign');
+        }
+
+        if ($this->get_instance()->markingallocation && has_capability('mod/assign:manageallocations', $this->context)) {
+            $markers = get_users_by_capability($this->context, 'mod/assign:grade');
+            $markerlist = array('' =>  get_string('choosemarker', 'assign'));
+            foreach ($markers as $marker) {
+                $markerlist[$marker->id] = fullname($marker);
+            }
+            $mform->addElement('select', 'allocatedmarker', get_string('allocatedmarker', 'assign'), $markerlist);
+            $mform->addHelpButton('allocatedmarker', 'allocatedmarker', 'assign');
+            $mform->disabledIf('allocatedmarker', 'workflowstate', 'eq', ASSIGN_MARKING_WORKFLOW_STATE_READYFORREVIEW);
+            $mform->disabledIf('allocatedmarker', 'workflowstate', 'eq', ASSIGN_MARKING_WORKFLOW_STATE_INREVIEW);
+            $mform->disabledIf('allocatedmarker', 'workflowstate', 'eq', ASSIGN_MARKING_WORKFLOW_STATE_READYFORRELEASE);
+            $mform->disabledIf('allocatedmarker', 'workflowstate', 'eq', ASSIGN_MARKING_WORKFLOW_STATE_RELEASED);
+        }
+
         $mform->addElement('static', 'currentgrade', get_string('currentgrade', 'assign'), $gradestring);
 
         if (count($useridlist) > 1) {
@@ -5310,6 +5589,89 @@ class assign {
         $this->add_to_log('lock submission', $logmessage);
     }
 
+
+    /**
+     * Set the workflow state for multiple users
+     *
+     * @return void
+     */
+    private function process_set_batch_marking_workflow_state() {
+        global $DB;
+
+        require_sesskey();
+
+        $batchusers = required_param('selectedusers', PARAM_TEXT);
+        $state = required_param('markingworkflowstate', PARAM_ALPHA);
+        $useridlist = explode(',', $batchusers);
+
+        foreach ($useridlist as $userid) {
+            $flags = $this->get_user_flags($userid, true);
+
+            $flags->workflowstate = $state;
+
+            $gradingdisabled = $this->grading_disabled($userid);
+
+            // Will not apply update if user does not have permission to assign this workflow state.
+            if (!$gradingdisabled && $this->update_user_flags($flags)) {
+
+                $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
+
+                $params = array('id'=>$user->id,
+                                'fullname'=>fullname($user),
+                                'state'=>$state);
+                $message = get_string('setmarkingworkflowstateforlog', 'assign', $params);
+                $this->add_to_log('set marking workflow state', $message);
+            }
+        }
+
+
+    }
+
+    /**
+     * Set the marking allocation for multiple users
+     *
+     * @return void
+     */
+    private function process_set_batch_marking_allocation() {
+        global $DB;
+
+        require_sesskey();
+        require_capability('mod/assign:manageallocations', $this->context);
+
+        $batchusers = required_param('selectedusers', PARAM_TEXT);
+        $markerid = required_param('allocatedmarker', PARAM_INT);
+        $marker = $DB->get_record('user', array('id' => $markerid), '*', MUST_EXIST);
+
+        $useridlist = explode(',', $batchusers);
+
+        foreach ($useridlist as $userid) {
+            $flags = $this->get_user_flags($userid, true);
+            if ($flags->workflowstate == ASSIGN_MARKING_WORKFLOW_STATE_READYFORREVIEW ||
+                $flags->workflowstate == ASSIGN_MARKING_WORKFLOW_STATE_INREVIEW ||
+                $flags->workflowstate == ASSIGN_MARKING_WORKFLOW_STATE_READYFORRELEASE ||
+                $flags->workflowstate == ASSIGN_MARKING_WORKFLOW_STATE_RELEASED) {
+
+                continue; // Allocated marker can only be changed in certain workflow states.
+            }
+
+            $flags->allocatedmarker = $marker->id;
+
+            if ($this->update_user_flags($flags)) {
+
+                $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
+
+                $params = array('id'=>$user->id,
+                    'fullname'=>fullname($user),
+                    'marker'=>fullname($marker));
+                $message = get_string('setmarkerallocationforlog', 'assign', $params);
+                $this->add_to_log('set marking allocation', $message);
+            }
+        }
+
+
+    }
+
+
     /**
      * Unlock the process.
      *
@@ -5362,6 +5724,12 @@ class assign {
                 if (isset($formdata->grade)) {
                     $grade->grade = grade_floatval(unformat_float($formdata->grade));
                 }
+            }
+            if (isset($formdata->workflowstate) || isset($formdata->allocatedmarker)) {
+                $flags = $this->get_user_flags($userid, true);
+                $flags->workflowstate = isset($formdata->workflowstate) ? $formdata->workflowstate : $flags->workflowstate;
+                $flags->allocatedmarker = isset($formdata->allocatedmarker) ? $formdata->allocatedmarker : $flags->allocatedmarker;
+                $this->update_user_flags($flags);
             }
         }
         $grade->grader= $USER->id;
@@ -5902,6 +6270,33 @@ class assign {
         }
 
         return false;
+    }
+
+    /**
+     * Get the list of marking_workflow states the current user has permission to transition a grade to.
+     *
+     * @return array of state => description
+     */
+    public function get_marking_workflow_states_for_current_user() {
+        if (!empty($this->markingworkflowstates)) {
+            return $this->markingworkflowstates;
+        }
+        $states = array();
+        if (has_capability('mod/assign:grade', $this->context)) {
+            $states[ASSIGN_MARKING_WORKFLOW_STATE_INMARKING] = get_string('markingworkflowstateinmarking', 'assign');
+            $states[ASSIGN_MARKING_WORKFLOW_STATE_READYFORREVIEW] = get_string('markingworkflowstatereadyforreview', 'assign');
+        }
+        if (has_any_capability(array('mod/assign:reviewgrades',
+                                     'mod/assign:managegrades'), $this->context)) {
+            $states[ASSIGN_MARKING_WORKFLOW_STATE_INREVIEW] = get_string('markingworkflowstateinreview', 'assign');
+            $states[ASSIGN_MARKING_WORKFLOW_STATE_READYFORRELEASE] = get_string('markingworkflowstatereadyforrelease', 'assign');
+        }
+        if (has_any_capability(array('mod/assign:releasegrades',
+                                     'mod/assign:managegrades'), $this->context)) {
+            $states[ASSIGN_MARKING_WORKFLOW_STATE_RELEASED] = get_string('markingworkflowstatereleased', 'assign');
+        }
+        $this->markingworkflowstates = $states;
+        return $this->markingworkflowstates;
     }
 
 }

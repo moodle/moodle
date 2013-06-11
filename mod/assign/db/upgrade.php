@@ -424,8 +424,39 @@ function xmldb_assign_upgrade($oldversion) {
     // Moodle v2.5.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2013061101) {
+        // Define field markingworkflow to be added to assign
+        $table = new xmldb_table('assign');
+        $field = new xmldb_field('markingworkflow', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'maxattempts');
+
+        // Conditionally launch add field markingworkflow
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field markingallocation to be added to assign.
+        $field = new xmldb_field('markingallocation', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'markingworkflow');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field workflowstate to be added to assign_grades
+        $table = new xmldb_table('assign_user_flags');
+        $field = new xmldb_field('workflowstate', XMLDB_TYPE_CHAR, '20', null, null, null, null, 'extensionduedate');
+
+        // Conditionally launch add field workflowstate
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field allocatedmarker to be added to assign_grades.
+        $field = new xmldb_field('allocatedmarker', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'workflowstate');
+        // Conditionally launch add field workflowstate
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        upgrade_mod_savepoint(true, 2013061101, 'assign');
+    }
 
     return true;
 }
-
-

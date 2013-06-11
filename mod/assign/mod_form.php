@@ -180,6 +180,15 @@ class mod_assign_mod_form extends moodleform_mod {
             $mform->freeze('blindmarking');
         }
 
+        $name = get_string('markingworkflow', 'assign');
+        $mform->addElement('selectyesno', 'markingworkflow', $name);
+        $mform->addHelpButton('markingworkflow', 'markingworkflow', 'assign');
+
+        $name = get_string('markingallocation', 'assign');
+        $mform->addElement('selectyesno', 'markingallocation', $name);
+        $mform->addHelpButton('markingallocation', 'markingallocation', 'assign');
+        $mform->disabledIf('markingallocation', 'markingworkflow', 'eq', 0);
+
         $this->standard_coursemodule_elements();
         $this->apply_admin_defaults();
 
