@@ -56,7 +56,6 @@ class mod_assign_generator extends testing_module_generator {
             'sendnotifications'                 => 0,
             'sendlatenotifications'             => 0,
             'duedate'                           => 0,
-            'displayduedate'                    => 0,
             'allowsubmissionsfromdate'          => 0,
             'grade'                             => 100,
             'cutoffdate'                        => 0,

@@ -86,7 +86,6 @@ class assign_upgrade_manager {
         $data->sendnotifications = $oldassignment->emailteachers;
         $data->sendlatenotifications = $oldassignment->emailteachers;
         $data->duedate = $oldassignment->timedue;
-        $data->displayduedate = 0;
         $data->allowsubmissionsfromdate = $oldassignment->timeavailable;
         $data->grade = $oldassignment->grade;
         $data->submissiondrafts = $oldassignment->resubmit;
