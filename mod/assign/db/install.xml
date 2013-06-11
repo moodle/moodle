@@ -17,6 +17,7 @@
         <FIELD NAME="sendnotifications" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Allows the disabling of email notifications in the assign module."/>
         <FIELD NAME="sendlatenotifications" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Allows separate enabling of notifications for late assignment submissions."/>
         <FIELD NAME="duedate" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The due date for the assignment. Displayed to students."/>
+        <FIELD NAME="displayduedate" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If true the due date will be displayed."/>
         <FIELD NAME="allowsubmissionsfromdate" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If set, submissions will only be accepted after this date."/>
         <FIELD NAME="grade" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The maximum grade for this assignment. Can be negative to indicate the use of a scale."/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The time the settings for this assign module instance were last modified."/>
