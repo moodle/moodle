@@ -60,9 +60,6 @@ if (!confirm_sesskey()) {
 }
 
 switch ($action) {
-    case 'uninstall':
-        die('TODO: not implemented yet');
-        break;
 
     case 'disable':
         // remove from enabled list
