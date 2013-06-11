@@ -2,6 +2,8 @@
       // format.php - course format featuring social forum
       //              included from view.php
 
+    require_once($CFG->dirroot.'/mod/forum/lib.php');
+
     $strgroups  = get_string('groups');
     $strgroupmy = get_string('groupmy');
     $editing    = $PAGE->user_is_editing();
