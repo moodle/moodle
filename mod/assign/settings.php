@@ -224,4 +224,23 @@ if ($ADMIN->fulltree) {
     $setting->set_locked_flag_options(admin_setting_flag::ENABLED, false);
     $settings->add($setting);
 
+    $name = new lang_string('markingworkflow', 'mod_assign');
+    $description = new lang_string('markingworkflow_help', 'mod_assign');
+    $setting = new admin_setting_configcheckbox('assign/markingworkflow',
+                                                    $name,
+                                                    $description,
+                                                    0);
+    $setting->set_advanced_flag_options(admin_setting_flag::ENABLED, false);
+    $setting->set_locked_flag_options(admin_setting_flag::ENABLED, false);
+    $settings->add($setting);
+
+    $name = new lang_string('markingallocation', 'mod_assign');
+    $description = new lang_string('markingallocation_help', 'mod_assign');
+    $setting = new admin_setting_configcheckbox('assign/markingallocation',
+                                                    $name,
+                                                    $description,
+                                                    0);
+    $setting->set_advanced_flag_options(admin_setting_flag::ENABLED, false);
+    $setting->set_locked_flag_options(admin_setting_flag::ENABLED, false);
+    $settings->add($setting);
 }
