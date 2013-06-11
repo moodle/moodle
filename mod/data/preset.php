@@ -103,6 +103,8 @@ if (!$form_export->is_submitted()) {
     $currenttab = 'presets';
     $currentgroup = groups_get_activity_group($cm);
     $groupmode = groups_get_activity_groupmode($cm);
+    echo $OUTPUT->box(format_module_intro('data', $data, $cm->id), 'generalbox', 'intro');
+
     include('tabs.php');
 }
 

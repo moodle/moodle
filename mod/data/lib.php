@@ -1976,6 +1976,8 @@ function data_print_header($course, $cm, $data, $currenttab='') {
     $currentgroup = groups_get_activity_group($cm);
     $groupmode = groups_get_activity_groupmode($cm);
 
+    echo $OUTPUT->box(format_module_intro('data', $data, $cm->id), 'generalbox', 'intro');
+
     // Print the tabs
 
     if ($currenttab) {
