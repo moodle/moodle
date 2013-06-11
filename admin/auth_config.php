@@ -117,6 +117,9 @@ function print_auth_lock_options($auth, $user_fields, $helptext, $retrieveopts, 
         $user_fields = array_merge($user_fields, $customfields);
     }
 
+    if (!empty($customfields)) {
+        $customfieldname = $DB->get_records('user_info_field', null, '', 'shortname, name');
+    }
     foreach ($user_fields as $field) {
         // Define some vars we'll work with.
         if (!isset($pluginconfig->{"field_map_$field"})) {
@@ -143,7 +146,7 @@ function print_auth_lock_options($auth, $user_fields, $helptext, $retrieveopts, 
         } elseif (!empty($customfields) && in_array($field, $customfields)) {
             // If custom field then pick name from database.
             $fieldshortname = str_replace('profile_field_', '', $fieldname);
-            $fieldname = $DB->get_field('user_info_field', 'name', array('shortname' => $fieldshortname));
+            $fieldname = $customfieldname[$fieldshortname]->name;
         } else {
             $fieldname = get_string($fieldname);
         }

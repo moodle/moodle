@@ -1163,12 +1163,13 @@ class auth_plugin_ldap extends auth_plugin_base {
                 $profilefield = '';
                 // Only process if the moodle field ($key) has changed and we
                 // are set to update LDAP with it
+                $customprofilefield = 'profile_field_' . $key;
                 if (isset($olduser->$key) and isset($newuser->$key)
                     and ($olduser->$key !== $newuser->$key)) {
                     $profilefield = $key;
-                } else if (isset($olduser->{'profile_field_' . $key}) && isset($newuser->{'profile_field_' . $key})
-                    && $olduser->{'profile_field_' . $key} !== $newuser->{'profile_field_' . $key}) {
-                    $profilefield = 'profile_field_' . $key;
+                } else if (isset($olduser->$customprofilefield) && isset($newuser->$customprofilefield)
+                    && $olduser->$customprofilefield !== $newuser->$customprofilefield) {
+                    $profilefield = $customprofilefield;
                 }
 
                 if (!empty($profilefield) && !empty($this->config->{'field_updateremote_' . $key})) {

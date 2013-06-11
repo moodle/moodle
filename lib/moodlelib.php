@@ -3839,31 +3839,18 @@ function get_user_fieldnames() {
  */
 function create_user_record($username, $password, $auth = 'manual') {
     global $CFG, $DB;
-
+    require_once($CFG->dirroot."/user/profile/lib.php");
     //just in case check text case
     $username = trim(textlib::strtolower($username));
 
     $authplugin = get_auth_plugin($auth);
-
+    $customfields = $authplugin->get_custom_user_profile_fields();
     $newuser = new stdClass();
-    $customfield = new stdClass();
     if ($newinfo = $authplugin->get_userinfo($username)) {
         $newinfo = truncate_userinfo($newinfo);
         foreach ($newinfo as $key => $value){
-            if (in_array($key, $authplugin->userfields)) {
+            if (in_array($key, $authplugin->userfields) || (in_array($key, $customfields))) {
                 $newuser->$key = $value;
-            } else {
-                $customfields = $authplugin->get_custom_user_profile_fields();
-                if (!empty($customfields) && in_array($key, $customfields)) {
-                    $shortname = str_replace('profile_field_', '', $key);
-                    $infofield = $DB->get_record('user_info_field', array('shortname' => $shortname));
-                    $data = $infofield->defaultdata;
-                    if(strcmp($data, $value) !== 0) {
-                        $customfield->$key = new stdClass();
-                        $customfield->$key->fieldid = $infofield->id;
-                        $customfield->$key->data = $value;
-                    }
-                }
             }
         }
     }
@@ -3895,10 +3882,8 @@ function create_user_record($username, $password, $auth = 'manual') {
 
     $newuser->id = $DB->insert_record('user', $newuser);
 
-    foreach ($customfield as $key) {
-        $key->userid = $newuser->id;
-        $key->id = $DB->insert_record('user_info_data', $key);
-    }
+    // Save user profile data.
+    profile_save_data($newuser);
 
     $user = get_complete_user_data('id', $newuser->id);
     if (!empty($CFG->{'auth_'.$newuser->auth.'_forcechangepassword'})){
@@ -3923,7 +3908,7 @@ function create_user_record($username, $password, $auth = 'manual') {
  */
 function update_user_record($username) {
     global $DB, $CFG;
-
+    require_once($CFG->dirroot."/user/profile/lib.php");
     $username = trim(textlib::strtolower($username)); /// just in case check text case
 
     $oldinfo = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>$CFG->mnet_localhost_id), '*', MUST_EXIST);
@@ -3954,50 +3939,10 @@ function update_user_record($username) {
                 // in a value for the selected field _if LDAP is giving
                 // nothing_ for this field. Thus it makes sense to let this value
                 // stand in until LDAP is giving a value for this field.
-                if (!empty($value) && ($lockval === 'unlockedifempty')) {
-                    if (in_array($key, $userauth->userfields)) {
-                        if ((string)$oldinfo->$key !== (string)$value) {
-                            $newuser[$key] = (string)$value;
-                        }
-                    } else if ($iscustom) {
-                        $shortname = str_replace('profile_field_', '', $key);
-                        $infofield = $DB->get_record('user_info_field', array('shortname' => $shortname));
-                        $data = $DB->get_field('user_info_data', 'data', array('userid' => $oldinfo->id, 'fieldid' => $infofield->id));
-                        // If there is no value in the user_info_data then use default value for comparison.
-                        if ($data === false) {
-                            $originalvalue = $infofield->defaultdata;
-                        } else {
-                            $originalvalue = $data;
-                        }
-                        // If passed value is different then original value then update/insert.
-                        if (strcmp($originalvalue, $value) !== 0) {
-                            $valid = true;
-                            // Check to make sure that the value is a valid.
-                            if (strcmp($info_field->datatype, 'menu') == 0) {
-                                $validValues = explode("\n", $info_field->param1);
-                                if (!in_array($value, $validValues)) {
-                                    $valid = false;
-                                }
-                            } else if(strcmp($info_field->datatype, 'checkbox') == 0) {
-                                if ($value != 1 && $value != 0) {
-                                    $valid = false;
-                                }
-                            }
-
-                            // Insert/update if value is valid.
-                            if ($valid) {
-                                if ($data === false) {
-                                    $row = new stdClass();
-                                    $row->userid = $oldinfo->id;
-                                    $row->fieldid = $infofield->id;
-                                    $row->data = $value;
-                                    $row->id = $DB->insert_record('user_info_data', $row);
-                                } else {
-                                    $DB->set_field('user_info_data', 'data', $value,
-                                            array('userid' => $oldinfo->id, 'fieldid' => $infofield->id));
-                                }
-                            }
-                        }
+                if (!(empty($value) && $lockval === 'unlockedifempty')) {
+                    if ($iscustom || (in_array($key, $userauth->userfields) &&
+                            ((string)$oldinfo->$key !== (string)$value))) {
+                        $newuser[$key] = (string)$value;
                     }
                 }
             }
@@ -4006,6 +3951,10 @@ function update_user_record($username) {
             $newuser['id'] = $oldinfo->id;
             $newuser['timemodified'] = time();
             $DB->update_record('user', $newuser);
+
+            // Save user profile data.
+            profile_save_data((object) $newuser);
+
             // fetch full user record for the event, the complete user data contains too much info
             // and we want to be consistent with other places that trigger this event
             events_trigger('user_updated', $DB->get_record('user', array('id'=>$oldinfo->id)));
