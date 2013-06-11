@@ -203,3 +203,27 @@ function formal_white_set_customcss($css, $customcss) {
     $css = str_replace($tag, $customcss, $css);
     return $css;
 }
+
+/**
+ * Serves formal white files.
+ *
+ * @param stdClass $course
+ * @param stdClass $cm
+ * @param context $context
+ * @param string $filearea
+ * @param type $args
+ * @param array $forcedownload
+ * @param array $options
+ * @return bool
+ */
+function theme_formal_white_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
+    if ($context->contextlevel == CONTEXT_SYSTEM and $filearea === 'customlogourl') {
+        $theme = theme_config::load('formal_white');
+        return $theme->setting_file_serve('customlogourl', $args, $forcedownload, $options);
+    } else if ($context->contextlevel == CONTEXT_SYSTEM and $filearea === 'frontpagelogourl') {
+        $theme = theme_config::load('formal_white');
+        return $theme->setting_file_serve('frontpagelogourl', $args, $forcedownload, $options);
+    } else {
+        send_file_not_found();
+    }
+}
