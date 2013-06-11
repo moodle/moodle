@@ -44,7 +44,7 @@ class filter_urltolink_testcase extends basic_testcase {
             '$1<a href="http://www.$2$3" target="_blank">www.$2$3</a>', $text);
     }
 
-    function test_convert_urls_into_links() {
+    function get_convert_urls_into_links_test_cases() {
         $texts = array (
             //just a url
             'http://moodle.org - URL' => '<a href="http://moodle.org" class="_blanktarget">http://moodle.org</a> - URL',
@@ -57,13 +57,26 @@ class filter_urltolink_testcase extends basic_testcase {
             'URL: https://moodle.org/s/i=1&j=2' => 'URL: <a href="https://moodle.org/s/i=1&j=2" class="_blanktarget">https://moodle.org/s/i=1&j=2</a>',
             //url with port and params
             'URL: http://moodle.org:8080/s/i=1' => 'URL: <a href="http://moodle.org:8080/s/i=1" class="_blanktarget">http://moodle.org:8080/s/i=1</a>',
-            //url in brackets
+            // URL with complex fragment.
+            'Most voted issues: https://tracker.moodle.org/browse/MDL#selectedTab=com.atlassian.jira.plugin.system.project%3Apopularissues-panel' => 'Most voted issues: <a href="https://tracker.moodle.org/browse/MDL#selectedTab=com.atlassian.jira.plugin.system.project%3Apopularissues-panel" class="_blanktarget">https://tracker.moodle.org/browse/MDL#selectedTab=com.atlassian.jira.plugin.system.project%3Apopularissues-panel</a>',
+            // Domain with more parts
+            'URL: www.bbc.co.uk.' => 'URL: <a href="http://www.bbc.co.uk" class="_blanktarget">www.bbc.co.uk</a>.',
+            // URL in brackets.
             '(http://moodle.org) - URL' => '(<a href="http://moodle.org" class="_blanktarget">http://moodle.org</a>) - URL',
             '(www.moodle.org) - URL' => '(<a href="http://www.moodle.org" class="_blanktarget">www.moodle.org</a>) - URL',
-            //url in square brackets
+            // URL in brackets with a path.
+            '(http://example.com/index.html) - URL' => '(<a href="http://example.com/index.html" class="_blanktarget">http://example.com/index.html</a>) - URL',
+            '(www.example.com/index.html) - URL' => '(<a href="http://www.example.com/index.html" class="_blanktarget">www.example.com/index.html</a>) - URL',
+            // URL in brackets with anchor.
+            '(http://moodle.org/main#anchor) - URL' => '(<a href="http://moodle.org/main#anchor" class="_blanktarget">http://moodle.org/main#anchor</a>) - URL',
+            '(www.moodle.org/main#anchor) - URL' => '(<a href="http://www.moodle.org/main#anchor" class="_blanktarget">www.moodle.org/main#anchor</a>) - URL',
+            // URL in square brackets.
             '[http://moodle.org] - URL' => '[<a href="http://moodle.org" class="_blanktarget">http://moodle.org</a>] - URL',
             '[www.moodle.org] - URL' => '[<a href="http://www.moodle.org" class="_blanktarget">www.moodle.org</a>] - URL',
-            //url in brackets with anchor
+            // URL in square brackets with a path.
+            '[http://example.com/index.html] - URL' => '[<a href="http://example.com/index.html" class="_blanktarget">http://example.com/index.html</a>] - URL',
+            '[www.example.com/index.html] - URL' => '[<a href="http://www.example.com/index.html" class="_blanktarget">www.example.com/index.html</a>] - URL',
+            // URL in square brackets with anchor.
             '[http://moodle.org/main#anchor] - URL' => '[<a href="http://moodle.org/main#anchor" class="_blanktarget">http://moodle.org/main#anchor</a>] - URL',
             '[www.moodle.org/main#anchor] - URL' => '[<a href="http://www.moodle.org/main#anchor" class="_blanktarget">www.moodle.org/main#anchor</a>] - URL',
             //brackets within the url
@@ -71,7 +84,8 @@ class filter_urltolink_testcase extends basic_testcase {
             'URL: www.cc.org/url_(withpar)_go/?i=2' => 'URL: <a href="http://www.cc.org/url_(withpar)_go/?i=2" class="_blanktarget">www.cc.org/url_(withpar)_go/?i=2</a>',
             'URL: http://cc.org/url_(with)_(par)_go/?i=2' => 'URL: <a href="http://cc.org/url_(with)_(par)_go/?i=2" class="_blanktarget">http://cc.org/url_(with)_(par)_go/?i=2</a>',
             'URL: www.cc.org/url_(with)_(par)_go/?i=2' => 'URL: <a href="http://www.cc.org/url_(with)_(par)_go/?i=2" class="_blanktarget">www.cc.org/url_(with)_(par)_go/?i=2</a>',
-            'http://en.wikipedia.org/wiki/Slash_(punctuation)'=>'<a href="http://en.wikipedia.org/wiki/Slash_(punctuation)" class="_blanktarget">http://en.wikipedia.org/wiki/Slash_(punctuation)</a>',
+            // URL legitimately ending in a bracket. Commented out as part of MDL-22390. See next tests for work-arounds.
+            // 'http://en.wikipedia.org/wiki/Slash_(punctuation)'=>'<a href="http://en.wikipedia.org/wiki/Slash_(punctuation)" class="_blanktarget">http://en.wikipedia.org/wiki/Slash_(punctuation)</a>',
             'http://en.wikipedia.org/wiki/%28#Parentheses_.28_.29 - URL' => '<a href="http://en.wikipedia.org/wiki/%28#Parentheses_.28_.29" class="_blanktarget">http://en.wikipedia.org/wiki/%28#Parentheses_.28_.29</a> - URL',
             'http://en.wikipedia.org/wiki/(#Parentheses_.28_.29 - URL' => '<a href="http://en.wikipedia.org/wiki/(#Parentheses_.28_.29" class="_blanktarget">http://en.wikipedia.org/wiki/(#Parentheses_.28_.29</a> - URL',
             //escaped brackets in url
@@ -94,8 +108,6 @@ class filter_urltolink_testcase extends basic_testcase {
             'URL: www.moodle.org?u=1.23' => 'URL: <a href="http://www.moodle.org?u=1.23" class="_blanktarget">www.moodle.org?u=1.23</a>',
             //escaped space in url
             'URL: www.moodle.org?u=test+param&' => 'URL: <a href="http://www.moodle.org?u=test+param&" class="_blanktarget">www.moodle.org?u=test+param&</a>',
-            //odd characters in url param
-            'URL: www.moodle.org?param=:)' => 'URL: <a href="http://www.moodle.org?param=:)" class="_blanktarget">www.moodle.org?param=:)</a>',
             //multiple urls
             'URL: http://moodle.org www.moodle.org'
             => 'URL: <a href="http://moodle.org" class="_blanktarget">http://moodle.org</a> <a href="http://www.moodle.org" class="_blanktarget">www.moodle.org</a>',
@@ -151,17 +163,25 @@ class filter_urltolink_testcase extends basic_testcase {
             //'<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN http://www.w3.org/TR/html4/strict.dtd">'=>'<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN http://www.w3.org/TR/html4/strict.dtd">'
         );
 
+        $data = array();
+        foreach ($texts as $text => $correctresult) {
+            $data[] = array($text, $correctresult);
+        }
+        return $data;
+    }
+
+    /**
+     * @dataProvider get_convert_urls_into_links_test_cases
+     */
+    function test_convert_urls_into_links($text, $correctresult) {
+        $testablefilter = new testable_filter_urltolink();
+        $testablefilter->convert_urls_into_links($text);
+        $this->assertEquals($correctresult, $text);
+    }
+
+    function test_convert_urls_into_links_performance() {
         $testablefilter = new testable_filter_urltolink();
 
-        foreach ($texts as $text => $correctresult) {
-            $msg = "Testing text: ". str_replace('%', '%%', $text) . ": %s"; // Escape original '%' so sprintf() wont get confused
-
-            $testablefilter->convert_urls_into_links($text);
-
-            $this->assertEquals($text, $correctresult, $msg);
-        }
-
-        //performance testing
         $reps = 1000;
         $text = file_get_contents(__DIR__ . '/fixtures/sample.txt');
         $time_start = microtime(true);
