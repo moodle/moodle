@@ -53,7 +53,7 @@ class tool_customlang_renderer extends plugin_renderer_base {
         $output = '';
 
         if (empty($translator->strings)) {
-            return $this->heading(get_string('nostringsfound', 'tool_customlang'), 3);
+            return $this->notification(get_string('nostringsfound', 'tool_customlang'));
         }
 
         $table = new html_table();
