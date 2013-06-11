@@ -4669,3 +4669,13 @@ function convert_tabrows_to_tree($tabrows, $selected, $inactive, $activated) {
 function move_section($course, $section, $move) {
     throw new coding_exception('move_section() can not be used any more, please see move_section_to().');
 }
+/**
+ * Can handle rotated text. Whether it is safe to use the trickery in textrotate.js.
+ *
+ * @deprecated since 2.5 - do not use, the textrotate.js will work it out automatically
+ * @return bool True for yes, false for no
+ */
+function can_use_rotated_text() {
+    debugging('can_use_rotated_text() is deprecated since Moodle 2.5. JS feature detection is used automatically.', DEBUG_DEVELOPER);
+    return true;
+}

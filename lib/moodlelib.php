@@ -9112,17 +9112,6 @@ function get_browser_version_classes() {
 }
 
 /**
- * Can handle rotated text. Whether it is safe to use the trickery in textrotate.js.
- *
- * @return bool True for yes, false for no
- */
-function can_use_rotated_text() {
-    return check_browser_version('MSIE', 9) || check_browser_version('Firefox', 2) ||
-            check_browser_version('Chrome', 21) || check_browser_version('Safari', 536.25) ||
-            check_browser_version('Opera', 12) || check_browser_version('Safari iOS', 533);
-}
-
-/**
  * Determine if moodle installation requires update
  *
  * Checks version numbers of main code and all modules to see
