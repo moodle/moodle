@@ -890,8 +890,8 @@ abstract class moodleform_mod extends moodleform {
             if ($mform->elementExists($name)) {
                 $element = $mform->getElement($name);
                 if ($element->getType() == 'date_time_selector') {
-                    $enabledsetting = $name . '_enabled';
-                    if (empty($settings->$enabledsetting)) {
+                    $enabledsetting = $name . '_enabled';
+                    if (empty($settings->$enabledsetting)) {
                         $mform->setDefault($name, 0);
                     } else {
                         $relativetime = $usermidnight;
