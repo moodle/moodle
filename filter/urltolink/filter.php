@@ -122,18 +122,24 @@ class filter_urltolink extends moodle_text_filter {
             $unicoderegexp = @preg_match('/\pL/u', 'a'); // This will fail silently, returning false,
         }
 
-        //todo: MDL-21296 - use of unicode modifiers may cause a timeout
-        if ($unicoderegexp) { //We can use unicode modifiers
-            $text = preg_replace('#(?<!=["\'])(((http(s?))://)(((([\pLl0-9]([\pLl0-9]|-)*[\pLl0-9]|[\pLl0-9])\.)+([\pLl]([\pLl0-9]|-)*[\pLl0-9]|[\pLl]))|(([0-9]{1,3}\.){3}[0-9]{1,3}))(:[\pL0-9]*)?(/([\pLl0-9\.!$&\'\(\)*+,;=_~:@-]|%[a-fA-F0-9]{2})*)*(\?([\pLl0-9\.!$&\'\(\)*+,;=_~:@/?-]|%[a-fA-F0-9]{2})*)?(\#[\pLl0-9\.!$&\'\(\)*+,;=_~:@/?-]*)?)(?<![,.;])#iu',
-                                 '<a href="\\1" class="_blanktarget">\\1</a>', $text);
-            $text = preg_replace('#(?<!=["\']|//)((www\.([\pLl0-9]([\pLl0-9]|-)*[\pLl0-9]|[\pLl0-9])\.)+([\pLl]([\pLl0-9]|-)*[\pLl0-9]|[\pLl])(:[\pL0-9]*)?(/([\pLl0-9\.!$&\'\(\)*+,;=_~:@-]|%[a-fA-F0-9]{2})*)*(\?([\pLl0-9\.!$&\'\(\)*+,;=_~:@/?-]|%[a-fA-F0-9]{2})*)?(\#[\pLl0-9\.!$&\'\(\)*+,;=_~:@/?-]*)?)(?<![,.;])#iu',
-                                 '<a href="http://\\1" class="_blanktarget">\\1</a>', $text);
-        } else { //We cannot use unicode modifiers
-            $text = preg_replace('#(?<!=["\'])(((http(s?))://)(((([a-z0-9]([a-z0-9]|-)*[a-z0-9]|[a-z0-9])\.)+([a-z]([a-z0-9]|-)*[a-z0-9]|[a-z]))|(([0-9]{1,3}\.){3}[0-9]{1,3}))(:[a-zA-Z0-9]*)?(/([a-z0-9\.!$&\'\(\)*+,;=_~:@-]|%[a-f0-9]{2})*)*(\?([a-z0-9\.!$&\'\(\)*+,;=_~:@/?-]|%[a-fA-F0-9]{2})*)?(\#[a-z0-9\.!$&\'\(\)*+,;=_~:@/?-]*)?)(?<![,.;])#i',
-                                 '<a href="\\1" class="_blanktarget">\\1</a>', $text);
-            $text = preg_replace('#(?<!=["\']|//)((www\.([a-z0-9]([a-z0-9]|-)*[a-z0-9]|[a-z0-9])\.)+([a-z]([a-z0-9]|-)*[a-z0-9]|[a-z])(:[a-zA-Z0-9]*)?(/([a-z0-9\.!$&\'\(\)*+,;=_~:@-]|%[a-f0-9]{2})*)*(\?([a-z0-9\.!$&\'\(\)*+,;=_~:@/?-]|%[a-fA-F0-9]{2})*)?(\#[a-z0-9\.!$&\'\(\)*+,;=_~:@/?-]*)?)(?<![,.;])#i',
-                                 '<a href="http://\\1" class="_blanktarget">\\1</a>', $text);
+        // TODO MDL-21296 - use of unicode modifiers may cause a timeout
+        $domainsegment = '(?:[\pLl0-9][\pLl0-9-]*[\pLl0-9]|[\pLl0-9])';
+        $numericip = '(?:(?:[0-9]{1,3}\.){3}[0-9]{1,3})';
+        $port = '(?::\d*)';
+        $pathchar = '(?:[\pL0-9\.!$&\'\(\)*+,;=_~:@-]|%[a-f0-9]{2})';
+        $path = "(?:/$pathchar*)*";
+        $querystring = '(?:\?(?:[\pL0-9\.!$&\'\(\)*+,;=_~:@/?-]|%[a-fA-F0-9]{2})*)';
+        $fragment = '(?:\#(?:[\pL0-9\.!$&\'\(\)*+,;=_~:@/?-]|%[a-fA-F0-9]{2})*)';
+
+        $regex = "(?<!=[\"'])(?:http(s)?://|(www\.))((?:$domainsegment\.)+$domainsegment|$numericip)" .
+                "($port?$path$querystring?$fragment?)(?<![]),.;])";
+        if ($unicoderegexp) {
+            $regex = '#' . $regex . '#ui';
+        } else {
+            $regex = '#' . preg_replace(array('\pLl', '\PL'), 'a-z', $regex) . '#i';
         }
+
+        $text = preg_replace($regex, '<a href="http$1://$2$3$4" class="_blanktarget">$0</a>', $text);
 
         if (!empty($ignoretags)) {
             $ignoretags = array_reverse($ignoretags); /// Reversed so "progressive" str_replace() will solve some nesting problems.
