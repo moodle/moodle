@@ -1683,14 +1683,15 @@ abstract class quiz_nav_panel_base {
 
     public function user_picture() {
         global $DB;
-
-        if (!$this->attemptobj->get_quiz()->showuserpicture) {
+        if ($this->attemptobj->get_quiz()->showuserpicture == QUIZ_SHOWIMAGE_NONE) {
             return null;
         }
-
         $user = $DB->get_record('user', array('id' => $this->attemptobj->get_userid()));
         $userpicture = new user_picture($user);
         $userpicture->courseid = $this->attemptobj->get_courseid();
+        if ($this->attemptobj->get_quiz()->showuserpicture == QUIZ_SHOWIMAGE_LARGE) {
+            $userpicture->size = true;
+        }
         return $userpicture;
     }
 }

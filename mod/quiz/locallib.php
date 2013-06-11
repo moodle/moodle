@@ -55,6 +55,21 @@ define('QUIZ_SHOW_TIME_BEFORE_DEADLINE', '3600');
  */
 define('QUIZ_MIN_TIME_TO_CONTINUE', '2');
 
+/**
+ * @var int We show no image when user selects No image from dropdown menu in quiz settings.
+ */
+define('QUIZ_SHOWIMAGE_NONE', 0);
+
+/**
+ * @var int We show small image when user selects small image from dropdown menu in quiz settings.
+ */
+define('QUIZ_SHOWIMAGE_SMALL', 1);
+
+/**
+ * @var int We show Large image when user selects Large image from dropdown menu in quiz settings.
+ */
+define('QUIZ_SHOWIMAGE_LARGE', 2);
+
 
 // Functions related to attempts ///////////////////////////////////////////////
 
