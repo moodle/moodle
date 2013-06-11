@@ -513,8 +513,8 @@ function filter_get_all_installed() {
     global $CFG;
 
     $filternames = array();
-    foreach (get_list_of_plugins('filter') as $filter) {
-        if (is_readable("$CFG->dirroot/filter/$filter/filter.php")) {
+    foreach (get_plugin_list('filter') as $filter => $fulldir) {
+        if (is_readable("$fulldir/filter.php")) {
             $filternames[$filter] = filter_get_name($filter);
         }
     }
