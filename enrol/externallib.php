@@ -586,7 +586,10 @@ class core_role_external extends external_api {
                         array(
                             'roleid'    => new external_value(PARAM_INT, 'Role to assign to the user'),
                             'userid'    => new external_value(PARAM_INT, 'The user that is going to be assigned'),
-                            'contextid' => new external_value(PARAM_INT, 'The context to assign the user role in'),
+                            'contextid' => new external_value(PARAM_INT, 'The context to assign the user role in', VALUE_OPTIONAL),
+                            'contextlevel' => new external_value(PARAM_ALPHA, 'The context level to assign the user role in
+                                    (block, course, coursecat, system, user, module)', VALUE_OPTIONAL),
+                            'instanceid' => new external_value(PARAM_INT, 'The Instance id of item where the role needs to be assigned', VALUE_OPTIONAL),
                         )
                     )
                 )
@@ -607,10 +610,26 @@ class core_role_external extends external_api {
         $params = self::validate_parameters(self::assign_roles_parameters(), array('assignments'=>$assignments));
 
         $transaction = $DB->start_delegated_transaction();
+        $levels = context_helper::get_all_levels();
 
         foreach ($params['assignments'] as $assignment) {
-            // Ensure the current user is allowed to run this function in the enrolment context
-            $context = context::instance_by_id($assignment['contextid'], IGNORE_MISSING);
+            // Ensure correct context level with a instance id or contextid is passed.
+            if (isset($assignment['contextid'])) {
+                $context = context::instance_by_id($assignment['contextid'], IGNORE_MISSING);
+
+            } else if (isset($assignment['contextlevel']) && isset($assignment['instanceid'])) {
+                $contextlevel = "context_".$assignment['contextlevel'];
+                if (!array_search($contextlevel, $levels)) {
+                    throw new invalid_parameter_exception('Invalid context level = '.$assignment['contextlevel']);
+                }
+                // Ensure the current user is allowed to run this function in the enrolment context.
+                $context = $contextlevel::instance($assignment['instanceid'], IGNORE_MISSING);
+            } else {
+                // No valid context info was found.
+                throw new invalid_parameter_exception('Missing parameters, please provide either context level with instance id or contextid');
+            }
+
+            // Ensure the current user is allowed to run this function in the enrolment context.
             self::validate_context($context);
             require_capability('moodle/role:assign', $context);
 
@@ -621,7 +640,7 @@ class core_role_external extends external_api {
                 throw new invalid_parameter_exception('Can not assign roleid='.$assignment['roleid'].' in contextid='.$assignment['contextid']);
             }
 
-            role_assign($assignment['roleid'], $assignment['userid'], $assignment['contextid']);
+            role_assign($assignment['roleid'], $assignment['userid'], $context->id);
         }
 
         $transaction->allow_commit();
