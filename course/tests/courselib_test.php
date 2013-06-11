@@ -100,6 +100,8 @@ class courselib_testcase extends advanced_testcase {
         $moduleinfo->requireallteammemberssubmit = true;
         $moduleinfo->teamsubmissiongroupingid = true;
         $moduleinfo->blindmarking = true;
+        $moduleinfo->markingworkflow = true;
+        $moduleinfo->markingallocation = true;
         $moduleinfo->assignsubmission_onlinetext_enabled = true;
         $moduleinfo->assignsubmission_file_enabled = true;
         $moduleinfo->assignsubmission_file_maxfiles = 1;
@@ -134,6 +136,8 @@ class courselib_testcase extends advanced_testcase {
         $this->assertEquals($moduleinfo->requireallteammemberssubmit, $dbmodinstance->requireallteammemberssubmit);
         $this->assertEquals($moduleinfo->teamsubmissiongroupingid, $dbmodinstance->teamsubmissiongroupingid);
         $this->assertEquals($moduleinfo->blindmarking, $dbmodinstance->blindmarking);
+        $this->assertEquals($moduleinfo->markingworkflow, $dbmodinstance->markingworkflow);
+        $this->assertEquals($moduleinfo->markingallocation, $dbmodinstance->markingallocation);
         // The goal not being to fully test assign_add_instance() we'll stop here for the assign tests - to avoid too many DB queries.
 
         // Advanced grading.
