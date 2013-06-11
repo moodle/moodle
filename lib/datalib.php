@@ -1538,6 +1538,35 @@ function coursemodule_visible_for_user($cm, $userid=0) {
 
 /// LOG FUNCTIONS /////////////////////////////////////////////////////
 
+/**
+ * Add an entry to the config log table.
+ *
+ * These are "action" focussed rather than web server hits,
+ * and provide a way to easily reconstruct changes to Moodle configuration.
+ *
+ * @package core
+ * @category log
+ * @global moodle_database $DB
+ * @global stdClass $USER
+ * @param    string  $name     The name of the configuration change action
+                               For example 'filter_active' when activating or deactivating a filter
+ * @param    string  $oldvalue The config setting's previous value
+ * @param    string  $value    The config setting's new value
+ * @param    string  $plugin   Plugin name, for example a filter name when changing filter configuration
+ * @return void
+ */
+function add_to_config_log($name, $oldvalue, $value, $plugin) {
+    global $USER, $DB;
+
+    $log = new stdClass();
+    $log->userid       = during_initial_install() ? 0 :$USER->id; // 0 as user id during install
+    $log->timemodified = time();
+    $log->name         = $name;
+    $log->oldvalue  = $oldvalue;
+    $log->value     = $value;
+    $log->plugin    = $plugin;
+    $DB->insert_record('config_log', $log);
+}
 
 /**
  * Add an entry to the log table.

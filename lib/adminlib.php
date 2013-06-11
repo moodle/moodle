@@ -1737,15 +1737,7 @@ abstract class admin_setting {
             rebuild_course_cache(0, true);
         }
 
-        // log change
-        $log = new stdClass();
-        $log->userid       = during_initial_install() ? 0 :$USER->id; // 0 as user id during install
-        $log->timemodified = time();
-        $log->plugin       = $this->plugin;
-        $log->name         = $name;
-        $log->value        = $value;
-        $log->oldvalue     = $oldvalue;
-        $DB->insert_record('config_log', $log);
+        add_to_config_log($name, $oldvalue, $value, $this->plugin);
 
         return true; // BC only
     }
