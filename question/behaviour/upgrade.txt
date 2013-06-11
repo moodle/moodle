@@ -1,9 +1,13 @@
 This files describes API changes for question behaviour plugins.
 
+=== 2.6 ===
+
+1) Legacy required_question_definition_type no longer supported. (See 2.2 point 2) below.)
+
 === 2.3 ===
 
-* This plugin type now supports cron in the standard way. If required, Create a
-  lib.php file containing
+1) This plugin type now supports cron in the standard way. If required, Create a
+   lib.php file containing
 function qbehaviour_mypluginname_cron() {};
 
 === 2.2 ===

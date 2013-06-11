@@ -85,24 +85,7 @@ abstract class question_behaviour {
      *
      * @param question_definition $question the question.
      */
-    public function is_compatible_question(question_definition $question) {
-        $requiredclass = $this->required_question_definition_type();
-        return $this->question instanceof $requiredclass;
-    }
-
-    /**
-     * Most behaviours can only work with {@link question_definition}s
-     * of a particular subtype, or that implement a particular interface.
-     * This method lets the behaviour document that. The type of
-     * question passed to the constructor is then checked against this type.
-     *
-     * @deprecated since 2.2. Please use/override {@link is_compatible_question()} instead.
-     *
-     * @return string class/interface name.
-     */
-    protected function required_question_definition_type() {
-        return 'question_definition';
-    }
+    public abstract function is_compatible_question(question_definition $question);
 
     /**
      * @return string the name of this behaviour. For example the name of

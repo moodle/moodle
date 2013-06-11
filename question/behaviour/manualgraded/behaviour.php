@@ -40,6 +40,10 @@ defined('MOODLE_INTERNAL') || die();
 class qbehaviour_manualgraded extends question_behaviour_with_save {
     const IS_ARCHETYPAL = true;
 
+    public function is_compatible_question(question_definition $question) {
+        return $question instanceof question_with_responses;
+    }
+
     public static function get_unused_display_options() {
         return array('correctness', 'marks', 'specificfeedback', 'generalfeedback',
                 'rightanswer');
