@@ -147,7 +147,6 @@ class mod_assign_mod_form extends moodleform_mod {
         $mform->addElement('select', 'teamsubmissiongroupingid', $name, $options);
         $mform->addHelpButton('teamsubmissiongroupingid', 'teamsubmissiongroupingid', 'assign');
         $mform->disabledIf('teamsubmissiongroupingid', 'teamsubmission', 'eq', 0);
-        $mform->setDefault('teamsubmissiongroupingid', 0);
 
         $mform->addElement('header', 'notifications', get_string('notifications', 'assign'));
 

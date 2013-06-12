@@ -554,7 +554,9 @@ class assign {
         $update->completionsubmit = !empty($formdata->completionsubmit);
         $update->teamsubmission = $formdata->teamsubmission;
         $update->requireallteammemberssubmit = $formdata->requireallteammemberssubmit;
-        $update->teamsubmissiongroupingid = $formdata->teamsubmissiongroupingid;
+        if (isset($formdata->teamsubmissiongroupingid)) {
+            $update->teamsubmissiongroupingid = $formdata->teamsubmissiongroupingid;
+        }
         $update->blindmarking = $formdata->blindmarking;
         $update->attemptreopenmethod = ASSIGN_ATTEMPT_REOPEN_METHOD_NONE;
         if (!empty($formdata->attemptreopenmethod)) {
@@ -879,7 +881,9 @@ class assign {
         }
         $update->teamsubmission = $formdata->teamsubmission;
         $update->requireallteammemberssubmit = $formdata->requireallteammemberssubmit;
-        $update->teamsubmissiongroupingid = $formdata->teamsubmissiongroupingid;
+        if (isset($formdata->teamsubmissiongroupingid)) {
+            $update->teamsubmissiongroupingid = $formdata->teamsubmissiongroupingid;
+        }
         $update->blindmarking = $formdata->blindmarking;
         $update->attemptreopenmethod = ASSIGN_ATTEMPT_REOPEN_METHOD_NONE;
         if (!empty($formdata->attemptreopenmethod)) {
