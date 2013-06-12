@@ -893,6 +893,7 @@ abstract class moodleform_mod extends moodleform {
         $lockedicon = html_writer::tag('span',
                                        $OUTPUT->pix_icon('t/locked', get_string('locked', 'admin')),
                                        array('class' => 'action-icon'));
+        $isupdate = !empty($this->_cm);
 
         foreach ($settings as $name => $value) {
             if (strpos('_', $name) !== false) {
@@ -902,8 +903,12 @@ abstract class moodleform_mod extends moodleform {
                 $element = $mform->getElement($name);
                 $lockedsetting = $name . '_locked';
                 if (!empty($settings->$lockedsetting)) {
-                    $value = $mform->getElement($name)->getValue();
-                    $value = reset($value);
+                    // Always lock locked settings for new modules,
+                    // for updates, only lock them if the current value is the same as the default (or there is no current value).
+                    $value = $settings->$name;
+                    if ($isupdate && isset($this->current->$name)) {
+                        $value = $this->current->$name;
+                    }
                     if ($value == $settings->$name) {
                         $mform->setConstant($name, $settings->$name);
                         $element->setLabel($element->getLabel() . $lockedicon);
