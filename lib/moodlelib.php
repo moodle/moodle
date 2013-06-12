@@ -8219,7 +8219,14 @@ function get_plugin_types($fullpaths=true) {
     $cache = cache::make('core', 'plugintypes');
 
     if ($fullpaths) {
-        $cached = $cache->get(1);
+        // First confirm that dirroot and the stored dirroot match.
+        if ($CFG->dirroot === $cache->get('dirroot')) {
+            // They match we can use it.
+            $cached = $cache->get(1);
+        } else {
+            // Oops they didn't match. The moodle directory has been moved on us.
+            $cached = false;
+        }
     } else {
         $cached = $cache->get(0);
     }
@@ -8279,6 +8286,9 @@ function get_plugin_types($fullpaths=true) {
 
         $cache->set(0, $info);
         $cache->set(1, $fullinfo);
+        // We cache the dirroot as well so that we can compare it when we
+        // retrieve full info from the cache.
+        $cache->set('dirroot', $CFG->dirroot);
 
         return ($fullpaths ? $fullinfo : $info);
     }
@@ -8301,7 +8311,9 @@ function is_valid_plugin_name($name) {
 function get_plugin_list($plugintype) {
     global $CFG;
 
-    $cache = cache::make('core', 'pluginlist');
+    // We use the dirroot as an identifier here because if it has changed the whole cache
+    // can be considered invalid.
+    $cache = cache::make('core', 'pluginlist', array('dirroot' => $CFG->dirroot));
     $cached = $cache->get($plugintype);
     if ($cached !== false) {
         return $cached;
