@@ -168,6 +168,7 @@ abstract class award_criteria {
             if (in_array('grade', $this->optional_params)) {
                 $parameter[] =& $mform->createElement('static', 'mgrade_' . $param['id'], null, get_string('mingrade', 'badges'));
                 $parameter[] =& $mform->createElement('text', 'grade_' . $param['id'], '', array('size' => '5'));
+                $mform->setType('grade_' . $param['id'], PARAM_INT);
             }
 
             if (in_array('bydate', $this->optional_params)) {
