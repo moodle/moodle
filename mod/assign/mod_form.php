@@ -103,17 +103,11 @@ class mod_assign_mod_form extends moodleform_mod {
         $mform->addElement('selectyesno', 'submissiondrafts', $name);
         $mform->addHelpButton('submissiondrafts', 'submissiondrafts', 'assign');
 
-        if (empty($config->submissionstatement)) {
-            $mform->addElement('hidden', 'requiresubmissionstatement', 0);
-        } else if (empty($config->requiresubmissionstatement)) {
-            $name = get_string('requiresubmissionstatement', 'assign');
-            $mform->addElement('selectyesno', 'requiresubmissionstatement', $name);
-            $mform->addHelpButton('requiresubmissionstatement',
-                                  'requiresubmissionstatementassignment',
-                                  'assign');
-        } else {
-            $mform->addElement('hidden', 'requiresubmissionstatement', 1);
-        }
+        $name = get_string('requiresubmissionstatement', 'assign');
+        $mform->addElement('selectyesno', 'requiresubmissionstatement', $name);
+        $mform->addHelpButton('requiresubmissionstatement',
+                              'requiresubmissionstatement',
+                              'assign');
         $mform->setType('requiresubmissionstatement', PARAM_BOOL);
 
         $options = array(

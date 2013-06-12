@@ -2285,6 +2285,46 @@ if (is_ie) {
     }
 }
 
+/**
+ * Empty setting used to allow flags (advanced) on settings that can have no sensible default.
+ * Note: Only advanced makes sense right now - locked does not.
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class admin_setting_configempty extends admin_setting_configtext {
+
+    /**
+     * @param string $name
+     * @param string $visiblename
+     * @param string $description
+     */
+    public function __construct($name, $visiblename, $description) {
+        parent::__construct($name, $visiblename, $description, '', PARAM_RAW);
+    }
+
+    /**
+     * Returns an XHTML string for the hidden field
+     *
+     * @param string $data
+     * @param string $query
+     * @return string XHTML string for the editor
+     */
+    public function output_html($data, $query='') {
+        return format_admin_setting($this,
+                                    $this->visiblename,
+                                    '<div class="form-empty" >' .
+                                    '<input type="hidden"' .
+                                        ' id="'. $this->get_id() .'"' .
+                                        ' name="'. $this->get_full_name() .'"' .
+                                        ' value=""/></div>',
+                                    $this->description,
+                                    true,
+                                    '',
+                                    get_string('none'),
+                                    $query);
+    }
+}
+
 
 /**
  * Path to directory

@@ -3425,8 +3425,7 @@ class assign {
 
         $data = new stdClass();
         $adminconfig = $this->get_admin_config();
-        $requiresubmissionstatement = (!empty($adminconfig->requiresubmissionstatement) ||
-                                       $this->get_instance()->requiresubmissionstatement) &&
+        $requiresubmissionstatement = $this->get_instance()->requiresubmissionstatement &&
                                        !empty($adminconfig->submissionstatement);
 
         $submissionstatement = '';
@@ -4412,8 +4411,7 @@ class assign {
         $instance = $this->get_instance();
         $data = new stdClass();
         $adminconfig = $this->get_admin_config();
-        $requiresubmissionstatement = (!empty($adminconfig->requiresubmissionstatement) ||
-                                       $instance->requiresubmissionstatement) &&
+        $requiresubmissionstatement = $instance->requiresubmissionstatement &&
                                        !empty($adminconfig->submissionstatement);
 
         $submissionstatement = '';
@@ -5485,8 +5483,7 @@ class assign {
         // Submission statement.
         $adminconfig = $this->get_admin_config();
 
-        $requiresubmissionstatement = (!empty($adminconfig->requiresubmissionstatement) ||
-                                       $this->get_instance()->requiresubmissionstatement) &&
+        $requiresubmissionstatement = $this->get_instance()->requiresubmissionstatement &&
                                        !empty($adminconfig->submissionstatement);
 
         $draftsenabled = $this->get_instance()->submissiondrafts;
