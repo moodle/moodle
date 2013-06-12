@@ -111,7 +111,6 @@ class tinymce_texteditor extends texteditor {
 
     protected function get_init_params($elementid, array $options=null) {
         global $CFG, $PAGE, $OUTPUT;
-        require_once($CFG->dirroot . '/lib/editor/tinymce/classes/plugin.php');
 
         //TODO: we need to implement user preferences that affect the editor setup too
 
@@ -260,7 +259,6 @@ class tinymce_texteditor extends texteditor {
      */
     public function get_plugin($plugin) {
         global $CFG;
-        require_once($CFG->dirroot . '/lib/editor/tinymce/classes/plugin.php');
         return editor_tinymce_plugin::get($plugin);
     }
 

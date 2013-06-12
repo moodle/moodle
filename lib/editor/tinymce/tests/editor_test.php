@@ -36,6 +36,13 @@ defined('MOODLE_INTERNAL') || die();
  */
 class editor_tinymce_testcase extends advanced_testcase {
 
+    public function test_autoloading() {
+        // Note: This test core_frankestyle calssloader.
+        $this->assertTrue(class_exists('editor_tinymce_plugin'));
+        $this->assertFalse(class_exists('editor_tinymce_plugin_xx_yy'));
+        $this->assertFalse(class_exists('\editor_tinymce\plugin'));
+    }
+
     public function test_toolbar_parsing() {
         global $CFG;
         require_once("$CFG->dirroot/lib/editorlib.php");
