@@ -207,12 +207,10 @@ class assign_grading_table extends table_sql implements renderable {
                     if ($workflowfilter == ASSIGN_MARKING_WORKFLOW_STATE_NOTMARKED) {
                         $where .= ' AND (uf.workflowstate = :workflowstate OR uf.workflowstate IS NULL OR '.
                             $DB->sql_isempty('assign_user_flags', 'workflowstate', true, true).')';
-                        echo $where;
                         $params['workflowstate'] = $workflowfilter;
                     } else {
                         $where .= ' AND uf.workflowstate = :workflowstate';
                         $params['workflowstate'] = $workflowfilter;
-                        echo $where;
                     }
                 }
             }
