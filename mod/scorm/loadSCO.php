@@ -150,9 +150,6 @@ if (scorm_external_link($sco->launch)) {
 } else if ($scorm->scormtype === SCORM_TYPE_EXTERNAL) {
     // Remote learning activity
     $result = dirname($scorm->reference).'/'.$launcher;
-} else if ($scorm->scormtype === SCORM_TYPE_IMSREPOSITORY) {
-    // Repository
-    $result = $CFG->repositorywebroot.substr($scorm->reference, 1).'/'.$sco->launch;
 } else if ($scorm->scormtype === SCORM_TYPE_LOCAL or $scorm->scormtype === SCORM_TYPE_LOCALSYNC) {
     //note: do not convert this to use get_file_url() or moodle_url()
     //SCORM does not work without slasharguments and moodle_url() encodes querystring vars

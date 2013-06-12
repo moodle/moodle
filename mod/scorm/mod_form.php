@@ -63,10 +63,6 @@ class mod_scorm_mod_form extends moodleform_mod {
             $scormtypes[SCORM_TYPE_LOCALSYNC] = get_string('typelocalsync', 'scorm');
         }
 
-        if (!empty($CFG->repositoryactivate) and $cfg_scorm->allowtypeimsrepository) {
-            $scormtypes[SCORM_TYPE_IMSREPOSITORY] = get_string('typeimsrepository', 'scorm');
-        }
-
         if ($cfg_scorm->allowtypeexternalaicc) {
             $scormtypes[SCORM_TYPE_AICCURL] = get_string('typeaiccurl', 'scorm');
         }
@@ -400,12 +396,6 @@ class mod_scorm_mod_form extends moodleform_mod {
                 }
             }
 
-        } else if ($type === SCORM_TYPE_IMSREPOSITORY) {
-            $reference = $data['packageurl'];
-            if (stripos($reference, '#') !== 0) {
-                $errors['packageurl'] = get_string('invalidurl', 'scorm');
-            }
-
         } else if ($type === SCORM_TYPE_AICCURL) {
             $reference = $data['packageurl'];
             // Syntax check.
@@ -432,7 +422,6 @@ class mod_scorm_mod_form extends moodleform_mod {
             switch ($default_values['scormtype']) {
                 case SCORM_TYPE_LOCALSYNC :
                 case SCORM_TYPE_EXTERNAL:
-                case SCORM_TYPE_IMSREPOSITORY:
                 case SCORM_TYPE_AICCURL:
                     $default_values['packageurl'] = $default_values['reference'];
             }

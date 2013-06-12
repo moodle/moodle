@@ -112,8 +112,6 @@ if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_configcheckbox('scorm/allowtypelocalsync', get_string('allowtypelocalsync', 'scorm'), '', 0));
 
-    $settings->add(new admin_setting_configcheckbox('scorm/allowtypeimsrepository', get_string('allowtypeimsrepository', 'scorm'), '', 0));
-
     $settings->add(new admin_setting_configcheckbox('scorm/allowtypeexternalaicc', get_string('allowtypeexternalaicc', 'scorm'), get_string('allowtypeexternalaicc_desc', 'scorm'), 0));
 
     $settings->add(new admin_setting_configcheckbox('scorm/allowaicchacp', get_string('allowtypeaicchacp', 'scorm'), get_string('allowtypeaicchacp_desc', 'scorm'), 0));

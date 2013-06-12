@@ -79,6 +79,21 @@ function xmldb_scorm_upgrade($oldversion) {
     // Moodle v2.4.0 release upgrade line
     // Put any upgrade step following this
 
+    // Remove old imsrepository type - convert any existing records to external type to help prevent major errors.
+    if ($oldversion < 2013050101) {
+        $scorms = $DB->get_recordset('scorm', array('scormtype' => 'imsrepository'));
+        foreach($scorms as $scorm) {
+            $scorm->scormtype = SCORM_TYPE_EXTERNAL;
+            if (!empty($CFG->repository)) { // Fix path to imsmanifest if $CFG->repository is set.
+                $scorm->reference = $CFG->repository.substr($scorm->reference, 1).'/imsmanifest.xml';
+                $scorm->sha1hash = sha1($scorm->reference);
+            }
+            $scorm->revision++;
+            $DB->update_record('scorm', $scorm);
+        }
+        upgrade_mod_savepoint(true, 2013050101, 'scorm');
+    }
+
 
     // Moodle v2.5.0 release upgrade line.
     // Put any upgrade step following this.
