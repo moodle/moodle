@@ -485,6 +485,13 @@ class assign_grading_table extends table_sql implements renderable {
             if ($this->quickgrading && !$gradingdisabled) {
                 $name = 'quickgrade_' . $row->id . '_workflowstate';
                 $o .= html_writer::select($workflowstates, $name, $workflowstate, array('' => get_string('markingworkflowstatenotmarked', 'assign')));
+                // Check if this user is a marker that can't manage allocations and doesn't have the marker column added.
+                if ($this->assignment->get_instance()->markingallocation &&
+                    !has_capability('mod/assign:manageallocations', $this->assignment->get_context())) {
+
+                    $name = 'quickgrade_' . $row->id . '_allocatedmarker';
+                    $o .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>$name, 'value'=>$row->allocatedmarker));
+                }
             } else {
                 $o .= $this->output->container(get_string('markingworkflowstate' . $workflowstate, 'assign'), $workflowstate);
             }
