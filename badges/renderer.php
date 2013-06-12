@@ -549,9 +549,12 @@ class core_badges_renderer extends plugin_renderer_base {
         $paging = new paging_bar($badges->totalcount, $badges->page, $badges->perpage, $this->page->url, 'page');
 
         // New badge button.
-        $n['type'] = $this->page->url->get_param('type');
-        $n['id'] = $this->page->url->get_param('id');
-        $htmlnew = $this->output->single_button(new moodle_url('newbadge.php', $n), get_string('newbadge', 'badges'));
+        $htmlnew = '';
+        if (has_capability('moodle/badges:createbadge', $this->page->context)) {
+            $n['type'] = $this->page->url->get_param('type');
+            $n['id'] = $this->page->url->get_param('id');
+            $htmlnew = $this->output->single_button(new moodle_url('newbadge.php', $n), get_string('newbadge', 'badges'));
+        }
 
         $htmlpagingbar = $this->render($paging);
         $table = new html_table();
