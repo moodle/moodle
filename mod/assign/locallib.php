@@ -4694,7 +4694,6 @@ class assign {
                 }
             }
 
-            $this->update_grade($grade);
             if ($flags->workflowstate != $modified->workflowstate ||
                 $flags->allocatedmarker != $modified->allocatedmarker) {
 
@@ -4702,6 +4701,7 @@ class assign {
                 $flags->allocatedmarker = $modified->allocatedmarker;
                 $this->update_user_flags($flags);
             }
+            $this->update_grade($grade);
             $this->notify_grade_modified($grade);
 
             // Save outcomes.
@@ -5613,6 +5613,12 @@ class assign {
 
             // Will not apply update if user does not have permission to assign this workflow state.
             if (!$gradingdisabled && $this->update_user_flags($flags)) {
+                if ($state == ASSIGN_MARKING_WORKFLOW_STATE_RELEASED) {
+                    // Update Gradebook.
+                    $assign = clone $this->get_instance();
+                    $assign->cmidnumber = $this->get_course_module()->idnumber;
+                    assign_update_grades($assign, $userid);
+                }
 
                 $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
 
