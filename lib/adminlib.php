@@ -1615,6 +1615,9 @@ abstract class admin_setting {
             }
         }
 
+        if (!empty($output)) {
+            return html_writer::tag('span', $output, array('class' => 'adminsettingsflags'));
+        }
         return $output;
     }
 
