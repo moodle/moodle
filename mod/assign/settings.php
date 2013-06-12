@@ -79,13 +79,6 @@ if ($ADMIN->fulltree) {
                                                     $description,
                                                     $default));
 
-    $name = new lang_string('requiresubmissionstatement', 'mod_assign');
-    $description = new lang_string('requiresubmissionstatement_help', 'mod_assign');
-    $settings->add(new admin_setting_configcheckbox('assign/requiresubmissionstatement',
-                                                    $name,
-                                                    $description,
-                                                    0));
-
     $name = new lang_string('defaultsettings', 'mod_assign');
     $description = new lang_string('defaultsettings_help', 'mod_assign');
     $settings->add(new admin_setting_heading('defaultsettings', $name, $description));
@@ -108,7 +101,6 @@ if ($ADMIN->fulltree) {
                                                     0);
     $setting->set_enabled_flag_options(admin_setting_flag::ENABLED, true);
     $setting->set_advanced_flag_options(admin_setting_flag::ENABLED, false);
-    $setting->set_locked_flag_options(admin_setting_flag::ENABLED, false);
     $settings->add($setting);
 
     $name = new lang_string('duedate', 'mod_assign');
@@ -119,7 +111,6 @@ if ($ADMIN->fulltree) {
                                                     604800);
     $setting->set_enabled_flag_options(admin_setting_flag::ENABLED, true);
     $setting->set_advanced_flag_options(admin_setting_flag::ENABLED, false);
-    $setting->set_locked_flag_options(admin_setting_flag::ENABLED, false);
     $settings->add($setting);
 
     $name = new lang_string('cutoffdate', 'mod_assign');
@@ -130,12 +121,21 @@ if ($ADMIN->fulltree) {
                                                     1209600);
     $setting->set_enabled_flag_options(admin_setting_flag::ENABLED, false);
     $setting->set_advanced_flag_options(admin_setting_flag::ENABLED, false);
-    $setting->set_locked_flag_options(admin_setting_flag::ENABLED, false);
     $settings->add($setting);
 
     $name = new lang_string('submissiondrafts', 'mod_assign');
     $description = new lang_string('submissiondrafts_help', 'mod_assign');
     $setting = new admin_setting_configcheckbox('assign/submissiondrafts',
+                                                    $name,
+                                                    $description,
+                                                    0);
+    $setting->set_advanced_flag_options(admin_setting_flag::ENABLED, false);
+    $setting->set_locked_flag_options(admin_setting_flag::ENABLED, false);
+    $settings->add($setting);
+
+    $name = new lang_string('requiresubmissionstatement', 'mod_assign');
+    $description = new lang_string('requiresubmissionstatement_help', 'mod_assign');
+    $setting = new admin_setting_configcheckbox('assign/requiresubmissionstatement',
                                                     $name,
                                                     $description,
                                                     0);
