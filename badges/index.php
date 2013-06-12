@@ -191,8 +191,11 @@ if ($totalcount) {
     echo $output->render($badges);
 } else {
     echo $output->notification(get_string('nobadges', 'badges'));
-    echo $OUTPUT->single_button(new moodle_url('newbadge.php', array('type' => $type, 'id' => $courseid)),
+
+    if (has_capability('moodle/badges:createbadge', $PAGE->context)) {
+        echo $OUTPUT->single_button(new moodle_url('newbadge.php', array('type' => $type, 'id' => $courseid)),
             get_string('newbadge', 'badges'));
+    }
 }
 
 echo $OUTPUT->footer();
