@@ -251,6 +251,12 @@
 .admin_colourpicker .previewcolour {border:1px solid #000;margin-left:301px;}
 .admin_colourpicker .currentcolour {border:1px solid #000;margin-left:301px;border-top-width:0;}
 
+/* Styles for flags on admin settings */
+.adminsettingsflags { float: right; }
+.dir-rtl .adminsettingsflags { float: left; }
+.adminsettingsflags label { margin-right: 7px; }
+.dir-rtl .adminsettingsflags label { margin-left: 7px; }
+
 /** Overide for RTL layout **/
 .dir-rtl #adminsettings .form-item  .form-setting,
 .dir-rtl #adminsettings .form-item  .form-label,
