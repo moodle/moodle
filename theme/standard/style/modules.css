@@ -159,13 +159,11 @@ table.mod_index {width:90%;margin:1em auto;}
 #page-mod-lesson-essay .sent {color:#006600;}
 #page-mod-lesson-essay .ungraded {color:#999999;}
 #page-mod-lesson-essay .gradetable {margin-bottom: 20px;}
-.path-mod-lesson .branchbuttoncontainer.vertical .lessonbutton,
-.path-mod-lesson .centerpadded {padding:5px;}
+.path-mod-lesson .branchbuttoncontainer.vertical .lessonbutton {padding:5px;}
 #page-mod-lesson-essay .buttons,
 .path-mod-lesson .center,
 .path-mod-lesson .firstpageoptions,
 .path-mod-lesson .clock .content,
-.path-mod-lesson .centerpadded,
 #page-mod-lesson-view .password-form,
 .path-mod-lesson .edit_pages_box .addlinks {text-align:center;}
 
