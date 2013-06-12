@@ -119,6 +119,7 @@ class award_criteria_course extends award_criteria {
             $parameter[] =& $mform->createElement('text', 'grade_' . $param['course'], '', array('size' => '5'));
             $parameter[] =& $mform->createElement('static', 'complby_' . $param['course'], null, get_string('bydate', 'badges'));
             $parameter[] =& $mform->createElement('date_selector', 'bydate_' . $param['course'], '', array('optional' => true));
+            $mform->setType('grade_' . $param['course'], PARAM_INT);
             $mform->addGroup($parameter, 'param_' . $param['course'], '', array(' '), false);
 
             $mform->disabledIf('bydate_' . $param['course'] . '[day]', 'bydate_' . $param['course'] . '[enabled]', 'notchecked');
