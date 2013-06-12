@@ -350,6 +350,11 @@ class cache_helper {
      * @param string $definition
      */
     protected static function ensure_ready_for_stats($store, $definition) {
+        // This function is performance-sensitive, so exit as quickly as possible
+        // if we do not need to do anything.
+        if (isset(self::$stats[$definition][$store])) {
+            return;
+        }
         if (!array_key_exists($definition, self::$stats)) {
             self::$stats[$definition] = array(
                 $store => array(
