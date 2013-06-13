@@ -126,6 +126,8 @@ information provided here is intended especially for developers.
     enrol_cohort_enrol_all_users()
     enrol_cohort_search_cohorts()
 * The never unused webdav_locks table was dropped.
+* rss_error() now supports returning of correct HTTP status of error and will return '404 Not Found'
+  unless other status is specified.
 
 === 2.9.1 ===
 
