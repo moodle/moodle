@@ -553,7 +553,7 @@ class lesson_display_answer_form_multichoice_multianswer extends moodleform {
             if ($hasattempt && in_array($answer->id, $useranswers)) {
                 $answerid = 'answer_'.$answer->id;
                 $mform->addElement('hidden', 'answer['.$answer->id.']', $answer->answer);
-                $mform->setType('answer['.$answer->id.']', PARAM_TEXT);
+                $mform->setType('answer['.$answer->id.']', PARAM_NOTAGS);
                 $mform->setDefault($answerid, true);
                 $mform->setDefault('answer['.$answer->id.']', true);
             }
