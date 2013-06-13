@@ -1624,7 +1624,7 @@ abstract class admin_setting {
     /**
      * Write the values of the flags for this admin setting.
      *
-     * @param array $data - The data submitted from the form.
+     * @param array $data - The data submitted from the form or null to set the default value for new installs.
      * @return bool - true if successful.
      */
     public function write_setting_flags($data) {
@@ -1938,13 +1938,17 @@ class admin_setting_flag {
      * Save the submitted data for this flag - or set it to the default if $data is null.
      *
      * @param admin_setting $setting - The admin setting for this flag
-     * @param array $data - The data submitted from the form.
+     * @param array $data - The data submitted from the form or null to set the default value for new installs.
      * @return bool
      */
     public function write_setting_flag(admin_setting $setting, $data) {
         $result = true;
         if ($this->is_enabled()) {
-            $value = !empty($data[$setting->get_full_name() . '_' . $this->get_shortname()]);
+            if (!isset($data)) {
+                $value = $this->get_default();
+            } else {
+                $value = !empty($data[$setting->get_full_name() . '_' . $this->get_shortname()]);
+            }
             $result = $setting->config_write($setting->name . '_' . $this->get_shortname(), $value);
         }
 
@@ -6404,6 +6408,7 @@ function admin_apply_default_settings($node=NULL, $unconditional=true) {
                     continue;
                 }
                 $setting->write_setting($defaultsetting);
+                $setting->write_setting_flags(null);
             }
         }
 }
