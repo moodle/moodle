@@ -715,17 +715,14 @@ M.core_filepicker.init = function(Y, options) {
                 this.process_dlg_node = Y.Node.createWithFilesSkin(M.core_filepicker.templates.processexistingfile);
                 var node = this.process_dlg_node;
                 node.generateID();
-                this.process_dlg = new Y.Panel({
-                    srcNode      : node,
+                this.process_dlg = new M.core.dialogue({
+                    draggable    : true,
+                    srcNode      : this.fpnode,
                     headerContent: M.str.repository.fileexistsdialogheader,
-                    zIndex       : 8000,
                     centered     : true,
                     modal        : true,
                     visible      : false,
-                    render       : true,
-                    buttons      : {}
                 });
-                this.process_dlg.plug(Y.Plugin.Drag,{handles:['#'+node.get('id')+' .yui3-widget-hd']});
                 node.one('.fp-dlg-butoverwrite').on('click', handleOverwrite, this);
                 node.one('.fp-dlg-butrename').on('click', handleRename, this);
                 node.one('.fp-dlg-butcancel').on('click', handleCancel, this);
@@ -758,15 +755,13 @@ M.core_filepicker.init = function(Y, options) {
                 this.msg_dlg_node = Y.Node.createWithFilesSkin(M.core_filepicker.templates.message);
                 this.msg_dlg_node.generateID();
 
-                this.msg_dlg = new Y.Panel({
+                this.msg_dlg = new M.core.dialogue({
+                    draggable    : true,
                     srcNode      : this.msg_dlg_node,
-                    zIndex       : 8000,
                     centered     : true,
                     modal        : true,
-                    visible      : false,
-                    render       : true
+                    visible      : false
                 });
-                this.msg_dlg.plug(Y.Plugin.Drag,{handles:['#'+this.msg_dlg_node.get('id')+' .yui3-widget-hd']});
                 this.msg_dlg_node.one('.fp-msg-butok').on('click', function(e) {
                     e.preventDefault();
                     this.msg_dlg.hide();
@@ -1287,25 +1282,19 @@ M.core_filepicker.init = function(Y, options) {
             var client_id = this.options.client_id;
             this.fpnode = Y.Node.createWithFilesSkin(M.core_filepicker.templates.generallayout).
                 set('id', 'filepicker-'+client_id);
-            this.mainui = new Y.Panel({
+            this.mainui = new M.core.dialogue({
+                extraClasses : 'filepicker',
+                draggable    : true,
                 srcNode      : this.fpnode,
                 headerContent: M.str.repository.filepicker,
-                zIndex       : 7500,
                 centered     : true,
                 modal        : true,
                 visible      : false,
-                minWidth     : this.fpnode.getStylePx('minWidth'),
-                minHeight    : this.fpnode.getStylePx('minHeight'),
-                maxWidth     : this.fpnode.getStylePx('maxWidth'),
-                maxHeight    : this.fpnode.getStylePx('maxHeight'),
-                render       : true
+                width        : '873px',
+                responsiveWidth : 873,
+                height       : '558px'
             });
-            // allow to move the panel dragging it by it's header:
-            this.mainui.plug(Y.Plugin.Drag,{handles:['#filepicker-'+client_id+' .yui3-widget-hd']});
-            this.mainui.show();
-            if (this.mainui.get('y') < 0) {
-                this.mainui.set('y', 0);
-            }
+
             // create panel for selecting a file (initially hidden)
             this.selectnode = Y.Node.createWithFilesSkin(M.core_filepicker.templates.selectlayout).
                 set('id', 'filepicker-select-'+client_id).
@@ -1313,17 +1302,14 @@ M.core_filepicker.init = function(Y, options) {
                 set('role', 'dialog');
 
             var fplabel = 'fp-file_label_'+ client_id;
-            this.selectui = new Y.Panel({
+            this.selectui = new M.core.dialogue({
                 headerContent: '<span id="' + fplabel +'">'+M.str.moodle.edit+'</span>',
+                draggable    : true,
                 srcNode      : this.selectnode,
-                zIndex       : 7600,
                 centered     : true,
                 modal        : true,
-                close        : true,
-                render       : true
+                visible      : false,
             });
-            // allow to move the panel dragging it by it's header:
-            this.selectui.plug(Y.Plugin.Drag,{handles:['#filepicker-select-'+client_id+' .yui3-widget-hd']});
             Y.one('#'+this.selectnode.get('id')).setAttribute('aria-labelledby', fplabel);
             this.selectui.hide();
             // event handler for lazy loading of thumbnails and next page

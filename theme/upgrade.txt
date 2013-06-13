@@ -1,5 +1,10 @@
 This files describes API changes in /theme/* themes,
 information provided here is intended especially for theme designer.
+=== 2.6 ===
+Notes:
+* The file picker and activity chooser have been converted to use M.core.dialogue. This means the styles
+for these elements have changed in the base and bootstrapbase themes and you will need to copy the new styles
+if you are not inheriting from either one of these themes.
 
 === 2.6 ===
 

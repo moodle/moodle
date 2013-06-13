@@ -976,6 +976,23 @@ sup {vertical-align: super;}
   background:#FFF;
 }
 
+.moodle-dialogue-base .moodle-dialogue-fullscreen .moodle-dialogue-hd {
+    padding: 10px;
+    font-size: 16px;
+}
+
+.moodle-dialogue-base .moodle-dialogue-fullscreen,
+.moodle-dialogue-fullscreen .moodle-dialogue-content {
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+    border: 0px;
+}
+.moodle-dialogue-base .moodle-dialogue-fullscreen .moodle-dialogue-hd,
+.moodle-dialogue-base .moodle-dialogue-fullscreen .moodle-dialogue-wrap {
+    border-radius: 0px;
+}
+
 .moodle-dialogue-confirm .confirmation-dialogue {text-align:center;}
 .moodle-dialogue-confirm .confirmation-dialogue input {text-align:center;}
 .moodle-dialogue-exception .moodle-exception-message {text-align:center}
