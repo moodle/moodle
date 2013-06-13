@@ -814,7 +814,8 @@
         $PAGE->requires->js_init_call('M.core_user.init_participation', null, false, $module);
     }
 
-    if (has_capability('moodle/site:viewparticipants', $context) && $totalcount > ($perpage*3)) {
+    // Show a search box if all participants don't fit on a single screen
+    if ($totalcount > $perpage) {
         echo '<form action="index.php" class="searchform"><div><input type="hidden" name="id" value="'.$course->id.'" />';
         echo '<label for="search">' . get_string('search', 'search') . ' </label>';
         echo '<input type="text" id="search" name="search" value="'.s($search).'" />&nbsp;<input type="submit" value="'.get_string('search').'" /></div></form>'."\n";
