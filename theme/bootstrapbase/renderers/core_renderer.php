@@ -53,9 +53,10 @@ class theme_bootstrapbase_core_renderer extends core_renderer {
      */
     public function navbar() {
         $items = $this->page->navbar->get_items();
+        $breadcrumbs = array();
         foreach ($items as $item) {
             $item->hideicon = true;
-                $breadcrumbs[] = $this->render($item);
+            $breadcrumbs[] = $this->render($item);
         }
         $divider = '<span class="divider">/</span>';
         $list_items = '<li>'.join(" $divider</li><li>", $breadcrumbs).'</li>';
