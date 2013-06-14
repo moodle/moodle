@@ -813,6 +813,71 @@ class backup_comments_structure_step extends backup_structure_step {
 }
 
 /**
+ * structure step in charge of constructing the badges.xml file for all the badges found
+ * in a given context
+ */
+class backup_badges_structure_step extends backup_structure_step {
+
+    protected function execute_condition() {
+        // Check that all activities have been included.
+        if ($this->task->is_excluding_activities()) {
+            return false;
+        }
+        return true;
+    }
+
+    protected function define_structure() {
+
+        // Define each element separated.
+
+        $badges = new backup_nested_element('badges');
+        $badge = new backup_nested_element('badge', array('id'), array('name', 'description',
+                'timecreated', 'timemodified', 'usercreated', 'usermodified', 'issuername',
+                'issuerurl', 'issuercontact', 'expiredate', 'expireperiod', 'type', 'courseid',
+                'message', 'messagesubject', 'attachment', 'notification', 'status', 'nextcron'));
+
+        $criteria = new backup_nested_element('criteria');
+        $criterion = new backup_nested_element('criterion', array('id'), array('badgeid',
+                'criteriatype', 'method'));
+
+        $parameters = new backup_nested_element('parameters');
+        $parameter = new backup_nested_element('parameter', array('id'), array('critid',
+                'name', 'value', 'criteriatype'));
+
+        // Build the tree.
+
+        $badges->add_child($badge);
+        $badge->add_child($criteria);
+        $criteria->add_child($criterion);
+        $criterion->add_child($parameters);
+        $parameters->add_child($parameter);
+
+        // Define sources.
+
+        $badge->set_source_table('badge', array('courseid' => backup::VAR_COURSEID));
+        $criterion->set_source_table('badge_criteria', array('badgeid' => backup::VAR_PARENTID));
+
+        $parametersql = 'SELECT cp.*, c.criteriatype
+                             FROM {badge_criteria_param} cp JOIN {badge_criteria} c
+                                 ON cp.critid = c.id
+                             WHERE critid = :critid';
+        $parameterparams = array('critid' => backup::VAR_PARENTID);
+        $parameter->set_source_sql($parametersql, $parameterparams);
+
+        // Define id annotations.
+
+        $badge->annotate_ids('user', 'usercreated');
+        $badge->annotate_ids('user', 'usermodified');
+        $criterion->annotate_ids('badge', 'badgeid');
+        $parameter->annotate_ids('criterion', 'critid');
+        $badge->annotate_files('badges', 'badgeimage', 'id');
+
+        // Return the root element ($badges).
+        return $badges;
+    }
+}
+
+/**
  * structure step in charge of constructing the calender.xml file for all the events found
  * in a given context
  */

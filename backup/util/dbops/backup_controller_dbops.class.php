@@ -483,6 +483,7 @@ abstract class backup_controller_dbops extends backup_dbops {
             'backup_general_blocks'             => 'blocks',
             'backup_general_filters'            => 'filters',
             'backup_general_comments'           => 'comments',
+            'backup_general_badges'             => 'badges',
             'backup_general_userscompletion'    => 'userscompletion',
             'backup_general_logs'               => 'logs',
             'backup_general_histories'          => 'grade_histories'
