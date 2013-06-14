@@ -89,41 +89,6 @@ class core_role_external_testcase extends externallib_advanced_testcase {
             array('roleid' => 3, 'userid' => $USER->id, 'contextid' => $context->id));
     }
 
-    /*
-     * Test assign_roles() parameter validation
-     */
-    public function test_assign_roles_params() {
-        global $USER;
-
-        // Call without correct context details.
-        $this->setExpectedException('invalid_parameter_exception');
-        core_role_external::assign_roles(array('roleid' => 3, 'userid' => $USER->id));
-    }
-
-    /*
-     * Test assign_roles() parameter validation
-     */
-    public function test_assign_roles_params2() {
-        global $USER;
-
-        // Call without correct context details.
-        $this->setExpectedException('invalid_parameter_exception');
-        core_role_external::assign_roles(array('roleid' => 3, 'userid' => $USER->id, 'contextlevel' => "course"));
-    }
-
-    /*
-     * Test assign_roles() parameter validation
-     */
-    public function test_assign_roles_params3() {
-        global $USER;
-
-        // Call without correct context details.
-        $this->resetAfterTest(true);
-        $course = self::getDataGenerator()->create_course();
-        $this->setExpectedException('invalid_parameter_exception');
-        core_role_external::assign_roles(array('roleid' => 3, 'userid' => $USER->id, 'instanceid' => $course->id));
-    }
-
     /**
      * Test unassign_roles
      */

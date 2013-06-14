@@ -610,24 +610,10 @@ class core_role_external extends external_api {
         $params = self::validate_parameters(self::assign_roles_parameters(), array('assignments'=>$assignments));
 
         $transaction = $DB->start_delegated_transaction();
-        $levels = context_helper::get_all_levels();
 
         foreach ($params['assignments'] as $assignment) {
             // Ensure correct context level with a instance id or contextid is passed.
-            if (isset($assignment['contextid'])) {
-                $context = context::instance_by_id($assignment['contextid'], IGNORE_MISSING);
-
-            } else if (isset($assignment['contextlevel']) && isset($assignment['instanceid'])) {
-                $contextlevel = "context_".$assignment['contextlevel'];
-                if (!array_search($contextlevel, $levels)) {
-                    throw new invalid_parameter_exception('Invalid context level = '.$assignment['contextlevel']);
-                }
-                // Ensure the current user is allowed to run this function in the enrolment context.
-                $context = $contextlevel::instance($assignment['instanceid'], IGNORE_MISSING);
-            } else {
-                // No valid context info was found.
-                throw new invalid_parameter_exception('Missing parameters, please provide either context level with instance id or contextid');
-            }
+            $context = self::get_context($assignment);
 
             // Ensure the current user is allowed to run this function in the enrolment context.
             self::validate_context($context);

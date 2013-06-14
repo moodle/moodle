@@ -356,6 +356,30 @@ class external_api {
             require_login($course, false, $cm, false, true);
         }
     }
+
+    /**
+     * Get context from passed context id or combination of context level and isntance id
+     *
+     * @param array $param
+     * @since Moodle 2.6
+     * @throws invalid_parameter_exception
+     * @return context
+     */
+    protected static function get_context($param) {
+        $levels = context_helper::get_all_levels();
+        if (isset($param['contextid'])) {
+            return context::instance_by_id($param['contextid'], IGNORE_MISSING);
+        } else if (isset($param['contextlevel']) && isset($param['instanceid'])) {
+            $contextlevel = "context_".$param['contextlevel'];
+            if (!array_search($contextlevel, $levels)) {
+                throw new invalid_parameter_exception('Invalid context level = '.$param['contextlevel']);
+            }
+           return $contextlevel::instance($param['instanceid'], IGNORE_MISSING);
+        } else {
+            // No valid context info was found.
+            throw new invalid_parameter_exception('Missing parameters, please provide either context level with instance id or contextid');
+        }
+    }
 }
 
 /**
