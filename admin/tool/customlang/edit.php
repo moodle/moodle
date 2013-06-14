@@ -32,7 +32,7 @@ $lng                    = required_param('lng', PARAM_LANG);
 $currentpage            = optional_param('p', 0, PARAM_INT);
 $translatorsubmitted    = optional_param('translatorsubmitted', 0, PARAM_BOOL);
 
-$PAGE->set_pagelayout('standard');
+$PAGE->set_pagelayout('report'); // Allows for wide page contents.
 $PAGE->set_url('/admin/tool/customlang/edit.php', array('lng' => $lng));
 navigation_node::override_active_url(new moodle_url('/admin/tool/customlang/index.php'));
 $PAGE->set_title(get_string('pluginname', 'tool_customlang'));
