@@ -315,7 +315,11 @@ table#user-grades th#studentheader,
 table#user-grades th.user {
     text-align: left;
 }
-
+.dir-rtl table#user-grades th.category,
+.dir-rtl table#user-grades th#studentheader,
+.dir-rtl table#user-grades th.user {
+  text-align: right;
+}
 div.gradertoggle {
     display: inline;
     margin-left: 20px;
@@ -354,6 +358,9 @@ table#user-grades .datesubmitted {
 
 .path-grade-report-grader th.user img.userpicture {
     margin-right: 0.5em;
+}
+.path-grade-report-grader.dir-rtl th.user img.userpicture {
+  margin-left: 0.5em;
 }
 
 .path-grade-report-grader a.quickedit {
