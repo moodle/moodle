@@ -199,11 +199,22 @@ class core_role_external_testcase extends externallib_advanced_testcase {
         $users = get_role_users(3, $context);
         $this->assertEquals(count($users), 0);
 
-        // Call the external function. Assign teacher role to $USER.
+        // Call the external function. Assign teacher role to $USER with contextid.
         core_role_external::assign_roles(array(
             array('roleid' => 3, 'userid' => $USER->id, 'contextid' => $context->id)));
 
         // Check the role has been assigned.
+        $users = get_role_users(3, $context);
+        $this->assertEquals(count($users), 1);
+
+        // Unassign role.
+        role_unassign(3, $USER->id, $context->id);
+        $users = get_role_users(3, $context);
+        $this->assertEquals(count($users), 0);
+
+        // Call the external function. Assign teacher role to $USER.
+        core_role_external::assign_roles(array(
+            array('roleid' => 3, 'userid' => $USER->id, 'contextlevel' => "course", 'instanceid' => $course->id)));
         $users = get_role_users(3, $context);
         $this->assertEquals(count($users), 1);
 
@@ -212,6 +223,41 @@ class core_role_external_testcase extends externallib_advanced_testcase {
         $this->setExpectedException('moodle_exception');
         $categories = core_role_external::assign_roles(
             array('roleid' => 3, 'userid' => $USER->id, 'contextid' => $context->id));
+    }
+
+    /*
+     * Test assign_roles() parameter validation
+     */
+    public function test_assign_roles_params() {
+        global $USER;
+
+        // Call without correct context details.
+        $this->setExpectedException('invalid_parameter_exception');
+        core_role_external::assign_roles(array('roleid' => 3, 'userid' => $USER->id));
+    }
+
+    /*
+     * Test assign_roles() parameter validation
+     */
+    public function test_assign_roles_params2() {
+        global $USER;
+
+        // Call without correct context details.
+        $this->setExpectedException('invalid_parameter_exception');
+        core_role_external::assign_roles(array('roleid' => 3, 'userid' => $USER->id, 'contextlevel' => "course"));
+    }
+
+    /*
+     * Test assign_roles() parameter validation
+     */
+    public function test_assign_roles_params3() {
+        global $USER;
+
+        // Call without correct context details.
+        $this->resetAfterTest(true);
+        $course = self::getDataGenerator()->create_course();
+        $this->setExpectedException('invalid_parameter_exception');
+        core_role_external::assign_roles(array('roleid' => 3, 'userid' => $USER->id, 'instanceid' => $course->id));
     }
 
     /**
