@@ -1711,6 +1711,27 @@ abstract class enrol_plugin {
     }
 
     /**
+     * Checks if user can self enrol.
+     *
+     * @param stdClass $instance enrolment instance
+     * @return bool true if current user can self enrol, else error code and message.
+     */
+    public function can_self_enrol(stdClass $instance) {
+        return false;
+    }
+
+    /**
+     * Return information for enrolment instance containing list of parameters required
+     * for enrolment, name of enrolment plugin etc.
+     *
+     * @param stdClass $instance enrolment instance
+     * @return array instance info.
+     */
+    public function get_enrol_info(stdClass $instance) {
+        return null;
+    }
+
+    /**
      * Adds navigation links into course admin block.
      *
      * By defaults looks for manage links only.

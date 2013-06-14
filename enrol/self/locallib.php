@@ -36,30 +36,24 @@ class enrol_self_enrol_form extends moodleform {
      * @return string form identifier
      */
     protected function get_form_identifier() {
-        $formid = $this->_customdata->id.'_'.get_class($this);
+        $formid = $this->_customdata['instance']->id.'_'.get_class($this);
         return $formid;
     }
 
     public function definition() {
-        global $DB;
-
         $mform = $this->_form;
-        $instance = $this->_customdata;
+        $instance = $this->_customdata['instance'];
         $this->instance = $instance;
         $plugin = enrol_get_plugin('self');
 
         $heading = $plugin->get_instance_name($instance);
         $mform->addElement('header', 'selfheader', $heading);
 
-        if ($instance->customint3 > 0) {
-            // Max enrol limit specified.
-            $count = $DB->count_records('user_enrolments', array('enrolid'=>$instance->id));
-            if ($count >= $instance->customint3) {
-                // Bad luck, no more self enrolments here.
-                $this->toomany = true;
-                $mform->addElement('static', 'notice', '', get_string('maxenrolledreached', 'enrol_self'));
-                return;
-            }
+        if (true !== $this->_customdata['enrolstatus']) {
+            // If enrol status then show message, else show general error message.
+            $statusmsg = array_values($this->_customdata['enrolstatus']);
+            $mform->addElement('static', 'notice', '', $statusmsg[0]);
+            return;
         }
 
         if ($instance->password) {
