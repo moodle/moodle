@@ -30,7 +30,7 @@ $string['availablebuttons'] = 'Available buttons';
 $string['customconfig'] = 'Custom configuration';
 $string['customconfig_desc'] = 'Custom advanced TinyMCE configuration in JSON format, for example: {"option1" : "value2", "option2" : "value2"}. Any options specified here override standard and plugin settings.';
 $string['customtoolbar'] = 'Editor toolbar';
-$string['customtoolbar_desc'] = 'Each line contains a list of comma separated button names, use "|" as a group separator, empty lines are ignored. See <a href="{$a}" target="_blank">{$a}</a> for the list of default TinyMCE buttons.';
+$string['customtoolbar_desc'] = 'Each line contains a list of comma separated button names, use "|" as a group separator, empty lines are ignored. See <a href="{$a}" target="_blank">{$a}</a> for the list of default TinyMCE buttons.<br />The first row will always be shown, where as the visibility of second and third toolbars can be toggled';
 $string['fontselectlist'] = 'Available fonts list';
 $string['pluginname'] = 'TinyMCE HTML editor';
 $string['settings'] = 'General settings';

@@ -45,5 +45,29 @@ function xmldb_editor_tinymce_upgrade($oldversion) {
     // Put any upgrade step following this.
 
 
+    // Moodle v2.6.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    if ($oldversion < 2013061400) {
+        // Reset redesigned editor toolbar setting.
+        $oldorder = "fontselect,fontsizeselect,formatselect,|,undo,redo,|,search,replace,|,fullscreen
+
+bold,italic,underline,strikethrough,sub,sup,|,justifyleft,justifycenter,justifyright,|,cleanup,removeformat,pastetext,pasteword,|,forecolor,backcolor,|,ltr,rtl
+
+bullist,numlist,outdent,indent,|,link,unlink,|,image,nonbreaking,charmap,table,|,code";
+
+        $neworder = "formatselect,bold,italic,|,bullist,numlist,|,link,unlink,|,image
+
+undo,redo,|,underline,strikethrough,sub,sup,|,justifyleft,justifycenter,justifyright,|,outdent,indent,|,forecolor,backcolor,|,ltr,rtl,|,nonbreaking,charmap,table
+
+fontselect,fontsizeselect,code,search,replace,|,cleanup,removeformat,pastetext,pasteword,|,fullscreen";
+        $currentorder = get_config('editor_tinymce', 'customtoolbar');
+        if ($currentorder == $oldorder) {
+            unset_config('customtoolbar', 'editor_tinymce');
+            set_config('customtoolbar', $neworder, 'editor_tinymce');
+        }
+        upgrade_plugin_savepoint(true, 2013061400, 'editor', 'tinymce');
+    }
+
     return true;
 }

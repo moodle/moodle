@@ -15,16 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * TinyMCE text editor integration version file.
+ * TinyMCE image insert/edit plugin version details.
  *
- * @package    editor_tinymce
- * @copyright  2009 Petr Skoda (http://skodak.org)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   tinymce_pdw
+ * @copyright 2013 Jason Fowler
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2013061400;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2013050100;        // Requires this Moodle version
-$plugin->component = 'editor_tinymce';  // Full name of the plugin (used for diagnostics)
-$plugin->release   = '3.5.8';           // This is NOT a directory name, see lib.php if you need to know where is the editor code!
+// The current plugin version (Date: YYYYMMDDXX).
+$plugin->version   = 2013061400;
+// Required Moodle version.
+$plugin->requires  = 2013050100;
+// Full name of the plugin (used for diagnostics).
+$plugin->component = 'tinymce_pdw';
