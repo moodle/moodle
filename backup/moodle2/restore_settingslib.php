@@ -64,6 +64,12 @@ class restore_activities_setting extends restore_generic_setting {}
 class restore_comments_setting extends restore_role_assignments_setting {}
 
 /**
+ * root setting to control if restore will create badges or not,
+ * depends on @restore_activities_setting
+ */
+class restore_badges_setting extends restore_generic_setting {}
+
+/**
  * root setting to control if restore will create
  * events or no, depends of @restore_users_setting
  * exactly in the same way than @restore_role_assignments_setting so we extend from it

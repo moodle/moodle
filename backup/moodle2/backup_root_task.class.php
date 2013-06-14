@@ -122,6 +122,12 @@ class backup_root_task extends backup_task {
         $this->add_setting($comments);
         $users->add_dependency($comments);
 
+        // Define badges (dependent of activities).
+        $badges = new backup_badges_setting('badges', base_setting::IS_BOOLEAN, true);
+        $badges->set_ui(new backup_setting_ui_checkbox($badges, get_string('rootsettingbadges', 'backup')));
+        $this->add_setting($badges);
+        $activities->add_dependency($badges);
+
         // Define calendar events (dependent of users)
         $events = new backup_calendarevents_setting('calendarevents', base_setting::IS_BOOLEAN, true);
         $events->set_ui(new backup_setting_ui_checkbox($events, get_string('rootsettingcalendarevents', 'backup')));

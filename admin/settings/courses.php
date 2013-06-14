@@ -158,6 +158,7 @@ if ($hassiteconfig
     $temp->add(new admin_setting_configcheckbox_with_lock('backup/backup_general_blocks', new lang_string('generalblocks','backup'), new lang_string('configgeneralblocks','backup'), array('value'=>1, 'locked'=>0)));
     $temp->add(new admin_setting_configcheckbox_with_lock('backup/backup_general_filters', new lang_string('generalfilters','backup'), new lang_string('configgeneralfilters','backup'), array('value'=>1, 'locked'=>0)));
     $temp->add(new admin_setting_configcheckbox_with_lock('backup/backup_general_comments', new lang_string('generalcomments','backup'), new lang_string('configgeneralcomments','backup'), array('value'=>1, 'locked'=>0)));
+    $temp->add(new admin_setting_configcheckbox_with_lock('backup/backup_general_badges', new lang_string('generalbadges','backup'), new lang_string('configgeneralbadges','backup'), array('value'=>1,'locked'=>0)));
     $temp->add(new admin_setting_configcheckbox_with_lock('backup/backup_general_userscompletion', new lang_string('generaluserscompletion','backup'), new lang_string('configgeneraluserscompletion','backup'), array('value'=>1, 'locked'=>0)));
     $temp->add(new admin_setting_configcheckbox_with_lock('backup/backup_general_logs', new lang_string('generallogs','backup'), new lang_string('configgenerallogs','backup'), array('value'=>0, 'locked'=>0)));
     $temp->add(new admin_setting_configcheckbox_with_lock('backup/backup_general_histories', new lang_string('generalhistories','backup'), new lang_string('configgeneralhistories','backup'), array('value'=>0, 'locked'=>0)));
@@ -231,6 +232,7 @@ if ($hassiteconfig
     $temp->add(new admin_setting_configcheckbox('backup/backup_auto_blocks', new lang_string('generalblocks','backup'), new lang_string('configgeneralblocks','backup'), 1));
     $temp->add(new admin_setting_configcheckbox('backup/backup_auto_filters', new lang_string('generalfilters','backup'), new lang_string('configgeneralfilters','backup'), 1));
     $temp->add(new admin_setting_configcheckbox('backup/backup_auto_comments', new lang_string('generalcomments','backup'), new lang_string('configgeneralcomments','backup'), 1));
+    $temp->add(new admin_setting_configcheckbox('backup/backup_auto_badges', new lang_string('generalbadges','backup'), new lang_string('configgeneralbadges','backup'), 1));
     $temp->add(new admin_setting_configcheckbox('backup/backup_auto_userscompletion', new lang_string('generaluserscompletion','backup'), new lang_string('configgeneraluserscompletion','backup'), 1));
     $temp->add(new admin_setting_configcheckbox('backup/backup_auto_logs', new lang_string('generallogs', 'backup'), new lang_string('configgenerallogs', 'backup'), 0));
     $temp->add(new admin_setting_configcheckbox('backup/backup_auto_histories', new lang_string('generalhistories','backup'), new lang_string('configgeneralhistories','backup'), 0));

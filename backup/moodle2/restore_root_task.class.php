@@ -181,6 +181,19 @@ class restore_root_task extends restore_task {
         $this->add_setting($comments);
         $users->add_dependency($comments);
 
+        // Define badges (dependent of activities).
+        $defaultvalue = false;                      // Safer default.
+        $changeable = false;
+        if (isset($rootsettings['badges']) && $rootsettings['badges']) { // Only enabled when available.
+            $defaultvalue = true;
+            $changeable = true;
+        }
+        $badges = new restore_badges_setting('badges', base_setting::IS_BOOLEAN, $defaultvalue);
+        $badges->set_ui(new backup_setting_ui_checkbox($badges, get_string('rootsettingbadges', 'backup')));
+        $badges->get_ui()->set_changeable($changeable);
+        $this->add_setting($badges);
+        $activities->add_dependency($badges);
+
         // Define Calendar events (dependent of users)
         $defaultvalue = false;                      // Safer default
         $changeable = false;
