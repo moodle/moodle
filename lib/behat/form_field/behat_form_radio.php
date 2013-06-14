@@ -36,7 +36,7 @@ require_once(__DIR__  . '/behat_form_checkbox.php');
  * This form field type can be added to forms as any other
  * moodle form element, but it does not make sense without
  * a group of radio inputs, so is hard to find it alone and
- * detect it by behat_form_manager::get_field(), where is useful
+ * detect it by behat_field_manager::get_form_field(), where is useful
  * is when the default behat_form_field class is being used, it
  * finds a input[type=radio] and it delegates set_value() and
  * get_value() to behat_form_radio.

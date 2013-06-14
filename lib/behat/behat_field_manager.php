@@ -48,15 +48,14 @@ class behat_field_manager {
      * the value of form elements.
      *
      * @param NodeElement $fieldnode
-     * @param string $locator The locator to help give more info about the possible problem.
      * @param Session $session The behat browser session
      * @return behat_form_field
      */
-    public static function get_field(NodeElement $fieldnode, $locator, Session $session) {
+    public static function get_form_field(NodeElement $fieldnode, Session $session) {
 
         // Get the field type if is part of a moodleform.
         if (self::is_moodleform_field($fieldnode)) {
-            $type = self::get_node_type($fieldnode, $locator, $session);
+            $type = self::get_field_node_type($fieldnode, $session);
         }
 
         // If is not a moodleforms field use the base field type.
@@ -100,7 +99,7 @@ class behat_field_manager {
      *
      * Note that there are fields inside moodleforms that are not
      * moodleform element; this method can not detect this, this will
-     * be managed by get_node_type, after failing to find the form
+     * be managed by get_field_node_type, after failing to find the form
      * element element type.
      *
      * @param NodeElement $fieldnode
@@ -117,15 +116,14 @@ class behat_field_manager {
     /**
      * Recursive method to find the field type.
      *
-     * Depending on the field the felement class node is a level or in another. We
+     * Depending on the field the felement class node is in a level or in another. We
      * look recursively for a parent node with a 'felement' class to find the field type.
      *
      * @param NodeElement $fieldnode The current node.
-     * @param string $locator Just to send an exception that makes sense for the user.
      * @param Session $session The behat browser session
      * @return mixed A NodeElement if we continue looking for the element type and String or false when we are done.
      */
-    protected static function get_node_type(NodeElement $fieldnode, $locator, Session $session) {
+    protected static function get_field_node_type(NodeElement $fieldnode, Session $session) {
 
         // We look for a parent node with 'felement' class.
         if ($class = $fieldnode->getParent()->getAttribute('class')) {
@@ -141,7 +139,50 @@ class behat_field_manager {
             }
         }
 
-        return self::get_node_type($fieldnode->getParent(), $locator, $session);
+        return self::get_field_node_type($fieldnode->getParent(), $session);
+    }
+
+    /**
+     * Gets an instance of the form field.
+     *
+     * Not all the fields are part of a moodle form, in this
+     * cases it fallsback to the generic form field. Also note
+     * that this generic field type is using a generic setValue()
+     * method from the Behat API, which is not always good to set
+     * the value of form elements.
+     *
+     * @deprecated since Moodle 2.6 MDL-39634 - please do not use this function any more.
+     * @todo MDL-XXXXX This will be deleted in Moodle 2.8
+     * @see behat_field_manager::get_form_field()
+     * @param NodeElement $fieldnode
+     * @param Session $session The behat browser session
+     * @return behat_form_field
+     */
+    public static function get_field(NodeElement $fieldnode, $locator, Session $session) {
+        debugging('Function behat_field_manager::get_field() is deprecated, ' .
+            'please use function behat_field_manager::get_form_field() instead', DEBUG_DEVELOPER);
+
+        return self::get_form_field($fieldnode, $session);
+    }
+
+    /**
+     * Recursive method to find the field type.
+     *
+     * Depending on the field the felement class node is in a level or in another. We
+     * look recursively for a parent node with a 'felement' class to find the field type.
+     *
+     * @deprecated since Moodle 2.6 MDL-39634 - please do not use this function any more.
+     * @todo MDL-XXXXX This will be deleted in Moodle 2.8
+     * @see behat_field_manager::get_field_node_type()
+     * @param NodeElement $fieldnode The current node.
+     * @param Session $session The behat browser session
+     * @return mixed A NodeElement if we continue looking for the element type and String or false when we are done.
+     */
+    protected static function get_node_type(NodeElement $fieldnode, $locator, Session $session) {
+        debugging('Function behat_field_manager::get_node_type() is deprecated, ' .
+            'please use function behat_field_manager::get_field_node_type() instead', DEBUG_DEVELOPER);
+
+        return self::get_field_node_type($fieldnode, $session);
     }
 
 }
