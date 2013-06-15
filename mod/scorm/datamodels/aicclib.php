@@ -134,11 +134,17 @@ function scorm_parse_aicc($scorm) {
         $extension = strtolower(substr($ext, 1));
         if (in_array($extension, $extaiccfiles)) {
             $id = strtolower(basename($filename, $ext));
+            if (!isset($ids[$id])) {
+                $ids[$id] = new stdClass();
+            }
             $ids[$id]->$extension = $file;
         }
     }
 
     foreach ($ids as $courseid => $id) {
+        if (!isset($courses[$courseid])) {
+            $courses[$courseid] = new stdClass();
+        }
         if (isset($id->crs)) {
             $contents = $id->crs->get_content();
             $rows = explode("\r\n", $contents);
@@ -169,6 +175,9 @@ function scorm_parse_aicc($scorm) {
                 if (preg_match($regexp, $rows[$i], $matches)) {
                     for ($j=0; $j<count($columns->columns); $j++) {
                         $column = $columns->columns[$j];
+                        if (!isset($courses[$courseid]->elements[substr(trim($matches[$columns->mastercol+1]), 1 , -1)])) {
+                            $courses[$courseid]->elements[substr(trim($matches[$columns->mastercol+1]), 1 , -1)] = new stdClass();
+                        }
                         $courses[$courseid]->elements[substr(trim($matches[$columns->mastercol+1]), 1 , -1)]->$column = substr(trim($matches[$j+1]), 1, -1);
                     }
                 }
@@ -268,6 +277,7 @@ function scorm_parse_aicc($scorm) {
             if (isset($course->elements)) {
                 foreach ($course->elements as $element) {
                     unset($sco);
+                    $sco = new stdClass();
                     $sco->identifier = $element->system_id;
                     $sco->scorm = $scorm->id;
                     $sco->organization = $course->id;
