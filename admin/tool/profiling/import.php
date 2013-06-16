@@ -48,7 +48,11 @@ if ($data = $mform->get_data()) {
     $status = $mform->save_file('mprfile', $file);
     if ($status) {
         // File saved properly, let's import it.
-        $status = profiling_import_runs($file);
+        $status = profiling_import_runs($file, $data->importprefix);
+    }
+    // Delete the temp file, not needed anymore.
+    if (file_exists($file)) {
+        unlink($file);
     }
     if ($status) {
         // Import ended ok, let's redirect to main profiling page.

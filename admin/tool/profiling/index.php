@@ -160,7 +160,7 @@ if (isset($script)) {
 
     echo $OUTPUT->heading($header);
 
-    // Print the controller block with different options
+    // Print the controller block with different options.
     echo profiling_list_controls($listurl);
 
     // TODO: Fix flexitable to validate tsort/thide/tshow/tifirs/tilast/page

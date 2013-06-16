@@ -38,6 +38,7 @@ $string['exportproblem'] = 'Some problem happened exporting the profile run "{$a
 $string['exportthis'] = 'Export this profiling run';
 $string['import'] = 'Import';
 $string['importok'] = 'File "{$a}" imported successfully.';
+$string['importprefix'] = 'Import prefix';
 $string['importproblem'] = 'Some problem happened importing the file "{$a}".';
 $string['lastrunof'] = 'Summary of last run of {$a}';
 $string['markreferencerun'] = 'Mark as reference run/comment';

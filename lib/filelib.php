@@ -1449,6 +1449,7 @@ function &get_mimetypes_array() {
         'mpeg' => array ('type'=>'video/mpeg', 'icon'=>'mpeg', 'groups'=>array('video','web_video'), 'string'=>'video'),
         'mpe'  => array ('type'=>'video/mpeg', 'icon'=>'mpeg', 'groups'=>array('video','web_video'), 'string'=>'video'),
         'mpg'  => array ('type'=>'video/mpeg', 'icon'=>'mpeg', 'groups'=>array('video','web_video'), 'string'=>'video'),
+        'mpr'  => array ('type'=>'application/vnd.moodle.profiling', 'icon'=>'moodle'),
 
         'nbk'       => array ('type'=>'application/x-smarttech-notebook', 'icon'=>'archive'),
         'notebook'  => array ('type'=>'application/x-smarttech-notebook', 'icon'=>'archive'),
