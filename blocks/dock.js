@@ -844,7 +844,7 @@ M.core_dock.genericblock.prototype = {
         } else {
             moveto.setAttribute('title', Y.Escape.html(M.util.get_string('addtodock', 'block')));
         }
-        
+
         var icon = 't/block_to_dock';
         if (right_to_left()) {
             icon = 't/block_to_dock_rtl';
