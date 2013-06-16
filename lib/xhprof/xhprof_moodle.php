@@ -423,7 +423,7 @@ function profiling_get_difference($number1, $number2, $units = '', $factor = 1, 
  * Export profiling runs to a .mpr (moodle profile runs) file.
  *
  * This function gets an array of profiling runs (array of runids) and
- * saves a .mpr file into destinantion for ulterior handling.
+ * saves a .mpr file into destination for ulterior handling.
  *
  * Format of .mpr files:
  *   mpr files are simple zip packages containing these files:
@@ -435,12 +435,12 @@ function profiling_get_difference($number1, $number2, $units = '', $factor = 1, 
  *    - runid.xml: One file per each run detailed in the main file,
  *        containing the raw dump of the given runid in the profiling table.
  *
- * Posible improvement: Start storing some extra information in the
+ * Possible improvement: Start storing some extra information in the
  * profiling table for each run (moodle version, database, git hash...).
  *
  * @param array $runids list of runids to be exported.
  * @param string $file filesystem fullpath to destination .mpr file.
- * @return boolean the mpr file has been succesfully exported (true) or no (false).
+ * @return boolean the mpr file has been successfully exported (true) or no (false).
  */
 function profiling_export_runs(array $runids, $file) {
     global $CFG, $DB;
@@ -475,7 +475,7 @@ function profiling_export_runs(array $runids, $file) {
         $status = profiling_export_package($file, $tmpdir);
     }
 
-    // Process finished ok, clean and return
+    // Process finished ok, clean and return.
     fulldelete($tmpdir);
     return $status;
 }
@@ -487,10 +487,86 @@ function profiling_export_runs(array $runids, $file) {
  * implementation of .mpr files.
  *
  * @param string $file filesystem fullpath to target .mpr file.
- * @return boolean the mpr file has been succesfully imported (true) or no (false).
+ * @param string $commentprefix prefix to add to the comments of all the imported runs.
+ * @return boolean the mpr file has been successfully imported (true) or no (false).
  */
-function profiling_import_runs($file) {
-    return true;
+function profiling_import_runs($file, $commentprefix = '') {
+    global $DB;
+
+    // Any problem with the file or its directory, abort.
+    if (!file_exists($file) or !is_readable($file) or !is_writable(dirname($file))) {
+        return false;
+    }
+
+    // Unzip the file into temp directory.
+    $tmpdir = dirname($file) . '/' . time() . '_' . random_string(4);
+    $fp = get_file_packer('application/vnd.moodle.profiling');
+    $status = $fp->extract_to_pathname($file, $tmpdir);
+
+    // Look for master file and verify its format.
+    if ($status) {
+        $mfile = $tmpdir . '/moodle_profiling_runs.xml';
+        if (!file_exists($mfile) or !is_readable($mfile)) {
+            $status = false;
+        } else {
+            $mdom = new DOMDocument();
+            if (!$mdom->load($mfile)) {
+                $status = false;
+            } else {
+                $status = @$mdom->schemaValidateSource(profiling_get_import_main_schema());
+            }
+        }
+    }
+
+    // Verify all detail files exist and verify their format.
+    if ($status) {
+        $runs = $mdom->getElementsByTagName('run');
+        foreach ($runs as $run) {
+            $rfile = $tmpdir . '/' . clean_param($run->getAttribute('ref'), PARAM_FILE);
+            if (!file_exists($rfile) or !is_readable($rfile)) {
+                $status = false;
+            } else {
+                $rdom = new DOMDocument();
+                if (!$rdom->load($rfile)) {
+                    $status = false;
+                } else {
+                    $status = @$rdom->schemaValidateSource(profiling_get_import_run_schema());
+                }
+            }
+        }
+    }
+
+    // Everything looks ok, let's import all the runs.
+    if ($status) {
+        reset($runs);
+        foreach ($runs as $run) {
+            $rfile = $tmpdir . '/' . $run->getAttribute('ref');
+            $rdom = new DOMDocument();
+            $rdom->load($rfile);
+            $runarr = array();
+            $runarr['runid'] = clean_param($rdom->getElementsByTagName('runid')->item(0)->nodeValue, PARAM_ALPHANUMEXT);
+            $runarr['url'] = clean_param($rdom->getElementsByTagName('url')->item(0)->nodeValue, PARAM_CLEAN);
+            $runarr['runreference'] = clean_param($rdom->getElementsByTagName('runreference')->item(0)->nodeValue, PARAM_INT);
+            $runarr['runcomment'] = $commentprefix . clean_param($rdom->getElementsByTagName('runcomment')->item(0)->nodeValue, PARAM_CLEAN);
+            $runarr['timecreated'] = time(); // Now.
+            $runarr['totalexecutiontime'] = clean_param($rdom->getElementsByTagName('totalexecutiontime')->item(0)->nodeValue, PARAM_INT);
+            $runarr['totalcputime'] = clean_param($rdom->getElementsByTagName('totalcputime')->item(0)->nodeValue, PARAM_INT);
+            $runarr['totalcalls'] = clean_param($rdom->getElementsByTagName('totalcalls')->item(0)->nodeValue, PARAM_INT);
+            $runarr['totalmemory'] = clean_param($rdom->getElementsByTagName('totalmemory')->item(0)->nodeValue, PARAM_INT);
+            $runarr['data'] = clean_param($rdom->getElementsByTagName('data')->item(0)->nodeValue, PARAM_CLEAN);
+            // If the runid does not exist, insert it.
+            if (!$DB->record_exists('profiling', array('runid' => $runarr['runid']))) {
+                $DB->insert_record('profiling', $runarr);
+            } else {
+                return false;
+            }
+        }
+    }
+
+    // Clean the temp directory used for import.
+    remove_dir($tmpdir);
+
+    return $status;
 }
 
 /**
@@ -523,7 +599,9 @@ function profiling_export_generate(array $runids, $tmpdir) {
     $mainxw->full_tag('release', $release);
     $mainxw->full_tag('version', $version);
     $mainxw->full_tag('dbtype', $dbtype);
-    $mainxw->full_tag('githash', $githash);
+    if ($githash) {
+        $mainxw->full_tag('githash', $githash);
+    }
     $mainxw->full_tag('date', $date);
     $mainxw->end_tag('info');
 
@@ -588,6 +666,83 @@ function profiling_export_package($file, $tmpdir) {
     return true;
 }
 
+/**
+ * Return the xml schema for the main import file.
+ *
+ * @return string
+ *
+ */
+function profiling_get_import_main_schema() {
+    $schema = <<<EOS
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:element name="moodle_profiling_runs">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="info"/>
+        <xs:element ref="runs"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="info">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element type="xs:string" name="release"/>
+        <xs:element type="xs:decimal" name="version"/>
+        <xs:element type="xs:string" name="dbtype"/>
+        <xs:element type="xs:string" minOccurs="0" name="githash"/>
+        <xs:element type="xs:int" name="date"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="runs">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="run"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="run">
+    <xs:complexType>
+      <xs:attribute type="xs:int" name="id"/>
+      <xs:attribute type="xs:string" name="ref"/>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
+EOS;
+    return $schema;
+}
+
+/**
+ * Return the xml schema for each individual run import file.
+ *
+ * @return string
+ *
+ */
+function profiling_get_import_run_schema() {
+    $schema = <<<EOS
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:element name="moodle_profiling_run">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element type="xs:int" name="id"/>
+        <xs:element type="xs:string" name="runid"/>
+        <xs:element type="xs:string" name="url"/>
+        <xs:element type="xs:int" name="runreference"/>
+        <xs:element type="xs:string" name="runcomment"/>
+        <xs:element type="xs:int" name="timecreated"/>
+        <xs:element type="xs:int" name="totalexecutiontime"/>
+        <xs:element type="xs:int" name="totalcputime"/>
+        <xs:element type="xs:int" name="totalcalls"/>
+        <xs:element type="xs:int" name="totalmemory"/>
+        <xs:element type="xs:string" name="data"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
+EOS;
+    return $schema;
+}
 /**
  * Custom implementation of iXHProfRuns
  *

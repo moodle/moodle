@@ -65,6 +65,10 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
             60 => new lang_string('numminutes', '', 60),
             30 => new lang_string('numminutes', '', 30),
             15 => new lang_string('numminutes', '', 15))));
+        // Define the prefix to be added to imported profiling runs.
+        $temp->add(new admin_setting_configtext('profilingimportprefix',
+                new lang_string('profilingimportprefix', 'admin'),
+                new lang_string('profilingimportprefix_desc', 'admin'), '(I)', PARAM_TAG, 10));
 
         // Add the 'profiling' page to admin block
         $ADMIN->add('development', $temp);
