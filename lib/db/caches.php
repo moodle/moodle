@@ -121,6 +121,15 @@ $definitions = array(
         'mode' => cache_store::MODE_APPLICATION,
     ),
 
+    // Cache for the list of event observers.
+    'observers' => array(
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true,
+        'simpledata' => true,
+        'persistent' => true,
+        'persistentmaxsize' => 2,
+    ),
+
     // Cache used by the {@link plugininfo_base} class.
     'plugininfo_base' => array(
         'mode' => cache_store::MODE_APPLICATION,

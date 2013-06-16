@@ -27,7 +27,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 
-class eventslib_testcase extends advanced_testcase {
+class core_eventslib_testcase extends advanced_testcase {
 
     /**
      * Create temporary entries in the database for these tests.
