@@ -23,20 +23,27 @@ echo $OUTPUT->header();
 //TODO: add support for large number of users
 
 if ($confirm and confirm_sesskey()) {
-
+    $notifications = '';
     list($in, $params) = $DB->get_in_or_equal($SESSION->bulk_users);
     $rs = $DB->get_recordset_select('user', "id $in", $params);
     foreach ($rs as $user) {
         if (!is_siteadmin($user) and $USER->id != $user->id and delete_user($user)) {
             unset($SESSION->bulk_users[$user->id]);
         } else {
-            echo $OUTPUT->notification(get_string('deletednot', '', fullname($user, true)));
+            $notifications .= $OUTPUT->notification(get_string('deletednot', '', fullname($user, true)));
         }
     }
     $rs->close();
     session_gc(); // remove stale sessions
-    redirect($return, get_string('changessaved'));
-
+    echo $OUTPUT->box_start('generalbox', 'notice');
+    if (!empty($notifications)) {
+        echo $notifications;
+    } else {
+        echo $OUTPUT->notification(get_string('changessaved'), 'notifysuccess');
+    }
+    $continue = new single_button(new moodle_url($return), get_string('continue'), 'post');
+    echo $OUTPUT->render($continue);
+    echo $OUTPUT->box_end();
 } else {
     list($in, $params) = $DB->get_in_or_equal($SESSION->bulk_users);
     $userlist = $DB->get_records_select_menu('user', "id $in", $params, 'fullname', 'id,'.$DB->sql_fullname().' AS fullname');
