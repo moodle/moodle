@@ -823,6 +823,45 @@ class accesslib_testcase extends advanced_testcase {
     }
 
     /**
+     * Test role default allows.
+     */
+    public function test_get_default_role_archetype_allows() {
+        $archetypes = get_role_archetypes();
+        foreach ($archetypes as $archetype) {
+
+            $result = get_default_role_archetype_allows('assign', $archetype);
+            $this->assertTrue(is_array($result));
+
+            $result = get_default_role_archetype_allows('override', $archetype);
+            $this->assertTrue(is_array($result));
+
+            $result = get_default_role_archetype_allows('switch', $archetype);
+            $this->assertTrue(is_array($result));
+        }
+
+        $result = get_default_role_archetype_allows('assign', '');
+        $this->assertSame(array(), $result);
+
+        $result = get_default_role_archetype_allows('override', '');
+        $this->assertSame(array(), $result);
+
+        $result = get_default_role_archetype_allows('switch', '');
+        $this->assertSame(array(), $result);
+
+        $result = get_default_role_archetype_allows('assign', 'wrongarchetype');
+        $this->assertSame(array(), $result);
+        $this->assertDebuggingCalled();
+
+        $result = get_default_role_archetype_allows('override', 'wrongarchetype');
+        $this->assertSame(array(), $result);
+        $this->assertDebuggingCalled();
+
+        $result = get_default_role_archetype_allows('switch', 'wrongarchetype');
+        $this->assertSame(array(), $result);
+        $this->assertDebuggingCalled();
+    }
+
+    /**
      * Test allowing of role assignments.
      * @return void
      */
