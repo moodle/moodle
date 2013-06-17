@@ -7563,7 +7563,7 @@ function get_string($identifier, $component = '', $a = NULL, $lazyload = false) 
         return new lang_string($identifier, $component, $a);
     }
 
-    if (debugging('', DEBUG_DEVELOPER) && clean_param($identifier, PARAM_STRINGID) === '') {
+    if ($CFG->developerdebug && clean_param($identifier, PARAM_STRINGID) === '') {
         throw new coding_exception('Invalid string identifier. The identifier cannot be empty. Please fix your get_string() call.');
     }
 
@@ -11360,6 +11360,7 @@ class lang_string {
      * @param string $lang The language to use when processing the string.
      */
     public function __construct($identifier, $component = '', $a = null, $lang = null) {
+        global $CFG;
         if (empty($component)) {
             $component = 'moodle';
         }
@@ -11397,7 +11398,7 @@ class lang_string {
             }
         }
 
-        if (debugging(false, DEBUG_DEVELOPER)) {
+        if ($CFG->developerdebug) {
             if (clean_param($this->identifier, PARAM_STRINGID) == '') {
                 throw new coding_exception('Invalid string identifier. Most probably some illegal character is part of the string identifier. Please check your string definition');
             }

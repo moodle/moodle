@@ -69,6 +69,9 @@ information provided here is intended especially for developers.
   uninstall tool is returned. Unless the plugin type needs extra steps that can't be handled by
   plugininfo_xxx::uninstall() method or xmldb_xxx_uninstall() function, this default URL should
   satisfy all plugin types.
+* New pattern 'if ($CFG->developerdebug) {}' can be used when checking whether to carry
+  out additional sanity checks - faster than debugging('', DEBUG_DEVELOPER), but
+  that still works too.
 
 Database (DML) layer:
 * $DB->sql_empty() is deprecated, you have to use sql parameters with empty values instead,
