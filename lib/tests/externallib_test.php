@@ -136,9 +136,9 @@ class externallib_testcase extends advanced_testcase {
         $cleanedvalue = external_api::clean_returnvalue($returndesc, $testdata);
     }
     /*
-     * Test external_api::get_context()
+     * Test external_api::get_context_from_params()
      */
-    public function test_get_context() {
+    public function test_get_context_from_params() {
         global $USER;
 
         $this->resetAfterTest(true);
@@ -159,7 +159,7 @@ class externallib_testcase extends advanced_testcase {
     }
 
     /*
-     * Test external_api::get_context() parameter validation
+     * Test external_api::get_context()_from_params parameter validation
      */
     public function test_get_context_params() {
         global $USER;
@@ -170,7 +170,7 @@ class externallib_testcase extends advanced_testcase {
     }
 
     /*
-     * Test external_api::get_context() parameter validation
+     * Test external_api::get_context()_from_params parameter validation
      */
     public function test_get_context_params2() {
         global $USER;
@@ -181,7 +181,7 @@ class externallib_testcase extends advanced_testcase {
     }
 
     /*
-     * Test external_api::get_context() parameter validation
+     * Test external_api::get_context()_from_params parameter validation
      */
     public function test_get_context_params3() {
         global $USER;
@@ -200,6 +200,6 @@ class externallib_testcase extends advanced_testcase {
 class test_exernal_api extends external_api {
 
     public static function get_context_wrapper($params) {
-        return self::get_context($params);
+        return self::get_context_from_params($params);
     }
 }

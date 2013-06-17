@@ -613,7 +613,7 @@ class core_role_external extends external_api {
 
         foreach ($params['assignments'] as $assignment) {
             // Ensure correct context level with a instance id or contextid is passed.
-            $context = self::get_context($assignment);
+            $context = self::get_context_from_params($assignment);
 
             // Ensure the current user is allowed to run this function in the enrolment context.
             self::validate_context($context);
