@@ -50,10 +50,6 @@ class qtype_ordering_question extends question_graded_automatically {
     }
 
     public function classify_response(array $response) {
-        print_r ($response);
-        echo 'STOP in question/type/ordering/question.php classify_response()';
-        die();
-
         if (array_key_exists('answer', $response)) {
             $responseclassid = ($response['answer'] ? 1 : 0);
             list($fraction) = $this->grade_response($response);
