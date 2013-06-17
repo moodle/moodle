@@ -111,8 +111,8 @@ abstract class restore_controller_dbops extends restore_dbops {
             // TODO: If not match, exception, table corresponds to another backup/restore operation
             return true;
         }
-        create_backup_ids_temp_table($restoreid);
-        create_backup_files_temp_table($restoreid);
+        backup_controller_dbops::create_backup_ids_temp_table($restoreid);
+        backup_controller_dbops::create_backup_files_temp_table($restoreid);
         return false;
     }
 
