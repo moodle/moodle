@@ -36,25 +36,18 @@ class enrol_self_enrol_form extends moodleform {
      * @return string form identifier
      */
     protected function get_form_identifier() {
-        $formid = $this->_customdata['instance']->id.'_'.get_class($this);
+        $formid = $this->_customdata->id.'_'.get_class($this);
         return $formid;
     }
 
     public function definition() {
         $mform = $this->_form;
-        $instance = $this->_customdata['instance'];
+        $instance = $this->_customdata;
         $this->instance = $instance;
         $plugin = enrol_get_plugin('self');
 
         $heading = $plugin->get_instance_name($instance);
         $mform->addElement('header', 'selfheader', $heading);
-
-        if (true !== $this->_customdata['enrolstatus']) {
-            // If enrol status then show message, else show general error message.
-            $statusmsg = array_values($this->_customdata['enrolstatus']);
-            $mform->addElement('static', 'notice', '', $statusmsg[0]);
-            return;
-        }
 
         if ($instance->password) {
             // Change the id of self enrolment key input as there can be multiple self enrolment methods.

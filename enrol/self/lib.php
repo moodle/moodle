@@ -106,21 +106,11 @@ class enrol_self_plugin extends enrol_plugin {
     }
 
     public function show_enrolme_link(stdClass $instance) {
-        global $CFG, $USER;
 
-        if ($instance->status != ENROL_INSTANCE_ENABLED) {
+        if (true !== $this->can_self_enrol($instance, false)) {
             return false;
         }
 
-        if (!$instance->customint6) {
-            // New enrols not allowed.
-            return false;
-        }
-
-        if ($instance->customint5) {
-            require_once("$CFG->dirroot/cohort/lib.php");
-            return cohort_is_member($instance->customint5, $USER->id);
-        }
         return true;
     }
 
@@ -208,7 +198,7 @@ class enrol_self_plugin extends enrol_plugin {
         add_to_log($instance->courseid, 'course', 'enrol', '../enrol/users.php?id='.$instance->courseid, $instance->courseid); //TODO: There should be userid somewhere!
 
         if ($instance->password and $instance->customint1 and $data->enrolpassword !== $instance->password) {
-            // it must be a group enrolment, let's assign group too
+            // It must be a group enrolment, let's assign group too.
             $groups = $DB->get_records('groups', array('courseid'=>$instance->courseid), 'id', 'id, enrolmentkey');
             foreach ($groups as $group) {
                 if (empty($group->enrolmentkey)) {
@@ -240,52 +230,64 @@ class enrol_self_plugin extends enrol_plugin {
 
         $enrolstatus = $this->can_self_enrol($instance);
 
-        $form = new enrol_self_enrol_form(NULL, array('instance' => $instance, 'enrolstatus' => $enrolstatus));
-        $instanceid = optional_param('instance', 0, PARAM_INT);
-        if ($instance->id == $instanceid) {
-            if ($data = $form->get_data()) {
-                $this->enrol_self($instance, $data);
+        // Don't show enrolment instance form, if user can't enrol using it.
+        if (true === $enrolstatus) {
+            $form = new enrol_self_enrol_form(NULL, $instance);
+            $instanceid = optional_param('instance', 0, PARAM_INT);
+            if ($instance->id == $instanceid) {
+                if ($data = $form->get_data()) {
+                    $this->enrol_self($instance, $data);
+                }
             }
+
+            ob_start();
+            $form->display();
+            $output = ob_get_clean();
+            return $OUTPUT->box($output);
         }
-
-        ob_start();
-        $form->display();
-        $output = ob_get_clean();
-
-        return $OUTPUT->box($output);
     }
 
     /**
      * Checks if user can self enrol.
      *
      * @param stdClass $instance enrolment instance
-     * @return bool|array true if successful, else error code and message.
+     * @param bool $checkuserenrolment if true will check if user enrolment is inactive.
+     *             used by navigation to improve performance.
+     * @return bool|string true if successful, else error message or false.
      */
-    public function can_self_enrol(stdClass $instance) {
-        global $DB, $USER;
+    public function can_self_enrol(stdClass $instance, $checkuserenrolment = true) {
+        global $DB, $USER, $CFG;
 
-        if (isguestuser()) {
-            // Can not enrol guest!!
-            return array('canntenrol' => get_string('canntenrol', 'enrol_self'));
+        if ($checkuserenrolment) {
+            if (isguestuser()) {
+                // Can not enrol guest.
+                return get_string('canntenrol', 'enrol_self');
+            }
+            // Check if user is already enroled.
+            if ($DB->get_record('user_enrolments', array('userid' => $USER->id, 'enrolid' => $instance->id))) {
+                return get_string('canntenrol', 'enrol_self');
+            }
+        }
+
+        if ($instance->status != ENROL_INSTANCE_ENABLED) {
+            return get_string('canntenrol', 'enrol_self');
         }
 
         if ($instance->enrolstartdate != 0 and $instance->enrolstartdate > time()) {
-            //TODO: inform that we can not enrol yet
-            return array('canntenrol' => get_string('canntenrol', 'enrol_self'));
+            return get_string('canntenrol', 'enrol_self');
         }
 
         if ($instance->enrolenddate != 0 and $instance->enrolenddate < time()) {
-            //TODO: inform that enrolment is not possible any more
-            return array('canntenrol' => get_string('canntenrol', 'enrol_self'));
+            return get_string('canntenrol', 'enrol_self');
         }
 
         if (!$instance->customint6) {
             // New enrols not allowed.
-            return array('canntenrol' => get_string('canntenrol', 'enrol_self'));
+            return get_string('canntenrol', 'enrol_self');
         }
 
         if ($DB->record_exists('user_enrolments', array('userid' => $USER->id, 'enrolid' => $instance->id))) {
-            return array('canntenrol' => get_string('canntenrol', 'enrol_self'));
+            return get_string('canntenrol', 'enrol_self');
         }
 
         if ($instance->customint3 > 0) {
@@ -293,7 +295,7 @@ class enrol_self_plugin extends enrol_plugin {
             $count = $DB->count_records('user_enrolments', array('enrolid' => $instance->id));
             if ($count >= $instance->customint3) {
                 // Bad luck, no more self enrolments here.
-                return array('maxenrolledreached' => get_string('maxenrolledreached', 'enrol_self'));
+                return get_string('maxenrolledreached', 'enrol_self');
             }
         }
 
@@ -305,7 +307,7 @@ class enrol_self_plugin extends enrol_plugin {
                     return null;
                 }
                 $a = format_string($cohort->name, true, array('context' => context::instance_by_id($cohort->contextid)));
-                return array('cohortnonmemberinfo' => markdown_to_html(get_string('cohortnonmemberinfo', 'enrol_self', $a)));
+                return markdown_to_html(get_string('cohortnonmemberinfo', 'enrol_self', $a));
             }
         }
 
@@ -326,6 +328,7 @@ class enrol_self_plugin extends enrol_plugin {
         $instanceinfo->courseid = $instance->courseid;
         $instanceinfo->type = $this->get_name();
         $instanceinfo->name = $this->get_instance_name($instance);
+        $instanceinfo->status = $this->can_self_enrol($instance);
 
         if ($instance->password) {
             $instanceinfo->requiredparam = new stdClass();

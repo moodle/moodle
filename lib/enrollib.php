@@ -1714,9 +1714,11 @@ abstract class enrol_plugin {
      * Checks if user can self enrol.
      *
      * @param stdClass $instance enrolment instance
-     * @return bool true if current user can self enrol, else error code and message.
+     * @param bool $checkuserenrolment if true will check if user enrolment is inactive.
+     *             used by navigation to improve performance.
+     * @return bool|string true if successful, else error message or false
      */
-    public function can_self_enrol(stdClass $instance) {
+    public function can_self_enrol(stdClass $instance, $checkuserenrolment = true) {
         return false;
     }
 
