@@ -1032,11 +1032,8 @@ class qtype_calculated extends question_type {
         $answers = $question->options->answers;
 
         foreach ($answers as $key => $answer) {
-            if (is_string($answer)) {
-                $strheader .= $delimiter.$answer;
-            } else {
-                $strheader .= $delimiter.$answer->answer;
-            }
+            $ans = shorten_text($answer->answer, 17, true);
+            $strheader .= $delimiter.$ans;
             $delimiter = '<br/><br/><br/>';
         }
         return $strheader;
@@ -1083,10 +1080,11 @@ class qtype_calculated extends question_type {
                 $comment->stranswers[$key] = $formula . ' = ' .
                         get_string('anyvalue', 'qtype_calculated') . '<br/><br/><br/>';
             } else {
+                $formula = shorten_text($formula, 57, true);
                 $comment->stranswers[$key] = $formula . ' = ' . $formattedanswer->answer . '<br/>';
                 $correcttrue = new stdClass();
                 $correcttrue->correct = $formattedanswer->answer;
-                $correcttrue->true = $answer->answer;
+                $correcttrue->true = '';
                 if ($formattedanswer->answer < $answer->min ||
                         $formattedanswer->answer > $answer->max) {
                     $comment->outsidelimit = true;
@@ -1103,57 +1101,6 @@ class qtype_calculated extends question_type {
                 $comment->stranswers[$key] .= get_string('max', 'qtype_calculated') .
                         $delimiter . $answer->max;
             }
-        }
-        return fullclone($comment);
-    }
-    public function multichoice_comment_on_datasetitems($questionid, $questiontext,
-            $answers, $data, $number) {
-        global $DB;
-        $comment = new stdClass();
-        $comment->stranswers = array();
-        $comment->outsidelimit = false;
-        $comment->answers = array();
-        // Find a default unit.
-        if (!empty($questionid) && $unit = $DB->get_record('question_numerical_units',
-                array('question' => $questionid, 'multiplier' => 1.0))) {
-            $unit = $unit->unit;
-        } else {
-            $unit = '';
-        }
-
-        $answers = fullclone($answers);
-        $errors = '';
-        $delimiter = ': ';
-        foreach ($answers as $key => $answer) {
-            $answer->answer = $this->substitute_variables($answer->answer, $data);
-            // Evaluate the equations i.e {=5+4).
-            $qtext = '';
-            $qtextremaining = $answer->answer;
-            while (preg_match('~\{=([^[:space:]}]*)}~', $qtextremaining, $regs1)) {
-                $qtextsplits = explode($regs1[0], $qtextremaining, 2);
-                $qtext = $qtext.$qtextsplits[0];
-                $qtextremaining = $qtextsplits[1];
-                if (empty($regs1[1])) {
-                    $str = '';
-                } else {
-                    if ($formulaerrors = qtype_calculated_find_formula_errors($regs1[1])) {
-                        $str = $formulaerrors;
-                    } else {
-                        eval('$str = '.$regs1[1].';');
-
-                        $texteval= qtype_calculated_calculate_answer(
-                            $str, $data, $answer->tolerance,
-                            $answer->tolerancetype, $answer->correctanswerlength,
-                            $answer->correctanswerformat, '');
-                        $str = $texteval->answer;
-
-                    }
-                }
-                $qtext = $qtext.$str;
-            }
-            $answer->answer = $qtext.$qtextremaining;
-            $comment->stranswers[$key]= $answer->answer;
-
         }
         return fullclone($comment);
     }
@@ -1878,32 +1825,9 @@ function qtype_calculated_calculate_answer($formula, $individualdata,
         $calculated->answer = NAN;
         return $calculated;
     }
-    if ('1' == $answerformat) { /* Answer is to have $answerlength decimals */
-        /*** Adjust to the correct number of decimals ***/
-        if (stripos($answer, 'e')>0) {
-            $answerlengthadd = strlen($answer)-stripos($answer, 'e');
-        } else {
-            $answerlengthadd = 0;
-        }
-        $calculated->answer = round(floatval($answer), $answerlength+$answerlengthadd);
-
-        if ($answerlength) {
-            /* Try to include missing zeros at the end */
-
-            if (preg_match('~^(.*\\.)(.*)$~', $calculated->answer, $regs)) {
-                $calculated->answer = $regs[1] . substr(
-                    $regs[2] . '00000000000000000000000000000000000000000x',
-                    0, $answerlength)
-                    . $unit;
-            } else {
-                $calculated->answer .=
-                    substr('.00000000000000000000000000000000000000000x',
-                        0, $answerlength + 1) . $unit;
-            }
-        } else {
-            /* Attach unit */
-            $calculated->answer .= $unit;
-        }
+    if ('1' == $answerformat) { // Answer is to have $answerlength decimals.
+        // Decimal places.
+        $calculated->answer = sprintf('%.' . $answerlength . 'F', $answer);
 
     } else if ($answer) { // Significant figures does only apply if the result is non-zero.
 
@@ -1941,30 +1865,33 @@ function qtype_calculated_calculate_answer($formula, $individualdata,
             $exponent = 'e'.--$p10;
             $answer *= 10;
             if (1 == $answerlength) {
-                $calculated->answer = $sign.$answer.$exponent.$unit;
+                $calculated->answer = $sign.$answer.$exponent;
             } else {
                 // Attach additional zeros at the end of $answer.
                 $answer .= (1 == strlen($answer) ? '.' : '')
                     . '00000000000000000000000000000000000000000x';
                 $calculated->answer = $sign
-                    .substr($answer, 0, $answerlength +1).$exponent.$unit;
+                    .substr($answer, 0, $answerlength +1).$exponent;
             }
         } else {
             // Stick to plain numeric format.
             $answer *= "1e$p10";
             if (0.1 <= $answer / "1e$answerlength") {
-                $calculated->answer = $sign.$answer.$unit;
+                $calculated->answer = $sign.$answer;
             } else {
                 // Could be an idea to add some zeros here.
                 $answer .= (preg_match('~^[0-9]*$~', $answer) ? '.' : '')
                     . '00000000000000000000000000000000000000000x';
                 $oklen = $answerlength + ($p10 < 1 ? 2-$p10 : 1);
-                $calculated->answer = $sign.substr($answer, 0, $oklen).$unit;
+                $calculated->answer = $sign.substr($answer, 0, $oklen);
             }
         }
 
     } else {
         $calculated->answer = 0.0;
+    }
+    if ($unit != '') {
+            $calculated->answer = $calculated->answer . ' ' . $unit;
     }
 
     // Return the result.

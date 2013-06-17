@@ -86,6 +86,25 @@ class qtype_calculated_question extends qtype_numerical_question
             return parent::get_variants_selection_seed();
         }
     }
+
+    public function get_correct_response() {
+        $answer = $this->get_correct_answer();
+        if (!$answer) {
+            return array();
+        }
+
+        $response = array('answer' => $this->vs->format_float($answer->answer,
+            $answer->correctanswerlength, $answer->correctanswerformat));
+
+        if ($this->has_separate_unit_field()) {
+            $response['unit'] = $this->ap->get_default_unit();
+        } else if ($this->unitdisplay == qtype_numerical::UNITINPUT) {
+            $response['answer'] = $this->ap->add_unit($response['answer']);
+        }
+
+        return $response;
+    }
+
 }
 
 
@@ -318,9 +337,67 @@ class qtype_calculated_variable_substituter {
             if ($format == '1' ) { // Answer is to have $length decimals.
                 // Decimal places.
                 $x = sprintf('%.' . $length . 'F', $x);
-            } else if ($format == 2) {
-                // Significant figures.
-                $x = sprintf('%.' . $length . 'g', $x);
+
+            } else if ($x) { // Significant figures does only apply if the result is non-zero.
+                $answer = $x;
+                // Convert to positive answer.
+                if ($answer < 0) {
+                    $answer = -$answer;
+                    $sign = '-';
+                } else {
+                    $sign = '';
+                }
+
+                // Determine the format 0.[1-9][0-9]* for the answer...
+                $p10 = 0;
+                while ($answer < 1) {
+                    --$p10;
+                    $answer *= 10;
+                }
+                while ($answer >= 1) {
+                    ++$p10;
+                    $answer /= 10;
+                }
+                // ... and have the answer rounded of to the correct length.
+                $answer = round($answer, $length);
+
+                // If we rounded up to 1.0, place the answer back into 0.[1-9][0-9]* format.
+                if ($answer >= 1) {
+                    ++$p10;
+                    $answer /= 10;
+                }
+
+                // Have the answer written on a suitable format.
+                // Either scientific or plain numeric.
+                if (-2 > $p10 || 4 < $p10) {
+                    // Use scientific format.
+                    $exponent = 'e'.--$p10;
+                    $answer *= 10;
+                    if (1 == $length) {
+                        $x = $sign.$answer.$exponent;
+                    } else {
+                        // Attach additional zeros at the end of $answer.
+                        $answer .= (1 == strlen($answer) ? '.' : '')
+                            . '00000000000000000000000000000000000000000x';
+                        $x = $sign
+                            .substr($answer, 0, $length +1).$exponent;
+                    }
+                } else {
+                    // Stick to plain numeric format.
+                    $answer *= "1e$p10";
+                    if (0.1 <= $answer / "1e$length") {
+                        $x = $sign.$answer;
+                    } else {
+                        // Could be an idea to add some zeros here.
+                        $answer .= (preg_match('~^[0-9]*$~', $answer) ? '.' : '')
+                            . '00000000000000000000000000000000000000000x';
+                        $oklen = $length + ($p10 < 1 ? 2-$p10 : 1);
+                        $x = $sign.substr($answer, 0, $oklen);
+                    }
+                }
+
+            } else {
+                $x = 0.0;
             }
         }
         return str_replace('.', $this->decimalpoint, $x);

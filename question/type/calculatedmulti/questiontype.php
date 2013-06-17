@@ -197,12 +197,9 @@ class qtype_calculatedmulti extends qtype_calculated {
         $answers = $question->options->answers;
 
         foreach ($answers as $key => $answer) {
-            if (is_string($answer)) {
-                $strheader .= $delimiter.$answer;
-            } else {
-                $strheader .= $delimiter.$answer->answer;
-            }
-            $delimiter = '<br/>';
+            $ans = shorten_text($answer->answer, 17, true);
+            $strheader .= $delimiter.$ans;
+            $delimiter = '<br/><br/>';
         }
         return $strheader;
     }
@@ -219,14 +216,14 @@ class qtype_calculatedmulti extends qtype_calculated {
         $errors = '';
         $delimiter = ': ';
         foreach ($answers as $key => $answer) {
-            $answer->answer = $this->substitute_variables($answer->answer, $data);
+            $anssubstituted = $this->substitute_variables($answer->answer, $data);
             // Evaluate the equations i.e {=5+4).
-            $qtext = '';
-            $qtextremaining = $answer->answer;
-            while (preg_match('~\{=([^[:space:]}]*)}~', $qtextremaining, $regs1)) {
-                $qtextsplits = explode($regs1[0], $qtextremaining, 2);
-                $qtext =$qtext.$qtextsplits[0];
-                $qtextremaining = $qtextsplits[1];
+            $anstext = '';
+            $anstextremaining = $anssubstituted;
+            while (preg_match('~\{=([^[:space:]}]*)}~', $anstextremaining, $regs1)) {
+                $anstextsplits = explode($regs1[0], $anstextremaining, 2);
+                $anstext =$anstext.$anstextsplits[0];
+                $anstextremaining = $anstextsplits[1];
                 if (empty($regs1[1])) {
                     $str = '';
                 } else {
@@ -236,10 +233,10 @@ class qtype_calculatedmulti extends qtype_calculated {
                         eval('$str = '.$regs1[1].';');
                     }
                 }
-                $qtext = $qtext.$str;
+                $anstext = $anstext.$str;
             }
-            $answer->answer = $qtext.$qtextremaining;
-            $comment->stranswers[$key] = $answer->answer;
+            $anstext .= $anstextremaining;
+            $comment->stranswers[$key] = $anssubstituted.'<br/>'.$anstext;
         }
         return fullclone($comment);
     }

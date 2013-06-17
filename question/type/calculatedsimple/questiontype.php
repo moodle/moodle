@@ -267,7 +267,8 @@ class qtype_calculatedsimple extends qtype_calculated {
         $delimiter = '';
 
         foreach ($answers as $key => $answer) {
-            $strheader .= $delimiter.$answer->answer;
+            $ans = shorten_text($answer->answer, 17, true);
+            $strheader .= $delimiter.$ans;
             $delimiter = '<br/><br/><br/>';
         }
         return $strheader;

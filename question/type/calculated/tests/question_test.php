@@ -67,12 +67,41 @@ class qtype_calculated_question_test extends advanced_testcase {
     }
 
     public function test_get_correct_response() {
+        // Testing with 3.0 + 0.1416.
+        $question = test_question_maker::make_question('calculated');
+        $question->start_attempt(new question_attempt_step(), 3);
+        $values = $question->vs->get_values();
+        $this->assertSame(array('answer' => '3.01' ), $question->get_correct_response());
+        foreach ($question->answers as $answer) {
+            $answer->correctanswerlength = 2;
+            $answer->correctanswerformat = 2;
+        }
+        $this->assertSame(array('answer' => '3.0' ), $question->get_correct_response());
+
+        // Testing with 1.0 + 5.0.
         $question = test_question_maker::make_question('calculated');
         $question->start_attempt(new question_attempt_step(), 1);
         $values = $question->vs->get_values();
+        $this->assertSame(array('answer' => '6.00' ), $question->get_correct_response());
 
-        $this->assertEquals(array('answer' => $values['a'] + $values['b']),
+        foreach ($question->answers as $answer) {
+            $answer->correctanswerlength = 2;
+            $answer->correctanswerformat = 2;
+        }
+        $this->assertSame(array('answer' => '6.0' ),
                 $question->get_correct_response());
+        // Testing with 31.0 + 0.01416 .
+        $question = test_question_maker::make_question('calculated');
+        $question->start_attempt(new question_attempt_step(), 4);
+        $values = $question->vs->get_values();
+        $this->assertSame(array('answer' => '31.01' ), $question->get_correct_response());
+
+        foreach ($question->answers as $answer) {
+            $answer->correctanswerlength = 3;
+            $answer->correctanswerformat = 2;
+        }
+        $this->assertSame(array('answer' => '31.0' ), $question->get_correct_response());
+
     }
 
     public function test_get_question_summary() {

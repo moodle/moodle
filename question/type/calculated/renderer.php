@@ -36,4 +36,19 @@ require_once($CFG->dirroot . '/question/type/numerical/renderer.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_calculated_renderer extends qtype_numerical_renderer {
+    public function correct_response(question_attempt $qa) {
+        $question = $qa->get_question();
+        $answer = $question->get_correct_response();
+        if (!$answer) {
+            return '';
+        }
+
+        $response = $answer['answer'];
+        if ($question->unitdisplay != qtype_numerical::UNITNONE && $question->unitdisplay != qtype_numerical::UNITINPUT) {
+            $response = $question->ap->add_unit($response);
+        }
+
+        return get_string('correctansweris', 'qtype_shortanswer', $response);
+    }
+
 }

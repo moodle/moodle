@@ -28,6 +28,8 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/question/type/calculated/question.php');
+require_once($CFG->dirroot . '/question/type/numerical/question.php');
+require_once($CFG->dirroot . '/question/type/numerical/questiontype.php');
 require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
 
 
@@ -75,6 +77,8 @@ class qtype_calculated_test_helper extends question_test_helper {
         $q->datasetloader = new qtype_calculated_test_dataset_loader(0, array(
             array('a' => 1, 'b' => 5),
             array('a' => 3, 'b' => 4),
+            array('a' => 3, 'b' => 0.01416),
+            array('a' => 31, 'b' => 0.01416),
         ));
 
         return $q;
