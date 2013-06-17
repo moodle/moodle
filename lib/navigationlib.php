@@ -2448,9 +2448,9 @@ class global_navigation extends navigation_node {
         }
 
         // Badges.
-        if (!empty($CFG->enablebadges) && has_capability('moodle/badges:viewbadges', $this->page->context)) {
-            $url = new moodle_url($CFG->wwwroot . '/badges/view.php',
-                    array('type' => 2, 'id' => $course->id));
+        if (!empty($CFG->enablebadges) && !empty($CFG->badges_allowcoursebadges) &&
+            has_capability('moodle/badges:viewbadges', $this->page->context)) {
+            $url = new moodle_url('/badges/view.php', array('type' => 2, 'id' => $course->id));
 
             $coursenode->add(get_string('coursebadges', 'badges'), null,
                     navigation_node::TYPE_CONTAINER, null, 'coursebadges');
@@ -2499,7 +2499,7 @@ class global_navigation extends navigation_node {
         }
 
         //Badges
-        if (!empty($CFG->enablebadges) && !empty($CFG->badges_allowcoursebadges) && has_capability('moodle/badges:viewbadges', $this->page->context)) {
+        if (!empty($CFG->enablebadges) && has_capability('moodle/badges:viewbadges', $this->page->context)) {
             $url = new moodle_url($CFG->wwwroot . '/badges/view.php', array('type' => 1));
             $coursenode->add(get_string('sitebadges', 'badges'), $url, navigation_node::TYPE_CUSTOM);
         }
