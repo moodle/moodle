@@ -3839,18 +3839,19 @@ function get_user_fieldnames() {
  */
 function create_user_record($username, $password, $auth = 'manual') {
     global $CFG, $DB;
-
+    require_once($CFG->dirroot."/user/profile/lib.php");
     //just in case check text case
     $username = trim(textlib::strtolower($username));
 
     $authplugin = get_auth_plugin($auth);
-
+    $customfields = $authplugin->get_custom_user_profile_fields();
     $newuser = new stdClass();
-
     if ($newinfo = $authplugin->get_userinfo($username)) {
         $newinfo = truncate_userinfo($newinfo);
         foreach ($newinfo as $key => $value){
-            $newuser->$key = $value;
+            if (in_array($key, $authplugin->userfields) || (in_array($key, $customfields))) {
+                $newuser->$key = $value;
+            }
         }
     }
 
@@ -3880,6 +3881,10 @@ function create_user_record($username, $password, $auth = 'manual') {
     $newuser->mnethostid = $CFG->mnet_localhost_id;
 
     $newuser->id = $DB->insert_record('user', $newuser);
+
+    // Save user profile data.
+    profile_save_data($newuser);
+
     $user = get_complete_user_data('id', $newuser->id);
     if (!empty($CFG->{'auth_'.$newuser->auth.'_forcechangepassword'})){
         set_user_preference('auth_forcepasswordchange', 1, $user);
@@ -3903,7 +3908,7 @@ function create_user_record($username, $password, $auth = 'manual') {
  */
 function update_user_record($username) {
     global $DB, $CFG;
-
+    require_once($CFG->dirroot."/user/profile/lib.php");
     $username = trim(textlib::strtolower($username)); /// just in case check text case
 
     $oldinfo = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>$CFG->mnet_localhost_id), '*', MUST_EXIST);
@@ -3912,9 +3917,12 @@ function update_user_record($username) {
 
     if ($newinfo = $userauth->get_userinfo($username)) {
         $newinfo = truncate_userinfo($newinfo);
+        $customfields = $userauth->get_custom_user_profile_fields();
+
         foreach ($newinfo as $key => $value){
             $key = strtolower($key);
-            if (!property_exists($oldinfo, $key) or $key === 'username' or $key === 'id'
+            $iscustom = in_array($key, $customfields);
+            if ((!property_exists($oldinfo, $key) && !$iscustom) or $key === 'username' or $key === 'id'
                     or $key === 'auth' or $key === 'mnethostid' or $key === 'deleted') {
                 // unknown or must not be changed
                 continue;
@@ -3932,7 +3940,8 @@ function update_user_record($username) {
                 // nothing_ for this field. Thus it makes sense to let this value
                 // stand in until LDAP is giving a value for this field.
                 if (!(empty($value) && $lockval === 'unlockedifempty')) {
-                    if ((string)$oldinfo->$key !== (string)$value) {
+                    if ($iscustom || (in_array($key, $userauth->userfields) &&
+                            ((string)$oldinfo->$key !== (string)$value))) {
                         $newuser[$key] = (string)$value;
                     }
                 }
@@ -3942,6 +3951,10 @@ function update_user_record($username) {
             $newuser['id'] = $oldinfo->id;
             $newuser['timemodified'] = time();
             $DB->update_record('user', $newuser);
+
+            // Save user profile data.
+            profile_save_data((object) $newuser);
+
             // fetch full user record for the event, the complete user data contains too much info
             // and we want to be consistent with other places that trigger this event
             events_trigger('user_updated', $DB->get_record('user', array('id'=>$oldinfo->id)));
