@@ -64,7 +64,7 @@ class format_weeks extends format_base {
             // We subtract 24 hours for display purposes.
             $dates->end = ($dates->end - 86400);
 
-            $dateformat = ' '.get_string('strftimedateshort');
+            $dateformat = get_string('strftimedateshort');
             $weekday = userdate($dates->start, $dateformat);
             $endweekday = userdate($dates->end, $dateformat);
             return $weekday.' - '.$endweekday;
