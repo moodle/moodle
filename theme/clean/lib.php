@@ -56,7 +56,7 @@ function theme_clean_process_css($css, $theme) {
 
 /**
  * Adds the logo to CSS.
- * 
+ *
  * @param string $css The CSS.
  * @param string $logo The URL of the logo.
  * @return string The parsed CSS
