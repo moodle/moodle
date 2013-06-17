@@ -2172,5 +2172,23 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2013061400.01);
     }
 
+    if ($oldversion < 2013061700.00) {
+        // MDL-40103: Remove unused template tables from the database.
+        // These are now created inline with xmldb_table
+
+        $tablestocleanup = array('temp_enroled_template','temp_log_template','backup_files_template','backup_ids_template');
+        $dbman = $DB->get_manager();
+
+        foreach ($tablestocleanup as $table) {
+            $xmltable = new xmldb_table($table);
+            if ($dbman->table_exists($xmltable)) { 
+                $dbman->drop_table($xmltable);
+            }
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2013061700.00);
+    }
+
     return true;
 }

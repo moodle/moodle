@@ -103,58 +103,44 @@ abstract class backup_controller_dbops extends backup_dbops {
     }
 
     public static function create_backup_ids_temp_table($backupid) {
-        self::create_temptable_from_real_table($backupid, 'backup_ids_template', 'backup_ids_temp');
-    }
-
-    /**
-     * Given one "real" tablename, create one temp table suitable for be used in backup/restore operations
-     */
-    public static function create_temptable_from_real_table($backupid, $realtablename, $temptablename) {
         global $CFG, $DB;
         $dbman = $DB->get_manager(); // We are going to use database_manager services
 
-        // As far as xmldb objects use a lot of circular references (prev and next) and we aren't destroying
-        // them at all, that causes one memory leak of about 3M per backup execution, not problematic for
-        // individual backups but critical for automated (multiple) ones.
-        // So we are statically caching the xmldb_table definition here to produce the leak "only" once
-        static $xmldb_tables = array();
-
-        // Not cached, get it
-        if (!isset($xmldb_tables[$realtablename])) {
-            // Note: For now we are going to load the realtablename from core lib/db/install.xml
-            // that way, any change in the "template" will be applied here automatically. If this causes
-            // too much slow, we can always forget about the template and keep maintained the xmldb_table
-            // structure inline - manually - here.
-            // TODO: Right now, loading the whole lib/db/install.xml is "eating" 10M, we should
-            // change our way here in order to decrease that memory usage
-            $templatetablename = $realtablename;
-            $targettablename   = $temptablename;
-            $xmlfile = $CFG->dirroot . '/lib/db/install.xml';
-            $xmldb_file = new xmldb_file($xmlfile);
-            if (!$xmldb_file->fileExists()) {
-                throw new ddl_exception('ddlxmlfileerror', null, 'File does not exist');
-            }
-            $loaded = $xmldb_file->loadXMLStructure();
-            if (!$loaded || !$xmldb_file->isLoaded()) {
-                throw new ddl_exception('ddlxmlfileerror', null, 'not loaded??');
-            }
-            $xmldb_structure = $xmldb_file->getStructure();
-            $xmldb_table = $xmldb_structure->getTable($templatetablename);
-            if (is_null($xmldb_table)) {
-                throw new ddl_exception('ddlunknowntable', null, 'The table ' . $templatetablename . ' is not defined in file ' . $xmlfile);
-            }
-            // Clean prev & next, we are alone
-            $xmldb_table->setNext(null);
-            $xmldb_table->setPrevious(null);
-            // Rename
-            $xmldb_table->setName($targettablename);
-            // Cache it
-            $xmldb_tables[$realtablename] = $xmldb_table;
-        }
-        // Arrived here, we have the table always in static cache, get it
-        $xmldb_table = $xmldb_tables[$realtablename];
+        $xmldb_table = new xmldb_table('backup_ids_temp');
+        $xmldb_table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         // Set default backupid (not needed but this enforce any missing backupid). That's hackery in action!
-        $xmldb_table->getField('backupid')->setDefault($backupid);
+        $xmldb_table->add_field('backupid', XMLDB_TYPE_CHAR, 32, null, XMLDB_NOTNULL, null, $backupid);
+        $xmldb_table->add_field('itemname', XMLDB_TYPE_CHAR, 160, null, XMLDB_NOTNULL, null, null);
+        $xmldb_table->add_field('itemid', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, null, null);
+        $xmldb_table->add_field('newitemid', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, null, '0');
+        $xmldb_table->add_field('parentitemid', XMLDB_TYPE_INTEGER, 10, null, null, null, '0');
+        $xmldb_table->add_field('info', XMLDB_TYPE_TEXT, 1333, null, null, null, null);
+        $xmldb_table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $xmldb_table->add_key('backupid_itemname_itemid_uk', XMLDB_KEY_UNIQUE, array('backupid','itemname','itemid'));
+        $xmldb_table->add_index('backupid_parentitemid_ix', null, array('backupid','itemname','parentitemid'));
+        $xmldb_table->add_index('backupid_itemname_newitemid_ix', null, array('backupid','itemname','newitemid'));
+
+        $dbman->create_temp_table($xmldb_table); // And create it
+
+    }
+
+    public static function create_backup_files_temp_table($backupid) {
+        global $CFG, $DB;
+        $dbman = $DB->get_manager(); // We are going to use database_manager services
+
+        $xmldb_table = new xmldb_table('backup_files_temp');
+        $xmldb_table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        // Set default backupid (not needed but this enforce any missing backupid). That's hackery in action!
+        $xmldb_table->add_field('backupid', XMLDB_TYPE_CHAR, 32, null, XMLDB_NOTNULL, null, $backupid);
+        $xmldb_table->add_field('contextid', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, null, null);
+        $xmldb_table->add_field('component', XMLDB_TYPE_CHAR, 100, null, XMLDB_NOTNULL, null, null);
+        $xmldb_table->add_field('filearea', XMLDB_TYPE_CHAR, 50, null, XMLDB_NOTNULL, null, null);
+        $xmldb_table->add_field('itemid', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, null, null);
+        $xmldb_table->add_field('info', XMLDB_TYPE_TEXT, 1333, null, null, null, null);
+        $xmldb_table->add_field('newcontextid', XMLDB_TYPE_INTEGER, 10, null, null, null, '0');
+        $xmldb_table->add_field('newitemid', XMLDB_TYPE_INTEGER, 10, null, null, null, '0');
+        $xmldb_table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $xmldb_table->add_index('backupid_contextid_component_filearea_itemid_ix', null, array('backupid','contextid','component','filearea','itemid'));
 
         $dbman->create_temp_table($xmldb_table); // And create it
     }

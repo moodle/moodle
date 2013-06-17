@@ -2736,44 +2736,6 @@
         <INDEX NAME="typeitem_ix" UNIQUE="false" FIELDS="type, itemid"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="backup_ids_template" COMMENT="To store all sort of ids along the backup process. Note this table isn't really used but its temporary counterpart.">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="backupid" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="unique id of the backup"/>
-        <FIELD NAME="itemname" TYPE="char" LENGTH="160" NOTNULL="true" SEQUENCE="false" COMMENT="name of the component this id belongs to (usually table names)"/>
-        <FIELD NAME="itemid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="id of the component (usually table-&amp;gt;id values)"/>
-        <FIELD NAME="newitemid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="new id of the component after restore"/>
-        <FIELD NAME="parentitemid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="other id that can be useful to represent parent-child relations"/>
-        <FIELD NAME="info" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="to store information related with the item, base64(serialize())"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="backupid_itemname_itemid_uk" TYPE="unique" FIELDS="backupid, itemname, itemid"/>
-      </KEYS>
-      <INDEXES>
-        <INDEX NAME="backupid_parentitemid_ix" UNIQUE="false" FIELDS="backupid, itemname, parentitemid"/>
-        <INDEX NAME="backupid_itemname_newitemid_ix" UNIQUE="false" FIELDS="backupid, itemname, newitemid"/>
-      </INDEXES>
-    </TABLE>
-    <TABLE NAME="backup_files_template" COMMENT="To store files along the backup process. Note this table isn't really used but its temporary counterpart.">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="backupid" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="unique backup id this record corresponds to"/>
-        <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="source contextid of the file"/>
-        <FIELD NAME="component" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="filearea" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="itemid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="info" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="to store the complete file record (serialized)"/>
-        <FIELD NAME="newcontextid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The new contextid that the file has been restored to."/>
-        <FIELD NAME="newitemid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The new itemid the file has been restored to."/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-      </KEYS>
-      <INDEXES>
-        <INDEX NAME="backupid_contextid_component_filearea_itemid_ix" UNIQUE="false" FIELDS="backupid, contextid, component, filearea, itemid"/>
-      </INDEXES>
-    </TABLE>
     <TABLE NAME="backup_logs" COMMENT="To store all the logs from backup and restore operations (by db logger)">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
@@ -2900,39 +2862,6 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
-    </TABLE>
-    <TABLE NAME="temp_enroled_template" COMMENT="Temporary storage for course enrolments">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="roleid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-      </KEYS>
-      <INDEXES>
-        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
-        <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid"/>
-        <INDEX NAME="roleid" UNIQUE="false" FIELDS="roleid"/>
-      </INDEXES>
-    </TABLE>
-    <TABLE NAME="temp_log_template" COMMENT="Temporary storage for daily logs">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="action" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-      </KEYS>
-      <INDEXES>
-        <INDEX NAME="action" UNIQUE="false" FIELDS="action"/>
-        <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
-        <INDEX NAME="user" UNIQUE="false" FIELDS="userid"/>
-        <INDEX NAME="usercourseaction" UNIQUE="false" FIELDS="userid, course, action"/>
-      </INDEXES>
     </TABLE>
     <TABLE NAME="badge" COMMENT="Defines badge">
       <FIELDS>
