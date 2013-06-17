@@ -97,7 +97,7 @@ if (!$currentpage->userid) {
 }
 
 $PAGE->set_context($context);
-$PAGE->set_pagelayout('mydashboard');
+$PAGE->set_pagelayout('mypublic');
 $PAGE->set_pagetype('user-profile');
 
 // Set up block editing capabilities
