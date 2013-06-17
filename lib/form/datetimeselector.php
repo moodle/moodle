@@ -100,8 +100,10 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group {
                 }
             }
         }
-        // MDL-18375, Multi-Calendar Support
-        // form_init_date_js();
+        // The YUI2 calendar only supports the gregorian calendar type.
+        if (calendar_type_plugin_factory::get_calendar_type() === 'gregorian') {
+            form_init_date_js();
+        }
     }
 
     /**
@@ -138,10 +140,13 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group {
             $this->_elements[] = @MoodleQuickForm::createElement('select', 'hour', get_string('hour', 'form'), $hours, $this->getAttributes(), true);
             $this->_elements[] = @MoodleQuickForm::createElement('select', 'minute', get_string('minute', 'form'), $minutes, $this->getAttributes(), true);
         }
-        $this->_elements[] = @MoodleQuickForm::createElement('image', 'calendar', $OUTPUT->pix_url('i/calendar', 'moodle'),
-            array('title' => get_string('calendar', 'calendar'), 'class' => 'visibleifjs'));
+        // The YUI2 calendar only supports the gregorian calendar type so only display the calendar image if this is being used.
+        if (calendar_type_plugin_factory::get_calendar_type() === 'gregorian') {
+            $this->_elements[] = @MoodleQuickForm::createElement('image', 'calendar', $OUTPUT->pix_url('i/calendar', 'moodle'),
+                array('title' => get_string('calendar', 'calendar'), 'class' => 'visibleifjs'));
+        }
         // If optional we add a checkbox which the user can use to turn if on
-        if($this->_options['optional']) {
+        if ($this->_options['optional']) {
             $this->_elements[] = @MoodleQuickForm::createElement('checkbox', 'enabled', null, get_string('enable'), $this->getAttributes(), true);
         }
         foreach ($this->_elements as $element){
