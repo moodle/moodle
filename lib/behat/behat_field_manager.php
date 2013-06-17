@@ -142,4 +142,41 @@ class behat_field_manager {
         return self::get_field_node_type($fieldnode->getParent(), $session);
     }
 
+    /**
+     * Gets an instance of the form field.
+     *
+     * Not all the fields are part of a moodle form, in this
+     * cases it fallsback to the generic form field. Also note
+     * that this generic field type is using a generic setValue()
+     * method from the Behat API, which is not always good to set
+     * the value of form elements.
+     *
+     * @deprecated since Moodle 2.6 MDL-39634 - please do not use this function any more.
+     * @todo MDL-XXXXX This will be deleted in Moodle 2.8
+     * @see behat_field_manager::get_form_field()
+     * @param NodeElement $fieldnode
+     * @param Session $session The behat browser session
+     * @return behat_form_field
+     */
+    public static function get_field(NodeElement $fieldnode, $locator, Session $session) {
+        return self::get_form_field($fieldnode, $session);
+    }
+
+    /**
+     * Recursive method to find the field type.
+     *
+     * Depending on the field the felement class node is in a level or in another. We
+     * look recursively for a parent node with a 'felement' class to find the field type.
+     *
+     * @deprecated since Moodle 2.6 MDL-39634 - please do not use this function any more.
+     * @todo MDL-XXXXX This will be deleted in Moodle 2.8
+     * @see behat_field_manager::get_field_node_type()
+     * @param NodeElement $fieldnode The current node.
+     * @param Session $session The behat browser session
+     * @return mixed A NodeElement if we continue looking for the element type and String or false when we are done.
+     */
+    protected static function get_node_type(NodeElement $fieldnode, $locator, Session $session) {
+        return self::get_field_node_type($fieldnode, $session);
+    }
+
 }
