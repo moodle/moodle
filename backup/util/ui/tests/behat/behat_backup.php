@@ -322,7 +322,7 @@ class behat_backup extends behat_base {
 
             try {
                 $fieldnode = $this->find_field($locator);
-                $field = behat_field_manager::get_field($fieldnode, $locator, $this->getSession());
+                $field = behat_field_manager::get_form_field($fieldnode, $this->getSession());
                 $field->set_value($value);
 
             } catch (ElementNotFoundException $e) {
