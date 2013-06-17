@@ -48,7 +48,7 @@ class feedback_edit_add_question_form extends moodleform {
         $mform->setType('position', PARAM_INT);
 
         // buttons
-        $mform->addElement('submit', 'add_item', get_string('add_item', 'feedback'));
+        $mform->addElement('submit', 'add_item', get_string('add_item', 'feedback'), array('class' => 'hiddenifjs'));
     }
 }
 
