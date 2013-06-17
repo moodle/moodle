@@ -5,7 +5,7 @@ div.yui3-menu-content {
 /**************************************************************************************************/
 
 #custommenu .yui3-menu {
-    background-image:url([[pix:theme|custommenubg]]);
+    background-image:url([[pix:theme|trend/__setting_trendcolor__/custommenubg]]);
     background-repeat:repeat-x;
     background-color:#e1e1df;
 }

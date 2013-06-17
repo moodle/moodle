@@ -3,7 +3,7 @@
  **********************************************************/
 
 #page-mod-quiz-edit div.quizpage .pagecontent {background-color:[[setting:lblockcolumnbgc]];}
-.questionbankwindow h2 {background-image:url([[pix:theme|gradient_h]]);background-repeat:repeat-x;border-top:1px solid #C6BDA8;background-color:#E3DFD4;border-top:1px solid #C6BDA8;}
+.questionbankwindow h2 {background-image:url([[pix:theme|trend/__setting_trendcolor__/gradient_h]]);background-color:[[setting:blockheaderbackground]];background-repeat:repeat-x;border-top:1px solid #C6BDA8;}
 #page-mod-quiz-edit .questionbankwindow div.header {background-color:transparent;}
 #page-mod-quiz-edit .questionbankwindow div.header .title {color:#000;}
 #page-mod-quiz-edit .questionbankwindow div.header a:link,

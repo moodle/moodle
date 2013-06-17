@@ -219,7 +219,7 @@ if ($hasfooter) {
                 <?php echo page_doc_link(get_string('moodledocslink')); ?>
             </div>
         </div> <!-- </page-footer> -->
-    </div> <!-- </page"> -->
+    </div> <!-- </page> -->
 
     <div class="clearfix"></div>
 

@@ -46,6 +46,20 @@ if ($ADMIN->fulltree) {
     $setting->set_updatedcallback('theme_reset_all_caches');
     $settings->add($setting);
 
+    // Trend colour settings
+    $name = 'theme_formal_white/trendcolor';
+    $title = get_string('trendcolor','theme_formal_white');
+    $description = get_string('trendcolordesc', 'theme_formal_white');
+    $default = 'mink';
+    $trends = get_directory_list($CFG->dirroot.'/theme/formal_white/pix/trend/', '', false, true, false);
+    $choices = array();
+    foreach ($trends as $trend) {
+        $choices[$trend] = get_string($trend, 'theme_formal_white');
+    }
+    $setting = new admin_setting_configselect($name, $title, $description, $default, $choices);
+    $setting->set_updatedcallback('theme_reset_all_caches');
+    $settings->add($setting);
+
     // Custom site logo setting
     $name = 'theme_formal_white/customlogourl';
     $title = get_string('customlogourl','theme_formal_white');

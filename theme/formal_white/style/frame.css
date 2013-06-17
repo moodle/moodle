@@ -54,7 +54,7 @@
 
 #frametop,
 #footerframetop {
-    background-image:url([[pix:theme|roundcorner/header]]);
+    background-image:url([[pix:theme|trend/__setting_trendcolor__/roundcorner/header]]);
     margin:[[setting:framemargin]] [[setting:framemargin]] 0;
     background-position:0 0;
     background-repeat:repeat-x;
@@ -63,7 +63,7 @@
 
 #frametopright,
 #footerframetopright { /* Frame background top right */
-    background-image:url([[pix:theme|roundcorner/header_r]]);
+    background-image:url([[pix:theme|trend/__setting_trendcolor__/roundcorner/header_r]]);
     background-repeat:no-repeat;
     background-position:100% 0;
     text-align:left;
@@ -74,7 +74,7 @@
 #frametopright div,
 #footerframetopright div { /* Frame background top left */
     background-color:transparent;
-    background-image:url([[pix:theme|roundcorner/header_l]]);
+    background-image:url([[pix:theme|trend/__setting_trendcolor__/roundcorner/header_l]]);
     background-position:0 0;
     background-repeat:no-repeat;
     float:left;
@@ -88,7 +88,7 @@
 
 #frameleft,
 #footerframeleft { /* Frame background left */
-    background-image:url([[pix:theme|roundcorner/body_l]]);
+    background-image:url([[pix:theme|trend/__setting_trendcolor__/roundcorner/body_l]]);
     background-repeat:repeat-y;
     background-position:0 0;
     background-color:#FFF;
@@ -96,7 +96,7 @@
 
 #frameright,
 #footerframeright { /* Frame background right */
-    background-image:url([[pix:theme|roundcorner/body_r]]);
+    background-image:url([[pix:theme|trend/__setting_trendcolor__/roundcorner/body_r]]);
     background-repeat:repeat-y;
     background-position:100% 0;
     background-color:transparent;
@@ -106,7 +106,7 @@
 
 #framebottomright,
 #footerframebottomright { /* Frame background bottom right */
-    background-image:url([[pix:theme|roundcorner/footer_r]]);
+    background-image:url([[pix:theme|trend/__setting_trendcolor__/roundcorner/footer_r]]);
     background-position:100% 0;
     background-repeat:no-repeat;
     height: 17px;
@@ -117,7 +117,7 @@
 #framebottomright div,
 #footerframebottomright div {  /* Frame background bottom left */
     background-color:transparent;
-    background-image:url([[pix:theme|roundcorner/footer_l]]);
+    background-image:url([[pix:theme|trend/__setting_trendcolor__/roundcorner/footer_l]]);
     background-position:0 0;
     background-repeat:no-repeat;
     float: left;
@@ -133,7 +133,7 @@
 #footerframebottom { /* Bottom Middle */
     background-attachment:scroll;
     background-color:transparent;
-    background-image:url([[pix:theme|roundcorner/footer]]);
+    background-image:url([[pix:theme|trend/__setting_trendcolor__/roundcorner/footer]]);
     background-position:0 100%;
     background-repeat:repeat-x;
 }

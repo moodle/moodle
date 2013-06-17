@@ -27,6 +27,14 @@ function formal_white_user_settings($css, $theme) {
     }
     $css = formal_white_set_framemargin($css, $framemargin);
 
+    // Set the images according to color trend
+    if (!isset($theme->settings->trendcolor)) {
+        $trendcolor = 'mink'; // default
+    } else {
+        $trendcolor = $theme->settings->trendcolor;
+    }
+    $css = formal_white_set_trendcolor($css, $trendcolor);
+
     // Set the page header background color
     if (empty($theme->settings->headerbgc)) {
         $headerbgc = '#E3DFD4'; // default
@@ -86,8 +94,6 @@ function formal_white_user_settings($css, $theme) {
     return $css;
 }
 
-
-
 /**
  * Sets the link color variable in CSS
  *
@@ -107,6 +113,83 @@ function formal_white_set_framemargin($css, $framemargin) {
     $tag = '[[calculated:headermenumargin]]';
     $css = str_replace($tag, $calculated.'px', $css);
 
+    return $css;
+}
+
+function formal_white_set_trendcolor($css, $trendcolor) {
+    // __setting_trendcolor__ is part of URLS so it is already between double square bracket.
+    // I can not enclose it between double square bracket once again otherwise images path parser get confused.
+    $tag = urlencode('__setting_trendcolor__'); // urlencode is useless but it is correct to put it here
+    $css = str_replace($tag, $trendcolor, $css);
+
+    // of the basis of the general choosed trend, I need the right background color.
+    switch ($trendcolor) {
+        case 'blueberry':
+            // page background
+            $tag = '[[setting:pagebackground]]';
+            $css = str_replace($tag, '#DAF1FF', $css);
+
+            // block header background
+            $tag = '[[setting:blockheaderbackground]]';
+            $css = str_replace($tag, '#CDE2F3', $css);
+            break;
+        case 'lemon':
+            // page background
+            $tag = '[[setting:pagebackground]]';
+            $css = str_replace($tag, '#FFEB9A', $css);
+
+            // block header background
+            $tag = '[[setting:blockheaderbackground]]';
+            $css = str_replace($tag, '#F7DA41', $css);
+            break;
+        case 'lime':
+            // page background
+            $tag = '[[setting:pagebackground]]';
+            $css = str_replace($tag, '#F0F5BB', $css);
+
+            // block header background
+            $tag = '[[setting:blockheaderbackground]]';
+            $css = str_replace($tag, '#E2E499', $css);
+            break;
+        case 'mink':
+            // page background
+            $tag = '[[setting:pagebackground]]';
+            $css = str_replace($tag, '#EFEFEF', $css);
+
+            // block header background
+            $tag = '[[setting:blockheaderbackground]]';
+            $css = str_replace($tag, '#E3DFD4', $css);
+            break;
+        case 'orange':
+            // page background
+            $tag = '[[setting:pagebackground]]';
+            $css = str_replace($tag, '#FFD46C', $css);
+
+            // block header background
+            $tag = '[[setting:blockheaderbackground]]';
+            $css = str_replace($tag, '#FDC06D', $css);
+            break;
+        case 'peach':
+            // page background
+            $tag = '[[setting:pagebackground]]';
+            $css = str_replace($tag, '#FCD3BC', $css);
+
+            // block header background
+            $tag = '[[setting:blockheaderbackground]]';
+            $css = str_replace($tag, '#F7C099', $css);
+            break;
+        case 'silver':
+            // page background
+            $tag = '[[setting:pagebackground]]';
+            $css = str_replace($tag, '#EFF0F2', $css);
+
+            // block header background
+            $tag = '[[setting:blockheaderbackground]]';
+            $css = str_replace($tag, '#E0DFDD', $css);
+            break;
+        default:
+            debugging('It seems a colour has been added to the formal_white trend colours folder but was not fully managed. The code must be updated by a developer.');
+    }
     return $css;
 }
 

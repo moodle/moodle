@@ -2,24 +2,24 @@
  * This file contains style information for calendar module  *
  *************************************************************/
 
-/* i nomi dei mesi */
+/* the names of the months */
 .path-calendar .minicalendarblock h3 {font-size:1.0em;margin:0;text-align:center;}
 
-/* spaziatura fra nome del mese e minicalendar corrispondente */
+/* spacing between the month name and the corresponding minicalendar */
 .path-calendar .block .minicalendar {margin:5px 0 10px 0;}
 
-/* la quadrettatura del calendario */
+/* the grid of the calendar */
 .path-calendar .calendartable th,
 .path-calendar .calendartable td {border:1px [[setting:lblockcolumnbgc]] solid;}
 
-/* il rilievo del giorno corrente nel minicalendar */
+/* the different current day in minicalendar */
 /*.path-calendar .calendartable td.today {border:2px #444444 solid;}*/
 .path-calendar .minicalendar td.today {border:2px #444444 solid;}
 
-/* il bordo del generico evento nella lista a centro pagina */
+/* the edge of the generic event in the list in the center of the page */
 .path-calendar .maincalendar .eventlist .event {border: 1px [[setting:lblockcolumnbgc]] solid;}
 
-/* se c'è una duration... nel minicalendar */
+/* if a duration exists... in the minicalendar */
 .path-calendar .minicalendar .calendar_event_user,
 .path-calendar .minicalendar .duration_user {border-bottom:2px #A1BECB dotted;}
 .path-calendar .minicalendar .calendar_event_course,
@@ -29,24 +29,24 @@
 .path-calendar .minicalendar .calendar_event_group,
 .path-calendar .minicalendar .duration_group {border-bottom:2px #FBBB23 dotted;}
 
-/* se c'è una duration... nel calendartable */
-/* attento: non servono perché potrei avere più di una duration */
-/* per questo la casella non va segnata con un border-bottom    */
-/* ma vanno riporati gli eventi al suo interno                  */
+/* if a duration exists... in the calendartable */
+/* take care: it is not needed because I might have more than one duration
+ * this is why the cell must not be equipped with a border-bottom
+ * but events need to to drown inside
+ */
 
 .path-calendar .maincalendar .calendarmonth th,
-.path-calendar .minicalendar th {background:url([[pix:theme|gradient-sb]]) repeat-x 0 0;}
+.path-calendar .minicalendar th {background:url([[pix:theme|trend/__setting_trendcolor__/gradient-sb]]) repeat-x 0 0;}
 
-/* i settaggi del calendario del blocco */
-
-/* la quadrettatura del calendario */
+/* settings for the block calendar */
+/* the grid of the calendar */
 .calendartable th,
 .calendartable td {border:1px [[setting:lblockcolumnbgc]] solid;}
 
-/* il rilievo del giorno corrente nel calendario del blocco */
+/* the different current day in the block calendar */
 .calendartable .today {border:2px #444444 solid;}
 
-/* se c'è una duration... nel minicalendar */
+/* if a duration exists... in the block calendar */
 .calendartable .calendar_event_user,
 .calendartable .duration_user {border-bottom:2px #A1BECB dotted;}
 .calendartable .calendar_event_course,
