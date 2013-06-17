@@ -2163,5 +2163,14 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2013051400.01);
     }
 
+    if ($oldversion < 2013051400.06) {
+        // Clean up old tokens which haven't been deleted.
+        $DB->execute("DELETE FROM {user_private_key} WHERE NOT EXISTS
+                         (SELECT 'x' FROM {user} WHERE deleted = 0 AND id = userid)");
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2013051400.06);
+    }
+
     return true;
 }
