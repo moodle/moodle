@@ -131,6 +131,8 @@ define('MOODLE_INTERNAL', true);
 // Disables all caching.
 define('CACHE_DISABLE_ALL', true);
 
+define('PHPUNIT_TEST', false);
+
 // Check that PHP is of a sufficient version
 if (version_compare(phpversion(), "5.3.3") < 0) {
     $phpversion = phpversion();
@@ -160,6 +162,7 @@ $CFG->admin                = array_pop($parts);
 //the problem is that we need specific version of quickforms and hacked excel files :-(
 ini_set('include_path', $CFG->libdir.'/pear' . PATH_SEPARATOR . ini_get('include_path'));
 
+require_once($CFG->libdir.'/classes/component.php');
 require_once($CFG->libdir.'/installlib.php');
 require_once($CFG->libdir.'/clilib.php');
 require_once($CFG->libdir.'/setuplib.php');
