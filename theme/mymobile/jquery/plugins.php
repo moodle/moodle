@@ -36,7 +36,16 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+/*
+ * Note: If you want to change the contents of 'custom131.js' because you are
+ *       developing but don't want to up the version until you are happy with
+ *       it, then 'Purge All Caches' does not work, you need to clear the browsers
+ *       cache at the client end so that it requests a new copy on page load.
+ *       This also applies to the small 'hack' that is contained witin
+ *       'jquery.mobile-1.3.1.js'.
+ *       G J Barnard 14th April 2013
+ */
 $plugins = array(
-    'mymobile'   => array('files' => array('custom.js')), // Do not forget to bump up version after modification!
-    'mobile'     => array('files' => array('jquery.mobile-1.1.1.js'))
+    'mymobile'   => array('files' => array('custom131.js')), // Do not forget to bump up version after modification!
+    'mobile'     => array('files' => array('jquery.mobile-1.3.1.js'))
 );

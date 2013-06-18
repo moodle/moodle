@@ -494,19 +494,12 @@ input[name="mailnow"] {
     color:inherit;
 }
 .loginbox .loginform .form-input #username, .loginbox .loginform .form-input #password {
-    margin: 0 0 .4em;
-}
-.loginbox .loginform .form-input #username, .loginbox .loginform .form-input #password {
-    border: 1px solid #ccc !important;
     color: inherit !important;
     font-family: inherit !important;
     font-size: 16px !important;
     line-height: 1.4;
     padding: .4em !important;
     width: 98% !important;
-}
-.form-input #password {
-    margin-bottom: 1.2em !important;
 }
 .loginbox #loginbtn {
     width: 100% !important;
@@ -1630,6 +1623,11 @@ div.tablets, #sliderdiv, .has-myblocks .jsetsbar {
     height: 100%;
     max-width: 100px;
     max-height: 100px;
+}
+
+/** Moodle 2.5 Changes */
+.coursebox .name {
+    width: 100%;
 }
 /** Custom CSS **/
 [[setting:customcss]]
