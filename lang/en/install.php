@@ -86,6 +86,7 @@ $string['databasehead'] = 'Database settings';
 $string['databasehost'] = 'Database host';
 $string['databasename'] = 'Database name';
 $string['databasepass'] = 'Database password';
+$string['databaseport'] = 'Database port';
 $string['databasesettings'] = 'Now you need to configure the database where most Moodle data
     will be stored.  This database must already have been created
     and a username and password created to access it.<br />

@@ -58,7 +58,8 @@ Options:
 --dbname=NAME         Database name. Default is moodle
 --dbuser=USERNAME     Database user. Default is root
 --dbpass=PASSWORD     Database password. Default is blank
---dbsocket            Use database sockets. Available for some databases only.
+--dbport=NUMBER       Use database port.
+--dbsocket=PATH       Use database socket, 1 means default. Available for some databases only.
 --prefix=STRING       Table prefix for above database tables. Default is mdl_
 --fullname=STRING     The fullname of the site
 --shortname=STRING    The shortname of the site
@@ -151,6 +152,7 @@ $CFG->running_installer    = true;
 $CFG->early_install_lang   = true;
 $CFG->ostype               = (stristr(PHP_OS, 'win') && !stristr(PHP_OS, 'darwin')) ? 'WINDOWS' : 'UNIX';
 $CFG->developerdebug       = true;
+$CFG->dboptions            = array();
 
 $parts = explode('/', str_replace('\\', '/', dirname(dirname(__FILE__))));
 $CFG->admin                = array_pop($parts);
@@ -205,7 +207,8 @@ list($options, $unrecognized) = cli_get_params(
         'dbname'            => 'moodle',
         'dbuser'            => empty($distro->dbuser) ? 'root' : $distro->dbuser, // let distros set dbuser
         'dbpass'            => '',
-        'dbsocket'          => false,
+        'dbport'            => '',
+        'dbsocket'          => '',
         'prefix'            => 'mdl_',
         'fullname'          => '',
         'shortname'         => '',
@@ -498,6 +501,34 @@ if ($interactive) {
     $CFG->prefix = $options['prefix'];
 }
 
+// ask for db port
+if ($interactive) {
+    cli_separator();
+    cli_heading(get_string('databaseport', 'install'));
+    $prompt = get_string('clitypevaluedefault', 'admin', $options['dbport']);
+    $CFG->dboptions['dbport'] = (int)cli_input($prompt, $options['dbport']);
+
+} else {
+    $CFG->dboptions['dbport'] = (int)$options['dbport'];
+}
+if ($CFG->dboptions['dbport'] <= 0) {
+    $CFG->dboptions['dbport'] = '';
+}
+
+// ask for db socket
+if ($CFG->ostype === 'WINDOWS') {
+    $CFG->dboptions['dbsocket'] = '';
+
+} else if ($interactive and empty($CFG->dboptions['dbport'])) {
+    cli_separator();
+    cli_heading(get_string('databasesocket', 'install'));
+    $prompt = get_string('clitypevaluedefault', 'admin', $options['dbsocket']);
+    $CFG->dboptions['dbsocket'] = cli_input($prompt, $options['dbsocket']);
+
+} else {
+    $CFG->dboptions['dbsocket'] = $options['dbsocket'];
+}
+
 // ask for db user
 if ($interactive) {
     cli_separator();
@@ -526,14 +557,14 @@ if ($interactive) {
 
         $CFG->dbpass = cli_input($prompt, $options['dbpass']);
         if (function_exists('distro_pre_create_db')) { // Hook for distros needing to do something before DB creation
-            $distro = distro_pre_create_db($database, $CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->prefix, array('dbpersist'=>0, 'dbsocket'=>$options['dbsocket']), $distro);
+            $distro = distro_pre_create_db($database, $CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->prefix, array('dbpersist'=>0, 'dbport'=>$CFG->dboptions['dbport'], 'dbsocket'=>$CFG->dboptions['dbsocket']), $distro);
         }
-        $hint_database = install_db_validate($database, $CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->prefix, array('dbpersist'=>0, 'dbsocket'=>$options['dbsocket']));
+        $hint_database = install_db_validate($database, $CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->prefix, array('dbpersist'=>0, 'dbport'=>$CFG->dboptions['dbport'], 'dbsocket'=>$CFG->dboptions['dbsocket']));
     } while ($hint_database !== '');
 
 } else {
     $CFG->dbpass = $options['dbpass'];
-    $hint_database = install_db_validate($database, $CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->prefix, array('dbpersist'=>0, 'dbsocket'=>$options['dbsocket']));
+    $hint_database = install_db_validate($database, $CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->prefix, array('dbpersist'=>0, 'dbport'=>$CFG->dboptions['dbport'], 'dbsocket'=>$CFG->dboptions['dbsocket']));
     if ($hint_database !== '') {
         cli_error(get_string('dbconnectionerror', 'install'));
     }
