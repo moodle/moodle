@@ -66,8 +66,9 @@ class behat_files extends behat_base {
         // Gets the ffilemanager node specified by the locator which contains the filepicker container.
         $filepickercontainer = $this->find(
             'xpath',
-            "//input[./@id = //label[contains(normalize-space(string(.)), '" . $filepickerelement . "')]/@for]
-//ancestor::div[contains(concat(' ', normalize-space(@class), ' '), ' ffilemanager ') or contains(concat(' ', normalize-space(@class), ' '), ' ffilepicker ')]",
+            "//input[./@id = //label[contains(normalize-space(string(.)), '" . $filepickerelement . "')]/@for]" .
+                "//ancestor::div[contains(concat(' ', normalize-space(@class), ' '), ' ffilemanager ') or " .
+                "contains(concat(' ', normalize-space(@class), ' '), ' ffilepicker ')]",
             $exception
         );
 
@@ -123,11 +124,10 @@ class behat_files extends behat_base {
             // First we look at the folder as we need to click on the contextual menu otherwise it would be opened.
             $node = $this->find(
                 'xpath',
-                "//div[@class='fp-content']
-//descendant::*[self::div | self::a][contains(concat(' ', normalize-space(@class), ' '), ' fp-file ')]
-[contains(concat(' ', normalize-space(@class), ' '), ' fp-folder ')][contains(normalize-space(string(.)), '" . $name . "')]
-//descendant::a[contains(concat(' ', normalize-space(@class), ' '), ' fp-contextmenu ')]
-",
+                "//div[@class='fp-content']" .
+                    "//descendant::*[self::div | self::a][contains(concat(' ', normalize-space(@class), ' '), ' fp-file ')]" .
+                    "[contains(concat(' ', normalize-space(@class), ' '), ' fp-folder ')][contains(normalize-space(string(.)), '" . $name . "')]" .
+                    "//descendant::a[contains(concat(' ', normalize-space(@class), ' '), ' fp-contextmenu ')]",
                 $exception,
                 $containernode
             );
@@ -137,10 +137,10 @@ class behat_files extends behat_base {
             // Here the contextual menu is hidden, we click on the thumbnail.
             $node = $this->find(
                 'xpath',
-                "//div[@class='fp-content']
-//descendant::*[self::div | self::a][contains(concat(' ', normalize-space(@class), ' '), ' fp-file ')][contains(normalize-space(string(.)), '" . $name . "')]
-//descendant::div[contains(concat(' ', normalize-space(@class), ' '), ' fp-thumbnail ')]
-",
+                "//div[@class='fp-content']" .
+                "//descendant::*[self::div | self::a][contains(concat(' ', normalize-space(@class), ' '), ' fp-file ')]" .
+                "[contains(normalize-space(string(.)), '" . $name . "')]" .
+                "//descendant::div[contains(concat(' ', normalize-space(@class), ' '), ' fp-thumbnail ')]",
                 false,
                 $containernode
             );
@@ -179,9 +179,9 @@ class behat_files extends behat_base {
         // Here we don't need to look inside the selected filepicker because there can only be one modal window.
         $repositorylink = $this->find(
             'xpath',
-            "//div[contains(concat(' ', normalize-space(@class), ' '), ' fp-repo-area ')]
-//descendant::span[contains(concat(' ', normalize-space(@class), ' '), ' fp-repo-name ')]
-[contains(normalize-space(string(.)), '" . $repositoryname . "')]",
+            "//div[contains(concat(' ', normalize-space(@class), ' '), ' fp-repo-area ')]" .
+                "//descendant::span[contains(concat(' ', normalize-space(@class), ' '), ' fp-repo-name ')]" .
+                "[contains(normalize-space(string(.)), '" . $repositoryname . "')]",
             $repoexception
         );
 
