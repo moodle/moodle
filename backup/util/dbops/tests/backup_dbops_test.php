@@ -148,6 +148,30 @@ class backup_dbops_testcase extends advanced_testcase {
         backup_controller_dbops::drop_backup_ids_temp_table('testingid');
         $this->assertFalse($dbman->table_exists('backup_ids_temp'));
     }
+
+    /**
+     * Check backup_includes_files
+     */
+    function test_backup_controller_dbops_includes_files() {
+        global $DB;
+
+        $dbman = $DB->get_manager(); // Going to use some database_manager services for testing
+
+        // A MODE_GENERAL controller - this should include files
+        $bc = new mock_backup_controller4dbops(backup::TYPE_1ACTIVITY, $this->moduleid, backup::FORMAT_MOODLE,
+            backup::INTERACTIVE_NO, backup::MODE_GENERAL, $this->userid);
+        $this->assertEquals(backup_controller_dbops::backup_includes_files($bc->get_backupid()), 1);
+
+        // A MODE_IMPORT controller - should not include files
+        $bc = new mock_backup_controller4dbops(backup::TYPE_1ACTIVITY, $this->moduleid, backup::FORMAT_MOODLE,
+            backup::INTERACTIVE_NO, backup::MODE_IMPORT, $this->userid);
+        $this->assertEquals(backup_controller_dbops::backup_includes_files($bc->get_backupid()), 0);
+
+        // A MODE_SAMESITE controller - should not include files
+        $bc = new mock_backup_controller4dbops(backup::TYPE_1COURSE, $this->moduleid, backup::FORMAT_MOODLE,
+            backup::INTERACTIVE_NO, backup::MODE_SAMESITE, $this->userid);
+        $this->assertEquals(backup_controller_dbops::backup_includes_files($bc->get_backupid()), 0);
+    }
 }
 
 class mock_backup_controller4dbops extends backup_controller {

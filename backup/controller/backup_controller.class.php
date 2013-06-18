@@ -56,6 +56,7 @@ class backup_controller extends backup implements loggable {
     protected $status; // Current status of the controller (created, planned, configured...)
 
     protected $plan;   // Backup execution plan
+    protected $includefiles; // Whether this backup includes files or not.
 
     protected $execution;     // inmediate/delayed
     protected $executiontime; // epoch time when we want the backup to be executed (requires cron to run)
@@ -239,6 +240,17 @@ class backup_controller extends backup implements loggable {
         return $this->type;
     }
 
+    /**
+     * Returns the current value of the include_files setting.
+     * This setting is intended to ensure that files are not included in
+     * generated backups.
+     *
+     * @return int Indicates whether files should be included in backups.
+     */
+    public function get_include_files() {
+        return $this->includefiles;
+    }
+
     public function get_operation() {
         return $this->operation;
     }
@@ -362,6 +374,33 @@ class backup_controller extends backup implements loggable {
         $this->log('applying plan defaults', backup::LOG_DEBUG);
         backup_controller_dbops::apply_config_defaults($this);
         $this->set_status(backup::STATUS_CONFIGURED);
+        $this->set_include_files();
+    }
+
+    /**
+     * Set the initial value for the include_files setting.
+     *
+     * @see backup_controller::get_include_files for further information on the purpose of this setting.
+     * @return int Indicates whether files should be included in backups.
+     */
+    protected function set_include_files() {
+        // We normally include files.
+        $includefiles = true;
+
+        // In an import, we don't need to include files.
+        if ($this->get_mode() === backup::MODE_IMPORT) {
+            $includefiles = false;
+        }
+
+        // When a backup is intended for the same site, we don't need to include the files.
+        // Note, this setting is only used for duplication of an entire course.
+        if ($this->get_mode() === backup::MODE_SAMESITE) {
+            $includefiles = false;
+        }
+
+        $this->includefiles = (int) $includefiles;
+        $this->log("setting file inclusion to {$this->includefiles}", backup::LOG_DEBUG);
+        return $this->includefiles;
     }
 }
 
