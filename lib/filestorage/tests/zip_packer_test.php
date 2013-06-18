@@ -75,12 +75,14 @@ class zip_packer_testcase extends advanced_testcase {
             __DIR__.'/fixtures/test_7zip_927.zip',
             __DIR__.'/fixtures/test_winzip_165.zip',
             __DIR__.'/fixtures/test_winrar_421.zip',
+            __DIR__.'/fixtures/test_thumbsdb.zip',
         );
 
         if (function_exists('normalizer_normalize')) {
             // Unfortunately there is no way to standardise UTF-8 strings without INTL extension
             $files[] = __DIR__.'/fixtures/test_infozip_3.zip';
             $files[] = __DIR__.'/fixtures/test_osx_1074.zip';
+            $files[] = __DIR__.'/fixtures/test_osx_compress.zip';
         }
 
         $packer = get_file_packer('application/zip');
