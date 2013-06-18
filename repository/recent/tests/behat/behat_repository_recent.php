@@ -58,8 +58,11 @@ class behat_repository_recent extends behat_files {
 
         $this->find_button('Select this file')->click();
 
-        // Wait a while for the file to be selected.
-        $this->getSession()->wait(3 * 1000, false);
+        // Ensure the file has been selected and we returned to the form page.
+        $this->wait_until_return_to_form();
+
+        // Wait until file manager contents are updated.
+        $this->wait_until_contents_are_updated($filepickernode);
     }
 
 }
