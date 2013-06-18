@@ -98,7 +98,7 @@ class behat_form_field {
     /**
      * Guesses the element type we are dealing with in case is not a text-based element.
      *
-     * This class is the generic field type, behat_field_manager::get_field()
+     * This class is the generic field type, behat_field_manager::get_form_field()
      * should be able to find the appropiate class for the field type, but
      * in cases like moodle form group elements we can not find the type of
      * the field through the DOM so we also need to take care of the

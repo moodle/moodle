@@ -81,7 +81,7 @@ class behat_forms extends behat_base {
             $fieldnode = $this->find_field($locator);
 
             // Gets the field type from a parent node.
-            $field = behat_field_manager::get_field($fieldnode, $locator, $this->getSession());
+            $field = behat_field_manager::get_form_field($fieldnode, $this->getSession());
 
             // Delegates to the field class.
             $field->set_value($value);
@@ -256,7 +256,7 @@ class behat_forms extends behat_base {
         $fieldnode = $this->find_field($locator);
 
         // Get the field.
-        $field = behat_field_manager::get_field($fieldnode, $locator, $this->getSession());
+        $field = behat_field_manager::get_form_field($fieldnode, $this->getSession());
         $fieldvalue = $field->get_value();
 
         // Checks if the provided value matches the current field value.
