@@ -518,9 +518,8 @@ class cache_helper {
      * @return string
      */
     public static function hash_key($key, cache_definition $definition) {
-        global $CFG;
         if ($definition->uses_simple_keys()) {
-            if ($CFG->developerdebug && preg_match('#[^a-zA-Z0-9_]#', $key)) {
+            if (debugging() && preg_match('#[^a-zA-Z0-9_]#', $key)) {
                 throw new coding_exception('Cache definition '.$definition->get_id().' requires simple keys. Invalid key provided.', $key);
             }
             // We put the key first so that we can be sure the start of the key changes.

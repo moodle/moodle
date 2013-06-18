@@ -54,13 +54,6 @@ if (!isset($CFG)) {
     }
 }
 
-// The 'developerdebug' value is relied upon by various functions, so set it
-// immediately (before debugging value is actually known).
-if (!isset($CFG->developerdebug)) {
-    $tempdeveloperdebug = true;
-    $CFG->developerdebug = false;
-}
-
 // We can detect real dirroot path reliably since PHP 4.0.2,
 // it can not be anything else, there is no point in having this in config.php
 $CFG->dirroot = dirname(dirname(__FILE__));
@@ -619,9 +612,6 @@ if ($originalconfigdebug !== null) {
 unset($originalconfigdebug);
 unset($originaldatabasedebug);
 error_reporting($CFG->debug);
-if (!empty($tempdeveloperdebug)) {
-    $CFG->developerdebug = debugging('', DEBUG_DEVELOPER);
-}
 
 // find out if PHP configured to display warnings,
 // this is a security problem because some moodle scripts may
