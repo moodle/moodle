@@ -67,6 +67,13 @@ class mod_assign_grading_options_form extends moodleform {
             $mform->setDefault('quickgrading', $instance['quickgrading']);
         }
 
+        // Show active/suspended user option.
+        if ($instance['showonlyactiveenrolopt']) {
+            $mform->addElement('checkbox', 'showonlyactiveenrol', get_string('showonlyactiveenrol', 'grades'), '', $dirtyclass);
+            $mform->addHelpButton('showonlyactiveenrol', 'showonlyactiveenrol', 'grades');
+            $mform->setDefault('showonlyactiveenrol', $instance['showonlyactiveenrol']);
+        }
+
         // Hidden params.
         $mform->addElement('hidden', 'contextid', $instance['contextid']);
         $mform->setType('contextid', PARAM_INT);

@@ -122,6 +122,12 @@ class assign {
     /** @var array of marking workflow states for the current user */
     private $markingworkflowstates = null;
 
+    /** @var bool whether to exclude users with inactive enrolment */
+    private $showonlyactiveenrol = true;
+
+    /** @var array list of suspended user IDs in form of ([id1] => id1) */
+    private $susers = array();
+
     /**
      * Constructor for the base assign class.
      *
@@ -134,7 +140,7 @@ class assign {
      *                      otherwise this class will load one from the context as required.
      */
     public function __construct($coursemodulecontext, $coursemodule, $course) {
-        global $PAGE;
+        global $PAGE, $CFG;
 
         $this->context = $coursemodulecontext;
         $this->coursemodule = $coursemodule;
@@ -145,6 +151,15 @@ class assign {
 
         $this->submissionplugins = $this->load_plugins('assignsubmission');
         $this->feedbackplugins = $this->load_plugins('assignfeedback');
+
+        $defaultgradeshowactiveenrol = !empty($CFG->grade_report_showonlyactiveenrol);
+        $this->showonlyactiveenrol = get_user_preferences('grade_report_showonlyactiveenrol', $defaultgradeshowactiveenrol);
+        if (!is_null($this->context)) {
+            $this->showonlyactiveenrol = $this->showonlyactiveenrol ||
+                        !has_capability('moodle/course:viewsuspendedusers', $this->context);
+
+            $this->susers = get_suspended_userids($this->context);
+        }
     }
 
     /**
@@ -1256,9 +1271,11 @@ class assign {
      */
     public function list_participants($currentgroup, $idsonly) {
         if ($idsonly) {
-            return get_enrolled_users($this->context, 'mod/assign:submit', $currentgroup, 'u.id');
+            return get_enrolled_users($this->context, 'mod/assign:submit', $currentgroup, 'u.id', null, null, null,
+                    $this->showonlyactiveenrol);
         } else {
-            return get_enrolled_users($this->context, 'mod/assign:submit', $currentgroup);
+            return get_enrolled_users($this->context, 'mod/assign:submit', $currentgroup, 'u.*', null, null, null,
+                    $this->showonlyactiveenrol);
         }
     }
 
@@ -1291,7 +1308,7 @@ class assign {
      * @return int number of matching users
      */
     public function count_participants($currentgroup) {
-        return count_enrolled_users($this->context, 'mod/assign:submit', $currentgroup);
+        return count_enrolled_users($this->context, 'mod/assign:submit', $currentgroup, $this->showonlyactiveenrol);
     }
 
     /**
@@ -1340,6 +1357,12 @@ class assign {
                         s.status = :submitted AND
                         (s.timemodified > g.timemodified OR g.timemodified IS NULL)';
 
+        if ($this->showonlyactiveenrol && sizeof($this->susers)) {
+            $susql = '';
+            list($susql, $suparams) = $DB->get_in_or_equal($this->susers, SQL_PARAMS_NAMED, 'sng', false);
+            $sql .= " AND s.userid $susql";
+            $params = array_merge($params, $suparams);
+        }
         return $DB->count_records_sql($sql, $params);
     }
 
@@ -1365,6 +1388,12 @@ class assign {
                    JOIN(' . $esql . ') e ON e.id = g.userid
                    WHERE g.assignment = :assignid';
 
+        if ($this->showonlyactiveenrol && sizeof($this->susers)) {
+            $susql = '';
+            list($susql, $suparams) = $DB->get_in_or_equal($this->susers, SQL_PARAMS_NAMED, 'cg', false);
+            $sql .= " AND g.userid $susql";
+            $params = array_merge($params, $suparams);
+        }
         return $DB->count_records_sql($sql, $params);
     }
 
@@ -1405,6 +1434,12 @@ class assign {
                        WHERE
                             s.assignment = :assignid AND
                             s.timemodified IS NOT NULL';
+
+            if ($this->showonlyactiveenrol && sizeof($this->susers)) {
+                list($susql, $suparams) = $DB->get_in_or_equal($this->susers, SQL_PARAMS_NAMED, 'cs', false);
+                $sql .= " AND userid $susql";
+                $params = array_merge($params, $suparams);
+            }
         }
 
         return $DB->count_records_sql($sql, $params);
@@ -1455,6 +1490,12 @@ class assign {
                             s.assignment = :assignid AND
                             s.timemodified IS NOT NULL AND
                             s.status = :submissionstatus';
+
+            if ($this->showonlyactiveenrol && sizeof($this->susers)) {
+                list($susql, $suparams) = $DB->get_in_or_equal($this->susers, SQL_PARAMS_NAMED, 'csws', false);
+                $sql .= " AND s.userid $susql";
+                $params = array_merge($params, $suparams);
+            }
         }
 
         return $DB->count_records_sql($sql, $params);
@@ -1836,6 +1877,14 @@ class assign {
             foreach ($allusers as $user) {
                 if ($this->get_submission_group($user->id) == null) {
                     $members[] = $user;
+                }
+            }
+        }
+        // Exclude suspended users, if user can't see them.
+        if (!has_capability('moodle/course:viewsuspendedusers', $this->context)) {
+            foreach ($members as $key => $member) {
+                if (in_array($member->id, $this->susers)) {
+                    unset($members[$key]);
                 }
             }
         }
@@ -2289,7 +2338,8 @@ class assign {
         require_capability('mod/assign:grade', $this->context);
 
         // Load all users with submit.
-        $students = get_enrolled_users($this->context, "mod/assign:submit");
+        $students = get_enrolled_users($this->context, "mod/assign:submit", null, 'u.*', null, null, null,
+                        $this->showonlyactiveenrol);
 
         // Build a list of files to zip.
         $filesforzipping = array();
@@ -2904,6 +2954,7 @@ class assign {
         $controller = $gradingmanager->get_active_controller();
         $showquickgrading = empty($controller);
         $quickgrading = get_user_preferences('assign_quickgrading', false);
+        $showonlyactiveenrolopt = has_capability('moodle/course:viewsuspendedusers', $this->context);
 
         $markingallocation = $this->get_instance()->markingallocation &&
             has_capability('mod/assign:manageallocations', $this->context);
@@ -2934,7 +2985,9 @@ class assign {
                                           'showquickgrading'=>$showquickgrading,
                                           'quickgrading'=>$quickgrading,
                                           'markingworkflowopt'=>$markingworkflowoptions,
-                                          'markingallocationopt'=>$markingallocationoptions);
+                                          'markingallocationopt'=>$markingallocationoptions,
+                                          'showonlyactiveenrolopt'=>$showonlyactiveenrolopt,
+                                          'showonlyactiveenrol'=>$this->showonlyactiveenrol);
 
         $classoptions = array('class'=>'gradingoptionsform');
         $gradingoptionsform = new mod_assign_grading_options_form(null,
@@ -3925,7 +3978,9 @@ class assign {
             foreach ($team as $member) {
                 $membersubmission = $this->get_user_submission($member->id, false, $submission->attemptnumber);
 
-                if (!$membersubmission || $membersubmission->status != ASSIGN_SUBMISSION_STATUS_SUBMITTED) {
+                // If no submission found for team member and member is active then everyone has not submitted.
+                if (!$membersubmission || $membersubmission->status != ASSIGN_SUBMISSION_STATUS_SUBMITTED
+                        && (!in_array($member->id, $this->susers))) {
                     $allsubmitted = false;
                     if ($anysubmitted) {
                         break;
@@ -4095,7 +4150,8 @@ class assign {
      * @return array
      */
     protected function get_graders($userid) {
-        $potentialgraders = get_enrolled_users($this->context, 'mod/assign:grade');
+        // Potential graders should be active users only.
+        $potentialgraders = get_enrolled_users($this->context, "mod/assign:grade", null, 'u.*', null, null, null, true);
 
         $graders = array();
         if (groups_get_activity_groupmode($this->get_course_module()) == SEPARATEGROUPS) {
@@ -4801,6 +4857,11 @@ class assign {
         $gradingmanager = get_grading_manager($this->get_context(), 'mod_assign', 'submissions');
         $controller = $gradingmanager->get_active_controller();
         $showquickgrading = empty($controller);
+        if (!is_null($this->context)) {
+            $showonlyactiveenrolopt = has_capability('moodle/course:viewsuspendedusers', $this->context);
+        } else {
+            $showonlyactiveenrolopt = false;
+        }
 
         $markingallocation = $this->get_instance()->markingallocation &&
             has_capability('mod/assign:manageallocations', $this->context);
@@ -4829,7 +4890,9 @@ class assign {
                                       'showquickgrading'=>$showquickgrading,
                                       'quickgrading'=>false,
                                       'markingworkflowopt' => $markingworkflowoptions,
-                                      'markingallocationopt' => $markingallocationoptions);
+                                      'markingallocationopt' => $markingallocationoptions,
+                                      'showonlyactiveenrolopt'=>$showonlyactiveenrolopt,
+                                      'showonlyactiveenrol'=>$this->showonlyactiveenrol);
 
         $mform = new mod_assign_grading_options_form(null, $gradingoptionsparams);
         if ($formdata = $mform->get_data()) {
@@ -4845,6 +4908,11 @@ class assign {
             }
             if ($showquickgrading) {
                 set_user_preference('assign_quickgrading', isset($formdata->quickgrading));
+            }
+            if (!empty($showonlyactiveenrolopt)) {
+                $showonlyactiveenrol = isset($formdata->showonlyactiveenrol);
+                set_user_preference('grade_report_showonlyactiveenrol', $showonlyactiveenrol);
+                $this->showonlyactiveenrol = $showonlyactiveenrol;
             }
         }
     }
