@@ -247,7 +247,7 @@ if ((!empty($hide) or !empty($show)) && confirm_sesskey()) {
     require_capability('moodle/course:visibility', $coursecontext);
     // Set the visibility of the course. we set the old flag when user manually changes visibility of course.
     $params = array('id' => $course->id, 'visible' => $visible, 'visibleold' => $visible, 'timemodified' => time());
-    $DB->update_record('course', $params);
+    update_course_record((object)$params);
     cache_helper::purge_by_event('changesincourse');
     add_to_log($course->id, "course", ($visible ? 'show' : 'hide'), "edit.php?id=$course->id", $course->id);
 }

@@ -5099,7 +5099,7 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
     if (!empty($options['keep_groups_and_groupings'])) {
         $oldcourse->defaultgroupingid = 0;
     }
-    $DB->update_record('course', $oldcourse);
+    update_course_record($oldcourse);
 
     // Delete course sections and availability options.
     $DB->delete_records_select('course_sections_availability',

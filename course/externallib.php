@@ -1083,7 +1083,7 @@ class core_course_external extends external_api {
         $course->visible = $params['visible'];
 
         // Set shortname and fullname back.
-        $DB->update_record('course', $course);
+        update_course_record($course);
 
         if (empty($CFG->keeptempdirectoriesonbackup)) {
             fulldelete($backupbasepath);

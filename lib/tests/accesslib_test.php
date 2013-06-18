@@ -2433,7 +2433,7 @@ class core_accesslib_testcase extends advanced_testcase {
         $miscid = $DB->get_field_sql("SELECT MIN(id) FROM {course_categories}");
         $categorycontext = context_coursecat::instance($miscid);
         $course->category = $miscid;
-        $DB->update_record('course', $course);
+        update_course_record($course);
         $context->update_moved($categorycontext);
 
         $context = context_course::instance($course->id);
@@ -2672,7 +2672,7 @@ class core_accesslib_testcase extends advanced_testcase {
         $miscid = $DB->get_field_sql("SELECT MIN(id) FROM {course_categories}");
         $categorycontext = context_coursecat::instance($miscid);
         $course->category = $miscid;
-        $DB->update_record('course', $course);
+        update_course_record($course);
         context_moved($context, $categorycontext);
         $this->assertDebuggingCalled('context_moved() is deprecated, please use context::update_moved() instead.', DEBUG_DEVELOPER);
         $context = context_course::instance($course->id);
