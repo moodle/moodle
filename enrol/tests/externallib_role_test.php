@@ -115,9 +115,22 @@ class core_role_external_testcase extends externallib_advanced_testcase {
         $users = get_role_users(3, $context);
         $this->assertEquals(count($users), 1);
 
-        // Call the external function. Assign teacher role to $USER.
+        // Call the external function. Unassign teacher role using contextid.
         core_role_external::unassign_roles(array(
             array('roleid' => 3, 'userid' => $USER->id, 'contextid' => $context->id)));
+
+        // Check the role has been unassigned on course context.
+        $users = get_role_users(3, $context);
+        $this->assertEquals(count($users), 0);
+
+        // Add teacher role to $USER on course context.
+        role_assign(3, $USER->id, $context->id);
+        $users = get_role_users(3, $context);
+        $this->assertEquals(count($users), 1);
+
+        // Call the external function. Unassign teacher role using context level and instanceid.
+        core_role_external::unassign_roles(array(
+            array('roleid' => 3, 'userid' => $USER->id, 'contextlevel' => "course", 'instanceid' => $course->id)));
 
         // Check the role has been unassigned on course context.
         $users = get_role_users(3, $context);

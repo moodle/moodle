@@ -655,7 +655,10 @@ class core_role_external extends external_api {
                         array(
                             'roleid'    => new external_value(PARAM_INT, 'Role to assign to the user'),
                             'userid'    => new external_value(PARAM_INT, 'The user that is going to be assigned'),
-                            'contextid' => new external_value(PARAM_INT, 'The context to unassign the user role from'),
+                            'contextid' => new external_value(PARAM_INT, 'The context to unassign the user role from', VALUE_OPTIONAL),
+                            'contextlevel' => new external_value(PARAM_ALPHA, 'The context level to unassign the user role in
++                                    (block, course, coursecat, system, user, module)', VALUE_OPTIONAL),
+                            'instanceid' => new external_value(PARAM_INT, 'The Instance id of item where the role needs to be unassigned', VALUE_OPTIONAL),
                         )
                     )
                 )
@@ -679,7 +682,7 @@ class core_role_external extends external_api {
 
         foreach ($params['unassignments'] as $unassignment) {
             // Ensure the current user is allowed to run this function in the unassignment context
-            $context = context::instance_by_id($unassignment['contextid'], IGNORE_MISSING);
+            $context = self::get_context_from_params($unassignment);
             self::validate_context($context);
             require_capability('moodle/role:assign', $context);
 
@@ -689,7 +692,7 @@ class core_role_external extends external_api {
                 throw new invalid_parameter_exception('Can not unassign roleid='.$unassignment['roleid'].' in contextid='.$unassignment['contextid']);
             }
 
-            role_unassign($unassignment['roleid'], $unassignment['userid'], $unassignment['contextid']);
+            role_unassign($unassignment['roleid'], $unassignment['userid'], $context->id);
         }
 
         $transaction->allow_commit();
