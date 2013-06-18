@@ -52,8 +52,9 @@ class moodle_simplepie extends SimplePie {
      * with Moodle defaults.
      *
      * @param string $feedurl optional URL of the feed
+     * @param int $timeout how many seconds requests should wait for server response
      */
-    public function __construct($feedurl = null) {
+    public function __construct($feedurl = null, $timeout = 2) {
         $cachedir = moodle_simplepie::get_cache_directory();
         check_dir_exists($cachedir);
 
@@ -70,7 +71,7 @@ class moodle_simplepie extends SimplePie {
         $this->set_output_encoding('UTF-8');
 
         // default to a short timeout as most operations will be interactive
-        $this->set_timeout(2);
+        $this->set_timeout($timeout);
 
         // 1 hour default cache
         $this->set_cache_location($cachedir);

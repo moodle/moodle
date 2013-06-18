@@ -37,19 +37,21 @@ require_once($CFG->libdir.'/simplepie/moodle_simplepie.php');
 
 class moodlesimplepie_testcase extends basic_testcase {
 
-    # A url we know exists and is valid
+    // A url we know exists and is valid.
     const VALIDURL = 'http://download.moodle.org/unittest/rsstest.xml';
-    # A url which we know doesn't exist
+    // A url which we know doesn't exist.
     const INVALIDURL = 'http://download.moodle.org/unittest/rsstest-which-doesnt-exist.xml';
-    # This tinyurl redirects to th rsstest.xml file
+    // This tinyurl redirects to th rsstest.xml file.
     const REDIRECTURL = 'http://tinyurl.com/lvyslv';
+    // The number of seconds tests should wait for the server to respond (high to prevent false positives).
+    const TIMEOUT = 10;
 
     function setUp() {
         moodle_simplepie::reset_cache();
     }
 
     function test_getfeed() {
-        $feed = new moodle_simplepie(self::VALIDURL);
+        $feed = new moodle_simplepie(self::VALIDURL, self::TIMEOUT);
 
         $this->assertInstanceOf('moodle_simplepie', $feed);
 
@@ -109,7 +111,7 @@ EOD;
      * Test retrieving a url which doesn't exist
      */
     function test_failurl() {
-        $feed = @new moodle_simplepie(self::INVALIDURL); // we do not want this in php error log
+        $feed = @new moodle_simplepie(self::INVALIDURL, self::TIMEOUT); // we do not want this in php error log
 
         $this->assertNotEmpty($feed->error());
     }
@@ -136,7 +138,7 @@ EOD;
     function test_redirect() {
         global $CFG;
 
-        $feed = new moodle_simplepie(self::REDIRECTURL);
+        $feed = new moodle_simplepie(self::REDIRECTURL, self::TIMEOUT);
 
         $this->assertNull($feed->error());
         $this->assertEquals($feed->get_title(), 'Moodle News');
