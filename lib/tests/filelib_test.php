@@ -82,9 +82,308 @@ class filelib_testcase extends advanced_testcase {
     }
 
     public function test_download_file_content() {
+        global $CFG;
+
+        // Test http success first.
         $testhtml = "http://download.moodle.org/unittest/test.html";
+
         $contents = download_file_content($testhtml);
-        $this->assertEquals('47250a973d1b88d9445f94db4ef2c97a', md5($contents));
+        $this->assertSame('47250a973d1b88d9445f94db4ef2c97a', md5($contents));
+
+        $tofile = "$CFG->tempdir/test.html";
+        @unlink($tofile);
+        $result = download_file_content($testhtml, null, null, false, 300, 20, false, $tofile);
+        $this->assertTrue($result);
+        $this->assertFileExists($tofile);
+        $this->assertSame($contents, file_get_contents($tofile));
+        @unlink($tofile);
+
+        $result = download_file_content($testhtml, null, null, false, 300, 20, false, null, true);
+        $this->assertSame($contents, $result);
+
+        $response = download_file_content($testhtml, null, null, true);
+        $this->assertInstanceOf('stdClass', $response);
+        $this->assertSame('200', $response->status);
+        $this->assertTrue(is_array($response->headers));
+        $this->assertSame('HTTP/1.1 200 OK', rtrim($response->response_code));
+        $this->assertSame($contents, $response->results);
+        $this->assertSame('', $response->error);
+
+
+        // Test https success.
+        $testhtml = "https://download.moodle.org/unittest/test.html";
+
+        $contents = download_file_content($testhtml, null, null, false, 300, 20, true);
+        $this->assertSame('47250a973d1b88d9445f94db4ef2c97a', md5($contents));
+
+        $contents = download_file_content($testhtml);
+        $this->assertSame('47250a973d1b88d9445f94db4ef2c97a', md5($contents));
+
+
+        // Now 404.
+        $testhtml = "http://download.moodle.org/unittest/test.html_nonexistent";
+
+        $contents = download_file_content($testhtml);
+        $this->assertFalse($contents);
+        $this->assertDebuggingCalled();
+
+        $response = download_file_content($testhtml, null, null, true);
+        $this->assertInstanceOf('stdClass', $response);
+        $this->assertSame('404', $response->status);
+        $this->assertTrue(is_array($response->headers));
+        $this->assertSame('HTTP/1.1 404 Not Found', rtrim($response->response_code));
+        $this->assertStringStartsWith('<!DOCTYPE', $response->results);
+        $this->assertSame('', $response->error);
+
+
+        // Invalid url.
+        $testhtml = "ftp://download.moodle.org/unittest/test.html";
+
+        $contents = download_file_content($testhtml);
+        $this->assertFalse($contents);
+
+
+        // Test standard redirects.
+        $testurl = 'http://download.moodle.org/unittest/test_redir.php';
+
+        $contents = download_file_content("$testurl?redir=2");
+        $this->assertSame('done', $contents);
+
+        $response = download_file_content("$testurl?redir=2", null, null, true);
+        $this->assertInstanceOf('stdClass', $response);
+        $this->assertSame('200', $response->status);
+        $this->assertTrue(is_array($response->headers));
+        $this->assertSame('HTTP/1.1 200 OK', rtrim($response->response_code));
+        $this->assertSame('done', $response->results);
+        $this->assertSame('', $response->error);
+
+/*
+        // Commented out for performance reasons.
+
+        $contents = download_file_content("$testurl?redir=6");
+        $this->assertFalse(false, $contents);
+        $this->assertDebuggingCalled();
+
+        $response = download_file_content("$testurl?redir=6", null, null, true);
+        $this->assertInstanceOf('stdClass', $response);
+        $this->assertSame('0', $response->status);
+        $this->assertTrue(is_array($response->headers));
+        $this->assertFalse($response->results);
+        $this->assertNotEmpty($response->error);
+*/
+
+        // Test relative redirects.
+        $testurl = 'http://download.moodle.org/unittest/test_relative_redir.php';
+
+        $contents = download_file_content("$testurl");
+        $this->assertSame('done', $contents);
+
+        $contents = download_file_content("$testurl?unused=xxx");
+        $this->assertSame('done', $contents);
+    }
+
+    /**
+     * Test curl class.
+     */
+    public function test_curl_class() {
+        global $CFG;
+
+        // Test https success.
+        $testhtml = "https://download.moodle.org/unittest/test.html";
+
+        $curl = new curl();
+        $contents = $curl->get($testhtml);
+        $this->assertSame('47250a973d1b88d9445f94db4ef2c97a', md5($contents));
+        $this->assertSame(0, $curl->get_errno());
+
+        $curl = new curl();
+        $tofile = "$CFG->tempdir/test.html";
+        @unlink($tofile);
+        $fp = fopen($tofile, 'w');
+        $result = $curl->get($testhtml, array(), array('CURLOPT_FILE'=>$fp));
+        $this->assertTrue($result);
+        fclose($fp);
+        $this->assertFileExists($tofile);
+        $this->assertSame($contents, file_get_contents($tofile));
+        @unlink($tofile);
+
+        $curl = new curl();
+        $tofile = "$CFG->tempdir/test.html";
+        @unlink($tofile);
+        $result = $curl->download_one($testhtml, array(), array('filepath'=>$tofile));
+        $this->assertTrue($result);
+        $this->assertFileExists($tofile);
+        $this->assertSame($contents, file_get_contents($tofile));
+        @unlink($tofile);
+
+        // Test full URL redirects.
+        $testurl = 'http://download.moodle.org/unittest/test_redir.php';
+
+        $curl = new curl();
+        $contents = $curl->get("$testurl?redir=2", array(), array('CURLOPT_MAXREDIRS'=>2));
+        $this->assertSame(0, $curl->get_errno());
+        $this->assertSame(2, $curl->info['redirect_count']);
+        $this->assertSame('done', $contents);
+
+        $curl = new curl();
+        $curl->emulateredirects = true;
+        $contents = $curl->get("$testurl?redir=2", array(), array('CURLOPT_MAXREDIRS'=>2));
+        $this->assertSame(0, $curl->get_errno());
+        $this->assertSame(2, $curl->info['redirect_count']);
+        $this->assertSame('done', $contents);
+
+        $curl = new curl();
+        $contents = $curl->get("$testurl?redir=3", array(), array('CURLOPT_FOLLOWLOCATION'=>0));
+        $this->assertSame(0, $curl->get_errno());
+        $this->assertSame(302, $curl->info['http_code']);
+        $this->assertSame('', $contents);
+
+        $curl = new curl();
+        $curl->emulateredirects = true;
+        $contents = $curl->get("$testurl?redir=3", array(), array('CURLOPT_FOLLOWLOCATION'=>0));
+        $this->assertSame(0, $curl->get_errno());
+        $this->assertSame(302, $curl->info['http_code']);
+        $this->assertSame('', $contents);
+
+        $curl = new curl();
+        $contents = $curl->get("$testurl?redir=2", array(), array('CURLOPT_MAXREDIRS'=>1));
+        $this->assertSame(CURLE_TOO_MANY_REDIRECTS, $curl->get_errno());
+        $this->assertNotEmpty($contents);
+
+        $curl = new curl();
+        $curl->emulateredirects = true;
+        $contents = $curl->get("$testurl?redir=2", array(), array('CURLOPT_MAXREDIRS'=>1));
+        $this->assertSame(CURLE_TOO_MANY_REDIRECTS, $curl->get_errno());
+        $this->assertNotEmpty($contents);
+
+        $curl = new curl();
+        $tofile = "$CFG->tempdir/test.html";
+        @unlink($tofile);
+        $fp = fopen($tofile, 'w');
+        $result = $curl->get("$testurl?redir=1", array(), array('CURLOPT_FILE'=>$fp));
+        $this->assertTrue($result);
+        fclose($fp);
+        $this->assertFileExists($tofile);
+        $this->assertSame('done', file_get_contents($tofile));
+        @unlink($tofile);
+
+        $curl = new curl();
+        $curl->emulateredirects = true;
+        $tofile = "$CFG->tempdir/test.html";
+        @unlink($tofile);
+        $fp = fopen($tofile, 'w');
+        $result = $curl->get("$testurl?redir=1", array(), array('CURLOPT_FILE'=>$fp));
+        $this->assertTrue($result);
+        fclose($fp);
+        $this->assertFileExists($tofile);
+        $this->assertSame('done', file_get_contents($tofile));
+        @unlink($tofile);
+
+        $curl = new curl();
+        $tofile = "$CFG->tempdir/test.html";
+        @unlink($tofile);
+        $result = $curl->download_one("$testurl?redir=1", array(), array('filepath'=>$tofile));
+        $this->assertTrue($result);
+        $this->assertFileExists($tofile);
+        $this->assertSame('done', file_get_contents($tofile));
+        @unlink($tofile);
+
+        $curl = new curl();
+        $curl->emulateredirects = true;
+        $tofile = "$CFG->tempdir/test.html";
+        @unlink($tofile);
+        $result = $curl->download_one("$testurl?redir=1", array(), array('filepath'=>$tofile));
+        $this->assertTrue($result);
+        $this->assertFileExists($tofile);
+        $this->assertSame('done', file_get_contents($tofile));
+        @unlink($tofile);
+
+
+        // Test relative location redirects.
+        $testurl = 'http://download.moodle.org/unittest/test_relative_redir.php';
+
+        $curl = new curl();
+        $contents = $curl->get($testurl);
+        $this->assertSame(0, $curl->get_errno());
+        $this->assertSame(1, $curl->info['redirect_count']);
+        $this->assertSame('done', $contents);
+
+        $curl = new curl();
+        $curl->emulateredirects = true;
+        $contents = $curl->get($testurl);
+        $this->assertSame(0, $curl->get_errno());
+        $this->assertSame(1, $curl->info['redirect_count']);
+        $this->assertSame('done', $contents);
+
+
+        // Test different redirect types.
+        $testurl = 'http://download.moodle.org/unittest/test_relative_redir.php';
+
+        $curl = new curl();
+        $contents = $curl->get("$testurl?type=301");
+        $this->assertSame(0, $curl->get_errno());
+        $this->assertSame(1, $curl->info['redirect_count']);
+        $this->assertSame('done', $contents);
+
+        $curl = new curl();
+        $curl->emulateredirects = true;
+        $contents = $curl->get("$testurl?type=301");
+        $this->assertSame(0, $curl->get_errno());
+        $this->assertSame(1, $curl->info['redirect_count']);
+        $this->assertSame('done', $contents);
+
+        $curl = new curl();
+        $contents = $curl->get("$testurl?type=302");
+        $this->assertSame(0, $curl->get_errno());
+        $this->assertSame(1, $curl->info['redirect_count']);
+        $this->assertSame('done', $contents);
+
+        $curl = new curl();
+        $curl->emulateredirects = true;
+        $contents = $curl->get("$testurl?type=302");
+        $this->assertSame(0, $curl->get_errno());
+        $this->assertSame(1, $curl->info['redirect_count']);
+        $this->assertSame('done', $contents);
+
+        $curl = new curl();
+        $contents = $curl->get("$testurl?type=303");
+        $this->assertSame(0, $curl->get_errno());
+        $this->assertSame(1, $curl->info['redirect_count']);
+        $this->assertSame('done', $contents);
+
+        $curl = new curl();
+        $curl->emulateredirects = true;
+        $contents = $curl->get("$testurl?type=303");
+        $this->assertSame(0, $curl->get_errno());
+        $this->assertSame(1, $curl->info['redirect_count']);
+        $this->assertSame('done', $contents);
+
+        $curl = new curl();
+        $contents = $curl->get("$testurl?type=307");
+        $this->assertSame(0, $curl->get_errno());
+        $this->assertSame(1, $curl->info['redirect_count']);
+        $this->assertSame('done', $contents);
+
+        $curl = new curl();
+        $curl->emulateredirects = true;
+        $contents = $curl->get("$testurl?type=307");
+        $this->assertSame(0, $curl->get_errno());
+        $this->assertSame(1, $curl->info['redirect_count']);
+        $this->assertSame('done', $contents);
+
+        $curl = new curl();
+        $contents = $curl->get("$testurl?type=308");
+        $this->assertSame(0, $curl->get_errno());
+        $this->assertSame(1, $curl->info['redirect_count']);
+        $this->assertSame('done', $contents);
+
+        $curl = new curl();
+        $curl->emulateredirects = true;
+        $contents = $curl->get("$testurl?type=308");
+        $this->assertSame(0, $curl->get_errno());
+        $this->assertSame(1, $curl->info['redirect_count']);
+        $this->assertSame('done', $contents);
+
     }
 
     /**

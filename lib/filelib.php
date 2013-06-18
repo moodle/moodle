@@ -1126,7 +1126,6 @@ function format_postdata_for_curlcall($postdata) {
  * Fetches content of file from Internet (using proxy if defined). Uses cURL extension if present.
  * Due to security concerns only downloads from http(s) sources are supported.
  *
- * @todo MDL-31073 add version test for '7.10.5'
  * @category files
  * @param string $url file url starting with http(s)://
  * @param array $headers http headers, null if none. If set, should be an
@@ -1149,14 +1148,7 @@ function format_postdata_for_curlcall($postdata) {
 function download_file_content($url, $headers=null, $postdata=null, $fullresponse=false, $timeout=300, $connecttimeout=20, $skipcertverify=false, $tofile=NULL, $calctimeout=false) {
     global $CFG;
 
-    // some extra security
-    $newlines = array("\r", "\n");
-    if (is_array($headers) ) {
-        foreach ($headers as $key => $value) {
-            $headers[$key] = str_replace($newlines, '', $value);
-        }
-    }
-    $url = str_replace($newlines, '', $url);
+    // Only http and https links supported.
     if (!preg_match('|^https?://|i', $url)) {
         if ($fullresponse) {
             $response = new stdClass();
@@ -1171,227 +1163,168 @@ function download_file_content($url, $headers=null, $postdata=null, $fullrespons
         }
     }
 
-    // check if proxy (if used) should be bypassed for this url
-    $proxybypass = is_proxybypass($url);
+    $options = array();
 
-    if (!$ch = curl_init($url)) {
-        debugging('Can not init curl.');
-        return false;
-    }
-
-    // set extra headers
-    if (is_array($headers) ) {
-        $headers2 = array();
+    $headers2 = array();
+    if (is_array($headers)) {
         foreach ($headers as $key => $value) {
-            $headers2[] = "$key: $value";
+            if (is_numeric($key)) {
+                $headers2[] = $value;
+            } else {
+                $headers2[] = "$key: $value";
+            }
         }
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers2);
     }
 
     if ($skipcertverify) {
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        $options['CURLOPT_SSL_VERIFYPEER'] = false;
+    } else {
+        $options['CURLOPT_SSL_VERIFYPEER'] = true;
     }
 
-    // use POST if requested
+    $options['CURLOPT_CONNECTTIMEOUT'] = $connecttimeout;
+
+    $options['CURLOPT_FOLLOWLOCATION'] = 1;
+    $options['CURLOPT_MAXREDIRS'] = 5;
+
+    // Use POST if requested.
     if (is_array($postdata)) {
         $postdata = format_postdata_for_curlcall($postdata);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $postdata);
+    } else if (empty($postdata)) {
+        $postdata = null;
     }
 
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_HEADER, false);
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $connecttimeout);
-
-    if ($cacert = curl::get_cacert()) {
-        curl_setopt($ch, CURLOPT_CAINFO, $cacert);
-    }
-
-    if (!ini_get('open_basedir') and !ini_get('safe_mode')) {
-        // TODO: add version test for '7.10.5'
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($ch, CURLOPT_MAXREDIRS, 5);
-    }
-
-    if (!empty($CFG->proxyhost) and !$proxybypass) {
-        // SOCKS supported in PHP5 only
-        if (!empty($CFG->proxytype) and ($CFG->proxytype == 'SOCKS5')) {
-            if (defined('CURLPROXY_SOCKS5')) {
-                curl_setopt($ch, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS5);
-            } else {
-                curl_close($ch);
-                if ($fullresponse) {
-                    $response = new stdClass();
-                    $response->status        = '0';
-                    $response->headers       = array();
-                    $response->response_code = 'SOCKS5 proxy is not supported in PHP4';
-                    $response->results       = '';
-                    $response->error         = 'SOCKS5 proxy is not supported in PHP4';
-                    return $response;
-                } else {
-                    debugging("SOCKS5 proxy is not supported in PHP4.", DEBUG_ALL);
-                    return false;
-                }
-            }
-        }
-
-        curl_setopt($ch, CURLOPT_HTTPPROXYTUNNEL, false);
-
-        if (empty($CFG->proxyport)) {
-            curl_setopt($ch, CURLOPT_PROXY, $CFG->proxyhost);
-        } else {
-            curl_setopt($ch, CURLOPT_PROXY, $CFG->proxyhost.':'.$CFG->proxyport);
-        }
-
-        if (!empty($CFG->proxyuser) and !empty($CFG->proxypassword)) {
-            curl_setopt($ch, CURLOPT_PROXYUSERPWD, $CFG->proxyuser.':'.$CFG->proxypassword);
-            if (defined('CURLOPT_PROXYAUTH')) {
-                // any proxy authentication if PHP 5.1
-                curl_setopt($ch, CURLOPT_PROXYAUTH, CURLAUTH_BASIC | CURLAUTH_NTLM);
-            }
-        }
-    }
-
-    // set up header and content handlers
-    $received = new stdClass();
-    $received->headers = array(); // received headers array
-    $received->tofile  = $tofile;
-    $received->fh      = null;
-    curl_setopt($ch, CURLOPT_HEADERFUNCTION, partial('download_file_content_header_handler', $received));
-    if ($tofile) {
-        curl_setopt($ch, CURLOPT_WRITEFUNCTION, partial('download_file_content_write_handler', $received));
-    }
-
+    // Optionally attempt to get more correct timeout by fetching the file size.
     if (!isset($CFG->curltimeoutkbitrate)) {
-        //use very slow rate of 56kbps as a timeout speed when not set
+        // Use very slow rate of 56kbps as a timeout speed when not set.
         $bitrate = 56;
     } else {
         $bitrate = $CFG->curltimeoutkbitrate;
     }
+    if ($calctimeout and !isset($postdata)) {
+        $curl = new curl();
+        $curl->setHeader($headers2);
 
-    // try to calculate the proper amount for timeout from remote file size.
-    // if disabled or zero, we won't do any checks nor head requests.
-    if ($calctimeout && $bitrate > 0) {
-        //setup header request only options
-        curl_setopt_array ($ch, array(
-            CURLOPT_RETURNTRANSFER => false,
-            CURLOPT_NOBODY         => true)
-        );
+        $curl->head($url, $postdata, $options);
 
-        curl_exec($ch);
-        $info = curl_getinfo($ch);
-        $err = curl_error($ch);
-
-        if ($err === '' && $info['download_content_length'] > 0) { //no curl errors
-            $timeout = max($timeout, ceil($info['download_content_length'] * 8 / ($bitrate * 1024))); //adjust for large files only - take max timeout.
+        $info = $curl->get_info();
+        $error_no = $curl->get_errno();
+        if (!$error_no && $info['download_content_length'] > 0) {
+            // No curl errors - adjust for large files only - take max timeout.
+            $timeout = max($timeout, ceil($info['download_content_length'] * 8 / ($bitrate * 1024)));
         }
-        //reinstate affected curl options
-        curl_setopt_array ($ch, array(
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_NOBODY         => false,
-            CURLOPT_HTTPGET        => true)
-        );
     }
 
-    curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
-    $result = curl_exec($ch);
+    $curl = new curl();
+    $curl->setHeader($headers2);
 
-    // try to detect encoding problems
+    $options['CURLOPT_RETURNTRANSFER'] = true;
+    $options['CURLOPT_NOBODY'] = false;
+    $options['CURLOPT_TIMEOUT'] = $timeout;
+
+    if ($tofile) {
+        $fh = fopen($tofile, 'w');
+        if (!$fh) {
+            if ($fullresponse) {
+                $response = new stdClass();
+                $response->status        = 0;
+                $response->headers       = array();
+                $response->response_code = 'Can not write to file';
+                $response->results       = false;
+                $response->error         = 'Can not write to file';
+                return $response;
+            } else {
+                return false;
+            }
+        }
+        $options['CURLOPT_FILE'] = $fh;
+    }
+
+    if (isset($postdata)) {
+        $content = $curl->post($url, $postdata, $options);
+    } else {
+        $content = $curl->get($url, null, $options);
+    }
+
+    if ($tofile) {
+        fclose($fh);
+        @chmod($tofile, $CFG->filepermissions);
+    }
+
+/*
+    // Try to detect encoding problems.
     if ((curl_errno($ch) == 23 or curl_errno($ch) == 61) and defined('CURLOPT_ENCODING')) {
         curl_setopt($ch, CURLOPT_ENCODING, 'none');
         $result = curl_exec($ch);
     }
+*/
 
-    if ($received->fh) {
-        fclose($received->fh);
-    }
+    $info       = $curl->get_info();
+    $error_no   = $curl->get_errno();
+    $rawheaders = $curl->get_raw_response();
 
-    if (curl_errno($ch)) {
-        $error    = curl_error($ch);
-        $error_no = curl_errno($ch);
-        curl_close($ch);
-
-        if ($fullresponse) {
-            $response = new stdClass();
-            if ($error_no == 28) {
-                $response->status    = '-100'; // mimic snoopy
-            } else {
-                $response->status    = '0';
-            }
-            $response->headers       = array();
-            $response->response_code = $error;
-            $response->results       = false;
-            $response->error         = $error;
-            return $response;
-        } else {
+    if ($error_no) {
+        $error = $content;
+        if (!$fullresponse) {
             debugging("cURL request for \"$url\" failed with: $error ($error_no)", DEBUG_ALL);
             return false;
         }
 
+        $response = new stdClass();
+        if ($error_no == 28) {
+            $response->status    = '-100'; // Mimic snoopy.
+        } else {
+            $response->status    = '0';
+        }
+        $response->headers       = array();
+        $response->response_code = $error;
+        $response->results       = false;
+        $response->error         = $error;
+        return $response;
+    }
+
+    if ($tofile) {
+        $content = true;
+    }
+
+    if (empty($info['http_code'])) {
+        // For security reasons we support only true http connections (Location: file:// exploit prevention).
+        $response = new stdClass();
+        $response->status        = '0';
+        $response->headers       = array();
+        $response->response_code = 'Unknown cURL error';
+        $response->results       = false; // do NOT change this, we really want to ignore the result!
+        $response->error         = 'Unknown cURL error';
+
     } else {
-        $info = curl_getinfo($ch);
-        curl_close($ch);
+        $response = new stdClass();
+        $response->status        = (string)$info['http_code'];
+        $response->headers       = $rawheaders;
+        $response->results       = $content;
+        $response->error         = '';
 
-        if (empty($info['http_code'])) {
-            // for security reasons we support only true http connections (Location: file:// exploit prevention)
-            $response = new stdClass();
-            $response->status        = '0';
-            $response->headers       = array();
-            $response->response_code = 'Unknown cURL error';
-            $response->results       = false; // do NOT change this, we really want to ignore the result!
-            $response->error         = 'Unknown cURL error';
-
-        } else {
-            $response = new stdClass();
-            $response->status        = (string)$info['http_code'];
-            $response->headers       = $received->headers;
-            $response->response_code = $received->headers[0];
-            $response->results       = $result;
-            $response->error         = '';
-        }
-
-        if ($fullresponse) {
-            return $response;
-        } else if ($info['http_code'] != 200) {
-            debugging("cURL request for \"$url\" failed, HTTP response code: ".$response->response_code, DEBUG_ALL);
-            return false;
-        } else {
-            return $response->results;
+        // There might be multiple headers on redirect, find the status of the last one.
+        $firstline = true;
+        foreach ($rawheaders as $line) {
+            if ($firstline) {
+                $response->response_code = $line;
+                $firstline = false;
+            }
+            if (trim($line, "\r\n") === '') {
+                $firstline = true;
+            }
         }
     }
-}
 
-/**
- * internal implementation
- * @param stdClass $received
- * @param resource $ch
- * @param mixed $header
- * @return int header length
- */
-function download_file_content_header_handler($received, $ch, $header) {
-    $received->headers[] = $header;
-    return strlen($header);
-}
+    if ($fullresponse) {
+        return $response;
+    }
 
-/**
- * internal implementation
- * @param stdClass $received
- * @param resource $ch
- * @param mixed $data
- */
-function download_file_content_write_handler($received, $ch, $data) {
-    if (!$received->fh) {
-        $received->fh = fopen($received->tofile, 'w');
-        if ($received->fh === false) {
-            // bad luck, file creation or overriding failed
-            return 0;
-        }
+    if ($info['http_code'] != 200) {
+        debugging("cURL request for \"$url\" failed, HTTP response code: ".$response->response_code, DEBUG_ALL);
+        return false;
     }
-    if (fwrite($received->fh, $data) === false) {
-        // bad luck, write failed, let's abort completely
-        return 0;
-    }
-    return strlen($data);
+    return $response->results;
 }
 
 /**
@@ -2824,12 +2757,14 @@ function file_modify_html_header($text) {
 class curl {
     /** @var bool Caches http request contents */
     public  $cache    = false;
-    /** @var bool Uses proxy */
-    public  $proxy    = false;
+    /** @var bool Uses proxy, null means automatic based on URL */
+    public  $proxy    = null;
     /** @var string library version */
     public  $version  = '0.4 dev';
     /** @var array http's response */
     public  $response = array();
+    /** @var array Raw response headers, needed for BC in download_file_content(). */
+    public $rawresponse = array();
     /** @var array http header */
     public  $header   = array();
     /** @var string cURL information */
@@ -2838,6 +2773,8 @@ class curl {
     public  $error;
     /** @var int error code */
     public  $errno;
+    /** @var bool use workaround for open_basedir restrictions, to be changed from unit tests only! */
+    public $emulateredirects = null;
 
     /** @var array cURL options */
     private $options;
@@ -2851,36 +2788,45 @@ class curl {
     private $debug    = false;
     /** @var bool|string Path to cookie file */
     private $cookie   = false;
+    /** @var bool tracks multiple headers in response - redirect detection */
+    private $responsefinished = false;
 
     /**
-     * Constructor
+     * Curl constructor.
      *
-     * @global stdClass $CFG
-     * @param array $options
+     * Allowed settings are:
+     *  proxy: (bool) use proxy server, null means autodetect non-local from url
+     *  debug: (bool) use debug output
+     *  cookie: (string) path to cookie file, false if none
+     *  cache: (bool) use cache
+     *  module_cache: (string) type of cache
+     *
+     * @param array $settings
      */
-    public function __construct($options = array()){
+    public function __construct($settings = array()) {
         global $CFG;
         if (!function_exists('curl_init')) {
             $this->error = 'cURL module must be enabled!';
             trigger_error($this->error, E_USER_ERROR);
             return false;
         }
-        // the options of curl should be init here.
+
+        // All settings of this class should be init here.
         $this->resetopt();
-        if (!empty($options['debug'])) {
+        if (!empty($settings['debug'])) {
             $this->debug = true;
         }
-        if(!empty($options['cookie'])) {
-            if($options['cookie'] === true) {
+        if (!empty($settings['cookie'])) {
+            if($settings['cookie'] === true) {
                 $this->cookie = $CFG->dataroot.'/curl_cookie.txt';
             } else {
-                $this->cookie = $options['cookie'];
+                $this->cookie = $settings['cookie'];
             }
         }
-        if (!empty($options['cache'])) {
+        if (!empty($settings['cache'])) {
             if (class_exists('curl_cache')) {
-                if (!empty($options['module_cache'])) {
-                    $this->cache = new curl_cache($options['module_cache']);
+                if (!empty($settings['module_cache'])) {
+                    $this->cache = new curl_cache($settings['module_cache']);
                 } else {
                     $this->cache = new curl_cache('misc');
                 }
@@ -2907,32 +2853,36 @@ class curl {
                 }
                 $this->setopt(array('proxytype'=>$this->proxy_type));
             }
+
+            if (isset($settings['proxy'])) {
+                $this->proxy = $settings['proxy'];
+            }
+        } else {
+            $this->proxy = false;
         }
-        if (!empty($this->proxy_host)) {
-            $this->proxy = array('proxy'=>$this->proxy_host);
+
+        if (!isset($this->emulateredirects)) {
+            $this->emulateredirects = (ini_get('open_basedir') or ini_get('safe_mode'));
         }
     }
+
     /**
      * Resets the CURL options that have already been set
      */
-    public function resetopt(){
+    public function resetopt() {
         $this->options = array();
         $this->options['CURLOPT_USERAGENT']         = 'MoodleBot/1.0';
         // True to include the header in the output
         $this->options['CURLOPT_HEADER']            = 0;
         // True to Exclude the body from the output
         $this->options['CURLOPT_NOBODY']            = 0;
-        // TRUE to follow any "Location: " header that the server
-        // sends as part of the HTTP header (note this is recursive,
-        // PHP will follow as many "Location: " headers that it is sent,
-        // unless CURLOPT_MAXREDIRS is set).
-        //$this->options['CURLOPT_FOLLOWLOCATION']    = 1;
+        // Redirect ny default.
+        $this->options['CURLOPT_FOLLOWLOCATION']    = 1;
         $this->options['CURLOPT_MAXREDIRS']         = 10;
         $this->options['CURLOPT_ENCODING']          = '';
         // TRUE to return the transfer as a string of the return
         // value of curl_exec() instead of outputting it out directly.
         $this->options['CURLOPT_RETURNTRANSFER']    = 1;
-        $this->options['CURLOPT_BINARYTRANSFER']    = 0;
         $this->options['CURLOPT_SSL_VERIFYPEER']    = 0;
         $this->options['CURLOPT_SSL_VERIFYHOST']    = 2;
         $this->options['CURLOPT_CONNECTTIMEOUT']    = 30;
@@ -2999,12 +2949,14 @@ class curl {
      */
     public function setopt($options = array()) {
         if (is_array($options)) {
-            foreach ($options as $name => $val){
+            foreach ($options as $name => $val) {
                 if (!is_string($name)) {
                     throw new coding_exception('Curl options should be defined using strings, not constant values.');
                 }
                 if (stripos($name, 'CURLOPT_') === false) {
                     $name = strtoupper('CURLOPT_'.$name);
+                } else {
+                    $name = strtoupper($name);
                 }
                 $this->options[$name] = $val;
             }
@@ -3014,7 +2966,7 @@ class curl {
     /**
      * Reset http method
      */
-    public function cleanopt(){
+    public function cleanopt() {
         unset($this->options['CURLOPT_HTTPGET']);
         unset($this->options['CURLOPT_POST']);
         unset($this->options['CURLOPT_POSTFIELDS']);
@@ -3038,21 +2990,30 @@ class curl {
      * @param array $header
      */
     public function setHeader($header) {
-        if (is_array($header)){
+        if (is_array($header)) {
             foreach ($header as $v) {
                 $this->setHeader($v);
             }
         } else {
-            $this->header[] = $header;
+            // Remove newlines, they are not allowed in headers.
+            $this->header[] = preg_replace('/[\r\n]/', '', $header);
         }
     }
 
     /**
-     * Set HTTP Response Header
-     *
+     * Get HTTP Response Headers
+     * @return array of arrays
      */
-    public function getResponse(){
+    public function getResponse() {
         return $this->response;
+    }
+
+    /**
+     * Get raw HTTP Response Headers
+     * @return array of strings
+     */
+    public function get_raw_response() {
+        return $this->rawresponse;
     }
 
     /**
@@ -3063,13 +3024,23 @@ class curl {
      * @param string $header
      * @return int The strlen of the header
      */
-    private function formatHeader($ch, $header)
-    {
+    private function formatHeader($ch, $header) {
+        $this->rawresponse[] = $header;
+
+        if (trim($header, "\r\n") === '') {
+            if ($this->responsefinished) {
+                // Multiple headers means redirect, keep just the latest one.
+                $this->response = array();
+                return strlen($header);
+            }
+            $this->responsefinished = true;
+        }
+
         if (strlen($header) > 2) {
             list($key, $value) = explode(" ", rtrim($header, "\r\n"), 2);
             $key = rtrim($key, ':');
             if (!empty($this->response[$key])) {
-                if (is_array($this->response[$key])){
+                if (is_array($this->response[$key])) {
                     $this->response[$key][] = $value;
                 } else {
                     $tmp = $this->response[$key];
@@ -3093,6 +3064,14 @@ class curl {
      * @return resource The curl handle
      */
     private function apply_opt($curl, $options) {
+        // Some more security first.
+        if (defined('CURLOPT_PROTOCOLS')) {
+            $this->options['CURLOPT_PROTOCOLS'] = (CURLPROTO_HTTP | CURLPROTO_HTTPS);
+        }
+        if (defined('CURLOPT_REDIR_PROTOCOLS')) {
+            $this->options['CURLOPT_REDIR_PROTOCOLS'] = (CURLPROTO_HTTP | CURLPROTO_HTTPS);
+        }
+
         // Clean up
         $this->cleanopt();
         // set cookie
@@ -3102,15 +3081,29 @@ class curl {
                              ));
         }
 
-        // set proxy
-        if (!empty($this->proxy) || !empty($options['proxy'])) {
-            $this->setopt($this->proxy);
+        // Bypass proxy if required.
+        if ($this->proxy === null) {
+            if (!empty($this->options['CURLOPT_URL']) and is_proxybypass($this->options['CURLOPT_URL'])) {
+                $proxy = false;
+            } else {
+                $proxy = true;
+            }
+        } else {
+            $proxy = (bool)$this->proxy;
         }
+
+        // Set proxy.
+        if ($proxy) {
+            $options['CURLOPT_PROXY'] = $this->proxy_host;
+        } else {
+            unset($this->options['CURLOPT_PROXY']);
+        }
+
         $this->setopt($options);
         // reset before set options
         curl_setopt($curl, CURLOPT_HEADERFUNCTION, array(&$this,'formatHeader'));
         // set headers
-        if (empty($this->header)){
+        if (empty($this->header)) {
             $this->setHeader(array(
                 'User-Agent: MoodleBot/1.0',
                 'Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7',
@@ -3119,24 +3112,42 @@ class curl {
         }
         curl_setopt($curl, CURLOPT_HTTPHEADER, $this->header);
 
-        // Bypass proxy (for this request only) if required.
-        if (!empty($this->options['CURLOPT_URL']) &&
-                is_proxybypass($this->options['CURLOPT_URL'])) {
-            unset($this->options['CURLOPT_PROXY']);
-        }
-
-        if ($this->debug){
+        if ($this->debug) {
             echo '<h1>Options</h1>';
             var_dump($this->options);
             echo '<h1>Header</h1>';
             var_dump($this->header);
         }
 
+        // Do not allow infinite redirects.
+        if (!isset($this->options['CURLOPT_MAXREDIRS'])) {
+            $this->options['CURLOPT_MAXREDIRS'] = 0;
+        } else if ($this->options['CURLOPT_MAXREDIRS'] > 100) {
+            $this->options['CURLOPT_MAXREDIRS'] = 100;
+        } else {
+            $this->options['CURLOPT_MAXREDIRS'] = (int)$this->options['CURLOPT_MAXREDIRS'];
+        }
+
+        // Make sure we always know if redirects expected.
+        if (!isset($this->options['CURLOPT_FOLLOWLOCATION'])) {
+            $this->options['CURLOPT_FOLLOWLOCATION'] = 0;
+        }
+
         // Set options.
         foreach($this->options as $name => $val) {
-            $name = constant(strtoupper($name));
+            if ($name === 'CURLOPT_PROTOCOLS' or $name === 'CURLOPT_REDIR_PROTOCOLS') {
+                // These can not be changed, sorry.
+                continue;
+            }
+            if ($name === 'CURLOPT_FOLLOWLOCATION' and $this->emulateredirects) {
+                // The redirects are emulated elsewhere.
+                curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 0);
+                continue;
+            }
+            $name = constant($name);
             curl_setopt($curl, $name, $val);
         }
+
         return $curl;
     }
 
@@ -3180,13 +3191,12 @@ class curl {
      * @return array An array of results
      */
     public function download($requests, $options = array()) {
-        $options['CURLOPT_BINARYTRANSFER'] = 1;
         $options['RETURNTRANSFER'] = false;
         return $this->multi($requests, $options);
     }
 
     /**
-     * Mulit HTTP Requests
+     * Multi HTTP Requests
      * This function could run multi-requests in parallel.
      *
      * @param array $requests An array of files to request
@@ -3204,7 +3214,7 @@ class curl {
                 $requests[$i]['file'] = fopen($requests[$i]['filepath'], 'w');
                 $requests[$i]['auto-handle'] = true;
             }
-            foreach($requests[$i] as $n=>$v){
+            foreach($requests[$i] as $n=>$v) {
                 $options[$n] = $v;
             }
             $handles[$i] = curl_init($requests[$i]['url']);
@@ -3241,25 +3251,125 @@ class curl {
      * @param array $options
      * @return bool
      */
-    protected function request($url, $options = array()){
+    protected function request($url, $options = array()) {
         // create curl instance
         $curl = curl_init($url);
         $options['url'] = $url;
+
+        // Reset here so that the data is valid when result returned from cache.
+        $this->info             = array();
+        $this->error            = '';
+        $this->errno            = 0;
+        $this->response         = array();
+        $this->rawresponse      = array();
+        $this->responsefinished = false;
+
         $this->apply_opt($curl, $options);
         if ($this->cache && $ret = $this->cache->get($this->options)) {
             return $ret;
-        } else {
-            $ret = curl_exec($curl);
-            if ($this->cache) {
-                $this->cache->set($this->options, $ret);
-            }
         }
 
+        $ret = curl_exec($curl);
         $this->info  = curl_getinfo($curl);
         $this->error = curl_error($curl);
         $this->errno = curl_errno($curl);
+        // Note: $this->response and $this->rawresponse are filled by $hits->formatHeader callback.
 
-        if ($this->debug){
+        if ($this->emulateredirects and $this->options['CURLOPT_FOLLOWLOCATION'] and $this->info['http_code'] != 200) {
+            $redirects = 0;
+
+            while($redirects <= $this->options['CURLOPT_MAXREDIRS']) {
+
+                if ($this->info['http_code'] == 301) {
+                    // Moved Permanently - repeat the same request on new URL.
+
+                } else if ($this->info['http_code'] == 302) {
+                    // Found - the standard redirect - repeat the same request on new URL.
+
+                } else if ($this->info['http_code'] == 303) {
+                    // 303 See Other - repeat only if GET, do not bother with POSTs.
+                    if (empty($this->options['CURLOPT_HTTPGET'])) {
+                        break;
+                    }
+
+                } else if ($this->info['http_code'] == 307) {
+                    // Temporary Redirect - must repeat using the same request type.
+
+                } else if ($this->info['http_code'] == 308) {
+                    // Permanent Redirect - must repeat using the same request type.
+
+                } else {
+                    // Some other http code means do not retry!
+                    break;
+                }
+
+                $redirects++;
+
+                $redirecturl = null;
+                if (isset($this->info['redirect_url'])) {
+                    if (preg_match('|^https?://|i', $this->info['redirect_url'])) {
+                        $redirecturl = $this->info['redirect_url'];
+                    }
+                }
+                if (!$redirecturl) {
+                    foreach ($this->response as $k => $v) {
+                        if (strtolower($k) === 'location') {
+                            $redirecturl = $v;
+                            break;
+                        }
+                    }
+                    if (preg_match('|^https?://|i', $redirecturl)) {
+                        // Great, this is the correct location format!
+
+                    } else if ($redirecturl) {
+                        $current = curl_getinfo($curl, CURLINFO_EFFECTIVE_URL);
+                        if (strpos($redirecturl, '/') === 0) {
+                            // Relative to server root - just guess.
+                            $pos = strpos('/', $current, 8);
+                            if ($pos === false) {
+                                $redirecturl = $current.$redirecturl;
+                            } else {
+                                $redirecturl = substr($current, 0, $pos).$redirecturl;
+                            }
+                        } else {
+                            // Relative to current script.
+                            $redirecturl = dirname($current).'/'.$redirecturl;
+                        }
+                    }
+                }
+
+                $this->responsefinished = false;
+                $this->response = array();
+
+                curl_setopt($curl, CURLOPT_URL, $redirecturl);
+                $ret = curl_exec($curl);
+
+                $this->info  = curl_getinfo($curl);
+                $this->error = curl_error($curl);
+                $this->errno = curl_errno($curl);
+
+                $this->info['redirect_count'] = $redirects;
+
+                if ($this->info['http_code'] === 200) {
+                    // Finally this is what we wanted.
+                    break;
+                }
+                if ($this->errno != CURLE_OK) {
+                    // Something wrong is going on.
+                    break;
+                }
+            }
+            if ($redirects > $this->options['CURLOPT_MAXREDIRS']) {
+                $this->errno = CURLE_TOO_MANY_REDIRECTS;
+                $this->error = 'Maximum ('.$this->options['CURLOPT_MAXREDIRS'].') redirects followed';
+            }
+        }
+
+        if ($this->cache) {
+            $this->cache->set($this->options, $ret);
+        }
+
+        if ($this->debug) {
             echo '<h1>Return Data</h1>';
             var_dump($ret);
             echo '<h1>Info</h1>';
@@ -3270,7 +3380,7 @@ class curl {
 
         curl_close($curl);
 
-        if (empty($this->error)){
+        if (empty($this->error)) {
             return $ret;
         } else {
             return $this->error;
@@ -3288,7 +3398,7 @@ class curl {
      * @param array $options
      * @return bool
      */
-    public function head($url, $options = array()){
+    public function head($url, $options = array()) {
         $options['CURLOPT_HTTPGET'] = 0;
         $options['CURLOPT_HEADER']  = 1;
         $options['CURLOPT_NOBODY']  = 1;
@@ -3303,7 +3413,7 @@ class curl {
      * @param array $options
      * @return bool
      */
-    public function post($url, $params = '', $options = array()){
+    public function post($url, $params = '', $options = array()) {
         $options['CURLOPT_POST']       = 1;
         if (is_array($params)) {
             $this->_tmp_file_post_params = array();
@@ -3331,10 +3441,10 @@ class curl {
      * @param array $options
      * @return bool
      */
-    public function get($url, $params = array(), $options = array()){
+    public function get($url, $params = array(), $options = array()) {
         $options['CURLOPT_HTTPGET'] = 1;
 
-        if (!empty($params)){
+        if (!empty($params)) {
             $url .= (stripos($url, '?') !== false) ? '&' : '?';
             $url .= http_build_query($params, '', '&');
         }
@@ -3373,8 +3483,7 @@ class curl {
      */
     public function download_one($url, $params, $options = array()) {
         $options['CURLOPT_HTTPGET'] = 1;
-        $options['CURLOPT_BINARYTRANSFER'] = true;
-        if (!empty($params)){
+        if (!empty($params)) {
             $url .= (stripos($url, '?') !== false) ? '&' : '?';
             $url .= http_build_query($params, '', '&');
         }
@@ -3405,9 +3514,9 @@ class curl {
      * @param array $options
      * @return bool
      */
-    public function put($url, $params = array(), $options = array()){
+    public function put($url, $params = array(), $options = array()) {
         $file = $params['file'];
-        if (!is_file($file)){
+        if (!is_file($file)) {
             return null;
         }
         $fp   = fopen($file, 'r');
@@ -3415,7 +3524,7 @@ class curl {
         $options['CURLOPT_PUT']        = 1;
         $options['CURLOPT_INFILESIZE'] = $size;
         $options['CURLOPT_INFILE']     = $fp;
-        if (!isset($this->options['CURLOPT_USERPWD'])){
+        if (!isset($this->options['CURLOPT_USERPWD'])) {
             $this->setopt(array('CURLOPT_USERPWD'=>'anonymous: noreply@moodle.org'));
         }
         $ret = $this->request($url, $options);
@@ -3431,7 +3540,7 @@ class curl {
      * @param array $options
      * @return bool
      */
-    public function delete($url, $param = array(), $options = array()){
+    public function delete($url, $param = array(), $options = array()) {
         $options['CURLOPT_CUSTOMREQUEST'] = 'DELETE';
         if (!isset($options['CURLOPT_USERPWD'])) {
             $options['CURLOPT_USERPWD'] = 'anonymous: noreply@moodle.org';
@@ -3447,7 +3556,7 @@ class curl {
      * @param array $options
      * @return bool
      */
-    public function trace($url, $options = array()){
+    public function trace($url, $options = array()) {
         $options['CURLOPT_CUSTOMREQUEST'] = 'TRACE';
         $ret = $this->request($url, $options);
         return $ret;
@@ -3460,7 +3569,7 @@ class curl {
      * @param array $options
      * @return bool
      */
-    public function options($url, $options = array()){
+    public function options($url, $options = array()) {
         $options['CURLOPT_CUSTOMREQUEST'] = 'OPTIONS';
         $ret = $this->request($url, $options);
         return $ret;
