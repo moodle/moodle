@@ -92,12 +92,12 @@ class behat_completion extends behat_base {
             $this->find('xpath', "//*[@id='settingsnav']" .
                 "/descendant::li" .
                 "/descendant::li[not(contains(@class,'collapsed'))]" .
-                "/descendant::p[contains(., 'Activity completion')]");
+                "/descendant::p[contains(., '" . get_string('pluginname', 'report_progress') . "')]");
         } catch (ElementNotFoundException $e) {
-            $steps[] = new Given('I expand "Reports" node');
+            $steps[] = new Given('I expand "' . get_string('reports') . '" node');
         }
 
-        $steps[] = new Given('I follow "Activity completion"');
+        $steps[] = new Given('I follow "' . get_string('pluginname', 'report_progress') . '"');
 
         return $steps;
     }

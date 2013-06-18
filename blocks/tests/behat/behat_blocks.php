@@ -52,7 +52,7 @@ class behat_blocks extends behat_base {
         if (!$this->running_javascript()) {
             $steps = array(
                 $steps,
-                new Given('I click on "Go" "button" in the "#add_block" "css_element"')
+                new Given('I click on "' . get_string('go') . '" "button" in the "#add_block" "css_element"')
             );
         }
         return $steps;

@@ -61,25 +61,25 @@ class behat_backup extends behat_base {
         $this->find_link($backupcourse)->click();
 
         // Click the backup link.
-        $this->find_link('Backup')->click();
+        $this->find_link(get_string('backup'))->click();
 
         // Initial settings.
         $this->fill_backup_restore_form($options);
-        $this->find_button('Next')->press();
+        $this->find_button(get_string('backupstage1action', 'backup'))->press();
 
         // Schema settings.
         $this->fill_backup_restore_form($options);
-        $this->find_button('Next')->press();
+        $this->find_button(get_string('backupstage2action', 'backup'))->press();
 
         // Confirmation and review, backup filename can also be specified.
         $this->fill_backup_restore_form($options);
-        $this->find_button('Perform backup')->press();
+        $this->find_button(get_string('backupstage4action', 'backup'))->press();
 
         // Waiting for it to finish.
         $this->wait(10);
 
         // Last backup continue button.
-        $this->find_button('Continue')->press();
+        $this->find_button(get_string('backupstage16action', 'backup'))->press();
     }
 
     /**
@@ -106,7 +106,7 @@ class behat_backup extends behat_base {
         $this->find_link($tocourse)->click();
 
         // Click the backup link.
-        $this->find_link('Import')->click();
+        $this->find_link(get_string('import'))->click();
 
         // Select the course.
         $exception = new ExpectationException('"' . $fromcourse . '" course not found in the list of courses to import from', $this->getSession());
@@ -119,22 +119,22 @@ class behat_backup extends behat_base {
         $radionode->check();
         $radionode->click();
 
-        $this->find_button('Continue')->press();
+        $this->find_button(get_string('continue'))->press();
 
         // Initial settings.
         $this->fill_backup_restore_form($options);
-        $this->find_button('Next')->press();
+        $this->find_button(get_string('importbackupstage1action', 'backup'))->press();
 
         // Schema settings.
         $this->fill_backup_restore_form($options);
-        $this->find_button('Next')->press();
+        $this->find_button(get_string('importbackupstage2action', 'backup'))->press();
 
         // Run it.
-        $this->find_button('Perform import')->press();
+        $this->find_button(get_string('importbackupstage4action', 'backup'))->press();
         $this->wait();
 
         // Continue and redirect to 'to' course.
-        $this->find_button('Continue')->press();
+        $this->find_button(get_string('continue'))->press();
     }
 
     /**
@@ -160,7 +160,8 @@ class behat_backup extends behat_base {
         $radionode->click();
 
         // Pressing the continue button of the restore into an existing course section.
-        $continuenode = $this->find('xpath', "//div[contains(@class, 'bcs-existing-course')]/descendant::input[@type='submit'][@value='Continue']");
+        $continuenode = $this->find('xpath', "//div[contains(@class, 'bcs-existing-course')]" .
+            "/descendant::input[@type='submit'][@value='" . get_string('continue') . "']");
         $continuenode->click();
         $this->wait();
 
@@ -188,7 +189,8 @@ class behat_backup extends behat_base {
         $radionode->click();
 
         // Pressing the continue button of the restore into an existing course section.
-        $continuenode = $this->find('xpath', "//div[contains(@class, 'bcs-new-course')]/descendant::input[@type='submit'][@value='Continue']");
+        $continuenode = $this->find('xpath', "//div[contains(@class, 'bcs-new-course')]" .
+            "/descendant::input[@type='submit'][@value='" . get_string('continue') . "']");
         $continuenode->click();
         $this->wait();
 
@@ -216,7 +218,7 @@ class behat_backup extends behat_base {
 
         // Pressing the continue button of the restore merging section.
         $continuenode = $this->find('xpath', "//div[contains(@class, 'bcs-current-course')]" .
-            "/descendant::input[@type='submit'][@value='Continue']");
+            "/descendant::input[@type='submit'][@value='" . get_string('continue') . "']");
         $continuenode->click();
         $this->wait();
 
@@ -244,7 +246,7 @@ class behat_backup extends behat_base {
 
         // Pressing the continue button of the restore merging section.
         $continuenode = $this->find('xpath', "//div[contains(@class, 'bcs-current-course')]" .
-            "/descendant::input[@type='submit'][@value='Continue']");
+            "/descendant::input[@type='submit'][@value='" . get_string('continue') . "']");
         $continuenode->click();
         $this->wait();
 
@@ -263,12 +265,12 @@ class behat_backup extends behat_base {
 
         // Using xpath as there are other restore links before this one.
         $exception = new ExpectationException('The "' . $backupfilename . '" backup file can not be found in this page', $this->getSession());
-        $xpath = "//tr[contains(., '" . $backupfilename . "')]/descendant::a[contains(., 'Restore')]";
+        $xpath = "//tr[contains(., '" . $backupfilename . "')]/descendant::a[contains(., '" . get_string('restore') . "')]";
         $restorelink = $this->find('xpath', $xpath, $exception);
         $restorelink->click();
 
         // Confirm the backup contents.
-        $restore = $this->find_button('Continue')->press();
+        $restore = $this->find_button(get_string('continue'))->press();
     }
 
     /**
@@ -284,18 +286,18 @@ class behat_backup extends behat_base {
 
         // Settings.
         $this->fill_backup_restore_form($options);
-        $this->find_button('Next')->press();
+        $this->find_button(get_string('restorestage4action', 'backup'))->press();
 
         // Schema.
         $this->fill_backup_restore_form($options);
-        $this->find_button('Next')->press();
+        $this->find_button(get_string('restorestage8action', 'backup'))->press();
 
         // Review, no options here.
-        $this->find_button('Perform restore')->press();
+        $this->find_button(get_string('restorestage16action', 'backup'))->press();
         $this->wait(10);
 
         // Last restore continue button, redirected to restore course after this.
-        $this->find_button('Continue')->press();
+        $this->find_button(get_string('restorestage32action', 'backup'))->press();
     }
 
     /**
