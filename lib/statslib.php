@@ -1593,7 +1593,7 @@ function stats_temp_table_create() {
 
     /// Define tables user to be created
     $table = new xmldb_table('temp_stats_daily');
-    $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+    $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
     $table->add_field('courseid', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, null, '0');
     $table->add_field('timeend', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, null, '0');
     $table->add_field('roleid', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, null, '0');
@@ -1601,13 +1601,13 @@ function stats_temp_table_create() {
     $table->add_field('stat1', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, null, '0');
     $table->add_field('stat2', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, null, '0');
     $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-    $table->add_index('courseid', null, array('courseid'));
-    $table->add_index('timeend', null, array('timeend'));
-    $table->add_index('roleid', null, array('roleid'));
+    $table->add_index('courseid', XMLDB_INDEX_NOTUNIQUE, array('courseid'));
+    $table->add_index('timeend', XMLDB_INDEX_NOTUNIQUE, array('timeend'));
+    $table->add_index('roleid', XMLDB_INDEX_NOTUNIQUE, array('roleid'));
     $tables['temp_stats_daily'] = $table;
 
     $table = new xmldb_table('temp_stats_user_daily');
-    $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+    $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
     $table->add_field('courseid', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, null, '0');
     $table->add_field('userid', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, null, '0');
     $table->add_field('roleid', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, null, '0');
@@ -1616,34 +1616,34 @@ function stats_temp_table_create() {
     $table->add_field('statswrites', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, null, '0');
     $table->add_field('stattype', XMLDB_TYPE_CHAR, 30, null, XMLDB_NOTNULL, null, null);
     $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-    $table->add_index('courseid', null, array('courseid'));
-    $table->add_index('userid', null, array('userid'));
-    $table->add_index('timeend', null, array('timeend'));
-    $table->add_index('roleid', null, array('roleid'));
+    $table->add_index('courseid', XMLDB_INDEX_NOTUNIQUE, array('courseid'));
+    $table->add_index('userid', XMLDB_INDEX_NOTUNIQUE, array('userid'));
+    $table->add_index('timeend', XMLDB_INDEX_NOTUNIQUE, array('timeend'));
+    $table->add_index('roleid', XMLDB_INDEX_NOTUNIQUE, array('roleid'));
     $tables['temp_stats_user_daily'] = $table;
 
     $table = new xmldb_table('temp_enroled');
-    $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+    $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
     $table->add_field('userid', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, null, '0');
     $table->add_field('courseid', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, null, '0');
-    $table->add_field('roleid', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, null, '0');
+    $table->add_field('roleid', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, null, null);
     $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-    $table->add_index('userid', null, array('userid'));
-    $table->add_index('courseid', null, array('courseid'));
-    $table->add_index('roleid', null, array('roleid'));
+    $table->add_index('userid', XMLDB_INDEX_NOTUNIQUE, array('userid'));
+    $table->add_index('courseid', XMLDB_INDEX_NOTUNIQUE, array('courseid'));
+    $table->add_index('roleid', XMLDB_INDEX_NOTUNIQUE, array('roleid'));
     $tables['temp_enroled'] = $table;
 
 
     $table = new xmldb_table('temp_log1');
-    $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+    $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
     $table->add_field('userid', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, null, '0');
     $table->add_field('course', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, null, '0');
     $table->add_field('action', XMLDB_TYPE_CHAR, 40, null, XMLDB_NOTNULL, null, null);
     $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-    $table->add_index('action', null, array('action'));
-    $table->add_index('course', null, array('course'));
-    $table->add_index('user', null, array('userid'));
-    $table->add_index('usercourseaction', null, array('userid','course','action'));
+    $table->add_index('action', XMLDB_INDEX_NOTUNIQUE, array('action'));
+    $table->add_index('course', XMLDB_INDEX_NOTUNIQUE, array('course'));
+    $table->add_index('user', XMLDB_INDEX_NOTUNIQUE, array('userid'));
+    $table->add_index('usercourseaction', XMLDB_INDEX_NOTUNIQUE, array('userid','course','action'));
     $tables['temp_log1'] = $table;
 
     /// temp_log2 is exactly the same as temp_log1.
