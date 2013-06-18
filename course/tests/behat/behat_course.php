@@ -48,7 +48,7 @@ class behat_course extends behat_base {
      * @Given /^I turn editing mode on$/
      */
     public function i_turn_editing_mode_on() {
-        return new Given('I press "Turn editing on"');
+        return new Given('I press "' . get_string('turneditingon') . '"');
     }
 
     /**
@@ -56,7 +56,7 @@ class behat_course extends behat_base {
      * @Given /^I turn editing mode off$/
      */
     public function i_turn_editing_mode_off() {
-        return new Given('I press "Turn editing off"');
+        return new Given('I press "' . get_string('turneditingoff') . '"');
     }
 
     /**
@@ -68,9 +68,9 @@ class behat_course extends behat_base {
     public function i_create_a_course_with(TableNode $table) {
         return array(
             new Given('I go to the courses management page'),
-            new Given('I press "Add a new course"'),
+            new Given('I press "' . get_string('addnewcourse') . '"'),
             new Given('I fill the moodle form with:', $table),
-            new Given('I press "Save changes"')
+            new Given('I press "' . get_string('savechanges') . '"')
         );
     }
 
@@ -83,9 +83,9 @@ class behat_course extends behat_base {
 
         return array(
             new Given('I am on homepage'),
-            new Given('I expand "Site administration" node'),
-            new Given('I expand "Courses" node'),
-            new Given('I follow "Add/edit courses"'),
+            new Given('I expand "' . get_string('administrationsite') . '" node'),
+            new Given('I expand "' . get_string('courses', 'admin') . '" node'),
+            new Given('I follow "' . get_string('coursemgmt', 'admin') . '"'),
         );
     }
 
@@ -102,7 +102,7 @@ class behat_course extends behat_base {
         return array(
             new Given('I add a "'.$activity.'" to section "'.$section.'"'),
             new Given('I fill the moodle form with:', $data),
-            new Given('I press "Save and return to course"')
+            new Given('I press "' . get_string('savechangesandreturntocourse') . '"')
         );
     }
 
@@ -765,8 +765,8 @@ class behat_course extends behat_base {
     protected function is_course_editor() {
 
         // We don't need to behat_base::spin() here as all is already loaded.
-        if (!$this->getSession()->getPage()->findButton('Turn editing off') &&
-                !$this->getSession()->getPage()->findButton('Turn editing on')) {
+        if (!$this->getSession()->getPage()->findButton(get_string('turneditingoff')) &&
+                !$this->getSession()->getPage()->findButton(get_string('turneditingon'))) {
             return false;
         }
 

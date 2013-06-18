@@ -63,7 +63,7 @@ class behat_filepicker extends behat_files {
         $dialoginput = $this->find('css', '.fp-mkdir-dlg-text input');
         $dialoginput->setValue($foldername);
 
-        $this->getSession()->getPage()->pressButton('Create folder');
+        $this->getSession()->getPage()->pressButton(get_string('makeafolder'));
 
         // Wait until the process finished and modal windows are hidden.
         $this->wait_until_return_to_form();

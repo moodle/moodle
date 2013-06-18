@@ -63,7 +63,7 @@ class behat_block_comments extends behat_base {
             $commentstextarea = $this->find('css', '.comment-area textarea', $exception);
             $commentstextarea->setValue($comment);
 
-            $this->find_link('Save comment')->click();
+            $this->find_link(get_string('savecomment'))->click();
 
             // Wait for the AJAX request.
             $this->getSession()->wait(4 * 1000, false);

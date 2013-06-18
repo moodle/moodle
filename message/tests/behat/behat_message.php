@@ -63,10 +63,10 @@ class behat_message extends behat_base {
         $steps[] = new Given('I am on homepage');
 
         if ($this->running_javascript()) {
-            $steps[] = new Given('I expand "My profile" node');
+            $steps[] = new Given('I expand "' . get_string('myprofile') . '" node');
         }
 
-        $steps[] = new Given('I follow "Messages"');
+        $steps[] = new Given('I follow "' . get_string('messages', 'message') . '"');
         $steps[] = new Given('I fill in "' . get_string('searchcombined', 'message') . '" with "' . $tofullname . '"');
         $steps[] = new Given('I press "' . get_string('searchcombined', 'message') . '"');
         $steps[] = new Given('I follow "' . get_string('sendmessageto', 'message', $tofullname) . '"');

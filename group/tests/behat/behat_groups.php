@@ -80,7 +80,7 @@ class behat_groups extends behat_base {
         $this->getSession()->wait(self::TIMEOUT, '(document.readyState === "complete")');
 
         // Returning to the main groups page.
-        $this->find_button('Back to groups')->click();
+        $this->find_button(get_string('backtogroups', 'group'))->click();
     }
 
 }

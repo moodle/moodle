@@ -49,10 +49,10 @@ class behat_auth extends behat_base {
     public function i_log_in_as($username) {
 
         return array(new Given('I am on homepage'),
-            new Given('I follow "Log in"'),
-            new Given('I fill in "Username" with "'.$username.'"'),
-            new Given('I fill in "Password" with "'.$username.'"'),
-            new Given('I press "Log in"')
+            new Given('I follow "' . get_string('login') . '"'),
+            new Given('I fill in "' . get_string('username') . '" with "'.$username.'"'),
+            new Given('I fill in "' . get_string('password') . '" with "'.$username.'"'),
+            new Given('I press "' . get_string('login') . '"')
         );
     }
 
@@ -62,7 +62,7 @@ class behat_auth extends behat_base {
      * @Given /^I log out$/
      */
     public function i_log_out() {
-        return new When('I follow "Log out"');
+        return new When('I follow "' . get_string('logout') . '"');
     }
 
 }

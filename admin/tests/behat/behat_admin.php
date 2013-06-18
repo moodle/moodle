@@ -62,7 +62,7 @@ class behat_admin extends behat_base {
             }
 
             // Search by label.
-            $searchbox = $this->find_field('Search in settings');
+            $searchbox = $this->find_field(get_string('searchinsettings', 'admin'));
             $searchbox->setValue($label);
             $submitsearch = $this->find('css', 'form.adminsearchform input[type=submit]');
             $submitsearch->press();
@@ -90,7 +90,7 @@ class behat_admin extends behat_base {
             $field = behat_field_manager::get_field_instance($type, $fieldnode, $this->getSession());
             $field->set_value($value);
 
-            $this->find_button('Save changes')->press();
+            $this->find_button(get_string('savechanges'))->press();
         }
     }
 
