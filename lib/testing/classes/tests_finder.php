@@ -96,9 +96,9 @@ class tests_finder {
         $subsystems = core_component::get_core_subsystems();
 
         // Hack the list a bit to cover some well-known ones
-        $subsystems['backup'] = 'backup';
-        $subsystems['db-dml'] = 'lib/dml';
-        $subsystems['db-ddl'] = 'lib/ddl';
+        $subsystems['backup'] = $CFG->dirroot.'/backup';
+        $subsystems['db-dml'] = $CFG->dirroot.'/lib/dml';
+        $subsystems['db-ddl'] = $CFG->dirroot.'/lib/ddl';
 
         ksort($subsystems);
         foreach ($subsystems as $subsys => $fullsubsys) {
