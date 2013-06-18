@@ -29,7 +29,7 @@ global $CFG;
 require_once($CFG->libdir . '/externallib.php');
 
 
-class externallib_testcase extends basic_testcase {
+class externallib_testcase extends advanced_testcase {
     public function test_validate_params() {
         $params = array('text'=>'aaa', 'someid'=>'6',);
         $description = new external_function_parameters(array('someid' => new external_value(PARAM_INT, 'Some int value'),
@@ -134,5 +134,72 @@ class externallib_testcase extends basic_testcase {
         $testdata = array($singlestructure);
         $this->setExpectedException('invalid_response_exception');
         $cleanedvalue = external_api::clean_returnvalue($returndesc, $testdata);
+    }
+    /*
+     * Test external_api::get_context_from_params()
+     */
+    public function test_get_context_from_params() {
+        global $USER;
+
+        $this->resetAfterTest(true);
+        $course = $this->getDataGenerator()->create_course();
+        $realcontext = context_course::instance($course->id);
+
+        // Use context id.
+        $fetchedcontext = test_exernal_api::get_context_wrapper(array("contextid" => $realcontext->id));
+        $this->assertSame($realcontext, $fetchedcontext);
+
+        // Use context level and instance id.
+        $fetchedcontext = test_exernal_api::get_context_wrapper(array("contextlevel" => "course", "instanceid" => $course->id));
+        $this->assertSame($realcontext, $fetchedcontext);
+
+        // Passing wrong level
+        $this->setExpectedException('invalid_parameter_exception');
+        $fetchedcontext = test_exernal_api::get_context_wrapper(array("contextlevel" => "random", "instanceid" => $course->id));
+    }
+
+    /*
+     * Test external_api::get_context()_from_params parameter validation
+     */
+    public function test_get_context_params() {
+        global $USER;
+
+        // Call without correct context details.
+        $this->setExpectedException('invalid_parameter_exception');
+        test_exernal_api::get_context_wrapper(array('roleid' => 3, 'userid' => $USER->id));
+    }
+
+    /*
+     * Test external_api::get_context()_from_params parameter validation
+     */
+    public function test_get_context_params2() {
+        global $USER;
+
+        // Call without correct context details.
+        $this->setExpectedException('invalid_parameter_exception');
+        test_exernal_api::get_context_wrapper(array('roleid' => 3, 'userid' => $USER->id, 'contextlevel' => "course"));
+    }
+
+    /*
+     * Test external_api::get_context()_from_params parameter validation
+     */
+    public function test_get_context_params3() {
+        global $USER;
+
+        // Call without correct context details.
+        $this->resetAfterTest(true);
+        $course = self::getDataGenerator()->create_course();
+        $this->setExpectedException('invalid_parameter_exception');
+        test_exernal_api::get_context_wrapper(array('roleid' => 3, 'userid' => $USER->id, 'instanceid' => $course->id));
+    }
+}
+
+/*
+ * Just a wrapper to access protected apis for testing
+ */
+class test_exernal_api extends external_api {
+
+    public static function get_context_wrapper($params) {
+        return self::get_context_from_params($params);
     }
 }
