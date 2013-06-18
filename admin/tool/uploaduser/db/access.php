@@ -15,17 +15,25 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version info
+ * Defines the capabilities used by the user upload admin tool
  *
- * @package    tool
- * @subpackage uploaduser
- * @copyright  2011 Petr Skoda {@link http://skodak.org}
+ * @package    tool_uploaduser
+ * @copyright  2013 Dan Poltawski <dan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2013061400; // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2013050100; // Requires this Moodle version
-$plugin->component = 'tool_uploaduser'; // Full name of the plugin (used for diagnostics)
+$capabilities = array(
 
+    // Allows the user to upload user pictures.
+    'tool/uploaduser:uploaduserpictures' => array(
+        'riskbitmask' => RISK_SPAM,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'manager' => CAP_ALLOW
+        ),
+        'clonepermissionsfrom' =>  'moodle/site:uploadusers',
+    ),
+);

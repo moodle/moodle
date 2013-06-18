@@ -59,6 +59,7 @@ $string['uploadusers_help'] = 'Users may be uploaded (and optionally enrolled in
 * Required fieldnames are username, password, firstname, lastname, email';
 $string['uploaduserspreview'] = 'Upload users preview';
 $string['uploadusersresult'] = 'Upload users results';
+$string['uploaduser:uploaduserpictures'] = 'Upload user pictures';
 $string['useraccountupdated'] = 'User updated';
 $string['useraccountuptodate'] = 'User up-to-date';
 $string['userdeleted'] = 'User deleted';
