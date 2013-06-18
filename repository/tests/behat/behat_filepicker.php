@@ -65,8 +65,11 @@ class behat_filepicker extends behat_files {
 
         $this->getSession()->getPage()->pressButton('Create folder');
 
-        // Wait few seconds for the folder to be created and filepicker contents reloaded.
-        $this->getSession()->wait(4 * 1000, false);
+        // Wait until the process finished and modal windows are hidden.
+        $this->wait_until_return_to_form();
+
+        // Wait until the current folder contents are updated
+        $this->wait_until_contents_are_updated($fieldnode);
     }
 
     /**
@@ -86,6 +89,9 @@ class behat_filepicker extends behat_files {
             $this->getSession()
         );
 
+        // Just in case there is any contents refresh in progress.
+        $this->wait_until_contents_are_updated($fieldnode);
+
         // We look both in the pathbar and in the contents.
         try {
 
@@ -93,7 +99,8 @@ class behat_filepicker extends behat_files {
             $folder = $this->find(
                 'xpath',
                 "//div[contains(concat(' ', normalize-space(@class), ' '), ' fp-folder ')]" .
-                    "//descendant::div[contains(concat(' ', normalize-space(.), ' '), '" . $foldername . "')]",
+                    "/descendant::div[contains(concat(' ', @class, ' '), ' fp-filename ')]" .
+                    "[normalize-space(.)='" . $foldername . "']",
                 $exception,
                 $fieldnode
             );
@@ -103,7 +110,7 @@ class behat_filepicker extends behat_files {
             $folder = $this->find(
                 'xpath',
                 "//a[contains(concat(' ', normalize-space(@class), ' '), ' fp-path-folder-name ')]" .
-                    "[contains(concat(' ', normalize-space(.), ' '), '" . $foldername . "')]",
+                    "[normalize-space(.)='" . $foldername . "']",
                 $exception,
                 $fieldnode
             );
@@ -112,8 +119,8 @@ class behat_filepicker extends behat_files {
         // It should be a NodeElement, otherwise an exception would have been thrown.
         $folder->click();
 
-        // Wait few seconds for the filepicker contents to be updated.
-        $this->getSession()->wait(4 * 1000, false);
+        // Wait until the current folder contents are updated
+        $this->wait_until_contents_are_updated($fieldnode);
     }
 
     /**
@@ -133,9 +140,12 @@ class behat_filepicker extends behat_files {
         $exception = new ExpectationException($filename.' element can not be unzipped', $this->getSession());
         $this->perform_on_element('unzip', $exception);
 
-        // Wait few seconds.
-        // Here the time will depend on the zip contents and the server load, so it better to be conservative.
-        $this->getSession()->wait(8 * 1000, false);
+        // Wait until the process finished and modal windows are hidden.
+        $this->wait_until_return_to_form();
+
+        // Wait until the current folder contents are updated
+        $containernode = $this->get_filepicker_node($filepickerelement);
+        $this->wait_until_contents_are_updated($containernode);
     }
 
     /**
@@ -155,9 +165,12 @@ class behat_filepicker extends behat_files {
         $exception = new ExpectationException($foldername.' element can not be zipped', $this->getSession());
         $this->perform_on_element('zip', $exception);
 
-        // Wait few seconds.
-        // Here the time will depend on the folder contents and the server load, so it better to be conservative.
-        $this->getSession()->wait(8 * 1000, false);
+        // Wait until the process finished and modal windows are hidden.
+        $this->wait_until_return_to_form();
+
+        // Wait until the current folder contents are updated
+        $containernode = $this->get_filepicker_node($filepickerelement);
+        $this->wait_until_contents_are_updated($containernode);
     }
 
     /**
@@ -182,8 +195,12 @@ class behat_filepicker extends behat_files {
         $okbutton = $this->find('css', 'div.fp-dlg button.fp-dlg-butconfirm');
         $okbutton->click();
 
-        // Wait few seconds until filepicker contents are reloaded.
-        $this->getSession()->wait(4 * 1000, false);
+        // Wait until the process finished and modal windows are hidden.
+        $this->wait_until_return_to_form();
+
+        // Wait until file manager contents are updated.
+        $containernode = $this->get_filepicker_node($filepickerelement);
+        $this->wait_until_contents_are_updated($containernode);
     }
 
 }
