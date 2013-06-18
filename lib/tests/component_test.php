@@ -151,6 +151,7 @@ class core_component_testcase extends advanced_testcase {
                 // Let's crosscheck it with independent implementation (auth/db is an exception).
                 $reldir = substr($fulldir, strlen($CFG->dirroot)+1);
                 $dirs = get_list_of_plugins($reldir);
+                $dirs = array_values($dirs);
                 $this->assertDebuggingCalled();
                 $this->assertSame($dirs, array_keys($plugins));
             }
