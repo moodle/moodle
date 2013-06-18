@@ -1594,12 +1594,12 @@ function stats_temp_table_create() {
     /// Define tables user to be created
     $table = new xmldb_table('temp_stats_daily');
     $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-    $table->add_field('courseid', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, null, null);
-    $table->add_field('timeend', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, null, null);
-    $table->add_field('roleid', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, null, null);
+    $table->add_field('courseid', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, null, '0');
+    $table->add_field('timeend', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, null, '0');
+    $table->add_field('roleid', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, null, '0');
     $table->add_field('stattype', XMLDB_TYPE_CHAR, 20, null, XMLDB_NOTNULL, null, 'activity');
-    $table->add_field('stat1', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, null, null);
-    $table->add_field('stat2', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, null, null);
+    $table->add_field('stat1', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, null, '0');
+    $table->add_field('stat2', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, null, '0');
     $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
     $table->add_index('courseid', null, array('courseid'));
     $table->add_index('timeend', null, array('timeend'));
@@ -1614,7 +1614,7 @@ function stats_temp_table_create() {
     $table->add_field('timeend', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, null, '0');
     $table->add_field('statsreads', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, null, '0');
     $table->add_field('statswrites', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, null, '0');
-    $table->add_field('stattyspe', XMLDB_TYPE_CHAR, 30, null, XMLDB_NOTNULL, null, null);
+    $table->add_field('stattype', XMLDB_TYPE_CHAR, 30, null, XMLDB_NOTNULL, null, null);
     $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
     $table->add_index('courseid', null, array('courseid'));
     $table->add_index('userid', null, array('userid'));
@@ -1637,11 +1637,11 @@ function stats_temp_table_create() {
     $table = new xmldb_table('temp_log1');
     $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
     $table->add_field('userid', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, null, '0');
-    $table->add_field('courseid', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, null, '0');
+    $table->add_field('course', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, null, '0');
     $table->add_field('action', XMLDB_TYPE_CHAR, 40, null, XMLDB_NOTNULL, null, null);
     $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
     $table->add_index('action', null, array('action'));
-    $table->add_index('course', null, array('courseid'));
+    $table->add_index('course', null, array('course'));
     $table->add_index('user', null, array('userid'));
     $table->add_index('usercourseaction', null, array('userid','course','action'));
     $tables['temp_log1'] = $table;
