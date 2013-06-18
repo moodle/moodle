@@ -69,7 +69,7 @@ function assign_reset_userdata($data) {
     $status = array();
     $params = array('courseid'=>$data->courseid);
     $sql = "SELECT a.id FROM {assign} a WHERE a.course=:courseid";
-    $course = $DB->get_record('course', array('id'=>$data->courseid), '*', MUST_EXIST);
+    $course = get_course($data->courseid);
     if ($assigns = $DB->get_records_sql($sql, $params)) {
         foreach ($assigns as $assign) {
             $cm = get_coursemodule_from_instance('assign',

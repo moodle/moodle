@@ -2120,8 +2120,8 @@ class core_accesslib_testcase extends advanced_testcase {
         $guestid = $CFG->siteguest;
 
         // Enrol some users into some courses.
-        $course1 = $DB->get_record('course', array('id'=>$testcourses[22]), '*', MUST_EXIST);
-        $course2 = $DB->get_record('course', array('id'=>$testcourses[7]), '*', MUST_EXIST);
+        $course1 = get_course($testcourses[22]);
+        $course2 = get_course($testcourses[7]);
         $cms = $DB->get_records('course_modules', array('course'=>$course1->id), 'id');
         $cm1 = reset($cms);
         $blocks = $DB->get_records('block_instances', array('parentcontextid'=>context_module::instance($cm1->id)->id), 'id');

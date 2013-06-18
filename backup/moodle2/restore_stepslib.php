@@ -1632,7 +1632,7 @@ class restore_default_enrolments_step extends restore_execution_step {
     public function define_execution() {
         global $DB;
 
-        $course = $DB->get_record('course', array('id'=>$this->get_courseid()), '*', MUST_EXIST);
+        $course = get_course($this->get_courseid());
 
         if ($DB->record_exists('enrol', array('courseid'=>$this->get_courseid(), 'enrol'=>'manual'))) {
             // Something already added instances, do not add default instances.
@@ -1849,7 +1849,7 @@ class restore_fix_restorer_access_step extends restore_execution_step {
             return;
         }
         if (!$DB->record_exists('enrol', array('enrol'=>'manual', 'courseid'=>$courseid))) {
-            $course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
+            $course = get_course($courseid);
             $fields = array('status'=>ENROL_INSTANCE_ENABLED, 'enrolperiod'=>$enrol->get_config('enrolperiod', 0), 'roleid'=>$enrol->get_config('roleid', 0));
             $enrol->add_instance($course, $fields);
         }

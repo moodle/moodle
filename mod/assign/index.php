@@ -27,7 +27,7 @@ require_once($CFG->dirroot.'/mod/assign/locallib.php');
 // For this type of page this is the course id.
 $id = required_param('id', PARAM_INT);
 
-$course = $DB->get_record('course', array('id' => $id), '*', MUST_EXIST);
+$course = get_course($id);
 require_login($course);
 $PAGE->set_url('/mod/assign/index.php', array('id' => $id));
 $PAGE->set_pagelayout('incourse');

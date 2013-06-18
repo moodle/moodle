@@ -41,7 +41,7 @@ if (optional_param('resetbutton', '', PARAM_RAW) !== '') {
     redirect('users.php?id=' . $id);
 }
 
-$course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
+$course = get_course($id);
 $context = context_course::instance($course->id, MUST_EXIST);
 
 if ($course->id == SITEID) {

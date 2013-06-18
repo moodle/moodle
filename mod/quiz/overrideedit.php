@@ -58,7 +58,7 @@ if ($overrideid) {
 } else {
     print_error('invalidcoursemodule');
 }
-$course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
+$course = get_course($cm->course);
 
 $url = new moodle_url('/mod/quiz/overrideedit.php');
 if ($action) {

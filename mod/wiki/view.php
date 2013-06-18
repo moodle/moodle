@@ -66,7 +66,7 @@ if ($id) {
     }
 
     // Checking course instance
-    $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+    $course = get_course($cm->course);
 
     require_login($course, true, $cm);
 
@@ -138,7 +138,7 @@ if ($id) {
     $currentgroup = $subwiki->groupid;
 
     // Checking course instance
-    $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+    $course = get_course($cm->course);
 
     require_login($course, true, $cm);
     /*
@@ -169,7 +169,7 @@ if ($id) {
     }
 
     // Checking course instance
-    $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+    $course = get_course($cm->course);
 
     require_login($course, true, $cm);
 
@@ -252,7 +252,7 @@ if ($id) {
     //    }
     //
     //    // Checking course instance
-    //    $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
+    //    $course = get_course($cm->course);
     //
     //    // Checking course module instance
     //    if (!$cm = get_coursemodule_from_instance("wiki", $wiki->id, $course->id)) {

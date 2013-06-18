@@ -44,7 +44,7 @@ $sort = optional_param('sort','',PARAM_ALPHA);
 $edituser = optional_param('edituser', 0, PARAM_INT);
 
 
-$course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+$course = get_course($courseid);
 $context = context_course::instance($course->id);
 
 $url = new moodle_url('/report/completion/index.php', array('course'=>$course->id));

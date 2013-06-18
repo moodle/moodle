@@ -109,7 +109,7 @@ abstract class backup_check {
         $typecapstocheck = array();
         switch ($type) {
             case backup::TYPE_1COURSE :
-                $DB->get_record('course', array('id' => $id), '*', MUST_EXIST); // course exists
+                get_course($id); // course exists
                 $typecapstocheck['moodle/backup:backupcourse'] = $coursectx;
                 break;
             case backup::TYPE_1SECTION :

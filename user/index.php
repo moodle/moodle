@@ -38,9 +38,9 @@
         if ($context->contextlevel != CONTEXT_COURSE) {
             print_error('invalidcontext');
         }
-        $course = $DB->get_record('course', array('id'=>$context->instanceid), '*', MUST_EXIST);
+        $course = get_course($context->instanceid);
     } else {
-        $course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
+        $course = get_course($courseid);
         $context = context_course::instance($course->id, MUST_EXIST);
     }
     // not needed anymore

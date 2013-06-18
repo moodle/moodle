@@ -28,7 +28,7 @@ require_once($CFG->dirroot.'/mnet/service/enrol/locallib.php');
 
 $id = required_param('id', PARAM_INT); // course id
 
-$course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
+$course = get_course($id);
 $context = context_course::instance($course->id, MUST_EXIST);
 
 require_login($course);

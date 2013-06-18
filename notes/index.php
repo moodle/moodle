@@ -39,7 +39,7 @@ if (empty($courseid)) {
 }
 
 /// locate course information
-$course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
+$course = get_course($courseid);
 
 /// locate user information
 if ($userid) {

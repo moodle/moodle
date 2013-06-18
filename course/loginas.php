@@ -35,7 +35,7 @@ if ($redirect) {
 $userid = required_param('user', PARAM_INT);         // login as this user
 
 require_sesskey();
-$course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
+$course = get_course($id);
 
 /// User must be logged in
 

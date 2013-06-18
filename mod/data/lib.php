@@ -1439,7 +1439,7 @@ function data_rating_validate($params) {
         }
     }
 
-    $course = $DB->get_record('course', array('id'=>$info->course), '*', MUST_EXIST);
+    $course = get_course($info->course);
     $cm = get_coursemodule_from_instance('data', $info->dataid, $course->id, false, MUST_EXIST);
     $context = context_module::instance($cm->id);
 

@@ -63,7 +63,7 @@ if ($l) {  // Two ways to specify the module
     $lti = $DB->get_record('lti', array('id' => $cm->instance), '*', MUST_EXIST);
 }
 
-$course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+$course = get_course($cm->course);
 
 $tool = lti_get_tool_by_url_match($lti->toolurl);
 if ($tool) {

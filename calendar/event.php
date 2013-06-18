@@ -81,7 +81,7 @@ $PAGE->set_url($url);
 $PAGE->set_pagelayout('standard');
 
 if ($courseid != SITEID && !empty($courseid)) {
-    $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+    $course = get_course($courseid);
     $courses = array($course->id => $course);
     $issite = false;
 } else {

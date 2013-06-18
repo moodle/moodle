@@ -33,7 +33,7 @@ if (!isloggedin()) {
     redirect(get_login_url());
 }
 
-$course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
+$course = get_course($id);
 $context = context_course::instance($course->id, MUST_EXIST);
 
 // Everybody is enrolled on the frontpage

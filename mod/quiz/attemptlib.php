@@ -108,7 +108,7 @@ class quiz {
         global $DB;
 
         $quiz = quiz_access_manager::load_quiz_and_settings($quizid);
-        $course = $DB->get_record('course', array('id' => $quiz->course), '*', MUST_EXIST);
+        $course = get_course($quiz->course);
         $cm = get_coursemodule_from_instance('quiz', $quiz->id, $course->id, false, MUST_EXIST);
 
         // Update quiz with override information.
@@ -489,7 +489,7 @@ class quiz_attempt {
 
         $attempt = $DB->get_record('quiz_attempts', $conditions, '*', MUST_EXIST);
         $quiz = quiz_access_manager::load_quiz_and_settings($attempt->quiz);
-        $course = $DB->get_record('course', array('id' => $quiz->course), '*', MUST_EXIST);
+        $course = get_course($quiz->course);
         $cm = get_coursemodule_from_instance('quiz', $quiz->id, $course->id, false, MUST_EXIST);
 
         // Update quiz with override information.

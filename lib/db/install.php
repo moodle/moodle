@@ -96,7 +96,7 @@ function xmldb_main_install() {
     }
     // Make sure site course context exists
     context_course::instance($SITE->id);
-    // Update the global frontpage cache
+    // Update the global frontpage cache from database.
     $SITE = $DB->get_record('course', array('id'=>$newsite->id), '*', MUST_EXIST);
 
 

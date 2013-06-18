@@ -30,7 +30,7 @@ $userid   = required_param('id', PARAM_INT);
 $courseid = required_param('course', PARAM_INT);
 
 $user = $DB->get_record('user', array('id'=>$userid, 'deleted'=>0), '*', MUST_EXIST);
-$course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
+$course = get_course($courseid);
 
 $coursecontext   = context_course::instance($course->id);
 $personalcontext = context_user::instance($user->id);

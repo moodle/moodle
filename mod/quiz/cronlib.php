@@ -66,7 +66,7 @@ class mod_quiz_overdue_attempt_updater {
 
                 // If we have moved on to a different course, fetch the new data.
                 if (!$course || $course->id != $quiz->course) {
-                    $course = $DB->get_record('course', array('id' => $quiz->course), '*', MUST_EXIST);
+                    $course = get_course($quiz->course);
                 }
 
                 // Make a specialised version of the quiz settings, with the relevant overrides.

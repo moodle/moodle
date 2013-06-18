@@ -36,7 +36,7 @@ if ($courseid == SITEID) {
     $courseid = 0;
 }
 if ($courseid) {
-    $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+    $course = get_course($courseid);
     $PAGE->set_course($course);
     $context = $PAGE->context;
 } else {

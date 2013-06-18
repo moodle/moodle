@@ -36,7 +36,7 @@ $id      = optional_param('id', $SITE->id, PARAM_INT);
 $page    = optional_param('page', 0, PARAM_INT);
 $inpopup = optional_param('inpopup', 0, PARAM_BOOL);
 
-$course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
+$course = get_course($id);
 
 require_login($course);
 

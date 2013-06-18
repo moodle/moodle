@@ -39,7 +39,7 @@ if ($course) {
 } else {
     $isfrontpage = false;
     if ($context->contextlevel == CONTEXT_USER) {
-        $course = $DB->get_record('course', array('id'=>optional_param('courseid', SITEID, PARAM_INT)), '*', MUST_EXIST);
+        $course = get_course(optional_param('courseid', SITEID, PARAM_INT));
         $user = $DB->get_record('user', array('id'=>$context->instanceid), '*', MUST_EXIST);
         $url->param('courseid', $course->id);
         $url->param('userid', $user->id);

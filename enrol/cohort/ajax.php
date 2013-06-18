@@ -38,7 +38,7 @@ $action  = required_param('action', PARAM_ALPHANUMEXT);
 
 $PAGE->set_url(new moodle_url('/enrol/cohort/ajax.php', array('id'=>$id, 'action'=>$action)));
 
-$course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
+$course = get_course($id);
 $context = context_course::instance($course->id, MUST_EXIST);
 
 if ($course->id == SITEID) {

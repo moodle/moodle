@@ -53,7 +53,7 @@ if (!is_null($sesskey)) {
 $PAGE->set_url($url);
 
 $forum   = $DB->get_record('forum', array('id' => $id), '*', MUST_EXIST);
-$course  = $DB->get_record('course', array('id' => $forum->course), '*', MUST_EXIST);
+$course  = get_course($forum->course);
 $cm      = get_coursemodule_from_instance('forum', $forum->id, $course->id, false, MUST_EXIST);
 $context = context_module::instance($cm->id);
 

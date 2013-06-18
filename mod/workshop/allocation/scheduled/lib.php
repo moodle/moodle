@@ -277,7 +277,7 @@ function workshopallocation_scheduled_cron() {
 
     foreach ($workshops as $workshop) {
         $cm = get_coursemodule_from_instance('workshop', $workshop->id, $workshop->course, false, MUST_EXIST);
-        $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+        $course = get_course($cm->course);
         $workshop = new workshop($workshop, $cm, $course);
         $allocator = $workshop->allocator_instance('scheduled');
         $result = $allocator->execute();

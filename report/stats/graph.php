@@ -37,7 +37,7 @@ $roleid   = optional_param('roleid',0,PARAM_INT);
 $url = new moodle_url('/report/stats/graph.php', array('course'=>$courseid, 'report'=>$report, 'time'=>$time, 'mode'=>$mode, 'userid'=>$userid, 'roleid'=>$roleid));
 $PAGE->set_url($url);
 
-$course = $DB->get_record("course", array("id"=>$courseid), '*', MUST_EXIST);
+$course = get_course($courseid);
 $coursecontext   = context_course::instance($course->id);
 $PAGE->set_context($coursecontext);
 

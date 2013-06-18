@@ -17,7 +17,7 @@ $searchcourses = optional_param('searchcourses', false, PARAM_BOOL);
 $restoretarget = optional_param('target', backup::TARGET_CURRENT_ADDING, PARAM_INT);
 
 // Load the course and context
-$course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
+$course = get_course($courseid);
 $context = context_course::instance($courseid);
 
 // Must pass login
@@ -51,7 +51,7 @@ if ($importcourseid === false || $searchcourses) {
 }
 
 // Load the course +context to import from
-$importcourse = $DB->get_record('course', array('id'=>$importcourseid), '*', MUST_EXIST);
+$importcourse = get_course($importcourseid);
 $importcontext = context_course::instance($importcourseid);
 
 // Make sure the user can backup from that course
