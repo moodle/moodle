@@ -79,7 +79,9 @@ class core_component {
             return;
         }
 
-        if (PHPUNIT_TEST or !empty($CFG->early_install_lang) or (defined('BEHAT_UTIL') and BEHAT_UTIL)) {
+        if (PHPUNIT_TEST or !empty($CFG->early_install_lang) or
+                (defined('BEHAT_UTIL') and BEHAT_UTIL) or
+                (defined('BEHAT_TEST') and BEHAT_TEST)) {
             // 1/ Do not bother storing the file for unit tests,
             //    we need fresh copy for each execution and
             //    later we keep it in memory.
