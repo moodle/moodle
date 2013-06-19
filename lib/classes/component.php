@@ -175,10 +175,10 @@ class core_component {
      */
     protected static function get_cache_content() {
         $cache = array(
-            'subsystems'  => var_export(self::$subsystems, true),
-            'plugintypes' => var_export(self::$plugintypes, true),
-            'plugins'     => var_export(self::$plugins, true),
-            'classmap'    => var_export(self::$classmap, true),
+            'subsystems'  => self::$subsystems,
+            'plugintypes' => self::$plugintypes,
+            'plugins'     => self::$plugins,
+            'classmap'    => self::$classmap,
         );
 
         return '<?php
