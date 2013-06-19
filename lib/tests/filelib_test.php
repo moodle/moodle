@@ -105,7 +105,7 @@ class filelib_testcase extends advanced_testcase {
         $this->assertInstanceOf('stdClass', $response);
         $this->assertSame('200', $response->status);
         $this->assertTrue(is_array($response->headers));
-        $this->assertSame('HTTP/1.1 200 OK', rtrim($response->response_code));
+        $this->assertRegExp('|^HTTP/1\.[01] 200 OK$|', rtrim($response->response_code));
         $this->assertSame($contents, $response->results);
         $this->assertSame('', $response->error);
 
@@ -131,7 +131,7 @@ class filelib_testcase extends advanced_testcase {
         $this->assertInstanceOf('stdClass', $response);
         $this->assertSame('404', $response->status);
         $this->assertTrue(is_array($response->headers));
-        $this->assertSame('HTTP/1.1 404 Not Found', rtrim($response->response_code));
+        $this->assertRegExp('|^HTTP/1\.[01] 404 Not Found$|', rtrim($response->response_code));
         $this->assertStringStartsWith('<!DOCTYPE', $response->results);
         $this->assertSame('', $response->error);
 
@@ -153,7 +153,7 @@ class filelib_testcase extends advanced_testcase {
         $this->assertInstanceOf('stdClass', $response);
         $this->assertSame('200', $response->status);
         $this->assertTrue(is_array($response->headers));
-        $this->assertSame('HTTP/1.1 200 OK', rtrim($response->response_code));
+        $this->assertRegExp('|^HTTP/1\.[01] 200 OK$|', rtrim($response->response_code));
         $this->assertSame('done', $response->results);
         $this->assertSame('', $response->error);
 
