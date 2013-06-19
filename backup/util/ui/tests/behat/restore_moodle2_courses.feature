@@ -88,7 +88,7 @@ Feature: Restore Moodle 2 course backups
       | id_startdate_year | 2020 |
       | id_format | Weekly format |
     And I press "Save changes"
-    And I should see "1 January -  7 January"
+    And I should see "1 January - 7 January"
     And I should see "Test forum name"
     And I follow "Edit settings"
     And I expand all fieldsets
