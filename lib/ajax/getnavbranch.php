@@ -103,6 +103,9 @@ try {
         foreach ($branch->find_all_of_type(navigation_node::TYPE_CATEGORY) as $category) {
             $category->action = null;
         }
+        foreach ($branch->find_all_of_type(navigation_node::TYPE_MY_CATEGORY) as $category) {
+            $category->action = null;
+        }
     }
 
     // Stop buffering errors at this point
