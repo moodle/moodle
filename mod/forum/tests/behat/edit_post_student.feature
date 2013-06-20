@@ -33,9 +33,7 @@ Feature: Students can edit or delete their forum posts within a set time limit
     And I add a new discussion to "Test forum name" forum with:
       | Subject | Forum post subject |
       | Message | This is the body |
-    And I wait "6" seconds
 
-  @javascript
   Scenario: Edit forum post
     When I follow "Forum post subject"
     And I follow "Edit"
@@ -43,7 +41,7 @@ Feature: Students can edit or delete their forum posts within a set time limit
       | Subject | Edited post subject |
       | Message | Edited post body |
     And I press "Save changes"
-    And I wait "6" seconds
+    And I wait to be redirected
     Then I should see "Edited post subject"
     And I should see "Edited post body"
 
