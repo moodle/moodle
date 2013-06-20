@@ -1301,18 +1301,18 @@ class assign {
     }
 
     /**
-     * Load a count of users enrolled in the current course with the specified permission and group.
+     * Load a count of active users enrolled in the current course with the specified permission and group.
      * 0 for no group.
      *
      * @param int $currentgroup
      * @return int number of matching users
      */
     public function count_participants($currentgroup) {
-        return count_enrolled_users($this->context, 'mod/assign:submit', $currentgroup, $this->showonlyactiveenrol);
+        return count_enrolled_users($this->context, 'mod/assign:submit', $currentgroup, true);
     }
 
     /**
-     * Load a count of users submissions in the current module that require grading
+     * Load a count of active users submissions in the current module that require grading
      * This means the submission modification time is more recent than the
      * grading modification time and the status is SUBMITTED.
      *
@@ -1327,7 +1327,7 @@ class assign {
         }
 
         $currentgroup = groups_get_activity_group($this->get_course_module(), true);
-        list($esql, $params) = get_enrolled_sql($this->get_context(), 'mod/assign:submit', $currentgroup, false);
+        list($esql, $params) = get_enrolled_sql($this->get_context(), 'mod/assign:submit', $currentgroup, true);
 
         $submissionmaxattempt = 'SELECT mxs.userid, MAX(mxs.attemptnumber) AS maxattempt
                                  FROM {assign_submission} mxs
@@ -1357,12 +1357,6 @@ class assign {
                         s.status = :submitted AND
                         (s.timemodified > g.timemodified OR g.timemodified IS NULL)';
 
-        if ($this->showonlyactiveenrol && sizeof($this->susers)) {
-            $susql = '';
-            list($susql, $suparams) = $DB->get_in_or_equal($this->susers, SQL_PARAMS_NAMED, 'sng', false);
-            $sql .= " AND s.userid $susql";
-            $params = array_merge($params, $suparams);
-        }
         return $DB->count_records_sql($sql, $params);
     }
 
@@ -1379,7 +1373,7 @@ class assign {
         }
 
         $currentgroup = groups_get_activity_group($this->get_course_module(), true);
-        list($esql, $params) = get_enrolled_sql($this->get_context(), 'mod/assign:submit', $currentgroup, false);
+        list($esql, $params) = get_enrolled_sql($this->get_context(), 'mod/assign:submit', $currentgroup, true);
 
         $params['assignid'] = $this->get_instance()->id;
 
@@ -1388,12 +1382,6 @@ class assign {
                    JOIN(' . $esql . ') e ON e.id = g.userid
                    WHERE g.assignment = :assignid';
 
-        if ($this->showonlyactiveenrol && sizeof($this->susers)) {
-            $susql = '';
-            list($susql, $suparams) = $DB->get_in_or_equal($this->susers, SQL_PARAMS_NAMED, 'cg', false);
-            $sql .= " AND g.userid $susql";
-            $params = array_merge($params, $suparams);
-        }
         return $DB->count_records_sql($sql, $params);
     }
 
@@ -1424,7 +1412,7 @@ class assign {
             $params['groupuserid'] = 0;
         } else {
             $currentgroup = groups_get_activity_group($this->get_course_module(), true);
-            list($esql, $params) = get_enrolled_sql($this->get_context(), 'mod/assign:submit', $currentgroup, false);
+            list($esql, $params) = get_enrolled_sql($this->get_context(), 'mod/assign:submit', $currentgroup, true);
 
             $params['assignid'] = $this->get_instance()->id;
 
@@ -1435,11 +1423,6 @@ class assign {
                             s.assignment = :assignid AND
                             s.timemodified IS NOT NULL';
 
-            if ($this->showonlyactiveenrol && sizeof($this->susers)) {
-                list($susql, $suparams) = $DB->get_in_or_equal($this->susers, SQL_PARAMS_NAMED, 'cs', false);
-                $sql .= " AND userid $susql";
-                $params = array_merge($params, $suparams);
-            }
         }
 
         return $DB->count_records_sql($sql, $params);
@@ -1455,7 +1438,7 @@ class assign {
         global $DB;
 
         $currentgroup = groups_get_activity_group($this->get_course_module(), true);
-        list($esql, $params) = get_enrolled_sql($this->get_context(), 'mod/assign:submit', $currentgroup, false);
+        list($esql, $params) = get_enrolled_sql($this->get_context(), 'mod/assign:submit', $currentgroup, true);
 
         $params['assignid'] = $this->get_instance()->id;
         $params['assignid2'] = $this->get_instance()->id;
@@ -1491,11 +1474,6 @@ class assign {
                             s.timemodified IS NOT NULL AND
                             s.status = :submissionstatus';
 
-            if ($this->showonlyactiveenrol && sizeof($this->susers)) {
-                list($susql, $suparams) = $DB->get_in_or_equal($this->susers, SQL_PARAMS_NAMED, 'csws', false);
-                $sql .= " AND s.userid $susql";
-                $params = array_merge($params, $suparams);
-            }
         }
 
         return $DB->count_records_sql($sql, $params);
