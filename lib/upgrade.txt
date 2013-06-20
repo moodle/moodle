@@ -1,6 +1,9 @@
 This files describes API changes in core lbraries and APIs,
 information provided here is intended especially for developers.
 
+=== 2.4.6 ===
+* Use new function moodleform::mock_submit() to simulate form submission in unit tests.
+
 === 2.4.4 ===
 * condition_info:get_condition_user_fields($formatoptions) now accepts the optional
   param $formatoptions, that will determine if the field names are processed by
