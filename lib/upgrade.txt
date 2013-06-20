@@ -1,5 +1,7 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
+=== 2.5.2 ===
+* Use new function moodleform::mock_submit() to simulate form submission in unit tests.
 
 === 2.5.1 ===
 
