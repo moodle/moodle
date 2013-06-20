@@ -34,9 +34,18 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_essay_question extends question_with_responses {
+
     public $responseformat;
+
+    /** @var int Indicates whether an inline response is required ('0') or optional ('1')  */
+    public $responserequired;
+
     public $responsefieldlines;
     public $attachments;
+
+    /** @var int The number of attachments required for a response to be complete. */
+    public $attachmentsrequired;
+
     public $graderinfo;
     public $graderinfoformat;
     public $responsetemplate;
@@ -81,7 +90,27 @@ class qtype_essay_question extends question_with_responses {
     }
 
     public function is_complete_response(array $response) {
-        return array_key_exists('answer', $response) && ($response['answer'] !== '');
+        // Determine if the given response has inline text and attachments.
+        $hasinlinetext = array_key_exists('answer', $response) && ($response['answer'] !== '');
+        $hasattachments = array_key_exists('attachments', $response)
+            && $response['attachments'] instanceof question_response_files;
+
+        // Determine the number of attachments present.
+        if ($hasattachments) {
+            $attachcount = count($response['attachments']->get_files());
+        } else {
+            $attachcount = 0;
+        }
+
+        // Determine if we have /some/ content to be graded.
+        $hascontent = $hasinlinetext || ($attachcount > 0);
+
+        // Determine if we meet the optional requirements.
+        $meetsinlinereq = $hasinlinetext || (!$this->responserequired) || ($this->responseformat == 'noinline');
+        $meetsattachmentreq = ($attachcount >= $this->attachmentsrequired);
+
+        // The response is complete iff all of our requirements are met.
+        return $hascontent && $meetsinlinereq && $meetsattachmentreq;
     }
 
     public function is_same_response(array $prevresponse, array $newresponse) {
