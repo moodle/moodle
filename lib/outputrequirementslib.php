@@ -245,7 +245,6 @@ class page_requirements_manager {
 
         // Every page should include definition of following modules.
         $this->js_module($this->find_module('core_filepicker'));
-        $this->js_module($this->find_module('core_dock'));
     }
 
     /**
@@ -672,15 +671,6 @@ class page_requirements_manager {
                 case 'core_completion':
                     $module = array('name'     => 'core_completion',
                                     'fullpath' => '/course/completion.js');
-                    break;
-                case 'core_dock':
-                    $module = array('name'     => 'core_dock',
-                                    'fullpath' => '/blocks/dock.js',
-                                    'requires' => array('base', 'node', 'event-custom', 'event-mouseenter', 'event-resize', 'escape'),
-                                    'strings'  => array(array('addtodock', 'block'),array('undockitem', 'block'),array('dockblock', 'block'),
-                                                        array('undockblock', 'block'),array('undockall', 'block'),array('thisdirectionvertical', 'langconfig'),
-                                                        array('hidedockpanel', 'block'),array('hidepanel', 'block')
-                                                    ));
                     break;
                 case 'core_message':
                     $module = array('name'     => 'core_message',

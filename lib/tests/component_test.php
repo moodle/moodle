@@ -47,7 +47,7 @@ class core_component_testcase extends advanced_testcase {
         foreach($subsystems as $subsystem => $fulldir) {
             $this->assertFalse(strpos($subsystem, '_'), 'Core subsystems must be one work without underscores');
             if ($fulldir === null) {
-                if ($subsystem === 'dock' or $subsystem === 'filepicker' or $subsystem === 'help') {
+                if ($subsystem === 'filepicker' or $subsystem === 'help') {
                     // Arrgghh, let's not introduce more subsystems for no real reason...
                 } else {
                     // Lang strings.

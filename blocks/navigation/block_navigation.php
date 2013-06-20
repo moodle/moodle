@@ -56,7 +56,6 @@ class block_navigation extends block_base {
      * Set the initial properties for the block
      */
     function init() {
-        global $CFG;
         $this->blockname = get_class($this);
         $this->title = get_string('pluginname', $this->blockname);
     }
@@ -109,8 +108,7 @@ class block_navigation extends block_base {
      */
     function get_required_javascript() {
         global $CFG;
-        user_preference_allow_ajax_update('docked_block_instance_'.$this->instance->id, PARAM_INT);
-        $this->page->requires->js_module('core_dock');
+        parent::get_required_javascript();
         $limit = 20;
         if (!empty($CFG->navcourselimit)) {
             $limit = $CFG->navcourselimit;
@@ -127,7 +125,7 @@ class block_navigation extends block_base {
             'expansionlimit' => $expansionlimit
         );
         $this->page->requires->string_for_js('viewallcourses', 'moodle');
-        $this->page->requires->yui_module(array('core_dock', 'moodle-block_navigation-navigation'), 'M.block_navigation.init_add_tree', array($arguments));
+        $this->page->requires->yui_module('moodle-block_navigation-navigation', 'M.block_navigation.init_add_tree', array($arguments));
     }
 
     /**
@@ -136,7 +134,6 @@ class block_navigation extends block_base {
      * @return object $this->content
      */
     function get_content() {
-        global $CFG, $OUTPUT;
         // First check if we have already generated, don't waste cycles
         if ($this->contentgenerated === true) {
             return $this->content;

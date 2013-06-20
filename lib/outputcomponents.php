@@ -2439,6 +2439,12 @@ class block_contents {
     public $collapsible = self::NOT_HIDEABLE;
 
     /**
+     * Set this to true if the block is dockable.
+     * @var bool
+     */
+    public $dockable = false;
+
+    /**
      * @var array A (possibly empty) array of editing controls. Each element of
      * this array should be an array('url' => $url, 'icon' => $icon, 'caption' => $caption).
      * $icon is the icon name. Fed to $OUTPUT->pix_url.
