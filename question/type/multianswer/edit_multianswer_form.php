@@ -366,12 +366,8 @@ class qtype_multianswer_edit_form extends question_edit_form {
                         }
                         foreach ($subquestion->answer as $key => $answer) {
                             if ($subquestion->qtype == 'numerical' && $key == 0) {
-                                if (isset($subquestion->tolerance[0])) {
-                                    $default_values[$prefix.'tolerance['.$key.']'] =
+                                $default_values[$prefix.'tolerance['.$key.']'] =
                                         $subquestion->tolerance[0];
-                                } else {
-                                    $default_values[$prefix.'tolerance['.$key.']'] = 0;
-                                }
                             }
                             if (is_array($answer)) {
                                 $answer = $answer['text'];
@@ -476,11 +472,10 @@ class qtype_multianswer_edit_form extends question_edit_form {
                         $trimmedanswer = trim($answer);
                         if ($trimmedanswer !== '') {
                             $answercount++;
-                            if ($subquestion->qtype == 'numerical' && $trimmedanswer != '*') {
-                                if (!$this->is_valid_number($trimmedanswer)) {
-                                    $errors[$prefix.'answer['.$key.']'] =
+                            if ($subquestion->qtype == 'numerical' &&
+                                    !($this->is_valid_number($trimmedanswer) || $trimmedanswer == '*')) {
+                                $errors[$prefix.'answer['.$key.']'] =
                                         get_string('answermustbenumberorstar', 'qtype_numerical');
-                                }
                             }
                             if ($subquestion->fraction[$key] == 1) {
                                 $maxgrade = true;

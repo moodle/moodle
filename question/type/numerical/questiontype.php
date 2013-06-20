@@ -632,35 +632,17 @@ class qtype_numerical_answer_processor {
         // Strip spaces (which may be thousands separators) and change other forms
         // of writing e to e.
         $response = str_replace(' ', '', $response);
-        // Strip thousand separators like half space.
-        if (!in_array($this->thousandssep, array(',', '.', ' '))) {
-            if (strpos($response, $this->thousandssep) !== false) {
-                $response = str_replace($this->thousandssep, '', $response);
-            }
-        }
         $response = preg_replace('~(?:e|E|(?:x|\*|×)10(?:\^|\*\*))([+-]?\d+)~', 'e$1', $response);
-        // Dot . is mostly a decimal separator there a few exceptions where it is a thousand separator
-        // If a . is present or there are multiple , (i.e. 2,456,789 ) assume,
-        // is a thousands separator and strip it or else assume it is a decimal
-        // separator and change it to .
-        // if only one and it is , then change to .
-        if (substr_count($response, ',')+ substr_count($response, '.') == 1 ) {
-            if (strpos($response, ',') !== false) {
-                $response = str_replace(',', '.', $response);
-            }
-        } else if (substr_count($response, ',') == 1 && substr_count($response, '.') == 1) {
-            if (strpos($response, '.') > strpos($response, ',')) { // Then , is thousand.
-                $response = str_replace(',', '', $response);
-            } else {
-                $response = str_replace('.', '', $response);
-                $response = str_replace(',', '.', $response);
-            }
-        } else if (substr_count($response, ',') > 1) {
-              $response = str_replace(',', '', $response);
-        } else if (substr_count($response, '.') > 1) {
-              $response = str_replace('.', '', $response);
-              $response = str_replace(',', '.', $response);
+
+        // If a . is present or there are multiple , (i.e. 2,456,789 ) assume ,
+        // is a thouseands separator, and strip it, else assume it is a decimal
+        // separator, and change it to ..
+        if (strpos($response, '.') !== false || substr_count($response, ',') > 1) {
+            $response = str_replace(',', '', $response);
+        } else {
+            $response = str_replace(',', '.', $response);
         }
+
         $regex = '[+-]?(?:\d+(?:\\.\d*)?|\\.\d+)(?:e[-+]?\d+)?';
         if ($this->unitsbefore) {
             $regex = "/$regex$/";

@@ -59,7 +59,7 @@ class qtype_numerical_edit_form extends question_edit_form {
 
         $tolerance = $mform->createElement('text', 'tolerance',
                 get_string('answererror', 'qtype_numerical'), array('size' => 15));
-        $repeatedoptions['tolerance']['type'] = PARAM_RAW;// This parameter will be validated in validation().
+        $repeatedoptions['tolerance']['type'] = PARAM_FLOAT;
         $repeatedoptions['tolerance']['default'] = 0;
         $elements = $repeated[0]->getElements();
         $elements[0]->setSize(15);
@@ -293,7 +293,7 @@ class qtype_numerical_edit_form extends question_edit_form {
                 if ($data['fraction'][$key] == 1) {
                     $maxgrade = true;
                 }
-                if ($answer !== '*' && !$this->is_valid_number($data['tolerance'][$key])) {
+                if ($answer !== '*' && !is_numeric($data['tolerance'][$key])) {
                     $errors['answeroptions['.$key.']'] =
                             get_string('xmustbenumeric', 'qtype_numerical',
                                 get_string('acceptederror', 'qtype_numerical'));
