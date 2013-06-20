@@ -126,7 +126,7 @@ class assign {
     private $showonlyactiveenrol = true;
 
     /** @var array list of suspended user IDs in form of ([id1] => id1) */
-    private $susers = array();
+    public $susers = array();
 
     /**
      * Constructor for the base assign class.
@@ -2707,7 +2707,8 @@ class assign {
                                                    $viewfullnames,
                                                    $this->is_blind_marking(),
                                                    $this->get_uniqueid_for_user($user->id),
-                                                   get_extra_user_fields($this->get_context()));
+                                                   get_extra_user_fields($this->get_context()),
+                                                   in_array($userid, $this->susers));
             $o .= $this->get_renderer()->render($usersummary);
         }
         $submission = $this->get_user_submission($userid, false, $attemptnumber);
@@ -3380,7 +3381,8 @@ class assign {
                                                                 $this->get_course_context()),
                                                                 $this->is_blind_marking(),
                                                                 $this->get_uniqueid_for_user($user->id),
-                                                                $extrauserfields));
+                                                                $extrauserfields,
+                                                                in_array($userid, $this->susers)));
             $usercount += 1;
         }
 
@@ -3431,10 +3433,11 @@ class assign {
             $usershtml .= $this->get_renderer()->render(new assign_user_summary($user,
                 $this->get_course()->id,
                 has_capability('moodle/site:viewfullnames',
-                    $this->get_course_context()),
+                $this->get_course_context()),
                 $this->is_blind_marking(),
                 $this->get_uniqueid_for_user($user->id),
-                $extrauserfields));
+                $extrauserfields,
+                in_array($userid, $this->susers)));
             $usercount += 1;
         }
 

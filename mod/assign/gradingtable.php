@@ -727,10 +727,18 @@ class assign_grading_table extends table_sql implements renderable {
         if (!$this->is_downloading()) {
             $courseid = $this->assignment->get_course()->id;
             $link= new moodle_url('/user/view.php', array('id' =>$row->id, 'course'=>$courseid));
-            return $this->output->action_link($link, fullname($row));
+            $fullname = $this->output->action_link($link, fullname($row));
         } else {
-            return fullname($row);
+            $fullname = fullname($row);
         }
+
+        if (in_array($row->id, $this->assignment->susers)) {
+            $suspendedstring = get_string('userenrolmentsuspended', 'grades');
+            $fullname .= ' '.html_writer::empty_tag('img', array('src' => $this->output->pix_url('i/enrolmentsuspended'),
+                'title' => $suspendedstring, 'alt' => $suspendedstring, 'class' => 'usersuspendedicon'));
+            $fullname = html_writer::tag('span', $fullname, array('class' => 'usersuspended'));
+        }
+        return $fullname;
     }
 
     /**
