@@ -298,6 +298,18 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $assign = $this->create_instance(array('grade'=>100));
 
         $this->assertEquals(self::DEFAULT_STUDENT_COUNT + self::EXTRA_STUDENT_COUNT, count($assign->list_participants(null, true)));
+
+        // Teacher with user preference set should see suspended users as well.
+        set_user_preference('grade_report_showonlyactiveenrol', false);
+        $assign = $this->create_instance(array('grade'=>100));
+        $this->assertEquals(self::DEFAULT_STUDENT_COUNT + self::EXTRA_STUDENT_COUNT + self::EXTRA_SUSPENDED_COUNT,
+                count($assign->list_participants(null, true)));
+
+        // Non-editing teacher should not see suspended users, even if user prefernce is set.
+        $this->setUser($this->teachers[0]);
+        set_user_preference('grade_report_showonlyactiveenrol', false);
+        $assign = $this->create_instance(array('grade'=>100));
+        $this->assertEquals(self::DEFAULT_STUDENT_COUNT + self::EXTRA_STUDENT_COUNT, count($assign->list_participants(null, true)));
     }
 
     public function test_count_teams() {
@@ -366,11 +378,24 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $plugin = $assign->get_submission_plugin_by_type('onlinetext');
         $plugin->save($submission, $data);
 
+        // Simulate a submission for suspended user, this will never be counted.
+        $this->setUser($this->extrastudents[3]);
+        $submission = $assign->get_user_submission($this->extrasuspendedstudents[0]->id, true);
+        $submission->status = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
+        $assign->testable_update_submission($submission, $this->extrasuspendedstudents[0]->id, true, false);
+        $data = new stdClass();
+        $data->onlinetext_editor = array('itemid'=>file_get_unused_draft_itemid(),
+                                         'text'=>'Submission text',
+                                         'format'=>FORMAT_MOODLE);
+        $plugin = $assign->get_submission_plugin_by_type('onlinetext');
+        $plugin->save($submission, $data);
+
         // Simulate adding a grade.
         $this->setUser($this->teachers[0]);
         $data = new stdClass();
         $data->grade = '50.0';
         $assign->testable_apply_grade_to_user($data, $this->extrastudents[3]->id, 0);
+        $assign->testable_apply_grade_to_user($data, $this->extrasuspendedstudents[0]->id, 0);
 
         $this->assertEquals(2, $assign->count_grades());
         $this->assertEquals(4, $assign->count_submissions());
@@ -386,6 +411,13 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
 
         $users = $assign->testable_get_grading_userid_list();
         $this->assertEquals(self::DEFAULT_STUDENT_COUNT + self::EXTRA_STUDENT_COUNT, count($users));
+
+        $this->setUser($this->editingteachers[0]);
+        set_user_preference('grade_report_showonlyactiveenrol', false);
+        $assign = $this->create_instance();
+
+        $users = $assign->testable_get_grading_userid_list();
+        $this->assertEquals(self::DEFAULT_STUDENT_COUNT + self::EXTRA_STUDENT_COUNT + self::EXTRA_SUSPENDED_COUNT, count($users));
     }
 
     public function test_cron() {
@@ -431,6 +463,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
     }
 
     public function test_can_view_submission() {
+        $this->create_extra_users();
         $this->setUser($this->editingteachers[0]);
         $assign = $this->create_instance();
 
@@ -442,10 +475,12 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $this->assertEquals(true, $assign->can_view_submission($this->students[0]->id));
         $this->assertEquals(true, $assign->can_view_submission($this->students[1]->id));
         $this->assertEquals(true, $assign->can_view_submission($this->teachers[0]->id));
+        $this->assertEquals(false, $assign->can_view_submission($this->extrasuspendedstudents[0]->id));
         $this->setUser($this->editingteachers[0]);
         $this->assertEquals(true, $assign->can_view_submission($this->students[0]->id));
         $this->assertEquals(true, $assign->can_view_submission($this->students[1]->id));
         $this->assertEquals(true, $assign->can_view_submission($this->teachers[0]->id));
+        $this->assertEquals(true, $assign->can_view_submission($this->extrasuspendedstudents[0]->id));
     }
 
 
@@ -479,7 +514,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $submission = $assign->get_group_submission($this->extrastudents[0]->id, 0, true);
         $assign->testable_update_submission($submission, $this->extrastudents[0]->id, true, true);
 
-        // Check that at least 2 members of the submission group had their submission updated.
+        // Check that at least 2 active members and 1 suspended member of the submission group had their submission updated.
 
         $this->setUser($this->editingteachers[0]);
         $gradinginfo = grade_get_grades($this->course->id,
@@ -499,6 +534,50 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
 
         $this->assertEquals($this->extrastudents[self::GROUP_COUNT]->id,
                             $gradinginfo->items[0]->grades[$this->extrastudents[self::GROUP_COUNT]->id]->usermodified);
+
+        $gradinginfo = grade_get_grades($this->course->id,
+                                        'mod',
+                                        'assign',
+                                        $assign->get_instance()->id,
+                                        $this->extrasuspendedstudents[0]->id);
+        $this->assertEquals($this->extrasuspendedstudents[0]->id,
+                            $gradinginfo->items[0]->grades[$this->extrasuspendedstudents[0]->id]->usermodified);
+
+        // Check the same with non-editing teacher and make sure submission is not updated for suspended user.
+        $this->setUser($this->editingteachers[0]);
+        $assign = $this->create_instance(array('teamsubmission'=>1));
+
+        $this->setUser($this->extrastudents[1]);
+        $now = time();
+        $submission = $assign->get_group_submission($this->extrastudents[1]->id, 0, true);
+        $assign->testable_update_submission($submission, $this->extrastudents[1]->id, true, true);
+
+        $this->setUser($this->teachers[0]);
+        $gradinginfo = grade_get_grades($this->course->id,
+                                        'mod',
+                                        'assign',
+                                        $assign->get_instance()->id,
+                                        $this->extrastudents[1]->id);
+
+        $this->assertEquals($this->extrastudents[1]->id,
+                            $gradinginfo->items[0]->grades[$this->extrastudents[1]->id]->usermodified);
+
+        $gradinginfo = grade_get_grades($this->course->id,
+                                        'mod',
+                                        'assign',
+                                        $assign->get_instance()->id,
+                                        $this->extrastudents[self::GROUP_COUNT+1]->id);
+
+        $this->assertEquals($this->extrastudents[self::GROUP_COUNT+1]->id,
+                            $gradinginfo->items[0]->grades[$this->extrastudents[self::GROUP_COUNT+1]->id]->usermodified);
+
+        $gradinginfo = grade_get_grades($this->course->id,
+                                        'mod',
+                                        'assign',
+                                        $assign->get_instance()->id,
+                                        $this->extrasuspendedstudents[1]->id);
+        $this->assertEquals($this->extrasuspendedstudents[1]->id,
+                            $gradinginfo->items[0]->grades[$this->extrasuspendedstudents[1]->id]->usermodified);
 
         // Now verify blind marking.
         $this->setUser($this->editingteachers[0]);

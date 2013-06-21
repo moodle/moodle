@@ -667,9 +667,12 @@ EOD;
      * @param string $enrol name of enrol plugin,
      *     there must be exactly one instance in course,
      *     it must support enrol_user() method.
+     * @param int (optional) $timestart 0 means unknown
+     * @param int (optional) $timeend 0 means forever
+     * @param int (optional) $status default to ENROL_USER_ACTIVE for new enrolments
      * @return bool success
      */
-    public function enrol_user($userid, $courseid, $roleid = null, $enrol = 'manual') {
+    public function enrol_user($userid, $courseid, $roleid = null, $enrol = 'manual', $timestart = 0, $timeend = 0, $status = null) {
         global $DB;
 
         if (!$plugin = enrol_get_plugin($enrol)) {
@@ -686,8 +689,7 @@ EOD;
             $roleid = $instance->roleid;
         }
 
-        $plugin->enrol_user($instance, $userid, $roleid);
-
+        $plugin->enrol_user($instance, $userid, $roleid, $timestart, $timeend, $status);
         return true;
     }
 }
