@@ -1,0 +1,265 @@
+<?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * File containing processor class.
+ *
+ * @package    tool_uploadcourse
+ * @copyright  2013 Frédéric Massart
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Processor class.
+ *
+ * @package    tool_uploadcourse
+ * @copyright  2013 Frédéric Massart
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class tool_uploadcourse_processor {
+
+    /**
+     * Create courses that do not exist yet.
+     */
+    const MODE_CREATE_NEW = 1;
+
+    /**
+     * Create all courses, appending a suffix to the shortname if the course exists.
+     */
+    const MODE_CREATE_ALL = 2;
+
+    /**
+     * Create courses, and update the ones that already exist.
+     */
+    const MODE_CREATE_OR_UPDATE = 3;
+
+    /**
+     * Only update existing courses.
+     */
+    const MODE_UPDATE_ONLY = 4;
+
+    /**
+     * During update, do not update anything... O_o Huh?!
+     */
+    const UPDATE_NOTHING = 0;
+
+    /**
+     * During update, only use data passed from the CSV.
+     */
+    const UPDATE_ALL_WITH_DATA_ONLY = 1;
+
+    /**
+     * During update, use either data from the CSV, or defaults.
+     */
+    const UPDATE_ALL_WITH_DATA_OR_DEFAUTLS = 2;
+
+    /**
+     * During update, update missing values from either data from the CSV, or defaults.
+     */
+    const UPDATE_MISSING_WITH_DATA_OR_DEFAUTLS = 3;
+
+    /** @var int processor mode. */
+    protected $mode;
+
+    /** @var int upload mode. */
+    protected $updatemode;
+
+    /** @var bool are renames allowed. */
+    protected $allowrenames = false;
+
+    /** @var bool are deletes allowed. */
+    protected $allowdeletes = false;
+
+    /** @var bool are resets allowed. */
+    protected $allowresets = false;
+
+    /** @var string path to a restore file. */
+    protected $restorefile;
+
+    /** @var string shortname of the course to be restored. */
+    protected $templatecourse;
+
+    /** @var string reset courses after processing them. */
+    protected $reset;
+
+    /** @var string template to generate a course shortname. */
+    protected $shortnametemplate;
+
+    /** @var csv_import_reader */
+    protected $cir;
+
+    /** @var array default values. */
+    protected $defaults = array();
+
+    /** @var array CSV columns. */
+    protected $columns = array();
+
+    /** @var int line number. */
+    protected $linenb = 0;
+
+    /** @var int line data. */
+    protected $linedata = array();
+
+    /** @var bool whether the process has been started or not. */
+    protected $processstarted = false;
+
+    /**
+     * Constructor
+     *
+     * @param csv_import_reader $cir import reader object
+     * @param array $options options of the process
+     * @param array $defaults default data value
+     */
+    public function __construct(csv_import_reader $cir, array $options, array $defaults = array()) {
+
+        if (!isset($options['mode']) || !in_array($options['mode'], array(self::MODE_CREATE_NEW, self::MODE_CREATE_ALL,
+                self::MODE_CREATE_OR_UPDATE, self::MODE_UPDATE_ONLY))) {
+            throw new coding_exception('Unknown process mode');
+        }
+
+        // Force int to make sure === comparison work as expected.
+        $this->mode = (int) $options['mode'];
+
+        $this->updatemode = self::UPDATE_NOTHING;
+        if (isset($options['updatemode'])) {
+            // Force int to make sure === comparison work as expected.
+            $this->updatemode = (int) $options['updatemode'];
+        }
+        if (isset($options['allowrenames'])) {
+            $this->allowrenames = $options['allowrenames'];
+        }
+        if (isset($options['allowdeletes'])) {
+            $this->allowdeletes = $options['allowdeletes'];
+        }
+        if (isset($options['allowresets'])) {
+            $this->allowresets = $options['allowresets'];
+        }
+
+        if (isset($options['restorefile'])) {
+            $this->restorefile = $options['restorefile'];
+        }
+        if (isset($options['templatecourse'])) {
+            $this->templatecourse = $options['templatecourse'];
+        }
+        if (isset($options['reset'])) {
+            $this->reset = $options['reset'];
+        }
+        if (isset($options['shortnametemplate'])) {
+            $this->shortnametemplate = $options['shortnametemplate'];
+        }
+
+        $this->cir = $cir;
+        $this->columns = $cir->get_columns();
+        $this->defaults = $defaults;
+    }
+
+    /**
+     * Execute the process.
+     *
+     * @return void
+     */
+    public function execute() {
+        if ($this->processstarted) {
+            throw new coding_exception('Process has already been started');
+        }
+        $this->processstarted = true;
+
+        // Loop over the CSV lines.
+        while ($line = $this->cir->next()) {
+            $this->linenb++;
+
+            $data = $this->parse_line($line);
+            $course = self::get_course($data);
+            if ($course->prepare()) {
+                $course->proceed();
+            } else {
+                print_object($course->get_errors());
+            }
+        }
+
+        // $this->remove_restore_content();
+    }
+
+    /**
+     * Return a course import object.
+     *
+     * @param array $data data to import the course with.
+     * @return tool_uploadcourse_course
+     */
+    public function get_course($data) {
+        $importoptions = array(
+            'candelete' => $this->allowdeletes,
+            'canrename' => $this->allowrenames,
+            'canreset' => $this->allowresets,
+            'reset' => $this->reset,
+            'restoredir' => $this->get_restore_content_dir(),
+            'shortnametemplate' => $this->shortnametemplate
+        );
+        return new tool_uploadcourse_course($this->mode, $this->updatemode, $data, $this->defaults, $importoptions);
+    }
+
+    /**
+     * Get the directory of the object to restore.
+     *
+     * @param string $default directory to use if none found.
+     * @return string subdirectory in $CFG->tempdir/backup/...
+     */
+    public function get_restore_content_dir() {
+        $backupfile = null;
+        $shortname = null;
+
+        if (!empty($this->restorefile)) {
+            $backupfile = $this->restorefile;
+        } else if (!empty($this->templatecourse) || is_numeric($this->templatecourse)) {
+            $shortname = $this->templatecourse;
+        }
+
+        $dir = tool_uploadcourse_helper::get_restore_content_dir($backupfile, $shortname);
+        return $dir;
+    }
+
+    /**
+     * Parse a line to return an array(column => value)
+     *
+     * @param array $line returned by csv_import_reader
+     * @return array
+     */
+    protected function parse_line($line) {
+        $data = array();
+        foreach ($line as $keynum => $value) {
+            if (!isset($this->columns[$keynum])) {
+                // This should not happen.
+                continue;
+            }
+
+            $key = $this->columns[$keynum];
+            $data[$key] = $value;
+        }
+        return $data;
+    }
+
+    /**
+     * Delete the restore object.
+     *
+     * @return void
+     */
+    protected function remove_restore_content() {
+        global $CFG;
+        tool_uploadcourse_helper::clean_restore_content();
+    }
+}
