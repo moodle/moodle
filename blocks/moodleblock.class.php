@@ -340,7 +340,7 @@ class block_base {
 
     /**
      * Subclasses should override this and return true if the
-     * subclass block has a config_global.html file.
+     * subclass block has a settings.php file.
      *
      * @return boolean
      */
