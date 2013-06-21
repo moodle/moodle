@@ -1,0 +1,771 @@
+<?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * File containing tests for the course class.
+ *
+ * @package    tool_uploadcourse
+ * @copyright  2013 Frédéric Massart
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once($CFG->dirroot . '/admin/tool/uploadcourse/classes/processor.php');
+require_once($CFG->dirroot . '/admin/tool/uploadcourse/classes/course.php');
+require_once($CFG->dirroot . '/admin/tool/uploadcourse/classes/helper.php');
+require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
+require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
+require_once($CFG->libdir . '/csvlib.class.php');
+require_once($CFG->libdir . '/coursecatlib.php');
+
+/**
+ * Course test case.
+ */
+class tool_uploadcourse_course_testcase extends advanced_testcase {
+
+    public function test_proceed_without_prepare() {
+        $this->resetAfterTest(true);
+        $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;
+        $updatemode = tool_uploadcourse_processor::UPDATE_NOTHING;
+        $data = array();
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data);
+        $this->setExpectedException('coding_exception');
+        $co->proceed();
+    }
+
+    public function test_proceed_when_prepare_failed() {
+        $this->resetAfterTest(true);
+        $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;
+        $updatemode = tool_uploadcourse_processor::UPDATE_NOTHING;
+        $data = array();
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data);
+        $this->assertFalse($co->prepare());
+        $this->setExpectedException('moodle_exception');
+        $co->proceed();
+    }
+
+    public function test_create() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        // Existing course.
+        $c1 = $this->getDataGenerator()->create_course(array('shortname' => 'c1', 'summary' => 'Yay!'));
+        $this->assertTrue($DB->record_exists('course', array('shortname' => 'c1')));
+
+        $updatemode = tool_uploadcourse_processor::UPDATE_NOTHING;
+
+        // Try to add a new course.
+        $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;
+        $data = array('shortname' => 'newcourse', 'fullname' => 'New course', 'summary' => 'New', 'category' => 1);
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data);
+        $this->assertTrue($co->prepare());
+        $this->assertFalse($DB->record_exists('course', array('shortname' => 'newcourse')));
+        $co->proceed();
+        $this->assertTrue($DB->record_exists('course', array('shortname' => 'newcourse')));
+
+        // Try to add a new course, that already exists.
+        $coursecount = $DB->count_records('course', array());
+        $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;
+        $data = array('shortname' => 'c1', 'fullname' => 'C1FN', 'summary' => 'C1', 'category' => 1);
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data);
+        $this->assertFalse($co->prepare());
+        $this->assertEquals($coursecount, $DB->count_records('course', array()));
+        $this->assertNotEquals('C1', $DB->get_field_select('course', 'summary', 'shortname = :s', array('s' => 'c1')));
+
+        // Try to add new with shortname incrementation.
+        $mode = tool_uploadcourse_processor::MODE_CREATE_ALL;
+        $data = array('shortname' => 'c1', 'fullname' => 'C1FN', 'summary' => 'C1', 'category' => 1);
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data);
+        $this->assertTrue($co->prepare());
+        $co->proceed();
+        $this->assertTrue($DB->record_exists('course', array('shortname' => 'c2')));
+    }
+
+    public function test_delete() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $c1 = $this->getDataGenerator()->create_course();
+        $c2 = $this->getDataGenerator()->create_course();
+
+        $this->assertTrue($DB->record_exists('course', array('shortname' => $c1->shortname)));
+        $this->assertFalse($DB->record_exists('course', array('shortname' => 'DoesNotExist')));
+
+        $mode = tool_uploadcourse_processor::MODE_CREATE_OR_UPDATE;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
+
+        // Try delete when option not available.
+        $importoptions = array('candelete' => false);
+        $data = array('shortname' => $c1->shortname, 'delete' => 1);
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data, array(), $importoptions);
+        $this->assertFalse($co->prepare());
+        $this->assertTrue($DB->record_exists('course', array('shortname' => $c1->shortname)));
+
+        // Try delete when not requested.
+        $importoptions = array('candelete' => true);
+        $data = array('shortname' => $c1->shortname, 'delete' => 0);
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data, array(), $importoptions);
+        $this->assertTrue($co->prepare());
+        $co->proceed();
+        $this->assertTrue($DB->record_exists('course', array('shortname' => $c1->shortname)));
+
+        // Try delete when requested.
+        $importoptions = array('candelete' => true);
+        $data = array('shortname' => $c1->shortname, 'delete' => 1);
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data, array(), $importoptions);
+        $this->assertTrue($co->prepare());
+        $co->proceed();
+        $this->assertFalse($DB->record_exists('course', array('shortname' => $c1->shortname)));
+        $this->assertTrue($DB->record_exists('course', array('shortname' => $c2->shortname)));
+
+        // Try deleting non-existing record, this should not fail.
+        $data = array('shortname' => 'DoesNotExist', 'delete' => 1);
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data, array(), $importoptions);
+        $this->assertFalse($co->prepare());
+    }
+
+    public function test_update() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $c1 = $this->getDataGenerator()->create_course(array('shortname' => 'c1'));
+
+        // Try to add with existing shortnames, not allowing creation, and updating nothing.
+        $mode = tool_uploadcourse_processor::MODE_UPDATE_ONLY;
+        $updatemode = tool_uploadcourse_processor::UPDATE_NOTHING;
+        $data = array('shortname' => 'c1', 'fullname' => 'New fullname');
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data);
+        $this->assertFalse($co->prepare());
+
+        // Try to add with non-existing shortnames.
+        $mode = tool_uploadcourse_processor::MODE_UPDATE_ONLY;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
+        $data = array('shortname' => 'DoesNotExist', 'fullname' => 'New fullname');
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data);
+        $this->assertFalse($co->prepare());
+
+        // Try a proper update.
+        $mode = tool_uploadcourse_processor::MODE_UPDATE_ONLY;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
+        $data = array('shortname' => 'c1', 'fullname' => 'New fullname');
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data);
+        // $this->assertTrue($co->prepare());
+        $co->prepare();
+        $co->proceed();
+        $this->assertEquals('New fullname', $DB->get_field_select('course', 'fullname', 'shortname = :s', array('s' => 'c1')));
+
+        // Try a proper update with defaults.
+        $mode = tool_uploadcourse_processor::MODE_UPDATE_ONLY;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_OR_DEFAUTLS;
+        $data = array('shortname' => 'c1', 'fullname' => 'Another fullname');
+        $defaults = array('fullname' => 'Not this one', 'summary' => 'Awesome summary');
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data, $defaults);
+        $this->assertTrue($co->prepare());
+        $co->proceed();
+        $this->assertEquals('Another fullname', $DB->get_field_select('course', 'fullname', 'shortname = :s', array('s' => 'c1')));
+        $this->assertEquals('Awesome summary', $DB->get_field_select('course', 'summary', 'shortname = :s', array('s' => 'c1')));
+
+        // Try a proper update missing only.
+        $mode = tool_uploadcourse_processor::MODE_UPDATE_ONLY;
+        $updatemode = tool_uploadcourse_processor::UPDATE_MISSING_WITH_DATA_OR_DEFAUTLS;
+        $DB->set_field('course', 'summary', '', array('shortname' => 'c1'));
+        $this->assertEquals('', $DB->get_field_select('course', 'summary', 'shortname = :s', array('s' => 'c1')));
+        $data = array('shortname' => 'c1', 'summary' => 'Fill in summary');
+        $defaults = array('summary' => 'Do not use this summary');
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data, $defaults);
+        $this->assertTrue($co->prepare());
+        $co->proceed();
+        $this->assertEquals('Fill in summary', $DB->get_field_select('course', 'summary', 'shortname = :s', array('s' => 'c1')));
+
+        // Try a proper update missing only using defaults.
+        $mode = tool_uploadcourse_processor::MODE_UPDATE_ONLY;
+        $updatemode = tool_uploadcourse_processor::UPDATE_MISSING_WITH_DATA_OR_DEFAUTLS;
+        $DB->set_field('course', 'summary', '', array('shortname' => 'c1'));
+        $this->assertEquals('', $DB->get_field_select('course', 'summary', 'shortname = :s', array('s' => 'c1')));
+        $data = array('shortname' => 'c1');
+        $defaults = array('summary' => 'Use this summary');
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data, $defaults);
+        $this->assertTrue($co->prepare());
+        $co->proceed();
+        $this->assertEquals('Use this summary', $DB->get_field_select('course', 'summary', 'shortname = :s', array('s' => 'c1')));
+    }
+
+    public function test_data_saved() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        // Create.
+        $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;
+        $updatemode = tool_uploadcourse_processor::UPDATE_NOTHING;
+        $data = array(
+            'shortname' => 'c1',
+            'fullname' => 'Fullname',
+            'category' => '1',
+            'visible' => '0',
+            'startdate' => '8 June 1990',
+            'idnumber' => '123abc',
+            'summary' => 'Summary',
+            'format' => 'weeks',
+            'theme' => 'afterburner',
+            'lang' => 'en',
+            'newsitems' => '7',
+            'showgrades' => '0',
+            'showreports' => '1',
+            'legacyfiles' => '1',
+            'maxbytes' => '1234',
+            'groupmode' => '2',
+            'groupmodeforce' => '1',
+            'enablecompletion' => '1',
+
+            'role_teacher' => 'Knight',
+            'role_manager' => 'Jedi',
+
+            'enrolment_1' => 'guest',
+            'enrolment_2' => 'self',
+            'enrolment_2_roleid' => '1',
+            'enrolment_3' => 'manual',
+            'enrolment_3_disable' => '1',
+        );
+
+
+        $this->assertFalse($DB->record_exists('course', array('shortname' => 'c1')));
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data);
+        $this->assertTrue($co->prepare());
+        $co->proceed();
+        $this->assertTrue($DB->record_exists('course', array('shortname' => 'c1')));
+        $course = $DB->get_record('course', array('shortname' => 'c1'));
+        $ctx = context_course::instance($course->id);
+
+        $this->assertEquals($data['fullname'], $course->fullname);
+        $this->assertEquals($data['category'], $course->category);
+        $this->assertEquals($data['visible'], $course->visible);
+        $this->assertEquals(mktime(0, 0, 0, 6, 8, 1990), $course->startdate);
+        $this->assertEquals($data['idnumber'], $course->idnumber);
+        $this->assertEquals($data['summary'], $course->summary);
+        $this->assertEquals($data['format'], $course->format);
+        $this->assertEquals($data['theme'], $course->theme);
+        $this->assertEquals($data['lang'], $course->lang);
+        $this->assertEquals($data['newsitems'], $course->newsitems);
+        $this->assertEquals($data['showgrades'], $course->showgrades);
+        $this->assertEquals($data['showreports'], $course->showreports);
+        $this->assertEquals($data['legacyfiles'], $course->legacyfiles);
+        $this->assertEquals($data['maxbytes'], $course->maxbytes);
+        $this->assertEquals($data['groupmode'], $course->groupmode);
+        $this->assertEquals($data['groupmodeforce'], $course->groupmodeforce);
+        $this->assertEquals($data['enablecompletion'], $course->enablecompletion);
+
+        // Roles.
+        $roleids = array();
+        $roles = get_all_roles();
+        foreach ($roles as $role) {
+            $roleids[$role->shortname] = $role->id;
+        }
+        $this->assertEquals('Knight', $DB->get_field_select('role_names', 'name',
+            'roleid = :roleid AND contextid = :ctxid', array('ctxid' => $ctx->id, 'roleid' => $roleids['teacher'])));
+        $this->assertEquals('Jedi', $DB->get_field_select('role_names', 'name',
+            'roleid = :roleid AND contextid = :ctxid', array('ctxid' => $ctx->id, 'roleid' => $roleids['manager'])));
+
+        // Enrolment methods.
+        $enroldata = array();
+        $instances = enrol_get_instances($course->id, false);
+        $this->assertCount(3, $instances);
+        foreach ($instances as $instance) {
+            $enroldata[$instance->enrol] = $instance;
+        }
+
+        $this->assertNotEmpty($enroldata['guest']);
+        $this->assertEquals(ENROL_INSTANCE_ENABLED, $enroldata['guest']->status);
+        $this->assertNotEmpty($enroldata['self']);
+        $this->assertEquals($data['enrolment_2_roleid'], $enroldata['self']->roleid);
+        $this->assertEquals(ENROL_INSTANCE_ENABLED, $enroldata['self']->status);
+        $this->assertNotEmpty($enroldata['manual']);
+        $this->assertEquals(ENROL_INSTANCE_DISABLED, $enroldata['manual']->status);
+
+        // Update existing course.
+        $cat = $this->getDataGenerator()->create_category();
+        $mode = tool_uploadcourse_processor::MODE_UPDATE_ONLY;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
+        $data = array(
+            'shortname' => 'c1',
+            'fullname' => 'Fullname 2',
+            'category' => $cat->id,
+            'visible' => '1',
+            'startdate' => '11 June 1984',
+            'idnumber' => 'changeidn',
+            'summary' => 'Summary 2',
+            'format' => 'topics',
+            'theme' => 'clean',
+            'lang' => '',
+            'newsitems' => '2',
+            'showgrades' => '1',
+            'showreports' => '0',
+            'legacyfiles' => '0',
+            'maxbytes' => '4321',
+            'groupmode' => '1',
+            'groupmodeforce' => '0',
+            'enablecompletion' => '0',
+
+            'role_teacher' => 'Teacher',
+            'role_manager' => 'Manager',
+
+            'enrolment_1' => 'guest',
+            'enrolment_1_disable' => '1',
+            'enrolment_2' => 'self',
+            'enrolment_2_roleid' => '2',
+            'enrolment_3' => 'manual',
+            'enrolment_3_delete' => '1',
+        );
+
+        $this->assertTrue($DB->record_exists('course', array('shortname' => 'c1')));
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data);
+        $this->assertTrue($co->prepare());
+        $co->proceed();
+        $course = $DB->get_record('course', array('shortname' => 'c1'));
+        $ctx = context_course::instance($course->id);
+
+        $this->assertEquals($data['fullname'], $course->fullname);
+        $this->assertEquals($data['category'], $course->category);
+        $this->assertEquals($data['visible'], $course->visible);
+        $this->assertEquals(mktime(0, 0, 0, 6, 11, 1984), $course->startdate);
+        $this->assertEquals($data['idnumber'], $course->idnumber);
+        $this->assertEquals($data['summary'], $course->summary);
+        $this->assertEquals($data['format'], $course->format);
+        $this->assertEquals($data['theme'], $course->theme);
+        $this->assertEquals($data['lang'], $course->lang);
+        $this->assertEquals($data['newsitems'], $course->newsitems);
+        $this->assertEquals($data['showgrades'], $course->showgrades);
+        $this->assertEquals($data['showreports'], $course->showreports);
+        $this->assertEquals($data['legacyfiles'], $course->legacyfiles);
+        $this->assertEquals($data['maxbytes'], $course->maxbytes);
+        $this->assertEquals($data['groupmode'], $course->groupmode);
+        $this->assertEquals($data['groupmodeforce'], $course->groupmodeforce);
+        $this->assertEquals($data['enablecompletion'], $course->enablecompletion);
+
+        // Roles.
+        $roleids = array();
+        $roles = get_all_roles();
+        foreach ($roles as $role) {
+            $roleids[$role->shortname] = $role->id;
+        }
+        $this->assertEquals('Teacher', $DB->get_field_select('role_names', 'name',
+            'roleid = :roleid AND contextid = :ctxid', array('ctxid' => $ctx->id, 'roleid' => $roleids['teacher'])));
+        $this->assertEquals('Manager', $DB->get_field_select('role_names', 'name',
+            'roleid = :roleid AND contextid = :ctxid', array('ctxid' => $ctx->id, 'roleid' => $roleids['manager'])));
+
+        // Enrolment methods.
+        $enroldata = array();
+        $instances = enrol_get_instances($course->id, false);
+        $this->assertCount(2, $instances);
+        foreach ($instances as $instance) {
+            $enroldata[$instance->enrol] = $instance;
+        }
+
+        $this->assertNotEmpty($enroldata['guest']);
+        $this->assertEquals(ENROL_INSTANCE_DISABLED, $enroldata['guest']->status);
+        $this->assertNotEmpty($enroldata['self']);
+        $this->assertEquals($data['enrolment_2_roleid'], $enroldata['self']->roleid);
+        $this->assertEquals(ENROL_INSTANCE_ENABLED, $enroldata['self']->status);
+    }
+
+    public function test_default_data_saved() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        // Create.
+        $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;
+        $updatemode = tool_uploadcourse_processor::UPDATE_NOTHING;
+        $data = array(
+            'shortname' => 'c1',
+        );
+        $defaultdata = array(
+            'fullname' => 'Fullname',
+            'category' => '1',
+            'visible' => '0',
+            'startdate' => '8 June 1990',
+            'idnumber' => '123abc',
+            'summary' => 'Summary',
+            'format' => 'weeks',
+            'theme' => 'afterburner',
+            'lang' => 'en',
+            'newsitems' => '7',
+            'showgrades' => '0',
+            'showreports' => '1',
+            'legacyfiles' => '1',
+            'maxbytes' => '1234',
+            'groupmode' => '2',
+            'groupmodeforce' => '1',
+            'enablecompletion' => '1',
+        );
+
+
+        $this->assertFalse($DB->record_exists('course', array('shortname' => 'c1')));
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data, $defaultdata);
+        $this->assertTrue($co->prepare());
+        $co->proceed();
+        $this->assertTrue($DB->record_exists('course', array('shortname' => 'c1')));
+        $course = $DB->get_record('course', array('shortname' => 'c1'));
+        $ctx = context_course::instance($course->id);
+
+        $this->assertEquals($defaultdata['fullname'], $course->fullname);
+        $this->assertEquals($defaultdata['category'], $course->category);
+        $this->assertEquals($defaultdata['visible'], $course->visible);
+        $this->assertEquals(mktime(0, 0, 0, 6, 8, 1990), $course->startdate);
+        $this->assertEquals($defaultdata['idnumber'], $course->idnumber);
+        $this->assertEquals($defaultdata['summary'], $course->summary);
+        $this->assertEquals($defaultdata['format'], $course->format);
+        $this->assertEquals($defaultdata['theme'], $course->theme);
+        $this->assertEquals($defaultdata['lang'], $course->lang);
+        $this->assertEquals($defaultdata['newsitems'], $course->newsitems);
+        $this->assertEquals($defaultdata['showgrades'], $course->showgrades);
+        $this->assertEquals($defaultdata['showreports'], $course->showreports);
+        $this->assertEquals($defaultdata['legacyfiles'], $course->legacyfiles);
+        $this->assertEquals($defaultdata['maxbytes'], $course->maxbytes);
+        $this->assertEquals($defaultdata['groupmode'], $course->groupmode);
+        $this->assertEquals($defaultdata['groupmodeforce'], $course->groupmodeforce);
+        $this->assertEquals($defaultdata['enablecompletion'], $course->enablecompletion);
+
+        // Update.
+        $cat = $this->getDataGenerator()->create_category();
+        $mode = tool_uploadcourse_processor::MODE_UPDATE_ONLY;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_OR_DEFAUTLS;
+        $data = array(
+            'shortname' => 'c1',
+        );
+        $defaultdata = array(
+            'fullname' => 'Fullname 2',
+            'category' => $cat->id,
+            'visible' => '1',
+            'startdate' => '11 June 1984',
+            'idnumber' => 'changedid',
+            'summary' => 'Summary 2',
+            'format' => 'topics',
+            'theme' => 'clean',
+            'lang' => '',
+            'newsitems' => '2',
+            'showgrades' => '1',
+            'showreports' => '0',
+            'legacyfiles' => '0',
+            'maxbytes' => '1111',
+            'groupmode' => '1',
+            'groupmodeforce' => '0',
+            'enablecompletion' => '0',
+        );
+
+        $this->assertTrue($DB->record_exists('course', array('shortname' => 'c1')));
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data, $defaultdata);
+        $this->assertTrue($co->prepare());
+        $co->proceed();
+        $this->assertTrue($DB->record_exists('course', array('shortname' => 'c1')));
+        $course = $DB->get_record('course', array('shortname' => 'c1'));
+        $ctx = context_course::instance($course->id);
+
+        $this->assertEquals($defaultdata['fullname'], $course->fullname);
+        $this->assertEquals($defaultdata['category'], $course->category);
+        $this->assertEquals($defaultdata['visible'], $course->visible);
+        $this->assertEquals(mktime(0, 0, 0, 6, 11, 1984), $course->startdate);
+        $this->assertEquals($defaultdata['idnumber'], $course->idnumber);
+        $this->assertEquals($defaultdata['summary'], $course->summary);
+        $this->assertEquals($defaultdata['format'], $course->format);
+        $this->assertEquals($defaultdata['theme'], $course->theme);
+        $this->assertEquals($defaultdata['lang'], $course->lang);
+        $this->assertEquals($defaultdata['newsitems'], $course->newsitems);
+        $this->assertEquals($defaultdata['showgrades'], $course->showgrades);
+        $this->assertEquals($defaultdata['showreports'], $course->showreports);
+        $this->assertEquals($defaultdata['legacyfiles'], $course->legacyfiles);
+        $this->assertEquals($defaultdata['maxbytes'], $course->maxbytes);
+        $this->assertEquals($defaultdata['groupmode'], $course->groupmode);
+        $this->assertEquals($defaultdata['groupmodeforce'], $course->groupmodeforce);
+        $this->assertEquals($defaultdata['enablecompletion'], $course->enablecompletion);
+    }
+
+    public function test_rename() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $c1 = $this->getDataGenerator()->create_course(array('shortname' => 'c1'));
+
+        // Cannot rename when creating.
+        $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
+        $importoptions = array('canrename' => true);
+        $data = array('shortname' => 'c1', 'rename' => 'newshortname');
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data, array(), $importoptions);
+        $this->assertFalse($co->prepare());
+
+        // Cannot rename when creating.
+        $mode = tool_uploadcourse_processor::MODE_CREATE_ALL;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
+        $importoptions = array('canrename' => true);
+        $data = array('shortname' => 'c1', 'rename' => 'newshortname');
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data, array(), $importoptions);
+        $this->assertFalse($co->prepare());
+
+        // Error when not allowed to rename the course.
+        $mode = tool_uploadcourse_processor::MODE_UPDATE_ONLY;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
+        $importoptions = array('canrename' => false);
+        $data = array('shortname' => 'c1', 'rename' => 'newshortname');
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data, array(), $importoptions);
+        $this->assertFalse($co->prepare());
+
+        // Can rename when updating.
+        $mode = tool_uploadcourse_processor::MODE_CREATE_OR_UPDATE;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
+        $importoptions = array('canrename' => true);
+        $data = array('shortname' => 'c1', 'rename' => 'newshortname');
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data, array(), $importoptions);
+        $this->assertTrue($co->prepare());
+        $co->proceed();
+        $this->assertEquals('newshortname', $DB->get_field_select('course', 'shortname', 'id = :id', array('id' => $c1->id)));
+
+        // Can rename when updating.
+        $mode = tool_uploadcourse_processor::MODE_UPDATE_ONLY;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
+        $importoptions = array('canrename' => true);
+        $data = array('shortname' => 'newshortname', 'rename' => 'newshortname2');
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data, array(), $importoptions);
+        $this->assertTrue($co->prepare());
+        $co->proceed();
+        $this->assertEquals('newshortname2', $DB->get_field_select('course', 'shortname', 'id = :id', array('id' => $c1->id)));
+
+        // Error when course does not exist.
+        $mode = tool_uploadcourse_processor::MODE_UPDATE_ONLY;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
+        $importoptions = array('canrename' => true);
+        $data = array('shortname' => 'DoesNotExist', 'rename' => 'c1');
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data, array(), $importoptions);
+        $this->assertFalse($co->prepare());
+
+        // Renaming still updates the other values.
+        $mode = tool_uploadcourse_processor::MODE_CREATE_OR_UPDATE;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_OR_DEFAUTLS;
+        $importoptions = array('canrename' => true);
+        $data = array('shortname' => 'newshortname2', 'rename' => 'c1', 'fullname' => 'Another fullname!');
+        $defaultdata = array('summary' => 'New summary!');
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data, $defaultdata, $importoptions);
+        $this->assertTrue($co->prepare());
+        $co->proceed();
+        $this->assertEquals('c1', $DB->get_field_select('course', 'shortname', 'id = :id', array('id' => $c1->id)));
+        $this->assertEquals('New summary!', $DB->get_field_select('course', 'summary', 'id = :id', array('id' => $c1->id)));
+        $this->assertEquals('Another fullname!', $DB->get_field_select('course', 'fullname', 'id = :id', array('id' => $c1->id)));
+    }
+
+    public function test_restore_course() {
+        global $DB;
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $c1 = $this->getDataGenerator()->create_course();
+        $c1f1 = $this->getDataGenerator()->create_module('forum', array('course' => $c1->id));
+
+        $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
+        $data = array('shortname' => 'A1', 'templatecourse' => $c1->shortname, 'summary' => 'A', 'category' => 1, 'fullname' => 'A1');
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data);
+        $this->assertTrue($co->prepare());
+        $co->proceed();
+        $course = $DB->get_record('course', array('shortname' => 'A1'));
+        $modinfo = get_fast_modinfo($course);
+        $found = false;
+        foreach ($modinfo->get_cms() as $cmid => $cm) {
+            if ($cm->modname == 'forum' && $cm->name == $c1f1->name) {
+                $found = true;
+                break;
+            }
+        }
+        $this->assertTrue($found);
+
+        // Restore the time limit to prevent warning.
+        set_time_limit(0);
+    }
+
+    public function test_restore_file() {
+        global $DB;
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $c1 = $this->getDataGenerator()->create_course();
+        $c1f1 = $this->getDataGenerator()->create_module('forum', array('course' => $c1->id));
+
+        // Restore from a file, checking that the file takes priority over the templatecourse.
+        $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
+        $data = array('shortname' => 'A1', 'backupfile' => __DIR__ . '/fixtures/backup.mbz',
+            'summary' => 'A', 'category' => 1, 'fullname' => 'A1', 'templatecourse' => $c1->shortname);
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data);
+        $this->assertTrue($co->prepare());
+        $co->proceed();
+        $course = $DB->get_record('course', array('shortname' => 'A1'));
+        $modinfo = get_fast_modinfo($course);
+        $found = false;
+        foreach ($modinfo->get_cms() as $cmid => $cm) {
+            if ($cm->modname == 'glossary' && $cm->name == 'Imported Glossary') {
+                $found = true;
+            } else if ($cm->modname == 'forum' && $cm->name == $c1f1->name) {
+                // We should not find this!
+                $this->assertTrue(false);
+            }
+        }
+        $this->assertTrue($found);
+
+        // Restore the time limit to prevent warning.
+        set_time_limit(0);
+    }
+
+    /**
+     * Testing the reset on groups, group members and enrolments.
+     */
+    public function test_reset() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $c1 = $this->getDataGenerator()->create_course();
+        $c1ctx = context_course::instance($c1->id);
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $teacherrole = $DB->get_record('role', array('shortname' => 'teacher'));
+
+        $u1 = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($u1->id, $c1->id, $studentrole->id);
+        $this->assertCount(1, get_enrolled_users($c1ctx));
+
+        $g1 = $this->getDataGenerator()->create_group(array('courseid' => $c1->id));
+        $this->getDataGenerator()->create_group_member(array('groupid' => $g1->id, 'userid' => $u1->id));
+        $this->assertEquals(1, $DB->count_records('groups', array('courseid' => $c1->id)));
+        $this->assertTrue($DB->record_exists('groups_members', array('groupid' => $g1->id, 'userid' => $u1->id)));
+
+        // Wrong mode.
+        $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
+        $data = array('shortname' => $c1->shortname, 'reset' => '1');
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data);
+        $this->assertFalse($co->prepare());
+        $this->assertTrue($DB->record_exists('groups', array('id' => $g1->id)));
+        $this->assertTrue($DB->record_exists('groups_members', array('groupid' => $g1->id, 'userid' => $u1->id)));
+        $this->assertCount(1, get_enrolled_users($c1ctx));
+
+        // Reset not allowed.
+        $mode = tool_uploadcourse_processor::MODE_UPDATE_ONLY;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
+        $data = array('shortname' => $c1->shortname, 'reset' => '1');
+        $importoptions = array('canreset' => false);
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data, array(), $importoptions);
+        $this->assertFalse($co->prepare());
+        $this->assertTrue($DB->record_exists('groups', array('id' => $g1->id)));
+        $this->assertTrue($DB->record_exists('groups_members', array('groupid' => $g1->id, 'userid' => $u1->id)));
+        $this->assertCount(1, get_enrolled_users($c1ctx));
+
+        // Reset allowed but not requested.
+        $mode = tool_uploadcourse_processor::MODE_UPDATE_ONLY;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
+        $data = array('shortname' => $c1->shortname, 'reset' => '0');
+        $importoptions = array('canreset' => true);
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data, array(), $importoptions);
+        $this->assertTrue($co->prepare());
+        $this->assertTrue($DB->record_exists('groups', array('id' => $g1->id)));
+        $this->assertTrue($DB->record_exists('groups_members', array('groupid' => $g1->id, 'userid' => $u1->id)));
+        $this->assertCount(1, get_enrolled_users($c1ctx));
+
+        // Reset passed as a default parameter, should not be taken in account.
+        $mode = tool_uploadcourse_processor::MODE_UPDATE_ONLY;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
+        $data = array('shortname' => $c1->shortname);
+        $importoptions = array('canreset' => true);
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data, array('reset' => 1), $importoptions);
+        $this->assertTrue($co->prepare());
+        $co->proceed();
+        $this->assertTrue($DB->record_exists('groups', array('id' => $g1->id)));
+        $this->assertTrue($DB->record_exists('groups_members', array('groupid' => $g1->id, 'userid' => $u1->id)));
+        $this->assertCount(1, get_enrolled_users($c1ctx));
+
+        // Reset executed from data.
+        $mode = tool_uploadcourse_processor::MODE_UPDATE_ONLY;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
+        $data = array('shortname' => $c1->shortname, 'reset' => 1);
+        $importoptions = array('canreset' => true);
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data, array(), $importoptions);
+        $this->assertTrue($co->prepare());
+        $co->proceed();
+        $this->assertFalse($DB->record_exists('groups', array('id' => $g1->id)));
+        $this->assertFalse($DB->record_exists('groups_members', array('groupid' => $g1->id, 'userid' => $u1->id)));
+        $this->assertCount(0, get_enrolled_users($c1ctx));
+
+        // Reset executed from import option.
+        $mode = tool_uploadcourse_processor::MODE_UPDATE_ONLY;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
+        $data = array('shortname' => $c1->shortname, 'reset' => 0);
+        $importoptions = array('reset' => 1, 'canreset' => true);
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data, array(), $importoptions);
+
+        $g1 = $this->getDataGenerator()->create_group(array('courseid' => $c1->id));
+        $this->getDataGenerator()->create_group_member(array('groupid' => $g1->id, 'userid' => $u1->id));
+        $this->assertEquals(1, $DB->count_records('groups', array('courseid' => $c1->id)));
+        $this->assertTrue($co->prepare());
+        $co->proceed();
+        $this->assertFalse($DB->record_exists('groups', array('id' => $g1->id)));
+    }
+
+    public function test_create_bad_category() {
+        $this->resetAfterTest(true);
+
+        // Ensure fails when category cannot be resolved upon creation.
+        $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
+        $data = array('shortname' => 'c1', 'summary' => 'summary', 'fullname' => 'FN', 'category' => 'Wrong cat');
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data);
+        $this->assertFalse($co->prepare());
+        $this->assertArrayHasKey('couldnotresolvecatgorybyid', $co->get_errors());
+
+        // Ensure fails when category cannot be resolved upon update.
+        $c1 = $this->getDataGenerator()->create_course();
+        $mode = tool_uploadcourse_processor::MODE_UPDATE_ONLY;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
+        $data = array('shortname' => $c1->shortname, 'category' => 'Wrong cat');
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data);
+        $this->assertFalse($co->prepare());
+        $this->assertArrayHasKey('couldnotresolvecatgorybyid', $co->get_errors());
+    }
+
+    public function test_enrolment_data() {
+        $this->resetAfterTest(true);
+
+        $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
+        $data = array('shortname' => 'c1', 'summary' => 'S', 'fullname' => 'FN', 'category' => '1');
+        $data['enrolment_1'] = 'manual';
+        $data['enrolment_1_role'] = 'teacher';
+        $data['enrolment_1_startdate'] = '2nd July 2013';
+        $data['enrolment_1_enddate'] = '2nd August 2013';
+        $data['enrolment_1_enrolperiod'] = '10 days';
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data);
+        $this->assertTrue($co->prepare());
+        $co->proceed();
+
+        // Enrolment methods.
+        $enroldata = array();
+        $instances = enrol_get_instances($co->get_id(), false);
+        foreach ($instances as $instance) {
+            $enroldata[$instance->enrol] = $instance;
+        }
+
+        $this->assertNotEmpty($enroldata['manual']);
+        $this->assertEquals(ENROL_INSTANCE_ENABLED, $enroldata['manual']->status);
+        $this->assertEquals(strtotime($data['enrolment_1_startdate']), $enroldata['manual']->enrolstartdate);
+        $this->assertEquals(strtotime('1970-01-01 GMT + ' . $data['enrolment_1_enrolperiod']), $enroldata['manual']->enrolperiod);
+        $this->assertEquals(strtotime('12th July 2013'), $enroldata['manual']->enrolenddate);
+    }
+}
