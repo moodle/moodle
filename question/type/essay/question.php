@@ -82,7 +82,7 @@ class qtype_essay_question extends question_with_responses {
     }
 
     public function is_complete_response(array $response) {
-        return !empty($response['answer']);
+        return array_key_exists('answer', $response) && ($response['answer'] !== '');
     }
 
     public function is_same_response(array $prevresponse, array $newresponse) {
