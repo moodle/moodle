@@ -242,8 +242,8 @@ class behat_general extends behat_base {
 
         // The table row container.
         $nocontainerexception = new ElementNotFoundException($this->getSession(), '"' . $tablerowtext . '" row text ');
-        $tablerowtext = str_replace("'", "\'", $tablerowtext);
-        $rownode = $this->find('xpath', "//tr[contains(., '" . $tablerowtext . "')]", $nocontainerexception);
+        $tablerowtext = $this->getSession()->getSelectorsHandler()->xpathLiteral($tablerowtext);
+        $rownode = $this->find('xpath', "//tr[contains(., $tablerowtext)]", $nocontainerexception);
 
         // Looking for the element DOM node inside the specified row.
         list($selector, $locator) = $this->transform_selector($selectortype, $element);
@@ -285,7 +285,7 @@ class behat_general extends behat_base {
     public function assert_page_contains_text($text) {
 
         $xpathliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($text);
-        $xpath = "/descendant::*[contains(., " . $xpathliteral. ")]";
+        $xpath = "/descendant::*[contains(., $xpathliteral)]";
 
         // Wait until it finds the text, otherwise custom exception.
         try {
@@ -305,7 +305,7 @@ class behat_general extends behat_base {
     public function assert_page_not_contains_text($text) {
 
         $xpathliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($text);
-        $xpath = "/descendant::*[not(contains(., " . $xpathliteral. "))]";
+        $xpath = "/descendant::*[not(contains(., $xpathliteral))]";
 
         // Wait until it finds the text, otherwise custom exception.
         try {

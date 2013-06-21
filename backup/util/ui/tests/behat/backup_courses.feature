@@ -31,7 +31,7 @@ Feature: Backup Moodle courses
     And I should not see "Section 3"
     And I press "Continue"
     And I click on "Continue" "button" in the ".bcs-current-course" "css_element"
-    And I click on "//div[contains(concat(' ', @class, ' '), ' fitem ')][contains(., 'Include calendar events')]/descendant::img" "xpath_element"
-    And I click on "setting_root_logs" "checkbox" in the "//div[contains(@class, 'fitem')][contains(., 'Include course logs')]" "xpath_element"
+    And "//div[contains(concat(' ', normalize-space(@class), ' '), ' fitem ')][contains(., 'Include calendar events')]/descendant::img" "xpath_element" should exists
+    And I check "Include course logs"
     And I press "Cancel"
     And I click on "Cancel" "button" in the ".confirmation-dialogue" "css_element"

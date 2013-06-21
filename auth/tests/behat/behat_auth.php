@@ -50,8 +50,8 @@ class behat_auth extends behat_base {
 
         return array(new Given('I am on homepage'),
             new Given('I follow "' . get_string('login') . '"'),
-            new Given('I fill in "' . get_string('username') . '" with "'.$username.'"'),
-            new Given('I fill in "' . get_string('password') . '" with "'.$username.'"'),
+            new Given('I fill in "' . get_string('username') . '" with "' . $this->escape($username) . '"'),
+            new Given('I fill in "' . get_string('password') . '" with "'. $this->escape($username) . '"'),
             new Given('I press "' . get_string('login') . '"')
         );
     }

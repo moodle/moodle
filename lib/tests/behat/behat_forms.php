@@ -132,8 +132,8 @@ class behat_forms extends behat_base {
 
             // Show all fields.
             $showmorestr = get_string('showmore', 'form');
-            $showmores = $this->find_all('xpath', "//a[contains(concat(' ', normalize-space(.), ' '), '" . $showmorestr . "')]" .
-                "[contains(concat(' ', normalize-space(@class), ' '), ' moreless-toggler')]");
+            $showmores = $this->find_all('xpath', "//a[normalize-space(.)='" . $showmorestr . "']" .
+                "[contains(concat(' ', normalize-space(@class), ' '), ' moreless-toggler ')]");
 
             // We are supposed to have 'show more's here, otherwise exception.
 
@@ -186,9 +186,12 @@ class behat_forms extends behat_base {
                 return;
             }
 
+            // Single select needs an extra click in the option.
             if (!$selectnode->hasAttribute('multiple')) {
-                // Single select needs an extra click in the option.
-                $xpath = ".//option[(./@value = '" . $option . "' or contains(normalize-space(string(.)), '" . $option . "'))]";
+
+                // Avoid quotes problems.
+                $option = $this->getSession()->getSelectorsHandler()->xpathLiteral($option);
+                $xpath = "//option[(./@value=$option or normalize-space(.)=$option)]";
                 $optionnode = $this->find('xpath', $xpath, false, $selectnode);
                 $optionnode->click();
             } else {

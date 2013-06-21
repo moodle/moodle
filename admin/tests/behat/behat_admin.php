@@ -72,8 +72,12 @@ class behat_admin extends behat_base {
             // Admin settings does not use the same DOM structure than other moodle forms
             // but we also need to use lib/behat/form_field/* to deal with the different moodle form elements.
             $exception = new ElementNotFoundException($this->getSession(), '"' . $label . '" administration setting ');
+
+            // The argument should be converted to an xpath literal.
+            $label = $this->getSession()->getSelectorsHandler()->xpathLiteral($label);
+
             $fieldxpath = "//*[self::input | self::textarea | self::select][not(./@type = 'submit' or ./@type = 'image' or ./@type = 'hidden')]" .
-                "[@id=//label[contains(normalize-space(string(.)), '" . $label . "')]/@for]";
+                "[@id=//label[contains(normalize-space(.), $label)]/@for]";
             $fieldnode = $this->find('xpath', $fieldxpath, $exception);
             $formfieldtypenode = $this->find('xpath', $fieldxpath . "/ancestor::div[@class='form-setting']" .
                 "/child::div[contains(concat(' ', @class, ' '),  ' form-')]/child::*/parent::div");
