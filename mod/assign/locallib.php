@@ -2691,7 +2691,6 @@ class assign {
         }
         $submission = $this->get_user_submission($userid, false, $attemptnumber);
         $submissiongroup = null;
-        $submissiongroupmemberswhohavenotsubmitted = array();
         $teamsubmission = null;
         $notsubmitted = array();
         if ($instance->teamsubmission) {
@@ -3214,6 +3213,9 @@ class assign {
         }
         if ($userid == $USER->id && has_capability('mod/assign:submit', $this->context)) {
             return true;
+        }
+        if (in_array($userid, $this->susers) && !has_capability('moodle/course:viewsuspendedusers', $this->context)) {
+            return false;
         }
         if (has_capability('mod/assign:grade', $this->context)) {
             return true;
