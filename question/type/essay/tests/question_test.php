@@ -49,4 +49,19 @@ class qtype_essay_question_test extends advanced_testcase {
         $this->assertEquals($longstring,
                 $essay->summarise_response(array('answer' => $longstring)));
     }
+
+    public function test_is_complete_response() {
+
+        $essay = test_question_maker::make_an_essay_question();
+        $essay->start_attempt(new question_attempt_step(), 1);
+
+        // The empty string should be considered an empty response, as should a lack of a response.
+        $this->assertFalse($essay->is_complete_response(array('answer' => '')));
+        $this->assertFalse($essay->is_complete_response(array()));
+
+        // Any nonempty string should be considered a complete response.
+        $this->assertTrue($essay->is_complete_response(array('answer' => 'A student response.')));
+        $this->assertTrue($essay->is_complete_response(array('answer' => '0 times.')));
+        $this->assertTrue($essay->is_complete_response(array('answer' => '0')));
+    }
 }
