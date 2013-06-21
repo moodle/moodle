@@ -73,7 +73,7 @@ class behat_permissions extends behat_base {
     public function i_override_the_system_permissions_of_role_with($rolename, $table) {
 
         // We don't know the number of overrides so we have to get it to match the option contents.
-        $roleoption = $this->find('xpath', '//select[@name="roleid"]/option[contains(text(),"' . $this->escape($rolename) . '")]');
+        $roleoption = $this->find('xpath', '//select[@name="roleid"]/option[contains(.,"' . $this->escape($rolename) . '")]');
 
         return array(
             new Given('I select "' . $this->escape($roleoption->getText()) . '" from "' . get_string('advancedoverride', 'role') . '"'),

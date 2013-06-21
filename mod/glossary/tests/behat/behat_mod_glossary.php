@@ -66,7 +66,7 @@ class behat_mod_glossary extends behat_base {
             new Given('I follow "' . get_string('categoryview', 'mod_glossary') . '"'),
             new Given('I press "' . get_string('editcategories', 'mod_glossary') . '"'),
             new Given('I press "' . get_string('add').' '.get_string('category', 'glossary') . '"'),
-            new Given('I fill in "name" with "' . $categoryname . '"'),
+            new Given('I fill in "name" with "' . $this->escape($categoryname) . '"'),
             new Given('I press "' . get_string('savechanges') . '"'),
             new Given('I press "' . get_string('back', 'mod_glossary') . '"')
         );

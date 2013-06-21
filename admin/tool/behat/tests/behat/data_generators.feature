@@ -30,17 +30,17 @@ Feature: Set up contextual data for tests
     Then I should see "Course 1"
     And I should see "Course 2"
     And I should see "Course 3"
-    When I go to the courses management page
+    And I go to the courses management page
     And I follow "Cat 1"
-    Then I should see "Cat 2"
+    And I should see "Cat 2"
     And I should see "Cat 3"
-    When I follow "Cat 3"
-    Then I should see "Course 1"
+    And I follow "Cat 3"
+    And I should see "Course 1"
     And I should see "Course 2"
-    When I select "Cat 2" from "Course categories:"
-    Then I should see "No courses in this category"
-    When I select "Miscellaneous" from "Course categories:"
-    Then I should see "Course 3"
+    And I select "Cat 1 / Cat 2" from "Course categories:"
+    And I should see "No courses in this category"
+    And I select "Miscellaneous" from "Course categories:"
+    And I should see "Course 3"
 
   @javascript
   Scenario: Add a bunch of groups and groupings
