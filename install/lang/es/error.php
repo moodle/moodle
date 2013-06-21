@@ -30,6 +30,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['cannotcreatedboninstall'] = '<p> No se puede crear la base de datos. </p><p> La base de datos especificada no existe y el usuario indicado no tiene permiso para crear la base de datos. </p><p> El administrador del sitio debe comprobar la configuración de base de datos. </p>';
 $string['cannotcreatelangdir'] = 'No se puede crear el directorio de idioma.';
 $string['cannotcreatetempdir'] = 'No se puede crear el directorio temp.';
 $string['cannotdownloadcomponents'] = 'No se puede descargar componentes';
@@ -39,6 +40,7 @@ $string['cannotsavemd5file'] = 'No se puede guardar el archivo md5';
 $string['cannotsavezipfile'] = 'No se puede guardar el archivo ZIP';
 $string['cannotunzipfile'] = 'No se puede descomprimir el archivo';
 $string['componentisuptodate'] = 'El componente está actualizado';
+$string['dmlexceptiononinstall'] = '<p>Ha ocurrido un error de base de datos [{$s->errorcode}].<br/>{$a->debuginfo}</p>';
 $string['downloadedfilecheckfailed'] = 'Ha fallado la comprobación del archivo descargado';
 $string['invalidmd5'] = 'La variable de verificación MD5 es incorrecta no es valida - trate nuevamente';
 $string['missingrequiredfield'] = 'Falta algún campo necesario';
