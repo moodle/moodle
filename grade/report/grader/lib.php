@@ -145,7 +145,7 @@ class grade_report_grader extends grade_report {
         $this->pbarurl = new moodle_url('/grade/report/grader/index.php', array('id' => $this->courseid));
 
         $this->setup_groups();
-
+        $this->setup_users();
         $this->setup_sortitemid();
     }
 
@@ -158,7 +158,7 @@ class grade_report_grader extends grade_report {
     public function process_data($data) {
         global $DB;
         $warnings = array();
-
+        
         $separategroups = false;
         $mygroups       = array();
         if ($this->groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $this->context)) {
@@ -175,6 +175,7 @@ class grade_report_grader extends grade_report {
 
         // always initialize all arrays
         $queue = array();
+
         $this->load_users();
         $this->load_final_grades();
 
@@ -397,8 +398,9 @@ class grade_report_grader extends grade_report {
         if (!empty($this->users)) {
             return;
         }
+        $this->setup_users();
 
-        // Limit to users with a gradeable role.
+        //limit to users with a gradeable role
         list($gradebookrolessql, $gradebookrolesparams) = $DB->get_in_or_equal(explode(',', $this->gradebookroles), SQL_PARAMS_NAMED, 'grbr0');
 
         // Limit to users with an active enrollment.
@@ -412,8 +414,7 @@ class grade_report_grader extends grade_report {
 
         // If the user has clicked one of the sort asc/desc arrows.
         if (is_numeric($this->sortitemid)) {
-            $params = array_merge(array('gitemid' => $this->sortitemid), $gradebookrolesparams, $this->groupwheresql_params, $enrolledparams,
-                $relatedctxparams);
+            $params = array_merge(array('gitemid'=>$this->sortitemid), $gradebookrolesparams, $this->userwheresql_params, $this->groupwheresql_params, $enrolledparams);
 
             $sortjoin = "LEFT JOIN {grade_grades} g ON g.userid = u.id AND g.itemid = $this->sortitemid";
             $sort = "g.finalgrade $this->sortorder";
@@ -435,7 +436,7 @@ class grade_report_grader extends grade_report {
                     break;
             }
 
-            $params = array_merge($gradebookrolesparams, $this->groupwheresql_params, $enrolledparams, $relatedctxparams);
+            $params = array_merge($gradebookrolesparams, $this->userwheresql_params, $this->groupwheresql_params, $enrolledparams, $relatedctxparams);
         }
 
         $sql = "SELECT $userfields
@@ -450,6 +451,7 @@ class grade_report_grader extends grade_report {
                               AND ra.contextid $relatedctxsql
                        ) rainner ON rainner.userid = u.id
                    AND u.deleted = 0
+                   $this->userwheresql
                    $this->groupwheresql
               ORDER BY $sort";
         $studentsperpage = $this->get_students_per_page();
@@ -489,7 +491,6 @@ class grade_report_grader extends grade_report {
                 }
             }
         }
-
         return $this->users;
     }
 
@@ -504,6 +505,10 @@ class grade_report_grader extends grade_report {
             return;
         }
 
+        if (empty($this->users)) {
+            return;
+        }
+
         // please note that we must fetch all grade_grades fields if we want to construct grade_grade object from it!
         $params = array_merge(array('courseid'=>$this->courseid), $this->userselect_params);
         $sql = "SELECT g.*
@@ -512,7 +517,6 @@ class grade_report_grader extends grade_report {
                  WHERE g.itemid = gi.id AND gi.courseid = :courseid {$this->userselect}";
 
         $userids = array_keys($this->users);
-
 
         if ($grades = $DB->get_records_sql($sql, $params)) {
             foreach ($grades as $graderec) {

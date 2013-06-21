@@ -39,6 +39,17 @@ $target        = optional_param('target', 0, PARAM_ALPHANUM);
 $toggle        = optional_param('toggle', NULL, PARAM_INT);
 $toggle_type   = optional_param('toggle_type', 0, PARAM_ALPHANUM);
 
+$graderreportsifirst  = optional_param('sifirst', NULL, PARAM_ALPHA);
+$graderreportsilast   = optional_param('silast', NULL, PARAM_ALPHA);
+
+// the report object is recreated each time, save search information to session for future use
+if (isset($graderreportsifirst)) {
+    $SESSION->graderreportsifirst = $graderreportsifirst;
+}
+if (isset($graderreportsilast)) {
+    $SESSION->graderreportsilast = $graderreportsilast;
+}
+
 $PAGE->set_url(new moodle_url('/grade/report/grader/index.php', array('id'=>$courseid)));
 
 /// basic access checks
@@ -118,6 +129,7 @@ print_grade_page_head($COURSE->id, 'report', 'grader', $reportname, false, $butt
 //Initialise the grader report object that produces the table
 //the class grade_report_grader_ajax was removed as part of MDL-21562
 $report = new grade_report_grader($courseid, $gpr, $context, $page, $sortitemid);
+$numusers = $report->get_numusers(true, true);
 
 // make sure separate group does not prevent view
 if ($report->currentgroup == -2) {
@@ -135,11 +147,58 @@ if ($data = data_submitted() and confirm_sesskey() and has_capability('moodle/gr
 
 // final grades MUST be loaded after the processing
 $report->load_users();
-$numusers = $report->get_numusers();
 $report->load_final_grades();
-
 echo $report->group_selector;
-echo '<div class="clearer"></div>';
+
+// Initials Selection Section
+$baseurl = new moodle_url('/grade/report/grader/index.php', array('id' => $course->id));
+$firstinitial = isset($SESSION->graderreportsifirst) ? $SESSION->graderreportsifirst : "";
+$lastinitial  = isset($SESSION->graderreportsilast) ? $SESSION->graderreportsilast : "";
+$strall = get_string('all');
+$alpha  = explode(',', get_string('alphabet', 'langconfig'));
+$strallparticipants = get_string('allparticipants');
+$totalusers = $report->get_numusers(false, false);
+
+echo '<form action="index.php">'; 
+echo '<div>';
+echo $OUTPUT->heading($strallparticipants.get_string('labelsep', 'langconfig').$numusers.'/'.$totalusers, 3);
+
+// Bar of first initials
+echo '<div class="initialbar firstinitial">'.get_string('firstname').' : ';
+if (!empty($firstinitial)) {
+    echo '<a href="'.$baseurl->out().'&amp;sifirst=">'.$strall.'</a>';
+} else {
+    echo '<strong>'.$strall.'</strong>';
+}
+foreach ($alpha as $letter) {
+    if ($letter == $firstinitial) {
+        echo ' <strong>'.$letter.'</strong>';
+    } else {
+        echo ' <a href="'.$baseurl->out().'&amp;sifirst='.$letter.'">'.$letter.'</a>';
+    }
+}
+echo '</div>';
+
+// Bar of last initials
+echo '<div class="initialbar lastinitial">'.get_string('lastname').' : ';
+if (!empty($lastinitial)) {
+    echo '<a href="'.$baseurl->out().'&amp;silast=">'.$strall.'</a>';
+} else {
+    echo '<strong>'.$strall.'</strong>';
+}
+foreach ($alpha as $letter) {
+    if ($letter == $lastinitial) {
+        echo ' <strong>'.$letter.'</strong>';
+    } else {
+        echo ' <a href="'.$baseurl->out().'&amp;silast='.$letter.'">'.$letter.'</a>';
+    }
+}
+echo '</div>';
+
+echo '</div>';
+echo '<div>&nbsp;</div>';
+echo '</form>';
+// Initials Selection Section
 
 //show warnings if any
 foreach($warnings as $warning) {

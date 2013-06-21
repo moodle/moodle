@@ -132,6 +132,19 @@ abstract class grade_report {
      */
     protected $groupwheresql_params = array();
 
+//// USER VARIABLES (including SQL)
+
+    /**
+     * An SQL constraint to append to the queries used by this object to build the report.
+     * @var string $userwheresql
+     */
+    protected $userwheresql;
+
+    /**
+     * The ordered params for $userwheresql
+     * @var array $userwheresql_params
+     */
+    protected $userwheresql_params = array();
 
     /**
      * Constructor. Sets local copies of user preferences and initialises grade_tree.
@@ -268,11 +281,12 @@ abstract class grade_report {
     /**
      * Fetches and returns a count of all the users that will be shown on this page.
      * @param boolean $groups include groups limit
+     * @param boolean $users include users limit - default false, used for searching purposes
      * @return int Count of users
      */
-    public function get_numusers($groups=true) {
-        global $DB;
-
+    public function get_numusers($groups = true, $users = false) {
+        global $CFG, $DB;
+        $userwheresql = "";
         $groupsql      = "";
         $groupwheresql = "";
 
@@ -286,6 +300,11 @@ abstract class grade_report {
         list($relatedctxsql, $relatedctxparams) = $DB->get_in_or_equal($this->context->get_parent_context_ids(true), SQL_PARAMS_NAMED, 'relatedctx');
 
         $params = array_merge($gradebookrolesparams, $enrolledparams, $relatedctxparams);
+
+        if ($users) {
+            $userwheresql = $this->userwheresql;
+            $params       = array_merge($params, $this->userwheresql_params);
+        }
 
         if ($groups) {
             $groupsql      = $this->groupsql;
@@ -302,6 +321,7 @@ abstract class grade_report {
                        $groupsql
                       WHERE ra.roleid $gradebookrolessql
                             AND u.deleted = 0
+                            $userwheresql
                             $groupwheresql
                             AND ra.contextid $relatedctxsql";
         return $DB->count_records_sql($countsql, $params);
@@ -325,6 +345,20 @@ abstract class grade_report {
                 $this->groupwheresql        = " AND gm.groupid = :gr_grpid ";
                 $this->groupwheresql_params = array('gr_grpid'=>$this->currentgroup);
             }
+        }
+    }
+
+    public function setup_users() {
+        global $SESSION;
+        $this->userwheresql = "";
+        $this->userwheresql_params = array();
+        if (isset($SESSION->graderreportsifirst) && !empty($SESSION->graderreportsifirst)) {
+            $this->userwheresql .= ' AND u.firstname ILIKE  :firstname ';
+            $this->userwheresql_params['firstname'] = $SESSION->graderreportsifirst.'%';
+        }
+        if (isset($SESSION->graderreportsilast) && !empty($SESSION->graderreportsilast)) {
+            $this->userwheresql .= ' AND u.lastname ILIKE  :lastname ';
+            $this->userwheresql_params['lastname'] = $SESSION->graderreportsilast.'%';
         }
     }
 
