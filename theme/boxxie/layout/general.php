@@ -79,7 +79,7 @@ echo $OUTPUT->doctype() ?>
                 </div>
 
                 <?php if ($hassidepre) { ?>
-                <div id="region-pre">
+                <div id="region-pre" class="block-region">
                     <div class="region-content">
                         <?php echo $OUTPUT->blocks_for_region('side-pre') ?>
                     </div>
@@ -87,7 +87,7 @@ echo $OUTPUT->doctype() ?>
                 <?php } ?>
 
                 <?php if ($hassidepost) { ?>
-                <div id="region-post">
+                <div id="region-post" class="block-region">
                     <div class="region-content">
                         <?php echo $OUTPUT->blocks_for_region('side-post') ?>
                     </div>
