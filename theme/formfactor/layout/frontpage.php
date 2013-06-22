@@ -31,16 +31,16 @@ echo $OUTPUT->doctype() ?>
 <!-- START OF HEADER -->
 
     <div id="page-header" class="clearfix">
-		<div id="page-header-wrapper">
-	        <h1 class="headermain"><?php echo $PAGE->heading ?></h1>
-    	    <div class="headermenu">
-        		<?php
-	        	    echo $OUTPUT->login_info();
-    	        	echo $OUTPUT->lang_menu();
-	        	    echo $PAGE->headingmenu;
-		        ?>
-	    	</div>
-	    </div>
+        <div id="page-header-wrapper">
+            <h1 class="headermain"><?php echo $PAGE->heading ?></h1>
+            <div class="headermenu">
+                <?php
+                    echo $OUTPUT->login_info();
+                    echo $OUTPUT->lang_menu();
+                    echo $PAGE->headingmenu;
+                ?>
+            </div>
+        </div>
     </div>
 
     <?php if ($hascustommenu) { ?>
@@ -49,7 +49,7 @@ echo $OUTPUT->doctype() ?>
       <ul id="page-navigation" class="clearfix">
         <li>&nbsp;</li>
       </ul>
-  	<?php } ?>
+    <?php } ?>
 
 <!-- END OF HEADER -->
 
@@ -69,7 +69,7 @@ echo $OUTPUT->doctype() ?>
                 </div>
 
                 <?php if ($hassidepre) { ?>
-                <div id="region-pre">
+                <div id="region-pre" class="block-region">
                     <div class="region-content">
                         <?php echo $OUTPUT->blocks_for_region('side-pre') ?>
                     </div>
@@ -77,7 +77,7 @@ echo $OUTPUT->doctype() ?>
                 <?php } ?>
 
                 <?php if ($hassidepost) { ?>
-                <div id="region-post">
+                <div id="region-post" class="block-region">
                     <div class="region-content">
                         <?php echo $OUTPUT->blocks_for_region('side-post') ?>
                     </div>
