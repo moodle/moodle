@@ -648,7 +648,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $this->assertNotEquals(false, strpos($output, 'Feedback'), 'Show feedback even if there is no grade');
         $this->assertEquals(false, strpos($output, 'Grade'), 'Do not show grade when there is no grade.');
         $this->assertEquals(false, strpos($output, 'Graded on'), 'Do not show graded date when there is no grade.');
-        
+
         // Now hide the grade in gradebook.
         $this->setUser($this->teachers[0]);
         $gradeitem = new grade_item(array(
@@ -663,7 +663,6 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $this->setUser($this->students[0]);
         $output = $assign->view_student_summary($this->students[0], true);
         $this->assertEquals(false, strpos($output, 'Feedback'), 'Do not show feedback if the grade is hidden in the gradebook');
-        
     }
 
     public function test_attempt_reopen_method_manual() {
