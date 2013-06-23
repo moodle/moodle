@@ -88,6 +88,7 @@ class enrol_flatfile_testcase extends advanced_testcase {
         $user4 = $this->getDataGenerator()->create_user(array('idnumber'=>'čtvrtý'));
         $user5 = $this->getDataGenerator()->create_user(array('idnumber'=>'u5'));
         $user6 = $this->getDataGenerator()->create_user(array('idnumber'=>'u6'));
+        $user7 = $this->getDataGenerator()->create_user(array('idnumber'=>''));
 
         $course1 = $this->getDataGenerator()->create_course(array('idnumber'=>'c1'));
         $course2 = $this->getDataGenerator()->create_course(array('idnumber'=>'c2'));
@@ -124,7 +125,8 @@ class enrol_flatfile_testcase extends advanced_testcase {
             add,student,u5,c2,20,10
             add,student,u6,c1,0,$future
             add,student,u6,c2,$future,0
-            add,student,u6,c3,$future,$farfuture";
+            add,student,u6,c3,$future,$farfuture
+            add,student,,c2";
         file_put_contents($file, $data);
 
         $this->assertEquals(0, $DB->count_records('user_enrolments'));
