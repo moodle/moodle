@@ -131,7 +131,6 @@ if ($delete and $confirmed) {
 
     // So long, and thanks for all the bugs.
     fulldelete($pluginfo->rootdir);
-    cache::make('core', 'pluginlist')->purge();
     redirect($PAGE->url);
 }
 
