@@ -1695,7 +1695,7 @@ function role_assign($roleid, $userid, $contextid, $component = '', $itemid = 0,
  *
  * @param int $roleid
  * @param int  $userid
- * @param int|context  $contextid
+ * @param int  $contextid
  * @param string $component
  * @param int  $itemid
  * @return void
