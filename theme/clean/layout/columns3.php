@@ -31,6 +31,12 @@
 // Get the HTML for the settings bits.
 $html = theme_clean_get_html_for_settings($OUTPUT, $PAGE);
 
+if (right_to_left()) {
+    $regionbsid = 'region-bs-main-and-post';
+} else {
+    $regionbsid = 'region-bs-main-and-pre';
+}
+
 echo $OUTPUT->doctype() ?>
 <html <?php echo $OUTPUT->htmlattributes(); ?>>
 <head>
@@ -78,7 +84,7 @@ echo $OUTPUT->doctype() ?>
     </header>
 
     <div id="page-content" class="row-fluid">
-        <div id="region-bs-main-and-pre" class="span9">
+        <div id="<?php echo $regionbsid ?>" class="span9">
             <div class="row-fluid">
                 <section id="region-main" class="span8 pull-right">
                     <?php
