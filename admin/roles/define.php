@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -19,13 +18,12 @@
  * Lets the user edit role definitions.
  *
  * Responds to actions:
- *   add       - add a new role
- *   duplicate - like add, only initialise the new role by using an existing one.
+ *   add       - add a new role (allows import, duplicate, archetype)
+ *   export    - save xml role definition
  *   edit      - edit the definition of a role
  *   view      - view the definition of a role
  *
- * @package    core
- * @subpackage role
+ * @package    core_role
  * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -34,7 +32,7 @@
     require_once($CFG->dirroot . '/' . $CFG->admin . '/roles/lib.php');
 
     $action = required_param('action', PARAM_ALPHA);
-    if (!in_array($action, array('add', 'duplicate', 'edit', 'view'))) {
+    if (!in_array($action, array('add', 'export', 'edit', 'reset', 'view'))) {
         throw new moodle_exception('invalidaccess');
     }
     if ($action != 'add') {
@@ -42,28 +40,28 @@
     } else {
         $roleid = 0;
     }
+    $resettype = optional_param('resettype', '', PARAM_RAW);
+    $return = optional_param('return', 'manage', PARAM_ALPHA);
 
 /// Get the base URL for this and related pages into a convenient variable.
-    $manageurl = $CFG->wwwroot . '/' . $CFG->admin . '/roles/manage.php';
-    $defineurl = $CFG->wwwroot . '/' . $CFG->admin . '/roles/define.php';
-    if ($action == 'duplicate') {
-        $baseurl = $defineurl . '?action=add';
+    $baseurl = new moodle_url('/admin/roles/define.php', array('action'=>$action, 'roleid'=>$roleid));
+    $manageurl = new moodle_url('/admin/roles/manage.php');
+    if ($return === 'manage') {
+        $returnurl = $manageurl;
     } else {
-        $baseurl = $defineurl . '?action=' . $action;
-        if ($roleid) {
-            $baseurl .= '&amp;roleid=' . $roleid;
-        }
+        $returnurl = new moodle_url('/admin/roles/define.php', array('action'=>'view', 'roleid'=>$roleid));;
     }
 
 /// Check access permissions.
     $systemcontext = context_system::instance();
     require_login();
     require_capability('moodle/role:manage', $systemcontext);
-    admin_externalpage_setup('defineroles', '', array('action' => $action, 'roleid' => $roleid), $defineurl);
+    admin_externalpage_setup('defineroles', '', array('action' => $action, 'roleid' => $roleid), new moodle_url('/admin/roles/define.php'));
 
-/// Handle the cancel button.
-    if (optional_param('cancel', false, PARAM_BOOL)) {
-        redirect($manageurl);
+/// Export role.
+    if ($action === 'export') {
+        core_role_preset::send_export_xml($roleid);
+        die;
     }
 
 /// Handle the toggle advanced mode button.
@@ -78,17 +76,121 @@
     $rolenames = role_fix_names($roles, $systemcontext, ROLENAME_ORIGINAL);
     $rolescount = count($roles);
 
-/// Create the table object.
-    if ($action == 'view') {
-        $definitiontable = new view_role_definition_table($systemcontext, $roleid);
-    } else if ($showadvanced) {
-        $definitiontable = new define_role_table_advanced($systemcontext, $roleid);
+    if ($action == 'add') {
+        $title = get_string('addinganewrole', 'role');
+    } else if ($action == 'view') {
+        $title = get_string('viewingdefinitionofrolex', 'role', $rolenames[$roleid]->localname);
+    } else if ($action == 'reset') {
+        $title = get_string('resettingrole', 'role', $rolenames[$roleid]->localname);
     } else {
-        $definitiontable = new define_role_table_basic($systemcontext, $roleid);
+        $title = get_string('editingrolex', 'role', $rolenames[$roleid]->localname);
     }
-    $definitiontable->read_submitted_permissions();
-    if ($action == 'duplicate') {
-        $definitiontable->make_copy();
+
+/// Decide how to create new role.
+    if ($action === 'add' and $resettype !== 'none') {
+        $mform = new core_role_preset_form(null, array('action'=>'add', 'roleid'=>0, 'resettype'=>'0', 'return'=>'manage'));
+        if ($mform->is_cancelled()) {
+            redirect($manageurl);
+
+        } else if ($data = $mform->get_data()) {
+            $resettype = $data->resettype;
+            $options = array(
+                'shortname'     => 1,
+                'name'          => 1,
+                'description'   => 1,
+                'permissions'   => 1,
+                'archetype'     => 1,
+                'contextlevels' => 1,
+                'allowassign'   => 1,
+                'allowoverride' => 1,
+                'allowswitch'   => 1);
+            if ($showadvanced) {
+                $definitiontable = new define_role_table_advanced($systemcontext, 0);
+            } else {
+                $definitiontable = new define_role_table_basic($systemcontext, 0);
+            }
+            if (is_number($resettype)) {
+                // Duplicate the role.
+                $definitiontable->force_duplicate($resettype, $options);
+            } else {
+                // Must be an archetype.
+                $definitiontable->force_archetype($resettype, $options);
+            }
+
+            if ($xml = $mform->get_file_content('rolepreset')) {
+                $definitiontable->force_preset($xml, $options);
+            }
+
+        } else {
+            echo $OUTPUT->header();
+            echo $OUTPUT->heading_with_help($title, 'roles', 'role');
+            $mform->display();
+            echo $OUTPUT->footer();
+            die;
+        }
+
+    } else if ($action === 'reset' and $resettype !== 'none') {
+        if (!$role = $DB->get_record('role', array('id'=>$roleid))) {
+            redirect($manageurl);
+        }
+        $resettype = empty($role->archetype) ? '0' : $role->archetype;
+        $mform = new core_role_preset_form(null,
+            array('action'=>'reset', 'roleid'=>$roleid, 'resettype'=>$resettype , 'permissions'=>1, 'archetype'=>1, 'contextlevels'=>1, 'return'=>$return));
+        if ($mform->is_cancelled()) {
+            redirect($returnurl);
+
+        } else if ($data = $mform->get_data()) {
+            $resettype = $data->resettype;
+            $options = array(
+                'shortname'     => $data->shortname,
+                'name'          => $data->name,
+                'description'   => $data->description,
+                'permissions'   => $data->permissions,
+                'archetype'     => $data->archetype,
+                'contextlevels' => $data->contextlevels,
+                'allowassign'   => $data->allowassign,
+                'allowoverride' => $data->allowoverride,
+                'allowswitch'   => $data->allowswitch);
+            if ($showadvanced) {
+                $definitiontable = new define_role_table_advanced($systemcontext, $roleid);
+            } else {
+                $definitiontable = new define_role_table_basic($systemcontext, $roleid);
+            }
+            if (is_number($resettype)) {
+                // Duplicate the role.
+                $definitiontable->force_duplicate($resettype, $options);
+            } else {
+                // Must be an archetype.
+                $definitiontable->force_archetype($resettype, $options);
+            }
+
+            if ($xml = $mform->get_file_content('rolepreset')) {
+                $definitiontable->force_preset($xml, $options);
+            }
+
+        } else {
+            echo $OUTPUT->header();
+            echo $OUTPUT->heading_with_help($title, 'roles', 'role');
+            $mform->display();
+            echo $OUTPUT->footer();
+            die;
+        }
+
+    } else {
+    /// Create the table object.
+        if ($action == 'view') {
+            $definitiontable = new view_role_definition_table($systemcontext, $roleid);
+        } else if ($showadvanced) {
+            $definitiontable = new define_role_table_advanced($systemcontext, $roleid);
+        } else {
+            $definitiontable = new define_role_table_basic($systemcontext, $roleid);
+        }
+        $definitiontable->read_submitted_permissions();
+    }
+
+/// Handle the cancel button.
+    if (optional_param('cancel', false, PARAM_BOOL)) {
+        redirect($returnurl);
     }
 
 /// Process submission in necessary.
@@ -96,7 +198,11 @@
         $definitiontable->save_changes();
         add_to_log(SITEID, 'role', $action, 'admin/roles/define.php?action=view&roleid=' .
                 $definitiontable->get_role_id(), $definitiontable->get_role_name(), '', $USER->id);
-        redirect($manageurl);
+        if ($action === 'add') {
+            redirect(new moodle_url('/admin/roles/define.php', array('action'=>'view', 'roleid'=>$definitiontable->get_role_id())));
+        } else {
+            redirect($returnurl);
+        }
     }
 
 /// Print the page header and tabs.
@@ -105,40 +211,25 @@
     $currenttab = 'manage';
     include('managetabs.php');
 
-    if ($action == 'add') {
-        $title = get_string('addinganewrole', 'role');
-    } else if ($action == 'duplicate') {
-        $title = get_string('addingrolebycopying', 'role', $rolenames[$roleid]->localname);
-    } else if ($action == 'view') {
-        $title = get_string('viewingdefinitionofrolex', 'role', $rolenames[$roleid]->localname);
-    } else if ($action == 'edit') {
-        $title = get_string('editingrolex', 'role', $rolenames[$roleid]->localname);
-    }
     echo $OUTPUT->heading_with_help($title, 'roles', 'role');
 
 /// Work out some button labels.
-    if ($action == 'add' || $action == 'duplicate') {
+    if ($action === 'add') {
         $submitlabel = get_string('createthisrole', 'role');
     } else {
         $submitlabel = get_string('savechanges');
     }
 
 /// On the view page, show some extra controls at the top.
-    if ($action == 'view') {
+    if ($action === 'view') {
         echo $OUTPUT->container_start('buttons');
-        $options = array();
-        $options['roleid'] = $roleid;
-        $options['action'] = 'edit';
-        echo $OUTPUT->single_button(new moodle_url($defineurl, $options), get_string('edit'));
-        $options['action'] = 'reset';
-        if ($definitiontable->get_archetype()) {
-            echo $OUTPUT->single_button(new moodle_url($manageurl, $options), get_string('resetrole', 'role'));
-        } else {
-            echo $OUTPUT->single_button(new moodle_url($manageurl, $options), get_string('resetrolenolegacy', 'role'));
-        }
-        $options['action'] = 'duplicate';
-        echo $OUTPUT->single_button(new moodle_url($defineurl, $options), get_string('duplicaterole', 'role'));
-        echo $OUTPUT->single_button(new moodle_url($manageurl), get_string('listallroles', 'role'));
+        $url = new moodle_url('/admin/roles/define.php', array('action'=>'edit', 'roleid'=>$roleid, 'return'=>'define'));
+        echo $OUTPUT->single_button(new moodle_url($url), get_string('edit'));
+        $url = new moodle_url('/admin/roles/define.php', array('action'=>'reset', 'roleid'=>$roleid, 'return'=>'define'));
+        echo $OUTPUT->single_button(new moodle_url($url), get_string('resetrole', 'role'));
+        $url = new moodle_url('/admin/roles/define.php', array('action'=>'export', 'roleid'=>$roleid));
+        echo $OUTPUT->single_button(new moodle_url($url), get_string('export', 'core_role'));
+        echo $OUTPUT->single_button($manageurl, get_string('listallroles', 'role'));
         echo $OUTPUT->container_end();
     }
 
@@ -148,10 +239,12 @@
         echo '<div class="mform">';
     } else {
     ?>
-<form id="rolesform" class="mform" action="<?php echo $baseurl; ?>" method="post"><div>
+<form id="rolesform" class="mform" action="<?php p($baseurl->out(false)); ?>" method="post"><div>
 <input type="hidden" name="sesskey" value="<?php p(sesskey()) ?>" />
+<input type="hidden" name="return" value="<?php p($return); ?>" />
+<input type="hidden" name="resettype" value="none" />
 <div class="submit buttons">
-    <input type="submit" name="savechanges" value="<?php echo $submitlabel; ?>" />
+    <input type="submit" name="savechanges" value="<?php p($submitlabel); ?>" />
     <input type="submit" name="cancel" value="<?php print_string('cancel'); ?>" />
 </div>
     <?php
@@ -166,7 +259,7 @@
     } else {
         ?>
 <div class="submit buttons">
-    <input type="submit" name="savechanges" value="<?php echo $submitlabel; ?>" />
+    <input type="submit" name="savechanges" value="<?php p($submitlabel); ?>" />
     <input type="submit" name="cancel" value="<?php print_string('cancel'); ?>" />
 </div>
 </div></form>
@@ -176,7 +269,7 @@
 
 /// Print a link back to the all roles list.
     echo '<div class="backlink">';
-    echo '<p><a href="' . $manageurl . '">' . get_string('backtoallroles', 'role') . '</a></p>';
+    echo '<p><a href="' . s($manageurl->out(false)) . '">' . get_string('backtoallroles', 'role') . '</a></p>';
     echo '</div>';
 
     echo $OUTPUT->footer();

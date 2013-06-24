@@ -140,42 +140,6 @@
             redirect($baseurl);
             break;
 
-        case 'reset':
-            if (!$confirmed) {
-                // show confirmation
-                echo $OUTPUT->header();
-                $optionsyes = array('action'=>'reset', 'roleid'=>$roleid, 'sesskey'=>sesskey(), 'confirm'=>1);
-                $optionsno  = array('action'=>'view', 'roleid'=>$roleid);
-                $a = new stdClass();
-                $a->id = $roleid;
-                $a->name = $roles[$roleid]->name;
-                $a->shortname = $roles[$roleid]->shortname;
-                $a->legacytype = $roles[$roleid]->archetype;
-                if (empty($a->legacytype)) {
-                    $warning = get_string('resetrolesurenolegacy', 'role', $a);
-                } else {
-                    $warning = get_string('resetrolesure', 'role', $a);
-                }
-                $formcontinue = new single_button(new moodle_url('manage.php', $optionsyes), get_string('yes'));
-                $formcancel = new single_button(new moodle_url('manage.php', $optionsno), get_string('no'), 'get');
-                echo $OUTPUT->confirm($warning, $formcontinue, $formcancel);
-                echo $OUTPUT->footer();
-                die;
-            }
-
-            // Reset context levels for standard archetypes
-            if ($roles[$roleid]->archetype) {
-                set_role_contextlevels($roleid, get_default_contextlevels($roles[$roleid]->archetype));
-            }
-
-            //reset or delete the capabilities
-            reset_role_capabilities($roleid);
-
-            // Mark context dirty, log and redirect.
-            mark_context_dirty($systemcontext->path);
-            add_to_log(SITEID, 'role', 'reset', 'admin/roles/manage.php?action=reset&roleid=' . $roleid, $roles[$roleid]->localname, '', $USER->id);
-            redirect($defineurl . '?action=view&roleid=' . $roleid);
-            break;
     }
 
 /// Print the page header and tabs.
@@ -198,7 +162,6 @@
 
 /// Get some strings outside the loop.
     $stredit = get_string('edit');
-    $strduplicate = get_string('duplicate');
     $strdelete = get_string('delete');
     $strmoveup = get_string('moveup');
     $strmovedown = get_string('movedown');
@@ -233,9 +196,6 @@
         // edit
         $row[3] .= get_action_icon($defineurl . '?action=edit&amp;roleid=' . $role->id,
                 'edit', $stredit, get_string('editxrole', 'role', $role->localname));
-        // duplicate
-        $row[3] .= get_action_icon($defineurl . '?action=duplicate&amp;roleid=' . $role->id,
-                'copy', $strduplicate, get_string('createrolebycopying', 'role', $role->localname));
         // delete
         if (isset($undeletableroles[$role->id])) {
             $row[3] .= get_spacer();

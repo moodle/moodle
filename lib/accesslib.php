@@ -2457,6 +2457,79 @@ function get_default_capabilities($archetype) {
 }
 
 /**
+ * Return default roles that can be assigned, overridden or switched
+ * by give role archetype.
+ *
+ * @param string $type  assign|override|switch
+ * @param string $archetype
+ * @return array of role ids
+ */
+function get_default_role_archetype_allows($type, $archetype) {
+    global $DB;
+
+    if (empty($archetype)) {
+        return array();
+    }
+
+    $roles = $DB->get_records('role');
+    $archetypemap = array();
+    foreach ($roles as $role) {
+        if ($role->archetype) {
+            $archetypemap[$role->archetype][$role->id] = $role->id;
+        }
+    }
+
+    $defaults = array(
+        'assign' => array(
+            'manager'        => array('manager', 'coursecreator', 'editingteacher', 'teacher', 'student'),
+            'coursecreator'  => array(),
+            'editingteacher' => array('teacher', 'student'),
+            'teacher'        => array(),
+            'student'        => array(),
+            'guest'          => array(),
+            'user'           => array(),
+            'frontpage'      => array(),
+        ),
+        'override' => array(
+            'manager'        => array('manager', 'coursecreator', 'editingteacher', 'teacher', 'student', 'guest', 'user', 'frontpage'),
+            'coursecreator'  => array(),
+            'editingteacher' => array('teacher', 'student', 'guest'),
+            'teacher'        => array(),
+            'student'        => array(),
+            'guest'          => array(),
+            'user'           => array(),
+            'frontpage'      => array(),
+        ),
+        'switch' => array(
+            'manager'        => array('editingteacher', 'teacher', 'student', 'guest'),
+            'coursecreator'  => array(),
+            'editingteacher' => array('teacher', 'student', 'guest'),
+            'teacher'        => array('student', 'guest'),
+            'student'        => array(),
+            'guest'          => array(),
+            'user'           => array(),
+            'frontpage'      => array(),
+        ),
+    );
+
+    if (!isset($defaults[$type][$archetype])) {
+        debugging("Unknown type '$type'' or archetype '$archetype''");
+        return array();
+    }
+
+    $return = array();
+    foreach ($defaults[$type][$archetype] as $at) {
+        if (isset($archetypemap[$at])) {
+            foreach ($archetypemap[$at] as $roleid) {
+                $return[$roleid] = $roleid;
+            }
+        }
+    }
+
+    return $return;
+}
+
+/**
  * Reset role capabilities to default according to selected role archetype.
  * If no archetype selected, removes all capabilities.
  *

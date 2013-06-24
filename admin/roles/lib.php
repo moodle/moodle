@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -20,15 +19,15 @@
  *
  * Responds to actions:
  *   add       - add a new role
- *   duplicate - like add, only initialise the new role by using an existing one.
  *   edit      - edit the definition of a role
  *   view      - view the definition of a role
  *
- * @package    core
- * @subpackage role
+ * @package    core_role
  * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->dirroot.'/user/selector/lib.php');
@@ -544,6 +543,10 @@ class define_role_table_advanced extends capability_table_with_risks {
     protected $allcontextlevels;
     protected $disabled = '';
 
+    protected $allowassign;
+    protected $allowoverride;
+    protected $allowswitch;
+
     public function __construct($context, $roleid) {
         $this->roleid = $roleid;
         parent::__construct($context, 'defineroletable', $roleid);
@@ -573,6 +576,10 @@ class define_role_table_advanced extends capability_table_with_risks {
             } else {
                 $this->contextlevels = array();
             }
+            $this->allowassign = array_keys($this->get_allow_roles_list('assign'));
+            $this->allowoverride = array_keys($this->get_allow_roles_list('override'));
+            $this->allowswitch = array_keys($this->get_allow_roles_list('switch'));
+
         } else {
             $this->role = new stdClass;
             $this->role->name = '';
@@ -580,6 +587,9 @@ class define_role_table_advanced extends capability_table_with_risks {
             $this->role->description = '';
             $this->role->archetype = '';
             $this->contextlevels = array();
+            $this->allowassign = array();
+            $this->allowoverride = array();
+            $this->allowswitch = array();
         }
         parent::load_current_permissions();
     }
@@ -646,6 +656,20 @@ class define_role_table_advanced extends capability_table_with_risks {
             }
         }
 
+        // Allowed roles.
+        $allow = optional_param_array('allowassign', null, PARAM_INT);
+        if (!is_null($allow)) {
+            $this->allowassign = $allow;
+        }
+        $allow = optional_param_array('allowoverride', null, PARAM_INT);
+        if (!is_null($allow)) {
+            $this->allowoverride = $allow;
+        }
+        $allow = optional_param_array('allowswitch', null, PARAM_INT);
+        if (!is_null($allow)) {
+            $this->allowswitch = $allow;
+        }
+
         // Now read the permissions for each capability.
         parent::read_submitted_permissions();
     }
@@ -655,14 +679,228 @@ class define_role_table_advanced extends capability_table_with_risks {
     }
 
     /**
-     * Call this after the table has been initialised, so to indicate that
-     * when save is called, we want to make a duplicate role.
+     * Call this after the table has been initialised,
+     * this resets everything to that role.
+     *
+     * @param int $roleid role id or 0 for no role
+     * @param array $options array with following keys:
+     *      'name', 'shortname', 'description', 'permissions', 'archetype',
+     *      'contextlevels', 'allowassign', 'allowoverride', 'allowswitch'
      */
-    public function make_copy() {
-        $this->roleid = 0;
-        unset($this->role->id);
-        $this->role->name = role_get_name($this->role, null, ROLENAME_ORIGINAL) . ' ' . get_string('copyasnoun');
-        $this->role->shortname .= 'copy';
+    public function force_duplicate($roleid, array $options) {
+        global $DB;
+
+        if ($roleid == 0) {
+            // This means reset to nothing == remove everything.
+
+            if ($options['shortname']) {
+                $this->role->shortname = '';
+            }
+
+            if ($options['name']) {
+                $this->role->name = '';
+            }
+
+            if ($options['description']) {
+                $this->role->description = '';
+            }
+
+            if ($options['archetype']) {
+                $this->role->archetype = '';
+            }
+
+            if ($options['contextlevels']) {
+                $this->contextlevels = array();
+            }
+
+            if ($options['allowassign']) {
+                $this->allowassign = array();
+            }
+            if ($options['allowoverride']) {
+                $this->allowoverride = array();
+            }
+            if ($options['allowswitch']) {
+                $this->allowswitch = array();
+            }
+
+            if ($options['permissions']) {
+                foreach ($this->capabilities as $capid => $cap) {
+                    $this->permissions[$cap->name] = CAP_INHERIT;
+                }
+            }
+
+            return;
+        }
+
+        $role = $DB->get_record('role', array('id'=>$roleid), '*', MUST_EXIST);
+
+        if ($options['shortname']) {
+            $this->role->shortname = $role->shortname;
+        }
+
+        if ($options['name']) {
+            $this->role->name = $role->name;
+        }
+
+        if ($options['description']) {
+            $this->role->description = $role->description;
+        }
+
+        if ($options['archetype']) {
+            $this->role->archetype = $role->archetype;
+        }
+
+        if ($options['contextlevels']) {
+            $this->contextlevels = array();
+            $levels = get_role_contextlevels($roleid);
+            foreach ($levels as $cl) {
+                $this->contextlevels[$cl] = $cl;
+            }
+        }
+
+        if ($options['allowassign']) {
+            $this->allowassign = array_keys($this->get_allow_roles_list('assign', $roleid));
+        }
+        if ($options['allowoverride']) {
+            $this->allowoverride = array_keys($this->get_allow_roles_list('override', $roleid));
+        }
+        if ($options['allowswitch']) {
+            $this->allowswitch = array_keys($this->get_allow_roles_list('switch', $roleid));
+        }
+
+        if ($options['permissions']) {
+            $this->permissions = $DB->get_records_menu('role_capabilities',
+                array('roleid' => $roleid, 'contextid' => context_system::instance()->id),
+                '', 'capability,permission');
+
+            foreach ($this->capabilities as $capid => $cap) {
+                if (!isset($this->permissions[$cap->name])) {
+                    $this->permissions[$cap->name] = CAP_INHERIT;
+                }
+            }
+        }
+    }
+
+    /**
+     * Change the role definition to match given archetype.
+     *
+     * @param string $archetype
+     * @param array $options array with following keys:
+     *      'name', 'shortname', 'description', 'permissions', 'archetype',
+     *      'contextlevels', 'allowassign', 'allowoverride', 'allowswitch'
+     */
+    public function force_archetype($archetype, array $options) {
+        $archetypes = get_role_archetypes();
+        if (!isset($archetypes[$archetype])) {
+            throw new coding_exception('Unknown archetype: '.$archetype);
+        }
+
+        if ($options['shortname']) {
+            $this->role->shortname = '';
+        }
+
+        if ($options['name']) {
+            $this->role->name = '';
+        }
+
+        if ($options['description']) {
+            $this->role->description = '';
+        }
+
+        if ($options['archetype']) {
+            $this->role->archetype = $archetype;
+        }
+
+        if ($options['contextlevels']) {
+            $this->contextlevels = array();
+            $defaults = get_default_contextlevels($archetype);
+            foreach ($defaults as $cl) {
+                $this->contextlevels[$cl] = $cl;
+            }
+        }
+
+        if ($options['allowassign']) {
+            $this->allowassign = get_default_role_archetype_allows('assign', $archetype);
+        }
+        if ($options['allowoverride']) {
+            $this->allowoverride = get_default_role_archetype_allows('override', $archetype);
+        }
+        if ($options['allowswitch']) {
+            $this->allowswitch = get_default_role_archetype_allows('switch', $archetype);
+        }
+
+        if ($options['permissions']) {
+            $defaultpermissions = get_default_capabilities($archetype);
+            foreach ($this->permissions as $k => $v) {
+                if (isset($defaultpermissions[$k])) {
+                    $this->permissions[$k] = $defaultpermissions[$k];
+                    continue;
+                }
+                $this->permissions[$k] = CAP_INHERIT;
+            }
+        }
+    }
+
+    /**
+     * Change the role definition to match given preset.
+     *
+     * @param string $xml
+     * @param array $options array with following keys:
+     *      'name', 'shortname', 'description', 'permissions', 'archetype',
+     *      'contextlevels', 'allowassign', 'allowoverride', 'allowswitch'
+     */
+    public function force_preset($xml, array $options) {
+        if (!$info = core_role_preset::parse_preset($xml)) {
+            throw new coding_exception('Invalid role preset');
+        }
+
+        if ($options['shortname']) {
+            if (isset($info['shortname'])) {
+                $this->role->shortname = $info['shortname'];
+            }
+        }
+
+        if ($options['name']) {
+            if (isset($info['name'])) {
+                $this->role->name = $info['name'];
+            }
+        }
+
+        if ($options['description']) {
+            if (isset($info['description'])) {
+                $this->role->description = $info['description'];
+            }
+        }
+
+        if ($options['archetype']) {
+            if (isset($info['archetype'])) {
+                $this->role->archetype = $info['archetype'];
+            }
+        }
+
+        if ($options['contextlevels']) {
+            if (isset($info['contextlevels'])) {
+                $this->contextlevels = $info['contextlevels'];
+            }
+        }
+
+        foreach (array('assign', 'override', 'switch') as $type) {
+            if ($options['allow'.$type]) {
+                if (isset($info['allow'.$type])) {
+                    $this->{'allow'.$type} = $info['allow'.$type];
+                }
+            }
+        }
+
+        if ($options['permissions']) {
+            foreach ($this->permissions as $k => $v) {
+                // Note: do not set everything else to CAP_INHERIT here
+                //       because the xml file might not contain all capabilities.
+                if (isset($info['permissions'][$k])) {
+                    $this->permissions[$k] = $info['permissions'][$k];
+                }
+            }
+        }
     }
 
     public function get_role_name() {
@@ -696,8 +934,40 @@ class define_role_table_advanced extends capability_table_with_risks {
         // Assignable contexts.
         set_role_contextlevels($this->role->id, $this->contextlevels);
 
+        // Set allowed roles.
+        $this->save_allow('assign');
+        $this->save_allow('override');
+        $this->save_allow('switch');
+
         // Permissions.
         parent::save_changes();
+    }
+
+    protected function save_allow($type) {
+        global $DB;
+
+        $current = array_keys($this->get_allow_roles_list($type));
+        $wanted = $this->{'allow'.$type};
+
+        $addfunction = 'allow_'.$type;
+        $deltable = 'role_allow_'.$type;
+        $field = 'allow'.$type;
+
+        foreach ($current as $roleid) {
+            if (!in_array($roleid, $wanted)) {
+                $DB->delete_records($deltable, array('roleid'=>$this->roleid, $field=>$roleid));
+                continue;
+            }
+            $key = array_search($roleid, $wanted);
+            unset($wanted[$key]);
+        }
+
+        foreach ($wanted as $roleid) {
+            if ($roleid == -1) {
+                $roleid = $this->roleid;
+            }
+            $addfunction($this->roleid, $roleid);
+        }
     }
 
     protected function get_name_field($id) {
@@ -742,9 +1012,10 @@ class define_role_table_advanced extends capability_table_with_risks {
      * Returns an array of roles of the allowed type.
      *
      * @param string $type Must be one of: assign, switch, or override.
+     * @param int $roleid (null means current role)
      * @return array
      */
-    protected function get_allow_roles_list($type) {
+    protected function get_allow_roles_list($type, $roleid = null) {
         global $DB;
 
         if ($type !== 'assign' and $type !== 'switch' and $type !== 'override') {
@@ -752,7 +1023,11 @@ class define_role_table_advanced extends capability_table_with_risks {
             return array();
         }
 
-        if (empty($this->roleid)) {
+        if ($roleid === null) {
+            $roleid = $this->roleid;
+        }
+
+        if (empty($roleid)) {
             return array();
         }
 
@@ -761,7 +1036,7 @@ class define_role_table_advanced extends capability_table_with_risks {
                   JOIN {role_allow_{$type}} a ON a.allow{$type} = r.id
                  WHERE a.roleid = :roleid
               ORDER BY r.sortorder ASC";
-        return $DB->get_records_sql($sql, array('roleid'=>$this->roleid));
+        return $DB->get_records_sql($sql, array('roleid'=>$roleid));
     }
 
     /**
@@ -771,12 +1046,22 @@ class define_role_table_advanced extends capability_table_with_risks {
      * @return array Am array of role names with the allowed type
      */
     protected function get_allow_role_control($type) {
-        if ($roles = $this->get_allow_roles_list($type)) {
-            $roles = role_fix_names($roles, null, ROLENAME_ORIGINAL, true);
-            return implode(', ', $roles);
-        } else {
-            return get_string('none');
+        if ($type !== 'assign' and $type !== 'switch' and $type !== 'override') {
+            debugging('Invalid role allowed type specified', DEBUG_DEVELOPER);
+            return '';
         }
+
+        $property = 'allow'.$type;
+        $selected = $this->$property;
+
+        $options = array();
+        foreach (role_get_names(null, ROLENAME_ALIAS) as $role) {
+            $options[$role->id] = $role->localname;
+        }
+        if ($this->roleid == 0) {
+            $options[-1] = get_string('thisnewrole', 'core_role');
+        }
+        return html_writer::select($options, 'allow'.$type.'[]', $selected, false, array('multiple'=>'multiple', 'size'=>10));
     }
 
     /**
@@ -807,10 +1092,10 @@ class define_role_table_advanced extends capability_table_with_risks {
             $extraclass = '';
         }
         echo '<div class="felement' . $extraclass . '">';
+        echo $field;
         if (isset($this->errors[$name])) {
             echo $OUTPUT->error_text($this->errors[$name]);
         }
-        echo $field;
         echo '</div>';
         echo '</div>';
     }
@@ -831,9 +1116,9 @@ class define_role_table_advanced extends capability_table_with_risks {
         $this->print_field('edit-description', get_string('customroledescription', 'role').'&nbsp;'.$OUTPUT->help_icon('customroledescription', 'role'), $this->get_description_field('description'));
         $this->print_field('menuarchetype', get_string('archetype', 'role').'&nbsp;'.$OUTPUT->help_icon('archetype', 'role'), $this->get_archetype_field('archetype'));
         $this->print_field('', get_string('maybeassignedin', 'role'), $this->get_assignable_levels_control());
-        $this->print_field('', get_string('allowassign', 'role'), $this->get_allow_role_control('assign'));
-        $this->print_field('', get_string('allowoverride', 'role'), $this->get_allow_role_control('override'));
-        $this->print_field('', get_string('allowswitch', 'role'), $this->get_allow_role_control('switch'));
+        $this->print_field('menuallowassign', get_string('allowassign', 'role'), $this->get_allow_role_control('assign'));
+        $this->print_field('menuallowoverride', get_string('allowoverride', 'role'), $this->get_allow_role_control('override'));
+        $this->print_field('menuallowswitch', get_string('allowswitch', 'role'), $this->get_allow_role_control('switch'));
         if ($risks = $this->get_role_risks_info()) {
             $this->print_field('', get_string('rolerisks', 'role'), $risks);
         }
@@ -933,6 +1218,16 @@ class view_role_definition_table extends define_role_table_advanced {
             return get_string('archetype'.$this->role->archetype, 'role');
         }
     }
+
+    protected function get_allow_role_control($type) {
+        if ($roles = $this->get_allow_roles_list($type)) {
+            $roles = role_fix_names($roles, null, ROLENAME_ORIGINAL, true);
+            return implode(', ', $roles);
+        } else {
+            return get_string('none');
+        }
+    }
+
 
     protected function print_show_hide_advanced_button() {
         // Do nothing.
