@@ -5264,6 +5264,13 @@ class assign {
         $submission->status = ASSIGN_SUBMISSION_STATUS_DRAFT;
         $this->update_submission($submission, $userid, true, $this->get_instance()->teamsubmission);
 
+        // Give each submission plugin a chance to process the reverting to draft.
+        $plugins = $this->get_submission_plugins();
+        foreach ($plugins as $plugin) {
+            if ($plugin->is_enabled() && $plugin->is_visible()) {
+                $plugin->revert_to_draft($submission);
+            }
+        }
         // Update the modified time on the grade (grader modified).
         $grade = $this->get_user_grade($userid, true);
         $grade->grader = $USER->id;
@@ -5300,6 +5307,15 @@ class assign {
             $userid = required_param('userid', PARAM_INT);
         }
 
+        // Give each submission plugin a chance to process the locking.
+        $plugins = $this->get_submission_plugins();
+        $submission = $this->get_user_submission($userid, false);
+        foreach ($plugins as $plugin) {
+            if ($plugin->is_enabled() && $plugin->is_visible()) {
+                $plugin->lock($submission);
+            }
+        }
+
         $flags = $this->get_user_flags($userid, true);
         $flags->locked = 1;
         $this->update_user_flags($flags);
@@ -5327,6 +5343,14 @@ class assign {
 
         if (!$userid) {
             $userid = required_param('userid', PARAM_INT);
+        }
+        // Give each submission plugin a chance to process the unlocking.
+        $plugins = $this->get_submission_plugins();
+        $submission = $this->get_user_submission($userid, false);
+        foreach ($plugins as $plugin) {
+            if ($plugin->is_enabled() && $plugin->is_visible()) {
+                $plugin->unlock($submission);
+            }
         }
 
         $flags = $this->get_user_flags($userid, true);
