@@ -163,10 +163,10 @@ $CFG->admin                = array_pop($parts);
 ini_set('include_path', $CFG->libdir.'/pear' . PATH_SEPARATOR . ini_get('include_path'));
 
 require_once($CFG->libdir.'/classes/component.php');
+require_once($CFG->libdir.'/classes/text.php');
 require_once($CFG->libdir.'/installlib.php');
 require_once($CFG->libdir.'/clilib.php');
 require_once($CFG->libdir.'/setuplib.php');
-require_once($CFG->libdir.'/textlib.class.php');
 require_once($CFG->libdir.'/weblib.php');
 require_once($CFG->libdir.'/dmllib.php');
 require_once($CFG->libdir.'/moodlelib.php');

@@ -1973,7 +1973,6 @@ function upgrade_rename_old_backup_files_using_shortname() {
         return;
     }
 
-    require_once($CFG->libdir.'/textlib.class.php');
     require_once($CFG->dirroot.'/backup/util/includes/backup_includes.php');
     $backupword = str_replace(' ', '_', textlib::strtolower(get_string('backupfilename')));
     $backupword = trim(clean_filename($backupword), '_');
