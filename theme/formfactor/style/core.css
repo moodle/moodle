@@ -83,7 +83,7 @@ body, h1, h2, h3, h4, h5, h6, p, ul, ol, dl, input, textarea {
 .mform legend {
     border: 1px solid #ddd;
     padding: 2px 7px;
-    background-image: : url([[pix:theme|gradient-sb]]);
+    background-image: url([[pix:theme|gradient-sb]]);
     background-repeat: repeat-x;
     background-position: 0 -25%;
 }
