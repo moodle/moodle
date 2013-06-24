@@ -15,6 +15,7 @@
         stopOnSkipped="false"
         strict="false"
         printerClass="Hint_ResultPrinter"
+        testSuiteLoaderClass="phpunit_autoloader"
         >
 
     <php>
