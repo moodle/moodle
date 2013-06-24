@@ -231,11 +231,6 @@ a.skip:active {position: static;display: block;}
 .mform .ftags select {margin-bottom: 0.7em;min-width: 22em;}
 
 input#id_externalurl {direction:ltr;}
-
-/** Browser corrections for mforms **/
-.ie .mform .fitem .felement {margin-left:0;text-align:left;float:left;}
-/** Fix IE double margin + float bugs **/
-.ie .mform .fitem .fitemtitle {padding-right:1em;}
 #portfolio-add-button {display:inline;}
 
 /**
@@ -628,11 +623,6 @@ body.tag .managelink {padding: 5px;}
 
 .corelightbox {background-color:#CCC;position:absolute;top:0;left:0;width:100%;height:100%;text-align:center;}
 .corelightbox img {position:fixed;top:50%;}
-
-/**
- * IE - Overide for RTL layout
- */
-.ie.dir-rtl .mform .fitem .felement {margin-right:0;text-align:right;float:right;}
 
 .mod-indent-1 {margin-left:20px;}
 .mod-indent-2 {margin-left:40px;}
