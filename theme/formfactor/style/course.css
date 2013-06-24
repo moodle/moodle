@@ -1,3 +1,13 @@
-.path-course-view .course-content .section.main { background: #f5f5f5;border: 1px solid #ddd }
-.course_category_tree .category > .info .name { line-height:1.4; font-size:1em;}
-.coursebox.collapsed {border-bottom: none;}
+/* Course
+-------------------------*/
+.path-course-view .course-content .section.main {
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+}
+.course_category_tree .category > .info .name {
+    line-height: 1.4;
+    font-size: 1em;
+}
+.coursebox.collapsed {
+    border-bottom: 0 none;
+}
