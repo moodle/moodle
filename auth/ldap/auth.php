@@ -1633,6 +1633,13 @@ class auth_plugin_ldap extends auth_plugin_base {
             $SESSION->wantsurl = $CFG->wwwroot;
         }
     }
+    
+    function logoutpage_hook() {
+        global $redirect;
+        if (!empty($this->config->ntlmsso_enabled)) {
+            $redirect = get_login_url().'?authldap_skipntlmsso=1';
+        }
+    }
 
     /**
      * To be called from a page running under NTLM's
