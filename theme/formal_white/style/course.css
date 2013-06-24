@@ -9,7 +9,7 @@
 .course-content ul.weeks li.section .right {padding:5px 0;}
 .course-content .single-section .section-navigation {margin-bottom:0;}
 
-/** Course **/
+/** coursebox **/
 .coursebox {border:1px solid #DDD;border-color:#DDDDDD;}
 #page-enrol-index .generalbox.info,
 #page-course-info .generalbox.info {border:none;}
