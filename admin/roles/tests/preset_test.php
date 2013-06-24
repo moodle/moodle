@@ -63,9 +63,16 @@ class core_role_preset_testcase extends advanced_testcase {
                ORDER BY capability ASC",
                 array('syscontext'=>context_system::instance()->id, 'roleid'=>$role->id));
 
-            $this->assertEquals(count($capabilities), count($info['permissions']));
             foreach ($capabilities as $cap) {
                 $this->assertEquals($cap->permission, $info['permissions'][$cap->capability]);
+                unset($info['permissions'][$cap->capability]);
+            }
+            // The remainders should be only inherits.
+            foreach ($info['permissions'] as $capability => $permission) {
+                if ($permission == CAP_INHERIT) {
+                    continue;
+                }
+                $this->fail('only CAP_INHERIT expected');
             }
         }
     }

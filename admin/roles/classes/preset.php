@@ -98,31 +98,33 @@ class core_role_preset {
         $permissions = $dom->createElement('permissions');
         $top->appendChild($permissions);
 
-        $capabilities = $DB->get_records_sql(
-            "SELECT *
+        $capabilities = $DB->get_records_sql_menu(
+            "SELECT capability, permission
                FROM {role_capabilities}
               WHERE contextid = :syscontext AND roleid = :roleid
            ORDER BY capability ASC",
             array('syscontext'=>context_system::instance()->id, 'roleid'=>$roleid));
 
-        foreach ($capabilities as $cap) {
-            if ($cap->permission == CAP_INHERIT) {
-                $permissions->appendChild($dom->createElement('inherit', $cap->capability));
+        $allcapabilities = $DB->get_records('capabilities', array(), 'name ASC');
+        foreach ($allcapabilities as $cap) {
+            if (!isset($capabilities[$cap->name])) {
+                $permissions->appendChild($dom->createElement('inherit', $cap->name));
             }
         }
-        foreach ($capabilities as $cap) {
-            if ($cap->permission == CAP_ALLOW) {
-                $permissions->appendChild($dom->createElement('allow', $cap->capability));
+
+        foreach ($capabilities as $capability => $permission) {
+            if ($permission == CAP_ALLOW) {
+                $permissions->appendChild($dom->createElement('allow', $capability));
             }
         }
-        foreach ($capabilities as $cap) {
-            if ($cap->permission == CAP_PREVENT) {
-                $permissions->appendChild($dom->createElement('prevent', $cap->capability));
+        foreach ($capabilities as $capability => $permission) {
+            if ($permission == CAP_PREVENT) {
+                $permissions->appendChild($dom->createElement('prevent', $capability));
             }
         }
-        foreach ($capabilities as $cap) {
-            if ($cap->permission == CAP_PROHIBIT) {
-                $permissions->appendChild($dom->createElement('prohibit', $cap->capability));
+        foreach ($capabilities as $capability => $permission) {
+            if ($permission == CAP_PROHIBIT) {
+                $permissions->appendChild($dom->createElement('prohibit', $capability));
             }
         }
 
