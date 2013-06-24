@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+$left = (!right_to_left());  // To know if to add 'pull-right' and 'desktop-first-column' classes in the layout for LTR.
 echo $OUTPUT->doctype() ?>
 <html <?php echo $OUTPUT->htmlattributes(); ?>>
 <head>
@@ -61,25 +62,19 @@ echo $OUTPUT->doctype() ?>
     </header>
 
     <div id="page-content" class="row-fluid">
-        <div id="region-bs-main-and-pre" class="span9">
-            <div class="row-fluid">
-                <section id="region-main" class="span9 pull-right">
-                    <?php
-                    echo $OUTPUT->course_content_header();
-                    echo $OUTPUT->main_content();
-                    echo $OUTPUT->course_content_footer();
-                    ?>
-                </section>
-                <?php
-                if (!right_to_left()) {
-                    echo $OUTPUT->blocks('side-pre', 'span3 desktop-first-column');
-                } ?>
-            </div>
-        </div>
+        <section id="region-main" class="span9<?php if ($left) { echo ' pull-right'; } ?>">
+            <?php
+            echo $OUTPUT->course_content_header();
+            echo $OUTPUT->main_content();
+            echo $OUTPUT->course_content_footer();
+            ?>
+        </section>
         <?php
-        if (right_to_left()) {
-            echo $OUTPUT->blocks('side-post', 'span3');
+        $classextra = '';
+        if ($left) {
+            $classextra = ' desktop-first-column';
         }
+        echo $OUTPUT->blocks('side-pre', 'span3'.$classextra);
         ?>
     </div>
 
