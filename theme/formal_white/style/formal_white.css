@@ -224,7 +224,11 @@ pre, code, tt {
 }
 
 /* MDL-29403 */
-.capdefault {background-image:url([[pix:theme|trend/__setting_trendcolor__/gradient_h]]);background-color:[[setting:blockheaderbackground]];background-repeat:repeat-x;}
+.capdefault {
+    background-image:url([[pix:theme|trend/__setting_trendcolor__/gradient_h]]);
+    background-color:[[setting:blockheaderbackground]];
+    background-repeat:repeat-x;
+}
 table#defineroletable th {border-top:none;}
 
 form.loginform .rememberusername {

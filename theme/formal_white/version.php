@@ -15,11 +15,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Label module version info
+ * Moodle's formal_white theme
  *
- * @package    theme_formal_white
- * @copyright  Mediatouch 2000 (http://mediatouch.it/)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * DO NOT MODIFY THIS THEME!
+ * COPY IT FIRST, THEN RENAME THE COPY AND MODIFY IT INSTEAD.
+ *
+ * For full information about creating Moodle themes, see:
+ * http://docs.moodle.org/dev/Themes_2.0
+ *
+ * @package   theme_formal_white
+ * @copyright 2013 Mediatouch 2000, mediatouch.it
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die;
