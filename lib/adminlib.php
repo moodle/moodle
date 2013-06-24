@@ -3574,7 +3574,7 @@ class admin_setting_sitesetselect extends admin_setting_configselect {
      * @return string empty or error message
      */
     public function write_setting($data) {
-        global $DB, $SITE;
+        global $DB, $SITE, $COURSE;
         if (!in_array($data, array_keys($this->choices))) {
             return get_string('errorsetting', 'admin');
         }
@@ -3583,10 +3583,19 @@ class admin_setting_sitesetselect extends admin_setting_configselect {
         $temp                 = $this->name;
         $record->$temp        = $data;
         $record->timemodified = time();
-        // update $SITE
-        $SITE->{$this->name} = $data;
+
         course_get_format($SITE)->update_course_format_options($record);
-        return ($DB->update_record('course', $record) ? '' : get_string('errorsetting', 'admin'));
+        $DB->update_record('course', $record);
+
+        // Reset caches.
+        $SITE = $DB->get_record('course', array('id'=>$SITE->id), '*', MUST_EXIST);
+        if ($SITE->id == $COURSE->id) {
+            $COURSE = $SITE;
+        }
+        format_base::reset_course_cache($SITE->id);
+
+        return '';
+
     }
 }
 
@@ -3768,17 +3777,22 @@ class admin_setting_sitesetcheckbox extends admin_setting_configcheckbox {
      * @return string empty string or error message
      */
     public function write_setting($data) {
-        global $DB, $SITE;
+        global $DB, $SITE, $COURSE;
         $record = new stdClass();
         $record->id            = $SITE->id;
         $record->{$this->name} = ($data == '1' ? 1 : 0);
         $record->timemodified  = time();
-        // update $SITE
-        $SITE->{$this->name} = $data;
+
         course_get_format($SITE)->update_course_format_options($record);
         $DB->update_record('course', $record);
-        // There is something wrong in cache updates somewhere, let's reset everything.
-        format_base::reset_course_cache();
+
+        // Reset caches.
+        $SITE = $DB->get_record('course', array('id'=>$SITE->id), '*', MUST_EXIST);
+        if ($SITE->id == $COURSE->id) {
+            $COURSE = $SITE;
+        }
+        format_base::reset_course_cache($SITE->id);
+
         return '';
     }
 }
@@ -3825,7 +3839,7 @@ class admin_setting_sitesettext extends admin_setting_configtext {
      * @return string empty or error message
      */
     public function write_setting($data) {
-        global $DB, $SITE;
+        global $DB, $SITE, $COURSE;
         $data = trim($data);
         $validated = $this->validate($data);
         if ($validated !== true) {
@@ -3836,12 +3850,17 @@ class admin_setting_sitesettext extends admin_setting_configtext {
         $record->id            = $SITE->id;
         $record->{$this->name} = $data;
         $record->timemodified  = time();
-        // update $SITE
-        $SITE->{$this->name} = $data;
+
         course_get_format($SITE)->update_course_format_options($record);
         $DB->update_record('course', $record);
-        // There is something wrong in cache updates somewhere, let's reset everything.
-        format_base::reset_course_cache();
+
+        // Reset caches.
+        $SITE = $DB->get_record('course', array('id'=>$SITE->id), '*', MUST_EXIST);
+        if ($SITE->id == $COURSE->id) {
+            $COURSE = $SITE;
+        }
+        format_base::reset_course_cache($SITE->id);
+
         return '';
     }
 }
@@ -3877,16 +3896,22 @@ class admin_setting_special_frontpagedesc extends admin_setting {
      * @return string empty or error message
      */
     public function write_setting($data) {
-        global $DB, $SITE;
+        global $DB, $SITE, $COURSE;
         $record = new stdClass();
         $record->id            = $SITE->id;
         $record->{$this->name} = $data;
         $record->timemodified  = time();
-        $SITE->{$this->name} = $data;
+
         course_get_format($SITE)->update_course_format_options($record);
         $DB->update_record('course', $record);
-        // There is something wrong in cache updates somewhere, let's reset everything.
-        format_base::reset_course_cache();
+
+        // Reset caches.
+        $SITE = $DB->get_record('course', array('id'=>$SITE->id), '*', MUST_EXIST);
+        if ($SITE->id == $COURSE->id) {
+            $COURSE = $SITE;
+        }
+        format_base::reset_course_cache($SITE->id);
+
         return '';
     }
 
