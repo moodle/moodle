@@ -96,6 +96,29 @@ abstract class question_test_helper {
      * this question type.
      */
     abstract public function get_test_questions();
+
+    /**
+     * Set up a form to create a question in $cat. This method also sets cat and contextid on $questiondata object.
+     * @param object $cat the category
+     * @param object $questiondata form initialisation requires question data.
+     * @return moodleform
+     */
+    public static function get_question_editing_form($cat, $questiondata) {
+        $catcontext = context::instance_by_id($cat->contextid, MUST_EXIST);
+        $contexts = new question_edit_contexts($catcontext);
+        $dataforformconstructor = new stdClass();
+        $dataforformconstructor->qtype = $questiondata->qtype;
+        $dataforformconstructor->contextid = $questiondata->contextid = $catcontext->id;
+        $dataforformconstructor->category = $questiondata->category = $cat->id;
+        $dataforformconstructor->formoptions = new stdClass();
+        $dataforformconstructor->formoptions->canmove = true;
+        $dataforformconstructor->formoptions->cansaveasnew = true;
+        $dataforformconstructor->formoptions->movecontext = false;
+        $dataforformconstructor->formoptions->canedit = true;
+        $dataforformconstructor->formoptions->repeatelements = true;
+        $qtype = question_bank::get_qtype($questiondata->qtype);
+        return  $qtype->create_editing_form('question.php', $dataforformconstructor, $cat, $contexts, true);
+    }
 }
 
 
@@ -170,18 +193,6 @@ class test_question_maker {
         $qdata->createdby = $USER->id;
         $qdata->modifiedby = $USER->id;
         $qdata->hints = array();
-    }
-
-    public static function initialise_question_form_data($qdata) {
-        $formdata = new stdClass();
-        $formdata->id = 0;
-        $formdata->category = '0,0';
-        $formdata->usecurrentcat = 1;
-        $formdata->categorymoveto = '0,0';
-        $formdata->tags = array();
-        $formdata->penalty = 0.3333333;
-        $formdata->questiontextformat = FORMAT_HTML;
-        $formdata->generalfeedbackformat = FORMAT_HTML;
     }
 
     /**
@@ -412,6 +423,19 @@ class test_question_maker {
         $q->shownumcorrect = true;
         $q->incorrectfeedback = self::STANDARD_OVERALL_INCORRECT_FEEDBACK;
         $q->incorrectfeedbackformat = FORMAT_HTML;
+    }
+
+    /**
+     * Add some standard overall feedback to a question's form data.
+     */
+    public static function set_standard_combined_feedback_form_data($form) {
+        $form->correctfeedback = array('text' => self::STANDARD_OVERALL_CORRECT_FEEDBACK,
+                                    'format' => FORMAT_HTML);
+        $form->partiallycorrectfeedback = array('text' => self::STANDARD_OVERALL_PARTIALLYCORRECT_FEEDBACK,
+                                             'format' => FORMAT_HTML);
+        $form->shownumcorrect = true;
+        $form->incorrectfeedback = array('text' => self::STANDARD_OVERALL_INCORRECT_FEEDBACK,
+                                    'format' => FORMAT_HTML);
     }
 }
 

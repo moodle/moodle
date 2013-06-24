@@ -768,7 +768,6 @@ class question_answer {
      * Constructor.
      * @param int $id the answer.
      * @param string $answer the answer.
-     * @param int $answerformat the format of the answer.
      * @param number $fraction the fraction this answer is worth.
      * @param string $feedback the feedback for this answer.
      * @param int $feedbackformat the format of the feedback.

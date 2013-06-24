@@ -17,9 +17,8 @@
 /**
  * Test helpers for the multianswer question type.
  *
- * @package    qtype
- * @subpackage multianswer
- * @copyright  2011 The Open University
+ * @package    qtype_multianswer
+ * @copyright  2013 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -33,7 +32,7 @@ require_once($CFG->dirroot . '/question/type/multianswer/question.php');
 /**
  * Test helper class for the multianswer question type.
  *
- * @copyright  2011 The Open University
+ * @copyright  2013 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_multianswer_test_helper extends question_test_helper {
@@ -171,7 +170,7 @@ class qtype_multianswer_test_helper extends question_test_helper {
         $mc->options->partiallycorrectfeedbackformat = 1;
         $mc->options->incorrectfeedback = '';
         $mc->options->incorrectfeedbackformat = 1;
-        $mc->options->answernumbering = '';
+        $mc->options->answernumbering = 0;
         $mc->options->shownumcorrect = 0;
 
         $mc->options->answers = array(
@@ -190,8 +189,8 @@ class qtype_multianswer_test_helper extends question_test_helper {
         );
 
         $qdata->hints = array(
-            new question_hint(0, 'Hint 1', FORMAT_HTML),
-            new question_hint(0, 'Hint 2', FORMAT_HTML),
+            new question_hint_with_parts(0, 'Hint 1', FORMAT_HTML, 0, 0),
+            new question_hint_with_parts(0, 'Hint 2', FORMAT_HTML, 0, 0),
         );
 
         return $qdata;
@@ -204,16 +203,14 @@ class qtype_multianswer_test_helper extends question_test_helper {
      */
     public function get_multianswer_question_form_data_twosubq() {
         $formdata = new stdClass();
-        test_question_maker::initialise_question_form_data($formdata);
-
         $formdata->name = 'Simple multianswer';
-        $formdata->questiontext = 'Complete this opening line of verse: "The ' .
+        $formdata->questiontext = array('text' => 'Complete this opening line of verse: "The ' .
                 '{1:SHORTANSWER:Dog#Wrong, silly!~=Owl#Well done!~*#Wrong answer} ' .
                 'and the {1:MULTICHOICE:Bow-wow#You seem to have a dog obsessions!' .
                 '~Wiggly worm#Now you are just being ridiculous!~=Pussy-cat#Well done!}' .
-                ' went to sea".';
-        $formdata->generalfeedback = 'General feedback: It\'s from "The Owl and the Pussy-cat" ' .
-                'by Lear: "The owl and the pussycat went to sea';
+                ' went to sea".', 'format' => FORMAT_HTML);
+        $formdata->generalfeedback = array('text' => 'General feedback: It\'s from "The Owl and the Pussy-cat" ' .
+                'by Lear: "The owl and the pussycat went to sea', 'format' => FORMAT_HTML);
 
         $formdata->hint = array(
             0 => array('text' => 'Hint 1', 'format' => FORMAT_HTML, 'itemid' => 0),

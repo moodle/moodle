@@ -15,11 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Unit tests for the true-false question definition class.
+ * Unit tests for the calculatedsimple question type class.
  *
- * @package    qtype
- * @subpackage truefalse
- * @copyright  2007 The Open University
+ * @package    qtype_calculatedsimple
+ * @copyright  2013 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -27,22 +26,30 @@
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once($CFG->dirroot . '/question/type/truefalse/questiontype.php');
+require_once($CFG->dirroot . '/question/type/calculatedsimple/questiontype.php');
 require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
 require_once($CFG->dirroot . '/question/type/edit_question_form.php');
-require_once($CFG->dirroot . '/question/type/truefalse/edit_truefalse_form.php');
+require_once($CFG->dirroot . '/question/type/calculatedsimple/edit_calculatedsimple_form.php');
+
 
 /**
- * Unit tests for the true-false question definition class.
+ * Unit tests for the calculatedsimple question type class.
  *
  * @copyright  2007 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_truefalse_test extends advanced_testcase {
+class qtype_calculatedsimple_test extends advanced_testcase {
+    public static $includecoverage = array(
+        'question/type/questiontypebase.php',
+        'question/type/calculatedsimple/questiontype.php',
+        'question/type/edit_question_form.php',
+        'question/type/calculatedsimple/edit_calculatedsimple_form.php'
+    );
+
     protected $qtype;
 
     protected function setUp() {
-        $this->qtype = new qtype_truefalse();
+        $this->qtype = new qtype_calculatedsimple();
     }
 
     protected function tearDown() {
@@ -50,48 +57,28 @@ class qtype_truefalse_test extends advanced_testcase {
     }
 
     public function test_name() {
-        $this->assertEquals($this->qtype->name(), 'truefalse');
+        $this->assertEquals($this->qtype->name(), 'calculatedsimple');
     }
 
     public function test_can_analyse_responses() {
         $this->assertTrue($this->qtype->can_analyse_responses());
     }
 
-    public function test_get_random_guess_score() {
-        $this->assertEquals(0.5, $this->qtype->get_random_guess_score(null));
-    }
 
-    public function test_get_possible_responses() {
-        $q = new stdClass();
-        $q->id = 1;
-        $q->options = new stdClass();
-        $q->options->trueanswer = 1;
-        $q->options->falseanswer = 2;
-        $q->options->answers[1] = (object) array('fraction' => 1);
-        $q->options->answers[2] = (object) array('fraction' => 0);
-
-        $this->assertEquals(array(
-            $q->id => array(
-                0 => new question_possible_response(get_string('false', 'qtype_truefalse'), 0),
-                1 => new question_possible_response(get_string('true', 'qtype_truefalse'), 1),
-                null => question_possible_response::no_response()),
-        ), $this->qtype->get_possible_responses($q));
-    }
-
-    public function test_question_saving_true() {
+    public function test_question_saving_sumwithvariants() {
         $this->resetAfterTest(true);
         $this->setAdminUser();
 
-        $questiondata = test_question_maker::get_question_data('truefalse');
-        $formdata = test_question_maker::get_question_form_data('truefalse');
+        $questiondata = test_question_maker::get_question_data('calculatedsimple', 'sumwithvariants');
+        $formdata = test_question_maker::get_question_form_data('calculatedsimple', 'sumwithvariants');
 
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $generator->create_question_category(array());
 
         $formdata->category = "{$cat->id},{$cat->contextid}";
-        qtype_truefalse_edit_form::mock_submit((array)$formdata);
+        qtype_calculatedsimple_edit_form::mock_submit((array)$formdata);
 
-        $form = qtype_truefalse_test_helper::get_question_editing_form($cat, $questiondata);
+        $form = qtype_calculatedsimple_test_helper::get_question_editing_form($cat, $questiondata);
 
         $this->assertTrue($form->is_validated());
 
@@ -102,30 +89,34 @@ class qtype_truefalse_test extends advanced_testcase {
         $actualquestiondata = end($actualquestionsdata);
 
         foreach ($questiondata as $property => $value) {
-            if (!in_array($property, array('options'))) {
+            if (!in_array($property, array('id', 'version', 'timemodified', 'timecreated', 'options'))) {
                 $this->assertAttributeEquals($value, $property, $actualquestiondata);
             }
         }
 
         foreach ($questiondata->options as $optionname => $value) {
-            if (!in_array($optionname, array('trueanswer', 'falseanswer', 'answers'))) {
+            if ($optionname != 'answers') {
                 $this->assertAttributeEquals($value, $optionname, $actualquestiondata->options);
             }
         }
 
-        $answerindexes = array();
-        foreach ($questiondata->options->answers as $ansindex => $answer) {
+        foreach ($questiondata->options->answers as $answer) {
             $actualanswer = array_shift($actualquestiondata->options->answers);
             foreach ($answer as $ansproperty => $ansvalue) {
-                // This question does not use 'answerformat', will ignore it.
                 if (!in_array($ansproperty, array('id', 'question', 'answerformat'))) {
                     $this->assertAttributeEquals($ansvalue, $ansproperty, $actualanswer);
                 }
             }
-            $answerindexes[$answer->answer] = $ansindex;
         }
 
-        $this->assertEquals($questiondata->options->trueanswer, $answerindexes['True']);
-        $this->assertEquals($questiondata->options->falseanswer, $answerindexes['False']);
+        $datasetloader = new qtype_calculated_dataset_loader($actualquestiondata->id);
+
+        $this->assertEquals(10, $datasetloader->get_number_of_items());
+
+        for ($itemno = 1; $itemno <= 10; $itemno++) {
+            $item = $datasetloader->get_values($itemno);
+            $this->assertEquals($formdata->number[($itemno -1)*2 + 2], $item['a']);
+            $this->assertEquals($formdata->number[($itemno -1)*2 + 1], $item['b']);
+        }
     }
 }
