@@ -452,36 +452,51 @@ class enrol_self_testcase extends advanced_testcase {
         $selfplugin = enrol_get_plugin('self');
 
         $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+
+        $studentrole = $DB->get_record('role', array('shortname'=>'student'));
+        $this->assertNotEmpty($studentrole);
 
         $course1 = $this->getDataGenerator()->create_course();
         $course2 = $this->getDataGenerator()->create_course();
         $course3 = $this->getDataGenerator()->create_course();
         $course4 = $this->getDataGenerator()->create_course();
         $course5 = $this->getDataGenerator()->create_course();
+        $course6 = $this->getDataGenerator()->create_course();
+        $course7 = $this->getDataGenerator()->create_course();
+        $course8 = $this->getDataGenerator()->create_course();
+        $course9 = $this->getDataGenerator()->create_course();
+        $course10 = $this->getDataGenerator()->create_course();
+        $course11 = $this->getDataGenerator()->create_course();
 
         $cohort1 = $this->getDataGenerator()->create_cohort();
         $cohort2 = $this->getDataGenerator()->create_cohort();
 
+        // New enrolments are allowed and enrolment instance is enabled.
         $instance1 = $DB->get_record('enrol', array('courseid'=>$course1->id, 'enrol'=>'self'), '*', MUST_EXIST);
         $instance1->customint6 = 1;
         $DB->update_record('enrol', $instance1);
         $selfplugin->update_status($instance1, ENROL_INSTANCE_ENABLED);
 
+        // New enrolments are not allowed, but enrolment instance is enabled.
         $instance2 = $DB->get_record('enrol', array('courseid'=>$course2->id, 'enrol'=>'self'), '*', MUST_EXIST);
         $instance2->customint6 = 0;
         $DB->update_record('enrol', $instance2);
         $selfplugin->update_status($instance2, ENROL_INSTANCE_ENABLED);
 
+        // New enrolments are allowed , but enrolment instance is disabled.
         $instance3 = $DB->get_record('enrol', array('courseid'=>$course3->id, 'enrol'=>'self'), '*', MUST_EXIST);
         $instance3->customint6 = 1;
         $DB->update_record('enrol', $instance3);
         $selfplugin->update_status($instance3, ENROL_INSTANCE_DISABLED);
 
+        // New enrolments are not allowed and enrolment instance is disabled.
         $instance4 = $DB->get_record('enrol', array('courseid'=>$course4->id, 'enrol'=>'self'), '*', MUST_EXIST);
         $instance4->customint6 = 0;
         $DB->update_record('enrol', $instance4);
         $selfplugin->update_status($instance4, ENROL_INSTANCE_DISABLED);
 
+        // Cohort member test.
         $instance5 = $DB->get_record('enrol', array('courseid'=>$course5->id, 'enrol'=>'self'), '*', MUST_EXIST);
         $instance5->customint6 = 1;
         $instance5->customint5 = $cohort1->id;
@@ -495,16 +510,107 @@ class enrol_self_testcase extends advanced_testcase {
         $DB->update_record('enrol', $instance1);
         $selfplugin->update_status($instance6, ENROL_INSTANCE_ENABLED);
 
+        // Enrol start date is in future.
+        $instance7 = $DB->get_record('enrol', array('courseid'=>$course6->id, 'enrol'=>'self'), '*', MUST_EXIST);
+        $instance7->customint6 = 1;
+        $instance7->enrolstartdate = time() + 60;
+        $DB->update_record('enrol', $instance7);
+        $selfplugin->update_status($instance7, ENROL_INSTANCE_ENABLED);
+
+        // Enrol start date is in past.
+        $instance8 = $DB->get_record('enrol', array('courseid'=>$course7->id, 'enrol'=>'self'), '*', MUST_EXIST);
+        $instance8->customint6 = 1;
+        $instance8->enrolstartdate = time() - 60;
+        $DB->update_record('enrol', $instance8);
+        $selfplugin->update_status($instance8, ENROL_INSTANCE_ENABLED);
+
+        // Enrol end date is in future.
+        $instance9 = $DB->get_record('enrol', array('courseid'=>$course8->id, 'enrol'=>'self'), '*', MUST_EXIST);
+        $instance9->customint6 = 1;
+        $instance9->enrolenddate = time() + 60;
+        $DB->update_record('enrol', $instance9);
+        $selfplugin->update_status($instance9, ENROL_INSTANCE_ENABLED);
+
+        // Enrol end date is in past.
+        $instance10 = $DB->get_record('enrol', array('courseid'=>$course9->id, 'enrol'=>'self'), '*', MUST_EXIST);
+        $instance10->customint6 = 1;
+        $instance10->enrolenddate = time() - 60;
+        $DB->update_record('enrol', $instance10);
+        $selfplugin->update_status($instance10, ENROL_INSTANCE_ENABLED);
+
+        // Maximum enrolments reached.
+        $instance11 = $DB->get_record('enrol', array('courseid'=>$course10->id, 'enrol'=>'self'), '*', MUST_EXIST);
+        $instance11->customint6 = 1;
+        $instance11->customint3 = 1;
+        $DB->update_record('enrol', $instance11);
+        $selfplugin->update_status($instance11, ENROL_INSTANCE_ENABLED);
+        $selfplugin->enrol_user($instance11, $user2->id, $studentrole->id);
+
+        // Maximum enrolments not reached.
+        $instance12 = $DB->get_record('enrol', array('courseid'=>$course11->id, 'enrol'=>'self'), '*', MUST_EXIST);
+        $instance12->customint6 = 1;
+        $instance12->customint3 = 1;
+        $DB->update_record('enrol', $instance12);
+        $selfplugin->update_status($instance12, ENROL_INSTANCE_ENABLED);
+
         $this->setUser($user1);
         $this->assertTrue($selfplugin->show_enrolme_link($instance1));
         $this->assertFalse($selfplugin->show_enrolme_link($instance2));
         $this->assertFalse($selfplugin->show_enrolme_link($instance3));
         $this->assertFalse($selfplugin->show_enrolme_link($instance4));
+        $this->assertFalse($selfplugin->show_enrolme_link($instance7));
+        $this->assertTrue($selfplugin->show_enrolme_link($instance8));
+        $this->assertTrue($selfplugin->show_enrolme_link($instance9));
+        $this->assertFalse($selfplugin->show_enrolme_link($instance10));
+        $this->assertFalse($selfplugin->show_enrolme_link($instance11));
+        $this->assertTrue($selfplugin->show_enrolme_link($instance12));
 
         require_once("$CFG->dirroot/cohort/lib.php");
         cohort_add_member($cohort1->id, $user1->id);
 
         $this->assertTrue($selfplugin->show_enrolme_link($instance5));
         $this->assertFalse($selfplugin->show_enrolme_link($instance6));
+    }
+
+    /**
+     * This will check user enrolment only, rest has been tested in test_show_enrolme_link.
+     */
+    public function test_can_self_enrol() {
+        global $DB, $CFG;
+        $this->resetAfterTest();
+        $this->preventResetByRollback();
+
+        $selfplugin = enrol_get_plugin('self');
+
+        $expectederrorstring = get_string('canntenrol', 'enrol_self');
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $guest = $DB->get_record('user', array('id' => $CFG->siteguest));
+
+        $studentrole = $DB->get_record('role', array('shortname'=>'student'));
+        $this->assertNotEmpty($studentrole);
+        $editingteacherrole = $DB->get_record('role', array('shortname'=>'editingteacher'));
+        $this->assertNotEmpty($editingteacherrole);
+
+        $course1 = $this->getDataGenerator()->create_course();
+
+        $instance1 = $DB->get_record('enrol', array('courseid'=>$course1->id, 'enrol'=>'self'), '*', MUST_EXIST);
+        $instance1->customint6 = 1;
+        $DB->update_record('enrol', $instance1);
+        $selfplugin->update_status($instance1, ENROL_INSTANCE_ENABLED);
+        $selfplugin->enrol_user($instance1, $user2->id, $editingteacherrole->id);
+
+        $this->setUser($guest);
+        $this->assertSame($expectederrorstring, $selfplugin->can_self_enrol($instance1, true));
+
+        $this->setUser($user1);
+        $this->assertTrue($selfplugin->can_self_enrol($instance1, true));
+
+        // Active enroled user.
+        $this->setUser($user2);
+        $selfplugin->enrol_user($instance1, $user1->id, $studentrole->id);
+        $this->setUser($user1);
+        $this->assertSame($expectederrorstring, $selfplugin->can_self_enrol($instance1, true));
     }
 }
