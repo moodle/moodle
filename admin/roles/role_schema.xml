@@ -15,12 +15,6 @@
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-    <xs:element name="name">
-        <xs:complexType/>
-    </xs:element>
-    <xs:element name="description">
-        <xs:complexType/>
-    </xs:element>
     <xs:element name="archetype" type="xs:string"/>
     <xs:element name="contextlevels">
         <xs:complexType>
@@ -61,9 +55,11 @@
             </xs:sequence>
         </xs:complexType>
     </xs:element>
+    <xs:element name="shortname" type="xs:string"/>
+    <xs:element name="name" type="xs:string"/>
+    <xs:element name="description" type="xs:string"/>
     <xs:element name="inherit" type="xs:string"/>
     <xs:element name="allow" type="xs:string"/>
     <xs:element name="prevent" type="xs:string"/>
     <xs:element name="prohibit" type="xs:string"/>
-    <xs:element name="shortname" type="xs:string"/>
 </xs:schema>
