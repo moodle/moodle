@@ -54,20 +54,43 @@ class behat_repository_upload extends behat_files {
 
         $filepickernode = $this->get_filepicker_node($filepickerelement);
 
+        // Wait until file manager is completely loaded.
+        $this->wait_until_contents_are_updated($filepickernode);
+
         // Opening the select repository window and selecting the upload repository.
         $this->open_add_file_window($filepickernode, get_string('pluginname', 'repository_upload'));
+
+        // Ensure all the form is ready.
+        $this->getSession()->wait(2 * 1000, false);
+        $noformexception = new ExpectationException('The upload file form is not ready', $this->getSession());
+        $this->find(
+            'xpath',
+            "//div[contains(concat(' ', @class, ' '), ' file-picker ')]" .
+                "[contains(concat(' ', @class, ' '), ' repository_upload ')]" .
+                "/descendant::div[@class='fp-content']" .
+                "/descendant::div[contains(concat(' ', @class, ' '), ' fp-upload-form ')]" .
+                "/descendant::form",
+            $noformexception
+        );
+        // After this we have the elements we want to interact with.
+
+        // Form elements to interact with.
+        $file = $this->find_file('repo_upload_file');
+        $submit = $this->find_button(get_string('upload', 'repository'));
 
         // Attaching specified file to the node.
         $filepath = str_replace('/', DIRECTORY_SEPARATOR, $filepath);
         $fileabsolutepath = $CFG->dirroot . DIRECTORY_SEPARATOR . $filepath;
-        $inputfilenode = $this->find_file('repo_upload_file');
-        $inputfilenode->attachFile($fileabsolutepath);
+        $file->attachFile($fileabsolutepath);
 
         // Submit the file.
-        $this->getSession()->getPage()->pressButton('Upload this file');
+        $submit->press();
 
-        // Wait a while for the file to be uploaded.
-        $this->getSession()->wait(6 * 1000, false);
+        // Ensure the file has been uploaded and all ajax processes finished.
+        $this->wait_until_return_to_form();
+
+        // Wait until file manager contents are updated.
+        $this->wait_until_contents_are_updated($filepickernode);
     }
 
 }
