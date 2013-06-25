@@ -66,6 +66,7 @@ echo $OUTPUT->header();
 if (!has_capability('mod/glossary:manageentries', $context) and !$glossary->allowprintview) {
     notice(get_string('printviewnotallowed', 'glossary'));
 }
+$PAGE->requires->js_init_code("window.print();");
 
 /// setting the default values for the display mode of the current glossary
 /// only if the glossary is viewed by the first time
@@ -166,6 +167,14 @@ $entriesshown = 0;
 $currentpivot = '';
 
 $site = $DB->get_record("course", array("id"=>1));
+
+// Print dialog link.
+$printtext = get_string('print', 'glossary');
+$printicon = $OUTPUT->pix_icon('print', $printtext, 'glossary', array('class' => 'glossary_print_icon'));
+$printlinkatt = array('onclick' => 'window.print();return false;', 'class' => 'glossary_no_print');
+$printiconlink = html_writer::link('#', $printicon, $printlinkatt);
+echo html_writer::tag('div', $printiconlink, array('class' => 'printicon'));
+
 echo '<p style="text-align:right"><span style="font-size:0.75em">' . userdate(time()) . '</span></p>';
 echo get_string("site") . ': <strong>' . format_string($site->fullname) . '</strong><br />';
 echo get_string("course") . ': <strong>' . format_string($course->fullname) . ' ('. format_string($course->shortname) . ')</strong><br />';

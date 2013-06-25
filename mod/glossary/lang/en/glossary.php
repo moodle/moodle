@@ -248,6 +248,7 @@ $string['page-mod-glossary-view'] = 'View glossary edit page';
 $string['pluginadministration'] = 'Glossary administration';
 $string['pluginname'] = 'Glossary';
 $string['popupformat'] = 'Popup format';
+$string['print'] = 'Print';
 $string['printerfriendly'] = 'Printer-friendly version';
 $string['printviewnotallowed'] = 'Print view isn\'t allowed';
 $string['question'] = 'Question';

@@ -33,4 +33,5 @@
 #page-mod-glossary-showentry #page-content {min-width:600px;}
 
 #page-mod-glossary-print .mod-glossary-entrylist .mod-glossary-entry { vertical-align: top; }
+#page-mod-glossary-print .printicon,
 .path-mod-glossary.dir-rtl .glossarypost {text-align: right;}
