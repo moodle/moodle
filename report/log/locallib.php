@@ -347,6 +347,7 @@ function report_log_print_mnet_selector_form($hostid, $course, $selecteduser=0, 
         }
         echo html_writer::label(get_string('participantslist'), 'menuuser', false, array('class' => 'accesshide'));
         echo html_writer::select($users, "user", $selecteduser, false);
+        $a = new stdClass();
         $a->url = "$CFG->wwwroot/report/log/index.php?chooselog=0&group=$selectedgroup&user=$selecteduser"
             ."&id=$course->id&date=$selecteddate&modid=$selectedactivity&showusers=1&showcourses=$showcourses";
         print_string('logtoomanyusers','moodle',$a);
