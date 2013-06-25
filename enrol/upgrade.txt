@@ -1,6 +1,11 @@
 This files describes API changes in /enrol/* - plugins,
 information provided here is intended especially for developers.
 
+=== 2.6 ===
+
+* Enrolment plugin which supports self enrolment should implement can_self_enrol()
+* Enrolment plugin should implement get_enrol_info() to expose instance information
+  with webservice or external interface.
 
 === 2.5 ===
 
