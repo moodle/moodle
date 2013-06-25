@@ -52,10 +52,7 @@ class core_role_preset_form extends moodleform {
         $group = get_string('role', 'core');
         $options[$group] = array();
         foreach (role_get_names(null, ROLENAME_BOTH) as $role) {
-            if ($data['roleid'] == $role->id) {
-                // Do not reset to self.
-                continue;
-            }
+            // Allow reset to self too, it may be useful when importing incomplete XML preset.
             $options[$group][$role->id] = $role->localname;
         }
 
