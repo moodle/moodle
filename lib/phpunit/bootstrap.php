@@ -33,6 +33,7 @@ ini_set('log_errors', '1');
 
 require_once(__DIR__.'/bootstraplib.php');
 require_once(__DIR__.'/../testing/lib.php');
+require_once(__DIR__.'/classes/autoloader.php');
 
 if (isset($_SERVER['REMOTE_ADDR'])) {
     phpunit_bootstrap_error(1, 'Unit tests can be executed only from command line!');
