@@ -1516,7 +1516,10 @@ class ddl_testcase extends database_driver_testcase {
         $this->assertEquals($records[1]->secondname, $this->records['test_table1'][0]->secondname);
         $this->assertEquals($records[2]->intro, $this->records['test_table1'][1]->intro);
 
-        // Drop table1
+        // Collect statistics about the data in the temp table.
+        $DB->update_temp_table_stats();
+
+        // Drop table1.
         $dbman->drop_table($table1);
         $this->assertFalse($dbman->table_exists('test_table1'));
 
@@ -1529,8 +1532,10 @@ class ddl_testcase extends database_driver_testcase {
             $this->assertTrue($e instanceof ddl_table_missing_exception);
         }
 
-        // Fill/modify/delete a few table0 records
-        // TODO: that's
+        // Collect statistics about the data in the temp table with less tables.
+        $DB->update_temp_table_stats();
+
+        // Fill/modify/delete a few table0 records.
 
         // Drop table0
         $dbman->drop_table($table0);
