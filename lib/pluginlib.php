@@ -3077,9 +3077,19 @@ class plugininfo_block extends plugininfo_base {
         return true;
     }
 
-    public function get_uninstall_url() {
-        $blocksinfo = self::get_blocks_info();
-        return new moodle_url('/admin/blocks.php', array('delete' => $blocksinfo[$this->name]->id, 'sesskey' => sesskey()));
+    /**
+     * Warnign with number of block instances.
+     *
+     * @return string
+     */
+    public function get_uninstall_extra_warning() {
+        global $DB;
+
+        if (!$count = $DB->count_records('block_instances', array('blockname'=>$this->name))) {
+            return '';
+        }
+
+        return '<p>'.get_string('uninstallextraconfirmblock', 'core_plugin', array('instances'=>$count)).'</p>';
     }
 
     /**

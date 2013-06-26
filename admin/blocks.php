@@ -11,7 +11,6 @@
     $confirm  = optional_param('confirm', 0, PARAM_BOOL);
     $hide     = optional_param('hide', 0, PARAM_INT);
     $show     = optional_param('show', 0, PARAM_INT);
-    $delete   = optional_param('delete', 0, PARAM_INT);
     $unprotect = optional_param('unprotect', 0, PARAM_INT);
     $protect = optional_param('protect', 0, PARAM_INT);
 
@@ -81,35 +80,6 @@
         admin_get_root(true, false);  // settings not required - only pages
     }
 
-    if (!empty($delete) && confirm_sesskey()) {
-        echo $OUTPUT->header();
-        echo $OUTPUT->heading($strmanageblocks);
-
-        if (!$block = blocks_get_record($delete)) {
-            print_error('blockdoesnotexist', 'error');
-        }
-
-        if (get_string_manager()->string_exists('pluginname', "block_$block->name")) {
-            $strblockname = get_string('pluginname', "block_$block->name");
-        } else {
-            $strblockname = $block->name;
-        }
-
-        if (!$confirm) {
-            echo $OUTPUT->confirm(get_string('blockdeleteconfirm', '', $strblockname), 'blocks.php?delete='.$block->id.'&confirm=1', 'blocks.php');
-            echo $OUTPUT->footer();
-            exit;
-
-        } else {
-            uninstall_plugin('block', $block->name);
-
-            $a = new stdClass();
-            $a->block = $strblockname;
-            $a->directory = $CFG->dirroot.'/blocks/'.$block->name;
-            notice(get_string('blockdeletefiles', '', $a), 'blocks.php');
-        }
-    }
-
     echo $OUTPUT->header();
     echo $OUTPUT->heading($strmanageblocks);
 
@@ -170,7 +140,11 @@
             }
         }
 
-        $delete = '<a href="blocks.php?delete='.$blockid.'&amp;sesskey='.sesskey().'">'.$strdelete.'</a>';
+        if ($deleteurl = plugin_manager::instance()->get_uninstall_url('block_'.$blockname)) {
+            $delete = html_writer::link($deleteurl, $strdelete);
+        } else {
+            $delete = '';
+        }
 
         $settings = ''; // By default, no configuration
         if ($blockobject and $blockobject->has_config()) {
@@ -257,9 +231,14 @@
         $table->setup();
 
         foreach ($incompatible as $block) {
+            if ($deleteurl = plugin_manager::instance()->get_uninstall_url('block_'.$block->name)) {
+                $delete = html_writer::link($deleteurl, $strdelete);
+            } else {
+                $delete = '';
+            }
             $table->add_data(array(
                 $block->name,
-                '<a href="blocks.php?delete='.$block->id.'&amp;sesskey='.sesskey().'">'.$strdelete.'</a>',
+                $delete,
             ));
         }
         $table->print_html();
