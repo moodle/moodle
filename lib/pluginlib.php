@@ -4021,8 +4021,21 @@ class plugininfo_format extends plugininfo_base {
         }
     }
 
-    public function get_uninstall_url() {
-        return new moodle_url('/admin/courseformats.php',
-                array('sesskey' => sesskey(), 'action' => 'uninstall', 'format' => $this->name));
+    public function get_uninstall_extra_warning() {
+        global $DB;
+
+        $coursecount = $DB->count_records('course', array('format' => $this->name));
+
+        if (!$coursecount) {
+            return '';
+        }
+
+        $defaultformat = $this->get_plugin_manager()->plugin_name('format_'.get_config('moodlecourse', 'format'));
+        $message = get_string(
+            'formatuninstallwithcourses', 'core_admin',
+            (object)array('count' => $coursecount, 'format' => $this->displayname,
+            'defaultformat' => $defaultformat));
+
+        return $message;
     }
 }

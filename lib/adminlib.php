@@ -6183,8 +6183,8 @@ class admin_setting_manageformats extends admin_setting {
                 $settings = html_writer::link($format->get_settings_url(), $txt->settings);
             }
             $uninstall = '';
-            if ($defaultformat !== $format->name) {
-                $uninstall = html_writer::link($format->get_uninstall_url(), $txt->delete);
+            if ($deleteurl = plugin_manager::instance()->get_uninstall_url('format_'.$format->name)) {
+                $uninstall = html_writer::link($deleteurl, $txt->delete);
             }
             $table->data[] =array($strformatname, $hideshow, $updown, $uninstall, $settings);
         }
