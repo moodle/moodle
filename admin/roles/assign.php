@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,8 +17,7 @@
 /**
  * Lets you assign roles to users in a particular context.
  *
- * @package    core
- * @subpackage role
+ * @package    core_role
  * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -92,8 +90,8 @@ if ($roleid) {
     // Create the user selector objects.
     $options = array('context' => $context, 'roleid' => $roleid);
 
-    $potentialuserselector = roles_get_potential_user_selector($context, 'addselect', $options);
-    $currentuserselector = new existing_role_holders('removeselect', $options);
+    $potentialuserselector = core_role_get_potential_user_selector($context, 'addselect', $options);
+    $currentuserselector = new core_role_existing_role_holders('removeselect', $options);
 
     // Process incoming role assignments
     $errors = array();
@@ -145,6 +143,7 @@ $PAGE->set_title($title);
 
 switch ($context->contextlevel) {
     case CONTEXT_SYSTEM:
+        require_once($CFG->libdir.'/adminlib.php');
         admin_externalpage_setup('assignroles', '', array('contextid' => $contextid, 'roleid' => $roleid));
         break;
     case CONTEXT_USER:
@@ -157,6 +156,7 @@ switch ($context->contextlevel) {
         break;
     case CONTEXT_COURSE:
         if ($isfrontpage) {
+            require_once($CFG->libdir.'/adminlib.php');
             admin_externalpage_setup('frontpageroles', '', array('contextid' => $contextid, 'roleid' => $roleid));
         } else {
             $PAGE->set_heading($course->fullname);

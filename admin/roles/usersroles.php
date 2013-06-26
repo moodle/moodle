@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -19,8 +18,7 @@
  * User roles report list all the users who have been assigned a particular
  * role in all contexts.
  *
- * @package    core
- * @subpackage role
+ * @package    core_role
  * @copyright  &copy; 2007 The Open University and others
  * @author     t.j.hunt@open.ac.uk and others
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

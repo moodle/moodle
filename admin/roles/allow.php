@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,21 +17,19 @@
 /**
  * Allow overriding of roles by other roles
  *
- * @package    core
- * @subpackage role
+ * @package    core_role
  * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
-require_once($CFG->dirroot . '/' . $CFG->admin . '/roles/lib.php');
 
 $mode = required_param('mode', PARAM_ALPHANUMEXT);
 $classformode = array(
-    'assign' => 'role_allow_assign_page',
-    'override' => 'role_allow_override_page',
-    'switch' => 'role_allow_switch_page'
+    'assign' => 'core_role_allow_assign_page',
+    'override' => 'core_role_allow_override_page',
+    'switch' => 'core_role_allow_switch_page'
 );
 if (!isset($classformode[$mode])) {
     print_error('invalidmode', '', '', $mode);

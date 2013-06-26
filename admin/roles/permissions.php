@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,15 +17,12 @@
 /**
  * This script serves draft files of current user
  *
- * @package    core
- * @subpackage role
- * @copyright  2009 Petr Skoda (skodak) info@skodak.org
+ * @package    core_role
+ * @copyright  2009 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require('../../config.php');
-require_once("$CFG->dirroot/$CFG->admin/roles/lib.php");
-require_once("permissions_forms.php");
 
 $contextid  = required_param('contextid',PARAM_INT);
 
@@ -95,6 +91,7 @@ switch ($context->contextlevel) {
         break;
     case CONTEXT_COURSE:
         if ($isfrontpage) {
+            require_once($CFG->libdir.'/adminlib.php');
             admin_externalpage_setup('frontpageroles', '', array(), $PAGE->url);
         } else {
             $PAGE->set_heading($course->fullname);
@@ -147,7 +144,7 @@ if ($capability && ($allowoverrides || ($allowsafeoverrides && is_safe_capabilit
 
     if ($allow || $prohibit) {
         if ($allow) {
-            $mform = new role_allow_form(null, array($context, $capability, $overridableroles));
+            $mform = new core_role_permission_allow_form(null, array($context, $capability, $overridableroles));
             if ($mform->is_cancelled()) {
                 redirect($PAGE->url);
             } else if ($data = $mform->get_data() and !empty($data->roleid)) {
@@ -162,7 +159,7 @@ if ($capability && ($allowoverrides || ($allowsafeoverrides && is_safe_capabilit
             }
         }
         if ($prohibit) {
-            $mform = new role_prohibit_form(null, array($context, $capability, $overridableroles));
+            $mform = new core_role_permission_prohibit_form(null, array($context, $capability, $overridableroles));
             if ($mform->is_cancelled()) {
                 redirect($PAGE->url);
             } else if ($data = $mform->get_data() and !empty($data->roleid)) {
@@ -188,7 +185,7 @@ if ($capability && ($allowoverrides || ($allowsafeoverrides && is_safe_capabilit
 echo $OUTPUT->header();
 echo $OUTPUT->heading($title);
 
-$table = new permissions_table($context, $contextname, $allowoverrides, $allowsafeoverrides, $overridableroles);
+$table = new core_role_permissions_table($context, $contextname, $allowoverrides, $allowsafeoverrides, $overridableroles);
 echo $OUTPUT->box_start('generalbox capbox');
 // print link to advanced override page
 if ($overridableroles) {

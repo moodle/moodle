@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,14 +17,13 @@
 /**
  * Lets you site administrators
  *
- * @package    core
- * @subpackage role
- * @copyright  2010 Petr Skoda (skodak) http://skodak.org
+ * @package    core_role
+ * @copyright  2010 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once(dirname(__FILE__) . '/../../config.php');
-require_once($CFG->dirroot . '/' . $CFG->admin . '/roles/lib.php');
+require_once($CFG->libdir.'/adminlib.php');
 
 $confirmadd = optional_param('confirmadd', 0, PARAM_INT);
 $confirmdel = optional_param('confirmdel', 0, PARAM_INT);
@@ -37,10 +35,10 @@ if (!is_siteadmin()) {
     die;
 }
 
-$admisselector = new admins_existing_selector();
+$admisselector = new core_role_admins_existing_selector();
 $admisselector->set_extra_fields(array('username', 'email'));
 
-$potentialadmisselector = new admins_potential_selector();
+$potentialadmisselector = new core_role_admins_potential_selector();
 $potentialadmisselector->set_extra_fields(array('username', 'email'));
 
 if (optional_param('add', false, PARAM_BOOL) and confirm_sesskey()) {

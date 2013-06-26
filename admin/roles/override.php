@@ -25,7 +25,6 @@
  */
 
 require('../../config.php');
-require_once("$CFG->dirroot/$CFG->admin/roles/lib.php");
 
 $contextid = required_param('contextid', PARAM_INT);   // context id
 $roleid    = required_param('roleid', PARAM_INT);   // requested role id
@@ -98,6 +97,7 @@ switch ($context->contextlevel) {
         break;
     case CONTEXT_COURSE:
         if ($isfrontpage) {
+            require_once($CFG->libdir.'/adminlib.php');
             admin_externalpage_setup('frontpageroles', '', array(), $PAGE->url);
         } else {
             $PAGE->set_heading($course->fullname);
@@ -121,7 +121,7 @@ if (empty($overridableroles[$roleid])) {
 }
 
 // If we are actually overriding a role, create the table object, and save changes if appropriate.
-$overridestable = new override_permissions_table_advanced($context, $roleid, $safeoverridesonly);
+$overridestable = new core_role_override_permissions_table_advanced($context, $roleid, $safeoverridesonly);
 $overridestable->read_submitted_permissions();
 
 if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {

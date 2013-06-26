@@ -29,7 +29,7 @@
  */
 
     require_once(dirname(__FILE__) . '/../../config.php');
-    require_once($CFG->dirroot . '/' . $CFG->admin . '/roles/lib.php');
+    require_once($CFG->libdir.'/adminlib.php');
 
     $action = required_param('action', PARAM_ALPHA);
     if (!in_array($action, array('add', 'export', 'edit', 'reset', 'view'))) {
@@ -105,9 +105,9 @@
                 'allowoverride' => 1,
                 'allowswitch'   => 1);
             if ($showadvanced) {
-                $definitiontable = new define_role_table_advanced($systemcontext, 0);
+                $definitiontable = new core_role_define_role_table_advanced($systemcontext, 0);
             } else {
-                $definitiontable = new define_role_table_basic($systemcontext, 0);
+                $definitiontable = new core_role_define_role_table_basic($systemcontext, 0);
             }
             if (is_number($resettype)) {
                 // Duplicate the role.
@@ -152,9 +152,9 @@
                 'allowoverride' => $data->allowoverride,
                 'allowswitch'   => $data->allowswitch);
             if ($showadvanced) {
-                $definitiontable = new define_role_table_advanced($systemcontext, $roleid);
+                $definitiontable = new core_role_define_role_table_advanced($systemcontext, $roleid);
             } else {
-                $definitiontable = new define_role_table_basic($systemcontext, $roleid);
+                $definitiontable = new core_role_define_role_table_basic($systemcontext, $roleid);
             }
             if (is_number($resettype)) {
                 // Duplicate the role.
@@ -179,11 +179,11 @@
     } else {
     /// Create the table object.
         if ($action == 'view') {
-            $definitiontable = new view_role_definition_table($systemcontext, $roleid);
+            $definitiontable = new core_role_view_role_definition_table($systemcontext, $roleid);
         } else if ($showadvanced) {
-            $definitiontable = new define_role_table_advanced($systemcontext, $roleid);
+            $definitiontable = new core_role_define_role_table_advanced($systemcontext, $roleid);
         } else {
-            $definitiontable = new define_role_table_basic($systemcontext, $roleid);
+            $definitiontable = new core_role_define_role_table_basic($systemcontext, $roleid);
         }
         $definitiontable->read_submitted_permissions();
     }

@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,14 +17,12 @@
 /**
  * Shows the result of has_capability for every capability for a user in a context.
  *
- * @package    core
- * @subpackage role
+ * @package    core_role
  * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once(dirname(__FILE__) . '/../../config.php');
-require_once($CFG->dirroot . '/' . $CFG->admin . '/roles/lib.php');
 
 $contextid = required_param('contextid',PARAM_INT);
 
@@ -62,7 +59,7 @@ $contextname = print_context_name($context);
 // Teachers within a course just get to see the same list of enrolled users.
 // Admins (people with moodle/role:manage) can run this report for any user.
 $options = array('accesscontext' => $context);
-$userselector = new role_check_users_selector('reportuser', $options);
+$userselector = new core_role_check_users_selector('reportuser', $options);
 $userselector->set_rows(20);
 
 // Work out an appropriate page title.
@@ -73,6 +70,7 @@ $PAGE->set_title($title);
 
 switch ($context->contextlevel) {
     case CONTEXT_SYSTEM:
+        require_once($CFG->libdir.'/adminlib.php');
         admin_externalpage_setup('checkpermissions', '', array('contextid' => $contextid));
         break;
     case CONTEXT_USER:
@@ -85,6 +83,7 @@ switch ($context->contextlevel) {
         break;
     case CONTEXT_COURSE:
         if ($isfrontpage) {
+            require_once($CFG->libdir.'/adminlib.php');
             admin_externalpage_setup('frontpageroles', '', array('contextid' => $contextid), $CFG->wwwroot . '/' . $CFG->admin . '/roles/check.php');
         } else {
             $PAGE->set_heading($course->fullname);
@@ -138,7 +137,7 @@ if (!is_null($reportuser)) {
     }
 
     echo $OUTPUT->heading(get_string('permissionsforuser', 'role', fullname($reportuser)), 3);
-    $table = new check_capability_table($context, $reportuser, $contextname);
+    $table = new core_role_check_capability_table($context, $reportuser, $contextname);
     $table->display();
     echo $OUTPUT->box_end();
 

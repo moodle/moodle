@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,17 +17,17 @@
 /**
  * This script serves draft files of current user
  *
- * @package    core
- * @subpackage role
- * @copyright  2009 Petr Skoda (skodak) info@skodak.org
+ * @package    core_role
+ * @copyright  2009 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
 
 require_once("$CFG->libdir/formslib.php");
 
 
-class role_allow_form extends moodleform {
+class core_role_permission_allow_form extends moodleform {
 
     // Define the form
     function definition() {
@@ -62,40 +61,5 @@ class role_allow_form extends moodleform {
         $mform->setDefault('allow', 1);
 
         $this->add_action_buttons(true, get_string('allow', 'role'));
-    }
-}
-
-
-class role_prohibit_form extends moodleform {
-
-    // Define the form
-    function definition() {
-        global $CFG;
-
-        $mform = $this->_form;
-        list($context, $capability, $overridableroles) = $this->_customdata;
-
-        list($needed, $forbidden) = get_roles_with_cap_in_context($context, $capability->name);
-        foreach($forbidden as $id=>$unused) {
-            unset($overridableroles[$id]);
-        }
-
-        $mform->addElement('header', 'ptohibitheader', get_string('roleprohibitheader', 'role'));
-
-        $mform->addElement('select', 'roleid', get_string('roleselect', 'role'), $overridableroles);
-
-        $mform->addElement('hidden','capability');
-        $mform->setType('capability', PARAM_CAPABILITY);
-        $mform->setDefault('capability', $capability->name);
-
-        $mform->addElement('hidden','contextid');
-        $mform->setType('contextid', PARAM_INT);
-        $mform->setDefault('contextid', $context->id);
-
-        $mform->addElement('hidden','prohibit');
-        $mform->setType('prohibit', PARAM_INT);
-        $mform->setDefault('prohibit', 1);
-
-        $this->add_action_buttons(true, get_string('prohibit', 'role'));
     }
 }

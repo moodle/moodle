@@ -15,22 +15,36 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Defines the tab bar used on the manage/allow assign/allow overrides pages.
+ * Library code used by the roles administration interfaces.
  *
  * @package    core_role
  * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.'); // It must be included from a Moodle page
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Subclass of role_allow_role_page for the Allow assigns tab.
+ */
+class core_role_allow_assign_page extends core_role_allow_role_page {
+    public function __construct() {
+        parent::__construct('role_allow_assign', 'allowassign');
+    }
+
+    protected function set_allow($fromroleid, $targetroleid) {
+        allow_assign($fromroleid, $targetroleid);
+    }
+
+    protected function get_cell_tooltip($fromrole, $targetrole) {
+        $a = new stdClass;
+        $a->fromrole = $fromrole->localname;
+        $a->targetrole = $targetrole->localname;
+        return get_string('allowroletoassign', 'role', $a);
+    }
+
+    public function get_intro_text() {
+        return get_string('configallowassign', 'admin');
+    }
 }
-
-$toprow = array();
-$toprow[] = new tabobject('manage', new moodle_url('/admin/roles/manage.php'), get_string('manageroles', 'role'));
-$toprow[] = new tabobject('assign', new moodle_url('/admin/roles/allow.php', array('mode'=>'assign')), get_string('allowassign', 'role'));
-$toprow[] = new tabobject('override', new moodle_url('/admin/roles/allow.php', array('mode'=>'override')), get_string('allowoverride', 'role'));
-$toprow[] = new tabobject('switch', new moodle_url('/admin/roles/allow.php', array('mode'=>'switch')), get_string('allowswitch', 'role'));
-
-echo $OUTPUT->tabtree($toprow, $currenttab);
 
