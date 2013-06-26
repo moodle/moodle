@@ -33,40 +33,6 @@ require_once($CFG->libdir.'/tablelib.php');
 
 admin_externalpage_setup('managelocalplugins');
 
-$delete  = optional_param('delete', '', PARAM_PLUGIN);
-$confirm = optional_param('confirm', '', PARAM_BOOL);
-
-/// If data submitted, then process and store.
-
-if (!empty($delete) and confirm_sesskey()) {
-    echo $OUTPUT->header();
-    echo $OUTPUT->heading(get_string('localplugins'));
-
-    if (!$confirm) {
-        if (get_string_manager()->string_exists('pluginname', 'local_' . $delete)) {
-            $strpluginname = get_string('pluginname', 'local_' . $delete);
-        } else {
-            $strpluginname = $delete;
-        }
-        echo $OUTPUT->confirm(get_string('localplugindeleteconfirm', '', $strpluginname),
-                                new moodle_url($PAGE->url, array('delete' => $delete, 'confirm' => 1)),
-                                $PAGE->url);
-        echo $OUTPUT->footer();
-        die();
-
-    } else {
-        uninstall_plugin('local', $delete);
-        $a = new stdclass();
-        $a->name = $delete;
-        $pluginlocation = get_plugin_types();
-        $a->directory = $pluginlocation['local'] . '/' . $delete;
-        echo $OUTPUT->notification(get_string('plugindeletefiles', '', $a), 'notifysuccess');
-        echo $OUTPUT->continue_button($PAGE->url);
-        echo $OUTPUT->footer();
-        die();
-    }
-}
-
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('localplugins'));
 
@@ -92,8 +58,10 @@ foreach (get_plugin_list('local') as $plugin => $plugindir) {
 collatorlib::asort($plugins);
 
 foreach ($plugins as $plugin => $name) {
-    $delete = new moodle_url($PAGE->url, array('delete' => $plugin, 'sesskey' => sesskey()));
-    $delete = html_writer::link($delete, get_string('delete'));
+    $delete = '';
+    if ($deleteurl = plugin_manager::instance()->get_uninstall_url('local_'.$plugin)) {
+        $delete = html_writer::link($deleteurl, get_string('uninstallplugin', 'core_admin'));
+    }
 
     $version = get_config('local_' . $plugin);
     if (!empty($version->version)) {

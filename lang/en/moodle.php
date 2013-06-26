@@ -924,7 +924,6 @@ $string['listofallpeople'] = 'List of all people';
 $string['listofcourses'] = 'List of courses';
 $string['loadinghelp'] = 'Loading...';
 $string['local'] = 'Local';
-$string['localplugindeleteconfirm'] = 'You are about to completely delete the local plugin \'{$a}\'. This will completely delete everything in the database associated with this plugin. Are you SURE you want to continue?';
 $string['localplugins'] = 'Local plugins';
 $string['localpluginsmanage'] = 'Manage local plugins';
 $string['location'] = 'Location';
