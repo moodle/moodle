@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Library code used by the roles administration interfaces.
+ * Capabilities table with risks.
  *
  * @package    core_role
  * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
@@ -47,7 +47,7 @@ abstract class core_role_capability_table_with_risks extends core_role_capabilit
         parent::__construct($context, $id);
 
         $this->allrisks = get_all_risks();
-        $this->risksurl = get_docs_url(s(get_string('risks', 'role')));
+        $this->risksurl = get_docs_url(s(get_string('risks', 'core_role')));
 
         $this->allpermissions = array(
             CAP_INHERIT => 'inherit',
@@ -64,7 +64,7 @@ abstract class core_role_capability_table_with_risks extends core_role_capabilit
         $this->roleid = $roleid;
         $this->load_current_permissions();
 
-        /// Fill in any blank permissions with an explicit CAP_INHERIT, and init a locked field.
+        // Fill in any blank permissions with an explicit CAP_INHERIT, and init a locked field.
         foreach ($this->capabilities as $capid => $cap) {
             if (!isset($this->permissions[$cap->name])) {
                 $this->permissions[$cap->name] = CAP_INHERIT;
@@ -76,7 +76,7 @@ abstract class core_role_capability_table_with_risks extends core_role_capabilit
     protected function load_current_permissions() {
         global $DB;
 
-        /// Load the overrides/definition in this context.
+        // Load the overrides/definition in this context.
         if ($this->roleid) {
             $this->permissions = $DB->get_records_menu('role_capabilities', array('roleid' => $this->roleid,
                 'contextid' => $this->context->id), '', 'capability,permission');
@@ -96,18 +96,18 @@ abstract class core_role_capability_table_with_risks extends core_role_capabilit
 
         foreach ($this->capabilities as $cap) {
             if ($cap->locked || $this->skip_row($cap)) {
-                /// The user is not allowed to change the permission for this capability
+                // The user is not allowed to change the permission for this capability.
                 continue;
             }
 
             $permission = optional_param($cap->name, null, PARAM_PERMISSION);
             if (is_null($permission)) {
-                /// A permission was not specified in submitted data.
+                // A permission was not specified in submitted data.
                 continue;
             }
 
-            /// If the permission has changed, update $this->permissions and
-            /// Record the fact there is data to save.
+            // If the permission has changed, update $this->permissions and
+            // Record the fact there is data to save.
             if ($this->permissions[$cap->name] != $permission) {
                 $this->permissions[$cap->name] = $permission;
                 $this->changed[] = $cap->name;
@@ -119,14 +119,14 @@ abstract class core_role_capability_table_with_risks extends core_role_capabilit
      * Save the new values of any permissions that have been changed.
      */
     public function save_changes() {
-        /// Set the permissions.
+        // Set the permissions.
         foreach ($this->changed as $changedcap) {
             assign_capability($changedcap, $this->permissions[$changedcap],
                 $this->roleid, $this->context->id, true);
         }
 
-        /// Force accessinfo refresh for users visiting this context.
-        mark_context_dirty($this->context->path);
+        // Force accessinfo refresh for users visiting this context.
+        $this->context->mark_dirty();
     }
 
     public function display() {
@@ -143,7 +143,7 @@ abstract class core_role_capability_table_with_risks extends core_role_capabilit
         global $OUTPUT;
         echo '<th colspan="' . count($this->displaypermissions) . '" scope="col">' .
             get_string('permission', 'role') . ' ' . $OUTPUT->help_icon('permission', 'role') . '</th>';
-        echo '<th class="risk" colspan="' . count($this->allrisks) . '" scope="col">' . get_string('risks','role') . '</th>';
+        echo '<th class="risk" colspan="' . count($this->allrisks) . '" scope="col">' . get_string('risks', 'core_role') . '</th>';
     }
 
     protected function num_extra_columns() {
@@ -164,7 +164,7 @@ abstract class core_role_capability_table_with_risks extends core_role_capabilit
 
     protected function add_row_cells($capability) {
         $this->add_permission_cells($capability);
-        /// One cell for each possible risk.
+        // One cell for each possible risk.
         foreach ($this->allrisks as $riskname => $risk) {
             echo '<td class="risk ' . str_replace('risk', '', $riskname) . '">';
             if ($risk & (int)$capability->riskbitmask) {
@@ -180,7 +180,7 @@ abstract class core_role_capability_table_with_risks extends core_role_capabilit
      * @param string $type the type of risk, will be one of the keys from the
      *      get_all_risks array. Must start with 'risk'.
      */
-    function get_risk_icon($type) {
+    public function get_risk_icon($type) {
         global $OUTPUT;
         if (!isset($this->riskicons[$type])) {
             $iconurl = $OUTPUT->pix_url('i/' . str_replace('risk', 'risk_', $type));

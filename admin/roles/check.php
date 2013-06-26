@@ -24,7 +24,7 @@
 
 require_once(dirname(__FILE__) . '/../../config.php');
 
-$contextid = required_param('contextid',PARAM_INT);
+$contextid = required_param('contextid', PARAM_INT);
 
 list($context, $course, $cm) = get_context_info_array($contextid);
 
@@ -44,7 +44,7 @@ if ($course) {
     }
 }
 
-// security first
+// Security first.
 require_login($course, false, $cm);
 if (!has_any_capability(array('moodle/role:assign', 'moodle/role:safeoverride', 'moodle/role:override', 'moodle/role:manage'), $context)) {
     print_error('nopermissions', 'error', '', get_string('checkpermissions', 'role'));

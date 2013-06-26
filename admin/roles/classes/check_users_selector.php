@@ -15,12 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Library code used by the roles administration interfaces.
- *
- * Responds to actions:
- *   add       - add a new role
- *   edit      - edit the definition of a role
- *   view      - view the definition of a role
+ * User selector.
  *
  * @package    core_role
  * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
@@ -38,7 +33,7 @@ require_once($CFG->dirroot.'/user/selector/lib.php');
  */
 class core_role_check_users_selector extends user_selector_base {
     /** @var bool limit listing of users to enrolled only */
-    var $onlyenrolled;
+    protected $onlyenrolled;
 
     /**
      * Constructor.

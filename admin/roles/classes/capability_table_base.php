@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Library code used by the roles administration interfaces.
+ * Base capability table.
  *
  * @package    core_role
  * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
@@ -49,13 +49,13 @@ abstract class core_role_capability_table_base {
     const NUM_CAPS_FOR_SEARCH = 12;
 
     /**
-     * Constructor
-     * @param object $context the context this table relates to.
+     * Constructor.
+     * @param context $context the context this table relates to.
      * @param string $id what to put in the id="" attribute.
      */
-    public function __construct($context, $id) {
+    public function __construct(context $context, $id) {
         $this->context = $context;
-        $this->capabilities = fetch_context_capabilities($context);
+        $this->capabilities = $context->get_capabilities();
         $this->id = $id;
     }
 
@@ -74,15 +74,15 @@ abstract class core_role_capability_table_base {
     public function display() {
         if (count($this->capabilities) > self::NUM_CAPS_FOR_SEARCH) {
             global $PAGE;
-            $PAGE->requires->strings_for_js(array('filter','clear'),'moodle');
+            $PAGE->requires->strings_for_js(array('filter', 'clear'), 'moodle');
             $PAGE->requires->js_init_call('M.core_role.init_cap_table_filter', array($this->id, $this->context->id));
         }
         echo '<table class="' . implode(' ', $this->classes) . '" id="' . $this->id . '">' . "\n<thead>\n";
-        echo '<tr><th class="name" align="left" scope="col">' . get_string('capability','role') . '</th>';
+        echo '<tr><th class="name" align="left" scope="col">' . get_string('capability', 'core_role') . '</th>';
         $this->add_header_cells();
         echo "</tr>\n</thead>\n<tbody>\n";
 
-        /// Loop over capabilities.
+        // Loop over capabilities.
         $contextlevel = 0;
         $component = '';
         foreach ($this->capabilities as $capability) {
@@ -90,35 +90,35 @@ abstract class core_role_capability_table_base {
                 continue;
             }
 
-            /// Prints a breaker if component or name or context level has changed
+            // Prints a breaker if component or name or context level has changed.
             if (component_level_changed($capability, $component, $contextlevel)) {
                 $this->print_heading_row($capability);
             }
             $contextlevel = $capability->contextlevel;
             $component = $capability->component;
 
-            /// Start the row.
+            // Start the row.
             echo '<tr class="' . implode(' ', array_unique(array_merge(array('rolecap'),
                     $this->get_row_classes($capability)))) . '">';
 
-            /// Table cell for the capability name.
+            // Table cell for the capability name.
             echo '<th scope="row" class="name"><span class="cap-desc">' . get_capability_docs_link($capability) .
                 '<span class="cap-name">' . $capability->name . '</span></span></th>';
 
-            /// Add the cells specific to this table.
+            // Add the cells specific to this table.
             $this->add_row_cells($capability);
 
-            /// End the row.
+            // End the row.
             echo "</tr>\n";
         }
 
-        /// End of the table.
+        // End of the table.
         echo "</tbody>\n</table>\n";
     }
 
     /**
      * Used to output a heading rows when the context level or component changes.
-     * @param object $capability gives the new component and contextlevel.
+     * @param stdClass $capability gives the new component and contextlevel.
      */
     protected function print_heading_row($capability) {
         echo '<tr class="rolecapheading header"><td colspan="' . (1 + $this->num_extra_columns()) . '" class="header"><strong>' .
@@ -127,10 +127,14 @@ abstract class core_role_capability_table_base {
 
     }
 
-    /** For subclasses to override, output header cells, after the initial capability one. */
+    /**
+     * For subclasses to override, output header cells, after the initial capability one.
+     */
     protected abstract function add_header_cells();
 
-    /** For subclasses to override, return the number of cells that add_header_cells/add_row_cells output. */
+    /**
+     * For subclasses to override, return the number of cells that add_header_cells/add_row_cells output.
+     */
     protected abstract function num_extra_columns();
 
     /**
@@ -148,7 +152,7 @@ abstract class core_role_capability_table_base {
      * For subclasses to override. A change to reaturn class names that are added
      * to the class="" attribute on the &lt;tr> for this capability.
      *
-     * @param object $capability the capability this row relates to.
+     * @param stdClass $capability the capability this row relates to.
      * @return array of class name strings.
      */
     protected function get_row_classes($capability) {
@@ -161,7 +165,7 @@ abstract class core_role_capability_table_base {
      *
      * You can rely on get_row_classes always being called before add_row_cells.
      *
-     * @param object $capability the capability this row relates to.
+     * @param stdClass $capability the capability this row relates to.
      */
     protected abstract function add_row_cells($capability);
 }
