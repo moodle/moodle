@@ -15,20 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Lets you assign roles to users in a particular context.
+ * Assign roles to users.
  *
  * @package    core_role
  * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(__FILE__) . '/../../config.php');
+require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot . '/' . $CFG->admin . '/roles/lib.php');
 
 define("MAX_USERS_TO_LIST_PER_ROLE", 10);
 
-$contextid      = required_param('contextid',PARAM_INT);
-$roleid         = optional_param('roleid', 0, PARAM_INT);
+$contextid = required_param('contextid', PARAM_INT);
+$roleid    = optional_param('roleid', 0, PARAM_INT);
 
 list($context, $course, $cm) = get_context_info_array($contextid);
 
@@ -49,7 +49,7 @@ if ($course) {
 }
 
 
-// security
+// Security.
 require_login($course, false, $cm);
 require_capability('moodle/role:assign', $context);
 $PAGE->set_url($url);
@@ -58,11 +58,11 @@ $PAGE->set_context($context);
 $contextname = print_context_name($context);
 $courseid = $course->id;
 
-// These are needed early because of tabs.php
+// These are needed early because of tabs.php.
 list($assignableroles, $assigncounts, $nameswithcounts) = get_assignable_roles($context, ROLENAME_BOTH, true);
 $overridableroles = get_overridable_roles($context, ROLENAME_BOTH);
 
-// Make sure this user can assign this role
+// Make sure this user can assign this role.
 if ($roleid && !isset($assignableroles[$roleid])) {
     $a = new stdClass;
     $a->roleid = $roleid;
@@ -93,7 +93,7 @@ if ($roleid) {
     $potentialuserselector = core_role_get_potential_user_selector($context, 'addselect', $options);
     $currentuserselector = new core_role_existing_role_holders('removeselect', $options);
 
-    // Process incoming role assignments
+    // Process incoming role assignments.
     $errors = array();
     if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
         $userstoassign = $potentialuserselector->get_selected_users();
@@ -117,13 +117,13 @@ if ($roleid) {
         }
     }
 
-    // Process incoming role unassignments
+    // Process incoming role unassignments.
     if (optional_param('remove', false, PARAM_BOOL) && confirm_sesskey()) {
         $userstounassign = $currentuserselector->get_selected_users();
         if (!empty($userstounassign)) {
 
             foreach ($userstounassign as $removeuser) {
-                //unassign only roles that are added manually, no messing with other components!!!
+                // Unassign only roles that are added manually, no messing with other components!!!
                 role_unassign($roleid, $removeuser->id, $context->id, '');
             }
 
@@ -184,7 +184,7 @@ if ($roleid) {
     }
 
     // Print the form.
-$assignurl = new moodle_url($PAGE->url, array('roleid'=>$roleid));
+    $assignurl = new moodle_url($PAGE->url, array('roleid'=>$roleid));
 ?>
 <form id="assignform" method="post" action="<?php echo $assignurl ?>"><div>
   <input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
@@ -248,7 +248,7 @@ $assignurl = new moodle_url($PAGE->url, array('roleid'=>$roleid));
         echo $OUTPUT->box(get_string('globalroleswarning', 'role'));
     }
 
-    // Print instruction
+    // Print instruction.
     echo $OUTPUT->heading(get_string('chooseroletoassign', 'role'), 3);
 
     // Get the names of role holders for roles with between 1 and MAX_USERS_TO_LIST_PER_ROLE users,
@@ -276,7 +276,7 @@ $assignurl = new moodle_url($PAGE->url, array('roleid'=>$roleid));
         }
     }
 
-    // Print overview table
+    // Print overview table.
     $table = new html_table();
     $table->id = 'assignrole';
     $table->head = array(get_string('role'), get_string('description'), get_string('userswiththisrole', 'role'));
@@ -302,7 +302,7 @@ $assignurl = new moodle_url($PAGE->url, array('roleid'=>$roleid));
 
     if ($context->contextlevel > CONTEXT_USER) {
         echo html_writer::start_tag('div', array('class'=>'backlink'));
-        echo html_writer::tag('a', get_string('backto', '', $contextname), array('href'=>get_context_url($context)));
+        echo html_writer::tag('a', get_string('backto', '', $contextname), array('href'=>$context->get_url()));
         echo html_writer::end_tag('div');
     }
 }

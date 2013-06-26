@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Library code used by the roles administration interfaces.
+ * Existing user selector.
  *
  * @package    core_role
  * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
@@ -29,10 +29,6 @@ defined('MOODLE_INTERNAL') || die();
  * question on the assign roles page.
  */
 class core_role_existing_role_holders extends core_role_assign_user_selector_base {
-
-    public function __construct($name, $options) {
-        parent::__construct($name, $options);
-    }
 
     public function find_users($search) {
         global $DB;
@@ -96,7 +92,7 @@ class core_role_existing_role_holders extends core_role_assign_user_selector_bas
                 $user->disabled = true;
             }
             if ($user->component !== '') {
-                // bad luck, you can tweak only manual role assignments
+                // Bad luck, you can tweak only manual role assignments.
                 $user->disabled = true;
             }
             unset($user->component);
