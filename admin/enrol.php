@@ -119,7 +119,9 @@ switch ($action) {
 
         echo $OUTPUT->notification(get_string('success'), 'notifysuccess');
 
-        $return = new moodle_url('/admin/plugins.php', array('uninstall'=>'enrol_'.$enrol, 'sesskey'=>sesskey()));
+        if (!$return = plugin_manager::instance()->get_uninstall_url('enrol_'.$enrol)) {
+            $return = new moodle_url('/admin/plugins.php');
+        }
         echo $OUTPUT->continue_button($return);
         echo $OUTPUT->footer();
         exit;
