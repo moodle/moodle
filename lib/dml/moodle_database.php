@@ -2109,6 +2109,15 @@ abstract class moodle_database {
     }
 
     /**
+     * Analyze the data in temporary tables to force statistics collection after bulk data loads.
+     *
+     * @return void
+     */
+    public function update_temp_table_stats() {
+        $this->temptables->update_stats();
+    }
+
+    /**
      * Checks and returns true if transactions are supported.
      *
      * It is not responsible to run productions servers
