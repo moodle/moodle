@@ -13,8 +13,6 @@
 
     $show    = optional_param('show', '', PARAM_PLUGIN);
     $hide    = optional_param('hide', '', PARAM_PLUGIN);
-    $delete  = optional_param('delete', '', PARAM_PLUGIN);
-    $confirm = optional_param('confirm', '', PARAM_BOOL);
 
 
 /// Print headings
@@ -73,38 +71,6 @@
         admin_get_root(true, false);  // settings not required - only pages
     }
 
-    if (!empty($delete) and confirm_sesskey()) {
-        echo $OUTPUT->header();
-        echo $OUTPUT->heading($stractivities);
-
-        if (get_string_manager()->string_exists('modulename', $delete)) {
-            $strmodulename = get_string('modulename', $delete);
-        } else {
-            $strmodulename = $delete;
-        }
-
-        if (!$confirm) {
-            echo $OUTPUT->confirm(get_string("moduledeleteconfirm", "", $strmodulename), "modules.php?delete=$delete&confirm=1", "modules.php");
-            echo $OUTPUT->footer();
-            exit;
-
-        } else {  // Delete everything!!
-
-            if ($delete == "forum") {
-                print_error("cannotdeleteforummodule", 'forum');
-            }
-
-            uninstall_plugin('mod', $delete);
-            $a = new stdClass();
-            $a->module = $strmodulename;
-            $a->directory = "$CFG->dirroot/mod/$delete";
-            echo $OUTPUT->notification(get_string("moduledeletefiles", "", $a), 'notifysuccess');
-            echo $OUTPUT->continue_button("modules.php");
-            echo $OUTPUT->footer();
-            exit;
-        }
-    }
-
     echo $OUTPUT->header();
     echo $OUTPUT->heading($stractivities);
 
@@ -136,7 +102,10 @@
             $missing = false;
         }
 
-        $delete = "<a href=\"modules.php?delete=$module->name&amp;sesskey=".sesskey()."\">$strdelete</a>";
+        $delete = '';
+        if ($deleteurl = plugin_manager::instance()->get_uninstall_url('mod_'.$module->name)) {
+            $delete = html_writer::link($deleteurl, $strdelete);
+        }
 
         if (file_exists("$CFG->dirroot/mod/$module->name/settings.php") ||
                 file_exists("$CFG->dirroot/mod/$module->name/settingstree.php")) {

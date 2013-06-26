@@ -3423,8 +3423,29 @@ class plugininfo_mod extends plugininfo_base {
         }
     }
 
-    public function get_uninstall_url() {
-        return new moodle_url('/admin/modules.php', array('delete' => $this->name, 'sesskey' => sesskey()));
+    /**
+     * Return warning with number of activities and number of affected courses.
+     *
+     * @return string
+     */
+    public function get_uninstall_extra_warning() {
+        global $DB;
+
+        if (!$module = $DB->get_record('modules', array('name'=>$this->name))) {
+            return '';
+        }
+
+        if (!$count = $DB->count_records('course_modules', array('module'=>$module->id))) {
+            return '';
+        }
+
+        $sql = "SELECT COUNT(course)
+                  FROM {course_modules}
+                 WHERE module = :mid
+              GROUP BY course";
+        $courses = $DB->count_records_sql($sql, array('mid'=>$module->id));
+
+        return '<p>'.get_string('uninstallextraconfirmmod', 'core_plugin', array('instances'=>$count, 'courses'=>$courses)).'</p>';
     }
 
     /**

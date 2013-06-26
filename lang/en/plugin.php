@@ -153,6 +153,7 @@ $string['uninstalldeleteconfirm'] = 'All data associated with the plugin <em>{$a
 $string['uninstalldeleteconfirmexternal'] = 'It appears that the current version of the plugin has been obtained via source code management system ({$a}) checkout. If you remove the plugin folder, you may loose important local modifications of the code. Please ensure that you definitely want to remove the plugin folder before continuing.';
 $string['uninstallextraconfirmblock'] = 'There are {$a->instances} instances of this block.';
 $string['uninstallextraconfirmenrol'] = 'There are {$a->enrolments} user enrolments.';
+$string['uninstallextraconfirmmod'] = 'There are {$a->instances} instances of this module in {$a->courses} courses.';
 $string['uninstalling'] = 'Uninstalling {$a->name}';
 $string['version'] = 'Version';
 $string['versiondb'] = 'Current version';
