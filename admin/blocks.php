@@ -1,6 +1,6 @@
 <?php
 
-    // Allows the admin to configure blocks (hide/show, delete and configure)
+    // Allows the admin to configure blocks (hide/show, uninstall and configure)
 
     require_once('../config.php');
     require_once($CFG->libdir.'/adminlib.php');
@@ -17,7 +17,7 @@
 /// Print headings
 
     $strmanageblocks = get_string('manageblocks');
-    $strdelete = get_string('delete');
+    $struninstall = get_string('uninstallplugin', 'core_admin');
     $strversion = get_string('version');
     $strhide = get_string('hide');
     $strshow = get_string('show');
@@ -97,8 +97,8 @@
 
     $table = new flexible_table('admin-blocks-compatible');
 
-    $table->define_columns(array('name', 'instances', 'version', 'hideshow', 'undeletable', 'delete', 'settings'));
-    $table->define_headers(array($strname, $strcourses, $strversion, $strhide.'/'.$strshow, $strprotecthdr, $strdelete, $strsettings));
+    $table->define_columns(array('name', 'instances', 'version', 'hideshow', 'undeletable', 'uninstall', 'settings'));
+    $table->define_headers(array($strname, $strcourses, $strversion, $strhide.'/'.$strshow, $strprotecthdr, $struninstall, $strsettings));
     $table->define_baseurl($CFG->wwwroot.'/'.$CFG->admin.'/blocks.php');
     $table->set_attribute('class', 'admintable blockstable generaltable');
     $table->set_attribute('id', 'compatibleblockstable');
@@ -140,10 +140,10 @@
             }
         }
 
-        if ($deleteurl = plugin_manager::instance()->get_uninstall_url('block_'.$blockname)) {
-            $delete = html_writer::link($deleteurl, $strdelete);
+        if ($uninstallurl = plugin_manager::instance()->get_uninstall_url('block_'.$blockname)) {
+            $uninstall = html_writer::link($uninstallurl, $struninstall);
         } else {
-            $delete = '';
+            $uninstall = '';
         }
 
         $settings = ''; // By default, no configuration
@@ -209,7 +209,7 @@
             '<span'.$class.'>'.$version.'</span>',
             $visible,
             $undeletable,
-            $delete,
+            $uninstall,
             $settings
         );
         $table->add_data($row);
@@ -222,8 +222,8 @@
 
         $table = new flexible_table('admin-blocks-incompatible');
 
-        $table->define_columns(array('block', 'delete'));
-        $table->define_headers(array($strname, $strdelete));
+        $table->define_columns(array('block', 'uninstall'));
+        $table->define_headers(array($strname, $struninstall));
         $table->define_baseurl($CFG->wwwroot.'/'.$CFG->admin.'/blocks.php');
 
         $table->set_attribute('class', 'incompatibleblockstable generaltable');
@@ -231,14 +231,14 @@
         $table->setup();
 
         foreach ($incompatible as $block) {
-            if ($deleteurl = plugin_manager::instance()->get_uninstall_url('block_'.$block->name)) {
-                $delete = html_writer::link($deleteurl, $strdelete);
+            if ($uninstallurl = plugin_manager::instance()->get_uninstall_url('block_'.$block->name)) {
+                $uninstall = html_writer::link($uninstallurl, $struninstall);
             } else {
-                $delete = '';
+                $uninstall = '';
             }
             $table->add_data(array(
                 $block->name,
-                $delete,
+                $uninstall,
             ));
         }
         $table->print_html();

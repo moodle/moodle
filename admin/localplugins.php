@@ -39,8 +39,8 @@ echo $OUTPUT->heading(get_string('localplugins'));
 /// Print the table of all installed local plugins
 
 $table = new flexible_table('localplugins_administration_table');
-$table->define_columns(array('name', 'version', 'delete'));
-$table->define_headers(array(get_string('plugin'), get_string('version'), get_string('delete')));
+$table->define_columns(array('name', 'version', 'uninstall'));
+$table->define_headers(array(get_string('plugin'), get_string('version'), get_string('uninstallplugin', 'core_admin')));
 $table->define_baseurl($PAGE->url);
 $table->set_attribute('id', 'localplugins');
 $table->set_attribute('class', 'admintable generaltable');
@@ -58,9 +58,9 @@ foreach (get_plugin_list('local') as $plugin => $plugindir) {
 collatorlib::asort($plugins);
 
 foreach ($plugins as $plugin => $name) {
-    $delete = '';
-    if ($deleteurl = plugin_manager::instance()->get_uninstall_url('local_'.$plugin)) {
-        $delete = html_writer::link($deleteurl, get_string('uninstallplugin', 'core_admin'));
+    $uninstall = '';
+    if ($uninstallurl = plugin_manager::instance()->get_uninstall_url('local_'.$plugin)) {
+        $uninstall = html_writer::link($uninstall, get_string('uninstallplugin', 'core_admin'));
     }
 
     $version = get_config('local_' . $plugin);
@@ -70,7 +70,7 @@ foreach ($plugins as $plugin => $name) {
         $version = '?';
     }
 
-    $table->add_data(array($name, $version, $delete));
+    $table->add_data(array($name, $version, $uninstall));
 }
 
 $table->print_html();

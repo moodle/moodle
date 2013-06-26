@@ -18,7 +18,7 @@
 /// Print headings
 
     $stractivities = get_string("activities");
-    $strdelete = get_string("delete");
+    $struninstall = get_string('uninstallplugin', 'core_admin');
     $strversion = get_string("version");
     $strhide = get_string("hide");
     $strshow = get_string("show");
@@ -44,7 +44,7 @@
                  WHERE module=?";
         $DB->execute($sql, array($module->id));
         // clear the course modinfo cache for courses
-        // where we just deleted something
+        // where we just uninstalld something
         $sql = "UPDATE {course}
                    SET modinfo=''
                  WHERE id IN (SELECT DISTINCT course
@@ -83,8 +83,8 @@
 /// Print the table of all modules
     // construct the flexible table ready to display
     $table = new flexible_table(MODULE_TABLE);
-    $table->define_columns(array('name', 'instances', 'version', 'hideshow', 'delete', 'settings'));
-    $table->define_headers(array($stractivitymodule, $stractivities, $strversion, "$strhide/$strshow", $strdelete, $strsettings));
+    $table->define_columns(array('name', 'instances', 'version', 'hideshow', 'uninstall', 'settings'));
+    $table->define_headers(array($stractivitymodule, $stractivities, $strversion, "$strhide/$strshow", $struninstall, $strsettings));
     $table->define_baseurl($CFG->wwwroot.'/'.$CFG->admin.'/modules.php');
     $table->set_attribute('id', 'modules');
     $table->set_attribute('class', 'generaltable');
@@ -102,9 +102,9 @@
             $missing = false;
         }
 
-        $delete = '';
-        if ($deleteurl = plugin_manager::instance()->get_uninstall_url('mod_'.$module->name)) {
-            $delete = html_writer::link($deleteurl, $strdelete);
+        $uninstall = '';
+        if ($uninstallurl = plugin_manager::instance()->get_uninstall_url('mod_'.$module->name)) {
+            $uninstall = html_writer::link($uninstallurl, $struninstall);
         }
 
         if (file_exists("$CFG->dirroot/mod/$module->name/settings.php") ||
@@ -141,7 +141,7 @@
             $class =   ' class="dimmed_text"';
         }
         if ($module->name == "forum") {
-            $delete = "";
+            $uninstall = "";
             $visible = "";
             $class = "";
         }
@@ -152,7 +152,7 @@
             $countlink,
             '<span'.$class.'>'.$module->version.'</span>',
             $visible,
-            $delete,
+            $uninstall,
             $settings
         ));
     }

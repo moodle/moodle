@@ -5129,7 +5129,7 @@ class admin_setting_manageenrols extends admin_setting {
         $strsettings  = get_string('settings');
         $strenable    = get_string('enable');
         $strdisable   = get_string('disable');
-        $struninstall = get_string('uninstallplugin', 'admin');
+        $struninstall = get_string('uninstallplugin', 'core_admin');
         $strusage     = get_string('enrolusage', 'enrol');
         $strversion   = get_string('version');
 
@@ -5240,8 +5240,8 @@ class admin_setting_manageenrols extends admin_setting {
 
             // Add uninstall info.
             $uninstall = '';
-            if ($deleteurl = plugin_manager::instance()->get_uninstall_url('enrol_'.$enrol)) {
-                $uninstall = html_writer::link($deleteurl, $struninstall);
+            if ($uninstallurl = plugin_manager::instance()->get_uninstall_url('enrol_'.$enrol)) {
+                $uninstall = html_writer::link($uninstallurl, $struninstall);
             }
 
             // Add a row to the table.
@@ -5861,7 +5861,7 @@ class admin_setting_manageeditors extends admin_setting {
         // display strings
         $txt = get_strings(array('administration', 'settings', 'edit', 'name', 'enable', 'disable',
             'up', 'down', 'none'));
-        $struninstall = get_string('uninstallplugin', 'admin');
+        $struninstall = get_string('uninstallplugin', 'core_admin');
 
         $txt->updown = "$txt->up/$txt->down";
 
@@ -5942,8 +5942,8 @@ class admin_setting_manageeditors extends admin_setting {
             }
 
             $uninstall = '';
-            if ($deleteurl = plugin_manager::instance()->get_uninstall_url('editor_'.$editor)) {
-                $uninstall = html_writer::link($deleteurl, $struninstall);
+            if ($uninstallurl = plugin_manager::instance()->get_uninstall_url('editor_'.$editor)) {
+                $uninstall = html_writer::link($uninstallurl, $struninstall);
             }
 
             // add a row to the table
@@ -6130,11 +6130,12 @@ class admin_setting_manageformats extends admin_setting {
         $formats = plugin_manager::instance()->get_plugins_of_type('format');
 
         // display strings
-        $txt = get_strings(array('settings', 'name', 'enable', 'disable', 'up', 'down', 'default', 'delete'));
+        $txt = get_strings(array('settings', 'name', 'enable', 'disable', 'up', 'down', 'default'));
+        $txt->uninstall = get_string('uninstallplugin', 'core_admin');
         $txt->updown = "$txt->up/$txt->down";
 
         $table = new html_table();
-        $table->head  = array($txt->name, $txt->enable, $txt->updown, $txt->delete, $txt->settings);
+        $table->head  = array($txt->name, $txt->enable, $txt->updown, $txt->uninstall, $txt->settings);
         $table->align = array('left', 'center', 'center', 'center', 'center');
         $table->width = '90%';
         $table->attributes['class'] = 'manageformattable generaltable';
@@ -6179,8 +6180,8 @@ class admin_setting_manageformats extends admin_setting {
                 $settings = html_writer::link($format->get_settings_url(), $txt->settings);
             }
             $uninstall = '';
-            if ($deleteurl = plugin_manager::instance()->get_uninstall_url('format_'.$format->name)) {
-                $uninstall = html_writer::link($deleteurl, $txt->delete);
+            if ($uninstallurl = plugin_manager::instance()->get_uninstall_url('format_'.$format->name)) {
+                $uninstall = html_writer::link($uninstallurl, $txt->uninstall);
             }
             $table->data[] =array($strformatname, $hideshow, $updown, $uninstall, $settings);
         }

@@ -18,7 +18,7 @@
  * Provides an overview of installed plagiarism plugins
  *
  * Displays the list of found plagiarism plugins, their version (if found) and
- * a link to delete the plagiarism plugin.
+ * a link to uninstall the plagiarism plugin.
  *
  * @see       http://docs.moodle.org/dev/Plagiarism_API
  * @package   admin
@@ -36,7 +36,8 @@ echo $OUTPUT->header();
 
 // Print the table of all installed plagiarism plugins.
 
-$txt = get_strings(array('settings', 'name', 'version', 'delete'));
+$txt = get_strings(array('settings', 'name', 'version'));
+$txt->uninstall = get_string('uninstallplugin', 'core_admin');
 
 $plagiarismplugins = get_plugin_list('plagiarism');
 if (empty($plagiarismplugins)) {
@@ -49,7 +50,7 @@ echo $OUTPUT->heading(get_string('availableplugins', 'plagiarism'), 3, 'main');
 echo $OUTPUT->box_start('generalbox authsui');
 
 $table = new html_table();
-$table->head  = array($txt->name, $txt->version, $txt->delete, $txt->settings);
+$table->head  = array($txt->name, $txt->version, $txt->uninstall, $txt->settings);
 $table->colclasses = array('mdl-left', 'mdl-align', 'mdl-align', 'mdl-align');
 $table->data  = array();
 $table->attributes['class'] = 'manageplagiarismtable generaltable';
@@ -69,12 +70,12 @@ foreach ($plagiarismplugins as $plugin => $dir) {
         } else {
             $version = '?';
         }
-        // Delete link.
-        $delete = '';
-        if ($deleteurl = plugin_manager::instance()->get_uninstall_url('plagiarism_'.$plugin)) {
-            $delete = html_writer::link($deleteurl, get_string('delete'));
+        // uninstall link.
+        $uninstall = '';
+        if ($uninstallurl = plugin_manager::instance()->get_uninstall_url('plagiarism_'.$plugin)) {
+            $uninstall = html_writer::link($uninstallurl, $txt->uninstall);
         }
-        $table->data[] = array($displayname, $version, $delete, $settings);
+        $table->data[] = array($displayname, $version, $uninstall, $settings);
     }
 }
 echo html_writer::table($table);

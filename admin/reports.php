@@ -18,7 +18,7 @@
  * Provides an overview of installed reports
  *
  * Displays the list of found reports, their version (if found) and
- * a link to delete the report.
+ * a link to uninstall the report.
  *
  * The code is based on admin/localplugins.php by David Mudrak.
  *
@@ -38,9 +38,11 @@ echo $OUTPUT->heading(get_string('reports'));
 
 /// Print the table of all installed report plugins
 
+$struninstall = get_string('uninstallplugin', 'core_admin');
+
 $table = new flexible_table('reportplugins_administration_table');
-$table->define_columns(array('name', 'version', 'delete'));
-$table->define_headers(array(get_string('plugin'), get_string('version'), get_string('delete')));
+$table->define_columns(array('name', 'version', 'uninstall'));
+$table->define_headers(array(get_string('plugin'), get_string('version'), $struninstall));
 $table->define_baseurl($PAGE->url);
 $table->set_attribute('id', 'reportplugins');
 $table->set_attribute('class', 'generaltable generalbox boxaligncenter boxwidthwide');
@@ -70,9 +72,9 @@ foreach ($installed as $config) {
 }
 
 foreach ($plugins as $plugin => $name) {
-    $delete = '';
-    if ($deleteurl = plugin_manager::instance()->get_uninstall_url('report_'.$plugin)) {
-        $delete = html_writer::link($deleteurl, get_string('delete'));
+    $uninstall = '';
+    if ($uninstallurl = plugin_manager::instance()->get_uninstall_url('report_'.$plugin)) {
+        $uninstall = html_writer::link($uninstallurl, $struninstall);
     }
 
     if (!isset($versions[$plugin])) {
@@ -94,7 +96,7 @@ foreach ($plugins as $plugin => $name) {
         }
     }
 
-    $table->add_data(array($name, $version, $delete));
+    $table->add_data(array($name, $version, $uninstall));
 }
 
 $table->print_html();
