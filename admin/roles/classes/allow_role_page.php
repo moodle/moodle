@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Library code used by the roles administration interfaces.
+ * Base class for allow matrices.
  *
  * @package    core_role
  * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
@@ -35,6 +35,8 @@ abstract class core_role_allow_role_page {
     protected $allowed = null;
 
     /**
+     * Constructor.
+     *
      * @param string $tablename the table where our data is stored.
      * @param string $targetcolname the name of the target role id column.
      */
@@ -48,7 +50,7 @@ abstract class core_role_allow_role_page {
      * Load information about all the roles we will need information about.
      */
     protected function load_required_roles() {
-        /// Get all roles
+        // Get all roles.
         $this->roles = role_fix_names(get_all_roles(), context_system::instance(), ROLENAME_ORIGINAL);
     }
 
@@ -57,7 +59,7 @@ abstract class core_role_allow_role_page {
      */
     public function process_submission() {
         global $DB;
-        /// Delete all records, then add back the ones that should be allowed.
+        // Delete all records, then add back the ones that should be allowed.
         $DB->delete_records($this->tablename);
         foreach ($this->roles as $fromroleid => $notused) {
             foreach ($this->roles as $targetroleid => $alsonotused) {
@@ -70,8 +72,8 @@ abstract class core_role_allow_role_page {
 
     /**
      * Set one allow in the database.
-     * @param integer $fromroleid
-     * @param integer $targetroleid
+     * @param int $fromroleid
+     * @param int $targetroleid
      */
     protected abstract function set_allow($fromroleid, $targetroleid);
 
@@ -80,7 +82,7 @@ abstract class core_role_allow_role_page {
      */
     public function load_current_settings() {
         global $DB;
-        /// Load the current settings
+        // Load the current settings.
         $this->allowed = array();
         foreach ($this->roles as $role) {
             // Make an array $role->id => false. This is probably too clever for its own good.
@@ -94,17 +96,19 @@ abstract class core_role_allow_role_page {
     }
 
     /**
+     * Is target allowed?
+     *
      * @param integer $targetroleid a role id.
-     * @return boolean whether the user should be allowed to select this role as a
-     * target role.
+     * @return boolean whether the user should be allowed to select this role as a target role.
      */
     protected function is_allowed_target($targetroleid) {
         return true;
     }
 
     /**
-     * @return object a $table structure that can be passed to print_table, containing
-     * one cell for each checkbox.
+     * Returns structure that can be passed to print_table,
+     * containing one cell for each checkbox.
+     * @return html_table a table
      */
     public function get_table() {
         $table = new html_table();
@@ -117,7 +121,7 @@ abstract class core_role_allow_role_page {
         $table->head = array('&#xa0;');
         $table->colclasses = array('');
 
-        /// Add role name headers.
+        // Add role name headers.
         foreach ($this->roles as $targetrole) {
             $table->head[] = $targetrole->localname;
             $table->align[] = 'left';
@@ -128,7 +132,7 @@ abstract class core_role_allow_role_page {
             }
         }
 
-        /// Now the rest of the table.
+        // Now the rest of the table.
         foreach ($this->roles as $fromrole) {
             $row = array($fromrole->localname);
             foreach ($this->roles as $targetrole) {
@@ -154,7 +158,7 @@ abstract class core_role_allow_role_page {
 
     /**
      * Snippet of text displayed above the table, telling the admin what to do.
-     * @return unknown_type
+     * @return string
      */
     public abstract function get_intro_text();
 }

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Library code used by the roles administration interfaces.
+ * Role witch matrix.
  *
  * @package    core_role
  * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
@@ -37,7 +37,7 @@ class core_role_allow_switch_page extends core_role_allow_role_page {
     protected function load_required_roles() {
         global $DB;
         parent::load_required_roles();
-        $this->allowedtargetroles = $DB->get_records_menu('role', NULL, 'id');
+        $this->allowedtargetroles = $DB->get_records_menu('role', null, 'id');
     }
 
     protected function set_allow($fromroleid, $targetroleid) {

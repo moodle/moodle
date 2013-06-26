@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Library code used by the roles administration interfaces.
+ * Role assign matrix.
  *
  * @package    core_role
  * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
@@ -47,4 +47,3 @@ class core_role_allow_assign_page extends core_role_allow_role_page {
         return get_string('configallowassign', 'admin');
     }
 }
-
