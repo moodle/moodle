@@ -5232,18 +5232,16 @@ class admin_setting_manageenrols extends admin_setting {
             // Add settings link.
             if (!$version) {
                 $settings = '';
-            } else if ($url = $plugininfo->get_settings_url()) {
-                $settings = html_writer::link($url, $strsettings);
+            } else if ($surl = $plugininfo->get_settings_url()) {
+                $settings = html_writer::link($surl, $strsettings);
             } else {
                 $settings = '';
             }
 
             // Add uninstall info.
-            if ($version) {
-                $url = new moodle_url($plugininfo->get_uninstall_url(), array('return'=>'settings'));
-                $uninstall = html_writer::link($url, $struninstall);
-            } else {
-                $uninstall = '';
+            $uninstall = '';
+            if ($deleteurl = plugin_manager::instance()->get_uninstall_url('enrol_'.$enrol)) {
+                $uninstall = html_writer::link($deleteurl, $struninstall);
             }
 
             // Add a row to the table.

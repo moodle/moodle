@@ -3605,11 +3605,38 @@ class plugininfo_enrol extends plugininfo_base {
     }
 
     public function is_uninstall_allowed() {
+        if ($this->name === 'manual') {
+            return false;
+        }
         return true;
     }
 
-    public function get_uninstall_url() {
-        return new moodle_url('/admin/enrol.php', array('action' => 'uninstall', 'enrol' => $this->name, 'sesskey' => sesskey()));
+    /**
+     * Return warning with number of activities and number of affected courses.
+     *
+     * @return string
+     */
+    public function get_uninstall_extra_warning() {
+        global $DB, $OUTPUT;
+
+        $sql = "SELECT COUNT('x')
+                  FROM {user_enrolments} ue
+                  JOIN {enrol} e ON e.id = ue.enrolid
+                 WHERE e.enrol = :plugin";
+        $count = $DB->count_records_sql($sql, array('plugin'=>$this->name));
+
+        if (!$count) {
+            return '';
+        }
+
+        $migrateurl = new moodle_url('/admin/enrol.php', array('action'=>'migrate', 'enrol'=>$this->name, 'sesskey'=>sesskey()));
+        $migrate = new single_button($migrateurl, get_string('migratetomanual', 'core_enrol'));
+        $button = $OUTPUT->render($migrate);
+
+        $result = '<p>'.get_string('uninstallextraconfirmenrol', 'core_plugin', array('enrolments'=>$count)).'</p>';
+        $result .= $button;
+
+        return $result;
     }
 }
 

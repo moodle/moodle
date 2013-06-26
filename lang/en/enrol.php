@@ -81,6 +81,7 @@ $string['invalidenrolinstance'] = 'Invalid enrolment instance';
 $string['invalidrole'] = 'Invalid role';
 $string['manageenrols'] = 'Manage enrol plugins';
 $string['manageinstance'] = 'Manage';
+$string['migratetomanual'] = 'Migrate to manual enrolments';
 $string['nochange'] = 'No change';
 $string['noexistingparticipants'] = 'No existing participants';
 $string['noguestaccess'] = 'Guests can not access this course, please try to log in.';
@@ -110,12 +111,6 @@ $string['unenrolconfirm'] = 'Do you really want to unenrol user "{$a->user}" fro
 $string['unenrolme'] = 'Unenrol me from {$a}';
 $string['unenrolnotpermitted'] = 'You do not have permission or can not unenrol this user from this course.';
 $string['unenrolroleusers'] = 'Unenrol users';
-$string['uninstallconfirm'] = 'You are about to uninstall the enrolment plugin \'{$a}\'. This will result in the deletion of all data associated with this enrolment type, including users\' grades, group membership, forum subscriptions and any other course-related data.
-
-Are you SURE you want to continue?';
-$string['uninstalldelete'] = 'Delete all enrolments and uninstall';
-$string['uninstalldeletefiles'] = 'All data associated with the enrol plugin \'{$a->plugin}\' has been deleted from the database.  To complete the deletion (and prevent the plugin re-installing itself), you should now delete this directory from your server: {$a->directory}';
-$string['uninstallmigrate'] = 'Uninstall but keep all enrolments';
 $string['uninstallmigrating'] = 'Migrating "{$a}" enrolments';
 $string['unknowajaxaction'] = 'Unknown action requested';
 $string['unlimitedduration'] = 'Unlimited';
