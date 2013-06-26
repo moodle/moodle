@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Library code used by the roles administration interfaces.
+ * Existing admin user selector.
  *
  * @package    core_role
  * @copyright  2010 Petr Skoda {@link http://skodak.org}
@@ -28,6 +28,8 @@ require_once($CFG->dirroot.'/user/selector/lib.php');
 
 class core_role_admins_existing_selector extends user_selector_base {
     /**
+     * Create instance.
+     *
      * @param string $name control name
      * @param array $options should have two elements with keys groupid and courseid.
      */
@@ -44,7 +46,6 @@ class core_role_admins_existing_selector extends user_selector_base {
         list($wherecondition, $params) = $this->search_sql($search, '');
 
         $fields      = 'SELECT ' . $this->required_fields_sql('');
-        $countfields = 'SELECT COUNT(1)';
 
         if ($wherecondition) {
             $wherecondition = "$wherecondition AND id IN ($CFG->siteadmins)";
@@ -73,14 +74,14 @@ class core_role_admins_existing_selector extends user_selector_base {
 
         $result = array();
         if ($mainadmin) {
-            $result[get_string('mainadmin', 'role')] = $mainadmin;
+            $result[get_string('mainadmin', 'core_role')] = $mainadmin;
         }
 
         if ($availableusers) {
             if ($search) {
-                $groupname = get_string('extusersmatching', 'role', $search);
+                $groupname = get_string('extusersmatching', 'core_role', $search);
             } else {
-                $groupname = get_string('extusers', 'role');
+                $groupname = get_string('extusers', 'core_role');
             }
             $result[$groupname] = $availableusers;
         }

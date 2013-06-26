@@ -15,14 +15,14 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Lets you site administrators
+ * Select site administrators.
  *
  * @package    core_role
  * @copyright  2010 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(__FILE__) . '/../../config.php');
+require_once(__DIR__ . '/../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
 $confirmadd = optional_param('confirmadd', 0, PARAM_INT);
@@ -46,7 +46,8 @@ if (optional_param('add', false, PARAM_BOOL) and confirm_sesskey()) {
         $user = reset($userstoadd);
         $username = fullname($user) . " ($user->username, $user->email)";
         echo $OUTPUT->header();
-        echo $OUTPUT->confirm(get_string('confirmaddadmin', 'role', $username), new moodle_url('/admin/roles/admins.php', array('confirmadd'=>$user->id, 'sesskey'=>sesskey())), $PAGE->url);
+        $yesurl = new moodle_url('/admin/roles/admins.php', array('confirmadd'=>$user->id, 'sesskey'=>sesskey()));
+        echo $OUTPUT->confirm(get_string('confirmaddadmin', 'core_role', $username), $yesurl, $PAGE->url);
         echo $OUTPUT->footer();
         die;
     }
@@ -55,11 +56,12 @@ if (optional_param('add', false, PARAM_BOOL) and confirm_sesskey()) {
     if ($userstoremove = $admisselector->get_selected_users()) {
         $user = reset($userstoremove);
         if ($USER->id == $user->id) {
-            //can not remove self
+            // Can not remove self.
         } else {
             $username = fullname($user) . " ($user->username, $user->email)";
             echo $OUTPUT->header();
-            echo $OUTPUT->confirm(get_string('confirmdeladmin', 'role', $username), new moodle_url('/admin/roles/admins.php', array('confirmdel'=>$user->id, 'sesskey'=>sesskey())), $PAGE->url);
+            $yesurl = new moodle_url('/admin/roles/admins.php', array('confirmdel'=>$user->id, 'sesskey'=>sesskey()));
+            echo $OUTPUT->confirm(get_string('confirmdeladmin', 'core_role', $username), $yesurl, $PAGE->url);
             echo $OUTPUT->footer();
             die;
         }
@@ -70,7 +72,7 @@ if (optional_param('add', false, PARAM_BOOL) and confirm_sesskey()) {
         $newmain = reset($newmain);
         $newmain = $newmain->id;
         $admins = array();
-        foreach(explode(',', $CFG->siteadmins) as $admin) {
+        foreach (explode(',', $CFG->siteadmins) as $admin) {
             $admin = (int)$admin;
             if ($admin) {
                 $admins[$admin] = $admin;
@@ -87,7 +89,7 @@ if (optional_param('add', false, PARAM_BOOL) and confirm_sesskey()) {
 
 } else if ($confirmadd and confirm_sesskey()) {
     $admins = array();
-    foreach(explode(',', $CFG->siteadmins) as $admin) {
+    foreach (explode(',', $CFG->siteadmins) as $admin) {
         $admin = (int)$admin;
         if ($admin) {
             $admins[$admin] = $admin;
@@ -99,7 +101,7 @@ if (optional_param('add', false, PARAM_BOOL) and confirm_sesskey()) {
 
 } else if ($confirmdel and confirm_sesskey() and $confirmdel != $USER->id) {
     $admins = array();
-    foreach(explode(',', $CFG->siteadmins) as $admin) {
+    foreach (explode(',', $CFG->siteadmins) as $admin) {
         $admin = (int)$admin;
         if ($admin) {
             $admins[$admin] = $admin;
@@ -110,12 +112,12 @@ if (optional_param('add', false, PARAM_BOOL) and confirm_sesskey()) {
     redirect($PAGE->url);
 }
 
-/// Print header
+// Print header.
 echo $OUTPUT->header();
 ?>
 
 <div id="addadmisform">
-    <h3 class="main"><?php print_string('manageadmins', 'role'); ?></h3>
+    <h3 class="main"><?php print_string('manageadmins', 'core_role'); ?></h3>
 
     <form id="assignform" method="post" action="<?php echo $PAGE->url ?>">
     <div>
@@ -125,18 +127,18 @@ echo $OUTPUT->header();
     <tr>
       <td id='existingcell'>
           <p>
-            <label for="removeselect"><?php print_string('existingadmins', 'role'); ?></label>
+            <label for="removeselect"><?php print_string('existingadmins', 'core_role'); ?></label>
           </p>
           <?php $admisselector->display(); ?>
           </td>
-      <td id='buttonscell'>
+      <td id="buttonscell">
         <p class="arrow_button">
             <input name="add" id="add" type="submit" value="<?php echo $OUTPUT->larrow().'&nbsp;'.get_string('add'); ?>" title="<?php print_string('add'); ?>" /><br />
             <input name="remove" id="remove" type="submit" value="<?php echo get_string('remove').'&nbsp;'.$OUTPUT->rarrow(); ?>" title="<?php print_string('remove'); ?>" />
-            <input name="main" id="main" type="submit" value="<?php echo get_string('mainadminset', 'role'); ?>" title="<?php print_string('mainadminset', 'role'); ?>" />
+            <input name="main" id="main" type="submit" value="<?php echo get_string('mainadminset', 'role'); ?>" title="<?php print_string('mainadminset', 'core_role'); ?>" />
         </p>
       </td>
-      <td id='potentialcell'>
+      <td id="potentialcell">
           <p>
             <label for="addselect"><?php print_string('users'); ?></label>
           </p>
@@ -149,8 +151,5 @@ echo $OUTPUT->header();
 </div>
 
 <?php
-
-//this must be after calling display() on the selectors so their setup JS executes first
-//////$PAGE->requires->js_function_call('init_add_remove_admis_page');
 
 echo $OUTPUT->footer();

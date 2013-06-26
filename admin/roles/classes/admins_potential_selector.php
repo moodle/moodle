@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Library code used by the roles administration interfaces.
+ * Potential admin user selector.
  *
  * @package    core_role
  * @copyright  2010 Petr Skoda {@link http://skodak.org}
@@ -28,6 +28,8 @@ require_once($CFG->dirroot.'/user/selector/lib.php');
 
 class core_role_admins_potential_selector extends user_selector_base {
     /**
+     * Create instance.
+     *
      * @param string $name control name
      * @param array $options should have two elements with keys groupid and courseid.
      */
@@ -51,7 +53,8 @@ class core_role_admins_potential_selector extends user_selector_base {
         $sql = " FROM {user}
                 WHERE $wherecondition AND mnethostid = :localmnet";
 
-        $params['localmnet'] = $CFG->mnet_localhost_id; // it could be dangerous to make remote users admins and also this could lead to other problems
+        // It could be dangerous to make remote users admins and also this could lead to other problems.
+        $params['localmnet'] = $CFG->mnet_localhost_id;
 
         list($sort, $sortparams) = users_order_by_sql('', $search, $this->accesscontext);
         $order = ' ORDER BY ' . $sort;
@@ -71,9 +74,9 @@ class core_role_admins_potential_selector extends user_selector_base {
         }
 
         if ($search) {
-            $groupname = get_string('potusersmatching', 'role', $search);
+            $groupname = get_string('potusersmatching', 'core_role', $search);
         } else {
-            $groupname = get_string('potusers', 'role');
+            $groupname = get_string('potusers', 'core_role');
         }
 
         return array($groupname => $availableusers);
