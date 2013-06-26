@@ -36,9 +36,12 @@ class core_role_permissions_table extends core_role_capability_table_base {
     protected $icons = array();
 
     /**
-     * Constructor
-     * @param object $context the context this table relates to.
+     * Constructor.
+     * @param context $context the context this table relates to.
      * @param string $contextname print_context_name($context) - to save recomputing.
+     * @param array $allowoverrides
+     * @param array $allowsafeoverrides
+     * @param array $overridableroles
      */
     public function __construct($context, $contextname, $allowoverrides, $allowsafeoverrides, $overridableroles) {
         parent::__construct($context, 'permissions');
@@ -53,9 +56,9 @@ class core_role_permissions_table extends core_role_capability_table_base {
     }
 
     protected function add_header_cells() {
-        echo '<th>' . get_string('risks', 'role') . '</th>';
-        echo '<th>' . get_string('neededroles', 'role') . '</th>';
-        echo '<th>' . get_string('prohibitedroles', 'role') . '</th>';
+        echo '<th>' . get_string('risks', 'core_role') . '</th>';
+        echo '<th>' . get_string('neededroles', 'core_role') . '</th>';
+        echo '<th>' . get_string('prohibitedroles', 'core_role') . '</th>';
     }
 
     protected function num_extra_columns() {
@@ -78,25 +81,25 @@ class core_role_permissions_table extends core_role_capability_table_base {
         $forbiddenroles = array();
         $allowable      = $overridableroles;
         $forbitable     = $overridableroles;
-        foreach ($neededroles as $id=>$unused) {
+        foreach ($neededroles as $id => $unused) {
             unset($allowable[$id]);
         }
-        foreach ($forbidden as $id=>$unused) {
+        foreach ($forbidden as $id => $unused) {
             unset($allowable[$id]);
             unset($forbitable[$id]);
         }
 
-        foreach ($roles as $id=>$name) {
+        foreach ($roles as $id => $name) {
             if (isset($needed[$id])) {
                 $neededroles[$id] = $roles[$id];
                 if (isset($overridableroles[$id]) and ($allowoverrides or ($allowsafeoverrides and is_safe_capability($capability)))) {
                     $preventurl = new moodle_url($PAGE->url, array('contextid'=>$contextid, 'roleid'=>$id, 'capability'=>$capability->name, 'prevent'=>1));
-                    $neededroles[$id] .= $OUTPUT->action_icon($preventurl, new pix_icon('t/delete', get_string('prevent', 'role')));
+                    $neededroles[$id] .= $OUTPUT->action_icon($preventurl, new pix_icon('t/delete', get_string('prevent', 'core_role')));
                 }
             }
         }
         $neededroles = implode(', ', $neededroles);
-        foreach ($roles as $id=>$name) {
+        foreach ($roles as $id => $name) {
             if (isset($forbidden[$id])  and ($allowoverrides or ($allowsafeoverrides and is_safe_capability($capability)))) {
                 $forbiddenroles[$id] = $roles[$id];
                 if (isset($overridableroles[$id]) and prohibit_is_removable($id, $context, $capability->name)) {
@@ -109,12 +112,12 @@ class core_role_permissions_table extends core_role_capability_table_base {
 
         if ($allowable and ($allowoverrides or ($allowsafeoverrides and is_safe_capability($capability)))) {
             $allowurl = new moodle_url($PAGE->url, array('contextid'=>$contextid, 'capability'=>$capability->name, 'allow'=>1));
-            $neededroles .= '<div class="allowmore">'.$OUTPUT->action_icon($allowurl, new pix_icon('t/add', get_string('allow', 'role'))).'</div>';
+            $neededroles .= '<div class="allowmore">'.$OUTPUT->action_icon($allowurl, new pix_icon('t/add', get_string('allow', 'core_role'))).'</div>';
         }
 
         if ($forbitable and ($allowoverrides or ($allowsafeoverrides and is_safe_capability($capability)))) {
             $prohibiturl = new moodle_url($PAGE->url, array('contextid'=>$contextid, 'capability'=>$capability->name, 'prohibit'=>1));
-            $forbiddenroles .= '<div class="prohibitmore">'.$OUTPUT->action_icon($prohibiturl, new pix_icon('t/add', get_string('prohibit', 'role'))).'</div>';
+            $forbiddenroles .= '<div class="prohibitmore">'.$OUTPUT->action_icon($prohibiturl, new pix_icon('t/add', get_string('prohibit', 'core_role'))).'</div>';
         }
 
         $risks = $this->get_risks($capability);
@@ -128,11 +131,11 @@ class core_role_permissions_table extends core_role_capability_table_base {
         global $OUTPUT;
 
         $allrisks = get_all_risks();
-        $risksurl = new moodle_url(get_docs_url(s(get_string('risks', 'role'))));
+        $risksurl = new moodle_url(get_docs_url(s(get_string('risks', 'core_role'))));
 
         $return = '';
 
-        foreach ($allrisks as $type=>$risk) {
+        foreach ($allrisks as $type => $risk) {
             if ($risk & (int)$capability->riskbitmask) {
                 if (!isset($this->icons[$type])) {
                     $pixicon = new pix_icon('/i/' . str_replace('risk', 'risk_', $type), get_string($type . 'short', 'admin'));
