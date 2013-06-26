@@ -2846,37 +2846,37 @@ class global_navigation_for_ajax extends global_navigation {
             $courses = enrol_get_my_courses();
             $categoryids = array();
 
-            //only search for categories if basecategory was found
+            // Only search for categories if basecategory was found.
             if (!is_null($basecategory)) {
-                // get course parent category ids 
+                // Get course parent category ids.
                 foreach ($courses as $course) {
                     $categoryids[] = $course->category;
                 }
 
-                // get a unique list of category ids which a part of the path
-                // to user's courses
-                $course_subcategories = array();
-                $added_subcategories = array();
+                // Get a unique list of category ids which a part of the path
+                // to user's courses.
+                $coursesubcategories = array();
+                $addedsubcategories = array();
 
                 list($sql, $params) = $DB->get_in_or_equal($categoryids);
                 $categories = $DB->get_recordset_select('course_categories', 'id '.$sql, $params, 'sortorder, id', 'id, path');
 
                 foreach ($categories as $category){
-                    $course_subcategories = array_merge($course_subcategories, explode('/', trim($category->path, "/")));
+                    $coursesubcategories = array_merge($coursesubcategories, explode('/', trim($category->path, "/")));
                 }
-                $course_subcategories = array_unique($course_subcategories);
+                $coursesubcategories = array_unique($coursesubcategories);
 
-                // only add a subcategory if it is part of the path to user's course and
-                // wasn't already added
-                foreach ($subcategories as $sub_id => $subcategory) {
-                    if (in_array($sub_id, $course_subcategories) &&
-                            !in_array($sub_id, $added_subcategories)) {
+                // Only add a subcategory if it is part of the path to user's course and
+                // wasn't already added.
+                foreach ($subcategories as $subid => $subcategory) {
+                    if (in_array($subid, $coursesubcategories) &&
+                            !in_array($subid, $addedsubcategories)) {
                             $this->add_category($subcategory, $basecategory, $nodetype);
-                            $added_subcategories[] = $sub_id;
+                            $addedsubcategories[] = $subid;
                     }
                 }
             }
-            
+
             foreach ($courses as $course) {
                 // Add course if it's in category.
                 if (in_array($course->category, $categorylist)) {
