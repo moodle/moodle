@@ -33,40 +33,6 @@ require_once($CFG->libdir.'/tablelib.php');
 
 admin_externalpage_setup('managetools');
 
-$delete  = optional_param('delete', '', PARAM_PLUGIN);
-$confirm = optional_param('confirm', '', PARAM_BOOL);
-
-/// If data submitted, then process and store.
-
-if (!empty($delete) and confirm_sesskey()) {
-    echo $OUTPUT->header();
-    echo $OUTPUT->heading(get_string('tools', 'admin'));
-
-    if (!$confirm) {
-        if (get_string_manager()->string_exists('pluginname', 'tool_' . $delete)) {
-            $strpluginname = get_string('pluginname', 'tool_' . $delete);
-        } else {
-            $strpluginname = $delete;
-        }
-        echo $OUTPUT->confirm(get_string('toolsdeleteconfirm', 'admin', $strpluginname),
-                                new moodle_url($PAGE->url, array('delete' => $delete, 'confirm' => 1)),
-                                $PAGE->url);
-        echo $OUTPUT->footer();
-        die();
-
-    } else {
-        uninstall_plugin('tool', $delete);
-        $a = new stdclass();
-        $a->name = $delete;
-        $pluginlocation = get_plugin_types();
-        $a->directory = $pluginlocation['tool'] . '/' . $delete;
-        echo $OUTPUT->notification(get_string('plugindeletefiles', '', $a), 'notifysuccess');
-        echo $OUTPUT->continue_button($PAGE->url);
-        echo $OUTPUT->footer();
-        die();
-    }
-}
-
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('tools', 'admin'));
 
@@ -104,8 +70,10 @@ foreach ($installed as $config) {
 }
 
 foreach ($plugins as $plugin => $name) {
-    $delete = new moodle_url($PAGE->url, array('delete' => $plugin, 'sesskey' => sesskey()));
-    $delete = html_writer::link($delete, get_string('delete'));
+    $delete = '';
+    if ($deleteurl = plugin_manager::instance()->get_uninstall_url('tool_'.$plugin)) {
+        $delete = html_writer::link($deleteurl, get_string('delete'));
+    }
 
     if (!isset($versions[$plugin])) {
         if (file_exists("$CFG->dirroot/$CFG->admin/tool/$plugin/version.php")) {
