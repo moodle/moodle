@@ -103,6 +103,12 @@ abstract class grade_report {
     public $currentgroup;
 
     /**
+     * The current groupname being displayed.
+     * @var string $currentgroupname
+     */
+    public $currentgroupname;
+
+    /**
      * Current course group mode
      * @var int $groupmode
      */
@@ -341,6 +347,8 @@ abstract class grade_report {
             }
 
             if ($this->currentgroup) {
+                $group = groups_get_group($this->currentgroup);
+                $this->currentgroupname     = $group->name;  
                 $this->groupsql             = " JOIN {groups_members} gm ON gm.userid = u.id ";
                 $this->groupwheresql        = " AND gm.groupid = :gr_grpid ";
                 $this->groupwheresql_params = array('gr_grpid'=>$this->currentgroup);

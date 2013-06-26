@@ -24,6 +24,7 @@
 
 require_once '../../../config.php';
 require_once $CFG->libdir.'/gradelib.php';
+require_once $CFG->dirroot.'/user/renderer.php';
 require_once $CFG->dirroot.'/grade/lib.php';
 require_once $CFG->dirroot.'/grade/report/grader/lib.php';
 
@@ -39,16 +40,22 @@ $target        = optional_param('target', 0, PARAM_ALPHANUM);
 $toggle        = optional_param('toggle', NULL, PARAM_INT);
 $toggle_type   = optional_param('toggle_type', 0, PARAM_ALPHANUM);
 
+$reset                = optional_param('Reset', NULL, PARAM_ALPHA);
 $graderreportsifirst  = optional_param('sifirst', NULL, PARAM_ALPHA);
 $graderreportsilast   = optional_param('silast', NULL, PARAM_ALPHA);
 
-// the report object is recreated each time, save search information to session for future use
-if (isset($graderreportsifirst)) {
-    $SESSION->graderreportsifirst = $graderreportsifirst;
-}
-if (isset($graderreportsilast)) {
-    $SESSION->graderreportsilast = $graderreportsilast;
-}
+if (isset($reset)) {
+    $SESSION->graderreportsifirst = '';
+    $SESSION->graderreportsilast = '';
+} else {
+    // the report object is recreated each time, save search information to session for future use
+    if (isset($graderreportsifirst)) {
+        $SESSION->graderreportsifirst = $graderreportsifirst;
+    }  
+    if (isset($graderreportsilast)) {
+        $SESSION->graderreportsilast = $graderreportsilast;
+    } 
+}	
 
 $PAGE->set_url(new moodle_url('/grade/report/grader/index.php', array('id'=>$courseid)));
 
@@ -150,55 +157,14 @@ $report->load_users();
 $report->load_final_grades();
 echo $report->group_selector;
 
-// Initials Selection Section
-$baseurl = new moodle_url('/grade/report/grader/index.php', array('id' => $course->id));
-$firstinitial = isset($SESSION->graderreportsifirst) ? $SESSION->graderreportsifirst : "";
-$lastinitial  = isset($SESSION->graderreportsilast) ? $SESSION->graderreportsilast : "";
-$strall = get_string('all');
-$alpha  = explode(',', get_string('alphabet', 'langconfig'));
-$strallparticipants = get_string('allparticipants');
-$totalusers = $report->get_numusers(false, false);
-
-echo '<form action="index.php">'; 
-echo '<div>';
-echo $OUTPUT->heading($strallparticipants.get_string('labelsep', 'langconfig').$numusers.'/'.$totalusers, 3);
-
-// Bar of first initials
-echo '<div class="initialbar firstinitial">'.get_string('firstname').' : ';
-if (!empty($firstinitial)) {
-    echo '<a href="'.$baseurl->out().'&amp;sifirst=">'.$strall.'</a>';
-} else {
-    echo '<strong>'.$strall.'</strong>';
-}
-foreach ($alpha as $letter) {
-    if ($letter == $firstinitial) {
-        echo ' <strong>'.$letter.'</strong>';
-    } else {
-        echo ' <a href="'.$baseurl->out().'&amp;sifirst='.$letter.'">'.$letter.'</a>';
-    }
-}
-echo '</div>';
-
-// Bar of last initials
-echo '<div class="initialbar lastinitial">'.get_string('lastname').' : ';
-if (!empty($lastinitial)) {
-    echo '<a href="'.$baseurl->out().'&amp;silast=">'.$strall.'</a>';
-} else {
-    echo '<strong>'.$strall.'</strong>';
-}
-foreach ($alpha as $letter) {
-    if ($letter == $lastinitial) {
-        echo ' <strong>'.$letter.'</strong>';
-    } else {
-        echo ' <a href="'.$baseurl->out().'&amp;silast='.$letter.'">'.$letter.'</a>';
-    }
-}
-echo '</div>';
-
-echo '</div>';
-echo '<div>&nbsp;</div>';
-echo '</form>';
-// Initials Selection Section
+// User search
+$url = new moodle_url('/grade/report/grader/index.php', array('id' => $course->id));
+$hiddenfields = array('group' => 0);
+$firstinitial = isset($SESSION->graderreportsifirst) ? $SESSION->graderreportsifirst : '';
+$lastinitial  = isset($SESSION->graderreportsilast) ? $SESSION->graderreportsilast : '';
+$totalusers = $report->get_numusers(true, false);
+$renderer = $PAGE->get_renderer('core_user');
+echo $renderer->user_search($url, $hiddenfields, $firstinitial, $lastinitial, $numusers, $totalusers, $report->currentgroupname);
 
 //show warnings if any
 foreach($warnings as $warning) {
@@ -211,7 +177,12 @@ if (!empty($studentsperpage)) {
     echo $OUTPUT->paging_bar($numusers, $report->page, $studentsperpage, $report->pbarurl);
 }
 
-$reporthtml = $report->get_grade_table();
+$displayaverages = true;
+if ($numusers == 0) {
+    $displayaverages = false;
+}
+
+$reporthtml = $report->get_grade_table($displayaverages);
 
 // print submit button
 if ($USER->gradeediting[$course->id] && ($report->get_pref('showquickfeedback') || $report->get_pref('quickgrading'))) {
