@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Library code used by the roles administration interfaces.
+ * override permissions table.
  *
  * @package    core_role
  * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
@@ -29,7 +29,7 @@ class core_role_override_permissions_table_advanced extends core_role_capability
     protected $haslockedcapabilities = false;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * This method loads loads all the information about the current state of
      * the overrides, then updates that based on any submitted data. It also
@@ -43,9 +43,9 @@ class core_role_override_permissions_table_advanced extends core_role_capability
     public function __construct($context, $roleid, $safeoverridesonly) {
         parent::__construct($context, 'overriderolestable', $roleid);
         $this->displaypermissions = $this->allpermissions;
-        $this->strnotset = get_string('notset', 'role');
+        $this->strnotset = get_string('notset', 'core_role');
 
-        /// Determine which capabilities should be locked.
+        // Determine which capabilities should be locked.
         if ($safeoverridesonly) {
             foreach ($this->capabilities as $capid => $cap) {
                 if (!is_safe_capability($cap)) {
@@ -57,10 +57,8 @@ class core_role_override_permissions_table_advanced extends core_role_capability
     }
 
     protected function load_parent_permissions() {
-        global $DB;
-
-        /// Get the capabilities from the parent context, so that can be shown in the interface.
-        $parentcontext = context::instance_by_id(get_parent_contextid($this->context));
+        // Get the capabilities from the parent context, so that can be shown in the interface.
+        $parentcontext = context::instance_by_id($this->context->get_parent_context());
         $this->parentpermissions = role_context_capabilities($this->roleid, $parentcontext);
     }
 
@@ -74,7 +72,7 @@ class core_role_override_permissions_table_advanced extends core_role_capability
             $disabled = ' disabled="disabled"';
         }
 
-        /// One cell for each possible permission.
+        // One cell for each possible permission.
         foreach ($this->displaypermissions as $perm => $permname) {
             $strperm = $this->strperms[$permname];
             $extraclass = '';
