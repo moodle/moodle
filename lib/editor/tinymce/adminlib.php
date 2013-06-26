@@ -40,10 +40,6 @@ class plugininfo_tinymce extends plugininfo_base {
         return true;
     }
 
-    public function get_uninstall_url() {
-        return new moodle_url('/lib/editor/tinymce/subplugins.php', array('delete' => $this->name, 'sesskey' => sesskey()));
-    }
-
     public function get_settings_section_name() {
         return 'tinymce'.$this->name.'settings';
     }
@@ -235,11 +231,9 @@ class tiynce_subplugins_settings extends admin_setting {
             }
 
             // Add uninstall info.
-            if ($version) {
-                $url = new moodle_url($plugininfo->get_uninstall_url(), array('return'=>'settings'));
-                $uninstall = html_writer::link($url, $struninstall);
-            } else {
-                $uninstall = '';
+            $uninstall = '';
+            if ($deleteurl = plugin_manager::instance()->get_uninstall_url('tinymce_' . $name)) {
+                $uninstall = html_writer::link($deleteurl, $struninstall);
             }
 
             // Add a row to the table.

@@ -34,7 +34,6 @@ $string['customtoolbar_desc'] = 'Each line contains a list of comma separated bu
 $string['fontselectlist'] = 'Available fonts list';
 $string['pluginname'] = 'TinyMCE HTML editor';
 $string['settings'] = 'General settings';
-$string['subplugindeleteconfirm'] = 'You are about to completely delete TinyMCE subplugin \'{$a}\'. This will completely delete everything in the database associated with this subplugin. Are you SURE you want to continue?';
 $string['subplugintype_tinymce_plural'] = 'Plugins';
 
 
