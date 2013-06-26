@@ -3879,6 +3879,17 @@ class plugininfo_editor extends plugininfo_base {
     }
 
     /**
+     * Basic textarea editor can not be uninstalled.
+     */
+    public function is_uninstall_allowed() {
+        if ($this->name === 'textarea') {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
      * Returns the information about plugin availability
      *
      * True means that the plugin is enabled. False means that the plugin is

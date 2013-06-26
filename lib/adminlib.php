@@ -5943,11 +5943,9 @@ class admin_setting_manageeditors extends admin_setting {
                 $settings = '';
             }
 
-            if ($editor === 'textarea') {
-                $uninstall = '';
-            } else {
-                $uurl = new moodle_url('/admin/editors.php', array('action'=>'uninstall', 'editor'=>$editor, 'sesskey'=>sesskey()));
-                $uninstall = html_writer::link($uurl, $struninstall);
+            $uninstall = '';
+            if ($deleteurl = plugin_manager::instance()->get_uninstall_url('editor_'.$editor)) {
+                $uninstall = html_writer::link($deleteurl, $struninstall);
             }
 
             // add a row to the table
