@@ -3978,6 +3978,10 @@ class plugininfo_plagiarism extends plugininfo_base {
             $adminroot->add($parentnodename, $settings);
         }
     }
+
+    public function is_uninstall_allowed() {
+        return true;
+    }
 }
 
 /**

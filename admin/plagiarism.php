@@ -32,38 +32,6 @@ require_once($CFG->libdir.'/tablelib.php');
 
 admin_externalpage_setup('manageplagiarismplugins');
 
-$delete  = optional_param('delete', '', PARAM_PLUGIN);
-$confirm = optional_param('confirm', false, PARAM_BOOL);
-
-if (!empty($delete) and confirm_sesskey()) { // If data submitted, then process and store.
-    echo $OUTPUT->header();
-    echo $OUTPUT->heading(get_string('manageplagiarism', 'plagiarism'));
-
-    if (!$confirm) {
-        if (get_string_manager()->string_exists('pluginname', 'plagiarism_' . $delete)) {
-            $strpluginname = get_string('pluginname', 'plagiarism_' . $delete);
-        } else {
-            $strpluginname = $delete;
-        }
-        echo $OUTPUT->confirm(get_string('plagiarismplugindeleteconfirm', 'plagiarism', $strpluginname),
-            new moodle_url($PAGE->url, array('delete' => $delete, 'confirm' => 1)),
-            $PAGE->url);
-        echo $OUTPUT->footer();
-        die();
-
-    } else {
-        uninstall_plugin('plagiarism', $delete);
-        $a = new stdclass();
-        $a->name = $delete;
-        $pluginlocation = get_plugin_types();
-        $a->directory = $pluginlocation['plagiarism'] . '/' . $delete;
-        echo $OUTPUT->notification(get_string('plugindeletefiles', '', $a), 'notifysuccess');
-        echo $OUTPUT->continue_button($PAGE->url);
-        echo $OUTPUT->footer();
-        die();
-    }
-}
-
 echo $OUTPUT->header();
 
 // Print the table of all installed plagiarism plugins.
@@ -102,8 +70,10 @@ foreach ($plagiarismplugins as $plugin => $dir) {
             $version = '?';
         }
         // Delete link.
-        $delete = new moodle_url($PAGE->url, array('delete' => $plugin, 'sesskey' => sesskey()));
-        $delete = html_writer::link($delete, get_string('delete'));
+        $delete = '';
+        if ($deleteurl = plugin_manager::instance()->get_uninstall_url('plagiarism_'.$plugin)) {
+            $delete = html_writer::link($deleteurl, get_string('delete'));
+        }
         $table->data[] = array($displayname, $version, $delete, $settings);
     }
 }
