@@ -66,9 +66,9 @@ class core_role_potential_assignees_course_and_above extends core_role_assign_us
         }
 
         if ($search) {
-            $groupname = get_string('potusersmatching', 'role', $search);
+            $groupname = get_string('potusersmatching', 'core_role', $search);
         } else {
-            $groupname = get_string('potusers', 'role');
+            $groupname = get_string('potusers', 'core_role');
         }
 
         return array($groupname => $availableusers);

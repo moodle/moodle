@@ -58,7 +58,7 @@ abstract class core_role_capability_table_with_risks extends core_role_capabilit
 
         $this->strperms = array();
         foreach ($this->allpermissions as $permname) {
-            $this->strperms[$permname] =  get_string($permname, 'role');
+            $this->strperms[$permname] =  get_string($permname, 'core_role');
         }
 
         $this->roleid = $roleid;
@@ -142,7 +142,7 @@ abstract class core_role_capability_table_with_risks extends core_role_capabilit
     protected function add_header_cells() {
         global $OUTPUT;
         echo '<th colspan="' . count($this->displaypermissions) . '" scope="col">' .
-            get_string('permission', 'role') . ' ' . $OUTPUT->help_icon('permission', 'role') . '</th>';
+            get_string('permission', 'core_role') . ' ' . $OUTPUT->help_icon('permission', 'core_role') . '</th>';
         echo '<th class="risk" colspan="' . count($this->allrisks) . '" scope="col">' . get_string('risks', 'core_role') . '</th>';
     }
 

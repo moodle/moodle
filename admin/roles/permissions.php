@@ -119,7 +119,7 @@ if ($capability && ($allowoverrides || ($allowsafeoverrides && is_safe_capabilit
 
             } else {
                 $a = (object)array('cap'=>get_capability_docs_link($capability)." ($capability->name)", 'role'=>$overridableroles[$roleid], 'context'=>$contextname);
-                $message = get_string('confirmroleprevent', 'role', $a);
+                $message = get_string('confirmroleprevent', 'core_role', $a);
                 $continueurl = new moodle_url($PAGE->url,
                     array('contextid'=>$context->id, 'roleid'=>$roleid, 'capability'=>$capability->name, 'prevent'=>1, 'sesskey'=>sesskey(), 'confirm'=>1));
             }
@@ -131,7 +131,7 @@ if ($capability && ($allowoverrides || ($allowsafeoverrides && is_safe_capabilit
                 redirect($PAGE->url);
             } else {
                 $a = (object)array('cap'=>get_capability_docs_link($capability)." ($capability->name)", 'role'=>$overridableroles[$roleid], 'context'=>$contextname);
-                $message = get_string('confirmroleunprohibit', 'role', $a);
+                $message = get_string('confirmroleunprohibit', 'core_role', $a);
                 $continueurl = new moodle_url($PAGE->url,
                     array('contextid'=>$context->id, 'roleid'=>$roleid, 'capability'=>$capability->name, 'unprohibit'=>1, 'sesskey'=>sesskey(), 'confirm'=>1));
             }
@@ -157,7 +157,7 @@ if ($capability && ($allowoverrides || ($allowsafeoverrides && is_safe_capabilit
                 redirect($PAGE->url);
             } else {
                 $a = (object)array('cap'=>get_capability_docs_link($capability)." ($capability->name)", 'context'=>$contextname);
-                $message = get_string('roleallowinfo', 'role', $a);
+                $message = get_string('roleallowinfo', 'core_role', $a);
             }
         }
         if ($prohibit) {
@@ -193,7 +193,7 @@ echo $OUTPUT->box_start('generalbox capbox');
 if ($overridableroles) {
     $overrideurl = new moodle_url('/admin/roles/override.php', array('contextid' => $context->id));
     $select = new single_select($overrideurl, 'roleid', $nameswithcounts);
-    $select->label = get_string('advancedoverride', 'role');
+    $select->label = get_string('advancedoverride', 'core_role');
     echo html_writer::tag('div', $OUTPUT->render($select), array('class'=>'advancedoverride'));
 }
 $table->display();

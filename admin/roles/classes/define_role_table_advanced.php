@@ -47,7 +47,7 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
         $this->roleid = $roleid;
         parent::__construct($context, 'defineroletable', $roleid);
         $this->displaypermissions = $this->allpermissions;
-        $this->strperms[$this->allpermissions[CAP_INHERIT]] = get_string('notset', 'role');
+        $this->strperms[$this->allpermissions[CAP_INHERIT]] = get_string('notset', 'core_role');
 
         $this->allcontextlevels = array(
             CONTEXT_SYSTEM => get_string('coresystem'),
@@ -102,11 +102,11 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
             $this->role->shortname = textlib::specialtoascii($this->role->shortname);
             $this->role->shortname = textlib::strtolower(clean_param($this->role->shortname, PARAM_ALPHANUMEXT));
             if (empty($this->role->shortname)) {
-                $this->errors['shortname'] = get_string('errorbadroleshortname', 'role');
+                $this->errors['shortname'] = get_string('errorbadroleshortname', 'core_role');
             }
         }
         if ($DB->record_exists_select('role', 'shortname = ? and id <> ?', array($this->role->shortname, $this->roleid))) {
-            $this->errors['shortname'] = get_string('errorexistsroleshortname', 'role');
+            $this->errors['shortname'] = get_string('errorexistsroleshortname', 'core_role');
         }
 
         // Role name.
@@ -116,11 +116,11 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
             // Hack: short names of standard roles are equal to archetypes, empty name means localised via lang packs.
             $archetypes = get_role_archetypes();
             if (!isset($archetypes[$shortname]) and html_is_blank($this->role->name)) {
-                $this->errors['name'] = get_string('errorbadrolename', 'role');
+                $this->errors['name'] = get_string('errorbadrolename', 'core_role');
             }
         }
         if ($this->role->name !== '' and $DB->record_exists_select('role', 'name = ? and id <> ?', array($this->role->name, $this->roleid))) {
-            $this->errors['name'] = get_string('errorexistsrolename', 'role');
+            $this->errors['name'] = get_string('errorexistsrolename', 'core_role');
         }
 
         // Description.
@@ -597,7 +597,7 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
     }
 
     protected function print_show_hide_advanced_button() {
-        echo '<p class="definenotice">' . get_string('highlightedcellsshowdefault', 'role') . ' </p>';
+        echo '<p class="definenotice">' . get_string('highlightedcellsshowdefault', 'core_role') . ' </p>';
         echo '<div class="advancedbutton">';
         echo '<input type="submit" name="toggleadvanced" value="' . get_string('hideadvanced', 'form') . '" />';
         echo '</div>';
@@ -607,17 +607,17 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
         global $OUTPUT;
         // Extra fields at the top of the page.
         echo '<div class="topfields clearfix">';
-        $this->print_field('shortname', get_string('roleshortname', 'role').'&nbsp;'.$OUTPUT->help_icon('roleshortname', 'role'), $this->get_shortname_field('shortname'));
-        $this->print_field('name', get_string('customrolename', 'role').'&nbsp;'.$OUTPUT->help_icon('customrolename', 'role'), $this->get_name_field('name'));
-        $this->print_field('edit-description', get_string('customroledescription', 'role').'&nbsp;'.$OUTPUT->help_icon('customroledescription', 'role'),
+        $this->print_field('shortname', get_string('roleshortname', 'core_role').'&nbsp;'.$OUTPUT->help_icon('roleshortname', 'core_role'), $this->get_shortname_field('shortname'));
+        $this->print_field('name', get_string('customrolename', 'core_role').'&nbsp;'.$OUTPUT->help_icon('customrolename', 'core_role'), $this->get_name_field('name'));
+        $this->print_field('edit-description', get_string('customroledescription', 'core_role').'&nbsp;'.$OUTPUT->help_icon('customroledescription', 'core_role'),
             $this->get_description_field('description'));
-        $this->print_field('menuarchetype', get_string('archetype', 'role').'&nbsp;'.$OUTPUT->help_icon('archetype', 'role'), $this->get_archetype_field('archetype'));
-        $this->print_field('', get_string('maybeassignedin', 'role'), $this->get_assignable_levels_control());
-        $this->print_field('menuallowassign', get_string('allowassign', 'role'), $this->get_allow_role_control('assign'));
-        $this->print_field('menuallowoverride', get_string('allowoverride', 'role'), $this->get_allow_role_control('override'));
-        $this->print_field('menuallowswitch', get_string('allowswitch', 'role'), $this->get_allow_role_control('switch'));
+        $this->print_field('menuarchetype', get_string('archetype', 'core_role').'&nbsp;'.$OUTPUT->help_icon('archetype', 'core_role'), $this->get_archetype_field('archetype'));
+        $this->print_field('', get_string('maybeassignedin', 'core_role'), $this->get_assignable_levels_control());
+        $this->print_field('menuallowassign', get_string('allowassign', 'core_role'), $this->get_allow_role_control('assign'));
+        $this->print_field('menuallowoverride', get_string('allowoverride', 'core_role'), $this->get_allow_role_control('override'));
+        $this->print_field('menuallowswitch', get_string('allowswitch', 'core_role'), $this->get_allow_role_control('switch'));
         if ($risks = $this->get_role_risks_info()) {
-            $this->print_field('', get_string('rolerisks', 'role'), $risks);
+            $this->print_field('', get_string('rolerisks', 'core_role'), $risks);
         }
         echo "</div>";
 

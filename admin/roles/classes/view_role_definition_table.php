@@ -51,7 +51,7 @@ class core_role_view_role_definition_table extends core_role_define_role_table_a
         if (empty($this->role->archetype)) {
             return get_string('none');
         } else {
-            return get_string('archetype'.$this->role->archetype, 'role');
+            return get_string('archetype'.$this->role->archetype, 'core_role');
         }
     }
 
@@ -95,7 +95,7 @@ class core_role_view_role_definition_table extends core_role_define_role_table_a
             }
         }
 
-        $risksurl = new moodle_url(get_docs_url(s(get_string('risks', 'role'))));
+        $risksurl = new moodle_url(get_docs_url(s(get_string('risks', 'core_role'))));
         foreach ($risks as $type => $risk) {
             $pixicon = new pix_icon('/i/' . str_replace('risk', 'risk_', $type), get_string($type . 'short', 'admin'));
             $risks[$type] = $OUTPUT->action_icon($risksurl, $pixicon, new popup_action('click', $risksurl));
@@ -125,7 +125,7 @@ class core_role_view_role_definition_table extends core_role_define_role_table_a
         $permname = $this->allpermissions[$perm];
         $defaultperm = $this->allpermissions[$this->parentpermissions[$capability->name]];
         if ($permname != $defaultperm) {
-            $default = get_string('defaultx', 'role', $this->strperms[$defaultperm]);
+            $default = get_string('defaultx', 'core_role', $this->strperms[$defaultperm]);
         } else {
             $default = "&#xa0;";
         }

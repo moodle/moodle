@@ -52,10 +52,10 @@ class core_role_allow_switch_page extends core_role_allow_role_page {
         $a = new stdClass;
         $a->fromrole = $fromrole->localname;
         $a->targetrole = $targetrole->localname;
-        return get_string('allowroletoswitch', 'role', $a);
+        return get_string('allowroletoswitch', 'core_role', $a);
     }
 
     public function get_intro_text() {
-        return get_string('configallowswitch', 'admin');
+        return get_string('configallowswitch', 'core_admin');
     }
 }

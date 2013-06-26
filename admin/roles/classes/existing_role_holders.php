@@ -106,9 +106,9 @@ class core_role_existing_role_holders extends core_role_assign_user_selector_bas
         if ($this->context->contextlevel == CONTEXT_SYSTEM) {
             // Special case in the System context.
             if ($search) {
-                return get_string('extusersmatching', 'role', $search);
+                return get_string('extusersmatching', 'core_role', $search);
             } else {
-                return get_string('extusers', 'role');
+                return get_string('extusers', 'core_role');
             }
         }
         $contexttype = get_contextlevel_name($this->context->contextlevel);
@@ -117,15 +117,15 @@ class core_role_existing_role_holders extends core_role_assign_user_selector_bas
             $a->search = $search;
             $a->contexttype = $contexttype;
             if ($numusers) {
-                return get_string('usersinthisxmatching', 'role', $a);
+                return get_string('usersinthisxmatching', 'core_role', $a);
             } else {
-                return get_string('noneinthisxmatching', 'role', $a);
+                return get_string('noneinthisxmatching', 'core_role', $a);
             }
         } else {
             if ($numusers) {
-                return get_string('usersinthisx', 'role', $contexttype);
+                return get_string('usersinthisx', 'core_role', $contexttype);
             } else {
-                return get_string('noneinthisx', 'role', $contexttype);
+                return get_string('noneinthisx', 'core_role', $contexttype);
             }
         }
     }
@@ -137,9 +137,9 @@ class core_role_existing_role_holders extends core_role_assign_user_selector_bas
             $a = new stdClass;
             $a->contextname = $contextname;
             $a->search = $search;
-            return get_string('usersfrommatching', 'role', $a);
+            return get_string('usersfrommatching', 'core_role', $a);
         } else {
-            return get_string('usersfrom', 'role', $contextname);
+            return get_string('usersfrom', 'core_role', $contextname);
         }
     }
 }

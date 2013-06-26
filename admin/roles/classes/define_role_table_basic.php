@@ -31,7 +31,7 @@ class core_role_define_role_table_basic extends core_role_define_role_table_adva
     public function __construct($context, $roleid) {
         parent::__construct($context, $roleid);
         $this->displaypermissions = array(CAP_ALLOW => $this->allpermissions[CAP_ALLOW]);
-        $this->stradvmessage = get_string('useshowadvancedtochange', 'role');
+        $this->stradvmessage = get_string('useshowadvancedtochange', 'core_role');
         $this->strallow = $this->strperms[$this->allpermissions[CAP_ALLOW]];
     }
 

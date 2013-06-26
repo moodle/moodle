@@ -54,7 +54,7 @@ class core_role_check_capability_table extends core_role_capability_table_base {
     }
 
     protected function add_header_cells() {
-        echo '<th>' . get_string('allowed', 'role') . '</th>';
+        echo '<th>' . get_string('allowed', 'core_role') . '</th>';
     }
 
     protected function num_extra_columns() {

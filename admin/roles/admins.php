@@ -135,7 +135,7 @@ echo $OUTPUT->header();
         <p class="arrow_button">
             <input name="add" id="add" type="submit" value="<?php echo $OUTPUT->larrow().'&nbsp;'.get_string('add'); ?>" title="<?php print_string('add'); ?>" /><br />
             <input name="remove" id="remove" type="submit" value="<?php echo get_string('remove').'&nbsp;'.$OUTPUT->rarrow(); ?>" title="<?php print_string('remove'); ?>" />
-            <input name="main" id="main" type="submit" value="<?php echo get_string('mainadminset', 'role'); ?>" title="<?php print_string('mainadminset', 'core_role'); ?>" />
+            <input name="main" id="main" type="submit" value="<?php echo get_string('mainadminset', 'core_role'); ?>" title="<?php print_string('mainadminset', 'core_role'); ?>" />
         </p>
       </td>
       <td id="potentialcell">

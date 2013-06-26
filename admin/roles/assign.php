@@ -75,12 +75,12 @@ if ($roleid) {
     $a = new stdClass;
     $a->role = $assignableroles[$roleid];
     $a->context = $contextname;
-    $title = get_string('assignrolenameincontext', 'role', $a);
+    $title = get_string('assignrolenameincontext', 'core_role', $a);
 } else {
     if ($isfrontpage) {
         $title = get_string('frontpageroles', 'admin');
     } else {
-        $title = get_string('assignrolesin', 'role', $contextname);
+        $title = get_string('assignrolesin', 'core_role', $contextname);
     }
 }
 
@@ -174,13 +174,13 @@ switch ($context->contextlevel) {
 echo $OUTPUT->header();
 
 // Print heading.
-echo $OUTPUT->heading_with_help($title, 'assignroles', 'role');
+echo $OUTPUT->heading_with_help($title, 'assignroles', 'core_role');
 
 if ($roleid) {
     // Show UI for assigning a particular role to users.
     // Print a warning if we are assigning system roles.
     if ($context->contextlevel == CONTEXT_SYSTEM) {
-        echo $OUTPUT->box(get_string('globalroleswarning', 'role'));
+        echo $OUTPUT->box(get_string('globalroleswarning', 'core_role'));
     }
 
     // Print the form.
@@ -192,7 +192,7 @@ if ($roleid) {
   <table id="assigningrole" summary="" class="admintable roleassigntable generaltable" cellspacing="0">
     <tr>
       <td id="existingcell">
-          <p><label for="removeselect"><?php print_string('extusers', 'role'); ?></label></p>
+          <p><label for="removeselect"><?php print_string('extusers', 'core_role'); ?></label></p>
           <?php $currentuserselector->display() ?>
       </td>
       <td id="buttonscell">
@@ -205,7 +205,7 @@ if ($roleid) {
           </div>
       </td>
       <td id="potentialcell">
-          <p><label for="addselect"><?php print_string('potusers', 'role'); ?></label></p>
+          <p><label for="addselect"><?php print_string('potusers', 'core_role'); ?></label></p>
           <?php $potentialuserselector->display() ?>
       </td>
     </tr>
@@ -230,31 +230,31 @@ if ($roleid) {
     echo '<div class="backlink">';
 
     $select = new single_select($PAGE->url, 'roleid', $nameswithcounts, $roleid, null);
-    $select->label = get_string('assignanotherrole', 'role');
+    $select->label = get_string('assignanotherrole', 'core_role');
     echo $OUTPUT->render($select);
     $backurl = new moodle_url('/admin/roles/assign.php', array('contextid' => $contextid));
-    echo '<p><a href="' . $backurl->out() . '">' . get_string('backtoallroles', 'role') . '</a></p>';
+    echo '<p><a href="' . $backurl->out() . '">' . get_string('backtoallroles', 'core_role') . '</a></p>';
     echo '</div>';
 
 } else if (empty($assignableroles)) {
     // Print a message that there are no roles that can me assigned here.
-    echo $OUTPUT->heading(get_string('notabletoassignroleshere', 'role'), 3);
+    echo $OUTPUT->heading(get_string('notabletoassignroleshere', 'core_role'), 3);
 
 } else {
     // Show UI for choosing a role to assign.
 
     // Print a warning if we are assigning system roles.
     if ($context->contextlevel == CONTEXT_SYSTEM) {
-        echo $OUTPUT->box(get_string('globalroleswarning', 'role'));
+        echo $OUTPUT->box(get_string('globalroleswarning', 'core_role'));
     }
 
     // Print instruction.
-    echo $OUTPUT->heading(get_string('chooseroletoassign', 'role'), 3);
+    echo $OUTPUT->heading(get_string('chooseroletoassign', 'core_role'), 3);
 
     // Get the names of role holders for roles with between 1 and MAX_USERS_TO_LIST_PER_ROLE users,
     // and so determine whether to show the extra column.
     $roleholdernames = array();
-    $strmorethanmax = get_string('morethan', 'role', MAX_USERS_TO_LIST_PER_ROLE);
+    $strmorethanmax = get_string('morethan', 'core_role', MAX_USERS_TO_LIST_PER_ROLE);
     $showroleholders = false;
     foreach ($assignableroles as $roleid => $notused) {
         $roleusers = '';
@@ -279,7 +279,7 @@ if ($roleid) {
     // Print overview table.
     $table = new html_table();
     $table->id = 'assignrole';
-    $table->head = array(get_string('role'), get_string('description'), get_string('userswiththisrole', 'role'));
+    $table->head = array(get_string('role'), get_string('description'), get_string('userswiththisrole', 'core_role'));
     $table->colclasses = array('leftalign role', 'leftalign', 'centeralign userrole');
     $table->attributes['class'] = 'admintable generaltable';
     if ($showroleholders) {

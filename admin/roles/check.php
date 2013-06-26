@@ -47,7 +47,7 @@ if ($course) {
 // Security first.
 require_login($course, false, $cm);
 if (!has_any_capability(array('moodle/role:assign', 'moodle/role:safeoverride', 'moodle/role:override', 'moodle/role:manage'), $context)) {
-    print_error('nopermissions', 'error', '', get_string('checkpermissions', 'role'));
+    print_error('nopermissions', 'error', '', get_string('checkpermissions', 'core_role'));
 }
 $PAGE->set_url($url);
 $PAGE->set_context($context);
@@ -63,7 +63,7 @@ $userselector = new core_role_check_users_selector('reportuser', $options);
 $userselector->set_rows(20);
 
 // Work out an appropriate page title.
-$title = get_string('checkpermissionsin', 'role', $contextname);
+$title = get_string('checkpermissionsin', 'core_role', $contextname);
 
 $PAGE->set_pagelayout('admin');
 $PAGE->set_title($title);
@@ -116,7 +116,7 @@ if (!is_null($reportuser)) {
     echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
 
     if (!empty($roleassignments)) {
-        echo $OUTPUT->heading(get_string('rolesforuser', 'role', fullname($reportuser)), 3);
+        echo $OUTPUT->heading(get_string('rolesforuser', 'core_role', fullname($reportuser)), 3);
         echo html_writer::start_tag('ul');
 
         $systemcontext = context_system::instance();
@@ -130,20 +130,20 @@ if (!is_null($reportuser)) {
                         array('action' => 'view', 'roleid' => $ra->roleid)), $rolename);
             }
 
-            echo html_writer::tag('li', get_string('roleincontext', 'role',
+            echo html_writer::tag('li', get_string('roleincontext', 'core_role',
                     array('role' => $rolename, 'context' => $link)));
         }
         echo html_writer::end_tag('ul');
     }
 
-    echo $OUTPUT->heading(get_string('permissionsforuser', 'role', fullname($reportuser)), 3);
+    echo $OUTPUT->heading(get_string('permissionsforuser', 'core_role', fullname($reportuser)), 3);
     $table = new core_role_check_capability_table($context, $reportuser, $contextname);
     $table->display();
     echo $OUTPUT->box_end();
 
-    $selectheading = get_string('selectanotheruser', 'role');
+    $selectheading = get_string('selectanotheruser', 'core_role');
 } else {
-    $selectheading = get_string('selectauser', 'role');
+    $selectheading = get_string('selectauser', 'core_role');
 }
 
 // Show UI for choosing a user to report on.
@@ -164,14 +164,14 @@ echo $OUTPUT->heading('<label for="reportuser">' . $selectheading . '</label>', 
 $userselector->display();
 
 // Submit button and the end of the form.
-echo '<p id="chooseusersubmit"><input type="submit" value="' . get_string('showthisuserspermissions', 'role') . '" /></p>';
+echo '<p id="chooseusersubmit"><input type="submit" value="' . get_string('showthisuserspermissions', 'corerole') . '" /></p>';
 echo '</form>';
 echo $OUTPUT->box_end();
 
 // Appropriate back link.
 if ($context->contextlevel > CONTEXT_USER) {
     echo html_writer::start_tag('div', array('class'=>'backlink'));
-    echo html_writer::tag('a', get_string('backto', '', $contextname), array('href'=>get_context_url($context)));
+    echo html_writer::tag('a', get_string('backto', '', $contextname), array('href'=>$context->get_url()));
     echo html_writer::end_tag('div');
 }
 

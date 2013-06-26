@@ -40,10 +40,10 @@ class core_role_allow_override_page extends core_role_allow_role_page {
         $a = new stdClass;
         $a->fromrole = $fromrole->localname;
         $a->targetrole = $targetrole->localname;
-        return get_string('allowroletooverride', 'role', $a);
+        return get_string('allowroletooverride', 'core_role', $a);
     }
 
     public function get_intro_text() {
-        return get_string('configallowoverride2', 'admin');
+        return get_string('configallowoverride2', 'core_admin');
     }
 }

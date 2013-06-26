@@ -40,10 +40,10 @@ class core_role_allow_assign_page extends core_role_allow_role_page {
         $a = new stdClass;
         $a->fromrole = $fromrole->localname;
         $a->targetrole = $targetrole->localname;
-        return get_string('allowroletoassign', 'role', $a);
+        return get_string('allowroletoassign', 'core_role', $a);
     }
 
     public function get_intro_text() {
-        return get_string('configallowassign', 'admin');
+        return get_string('configallowassign', 'core_admin');
     }
 }

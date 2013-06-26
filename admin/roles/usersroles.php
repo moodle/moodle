@@ -115,8 +115,8 @@ $overridableroles = get_overridable_roles($usercontext, ROLENAME_BOTH);
 
 // Print the header.
 $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $coursecontext));
-$straction = get_string('thisusersroles', 'role');
-$title = get_string('xroleassignments', 'role', $fullname);
+$straction = get_string('thisusersroles', 'core_role');
+$title = get_string('xroleassignments', 'core_role', $fullname);
 
 // Course header.
 $PAGE->set_title($title);
@@ -181,11 +181,11 @@ function print_report_tree($contextid, $contexts, $systemcontext, $fullname, $al
             $a->fullname = $fullname;
             $a->contextlevel = $context->get_level_name();
             if ($context->contextlevel == CONTEXT_SYSTEM) {
-                $strgoto = get_string('gotoassignsystemroles', 'role');
-                $strcheck = get_string('checksystempermissionsfor', 'role', $a);
+                $strgoto = get_string('gotoassignsystemroles', 'core_role');
+                $strcheck = get_string('checksystempermissionsfor', 'core_role', $a);
             } else {
-                $strgoto = get_string('gotoassignroles', 'role', $a);
-                $strcheck = get_string('checkuserspermissionshere', 'role', $a);
+                $strgoto = get_string('gotoassignroles', 'core_role', $a);
+                $strcheck = get_string('checkuserspermissionshere', 'core_role', $a);
             }
             echo ' <a title="' . $strgoto . '" href="' . $raurl . '"><img class="iconsmall" src="' .
                     $OUTPUT->pix_url('t/edit') . '" alt="' . $stredit . '" /></a> ';
