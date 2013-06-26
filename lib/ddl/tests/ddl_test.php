@@ -1545,6 +1545,9 @@ class core_ddl_testcase extends database_driver_testcase {
         $this->assertSame($records[1]->secondname, $this->records['test_table1'][0]->secondname);
         $this->assertSame($records[2]->intro, $this->records['test_table1'][1]->intro);
 
+        // Collect statistics about the data in the temp table.
+        $DB->update_temp_table_stats();
+
         // Drop table1.
         $dbman->drop_table($table1);
         $this->assertFalse($dbman->table_exists('test_table1'));
@@ -1557,6 +1560,9 @@ class core_ddl_testcase extends database_driver_testcase {
         } catch (moodle_exception $e) {
             $this->assertInstanceOf('ddl_table_missing_exception', $e);
         }
+
+        // Collect statistics about the data in the temp table with less tables.
+        $DB->update_temp_table_stats();
 
         // Fill/modify/delete a few table0 records.
 
