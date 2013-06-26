@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Library code used by the roles administration interfaces.
+ * Advanced role definition form.
  *
  * @package    core_role
  * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
@@ -31,9 +31,9 @@ defined('MOODLE_INTERNAL') || die();
  * starting to be more and more like a formslib form in some respects.)
  */
 class core_role_define_role_table_advanced extends core_role_capability_table_with_risks {
-    /** Used to store other information (besides permissions) about the role we are creating/editing. */
+    /** @var stdClass Used to store other information (besides permissions) about the role we are creating/editing. */
     protected $role;
-    /** Used to store errors found when validating the data. */
+    /** @var array Used to store errors found when validating the data. */
     protected $errors;
     protected $contextlevels;
     protected $allcontextlevels;
@@ -133,7 +133,7 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
         $archetype = optional_param('archetype', null, PARAM_RAW);
         if (isset($archetype)) {
             $archetypes = get_role_archetypes();
-            if (isset($archetypes[$archetype])){
+            if (isset($archetypes[$archetype])) {
                 $this->role->archetype = $archetype;
             } else {
                 $this->role->archetype = '';
@@ -419,11 +419,11 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
         global $DB;
 
         if (!$this->roleid) {
-            // Creating role
+            // Creating role.
             $this->role->id = create_role($this->role->name, $this->role->shortname, $this->role->description, $this->role->archetype);
             $this->roleid = $this->role->id; // Needed to make the parent::save_changes(); call work.
         } else {
-            // Updating role
+            // Updating role.
             $DB->update_record('role', $this->role);
         }
 
@@ -481,7 +481,7 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
     protected function get_archetype_field($id) {
         $options = array();
         $options[''] = get_string('none');
-        foreach(get_role_archetypes() as $type) {
+        foreach (get_role_archetypes() as $type) {
             $options[$type] = get_string('archetype'.$type, 'role');
         }
         return html_writer::select($options, 'archetype', $this->role->archetype, false);
@@ -609,7 +609,8 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
         echo '<div class="topfields clearfix">';
         $this->print_field('shortname', get_string('roleshortname', 'role').'&nbsp;'.$OUTPUT->help_icon('roleshortname', 'role'), $this->get_shortname_field('shortname'));
         $this->print_field('name', get_string('customrolename', 'role').'&nbsp;'.$OUTPUT->help_icon('customrolename', 'role'), $this->get_name_field('name'));
-        $this->print_field('edit-description', get_string('customroledescription', 'role').'&nbsp;'.$OUTPUT->help_icon('customroledescription', 'role'), $this->get_description_field('description'));
+        $this->print_field('edit-description', get_string('customroledescription', 'role').'&nbsp;'.$OUTPUT->help_icon('customroledescription', 'role'),
+            $this->get_description_field('description'));
         $this->print_field('menuarchetype', get_string('archetype', 'role').'&nbsp;'.$OUTPUT->help_icon('archetype', 'role'), $this->get_archetype_field('archetype'));
         $this->print_field('', get_string('maybeassignedin', 'role'), $this->get_assignable_levels_control());
         $this->print_field('menuallowassign', get_string('allowassign', 'role'), $this->get_allow_role_control('assign'));
@@ -627,7 +628,7 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
     }
 
     protected function add_permission_cells($capability) {
-        /// One cell for each possible permission.
+        // One cell for each possible permission.
         foreach ($this->displaypermissions as $perm => $permname) {
             $strperm = $this->strperms[$permname];
             $extraclass = '';

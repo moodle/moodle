@@ -88,7 +88,7 @@ class core_role_view_role_definition_table extends core_role_define_role_table_a
             if ($perm != CAP_ALLOW) {
                 continue;
             }
-            foreach ($allrisks as $type=>$risk) {
+            foreach ($allrisks as $type => $risk) {
                 if ($risk & (int)$capability->riskbitmask) {
                     $risks[$type] = $risk;
                 }
@@ -96,7 +96,7 @@ class core_role_view_role_definition_table extends core_role_define_role_table_a
         }
 
         $risksurl = new moodle_url(get_docs_url(s(get_string('risks', 'role'))));
-        foreach ($risks as $type=>$risk) {
+        foreach ($risks as $type => $risk) {
             $pixicon = new pix_icon('/i/' . str_replace('risk', 'risk_', $type), get_string($type . 'short', 'admin'));
             $risks[$type] = $OUTPUT->action_icon($risksurl, $pixicon, new popup_action('click', $risksurl));
         }
