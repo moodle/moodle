@@ -33,40 +33,6 @@ require_once($CFG->libdir.'/tablelib.php');
 
 admin_externalpage_setup('managereports');
 
-$delete  = optional_param('delete', '', PARAM_PLUGIN);
-$confirm = optional_param('confirm', '', PARAM_BOOL);
-
-/// If data submitted, then process and store.
-
-if (!empty($delete) and confirm_sesskey()) {
-    echo $OUTPUT->header();
-    echo $OUTPUT->heading(get_string('reports'));
-
-    if (!$confirm) {
-        if (get_string_manager()->string_exists('pluginname', 'report_' . $delete)) {
-            $strpluginname = get_string('pluginname', 'report_' . $delete);
-        } else {
-            $strpluginname = $delete;
-        }
-        echo $OUTPUT->confirm(get_string('reportsdeleteconfirm', 'admin', $strpluginname),
-                                new moodle_url($PAGE->url, array('delete' => $delete, 'confirm' => 1)),
-                                $PAGE->url);
-        echo $OUTPUT->footer();
-        die();
-
-    } else {
-        uninstall_plugin('report', $delete);
-        $a = new stdclass();
-        $a->name = $delete;
-        $pluginlocation = get_plugin_types();
-        $a->directory = $pluginlocation['report'] . '/' . $delete;
-        echo $OUTPUT->notification(get_string('plugindeletefiles', '', $a), 'notifysuccess');
-        echo $OUTPUT->continue_button($PAGE->url);
-        echo $OUTPUT->footer();
-        die();
-    }
-}
-
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('reports'));
 
@@ -104,8 +70,10 @@ foreach ($installed as $config) {
 }
 
 foreach ($plugins as $plugin => $name) {
-    $delete = new moodle_url($PAGE->url, array('delete' => $plugin, 'sesskey' => sesskey()));
-    $delete = html_writer::link($delete, get_string('delete'));
+    $delete = '';
+    if ($deleteurl = plugin_manager::instance()->get_uninstall_url('report_'.$plugin)) {
+        $delete = html_writer::link($deleteurl, get_string('delete'));
+    }
 
     if (!isset($versions[$plugin])) {
         if (file_exists("$CFG->dirroot/report/$plugin/version.php")) {

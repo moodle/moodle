@@ -3883,10 +3883,6 @@ class plugininfo_report extends plugininfo_base {
     public function is_uninstall_allowed() {
         return true;
     }
-
-    public function get_uninstall_url() {
-        return new moodle_url('/admin/reports.php', array('delete' => $this->name, 'sesskey' => sesskey()));
-    }
 }
 
 
@@ -3895,8 +3891,8 @@ class plugininfo_report extends plugininfo_base {
  */
 class plugininfo_local extends plugininfo_base {
 
-    public function get_uninstall_url() {
-        return new moodle_url('/admin/localplugins.php', array('delete' => $this->name, 'sesskey' => sesskey()));
+    public function is_uninstall_allowed() {
+        return true;
     }
 }
 
