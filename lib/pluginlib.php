@@ -521,6 +521,26 @@ class plugin_manager {
     }
 
     /**
+     * Returns uninstall URL if exists.
+     *
+     * @param string $component
+     * @return moodle_url uninstall URL, null if uninstall not supported
+     */
+    public function get_uninstall_url($component) {
+        if (!$this->can_uninstall_plugin($component)) {
+            return null;
+        }
+
+        $pluginfo = $this->get_plugin_info($component);
+
+        if (is_null($pluginfo)) {
+            return null;
+        }
+
+        return $pluginfo->get_uninstall_url();
+    }
+
+    /**
      * Uninstall the given plugin.
      *
      * Automatically cleans-up all remaining configuration data, log records, events,
@@ -2823,6 +2843,15 @@ abstract class plugininfo_base {
         }
 
         return true;
+    }
+
+    /**
+     * Optional extra warning before uninstallation, for example number of uses in courses.
+     *
+     * @return string
+     */
+    public function get_uninstall_extra_warning() {
+        return '';
     }
 
     /**
