@@ -201,11 +201,6 @@ margin-left: 10px;
 text-align:right;
 }
 
-table#user-grades .hidden,
-table#user-grades .hidden a {
-color:#aaa;
-}
-
 table#user-grades .datesubmitted {
 font-size:.7em;
 }
