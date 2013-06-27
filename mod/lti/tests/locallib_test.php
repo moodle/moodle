@@ -139,4 +139,10 @@ class mod_lti_locallib_testcase extends basic_testcase {
 
         lti_verify_sourcedid($ltiinstance, $parsed);
     }
+
+    public function test_lti_ensure_url_is_https() {
+        $this->assertEquals('https://moodle.org', lti_ensure_url_is_https('http://moodle.org'));
+        $this->assertEquals('https://moodle.org', lti_ensure_url_is_https('moodle.org'));
+        $this->assertEquals('https://moodle.org', lti_ensure_url_is_https('https://moodle.org'));
+    }
 }
