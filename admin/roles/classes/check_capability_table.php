@@ -44,7 +44,6 @@ class core_role_check_capability_table extends core_role_capability_table_base {
      * @param string $contextname print_context_name($context) - to save recomputing.
      */
     public function __construct($context, $user, $contextname) {
-        global $CFG;
         parent::__construct($context, 'explaincaps');
         $this->user = $user;
         $this->fullname = fullname($user);
@@ -71,7 +70,6 @@ class core_role_check_capability_table extends core_role_capability_table_base {
     }
 
     protected function add_row_cells($capability) {
-        global $OUTPUT;
         if ($this->hascap) {
             $result = $this->stryes;
         } else {

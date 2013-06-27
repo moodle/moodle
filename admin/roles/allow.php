@@ -45,7 +45,7 @@ $controller = new $classformode[$mode]();
 
 if (optional_param('submit', false, PARAM_BOOL) && data_submitted() && confirm_sesskey()) {
     $controller->process_submission();
-    mark_context_dirty($syscontext->path);
+    $syscontext->mark_dirty();
     add_to_log(SITEID, 'role', 'edit allow ' . $mode, str_replace($CFG->wwwroot . '/', '', $baseurl), '', '', $USER->id);
     redirect($baseurl);
 }

@@ -55,7 +55,7 @@ require_capability('moodle/role:assign', $context);
 $PAGE->set_url($url);
 $PAGE->set_context($context);
 
-$contextname = print_context_name($context);
+$contextname = $context->get_context_name();
 $courseid = $course->id;
 
 // These are needed early because of tabs.php.
@@ -163,7 +163,7 @@ switch ($context->contextlevel) {
         }
         break;
     case CONTEXT_MODULE:
-        $PAGE->set_heading(print_context_name($context, false));
+        $PAGE->set_heading($context->get_context_name(false));
         $PAGE->set_cacheable(false);
         break;
     case CONTEXT_BLOCK:

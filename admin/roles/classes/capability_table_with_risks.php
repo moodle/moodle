@@ -36,7 +36,7 @@ abstract class core_role_capability_table_with_risks extends core_role_capabilit
     protected $strperms; // Language string cache.
     protected $risksurl; // URL in moodledocs about risks.
     protected $riskicons = array(); // Cache to avoid regenerating the HTML for each risk icon.
-    /** The capabilities to highlight as default/inherited. */
+    /** @var array The capabilities to highlight as default/inherited. */
     protected $parentpermissions;
     protected $displaypermissions;
     protected $permissions;

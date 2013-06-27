@@ -34,22 +34,21 @@ class core_role_existing_role_holders extends core_role_assign_user_selector_bas
         global $DB;
 
         list($wherecondition, $params) = $this->search_sql($search, 'u');
-        list($ctxcondition, $ctxparams) = $DB->get_in_or_equal(get_parent_contexts($this->context, true), SQL_PARAMS_NAMED, 'ctx');
+        list($ctxcondition, $ctxparams) = $DB->get_in_or_equal($this->context->get_parent_context_ids(true), SQL_PARAMS_NAMED, 'ctx');
         $params = array_merge($params, $ctxparams);
         $params['roleid'] = $this->roleid;
 
         list($sort, $sortparams) = users_order_by_sql('u', $search, $this->accesscontext);
         $params = array_merge($params, $sortparams);
 
-        $sql = "SELECT ra.id as raid," . $this->required_fields_sql('u') . ",ra.contextid,ra.component
-                FROM {role_assignments} ra
-                JOIN {user} u ON u.id = ra.userid
-                JOIN {context} ctx ON ra.contextid = ctx.id
-                WHERE
-                    $wherecondition AND
-                    ctx.id $ctxcondition AND
-                    ra.roleid = :roleid
-                ORDER BY ctx.depth DESC, ra.component, $sort";
+        $sql = "SELECT ra.id AS raid," . $this->required_fields_sql('u') . ",ra.contextid,ra.component
+                  FROM {role_assignments} ra
+                  JOIN {user} u ON u.id = ra.userid
+                  JOIN {context} ctx ON ra.contextid = ctx.id
+                 WHERE $wherecondition
+                       AND ctx.id $ctxcondition
+                       AND ra.roleid = :roleid
+              ORDER BY ctx.depth DESC, ra.component, $sort";
         $contextusers = $DB->get_records_sql($sql, $params);
 
         // No users at all.
@@ -111,7 +110,7 @@ class core_role_existing_role_holders extends core_role_assign_user_selector_bas
                 return get_string('extusers', 'core_role');
             }
         }
-        $contexttype = get_contextlevel_name($this->context->contextlevel);
+        $contexttype = context_helper::get_level_name($this->context->contextlevel);
         if ($search) {
             $a = new stdClass;
             $a->search = $search;
@@ -132,7 +131,7 @@ class core_role_existing_role_holders extends core_role_assign_user_selector_bas
 
     protected function parent_con_group_name($search, $contextid) {
         $context = context::instance_by_id($contextid);
-        $contextname = print_context_name($context, true, true);
+        $contextname = $context->get_context_name(true, true);
         if ($search) {
             $a = new stdClass;
             $a->contextname = $contextname;

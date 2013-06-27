@@ -31,15 +31,15 @@ defined('MOODLE_INTERNAL') || die();
  * some blocks) then return a core_role_potential_assignees_below_course object. Otherwise
  * return a core_role_potential_assignees_course_and_above.
  *
- * @param stdClass $context a context.
+ * @param context $context a context.
  * @param string $name passed to user selector constructor.
  * @param array $options to user selector constructor.
  * @return user_selector_base an appropriate user selector.
  */
-function core_role_get_potential_user_selector($context, $name, $options) {
+function core_role_get_potential_user_selector(context $context, $name, $options) {
     $blockinsidecourse = false;
     if ($context->contextlevel == CONTEXT_BLOCK) {
-        $parentcontext = context::instance_by_id(get_parent_contextid($context));
+        $parentcontext = $context->get_parent_context();
         $blockinsidecourse = in_array($parentcontext->contextlevel, array(CONTEXT_MODULE, CONTEXT_COURSE));
     }
 

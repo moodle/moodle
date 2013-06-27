@@ -58,7 +58,7 @@ class core_role_override_permissions_table_advanced extends core_role_capability
 
     protected function load_parent_permissions() {
         // Get the capabilities from the parent context, so that can be shown in the interface.
-        $parentcontext = context::instance_by_id($this->context->get_parent_context());
+        $parentcontext = $this->context->get_parent_context();
         $this->parentpermissions = role_context_capabilities($this->roleid, $parentcontext);
     }
 

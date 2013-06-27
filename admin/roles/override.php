@@ -74,7 +74,7 @@ list($overridableroles, $overridecounts, $nameswithcounts) = get_overridable_rol
 // Work out an appropriate page title.
 $contextname = $context->get_context_name();
 $straction = get_string('overrideroles', 'core_role'); // Used by tabs.php.
-$a = (object)array('context' => $contextname, 'core_role' => $overridableroles[$roleid]);
+$a = (object)array('context' => $contextname, 'role' => $overridableroles[$roleid]);
 $title = get_string('overridepermissionsforrole', 'core_role', $a);
 
 $currenttab = 'permissions';

@@ -53,7 +53,7 @@ $PAGE->set_url($url);
 $PAGE->set_context($context);
 
 $courseid = $course->id;
-$contextname = print_context_name($context);
+$contextname = $context->get_context_name();
 
 // Get the user_selector we will need.
 // Teachers within a course just get to see the same list of enrolled users.
@@ -90,7 +90,7 @@ switch ($context->contextlevel) {
         }
         break;
     case CONTEXT_MODULE:
-        $PAGE->set_heading(print_context_name($context, false));
+        $PAGE->set_heading($context->get_context_name(false));
         $PAGE->set_cacheable(false);
         break;
     case CONTEXT_BLOCK:
@@ -164,7 +164,7 @@ echo $OUTPUT->heading('<label for="reportuser">' . $selectheading . '</label>', 
 $userselector->display();
 
 // Submit button and the end of the form.
-echo '<p id="chooseusersubmit"><input type="submit" value="' . get_string('showthisuserspermissions', 'corerole') . '" /></p>';
+echo '<p id="chooseusersubmit"><input type="submit" value="' . get_string('showthisuserspermissions', 'core_role') . '" /></p>';
 echo '</form>';
 echo $OUTPUT->box_end();
 
