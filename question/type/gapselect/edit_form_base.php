@@ -118,6 +118,7 @@ class qtype_gapselect_edit_form_base extends question_edit_form {
 
     protected function definition_answer_choice(&$mform) {
         $mform->addElement('header', 'choicehdr', get_string('choices', 'qtype_gapselect'));
+        $mform->setExpanded('choicehdr', 1);
 
         $mform->addElement('checkbox', 'shuffleanswers', get_string('shuffle', 'qtype_gapselect'));
         $mform->setDefault('shuffleanswers', 0);
