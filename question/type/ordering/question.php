@@ -77,7 +77,7 @@ class qtype_ordering_question extends question_graded_automatically {
         if (! $options = $DB->get_record ('question_ordering', array('question' => $this->id))) {
             $options = (object)array('logical' => 0); // shouldn't happen !!
         }
-        if (! $answers = $DB->get_records ('question_answers', array('question' => $this->id), 'fraction')) {
+        if (! $answers = $DB->get_records ('question_answers', array('question' => $this->id), 'fraction,id')) {
             $answers = array(); // shouldn't happen !!
         }
 

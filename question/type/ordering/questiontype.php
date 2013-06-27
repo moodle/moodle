@@ -146,36 +146,263 @@ class qtype_ordering extends question_type {
         //parent::get_question_options($question);
         return true;
     }
-/*
-    protected function initialise_question_instance(question_definition $question, $questiondata) {
-        parent::initialise_question_instance($question, $questiondata);
-        $answers = $questiondata->options->answers;
 
-        if ($answers[$questiondata->options->trueanswer]->fraction > 0.99) {
-            $question->rightanswer = true;
-        } else {
-            $question->rightanswer = false;
-        }
-
-        $question->truefeedback =  $answers[$questiondata->options->trueanswer]->feedback;
-        $question->falsefeedback = $answers[$questiondata->options->falseanswer]->feedback;
-        $question->truefeedbackformat =
-                $answers[$questiondata->options->trueanswer]->feedbackformat;
-        $question->falsefeedbackformat =
-                $answers[$questiondata->options->falseanswer]->feedbackformat;
-        $question->trueanswerid =  $questiondata->options->trueanswer;
-        $question->falseanswerid = $questiondata->options->falseanswer;
-    }
-    */
+    // following seems to be unnecessary ...
+    // initialise_question_instance(question_definition $question, $questiondata)
 
     public function delete_question($questionid, $contextid) {
         global $DB;
         $DB->delete_records('question_ordering', array('question' => $questionid));
         parent::delete_question($questionid, $contextid);
     }
+
+    /**
+     * import_from_gift
+     *
+     * @param array         $data
+     * @param stdClass      $question
+     * @param qformat_gift $format
+     * @param string        $extra (optional, default=null)
+     * @todo Finish documenting this function
+     */
+    function import_from_gift($lines, $question, $format, $extra=null) {
+
+        // convert $lines to a single a string - for preg_match()
+        $lines = implode(PHP_EOL, $lines);
+
+        // extract question info from GIFT file $lines
+        $search = '/^([^{]*)\s*\{>\s*(\d+)\s*((?:ALL|EXACT|RANDOM|REL|CONTIGUOUS|CONTIG)?)\s*(.*?)\s*\}\s*$/s';
+        // $1 the question name
+        // $2 the number of items to be shown
+        // $3 the extraction type
+        // $4 the lines of items to be ordered
+        if (empty($extra) || ! preg_match($search, $lines, $matches)) {
+            return false; // format not recognized
+        }
+
+        $questionname = trim($matches[1]);
+        $numberofitems = trim($matches[2]);
+        $extractiontype = trim($matches[3]);
+        $lines = explode(PHP_EOL, $matches[4]);
+        unset($matches);
+
+        $question->qtype = 'ordering';
+        $question->name = trim($question->name);
+
+        // fix empty or long question name
+        $question->name = $this->fix_questionname($question->name, $questionname);
+
+        // set "studentsee" field from $numberofitems
+        if (is_numeric($numberofitems) && $numberofitems > 2 && $numberofitems <= count($lines)) {
+            $numberofitems = intval($numberofitems);
+        } else {
+            $numberofitems = min(6, count($lines));
+        }
+        $this->set_num_and_type($question, $numberofitems, $extractiontype);
+
+        // remove blank items
+        $lines = array_map('trim', $lines);
+        $lines = array_filter($lines); // remove blanks
+
+        // set up answer arrays
+        $question->answer = array();
+        $question->answerformat = array();
+        $question->fraction = array();
+        $question->feedback = array();
+        $question->feedbackformat = array();
+
+        // Note that "fraction" field is used to denote sort order
+        // "fraction" fields will be set to correct values later
+        // in the save_question_options() method of this class
+
+        foreach ($lines as $i => $line) {
+            $question->answer[$i] = $line;
+            $question->answerformat[$i] = FORMAT_MOODLE; // =0
+            $question->fraction[$i] = 1; // will be reset later in save_question_options()
+            $question->feedback[$i] = '';
+            $question->feedbackformat[$i] = FORMAT_MOODLE; // =0
+        }
+
+        return $question;
+    }
+
+    /**
+     * extract_num_and_type
+     *
+     * @param stdClass      $question
+     * @todo Finish documenting this function
+     */
+    function extract_num_and_type($question) {
+        switch ($question->options->logical) {
+            case 0:  $type = 'EXACT';  break; // all
+            case 1:  $type = 'REL';    break; // random subset
+            case 2:  $type = 'CONTIG'; break; // contiguous subset
+            default: $type = ''; // shouldn't happen !!
+        }
+        $num = $question->options->studentsee + 2;
+        return array($num, $type);
+    }
+
+    /**
+     * export_to_gift
+     *
+     * @param stdClass      $question
+     * @param qformat_gift $format
+     * @param string        $extra (optional, default=null)
+     * @todo Finish documenting this function
+     */
+    function export_to_gift($question, $format, $extra=null) {
+        list($num, $type) = $this->extract_num_and_type($question);
+
+        $expout = $question->questiontext.'{>'.$num.' '.$type.' '."\n";
+        foreach ($question->options->answers as $answer) {
+            $expout .= $answer->answer."\n";
+        }
+        $expout .= '}';
+
+        return $expout;
+    }
+
+    /**
+     * export_to_xml
+     *
+     * @param stdClass    $question
+     * @param qformat_xml $format
+     * @param string      $extra (optional, default=null)
+     * @todo Finish documenting this function
+     */
+    function export_to_xml($question, qformat_xml $format, $extra=null) {
+
+        list($num, $type) = $this->extract_num_and_type($question);
+
+        $output = '';
+        $output .= "    <logical>$type</logical>\n";
+        $output .= "    <studentsee>$num</studentsee>\n";
+
+        foreach($question->options->answers as $answer) {
+            $output .= '    <answer fraction="'.$answer->fraction.'" '.$format->format($answer->answerformat).">\n";
+            $output .= $format->writetext($answer->answer, 3);
+            if ($feedback = trim($answer->feedback)) { // usually there is no feedback
+                $output .= '      <feedback '.$format->format($answer->feedbackformat).">\n";
+                $output .= $format->writetext($answer->feedback, 4);
+                $output .= "      </feedback>\n";
+            }
+            $output .= "    </answer>\n";
+        }
+
+        return $output;
+    }
+
+    /*
+     * Imports question from the Moodle XML format
+     *
+     * Imports question using information from extra_question_fields function
+     * If some of you fields contains id's you'll need to reimplement this
+     *
+     * @param array          $data
+     * @param qtype_ordering $question (or null)
+     * @param qformat_xml    $format
+     * @param string         $extra (optional, default=null)
+     */
+    public function import_from_xml($data, $question, qformat_xml $format, $extra=null) {
+
+        $question_type = $format->getpath($data, array('@', 'type'), '');
+
+        if ($question_type != 'ordering') {
+            return false;
+        }
+
+        $newquestion = $format->import_headers($data);
+        $newquestion->qtype = $question_type;
+
+        // fix empty or long question name
+        $newquestion->name = $this->fix_questionname($newquestion->name, $newquestion->questiontext);
+
+        // extra fields fields fields - "logical" and "studentsee"
+        $numberofitems = $format->getpath($data, array('#', 'studentsee', 0, '#'), 6);
+        $extractiontype = $format->getpath($data, array('#', 'logical', 0, '#'), 'RANDOM');
+        $this->set_num_and_type($newquestion, $numberofitems, $extractiontype);
+
+        $newquestion->answer = array();
+        $newquestion->answerformat = array();
+        $newquestion->fraction = array();
+        $newquestion->feedback = array();
+        $newquestion->feedbackformat = array();
+
+        $i = 0;
+        while ($answer = $format->getpath($data, array('#', 'answer', $i), '')) {
+            if ($text = $format->getpath($answer, array('#', 'text', 0, '#'), '')) {
+                $newquestion->answer[] = $text;
+                $answerformat = $format->getpath($answer, array('@', 'format'), 'moodle_auto_format');
+                $newquestion->answerformat[] = $format->trans_format($answerformat);
+                $newquestion->fraction[] = 1; // will be reset later in save_question_options()
+                $newquestion->feedback[] = $format->getpath($answer, array('#', 'feedback', 0, '#', 'text', 0, '#'), '');
+                $feedbackformat = $format->getpath($answer, array('#', 'format', 0, '@', 'format'), 'moodle_auto_format');
+                $newquestion->feedbackformat[] = $format->trans_format($feedbackformat);
+            }
+            $i++;
+        }
+
+        return $newquestion;
+    }
+
+    /*
+     * fix_questionname
+     *
+     * @param string $name
+     * @param string $defaultname (optional, default='')
+     * @param integer $maxnamelength (optional, default=42)
+     */
+    public function fix_questionname($name, $defaultname='', $maxnamelength = 42) {
+        if (trim($name)=='') {
+            if ($defaultname) {
+                $name = $defaultname;
+            } else {
+                $name = get_string('defaultquestionname', 'qtype_ordering');
+            }
+        }
+        if (strlen($name) > $maxnamelength) {
+            $name = substr($name, 0, $maxnamelength);
+            if ($pos = strrpos($name, ' ')) {
+                $name = substr($name, 0, $pos);
+            }
+            $name .= ' ...';
+        }
+        return $name;
+    }
+
+    /*
+     * set_num_and_type
+     *
+     * @param object $question (passed by reference)
+     * @param integer $num the number of items to display
+     * @param integer $type the extraction type
+     */
+    function set_num_and_type(&$question, $num, $type) {
+
+        // set "studentsee" from $num(ber of items)
+        $question->studentsee = ($num - 2);
+
+        // set "logical" from (extraction) $type
+        switch ($type) {
+            case 'ALL':
+            case 'EXACT':
+                $question->logical = 0;
+                break;
+
+            case 'RANDOM':
+            case 'REL':
+                $question->logical = 1;
+                break;
+
+            case 'CONTIGUOUS':
+            case 'CONTIG':
+                $question->logical = 2;
+                break;
+        }
+    }
 }
 
-// NEW LINES START
 if ($register_questiontype) {
     class question_ordering_qtype extends qtype_ordering {
         function name() {
@@ -184,4 +411,3 @@ if ($register_questiontype) {
     }
     question_register_questiontype(new question_ordering_qtype());
 }
-// NEW LINES STOP

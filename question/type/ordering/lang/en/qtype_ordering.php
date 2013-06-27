@@ -43,4 +43,5 @@ $string['ordering_comment'] = 'Drag and drop the items into the correct order.';
 
 // TODO add any other requred strings.
 $string['ordering_help'] = 'Ordering help';
+$string['defaultquestionname'] = 'Put the following events into the correct order.';
 ?>
