@@ -208,8 +208,10 @@ class tool_uploadcourse_helper_testcase extends advanced_testcase {
             'role_' . $roleids['villain'] => 'Jabba the Hutt',
         );
 
-        $actual = tool_uploadcourse_helper::get_role_names($data);
+        $errors = array();
+        $actual = tool_uploadcourse_helper::get_role_names($data, $errors);
         $this->assertSame($actual, $expected);
+        $this->assertArrayHasKey('invalidroles', $errors);
     }
 
     public function test_increment_idnumber() {
@@ -257,12 +259,18 @@ class tool_uploadcourse_helper_testcase extends advanced_testcase {
         $this->assertEquals($c2->id, tool_uploadcourse_helper::resolve_category($data));
 
         // Adding unexisting data.
+        $errors = array();
         $data['category_idnumber'] = 1234;
-        $this->assertEquals($c2->id, tool_uploadcourse_helper::resolve_category($data));
+        $this->assertEquals($c2->id, tool_uploadcourse_helper::resolve_category($data, $errors));
+        $this->assertArrayHasKey('couldnotresolvecatgorybyidnumber', $errors);
+        $errors = array();
         $data['category'] = 1234;
-        $this->assertEquals($c2->id, tool_uploadcourse_helper::resolve_category($data));
+        $this->assertEquals($c2->id, tool_uploadcourse_helper::resolve_category($data, $errors));
+        $this->assertArrayHasKey('couldnotresolvecatgorybyid', $errors);
+        $errors = array();
         $data['category_path'] = 'Not exist';
-        $this->assertEmpty(tool_uploadcourse_helper::resolve_category($data));
+        $this->assertEmpty(tool_uploadcourse_helper::resolve_category($data, $errors));
+        $this->assertArrayHasKey('couldnotresolvecatgorybypath', $errors);
     }
 
     public function test_resolve_category_by_idnumber() {

@@ -84,6 +84,7 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
         $data = array('shortname' => 'c1', 'fullname' => 'C1FN', 'summary' => 'C1', 'category' => 1);
         $co = new tool_uploadcourse_course($mode, $updatemode, $data);
         $this->assertFalse($co->prepare());
+        $this->assertArrayHasKey('courseexistsanduploadnotallowed', $co->get_errors());
         $this->assertEquals($coursecount, $DB->count_records('course', array()));
         $this->assertNotEquals('C1', $DB->get_field_select('course', 'summary', 'shortname = :s', array('s' => 'c1')));
 
@@ -114,6 +115,7 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
         $data = array('shortname' => $c1->shortname, 'delete' => 1);
         $co = new tool_uploadcourse_course($mode, $updatemode, $data, array(), $importoptions);
         $this->assertFalse($co->prepare());
+        $this->assertArrayHasKey('coursedeletionnotallowed', $co->get_errors());
         $this->assertTrue($DB->record_exists('course', array('shortname' => $c1->shortname)));
 
         // Try delete when not requested.
@@ -137,6 +139,7 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
         $data = array('shortname' => 'DoesNotExist', 'delete' => 1);
         $co = new tool_uploadcourse_course($mode, $updatemode, $data, array(), $importoptions);
         $this->assertFalse($co->prepare());
+        $this->assertArrayHasKey('cannotdeletecoursenotexist', $co->get_errors());
     }
 
     public function test_update() {
@@ -145,27 +148,28 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
 
         $c1 = $this->getDataGenerator()->create_course(array('shortname' => 'c1'));
 
-        // Try to add with existing shortnames, not allowing creation, and updating nothing.
+        // Try to update with existing shortnames, not allowing creation, and updating nothing.
         $mode = tool_uploadcourse_processor::MODE_UPDATE_ONLY;
         $updatemode = tool_uploadcourse_processor::UPDATE_NOTHING;
         $data = array('shortname' => 'c1', 'fullname' => 'New fullname');
         $co = new tool_uploadcourse_course($mode, $updatemode, $data);
         $this->assertFalse($co->prepare());
+        $this->assertArrayHasKey('updatemodedoessettonothing', $co->get_errors());
 
-        // Try to add with non-existing shortnames.
+        // Try to update with non-existing shortnames.
         $mode = tool_uploadcourse_processor::MODE_UPDATE_ONLY;
         $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
         $data = array('shortname' => 'DoesNotExist', 'fullname' => 'New fullname');
         $co = new tool_uploadcourse_course($mode, $updatemode, $data);
         $this->assertFalse($co->prepare());
+        $this->assertArrayHasKey('coursedoesnotexistandcreatenotallowed', $co->get_errors());
 
         // Try a proper update.
         $mode = tool_uploadcourse_processor::MODE_UPDATE_ONLY;
         $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
         $data = array('shortname' => 'c1', 'fullname' => 'New fullname');
         $co = new tool_uploadcourse_course($mode, $updatemode, $data);
-        // $this->assertTrue($co->prepare());
-        $co->prepare();
+        $this->assertTrue($co->prepare());
         $co->proceed();
         $this->assertEquals('New fullname', $DB->get_field_select('course', 'fullname', 'shortname = :s', array('s' => 'c1')));
 
@@ -506,14 +510,16 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
         $data = array('shortname' => 'c1', 'rename' => 'newshortname');
         $co = new tool_uploadcourse_course($mode, $updatemode, $data, array(), $importoptions);
         $this->assertFalse($co->prepare());
+        $this->assertArrayHasKey('courseexistsanduploadnotallowed', $co->get_errors());
 
         // Cannot rename when creating.
         $mode = tool_uploadcourse_processor::MODE_CREATE_ALL;
         $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
         $importoptions = array('canrename' => true);
-        $data = array('shortname' => 'c1', 'rename' => 'newshortname');
+        $data = array('shortname' => 'c1', 'rename' => 'newshortname', 'category' => 1, 'summary' => 'S', 'fullname' => 'F');
         $co = new tool_uploadcourse_course($mode, $updatemode, $data, array(), $importoptions);
         $this->assertFalse($co->prepare());
+        $this->assertArrayHasKey('canonlyrenameinupdatemode', $co->get_errors());
 
         // Error when not allowed to rename the course.
         $mode = tool_uploadcourse_processor::MODE_UPDATE_ONLY;
@@ -522,6 +528,7 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
         $data = array('shortname' => 'c1', 'rename' => 'newshortname');
         $co = new tool_uploadcourse_course($mode, $updatemode, $data, array(), $importoptions);
         $this->assertFalse($co->prepare());
+        $this->assertArrayHasKey('courserenamingnotallowed', $co->get_errors());
 
         // Can rename when updating.
         $mode = tool_uploadcourse_processor::MODE_CREATE_OR_UPDATE;
@@ -544,12 +551,13 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
         $this->assertEquals('newshortname2', $DB->get_field_select('course', 'shortname', 'id = :id', array('id' => $c1->id)));
 
         // Error when course does not exist.
-        $mode = tool_uploadcourse_processor::MODE_UPDATE_ONLY;
+        $mode = tool_uploadcourse_processor::MODE_CREATE_OR_UPDATE;
         $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
         $importoptions = array('canrename' => true);
-        $data = array('shortname' => 'DoesNotExist', 'rename' => 'c1');
+        $data = array('shortname' => 'DoesNotExist', 'rename' => 'c1', 'category' => 1, 'summary' => 'S', 'fullname' => 'F');
         $co = new tool_uploadcourse_course($mode, $updatemode, $data, array(), $importoptions);
         $this->assertFalse($co->prepare());
+        $this->assertArrayHasKey('cannotrenamecoursenotexist', $co->get_errors());
 
         // Renaming still updates the other values.
         $mode = tool_uploadcourse_processor::MODE_CREATE_OR_UPDATE;
@@ -651,9 +659,10 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
         // Wrong mode.
         $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;
         $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
-        $data = array('shortname' => $c1->shortname, 'reset' => '1');
+        $data = array('shortname' => 'DoesNotExist', 'reset' => '1', 'summary' => 'summary', 'fullname' => 'FN', 'category' => 1);
         $co = new tool_uploadcourse_course($mode, $updatemode, $data);
         $this->assertFalse($co->prepare());
+        $this->assertArrayHasKey('canonlyresetcourseinupdatemode', $co->get_errors());
         $this->assertTrue($DB->record_exists('groups', array('id' => $g1->id)));
         $this->assertTrue($DB->record_exists('groups_members', array('groupid' => $g1->id, 'userid' => $u1->id)));
         $this->assertCount(1, get_enrolled_users($c1ctx));
@@ -665,6 +674,7 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
         $importoptions = array('canreset' => false);
         $co = new tool_uploadcourse_course($mode, $updatemode, $data, array(), $importoptions);
         $this->assertFalse($co->prepare());
+        $this->assertArrayHasKey('courseresetnotallowed', $co->get_errors());
         $this->assertTrue($DB->record_exists('groups', array('id' => $g1->id)));
         $this->assertTrue($DB->record_exists('groups_members', array('groupid' => $g1->id, 'userid' => $u1->id)));
         $this->assertCount(1, get_enrolled_users($c1ctx));
@@ -676,6 +686,7 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
         $importoptions = array('canreset' => true);
         $co = new tool_uploadcourse_course($mode, $updatemode, $data, array(), $importoptions);
         $this->assertTrue($co->prepare());
+        $co->proceed();
         $this->assertTrue($DB->record_exists('groups', array('id' => $g1->id)));
         $this->assertTrue($DB->record_exists('groups_members', array('groupid' => $g1->id, 'userid' => $u1->id)));
         $this->assertCount(1, get_enrolled_users($c1ctx));

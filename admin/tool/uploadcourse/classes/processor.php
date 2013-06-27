@@ -109,11 +109,11 @@ class tool_uploadcourse_processor {
     /** @var array CSV columns. */
     protected $columns = array();
 
+    /** @var array of errors where the key is the line number. */
+    protected $errors = array();
+
     /** @var int line number. */
     protected $linenb = 0;
-
-    /** @var int line data. */
-    protected $linedata = array();
 
     /** @var bool whether the process has been started or not. */
     protected $processstarted = false;
@@ -166,6 +166,8 @@ class tool_uploadcourse_processor {
         $this->cir = $cir;
         $this->columns = $cir->get_columns();
         $this->defaults = $defaults;
+        $this->validate();
+        $this->reset();
     }
 
     /**
@@ -184,15 +186,15 @@ class tool_uploadcourse_processor {
             $this->linenb++;
 
             $data = $this->parse_line($line);
-            $course = self::get_course($data);
+            $course = $this->get_course($data);
             if ($course->prepare()) {
                 $course->proceed();
             } else {
-                print_object($course->get_errors());
+                $this->log_error($course->get_errors());
             }
         }
 
-        // $this->remove_restore_content();
+        $this->remove_restore_content();
     }
 
     /**
@@ -201,7 +203,7 @@ class tool_uploadcourse_processor {
      * @param array $data data to import the course with.
      * @return tool_uploadcourse_course
      */
-    public function get_course($data) {
+    protected function get_course($data) {
         $importoptions = array(
             'candelete' => $this->allowdeletes,
             'canrename' => $this->allowrenames,
@@ -214,12 +216,21 @@ class tool_uploadcourse_processor {
     }
 
     /**
+     * Return the errors.
+     *
+     * @return array
+     */
+    public function get_errors() {
+        return $this->errors;
+    }
+
+    /**
      * Get the directory of the object to restore.
      *
      * @param string $default directory to use if none found.
      * @return string subdirectory in $CFG->tempdir/backup/...
      */
-    public function get_restore_content_dir() {
+    protected function get_restore_content_dir() {
         $backupfile = null;
         $shortname = null;
 
@@ -231,6 +242,25 @@ class tool_uploadcourse_processor {
 
         $dir = tool_uploadcourse_helper::get_restore_content_dir($backupfile, $shortname);
         return $dir;
+    }
+
+    /**
+     * Log errors on the current line.
+     *
+     * @param array $errors array of errors
+     * @return void
+     */
+    protected function log_error($errors) {
+        if (empty($errors)) {
+            return;
+        }
+
+        foreach ($errors as $code => $langstring) {
+            if (!isset($this->errors[$this->linenb])) {
+                $this->errors[$this->linenb] = array();
+            }
+            $this->errors[$this->linenb][$code] = $langstring;
+        }
     }
 
     /**
@@ -254,12 +284,69 @@ class tool_uploadcourse_processor {
     }
 
     /**
+     * Return a preview of the import.
+     *
+     * This only returns passed data, along with the errors.
+     *
+     * @param integer $rows number of rows to preview.
+     * @return array of preview data.
+     */
+    public function preview($rows = 10) {
+        if ($this->processstarted) {
+            throw new coding_exception('Process has already been started');
+        }
+        $this->processstarted = true;
+
+        // Loop over the CSV lines.
+        $preview = array();
+        while (($line = $this->cir->next()) && $rows > $this->linenb) {
+            $this->linenb++;
+            $data = $this->parse_line($line);
+            $course = $this->get_course($data);
+            $result = $course->prepare();
+            if (!$result) {
+                $this->log_error($course->get_errors());
+            }
+            $row = $data;
+            $preview[$this->linenb] = $row;
+        }
+
+        $this->remove_restore_content();
+
+        return $preview;
+    }
+
+    /**
      * Delete the restore object.
      *
      * @return void
      */
     protected function remove_restore_content() {
-        global $CFG;
         tool_uploadcourse_helper::clean_restore_content();
+    }
+
+    /**
+     * Reset the current process.
+     *
+     * @return void.
+     */
+    public function reset() {
+        $this->processstarted = false;
+        $this->linenb = 0;
+        $this->cir->init();
+        $this->errors = array();
+    }
+
+    /**
+     * Validation.
+     *
+     * @return void
+     */
+    protected function validate() {
+        if (empty($this->columns)) {
+            throw new moodle_exception('cannotreadtmpfile', 'error');
+        } else if (count($this->columns) < 2) {
+            throw new moodle_exception('csvfewcolumns', 'error');
+        }
     }
 }

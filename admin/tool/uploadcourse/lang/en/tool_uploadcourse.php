@@ -24,6 +24,45 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['invalidshortname'] = 'Invalid shortname';
+$string['cannotdeletecoursenotexist'] = 'Cannot delete a course that does not exist';
+$string['cannotgenerateshortnameupdatemode'] = 'Cannot generate a shortname when updates are allowed';
+$string['cannotreadbackupfile'] = 'Cannot read the backup file';
+$string['cannotrenamecoursenotexist'] = 'Cannot rename a course that does not exist';
+$string['cannotrenameidnumberconflict'] = 'Cannot rename the course, the ID number conflicts with an existing course';
+$string['cannotrenameshortnamealreadyinuse'] = 'Cannot rename the course, the shortname is already used';
+$string['canonlyrenameinupdatemode'] = 'Can only rename a course when update is allowed';
+$string['canonlyresetcourseinupdatemode'] = 'Can only reset a course in update mode';
+$string['couldnotresolvecatgorybyid'] = 'Could not resolve category by ID';
+$string['couldnotresolvecatgorybyidnumber'] = 'Could not resolve category by ID number';
+$string['couldnotresolvecatgorybypath'] = 'Could not resolve category by path';
+$string['coursecreated'] = 'Course created';
+$string['coursedeleted'] = 'Course deleted';
+$string['coursedeletionnotallowed'] = 'Course deletion is not allowed';
+$string['coursedoesnotexistandcreatenotallowed'] = 'The course does not exist and creating course is not allowed';
+$string['courseexistsanduploadnotallowed'] = 'The course exists and update are not allowed';
+$string['courseidnumberincremented'] = 'Course ID number incremented {$a->from} -> {$a->to}';
+$string['courserenamed'] = 'Course renamed';
+$string['courserenamingnotallowed'] = 'Course renaming is not allowed';
+$string['coursereset'] = 'Course reset';
+$string['courseresetnotallowed'] = 'Course reset now allowed';
+$string['courserestored'] = 'Course restored';
+$string['courseshortnameincremented'] = 'Course shortname incremented {$a->from} -> {$a->to}';
+$string['courseshortnamegenerated'] = 'Course shortname generated';
+$string['coursetorestorefromdoesnotexist'] = 'The course to restore from does not exist';
+$string['courseupdated'] = 'Course updated';
+$string['errorwhilerestoringcourse'] = 'Error while restoring the course';
+$string['errorwhiledeletingcourse'] = 'Error while deleting the course';
+$string['generatedshortnameinvalid'] = 'The generated shortname is invalid';
+$string['generatedshortnamealreadyinuse'] = 'The generated shortname is already in use';
+$string['invalidbackupfile'] = 'Invalid backup file';
+$string['invalidcourseformat'] = 'Invalid course format';
+$string['invalidroles'] = 'Invalid role names: {$a}';
+$string['missingmandatoryfields'] = 'Missing value for mandatory fields: {$a}';
+$string['missingshortnamenotemplate'] = 'Missing shortname and shortname template not set';
+$string['updatemodedoessettonothing'] = 'Update mode does not allow anything to be updated';
+$string['unknownimportmode'] = 'Unknown import mode';
+
 $string['csvfileerror'] = 'There is something wrong with the format of the CSV file - please check the number of headings and columns match, and that the delimiter and file encoding are correct (don\t use comma-quoted as Moodle does not support it): {$a}';
 $string['allowdeletes'] = 'Allow deletes';
 $string['allowrenames'] = 'Allow renames';

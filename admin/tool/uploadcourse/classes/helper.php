@@ -222,9 +222,10 @@ class tool_uploadcourse_helper {
      *
      * @param string $backupfile path to a backup file.
      * @param string $shortname shortname of a course.
+     * @param array $errors will be populated with errors found.
      * @return string|false false when the backup couldn't retrieved.
      */
-    public static function get_restore_content_dir($backupfile = null, $shortname = null) {
+    public static function get_restore_content_dir($backupfile = null, $shortname = null, &$errors = array()) {
         global $CFG, $DB, $USER;
 
         $cachekey = null;
@@ -243,12 +244,19 @@ class tool_uploadcourse_helper {
             // Use false instead of null because it would consider that the cache
             // key has not been set.
             $backupid = false;
-            if (!empty($backupfile) && is_readable($backupfile)) {
-                // Extracting the backup file.
-                $packer = get_file_packer('application/vnd.moodle.backup');
-                $backupid = restore_controller::get_tempdir_name(SITEID, $USER->id);
-                $path = "$CFG->tempdir/backup/$backupid/";
-                $result = $packer->extract_to_pathname($backupfile, $path);
+            if (!empty($backupfile)) {
+                if (!is_readable($backupfile)) {
+                    $errors['cannotreadbackupfile'] = new lang_string('cannotreadbackupfile', 'tool_uploadcourse');
+                } else {
+                    // Extracting the backup file.
+                    $packer = get_file_packer('application/vnd.moodle.backup');
+                    $backupid = restore_controller::get_tempdir_name(SITEID, $USER->id);
+                    $path = "$CFG->tempdir/backup/$backupid/";
+                    $result = $packer->extract_to_pathname($backupfile, $path);
+                    if (!$result) {
+                        $errors['invalidbackupfile'] = new lang_string('invalidbackupfile', 'tool_uploadcourse');
+                    }
+                }
             } else if (!empty($shortname) || is_numeric($shortname)) {
                 // Creating restore from an existing course.
                 $courseid = $DB->get_field('course', 'id', array('shortname' => $shortname), IGNORE_MISSING);
@@ -258,6 +266,9 @@ class tool_uploadcourse_helper {
                     $bc->execute_plan();
                     $backupid = $bc->get_backupid();
                     $bc->destroy();
+                } else {
+                    $errors['coursetorestorefromdoesnotexist'] =
+                        new lang_string('coursetorestorefromdoesnotexist', 'tool_uploadcourse');
                 }
             }
             self::$restorecontentcache[$cachekey] = $backupid;
@@ -288,22 +299,28 @@ class tool_uploadcourse_helper {
      * Get the role renaming data from the passed data.
      *
      * @param array $data data to extract the names from.
+     * @param array $errors will be populated with errors found.
      * @return array where the key is the role_<id>, the value is the new name.
      */
-    public static function get_role_names($data) {
+    public static function get_role_names($data, &$errors = array()) {
         $rolenames = array();
         $rolesids = self::get_role_ids();
+        $invalidroles = array();
         foreach ($data as $field => $value) {
 
             $matches = array();
             if (preg_match('/^role_(.+)?$/', $field, $matches)) {
                 if (!isset($rolesids[$matches[1]])) {
-                    // Error!
+                    $invalidroles[] = $matches[1];
                     continue;
                 }
                 $rolenames['role_' . $rolesids[$matches[1]]] = $value;
             }
 
+        }
+
+        if (!empty($invalidroles)) {
+            $errors['invalidroles'] = new lang_string('invalidroles', 'tool_uploadcourse', implode(', ', $invalidroles));
         }
 
         // Roles names.
@@ -363,25 +380,33 @@ class tool_uploadcourse_helper {
      * - category_path, array of categories from parent to child.
      *
      * @param array $data to resolve the category from.
+     * @param array $errors will be populated with errors found.
      * @return int category ID.
      */
-    public static function resolve_category($data) {
+    public static function resolve_category($data, &$errors = array()) {
         global $DB;
         $catid = null;
 
         if (!empty($data['category'])) {
-            $category = coursecat::get($data['category'], IGNORE_MISSING);
+            $category = coursecat::get((int) $data['category'], IGNORE_MISSING);
             if (!empty($category)) {
                 $catid = $category->id;
+            } else {
+                $errors['couldnotresolvecatgorybyid'] =
+                    new lang_string('couldnotresolvecatgorybyid', 'tool_uploadcourse');
             }
         }
 
         if (empty($catid) && !empty($data['category_idnumber'])) {
             $catid = self::resolve_category_by_idnumber($data['category_idnumber']);
+            $errors['couldnotresolvecatgorybyidnumber'] =
+                new lang_string('couldnotresolvecatgorybyidnumber', 'tool_uploadcourse');
         }
 
         if (empty($catid) && !empty($data['category_path'])) {
             $catid = self::resolve_category_by_path(explode(' / ', $data['category_path']));
+            $errors['couldnotresolvecatgorybypath'] =
+                new lang_string('couldnotresolvecatgorybypath', 'tool_uploadcourse');
         }
 
         return $catid;
