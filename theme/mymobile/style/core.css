@@ -934,6 +934,10 @@ table#user-grades {
     border-width: 0px;
     font-size: inherit;
 }
+table#user-grades .dimmed_text,
+table#user-grades .dimmed_text a {
+    color: #AAAAAA;
+}
 table.user-grade td.oddd1.b1t.b2b.b1l{
     width: 0px;
 }
