@@ -27,4 +27,4 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'qtype_ordering';
 $plugin->maturity = MATURITY_STABLE;
-$plugin->version  = 2013062100;
+$plugin->version  = 2013062800;
