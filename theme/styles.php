@@ -65,7 +65,12 @@ if ($slashargument = min_get_slash_argument()) {
     $usesvg    = (bool)min_optional_param('svg', '1', 'INT');
 }
 
-if (!in_array($type, array('all', 'ie', 'editor', 'plugins', 'parents', 'theme'))) {
+if ($type === 'editor') {
+    // The editor CSS is never chunked.
+    $chunk = null;
+} else if ($type === 'all') {
+    // We're fine.
+} else {
     header('HTTP/1.0 404 not found');
     die('Theme was not found, sorry.');
 }
@@ -79,10 +84,6 @@ if (file_exists("$CFG->dirroot/theme/$themename/config.php")) {
     die('Theme was not found, sorry.');
 }
 
-if ($type === 'ie') {
-    css_send_ie_css($themename, $rev, $etag, !empty($slashargument));
-}
-
 $candidatedir = "$CFG->cachedir/theme/$themename/css";
 $etag = "$themename/$rev/$type";
 $candidatename = $type;
@@ -91,6 +92,7 @@ if (!$usesvg) {
     $candidatedir .= '/nosvg';
     $etag .= '/nosvg';
 }
+
 if ($chunk !== null) {
     $etag .= '/chunk'.$chunk;
     $candidatename .= '.'.$chunk;
@@ -140,21 +142,21 @@ if ($type === 'editor') {
     $css = $theme->css_files();
     $allfiles = array();
     $relroot = preg_replace('|^http.?://[^/]+|', '', $CFG->wwwroot);
-    foreach ($css as $key=>$value) {
-        if (!empty($slashargument)) {
-            if ($usesvg) {
-                $chunkurl = "{$relroot}/theme/styles.php/{$themename}/{$rev}/{$key}";
-            } else {
-                $chunkurl = "{$relroot}/theme/styles.php/_s/{$themename}/{$rev}/{$key}";
-            }
+    if (!empty($slashargument)) {
+        if ($usesvg) {
+            $chunkurl = "{$relroot}/theme/styles.php/{$themename}/{$rev}/all";
         } else {
-            if ($usesvg) {
-                $chunkurl = "{$relroot}/theme/styles.php?theme={$themename}&rev={$rev}&type={$key}";
-            } else {
-                $chunkurl = "{$relroot}/theme/styles.php?theme={$themename}&rev={$rev}&type={$key}&svg=0";
-            }
+            $chunkurl = "{$relroot}/theme/styles.php/_s/{$themename}/{$rev}/all";
         }
-        $cssfiles = array();
+    } else {
+        if ($usesvg) {
+            $chunkurl = "{$relroot}/theme/styles.php?theme={$themename}&rev={$rev}&type=all";
+        } else {
+            $chunkurl = "{$relroot}/theme/styles.php?theme={$themename}&rev={$rev}&type=all&svg=0";
+        }
+    }
+    $cssfiles = array();
+    foreach ($css as $key=>$value) {
         foreach($value as $val) {
             if (is_array($val)) {
                 foreach ($val as $k=>$v) {
@@ -164,12 +166,8 @@ if ($type === 'editor') {
                 $cssfiles[] = $val;
             }
         }
-        $cssfile = "$basedir/$key.css";
-        css_store_css($theme, $cssfile, $cssfiles, true, $chunkurl);
-        $allfiles = array_merge($allfiles, $cssfiles);
     }
-    $cssfile = "$basedir/all.css";
-    css_store_css($theme, $cssfile, $allfiles);
+    css_store_css($theme, "$basedir/all.css", $cssfiles, true, $chunkurl);
 }
 
 // verify nothing failed in cache file creation

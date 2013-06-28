@@ -579,26 +579,23 @@ class theme_config {
      * Returns the stylesheet URL of this editor content
      *
      * @param bool $encoded false means use & and true use &amp; in URLs
-     * @return string
+     * @return moodle_url
      */
     public function editor_css_url($encoded=true) {
         global $CFG;
-
         $rev = theme_get_revision();
-
         if ($rev > -1) {
+            $url = new moodle_url("$CFG->httpswwwroot/theme/styles.php");
             if (!empty($CFG->slasharguments)) {
-                $url = new moodle_url("$CFG->httpswwwroot/theme/styles.php");
                 $url->set_slashargument('/'.$this->name.'/'.$rev.'/editor', 'noparam', true);
-                return $url;
             } else {
-                $params = array('theme'=>$this->name,'rev'=>$rev, 'type'=>'editor');
-                return new moodle_url($CFG->httpswwwroot.'/theme/styles.php', $params);
+                $url->params(array('theme'=>$this->name,'rev'=>$rev, 'type'=>'editor'));
             }
         } else {
             $params = array('theme'=>$this->name, 'type'=>'editor');
-            return new moodle_url($CFG->httpswwwroot.'/theme/styles_debug.php', $params);
+            $url = new moodle_url($CFG->httpswwwroot.'/theme/styles_debug.php', $params);
         }
+        return $url;
     }
 
     /**
@@ -661,31 +658,33 @@ class theme_config {
 
         if ($rev > -1) {
             $url = new moodle_url("$CFG->httpswwwroot/theme/styles.php");
-            if (check_browser_version('MSIE', 5)) {
-                // We need to split the CSS files for IE
-                $urls[] = new moodle_url($url, array('theme' => $this->name,'rev' => $rev, 'type' => 'plugins', 'svg' => '0'));
-                $urls[] = new moodle_url($url, array('theme' => $this->name,'rev' => $rev, 'type' => 'parents', 'svg' => '0'));
-                $urls[] = new moodle_url($url, array('theme' => $this->name,'rev' => $rev, 'type' => 'theme', 'svg' => '0'));
-            } else {
-                if (!empty($CFG->slasharguments)) {
-                    $slashargs = '/'.$this->name.'/'.$rev.'/all';
-                    if (!$svg) {
-                        // We add a simple /_s to the start of the path.
-                        // The underscore is used to ensure that it isn't a valid theme name.
-                        $slashargs = '/_s'.$slashargs;
-                    }
-                    $url->set_slashargument($slashargs, 'noparam', true);
-                } else {
-                    $params = array('theme' => $this->name,'rev' => $rev, 'type' => 'all');
-                    if (!$svg) {
-                        // We add an SVG param so that we know not to serve SVG images.
-                        // We do this because all modern browsers support SVG and this param will one day be removed.
-                        $params['svg'] = '0';
-                    }
-                    $url->params($params);
+            $separate = (check_browser_version('MSIE', 5) && !check_browser_version('MSIE', 10));
+            if (!empty($CFG->slasharguments)) {
+                $slashargs = '';
+                if (!$svg) {
+                    // We add a simple /_s to the start of the path.
+                    // The underscore is used to ensure that it isn't a valid theme name.
+                    $slashargs .= '/_s'.$slashargs;
                 }
-                $urls[] = $url;
+                $slashargs .= '/'.$this->name.'/'.$rev.'/all';
+                if ($separate) {
+                    $slashargs .= '/chunk0';
+                }
+                $url->set_slashargument($slashargs, 'noparam', true);
+            } else {
+                $params = array('theme' => $this->name,'rev' => $rev, 'type' => 'all');
+                if (!$svg) {
+                    // We add an SVG param so that we know not to serve SVG images.
+                    // We do this because all modern browsers support SVG and this param will one day be removed.
+                    $params['svg'] = '0';
+                }
+                if ($separate) {
+                    $params['chunk'] = '0';
+                }
+                $url->params($params);
             }
+            $urls[] = $url;
+
         } else {
             // find out the current CSS and cache it now for 5 seconds
             // the point is to construct the CSS only once and pass it through the
