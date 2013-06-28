@@ -12,6 +12,7 @@ Modifications
 3. Use textlib, not crappy functions that break UTF-8, in the _strtoupper method. (Tim Hunt 2010-11-02)
 4. Make sure html2text does not destroy '0'. (Tim Hunt 2011-09-21)
 5. define missing mail charset
+6. Fixed the links list enumeration (MDL-35206).
 
 
 Imported from: https://github.com/moodle/custom-html2text/tree/MOODLE_5886_1
