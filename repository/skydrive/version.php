@@ -25,8 +25,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2013062700;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2012062500;        // Requires this Moodle version.
+$plugin->version   = 2013070300;        // The current plugin version (Date: YYYYMMDDXX).
+$plugin->requires  = 2012120300;        // Requires this Moodle version.
 $plugin->component = 'repository_skydrive'; // Full name of the plugin (used for diagnostics).
-$plugin->release   = '1.2';
-$plugin->maturity  = MATURITY_STABLE;
