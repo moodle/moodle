@@ -377,8 +377,9 @@ class qtype_ordering extends question_type {
      * @param object $question (passed by reference)
      * @param integer $num the number of items to display
      * @param integer $type the extraction type
+     * @param integer $default_type (optional, default=1)
      */
-    function set_num_and_type(&$question, $num, $type) {
+    function set_num_and_type(&$question, $num, $type, $default_type=1) {
 
         // set "studentsee" from $num(ber of items)
         $question->studentsee = ($num - 2);
@@ -399,6 +400,10 @@ class qtype_ordering extends question_type {
             case 'CONTIG':
                 $question->logical = 2;
                 break;
+
+            // otherwise
+            default:
+                $question->logical = $default_type;
         }
     }
 }
