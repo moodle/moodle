@@ -584,7 +584,7 @@ class html2text
             $index = count($this->_link_list);
         }
 
-        return $display . ' [' . ($index+1) . ']';
+        return $display . ' [' . ($index) . ']';
     }
 
     /**
