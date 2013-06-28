@@ -113,13 +113,16 @@ class core_calendar_external_testcase extends externallib_advanced_testcase {
 
         // Create a few events and do asserts.
         $this->create_calendar_event('test', $USER->id);
-        $count = count($DB->get_records("event", array('name' => 'test')));
+        $where = $DB->sql_compare_text('name') ." = ?";
+        $count = count($DB->get_records_select("event", $where, array('test')));
         $this->assertEquals(1, $count);
         $aftercount = count($DB->get_records("event"));
         $this->assertEquals($prevcount + 1, $aftercount);
 
         $this->create_calendar_event('user', $USER->id, 'user', 3);
-        $count = count($DB->get_records("event", array('name' => 'user')));
+        $where = $DB->sql_compare_text('name') ." = ?";
+        $count = count($DB->get_records_select("event", $where, array('user')));
+
         $this->assertEquals(3, $count);
         $aftercount = count($DB->get_records("event"));
         $this->assertEquals($prevcount + 4, $aftercount);
