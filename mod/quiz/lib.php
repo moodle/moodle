@@ -668,34 +668,6 @@ function quiz_update_grades($quiz, $userid = 0, $nullifnone = true) {
 }
 
 /**
- * Update all grades in gradebook.
- */
-function quiz_upgrade_grades() {
-    global $DB;
-
-    $sql = "SELECT COUNT('x')
-              FROM {quiz} a, {course_modules} cm, {modules} m
-             WHERE m.name='quiz' AND m.id=cm.module AND cm.instance=a.id";
-    $count = $DB->count_records_sql($sql);
-
-    $sql = "SELECT a.*, cm.idnumber AS cmidnumber, a.course AS courseid
-              FROM {quiz} a, {course_modules} cm, {modules} m
-             WHERE m.name='quiz' AND m.id=cm.module AND cm.instance=a.id";
-    $rs = $DB->get_recordset_sql($sql);
-    if ($rs->valid()) {
-        $pbar = new progress_bar('quizupgradegrades', 500, true);
-        $i=0;
-        foreach ($rs as $quiz) {
-            $i++;
-            upgrade_set_timeout(60*5); // Set up timeout, may also abort execution.
-            quiz_update_grades($quiz, 0, false);
-            $pbar->update($i, $count, "Updating Quiz grades ($i/$count).");
-        }
-    }
-    $rs->close();
-}
-
-/**
  * Create or update the grade item for given quiz
  *
  * @category grade

@@ -624,36 +624,6 @@ function scorm_update_grades($scorm, $userid=0, $nullifnone=true) {
 }
 
 /**
- * Update all grades in gradebook.
- *
- * @global object
- */
-function scorm_upgrade_grades() {
-    global $DB;
-
-    $sql = "SELECT COUNT('x')
-              FROM {scorm} s, {course_modules} cm, {modules} m
-             WHERE m.name='scorm' AND m.id=cm.module AND cm.instance=s.id";
-    $count = $DB->count_records_sql($sql);
-
-    $sql = "SELECT s.*, cm.idnumber AS cmidnumber, s.course AS courseid
-              FROM {scorm} s, {course_modules} cm, {modules} m
-             WHERE m.name='scorm' AND m.id=cm.module AND cm.instance=s.id";
-    $rs = $DB->get_recordset_sql($sql);
-    if ($rs->valid()) {
-        $pbar = new progress_bar('scormupgradegrades', 500, true);
-        $i=0;
-        foreach ($rs as $scorm) {
-            $i++;
-            upgrade_set_timeout(60*5); // set up timeout, may also abort execution
-            scorm_update_grades($scorm, 0, false);
-            $pbar->update($i, $count, "Updating Scorm grades ($i/$count).");
-        }
-    }
-    $rs->close();
-}
-
-/**
  * Update/create grade item for given scorm
  *
  * @category grade

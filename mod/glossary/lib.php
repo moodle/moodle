@@ -789,36 +789,6 @@ function glossary_update_grades($glossary=null, $userid=0, $nullifnone=true) {
 }
 
 /**
- * Update all grades in gradebook.
- *
- * @global object
- */
-function glossary_upgrade_grades() {
-    global $DB;
-
-    $sql = "SELECT COUNT('x')
-              FROM {glossary} g, {course_modules} cm, {modules} m
-             WHERE m.name='glossary' AND m.id=cm.module AND cm.instance=g.id";
-    $count = $DB->count_records_sql($sql);
-
-    $sql = "SELECT g.*, cm.idnumber AS cmidnumber, g.course AS courseid
-              FROM {glossary} g, {course_modules} cm, {modules} m
-             WHERE m.name='glossary' AND m.id=cm.module AND cm.instance=g.id";
-    $rs = $DB->get_recordset_sql($sql);
-    if ($rs->valid()) {
-        $pbar = new progress_bar('glossaryupgradegrades', 500, true);
-        $i=0;
-        foreach ($rs as $glossary) {
-            $i++;
-            upgrade_set_timeout(60*5); // set up timeout, may also abort execution
-            glossary_update_grades($glossary, 0, false);
-            $pbar->update($i, $count, "Updating Glossary grades ($i/$count).");
-        }
-    }
-    $rs->close();
-}
-
-/**
  * Create/update grade item for given glossary
  *
  * @category grade
