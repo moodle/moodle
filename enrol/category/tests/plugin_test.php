@@ -25,10 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-global $CFG;
-require_once($CFG->dirroot.'/enrol/category/locallib.php');
-
-class enrol_category_testcase extends advanced_testcase {
+class enrol_category_plugin_testcase extends advanced_testcase {
 
     protected function enable_plugin() {
         $enabled = enrol_get_plugins(true);
@@ -107,7 +104,8 @@ class enrol_category_testcase extends advanced_testcase {
     }
 
     public function test_handler_sync() {
-        global $DB;
+        global $DB, $CFG;
+        require_once($CFG->dirroot.'/enrol/category/locallib.php');
 
         $this->resetAfterTest();
 
@@ -179,7 +177,8 @@ class enrol_category_testcase extends advanced_testcase {
     }
 
     public function test_sync_course() {
-        global $DB;
+        global $DB, $CFG;
+        require_once($CFG->dirroot.'/enrol/category/locallib.php');
 
         $this->resetAfterTest();
 
@@ -272,7 +271,8 @@ class enrol_category_testcase extends advanced_testcase {
     }
 
     public function test_sync_full() {
-        global $DB;
+        global $DB, $CFG;
+        require_once($CFG->dirroot.'/enrol/category/locallib.php');
 
         $this->resetAfterTest();
 
