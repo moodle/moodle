@@ -1685,7 +1685,11 @@ function role_assign($roleid, $userid, $contextid, $component = '', $itemid = 0,
         reload_all_capabilities();
     }
 
-    events_trigger('role_assigned', $ra);
+    $event = \core\event\role_assigned::create(
+        array('context'=>$context, 'objectid'=>$ra->roleid, 'relateduserid'=>$ra->userid,
+            'extra'=>array('id'=>$ra->id, 'component'=>$ra->component, 'itemid'=>$ra->itemid)));
+    $event->add_cached_record('role_assignments', $ra);
+    $event->trigger();
 
     return $ra->id;
 }
@@ -1769,8 +1773,12 @@ function role_unassign_all(array $params, $subcontexts = false, $includemanual =
             if (!empty($USER->id) && $USER->id == $ra->userid) {
                 reload_all_capabilities();
             }
+            $event = \core\event\role_unassigned::create(
+                array('context'=>$context, 'objectid'=>$ra->roleid, 'relateduserid'=>$ra->userid,
+                    'extra'=>array('id'=>$ra->id, 'component'=>$ra->component, 'itemid'=>$ra->itemid)));
+            $event->add_cached_record('role_assignments', $ra);
+            $event->trigger();
         }
-        events_trigger('role_unassigned', $ra);
     }
     unset($ras);
 
@@ -1796,7 +1804,11 @@ function role_unassign_all(array $params, $subcontexts = false, $includemanual =
                     if (!empty($USER->id) && $USER->id == $ra->userid) {
                         reload_all_capabilities();
                     }
-                    events_trigger('role_unassigned', $ra);
+                    $event = \core\event\role_unassigned::create(
+                        array('context'=>$context, 'objectid'=>$ra->roleid, 'relateduserid'=>$ra->userid,
+                            'extra'=>array('id'=>$ra->id, 'component'=>$ra->component, 'itemid'=>$ra->itemid)));
+                    $event->add_cached_record('role_assignments', $ra);
+                    $event->trigger();
                 }
             }
         }
