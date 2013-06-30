@@ -143,8 +143,8 @@ class plugin_manager {
             // Hack: include mod and editor subplugin management classes first,
             //       the adminlib.php is supposed to contain extra admin settings too.
             require_once($CFG->libdir.'/adminlib.php');
-            foreach(array('mod', 'editor') as $type) {
-                foreach (get_plugin_list($type) as $dir) {
+            foreach (core_component::get_plugin_types_with_subplugins() as $type => $ignored) {
+                foreach (core_component::get_plugin_list($type) as $dir) {
                     if (file_exists("$dir/adminlib.php")) {
                         include_once("$dir/adminlib.php");
                     }
@@ -221,8 +221,6 @@ class plugin_manager {
      * Returns list of plugins that define their subplugins and the information
      * about them from the db/subplugins.php file.
      *
-     * At the moment, only activity modules and editors can define subplugins.
-     *
      * @param bool $disablecache force reload, cache can be used otherwise
      * @return array with keys like 'mod_quiz', and values the data from the
      *      corresponding db/subplugins.php file.
@@ -231,9 +229,8 @@ class plugin_manager {
 
         if ($disablecache or is_null($this->subpluginsinfo)) {
             $this->subpluginsinfo = array();
-            foreach (array('mod', 'editor') as $type) {
-                $owners = get_plugin_list($type);
-                foreach ($owners as $component => $ownerdir) {
+            foreach (core_component::get_plugin_types_with_subplugins() as $type => $ignored) {
+                foreach (core_component::get_plugin_list($type) as $component => $ownerdir) {
                     $componentsubplugins = array();
                     if (file_exists($ownerdir . '/db/subplugins.php')) {
                         $subplugins = array();

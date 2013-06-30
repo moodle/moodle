@@ -128,14 +128,15 @@ function uninstall_plugin($type, $name) {
     // This may take a long time.
     @set_time_limit(0);
 
-    // recursively uninstall all module/editor subplugins first
-    if ($type === 'mod' || $type === 'editor') {
-        $base = get_component_directory($type . '_' . $name);
+    // Recursively uninstall all subplugins first.
+    $subplugintypes = core_component::get_plugin_types_with_subplugins();
+    if (isset($subplugintypes[$type])) {
+        $base = core_component::get_plugin_directory($type, $name);
         if (file_exists("$base/db/subplugins.php")) {
             $subplugins = array();
             include("$base/db/subplugins.php");
             foreach ($subplugins as $subplugintype=>$dir) {
-                $instances = get_plugin_list($subplugintype);
+                $instances = core_component::get_plugin_list($subplugintype);
                 foreach ($instances as $subpluginname => $notusedpluginpath) {
                     uninstall_plugin($subplugintype, $subpluginname);
                 }

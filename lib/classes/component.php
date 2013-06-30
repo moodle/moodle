@@ -29,7 +29,7 @@ class core_component {
     /** @var array list of ignored directories - watch out for auth/db exception */
     protected static $ignoreddirs = array('CVS'=>true, '_vti_cnf'=>true, 'simpletest'=>true, 'db'=>true, 'yui'=>true, 'tests'=>true, 'classes'=>true);
     /** @var array list plugin types that support subplugins, do not add more here unless absolutely necessary */
-    protected static $supportsubplugins = array('mod', 'editor');
+    protected static $supportsubplugins = array('mod', 'editor', 'local');
 
     /** @var null cache of plugin types */
     protected static $plugintypes = null;
@@ -326,29 +326,69 @@ $cache = '.var_export($cache, true).';
         }
 
         foreach (self::$supportsubplugins as $type) {
-            $subpluginowners = self::fetch_plugins($type, $types[$type]);
-            foreach ($subpluginowners as $ownerdir) {
-                if (file_exists("$ownerdir/db/subplugins.php")) {
-                    $subplugins = array();
-                    include("$ownerdir/db/subplugins.php");
-                    foreach ($subplugins as $subtype => $dir) {
-                        if (!preg_match('/^[a-z][a-z0-9]*$/', $subtype)) {
-                            error_log("Invalid subtype '$subtype'' detected in '$ownerdir', invalid characters present.");
-                            continue;
-                        }
-                        if (isset(self::$subsystems[$subtype])) {
-                            error_log("Invalid subtype '$subtype'' detected in '$ownerdir', duplicates core subsystem.");
-                            continue;
-                        }
-                        $types[$subtype] = $CFG->dirroot.'/'.$dir;
-                    }
+            if ($type === 'local') {
+                // Local subplugins must be after local plugins.
+                continue;
+            }
+            $subplugins = self::fetch_subplugins($type, $types[$type]);
+            foreach($subplugins as $subtype => $subplugin) {
+                if (isset($types[$subtype])) {
+                    error_log("Invalid subtype '$subtype', duplicate detected.");
+                    continue;
                 }
+                $types[$subtype] = $subplugin;
             }
         }
 
         // Local is always last!
         $types['local'] = $CFG->dirroot.'/local';
 
+        if (in_array('local', self::$supportsubplugins)) {
+            $subplugins = self::fetch_subplugins('local', $types['local']);
+            foreach($subplugins as $subtype => $subplugin) {
+                if (isset($types[$subtype])) {
+                    error_log("Invalid subtype '$subtype', duplicate detected.");
+                    continue;
+                }
+                $types[$subtype] = $subplugin;
+            }
+        }
+
+        return $types;
+    }
+
+    /**
+     * Returns list of subtypes defined in given plugin type.
+     * @param string $type
+     * @param string $fulldir
+     * @return array
+     */
+    protected static function fetch_subplugins($type, $fulldir) {
+        global $CFG;
+
+        $types = array();
+        $subpluginowners = self::fetch_plugins($type, $fulldir);
+        foreach ($subpluginowners as $ownerdir) {
+            if (file_exists("$ownerdir/db/subplugins.php")) {
+                $subplugins = array();
+                include("$ownerdir/db/subplugins.php");
+                foreach ($subplugins as $subtype => $dir) {
+                    if (!preg_match('/^[a-z][a-z0-9]*$/', $subtype)) {
+                        error_log("Invalid subtype '$subtype'' detected in '$ownerdir', invalid characters present.");
+                        continue;
+                    }
+                    if (isset(self::$subsystems[$subtype])) {
+                        error_log("Invalid subtype '$subtype'' detected in '$ownerdir', duplicates core subsystem.");
+                        continue;
+                    }
+                    if (!is_dir("$CFG->dirroot/$dir")) {
+                        error_log("Invalid subtype directory '$dir' detected in '$ownerdir'.");
+                        continue;
+                    }
+                    $types[$subtype] = "$CFG->dirroot/$dir";
+                }
+            }
+        }
         return $types;
     }
 
@@ -680,5 +720,19 @@ $cache = '.var_export($cache, true).';
         }
 
         return self::get_plugin_directory($type, $plugin);
+    }
+
+    /**
+     * Returns list of plugin types that allow subplugins.
+     * @return array as (string)plugintype => (string)fulldir
+     */
+    public static function get_plugin_types_with_subplugins() {
+        self::init();
+
+        $return = array();
+        foreach (self::$supportsubplugins as $type) {
+            $return[$type] = self::$plugintypes[$type];
+        }
+        return $return;
     }
 }
