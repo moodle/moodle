@@ -29,6 +29,7 @@ $id = optional_param('id', 0, PARAM_INT);       // Course Module ID, or
 $a = optional_param('a', 0, PARAM_INT);         // scorm ID.
 $scoid = required_param('scoid', PARAM_INT);     // sco ID.
 $mode = optional_param('mode', '', PARAM_ALPHA); // navigation mode.
+$currentorg = optional_param('currentorg', '', PARAM_RAW); // Selected organization.
 $attempt = required_param('attempt', PARAM_INT); // new attempt.
 
 if (!empty($id)) {

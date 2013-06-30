@@ -129,6 +129,47 @@ function xmldb_scorm_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2013081303, 'scorm');
     }
 
+    if ($oldversion < 2013090100) {
+        $table = new xmldb_table('scorm');
+
+        $field = new xmldb_field('nav', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, true, null, 1, 'hidetoc');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('navpositionleft', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, -100, 'nav');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('navpositiontop', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, -100, 'navpositionleft');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('hidenav');
+        if ($dbman->field_exists($table, $field)) {
+            // Update nav setting to disable navigation buttons.
+            $DB->set_field('scorm', 'nav', 0, array('hidenav' => 1));
+            // Update nav setting to show floating navigation buttons under TOC.
+            $DB->set_field('scorm', 'nav', 2, array('hidenav' => 0));
+            $DB->set_field('scorm', 'navpositionleft', 215, array('hidenav' => 0));
+            $DB->set_field('scorm', 'navpositiontop', 300, array('hidenav' => 0));
+            // Drop hidenav field.
+            $dbman->drop_field($table, $field);
+        }
+
+        $params = array('plugin' => 'scorm', 'name' => 'hidenav');
+        if ($DB->record_exists('config_plugins', $params)) {
+            $DB->delete_records('config_plugins', $params);
+        }
+        $params = array('plugin' => 'scorm', 'name' => 'hidenav_adv');
+        if ($DB->record_exists('config_plugins', $params)) {
+            $DB->delete_records('config_plugins', $params);
+        }
+        upgrade_mod_savepoint(true, 2013090100, 'scorm');
+    }
+
     return true;
 }
 

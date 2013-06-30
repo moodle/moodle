@@ -34,6 +34,11 @@ define('SCORM_TOC_HIDDEN', 1);
 define('SCORM_TOC_POPUP', 2);
 define('SCORM_TOC_DISABLED', 3);
 
+// Used to show/hide navigation buttons and set their position.
+define('SCORM_NAV_DISABLED', 0);
+define('SCORM_NAV_UNDER_CONTENT', 1);
+define('SCORM_NAV_FLOATING', 2);
+
 //used to check what SCORM version is being used.
 define('SCORM_12', 1);
 define('SCORM_13', 2);
