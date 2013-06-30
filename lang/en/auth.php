@@ -59,6 +59,7 @@ $string['auth_user_create'] = 'Enable user creation';
 $string['auth_user_creation'] = 'New (anonymous) users can create user accounts on the external authentication source and confirmed via email. If you enable this , remember to also configure module-specific options for user creation.';
 $string['auth_usernameexists'] = 'Selected username already exists. Please choose a new one.';
 $string['auto_add_remote_users'] = 'Auto add remote users';
+$string['createpassword'] = 'Generate password and notify user';
 $string['createpasswordifneeded'] = 'Create password if needed';
 $string['emailchangecancel'] = 'Cancel email change';
 $string['emailchangepending'] = 'Change pending. Open the link sent to you at {$a->preference_newemail}.';

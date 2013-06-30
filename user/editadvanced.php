@@ -161,15 +161,22 @@ if ($usernew = $userform->get_data()) {
     }
 
     $usernew->timemodified = time();
+    $cratepassword = false;
 
     if ($usernew->id == -1) {
         //TODO check out if it makes sense to create account with this auth plugin and what to do with the password
         unset($usernew->id);
+        $cratepassword = !empty($usernew->createpassword);
+        unset($usernew->createpassword);
         $usernew = file_postupdate_standard_editor($usernew, 'description', $editoroptions, null, 'user', 'profile', null);
         $usernew->mnethostid = $CFG->mnet_localhost_id; // always local user
         $usernew->confirmed  = 1;
         $usernew->timecreated = time();
-        $usernew->password = hash_internal_user_password($usernew->newpassword);
+        if ($cratepassword) {
+            $usernew->password = '';
+        } else {
+            $usernew->password = hash_internal_user_password($usernew->newpassword);
+        }
         $usernew->id = $DB->insert_record('user', $usernew);
         $usercreated = true;
         add_to_log($course->id, 'user', 'add', "view.php?id=$usernew->id&course=$course->id", '');
@@ -235,6 +242,12 @@ if ($usernew = $userform->get_data()) {
         events_trigger('user_created', $usernew);
     } else {
         events_trigger('user_updated', $usernew);
+    }
+
+    if ($cratepassword) {
+        setnew_password_and_mail($usernew);
+        unset_user_preference('create_password', $usernew);
+        set_user_preference('auth_forcepasswordchange', 1, $usernew);
     }
 
     if ($user->id == $USER->id) {

@@ -63,15 +63,20 @@ class user_editadvanced_form extends moodleform {
         $mform->addElement('advcheckbox', 'suspended', get_string('suspended','auth'));
         $mform->addHelpButton('suspended', 'suspended', 'auth');
 
+        $mform->addElement('checkbox', 'createpassword', get_string('createpassword','auth'));
+
         if (!empty($CFG->passwordpolicy)){
             $mform->addElement('static', 'passwordpolicyinfo', '', print_password_policy());
         }
         $mform->addElement('passwordunmask', 'newpassword', get_string('newpassword'), 'size="20"');
         $mform->addHelpButton('newpassword', 'newpassword');
         $mform->setType('newpassword', PARAM_RAW);
+        $mform->disabledIf('newpassword', 'createpassword', 'checked');
 
         $mform->addElement('advcheckbox', 'preference_auth_forcepasswordchange', get_string('forcepasswordchange'));
         $mform->addHelpButton('preference_auth_forcepasswordchange', 'forcepasswordchange');
+        $mform->disabledIf('preference_auth_forcepasswordchange', 'createpassword', 'checked');
+
         /// shared fields
         useredit_shared_definition($mform, $editoroptions, $filemanageroptions);
 
@@ -122,8 +127,10 @@ class user_editadvanced_form extends moodleform {
         }
 
         // require password for new users
-        if ($userid == -1) {
-            $mform->addRule('newpassword', get_string('required'), 'required', null, 'client');
+        if ($userid > 0) {
+            if ($mform->elementExists('createpassword')) {
+                $mform->removeElement('createpassword');
+            }
         }
 
         if ($user and is_mnet_remote_user($user)) {
@@ -174,10 +181,19 @@ class user_editadvanced_form extends moodleform {
         $user = $DB->get_record('user', array('id'=>$usernew->id));
         $err = array();
 
-        if (!empty($usernew->newpassword)) {
-            $errmsg = '';//prevent eclipse warning
-            if (!check_password_policy($usernew->newpassword, $errmsg)) {
-                $err['newpassword'] = $errmsg;
+        if (!$user and !empty($usernew->createpassword)) {
+            if ($usernew->suspended) {
+                // Show some error because we can not mail suspended users.
+                $err['suspended'] = get_string('error');
+            }
+        } else {
+            if (!empty($usernew->newpassword)) {
+                $errmsg = ''; // Prevent eclipse warning.
+                if (!check_password_policy($usernew->newpassword, $errmsg)) {
+                    $err['newpassword'] = $errmsg;
+                }
+            } else if (!$user) {
+                $err['newpassword'] = get_string('required');
             }
         }
 
