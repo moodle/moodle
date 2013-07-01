@@ -58,9 +58,9 @@ class qtype_ddmarker_test_helper extends question_test_helper {
         test_question_maker::set_standard_combined_feedback_fields($dd);
 
         $dd->choices = $this->make_choice_structure(array(
-                    new qtype_ddmarker_drag_item('quick', 1, 0),
-                    new qtype_ddmarker_drag_item('fox', 2, 0),
-                    new qtype_ddmarker_drag_item('lazy', 3, 0)
+                    new qtype_ddmarker_drag_item('quick', 1, 0, 1),
+                    new qtype_ddmarker_drag_item('fox', 2, 0, 1),
+                    new qtype_ddmarker_drag_item('lazy', 3, 0, 1)
 
         ));
 
@@ -113,10 +113,10 @@ class qtype_ddmarker_test_helper extends question_test_helper {
         test_question_maker::set_standard_combined_feedback_fields($dd);
 
         $dd->choices = $this->make_choice_structure(array(
-                    new qtype_ddmarker_drag_item('+', 1, 1),
-                    new qtype_ddmarker_drag_item('-', 2, 1),
-                    new qtype_ddmarker_drag_item('*', 3, 1),
-                    new qtype_ddmarker_drag_item('/', 4, 1)
+                    new qtype_ddmarker_drag_item('+', 1, 1, 0),
+                    new qtype_ddmarker_drag_item('-', 2, 1, 0),
+                    new qtype_ddmarker_drag_item('*', 3, 1, 0),
+                    new qtype_ddmarker_drag_item('/', 4, 1, 0)
 
         ));
 
