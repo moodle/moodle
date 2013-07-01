@@ -152,15 +152,15 @@ class mod_lti_mod_form extends moodleform_mod {
         // Add privacy preferences fieldset where users choose whether to send their data
         $mform->addElement('header', 'privacy', get_string('privacy', 'lti'));
 
-        $mform->addElement('checkbox', 'instructorchoicesendname', '&nbsp;', ' ' . get_string('share_name', 'lti'));
+        $mform->addElement('advcheckbox', 'instructorchoicesendname', '&nbsp;', ' ' . get_string('share_name', 'lti'));
         $mform->setDefault('instructorchoicesendname', '1');
         $mform->addHelpButton('instructorchoicesendname', 'share_name', 'lti');
 
-        $mform->addElement('checkbox', 'instructorchoicesendemailaddr', '&nbsp;', ' ' . get_string('share_email', 'lti'));
+        $mform->addElement('advcheckbox', 'instructorchoicesendemailaddr', '&nbsp;', ' ' . get_string('share_email', 'lti'));
         $mform->setDefault('instructorchoicesendemailaddr', '1');
         $mform->addHelpButton('instructorchoicesendemailaddr', 'share_email', 'lti');
 
-        $mform->addElement('checkbox', 'instructorchoiceacceptgrades', '&nbsp;', ' ' . get_string('accept_grades', 'lti'));
+        $mform->addElement('advcheckbox', 'instructorchoiceacceptgrades', '&nbsp;', ' ' . get_string('accept_grades', 'lti'));
         $mform->setDefault('instructorchoiceacceptgrades', '1');
         $mform->addHelpButton('instructorchoiceacceptgrades', 'accept_grades', 'lti');
 
