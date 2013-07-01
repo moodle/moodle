@@ -43,17 +43,18 @@ function tool_capability_calculate_role_data($capability, array $roles) {
 
     // Get all the role_capabilities rows for this capability - that is, all
     // role definitions, and all role overrides.
-    $rolecaps = $DB->get_records_sql("
-            SELECT id, roleid, contextid, permission
-            FROM {role_capabilities}
-            WHERE capability = ? $sqlroletest", $params);
+    $sql = 'SELECT id, roleid, contextid, permission
+              FROM {role_capabilities}
+             WHERE capability = ? '.$sqlroletest;
+    $rolecaps = $DB->get_records_sql($sql, $params);
 
     // In order to display a nice tree of contexts, we need to get all the
     // ancestors of all the contexts in the query we just did.
-    $relevantpaths = $DB->get_records_sql_menu("
-            SELECT DISTINCT con.path, 1
-            FROM {context} con JOIN {role_capabilities} rc ON rc.contextid = con.id
-            WHERE capability = ? $sqlroletest", $params);
+    $sql = 'SELECT DISTINCT con.path, 1
+              FROM {context} con
+              JOIN {role_capabilities} rc ON rc.contextid = con.id
+             WHERE capability = ? '.$sqlroletest;
+    $relevantpaths = $DB->get_records_sql_menu($sql, $params);
     $requiredcontexts = array($systemcontext->id);
     foreach ($relevantpaths as $path => $notused) {
         $requiredcontexts = array_merge($requiredcontexts, explode('/', trim($path, '/')));

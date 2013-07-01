@@ -41,6 +41,8 @@ class tool_capability_settings_form extends moodleform {
      */
     public function definition() {
         $form = $this->_form;
+        $capabilities = $this->_customdata['capabilities'];
+        $roles = $this->_customdata['roles'];
         // Set the form ID.
         $form->setAttributes(array('id' => 'capability-overview-form') + $form->getAttributes());
 
@@ -50,10 +52,12 @@ class tool_capability_settings_form extends moodleform {
         $form->addElement('hidden', 'search');
         $form->setType('search', PARAM_TEXT);
 
-        $form->addElement('select', 'capability', get_string('capabilitylabel', 'tool_capability'), $this->_customdata['capabilities'], array('multiple' => 'multiple', 'size' => 10, 'data-search' => 'capability'));
+        $attributes = array('multiple' => 'multiple', 'size' => 10, 'data-search' => 'capability');
+        $form->addElement('select', 'capability', get_string('capabilitylabel', 'tool_capability'), $capabilities, $attributes);
         $form->setType('capability', PARAM_CAPABILITY);
 
-        $form->addElement('select', 'roles', get_string('roleslabel', 'tool_capability'), $this->_customdata['roles'], array('multiple' => 'multiple', 'size' => 10));
+        $attributes = array('multiple' => 'multiple', 'size' => 10);
+        $form->addElement('select', 'roles', get_string('roleslabel', 'tool_capability'), $roles, $attributes);
         $form->setType('roles', PARAM_TEXT);
 
         $form->addElement('submit', 'submitbutton', get_string('getreport', 'tool_capability'));

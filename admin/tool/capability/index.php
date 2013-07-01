@@ -15,8 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * For a given capability, show what permission it has for every role, and
- * everywhere that it is overridden.
+ * For a given capability, show what permission it has for every role, and everywhere that it is overridden.
  *
  * @package    tool_capability
  * @copyright  2008 Tim Hunt
@@ -56,7 +55,11 @@ $form = new tool_capability_settings_form(null, array(
     'capabilities' => $capabilitychoices,
     'roles' => $rolechoices
 ));
-$PAGE->requires->yui_module('moodle-tool_capability-search', 'M.tool_capability.init_capability_search', array(array('strsearch' => get_string('search'))));
+$PAGE->requires->yui_module(
+    'moodle-tool_capability-search',
+    'M.tool_capability.init_capability_search',
+    array(array('strsearch' => get_string('search')))
+);
 
 // Log.
 $capabilities = array();
@@ -64,14 +67,21 @@ $rolestoshow = array();
 $roleids = array('0');
 $cleanedroleids = array();
 if ($data = $form->get_data()) {
-    $capabilities = $data->capability;
-    $allrolesids = array_keys($allroles);
 
-    $roleids = $data->roles;
+    $roleids = array();
+    if (!empty($data->roles)) {
+        $roleids = $data->roles;
+    }
+
+    $capabilities = array();
+    if (!empty($data->capability)) {
+        $capabilities = $data->capability;
+    }
+
     if (in_array('0', $roleids)) {
         $rolestoshow = $allroles;
     } else {
-        $cleanedroleids = array_intersect($allrolesids, $roleids);
+        $cleanedroleids = array_intersect(array_keys($allroles), $roleids);
         if (count($cleanedroleids) === 0) {
             $rolestoshow = $allroles;
         } else {
@@ -92,7 +102,7 @@ $form->display();
 
 // If we have a capability, generate the report.
 if (count($capabilities) && count($rolestoshow)) {
-    /** @var tool_capability_renderer $renderer */
+    /* @var tool_capability_renderer $renderer */
     echo $renderer->capability_comparison_table($capabilities, $context->id, $rolestoshow);
 }
 

@@ -33,6 +33,13 @@ SEARCH.prototype = {
      */
     select: null,
     /**
+     * An associative array of search option. Populated from the select node above during initialisation.
+     * @property selectoptions
+     * @type Object
+     * @protected
+     */
+    selectoptions : {},
+    /**
      * The search input field.
      * @property input
      * @type Node
@@ -61,6 +68,11 @@ SEARCH.prototype = {
     initializer : function() {
         this.form = Y.one('#capability-overview-form');
         this.select = this.form.one('select[data-search=capability]');
+        this.select.setStyle('minWidth', this.select.get('offsetWidth'));
+        this.select.get('options').each(function(option) {
+            var capability = option.get('value');
+            this.selectoptions[capability] = option;
+        }, this);
         this.button = this.form.all('input[type=submit]');
         this.lastsearch = this.form.one('input[name=search]');
 
@@ -79,7 +91,9 @@ SEARCH.prototype = {
         if (this.lastsearch) {
             this.input.set('value', this.lastsearch.get('value'));
             this.typed();
-            this.select.set('scrollTop', this.select.one('option[selected]').get('getX'));
+            if (this.select.one('option[selected]')) {
+                this.select.set('scrollTop', this.select.one('option[selected]').get('getX'));
+            }
         }
 
         this.validate();
@@ -98,21 +112,19 @@ SEARCH.prototype = {
      */
     typed : function() {
         var search = this.input.get('value'),
-            options = this.select.get('options'),
             matching = 0,
-            last = null;
+            last = null,
+            capability;
         if (this.lastsearch) {
             this.lastsearch.set('value', search);
         }
-        options.each(function(option){
-            if (option.get('text').indexOf(search) >= 0) {
+        this.select.all('option').remove();
+        for (capability in this.selectoptions) {
+            if (capability.indexOf(search) >= 0) {
                 matching++;
-                last = option;
-                option.set('disabled', false).setStyle('display', 'block');
-            } else {
-                option.set('disabled', true).set('selected', false).setStyle('display', 'none');
+                this.select.append(this.selectoptions[capability]);
             }
-        }, this);
+        }
         if (matching === 0) {
             this.input.addClass("error");
         } else {

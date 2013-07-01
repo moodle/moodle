@@ -39,10 +39,10 @@ class tool_capability_renderer extends plugin_renderer_base {
         static $strpermissions;
         if (!$strpermissions) {
             $strpermissions = array(
-                CAP_INHERIT => new lang_string('inherit','role'),
-                CAP_ALLOW => new lang_string('allow','role'),
-                CAP_PREVENT => new lang_string('prevent','role'),
-                CAP_PROHIBIT => new lang_string('prohibit','role')
+                CAP_INHERIT => new lang_string('inherit', 'role'),
+                CAP_ALLOW => new lang_string('allow', 'role'),
+                CAP_PREVENT => new lang_string('prevent', 'role'),
+                CAP_PROHIBIT => new lang_string('prohibit', 'role')
             );
         }
         return $strpermissions;
