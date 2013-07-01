@@ -374,6 +374,7 @@ class tool_uploadcourse_course {
      * @return bool false is any error occured.
      */
     public function prepare() {
+        global $DB;
         $this->prepared = true;
 
         // Validate the shortname.
@@ -533,6 +534,14 @@ class tool_uploadcourse_course {
                             array('from' => $originalidn, 'to' => $coursedata['idnumber'])));
                     }
                 }
+            }
+        }
+
+        // If the course does not exist, ensure that the ID number is not taken.
+        if (!$exists && isset($coursedata['idnumber'])) {
+            if ($DB->count_records_select('course', 'idnumber = :idn', array('idn' => $coursedata['idnumber'])) > 0) {
+                $this->error('idnumberalreadyinuse', new lang_string('idnumberalreadyinuse', 'tool_uploadcourse'));
+                return false;
             }
         }
 

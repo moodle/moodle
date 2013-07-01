@@ -779,4 +779,30 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
         $this->assertEquals(strtotime('1970-01-01 GMT + ' . $data['enrolment_1_enrolperiod']), $enroldata['manual']->enrolperiod);
         $this->assertEquals(strtotime('12th July 2013'), $enroldata['manual']->enrolenddate);
     }
+
+    public function test_idnumber_problems() {
+        $this->resetAfterTest(true);
+
+        $c1 = $this->getDataGenerator()->create_course(array('idnumber' => 'Taken'));
+        $c2 = $this->getDataGenerator()->create_course();
+
+        // Create with existing ID number.
+        $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
+        $data = array('shortname' => 'c2', 'summary' => 'summary', 'fullname' => 'FN', 'category' => '1',
+            'idnumber' => $c1->idnumber);
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data);
+        $this->assertFalse($co->prepare());
+        $this->assertArrayHasKey('idnumberalreadyinuse', $co->get_errors());
+
+        // Rename to existing ID number.
+        $mode = tool_uploadcourse_processor::MODE_UPDATE_ONLY;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
+        $data = array('shortname' => $c2->shortname, 'rename' => 'SN', 'idnumber' => $c1->idnumber);
+        $importoptions = array('canrename' => true);
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data, array(), $importoptions);
+        $this->assertFalse($co->prepare());
+        $this->assertArrayHasKey('cannotrenameidnumberconflict', $co->get_errors());
+    }
+
 }
