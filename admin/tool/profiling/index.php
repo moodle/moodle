@@ -17,8 +17,7 @@
 /**
  * Profiling tool.
  *
- * @package    tool
- * @subpackage profiling
+ * @package    tool_profiling
  * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -161,6 +160,9 @@ if (isset($script)) {
 
     echo $OUTPUT->heading($header);
 
+    // Print the controller block with different options.
+    echo profiling_list_controls($listurl);
+
     // TODO: Fix flexitable to validate tsort/thide/tshow/tifirs/tilast/page
     // TODO: Fix table_sql to allow it to work without WHERE clause
     // add silly condition (1 = 1) because of table_sql bug
@@ -179,9 +181,6 @@ if (isset($script)) {
     $table->define_baseurl($baseurl);
     $table->column_suppress('url');
     $table->out(PROFILING_RUNSPERPAGE, true);
-
-    // Print the controller block with different options
-    echo profiling_list_controls($listurl);
 }
 
 // Footer.
