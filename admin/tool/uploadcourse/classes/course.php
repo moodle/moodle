@@ -430,6 +430,18 @@ class tool_uploadcourse_course {
         $updatemode = $this->updatemode;
         $usedefaults = $this->can_use_defaults();
 
+        // Resolve the category, and fail if not found.
+        $errors = array();
+        $catid = tool_uploadcourse_helper::resolve_category($this->rawdata, $errors);
+        if (empty($errors)) {
+            $coursedata['category'] = $catid;
+        } else {
+            foreach ($errors as $key => $message) {
+                $this->error($key, $message);
+            }
+            return false;
+        }
+
         // If the course does not exist, or will be forced created.
         if (!$exists || $mode === tool_uploadcourse_processor::MODE_CREATE_ALL) {
 
@@ -514,7 +526,7 @@ class tool_uploadcourse_course {
                     array('from' => $original, 'to' => $this->shortname)));
                 if (isset($coursedata['idnumber'])) {
                     $originalidn = $coursedata['idnumber'];
-                    $coursedata['idnumber'] = $this->increment_idnumber($coursedata['idnumber']);
+                    $coursedata['idnumber'] = tool_uploadcourse_helper::increment_idnumber($coursedata['idnumber']);
                     if ($originalidn != $coursedata['idnumber']) {
                         $this->status('courseidnumberincremented', new lang_string('courseidnumberincremented', 'tool_uploadcourse',
                             array('from' => $originalidn, 'to' => $coursedata['idnumber'])));
@@ -553,18 +565,6 @@ class tool_uploadcourse_course {
                 // O_o Huh?! This should really never happen here!
                 $this->error('unknownimportmode', new lang_string('unknownimportmode', 'tool_uploadcourse'));
                 return false;
-        }
-
-        // Resolve the category.
-        $errors = array();
-        $catid = tool_uploadcourse_helper::resolve_category($this->rawdata, $errors);
-        if (!empty($catid) && empty($errors)) {
-            $coursedata['category'] = $catid;
-        } else if (!empty($errors)) {
-            foreach ($errors as $key => $message) {
-                $this->error($key, $message);
-            }
-            return false;
         }
 
         // Get final data.
@@ -644,6 +644,7 @@ class tool_uploadcourse_course {
             } else {
                 $this->error('errorwhiledeletingcourse', new lang_string('errorwhiledeletingcourse', 'tool_uploadcourse'));
             }
+            return true;
         } else if ($this->outcome === self::OUTCOME_CREATE) {
             $course = create_course((object) $this->data);
             $this->status('coursecreated', new lang_string('coursecreated', 'tool_uploadcourse'));

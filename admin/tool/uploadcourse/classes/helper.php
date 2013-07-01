@@ -389,7 +389,7 @@ class tool_uploadcourse_helper {
 
         if (!empty($data['category'])) {
             $category = coursecat::get((int) $data['category'], IGNORE_MISSING);
-            if (!empty($category)) {
+            if (!empty($category) && !empty($category->id)) {
                 $catid = $category->id;
             } else {
                 $errors['couldnotresolvecatgorybyid'] =
@@ -399,14 +399,17 @@ class tool_uploadcourse_helper {
 
         if (empty($catid) && !empty($data['category_idnumber'])) {
             $catid = self::resolve_category_by_idnumber($data['category_idnumber']);
-            $errors['couldnotresolvecatgorybyidnumber'] =
-                new lang_string('couldnotresolvecatgorybyidnumber', 'tool_uploadcourse');
+            if (empty($catid)) {
+                $errors['couldnotresolvecatgorybyidnumber'] =
+                    new lang_string('couldnotresolvecatgorybyidnumber', 'tool_uploadcourse');
+            }
         }
-
         if (empty($catid) && !empty($data['category_path'])) {
             $catid = self::resolve_category_by_path(explode(' / ', $data['category_path']));
-            $errors['couldnotresolvecatgorybypath'] =
-                new lang_string('couldnotresolvecatgorybypath', 'tool_uploadcourse');
+            if (empty($catid)) {
+                $errors['couldnotresolvecatgorybypath'] =
+                    new lang_string('couldnotresolvecatgorybypath', 'tool_uploadcourse');
+            }
         }
 
         return $catid;
