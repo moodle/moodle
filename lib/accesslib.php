@@ -717,7 +717,7 @@ function has_capability_in_accessdata($capability, context $context, array &$acc
  * @see has_capability()
  *
  * @param string $capability the name of the capability to check. For example mod/forum:view
- * @param context $context the context to check the capability in. You normally get this with {@link get_context_instance}.
+ * @param context $context the context to check the capability in. You normally get this with context_xxxx::instance().
  * @param int $userid A user id. By default (null) checks the permissions of the current user.
  * @param bool $doanything If false, ignore effect of admin role assignment
  * @param string $errormessage The error string to to user. Defaults to 'nopermissions'.
