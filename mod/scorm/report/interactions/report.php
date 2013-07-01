@@ -96,21 +96,23 @@ class scorm_interactions_report extends scorm_default_report {
 
         if (empty($currentgroup)) {
             // all users who can attempt scoes
-            if (!$students = get_users_by_capability($contextmodule, 'mod/scorm:savetrack', '', '', '', '', '', '', false)) {
+            if (!$students = get_users_by_capability($contextmodule, 'mod/scorm:savetrack', 'u.id', '', '', '', '', '', false)) {
                 echo $OUTPUT->notification(get_string('nostudentsyet'));
                 $nostudents = true;
                 $allowedlist = '';
             } else {
                 $allowedlist = array_keys($students);
             }
+            unset($students);
         } else {
             // all users who can attempt scoes and who are in the currently selected group
-            if (!$groupstudents = get_users_by_capability($contextmodule, 'mod/scorm:savetrack', '', '', '', '', $currentgroup, '', false)) {
+            if (!$groupstudents = get_users_by_capability($contextmodule, 'mod/scorm:savetrack', 'u.id', '', '', '', $currentgroup, '', false)) {
                 echo $OUTPUT->notification(get_string('nostudentsingroup'));
                 $nostudents = true;
                 $groupstudents = array();
             }
             $allowedlist = array_keys($groupstudents);
+            unset($groupstudents);
         }
         if ( !$nostudents ) {
             // Now check if asked download of data
