@@ -93,7 +93,7 @@
         <FIELD NAME="groupmodeforce" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="defaultgroupingid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="default grouping used in course modules, does not have key intentionally"/>
         <FIELD NAME="lang" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="calendartype" TYPE="char" LENGTH="20" NOTNULL="false" DEFAULT="" SEQUENCE="false"/>
+        <FIELD NAME="calendartype" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="theme" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
@@ -772,7 +772,7 @@
         <FIELD NAME="city" TYPE="char" LENGTH="120" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="country" TYPE="char" LENGTH="2" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="lang" TYPE="char" LENGTH="30" NOTNULL="true" DEFAULT="en" SEQUENCE="false"/>
-        <FIELD NAME="calendartype" TYPE="char" LENGTH="20" NOTNULL="false" DEFAULT="" SEQUENCE="false"/>
+        <FIELD NAME="calendartype" TYPE="char" LENGTH="30" NOTNULL="true" DEFAULT="gregorian" SEQUENCE="false"/>
         <FIELD NAME="theme" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="timezone" TYPE="char" LENGTH="100" NOTNULL="true" DEFAULT="99" SEQUENCE="false"/>
         <FIELD NAME="firstaccess" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
