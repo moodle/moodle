@@ -115,6 +115,8 @@ define('INSECURE_DATAROOT_ERROR', 2);
 /**
  * Automatically clean-up all plugin data and remove the plugin DB tables
  *
+ * NOTE: do not call directly, use new /admin/plugins.php?uninstall=component instead!
+ *
  * @param string $type The plugin type, eg. 'mod', 'qtype', 'workshopgrading' etc.
  * @param string $name The plugin name, eg. 'forum', 'multichoice', 'accumulative' etc.
  * @uses global $OUTPUT to produce notices and other messages
@@ -5127,7 +5129,7 @@ class admin_setting_manageenrols extends admin_setting {
         $strsettings  = get_string('settings');
         $strenable    = get_string('enable');
         $strdisable   = get_string('disable');
-        $struninstall = get_string('uninstallplugin', 'admin');
+        $struninstall = get_string('uninstallplugin', 'core_admin');
         $strusage     = get_string('enrolusage', 'enrol');
         $strversion   = get_string('version');
 
@@ -5230,18 +5232,16 @@ class admin_setting_manageenrols extends admin_setting {
             // Add settings link.
             if (!$version) {
                 $settings = '';
-            } else if ($url = $plugininfo->get_settings_url()) {
-                $settings = html_writer::link($url, $strsettings);
+            } else if ($surl = $plugininfo->get_settings_url()) {
+                $settings = html_writer::link($surl, $strsettings);
             } else {
                 $settings = '';
             }
 
             // Add uninstall info.
-            if ($version) {
-                $url = new moodle_url($plugininfo->get_uninstall_url(), array('return'=>'settings'));
-                $uninstall = html_writer::link($url, $struninstall);
-            } else {
-                $uninstall = '';
+            $uninstall = '';
+            if ($uninstallurl = plugin_manager::instance()->get_uninstall_url('enrol_'.$enrol)) {
+                $uninstall = html_writer::link($uninstallurl, $struninstall);
             }
 
             // Add a row to the table.
@@ -5861,7 +5861,7 @@ class admin_setting_manageeditors extends admin_setting {
         // display strings
         $txt = get_strings(array('administration', 'settings', 'edit', 'name', 'enable', 'disable',
             'up', 'down', 'none'));
-        $struninstall = get_string('uninstallplugin', 'admin');
+        $struninstall = get_string('uninstallplugin', 'core_admin');
 
         $txt->updown = "$txt->up/$txt->down";
 
@@ -5941,11 +5941,9 @@ class admin_setting_manageeditors extends admin_setting {
                 $settings = '';
             }
 
-            if ($editor === 'textarea') {
-                $uninstall = '';
-            } else {
-                $uurl = new moodle_url('/admin/editors.php', array('action'=>'uninstall', 'editor'=>$editor, 'sesskey'=>sesskey()));
-                $uninstall = html_writer::link($uurl, $struninstall);
+            $uninstall = '';
+            if ($uninstallurl = plugin_manager::instance()->get_uninstall_url('editor_'.$editor)) {
+                $uninstall = html_writer::link($uninstallurl, $struninstall);
             }
 
             // add a row to the table
@@ -6132,11 +6130,12 @@ class admin_setting_manageformats extends admin_setting {
         $formats = plugin_manager::instance()->get_plugins_of_type('format');
 
         // display strings
-        $txt = get_strings(array('settings', 'name', 'enable', 'disable', 'up', 'down', 'default', 'delete'));
+        $txt = get_strings(array('settings', 'name', 'enable', 'disable', 'up', 'down', 'default'));
+        $txt->uninstall = get_string('uninstallplugin', 'core_admin');
         $txt->updown = "$txt->up/$txt->down";
 
         $table = new html_table();
-        $table->head  = array($txt->name, $txt->enable, $txt->updown, $txt->delete, $txt->settings);
+        $table->head  = array($txt->name, $txt->enable, $txt->updown, $txt->uninstall, $txt->settings);
         $table->align = array('left', 'center', 'center', 'center', 'center');
         $table->width = '90%';
         $table->attributes['class'] = 'manageformattable generaltable';
@@ -6181,8 +6180,8 @@ class admin_setting_manageformats extends admin_setting {
                 $settings = html_writer::link($format->get_settings_url(), $txt->settings);
             }
             $uninstall = '';
-            if ($defaultformat !== $format->name) {
-                $uninstall = html_writer::link($format->get_uninstall_url(), $txt->delete);
+            if ($uninstallurl = plugin_manager::instance()->get_uninstall_url('format_'.$format->name)) {
+                $uninstall = html_writer::link($uninstallurl, $txt->uninstall);
             }
             $table->data[] =array($strformatname, $hideshow, $updown, $uninstall, $settings);
         }

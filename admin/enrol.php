@@ -31,7 +31,6 @@ require_once($CFG->libdir.'/adminlib.php');
 $action  = required_param('action', PARAM_ALPHANUMEXT);
 $enrol   = required_param('enrol', PARAM_PLUGIN);
 $confirm = optional_param('confirm', 0, PARAM_BOOL);
-$migrate = optional_param('migrate', 0, PARAM_BOOL);
 
 $PAGE->set_url('/admin/enrol.php');
 $PAGE->set_context(context_system::instance());
@@ -96,7 +95,7 @@ switch ($action) {
         set_config('enrol_plugins_enabled', implode(',', $enabled));
         break;
 
-    case 'uninstall':
+    case 'migrate':
         if (get_string_manager()->string_exists('pluginname', 'enrol_'.$enrol)) {
             $strplugin = get_string('pluginname', 'enrol_'.$enrol);
         } else {
@@ -106,58 +105,26 @@ switch ($action) {
         $PAGE->set_title($strplugin);
         echo $OUTPUT->header();
 
-        if (!$confirm) {
-            echo $OUTPUT->heading(get_string('enrolments', 'enrol'));
+        // This may take a long time.
+        set_time_limit(0);
 
-            $deleteurl = new moodle_url('/admin/enrol.php', array('action'=>'uninstall', 'enrol'=>$enrol, 'sesskey'=>sesskey(), 'confirm'=>1, 'migrate'=>0));
-            $migrateurl = new moodle_url('/admin/enrol.php', array('action'=>'uninstall', 'enrol'=>$enrol, 'sesskey'=>sesskey(), 'confirm'=>1, 'migrate'=>1));
+        // Disable plugin to prevent concurrent cron execution.
+        unset($enabled[$enrol]);
+        set_config('enrol_plugins_enabled', implode(',', array_keys($enabled)));
 
-            $migrate = new single_button($migrateurl, get_string('uninstallmigrate', 'enrol'));
-            $delete = new single_button($deleteurl, get_string('uninstalldelete', 'enrol'));
-            $cancel = new single_button($return, get_string('cancel'), 'get');
+        echo $OUTPUT->heading(get_string('uninstallmigrating', 'enrol', 'enrol_'.$enrol));
 
-            $buttons = $OUTPUT->render($delete) . $OUTPUT->render($cancel);
-            if ($enrol !== 'manual') {
-                $buttons = $OUTPUT->render($migrate) . $buttons;
-            }
+        require_once("$CFG->dirroot/enrol/manual/locallib.php");
+        enrol_manual_migrate_plugin_enrolments($enrol);
 
-            echo $OUTPUT->box_start('generalbox', 'notice');
-            echo html_writer::tag('p', markdown_to_html(get_string('uninstallconfirm', 'enrol', $strplugin)));
-            echo html_writer::tag('div', $buttons, array('class' => 'buttons'));
-            echo $OUTPUT->box_end();
+        echo $OUTPUT->notification(get_string('success'), 'notifysuccess');
 
-            echo $OUTPUT->footer();
-            exit;
-
-        } else {
-            // This may take a long time.
-            set_time_limit(0);
-
-            // Disable plugin to prevent concurrent cron execution.
-            unset($enabled[$enrol]);
-            set_config('enrol_plugins_enabled', implode(',', array_keys($enabled)));
-
-            if ($migrate) {
-                echo $OUTPUT->heading(get_string('uninstallmigrating', 'enrol', 'enrol_'.$enrol));
-
-                require_once("$CFG->dirroot/enrol/manual/locallib.php");
-                enrol_manual_migrate_plugin_enrolments($enrol);
-
-                echo $OUTPUT->notification(get_string('success'), 'notifysuccess');
-            }
-
-            // Delete everything!!
-            uninstall_plugin('enrol', $enrol);
-            $syscontext->mark_dirty(); // Resets all enrol caches.
-
-            $a = new stdClass();
-            $a->plugin = $strplugin;
-            $a->directory = "$CFG->dirroot/enrol/$enrol";
-            echo $OUTPUT->notification(get_string('uninstalldeletefiles', 'enrol', $a), 'notifysuccess');
-            echo $OUTPUT->continue_button($return);
-            echo $OUTPUT->footer();
-            exit;
+        if (!$return = plugin_manager::instance()->get_uninstall_url('enrol_'.$enrol)) {
+            $return = new moodle_url('/admin/plugins.php');
         }
+        echo $OUTPUT->continue_button($return);
+        echo $OUTPUT->footer();
+        exit;
 }
 
 

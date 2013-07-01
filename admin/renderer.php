@@ -375,7 +375,7 @@ class core_admin_renderer extends plugin_renderer_base {
      * Display a page to confirm the plugin uninstallation.
      *
      * @param plugin_manager $pluginman
-     * @param plugin_info $pluginfo
+     * @param plugininfo_base $pluginfo
      * @param moodle_url $continueurl URL to continue after confirmation
      * @return string
      */
@@ -384,10 +384,14 @@ class core_admin_renderer extends plugin_renderer_base {
 
         $pluginname = $pluginman->plugin_name($pluginfo->component);
 
+        $confirm = '<p>' . get_string('uninstallconfirm', 'core_plugin', array('name' => $pluginname)) . '</p>';
+        if ($extraconfirm = $pluginfo->get_uninstall_extra_warning()) {
+            $confirm .= $extraconfirm;
+        }
+
         $output .= $this->output->header();
         $output .= $this->output->heading(get_string('uninstalling', 'core_plugin', array('name' => $pluginname)));
-        $output .= $this->output->confirm(get_string('uninstallconfirm', 'core_plugin', array('name' => $pluginname)),
-            $continueurl, $this->page->url);
+        $output .= $this->output->confirm($confirm, $continueurl, $this->page->url);
         $output .= $this->output->footer();
 
         return $output;
@@ -397,7 +401,7 @@ class core_admin_renderer extends plugin_renderer_base {
      * Display a page with results of plugin uninstallation and offer removal of plugin files.
      *
      * @param plugin_manager $pluginman
-     * @param plugin_info $pluginfo
+     * @param plugininfo_base $pluginfo
      * @param progress_trace_buffer $progress
      * @param moodle_url $continueurl URL to continue to remove the plugin folder
      * @return string
@@ -431,7 +435,7 @@ class core_admin_renderer extends plugin_renderer_base {
      * Display a page with results of plugin uninstallation and inform about the need to remove plugin files manually.
      *
      * @param plugin_manager $pluginman
-     * @param plugin_info $pluginfo
+     * @param plugininfo_base $pluginfo
      * @param progress_trace_buffer $progress
      * @return string
      */
