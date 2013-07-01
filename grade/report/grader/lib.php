@@ -857,7 +857,7 @@ class grade_report_grader extends grade_report {
                     $itemcell->attributes['class'] = $type . ' ' . $catlevel . ' highlightable';
 
                     if ($element['object']->is_hidden()) {
-                        $itemcell->attributes['class'] .= ' hidden';
+                        $itemcell->attributes['class'] .= ' dimmed_text';
                     }
 
                     $itemcell->colspan = $colspan;
