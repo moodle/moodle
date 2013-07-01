@@ -12,7 +12,8 @@ to be installed in order to work.
 This question type was written by Jamie Pratt (http://jamiep.org/) for the Open
 University.
 
-This question type is compatible with Moodle 2.3+ (master branch).
+This version of this question type is compatible with Moodle 2.5+. There are
+other versions available for Moodle 2.3+.
 
 ###Installation
 
@@ -20,17 +21,13 @@ This question type is compatible with Moodle 2.3+ (master branch).
 
 To install using git for a 2.3+ Moodle installation, type this command in the
 root of your Moodle install:
-
-git clone git://github.com/moodleou/moodle-qtype_ddmarker.git question/type/ddmarker
-
+    git clone git://github.com/moodleou/moodle-qtype_ddmarker.git question/type/ddmarker
 Then add question/type/ddmarker to your git ignore.
 
 ####Installation From Downloaded zip file
 
 Alternatively, download the zip from:
-
-* Moodle 2.3+ - https://github.com/moodleou/moodle-qtype_ddmarker/zipball/master
-
+    https://github.com/moodleou/moodle-qtype_ddmarker/zipball/master
 unzip it into the question/type folder, and then rename the new folder to ddmarker.
 
 ###Converting 'image target' type questions to this type
