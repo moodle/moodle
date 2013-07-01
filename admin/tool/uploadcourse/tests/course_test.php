@@ -25,13 +25,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once($CFG->dirroot . '/admin/tool/uploadcourse/classes/processor.php');
-require_once($CFG->dirroot . '/admin/tool/uploadcourse/classes/course.php');
-require_once($CFG->dirroot . '/admin/tool/uploadcourse/classes/helper.php');
-require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
-require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
-require_once($CFG->libdir . '/csvlib.class.php');
-require_once($CFG->libdir . '/coursecatlib.php');
 
 /**
  * Course test case.

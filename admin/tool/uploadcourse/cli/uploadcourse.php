@@ -172,7 +172,7 @@ if (isset($options['templatecourse'])) {
     $processoroptions['templatecourse'] = $options['templatecourse'];
 }
 
-// Backup file.
+// Restore file.
 if ($options['restorefile']) {
     $options['restorefile'] = realpath($options['restorefile']);
 }
