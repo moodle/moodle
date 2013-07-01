@@ -511,7 +511,8 @@ class tool_uploadcourse_course {
                     }
                     $exists = true;
                 }
-                $this->status('courseshortnamegenerated', new lang_string('courseshortnamegenerated', 'tool_uploadcourse'));
+                $this->status('courseshortnamegenerated', new lang_string('courseshortnamegenerated', 'tool_uploadcourse',
+                    $newshortname));
                 $this->shortname = $newshortname;
             }
         }

@@ -181,6 +181,9 @@ class tool_uploadcourse_processor {
         }
         $this->processstarted = true;
 
+        $tracker = new tool_uploadcourse_tracker(tool_uploadcourse_tracker::OUTPUT_PLAIN);
+        $tracker->start();
+
         // Loop over the CSV lines.
         while ($line = $this->cir->next()) {
             $this->linenb++;
@@ -189,10 +192,13 @@ class tool_uploadcourse_processor {
             $course = $this->get_course($data);
             if ($course->prepare()) {
                 $course->proceed();
+                $tracker->output($this->linenb, true, $course->get_statuses(), $data);
             } else {
-                $this->log_error($course->get_errors());
+                $tracker->output($this->linenb, false, $course->get_errors(), $data);
             }
         }
+
+        $tracker->finish();
 
         $this->remove_restore_content();
     }
@@ -296,6 +302,8 @@ class tool_uploadcourse_processor {
             throw new coding_exception('Process has already been started');
         }
         $this->processstarted = true;
+        $tracker = new tool_uploadcourse_tracker(tool_uploadcourse_tracker::OUTPUT_PLAIN);
+        $tracker->start();
 
         // Loop over the CSV lines.
         $preview = array();
@@ -305,12 +313,15 @@ class tool_uploadcourse_processor {
             $course = $this->get_course($data);
             $result = $course->prepare();
             if (!$result) {
-                $this->log_error($course->get_errors());
+                $tracker->output($this->linenb, $result, $course->get_errors(), $data);
+            } else {
+                $tracker->output($this->linenb, $result, $course->get_statuses(), $data);
             }
             $row = $data;
             $preview[$this->linenb] = $row;
         }
 
+        $tracker->finish();
         $this->remove_restore_content();
 
         return $preview;
