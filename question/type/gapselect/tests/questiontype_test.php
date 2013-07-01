@@ -210,13 +210,13 @@ class qtype_gapselect_test extends question_testcase {
 
         $expectedq->shuffleanswers = 1;
         $expectedq->correctfeedback = array('text' => '<p>Your answer is correct.</p>',
-                'format' => FORMAT_MOODLE, 'files' => array());
+                'format' => FORMAT_MOODLE);
         $expectedq->partiallycorrectfeedback = array(
                 'text' => '<p>Your answer is partially correct.</p>',
-                'format' => FORMAT_MOODLE, 'files' => array());
+                'format' => FORMAT_MOODLE);
         $expectedq->shownumcorrect = true;
         $expectedq->incorrectfeedback = array('text' => '<p>Your answer is incorrect.</p>',
-                'format' => FORMAT_MOODLE, 'files' => array());
+                'format' => FORMAT_MOODLE);
 
         $expectedq->choices = array(
             array('answer' => 'Alpha', 'choicegroup' => 1),
@@ -225,9 +225,9 @@ class qtype_gapselect_test extends question_testcase {
         );
 
         $expectedq->hint = array(
-                array('text' => 'Try again.', 'format' => FORMAT_MOODLE, 'files' => array()),
+                array('text' => 'Try again.', 'format' => FORMAT_MOODLE),
                 array('text' => 'These are the first three letters of the Greek alphabet.',
-                        'format' => FORMAT_MOODLE, 'files' => array()));
+                        'format' => FORMAT_MOODLE));
         $expectedq->hintshownumcorrect = array(true, true);
         $expectedq->hintclearwrong = array(false, true);
         $this->assert(new question_check_specified_fields_expectation($expectedq), $q);
