@@ -73,6 +73,31 @@ class html2text_testcase extends basic_testcase {
         $this->assertSame('0', html_to_text('0'));
     }
 
+    /**
+     * Test the links list enumeration.
+     */
+    public function test_build_link_list() {
+
+        // Note the trailing whitespace left intentionally in the text.
+        $text = 'Total of <a title="List of integrated issues"
+            href="http://tr.mdl.org/sh.jspa?r=1&j=p+%3D+%22I+d%22+%3D">     
+            <strong>27 issues</strong></a> and <a href="http://another.url/?f=a&amp;b=2">some</a> other
+have been fixed <strong><a href="http://third.url/view.php">last week</a></strong>';
+
+        // Do not collect links.
+        $result = html_to_text($text, 5000, false);
+        $this->assertSame('Total of 27 ISSUES and some other have been fixed LAST WEEK', $result);
+
+        // Collect and enumerate links.
+        $result = html_to_text($text, 5000, true);
+        $this->assertSame(0, strpos($result, 'Total of 27 ISSUES [1] and some [2] other have been fixed LAST WEEK [3]'));
+        $this->assertSame(false, strpos($result, '[0]'));
+        $this->assertSame(1, preg_match('|^'.preg_quote('[1] http://tr.mdl.org/sh.jspa?r=1&j=p+%3D+%22I+d%22+%3D').'$|m', $result));
+        $this->assertSame(1, preg_match('|^'.preg_quote('[2] http://another.url/?f=a&amp;b=2').'$|m', $result));
+        $this->assertSame(1, preg_match('|^'.preg_quote('[3] http://third.url/view.php').'$|m', $result));
+        $this->assertSame(false, strpos($result, '[4]'));
+    }
+
     // ======= Standard html2text conversion features =======
 
     /**
