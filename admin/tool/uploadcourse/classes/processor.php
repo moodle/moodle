@@ -173,32 +173,54 @@ class tool_uploadcourse_processor {
     /**
      * Execute the process.
      *
+     * @param object $tracker the output tracker to use.
      * @return void
      */
-    public function execute() {
+    public function execute($tracker = null) {
         if ($this->processstarted) {
             throw new coding_exception('Process has already been started');
         }
         $this->processstarted = true;
 
-        $tracker = new tool_uploadcourse_tracker(tool_uploadcourse_tracker::OUTPUT_PLAIN);
+        if (empty($tracker)) {
+            $tracker = new tool_uploadcourse_tracker(tool_uploadcourse_tracker::NO_OUTPUT);
+        }
         $tracker->start();
+
+        $total = 0;
+        $created = 0;
+        $updated = 0;
+        $deleted = 0;
+        $errors = 0;
 
         // Loop over the CSV lines.
         while ($line = $this->cir->next()) {
             $this->linenb++;
+            $total++;
 
             $data = $this->parse_line($line);
             $course = $this->get_course($data);
             if ($course->prepare()) {
                 $course->proceed();
-                $tracker->output($this->linenb, true, $course->get_statuses(), $data);
+
+                $status = $course->get_statuses();
+                if (array_key_exists('coursecreated', $status)) {
+                    $created++;
+                } else if (array_key_exists('courseupdated', $status)) {
+                    $updated++;
+                } else if (array_key_exists('coursedeleted', $status)) {
+                    $deleted++;
+                }
+
+                $tracker->output($this->linenb, true, $status, $data);
             } else {
+                $errors++;
                 $tracker->output($this->linenb, false, $course->get_errors(), $data);
             }
         }
 
         $tracker->finish();
+        $tracker->results($total, $created, $updated, $deleted, $errors);
 
         $this->remove_restore_content();
     }
@@ -295,14 +317,18 @@ class tool_uploadcourse_processor {
      * This only returns passed data, along with the errors.
      *
      * @param integer $rows number of rows to preview.
+     * @param object $tracker the output tracker to use.
      * @return array of preview data.
      */
-    public function preview($rows = 10) {
+    public function preview($rows = 10, $tracker = null) {
         if ($this->processstarted) {
             throw new coding_exception('Process has already been started');
         }
         $this->processstarted = true;
-        $tracker = new tool_uploadcourse_tracker(tool_uploadcourse_tracker::OUTPUT_PLAIN);
+
+        if (empty($tracker)) {
+            $tracker = new tool_uploadcourse_tracker(tool_uploadcourse_tracker::NO_OUTPUT);
+        }
         $tracker->start();
 
         // Loop over the CSV lines.

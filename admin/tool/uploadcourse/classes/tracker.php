@@ -121,8 +121,15 @@ class tool_uploadcourse_tracker {
         );
 
         if ($this->outputmode == self::OUTPUT_PLAIN) {
+            foreach ($message as $msg) {
+                $this->buffer->output($msg);
+            }
         } else if ($this->outputmode == self::OUTPUT_HTML) {
-            echo html_writer::end_tag('table');
+            $buffer = new progress_trace_buffer(new html_list_progress_trace());
+            foreach ($message as $msg) {
+                $buffer->output($msg);
+            }
+            $buffer->finished();
         }
     }
 
