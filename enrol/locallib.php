@@ -61,6 +61,16 @@ class course_enrolment_manager {
      * @var string
      */
     protected $searchfilter = '';
+    /**
+     * Limits the focus of the manager to users in specified group
+     * @var int
+     */
+    protected $groupfilter = '';
+    /**
+     * Limits the focus of the manager to users who match status active/inactive
+     * @var int
+     */
+    protected $statusfilter = '';
 
     /**
      * The total number of users enrolled in the course
@@ -120,15 +130,19 @@ class course_enrolment_manager {
      * @param string $instancefilter
      * @param int $rolefilter If non-zero, filters to users with specified role
      * @param string $searchfilter If non-blank, filters to users with search text
+     * @param int $groupfilter if non-zero, filter users with specified group
+     * @param int $statusfilter if not -1, filter users with active/inactive enrollment.
      */
     public function __construct(moodle_page $moodlepage, $course, $instancefilter = null,
-            $rolefilter = 0, $searchfilter = '') {
+            $rolefilter = 0, $searchfilter = '', $groupfilter = 0, $statusfilter = -1) {
         $this->moodlepage = $moodlepage;
         $this->context = context_course::instance($course->id);
         $this->course = $course;
         $this->instancefilter = $instancefilter;
         $this->rolefilter = $rolefilter;
         $this->searchfilter = $searchfilter;
+        $this->groupfilter = $groupfilter;
+        $this->statusfilter = $statusfilter;
     }
 
     /**
@@ -158,6 +172,7 @@ class course_enrolment_manager {
                            FROM {user} u
                            JOIN {user_enrolments} ue ON (ue.userid = u.id  AND ue.enrolid $instancessql)
                            JOIN {enrol} e ON (e.id = ue.enrolid)
+                           LEFT JOIN {groups_members} gm ON u.id = gm.userid
                           WHERE $filtersql";
             $this->totalusers = (int)$DB->count_records_sql($sqltotal, $params);
         }
@@ -227,6 +242,7 @@ class course_enrolment_manager {
                       JOIN {user_enrolments} ue ON (ue.userid = u.id  AND ue.enrolid $instancessql)
                       JOIN {enrol} e ON (e.id = ue.enrolid)
                  LEFT JOIN {user_lastaccess} ul ON (ul.courseid = e.courseid AND ul.userid = u.id)
+                 LEFT JOIN {groups_members} gm ON u.id = gm.userid
                      WHERE $filtersql";
             if ($sort === 'firstname') {
                 $sql .= " ORDER BY u.firstname $direction, u.lastname $direction";
@@ -268,6 +284,29 @@ class course_enrolment_manager {
             $sql .= " AND (SELECT COUNT(1) FROM {role_assignments} ra WHERE ra.userid = u.id " .
                     "AND ra.roleid = :roleid AND ra.contextid $contextsql) > 0";
             $params['roleid'] = $this->rolefilter;
+        }
+
+        // Group condition.
+        if ($this->groupfilter) {
+            $sql .= " AND gm.groupid = :groupid";
+            $params['groupid'] = $this->groupfilter;
+        }
+
+        // Status condition.
+        if ($this->statusfilter === ENROL_USER_ACTIVE) {
+            $sql .= " AND ue.status = :active AND e.status = :enabled AND ue.timestart < :now1
+                    AND (ue.timeend = 0 OR ue.timeend > :now2)";
+            $now = round(time(), -2); // rounding helps caching in DB
+            $params += array('enabled' => ENROL_INSTANCE_ENABLED,
+                            'active' => ENROL_USER_ACTIVE,
+                            'now1' => $now, 'now2' => $now);
+        } else if ($this->statusfilter === ENROL_USER_SUSPENDED) {
+            $sql .= " AND ue.status = :inactive OR e.status = :disabled OR ue.timestart > :now1
+                    OR (ue.timeend <> 0 AND ue.timeend < :now2)";
+            $now = round(time(), -2); // rounding helps caching in DB
+            $params += array('disabled' => ENROL_INSTANCE_DISABLED,
+                            'inactive' => ENROL_USER_SUSPENDED,
+                            'now1' => $now, 'now2' => $now);
         }
 
         return array($sql, $params);
@@ -851,6 +890,12 @@ class course_enrolment_manager {
         }
         if ($this->searchfilter !== '') {
             $args['search'] = $this->searchfilter;
+        }
+        if (!empty($this->groupfilter)) {
+            $args['group'] = $this->groupfilter;
+        }
+        if ($this->statusfilter !== -1) {
+            $args['status'] = $this->statusfilter;
         }
         return $args;
     }
