@@ -34,13 +34,13 @@ defined('MOODLE_INTERNAL') || die();
 class tool_uploadcourse_course {
 
     /** Outcome of the process: creating the course */
-    const OUTCOME_CREATE = 1;
+    const DO_CREATE = 1;
 
     /** Outcome of the process: updating the course */
-    const OUTCOME_UPDATE = 2;
+    const DO_UPDATE = 2;
 
     /** Outcome of the process: deleting the course */
-    const OUTCOME_DELETE = 3;
+    const DO_DELETE = 3;
 
     /** @var array final import data. */
     protected $data = array();
@@ -63,8 +63,8 @@ class tool_uploadcourse_course {
     /** @var array course import options. */
     protected $options = array();
 
-    /** @var int constant value of the outcome, what to do with that course */
-    protected $outcome;
+    /** @var int constant value of self::DO_*, what to do with that course */
+    protected $do;
 
     /** @var bool set to true once we have prepared the course */
     protected $prepared = false;
@@ -396,7 +396,7 @@ class tool_uploadcourse_course {
                 return false;
             }
 
-            $this->outcome = self::OUTCOME_DELETE;
+            $this->do = self::DO_DELETE;
             return true;
         }
 
@@ -572,10 +572,10 @@ class tool_uploadcourse_course {
         if ($exists) {
             $missingonly = ($updatemode === tool_uploadcourse_processor::UPDATE_MISSING_WITH_DATA_OR_DEFAUTLS);
             $coursedata = $this->get_final_update_data($coursedata, $usedefaults, $missingonly);
-            $this->outcome = self::OUTCOME_UPDATE;
+            $this->do = self::DO_UPDATE;
         } else {
             $coursedata = $this->get_final_create_data($coursedata);
-            $this->outcome = self::OUTCOME_CREATE;
+            $this->do = self::DO_CREATE;
         }
 
         // Course start date.
@@ -612,7 +612,7 @@ class tool_uploadcourse_course {
 
         // We cannot
         if ($this->importoptions['reset'] || $this->options['reset']) {
-            if ($this->outcome !== self::OUTCOME_UPDATE) {
+            if ($this->do !== self::DO_UPDATE) {
                 $this->error('canonlyresetcourseinupdatemode',
                     new lang_string('canonlyresetcourseinupdatemode', 'tool_uploadcourse'));
                 return false;
@@ -639,17 +639,17 @@ class tool_uploadcourse_course {
             throw new moodle_exception('Cannot proceed, errors were detected.');
         }
 
-        if ($this->outcome === self::OUTCOME_DELETE) {
+        if ($this->do === self::DO_DELETE) {
             if ($this->delete()) {
                 $this->status('coursedeleted', new lang_string('coursedeleted', 'tool_uploadcourse'));
             } else {
                 $this->error('errorwhiledeletingcourse', new lang_string('errorwhiledeletingcourse', 'tool_uploadcourse'));
             }
             return true;
-        } else if ($this->outcome === self::OUTCOME_CREATE) {
+        } else if ($this->do === self::DO_CREATE) {
             $course = create_course((object) $this->data);
             $this->status('coursecreated', new lang_string('coursecreated', 'tool_uploadcourse'));
-        } else if ($this->outcome === self::OUTCOME_UPDATE) {
+        } else if ($this->do === self::DO_UPDATE) {
             $course = (object) $this->data;
             update_course($course);
             $this->status('courseupdated', new lang_string('courseupdated', 'tool_uploadcourse'));
@@ -681,7 +681,7 @@ class tool_uploadcourse_course {
 
         // Reset the course.
         if ($this->importoptions['reset'] || $this->options['reset']) {
-            if ($this->outcome === self::OUTCOME_UPDATE && $this->can_reset()) {
+            if ($this->do === self::DO_UPDATE && $this->can_reset()) {
                 $this->reset($course);
                 $this->status('coursereset', new lang_string('coursereset', 'tool_uploadcourse'));
             }
