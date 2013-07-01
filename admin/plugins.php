@@ -85,10 +85,18 @@ if ($uninstall) {
         if ($pluginman->is_plugin_folder_removable($pluginfo->component)) {
             $continueurl = new moodle_url($PAGE->url, array('delete' => $pluginfo->component, 'sesskey' => sesskey(), 'confirm' => 1));
             echo $output->plugin_uninstall_results_removable_page($pluginman, $pluginfo, $progress, $continueurl);
+            // Reset op code caches.
+            if (function_exists('opcache_reset')) {
+                opcache_reset();
+            }
             exit();
 
         } else {
             echo $output->plugin_uninstall_results_page($pluginman, $pluginfo, $progress);
+            // Reset op code caches.
+            if (function_exists('opcache_reset')) {
+                opcache_reset();
+            }
             exit();
         }
     }
@@ -131,6 +139,10 @@ if ($delete and $confirmed) {
 
     // So long, and thanks for all the bugs.
     fulldelete($pluginfo->rootdir);
+    // Reset op code caches.
+    if (function_exists('opcache_reset')) {
+        opcache_reset();
+    }
     redirect($PAGE->url);
 }
 

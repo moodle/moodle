@@ -7216,6 +7216,11 @@ class core_string_manager implements string_manager {
         // and re-populate it again
         fulldelete($this->menucache);
         $this->get_list_of_translations(true);
+
+        // Lang packs use PHP files in dataroot, it is better to invalidate opcode caches.
+        if (function_exists('opcache_reset')) {
+            opcache_reset();
+        }
     }
 
     /**

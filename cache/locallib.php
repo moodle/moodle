@@ -108,6 +108,8 @@ class cache_config_writer extends cache_config {
             fflush($handle);
             fclose($handle);
             $locking->unlock('configwrite', 'config');
+            // Tell PHP to recompile the script.
+            core_component::invalidate_opcode_php_cache($cachefile);
         } else {
             throw new cache_exception('ex_configcannotsave', 'cache', '', null, 'Unable to open the cache config file.');
         }

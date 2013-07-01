@@ -142,6 +142,7 @@ class core_component {
                 @chmod($cachefile, $CFG->filepermissions);
             }
             @unlink($cachefile.'.tmp'); // Just in case anything fails (race condition).
+            self::invalidate_opcode_php_cache($cachefile);
         }
     }
 
@@ -734,5 +735,22 @@ $cache = '.var_export($cache, true).';
             $return[$type] = self::$plugintypes[$type];
         }
         return $return;
+    }
+
+    /**
+     * Invalidate opcode cache for given file, this is intended for
+     * php files that are stored in dataroot.
+     *
+     * Note: we need it here because this class must be self-contained.
+     *
+     * @param string $file
+     */
+    public static function invalidate_opcode_php_cache($file) {
+        if (function_exists('opcache_invalidate')) {
+            if (!file_exists($file)) {
+                return;
+            }
+            opcache_invalidate($file, true);
+        }
     }
 }
