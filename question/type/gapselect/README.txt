@@ -13,7 +13,7 @@ This version of this question type is compatible with Moodle 2.5+. There are
 other versions available for Moodle 2.3+.
 
 To install using git, type this command in the root of your Moodle install
-    git clone git://github.com/moodleou/moodle-qtype_gapselect.git question/type/gapselect
+    git clone git@github.com:moodleou/moodle-qtype_gapselect.git question/type/gapselect
 Then add question/type/gapselect to your git ignore.
 
 Alternatively, download the zip from
