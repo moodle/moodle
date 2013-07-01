@@ -72,17 +72,15 @@ class lesson_page_type_matching extends lesson_page {
         foreach ($answers as $answer) {
             // get all the response
             if ($answer->response != null) {
-                $responses[$answer->id] = trim($answer->response);
+                $responses[] = trim($answer->response);
             }
         }
 
         $responseoptions = array(''=>get_string('choosedots'));
         if (!empty($responses)) {
-            $shuffleresponses = $responses;
-            shuffle($shuffleresponses);
-            foreach ($shuffleresponses as  $response) {
-                $key = array_search($response, $responses);
-                $responseoptions[$key] = $response;
+            shuffle($responses);
+            foreach ($responses as  $response) {
+                $responseoptions[htmlspecialchars($response)] = $response;
             }
         }
         if (isset($USER->modattempts[$this->lesson->id]) && !empty($attempt->useranswer)) {
@@ -167,12 +165,12 @@ class lesson_page_type_matching extends lesson_page {
         $wrong   = array_shift($getanswers);
 
         $answers = array();
-        foreach ($getanswers as $key=>$answer) {
+        foreach ($getanswers as $key => $answer) {
             if ($answer->answer !== '' or $answer->response !== '') {
                 $answers[$answer->id] = $answer;
             }
-            unset($getanswers[$key]);
         }
+
         // get the user's exact responses for record keeping
         $hits = 0;
         $userresponse = array();
@@ -181,12 +179,13 @@ class lesson_page_type_matching extends lesson_page {
                 $result->noanswer = true;
                 return $result;
             }
-            $userresponse[] = $value;
+            $value = htmlspecialchars_decode($value);
+            $userresponse[] = htmlspecialchars_decode($value);
             // Make sure the user's answer exists in question's answer
             if (array_key_exists($id, $answers)) {
                 $answer = $answers[$id];
-                $result->studentanswer .= '<br />'.format_text($answer->answer, $answer->answerformat, $formattextdefoptions).' = '.$answers[$value]->response;
-                if ($id == $value) {
+                $result->studentanswer .= '<br />'.format_text($answer->answer, $answer->answerformat, $formattextdefoptions).' = '.$value;
+                if (trim($answer->response) == trim($value)) {
                     $hits++;
                 }
             }
@@ -401,13 +400,13 @@ class lesson_page_type_matching extends lesson_page {
                 }
             } elseif ($n > 1) {
                 $data = '<label class="accesshide" for="answer_' . $n . '">' . get_string('answer', 'lesson') . '</label>';
-                $data .= "<select id=\"answer_". $n ."\" disabled=\"disabled\"><option selected=\"selected\">".strip_tags(format_string($answer->answer))."</option></select>";
+                $data .= strip_tags(format_string($answer->answer)) . ' ';
                 if ($useranswer != null) {
                     $userresponse = explode(",", $useranswer->useranswer);
                     $data .= '<label class="accesshide" for="stu_answer_response_' . $n . '">' . get_string('matchesanswer', 'lesson') . '</label>';
                     $data .= "<select id=\"stu_answer_response_" . $n . "\" disabled=\"disabled\"><option selected=\"selected\">";
                     if (array_key_exists($i, $userresponse)) {
-                        $data .= strip_tags(format_string($answers[$userresponse[$i]]->response));
+                        $data .= $userresponse[$i];
                     }
                     $data .= "</option></select>";
                 } else {
@@ -519,19 +518,21 @@ class lesson_display_answer_form_matching extends moodleform {
         $mform->setType('pageid', PARAM_INT);
 
         $i = 0;
+
         foreach ($answers as $answer) {
             $mform->addElement('html', '<div class="answeroption">');
             if ($answer->response != null) {
                 $responseid = 'response['.$answer->id.']';
                 if ($hasattempt) {
                     $responseid = 'response_'.$answer->id;
-                    $mform->addElement('hidden', 'response['.$answer->id.']', htmlspecialchars(trim($answers[$useranswers[$i]]->response)));
-                    $mform->setType('response', PARAM_NOTAGS);
+                    $mform->addElement('hidden', 'response['.$answer->id.']', htmlspecialchars($useranswers[$i]));
+                    // Temporary fixed until MDL-38885 gets integrated
+                    $mform->setType('response', PARAM_TEXT);
                 }
                 $mform->addElement('select', $responseid, format_text($answer->answer,$answer->answerformat,$options), $responseoptions, $disabled);
                 $mform->setType($responseid, PARAM_TEXT);
                 if ($hasattempt) {
-                    $mform->setDefault($responseid, htmlspecialchars(trim($answers[$useranswers[$i]]->response))); //TODO: this is suspicious
+                    $mform->setDefault($responseid, htmlspecialchars(trim($useranswers[$i])));
                 } else {
                     $mform->setDefault($responseid, 'answeroption');
                 }
