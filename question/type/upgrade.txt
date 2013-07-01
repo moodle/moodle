@@ -2,13 +2,52 @@ This files describes API changes for question type plugins.
 
 === 2.5 ===
 
-* There have been some tweaks to the helper class that is used to right
+* There have been some tweaks to the helper class that is used to write
   walkthrough tests. You should not have to change your code, but you might
   like to take a look at some of the new helper methods available. In particular,
   if you had any code that did
   $this->process_submission(array('-finish' => 1));
   you should change that to
   $this->finish();
+
+* There have been lots of usability improvements to the question editing forms.
+  MDL-37417 links to all the changes. There are only a few API changes that
+  *require* you to upgrade your question type, but you are strongly recommended
+  to make similar usability improvements in your own question types.
+
+  + Some of the ids used in the form HTML have had ‘id_’ added at the front.
+    Take care if you refer to these in your JavasSript or CSS.
+
+  + MDL-32750 The HTML editing tools are now collapsed. This is applied by default
+    to all HTML editors except question text and general feedback. If you want to
+    add more exceptions, see the get_non_collabsible_editor_options method.
+
+  + Form fields have been grouped onto one line where appropriate, to reduce
+    the height of the form. qtype_numerical is a good example of this.
+
+  + Where elements are in groups, we have changed the normal accesshide CSS, so
+    that their labels are visible. If you were using grouped elements in the past
+    with static elements to lable the fields, then you will need to remove the statics.
+
+  + All the choices / answers have been merged into a single section of the form.
+    This works better with the new 'shortforms' MDL-30637. Also the
+    "Add blanks for more ..." buttons are now inside that section. This probably
+    requries that you remove any headings from your per-answer fields, and change
+    some of the labels.
+
+  + Having merged all the elements into one form section, we then used CSS to
+    visually group the fields for one choice, answer, etc.
+
+  + When editing an existing question, we only show as many repeats are are
+    actually needed until the user clicks the "Add blanks for more ..." button.
+    Where you have your own repeat elements, you may need to change the
+    number of repeats calculation.
+
+  + As with all forms, setType() is now required for all text form elements.
+
+  + A good example of a question type being upgraded to take account of all these
+    changes is
+    https://github.com/moodleou/moodle-qtype_pmatch/commit/9d8e1beb9f780246416a0f3a7622f700b8fa90c8
 
 
 === 2.3.5 / 2.4.2 / 2.5 ===
