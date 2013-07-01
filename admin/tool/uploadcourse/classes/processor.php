@@ -213,6 +213,7 @@ class tool_uploadcourse_processor {
                     $deleted++;
                 }
 
+                $data = array_merge($data, $course->get_data(), array('id' => $course->get_id()));
                 $tracker->output($this->linenb, true, $status, $data);
             } else {
                 $errors++;

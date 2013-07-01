@@ -24,7 +24,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['invalidshortname'] = 'Invalid shortname';
+$string['allowdeletes'] = 'Allow deletes';
+$string['allowrenames'] = 'Allow renames';
+$string['allowresets'] = 'Allow resets';
 $string['cannotdeletecoursenotexist'] = 'Cannot delete a course that does not exist';
 $string['cannotgenerateshortnameupdatemode'] = 'Cannot generate a shortname when updates are allowed';
 $string['cannotreadbackupfile'] = 'Cannot read the backup file';
@@ -56,8 +58,11 @@ $string['courseshortnameincremented'] = 'Course shortname incremented {$a->from}
 $string['courseshortnamegenerated'] = 'Course shortname generated: {$a}';
 $string['coursetorestorefromdoesnotexist'] = 'The course to restore from does not exist';
 $string['courseupdated'] = 'Course updated';
+$string['csvdelimiter'] = 'CSV delimiter';
 $string['csvfileerror'] = 'There is something wrong with the format of the CSV file. Please check the number of headings and columns match, and that the delimiter and file encoding are correct: {$a}';
 $string['csvline'] = 'Line';
+$string['defaultvalues'] = 'Default values';
+$string['encoding'] = 'Encoding';
 $string['errorwhilerestoringcourse'] = 'Error while restoring the course';
 $string['errorwhiledeletingcourse'] = 'Error while deleting the course';
 $string['generatedshortnameinvalid'] = 'The generated shortname is invalid';
@@ -71,26 +76,40 @@ $string['invalidencoding'] = 'Invalid encoding';
 $string['invalidmode'] = 'Invalid mode selected';
 $string['invalideupdatemode'] = 'Invalid update mode selected';
 $string['invalidroles'] = 'Invalid role names: {$a}';
+$string['invalidshortname'] = 'Invalid shortname';
 $string['missingmandatoryfields'] = 'Missing value for mandatory fields: {$a}';
 $string['missingshortnamenotemplate'] = 'Missing shortname and shortname template not set';
-$string['outcome'] = 'Outcome';
-$string['updatemodedoessettonothing'] = 'Update mode does not allow anything to be updated';
-$string['uploadcoursesresult'] = 'Upload courses results';
+$string['mode'] = 'Upload mode';
+$string['preview'] = 'Preview';
+$string['reset'] = 'Reset course after upload';
+$string['result'] = 'Result';
+$string['restoreafterimport'] = 'Restore after import';
+$string['rowpreviewnum'] = 'Preview rows';
+$string['shortnametemplate'] = 'Shortname template';
+$string['shortnametemplate_help'] = 'The short name of the course is displayed in the navigation. You may use template syntax here (%f = fullname, %i = idnumber), or enter an initial value that is incremented.';
 $string['unknownimportmode'] = 'Unknown import mode';
+$string['updatemode'] = 'Update mode';
+$string['updatemodedoessettonothing'] = 'Update mode does not allow anything to be updated';
+$string['uploadcourses'] = 'Upload courses';
+$string['uploadcourses_help'] = 'Courses may be uploaded via text file. The format of the file should be as follows:
 
-$string['allowdeletes'] = 'Allow deletes';
-$string['allowrenames'] = 'Allow renames';
-$string['csvdelimiter'] = 'CSV delimiter';
-$string['defaultvalues'] = 'Default values';
+* Each line of the file contains one record
+* Each record is a series of data separated by commas (or other delimiters)
+* The first record contains a list of fieldnames defining the format of the rest of the file
+* Required fieldnames are shortname, fullname, summary and category';
+$string['uploadcoursesresult'] = 'Upload courses results';
+
+
+
+
+
 $string['deleteerrors'] = 'Delete errors';
-$string['encoding'] = 'Encoding';
 $string['errors'] = 'Errors';
 $string['invalidinput'] = 'You must specify a valid combination of --action and --mode';
 $string['nochanges'] = 'No changes';
 $string['pluginname'] = 'Course upload';
 $string['renameerrors'] = 'Rename errors';
 $string['requiredtemplate'] = 'Required. You may use template syntax here (%l = lastname, %f = firstname, %u = coursename). See help for details and examples.';
-$string['rowpreviewnum'] = 'Preview rows';
 $string['uploadpicture_badcoursefield'] = 'The course attribute specified is not valid. Please, try again.';
 $string['uploadpicture_cannotmovezip'] = 'Cannot move zip file to temporary directory.';
 $string['uploadpicture_cannotprocessdir'] = 'Cannot process unzipped files.';
@@ -104,13 +123,7 @@ $string['uploadpicture_courseskipped'] = 'Skipping course {$a} (already has a pi
 $string['uploadpicture_courseupdated'] = 'Picture updated for course {$a}.';
 $string['uploadpictures'] = 'Upload course pictures';
 $string['uploadpictures_help'] = 'Course pictures can be uploaded as a zip file of image files. The image files should be named chosen-course-attribute.extension, for example course1234.jpg for a course with coursename course1234.';
-$string['uploadcourses'] = 'Upload courses';
-$string['uploadcourses_help'] = 'Courses may be uploaded (and optionally enrolled in courses) via text file. The format of the file should be as follows:
 
-* Each line of the file contains one record
-* Each record is a series of data separated by commas (or other delimiters)
-* The first record contains a list of fieldnames defining the format of the rest of the file
-* Required fieldnames are coursename, password, firstname, lastname, email';
 $string['uploadcoursespreview'] = 'Upload courses preview';
 $string['courseuptodate'] = 'Course up-to-date';
 $string['courseupdated'] = 'Course updated';
@@ -133,7 +146,7 @@ $string['coursenotrenamedoff'] = 'Course not renamed - renaming off';
 $string['coursenotrenamedadmin'] = 'Course not renamed - no admin';
 $string['invalidvalue'] = 'Invalid value for field {$a}';
 $string['shortnamecourse'] = 'Shortname';
-$string['shortnamecourse_help'] = 'The short name of the course is displayed in the navigation. You may use template syntax here (%f = fullname, %i = idnumber), or enter an initial value that is incremented. See help for details and examples.';
+
 $string['idnumbernotunique'] = 'idnumber is not unique';
 $string['ccbulk'] = 'Select for bulk operations';
 $string['ccbulkall'] = 'All courses';
@@ -143,7 +156,7 @@ $string['cclegacy1role'] = '(Original Student) typeN=1';
 $string['cclegacy2role'] = '(Original Teacher) typeN=2';
 $string['cclegacy3role'] = '(Original Non-editing teacher) typeN=3';
 $string['ccnoemailduplicates'] = 'Prevent email address duplicates';
-$string['ccoptype'] = 'Upload type';
+
 $string['ccoptype_addinc'] = 'Add all, append number to shortnames if needed';
 $string['ccoptype_addnew'] = 'Add new only, skip existing courses';
 $string['ccoptype_addupdate'] = 'Add new and update existing courses';
@@ -151,13 +164,12 @@ $string['ccoptype_update'] = 'Update existing courses only';
 $string['ccpasswordcron'] = 'Generated in cron';
 $string['ccpasswordnew'] = 'New course password';
 $string['ccpasswordold'] = 'Existing course password';
-$string['reset'] = 'Reset course after upload';
 $string['ccstandardshortnames'] = 'Standardise shortnames';
 $string['ccupdateall'] = 'Override with file and defaults';
 $string['ccupdatefromfile'] = 'Override with file';
 $string['ccupdatemissing'] = 'Fill in missing from file and defaults';
 $string['ccupdatetype'] = 'Existing course details';
-$string['ccshortnametemplate'] = 'Shortname template';
+
 $string['ccfullnametemplate'] = 'Fullname template';
 $string['ccidnumbertemplate'] = 'Idnumber template';
 $string['missingtemplate'] = 'Template not found';

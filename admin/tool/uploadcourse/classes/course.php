@@ -56,6 +56,9 @@ class tool_uploadcourse_course {
     /** @var array errors. */
     protected $errors = array();
 
+    /** @var int the ID of the course that had been processed. */
+    protected $id;
+
     /** @var array containing options passed from the processor. */
     protected $importoptions = array();
 
@@ -70,6 +73,9 @@ class tool_uploadcourse_course {
 
     /** @var bool set to true once we have prepared the course */
     protected $prepared = false;
+
+    /** @var bool set to true once we have started the process of the course */
+    protected $processstarted = false;
 
     /** @var array course import data. */
     protected $rawdata = array();
@@ -221,8 +227,8 @@ class tool_uploadcourse_course {
      */
     protected function delete() {
         global $DB;
-        $id = $DB->get_field_select('course', 'id', 'shortname = :shortname', array('shortname' => $this->shortname), MUST_EXIST);
-        return delete_course($id, false);
+        $this->id = $DB->get_field_select('course', 'id', 'shortname = :shortname', array('shortname' => $this->shortname), MUST_EXIST);
+        return delete_course($this->id, false);
     }
 
     /**
@@ -319,6 +325,18 @@ class tool_uploadcourse_course {
         }
         $newdata['id'] =  $existingdata->id;
         return $newdata;
+    }
+
+    /**
+     * Return the ID of the processed course.
+     *
+     * @return int|null
+     */
+    public function get_id() {
+        if (!$this->processstarted) {
+            throw new coding_exception('The course has not been processed yet!');
+        }
+        return $this->id;
     }
 
     /**
@@ -648,7 +666,10 @@ class tool_uploadcourse_course {
             throw new coding_exception('The course has not been prepared.');
         } else if ($this->has_errors()) {
             throw new moodle_exception('Cannot proceed, errors were detected.');
+        } else if ($this->processstarted) {
+            throw new coding_exception('The process has already been started.');
         }
+        $this->processstarted = true;
 
         if ($this->do === self::DO_DELETE) {
             if ($this->delete()) {
@@ -659,10 +680,12 @@ class tool_uploadcourse_course {
             return true;
         } else if ($this->do === self::DO_CREATE) {
             $course = create_course((object) $this->data);
+            $this->id = $course->id;
             $this->status('coursecreated', new lang_string('coursecreated', 'tool_uploadcourse'));
         } else if ($this->do === self::DO_UPDATE) {
             $course = (object) $this->data;
             update_course($course);
+            $this->id = $course->id;
             $this->status('courseupdated', new lang_string('courseupdated', 'tool_uploadcourse'));
         } else {
             // Strangely the outcome has not been defined, or is unknown!
