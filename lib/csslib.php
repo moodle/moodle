@@ -76,13 +76,6 @@ function css_store_css(theme_config $theme, $csspath, array $cssfiles, $chunk = 
         $css = $theme->post_process(css_minify_css($cssfiles));
     }
 
-    if ($chunk) {
-        // Chunk the CSS if requried.
-        $css = css_chunk_by_selector_count($css, $chunkurl);
-    } else {
-        $css = array($css);
-    }
-
     clearstatcache();
     if (!file_exists(dirname($csspath))) {
         @mkdir(dirname($csspath), $CFG->directorypermissions, true);
@@ -92,28 +85,47 @@ function css_store_css(theme_config $theme, $csspath, array $cssfiles, $chunk = 
     // the rename() should be more atomic than fwrite().
     ignore_user_abort(true);
 
-    $files = count($css);
-    $count = 0;
-    foreach ($css as $content) {
-        if ($files > 1 && ($count+1) !== $files) {
-            // If there is more than one file and this is not the last file.
-            $filename = preg_replace('#\.css$#', '.'.$count.'.css', $csspath);
+    // First up write out the single file for all those using decent browsers.
+    css_write_file($csspath, $css);
+
+    if ($chunk) {
+        // If we need to chunk the CSS for browsers that are sub-par.
+        $css = css_chunk_by_selector_count($css, $chunkurl);
+        $files = count($css);
+        $count = 1;
+        foreach ($css as $content) {
+            if ($count === $files) {
+                // If there is more than one file and this IS the last file.
+                $filename = preg_replace('#\.css$#', '.0.css', $csspath);
+            } else {
+                // If there is more than one file and this is not the last file.
+                $filename = preg_replace('#\.css$#', '.'.$count.'.css', $csspath);
+            }
             $count++;
-        } else {
-            $filename = $csspath;
-        }
-        if ($fp = fopen($filename.'.tmp', 'xb')) {
-            fwrite($fp, $content);
-            fclose($fp);
-            rename($filename.'.tmp', $filename);
-            @chmod($filename, $CFG->filepermissions);
-            @unlink($filename.'.tmp'); // just in case anything fails
+            css_write_file($filename, $content);
         }
     }
 
     ignore_user_abort(false);
     if (connection_aborted()) {
         die;
+    }
+}
+
+/**
+ * Writes a CSS file.
+ *
+ * @param string $filename
+ * @param string $content
+ */
+function css_write_file($filename, $content) {
+    global $CFG;
+    if ($fp = fopen($filename.'.tmp', 'xb')) {
+        fwrite($fp, $content);
+        fclose($fp);
+        rename($filename.'.tmp', $filename);
+        @chmod($filename, $CFG->filepermissions);
+        @unlink($filename.'.tmp'); // just in case anything fails
     }
 }
 
@@ -184,7 +196,7 @@ function css_chunk_by_selector_count($css, $importurl, $maxselectors = 4095, $bu
     $importcss = '';
     $slashargs = strpos($importurl, '.php?') === false;
     $parts = count($css);
-    for ($i = 0; $i < $parts - 1; $i++) {
+    for ($i = 1; $i < $parts; $i++) {
         if ($slashargs) {
             $importcss .= "@import url({$importurl}/chunk{$i});\n";
         } else {
@@ -195,51 +207,6 @@ function css_chunk_by_selector_count($css, $importurl, $maxselectors = 4095, $bu
     $css[key($css)] = $importcss;
 
     return $css;
-}
-
-/**
- * Sends IE specific CSS
- *
- * In writing the CSS parser I have a theory that we could optimise the CSS
- * then split it based upon the number of selectors to ensure we dont' break IE
- * and that we include only as many sub-stylesheets as we require.
- * Of course just a theory but may be fun to code.
- *
- * @param string $themename The name of the theme we are sending CSS for.
- * @param string $rev The revision to ensure we utilise the cache.
- * @param string $etag The revision to ensure we utilise the cache.
- * @param bool $slasharguments
- */
-function css_send_ie_css($themename, $rev, $etag, $slasharguments) {
-    global $CFG;
-
-    $lifetime = 60*60*24*60; // 60 days only - the revision may get incremented quite often
-
-    $relroot = preg_replace('|^http.?://[^/]+|', '', $CFG->wwwroot);
-
-    $css  = "/** Unfortunately IE6-9 does not support more than 4096 selectors in one CSS file, which means we have to use some ugly hacks :-( **/";
-    if ($slasharguments) {
-        $css .= "\n@import url($relroot/styles.php/$themename/$rev/plugins);";
-        $css .= "\n@import url($relroot/styles.php/$themename/$rev/parents);";
-        $css .= "\n@import url($relroot/styles.php/$themename/$rev/theme);";
-    } else {
-        $css .= "\n@import url($relroot/styles.php?theme=$themename&rev=$rev&type=plugins);";
-        $css .= "\n@import url($relroot/styles.php?theme=$themename&rev=$rev&type=parents);";
-        $css .= "\n@import url($relroot/styles.php?theme=$themename&rev=$rev&type=theme);";
-    }
-
-    header('Etag: "'.$etag.'"');
-    header('Content-Disposition: inline; filename="styles.php"');
-    header('Last-Modified: '. gmdate('D, d M Y H:i:s', time()) .' GMT');
-    header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
-    header('Pragma: ');
-    header('Cache-Control: public, max-age='.$lifetime);
-    header('Accept-Ranges: none');
-    header('Content-Type: text/css; charset=utf-8');
-    header('Content-Length: '.strlen($css));
-
-    echo $css;
-    die;
 }
 
 /**
