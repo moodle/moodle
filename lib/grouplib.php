@@ -776,7 +776,7 @@ function groups_get_activity_allowed_groups($cm,$userid=0) {
     // If visible groups mode, or user has the accessallgroups capability,
     // then they can access all groups for the activity...
     $context = context_module::instance($cm->id);
-    if ($groupmode == VISIBLEGROUPS or has_capability('moodle/site:accessallgroups', $context)) {
+    if ($groupmode == VISIBLEGROUPS or has_capability('moodle/site:accessallgroups', $context, $userid)) {
         return groups_get_all_groups($cm->course, 0, $cm->groupingid);
     } else {
         // ...otherwise they can only access groups they belong to
