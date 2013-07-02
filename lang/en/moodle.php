@@ -352,7 +352,7 @@ $string['courserequestdetails'] = 'Details of the course you are requesting';
 $string['courserequestfailed'] = 'For some reason, your course request could not be saved';
 $string['courserequestintro'] = 'Use this form to request a course to be created for you.<br />Try and fill in as much information as you can to allow<br />the administrators to understand your reasons for wanting this course.';
 $string['courserequestreason'] = 'Reasons for wanting this course';
-$string['courserequestsuccess'] = 'Successfully saved your course request. Expect an email within a few days with the outcome';
+$string['courserequestsuccess'] = 'Your course request has been saved successfully. You will be sent an email to inform you whether your request was approved.';
 $string['courserequestsupport'] = 'Supporting information to help the administrator evaluate this request';
 $string['courserestore'] = 'Course restore';
 $string['courses'] = 'Courses';
@@ -1159,7 +1159,7 @@ line at the top of your web browser window.
 Cheers from the \'{$a->sitename}\' administrator,
 {$a->signoff}';
 $string['newusers'] = 'New users';
-$string['newwindow'] = 'new window';
+$string['newwindow'] = 'New window';
 $string['next'] = 'Next';
 $string['nextsection'] = 'Next section';
 $string['no'] = 'No';
@@ -1494,7 +1494,7 @@ $string['selectaregion'] = 'Select a region';
 $string['selctauser'] = 'Select a user';
 $string['selectall'] = 'Select all';
 $string['selectamodule'] = 'Please select an activity module';
-$string['selectanoptions'] = 'Select an options';
+$string['selectanoptions'] = 'Select an option';
 $string['selectdefault'] = 'Select default';
 $string['selectedfile'] = 'Selected file';
 $string['selectednowmove'] = '{$a} files selected for moving. Now go into the destination folder and press \'Move files to here\'';
@@ -1502,7 +1502,7 @@ $string['selectfiles'] = 'Select files';
 $string['selectmoduletoviewhelp'] = 'Select an activity or resource to view its help.
 
 Double-click on an activity or resource name to quickly add it.';
-$string['selectnos'] = 'Select all \'no\'';
+$string['selectnos'] = 'Select all \'No\'';
 $string['selectperiod'] = 'Select period';
 $string['senddetails'] = 'Send my details via email';
 $string['separate'] = 'Separate';

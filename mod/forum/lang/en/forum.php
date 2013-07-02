@@ -395,7 +395,9 @@ $string['subscriptionmode_help'] = 'When a participant is subscribed to a forum 
 * Optional subscription - Participants can choose whether to be subscribed
 * Forced subscription - Everyone is subscribed and cannot unsubscribe
 * Auto subscription - Everyone is subscribed initially but can choose to unsubscribe at any time
-* Subscription disabled - Subscriptions are not allowed';
+* Subscription disabled - Subscriptions are not allowed
+
+Note: Any subscription mode changes will only affect users who enrol in the course in the future, and not existing users.';
 $string['subscriptionoptional'] = 'Optional subscription';
 $string['subscriptionforced'] = 'Forced subscription';
 $string['subscriptionauto'] = 'Auto subscription';
