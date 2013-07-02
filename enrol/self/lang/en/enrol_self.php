@@ -59,9 +59,9 @@ This is a notification that your enrolment in the course \'{$a->course}\' is due
 If you need help, please contact {$a->enroller}.';
 $string['groupkey'] = 'Use group enrolment keys';
 $string['groupkey_desc'] = 'Use group enrolment keys by default.';
-$string['groupkey_help'] = 'In addition to restricting access to the course to only those who know the key, use of a group enrolment key means users are automatically added to the group when they enrol in the course.
+$string['groupkey_help'] = 'In addition to restricting access to the course to only those who know the key, use of group enrolment keys means users are automatically added to groups when they enrol in the course.
 
-To use a group enrolment key, an enrolment key must be specified in the course settings as well as the group enrolment key in the group settings.';
+Note: An enrolment key for the course must be specified in the self enrolment settings as well as group enrolment keys in the group settings.';
 $string['longtimenosee'] = 'Unenrol inactive after';
 $string['longtimenosee_help'] = 'If users haven\'t accessed a course for a long time, then they are automatically unenrolled. This parameter specifies that time limit.';
 $string['maxenrolled'] = 'Max enrolled users';

@@ -37,7 +37,7 @@ $string['missinglangparent'] = 'Missing parent language <em>{$a->parent}</em> of
 $string['nolangupdateneeded'] = 'All your language packs are up to date, no update is needed';
 $string['pluginname'] = 'Language packs';
 $string['purgestringcaches'] = 'Purge string caches';
-$string['remotelangnotavailable'] = 'Because Moodle can not connect to download.moodle.org, we are unable to do language pack installation automatically. Please download the appropriate zip file(s) from http://download.moodle.org, copy them to your {$a} directory and unzip them manually.';
+$string['remotelangnotavailable'] = 'Because Moodle cannot connect to download.moodle.org, it is not possible for language packs to be installed automatically. Please download the appropriate ZIP file(s) from <a href="http://download.moodle.org/langpack/">download.moodle.org/langpack</a>, copy them to your {$a} directory and unzip them manually.';
 $string['uninstall'] = 'Uninstall selected language pack';
 $string['uninstallconfirm'] = 'You are about to completely uninstall language pack {$a}, are you sure?';
 $string['updatelangs'] = 'Update all installed language packs';
