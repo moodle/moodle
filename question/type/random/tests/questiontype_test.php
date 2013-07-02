@@ -62,4 +62,18 @@ class qtype_random_test extends advanced_testcase {
     public function test_get_possible_responses() {
         $this->assertEquals(array(), $this->qtype->get_possible_responses(null));
     }
+
+    public function test_question_creation() {
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $cat = $generator->create_question_category();
+        $question1 = $generator->create_question('shortanswer', null, array('category' => $cat->id));
+        $question2 = $generator->create_question('numerical', null, array('category' => $cat->id));
+
+        $randomquestion = $generator->create_question('random', null, array('category' => $cat->id));
+
+        $q = question_bank::load_question($randomquestion->id);
+
+        $this->assertContains($q->id, array($question1->id, $question2->id));
+    }
 }
