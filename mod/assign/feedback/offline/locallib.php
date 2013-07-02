@@ -80,7 +80,7 @@ class assign_feedback_offline extends assign_feedback_plugin {
 
         $gradeimporter = new assignfeedback_offline_grade_importer($importid, $this->assignment);
 
-        $context = get_context_instance(CONTEXT_USER, $USER->id);
+        $context = context_user::instance($USER->id);
         $fs = get_file_storage();
         if (!$files = $fs->get_area_files($context->id, 'user', 'draft', $draftid, 'id DESC', false)) {
             redirect(new moodle_url('view.php',

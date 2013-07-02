@@ -899,7 +899,7 @@ class moodle_page {
     /**
      * Set the main context to which this page belongs.
      *
-     * @param context $context a context object, normally obtained with get_context_instance.
+     * @param context $context a context object. You normally get this with context_xxxx::instance().
      */
     public function set_context($context) {
         if ($context === null) {
