@@ -5,7 +5,18 @@
 }
 .que.multichoice .answer div.r0,
 .que.multichoice .answer div.r1 {
-    padding: 0.3em;
+    padding: 0.3em 0 0.3em 25px;
+    text-indent: -25px;
+}
+.que.multichoice .answer div.r0 input,
+.que.multichoice .answer div.r1 input {
+    margin: 0 5px;
+    padding: 0;
+    width: 15px;
+}
+.dir-rtl .que.multichoice .answer div.r0,
+.dir-rtl .que.multichoice .answer div.r1 {
+    padding: 0.3em 25px 0.3em 0;
 }
 
 /* Editing form. */
