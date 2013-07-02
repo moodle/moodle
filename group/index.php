@@ -56,13 +56,11 @@ $PAGE->set_url($url);
 // Make sure that the user has permissions to manage groups.
 require_login($course);
 
+$context = get_context_instance(CONTEXT_COURSE, $course->id);
+require_capability('moodle/course:managegroups', $context);
+
 $PAGE->requires->yui2_lib('connection');
 $PAGE->requires->js('/group/clientlib.js');
-
-$context = get_context_instance(CONTEXT_COURSE, $course->id);
-if (!has_capability('moodle/course:managegroups', $context)) {
-    redirect('/course/view.php', array('id'=>$course->id)); // Not allowed to manage all groups
-}
 
 // Check for multiple/no group errors
 if (!$singlegroup) {
