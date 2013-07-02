@@ -2367,6 +2367,10 @@ class accesslib_testcase extends advanced_testcase {
         $this->assertEquals(count($children), $DB->count_records('context')-1);
         unset($children);
 
+        // Make sure a debugging is thrown.
+        get_context_instance($record->contextlevel, $record->instanceid);
+        $this->assertDebuggingCalled('get_context_instance() is deprecated, please use respective context_xxxx::instance().', DEBUG_DEVELOPER);
+
         $DB->delete_records('context', array('contextlevel'=>CONTEXT_BLOCK));
         create_contexts();
         $this->assertFalse($DB->record_exists('context', array('contextlevel'=>CONTEXT_BLOCK)));
