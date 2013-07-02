@@ -26,7 +26,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/repository/lib.php');
-require_once($CFG->libdir . '/textlib.class.php');
 require_once($CFG->libdir . '/google/Google_Client.php');
 require_once($CFG->libdir . '/google/contrib/Google_DriveService.php');
 

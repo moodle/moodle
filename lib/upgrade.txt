@@ -3,6 +3,7 @@ information provided here is intended especially for developers.
 
 === 2.6 ===
 * Use new core_component::* plugin listing and component normalisation methods.
+* Use core_text::* instead of textlib:: and also core_collator::* instead of collatorlib::*.
 
 
 === 2.5.1 ===

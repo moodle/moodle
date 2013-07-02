@@ -193,7 +193,7 @@ if (!empty($memlimit) and $memlimit != -1) {
 }
 
 // Continue with lib loading
-require_once($CFG->libdir.'/textlib.class.php');
+require_once($CFG->libdir.'/classes/text.php');
 require_once($CFG->libdir.'/weblib.php');
 require_once($CFG->libdir.'/outputlib.php');
 require_once($CFG->libdir.'/dmllib.php');

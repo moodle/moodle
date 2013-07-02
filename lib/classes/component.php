@@ -460,9 +460,9 @@ $cache = '.var_export($cache, true).';
             }
         }
 
-        // Note: Add a few extra legacy classes here if necessary.
-        //self::$classmap['textlib'] = "$CFG->dirroot/lib/textlib.class.php";
-        //self::$classmap['collatorlib'] = "$CFG->dirroot/lib/textlib.class.php";
+        // Note: Add extra deprecated legacy classes here as necessary.
+        self::$classmap['textlib'] = "$CFG->dirroot/lib/classes/text.php";
+        self::$classmap['collatorlib'] = "$CFG->dirroot/lib/classes/collator.php";
     }
 
     /**
