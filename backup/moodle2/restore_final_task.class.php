@@ -67,9 +67,7 @@ class restore_final_task extends restore_task {
         }
 
         // Conditionally restore course badges.
-        if ($this->get_setting_value('badges') &&
-            $this->get_target() !== backup::TARGET_CURRENT_ADDING &&
-            $this->get_target() !== backup::TARGET_EXISTING_ADDING) {
+        if ($this->get_setting_value('badges')) {
             $this->add_step(new restore_badges_structure_step('course_badges', 'badges.xml'));
         }
 

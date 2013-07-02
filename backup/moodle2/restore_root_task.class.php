@@ -193,6 +193,7 @@ class restore_root_task extends restore_task {
         $badges->get_ui()->set_changeable($changeable);
         $this->add_setting($badges);
         $activities->add_dependency($badges);
+        $users->add_dependency($badges);
 
         // Define Calendar events (dependent of users)
         $defaultvalue = false;                      // Safer default
