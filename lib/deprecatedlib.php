@@ -4883,3 +4883,19 @@ function get_context_instance($contextlevel, $instance = 0, $strictness = IGNORE
         return $contexts[$instance];
     }
 }
+
+/**
+ * Get a context instance as an object, from a given context id.
+ *
+ * @deprecated since Moodle 2.2 MDL-35009 - please do not use this function any more.
+ * @todo MDL-34550 This will be deleted in Moodle 2.8
+ * @see context::instance_by_id($id)
+ * @param int $id context id
+ * @param int $strictness IGNORE_MISSING means compatible mode, false returned if record not found, debug message if more found;
+ *                        MUST_EXIST means throw exception if no record or multiple records found
+ * @return context|bool the context object or false if not found.
+ */
+function get_context_instance_by_id($id, $strictness = IGNORE_MISSING) {
+    debugging('Function get_context_instance_by_id() is deprecated, please use context::instance_by_id($id) instead', DEBUG_DEVELOPER);
+    return context::instance_by_id($id, $strictness);
+}

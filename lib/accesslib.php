@@ -7266,19 +7266,6 @@ function get_system_context($cache = true) {
 }
 
 /**
- * Get a context instance as an object, from a given context id.
- *
- * @deprecated since 2.2, use context::instance_by_id($id) instead
- * @param int $id context id
- * @param int $strictness IGNORE_MISSING means compatible mode, false returned if record not found, debug message if more found;
- *                        MUST_EXIST means throw exception if no record or multiple records found
- * @return context|bool the context object or false if not found.
- */
-function get_context_instance_by_id($id, $strictness = IGNORE_MISSING) {
-    return context::instance_by_id($id, $strictness);
-}
-
-/**
  * Recursive function which, given a context, find all parent context ids,
  * and return the array in reverse order, i.e. parent first, then grand
  * parent, etc.
