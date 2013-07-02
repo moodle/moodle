@@ -28,10 +28,14 @@ global $CFG;
 
 /**
  * Helper test case.
+ *
+ * @package    tool_uploadcourse
+ * @copyright  2013 Frédéric Massart
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class tool_uploadcourse_helper_testcase extends advanced_testcase {
 
-    function test_generate_shortname() {
+    public function test_generate_shortname() {
         $data = (object) array('fullname' => 'Ah Bh Ch 01 02 03', 'idnumber' => 'ID123');
 
         $this->assertSame($data->fullname, tool_uploadcourse_helper::generate_shortname($data, '%f'));
@@ -41,14 +45,14 @@ class tool_uploadcourse_helper_testcase extends advanced_testcase {
         $this->assertSame('[Ah Bh Ch] = ID123', tool_uploadcourse_helper::generate_shortname($data, '[%8f] = %i'));
     }
 
-    function test_get_course_formats() {
+    public function test_get_course_formats() {
         $result = tool_uploadcourse_helper::get_course_formats();
         $this->assertSame(array_keys(get_plugin_list('format')), $result);
         // Should be similar as first result, as cached.
         $this->assertSame($result, tool_uploadcourse_helper::get_course_formats());
     }
 
-    function test_get_enrolment_data() {
+    public function test_get_enrolment_data() {
         $this->resetAfterTest(true);
         $data = array(
             'enrolment_1' => 'unknown',
@@ -94,16 +98,17 @@ class tool_uploadcourse_helper_testcase extends advanced_testcase {
         $this->assertSame(tool_uploadcourse_helper::get_enrolment_data($data), $expected);
     }
 
-    function test_get_enrolment_plugins() {
+    public function test_get_enrolment_plugins() {
         $this->resetAfterTest(true);
         $actual = tool_uploadcourse_helper::get_enrolment_plugins();
         $this->assertSame(array_keys(enrol_get_plugins(false)), array_keys($actual));
         // This should be identical as cached.
         $secondactual = tool_uploadcourse_helper::get_enrolment_plugins();
-        $this->assertSame($actual, $secondactual);
+        $this->assertEquals($actual, $secondactual);
     }
 
-    function test_get_restore_content_dir() {
+    public function test_get_restore_content_dir() {
+        global $CFG;
         $this->resetAfterTest(true);
         $this->setAdminUser();
 
@@ -144,7 +149,6 @@ class tool_uploadcourse_helper_testcase extends advanced_testcase {
         $this->assertEquals($bcinfo->original_course_id, $c2->id);
         $this->assertEquals($bcinfo->original_course_fullname, $c2->fullname);
 
-
         // Checking with a shortname.
         $dir = tool_uploadcourse_helper::get_restore_content_dir(null, $c1->shortname);
         $bcinfo = backup_general_helper::get_backup_information($dir);
@@ -160,6 +164,21 @@ class tool_uploadcourse_helper_testcase extends advanced_testcase {
         $bcinfo = backup_general_helper::get_backup_information($dir);
         $this->assertEquals($bcinfo->original_course_id, $c2->id);
         $this->assertEquals($bcinfo->original_course_fullname, $c2->fullname);
+
+        // Cleaning content directories.
+        $oldcfg = isset($CFG->keeptempdirectoriesonbackup) ? $CFG->keeptempdirectoriesonbackup : false;
+        $dir = "$CFG->tempdir/backup/$dir";
+        $this->assertTrue(file_exists($dir));
+
+        $CFG->keeptempdirectoriesonbackup = false;
+        tool_uploadcourse_helper::clean_restore_content();
+        $this->assertTrue(file_exists($dir));
+
+        $CFG->keeptempdirectoriesonbackup = true;
+        tool_uploadcourse_helper::clean_restore_content();
+        $this->assertFalse(file_exists($dir));
+
+        $CFG->keeptempdirectoriesonbackup = $oldcfg;
 
         // Restore the time limit to prevent warning.
         set_time_limit(0);

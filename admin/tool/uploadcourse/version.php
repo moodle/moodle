@@ -15,17 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version info
+ * Plugin version info.
  *
  * @package    tool_uploadcourse
- * @subpackage uploadcourse
- * @copyright  2011 Petr Skoda {@link http://skodak.org}
  * @copyright  2011 Piers Harding
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-defined('MOODLE_INTERNAL') || die;
 
-$plugin->version   = 2012112301; // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2011091600; // Requires this Moodle version
-$plugin->component = 'tool_uploadcourse'; // Full name of the plugin (used for diagnostics).
+defined('MOODLE_INTERNAL') || die();
 
+$plugin->version   = 2013070200;            // The current plugin version (Date: YYYYMMDDXX).
+$plugin->requires  = 2013062100;            // Requires this Moodle version.
+$plugin->component = 'tool_uploadcourse';   // Full name of the plugin (used for diagnostics).

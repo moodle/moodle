@@ -51,7 +51,8 @@ class tool_uploadcourse_step2_form extends tool_uploadcourse_base_form {
         $mform->addElement('header', 'courseoptionshdr', get_string('courseprocess', 'tool_uploadcourse'));
         $mform->setExpanded('courseoptionshdr', true);
 
-        $mform->addElement('text', 'options[shortnametemplate]', get_string('shortnametemplate', 'tool_uploadcourse'), 'maxlength="100" size="20"');
+        $mform->addElement('text', 'options[shortnametemplate]', get_string('shortnametemplate', 'tool_uploadcourse'),
+            'maxlength="100" size="20"');
         $mform->setType('options[shortnametemplate]', PARAM_RAW);
         $mform->addHelpButton('options[shortnametemplate]', 'shortnametemplate', 'tool_uploadcourse');
         $mform->disabledIf('options[shortnametemplate]', 'options[mode]', 'eq', tool_uploadcourse_processor::MODE_CREATE_OR_UPDATE);
@@ -113,7 +114,7 @@ class tool_uploadcourse_step2_form extends tool_uploadcourse_base_form {
             $mform->addElement('select', 'defaults[theme]', get_string('forcetheme'), $themes);
         }
 
-        $languages[] = array();
+        $languages = array();
         $languages[''] = get_string('forceno');
         $languages += get_string_manager()->get_list_of_translations();
         $mform->addElement('select', 'defaults[lang]', get_string('forcelanguage'), $languages);
@@ -162,8 +163,8 @@ class tool_uploadcourse_step2_form extends tool_uploadcourse_base_form {
         $mform->setDefault('defaults[groupmodeforce]', $courseconfig->groupmodeforce);
 
         // Hidden fields.
-        $mform->addElement('hidden', 'iid');
-        $mform->setType('iid', PARAM_INT);
+        $mform->addElement('hidden', 'importid');
+        $mform->setType('importid', PARAM_INT);
 
         $mform->addElement('hidden', 'previewrows');
         $mform->setType('previewrows', PARAM_INT);
@@ -180,7 +181,7 @@ class tool_uploadcourse_step2_form extends tool_uploadcourse_base_form {
      * @param string $submitlabel label for submit button, defaults to get_string('savechanges')
      * @return void
      */
-    function add_action_buttons($cancel = true, $submitlabel = null){
+    public function add_action_buttons($cancel = true, $submitlabel = null) {
         $mform =& $this->_form;
         $buttonarray = array();
         $buttonarray[] = &$mform->createElement('submit', 'showpreview', get_string('preview', 'tool_uploadcourse'));

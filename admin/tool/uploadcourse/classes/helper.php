@@ -29,9 +29,12 @@ require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
 
 /**
  * Class containing a set of helpers.
+ *
+ * @package    tool_uploadcourse
+ * @copyright  2013 Frédéric Massart
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class tool_uploadcourse_helper {
-
 
     /** @var array category idnumber cache. */
     static protected $categoryidnumbercache = array();

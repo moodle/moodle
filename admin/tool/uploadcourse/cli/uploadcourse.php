@@ -25,7 +25,6 @@
 define('CLI_SCRIPT', true);
 
 require(__DIR__ . '/../../../../config.php');
-require_once(__DIR__ . '/../locallib.php');
 require_once($CFG->libdir . '/clilib.php');
 require_once($CFG->libdir . '/coursecatlib.php');
 require_once($CFG->libdir . '/csvlib.class.php');
@@ -188,8 +187,8 @@ cron_setup_user();
 
 // Let's get started!
 $content = file_get_contents($options['file']);
-$iid = csv_import_reader::get_new_iid('uploadcourse');
-$cir = new csv_import_reader($iid, 'uploadcourse');
+$importid = csv_import_reader::get_new_iid('uploadcourse');
+$cir = new csv_import_reader($importid, 'uploadcourse');
 $readcount = $cir->load_csv_content($content, $options['encoding'], $options['delimiter']);
 unset($content);
 if ($readcount === false) {

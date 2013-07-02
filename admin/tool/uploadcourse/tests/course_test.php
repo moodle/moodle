@@ -28,6 +28,10 @@ global $CFG;
 
 /**
  * Course test case.
+ *
+ * @package    tool_uploadcourse
+ * @copyright  2013 Frédéric Massart
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
  */
 class tool_uploadcourse_course_testcase extends advanced_testcase {
 
@@ -239,7 +243,6 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
             'enrolment_3_disable' => '1',
         );
 
-
         $this->assertFalse($DB->record_exists('course', array('shortname' => 'c1')));
         $co = new tool_uploadcourse_course($mode, $updatemode, $data);
         $this->assertTrue($co->prepare());
@@ -409,7 +412,6 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
             'enablecompletion' => '1',
         );
 
-
         $this->assertFalse($DB->record_exists('course', array('shortname' => 'c1')));
         $co = new tool_uploadcourse_course($mode, $updatemode, $data, $defaultdata);
         $this->assertTrue($co->prepare());
@@ -576,7 +578,8 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
 
         $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;
         $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
-        $data = array('shortname' => 'A1', 'templatecourse' => $c1->shortname, 'summary' => 'A', 'category' => 1, 'fullname' => 'A1');
+        $data = array('shortname' => 'A1', 'templatecourse' => $c1->shortname, 'summary' => 'A', 'category' => 1,
+            'fullname' => 'A1');
         $co = new tool_uploadcourse_course($mode, $updatemode, $data);
         $this->assertTrue($co->prepare());
         $co->proceed();

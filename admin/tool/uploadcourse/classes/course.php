@@ -206,8 +206,11 @@ class tool_uploadcourse_course {
      * @return bool
      */
     public function can_update() {
-        return in_array($this->mode, array(tool_uploadcourse_processor::MODE_UPDATE_ONLY,
-            tool_uploadcourse_processor::MODE_CREATE_OR_UPDATE)) && $this->updatemode != tool_uploadcourse_processor::UPDATE_NOTHING;
+        return in_array($this->mode,
+                array(
+                    tool_uploadcourse_processor::MODE_UPDATE_ONLY,
+                    tool_uploadcourse_processor::MODE_CREATE_OR_UPDATE)
+                ) && $this->updatemode != tool_uploadcourse_processor::UPDATE_NOTHING;
     }
 
     /**
@@ -227,7 +230,8 @@ class tool_uploadcourse_course {
      */
     protected function delete() {
         global $DB;
-        $this->id = $DB->get_field_select('course', 'id', 'shortname = :shortname', array('shortname' => $this->shortname), MUST_EXIST);
+        $this->id = $DB->get_field_select('course', 'id', 'shortname = :shortname',
+            array('shortname' => $this->shortname), MUST_EXIST);
         return delete_course($this->id, false);
     }
 
@@ -248,6 +252,7 @@ class tool_uploadcourse_course {
     /**
      * Return whether the course exists or not.
      *
+     * @param string $shortname the shortname to use to check if the course exists. Falls back on $this->shortname if empty.
      * @return bool
      */
     protected function exists($shortname = null) {
@@ -424,7 +429,8 @@ class tool_uploadcourse_course {
         // Can we create/update the course under those conditions?
         if ($exists) {
             if ($this->mode === tool_uploadcourse_processor::MODE_CREATE_NEW) {
-                $this->error('courseexistsanduploadnotallowed', new lang_string('courseexistsanduploadnotallowed', 'tool_uploadcourse'));
+                $this->error('courseexistsanduploadnotallowed',
+                    new lang_string('courseexistsanduploadnotallowed', 'tool_uploadcourse'));
                 return false;
             }
         } else {
@@ -520,7 +526,8 @@ class tool_uploadcourse_course {
                     new lang_string('cannotgenerateshortnameupdatemode', 'tool_uploadcourse'));
                 return false;
             } else {
-                $newshortname = tool_uploadcourse_helper::generate_shortname($coursedata, $this->importoptions['shortnametemplate']);
+                $newshortname = tool_uploadcourse_helper::generate_shortname($coursedata,
+                    $this->importoptions['shortnametemplate']);
                 if (is_null($newshortname)) {
                     $this->error('generatedshortnameinvalid', new lang_string('generatedshortnameinvalid', 'tool_uploadcourse'));
                     return false;
@@ -639,7 +646,7 @@ class tool_uploadcourse_course {
         // TODO log warnings.
         $this->restoredata = $this->get_restore_content_dir();
 
-        // We cannot
+        // We can only reset courses when allowed and we are updating the course.
         if ($this->importoptions['reset'] || $this->options['reset']) {
             if ($this->do !== self::DO_UPDATE) {
                 $this->error('canonlyresetcourseinupdatemode',
@@ -837,6 +844,7 @@ class tool_uploadcourse_course {
      *
      * This does not reset any of the content of the activities.
      *
+     * @param stdClass $course the course object of the course to reset.
      * @return array status array of array component, item, error.
      */
     protected function reset($course) {

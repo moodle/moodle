@@ -257,7 +257,6 @@ class tool_uploadcourse_processor {
     /**
      * Get the directory of the object to restore.
      *
-     * @param string $default directory to use if none found.
      * @return string subdirectory in $CFG->tempdir/backup/...
      */
     protected function get_restore_content_dir() {

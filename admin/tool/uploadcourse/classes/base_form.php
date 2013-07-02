@@ -55,18 +55,19 @@ class tool_uploadcourse_base_form extends moodleform {
         $mform->setExpanded('importoptionshdr', true);
 
         $choices = array(
-            tool_uploadcourse_processor::MODE_CREATE_NEW => get_string('ccoptype_addnew', 'tool_uploadcourse'),
-            tool_uploadcourse_processor::MODE_CREATE_ALL => get_string('ccoptype_addinc', 'tool_uploadcourse'),
-            tool_uploadcourse_processor::MODE_CREATE_OR_UPDATE => get_string('ccoptype_addupdate', 'tool_uploadcourse'),
-            tool_uploadcourse_processor::MODE_UPDATE_ONLY => get_string('ccoptype_update', 'tool_uploadcourse')
+            tool_uploadcourse_processor::MODE_CREATE_NEW => get_string('createnew', 'tool_uploadcourse'),
+            tool_uploadcourse_processor::MODE_CREATE_ALL => get_string('createall', 'tool_uploadcourse'),
+            tool_uploadcourse_processor::MODE_CREATE_OR_UPDATE => get_string('createorupdate', 'tool_uploadcourse'),
+            tool_uploadcourse_processor::MODE_UPDATE_ONLY => get_string('updateonly', 'tool_uploadcourse')
         );
         $mform->addElement('select', 'options[mode]', get_string('mode', 'tool_uploadcourse'), $choices);
 
         $choices = array(
             tool_uploadcourse_processor::UPDATE_NOTHING => get_string('nochanges', 'tool_uploadcourse'),
-            tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY => get_string('ccupdatefromfile', 'tool_uploadcourse'),
-            tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_OR_DEFAUTLS => get_string('ccupdateall', 'tool_uploadcourse'),
-            tool_uploadcourse_processor::UPDATE_MISSING_WITH_DATA_OR_DEFAUTLS => get_string('ccupdatemissing', 'tool_uploadcourse')
+            tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY => get_string('updatewithdataonly', 'tool_uploadcourse'),
+            tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_OR_DEFAUTLS =>
+                get_string('updatewithdataordefaults', 'tool_uploadcourse'),
+            tool_uploadcourse_processor::UPDATE_MISSING_WITH_DATA_OR_DEFAUTLS => get_string('updatemissing', 'tool_uploadcourse')
         );
         $mform->addElement('select', 'options[updatemode]', get_string('updatemode', 'tool_uploadcourse'), $choices);
         $mform->setDefault('options[updatemode]', tool_uploadcourse_processor::UPDATE_NOTHING);

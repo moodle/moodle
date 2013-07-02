@@ -23,24 +23,22 @@
  */
 
 require(__DIR__ . '/../../../config.php');
-require_once(__DIR__ . '/locallib.php');
 require_once($CFG->libdir . '/adminlib.php');
-require_once($CFG->libdir . '/clilib.php');
 require_once($CFG->libdir . '/coursecatlib.php');
 require_once($CFG->libdir . '/csvlib.class.php');
 
 admin_externalpage_setup('tooluploadcourse');
 
-$iid         = optional_param('iid', '', PARAM_INT);
+$importid         = optional_param('importid', '', PARAM_INT);
 $previewrows = optional_param('previewrows', 10, PARAM_INT);
 
 $returnurl = new moodle_url('/admin/tool/uploadcourse/index.php');
 
-if (empty($iid)) {
+if (empty($importid)) {
     $mform1 = new tool_uploadcourse_step1_form();
     if ($form1data = $mform1->get_data()) {
-        $iid = csv_import_reader::get_new_iid('uploadcourse');
-        $cir = new csv_import_reader($iid, 'uploadcourse');
+        $importid = csv_import_reader::get_new_iid('uploadcourse');
+        $cir = new csv_import_reader($importid, 'uploadcourse');
         $content = $mform1->get_file_content('coursefile');
         $readcount = $cir->load_csv_content($content, $form1data->encoding, $form1data->delimiter_name);
         unset($content);
@@ -57,11 +55,11 @@ if (empty($iid)) {
         die();
     }
 } else {
-    $cir = new csv_import_reader($iid, 'uploadcourse');
+    $cir = new csv_import_reader($importid, 'uploadcourse');
 }
 
 // Data to set in the form.
-$data = array('iid' => $iid, 'previewrows' => $previewrows);
+$data = array('importid' => $importid, 'previewrows' => $previewrows);
 if (!empty($form1data)) {
     // Get options from the first form to pass it onto the second.
     foreach ($form1data->options as $key => $value) {
