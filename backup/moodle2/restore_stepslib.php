@@ -2007,6 +2007,7 @@ class restore_badges_structure_step extends restore_structure_step {
         $paths[] = new restore_path_element('badge', '/badges/badge');
         $paths[] = new restore_path_element('criterion', '/badges/badge/criteria/criterion');
         $paths[] = new restore_path_element('parameter', '/badges/badge/criteria/criterion/parameters/parameter');
+        $paths[] = new restore_path_element('manual_award', '/badges/badge/manual_awards/manual_award');
 
         return $paths;
     }
@@ -2014,7 +2015,7 @@ class restore_badges_structure_step extends restore_structure_step {
     public function process_badge($data) {
         global $DB, $CFG;
 
-        require_once $CFG->libdir . '/badgeslib.php';
+        require_once($CFG->libdir . '/badgeslib.php');
 
         $data = (object)$data;
         $data->usercreated = $this->get_mappingid('user', $data->usercreated);
@@ -2068,7 +2069,8 @@ class restore_badges_structure_step extends restore_structure_step {
 
     public function process_parameter($data) {
         global $DB, $CFG;
-        require_once $CFG->libdir . '/badgeslib.php';
+
+        require_once($CFG->libdir . '/badgeslib.php');
 
         $data = (object)$data;
         $criteriaid = $this->get_new_parentid('criterion');
@@ -2087,12 +2089,35 @@ class restore_badges_structure_step extends restore_structure_step {
             $params['name'] = $oldparam[0] . '_' . $this->get_courseid();
             $params['value'] = $oldparam[0] == 'course' ? $this->get_courseid() : $data->value;
         } else if ($data->criteriatype == BADGE_CRITERIA_TYPE_MANUAL) {
-            $params['name'] = $data->name;
-            $params['value'] = $data->value;
+            $role = $this->get_mappingid('role', $data->value);
+            if (!empty($role)) {
+                $params['name'] = 'role_' . $role;
+                $params['value'] = $role;
+            } else {
+                return;
+            }
         }
 
         if (!$DB->record_exists('badge_criteria_param', $params)) {
             $DB->insert_record('badge_criteria_param', $params);
+        }
+    }
+
+    public function process_manual_award($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $role = $this->get_mappingid('role', $data->issuerrole);
+
+        if (!empty($role)) {
+            $award = array(
+                'badgeid'     => $this->get_new_parentid('badge'),
+                'recipientid' => $this->get_mappingid('user', $data->recipientid),
+                'issuerid'    => $this->get_mappingid('user', $data->issuerid),
+                'issuerrole'  => $role,
+                'datemet'     => $this->apply_date_offset($data->datemet)
+            );
+            $DB->insert_record('badge_manual_award', $award);
         }
     }
 

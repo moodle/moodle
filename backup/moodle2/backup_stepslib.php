@@ -844,6 +844,10 @@ class backup_badges_structure_step extends backup_structure_step {
         $parameter = new backup_nested_element('parameter', array('id'), array('critid',
                 'name', 'value', 'criteriatype'));
 
+        $manual_awards = new backup_nested_element('manual_awards');
+        $manual_award = new backup_nested_element('manual_award', array('id'), array('badgeid',
+                'recipientid', 'issuerid', 'issuerrole', 'datemet'));
+
         // Build the tree.
 
         $badges->add_child($badge);
@@ -851,6 +855,8 @@ class backup_badges_structure_step extends backup_structure_step {
         $criteria->add_child($criterion);
         $criterion->add_child($parameters);
         $parameters->add_child($parameter);
+        $badge->add_child($manual_awards);
+        $manual_awards->add_child($manual_award);
 
         // Define sources.
 
@@ -864,6 +870,8 @@ class backup_badges_structure_step extends backup_structure_step {
         $parameterparams = array('critid' => backup::VAR_PARENTID);
         $parameter->set_source_sql($parametersql, $parameterparams);
 
+        $manual_award->set_source_table('badge_manual_award', array('badgeid' => backup::VAR_PARENTID));
+
         // Define id annotations.
 
         $badge->annotate_ids('user', 'usercreated');
@@ -871,6 +879,10 @@ class backup_badges_structure_step extends backup_structure_step {
         $criterion->annotate_ids('badge', 'badgeid');
         $parameter->annotate_ids('criterion', 'critid');
         $badge->annotate_files('badges', 'badgeimage', 'id');
+        $manual_award->annotate_ids('badge', 'badgeid');
+        $manual_award->annotate_ids('user', 'recipientid');
+        $manual_award->annotate_ids('user', 'issuerid');
+        $manual_award->annotate_ids('role', 'issuerrole');
 
         // Return the root element ($badges).
         return $badges;
