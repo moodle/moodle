@@ -813,6 +813,44 @@ function groups_course_module_visible($cm, $userid=null) {
 }
 
 /**
+ * Determine if a given group is visible to user or not in a given context.
+ *
+ * @since Moodle 2.6
+ * @param int      $groupid Group id to test. 0 for all groups.
+ * @param stdClass $course  Course object.
+ * @param stdClass $cm      Course module object.
+ * @param int      $userid  user id to test against. Defaults to $USER.
+ * @return boolean true if visible, false otherwise
+ */
+function groups_group_visible($groupid, $course, $cm = null, $userid = null) {
+    global $USER;
+
+    if (empty($userid)) {
+        $userid = $USER->id;
+    }
+
+    $groupmode = empty($cm) ? groups_get_course_groupmode($course) : groups_get_activity_groupmode($cm, $course);
+    if ($groupmode == NOGROUPS || $groupmode == VISIBLEGROUPS) {
+        // Groups are not used, or everything is visible, no need to go any further.
+        return true;
+    }
+
+    // Group mode is separate, check if user can see requested group.
+    $groups = empty($cm) ? groups_get_all_groups($course->id, $userid) : groups_get_activity_allowed_groups($cm, $userid);
+    if (array_key_exists($groupid, $groups)) {
+        // User can see the group.
+        return true;
+    }
+
+    // User wants to see all groups.
+    if ($groupid == 0) {
+        $context = empty($cm) ? context_course::instance($course->id) : context_module::instance($cm->id);
+        return has_capability('moodle/site:accessallgroups', $context, $userid);
+    }
+    return false;
+}
+
+/**
  * Internal method, sets up $SESSION->activegroup and verifies previous value
  *
  * @param int $courseid
