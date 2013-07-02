@@ -4865,7 +4865,7 @@ function can_use_rotated_text() {
  */
 function get_context_instance($contextlevel, $instance = 0, $strictness = IGNORE_MISSING) {
 
-    debugging('get_context_instance() is deprecated, please use respective context_xxxx::instance().', DEBUG_DEVELOPER);
+    debugging('get_context_instance() is deprecated, please use context_xxxx::instance() instead.', DEBUG_DEVELOPER);
 
     $instances = (array)$instance;
     $contexts = array();
@@ -4896,6 +4896,6 @@ function get_context_instance($contextlevel, $instance = 0, $strictness = IGNORE
  * @return context|bool the context object or false if not found.
  */
 function get_context_instance_by_id($id, $strictness = IGNORE_MISSING) {
-    debugging('Function get_context_instance_by_id() is deprecated, please use context::instance_by_id($id) instead', DEBUG_DEVELOPER);
+    debugging('get_context_instance_by_id() is deprecated, please use context::instance_by_id($id) instead.', DEBUG_DEVELOPER);
     return context::instance_by_id($id, $strictness);
 }

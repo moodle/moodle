@@ -2369,7 +2369,9 @@ class accesslib_testcase extends advanced_testcase {
 
         // Make sure a debugging is thrown.
         get_context_instance($record->contextlevel, $record->instanceid);
-        $this->assertDebuggingCalled('get_context_instance() is deprecated, please use respective context_xxxx::instance().', DEBUG_DEVELOPER);
+        $this->assertDebuggingCalled('get_context_instance() is deprecated, please use context_xxxx::instance() instead.', DEBUG_DEVELOPER);
+        get_context_instance_by_id($record->id);
+        $this->assertDebuggingCalled('get_context_instance_by_id() is deprecated, please use context::instance_by_id($id) instead.', DEBUG_DEVELOPER);
 
         $DB->delete_records('context', array('contextlevel'=>CONTEXT_BLOCK));
         create_contexts();
