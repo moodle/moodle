@@ -65,6 +65,7 @@ Standard plugin features:
 * /local/pluginname/db/events.php - event handlers and subscripts
 * /local/pluginname/db/messages.php - messaging registration
 * /local/pluginname/db/services.php - definition of web services and web service functions
+* /local/pluginname/db/subplugins.php - list of subplugins types supported by this local plugin
 * /local/pluginname/lang/en/local_pluginname.php - language file
 * /local/pluginname/settings.php - admin settings
 
