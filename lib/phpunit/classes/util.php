@@ -160,6 +160,10 @@ class phpunit_util extends testing_util {
         $_SERVER = self::get_global_backup('_SERVER');
         $CFG = self::get_global_backup('CFG');
         $SITE = self::get_global_backup('SITE');
+        $_GET = array();
+        $_POST = array();
+        $_FILES = array();
+        $_REQUEST = array();
         $COURSE = $SITE;
 
         // reinitialise following globals
