@@ -327,4 +327,19 @@ class core_component_testcase extends advanced_testcase {
             $this->assertSame($fulldir, get_component_directory(('core_'.$subsystem)));
         }
     }
+
+    public function test_get_plugin_types_with_subplugins() {
+        global $CFG;
+
+        $types = core_component::get_plugin_types_with_subplugins();
+
+        // Hardcode it here to detect if anybody hacks the code to include more types.
+        $expected = array(
+            'mod' => "$CFG->dirroot/mod",
+            'editor' => "$CFG->dirroot/lib/editor",
+            'local' => "$CFG->dirroot/local",
+        );
+
+        $this->assertSame($expected, $types);
+    }
 }
