@@ -51,10 +51,10 @@ class behat_mod_forum extends behat_base {
         // Escaping $forumname as it has been stripped automatically by the transformer.
         return array(
             new Given('I follow "' . $this->escape($forumname) . '"'),
-            new Given('I press "Add a new discussion topic"'),
+            new Given('I press "' . get_string('addanewdiscussion', 'mod_forum') . '"'),
             new Given('I fill the moodle form with:', $table),
-            new Given('I press "Post to forum"'),
-            new Given('I wait "5" seconds')
+            new Given('I press "' . get_string('posttoforum', 'mod_forum') . '"'),
+            new Given('I wait to be redirected')
         );
     }
 
@@ -62,8 +62,8 @@ class behat_mod_forum extends behat_base {
      * Adds a reply to the specified post of the specified forum. The step begins from the forum's page or from the forum's course page.
      *
      * @Given /^I reply "(?P<post_subject_string>(?:[^"]|\\")*)" post from "(?P<forum_name_string>(?:[^"]|\\")*)" forum with:$/
-     * @param mixed $postname The subject of the post
-     * @param mixed $forumname The forum name
+     * @param string $postname The subject of the post
+     * @param string $forumname The forum name
      * @param TableNode $table
      */
     public function i_reply_post_from_forum_with($postsubject, $forumname, TableNode $table) {
@@ -71,10 +71,11 @@ class behat_mod_forum extends behat_base {
         return array(
             new Given('I follow "' . $this->escape($forumname) . '"'),
             new Given('I follow "' . $this->escape($postsubject) . '"'),
-            new Given('I follow "Reply"'),
+            new Given('I follow "' . get_string('reply', 'mod_forum') . '"'),
             new Given('I fill the moodle form with:', $table),
-            new Given('I press "Post to forum"'),
-            new Given('I wait "5" seconds')
+            new Given('I press "' . get_string('posttoforum', 'mod_forum') . '"'),
+            new Given('I wait to be redirected')
         );
+
     }
 }
