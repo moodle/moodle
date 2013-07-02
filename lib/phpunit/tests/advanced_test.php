@@ -219,6 +219,28 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         $this->assertTrue(isset($CFG->admin));
         $this->assertEquals(1, $CFG->rolesactive);
 
+        // _GET change.
+        $_GET['__somethingthatwillnotnormallybepresent__'] = 'yy';
+        phpunit_util::reset_all_data(true);
+
+        $this->assertEquals(array(), $_GET);
+
+
+        // _POST change.
+        $_POST['__somethingthatwillnotnormallybepresent2__'] = 'yy';
+        phpunit_util::reset_all_data(true);
+        $this->assertEquals(array(), $_POST);
+
+        // _FILES change.
+        $_FILES['__somethingthatwillnotnormallybepresent3__'] = 'yy';
+        phpunit_util::reset_all_data(true);
+        $this->assertEquals(array(), $_FILES);
+
+        // _REQUEST change.
+        $_REQUEST['__somethingthatwillnotnormallybepresent4__'] = 'yy';
+        phpunit_util::reset_all_data(true);
+        $this->assertEquals(array(), $_REQUEST);
+
         //silent changes
         $_SERVER['xx'] = 'yy';
         phpunit_util::reset_all_data(true);
