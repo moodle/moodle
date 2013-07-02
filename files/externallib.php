@@ -63,7 +63,7 @@ class core_files_external extends external_api {
      *
      * @param int $contextid context id
      * @param int $component component
-     * @param int $filearea file aera
+     * @param int $filearea file area
      * @param int $itemid item id
      * @param string $filepath file path
      * @param string $filename file name
@@ -206,13 +206,17 @@ class core_files_external extends external_api {
     public static function upload_parameters() {
         return new external_function_parameters(
             array(
-                'contextid' => new external_value(PARAM_INT, 'context id'),
+                'contextid' => new external_value(PARAM_INT, 'context id', VALUE_DEFAULT, null),
                 'component' => new external_value(PARAM_COMPONENT, 'component'),
                 'filearea'  => new external_value(PARAM_AREA, 'file area'),
                 'itemid'    => new external_value(PARAM_INT, 'associated id'),
                 'filepath'  => new external_value(PARAM_PATH, 'file path'),
                 'filename'  => new external_value(PARAM_FILE, 'file name'),
-                'filecontent' => new external_value(PARAM_TEXT, 'file content')
+                'filecontent' => new external_value(PARAM_TEXT, 'file content'),
+                'contextlevel' => new external_value(PARAM_ALPHA, 'The context level to put the file in,
+                        (block, course, coursecat, system, user, module)', VALUE_DEFAULT, null),
+                'instanceid' => new external_value(PARAM_INT, 'The Instance id of item associated
+                         with the context level', VALUE_DEFAULT, null)
             )
         );
     }
@@ -220,22 +224,25 @@ class core_files_external extends external_api {
     /**
      * Uploading a file to moodle
      *
-     * @param int $contextid context id
-     * @param string $component component
-     * @param string $filearea file aera
-     * @param int $itemid item id
-     * @param string $filepath file path
-     * @param string $filename file name
-     * @param string $filecontent file content
+     * @param int    $contextid    context id
+     * @param string $component    component
+     * @param string $filearea     file area
+     * @param int    $itemid       item id
+     * @param string $filepath     file path
+     * @param string $filename     file name
+     * @param string $filecontent  file content
+     * @param string $contextlevel Context level (block, course, coursecat, system, user or module)
+     * @param int    $instanceid   Instance id of the item associated with the context level
      * @return array
      * @since Moodle 2.2
      */
-    public static function upload($contextid, $component, $filearea, $itemid, $filepath, $filename, $filecontent) {
+    public static function upload($contextid, $component, $filearea, $itemid, $filepath, $filename, $filecontent, $contextlevel, $instanceid) {
         global $USER, $CFG;
 
         $fileinfo = self::validate_parameters(self::upload_parameters(), array(
-            'contextid'=>$contextid, 'component'=>$component, 'filearea'=>$filearea, 'itemid'=>$itemid,
-            'filepath'=>$filepath, 'filename'=>$filename, 'filecontent'=>$filecontent));
+                'contextid' => $contextid, 'component' => $component, 'filearea' => $filearea, 'itemid' => $itemid,
+                'filepath' => $filepath, 'filename' => $filename, 'filecontent' => $filecontent, 'contextlevel' => $contextlevel,
+                'instanceid' => $instanceid));
 
         if (!isset($fileinfo['filecontent'])) {
             throw new moodle_exception('nofile');
@@ -271,11 +278,14 @@ class core_files_external extends external_api {
             throw new coding_exception('itemid cannot be empty');
         }
 
-        if (!empty($fileinfo['contextid'])) {
-            $context = context::instance_by_id($fileinfo['contextid']);
-        } else {
-            $context = get_system_context();
+        // We need to preserve backword compatibility. Context id is no more a required.
+        if (empty($fileinfo['contextid'])) {
+            unset($fileinfo['contextid']);
         }
+
+        // Get and validate context.
+        $context = self::get_context_from_params($fileinfo);
+        self::validate_context($context);
 
         if (!($fileinfo['component'] == 'user' and $fileinfo['filearea'] == 'private')) {
             throw new coding_exception('File can be uploaded to user private area only');
