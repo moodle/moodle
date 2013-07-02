@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,19 +15,16 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This script serves draft files of current user
+ * Change permissions.
  *
- * @package    core
- * @subpackage role
- * @copyright  2009 Petr Skoda (skodak) info@skodak.org
+ * @package    core_role
+ * @copyright  2009 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require('../../config.php');
-require_once("$CFG->dirroot/$CFG->admin/roles/lib.php");
-require_once("permissions_forms.php");
 
-$contextid  = required_param('contextid',PARAM_INT);
+$contextid  = required_param('contextid', PARAM_INT);
 
 $roleid     = optional_param('roleid', 0, PARAM_INT);
 $capability = optional_param('capability', false, PARAM_CAPABILITY);
@@ -56,7 +52,7 @@ if ($course) {
     }
 }
 
-// security first
+// Security first.
 require_login($course, false, $cm);
 require_capability('moodle/role:review', $context);
 $PAGE->set_url($url);
@@ -64,7 +60,7 @@ $PAGE->set_context($context);
 $courseid = $course->id;
 
 
-// These are needed early because of tabs.php
+// These are needed early because of tabs.php.
 $assignableroles = get_assignable_roles($context, ROLENAME_BOTH);
 list($overridableroles, $overridecounts, $nameswithcounts) = get_overridable_roles($context, ROLENAME_BOTH, true);
 if ($capability) {
@@ -74,9 +70,9 @@ if ($capability) {
 $allowoverrides     = has_capability('moodle/role:override', $context);
 $allowsafeoverrides = has_capability('moodle/role:safeoverride', $context);
 
-$contextname = print_context_name($context);
-$title = get_string('permissionsincontext', 'role', $contextname);
-$straction = get_string('permissions', 'role'); // Used by tabs.php
+$contextname = $context->get_context_name();
+$title = get_string('permissionsincontext', 'core_role', $contextname);
+$straction = get_string('permissions', 'core_role'); // Used by tabs.php.
 $currenttab = 'permissions';
 
 $PAGE->set_pagelayout('admin');
@@ -95,13 +91,14 @@ switch ($context->contextlevel) {
         break;
     case CONTEXT_COURSE:
         if ($isfrontpage) {
+            require_once($CFG->libdir.'/adminlib.php');
             admin_externalpage_setup('frontpageroles', '', array(), $PAGE->url);
         } else {
             $PAGE->set_heading($course->fullname);
         }
         break;
     case CONTEXT_MODULE:
-        $PAGE->set_heading(print_context_name($context, false));
+        $PAGE->set_heading($context->get_context_name(false));
         $PAGE->set_cacheable(false);
         break;
     case CONTEXT_BLOCK:
@@ -109,12 +106,12 @@ switch ($context->contextlevel) {
         break;
 }
 
-// handle confirmations and actions
-// We have a capability and overrides are allowed or safe overrides are allowed and this is safe
+// Handle confirmations and actions.
+// We have a capability and overrides are allowed or safe overrides are allowed and this is safe.
 if ($capability && ($allowoverrides || ($allowsafeoverrides && is_safe_capability($capability)))) {
-    // If we already know the the role ID, it is overrideable, and we are setting prevent or unprohibit
+    // If we already know the the role ID, it is overrideable, and we are setting prevent or unprohibit.
     if (isset($overridableroles[$roleid]) && ($prevent || $unprohibit)) {
-        // We are preventing
+        // We are preventing.
         if ($prevent) {
             if ($confirm && data_submitted() && confirm_sesskey()) {
                 role_change_permission($roleid, $context, $capability->name, CAP_PREVENT);
@@ -122,22 +119,24 @@ if ($capability && ($allowoverrides || ($allowsafeoverrides && is_safe_capabilit
 
             } else {
                 $a = (object)array('cap'=>get_capability_docs_link($capability)." ($capability->name)", 'role'=>$overridableroles[$roleid], 'context'=>$contextname);
-                $message = get_string('confirmroleprevent', 'role', $a);
-                $continueurl = new moodle_url($PAGE->url, array('contextid'=>$context->id, 'roleid'=>$roleid, 'capability'=>$capability->name, 'prevent'=>1, 'sesskey'=>sesskey(), 'confirm'=>1));
+                $message = get_string('confirmroleprevent', 'core_role', $a);
+                $continueurl = new moodle_url($PAGE->url,
+                    array('contextid'=>$context->id, 'roleid'=>$roleid, 'capability'=>$capability->name, 'prevent'=>1, 'sesskey'=>sesskey(), 'confirm'=>1));
             }
         }
-        // We are unprohibiting
+        // We are unprohibiting.
         if ($unprohibit) {
             if ($confirm && data_submitted() && confirm_sesskey()) {
                 role_change_permission($roleid, $context, $capability->name, CAP_INHERIT);
                 redirect($PAGE->url);
             } else {
                 $a = (object)array('cap'=>get_capability_docs_link($capability)." ($capability->name)", 'role'=>$overridableroles[$roleid], 'context'=>$contextname);
-                $message = get_string('confirmroleunprohibit', 'role', $a);
-                $continueurl = new moodle_url($PAGE->url, array('contextid'=>$context->id, 'roleid'=>$roleid, 'capability'=>$capability->name, 'unprohibit'=>1, 'sesskey'=>sesskey(), 'confirm'=>1));
+                $message = get_string('confirmroleunprohibit', 'core_role', $a);
+                $continueurl = new moodle_url($PAGE->url,
+                    array('contextid'=>$context->id, 'roleid'=>$roleid, 'capability'=>$capability->name, 'unprohibit'=>1, 'sesskey'=>sesskey(), 'confirm'=>1));
             }
         }
-        // Display and print
+        // Display and print.
         echo $OUTPUT->header();
         echo $OUTPUT->heading($title);
         echo $OUTPUT->confirm($message, $continueurl, $PAGE->url);
@@ -147,7 +146,7 @@ if ($capability && ($allowoverrides || ($allowsafeoverrides && is_safe_capabilit
 
     if ($allow || $prohibit) {
         if ($allow) {
-            $mform = new role_allow_form(null, array($context, $capability, $overridableroles));
+            $mform = new core_role_permission_allow_form(null, array($context, $capability, $overridableroles));
             if ($mform->is_cancelled()) {
                 redirect($PAGE->url);
             } else if ($data = $mform->get_data() and !empty($data->roleid)) {
@@ -158,11 +157,11 @@ if ($capability && ($allowoverrides || ($allowsafeoverrides && is_safe_capabilit
                 redirect($PAGE->url);
             } else {
                 $a = (object)array('cap'=>get_capability_docs_link($capability)." ($capability->name)", 'context'=>$contextname);
-                $message = get_string('roleallowinfo', 'role', $a);
+                $message = get_string('roleallowinfo', 'core_role', $a);
             }
         }
         if ($prohibit) {
-            $mform = new role_prohibit_form(null, array($context, $capability, $overridableroles));
+            $mform = new core_role_permission_prohibit_form(null, array($context, $capability, $overridableroles));
             if ($mform->is_cancelled()) {
                 redirect($PAGE->url);
             } else if ($data = $mform->get_data() and !empty($data->roleid)) {
@@ -173,7 +172,7 @@ if ($capability && ($allowoverrides || ($allowsafeoverrides && is_safe_capabilit
                 redirect($PAGE->url);
             } else {
                 $a = (object)array('cap'=>get_capability_docs_link($capability)." ($capability->name)", 'context'=>$contextname);
-                $message = get_string('roleprohibitinfo', 'role', $a);
+                $message = get_string('roleprohibitinfo', 'core_role', $a);
             }
         }
         echo $OUTPUT->header();
@@ -188,13 +187,13 @@ if ($capability && ($allowoverrides || ($allowsafeoverrides && is_safe_capabilit
 echo $OUTPUT->header();
 echo $OUTPUT->heading($title);
 
-$table = new permissions_table($context, $contextname, $allowoverrides, $allowsafeoverrides, $overridableroles);
+$table = new core_role_permissions_table($context, $contextname, $allowoverrides, $allowsafeoverrides, $overridableroles);
 echo $OUTPUT->box_start('generalbox capbox');
-// print link to advanced override page
+// Print link to advanced override page.
 if ($overridableroles) {
     $overrideurl = new moodle_url('/admin/roles/override.php', array('contextid' => $context->id));
     $select = new single_select($overrideurl, 'roleid', $nameswithcounts);
-    $select->label = get_string('advancedoverride', 'role');
+    $select->label = get_string('advancedoverride', 'core_role');
     echo html_writer::tag('div', $OUTPUT->render($select), array('class'=>'advancedoverride'));
 }
 $table->display();
@@ -203,9 +202,8 @@ echo $OUTPUT->box_end();
 
 if ($context->contextlevel > CONTEXT_USER) {
     echo html_writer::start_tag('div', array('class'=>'backlink'));
-    echo html_writer::tag('a', get_string('backto', '', $contextname), array('href'=>get_context_url($context)));
+    echo html_writer::tag('a', get_string('backto', '', $contextname), array('href'=>$context->get_url()));
     echo html_writer::end_tag('div');
 }
 
 echo $OUTPUT->footer($course);
-

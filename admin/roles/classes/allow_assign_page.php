@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Defines the tab bar used on the manage/allow assign/allow overrides pages.
+ * Role assign matrix.
  *
  * @package    core_role
  * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
@@ -24,11 +24,26 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$toprow = array();
-$toprow[] = new tabobject('manage', new moodle_url('/admin/roles/manage.php'), get_string('manageroles', 'core_role'));
-$toprow[] = new tabobject('assign', new moodle_url('/admin/roles/allow.php', array('mode'=>'assign')), get_string('allowassign', 'core_role'));
-$toprow[] = new tabobject('override', new moodle_url('/admin/roles/allow.php', array('mode'=>'override')), get_string('allowoverride', 'core_role'));
-$toprow[] = new tabobject('switch', new moodle_url('/admin/roles/allow.php', array('mode'=>'switch')), get_string('allowswitch', 'core_role'));
+/**
+ * Subclass of role_allow_role_page for the Allow assigns tab.
+ */
+class core_role_allow_assign_page extends core_role_allow_role_page {
+    public function __construct() {
+        parent::__construct('role_allow_assign', 'allowassign');
+    }
 
-echo $OUTPUT->tabtree($toprow, $currenttab);
+    protected function set_allow($fromroleid, $targetroleid) {
+        allow_assign($fromroleid, $targetroleid);
+    }
 
+    protected function get_cell_tooltip($fromrole, $targetrole) {
+        $a = new stdClass;
+        $a->fromrole = $fromrole->localname;
+        $a->targetrole = $targetrole->localname;
+        return get_string('allowroletoassign', 'core_role', $a);
+    }
+
+    public function get_intro_text() {
+        return get_string('configallowassign', 'core_admin');
+    }
+}

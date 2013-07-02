@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -19,14 +18,13 @@
  * User roles report list all the users who have been assigned a particular
  * role in all contexts.
  *
- * @package    core
- * @subpackage role
+ * @package    core_role
  * @copyright  &copy; 2007 The Open University and others
  * @author     t.j.hunt@open.ac.uk and others
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(__FILE__) . '/../../config.php');
+require_once(__DIR__ . '/../../config.php');
 
 // Get params.
 $userid = required_param('userid', PARAM_INT);
@@ -46,12 +44,12 @@ $PAGE->set_url($baseurl);
 $PAGE->set_context($coursecontext);
 $PAGE->set_pagelayout('admin');
 
-/// Check login and permissions.
+// Check login and permissions.
 require_login($course);
 $canview = has_any_capability(array('moodle/role:assign', 'moodle/role:safeoverride',
         'moodle/role:override', 'moodle/role:manage'), $usercontext);
 if (!$canview) {
-    print_error('nopermissions', 'error', '', get_string('checkpermissions', 'role'));
+    print_error('nopermissions', 'error', '', get_string('checkpermissions', 'core_role'));
 }
 
 if ($userid != $USER->id) {
@@ -65,32 +63,26 @@ if ($course->id != $SITE->id || $userid != $USER->id) {
     $PAGE->navbar->includesettingsbase = true;
 }
 
-/// Now get the role assignments for this user.
-$sql = "SELECT
-        ra.id, ra.userid, ra.contextid, ra.roleid, ra.component, ra.itemid,
-        c.path
-    FROM
-        {role_assignments} ra
-        JOIN {context} c ON ra.contextid = c.id
-        JOIN {role} r ON ra.roleid = r.id
-    WHERE
-        ra.userid = ?
-    "./*AND ra.active = 1*/"
-    ORDER BY
-        contextlevel DESC, contextid ASC, r.sortorder ASC";
+// Now get the role assignments for this user.
+$sql = "SELECT ra.id, ra.userid, ra.contextid, ra.roleid, ra.component, ra.itemid, c.path
+          FROM {role_assignments} ra
+          JOIN {context} c ON ra.contextid = c.id
+          JOIN {role} r ON ra.roleid = r.id
+         WHERE ra.userid = ?
+      ORDER BY contextlevel DESC, contextid ASC, r.sortorder ASC";
 $roleassignments = $DB->get_records_sql($sql, array($user->id));
 
 $allroles = role_fix_names(get_all_roles());
 
-/// In order to display a nice tree of contexts, we need to get all the
-/// ancestors of all the contexts in the query we just did.
+// In order to display a nice tree of contexts, we need to get all the
+// ancestors of all the contexts in the query we just did.
 $requiredcontexts = array();
 foreach ($roleassignments as $ra) {
     $requiredcontexts = array_merge($requiredcontexts, explode('/', trim($ra->path, '/')));
 }
 $requiredcontexts = array_unique($requiredcontexts);
 
-/// Now load those contexts.
+// Now load those contexts.
 if ($requiredcontexts) {
     list($sqlcontexttest, $contextparams) = $DB->get_in_or_equal($requiredcontexts);
     $contexts = get_sorted_contexts('ctx.id ' . $sqlcontexttest, $contextparams);
@@ -98,13 +90,13 @@ if ($requiredcontexts) {
     $contexts = array();
 }
 
-/// Prepare some empty arrays to hold the data we are about to compute.
+// Prepare some empty arrays to hold the data we are about to compute.
 foreach ($contexts as $conid => $con) {
     $contexts[$conid]->children = array();
     $contexts[$conid]->roleassignments = array();
 }
 
-/// Put the contexts into a tree structure.
+// Put the contexts into a tree structure.
 foreach ($contexts as $conid => $con) {
     $context = context::instance_by_id($conid);
     $parentcontextid = get_parent_contextid($context);
@@ -113,7 +105,7 @@ foreach ($contexts as $conid => $con) {
     }
 }
 
-/// Put the role capabilities into the context tree.
+// Put the role capabilities into the context tree.
 foreach ($roleassignments as $ra) {
     $contexts[$ra->contextid]->roleassignments[$ra->roleid] = $ra;
 }
@@ -121,12 +113,12 @@ foreach ($roleassignments as $ra) {
 $assignableroles = get_assignable_roles($usercontext, ROLENAME_BOTH);
 $overridableroles = get_overridable_roles($usercontext, ROLENAME_BOTH);
 
-/// Print the header
+// Print the header.
 $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $coursecontext));
-$straction = get_string('thisusersroles', 'role');
-$title = get_string('xroleassignments', 'role', $fullname);
+$straction = get_string('thisusersroles', 'core_role');
+$title = get_string('xroleassignments', 'core_role', $fullname);
 
-/// Course header
+// Course header.
 $PAGE->set_title($title);
 if ($courseid != SITEID) {
     $PAGE->set_heading($fullname);
@@ -139,12 +131,12 @@ echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthnormal');
 
 // Display them.
 if (!$roleassignments) {
-    echo '<p>', get_string('noroleassignments', 'role'), '</p>';
+    echo '<p>', get_string('noroleassignments', 'core_role'), '</p>';
 } else {
     print_report_tree($systemcontext->id, $contexts, $systemcontext, $fullname, $allroles);
 }
 
-/// End of page.
+// End of page.
 echo $OUTPUT->box_end();
 echo $OUTPUT->footer();
 
@@ -155,13 +147,13 @@ function print_report_tree($contextid, $contexts, $systemcontext, $fullname, $al
     static $stredit = null, $strcheckpermissions, $globalroleassigner, $assignurl, $checkurl;
     if (is_null($stredit)) {
         $stredit = get_string('edit');
-        $strcheckpermissions = get_string('checkpermissions', 'role');
+        $strcheckpermissions = get_string('checkpermissions', 'core_role');
         $globalroleassigner = has_capability('moodle/role:assign', $systemcontext);
         $assignurl = $CFG->wwwroot . '/' . $CFG->admin . '/roles/assign.php';
         $checkurl = $CFG->wwwroot . '/' . $CFG->admin . '/roles/check.php';
     }
 
-    // Pull the current context into an array for convinience.
+    // Pull the current context into an array for convenience.
     $context = context::instance_by_id($contextid);
 
     // Print the context name.
@@ -189,11 +181,11 @@ function print_report_tree($contextid, $contexts, $systemcontext, $fullname, $al
             $a->fullname = $fullname;
             $a->contextlevel = $context->get_level_name();
             if ($context->contextlevel == CONTEXT_SYSTEM) {
-                $strgoto = get_string('gotoassignsystemroles', 'role');
-                $strcheck = get_string('checksystempermissionsfor', 'role', $a);
+                $strgoto = get_string('gotoassignsystemroles', 'core_role');
+                $strcheck = get_string('checksystempermissionsfor', 'core_role', $a);
             } else {
-                $strgoto = get_string('gotoassignroles', 'role', $a);
-                $strcheck = get_string('checkuserspermissionshere', 'role', $a);
+                $strgoto = get_string('gotoassignroles', 'core_role', $a);
+                $strcheck = get_string('checkuserspermissionshere', 'core_role', $a);
             }
             echo ' <a title="' . $strgoto . '" href="' . $raurl . '"><img class="iconsmall" src="' .
                     $OUTPUT->pix_url('t/edit') . '" alt="' . $stredit . '" /></a> ';

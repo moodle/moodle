@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,21 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Lets you assign roles to users in a particular context.
+ * Assign roles to users.
  *
- * @package    core
- * @subpackage role
+ * @package    core_role
  * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(__FILE__) . '/../../config.php');
+require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot . '/' . $CFG->admin . '/roles/lib.php');
 
 define("MAX_USERS_TO_LIST_PER_ROLE", 10);
 
-$contextid      = required_param('contextid',PARAM_INT);
-$roleid         = optional_param('roleid', 0, PARAM_INT);
+$contextid = required_param('contextid', PARAM_INT);
+$roleid    = optional_param('roleid', 0, PARAM_INT);
 
 list($context, $course, $cm) = get_context_info_array($contextid);
 
@@ -51,20 +49,20 @@ if ($course) {
 }
 
 
-// security
+// Security.
 require_login($course, false, $cm);
 require_capability('moodle/role:assign', $context);
 $PAGE->set_url($url);
 $PAGE->set_context($context);
 
-$contextname = print_context_name($context);
+$contextname = $context->get_context_name();
 $courseid = $course->id;
 
-// These are needed early because of tabs.php
+// These are needed early because of tabs.php.
 list($assignableroles, $assigncounts, $nameswithcounts) = get_assignable_roles($context, ROLENAME_BOTH, true);
 $overridableroles = get_overridable_roles($context, ROLENAME_BOTH);
 
-// Make sure this user can assign this role
+// Make sure this user can assign this role.
 if ($roleid && !isset($assignableroles[$roleid])) {
     $a = new stdClass;
     $a->roleid = $roleid;
@@ -77,12 +75,12 @@ if ($roleid) {
     $a = new stdClass;
     $a->role = $assignableroles[$roleid];
     $a->context = $contextname;
-    $title = get_string('assignrolenameincontext', 'role', $a);
+    $title = get_string('assignrolenameincontext', 'core_role', $a);
 } else {
     if ($isfrontpage) {
         $title = get_string('frontpageroles', 'admin');
     } else {
-        $title = get_string('assignrolesin', 'role', $contextname);
+        $title = get_string('assignrolesin', 'core_role', $contextname);
     }
 }
 
@@ -92,10 +90,10 @@ if ($roleid) {
     // Create the user selector objects.
     $options = array('context' => $context, 'roleid' => $roleid);
 
-    $potentialuserselector = roles_get_potential_user_selector($context, 'addselect', $options);
-    $currentuserselector = new existing_role_holders('removeselect', $options);
+    $potentialuserselector = core_role_get_potential_user_selector($context, 'addselect', $options);
+    $currentuserselector = new core_role_existing_role_holders('removeselect', $options);
 
-    // Process incoming role assignments
+    // Process incoming role assignments.
     $errors = array();
     if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
         $userstoassign = $potentialuserselector->get_selected_users();
@@ -119,13 +117,13 @@ if ($roleid) {
         }
     }
 
-    // Process incoming role unassignments
+    // Process incoming role unassignments.
     if (optional_param('remove', false, PARAM_BOOL) && confirm_sesskey()) {
         $userstounassign = $currentuserselector->get_selected_users();
         if (!empty($userstounassign)) {
 
             foreach ($userstounassign as $removeuser) {
-                //unassign only roles that are added manually, no messing with other components!!!
+                // Unassign only roles that are added manually, no messing with other components!!!
                 role_unassign($roleid, $removeuser->id, $context->id, '');
             }
 
@@ -145,6 +143,7 @@ $PAGE->set_title($title);
 
 switch ($context->contextlevel) {
     case CONTEXT_SYSTEM:
+        require_once($CFG->libdir.'/adminlib.php');
         admin_externalpage_setup('assignroles', '', array('contextid' => $contextid, 'roleid' => $roleid));
         break;
     case CONTEXT_USER:
@@ -157,13 +156,14 @@ switch ($context->contextlevel) {
         break;
     case CONTEXT_COURSE:
         if ($isfrontpage) {
+            require_once($CFG->libdir.'/adminlib.php');
             admin_externalpage_setup('frontpageroles', '', array('contextid' => $contextid, 'roleid' => $roleid));
         } else {
             $PAGE->set_heading($course->fullname);
         }
         break;
     case CONTEXT_MODULE:
-        $PAGE->set_heading(print_context_name($context, false));
+        $PAGE->set_heading($context->get_context_name(false));
         $PAGE->set_cacheable(false);
         break;
     case CONTEXT_BLOCK:
@@ -174,17 +174,17 @@ switch ($context->contextlevel) {
 echo $OUTPUT->header();
 
 // Print heading.
-echo $OUTPUT->heading_with_help($title, 'assignroles', 'role');
+echo $OUTPUT->heading_with_help($title, 'assignroles', 'core_role');
 
 if ($roleid) {
     // Show UI for assigning a particular role to users.
     // Print a warning if we are assigning system roles.
     if ($context->contextlevel == CONTEXT_SYSTEM) {
-        echo $OUTPUT->box(get_string('globalroleswarning', 'role'));
+        echo $OUTPUT->box(get_string('globalroleswarning', 'core_role'));
     }
 
     // Print the form.
-$assignurl = new moodle_url($PAGE->url, array('roleid'=>$roleid));
+    $assignurl = new moodle_url($PAGE->url, array('roleid'=>$roleid));
 ?>
 <form id="assignform" method="post" action="<?php echo $assignurl ?>"><div>
   <input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
@@ -192,7 +192,7 @@ $assignurl = new moodle_url($PAGE->url, array('roleid'=>$roleid));
   <table id="assigningrole" summary="" class="admintable roleassigntable generaltable" cellspacing="0">
     <tr>
       <td id="existingcell">
-          <p><label for="removeselect"><?php print_string('extusers', 'role'); ?></label></p>
+          <p><label for="removeselect"><?php print_string('extusers', 'core_role'); ?></label></p>
           <?php $currentuserselector->display() ?>
       </td>
       <td id="buttonscell">
@@ -205,7 +205,7 @@ $assignurl = new moodle_url($PAGE->url, array('roleid'=>$roleid));
           </div>
       </td>
       <td id="potentialcell">
-          <p><label for="addselect"><?php print_string('potusers', 'role'); ?></label></p>
+          <p><label for="addselect"><?php print_string('potusers', 'core_role'); ?></label></p>
           <?php $potentialuserselector->display() ?>
       </td>
     </tr>
@@ -230,31 +230,31 @@ $assignurl = new moodle_url($PAGE->url, array('roleid'=>$roleid));
     echo '<div class="backlink">';
 
     $select = new single_select($PAGE->url, 'roleid', $nameswithcounts, $roleid, null);
-    $select->label = get_string('assignanotherrole', 'role');
+    $select->label = get_string('assignanotherrole', 'core_role');
     echo $OUTPUT->render($select);
     $backurl = new moodle_url('/admin/roles/assign.php', array('contextid' => $contextid));
-    echo '<p><a href="' . $backurl->out() . '">' . get_string('backtoallroles', 'role') . '</a></p>';
+    echo '<p><a href="' . $backurl->out() . '">' . get_string('backtoallroles', 'core_role') . '</a></p>';
     echo '</div>';
 
 } else if (empty($assignableroles)) {
     // Print a message that there are no roles that can me assigned here.
-    echo $OUTPUT->heading(get_string('notabletoassignroleshere', 'role'), 3);
+    echo $OUTPUT->heading(get_string('notabletoassignroleshere', 'core_role'), 3);
 
 } else {
     // Show UI for choosing a role to assign.
 
     // Print a warning if we are assigning system roles.
     if ($context->contextlevel == CONTEXT_SYSTEM) {
-        echo $OUTPUT->box(get_string('globalroleswarning', 'role'));
+        echo $OUTPUT->box(get_string('globalroleswarning', 'core_role'));
     }
 
-    // Print instruction
-    echo $OUTPUT->heading(get_string('chooseroletoassign', 'role'), 3);
+    // Print instruction.
+    echo $OUTPUT->heading(get_string('chooseroletoassign', 'core_role'), 3);
 
     // Get the names of role holders for roles with between 1 and MAX_USERS_TO_LIST_PER_ROLE users,
     // and so determine whether to show the extra column.
     $roleholdernames = array();
-    $strmorethanmax = get_string('morethan', 'role', MAX_USERS_TO_LIST_PER_ROLE);
+    $strmorethanmax = get_string('morethan', 'core_role', MAX_USERS_TO_LIST_PER_ROLE);
     $showroleholders = false;
     foreach ($assignableroles as $roleid => $notused) {
         $roleusers = '';
@@ -276,10 +276,10 @@ $assignurl = new moodle_url($PAGE->url, array('roleid'=>$roleid));
         }
     }
 
-    // Print overview table
+    // Print overview table.
     $table = new html_table();
     $table->id = 'assignrole';
-    $table->head = array(get_string('role'), get_string('description'), get_string('userswiththisrole', 'role'));
+    $table->head = array(get_string('role'), get_string('description'), get_string('userswiththisrole', 'core_role'));
     $table->colclasses = array('leftalign role', 'leftalign', 'centeralign userrole');
     $table->attributes['class'] = 'admintable generaltable';
     if ($showroleholders) {
@@ -302,7 +302,7 @@ $assignurl = new moodle_url($PAGE->url, array('roleid'=>$roleid));
 
     if ($context->contextlevel > CONTEXT_USER) {
         echo html_writer::start_tag('div', array('class'=>'backlink'));
-        echo html_writer::tag('a', get_string('backto', '', $contextname), array('href'=>get_context_url($context)));
+        echo html_writer::tag('a', get_string('backto', '', $contextname), array('href'=>$context->get_url()));
         echo html_writer::end_tag('div');
     }
 }
