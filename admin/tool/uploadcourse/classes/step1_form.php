@@ -33,7 +33,7 @@ require_once($CFG->libdir.'/formslib.php');
  * @copyright  2011 Piers Harding
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_uploadcourse_step1_form extends moodleform {
+class tool_uploadcourse_step1_form extends tool_uploadcourse_base_form {
 
     /**
      * The standard form definiton.
@@ -42,7 +42,7 @@ class tool_uploadcourse_step1_form extends moodleform {
     public function definition () {
         $mform = $this->_form;
 
-        $mform->addElement('header', 'settingsheader', get_string('upload'));
+        $mform->addElement('header', 'generalhdr', get_string('general'));
 
         $mform->addElement('filepicker', 'coursefile', get_string('file'));
         $mform->addRule('coursefile', null, 'required');
@@ -65,6 +65,11 @@ class tool_uploadcourse_step1_form extends moodleform {
         $mform->addElement('select', 'previewrows', get_string('rowpreviewnum', 'tool_uploadcourse'), $choices);
         $mform->setType('previewrows', PARAM_INT);
 
-        $this->add_action_buttons(false, get_string('uploadcourses', 'tool_uploadcourse'));
+        $this->add_import_options();
+
+        $mform->addElement('hidden', 'showpreview', 1);
+        $mform->setType('showpreview', PARAM_INT);
+
+        $this->add_action_buttons(false, get_string('preview', 'tool_uploadcourse'));
     }
 }

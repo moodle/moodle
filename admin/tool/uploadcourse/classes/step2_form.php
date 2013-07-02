@@ -24,8 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir.'/formslib.php');
-
 /**
  * Specify course upload details.
  *
@@ -33,7 +31,7 @@ require_once($CFG->libdir.'/formslib.php');
  * @copyright  2011 Piers Harding
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_uploadcourse_step2_form extends moodleform {
+class tool_uploadcourse_step2_form extends tool_uploadcourse_base_form {
 
     /**
      * The standard form definiton.
@@ -46,57 +44,38 @@ class tool_uploadcourse_step2_form extends moodleform {
         $data    = $this->_customdata['data'];
         $courseconfig = get_config('moodlecourse');
 
-        // Upload settings and file.
-        $mform->addElement('header', 'generalhdr', get_string('general'));
+        // Import options.
+        $this->add_import_options();
 
-        $choices = array(
-            tool_uploadcourse_processor::MODE_CREATE_NEW => get_string('ccoptype_addnew', 'tool_uploadcourse'),
-            tool_uploadcourse_processor::MODE_CREATE_ALL => get_string('ccoptype_addinc', 'tool_uploadcourse'),
-            tool_uploadcourse_processor::MODE_CREATE_OR_UPDATE => get_string('ccoptype_addupdate', 'tool_uploadcourse'),
-            tool_uploadcourse_processor::MODE_UPDATE_ONLY => get_string('ccoptype_update', 'tool_uploadcourse')
-        );
-        $mform->addElement('select', 'options[mode]', get_string('mode', 'tool_uploadcourse'), $choices);
-
-        $choices = array(
-            tool_uploadcourse_processor::UPDATE_NOTHING => get_string('nochanges', 'tool_uploadcourse'),
-            tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY => get_string('ccupdatefromfile', 'tool_uploadcourse'),
-            tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_OR_DEFAUTLS => get_string('ccupdateall', 'tool_uploadcourse'),
-            tool_uploadcourse_processor::UPDATE_MISSING_WITH_DATA_OR_DEFAUTLS => get_string('ccupdatemissing', 'tool_uploadcourse')
-        );
-        $mform->addElement('select', 'options[updatemode]', get_string('updatemode', 'tool_uploadcourse'), $choices);
-        $mform->setDefault('options[updatemode]', tool_uploadcourse_processor::UPDATE_NOTHING);
-        $mform->disabledIf('options[updatemode]', 'mode', 'eq', tool_uploadcourse_processor::MODE_CREATE_NEW);
-        $mform->disabledIf('options[updatemode]', 'mode', 'eq', tool_uploadcourse_processor::MODE_CREATE_ALL);
-
-        $mform->addElement('selectyesno', 'options[allowdeletes]', get_string('allowdeletes', 'tool_uploadcourse'));
-        $mform->setDefault('options[allowdeletes]', 0);
-        $mform->disabledIf('options[allowdeletes]', 'mode', 'eq', tool_uploadcourse_processor::MODE_CREATE_NEW);
-        $mform->disabledIf('options[allowdeletes]', 'mode', 'eq', tool_uploadcourse_processor::MODE_CREATE_ALL);
-
-        $mform->addElement('selectyesno', 'options[allowrenames]', get_string('allowrenames', 'tool_uploadcourse'));
-        $mform->setDefault('options[allowrenames]', 0);
-        $mform->disabledIf('options[allowrenames]', 'mode', 'eq', tool_uploadcourse_processor::MODE_CREATE_NEW);
-        $mform->disabledIf('options[allowrenames]', 'mode', 'eq', tool_uploadcourse_processor::MODE_CREATE_ALL);
-
-        $mform->addElement('selectyesno', 'options[allowresets]', get_string('allowresets', 'tool_uploadcourse'));
-        $mform->setDefault('options[allowresets]', 0);
-        $mform->disabledIf('options[allowresets]', 'mode', 'eq', tool_uploadcourse_processor::MODE_CREATE_NEW);
-        $mform->disabledIf('options[allowresets]', 'mode', 'eq', tool_uploadcourse_processor::MODE_CREATE_ALL);
-
-        $mform->addElement('selectyesno', 'options[reset]', get_string('reset', 'tool_uploadcourse'));
-        $mform->setDefault('options[reset]', 0);
-        $mform->disabledIf('options[reset]', 'mode', 'eq', tool_uploadcourse_processor::MODE_CREATE_NEW);
-        $mform->disabledIf('options[reset]', 'mode', 'eq', tool_uploadcourse_processor::MODE_CREATE_ALL);
-
-        // Default values.
-        $mform->addElement('header', 'defaultheader', get_string('defaultvalues', 'tool_uploadcourse'));
-        $mform->setExpanded('defaultheader', true);
+        // Course options.
+        $mform->addElement('header', 'courseoptionshdr', get_string('courseprocess', 'tool_uploadcourse'));
+        $mform->setExpanded('courseoptionshdr', true);
 
         $mform->addElement('text', 'options[shortnametemplate]', get_string('shortnametemplate', 'tool_uploadcourse'), 'maxlength="100" size="20"');
         $mform->setType('options[shortnametemplate]', PARAM_RAW);
         $mform->addHelpButton('options[shortnametemplate]', 'shortnametemplate', 'tool_uploadcourse');
-        $mform->disabledIf('options[shortnametemplate]', 'mode', 'eq', tool_uploadcourse_processor::MODE_CREATE_OR_UPDATE);
-        $mform->disabledIf('options[shortnametemplate]', 'mode', 'eq', tool_uploadcourse_processor::MODE_UPDATE_ONLY);
+        $mform->disabledIf('options[shortnametemplate]', 'options[mode]', 'eq', tool_uploadcourse_processor::MODE_CREATE_OR_UPDATE);
+        $mform->disabledIf('options[shortnametemplate]', 'options[mode]', 'eq', tool_uploadcourse_processor::MODE_UPDATE_ONLY);
+
+        $contextid = $this->_customdata['contextid'];
+        $mform->addElement('hidden', 'contextid', $contextid);
+        $mform->setType('contextid', PARAM_INT);
+        $mform->addElement('filepicker', 'options[restorefile]', get_string('templatefile', 'tool_uploadcourse'));
+        $mform->addHelpButton('options[restorefile]', 'templatefile', 'tool_uploadcourse');
+
+        $mform->addElement('text', 'options[templatecourse]', get_string('coursetemplatename', 'tool_uploadcourse'));
+        $mform->setType('options[templatecourse]', PARAM_TEXT);
+        $mform->addHelpButton('options[templatecourse]', 'coursetemplatename', 'tool_uploadcourse');
+
+        $mform->addElement('selectyesno', 'options[reset]', get_string('reset', 'tool_uploadcourse'));
+        $mform->setDefault('options[reset]', 0);
+        $mform->disabledIf('options[reset]', 'options[mode]', 'eq', tool_uploadcourse_processor::MODE_CREATE_NEW);
+        $mform->disabledIf('options[reset]', 'options[mode]', 'eq', tool_uploadcourse_processor::MODE_CREATE_ALL);
+        $mform->disabledIf('options[reset]', 'options[allowresets]', 'eq', 0);
+
+        // Default values.
+        $mform->addElement('header', 'defaultheader', get_string('defaultvalues', 'tool_uploadcourse'));
+        $mform->setExpanded('defaultheader', true);
 
         $displaylist = coursecat::make_categories_list('moodle/course:create');
         $mform->addElement('select', 'defaults[category]', get_string('coursecategory'), $displaylist);
@@ -107,7 +86,7 @@ class tool_uploadcourse_step2_form extends moodleform {
         $choices['1'] = get_string('show');
         $mform->addElement('select', 'defaults[visible]', get_string('visible'), $choices);
         $mform->addHelpButton('defaults[visible]', 'visible');
-        $mform->setDefault('defaults[defaults]', $courseconfig->visible);
+        $mform->setDefault('defaults[visible]', $courseconfig->visible);
 
         $mform->addElement('date_selector', 'defaults[startdate]', get_string('startdate'));
         $mform->addHelpButton('defaults[startdate]', 'startdate');
@@ -182,24 +161,6 @@ class tool_uploadcourse_step2_form extends moodleform {
         $mform->addHelpButton('defaults[groupmodeforce]', 'groupmodeforce', 'group');
         $mform->setDefault('defaults[groupmodeforce]', $courseconfig->groupmodeforce);
 
-        // Restore.
-        $mform->addElement('header', 'restorehdr', get_string('restoreafterimport', 'tool_uploadcourse'));
-        $mform->setExpanded('restorehdr', true);
-
-        $courseshortnames = $DB->get_records('course', null, $sort='shortname', 'id,shortname,idnumber');
-        $formccourseshortnames = array('' => get_string('none'));
-        foreach ($courseshortnames as $course) {
-            $formccourseshortnames[$course->shortname] = $course->shortname;
-        }
-        $mform->addElement('select', 'options[templatecourse]', get_string('coursetemplatename', 'tool_uploadcourse'), $formccourseshortnames);
-        $mform->addHelpButton('options[templatecourse]', 'coursetemplatename', 'tool_uploadcourse');
-        $mform->setDefault('options[templatecourse]', 'none');
-
-        $contextid = $this->_customdata['contextid'];
-        $mform->addElement('hidden', 'contextid', $contextid);
-        $mform->setType('contextid', PARAM_INT);
-        $mform->addElement('filepicker', 'options[restorefile]', get_string('templatefile', 'tool_uploadcourse'));
-
         // Hidden fields.
         $mform->addElement('hidden', 'iid');
         $mform->setType('iid', PARAM_INT);
@@ -222,7 +183,7 @@ class tool_uploadcourse_step2_form extends moodleform {
     function add_action_buttons($cancel = true, $submitlabel = null){
         $mform =& $this->_form;
         $buttonarray = array();
-        $buttonarray[] = &$mform->createElement('submit', 'previewbutton', get_string('preview', 'tool_uploadcourse'));
+        $buttonarray[] = &$mform->createElement('submit', 'showpreview', get_string('preview', 'tool_uploadcourse'));
         $buttonarray[] = &$mform->createElement('submit', 'submitbutton', $submitlabel);
         $buttonarray[] = &$mform->createElement('cancel');
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
