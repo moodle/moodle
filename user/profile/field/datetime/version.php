@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,14 +16,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    profilefield
- * @subpackage datetime
- * @copyright  2010 onwards Shane Elliot {@link http://pukunui.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Version information for the datetime field.
+ *
+ * @package profilefield_datetime
+ * @copyright Mark Nelson <markn@moodle.com>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2013050100;        // The current plugin version (Date: YYYYMMDDXX)
+$plugin->version   = 2013070200;        // The current plugin version (Date: YYYYMMDDXX)
 $plugin->requires  = 2013050100;        // Requires this Moodle version
 $plugin->component = 'profilefield_datetime'; // Full name of the plugin (used for diagnostics)
