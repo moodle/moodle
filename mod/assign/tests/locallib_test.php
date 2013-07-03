@@ -305,7 +305,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $this->assertEquals(self::DEFAULT_STUDENT_COUNT + self::EXTRA_STUDENT_COUNT + self::EXTRA_SUSPENDED_COUNT,
                 count($assign->list_participants(null, true)));
 
-        // Non-editing teacher should not see suspended users, even if user prefernce is set.
+        // Non-editing teacher should not see suspended users, even if user preference is set.
         $this->setUser($this->teachers[0]);
         set_user_preference('grade_report_showonlyactiveenrol', false);
         $assign = $this->create_instance(array('grade'=>100));

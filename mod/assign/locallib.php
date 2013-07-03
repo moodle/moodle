@@ -123,10 +123,10 @@ class assign {
     private $markingworkflowstates = null;
 
     /** @var bool whether to exclude users with inactive enrolment */
-    private $showonlyactiveenrol = true;
+    private $showonlyactiveenrol = null;
 
     /** @var array list of suspended user IDs in form of ([id1] => id1) */
-    public $susers = array();
+    public $susers = null;
 
     /**
      * Constructor for the base assign class.
@@ -151,15 +151,6 @@ class assign {
 
         $this->submissionplugins = $this->load_plugins('assignsubmission');
         $this->feedbackplugins = $this->load_plugins('assignfeedback');
-
-        $defaultgradeshowactiveenrol = !empty($CFG->grade_report_showonlyactiveenrol);
-        $this->showonlyactiveenrol = get_user_preferences('grade_report_showonlyactiveenrol', $defaultgradeshowactiveenrol);
-        if (!is_null($this->context)) {
-            $this->showonlyactiveenrol = $this->showonlyactiveenrol ||
-                        !has_capability('moodle/course:viewsuspendedusers', $this->context);
-
-            $this->susers = get_suspended_userids($this->context);
-        }
     }
 
     /**
@@ -1272,10 +1263,10 @@ class assign {
     public function list_participants($currentgroup, $idsonly) {
         if ($idsonly) {
             return get_enrolled_users($this->context, 'mod/assign:submit', $currentgroup, 'u.id', null, null, null,
-                    $this->showonlyactiveenrol);
+                    $this->show_only_active_users());
         } else {
             return get_enrolled_users($this->context, 'mod/assign:submit', $currentgroup, 'u.*', null, null, null,
-                    $this->showonlyactiveenrol);
+                    $this->show_only_active_users());
         }
     }
 
@@ -1861,7 +1852,7 @@ class assign {
         // Exclude suspended users, if user can't see them.
         if (!has_capability('moodle/course:viewsuspendedusers', $this->context)) {
             foreach ($members as $key => $member) {
-                if (in_array($member->id, $this->susers)) {
+                if (!$this->is_active_user($member->id)) {
                     unset($members[$key]);
                 }
             }
@@ -2317,7 +2308,7 @@ class assign {
 
         // Load all users with submit.
         $students = get_enrolled_users($this->context, "mod/assign:submit", null, 'u.*', null, null, null,
-                        $this->showonlyactiveenrol);
+                        $this->show_only_active_users());
 
         // Build a list of files to zip.
         $filesforzipping = array();
@@ -2686,7 +2677,7 @@ class assign {
                                                    $this->is_blind_marking(),
                                                    $this->get_uniqueid_for_user($user->id),
                                                    get_extra_user_fields($this->get_context()),
-                                                   in_array($userid, $this->susers));
+                                                   !$this->is_active_user($userid));
             $o .= $this->get_renderer()->render($usersummary);
         }
         $submission = $this->get_user_submission($userid, false, $attemptnumber);
@@ -2965,7 +2956,7 @@ class assign {
                                           'markingworkflowopt'=>$markingworkflowoptions,
                                           'markingallocationopt'=>$markingallocationoptions,
                                           'showonlyactiveenrolopt'=>$showonlyactiveenrolopt,
-                                          'showonlyactiveenrol'=>$this->showonlyactiveenrol);
+                                          'showonlyactiveenrol'=>$this->show_only_active_users());
 
         $classoptions = array('class'=>'gradingoptionsform');
         $gradingoptionsform = new mod_assign_grading_options_form(null,
@@ -3214,7 +3205,7 @@ class assign {
         if ($userid == $USER->id && has_capability('mod/assign:submit', $this->context)) {
             return true;
         }
-        if (in_array($userid, $this->susers) && !has_capability('moodle/course:viewsuspendedusers', $this->context)) {
+        if (!$this->is_active_user($userid) && !has_capability('moodle/course:viewsuspendedusers', $this->context)) {
             return false;
         }
         if (has_capability('mod/assign:grade', $this->context)) {
@@ -3362,7 +3353,7 @@ class assign {
                                                                 $this->is_blind_marking(),
                                                                 $this->get_uniqueid_for_user($user->id),
                                                                 $extrauserfields,
-                                                                in_array($userid, $this->susers)));
+                                                                !$this->is_active_user($userid)));
             $usercount += 1;
         }
 
@@ -3417,7 +3408,7 @@ class assign {
                 $this->is_blind_marking(),
                 $this->get_uniqueid_for_user($user->id),
                 $extrauserfields,
-                in_array($userid, $this->susers)));
+                !$this->is_active_user($userid)));
             $usercount += 1;
         }
 
@@ -3963,7 +3954,7 @@ class assign {
 
                 // If no submission found for team member and member is active then everyone has not submitted.
                 if (!$membersubmission || $membersubmission->status != ASSIGN_SUBMISSION_STATUS_SUBMITTED
-                        && (!in_array($member->id, $this->susers))) {
+                        && ($this->is_active_user($member->id))) {
                     $allsubmitted = false;
                     if ($anysubmitted) {
                         break;
@@ -4875,7 +4866,7 @@ class assign {
                                       'markingworkflowopt' => $markingworkflowoptions,
                                       'markingallocationopt' => $markingallocationoptions,
                                       'showonlyactiveenrolopt'=>$showonlyactiveenrolopt,
-                                      'showonlyactiveenrol'=>$this->showonlyactiveenrol);
+                                      'showonlyactiveenrol'=>$this->show_only_active_users());
 
         $mform = new mod_assign_grading_options_form(null, $gradingoptionsparams);
         if ($formdata = $mform->get_data()) {
@@ -6383,6 +6374,38 @@ class assign {
         return $this->markingworkflowstates;
     }
 
+    /**
+     * Check is only active users in course should be shown.
+     *
+     * @return bool true if only active users should be shown.
+     */
+    public function show_only_active_users() {
+        global $CFG;
+
+        if (is_null($this->showonlyactiveenrol)) {
+            $defaultgradeshowactiveenrol = !empty($CFG->grade_report_showonlyactiveenrol);
+            $this->showonlyactiveenrol = get_user_preferences('grade_report_showonlyactiveenrol', $defaultgradeshowactiveenrol);
+
+            if (!is_null($this->context)) {
+                $this->showonlyactiveenrol = $this->showonlyactiveenrol ||
+                            !has_capability('moodle/course:viewsuspendedusers', $this->context);
+            }
+        }
+        return $this->showonlyactiveenrol;
+    }
+
+    /**
+     * Return true is user is active user in course else false
+     *
+     * @param int $userid
+     * @return bool true is user is active in course.
+     */
+    public function is_active_user($userid) {
+        if (is_null($this->susers) && !is_null($this->context)) {
+            $this->susers = get_suspended_userids($this->context);
+        }
+        return !in_array($userid, $this->susers);
+    }
 }
 
 /**
