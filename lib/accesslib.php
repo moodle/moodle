@@ -6001,7 +6001,7 @@ class context_system extends context {
 
 
         try {
-            // we ignore the strictness completely because system context must except except during install
+            // We ignore the strictness completely because system context must exist except during install.
             $record = $DB->get_record('context', array('contextlevel'=>CONTEXT_SYSTEM), '*', MUST_EXIST);
         } catch (dml_exception $e) {
             //table or record does not exist
