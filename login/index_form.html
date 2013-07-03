@@ -18,16 +18,8 @@ if (!empty($CFG->loginpasswordautocomplete)) {
       <div class="skiplinks"><a class="skip" href="signup.php"><?php print_string("tocreatenewaccount"); ?></a></div>
 <?php
   } ?>
-    <h2><?php print_string("returningtosite") ?></h2>
+    <h2><?php print_string("login") ?></h2>
       <div class="subcontent loginsub">
-        <div class="desc">
-          <?php
-            print_string("loginusing");
-            echo '<br/>';
-            echo '('.get_string("cookiesenabled").')';
-            echo $OUTPUT->help_icon('cookiesenabled');
-           ?>
-        </div>
         <?php
           if (!empty($errormsg)) {
               echo html_writer::start_tag('div', array('class' => 'loginerrors'));
@@ -59,6 +51,12 @@ if (!empty($CFG->loginpasswordautocomplete)) {
           <div class="clearer"><!-- --></div>
           <div class="forgetpass"><a href="forgot_password.php"><?php print_string("forgotten") ?></a></div>
         </form>
+        <div class="desc">
+            <?php
+                echo get_string("cookiesenabled");
+                echo $OUTPUT->help_icon('cookiesenabled');
+            ?>
+        </div>
       </div>
 
 <?php if ($CFG->guestloginbutton and !isguestuser()) {  ?>

@@ -931,13 +931,13 @@ $string['log_excel_date_format'] = 'yyyy mmmm d h:mm';
 $string['loggedinas'] = 'You are logged in as {$a}';
 $string['loggedinasguest'] = 'You are currently using guest access';
 $string['loggedinnot'] = 'You are not logged in.';
-$string['login'] = 'Login';
+$string['login'] = 'Log in';
 $string['loginalready'] = 'You are already logged in';
-$string['loginas'] = 'Login as';
+$string['loginas'] = 'Log in as';
 $string['loginaspasswordexplain'] = '<p>You must enter the special "loginas password" to use this feature.<br />If you do not know it, ask your server administrator.</p>';
 $string['login_failure_logs'] = 'Login failure logs';
-$string['loginguest'] = 'Login as a guest';
-$string['loginsite'] = 'Login to the site';
+$string['loginguest'] = 'Log in as a guest';
+$string['loginsite'] = 'Log in to the site';
 $string['loginsteps'] = 'Hi! For full access to courses you\'ll need to take
    a minute to create a new account for yourself on this web site.
    Each of the individual courses may also have a one-time
@@ -960,10 +960,9 @@ $string['loginstepsnone'] = '<p>Hi!</p>
 <p>For full access to courses you\'ll need to create yourself an account.</p>
 <p>All you need to do is make up a username and password and use it in the form on this page!</p>
 <p>If someone else has already chosen your username then you\'ll have to try again using a different username.</p>';
-$string['loginto'] = 'Login to {$a}';
-$string['loginusing'] = 'Login here using your username and password';
-$string['logout'] = 'Logout';
-$string['logoutconfirm'] = 'Do you really want to logout?';
+$string['loginto'] = 'Log in to {$a}';
+$string['logout'] = 'Log out';
+$string['logoutconfirm'] = 'Do you really want to log out?';
 $string['logs'] = 'Logs';
 $string['logtoomanycourses'] = '[ <a href="{$a->url}">more</a> ]';
 $string['logtoomanyusers'] = '[ <a href="{$a->url}">more</a> ]';
