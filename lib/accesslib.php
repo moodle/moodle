@@ -7225,19 +7225,6 @@ class context_block extends context {
 // before removing devs will be warned with a debugging message first,
 // then we will add error message and only after that we can remove the functions
 // completely.
-
-
-/**
- * Returns system context or null if can not be created yet.
- *
- * @deprecated since 2.2, use context_system::instance()
- * @param bool $cache use caching
- * @return context system context (null if context table not created yet)
- */
-function get_system_context($cache = true) {
-    return context_system::instance(0, IGNORE_MISSING, $cache);
-}
-
 /**
  * Recursive function which, given a context, find all parent context ids,
  * and return the array in reverse order, i.e. parent first, then grand

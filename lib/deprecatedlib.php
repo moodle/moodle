@@ -4915,3 +4915,16 @@ function load_temp_role($context, $roleid, array $accessdata) {
 function remove_temp_roles($context, array $accessdata) {
     throw new coding_exception('remove_temp_roles() can not be used any more, please use remove_temp_course_roles()');
 }
+
+/**
+ * Returns system context or null if can not be created yet.
+ *
+ * @see context_system::instance()
+ * @deprecated since 2.2, use context_system::instance()
+ * @param bool $cache use caching
+ * @return context system context (null if context table not created yet)
+ */
+function get_system_context($cache = true) {
+    debugging('get_system_context() is deprecated, please use context_system::instance() instead.', DEBUG_DEVELOPER);
+    return context_system::instance(0, IGNORE_MISSING, $cache);
+}

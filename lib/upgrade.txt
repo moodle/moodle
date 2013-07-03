@@ -7,6 +7,7 @@ information provided here is intended especially for developers.
 * get_context_instance() is deprecated, please use use context_xxxx::instance().
 * get_context_instance_by_id() is deprecated, please use context::instance_by_id($id).
 * load_temp_role() and remove_temp_roles() can not be used any more.
+* get_system_context() is deprecated, please use context_system::instance().
 
 === 2.5.1 ===
 
