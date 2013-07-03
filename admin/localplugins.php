@@ -60,7 +60,7 @@ collatorlib::asort($plugins);
 foreach ($plugins as $plugin => $name) {
     $uninstall = '';
     if ($uninstallurl = plugin_manager::instance()->get_uninstall_url('local_'.$plugin)) {
-        $uninstall = html_writer::link($uninstall, get_string('uninstallplugin', 'core_admin'));
+        $uninstall = html_writer::link($uninstallurl, get_string('uninstallplugin', 'core_admin'));
     }
 
     $version = get_config('local_' . $plugin);
