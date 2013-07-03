@@ -2921,8 +2921,9 @@ class assign {
         // Get marking states to show in form.
         $markingworkflowoptions = array();
         if ($markingworkflow) {
+            $notmarked = get_string('markingworkflowstatenotmarked', 'assign');
             $markingworkflowoptions[''] = get_string('filternone', 'assign');
-            $markingworkflowoptions[ASSIGN_MARKING_WORKFLOW_STATE_NOTMARKED] = get_string('markingworkflowstatenotmarked', 'assign');
+            $markingworkflowoptions[ASSIGN_MARKING_WORKFLOW_STATE_NOTMARKED] = $notmarked;
             $markingworkflowoptions = array_merge($markingworkflowoptions, $this->get_marking_workflow_states_for_current_user());
         }
 
@@ -4817,8 +4818,9 @@ class assign {
         // Get marking states to show in form.
         $markingworkflowoptions = array();
         if ($this->get_instance()->markingworkflow) {
+            $notmarked = get_string('markingworkflowstatenotmarked', 'assign');
             $markingworkflowoptions[''] = get_string('filternone', 'assign');
-            $markingworkflowoptions[ASSIGN_MARKING_WORKFLOW_STATE_NOTMARKED] = get_string('markingworkflowstatenotmarked', 'assign');
+            $markingworkflowoptions[ASSIGN_MARKING_WORKFLOW_STATE_NOTMARKED] = $notmarked
             $markingworkflowoptions = array_merge($markingworkflowoptions, $this->get_marking_workflow_states_for_current_user());
         }
 
@@ -5299,7 +5301,8 @@ class assign {
         }
 
         if ($this->get_instance()->markingworkflow) {
-            $options = array('' => get_string('markingworkflowstatenotmarked', 'assign')) + $this->get_marking_workflow_states_for_current_user();
+            $states = $this->get_marking_workflow_states_for_current_user();
+            $options = array('' => get_string('markingworkflowstatenotmarked', 'assign')) + $states;
             $mform->addElement('select', 'workflowstate', get_string('markingworkflowstate', 'assign'), $options);
             $mform->addHelpButton('workflowstate', 'markingworkflowstate', 'assign');
         }
@@ -5648,8 +5651,6 @@ class assign {
                 $this->add_to_log('set marking workflow state', $message);
             }
         }
-
-
     }
 
     /**
@@ -5692,8 +5693,6 @@ class assign {
                 $this->add_to_log('set marking allocation', $message);
             }
         }
-
-
     }
 
 

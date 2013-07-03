@@ -755,7 +755,6 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $grades = $assign->get_user_grades_for_gradebook($this->students[0]->id);
         $this->assertEquals(50, (int)$grades[$this->students[0]->id]->rawgrade);
 
-
     }
 
     public function test_markingworkflow() {
@@ -765,7 +764,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $assign = $this->create_instance(array('markingworkflow'=>1));
         $PAGE->set_url(new moodle_url('/mod/assign/view.php', array('id' => $assign->get_course_module()->id)));
 
-        // Mark the submission and set to notmarked
+        // Mark the submission and set to notmarked.
         $this->setUser($this->teachers[0]);
         $data = new stdClass();
         $data->grade = '50.0';
@@ -777,7 +776,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $output = $assign->view_student_summary($this->students[0], true);
         $this->assertEquals(false, strpos($output, '50.0'));
 
-        // Mark the submission and set to inmarking
+        // Mark the submission and set to inmarking.
         $this->setUser($this->teachers[0]);
         $data = new stdClass();
         $data->grade = '50.0';
@@ -789,7 +788,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $output = $assign->view_student_summary($this->students[0], true);
         $this->assertEquals(false, strpos($output, '50.0'));
 
-        // Mark the submission and set to readyforreview
+        // Mark the submission and set to readyforreview.
         $this->setUser($this->teachers[0]);
         $data = new stdClass();
         $data->grade = '50.0';
@@ -801,7 +800,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $output = $assign->view_student_summary($this->students[0], true);
         $this->assertEquals(false, strpos($output, '50.0'));
 
-        // Mark the submission and set to inreview
+        // Mark the submission and set to inreview.
         $this->setUser($this->teachers[0]);
         $data = new stdClass();
         $data->grade = '50.0';
@@ -813,7 +812,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $output = $assign->view_student_summary($this->students[0], true);
         $this->assertEquals(false, strpos($output, '50.0'));
 
-        // Mark the submission and set to readyforrelease
+        // Mark the submission and set to readyforrelease.
         $this->setUser($this->teachers[0]);
         $data = new stdClass();
         $data->grade = '50.0';
@@ -825,7 +824,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $output = $assign->view_student_summary($this->students[0], true);
         $this->assertEquals(false, strpos($output, '50.0'));
 
-        // Mark the submission and set to released
+        // Mark the submission and set to released.
         $this->setUser($this->teachers[0]);
         $data = new stdClass();
         $data->grade = '50.0';
@@ -842,21 +841,21 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         global $PAGE;
 
         $this->setUser($this->editingteachers[0]);
-        $assign = $this->create_instance(array('markingworkflow'=>1,'markingallocation'=>1));
+        $assign = $this->create_instance(array('markingworkflow'=>1, 'markingallocation'=>1));
         $PAGE->set_url(new moodle_url('/mod/assign/view.php', array('id' => $assign->get_course_module()->id)));
 
-        // Allocate marker to submission
+        // Allocate marker to submission.
         $data = new stdClass();
         $data->allocatedmarker = $this->teachers[0]->id;
         $assign->testable_apply_grade_to_user($data, $this->students[0]->id, 0);
 
-        // Check the allocated marker can view the submission
+        // Check the allocated marker can view the submission.
         $this->setUser($this->teachers[0]);
         $gradingtable = new assign_grading_table($assign, 100, '', 0, true);
         $output = $assign->get_renderer()->render($gradingtable);
         $this->assertEquals(true, strpos($output, $this->students[0]->lastname));
 
-        // Check that other teachers can't view this submission
+        // Check that other teachers can't view this submission.
         $this->setUser($this->teachers[1]);
         $gradingtable = new assign_grading_table($assign, 100, '', 0, true);
         $output = $assign->get_renderer()->render($gradingtable);
