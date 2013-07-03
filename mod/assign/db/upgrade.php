@@ -221,7 +221,8 @@ function xmldb_assign_upgrade($oldversion) {
         if (!$dbman->field_exists($table, $field)) {
             // OK safe to cleanup duplicates here.
 
-            $sql = 'SELECT assignment, userid, groupid from {assign_submission} GROUP BY assignment, userid, groupid HAVING (count(id) > 1)';
+            $sql = 'SELECT assignment, userid, groupid from {assign_submission} ' .
+                   'GROUP BY assignment, userid, groupid HAVING (count(id) > 1)';
             $badrecords = $DB->get_recordset_sql($sql);
 
             foreach ($badrecords as $badrecord) {
@@ -423,7 +424,6 @@ function xmldb_assign_upgrade($oldversion) {
 
     // Moodle v2.5.0 release upgrade line.
     // Put any upgrade step following this.
-
 
     return true;
 }
