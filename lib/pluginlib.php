@@ -3436,10 +3436,13 @@ class plugininfo_mod extends plugininfo_base {
             return '';
         }
 
-        $sql = "SELECT COUNT(course)
-                  FROM {course_modules}
-                 WHERE module = :mid
-              GROUP BY course";
+        $sql = "SELECT COUNT('x')
+                  FROM (
+                    SELECT course
+                      FROM {course_modules}
+                     WHERE module = :mid
+                  GROUP BY course
+                  ) c";
         $courses = $DB->count_records_sql($sql, array('mid'=>$module->id));
 
         return '<p>'.get_string('uninstallextraconfirmmod', 'core_plugin', array('instances'=>$count, 'courses'=>$courses)).'</p>';
