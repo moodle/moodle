@@ -532,93 +532,17 @@ class grade_report_grader extends grade_report {
     }
 
     /**
-     * Builds and returns a div with on/off toggles.
-     * @return string HTML code
-     * @deprecated since 2.4 as it appears not to be used any more.
+     * @deprecated since Moodle 2.4 as it appears not to be used any more.
      */
     public function get_toggles_html() {
-        global $CFG, $USER, $COURSE, $OUTPUT;
-        debugging('Call to deprecated function grade_report_grader::get_toggles_html().', DEBUG_DEVELOPER);
-        $html = '';
-        if ($USER->gradeediting[$this->courseid]) {
-            if (has_capability('moodle/grade:manage', $this->context) or has_capability('moodle/grade:hide', $this->context)) {
-                $html .= $this->print_toggle('eyecons');
-            }
-            if (has_capability('moodle/grade:manage', $this->context)
-             or has_capability('moodle/grade:lock', $this->context)
-             or has_capability('moodle/grade:unlock', $this->context)) {
-                $html .= $this->print_toggle('locks');
-            }
-            if (has_capability('moodle/grade:manage', $this->context)) {
-                $html .= $this->print_toggle('quickfeedback');
-            }
-
-            if (has_capability('moodle/grade:manage', $this->context)) {
-                $html .= $this->print_toggle('calculations');
-            }
-        }
-
-        if ($this->canviewhidden) {
-            $html .= $this->print_toggle('averages');
-        }
-
-        $html .= $this->print_toggle('ranges');
-        if (!empty($CFG->enableoutcomes)) {
-            $html .= $this->print_toggle('nooutcomes');
-        }
-
-        return $OUTPUT->container($html, 'grade-report-toggles');
+        throw new coding_exception('get_toggles_html() can not be used any more');
     }
 
     /**
-    * Shortcut function for printing the grader report toggles.
-    * @param string $type The type of toggle
-    * @param bool $return Whether to return the HTML string rather than printing it
-    * @return void
-    * @deprecated since 2.4 as it appears not to be used any more.
-    */
+     * @deprecated since 2.4 as it appears not to be used any more.
+     */
     public function print_toggle($type) {
-        global $CFG, $OUTPUT;
-        debugging('Call to deprecated function grade_report_grader::print_toggle().', DEBUG_DEVELOPER);
-        $icons = array('eyecons' => 't/hide',
-                       'calculations' => 't/calc',
-                       'locks' => 't/lock',
-                       'averages' => 't/mean',
-                       'quickfeedback' => 't/feedback',
-                       'nooutcomes' => 't/outcomes');
-
-        $prefname = 'grade_report_show' . $type;
-
-        if (array_key_exists($prefname, $CFG)) {
-            $showpref = get_user_preferences($prefname, $CFG->$prefname);
-        } else {
-            $showpref = get_user_preferences($prefname);
-        }
-
-        $strshow = $this->get_lang_string('show' . $type, 'grades');
-        $strhide = $this->get_lang_string('hide' . $type, 'grades');
-
-        $showhide = 'show';
-        $toggleaction = 1;
-
-        if ($showpref) {
-            $showhide = 'hide';
-            $toggleaction = 0;
-        }
-
-        if (array_key_exists($type, $icons)) {
-            $imagename = $icons[$type];
-        } else {
-            $imagename = "t/$type";
-        }
-
-        $string = ${'str' . $showhide};
-
-        $url = new moodle_url($this->baseurl, array('toggle' => $toggleaction, 'toggle_type' => $type));
-
-        $retval = $OUTPUT->container($OUTPUT->action_icon($url, new pix_icon($imagename, $string))); // TODO: this container looks wrong here
-
-        return $retval;
+        throw new coding_exception('print_toggle() can not be used any more');
     }
 
     /**
